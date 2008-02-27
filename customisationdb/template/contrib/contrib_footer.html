@@ -1,0 +1,68 @@
+<!-- IF S_DISPLAY_TABS -->
+				<span class="corners-bottom"><span></span></span></div>
+			</div>
+		</div>
+	</div>
+
+<!-- ENDIF -->
+				<span class="corners-bottom"><span></span></span></div>
+<!-- IF S_AUTHOR_SELECT || PAGINATION -->				
+<ul class="linklist">
+	<li class="rightside pagination"><!-- IF S_AUTHOR_SELECT -->{TOTAL_USERS} &bull; <!-- ENDIF --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE -->{PAGE_NUMBER}<!-- ENDIF --></li>
+</ul>				
+<!-- ENDIF -->
+<!-- IF not S_WIDE -->		
+<div id="extras">
+		<!-- IF S_CONTRIB -->
+			<!-- IF not S_IS_BOT && U_DOWNLOAD && not .rev -->
+				<dl class="extra-box download-contrib">
+					<dt><a href="{U_DOWNLOAD}">DOWNLOAD {CONTRIB_LABEL}</a></dt>
+					<dd>Downloaded {CONTRIB_DOWNLOADS} time<!-- IF CONTRIB_DOWNLOADS != 1 -->s<!-- ENDIF --><br />Size: {CONTRIB_FILESIZE}<br />MD5 hash: {CONTRIB_MD5}</dd>
+				</dl>
+			<!-- ENDIF -->
+			<!-- IF .contriblinks -->
+				<div class="mini-panel">
+					<div class="inner"><span class="corners-top"><span></span></span>
+					<h3>{CONTRIB_NAME}</h3>
+						<ul class="menu">
+							<!-- BEGIN contriblinks -->
+								<li<!-- IF contriblinks.S_SELECTED --> id="activemenu"<!-- ENDIF -->><a href="{contriblinks.U_TITLE}"><!-- IF contriblinks.ICON --><img src="{S_THEME_PATH}/images/{contriblinks.IMG_PATH}" alt="{contriblinks.L_TITLE}" title="{contriblinks.L_TITLE}"/> <!-- ENDIF --><span>{contriblinks.L_TITLE}</span></a></li>
+							<!-- END contriblinks -->
+						</ul>
+					
+					<span class="corners-bottom"><span></span></span></div>		
+				</div>
+			<!-- ENDIF -->				
+		<!-- ENDIF -->
+		<!-- BEGIN l_block1 -->
+			<!-- IF l_block1.S_SELECTED -->
+
+		<!-- BEGIN l_block2 -->
+			<!-- IF .l_block1.l_block2.l_block3 -->
+		<div class="mini-panel">
+			<div class="inner"><span class="corners-top"><span></span></span>
+			<h3>{l_block1.l_block2.L_TITLE}</h3>
+			<ul class="menu">
+				<!-- ENDIF -->
+				<!-- BEGIN l_block3 -->
+					<li<!-- IF l_block1.l_block2.l_block3.S_SELECTED --> id="activemenu"<!-- ENDIF --><!-- IF l_block1.l_block2.l_block3.S_LAST_ROW -->   class="last"<!-- ENDIF -->><a href="{l_block1.l_block2.l_block3.U_TITLE}"><span>{l_block1.l_block2.l_block3.L_TITLE}</span></a></li>
+					<!-- IF l_block1.l_block2.l_block3.S_SELECTED -->
+					<!-- BEGIN !innerblock -->
+					<li<!-- IF innerblock.S_SELECTED --> id="activemenu"<!-- ENDIF -->><a href="{innerblock.U_TITLE}"><span>&raquo; {innerblock.L_TITLE}</span></a></li>
+					<!-- END !innerblock -->
+					<!-- ENDIF -->
+				<!-- END l_block3 -->
+				<!-- IF .l_block1.l_block2.l_block3 -->
+			</ul>
+			<span class="corners-bottom"><span></span></span></div>		
+		</div>					
+			<!-- ENDIF -->
+		<!-- END l_block2 -->
+		
+			<!-- ENDIF -->
+		<!-- END l_block1 -->
+	
+</div>
+<!-- IF S_LIST_AFTER--><!-- INCLUDE contrib/contrib_list.html --><!-- ENDIF -->		
+<!-- ENDIF -->
+<!-- INCLUDE overall_footer.html -->

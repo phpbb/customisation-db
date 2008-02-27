@@ -1,0 +1,43 @@
+<<!-- IF S_FIX --><!-- ENDIF -->?xml version="1.0" encoding="UTF-8"?<!-- IF S_FIX --><!-- ENDIF -->>
+
+<atom:feed xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">
+<atom:link rel="self" type="application/atom+xml" href="{LINK2}" />
+	<!-- IF TITLE -->
+	<atom:title>{TITLE}</atom:title>
+	<!-- ENDIF -->
+	<!-- IF DESC -->
+	<atom:subtitle>{DESC}</atom:subtitle>
+	<!-- ENDIF -->
+	<!-- IF LINK -->
+	<atom:link href="{LINK}" />
+	<!-- ENDIF -->
+	<atom:updated>{UPDATED}</atom:updated>
+
+
+ <atom:author>
+   <atom:name>phpBB Group</atom:name>
+ </atom:author>
+ <atom:id>{LINK2}</atom:id>
+
+	<!-- BEGIN tag -->
+			<atom:{tag.TAG_NAME}>
+				<!-- BEGIN node -->
+					<!-- IF tag.node.NODE_NAME eq 'link' -->
+						<atom:link href="{tag.node.NODE_VALUE}"/>
+					<!-- ELSEIF tag.node.NODE_NAME eq 'author' -->
+						<atom:author><atom:name>{tag.node.NODE_VALUE}</atom:name></atom:author>
+					<!-- ELSEIF tag.node.NODE_NAME eq 'content' -->
+						<atom:content type="xhtml" xml:base="{tag.node.LINK}">
+							<xhtml:div>
+								{tag.node.NODE_VALUE}
+							</xhtml:div>
+							
+						</atom:content>						
+					<!-- ELSE -->			
+						<atom:{tag.node.NODE_NAME}>{tag.node.NODE_VALUE}</atom:{tag.node.NODE_NAME}>
+					<!-- ENDIF -->	
+				<!-- END node -->
+			</atom:{tag.TAG_NAME}>
+	<!-- END tag -->
+
+</atom:feed>

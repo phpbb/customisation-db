@@ -1,0 +1,37 @@
+<!-- INCLUDE contrib/contrib_header.html -->
+
+<!-- IF S_LIST -->
+
+	{CONTRIB_CLASS} list
+
+<!-- ELSEIF S_CREATE || S_UPDATE -->
+
+	{CONTRIB_CLASS} create/update
+
+<!-- ELSEIF S_HISTORY -->
+
+	{CONTRIB_CLASS} history
+
+<!-- ELSEIF S_UPDATE -->
+
+	{CONTRIB_CLASS} update
+
+<!-- ELSEIF S_PENDING -->
+
+	{CONTRIB_CLASS} pending
+
+<!-- ELSEIF S_DESCRIPTION -->
+
+	{CONTRIB_CLASS} description
+
+<!-- ELSEIF S_TAGS -->
+
+	{CONTRIB_CLASS} tags
+
+<!-- ELSEIF S_OWNERSHIP -->
+
+	{CONTRIB_CLASS} ownership
+
+<!-- ENDIF -->
+
+<!-- INCLUDE contrib/contrib_footer.html -->

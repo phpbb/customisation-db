@@ -1,0 +1,72 @@
+<fieldset class="fields1">
+	<!-- IF ERROR --><p class="error">{ERROR}</p><!-- ENDIF -->
+
+
+	<!-- INCLUDE contrib/posting_buttons.html -->
+
+	<div id="smiley-box">
+		<!-- IF S_SMILIES_ALLOWED and .smiley -->
+			<strong>{L_SMILIES}</strong><br />
+			<!-- BEGIN smiley -->
+				<a href="#" onclick="insert_text('{smiley.A_SMILEY_CODE}', true); return false;"><img src="{smiley.SMILEY_IMG}" width="{smiley.SMILEY_WIDTH}" height="{smiley.SMILEY_HEIGHT}" alt="{smiley.SMILEY_CODE}" title="{smiley.SMILEY_DESC}" /></a>
+			<!-- END smiley -->
+		<!-- ENDIF -->
+		<!-- IF S_SHOW_SMILEY_LINK and S_SMILIES_ALLOWED-->
+			<br /><a href="{U_MORE_SMILIES}" onclick="window.open('{U_MORE_SMILIES}', '_phpbbsmilies', 'HEIGHT=350,resizable=yes,scrollbars=yes,WIDTH=300'); return false;">{L_MORE_SMILIES}</a>
+		<!-- ENDIF -->
+
+		<!-- IF BBCODE_STATUS -->
+		<!-- IF .smiley --><hr /><!-- ENDIF -->
+		{BBCODE_STATUS}<br />
+		<!-- IF S_BBCODE_ALLOWED -->
+			{IMG_STATUS}<br />
+			{FLASH_STATUS}<br />
+			{URL_STATUS}<br />
+			{SMILIES_STATUS}
+		<!-- ENDIF -->
+		<!-- ENDIF -->
+	</div>
+
+	<div id="message-box">
+		<textarea name="message" id="message" rows="15" cols="76" tabindex="3" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" class="inputbox">{MESSAGE}</textarea>
+	</div>
+</fieldset>
+
+<!-- IF $EXTRA_POSTING_OPTIONS eq 1 -->
+
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+
+
+
+	<div class="panel bg2">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<fieldset class="submit-buttons">
+			{S_HIDDEN_ADDRESS_FIELD}
+			{S_HIDDEN_FIELDS}
+			<input type="submit" accesskey="s" tabindex="6" name="post" value="{L_SUBMIT}" class="button1" />&nbsp;
+
+		</fieldset>
+
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+
+		<div id="tabs">
+			<ul>
+				<li id="options-panel-tab" class="activetab"><a href="#tabs" onclick="subPanels('options-panel'); return false;"><span>{L_OPTIONS}</span></a></li>
+			</ul>
+		</div>
+
+	<div class="panel bg3" id="options-panel">
+		<div class="inner"><span class="corners-top"><span></span></span>
+
+		<fieldset class="fields1">
+
+				<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{S_BBCODE_CHECKED} /> {L_DISABLE_BBCODE}</label></div>
+				<div><label for="disable_smilies"><input type="checkbox" name="disable_smilies" id="disable_smilies"{S_SMILIES_CHECKED} /> {L_DISABLE_SMILIES}</label></div>
+				<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{S_MAGIC_URL_CHECKED} /> {L_DISABLE_MAGIC_URL}</label></div>
+				<div><label for="attach_sig"><input type="checkbox" name="attach_sig" id="attach_sig"{S_SIGNATURE_CHECKED} /> {L_ATTACH_SIG}</label></div>
+
+		</fieldset>
+
+<!-- ENDIF -->

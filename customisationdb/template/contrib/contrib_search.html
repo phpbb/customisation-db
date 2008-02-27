@@ -1,0 +1,52 @@
+<!-- INCLUDE contrib/contrib_header.html -->
+
+<h2 class="imgrep {CONTRIB_CLASS}db">{CONTRIB_LABEL} search</h2>
+
+<form id="search_contrib" method="post" action="{U_ACTION}" id="search_mod" enctype="multipart/form-data">
+	<div class="panel">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<fieldset>
+		<dl>
+			<dt><label for="contrib_search">{CONTRIB_LABEL} Name:</label></dt>
+			<dd><input name="contrib_search" type="text" id="contrib_search" /></dd>
+		</dl>
+		</fieldset>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+			<!-- BEGIN groups -->
+			<div class="panel">
+				<div class="inner"><span class="corners-top"><span></span></span>
+				<fieldset>
+				<dl>
+					<dt><label>{groups.GROUPNAME}</label></dt>
+					<dd>
+						<!-- BEGIN tags -->
+						<input name="contrib_{groups.tags.TAG_ID}" type="checkbox" id="contrib_{groups.GROUPNAME}_{groups.tags.TAGNAME}" /><label for="contrib_{groups.GROUPNAME}_{groups.tags.TAGNAME}">{groups.tags.TAGLABEL}</label><br />
+						<!-- END tags -->
+					</dd>
+				</dl>
+				</fieldset>
+				<span class="corners-bottom"><span></span></span></div>
+			</div>
+			<!-- END groups -->
+		<div class="panel">
+				<div class="inner"><span class="corners-top"><span></span></span>
+				<fieldset>
+				<dl>
+					<dt><label>phpBB Version</label></dt>
+					<dd>
+						<input name="version_2" type="checkbox" id="version_2" /><label for="version_2">phpBB 2.0.x</label><br />
+						<input name="version_3" type="checkbox" id="version_3" /><label for="version_3">phpBB 3.0.x</label><br />
+						
+					</dd>
+				</dl>
+				</fieldset>
+				<span class="corners-bottom"><span></span></span></div>
+			</div>	
+	
+	<fieldset class="display-actions">
+			<input type="submit" name="search" value="{L_SUBMIT}" class="button1" />
+	</fieldset>
+</form>
+<!-- INCLUDE contrib/contrib_footer.html -->
+	

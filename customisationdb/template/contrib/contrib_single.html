@@ -1,0 +1,151 @@
+	<h3>{CONTRIB_NAME}</h3>
+	<p>{CONTRIB_DESCRIPTION}</p><br /><br />
+	<!-- IF .rev -->
+		<h3>{CONTRIB_LABEL} revisions</h3>
+		<p>There have been revisions to this {CONTRIB_LABEL}. They can be downloaded below:</p>
+		<ol>
+			<!-- BEGIN rev -->
+			<li><a href="{rev.U_DOWNLOAD}">Revision #{rev.REVISION_ID}, Revision version {rev.REVISION_VERSION}, revision date {rev.REVISION_DATE}.</a></li>
+			<!-- END rev -->
+		</ol>
+		<br /><br />
+	<!-- ENDIF -->
+    <!-- IF S_TEAM -->
+		<h3>{CONTRIB_LABEL} queue status</h3>
+		<p>Current {CONTRIB_LABEL} status:	<!-- IF S_STATUS eq 0 -->New<!-- ELSEIF S_STATUS eq 1 -->Waiting approval<!-- ELSE -->Waiting deny<!-- ENDIF --><br />
+		Special status set:</p><br />
+		<ul>
+			<!-- BEGIN st -->
+				<li>{st.VALUE}</li>
+			<!-- BEGINELSE -->
+				<li>No status set currently.</li>
+			<!-- END st -->
+		</ul>
+		<br /><br />
+		<!-- IF CONTRIB_CLASS eq 'mods' -->
+			<h3>EAL urls</h3>
+			<p>Use the urls below for running EAL.</p>
+			<ol>
+				<!-- BEGIN rev -->
+				<li>Revision #{rev.REVISION_ID}: <a href="http://www.phpbb.com/mods/db/eal/{rev.REVISION_ID}/{rev.EAL}">http://www.phpbb.com/mods/db/eal/{rev.REVISION_ID}/{rev.EAL}</a></li>
+				<!-- END rev -->
+			</ol>
+			<br /><br />
+		<!-- ENDIF -->
+		<h3>Change owner</h3>
+		<form action="{U_FORM}" method="post">
+		New user (<strong>ONLY FILL IN USER ID'S!!!! It dont understand usernames, and Paul is lazy :)</strong>):
+		<input type="text" name="change_owner_uid" /><br />
+		<input type="submit" name="change_owner" value="Change" /><br />
+		</form>
+	<!-- ENDIF -->
+	<div class="forabg">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<ul class="topiclist">
+			<li class="header">
+
+				<dl class="icon">
+					<dt>{CONTRIB_NAME}</dt>
+					<dd></dd>
+				</dl>
+
+			</li>
+		</ul>
+		<ul class="topiclist forums">
+			<li class="row">
+				<dl>
+					<dt>Author:</dt>
+					<dd>{AUTHOR_FULL}</dd>
+				</dl>
+			</li><li class="row">
+				<dl>
+					<dt>Version:</dt>
+					<dd>{CONTRIB_VERSION}<!-- IF CONTRIB_REVISION_NAME --> &quot;{CONTRIB_REVISION_NAME}&quot;<!-- ENDIF --></dd>
+				</dl>
+			</li>
+			<li class="row">
+	<!--			<dl>
+					<dt>MD5 hash:</dt>
+					<dd>{CONTRIB_MD5}</dd>
+				</dl>
+			</li>
+			<li class="row">
+				<dl>
+					<dt>Status:</dt>
+					<dd>{CONTRIB_STATUS}</dd>
+				</dl>
+			</li><li class="row">-->
+				<dl>
+					<dt>Rating:</dt>
+					<dd>{CONTRIB_RATING} out of 5 ({CONTRIB_RATE_COUNT} ratings)
+					<!-- IF not S_RATE -->
+					<br />
+					<form action="{U_RATE}" method="post">
+					Rate this {CONTRIB_LABEL}: <select name="rate" onChange="this.form.submit();">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+					<input type="submit" value="Go" class="button1" />
+					</form>
+					<!-- ENDIF -->
+					</dd>
+				</dl>
+			</li>
+			<!-- IF .topics -->
+				<li class="row">
+					<dl>
+						<dt><strong>{CONTRIB_LABEL} topics</strong></dt>
+						<dd></dd>
+					</dl>
+				</li>
+				<!-- BEGIN topics -->
+					<li class="row">
+						<dl>
+							<dt>{topics.TOPIC} topic:
+							<!-- IF topics.S_ANNOUNC --><br />In this topic you can get support for this MOD.<!-- ENDIF -->
+							</dt>
+							<dd><a href="{topics.U_TOPIC}">View</a></dd>
+						</dl>
+					</li>
+				<!-- END topics -->
+			<!-- ENDIF -->
+			<!-- IF .tag_group -->
+				<li class="row">
+					<dl>
+						<dt><strong>{CONTRIB_LABEL} information</strong></dt>
+						<dd></dd>
+					</dl>
+				</li>
+				<!-- BEGIN tag_group -->
+					<li class="row">
+						<dl>
+							<dt>{tag_group.TAG_GROUP}<!-- IF tag_group.TAG_GROUP == 'phpBB' --> version<!-- ENDIF -->:</dt>
+							<dd>
+								<ul>
+								<!-- BEGIN tag_entry -->
+									<li><a href="{tag_group.tag_entry.U_TAG}">{tag_group.tag_entry.TAG_NAME}</a></li>
+								<!-- END tag_entry -->
+								</ul>
+							</dd>
+						</dl>
+					</li>
+				<!-- END tag_group -->
+			<!-- ENDIF -->
+		</ul>
+
+	</div>
+		<span class="corners-bottom"><span></span></span></div>
+		<!-- IF S_TEAM -->
+		<a href="javascript:dE('queue');">Queue topic</a> &bull; <a href="javascript:dE('queue_post');">Reply to queue</a><br />
+		<div id="queue" style="display:none;">
+		<!-- Need here to display the queue -->
+		<h3>Queue topic</h3>
+		<!-- INCLUDE contrib/contrib_postrow.html -->
+		</div>
+		<div id="queue_post" style="display:none;">
+			<!-- INCLUDE contrib/contrib_post.html -->
+		</div>
+		<!-- ENDIF -->

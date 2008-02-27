@@ -1,0 +1,28 @@
+<!-- INCLUDE overall_header.html -->	
+
+<ul class="linklist navlinks">
+	<li><a href="{U_HOME}">Home</a> 
+		<!-- BEGIN breadcrumbs -->
+			<strong>&#8249;</strong> <a href="{breadcrumbs.U_LINK}">{breadcrumbs.L_LINK}</a>
+		<!-- END breadcrumbs -->
+	</li>
+</ul>
+
+<div<!-- IF not PAGINATION --> id="main"<!-- ENDIF --><!-- IF S_WIDE --> class="wide"<!-- ENDIF -->>
+
+<!-- IF S_DISPLAY_TABS -->
+	<h2 class="imgrep {CONTRIB_CLASS}queue">{CONTRIB_CLASS} queue</h2>
+	<div id="wrap2">
+		<div id="page-body2">
+			<div id="tabs">
+				<ul>
+				<!-- BEGIN t2_block1 -->
+					<li<!-- IF t2_block1.S_SELECTED --> class="activetab"<!-- ENDIF -->><a href="{t2_block1.U_TITLE}"><span>{t2_block1.L_TITLE}</span></a></li>
+				<!-- END t2_block1 -->
+				</ul>
+			</div>
+	
+			<div class="panel bg3">
+				<div class="inner"><span class="corners-top"><span></span></span>	
+
+<!-- ENDIF -->

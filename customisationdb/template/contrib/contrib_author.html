@@ -1,0 +1,437 @@
+<!-- INCLUDE contrib/contrib_header.html -->
+<!-- IF not S_DISPLAY_TABS --><h2 class="imgrep {CONTRIB_CLASS}my">My {CONTRIB_CLASS}</h2><!-- ENDIF -->
+<!-- IF S_LIST -->
+
+	<!-- IF .contribs -->
+	<div class="panel bg3">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<table class="table1" cellspacing="1">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Version</th>
+					<th>Date submitted</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- BEGIN contribs -->
+					<!-- IF contribs.S_ROW_COUNT is even --><tr class="bg1"><!-- ELSE --><tr class="bg2"><!-- ENDIF -->
+						<td>{contribs.CONTRIB_NAME}<br />{CONTRIB_LABEL} status: <a href="javascript:dE('contrib_{contribs.CONTRIB_ID}');">View</a>. phpBB Version: {contribs.PHPBB}</td>
+						<td>{contribs.CONTRIB_VERSION}</td>
+						<td>{contribs.CONTRIB_DATE}</td>
+						<td align="center">
+							<!-- BEGIN legend -->
+								<a href="{contribs.legend.U_LABEL}"><img src="{S_THEME_PATH}/images/{contribs.legend.IMG_LABEL}" alt="{contribs.legend.L_LABEL}" title="{contribs.legend.L_LABEL}" /></a>
+							<!-- END legend -->
+						</td>
+					</tr>
+					
+					<tr class="<!-- IF contribs.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
+						<td colspan="4">
+							<table style="display:none;" id="contrib_{contribs.CONTRIB_ID}">
+								<tr>
+									<th>Revision id</th>
+									<th>Revision version</th>
+									<th>Queue type (New or update)</th>
+									<th>Submitted</th>
+									<th>Validated</th>
+									<th>Status</th>
+								</tr>
+								<!-- BEGIN queue -->
+									<tr>
+										<td>{contribs.queue.REVISION_ID}</td>
+										<td>{contribs.queue.VERSION}</td>
+										<td>{contribs.queue.QUEUE_TYPE}</td>
+										<td>{contribs.queue.SUBMITTED}</td>
+										<td>{contribs.queue.CLOSED}</td>
+										<td>{contribs.queue.STATUS}</td>
+									</tr>
+								<!-- END queue -->
+							</table>
+						</td>
+					</tr>
+				<!-- END contribs -->
+			</tbody>
+		</table>
+
+		<table class="table1" cellspacing="1">
+			<tr>
+				<!-- BEGIN legend -->
+				<td><img src="{S_THEME_PATH}/images/{legend.IMG_LABEL}" alt="{legend.L_LABEL}" title="{legend.L_LABEL}"/> {legend.L_LABEL}</td>
+				<!-- END legend -->
+			</tr>
+		</table>
+
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+		<!-- ELSE -->
+		<span>{CONTRIB_NO_MATCH}</span>
+		<!-- ENDIF -->
+
+
+<!-- ELSEIF S_CREATE || S_UPDATE -->
+
+	<!-- IF S_DISPLAY_TABS -->
+				<span class="corners-bottom"><span></span></span></div>
+			</div>
+		</div>
+	</div>
+	<!-- ENDIF -->	
+
+	<!-- IF S_CREATE -->
+	<!-- DEFINE $FORM_ID = 'create_contrib' -->
+
+	<p>Create a new {CONTRIB_LABEL} project in the phpBB.com {CONTRIB_LABEL}s database<br />
+	<strong>NOTE: This is ONLY for NEW {CONTRIB_LABEL}s, use my {CONTRIB_LABEL} for submitting updates!</strong>
+	</p>
+	<!-- ELSE -->
+	<!-- DEFINE $FORM_ID = 'update_contrib' -->
+	<!-- IF not S_DISPLAY_TABS --><h2 class="imgrep {CONTRIB_CLASS}sdb">Update your {CONTRIB_LABEL}</h2><!-- ENDIF -->
+
+	<p>Submit a new version of your {CONTRIB_LABEL} for the phpBB.com {CONTRIB_LABEL}s database</p>
+	<!-- ENDIF -->
+	<!-- IF S_ERROR_STR --><span class="error">{S_ERROR_STR}</span><!-- ENDIF -->
+	<form id="{$FORM_ID}" method="post" action="{U_ACTION}" name="{$FORM_ID}" enctype="multipart/form-data">
+	
+	<div class="forabg">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="icon">
+					<dt>Required Information</dt>
+					<dd class="information"></dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist forums">
+			<!-- IF S_CREATE -->
+			<li	class="row">
+				<dl>
+					<dt><label for="contrib_name">{CONTRIB_LABEL} name</label></dt>
+					<dd><input name="contrib_name" type="text" id="contrib_name" value="{CONTRIB_NAME}" /></dd>
+				</dl>
+			</li>
+			<!-- ENDIF -->
+			<li	class="row">
+				<dl>
+					<dt><label for="contrib_version">{CONTRIB_LABEL} version</label></dt>
+					<dd><input name="contrib_version" type="text" id="contrib_version" value="{CONTRIB_VERSION}" /></dd>
+				</dl>
+			</li>
+<!--			<li class="row">
+				<dl>
+					<dt><label for="contrib_revision_name">{CONTRIB_LABEL} revision</label></dt>
+					<dd><input name="contrib_revision_name" id="contrib_revision_name" /></dd>
+				</dl>
+			</li>	-->		
+			<li	class="row">
+				<!-- IF S_CREATE -->
+					<dl>
+						<dt><label for="contrib_description">{CONTRIB_LABEL} description</label></dt>
+						<dd><textarea name="contrib_description" id="contrib_description">{CONTRIB_DESCRIPTION}</textarea></dd>
+					</dl>
+					</li>
+					<li	class="row">
+				<!-- ENDIF -->
+				<dl>
+					<dt><label for="contrib_file">{CONTRIB_LABEL} upload</label></dt>
+					<dd><!-- IF S_FILE_UPLOAD_ERROR --><span class="error">File upload failed.</span><br /><!-- ENDIF --><input type="hidden" name="MAX_FILE_SIZE" value="9000000" /><input type="file" name="contrib_file" id="contrib_file" /></dd>
+				</dl>
+			</li>
+			<li	class="row">
+				<dl>
+					<dt><label for="agreed">I have read the <!-- IF CONTRIB_LABEL == 'Style' --><a href="http://www.phpbb.com/community/viewtopic.php?f=22&t=387602">{CONTRIB_LABEL} submission policy</a><!-- ELSE -->{CONTRIB_LABEL} submission policy for <a href="http://www.phpbb.com/mods/documentation/policies/moddb-3.0/index.php">phpBB 3.0</a> or <a href="http://www.phpbb.com/mods/documentation/policies/moddb-2.0/index.php">phpBB 2.0</a><!-- ENDIF --> and agreed with this</label></dt>
+					<dd><input type="checkbox" value="agreed" name="agreed" /><!-- IF S_NO_AGREED --><span class="error">You must agreed with the policy.</span><!-- ENDIF --></dd>
+				</dl>
+			</li>
+			<!-- IF S_CREATE and (S_PHPBB2 || S_PHPBB3) -->
+				<li	class="row">
+					<dl>
+						<dt><label>phpBB version for this {CONTRIB_LABEL}:</label></dt>
+						<dd><!-- IF S_PHPBB2 --><input type="radio" name="contrib_phpbb[]" value="{S_PHPBB2}" <!-- IF S_PHPBB2_SELECTED -->checked="checked"<!-- ENDIF --> />phpBB2<br /><!-- ENDIF -->
+						<!-- IF S_PHPBB3 --><input type="radio" name="contrib_phpbb[]" value="{S_PHPBB3}" <!-- IF S_PHPBB3_SELECTED -->checked="checked"<!-- ENDIF --> />phpBB3<!-- ENDIF -->
+						<!-- IF S_NO_VERSION --><span class="error">No version selected, this is required!</span><!-- ENDIF -->
+						</dd>
+					</dl>
+				</li>
+		<!-- ENDIF -->
+		<!-- IF CONTRIB_CLASS eq 'mods' -->
+			<li class="row">
+				<dl>
+					<dt><label>Allow the phpBB Modifications Team to fix small errors in your MOD?</label></dt>
+					<dd><input type="checkbox" name="repack" value="1" <!-- IF S_REPACK_SELECTED -->checked="checked"<!-- ENDIF --> />Yes</dd>
+				</dl>
+			</li>
+		<!-- ENDIF -->
+		</ul>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+
+	<br /><br />
+
+
+	<div class="forabg">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="icon">
+					<dt>Optional Information</dt>
+					<dd class="information"></dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist forums">
+			<li class="row">
+				<dl>
+					<dt><label for="contrib_message">Message to the {CONTRIB_LABEL} Team</label></dt>
+					<dd><textarea name="contrib_message" id="contrib_message">{CONTRIB_MESSAGE}</textarea></dd>
+				</dl>
+			</li>					
+			<!-- IF S_CREATE -->
+				<!-- BEGIN groups -->
+					<li class="row">
+						<dl>
+							<dt><label>{groups.GROUPNAME}</label></dt>
+							<dd>
+								<!-- BEGIN tags -->
+									<input name="contrib_{groups.tags.GROUP}[]" value="{groups.tags.TAGID}" type="<!-- IF groups.tags.S_RADIO -->radio<!-- ELSE -->checkbox<!-- ENDIF -->" id="contrib_{groups.tags.TAGID}" <!-- IF groups.tags.S_CHECKED -->checked="checked"<!-- ENDIF -->/><label for="contrib_{groups.tags.TAGID}">{groups.tags.TAGLABEL}</label><br />
+								<!-- END tags -->
+							</dd>
+						</dl>
+					</li>
+				<!-- END groups -->			
+			<!-- ENDIF -->
+		</ul>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+					
+	<fieldset class="display-actions">
+		{S_HIDDEN_FIELDS}
+		<input type="submit" name="<!-- IF S_CREATE -->create<!-- ELSE -->update<!-- ENDIF -->" value="{L_SUBMIT}" class="button1" />
+	</fieldset>
+	
+	</form>
+
+	<!-- IF S_DISPLAY_TABS -->
+	<!-- We like fixes ;) -->
+	<div><div><div><div>
+	<!-- ENDIF -->
+<!-- ELSEIF S_HISTORY -->
+
+	<h2>{CONTRIB_LABEL} History</h2>
+
+	<p>This is the history for your {CONTRIB_LABEL}. Here you can find everything when its submitted, approved/denied or updated. At this moment, only new revisions are displayed. Updates for tags or description isnt displayed yet.</p>
+
+	<!-- BEGIN revisions -->
+		<div class="forabg">
+			<div class="inner"><span class="corners-top"><span></span></span>
+			<ul class="topiclist">
+				<li class="header">
+					<dl class="icon">
+						<dt>{revisions.REVISION_NAME}</dt>
+						<dd class="information">Information</dd>
+					</dl>
+	
+				</li>
+			</ul>
+			<ul class="topiclist forums">
+				<li class="row">
+					<dl>		
+					<dt>Revision name</dt>
+					<dd>{revisions.REVISION_NAME}</dd>
+					</dl>
+				</li>
+				<li class="row">
+					<dl>		
+					<dt>Revision date</dt>
+					<dd>{revisions.REVISION_DATE}</dd>
+					</dl>
+				</li>
+				<li class="row">
+					<dl>		
+					<dt>{CONTRIB_LABEL} version</dt>
+					<dd>{revisions.REVISION_VERSION}</dd>
+					</dl>
+				</li>
+				<li class="row">
+					<dl>		
+					<dt>Revision submitter</dt>
+					<dd>{revisions.REVISION_AUTHOR}</dd>
+					</dl>
+				</li>
+				<li class="row">
+					<dl>		
+					<dt>Revision filename</dt>
+					<dd>{revisions.REVISION_FILENAME}</dd>
+					</dl>
+				</li>												
+			</ul>
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
+	<!-- END revisions -->
+<!-- ELSEIF S_DISCUSS -->
+
+	<h1>{L_CONTRIB_DISCUSS}</h1>
+
+	<p>{L_CONTRIB_DISCUSS} - {CONTRIB_NAME} v{CONTRIB_VERSION}<!-- IF CONTRIB_REVISION_NAME --> &quot;{CONTRIB_REVISION_NAME}&quot;<!-- ENDIF --></p>
+
+<!-- INCLUDE contrib/contrib_postrow.html -->
+
+	<form id="add_message" method="post" action="{U_ACTION}" name="add_message">
+	<fieldset>
+		<legend>Add Comment</legend>
+		<dl>
+			<dt><label for="post_subject">Subject:</label></dt>
+			<dd><input type="text" name="post_subject" id="post_subject" value="{POST_SUBJECT}" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="post_message">Message:</label></dt>
+			<dd><textarea name="post_message" id="post_message"></textarea></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset class="quick">
+		<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
+	</fieldset>
+	</form>
+
+<!-- ELSEIF S_PENDING -->
+
+	<!-- IF .pending -->
+	<!-- BEGIN pending -->
+		<!-- IF pending.CANCEL -->
+		<form action="{U_ACTION}" method="post">
+		<!-- ENDIF -->
+		<!-- IF pending.S_PENDING_UPDATE -->
+			<fieldset>
+				<legend>Update</legend>
+			<dl>
+				<dt>Pending a {CONTRIB_LABEL} update</dt>
+				<dd></dd>
+			</dl>
+			</fieldset>		
+		<!-- ENDIF -->
+
+		<!-- IF pending.S_PENDING_DESCRIPTION -->
+			<fieldset>
+				<legend>{pending.LEGEND}</legend>
+			<dl>
+				<dt>{L_CONTRIB_OLD}</dt>
+				<dd>{pending.CONTRIB_OLD}</dd>
+			</dl>
+			<dl>
+				<dt>{L_CONTRIB_NEW}</dt>
+				<dd>{pending.CONTRIB_NEW}</dd>
+			</dl>
+			</fieldset>
+		<!-- ENDIF -->
+
+		<!-- IF pending.S_PENDING_TAGS -->
+			<fieldset>
+				<legend>{pending.LEGEND}</legend>
+			<dl>
+				<dt>Update your {CONTRIB_LABEL} tags</dt>
+				<dd>
+					<!-- BEGIN addtags -->
+					<span style="color: green;">Adding: {pending.addtags.TAG_GROUP}: {pending.addtags.TAG_NAME}</span><br />
+					<!-- END addtags -->
+					<!-- BEGIN removetags -->
+					<span style="color: red;">Removing: {pending.removetags.TAG_GROUP}: {pending.removetags.TAG_NAME}</span><br />
+					<!-- END removetags -->
+				</dd>
+			</dl>
+			</fieldset>
+		<!-- ENDIF -->
+
+		<!-- IF pending.CANCEL -->
+			<fieldset class="quick">
+				{pending.S_HIDDEN_FIELDS}<input type="submit" name="cancel" value="{L_CANCEL}" class="button1" />
+			</fieldset>
+		</form>
+		<!-- ENDIF -->
+	<!-- END pending -->
+	<!-- ELSE -->
+	<span>You have no pending updates</span>
+	<!-- ENDIF -->
+
+<!-- ELSEIF S_DESCRIPTION -->
+	<form action="{U_ACTION}" method="post">
+		<fieldset>
+			<legend>{CONTRIB_LABEL} Description</legend>
+		<dl>
+			<dt>Current {CONTRIB_LABEL} description</dt>
+			<dd><!-- IF DESCRIPTION_P -->{DESCRIPTION_P}<!-- ELSE -->&nbsp;<!-- ENDIF --></dd>
+		</dl>
+		<!-- IF PENDING_DESCRIPTION -->
+		<dl>
+			<dt>Pending {CONTRIB_LABEL} description</dt>
+			<dd>{PENDING_DESCRIPTION}</dd>
+		</dl>
+		<!-- ENDIF -->
+		<dl>
+			<dt>New {CONTRIB_lABEL} description</dt>
+			<dd><textarea name="description">{DESCRIPTION}</textarea></dd>
+		</dl>
+		</fieldset>
+
+		<fieldset class="quick">
+			{S_HIDDEN_FIELDS}<input type="submit" name="update" value="{L_SUBMIT}" class="button1" />
+		</fieldset>
+	</form>
+
+<!-- ELSEIF S_TAGS -->
+
+	<form action="{U_ACTION}" method="post">
+		<table>
+			<tr>
+				<th>{L_GROUP}</th>
+				<th>{L_CURRENT_VALUE}</th>
+				<!-- IF PENDING_TAGS -->
+				<th>{L_REQUESTED_VALUE}</th>
+				<!-- ENDIF -->
+			</tr>
+			<!-- DEFINE $CLASS = 2 -->
+			<!-- BEGIN groups -->
+				<!-- DEFINE $FIRST = true -->
+				<tr>
+					<td class="bg1" rowspan="{groups.NUMTAGS}" valign="top">
+						<label>{groups.GROUPLABEL}</label>
+					</td>
+				<!-- BEGIN tags -->
+				<!-- IF not $FIRST -->
+				<tr>
+				<!-- ENDIF -->
+				<!-- DEFINE $FIRST = false -->
+					<td class="row{$CLASS}">
+						<input name="contrib_{groups.GROUPNAME}_{groups.tags.TAGNAME}" type="checkbox" id="contrib_{groups.GROUPNAME}_{groups.tags.TAGNAME}" <!-- IF groups.tags.S_CHECKED -->checked="checked"<!-- ENDIF -->/><label for="contrib_{groups.GROUPNAME}_{groups.tags.TAGNAME}">{groups.tags.TAGLABEL}</label>
+					</td>
+				<!-- IF PENDING_TAGS -->
+					<td class="row{$CLASS}">
+						<!-- IF groups.tags.S_ADDED --><span style="color: green;">Add Pending Approval</span><!-- ENDIF -->
+						<!-- IF groups.tags.S_REMOVED --><span style="color: red;">Remove Pending Approval</span><!-- ENDIF -->
+					</td>
+				<!-- ENDIF -->
+					<!-- IF $CLASS == 1 -->
+						<!-- DEFINE $CLASS = 2 -->
+					<!-- ELSE -->
+						<!-- DEFINE $CLASS = 1 -->
+					<!-- ENDIF -->
+				</tr>
+				<!-- END tags -->
+			<!-- END groups -->
+			<tr>
+				<td class="cat" colspan="<!-- IF PENDING_TAGS -->3<!-- ELSE -->2<!-- ENDIF -->">
+					{S_HIDDEN_FIELDS}<input type="submit" name="update" value="{L_UPDATE}" />
+				</td>
+			</tr>
+		</table>
+	</form>
+
+<!-- ELSEIF S_OWNERSHIP -->
+
+	-- contrib ownership --
+
+<!-- ENDIF -->
+
+<!-- INCLUDE contrib/contrib_footer.html -->

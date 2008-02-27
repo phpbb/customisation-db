@@ -1,0 +1,41 @@
+<<!-- IF S_FIX --><!-- ENDIF -->?xml version="1.0" encoding="UTF-8"?<!-- IF S_FIX --><!-- ENDIF -->>
+<rss version="2.0">
+
+	<channel>
+		<!-- IF TITLE -->
+		<title>{TITLE}</title>
+		<!-- ENDIF -->
+		<!-- IF DESC -->
+		<description>{DESC}</description>
+		<!-- ENDIF -->
+		<!-- IF LINK -->
+		<link>{LINK}</link>
+		<!-- ENDIF -->
+
+		<!-- IF IMAGE -->
+		<image>
+
+			<!-- IF TITLE -->
+			<title>{TITLE}</title>
+			<!-- ENDIF -->
+			<url>{IMAGE}</url>
+			<!-- IF LINK -->
+			<link>{LINK}</link>
+			<!-- ENDIF -->
+			<!-- IF HEIGHT -->
+			<height>{HEIGHT}</height><!-- ENDIF -->
+			<!-- IF WIDTH -->
+			<width>{WIDTH}</width>
+			<!-- ENDIF -->
+		</image>
+		<!-- ENDIF -->
+		<!-- BEGIN tag -->
+			<{tag.TAG_NAME}>
+				<!-- BEGIN node -->
+					<{tag.node.NODE_NAME}>{tag.node.NODE_VALUE}</{tag.node.NODE_NAME}>
+				<!-- END node -->
+			</{tag.TAG_NAME}>
+		<!-- END tag -->
+
+	</channel>
+</rss>

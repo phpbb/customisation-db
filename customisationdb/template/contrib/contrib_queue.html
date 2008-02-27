@@ -1,0 +1,385 @@
+<!-- INCLUDE contrib/contrib_header.html -->
+
+<!-- IF S_LIST -->
+	<table class="table1" cellspacing="1">
+		<!-- IF .queue_row -->
+		<thead>
+		<tr>
+			<th class="cat">
+				{CONTRIB_LABEL} Name
+			</th>
+			<th class="cat" colspan="2">
+				Date
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+		<!-- ENDIF -->
+		<!-- BEGIN queue_row -->
+		<!-- IF queue_row.S_ROW_COUNT is even --><tr class="bg1"><!-- ELSE --><tr class="bg2"><!-- ENDIF -->
+			<td>
+				{queue_row.CONTRIB_NAME}<!-- IF queue_row.S_NUMBER_REV eq 1 --> [ {queue_row.CONTRIB_VERSION} <!-- IF queue_row.CONTRIB_TAG -->{queue_row.CONTRIB_TAG}<!-- ENDIF --> ]<!-- ENDIF --><br />
+				{queue_row.USERNAME} <br />
+				phpBB version: {queue_row.CONTRIB_PHPBB}
+				<!-- IF queue_row.rev and queue_row.S_NUMBER_REV neq 1 -->
+				<br /><br />
+				<select>
+					<!-- BEGIN rev -->
+						<option>Revision #{queue_row.rev.REVISION_ID}, Revision version {queue_row.rev.REVISION_VERSION}, revision date {queue_row.rev.REVISION_DATE}.</option>
+					<!-- END rev -->
+				</select>
+				<!-- ENDIF -->
+			</td>
+			<td>
+				{queue_row.CONTRIB_DATE}
+			</td>
+			<td align="center">
+			<!-- BEGIN legend -->
+				<a href="{queue_row.legend.U_LABEL}"><img src="{S_THEME_PATH}/images/{queue_row.legend.IMG_LABEL}" alt="{queue_row.legend.L_LABEL}" title="{queue_row.legend.L_LABEL}" /></a>
+			<!-- END legend -->
+			</td>
+		</tr>
+		<!-- BEGINELSE -->
+		<tr>
+			<td class="bg1">
+				{L_NO_ITEMS_QUEUE}
+			</td>
+		</tr>
+		<!-- END queue_row -->
+		</tbody>
+	</table>
+
+	<table class="table1" cellspacing="1">
+		<tr>
+			<!-- BEGIN legend -->
+			<td><img src="{S_THEME_PATH}/images/{legend.IMG_LABEL}" alt="{legend.L_LABEL}" title="{legend.L_LABEL}"/> {legend.L_LABEL}</td>
+			<!-- END legend -->
+		</tr>
+	</table>
+
+<!-- ELSEIF S_OVERVIEW -->
+	-- Overview --
+
+<!-- ELSEIF S_MANAGE_REPACK -->
+
+	<h1>Repack a {CONTRIB_LABEL}</h1>
+
+	<p>Here you can repack a {CONTRIB_LABEL}. This will be the newest revision, and when approving the one that is going to be downloaded.</p>
+	<!-- IF S_ERROR_STR --><span class="error">{S_ERROR_STR}</span><!-- ENDIF -->
+	<form id="repack_contrib" method="post" action="{U_ACTION}" name="{$FORM_ID}" enctype="multipart/form-data">
+	<fieldset>
+		<legend>{L_CONTRIB_REPACK}</legend>
+	<dl>
+		<dt><label for="contrib_file">{CONTRIB_LABEL} Upload</label></dt>
+		<dd><!-- IF FILE_UPLOAD_ERROR --><span class="error">File upload failed.</span><br /><!-- ENDIF --><input type="hidden" name="MAX_FILE_SIZE" value="2000000" /><input type="file" name="contrib_file" id="contrib_file" /></dd>
+	</dl>
+	</fieldset>
+
+	<fieldset class="quick">
+		<input type="submit" name="repack" value="{L_SUBMIT}" class="button1" />
+	</fieldset>
+
+	<p>Optional Information</p>
+
+	<fieldset>
+		<legend>Extra Information to Categorise Your {CONTRIB_LABEL}</legend>
+	<dl>
+		<dt><label for="contrib_revision_name">{CONTRIB_LABEL} Revision name</label></dt>
+		<dd><input name="contrib_revision_name" id="contrib_revision_name" value="{REVISION_NAME}" /></dd>
+	</dl>
+	</fieldset>
+
+	<fieldset class="quick">
+		{S_HIDDEN_FIELDS}<input type="submit" name="repack" value="{L_SUBMIT}" class="button1" />
+	</fieldset>
+
+	</form>
+
+<!-- ELSEIF S_MANAGE_TAGS -->
+	<h1>Manage tags</h1>
+
+	<p>Here you can modify tags for a {CONTRIB_LABEL}. This tags will be direct active!
+	<form action="{U_ACTION}" method="post">
+		<table>
+			<tr>
+				<th>{L_GROUP}</th>
+				<th>{L_CURRENT_VALUE}</th>
+				<!-- IF PENDING_TAGS -->
+				<th>{L_REQUESTED_VALUE}</th>
+				<!-- ENDIF -->
+			</tr>
+			<!-- DEFINE $CLASS = 2 -->
+			<!-- BEGIN groups -->
+				<!-- DEFINE $FIRST = true -->
+				<tr>
+					<td class="bg1" rowspan="{groups.NUMTAGS}" valign="top">
+						<label>{groups.GROUPLABEL}</label>
+					</td>
+				<!-- BEGIN tags -->
+				<!-- IF not $FIRST -->
+				<tr>
+				<!-- ENDIF -->
+				<!-- DEFINE $FIRST = false -->
+					<td class="row{$CLASS}">
+						<input name="contrib_{groups.GROUPNAME}_{groups.tags.TAGNAME}" type="checkbox" id="contrib_{groups.GROUPNAME}_{groups.tags.TAGNAME}" <!-- IF groups.tags.S_CHECKED -->checked="checked"<!-- ENDIF -->/><label for="contrib_{groups.GROUPNAME}_{groups.tags.TAGNAME}">{groups.tags.TAGLABEL}</label>
+					</td>
+				<!-- IF PENDING_TAGS -->
+					<td class="row{$CLASS}">
+						<!-- IF groups.tags.S_ADDED --><span style="color: green;">Add Pending Approval</span><!-- ENDIF -->
+						<!-- IF groups.tags.S_REMOVED --><span style="color: red;">Remove Pending Approval</span><!-- ENDIF -->
+					</td>
+				<!-- ENDIF -->
+					<!-- IF $CLASS == 1 -->
+						<!-- DEFINE $CLASS = 2 -->
+					<!-- ELSE -->
+						<!-- DEFINE $CLASS = 1 -->
+					<!-- ENDIF -->
+				</tr>
+				<!-- END tags -->
+			<!-- END groups -->
+			<tr>
+				<td class="cat" colspan="<!-- IF PENDING_TAGS -->3<!-- ELSE -->2<!-- ENDIF -->">
+					{S_HIDDEN_FIELDS}<input type="submit" name="update" value="{L_UPDATE}" />
+				</td>
+			</tr>
+		</table>
+	</form>
+
+<!-- ELSEIF S_MANAGE_DESCRIPTION -->
+
+	<h1>{CONTRIB_LABEL} Description</h1>
+
+	<p>{CONTRIB_DESCRIPTION_EXPLAIN}</p>
+
+	<form action="{U_ACTION}" method="post">
+		<fieldset>
+			<legend>{CONTRIB_LABEL} Description</legend>
+
+		<dl>
+			<dt><label for="contrib_name">{CONTRIB_LABEL} Name</label></dt>
+			<dd><input name="contrib_name" type="text" id="contrib_name" value="{CONTRIB_NAME}" /></dd>
+		</dl>
+		<dl>
+			<dt><label for="contrib_version">{CONTRIB_LABEL} Version</label></dt>
+			<dd><input name="contrib_version" type="text" id="contrib_version" value= "{CONTRIB_VERSION}" /></dd>
+		</dl>
+
+		<dl>
+			<dt>{L_CONTRIB_DESC_CURRENT}</dt>
+			<dd><!-- IF DESCRIPTION -->{DESCRIPTION}<!-- ELSE -->&nbsp;<!-- ENDIF --></dd>
+		</dl>
+		<!-- IF PENDING_DESCRIPTION -->
+		<dl>
+			<dt>{L_CONTRIB_DESC_PENDING}</dt>
+			<dd>{PENDING_DESCRIPTION}</dd>
+		</dl>
+		<!-- ENDIF -->
+		<dl>
+			<dt>{L_CONTRIB_DESC_NEW}</dt>
+			<dd><textarea name="description">{DESCRIPTION}</textarea></dd>
+		</dl>
+		</fieldset>
+
+		<fieldset class="quick">
+			{S_HIDDEN_FIELDS}<input type="submit" name="update" value="{L_SUBMIT}" class="button1" />
+		</fieldset>
+
+	</form>
+
+<!-- ELSEIF S_HISTORY -->
+
+	-- History --
+
+<!-- ELSEIF S_DISCUSS -->
+
+
+<!-- ELSEIF S_VALIDATIONS_PENDING -->
+
+	<h1>Validate a {CONTRIB_LABEL}</h1>
+	<p>Set a {CONTRIB_LABEL} as approve or deny. </p>
+	<fieldset>
+	<!-- IF S_NEED -->
+		<dl>
+			<dt>{L_OPTIONS}</dt>
+			<dd>
+				<form action="{U_ACTION}" method="post">
+				<input type="submit" name="initialize" value="Set as approve" class="button1" /><br /><br />
+				<input type="submit" name="terminate" value="Set as deny" class="button2" /><br /><br />
+				<input type="submit" name="new" value="Set as NEW" class="button2" /><br />
+				Current setting:
+				<!-- IF S_STATUS eq 1 or S_STATUS eq 2 -->New<!-- ELSEIF S_STATUS eq 3 -->Waiting approval<!-- ELSE -->Waiting deny<!-- ENDIF -->
+				</form>
+			</dd>
+		</dl>
+	<!-- ENDIF -->
+
+	<dl>
+		<dt>Set/remove status for repack/stat/attention/validating</dt>
+		<dd><form action="{U_ACTION}" method="post">
+			<input type="submit" name="tag" value="Repack" class="button1" />
+			<input type="submit" name="tag" value="Attention" class="button2" />
+			<input type="submit" name="tag" value="Stat" class="button2" />
+			<input type="submit" name="tag" value="Validating" class="button2" />
+		</form>
+		<br />
+		Current status set:
+		<ul>
+			<!-- BEGIN st -->
+				<li>{st.VALUE}</li>
+			<!-- BEGINELSE -->
+				<li>No status set currently.</li>
+			<!-- END st -->
+		</ul>
+		</dd>
+
+	</dl>
+	<dl>
+		<dt>Remove approve/deny status<dt>
+		<dd><form action="{U_ACTION}" method="post">
+
+		</form>
+		</dd>
+	</fieldset>
+	<p>{L_PENDING_OPERATIONS}</p>
+
+	<!-- IF .queue_item -->
+		<ul>
+			<!-- BEGIN queue_item -->
+				<li>{queue_item.ACTION} (<a href="{queue_item.U_CAN}">CAN</a>)</li>
+			<!-- END queue_item -->
+		</ul>
+	<!-- ENDIF -->
+
+<!-- ELSEIF S_VALIDATE_CREATE || S_VALIDATE_UPDATE -->
+
+	<!-- IF S_VALIDATE_CREATE -->
+	<h1>Create A New {CONTRIB_LABEL}</h1>
+	<!-- ELSE -->
+	<h1>Update your {CONTRIB_LABEL}</h1>
+	<!-- ENDIF -->
+
+	<p><!-- IF S_VALIDATE_CREATE -->Approve a new submitted {CONTRIB_LABEL}<!-- ELSE -->Updated a subbmited {CONTRIB_LABEL}<!-- ENDIF --></p>
+	<form action="{U_VALIDATE}" method="post" id="approveform">
+
+	<!-- IF S_CONTRIB_STATUS eq 3 -->
+
+	<div id="approve_div">
+		<fieldset>
+			<legend>Approve</legend>
+			<dl>
+				<dt><label for"notes">Release notes</label></dt>
+				<dd><textarea name="notes" id="notes" rows="14"></textarea></dd>
+			</dl>
+			<dl>
+				<dt><label for"pm_txt_approve">Notes to the author. This will be send in the PM to the author only.</label></dt>
+				<dd><textarea name="pm_txt_approve" id="pm_txt_approve" rows="14"></textarea></dd>
+			</dl>
+
+		</fieldset>
+
+		<div class="panel">
+			<div class="inner"><span class="corners-top"><span></span></span>
+				<fieldset>
+				<dl>
+					<dt><label>Update phpBB Version for this {CONTRIB_LABEL}?<br />(Old versions <strong>arent</strong> displayed!)</label></dt>
+					<dd>
+						<!-- BEGIN tags -->
+						<input name="contrib_{tags.TAG_ID}" type="checkbox" id="contrib_{tags.TAG_ID}" /><label for="contrib_{tags.TAG_ID}">{tags.TAGLABEL}</label><br />
+						<!-- END tags -->
+					</dd>
+				</dl>
+				</fieldset>
+				<span class="corners-bottom"><span></span></span></div>
+			</div>
+		</div>
+
+		<!-- IF CONTRIB_LABEL == 'Style' -->
+		<fieldset>
+			<legend>Styles Demo</legend>
+			<dl>
+				<dt><label>Add to styles demo?</label></dt>
+				<dd>
+					<input type="checkbox" name="add_demo" id="add_demo" value="1" /> <label for="add_demo">phpBB 	3.0</label><br />
+					<input type="checkbox" name="add_demo2" id="add_demo2" value="1" /> <label for="add_demo2">phpBB 2.0</label>
+				</dd>
+			</dl>
+		</fieldset>
+		<!-- ENDIF -->
+
+		<fieldset class="quick">
+			<input type="submit" name="approve" id="approve" value="Approve" class="button1" />
+			</fieldset>
+	<!-- ELSE -->
+	<div id="reject_div">
+		<fieldset>
+			<legend>Reject</legend>
+			<dl>
+				<dt><label for="pm_txt_reject">Notes to the author. This will be send in the PM to the author only.</label></dt>
+				<dd><textarea name="pm_txt_reject" id="pm_txt_reject" rows="14"></textarea></dd>
+			</dl>
+		</fieldset>
+	</div>
+
+	<fieldset class="quick">
+		<input type="submit" name="reject" id="reject" value="Reject" class="button1" />
+	</fieldset>
+	<!-- ENDIF -->
+	</form>
+<!-- ELSEIF S_VALIDATE_DESCRIPTION -->
+
+	<h1>{CONTRIB_LABEL} Description</h1>
+
+	<fieldset>
+	<dl>
+		<dt>Old Description</dt>
+		<dd>{OLD_DESCRIPTION}</dd>
+	</dl>
+	<dl>
+		<dt>New Description</dt>
+		<dd>{NEW_DESCRIPTION}</dd>
+	</dl>
+	<dl>
+		<dt>Change?</dt>
+		<dd>
+			<form action="{U_VALIDATE}" method="post">
+			<input type="submit" name="approve" value="Approve" class="button1" /><br /><br />
+			<input type="submit" name="reject" value="Deny" class="button2" />
+			Reason for deny:<br />
+			<textarea name="pm_txt_reject" id="pm_txt_reject" rows="14"></textarea>
+			</form>
+		</dd>
+	</fieldset>
+
+<!-- ELSEIF S_VALIDATE_TAGS -->
+	<h1>Validate tags for {CONTRIB_LABEL}</h1>
+
+	<p>Validate the tags for the {CONTRIB_LABEL}.</p>
+	<form action="{U_VALIDATE}" method="post" id="approveform">
+
+	<fieldset>
+	<dl>
+		<dt>Old tags</dt>
+		<dd><ul><!-- BEGIN old --><li>{old.TAG_NAME}</li><!-- END old --></ul></dd>
+	</dl>
+	<dl>
+		<dt>New Tags</dt>
+		<dd><ul><!-- BEGIN new --><li>{new.TAG_NAME}</li><!-- END new --></ul></dd>
+	</dl>
+	<dl>
+		<dt>Change?</dt>
+		<dd>
+			<form action="{U_VALIDATE}" method="post">
+			<input type="submit" name="approve" value="Approve" class="button1" /><br /><br />
+			<input type="submit" name="reject" value="Deny" class="button2" />
+			</form>
+		</dd>
+	</fieldset>
+
+
+<!-- ELSEIF S_VALIDATE_OWNERSHIP -->
+
+	approve / disapprove an update to the ownership of a contrib
+
+<!-- ENDIF -->
+
+<!-- INCLUDE contrib/contrib_footer.html -->
