@@ -14,7 +14,6 @@
 <!-- ENDIF -->
 
 <form id="acp_board" method="post" action="{U_ACTION}">
-
 <!-- BEGIN options -->
 	<!-- IF options.S_LEGEND -->
 		<!-- IF not options.S_FIRST_ROW -->
@@ -22,22 +21,22 @@
 		<!-- ENDIF -->
 		<fieldset>
 			<legend>{options.LEGEND}</legend>
-	<!-- ELSE -->
+		<!-- ELSE -->
 
 		<dl>
 			<dt><label for="{options.KEY}">{options.TITLE}:</label><!-- IF options.S_EXPLAIN --><br /><span>{options.TITLE_EXPLAIN}</span><!-- ENDIF --></dt>
 			<dd>{options.CONTENT}</dd>
 		</dl>
 
-	<!-- ENDIF -->
-<!-- END options -->
+		<!-- ENDIF -->
+		<!-- END options -->
 
-<!-- IF S_AUTH -->
-	<!-- BEGIN auth_tpl -->
-		{auth_tpl.TPL}
-	<!-- END auth_tpl -->
-<!-- ENDIF -->
-</fieldset>
+		<!-- IF S_AUTH -->
+			<!-- BEGIN auth_tpl -->
+				{auth_tpl.TPL}
+			<!-- END auth_tpl -->
+		<!-- ENDIF -->
+		</fieldset>
 
 <fieldset class="submit-buttons">
 	<legend>{L_SUBMIT}</legend>
