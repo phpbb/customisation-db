@@ -15,8 +15,12 @@ if (!defined('IN_PHPBB'))
 
 $phpEx = '';
 $phpbb_root_path = '../../community';
+$root_path = '../../';
 
 include("{$phpbb_root_path}common.php");
+include("{$root_path}db/includes/class_main.$phpEx");
+include("{$root_path}db/includes/class_hooks.$phpEx");
+include("{$root_path}db/includes/class_api.$phpEx");
 
 // Start session management
 $user->session_begin();

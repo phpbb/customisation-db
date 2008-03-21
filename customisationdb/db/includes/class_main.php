@@ -34,6 +34,7 @@ class titania_db
 		$result = $db->sql_query($sql);
 		
 		$row = $db->sql_fetchrow($result);
+		$db->sql_freeresult($result);
 
 		if (!$row)
 		{
