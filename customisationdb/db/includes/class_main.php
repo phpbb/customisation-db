@@ -18,7 +18,7 @@ class titania_db
 	private static $db_data = array();
 	public static function init()
 	{
-		global $base_path, $root_path;
+		global $base_path, $root_path, $db;
 
 		if (!isset($base_path))
 		{
@@ -52,6 +52,7 @@ class titania_db
 			}
 			$classname = $db_name . '_config';
 			$classname::load_hooks();
+			call_user_func($classname);
 		}
 
 		return true;

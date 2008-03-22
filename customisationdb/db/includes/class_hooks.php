@@ -27,7 +27,7 @@ class titania_hooks
 	 * @param $class string Classname to call $function in. Should probarly be DB_NAME or so
 	 * @param $function string functionname to be called.
 	 */
-	public static add_hook($name, $db_type, $class, $function)
+	public static function add_hook($name, $db_type, $class, $function)
 	{
 		if (!isset(self::$hooks[$name . '_' . $db_type]))
 		{
@@ -46,7 +46,7 @@ class titania_hooks
 	 * @param $function string functionname to be called.
 	 * @return bool true when sucessfull deleted, false when failed.
 	 */
-	public static delete_hook($name, $db_type, $class, $function)
+	public static function delete_hook($name, $db_type, $class, $function)
 	{
 		if (!isset(self::$hooks[$name . '_' . $db_type]))
 		{
@@ -72,7 +72,7 @@ class titania_hooks
 	 * @param $db_type int Database type
 	 * @param $parameter array Array with parameters for function, like contrib_id.
 	 */
-	public static call_hook($name, $db_type, $parameter = array())
+	public static function call_hook($name, $db_type, $parameter = array())
 	{
 		if (!isset(self::$hooks[$name . '_' . $db_type]))
 		{

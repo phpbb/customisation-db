@@ -13,11 +13,13 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-$root_path = '../../';
+// Need complete path because of symlink at my testboard.
+$root_path = '/home/pauls/domains/paulsohier.nl/public_html/private/phpBB/Titania/dev/';
 
 // For phpBB.com, normally include just common.php
 include("{$root_path}common.php");
 
+include("{$root_path}db/includes/constants.$phpEx");
 include("{$root_path}db/includes/class_main.$phpEx");
 include("{$root_path}db/includes/class_hooks.$phpEx");
 include("{$root_path}db/includes/class_api.$phpEx");
