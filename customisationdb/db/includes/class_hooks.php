@@ -19,18 +19,18 @@ class titania_hooks
 	private $hooks;
 	
     /**
-     * Add a hook thats called when a certian action is done
-     * This function should be called in include file, class DB_NAME_config
-     *
-     * @param $name string hook name
-     * @param $db_type int Database type
-     * @param $class string Classname to call $function in. Should probarly be DB_NAME or so
-     * @param $function string functionname to be called.
-     */
+	 * Add a hook thats called when a certian action is done
+	 * This function should be called in include file, class DB_NAME_config
+	 *
+	 * @param $name string hook name
+	 * @param $db_type int Database type
+	 * @param $class string Classname to call $function in. Should probarly be DB_NAME or so
+	 * @param $function string functionname to be called.
+	 */
 	public static add_hook($name, $db_type, $class, $function)
 	{
-	    if (!isset(self::$hooks[$name . '_' . $db_type]))
-	    {
+		if (!isset(self::$hooks[$name . '_' . $db_type]))
+		{
 			self::$hooks[$name . '_' . $db_type] = array();
 		}
 		self::$hooks[$name . '_' . $db_type][] = array($class, $function);
@@ -40,16 +40,16 @@ class titania_hooks
 	/**
 	 * Delete a hook from the hooks list.
 	 *
-     * @param $name string hook name
-     * @param $db_type int Database type
-     * @param $class string Classname to call $function in. Should probarly be DB_NAME or so
-     * @param $function string functionname to be called.
-     * @return bool true when sucessfull deleted, false when failed.
-     */
+	 * @param $name string hook name
+	 * @param $db_type int Database type
+	 * @param $class string Classname to call $function in. Should probarly be DB_NAME or so
+	 * @param $function string functionname to be called.
+	 * @return bool true when sucessfull deleted, false when failed.
+	 */
 	public static delete_hook($name, $db_type, $class, $function)
 	{
-	    if (!isset(self::$hooks[$name . '_' . $db_type]))
-	    {
+		if (!isset(self::$hooks[$name . '_' . $db_type]))
+		{
 			return false;
 		}
 		
@@ -57,37 +57,37 @@ class titania_hooks
 		
 		foreach (self::$hooks[$name . '_' . $db_type] as $i => $data)
 		{
-            if ($data[0] == $class && $data[1] == $function)
-            {
-                unset(self::$hooks[$name . '_' . $db_type][$i]);
-                $found = true;
-            }
-        }
-        return $found;
+			if ($data[0] == $class && $data[1] == $function)
+			{
+				unset(self::$hooks[$name . '_' . $db_type][$i]);
+				$found = true;
+			}
+		}
+		return $found;
 	}
 	/**
 	 * Call a hook.
 	 * This function is called from the core. $parameter will contain some data about the called hook, like a contrib_id.
-     * @param $name string hook name
-     * @param $db_type int Database type
-     * @param $parameter array Array with parameters for function, like contrib_id.
-     */
+	 * @param $name string hook name
+	 * @param $db_type int Database type
+	 * @param $parameter array Array with parameters for function, like contrib_id.
+	 */
 	public static call_hook($name, $db_type, $parameter = array())
 	{
-	    if (!isset(self::$hooks[$name . '_' . $db_type]))
-	    {
+		if (!isset(self::$hooks[$name . '_' . $db_type]))
+		{
 			return false;
 		}
 		
 		foreach (self::$hooks[$name . '_' . $db_type] as $i => $data)
 		{
-            /**
-             * @TODO: need to test if this works in PHP 5.2.2 and lower.
-             * Not fully sure following php.net
-             */
-            call_user_func(($data[0] . '::' . $data[1]), $parameter);
-        }
-        return true;
+			/**
+			 * @TODO: need to test if this works in PHP 5.2.2 and lower.
+			 * Not fully sure following php.net
+			 */
+			call_user_func(($data[0] . '::' . $data[1]), $parameter);
+		}
+		return true;
 	}
 }
 ?>
