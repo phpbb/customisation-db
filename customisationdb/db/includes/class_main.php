@@ -44,11 +44,11 @@ class titania_db
 
 		if (self::$db_data['include_file'] && file_exists($root_path . 'db/data/' . elf::$db_data['include_file']))
 		{
-			include($root_path . 'db/data/' . elf::$db_data['include_file']);
+			include($root_path . 'db/data/' . self::$db_data['include_file']);
 			
 			if (!class_exists($db_name . '_config'))
 			{
-				trigger_error(sprintf('Cant find class %s_conig', $db_name));
+				trigger_error(sprintf('Cant find class %s_config', $db_name));
 			}
 			$classname = $db_name . '_config';
 			$classname::load_hooks();
