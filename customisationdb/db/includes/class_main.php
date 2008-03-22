@@ -51,7 +51,6 @@ class titania_db
 				trigger_error(sprintf('Cant find class %s_config', $db_name));
 			}
 			$classname = $db_name . '_config';
-			$classname::load_hooks();
 			call_user_func($classname);
 		}
 
