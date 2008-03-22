@@ -16,7 +16,7 @@ if (!defined('IN_PHPBB'))
 $root_path = '../../';
 
 // For phpBB.com, normally include just common.php
-include("{$phpbb_root}common.php");
+include("{$root_path}common.php");
 
 include("{$root_path}db/includes/class_main.$phpEx");
 include("{$root_path}db/includes/class_hooks.$phpEx");
