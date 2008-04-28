@@ -2,6 +2,34 @@
 # @version $Id$
 #
 
+
+CREATE TABLE customisation_authors (
+  author_id int(11) NOT NULL auto_increment,
+  user_id int(11) unsigned NOT NULL default '0',
+  phpbb_user_id int(11) unsigned NOT NULL default '0',
+  author_username varchar(255) collate utf8_bin NOT NULL,
+  author_username_clean varchar(255) collate utf8_bin NOT NULL,
+  author_realname varchar(255) collate utf8_bin NOT NULL,
+  author_website varchar(200) collate utf8_bin NOT NULL,
+  author_email varchar(100) collate utf8_bin NOT NULL,
+  author_email_hash bigint(20) NOT NULL default '0',
+  author_rating decimal(11,9) unsigned NOT NULL default '0.000000000',
+  author_rating_count int(11) unsigned NOT NULL default '0',
+  author_contribs int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (author_id),
+  KEY user_id (user_id),
+  KEY author_email_hash (author_email_hash)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+CREATE TABLE customisation_contrib_tags (
+  contrib_id int(11) unsigned NOT NULL default '0',
+  tag_id int(11) unsigned NOT NULL default '0',
+  tag_value varchar(255) collate utf8_bin NOT NULL,
+  PRIMARY KEY  (contrib_id,tag_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
 CREATE TABLE customisation_contribs (
   contrib_id int(11) NOT NULL auto_increment,
   contrib_type tinyint(1) unsigned NOT NULL default '1',
@@ -12,11 +40,13 @@ CREATE TABLE customisation_contribs (
   contrib_desc_uid varchar(8) collate utf8_bin NOT NULL,
   contrib_status tinyint(2) unsigned NOT NULL default '0',
   contrib_version varchar(15) collate utf8_bin NOT NULL,
-  contrib_version_name varchar(255) collate utf8_bin NOT NULL,
+  contrib_revision int(11) unsigned NOT NULL default '0',
+  contrib_validated_revision int(11) unsigned NOT NULL default '0',
   contrib_author_id int(11) unsigned NOT NULL default '0',
+  contrib_maintainer int(11) unsigned NOT NULL default '0',
   contrib_downloads int(11) unsigned NOT NULL default '0',
   contrib_views int(11) unsigned NOT NULL default '0',
-  contrib_phpbb_version varchar(8) collate utf8_bin NOT NULL,
+  contrib_phpbb_version tinyint(2) unsigned NOT NULL default '0',
   contrib_release_date int(11) unsigned NOT NULL default '0',
   contrib_update_date int(11) unsigned NOT NULL default '0',
   contrib_visibility tinyint(1) unsigned NOT NULL default '0',
@@ -30,4 +60,39 @@ CREATE TABLE customisation_contribs (
   KEY contrib_phpbb_version (contrib_phpbb_version),
   KEY contrib_rating (contrib_rating),
   KEY contrib_downloads (contrib_downloads)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+CREATE TABLE customisation_reviews (
+  review_id mediumint(8) NOT NULL auto_increment,
+  review_text mediumtext collate utf8_bin NOT NULL,
+  review_text_bitfield varchar(255) collate utf8_bin NOT NULL,
+  review_text_uid varchar(8) collate utf8_bin NOT NULL,
+  review_text_options int(11) unsigned NOT NULL default '7',
+  review_rating tinyint(1) unsigned NOT NULL default '3',
+  review_user_id mediumint(8) unsigned NOT NULL default '0',
+  review_status tinyint(1) unsigned NOT NULL default '1',
+  review_time int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (review_id),
+  KEY mod_id (mod_id),
+  KEY style_id (style_id),
+  KEY review_user_id (review_user_id),
+  KEY review_status (review_status)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+CREATE TABLE customisation_tag_fields (
+  tag_id int(11) NOT NULL auto_increment,
+  tag_type_id int(11) unsigned NOT NULL default '0',
+  tag_field_name varchar(255) collate utf8_bin NOT NULL,
+  tag_field_desc varchar(255) collate utf8_bin NOT NULL,
+  PRIMARY KEY  (tag_id),
+  KEY tag_type_id (tag_type_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+CREATE TABLE customisation_tag_types (
+  tag_type_id int(11) NOT NULL auto_increment,
+  tag_type_name varchar(255) collate utf8_bin NOT NULL,
+  PRIMARY KEY  (tag_type_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
