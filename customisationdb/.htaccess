@@ -1,3 +1,0 @@
-RewriteCond %{IS_SUBREQ} !^true$
-RewriteRule ^(mods|styles)/db/{0,1}$ db/index.php [QSA]
-RewriteRule ^(mods|styles)/db/[a-z0-9]+).php$ db/$2.php? [QSA]
