@@ -8,6 +8,13 @@
 *
 */
 
+/**
+*/
+if (!defined('IN_PHPBB'))
+{
+	exit;
+}
+
 // Table names
 define('CDB_AUTHORS_TABLE',				$table_prefix . 'authors');
 define('CDB_CONTRIBS_TABLE',			$table_prefix . 'contribs');
