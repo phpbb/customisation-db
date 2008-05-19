@@ -17,7 +17,7 @@ $starttime = explode(' ', microtime());
 $starttime = $starttime[1] + $starttime[0];
 
 define('IN_PHPBB', true);
-$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '../';
+$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '../../';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 include($phpbb_root_path . 'common.' . $phpEx);
 include($phpbb_root_path . 'includes/titania/common.' . $phpEx);
@@ -31,18 +31,18 @@ $user->setup();
 echo '<pre>';
 
 // Inserting
-$review = new review();
-$review->set_user_id(2);
-$review->set_rating(5);
+$review = new titania_review();
+$review->review_user_id = 2;
+$review->review_rating = 5;
 $review->submit();
 
 // Getting
-/*$review = new review(1);*/
+/*$review = new titania_review(1);*/
 
 // Updating
-/*$review = new review(2);
+/*$review = new titania_review(2);
 $review->set_text('[b]Blub blub[/b] :-P');
-$review->set_status(0);
+$review->review_status = 0;
 $review->generate_text_for_storage(true, true, true);
 $review->submit();*/
 
