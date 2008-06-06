@@ -28,17 +28,17 @@ if (!class_exists('titania_classbase'))
 class titania_review extends titania_classbase
 {
 	// Table properties
-	protected $properties = array(
-		'review_id'				=> 0,
-		'contrib_id'			=> 0,
-		'review_text'			=> '',
-		'review_text_bitfield'	=> '',
-		'review_text_uid'		=> '',
-		'review_text_options'	=> 7,
-		'review_rating'			=> 3,
-		'review_user_id'		=> 0,
-		'review_status'			=> 1,
-		'review_time'			=> 0,
+	protected $object_config = array(
+		'review_id'				=> array('default' => 0),
+		'contrib_id'			=> array('default' => 0),
+		'review_text'			=> array('default' => '', 'max' => 100, 'multibyte' => true, 'read-only' => true),
+		'review_text_bitfield'	=> array('default' => '', 'max' => 255, 'read-only' => true),
+		'review_text_uid'		=> array('default' => '', 'max' => 8, 'read-only' => true),
+		'review_text_options'	=> array('default' => 7, 'read-only' => true),
+		'review_rating'			=> array('default' => 3),
+		'review_user_id'		=> array('default' => 0),
+		'review_status'			=> array('default' => 1),
+		'review_time'			=> array('default' => 0),
 	);
 
 	// Database data
@@ -116,9 +116,9 @@ class titania_review extends titania_classbase
 		global $db;
 
 		$sql_array = array();
-		foreach ($this->properties as $key => $value)
+		foreach ($this->object_config as $name => $null)
 		{
-			$sql_array[$key] = $value;
+			$sql_array[$name] = $this->$name;
 		}
 
 		$sql = 'INSERT INTO ' . CDB_REVIEWS_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_array);
@@ -139,7 +139,7 @@ class titania_review extends titania_classbase
 		$this->data = $db->sql_fetchrow($result);
 		$db->sql_freeresult($result);
 
-		$this->set_text($this->data['review_text'], $this->data['review_text_bitfield'], $this->data['review_text_uid'], $this->data['review_text_options']);
+		$this->set_review_text($this->data['review_text'], $this->data['review_text_bitfield'], $this->data['review_text_uid'], $this->data['review_text_options']);
 
 		$this->review_id		= $this->data['review_id'];
 		$this->contrib_id		= $this->data['contrib_id'];
@@ -183,7 +183,7 @@ class titania_review extends titania_classbase
 	}
 
 	// Getters
-	public function get_text($editable = false)
+	public function get_review_text($editable = false)
 	{
 		// Text needs to be from database or parsed for database.
 		if (!$this->text_parsed_for_storage)
@@ -202,7 +202,7 @@ class titania_review extends titania_classbase
 	}
 
 	// Setters
-	public function set_text($text, $uid = false, $bitfield = false, $flags = false)
+	public function set_review_text($text, $uid = false, $bitfield = false, $flags = false)
 	{
 		$this->review_text = $text;
 		$this->text_parsed_for_storage = false;

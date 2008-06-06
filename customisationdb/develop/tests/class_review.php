@@ -32,8 +32,10 @@ echo '<pre>';
 
 // Inserting
 $review = new titania_review();
-$review->review_user_id = 2;
-$review->review_rating = 5;
+$review->set_review_user_id(2);
+$review->set_review_rating(5);
+$review->set_review_text('[b]Hehe blah moek[/b] :-)');
+$review->generate_text_for_storage(true, true, true);
 $review->submit();
 
 // Getting
@@ -41,12 +43,12 @@ $review->submit();
 
 // Updating
 /*$review = new titania_review(2);
-$review->set_text('[b]Blub blub[/b] :-P');
-$review->review_status = 0;
+$review->set_review_text('[b]Blub blub[/b] :-P');
+$review->set_review_status(0);
 $review->generate_text_for_storage(true, true, true);
 $review->submit();*/
 
-//echo $review->get_text();
+echo $review->get_review_text();
 
 //var_dump($review);
 
