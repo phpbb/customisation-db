@@ -16,33 +16,20 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-if (!class_exists('titania_classbase'))
+if (!class_exists('titania_database_object'))
 {
-	require($phpbb_root_path . 'includes/titania/classbase.' . $phpEx);
+	require($phpbb_root_path . 'includes/titania/class_base_db_object.' . $phpEx);
 }
 
 /**
 * Class to abstract contribution reviews.
 * @package Titania
 */
-class titania_review extends titania_classbase
+class titania_review extends titania_database_object
 {
-	// Table properties
-	protected $object_config = array(
-		'review_id'				=> array('default' => 0),
-		'contrib_id'			=> array('default' => 0),
-		'review_text'			=> array('default' => '', 'max' => 100, 'multibyte' => true, 'read-only' => true),
-		'review_text_bitfield'	=> array('default' => '', 'max' => 255, 'read-only' => true),
-		'review_text_uid'		=> array('default' => '', 'max' => 8, 'read-only' => true),
-		'review_text_options'	=> array('default' => 7, 'read-only' => true),
-		'review_rating'			=> array('default' => 3),
-		'review_user_id'		=> array('default' => 0),
-		'review_status'			=> array('default' => 1),
-		'review_time'			=> array('default' => 0),
-	);
-
-	// Database data
-	private $data = array();
+	// SQL settings
+	protected $sql_table		= CDB_REVIEWS_TABLE;
+	protected $sql_id_field		= 'review_id';
 
 	// Additional attributes
 	private $text_parsed_for_storage = false;
@@ -50,6 +37,20 @@ class titania_review extends titania_classbase
 	// Constructor
 	public function __construct($review_id = false)
 	{
+		// Configure object properties
+		$this->object_config = array_merge($this->object_config, array(
+			'review_id'				=> array('default' => 0),
+			'contrib_id'			=> array('default' => 0),
+			'review_text'			=> array('default' => '',	'readonly' => true),
+			'review_text_bitfield'	=> array('default' => '',	'readonly' => true,	'max' => 255),
+			'review_text_uid'		=> array('default' => '',	'readonly' => true,	'max' => 8),
+			'review_text_options'	=> array('default' => 7,	'readonly' => true),
+			'review_rating'			=> array('default' => 3),
+			'review_user_id'		=> array('default' => 0),
+			'review_status'			=> array('default' => 1),
+			'review_time'			=> array('default' => 0),
+		));
+	
 		if ($review_id === false)
 		{
 			// We're going to create a new review
@@ -59,7 +60,6 @@ class titania_review extends titania_classbase
 		{
 			// We're going to perform operations on an existing review
 			$this->review_id = $review_id;
-			$this->load();
 		}
 	}
 
@@ -73,80 +73,13 @@ class titania_review extends titania_classbase
 			$this->generate_text_for_storage(false, false, false);
 		}
 
-		if (!$this->review_id)
-		{
-			$this->insert();
-		}
-		else
-		{
-			$this->update();
-		}
-	}
-
-	// Update data
-	private function update()
-	{
-		$sql_array = array();
-		foreach ($this->data as $key => $value)
-		{
-			if ($key == 'review_id' || $this->$key == $value)
-			{
-				continue;
-			}
-
-			$sql_array[$key] = $this->$key;
-		}
-
-		if (!sizeof($sql_array))
-		{
-			return;
-		}
-
-		global $db;
-
-		$sql = 'UPDATE ' . CDB_REVIEWS_TABLE . '
-			SET ' . $db->sql_build_array('UPDATE', $sql_array) . '
-			WHERE review_id = ' . $this->review_id;
-		$db->sql_query($sql);
-	}
-
-	// Insert data
-	private function insert()
-	{
-		global $db;
-
-		$sql_array = array();
-		foreach ($this->object_config as $name => $null)
-		{
-			$sql_array[$name] = $this->$name;
-		}
-
-		$sql = 'INSERT INTO ' . CDB_REVIEWS_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_array);
-		$db->sql_query($sql);
-
-		$this->review_id = $db->sql_nextid();
+		parent::submit();
 	}
 
 	// Get review data from the database
-	private function load()
+	public function load()
 	{
-		global $db;
-
-		$sql = 'SELECT *
-			FROM ' . CDB_REVIEWS_TABLE . '
-			WHERE review_id = ' . $this->review_id;
-		$result = $db->sql_query($sql);
-		$this->data = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
-
-		$this->set_review_text($this->data['review_text'], $this->data['review_text_bitfield'], $this->data['review_text_uid'], $this->data['review_text_options']);
-
-		$this->review_id		= $this->data['review_id'];
-		$this->contrib_id		= $this->data['contrib_id'];
-		$this->review_rating	= $this->data['review_rating'];
-		$this->review_user_id	= $this->data['review_user_id'];
-		$this->review_status	= $this->data['review_status'];
-		$this->review_time		= $this->data['review_time'];
+		parent::load();
 
 		$this->text_parsed_for_storage = true;
 	}
@@ -154,7 +87,6 @@ class titania_review extends titania_classbase
 	// Parse text for db
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
-		// As per naderman
 		$review_text = $this->review_text;
 		$review_text_uid = $this->review_text_uid;
 		$review_text_bitfield = $this->review_text_bitfield;

@@ -39,14 +39,20 @@ $review->generate_text_for_storage(true, true, true);
 $review->submit();
 
 // Getting
-/*$review = new titania_review(1);*/
+/*$review = new titania_review(1);
+$review->load();*/
 
 // Updating
 /*$review = new titania_review(2);
+$review->load();
 $review->set_review_text('[b]Blub blub[/b] :-P');
 $review->set_review_status(0);
 $review->generate_text_for_storage(true, true, true);
 $review->submit();*/
+
+// Deleting
+/*$review = new titania_review(1);
+$review->delete();*/
 
 echo $review->get_review_text();
 

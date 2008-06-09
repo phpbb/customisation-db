@@ -21,7 +21,7 @@ if (!defined('IN_PHPBB'))
 *
 * @package Titania
 */
-abstract class titania_classbase
+abstract class titania_object
 {
 	/**
 	* Object data
@@ -35,17 +35,17 @@ abstract class titania_classbase
 	*
 	* @var		array[string][string]mixed		Associative array with property name (key) and associative configuration array (value).
 	*
-	* Example 1: Type will be determined from 'default'.
+	* Example 1: Type will be determined from 'default'. Length will be automatically truncated to the correct value.
 	* <code>
 	* 	$object_config = array(
-	* 		'property_name' => array('default' => 'teh_test_string', 'max' => 20, 'multibyte' => true, 'readonly' => true),
+	* 		'property_name' => array('default' => 'teh_test_string', 'max' => 20, 'readonly' => true),
 	* 	);
 	* </code>
 	*
 	* Example 2: Type will be determinded from 'type'.
 	* <code>
 	* 	$object_config = array(
-	* 		'property_name' => array('type' => 'int'),
+	* 		'property_name' => array('default' => false, 'type' => 'int'),
 	* 	);
 	* </code>
 	*/
@@ -149,7 +149,11 @@ abstract class titania_classbase
 	*/
 	protected function __set($name, $value)
 	{
-		if (isset($this->object_config[$name]['default']) && !is_array($this->object_config[$name]['default']))
+		if (isset($this->object_config[$name]['type']))
+		{
+			$type = $this->object_config[$name]['type'];
+		}
+		else if (isset($this->object_config[$name]['default']) && !is_array($this->object_config[$name]['default']))
 		{
 			$type = gettype($this->object_config[$name]['default']);
 		}
