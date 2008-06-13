@@ -84,7 +84,7 @@ abstract class titania_database_object extends titania_object
 				continue;
 			}
 
-			$sql_array[$key] = $this->ensure_size($this->$key, $this->object_config[$key]);
+			$sql_array[$key] = $this->validate($this->$key, $this->object_config[$key]);
 		}
 
 		if (!sizeof($sql_array))
@@ -113,7 +113,7 @@ abstract class titania_database_object extends titania_object
 		$sql_array = array();
 		foreach ($this->object_config as $name => $null)
 		{
-			$sql_array[$name] = $this->ensure_size($this->$name, $this->object_config[$name]);
+			$sql_array[$name] = $this->validate($this->$name, $this->object_config[$name]);
 		}
 
 		$sql = 'INSERT INTO ' . $this->sql_table . ' ' . $db->sql_build_array('INSERT', $sql_array);
@@ -169,7 +169,7 @@ abstract class titania_database_object extends titania_object
 	*
 	* @return	void
 	*/
-	private function ensure_size($value, $config)
+	protected function validate($value, $config)
 	{
 		if (is_string($value) && isset($config['max']))
 		{
