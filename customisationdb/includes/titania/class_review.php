@@ -41,7 +41,7 @@ class titania_review extends titania_database_object
 		$this->object_config = array_merge($this->object_config, array(
 			'review_id'				=> array('default' => 0),
 			'contrib_id'			=> array('default' => 0),
-			'review_text'			=> array('default' => '',	'readonly' => true),
+			'review_text'			=> array('default' => ''),
 			'review_text_bitfield'	=> array('default' => '',	'readonly' => true),
 			'review_text_uid'		=> array('default' => '',	'readonly' => true),
 			'review_text_options'	=> array('default' => 7,	'readonly' => true),
@@ -66,8 +66,7 @@ class titania_review extends titania_database_object
 	// Update data or submit new review
 	public function submit()
 	{
-		// Nobody parsed the text for storage before.
-		// Parse text with lowest settings.
+		// Nobody parsed the text for storage before. Parse text with lowest settings.
 		if (!$this->text_parsed_for_storage)
 		{
 			$this->generate_text_for_storage(false, false, false);

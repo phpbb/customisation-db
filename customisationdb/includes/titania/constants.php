@@ -30,3 +30,8 @@ define('CDB_REVISIONS_TABLE',			$cdb_table_prefix . 'revisions');
 define('CDB_TAG_FIELDS_TABLE',			$cdb_table_prefix . 'tag_fields');
 define('CDB_TAG_TYPES_TABLE',			$cdb_table_prefix . 'tag_types');
 define('CDB_WATCH_TABLE',				$cdb_table_prefix . 'watch');
+
+// Contribution types
+define('MOD', 1);
+define('STYLE', 2);
+define('SNIPPET', 3);
