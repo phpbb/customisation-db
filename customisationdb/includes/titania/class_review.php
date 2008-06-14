@@ -42,8 +42,8 @@ class titania_review extends titania_database_object
 			'review_id'				=> array('default' => 0),
 			'contrib_id'			=> array('default' => 0),
 			'review_text'			=> array('default' => '',	'readonly' => true),
-			'review_text_bitfield'	=> array('default' => '',	'readonly' => true,	'max' => 255),
-			'review_text_uid'		=> array('default' => '',	'readonly' => true,	'max' => 8),
+			'review_text_bitfield'	=> array('default' => '',	'readonly' => true),
+			'review_text_uid'		=> array('default' => '',	'readonly' => true),
 			'review_text_options'	=> array('default' => 7,	'readonly' => true),
 			'review_rating'			=> array('default' => 3),
 			'review_user_id'		=> array('default' => 0),
@@ -114,7 +114,7 @@ class titania_review extends titania_database_object
 		return generate_text_for_edit($this->review_text, $this->review_text_uid, $this->review_text_options);
 	}
 
-	// Getters
+	// Special getter methods overwriting the default magic methods.
 	public function get_review_text($editable = false)
 	{
 		// Text needs to be from database or parsed for database.
@@ -133,7 +133,7 @@ class titania_review extends titania_database_object
 		}
 	}
 
-	// Setters
+	// Special setter methods overwriting the default magic methods.
 	public function set_review_text($text, $uid = false, $bitfield = false, $flags = false)
 	{
 		$this->review_text = $text;

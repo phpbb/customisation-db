@@ -164,19 +164,52 @@ abstract class titania_database_object extends titania_object
 	}
 
 	/**
-	* Private function data has to pass before entering the database.
-	* Ensures string length et cetera.
+	* Function data has to pass before entering the database.
 	*
-	* @return	void
+	* @return	mixed
 	*/
 	protected function validate($value, $config)
 	{
-		if (is_string($value) && isset($config['max']))
+		if (is_string($value))
 		{
-			if (strlen($value) > $config['max'])
+			$value = $this->validate_string($value, $config);
+		}
+
+		return $value;
+	}
+	
+	/**
+	* Private function strings have to pass before entering the database.
+	* Ensures string length et cetera.
+	*
+	* @return	string
+	*/
+	private function validate_string($value, $config)
+	{
+		if (empty($value))
+		{
+			return '';
+		}
+
+		// Check if multibyte characters are disallowed
+		if (isset($config['multibyte']) && $config['multibyte'] === false)
+		{
+			// No multibyte, allow only ASCII (0-127)
+			$value = preg_replace('/[\x80-\xFF]/', '', $value);
+		}
+		else
+		{
+			// Make sure multibyte characters are wellformed
+			if (!preg_match('/^./u', $value))
 			{
-				return substr($value, 0, $config['max']);
+				return '';
 			}
+		}
+
+		// Truncate to the maximum length
+		if (isset($config['max']) && $config['max'] < strlen($value))
+		{
+			$value = substr($value, 0, $config['max']);
 		}
 
 		return $value;

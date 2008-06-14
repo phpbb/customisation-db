@@ -26,26 +26,45 @@ abstract class titania_object
 	/**
 	* Object data
 	*
-	* @var		array[string]mixed		Associative array holding the properties of this class.
+	* @var		array[string]mixed
+	* 			Associative array holding the properties of this class.
 	*/
 	protected $object_data = array();
 
 	/**
 	* Property configuration
 	*
-	* @var		array[string][string]mixed		Associative array with property name (key) and associative configuration array (value).
+	* @var		array[string][string]mixed
+	* 			Associative array with property name (key) and associative configuration array (value).
 	*
-	* Example 1: Type will be determined from 'default'. Length will be automatically truncated to the correct value.
+	*
+	* Example 1:
+	* 	Type will be determined from 'default'.
+	* 	Length will be automatically truncated to the correct value.
+	* 	Property can not be set via the setter method. It is readonly protected.
+	* 	Multibyte characters will be removed.
+	*
 	* <code>
 	* 	$object_config = array(
-	* 		'property_name' => array('default' => 'teh_test_string', 'max' => 20, 'readonly' => true),
+	* 		'property_name' => array(
+	* 			'default' => 'teh_test_string',
+	* 			'max' => 20,
+	* 			'readonly' => true,
+	* 			'multibyte' => false,
+	* 		),
 	* 	);
 	* </code>
 	*
-	* Example 2: Type will be determinded from 'type'.
+	*
+	* Example 2:
+	* 	Type will be determinded from 'type'.
+	*
 	* <code>
 	* 	$object_config = array(
-	* 		'property_name' => array('default' => false, 'type' => 'int'),
+	* 		'property_name' => array(
+	* 			'default' => false,
+	* 			'type' => 'int'
+	* 		),
 	* 	);
 	* </code>
 	*/
