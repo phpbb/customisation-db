@@ -18,7 +18,7 @@ if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
 
 if (!class_exists('titania_object'))
 {
-	require($phpbb_root_path . 'includes/titania/class_base_object.' . $phpEx);
+	require(TITANIA_ROOT . 'class_base_object.' . $phpEx);
 }
 
 /**

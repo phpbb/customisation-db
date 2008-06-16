@@ -16,9 +16,6 @@ if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
 	exit;
 }
 
-// Table prefix
-$cdb_table_prefix = 'customisation_';
-
 // Table names
 define('CUSTOMISATION_AUTHORS_TABLE',			$cdb_table_prefix . 'authors');
 define('CUSTOMISATION_CONTRIBS_TABLE',			$cdb_table_prefix . 'contribs');

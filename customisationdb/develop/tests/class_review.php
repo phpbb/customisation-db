@@ -9,6 +9,10 @@
 */
 
 /**
+ * @todo This file shouldn't be defining the PHPBB_ROOT_PATH I think.
+ */
+
+/**
 * @ignore
 */
 die("Yes. I'm dead.");
@@ -20,8 +24,8 @@ define('IN_PHPBB', true);
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '../../';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 include($phpbb_root_path . 'common.' . $phpEx);
-include($phpbb_root_path . 'includes/titania/common.' . $phpEx);
-include($phpbb_root_path . 'includes/titania/class_review.' . $phpEx);
+include(TITANIA_ROOT . 'common.' . $phpEx);
+include(TITANIA_ROOT . 'class_review.' . $phpEx);
 
 // Start session management
 $user->session_begin();
