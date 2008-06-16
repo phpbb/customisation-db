@@ -11,14 +11,14 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB'))
+if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
 {
 	exit;
 }
 
 if (!class_exists('titania_database_object'))
 {
-	require($phpbb_root_path . 'includes/titania/class_base_db_object.' . $phpEx);
+	require(TITANIA_ROOT . 'includes/titania/class_base_db_object.' . $phpEx);
 }
 
 /**
@@ -27,14 +27,32 @@ if (!class_exists('titania_database_object'))
 */
 class titania_review extends titania_database_object
 {
-	// SQL settings
-	protected $sql_table		= CDB_REVIEWS_TABLE;
+	/**
+	 * sql_table
+	 *
+	 * @var string
+	 */
+	protected $sql_table		= CUSTOMISATION_REVIEWS_TABLE;
+
+	/**
+	 * sql_id_field setting
+	 *
+	 * @var string
+	 */
 	protected $sql_id_field		= 'review_id';
 
-	// Additional attributes
+	/**
+	 * text parsed for storage
+	 *
+	 * @var bool
+	 */
 	private $text_parsed_for_storage = false;
 
-	// Constructor
+	/**
+	 * Constructor
+	 *
+	 * @param bool $review_id
+	 */
 	public function __construct($review_id = false)
 	{
 		// Configure object properties
@@ -50,7 +68,7 @@ class titania_review extends titania_database_object
 			'review_status'			=> array('default' => 1),
 			'review_time'			=> array('default' => 0),
 		));
-	
+
 		if ($review_id === false)
 		{
 			// We're going to create a new review
@@ -63,7 +81,10 @@ class titania_review extends titania_database_object
 		}
 	}
 
-	// Update data or submit new review
+	/**
+	 * Update data or submit new review
+	 *
+	 */
 	public function submit()
 	{
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
@@ -75,7 +96,10 @@ class titania_review extends titania_database_object
 		parent::submit();
 	}
 
-	// Get review data from the database
+	/**
+	 * Get review data from the database
+	 *
+	 */
 	public function load()
 	{
 		parent::load();
@@ -83,7 +107,13 @@ class titania_review extends titania_database_object
 		$this->text_parsed_for_storage = true;
 	}
 
-	// Parse text for db
+	/**
+	 * Parse text to store in database
+	 *
+	 * @param bool $allow_bbcode
+	 * @param bool $allow_urls
+	 * @param bool $allow_smilies
+	 */
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
 		$review_text = $this->review_text;
@@ -101,19 +131,32 @@ class titania_review extends titania_database_object
 		$this->text_parsed_for_storage = true;
 	}
 
-	// Parse text for display
+	/**
+	 * Parse text for display
+	 *
+	 * @return string text content from database for display
+	 */
 	private function generate_text_for_display()
 	{
 		return generate_text_for_display($this->review_text, $this->review_text_uid, $this->review_text_bitfield, $this->review_text_options);
 	}
 
-	// Parse text for edit
+	/**
+	 * Pase text for edit
+	 *
+	 * @return string text content from database for editing
+	 */
 	private function generate_text_for_edit()
 	{
 		return generate_text_for_edit($this->review_text, $this->review_text_uid, $this->review_text_options);
 	}
 
-	// Special getter methods overwriting the default magic methods.
+	/**
+	 * Getter function for review_text
+	 *
+	 * @param bool $editable
+	 * @return generate_text_for edit if editable is true, or display if false
+	 */
 	public function get_review_text($editable = false)
 	{
 		// Text needs to be from database or parsed for database.
@@ -132,7 +175,14 @@ class titania_review extends titania_database_object
 		}
 	}
 
-	// Special setter methods overwriting the default magic methods.
+	/**
+	 * Setter function for review_text
+	 *
+	 * @param string $text
+	 * @param string $uid
+	 * @param string $bitfield
+	 * @param int $flags
+	 */
 	public function set_review_text($text, $uid = false, $bitfield = false, $flags = false)
 	{
 		$this->review_text = $text;

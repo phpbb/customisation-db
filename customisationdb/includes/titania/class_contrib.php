@@ -11,7 +11,7 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB'))
+if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
 {
 	exit;
 }
@@ -22,13 +22,13 @@ if (!class_exists('titania_database_object'))
 }
 
 /**
-* Class to abstract contribution reviews.
-* @package Titania
-*/
+ * Class to abstract contribution reviews.
+ * @package Titania
+ */
 abstract class titania_contribution extends titania_database_object
 {
 	// SQL settings
-	protected $sql_table		= CDB_CONTRIBS_TABLE;
+	protected $sql_table		= CUSTOMISATION_CONTRIBS_TABLE;
 	protected $sql_id_field		= 'contrib_id';
 
 	// Additional attributes
@@ -81,7 +81,10 @@ abstract class titania_contribution extends titania_database_object
 		}
 	}
 
-	// Update data or submit new contrib
+	/**
+	 * submit
+	 *
+	 */
 	public function submit()
 	{
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
@@ -100,7 +103,7 @@ abstract class titania_contribution extends titania_database_object
 
 		$this->description_parsed_for_storage = true;
 	}
-	
+
 	// Parse description for db
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{

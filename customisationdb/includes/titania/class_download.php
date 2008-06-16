@@ -11,14 +11,14 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB'))
+if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
 {
 	exit;
 }
 
 if (!class_exists('titania_database_object'))
 {
-	require($phpbb_root_path . 'includes/titania/class_base_db_object.' . $phpEx);
+	require(TITANIA_ROOT . 'includes/titania/class_base_db_object.' . $phpEx);
 }
 
 /**
@@ -28,7 +28,7 @@ if (!class_exists('titania_database_object'))
 class titania_download extends titania_database_object
 {
 	// SQL settings
-	protected $sql_table		= CDB_DOWNLOADS_TABLE;
+	protected $sql_table		= CUSTOMISATION_DOWNLOADS_TABLE;
 	protected $sql_id_field		= 'download_id';
 
 	// Constructor

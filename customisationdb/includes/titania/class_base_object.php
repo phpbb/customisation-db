@@ -11,7 +11,7 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB'))
+if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
 {
 	exit;
 }

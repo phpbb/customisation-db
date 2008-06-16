@@ -11,7 +11,7 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB'))
+if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
 {
 	exit;
 }
@@ -166,6 +166,9 @@ abstract class titania_database_object extends titania_object
 	/**
 	* Function data has to pass before entering the database.
 	*
+	* @param string $value
+	* @param string $config
+	*
 	* @return	mixed
 	*/
 	protected function validate($value, $config)
@@ -177,7 +180,7 @@ abstract class titania_database_object extends titania_object
 
 		return $value;
 	}
-	
+
 	/**
 	* Private function strings have to pass before entering the database.
 	* Ensures string length et cetera.
