@@ -11,10 +11,14 @@
 /**
  * @ignore
  */
-if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
+if (!defined('IN_TITANIA'))
 {
 	exit;
 }
+
+// global constants to be used throughout the core of titania
+define('PHPBB_ROOT_PATH', $phpbb_root_path);
+define('IN_PHPBB', true);
 
 // Table names
 define('CUSTOMISATION_AUTHORS_TABLE',			$cdb_table_prefix . 'authors');

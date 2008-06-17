@@ -11,7 +11,7 @@
 /**
  * @ignore
  */
-if (!defined('IN_PHPBB') || (!defined('IN_TITANIA')))
+if (!defined('IN_TITANIA'))
 {
 	exit;
 }
@@ -31,15 +31,15 @@ $template_location = TITANIA_ROOT . 'template';
 ######################################################
 
 // Include titania constants
-require(TITANIA_ROOT . 'constants.' . $phpEx);
+require(TITANIA_ROOT . 'constants.' . PHP_EXT);
 
 // Include the general phpbb-related files
-include($phpbb_root_path . 'common.' . $phpEx);
+include(PHPBB_ROOT_PATH . 'common.' . PHP_EXT);
 
 // Start session management
 $user->session_begin();
 $auth->acl($user->data);
 $user->setup();
 
-// Now we init the template (this will later be replaced by the real template code)
-$template->set_custom_template($template_location, 'website');
+// set the custom template path for titania. Default: root/titania/template
+$template->set_custom_template($template_location, 'titania');
