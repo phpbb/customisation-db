@@ -11,14 +11,14 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
+if (!defined('IN_TITANIA'))
 {
 	exit;
 }
 
 if (!class_exists('titania_database_object'))
 {
-	require(TITANIA_ROOT . 'includes/titania/class_base_db_object.' . $phpEx);
+	require(TITANIA_ROOT . 'includes/titania/class_base_db_object.' . PHP_EXT);
 }
 
 /**
@@ -27,11 +27,25 @@ if (!class_exists('titania_database_object'))
 */
 class titania_download extends titania_database_object
 {
-	// SQL settings
+	/**
+	 * SQL table to use for downloads
+	 *
+	 * @var string
+	 */
 	protected $sql_table		= CUSTOMISATION_DOWNLOADS_TABLE;
+
+	/**
+	 * sql-in-set field
+	 *
+	 * @var string
+	 */
 	protected $sql_id_field		= 'download_id';
 
-	// Constructor
+	/**
+	 * Constructor for download class
+	 *
+	 * @param unknown_type $download_id
+	 */
 	public function __construct($download_id = false)
 	{
 		// Configure object properties
@@ -53,7 +67,7 @@ class titania_download extends titania_database_object
 			'extension'				=> array('default' => '', 'max' => 100),
 			'mimetype'				=> array('default' => '', 'max' => 100),
 
-			'download_url'			=> array('default' => '',	'max' => 255	'multibyte' => false),
+			'download_url'			=> array('default' => '',	'max' => 255,	'multibyte' => false),
 			'download_hash'			=> array('default' => '',	'max' => 32,	'readonly' => true),
 
 			'thumbnail'				=> array('default' => false, 'type' => 'int'),
@@ -69,7 +83,11 @@ class titania_download extends titania_database_object
 		}
 	}
 
-	// Allows to load data identified by revision_id
+	/**
+	 * Allows to load data identified by revision_id
+	 *
+	 * @param int $revision_id
+	 */
 	public function load($revision_id = false)
 	{
 		if ($revision_id === false)

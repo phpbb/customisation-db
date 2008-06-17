@@ -11,30 +11,48 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
+if (!defined('IN_TITANIA'))
 {
 	exit;
 }
 
 if (!class_exists('titania_database_object'))
 {
-	require($phpbb_root_path . 'includes/titania/class_base_db_object.' . $phpEx);
+	require(TITANIA_ROOT . 'includes/class_base_db_object.' . PHP_EXT);
 }
 
 /**
- * Class to abstract contribution reviews.
+ * Class to abstract contributions.
  * @package Titania
  */
 abstract class titania_contribution extends titania_database_object
 {
-	// SQL settings
+	/**
+	 * Database table to be used for the contribution object
+	 *
+	 * @var string
+	 */
 	protected $sql_table		= CUSTOMISATION_CONTRIBS_TABLE;
+
+	/**
+	 * sql-in-set field for the contribution object
+	 *
+	 * @var unknown_type
+	 */
 	protected $sql_id_field		= 'contrib_id';
 
-	// Additional attributes
+	/**
+	 * description parsed for storage
+	 *
+	 * @var bool
+	 */
 	private $description_parsed_for_storage = false;
 
-	// Constructor
+	/**
+	 * Constructor class for the contribution object
+	 *
+	 * @param int $contrib_id
+	 */
 	public function __construct($contrib_id = false)
 	{
 		// Configure object properties
@@ -82,7 +100,7 @@ abstract class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 * submit
+	 * submit data for storing into the database
 	 *
 	 */
 	public function submit()
@@ -96,7 +114,10 @@ abstract class titania_contribution extends titania_database_object
 		parent::submit();
 	}
 
-	// Get review data from the database
+	/**
+	 * load function to load description parsed text
+	 *
+	 */
 	public function load()
 	{
 		parent::load();
@@ -104,7 +125,13 @@ abstract class titania_contribution extends titania_database_object
 		$this->description_parsed_for_storage = true;
 	}
 
-	// Parse description for db
+	/**
+	 * Generate text for storing description into the database
+	 *
+	 * @param bool $allow_bbcode
+	 * @param bool $allow_urls
+	 * @param bool $allow_smilies
+	 */
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
 		$contrib_description = $this->contrib_description;
@@ -122,24 +149,36 @@ abstract class titania_contribution extends titania_database_object
 		$this->text_parsed_for_storage = true;
 	}
 
-	// Parse description for display
+	/**
+	 * Parse description for display
+	 *
+	 * @return unknown
+	 */
 	private function generate_text_for_display()
 	{
 		return generate_text_for_display($this->contrib_description, $this->contrib_desc_uid, $this->contrib_desc_bitfield, $this->contrib_desc_options);
 	}
 
-	// Parse description for edit
+	/**
+	 *  Parse description for edit
+	 *
+	 * @return unknown
+	 */
 	private function generate_text_for_edit()
 	{
 		return generate_text_for_edit($this->contrib_description, $this->contrib_desc_uid, $this->contrib_desc_options);
 	}
 
-	// Get the author as an object
+	/**
+	 * Get the author as an object
+	 *
+	 * @return unknown
+	 */
 	public function get_author()
 	{
 		if (!class_exists('titania_author'))
 		{
-			require($phpbb_root_path . 'includes/titania/class_author.' . $phpEx);
+			require(TITANIA_ROOT . 'includes/class_author.' . PHP_EXT);
 		}
 
 		$author = new titania_author($this->contrib_author_id);
@@ -148,12 +187,17 @@ abstract class titania_contribution extends titania_database_object
 		return $author;
 	}
 
-	// Get the download as an object
+	/**
+	 * Get the download as an object
+	 *
+	 * @param unknown_type $validated
+	 * @return unknown
+	 */
 	public function get_download($validated = true)
 	{
 		if (!class_exists('titania_download'))
 		{
-			require($phpbb_root_path . 'includes/titania/class_download.' . $phpEx);
+			require(TITANIA_ROOT . 'includes/class_download.' . PHP_EXT);
 		}
 
 		$revision_id = ($validated) ? $this->contrib_validated_revision : $this->contrib_revision;

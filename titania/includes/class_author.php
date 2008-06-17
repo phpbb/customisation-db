@@ -11,14 +11,14 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
+if (!defined('IN_TITANIA'))
 {
 	exit;
 }
 
 if (!class_exists('titania_database_object'))
 {
-	require($titania_root . 'includes/titania/class_base_db_object.' . $phpEx);
+	require(TITANIA_ROOT . 'includes/class_base_db_object.' . PHP_EXT);
 }
 
 /**
@@ -27,11 +27,25 @@ if (!class_exists('titania_database_object'))
 */
 class titania_author extends titania_database_object
 {
-	// SQL settings
+	/**
+	 * SQL Table
+	 *
+	 * @var string
+	 */
 	protected $sql_table		= CUSTOMISATION_AUTHORS_TABLE;
+
+	/**
+	 * SQL in-set field
+	 *
+	 * @var string
+	 */
 	protected $sql_id_field		= 'author_id';
 
-	// Constructor
+	/**
+	 * Constructor class for titania authors
+	 *
+	 * @param int $author_id
+	 */
 	public function __construct($author_id = false)
 	{
 		// Configure object properties
@@ -61,13 +75,22 @@ class titania_author extends titania_database_object
 		}
 	}
 
-	// Special setter methods overwriting the default magic methods.
+	/**
+	 * Special setter methods overwriting the default magic methods.
+	 *
+	 * @param string $value
+	 */
 	public function set_author_username($value)
 	{
 		$this->author_username			= $value;
 		$this->author_username_clean	= utf8_clean_string($value);
 	}
 
+	/**
+	 * set author e-mail
+	 *
+	 * @param string $value
+	 */
 	public function set_author_email($value)
 	{
 		$lower = strtolower($value);

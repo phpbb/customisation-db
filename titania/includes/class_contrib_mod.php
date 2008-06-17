@@ -11,14 +11,14 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
+if (!defined('IN_TITANIA'))
 {
 	exit;
 }
 
 if (!class_exists('titania_contribution'))
 {
-	require($phpbb_root_path . 'includes/titania/class_contrib.' . $phpEx);
+	require(TITANIA_ROOT . 'includes/class_contrib.' . PHP_EXT);
 }
 
 /**
@@ -27,7 +27,11 @@ if (!class_exists('titania_contribution'))
 */
 class titania_modification extends titania_contribution
 {
-	// Constructor
+	/**
+	 * Constructor for titania modification
+	 *
+	 * @param int $contrib_id
+	 */
 	public function __construct($contrib_id = false)
 	{
 		// Delegate ...

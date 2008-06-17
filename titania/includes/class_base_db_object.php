@@ -11,14 +11,14 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
+if (!defined('IN_TITANIA'))
 {
 	exit;
 }
 
 if (!class_exists('titania_object'))
 {
-	require(TITANIA_ROOT . 'class_base_object.' . $phpEx);
+	require(TITANIA_ROOT . 'includes/class_base_object.' . PHP_EXT);
 }
 
 /**
