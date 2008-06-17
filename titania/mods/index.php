@@ -11,11 +11,12 @@
 /**
 * @ignore
 */
-define('IN_PHPBB', true);
 define('IN_TITANIA', true);
-define('TITANIA_ROOT', './../includes/titania/');
-$phpEx = substr(strrchr(__FILE__, '.'), 1);
-include(TITANIA_ROOT . 'common.' . $phpEx);
+if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
+if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
+include(TITANIA_ROOT . 'common.' . PHP_EXT);
+
+require(TITANIA_ROOT . 'includes/class_contrib.' . PHP_EXT);
 
 $mode = request_var('mode', '');
 

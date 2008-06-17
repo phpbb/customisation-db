@@ -49,6 +49,13 @@ abstract class titania_contribution extends titania_database_object
 	private $description_parsed_for_storage = false;
 
 	/**
+	 * Current viewing page location
+	 *
+	 * @var string
+	 */
+	public $page;
+
+	/**
 	 * Constructor class for the contribution object
 	 *
 	 * @param int $contrib_id
@@ -208,13 +215,140 @@ abstract class titania_contribution extends titania_database_object
 		return $download;
 	}
 
+	/**
+	 * Function to list contribs for the selected type.
+	 *
+	 * @todo Hard-coding many actions, will then need to seperate these into their own functions/classes to be dynamically generated and scaleable
+	 *
+	 * @param string $contrib_type
+	 */
+	public function contrib_list($contrib_type)
+	{
+		global $db, $template, $user;
+
+		// set an upper and lowercase contrib_type as well need each in multiple occurences.
+		$l_contrib_type = strtolower($contrib_type);
+		$u_contrib_type = strtoupper($contrib_type);
+
+		if (!defined('CONTRIB_TYPE_' . $u_contrib_type))
+		{
+			trigger_error('NO_CONTRIB_TYPE');
+		}
+
+		$submit = isset($_REQUEST['submit']) ? true : false;
+		$start = request_var('start', 0);
+		$limit = request_var('limit', 25);
+		$limit = ($limit > 100) ? 100 : $limit;
+
+		$default_key = 'a';
+		$sort_key = request_var('sk', $default_key);
+		$sort_dir = request_var('sd', 'a');
+
+		$sort_key_text = array(
+			'a'	=> $user->lang['SORT_AUTHOR'],
+			'b'	=> $user->lang['SORT_TIME_ADDED'],
+			'c'	=> $user->lang['SORT_TIME_UPDATED'],
+			'd'	=> $user->lang['SORT_DOWNLOADS'],
+			'e'	=> $user->lang['SORT_RATING'],
+			'f'	=> $user->lang['SORT_CONTRIB_NAME'],
+		);
+
+		$sort_key_sql = array(
+			'a'	=> 'a.author_username_clean',
+			'b'	=> 'c.contrib_release_date',
+			'c'	=> 'c.contrib_update_date',
+			'd'	=> 'c.contrib_downloads',
+			'e'	=> 'c.contrib_rating',
+			'f'	=> 'c.contrib_name',
+		);
+
+		$sort_dir_text = array(
+			'a' => $user->lang['ASCENDING'],
+			'd' => $user->lang['DESCENDING']
+		);
+
+		// Sorting and order
+		if (!isset($sort_key_sql[$sort_key]))
+		{
+			$sort_key = $default_key;
+		}
+
+		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC');
+
+		// select the list of contribs
+		$sql_ary = array(
+			'SELECT'	=> 'a.author_id, a.author_username, c.*',
+			'FROM'		=> array(
+				CUSTOMISATION_CONTRIBS_TABLE => 'c',
+			),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(CUSTOMISATION_AUTHORS_TABLE => 'a'),
+					'ON'	=> 'c.contrib_author_id = a.author_id'
+				),
+			),
+			'WHERE'		=> 'contrib_status = ' . STATUS_APPROVED . '
+						AND contrib_type = ' . constant('CONTRIB_TYPE_' . $u_contrib_type),
+			'ORDER_BY'	=> $order_by,
+		);
+		$sql = $db->sql_build_query('SELECT', $sql_ary);
+		$result = $db->sql_query_limit($sql, $limit, $start);
+
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$template->assign_block_vars($l_contrib_type, array(
+				$u_contrib_type . '_ID'		=> $row['contrib_id'],
+			));
+		}
+		$db->sql_freeresult($result);
+
+		// now count the number of results based on the perameters specified above
+		$sql_ary['SELECT'] = 'COUNT(c.contrib_id) AS total_contribs';
+		$sql = $db->sql_build_query('SELECT', $sql_ary);
+		$result = $db->sql_query($sql);
+		$total_contribs = $db->sql_fetchfield('total_contribs');
+		$db->sql_freeresult($result);
+
+		// Build the pagination_url
+		$params = array(
+			'sk'	=> $sort_key,
+			'sd'	=> $sort_dir,
+			'mode'	=> $mode,
+		);
+
+		$pagination_url = append_sid(self::page, implode('&amp;', $params));
+
+		$s_sort_key = '';
+		foreach ($sort_key_text as $key => $value)
+		{
+			$selected = ($sort_key == $key) ? ' selected="selected"' : '';
+			$s_sort_key .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
+		}
+
+		$s_sort_dir = '';
+		foreach ($sort_dir_text as $key => $value)
+		{
+			$selected = ($sort_dir == $key) ? ' selected="selected"' : '';
+			$s_sort_dir .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
+		}
+
+		$template->assign_vars(array(
+			'TOTAL_ROWS'		=> ($total_contribs == 1) ? $user->lang['LIST_RESULT'] : sprintf($user->lang['LIST_RESULTS'], $total_contribs),
+			'PAGINATION'		=> generate_pagination($pagination_url, $total_contribs, $limit, $start),
+			'PAGE_NUMBER'		=> on_page($total_contribs, $limit, $start),
+
+			'S_MODE_SELECT'		=> $s_sort_key,
+			'S_ORDER_SELECT'	=> $s_sort_dir,
+			'S_MODE_ACTION'		=> $pagination_url,
+		));
+	}
 
 	// Get revision object
 	/*public function get_revision($validated = true)
 	{
 		if (!class_exists('titania_revision'))
 		{
-			require($phpbb_root_path . 'includes/titania/class_revision.' . $phpEx);
+			require(TITANIA_ROOT . 'includes/class_revision.' . PHP_EXT);
 		}
 
 		$revision_id = ($validated) ? $this->contrib_validated_revision : $this->contrib_revision;
