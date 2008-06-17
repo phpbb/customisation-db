@@ -11,16 +11,16 @@
 /**
 * @ignore
 */
-die("Yes. I'm dead.");
+//die("Yes. I'm dead.");
 
 $starttime = explode(' ', microtime());
 $starttime = $starttime[1] + $starttime[0];
 
 define('IN_TITANIA', true);
-if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
+if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
-include(TITANIA_ROOT . 'common.' . $phpEx);
-include(TITANIA_ROOT . 'includes/class_review.' . $phpEx);
+require(TITANIA_ROOT . 'common.' . PHP_EXT);
+include(TITANIA_ROOT . 'includes/class_review.' . PHP_EXT);
 
 echo '<pre>';
 

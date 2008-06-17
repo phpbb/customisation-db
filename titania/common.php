@@ -19,12 +19,15 @@ if (!defined('IN_TITANIA'))
 // Include titania configuration
 require(TITANIA_ROOT . 'config.' . PHP_EXT);
 
-// Global constants to be used throughout the core of titania
-define('PHPBB_ROOT_PATH', $phpbb_root_path);
-define('IN_PHPBB', true);
+// We need to prepend the titania root because $phpbb_root_path is relative to it.
+define('PHPBB_ROOT_PATH', TITANIA_ROOT . $phpbb_root_path);
 
-// We also need a variable for the extension to let it work with phpBB 3.0.x scripts.
+// We need those variables to let phpBB 3.0.x scripts work properly.
+$phpbb_root_path = PHPBB_ROOT_PATH;
 $phpEx = PHP_EXT;
+
+// We set this so we can access the phpBB scripts.
+define('IN_PHPBB', true);
 
 // Include the general phpbb-related files.
 // This will also check if phpBB is installed and if we have the settings we need (db etc.).
