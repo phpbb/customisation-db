@@ -11,7 +11,7 @@
 /**
 * @ignore
 */
-//die("Yes. I'm dead.");
+die("Yes. I'm dead.");
 
 $starttime = explode(' ', microtime());
 $starttime = $starttime[1] + $starttime[0];
