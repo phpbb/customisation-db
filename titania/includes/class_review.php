@@ -28,21 +28,21 @@ if (!class_exists('titania_database_object'))
 class titania_review extends titania_database_object
 {
 	/**
-	 * sql_table
+	 * SQL Table
 	 *
 	 * @var string
 	 */
 	protected $sql_table		= CUSTOMISATION_REVIEWS_TABLE;
 
 	/**
-	 * sql_id_field setting
+	 * SQL identifier field
 	 *
 	 * @var string
 	 */
 	protected $sql_id_field		= 'review_id';
 
 	/**
-	 * text parsed for storage
+	 * Text parsed for storage
 	 *
 	 * @var bool
 	 */
@@ -84,6 +84,7 @@ class titania_review extends titania_database_object
 	/**
 	 * Update data or submit new review
 	 *
+	 * @return void
 	 */
 	public function submit()
 	{
@@ -99,6 +100,7 @@ class titania_review extends titania_database_object
 	/**
 	 * Get review data from the database
 	 *
+	 * @return void
 	 */
 	public function load()
 	{
@@ -113,6 +115,8 @@ class titania_review extends titania_database_object
 	 * @param bool $allow_bbcode
 	 * @param bool $allow_urls
 	 * @param bool $allow_smilies
+	 *
+	 * @return void
 	 */
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
@@ -142,7 +146,7 @@ class titania_review extends titania_database_object
 	}
 
 	/**
-	 * Pase text for edit
+	 * Parse text for edit
 	 *
 	 * @return string text content from database for editing
 	 */
@@ -155,7 +159,8 @@ class titania_review extends titania_database_object
 	 * Getter function for review_text
 	 *
 	 * @param bool $editable
-	 * @return generate_text_for edit if editable is true, or display if false
+	 *
+	 * @return string generate_text_for edit if editable is true, or display if false
 	 */
 	public function get_review_text($editable = false)
 	{
@@ -182,6 +187,8 @@ class titania_review extends titania_database_object
 	 * @param string $uid
 	 * @param string $bitfield
 	 * @param int $flags
+	 *
+	 * @return void
 	 */
 	public function set_review_text($text, $uid = false, $bitfield = false, $flags = false)
 	{

@@ -35,7 +35,7 @@ class titania_author extends titania_database_object
 	protected $sql_table		= CUSTOMISATION_AUTHORS_TABLE;
 
 	/**
-	 * SQL in-set field
+	 * SQL identifier field
 	 *
 	 * @var string
 	 */

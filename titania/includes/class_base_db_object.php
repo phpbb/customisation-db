@@ -31,7 +31,7 @@ abstract class titania_database_object extends titania_object
 	/**
 	* SQL table our fields will reside in
 	*
-	* @var		string
+	* @var	string
 	*/
 	protected $sql_table;
 
@@ -39,7 +39,7 @@ abstract class titania_database_object extends titania_object
 	* Unique field in $this->sql_table which we can use to identify
 	* records.. it's usually the primary key of the table
 	*
-	* @var		string
+	* @var	string
 	*/
 	protected $sql_id_field;
 
@@ -84,7 +84,7 @@ abstract class titania_database_object extends titania_object
 				continue;
 			}
 
-			$sql_array[$key] = $this->validate($this->$key, $this->object_config[$key]);
+			$sql_array[$key] = $this->validate_property($this->$key, $this->object_config[$key]);
 		}
 
 		if (!sizeof($sql_array))
@@ -113,7 +113,7 @@ abstract class titania_database_object extends titania_object
 		$sql_array = array();
 		foreach ($this->object_config as $name => $null)
 		{
-			$sql_array[$name] = $this->validate($this->$name, $this->object_config[$name]);
+			$sql_array[$name] = $this->validate_property($this->$name, $this->object_config[$name]);
 		}
 
 		$sql = 'INSERT INTO ' . $this->sql_table . ' ' . $db->sql_build_array('INSERT', $sql_array);
@@ -166,12 +166,12 @@ abstract class titania_database_object extends titania_object
 	/**
 	* Function data has to pass before entering the database.
 	*
-	* @param string $value
-	* @param string $config
+	* @param	mixed				$value		Value to validate
+	* @param	array[string]mixed	$config		Configuration array
 	*
 	* @return	mixed
 	*/
-	protected function validate($value, $config)
+	protected function validate_property($value, $config)
 	{
 		if (is_string($value))
 		{
@@ -185,7 +185,10 @@ abstract class titania_database_object extends titania_object
 	* Private function strings have to pass before entering the database.
 	* Ensures string length et cetera.
 	*
-	* @return	string
+	* @param	string	$value		The string we want to validate
+	* @param	array	$config		The configuration array we're validating against
+	*
+	* @return	string				The validated string
 	*/
 	private function validate_string($value, $config)
 	{
@@ -197,7 +200,7 @@ abstract class titania_database_object extends titania_object
 		// Check if multibyte characters are disallowed
 		if (isset($config['multibyte']) && $config['multibyte'] === false)
 		{
-			// No multibyte, allow only ASCII (0-127)
+			// No multibyte, only allow ASCII (0-127)
 			$value = preg_replace('/[\x80-\xFF]/', '', $value);
 		}
 		else

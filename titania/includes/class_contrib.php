@@ -25,7 +25,7 @@ if (!class_exists('titania_database_object'))
  * Class to abstract contributions.
  * @package Titania
  */
-abstract class titania_contribution extends titania_database_object
+class titania_contribution extends titania_database_object
 {
 	/**
 	 * Database table to be used for the contribution object
@@ -35,14 +35,14 @@ abstract class titania_contribution extends titania_database_object
 	protected $sql_table		= CUSTOMISATION_CONTRIBS_TABLE;
 
 	/**
-	 * sql-in-set field for the contribution object
+	 * Primary sql identifier for the contribution object
 	 *
-	 * @var unknown_type
+	 * @var string
 	 */
 	protected $sql_id_field		= 'contrib_id';
 
 	/**
-	 * description parsed for storage
+	 * Description parsed for storage
 	 *
 	 * @var bool
 	 */
@@ -107,8 +107,9 @@ abstract class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 * submit data for storing into the database
+	 * Submit data for storing into the database
 	 *
+	 * @return void
 	 */
 	public function submit()
 	{
@@ -122,8 +123,9 @@ abstract class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 * load function to load description parsed text
+	 * Load function to load description parsed text
 	 *
+	 * @return void
 	 */
 	public function load()
 	{
@@ -138,6 +140,8 @@ abstract class titania_contribution extends titania_database_object
 	 * @param bool $allow_bbcode
 	 * @param bool $allow_urls
 	 * @param bool $allow_smilies
+	 *
+	 * @return void
 	 */
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
@@ -159,7 +163,7 @@ abstract class titania_contribution extends titania_database_object
 	/**
 	 * Parse description for display
 	 *
-	 * @return unknown
+	 * @return string
 	 */
 	private function generate_text_for_display()
 	{
@@ -167,9 +171,9 @@ abstract class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 *  Parse description for edit
+	 * Parse description for edit
 	 *
-	 * @return unknown
+	 * @return string
 	 */
 	private function generate_text_for_edit()
 	{
@@ -179,7 +183,7 @@ abstract class titania_contribution extends titania_database_object
 	/**
 	 * Get the author as an object
 	 *
-	 * @return unknown
+	 * @return titania_author
 	 */
 	public function get_author()
 	{
@@ -197,8 +201,9 @@ abstract class titania_contribution extends titania_database_object
 	/**
 	 * Get the download as an object
 	 *
-	 * @param unknown_type $validated
-	 * @return unknown
+	 * @param bool $validated
+	 *
+	 * @return titania_download
 	 */
 	public function get_download($validated = true)
 	{

@@ -11,7 +11,7 @@
 /**
 * @ignore
 */
-if (!defined('IN_PHPBB') || !defined('IN_TITANIA'))
+if (!defined('IN_TITANIA'))
 {
 	exit;
 }
@@ -26,16 +26,15 @@ abstract class titania_object
 	/**
 	* Object data
 	*
-	* @var		array[string]mixed
-	* 			Associative array holding the properties of this class.
+	* @var	array[string]mixed		Associative array holding the properties of this class.
 	*/
 	protected $object_data = array();
 
 	/**
 	* Property configuration
 	*
-	* @var		array[string][string]mixed
-	* 			Associative array with property name (key) and associative configuration array (value).
+	* @var	array[string][string]mixed		Associative array with property name (key) 
+	* 										and associative configuration array (value).
 	*
 	*
 	* Example 1:

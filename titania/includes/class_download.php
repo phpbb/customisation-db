@@ -28,14 +28,14 @@ if (!class_exists('titania_database_object'))
 class titania_download extends titania_database_object
 {
 	/**
-	 * SQL table to use for downloads
+	 * SQL Table
 	 *
 	 * @var string
 	 */
 	protected $sql_table		= CUSTOMISATION_DOWNLOADS_TABLE;
 
 	/**
-	 * sql-in-set field
+	 * SQL identifier field
 	 *
 	 * @var string
 	 */
@@ -64,13 +64,13 @@ class titania_download extends titania_database_object
 
 			'download_count'		=> array('default' => 0),
 
-			'extension'				=> array('default' => '', 'max' => 100),
-			'mimetype'				=> array('default' => '', 'max' => 100),
+			'extension'				=> array('default' => '',	'max' => 100),
+			'mimetype'				=> array('default' => '',	'max' => 100),
 
 			'download_url'			=> array('default' => '',	'max' => 255,	'multibyte' => false),
 			'download_hash'			=> array('default' => '',	'max' => 32,	'readonly' => true),
 
-			'thumbnail'				=> array('default' => false, 'type' => 'int'),
+			'thumbnail'				=> array('default' => 0),
 		));
 
 		if ($download_id === false)
@@ -87,6 +87,8 @@ class titania_download extends titania_database_object
 	 * Allows to load data identified by revision_id
 	 *
 	 * @param int $revision_id
+	 *
+	 * @return void
 	 */
 	public function load($revision_id = false)
 	{
