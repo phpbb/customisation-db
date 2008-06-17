@@ -138,6 +138,8 @@ abstract class titania_database_object extends titania_object
 		$this->sql_data = $db->sql_fetchrow($result);
 		$db->sql_freeresult($result);
 
+		// @todo do something if there is no data
+
 		foreach ($this->sql_data as $key => $value)
 		{
 			if ($key == $this->sql_id_field || !isset($this->object_config[$key]))

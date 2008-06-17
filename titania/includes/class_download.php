@@ -108,4 +108,126 @@ class titania_download extends titania_database_object
 			$this->sql_id_field = $identifier;
 		}
 	}
+
+	/**
+	* Create a new download/upload
+	*
+	* @return void
+	*/
+	public function create()
+	{
+		// @todo
+	}
+
+	/**
+	* Checks if the user is authorized to download this file.
+	*
+	* @param int $user_id
+	* @return bool
+	*/
+	public function has_access($user_id)
+	{
+		// @todo
+		return true;
+	}
+
+	/**
+	* Stream the download to the browser
+	*
+	* @return void
+	*/
+	public function stream()
+	{
+		$file = TITANIA_ROOT . 'files/' . $this->physical_filename;
+
+		if (headers_sent())
+		{
+			exit;
+		}
+
+		if (file_exists($file) && is_readable($file))
+		{
+			global $user;
+			
+			if (!$user->data['is_bot'])
+			{
+				$this->increase_counter();
+			}
+
+			header('Pragma: public');
+			header('Content-Type: application/octet-stream');
+
+			$size = ($this->filesize) ? $this->filesize : @filesize($file);
+			if ($size)
+			{
+				header('Content-Length: ' . $size);
+			}
+
+			header('Content-Disposition: attachment; ' . $this->header_filename($this->real_filename) . '"');
+
+			// Try to deliver in chunks
+			@set_time_limit(0);
+
+			$fp = @fopen($file, 'rb');
+
+			if ($fp !== false)
+			{
+				while (!feof($fp))
+				{
+					echo fread($fp, 8192);
+				}
+				fclose($fp);
+			}
+			else
+			{
+				@readfile($file);
+			}
+
+			flush();
+		}
+		else
+		{
+			header('HTTP/1.0 404 not found');
+		}
+
+		exit;
+	}
+
+	/**
+	* Get a browser friendly UTF-8 encoded filename
+	*
+	* @param $file string
+	* @return string
+	*/
+	private function header_filename($file)
+	{
+		$user_agent = (!empty($_SERVER['HTTP_USER_AGENT'])) ? htmlspecialchars((string) $_SERVER['HTTP_USER_AGENT']) : '';
+
+		// There be dragons here.
+		// Not many follows the RFC...
+		if (strpos($user_agent, 'MSIE') !== false || strpos($user_agent, 'Safari') !== false || strpos($user_agent, 'Konqueror') !== false)
+		{
+			return "filename=" . rawurlencode($file);
+		}
+
+		// Follow the RFC for extended filename for the rest
+		return "filename*=UTF-8''" . rawurlencode($file);
+	}
+
+	/**
+	* Immediately increases the download counter of this download
+	*
+	* @return void
+	*/
+	private function increase_counter()
+	{
+		global $db;
+
+		$sql = 'UPDATE ' . $this->sql_table . '
+			SET download_count = download_count + 1
+			WHERE download_id = ' . $this->download_id;
+		$db->sql_query($sql);
+
+		$this->download_count = $this->download_count + 1;
+	}
 }

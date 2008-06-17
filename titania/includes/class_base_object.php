@@ -235,6 +235,32 @@ abstract class titania_object
 			throw new UnknownPropertyException($name);
 		}
 	}
+
+	/**
+	* Checks if a property value is equal to it's default value
+	*
+	* @param	string		Property name
+	* @return	bool
+	*/
+	protected function is_default($name)
+	{
+		if (!isset($this->object_data[$name]))
+		{
+			return true;
+		}
+
+		if (!isset($this->object_config[$name]['default']))
+		{
+			return false;
+		}
+
+		if ($this->object_data[$name] === $this->object_config[$name]['default'])
+		{
+			return true;
+		}
+
+		return false;
+	}
 }
 
 /**

@@ -54,7 +54,7 @@ $cdb_table_prefix = 'customisation_';
 *
 * Default: The folder 'template' in the titania root.
 * <code>
-* 	$template_location = './template/';
+* 	$template_location = './template';
 * </code>
 */
-$template_location = 'template/';
+$template_location = 'template';
