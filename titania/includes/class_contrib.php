@@ -241,44 +241,32 @@ class titania_contribution extends titania_database_object
 		}
 
 		$submit = isset($_REQUEST['submit']) ? true : false;
-		$start = request_var('start', 0);
-		$limit = request_var('limit', 25);
-		$limit = ($limit > 100) ? 100 : $limit;
 
-		$default_key = 'a';
-		$sort_key = request_var('sk', $default_key);
-		$sort_dir = request_var('sd', 'a');
-
-		$sort_key_text = array(
-			'a'	=> $user->lang['SORT_AUTHOR'],
-			'b'	=> $user->lang['SORT_TIME_ADDED'],
-			'c'	=> $user->lang['SORT_TIME_UPDATED'],
-			'd'	=> $user->lang['SORT_DOWNLOADS'],
-			'e'	=> $user->lang['SORT_RATING'],
-			'f'	=> $user->lang['SORT_CONTRIB_NAME'],
-		);
-
-		$sort_key_sql = array(
-			'a'	=> 'a.author_username_clean',
-			'b'	=> 'c.contrib_release_date',
-			'c'	=> 'c.contrib_update_date',
-			'd'	=> 'c.contrib_downloads',
-			'e'	=> 'c.contrib_rating',
-			'f'	=> 'c.contrib_name',
-		);
-
-		$sort_dir_text = array(
-			'a' => $user->lang['ASCENDING'],
-			'd' => $user->lang['DESCENDING']
-		);
-
-		// Sorting and order
-		if (!isset($sort_key_sql[$sort_key]))
+		if (!class_exists('sort'))
 		{
-			$sort_key = $default_key;
+			include(TITANIA_ROOT . 'includes/class_sort.' . PHP_EXT);
 		}
 
-		$order_by = $sort_key_sql[$sort_key] . ' ' . (($sort_dir == 'a') ? 'ASC' : 'DESC');
+		if (!class_exists('pagination'))
+		{
+			include(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
+		}
+
+		$sort = new sort();
+		$sort->set_sort_keys(array(
+			'a'	=> array('SORT_AUTHOR',			'a.author_username_clean', 'default' => true),
+			'b'	=> array('SORT_TIME_ADDED',		'c.contrib_release_date'),
+			'c'	=> array('SORT_TIME_UPDATED',	'c.contrib_update_date'),
+			'd'	=> array('SORT_DOWNLOADS',		'c.contrib_downloads'),
+			'e'	=> array('SORT_RATING',			'c.contrib_rating'),
+			'f'	=> array('SORT_CONTRIB_NAME',	'c.contrib_name'),
+		));
+
+		$sort->sort_request(false);
+
+		$pagination = new pagination();
+		$start = $pagination->set_start();
+		$limit = $pagination->set_limit();
 
 		// select the list of contribs
 		$sql_ary = array(
@@ -294,7 +282,7 @@ class titania_contribution extends titania_database_object
 			),
 			'WHERE'		=> 'contrib_status = ' . STATUS_APPROVED . '
 						AND contrib_type = ' . constant('CONTRIB_TYPE_' . $u_contrib_type),
-			'ORDER_BY'	=> $order_by,
+			'ORDER_BY'	=> $sort->get_order_by(),
 		);
 		$sql = $db->sql_build_query('SELECT', $sql_ary);
 		$result = $db->sql_query_limit($sql, $limit, $start);
@@ -307,44 +295,19 @@ class titania_contribution extends titania_database_object
 		}
 		$db->sql_freeresult($result);
 
-		// now count the number of results based on the perameters specified above
-		$sql_ary['SELECT'] = 'COUNT(c.contrib_id) AS total_contribs';
-		$sql = $db->sql_build_query('SELECT', $sql_ary);
-		$result = $db->sql_query($sql);
-		$total_contribs = $db->sql_fetchfield('total_contribs');
-		$db->sql_freeresult($result);
+		$pagination->sql_total_count($sql_ary, 'c.contrib_id');
 
-		// Build the pagination_url
-		$params = array(
-			'sk'	=> $sort_key,
-			'sd'	=> $sort_dir,
+		$pagination->set_params(array(
+			'sk'	=> $sort->get_sort_key(),
+			'sd'	=> $sort->get_sort_dir(),
 			'mode'	=> $mode,
-		);
+		));
 
-		$pagination_url = append_sid(self::page, implode('&amp;', $params));
-
-		$s_sort_key = '';
-		foreach ($sort_key_text as $key => $value)
-		{
-			$selected = ($sort_key == $key) ? ' selected="selected"' : '';
-			$s_sort_key .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
-		}
-
-		$s_sort_dir = '';
-		foreach ($sort_dir_text as $key => $value)
-		{
-			$selected = ($sort_dir == $key) ? ' selected="selected"' : '';
-			$s_sort_dir .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
-		}
+		$pagination->build_pagination(self::page);
 
 		$template->assign_vars(array(
-			'TOTAL_ROWS'		=> ($total_contribs == 1) ? $user->lang['LIST_RESULT'] : sprintf($user->lang['LIST_RESULTS'], $total_contribs),
-			'PAGINATION'		=> generate_pagination($pagination_url, $total_contribs, $limit, $start),
-			'PAGE_NUMBER'		=> on_page($total_contribs, $limit, $start),
-
-			'S_MODE_SELECT'		=> $s_sort_key,
-			'S_ORDER_SELECT'	=> $s_sort_dir,
-			'S_MODE_ACTION'		=> $pagination_url,
+			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
+			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
 		));
 	}
 

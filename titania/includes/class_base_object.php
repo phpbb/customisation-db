@@ -33,7 +33,7 @@ abstract class titania_object
 	/**
 	* Property configuration
 	*
-	* @var	array[string][string]mixed		Associative array with property name (key) 
+	* @var	array[string][string]mixed		Associative array with property name (key)
 	* 										and associative configuration array (value).
 	*
 	*
@@ -73,8 +73,8 @@ abstract class titania_object
 	* Catches calles to non-existing methods.
 	* Allows you to use generic getter and setter methods.
 	*
-	* @param	string		Property name
-	* @param	array		Arguments array
+	* @param	string	$name		Property name
+	* @param	array	$arguments	Arguments array
 	* @return	mixed
 	*/
 	public function __call($name, $arguments)
@@ -114,8 +114,8 @@ abstract class titania_object
 	* Get an object property. Catches calles to non-existing properties.
 	* Allows you to read properties via <code>$this->property_name</code>.
 	*
-	* @param	string		Property name
-	* @return	mixed		Property value
+	* @param	string	$name	Property name
+	* @return	mixed			Property value
 	*
 	* Note: This method should only be used inside of classes.
 	*/
@@ -159,8 +159,8 @@ abstract class titania_object
 	* Set an object property. Catches calles to non-existing properties.
 	* Allows you to write properties via <code>$this->property_name</code>.
 	*
-	* @param	string		Property name
-	* @param	mixed		Property value
+	* @param	string	$name	Property name
+	* @param	mixed	$value	Property value
 	* @return	void
 	*
 	* Note: This method should only be used inside of classes.
@@ -187,7 +187,7 @@ abstract class titania_object
 	/**
 	* Mass set object properties
 	*
-	* @param	array[string]mixed		Array with properties
+	* @param	array[string]mixed	$array	Array with properties
 	* @return	void
 	*
 	* Note: Method name is reserved for magic methods.
@@ -203,7 +203,7 @@ abstract class titania_object
 	/**
 	* Fetches isset() and empty() calls. Checks if a property is set
 	*
-	* @param	string		Property name
+	* @param	string	$name	Property name
 	* @return	boolean
 	*/
 	public function __isset($name)
@@ -219,7 +219,7 @@ abstract class titania_object
 	/**
 	* Fetches unset() calls. Unsets the property value
 	*
-	* @param	string		Property name
+	* @param	string	$name	Property name
 	* @return	void
 	*
 	* Note: The default property might be returned, even if unset() has been called.

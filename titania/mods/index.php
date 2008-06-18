@@ -18,7 +18,10 @@ include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
 require(TITANIA_ROOT . 'includes/class_contrib.' . PHP_EXT);
 
+$titania->add_lang('mods/titania_mods');
+
 $mode = request_var('mode', '');
+$tag_type = 'MOD';
 
 switch ($mode)
 {
@@ -36,6 +39,8 @@ switch ($mode)
 
 	case 'list':
 	default:
+		$mods = new titania_contribution();
+		$mods->page = TITANIA_ROOT . 'mods/index.' . PHP_EXT;
 
 		$page_title = $tag_type . '_LIST';
 		$template_body = 'mods/mod_list.html';
