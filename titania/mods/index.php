@@ -18,7 +18,7 @@ include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
 require(TITANIA_ROOT . 'includes/class_contrib.' . PHP_EXT);
 
-$titania->add_lang('mods/titania_mods');
+$titania->add_lang('titania_mods');
 
 $mode = request_var('mode', '');
 $tag_type = 'MOD';
@@ -48,12 +48,11 @@ switch ($mode)
 }
 
 // Output page
-page_header($user->lang[$page_title]);
+$titania->page_header($user->lang[$page_title]);
 
 $template->set_filenames(array(
 	'body' => $template_body,
 ));
 
-page_footer();
+$titania->page_footer();
 
-?>
