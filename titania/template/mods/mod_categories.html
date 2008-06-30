@@ -25,27 +25,22 @@
 		<table class="table1" cellspacing="1" id="modlist">
 		<thead>
 		<tr>
-			<th class="name"><span class="rank-img"><a href="{U_SORT_RATING}#modlist">{L_RATING}</a></span>
-				<a href="{U_SORT_MOD_TITLE}#modlist">{L_MOD_TITLE}</a></th>
-			<th class="posts"><a href="{U_SORT_DOWNLOADS}#modlist">{L_DOWNLOAD_COUNT}</a></th>
-			<th class="info">{L_MOD_DESCRIPTION}</th>
-			<th class="joined"><a href="{U_SORT_TIME_ADDED}#modlist">{L_DATE_ADDED}</a></th>
-			<th class="active"><a href="{U_SORT_TIME_UPDATED}#modlist">{L_LAST_UPDATE}</a></th>
+			<th colspan="2">{L_MOD_CATEGORY}</th>
+			<th>{L_TOTAL_MODS}</th>
+			<th>{L_CATEGORY_DESCRIPTION}</th>
 		</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN modlist -->
-			<tr class="<!-- IF modlist.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
-				<td>{modlist.AUTHOR}</td>
-				<td>{modlist.AUTHOR_FULL}</td>
-				<td>{modlist.TIME_ADDED}</td>
-				<td>{modlist.TIME_UPDATED}</td>
-				<td>{modlist.DOWNLOADS}</td>
-				<td>{modlist.RATING}</td>
+		<!-- BEGIN category -->
+			<tr class="<!-- IF category.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
+				<td>{category.ICON}</td>
+				<td>{category.TITLE}</td>
+				<td>{category.MODS}</td>
+				<td>{category.DESCRIPTION}</td>
 			</tr>
 		<!-- BEGINELSE -->
 		<tr class="bg1">
-			<td colspan="5" style="text-align:center;"><strong>{L_NO_MODS}</strong></td>
+			<td colspan="4" style="text-align:center;"><strong>{L_NO_CATEGORIES}</strong></td>
 		</tr>
 		<!-- END modlist -->
 	</tbody>

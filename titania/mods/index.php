@@ -38,12 +38,17 @@ switch ($mode)
 	break;
 
 	case 'list':
-	default:
 		$mods = new titania_contribution();
 		$mods->page = TITANIA_ROOT . 'mods/index.' . PHP_EXT;
 
 		$page_title = $tag_type . '_LIST';
 		$template_body = 'mods/mod_list.html';
+	break;
+
+	case 'categories':
+	default:
+		$page_title = $tag_type . '_CATEGORIES';
+		$template_body = 'mods/mod_categories.html';
 	break;
 }
 

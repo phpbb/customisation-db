@@ -175,13 +175,16 @@ class titania
 	}
 
 	/**
-	 * Return to previous or set page.
+	 * Generate HTML of to the previous or a specified page.
 	 *
-	 * @param string $redirect redirect URL absolute or relative path.
-	 * @param string $l_redirect LANG string
-	 * @param array $exclude variables to exclude from params, if necessary.
+	 * @param string $redirect optional -- redirect URL absolute or relative path.
+	 * @param string $l_redirect optional -- LANG string e.g.: 'RETURN_TO_MODS'
+	 * @param array $exclude variables to exclude from params, if necessary. e.g.: array('search', 'sort');
+	 * @param bool $return_url Return only the URL path, returns generated HTML by if set to false (default)
+	 *
+	 * @return HTML link string
 	 */
-	public function back_link($redirect = '', $l_redirect = '', $exclude = array())
+	public function back_link($redirect = '', $l_redirect = '', $exclude = array(), $return_url = false)
 	{
 		global $user, $config;
 
@@ -216,6 +219,6 @@ class titania
 		// set the redirect string (Return to previous page)
 		$l_redirect = ($l_redirect) ? $l_redirect : 'RETURN_LAST_PAGE';
 
-		return sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, $user->lang[$l_redirect]);
+		return (!$return_url) ? sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, $user->lang[$l_redirect]) : $redirect;
 	}
 }
