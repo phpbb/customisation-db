@@ -44,7 +44,7 @@ $lang = array_merge($lang, array(
 	'SELECT_SORT_METHOD'	=> 'Select Sort Method',
 	'ORDER'					=> 'Order by',
 	'PURGE_CACHE'			=> 'Purge Cache',
-	'CACHE_PURGED'			=> 'Cached has been successfully purged',
+	'CACHE_PURGED'			=> 'Cache has been successfully purged',
 	'RETURN_LAST_PAGE'		=> 'Return to the previous page',
 ));
 
