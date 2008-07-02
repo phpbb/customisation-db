@@ -45,6 +45,10 @@ require(PHPBB_ROOT_PATH . 'common.' . PHP_EXT);
 // Include titania constants
 require(TITANIA_ROOT . 'includes/constants.' . PHP_EXT);
 
+// Include policy file (and interface)
+require(TITANIA_ROOT . 'includes/interface_policy.' . PHP_EXT);
+require(TITANIA_ROOT . 'policy.' . PHP_EXT);
+
 // Start session management
 $user->session_begin();
 $auth->acl($user->data);
