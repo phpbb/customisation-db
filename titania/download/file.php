@@ -17,31 +17,46 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require(TITANIA_ROOT . 'common.' . PHP_EXT);
 include(TITANIA_ROOT . 'includes/class_download.' . PHP_EXT);
 
-// Get download by id.
-$download_id = request_var('id', 0);
+// Add language data
+$titania->add_lang('titania_download');
 
-if ($download_id)
+// Request vars
+$download_id	= request_var('id', 0);
+$contrib_id		= request_var('contrib_id', 0);
+
+// Instantiate a download object
+$download = new titania_download($download_id);
+
+try
 {
-	$download = new titania_download(0);
-	$download->load();
-
-	if ($download->has_access($user->data['user_id']))
+	if ($download_id)
 	{
-		$download->stream();
+		$download->load();
+	}
+	else if ($contrib_id)
+	{
+		$download->load_contrib($contrib_id);
+	}
+	else
+	{
+		throw new NoDataFoundException();
 	}
 
-	// @todo beautiful message
-	header('HTTP/1.0 404 not found');
+	$download->check_access();
+
+	$download->stream();
 }
-
-// Download the newest revision of a contribution.
-$contrib_id = request_var('contrib_id', 0);
-
-if ($contrib_id)
+catch (NoDataFoundException $e)
 {
-	// @todo
+	$download->trigger_not_found();
+}
+catch (DownloadAccessDeniedException $e)
+{
+	$download->trigger_forbidden();
+}
+catch (FileNotFoundException $e)
+{
+	$download->trigger_not_found();
 }
 
-// @todo beautiful message
-header('HTTP/1.0 404 not found');
-die('Download not found.');
+$download->trigger_not_found();

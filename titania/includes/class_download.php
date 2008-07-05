@@ -110,6 +110,30 @@ class titania_download extends titania_database_object
 	}
 
 	/**
+	 * Get's the latest download data of a contribution
+	 *
+	 * @param int $contrib_id	The contrib_id of the contribution
+	 * @param bool $validated	Latest (false) or latest validated version (true)
+	 *
+	 * @return void
+	 */
+	public function load_contrib($contrib_id, $validated = true)
+	{
+		global $db;
+
+		$column = ($validated) ? 'contrib_validated_revision' : 'contrib_revision';
+
+		$sql = 'SELECT ' . $column . '
+			FROM ' . CUSTOMISATION_CONTRIBS_TABLE . '
+			WHERE contrib_id = ' . $contrib_id;
+		$result = $db->sql_query($sql);
+		$revision_id = (int) $db->sql_fetchfield($column);
+		$db->sql_freeresult($result);
+
+		$this->load($revision_id);
+	}
+
+	/**
 	* Create a new download/upload
 	*
 	* @return void
@@ -122,13 +146,41 @@ class titania_download extends titania_database_object
 	/**
 	* Checks if the user is authorized to download this file.
 	*
-	* @param int $user_id
-	* @return bool
+	* @return void
 	*/
-	public function has_access($user_id)
+	public function check_access()
 	{
 		// @todo
-		return true;
+		return;
+
+		throw new DownloadAccessDeniedException();
+	}
+
+	/**
+	* Triggers a 'download not found' message.
+	*
+	* @return void
+	*/
+	public function trigger_not_found()
+	{
+		header('HTTP/1.0 404 not found');
+
+		trigger_error('DOWNLOAD_NOT_FOUND');
+	}
+
+	/**
+	* Triggers a 'access denied' message.
+	*
+	* @return void
+	*/
+	public function trigger_forbidden()
+	{
+		// Plausible deniability
+		// We do not let anybody know the download exists at all.
+		$this->trigger_not_found();
+		
+		// Maybe we want to change this later.
+		//header('HTTP/1.0 403 Forbidden');
 	}
 
 	/**
@@ -138,57 +190,55 @@ class titania_download extends titania_database_object
 	*/
 	public function stream()
 	{
-		$file = TITANIA_ROOT . 'files/' . $this->physical_filename;
-
 		if (headers_sent())
 		{
 			exit;
 		}
 
-		if (file_exists($file) && is_readable($file))
+		$file = TITANIA_ROOT . 'files/' . $this->physical_filename;
+
+		if (!file_exists($file) || !is_readable($file))
 		{
-			global $user;
-			
-			if (!$user->data['is_bot'])
+			throw new FileNotFoundException();
+		}
+
+		global $user;
+
+		if (!$user->data['is_bot'])
+		{
+			$this->increase_counter();
+		}
+
+		header('Pragma: public');
+		header('Content-Type: application/octet-stream');
+
+		$size = ($this->filesize) ? $this->filesize : @filesize($file);
+		if ($size)
+		{
+			header('Content-Length: ' . $size);
+		}
+
+		header('Content-Disposition: attachment; ' . $this->header_filename($this->real_filename) . '"');
+
+		// Try to deliver in chunks
+		@set_time_limit(0);
+
+		$fp = @fopen($file, 'rb');
+
+		if ($fp !== false)
+		{
+			while (!feof($fp))
 			{
-				$this->increase_counter();
+				echo fread($fp, 8192);
 			}
-
-			header('Pragma: public');
-			header('Content-Type: application/octet-stream');
-
-			$size = ($this->filesize) ? $this->filesize : @filesize($file);
-			if ($size)
-			{
-				header('Content-Length: ' . $size);
-			}
-
-			header('Content-Disposition: attachment; ' . $this->header_filename($this->real_filename) . '"');
-
-			// Try to deliver in chunks
-			@set_time_limit(0);
-
-			$fp = @fopen($file, 'rb');
-
-			if ($fp !== false)
-			{
-				while (!feof($fp))
-				{
-					echo fread($fp, 8192);
-				}
-				fclose($fp);
-			}
-			else
-			{
-				@readfile($file);
-			}
-
-			flush();
+			fclose($fp);
 		}
 		else
 		{
-			header('HTTP/1.0 404 not found');
+			@readfile($file);
 		}
+
+		flush();
 
 		exit;
 	}
@@ -229,5 +279,41 @@ class titania_download extends titania_database_object
 		$db->sql_query($sql);
 
 		$this->download_count = $this->download_count + 1;
+	}
+}
+
+/**
+* Exception thrown when a user is not allowed to access a download.
+*
+* @package Titania
+*/
+class DownloadAccessDeniedException extends Exception
+{
+	function __construct($message = '', $code = 0)
+	{
+		if (empty($message))
+		{
+			$name = 'Access denied.';
+		}
+
+		parent::__construct($message, $code);
+	}
+}
+
+/**
+* Exception thrown when a download file is not found or is not accessible.
+*
+* @package Titania
+*/
+class FileNotFoundException extends Exception
+{
+	function __construct($message = '', $code = 0)
+	{
+		if (empty($message))
+		{
+			$message = 'File not found or not accessible.';
+		}
+
+		parent::__construct($message, $code);
 	}
 }
