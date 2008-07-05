@@ -49,7 +49,8 @@ $review->submit();*/
 $review->delete();*/
 
 // Non-Existing Data
-/*try {
+/*try
+{
 	$review = new titania_review(123456);
 	$review->load();
 }
