@@ -48,6 +48,16 @@ $review->submit();*/
 /*$review = new titania_review(1);
 $review->delete();*/
 
+// Non-Existing Data
+/*try {
+	$review = new titania_review(123456);
+	$review->load();
+}
+catch (NoDataFoundException $e)
+{
+	echo $e->getMessage();
+}*/
+
 echo $review->get_review_text();
 
 //var_dump($review);

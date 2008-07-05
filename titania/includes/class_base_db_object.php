@@ -138,11 +138,14 @@ abstract class titania_database_object extends titania_object
 		$this->sql_data = $db->sql_fetchrow($result);
 		$db->sql_freeresult($result);
 
-		// @todo do something if there is no data
+		if (empty($this->sql_data))
+		{
+			throw new NoDataFoundException();
+		}
 
 		foreach ($this->sql_data as $key => $value)
 		{
-			if ($key == $this->sql_id_field || !isset($this->object_config[$key]))
+			if (!isset($this->object_config[$key]))
 			{
 				continue;
 			}
@@ -221,5 +224,23 @@ abstract class titania_database_object extends titania_object
 		}
 
 		return $value;
+	}
+}
+
+/**
+* Exception thrown when an object does not exist in the database.
+*
+* @package Titania
+*/
+class NoDataFoundException extends Exception
+{
+	function __construct($name = '', $code = 0)
+	{
+		if (empty($name))
+		{
+			$name = 'Unable to get object from database. No data found for primary key.';
+		}
+
+		parent::__construct($name, $code);
 	}
 }
