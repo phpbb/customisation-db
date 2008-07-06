@@ -197,7 +197,7 @@ class titania_download extends titania_database_object
 
 		$file = TITANIA_ROOT . 'files/' . $this->physical_filename;
 
-		if (!file_exists($file) || !is_readable($file))
+		if (!@file_exists($file) || !@is_readable($file))
 		{
 			throw new FileNotFoundException();
 		}
@@ -218,7 +218,7 @@ class titania_download extends titania_database_object
 			header('Content-Length: ' . $size);
 		}
 
-		header('Content-Disposition: attachment; ' . $this->header_filename($this->real_filename) . '"');
+		header('Content-Disposition: attachment; ' . $this->header_filename(htmlspecialchars_decode($this->real_filename)));
 
 		// Try to deliver in chunks
 		@set_time_limit(0);
@@ -246,7 +246,7 @@ class titania_download extends titania_database_object
 	/**
 	* Get a browser friendly UTF-8 encoded filename
 	*
-	* @param $file string
+	* @param string $file
 	* @return string
 	*/
 	private function header_filename($file)
@@ -257,7 +257,7 @@ class titania_download extends titania_database_object
 		// Not many follows the RFC...
 		if (strpos($user_agent, 'MSIE') !== false || strpos($user_agent, 'Safari') !== false || strpos($user_agent, 'Konqueror') !== false)
 		{
-			return "filename=" . rawurlencode($file);
+			return 'filename=' . rawurlencode($file);
 		}
 
 		// Follow the RFC for extended filename for the rest
