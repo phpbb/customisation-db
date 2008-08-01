@@ -178,7 +178,7 @@ class titania_download extends titania_database_object
 		// Plausible deniability
 		// We do not let anybody know the download exists at all.
 		$this->trigger_not_found();
-		
+
 		// Maybe we want to change this later.
 		//header('HTTP/1.0 403 Forbidden');
 	}

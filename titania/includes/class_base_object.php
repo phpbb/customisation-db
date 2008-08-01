@@ -84,26 +84,23 @@ abstract class titania_object
 			throw new UnknownMethodException($name);
 		}
 
-		if (substr($name, 0, 4) == 'get_')
-		{
-			$prop_name = substr($name, 4);
+		$prefix = strtolower(substr($name, 0, 4));
+		$property = strtolower(substr($name, 4));
 
-			return $this->__get($prop_name);
+		if ($prefix == 'get_')
+		{
+			return $this->__get($property);
 		}
-		else if (substr($name, 0, 4) == 'set_')
+		else if ($prefix == 'set_')
 		{
-			$prop_name = substr($name, 4);
-
 			// Check readonly attribute.
-			if (isset($this->object_config[$prop_name]['readonly']) && $this->object_config[$prop_name]['readonly'])
+			if (isset($this->object_config[$property]['readonly']) && $this->object_config[$property]['readonly'])
 			{
-				throw new SetReadOnlyPropertyException($prop_name);
+				throw new SetReadOnlyPropertyException($property);
 			}
 			else
 			{
-				$prop_value = $arguments[0];
-
-				return $this->__set($prop_name, $prop_value);
+				return $this->__set($property, $arguments[0]);
 			}
 		}
 
