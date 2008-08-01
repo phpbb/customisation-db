@@ -84,8 +84,8 @@ abstract class titania_object
 			throw new UnknownMethodException($name);
 		}
 
-		$prefix = strtolower(substr($name, 0, 4));
-		$property = strtolower(substr($name, 4));
+		$prefix		= substr($name, 0, 4);
+		$property	= substr($name, 4);
 
 		if ($prefix == 'get_')
 		{
