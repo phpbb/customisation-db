@@ -88,7 +88,7 @@ abstract class titania_database_object extends titania_object
 			$property_value = $this->validate_property($this->$name, $config_array);
 
 			// Property value has not changed
-			if ($property_value == $this->sql_data[$name])
+			if (isset($this->sql_data[$name]) && $this->sql_data[$name] == $property_value)
 			{
 				continue;
 			}
