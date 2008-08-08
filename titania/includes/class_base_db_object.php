@@ -77,17 +77,26 @@ abstract class titania_database_object extends titania_object
 	public function update()
 	{
 		$sql_array = array();
-		foreach ($this->sql_data as $key => $value)
+		foreach ($this->object_config as $name => $config_array)
 		{
-			if ($key == $this->sql_id_field || $this->$key == $value)
+			// No need to update the sql identifier
+			if ($name == $this->sql_id_field)
 			{
 				continue;
 			}
 
-			$sql_array[$key] = $this->validate_property($this->$key, $this->object_config[$key]);
+			$property_value = $this->validate_property($this->$name, $config_array);
+
+			// Property value has not changed
+			if ($property_value == $this->sql_data[$name])
+			{
+				continue;
+			}
+
+			$sql_array[$name] = $property_value;
 		}
 
-		if (!sizeof($sql_array))
+		if (empty($sql_array))
 		{
 			return;
 		}
