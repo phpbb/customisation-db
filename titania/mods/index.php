@@ -16,8 +16,7 @@ if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
-require(TITANIA_ROOT . 'includes/class_contrib.' . PHP_EXT);
-
+$titania->add_lang('titania_contrib');
 $titania->add_lang('titania_mods');
 
 $mode = request_var('mode', '');
@@ -25,29 +24,49 @@ $tag_type = 'MOD';
 
 switch ($mode)
 {
-	case 'detail':
+	case 'details':
 
 		$page_title = 'MOD_DETAILS';
 		$template_body = 'mods/mod_detail.html';
+
+		require(TITANIA_ROOT . 'includes/class_contrib_mod.' . PHP_EXT);
+
+		try
+		{
+			$mod = new titania_modification(request_var('contrib_id', 0));
+			$mod->load();
+
+			$author = $mod->get_author();
+		}
+		catch (NoDataFoundException $e)
+		{
+			trigger_error('CONTRIB_NOT_FOUND');
+		}
+
 	break;
 
 	case 'reviews':
 
 		$page_title = 'MOD_REVIEWS';
 		$template_body = 'mods/mod_reviews.html';
+
 	break;
 
 	case 'list':
+
 		$titania->page = TITANIA_ROOT . 'mods/index.' . PHP_EXT;
 
 		$page_title = $tag_type . '_LIST';
 		$template_body = 'mods/mod_list.html';
+
 	break;
 
 	case 'categories':
 	default:
+
 		$page_title = $tag_type . '_CATEGORIES';
 		$template_body = 'mods/mod_categories.html';
+
 	break;
 }
 

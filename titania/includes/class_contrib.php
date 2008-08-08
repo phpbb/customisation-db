@@ -95,7 +95,7 @@ class titania_contribution extends titania_database_object
 		}
 		else
 		{
-			$this->contrib_id = $review_id;
+			$this->contrib_id = $contrib_id;
 		}
 	}
 

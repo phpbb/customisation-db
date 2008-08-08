@@ -91,11 +91,11 @@ class titania
 			{
 				if ((@include $language_filename) === false)
 				{
-					trigger_error('Language file ' . basename($language_filename) . ' couldn\'t be opened.', E_USER_ERROR);
+					trigger_error('Language file ' . $language_filename . ' couldn\'t be opened.', E_USER_ERROR);
 				}
 
 				// we only merge the lang array if it is set and not empty
-				if (isset($lang) && sizeof($lang))
+				if (!empty($lang) && is_array($lang))
 				{
 					$user->lang = array_merge($user->lang, $lang);
 				}
@@ -127,6 +127,11 @@ class titania
 	public function page_footer($run_cron = true)
 	{
 		global $auth, $user, $template, $cache;
+
+		/*
+		** This is development/testing code.
+		** @security: Cross-Site Request Forgery
+		*/
 
 		// admin requested the cache to be purged, ensure they have permission and purge the cache.
 		if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && $auth->acl_get('a_'))
