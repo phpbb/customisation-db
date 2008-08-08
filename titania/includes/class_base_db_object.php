@@ -131,7 +131,7 @@ abstract class titania_database_object extends titania_object
 	{
 		global $db;
 
-		$sql = 'SELECT *
+		$sql = 'SELECT ' . implode(', ', array_keys($this->object_config)) . '
 			FROM ' . $this->sql_table . '
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
 		$result = $db->sql_query($sql);
