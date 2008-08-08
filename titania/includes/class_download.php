@@ -68,7 +68,7 @@ class titania_download extends titania_database_object
 			'mimetype'				=> array('default' => '',	'max' => 100),
 
 			'download_url'			=> array('default' => '',	'max' => 255,	'multibyte' => false),
-			'download_hash'			=> array('default' => '',	'max' => 32,	'readonly' => true),
+			'download_hash'			=> array('default' => '',	'max' => 32,	'multibyte' => false,	'readonly' => true),
 
 			'thumbnail'				=> array('default' => 0),
 		));
@@ -110,7 +110,7 @@ class titania_download extends titania_database_object
 	}
 
 	/**
-	 * Get's the latest download data of a contribution
+	 * Gets the latest download data of a contribution
 	 *
 	 * @param int $contrib_id	The contrib_id of the contribution
 	 * @param bool $validated	Latest (false) or latest validated version (true)
