@@ -36,6 +36,13 @@ class titania
 	private $lang_path;
 
 	/**
+	 * Current viewing page location
+	 *
+	 * @var string
+	 */
+	public $page;
+
+	/**
 	 * construct class
 	 */
 	public function __construct()
@@ -181,5 +188,96 @@ class titania
 		$l_redirect = ($l_redirect) ? $l_redirect : 'RETURN_LAST_PAGE';
 
 		return (!$return_url) ? sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, $user->lang[$l_redirect]) : $redirect;
+	}
+
+	/**
+	 * Function to list contribs for the selected type.
+	 *
+	 * @todo Hard-coding many actions, will then need to seperate these into their own functions/classes to be dynamically generated and scaleable
+	 *
+	 * @param string $contrib_type
+	 */
+	public function contrib_list($contrib_type)
+	{
+		global $db, $template, $user;
+
+		// set an upper and lowercase contrib_type as well need each in multiple occurences.
+		$l_contrib_type = strtolower($contrib_type);
+		$u_contrib_type = strtoupper($contrib_type);
+
+		if (!defined('CONTRIB_TYPE_' . $u_contrib_type))
+		{
+			trigger_error('NO_CONTRIB_TYPE');
+		}
+
+		$submit = isset($_REQUEST['submit']) ? true : false;
+
+		if (!class_exists('sort'))
+		{
+			include(TITANIA_ROOT . 'includes/class_sort.' . PHP_EXT);
+		}
+
+		if (!class_exists('pagination'))
+		{
+			include(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
+		}
+
+		$sort = new sort();
+		$sort->set_sort_keys(array(
+			'a'	=> array('SORT_AUTHOR',			'a.author_username_clean', 'default' => true),
+			'b'	=> array('SORT_TIME_ADDED',		'c.contrib_release_date'),
+			'c'	=> array('SORT_TIME_UPDATED',	'c.contrib_update_date'),
+			'd'	=> array('SORT_DOWNLOADS',		'c.contrib_downloads'),
+			'e'	=> array('SORT_RATING',			'c.contrib_rating'),
+			'f'	=> array('SORT_CONTRIB_NAME',	'c.contrib_name'),
+		));
+
+		$sort->sort_request(false);
+
+		$pagination = new pagination();
+		$start = $pagination->set_start();
+		$limit = $pagination->set_limit();
+
+		// select the list of contribs
+		$sql_ary = array(
+			'SELECT'	=> 'a.author_id, a.author_username, c.*',
+			'FROM'		=> array(
+				CUSTOMISATION_CONTRIBS_TABLE => 'c',
+			),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(CUSTOMISATION_AUTHORS_TABLE => 'a'),
+					'ON'	=> 'c.contrib_author_id = a.author_id'
+				),
+			),
+			'WHERE'		=> 'contrib_status = ' . STATUS_APPROVED . '
+						AND contrib_type = ' . constant('CONTRIB_TYPE_' . $u_contrib_type),
+			'ORDER_BY'	=> $sort->get_order_by(),
+		);
+		$sql = $db->sql_build_query('SELECT', $sql_ary);
+		$result = $db->sql_query_limit($sql, $limit, $start);
+
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$template->assign_block_vars($l_contrib_type, array(
+				$u_contrib_type . '_ID'		=> $row['contrib_id'],
+			));
+		}
+		$db->sql_freeresult($result);
+
+		$pagination->sql_total_count($sql_ary, 'c.contrib_id');
+
+		$pagination->set_params(array(
+			'sk'	=> $sort->get_sort_key(),
+			'sd'	=> $sort->get_sort_dir(),
+			'mode'	=> $mode,
+		));
+
+		$pagination->build_pagination(self::page);
+
+		$template->assign_vars(array(
+			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
+			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
+		));
 	}
 }
