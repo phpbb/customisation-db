@@ -117,7 +117,7 @@ if (!defined('IN_TITANIA'))
 		foreach ($config_values as $option)
 		{
 			$value = request_var($option['key'], '');
-			$config_data .= "\${$option['key']} = '" . $value . "';\n";
+			$config_data .= "\${$option['key']} = '" . str_replace("'", "\\'", str_replace('\\', '\\\\', $value)) . "';\n";
 		}
 
 		$config_data .= "\n@define('TITANIA_INSTALLED', true);\n";

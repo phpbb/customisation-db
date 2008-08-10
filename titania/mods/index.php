@@ -25,7 +25,6 @@ $tag_type = 'MOD';
 switch ($mode)
 {
 	case 'details':
-
 		$page_title = 'MOD_DETAILS';
 		$template_body = 'mods/mod_detail.html';
 
@@ -46,7 +45,6 @@ switch ($mode)
 	break;
 
 	case 'reviews':
-
 		$page_title = 'MOD_REVIEWS';
 		$template_body = 'mods/mod_reviews.html';
 
