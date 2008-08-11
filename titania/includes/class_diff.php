@@ -83,8 +83,8 @@ class titania_diff
 	 */
 	public function from_file($filename_old, $filename_new)
 	{
-		$file_old = ($filename_old) ? file($filename_old) : array();
-		$file_new = ($filename_new) ? file($filename_new) : array();
+	    $file_old = ($filename_old) ? self::file_contents($filename_old) : '';
+		$file_new = ($filename_new) ? self::file_contents($filename_new) : '';
 		
 		// create renderer and process diff
 		$renderer = new $this->renderer_type();
@@ -100,6 +100,11 @@ class titania_diff
 	 */
 	public function from_dir($dir_old, $dir_new)
 	{
+	    if (!file_exists($dir_old) || !file_exists($dir_new))
+	    {
+			return false;
+		}
+		
 		$result = '';
 		
 		$files_old = array_flip(self::list_files($dir_old));
@@ -144,13 +149,18 @@ class titania_diff
 	 */
 	public function from_zip($filename_old, $filename_new)
 	{
+	    if (!file_exists($filename_old) || !file_exists($filename_new))
+	    {
+			return false;
+		}
+		
 		// temporary dirs
-		$tmp_old = TITANIA_ROOT . 'temp/' . basename($filename_old) . '/';
-		$tmp_new = TITANIA_ROOT . 'temp/' . basename($filename_new) . '/';
+		$tmp_old = TITANIA_ROOT . 'files/temp/' . basename($filename_old) . '/';
+		$tmp_new = TITANIA_ROOT . 'files/temp/' . basename($filename_new) . '/';
 		
 		// extract files
-		self::extract_zip($filename_old, $tmp_old);
-		self::extract_zip($filename_new, $tmp_new);
+		$result_old = self::extract_zip($filename_old, $tmp_old);
+		$result_new = self::extract_zip($filename_new, $tmp_new);
 		
 		// get diff
 		$result = $this->from_dir($tmp_old, $tmp_new);
@@ -226,12 +236,12 @@ class titania_diff
 	public static function list_files($root, $dir = '')
 	{
 		$files = array();
-		
+
 		if ($dh = opendir($root . $dir))
 		{
 			while (false !== ($file = readdir($dh)))
 			{
-				if ($dir == '.' || $dir == '..')
+				if ($file == '.' || $file == '..')
 				{
 					continue;
 				}
@@ -260,7 +270,7 @@ class titania_diff
 	 */
 	public static function rmdir($dir, $rm_self = false)
 	{
-		foreach (self::list_files('', $dir) as $filename)
+		foreach (self::list_files($dir) as $filename)
 		{
 			if (is_file($dir . $filename))
 			{
@@ -276,6 +286,17 @@ class titania_diff
 		{
 			rmdir($dir);
 		}
+	}
+	
+	/**
+	 * Get contents of a file, don't mess up linefeeds
+	 *
+	 * @param string $filename Path to file
+	 * @return File contents
+	 */
+	public static function file_contents($filename)
+	{
+		return preg_replace('#\\r(?:\\n|)#s', "\n", file_get_contents($filename));
 	}
 	
 	/**
