@@ -178,9 +178,6 @@ class titania_download extends titania_database_object
 		// Plausible deniability
 		// We do not let anybody know the download exists at all.
 		$this->trigger_not_found();
-
-		// Maybe we want to change this later.
-		//header('HTTP/1.0 403 Forbidden');
 	}
 
 	/**
@@ -191,6 +188,19 @@ class titania_download extends titania_database_object
 	public function stream()
 	{
 		if (headers_sent())
+		{
+			exit;
+		}
+
+		// Let’s try to keep the lid on the jar - Kellanved
+		if (isset($_SERVER['CONTENT_TYPE']))
+		{
+			if ($_SERVER['CONTENT_TYPE'] === 'application/x-java-archive')
+			{
+				exit;
+			}
+		}
+		else if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Java') !== false)
 		{
 			exit;
 		}
@@ -247,6 +257,7 @@ class titania_download extends titania_database_object
 	* Get a browser friendly UTF-8 encoded filename
 	*
 	* @param string $file
+	*
 	* @return string
 	*/
 	private function header_filename($file)

@@ -59,4 +59,4 @@ catch (FileNotFoundException $e)
 	$download->trigger_not_found();
 }
 
-$download->trigger_not_found();
+exit;
