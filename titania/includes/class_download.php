@@ -192,7 +192,7 @@ class titania_download extends titania_database_object
 			exit;
 		}
 
-		// Let’s try to keep the lid on the jar - Kellanved
+		// Let's try to keep the lid on the jar - Kellanved
 		if (isset($_SERVER['CONTENT_TYPE']))
 		{
 			if ($_SERVER['CONTENT_TYPE'] === 'application/x-java-archive')
