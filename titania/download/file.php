@@ -15,7 +15,7 @@ define('IN_TITANIA', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require(TITANIA_ROOT . 'common.' . PHP_EXT);
-include(TITANIA_ROOT . 'includes/class_download.' . PHP_EXT);
+require(TITANIA_ROOT . 'includes/class_download.' . PHP_EXT);
 
 // Add language data
 $titania->add_lang('titania_download');
@@ -46,17 +46,13 @@ try
 
 	$download->stream();
 }
-catch (NoDataFoundException $e)
-{
-	$download->trigger_not_found();
-}
 catch (DownloadAccessDeniedException $e)
 {
-	$download->trigger_forbidden();
+	policy::download_access_denied($download);
 }
-catch (FileNotFoundException $e)
+catch (NoDataFoundException $e)
 {
-	$download->trigger_not_found();
+	policy::download_not_found($download);
 }
 
 exit;

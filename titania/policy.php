@@ -24,5 +24,20 @@ if (!defined('IN_TITANIA'))
  */
 class policy implements titania_policy
 {
+	/**
+	* Downloads
+	*/
+	public static function download_not_found($download)
+	{
+		$download->trigger_not_found();
+	}
 
+	public static function download_access_denied($download)
+	{
+		// Plausible deniability
+		// We do not let anybody know the download exists at all.
+		$download->trigger_not_found();
+
+		// Alternative solution: $download->trigger_forbidden();
+	}
 }

@@ -175,9 +175,9 @@ class titania_download extends titania_database_object
 	*/
 	public function trigger_forbidden()
 	{
-		// Plausible deniability
-		// We do not let anybody know the download exists at all.
-		$this->trigger_not_found();
+		header('HTTP/1.0 403 Forbidden');
+
+		trigger_error('DOWNLOAD_ACCESS_DENIED');
 	}
 
 	/**
@@ -189,10 +189,10 @@ class titania_download extends titania_database_object
 	{
 		if (headers_sent())
 		{
-			exit;
+			trigger_error('UNABLE_TO_DELIVER_FILE');
 		}
 
-		// Let's try to keep the lid on the jar - Kellanved
+		// Lets try to keep the lid on the jar - Kellanved
 		if (isset($_SERVER['CONTENT_TYPE']))
 		{
 			if ($_SERVER['CONTENT_TYPE'] === 'application/x-java-archive')
@@ -316,7 +316,7 @@ class DownloadAccessDeniedException extends Exception
 *
 * @package Titania
 */
-class FileNotFoundException extends Exception
+class FileNotFoundException extends NoDataFoundException
 {
 	function __construct($message = '', $code = 0)
 	{

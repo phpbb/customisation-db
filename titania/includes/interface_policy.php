@@ -27,5 +27,9 @@ if (!defined('IN_TITANIA'))
  */
 interface titania_policy
 {
-
+	/**
+	* Downloads
+	*/
+	public static function download_not_found($download);
+	public static function download_access_denied($download);
 }

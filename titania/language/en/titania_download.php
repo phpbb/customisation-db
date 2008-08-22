@@ -36,6 +36,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'DOWNLOAD_NOT_FOUND'	=> 'The requested file could not be found.',
+	'DOWNLOAD_ACCESS_DENIED'	=> 'You are not allowed to download the requested file.',
+	'DOWNLOAD_NOT_FOUND'		=> 'The requested file could not be found.',
 ));
 
