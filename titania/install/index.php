@@ -77,16 +77,17 @@ $error = array();
 
 if ($submit)
 {
+	$phpbb_root_path = (isset($_POST['phpbb_root_path'])) ? TITANIA_ROOT . (string) $_POST['phpbb_root_path'] : '';
+
 	/**
 	 * @todo need some basic sanitisation for the phpbb_root_path before we continue.
 	 * The file_exists does prevent basic remote file checking, but I'm not certain if it will work on all configurations.
 	 */
-	if (isset($_POST['phpbb_root_path']) && file_exists(TITANIA_ROOT . (string) $_POST['phpbb_root_path'] . 'common.' . PHP_EXT))
+	if ($phpbb_root_path && file_exists($phpbb_root_path . 'common.' . PHP_EXT))
 	{
 		define('IN_PHPBB', true);
-		if (!defined('PHPBB_ROOT_PATH')) define('PHPBB_ROOT_PATH', TITANIA_ROOT . $_POST['phpbb_root_path']);
+		if (!defined('PHPBB_ROOT_PATH')) define('PHPBB_ROOT_PATH', $phpbb_root_path);
 		if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
-		$phpbb_root_path = PHPBB_ROOT_PATH;
 		$phpEx = PHP_EXT;
 
 		include(PHPBB_ROOT_PATH . 'common.' . PHP_EXT);
@@ -117,7 +118,13 @@ if (!defined('IN_TITANIA'))
 		foreach ($config_values as $option)
 		{
 			$value = request_var($option['key'], '');
-			$config_data .= "\${$option['key']} = '" . str_replace("'", "\\'", str_replace('\\', '\\\\', $value)) . "';\n";
+			$define_option = strtoupper($option['key']);
+			$define_value = str_replace("'", "\\'", str_replace('\\', '\\\\', $value));
+
+			// if the variable is the phpbb_root_path, we prepend TITANIA_ROOT...
+			$define_value = ($option['key'] == 'phpbb_root_path') ? TITANIA_ROOT . $define_value : $define_value;
+
+			$config_data .= "define('$define_option', '$define_value');\n";
 		}
 
 		$config_data .= "\n@define('TITANIA_INSTALLED', true);\n";

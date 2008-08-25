@@ -16,8 +16,7 @@ if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
-$titania->add_lang('titania_contrib');
-$titania->add_lang('titania_mods');
+$user->add_lang(array('titania_contrib', 'titania_mods'));
 
 $mode = request_var('mode', '');
 $tag_type = 'MOD';

@@ -22,20 +22,6 @@ if (!defined('IN_TITANIA'))
 class titania
 {
 	/**
-	 * Language ISO code name (en, de, etc)
-	 *
-	 * @var string
-	 */
-	private $lang_name;
-
-	/**
-	 * Titania Lang path
-	 *
-	 * @var string
-	 */
-	private $lang_path;
-
-	/**
 	 * Current viewing page location
 	 *
 	 * @var string
@@ -47,64 +33,18 @@ class titania
 	 */
 	public function __construct()
 	{
-		$this->setup();
-	}
+		global $user, $auth, $template;
 
-	/**
-	 * Titania setup, auto-load titania_common langauge file in TITANIA_ROOT language directory.
-	 */
-	private function setup()
-	{
-		global $user, $config;
+		// Start session management
+		$user->session_begin();
+		$auth->acl($user->data);
+		$user->setup();
 
-		$this->lang_name = (file_exists(TITANIA_ROOT . 'language/' . $user->data['user_lang'] . '/titania_common.' . PHP_EXT)) ? $user->data['user_lang'] : basename($config['default_lang']);
-		$this->lang_path = TITANIA_ROOT . 'language/' . $this->lang_name . '/';
-		$this->add_lang('titania_common');
-	}
+		// Set the custom template path for titania. Default: root/titania/template
+		$template->set_custom_template(TITANIA_ROOT . TEMPLATE_PATH, 'titania');
+		$user->set_custom_lang_path(TITANIA_ROOT . 'language');
 
-	/**
-	 * Add lang file for titania system.
-	 *
-	 * @param string $lang_set
-	 * @param bool $phpbb_lang_file language file located in the phpbb/language/ directory.
-	 */
-	public function add_lang($lang_set, $phpbb_lang_file = false)
-	{
-		global $user;
-
-		if (is_array($lang_set))
-		{
-			foreach ($lang_set as $lang_file)
-			{
-				$this->add_lang($lang_file);
-			}
-		}
-		else
-		{
-			$language_filename = $this->lang_path . $lang_set . '.' . PHP_EXT;
-
-			// if the phpbb_lang_file is set, we do not look in the TITANIA language directory for this file.
-			// ensure the file exists, if not, check the phpbb/language/ directory for the language file
-			// the downside of doing this is if the language file is missing from both locations, it will tell the user
-			// that the language file does not exist in the phpbb/language/ directory
-			if (!$phpbb_lang_file && file_exists($language_filename))
-			{
-				if ((@include $language_filename) === false)
-				{
-					trigger_error('Language file ' . $language_filename . ' couldn\'t be opened.', E_USER_ERROR);
-				}
-
-				// we only merge the lang array if it is set and not empty
-				if (!empty($lang) && is_array($lang))
-				{
-					$user->lang = array_merge($user->lang, $lang);
-				}
-			}
-			else
-			{
-				$user->add_lang($lang_set);
-			}
-		}
+		$user->add_lang('titania_common');
 	}
 
 	/**

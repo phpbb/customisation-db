@@ -18,7 +18,7 @@ require(TITANIA_ROOT . 'common.' . PHP_EXT);
 require(TITANIA_ROOT . 'includes/class_download.' . PHP_EXT);
 
 // Add language data
-$titania->add_lang('titania_download');
+$user->add_lang('titania_download');
 
 // Request vars
 $download_id	= request_var('id', 0);

@@ -17,17 +17,17 @@ if (!defined('IN_TITANIA'))
 }
 
 // Table names
-define('CUSTOMISATION_AUTHORS_TABLE',			$cdb_table_prefix . 'authors');
-define('CUSTOMISATION_CONTRIBS_TABLE',			$cdb_table_prefix . 'contribs');
-define('CUSTOMISATION_CONTRIB_TAGS_TABLE',		$cdb_table_prefix . 'contrib_tags');
-define('CUSTOMISATION_DOWNLOADS_TABLE',			$cdb_table_prefix . 'downloads');
-define('CUSTOMISATION_QUEUE_TABLE',				$cdb_table_prefix . 'queue');
-define('CUSTOMISATION_QUEUE_HISTORY_TABLE',		$cdb_table_prefix . 'queue_history');
-define('CUSTOMISATION_REVIEWS_TABLE',			$cdb_table_prefix . 'reviews');
-define('CUSTOMISATION_REVISIONS_TABLE',			$cdb_table_prefix . 'revisions');
-define('CUSTOMISATION_TAG_FIELDS_TABLE',		$cdb_table_prefix . 'tag_fields');
-define('CUSTOMISATION_TAG_TYPES_TABLE',			$cdb_table_prefix . 'tag_types');
-define('CUSTOMISATION_WATCH_TABLE',				$cdb_table_prefix . 'watch');
+define('CUSTOMISATION_AUTHORS_TABLE',			CDB_TABLE_PREFIX . 'authors');
+define('CUSTOMISATION_CONTRIBS_TABLE',			CDB_TABLE_PREFIX . 'contribs');
+define('CUSTOMISATION_CONTRIB_TAGS_TABLE',		CDB_TABLE_PREFIX . 'contrib_tags');
+define('CUSTOMISATION_DOWNLOADS_TABLE',			CDB_TABLE_PREFIX . 'downloads');
+define('CUSTOMISATION_QUEUE_TABLE',				CDB_TABLE_PREFIX . 'queue');
+define('CUSTOMISATION_QUEUE_HISTORY_TABLE',		CDB_TABLE_PREFIX . 'queue_history');
+define('CUSTOMISATION_REVIEWS_TABLE',			CDB_TABLE_PREFIX . 'reviews');
+define('CUSTOMISATION_REVISIONS_TABLE',			CDB_TABLE_PREFIX . 'revisions');
+define('CUSTOMISATION_TAG_FIELDS_TABLE',		CDB_TABLE_PREFIX . 'tag_fields');
+define('CUSTOMISATION_TAG_TYPES_TABLE',			CDB_TABLE_PREFIX . 'tag_types');
+define('CUSTOMISATION_WATCH_TABLE',				CDB_TABLE_PREFIX . 'watch');
 
 // Customisation (contrib) status
 define('STATUS_NEW', 0);

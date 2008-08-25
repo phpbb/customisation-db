@@ -1,9 +1,9 @@
-/* @version $Id$ */
+/* SQLEditor (MySQL)*/
 
 
 CREATE TABLE `customisation_authors`
 (
-`author_id` MEDIUMINT(8) NOT NULL AUTO_INCREMENT ,
+`author_id` MEDIUMINT(8) unsigned  NOT NULL AUTO_INCREMENT ,
 `user_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
 `phpbb_user_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
 `author_username` VARCHAR(255) NOT NULL,
@@ -25,38 +25,16 @@ PRIMARY KEY (`author_id`)
 
 CREATE TABLE `customisation_tag_types`
 (
-`tag_type_id` MEDIUMINT(8) NOT NULL AUTO_INCREMENT ,
+`tag_type_id` MEDIUMINT(8) unsigned  NOT NULL AUTO_INCREMENT ,
 `tag_type_name` VARCHAR(255) NOT NULL,
 PRIMARY KEY (`tag_type_id`)
 ) TYPE=InnoDB;
 
 
 
-CREATE TABLE `customisation_contrib_tags`
-(
-`contrib_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
-`tag_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
-`tag_value` VARCHAR(255) NOT NULL,
-PRIMARY KEY (`contrib_id`,`tag_id`)
-) TYPE=InnoDB;
-
-
-
-CREATE TABLE `customisation_tag_fields`
-(
-`tag_id` MEDIUMINT(8) NOT NULL AUTO_INCREMENT ,
-`tag_type_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
-`tag_field_name` VARCHAR(255) NOT NULL,
-`tag_field_desc` VARCHAR(255) NOT NULL,
-`contrib_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL UNIQUE ,
-PRIMARY KEY (`tag_id`)
-) TYPE=InnoDB;
-
-
-
 CREATE TABLE `customisation_contribs`
 (
-`contrib_id` MEDIUMINT(8) NOT NULL AUTO_INCREMENT ,
+`contrib_id` MEDIUMINT(8) unsigned  NOT NULL AUTO_INCREMENT ,
 `contrib_type` TINYINT(1) unsigned  DEFAULT 1 NOT NULL,
 `contrib_name` VARCHAR(255) NOT NULL,
 `contrib_description` MEDIUMTEXT NOT NULL,
@@ -83,7 +61,7 @@ PRIMARY KEY (`contrib_id`)
 
 
 
-CREATE TABLE `customisations_watch`
+CREATE TABLE `customisation_watch`
 (
 `contrib_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
 `user_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
@@ -93,9 +71,31 @@ PRIMARY KEY (`contrib_id`,`user_id`)
 
 
 
+CREATE TABLE `customisation_tag_fields`
+(
+`tag_id` MEDIUMINT(8) unsigned  NOT NULL AUTO_INCREMENT ,
+`tag_type_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
+`tag_field_name` VARCHAR(255) NOT NULL,
+`tag_field_desc` VARCHAR(255) NOT NULL,
+`contrib_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
+PRIMARY KEY (`tag_id`)
+) TYPE=InnoDB;
+
+
+
+CREATE TABLE `customisation_contrib_tags`
+(
+`contrib_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
+`tag_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
+`tag_value` VARCHAR(255) NOT NULL,
+PRIMARY KEY (`contrib_id`,`tag_id`)
+) TYPE=InnoDB;
+
+
+
 CREATE TABLE `customisation_revisions`
 (
-`revision_id` MEDIUMINT(8) NOT NULL AUTO_INCREMENT ,
+`revision_id` MEDIUMINT(8) unsigned  NOT NULL AUTO_INCREMENT ,
 `contrib_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
 `contrib_type` TINYINT(1) unsigned  DEFAULT 0 NOT NULL,
 `revision_name` VARCHAR(100) NOT NULL,
@@ -107,7 +107,7 @@ PRIMARY KEY (`revision_id`)
 
 CREATE TABLE `customisation_downloads`
 (
-`download_id` MEDIUMINT(8) NOT NULL AUTO_INCREMENT ,
+`download_id` MEDIUMINT(8) unsigned  NOT NULL AUTO_INCREMENT ,
 `revision_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
 `download_type` TINYINT(1) unsigned  DEFAULT 0 NOT NULL,
 `download_status` TINYINT(1) unsigned  DEFAULT 0 NOT NULL,
@@ -128,7 +128,7 @@ PRIMARY KEY (`download_id`)
 
 CREATE TABLE `customisation_reviews`
 (
-`review_id` MEDIUMINT(8) NOT NULL AUTO_INCREMENT ,
+`review_id` MEDIUMINT(8) unsigned  NOT NULL AUTO_INCREMENT ,
 `contrib_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
 `review_text` MEDIUMTEXT NOT NULL,
 `review_text_bitfield` VARCHAR(255) NOT NULL,
@@ -143,19 +143,9 @@ PRIMARY KEY (`review_id`)
 
 
 
-CREATE TABLE `customisation_queue_history`
-(
-`history_id` MEDIUMINT(8) NOT NULL AUTO_INCREMENT ,
-`queue_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL UNIQUE ,
-`user_id` MEDIUMINT(8) NOT NULL,
-PRIMARY KEY (`history_id`)
-) TYPE=InnoDB;
-
-
-
 CREATE TABLE `customisation_queue`
 (
-`queue_id` MEDIUMINT(8) NOT NULL AUTO_INCREMENT ,
+`queue_id` MEDIUMINT(8) unsigned  NOT NULL AUTO_INCREMENT ,
 `revision_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
 `queue_type` TINYINT(1) unsigned  DEFAULT 0 NOT NULL,
 `queue_status` TINYINT(1) unsigned  DEFAULT 0 NOT NULL,
@@ -173,18 +163,27 @@ PRIMARY KEY (`queue_id`)
 ) TYPE=InnoDB;
 
 
-CREATE INDEX `customisation_tag_fields_tag_id_idxfk`  ON `customisation_tag_fields`(`tag_id`);
-ALTER TABLE `customisation_tag_fields` ADD FOREIGN KEY (`tag_id,contrib_id`) REFERENCES `customisation_contrib_tags`(`tag_id,contrib_id`);
-ALTER TABLE `customisation_tag_fields` ADD FOREIGN KEY (`tag_type_id`) REFERENCES `customisation_tag_types`(`tag_type_id`);
-CREATE INDEX `customisation_contribs_contrib_id_idxfk`  ON `customisation_contribs`(`contrib_id`);
-ALTER TABLE `customisation_contribs` ADD FOREIGN KEY (`contrib_id`) REFERENCES `customisation_tag_fields`(`contrib_id`);
-ALTER TABLE `customisation_contribs` ADD FOREIGN KEY (`contrib_revision`) REFERENCES `customisation_revisions`(`revision_id`);
+
+CREATE TABLE `customisation_queue_history`
+(
+`history_id` MEDIUMINT(8) unsigned  NOT NULL AUTO_INCREMENT ,
+`queue_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
+`user_id` MEDIUMINT(8) unsigned  DEFAULT 0 NOT NULL,
+PRIMARY KEY (`history_id`)
+) TYPE=InnoDB;
+
+
 ALTER TABLE `customisation_contribs` ADD FOREIGN KEY (`contrib_author_id`) REFERENCES `customisation_authors`(`author_id`);
-CREATE INDEX `customisations_watch_contrib_id_idxfk`  ON `customisations_watch`(`contrib_id`);
-ALTER TABLE `customisations_watch` ADD FOREIGN KEY (`contrib_id`) REFERENCES `customisation_contribs`(`contrib_id`);
-ALTER TABLE `customisation_revisions` ADD FOREIGN KEY (`contrib_id`) REFERENCES `customisation_contribs`(`contrib_id`);
+CREATE INDEX `customisation_watch_contrib_id_idxfk`  ON `customisation_watch`(`contrib_id`);
+ALTER TABLE `customisation_watch` ADD FOREIGN KEY (`contrib_id`) REFERENCES `customisation_contribs`(`contrib_id`);
+ALTER TABLE `customisation_tag_fields` ADD FOREIGN KEY (`tag_type_id`) REFERENCES `customisation_tag_types`(`tag_type_id`);
+ALTER TABLE `customisation_tag_fields` ADD FOREIGN KEY (`contrib_id`) REFERENCES `customisation_contribs`(`contrib_id`);
+CREATE INDEX `customisation_contrib_tags_contrib_id_idxfk`  ON `customisation_contrib_tags`(`contrib_id`);
+ALTER TABLE `customisation_contrib_tags` ADD FOREIGN KEY (`contrib_id`) REFERENCES `customisation_contribs`(`contrib_id`);
+CREATE INDEX `customisation_contrib_tags_tag_id_idxfk`  ON `customisation_contrib_tags`(`tag_id`);
+ALTER TABLE `customisation_contrib_tags` ADD FOREIGN KEY (`tag_id`) REFERENCES `customisation_tag_fields`(`tag_id`);
 ALTER TABLE `customisation_downloads` ADD FOREIGN KEY (`revision_id`) REFERENCES `customisation_revisions`(`revision_id`);
 ALTER TABLE `customisation_reviews` ADD FOREIGN KEY (`contrib_id`) REFERENCES `customisation_contribs`(`contrib_id`);
-CREATE INDEX `customisation_queue_queue_id_idxfk`  ON `customisation_queue`(`queue_id`);
-ALTER TABLE `customisation_queue` ADD FOREIGN KEY (`queue_id`) REFERENCES `customisation_queue_history`(`queue_id`);
 ALTER TABLE `customisation_queue` ADD FOREIGN KEY (`revision_id`) REFERENCES `customisation_revisions`(`revision_id`);
+ALTER TABLE `customisation_queue` ADD FOREIGN KEY (`contrib_id`) REFERENCES `customisation_contribs`(`contrib_id`);
+ALTER TABLE `customisation_queue_history` ADD FOREIGN KEY (`queue_id`) REFERENCES `customisation_queue`(`queue_id`);

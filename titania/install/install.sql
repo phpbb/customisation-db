@@ -1,7 +1,9 @@
 # @version $Id$
 
+SET FOREIGN_KEY_CHECKS = 0;
+
 CREATE TABLE customisation_authors (
-  author_id mediumint(8) NOT NULL auto_increment,
+  author_id mediumint(8) unsigned NOT NULL auto_increment,
   user_id mediumint(8) unsigned NOT NULL default '0',
   phpbb_user_id mediumint(8) unsigned NOT NULL default '0',
   author_username varchar(255) collate utf8_bin NOT NULL,
@@ -26,12 +28,15 @@ CREATE TABLE customisation_contrib_tags (
   contrib_id mediumint(8) unsigned NOT NULL default '0',
   tag_id mediumint(8) unsigned NOT NULL default '0',
   tag_value varchar(255) collate utf8_bin NOT NULL,
-  PRIMARY KEY  (contrib_id,tag_id)
+  PRIMARY KEY  (contrib_id,tag_id),
+  KEY tag_id (tag_id),
+  CONSTRAINT fk_tags_contrib_id FOREIGN KEY (contrib_id) REFERENCES customisation_contribs (contrib_id),
+  CONSTRAINT fk_tags_tag_id FOREIGN KEY (tag_id) REFERENCES customisation_tag_fields (tag_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 CREATE TABLE customisation_contribs (
-  contrib_id mediumint(8) NOT NULL auto_increment,
+  contrib_id mediumint(8) unsigned NOT NULL auto_increment,
   contrib_type tinyint(1) unsigned NOT NULL default '1',
   contrib_name varchar(255) collate utf8_bin NOT NULL,
   contrib_description mediumtext collate utf8_bin NOT NULL,
@@ -60,12 +65,13 @@ CREATE TABLE customisation_contribs (
   KEY contrib_phpbb_version (contrib_phpbb_version),
   KEY contrib_rating (contrib_rating),
   KEY contrib_downloads (contrib_downloads),
-  KEY customisation_contribs_contrib_id_idxfk (contrib_id)
+  KEY contrib_id (contrib_id),
+  CONSTRAINT fk_author_id FOREIGN KEY (contrib_author_id) REFERENCES customisation_authors (author_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 CREATE TABLE customisation_downloads (
-  download_id mediumint(8) NOT NULL auto_increment,
+  download_id mediumint(8) unsigned NOT NULL auto_increment,
   revision_id mediumint(8) unsigned NOT NULL default '0',
   download_type tinyint(1) unsigned NOT NULL default '0',
   download_status tinyint(1) unsigned NOT NULL default '0',
@@ -81,12 +87,13 @@ CREATE TABLE customisation_downloads (
   thumbnail tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY  (download_id),
   KEY revision_id (revision_id),
-  KEY download_type (download_type)
+  KEY download_type (download_type),
+  CONSTRAINT fk_download_revision_id FOREIGN KEY (revision_id) REFERENCES customisation_revisions (revision_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 CREATE TABLE customisation_queue (
-  queue_id mediumint(8) NOT NULL auto_increment,
+  queue_id mediumint(8) unsigned NOT NULL auto_increment,
   revision_id mediumint(8) unsigned NOT NULL default '0',
   queue_type tinyint(1) unsigned NOT NULL default '0',
   queue_status tinyint(1) unsigned NOT NULL default '0',
@@ -107,20 +114,24 @@ CREATE TABLE customisation_queue (
   KEY queue_status (queue_status),
   KEY revision_id (revision_id),
   KEY submitter_user_id (submitter_user_id),
-  KEY customisation_queue_queue_id_idxfk (queue_id)
+  KEY queue_id (queue_id),
+  CONSTRAINT fk_queue_contrib_id FOREIGN KEY (contrib_id) REFERENCES customisation_contribs (contrib_id),
+  CONSTRAINT fk_queue_revision_id FOREIGN KEY (revision_id) REFERENCES customisation_revisions (revision_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 CREATE TABLE customisation_queue_history (
-  history_id mediumint(8) NOT NULL auto_increment,
+  history_id mediumint(8) unsigned NOT NULL auto_increment,
   queue_id mediumint(8) unsigned NOT NULL default '0',
-  user_id mediumint(8) NOT NULL,
-  PRIMARY KEY  (history_id)
+  user_id mediumint(8) unsigned NOT NULL default '0',
+  PRIMARY KEY  (history_id),
+  KEY queue_id (queue_id),
+  CONSTRAINT fk_history_queue_id FOREIGN KEY (queue_id) REFERENCES customisation_queue (queue_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 CREATE TABLE customisation_reviews (
-  review_id mediumint(8) NOT NULL auto_increment,
+  review_id mediumint(8) unsigned NOT NULL auto_increment,
   contrib_id mediumint(8) unsigned NOT NULL default '0',
   review_text mediumtext collate utf8_bin NOT NULL,
   review_text_bitfield varchar(255) collate utf8_bin NOT NULL,
@@ -133,12 +144,13 @@ CREATE TABLE customisation_reviews (
   PRIMARY KEY  (review_id),
   KEY review_user_id (review_user_id),
   KEY review_status (review_status),
-  KEY contrib_id (contrib_id)
+  KEY contrib_id (contrib_id),
+  CONSTRAINT fk_review_contrib_id FOREIGN KEY (contrib_id) REFERENCES customisation_contribs (contrib_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 CREATE TABLE customisation_revisions (
-  revision_id mediumint(8) NOT NULL auto_increment,
+  revision_id mediumint(8) unsigned NOT NULL auto_increment,
   contrib_id mediumint(8) unsigned NOT NULL default '0',
   contrib_type tinyint(1) unsigned NOT NULL default '0',
   revision_name varchar(100) collate utf8_bin NOT NULL,
@@ -149,19 +161,22 @@ CREATE TABLE customisation_revisions (
 
 
 CREATE TABLE customisation_tag_fields (
-  tag_id mediumint(8) NOT NULL auto_increment,
+  tag_id mediumint(8) unsigned NOT NULL auto_increment,
   tag_type_id mediumint(8) unsigned NOT NULL default '0',
   tag_field_name varchar(255) collate utf8_bin NOT NULL,
   tag_field_desc varchar(255) collate utf8_bin NOT NULL,
   contrib_id mediumint(8) unsigned NOT NULL default '0',
   PRIMARY KEY  (tag_id),
   KEY tag_type_id (tag_type_id),
-  KEY customisation_tag_fields_tag_id_idxfk (tag_id)
+  KEY tag_id (tag_id),
+  KEY contrib_id (contrib_id),
+  CONSTRAINT fk_tag_contrib_id FOREIGN KEY (contrib_id) REFERENCES customisation_contribs (contrib_id),
+  CONSTRAINT fk_tag_type_id FOREIGN KEY (tag_type_id) REFERENCES customisation_tag_types (tag_type_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 CREATE TABLE customisation_tag_types (
-  tag_type_id mediumint(8) NOT NULL auto_increment,
+  tag_type_id mediumint(8) unsigned NOT NULL auto_increment,
   tag_type_name varchar(255) collate utf8_bin NOT NULL,
   PRIMARY KEY  (tag_type_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -171,5 +186,8 @@ CREATE TABLE customisation_watch (
   contrib_id mediumint(8) unsigned NOT NULL default '0',
   user_id mediumint(8) unsigned NOT NULL default '0',
   mark_time int(11) unsigned NOT NULL default '0',
-  PRIMARY KEY  (contrib_id,user_id)
+  PRIMARY KEY  (contrib_id,user_id),
+  CONSTRAINT fk_watch_contrib_id FOREIGN KEY (contrib_id) REFERENCES customisation_contribs (contrib_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+SET FOREIGN_KEY_CHECKS = 1;
