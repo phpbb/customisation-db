@@ -78,6 +78,7 @@
 
 <link href="{T_THEME_PATH}/print.css" rel="stylesheet" type="text/css" media="print" title="printonly" />
 <link href="{T_STYLESHEET_LINK}" rel="stylesheet" type="text/css" media="screen, projection" />
+<link href="{T_TITANIA_STYLESHEET}" rel="stylesheet" type="text/css" media="screen, projection" />
 
 <link href="{T_THEME_PATH}/normal.css" rel="stylesheet" type="text/css" title="A" />
 <link href="{T_THEME_PATH}/medium.css" rel="alternate stylesheet" type="text/css" title="A+" />
@@ -172,3 +173,10 @@
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
 		<!-- ENDIF -->
+
+		<!-- BEGIN errorbox -->
+		<div class="<!-- IF errorbox.S_ERROR -->errorbox<!-- ELSE -->successbox<!-- ENDIF -->">
+			<h3>{errorbox.TITLE}</h3>
+			<p>{errorbox.MESSAGE}</p>
+		</div>
+		<!-- END errorbox -->

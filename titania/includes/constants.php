@@ -16,6 +16,8 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+define('THEME_PATH', TITANIA_ROOT . 'theme/');
+
 // Table names
 define('CUSTOMISATION_AUTHORS_TABLE',			CDB_TABLE_PREFIX . 'authors');
 define('CUSTOMISATION_CONTRIBS_TABLE',			CDB_TABLE_PREFIX . 'contribs');
@@ -33,6 +35,10 @@ define('CUSTOMISATION_WATCH_TABLE',				CDB_TABLE_PREFIX . 'watch');
 define('STATUS_NEW', 0);
 define('STATUS_APPROVED', 1);
 define('STATUS_DENIED', 2);
+
+// Errorbox types
+define('ERROR_ERROR', 1);
+define('ERROR_SUCCESS', 2);
 
 // Customisation (contrib) type
 define('CONTRIB_TYPE_MOD', 1);

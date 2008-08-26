@@ -40,6 +40,8 @@ class titania
 		$auth->acl($user->data);
 		$user->setup();
 
+		$this->page = $user->page['script_path'] . $user->page['page_name'];
+
 		// Set the custom template path for titania. Default: root/titania/template
 		$template->set_custom_template(TITANIA_ROOT . TEMPLATE_PATH, 'titania');
 		$user->set_custom_lang_path(TITANIA_ROOT . 'language');
@@ -55,8 +57,17 @@ class titania
 	 */
 	public function page_header($page_title = '', $display_online_list = true)
 	{
+		global $template;
+
 		// Call the phpBB page_header() function, but we perform our own actions here as well.
 		page_header($page_title, $display_online_list);
+
+		$template->assign_vars(array(
+			// rewrite the login URL to redirect to the currently viewed page.
+			'U_LOGIN_LOGOUT'		=> $template->_rootref['U_LOGIN_LOGOUT'] . '&amp;redirect=' . $this->page,
+			'T_TITANIA_THEME_PATH'	=> THEME_PATH,
+			'T_TITANIA_STYLESHEET'	=> THEME_PATH . 'stylesheet.css',
+		));
 	}
 
 	/**
@@ -68,16 +79,22 @@ class titania
 	{
 		global $auth, $user, $template, $cache;
 
-		/*
-		** This is development/testing code.
-		** @security: Cross-Site Request Forgery
-		*/
-
 		// admin requested the cache to be purged, ensure they have permission and purge the cache.
 		if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && $auth->acl_get('a_'))
 		{
-			$cache->purge();
-			trigger_error($user->lang['CACHE_PURGED'] . $this->back_link('', '', array('cache')));
+			if (confirm_box(true))
+			{
+				$cache->purge();
+				titania::error_box('SUCCESS', $user->lang['CACHE_PURGED'] . $this->back_link('', '', array('cache')));
+			}
+			else
+			{
+				$s_hidden_fields = build_hidden_fields(array(
+					'cache'		=> 'purge',
+				));
+
+				confirm_box(false, 'CONFIRM_PURGE_CACHE', $s_hidden_fields);
+			}
 		}
 
 		$template->assign_vars(array(
@@ -101,32 +118,61 @@ class titania
 	{
 		global $user, $config;
 
-		// if the redirect param is filled, we return directly to that page
+		$params = $query = array();
+		$exclude = array_combine($exclude, $exclude);
+
 		if (!$redirect)
 		{
+			// we must process our own redirect
 			// full site URL based on config.
 			$site_url = $config['server_protocol'] . $config['server_name'] . '/';
 
 			// if HTTP_REFERER is set, and begins with the site URL, we allow it to be our redirect...
 			if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] && (strpos($_SERVER['HTTP_REFERER'], $site_url) === 0))
 			{
-				$redirect = $_SERVER['HTTP_REFERER'];
+				$url_scheme = parse_url($_SERVER['HTTP_REFERER']);
+
+				$redirect = $url_scheme['path'];
+				$query_ary = (isset($url_scheme['query'])) ? explode('&', $url_scheme['query']) : $query;
+
+				foreach ($query_ary as $param)
+				{
+					list($key, $value) = explode('=', $param);
+					$query[$key] = $value;
+				}
 			}
 			else
 			{
-				$params = array();
-
-				// collect the list of $_GET params to be used in the redirect string.
-				foreach ($_GET as $key => $value)
-				{
-					if (!in_array($key, $exclude))
-					{
-						$params[] = $key . '=' . $value;
-					}
-				}
-
-				$redirect = $user->page['script_path'] . $user->page['page_name'] . '?' . implode('&amp;', $params);
+				$redirect = $user->page['script_path'] . $user->page['page_name'];
 			}
+		}
+		else
+		{
+			$url_scheme = parse_url($redirect);
+			$redirect = $url_scheme['path'];
+			$query_ary = (isset($url_scheme['query'])) ? explode('&', $url_scheme['query']) : $query;
+
+			foreach ($query_ary as $param)
+			{
+				list($key, $value) = explode('=', $param);
+				$query[$key] = $value;
+			}
+		}
+
+		if ($exclude || !$redirect)
+		{
+			// collect the list of $_GET params to be used in the redirect string if query string not filled.
+			$query = ($query) ? $query : $_GET;
+
+			foreach ($query as $key => $value)
+			{
+				if (!isset($exclude[$key]))
+				{
+					$params[] = $key . '=' . $value;
+				}
+			}
+
+			$redirect .= ($params) ? '?' . implode('&amp;', $params) : '';
 		}
 
 		// set the redirect string (Return to previous page)
@@ -144,7 +190,7 @@ class titania
 	 */
 	public function contrib_list($contrib_type)
 	{
-		global $db, $template, $user;
+		global $db, $template;
 
 		// set an upper and lowercase contrib_type as well need each in multiple occurences.
 		$l_contrib_type = strtolower($contrib_type);
@@ -155,7 +201,7 @@ class titania
 			trigger_error('NO_CONTRIB_TYPE');
 		}
 
-		$submit = isset($_REQUEST['submit']) ? true : false;
+//		$submit = isset($_REQUEST['submit']) ? true : false;
 
 		if (!class_exists('sort'))
 		{
@@ -215,14 +261,33 @@ class titania
 		$pagination->set_params(array(
 			'sk'	=> $sort->get_sort_key(),
 			'sd'	=> $sort->get_sort_dir(),
-			'mode'	=> $mode,
 		));
 
-		$pagination->build_pagination(self::page);
+		$pagination->build_pagination($this->page);
 
 		$template->assign_vars(array(
 			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
 			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
 		));
 	}
+
+	/**
+	 * Show the errorbox or successbox
+	 *
+	 * @param string $l_title message title - custom or user->lang defined
+	 * @param string $l_message message string
+	 * @param int $error_type ERROR_SUCCESS or ERROR_ERROR constant
+	 */
+	public static function error_box($l_title, $l_message, $error_type = ERROR_SUCCESS)
+	{
+		global $template, $user;
+
+		$template->assign_block_vars('errorbox', array(
+			'TITLE'		=> (isset($user->lang[$l_title])) ? $user->lang[$l_title] : $l_title,
+			'MESSAGE'	=> $l_message,
+			'S_ERROR'	=> ($error_type == ERROR_ERROR) ? true : false,
+			'S_SUCCESS'	=> ($error_type == ERROR_SUCCESS) ? true : false,
+		));
+	}
 }
+

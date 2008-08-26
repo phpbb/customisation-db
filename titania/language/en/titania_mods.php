@@ -36,11 +36,14 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+	'CATEGORY_DESCRIPTION'	=> 'Description',
+
 	'FIND_MOD'				=> 'Find a MOD',
 
 	'HIDE_FIND_MOD'			=> 'Hide Find',
 
 	'MOD_AUTHOR'			=> 'MOD Author',
+	'MOD_CATEGORY'			=> 'Category',
 	'MOD_CATEGORIES'		=> 'MOD Categories',
 	'MOD_DESCRIPTION'		=> 'MOD Description',
 	'MOD_LIST'				=> 'MODs list &bull; Search Results',
@@ -48,6 +51,7 @@ $lang = array_merge($lang, array(
 	'MOD_TITLE'				=> 'MOD Title',
 
 	'NO_MODS'				=> 'No MODs found',
+	'NO_CATEGORIES'			=> 'No Categories defined',
 
 	'TOTAL_MODS'			=> 'Total MODs Found',
 ));

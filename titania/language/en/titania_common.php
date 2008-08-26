@@ -37,11 +37,16 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'CACHE_PURGED'			=> 'Cache has been successfully purged',
+	'CONFIRM_PURGE_CACHE'	=> 'Are you sure you want to purge the cache?',
 
 	'DATE_ADDED'			=> 'Date Added',
 	'DOWNLOAD_COUNT'		=> 'Downloads',
 
+	'ERROR'					=> 'Error',
+
 	'LAST_UPDATE'			=> 'Last Update',
+
+	'NOTICE'				=> 'Notice',
 
 	'ORDER'					=> 'Order by',
 
@@ -52,5 +57,8 @@ $lang = array_merge($lang, array(
 
 	'SEARCH_RESULTS'		=> 'Search Results',
 	'SELECT_SORT_METHOD'	=> 'Select Sort Method',
+	'SUCCESS'				=> 'Success',
+
+	'WARNING'				=> 'Warning',
 ));
 
