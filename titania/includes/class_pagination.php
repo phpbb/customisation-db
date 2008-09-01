@@ -120,7 +120,7 @@ class pagination
 	 */
 	public function set_limit($limit_name = 'limit')
 	{
-		$limit = request_var($limit_name = 'limit');
+		$limit = request_var($limit_name, 0);
 
 		$this->limit = ($limit > $this->max_limit) ? $this->max_limit : $limit;
 		return $this->limit;
@@ -210,7 +210,7 @@ class pagination
 	 */
 	public function build_pagination($page)
 	{
-		global $template;
+		global $template, $user;
 
 		$params = (sizeof($this->params)) ? implode('&amp;', $this->params) : '';
 

@@ -182,9 +182,26 @@ class titania
 	}
 
 	/**
-	 * Function to list contribs for the selected type.
+	 * Show the errorbox or successbox
 	 *
-	 * @todo Hard-coding many actions, will then need to seperate these into their own functions/classes to be dynamically generated and scaleable
+	 * @param string $l_title message title - custom or user->lang defined
+	 * @param string $l_message message string
+	 * @param int $error_type ERROR_SUCCESS or ERROR_ERROR constant
+	 */
+	public static function error_box($l_title, $l_message, $error_type = ERROR_SUCCESS)
+	{
+		global $template, $user;
+
+		$template->assign_block_vars('errorbox', array(
+			'TITLE'		=> (isset($user->lang[$l_title])) ? $user->lang[$l_title] : $l_title,
+			'MESSAGE'	=> $l_message,
+			'S_ERROR'	=> ($error_type == ERROR_ERROR) ? true : false,
+			'S_SUCCESS'	=> ($error_type == ERROR_SUCCESS) ? true : false,
+		));
+	}
+
+	/**
+	 * Function to list contribs for the selected type.
 	 *
 	 * @param string $contrib_type
 	 */
@@ -213,14 +230,17 @@ class titania
 			include(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
 		}
 
+		/**
+		 * @todo too much hard-coding here
+		 */
 		$sort = new sort();
 		$sort->set_sort_keys(array(
-			'a'	=> array('SORT_AUTHOR',			'a.author_username_clean', 'default' => true),
-			'b'	=> array('SORT_TIME_ADDED',		'c.contrib_release_date'),
-			'c'	=> array('SORT_TIME_UPDATED',	'c.contrib_update_date'),
-			'd'	=> array('SORT_DOWNLOADS',		'c.contrib_downloads'),
-			'e'	=> array('SORT_RATING',			'c.contrib_rating'),
-			'f'	=> array('SORT_CONTRIB_NAME',	'c.contrib_name'),
+			array('SORT_AUTHOR',		'a.author_username_clean', 'default' => true),
+			array('SORT_TIME_ADDED',	'c.contrib_release_date'),
+			array('SORT_TIME_UPDATED',	'c.contrib_update_date'),
+			array('SORT_DOWNLOADS',		'c.contrib_downloads'),
+			array('SORT_RATING',		'c.contrib_rating'),
+			array('SORT_CONTRIB_NAME',	'c.contrib_name'),
 		));
 
 		$sort->sort_request(false);
@@ -268,25 +288,6 @@ class titania
 		$template->assign_vars(array(
 			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
 			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
-		));
-	}
-
-	/**
-	 * Show the errorbox or successbox
-	 *
-	 * @param string $l_title message title - custom or user->lang defined
-	 * @param string $l_message message string
-	 * @param int $error_type ERROR_SUCCESS or ERROR_ERROR constant
-	 */
-	public static function error_box($l_title, $l_message, $error_type = ERROR_SUCCESS)
-	{
-		global $template, $user;
-
-		$template->assign_block_vars('errorbox', array(
-			'TITLE'		=> (isset($user->lang[$l_title])) ? $user->lang[$l_title] : $l_title,
-			'MESSAGE'	=> $l_message,
-			'S_ERROR'	=> ($error_type == ERROR_ERROR) ? true : false,
-			'S_SUCCESS'	=> ($error_type == ERROR_SUCCESS) ? true : false,
 		));
 	}
 }
