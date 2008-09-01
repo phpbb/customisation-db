@@ -55,7 +55,7 @@ class titania
 	 * @param string $page_title
 	 * @param bool $display_online_list
 	 */
-	public function page_header($page_title = '', $display_online_list = true)
+	public function page_header($page_title = '', $display_online_list = false)
 	{
 		global $template;
 
