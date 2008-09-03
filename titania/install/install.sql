@@ -18,9 +18,11 @@ CREATE TABLE customisation_authors (
   author_snippets mediumint(8) unsigned NOT NULL default '0',
   author_mods mediumint(8) unsigned NOT NULL default '0',
   author_styles mediumint(8) unsigned NOT NULL default '0',
+  author_visible tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY  (author_id),
   KEY user_id (user_id),
-  KEY author_email_hash (author_email_hash)
+  KEY author_email_hash (author_email_hash),
+  KEY author_visible (author_visible)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
