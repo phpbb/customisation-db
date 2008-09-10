@@ -45,4 +45,8 @@ define('CONTRIB_TYPE_MOD', 1);
 define('CONTRIB_TYPE_STYLE', 2);
 define('CONTRIB_TYPE_SNIPPET', 3);
 define('CONTRIB_TYPE_LANG_PACK', 4);
+
+// Author constants
+define('AUTHOR_HIDDEN', 0);
+define('AUTHOR_VISIBLE', 1);
 // Define further contrib types based on the tags, and tag_types tables.

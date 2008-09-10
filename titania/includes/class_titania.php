@@ -290,5 +290,84 @@ class titania
 			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
 		));
 	}
+	
+	
+	/**
+	 * Function to list authors
+	 *
+	 */
+	public function author_list()
+	{
+		global $db, $template;
+
+		if (!class_exists('sort'))
+		{
+			include(TITANIA_ROOT . 'includes/class_sort.' . PHP_EXT);
+		}
+
+		if (!class_exists('pagination'))
+		{
+			include(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
+		}
+
+		/**
+		 * @todo too much hard-coding here
+		 */
+		$sort = new sort();
+		$sort->set_sort_keys(array(
+			array('SORT_AUTHOR',		'author_username_clean', 'default' => true),
+			array('SORT_RATING',	'author_rating'),
+			array('SORT_CONTRIBS',	'author_contribs'),
+			array('SORT_MODS',		'author_mods'),
+			array('SORT_STYLES',		'author_styles'),
+		));
+
+		$sort->sort_request(false);
+
+		$pagination = new pagination();
+		$start = $pagination->set_start();
+		$limit = $pagination->set_limit();
+
+		// select the list of contribs
+		$sql_ary = array(
+			'SELECT'	=> 'a.*, u.user_lastvisit, u.user_posts',
+			'FROM'		=> array(
+				CUSTOMISATION_AUTHORS_TABLE => 'a',
+			),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(USERS_TABLE => 'u'),
+					'ON'	=> 'a.user_id = a.author_id'
+				),
+			),
+			'WHERE'		=> 'a.author_visible <> ' . AUTHOR_VISIBLE,
+			'ORDER_BY'	=> $sort->get_order_by(),
+		);
+		$sql = $db->sql_build_query('SELECT', $sql_ary);
+		$result = $db->sql_query_limit($sql, $limit, $start);
+
+		while ($row = $db->sql_fetchrow($result))
+		{
+			/**
+			* @TODO
+			* Send stuff to the template here
+			**/
+		}
+		$db->sql_freeresult($result);
+
+		$pagination->sql_total_count($sql_ary, 'a.author_id');
+
+		$pagination->set_params(array(
+			'sk'	=> $sort->get_sort_key(),
+			'sd'	=> $sort->get_sort_dir(),
+		));
+
+		$pagination->build_pagination($this->page);
+
+		$template->assign_vars(array(
+			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
+			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
+		));
+	}
 }
 

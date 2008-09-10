@@ -67,6 +67,7 @@ class titania_author extends titania_database_object
 			'author_snippets'		=> array('default' => 0),
 			'author_mods'			=> array('default' => 0),
 			'author_styles'			=> array('default' => 0),
+			'author_visible'		=> array('default' => AUTHOR_VISIBLE),
 		));
 
 		if ($author_id !== false)
