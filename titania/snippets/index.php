@@ -24,21 +24,27 @@ $tag_type = 'SNIPPET';
 switch ($mode)
 {
 	case 'details':
+	
 		$page_title = 'SNIPPET_DETAILS';
 		$template_body = 'snippets/snippets_detail.html';
+		
 	break;
 
 	case 'list':
+	
 		$titania->page = TITANIA_ROOT . 'snippets/index.' . PHP_EXT;
 
 		$page_title = $tag_type . '_LIST';
 		$template_body = 'snippets/snippets_list.html';
+		
 	break;
 
 	case 'categories':
 	default:
+	
 		$page_title = $tag_type . '_CATEGORIES';
 		$template_body = 'snippets/snippets_categories.html';
+		
 	break;
 }
 
