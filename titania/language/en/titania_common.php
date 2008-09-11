@@ -60,5 +60,12 @@ $lang = array_merge($lang, array(
 	'SUCCESS'				=> 'Success',
 
 	'WARNING'				=> 'Warning',
+	
+	// Sorting
+	'SORT_AUTHOR'			=> 'Sort By Author',
+	'SORT_AUTHOR_RATING'	=> 'Sort By Author Rating',
+	'SORT_CONTRIBS'			=> 'Sort By Number of Contributions',
+	'SORT_MODS'				=> 'Sort By Number of MODs',
+	'SORT_STYLES'			=> 'Sort By Number of Styles',
 ));
 

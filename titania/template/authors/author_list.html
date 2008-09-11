@@ -1,3 +1,19 @@
 <!-- INCLUDE overall_header.html -->
 {L_AUTHOR_PROFILE}
+<table width="100%">
+<!-- BEGIN authors -->
+<tr>
+	<td width="10%">{authors.USERNAME}</td>
+	<td width="10%"><!-- IF authors.U_PHPBB_PROFILE --><a href="{authors.U_PHPBB_PROFILE}">{L_PHPBB_PROFILE}</a><!-- ELSE -->&nbsp;<!-- ENDIF --></td>
+	<td width="10%">{authors.CONTRIBS}</td>
+	<td width="10%">{authors.MODS}</td>
+	<td width="10%">{authors.STYLES}</td>
+	<td width="10%">{authors.RATING}</td>
+	<td width="10%">{authors.WEBSITE}</td>
+	<td width="10%">{authors.LAST_VISIT}</td>
+	<td width="10%">{authors.POSTS}</td>
+	<td width="10%"><!-- IF authors.ONLINE -->{L_ONLINE}<!-- ENDIF --></td>
+</tr>
+<!-- END -->
+</table>
 <!-- INCLUDE overall_footer.html -->

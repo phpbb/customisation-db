@@ -59,6 +59,7 @@ switch ($mode)
 		* Send authors to template
 		* Uses $titania->author_list()
 		**/
+		$titania->author_list();
 		
 	break;
 
