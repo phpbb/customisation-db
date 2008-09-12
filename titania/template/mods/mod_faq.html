@@ -1,0 +1,16 @@
+<!-- INCLUDE overall_header.html -->
+<h2 class="solo">{L_MOD_FAQ}</h2>
+
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<!-- IF S_NO_FAQ -->
+		<center><strong>{L_NO_FAQ_FOR_THIS_MOD}</strong></center>
+	<!-- ELSE -->
+		<!-- BEGIN faq -->
+		<h4>{faq.SUBJECT} ({L_MOD_VERSION}: {faq.MOD_VERSION})</h4>
+		<p>{faq.TEXT}</p>
+		<!-- END faq -->
+	<!-- ENDIF -->
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- INCLUDE overall_footer.html -->
