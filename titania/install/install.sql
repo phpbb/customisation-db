@@ -193,7 +193,7 @@ CREATE TABLE customisation_watch (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
-CREATE TABLE customisation_mod_faq (
+CREATE TABLE customisation_contrib_faq (
   faq_id mediumint(8) unsigned NOT NULL auto_increment,
   contrib_id mediumint(8) unsigned NOT NULL default '0',
   parent_id mediumint(8) unsigned NOT NULL default '0',

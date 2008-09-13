@@ -32,7 +32,7 @@ class titania_faq extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= CUSTOMISATION_MOD_FAQ_TABLE;
+	protected $sql_table		= CUSTOMISATION_CONTRIB_FAQ_TABLE;
 
 	/**
 	 * SQL identifier field
@@ -54,7 +54,7 @@ class titania_faq extends titania_database_object
 			'faq_id'			=> array('default' => 0),
 			'contrib_id' 		=> array('default' => 0),
 			'parent_id' 		=> array('default' => 0),
-			'faq_mod_version' 	=> array('default' => 0, 'max' => 15),
+			'faq_version' 		=> array('default' => 0, 'max' => 15),
 			'faq_order_id' 		=> array('default' => 0),
 			'faq_subject' 		=> array('default' => 0, 'max' => 255),
 			'faq_text' 			=> array('default' => 0)
@@ -87,7 +87,7 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
-	 * Display faq for MOD
+	 * Display FAQ for specific contrib
 	 *
 	 * @param int $contrib_id
 	 */
@@ -100,23 +100,26 @@ class titania_faq extends titania_database_object
 			WHERE contrib_id = ' . (int) $contrib_id;
 		$result = $db->sql_query($sql);
 		
-		while ($row = $db->sql_fetchrowset($result))
+		if ($row = $db->sql_fetchrow($result))
 		{
-			$template->assign_block_vars('faq', array(
-				'ID'			=> $row['faq_id'],
-				'MOD_VERSION'	=> $row['faq_version'],
-				'SUBJECT'		=> $row['faq_subject'],
-				'TEXT'			=> $row['faq_text']
+		 	do
+		 	{
+				$template->assign_block_vars('faq', array(
+					'ID'			=> $row['faq_id'],
+					'VERSION'		=> $row['faq_version'],
+					'SUBJECT'		=> $row['faq_subject'],
+					'TEXT'			=> $row['faq_text'],
+				));			
+			}
+			while ($row = $db->sql_fetchrow($result));
+		}
+		else if
+		{
+			$template->assign_vars(array(
+				'S_NO_FAQ'		=> true,
 			));
-			
-			$exists = true;
 		}
 		$db->sql_freeresult($result);
-
-		if ($exists !== true)
-		{
-			$template->assign_var('S_NO_FAQ', true);
-		}
 	}
 }
 

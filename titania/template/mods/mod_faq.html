@@ -7,7 +7,7 @@
 		<center><strong>{L_NO_FAQ_FOR_THIS_MOD}</strong></center>
 	<!-- ELSE -->
 		<!-- BEGIN faq -->
-		<h4>{faq.SUBJECT} ({L_MOD_VERSION}: {faq.MOD_VERSION})</h4>
+		<h4>{faq.SUBJECT}<!-- IF faq.VERSION -->&nbsp;({L_VERSION}: {faq.VERSION})<!-- ENDIF --></h4>
 		<p>{faq.TEXT}</p>
 		<!-- END faq -->
 	<!-- ENDIF -->

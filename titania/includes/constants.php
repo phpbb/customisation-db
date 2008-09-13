@@ -30,7 +30,7 @@ define('CUSTOMISATION_REVISIONS_TABLE',			CDB_TABLE_PREFIX . 'revisions');
 define('CUSTOMISATION_TAG_FIELDS_TABLE',		CDB_TABLE_PREFIX . 'tag_fields');
 define('CUSTOMISATION_TAG_TYPES_TABLE',			CDB_TABLE_PREFIX . 'tag_types');
 define('CUSTOMISATION_WATCH_TABLE',				CDB_TABLE_PREFIX . 'watch');
-define('CUSTOMISATION_MOD_FAQ_TABLE',			CDB_TABLE_PREFIX . 'mod_faq');
+define('CUSTOMISATION_CONTRIB_FAQ_TABLE',		CDB_TABLE_PREFIX . 'contrib_faq');
 
 // Customisation (contrib) status
 define('STATUS_NEW', 0);
