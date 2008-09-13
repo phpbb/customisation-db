@@ -3,14 +3,12 @@
 
 <div class="panel">
 	<div class="inner"><span class="corners-top"><span></span></span>
-	<!-- IF S_NO_FAQ -->
-		<center><strong>{L_NO_FAQ_FOR_THIS_MOD}</strong></center>
-	<!-- ELSE -->
 		<!-- BEGIN faq -->
-		<h4>{faq.SUBJECT}<!-- IF faq.VERSION -->&nbsp;({L_VERSION}: {faq.VERSION})<!-- ENDIF --></h4>
-		<p>{faq.TEXT}</p>
+			<h4>{faq.SUBJECT}<!-- IF faq.VERSION -->&nbsp;({L_VERSION}: {faq.VERSION})<!-- ENDIF --></h4>
+			<p>{faq.TEXT}</p>
+		<!-- BEGINELSE -->
+			<center><strong>{L_NO_FAQ_FOR_THIS_MOD}</strong></center>
 		<!-- END faq -->
-	<!-- ENDIF -->
 	<span class="corners-bottom"><span></span></span></div>
 </div>
 <!-- INCLUDE overall_footer.html -->

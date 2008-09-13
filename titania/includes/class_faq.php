@@ -2,7 +2,7 @@
 /**
 *
 * @package Titania
-* @version $Id: $
+* @version $Id: class_faq.php 49 2008-06-29 23:03:16Z HighwayofLife $
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -49,7 +49,6 @@ class titania_faq extends titania_database_object
 	public function __construct($faq_id = false)
 	{
 		// Configure object properties
-		
 		$this->object_config = array_merge($this->object_config, array(
 			'faq_id'			=> array('default' => 0),
 			'contrib_id' 		=> array('default' => 0),
@@ -87,39 +86,53 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
-	 * Display FAQ for specific contrib
+	 * Display FAQs for specific contrib
 	 *
 	 * @param int $contrib_id
 	 */
-	public function display($contrib_id)
+	public function display($contrib_id = 0)
 	{
 		global $db, $template;
 	
-		$sql = 'SELECT *
-			FROM ' . $this->sql_table . '
-			WHERE contrib_id = ' . (int) $contrib_id;
-		$result = $db->sql_query($sql);
-		
-		if ($row = $db->sql_fetchrow($result))
+		if (!class_exists('pagination'))
 		{
-		 	do
-		 	{
-				$template->assign_block_vars('faq', array(
-					'ID'			=> $row['faq_id'],
-					'VERSION'		=> $row['faq_version'],
-					'SUBJECT'		=> $row['faq_subject'],
-					'TEXT'			=> $row['faq_text'],
-				));			
-			}
-			while ($row = $db->sql_fetchrow($result));
+			include(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
 		}
-		else if
+		
+		$pagination = new pagination();
+		$start = $pagination->set_start();
+		$limit = $pagination->set_limit();
+
+		// Select number of total FAQs for this contrib
+		$sql = 'SELECT COUNT(faq_id) as total_count
+			FROM ' . $this->sql_table . '
+			WHERE contrib_id = ' . $contrib_id;
+		$sql = $db->sql_query($sql);	
+		$total_results = $db->sql_fetchfield('total_count');
+		$db->sql_freeresult($result);
+		
+		// Set number of total records
+		$pagination->set_total_results($total_results);
+		
+		// Select the list of FAQs
+		$sql = 'SELECT faq_id, faq_version, faq_subject, faq_text
+			FROM ' . $this->sql_table . '
+			WHERE contrib_id = ' . $contrib_id;
+		$sql = $db->sql_query($sql);
+		$result = $db->sql_query_limit($sql, $limit, $start);
+
+		while ($row = $db->sql_fetchrow($result))
 		{
-			$template->assign_vars(array(
-				'S_NO_FAQ'		=> true,
-			));
+			$template->assign_block_vars('faq', array(
+				'ID'			=> $row['faq_id'],
+				'VERSION'		=> $row['faq_version'],
+				'SUBJECT'		=> $row['faq_subject'],
+				'TEXT'			=> $row['faq_text'],
+			));			
 		}
 		$db->sql_freeresult($result);
+		
+		$pagination->build_pagination($this->page);
 	}
 }
 
