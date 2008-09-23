@@ -86,11 +86,11 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
-	 * Display FAQs for specific contrib
+	 * Display FAQs list for specific contrib
 	 *
 	 * @param int $contrib_id
 	 */
-	public function display($contrib_id = 0)
+	public function list_faqs($contrib_id = 0)
 	{
 		global $db, $template;
 	

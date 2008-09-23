@@ -18,7 +18,11 @@ include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
 $user->add_lang(array('titania_contrib', 'titania_mods'));
 
-$mode = request_var('mode', '');
+$mode 		= request_var('mode', '');
+$action 	= request_var('action', '');
+
+$contrib_id = request_var('contrib_id', 0);
+
 $tag_type = 'MOD';
 
 switch ($mode)
@@ -32,7 +36,7 @@ switch ($mode)
 
 		try
 		{
-			$mod = new titania_modification(request_var('contrib_id', 0));
+			$mod = new titania_modification($contrib_id);
 			$mod->load();
 
 			$author = $mod->get_author();
@@ -45,10 +49,49 @@ switch ($mode)
 	break;
 	
 	case 'faq':
-	
-		$page_title = 'MOD_FAQ';
-		$template_body = 'mods/mod_faq.html';
-	
+		require(TITANIA_ROOT . 'includes/class_faq.' . PHP_EXT);
+		
+		$faq = new titania_faq(request_var('faq_id', 0));
+		
+		switch ($action)
+		{
+			case 'add':
+			case 'edit':
+				if ($submit)
+				{
+					// @todo
+					$faq->submit();
+				}
+				
+				$page_title = 'MOD_FAQ_' . strtoupper($action);
+				$template_body = 'mods/mod_faq_edit.html';
+				
+				$faq->load();
+				
+				// @todo
+				
+				$template->assign_vars(array(
+					'FAQ_SUBJECT'	=> $faq->faq_subject,
+					'FAQ_TEXT'		=> $faq->faq_text
+				));
+			break;
+			
+			case 'delete':
+				// @todo			
+			break;
+			
+			case 'detail':
+				// @todo			
+			break;
+			
+			default:
+				$page_title = 'MOD_FAQ_LIST';
+				$template_body = 'mods/mod_faq_list.html';
+				
+				// @todo				
+				$faq->list_faqs($contrib_id);
+			break;
+		}
 	break;
 
 	case 'reviews':
