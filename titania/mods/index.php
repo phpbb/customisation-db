@@ -20,15 +20,15 @@ $user->add_lang(array('titania_contrib', 'titania_mods'));
 
 $mode 		= request_var('mode', '');
 $action 	= request_var('action', '');
-
 $contrib_id = request_var('contrib_id', 0);
+
+$submit		= (isset($_POST['submit'])) ? true : false;
 
 $tag_type = 'MOD';
 
 switch ($mode)
 {
 	case 'details':
-	
 		$page_title = 'MOD_DETAILS';
 		$template_body = 'mods/mod_detail.html';
 
@@ -45,7 +45,6 @@ switch ($mode)
 		{
 			trigger_error('CONTRIB_NOT_FOUND');
 		}
-
 	break;
 	
 	case 'faq':
@@ -80,7 +79,7 @@ switch ($mode)
 				// @todo			
 			break;
 			
-			case 'detail':
+			case 'details':
 				// @todo			
 			break;
 			
@@ -95,27 +94,21 @@ switch ($mode)
 	break;
 
 	case 'reviews':
-	
 		$page_title = 'MOD_REVIEWS';
 		$template_body = 'mods/mod_reviews.html';
-
 	break;
 
 	case 'list':
-
 		$titania->page = TITANIA_ROOT . 'mods/index.' . PHP_EXT;
 
 		$page_title = $tag_type . '_LIST';
 		$template_body = 'mods/mod_list.html';
-
 	break;
 
 	case 'categories':
 	default:
-
 		$page_title = $tag_type . '_CATEGORIES';
 		$template_body = 'mods/mod_categories.html';
-
 	break;
 }
 
