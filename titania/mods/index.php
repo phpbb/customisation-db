@@ -58,37 +58,62 @@ switch ($mode)
 			case 'edit':
 				if ($submit)
 				{
+					$subject 	= utf8_normalize_nfc(request_var('subject', '', true));
+					$text 		= utf8_normalize_nfc(request_var('text', '', true));
+					
 					// @todo
 					$faq->submit();
 				}
 				
-				$page_title = 'MOD_FAQ_' . strtoupper($action);
+				$page_title = $tag_type . '_FAQ_' . strtoupper($action);
 				$template_body = 'mods/mod_faq_edit.html';
 				
-				$faq->load();
+				if ($action == 'edit')
+				{
+					$faq->load();
+				}
 				
 				// @todo
 				
 				$template->assign_vars(array(
-					'FAQ_SUBJECT'	=> $faq->faq_subject,
-					'FAQ_TEXT'		=> $faq->faq_text
+					'FAQ_SUBJECT'			=> $faq->faq_subject,
+					'FAQ_TEXT'				=> $faq->faq_text,
+					'FAQ_CONTRIB_VERSION'	=> $faq->contrib_version
 				));
 			break;
 			
 			case 'delete':
-				// @todo			
+				// check
+				if (confirm_box(true))
+				{
+					$faq->delete();
+					
+					// @todo: redirect
+				}
+				else
+				{
+					$s_hidden_fields = build_hidden_fields(array(
+						'submit'	=> true,
+						'faq_id'	=> $faq->faq_id
+					));
+					
+					confirm_box(false, 'FAQ_DELETE', $s_hidden_fields);
+				}
 			break;
 			
 			case 'details':
+				$page_title = $tag_type . '_FAQ_DETAILS';
+				$template_body = 'mods/mod_faq_details.html';
+				
 				// @todo			
 			break;
 			
 			default:
-				$page_title = 'MOD_FAQ_LIST';
+				$page_title = $tag_type . '_FAQ_LIST';
 				$template_body = 'mods/mod_faq_list.html';
 				
 				// @todo				
-				$faq->list_faqs($contrib_id);
+				$faq->faqs_list($contrib_id);
 			break;
 		}
 	break;

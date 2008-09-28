@@ -42,7 +42,7 @@ class titania_faq extends titania_database_object
 	protected $sql_id_field		= 'faq_id';
 
 	/**
-	 * Constructor class for titania authors
+	 * Constructor class for titania faq
 	 *
 	 * @param int $faq_id
 	 */
@@ -53,10 +53,13 @@ class titania_faq extends titania_database_object
 			'faq_id'			=> array('default' => 0),
 			'contrib_id' 		=> array('default' => 0),
 			'parent_id' 		=> array('default' => 0),
-			'faq_version' 		=> array('default' => 0, 'max' => 15),
+			'contrib_version' 	=> array('default' => 0, 'max' => 15),
 			'faq_order_id' 		=> array('default' => 0),
 			'faq_subject' 		=> array('default' => 0, 'max' => 255),
-			'faq_text' 			=> array('default' => 0)
+			'faq_text' 			=> array('default' => 0),
+			'faq_text_bitfield'	=> array('default' => '', 'readonly' => true),
+			'faq_text_uid'		=> array('default' => '', 'readonly' => true),
+			'faq_text_options'	=> array('default' => 7, 'readonly' => true)
 		));
 
 		if ($faq_id !== false)
@@ -66,73 +69,97 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
-	 * Submit data for storing into the database
+	 *  Creating list with similar FAQs
 	 *
-	 * @return void
-	 */
-	public function submit()
+	 * @param int $faq_id
+	 */ 
+	public function get_similar_faqs($faq_id)
 	{
-		parent::submit();
+		global $db;
+		
+		$sql = 'SELECT faq_id, faq_subject
+			FROM ' . $this->sql_table . '
+			WHERE parent_id = ' . (int) $faq_id;
+		$result = $db->sql_query($sql);
+		
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$template->assign_block_vars('similarfaqs', array(
+				'U_FAQ'		=> append_sid(TITANIA_ROOT . "mods/index.$phpEx?mode=faq&amp;action=details&amp;faq_id=" . $row['faq_id']),
+				'SUBJECT'	=> $row['faq_subject']
+			));
+		}
 	}
 
 	/**
-	 * Remove data from database
-	 *
-	 * @return void
-	 */	
-	public function delete()
-	{
-		parent::delete();
-	}
-
-	/**
-	 * Display FAQs list for specific contrib
+	 * Display FAQs list for selected contrib
 	 *
 	 * @param int $contrib_id
 	 */
-	public function list_faqs($contrib_id = 0)
+	public function get_faqs_list($contrib_id)
 	{
 		global $db, $template;
-	
+
+		if (!class_exists('sort'))
+		{
+			include(TITANIA_ROOT . 'includes/class_sort.' . PHP_EXT);
+		}
+			
 		if (!class_exists('pagination'))
 		{
 			include(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
 		}
 		
+		$sort = new sort();
+		
+		$sort->set_sort_keys(array(
+			array('SORT_CONTRIB_VERSION',		'f.contrib_version', 'default' => true),
+			array('SORT_SUBJECT',				'f.fat_subject'),
+		));
+
+		$sort->sort_request(false);		
+		
 		$pagination = new pagination();
 		$start = $pagination->set_start();
 		$limit = $pagination->set_limit();
-
-		// Select number of total FAQs for this contrib
-		$sql = 'SELECT COUNT(faq_id) as total_count
-			FROM ' . $this->sql_table . '
-			WHERE contrib_id = ' . $contrib_id;
-		$sql = $db->sql_query($sql);	
-		$total_results = $db->sql_fetchfield('total_count');
-		$db->sql_freeresult($result);
 		
-		// Set number of total records
-		$pagination->set_total_results($total_results);
+		// select the list of faqs for this contrib
+		$sql_array = array(
+			'SELECT'	=> 'f.faq_id, f.contrib_version, f.faq_subject',
+			'FROM'		=> array(
+				$this->sql_table => 'f'
+			),
+			'WHERE'		=> 'f.contrib_id = ' . $contrib_id,
+			'ORDER_BY'	=> $sort->get_order_by()
+		);
 		
-		// Select the list of FAQs
-		$sql = 'SELECT faq_id, faq_version, faq_subject, faq_text
-			FROM ' . $this->sql_table . '
-			WHERE contrib_id = ' . $contrib_id;
-		$sql = $db->sql_query($sql);
+		$sql = $db->sql_build_query('SELECT', $sql_array);
 		$result = $db->sql_query_limit($sql, $limit, $start);
 
 		while ($row = $db->sql_fetchrow($result))
 		{
-			$template->assign_block_vars('faq', array(
-				'ID'			=> $row['faq_id'],
-				'VERSION'		=> $row['faq_version'],
-				'SUBJECT'		=> $row['faq_subject'],
-				'TEXT'			=> $row['faq_text'],
+			$template->assign_block_vars('faqs', array(
+				'U_FAQ'				=> append_sid(TITANIA_ROOT . "mods/index.$phpEx?mode=faq&amp;action=details&amp;faq_id=" . $row['faq_id']),
+				'CONTRIB_VERSION'	=> $row['contrib_version'],
+				'SUBJECT'			=> $row['faq_subject'],
 			));			
 		}
 		$db->sql_freeresult($result);
 		
+		$pagination->sql_total_count($sql_ary, 'f.faq_id');
+		
+		$pagination->set_params(array(
+			'sk'	=> $sort->get_sort_key(),
+			'sd'	=> $sort->get_sort_dir(),
+		));
+		
+		// Build a pagination
 		$pagination->build_pagination($this->page);
+		
+		$template->assign_vars(array(
+			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
+			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
+		));
 	}
 }
 
