@@ -85,7 +85,7 @@ class titania_faq extends titania_database_object
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$template->assign_block_vars('similarfaqs', array(
-				'U_FAQ'		=> append_sid(TITANIA_ROOT . "mods/index.$phpEx?mode=faq&amp;action=details&amp;faq_id=" . $row['faq_id']),
+				'U_FAQ'		=> append_sid(TITANIA_ROOT . "mods/index.$phpEx", 'mode=faq&amp;action=details&amp;faq_id=' . $row['faq_id']),
 				'SUBJECT'	=> $row['faq_subject']
 			));
 		}
@@ -139,7 +139,7 @@ class titania_faq extends titania_database_object
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$template->assign_block_vars('faqs', array(
-				'U_FAQ'				=> append_sid(TITANIA_ROOT . "mods/index.$phpEx?mode=faq&amp;action=details&amp;faq_id=" . $row['faq_id']),
+				'U_FAQ'				=> append_sid(TITANIA_ROOT . "mods/index.$phpEx", 'mode=faq&amp;action=details&amp;faq_id=' . $row['faq_id']),
 				'CONTRIB_VERSION'	=> $row['contrib_version'],
 				'SUBJECT'			=> $row['faq_subject'],
 			));			
