@@ -176,7 +176,9 @@
 
 		<!-- BEGIN errorbox -->
 		<div class="<!-- IF errorbox.S_ERROR -->errorbox<!-- ELSE -->successbox<!-- ENDIF -->">
-			<h3>{errorbox.TITLE}</h3>
-			<p>{errorbox.MESSAGE}</p>
+		    <div class="inner"><span class="corners-top"><span></span></span>
+			     <h3>{errorbox.TITLE}</h3>
+			     <p>{errorbox.MESSAGE}</p>
+			<span class="corners-bottom"><span></span></span></div>
 		</div>
 		<!-- END errorbox -->
