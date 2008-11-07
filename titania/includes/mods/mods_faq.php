@@ -2,7 +2,7 @@
 /**
  *
  * @package titania
- * @version $Id: faq_main.php 122 2008-11-07 20:20:10Z daroPL $
+ * @version $Id: mods_faq.php 122 2008-11-07 20:20:10Z daroPL $
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -21,7 +21,7 @@ if (!defined('IN_PHPBB'))
 * Class for FAQ module
 * @package mods
 */
-class faq_main extends titania_object
+class mods_faq extends titania_object
 {
 	public $p_master;
 	public $u_action;
