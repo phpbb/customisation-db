@@ -1,77 +1,47 @@
 <?php
 /**
-*
-* @package titania
-* @version $Id: index.php 77 2008-08-25 09:11:31Z HighwayofLife $
-* @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License
-*
-*/
+ *
+ * @package titania
+ * @version $Id: index.php 77 2008-08-25 09:11:31Z HighwayofLife $
+ * @copyright (c) 2008 phpBB Customisation Database Team
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ *
+ */
 
 /**
-* @ignore
-*/
+ * @ignore
+ */
 define('IN_TITANIA', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
+include(PHPBB_ROOT_PATH . 'includes/functions_module.' . PHP_EXT);
 
-$user->add_lang(array('titania_contrib', 'titania_authors'));
+$id		= request_var('id', 'main');
+$mode	= request_var('mode', '');
 
-$mode = request_var('mode', '');
-$tag_type = 'AUTHOR';
+$module = new p_master();
 
-switch ($mode)
-{
-	case 'profile':
-		$page_title = 'AUTHOR_PROFILE';
-		$template_body = 'authors/author_profile.html';
+// Instantiate module system and generate list of available modules
+$module->list_modules('authors');
 
-		require(TITANIA_ROOT . 'includes/class_author.' . PHP_EXT);
+// Select the active module
+$module->set_active($id, $mode);
 
-		try
-		{
-			$author = new titania_author(request_var('author_id', 0));
-			$author->load();
-		}
-		catch (NoDataFoundException $e)
-		{
-			trigger_error('AUTHOR_NOT_FOUND');
-		}
-		
-		/**
-		* @TODO
-		* Send author data to the template
-		**/
-		
-	break;
+// Load and execute the relevant module
+// trick the module class to allow modules to be loaded from the titania includes path.
+$phpbb_root_path = TITANIA_ROOT;
+$module->load_active();
+$phpbb_root_path = PHPBB_ROOT_PATH;
 
-	case 'list':
-	default:
+// Assign data to the template engine for the list of modules
+$module->assign_tpl_vars(append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT));
 
-		$titania->page = TITANIA_ROOT . 'authors/index.' . PHP_EXT;
-
-		$page_title = $tag_type . '_LIST';
-		$template_body = 'authors/author_list.html';
-		
-		/**
-		* @TODO
-		* Send authors to template
-		* Uses $titania->author_list()
-		**/
-		$titania->author_list();
-		
-	break;
-
-}
-
-// Output page
-$titania->page_header($user->lang[$page_title]);
+// $titania->page_footer(false);
+$titania->page_header($module->get_page_title(), false);
 
 $template->set_filenames(array(
-	'body' => $template_body,
+	'body' => $module->get_tpl_name(),
 ));
 
 $titania->page_footer();
-
-?>

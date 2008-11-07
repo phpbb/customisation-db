@@ -68,7 +68,7 @@ class mods_main extends titania_object
 				if (!$found)
 				{
 					titania::error_box('ERROR', $user->lang['MOD_NOT_FOUND'], ERROR_ERROR);
-					
+
 					$mode = ($category) ? 'list' : 'categories';
 					$this->main($id, $mode);
 					return;

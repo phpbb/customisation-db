@@ -18,11 +18,28 @@ CREATE TABLE customisation_authors (
   author_snippets mediumint(8) unsigned NOT NULL default '0',
   author_mods mediumint(8) unsigned NOT NULL default '0',
   author_styles mediumint(8) unsigned NOT NULL default '0',
-  author_visible tinyint(1) unsigned NOT NULL default '0',
+  author_visible tinyint(1) unsigned NOT NULL default '1',
   PRIMARY KEY  (author_id),
   KEY user_id (user_id),
   KEY author_email_hash (author_email_hash),
   KEY author_visible (author_visible)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+CREATE TABLE customisation_contrib_faq (
+  faq_id mediumint(8) unsigned NOT NULL auto_increment,
+  contrib_id mediumint(8) unsigned NOT NULL default '0',
+  parent_id mediumint(8) unsigned NOT NULL default '0',
+  contrib_version varchar(15) collate utf8_bin NOT NULL,
+  faq_order_id mediumint(8) unsigned NOT NULL default '0',
+  faq_subject varchar(255) collate utf8_bin NOT NULL default '',
+  faq_text mediumtext collate utf8_bin NOT NULL,
+  faq_text_bitfield varchar(255) collate utf8_bin NOT NULL,
+  faq_text_uid varchar(8) collate utf8_bin NOT NULL,
+  faq_text_options int(11) unsigned NOT NULL default '7',
+  PRIMARY KEY  (faq_id),
+  KEY contrib_id (contrib_id),
+  KEY parent_id (parent_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
@@ -32,6 +49,7 @@ CREATE TABLE customisation_contrib_tags (
   tag_value varchar(255) collate utf8_bin NOT NULL,
   PRIMARY KEY  (contrib_id,tag_id),
   KEY tag_id (tag_id),
+  KEY contrib_id (contrib_id),
   CONSTRAINT fk_tags_contrib_id FOREIGN KEY (contrib_id) REFERENCES customisation_contribs (contrib_id),
   CONSTRAINT fk_tags_tag_id FOREIGN KEY (tag_id) REFERENCES customisation_tag_fields (tag_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -165,14 +183,12 @@ CREATE TABLE customisation_revisions (
 CREATE TABLE customisation_tag_fields (
   tag_id mediumint(8) unsigned NOT NULL auto_increment,
   tag_type_id mediumint(8) unsigned NOT NULL default '0',
-  tag_field_name varchar(255) collate utf8_bin NOT NULL,
+  tag_field_name varchar(100) collate utf8_bin NOT NULL,
   tag_field_desc varchar(255) collate utf8_bin NOT NULL,
-  contrib_id mediumint(8) unsigned NOT NULL default '0',
+  tag_clean_name varchar(100) collate utf8_bin NOT NULL,
   PRIMARY KEY  (tag_id),
   KEY tag_type_id (tag_type_id),
   KEY tag_id (tag_id),
-  KEY contrib_id (contrib_id),
-  CONSTRAINT fk_tag_contrib_id FOREIGN KEY (contrib_id) REFERENCES customisation_contribs (contrib_id),
   CONSTRAINT fk_tag_type_id FOREIGN KEY (tag_type_id) REFERENCES customisation_tag_types (tag_type_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -189,24 +205,9 @@ CREATE TABLE customisation_watch (
   user_id mediumint(8) unsigned NOT NULL default '0',
   mark_time int(11) unsigned NOT NULL default '0',
   PRIMARY KEY  (contrib_id,user_id),
+  KEY contrib_id (contrib_id),
   CONSTRAINT fk_watch_contrib_id FOREIGN KEY (contrib_id) REFERENCES customisation_contribs (contrib_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-
-CREATE TABLE customisation_contrib_faq (
-  faq_id mediumint(8) unsigned NOT NULL auto_increment,
-  contrib_id mediumint(8) unsigned NOT NULL default '0',
-  parent_id mediumint(8) unsigned NOT NULL default '0',
-  contrib_version varchar(15) collate utf8_bin NOT NULL,
-  faq_order_id mediumint(8) unsigned NOT NULL default '0',
-  faq_subject varchar(255) NOT NULL default '',
-  faq_text mediumtext NOT NULL,
-  faq_text_bitfield varchar(255) collate utf8_bin NOT NULL,
-  faq_text_uid varchar(8) collate utf8_bin NOT NULL,
-  faq_text_options int(11) unsigned NOT NULL default '7',
-  PRIMARY KEY  (faq_id),
-  KEY contrib_id (contrib_id),
-  KEY parent_id (parent_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 SET FOREIGN_KEY_CHECKS = 1;

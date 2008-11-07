@@ -149,7 +149,7 @@ abstract class titania_database_object extends titania_object
 
 		if (empty($this->sql_data))
 		{
-			throw new NoDataFoundException();
+			return false;
 		}
 
 		foreach ($this->sql_data as $key => $value)

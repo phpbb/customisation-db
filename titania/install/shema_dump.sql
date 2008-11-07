@@ -1,8 +1,6 @@
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
-drop table if exists `customisation_authors`;
-
 CREATE TABLE `customisation_authors` (
   `author_id` mediumint(8) unsigned NOT NULL auto_increment,
   `user_id` mediumint(8) unsigned NOT NULL default '0',
@@ -19,14 +17,31 @@ CREATE TABLE `customisation_authors` (
   `author_snippets` mediumint(8) unsigned NOT NULL default '0',
   `author_mods` mediumint(8) unsigned NOT NULL default '0',
   `author_styles` mediumint(8) unsigned NOT NULL default '0',
+  `author_visible` tinyint(1) unsigned NOT NULL default '1',
   PRIMARY KEY  (`author_id`),
   KEY `user_id` (`user_id`),
-  KEY `author_email_hash` (`author_email_hash`)
+  KEY `author_email_hash` (`author_email_hash`),
+  KEY `author_visible` (`author_visible`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-insert into `customisation_authors` values('2','2','165089','Highway of Life','highway of life','David Lewis','http://startrekguide.com','highwayoflife@gmail.com','175420516723','0.000000000','0','1','0','1','0');
+insert into `customisation_authors` values('2','2','165089','Highway of Life','highway of life','David Lewis','http://startrekguide.com','highwayoflife@gmail.com','175420516723','0.000000000','0','1','0','1','0','1');
 
-drop table if exists `customisation_contrib_tags`;
+CREATE TABLE `customisation_contrib_faq` (
+  `faq_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `contrib_id` mediumint(8) unsigned NOT NULL default '0',
+  `parent_id` mediumint(8) unsigned NOT NULL default '0',
+  `contrib_version` varchar(15) collate utf8_bin NOT NULL,
+  `faq_order_id` mediumint(8) unsigned NOT NULL default '0',
+  `faq_subject` varchar(255) collate utf8_bin NOT NULL default '',
+  `faq_text` mediumtext collate utf8_bin NOT NULL,
+  `faq_text_bitfield` varchar(255) collate utf8_bin NOT NULL,
+  `faq_text_uid` varchar(8) collate utf8_bin NOT NULL,
+  `faq_text_options` int(11) unsigned NOT NULL default '7',
+  PRIMARY KEY  (`faq_id`),
+  KEY `contrib_id` (`contrib_id`),
+  KEY `parent_id` (`parent_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
 
 CREATE TABLE `customisation_contrib_tags` (
   `contrib_id` mediumint(8) unsigned NOT NULL default '0',
@@ -40,8 +55,6 @@ CREATE TABLE `customisation_contrib_tags` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 insert into `customisation_contrib_tags` values('1','2','');
-
-drop table if exists `customisation_contribs`;
 
 CREATE TABLE `customisation_contribs` (
   `contrib_id` mediumint(8) unsigned NOT NULL auto_increment,
@@ -79,8 +92,6 @@ CREATE TABLE `customisation_contribs` (
 
 insert into `customisation_contribs` values('1','1','ACP Add User MOD',0x416464732061206e6577204d6f64756c65207468617420656e61626c657320616e2041646d696e6973747261746f7220746f206372656174652061206e65772075736572206163636f756e74207468726f756768207468652041646d696e697374726174696f6e20436f6e74726f6c2050616e656c2028414350292e0a4164647320616e206578747261207065726d697373696f6e20746f20616c6c6f772061646d696e6973747261746f7220746f206372656174652061206e65772075736572206163636f756e742e0a4769766573207468652061646d696e6973747261746f7220746865206162696c69747920746f20696e7374616e746c7920617070726f76652061206e6577206d656d626572206166746572206372656174696f6e2e,'','7','','1','1.0.1','1','1','2','0','5','20','3','1220301000','0','1','0.000000000','0','');
 
-drop table if exists `customisation_downloads`;
-
 CREATE TABLE `customisation_downloads` (
   `download_id` mediumint(8) unsigned NOT NULL auto_increment,
   `revision_id` mediumint(8) unsigned NOT NULL default '0',
@@ -102,8 +113,6 @@ CREATE TABLE `customisation_downloads` (
   CONSTRAINT `fk_download_revision_id` FOREIGN KEY (`revision_id`) REFERENCES `customisation_revisions` (`revision_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-
-drop table if exists `customisation_queue`;
 
 CREATE TABLE `customisation_queue` (
   `queue_id` mediumint(8) unsigned NOT NULL auto_increment,
@@ -133,8 +142,6 @@ CREATE TABLE `customisation_queue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
-drop table if exists `customisation_queue_history`;
-
 CREATE TABLE `customisation_queue_history` (
   `history_id` mediumint(8) unsigned NOT NULL auto_increment,
   `queue_id` mediumint(8) unsigned NOT NULL default '0',
@@ -144,8 +151,6 @@ CREATE TABLE `customisation_queue_history` (
   CONSTRAINT `fk_history_queue_id` FOREIGN KEY (`queue_id`) REFERENCES `customisation_queue` (`queue_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-
-drop table if exists `customisation_reviews`;
 
 CREATE TABLE `customisation_reviews` (
   `review_id` mediumint(8) unsigned NOT NULL auto_increment,
@@ -166,8 +171,6 @@ CREATE TABLE `customisation_reviews` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
-drop table if exists `customisation_revisions`;
-
 CREATE TABLE `customisation_revisions` (
   `revision_id` mediumint(8) unsigned NOT NULL auto_increment,
   `contrib_id` mediumint(8) unsigned NOT NULL default '0',
@@ -179,8 +182,6 @@ CREATE TABLE `customisation_revisions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 insert into `customisation_revisions` values('1','1','1','1.0.0','1220301000');
-
-drop table if exists `customisation_tag_fields`;
 
 CREATE TABLE `customisation_tag_fields` (
   `tag_id` mediumint(8) unsigned NOT NULL auto_increment,
@@ -203,19 +204,15 @@ insert into `customisation_tag_fields` values('1','1','Add-ons','Add-on MOds','a
  ('7','1','Entertainment','Entertainment and Games MODs','entertainment'),
  ('8','1','Syndication','RSS Feed and Syndication MODs','syndication');
 
-drop table if exists `customisation_tag_types`;
-
 CREATE TABLE `customisation_tag_types` (
   `tag_type_id` mediumint(8) unsigned NOT NULL auto_increment,
   `tag_type_name` varchar(255) collate utf8_bin NOT NULL,
   PRIMARY KEY  (`tag_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-insert into `customisation_tag_types` values('1','CATEGORY'),
+insert into `customisation_tag_types` values('1','MOD_CATEGORY'),
  ('2','COMPONENT'),
  ('3','COMPLEXITY');
-
-drop table if exists `customisation_watch`;
 
 CREATE TABLE `customisation_watch` (
   `contrib_id` mediumint(8) unsigned NOT NULL default '0',

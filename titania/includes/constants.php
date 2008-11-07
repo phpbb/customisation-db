@@ -58,3 +58,5 @@ define('AUTHOR_VISIBLE', 1);
 // Define further contrib types based on the tags, and tag_types tables.
 
 define('DEFAULT_OFFSET_LIMIT', 25);
+
+define('U_PHPBBCOM_VIEWPROFILE', 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile');

@@ -19,7 +19,7 @@ CREATE TABLE `phpbb_modules` (
   KEY `left_right_id` (`left_id`,`right_id`),
   KEY `module_enabled` (`module_enabled`),
   KEY `class_left_id` (`module_class`,`left_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=207 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=MyISAM AUTO_INCREMENT=212 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 insert into `phpbb_modules` values('1','1','1','','acp','0','1','60','ACP_CAT_GENERAL','',''),
  ('2','1','1','','acp','1','4','17','ACP_QUICK_ACCESS','',''),
@@ -226,6 +226,11 @@ insert into `phpbb_modules` values('1','1','1','','acp','0','1','60','ACP_CAT_GE
  ('203','1','1','main','mods','190','26','27','MODS_SUPPORT','support',''),
  ('204','1','1','main','mods','190','28','29','MODS_SCREENSHOTS','screenshots',''),
  ('205','1','1','','titania','0','1','4','TITANIA_MAIN','',''),
- ('206','1','1','main','titania','205','2','3','TITANIA_HOME','','');
+ ('206','1','1','main','titania','205','2','3','TITANIA_HOME','home',''),
+ ('207','1','1','','authors','0','1','10','AUTHORS_MAIN','',''),
+ ('208','1','1','main','authors','207','2','3','AUTHORS_LIST','list',''),
+ ('209','1','1','main','authors','207','4','5','AUTHOR_PROFILE','profile',''),
+ ('210','1','1','main','authors','207','6','7','AUTHOR_SEARCH','search',''),
+ ('211','1','1','main','authors','207','8','9','AUTHOR_SEARCH_RESULTS','results','');
 
 SET FOREIGN_KEY_CHECKS = 1;
