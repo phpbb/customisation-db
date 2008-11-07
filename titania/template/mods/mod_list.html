@@ -27,7 +27,7 @@
 		<tr>
 			<th class="name"><span class="rank-img"><a href="{U_SORT_RATING}#modlist">{L_RATING}</a></span>
 				<a href="{U_SORT_MOD_TITLE}#modlist">{L_MOD_TITLE}</a></th>
-			<th class="posts"><a href="{U_SORT_DOWNLOADS}#modlist">{L_DOWNLOAD_COUNT}</a></th>
+			<th class="posts" style="width: 10%;"><a href="{U_SORT_DOWNLOADS}#modlist">{L_DOWNLOAD_COUNT}</a></th>
 			<th class="info">{L_MOD_DESCRIPTION}</th>
 			<th class="joined"><a href="{U_SORT_TIME_ADDED}#modlist">{L_DATE_ADDED}</a></th>
 			<th class="active"><a href="{U_SORT_TIME_UPDATED}#modlist">{L_LAST_UPDATE}</a></th>
@@ -36,9 +36,9 @@
 		<tbody>
 		<!-- BEGIN contrib -->
 			<tr class="<!-- IF contrib.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
-				<td><a href="{contrib.U_CONTRIB}">{contrib.TITLE}</a> {contrib.VERSION}<span class="rank-img">{contrib.RATING}</span><br />
+				<td><a href="{contrib.U_CONTRIB}">{contrib.TITLE}</a> {contrib.VERSION}<span class="rank-img" style="margin-bottom: 10px;">{contrib.RATING}</span><br />
 					{contrib.AUTHOR}</td>
-				<td>{contrib.DOWNLOADS}</td>
+				<td style="text-align: center;">{contrib.DOWNLOADS}</td>
 				<td>{contrib.DESC}</td>
 				<td>{contrib.ADDED}</td>
 				<td>{contrib.UPDATED}</td>
