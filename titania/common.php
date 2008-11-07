@@ -52,4 +52,5 @@ $titania = new titania();
 // Include policy file (and interface)
 require(TITANIA_ROOT . 'includes/interface_policy.' . PHP_EXT);
 require(TITANIA_ROOT . 'policy.' . PHP_EXT);
+include(TITANIA_ROOT . 'includes/class_base_object.' . PHP_EXT);
 

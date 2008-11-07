@@ -37,6 +37,11 @@ define('STATUS_NEW', 0);
 define('STATUS_APPROVED', 1);
 define('STATUS_DENIED', 2);
 
+// Tag types
+define('TAG_TYPE_MOD_CATEGORY', 1);
+define('TAG_TYPE_COMPONENT', 2);
+define('TAG_TYPE_COMPLEXITY', 3);
+
 // Errorbox types
 define('ERROR_ERROR', 1);
 define('ERROR_SUCCESS', 2);
@@ -51,3 +56,5 @@ define('CONTRIB_TYPE_LANG_PACK', 4);
 define('AUTHOR_HIDDEN', 0);
 define('AUTHOR_VISIBLE', 1);
 // Define further contrib types based on the tags, and tag_types tables.
+
+define('DEFAULT_OFFSET_LIMIT', 25);

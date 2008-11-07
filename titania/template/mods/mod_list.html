@@ -34,14 +34,14 @@
 		</tr>
 		</thead>
 		<tbody>
-		<!-- BEGIN modlist -->
-			<tr class="<!-- IF modlist.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
-				<td>{modlist.AUTHOR}</td>
-				<td>{modlist.AUTHOR_FULL}</td>
-				<td>{modlist.TIME_ADDED}</td>
-				<td>{modlist.TIME_UPDATED}</td>
-				<td>{modlist.DOWNLOADS}</td>
-				<td>{modlist.RATING}</td>
+		<!-- BEGIN contrib -->
+			<tr class="<!-- IF contrib.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
+				<td><a href="{contrib.U_CONTRIB}">{contrib.TITLE}</a> {contrib.VERSION}<span class="rank-img">{contrib.RATING}</span><br />
+					{contrib.AUTHOR}</td>
+				<td>{contrib.DOWNLOADS}</td>
+				<td>{contrib.DESC}</td>
+				<td>{contrib.ADDED}</td>
+				<td>{contrib.UPDATED}</td>
 			</tr>
 		<!-- BEGINELSE -->
 		<tr class="bg1">

@@ -57,17 +57,59 @@ class titania
 	 */
 	public function page_header($page_title = '', $display_online_list = false)
 	{
-		global $template;
+		global $template, $user;
 
 		// Call the phpBB page_header() function, but we perform our own actions here as well.
 		page_header($page_title, $display_online_list);
+		
+		if ($user->data['user_id'] == ANONYMOUS)
+		{
+			$u_login_logout = $template->_rootref['U_LOGIN_LOGOUT'] . '&amp;redirect=' . $this->page;
+		}
+		else
+		{
+			$u_login_logout = append_sid(TITANIA_ROOT . 'index.' . PHP_EXT, 'mode=logout', true, $user->session_id); 
+		}
 
 		$template->assign_vars(array(
 			// rewrite the login URL to redirect to the currently viewed page.
-			'U_LOGIN_LOGOUT'		=> $template->_rootref['U_LOGIN_LOGOUT'] . '&amp;redirect=' . $this->page,
+			'U_LOGIN_LOGOUT'		=> $u_login_logout,
+			'LOGIN_REDIRECT'		=> $user->page['page'],
+			'S_LOGIN_ACTION'		=> append_sid(PHPBB_ROOT_PATH . 'ucp.' . PHP_EXT, 'mode=login'),
 			'T_TITANIA_THEME_PATH'	=> THEME_PATH,
 			'T_TITANIA_STYLESHEET'	=> THEME_PATH . 'stylesheet.css',
 		));
+	}
+
+	/**
+	 * Titania Logout method to redirect the user to the Titania root instead of the phpBB Root
+	 *
+	 * @param bool $return if we are within a method, we can use the error_box instead of a trigger_error on the redirect.
+	 */
+	public function logout($return = false)
+	{
+		global $user;
+
+		if ($user->data['user_id'] != ANONYMOUS && isset($_GET['sid']) && !is_array($_GET['sid']) && $_GET['sid'] === $user->session_id)
+		{
+			$user->session_kill();
+			$user->session_begin();
+			$message = $user->lang['LOGOUT_REDIRECT'];
+		}
+		else
+		{
+			$message = ($user->data['user_id'] == ANONYMOUS) ? $user->lang['LOGOUT_REDIRECT'] : $user->lang['LOGOUT_FAILED'];
+		}
+		
+		if ($return)
+		{
+			return $message;
+		}
+
+		meta_refresh(3, append_sid(TITANIA_PATH . 'index.' . PHP_EXT));
+
+		$message = $message . '<br /><br />' . sprintf($user->lang['RETURN_INDEX'], '<a href="' . append_sid(TITANIA_PATH . 'index.' . PHP_EXT) . '">', '</a> ');
+		trigger_error($message);
 	}
 
 	/**
@@ -201,98 +243,6 @@ class titania
 	}
 
 	/**
-	 * Function to list contribs for the selected type.
-	 *
-	 * @param string $contrib_type
-	 */
-	public function contrib_list($contrib_type)
-	{
-		global $db, $template;
-
-		// set an upper and lowercase contrib_type as well need each in multiple occurences.
-		$l_contrib_type = strtolower($contrib_type);
-		$u_contrib_type = strtoupper($contrib_type);
-
-		if (!defined('CONTRIB_TYPE_' . $u_contrib_type))
-		{
-			trigger_error('NO_CONTRIB_TYPE');
-		}
-
-//		$submit = isset($_REQUEST['submit']) ? true : false;
-
-		if (!class_exists('sort'))
-		{
-			include(TITANIA_ROOT . 'includes/class_sort.' . PHP_EXT);
-		}
-
-		if (!class_exists('pagination'))
-		{
-			include(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
-		}
-
-		/**
-		 * @todo too much hard-coding here
-		 */
-		$sort = new sort();
-		$sort->set_sort_keys(array(
-			array('SORT_AUTHOR',		'a.author_username_clean', 'default' => true),
-			array('SORT_TIME_ADDED',	'c.contrib_release_date'),
-			array('SORT_TIME_UPDATED',	'c.contrib_update_date'),
-			array('SORT_DOWNLOADS',		'c.contrib_downloads'),
-			array('SORT_RATING',		'c.contrib_rating'),
-			array('SORT_CONTRIB_NAME',	'c.contrib_name'),
-		));
-
-		$sort->sort_request(false);
-
-		$pagination = new pagination();
-		$start = $pagination->set_start();
-		$limit = $pagination->set_limit();
-
-		// select the list of contribs
-		$sql_ary = array(
-			'SELECT'	=> 'a.author_id, a.author_username, c.*',
-			'FROM'		=> array(
-				CUSTOMISATION_CONTRIBS_TABLE => 'c',
-			),
-			'LEFT_JOIN'	=> array(
-				array(
-					'FROM'	=> array(CUSTOMISATION_AUTHORS_TABLE => 'a'),
-					'ON'	=> 'c.contrib_author_id = a.author_id'
-				),
-			),
-			'WHERE'		=> 'contrib_status = ' . STATUS_APPROVED . '
-						AND contrib_type = ' . constant('CONTRIB_TYPE_' . $u_contrib_type),
-			'ORDER_BY'	=> $sort->get_order_by(),
-		);
-		$sql = $db->sql_build_query('SELECT', $sql_ary);
-		$result = $db->sql_query_limit($sql, $limit, $start);
-
-		while ($row = $db->sql_fetchrow($result))
-		{
-			$template->assign_block_vars($l_contrib_type, array(
-				$u_contrib_type . '_ID'		=> $row['contrib_id'],
-			));
-		}
-		$db->sql_freeresult($result);
-
-		$pagination->sql_total_count($sql_ary, 'c.contrib_id');
-
-		$pagination->set_params(array(
-			'sk'	=> $sort->get_sort_key(),
-			'sd'	=> $sort->get_sort_dir(),
-		));
-
-		$pagination->build_pagination($this->page);
-
-		$template->assign_vars(array(
-			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
-			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
-		));
-	}
-	
-	
-	/**
 	 * Function to list authors
 	 *
 	 */
@@ -314,7 +264,7 @@ class titania
 		 * @todo too much hard-coding here
 		 */
 		$sort = new sort();
-		
+
 		$sort->set_sort_keys(array(
 			array('SORT_AUTHOR',		'a.author_username_clean', 'default' => true),
 			array('SORT_AUTHOR_RATING',	'a.author_rating'),
@@ -345,22 +295,22 @@ class titania
 			'WHERE'		=> 'a.author_visible <> ' . AUTHOR_HIDDEN,
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
-		
+
 		$sql = $db->sql_build_query('SELECT', $sql_ary);
 		$result = $db->sql_query_limit($sql, $limit, $start);
-		
+
 		$authors = array();
 		$author_id_key = array();
-		
+
 		while ($author = $db->sql_fetchrow($result))
 		{
 			$author_id_key[$author['user_id']] = $author;
 			$author_id_key[$author['user_id']]['online'] = false;
 			$authors[] = &$author_id_key[$author['user_id']];
 		}
-		
+
 		$db->sql_freeresult($result);
-		
+
 		// Generate online information for user
 		if ($config['load_onlinetrack'] && sizeof($authors))
 		{
@@ -392,7 +342,7 @@ class titania
 				'U_PHPBB_PROFILE'	=>	($author['phpbb_user_id'] > 0) ? 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&u=' . $author['phpbb_user_id'] : '',
 			));
 		}
-		
+
 		$pagination->sql_total_count($sql_ary, 'a.author_id');
 
 		$pagination->set_params(array(
@@ -401,7 +351,7 @@ class titania
 		));
 
 		$pagination->build_pagination($this->page);
-		
+
 
 		$template->assign_vars(array(
 			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),

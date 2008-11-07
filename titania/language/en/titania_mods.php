@@ -48,10 +48,17 @@ $lang = array_merge($lang, array(
 	'MOD_DESCRIPTION'		=> 'MOD Description',
 	'MOD_LIST'				=> 'MODs list &bull; Search Results',
 	'MOD_LIST_DESCRIPTION'	=> 'MOD list description',
+	'MOD_NOT_FOUND'			=> 'MOD not found',
 	'MOD_TITLE'				=> 'MOD Title',
 
-	'NO_MODS'				=> 'No MODs found',
+	'NO_MODS'				=> 'No MODs found in category: “%s”',
 	'NO_CATEGORIES'			=> 'No Categories defined',
+
+	'SORT_CONTRIB_NAME'		=> 'Sort by MOD title',
+	'SORT_DOWNLOADS'		=> 'Sort by downloads',
+	'SORT_RATING'			=> 'Sort by MOD rating',
+	'SORT_TIME_ADDED'		=> 'Sort by date added',
+	'SORT_TIME_UPDATED'		=> 'Sort by date updated',
 
 	'TOTAL_MODS'			=> 'Total MODs Found',
 ));

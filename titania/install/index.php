@@ -122,9 +122,9 @@ if (!defined('IN_TITANIA'))
 			$define_value = str_replace("'", "\\'", str_replace('\\', '\\\\', $value));
 
 			// if the variable is the phpbb_root_path, we prepend TITANIA_ROOT...
-			$define_value = ($option['key'] == 'phpbb_root_path') ? TITANIA_ROOT . $define_value : $define_value;
+			$define_value = ($option['key'] == 'phpbb_root_path') ? "TITANIA_ROOT . '$define_value'" : "'$define_value'";
 
-			$config_data .= "define('$define_option', '$define_value');\n";
+			$config_data .= "define('$define_option', $define_value);\n";
 		}
 
 		$config_data .= "\n@define('TITANIA_INSTALLED', true);\n";

@@ -56,7 +56,7 @@ class pagination
 	 *
 	 * @var string
 	 */
-	protected $result_lang = '';
+	protected $result_lang = 'RETURNED_RESULT';
 
 	/**
 	 * Template vars, set automatically but may be changed if necessary.
