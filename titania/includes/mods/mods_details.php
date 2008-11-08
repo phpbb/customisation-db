@@ -67,7 +67,6 @@ class mods_details extends titania_object
 			case 'translations':
 			break;
 
-			//case 'details':
 			case 'email':
 				$this->tpl_name = 'mods/mod_email';
 				$this->page_title = 'MOD_EMAIL';
@@ -141,20 +140,17 @@ class mods_details extends titania_object
 		if (!$config['email_enable'])
 		{
 			titania::error_box('ERROR', 'EMAIL_DISABLED', ERROR_FATAL, 503);
-			return;
 		}
 
 		if (!$user->data['is_registered'] || $user->data['is_bot'] || !$auth->acl_get('u_sendemail'))
 		{
 			titania::error_box('ERROR', 'NO_EMAIL_MOD', ERROR_FATAL, 403);
-			return;
 		}
 
 		// Are we trying to abuse the facility?
 		if (time() - $user->data['user_emailtime'] < $config['flood_interval'])
 		{
 			titania::error_box('ERROR', 'FLOOD_EMAIL_LIMIT', ERROR_FATAL);
-			return;
 		}
 
 		$sql = 'SELECT c.contrib_id, c.contrib_name FROM ' . CUSTOMISATION_CONTRIBS_TABLE . ' c
@@ -167,7 +163,6 @@ class mods_details extends titania_object
 		if (!$mod)
 		{
 			titania::error_box('ERROR', $user->lang['MOD_NOT_FOUND'], ERROR_FATAL, 404);
-			return;
 		}
 
 		$error = array();
