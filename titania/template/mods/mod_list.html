@@ -18,6 +18,45 @@
 
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
+	
+	
+    <div id="list-db">
+		<div class="forabg">
+			<div class="inner"><span class="corners-top"><span></span></span>
+			<ul class="topiclist">
+				<li class="header">
+					<dl>
+						<dt><a href="{U_SORT_MOD_TITLE}#modlist">{L_MOD_TITLE}</a><span class="rating"><a href="{U_SORT_RATING}#modlist">{L_RATING}</a></span></dt>
+						<dd class="download-count"><a href="{U_SORT_DOWNLOADS}#modlist">{L_DOWNLOAD_COUNT}</a></dd>
+						<dd class="description">{L_MOD_DESCRIPTION}</dd>
+						<dd class="added"><a href="{U_SORT_TIME_ADDED}#modlist">{L_DATE_ADDED}</a></dd>
+						<dd class="last-update"><a href="{U_SORT_TIME_UPDATED}#modlist">{L_LAST_UPDATE}</a></dd>
+					</dl>
+				</li>
+			</ul>
+			<ul class="topiclist topics">
+		<!-- BEGIN contrib -->	
+		<li class="row <!-- IF contrib.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
+			<dl>
+				<dt>
+					<a href="{contrib.U_CONTRIB}">{contrib.TITLE}</a> {contrib.VERSION} <span class="rating">{contrib.RATING}</span><br />
+					{contrib.AUTHOR}
+				</dt>
+				    <dd class="download-count">{contrib.DOWNLOADS} <dfn>{L_DOWNLOAD_COUNT}</dfn></dd>
+					<dd class="description">{contrib.DESC} <dfn>{L_MOD_DESCRIPTION}</dfn></dd>
+					<dd class="added">{contrib.ADDED} <dfn>{L_DATE_ADDED}</dfn></dd>
+					<dd class="last-update">{contrib.UPDATED} <dfn>{L_LAST_UPDATE}</dfn></dd>
+			</dl>
+		</li>
+		<!-- END modlist -->
+			</ul>
+
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
+	</div>
+	
+	
+	
 
 	<div class="forumbg forumbg-table">
 		<div class="inner"><span class="corners-top"><span></span></span>

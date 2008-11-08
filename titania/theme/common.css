@@ -62,3 +62,46 @@
 	text-decoration: none;
 	font-weight: bold;
 }
+
+/* move this to a other file later ;) */
+#list-db ul.topiclist dt {
+   font-weight: none ;
+   width: 29%;
+}
+
+#list-db li.row dt , #list-db li.row dd.download-count, #list-db li.row dd.added , #list-db li.row dd.last-update  {
+   margin-top: 20px;
+}
+
+#list-db .rating {
+   float: right;
+   margin-top: -11px;
+}
+
+#list-db dd.download-count {
+   width: 10%;
+   text-align: center;
+}
+
+#list-db dd.description {
+   width: 29%;
+   padding-left: 5px;
+}
+
+#list-db li.row dd {
+   font-size: 1.1em;
+}
+
+#list-db dd.added {
+   width: 14%;
+   padding-left: 5px;
+}
+
+#list-db dd.added {
+   width: 15%;
+   padding-left: 5px;
+}
+
+#list-db dd.last-update {
+   padding-left: 5px;
+}
