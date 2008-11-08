@@ -139,7 +139,7 @@ class mods_details extends titania_object
 			trigger_error('EMAIL_DISABLED');
 		}
 
-		if ($user->data['is_registered'] && !$user->data['is_bot'] && !$auth->acl_get('u_sendemail'))
+		if ($user->data['is_registered'] || !$user->data['is_bot'] || !$auth->acl_get('u_sendemail'))
 		{
 			trigger_error('NO_EMAIL_MOD');
 		}
@@ -160,6 +160,8 @@ class mods_details extends titania_object
 		if (!$mod)
 		{
 			titania::error_box('ERROR', $user->lang['MOD_NOT_FOUND'], ERROR_ERROR);
+			$this->main('', 'list');
+			return;
 		}
 
 		// "Trick back" (the one in mods/index.php)
