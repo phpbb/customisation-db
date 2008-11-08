@@ -48,6 +48,9 @@ class mods_main extends titania_object
 	{
 		global $user, $template, $cache;
 
+		// complete the hack to allow our modules to be loaded from the Titania/includes directory.
+		$phpbb_root_path = PHPBB_ROOT_PATH;
+
 		$user->add_lang(array('titania_contrib', 'titania_mods'));
 
 		$category	= request_var('category', 0);

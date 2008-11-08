@@ -48,6 +48,9 @@ class mods_details extends titania_object
 	{
 		global $user, $template, $cache;
 
+		// complete the hack to allow our modules to be loaded from the Titania/includes directory.
+		$phpbb_root_path = PHPBB_ROOT_PATH;
+
 		$user->add_lang(array('titania_mods'));
 
 		$mod_id	= request_var('mod', 0);
@@ -127,7 +130,7 @@ class mods_details extends titania_object
 			'AUTHOR'		=> sprintf($user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
 		));
 	}
-	
+
 	public function mod_email($mod_id)
 	{
 		global $config, $auth, $db, $phpbb_root_path, $template, $user;
@@ -164,11 +167,6 @@ class mods_details extends titania_object
 			return;
 		}
 
-		// "Trick back" (the one in mods/index.php)
-		// $phpbb_root_path should be TITANIA_ROOT_PATH but who knows whether this will change in the future
-		$old_phpbb_root_path = $phpbb_root_path;
-		$phpbb_root_path = PHPBB_ROOT_PATH;
-
 		$error = array();
 
 		$name		= utf8_normalize_nfc(request_var('name', '', true));
@@ -177,9 +175,6 @@ class mods_details extends titania_object
 		$message	= utf8_normalize_nfc(request_var('message', '', true));
 		$cc			= (isset($_POST['cc_email'])) ? true : false;
 		$submit		= (isset($_POST['submit'])) ? true : false;
-
-		// Redo the trick
-		$phpbb_root_path = $old_phpbb_root_path;
 
 		if ($submit)
 		{
@@ -250,7 +245,7 @@ class mods_details extends titania_object
 						'TO_USERNAME'	=> htmlspecialchars_decode($row['to_name']),
 						'FROM_USERNAME'	=> htmlspecialchars_decode($user->data['username']),
 						'MESSAGE'		=> htmlspecialchars_decode($message),
-					
+
 						'MOD_TITLE'		=> htmlspecialchars_decode($row['mod_title']),
 						'U_MOD'			=> generate_board_url(true) . $this->page . '?mode=details&mod=' . $mod_id, // @todo Not sure if this is the correct url
 					));

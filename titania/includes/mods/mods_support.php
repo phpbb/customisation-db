@@ -48,6 +48,9 @@ class mods_support extends titania_object
 	{
 		global $user, $template, $cache;
 
+		// complete the hack to allow our modules to be loaded from the Titania/includes directory.
+		$phpbb_root_path = PHPBB_ROOT_PATH;
+
 		$user->add_lang(array('titania_support'));
 
 		$submit		= isset($_POST['submit']) ? true : false;
