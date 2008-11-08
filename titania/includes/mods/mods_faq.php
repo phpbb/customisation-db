@@ -2,7 +2,7 @@
 /**
  *
  * @package titania
- * @version $Id: mods_faq.php 122 2008-11-07 20:20:10Z daro $
+ * @version $Id: $
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -51,70 +51,89 @@ class mods_faq extends titania_object
 		$user->add_lang(array('titania_faq'));
 
 		$faq_id		= request_var('faq_id', 0);
+		$action 	= request_var('action', '');
+		
 		$submit		= isset($_POST['submit']) ? true : false;
 		
-		$form_key = 'mods_details';
+		$form_key = 'mods_faq';
 		add_form_key($form_key);
-
-		require(TITANIA_ROOT . 'includes/class_faq.' . PHP_EXT);
-		$faq = new titania_faq($faq_id);
 
 		switch ($mode)
 		{
-			case 'add':
-			case 'edit':
-				if ($submit)
-				{
-					$subject 	= utf8_normalize_nfc(request_var('subject', '', true));
-					$text 		= utf8_normalize_nfc(request_var('text', '', true));
-					
-					$faq->submit();
-				}
-				
-				if ($mode == 'edit')
-				{
-					$faq->load();
-				}
-				
-				$template->assign_vars(array(
-					'U_ACTION'		=> '',
-					
-					'FAQ_SUBJECT'	=> $faq->faq_subject,
-				));
+			case 'main':
+			
 			break;
-
-			case 'delete':
-				if (confirm_box(true))
+			
+			case 'manage':
+				require(TITANIA_ROOT . 'includes/class_faq.' . PHP_EXT);
+				
+				$faq = new titania_faq($faq_id);
+		
+				if ($action == 'add' || $action == 'edit')
 				{
-					$faq->delete();
+					if ($submit)
+					{
+						$subject 	= utf8_normalize_nfc(request_var('subject', '', true));
+						$text 		= utf8_normalize_nfc(request_var('text', '', true));
+						
+						$faq->submit();
+					}					
+					
+					if ($mode == 'edit')
+					{
+						$faq->load();
+					}
+					
+					$template->assign_vars(array(
+						'U_ACTION'		=> '',
+						
+						'FAQ_SUBJECT'	=> $faq->faq_subject,
+					));					
+				}
+				else if ($action == 'delete')
+				{
+					if (confirm_box(true))
+					{
+						$faq->delete();
+					}
+					else
+					{
+						$s_hidden_fields = build_hidden_fields(array(
+							'submit'	=> true,
+							'faq_id'	=> $faq_id
+						));
+						confirm_box(false, 'DELETE_FAQ', $s_hidden_fields);
+					}						
+				}
+			break;
+			
+			case 'view':
+			default:
+				if (!$faq_id)
+				{
+					$contrib_id = request_var('contrib_id', 0);
+					
+					if (!$contrib_id)
+					{
+						// error
+					}
+					
+					$this->tpl_name = 'mods/mod_faq';
+					$this->page_title = 'MODS_FAQ_LIST';
+				
+					$found = $this->faq_list();
+					
+					if (!$found)
+					{
+						titania::error_box('ERROR', $user->lang['FAQ_NOT_FOUND'], ERROR_ERROR);
+					}
 				}
 				else
 				{
-					$s_hidden_fields = build_hidden_fields(array(
-						'submit'	=> true,
-						'faq_id'	=> $faq_id
-					));
-					confirm_box(false, 'DELETE_FAQ', $s_hidden_fields);
-				}	
-			break;
-
-			case 'details':
-			
-			break;
-			
-			case 'list':
-			default:
-				$this->tpl_name = 'mods/mod_faq';
-				$this->page_title = 'MODS_FAQ_LIST';
-				
-				$this->faq_list(request_var('contrib_id', 0));
+					// get details
+				}
 			break;
 		}		
-	}
-
-	private function faq_details($faq_id)
-	{
-		// $this->load();
 	}
 	
 	/**
@@ -133,11 +152,15 @@ class mods_faq extends titania_object
 		
 		while ($row = $db->sql_fetchrow($result))
 		{
-			$template->assign_block_vars('similarfaqs', array(
+			$template->assign_block_vars('similarfaq', array(
 				'U_FAQ'		=> append_sid(TITANIA_ROOT . "mods/index.$phpEx", 'mode=faq&amp;action=details&amp;faq_id=' . $row['faq_id']),
 				'SUBJECT'	=> $row['faq_subject']
 			));
+			
+			$results = true;
 		}
+		
+		return (!isset($results)) ? false : true;
 	}
 
 	/**
@@ -191,9 +214,16 @@ class mods_faq extends titania_object
 				'U_FAQ'				=> append_sid(TITANIA_ROOT . "mods/index.$phpEx", 'mode=faq&amp;action=details&amp;faq_id=' . $row['faq_id']),
 				'CONTRIB_VERSION'	=> $row['contrib_version'],
 				'SUBJECT'			=> $row['faq_subject'],
-			));			
+			));
+			
+			$results = true;
 		}
 		$db->sql_freeresult($result);
+		
+		if (!isset($results))
+		{
+			return false;
+		}
 		
 		$pagination->sql_total_count($sql_ary, 'f.faq_id');
 		
@@ -209,5 +239,7 @@ class mods_faq extends titania_object
 			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
 			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
 		));
+		
+		return true;
 	}
 }
