@@ -65,6 +65,10 @@ class mods_details extends titania_object
 			break;
 
 			case 'email':
+				$this->tpl_name = 'mods/mod_email';
+				$this->page_title = 'MOD_EMAIL';
+
+				$this->mod_email($mod_id);
 			break;
 
 			case 'changes':
@@ -121,6 +125,150 @@ class mods_details extends titania_object
 			'UPDATED'		=> $user->format_date($row['contrib_update_date']),
 			'VERSION'		=> $row['contrib_version'],
 			'AUTHOR'		=> sprintf($user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
+		));
+	}
+	
+	public function mod_email($mod_id)
+	{
+		global $config, $auth, $db, $phpbb_root_path, $template, $user;
+
+		// $user->add_lang('memberlist');
+
+		if (!$config['email_enable'])
+		{
+			trigger_error('EMAIL_DISABLED');
+		}
+
+		if ($user->data['is_registered'] && !$user->data['is_bot'] && !$auth->acl_get('u_sendemail'))
+		{
+			trigger_error('NO_EMAIL_MOD');
+		}
+
+		// Are we trying to abuse the facility?
+		if (time() - $user->data['user_emailtime'] < $config['flood_interval'])
+		{
+			trigger_error('FLOOD_EMAIL_LIMIT');
+		}
+
+		$sql = 'SELECT c.contrib_id, c.contrib_name FROM ' . CUSTOMISATION_CONTRIBS_TABLE . ' c
+				WHERE c.contrib_id = ' . (int) $mod_id . '
+				AND c.contrib_status = ' .  STATUS_APPROVED;
+		$result = $db->sql_query($sql);
+		$mod = $db->sql_fetchrow($result);
+		$db->sql_freeresult($result);
+
+		if (!$mod)
+		{
+			titania::error_box('ERROR', $user->lang['MOD_NOT_FOUND'], ERROR_ERROR);
+		}
+
+		// "Trick back" (the one in mods/index.php)
+		// $phpbb_root_path should be TITANIA_ROOT_PATH but who knows whether this will change in the future
+		$old_phpbb_root_path = $phpbb_root_path;
+		$phpbb_root_path = PHPBB_ROOT_PATH;
+
+		$error = array();
+
+		$name		= utf8_normalize_nfc(request_var('name', '', true));
+		$email		= request_var('email', '');
+		$email_lang = request_var('lang', $config['default_lang']);
+		$message	= utf8_normalize_nfc(request_var('message', '', true));
+		$cc			= (isset($_POST['cc_email'])) ? true : false;
+		$submit		= (isset($_POST['submit'])) ? true : false;
+
+		// Redo the trick
+		$phpbb_root_path = $old_phpbb_root_path;
+
+		if ($submit)
+		{
+			if (!check_form_key('mods_details'))
+			{
+				$error[] = 'FORM_INVALID';
+			}
+
+			if (!$email || !preg_match('/^' . get_preg_expression('email') . '$/i', $email))
+			{
+				$error[] = $user->lang['EMPTY_ADDRESS_EMAIL'];
+			}
+
+			if (!$name)
+			{
+				$error[] = $user->lang['EMPTY_NAME_EMAIL'];
+			}
+
+			if (!sizeof($error))
+			{
+				$sql = 'UPDATE ' . USERS_TABLE . '
+					SET user_emailtime = ' . time() . '
+					WHERE user_id = ' . $user->data['user_id'];
+				$result = $db->sql_query($sql);
+
+				include_once(PHPBB_ROOT_PATH . 'includes/functions_messenger.' . PHP_EXT);
+				$messenger = new messenger(false);
+
+				$mail_to_users = array();
+
+				$mail_to_users[] = array(
+					'email_lang'		=> $email_lang,
+					'email'				=> $email,
+					'name'				=> $name,
+					'username'			=> '',
+					'to_name'			=> $name,
+					'mod_id'			=> $mod['contrib_id'],
+					'mod_title'			=> $mod['contrib_name'],
+				);
+
+				// Ok, now the same email if CC specified, but without exposing the users email address
+				if ($cc)
+				{
+					$mail_to_users[] = array(
+						'email_lang'		=> $user->data['user_lang'],
+						'email'				=> $user->data['user_email'],
+						'name'				=> $user->data['username'],
+						'username'			=> $user->data['username'],
+						'to_name'			=> $name,
+						'mod_id'			=> $mod['contrib_id'],
+						'mod_title'			=> $mod['contrib_name'],
+					);
+				}
+
+				foreach ($mail_to_users as $row)
+				{
+					$messenger->template('mod_recommend', $row['email_lang']);
+					$messenger->replyto($user->data['user_email']);
+					$messenger->to($row['email'], $row['name']);
+
+					$messenger->headers('X-AntiAbuse: Board servername - ' . $config['server_name']);
+					$messenger->headers('X-AntiAbuse: User_id - ' . $user->data['user_id']);
+					$messenger->headers('X-AntiAbuse: Username - ' . $user->data['username']);
+					$messenger->headers('X-AntiAbuse: User IP - ' . $user->ip);
+
+					$messenger->assign_vars(array(
+						'BOARD_CONTACT'	=> $config['board_contact'],
+						'TO_USERNAME'	=> htmlspecialchars_decode($row['to_name']),
+						'FROM_USERNAME'	=> htmlspecialchars_decode($user->data['username']),
+						'MESSAGE'		=> htmlspecialchars_decode($message),
+					
+						'MOD_TITLE'		=> htmlspecialchars_decode($row['mod_title']),
+						'U_MOD'			=> generate_board_url(true) . $this->page . '?mode=details&mod=' . $mod_id, // @todo Not sure if this is the correct url
+					));
+
+					$messenger->send(NOTIFY_EMAIL);
+				}
+
+				titania::error_box('SUCCESS', $user->lang['EMAIL_SENT'], ERROR_SUCCESS);
+				$this->main('', 'details'); // @todo What should the value of $id be?
+				return;
+			}
+		}
+
+		$template->assign_vars(array(
+			'MOD_TITLE'		=> $mod['contrib_name'],
+
+			'ERROR_MESSAGE'		=> (sizeof($error)) ? implode('<br />', $error) : '',
+
+			'S_LANG_OPTIONS'	=> language_select($email_lang),
+			'S_POST_ACTION'		=> $this->u_action . '&amp;mod=' . $mod_id,
 		));
 	}
 }

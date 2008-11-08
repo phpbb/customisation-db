@@ -38,6 +38,8 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'CATEGORY_DESCRIPTION'	=> 'Description',
 
+	'EMAIL_MOD_BODY_EXPLAIN'=> 'This message will be sent as plain text, do not include any HTML or BBCode. Please note that the MOD information is already included in the message. The return address for this message will be set to your e-mail address.',
+
 	'FIND_MOD'				=> 'Find a MOD',
 
 	'HIDE_FIND_MOD'			=> 'Hide Find',
@@ -46,13 +48,17 @@ $lang = array_merge($lang, array(
 	'MOD_CATEGORY'			=> 'Category',
 	'MOD_CATEGORIES'		=> 'MOD Categories',
 	'MOD_DESCRIPTION'		=> 'MOD Description',
+	'MOD_EMAIL'				=> 'E-mail MOD to a friend',
 	'MOD_LIST'				=> 'MODs list &bull; Search Results',
 	'MOD_LIST_DESCRIPTION'	=> 'MOD list description',
 	'MOD_NOT_FOUND'			=> 'MOD not found',
 	'MOD_TITLE'				=> 'MOD Title',
 
+	'NO_EMAIL_MOD'			=> 'You are not permitted to send an e-mail to a friend recommending this MOD.',
 	'NO_MODS'				=> 'No MODs found in category: “%s”',
 	'NO_CATEGORIES'			=> 'No Categories defined',
+
+	'RECOMMEND_MOD'			=> 'Recommend this MOD to a friend',
 
 	'SORT_CONTRIB_NAME'		=> 'Sort by MOD title',
 	'SORT_DOWNLOADS'		=> 'Sort by downloads',
