@@ -29,11 +29,11 @@ class mods_details extends titania_object
 	/**
 	 * Constructor
 	 */
-	public function __construct(&$p_master)
+	public function __construct($p_master)
 	{
 		global $user;
 
-		$this->p_master = &$p_master;
+		$this->p_master = $p_master;
 
 		$this->page = $user->page['script_path'] . $user->page['page_name'];
 	}
