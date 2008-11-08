@@ -223,6 +223,16 @@ class titania
 		return (!$return_url) ? sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, $user->lang[$l_redirect]) : $redirect;
 	}
 
+	public static function trigger_error($error_msg, $error_type = NULL, $status_code = NULL)
+	{
+		if ($status_code)
+		{
+			titania::set_header_status($status_code);
+		}
+
+		trigger_error($error_msg, $error_type);
+	}
+
 	/**
 	 * Show the errorbox or successbox
 	 *
@@ -231,23 +241,13 @@ class titania
 	 * @param int $error_type ERROR_SUCCESS or ERROR_ERROR constant
 	 * @param int $status_code an HTTP status code
 	 */
-	public static function error_box($l_title, $l_message, $error_type = ERROR_SUCCESS, $status_code = false)
+	public static function error_box($l_title, $l_message, $error_type = ERROR_SUCCESS, $status_code = NULL)
 	{
 		global $template, $user;
 
-		// Send the appropriate HTTP status header
-		$statuses = array(
-			'201' => 'Created',
-			'301' => 'Moved Permanently',
-			'303' => 'See Other',
-			'403' => 'Forbidden',
-			'404' => 'Not Found',
-		);
-
-		if (isset($statuses[(string) $status_code]))
+		if ($status_code)
 		{
-			header("HTTP/1.1 {$status_code} {$statuses[$status_code]}", false, $status_code);
-			header("Status: {$status_code} {$statuses[$status_code]}", false, $status_code);
+			titania::set_header_status($status_code);
 		}
 
 		$template->assign_block_vars('errorbox', array(
@@ -274,5 +274,41 @@ class titania
 		$user->add_lang($lang_set, $use_db, $use_help);
 
 		$user->set_custom_lang_path(TITANIA_ROOT . 'language');
+	}
+
+	public static function set_header_status($status_code = NULL)
+	{
+		// Send the appropriate HTTP status header
+		$status = array(
+			200 => 'OK',
+			201 => 'Created',
+			202 => 'Accepted',
+			204 => 'No Content',
+			205 => 'Reset Content',
+			300 => 'Multiple Choices',
+			301 => 'Moved Permanently',
+			302 => 'Found', // Moved Temporarily
+			303 => 'See Other',
+			304 => 'Not Modified',
+			307 => 'Temporary Redirect',
+			400 => 'Bad Request',
+			401 => 'Unauthorized',
+			403 => 'Forbidden',
+			404 => 'Not Found',
+			406 => 'Not Acceptable',
+			409 => 'Conflict',
+			410 => 'Gone',
+			500 => 'Internal Server Error',
+			501 => 'Not Implemented',
+			502 => 'Bad Gateway',
+			503 => 'Service Unavailable',
+		);
+
+		if ($status_code && $status[$status_code])
+		{
+			$header = $status_code . ' ' . $status[$status_code];
+			header('HTTP/1.1 ' . $header, false, $status_code);
+			header('Status: ' . $header, false, $status_code);
+		}
 	}
 }

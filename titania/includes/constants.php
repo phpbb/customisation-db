@@ -46,6 +46,30 @@ define('TAG_TYPE_COMPLEXITY', 3);
 define('ERROR_ERROR', 1);
 define('ERROR_SUCCESS', 2);
 
+// Header status codes
+define('HEADER_OK',					200);
+define('HEADER_CREATED',			201);
+define('HEADER_ACCEPTED',			202);
+define('HEADER_NO_CONTENT', 		204);
+define('HEADER_RESET_CONTENT',		205);
+define('HEADER_MULTIPLE_CHOICES',	300);
+define('HEADER_MOVED_PERMANENTLY',	301);
+define('HEADER_FOUND',				302); // Moved Temporarily
+define('HEADER_SEE_OTHER',			303);
+define('HEADER_NOT_MODIFIED',		304);
+define('HEADER_TEMPORARY_REDIRECT',	307);
+define('HEADER_BAD_REQUEST',		400);
+define('HEADER_UNAUTHORIZED',		401);
+define('HEADER_FORBIDDEN',			403);
+define('HEADER_NOT_FOUND',			404);
+define('HEADER_NOT_ACCEPTABLE',		406);
+define('HEADER_CONFLICT',			409);
+define('HEADER_GONE',				410);
+define('HEADER_INTERNAL_SERVER_ERROR',	500);
+define('HEADER_NOT_IMPLEMENTED',	501);
+define('HEADER_BAD_GATEWAY',		502);
+define('HEADER_SERVICE_UNAVAILABLE',503);
+
 // Customisation (contrib) type
 define('CONTRIB_TYPE_MOD', 1);
 define('CONTRIB_TYPE_STYLE', 2);
