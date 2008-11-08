@@ -117,25 +117,9 @@ class mods_faq extends titania_object
 				{
 					$this->tpl_name = 'mods/mod_faq_details';
 					$this->page_title = 'MODS_FAQ_DETAILS';
-
-					$faq->load();
-
-					if (!$faq->faq_id)
-					{
-						titania::error_box('ERROR', $user->lang['FAQ_DETAILS_NOT_FOUND'], ERROR_ERROR);
-					}
-
-					decode_message($faq->faq_text, $faq->faq_text_uid);
-
-					$template->assign_vars(array(
-						'FAQ_ID'			=> $faq->faq_id,
-						'FAQ_SUBJECT'		=> $faq->faq_subject,
-						'FAQ_TEXT'			=> $faq->faq_text,
-						'CONTRIB_VERSION' 	=> $faq->contrib_version,
-
-						'U_OTHERS_FAQ'		=> append_sid(TITANIA_ROOT . 'mods/index.' . PHP_EXT, 'mode=view&amp;contrib_id=' . $faq->contrib_id),
-					));
-
+					
+					$faq->faq_details($faq_id);
+					
 					$faq->similar_faq($faq_id);
 				}
 				else
@@ -144,7 +128,7 @@ class mods_faq extends titania_object
 
 					if (!$contrib_id)
 					{
-						trigger_error('NO_CONTRIB_SELECTED');
+						titania::error_box('ERROR', 'NO_CONTRIB_SELECTED', ERROR_FATAL, 404);
 					}
 
 					$this->tpl_name = 'mods/mod_faq_list';
@@ -154,7 +138,7 @@ class mods_faq extends titania_object
 
 					if (!$found)
 					{
-						titania::error_box('ERROR', $user->lang['FAQ_NOT_FOUND'], ERROR_ERROR);
+						titania::error_box('ERROR', 'FAQ_NOT_FOUND', ERROR_ERROR);
 					}
 				}
 			break;

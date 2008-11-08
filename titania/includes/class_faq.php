@@ -68,6 +68,34 @@ class titania_faq extends titania_database_object
 		}
 	}
 	
+	/*
+	 * faq details
+	 *
+     * @param int $faq_id
+	 */
+	public function faq_details($faq_id)
+	{
+		global $template;
+		
+		$this->load();
+
+		if (!$this->faq_id)
+		{
+			titania::error_box('ERROR', 'FAQ_DETAILS_NOT_FOUND', ERROR_FATAL, 404);
+		}		
+
+		decode_message($this->faq_text, $this->faq_text_uid);
+
+		$template->assign_vars(array(
+			'FAQ_ID'			=> $this->faq_id,
+			'FAQ_SUBJECT'		=> $this->faq_subject,
+			'FAQ_TEXT'			=> $this->faq_text,
+			'CONTRIB_VERSION' 	=> $this->contrib_version,
+
+			'U_OTHERS_FAQ'		=> append_sid(TITANIA_ROOT . 'mods/index.' . PHP_EXT, 'mode=view&amp;contrib_id=' . $this->contrib_id),
+		));
+	}
+	
 	/**
 	 * Creating list with similar FAQ
 	 *
