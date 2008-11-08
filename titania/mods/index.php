@@ -20,8 +20,35 @@ include(TITANIA_ROOT . 'includes/titania_cache.' . PHP_EXT);
 
 $cache = new titania_cache();
 
-$id		= request_var('id', 'main');
+$id		= request_var('id', '');
 $mode	= request_var('mode', '');
+
+// Auto assign some ID's to eliminate the need for id param on most URLs
+if (!$id)
+{
+	switch ($mode)
+	{
+		case 'details':
+			$id = 'details';
+		break;
+
+		case 'faq':
+			$id = 'faq';
+		break;
+
+		case 'reviews':
+			$id = 'reviews';
+		break;
+
+		case 'support':
+			$id = 'support';
+		break;
+
+		default:
+			$id = 'main';
+		break;
+	}
+}
 
 $module = new p_master();
 

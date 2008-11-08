@@ -50,7 +50,6 @@ class mods_main extends titania_object
 
 		$user->add_lang(array('titania_contrib', 'titania_mods'));
 
-		$mod_id		= request_var('mod_id', 0);
 		$category	= request_var('category', 0);
 		$submit		= isset($_POST['submit']) ? true : false;
 
@@ -149,11 +148,6 @@ class mods_main extends titania_object
 		$start = $pagination->set_start();
 		$limit = $pagination->set_limit();
 
-		$params = array(
-			'mode=details',
-			'category=' . $category,
-		);
-
 		$results = false;
 
 		$sql_ary = array(
@@ -188,10 +182,10 @@ class mods_main extends titania_object
 
 			$template->assign_block_vars('contrib', array(
 				'ID'			=> $row['contrib_id'],
-				'U_CONTRIB'		=> append_sid($this->page, implode('&amp;', $params) . '&amp;mod_id=' . $row['contrib_id']),
+				'U_CONTRIB'		=> append_sid($this->page, 'mode=details&amp;mod=' . $row['contrib_id']),
 				'TITLE'			=> $row['contrib_name'],
 				'DESC'			=> $row['contrib_description'],
-				'RATING'		=> sprintf('%.2f', $row['contrib_rating']),
+				'RATING'		=> round($row['contrib_rating'], 2),
 				'DOWNLOADS'		=> $row['contrib_downloads'],
 				'ADDED'			=> $user->format_date($row['contrib_release_date']),
 				'UPDATED'		=> $user->format_date($row['contrib_update_date']),
