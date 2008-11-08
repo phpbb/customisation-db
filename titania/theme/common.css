@@ -65,7 +65,7 @@
 
 /* move this to a other file later ;) */
 #list-db ul.topiclist dt {
-   font-weight: none ;
+   font-weight: normal;
    width: 29%;
 }
 
