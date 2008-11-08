@@ -67,6 +67,7 @@ class mods_details extends titania_object
 			case 'translations':
 			break;
 
+			//case 'details':
 			case 'email':
 				$this->tpl_name = 'mods/mod_email';
 				$this->page_title = 'MOD_EMAIL';
@@ -135,22 +136,25 @@ class mods_details extends titania_object
 	{
 		global $config, $auth, $db, $phpbb_root_path, $template, $user;
 
-		// $user->add_lang('memberlist');
+		titania::add_phpbb_lang(array('memberlist', 'ucp'));
 
 		if (!$config['email_enable'])
 		{
-			trigger_error('EMAIL_DISABLED');
+			titania::error_box('ERROR', 'EMAIL_DISABLED', ERROR_FATAL, 503);
+			return;
 		}
 
-		if ($user->data['is_registered'] || !$user->data['is_bot'] || !$auth->acl_get('u_sendemail'))
+		if (!$user->data['is_registered'] || $user->data['is_bot'] || !$auth->acl_get('u_sendemail'))
 		{
-			trigger_error('NO_EMAIL_MOD');
+			titania::error_box('ERROR', 'NO_EMAIL_MOD', ERROR_FATAL, 403);
+			return;
 		}
 
 		// Are we trying to abuse the facility?
 		if (time() - $user->data['user_emailtime'] < $config['flood_interval'])
 		{
-			trigger_error('FLOOD_EMAIL_LIMIT');
+			titania::error_box('ERROR', 'FLOOD_EMAIL_LIMIT', ERROR_FATAL);
+			return;
 		}
 
 		$sql = 'SELECT c.contrib_id, c.contrib_name FROM ' . CUSTOMISATION_CONTRIBS_TABLE . ' c
@@ -162,8 +166,7 @@ class mods_details extends titania_object
 
 		if (!$mod)
 		{
-			titania::error_box('ERROR', $user->lang['MOD_NOT_FOUND'], ERROR_ERROR);
-			$this->main('', 'list');
+			titania::error_box('ERROR', $user->lang['MOD_NOT_FOUND'], ERROR_FATAL, 404);
 			return;
 		}
 
@@ -253,8 +256,8 @@ class mods_details extends titania_object
 					$messenger->send(NOTIFY_EMAIL);
 				}
 
-				titania::error_box('SUCCESS', $user->lang['EMAIL_SENT'], ERROR_SUCCESS);
-				$this->main('', 'details'); // @todo What should the value of $id be?
+				titania::error_box('SUCCESS', 'EMAIL_SENT', ERROR_SUCCESS);
+				$this->main('details', 'details');
 				return;
 			}
 		}

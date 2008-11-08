@@ -44,7 +44,8 @@ define('TAG_TYPE_COMPLEXITY', 3);
 
 // Errorbox types
 define('ERROR_ERROR', 1);
-define('ERROR_SUCCESS', 2);
+define('ERROR_FATAL', 2);
+define('ERROR_SUCCESS', 3);
 
 // Customisation (contrib) type
 define('CONTRIB_TYPE_MOD', 1);

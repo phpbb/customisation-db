@@ -229,17 +229,69 @@ class titania
 	 * @param string $l_title message title - custom or user->lang defined
 	 * @param string $l_message message string
 	 * @param int $error_type ERROR_SUCCESS or ERROR_ERROR constant
+	 * @param int $status_code an HTTP status code
 	 */
-	public static function error_box($l_title, $l_message, $error_type = ERROR_SUCCESS)
+	public static function error_box($l_title, $l_message, $error_type = ERROR_SUCCESS, $status_code = false)
 	{
 		global $template, $user;
 
+		// Send the appropriate HTTP status header
+		$statuses = array(
+			'200' => 'OK',
+			'201' => 'Created',
+			'202' => 'Accepted',
+			'204' => 'No Content',
+			'205' => 'Reset Content',
+			'300' => 'Multiple Choices',
+			'301' => 'Moved Permanently',
+			'302' => 'Found', // Moved Temporarily
+			'303' => 'See Other',
+			'304' => 'Not Modified',
+			'307' => 'Temporary Redirect',
+			'400' => 'Bad Request',
+			'401' => 'Unauthorized',
+			'402' => 'Payment Required',
+			'403' => 'Forbidden',
+			'404' => 'Not Found',
+			'406' => 'Not Acceptable',
+			'409' => 'Conflict',
+			'410' => 'Gone',
+			'500' => 'Internal Server Error',
+			'501' => 'Not Implemented',
+			'502' => 'Bad Gateway',
+			'503' => 'Service Unavailable',
+		);
+
+		if (isset($statuses[(string) $status_code]))
+		{
+			header("HTTP/1.1 {$status_code} {$statuses[$status_code]}", false, $status_code);
+			header("Status: {$status_code} {$statuses[$status_code]}", false, $status_code);
+		}
+
 		$template->assign_block_vars('errorbox', array(
 			'TITLE'		=> (isset($user->lang[$l_title])) ? $user->lang[$l_title] : $l_title,
-			'MESSAGE'	=> $l_message,
-			'S_ERROR'	=> ($error_type == ERROR_ERROR) ? true : false,
+			'MESSAGE'	=> (isset($user->lang[$l_message])) ? $user->lang[$l_message] : $l_message,
+			'S_ERROR'	=> ($error_type == ERROR_ERROR || $error_type == ERROR_FATAL) ? true : false,
 			'S_SUCCESS'	=> ($error_type == ERROR_SUCCESS) ? true : false,
 		));
+
+		if ($error_type == ERROR_FATAL)
+		{
+			global $titania, $phpbb_root_path;
+
+			// Set correct $phpbb_root_path
+			$phpbb_root_path = PHPBB_ROOT_PATH;
+
+			$titania->page_header('ERROR');
+
+			$template->set_filenames(array(
+				'body' => 'error_body.html',
+			));
+
+			$titania->page_footer();
+
+			exit_handler();
+		}
 	}
 
 	/**
