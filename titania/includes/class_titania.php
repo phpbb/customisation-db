@@ -241,5 +241,22 @@ class titania
 			'S_SUCCESS'	=> ($error_type == ERROR_SUCCESS) ? true : false,
 		));
 	}
-}
 
+	/**
+	 * Add a phpBB language file
+	 *
+	 * @param mixed $lang_set
+	 * @param bool $use_db
+	 * @param bool $use_help
+	 */
+	public static function add_phpbb_lang($lang_set, $use_db = false, $use_help = false)
+	{
+		global $user;
+
+		$user->set_custom_lang_path(PHPBB_ROOT_PATH . 'language');
+
+		$user->add_lang($lang_set, $use_db, $use_help);
+
+		$user->set_custom_lang_path(TITANIA_ROOT . 'language');
+	}
+}
