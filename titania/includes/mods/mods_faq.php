@@ -1,12 +1,19 @@
 <?php
+<!-- IF S_KEYWORD_VERSION -->
+<!--
 /**
- *
- * @package titania
- * @version $Id: $
- * @copyright (c) 2008 phpBB Customisation Database Team
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- *
- */
+*
+* @author Original Author author@example.com
+* @author Another Author another@example.com
+*
+* @package {PACKAGENAME}
+* @version $Id:$
+* @copyright (c) 2007 Your Group Name
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License 
+*
+*/
+//-->
+<!-- ENDIF -->
 
 /**
 * @ignore
@@ -48,7 +55,7 @@ class mods_faq extends titania_object
 	{
 		global $user, $template, $cache;
 
-		$user->add_lang(array('titania_faq'));
+		$user->add_lang(array('titania_contrib'));
 
 		$faq_id		= request_var('faq_id', 0);
 		$action 	= request_var('action', '');
@@ -58,6 +65,10 @@ class mods_faq extends titania_object
 		$form_key = 'mods_faq';
 		add_form_key($form_key);
 
+		require(TITANIA_ROOT . 'includes/class_faq.' . PHP_EXT);
+				
+		$faq = new titania_faq($faq_id);
+				
 		switch ($mode)
 		{
 			case 'main':
@@ -65,10 +76,6 @@ class mods_faq extends titania_object
 			break;
 			
 			case 'manage':
-				require(TITANIA_ROOT . 'includes/class_faq.' . PHP_EXT);
-				
-				$faq = new titania_faq($faq_id);
-		
 				if ($action == 'add' || $action == 'edit')
 				{
 					if ($submit)
@@ -85,9 +92,10 @@ class mods_faq extends titania_object
 					}
 					
 					$template->assign_vars(array(
-						'U_ACTION'		=> '',
+						'U_ACTION'		=> $this->u_action . $this->page,
 						
 						'FAQ_SUBJECT'	=> $faq->faq_subject,
+						'FAQ_TEXT'		=> $faq->faq_text
 					));					
 				}
 				else if ($action == 'delete')
@@ -109,137 +117,51 @@ class mods_faq extends titania_object
 			
 			case 'view':
 			default:
-				if (!$faq_id)
+				if ($faq_id)
+				{
+					$this->tpl_name = 'mods/mod_faq_details';
+					$this->page_title = 'MODS_FAQ_DETAILS';
+					
+					$faq->load();
+
+					if (!$faq->faq_id)
+					{
+						titania::error_box('ERROR', $user->lang['FAQ_DETAILS_NOT_FOUND'], ERROR_ERROR);
+					}
+					
+					decode_message($faq->faq_text, $faq->faq_text_uid);
+					
+					$template->assign_vars(array(
+						'FAQ_ID'			=> $faq->faq_id,
+						'FAQ_SUBJECT'		=> $faq->faq_subject,
+						'FAQ_TEXT'			=> $faq->faq_text,
+						'CONTRIB_VERSION' 	=> $faq->contrib_version,
+						
+						'U_OTHERS_FAQ'		=> append_sid(TITANIA_ROOT . 'mods/index.' . PHP_EXT, 'mode=view&amp;contrib_id=' . $faq->contrib_id),
+					));
+					
+					$faq->similar_faq($faq_id);
+				}
+				else
 				{
 					$contrib_id = request_var('contrib_id', 0);
 					
 					if (!$contrib_id)
 					{
-						// error
+						trigger_error('NO_CONTRIB_SELECTED');
 					}
 					
-					$this->tpl_name = 'mods/mod_faq';
+					$this->tpl_name = 'mods/mod_faq_list';
 					$this->page_title = 'MODS_FAQ_LIST';
 				
-					$found = $this->faq_list();
+					$found = $faq->faq_list();
 					
 					if (!$found)
 					{
 						titania::error_box('ERROR', $user->lang['FAQ_NOT_FOUND'], ERROR_ERROR);
 					}
 				}
-				else
-				{
-					// get details
-				}
 			break;
 		}		
-	}
-	
-	/**
-	 *  Creating list with similar FAQ
-	 *
-	 * @param int $faq_id
-	 */ 
-	private function get_similar_faq($faq_id)
-	{
-		global $db;
-		
-		$sql = 'SELECT faq_id, faq_subject
-			FROM ' . $this->sql_table . '
-			WHERE parent_id = ' . (int) $faq_id;
-		$result = $db->sql_query($sql);
-		
-		while ($row = $db->sql_fetchrow($result))
-		{
-			$template->assign_block_vars('similarfaq', array(
-				'U_FAQ'		=> append_sid(TITANIA_ROOT . "mods/index.$phpEx", 'mode=faq&amp;action=details&amp;faq_id=' . $row['faq_id']),
-				'SUBJECT'	=> $row['faq_subject']
-			));
-			
-			$results = true;
-		}
-		
-		return (!isset($results)) ? false : true;
-	}
-
-	/**
-	 * Display FAQ list for selected contrib
-	 *
-	 * @param int $contrib_id
-	 */
-	private function faq_list($contrib_id)
-	{
-		global $db, $template;
-
-		if (!class_exists('sort'))
-		{
-			include(TITANIA_ROOT . 'includes/class_sort.' . PHP_EXT);
-		}
-			
-		if (!class_exists('pagination'))
-		{
-			include(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
-		}
-		
-		$sort = new sort();
-		
-		$sort->set_sort_keys(array(
-			array('SORT_CONTRIB_VERSION',		'f.contrib_version', 'default' => true),
-			array('SORT_SUBJECT',				'f.fat_subject'),
-		));
-
-		$sort->sort_request(false);		
-		
-		$pagination = new pagination();
-		$start = $pagination->set_start();
-		$limit = $pagination->set_limit();
-		
-		// select the list of faqs for this contrib
-		$sql_array = array(
-			'SELECT'	=> 'f.faq_id, f.contrib_version, f.faq_subject',
-			'FROM'		=> array(
-				$this->sql_table => 'f'
-			),
-			'WHERE'		=> 'f.contrib_id = ' . $contrib_id,
-			'ORDER_BY'	=> $sort->get_order_by()
-		);
-		
-		$sql = $db->sql_build_query('SELECT', $sql_array);
-		$result = $db->sql_query_limit($sql, $limit, $start);
-
-		while ($row = $db->sql_fetchrow($result))
-		{
-			$template->assign_block_vars('faqs', array(
-				'U_FAQ'				=> append_sid(TITANIA_ROOT . "mods/index.$phpEx", 'mode=faq&amp;action=details&amp;faq_id=' . $row['faq_id']),
-				'CONTRIB_VERSION'	=> $row['contrib_version'],
-				'SUBJECT'			=> $row['faq_subject'],
-			));
-			
-			$results = true;
-		}
-		$db->sql_freeresult($result);
-		
-		if (!isset($results))
-		{
-			return false;
-		}
-		
-		$pagination->sql_total_count($sql_ary, 'f.faq_id');
-		
-		$pagination->set_params(array(
-			'sk'	=> $sort->get_sort_key(),
-			'sd'	=> $sort->get_sort_dir(),
-		));
-		
-		// Build a pagination
-		$pagination->build_pagination($this->page);
-		
-		$template->assign_vars(array(
-			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
-			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
-		));
-		
-		return true;
 	}
 }
