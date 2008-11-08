@@ -2,7 +2,7 @@
 /**
  *
  * @package titania
- * @version $Id: mods_faq.php 122 2008-11-07 20:20:10Z daroPL $
+ * @version $Id: mods_faq.php 122 2008-11-07 20:20:10Z daro $
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -52,14 +52,77 @@ class mods_faq extends titania_object
 
 		$faq_id		= request_var('faq_id', 0);
 		$submit		= isset($_POST['submit']) ? true : false;
+		
+		$form_key = 'mods_details';
+		add_form_key($form_key);
+
+		require(TITANIA_ROOT . 'includes/class_faq.' . PHP_EXT);
+		$faq = new titania_faq($faq_id);
+
+		switch ($mode)
+		{
+			case 'add':
+			case 'edit':
+				if ($submit)
+				{
+					$subject 	= utf8_normalize_nfc(request_var('subject', '', true));
+					$text 		= utf8_normalize_nfc(request_var('text', '', true));
+					
+					$faq->submit();
+				}
+				
+				if ($mode == 'edit')
+				{
+					$faq->load();
+				}
+				
+				$template->assign_vars(array(
+					'U_ACTION'		=> '',
+					
+					'FAQ_SUBJECT'	=> $faq->faq_subject,
+				));
+			break;
+
+			case 'delete':
+				if (confirm_box(true))
+				{
+					$faq->delete();
+				}
+				else
+				{
+					$s_hidden_fields = build_hidden_fields(array(
+						'submit'	=> true,
+						'faq_id'	=> $faq_id
+					));
+					confirm_box(false, 'DELETE_FAQ', $s_hidden_fields);
+				}	
+			break;
+
+			case 'details':
+			
+			break;
+			
+			case 'list':
+			default:
+				$this->tpl_name = 'mods/mod_faq';
+				$this->page_title = 'MODS_FAQ_LIST';
+				
+				$this->faq_list(request_var('contrib_id', 0));
+			break;
+		}		
 	}
 
+	private function faq_details($faq_id)
+	{
+		// $this->load();
+	}
+	
 	/**
 	 *  Creating list with similar FAQ
 	 *
 	 * @param int $faq_id
 	 */ 
-	public function get_similar_faq($faq_id)
+	private function get_similar_faq($faq_id)
 	{
 		global $db;
 		
@@ -82,7 +145,7 @@ class mods_faq extends titania_object
 	 *
 	 * @param int $contrib_id
 	 */
-	public function faq_list($contrib_id)
+	private function faq_list($contrib_id)
 	{
 		global $db, $template;
 
