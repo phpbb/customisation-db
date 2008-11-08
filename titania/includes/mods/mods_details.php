@@ -139,18 +139,18 @@ class mods_details extends titania_object
 
 		if (!$config['email_enable'])
 		{
-			titania::error_box('ERROR', 'EMAIL_DISABLED', ERROR_FATAL, 503);
+			trigger_error('EMAIL_DISABLED');
 		}
 
 		if (!$user->data['is_registered'] || $user->data['is_bot'] || !$auth->acl_get('u_sendemail'))
 		{
-			titania::error_box('ERROR', 'NO_EMAIL_MOD', ERROR_FATAL, 403);
+			trigger_error('NO_EMAIL_MOD');
 		}
 
 		// Are we trying to abuse the facility?
 		if (time() - $user->data['user_emailtime'] < $config['flood_interval'])
 		{
-			titania::error_box('ERROR', 'FLOOD_EMAIL_LIMIT', ERROR_FATAL);
+			trigger_error('FLOOD_EMAIL_LIMIT');
 		}
 
 		$sql = 'SELECT c.contrib_id, c.contrib_name FROM ' . CUSTOMISATION_CONTRIBS_TABLE . ' c
@@ -162,7 +162,7 @@ class mods_details extends titania_object
 
 		if (!$mod)
 		{
-			titania::error_box('ERROR', $user->lang['MOD_NOT_FOUND'], ERROR_FATAL, 404);
+			trigger_error('MOD_NOT_FOUND');
 		}
 
 		$error = array();

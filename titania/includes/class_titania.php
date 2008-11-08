@@ -237,29 +237,11 @@ class titania
 
 		// Send the appropriate HTTP status header
 		$statuses = array(
-			'200' => 'OK',
 			'201' => 'Created',
-			'202' => 'Accepted',
-			'204' => 'No Content',
-			'205' => 'Reset Content',
-			'300' => 'Multiple Choices',
 			'301' => 'Moved Permanently',
-			'302' => 'Found', // Moved Temporarily
 			'303' => 'See Other',
-			'304' => 'Not Modified',
-			'307' => 'Temporary Redirect',
-			'400' => 'Bad Request',
-			'401' => 'Unauthorized',
-			'402' => 'Payment Required',
 			'403' => 'Forbidden',
 			'404' => 'Not Found',
-			'406' => 'Not Acceptable',
-			'409' => 'Conflict',
-			'410' => 'Gone',
-			'500' => 'Internal Server Error',
-			'501' => 'Not Implemented',
-			'502' => 'Bad Gateway',
-			'503' => 'Service Unavailable',
 		);
 
 		if (isset($statuses[(string) $status_code]))
@@ -271,27 +253,9 @@ class titania
 		$template->assign_block_vars('errorbox', array(
 			'TITLE'		=> (isset($user->lang[$l_title])) ? $user->lang[$l_title] : $l_title,
 			'MESSAGE'	=> (isset($user->lang[$l_message])) ? $user->lang[$l_message] : $l_message,
-			'S_ERROR'	=> ($error_type == ERROR_ERROR || $error_type == ERROR_FATAL) ? true : false,
+			'S_ERROR'	=> ($error_type == ERROR_ERROR) ? true : false,
 			'S_SUCCESS'	=> ($error_type == ERROR_SUCCESS) ? true : false,
 		));
-
-		if ($error_type == ERROR_FATAL)
-		{
-			global $titania, $phpbb_root_path;
-
-			// Set correct $phpbb_root_path
-			$phpbb_root_path = PHPBB_ROOT_PATH;
-
-			$titania->page_header('ERROR');
-
-			$template->set_filenames(array(
-				'body' => 'error_body.html',
-			));
-
-			$titania->page_footer();
-
-			exit_handler();
-		}
 	}
 
 	/**
