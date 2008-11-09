@@ -66,16 +66,16 @@
 /* move this to a other file later ;) */
 #list-db ul.topiclist dt {
    font-weight: normal;
-   width: 29%;
+   width: 26%;
 }
 
-#list-db li.row dt , #list-db li.row dd.download-count, #list-db li.row dd.added , #list-db li.row dd.last-update  {
+#list-db li.row dt , #list-db li.row dd.rating, #list-db li.row dd.download-count, #list-db li.row dd.added , #list-db li.row dd.last-update  {
    margin-top: 20px;
 }
 
-#list-db .rating {
-   float: right;
-   margin-top: -11px;
+#list-db dd.rating {
+   width: 3%;
+   text-align: center;
 }
 
 #list-db dd.download-count {
