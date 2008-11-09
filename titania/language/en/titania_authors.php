@@ -47,5 +47,9 @@ $lang = array_merge($lang, array(
 	'NUM_STYLES'		=> '%s Styles',
 	'NUM_SNIPPET'		=> '%s Snippet',
 	'NUM_SNIPPETS'		=> '%s Snippets',
+	'AUTHOR_MODS'       => 'MODs',
+	'AUTHOR_STYLES'     => 'Styles',
+	'AUTHOR_CONTRIBS'   => 'Contribs',
+	'PHPBB_PROFILE'     => 'phpBB.com profile',
 ));
 

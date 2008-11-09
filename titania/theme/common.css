@@ -79,10 +79,6 @@ h4.details {
    width: 26%;
 }
 
-#list-db li.row dt , #list-db li.row dd.rating, #list-db li.row dd.download-count, #list-db li.row dd.added , #list-db li.row dd.last-update  {
-   margin-top: 20px;
-}
-
 #list-db dd.rating {
    width: 3%;
    text-align: center;
@@ -98,7 +94,7 @@ h4.details {
    padding-left: 5px;
 }
 
-#list-db li.row dd {
+#list-db li.row dd , #author_list li.row dd {
    font-size: 1.1em;
 }
 
@@ -114,4 +110,47 @@ h4.details {
 
 #list-db dd.last-update {
    padding-left: 5px;
+}
+
+#author_list ul.topiclist dt{
+   width: 0%;
+   margin-left: -8px;
+}
+
+#author_list ul.topiclist dd{
+   white-space: normal;
+}
+
+#author_list dd.author-full {
+   width: 10%;
+}
+
+#author_list dd.full_author
+{
+   width: 10%;
+}
+
+#author_list dd.phpbb_link
+{
+   width: 10%;
+}
+
+#author_list dd.contribs , #author_list dd.mods , #author_list dd.styles, #author_list dd.rating, #author_list dd.post{
+   width: 6%;
+   text-align: center;
+}
+
+#author_list dd.website
+{
+   width: 16%;
+}
+
+#author_list dd.last-visit
+{
+   width: 13%;
+}
+
+#author_list dd.online-user
+{
+   width: 2%;
 }
