@@ -38,5 +38,14 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'AUTHOR_LIST'		=> 'Author List',
 	'AUTHOR_PROFILE'	=> 'Author Profile',
+	'AUTHOR_NOT_FOUND'	=> 'Author not found',
+	'NUM_CONTRIB'		=> '%s Contribution',
+	'NUM_CONTRIBS'		=> '%s Contributions',
+	'NUM_MOD'			=> '%s MOD',
+	'NUM_MODS'			=> '%s MODs',
+	'NUM_STYLE'			=> '%s Style',
+	'NUM_STYLES'		=> '%s Styles',
+	'NUM_SNIPPET'		=> '%s Snippet',
+	'NUM_SNIPPETS'		=> '%s Snippets',
 ));
 
