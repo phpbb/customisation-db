@@ -60,7 +60,7 @@ class mods_faq extends titania_object
 
 		require(TITANIA_ROOT . 'includes/class_faq.' . PHP_EXT);
 
-		$faq = new titania_faq($faq_id);
+		$faq = new titania_faq($faq_id, 'mods');
 
 		switch ($mode)
 		{
@@ -115,9 +115,9 @@ class mods_faq extends titania_object
 					$this->tpl_name = 'contrib_faq_details';
 					$this->page_title = 'MODS_FAQ_DETAILS';
 
-					$faq->faq_details($faq_id);
+					$faq->faq_details();
 
-					$faq->similar_faq($faq_id);
+					$faq->similar_faq();
 				}
 				else
 				{

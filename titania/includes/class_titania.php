@@ -223,7 +223,7 @@ class titania
 		return (!$return_url) ? sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, $user->lang[$l_redirect]) : $redirect;
 	}
 
-	public static function trigger_error($error_msg, $error_type = NULL, $status_code = NULL)
+	public static function trigger_error($error_msg, $error_type = E_USER_NOTICE, $status_code = NULL)
 	{
 		if ($status_code)
 		{

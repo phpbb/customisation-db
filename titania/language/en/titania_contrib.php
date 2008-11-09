@@ -37,12 +37,15 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'CONTRIB_NOT_FOUND'		=> 'The contribution you requested could not be found.',
-
+	'NO_CONTRIB_SELECTED'	=> 'No contrib has been selected.',
+	
 	'FAQ_DETAILS_NOT_FOUND' => 'Details for this subject could not be found.',
 	'FAQ_NOT_FOUND'			=> 'No FAQ have not added for this contrib.',
 	'MODS_FAQ_LIST'			=> 'FAQ list',
 	'MODS_FAQ_DETAILS'		=> 'FAQ details',
-
+	
+	'FOR_VERSION'			=> 'For version',
+	
 	'AUTHOR_BY'				=> 'By %s',
 	'U_SEARCH_MODS_AUTHOR'	=> '%1$sOther MODs by %2$s%3$s',
 
