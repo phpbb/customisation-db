@@ -46,7 +46,7 @@ class authors_main extends titania_object
 	 */
 	public function main($id, $mode)
 	{
-		global $user;
+		global $user, $phpbb_root_path;
 
 		// complete the hack to allow our modules to be loaded from the Titania/includes directory.
 		$phpbb_root_path = PHPBB_ROOT_PATH;

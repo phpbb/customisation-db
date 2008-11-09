@@ -46,7 +46,7 @@ class mods_faq extends titania_object
 	 */
 	public function main($id, $mode)
 	{
-		global $user, $template, $cache;
+		global $user, $template, $cache, $phpbb_root_path;
 
 		// complete the hack to allow our modules to be loaded from the Titania/includes directory.
 		$phpbb_root_path = PHPBB_ROOT_PATH;
@@ -117,9 +117,9 @@ class mods_faq extends titania_object
 				{
 					$this->tpl_name = 'mods/mod_faq_details';
 					$this->page_title = 'MODS_FAQ_DETAILS';
-					
+
 					$faq->faq_details($faq_id);
-					
+
 					$faq->similar_faq($faq_id);
 				}
 				else

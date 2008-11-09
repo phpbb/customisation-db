@@ -46,10 +46,12 @@ class titania_main extends titania_object
 	 */
 	public function main($id, $mode)
 	{
-		global $user, $template, $cache;
+		global $user, $template, $cache, $phpbb_root_path;
+
+		$phpbb_root_path = PHPBB_ROOT_PATH;
 
 		$user->add_lang('titania_contrib');
-		
+
 		$this->tpl_name = 'titania/index_body';
 		$this->page_title = 'TITANIA_HOME';
 	}

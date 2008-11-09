@@ -27,7 +27,6 @@ $module->list_modules('titania');
 
 // Select the active module
 $module->set_active($id, $mode);
-
 // Load and execute the relevant module
 // trick the module class to allow modules to be loaded from the titania includes path.
 $phpbb_root_path = TITANIA_ROOT;
