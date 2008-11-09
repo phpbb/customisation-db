@@ -112,7 +112,7 @@ class mods_faq extends titania_object
 			default:
 				if ($faq_id)
 				{
-					$this->tpl_name = 'mods/mod_faq_details';
+					$this->tpl_name = 'contrib_faq_details';
 					$this->page_title = 'MODS_FAQ_DETAILS';
 
 					$faq->faq_details($faq_id);
@@ -121,14 +121,14 @@ class mods_faq extends titania_object
 				}
 				else
 				{
-					$contrib_id = request_var('contrib_id', 0);
+					$contrib_id = request_var('mod', 0);
 
 					if (!$contrib_id)
 					{
 						titania::trigger_error('NO_CONTRIB_SELECTED');
 					}
 
-					$this->tpl_name = 'mods/mod_faq_list';
+					$this->tpl_name = 'contrib_faq_list';
 					$this->page_title = 'MODS_FAQ_LIST';
 
 					$found = $faq->faq_list($contrib_id);
