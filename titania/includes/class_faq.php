@@ -73,7 +73,7 @@ class titania_faq extends titania_database_object
 	 *
      * @param int $faq_id
 	 */
-	public function faq_details($faq_id)
+	public function faq_details()
 	{
 		global $template;
 		
@@ -81,7 +81,7 @@ class titania_faq extends titania_database_object
 
 		if (!$this->faq_id)
 		{
-			oberon::trigger_error('FAQ_DETAILS_NOT_FOUND');
+			titania::trigger_error('FAQ_DETAILS_NOT_FOUND');
 		}		
 
 		decode_message($this->faq_text, $this->faq_text_uid);
@@ -138,7 +138,7 @@ class titania_faq extends titania_database_object
 	 *
 	 * @param int $contrib_id
 	 */
-	public function faq_list($contrib_id, $contrib_type)
+	public function faq_list($contrib_id)
 	{
 		global $db, $template;
 
