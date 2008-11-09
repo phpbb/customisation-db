@@ -42,6 +42,8 @@ CREATE TABLE `customisation_contrib_faq` (
   KEY `parent_id` (`parent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
+insert into `customisation_contrib_faq` values('1','1','','1.0.1','','This is a faq test!',' 0x61206661712074657874206c6f6f6b206174206d652e','','','7');
+
 
 CREATE TABLE `customisation_contrib_tags` (
   `contrib_id` mediumint(8) unsigned NOT NULL default '0',
