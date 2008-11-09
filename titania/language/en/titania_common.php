@@ -88,7 +88,7 @@ $lang = array_merge($lang, array(
 	'MODO_DOWNLOAD'			=> 'Download Information',
 
 	'DETAILS_TITLE'			=> 'MOD Details',
-	'DETAILS_MOD_TITLE'		=> 'MOD title',
+	'DETAILS_MOD_TITLE'		=> 'MOD Title',
 	'DETAILS_MOD_CATEGORY'	=> 'Category',
 	'DETAILS_MOD_AUTHOR'	=> 'Mod Author',
 	'DETAILS_MOD_VERSION'	=> 'Version',
@@ -126,8 +126,8 @@ $lang = array_merge($lang, array(
 	'COMPLEX_ADDITIONAL'	=> 'Additional Module',
 	
 	'STYLES_TITLE'			=> 'Styles Supported',
-	'STYLES_PROSILVER'		=> 'proSilver',
-	'STYLES_SUBSILVER'		=> 'subSilver2',
+	'STYLES_PROSILVER'		=> 'prosilver',
+	'STYLES_SUBSILVER'		=> 'subsilver2',
 	'STYLES_OTHER'			=> 'Other Styles',
 	
 	'LANGUAGE_TITLE'		=> 'Languages Supported',
@@ -140,11 +140,11 @@ $lang = array_merge($lang, array(
 	'OTHER_MODS'			=> 'Other MODs by this Author',
 	
 	'DOWNLOAD_TITLE'		=> 'MOD Download',
-	'DOWNLOAD_CHECK'		=> 'Download checksum',
+	'DOWNLOAD_CHECK'		=> 'Download Checksum',
 	'DOWNLOAD_MOD_TITLE'	=> 'Download Title',
-	'DOWNLOAD_FILESIZE'		=> 'Download filesize',
+	'DOWNLOAD_FILESIZE'		=> 'Download Filesize',
 	'DOWNLOAD_URL'			=> 'Download URL',
-	'DOWNLOAD_COUNT'		=> 'Download count',
+	'DOWNLOAD_COUNT'		=> 'Download Count',
 
 	'DEMO_TITLE'			=> 'MOD Demo and Screenshots',
 	'DEMO_URL'				=> 'Demo URL',
