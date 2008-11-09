@@ -46,10 +46,7 @@ class authors_main extends titania_object
 	 */
 	public function main($id, $mode)
 	{
-		global $user, $phpbb_root_path;
-
-		// complete the hack to allow our modules to be loaded from the Titania/includes directory.
-		$phpbb_root_path = PHPBB_ROOT_PATH;
+		global $user;
 
 		$user->add_lang(array('titania_contrib', 'titania_authors'));
 
@@ -64,11 +61,11 @@ class authors_main extends titania_object
 				if (!$found)
 				{
 					titania::error_box('ERROR', $user->lang['AUTHOR_NOT_FOUND'], ERROR_ERROR);
-					
+
 					$this->main($id, 'list');
 					return;
 				}
-			
+
 			break;
 
 			case 'list':
@@ -191,13 +188,13 @@ class authors_main extends titania_object
 			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
 		));
 	}
-	
+
 	private function author_profile()
 	{
 		global $db, $template;
-		
+
 		$author_id = request_var('u', 0);
-		
+
 		$sql_ary = array(
 			'SELECT' => 'a.*, u.user_lastvisit, u.username, u.user_posts, u.user_colour',
 			'FROM'		=> array(
@@ -212,21 +209,21 @@ class authors_main extends titania_object
 			'WHERE'		=> 'a.author_id = ' . $author_id . '
 				AND a.author_visible <> ' . AUTHOR_HIDDEN
 		);
-		
+
 		$sql = $db->sql_build_query('SELECT', $sql_ary);
-		
+
 		$result = $db->sql_query($sql);
-		
+
 		if(!($author = $db->sql_fetchrow($result)))
 		{
 			return false;
 		}
-		
+
 		if(!$author['author_visible'])
 		{
 			return false;
 		}
-		
+
 		$template->assign_vars(array(
 			'AUTHOR_NAME'		=> get_username_string('username', $author['user_id'], $author['username'], $author['user_colour']),
 			'USER_FULL'			=> ($author['user_id']) ? get_username_string('full', $author['user_id'], $author['username'], $author['user_colour']) : '',
@@ -238,25 +235,25 @@ class authors_main extends titania_object
 			'SNIPPET_COUNT'		=> $this->generate_contrib_string('snippet', 'link', $author['author_snippets'], $author_id),
 			'MOD_COUNT'			=> $this->generate_contrib_string('mod', 'link', $author['author_mods'], $author_id),
 			'STYLE_COUNT'		=> $this->generate_contrib_string('style', 'link', $author['author_styles'], $author_id),
-			
+
 			'U_PHPBB_PROFILE'	=> ($author['phpbb_user_id']) ? U_PHPBBCOM_VIEWPROFILE . '&amp;u=' . $author['phpbb_user_id'] : '',
 		));
-		
+
 		return true;
 	}
-	
+
 	// Currently this just returns the $rating parameter, but we may want to use an image/image combo for ratings
 	// This can be changed later if this is decided.
 	private function generate_rating($rating)
 	{
 		return round($rating, 2);
 	}
-	
+
 	// This can handle generating links to a contrib list, as well as just text
 	private function generate_contrib_string($contrib_type, $string_type, $num, $author_id = 0)
 	{
 		global $user;
-		
+
 		$contrib_type = strtoupper($contrib_type);
 		$lang_key = 'NUM_' . $contrib_type . (($num == 1)?'':'S');
 		$contrib_string = sprintf($user->lang[$lang_key], $num);
@@ -270,15 +267,15 @@ class authors_main extends titania_object
 			{
 				case 'MOD':
 					$url = append_sid(TITANIA_ROOT . 'mods/index.php', 'mode=search&amp;u=' . $author_id);
-					
+
 				break;
-				
+
 				default:
 					$url = '#';
 			}
 			$contrib_string = '<a href="' . $url . '">' . $contrib_string . '</a>';
 		}
-		
+
 		return $contrib_string;
 	}
 }
