@@ -210,4 +210,45 @@ class titania_review extends titania_database_object
 			$this->review_text_options = $flags;
 		}
 	}
+
+
+
+	/**
+	 * Display rating menu if user has not rated this contrib previously
+	 *
+	 * @return unknown
+	 */
+	public function rating_menu($contrib_id)
+	{
+		global $user, $db;
+
+		$s_rating_options = '';
+		foreach ($user->lang['ratings'] as $rating => $lang)
+		{
+			$s_rating_options .= '<option value="' . $rating . '">' . $lang . '</option>';
+		}
+
+		return $s_rating_options;
+	}
+
+	/**
+	 * Obtain an array of reviews by contrib.
+	 *
+	 * @param int $contrib
+	 * @param string $order_by @todo
+	 */
+	public function obtain_contrib_reviews($contrib_id, $order_by = false)
+	{
+		global $db;
+
+		$sql = 'SELECT *
+				FROM ' . CUSTOMISATION_REVIEWS_TABLE . '
+				WHERE contrib_id = ' . (int) $contrib_id;
+		$result = $db->sql_query($sql);
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$reviews[$row['review_id']] = $row;
+		}
+		$db->sql_freeresult($result);
+	}
 }

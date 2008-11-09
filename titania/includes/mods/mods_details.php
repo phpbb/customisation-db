@@ -69,6 +69,7 @@ class mods_details extends titania_object
 				$this->page_title = 'MOD_EMAIL';
 
 				$this->mod_email($mod_id);
+				return;
 			break;
 
 			case 'changes':
@@ -112,8 +113,10 @@ class mods_details extends titania_object
 		);
 		$sql = $db->sql_build_query('SELECT', $sql_ary);
 		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchfield($result);
+		$row = $db->sql_fetchrow($result);
 		$db->sql_freeresult($result);
+
+		$profile_url = append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'mode=profile');
 
 		$template->assign_vars(array(
 			'MOD_ID'		=> $row['contrib_id'],
@@ -124,24 +127,41 @@ class mods_details extends titania_object
 			'ADDED'			=> $user->format_date($row['contrib_release_date']),
 			'UPDATED'		=> $user->format_date($row['contrib_update_date']),
 			'VERSION'		=> $row['contrib_version'],
-			'AUTHOR'		=> sprintf($user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
+			'AUTHOR_FULL'	=> sprintf($user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
+			'PROFILE_FULL'	=> ($row['user_id']) ? get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']) : '',
+
+			'U_SEARCH_MODS_AUTHOR'	=> sprintf($user->lang['SEARCH_AUTHOR_MODS'], '<a href="' . append_sid(TITANIA_ROOT . $this->page, 'mode=search&amp;u=' . $row['author_id']) . '">', $row['author_username'], '</a>'),
 		));
 	}
 
+	/**
+	 * Email a friend
+	 *
+	 * @param int $mod_id
+	 */
 	public function mod_email($mod_id)
 	{
-		global $config, $auth, $db, $phpbb_root_path, $template, $user;
+		global $config, $auth, $db, $template, $user;
 
 		titania::add_phpbb_lang(array('memberlist', 'ucp'));
 
 		if (!$config['email_enable'])
 		{
-			trigger_error('EMAIL_DISABLED');
+			titania::error_box('ERROR', $user->lang['EMAIL_DISABLED'], ERROR_ERROR, HEADER_SERVICE_UNAVAILABLE);
+			$this->main('details', 'details');
+			return;
 		}
 
 		if (!$user->data['is_registered'] || $user->data['is_bot'] || !$auth->acl_get('u_sendemail'))
 		{
-			trigger_error('NO_EMAIL_MOD');
+			if ($user->data['user_id'] == ANONYMOUS)
+			{
+				login_box(TITANIA_ROOT . $this->page . '&amp;mod=' . $mod_id, 'NO_EMAIL_MOD');
+			}
+
+			titania::error_box('ERROR', $user->lang['NO_EMAIL_MOD'], ERROR_ERROR, HEADER_FORBIDDEN);
+			$this->main('details', 'details');
+			return;
 		}
 
 		// Are we trying to abuse the facility?
@@ -150,9 +170,10 @@ class mods_details extends titania_object
 			trigger_error('FLOOD_EMAIL_LIMIT');
 		}
 
-		$sql = 'SELECT c.contrib_id, c.contrib_name FROM ' . CUSTOMISATION_CONTRIBS_TABLE . ' c
+		$sql = 'SELECT c.contrib_id, c.contrib_name
+				FROM ' . CUSTOMISATION_CONTRIBS_TABLE . ' c
 				WHERE c.contrib_id = ' . (int) $mod_id . '
-				AND c.contrib_status = ' .  STATUS_APPROVED;
+					AND c.contrib_status = ' .  STATUS_APPROVED;
 		$result = $db->sql_query($sql);
 		$mod = $db->sql_fetchrow($result);
 		$db->sql_freeresult($result);
@@ -242,7 +263,7 @@ class mods_details extends titania_object
 						'MESSAGE'		=> htmlspecialchars_decode($message),
 
 						'MOD_TITLE'		=> htmlspecialchars_decode($row['mod_title']),
-						'U_MOD'			=> generate_board_url(true) . $this->page . '?mode=details&mod=' . $mod_id, // @todo Not sure if this is the correct url
+						'U_MOD'			=> generate_board_url(true) . $this->page . '?mode=details&mod=' . $mod_id,
 					));
 
 					$messenger->send(NOTIFY_EMAIL);
@@ -255,12 +276,31 @@ class mods_details extends titania_object
 		}
 
 		$template->assign_vars(array(
-			'MOD_TITLE'		=> $mod['contrib_name'],
+			'MOD_TITLE'			=> $mod['contrib_name'],
 
 			'ERROR_MESSAGE'		=> (sizeof($error)) ? implode('<br />', $error) : '',
 
 			'S_LANG_OPTIONS'	=> language_select($email_lang),
 			'S_POST_ACTION'		=> $this->u_action . '&amp;mod=' . $mod_id,
 		));
+	}
+
+	/**
+	 * Increment contrib views, but only if the user just visited the page and they are not a bot.
+	 *
+	 * @param string $param URL parameter to look for, such as mod, style, mod_id
+	 * @param int $contrib_id contrib_id to increment views for
+	 */
+	public function increment_contrib_views($param, $contrib_id)
+	{
+		global $db, $user;
+
+		if (isset($user->data['session_page']) && !$user->data['is_bot'] && strpos($user->data['session_page'], "&{$param}={$contrib_id}") === false)
+		{
+			$sql = 'UPDATE ' . CUSTOMISATION_CONTRIBS_TABLE . ' SET contrib_views = contrib_views + 1 WHERE contrib_id = ' . (int) $contrib_id;
+			$db->sql_query($sql);
+		}
+
+		return;
 	}
 }
