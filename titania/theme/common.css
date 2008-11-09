@@ -63,6 +63,16 @@
 	font-weight: bold;
 }
 
+h4.details {
+    color: #000000;
+	padding-bottom: 2px;
+}
+
+#modlisting  strong {
+    font-weight: normal;
+	color: #000000;
+}
+
 /* move this to a other file later ;) */
 #list-db ul.topiclist dt {
    font-weight: normal;

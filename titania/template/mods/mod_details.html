@@ -2,35 +2,30 @@
 
 <form method="post" action="{S_MODE_ACTION}">
 	<h2>{MOD_TITLE}</h2>
+    <p>{MOD_DESC}</p>
 
-	<div class="panel bg3" id="modlisting">
-		<div class="inner"><span class="corners-top"><span></span></span>
-			<div class="column1">
-				<dt><strong>{L_MOD_GENERAL}</strong></dt>
-			</div>
-		<span class="corners-bottom"><span></span></span></div>
-	</div>
+	<h4 class="details">{L_MODO_GENERAL}</h4>
 
 	<div class="panel bg2" id="modlisting">
 		<div class="inner"><span class="corners-top"><span></span></span>
 			<div class="column1">
 				<dl class="faq">
-					<dt><strong>{L_DETAILS_TITLE}</strong></dt>
-					<dd>{L_DETAILS_MOD_TITLE}</dd>
-					<dd>{L_DETAILS_MOD_CATEGORY}</dd>
-					<dd>{L_DETAILS_MOD_AUTHOR}</dd>
-					<dd>{L_DETAILS_MOD_VERSION}</dd>
-					<dd>{L_DETAILS_MOD_BRANCH}</dd>
-					<dd>{L_DETAILS_MOD_TIME}</dd>
+					<dt><h3>{L_DETAILS_TITLE}</h3></dt>
+					<dd><strong>{L_DETAILS_MOD_TITLE}</strong>: {MOD_TITLE}</dd>
+					<dd><strong>{L_DETAILS_MOD_CATEGORY}</strong></dd>
+					<dd><strong>{L_DETAILS_MOD_AUTHOR}</strong></dd>
+					<dd><strong>{L_DETAILS_MOD_VERSION}</strong>: {VERSION}</dd>
+					<dd><strong>{L_DETAILS_MOD_BRANCH}</strong></dd>
+					<dd><strong>{L_DETAILS_MOD_TIME}</strong></dd>
 				</dl>
 			</div>
 			<div class="column2">
 				<dl class="faq">
-					<dt><strong>{L_AUTHOR_TITLE}</strong></dt>
-					<dd>{L_AUTHOR_MOD_AUTHOR}</dd>
-					<dd>{L_AUTHOR_PROFILE}</dd>
-					<dd>{L_AUTHOR_LAST}</dd>
-					<dd>{L_AUTHOR_RR}</dd>
+					<dt><h3>{L_AUTHOR_TITLE}</h3></dt>
+					<dd><strong>{L_AUTHOR_MOD_AUTHOR}</strong></dd>
+					<dd><strong>{L_AUTHOR_PROFILE}</strong>: {AUTHOR_FULL}</dd>
+					<dd><strong>{L_AUTHOR_LAST}</strong></dd>
+					<dd><strong>{L_AUTHOR_RR}</strong></dd>
 				</dl>
 			</div>
 		<span class="corners-bottom"><span></span></span></div>
@@ -40,132 +35,107 @@
 		<div class="inner"><span class="corners-top"><span></span></span>
 			<div class="column1">
 				<dl class="faq">
-					<dt><strong>{L_VALID_TITLE}</strong></dt>
-					<dd>{L_VALID_STATUS}</dd>
-					<dd>{L_VALID_DATE}</dd>
-					<dd>{L_VALID_VERSION}</dd>
-					<dd>{L_VALID_QUEUE}</dd>
-					<dd>{L_VALID_TESTED}</dd>
-					<dd>{L_VALID_DOWNLOAD}</dd>
+					<dt><h3>{L_VALID_TITLE}</h3></dt>
+					<dd><strong>{L_VALID_STATUS}</strong></dd>
+					<dd><strong>{L_VALID_DATE}</strong></dd>
+					<dd><strong>{L_VALID_VERSION}</strong></dd>
+					<dd><strong>{L_VALID_QUEUE}</strong></dd>
+					<dd><strong>{L_VALID_TESTED}</strong></dd>
+					<dd><strong>{L_VALID_DOWNLOAD}</strong></dd>
 				</dl>
 			</div>
 			<div class="column2">
 				<dl class="faq">
-					<dt><strong>{L_RR_TITLE}</strong></dt>
-					<dd>{L_RR_MOD}</dd>
-					<dd>{L_RR_TEAM}</dd>
-					<dd>{L_RR_RANK}</dd>
-					<dd>{L_RR_E_RATING}</dd>
-					<dd>{L_RR_E_REVIEW}</dd>
-					<dd>{L_RR_LIST}</dd>
+					<dt><h3>{L_RR_TITLE}</h3></dt>
+					<dd><strong>{L_RR_MOD}</strong></dd>
+					<dd><strong>{L_RR_TEAM}</strong></dd>
+					<dd><strong>{L_RR_RANK}</strong></dd>
+					<dd><strong>{L_RR_E_RATING}</strong></dd>
+					<dd><strong>{L_RR_E_REVIEW}</strong></dd>
+					<dd><strong>{L_RR_LIST}</strong></dd>
 				</dl>
 			</div>
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
 
-	<div class="panel bg3" id="modlisting">
-		<div class="inner"><span class="corners-top"><span></span></span>
-			<div class="column1">
-				<dt><strong>{L_MODO_ADVANCED}</strong></dt>
-			</div>
-		<span class="corners-bottom"><span></span></span></div>
-	</div>
+	<h4 class="details">{L_MODO_ADVANCED}</h4>
 
 	<!-- BEGIN complexity -->
 	<div class="panel bg2" id="modlisting">
 		<div class="inner"><span class="corners-top"><span></span></span>
 			<div class="column1">
 				<dl class="faq">
-					<dt><strong>{L_COMPLEX_TITLE}</strong></dt>
-					<dd>{L_COMPLEX_SCHEMA}</dd>
-					<dd>{L_COMPLEX_DATA}</dd>
-					<dd>{L_COMPLEX_TEMPLATE}</dd>
-					<dd>{L_COMPLEX_LANGUAGE}</dd>
-					<dd>{L_COMPLEX_EDIT}</dd>
-					<dd>{L_COMPLEX_ADDITIONAL}</dd>
+					<dt><h3>{L_COMPLEX_TITLE}</h3></dt>
+					<dd><strong>{L_COMPLEX_SCHEMA}</strong></dd>
+					<dd><strong>{L_COMPLEX_DATA}</strong></dd>
+					<dd><strong>{L_COMPLEX_TEMPLATE}</strong></dd>
+					<dd><strong>{L_COMPLEX_LANGUAGE}</strong></dd>
+					<dd><strong>{L_COMPLEX_EDIT}</strong></dd>
+					<dd><strong>{L_COMPLEX_ADDITIONAL}</strong></dd>
 				</dl>
 			</div>
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
 	<!-- END complexity -->
 
-	<div class="panel bg3" id="modlisting">
-		<div class="inner"><span class="corners-top"><span></span></span>
-			<div class="column1">
-				<dt><strong>{L_MODO_COMPATABILITY}</strong></dt>
-			</div>
-		<span class="corners-bottom"><span></span></span></div>
-	</div>
+	<h4 class="details">{L_MODO_COMPATABILITY}</h4>
 
 	<div class="panel bg2" id="modlisting">
 		<div class="inner"><span class="corners-top"><span></span></span>
 			<div class="column1">
 				<dl class="faq">
-					<dt><strong>{L_STYLES_TITLE}</strong></dt>
-					<dd>{L_STYLES_PROSILVER}</dd>
-					<dd>{L_STYLES_SUBSILVER}</dd>
-					<dd>{L_STYLES_OTHER}</dd>
+					<dt><h3>{L_STYLES_TITLE}</h3></dt>
+					<dd><strong>{L_STYLES_PROSILVER}</strong></dd>
+					<dd><strong>{L_STYLES_SUBSILVER}</strong></dd>
+					<dd><strong>{L_STYLES_OTHER}</strong></dd>
 				</dl>
 				<dl class="faq">
 					<dt><strong>{L_LANGUAGE_TITLE}</strong></dt>
-					<dd>{L_LANGUAGE_AVAILABLE}</dd>
+					<dd><strong>{L_LANGUAGE_AVAILABLE}</strong></dd>
 				</dl>
 			</div>
 			<div class="column2">
 				<dl class="faq">
-					<dt><strong>{L_OTHER_TITLE}</strong></dt>
-					<dd>{L_OTHER_MODX}</dd>
-					<dd>{L_OTHER_FEATURES}</dd>
-					<dd>{L_OTHER_SIMILAR}</dd>
-					<dd>{L_OTHER_MODS}</dd>
+					<dt><h3>{L_OTHER_TITLE}</h3></dt>
+					<dd><strong>{L_OTHER_MODX}</strong></dd>
+					<dd><strong>{L_OTHER_FEATURES}</strong></dd>
+					<dd><strong>{L_OTHER_SIMILAR}</strong></dd>
+					<dd><strong>{L_OTHER_MODS}</strong></dd>
 				</dl>
 			</div>
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
 
-	<div class="panel bg3" id="modlisting">
-		<div class="inner"><span class="corners-top"><span></span></span>
-			<div class="column1">
-				<dt><strong>{L_MODO_DOWNLOAD}</strong></dt>
-			</div>
-		<span class="corners-bottom"><span></span></span></div>
-	</div>
+	<h4 class="details">{L_MODO_DOWNLOAD}</h4>
 
 	<div class="panel bg2" id="modlisting">
 		<div class="inner"><span class="corners-top"><span></span></span>
 			<div class="column1">
 				<dl class="faq">
-					<dt><strong>{L_DOWNLOAD_TITLE}</strong></dt>
-					<dd>{L_DOWNLOAD_CHECK}</dd>
-					<dd>{L_DOWNLOAD_MOD_TITLE}</dd>
-					<dd>{L_DOWNLOAD_FILESIZE}</dd>
-					<dd>{L_DOWNLOAD_URL}</dd>
-					<dd>{L_DOWNLOAD_COUNT}</dd>
+					<dt><h3>{L_DOWNLOAD_TITLE}</h3></dt>
+					<dd><strong>{L_DOWNLOAD_CHECK}</strong></dd>
+					<dd><strong>{L_DOWNLOAD_MOD_TITLE}</strong></dd>
+					<dd><strong>{L_DOWNLOAD_FILESIZE}</strong></dd>
+					<dd><strong>{L_DOWNLOAD_URL}</strong></dd>
+					<dd><strong>{L_DOWNLOAD_COUNT}</strong></dd>
 				</dl>
 			</div>
 		
 			<div class="column2">
 				<dl class="faq">
-					<dt><strong>{L_DEMO_TITLE}</strong></dt>
-					<dd>{L_DEMO_URL}</dd>
-					<dd>{L_DEMO_SCREEN}</dd>
+					<dt><h3>{L_DEMO_TITLE}</h3></dt>
+					<dd><strong>{L_DEMO_URL}</strong></dd>
+					<dd><strong>{L_DEMO_SCREEN}</strong></dd>
 				</dl>
 				<dl class="faq">
-					<dt><strong>{L_SUPPORT_TITLE}</strong></dt>
-					<dd>{L_SUPPORT_TOPIC}</dd>
-					<dd>{L_SUPPORT_AUTHOR_URL}</dd>
+					<dt><h3>{L_SUPPORT_TITLE}</h3></dt>
+					<dd><strong>{L_SUPPORT_TOPIC}</strong></dd>
+					<dd><strong>{L_SUPPORT_AUTHOR_URL}</strong></dd>
 				</dl>
 			</div>
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
-
-	<div class="panel bg3" id="modlisting">
-		<div class="inner"><span class="corners-top"><span></span></span>
-			<div class="column1">
-				<dt><strong>{L_MOD_GENERAL}</strong></dt>
-			</div>
-		<span class="corners-bottom"><span></span></span></div>
-	</div>
+		<h4 class="details">{L_MODO_GENERAL}</h4>
 </form>
 
 <!-- INCLUDE overall_footer.html -->
