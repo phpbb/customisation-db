@@ -180,7 +180,7 @@ class mods_details extends titania_object
 
 		if (!$mod)
 		{
-			trigger_error('MOD_NOT_FOUND');
+			titania::trigger_error('MOD_NOT_FOUND', E_USER_NOTICE, HEADER_NOT_FOUND);
 		}
 
 		$error = array();
@@ -281,7 +281,7 @@ class mods_details extends titania_object
 			'ERROR_MESSAGE'		=> (sizeof($error)) ? implode('<br />', $error) : '',
 
 			'S_LANG_OPTIONS'	=> language_select($email_lang),
-			'S_POST_ACTION'		=> $this->u_action . '&amp;mod=' . $mod_id,
+			'S_POST_ACTION'		=> append_sid($this->page, 'id=details&amp;mode=email&amp;mod=' . $mod_id),
 		));
 	}
 
