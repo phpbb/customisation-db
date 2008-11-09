@@ -81,7 +81,7 @@ class titania_faq extends titania_database_object
 
 		if (!$this->faq_id)
 		{
-			titania::error_box('ERROR', 'FAQ_DETAILS_NOT_FOUND', ERROR_FATAL, 404);
+			oberon::trigger_error('FAQ_DETAILS_NOT_FOUND');
 		}		
 
 		decode_message($this->faq_text, $this->faq_text_uid);
@@ -126,7 +126,7 @@ class titania_faq extends titania_database_object
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$template->assign_block_vars('similarfaq', array(
-				'U_FAQ'		=> append_sid(TITANIA_ROOT . (($row['contrib_type'] == CONTRIB_TYPE_MOD) ? 'mods' : ($row['contrib_type'] == CONTRIB_TYPE_STYLE) 'styles' : 'snippets') . '/index.' . PHP_EXT, 'mode=view&amp;faq_id=' . $row['faq_id']),
+				'U_FAQ'		=> append_sid(TITANIA_ROOT . (($row['contrib_type'] == CONTRIB_TYPE_MOD) ? 'mods' : ($row['contrib_type'] == CONTRIB_TYPE_STYLE) ? 'styles' : 'snippets') . '/index.' . PHP_EXT, 'mode=view&amp;faq_id=' . $row['faq_id']),
 	
 				'SUBJECT'	=> $row['faq_subject']
 			));
@@ -187,7 +187,7 @@ class titania_faq extends titania_database_object
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$template->assign_block_vars('faq', array(
-				'U_FAQ'				=> append_sid(TITANIA_ROOT . (($row['contrib_type'] == CONTRIB_TYPE_MOD) ? 'mods' : ($row['contrib_type'] == CONTRIB_TYPE_STYLE) 'styles' : 'snippets') . '/index.' . PHP_EXT, 'mode=view&amp;faq_id=' . $row['faq_id']),
+				'U_FAQ'				=> append_sid(TITANIA_ROOT . (($row['contrib_type'] == CONTRIB_TYPE_MOD) ? 'mods' : ($row['contrib_type'] == CONTRIB_TYPE_STYLE) ? 'styles' : 'snippets') . '/index.' . PHP_EXT, 'mode=view&amp;faq_id=' . $row['faq_id']),
 				'CONTRIB_VERSION'	=> $row['contrib_version'],
 				'SUBJECT'			=> $row['faq_subject'],
 			));

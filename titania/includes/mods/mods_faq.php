@@ -125,7 +125,7 @@ class mods_faq extends titania_object
 
 					if (!$contrib_id)
 					{
-						titania::error_box('ERROR', 'NO_CONTRIB_SELECTED', ERROR_FATAL, 404);
+						oberon::trigger_error('NO_CONTRIB_SELECTED');
 					}
 
 					$this->tpl_name = 'mods/mod_faq_list';
