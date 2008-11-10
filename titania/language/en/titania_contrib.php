@@ -46,6 +46,13 @@ $lang = array_merge($lang, array(
 	
 	'FOR_VERSION'			=> 'For version',
 	
+	'OTHER_FAQ'				=> 'Look at other FAQ for this contrib',
+	'SIMILAR_FAQ'			=> 'Similar FAQ',
+	'NO_SIMILAR_FAQ'		=> 'No similar FAQ.',
+	
+	'SORT_CONTRIB_VERSION'	=> 'Sort by Contrib version',
+	'SORT_SUBJECT'			=> 'Sort by Subject',
+	
 	'AUTHOR_BY'				=> 'By %s',
 	'U_SEARCH_MODS_AUTHOR'	=> '%1$sOther MODs by %2$s%3$s',
 

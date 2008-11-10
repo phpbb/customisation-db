@@ -1,0 +1,26 @@
+<!-- INCLUDE overall_header.html -->
+
+<form method="post" action="{S_MODE_ACTION}">
+	<div class="panel bg2">
+		<div class="inner"><span class="corners-top"><span></span></span>
+			<h2>{FAQ_SUBJECT}</h2>
+			<span>{L_FOR_VERSION}: <strong>{CONTRIB_VERSION}</strong></span>
+			</hr >
+			<p>{FAQ_TEXT}</p>
+			<hr />
+			<a href="{U_OTHERS_FAQ}">{L_OTHER_FAQ}</a>
+			<div>
+				<strong>{L_SIMILAR_FAQ}:</strong>
+				<ul style="padding-left: 20px;">
+					<!-- BEGIN similarfaq -->
+					<li><a href="{similarfaq.U_FAQ}">{similarfaq.SUBJECT}</a></li>
+					<!-- BEGINELSE -->
+					<li>{L_NO_SIMILAR_FAQ}</li>
+					<!-- END similarfaq -->
+				</ul>
+			</div>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+</form>
+
+<!-- INCLUDE overall_footer.html -->
