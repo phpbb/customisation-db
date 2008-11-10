@@ -75,8 +75,8 @@ $lang = array_merge($lang, array(
 	'SORT_MODS'				=> 'Sort by number of MODs',
 	'SORT_STYLES'			=> 'Sort by number of Styles',
 
-	'RETURNED_RESULT'		=> '%d result found',
-	'RETURNED_RESULTS'		=> '%d results found',
+	'RETURNED_RESULT'		=> 'Displaying 1 result',
+	'RETURNED_RESULTS'		=> 'Displaying %1$d of %2$d results',
 	
 	'TITANIA_HOME'			=> 'Titania Home',
 	

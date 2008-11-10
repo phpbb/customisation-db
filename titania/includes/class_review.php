@@ -241,6 +241,8 @@ class titania_review extends titania_database_object
 	{
 		global $db;
 
+		$reviews = array();
+
 		$sql = 'SELECT *
 				FROM ' . CUSTOMISATION_REVIEWS_TABLE . '
 				WHERE contrib_id = ' . (int) $contrib_id;
@@ -250,5 +252,7 @@ class titania_review extends titania_database_object
 			$reviews[$row['review_id']] = $row;
 		}
 		$db->sql_freeresult($result);
+
+		return $reviews;
 	}
 }

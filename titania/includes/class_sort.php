@@ -57,7 +57,14 @@ class sort
 	 *
 	 * @var string
 	 */
-	protected $default_key = '';
+	public $default_key = '';
+
+	/**
+	 * Default Sort direction for the page
+	 *
+	 * @var string
+	 */
+	public $default_dir = '';
 
 	/**
 	 * Sort direction text shown to user, used for select box
@@ -77,6 +84,8 @@ class sort
 			'a' => $user->lang['ASCENDING'],
 			'd' => $user->lang['DESCENDING'],
 		);
+
+		$this->default_dir = 'a';
 	}
 
 	/**
@@ -95,7 +104,7 @@ class sort
 		}
 
 		$this->set_sort_key(request_var($sk, $this->default_key));
-		$this->set_sort_dir(request_var($sd, 'a'));
+		$this->set_sort_dir(request_var($sd, $this->default_dir));
 
 		return true;
 	}
@@ -127,10 +136,16 @@ class sort
 	/**
 	 * Get the set sort key
 	 *
+	 * @param bool $return_default if set to false, this method will not return the sort key if it is also the default key
 	 * @return string sort_key
 	 */
-	public function get_sort_key()
+	public function get_sort_key($return_default = true)
 	{
+		if (!$return_default && $this->sort_key == $this->default_key)
+		{
+			return false;
+		}
+
 		return $this->sort_key;
 	}
 
@@ -149,10 +164,16 @@ class sort
 	/**
 	 * Get the set sort direction
 	 *
+	 * @param bool $return_default if set to false, this method will not return the sort dir if it is also the default direction
 	 * @return string sort_dir
 	 */
-	public function get_sort_dir()
+	public function get_sort_dir($return_default = true)
 	{
+		if (!$return_default && $this->sort_dir == $this->default_dir)
+		{
+			return false;
+		}
+
 		return $this->sort_dir;
 	}
 

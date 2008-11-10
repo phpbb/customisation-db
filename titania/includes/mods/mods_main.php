@@ -148,7 +148,7 @@ class mods_main extends titania_object
 		$start = $pagination->set_start();
 		$limit = $pagination->set_limit();
 
-		$results = false;
+		$results = 0;
 
 		$sql_ary = array(
 			'SELECT'	=> 'c.*, a.author_id, a.author_username, u.user_colour',
@@ -176,7 +176,7 @@ class mods_main extends titania_object
 
 		while ($row = $db->sql_fetchrow($result))
 		{
-			$results = true;
+			$results++;
 
 			$profile_url = append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'mode=profile');
 
@@ -200,11 +200,12 @@ class mods_main extends titania_object
 			return false;
 		}
 
-		$pagination->sql_total_count($sql_ary, 'c.contrib_id');
+		$pagination->sql_total_count($sql_ary, 'c.contrib_id', $results);
 
 		$pagination->set_params(array(
-			'sk'	=> $sort->get_sort_key(),
-			'sd'	=> $sort->get_sort_dir(),
+			'sk'		=> $sort->get_sort_key(false),
+			'sd'		=> $sort->get_sort_dir(false),
+			'category'	=> $category,
 		));
 
 		$pagination->build_pagination($this->u_action);

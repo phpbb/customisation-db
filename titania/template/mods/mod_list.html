@@ -11,8 +11,8 @@
 				<!-- IF not S_SEARCH_MOD --><a href="{U_FIND_MOD}">{L_FIND_MOD}</a><!-- ELSE --><a href="{U_HIDE_FIND_MOD}">{L_HIDE_FIND_MOD}</a><!-- ENDIF -->
 			</li>
 			<li class="rightside pagination">
-				{TOTAL_MODS}
-				<!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE -->{PAGE_NUMBER}<!-- ENDIF -->
+				{TOTAL_ROWS}
+				<!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ENDIF -->
 			</li>
 		</ul>
 
@@ -108,6 +108,6 @@
 <hr />
 
 <ul class="linklist">
-	<li class="rightside pagination">{TOTAL_MODS}<!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE -->{PAGE_NUMBER}<!-- ENDIF --></li>
+	<li class="rightside pagination">{TOTAL_ROWS}<!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ENDIF --></li>
 </ul>
 <!-- INCLUDE overall_footer.html -->

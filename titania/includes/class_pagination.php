@@ -35,7 +35,7 @@ class pagination
 	 *
 	 * @var int
 	 */
-	protected $limit = 20;
+	protected $limit = DEFAULT_OFFSET_LIMIT;
 
 	/**
 	 * total results/rows/count
@@ -43,6 +43,13 @@ class pagination
 	 * @var int
 	 */
 	protected $total_results = 0;
+
+	/**
+	 * Displaying results/rows
+	 *
+	 * @var int
+	 */
+	protected $results = 0;
 
 	/**
 	 * pagination url
@@ -70,14 +77,14 @@ class pagination
 	 *
 	 * @var int
 	 */
-	protected $default_limit = 20;
+	protected $default_limit = DEFAULT_OFFSET_LIMIT;
 
 	/**
 	 * Maximimum definable limit allowed
 	 *
 	 * @var int
 	 */
-	protected $max_limit = 100;
+	protected $max_limit = MAX_OFFSET_LIMIT;
 
 	/**
 	 * params array
@@ -105,9 +112,9 @@ class pagination
 	 * @param string $start_name _REQUEST name used for start
 	 * @return int	start
 	 */
-	public function set_start($start_name = 'start')
+	public function set_start($start_name = 'start', $default = 0)
 	{
-		$this->start = request_var($start_name, 0);
+		$this->start = request_var($start_name, (int) $default);
 
 		return $this->start;
 	}
@@ -118,22 +125,29 @@ class pagination
 	 * @param string $limit_name _REQUEST name used for limit
 	 * @return int	$limit
 	 */
-	public function set_limit($limit_name = 'limit')
+	public function set_limit($limit_name = 'limit', $default = DEFAULT_OFFSET_LIMIT)
 	{
-		$limit = request_var($limit_name, 0);
+		$limit = request_var($limit_name, (int) $default);
+		$this->default_limit = $default;
 
 		$this->limit = ($limit > $this->max_limit) ? $this->max_limit : $limit;
 		return $this->limit;
 	}
 
+	/**
+	 * Set URL parameters
+	 *
+	 * @param array $params
+	 */
 	public function set_params($params)
 	{
 		foreach ($params as $key => $value)
 		{
-			$this->params[$key] = $value;
+			if ($value)
+			{
+				$this->params[$key] = $key . '=' . $value;
+			}
 		}
-
-		return true;
 	}
 
 	/**
@@ -144,6 +158,18 @@ class pagination
 	public function set_total_results($total_results)
 	{
 		$this->total_results = $total_results;
+
+		return true;
+	}
+
+	/**
+	 * Set the results, usually from a manual count of while loop
+	 *
+	 * @param int $results
+	 */
+	public function set_results($results)
+	{
+		$this->results = $results;
 
 		return true;
 	}
@@ -189,7 +215,7 @@ class pagination
 	 * @param array $sql_ary SQL array used for sql_build_query()
 	 * @param string $field_name sql_field to count. i.e.: 'c.contrib_id'
 	 */
-	public function sql_total_count($sql_ary, $field_name)
+	public function sql_total_count($sql_ary, $field_name, $results = 0)
 	{
 		global $db;
 
@@ -199,6 +225,11 @@ class pagination
 		$result = $db->sql_query($sql);
 		$this->total_results = $db->sql_fetchfield('total_count');
 		$db->sql_freeresult($result);
+
+		if ($results)
+		{
+			$this->set_results($results);
+		}
 
 		return $this->total_results;
 	}
@@ -212,12 +243,19 @@ class pagination
 	{
 		global $template, $user;
 
+		$this->set_params(array(
+			'limit'		=> ($this->limit == $this->default_limit) ? false : $this->limit,
+		));
+
 		$params = (sizeof($this->params)) ? implode('&amp;', $this->params) : '';
 
 		$this->url = append_sid($page, $params);
 
+		$results = ($this->results) ? $this->results : $this->total_results;
+		$lang = ($this->total_results == 1) ? $user->lang[$this->result_lang] : $user->lang[$this->result_lang . 'S'];
+
 		$template->assign_vars(array(
-			$this->template_vars['TOTAL_ROWS']	=> ($this->total_results == 1) ? $user->lang[$this->result_lang] : sprintf($user->lang[$this->result_lang . 'S'], $this->total_results),
+			$this->template_vars['TOTAL_ROWS']	=> sprintf($lang, $this->results, $this->total_results),
 			$this->template_vars['PAGINATION']	=> generate_pagination($this->url, $this->total_results, $this->limit, $this->start),
 			$this->template_vars['PAGE_NUMBER']	=> on_page($this->total_results, $this->limit, $this->start),
 
