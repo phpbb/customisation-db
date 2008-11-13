@@ -1,51 +1,51 @@
 <!-- INCLUDE overall_header.html -->
 <h2>{L_AUTHOR_PROFILE}</h2>
 
-<div id="author_list">
-		<div class="forabg">
-			<div class="inner"><span class="corners-top"><span></span></span>
-			<ul class="topiclist">
-				<li class="header">
-					<dl>
-						<dt></dt>
-						<dd class="author-full">{L_AUTHOR_PROFILE}</dd>
-						<dd class="full_author">{L_AUTHOR}</dd>
-						<dd class="phpbb_link"><!-- IF authors.U_PHPBB_PROFILE -->{L_PROFILE_LINK}<!-- ENDIF --></dd>
-						<dd class="contribs">{L_AUTHOR_CONTRIBS}</dd>
-						<dd class="mods">{L_AUTHOR_MODS}</dd>
-						<dd class="styles">{L_AUTHOR_STYLES}</dd>
-						<dd class="rating">{L_RATING}</dd>
-					    <dd class="website">{L_WEBSITE}</dd>
-					    <dd class="last-visit">{L_LAST_VISIT}</dd>
-					    <dd class="post">{L_POSTS}</dd>
-					    <dd class="online-user">{L_ONLINE}</dd>
-					</dl>
-				</li>
-			</ul>
-			<ul class="topiclist topics">
-        <!-- BEGIN authors -->			
-		<li class="row <!-- IF authors.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
-			<dl>
-				<dt></dt>
-				<dd class="author-full">{authors.AUTHOR_FULL}</dd>
-					<dd class="full_author">{authors.USER_FULL}</dd>
-				    <dd class="phpbb_link"><!-- IF authors.U_PHPBB_PROFILE --><a href="{authors.U_PHPBB_PROFILE}">{L_PHPBB_PROFILE}</a><!-- ENDIF --></dd>
-					<dd class="contribs">{authors.CONTRIBS}</dd>
-					<dd class="mods">{authors.MODS}</dd>
-					<dd class="styles">{authors.STYLES}</dd>
-					<dd class="rating">{authors.RATING}</dd>
-					<dd class="website">{authors.WEBSITE}</dd>
-					<dd class="last-visit">{authors.LAST_VISIT}</dd>
-					<dd class="post">{authors.POSTS}</dd>
-					<dd class="online-user"><!-- IF authors.ONLINE --><img src="{T_IMAGESET_PATH}/icon_online.gif" width="11" height="11" alt="{L_ONLINE}" title="{L_ONLINE}" /><!-- ELSE --><img src="{T_IMAGESET_PATH}/icon_offline.gif" width="11" height="11" alt="{L_OFFLINE}" title="{L_OFFLINE}" /><!-- ENDIF --></dd>
-			</dl>
-		</li>
-		<!-- END authors -->
-			</ul>
 
-			<span class="corners-bottom"><span></span></span></div>
-		</div>
-	</div>
+
+<div class="forumbg">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<table class="table1" cellspacing="1">
+	<thead>
+	<tr>
+	        <th class="name"><span class="rank-img">{L_AUTHOR}</span>{L_AUTHOR_PROFILE}</th>
+			<th class="posts"><!-- IF authors.U_PHPBB_PROFILE -->{L_PROFILE_LINK}<!-- ENDIF --></th>
+			<th>{L_AUTHOR_CONTRIBS}</th>
+            <th>{L_AUTHOR_MODS}</th>
+            <th>{L_AUTHOR_STYLES}</th>
+            <th>{L_RATING}</th>
+			<th class="joined">{L_WEBSITE}</th>
+			<th class="active">{L_LAST_VISIT}</th>
+            <th>{L_POSTS}</th>
+            <th>{L_ONLINE}</th>
+	</tr>
+	</thead>
+	<tbody>
+    <!-- BEGIN authors -->
+        <tr class="<!-- IF authors.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
+		<td><span class="rank-img">{authors.USER_FULL}</span> {authors.AUTHOR_FULL}</td>
+		<td class="posts"><!-- IF authors.U_PHPBB_PROFILE --><a href="{authors.U_PHPBB_PROFILE}">{L_PHPBB_PROFILE}</a><!-- ENDIF --></td>
+		<td>{authors.CONTRIBS}</td>
+        <td>{authors.MODS}</td>
+		<td>{authors.STYLES}</td>
+ 		<td>{authors.RATING}</td>
+        <td>{authors.WEBSITE}</td>
+		<td>{authors.LAST_VISIT}</td>
+ 		<td>{authors.POSTS}</td>
+		<td><!-- IF authors.ONLINE --><img src="{T_IMAGESET_PATH}/icon_online.gif" width="11" height="11" alt="{L_ONLINE}" title="{L_ONLINE}" /><!-- ELSE --><img src="{T_IMAGESET_PATH}/icon_offline.gif" width="11" height="11" alt="{L_OFFLINE}" title="{L_OFFLINE}" /><!-- ENDIF --></td>       
+	</tr>
+    <!-- BEGINELSE -->
+	<tr class="bg1">
+		<td colspan="<!-- IF S_VIEWONLINE -->5<!-- ELSE -->4<!-- ENDIF -->">{L_NO_MEMBERS}</td>
+	</tr>
+    <!-- END authors -->
+	</tbody>
+	</table>
+    
+    <span class="corners-bottom"><span></span></span></div>
+</div>
+
 <fieldset class="display-options">
 	<!-- IF PREVIOUS_PAGE --><a href="{PREVIOUS_PAGE}" class="left-box {S_CONTENT_FLOW_BEGIN}">{L_PREVIOUS}</a><!-- ENDIF -->
 	<!-- IF NEXT_PAGE --><a href="{NEXT_PAGE}" class="right-box {S_CONTENT_FLOW_END}">{L_NEXT}</a><!-- ENDIF -->
