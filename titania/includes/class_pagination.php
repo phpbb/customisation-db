@@ -21,89 +21,39 @@ if (!defined('IN_TITANIA'))
  *
  * @package Titania
  */
-class pagination
+class pagination extends titania_object
 {
 	/**
-	 * start
-	 *
-	 * @var int
-	 */
-	protected $start = 0;
-
-	/**
-	 * limit number of results to display on page
-	 *
-	 * @var int
-	 */
-	protected $limit = DEFAULT_OFFSET_LIMIT;
-
-	/**
-	 * total results/rows/count
-	 *
-	 * @var int
-	 */
-	protected $total_results = 0;
-
-	/**
-	 * Displaying results/rows
-	 *
-	 * @var int
-	 */
-	protected $results = 0;
-
-	/**
-	 * pagination url
-	 *
-	 * @var string
-	 */
-	protected $url = '';
-
-	/**
-	 * result language var, e.g.: TOTAL_ROW, plural language var appended automatically
-	 *
-	 * @var string
-	 */
-	protected $result_lang = 'RETURNED_RESULT';
-
-	/**
-	 * Template vars, set automatically but may be changed if necessary.
+	 * URL Params
 	 *
 	 * @var array
 	 */
-	protected $template_vars = array();
-
-	/**
-	 * default results/rows to display
-	 *
-	 * @var int
-	 */
-	protected $default_limit = DEFAULT_OFFSET_LIMIT;
-
-	/**
-	 * Maximimum definable limit allowed
-	 *
-	 * @var int
-	 */
-	protected $max_limit = MAX_OFFSET_LIMIT;
-
-	/**
-	 * params array
-	 *
-	 * @var array
-	 */
-	protected $params = array();
+	private $params = array();
 
 	/**
 	 * Set some default variables, set template_vars default values
 	 */
 	public function __construct()
 	{
-		$this->template_vars = array(
-			'TOTAL_ROWS'	=> 'TOTAL_ROWS',
-			'PAGINATION'	=> 'PAGINATION',
-			'PAGE_NUMBER'	=> 'PAGE_NUMBER',
-			'S_MODE_ACTION'	=> 'S_MODE_ACTION',
-		);
+		// Configure object properties
+		$this->object_config = array_merge($this->object_config, array(
+			'start'			=> array('default' => 0),
+			'limit'			=> array('default' => DEFAULT_OFFSET_LIMIT),
+			'default_limit'	=> array('default' => DEFAULT_OFFSET_LIMIT),
+			'max_limit'		=> array('default' => MAX_OFFSET_LIMIT),
+			'results'		=> array('default' => 0),
+			'total_results'	=> array('default' => 0),
+			'url'			=> array('default' => ''),
+			'result_lang'	=> array('default' => 'RETURNED_RESULT'),
+			'template_vars'	=> array(
+				'default' => array(
+					'TOTAL_ROWS'	=> 'TOTAL_ROWS',
+					'PAGINATION'	=> 'PAGINATION',
+					'PAGE_NUMBER'	=> 'PAGE_NUMBER',
+					'S_MODE_ACTION'	=> 'S_MODE_ACTION',
+				),
+			),
+		));
 	}
 
 	/**
@@ -145,45 +95,22 @@ class pagination
 		{
 			if ($value)
 			{
-				$this->params[$key] = $key . '=' . $value;
+				$key = (string) $key;
+				$this->params[$key] = $key . '=' . (string) $value;
 			}
 		}
 	}
 
 	/**
-	 * Set total_results, generally from config or SQL COUNT() Query
+	 * Set single URL parameter
 	 *
-	 * @param int $total_results
+	 * @param string $key
+	 * @param string $value
 	 */
-	public function set_total_results($total_results)
+	public function set_param($key, $value)
 	{
-		$this->total_results = $total_results;
-
-		return true;
-	}
-
-	/**
-	 * Set the results, usually from a manual count of while loop
-	 *
-	 * @param int $results
-	 */
-	public function set_results($results)
-	{
-		$this->results = $results;
-
-		return true;
-	}
-
-	/**
-	 * set result language var, e.g.: TOTAL_ROW, plural language var appended automatically
-	 *
-	 * @param string $lang_var
-	 */
-	public function set_result_lang($lang_var)
-	{
-		$this->result_lang = $lang_var;
-
-		return true;
+		$key = (string) $key;
+		$this->params[$key] = $key . '=' . (string) $value;
 	}
 
 	/**
@@ -205,8 +132,17 @@ class pagination
 		{
 			$this->template_vars[$key] = $lang;
 		}
+	}
 
-		return true;
+	/**
+	 * Set single template variable
+	 *
+	 * @param string $key
+	 * @param string $value
+	 */
+	public function set_template_var($key, $value)
+	{
+		$this->template_vars[$key] = $value;
 	}
 
 	/**

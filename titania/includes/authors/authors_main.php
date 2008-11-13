@@ -105,7 +105,7 @@ class authors_main extends titania_object
 		$sort->sort_request(false);
 
 		$pagination = new pagination();
-		$pagination->set_result_lang('AUTHOR');
+		$pagination->result_lang = 'AUTHOR';
 		$start = $pagination->set_start();
 		$limit = $pagination->set_limit();
 
@@ -177,11 +177,11 @@ class authors_main extends titania_object
 		$pagination->sql_total_count($sql_ary, 'a.author_id');
 
 		$pagination->set_params(array(
-			'sk'	=> $sort->get_sort_key(),
-			'sd'	=> $sort->get_sort_dir(),
+			'sk'	=> $sort->get_sort_key(false),
+			'sd'	=> $sort->get_sort_dir(false),
 		));
 
-		$pagination->build_pagination($this->page);
+		$pagination->build_pagination($this->u_action);
 
 		$template->assign_vars(array(
 			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
@@ -230,13 +230,13 @@ class authors_main extends titania_object
 			'REAL_NAME'			=> htmlspecialchars($author['author_realname']),
 			'WEBSITE'			=> $author['author_website'],
 			'RATING'			=> $this->generate_rating($author['author_rating']),
-			'S_RATING_PERCENT'	=> $author['author_rating'] / 5,
+			'RATING_COUNT'		=> $author['author_rating_count'],
 			'CONTRIB_COUNT'		=> $this->generate_contrib_string('contrib', 'link', $author['author_contribs'], $author_id),
 			'SNIPPET_COUNT'		=> $this->generate_contrib_string('snippet', 'link', $author['author_snippets'], $author_id),
 			'MOD_COUNT'			=> $this->generate_contrib_string('mod', 'link', $author['author_mods'], $author_id),
 			'STYLE_COUNT'		=> $this->generate_contrib_string('style', 'link', $author['author_styles'], $author_id),
 
-			'U_PHPBB_PROFILE'	=> ($author['phpbb_user_id']) ? U_PHPBBCOM_VIEWPROFILE . '&amp;u=' . $author['phpbb_user_id'] : '',
+			'U_PHPBB_PROFILE'	=> ($author['phpbb_user_id'] && titania::$config->phpbbcom_profile) ? U_PHPBBCOM_VIEWPROFILE . '&amp;u=' . $author['phpbb_user_id'] : '',
 		));
 
 		return true;

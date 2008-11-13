@@ -29,9 +29,16 @@ class titania
 	public $page;
 
 	/**
+	 * Titania configuration
+	 *
+	 * @var unknown_type
+	 */
+	public static $config;
+
+	/**
 	 * construct class
 	 */
-	public function __construct()
+	public function __construct($titania_config)
 	{
 		global $user, $auth, $template;
 
@@ -47,6 +54,13 @@ class titania
 		$user->set_custom_lang_path(TITANIA_ROOT . 'language');
 
 		$user->add_lang('titania_common');
+
+		if (!class_exists('titania_config'))
+		{
+			include(TITANIA_ROOT . 'includes/titania_config.' . PHP_EXT);
+		}
+
+		self::$config = $titania_config->get_config_data();
 	}
 
 	/**

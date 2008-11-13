@@ -23,6 +23,9 @@ if (!file_exists(TITANIA_ROOT . 'config.' . PHP_EXT))
 	die('<p>The Titania config.' . PHP_EXT . ' file could not be found.</p>
 	<p><a href="' . TITANIA_ROOT . 'install/index.' . PHP_EXT . '">Click here to install Titania</a></p>');
 }
+
+// config.php contains a titania_config array, set here in case it does not.
+$config_ary = array();
 require(TITANIA_ROOT . 'config.' . PHP_EXT);
 
 // We need those variables to let phpBB 3.0.x scripts work properly.
@@ -43,14 +46,17 @@ require(PHPBB_ROOT_PATH . 'common.' . PHP_EXT);
 
 // Include titania constants
 require(TITANIA_ROOT . 'includes/constants.' . PHP_EXT);
+require(TITANIA_ROOT . 'includes/class_base_object.' . PHP_EXT);
 
 // Include titania main class
 require(TITANIA_ROOT . 'includes/class_titania.' . PHP_EXT);
 
-$titania = new titania();
+// Include titania configurations
+require(TITANIA_ROOT . 'includes/titania_config.' . PHP_EXT);
+
+$titania_config = new titania_config($config_ary);
+$titania = new titania($titania_config);
 
 // Include policy file (and interface)
 require(TITANIA_ROOT . 'includes/interface_policy.' . PHP_EXT);
 require(TITANIA_ROOT . 'policy.' . PHP_EXT);
-include(TITANIA_ROOT . 'includes/class_base_object.' . PHP_EXT);
-
