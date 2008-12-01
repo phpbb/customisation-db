@@ -60,7 +60,7 @@ $module->set_active($id, $mode);
 
 // Load and execute the relevant module
 // trick the module class to allow modules to be loaded from the titania includes path.
-$module->set_custom_include_path(TITANIA_ROOT . 'includes/');
+$module->set_custom_include_path(TITANIA_ROOT);
 $module->load_active();
 
 // Assign data to the template engine for the list of modules

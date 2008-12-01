@@ -191,7 +191,7 @@ class pagination extends titania_object
 		$lang = ($this->total_results == 1) ? $user->lang[$this->result_lang] : $user->lang[$this->result_lang . 'S'];
 
 		$template->assign_vars(array(
-			$this->template_vars['TOTAL_ROWS']	=> sprintf($lang, $this->results, $this->total_results),
+			$this->template_vars['TOTAL_ROWS']	=> sprintf($lang, $results, $this->total_results),
 			$this->template_vars['PAGINATION']	=> generate_pagination($this->url, $this->total_results, $this->limit, $this->start),
 			$this->template_vars['PAGE_NUMBER']	=> on_page($this->total_results, $this->limit, $this->start),
 
