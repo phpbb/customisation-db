@@ -39,6 +39,7 @@ class pagination extends titania_object
 		$this->object_config = array_merge($this->object_config, array(
 			'start'			=> array('default' => 0),
 			'limit'			=> array('default' => DEFAULT_OFFSET_LIMIT),
+			'limit_name'	=> array('default' => 'limit'),
 			'default_limit'	=> array('default' => DEFAULT_OFFSET_LIMIT),
 			'max_limit'		=> array('default' => MAX_OFFSET_LIMIT),
 			'results'		=> array('default' => 0),
@@ -59,12 +60,13 @@ class pagination extends titania_object
 	/**
 	 * Set start variable for pagination
 	 *
-	 * @param string $start_name _REQUEST name used for start
+	 * @param int $default custom start param
+	 *
 	 * @return int	start
 	 */
-	public function set_start($start_name = 'start', $default = 0)
+	public function set_start($default = 0)
 	{
-		$this->start = request_var($start_name, (int) $default);
+		$this->start = request_var('start', (int) $default);
 
 		return $this->start;
 	}
@@ -72,15 +74,23 @@ class pagination extends titania_object
 	/**
 	 * Set limit variable for pagination
 	 *
-	 * @param string $limit_name _REQUEST name used for limit
+	 * @param int $default default Offset/Limit -- uses the constant if unset.
+	 * @param string $limit_name set a custom 'limit' param key name
+	 *
 	 * @return int	$limit
 	 */
-	public function set_limit($limit_name = 'limit', $default = DEFAULT_OFFSET_LIMIT)
+	public function set_limit($default = DEFAULT_OFFSET_LIMIT, $limit_name = 'limit')
 	{
 		$limit = request_var($limit_name, (int) $default);
-		$this->default_limit = $default;
+		$this->default_limit = (int) $default;
+		$this->limit_name = (string) $limit_name;
 
+		// Don't allow limits of 0 which is unlimited results. Instead use the max limit.
+		$limit = ($limit == 0) ? $this->max_limit : $limit;
+
+		// We don't allow the user to specify a limit higher than the maximum.
 		$this->limit = ($limit > $this->max_limit) ? $this->max_limit : $limit;
+
 		return $this->limit;
 	}
 
@@ -95,8 +105,7 @@ class pagination extends titania_object
 		{
 			if ($value)
 			{
-				$key = (string) $key;
-				$this->params[$key] = $key . '=' . (string) $value;
+				$this->params[(string) $key] = (string) $value;
 			}
 		}
 	}
@@ -109,8 +118,28 @@ class pagination extends titania_object
 	 */
 	public function set_param($key, $value)
 	{
-		$key = (string) $key;
-		$this->params[$key] = $key . '=' . (string) $value;
+		$this->params[(string) $key] = (string) $value;
+	}
+
+	/**
+	 * The phpBB generate_pagination function always appends the start parameter to the URL.
+	 * Therefore we ensure that we don't pass this param in those functions if pagination_url is set to false
+	 *
+	 * @param string $page
+	 * @param bool $pagination_url set to true if being passed to the generate_pagination function
+	 *
+	 * @return string
+	 */
+	private function get_url($page, $pagination_url = false)
+	{
+		$params = $this->params;
+
+		if ($pagination_url)
+		{
+			unset($params['start']);
+		}
+
+		return (sizeof($params)) ? append_sid($page, $params) : append_sid($page);
 	}
 
 	/**
@@ -180,19 +209,19 @@ class pagination extends titania_object
 		global $template, $user;
 
 		$this->set_params(array(
-			'limit'		=> ($this->limit == $this->default_limit) ? false : $this->limit,
+			$this->limit_name	=> ($this->limit == $this->default_limit) ? false : $this->limit,
+			'start'				=> ($this->start == 0) ? false : $this->start,
 		));
 
-		$params = (sizeof($this->params)) ? implode('&amp;', $this->params) : '';
-
-		$this->url = append_sid($page, $params);
+		$this->url = $this->get_url($page);
+		$pagination_url = $this->get_url($page, true);
 
 		$results = ($this->results) ? $this->results : $this->total_results;
 		$lang = ($this->total_results == 1) ? $user->lang[$this->result_lang] : $user->lang[$this->result_lang . 'S'];
 
 		$template->assign_vars(array(
 			$this->template_vars['TOTAL_ROWS']	=> sprintf($lang, $results, $this->total_results),
-			$this->template_vars['PAGINATION']	=> generate_pagination($this->url, $this->total_results, $this->limit, $this->start),
+			$this->template_vars['PAGINATION']	=> generate_pagination($pagination_url, $this->total_results, $this->limit, $this->start),
 			$this->template_vars['PAGE_NUMBER']	=> on_page($this->total_results, $this->limit, $this->start),
 
 			$this->template_vars['S_MODE_ACTION']	=> $this->url,
