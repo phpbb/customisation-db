@@ -68,6 +68,18 @@ h4.details {
 	padding-bottom: 2px;
 }
 
+a.mini {
+	font-size: 10px;
+}
+
+a.medium {
+	font-size: 11px;
+}
+
+a.big {
+	font-size: 12px;
+}
+
 #modlisting  strong {
     font-weight: normal;
 	color: #000000;

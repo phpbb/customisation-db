@@ -75,11 +75,11 @@ class titania_faq extends titania_database_object
 	 */
 	public function faq_details($contrib_type)
 	{
-		global $template, $titania;
+		global $template, $user, $titania;
 		
-		$this->load();
+		$found = $this->load();
 
-		if (!$this->faq_id)
+		if (!$found)
 		{
 			titania::trigger_error('FAQ_DETAILS_NOT_FOUND');
 		}		
@@ -90,7 +90,7 @@ class titania_faq extends titania_database_object
 			'FAQ_ID'			=> $this->faq_id,
 			'FAQ_SUBJECT'		=> $this->faq_subject,
 			'FAQ_TEXT'			=> $this->faq_text,
-			'CONTRIB_VERSION' 	=> $this->contrib_version,
+			'CONTRIB_VERSION' 	=> sprintf($user->lang['FOR_VERSION'], $this->contrib_version),
 
 			'U_OTHERS_FAQ'		=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $contrib_type . '=' . $this->contrib_id),
 		));

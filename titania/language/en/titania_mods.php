@@ -46,6 +46,7 @@ $lang = array_merge($lang, array(
 
 	'MOD_AUTHOR'			=> 'MOD Author',
 	'MOD_CATEGORY'			=> 'Category',
+	'MOD_VERSION'			=> 'MOD version',
 	'MOD_CATEGORIES'		=> 'MOD Categories',
 	'MOD_DESCRIPTION'		=> 'MOD Description',
 	'MOD_EMAIL'				=> 'E-mail MOD to a friend',
@@ -59,7 +60,9 @@ $lang = array_merge($lang, array(
 	'NO_CATEGORIES'			=> 'No Categories defined',
 
 	'RECOMMEND_MOD'			=> 'Recommend this MOD to a friend',
-
+	
+	'FOR_VERSION'			=> 'It has been released for MOD in <b>%s</b> version.',
+	
 	'SORT_CONTRIB_NAME'		=> 'Sort by MOD title',
 	'SORT_DOWNLOADS'		=> 'Sort by downloads',
 	'SORT_RATING'			=> 'Sort by MOD rating',

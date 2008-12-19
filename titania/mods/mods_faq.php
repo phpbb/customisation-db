@@ -116,7 +116,7 @@ class mods_faq extends titania_object
 					$this->page_title = 'MODS_FAQ_DETAILS';
 
 					$faq->faq_details('mod');
-
+					
 					$faq->similar_faq();
 				}
 				else
@@ -131,12 +131,7 @@ class mods_faq extends titania_object
 					$this->tpl_name = 'contrib_faq_list';
 					$this->page_title = 'MODS_FAQ_LIST';
 
-					$found = $faq->faq_list($contrib_id, 'mod');
-
-					if (!$found)
-					{
-						titania::error_box('ERROR', 'FAQ_NOT_FOUND', ERROR_ERROR);
-					}
+					$faq->faq_list($contrib_id, 'mod');
 				}
 			break;
 		}

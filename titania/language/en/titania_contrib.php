@@ -44,11 +44,11 @@ $lang = array_merge($lang, array(
 	'MODS_FAQ_LIST'			=> 'FAQ list',
 	'MODS_FAQ_DETAILS'		=> 'FAQ details',
 	
-	'FOR_VERSION'			=> 'For version',
-	
 	'OTHER_FAQ'				=> 'Look at other FAQ for this contrib',
 	'SIMILAR_FAQ'			=> 'Similar FAQ',
 	'NO_SIMILAR_FAQ'		=> 'No similar FAQ.',
+	
+	'FAQ_DESCRIPTION'		=> 'Here is a list of common issues and solution for them.',
 	
 	'SORT_CONTRIB_VERSION'	=> 'Sort by Contrib version',
 	'SORT_SUBJECT'			=> 'Sort by Subject',

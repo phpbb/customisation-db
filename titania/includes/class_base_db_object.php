@@ -161,6 +161,8 @@ abstract class titania_database_object extends titania_object
 
 			$this->$key = $value;
 		}
+		
+		return true;
 	}
 
 	/**

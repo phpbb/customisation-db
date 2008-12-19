@@ -1,18 +1,17 @@
 <!-- INCLUDE overall_header.html -->
 <form method="post" action="{S_MODE_ACTION}">
-	<h2 class="solo">{L_FAQ}</h2>
-	<p>{FAQ_LIST_DESCRIPTION}</p>
-
+	<h2>{L_FAQ}</h2>
+	<p>{L_FAQ_DESCRIPTION}</p>
+	
 	<div class="panel">
 		<div class="inner"><span class="corners-top"><span></span></span>
-
+		
 		<ul class="linklist">
 			<li class="rightside pagination"><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE -->{PAGE_NUMBER}<!-- ENDIF --></li>
 		</ul>
-
+		
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
-	
 	
     <div id="list-db">
 		<div class="forabg">
@@ -21,7 +20,7 @@
 				<li class="header">
 					<dl>
 						<dt>{L_FAQ}</dt>
-						<dd class="contrib-version"><a href="{U_SORT_CONTRIB_VERSION}#faqlist">{L_FOR_VERSION}</a></dd>
+						<dd class="contrib-version"><a href="{U_SORT_CONTRIB_VERSION}#faqlist">Version</a></dd>
 					</dl>
 				</li>
 			</ul>
@@ -35,6 +34,8 @@
 						<dd class="contrib-version">{faq.CONTRIB_VERSION}</dd>
 					</dl>
 				</li>
+				<!-- BEGINELSE -->
+				<li class="row bg2"><dl><dt><span style="text-align: center;"><strong>{L_FAQ_NOT_FOUND}</strong></span></dt></dl></li>
 				<!-- END faq -->
 			</ul>
 			<span class="corners-bottom"><span></span></span></div>
