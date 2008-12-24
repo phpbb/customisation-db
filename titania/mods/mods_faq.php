@@ -16,6 +16,8 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+require(TITANIA_ROOT . 'includes/class_faq.' . PHP_EXT);
+
 /**
 * faq_main
 * Class for FAQ module
@@ -58,8 +60,6 @@ class mods_faq extends titania_object
 		$form_key = 'mods_faq';
 		add_form_key($form_key);
 
-		require(TITANIA_ROOT . 'includes/class_faq.' . PHP_EXT);
-
 		$faq = new titania_faq($faq_id, 'mods');
 
 		switch ($mode)
@@ -69,42 +69,78 @@ class mods_faq extends titania_object
 			break;
 
 			case 'manage':
-				if ($action == 'add' || $action == 'edit')
+				switch ($action)
 				{
-					if ($submit)
-					{
-						$subject 	= utf8_normalize_nfc(request_var('subject', '', true));
-						$text 		= utf8_normalize_nfc(request_var('text', '', true));
+					case 'add':
+					case 'edit':
+						if ($submit)
+						{
+							$subject 	= utf8_normalize_nfc(request_var('subject', '', true));
+							$text 		= utf8_normalize_nfc(request_var('text', '', true));
 
-						$faq->submit();
-					}
+							$error = array();
+							
+							if (empty($subject))
+							{
+								$error[] = $user->lang['SUBJECT_EMPTY'];
+							}
+							
+							if (empty($text))
+							{
+								$error = $user->lang['TEXT_EMPTY'];
+							}
+							
+							if (!sizeof($error))
+							{
+								/*
+								 * todo
+								 */
+								$faq->submit();
+							}
+						}
 
-					if ($mode == 'edit')
-					{
-						$faq->load();
-					}
+						if ($mode == 'edit')
+						{
+							$faq->load();
+						}
+						
+						$this->tpl_name 	= 'contrib_faq_edit';
+						$this->page_title 	= ($action == 'edit') ? 'FAQ_EDITION' : 'FAQ_ADDITION';						
+						
+						$template->assign_vars(array(
+							'U_ACTION'		=> $this->u_action . $this->page,
 
-					$template->assign_vars(array(
-						'U_ACTION'		=> $this->u_action . $this->page,
-
-						'FAQ_SUBJECT'	=> $faq->faq_subject,
-						'FAQ_TEXT'		=> $faq->faq_text
-					));
-				}
-				else if ($action == 'delete')
-				{
-					if (confirm_box(true))
-					{
-						$faq->delete();
-					}
-					else
-					{
-						$s_hidden_fields = build_hidden_fields(array(
-							'submit'	=> true,
-							'faq_id'	=> $faq_id
+							'ERRORS'		=> (sizeof($error)) ? implode('<br />', $error) : false,
+							
+							'FAQ_SUBJECT'	=> ($submit) ? $subject : $faq->faq_subject,
+							'FAQ_TEXT'		=> ($submit) ? $text : $faq->faq_text,
 						));
-						confirm_box(false, 'DELETE_FAQ', $s_hidden_fields);
-					}
+					break;
+
+					case 'delete':
+						if ($submit)
+						{
+							if (confirm_box(true))
+							{
+								$faq->delete();
+								
+								// todo: redirect to faqs list
+							}
+							else
+							{
+								$redirect_url = append_sid(TITANIA_ROOT . 'mods/index.php', "id=faq&amp;mode=view&amp;faq_id=$faq_id");
+							}
+							redirect($redirect_url);
+						}
+						else
+						{
+							$s_hidden_fields = build_hidden_fields(array(
+								'submit'	=> true,
+								'faq_id'	=> $faq_id
+							));
+							confirm_box(false, 'DELETE_FAQ', $s_hidden_fields);
+						}
+					break;
 				}
 			break;
 
@@ -112,12 +148,17 @@ class mods_faq extends titania_object
 			default:
 				if ($faq_id)
 				{
-					$this->tpl_name = 'contrib_faq_details';
-					$this->page_title = 'MODS_FAQ_DETAILS';
+					$this->tpl_name 	= 'contrib_faq_details';
+					$this->page_title 	= 'MODS_FAQ_DETAILS';
 
-					$faq->faq_details('mod');
+					$found = $faq->faq_details('mod');
 					
-					$faq->similar_faq();
+					if (!$found)
+					{
+						trigger_error('FAQ_NOT_FOUND');
+					}
+					
+					$faq->similar_faqs();
 				}
 				else
 				{
@@ -125,13 +166,18 @@ class mods_faq extends titania_object
 
 					if (!$contrib_id)
 					{
-						titania::trigger_error('NO_CONTRIB_SELECTED');
+						trigger_error('NO_CONTRIB_SELECTED');
 					}
 
-					$this->tpl_name = 'contrib_faq_list';
-					$this->page_title = 'MODS_FAQ_LIST';
+					$this->tpl_name 	= 'contrib_faq_list';
+					$this->page_title 	= 'MODS_FAQ_LIST';
 
-					$faq->faq_list($contrib_id, 'mod');
+					$found = $faq->faq_list($contrib_id, 'mod');
+					
+					if (!$found)
+					{
+						trigger_error('NO_FAQ');
+					}
 				}
 			break;
 		}

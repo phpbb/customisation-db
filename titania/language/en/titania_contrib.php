@@ -48,6 +48,8 @@ $lang = array_merge($lang, array(
 	'SIMILAR_FAQ'			=> 'Similar FAQ',
 	'NO_SIMILAR_FAQ'		=> 'No similar FAQ.',
 	
+	'FOR_VERSION' => 'This FAQ has been added to %s version of contrib.',
+	
 	'FAQ_DESCRIPTION'		=> 'Here is a list of common issues and solution for them.',
 	
 	'SORT_CONTRIB_VERSION'	=> 'Sort by Contrib version',

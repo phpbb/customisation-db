@@ -76,15 +76,13 @@ class titania_faq extends titania_database_object
 	public function faq_details($contrib_type)
 	{
 		global $template, $user, $titania;
-		
-		$found = $this->load();
 
-		if (!$found)
+		if (!$this->load())
 		{
-			titania::trigger_error('FAQ_DETAILS_NOT_FOUND');
+			return false;
 		}		
 
-		decode_message($this->faq_text, $this->faq_text_uid);
+		// todo: decode_message($this->faq_text, $this->faq_text_uid); (error)
 		
 		$template->assign_vars(array(
 			'FAQ_ID'			=> $this->faq_id,
@@ -94,6 +92,8 @@ class titania_faq extends titania_database_object
 
 			'U_OTHERS_FAQ'		=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $contrib_type . '=' . $this->contrib_id),
 		));
+		
+		return true;
 	}
 	
 	/**
@@ -101,29 +101,11 @@ class titania_faq extends titania_database_object
 	 *
 	 * @param int $faq_id
 	 */ 
-	public function similar_faq()
+	public function similar_faqs()
 	{
 		global $db, $template;
 		
-		$sql_ary = array(
-			'SELECT'	=> 'f.faq_id, f.faq_subject',
-			'FROM'		=> array(
-				CUSTOMISATION_CONTRIB_FAQ_TABLE => 'f',
-			),
-			'WHERE'		=> 'f.parent_id = ' . $this->faq_id,
-		);
-		
-		$sql = $db->sql_build_query('SELECT', $sql_ary);		
-		$result = $db->sql_query($sql);
-		
-		while ($row = $db->sql_fetchrow($result))
-		{
-			$template->assign_block_vars('similarfaq', array(
-				'U_FAQ'		=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;faq_id=' . $row['faq_id']),
-	
-				'SUBJECT'	=> $row['faq_subject']
-			));
-		}
+		// todo
 	}
 	
 	/**
@@ -175,13 +157,13 @@ class titania_faq extends titania_database_object
 		
 		while ($row = $db->sql_fetchrow($result))
 		{
+			$results++;
+			
 			$template->assign_block_vars('faq', array(
 				'U_FAQ'				=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;faq_id=' . $row['faq_id']),
 				'CONTRIB_VERSION'	=> $row['contrib_version'],
 				'SUBJECT'			=> $row['faq_subject'],
 			));
-			
-			$results++;
 		}
 		$db->sql_freeresult($result);
 		
