@@ -4,7 +4,7 @@
 * authors [English]
 *
 * @package Titania
-* @version $Id: titania_mods.php 78 2008-08-26 02:22:02Z HighwayofLife $
+* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -36,9 +36,15 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+	'AUTHOR_CONTRIBS'   => 'Contribs',	
 	'AUTHOR_LIST'		=> 'Author List',
-	'AUTHOR_PROFILE'	=> 'Author Profile',
+    'AUTHOR_MODS'       => 'MODs',	
 	'AUTHOR_NOT_FOUND'	=> 'Author not found',
+	'AUTHOR_PROFILE'	=> 'Author Profile',
+	'AUTHOR_RATING'	    => 'Ranking',
+    'AUTHOR_SNIPPETS'   => 'Snippets',	
+    'AUTHOR_STYLES'     => 'Styles',
+
 	'NUM_CONTRIB'		=> '%s Contribution',
 	'NUM_CONTRIBS'		=> '%s Contributions',
 	'NUM_MOD'			=> '%s MOD',
@@ -47,9 +53,11 @@ $lang = array_merge($lang, array(
 	'NUM_STYLES'		=> '%s Styles',
 	'NUM_SNIPPET'		=> '%s Snippet',
 	'NUM_SNIPPETS'		=> '%s Snippets',
-	'AUTHOR_MODS'       => 'MODs',
-	'AUTHOR_STYLES'     => 'Styles',
-	'AUTHOR_CONTRIBS'   => 'Contribs',
+	
 	'PHPBB_PROFILE'     => 'phpBB.com profile',
+	
+	'REAL_NAME'         => 'Real Name',
+	
+	'USER_INFORMATION'  => '’s user information',
 ));
 

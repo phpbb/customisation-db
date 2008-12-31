@@ -2,7 +2,7 @@
 /**
 *
 * @package Titania
-* @version $Id: class_faq.php 49 2008-06-29 23:03:16Z HighwayofLife $
+* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
