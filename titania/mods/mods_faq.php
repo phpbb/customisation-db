@@ -50,18 +50,24 @@ class mods_faq extends titania_object
 	{
 		global $user, $template, $cache;
 
-		$user->add_lang(array('titania_contrib'));
+		$user->add_lang(array('titania_contrib', 'titania_mods'));
 
-		$faq_id		= request_var('faq_id', 0);
+		$faq_id		= request_var('faq', 0);
 		$action 	= request_var('action', '');
-
+		
 		$submit		= isset($_POST['submit']) ? true : false;
+				
+		add_form_key('mods_faq');
 
-		$form_key = 'mods_faq';
-		add_form_key($form_key);
-
-		$faq = new titania_faq($faq_id, 'mods');
-
+		if ($submit && !check_form_key('mods_faq'))
+		{
+			trigger_error('INVALID_FORM');
+		}
+		
+		$faq = new titania_faq($faq_id, CONTRIB_TYPE_MOD);
+		
+		$this->tpl_name = 'faq/faq_manage';
+		
 		switch ($mode)
 		{
 			case 'main':
@@ -69,117 +75,81 @@ class mods_faq extends titania_object
 			break;
 
 			case 'manage':
-				switch ($action)
+			
+				$faq_ids = request_var('faq_id', array(0));
+				
+				if ($submit && $faq_ids)
 				{
-					case 'add':
-					case 'edit':
-						if ($submit)
-						{
-							$subject 	= utf8_normalize_nfc(request_var('subject', '', true));
-							$text 		= utf8_normalize_nfc(request_var('text', '', true));
-
-							$error = array();
-							
-							if (empty($subject))
-							{
-								$error[] = $user->lang['SUBJECT_EMPTY'];
-							}
-							
-							if (empty($text))
-							{
-								$error = $user->lang['TEXT_EMPTY'];
-							}
-							
-							if (!sizeof($error))
-							{
-								/*
-								 * todo
-								 */
-								$faq->submit();
-							}
-						}
-
-						if ($mode == 'edit')
-						{
-							$faq->load();
-						}
+					switch ($action)
+					{
+						case 'delete':
+							$sql = 'DELETE FROM ' . CUSTOMISATION_CONTRIB_FAQ_TABLE . ' WHERE ' . $db->sql_in_set('faq_id', $faq_ids);
+							$db->sql_query($sql);
 						
-						$this->tpl_name 	= 'contrib_faq_edit';
-						$this->page_title 	= ($action == 'edit') ? 'FAQ_EDITION' : 'FAQ_ADDITION';						
+							$message = $user->lang['DELETE_FAQ_MARKED'];
+						break;
 						
-						$template->assign_vars(array(
-							'U_ACTION'		=> $this->u_action . $this->page,
-
-							'ERRORS'		=> (sizeof($error)) ? implode('<br />', $error) : false,
+						case 'move':
 							
-							'FAQ_SUBJECT'	=> ($submit) ? $subject : $faq->faq_subject,
-							'FAQ_TEXT'		=> ($submit) ? $text : $faq->faq_text,
-						));
-					break;
-
-					case 'delete':
-						if ($submit)
-						{
-							if (confirm_box(true))
-							{
-								$faq->delete();
-								
-								// todo: redirect to faqs list
-							}
-							else
-							{
-								$redirect_url = append_sid(TITANIA_ROOT . 'mods/index.php', "id=faq&amp;mode=view&amp;faq_id=$faq_id");
-							}
-							redirect($redirect_url);
-						}
-						else
-						{
-							$s_hidden_fields = build_hidden_fields(array(
-								'submit'	=> true,
-								'faq_id'	=> $faq_id
-							));
-							confirm_box(false, 'DELETE_FAQ', $s_hidden_fields);
-						}
-					break;
+						break;
+					}
+					
+					$faq->manage_list();
 				}
+				
 			break;
 
 			case 'view':
 			default:
-				if ($faq_id)
-				{
-					$this->tpl_name 	= 'contrib_faq_details';
-					$this->page_title 	= 'MODS_FAQ_DETAILS';
 
-					$found = $faq->faq_details('mod');
-					
-					if (!$found)
+				$mod_id = request_var('mod', 0);
+						
+				if ($action && in_array($action, array('create', 'edit')))
+				{
+					if (!$mod_id)
 					{
-						trigger_error('FAQ_NOT_FOUND');
+						trigger_error('NO_MOD_SELECTED');
 					}
+				
+					$this->page_title = ($action == 'edit') ? 'EDIT_FAQ' : 'CREATE_FAQ';
 					
-					$faq->similar_faqs();
+					$faq->submit_faq($mod_id, $action);
 				}
 				else
 				{
-					$contrib_id = request_var('mod', 0);
-
-					if (!$contrib_id)
+					if ($faq_id)
 					{
-						trigger_error('NO_CONTRIB_SELECTED');
+						$this->tpl_name 	= 'faq/faq_details';
+						$this->page_title 	= 'MOD_FAQ_DETAILS';
+
+						$found = $faq->faq_details();
+						
+						if (!$found)
+						{
+							trigger_error('FAQ_NOT_FOUND');
+						}
 					}
-
-					$this->tpl_name 	= 'contrib_faq_list';
-					$this->page_title 	= 'MODS_FAQ_LIST';
-
-					$found = $faq->faq_list($contrib_id, 'mod');
-					
-					if (!$found)
+					else
 					{
-						trigger_error('NO_FAQ');
+						if (!$mod_id)
+						{
+							trigger_error('NO_MOD_SELECTED');
+						}
+				
+						$this->tpl_name 	= 'faq/faq_list';
+						$this->page_title 	= 'MOD_FAQ_LIST';
+
+						$found = $faq->faq_list($mod_id);
+						
+						if (!$found)
+						{
+							trigger_error('NO_FAQ_FOUND');
+						}
 					}
 				}
+				
 			break;
 		}
 	}
+	
 }

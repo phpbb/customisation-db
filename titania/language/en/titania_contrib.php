@@ -37,23 +37,36 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'CONTRIB_NOT_FOUND'		=> 'The contribution you requested could not be found.',
-	'NO_CONTRIB_SELECTED'	=> 'No contrib has been selected.',
 	
-	'FAQ_DETAILS_NOT_FOUND' => 'Details for this subject could not be found.',
-	'FAQ_NOT_FOUND'			=> 'No FAQ have not added for this contrib.',
-	'MODS_FAQ_LIST'			=> 'FAQ list',
-	'MODS_FAQ_DETAILS'		=> 'FAQ details',
+	'NO_CONTRIB_SELECTED'		=> 'No contrib has been selected.',
+
+	'FAQ_NOT_FOUND'			=> 'The FAQ you requested could not be found.',
 	
-	'OTHER_FAQ'				=> 'Look at other FAQ for this contrib',
-	'SIMILAR_FAQ'			=> 'Similar FAQ',
-	'NO_SIMILAR_FAQ'		=> 'No similar FAQ.',
+	'MOD_FAQ_LIST'			=> 'FAQ list',
+	'MOD_FAQ_DETAILS'		=> 'FAQ details',
+
+	'FAQ_SUBJECT'			=> 'Subject',
+	'FAQ_TEXT'			=> 'Text',
 	
-	'FOR_VERSION' => 'This FAQ has been added to %s version of contrib.',
+	'SUBJECT_EMPTY'			=> 'Subject is empty',
+	'TEXT_EMPTY'			=> 'Text is empty',
+	
+	'EDIT_FAQ'			=> 'Edit FAQ',
+	'DELETE_FAQ'			=> 'Delete FAQ',
+	'CREATE_FAQ'			=> 'Create FAQ',
+	
+	'FAQ_CREATED'			=> 'New FAQ entry has been created.',
+	'FAQ_EDITED'			=> 'FAQ entry has been updated.',
+	
+	'RETURN_FAQ'			=> '%sReturn to the FAQ%s',
+	'RETURN_FAQ_LIST'		=> '%sReturn to FAQ list%s',
+	'BACK_TO_FAQ_LIST'		=> '&laquo; Back to FAQ list',
 	
 	'FAQ_DESCRIPTION'		=> 'Here is a list of common issues and solution for them.',
 	
-	'SORT_CONTRIB_VERSION'	=> 'Sort by Contrib version',
-	'SORT_SUBJECT'			=> 'Sort by Subject',
+	
+	'SORT_CONTRIB_VERSION'		=> 'Sort by contrib version',
+	'SORT_FAQ_SUBJECT'		=> 'Sort by FAQ Subject',
 	
 	'AUTHOR_BY'				=> 'By %s',
 	'U_SEARCH_MODS_AUTHOR'	=> '%1$sOther MODs by %2$s%3$s',

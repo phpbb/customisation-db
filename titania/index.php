@@ -11,6 +11,7 @@
 /**
 * @ignore
 */
+error_reporting(E_ALL);
 define('IN_TITANIA', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));

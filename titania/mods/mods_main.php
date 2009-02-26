@@ -107,9 +107,9 @@ class mods_main extends titania_object
 	 */
 	public function mod_categories()
 	{
-		global $cache, $template, $user;
+		global $template, $user;
 
-		$categories = $cache->get_categories(TAG_TYPE_MOD_CATEGORY);
+		$categories = titania::$cache->get_categories(TAG_TYPE_MOD_CATEGORY);
 
 		foreach ($categories as $row)
 		{

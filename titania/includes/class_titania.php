@@ -34,6 +34,13 @@ class titania
 	 * @var unknown_type
 	 */
 	public static $config;
+	
+	/*
+	 * Instance of titania_cache class
+	 *
+	 * $var unknown_type
+	 */
+	public static $cache;
 
 	/**
 	 * construct class
@@ -61,6 +68,14 @@ class titania
 		}
 
 		self::$config = $titania_config->get_config_data();
+
+		if (!class_exists('titania_cache'))
+		{
+			include(TITANIA_ROOT . 'includes/titania_cache.' . PHP_EXT);
+		}
+		
+		// titania_cache
+		self::$cache = new titania_cache();
 	}
 
 	/**

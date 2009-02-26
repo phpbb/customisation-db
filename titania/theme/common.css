@@ -123,3 +123,8 @@ a.big {
 #list-db dd.last-update {
    padding-left: 5px;
 }
+
+#faq-list dd.contrib-version {
+	width: 15%;
+	text-align: center;
+}
