@@ -55,6 +55,22 @@ class titania_faq extends titania_database_object
 	 */
 	private $contrib_type;
 	
+	/*
+	 * Current contrib identifier
+	 * 
+	 * $var string
+	 */
+	private $contrib_identifier;
+	
+	/*
+	 * Contrib identifiers
+	 */
+	private $contrib_identifiers = array(
+		CONTRIB_TYPE_MOD 	=> 'mod',
+		CONTRIB_TYPE_STYLE 	=> 'style',
+		CONTRIB_TYPE_SNIPPET 	=> 'snippet'
+	);
+	
 	/**
 	 * Constructor class for titania faq
 	 *
@@ -67,7 +83,7 @@ class titania_faq extends titania_database_object
 			'faq_id'		=> array('default' => 0),
 			'contrib_id' 		=> array('default' => 0),
 			'parent_id' 		=> array('default' => 0),
-			'contrib_version' 	=> array('default' => '', 'max' => 15),
+			'revision_id'		=> array('default' => 0),
 			'faq_order_id' 		=> array('default' => 0),
 			'faq_subject' 		=> array('default' => '', 'max' => 255),
 			'faq_text' 		=> array('default' => ''),
@@ -81,20 +97,10 @@ class titania_faq extends titania_database_object
 			$this->faq_id = $faq_id;
 		}
 		
-		switch ($contrib_type)
-		{
-			case CONTRIB_TYPE_MOD:
-				$this->contrib_type = 'mod';
-			break;
-			
-			case CONTRIB_TYPE_STYLE:
-				$this->contrib_type = 'style';
-			break;
-			
-			case CONTRIB_TYPE_SNIPPET:
-				$this->contrib_type = 'snippet';
-			break;
-		}
+		$this->contrib_type = $contrib_type;
+		
+		// e.g. mod, style
+		$this->contrib_identifier = $this->contrib_identifiers[$this->contrib_type];
 	}
 	
 	/**
@@ -245,6 +251,8 @@ class titania_faq extends titania_database_object
 		{
 			$this->faq_subject 	= utf8_normalize_nfc(request_var('subject', '', true));
 			$text 			= utf8_normalize_nfc(request_var('text', '', true));
+			$this->revision_id	= request_var('revision', 0);
+			$this->contrib_id 	= $contrib_id;
 			
 			if (empty($this->faq_subject))
 			{
@@ -258,16 +266,6 @@ class titania_faq extends titania_database_object
 			
 			if (!sizeof($errors))
 			{
-				$sql = 'SELECT contrib_version
-					FROM ' . CUSTOMISATION_CONTRIBS_TABLE . "
-					WHERE contrib_id = $contrib_id";
-				$result = $db->sql_query($sql);
-				$contrib = $db->sql_fetchrow($result);
-				$db->sql_freeresult($result);
-				
-				$this->contrib_version 	= $contrib['contrib_version'];
-				$this->contrib_id 	= $contrib_id;
-				
 				$this->set_faq_text($text);
 
 				$this->submit();
@@ -286,16 +284,17 @@ class titania_faq extends titania_database_object
 		}
 		
 		$template->assign_vars(array(
-			'U_ACTION'		=> $titania->page . "?id=faq&amp;mode=view&amp;action=$action&amp;{$this->contrib_type}=$contrib_id&amp;faq={$this->faq_id}",
+			'U_ACTION'		=> $titania->page . "?id=faq&amp;mode=view&amp;action=$action&amp;{$this->contrib_identifier}=$contrib_id&amp;faq={$this->faq_id}",
 			
 			'S_EDIT_FAQ'		=> true,
 			
 			'L_EDIT_FAQ'		=> ($action == 'edit') ? $user->lang['EDIT_FAQ'] : $user->lang['CREATE_FAQ'],
-			
-			'ERROR_MSG'		=> (sizeof($errors)) ? implode('<br />', $errors) : false,
-			
+			'L_REVISION'		=> $user->lang[strtoupper($this->contrib_identifier) . '_VERSION'],
+				
+			'ERROR_MSG'		=> (sizeof($errors)) ? implode('<br />', $errors) : false,				
 			'FAQ_SUBJECT'		=> $this->faq_subject,
 			'FAQ_TEXT'		=> $this->get_faq_text(true),
+			'REVISION_SELECT'	=> $this->revision_select($contrib_id, $this->contrib_type, $this->revision_id),
 		));
 	}
 	
@@ -334,6 +333,32 @@ class titania_faq extends titania_database_object
 	}
 	
 	/*
+	 * Revision list for selected contrib
+	 */
+	public function revision_select($contrib_id, $contrib_type, $default = 0)
+	{
+		global $db;
+		
+		$sql = 'SELECT revision_id, revision_name
+			FROM ' . CUSTOMISATION_REVISIONS_TABLE . "
+			WHERE contrib_id = $contrib_id
+				AND contrib_type = $contrib_type
+			ORDER BY revision_name DESC";
+		$result = $db->sql_query($sql);
+		
+		$options = '';
+		
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$selected = ($row['revision_id'] == $default) ? ' selected="selected"' : '';
+			$options .= '<option value="' . $row['revision_id'] . '"' . $selected . '>' . $row['revision_name'] . '</option>';
+		}
+		$db->sql_freeresult($result);
+		
+		return '<select name="revision" id="revision">' . $options . '</select>';
+	}
+	
+	/*
 	 * FAQ details
 	 */
 	public function faq_details()
@@ -341,15 +366,20 @@ class titania_faq extends titania_database_object
 		global $template, $db, $user, $titania, $auth;
 		
 		$sql_ary = array(
-			'SELECT'	=> 'f.*, c.contrib_name, c.contrib_version as current_contrib_version, c.contrib_author_id',
-			'FROM'		=> array(CUSTOMISATION_CONTRIB_FAQ_TABLE => 'f'),
+			'SELECT'	=> 'f.*, r.revision_name, r.revision_time, c.contrib_author_id',
+			'FROM'		=> array(
+				CUSTOMISATION_CONTRIB_FAQ_TABLE => 'f',
+				CUSTOMISATION_CONTRIBS_TABLE 	=> 'c'
+			),
 			'LEFT_JOIN'	=> array(
 				array(
-					'FROM'	=> array(CUSTOMISATION_CONTRIBS_TABLE => 'c'),
-					'ON'	=> 'c.contrib_id = f.contrib_id',
+					'FROM'	=> array(CUSTOMISATION_REVISIONS_TABLE => 'r'),
+					'ON'	=> 'r.revision_id = f.revision_id
+							AND c.contrib_id = f.contrib_id',
 				),
 			),
-			'WHERE'		=> 'f.faq_id = ' . $this->faq_id
+			'WHERE'		=> 'f.faq_id = ' . $this->faq_id . '
+						AND c.contrib_id = f.contrib_id'
 		);
 		$sql = $db->sql_build_query('SELECT', $sql_ary);
 		$result = $db->sql_query($sql);
@@ -365,12 +395,12 @@ class titania_faq extends titania_database_object
 		$template->assign_vars(array(
 			'FAQ_SUBJECT'		=> $row['faq_subject'],
 			'FAQ_TEXT'		=> generate_text_for_display($row['faq_text'], $row['faq_text_uid'], $row['faq_text_bitfield'], $row['faq_text_options']),
-			'CONTRIB_VERSION' 	=> $row['contrib_version'],
+			'REVISION_NAME' 	=> $row['revision_name'],
 
-			'U_FAQ_LIST'		=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $this->contrib_type . '=' . $row['contrib_id']),
-			'U_EDIT_FAQ'		=> ($user->data['user_id'] == $row['contrib_author_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=edit&amp;' . $this->contrib_type . '=' . $row['contrib_id'] . '&amp;faq=' . $row['faq_id']) : false,
+			'U_FAQ_LIST'		=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $this->contrib_identifier . '=' . $row['contrib_id']),
+			'U_EDIT_FAQ'		=> ($user->data['user_id'] == $row['contrib_author_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=edit&amp;' . $this->contrib_identifier . '=' . $row['contrib_id'] . '&amp;faq=' . $row['faq_id']) : false,
 			
-			'L_CONTRIB_VERSION'	=> $user->lang[strtoupper($this->contrib_type) . '_VERSION'],
+			'L_REVISION'		=> $user->lang[strtoupper($this->contrib_identifier) . '_VERSION'],
 		));
 		
 		return true;
@@ -398,8 +428,8 @@ class titania_faq extends titania_database_object
 		$sort = new sort();
 		
 		$sort->set_sort_keys(array(
-			'a' => array('SORT_FAQ_SUBJECT',		'f.faq_subject'),		
-			'b' => array('SORT_CONTRIB_VERSION',		'f.contrib_version', 'default' => true),
+			'a' => array('SORT_SUBJECT',	'f.faq_subject'),		
+			'b' => array('SORT_REVISION',	'f.revision_id', 'default' => true),
 		));
 
 		$sort->sort_request(false);		
@@ -409,10 +439,16 @@ class titania_faq extends titania_database_object
 		$limit = $pagination->set_limit();
 		
 		$sql_ary = array(
-			'SELECT'	=> 'f.*',
+			'SELECT'	=> 'f.*, r.revision_name',
 			'FROM'		=> array(
 					CUSTOMISATION_CONTRIB_FAQ_TABLE	=> 'f'
-			),		
+			),	
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(CUSTOMISATION_REVISIONS_TABLE => 'r'),
+					'ON'	=> 'r.revision_id = f.revision_id',
+				),
+			),			
 			'WHERE'		=> 'f.contrib_id = ' . $contrib_id,
 			'ORDER_BY'	=> $sort->get_order_by()
 		);
@@ -432,8 +468,8 @@ class titania_faq extends titania_database_object
 				'U_FAQ'			=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;faq=' . $row['faq_id']),
 				
 				'SUBJECT'		=> $row['faq_subject'],
-				'TEXT'			=> (utf8_strlen($row['faq_text']) > 120) ? utf8_substr($row['faq_text'], 0, 117) . '...' : $row['faq_text'],
-				'CONTRIB_VERSION'	=> $row['contrib_version'],
+				'TEXT'			=> (utf8_strlen($row['faq_text']) > 250) ? utf8_substr($row['faq_text'], 0, 250) . '...' : $row['faq_text'],
+				'REVISION_NAME'		=> $row['revision_name'],
 			));
 		}
 		$db->sql_freeresult($result);
@@ -451,7 +487,7 @@ class titania_faq extends titania_database_object
 		));
 		
 		// Build a pagination
-		$pagination->build_pagination(append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $this->contrib_type . '=' . $contrib_id));
+		$pagination->build_pagination(append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $this->contrib_identifier . '=' . $contrib_id));
 		
 		// informations about contrib
 		$sql = 'SELECT contrib_name, contrib_version, contrib_author_id
@@ -468,9 +504,9 @@ class titania_faq extends titania_database_object
 			'CONTRIB_NAME'		=> $contrib['contrib_name'],
 			'CONTRIB_VERSION'	=> $contrib['contrib_version'],
 			
-			'U_CREATE_FAQ'		=> ($user->data['user_id'] == $contrib['contrib_author_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=create&amp;' . $this->contrib_type . '=' . $contrib_id) : false,
+			'U_CREATE_FAQ'		=> ($user->data['user_id'] == $contrib['contrib_author_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=create&amp;' . $this->contrib_identifier . '=' . $contrib_id) : false,
 
-			'L_CONTRIB_VERSION'	=> $user->lang[strtoupper($this->contrib_type) . '_VERSION'],
+			'L_CONTRIB_VERSION'	=> $user->lang[strtoupper($this->contrib_identifier) . '_VERSION'],
 		));
 		
 		return true;

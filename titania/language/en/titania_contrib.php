@@ -65,11 +65,13 @@ $lang = array_merge($lang, array(
 	'FAQ_DESCRIPTION'		=> 'Here is a list of common issues and solution for them.',
 	
 	
-	'SORT_CONTRIB_VERSION'		=> 'Sort by contrib version',
-	'SORT_FAQ_SUBJECT'		=> 'Sort by FAQ Subject',
+	'SORT_REVISION'			=> 'Sort by revision',
+	'SORT_SUBJECT'			=> 'Sort by subject',
 	
-	'AUTHOR_BY'				=> 'By %s',
-	'U_SEARCH_MODS_AUTHOR'	=> '%1$sOther MODs by %2$s%3$s',
+	'REVISION'			=> 'Revision',
+	
+	'AUTHOR_BY'			=> 'By %s',
+	'U_SEARCH_MODS_AUTHOR'		=> '%1$sOther MODs by %2$s%3$s',
 
 	'rating'				=> array(
 		5	=> 'Excellent',

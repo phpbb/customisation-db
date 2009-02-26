@@ -30,7 +30,7 @@ CREATE TABLE `customisation_contrib_faq` (
   `faq_id` mediumint(8) unsigned NOT NULL auto_increment,
   `contrib_id` mediumint(8) unsigned NOT NULL default '0',
   `parent_id` mediumint(8) unsigned NOT NULL default '0',
-  `contrib_version` varchar(15) collate utf8_bin NOT NULL,
+  `revision_id` mediumint(8) unsigned NOT NULL default '0',
   `faq_order_id` mediumint(8) unsigned NOT NULL default '0',
   `faq_subject` varchar(255) collate utf8_bin NOT NULL default '',
   `faq_text` mediumtext collate utf8_bin NOT NULL,

@@ -68,7 +68,7 @@ $lang = array_merge($lang, array(
 	'SORT_RATING'			=> 'Sort by MOD rating',
 	'SORT_TIME_ADDED'		=> 'Sort by date added',
 	'SORT_TIME_UPDATED'		=> 'Sort by date updated',
-
+	
 	'TOTAL_MODS'			=> 'Total MODs Found',
 ));
 
