@@ -3,78 +3,77 @@ Validation Checklist for MODS with possible deny reasons..
 {x} = deny worthy
 [o] = note worthy??
 
-    * Insta Deny
-          o MOD Description is complete and informative
-          o license.txt present
-          o install file name = install.xml or other variations as long as it has the word install in it
-          o modx style => modx.prosilver.en.xsl, the prosilver xsl for displaying the MOD in the browser of the user
-          o placement of files => Both the install.xml and the license.txt should be in the root of your zip file
-          o non english or non prosilver file edit in install.xml
-          o wrong directory of new / optional files
-		  o Usage of register long arrays. ($HTTP_*_VARS)
-		  o RFI (Remote File inclusion) -- bad (not isset) or no usage of $phpbb_root_path/PHPBB_ROOT_PATH and $phpEx/PHP_EXT
-		  o No IN_PHPBB check in class files, function files, and language files.
-		  
-    * Packaging - items + any packaging errors or problems
-          o Correct Package file name
-          o Language Files within the language directory and correct lang_name translations
-          o Alternate lang MODX files used correctly
-          o Template and Theme files contained in correct directory
-          o Alternate template MODX files used correctly
-          o Scripts/installation placed in /contrib/ directory
-		  
-    * MODX - MODX files + any MODX errors or problems
-          o If PHP5.x specific functions are used, the requirement is noted in MODX
-          o Installation problems
-          o Does not work as intended
-          o Version checker missing
-		  
-    * Templates - Template files, theme files, images etc.
-          o Hard-coded PHP used in template files
-          o prosilver HTML not XHTML 1.0 strict (XTHML errors)
-          o subSilver2 HTML not XHTML 1.0 Transitional (XHTML errors)
-          o Broken/missing images
-          o Does no use/supply English images by default
-          o no HTML or CSS validation errors
-		  
-    * Language Files - Translations, etc.
-          o Hard-coded Language in PHP files
-		  o No assigning language vars in the PHP Controller (phpBB2 method)
-          o Hard-coded Language in Template files
-		  
-    * PHP/Coding - All the coding issues defined in the below list
-		  o Predefinied Variables like request_var() etc.
-		    # Usage of request_var instead of POST/GET/REQUEST for everything except submit. Even for array, default param should be checked to ensure proper var type handling.
-			# Use login_forum_box() or login_box() for logins.
-			# Use confirm_box() for the user to confirm sensitive actions (such as delets)
-			# Use trigger_error() for error handling/messages and user messages
-			# Usage of append_sid() for URLs
-			# use: sizeof() instead of count(), else if instead of elseif, use true/false instead of TRUE/FALSE
-			# int request_vars are request_var('var', 0); and not request_var('var', '0');
-          o Int and float Variables are enforced (int) and (float) when inserting into SQL queries
-          o No usage of banned functions: eval(), *exec() functions, system(), passthru(), pcntl_exec(), mysql*(), echo, or any print function.
-          o $_SERVER variables properly sanitised (many are user input)
-		  o Sessions initiated on the PHP Controller
-          o Hard-coded HTML used in PHP files
-		  o Descriptive but concise lowercase variable and function names with words separated by underscores.
-		  o One character loop indices
-		  o Spacing and braces on newlines, enforce brackets on conditionals and loops
-		  o Single quotes instead of double quotes
-		  o No magic numbers
-		  o No uninitialised variables or indices (test MODs with DEBUG/DEBUG_EXTRA enabled)
-		  o SQL issues
-			 # Strings are properly $db->sql_escape(); when inserting into SQL Queries.
-			 # phpBB3 DBAL is used instead of sql functions.
-			 # sql_build_query() is used on large SQL Queries (containing joins)
-			 # sql_build_array() is used on inserts and updates
-			 # sql_in_set() is used for SQL IN() statements
-			 # Avoid DB specific SQL unless case is used for each DB type
-			 # No usage of LIMIT in SQL, use sql_query_limit() function instead.
-			 # Cache static or heavy SQL Queries
-			 # No SQL Queries in loops
+* Insta Deny
+	o MOD Description is complete and informative
+	o license.txt present
+	o install file name = install.xml or other variations as long as it has the word install in it
+	o modx style => modx.prosilver.en.xsl, the prosilver xsl for displaying the MOD in the browser of the user
+	o placement of files => Both the install.xml and the license.txt should be in the root of your zip file
+	o non english or non prosilver file edit in install.xml
+	o wrong directory of new / optional files
+	o Usage of register long arrays. ($HTTP_*_VARS)
+	o RFI (Remote File inclusion) -- bad (not isset) or no usage of $phpbb_root_path/PHPBB_ROOT_PATH and $phpEx/PHP_EXT
+	o No IN_PHPBB check in class files, function files, and language files.
 
-	* Defaults (very minor issues):
-          o Tabs instead of spaces
-		  o Always use LF line endings
-		  o Proper file headers and php DocBlocks
-		  
+* Packaging - items + any packaging errors or problems
+	o Correct Package file name
+	o Language Files within the language directory and correct lang_name translations
+	o Alternate lang MODX files used correctly
+	o Template and Theme files contained in correct directory
+	o Alternate template MODX files used correctly
+	o Scripts/installation placed in /contrib/ directory
+
+* MODX - MODX files + any MODX errors or problems
+	o If PHP5.x specific functions are used, the requirement is noted in MODX
+	o Installation problems
+	o Does not work as intended
+	o Version checker missing
+
+* Templates - Template files, theme files, images etc.
+	o Hard-coded PHP used in template files
+	o prosilver HTML not XHTML 1.0 strict (XTHML errors)
+	o subSilver2 HTML not XHTML 1.0 Transitional (XHTML errors)
+	o Broken/missing images
+	o Does no use/supply English images by default
+	o no HTML or CSS validation errors
+
+* Language Files - Translations, etc.
+	o Hard-coded Language in PHP files
+	o No assigning language vars in the PHP Controller (phpBB2 method)
+	o Hard-coded Language in Template files
+
+* PHP/Coding - All the coding issues defined in the below list
+	o Predefinied Variables like request_var() etc.
+		# Usage of request_var instead of POST/GET/REQUEST for everything except submit. Even for array, default param should be checked to ensure proper var type handling.
+		# Use login_forum_box() or login_box() for logins.
+		# Use confirm_box() for the user to confirm sensitive actions (such as delets)
+		# Use trigger_error() for error handling/messages and user messages
+		# Usage of append_sid() for URLs
+		# use: sizeof() instead of count(), else if instead of elseif, use true/false instead of TRUE/FALSE
+		# int request_vars are request_var('var', 0); and not request_var('var', '0');
+	o Int and float Variables are enforced (int) and (float) when inserting into SQL queries
+	o No usage of banned functions: eval(), *exec() functions, system(), passthru(), pcntl_exec(), mysql*(), echo, or any print function.
+	o $_SERVER variables properly sanitised (many are user input)
+	o Sessions initiated on the PHP Controller
+	o Hard-coded HTML used in PHP files
+	o Descriptive but concise lowercase variable and function names with words separated by underscores.
+	o One character loop indices
+	o Spacing and braces on newlines, enforce brackets on conditionals and loops
+	o Single quotes instead of double quotes
+	o No magic numbers
+	o No uninitialised variables or indices (test MODs with DEBUG/DEBUG_EXTRA enabled)
+	o SQL issues
+		# Strings are properly $db->sql_escape(); when inserting into SQL Queries.
+		# phpBB3 DBAL is used instead of sql functions.
+		# sql_build_query() is used on large SQL Queries (containing joins)
+		# sql_build_array() is used on inserts and updates
+		# sql_in_set() is used for SQL IN() statements
+		# Avoid DB specific SQL unless case is used for each DB type
+		# No usage of LIMIT in SQL, use sql_query_limit() function instead.
+		# Cache static or heavy SQL Queries
+		# No SQL Queries in loops
+
+* Defaults (very minor issues):
+	o Tabs instead of spaces
+	o Always use LF line endings
+	o Proper file headers and php DocBlocks
