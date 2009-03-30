@@ -16,39 +16,22 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-require_once(PHPBB_ROOT_PATH . 'includes/functions_module.' . PHP_EXT);
+if (!class_exists('p_master'))
+{
+	require(PHPBB_ROOT_PATH . 'includes/functions_module.' . PHP_EXT);
+}
 
 /**
  * @package modules
  */
 class titania_modules extends p_master
 {
-	public $include_path;
-
 	/**
 	 * Constructor to set the custom module include path
 	 */
 	public function __construct()
 	{
-		global $phpbb_root_path;
-
-		$this->include_path = $phpbb_root_path . 'includes/';
-	}
-
-	/**
-	* Function to set custom module include path (able to use directory outside of phpBB)
-	*
-	* @param string $include_path include path to be used.
-	* @access public
-	*/
-	function set_custom_include_path($include_path)
-	{
-		$this->include_path = $include_path;
-
-		if (substr($this->include_path, -1) != '/')
-		{
-			$this->include_path .= '/';
-		}
+		$this->set_custom_include_path(titania::$config->modules_path);
 	}
 
 	/**

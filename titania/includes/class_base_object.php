@@ -54,6 +54,9 @@ abstract class titania_object
 	* 	);
 	* </code>
 	*
+	*	Note: 'max' and 'multibyte' only works when the object
+	*		is an instance of titania_database_object.
+	*
 	*
 	* Example 2:
 	* 	Type will be determinded from 'type'.
@@ -62,7 +65,7 @@ abstract class titania_object
 	* 	$object_config = array(
 	* 		'property_name' => array(
 	* 			'default' => false,
-	* 			'type' => 'int'
+	* 			'type' => 'int',
 	* 		),
 	* 	);
 	* </code>
@@ -79,7 +82,7 @@ abstract class titania_object
 	*/
 	public function __call($name, $arguments)
 	{
-		if (sizeof($arguments) > 1)
+		if (sizeof($arguments) != 1)
 		{
 			throw new UnknownMethodException($name);
 		}

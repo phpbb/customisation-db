@@ -16,21 +16,26 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-define('THEME_PATH', TITANIA_ROOT . 'theme/');
+// Without this we cannot include phpBB 3.0.x scripts.
+define('IN_PHPBB', true);
+
+// Some often used path constants
+define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
 
 // Table names
-define('CUSTOMISATION_AUTHORS_TABLE',			CDB_TABLE_PREFIX . 'authors');
-define('CUSTOMISATION_CONTRIBS_TABLE',			CDB_TABLE_PREFIX . 'contribs');
-define('CUSTOMISATION_CONTRIB_TAGS_TABLE',		CDB_TABLE_PREFIX . 'contrib_tags');
-define('CUSTOMISATION_DOWNLOADS_TABLE',			CDB_TABLE_PREFIX . 'downloads');
-define('CUSTOMISATION_QUEUE_TABLE',				CDB_TABLE_PREFIX . 'queue');
-define('CUSTOMISATION_QUEUE_HISTORY_TABLE',		CDB_TABLE_PREFIX . 'queue_history');
-define('CUSTOMISATION_REVIEWS_TABLE',			CDB_TABLE_PREFIX . 'reviews');
-define('CUSTOMISATION_REVISIONS_TABLE',			CDB_TABLE_PREFIX . 'revisions');
-define('CUSTOMISATION_TAG_FIELDS_TABLE',		CDB_TABLE_PREFIX . 'tag_fields');
-define('CUSTOMISATION_TAG_TYPES_TABLE',			CDB_TABLE_PREFIX . 'tag_types');
-define('CUSTOMISATION_WATCH_TABLE',				CDB_TABLE_PREFIX . 'watch');
-define('CUSTOMISATION_CONTRIB_FAQ_TABLE',		CDB_TABLE_PREFIX . 'contrib_faq');
+$table_prefix = titania::$config->table_prefix;
+define('CUSTOMISATION_AUTHORS_TABLE',			$table_prefix . 'authors');
+define('CUSTOMISATION_CONTRIBS_TABLE',			$table_prefix . 'contribs');
+define('CUSTOMISATION_CONTRIB_TAGS_TABLE',		$table_prefix . 'contrib_tags');
+define('CUSTOMISATION_DOWNLOADS_TABLE',			$table_prefix . 'downloads');
+define('CUSTOMISATION_QUEUE_TABLE',				$table_prefix . 'queue');
+define('CUSTOMISATION_QUEUE_HISTORY_TABLE',		$table_prefix . 'queue_history');
+define('CUSTOMISATION_REVIEWS_TABLE',			$table_prefix . 'reviews');
+define('CUSTOMISATION_REVISIONS_TABLE',			$table_prefix . 'revisions');
+define('CUSTOMISATION_TAG_FIELDS_TABLE',		$table_prefix . 'tag_fields');
+define('CUSTOMISATION_TAG_TYPES_TABLE',			$table_prefix . 'tag_types');
+define('CUSTOMISATION_WATCH_TABLE',				$table_prefix . 'watch');
+define('CUSTOMISATION_CONTRIB_FAQ_TABLE',		$table_prefix . 'contrib_faq');
 
 // Customisation (contrib) status
 define('STATUS_NEW', 0);
@@ -81,7 +86,3 @@ define('AUTHOR_HIDDEN', 0);
 define('AUTHOR_VISIBLE', 1);
 // Define further contrib types based on the tags, and tag_types tables.
 
-define('DEFAULT_OFFSET_LIMIT', 25);
-define('MAX_OFFSET_LIMIT', 100);
-
-define('U_PHPBBCOM_VIEWPROFILE', 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile');

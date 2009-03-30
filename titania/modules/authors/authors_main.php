@@ -48,7 +48,7 @@ class authors_main extends titania_object
 	{
 		global $user;
 
-		$user->add_lang(array('titania_contrib', 'titania_authors'));
+		titania::add_lang(array('contrib', 'authors'));
 
 		switch ($mode)
 		{
@@ -93,6 +93,7 @@ class authors_main extends titania_object
 		}
 
 		$sort = new sort();
+		$pagination = new pagination();
 
 		$sort->set_sort_keys(array(
 			array('SORT_AUTHOR',		'a.author_username_clean', 'default' => true),
@@ -104,10 +105,9 @@ class authors_main extends titania_object
 
 		$sort->sort_request(false);
 
-		$pagination = new pagination();
 		$pagination->result_lang = 'AUTHOR';
-		$start = $pagination->set_start();
-		$limit = $pagination->set_limit();
+		$start = $pagination->get_start();
+		$limit = $pagination->get_limit();
 
 		// select the list of contribs
 		$sql_ary = array(
@@ -155,6 +155,9 @@ class authors_main extends titania_object
 			$db->sql_freeresult($result);
 		}
 
+		$phpbbcom_profile_enabled = titania::$config->phpbbcom_profile;
+		$phpbbcom_viewprofile_url = titania::$config->phpbbcom_viewprofile_url;
+
 		foreach ($authors as $author)
 		{
 			$u_author_profile = append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'mode=profile');
@@ -170,7 +173,7 @@ class authors_main extends titania_object
 				'LAST_VISIT'		=> $user->format_date($author['user_lastvisit'], false, true),
 				'POSTS'				=> $author['user_posts'],
 				'ONLINE'			=> $author['online'],
-				'U_PHPBB_PROFILE'	=> ($author['phpbb_user_id']) ? U_PHPBBCOM_VIEWPROFILE . '&amp;u=' . $author['phpbb_user_id'] : '',
+				'U_PHPBB_PROFILE'	=> (!empty($author['phpbb_user_id']) && $phpbbcom_profile_enabled) ? sprintf($phpbbcom_viewprofile_url, $author['phpbb_user_id']) : '',
 			));
 		}
 
@@ -224,6 +227,9 @@ class authors_main extends titania_object
 			return false;
 		}
 
+		$phpbbcom_profile_enabled = titania::$config->phpbbcom_profile;
+		$phpbbcom_viewprofile_url = titania::$config->phpbbcom_viewprofile_url;
+
 		$template->assign_vars(array(
 			'AUTHOR_NAME'		=> get_username_string('username', $author['user_id'], $author['username'], $author['user_colour']),
 			'USER_FULL'			=> ($author['user_id']) ? get_username_string('full', $author['user_id'], $author['username'], $author['user_colour']) : '',
@@ -236,7 +242,7 @@ class authors_main extends titania_object
 			'MOD_COUNT'			=> $this->generate_contrib_string('mod', 'link', $author['author_mods'], $author_id),
 			'STYLE_COUNT'		=> $this->generate_contrib_string('style', 'link', $author['author_styles'], $author_id),
 
-			'U_PHPBB_PROFILE'	=> ($author['phpbb_user_id'] && titania::$config->phpbbcom_profile) ? U_PHPBBCOM_VIEWPROFILE . '&amp;u=' . $author['phpbb_user_id'] : '',
+			'U_PHPBB_PROFILE'	=> (!empty($author['phpbb_user_id']) && $phpbbcom_profile_enabled) ? sprintf($phpbbcom_viewprofile_url, $author['phpbb_user_id']) : '',
 		));
 
 		return true;
@@ -257,22 +263,24 @@ class authors_main extends titania_object
 		$contrib_type = strtoupper($contrib_type);
 		$lang_key = 'NUM_' . $contrib_type . (($num == 1)?'':'S');
 		$contrib_string = sprintf($user->lang[$lang_key], $num);
+
 		if($string_type == 'link')
 		{
 			if($author_id == 0)
 			{
 				trigger_error('Author ID not set when using link', E_USER_WARNING);
 			}
+
 			switch($contrib_type)
 			{
 				case 'MOD':
 					$url = append_sid(TITANIA_ROOT . 'mods/index.php', 'mode=search&amp;u=' . $author_id);
-
 				break;
 
 				default:
 					$url = '#';
 			}
+
 			$contrib_string = '<a href="' . $url . '">' . $contrib_string . '</a>';
 		}
 

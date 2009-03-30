@@ -28,25 +28,29 @@ if (!class_exists('titania_object'))
 */
 class titania_config extends titania_object
 {
-
 	/**
-	 * Setup default configuration and merge with the contents of $titania_config (array) from config.php
+	 * Setup default configuration
 	 */
-	function __construct($config_array)
+	public function __construct()
 	{
 		$this->object_config = array_merge($this->object_config, array(
-			'phpbbcom_profile'			=> array('default' => 1),
+			'language_path'				=> array('default' => TITANIA_ROOT . 'language/'),
+			'modules_path'				=> array('default' => TITANIA_ROOT . 'modules/'),
+			'phpbb_root_path'			=> array('default' => '../community/'),
+			'phpbbcom_profile'			=> array('default' => true),
+			'phpbbcom_viewprofile_url'	=> array('default' => 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
+			'table_prefix'				=> array('default' => 'customisation_'),
+			'template_path'				=> array('default' => TITANIA_ROOT . 'template/'),
+			'theme_path'				=> array('default' => TITANIA_ROOT . 'theme/'),
 		));
-
-		foreach ($config_array as $key => $val)
-		{
-			$this->$key = $val;
-		}
 	}
 
-	public function get_config_data()
+	/**
+	 * Read configuration settings from assoc. array
+	 */
+	public function read_array($config)
 	{
-		return $this;
+		$this->__set_array($config);
 	}
 }
 

@@ -48,7 +48,7 @@ class mods_main extends titania_object
 	{
 		global $user, $template, $cache;
 
-		$user->add_lang(array('titania_contrib', 'titania_mods'));
+		titania::add_lang(array('contrib', 'contrib_mod'));
 
 		$category	= request_var('category', 0);
 		$submit		= isset($_POST['submit']) ? true : false;
@@ -84,7 +84,7 @@ class mods_main extends titania_object
 
 				if (!$found)
 				{
-					$categories = $cache->get_categories(TAG_TYPE_MOD_CATEGORY);
+					$categories = titania::$cache->get_categories(TAG_TYPE_MOD_CATEGORY);
 					titania::error_box('ERROR', sprintf($user->lang['NO_MODS'], $categories[$category]['name']), ERROR_ERROR);
 					$this->main($id, 'categories');
 					return;
@@ -133,6 +133,8 @@ class mods_main extends titania_object
 		include_once(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
 
 		$sort = new sort();
+		$pagination = new pagination();
+
 		$sort->set_sort_keys(array(
 			array('SORT_AUTHOR',		'a.author_username_clean', 'default' => true),
 			array('SORT_TIME_ADDED',	'c.contrib_release_date'),
@@ -143,12 +145,6 @@ class mods_main extends titania_object
 		));
 
 		$sort->sort_request(false);
-
-		$pagination = new pagination();
-		$start = $pagination->set_start();
-		$limit = $pagination->set_limit();
-
-		$results = 0;
 
 		$sql_ary = array(
 			'SELECT'	=> 'c.*, a.author_id, a.author_username, u.user_colour',
@@ -172,8 +168,9 @@ class mods_main extends titania_object
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
 		$sql = $db->sql_build_query('SELECT', $sql_ary);
-		$result = $db->sql_query_limit($sql, $limit, $start);
+		$result = $db->sql_query_limit($sql, $pagination->get_limit(), $pagination->get_start());
 
+		$results = 0;
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$results++;

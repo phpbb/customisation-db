@@ -48,7 +48,7 @@ class mods_details extends titania_object
 	{
 		global $user, $template, $cache;
 
-		$user->add_lang(array('titania_mods'));
+		titania::add_lang(array('contrib_mod'));
 
 		$mod_id	= request_var('mod', 0);
 		$submit	= isset($_POST['submit']) ? true : false;
@@ -128,9 +128,9 @@ class mods_details extends titania_object
 			'UPDATED'		=> $user->format_date($row['contrib_update_date']),
 			'VERSION'		=> $row['contrib_version'],
 			'AUTHOR_FULL'	=> sprintf($user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
-			'PROFILE_FULL'	=> ($row['user_id']) ? get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']) : '',
+			'PROFILE_FULL'	=> (!empty($row['user_id']) ? get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']) : ''),
 
-			'U_SEARCH_MODS_AUTHOR'	=> sprintf($user->lang['SEARCH_AUTHOR_MODS'], '<a href="' . append_sid(TITANIA_ROOT . $this->page, 'mode=search&amp;u=' . $row['author_id']) . '">', $row['author_username'], '</a>'),
+			'U_SEARCH_MODS_AUTHOR'	=> sprintf($user->lang['U_SEARCH_MODS_AUTHOR'], '<a href="' . append_sid(TITANIA_ROOT . $this->page, 'mode=search&amp;u=' . $row['author_id']) . '">', $row['author_username'], '</a>'),
 		));
 	}
 
@@ -143,7 +143,7 @@ class mods_details extends titania_object
 	{
 		global $config, $auth, $db, $template, $user;
 
-		titania::add_phpbb_lang(array('memberlist', 'ucp'));
+		$user->add_lang(array('memberlist', 'ucp'));
 
 		if (!$config['email_enable'])
 		{
@@ -171,9 +171,9 @@ class mods_details extends titania_object
 		}
 
 		$sql = 'SELECT c.contrib_id, c.contrib_name
-				FROM ' . CUSTOMISATION_CONTRIBS_TABLE . ' c
-				WHERE c.contrib_id = ' . (int) $mod_id . '
-					AND c.contrib_status = ' .  STATUS_APPROVED;
+			FROM ' . CUSTOMISATION_CONTRIBS_TABLE . ' c
+			WHERE c.contrib_id = ' . (int) $mod_id . '
+				AND c.contrib_status = ' .  STATUS_APPROVED;
 		$result = $db->sql_query($sql);
 		$mod = $db->sql_fetchrow($result);
 		$db->sql_freeresult($result);

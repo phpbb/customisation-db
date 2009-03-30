@@ -229,9 +229,14 @@ abstract class titania_database_object extends titania_object
 		}
 
 		// Truncate to the maximum length
-		if (isset($config['max']) && $config['max'] < strlen($value))
+		if (isset($config['max']) && $config['max'])
 		{
-			$value = substr($value, 0, $config['max']);
+			if (!function_exists('truncate_string'))
+			{
+				require($phpbb_root_path . 'includes/functions_content.' . $phpEx);
+			}
+
+			truncate_string($value, $config['max']);
 		}
 
 		return $value;

@@ -24,6 +24,12 @@ if (!defined('IN_TITANIA'))
 class pagination extends titania_object
 {
 	/**
+	 * Constants
+	 */
+	const OFFSET_LIMIT_DEFAULT = 25;
+	const OFFSET_LIMIT_MAX = 100;
+
+	/**
 	 * URL Params
 	 *
 	 * @var array
@@ -38,10 +44,10 @@ class pagination extends titania_object
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
 			'start'			=> array('default' => 0),
-			'limit'			=> array('default' => DEFAULT_OFFSET_LIMIT),
+			'limit'			=> array('default' => self::OFFSET_LIMIT_DEFAULT),
 			'limit_name'	=> array('default' => 'limit'),
-			'default_limit'	=> array('default' => DEFAULT_OFFSET_LIMIT),
-			'max_limit'		=> array('default' => MAX_OFFSET_LIMIT),
+			'default_limit'	=> array('default' => self::OFFSET_LIMIT_DEFAULT),
+			'max_limit'		=> array('default' => self::OFFSET_LIMIT_MAX),
 			'results'		=> array('default' => 0),
 			'total_results'	=> array('default' => 0),
 			'url'			=> array('default' => ''),
@@ -64,7 +70,7 @@ class pagination extends titania_object
 	 *
 	 * @return int	start
 	 */
-	public function set_start($default = 0)
+	public function get_start($default = 0)
 	{
 		$this->start = request_var('start', (int) $default);
 
@@ -79,11 +85,12 @@ class pagination extends titania_object
 	 *
 	 * @return int	$limit
 	 */
-	public function set_limit($default = DEFAULT_OFFSET_LIMIT, $limit_name = 'limit')
+	public function get_limit($default = self::OFFSET_LIMIT_DEFAULT, $limit_name = 'limit')
 	{
 		$limit = request_var($limit_name, (int) $default);
-		$this->default_limit = (int) $default;
-		$this->limit_name = (string) $limit_name;
+
+		$this->default_limit = $default;
+		$this->limit_name = $limit_name;
 
 		// Don't allow limits of 0 which is unlimited results. Instead use the max limit.
 		$limit = ($limit == 0) ? $this->max_limit : $limit;
@@ -143,8 +150,11 @@ class pagination extends titania_object
 	}
 
 	/**
-	 * set custom template variables
-	 * options: TOTAL_ROWS, PAGINATION, PAGE_NUMBER and S_MODE_ACTION. Only specify those that need to be changed from default.
+	 * Set custom template variables
+	 *
+	 * Options: TOTAL_ROWS, PAGINATION, PAGE_NUMBER and S_MODE_ACTION.
+	 *	Only specify those that need to be changed from default.
+	 *
 	 * Usage:
 	 * <code>
 	 * $pagination->set_template_vars(array(

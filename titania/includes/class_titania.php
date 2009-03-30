@@ -26,26 +26,29 @@ class titania
 	 *
 	 * @var string
 	 */
-	public $page;
+	public static $page;
 
 	/**
 	 * Titania configuration
 	 *
-	 * @var unknown_type
+	 * @var titania_config
 	 */
 	public static $config;
 	
 	/*
 	 * Instance of titania_cache class
 	 *
-	 * $var unknown_type
+	 * $var titania_cache
 	 */
 	public static $cache;
 
-	/**
-	 * construct class
+	/*
+	 * Initialise titania:
+	 *	Session management, Cache, Language ...
+	 *
+	 * @return void
 	 */
-	public function __construct($titania_config)
+	public static function initialise()
 	{
 		global $user, $auth, $template;
 
@@ -54,28 +57,77 @@ class titania
 		$auth->acl($user->data);
 		$user->setup();
 
-		$this->page = $user->page['script_path'] . $user->page['page_name'];
+		self::$page = $user->page['script_path'] . $user->page['page_name'];
 
-		// Set the custom template path for titania. Default: root/titania/template
-		$template->set_custom_template(TITANIA_ROOT . TEMPLATE_PATH, 'titania');
-		$user->set_custom_lang_path(TITANIA_ROOT . 'language');
-
-		$user->add_lang('titania_common');
-
-		if (!class_exists('titania_config'))
-		{
-			include(TITANIA_ROOT . 'includes/titania_config.' . PHP_EXT);
-		}
-
-		self::$config = $titania_config->get_config_data();
-
+		// Instantiate cache
 		if (!class_exists('titania_cache'))
 		{
 			include(TITANIA_ROOT . 'includes/titania_cache.' . PHP_EXT);
 		}
-		
-		// titania_cache
 		self::$cache = new titania_cache();
+
+		// Set template path and template name
+		$template->set_custom_template(titania::$config->template_path, 'titania');
+
+		// Add common titania language file
+		self::add_lang('common');
+	}
+
+	/**
+	 * Reads a configuration file with an assoc. config array
+	 *
+	 * @param string $file	Path to configuration file
+	 */
+	public static function read_config_file($file)
+	{
+		if (!file_exists($file) || !is_readable($file))
+		{
+			echo '<p>';
+			echo '	The titania configuration file could not be found or is inaccessible. Check your configuration.';
+			echo '	<br />';
+			echo '	To install titania you have to rename config.example.php to config.php and adjust it to your needs.';
+			echo '</p>';
+
+			exit;
+		}
+
+		require($file);
+
+		if (!isset(self::$config))
+		{
+			if (!class_exists('titania_config'))
+			{
+				require(TITANIA_ROOT . 'includes/titania_config.' . PHP_EXT);
+			}
+
+			self::$config = new titania_config();
+		}
+
+		if (!is_array($config))
+		{
+			$config = array();
+		}
+
+		self::$config->read_array($config);
+	}
+
+	/**
+	 * Add a phpBB language file
+	 *
+	 * @param mixed $lang_set
+	 * @param bool $use_db
+	 * @param bool $use_help
+	 */
+	public static function add_lang($lang_set, $use_db = false, $use_help = false)
+	{
+		global $user;
+
+		$old_path = $user->lang_path;
+
+		$user->set_custom_lang_path(self::$config->language_path);
+		$user->add_lang($lang_set, $use_db, $use_help);
+
+		$user->set_custom_lang_path($old_path);
 	}
 
 	/**
@@ -84,7 +136,7 @@ class titania
 	 * @param string $page_title
 	 * @param bool $display_online_list
 	 */
-	public function page_header($page_title = '', $display_online_list = false)
+	public static function page_header($page_title = '', $display_online_list = false)
 	{
 		global $template, $user;
 
@@ -93,7 +145,7 @@ class titania
 
 		if ($user->data['user_id'] == ANONYMOUS)
 		{
-			$u_login_logout = $template->_rootref['U_LOGIN_LOGOUT'] . '&amp;redirect=' . $this->page;
+			$u_login_logout = $template->_rootref['U_LOGIN_LOGOUT'] . '&amp;redirect=' . self::$page;
 		}
 		else
 		{
@@ -105,8 +157,8 @@ class titania
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
 			'LOGIN_REDIRECT'		=> $user->page['page'],
 			'S_LOGIN_ACTION'		=> append_sid(PHPBB_ROOT_PATH . 'ucp.' . PHP_EXT, 'mode=login'),
-			'T_TITANIA_THEME_PATH'	=> THEME_PATH,
-			'T_TITANIA_STYLESHEET'	=> THEME_PATH . 'stylesheet.css',
+			'T_TITANIA_THEME_PATH'	=> titania::$config->theme_path,
+			'T_TITANIA_STYLESHEET'	=> titania::$config->theme_path . 'stylesheet.css',
 		));
 	}
 
@@ -115,7 +167,7 @@ class titania
 	 *
 	 * @param bool $return if we are within a method, we can use the error_box instead of a trigger_error on the redirect.
 	 */
-	public function logout($return = false)
+	public static function logout($return = false)
 	{
 		global $user;
 
@@ -135,9 +187,9 @@ class titania
 			return $message;
 		}
 
-		meta_refresh(3, append_sid(TITANIA_PATH . 'index.' . PHP_EXT));
+		meta_refresh(3, append_sid(TITANIA_ROOT . 'index.' . PHP_EXT));
 
-		$message = $message . '<br /><br />' . sprintf($user->lang['RETURN_INDEX'], '<a href="' . append_sid(TITANIA_PATH . 'index.' . PHP_EXT) . '">', '</a> ');
+		$message = $message . '<br /><br />' . sprintf($user->lang['RETURN_INDEX'], '<a href="' . append_sid(TITANIA_ROOT . 'index.' . PHP_EXT) . '">', '</a> ');
 		trigger_error($message);
 	}
 
@@ -146,7 +198,7 @@ class titania
 	 *
 	 * @param cron $run_cron
 	 */
-	public function page_footer($run_cron = true)
+	public static function page_footer($run_cron = true)
 	{
 		global $auth, $user, $template, $cache;
 
@@ -156,7 +208,7 @@ class titania
 			if (confirm_box(true))
 			{
 				$cache->purge();
-				titania::error_box('SUCCESS', $user->lang['CACHE_PURGED'] . $this->back_link('', '', array('cache')));
+				titania::error_box('SUCCESS', $user->lang['CACHE_PURGED'] . self::back_link('', '', array('cache')));
 			}
 			else
 			{
@@ -185,7 +237,7 @@ class titania
 	 *
 	 * @return HTML link string
 	 */
-	public function back_link($redirect = '', $l_redirect = '', $exclude = array(), $return_url = false)
+	public static function back_link($redirect = '', $l_redirect = '', $exclude = array(), $return_url = false)
 	{
 		global $user, $config;
 
@@ -287,28 +339,10 @@ class titania
 		));
 	}
 
-	/**
-	 * Add a phpBB language file
-	 *
-	 * @param mixed $lang_set
-	 * @param bool $use_db
-	 * @param bool $use_help
-	 */
-	public static function add_phpbb_lang($lang_set, $use_db = false, $use_help = false)
-	{
-		global $user;
-
-		$user->set_custom_lang_path(PHPBB_ROOT_PATH . 'language');
-
-		$user->add_lang($lang_set, $use_db, $use_help);
-
-		$user->set_custom_lang_path(TITANIA_ROOT . 'language');
-	}
-
 	public static function set_header_status($status_code = NULL)
 	{
 		// Send the appropriate HTTP status header
-		$status = array(
+		static $status = array(
 			200 => 'OK',
 			201 => 'Created',
 			202 => 'Accepted',
@@ -333,7 +367,7 @@ class titania
 			503 => 'Service Unavailable',
 		);
 
-		if ($status_code && $status[$status_code])
+		if ($status_code && isset($status[$status_code]))
 		{
 			$header = $status_code . ' ' . $status[$status_code];
 			header('HTTP/1.1 ' . $header, false, $status_code);

@@ -36,14 +36,14 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'AUTHOR_CONTRIBS'   => 'Contribs',	
+	'AUTHOR_CONTRIBS'	=> 'Contribs',
 	'AUTHOR_LIST'		=> 'Author List',
-    'AUTHOR_MODS'       => 'MODs',	
+	'AUTHOR_MODS'		=> 'MODs',
 	'AUTHOR_NOT_FOUND'	=> 'Author not found',
 	'AUTHOR_PROFILE'	=> 'Author Profile',
-	'AUTHOR_RATING'	    => 'Ranking',
-    'AUTHOR_SNIPPETS'   => 'Snippets',	
-    'AUTHOR_STYLES'     => 'Styles',
+	'AUTHOR_RATING'		=> 'Ranking',
+	'AUTHOR_SNIPPETS'	=> 'Snippets',
+	'AUTHOR_STYLES'		=> 'Styles',
 
 	'NUM_CONTRIB'		=> '%s Contribution',
 	'NUM_CONTRIBS'		=> '%s Contributions',
@@ -53,11 +53,11 @@ $lang = array_merge($lang, array(
 	'NUM_STYLES'		=> '%s Styles',
 	'NUM_SNIPPET'		=> '%s Snippet',
 	'NUM_SNIPPETS'		=> '%s Snippets',
-	
-	'PHPBB_PROFILE'     => 'phpBB.com profile',
-	
-	'REAL_NAME'         => 'Real Name',
-	
-	'USER_INFORMATION'  => '’s user information',
+
+	'PHPBB_PROFILE'		=> 'phpBB.com profile',
+
+	'REAL_NAME'			=> 'Real Name',
+
+	'USER_INFORMATION'	=> '’s user information',
 ));
 

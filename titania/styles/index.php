@@ -16,7 +16,7 @@ if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
-$user->add_lang('titania_contrib');
+titania::add_lang('contrib');
 
 $mode = request_var('mode', '');
 $tag_type = 'STYLE';
@@ -29,7 +29,7 @@ switch ($mode)
 	break;
 
 	case 'list':
-		$titania->page = TITANIA_ROOT . 'styles/index.' . PHP_EXT;
+		titania::page = TITANIA_ROOT . 'styles/index.' . PHP_EXT;
 
 		$page_title = $tag_type . '_LIST';
 		$template_body = 'styles/styles_list.html';
@@ -43,11 +43,11 @@ switch ($mode)
 }
 
 // Output page
-$titania->page_header($user->lang[$page_title]);
+titania::page_header($user->lang[$page_title]);
 
 $template->set_filenames(array(
 	'body' => $template_body,
 ));
 
-$titania->page_footer();
+titania::page_footer();
 

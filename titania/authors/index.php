@@ -29,18 +29,16 @@ $module->list_modules('authors');
 $module->set_active($id, $mode);
 
 // Load and execute the relevant module
-// trick the module class to allow modules to be loaded from the titania includes path.
-$module->set_custom_include_path(TITANIA_ROOT);
 $module->load_active();
 
 // Assign data to the template engine for the list of modules
 $module->assign_tpl_vars(append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT));
 
-// $titania->page_footer(false);
-$titania->page_header($module->get_page_title(), false);
+// Output page
+titania::page_header($module->get_page_title());
 
 $template->set_filenames(array(
 	'body' => $module->get_tpl_name(),
 ));
 
-$titania->page_footer();
+titania::page_footer();

@@ -48,7 +48,7 @@ class titania_main extends titania_object
 	{
 		global $user, $template, $cache;
 
-		$user->add_lang('titania_contrib');
+		//titania::add_lang('contrib');
 
 		$this->tpl_name = 'titania/index_body';
 		$this->page_title = 'TITANIA_HOME';

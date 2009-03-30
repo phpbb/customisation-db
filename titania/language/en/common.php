@@ -77,9 +77,9 @@ $lang = array_merge($lang, array(
 
 	'RETURNED_RESULT'		=> 'Displaying 1 result',
 	'RETURNED_RESULTS'		=> 'Displaying %1$d of %2$d results',
-	
+
 	'TITANIA_HOME'			=> 'Titania Home',
-	
+
 	// For the MOD overview
 	'MODO_TITLE'			=> 'MOD Overview',
 	'MODO_GENERAL'			=> 'General Information | Next MOD Breadcrumbs',
@@ -116,7 +116,7 @@ $lang = array_merge($lang, array(
 	'RR_E_RATING'			=> 'Enter Rating',
 	'RR_E_REVIEW'			=> 'Enter Review',
 	'RR_LIST'				=> 'Review List',	
-	
+
 	'COMPLEX_TITLE'			=> 'Complexity',
 	'COMPLEX_SCHEMA'		=> 'SQL Schema Changes',
 	'COMPLEX_DATA'			=> 'SQL Data Changes',
@@ -124,12 +124,12 @@ $lang = array_merge($lang, array(
 	'COMPLEX_LANGUAGE'		=> 'Language File Changes',
 	'COMPLEX_EDIT'			=> 'File Edits',
 	'COMPLEX_ADDITIONAL'	=> 'Additional Module',
-	
+
 	'STYLES_TITLE'			=> 'Styles Supported',
 	'STYLES_PROSILVER'		=> 'prosilver',
 	'STYLES_SUBSILVER'		=> 'subsilver2',
 	'STYLES_OTHER'			=> 'Other Styles',
-	
+
 	'LANGUAGE_TITLE'		=> 'Languages Supported',
 	'LANGUAGE_AVAILABLE'	=> 'Languages Available',
 
@@ -138,7 +138,7 @@ $lang = array_merge($lang, array(
 	'OTHER_FEATURES'		=> 'Features/Details in addition to MOD Description',
 	'OTHER_SIMILAR'			=> 'Other Similar MODs',
 	'OTHER_MODS'			=> 'Other MODs by this Author',
-	
+
 	'DOWNLOAD_TITLE'		=> 'MOD Download',
 	'DOWNLOAD_CHECK'		=> 'Download Checksum',
 	'DOWNLOAD_MOD_TITLE'	=> 'Download Title',

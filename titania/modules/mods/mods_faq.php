@@ -50,7 +50,7 @@ class mods_faq extends titania_object
 	{
 		global $user, $template, $cache;
 
-		$user->add_lang(array('titania_contrib', 'titania_mods'));
+		titania::add_lang(array('contrib', 'contrib_mod'));
 
 		$faq_id		= request_var('faq', 0);
 		$action 	= request_var('action', '');
