@@ -51,7 +51,7 @@ class pagination extends titania_object
 			'results'		=> array('default' => 0),
 			'total_results'	=> array('default' => 0),
 			'url'			=> array('default' => ''),
-			'result_lang'	=> array('default' => 'RETURNED_RESULT'),
+			'result_lang'	=> array('default' => 'RETURNED_RESULTS'),
 			'template_vars'	=> array(
 				'default' => array(
 					'TOTAL_ROWS'	=> 'TOTAL_ROWS',
@@ -139,14 +139,39 @@ class pagination extends titania_object
 	 */
 	private function get_url($page, $pagination_url = false)
 	{
+		$url = parse_url($page);
+
+		if (is_array($url) && !empty($url['query']))
+		{
+			$url['query'] = str_replace('&amp;', '&', $url['query']);
+			$param_ary = explode('&', $url['query']);
+			foreach ($param_ary as $param)
+			{
+				list($key, $value) = explode('=', $param);
+				$this->params[(string) $key] = $value;
+			}
+
+			foreach($url as $key => $value)
+			{
+				if ($key == 'query')
+				{
+					continue;
+				}
+
+				$page = $value;
+			}
+		}
+
 		$params = $this->params;
 
 		if ($pagination_url)
 		{
 			unset($params['start']);
 		}
+		
+		unset($params['sid']);
 
-		return (sizeof($params)) ? append_sid($page, $params) : append_sid($page);
+		return (!empty($params)) ? append_sid($page, $params) : append_sid($page);
 	}
 
 	/**
@@ -192,18 +217,26 @@ class pagination extends titania_object
 	 */
 	public function sql_total_count($sql_ary, $field_name, $results = 0)
 	{
-		global $db;
+		// If the number of results returned is less than the limit and if start <> 0, we don't need to make a second query
+		if ($results < $this->limit && !$this->start)
+		{
+			$this->total_results = $results;
+		}
+		else
+		{
+			global $db;
 
-		// now count the number of results based on the perameters specified in sql_ary
-		$sql_ary['SELECT'] = "COUNT($field_name) AS total_count";
-		$sql = $db->sql_build_query('SELECT', $sql_ary);
-		$result = $db->sql_query($sql);
-		$this->total_results = $db->sql_fetchfield('total_count');
-		$db->sql_freeresult($result);
+			// now count the number of results based on the perameters specified in sql_ary
+			$sql_ary['SELECT'] = "COUNT($field_name) AS total_count";
+			$sql = $db->sql_build_query('SELECT', $sql_ary);
+			$result = $db->sql_query($sql);
+			$this->total_results = $db->sql_fetchfield('total_count');
+			$db->sql_freeresult($result);
+		}
 
 		if ($results)
 		{
-			$this->set_results($results);
+			$this->results = $results;
 		}
 
 		return $this->total_results;
@@ -227,10 +260,9 @@ class pagination extends titania_object
 		$pagination_url = $this->get_url($page, true);
 
 		$results = ($this->results) ? $this->results : $this->total_results;
-		$lang = ($this->total_results == 1) ? $user->lang[$this->result_lang] : $user->lang[$this->result_lang . 'S'];
 
 		$template->assign_vars(array(
-			$this->template_vars['TOTAL_ROWS']	=> sprintf($lang, $results, $this->total_results),
+			$this->template_vars['TOTAL_ROWS']	=> $user->lang($this->result_lang, $results, $this->total_results),
 			$this->template_vars['PAGINATION']	=> generate_pagination($pagination_url, $this->total_results, $this->limit, $this->start),
 			$this->template_vars['PAGE_NUMBER']	=> on_page($this->total_results, $this->limit, $this->start),
 
