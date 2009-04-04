@@ -21,19 +21,12 @@ if (!defined('IN_TITANIA'))
  */
 class titania
 {
-	/**
-	 * Current viewing page location
-	 *
-	 * @var string
-	 */
-	public static $page;
-
-	/**
-	 * Titania configuration
-	 *
-	 * @var titania_config
-	 */
+	public static $auth;
+	public static $cache;
 	public static $config;
+	public static $db;
+	public static $template;
+	public static $user;
 	
 	/*
 	 * Instance of titania_cache class
@@ -41,6 +34,21 @@ class titania
 	 * $var titania_cache
 	 */
 	public static $cache;
+
+	/**
+	 * Static Constructor, we most likely will need to move this to the initialize method.
+	 */
+	public static function construct()
+	{
+		global $auth, $config, $db, $template, $user, $cache;
+
+		self::$auth		= &$auth;
+		self::$config	= &$config;
+		self::$db		= &$db;
+		self::$template	= &$template;
+		self::$user		= &$user;
+		self::$cache	= &$cache;
+	}
 
 	/*
 	 * Initialise titania:
@@ -50,14 +58,12 @@ class titania
 	 */
 	public static function initialise()
 	{
-		global $user, $auth, $template;
-
 		// Start session management
-		$user->session_begin();
-		$auth->acl($user->data);
-		$user->setup();
+		self::$user->session_begin();
+		self::$auth->acl(self::$user->data);
+		self::$user->setup();
 
-		self::$page = $user->page['script_path'] . $user->page['page_name'];
+		self::$page = self::$user->page['script_path'] . self::$user->page['page_name'];
 
 		// Instantiate cache
 		if (!class_exists('titania_cache'))
@@ -67,7 +73,7 @@ class titania
 		self::$cache = new titania_cache();
 
 		// Set template path and template name
-		$template->set_custom_template(titania::$config->template_path, 'titania');
+		self::$template->set_custom_template(self::$config->template_path, 'titania');
 
 		// Add common titania language file
 		self::add_lang('common');
@@ -120,14 +126,12 @@ class titania
 	 */
 	public static function add_lang($lang_set, $use_db = false, $use_help = false)
 	{
-		global $user;
+		$old_path = self::$user->lang_path;
 
-		$old_path = $user->lang_path;
+		self::$user->set_custom_lang_path(self::$config->language_path);
+		self::$user->add_lang($lang_set, $use_db, $use_help);
 
-		$user->set_custom_lang_path(self::$config->language_path);
-		$user->add_lang($lang_set, $use_db, $use_help);
-
-		$user->set_custom_lang_path($old_path);
+		self::$user->set_custom_lang_path($old_path);
 	}
 
 	/**
@@ -138,33 +142,31 @@ class titania
 	 */
 	public static function page_header($page_title = '', $display_online_list = false)
 	{
-		global $template, $user;
-
 		// Check if page_title is a language string
-		if (isset($user->lang[$page_title]))
+		if (isset(self::$user->lang[$page_title]))
 		{
-			$page_title = $user->lang[$page_title];
+			$page_title = self::$user->lang[$page_title];
 		}
 
 		// Call the phpBB page_header() function, but we perform our own actions here as well.
 		page_header($page_title, $display_online_list);
 
-		if ($user->data['user_id'] == ANONYMOUS)
+		if (self::$user->data['user_id'] == ANONYMOUS)
 		{
-			$u_login_logout = $template->_rootref['U_LOGIN_LOGOUT'] . '&amp;redirect=' . self::$page;
+			$u_login_logout = self::$template->_rootref['U_LOGIN_LOGOUT'] . '&amp;redirect=' . self::$page;
 		}
 		else
 		{
-			$u_login_logout = append_sid(TITANIA_ROOT . 'index.' . PHP_EXT, 'mode=logout', true, $user->session_id);
+			$u_login_logout = append_sid(TITANIA_ROOT . 'index.' . PHP_EXT, 'mode=logout', true, self::$user->session_id);
 		}
 
-		$template->assign_vars(array(
+		self::$template->assign_vars(array(
 			// rewrite the login URL to redirect to the currently viewed page.
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
-			'LOGIN_REDIRECT'		=> $user->page['page'],
+			'LOGIN_REDIRECT'		=> self::$user->page['page'],
 			'S_LOGIN_ACTION'		=> append_sid(PHPBB_ROOT_PATH . 'ucp.' . PHP_EXT, 'mode=login'),
-			'T_TITANIA_THEME_PATH'	=> titania::$config->theme_path,
-			'T_TITANIA_STYLESHEET'	=> titania::$config->theme_path . 'stylesheet.css',
+			'T_TITANIA_THEME_PATH'	=> self::$config->theme_path,
+			'T_TITANIA_STYLESHEET'	=> self::$config->theme_path . 'stylesheet.css',
 		));
 	}
 
@@ -175,17 +177,15 @@ class titania
 	 */
 	public static function logout($return = false)
 	{
-		global $user;
-
-		if ($user->data['user_id'] != ANONYMOUS && isset($_GET['sid']) && !is_array($_GET['sid']) && $_GET['sid'] === $user->session_id)
+		if (self::$user->data['user_id'] != ANONYMOUS && isset($_GET['sid']) && !is_array($_GET['sid']) && $_GET['sid'] === self::$user->session_id)
 		{
-			$user->session_kill();
-			$user->session_begin();
-			$message = $user->lang['LOGOUT_REDIRECT'];
+			self::$user->session_kill();
+			self::$user->session_begin();
+			$message = self::$user->lang['LOGOUT_REDIRECT'];
 		}
 		else
 		{
-			$message = ($user->data['user_id'] == ANONYMOUS) ? $user->lang['LOGOUT_REDIRECT'] : $user->lang['LOGOUT_FAILED'];
+			$message = (self::$user->data['user_id'] == ANONYMOUS) ? self::$user->lang['LOGOUT_REDIRECT'] : self::$user->lang['LOGOUT_FAILED'];
 		}
 
 		if ($return)
@@ -195,7 +195,7 @@ class titania
 
 		meta_refresh(3, append_sid(TITANIA_ROOT . 'index.' . PHP_EXT));
 
-		$message = $message . '<br /><br />' . sprintf($user->lang['RETURN_INDEX'], '<a href="' . append_sid(TITANIA_ROOT . 'index.' . PHP_EXT) . '">', '</a> ');
+		$message = $message . '<br /><br />' . sprintf(self::$user->lang['RETURN_INDEX'], '<a href="' . append_sid(TITANIA_ROOT . 'index.' . PHP_EXT) . '">', '</a> ');
 		trigger_error($message);
 	}
 
@@ -206,15 +206,13 @@ class titania
 	 */
 	public static function page_footer($run_cron = true)
 	{
-		global $auth, $user, $template, $cache;
-
 		// admin requested the cache to be purged, ensure they have permission and purge the cache.
-		if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && $auth->acl_get('a_'))
+		if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && self::$auth->acl_get('a_'))
 		{
 			if (confirm_box(true))
 			{
-				$cache->purge();
-				titania::error_box('SUCCESS', $user->lang['CACHE_PURGED'] . self::back_link('', '', array('cache')));
+				self::$cache->purge();
+				self::error_box('SUCCESS', self::$user->lang['CACHE_PURGED'] . self::back_link('', '', array('cache')));
 			}
 			else
 			{
@@ -226,8 +224,8 @@ class titania
 			}
 		}
 
-		$template->assign_vars(array(
-			'U_PURGE_CACHE'		=> ($auth->acl_get('a_')) ? append_sid($user->page['script_path'] . $user->page['page_name'], 'cache=purge') : '',
+		self::$template->assign_vars(array(
+			'U_PURGE_CACHE'		=> (self::$auth->acl_get('a_')) ? append_sid(self::$user->page['script_path'] . self::$user->page['page_name'], 'cache=purge') : '',
 		));
 
 		page_footer($run_cron);
@@ -245,8 +243,6 @@ class titania
 	 */
 	public static function back_link($redirect = '', $l_redirect = '', $exclude = array(), $return_url = false)
 	{
-		global $user, $config;
-
 		$params = $query = array();
 		$exclude = array_combine($exclude, $exclude);
 
@@ -272,7 +268,7 @@ class titania
 			}
 			else
 			{
-				$redirect = $user->page['script_path'] . $user->page['page_name'];
+				$redirect = self::$user->page['script_path'] . self::$user->page['page_name'];
 			}
 		}
 		else
@@ -307,7 +303,7 @@ class titania
 		// set the redirect string (Return to previous page)
 		$l_redirect = ($l_redirect) ? $l_redirect : 'RETURN_LAST_PAGE';
 
-		return (!$return_url) ? sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, $user->lang[$l_redirect]) : $redirect;
+		return (!$return_url) ? sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, self::$user->lang[$l_redirect]) : $redirect;
 	}
 
 	/**
@@ -316,24 +312,27 @@ class titania
 	 * @param string	$error_msg		error message or language string
 	 * @param int		$error_type		error type e.g. E_USER_NOTICE
 	 * @param int		$status_code	http response code
+	 * @param string	$title			Optional message header title
 	 *
 	 * @return void
 	 */
-	public static function trigger_error($error_msg, $error_type = false, $status_code = false)
+	public static function trigger_error($error_msg, $error_type = E_USER_NOTICE, $status_code = NULL, $title = '')
 	{
+		global $msg_title, $msg_long_text, $msg_template;
+
+		$msg_template = $template;
+
 		if ($status_code)
 		{
-			titania::set_header_status($status_code);
+			self::set_header_status($status_code);
 		}
 
-		if ($error_type)
+		if ($title)
 		{
-			trigger_error($error_msg, $error_type);
+			$msg_title = isset(self::$user->lang[$title]) ? self::$user->lang[$title] : $title;
 		}
-		else
-		{
-			trigger_error($error_msg);
-		}
+
+		trigger_error($error_msg, $error_type);
 	}
 
 	/**
@@ -346,21 +345,37 @@ class titania
 	 */
 	public static function error_box($l_title, $l_message, $error_type = ERROR_SUCCESS, $status_code = NULL)
 	{
-		global $template, $user;
-
 		if ($status_code)
 		{
-			titania::set_header_status($status_code);
+			self::set_header_status($status_code);
 		}
 
-		$template->assign_block_vars('errorbox', array(
-			'TITLE'		=> (isset($user->lang[$l_title])) ? $user->lang[$l_title] : $l_title,
-			'MESSAGE'	=> (isset($user->lang[$l_message])) ? $user->lang[$l_message] : $l_message,
-			'S_ERROR'	=> ($error_type == ERROR_ERROR) ? true : false,
-			'S_SUCCESS'	=> ($error_type == ERROR_SUCCESS) ? true : false,
-		));
+		$block = ($error_type == ERROR_ERROR) ? 'errorbox' : 'successbox';
+
+		if (is_array($l_message))
+		{
+			foreach ($l_message as $message)
+			{
+				self::$template->assign_block_vars($block, array(
+					'TITLE'		=> (isset(self::$user->lang[$l_title])) ? self::$user->lang[$l_title] : $l_title,
+					'MESSAGE'	=> (isset(self::$user->lang[$message])) ? self::$user->lang[$message] : $message,
+				));
+			}
+		}
+		else
+		{
+			self::$template->assign_block_vars($block, array(
+				'TITLE'		=> (isset(self::$user->lang[$l_title])) ? self::$user->lang[$l_title] : $l_title,
+				'MESSAGE'	=> (isset(self::$user->lang[$l_message])) ? self::$user->lang[$l_message] : $l_message,
+			));
+		}
 	}
 
+	/**
+	 * Set proper page header status
+	 *
+	 * @param int $status_code
+	 */
 	public static function set_header_status($status_code = NULL)
 	{
 		// Send the appropriate HTTP status header
