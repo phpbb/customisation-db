@@ -53,7 +53,7 @@ abstract class titania_database_object extends titania_object
 	/**
 	* Triggers an insert or an update depending on presence of $this->sql_id_field
 	*
-	* @return	void
+	* @return	bool		true on success, else false
 	*/
 	public function submit()
 	{
@@ -61,18 +61,18 @@ abstract class titania_database_object extends titania_object
 
 		if (!$this->$identifier)
 		{
-			$this->insert();
+			return $this->insert();
 		}
 		else
 		{
-			$this->update();
+			return $this->update();
 		}
 	}
 
 	/**
 	* Updates $this->sql_table with object data identified by $this->sql_id_field
 	*
-	* @return	void
+	* @return	bool		true on success, else false
 	*/
 	public function update()
 	{
@@ -98,7 +98,7 @@ abstract class titania_database_object extends titania_object
 
 		if (empty($sql_array))
 		{
-			return;
+			return false;
 		}
 
 		global $db;
@@ -107,13 +107,20 @@ abstract class titania_database_object extends titania_object
 			SET ' . $db->sql_build_array('UPDATE', $sql_array) . '
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
 		$db->sql_query($sql);
+
+		if ($db->sql_affectedrows())
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
 	* Inserts object data into $this->sql_table.
 	* Sets the identifier property to the correct id.
 	*
-	* @return	void
+	* @return	bool		true on success, else false
 	*/
 	public function insert()
 	{
@@ -128,13 +135,20 @@ abstract class titania_database_object extends titania_object
 		$sql = 'INSERT INTO ' . $this->sql_table . ' ' . $db->sql_build_array('INSERT', $sql_array);
 		$db->sql_query($sql);
 
-		$this->{$this->sql_id_field} = $db->sql_nextid();
+		if ($id = $db->sql_nextid())
+		{
+			$this->{$this->sql_id_field} = $id;
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
 	* Gets object data from the database and sets the properties.
 	*
-	* @return	void
+	* @return	bool		true when object found, else false
 	*/
 	public function load()
 	{
@@ -154,21 +168,16 @@ abstract class titania_database_object extends titania_object
 
 		foreach ($this->sql_data as $key => $value)
 		{
-			if (!isset($this->object_config[$key]))
-			{
-				continue;
-			}
-
 			$this->$key = $value;
 		}
-		
+
 		return true;
 	}
 
 	/**
 	* Deletes an object identified by $this->sql_id_field
 	*
-	* @return	void
+	* @return	int		rows deleted
 	*/
 	public function delete()
 	{
@@ -177,6 +186,8 @@ abstract class titania_database_object extends titania_object
 		$sql = 'DELETE FROM ' . $this->sql_table . '
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
 		$db->sql_query($sql);
+
+		return $db->sql_affectedrows();
 	}
 
 	/**
@@ -233,30 +244,12 @@ abstract class titania_database_object extends titania_object
 		{
 			if (!function_exists('truncate_string'))
 			{
-				require($phpbb_root_path . 'includes/functions_content.' . $phpEx);
+				require(PHPBB_ROOT_PATH . 'includes/functions_content.' . PHP_EXT);
 			}
 
 			truncate_string($value, $config['max']);
 		}
 
 		return $value;
-	}
-}
-
-/**
-* Exception thrown when an object does not exist in the database.
-*
-* @package Titania
-*/
-class NoDataFoundException extends Exception
-{
-	function __construct($name = '', $code = 0)
-	{
-		if (empty($name))
-		{
-			$name = 'Unable to get object from database. No data found for primary key.';
-		}
-
-		parent::__construct($name, $code);
 	}
 }

@@ -66,7 +66,7 @@ class titania_contribution extends titania_database_object
 			'contrib_desc_uid'				=> array('default' => '',	'readonly' => true),
 			'contrib_desc_options'			=> array('default' => 7,	'readonly' => true),
 
-			'contrib_status'				=> array('default' => 0),
+			'contrib_status'				=> array('default' => STATUS_NEW),
 			'contrib_version'				=> array('default' => '',	'max' => 15),
 
 			'contrib_revision'				=> array('default' => 0),
@@ -89,11 +89,7 @@ class titania_contribution extends titania_database_object
 			'contrib_demo'					=> array('default' => '',	'max' => 255,	'multibyte' => false),
 		));
 
-		if ($contrib_id === false)
-		{
-			$this->contrib_id = time();
-		}
-		else
+		if ($contrib_id !== false)
 		{
 			$this->contrib_id = $contrib_id;
 		}
@@ -102,7 +98,7 @@ class titania_contribution extends titania_database_object
 	/**
 	 * Submit data for storing into the database
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	public function submit()
 	{
@@ -112,19 +108,24 @@ class titania_contribution extends titania_database_object
 			$this->generate_text_for_storage(false, false, false);
 		}
 
-		parent::submit();
+		return parent::submit();
 	}
 
 	/**
 	 * Load function to load description parsed text
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	public function load()
 	{
-		parent::load();
+		$status = parent::load();
 
-		$this->description_parsed_for_storage = true;
+		if ($status)
+		{
+			$this->description_parsed_for_storage = true;
+		}
+
+		return $status;
 	}
 
 	/**

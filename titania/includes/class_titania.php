@@ -140,6 +140,12 @@ class titania
 	{
 		global $template, $user;
 
+		// Check if page_title is a language string
+		if (isset($user->lang[$page_title]))
+		{
+			$page_title = $user->lang[$page_title];
+		}
+
 		// Call the phpBB page_header() function, but we perform our own actions here as well.
 		page_header($page_title, $display_online_list);
 
@@ -304,14 +310,30 @@ class titania
 		return (!$return_url) ? sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, $user->lang[$l_redirect]) : $redirect;
 	}
 
-	public static function trigger_error($error_msg, $error_type = E_USER_NOTICE, $status_code = NULL)
+	/**
+	 * Wrapper for phpBB function trigger_error (with added http response code)
+	 *
+	 * @param string	$error_msg		error message or language string
+	 * @param int		$error_type		error type e.g. E_USER_NOTICE
+	 * @param int		$status_code	http response code
+	 *
+	 * @return void
+	 */
+	public static function trigger_error($error_msg, $error_type = false, $status_code = false)
 	{
 		if ($status_code)
 		{
 			titania::set_header_status($status_code);
 		}
 
-		trigger_error($error_msg, $error_type);
+		if ($error_type)
+		{
+			trigger_error($error_msg, $error_type);
+		}
+		else
+		{
+			trigger_error($error_msg);
+		}
 	}
 
 	/**
