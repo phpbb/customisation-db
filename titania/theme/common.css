@@ -8,6 +8,7 @@
 	margin: 10px 0;
 	color: #FFFFFF;
 	text-align: center;
+	display: none;
 }
 
 .errorbox span.corners-top , .successbox span.corners-top {

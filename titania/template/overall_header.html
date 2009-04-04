@@ -172,11 +172,19 @@
 		</div>
 		<!-- ENDIF -->
 
-		<!-- BEGIN errorbox -->
-		<div class="<!-- IF errorbox.S_ERROR -->errorbox<!-- ELSE -->successbox<!-- ENDIF -->">
+		<div id="errorbox" class="errorbox" style="<!-- IF .errorbox -->display:block;<!-- ENDIF -->">
 			<div class="inner"><span class="corners-top"><span></span></span>
-				<h3>{errorbox.TITLE}</h3>
+			<!-- BEGIN errorbox -->
+				<!-- IF errorbox.S_FIRST_ROW --><h3>{errorbox.TITLE}</h3><!-- ENDIF -->
 				<p>{errorbox.MESSAGE}</p>
+			<!-- END errorbox -->
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
-		<!-- END errorbox -->
+		<div id="successbox" class="successbox" style="<!-- IF .successbox -->display:block;<!-- ENDIF -->">
+			<div class="inner"><span class="corners-top"><span></span></span>
+			<!-- BEGIN successbox -->
+				<!-- IF successbox.S_FIRST_ROW --><h3>{successbox.TITLE}</h3><!-- ENDIF -->
+				<p>{successbox.MESSAGE}</p>
+			<!-- END successbox -->
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
