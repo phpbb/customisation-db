@@ -52,7 +52,7 @@ class titania
 	{
 		// Start session management
 		phpbb::$user->session_begin();
-		phpbb::$auth->acl(self::$user->data);
+		phpbb::$auth->acl(phpbb::$user->data);
 		phpbb::$user->setup();
 
 		self::$page = phpbb::$user->page['script_path'] . phpbb::$user->page['page_name'];
@@ -331,7 +331,7 @@ class titania
 	 * Show the errorbox or successbox
 	 *
 	 * @param string $l_title message title - custom or user->lang defined
-	 * @param string $l_message message string
+	 * @param mixed $l_message message string or array of strings
 	 * @param int $error_type ERROR_SUCCESS or ERROR_ERROR constant
 	 * @param int $status_code an HTTP status code
 	 */
@@ -344,21 +344,16 @@ class titania
 
 		$block = ($error_type == ERROR_ERROR) ? 'errorbox' : 'successbox';
 
-		if (is_array($l_message))
+		if (!is_array($l_message))
 		{
-			foreach ($l_message as $message)
-			{
-				phpbb::$template->assign_block_vars($block, array(
-					'TITLE'		=> (isset(phpbb::$user->lang[$l_title])) ? phpbb::$user->lang[$l_title] : $l_title,
-					'MESSAGE'	=> (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message,
-				));
-			}
+			$l_message = array($l_message);
 		}
-		else
+
+		foreach ($l_message as $message)
 		{
 			phpbb::$template->assign_block_vars($block, array(
 				'TITLE'		=> (isset(phpbb::$user->lang[$l_title])) ? phpbb::$user->lang[$l_title] : $l_title,
-				'MESSAGE'	=> (isset(phpbb::$user->lang[$l_message])) ? phpbb::$user->lang[$l_message] : $l_message,
+				'MESSAGE'	=> (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message,
 			));
 		}
 	}
