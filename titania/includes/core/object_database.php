@@ -88,6 +88,7 @@ abstract class titania_database_object extends titania_object
 			$property_value = $this->validate_property($this->$name, $config_array);
 
 			// Property value has not changed
+			// Comparison with == is fine
 			if (isset($this->sql_data[$name]) && $this->sql_data[$name] == $property_value)
 			{
 				continue;
@@ -105,6 +106,9 @@ abstract class titania_database_object extends titania_object
 			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_array) . '
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
 		phpbb::$db->sql_query($sql);
+
+		// Merge sql data back
+		$this->sql_data = array_merge($this->sql_data, $sql_array);
 
 		if (phpbb::$db->sql_affectedrows())
 		{

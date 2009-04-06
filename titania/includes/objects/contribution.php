@@ -189,6 +189,21 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
+	 * Add rating
+	 *
+	 * @return void
+	 */
+	public function add_rating($rating)
+	{
+		$points_current = $this->contrib_rating * $this->contrib_rating_count;
+
+		$this->contrib_rating_count = $this->contrib_rating_count + 1;
+		$this->contrib_rating = ($points_current + $rating) / $this->contrib_rating_count;
+
+		$this->update();
+	}
+
+	/**
 	 * Get the author as an object
 	 *
 	 * @return titania_author
@@ -241,7 +256,7 @@ class titania_contribution extends titania_database_object
 	/**
 	 * Get downloads per day
 	 *
-	 * @return float
+	 * @return string
 	 */
 	public function get_downloads_per_day()
 	{

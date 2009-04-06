@@ -51,7 +51,7 @@ class titania_review extends titania_database_object
 	/**
 	 * Constructor
 	 *
-	 * @param bool $review_id
+	 * @param int $review_id
 	 */
 	public function __construct($review_id = false)
 	{
@@ -72,7 +72,8 @@ class titania_review extends titania_database_object
 		if ($review_id === false)
 		{
 			// We're going to create a new review
-			$this->review_time = time();
+			$this->review_time = titania::$time;
+			$this->review_user_id = phpbb::$user->data['user_id'];
 		}
 		else
 		{
@@ -84,7 +85,7 @@ class titania_review extends titania_database_object
 	/**
 	 * Update data or submit new review
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	public function submit()
 	{
@@ -94,19 +95,24 @@ class titania_review extends titania_database_object
 			$this->generate_text_for_storage(false, false, false);
 		}
 
-		parent::submit();
+		return parent::submit();
 	}
 
 	/**
 	 * Get review data from the database
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	public function load()
 	{
-		parent::load();
+		$status = parent::load();
 
-		$this->text_parsed_for_storage = true;
+		if ($status)
+		{
+			$this->text_parsed_for_storage = true;
+		}
+
+		return $status;
 	}
 
 	/**
