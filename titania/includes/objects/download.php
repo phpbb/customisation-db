@@ -75,7 +75,7 @@ class titania_download extends titania_database_object
 
 		if ($download_id === false)
 		{
-			$this->filetime = time();
+			$this->filetime = titania::$time;
 		}
 		else
 		{
@@ -310,7 +310,7 @@ class DownloadAccessDeniedException extends Exception
 *
 * @package Titania
 */
-class FileNotFoundException extends NoDataFoundException
+class FileNotFoundException
 {
 	function __construct($message = '', $code = 0)
 	{

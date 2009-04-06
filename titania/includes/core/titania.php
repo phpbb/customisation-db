@@ -38,9 +38,16 @@ class titania
 	/**
 	 * Instance of titania_cache class
 	 *
-	 * $var titania_cache
+	 * @var titania_cache
 	 */
 	public static $cache;
+
+	/**
+	 * Request time (unix timestamp)
+	 *
+	 * @var int
+	 */
+	public static $time;
 
 	/*
 	 * Initialise titania:
@@ -50,12 +57,15 @@ class titania
 	 */
 	public static function initialise()
 	{
+		global $starttime;
+
 		// Start session management
 		phpbb::$user->session_begin();
 		phpbb::$auth->acl(phpbb::$user->data);
 		phpbb::$user->setup();
 
 		self::$page = phpbb::$user->page['script_path'] . phpbb::$user->page['page_name'];
+		self::$time = (int) $starttime;
 
 		// Instantiate cache
 		if (!class_exists('titania_cache'))
@@ -203,7 +213,7 @@ class titania
 		{
 			if (confirm_box(true))
 			{
-				phpbb::$cache->purge();
+				titania::$cache->purge();
 				self::error_box('SUCCESS', phpbb::$user->lang['CACHE_PURGED'] . self::back_link('', '', array('cache')));
 			}
 			else

@@ -42,6 +42,20 @@ class titania_contribution extends titania_database_object
 	protected $sql_id_field		= 'contrib_id';
 
 	/**
+	 * Author of this contribution
+	 *
+	 * @var titania_author
+	 */
+	protected $author;
+
+	/**
+	 * Download for this contribution
+	 *
+	 * @var titania_download
+	 */
+	protected $download;
+
+	/**
 	 * Description parsed for storage
 	 *
 	 * @var bool
@@ -183,7 +197,7 @@ class titania_contribution extends titania_database_object
 	{
 		if (!class_exists('titania_author'))
 		{
-			require(TITANIA_ROOT . 'includes/class_author.' . PHP_EXT);
+			require TITANIA_ROOT . 'includes/objects/author.' . PHP_EXT;
 		}
 
 		$author = new titania_author($this->contrib_author_id);
@@ -203,7 +217,7 @@ class titania_contribution extends titania_database_object
 	{
 		if (!class_exists('titania_download'))
 		{
-			require(TITANIA_ROOT . 'includes/class_download.' . PHP_EXT);
+			require TITANIA_ROOT . 'includes/objects/download.' . PHP_EXT;
 		}
 
 		$revision_id = ($validated) ? $this->contrib_validated_revision : $this->contrib_revision;
@@ -212,5 +226,95 @@ class titania_contribution extends titania_database_object
 		$download->load($revision_id);
 
 		return $download;
+	}
+
+	/*
+	 * Get download URL
+	 *
+	 * @return string
+	 */
+	public function get_download_url()
+	{
+		return append_sid(TITANIA_ROOT . 'download/file.' . PHP_EXT, 'contrib_id=' . $this->contrib_id);
+	}
+
+	/**
+	 * Get downloads per day
+	 *
+	 * @return float
+	 */
+	public function get_downloads_per_day()
+	{
+		static $day_seconds = 86400; // 24 * 60 * 60
+
+		// Cannot calculate anything without release date
+		// No point in showing this if there were no downloads 
+		if (!$this->contrib_release_date || !$this->contrib_downloads)
+		{
+			return '';
+		}
+
+		$time_elapsed = titania::$time - $this->contrib_release_date;
+
+		// The release was just today, show nothing.
+		if ($time_elapsed <= $day_seconds)
+		{
+			return '';
+		}
+
+		return sprintf('%.2f', $this->contrib_downloads / ($time_elapsed / $day_seconds));
+	}
+
+	/**
+	 * Passes details to the template
+	 *
+	 * @return void
+	 */
+	public function show_details()
+	{
+		if (!$this->author)
+		{
+			$this->author = $this->get_author();
+		}
+
+		if (!$this->download)
+		{
+			$this->download = $this->get_download();
+		}
+
+		phpbb::$template->assign_vars(array(
+			// Author data
+			'AUTHOR_NAME'				=> $this->author->author_username,
+			'AUTHOR_REALNAME'			=> $this->author->author_realname,
+
+			'U_AUTHOR_PROFILE'				=> $this->author->get_profile_url(),
+			'U_AUTHOR_PROFILE_PHPBB'		=> $this->author->get_phpbb_profile_url(),
+			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->author->get_phpbb_com_profile_url(),
+
+			// Contribution data
+			'CONTRIB_NAME'				=> $this->contrib_name,
+			'CONTRIB_DESC'				=> $this->generate_text_for_display(),
+			'CONTRIB_TYPE'				=> $this->contrib_type,
+
+			'CONTRIB_VIEWS'				=> $this->contrib_views,
+			'CONTRIB_DOWNLOADS'			=> $this->contrib_downloads, // Total downloads
+			'CONTRIB_DOWNLOADS_PER_DAY'	=> $this->get_downloads_per_day(),
+
+			'CONTRIB_RATING'			=> $this->contrib_rating,
+			'CONTRIB_RATINGS'			=> $this->contrib_rating_count,
+
+			'CONTRIB_VERSION'			=> $this->contrib_version,
+			'CONTRIB_PHPBB_VERSION'		=> $this->contrib_phpbb_version,
+
+			'CONTRIB_RELEASE_DATE'		=> phpbb::$user->format_date($this->contrib_release_date),
+			'CONTRIB_UPDATE_DATE'		=> phpbb::$user->format_date($this->contrib_update_date),
+
+			'U_CONTRIB_DOWNLOAD'		=> $this->get_download_url(),
+
+			// Download data
+			'DOWNLOAD_SIZE'				=> get_formatted_filesize($this->download->filesize),
+			'DOWNLOAD_CHECKSUM'			=> $this->download->download_hash,
+			'DOWNLOAD_COUNT'			=> $this->download->download_count, // Revision downloads
+		));
 	}
 }

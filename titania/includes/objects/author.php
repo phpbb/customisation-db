@@ -99,4 +99,44 @@ class titania_author extends titania_database_object
 		$this->author_email			= $lower;
 		$this->author_email_hash	= crc32($lower) . strlen($lower);
 	}
+
+	/**
+	 * Get profile url
+	 *
+	 * @return string
+	 */
+	public function get_profile_url()
+	{
+		return append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'a=' . $this->author_id);
+	}
+
+	/**
+	 * Get phpBB profile url
+	 *
+	 * @return string
+	 */
+	public function get_phpbb_profile_url()
+	{
+		if ($this->user_id)
+		{
+			return append_sid(PHPBB_ROOT_PATH . 'memberlist.' . PHP_EXT, 'u=' . $this->user_id);
+		}
+
+		return '';
+	}
+
+	/**
+	 * Get phpBB.com profile url
+	 *
+	 * @return string
+	 */
+	public function get_phpbb_com_profile_url()
+	{
+		if (titania::$config->phpbbcom_profile && $this->phpbb_user_id)
+		{
+			return sprintf(titania::$config->phpbbcom_viewprofile_url, $this->phpbb_user_id);
+		}
+
+		return '';
+	}
 }
