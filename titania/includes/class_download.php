@@ -119,16 +119,14 @@ class titania_download extends titania_database_object
 	 */
 	public function load_contrib($contrib_id, $validated = true)
 	{
-		global $db;
-
 		$column = ($validated) ? 'contrib_validated_revision' : 'contrib_revision';
 
 		$sql = 'SELECT ' . $column . '
 			FROM ' . CUSTOMISATION_CONTRIBS_TABLE . '
 			WHERE contrib_id = ' . $contrib_id;
-		$result = $db->sql_query($sql);
-		$revision_id = (int) $db->sql_fetchfield($column);
-		$db->sql_freeresult($result);
+		$result = phpbb::$db->sql_query($sql);
+		$revision_id = (int) phpbb::$db->sql_fetchfield($column);
+		phpbb::$db->sql_freeresult($result);
 
 		$this->load($revision_id);
 	}
@@ -212,9 +210,7 @@ class titania_download extends titania_database_object
 			throw new FileNotFoundException();
 		}
 
-		global $user;
-
-		if (!$user->data['is_bot'])
+		if (!phpbb::$user->data['is_bot'])
 		{
 			$this->increase_counter();
 		}
@@ -282,12 +278,10 @@ class titania_download extends titania_database_object
 	*/
 	private function increase_counter()
 	{
-		global $db;
-
 		$sql = 'UPDATE ' . $this->sql_table . '
 			SET download_count = download_count + 1
 			WHERE download_id = ' . $this->download_id;
-		$db->sql_query($sql);
+		phpbb::$db->sql_query($sql);
 
 		$this->download_count = $this->download_count + 1;
 	}

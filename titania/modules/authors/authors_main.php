@@ -31,11 +31,8 @@ class authors_main extends titania_object
 	 */
 	public function __construct($p_master)
 	{
-		global $user;
-
 		$this->p_master = $p_master;
-
-		$this->page = $user->page['script_path'] . $user->page['page_name'];
+		$this->page = titania::$page;
 	}
 
 	/**
@@ -46,8 +43,6 @@ class authors_main extends titania_object
 	 */
 	public function main($id, $mode)
 	{
-		global $user;
-
 		titania::add_lang(array('contrib', 'authors'));
 
 		switch ($mode)
@@ -60,7 +55,7 @@ class authors_main extends titania_object
 
 				if (!$found)
 				{
-					titania::error_box('ERROR', $user->lang['AUTHOR_NOT_FOUND'], ERROR_ERROR);
+					titania::error_box('ERROR', phpbb::$user->lang['AUTHOR_NOT_FOUND'], ERROR_ERROR);
 
 					$this->main($id, 'list');
 					return;
@@ -80,8 +75,6 @@ class authors_main extends titania_object
 
 	private function author_list()
 	{
-		global $db, $template, $config, $auth, $user;
-
 		if (!class_exists('sort'))
 		{
 			include(TITANIA_ROOT . 'includes/class_sort.' . PHP_EXT);
@@ -125,34 +118,34 @@ class authors_main extends titania_object
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
 
-		$sql = $db->sql_build_query('SELECT', $sql_ary);
-		$result = $db->sql_query_limit($sql, $limit, $start);
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 
 		$authors = $author_id_key = array();
 
-		while ($author = $db->sql_fetchrow($result))
+		while ($author = phpbb::$db->sql_fetchrow($result))
 		{
 			$author_id_key[$author['user_id']] = $author;
 			$author_id_key[$author['user_id']]['online'] = false;
 			$authors[] = &$author_id_key[$author['user_id']];
 		}
-		$db->sql_freeresult($result);
+		phpbb::$db->sql_freeresult($result);
 
 		// Generate online information for user
 		if ($config['load_onlinetrack'] && sizeof($authors))
 		{
 			$sql = 'SELECT session_user_id, MAX(session_time) as online_time, MIN(session_viewonline) AS viewonline
 				FROM ' . SESSIONS_TABLE . '
-				WHERE ' . $db->sql_in_set('session_user_id', array_keys($author_id_key)) . '
+				WHERE ' . phpbb::$db->sql_in_set('session_user_id', array_keys($author_id_key)) . '
 				GROUP BY session_user_id';
-			$result = $db->sql_query($sql);
+			$result = phpbb::$db->sql_query($sql);
 
 			$update_time = $config['load_online_time'] * 60;
-			while ($row = $db->sql_fetchrow($result))
+			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$author_id_key[$row['session_user_id']]['online'] = (time() - $update_time < $row['online_time'] && (($row['viewonline']) || $auth->acl_get('u_viewonline'))) ? true : false;
+				$author_id_key[$row['session_user_id']]['online'] = (time() - $update_time < $row['online_time'] && (($row['viewonline']) || phpbb::$auth->acl_get('u_viewonline'))) ? true : false;
 			}
-			$db->sql_freeresult($result);
+			phpbb::$db->sql_freeresult($result);
 		}
 
 		$phpbbcom_profile_enabled = titania::$config->phpbbcom_profile;
@@ -162,7 +155,7 @@ class authors_main extends titania_object
 		{
 			$u_author_profile = append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'mode=profile');
 
-			$template->assign_block_vars('authors', array(
+			phpbb::$template->assign_block_vars('authors', array(
 				'USER_FULL'			=> ($author['user_id']) ? get_username_string('full', $author['user_id'], $author['username'], $author['user_colour']) : '',
 				'AUTHOR_FULL'		=> get_username_string('full', $author['author_id'], $author['author_username'], $author['user_colour'], false, $u_author_profile),
 				'CONTRIBS'			=> $author['author_contribs'],
@@ -170,7 +163,7 @@ class authors_main extends titania_object
 				'STYLES'			=> $author['author_styles'],
 				'RATING'			=> $this->generate_rating($author['author_rating']),
 				'WEBSITE'			=> $author['author_website'],
-				'LAST_VISIT'		=> $user->format_date($author['user_lastvisit'], false, true),
+				'LAST_VISIT'		=> phpbb::$user->format_date($author['user_lastvisit'], false, true),
 				'POSTS'				=> $author['user_posts'],
 				'ONLINE'			=> $author['online'],
 				'U_PHPBB_PROFILE'	=> (!empty($author['phpbb_user_id']) && $phpbbcom_profile_enabled) ? sprintf($phpbbcom_viewprofile_url, $author['phpbb_user_id']) : '',
@@ -186,7 +179,7 @@ class authors_main extends titania_object
 
 		$pagination->build_pagination($this->u_action);
 
-		$template->assign_vars(array(
+		phpbb::$template->assign_vars(array(
 			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
 			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
 		));
@@ -194,8 +187,6 @@ class authors_main extends titania_object
 
 	private function author_profile()
 	{
-		global $db, $template;
-
 		$author_id = request_var('u', 0);
 
 		$sql_ary = array(
@@ -213,11 +204,11 @@ class authors_main extends titania_object
 				AND a.author_visible <> ' . AUTHOR_HIDDEN
 		);
 
-		$sql = $db->sql_build_query('SELECT', $sql_ary);
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
-		$result = $db->sql_query($sql);
+		$result = phpbb::$db->sql_query($sql);
 
-		if(!($author = $db->sql_fetchrow($result)))
+		if(!($author = phpbb::$db->sql_fetchrow($result)))
 		{
 			return false;
 		}
@@ -227,10 +218,7 @@ class authors_main extends titania_object
 			return false;
 		}
 
-		$phpbbcom_profile_enabled = titania::$config->phpbbcom_profile;
-		$phpbbcom_viewprofile_url = titania::$config->phpbbcom_viewprofile_url;
-
-		$template->assign_vars(array(
+		phpbb::$template->assign_vars(array(
 			'AUTHOR_NAME'		=> get_username_string('username', $author['user_id'], $author['username'], $author['user_colour']),
 			'USER_FULL'			=> ($author['user_id']) ? get_username_string('full', $author['user_id'], $author['username'], $author['user_colour']) : '',
 			'REAL_NAME'			=> htmlspecialchars($author['author_realname']),
@@ -242,7 +230,7 @@ class authors_main extends titania_object
 			'MOD_COUNT'			=> $this->generate_contrib_string('mod', 'link', $author['author_mods'], $author_id),
 			'STYLE_COUNT'		=> $this->generate_contrib_string('style', 'link', $author['author_styles'], $author_id),
 
-			'U_PHPBB_PROFILE'	=> (!empty($author['phpbb_user_id']) && $phpbbcom_profile_enabled) ? sprintf($phpbbcom_viewprofile_url, $author['phpbb_user_id']) : '',
+			'U_PHPBB_PROFILE'	=> (!empty($author['phpbb_user_id']) && titania::$config->phpbbcom_profile) ? sprintf(titania::$config->phpbbcom_viewprofile_url, $author['phpbb_user_id']) : '',
 		));
 
 		return true;
@@ -258,8 +246,6 @@ class authors_main extends titania_object
 	// This can handle generating links to a contrib list, as well as just text
 	private function generate_contrib_string($contrib_type, $string_type, $num, $author_id = 0)
 	{
-		global $user;
-
 		$contrib_type = strtoupper($contrib_type);
 		$lang_key = 'NUM_' . $contrib_type . (($num == 1)?'':'S');
 		$contrib_string = sprintf($user->lang[$lang_key], $num);

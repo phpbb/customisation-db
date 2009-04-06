@@ -78,11 +78,9 @@ class sort
 	 */
 	public function __construct()
 	{
-		global $user;
-
 		$this->sort_dir_text = array(
-			'a' => $user->lang['ASCENDING'],
-			'd' => $user->lang['DESCENDING'],
+			'a' => phpbb::$user->lang['ASCENDING'],
+			'd' => phpbb::$user->lang['DESCENDING'],
 		);
 
 		$this->default_dir = 'a';
@@ -193,12 +191,10 @@ class sort
 	 */
 	public function set_sort_keys($sort_keys)
 	{
-		global $user;
-
 		foreach ($sort_keys as $key => $option)
 		{
 			// text lang sort key
-			$this->sort_key_text[$key] = $user->lang[$option[0]];
+			$this->sort_key_text[$key] = phpbb::$user->lang[$option[0]];
 
 			// sql sort key
 			$this->sort_key_sql[$key] = $option[1];

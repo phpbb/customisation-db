@@ -224,14 +224,12 @@ class pagination extends titania_object
 		}
 		else
 		{
-			global $db;
-
 			// now count the number of results based on the perameters specified in sql_ary
 			$sql_ary['SELECT'] = "COUNT($field_name) AS total_count";
-			$sql = $db->sql_build_query('SELECT', $sql_ary);
-			$result = $db->sql_query($sql);
-			$this->total_results = $db->sql_fetchfield('total_count');
-			$db->sql_freeresult($result);
+			$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+			$result = phpbb::$db->sql_query($sql);
+			$this->total_results = phpbb::$db->sql_fetchfield('total_count');
+			phpbb::$db->sql_freeresult($result);
 		}
 
 		if ($results)
@@ -249,8 +247,6 @@ class pagination extends titania_object
 	 */
 	public function build_pagination($page)
 	{
-		global $template, $user;
-
 		$this->set_params(array(
 			$this->limit_name	=> ($this->limit == $this->default_limit) ? false : $this->limit,
 			'start'				=> ($this->start == 0) ? false : $this->start,
@@ -261,8 +257,8 @@ class pagination extends titania_object
 
 		$results = ($this->results) ? $this->results : $this->total_results;
 
-		$template->assign_vars(array(
-			$this->template_vars['TOTAL_ROWS']	=> $user->lang($this->result_lang, $results, $this->total_results),
+		phpbb::$template->assign_vars(array(
+			$this->template_vars['TOTAL_ROWS']	=> phpbb::$user->lang($this->result_lang, $results, $this->total_results),
 			$this->template_vars['PAGINATION']	=> generate_pagination($pagination_url, $this->total_results, $this->limit, $this->start),
 			$this->template_vars['PAGE_NUMBER']	=> on_page($this->total_results, $this->limit, $this->start),
 

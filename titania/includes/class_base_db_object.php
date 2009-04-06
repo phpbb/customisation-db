@@ -101,14 +101,12 @@ abstract class titania_database_object extends titania_object
 			return false;
 		}
 
-		global $db;
-
 		$sql = 'UPDATE ' . $this->sql_table . '
-			SET ' . $db->sql_build_array('UPDATE', $sql_array) . '
+			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_array) . '
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
-		$db->sql_query($sql);
+		phpbb::$db->sql_query($sql);
 
-		if ($db->sql_affectedrows())
+		if (phpbb::$db->sql_affectedrows())
 		{
 			return true;
 		}
@@ -124,18 +122,16 @@ abstract class titania_database_object extends titania_object
 	*/
 	public function insert()
 	{
-		global $db;
-
 		$sql_array = array();
 		foreach ($this->object_config as $name => $null)
 		{
 			$sql_array[$name] = $this->validate_property($this->$name, $this->object_config[$name]);
 		}
 
-		$sql = 'INSERT INTO ' . $this->sql_table . ' ' . $db->sql_build_array('INSERT', $sql_array);
-		$db->sql_query($sql);
+		$sql = 'INSERT INTO ' . $this->sql_table . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_array);
+		phpbb::$db->sql_query($sql);
 
-		if ($id = $db->sql_nextid())
+		if ($id = phpbb::$db->sql_nextid())
 		{
 			$this->{$this->sql_id_field} = $id;
 
@@ -152,14 +148,12 @@ abstract class titania_database_object extends titania_object
 	*/
 	public function load()
 	{
-		global $db;
-
 		$sql = 'SELECT ' . implode(', ', array_keys($this->object_config)) . '
 			FROM ' . $this->sql_table . '
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
-		$result = $db->sql_query($sql);
-		$this->sql_data = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
+		$result = phpbb::$db->sql_query($sql);
+		$this->sql_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
 
 		if (empty($this->sql_data))
 		{
@@ -181,13 +175,11 @@ abstract class titania_database_object extends titania_object
 	*/
 	public function delete()
 	{
-		global $db;
-
 		$sql = 'DELETE FROM ' . $this->sql_table . '
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
-		$db->sql_query($sql);
+		phpbb::$db->sql_query($sql);
 
-		return $db->sql_affectedrows();
+		return phpbb::$db->sql_affectedrows();
 	}
 
 	/**

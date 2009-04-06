@@ -220,10 +220,8 @@ class titania_review extends titania_database_object
 	 */
 	public function rating_menu($contrib_id)
 	{
-		global $user, $db;
-
 		$s_rating_options = '';
-		foreach ($user->lang['ratings'] as $rating => $lang)
+		foreach (phpbb::$user->lang['ratings'] as $rating => $lang)
 		{
 			$s_rating_options .= '<option value="' . $rating . '">' . $lang . '</option>';
 		}
@@ -239,19 +237,17 @@ class titania_review extends titania_database_object
 	 */
 	public function obtain_contrib_reviews($contrib_id, $order_by = false)
 	{
-		global $db;
-
 		$reviews = array();
 
 		$sql = 'SELECT *
 				FROM ' . CUSTOMISATION_REVIEWS_TABLE . '
 				WHERE contrib_id = ' . (int) $contrib_id;
-		$result = $db->sql_query($sql);
-		while ($row = $db->sql_fetchrow($result))
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$reviews[$row['review_id']] = $row;
 		}
-		$db->sql_freeresult($result);
+		phpbb::$db->sql_freeresult($result);
 
 		return $reviews;
 	}

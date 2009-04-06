@@ -31,11 +31,9 @@ class mods_details extends titania_object
 	 */
 	public function __construct($p_master)
 	{
-		global $user;
-
 		$this->p_master = $p_master;
 
-		$this->page = $user->page['script_path'] . $user->page['page_name'];
+		$this->page = titania::$page;
 	}
 
 	/**
@@ -46,8 +44,6 @@ class mods_details extends titania_object
 	 */
 	public function main($id, $mode)
 	{
-		global $user, $template, $cache;
-
 		titania::add_lang(array('contrib_mod'));
 
 		$mod_id	= request_var('mod', 0);
@@ -93,8 +89,6 @@ class mods_details extends titania_object
 
 	public function mod_details($mod_id)
 	{
-		global $db, $template, $user;
-
 		$sql_ary = array(
 			'SELECT'	=> 'c.*, a.author_id, a.author_username, u.user_colour',
 			'FROM'		=> array(CUSTOMISATION_CONTRIBS_TABLE => 'c'),
@@ -111,21 +105,21 @@ class mods_details extends titania_object
 			'WHERE'		=> 'c.contrib_id = ' . (int) $mod_id . '
 							AND c.contrib_status = ' .  STATUS_APPROVED,
 		);
-		$sql = $db->sql_build_query('SELECT', $sql_ary);
-		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
 
 		$profile_url = append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'mode=profile');
 
-		$template->assign_vars(array(
+		phpbb::$template->assign_vars(array(
 			'MOD_ID'		=> $row['contrib_id'],
 			'MOD_TITLE'		=> $row['contrib_name'],
 			'MOD_DESC'		=> $row['contrib_description'],
 			'RATING'		=> round($row['contrib_rating'], 2),
 			'DOWNLOADS'		=> $row['contrib_downloads'],
-			'ADDED'			=> $user->format_date($row['contrib_release_date']),
-			'UPDATED'		=> $user->format_date($row['contrib_update_date']),
+			'ADDED'			=> phpbb::$user->format_date($row['contrib_release_date']),
+			'UPDATED'		=> phpbb::$user->format_date($row['contrib_update_date']),
 			'VERSION'		=> $row['contrib_version'],
 			'AUTHOR_FULL'	=> sprintf($user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
 			'PROFILE_FULL'	=> (!empty($row['user_id']) ? get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']) : ''),
@@ -141,31 +135,29 @@ class mods_details extends titania_object
 	 */
 	public function mod_email($mod_id)
 	{
-		global $config, $auth, $db, $template, $user;
+		phpbb::$user->add_lang(array('memberlist', 'ucp'));
 
-		$user->add_lang(array('memberlist', 'ucp'));
-
-		if (!$config['email_enable'])
+		if (!phpbb::$config['email_enable'])
 		{
-			titania::error_box('ERROR', $user->lang['EMAIL_DISABLED'], ERROR_ERROR, HEADER_SERVICE_UNAVAILABLE);
+			titania::error_box('ERROR', phpbb::$user->lang['EMAIL_DISABLED'], ERROR_ERROR, HEADER_SERVICE_UNAVAILABLE);
 			$this->main('details', 'details');
 			return;
 		}
 
-		if (!$user->data['is_registered'] || $user->data['is_bot'] || !$auth->acl_get('u_sendemail'))
+		if (!phpbb::$user->data['is_registered'] || phpbb::$user->data['is_bot'] || !phpbb::$auth->acl_get('u_sendemail'))
 		{
-			if ($user->data['user_id'] == ANONYMOUS)
+			if (phpbb::$user->data['user_id'] == ANONYMOUS)
 			{
 				login_box(TITANIA_ROOT . $this->page . '&amp;mod=' . $mod_id, 'NO_EMAIL_MOD');
 			}
 
-			titania::error_box('ERROR', $user->lang['NO_EMAIL_MOD'], ERROR_ERROR, HEADER_FORBIDDEN);
+			titania::error_box('ERROR', phpbb::$user->lang['NO_EMAIL_MOD'], ERROR_ERROR, HEADER_FORBIDDEN);
 			$this->main('details', 'details');
 			return;
 		}
 
 		// Are we trying to abuse the facility?
-		if (time() - $user->data['user_emailtime'] < $config['flood_interval'])
+		if (time() - phpbb::$user->data['user_emailtime'] < $config['flood_interval'])
 		{
 			trigger_error('FLOOD_EMAIL_LIMIT');
 		}
@@ -174,9 +166,9 @@ class mods_details extends titania_object
 			FROM ' . CUSTOMISATION_CONTRIBS_TABLE . ' c
 			WHERE c.contrib_id = ' . (int) $mod_id . '
 				AND c.contrib_status = ' .  STATUS_APPROVED;
-		$result = $db->sql_query($sql);
-		$mod = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
+		$result = phpbb::$db->sql_query($sql);
+		$mod = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
 
 		if (!$mod)
 		{
@@ -213,8 +205,8 @@ class mods_details extends titania_object
 			{
 				$sql = 'UPDATE ' . USERS_TABLE . '
 					SET user_emailtime = ' . time() . '
-					WHERE user_id = ' . $user->data['user_id'];
-				$result = $db->sql_query($sql);
+					WHERE user_id = ' . phpbb::$user->data['user_id'];
+				$result = phpbb::$db->sql_query($sql);
 
 				include_once(PHPBB_ROOT_PATH . 'includes/functions_messenger.' . PHP_EXT);
 				$messenger = new messenger(false);
@@ -235,10 +227,10 @@ class mods_details extends titania_object
 				if ($cc)
 				{
 					$mail_to_users[] = array(
-						'email_lang'		=> $user->data['user_lang'],
-						'email'				=> $user->data['user_email'],
-						'name'				=> $user->data['username'],
-						'username'			=> $user->data['username'],
+						'email_lang'		=> phpbb::$user->data['user_lang'],
+						'email'				=> phpbb::$user->data['user_email'],
+						'name'				=> phpbb::$user->data['username'],
+						'username'			=> phpbb::$user->data['username'],
 						'to_name'			=> $name,
 						'mod_id'			=> $mod['contrib_id'],
 						'mod_title'			=> $mod['contrib_name'],
@@ -293,12 +285,10 @@ class mods_details extends titania_object
 	 */
 	public function increment_contrib_views($param, $contrib_id)
 	{
-		global $db, $user;
-
-		if (isset($user->data['session_page']) && !$user->data['is_bot'] && strpos($user->data['session_page'], "&{$param}={$contrib_id}") === false)
+		if (isset(phpbb::$user->data['session_page']) && !phpbb::$user->data['is_bot'] && strpos(phpbb::$user->data['session_page'], "&{$param}={$contrib_id}") === false)
 		{
 			$sql = 'UPDATE ' . CUSTOMISATION_CONTRIBS_TABLE . ' SET contrib_views = contrib_views + 1 WHERE contrib_id = ' . (int) $contrib_id;
-			$db->sql_query($sql);
+			phpbb::$db->sql_query($sql);
 		}
 
 		return;
