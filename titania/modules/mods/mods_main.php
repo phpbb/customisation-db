@@ -129,8 +129,15 @@ class mods_main extends titania_object
 	{
 		global $db, $template, $user;
 
-		include_once(TITANIA_ROOT . 'includes/class_sort.' . PHP_EXT);
-		include_once(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
+		if (!class_exists('sort'))
+		{
+			require TITANIA_ROOT . 'includes/tools/sort.' . PHP_EXT;
+		}
+
+		if (!class_exists('pagination'))
+		{
+			require TITANIA_ROOT . 'includes/tools/pagination.' . PHP_EXT;
+		}
 
 		$sort = new sort();
 		$pagination = new pagination();

@@ -121,10 +121,10 @@ class mods_details extends titania_object
 			'ADDED'			=> phpbb::$user->format_date($row['contrib_release_date']),
 			'UPDATED'		=> phpbb::$user->format_date($row['contrib_update_date']),
 			'VERSION'		=> $row['contrib_version'],
-			'AUTHOR_FULL'	=> sprintf($user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
+			'AUTHOR_FULL'	=> sprintf(phpbb::$user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
 			'PROFILE_FULL'	=> (!empty($row['user_id']) ? get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']) : ''),
 
-			'U_SEARCH_MODS_AUTHOR'	=> sprintf($user->lang['U_SEARCH_MODS_AUTHOR'], '<a href="' . append_sid(TITANIA_ROOT . $this->page, 'mode=search&amp;u=' . $row['author_id']) . '">', $row['author_username'], '</a>'),
+			'U_SEARCH_MODS_AUTHOR'	=> sprintf(phpbb::$user->lang['U_SEARCH_MODS_AUTHOR'], '<a href="' . append_sid(TITANIA_ROOT . $this->page, 'mode=search&amp;u=' . $row['author_id']) . '">', $row['author_username'], '</a>'),
 		));
 	}
 
@@ -157,7 +157,7 @@ class mods_details extends titania_object
 		}
 
 		// Are we trying to abuse the facility?
-		if (time() - phpbb::$user->data['user_emailtime'] < $config['flood_interval'])
+		if (time() - phpbb::$user->data['user_emailtime'] < phpbb::$config['flood_interval'])
 		{
 			trigger_error('FLOOD_EMAIL_LIMIT');
 		}

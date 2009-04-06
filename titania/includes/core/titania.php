@@ -60,7 +60,7 @@ class titania
 		// Instantiate cache
 		if (!class_exists('titania_cache'))
 		{
-			include(TITANIA_ROOT . 'includes/titania_cache.' . PHP_EXT);
+			include TITANIA_ROOT . 'includes/core/cache.' . PHP_EXT;
 		}
 		self::$cache = new titania_cache();
 
@@ -95,7 +95,7 @@ class titania
 		{
 			if (!class_exists('titania_config'))
 			{
-				require(TITANIA_ROOT . 'includes/titania_config.' . PHP_EXT);
+				require TITANIA_ROOT . 'includes/core/config.' . PHP_EXT;
 			}
 
 			self::$config = new titania_config();
@@ -312,7 +312,7 @@ class titania
 	{
 		global $msg_title, $msg_long_text, $msg_template;
 
-		$msg_template = $template;
+		$msg_template = &phpbb::$template;
 
 		if ($status_code)
 		{

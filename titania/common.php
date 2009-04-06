@@ -17,8 +17,8 @@ if (!defined('IN_TITANIA'))
 }
 
 // Include titania class
-require TITANIA_ROOT . 'includes/class_titania.' . PHP_EXT;
-require TITANIA_ROOT . 'includes/class_phpbb.' . PHP_EXT;
+require TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT;
+require TITANIA_ROOT . 'includes/core/phpbb.' . PHP_EXT;
 
 // Read config.php file
 titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);

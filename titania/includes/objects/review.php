@@ -18,7 +18,7 @@ if (!defined('IN_TITANIA'))
 
 if (!class_exists('titania_database_object'))
 {
-	require(TITANIA_ROOT . 'includes/class_base_db_object.' . PHP_EXT);
+	require TITANIA_ROOT . 'includes/core/object.' . PHP_EXT;
 }
 
 /**
