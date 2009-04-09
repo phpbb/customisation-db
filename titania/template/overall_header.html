@@ -172,7 +172,8 @@
 		</div>
 		<!-- ENDIF -->
 
-		<div id="errorbox" class="errorbox" style="<!-- IF .errorbox -->display:block;<!-- ENDIF -->">
+		<!-- IF .errorbox -->
+		<div id="errorbox" class="errorbox">
 			<div class="inner"><span class="corners-top"><span></span></span>
 			<!-- BEGIN errorbox -->
 				<!-- IF errorbox.S_FIRST_ROW --><h3>{errorbox.TITLE}</h3><!-- ENDIF -->
@@ -180,7 +181,9 @@
 			<!-- END errorbox -->
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
-		<div id="successbox" class="successbox" style="<!-- IF .successbox -->display:block;<!-- ENDIF -->">
+		<!-- ENDIF .errorbox -->
+		<!-- IF .successbox -->
+		<div id="successbox" class="successbox">
 			<div class="inner"><span class="corners-top"><span></span></span>
 			<!-- BEGIN successbox -->
 				<!-- IF successbox.S_FIRST_ROW --><h3>{successbox.TITLE}</h3><!-- ENDIF -->
@@ -188,3 +191,4 @@
 			<!-- END successbox -->
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
+		<!-- ENDIF -->
