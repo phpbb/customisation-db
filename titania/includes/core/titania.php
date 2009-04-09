@@ -354,6 +354,13 @@ class titania
 
 		$block = ($error_type == ERROR_ERROR) ? 'errorbox' : 'successbox';
 
+		if ($l_title)
+		{
+			$title = (isset(phpbb::$user->lang[$l_title])) ? phpbb::$user->lang[$l_title] : $l_title;
+
+			phpbb::$template->assign_var(strtoupper($block) . '_TITLE', $title);
+		}
+
 		if (!is_array($l_message))
 		{
 			$l_message = array($l_message);
@@ -361,8 +368,12 @@ class titania
 
 		foreach ($l_message as $message)
 		{
+			if (!$message)
+			{
+				continue;
+			}
+
 			phpbb::$template->assign_block_vars($block, array(
-				'TITLE'		=> (isset(phpbb::$user->lang[$l_title])) ? phpbb::$user->lang[$l_title] : $l_title,
 				'MESSAGE'	=> (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message,
 			));
 		}
