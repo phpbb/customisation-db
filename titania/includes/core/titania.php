@@ -64,7 +64,7 @@ class titania
 		phpbb::$auth->acl(phpbb::$user->data);
 		phpbb::$user->setup();
 
-		self::$page = phpbb::$user->page['script_path'] . phpbb::$user->page['page_name'];
+		self::$page = htmlspecialchars(phpbb::$user->page['script_path'] . phpbb::$user->page['page_name']);
 		self::$time = (int) $starttime;
 
 		// Instantiate cache
@@ -165,7 +165,7 @@ class titania
 		phpbb::$template->assign_vars(array(
 			// rewrite the login URL to redirect to the currently viewed page.
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
-			'LOGIN_REDIRECT'		=> phpbb::$user->page['page'],
+			'LOGIN_REDIRECT'		=> self::$page,
 			'S_LOGIN_ACTION'		=> append_sid(PHPBB_ROOT_PATH . 'ucp.' . PHP_EXT, 'mode=login'),
 			'T_TITANIA_THEME_PATH'	=> self::$config->theme_path,
 			'T_TITANIA_STYLESHEET'	=> self::$config->theme_path . 'stylesheet.css',
@@ -214,6 +214,7 @@ class titania
 			if (confirm_box(true))
 			{
 				titania::$cache->purge();
+
 				self::error_box('SUCCESS', phpbb::$user->lang['CACHE_PURGED'] . self::back_link('', '', array('cache')));
 			}
 			else

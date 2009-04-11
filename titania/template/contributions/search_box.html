@@ -1,0 +1,45 @@
+	<div class="menu-column">
+		<div class="menubg">
+			<div class="inner">
+				<span class="corners-top"><span></span></span>
+
+				<span class="menu-title">Advanced MOD Search</span>
+
+					<div class="contrib-content">
+						<div class="inner"><span class="corners-top blue"><span></span></span>
+
+							<form method="post" id="csearch" action="" class="advanced-search">
+								<fieldset>
+									<label for="cat"><strong>Category:</strong></label>
+									<select name="cat" id="f" onchange="if(this.options[this.selectedIndex].value != -1){ document.forms['jumpbox'].submit() }">
+										<option value="-1">Select a category</option>
+										<option value="14">Category 1</option>
+										<option value="49">Category 2</option>
+									</select>
+
+									<label for="author" id="aut"><strong>Author:</strong></label>
+									<select name="author" id="f2" onchange="if(this.options[this.selectedIndex].value != -1){ document.forms['jumpbox'].submit() }">
+										<option value="-1">Select an author</option>
+										<option value="14">Author 1</option>
+										<option value="49">Author 2</option>
+									</select>
+
+									<label for="sf1" id="main"><strong>Complexity:</strong></label>
+									<label for="sf1"><input type="radio" name="sf1" id="sf1" value="all" checked="checked" /> SQL Schema Changes</label>
+									<label for="sf2"><input type="radio" name="sf2" id="sf2" value="msgonly" /> SQL Data Changes</label>
+									<label for="sf3"><input type="radio" name="sf3" id="sf3" value="titleonly" /> File Edits</label>
+									<label for="sf4"><input type="radio" name="sf4" id="sf4" value="firstpost" /> Template Changes</label>
+								</fieldset>
+
+								<fieldset style="text-align: center; margin-top: 10px;">
+									<input type="submit" value="Submit" class="button2" />
+								</fieldset>
+							</form>
+
+						<span class="corners-bottom blue"><span></span></span></div>
+					</div>
+
+				<span class="corners-bottom"><span></span></span>
+			</div>
+		</div>
+	</div>

@@ -122,7 +122,12 @@ class titania_author extends titania_database_object
 	 */
 	public function get_profile_url()
 	{
-		return append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'a=' . $this->author_id);
+		if ($this->author_id)
+		{
+			return append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'a=' . $this->author_id);
+		}
+
+		return '';
 	}
 
 	/**

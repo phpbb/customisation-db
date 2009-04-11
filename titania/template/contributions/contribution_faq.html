@@ -1,0 +1,30 @@
+<!-- INCLUDE contributions/details_header.html -->
+
+	<h2 class="section-title">{CONTRIB_TITLE} :: {L_FAQ}</h2>
+
+	<!-- IF .faqlist -->
+	<div class="faq-list">
+		<span class="corners-top"><span></span></span>
+			<ul>
+				<!-- BEGIN faqlist -->
+				<li><a href="#f{S_ROW_COUNT}">{faqlist.FAQ_SUBJECT}</a></li>
+				<!-- END faqlist-->
+			</ul>
+		<span class="corners-bottom"><span></span></span>
+	</div>
+
+	<hr class="dashed" style="margin-bottom: 10px;" />
+	<!-- ENDIF -->
+
+	<!-- BEGIN faqitems -->
+	<a name="f{S_ROW_COUNT}"></a>
+
+	<div class="faq-item" id="f{S_ROW_COUNT}">
+		{faqitems.FAQ_SUBJECT}
+	</div>
+	<div class="faq-body">
+		{faqitems.FAQ_TEXT}
+	</div>
+	<!-- END faqitems -->
+
+<!-- INCLUDE contributions/details_footer.html -->

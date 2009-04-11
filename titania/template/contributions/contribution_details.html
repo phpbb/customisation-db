@@ -1,0 +1,80 @@
+<!-- INCLUDE contributions/details_header.html -->
+
+	<h2 class="section-title">{CONTRIB_TITLE} :: {L_DETAILS}</h2>
+
+	<div class="column1">
+		<h3>{L_CONTRIB_DETAILS}</h3>
+		<table>
+			<tr>
+				<td align="right"><strong>{L_CONTRIB_TITLE}:</strong></td>
+				<td align="left">{CONTRIB_TITLE}</td>
+			</tr>
+			<tr>
+				<td align="right"><strong>{L_CATEGORY}:</strong></td>
+				<td align="left">{CONTRIB_TAGS}</td>
+			</tr>
+			<tr>
+				<td align="right"><strong>{L_CONTRIB_AUTHOR}:</strong></td>
+				<td align="left"><a href="{U_AUTHOR_PROFILE}">{AUTHOR_NAME}</a><!-- IF AUTHOR_REALNAME --> ({AUTHOR_REALNAME})<!-- ENDIF --></td>
+			</tr>
+			<tr>
+				<td align="right"><strong>{L_VERSION}:</strong></td>
+				<td align="left">{CONTRIB_VERSION}</td>
+			</tr>
+			<tr>
+				<td align="right"><strong>{L_PHPBB_VERSION}:</strong></td>
+				<td align="left">{CONTRIB_PHPBB_VERSION}</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="column2">
+		<h3>{L_CONTRIB_STATISTICS}</h3>
+		<table>
+			<tr>
+				<td align="right"><strong>{L_DOWNLOADS_TOTAL}:</strong></td>
+				<td align="left">{CONTRIB_DOWNLOADS}<!-- IF CONTRIB_DOWNLOADS_PER_DAY --> ({CONTRIB_DOWNLOADS_PER_DAY})<!-- ENDIF --></td>
+			</tr>
+			<tr>
+				<td align="right"><strong>{L_DOWNLOADS_VERSION}:</strong></td>
+				<td align="left">{DOWNLOAD_COUNT}</td>
+			</tr>
+			<!-- IF CONTRIB_RATINGS -->
+			<tr>
+				<td align="right"><strong>{L_RATING}:</strong></td>
+				<td align="left">{CONTRIB_RATING} ({CONTRIB_RATINGS} {L_RATINGS})</td>
+			</tr>
+			<!-- ENDIF -->
+			<tr>
+				<td align="right"><strong>{L_FILESIZE}:</strong></td>
+				<td align="left">{DOWNLOAD_SIZE}</td>
+			</tr>
+			<!-- IF DOWNLOAD_CHECKSUM -->
+			<tr>
+				<td align="right"><strong>{L_DOWNLOAD_CHECKSUM}:</strong></td>
+				<td align="left">{DOWNLOAD_CHECKSUM}</td>
+			</tr>
+			<!-- ENDIF -->
+			<!-- IF CONTRIB_RELEASE_DATE -->
+			<tr>
+				<td align="right"><strong>{L_CONTRIB_RELEASE_DATE}:</strong></td>
+				<td align="left">{CONTRIB_RELEASE_DATE}</td>
+			</tr>
+			<!-- ENDIF -->
+			<!-- IF CONTRIB_UPDATE_DATE -->
+			<tr>
+				<td align="right"><strong>{L_CONTRIB_UPDATE_DATE}:</strong></td>
+				<td align="left">{CONTRIB_UPDATE_DATE}</td>
+			</tr>
+			<!-- ENDIF -->
+		</table>
+	</div>
+
+	<div class="clear"></div>
+
+	<!-- IF CONTRIB_DESC -->
+	<h3>{L_CONTRIB_DESCRIPTION}</h3>
+	{CONTRIB_DESC}
+	<!-- ENDIF -->
+
+<!-- INCLUDE contributions/details_footer.html -->

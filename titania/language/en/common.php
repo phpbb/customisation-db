@@ -39,32 +39,38 @@ $lang = array_merge($lang, array(
 	'AUTHOR_BY'				=> 'By %s',
 
 	'CACHE_PURGED'			=> 'Cache has been successfully purged',
+	'CATEGORIES'			=> 'Categories',
+	'CATEGORY'				=> 'Category',
 	'CONFIRM_PURGE_CACHE'	=> 'Are you sure you want to purge the cache?',
 
 	'DATE_ADDED'			=> 'Date Added',
+	'DETAILS'				=> 'Details',
 	'DOWNLOAD_COUNT'		=> 'Downloads',
 
 	'ERROR'					=> 'Error',
 
 	'LAST_UPDATE'			=> 'Last Update',
 
-	'NOTICE'				=> 'Notice',
-
-	// MODs CP names
 	'MODS_CATEGORIES'		=> 'MOD Categories',
 	'MODS_LIST'				=> 'MODs List',
 	'MODS_SEARCH_RESULTS'	=> 'MOD Search Results',
+
+	'NOTICE'				=> 'Notice',
 
 	'ORDER'					=> 'Order by',
 
 	'PURGE_CACHE'			=> 'Purge Cache',
 
 	'RATING'				=> 'Rating',
+	'RATINGS'				=> 'Ratings',
 	'RETURN_LAST_PAGE'		=> 'Return to the previous page',
+	'REVISION'				=> 'Revision',
 
 	'SEARCH_RESULTS'		=> 'Search Results',
 	'SELECT_SORT_METHOD'	=> 'Select Sort Method',
 	'SUCCESS'				=> 'Success',
+
+	'VERSION'				=> 'Version',
 
 	'WARNING'				=> 'Warning',
 
