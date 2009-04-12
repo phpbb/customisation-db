@@ -338,7 +338,7 @@ class titania_contribution extends titania_database_object
 		{
 			if (phpbb::$user->data['user_id'] == ANONYMOUS)
 			{
-				login_box(titania::$page, 'ERROR_CONTRIB_EMAIL_FRIEND');
+				login_box(titania::$page, phpbb::$user->lang['ERROR_CONTRIB_EMAIL_FRIEND']);
 			}
 
 			titania::error_box('ERROR', 'ERROR_CONTRIB_EMAIL_FRIEND', ERROR_ERROR, HEADER_FORBIDDEN);

@@ -209,7 +209,7 @@ class titania
 	public static function page_footer($run_cron = true)
 	{
 		// admin requested the cache to be purged, ensure they have permission and purge the cache.
-		if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && self::$auth->acl_get('a_'))
+		if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get('a_'))
 		{
 			if (confirm_box(true))
 			{
@@ -223,7 +223,7 @@ class titania
 					'cache'		=> 'purge',
 				));
 
-				confirm_box(false, 'CONFIRM_PURGE_CACHE', $s_hidden_fields);
+				confirm_box(false, phpbb::$user->lang['CONFIRM_PURGE_CACHE'], $s_hidden_fields);
 			}
 		}
 
