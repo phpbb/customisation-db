@@ -189,21 +189,6 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 * Add rating
-	 *
-	 * @return void
-	 */
-	public function add_rating($rating)
-	{
-		$points_current = $this->contrib_rating * $this->contrib_rating_count;
-
-		$this->contrib_rating_count = $this->contrib_rating_count + 1;
-		$this->contrib_rating = ($points_current + $rating) / $this->contrib_rating_count;
-
-		$this->update();
-	}
-
-	/**
 	 * Get the author as an object
 	 *
 	 * @return titania_author
@@ -263,7 +248,7 @@ class titania_contribution extends titania_database_object
 		static $day_seconds = 86400; // 24 * 60 * 60
 
 		// Cannot calculate anything without release date
-		// No point in showing this if there were no downloads 
+		// No point in showing this if there were no downloads
 		if (!$this->contrib_release_date || !$this->contrib_downloads)
 		{
 			return '';

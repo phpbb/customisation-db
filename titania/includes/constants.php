@@ -36,6 +36,7 @@ define('CUSTOMISATION_TAG_FIELDS_TABLE',		$table_prefix . 'tag_fields');
 define('CUSTOMISATION_TAG_TYPES_TABLE',			$table_prefix . 'tag_types');
 define('CUSTOMISATION_WATCH_TABLE',				$table_prefix . 'watch');
 define('CUSTOMISATION_CONTRIB_FAQ_TABLE',		$table_prefix . 'contrib_faq');
+define('CUSTOMISATION_RATINGS_TABLE',			$table_prefix . 'ratings');
 
 // Customisation (contrib) status
 define('STATUS_NEW', 0);
@@ -84,5 +85,9 @@ define('CONTRIB_TYPE_LANG_PACK', 4);
 // Author constants
 define('AUTHOR_HIDDEN', 0);
 define('AUTHOR_VISIBLE', 1);
+
+// Rating Type Constants
+define('RATING_AUTHOR', 1);
+define('RATING_CONTRIB', 2);
 // Define further contrib types based on the tags, and tag_types tables.
 

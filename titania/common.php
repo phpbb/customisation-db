@@ -16,6 +16,8 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+define('TITANIA_VERSION', '0.1.0');
+
 // Include titania class
 require TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT;
 require TITANIA_ROOT . 'includes/core/phpbb.' . PHP_EXT;
@@ -25,6 +27,7 @@ titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);
 
 // Include titania constants
 require TITANIA_ROOT . 'includes/constants.' . PHP_EXT;
+require TITANIA_ROOT . 'includes/functions.' . PHP_EXT;
 
 // We need this for compatibility reasons
 $phpEx = PHP_EXT;
@@ -41,3 +44,9 @@ require PHPBB_ROOT_PATH . 'common.' . PHP_EXT;
 // Start session management etc.
 phpbb::initialise();
 titania::initialise();
+
+// If the database is not installed or outdated redirect to the installer
+if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['custom_db_version']) || version_compare(phpbb::$config['custom_db_version'], TITANIA_VERSION, '<')))
+{
+	//redirect(titania_sid('install/index'));
+}

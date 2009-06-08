@@ -27,7 +27,7 @@ class titania
 	 * @var string
 	 */
 	public static $page;
-	
+
 	/**
 	 * Titania configuration member
 	 *
@@ -205,9 +205,19 @@ class titania
 	 * Titania page_footer
 	 *
 	 * @param cron $run_cron
+	 * @param bool|string $template_body For those lazy like me, send the template body name you want to load (or leave default to ignore and assign it yourself)
 	 */
-	public static function page_footer($run_cron = true)
+	public static function page_footer($run_cron = true, $template_body = false)
 	{
+		// Because I am lazy most of the time...
+		if ($template_body !== false)
+		{
+			global $template;
+			$template->set_filenames(array(
+				'body' => $template_body,
+			));
+		}
+
 		// admin requested the cache to be purged, ensure they have permission and purge the cache.
 		if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get('a_'))
 		{

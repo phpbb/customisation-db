@@ -42,6 +42,8 @@ class titania_config extends titania_object
 			'table_prefix'				=> array('default' => 'customisation_'),
 			'template_path'				=> array('default' => TITANIA_ROOT . 'template/'),
 			'theme_path'				=> array('default' => TITANIA_ROOT . 'theme/'),
+
+			'max_rating'				=> array('default' => 5),
 		));
 	}
 

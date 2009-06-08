@@ -37,8 +37,4 @@ $module->assign_tpl_vars(append_sid(TITANIA_ROOT . 'index.' . PHP_EXT));
 // Output page
 titania::page_header($module->get_page_title());
 
-$template->set_filenames(array(
-	'body' => $module->get_tpl_name(),
-));
-
-titania::page_footer();
+titania::page_footer(true, $module->get_tpl_name());
