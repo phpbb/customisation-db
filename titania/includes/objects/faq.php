@@ -32,7 +32,7 @@ class titania_faq extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= CDB_CONTRIB_FAQ_TABLE;
+	protected $sql_table		= TITANIA_CONTRIB_FAQ_TABLE;
 
 	/**
 	 * SQL identifier field
@@ -333,7 +333,7 @@ class titania_faq extends titania_database_object
 		global $db;
 
 		$sql = 'SELECT revision_id, revision_name
-			FROM ' . CDB_REVISIONS_TABLE . "
+			FROM ' . TITANIA_REVISIONS_TABLE . "
 			WHERE contrib_id = $contrib_id
 			ORDER BY revision_name DESC";
 		$result = $db->sql_query($sql);
@@ -360,12 +360,12 @@ class titania_faq extends titania_database_object
 		$sql_ary = array(
 			'SELECT'	=> 'f.*, r.revision_name, r.revision_time, c.contrib_author_id',
 			'FROM'		=> array(
-				CDB_CONTRIB_FAQ_TABLE => 'f',
-				CDB_CONTRIBS_TABLE 	=> 'c'
+				TITANIA_CONTRIB_FAQ_TABLE => 'f',
+				TITANIA_CONTRIBS_TABLE 	=> 'c'
 			),
 			'LEFT_JOIN'	=> array(
 				array(
-					'FROM'	=> array(CDB_REVISIONS_TABLE => 'r'),
+					'FROM'	=> array(TITANIA_REVISIONS_TABLE => 'r'),
 					'ON'	=> 'r.revision_id = f.revision_id
 							AND c.contrib_id = f.contrib_id',
 				),
@@ -433,11 +433,11 @@ class titania_faq extends titania_database_object
 		$sql_ary = array(
 			'SELECT'	=> 'f.*, r.revision_name',
 			'FROM'		=> array(
-					CDB_CONTRIB_FAQ_TABLE	=> 'f'
+					TITANIA_CONTRIB_FAQ_TABLE	=> 'f'
 			),
 			'LEFT_JOIN'	=> array(
 				array(
-					'FROM'	=> array(CDB_REVISIONS_TABLE => 'r'),
+					'FROM'	=> array(TITANIA_REVISIONS_TABLE => 'r'),
 					'ON'	=> 'r.revision_id = f.revision_id',
 				),
 			),
@@ -483,7 +483,7 @@ class titania_faq extends titania_database_object
 
 		// informations about contrib
 		$sql = 'SELECT contrib_name, contrib_version, contrib_author_id
-			FROM ' . CDB_CONTRIBS_TABLE . '
+			FROM ' . TITANIA_CONTRIBS_TABLE . '
 			WHERE contrib_id = ' . $contrib_id;
 		$result = $db->sql_query($sql);
 		$contrib = $db->sql_fetchrow($result);

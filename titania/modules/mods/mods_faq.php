@@ -83,7 +83,7 @@ class mods_faq extends titania_object
 					switch ($action)
 					{
 						case 'delete':
-							$sql = 'DELETE FROM ' . CDB_CONTRIB_FAQ_TABLE . ' WHERE ' . $db->sql_in_set('faq_id', $faq_ids);
+							$sql = 'DELETE FROM ' . TITANIA_CONTRIB_FAQ_TABLE . ' WHERE ' . $db->sql_in_set('faq_id', $faq_ids);
 							$db->sql_query($sql);
 						
 							$message = $user->lang['DELETE_FAQ_MARKED'];

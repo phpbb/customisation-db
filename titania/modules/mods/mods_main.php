@@ -155,14 +155,14 @@ class mods_main extends titania_object
 
 		$sql_ary = array(
 			'SELECT'	=> 'c.*, a.author_id, a.author_username, u.user_colour',
-			'FROM'		=> array(CDB_CONTRIBS_TABLE => 'c'),
+			'FROM'		=> array(TITANIA_CONTRIBS_TABLE => 'c'),
 			'LEFT_JOIN'	=> array(
 				array(
-					'FROM'	=> array(CDB_CONTRIB_TAGS_TABLE => 't'),
+					'FROM'	=> array(TITANIA_CONTRIB_TAGS_TABLE => 't'),
 					'ON'	=> 't.contrib_id = c.contrib_id',
 				),
 				array(
-					'FROM'	=> array(CDB_AUTHORS_TABLE => 'a'),
+					'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
 					'ON'	=> 'a.author_id = c.contrib_author_id',
 				),
 				array(

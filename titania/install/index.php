@@ -24,7 +24,7 @@ if (!file_exists(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT))
 }
 
 $mod_name = 'CUSTOMISATION_DATABASE';
-$version_config_name = 'cdb_version';
+$version_config_name = 'titania_version';
 
 
 $versions = array(
@@ -241,9 +241,9 @@ $versions = array(
 		),
 
 		'permission_add' => array(
-			'cdb_',
-			'cdb_rate',
-			'cdb_rate_reset',
+			'titania_',
+			'titania_rate',
+			'titania_rate_reset',
 		),
 	),
 

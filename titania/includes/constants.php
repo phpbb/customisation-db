@@ -24,28 +24,28 @@ define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
 
 // Table names
 $table_prefix = titania::$config->table_prefix;
-define('CDB_AUTHORS_TABLE',				$table_prefix . 'authors');
-define('CDB_CONTRIBS_TABLE',			$table_prefix . 'contribs');
-define('CDB_CONTRIB_TAGS_TABLE',		$table_prefix . 'contrib_tags');
-define('CDB_CONTRIB_COAUTHORS_TABLE',	$table_prefix . 'contrib_coauthors');
-define('CDB_DOWNLOADS_TABLE',			$table_prefix . 'downloads');
-define('CDB_QUEUE_TABLE',				$table_prefix . 'queue');
-define('CDB_QUEUE_HISTORY_TABLE',		$table_prefix . 'queue_history');
-define('CDB_REVISIONS_TABLE',			$table_prefix . 'revisions');
-define('CDB_TAG_FIELDS_TABLE',			$table_prefix . 'tag_fields');
-define('CDB_TAG_TYPES_TABLE',			$table_prefix . 'tag_types');
-define('CDB_WATCH_TABLE',				$table_prefix . 'watch');
-define('CDB_CONTRIB_FAQ_TABLE',			$table_prefix . 'contrib_faq');
-define('CDB_RATINGS_TABLE',				$table_prefix . 'ratings');
+define('TITANIA_AUTHORS_TABLE',				$table_prefix . 'authors');
+define('TITANIA_CONTRIBS_TABLE',			$table_prefix . 'contribs');
+define('TITANIA_CONTRIB_TAGS_TABLE',		$table_prefix . 'contrib_tags');
+define('TITANIA_CONTRIB_COAUTHORS_TABLE',	$table_prefix . 'contrib_coauthors');
+define('TITANIA_DOWNLOADS_TABLE',			$table_prefix . 'downloads');
+define('TITANIA_QUEUE_TABLE',				$table_prefix . 'queue');
+define('TITANIA_QUEUE_HISTORY_TABLE',		$table_prefix . 'queue_history');
+define('TITANIA_REVISIONS_TABLE',			$table_prefix . 'revisions');
+define('TITANIA_TAG_FIELDS_TABLE',			$table_prefix . 'tag_fields');
+define('TITANIA_TAG_TYPES_TABLE',			$table_prefix . 'tag_types');
+define('TITANIA_WATCH_TABLE',				$table_prefix . 'watch');
+define('TITANIA_CONTRIB_FAQ_TABLE',			$table_prefix . 'contrib_faq');
+define('TITANIA_RATINGS_TABLE',				$table_prefix . 'ratings');
 
 // Customisation/Queue (contrib) status
 define('STATUS_NEW', 0);
 define('STATUS_APPROVED', 1);
 define('STATUS_DENIED', 2);
-define('CDB_STATUS_TESTING', 3);
-define('CDB_STATUS_ATTENTION', 4);
-define('CDB_STATUS_APPROVE', 5); // Awaiting approve
-define('CDB_STATUS_DENY', 6); // Awating deny
+define('TITANIA_STATUS_TESTING', 3);
+define('TITANIA_STATUS_ATTENTION', 4);
+define('TITANIA_STATUS_APPROVE', 5); // Awaiting approve
+define('TITANIA_STATUS_DENY', 6); // Awating deny
 
 // Tag types
 define('TAG_TYPE_MOD_CATEGORY', 1);
@@ -95,5 +95,5 @@ define('RATING_AUTHOR', 1);
 define('RATING_CONTRIB', 2);
 
 // Download types
-define('CDB_DOWNLOAD_CONTRIB', 1);
-define('CDB_DOWNLOAD_POST', 2);
+define('TITANIA_DOWNLOAD_CONTRIB', 1);
+define('TITANIA_DOWNLOAD_POST', 2);

@@ -21,7 +21,7 @@ $config = array(
 	/**
 	* Prefix of the sql tables.
 	*
-	* @param	string	$cdb_table_prefix	Table prefix
+	* @param	string	$titania_table_prefix	Table prefix
 	*/
 	'table_prefix' => 'customisation_',
 );

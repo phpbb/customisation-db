@@ -40,7 +40,7 @@ class titania_diff
 	 * @var string
 	 */
 	private $renderer_type;
-	
+
 	/**
 	 * Identification for old and new
 	 * This is used by from_dir to add an identification to the diff file
@@ -48,7 +48,7 @@ class titania_diff
 	 * @var string
 	 */
 	private $id_old, $id_new;
-	
+
 	/**
 	 * constructor
 	 *
@@ -58,7 +58,7 @@ class titania_diff
 	{
 		$this->renderer_type = $renderer_type;
 	}
-	
+
 	/**
 	 * Set id_old and id_new
 	 *
@@ -70,9 +70,9 @@ class titania_diff
 		$this->id_old = $id_old;
 		$this->id_new = $id_new;
 	}
-	
+
 	// diff layers
-	
+
 	/**
 	 * Create diff from file
 	 * Lowest layer
@@ -85,12 +85,12 @@ class titania_diff
 	{
 	    $file_old = ($filename_old) ? self::file_contents($filename_old) : '';
 		$file_new = ($filename_new) ? self::file_contents($filename_new) : '';
-		
+
 		// create renderer and process diff
 		$renderer = new $this->renderer_type();
 		return $renderer->render(new diff($file_old, $file_new));
 	}
-	
+
 	/**
 	 * Create diff from dir
 	 *
@@ -104,14 +104,14 @@ class titania_diff
 	    {
 			return false;
 		}
-		
+
 		$result = '';
-		
+
 		$files_old = array_flip(self::list_files($dir_old));
 		$files_new = array_flip(self::list_files($dir_new));
-		
+
 		$files_merged = array_merge($files_old, $files_new);
-		
+
 		while (list($filename) = each($files_merged))
 		{
 			// add a context header for the file
@@ -119,7 +119,7 @@ class titania_diff
 			$result .= "===================================================================\n";
 			$result .= "--- $filename" . ($this->id_old ? "\t{$this->id_old}" : '') . "\n";
 			$result .= "+++ $filename" . ($this->id_new ? "\t{$this->id_new}" : '') . "\n";
-			
+
 			if (isset($files_old[$filename]) && isset($files_new[$filename]))
 			{
 				// old and new files exist
@@ -136,10 +136,10 @@ class titania_diff
 				$result .= $this->from_file($dir_old . $filename, false) . "\n";
 			}
 		}
-		
+
 		return $result;
 	}
-	
+
 	/**
 	 * Create diff from zip
 	 *
@@ -153,25 +153,25 @@ class titania_diff
 	    {
 			return false;
 		}
-		
+
 		// temporary dirs
 		$tmp_old = TITANIA_ROOT . 'files/temp/' . basename($filename_old) . '/';
 		$tmp_new = TITANIA_ROOT . 'files/temp/' . basename($filename_new) . '/';
-		
+
 		// extract files
 		$result_old = self::extract_zip($filename_old, $tmp_old);
 		$result_new = self::extract_zip($filename_new, $tmp_new);
-		
+
 		// get diff
 		$result = $this->from_dir($tmp_old, $tmp_new);
-		
+
 		// clean up
 		self::rmdir($tmp_old, true);
 		self::rmdir($tmp_new, true);
-		
+
 		return $result;
 	}
-	
+
 	/**
 	 * Create diff from revision
 	 *
@@ -183,8 +183,8 @@ class titania_diff
 	{
 		// get filenames
 		$sql = 'SELECT d.physical_filename
-			FROM ' . CDB_DOWNLOADS_TABLE . ' d
-			JOIN ' . CDB_REVISIONS_TABLE . ' r
+			FROM ' . TITANIA_DOWNLOADS_TABLE . ' d
+			JOIN ' . TITANIA_REVISIONS_TABLE . ' r
 				ON d.revision_id = r.revision_id
 			WHERE ' . phpbb::$db->sql_in_set('d.revision_id', array($rev_old, $rev_new)) . '
 			ORDER BY r.revision_time ASC';
@@ -192,19 +192,19 @@ class titania_diff
 		$filename_old = phpbb::$db->sql_fetchfield('physical_filename');
 		$filename_new = phpbb::$db->sql_fetchfield('physical_filename');
 		phpbb::$db->sql_freeresult($result);
-		
+
 		if (!$filename_old || !$filename_new)
 		{
 			return false;
 		}
-		
+
 		$this->set_id("revision $rev_old", "revision $rev_new");
-		
+
 		return $this->from_zip($filename_old, $filename_new);
 	}
-	
+
 	// static api functions
-	
+
 	/**
 	 * Extract a zip file
 	 *
@@ -218,13 +218,13 @@ class titania_diff
 		{
 			mkdir($destination, 0777, true);
 		}
-		
+
 		// extract files
 		$zip = new compress_zip('r', $filename);
 		$zip->extract($destination);
 		$zip->close();
 	}
-	
+
 	/**
 	 * Recursively get all filenames from a dir
 	 *
@@ -243,7 +243,7 @@ class titania_diff
 				{
 					continue;
 				}
-				
+
 				if (is_file($root . $dir . $file))
 				{
 					$files[] = $dir . $file;
@@ -253,13 +253,13 @@ class titania_diff
 					$files = array_merge($files, self::list_files($root, $dir . $file . '/'));
 				}
 			}
-			
+
 			closedir($dh);
 		}
-		
+
 		return $files;
 	}
-	
+
 	/**
 	 * Recursively remove dir
 	 *
@@ -279,13 +279,13 @@ class titania_diff
 				self::rmdir($dir . $filename . '/', true);
 			}
 		}
-		
+
 		if ($rm_self)
 		{
 			rmdir($dir);
 		}
 	}
-	
+
 	/**
 	 * Get contents of a file, don't mess up linefeeds
 	 *
@@ -296,7 +296,7 @@ class titania_diff
 	{
 		return preg_replace('#\\r(?:\\n|)#s', "\n", file_get_contents($filename));
 	}
-	
+
 	/**
 	 * @todo implement:
 	 * 1) Show diff from last submitted revision.

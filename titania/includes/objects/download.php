@@ -32,7 +32,7 @@ class titania_download extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= CDB_DOWNLOADS_TABLE;
+	protected $sql_table		= TITANIA_DOWNLOADS_TABLE;
 
 	/**
 	 * SQL identifier field
@@ -86,7 +86,7 @@ class titania_download extends titania_database_object
 	/**
 	 * Allows to load data identified by object_id
 	 *
-	 * @param int $download_type The type of download (check CDB_DOWNLOAD_ constants)
+	 * @param int $download_type The type of download (check TITANIA_DOWNLOAD_ constants)
 	 * @param int $object_id The id of the item to download
 	 *
 	 * @return void
@@ -123,13 +123,13 @@ class titania_download extends titania_database_object
 		$column = ($validated) ? 'contrib_validated_revision' : 'contrib_revision';
 
 		$sql = 'SELECT ' . $column . '
-			FROM ' . CDB_CONTRIBS_TABLE . '
+			FROM ' . TITANIA_CONTRIBS_TABLE . '
 			WHERE contrib_id = ' . $contrib_id;
 		$result = phpbb::$db->sql_query($sql);
 		$revision_id = (int) phpbb::$db->sql_fetchfield($column);
 		phpbb::$db->sql_freeresult($result);
 
-		$this->load(CDB_DOWNLOAD_CONTRIB, $revision_id);
+		$this->load(TITANIA_DOWNLOAD_CONTRIB, $revision_id);
 	}
 
 	/**

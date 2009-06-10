@@ -32,7 +32,7 @@ class titania_rating extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table			= CDB_RATINGS_TABLE;
+	protected $sql_table			= TITANIA_RATINGS_TABLE;
 
 	/**
 	 * SQL identifier field
@@ -126,7 +126,7 @@ class titania_rating extends titania_database_object
 		{
 			case 'author' :
 				$this->rating_type_id = RATING_AUTHOR;
-				$this->cache_table = CDB_AUTHORS_TABLE;
+				$this->cache_table = TITANIA_AUTHORS_TABLE;
 				$this->cache_rating = 'author_rating';
 				$this->cache_rating_count = 'author_rating_count';
 				$this->object_column = 'author_id';
@@ -134,7 +134,7 @@ class titania_rating extends titania_database_object
 
 			case 'contrib' :
 				$this->rating_type_id = RATING_CONTRIB;
-				$this->cache_table = CDB_CONTRIBS_TABLE;
+				$this->cache_table = TITANIA_CONTRIBS_TABLE;
 				$this->cache_rating = 'contrib_rating';
 				$this->cache_rating_count = 'contrib_rating_count';
 				$this->object_column = 'contrib_id';
@@ -193,7 +193,7 @@ class titania_rating extends titania_database_object
 	*/
 	public function add_rating($rating)
 	{
-		if (!phpbb::$user->data['is_registered'] || !phpbb::$auth->acl_get('cdb_rate'))
+		if (!phpbb::$user->data['is_registered'] || !phpbb::$auth->acl_get('titania_rate'))
 		{
 			return;
 		}
@@ -264,7 +264,7 @@ class titania_rating extends titania_database_object
 	*/
 	public function reset_rating()
 	{
-		if (!phpbb::$auth->acl_get('cdb_rate_reset'))
+		if (!phpbb::$auth->acl_get('titania_rate_reset'))
 		{
 			return;
 		}

@@ -106,7 +106,7 @@ class authors_main extends titania_object
 		$sql_ary = array(
 			'SELECT'	=> 'a.*, u.user_lastvisit, u.username, u.user_posts, u.user_colour',
 			'FROM'		=> array(
-				CDB_AUTHORS_TABLE => 'a',
+				TITANIA_AUTHORS_TABLE => 'a',
 			),
 			'LEFT_JOIN'	=> array(
 				array(
@@ -192,7 +192,7 @@ class authors_main extends titania_object
 		$sql_ary = array(
 			'SELECT' => 'a.*, u.user_lastvisit, u.username, u.user_posts, u.user_colour',
 			'FROM'		=> array(
-				CDB_AUTHORS_TABLE => 'a',
+				TITANIA_AUTHORS_TABLE => 'a',
 			),
 			'LEFT_JOIN'	=> array(
 				array(

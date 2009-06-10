@@ -91,10 +91,10 @@ class mods_details extends titania_object
 	{
 		$sql_ary = array(
 			'SELECT'	=> 'c.*, a.author_id, a.author_username, u.user_colour',
-			'FROM'		=> array(CDB_CONTRIBS_TABLE => 'c'),
+			'FROM'		=> array(TITANIA_CONTRIBS_TABLE => 'c'),
 			'LEFT_JOIN'	=> array(
 				array(
-					'FROM'	=> array(CDB_AUTHORS_TABLE => 'a'),
+					'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
 					'ON'	=> 'a.author_id = c.contrib_author_id',
 				),
 				array(
@@ -163,7 +163,7 @@ class mods_details extends titania_object
 		}
 
 		$sql = 'SELECT c.contrib_id, c.contrib_name
-			FROM ' . CDB_CONTRIBS_TABLE . ' c
+			FROM ' . TITANIA_CONTRIBS_TABLE . ' c
 			WHERE c.contrib_id = ' . (int) $mod_id . '
 				AND c.contrib_status = ' .  STATUS_APPROVED;
 		$result = phpbb::$db->sql_query($sql);
@@ -287,7 +287,7 @@ class mods_details extends titania_object
 	{
 		if (isset(phpbb::$user->data['session_page']) && !phpbb::$user->data['is_bot'] && strpos(phpbb::$user->data['session_page'], "&{$param}={$contrib_id}") === false)
 		{
-			$sql = 'UPDATE ' . CDB_CONTRIBS_TABLE . ' SET contrib_views = contrib_views + 1 WHERE contrib_id = ' . (int) $contrib_id;
+			$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . ' SET contrib_views = contrib_views + 1 WHERE contrib_id = ' . (int) $contrib_id;
 			phpbb::$db->sql_query($sql);
 		}
 
