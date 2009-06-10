@@ -162,8 +162,8 @@ class titania_rating extends titania_database_object
 
 		$sql = 'SELECT * FROM ' . $this->sql_table . '
 			WHERE rating_type_id = ' . (int) $this->rating_type . '
-			AND rating_user_id = ' . (int) phpbb::$user->data['user_id'] . '
-			AND rating_object_id = ' . (int) $this->object_id;
+				AND rating_user_id = ' . (int) phpbb::$user->data['user_id'] . '
+				AND rating_object_id = ' . (int) $this->object_id;
 		$result = phpbb::$db->sql_query($sql);
 		$this->sql_data = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
@@ -211,7 +211,7 @@ class titania_rating extends titania_database_object
 		$cnt = $total = 0;
 		$sql = 'SELECT rating_value FROM ' . $this->sql_table . '
 			WHERE rating_type_id = ' . (int) $this->rating_type . '
-			AND rating_object_id = ' . (int) $this->object_id;
+				AND rating_object_id = ' . (int) $this->object_id;
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -243,7 +243,7 @@ class titania_rating extends titania_database_object
 		$cnt = $total = 0;
 		$sql = 'SELECT rating_value FROM ' . $this->sql_table . '
 			WHERE rating_type_id = ' . (int) $this->rating_type . '
-			AND rating_object_id = ' . (int) $this->object_id;
+				AND rating_object_id = ' . (int) $this->object_id;
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -271,7 +271,7 @@ class titania_rating extends titania_database_object
 
 		$sql = 'DELETE FROM ' . $this->sql_table . '
 			WHERE rating_type_id = ' . (int) $this->rating_type . '
-			AND rating_object_id = ' . (int) $this->object_id;
+				AND rating_object_id = ' . (int) $this->object_id;
 		phpbb::$db->sql_query($sql);
 
 		$sql = 'UPDATE ' . $this->cache_table . ' SET ' .
