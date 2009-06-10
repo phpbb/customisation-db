@@ -32,7 +32,7 @@ class titania_rating extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table			= CUSTOMISATION_RATINGS_TABLE;
+	protected $sql_table			= CDB_RATINGS_TABLE;
 
 	/**
 	 * SQL identifier field
@@ -126,7 +126,7 @@ class titania_rating extends titania_database_object
 		{
 			case 'author' :
 				$this->rating_type_id = RATING_AUTHOR;
-				$this->cache_table = CUSTOMISATION_AUTHORS_TABLE;
+				$this->cache_table = CDB_AUTHORS_TABLE;
 				$this->cache_rating = 'author_rating';
 				$this->cache_rating_count = 'author_rating_count';
 				$this->object_column = 'author_id';
@@ -134,7 +134,7 @@ class titania_rating extends titania_database_object
 
 			case 'contrib' :
 				$this->rating_type_id = RATING_CONTRIB;
-				$this->cache_table = CUSTOMISATION_CONTRIBS_TABLE;
+				$this->cache_table = CDB_CONTRIBS_TABLE;
 				$this->cache_rating = 'contrib_rating';
 				$this->cache_rating_count = 'contrib_rating_count';
 				$this->object_column = 'contrib_id';
@@ -205,7 +205,7 @@ class titania_rating extends titania_database_object
 
 		$this->rating_value = $rating;
 
-		$this->submit();
+		parent::submit();
 
 		// Resync the cache table
 		$cnt = $total = 0;
@@ -237,7 +237,7 @@ class titania_rating extends titania_database_object
 			return;
 		}
 
-		$this->delete();
+		parent::delete();
 
 		// Resync the cache table
 		$cnt = $total = 0;

@@ -183,6 +183,11 @@ abstract class titania_database_object extends titania_object
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
 		phpbb::$db->sql_query($sql);
 
+		/**
+		* @todo See if we can unset this field.  We should be unsetting it to prevent issues with $this->submit again, but do we ever need that again after running delete?
+		*/
+		//unset($this->{$this->sql_id_field});
+
 		return phpbb::$db->sql_affectedrows();
 	}
 

@@ -100,6 +100,37 @@ $versions = array(
 					'contrib_visible'		=> array('INDEX', 'contrib_visible'),
 				),
 			)),
+			array('customisation_contrib_coauthors', array(
+				'COLUMNS'		=> array(
+					'contrib_id'			=> array('UINT', 0),
+					'author_id'				=> array('UINT', 0),
+				),
+				'PRIMARY_KEY'	=> array('contrib_id', 'author_id'),
+			)),
+			array('customisation_downloads', array(
+				'COLUMNS'		=> array(
+					'download_id'			=> array('UINT', NULL, 'auto_increment'),
+					'download_type'			=> array('TINT:1', 0),
+					'object_id'				=> array('UINT', 0),
+					'download_status'		=> array('TINT:1', 0),
+					'filesize'				=> array('INT:11', 0),
+					'filetime'				=> array('INT:11', 0),
+					'physical_filename'		=> array('VCHAR', ''),
+					'real_filename'			=> array('VCHAR', ''),
+					'download_count'		=> array('UINT', 0),
+					'extension'				=> array('VCHAR:100', ''),
+					'mimetype'				=> array('VCHAR:100', ''),
+					'download_hash'			=> array('VCHAR:32', ''),
+					'download_url'			=> array('VCHAR:255', ''), // What is this for?
+					'thumbnail'				=> array('BOOL', 0),
+				),
+				'PRIMARY_KEY'	=> 'download_id',
+				'KEYS'			=> array(
+					'download_type'		=> array('INDEX', 'download_type'),
+					'object_id'			=> array('INDEX', 'object_id'),
+					'download_status'	=> array('INDEX', 'download_status'),
+				),
+			)),
 			array('customisation_contrib_faq', array(
 				'COLUMNS'		=> array(
 					'faq_id'				=> array('UINT', NULL, 'auto_increment'),
@@ -127,6 +158,32 @@ $versions = array(
 				),
 				'PRIMARY_KEY'	=> array('contrib_id', 'tag_id'),
 			)),
+			array('customisation_queue', array(
+				'COLUMNS'		=> array(
+					'queue_id'				=> array('UINT', NULL, 'auto_increment'),
+					'revision_id'			=> array('UINT', 0),
+					'contrib_id'			=> array('UINT', 0),
+					'queue_type'			=> array('TINT:1', 0),
+					'queue_status'			=> array('TINT:1', 0),
+					'submitter_user_id'		=> array('UINT', 0),
+					'queue_notes'			=> array('MTEXT_UNI', ''), // Not sure why we need this?
+					'queue_notes_bitfield'	=> array('VCHAR:255', ''), // Not sure why we need this?
+					'queue_notes_uid'		=> array('VCHAR:8', ''), // Not sure why we need this?
+					'queue_notes_options'	=> array('UINT:11', 7), // Not sure why we need this?
+					'queue_progress'		=> array('TINT:3', 0),
+					'queue_submit_time'		=> array('UINT:11', 0),
+					'queue_close_time'		=> array('UINT:11', 0),
+				),
+				'PRIMARY_KEY'	=> 'queue_id',
+				'KEYS'			=> array(
+					'revision_id'			=> array('INDEX', 'revision_id'),
+					'contrib_id'			=> array('INDEX', 'contrib_id'),
+					'queue_type'			=> array('INDEX', 'queue_type'),
+					'queue_status'			=> array('INDEX', 'queue_status'),
+					'submitter_user_id'		=> array('INDEX', 'submitter_user_id'),
+					'queue_submit_time'		=> array('INDEX', 'queue_submit_time'),
+				),
+			)),
 			array('customisation_ratings', array(
 				'COLUMNS'		=> array(
 					'rating_id'				=> array('UINT', NULL, 'auto_increment'),
@@ -139,6 +196,47 @@ $versions = array(
 				'KEYS'			=> array(
 					'type_user_object'		=> array('UNIQUE', array('rating_type_id', 'rating_user_id', 'rating_object_id')),
 				),
+			)),
+			array('customisation_revisions', array(
+				'COLUMNS'		=> array(
+					'revision_id'			=> array('UINT', NULL, 'auto_increment'),
+					'contrib_id'			=> array('UINT', 0),
+					'revision_name'			=> array('STEXT_UNI', '', 'true_sort'),
+					'revision_time'			=> array('UINT:11', 0),
+				),
+				'PRIMARY_KEY'	=> 'revision_id',
+				'KEYS'			=> array(
+					'contrib_id'			=> array('INDEX', 'contrib_id'),
+				),
+			)),
+			array('customisation_tag_fields', array(
+				'COLUMNS'		=> array(
+					'tag_id'				=> array('UINT', NULL, 'auto_increment'),
+					'tag_type_id'			=> array('UINT', 0),
+					'tag_field_name'		=> array('XSTEXT_UNI', '', 'true_sort'),
+					'tag_clean_name'		=> array('XSTEXT_UNI', '', 'true_sort'),
+					'tag_field_desc'		=> array('STEXT_UNI', '', 'true_sort'),
+				),
+				'PRIMARY_KEY'	=> 'tag_id',
+				'KEYS'			=> array(
+					'tag_type_id'			=> array('INDEX', 'tag_type_id'),
+				),
+			)),
+			array('customisation_tag_types', array(
+				'COLUMNS'		=> array(
+					'tag_type_id'			=> array('UINT', NULL, 'auto_increment'),
+					'tag_type_name'			=> array('STEXT_UNI', '', 'true_sort'),
+				),
+				'PRIMARY_KEY'	=> 'tag_type_id',
+			)),
+			array('customisation_watch', array(
+				'COLUMNS'		=> array(
+					'watch_type'			=> array('TINT:1', 0),
+					'watch_object_id'		=> array('UINT', 0),
+					'watch_user_id'			=> array('UINT', 0),
+					'watch_mark_time'		=> array('UINT:11', 0),
+				),
+				'PRIMARY_KEY'	=> array('watch_type', 'watch_object_id', 'watch_user_id'),
 			)),
 		),
 

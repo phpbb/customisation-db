@@ -41,7 +41,7 @@ class titania_cache extends acm
 		{
 			$categories = array();
 			$sql = 'SELECT tag_id, tag_field_name, tag_field_desc
-						FROM ' . CUSTOMISATION_TAG_FIELDS_TABLE . '
+						FROM ' . CDB_TAG_FIELDS_TABLE . '
 						WHERE tag_type_id = ' . (int) $tag_type;
 			$result = phpbb::$db->sql_query($sql);
 

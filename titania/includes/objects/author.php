@@ -32,7 +32,7 @@ class titania_author extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= CUSTOMISATION_AUTHORS_TABLE;
+	protected $sql_table		= CDB_AUTHORS_TABLE;
 
 	/**
 	 * SQL identifier field

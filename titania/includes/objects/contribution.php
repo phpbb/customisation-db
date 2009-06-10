@@ -32,7 +32,7 @@ class titania_contribution extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= CUSTOMISATION_CONTRIBS_TABLE;
+	protected $sql_table		= CDB_CONTRIBS_TABLE;
 
 	/**
 	 * Primary sql identifier for the contribution object

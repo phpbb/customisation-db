@@ -32,7 +32,7 @@ class titania_download extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= CUSTOMISATION_DOWNLOADS_TABLE;
+	protected $sql_table		= CDB_DOWNLOADS_TABLE;
 
 	/**
 	 * SQL identifier field
@@ -51,7 +51,7 @@ class titania_download extends titania_database_object
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
 			'download_id'			=> array('default' => 0),
-			'revision_id'			=> array('default' => 0),
+			'object_id'				=> array('default' => 0),
 
 			'download_type'			=> array('default' => 0),
 			'download_status'		=> array('default' => 0),
@@ -84,13 +84,14 @@ class titania_download extends titania_database_object
 	}
 
 	/**
-	 * Allows to load data identified by revision_id
+	 * Allows to load data identified by object_id
 	 *
-	 * @param int $revision_id
+	 * @param int $download_type The type of download (check CDB_DOWNLOAD_ constants)
+	 * @param int $object_id The id of the item to download
 	 *
 	 * @return void
 	 */
-	public function load($revision_id = false)
+	public function load($download_type, $object_id)
 	{
 		if ($revision_id === false)
 		{
@@ -100,12 +101,12 @@ class titania_download extends titania_database_object
 		{
 			$identifier = $this->sql_id_field;
 
-			$this->sql_id_field = 'revision_id';
-			$this->revision_id = $revision_id;
+			$this->sql_id_field = 'object_id';
+			$this->object_id = $object_id;
 
 			parent::load();
 
-			$this->sql_id_field = $identifier;
+			$this->sql_id_field = $object_id;
 		}
 	}
 
@@ -122,13 +123,13 @@ class titania_download extends titania_database_object
 		$column = ($validated) ? 'contrib_validated_revision' : 'contrib_revision';
 
 		$sql = 'SELECT ' . $column . '
-			FROM ' . CUSTOMISATION_CONTRIBS_TABLE . '
+			FROM ' . CDB_CONTRIBS_TABLE . '
 			WHERE contrib_id = ' . $contrib_id;
 		$result = phpbb::$db->sql_query($sql);
 		$revision_id = (int) phpbb::$db->sql_fetchfield($column);
 		phpbb::$db->sql_freeresult($result);
 
-		$this->load($revision_id);
+		$this->load(CDB_DOWNLOAD_CONTRIB, $revision_id);
 	}
 
 	/**

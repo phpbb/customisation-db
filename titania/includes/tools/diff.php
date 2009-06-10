@@ -183,8 +183,8 @@ class titania_diff
 	{
 		// get filenames
 		$sql = 'SELECT d.physical_filename
-			FROM ' . CUSTOMISATION_DOWNLOADS_TABLE . ' d
-			JOIN ' . CUSTOMISATION_REVISIONS_TABLE . ' r
+			FROM ' . CDB_DOWNLOADS_TABLE . ' d
+			JOIN ' . CDB_REVISIONS_TABLE . ' r
 				ON d.revision_id = r.revision_id
 			WHERE ' . phpbb::$db->sql_in_set('d.revision_id', array($rev_old, $rev_new)) . '
 			ORDER BY r.revision_time ASC';
