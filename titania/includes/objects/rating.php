@@ -74,6 +74,14 @@ class titania_rating extends titania_database_object
 	protected $cache_rating_count	= '';
 
 	/**
+	 * Object column
+	 * The rating item primary key field (ex: author_id for rating authors)
+	 *
+	 * @var string
+	 */
+	protected $object_column		= '';
+
+	/**
 	 * Object ID
 	 * The rating item ID (ex: author_id for rating authors)
 	 *
@@ -121,7 +129,7 @@ class titania_rating extends titania_database_object
 				$this->cache_table = CUSTOMISATION_AUTHORS_TABLE;
 				$this->cache_rating = 'author_rating';
 				$this->cache_rating_count = 'author_rating_count';
-				$this->object_id = $object->author_id;
+				$this->object_column = 'author_id';
 			break;
 
 			case 'contrib' :
@@ -129,13 +137,14 @@ class titania_rating extends titania_database_object
 				$this->cache_table = CUSTOMISATION_CONTRIBS_TABLE;
 				$this->cache_rating = 'contrib_rating';
 				$this->cache_rating_count = 'contrib_rating_count';
-				$this->object_id = $object->contrib_id;
+				$this->object_column = 'contrib_id';
 			break;
 		}
 
-		// Get the rating and rating count
+		// Get the rating, rating count, and item id
 		$this->rating = $object->{$this->cache_rating};
 		$this->rating_count = $object->{$this->cache_rating_count};
+		$this->object_id = $object->{$this->object_column};
 
 		// Get the current user's rating (if any)
 		$this->get_rating();
@@ -197,6 +206,25 @@ class titania_rating extends titania_database_object
 		$this->rating_value = $rating;
 
 		$this->submit();
+
+		// Resync the cache table
+		$cnt = $total = 0;
+		$sql = 'SELECT rating_value FROM ' . $this->sql_table . '
+			WHERE rating_type_id = ' . (int) $this->rating_type . '
+			AND rating_object_id = ' . (int) $this->object_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$cnt++;
+			$total += $row['rating_value'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		$sql = 'UPDATE ' . $this->cache_table . ' SET ' .
+			$this->cache_rating . ' = ' . round($total / $cnt, 2) . ', ' .
+			$this->cache_rating_count . ' = ' . $cnt . '
+			WHERE ' . $this->object_column . ' = ' . $this->object_id;
+		phpbb::$db->sql_query($sql);
 	}
 
 	/**
@@ -209,7 +237,26 @@ class titania_rating extends titania_database_object
 			return;
 		}
 
-		// delete a rating from this item
+		$this->delete();
+
+		// Resync the cache table
+		$cnt = $total = 0;
+		$sql = 'SELECT rating_value FROM ' . $this->sql_table . '
+			WHERE rating_type_id = ' . (int) $this->rating_type . '
+			AND rating_object_id = ' . (int) $this->object_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$cnt++;
+			$total += $row['rating_value'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		$sql = 'UPDATE ' . $this->cache_table . ' SET ' .
+			$this->cache_rating . ' = ' . round($total / $cnt, 2) . ', ' .
+			$this->cache_rating_count . ' = ' . $cnt . '
+			WHERE ' . $this->object_column . ' = ' . $this->object_id;
+		phpbb::$db->sql_query($sql);
 	}
 
 	/**
@@ -225,6 +272,12 @@ class titania_rating extends titania_database_object
 		$sql = 'DELETE FROM ' . $this->sql_table . '
 			WHERE rating_type_id = ' . (int) $this->rating_type . '
 			AND rating_object_id = ' . (int) $this->object_id;
+		phpbb::$db->sql_query($sql);
+
+		$sql = 'UPDATE ' . $this->cache_table . ' SET ' .
+			$this->cache_rating . ' = 0, ' .
+			$this->cache_rating_count . ' = 0
+			WHERE ' . $this->object_column . ' = ' . $this->object_id;
 		phpbb::$db->sql_query($sql);
 	}
 }

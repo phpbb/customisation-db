@@ -74,6 +74,7 @@ class titania_contribution extends titania_database_object
 			'contrib_id'					=> array('default' => 0),
 			'contrib_type'					=> array('default' => 0),
 			'contrib_name'					=> array('default' => '',	'max' => 255),
+			'contrib_name_clean'			=> array('default' => '',	'max' => 255),
 
 			'contrib_description'			=> array('default' => ''),
 			'contrib_desc_bitfield'			=> array('default' => '',	'readonly' => true),
@@ -95,7 +96,7 @@ class titania_contribution extends titania_database_object
 			'contrib_phpbb_version'			=> array('default' => 3),
 			'contrib_release_date'			=> array('default' => 0),
 			'contrib_update_date'			=> array('default' => 0),
-			'contrib_visibility'			=> array('default' => 0),
+			'contrib_visible'				=> array('default' => 0),
 
 			'contrib_rating'				=> array('default' => 0.0),
 			'contrib_rating_count'			=> array('default' => 0),
@@ -121,6 +122,8 @@ class titania_contribution extends titania_database_object
 		{
 			$this->generate_text_for_storage(false, false, false);
 		}
+
+		$this->contrib_name_clean = utf8_clean_string($this->contrib_name);
 
 		return parent::submit();
 	}
