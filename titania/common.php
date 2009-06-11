@@ -46,7 +46,7 @@ phpbb::initialise();
 titania::initialise();
 
 // If the database is not installed or outdated redirect to the installer
-if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['custom_db_version']) || version_compare(phpbb::$config['custom_db_version'], TITANIA_VERSION, '<')))
+if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version']) || version_compare(phpbb::$config['titania_version'], TITANIA_VERSION, '<')))
 {
 	redirect(titania_sid('install/index'));
 }
