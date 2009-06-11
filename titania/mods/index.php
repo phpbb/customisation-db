@@ -23,28 +23,8 @@ $mode	= request_var('mode', '');
 // Auto assign some ID's to eliminate the need for id param on most URLs
 if (!$id)
 {
-	switch ($mode)
-	{
-		case 'details':
-			$id = 'details';
-		break;
-
-		case 'faq':
-			$id = 'faq';
-		break;
-
-		case 'reviews':
-			$id = 'reviews';
-		break;
-
-		case 'support':
-			$id = 'support';
-		break;
-
-		default:
-			$id = 'main';
-		break;
-	}
+	$modes = array('details', 'faq', 'reviews', 'support');
+	$id = (in_array($mode, $modes)) ? $mode : 'main';
 }
 
 $module = new titania_modules();

@@ -368,10 +368,52 @@ $versions = array(
 				'module_mode'		=> 'results',
 			)),
 		),
+
+		'custom' => 'titania_data',
+
+		'cache_purge' => '',
 	),
 
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
+
+function titania_data($action, $version)
+{
+	global $umil;
+
+	if ($action != 'install')
+	{
+		return;
+	}
+
+	$default_categories = array(
+		'Add-ons',
+		'Cosmetic',
+		'Admin Tools',
+		'Syndication',
+		'BBCode',
+		'Security',
+		'Communication',
+		'Profile/User Control Panel',
+		'Tools',
+		'Anti-Spam',
+		'Moderator Tools',
+		'Entertainment',
+	);
+
+	$sql_ary = array();
+	foreach ($default_categories as $cat_name)
+	{
+		$sql_ary[] = array(
+			'tag_type_id'		=> 1,
+			'tag_field_name'	=> $cat_name,
+			'tag_clean_name'	=> utf8_clean_string($cat_name),
+			'tag_field_desc'	=> '',
+		);
+	}
+
+	$umil->table_row_insert('customisation_tag_fields', $sql_ary);
+}
 
 include(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT);
 

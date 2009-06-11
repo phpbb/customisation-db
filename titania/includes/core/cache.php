@@ -35,28 +35,27 @@ class titania_cache extends acm
 	 */
 	public function get_categories($tag_type = TAG_TYPE_MOD_CATEGORY)
 	{
-		$categories = $this->get('_titania_categories');
+		$categories = $this->get('_titania_categories_' . $tag_type);
 
 		if (!$categories)
 		{
 			$categories = array();
-			$sql = 'SELECT tag_id, tag_field_name, tag_field_desc
-						FROM ' . TITANIA_TAG_FIELDS_TABLE . '
+			$sql = 'SELECT * FROM ' . TITANIA_TAG_FIELDS_TABLE . '
 						WHERE tag_type_id = ' . (int) $tag_type;
 			$result = phpbb::$db->sql_query($sql);
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
 				$categories[$row['tag_id']] = array(
-					'id'		=> $row['tag_id'],
-					'name'		=> $row['tag_field_name'],
-					'clean_name'=> $row['tag_clean_name'],
-					'desc'		=> $row['tag_field_desc'],
+					'id'			=> $row['tag_id'],
+					'name'			=> $row['tag_field_name'],
+					'clean_name'	=> $row['tag_clean_name'],
+					'desc'			=> $row['tag_field_desc'],
 				);
 			}
 			phpbb::$db->sql_freeresult($result);
 
-			$this->put('_titania_categories', $categories);
+			$this->put('_titania_categories_' . $tag_type, $categories);
 		}
 
 		return $categories;
