@@ -13,10 +13,11 @@
  */
 define('IN_TITANIA', true);
 define('IN_TITANIA_INSTALL', true);
+define('UMIL_AUTO', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', '../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
-$titania->add_lang('install');
+titania::add_lang('install');
 
 if (!file_exists(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT))
 {
@@ -245,12 +246,133 @@ $versions = array(
 			'titania_rate',
 			'titania_rate_reset',
 		),
+
+		'module_add' => array(
+			array('mods', 0, 'MODS_CAT_MAIN'),
+			array('mods', 0, 'MODS_CAT_DETAILS'),
+			array('mods', 0, 'MODS_CAT_FAQ'),
+			array('mods', 0, 'MODS_CAT_REVIEWS'),
+			array('mods', 0, 'MODS_CAT_SUPPORT'),
+			array('mods', 'MODS_CAT_MAIN', array(
+				'module_basename'	=> 'main',
+				'module_langname'	=> 'MODS_CATEGORIES',
+				'module_mode'		=> 'categories',
+			)),
+			array('mods', 'MODS_CAT_MAIN', array(
+				'module_basename'	=> 'main',
+				'module_langname'	=> 'MODS_LIST',
+				'module_mode'		=> 'list',
+			)),
+			array('mods', 'MODS_CAT_DETAILS', array(
+				'module_basename'	=> 'details',
+				'module_langname'	=> 'MODS_DETAILS',
+				'module_mode'		=> 'details',
+			)),
+			array('mods', 'MODS_CAT_DETAILS', array(
+				'module_basename'	=> 'details',
+				'module_langname'	=> 'MODS_SCREENSHOTS',
+				'module_mode'		=> 'screenshots',
+			)),
+			array('mods', 'MODS_CAT_DETAILS', array(
+				'module_basename'	=> 'details',
+				'module_langname'	=> 'MODS_PREVIEW',
+				'module_mode'		=> 'preview',
+			)),
+			array('mods', 'MODS_CAT_DETAILS', array(
+				'module_basename'	=> 'details',
+				'module_langname'	=> 'MODS_CHANGES',
+				'module_mode'		=> 'changes',
+			)),
+			array('mods', 'MODS_CAT_DETAILS', array(
+				'module_basename'	=> 'details',
+				'module_langname'	=> 'MODS_EMAIL_FRIEND',
+				'module_mode'		=> 'email',
+			)),
+			array('mods', 'MODS_CAT_DETAILS', array(
+				'module_basename'	=> 'details',
+				'module_langname'	=> 'MODS_STYLES',
+				'module_mode'		=> 'styles',
+			)),
+			array('mods', 'MODS_CAT_DETAILS', array(
+				'module_basename'	=> 'details',
+				'module_langname'	=> 'MODS_TRANSLATIONS',
+				'module_mode'		=> 'translations',
+			)),
+			array('mods', 'MODS_CAT_DETAILS', array(
+				'module_basename'	=> 'faq',
+				'module_langname'	=> 'MODS_VIEW_FAQ',
+				'module_mode'		=> 'faq',
+			)),
+			array('mods', 'MODS_CAT_FAQ', array(
+				'module_basename'	=> 'faq',
+				'module_langname'	=> 'MODS_FAQ',
+				'module_mode'		=> 'faq',
+			)),
+			array('mods', 'MODS_CAT_FAQ', array(
+				'module_basename'	=> 'faq',
+				'module_langname'	=> 'MODS_MANAGE_FAQ',
+				'module_mode'		=> 'manage',
+			)),
+			array('mods', 'MODS_CAT_FAQ', array(
+				'module_basename'	=> 'faq',
+				'module_langname'	=> 'MODS_VIEW_FAQ',
+				'module_mode'		=> 'view',
+			)),
+			array('mods', 'MODS_CAT_SUPPORT', array(
+				'module_basename'	=> 'support',
+				'module_langname'	=> 'MODS_SUPPORT',
+				'module_mode'		=> 'support',
+			)),
+			array('mods', 'MODS_CAT_SUPPORT', array(
+				'module_basename'	=> 'support',
+				'module_langname'	=> 'MODS_VIEW_SUPPORT',
+				'module_mode'		=> 'view',
+			)),
+			array('mods', 'MODS_CAT_SUPPORT', array(
+				'module_basename'	=> 'support',
+				'module_langname'	=> 'MODS_POST_SUPPORT',
+				'module_mode'		=> 'post',
+			)),
+			array('mods', 'MODS_CAT_SUPPORT', array(
+				'module_basename'	=> 'support',
+				'module_langname'	=> 'MODS_EDIT_SUPPORT',
+				'module_mode'		=> 'edit',
+			)),
+
+			array('titania', 0, 'TITANIA_MAIN'),
+			array('titania', 'TITANIA_MAIN', array(
+				'module_basename'	=> 'main',
+				'module_langname'	=> 'TITANIA_HOME',
+				'module_mode'		=> 'home',
+			)),
+
+			array('authors', 0, 'AUTHORS_MAIN'),
+			array('authors', 'AUTHORS_MAIN', array(
+				'module_basename'	=> 'main',
+				'module_langname'	=> 'AUTHORS_LIST',
+				'module_mode'		=> 'list',
+			)),
+			array('authors', 'AUTHORS_MAIN', array(
+				'module_basename'	=> 'main',
+				'module_langname'	=> 'AUTHOR_PROFILE',
+				'module_mode'		=> 'profile',
+			)),
+			array('authors', 'AUTHORS_MAIN', array(
+				'module_basename'	=> 'main',
+				'module_langname'	=> 'AUTHOR_SEARCH',
+				'module_mode'		=> 'search',
+			)),
+			array('authors', 'AUTHORS_MAIN', array(
+				'module_basename'	=> 'main',
+				'module_langname'	=> 'AUTHOR_SEARCH_RESULTS',
+				'module_mode'		=> 'results',
+			)),
+		),
 	),
 
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
-// Include the UMIF Auto file and everything else will be handled automatically.
 include(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT);
 
 ?>
