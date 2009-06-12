@@ -41,7 +41,7 @@ $lang = array_merge($lang, array(
 	'AUTHOR_MODS'		=> 'MODs',
 	'AUTHOR_NOT_FOUND'	=> 'Author not found',
 	'AUTHOR_PROFILE'	=> 'Author Profile',
-	'AUTHOR_RATING'		=> 'Ranking',
+	'AUTHOR_RATING'		=> 'Rating',
 	'AUTHOR_SNIPPETS'	=> 'Snippets',
 	'AUTHOR_STYLES'		=> 'Styles',
 

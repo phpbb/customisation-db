@@ -39,27 +39,22 @@ class titania_author extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_id_field		= 'author_id';
+	protected $sql_id_field		= 'user_id';
 
 	/**
 	 * Constructor class for titania authors
 	 *
 	 * @param int $author_id
 	 */
-	public function __construct($author_id = false)
+	public function __construct($user_id = false)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
-			'author_id'				=> array('default' => 0),
 			'user_id'				=> array('default' => 0),
 			'phpbb_user_id'			=> array('default' => 0),
 
-			'author_username'		=> array('default' => '',	'max' => 255),
-			'author_username_clean'	=> array('default' => '',	'max' => 255,	'readonly' => true),
 			'author_realname'		=> array('default' => '',	'max' => 255),
 			'author_website'		=> array('default' => '',	'max' => 200),
-			'author_email'			=> array('default' => '',	'multibyte' => false),
-			'author_email_hash'		=> array('default' => 0,	'readonly' => true),
 			'author_rating'			=> array('default' => 0.0),
 			'author_rating_count'	=> array('default' => 0),
 
@@ -70,34 +65,68 @@ class titania_author extends titania_database_object
 			'author_visible'		=> array('default' => AUTHOR_VISIBLE),
 		));
 
-		if ($author_id !== false)
+		if ($user_id !== false)
 		{
-			$this->author_id = $author_id;
+			$this->user_id = (int) $user_id;
 		}
 	}
 
 	/**
-	 * Special setter methods overwriting the default magic methods.
-	 *
-	 * @param string $value
-	 */
-	public function set_author_username($value)
+	* Load Author
+	*/
+	public function load($user_id = false)
 	{
-		$this->author_username			= $value;
-		$this->author_username_clean	= utf8_clean_string($value);
+		if ($user_id !== false)
+		{
+			$this->user_id = (int) $user_id;
+		}
+
+		$sql_ary = array(
+			'SELECT' => 'a.*, u.*', // Don't change to *!
+			'FROM'		=> array(
+				USERS_TABLE => 'u',
+			),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
+					'ON'	=> 'a.user_id = u.user_id'
+				),
+			),
+			'WHERE'		=> 'u.user_id = ' . $this->user_id
+		);
+
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
+		$result = phpbb::$db->sql_query($sql);
+
+		if(!($this->sql_data = phpbb::$db->sql_fetchrow($result)))
+		{
+			return false;
+		}
+
+		// The result could return with info only in the user's table (if no mods/styles have been submitted), so we need to fill these in if that is the case.
+		foreach ($this->object_config as $name => $data)
+		{
+			if (!isset($this->sql_data[$name]))
+			{
+				$this->sql_data[$name] = $data['default'];
+			}
+		}
+
+		foreach ($this->sql_data as $key => $value)
+		{
+			$this->$key = $value;
+		}
+
+		return true;
 	}
 
 	/**
-	 * set author e-mail
-	 *
-	 * @param string $value
-	 */
-	public function set_author_email($value)
+	* Get profile data
+	*/
+	public function get_profile_data()
 	{
-		$lower = strtolower($value);
-
-		$this->author_email			= $lower;
-		$this->author_email_hash	= crc32($lower) . strlen($lower);
+		return $this->sql_data;
 	}
 
 	/**
@@ -107,9 +136,9 @@ class titania_author extends titania_database_object
 	 */
 	public function get_profile_url()
 	{
-		if ($this->author_id)
+		if ($this->user_id)
 		{
-			return append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'a=' . $this->author_id);
+			return append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'u=' . $this->user_id);
 		}
 
 		return '';

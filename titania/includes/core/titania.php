@@ -120,6 +120,28 @@ class titania
 	}
 
 	/**
+	* Load a Titania Object
+	*
+	* @param mixed $object_name The name of the object
+	*/
+	public static function load_object($object_name)
+	{
+		$object_name = preg_replace('#(^A-Za-z0-9)#', '', $object_name);
+
+		if (class_exists($object_name))
+		{
+			return;
+		}
+
+		if (!file_exists(TITANIA_ROOT . 'includes/objects/' . $object_name . '.' . PHP_EXT))
+		{
+			trigger_error('Missing Object: ' . $object_name);
+		}
+
+		include(TITANIA_ROOT . 'includes/objects/' . $object_name . '.' . PHP_EXT);
+	}
+
+	/**
 	 * Add a phpBB language file
 	 *
 	 * @param mixed $lang_set

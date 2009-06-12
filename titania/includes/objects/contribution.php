@@ -87,7 +87,7 @@ class titania_contribution extends titania_database_object
 			'contrib_revision'				=> array('default' => 0),
 			'contrib_validated_revision'	=> array('default' => 0),
 
-			'contrib_author_id'				=> array('default' => 0),
+			'contrib_user_id'				=> array('default' => 0),
 			'contrib_maintainer'			=> array('default' => 0),
 
 			'contrib_downloads'				=> array('default' => 0),
@@ -144,6 +144,15 @@ class titania_contribution extends titania_database_object
 
 		return $status;
 	}
+
+	/**
+	* Get contrib data
+	*/
+	public function get_data()
+	{
+		return $this->sql_data;
+	}
+
 
 	/**
 	 * Generate text for storing description into the database
@@ -203,7 +212,7 @@ class titania_contribution extends titania_database_object
 			require TITANIA_ROOT . 'includes/objects/author.' . PHP_EXT;
 		}
 
-		$author = new titania_author($this->contrib_author_id);
+		$author = new titania_author($this->contrib_user_id);
 		$author->load();
 
 		return $author;

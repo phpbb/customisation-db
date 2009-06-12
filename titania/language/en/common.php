@@ -61,6 +61,7 @@ $lang = array_merge($lang, array(
 
 	'PURGE_CACHE'			=> 'Purge Cache',
 
+	'REMOVE_RATING'			=> 'Remove Rating',
 	'RATING'				=> 'Rating',
 	'RATINGS'				=> 'Ratings',
 	'RETURN_LAST_PAGE'		=> 'Return to the previous page',
@@ -121,7 +122,7 @@ $lang = array_merge($lang, array(
 	'RR_RANK'				=> 'MOD Rank',
 	'RR_E_RATING'			=> 'Enter Rating',
 	'RR_E_REVIEW'			=> 'Enter Review',
-	'RR_LIST'				=> 'Review List',	
+	'RR_LIST'				=> 'Review List',
 
 	'COMPLEX_TITLE'			=> 'Complexity',
 	'COMPLEX_SCHEMA'		=> 'SQL Schema Changes',

@@ -90,12 +90,12 @@ class mods_details extends titania_object
 	public function mod_details($mod_id)
 	{
 		$sql_ary = array(
-			'SELECT'	=> 'c.*, a.author_id, a.author_username, u.user_colour',
+			'SELECT'	=> 'c.*, a.user_id, a.author_username, u.user_colour',
 			'FROM'		=> array(TITANIA_CONTRIBS_TABLE => 'c'),
 			'LEFT_JOIN'	=> array(
 				array(
 					'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
-					'ON'	=> 'a.author_id = c.contrib_author_id',
+					'ON'	=> 'a.user_id = c.contrib_user_id',
 				),
 				array(
 					'FROM'	=> array(USERS_TABLE => 'u'),
@@ -121,10 +121,10 @@ class mods_details extends titania_object
 			'ADDED'			=> phpbb::$user->format_date($row['contrib_release_date']),
 			'UPDATED'		=> phpbb::$user->format_date($row['contrib_update_date']),
 			'VERSION'		=> $row['contrib_version'],
-			'AUTHOR_FULL'	=> sprintf(phpbb::$user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
+			'AUTHOR_FULL'	=> sprintf(phpbb::$user->lang['AUTHOR_BY'], get_username_string('full', $row['user_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
 			'PROFILE_FULL'	=> (!empty($row['user_id']) ? get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']) : ''),
 
-			'U_SEARCH_MODS_AUTHOR'	=> sprintf(phpbb::$user->lang['U_SEARCH_MODS_AUTHOR'], '<a href="' . append_sid(TITANIA_ROOT . $this->page, 'mode=search&amp;u=' . $row['author_id']) . '">', $row['author_username'], '</a>'),
+			'U_SEARCH_MODS_AUTHOR'	=> sprintf(phpbb::$user->lang['U_SEARCH_MODS_AUTHOR'], '<a href="' . append_sid(TITANIA_ROOT . $this->page, 'mode=search&amp;u=' . $row['user_id']) . '">', $row['author_username'], '</a>'),
 		));
 	}
 

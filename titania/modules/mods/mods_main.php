@@ -154,7 +154,7 @@ class mods_main extends titania_object
 		$sort->sort_request(false);
 
 		$sql_ary = array(
-			'SELECT'	=> 'c.*, a.author_id, a.author_username, u.user_colour',
+			'SELECT'	=> 'c.*, a.user_id, a.author_username, u.user_colour',
 			'FROM'		=> array(TITANIA_CONTRIBS_TABLE => 'c'),
 			'LEFT_JOIN'	=> array(
 				array(
@@ -163,7 +163,7 @@ class mods_main extends titania_object
 				),
 				array(
 					'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
-					'ON'	=> 'a.author_id = c.contrib_author_id',
+					'ON'	=> 'a.user_id = c.contrib_user_id',
 				),
 				array(
 					'FROM'	=> array(USERS_TABLE => 'u'),
@@ -194,7 +194,7 @@ class mods_main extends titania_object
 				'ADDED'			=> $user->format_date($row['contrib_release_date']),
 				'UPDATED'		=> $user->format_date($row['contrib_update_date']),
 				'VERSION'		=> $row['contrib_version'],
-				'AUTHOR'		=> sprintf($user->lang['AUTHOR_BY'], get_username_string('full', $row['author_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
+				'AUTHOR'		=> sprintf($user->lang['AUTHOR_BY'], get_username_string('full', $row['user_id'], $row['author_username'], $row['user_colour'], false, $profile_url)),
 			));
 		}
 		$db->sql_freeresult($result);

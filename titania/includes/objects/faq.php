@@ -358,7 +358,7 @@ class titania_faq extends titania_database_object
 		global $template, $db, $user, $titania, $auth;
 
 		$sql_ary = array(
-			'SELECT'	=> 'f.*, r.revision_name, r.revision_time, c.contrib_author_id',
+			'SELECT'	=> 'f.*, r.revision_name, r.revision_time, c.contrib_user_id',
 			'FROM'		=> array(
 				TITANIA_CONTRIB_FAQ_TABLE => 'f',
 				TITANIA_CONTRIBS_TABLE 	=> 'c'
@@ -390,7 +390,7 @@ class titania_faq extends titania_database_object
 			'REVISION_NAME' 	=> $row['revision_name'],
 
 			'U_FAQ_LIST'		=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $this->contrib_identifier . '=' . $row['contrib_id']),
-			'U_EDIT_FAQ'		=> ($user->data['user_id'] == $row['contrib_author_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=edit&amp;' . $this->contrib_identifier . '=' . $row['contrib_id'] . '&amp;faq=' . $row['faq_id']) : false,
+			'U_EDIT_FAQ'		=> ($user->data['user_id'] == $row['contrib_user_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=edit&amp;' . $this->contrib_identifier . '=' . $row['contrib_id'] . '&amp;faq=' . $row['faq_id']) : false,
 
 			'L_REVISION'		=> $user->lang[strtoupper($this->contrib_identifier) . '_VERSION'],
 		));
@@ -482,7 +482,7 @@ class titania_faq extends titania_database_object
 		$pagination->build_pagination(append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $this->contrib_identifier . '=' . $contrib_id));
 
 		// informations about contrib
-		$sql = 'SELECT contrib_name, contrib_version, contrib_author_id
+		$sql = 'SELECT contrib_name, contrib_version, contrib_user_id
 			FROM ' . TITANIA_CONTRIBS_TABLE . '
 			WHERE contrib_id = ' . $contrib_id;
 		$result = $db->sql_query($sql);
@@ -496,7 +496,7 @@ class titania_faq extends titania_database_object
 			'CONTRIB_NAME'		=> $contrib['contrib_name'],
 			'CONTRIB_VERSION'	=> $contrib['contrib_version'],
 
-			'U_CREATE_FAQ'		=> ($user->data['user_id'] == $contrib['contrib_author_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=create&amp;' . $this->contrib_identifier . '=' . $contrib_id) : false,
+			'U_CREATE_FAQ'		=> ($user->data['user_id'] == $contrib['contrib_user_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=create&amp;' . $this->contrib_identifier . '=' . $contrib_id) : false,
 
 			'L_CONTRIB_VERSION'	=> $user->lang[strtoupper($this->contrib_identifier) . '_VERSION'],
 		));

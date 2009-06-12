@@ -56,28 +56,20 @@ $versions = array(
 			)),
 			array('customisation_authors', array(
 				'COLUMNS'		=> array(
-					'author_id'				=> array('UINT', NULL, 'auto_increment'),
 					'user_id'				=> array('UINT', 0),
 					'phpbb_user_id'			=> array('UINT', 0),
-					'author_username'		=> array('VCHAR_CI', ''),
-					'author_username_clean'	=> array('VCHAR_CI', ''),
 					'author_realname'		=> array('VCHAR_CI', ''),
 					'author_website'		=> array('VCHAR_UNI:200', ''),
-					'author_email'			=> array('VCHAR_UNI:100', ''),
-					'author_email_hash'		=> array('BINT', 0),
 					'author_rating'			=> array('DECIMAL', 0),
 					'author_rating_count'	=> array('UINT', 0),
-					'author_contribs'		=> array('UINT', 0), //
+					'author_contribs'		=> array('UINT', 0), // Total # of contribs
 					'author_snippets'		=> array('UINT', 0), // Number of snippets
 					'author_mods'			=> array('UINT', 0), // Number of mods
 					'author_styles'			=> array('UINT', 0), // Number of styles
 					'author_visible'		=> array('BOOL', 1),
 				),
-				'PRIMARY_KEY'	=> 'author_id',
+				'PRIMARY_KEY'	=> 'user_id',
 				'KEYS'			=> array(
-					'user_id'				=> array('INDEX', 'user_id'),
-					'phpbb_user_id'			=> array('INDEX', 'phpbb_user_id'),
-					'author_username_clean'	=> array('INDEX', 'author_username_clean'),
 					'author_rating'			=> array('INDEX', 'author_rating'),
 					'author_contribs'		=> array('INDEX', 'author_contribs'),
 					'author_snippets'		=> array('INDEX', 'author_snippets'),
@@ -89,7 +81,7 @@ $versions = array(
 			array('customisation_contribs', array(
 				'COLUMNS'		=> array(
 					'contrib_id'					=> array('UINT', NULL, 'auto_increment'),
-					'contrib_author_id'				=> array('UINT', 0), // would like to replace with user_id...
+					'contrib_user_id'				=> array('UINT', 0),
 					'contrib_maintainer'			=> array('UINT', 0), // ???
 					'contrib_type'					=> array('TINT:1', 0),
 					'contrib_name'					=> array('STEXT_UNI', '', 'true_sort'),
@@ -115,7 +107,7 @@ $versions = array(
 				),
 				'PRIMARY_KEY'	=> 'contrib_id',
 				'KEYS'			=> array(
-					'contrib_author_id'		=> array('INDEX', 'contrib_author_id'),
+					'contrib_user_id'		=> array('INDEX', 'contrib_user_id'),
 					'contrib_type'			=> array('INDEX', 'contrib_type'),
 					'contrib_name_clean'	=> array('INDEX', 'contrib_name_clean'),
 					'contrib_status'		=> array('INDEX', 'contrib_status'),
@@ -127,9 +119,9 @@ $versions = array(
 			array('customisation_contrib_coauthors', array(
 				'COLUMNS'		=> array(
 					'contrib_id'			=> array('UINT', 0),
-					'author_id'				=> array('UINT', 0),
+					'user_id'				=> array('UINT', 0),
 				),
-				'PRIMARY_KEY'	=> array('contrib_id', 'author_id'),
+				'PRIMARY_KEY'	=> array('contrib_id', 'user_id'),
 			)),
 			array('customisation_contrib_faq', array(
 				'COLUMNS'		=> array(
@@ -247,6 +239,13 @@ $versions = array(
 			'titania_',
 			'titania_rate',
 			'titania_rate_reset',
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array('titania_rate_reset')),
+			array('ROLE_MOD_FULL', array('titania_rate_reset')),
+			array('ROLE_USER_FULL', array('titania_rate')),
+			array('ROLE_USER_STANDARD', array('titania_rate')),
 		),
 
 		'module_add' => array(
