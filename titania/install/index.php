@@ -31,6 +31,29 @@ $version_config_name = 'titania_version';
 $versions = array(
 	'0.1.0'	=> array(
 		'table_add' => array(
+			array('customisation_attachments', array(
+				'COLUMNS'		=> array(
+					'attachment_id'			=> array('UINT', NULL, 'auto_increment'),
+					'attachment_type'		=> array('TINT:1', 0),
+					'object_id'				=> array('UINT', 0),
+					'attachment_status'		=> array('TINT:1', 0),
+					'physical_filename'		=> array('VCHAR', ''),
+					'real_filename'			=> array('VCHAR', ''),
+					'download_count'		=> array('UINT', 0),
+					'filesize'				=> array('INT:11', 0),
+					'filetime'				=> array('INT:11', 0),
+					'extension'				=> array('VCHAR:100', ''),
+					'mimetype'				=> array('VCHAR:100', ''),
+					'hash'					=> array('VCHAR:32', ''),
+					'thumbnail'				=> array('BOOL', 0),
+				),
+				'PRIMARY_KEY'	=> 'attachment_id',
+				'KEYS'			=> array(
+					'attachment_type'		=> array('INDEX', 'attachment_type'),
+					'object_id'				=> array('INDEX', 'object_id'),
+					'attachment_status'		=> array('INDEX', 'attachment_status'),
+				),
+			)),
 			array('customisation_authors', array(
 				'COLUMNS'		=> array(
 					'author_id'				=> array('UINT', NULL, 'auto_increment'),
@@ -108,30 +131,6 @@ $versions = array(
 				),
 				'PRIMARY_KEY'	=> array('contrib_id', 'author_id'),
 			)),
-			array('customisation_downloads', array(
-				'COLUMNS'		=> array(
-					'download_id'			=> array('UINT', NULL, 'auto_increment'),
-					'download_type'			=> array('TINT:1', 0),
-					'object_id'				=> array('UINT', 0),
-					'download_status'		=> array('TINT:1', 0),
-					'filesize'				=> array('INT:11', 0),
-					'filetime'				=> array('INT:11', 0),
-					'physical_filename'		=> array('VCHAR', ''),
-					'real_filename'			=> array('VCHAR', ''),
-					'download_count'		=> array('UINT', 0),
-					'extension'				=> array('VCHAR:100', ''),
-					'mimetype'				=> array('VCHAR:100', ''),
-					'download_hash'			=> array('VCHAR:32', ''),
-					'download_url'			=> array('VCHAR:255', ''), // What is this for?
-					'thumbnail'				=> array('BOOL', 0),
-				),
-				'PRIMARY_KEY'	=> 'download_id',
-				'KEYS'			=> array(
-					'download_type'		=> array('INDEX', 'download_type'),
-					'object_id'			=> array('INDEX', 'object_id'),
-					'download_status'	=> array('INDEX', 'download_status'),
-				),
-			)),
 			array('customisation_contrib_faq', array(
 				'COLUMNS'		=> array(
 					'faq_id'				=> array('UINT', NULL, 'auto_increment'),
@@ -202,12 +201,15 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'revision_id'			=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'			=> array('UINT', 0),
+					'contrib_validated'		=> array('BOOL', 0),
+					'attachment_id'			=> array('UINT', 0),
 					'revision_name'			=> array('STEXT_UNI', '', 'true_sort'),
 					'revision_time'			=> array('UINT:11', 0),
 				),
 				'PRIMARY_KEY'	=> 'revision_id',
 				'KEYS'			=> array(
 					'contrib_id'			=> array('INDEX', 'contrib_id'),
+					'contrib_validated'		=> array('INDEX', 'contrib_validated'),
 				),
 			)),
 			array('customisation_tag_fields', array(

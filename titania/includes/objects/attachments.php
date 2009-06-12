@@ -25,61 +25,58 @@ if (!class_exists('titania_database_object'))
 * Class to abstract titania downloads.
 * @package Titania
 */
-class titania_download extends titania_database_object
+class titania_attachments extends titania_database_object
 {
 	/**
 	 * SQL Table
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= TITANIA_DOWNLOADS_TABLE;
+	protected $sql_table		= TITANIA_ATTACHMENTS_TABLE;
 
 	/**
 	 * SQL identifier field
 	 *
 	 * @var string
 	 */
-	protected $sql_id_field		= 'download_id';
+	protected $sql_id_field		= 'attachment_id';
 
 	/**
 	 * Constructor for download class
 	 *
 	 * @param unknown_type $download_id
 	 */
-	public function __construct($download_id = false)
+	public function __construct($type, $object_id = false)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
-			'download_id'			=> array('default' => 0),
+			'attachment_id'			=> array('default' => 0),
+			'attachment_type'		=> array('default' => 0),
 			'object_id'				=> array('default' => 0),
 
-			'download_type'			=> array('default' => 0),
-			'download_status'		=> array('default' => 0),
-
-			'filesize'				=> array('default' => 0),
-			'filetime'				=> array('default' => 0),
-
+			'attachment_status'		=> array('default' => 0),
 			'physical_filename'		=> array('default' => '',	'max' => 255),
 			'real_filename'			=> array('default' => '',	'max' => 255),
 
 			'download_count'		=> array('default' => 0),
 
+			'filesize'				=> array('default' => 0),
+			'filetime'				=> array('default' => 0),
 			'extension'				=> array('default' => '',	'max' => 100),
 			'mimetype'				=> array('default' => '',	'max' => 100),
-
-			'download_url'			=> array('default' => '',	'max' => 255,	'multibyte' => false),
-			'download_hash'			=> array('default' => '',	'max' => 32,	'multibyte' => false,	'readonly' => true),
+			'hash'					=> array('default' => '',	'max' => 32,	'multibyte' => false,	'readonly' => true),
 
 			'thumbnail'				=> array('default' => 0),
 		));
 
-		if ($download_id === false)
+		if ($object_id === false)
 		{
 			$this->filetime = titania::$time;
 		}
 		else
 		{
-			$this->download_id = $download_id;
+			$this->object_id = $object_id;
+			$this->load_object($type, $object_id);
 		}
 	}
 
@@ -91,23 +88,13 @@ class titania_download extends titania_database_object
 	 *
 	 * @return void
 	 */
-	public function load($download_type, $object_id)
+	public function load_object($download_type, $object_id)
 	{
-		if ($revision_id === false)
-		{
-			parent::load();
-		}
-		else
-		{
-			$identifier = $this->sql_id_field;
+		$this->sql_id_field = 'object_id';
 
-			$this->sql_id_field = 'object_id';
-			$this->object_id = $object_id;
+		parent::load();
 
-			parent::load();
-
-			$this->sql_id_field = $object_id;
-		}
+		$this->sql_id_field = 'attachment_id';
 	}
 
 	/**
@@ -120,16 +107,20 @@ class titania_download extends titania_database_object
 	 */
 	public function load_contrib($contrib_id, $validated = true)
 	{
-		$column = ($validated) ? 'contrib_validated_revision' : 'contrib_revision';
+		$sql = 'SELECT attachment_id
+			FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE contrib_id = ' . $contrib_id .
+				(($validated) ? ' AND contrib_validated = 1' : '');
+		phpbb::$db->sql_query($sql);
+		$attachment_id = (int) phpbb::$db->sql_fetchfield($column);
+		phpbb::$db->sql_freeresult();
 
-		$sql = 'SELECT ' . $column . '
-			FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE contrib_id = ' . $contrib_id;
-		$result = phpbb::$db->sql_query($sql);
-		$revision_id = (int) phpbb::$db->sql_fetchfield($column);
-		phpbb::$db->sql_freeresult($result);
+		if ($attachment_id)
+		{
+			$this->attachment_id = $attachment_id;
+		}
 
-		$this->load(TITANIA_DOWNLOAD_CONTRIB, $revision_id);
+		parent::load();
 	}
 
 	/**
@@ -281,7 +272,7 @@ class titania_download extends titania_database_object
 	{
 		$sql = 'UPDATE ' . $this->sql_table . '
 			SET download_count = download_count + 1
-			WHERE download_id = ' . $this->download_id;
+			WHERE attachment_id = ' . $this->attachment_id;
 		phpbb::$db->sql_query($sql);
 
 		$this->download_count = $this->download_count + 1;

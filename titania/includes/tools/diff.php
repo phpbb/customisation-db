@@ -182,11 +182,11 @@ class titania_diff
 	public function from_revision($rev_old, $rev_new)
 	{
 		// get filenames
-		$sql = 'SELECT d.physical_filename
-			FROM ' . TITANIA_DOWNLOADS_TABLE . ' d
+		$sql = 'SELECT a.physical_filename
+			FROM ' . TITANIA_ATTACHMENTS_TABLE . ' a
 			JOIN ' . TITANIA_REVISIONS_TABLE . ' r
-				ON d.revision_id = r.revision_id
-			WHERE ' . phpbb::$db->sql_in_set('d.revision_id', array($rev_old, $rev_new)) . '
+				ON a.attachment_id = r.attachment_id
+			WHERE ' . phpbb::$db->sql_in_set('r.revision_id', array($rev_old, $rev_new)) . '
 			ORDER BY r.revision_time ASC';
 		$result = phpbb::$db->sql_query($sql);
 		$filename_old = phpbb::$db->sql_fetchfield('physical_filename');

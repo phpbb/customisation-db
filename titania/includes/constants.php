@@ -24,11 +24,11 @@ define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
 
 // Table names
 $table_prefix = titania::$config->table_prefix;
+define('TITANIA_ATTACHMENTS_TABLE',			$table_prefix . 'attachments');
 define('TITANIA_AUTHORS_TABLE',				$table_prefix . 'authors');
 define('TITANIA_CONTRIBS_TABLE',			$table_prefix . 'contribs');
 define('TITANIA_CONTRIB_TAGS_TABLE',		$table_prefix . 'contrib_tags');
 define('TITANIA_CONTRIB_COAUTHORS_TABLE',	$table_prefix . 'contrib_coauthors');
-define('TITANIA_DOWNLOADS_TABLE',			$table_prefix . 'downloads');
 define('TITANIA_QUEUE_TABLE',				$table_prefix . 'queue');
 define('TITANIA_QUEUE_HISTORY_TABLE',		$table_prefix . 'queue_history');
 define('TITANIA_REVISIONS_TABLE',			$table_prefix . 'revisions');

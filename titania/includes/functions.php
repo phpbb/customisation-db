@@ -42,5 +42,8 @@ function sql_count_query($query, $count_column)
 	$query = preg_replace('#LIMIT ([0-9]+)(, ([0-9]+))?#', '', $query);
 
 	phpbb::$db->sql_query($query);
-	return (int) phpbb::$db->sql_fetchfield('cnt');
+	$cnt = (int) phpbb::$db->sql_fetchfield('cnt');
+	phpbb::$db->sql_freeresult();
+
+	return $cnt;
 }
