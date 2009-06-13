@@ -37,7 +37,7 @@ class titania_style extends titania_contribution
 		parent::__construct($contrib_id);
 
 		$this->object_config = array_merge($this->object_config, array(
-			'contrib_type' => array('default' => CONTRIB_TYPE_STYLE),
+			'contrib_type' => array('default' => TITANIA_TYPE_STYLE),
 		));
 	}
 }

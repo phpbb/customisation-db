@@ -388,17 +388,17 @@ class titania
 	 *
 	 * @param string $l_title message title - custom or user->lang defined
 	 * @param mixed $l_message message string or array of strings
-	 * @param int $error_type ERROR_SUCCESS or ERROR_ERROR constant
+	 * @param int $error_type TITANIA_SUCCESS or TITANIA_ERROR constant
 	 * @param int $status_code an HTTP status code
 	 */
-	public static function error_box($l_title, $l_message, $error_type = ERROR_SUCCESS, $status_code = NULL)
+	public static function error_box($l_title, $l_message, $error_type = TITANIA_SUCCESS, $status_code = NULL)
 	{
 		if ($status_code)
 		{
 			self::set_header_status($status_code);
 		}
 
-		$block = ($error_type == ERROR_ERROR) ? 'errorbox' : 'successbox';
+		$block = ($error_type == TITANIA_ERROR) ? 'errorbox' : 'successbox';
 
 		if ($l_title)
 		{

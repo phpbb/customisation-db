@@ -81,7 +81,7 @@ class titania_contribution extends titania_database_object
 			'contrib_desc_uid'				=> array('default' => '',	'readonly' => true),
 			'contrib_desc_options'			=> array('default' => 7,	'readonly' => true),
 
-			'contrib_status'				=> array('default' => STATUS_NEW),
+			'contrib_status'				=> array('default' => TITANIA_STATUS_NEW),
 			'contrib_version'				=> array('default' => '',	'max' => 15),
 
 			'contrib_revision'				=> array('default' => 0),
@@ -326,7 +326,7 @@ class titania_contribution extends titania_database_object
 
 		if (!phpbb::$config['email_enable'])
 		{
-			titania::error_box('ERROR', 'EMAIL_DISABLED', ERROR_ERROR, HEADER_SERVICE_UNAVAILABLE);
+			titania::error_box('ERROR', 'EMAIL_DISABLED', TITANIA_ERROR, HEADER_SERVICE_UNAVAILABLE);
 
 			return false;
 		}
@@ -338,7 +338,7 @@ class titania_contribution extends titania_database_object
 				login_box(titania::$page, phpbb::$user->lang['ERROR_CONTRIB_EMAIL_FRIEND']);
 			}
 
-			titania::error_box('ERROR', 'ERROR_CONTRIB_EMAIL_FRIEND', ERROR_ERROR, HEADER_FORBIDDEN);
+			titania::error_box('ERROR', 'ERROR_CONTRIB_EMAIL_FRIEND', TITANIA_ERROR, HEADER_FORBIDDEN);
 
 			return false;
 		}
@@ -384,7 +384,7 @@ class titania_contribution extends titania_database_object
 
 			if (!empty($error))
 			{
-				titania::error_box('ERROR', $error, ERROR_ERROR);
+				titania::error_box('ERROR', $error, TITANIA_ERROR);
 
 				return false;
 			}
@@ -447,7 +447,7 @@ class titania_contribution extends titania_database_object
 
 			phpbb::$user->set_custom_lang_path($lang_path);
 
-			titania::error_box('SUCCESS', 'EMAIL_SENT', ERROR_SUCCESS);
+			titania::error_box('SUCCESS', 'EMAIL_SENT', TITANIA_SUCCESS);
 
 			return true;
 		}

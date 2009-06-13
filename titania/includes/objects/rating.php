@@ -125,7 +125,7 @@ class titania_rating extends titania_database_object
 		switch($type)
 		{
 			case 'author' :
-				$this->rating_type_id = RATING_AUTHOR;
+				$this->rating_type_id = TITANIA_RATING_AUTHOR;
 				$this->cache_table = TITANIA_AUTHORS_TABLE;
 				$this->cache_rating = 'author_rating';
 				$this->cache_rating_count = 'author_rating_count';
@@ -133,7 +133,7 @@ class titania_rating extends titania_database_object
 			break;
 
 			case 'contrib' :
-				$this->rating_type_id = RATING_CONTRIB;
+				$this->rating_type_id = TITANIA_RATING_CONTRIB;
 				$this->cache_table = TITANIA_CONTRIBS_TABLE;
 				$this->cache_rating = 'contrib_rating';
 				$this->cache_rating_count = 'contrib_rating_count';

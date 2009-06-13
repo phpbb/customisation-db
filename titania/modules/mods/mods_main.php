@@ -66,7 +66,7 @@ class mods_main extends titania_object
 
 				if (!$found)
 				{
-					titania::error_box('ERROR', $user->lang['MOD_NOT_FOUND'], ERROR_ERROR);
+					titania::error_box('ERROR', $user->lang['MOD_NOT_FOUND'], TITANIA_ERROR);
 
 					$mode = ($category) ? 'list' : 'categories';
 					$this->main($id, $mode);
@@ -85,7 +85,7 @@ class mods_main extends titania_object
 				if (!$found)
 				{
 					$categories = titania::$cache->get_categories(TAG_TYPE_MOD_CATEGORY);
-					titania::error_box('ERROR', sprintf($user->lang['NO_MODS'], $categories[$category]['name']), ERROR_ERROR);
+					titania::error_box('ERROR', sprintf($user->lang['NO_MODS'], $categories[$category]['name']), TITANIA_ERROR);
 					$this->main($id, 'categories');
 					return;
 				}
@@ -171,7 +171,7 @@ class mods_main extends titania_object
 				),
 			),
 			'WHERE'		=> 't.tag_id = ' . $category . '
-							AND c.contrib_status = ' .  STATUS_APPROVED,
+							AND c.contrib_status = ' .  TITANIA_STATUS_APPROVED,
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
 		$sql = $db->sql_build_query('SELECT', $sql_ary);

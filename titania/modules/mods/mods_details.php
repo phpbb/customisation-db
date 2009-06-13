@@ -103,7 +103,7 @@ class mods_details extends titania_object
 				),
 			),
 			'WHERE'		=> 'c.contrib_id = ' . (int) $mod_id . '
-							AND c.contrib_status = ' .  STATUS_APPROVED,
+							AND c.contrib_status = ' .  TITANIA_STATUS_APPROVED,
 		);
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		$result = phpbb::$db->sql_query($sql);
@@ -139,7 +139,7 @@ class mods_details extends titania_object
 
 		if (!phpbb::$config['email_enable'])
 		{
-			titania::error_box('ERROR', phpbb::$user->lang['EMAIL_DISABLED'], ERROR_ERROR, HEADER_SERVICE_UNAVAILABLE);
+			titania::error_box('ERROR', phpbb::$user->lang['EMAIL_DISABLED'], TITANIA_ERROR, HEADER_SERVICE_UNAVAILABLE);
 			$this->main('details', 'details');
 			return;
 		}
@@ -151,7 +151,7 @@ class mods_details extends titania_object
 				login_box(TITANIA_ROOT . $this->page . '&amp;mod=' . $mod_id, 'NO_EMAIL_MOD');
 			}
 
-			titania::error_box('ERROR', phpbb::$user->lang['NO_EMAIL_MOD'], ERROR_ERROR, HEADER_FORBIDDEN);
+			titania::error_box('ERROR', phpbb::$user->lang['NO_EMAIL_MOD'], TITANIA_ERROR, HEADER_FORBIDDEN);
 			$this->main('details', 'details');
 			return;
 		}
@@ -165,7 +165,7 @@ class mods_details extends titania_object
 		$sql = 'SELECT c.contrib_id, c.contrib_name
 			FROM ' . TITANIA_CONTRIBS_TABLE . ' c
 			WHERE c.contrib_id = ' . (int) $mod_id . '
-				AND c.contrib_status = ' .  STATUS_APPROVED;
+				AND c.contrib_status = ' .  TITANIA_STATUS_APPROVED;
 		$result = phpbb::$db->sql_query($sql);
 		$mod = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
@@ -261,7 +261,7 @@ class mods_details extends titania_object
 					$messenger->send(NOTIFY_EMAIL);
 				}
 
-				titania::error_box('SUCCESS', 'EMAIL_SENT', ERROR_SUCCESS);
+				titania::error_box('SUCCESS', 'EMAIL_SENT', TITANIA_SUCCESS);
 				$this->main('details', 'details');
 				return;
 			}

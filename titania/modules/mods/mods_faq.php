@@ -64,7 +64,7 @@ class mods_faq extends titania_object
 			trigger_error('INVALID_FORM');
 		}
 
-		$faq = new titania_faq($faq_id, CONTRIB_TYPE_MOD);
+		$faq = new titania_faq($faq_id);
 
 		$this->tpl_name = 'faq/faq_manage';
 

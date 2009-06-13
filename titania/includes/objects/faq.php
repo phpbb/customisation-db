@@ -55,15 +55,6 @@ class titania_faq extends titania_database_object
 	 */
 	private $contrib_identifier;
 
-	/*
-	 * Contrib identifiers
-	 */
-	private $contrib_identifiers = array(
-		CONTRIB_TYPE_MOD 	=> 'mod',
-		CONTRIB_TYPE_STYLE 	=> 'style',
-		CONTRIB_TYPE_SNIPPET 	=> 'snippet'
-	);
-
 	/**
 	 * Constructor class for titania faq
 	 *

@@ -69,7 +69,7 @@ class authors_main extends titania_object
 
 				if (!$found)
 				{
-					titania::error_box('ERROR', phpbb::$user->lang['AUTHOR_NOT_FOUND'], ERROR_ERROR);
+					titania::error_box('ERROR', phpbb::$user->lang['AUTHOR_NOT_FOUND'], TITANIA_ERROR);
 
 					$this->main($id, 'list');
 					return;
@@ -128,7 +128,7 @@ class authors_main extends titania_object
 					'ON'	=> 'a.user_id = u.user_id'
 				),
 			),
-			'WHERE'		=> 'a.author_visible <> ' . AUTHOR_HIDDEN,
+			'WHERE'		=> 'a.author_visible <> ' . TITANIA_AUTHOR_HIDDEN,
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
 

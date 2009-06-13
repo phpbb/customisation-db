@@ -32,7 +32,7 @@ switch ($id)
 	case 'support':
 		$style = new titania_style($contrib_id);
 
-		if (!$style->load() || $style->contrib_type != CONTRIB_TYPE_STYLE)
+		if (!$style->load() || $style->contrib_type != TITANIA_TYPE_STYLE)
 		{
 			titania::trigger_error('ERROR_CONTRIB_NOT_FOUND', E_USER_NOTICE, HEADER_NOT_FOUND);
 		}

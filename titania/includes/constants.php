@@ -39,9 +39,9 @@ define('TITANIA_CONTRIB_FAQ_TABLE',			$table_prefix . 'contrib_faq');
 define('TITANIA_RATINGS_TABLE',				$table_prefix . 'ratings');
 
 // Customisation/Queue (contrib) status
-define('STATUS_NEW', 0);
-define('STATUS_APPROVED', 1);
-define('STATUS_DENIED', 2);
+define('TITANIA_STATUS_NEW', 0);
+define('TITANIA_STATUS_APPROVED', 1);
+define('TITANIA_STATUS_DENIED', 2);
 define('TITANIA_STATUS_TESTING', 3);
 define('TITANIA_STATUS_ATTENTION', 4);
 define('TITANIA_STATUS_APPROVE', 5); // Awaiting approve
@@ -53,8 +53,8 @@ define('TAG_TYPE_COMPONENT', 2);
 define('TAG_TYPE_COMPLEXITY', 3);
 
 // Errorbox types
-define('ERROR_ERROR', 1);
-define('ERROR_SUCCESS', 2);
+define('TITANIA_ERROR', 1);
+define('TITANIA_SUCCESS', 2);
 
 // Header status codes
 define('HEADER_OK',						200);
@@ -81,18 +81,18 @@ define('HEADER_BAD_GATEWAY',			502);
 define('HEADER_SERVICE_UNAVAILABLE',	503);
 
 // Customisation (contrib) type
-define('CONTRIB_TYPE_MOD', 1);
-define('CONTRIB_TYPE_STYLE', 2);
-define('CONTRIB_TYPE_SNIPPET', 3);
-define('CONTRIB_TYPE_LANG_PACK', 4);
+define('TITANIA_TYPE_MOD', 1);
+define('TITANIA_TYPE_STYLE', 2);
+define('TITANIA_TYPE_SNIPPET', 3);
+define('TITANIA_TYPE_LANG_PACK', 4);
 
 // Author constants
-define('AUTHOR_HIDDEN', 0);
-define('AUTHOR_VISIBLE', 1);
+define('TITANIA_AUTHOR_HIDDEN', 0);
+define('TITANIA_AUTHOR_VISIBLE', 1);
 
 // Rating Type Constants
-define('RATING_AUTHOR', 1);
-define('RATING_CONTRIB', 2);
+define('TITANIA_RATING_AUTHOR', 1);
+define('TITANIA_RATING_CONTRIB', 2);
 
 // Download types
 define('TITANIA_DOWNLOAD_CONTRIB', 1);
