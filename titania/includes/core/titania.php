@@ -128,7 +128,7 @@ class titania
 	{
 		$object_name = preg_replace('#(^A-Za-z0-9)#', '', $object_name);
 
-		if (class_exists($object_name))
+		if (class_exists('titania_' . $object_name))
 		{
 			return;
 		}
