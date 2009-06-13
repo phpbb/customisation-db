@@ -40,8 +40,7 @@ class titania_config extends titania_object
 			'phpbbcom_profile'			=> array('default' => true),
 			'phpbbcom_viewprofile_url'	=> array('default' => 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
 			'table_prefix'				=> array('default' => 'customisation_'),
-			'template_path'				=> array('default' => TITANIA_ROOT . 'template/'),
-			'theme_path'				=> array('default' => TITANIA_ROOT . 'theme/'),
+			'style'						=> array('default' => 'default'),
 
 			'max_rating'				=> array('default' => 5),
 		));

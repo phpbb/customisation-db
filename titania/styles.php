@@ -2,7 +2,7 @@
 /**
  *
  * @package titania
- * @version $Id$
+ * @version $Id: index.php 199 2009-04-11 19:54:15Z bantu $
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -12,7 +12,7 @@
 * @ignore
 */
 define('IN_TITANIA', true);
-if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', '../');
+if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 require TITANIA_ROOT . 'includes/objects/style.' . PHP_EXT;

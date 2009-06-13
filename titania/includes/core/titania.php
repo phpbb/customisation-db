@@ -49,6 +49,15 @@ class titania
 	 */
 	public static $time;
 
+	/**
+	 * Style, Template, and Theme Path
+	 *
+	 * @var string
+	 */
+	public static $style_path;
+	public static $template_path;
+	public static $theme_path;
+
 	/*
 	 * Initialise titania:
 	 *	Session management, Cache, Language ...
@@ -75,7 +84,11 @@ class titania
 		self::$cache = new titania_cache();
 
 		// Set template path and template name
-		phpbb::$template->set_custom_template(self::$config->template_path, 'titania');
+		self::$style_path = TITANIA_ROOT . 'styles/' . self::$config->style . '/';
+		self::$template_path = self::$style_path . 'template/';
+		self::$theme_path = self::$style_path . 'theme/';
+
+		phpbb::$template->set_custom_template(self::$template_path, 'titania');
 
 		// Add common titania language file
 		self::add_lang('common');
@@ -189,8 +202,8 @@ class titania
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
 			'LOGIN_REDIRECT'		=> self::$page,
 			'S_LOGIN_ACTION'		=> append_sid(PHPBB_ROOT_PATH . 'ucp.' . PHP_EXT, 'mode=login'),
-			'T_TITANIA_THEME_PATH'	=> self::$config->theme_path,
-			'T_TITANIA_STYLESHEET'	=> self::$config->theme_path . 'stylesheet.css',
+			'T_TITANIA_THEME_PATH'	=> self::$theme_path,
+			'T_TITANIA_STYLESHEET'	=> self::$theme_path . 'stylesheet.css',
 		));
 	}
 

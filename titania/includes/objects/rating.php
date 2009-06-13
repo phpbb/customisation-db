@@ -204,15 +204,15 @@ class titania_rating extends titania_database_object
 			$final_code .= '<img id="' . $this->object_id . '_' . $i . '" ';
 			if ($this->rating_id && $i <= $this->rating) // If they have rated, show their own rating in green stars
 			{
-				$final_code .= 'src="' . titania::$config->theme_path . '/images/star_green.gif" ';
+				$final_code .= 'src="' . titania::$theme_path . '/images/star_green.gif" ';
 			}
 			else if (!$this->rating_id && $i <= round($this->rating)) // Round because we only have full stars ATM, orange stars for the average rating (if the user has not rated)
 			{
-				$final_code .= 'src="' . titania::$config->theme_path . '/images/star_orange.gif" ';
+				$final_code .= 'src="' . titania::$theme_path . '/images/star_orange.gif" ';
 			}
 			else // show the rest in grey stars
 			{
-				$final_code .= 'src="' . titania::$config->theme_path . '/images/star_grey.gif" ';
+				$final_code .= 'src="' . titania::$theme_path . '/images/star_grey.gif" ';
 			}
 			$final_code .= ($can_rate) ? "onmouseover=\"ratingHover('{$i}', '{$this->object_id}')\"  onmouseout=\"ratingUnHover('{$this->rating}', '{$this->object_id}')\"  onmousedown=\"ratingDown('{$i}', '{$this->object_id}')\"" : '';
 			$final_code .= ' alt="' . $title . '" title="' . $title . '" />';
@@ -222,7 +222,7 @@ class titania_rating extends titania_database_object
 		// If they have rated already we will add the remove rating icon at the end
 		if ($this->rating_id)
 		{
-			$final_code .= ' <a href="' . $rate_url . '&amp;value=remove"><img id="' . $this->object_id . '_remove" src="' . titania::$config->theme_path . '/images/star_remove.gif"  alt="' . phpbb::$user->lang['REMOVE_RATING'] . '" title="' . phpbb::$user->lang['REMOVE_RATING'] . '" /></a>';
+			$final_code .= ' <a href="' . $rate_url . '&amp;value=remove"><img id="' . $this->object_id . '_remove" src="' . titania::$theme_path . '/images/star_remove.gif"  alt="' . phpbb::$user->lang['REMOVE_RATING'] . '" title="' . phpbb::$user->lang['REMOVE_RATING'] . '" /></a>';
 		}
 
 		$final_code .= '</span>';
