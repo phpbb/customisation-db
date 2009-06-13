@@ -278,29 +278,6 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 * Gets phpBB version from integer
-	 *	20 => 2.0.x
-	 *	30 => 3.0.x
-	 *	2 => 2.0.x
-	 *	3 => 3.0.x
-	 *	32 => 3.2.x
-	 *	etc
-	 *
-	 * @return string
-	 */
-	public function get_phpbb_version()
-	{
-		$version = (string) $this->contrib_phpbb_version;
-
-		if (!isset($version{1}))
-		{
-			$version{1} = 0;
-		}
-
-		return sprintf('%u.%u.x', $version{0}, $version{1});
-	}
-
-	/**
 	* Immediately increases the view counter for this contribution
 	*
 	* @return void
@@ -511,7 +488,7 @@ class titania_contribution extends titania_database_object
 			'CONTRIB_RATINGS'			=> $this->contrib_rating_count,
 
 			'CONTRIB_VERSION'			=> $this->contrib_version,
-			'CONTRIB_PHPBB_VERSION'		=> $this->get_phpbb_version(),
+			'CONTRIB_PHPBB_VERSION'		=> get_version_string($this->contrib_phpbb_version),
 
 			'CONTRIB_RELEASE_DATE'		=> phpbb::$user->format_date($this->contrib_release_date),
 			'CONTRIB_UPDATE_DATE'		=> ($this->contrib_update_date > $this->contrib_release_date) ? phpbb::$user->format_date($this->contrib_update_date) : '',

@@ -1,16 +1,18 @@
 <?php
 /**
-*
-* umil [English]
-*
-* @author Nathan Guse (EXreaction) http://lithiumstudios.org
-* @package phpBB3 UMIL - Unified MOD Install File
-* @version $Id: umil.php 88 2009-01-28 03:51:36Z HighwayofLife $
-* @copyright (c) 2009 phpBB Group
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License
-*
-*/
+ *
+ * @author Nathan Guse (EXreaction) http://lithiumstudios.org
+ * @author David Lewis (Highway of Life) highwayoflife@gmail.com
+ * @package umil
+ * @version $Id: umil.php 139 2009-05-28 00:32:44Z exreaction $
+ * @copyright (c) 2008 phpBB Group
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ *
+ */
 
+/**
+ * @ignore
+ */
 if (!defined('IN_PHPBB'))
 {
 	exit;
@@ -98,13 +100,15 @@ $lang = array_merge($lang, array(
 	'TABLE_COLUMN_NOT_EXIST'		=> 'ERROR: The column %2$s does not exist on table %1$s.',
 	'TABLE_COLUMN_REMOVE'			=> 'Removing the column named %2$s from table %1$s',
 	'TABLE_COLUMN_UPDATE'			=> 'Updating a column named %2$s from table %1$s',
-	'TABLE_INSERT_DATA'				=> 'Inserting rows to the %s database table.',
 	'TABLE_KEY_ADD'					=> 'Adding a key named %2$s to table %1$s',
 	'TABLE_KEY_ALREADY_EXIST'		=> 'ERROR: The index %2$s already exists on table %1$s.',
 	'TABLE_KEY_NOT_EXIST'			=> 'ERROR: The index %2$s does not exist on table %1$s.',
 	'TABLE_KEY_REMOVE'				=> 'Removing a key named %2$s from table %1$s',
 	'TABLE_NOT_EXIST'				=> 'ERROR: Database table %s does not exist.',
 	'TABLE_REMOVE'					=> 'Removing database table: %s',
+	'TABLE_ROW_INSERT_DATA'			=> 'Inserting data in the %s database table.',
+	'TABLE_ROW_REMOVE_DATA'			=> 'Removing a row from the %s database table',
+	'TABLE_ROW_UPDATE_DATA'			=> 'Updating a row in the %s database table.',
 	'TEMPLATE_CACHE_PURGE'			=> 'Refreshing the %s template',
 	'THEME_CACHE_PURGE'				=> 'Refreshing the %s theme',
 

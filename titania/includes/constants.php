@@ -81,6 +81,7 @@ define('HEADER_BAD_GATEWAY',			502);
 define('HEADER_SERVICE_UNAVAILABLE',	503);
 
 // Customisation (contrib) type
+define('TITANIA_TYPE_CATEGORY', 0); // Used in categories
 define('TITANIA_TYPE_MOD', 1);
 define('TITANIA_TYPE_STYLE', 2);
 define('TITANIA_TYPE_SNIPPET', 3);
