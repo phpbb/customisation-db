@@ -31,24 +31,6 @@ function titania_sid($page, $params = false, $is_amp = true, $session_id = false
 }
 
 /**
-* Quick function to take a normal select query, turn it into a count query, run the query, then return the result.
-*
-* @param string $query The normal SQL Query
-* @param string $count_column The name of the column you would like to count (probably the primary key...)
-*/
-function sql_count_query($query, $count_column)
-{
-	$query = preg_replace('#SELECT(.*)FROM#', 'SELECT COUNT(' . $count_column . ') AS cnt FROM', $query);
-	$query = preg_replace('#LIMIT ([0-9]+)(, ([0-9]+))?#', '', $query);
-
-	phpbb::$db->sql_query($query);
-	$cnt = (int) phpbb::$db->sql_fetchfield('cnt');
-	phpbb::$db->sql_freeresult();
-
-	return $cnt;
-}
-
-/**
 * Get version string from version number
 *
 * @param int|string $version The version number 20 for 2.0.x, 30 for 3.0.x
