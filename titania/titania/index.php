@@ -2,7 +2,7 @@
 /**
  *
  * @package Titania
- * @version $Id: index.php 203 2009-06-08 22:37:52Z exreaction $
+ * @version $Id$
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
