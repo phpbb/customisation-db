@@ -27,20 +27,5 @@ if (!defined('IN_TITANIA'))
 */
 function titania_sid($page, $params = false, $is_amp = true, $session_id = false)
 {
-	return append_sid(TITANIA_ROOT . $page . '.' . PHP_EXT, $params = false, $is_amp = true, $session_id = false);
-}
-
-/**
-* Get version string from version number
-*
-* @param int|string $version The version number 20 for 2.0.x, 30 for 3.0.x
-*/
-function get_version_string($version)
-{
-	$version = (string) $version;
-	$major = (isset($version[0])) ? $version[0] : 0;
-	$minor = (isset($version[1])) ? $version[1] : 0;
-	$revision = (isset($version[2])) ? substr($version, 2) : 0;
-
-	return sprintf('%u.%u.%u', $major, $minor, $revision);
+	return append_sid(TITANIA_ROOT . $page . '.' . PHP_EXT, $params, $is_amp, $session_id);
 }

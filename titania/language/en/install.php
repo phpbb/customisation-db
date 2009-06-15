@@ -39,3 +39,4 @@ $lang = array_merge($lang, array(
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
 ));
 
+?>

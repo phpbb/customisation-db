@@ -28,6 +28,7 @@ titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);
 // Include titania constants
 require TITANIA_ROOT . 'includes/constants.' . PHP_EXT;
 require TITANIA_ROOT . 'includes/functions.' . PHP_EXT;
+require TITANIA_ROOT . 'includes/functions_display.' . PHP_EXT;
 
 // We need this for compatibility reasons
 $phpEx = PHP_EXT;

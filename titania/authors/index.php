@@ -12,7 +12,7 @@
  * @ignore
  */
 define('IN_TITANIA', true);
-if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
+if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', '../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 require TITANIA_ROOT . 'includes/core/modules.' . PHP_EXT;

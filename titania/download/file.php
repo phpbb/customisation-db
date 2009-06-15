@@ -48,11 +48,11 @@ try
 }
 catch (DownloadAccessDeniedException $e)
 {
-	policy::download_access_denied($download);
+	$download->trigger_not_found();
 }
 catch (NoDataFoundException $e)
 {
-	policy::download_not_found($download);
+	$download->trigger_not_found();
 }
 
 exit;

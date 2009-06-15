@@ -8,14 +8,13 @@
  *
  */
 
-class mods_main_info
+class authors_details_info
 {
 	function module()
 	{
 		return array(
 			'modes'		=> array(
-				'categories'		=> array('title' => 'MODS_CATEGORIES', 'auth' => ''),
-				'list'				=> array('title' => 'MODS_LIST', 'auth' => ''),
+				'details'		=> array('title' => 'AUTHOR_DETAILS', 'auth' => ''),
 			),
 		);
 	}

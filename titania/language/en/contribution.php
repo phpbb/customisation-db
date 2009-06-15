@@ -36,38 +36,29 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'CONTRIB'				=> 'Contribution',
-	'CONTRIB_AUTHOR'		=> 'Contribution Author',
-	'CONTRIB_DESCRIPTION'	=> 'Contribution Description',
-	'CONTRIB_DETAILS'		=> 'Contribution Details',
-	'CONTRIB_FAQ'			=> 'Contribution FAQ',
-	'CONTRIB_NAME'			=> 'Contribution', // != CONTRIB
-	'CONTRIB_RELEASE_DATE'	=> 'Release date',
-	'CONTRIB_SCREENSHOTS'	=> 'Screenshots',
-	'CONTRIB_STATISTICS'	=> 'Contribution Statistics',
-	'CONTRIB_SUPPORT'		=> 'Support',
-	'CONTRIB_TITLE'			=> 'Contribution Title',
-	'CONTRIB_UPDATE_DATE'	=> 'Last updated',
+	'CONTRIB'						=> 'Contribution',
+	'CONTRIB_AUTHOR'				=> 'Contribution Author',
+	'CONTRIB_CAT_DETAILS'			=> 'Details',
+	'CONTRIB_CAT_FAQ'				=> 'FAQ',
+	'CONTRIB_CAT_MAIN'				=> 'Contributions',
+	'CONTRIB_CAT_SUPPORT'			=> 'Discussion/Support',
+	'CONTRIB_DESCRIPTION'			=> 'Contribution Description',
+	'CONTRIB_DETAILS'				=> 'Contribution Details',
+	'CONTRIB_FAQ'					=> 'FAQ',
+	'CONTRIB_NAME'					=> 'Contribution',
+	'CONTRIB_RELEASE_DATE'			=> 'Release date',
+	'CONTRIB_SUPPORT'				=> 'Discussion/Support',
+	'CONTRIB_TITLE'					=> 'Contribution Title',
+	'CONTRIB_UPDATE_DATE'			=> 'Last updated',
 
-	'DOWNLOAD_CHECKSUM'		=> 'MD5 checksum',
-	'DOWNLOADS'				=> 'Downloads',
-	'DOWNLOADS_PER_DAY'		=> '%.2f Downloads per Day',
-	'DOWNLOADS_TOTAL'		=> 'Total Downloads',
-	'DOWNLOADS_VERSION'		=> 'Version Downloads',
+	'DOWNLOADS'						=> 'Downloads',
+	'DOWNLOADS_PER_DAY'				=> '%.2f Downloads per Day',
+	'DOWNLOADS_TOTAL'				=> 'Total Downloads',
+	'DOWNLOADS_VERSION'				=> 'Version Downloads',
+	'DOWNLOAD_CHECKSUM'				=> 'MD5 checksum',
 
-	'ERROR_CONTRIB_NOT_FOUND'		=> 'The contribution you requested could not be found.',
 	'ERROR_CONTRIB_EMAIL_FRIEND'	=> 'You are not permitted to recommend this contribution to someone else.',
-
-	'PHPBB_VERSION'			=> 'phpBB Version',
-
-	'RATING_OUT_OF_FIVE'	=> '%.1f out of 5.0',
-
-	'rating'				=> array(
-		5	=> 'Excellent',
-		4	=> 'Good',
-		3	=> 'Average',
-		2	=> 'Poor',
-		1	=> 'Horrible',
-	),
+	'ERROR_CONTRIB_NOT_FOUND'		=> 'The contribution you requested could not be found.',
 ));
 
+?>

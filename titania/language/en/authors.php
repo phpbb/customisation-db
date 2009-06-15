@@ -36,28 +36,28 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'AUTHOR_CONTRIBS'	=> 'Contribs',
-	'AUTHOR_LIST'		=> 'Author List',
-	'AUTHOR_MODS'		=> 'MODs',
-	'AUTHOR_NOT_FOUND'	=> 'Author not found',
-	'AUTHOR_PROFILE'	=> 'Author Profile',
-	'AUTHOR_RATING'		=> 'Rating',
-	'AUTHOR_SNIPPETS'	=> 'Snippets',
-	'AUTHOR_STYLES'		=> 'Styles',
+	'AUTHORS_CAT_CONTRIBUTIONS'	=> 'Contributions',
+	'AUTHORS_CAT_DETAILS'		=> 'Main',
+	'AUTHORS_CAT_SUPPORT'		=> 'Support/Discussion',
+	'AUTHORS_DETAILS'			=> 'Main',
+	'AUTHOR_CONTRIBUTIONS'		=> 'Contributions',
+	'AUTHOR_NOT_FOUND'			=> 'Author not found',
+	'AUTHOR_SUPPORT'			=> 'Support/Discussion',
 
-	'NUM_CONTRIB'		=> '%s Contribution',
-	'NUM_CONTRIBS'		=> '%s Contributions',
-	'NUM_MOD'			=> '%s MOD',
-	'NUM_MODS'			=> '%s MODs',
-	'NUM_STYLE'			=> '%s Style',
-	'NUM_STYLES'		=> '%s Styles',
-	'NUM_SNIPPET'		=> '%s Snippet',
-	'NUM_SNIPPETS'		=> '%s Snippets',
+	'NUM_CONTRIB'				=> '%s Contribution',
+	'NUM_CONTRIBS'				=> '%s Contributions',
+	'NUM_MOD'					=> '%s MOD',
+	'NUM_MODS'					=> '%s MODs',
+	'NUM_SNIPPET'				=> '%s Snippet',
+	'NUM_SNIPPETS'				=> '%s Snippets',
+	'NUM_STYLE'					=> '%s Style',
+	'NUM_STYLES'				=> '%s Styles',
 
-	'PHPBB_PROFILE'		=> 'phpBB.com profile',
+	'PHPBB_PROFILE'				=> 'phpBB.com profile',
 
-	'REAL_NAME'			=> 'Real Name',
+	'REAL_NAME'					=> 'Real Name',
 
-	'USER_INFORMATION'	=> '’s user information',
+	'USER_INFORMATION'			=> '’s user information',
 ));
 
+?>

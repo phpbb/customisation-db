@@ -8,15 +8,13 @@
  *
  */
 
-class mods_faq_info
+class authors_contributions_info
 {
 	function module()
 	{
 		return array(
 			'modes'		=> array(
-				'faq'			=> array('title' => 'MODS_FAQ', 'auth' => ''),
-				'manage'		=> array('title' => 'MODS_MANAGE_FAQ', 'auth' => ''),
-				'view'			=> array('title' => 'MODS_VIEW_FAQ', 'auth' => ''),
+				'contributions'		=> array('title' => 'AUTHOR_CONTRIBUTIONS', 'auth' => ''),
 			),
 		);
 	}

@@ -82,6 +82,8 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'category_id'			=> array('UINT', NULL, 'auto_increment'),
 					'parent_id'				=> array('UINT', 0),
+					'left_id'				=> array('UINT', 0),
+					'right_id'				=> array('UINT', 0),
 					'category_type'			=> array('TINT:1', 0), // Check TITANIA_TYPE_ constants
 					'category_contribs'		=> array('UINT', 0), // Number of items
 					'category_visible'		=> array('BOOL', 1),
@@ -90,6 +92,7 @@ $versions = array(
 				'PRIMARY_KEY'	=> 'category_id',
 				'KEYS'			=> array(
 					'parent_id'			=> array('INDEX', 'parent_id'),
+					'left_right_id'		=> array('INDEX', array('left_id', 'right_id')),
 					'category_type'		=> array('INDEX', 'category_type'),
 					'category_visible'	=> array('INDEX', 'category_visible'),
 				),
@@ -98,7 +101,6 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'contrib_id'					=> array('UINT', NULL, 'auto_increment'),
 					'contrib_user_id'				=> array('UINT', 0),
-					'contrib_maintainer'			=> array('UINT', 0), // ???
 					'contrib_type'					=> array('TINT:1', 0),
 					'contrib_name'					=> array('STEXT_UNI', '', 'true_sort'),
 					'contrib_name_clean'			=> array('VCHAR_CI', ''),
@@ -107,18 +109,10 @@ $versions = array(
 					'contrib_desc_uid'				=> array('VCHAR:8', ''),
 					'contrib_desc_options'			=> array('UINT:11', 7),
 					'contrib_status'				=> array('TINT:2', 0),
-					'contrib_version'				=> array('VCHAR:15', 0), // don't think we need, we will need to get all the revisions anyways when displaying the mod
-					'contrib_revision'				=> array('UINT', 0), // don't think we need...
-					'contrib_validated_version'		=> array('VCHAR:15', 0), // don't think we need...
-					'contrib_validated_revision'	=> array('UINT', 0), // don't think we need...
-					'contrib_release_date'			=> array('INT:11', 0), // don't think we need...
-					'contrib_update_date'			=> array('INT:11', 0), // don't think we need...
 					'contrib_downloads'				=> array('UINT', 0),
 					'contrib_views'					=> array('UINT', 0),
-					'contrib_phpbb_version'			=> array('TINT:2', 0), // 3.0.0 -> 30, 3.2.0 -> 32
 					'contrib_rating'				=> array('DECIMAL', 0),
 					'contrib_rating_count'			=> array('UINT', 0),
-					'contrib_demo'					=> array('VCHAR:255', ''),
 					'contrib_visible'				=> array('BOOL', 1),
 				),
 				'PRIMARY_KEY'	=> 'contrib_id',
@@ -132,6 +126,13 @@ $versions = array(
 					'contrib_visible'		=> array('INDEX', 'contrib_visible'),
 				),
 			)),
+			array('customisation_contrib_in_categories', array(
+				'COLUMNS'		=> array(
+					'contrib_id'			=> array('UINT', 0),
+					'category_id'			=> array('UINT', 0),
+				),
+				'PRIMARY_KEY'	=> array('contrib_id', 'category_id'),
+			)),
 			array('customisation_contrib_coauthors', array(
 				'COLUMNS'		=> array(
 					'contrib_id'			=> array('UINT', 0),
@@ -144,7 +145,6 @@ $versions = array(
 					'faq_id'				=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'			=> array('UINT', 0),
 					'parent_id'				=> array('UINT', 0),
-					'contrib_version'		=> array('VCHAR:15', 0), // Remove this later (if it applies to a specific version the Mod author should just note it in the FAQ item, this is too clunky)
 					'faq_order_id'			=> array('UINT', 0),
 					'faq_subject'			=> array('STEXT_UNI', '', 'true_sort'),
 					'faq_text'				=> array('MTEXT_UNI', ''),
@@ -265,20 +265,22 @@ $versions = array(
 		),
 
 		'module_add' => array(
-			array('titania', 0, 'TITANIA_MAIN'),
-			array('titania', 'TITANIA_MAIN',	array('module_basename' => 'main'),		TITANIA_ROOT . 'modules/'),
+			//array('titania', 0, 'TITANIA_CAT_MAIN'),
+			//array('titania', 'TITANIA_MAIN',	array('module_basename' => 'main'),		TITANIA_ROOT . 'modules/'),
 
-			array('mods', 0, 'MODS_CAT_MAIN'),
-			array('mods', 'MODS_CAT_MAIN',		array('module_basename' => 'main'),		TITANIA_ROOT . 'modules/'),
-			array('mods', 0, 'MODS_CAT_DETAILS'),
-			array('mods', 'MODS_CAT_DETAILS',	array('module_basename' => 'details'),	TITANIA_ROOT . 'modules/'),
-			array('mods', 0, 'MODS_CAT_FAQ'),
-			array('mods', 'MODS_CAT_FAQ',		array('module_basename' => 'faq'),		TITANIA_ROOT . 'modules/'),
-			array('mods', 0, 'MODS_CAT_SUPPORT'),
-			array('mods', 'MODS_CAT_SUPPORT',	array('module_basename' => 'support'),	TITANIA_ROOT . 'modules/'),
+			array('contribs', 0, 'CONTRIB_CAT_DETAILS'),
+			array('contribs', 'CONTRIB_CAT_DETAILS',	array('module_basename' => 'details'),	TITANIA_ROOT . 'modules/'),
+			array('contribs', 0, 'CONTRIB_CAT_FAQ'),
+			array('contribs', 'CONTRIB_CAT_FAQ',		array('module_basename' => 'faq'),		TITANIA_ROOT . 'modules/'),
+			array('contribs', 0, 'CONTRIB_CAT_SUPPORT'),
+			array('contribs', 'CONTRIB_CAT_SUPPORT',	array('module_basename' => 'support'),	TITANIA_ROOT . 'modules/'),
 
-			array('authors', 0, 'AUTHORS_MAIN'),
-			array('authors', 'AUTHORS_MAIN',	array('module_basename' => 'main'),		TITANIA_ROOT . 'modules/'),
+			array('authors', 0, 'AUTHORS_CAT_DETAILS'),
+			array('authors', 'AUTHORS_CAT_DETAILS',	array('module_basename' => 'details'),					TITANIA_ROOT . 'modules/'),
+			array('authors', 0, 'AUTHORS_CAT_CONTRIBUTIONS'),
+			array('authors', 'AUTHORS_CAT_CONTRIBUTIONS',	array('module_basename' => 'contributions'),	TITANIA_ROOT . 'modules/'),
+			array('authors', 0, 'AUTHORS_CAT_SUPPORT'),
+			array('authors', 'AUTHORS_CAT_SUPPORT',	array('module_basename' => 'support'),					TITANIA_ROOT . 'modules/'),
 		),
 
 		'custom' => 'titania_data',
@@ -302,66 +304,88 @@ function titania_data($action, $version)
 		array(
 			'category_id'	=> 1,
 			'parent_id'		=> 0,
+			'left_id'		=> 1,
+			'right_id'		=> 22,
 			'category_type'	=> TITANIA_TYPE_CATEGORY,
 			'category_name'	=> 'phpBB3',
 		),
 		array(
 			'category_id'	=> 2,
 			'parent_id'		=> 1,
+			'left_id'		=> 2,
+			'right_id'		=> 19,
 			'category_type'	=> TITANIA_TYPE_CATEGORY,
 			'category_name'	=> 'CAT_MODIFICATIONS',
 		),
 		array(
 			'category_id'	=> 3,
 			'parent_id'		=> 1,
+			'left_id'		=> 20,
+			'right_id'		=> 21,
 			'category_type'	=> TITANIA_TYPE_STYLE,
 			'category_name'	=> 'CAT_STYLES',
 		),
 		array(
 			'category_id'	=> 4,
 			'parent_id'		=> 2,
+			'left_id'		=> 3,
+			'right_id'		=> 4,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_COSMETIC',
 		),
 		array(
 			'category_id'	=> 5,
 			'parent_id'		=> 2,
+			'left_id'		=> 5,
+			'right_id'		=> 6,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ADMIN_TOOLS',
 		),
 		array(
 			'category_id'	=> 6,
 			'parent_id'		=> 2,
+			'left_id'		=> 7,
+			'right_id'		=> 8,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_SECURITY',
 		),
 		array(
 			'category_id'	=> 7,
 			'parent_id'		=> 2,
+			'left_id'		=> 9,
+			'right_id'		=> 10,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_COMMUNICATION',
 		),
 		array(
 			'category_id'	=> 8,
 			'parent_id'		=> 2,
+			'left_id'		=> 11,
+			'right_id'		=> 12,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_PROFILE_UCP',
 		),
 		array(
 			'category_id'	=> 9,
 			'parent_id'		=> 2,
+			'left_id'		=> 13,
+			'right_id'		=> 14,
 			'category_type'	=> TITANIA_TYPE_MOD,
-			'category_name'	=> 'CAT_TOOLS',
+			'category_name'	=> 'CAT_ADDONS',
 		),
 		array(
 			'category_id'	=> 10,
 			'parent_id'		=> 2,
+			'left_id'		=> 15,
+			'right_id'		=> 16,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ANTI_SPAM',
 		),
 		array(
 			'category_id'	=> 11,
 			'parent_id'		=> 2,
+			'left_id'		=> 17,
+			'right_id'		=> 18,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ENTERTAINMENT',
 		),

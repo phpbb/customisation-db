@@ -15,26 +15,16 @@ define('IN_TITANIA', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
-require TITANIA_ROOT . 'includes/core/modules.' . PHP_EXT;
 
-$id		= request_var('id', 'main');
-$mode	= request_var('mode', '');
+$cat_id = request_var('c', 0);
 
-$module = new titania_modules();
+$current_category = display_categories($cat_id);
 
-// Instantiate module system and generate list of available modules
-$module->list_modules('titania');
+if ($cat_id != 0)
+{
+	display_contribs($cat_id);
+}
 
-// Select the active module
-$module->set_active($id, $mode);
+titania::page_header('CUSTOMISATION_DATABASE');
 
-// Load and execute the relevant module
-$module->load_active();
-
-// Assign data to the template engine for the list of modules
-$module->assign_tpl_vars(append_sid(TITANIA_ROOT . 'index.' . PHP_EXT));
-
-// Output page
-titania::page_header($module->get_page_title());
-
-titania::page_footer(true, $module->get_tpl_name());
+titania::page_footer(true, 'index_body.html');

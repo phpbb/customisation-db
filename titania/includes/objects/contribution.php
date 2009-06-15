@@ -82,26 +82,16 @@ class titania_contribution extends titania_database_object
 			'contrib_desc_options'			=> array('default' => 7,	'readonly' => true),
 
 			'contrib_status'				=> array('default' => TITANIA_STATUS_NEW),
-			'contrib_version'				=> array('default' => '',	'max' => 15),
-
-			'contrib_revision'				=> array('default' => 0),
-			'contrib_validated_revision'	=> array('default' => 0),
 
 			'contrib_user_id'				=> array('default' => 0),
-			'contrib_maintainer'			=> array('default' => 0),
 
 			'contrib_downloads'				=> array('default' => 0),
 			'contrib_views'					=> array('default' => 0),
 
-			'contrib_phpbb_version'			=> array('default' => 3),
-			'contrib_release_date'			=> array('default' => 0),
-			'contrib_update_date'			=> array('default' => 0),
 			'contrib_visible'				=> array('default' => 0),
 
 			'contrib_rating'				=> array('default' => 0.0),
 			'contrib_rating_count'			=> array('default' => 0),
-
-			'contrib_demo'					=> array('default' => '',	'max' => 255,	'multibyte' => false),
 		));
 
 		if ($contrib_id !== false)

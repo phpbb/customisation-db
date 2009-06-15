@@ -24,19 +24,21 @@ define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
 
 // Table names
 $table_prefix = titania::$config->table_prefix;
-define('TITANIA_ATTACHMENTS_TABLE',			$table_prefix . 'attachments');
-define('TITANIA_AUTHORS_TABLE',				$table_prefix . 'authors');
-define('TITANIA_CONTRIBS_TABLE',			$table_prefix . 'contribs');
-define('TITANIA_CONTRIB_TAGS_TABLE',		$table_prefix . 'contrib_tags');
-define('TITANIA_CONTRIB_COAUTHORS_TABLE',	$table_prefix . 'contrib_coauthors');
-define('TITANIA_QUEUE_TABLE',				$table_prefix . 'queue');
-define('TITANIA_QUEUE_HISTORY_TABLE',		$table_prefix . 'queue_history');
-define('TITANIA_REVISIONS_TABLE',			$table_prefix . 'revisions');
-define('TITANIA_TAG_FIELDS_TABLE',			$table_prefix . 'tag_fields');
-define('TITANIA_TAG_TYPES_TABLE',			$table_prefix . 'tag_types');
-define('TITANIA_WATCH_TABLE',				$table_prefix . 'watch');
-define('TITANIA_CONTRIB_FAQ_TABLE',			$table_prefix . 'contrib_faq');
-define('TITANIA_RATINGS_TABLE',				$table_prefix . 'ratings');
+define('TITANIA_ATTACHMENTS_TABLE',				$table_prefix . 'attachments');
+define('TITANIA_AUTHORS_TABLE',					$table_prefix . 'authors');
+define('TITANIA_CATEGORIES_TABLE',				$table_prefix . 'categories');
+define('TITANIA_CONTRIBS_TABLE',				$table_prefix . 'contribs');
+define('TITANIA_CONTRIB_IN_CATEGORIES_TABLE',	$table_prefix . 'contrib_in_categories');
+define('TITANIA_CONTRIB_TAGS_TABLE',			$table_prefix . 'contrib_tags');
+define('TITANIA_CONTRIB_COAUTHORS_TABLE',		$table_prefix . 'contrib_coauthors');
+define('TITANIA_QUEUE_TABLE',					$table_prefix . 'queue');
+define('TITANIA_QUEUE_HISTORY_TABLE',			$table_prefix . 'queue_history');
+define('TITANIA_REVISIONS_TABLE',				$table_prefix . 'revisions');
+define('TITANIA_TAG_FIELDS_TABLE',				$table_prefix . 'tag_fields');
+define('TITANIA_TAG_TYPES_TABLE',				$table_prefix . 'tag_types');
+define('TITANIA_WATCH_TABLE',					$table_prefix . 'watch');
+define('TITANIA_CONTRIB_FAQ_TABLE',				$table_prefix . 'contrib_faq');
+define('TITANIA_RATINGS_TABLE',					$table_prefix . 'ratings');
 
 // Customisation/Queue (contrib) status
 define('TITANIA_STATUS_NEW', 0);

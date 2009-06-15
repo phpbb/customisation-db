@@ -8,15 +8,13 @@
  *
  */
 
-class authors_main_info
+class authors_support_info
 {
 	function module()
 	{
 		return array(
 			'modes'		=> array(
-				'list'			=> array('title' => 'AUTHORS_LIST', 'auth' => ''),
-				'profile'		=> array('title' => 'AUTHOR_PROFILE', 'auth' => ''),
-				'search'		=> array('title' => 'AUTHOR_SEARCH', 'auth' => ''),
+				'support'		=> array('title' => 'AUTHOR_SUPPORT', 'auth' => ''),
 			),
 		);
 	}
