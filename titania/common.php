@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-define('TITANIA_VERSION', '0.1.0');
+define('TITANIA_VERSION', '0.1.2');
 
 // Include titania class
 require TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT;

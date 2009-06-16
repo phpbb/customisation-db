@@ -144,7 +144,7 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'faq_id'				=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'			=> array('UINT', 0),
-					'parent_id'                                => array('UINT', 0),
+					'parent_id'				=> array('UINT', 0), // Removed in 0.1.1
 					'faq_order_id'			=> array('UINT', 0),
 					'faq_subject'			=> array('STEXT_UNI', '', 'true_sort'),
 					'faq_text'				=> array('MTEXT_UNI', ''),
@@ -287,14 +287,14 @@ $versions = array(
 
 		'cache_purge' => '',
 	),
-	
-        '0.1.1' => array(
-                'column_remove' => array(
-                        array('customisation_contrib_faq', 'parent_id'),
-                ),
-                
+
+	'0.1.1' => array(
+		'table_column_remove' => array(
+			array('customisation_contrib_faq', 'parent_id'),
+		),
+
 		'permission_add' => array(
-		        'titania_faq_create',
+			'titania_faq_create',
 			'titania_faq_edit',
 			'titania_faq_delete',
 			'titania_faq_mod',
@@ -304,8 +304,17 @@ $versions = array(
 			array('ROLE_ADMIN_FULL', array('titania_faq_mod')),
 			array('ROLE_MOD_FULL', array('titania_faq_mod')),
 		),
-        ),
-        
+	),
+
+	'0.1.2' => array(
+		'table_column_add' => array(
+			array('customisation_authors', 'author_desc', array('MTEXT_UNI', '')),
+			array('customisation_authors', 'author_desc_bitfield', array('VCHAR:255', '')),
+			array('customisation_authors', 'author_desc_uid', array('VCHAR:8', '')),
+			array('customisation_authors', 'author_desc_options', array('UINT:11', 7)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
@@ -318,7 +327,7 @@ function titania_data($action, $version)
 		return;
 	}
 
-	$sql_ary = array(
+	$categories = array(
 		array(
 			'category_id'	=> 1,
 			'parent_id'		=> 0,
@@ -409,7 +418,42 @@ function titania_data($action, $version)
 		),
 	);
 
-	$umil->table_row_insert('customisation_categories', $sql_ary);
+	$umil->table_row_insert('customisation_categories', $categories);
+
+	$author = array(array(
+		'user_id'			=> phpbb::$user->data['user_id'],
+		'author_realname'	=> '|nub',
+		'author_website'	=> 'http://teh.nub.com/',
+		'author_contribs'	=> 1,
+		'author_mods'		=> 1,
+	));
+	$umil->table_row_insert('customisation_authors', $author);
+
+	$mod = array(array(
+		'contrib_id'			=> 1,
+		'contrib_user_id'		=> phpbb::$user->data['user_id'],
+		'contrib_type'			=> TITANIA_TYPE_MOD,
+		'contrib_name'			=> 'Nub Mod',
+		'contrib_name_clean'	=> 'nub mod',
+		'contrib_description'	=> 'This mod will turn all users into nubs.',
+		'contrib_desc_bitfield'	=> '',
+		'contrib_desc_uid'		=> '',
+		'contrib_desc_options'	=> 0,
+		'contrib_status'		=> TITANIA_STATUS_NEW,
+	));
+	$umil->table_row_insert('customisation_contribs', $mod);
+
+	$in_categories = array(
+		array(
+			'category_id'	=> 9,
+			'contrib_id'	=> 1,
+		),
+		array(
+			'category_id'	=> 11,
+			'contrib_id'	=> 1,
+		),
+	);
+	$umil->table_row_insert('customisation_contrib_in_categories', $in_categories);
 }
 
 include(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT);
