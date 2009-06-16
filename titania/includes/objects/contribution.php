@@ -197,57 +197,32 @@ class titania_contribution extends titania_database_object
 	 */
 	public function get_author()
 	{
+		if ($this->author)
+		{
+			return $this->author;
+		}
+
 		if (!class_exists('titania_author'))
 		{
 			require TITANIA_ROOT . 'includes/objects/author.' . PHP_EXT;
 		}
 
-		$author = new titania_author($this->contrib_user_id);
-		$author->load();
+		$this->author = new titania_author($this->contrib_user_id);
+		$this->author->load();
 
-		return $author;
-	}
-
-	/**
-	 * Get the download as an object
-	 *
-	 * @param bool $validated
-	 *
-	 * @return titania_download
-	 */
-	public function get_download($validated = true)
-	{
-		if (!class_exists('titania_download'))
-		{
-			require TITANIA_ROOT . 'includes/objects/download.' . PHP_EXT;
-		}
-
-		$revision_id = ($validated) ? $this->contrib_validated_revision : $this->contrib_revision;
-
-		$download = new titania_download();
-		$download->load($revision_id);
-
-		return $download;
-	}
-
-	/*
-	 * Get download URL
-	 *
-	 * @return string
-	 */
-	public function get_download_url()
-	{
-		return append_sid(TITANIA_ROOT . 'download/file.' . PHP_EXT, 'contrib_id=' . $this->contrib_id);
+		return $this->author;
 	}
 
 	/**
 	 * Get downloads per day
 	 *
 	 * @return string
+	 *
+	 * @todo Get the oldest revision_id to display this?
 	 */
 	public function get_downloads_per_day()
 	{
-		static $day_seconds = 86400; // 24 * 60 * 60
+		return 0;
 
 		// Cannot calculate anything without release date
 		// No point in showing this if there were no downloads
@@ -259,12 +234,12 @@ class titania_contribution extends titania_database_object
 		$time_elapsed = titania::$time - $this->contrib_release_date;
 
 		// The release was just today, show nothing.
-		if ($time_elapsed <= $day_seconds)
+		if ($time_elapsed <= 86400)
 		{
 			return '';
 		}
 
-		return sprintf(phpbb::$user->lang['DOWNLOADS_PER_DAY'], $this->contrib_downloads / ($time_elapsed / $day_seconds));
+		return sprintf(phpbb::$user->lang['DOWNLOADS_PER_DAY'], $this->contrib_downloads / ($time_elapsed / 86400));
 	}
 
 	/**
@@ -286,6 +261,8 @@ class titania_contribution extends titania_database_object
 	 * Recommend contribution to a friend
 	 *
 	 * @return bool		true if mail sent
+	 *
+	 * @todo I think this should be moved out from here.  Takes up a lot of lines and handling it should be the job of the module
 	 */
 	public function email_friend()
 	{
@@ -423,72 +400,36 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 * Passes common variables to the template
-	 *
-	 * @return void
-	 */
-	public function assign_common()
-	{
-		if (!$this->author)
-		{
-			$this->author = $this->get_author();
-		}
-
-		if (!$this->download)
-		{
-			$this->download = $this->get_download();
-		}
-
-		phpbb::$template->assign_vars(array(
-			// General urls
-			'U_CONTRIB_DETAILS'			=> append_sid(titania::$page, array('id' => 'details', 'contrib_id' => $this->contrib_id)),
-			'U_CONTRIB_SUPPORT'			=> append_sid(titania::$page, array('id' => 'support', 'contrib_id' => $this->contrib_id)),
-			'U_CONTRIB_SCREENSHOTS'		=> append_sid(titania::$page, array('id' => 'screenshots', 'contrib_id' => $this->contrib_id)),
-			'U_CONTRIB_FAQ'				=> append_sid(titania::$page, array('id' => 'faq', 'contrib_id' => $this->contrib_id)),
-
-			// Contribution data
-			'CONTRIB_TITLE'				=> $this->contrib_name,
-		));
-	}
-
-	/**
 	 * Passes details to the template
 	 *
 	 * @return void
 	 */
 	public function assign_details()
 	{
+		if (!$this->author)
+		{
+			$this->get_author();
+		}
+
 		phpbb::$template->assign_vars(array(
 			// Author data
-			'AUTHOR_NAME'				=> $this->author->author_username,
-			'AUTHOR_REALNAME'			=> $this->author->author_realname,
+			'AUTHOR_NAME'					=> $this->author->username,
+			'AUTHOR_NAME_FULL'				=> $this->author->get_username_string(),
+			'AUTHOR_REALNAME'				=> $this->author->author_realname,
 
 			'U_AUTHOR_PROFILE'				=> $this->author->get_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->author->get_phpbb_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->author->get_phpbb_com_profile_url(),
 
 			// Contribution data
-			'CONTRIB_DESC'				=> $this->generate_text_for_display(),
+			'CONTRIB_TITLE'					=> $this->contrib_name,
+			'CONTRIB_DESC'					=> $this->generate_text_for_display(),
 
-			'CONTRIB_VIEWS'				=> $this->contrib_views,
-			'CONTRIB_DOWNLOADS'			=> $this->contrib_downloads, // Total downloads
-			'CONTRIB_DOWNLOADS_PER_DAY'	=> $this->get_downloads_per_day(),
+			'CONTRIB_VIEWS'					=> $this->contrib_views,
+			'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
 
-			'CONTRIB_RATING'			=> sprintf(phpbb::$user->lang['RATING_OUT_OF_FIVE'], $this->contrib_rating),
-			'CONTRIB_RATINGS'			=> $this->contrib_rating_count,
-
-			'CONTRIB_VERSION'			=> $this->contrib_version,
-			'CONTRIB_PHPBB_VERSION'		=> get_version_string($this->contrib_phpbb_version),
-
-			'CONTRIB_RELEASE_DATE'		=> phpbb::$user->format_date($this->contrib_release_date),
-			'CONTRIB_UPDATE_DATE'		=> ($this->contrib_update_date > $this->contrib_release_date) ? phpbb::$user->format_date($this->contrib_update_date) : '',
-
-			'U_CONTRIB_DOWNLOAD'		=> $this->get_download_url(),
-
-			// Download data
-			'DOWNLOAD_SIZE'				=> get_formatted_filesize($this->download->filesize),
-			'DOWNLOAD_CHECKSUM'			=> $this->download->download_hash,
-			'DOWNLOAD_COUNT'			=> $this->download->download_count, // Revision downloads
+			'CONTRIB_RATING'				=> $this->contrib_rating,
+			'CONTRIB_RATINGS'				=> $this->contrib_rating_count,
 		));
 
 		if (!phpbb::$user->data['is_bot'])

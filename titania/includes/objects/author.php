@@ -130,6 +130,18 @@ class titania_author extends titania_database_object
 	}
 
 	/**
+	* Get username string
+	*
+	* @param mixed $mode Can be profile (for getting an url to the profile), username (for obtaining the username), colour (for obtaining the user colour), full (for obtaining a html string representing a coloured link to the users profile) or no_profile (the same as full but forcing no profile link)
+	*
+	* @return string username string
+	*/
+	public function get_username_string($mode = 'full')
+	{
+		return get_username_string($mode, $this->user_id, $this->username, $this->user_colour);
+	}
+
+	/**
 	 * Get profile url
 	 *
 	 * @return string

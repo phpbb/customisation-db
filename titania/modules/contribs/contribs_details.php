@@ -87,13 +87,22 @@ class contribs_details extends titania_object
 		}
 	}
 
+	/**
+	* Display details page
+	*
+	* @param int $contrib_id
+	*/
 	public function details($contrib_id)
 	{
 		titania::load_object('contribution');
 		$contrib = new titania_contribution($contrib_id);
 
-		$contrib->load();
+		if (!$contrib->load())
+		{
+			trigger_error('ERROR_CONTRIB_NOT_FOUND');
+		}
 
+		$contrib->assign_details();
 	}
 
 	/**

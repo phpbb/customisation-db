@@ -1,4 +1,4 @@
-<!-- INCLUDE contributions/details_header.html -->
+<!-- INCLUDE contributions/contribution_header.html -->
 
 	<h2 class="section-title">{CONTRIB_TITLE} :: {L_DETAILS}</h2>
 
@@ -10,20 +10,8 @@
 				<td align="left">{CONTRIB_TITLE}</td>
 			</tr>
 			<tr>
-				<td align="right"><strong>{L_CATEGORY}:</strong></td>
-				<td align="left">{CONTRIB_TAGS}</td>
-			</tr>
-			<tr>
 				<td align="right"><strong>{L_CONTRIB_AUTHOR}:</strong></td>
-				<td align="left"><a href="{U_AUTHOR_PROFILE}">{AUTHOR_NAME}</a><!-- IF AUTHOR_REALNAME --> ({AUTHOR_REALNAME})<!-- ENDIF --></td>
-			</tr>
-			<tr>
-				<td align="right"><strong>{L_VERSION}:</strong></td>
-				<td align="left">{CONTRIB_VERSION}</td>
-			</tr>
-			<tr>
-				<td align="right"><strong>{L_PHPBB_VERSION}:</strong></td>
-				<td align="left">{CONTRIB_PHPBB_VERSION}</td>
+				<td align="left">{AUTHOR_NAME_FULL}<!-- IF AUTHOR_REALNAME --> ({AUTHOR_REALNAME})<!-- ENDIF --></td>
 			</tr>
 		</table>
 	</div>
@@ -77,4 +65,4 @@
 	{CONTRIB_DESC}
 	<!-- ENDIF -->
 
-<!-- INCLUDE contributions/details_footer.html -->
+<!-- INCLUDE contributions/contribution_footer.html -->
