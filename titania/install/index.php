@@ -335,6 +335,7 @@ function titania_data($action, $version)
 			'right_id'		=> 22,
 			'category_type'	=> TITANIA_TYPE_CATEGORY,
 			'category_name'	=> 'phpBB3',
+			'category_contribs'		=> 1,
 		),
 		array(
 			'category_id'	=> 2,
@@ -343,6 +344,7 @@ function titania_data($action, $version)
 			'right_id'		=> 19,
 			'category_type'	=> TITANIA_TYPE_CATEGORY,
 			'category_name'	=> 'CAT_MODIFICATIONS',
+			'category_contribs'		=> 1,
 		),
 		array(
 			'category_id'	=> 3,
@@ -351,6 +353,7 @@ function titania_data($action, $version)
 			'right_id'		=> 21,
 			'category_type'	=> TITANIA_TYPE_STYLE,
 			'category_name'	=> 'CAT_STYLES',
+			'category_contribs'		=> 0,
 		),
 		array(
 			'category_id'	=> 4,
@@ -359,6 +362,7 @@ function titania_data($action, $version)
 			'right_id'		=> 4,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_COSMETIC',
+			'category_contribs'		=> 0,
 		),
 		array(
 			'category_id'	=> 5,
@@ -367,6 +371,7 @@ function titania_data($action, $version)
 			'right_id'		=> 6,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ADMIN_TOOLS',
+			'category_contribs'		=> 0,
 		),
 		array(
 			'category_id'	=> 6,
@@ -375,6 +380,7 @@ function titania_data($action, $version)
 			'right_id'		=> 8,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_SECURITY',
+			'category_contribs'		=> 0,
 		),
 		array(
 			'category_id'	=> 7,
@@ -383,6 +389,7 @@ function titania_data($action, $version)
 			'right_id'		=> 10,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_COMMUNICATION',
+			'category_contribs'		=> 0,
 		),
 		array(
 			'category_id'	=> 8,
@@ -391,6 +398,7 @@ function titania_data($action, $version)
 			'right_id'		=> 12,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_PROFILE_UCP',
+			'category_contribs'		=> 0,
 		),
 		array(
 			'category_id'	=> 9,
@@ -399,6 +407,7 @@ function titania_data($action, $version)
 			'right_id'		=> 14,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ADDONS',
+			'category_contribs'		=> 1,
 		),
 		array(
 			'category_id'	=> 10,
@@ -407,6 +416,7 @@ function titania_data($action, $version)
 			'right_id'		=> 16,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ANTI_SPAM',
+			'category_contribs'		=> 0,
 		),
 		array(
 			'category_id'	=> 11,
@@ -415,6 +425,7 @@ function titania_data($action, $version)
 			'right_id'		=> 18,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ENTERTAINMENT',
+			'category_contribs'		=> 1,
 		),
 	);
 
