@@ -144,7 +144,7 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'faq_id'				=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'			=> array('UINT', 0),
-					'parent_id'				=> array('UINT', 0),
+					'parent_id'                                => array('UINT', 0),
 					'faq_order_id'			=> array('UINT', 0),
 					'faq_subject'			=> array('STEXT_UNI', '', 'true_sort'),
 					'faq_text'				=> array('MTEXT_UNI', ''),
@@ -287,7 +287,25 @@ $versions = array(
 
 		'cache_purge' => '',
 	),
+	
+        '0.1.1' => array(
+                'column_remove' => array(
+                        array('customisation_contrib_faq', 'parent_id'),
+                ),
+                
+		'permission_add' => array(
+		        'titania_faq_create',
+			'titania_faq_edit',
+			'titania_faq_delete',
+			'titania_faq_mod',
+		),
 
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array('titania_faq_mod')),
+			array('ROLE_MOD_FULL', array('titania_faq_mod')),
+		),
+        ),
+        
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
