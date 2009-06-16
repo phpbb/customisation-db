@@ -61,5 +61,3 @@ class titania_cache extends acm
 		return $categories;
 	}
 }
-
-?>

@@ -54,5 +54,3 @@ class titania_config extends titania_object
 		$this->__set_array($config);
 	}
 }
-
-?>

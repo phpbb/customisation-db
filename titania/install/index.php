@@ -457,5 +457,3 @@ function titania_data($action, $version)
 }
 
 include(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT);
-
-?>

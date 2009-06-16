@@ -19,5 +19,3 @@ class authors_support_info
 		);
 	}
 }
-
-?>

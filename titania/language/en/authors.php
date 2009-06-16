@@ -59,5 +59,3 @@ $lang = array_merge($lang, array(
 
 	'USER_INFORMATION'			=> '’s user information',
 ));
-
-?>

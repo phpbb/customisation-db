@@ -8,13 +8,13 @@
  *
  */
 
-class authors_contributions_info
+class contribs_faq_info
 {
 	function module()
 	{
 		return array(
 			'modes'		=> array(
-				'contributions'		=> array('title' => 'AUTHOR_CONTRIBUTIONS', 'auth' => ''),
+				'faq'			=> array('title' => 'CONTRIB_FAQ', 'auth' => ''),
 			),
 		);
 	}

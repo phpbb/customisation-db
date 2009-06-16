@@ -123,5 +123,3 @@ class titania_modules extends p_master
 		}
 	}
 }
-
-?>

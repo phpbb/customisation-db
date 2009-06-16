@@ -495,5 +495,3 @@ class titania_faq extends titania_database_object
 		return true;
 	}
 }
-
-?>

@@ -66,5 +66,3 @@ $lang = array_merge($lang, array(
 
 	'U_SEARCH_MODS_AUTHOR'	=> '%1$sOther MODs by %2$s%3$s',
 ));
-
-?>

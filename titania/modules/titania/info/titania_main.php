@@ -19,5 +19,3 @@ class titania_main_info
 		);
 	}
 }
-
-?>

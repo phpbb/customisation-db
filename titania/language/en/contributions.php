@@ -60,5 +60,3 @@ $lang = array_merge($lang, array(
 	'ERROR_CONTRIB_EMAIL_FRIEND'	=> 'You are not permitted to recommend this contribution to someone else.',
 	'ERROR_CONTRIB_NOT_FOUND'		=> 'The contribution you requested could not be found.',
 ));
-
-?>
