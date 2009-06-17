@@ -88,7 +88,8 @@ class titania
 		self::$template_path = self::$style_path . 'template/';
 		self::$theme_path = self::$style_path . 'theme/';
 
-		phpbb::$template->set_custom_template(self::$template_path, 'titania');
+		phpbb::$template->set_custom_template(self::$template_path, 'titania_' . self::$config->style);
+		$user->theme['template_storedb'] = false;
 
 		// Add common titania language file
 		self::add_lang('common');
