@@ -33,11 +33,9 @@ class contribs_faq extends titania_object
 	 */
 	public function __construct($p_master)
 	{
-		global $user;
-
 		$this->p_master = $p_master;
 
-		$this->page = $user->page['script_path'] . $user->page['page_name'];
+		$this->page = titania::$page;
 	}
 
 	/**
@@ -48,13 +46,11 @@ class contribs_faq extends titania_object
 	 */
 	public function main($id, $mode)
 	{
-		global $user, $template, $cache;
+		titania::add_lang(array('faq', 'contributions'));
 
-		titania::add_lang(array('contrib', 'contrib_mod'));
-
-		$faq_id		= request_var('faq', 0);
+		$faq_id		= request_var('f', 0);
+		$contrib_id	= request_var('c', 0);
 		$action 	= request_var('action', '');
-
 		$submit		= isset($_POST['submit']) ? true : false;
 
 		add_form_key('mods_faq');
@@ -64,90 +60,61 @@ class contribs_faq extends titania_object
 			trigger_error('INVALID_FORM');
 		}
 
-		$faq = new titania_faq($faq_id);
+		$faq = new titania_faq($faq_id, $contrib_id);
 
-		$this->tpl_name = 'faq/faq_manage';
-
-		switch ($mode)
+		phpbb::$template->assign_vars(array(
+			'CONTRIB_NAME'		=> $faq->contrib_data['contrib_name'],
+		));
+		
+		$this->tpl_name = 'contributions/contribution_faq';
+		
+		switch ($action)
 		{
-			case 'main':
-
+			case 'create':
+			case 'edit':
+				
+				$this->page_title = ($action == 'edit') ? 'EDIT_FAQ' : 'CREATE_FAQ';
+				
+				$faq->submit_faq($action);
+				
 			break;
-
+			
+			case 'delete':
+				
+				$this->page_title = 'DELETE_FAQ';
+				
+				$faq->delete_faq();
+				
+			break;
+					
 			case 'manage':
-
-				$faq_ids = request_var('faq_id', array(0));
-
-				if ($submit && $faq_ids)
-				{
-					switch ($action)
-					{
-						case 'delete':
-							$sql = 'DELETE FROM ' . TITANIA_CONTRIB_FAQ_TABLE . ' WHERE ' . $db->sql_in_set('faq_id', $faq_ids);
-							$db->sql_query($sql);
-
-							$message = $user->lang['DELETE_FAQ_MARKED'];
-						break;
-
-						case 'move':
-
-						break;
-					}
-
-					$faq->manage_list();
-				}
+			
+				$this->page_title = 'FAQ_MANAGEMENT_LIST';
+						
+				$faq->management_list();
 
 			break;
-
-			case 'view':
+			
+			case 'details':
+			
+				$this->page_title = 'FAQ_DETAILS';
+				
+				$found = $faq->faq_details();
+				
+				if (!$found)
+				{
+					trigger_error('FAQ_NOT_FOUND');
+				}
+				
+			break;
+			
+			case 'list':
 			default:
 
-				$mod_id = request_var('mod', 0);
-
-				if ($action && in_array($action, array('create', 'edit')))
-				{
-					if (!$mod_id)
-					{
-						trigger_error('NO_MOD_SELECTED');
-					}
-
-					$this->page_title = ($action == 'edit') ? 'EDIT_FAQ' : 'CREATE_FAQ';
-
-					$faq->submit_faq($mod_id, $action);
-				}
-				else
-				{
-					if ($faq_id)
-					{
-						$this->tpl_name 	= 'faq/faq_details';
-						$this->page_title 	= 'MOD_FAQ_DETAILS';
-
-						$found = $faq->faq_details();
-
-						if (!$found)
-						{
-							trigger_error('FAQ_NOT_FOUND');
-						}
-					}
-					else
-					{
-						if (!$mod_id)
-						{
-							trigger_error('NO_MOD_SELECTED');
-						}
-
-						$this->tpl_name 	= 'faq/faq_list';
-						$this->page_title 	= 'MOD_FAQ_LIST';
-
-						$found = $faq->faq_list($mod_id);
-
-						if (!$found)
-						{
-							trigger_error('NO_FAQ_FOUND');
-						}
-					}
-				}
-
+				$this->page_title = 'FAQ_LIST';
+				
+				$faq->faq_list();
+				
 			break;
 		}
 	}

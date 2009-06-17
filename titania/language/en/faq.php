@@ -36,33 +36,29 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'AUTHOR_BY'				=> 'By %s',
-
-	'BACK_TO_FAQ_LIST'		=> '&laquo; Back to FAQ list',
-
+	'SORT_SUBJECT'			=> 'Subject',
+	'SORT_VIEWS'			=> 'Views',
+	
 	'CREATE_FAQ'			=> 'Create FAQ',
-
+	'EDIT_FAQ'			=> 'Edit FAQ',
 	'DELETE_FAQ'			=> 'Delete FAQ',
+	
+	'FAQ_MANAGEMENT_LIST'		=> 'FAQ Management List',
+	'FAQ_DETAILS'			=> 'FAQ Details Page',
+	'FAQ_LIST'			=> 'FAQ List',
 
-	'EDIT_FAQ'				=> 'Edit FAQ',
+	'SUBJECT_EMPTY'			=> 'You need to enter a subject',
+	'TEXT_EMPTY'			=> 'You need to enter a text',
 
-	'FAQ_CREATED'			=> 'New FAQ entry has been created.',
-	'FAQ_DESCRIPTION'		=> 'Here is a list of common issues and solution for them.',
-	'FAQ_EDITED'			=> 'FAQ entry has been updated.',
-	'FAQ_NOT_FOUND'			=> 'The FAQ you requested could not be found.',
+	'RETURN_FAQ'			=> '%sReturn to FAQ Details Page%s',
+	'RETURN_FAQ_LIST'		=> '%sReturn to FAQ List%s',
+
+	'FAQ_CREATED'			=> 'This FAQ has been created successfully.',
+	'FAQ_EDITED'			=> 'This FAQ has been edited successfully.',
+	'FAQ_DELETED'			=> 'This FAQ has been deleted successfully.',
+	
 	'FAQ_SUBJECT'			=> 'Subject',
-	'FAQ_TEXT'				=> 'Text',
-
-	'MOD_FAQ_DETAILS'		=> 'FAQ details',
-	'MOD_FAQ_LIST'			=> 'FAQ list',
-
-	'RETURN_FAQ'			=> '%sReturn to the FAQ%s',
-	'RETURN_FAQ_LIST'		=> '%sReturn to FAQ list%s',
-
-	'SORT_SUBJECT'			=> 'Sort by subject',
-	'SUBJECT_EMPTY'			=> 'Subject is empty',
-
-	'TEXT_EMPTY'			=> 'Text is empty',
-
-	'U_SEARCH_MODS_AUTHOR'	=> '%1$sOther MODs by %2$s%3$s',
+	'FAQ_TEXT'			=> 'Text',
+	
+	'FAQ_NOT_FOUND'			=> 'The FAQ specified could not be found.',
 ));

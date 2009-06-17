@@ -315,6 +315,12 @@ $versions = array(
 		),
 	),
 
+	'0.1.3' => array(
+		'table_column_add' => array(
+			array('customisation_contrib_faq', 'faq_views', array('UINT', 0)),
+		),
+	),
+	
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
@@ -465,6 +471,31 @@ function titania_data($action, $version)
 		),
 	);
 	$umil->table_row_insert('customisation_contrib_in_categories', $in_categories);
+	
+	$faq = array(
+		array(
+			'faq_id'			=> 1,
+			'contrib_id'			=> 1,
+			'faq_order_id'			=> 1,
+			'faq_subject'			=> 'FAQ example 1',
+			'faq_text'			=> 'It is only an FAQ example.',
+			'faq_text_bitfield'		=> '',
+			'faq_text_uid'			=> '',
+			'faq_text_options'		=> 7,
+		),
+		array(
+			'faq_id'			=> 2,
+			'contrib_id'			=> 1,
+			'faq_order_id'			=> 2,
+			'faq_subject'			=> 'FAQ example 2',
+			'faq_text'			=> 'It is only an FAQ example.',
+			'faq_text_bitfield'		=> '',
+			'faq_text_uid'			=> '',
+			'faq_text_options'		=> 7,
+		)	
+	);
+	
+	$umil->table_row_insert('customisation_contrib_faq', $faq);
 }
 
 include(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT);

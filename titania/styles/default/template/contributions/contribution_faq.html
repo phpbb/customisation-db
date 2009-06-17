@@ -1,21 +1,66 @@
-<!-- INCLUDE contributions/details_header.html -->
+<!-- INCLUDE contributions/contribution_header.html -->
 
 	<h2 class="section-title">{CONTRIB_TITLE} :: {L_FAQ}</h2>
 
 	<!-- IF .faqlist -->
-	<div class="faq-list">
-		<span class="corners-top"><span></span></span>
-			<ul>
-				<!-- BEGIN faqlist -->
-				<li><a href="#f{S_ROW_COUNT}">{faqlist.FAQ_SUBJECT}</a></li>
-				<!-- END faqlist-->
-			</ul>
-		<span class="corners-bottom"><span></span></span>
-	</div>
+		<div class="faq-list">
+			<span class="corners-top"><span></span></span>
+				<ul>
+					<!-- BEGIN faqlist -->
+					<li><a href="{faqlist.U_FAQ}#f{faqlist.S_ROW_COUNT}">{faqlist.FAQ_SUBJECT}</a></li>
+					<!-- END faqlist-->
+				</ul>
+			<span class="corners-bottom"><span></span></span>
+		</div>
+		<div>
+			<a href="{U_CREATE_FAQ}">{L_CREATE_FAQ}</a>
+		</div>
+		<hr class="dashed" style="margin-bottom: 10px;" />
+	<!-- ELSEIF S_FAQ_DETAILS -->
+		<div>
+			<h3>{FAQ_SUBJECT}</h3>
+		</div>
+		<div class="faq-body">
+			{FAQ_TEXT}
+		</div>
+		<div>
+			<a href="{U_EDIT_FAQ}">{L_EDIT_FAQ}</a><br />
+			{L_VIEWS}: {FAQ_VIEWS}
+		</div>
+	<!-- ELSEIF S_EDIT_FAQ -->
+		<form action="{U_ACTION}" method="post">
+			<div class="panel">
+				<div class="inner"><span class="corners-top"><span></span></span>
+				
+				<h2>{L_EDIT_FAQ}<!-- IF FAQ_SUBJECT --> :: {FAQ_SUBJECT}<!-- ENDIF --></h2>
+				
+				<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+				
+				<fieldset>
+					<dl style="clear: left;">
+						<dt><label for="subject">{L_FAQ_SUBJECT}:</label></dt>
+						<dd><input type="text" name="subject" id="subject" size="45" maxlength="60" tabindex="1" value="{FAQ_SUBJECT}" class="inputbox autowidth" /></dd>
+					</dl>				
+					<dl style="clear: left;">
+						<dt><label for="text">{L_FAQ_TEXT}:</label></dt>
+						<dd><textarea name="text" id="text" class="inputbox" cols="40" rows="5">{FAQ_TEXT}</textarea></dd>
+					</dl>				
+				</fieldset>
 
-	<hr class="dashed" style="margin-bottom: 10px;" />
+				<span class="corners-bottom"><span></span></span></div>
+			</div>
+
+			<fieldset class="submit-buttons">
+				<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp; 
+				<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
+				{S_FORM_TOKEN}
+			</fieldset>
+		</form>
+	<!-- ELSE -->
+
 	<!-- ENDIF -->
 
+	
 	<!-- BEGIN faqitems -->
 	<a name="f{S_ROW_COUNT}"></a>
 
@@ -27,4 +72,4 @@
 	</div>
 	<!-- END faqitems -->
 
-<!-- INCLUDE contributions/details_footer.html -->
+<!-- INCLUDE contributions/contribution_footer.html -->

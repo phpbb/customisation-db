@@ -49,31 +49,37 @@ class titania_faq extends titania_database_object
 	private $text_parsed_for_storage = false;
 
 	/*
-	 * Current contrib identifier
+	 * Contrib type for URLs, etc.
 	 *
-	 * $var string
+	 * @var string
 	 */
-	private $contrib_identifier;
+	private $contrib_type		= '';
+	
+	/*
+	 * Contrib data
+	 *
+	 * @var array
+	 */		
+	public $contrib_data		= array();
 
 	/**
 	 * Constructor class for titania faq
 	 *
 	 * @param int $faq_id
 	 */
-	public function __construct($faq_id = false)
+	public function __construct($faq_id = false, $contrib_id)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
-			'faq_id'			=> array('default' => 0),
+			'faq_id'		=> array('default' => 0),
 			'contrib_id' 		=> array('default' => 0),
-			'parent_id' 		=> array('default' => 0),
-			'revision_id'		=> array('default' => 0),
 			'faq_order_id' 		=> array('default' => 0),
 			'faq_subject' 		=> array('default' => '', 'max' => 255),
-			'faq_text' 			=> array('default' => ''),
+			'faq_text' 		=> array('default' => ''),
 			'faq_text_bitfield'	=> array('default' => '', 'readonly' => true),
 			'faq_text_uid'		=> array('default' => '', 'readonly' => true),
-			'faq_text_options'	=> array('default' => 7, 'readonly' => true)
+			'faq_text_options'	=> array('default' => 7, 'readonly' => true),
+			'faq_views'		=> array('default' => 0),
 		));
 
 		if ($faq_id !== false)
@@ -81,12 +87,35 @@ class titania_faq extends titania_database_object
 			$this->faq_id = $faq_id;
 		}
 
-		$this->contrib_type = $contrib_type;
-
-		// e.g. mod, style
-		$this->contrib_identifier = $this->contrib_identifiers[$this->contrib_type];
+		$this->contrib_id = $contrib_id;
+		
+		// getting contrib data from the contribs table
+		$this->get_contrib_data();
+		
+		// to creating URLs
+		$this->contrib_type = $this->contrib_data['contrib_type'];
 	}
 
+	/**
+	 * Get data about contrib
+	 *
+	 * @return void
+	 */
+	public function get_contrib_data()
+	{
+		$sql = 'SELECT *
+			FROM ' . TITANIA_CONTRIBS_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
+		$this->contrib_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+		
+		if (!$this->contrib_data)
+		{
+			trigger_error('ERROR_CONTRIB_NOT_FOUND');
+		}
+	}
+	
 	/**
 	 * Update data or submit new faq
 	 *
@@ -223,40 +252,52 @@ class titania_faq extends titania_database_object
 	/*
 	 * Submit FAQ
 	 */
-	public function submit_faq($contrib_id, $action)
-	{
-		global $template, $db, $user, $titania;
-
+	public function submit_faq($action)
+	{	
+		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_' . $action) && phpbb::$user->data['user_id'] != $this->contrib_data['contrib_user_id'])
+		{
+			return;
+		}
+		
 		$submit = (isset($_POST['submit'])) ? true : false;
 
 		$errors = array();
-
+		
 		if ($submit)
 		{
 			$this->faq_subject 	= utf8_normalize_nfc(request_var('subject', '', true));
 			$text 			= utf8_normalize_nfc(request_var('text', '', true));
-			$this->revision_id	= request_var('revision', 0);
-			$this->contrib_id 	= $contrib_id;
-
+			
 			if (empty($this->faq_subject))
 			{
-				$errors[] = $user->lang['SUBJECT_EMPTY'];
+				$errors[] = phpbb::$user->lang['SUBJECT_EMPTY'];
 			}
 
 			if (empty($text))
 			{
-				$errors[] = $user->lang['TEXT_EMPTY'];
+				$errors[] = phpbb::$user->lang['TEXT_EMPTY'];
 			}
 
 			if (!sizeof($errors))
 			{
+				// obtain the last order id
+				$sql = 'SELECT MAX(faq_order_id) as max_order_id
+					FROM ' . TITANIA_CONTRIB_FAQ_TABLE;
+				$result = phpbb::$db->sql_query_limit($sql, 1);
+				$max_order_id = phpbb::$db->sql_fetchfield('max_order_id');
+				phpbb::$db->sql_freeresult($result);
+
+				// set order id on the last one
+				$this->faq_order_id = $max_order_id + 1;
+				
+				// prepare a text to storage
 				$this->set_faq_text($text);
 
 				$this->submit();
 
-				$message = ($action == 'edit') ? $user->lang['FAQ_EDITED'] : $user->lang['FAQ_CREATED'];
-				$message .= '<br /><br />' . sprintf($user->lang['RETURN_FAQ'], '<a href="' . append_sid($titania->page, "id=faq&amp;mode=view&amp;faq={$this->faq_id}") . '">', '</a>');
-				$message .= '<br /><br />' . sprintf($user->lang['RETURN_FAQ_LIST'], '<a href="' . append_sid($titania->page, "id=faq&amp;mode=view&amp;mod=$contrib_id") . '">', '</a>');
+				$message = ($action == 'edit') ? phpbb::$user->lang['FAQ_EDITED'] : phpbb::$user->lang['FAQ_CREATED'];
+				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ'], '<a href="' . titania_sid('contributions/index', "mode=faq&amp;action=details&amp;c={$this->contrib_id}&amp;f={$this->faq_id}") . '">', '</a>');
+				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ_LIST'], '<a href="' . titania_sid('contributions/index', "mode=faq&amp;c={$this->contrib_id}") . '">', '</a>');
 
 				trigger_error($message);
 			}
@@ -266,19 +307,18 @@ class titania_faq extends titania_database_object
 		{
 			$this->load();
 		}
-
-		$template->assign_vars(array(
-			'U_ACTION'		=> $titania->page . "?id=faq&amp;mode=view&amp;action=$action&amp;{$this->contrib_identifier}=$contrib_id&amp;faq={$this->faq_id}",
+		
+		phpbb::$template->assign_vars(array(
+			'U_ACTION'		=> titania_sid('contributions/index', "mode=faq&amp;action=$action&amp;c={$this->contrib_id}&amp;f={$this->faq_id}"),
 
 			'S_EDIT_FAQ'		=> true,
 
-			'L_EDIT_FAQ'		=> ($action == 'edit') ? $user->lang['EDIT_FAQ'] : $user->lang['CREATE_FAQ'],
-			'L_REVISION'		=> $user->lang[strtoupper($this->contrib_identifier) . '_VERSION'],
+			'L_EDIT_FAQ'		=> ($action == 'edit') ? phpbb::$user->lang['EDIT_FAQ'] : phpbb::$user->lang['CREATE_FAQ'],
 
 			'ERROR_MSG'		=> (sizeof($errors)) ? implode('<br />', $errors) : false,
+			
 			'FAQ_SUBJECT'		=> $this->faq_subject,
 			'FAQ_TEXT'		=> $this->get_faq_text(true),
-			'REVISION_SELECT'	=> $this->revision_select($contrib_id, $this->contrib_type, $this->revision_id),
 		));
 	}
 
@@ -287,6 +327,11 @@ class titania_faq extends titania_database_object
 	 */
 	public function delete_faq()
 	{
+		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_delete') && phpbb::$user->data['user_id'] != $this->contrib_data['contrib_user_id'])
+		{
+			return;
+		}
+		
 		$submit = (isset($_POST['submit'])) ? true : false;
 
 		if ($submit)
@@ -309,159 +354,122 @@ class titania_faq extends titania_database_object
 	}
 
 	/*
-	 * FAQ manage
+	 * FAQ Management List
 	 */
-	public function manage_list()
+	public function management_list()
 	{
-
-	}
-
-	/*
-	 * Revision list for selected contrib
-	 */
-	public function revision_select($contrib_id, $default = 0)
-	{
-		global $db;
-
-		$sql = 'SELECT revision_id, revision_name
-			FROM ' . TITANIA_REVISIONS_TABLE . "
-			WHERE contrib_id = $contrib_id
-			ORDER BY revision_name DESC";
-		$result = $db->sql_query($sql);
-
-		$options = '';
-
-		while ($row = $db->sql_fetchrow($result))
+		if (!phpbb::$auth->acl_get('titania_faq_mod') && phpbb::$user->data['user_id'] != $this->contrib_data['contrib_user_id'])
 		{
-			$selected = ($row['revision_id'] == $default) ? ' selected="selected"' : '';
-			$options .= '<option value="' . $row['revision_id'] . '"' . $selected . '>' . $row['revision_name'] . '</option>';
-		}
-		$db->sql_freeresult($result);
-
-		return '<select name="revision" id="revision">' . $options . '</select>';
+			return;
+		}	
+		
 	}
 
 	/*
-	 * FAQ details
+	 * FAQ Details Page
 	 */
 	public function faq_details()
 	{
-		global $template, $db, $user, $titania, $auth;
-
+		// increase a FAQ views counter
+		$this->increase_views_counter();
+		
 		$sql_ary = array(
-			'SELECT'	=> 'f.*, r.revision_name, r.revision_time, c.contrib_user_id',
+			'SELECT'	=> 'f.*, c.contrib_user_id, c.contrib_name',
 			'FROM'		=> array(
 				TITANIA_CONTRIB_FAQ_TABLE => 'f',
 				TITANIA_CONTRIBS_TABLE 	=> 'c'
 			),
-			'LEFT_JOIN'	=> array(
-				array(
-					'FROM'	=> array(TITANIA_REVISIONS_TABLE => 'r'),
-					'ON'	=> 'r.revision_id = f.revision_id
-							AND c.contrib_id = f.contrib_id',
-				),
-			),
 			'WHERE'		=> 'f.faq_id = ' . $this->faq_id . '
 						AND c.contrib_id = f.contrib_id'
 		);
-		$sql = $db->sql_build_query('SELECT', $sql_ary);
-		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchrow($result);
-
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+		
 		if (!$row)
 		{
 			return false;
 		}
 
-		$db->sql_freeresult($result);
-
-		$template->assign_vars(array(
+		phpbb::$template->assign_vars(array(
 			'FAQ_SUBJECT'		=> $row['faq_subject'],
 			'FAQ_TEXT'		=> generate_text_for_display($row['faq_text'], $row['faq_text_uid'], $row['faq_text_bitfield'], $row['faq_text_options']),
-			'REVISION_NAME' 	=> $row['revision_name'],
+			'FAQ_VIEWS'		=> $row['faq_views'],
 
-			'U_FAQ_LIST'		=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $this->contrib_identifier . '=' . $row['contrib_id']),
-			'U_EDIT_FAQ'		=> ($user->data['user_id'] == $row['contrib_user_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=edit&amp;' . $this->contrib_identifier . '=' . $row['contrib_id'] . '&amp;faq=' . $row['faq_id']) : false,
-
-			'L_REVISION'		=> $user->lang[strtoupper($this->contrib_identifier) . '_VERSION'],
+			'S_FAQ_DETAILS'		=> true,
+			
+			'U_EDIT_FAQ'		=> (phpbb::$user->data['user_id'] == $row['contrib_user_id'] || phpbb::$auth->acl_get('titania_faq_edit')) ? titania_sid('contributions/index', 'mode=faq&amp;action=edit&amp;c=' . $row['contrib_id'] . '&amp;f=' . $row['faq_id']) : false,
 		));
 
 		return true;
 	}
 
 	/**
-	 * FAQ list
+	 * FAQ List
 	 *
 	 * @param int $contrib_id
 	 */
-	public function faq_list($contrib_id)
+	public function faq_list()
 	{
-		global $db, $template, $titania, $user, $auth;
-
 		if (!class_exists('sort'))
 		{
-			include(TITANIA_ROOT . 'includes/class_sort.' . PHP_EXT);
+			include(TITANIA_ROOT . 'includes/tools/sort.' . PHP_EXT);
 		}
 
 		if (!class_exists('pagination'))
 		{
-			include(TITANIA_ROOT . 'includes/class_pagination.' . PHP_EXT);
+			include(TITANIA_ROOT . 'includes/tools/pagination.' . PHP_EXT);
 		}
 
 		$sort = new sort();
 
 		$sort->set_sort_keys(array(
-			'a' => array('SORT_SUBJECT',	'f.faq_subject'),
-			'b' => array('SORT_REVISION',	'f.revision_id', 'default' => true),
+			'a' => array('SORT_SUBJECT',	'f.faq_subject', 'default' => true),
+			'b' => array('SORT_VIEWS',	'f.faq_views'),
 		));
 
 		$sort->sort_request(false);
 
-		$pagination = new pagination();
+		/*$pagination = new pagination();
 		$start = $pagination->set_start();
-		$limit = $pagination->set_limit();
+		$limit = $pagination->set_limit();*/
 
 		$sql_ary = array(
-			'SELECT'	=> 'f.*, r.revision_name',
+			'SELECT'	=> 'f.*',
 			'FROM'		=> array(
 					TITANIA_CONTRIB_FAQ_TABLE	=> 'f'
 			),
-			'LEFT_JOIN'	=> array(
-				array(
-					'FROM'	=> array(TITANIA_REVISIONS_TABLE => 'r'),
-					'ON'	=> 'r.revision_id = f.revision_id',
-				),
-			),
-			'WHERE'		=> 'f.contrib_id = ' . $contrib_id,
+			'WHERE'		=> 'f.contrib_id = ' . $this->contrib_id,
 			'ORDER_BY'	=> $sort->get_order_by()
 		);
 
-		$sql = $db->sql_build_query('SELECT', $sql_ary);
-		$result = $db->sql_query_limit($sql, $limit, $start);
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		$result = phpbb::$db->sql_query_limit($sql, 15, $start);
 
 		$results = 0;
 
-		while ($row = $db->sql_fetchrow($result))
+		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$results++;
 
 			strip_bbcode($row['faq_text'], $row['faq_text_uid']);
 
-			$template->assign_block_vars('faq', array(
-				'U_FAQ'			=> append_sid($titania->page, 'id=faq&amp;mode=view&amp;faq=' . $row['faq_id']),
+			phpbb::$template->assign_block_vars('faqlist', array(
+				'U_FAQ'			=> titania_sid('contributions/index', "mode=faq&amp;action=details&amp;c={$row['contrib_id']}&amp;f={$row['faq_id']}"),
 
-				'SUBJECT'		=> $row['faq_subject'],
+				'FAQ_SUBJECT'		=> $row['faq_subject'],
 				'TEXT'			=> (utf8_strlen($row['faq_text']) > 250) ? utf8_substr($row['faq_text'], 0, 250) . '...' : $row['faq_text'],
-				'REVISION_NAME'		=> $row['revision_name'],
+				'VIEWS'			=> $row['faq_views'],
 			));
 		}
-		$db->sql_freeresult($result);
+		phpbb::$db->sql_freeresult($result);
 
 		if (!$results)
 		{
 			return false;
 		}
-
+/*
 		$pagination->sql_total_count($sql_ary, 'f.faq_id', $results);
 
 		$pagination->set_params(array(
@@ -470,28 +478,31 @@ class titania_faq extends titania_database_object
 		));
 
 		// Build a pagination
-		$pagination->build_pagination(append_sid($titania->page, 'id=faq&amp;mode=view&amp;' . $this->contrib_identifier . '=' . $contrib_id));
-
-		// informations about contrib
-		$sql = 'SELECT contrib_name, contrib_version, contrib_user_id
-			FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE contrib_id = ' . $contrib_id;
-		$result = $db->sql_query($sql);
-		$contrib = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
-
-		$template->assign_vars(array(
+		$pagination->build_pagination(titania_sid('contributions/index', "mode=faq&amp;c={$this->contrib_id}"));
+*/
+		phpbb::$template->assign_vars(array(
 			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
 			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
-
-			'CONTRIB_NAME'		=> $contrib['contrib_name'],
-			'CONTRIB_VERSION'	=> $contrib['contrib_version'],
-
-			'U_CREATE_FAQ'		=> ($user->data['user_id'] == $contrib['contrib_user_id'] || $auth->acl_get('a_') || $auth->acl_get('m_')) ? append_sid($titania->page, 'id=faq&amp;mode=view&amp;action=create&amp;' . $this->contrib_identifier . '=' . $contrib_id) : false,
-
-			'L_CONTRIB_VERSION'	=> $user->lang[strtoupper($this->contrib_identifier) . '_VERSION'],
+			
+			'U_CREATE_FAQ'		=> (phpbb::$auth->acl_get('titania_faq_create') || phpbb::$user->data['user_id'] == $this->contrib_data['contrib_user_id']) ? titania_sid('contributions/index', "mode=faq&amp;c={$this->contrib_id}&amp;action=create") : false,
 		));
 
 		return true;
+	}
+	
+	/*
+	 * Increase a FAQ views counter
+	 */		
+	public function increase_views_counter()
+	{
+		if (phpbb::$user->data['is_bot'])
+		{
+			return;
+		}
+		
+		$sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
+			SET faq_views = faq_views + 1
+			WHERE faq_id = ' . $this->faq_id;
+		phpbb::$db->sql_query($sql);
 	}
 }
