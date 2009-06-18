@@ -55,11 +55,6 @@ class contribs_faq extends titania_object
 
 		add_form_key('mods_faq');
 
-		if ($submit && !check_form_key('mods_faq'))
-		{
-			trigger_error('INVALID_FORM');
-		}
-
 		$faq = new titania_faq($faq_id, $contrib_id);
 
 		phpbb::$template->assign_vars(array(
@@ -73,6 +68,11 @@ class contribs_faq extends titania_object
 			case 'create':
 			case 'edit':
 				
+				if ($submit && !check_form_key('mods_faq'))
+				{
+					trigger_error('INVALID_FORM');
+				}
+		
 				$this->page_title = ($action == 'edit') ? 'EDIT_FAQ' : 'CREATE_FAQ';
 				
 				$faq->submit_faq($action);
@@ -106,9 +106,6 @@ class contribs_faq extends titania_object
 					trigger_error('FAQ_NOT_FOUND');
 				}
 				
-			break;
-			
-			case 'list':
 			default:
 
 				$this->page_title = 'FAQ_LIST';

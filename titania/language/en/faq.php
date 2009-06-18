@@ -39,9 +39,13 @@ $lang = array_merge($lang, array(
 	'SORT_SUBJECT'			=> 'Subject',
 	'SORT_VIEWS'			=> 'Views',
 	
-	'CREATE_FAQ'			=> 'Create FAQ',
+	'CREATE_FAQ'			=> 'Create an new FAQ entry',
 	'EDIT_FAQ'			=> 'Edit FAQ',
+	
 	'DELETE_FAQ'			=> 'Delete FAQ',
+	'DELETE_FAQ_CONFIRM'		=> 'Are you sure delete the FAQ?',
+	
+	'FAQ_MANAGEMENT'		=> 'FAQ Management Panel',
 	
 	'FAQ_MANAGEMENT_LIST'		=> 'FAQ Management List',
 	'FAQ_DETAILS'			=> 'FAQ Details Page',
@@ -61,4 +65,6 @@ $lang = array_merge($lang, array(
 	'FAQ_TEXT'			=> 'Text',
 	
 	'FAQ_NOT_FOUND'			=> 'The FAQ specified could not be found.',
+	
+	'NO_FAQ'			=> 'Nobody created an FAQ entry yet.',
 ));
