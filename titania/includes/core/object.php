@@ -113,13 +113,14 @@ abstract class titania_object
 	/**
 	* Get an object property. Catches calles to non-existing properties.
 	* Allows you to read properties via <code>$this->property_name</code>.
+	* Leave the & at the beginning to allow things like $this->property_name[] = 'new'; (or it will cause errors)
 	*
 	* @param	string	$name	Property name
 	* @return	mixed			Property value
 	*
 	* Note: This method should only be used inside of classes.
 	*/
-	protected function __get($name)
+	protected function &__get($name)
 	{
 		if (isset($this->object_data[$name]))
 		{

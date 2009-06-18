@@ -182,7 +182,7 @@ class contribs_main extends titania_object
 		{
 			$results++;
 
-			$profile_url = append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'mode=profile');
+			$profile_url = titania_sid('authors/index', 'mode=profile');
 
 			$template->assign_block_vars('contrib', array(
 				'ID'			=> $row['contrib_id'],

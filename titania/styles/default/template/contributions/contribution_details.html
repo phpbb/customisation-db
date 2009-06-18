@@ -24,19 +24,15 @@
 				<td align="left">{CONTRIB_DOWNLOADS}<!-- IF CONTRIB_DOWNLOADS_PER_DAY --> ({CONTRIB_DOWNLOADS_PER_DAY})<!-- ENDIF --></td>
 			</tr>
 			<tr>
-				<td align="right"><strong>{L_DOWNLOADS_VERSION}:</strong></td>
-				<td align="left">{DOWNLOAD_COUNT}</td>
-			</tr>
-			<!-- IF CONTRIB_RATINGS -->
-			<tr>
 				<td align="right"><strong>{L_RATING}:</strong></td>
-				<td align="left">{CONTRIB_RATING} ({CONTRIB_RATINGS} {L_RATINGS})</td>
+				<td align="left">{CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})</td>
 			</tr>
-			<!-- ENDIF -->
+			<!-- IF DOWNLOAD_SIZE -->
 			<tr>
 				<td align="right"><strong>{L_FILESIZE}:</strong></td>
 				<td align="left">{DOWNLOAD_SIZE}</td>
 			</tr>
+			<!-- ENDIF -->
 			<!-- IF DOWNLOAD_CHECKSUM -->
 			<tr>
 				<td align="right"><strong>{L_DOWNLOAD_CHECKSUM}:</strong></td>

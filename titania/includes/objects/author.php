@@ -104,21 +104,27 @@ class titania_author extends titania_database_object
 			return false;
 		}
 
-		// The result could return with info only in the user's table (if no mods/styles have been submitted), so we need to fill these in if that is the case.
-		foreach ($this->object_config as $name => $data)
-		{
-			if (!isset($this->sql_data[$name]))
-			{
-				$this->sql_data[$name] = $data['default'];
-			}
-		}
-
 		foreach ($this->sql_data as $key => $value)
 		{
 			$this->$key = $value;
 		}
 
 		return true;
+	}
+
+	/**
+	* Load data from an external source.  Mainly for when we are selecting multiple authors and want to use a single query instead of one for each author.
+	*
+	* @param mixed $user_row The user row from the query.
+	*/
+	public function load_external($user_row)
+	{
+		$this->sql_data = $user_row;
+
+		foreach ($this->sql_data as $key => $value)
+		{
+			$this->$key = $value;
+		}
 	}
 
 	/**
@@ -150,7 +156,7 @@ class titania_author extends titania_database_object
 	{
 		if ($this->user_id)
 		{
-			return append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'u=' . $this->user_id);
+			return titania_sid('authors/index', 'u=' . $this->user_id);
 		}
 
 		return '';

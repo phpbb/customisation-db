@@ -40,7 +40,7 @@ $module->set_active($id, $mode);
 $module->load_active();
 
 // Assign data to the template engine for the list of modules
-$module->assign_tpl_vars(append_sid(TITANIA_ROOT . 'contributions/index.' . PHP_EXT));
+$module->assign_tpl_vars(titania_sid('contributions/index'));
 
 // Output page
 titania::page_header($module->get_page_title());

@@ -167,7 +167,7 @@ class authors_main extends titania_object
 
 		foreach ($authors as $author)
 		{
-			$u_author_profile = append_sid(TITANIA_ROOT . 'authors/index.' . PHP_EXT, 'mode=profile');
+			$u_author_profile = titania_sid('authors/index', 'mode=profile');
 
 			phpbb::$template->assign_block_vars('authors', array(
 				'USER_FULL'			=> ($author['user_id']) ? get_username_string('full', $author['user_id'], $author['username'], $author['user_colour']) : '',
@@ -239,42 +239,5 @@ class authors_main extends titania_object
 		));
 
 		return true;
-	}
-
-	// Currently this just returns the $rating parameter, but we may want to use an image/image combo for ratings
-	// This can be changed later if this is decided.
-	private function generate_rating($rating)
-	{
-		return round($rating, 2);
-	}
-
-	// This can handle generating links to a contrib list, as well as just text
-	private function generate_contrib_string($contrib_type, $string_type, $num, $user_id = 0)
-	{
-		$contrib_type = strtoupper($contrib_type);
-		$lang_key = 'NUM_' . $contrib_type . (($num == 1)?'':'S');
-		$contrib_string = sprintf(phpbb::$user->lang[$lang_key], $num);
-
-		if($string_type == 'link')
-		{
-			if($user_id == 0)
-			{
-				trigger_error('Author ID not set when using link', E_USER_WARNING);
-			}
-
-			switch($contrib_type)
-			{
-				case 'MOD':
-					$url = append_sid(TITANIA_ROOT . 'mods/index.php', 'mode=search&amp;u=' . $user_id);
-				break;
-
-				default:
-					$url = '#';
-			}
-
-			$contrib_string = '<a href="' . $url . '">' . $contrib_string . '</a>';
-		}
-
-		return $contrib_string;
 	}
 }

@@ -108,7 +108,7 @@ class titania_rating extends titania_database_object
 	/**
 	 * Constructor class for titania authors
 	 *
-	 * @param string $type The type of rating
+	 * @param string $type The type of rating ('author', 'contrib')
 	 * @param object $object The object we will be rating (author/contrib object)
 	 */
 	public function __construct($type, $object)
@@ -145,17 +145,14 @@ class titania_rating extends titania_database_object
 		$this->rating = $object->{$this->cache_rating};
 		$this->rating_count = $object->{$this->cache_rating_count};
 		$this->object_id = $object->{$this->object_column};
-
-		// Get the current user's rating (if any)
-		$this->get_rating();
 	}
 
 	/**
 	* Get the current user's rating
 	*/
-	public function get_rating()
+	public function load()
 	{
-		if (!phpbb::$user->data['is_registered'])
+		if (!phpbb::$user->data['is_registered'] || phpbb::$user->data['is_bot'])
 		{
 			return;
 		}
@@ -185,7 +182,7 @@ class titania_rating extends titania_database_object
 	public function get_rating_string()
 	{
 		$can_rate = (phpbb::$user->data['is_registered'] && phpbb::$auth->acl_get('titania_rate') && !$this->rating_id) ? true : false;
-		$rate_url = append_sid(TITANIA_ROOT . 'rate.' . PHP_EXT, 'id=' . $this->object_id);
+		$rate_url = titania_sid('rate', 'id=' . $this->object_id);
 
 		// If it has not had any ratings yet, give it 1/2 the max for the rating
 		if ($this->rating_count == 0)
@@ -198,7 +195,7 @@ class titania_rating extends titania_database_object
 		for ($i = 1; $i <= titania::$config->max_rating; $i++)
 		{
 			// Title will be $i/max if they've not rated it, rating/max if they have
-			$title = ((!$this->rating) ? $i : $this->rating) . '/' . titania::$config->max_rating;
+			$title = $i . '/' . titania::$config->max_rating;
 
 			$final_code .= ($can_rate) ? '<a href="' . $rate_url . '&amp;value=' . $i . '">' : '';
 			$final_code .= '<img id="' . $this->object_id . '_' . $i . '" ';
@@ -228,6 +225,18 @@ class titania_rating extends titania_database_object
 		$final_code .= '</span>';
 
 		return $final_code;
+	}
+
+	public function assign_common()
+	{
+		phpbb::$template->assign_vars(array(
+			'UA_GREY_STAR_SRC'		=> titania::$theme_path . '/images/star_grey.gif',
+			'UA_GREEN_STAR_SRC'		=> titania::$theme_path . '/images/star_green.gif',
+			'UA_RED_STAR_SRC'		=> titania::$theme_path . '/images/star_red.gif',
+			'UA_ORANGE_STAR_SRC'	=> titania::$theme_path . '/images/star_orange.gif',
+
+			'UA_MAX_RATING'			=> titania::$config->max_rating,
+		));
 	}
 
 	/**

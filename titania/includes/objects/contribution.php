@@ -42,25 +42,25 @@ class titania_contribution extends titania_database_object
 	protected $sql_id_field		= 'contrib_id';
 
 	/**
-	 * Author of this contribution
-	 *
-	 * @var titania_author
-	 */
-	protected $author;
-
-	/**
-	 * Download for this contribution
-	 *
-	 * @var titania_download
-	 */
-	protected $download;
-
-	/**
 	 * Description parsed for storage
 	 *
 	 * @var bool
 	 */
 	private $description_parsed_for_storage = false;
+
+	/**
+	 * Author of this contribution
+	 *
+	 * @var titania_author
+	 */
+	public $author;
+
+	/**
+	 * Rating of this contribution
+	 *
+	 * @var titania_rating
+	 */
+	public $rating;
 
 	/**
 	 * Constructor class for the contribution object
@@ -130,9 +130,90 @@ class titania_contribution extends titania_database_object
 		if ($status)
 		{
 			$this->description_parsed_for_storage = true;
+
+			titania::load_object('author');
+
+			// Load co-authors list
+			$this->coauthors = array();
+			$sql_ary = array(
+				'SELECT' => 'cc.*, a.*, u.*',
+				'FROM'		=> array(
+					TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc',
+					USERS_TABLE => 'u',
+				),
+				'LEFT_JOIN'	=> array(
+					array(
+						'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
+						'ON'	=> 'a.user_id = u.user_id'
+					),
+				),
+				'WHERE'		=> 'cc.contrib_id = ' . $this->contrib_id . ' AND u.user_id = cc.user_id'
+			);
+
+			$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$this->coauthors[$row['user_id']] = new titania_author($row['user_id']);
+				$this->coauthors[$row['user_id']]->load_external($row);
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			// Load the revisions list
+			$this->revisions = array();
+			$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
+				WHERE contrib_id = ' . $this->contrib_id . '
+				ORDER BY revision_id DESC';
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$this->revisions[$row['revision_id']] = $row;
+			}
+			phpbb::$db->sql_freeresult($result);
 		}
 
 		return $status;
+	}
+
+	/**
+	 * Get the author as an object
+	 *
+	 * @return titania_author
+	 */
+	public function get_author()
+	{
+		if ($this->author)
+		{
+			return $this->author;
+		}
+
+		titania::load_object('author');
+
+		$this->author = new titania_author($this->contrib_user_id);
+		$this->author->load();
+
+		return $this->author;
+	}
+
+	/**
+	 * Get the rating as an object
+	 *
+	 * @return titania_rating
+	 */
+	public function get_rating()
+	{
+		if ($this->rating)
+		{
+			return $this->rating;
+		}
+
+		titania::load_object('rating');
+
+		$this->rating = new titania_rating('contrib', $this);
+		$this->rating->load();
+		$this->rating->assign_common();
+
+		return $this->rating;
 	}
 
 	/**
@@ -188,29 +269,6 @@ class titania_contribution extends titania_database_object
 	private function generate_text_for_edit()
 	{
 		return generate_text_for_edit($this->contrib_description, $this->contrib_desc_uid, $this->contrib_desc_options);
-	}
-
-	/**
-	 * Get the author as an object
-	 *
-	 * @return titania_author
-	 */
-	public function get_author()
-	{
-		if ($this->author)
-		{
-			return $this->author;
-		}
-
-		if (!class_exists('titania_author'))
-		{
-			require TITANIA_ROOT . 'includes/objects/author.' . PHP_EXT;
-		}
-
-		$this->author = new titania_author($this->contrib_user_id);
-		$this->author->load();
-
-		return $this->author;
 	}
 
 	/**
@@ -406,20 +464,22 @@ class titania_contribution extends titania_database_object
 	 */
 	public function assign_details()
 	{
-		if (!$this->author)
-		{
-			$this->get_author();
-		}
+		// Get the author/rating objects
+		$this->get_author();
+		$this->get_rating();
 
 		phpbb::$template->assign_vars(array(
 			// Author data
 			'AUTHOR_NAME'					=> $this->author->username,
 			'AUTHOR_NAME_FULL'				=> $this->author->get_username_string(),
 			'AUTHOR_REALNAME'				=> $this->author->author_realname,
+			'AUTHOR_RATING'					=> $this->author->author_rating,
+			'AUTHOR_RATING_COUNT'			=> $this->author->author_rating_count,
 
 			'U_AUTHOR_PROFILE'				=> $this->author->get_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->author->get_phpbb_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->author->get_phpbb_com_profile_url(),
+			'U_AUTHOR_CONTRIBUTIONS'		=> titania_sid('index', 'u=' . $this->contrib_user_id),
 
 			// Contribution data
 			'CONTRIB_TITLE'					=> $this->contrib_name,
@@ -429,8 +489,37 @@ class titania_contribution extends titania_database_object
 			'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
 
 			'CONTRIB_RATING'				=> $this->contrib_rating,
-			'CONTRIB_RATINGS'				=> $this->contrib_rating_count,
+			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
+			'CONTRIB_RATING_STRING'			=> $this->rating->get_rating_string(),
 		));
+
+		// Display Co-authors
+		foreach ($this->coauthors as $user_id => $author)
+		{
+			phpbb::$template->assign_block_vars('coauthors', array(
+				'AUTHOR_NAME'					=> $author->username,
+				'AUTHOR_NAME_FULL'				=> $author->get_username_string(),
+
+				'U_AUTHOR_PROFILE'				=> $author->get_profile_url(),
+				'U_AUTHOR_PROFILE_PHPBB'		=> $author->get_phpbb_profile_url(),
+				'U_AUTHOR_PROFILE_PHPBB_COM'	=> $author->get_phpbb_com_profile_url(),
+				'U_AUTHOR_CONTRIBUTIONS'		=> titania_sid('index', 'u=' . $user_id),
+			));
+		}
+
+		// Display Revisions
+		foreach ($this->revisions as $revision_id => $revision)
+		{
+			phpbb::$template->assign_block_vars('revisions', array(
+				'REVISION_NAME'		=> $revision['revision_name'],
+				'REVISION_TIME'		=> phpbb::$user->format_date($revision['revision_time']),
+
+				'U_DOWNLOAD'		=> '',
+
+				'S_VALIDATED'		=> ($revision['contrib_validated']) ? true : false,
+			));
+		}
+
 
 		if (!phpbb::$user->data['is_bot'])
 		{

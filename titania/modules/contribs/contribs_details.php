@@ -253,21 +253,4 @@ class contribs_details extends titania_object
 			'S_POST_ACTION'		=> append_sid($this->page, 'id=details&amp;mode=email&amp;mod=' . $mod_id),
 		));
 	}
-
-	/**
-	 * Increment contrib views, but only if the user just visited the page and they are not a bot.
-	 *
-	 * @param string $param URL parameter to look for, such as mod, style, mod_id
-	 * @param int $contrib_id contrib_id to increment views for
-	 */
-	public function increment_contrib_views($param, $contrib_id)
-	{
-		if (isset(phpbb::$user->data['session_page']) && !phpbb::$user->data['is_bot'] && strpos(phpbb::$user->data['session_page'], "&{$param}={$contrib_id}") === false)
-		{
-			$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . ' SET contrib_views = contrib_views + 1 WHERE contrib_id = ' . (int) $contrib_id;
-			phpbb::$db->sql_query($sql);
-		}
-
-		return;
-	}
 }

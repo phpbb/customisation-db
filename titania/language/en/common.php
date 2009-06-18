@@ -63,5 +63,7 @@ $lang = array_merge($lang, array(
 
 	'PURGE_CACHE'				=> 'Purge Cache',
 
+	'RATING'					=> 'Rating',
+
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
 ));

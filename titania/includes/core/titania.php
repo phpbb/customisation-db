@@ -85,8 +85,8 @@ class titania
 
 		// Set template path and template name
 		self::$style_path = TITANIA_ROOT . 'styles/' . self::$config->style . '/';
-		self::$template_path = self::$style_path . 'template/';
-		self::$theme_path = self::$style_path . 'theme/';
+		self::$template_path = self::$style_path . 'template';
+		self::$theme_path = self::$style_path . 'theme';
 
 		phpbb::$template->set_custom_template(self::$template_path, 'titania_' . self::$config->style);
 		phpbb::$user->theme['template_storedb'] = false;
@@ -203,8 +203,10 @@ class titania
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
 			'LOGIN_REDIRECT'		=> self::$page,
 			'S_LOGIN_ACTION'		=> append_sid(PHPBB_ROOT_PATH . 'ucp.' . PHP_EXT, 'mode=login'),
-			'T_TITANIA_THEME_PATH'	=> self::$theme_path,
-			'T_TITANIA_STYLESHEET'	=> self::$theme_path . 'stylesheet.css',
+
+			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
+			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
+			'T_TITANIA_STYLESHEET'		=> self::$theme_path . '/stylesheet.css',
 		));
 	}
 
@@ -231,9 +233,9 @@ class titania
 			return $message;
 		}
 
-		meta_refresh(3, append_sid(TITANIA_ROOT . 'index.' . PHP_EXT));
+		meta_refresh(3, titania_sid('index'));
 
-		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . append_sid(TITANIA_ROOT . 'index.' . PHP_EXT) . '">', '</a> ');
+		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . titania_sid('index') . '">', '</a> ');
 		trigger_error($message);
 	}
 
