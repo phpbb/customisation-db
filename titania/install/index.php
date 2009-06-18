@@ -24,6 +24,12 @@ if (!file_exists(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT))
 	trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
 }
 
+// Make sure we are not using the same table prefix as phpBB (will cause conflicts).
+if (titania::$config->table_prefix == $GLOBALS['table_prefix'])
+{
+	trigger_error('You can not use the same table prefix for Titania as you are using for phpBB.');
+}
+
 $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
@@ -31,7 +37,7 @@ $version_config_name = 'titania_version';
 $versions = array(
 	'0.1.0'	=> array(
 		'table_add' => array(
-			array('customisation_attachments', array(
+			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
 					'attachment_id'			=> array('UINT', NULL, 'auto_increment'),
 					'attachment_type'		=> array('TINT:1', 0),
@@ -54,7 +60,7 @@ $versions = array(
 					'attachment_status'		=> array('INDEX', 'attachment_status'),
 				),
 			)),
-			array('customisation_authors', array(
+			array(TITANIA_AUTHORS_TABLE, array(
 				'COLUMNS'		=> array(
 					'user_id'				=> array('UINT', 0),
 					'phpbb_user_id'			=> array('UINT', 0),
@@ -78,7 +84,7 @@ $versions = array(
 					'author_visible'		=> array('INDEX', 'author_visible'),
 				),
 			)),
-			array('customisation_categories', array(
+			array(TITANIA_CATEGORIES_TABLE, array(
 				'COLUMNS'		=> array(
 					'category_id'			=> array('UINT', NULL, 'auto_increment'),
 					'parent_id'				=> array('UINT', 0),
@@ -97,7 +103,7 @@ $versions = array(
 					'category_visible'	=> array('INDEX', 'category_visible'),
 				),
 			)),
-			array('customisation_contribs', array(
+			array(TITANIA_CONTRIBS_TABLE, array(
 				'COLUMNS'		=> array(
 					'contrib_id'					=> array('UINT', NULL, 'auto_increment'),
 					'contrib_user_id'				=> array('UINT', 0),
@@ -126,21 +132,14 @@ $versions = array(
 					'contrib_visible'		=> array('INDEX', 'contrib_visible'),
 				),
 			)),
-			array('customisation_contrib_in_categories', array(
-				'COLUMNS'		=> array(
-					'contrib_id'			=> array('UINT', 0),
-					'category_id'			=> array('UINT', 0),
-				),
-				'PRIMARY_KEY'	=> array('contrib_id', 'category_id'),
-			)),
-			array('customisation_contrib_coauthors', array(
+			array(TITANIA_CONTRIB_COAUTHORS_TABLE, array(
 				'COLUMNS'		=> array(
 					'contrib_id'			=> array('UINT', 0),
 					'user_id'				=> array('UINT', 0),
 				),
 				'PRIMARY_KEY'	=> array('contrib_id', 'user_id'),
 			)),
-			array('customisation_contrib_faq', array(
+			array(TITANIA_CONTRIB_FAQ_TABLE, array(
 				'COLUMNS'		=> array(
 					'faq_id'				=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'			=> array('UINT', 0),
@@ -158,7 +157,14 @@ $versions = array(
 					'faq_order_id'		=> array('INDEX', 'faq_order_id'),
 				),
 			)),
-			array('customisation_contrib_tags', array(
+			array(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, array(
+				'COLUMNS'		=> array(
+					'contrib_id'			=> array('UINT', 0),
+					'category_id'			=> array('UINT', 0),
+				),
+				'PRIMARY_KEY'	=> array('contrib_id', 'category_id'),
+			)),
+			array(TITANIA_CONTRIB_TAGS_TABLE, array(
 				'COLUMNS'		=> array(
 					'contrib_id'			=> array('UINT', 0),
 					'tag_id'				=> array('UINT', 0),
@@ -166,7 +172,7 @@ $versions = array(
 				),
 				'PRIMARY_KEY'	=> array('contrib_id', 'tag_id'),
 			)),
-			array('customisation_queue', array(
+			array(TITANIA_QUEUE_TABLE, array(
 				'COLUMNS'		=> array(
 					'queue_id'				=> array('UINT', NULL, 'auto_increment'),
 					'revision_id'			=> array('UINT', 0),
@@ -192,7 +198,7 @@ $versions = array(
 					'queue_submit_time'		=> array('INDEX', 'queue_submit_time'),
 				),
 			)),
-			array('customisation_ratings', array(
+			array(TITANIA_RATINGS_TABLE, array(
 				'COLUMNS'		=> array(
 					'rating_id'				=> array('UINT', NULL, 'auto_increment'),
 					'rating_type_id'		=> array('UINT', 0),
@@ -205,7 +211,7 @@ $versions = array(
 					'type_user_object'		=> array('UNIQUE', array('rating_type_id', 'rating_user_id', 'rating_object_id')),
 				),
 			)),
-			array('customisation_revisions', array(
+			array(TITANIA_REVISIONS_TABLE, array(
 				'COLUMNS'		=> array(
 					'revision_id'			=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'			=> array('UINT', 0),
@@ -220,7 +226,7 @@ $versions = array(
 					'contrib_validated'		=> array('INDEX', 'contrib_validated'),
 				),
 			)),
-			array('customisation_tag_fields', array(
+			array(TITANIA_TAG_FIELDS_TABLE, array(
 				'COLUMNS'		=> array(
 					'tag_id'				=> array('UINT', NULL, 'auto_increment'),
 					'tag_type_id'			=> array('UINT', 0),
@@ -233,14 +239,14 @@ $versions = array(
 					'tag_type_id'			=> array('INDEX', 'tag_type_id'),
 				),
 			)),
-			array('customisation_tag_types', array(
+			array(TITANIA_TAG_TYPES_TABLE, array(
 				'COLUMNS'		=> array(
 					'tag_type_id'			=> array('UINT', NULL, 'auto_increment'),
 					'tag_type_name'			=> array('STEXT_UNI', '', 'true_sort'),
 				),
 				'PRIMARY_KEY'	=> 'tag_type_id',
 			)),
-			array('customisation_watch', array(
+			array(TITANIA_WATCH_TABLE, array(
 				'COLUMNS'		=> array(
 					'watch_type'			=> array('TINT:1', 0),
 					'watch_object_id'		=> array('UINT', 0),
@@ -290,7 +296,7 @@ $versions = array(
 
 	'0.1.1' => array(
 		'table_column_remove' => array(
-			array('customisation_contrib_faq', 'parent_id'),
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'parent_id'),
 		),
 
 		'permission_add' => array(
@@ -308,19 +314,19 @@ $versions = array(
 
 	'0.1.2' => array(
 		'table_column_add' => array(
-			array('customisation_authors', 'author_desc', array('MTEXT_UNI', '')),
-			array('customisation_authors', 'author_desc_bitfield', array('VCHAR:255', '')),
-			array('customisation_authors', 'author_desc_uid', array('VCHAR:8', '')),
-			array('customisation_authors', 'author_desc_options', array('UINT:11', 7)),
+			array(TITANIA_AUTHORS_TABLE, 'author_desc', array('MTEXT_UNI', '')),
+			array(TITANIA_AUTHORS_TABLE, 'author_desc_bitfield', array('VCHAR:255', '')),
+			array(TITANIA_AUTHORS_TABLE, 'author_desc_uid', array('VCHAR:8', '')),
+			array(TITANIA_AUTHORS_TABLE, 'author_desc_options', array('UINT:11', 7)),
 		),
 	),
 
 	'0.1.3' => array(
 		'table_column_add' => array(
-			array('customisation_contrib_faq', 'faq_views', array('UINT', 0)),
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'faq_views', array('UINT', 0)),
 		),
 	),
-	
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
@@ -435,7 +441,7 @@ function titania_data($action, $version)
 		),
 	);
 
-	$umil->table_row_insert('customisation_categories', $categories);
+	$umil->table_row_insert(TITANIA_CATEGORIES_TABLE, $categories);
 
 	$author = array(array(
 		'user_id'			=> phpbb::$user->data['user_id'],
@@ -444,7 +450,7 @@ function titania_data($action, $version)
 		'author_contribs'	=> 1,
 		'author_mods'		=> 1,
 	));
-	$umil->table_row_insert('customisation_authors', $author);
+	$umil->table_row_insert(TITANIA_AUTHORS_TABLE, $author);
 
 	$mod = array(array(
 		'contrib_id'			=> 1,
@@ -455,10 +461,10 @@ function titania_data($action, $version)
 		'contrib_description'	=> 'This mod will turn all users into nubs.',
 		'contrib_desc_bitfield'	=> '',
 		'contrib_desc_uid'		=> '',
-		'contrib_desc_options'	=> 0,
+		'contrib_desc_options'	=> 7,
 		'contrib_status'		=> TITANIA_STATUS_NEW,
 	));
-	$umil->table_row_insert('customisation_contribs', $mod);
+	$umil->table_row_insert(TITANIA_CONTRIBS_TABLE, $mod);
 
 	$in_categories = array(
 		array(
@@ -470,32 +476,32 @@ function titania_data($action, $version)
 			'contrib_id'	=> 1,
 		),
 	);
-	$umil->table_row_insert('customisation_contrib_in_categories', $in_categories);
-	
+	$umil->table_row_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $in_categories);
+
 	$faq = array(
 		array(
-			'faq_id'			=> 1,
+			'faq_id'				=> 1,
 			'contrib_id'			=> 1,
 			'faq_order_id'			=> 1,
 			'faq_subject'			=> 'FAQ example 1',
-			'faq_text'			=> 'It is only an FAQ example.',
+			'faq_text'				=> 'It is only an FAQ example.',
 			'faq_text_bitfield'		=> '',
 			'faq_text_uid'			=> '',
 			'faq_text_options'		=> 7,
 		),
 		array(
-			'faq_id'			=> 2,
+			'faq_id'				=> 2,
 			'contrib_id'			=> 1,
 			'faq_order_id'			=> 2,
 			'faq_subject'			=> 'FAQ example 2',
-			'faq_text'			=> 'It is only an FAQ example.',
+			'faq_text'				=> 'It is only an FAQ example.',
 			'faq_text_bitfield'		=> '',
 			'faq_text_uid'			=> '',
 			'faq_text_options'		=> 7,
-		)	
+		)
 	);
-	
-	$umil->table_row_insert('customisation_contrib_faq', $faq);
+
+	$umil->table_row_insert(TITANIA_CONTRIB_FAQ_TABLE, $faq);
 }
 
 include(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT);
