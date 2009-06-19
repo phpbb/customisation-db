@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 143 2009-06-09 19:30:42Z exreaction $
+ * @version $Id: umil.php 149 2009-06-16 00:58:51Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -200,6 +200,12 @@ class umil
 			if (version_compare(UMIL_VERSION, $info[0], '<'))
 			{
 				global $template, $user, $phpbb_root_path;
+
+				// Make sure user->setup() has been called
+				if (empty($user->lang))
+				{
+					$user->setup();
+				}
 
 				page_header('', false);
 
@@ -502,9 +508,9 @@ class umil
 				}
 				else if (is_array($return) && isset($return['command']))
 				{
-					$lang_key = array_shift($return['command']);
+					$lang_key = (is_array($return['command'])) ? array_shift($return['command']) : $return['command'];
 
-					if (sizeof($return['command']))
+					if (is_array($return['command']) && sizeof($return['command']))
 					{
 						$lang_args = array();
 						foreach ($return['command'] as $arg)
@@ -2053,6 +2059,15 @@ class umil
 			return;
 		}
 
+		/**
+		* $column_data can be empty when uninstalling a mod and table_column_remove was used, but no 3rd argument was given.
+		* In that case we'll assume that it was a column previously added by the mod (if not the author should specify a 3rd argument) and skip this to prevent an error
+		*/
+		if (empty($column_data))
+		{
+			return;
+		}
+
 		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_COLUMN_ADD', $table_name, $column_name);
@@ -2162,6 +2177,15 @@ class umil
 			{
 				call_user_func_array(array($this, 'table_index_add'), $params);
 			}
+			return;
+		}
+
+		/**
+		* $column can be empty when uninstalling a mod and table_index_remove was used, but no 3rd argument was given.
+		* In that case we'll assume that it was an index previously added by the mod (if not the author should specify a 3rd argument) and skip this to prevent an error
+		*/
+		if (empty($column))
+		{
 			return;
 		}
 
