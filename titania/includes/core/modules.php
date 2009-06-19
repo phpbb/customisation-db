@@ -35,91 +35,62 @@ class titania_modules extends p_master
 	}
 
 	/**
-	* Loads currently active module
+	* Check module authorisation
 	*
-	* This method loads a given module, passing it the relevant id and mode.
+	* Addition of the titania_access_ auth check
 	*/
-	public function load_active($mode = false, $module_url = false, $execute_module = true)
+	public function module_auth($module_auth, $forum_id = false)
 	{
-		global $phpbb_root_path, $phpbb_admin_path, $phpEx, $user;
+		global $auth, $config;
 
-		$module_path = $this->include_path . $this->p_class;
-		$icat = request_var('icat', '');
+		$module_auth = trim($module_auth);
 
-		if ($this->active_module === false)
+		// Generally allowed to access module if module_auth is empty
+		if (!$module_auth)
 		{
-			trigger_error('Module not accessible', E_USER_ERROR);
+			return true;
 		}
 
-		if (!class_exists("{$this->p_class}_$this->p_name"))
+		// With the code below we make sure only those elements get eval'd we really want to be checked
+		preg_match_all('/(?:
+			"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"         |
+			\'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*\'     |
+			[(),]                                  |
+			[^\s(),]+)/x', $module_auth, $match);
+
+		$tokens = $match[0];
+		for ($i = 0, $size = sizeof($tokens); $i < $size; $i++)
 		{
-			if (!file_exists("$module_path/{$this->p_class}_$this->p_name.$phpEx"))
+			$token = &$tokens[$i];
+
+			switch ($token)
 			{
-				trigger_error("Cannot find module $module_path/{$this->p_class}_$this->p_name.$phpEx", E_USER_ERROR);
+				case ')':
+				case '(':
+				case '&&':
+				case '||':
+				case ',':
+				break;
+
+				default:
+					if (!preg_match('#(?:titania_access_([0-9]+))|(?:acl_([a-z0-9_]+)(,\$id)?)|(?:\$id)|(?:aclf_([a-z0-9_]+))|(?:cfg_([a-z0-9_]+))|(?:request_([a-zA-Z0-9_]+))#', $token))
+					{
+						$token = '';
+					}
+				break;
 			}
-
-			include("$module_path/{$this->p_class}_$this->p_name.$phpEx");
-
-			if (!class_exists("{$this->p_class}_$this->p_name"))
-			{
-				trigger_error("Module file $module_path/{$this->p_class}_$this->p_name.$phpEx does not contain correct class [{$this->p_class}_$this->p_name]", E_USER_ERROR);
-			}
-
-			if (!empty($mode))
-			{
-				$this->p_mode = $mode;
-			}
-
-			// Create a new instance of the desired module ... if it has a
-			// constructor it will of course be executed
-			$instance = "{$this->p_class}_$this->p_name";
-
-			$this->module = new $instance($this);
-
-			// We pre-define the action parameter we are using all over the place
-			if (defined('IN_ADMIN'))
-			{
-				// Is first module automatically enabled a duplicate and the category not passed yet?
-				if (!$icat && $this->module_ary[$this->active_module_row_id]['is_duplicate'])
-				{
-					$icat = $this->module_ary[$this->active_module_row_id]['parent'];
-				}
-
-				// Not being able to overwrite ;)
-				$this->module->u_action = append_sid("{$phpbb_admin_path}index.$phpEx", "i={$this->p_name}") . (($icat) ? '&amp;icat=' . $icat : '') . "&amp;mode={$this->p_mode}";
-			}
-			else
-			{
-				// If user specified the module url we will use it...
-				if ($module_url !== false)
-				{
-					$this->module->u_action = $module_url;
-				}
-				else
-				{
-					$this->module->u_action = $phpbb_root_path . (($user->page['page_dir']) ? $user->page['page_dir'] . '/' : '') . $user->page['page_name'];
-				}
-
-				$this->module->u_action = append_sid($this->module->u_action, "i={$this->p_name}") . (($icat) ? '&amp;icat=' . $icat : '') . "&amp;mode={$this->p_mode}";
-			}
-
-			// Add url_extra parameter to u_action url
-			if (!empty($this->module_ary) && $this->active_module !== false && $this->module_ary[$this->active_module_row_id]['url_extra'])
-			{
-				$this->module->u_action .= $this->module_ary[$this->active_module_row_id]['url_extra'];
-			}
-
-			// Assign the module path for re-usage
-			$this->module->module_path = $module_path . '/';
-
-			// Execute the main method for the new instance, we send the module id and mode as parameters
-			// Users are able to call the main method after this function to be able to assign additional parameters manually
-			if ($execute_module)
-			{
-				$this->module->main($this->p_name, $this->p_mode);
-			}
-
-			return;
 		}
+
+		$module_auth = implode(' ', $tokens);
+
+		// Make sure $id seperation is working fine
+		$module_auth = str_replace(' , ', ',', $module_auth);
+
+		$forum_id = ($forum_id === false) ? $this->acl_forum_id : $forum_id;
+
+		$is_auth = false;
+		eval('$is_auth = (int) (' . preg_replace(array('#titania_access_([0-9]+)#', '#acl_([a-z0-9_]+)(,\$id)?#', '#\$id#', '#aclf_([a-z0-9_]+)#', '#cfg_([a-z0-9_]+)#', '#request_([a-zA-Z0-9_]+)#'), array('\\1 >= titania::$access_level','(int) $auth->acl_get(\'\\1\'\\2)', '(int) $forum_id', '(int) $auth->acl_getf_global(\'\\1\')', '(int) $config[\'\\1\']', '!empty($_REQUEST[\'\\1\'])'), $module_auth) . ');');
+
+		return $is_auth;
 	}
 }

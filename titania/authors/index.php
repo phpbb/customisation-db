@@ -20,6 +20,12 @@ include(TITANIA_ROOT . 'includes/core/modules.' . PHP_EXT);
 $mode		= request_var('mode', 'details');
 $user_id	= request_var('u', '');
 
+// If they are viewing their own authors page...
+if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['user_id'] == $user_id)
+{
+	titania::$access_level = TITANIA_ACCESS_AUTHORS;
+}
+
 $module = new titania_modules();
 
 // Instantiate module system and generate list of available modules

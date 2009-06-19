@@ -20,6 +20,21 @@ include(TITANIA_ROOT . 'includes/core/modules.' . PHP_EXT);
 $mode		= request_var('mode', 'details');
 $contrib_id	= request_var('c', '');
 
+// Check to see if the currently accessing user is an author
+if (titania::$access_level == TITANIA_ACCESS_PUBLIC)
+{
+	$authors = titania::$cache->get_contrib_authors($contrib_id);
+	if (!is_array($authors))
+	{
+		trigger_error('CONTRIB_NOT_FOUND');
+	}
+
+	if (in_array(phpbb::$user->data['user_id'], $authors))
+	{
+		titania::$access_level = TITANIA_ACCESS_AUTHORS;
+	}
+}
+
 $module = new titania_modules();
 
 // Instantiate module system and generate list of available modules
