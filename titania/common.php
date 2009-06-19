@@ -18,17 +18,17 @@ if (!defined('IN_TITANIA'))
 
 define('TITANIA_VERSION', '0.1.3');
 
+// Include titania constants and functions
+require TITANIA_ROOT . 'includes/constants.' . PHP_EXT;
+require TITANIA_ROOT . 'includes/functions.' . PHP_EXT;
+require TITANIA_ROOT . 'includes/functions_display.' . PHP_EXT;
+
 // Include titania class
 require TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT;
 require TITANIA_ROOT . 'includes/core/phpbb.' . PHP_EXT;
 
 // Read config.php file
 titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);
-
-// Include titania constants
-require TITANIA_ROOT . 'includes/constants.' . PHP_EXT;
-require TITANIA_ROOT . 'includes/functions.' . PHP_EXT;
-require TITANIA_ROOT . 'includes/functions_display.' . PHP_EXT;
 
 // We need this for compatibility reasons
 $phpEx = PHP_EXT;

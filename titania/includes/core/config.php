@@ -42,6 +42,8 @@ class titania_config extends titania_object
 			'table_prefix'				=> array('default' => 'customisation_'),
 			'style'						=> array('default' => 'default'),
 
+			'team_groups'				=> array('default' => array(5)),
+
 			'max_rating'				=> array('default' => 5),
 		));
 	}

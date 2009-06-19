@@ -39,7 +39,7 @@ define('TITANIA_TAG_FIELDS_TABLE',				$table_prefix . 'tag_fields');
 define('TITANIA_TAG_TYPES_TABLE',				$table_prefix . 'tag_types');
 define('TITANIA_WATCH_TABLE',					$table_prefix . 'watch');
 
-// Customisation/Queue (contrib) status
+// Contribution revision status
 define('TITANIA_STATUS_NEW', 0);
 define('TITANIA_STATUS_APPROVED', 1);
 define('TITANIA_STATUS_DENIED', 2);
@@ -56,6 +56,35 @@ define('TAG_TYPE_COMPLEXITY', 3);
 // Errorbox types
 define('TITANIA_ERROR', 1);
 define('TITANIA_SUCCESS', 2);
+
+// Contribution type
+define('TITANIA_TYPE_CATEGORY', 0); // Used in categories
+define('TITANIA_TYPE_MOD', 1);
+define('TITANIA_TYPE_STYLE', 2);
+define('TITANIA_TYPE_SNIPPET', 3);
+define('TITANIA_TYPE_LANG_PACK', 4);
+
+// Author constants
+define('TITANIA_AUTHOR_HIDDEN', 0);
+define('TITANIA_AUTHOR_VISIBLE', 1);
+
+// Rating Type Constants
+define('TITANIA_RATING_AUTHOR', 1);
+define('TITANIA_RATING_CONTRIB', 2);
+
+// Download types
+define('TITANIA_DOWNLOAD_CONTRIB', 1);
+define('TITANIA_DOWNLOAD_POST', 2);
+
+// Post types
+define('TITANIA_POST_DEFAULT', 1);
+define('TITANIA_POST_QUEUE', 2);
+define('TITANIA_POST_TRACKER', 3);
+
+// Access Levels
+define('TITANIA_ACCESS_TEAMS', 0);
+define('TITANIA_ACCESS_AUTHORS', 1);
+define('TITANIA_ACCESS_PUBLIC', 2);
 
 // Header status codes
 define('HEADER_OK',						200);
@@ -80,22 +109,3 @@ define('HEADER_INTERNAL_SERVER_ERROR',	500);
 define('HEADER_NOT_IMPLEMENTED',		501);
 define('HEADER_BAD_GATEWAY',			502);
 define('HEADER_SERVICE_UNAVAILABLE',	503);
-
-// Customisation (contrib) type
-define('TITANIA_TYPE_CATEGORY', 0); // Used in categories
-define('TITANIA_TYPE_MOD', 1);
-define('TITANIA_TYPE_STYLE', 2);
-define('TITANIA_TYPE_SNIPPET', 3);
-define('TITANIA_TYPE_LANG_PACK', 4);
-
-// Author constants
-define('TITANIA_AUTHOR_HIDDEN', 0);
-define('TITANIA_AUTHOR_VISIBLE', 1);
-
-// Rating Type Constants
-define('TITANIA_RATING_AUTHOR', 1);
-define('TITANIA_RATING_CONTRIB', 2);
-
-// Download types
-define('TITANIA_DOWNLOAD_CONTRIB', 1);
-define('TITANIA_DOWNLOAD_POST', 2);

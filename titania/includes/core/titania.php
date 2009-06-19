@@ -50,6 +50,13 @@ class titania
 	public static $time;
 
 	/**
+	* Current User's Access level
+	*
+	* @var int $access_level Check TITANIA_ACCESS_ constants
+	*/
+	public static $access_level = TITANIA_ACCESS_PUBLIC;
+
+	/**
 	 * Style, Template, and Theme Path
 	 *
 	 * @var string
@@ -90,6 +97,12 @@ class titania
 
 		phpbb::$template->set_custom_template(self::$template_path, 'titania_' . self::$config->style);
 		phpbb::$user->theme['template_storedb'] = false;
+
+		// Access Level check for teams access
+		if (in_array(phpbb::$user->data['user_group'], self::$config->team_groups))
+		{
+			self::$access_level = TITANIA_ACCESS_TEAMS;
+		}
 
 		// Add common titania language file
 		self::add_lang('common');
