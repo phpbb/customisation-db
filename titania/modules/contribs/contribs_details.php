@@ -32,7 +32,6 @@ class contribs_details extends titania_object
 	public function __construct($p_master)
 	{
 		$this->p_master = $p_master;
-
 		$this->page = titania::$page;
 	}
 
@@ -47,10 +46,6 @@ class contribs_details extends titania_object
 		titania::add_lang('contributions');
 
 		$contrib_id	= request_var('c', 0);
-		$submit	= isset($_POST['submit']) ? true : false;
-
-		$form_key = 'contrib_details';
-		add_form_key($form_key);
 
 		switch ($mode)
 		{
@@ -94,12 +89,14 @@ class contribs_details extends titania_object
 	*/
 	public function details($contrib_id)
 	{
+		titania::add_lang('authors');
+
 		titania::load_object('contribution');
 		$contrib = new titania_contribution($contrib_id);
 
 		if (!$contrib->load())
 		{
-			trigger_error('ERROR_CONTRIB_NOT_FOUND');
+			trigger_error('CONTRIB_NOT_FOUND');
 		}
 
 		$contrib->assign_details();

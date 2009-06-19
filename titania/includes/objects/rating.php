@@ -87,7 +87,7 @@ class titania_rating extends titania_database_object
 	 *
 	 * @var int
 	 */
-	protected $object_id			= 0;
+	protected $rating_object_id			= 0;
 
 	/**
 	 * Rating
@@ -106,6 +106,14 @@ class titania_rating extends titania_database_object
 	protected $rating_count			= 0;
 
 	/**
+	 * Rating Type
+	 * The rating type
+	 *
+	 * @var string
+	 */
+	protected $rating_type			= 0;
+
+	/**
 	 * Constructor class for titania authors
 	 *
 	 * @param string $type The type of rating ('author', 'contrib')
@@ -117,12 +125,14 @@ class titania_rating extends titania_database_object
 		$this->object_config = array_merge($this->object_config, array(
 			'rating_id'				=> array('default' => 0),
 			'rating_type_id'		=> array('default' => 0),
-			'rating_user_id'		=> array('default' => 0),
+			'rating_user_id'		=> array('default' => phpbb::$user->data['user_id']),
 			'rating_object_id'		=> array('default' => 0),
 			'rating_value'			=> array('default' => 0.0),
 		));
 
-		switch($type)
+		$this->rating_type = $type;
+
+		switch($this->rating_type)
 		{
 			case 'author' :
 				$this->rating_type_id = TITANIA_RATING_AUTHOR;
@@ -144,7 +154,7 @@ class titania_rating extends titania_database_object
 		// Get the rating, rating count, and item id
 		$this->rating = $object->{$this->cache_rating};
 		$this->rating_count = $object->{$this->cache_rating_count};
-		$this->object_id = $object->{$this->object_column};
+		$this->rating_object_id = $object->{$this->object_column};
 	}
 
 	/**
@@ -160,7 +170,7 @@ class titania_rating extends titania_database_object
 		$sql = 'SELECT * FROM ' . $this->sql_table . '
 			WHERE rating_type_id = ' . (int) $this->rating_type_id . '
 				AND rating_user_id = ' . (int) phpbb::$user->data['user_id'] . '
-				AND rating_object_id = ' . (int) $this->object_id;
+				AND rating_object_id = ' . (int) $this->rating_object_id;
 		$result = phpbb::$db->sql_query($sql);
 		$this->sql_data = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
@@ -182,7 +192,7 @@ class titania_rating extends titania_database_object
 	public function get_rating_string()
 	{
 		$can_rate = (phpbb::$user->data['is_registered'] && phpbb::$auth->acl_get('titania_rate') && !$this->rating_id) ? true : false;
-		$rate_url = titania_sid('rate', 'id=' . $this->object_id);
+		$rate_url = titania_sid('index', "action=rate&amp;type={$this->rating_type}&amp;id={$this->rating_object_id}");
 
 		// If it has not had any ratings yet, give it 1/2 the max for the rating
 		if ($this->rating_count == 0)
@@ -191,14 +201,14 @@ class titania_rating extends titania_database_object
 		}
 
 		// Go through and build the rating string
-		$final_code = '<span id="rating_' . $this->object_id . '">';
+		$final_code = '<span id="rating_' . $this->rating_object_id . '">';
 		for ($i = 1; $i <= titania::$config->max_rating; $i++)
 		{
 			// Title will be $i/max if they've not rated it, rating/max if they have
-			$title = $i . '/' . titania::$config->max_rating;
+			$title = (($this->rating_value) ? $this->rating_value : $i) . '/' . titania::$config->max_rating;
 
 			$final_code .= ($can_rate) ? '<a href="' . $rate_url . '&amp;value=' . $i . '">' : '';
-			$final_code .= '<img id="' . $this->object_id . '_' . $i . '" ';
+			$final_code .= '<img id="' . $this->rating_object_id . '_' . $i . '" ';
 			if ($this->rating_id && $i <= $this->rating) // If they have rated, show their own rating in green stars
 			{
 				$final_code .= 'src="' . titania::$theme_path . '/images/star_green.gif" ';
@@ -211,7 +221,7 @@ class titania_rating extends titania_database_object
 			{
 				$final_code .= 'src="' . titania::$theme_path . '/images/star_grey.gif" ';
 			}
-			$final_code .= ($can_rate) ? "onmouseover=\"ratingHover('{$i}', '{$this->object_id}')\"  onmouseout=\"ratingUnHover('{$this->rating}', '{$this->object_id}')\"  onmousedown=\"ratingDown('{$i}', '{$this->object_id}')\"" : '';
+			$final_code .= ($can_rate) ? "onmouseover=\"ratingHover('{$i}', '{$this->rating_object_id}')\"  onmouseout=\"ratingUnHover('{$this->rating}', '{$this->rating_object_id}')\"  onmousedown=\"ratingDown('{$i}', '{$this->rating_object_id}')\"" : '';
 			$final_code .= ' alt="' . $title . '" title="' . $title . '" />';
 			$final_code .= ($can_rate) ? '</a>' : '';
 		}
@@ -219,7 +229,7 @@ class titania_rating extends titania_database_object
 		// If they have rated already we will add the remove rating icon at the end
 		if ($this->rating_id)
 		{
-			$final_code .= ' <a href="' . $rate_url . '&amp;value=remove"><img id="' . $this->object_id . '_remove" src="' . titania::$theme_path . '/images/star_remove.gif"  alt="' . phpbb::$user->lang['REMOVE_RATING'] . '" title="' . phpbb::$user->lang['REMOVE_RATING'] . '" /></a>';
+			$final_code .= ' <a href="' . $rate_url . '&amp;value=-1"><img id="' . $this->rating_object_id . '_remove" src="' . titania::$theme_path . '/images/star_remove.gif"  alt="' . phpbb::$user->lang['REMOVE_RATING'] . '" title="' . phpbb::$user->lang['REMOVE_RATING'] . '" /></a>';
 		}
 
 		$final_code .= '</span>';
@@ -248,10 +258,10 @@ class titania_rating extends titania_database_object
 	{
 		if (!phpbb::$user->data['is_registered'] || !phpbb::$auth->acl_get('titania_rate'))
 		{
-			return;
+			return false;
 		}
 
-		if ($rating < 0 || $rating > titania::$config['max_rating'])
+		if ($rating < 0 || $rating > titania::$config->max_rating)
 		{
 			return false;
 		}
@@ -264,7 +274,7 @@ class titania_rating extends titania_database_object
 		$cnt = $total = 0;
 		$sql = 'SELECT rating_value FROM ' . $this->sql_table . '
 			WHERE rating_type_id = ' . (int) $this->rating_type_id . '
-				AND rating_object_id = ' . (int) $this->object_id;
+				AND rating_object_id = ' . (int) $this->rating_object_id;
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -276,8 +286,10 @@ class titania_rating extends titania_database_object
 		$sql = 'UPDATE ' . $this->cache_table . ' SET ' .
 			$this->cache_rating . ' = ' . round($total / $cnt, 2) . ', ' .
 			$this->cache_rating_count . ' = ' . $cnt . '
-			WHERE ' . $this->object_column . ' = ' . $this->object_id;
+			WHERE ' . $this->object_column . ' = ' . $this->rating_object_id;
 		phpbb::$db->sql_query($sql);
+
+		return true;
 	}
 
 	/**
@@ -287,7 +299,7 @@ class titania_rating extends titania_database_object
 	{
 		if (!phpbb::$user->data['is_registered'] || !$this->rating_id)
 		{
-			return;
+			return false;
 		}
 
 		parent::delete();
@@ -296,7 +308,7 @@ class titania_rating extends titania_database_object
 		$cnt = $total = 0;
 		$sql = 'SELECT rating_value FROM ' . $this->sql_table . '
 			WHERE rating_type_id = ' . (int) $this->rating_type_id . '
-				AND rating_object_id = ' . (int) $this->object_id;
+				AND rating_object_id = ' . (int) $this->rating_object_id;
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -306,10 +318,12 @@ class titania_rating extends titania_database_object
 		phpbb::$db->sql_freeresult($result);
 
 		$sql = 'UPDATE ' . $this->cache_table . ' SET ' .
-			$this->cache_rating . ' = ' . round($total / $cnt, 2) . ', ' .
+			$this->cache_rating . ' = ' . (($cnt > 0) ? round($total / $cnt, 2) : 0) . ', ' .
 			$this->cache_rating_count . ' = ' . $cnt . '
-			WHERE ' . $this->object_column . ' = ' . $this->object_id;
+			WHERE ' . $this->object_column . ' = ' . $this->rating_object_id;
 		phpbb::$db->sql_query($sql);
+
+		return true;
 	}
 
 	/**
@@ -319,18 +333,20 @@ class titania_rating extends titania_database_object
 	{
 		if (!phpbb::$auth->acl_get('titania_rate_reset'))
 		{
-			return;
+			return false;
 		}
 
 		$sql = 'DELETE FROM ' . $this->sql_table . '
 			WHERE rating_type_id = ' . (int) $this->rating_type_id . '
-				AND rating_object_id = ' . (int) $this->object_id;
+				AND rating_object_id = ' . (int) $this->rating_object_id;
 		phpbb::$db->sql_query($sql);
 
 		$sql = 'UPDATE ' . $this->cache_table . ' SET ' .
 			$this->cache_rating . ' = 0, ' .
 			$this->cache_rating_count . ' = 0
-			WHERE ' . $this->object_column . ' = ' . $this->object_id;
+			WHERE ' . $this->object_column . ' = ' . $this->rating_object_id;
 		phpbb::$db->sql_query($sql);
+
+		return true;
 	}
 }

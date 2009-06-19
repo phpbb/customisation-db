@@ -276,7 +276,7 @@ class titania
 		}
 
 		phpbb::$template->assign_vars(array(
-			'U_PURGE_CACHE'		=> (phpbb::$auth->acl_get('a_')) ? append_sid(self::$page, 'cache=purge') : '',
+			'U_PURGE_CACHE'		=> (phpbb::$auth->acl_get('a_')) ? append_sid(self::$page, array_merge($_GET, array('cache' => 'purge'))) : '',
 		));
 
 		page_footer($run_cron);

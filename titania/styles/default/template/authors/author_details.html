@@ -1,0 +1,37 @@
+<!-- INCLUDE authors/author_header.html -->
+
+<div class="column1">
+<div class="panel bg1">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<h3>{AUTHOR_NAME} {L_USER_INFORMATION}</h3>
+
+	<dl class="details" style="float: left; display: block; width: 60%;">
+
+		<dt>{L_AUTHOR}:</dt> <dd>{USER_FULL}</dd>
+		<dt>{L_REAL_NAME}:</dt> <dd>{REAL_NAME}</dd>
+		<dt>{L_WEBSITE}:</dt> <dd>{WEBSITE}</dd>
+    <!-- IF U_PHPBB_PROFILE -->
+	    <dt style="margin-bottom: 22px;">{L_PHPBB_PROFILE}:</dt> <dd><a href="{U_PHPBB_PROFILE}">{L_PHPBB_PROFILE}</a></dd>
+    <!-- ENDIF -->
+	</dl>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+</div>
+
+<div class="column2">
+<div class="panel bg2">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<h3>{L_MODO_ADVANCED}</h3>
+		<dl class="details" style="float: left; display: block; width: 60%;">
+			<dt>{L_AUTHOR_RATING}:</dt> <dd>{RATING} ({RATING_COUNT})</dd>
+			<dt>{L_AUTHOR_CONTRIBS}:</dt> <dd>{CONTRIB_COUNT}</dd>
+			<dt>{L_AUTHOR_SNIPPETS}:</dt> <dd>{SNIPPET_COUNT}</dd>
+            <dt>{L_AUTHOR_MODS}: </dt> <dd>{MOD_COUNT}</dd>
+			<dt>{L_AUTHOR_STYLES}:</dt> <dd>{STYLE_COUNT}</dd>
+		</dl>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+</div>
+
+<!-- INCLUDE authors/author_footer.html -->

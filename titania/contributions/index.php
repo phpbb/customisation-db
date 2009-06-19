@@ -17,16 +17,8 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 include(TITANIA_ROOT . 'includes/core/modules.' . PHP_EXT);
 
-$id			= request_var('id', '');
-$mode		= request_var('mode', '');
+$mode		= request_var('mode', 'details');
 $contrib_id	= request_var('c', '');
-
-// Auto assign some ID's to eliminate the need for id param on most URLs
-if (!$id)
-{
-	$modes = array('details', 'faq', 'support');
-	$id = (in_array($mode, $modes)) ? $mode : 'details';
-}
 
 $module = new titania_modules();
 
@@ -34,7 +26,7 @@ $module = new titania_modules();
 $module->list_modules('contribs');
 
 // Select the active module
-$module->set_active($id, $mode);
+$module->set_active($mode, $mode);
 
 // Load and execute the relevant module
 $module->load_active();
@@ -53,6 +45,8 @@ $template->assign_vars(array(
 	'U_CONTRIB_DETAILS'		=> titania_sid('contributions/index', 'c=' . $contrib_id),
 	'U_CONTRIB_SUPPORT'		=> titania_sid('contributions/index', 'mode=support&amp;c=' . $contrib_id),
 	'U_CONTRIB_FAQ'			=> titania_sid('contributions/index', 'mode=faq&amp;c=' . $contrib_id),
+
+	'S_MODE'				=> $mode,
 ));
 
 titania::page_footer();

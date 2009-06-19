@@ -460,7 +460,7 @@ class titania_contribution extends titania_database_object
 	/**
 	 * Passes details to the template
 	 *
-	 * @return void
+	 * @param bool $return True if you want the data prepared for output and returned as an array, false to output to the template
 	 */
 	public function assign_details()
 	{
@@ -468,19 +468,10 @@ class titania_contribution extends titania_database_object
 		$this->get_author();
 		$this->get_rating();
 
+		// Output author data
+		$this->author->assign_details();
+
 		phpbb::$template->assign_vars(array(
-			// Author data
-			'AUTHOR_NAME'					=> $this->author->username,
-			'AUTHOR_NAME_FULL'				=> $this->author->get_username_string(),
-			'AUTHOR_REALNAME'				=> $this->author->author_realname,
-			'AUTHOR_RATING'					=> $this->author->author_rating,
-			'AUTHOR_RATING_COUNT'			=> $this->author->author_rating_count,
-
-			'U_AUTHOR_PROFILE'				=> $this->author->get_profile_url(),
-			'U_AUTHOR_PROFILE_PHPBB'		=> $this->author->get_phpbb_profile_url(),
-			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->author->get_phpbb_com_profile_url(),
-			'U_AUTHOR_CONTRIBUTIONS'		=> titania_sid('index', 'u=' . $this->contrib_user_id),
-
 			// Contribution data
 			'CONTRIB_TITLE'					=> $this->contrib_name,
 			'CONTRIB_DESC'					=> $this->generate_text_for_display(),
@@ -496,15 +487,7 @@ class titania_contribution extends titania_database_object
 		// Display Co-authors
 		foreach ($this->coauthors as $user_id => $author)
 		{
-			phpbb::$template->assign_block_vars('coauthors', array(
-				'AUTHOR_NAME'					=> $author->username,
-				'AUTHOR_NAME_FULL'				=> $author->get_username_string(),
-
-				'U_AUTHOR_PROFILE'				=> $author->get_profile_url(),
-				'U_AUTHOR_PROFILE_PHPBB'		=> $author->get_phpbb_profile_url(),
-				'U_AUTHOR_PROFILE_PHPBB_COM'	=> $author->get_phpbb_com_profile_url(),
-				'U_AUTHOR_CONTRIBUTIONS'		=> titania_sid('index', 'u=' . $user_id),
-			));
+			phpbb::$template->assign_block_vars($author->assign_details(true));
 		}
 
 		// Display Revisions

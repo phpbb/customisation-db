@@ -54,12 +54,12 @@ class titania_faq extends titania_database_object
 	 * @var string
 	 */
 	private $contrib_type		= '';
-	
+
 	/*
 	 * Contrib data
 	 *
 	 * @var array
-	 */		
+	 */
 	public $contrib_data		= array();
 
 	/**
@@ -88,14 +88,14 @@ class titania_faq extends titania_database_object
 		}
 
 		$this->contrib_id = $contrib_id;
-		
+
 		// getting contrib data from the contribs table
 		$this->get_contrib_data();
-		
+
 		// to creating URLs
 		$this->contrib_type = $this->contrib_data['contrib_type'];
 	}
-	
+
 	/**
 	 * Update data or submit new faq
 	 *
@@ -237,21 +237,21 @@ class titania_faq extends titania_database_object
   	 * @return void
 	 */
 	public function submit_faq($action)
-	{	
+	{
 		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_' . $action) && phpbb::$user->data['user_id'] != $this->contrib_data['contrib_user_id'])
 		{
 			return;
 		}
-		
+
 		$submit = (isset($_POST['submit'])) ? true : false;
 
 		$errors = array();
-		
+
 		if ($submit)
 		{
 			$this->faq_subject 	= utf8_normalize_nfc(request_var('subject', '', true));
 			$text 			= utf8_normalize_nfc(request_var('text', '', true));
-			
+
 			if (empty($this->faq_subject))
 			{
 				$errors[] = phpbb::$user->lang['SUBJECT_EMPTY'];
@@ -266,7 +266,7 @@ class titania_faq extends titania_database_object
 			{
 				// set order id on the last
 				$this->faq_order_id = $this->get_last_order_id();
-				
+
 				// prepare a text to storage
 				$this->set_faq_text($text);
 
@@ -284,7 +284,7 @@ class titania_faq extends titania_database_object
 		{
 			$this->load();
 		}
-		
+
 		phpbb::$template->assign_vars(array(
 			'U_ACTION'		=> titania_sid('contributions/index', "mode=faq&amp;action=$action&amp;c={$this->contrib_id}&amp;f={$this->faq_id}"),
 
@@ -293,7 +293,7 @@ class titania_faq extends titania_database_object
 			'L_EDIT_FAQ'		=> ($action == 'edit') ? phpbb::$user->lang['EDIT_FAQ'] : phpbb::$user->lang['CREATE_FAQ'],
 
 			'ERROR_MSG'		=> (sizeof($errors)) ? implode('<br />', $errors) : false,
-			
+
 			'FAQ_SUBJECT'		=> $this->faq_subject,
 			'FAQ_TEXT'		=> $this->get_faq_text(true),
 		));
@@ -338,8 +338,8 @@ class titania_faq extends titania_database_object
 		if (!phpbb::$auth->acl_get('titania_faq_mod') && phpbb::$user->data['user_id'] != $this->contrib_data['contrib_user_id'])
 		{
 			return;
-		}	
-		
+		}
+
 		$order = request_var('order', '');
 
 		if ($order)
@@ -351,16 +351,16 @@ class titania_faq extends titania_database_object
 			$result = phpbb::$db->sql_query($sql);
 			$current_order = (int) phpbb::$db->sql_fetchfield('current_order');
 			phpbb::$db->sql_freeresult($result);
-					
+
 			// on move_down, switch position with next order_id...
 			// on move_up, switch position with previous order_id...
 			$switch_order_id = ($order == 'move_down') ? $current_order + 1 : $current_order - 1;
-			
+
 			$sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . "
 				SET faq_order_id = $switch_order_id
 				WHERE faq_id = {$this->faq_id}";
 			$result = phpbb::$db->sql_query($sql);
-			
+
 			// Only update the other entry too if the previous entry got updated
 			if (phpbb::$db->sql_affectedrows())
 			{
@@ -373,10 +373,10 @@ class titania_faq extends titania_database_object
 				$result = phpbb::$db->sql_query($sql);
 			}
 		}
-		
+
 		// fix an entries order
 		$this->cleanup_order();
-		
+
 		$sql = 'SELECT *
 			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			WHERE contrib_id = ' . $this->contrib_id . '
@@ -390,20 +390,20 @@ class titania_faq extends titania_database_object
 
 				'SUBJECT'		=> $row['faq_subject'],
 				'VIEWS'			=> $row['faq_views'],
-				
+
 				'U_MOVE_UP'		=> titania_sid('contributions/index', "mode=faq&amp;action=manage&amp;c={$row['contrib_id']}&amp;f={$row['faq_id']}&amp;order=move_up"),
 				'U_MOVE_DOWN'		=> titania_sid('contributions/index', "mode=faq&amp;action=manage&amp;c={$row['contrib_id']}&amp;f={$row['faq_id']}&amp;order=move_down"),
 				'U_EDIT'		=> titania_sid('contributions/index', "mode=faq&amp;action=edit&amp;c={$row['contrib_id']}&amp;f={$row['faq_id']}"),
 				'U_DELETE'		=> titania_sid('contributions/index', "mode=faq&amp;action=delete&amp;c={$row['contrib_id']}&amp;f={$row['faq_id']}"),
 			));
 		}
-		phpbb::$db->sql_freeresult($result);	
+		phpbb::$db->sql_freeresult($result);
 
 		phpbb::$template->assign_vars(array(
 			'S_MANAGE'			=> true,
-			
+
 			'U_CREATE_FAQ'			=> titania_sid('contributions/index', "mode=faq&amp;c={$this->contrib_id}&amp;action=create"),
-			
+
 			'ICON_MOVE_UP'			=> '<img src="' . PHPBB_ROOT_PATH . 'adm/images/icon_up.gif" alt="' . phpbb::$user->lang['MOVE_UP'] . '" title="' . phpbb::$user->lang['MOVE_UP'] . '" />',
 			'ICON_MOVE_UP_DISABLED'		=> '<img src="' . PHPBB_ROOT_PATH . 'adm/images/icon_up_disabled.gif" alt="' . phpbb::$user->lang['MOVE_UP'] . '" title="' . phpbb::$user->lang['MOVE_UP'] . '" />',
 			'ICON_MOVE_DOWN'		=> '<img src="' . PHPBB_ROOT_PATH . 'adm/images/icon_down.gif" alt="' . phpbb::$user->lang['MOVE_DOWN'] . '" title="' . phpbb::$user->lang['MOVE_DOWN'] . '" />',
@@ -424,7 +424,7 @@ class titania_faq extends titania_database_object
 	{
 		// increase a FAQ views counter
 		$this->increase_views_counter();
-		
+
 		$sql_ary = array(
 			'SELECT'	=> 'f.*, c.contrib_user_id, c.contrib_name',
 			'FROM'		=> array(
@@ -438,7 +438,7 @@ class titania_faq extends titania_database_object
 		$result = phpbb::$db->sql_query($sql);
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
-		
+
 		if (!$row)
 		{
 			return false;
@@ -450,7 +450,7 @@ class titania_faq extends titania_database_object
 			'FAQ_VIEWS'		=> $row['faq_views'],
 
 			'S_DETAILS'		=> true,
-			
+
 			'U_EDIT_FAQ'		=> (phpbb::$user->data['user_id'] == $row['contrib_user_id'] || phpbb::$auth->acl_get('titania_faq_edit')) ? titania_sid('contributions/index', 'mode=faq&amp;action=edit&amp;c=' . $row['contrib_id'] . '&amp;f=' . $row['faq_id']) : false,
 		));
 
@@ -498,7 +498,7 @@ class titania_faq extends titania_database_object
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		$result = phpbb::$db->sql_query_limit($sql, 15, $start);*/
-		
+
 		$sql = 'SELECT *
 			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			WHERE contrib_id = ' . $this->contrib_id . '
@@ -538,7 +538,7 @@ class titania_faq extends titania_database_object
 			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
 			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
 			'S_LIST'		=> true,
-			
+
 			'U_CREATE_FAQ'		=> (phpbb::$auth->acl_get('titania_faq_create') || phpbb::$user->data['user_id'] == $this->contrib_data['contrib_user_id']) ? titania_sid('contributions/index', "mode=faq&amp;c={$this->contrib_id}&amp;action=create") : false,
 			'U_FAQ_MANAGEMENT'	=> (phpbb::$auth->acl_get('titania_faq_mod') || phpbb::$user->data['user_id'] == $this->contrib_data['contrib_user_id']) ? titania_sid('contributions/index', "mode=faq&amp;c={$this->contrib_id}&amp;action=manage") : false,
 		));
@@ -559,31 +559,31 @@ class titania_faq extends titania_database_object
 		$result = phpbb::$db->sql_query($sql);
 		$this->contrib_data = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
-		
+
 		if (!$this->contrib_data)
 		{
-			trigger_error('ERROR_CONTRIB_NOT_FOUND');
+			trigger_error('CONTRIB_NOT_FOUND');
 		}
 	}
-	
+
 	/*
 	 * Increase a FAQ views counter
 	 *
 	 * @return void
-	 */		
+	 */
 	public function increase_views_counter()
 	{
 		if (phpbb::$user->data['is_bot'])
 		{
 			return;
 		}
-		
+
 		$sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			SET faq_views = faq_views + 1
 			WHERE faq_id = ' . $this->faq_id;
 		phpbb::$db->sql_query($sql);
 	}
-	
+
 	/*
 	 * Cleanup an entries order
 	 *
@@ -596,19 +596,19 @@ class titania_faq extends titania_database_object
 			WHERE contrib_id = ' . $this->contrib_id . '
 			ORDER BY faq_order_id ASC';
 		$result = phpbb::$db->sql_query($sql);
-		
+
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$order = 0;
-			
+
 			do
 			{
 				++$order;
-				
+
 				if ($row['faq_order_id'] != $order)
 				{
-					phpbb::$db->sql_query('UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . " 
-						SET faq_order_id = $order 
+					phpbb::$db->sql_query('UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . "
+						SET faq_order_id = $order
 						WHERE faq_id = {$row['faq_id']}");
 				}
 			}
@@ -621,7 +621,7 @@ class titania_faq extends titania_database_object
 	 * Obtain the last order id for a specified contrib
 	 *
  	 * @return int
-	 */	
+	 */
 	public function get_last_order_id()
 	{
 		$sql = 'SELECT MAX(faq_order_id) as max_order_id
@@ -631,6 +631,6 @@ class titania_faq extends titania_database_object
 		$max_order_id = phpbb::$db->sql_fetchfield('max_order_id');
 		phpbb::$db->sql_freeresult($result);
 
-		return $max_order_id + 1;	
+		return $max_order_id + 1;
 	}
 }

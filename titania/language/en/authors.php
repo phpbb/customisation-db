@@ -39,8 +39,8 @@ $lang = array_merge($lang, array(
 	'AUTHORS_CAT_CONTRIBUTIONS'	=> 'Contributions',
 	'AUTHORS_CAT_DETAILS'		=> 'Main',
 	'AUTHORS_CAT_SUPPORT'		=> 'Support/Discussion',
-	'AUTHORS_DETAILS'			=> 'Main',
 	'AUTHOR_CONTRIBUTIONS'		=> 'Contributions',
+	'AUTHOR_DETAILS'			=> 'Author Details',
 	'AUTHOR_NOT_FOUND'			=> 'Author not found',
 	'AUTHOR_SUPPORT'			=> 'Support/Discussion',
 

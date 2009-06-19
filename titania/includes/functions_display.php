@@ -33,6 +33,33 @@ function get_version_string($version)
 }
 
 /**
+* Get contribution type string (from the type id)
+*
+* @param int $type The type (check TITANIA_TYPE_ constants)
+*/
+function get_contrib_type_string($type)
+{
+	switch ($type)
+	{
+		case TITANIA_TYPE_MOD :
+			return phpbb::$user->lang['MODIFICATION'];
+		break;
+
+		case TITANIA_TYPE_STYLE :
+			return phpbb::$user->lang['STYLE'];
+		break;
+
+		case TITANIA_TYPE_SNIPPET :
+			return phpbb::$user->lang['SNIPPET'];
+		break;
+
+		case TITANIA_TYPE_LANG_PACK :
+			return phpbb::$user->lang['LANGUAGE_PACK'];
+		break;
+	}
+}
+
+/**
 * Display categories
 *
 * @param int $parent_id The parent id (only show categories under this category)
@@ -62,17 +89,32 @@ function display_categories($parent_id = 0, $blockname = 'categories')
 /**
 * Display contributions
 *
-* @param int $parent_id The parent id (only show contributions under this category)
+* @param string $mode The mode (category, author)
+* @param int $id The parent id (only show contributions under this category, author, etc)
 * @param string $blockname The name of the template block to use (contribs by default)
 */
-function display_contribs($category_id, $blockname = 'contribs')
+function display_contribs($mode, $id, $blockname = 'contribs')
 {
-	$sql = 'SELECT * FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' cic, ' . TITANIA_CONTRIBS_TABLE . ' c, ' . USERS_TABLE . ' u
-		WHERE cic.category_id = ' . (int) $category_id . '
-			AND c.contrib_id = cic.contrib_id
-			AND u.user_id = c.contrib_user_id
-			AND c.contrib_visible = 1
-		ORDER BY c.contrib_id DESC';
+	switch ($mode)
+	{
+		case 'author' :
+			$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . USERS_TABLE . ' u
+				WHERE c.contrib_user_id = ' . (int) $id . '
+					AND u.user_id = c.contrib_user_id
+					AND c.contrib_visible = 1
+				ORDER BY c.contrib_id DESC';
+		break;
+
+		case 'category' :
+			$sql = 'SELECT * FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' cic, ' . TITANIA_CONTRIBS_TABLE . ' c, ' . USERS_TABLE . ' u
+				WHERE cic.category_id = ' . (int) $id . '
+					AND c.contrib_id = cic.contrib_id
+					AND u.user_id = c.contrib_user_id
+					AND c.contrib_visible = 1
+				ORDER BY c.contrib_id DESC';
+		break;
+	}
+
 	$result = phpbb::$db->sql_query($sql);
 
 	while ($row = phpbb::$db->sql_fetchrow($result))
@@ -81,7 +123,7 @@ function display_contribs($category_id, $blockname = 'contribs')
 			'CONTRIB_USERNAME'			=> $row['username'],
 			'CONTRIB_USERNAME_FULL'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
 			'CONTRIB_NAME'				=> $row['contrib_name'],
-			'CONTRIB_TYPE'				=> $row['contrib_type'],
+			'CONTRIB_TYPE'				=> get_contrib_type_string($row['contrib_type']),
 			'CONTRIB_STATUS'			=> $row['contrib_status'],
 			'CONTRIB_DOWNLOADS'			=> $row['contrib_downloads'],
 			'CONTRIB_VIEWS'				=> $row['contrib_views'],
@@ -89,6 +131,8 @@ function display_contribs($category_id, $blockname = 'contribs')
 			'CONTRIB_RATING_COUNT'		=> $row['contrib_rating_count'],
 
 			'U_VIEW_CONTRIB'			=> titania_sid('contributions/index', 'c=' . $row['contrib_id']),
+
+			'S_CONTRIB_TYPE'			=> $row['contrib_type'],
 		));
 	}
 	phpbb::$db->sql_freeresult($result);

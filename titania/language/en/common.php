@@ -38,6 +38,8 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'AUTHOR_BY'					=> 'By %s',
 
+	'BAD_RATING'				=> 'Rating attempt failed.',
+
 	'CACHE_PURGED'				=> 'Cache has been successfully purged',
 	'CATEGORY'					=> 'Category',
 	'CAT_ADDONS'				=> 'Add-ons',
@@ -61,9 +63,18 @@ $lang = array_merge($lang, array(
 	'DOWNLOAD_ACCESS_DENIED'	=> 'You are not allowed to download the requested file.',
 	'DOWNLOAD_NOT_FOUND'		=> 'The requested file could not be found.',
 
+	'LANGUAGE_PACK'				=> 'Language Pack',
+	'LIST'						=> 'List',
+
+	'MODIFICATION'				=> 'Modification',
+
 	'PURGE_CACHE'				=> 'Purge Cache',
 
 	'RATING'					=> 'Rating',
+	'REMOVE_RATING'				=> 'Remove Rating',
+
+	'SNIPPET'					=> 'Snippet',
+	'STYLE'						=> 'Style',
 
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
 ));

@@ -1,0 +1,21 @@
+<!-- INCLUDE authors/author_header.html -->
+
+
+<h2 class="section-title">{PAGE_TITLE} :: {L_LIST}</h2>
+
+<div class="forumbg forumbg-table">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<table class="table1" cellspacing="1" id="modlist">
+		<!-- BEGIN contribs -->
+			<tr class="<!-- IF contribs.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
+				<td><a href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a> ({contribs.CONTRIB_TYPE})<br />
+				{L_AUTHOR}: {contribs.CONTRIB_USERNAME_FULL} </td>
+			</tr>
+		<!-- END contribs -->
+	</table>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- INCLUDE authors/author_footer.html -->

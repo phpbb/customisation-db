@@ -50,6 +50,8 @@ $lang = array_merge($lang, array(
 	'CONTRIB_SUPPORT'				=> 'Discussion/Support',
 	'CONTRIB_TITLE'					=> 'Contribution Title',
 	'CONTRIB_UPDATE_DATE'			=> 'Last updated',
+	'CONTRIBUTIONS'					=> 'Contributions',
+	'CONTRIB_NOT_FOUND'				=> 'The contribution you requested could not be found.',
 
 	'DOWNLOADS'						=> 'Downloads',
 	'DOWNLOADS_PER_DAY'				=> '%.2f Downloads per Day',
@@ -58,5 +60,4 @@ $lang = array_merge($lang, array(
 	'DOWNLOAD_CHECKSUM'				=> 'MD5 checksum',
 
 	'ERROR_CONTRIB_EMAIL_FRIEND'	=> 'You are not permitted to recommend this contribution to someone else.',
-	'ERROR_CONTRIB_NOT_FOUND'		=> 'The contribution you requested could not be found.',
 ));

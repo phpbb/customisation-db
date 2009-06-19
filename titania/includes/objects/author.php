@@ -42,6 +42,13 @@ class titania_author extends titania_database_object
 	protected $sql_id_field		= 'user_id';
 
 	/**
+	 * Rating of this author
+	 *
+	 * @var titania_rating
+	 */
+	public $rating;
+
+	/**
 	 * Constructor class for titania authors
 	 *
 	 * @param int $author_id
@@ -128,6 +135,27 @@ class titania_author extends titania_database_object
 	}
 
 	/**
+	 * Get the rating as an object
+	 *
+	 * @return titania_rating
+	 */
+	public function get_rating()
+	{
+		if ($this->rating)
+		{
+			return $this->rating;
+		}
+
+		titania::load_object('rating');
+
+		$this->rating = new titania_rating('author', $this);
+		$this->rating->load();
+		$this->rating->assign_common();
+
+		return $this->rating;
+	}
+
+	/**
 	* Get profile data
 	*/
 	public function get_profile_data()
@@ -138,12 +166,17 @@ class titania_author extends titania_database_object
 	/**
 	* Get username string
 	*
-	* @param mixed $mode Can be profile (for getting an url to the profile), username (for obtaining the username), colour (for obtaining the user colour), full (for obtaining a html string representing a coloured link to the users profile) or no_profile (the same as full but forcing no profile link)
+	* @param mixed $mode Can be titania (for full with author view page for link), profile (for getting an url to the profile), username (for obtaining the username), colour (for obtaining the user colour), full (for obtaining a html string representing a coloured link to the users profile) or no_profile (the same as full but forcing no profile link)
 	*
 	* @return string username string
 	*/
-	public function get_username_string($mode = 'full')
+	public function get_username_string($mode = 'titania')
 	{
+		if ($mode == 'titania')
+		{
+			return '<a href="' . $this->get_profile_url() . '">' . get_username_string('no_profile', $this->user_id, $this->username, $this->user_colour) . '</a>';
+		}
+
 		return get_username_string($mode, $this->user_id, $this->username, $this->user_colour);
 	}
 
@@ -190,5 +223,33 @@ class titania_author extends titania_database_object
 		}
 
 		return '';
+	}
+
+	/**
+	 * Passes details to the template
+	 *
+	 * @param bool $return True if you want the data prepared for output and returned as an array, false to output to the template
+	 */
+	public function assign_details($return = false)
+	{
+		$vars = array(
+			'AUTHOR_NAME'					=> $this->username,
+			'AUTHOR_NAME_FULL'				=> $this->get_username_string(),
+			'AUTHOR_REALNAME'				=> $this->author_realname,
+			'AUTHOR_RATING'					=> $this->author_rating,
+			'AUTHOR_RATING_COUNT'			=> $this->author_rating_count,
+
+			'U_AUTHOR_PROFILE'				=> $this->get_profile_url(),
+			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
+			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),
+			'U_AUTHOR_CONTRIBUTIONS'		=> titania_sid('authors/index', 'mode=contributions&amp;u=' . $this->user_id),
+		);
+
+		if ($return)
+		{
+			return $vars;
+		}
+
+		phpbb::$template->assign_vars($vars);
 	}
 }
