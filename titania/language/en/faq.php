@@ -45,9 +45,6 @@ $lang = array_merge($lang, array(
 	'DELETE_FAQ'			=> 'Delete FAQ',
 	'DELETE_FAQ_CONFIRM'		=> 'Are you sure delete the FAQ?',
 	
-	'FAQ_MANAGEMENT'		=> 'FAQ Management Panel',
-	
-	'FAQ_MANAGEMENT_LIST'		=> 'FAQ Management List',
 	'FAQ_DETAILS'			=> 'FAQ Details Page',
 	'FAQ_LIST'			=> 'FAQ List',
 
@@ -67,4 +64,6 @@ $lang = array_merge($lang, array(
 	'FAQ_NOT_FOUND'			=> 'The FAQ specified could not be found.',
 	
 	'NO_FAQ'			=> 'Nobody created an FAQ entry yet.',
+	
+	'FAQ_DELETED'			=> 'The FAQ entry has been deleted.',
 ));

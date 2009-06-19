@@ -63,6 +63,11 @@ class contribs_faq extends titania_object
 		
 		$this->tpl_name = 'contributions/contribution_faq';
 		
+		if ($mode != 'faq')
+		{
+			$action = $mode;
+		}
+		
 		switch ($action)
 		{
 			case 'create':
@@ -85,14 +90,9 @@ class contribs_faq extends titania_object
 				
 				$faq->delete_faq();
 				
-			break;
-					
-			case 'manage':
-			
-				$this->page_title = 'FAQ_MANAGEMENT_LIST';
-						
-				$faq->management_list();
-
+				titania::error_box('SUCCESS', 'FAQ_DELETED', TITANIA_SUCCESS);
+				$this->main($id, 'list');
+				
 			break;
 			
 			case 'details':
@@ -105,7 +105,8 @@ class contribs_faq extends titania_object
 				{
 					trigger_error('FAQ_NOT_FOUND');
 				}
-				
+			
+			case 'list':
 			default:
 
 				$this->page_title = 'FAQ_LIST';

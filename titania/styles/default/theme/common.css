@@ -303,6 +303,10 @@ li.row dd {
 	margin-left: 2em;
 }
 
+.faq-list ul li {
+	padding: 5px 0;
+}
+
 .faq-item {
 	width: auto;
 	background: url("./images/faq_header.gif") repeat-x #F0F0F0;
