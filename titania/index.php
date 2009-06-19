@@ -81,7 +81,7 @@ switch ($action)
 
 		if ($cat_id != 0)
 		{
-			display_contribs($cat_id);
+			display_contribs('category', $cat_id);
 		}
 	break;
 }
