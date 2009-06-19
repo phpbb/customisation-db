@@ -54,7 +54,7 @@ class titania
 	*
 	* @var int $access_level Check TITANIA_ACCESS_ constants
 	*/
-	public static $access_level = TITANIA_ACCESS_PUBLIC;
+	public static $access_level = 2;
 
 	/**
 	 * Style, Template, and Theme Path
@@ -99,7 +99,8 @@ class titania
 		phpbb::$user->theme['template_storedb'] = false;
 
 		// Access Level check for teams access
-		if (in_array(phpbb::$user->data['user_group'], self::$config->team_groups))
+		self::$access_level = TITANIA_ACCESS_PUBLIC;
+		if (in_array(phpbb::$user->data['group_id'], self::$config->team_groups))
 		{
 			self::$access_level = TITANIA_ACCESS_TEAMS;
 		}
