@@ -77,4 +77,8 @@ $lang = array_merge($lang, array(
 	'STYLE'						=> 'Style',
 
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
+	
+	'MOVE_UP'				=> 'Move up',
+	'MOVE_DOWN'				=> 'Move down',
+	'EDIT'					=> 'Edit',
 ));

@@ -88,10 +88,29 @@ class contribs_faq extends titania_object
 				
 				$this->page_title = 'DELETE_FAQ';
 				
-				$faq->delete_faq();
+				if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_delete') && phpbb::$user->data['user_id'] != $this->contrib_data['contrib_user_id'])
+				{
+					return;
+				}
+
+				if (confirm_box(true))
+				{
+					$faq->delete();
+
+					titania::error_box('SUCCESS', 'FAQ_DELETED', TITANIA_SUCCESS);
+					$this->main($id, 'list');					
+				}
+				else
+				{
+					confirm_box(false, 'DELETE_FAQ', build_hidden_fields(array(
+						'mode'		=> 'faq',
+						'action'	=> 'delete',
+						'c'		=> $contrib_id,
+						'f'		=> $faq_id,
+					)));
+				}
 				
-				titania::error_box('SUCCESS', 'FAQ_DELETED', TITANIA_SUCCESS);
-				$this->main($id, 'list');
+				redirect(titania_sid('contributions/index', "mode=faq&amp;c=$contrib_id"));
 				
 			break;
 			

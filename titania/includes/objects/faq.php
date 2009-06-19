@@ -125,6 +125,16 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
+	 * Delete an entry
+	 *
+	 * @return void
+	 */
+	public function delete()
+	{
+		parent::delete();
+	}
+
+	/**
 	 * Parse text to store in database
 	 *
 	 * @param bool $allow_bbcode
@@ -297,33 +307,6 @@ class titania_faq extends titania_database_object
 			'FAQ_SUBJECT'		=> $this->faq_subject,
 			'FAQ_TEXT'		=> $this->get_faq_text(true),
 		));
-	}
-
-	/*
-	 * Delete FAQ
-	 *
-  	 * @return void
-	 */
-	public function delete_faq()
-	{
-		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_delete') && phpbb::$user->data['user_id'] != $this->contrib_data['contrib_user_id'])
-		{
-			return;
-		}
-
-		if (confirm_box(true))
-		{
-			$this->delete();
-		}
-		else
-		{
-			confirm_box(false, 'DELETE_FAQ', build_hidden_fields(array(
-				'mode'		=> 'faq',
-				'action'	=> 'delete',
-				'c'		=> $this->contrib_id,
-				'f'		=> $this->faq_id
-			)));
-		}
 	}
 
 	/*
