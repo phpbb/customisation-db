@@ -1950,6 +1950,16 @@ class umil
 			return;
 		}
 
+
+		/**
+		* $table_data can be empty when uninstalling a mod and table_remove was used, but no 2rd argument was given.
+		* In that case we'll assume that it was a column previously added by the mod (if not the author should specify a 2rd argument) and skip this to prevent an error
+		*/
+		if (empty($table_data))
+		{
+			return;
+		}
+
 		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_ADD', $table_name);
