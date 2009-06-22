@@ -15,43 +15,73 @@ define('IN_TITANIA', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', '../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
-include(TITANIA_ROOT . 'includes/core/modules.' . PHP_EXT);
 
-$mode		= request_var('mode', 'details');
-$user_id	= request_var('u', '');
+// Setup some vars
+$page = request_var('page', 'details');
+$author = request_var('u', '');
 
-// If they are viewing their own authors page...
+// Add common lang
+titania::add_lang('authors');
+
+// Load the contribution
+titania::load_object('author');
+titania::$author = new titania_author();
+
+if (!titania::$author->load($author))
+{
+	trigger_error('AUTHOR_NOT_FOUND');
+}
+
+// Check to see if the currently accessing user is the author
 if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['user_id'] == $user_id)
 {
 	titania::$access_level = TITANIA_ACCESS_AUTHORS;
 }
 
-$module = new titania_modules();
+/**
+* Menu Array
+*
+* 'filename' => array(
+*	'title'		=> 'nav menu title',
+*	'auth'		=> ($can_see_page) ? true : false, // Not required, always true if missing
+* ),
+*/
+$pages = array(
+	'details' => array(
+		'title'		=> 'AUTHOR_DETAILS',
+	),
+	'contributions' => array(
+		'title'		=> 'AUTHOR_CONTRIBUTIONS',
+	),
+);
 
-// Instantiate module system and generate list of available modules
-$module->list_modules('authors');
+// Display nav menu
+foreach ($pages as $name => $data)
+{
+	// If they do not have authorization, skip.
+	if (isset($data['auth']) && !$data['auth'])
+	{
+		continue;
+	}
 
-// Select the active module
-$module->set_active($mode, $mode);
+	phpbb::$template->assign_block_vars('nav_menu', array(
+		'L_TITLE'		=> (isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title'],
 
-// Load and execute the relevant module
-$module->load_active();
+		'U_TITLE'		=> titania::$author->get_url() . (($name != 'details') ? '/' . $name : ''),
 
-// Assign data to the template engine for the list of modules
-$module->assign_tpl_vars(titania_sid('authors/index'));
+		'S_SELECTED'	=> ($page == $name) ? true : false,
+	));
+}
 
-// Output page
-titania::page_header($module->get_page_title());
+// And now to load the appropriate page...
+switch ($page)
+{
+	case 'details' :
+	case 'contributions' :
+		include(TITANIA_ROOT . 'authors/' . $page . '.' . PHP_EXT);
+	break;
 
-$template->set_filenames(array(
-	'body' => $module->get_tpl_name(),
-));
-
-$template->assign_vars(array(
-	'U_AUTHOR_DETAILS'		=> titania_sid('authors/index', 'u=' . $user_id),
-	'U_AUTHOR_CONTRIBS'		=> titania_sid('authors/index', 'mode=contributions&amp;u=' . $user_id),
-
-	'S_MODE'				=> $mode,
-));
-
-titania::page_footer();
+	default :
+		include(TITANIA_ROOT . 'authors/details.' . PHP_EXT);
+	break;
+}

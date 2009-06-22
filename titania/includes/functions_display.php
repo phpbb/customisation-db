@@ -95,6 +95,8 @@ function display_categories($parent_id = 0, $blockname = 'categories')
 */
 function display_contribs($mode, $id, $blockname = 'contribs')
 {
+	titania::load_object('contribution');
+
 	switch ($mode)
 	{
 		case 'author' :
@@ -119,6 +121,9 @@ function display_contribs($mode, $id, $blockname = 'contribs')
 
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
+		$contrib = new titania_contribution();
+		$contrib->__set_array($row);
+
 		phpbb::$template->assign_block_vars($blockname, array(
 			'CONTRIB_USERNAME'			=> $row['username'],
 			'CONTRIB_USERNAME_FULL'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
@@ -130,7 +135,7 @@ function display_contribs($mode, $id, $blockname = 'contribs')
 			'CONTRIB_RATING'			=> $row['contrib_rating'],
 			'CONTRIB_RATING_COUNT'		=> $row['contrib_rating_count'],
 
-			'U_VIEW_CONTRIB'			=> titania_sid('contributions/index', 'c=' . $row['contrib_id']),
+			'U_VIEW_CONTRIB'			=> $contrib->get_url(),
 
 			'S_CONTRIB_TYPE'			=> $row['contrib_type'],
 		));

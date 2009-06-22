@@ -120,7 +120,7 @@ abstract class titania_object
 	*
 	* Note: This method should only be used inside of classes.
 	*/
-	protected function &__get($name)
+	public function &__get($name)
 	{
 		if (isset($this->object_data[$name]))
 		{
@@ -145,7 +145,7 @@ abstract class titania_object
 	*
 	* Note: Method name is reserved for magic methods.
 	*/
-	protected function __get_array()
+	public function __get_array()
 	{
 		$array = array();
 		foreach ($this->object_config as $name => $null)
@@ -166,7 +166,7 @@ abstract class titania_object
 	*
 	* Note: This method should only be used inside of classes.
 	*/
-	protected function __set($name, $value)
+	public function __set($name, $value)
 	{
 		if (isset($this->object_config[$name]['type']))
 		{
@@ -193,7 +193,7 @@ abstract class titania_object
 	*
 	* Note: Method name is reserved for magic methods.
 	*/
-	protected function __set_array($array)
+	public function __set_array($array)
 	{
 		foreach ($array as $key => $value)
 		{

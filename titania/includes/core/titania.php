@@ -57,13 +57,23 @@ class titania
 	public static $access_level = 2;
 
 	/**
-	 * Style, Template, and Theme Path
+	 * Absolute Titania, Board, Style, Template, and Theme Path
 	 *
 	 * @var string
 	 */
+	public static $absolute_path;
+	public static $absolute_board;
 	public static $style_path;
 	public static $template_path;
 	public static $theme_path;
+
+	/**
+	* Hold our main contribution/author object for the currently loaded author/contribution
+	*
+	* @var object
+	*/
+	public static $contrib;
+	public static $author;
 
 	/*
 	 * Initialise titania:
@@ -90,12 +100,16 @@ class titania
 		}
 		self::$cache = new titania_cache();
 
+		// Set the absolute path
+		self::$absolute_path = generate_board_url(true) . phpbb::$user->page['root_script_path'] . titania::$config->titania_script_path;
+		self::$absolute_board = generate_board_url() . '/';
+
 		// Set template path and template name
-		self::$style_path = TITANIA_ROOT . 'styles/' . self::$config->style . '/';
+		self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
 		self::$template_path = self::$style_path . 'template';
 		self::$theme_path = self::$style_path . 'theme';
 
-		phpbb::$template->set_custom_template(self::$template_path, 'titania_' . self::$config->style);
+		phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
 		phpbb::$user->theme['template_storedb'] = false;
 
 		// Access Level check for teams access
@@ -154,7 +168,17 @@ class titania
 	*/
 	public static function load_object($object_name)
 	{
-		$object_name = preg_replace('#(^A-Za-z0-9)#', '', $object_name);
+		if (is_array($object_name))
+		{
+			foreach ($object_name as $name)
+			{
+				self::load_object($name);
+			}
+
+			return;
+		}
+
+		$object_name = preg_replace('#[^A-Za-z0-9]#', '', $object_name);
 
 		if (class_exists('titania_' . $object_name))
 		{
@@ -212,6 +236,7 @@ class titania
 			$u_login_logout = append_sid(TITANIA_ROOT . 'index.' . PHP_EXT, 'mode=logout', true, phpbb::$user->session_id);
 		}
 
+		$board = self::$absolute_board;
 		phpbb::$template->assign_vars(array(
 			// rewrite the login URL to redirect to the currently viewed page.
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
@@ -220,7 +245,21 @@ class titania
 
 			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
-			'T_TITANIA_STYLESHEET'		=> self::$theme_path . '/stylesheet.css',
+			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . '/style.php?style=' . self::$config->style,
+
+			'T_THEME_PATH'				=> "{$board}styles/" . phpbb::$user->theme['theme_path'] . '/theme',
+			'T_TEMPLATE_PATH'			=> "{$board}styles/" . phpbb::$user->theme['template_path'] . '/template',
+			'T_SUPER_TEMPLATE_PATH'		=> (isset(phpbb::$user->theme['template_inherit_path']) && phpbb::$user->theme['template_inherit_path']) ? "{$board}styles/" . phpbb::$user->theme['template_inherit_path'] . '/template' : "{$board}styles/" . phpbb::$user->theme['template_path'] . '/template',
+			'T_IMAGESET_PATH'			=> "{$board}styles/" . phpbb::$user->theme['imageset_path'] . '/imageset',
+			'T_IMAGESET_LANG_PATH'		=> "{$board}styles/" . phpbb::$user->theme['imageset_path'] . '/imageset/' . phpbb::$user->data['user_lang'],
+			'T_IMAGES_PATH'				=> "{$board}images/",
+			'T_SMILIES_PATH'			=> $board . phpbb::$config['smilies_path'] . '/',
+			'T_AVATAR_PATH'				=> $board . phpbb::$config['avatar_path'] . '/',
+			'T_AVATAR_GALLERY_PATH'		=> $board . phpbb::$config['avatar_gallery_path'] . '/',
+			'T_ICONS_PATH'				=> $board . phpbb::$config['icons_path'] . '/',
+			'T_RANKS_PATH'				=> $board . phpbb::$config['ranks_path'] . '/',
+			'T_UPLOAD_PATH'				=> $board . phpbb::$config['upload_path'] . '/',
+			'T_STYLESHEET_LINK'			=> (!phpbb::$user->theme['theme_storedb']) ? "{$board}styles/" . phpbb::$user->theme['theme_path'] . '/theme/stylesheet.css' : $board . 'style.' . PHP_EXT . '?sid=' . phpbb::$user->session_id . '&amp;id=' . phpbb::$user->theme['style_id'] . '&amp;lang=' . phpbb::$user->data['user_lang'],
 		));
 	}
 

@@ -64,10 +64,8 @@ class titania_contribution extends titania_database_object
 
 	/**
 	 * Constructor class for the contribution object
-	 *
-	 * @param int $contrib_id
 	 */
-	public function __construct($contrib_id = false)
+	public function __construct()
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -93,11 +91,6 @@ class titania_contribution extends titania_database_object
 			'contrib_rating'				=> array('default' => 0.0),
 			'contrib_rating_count'			=> array('default' => 0),
 		));
-
-		if ($contrib_id !== false)
-		{
-			$this->contrib_id = $contrib_id;
-		}
 	}
 
 	/**
@@ -121,78 +114,83 @@ class titania_contribution extends titania_database_object
 	/**
 	 * Load function to load description parsed text
 	 *
-	 * @return bool
-	 */
-	public function load()
-	{
-		$status = parent::load();
-
-		if ($status)
-		{
-			$this->description_parsed_for_storage = true;
-
-			titania::load_object('author');
-
-			// Load co-authors list
-			$this->coauthors = array();
-			$sql_ary = array(
-				'SELECT' => 'cc.*, a.*, u.*',
-				'FROM'		=> array(
-					TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc',
-					USERS_TABLE => 'u',
-				),
-				'LEFT_JOIN'	=> array(
-					array(
-						'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
-						'ON'	=> 'a.user_id = u.user_id'
-					),
-				),
-				'WHERE'		=> 'cc.contrib_id = ' . $this->contrib_id . ' AND u.user_id = cc.user_id'
-			);
-
-			$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
-			$result = phpbb::$db->sql_query($sql);
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$this->coauthors[$row['user_id']] = new titania_author($row['user_id']);
-				$this->coauthors[$row['user_id']]->load_external($row);
-			}
-			phpbb::$db->sql_freeresult($result);
-
-			// Load the revisions list
-			$this->revisions = array();
-			$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
-				WHERE contrib_id = ' . $this->contrib_id . '
-				ORDER BY revision_id DESC';
-			$result = phpbb::$db->sql_query($sql);
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$this->revisions[$row['revision_id']] = $row;
-			}
-			phpbb::$db->sql_freeresult($result);
-		}
-
-		return $status;
-	}
-
-	/**
-	 * Get the author as an object
+	 * @param int|string $contrib The contrib item (contrib_name_clean, contrib_id)
 	 *
-	 * @return titania_author
+	 * @return bool True if the contrib exists, false if not
 	 */
-	public function get_author()
+	public function load($contrib)
 	{
-		if ($this->author)
+		$sql = 'SELECT * FROM ' . $this->sql_table . ' WHERE ';
+
+		if (is_numeric($contrib))
 		{
-			return $this->author;
+			$sql .= 'contrib_id = ' . (int) $contrib;
 		}
+		else
+		{
+			$sql .= ' contrib_name_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($contrib)) . '\'';
+		}
+		$result = phpbb::$db->sql_query($sql);
+		$this->sql_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		if (empty($this->sql_data))
+		{
+			return false;
+		}
+
+		foreach ($this->sql_data as $key => $value)
+		{
+			$this->$key = $value;
+		}
+
+		$this->description_parsed_for_storage = true;
 
 		titania::load_object('author');
 
+		// Get the author
 		$this->author = new titania_author($this->contrib_user_id);
 		$this->author->load();
 
-		return $this->author;
+		// Load co-authors list
+		$this->coauthors = array();
+		$sql_ary = array(
+			'SELECT' => 'cc.*, a.*, u.*',
+			'FROM'		=> array(
+				TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc',
+				USERS_TABLE => 'u',
+			),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
+					'ON'	=> 'a.user_id = u.user_id'
+				),
+			),
+			'WHERE'		=> 'cc.contrib_id = ' . $this->contrib_id . ' AND u.user_id = cc.user_id'
+		);
+
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$this->coauthors[$row['user_id']] = new titania_author($row['user_id']);
+			$this->coauthors[$row['user_id']]->__set_array($row);
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Load the revisions list
+		$this->revisions = array();
+		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id . '
+			ORDER BY revision_id DESC';
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$this->revisions[$row['revision_id']] = $row;
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		return true;
 	}
 
 	/**
@@ -236,17 +234,7 @@ class titania_contribution extends titania_database_object
 	 */
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
-		$contrib_description = $this->contrib_description;
-		$contrib_desc_uid = $this->contrib_desc_uid;
-		$contrib_desc_bitfield = $this->contrib_desc_bitfield;
-		$contrib_desc_options = $this->contrib_desc_options;
-
-		generate_text_for_storage($contrib_description, $contrib_desc_uid, $contrib_desc_bitfield, $contrib_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
-
-		$this->contrib_description = $contrib_description;
-		$this->contrib_desc_uid = $contrib_desc_uid;
-		$this->contrib_desc_bitfield = $contrib_desc_bitfield;
-		$this->contrib_desc_options = $contrib_desc_options;
+		generate_text_for_storage($this->contrib_description, $this->contrib_desc_uid, $this->contrib_desc_bitfield, $this->contrib_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
 		$this->text_parsed_for_storage = true;
 	}
@@ -464,8 +452,7 @@ class titania_contribution extends titania_database_object
 	 */
 	public function assign_details()
 	{
-		// Get the author/rating objects
-		$this->get_author();
+		// Get the rating object
 		$this->get_rating();
 
 		// Output author data
@@ -508,5 +495,42 @@ class titania_contribution extends titania_database_object
 		{
 			$this->increase_view_counter();
 		}
+	}
+
+	/**
+	* Build view URL for a contribution
+	*/
+	public function get_url()
+	{
+		$url = titania::$absolute_path;
+
+		// For different items we will display the URL differently
+		switch ($this->contrib_type)
+		{
+			case TITANIA_TYPE_MOD :
+				$url .= 'mod/';
+			break;
+
+			case TITANIA_TYPE_STYLE :
+				$url .= 'style/';
+			break;
+
+			case TITANIA_TYPE_SNIPPET :
+				$url .= 'snippet/';
+			break;
+
+			case TITANIA_TYPE_LANG_PACK :
+				$url .= 'translation/';
+			break;
+
+			default :
+				$url .= 'contribution/';
+			break;
+		}
+
+		// Now the contrib name
+		$url .= $this->contrib_name_clean;
+
+		return $url;
 	}
 }

@@ -27,5 +27,5 @@ if (!defined('IN_TITANIA'))
 */
 function titania_sid($page, $params = false, $is_amp = true, $session_id = false)
 {
-	return append_sid(TITANIA_ROOT . $page . '.' . PHP_EXT, $params, $is_amp, $session_id);
+	return append_sid(titania::$absolute_path . $page . '.' . PHP_EXT, $params, $is_amp, $session_id);
 }

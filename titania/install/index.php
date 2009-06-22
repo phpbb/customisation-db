@@ -273,20 +273,6 @@ $versions = array(
 		'module_add' => array(
 			//array('titania', 0, 'TITANIA_CAT_MAIN'),
 			//array('titania', 'TITANIA_MAIN',	array('module_basename' => 'main'),		TITANIA_ROOT . 'modules/'),
-
-			array('contribs', 0, 'CONTRIB_CAT_DETAILS'),
-			array('contribs', 'CONTRIB_CAT_DETAILS',	array('module_basename' => 'details'),	TITANIA_ROOT . 'modules/'),
-			array('contribs', 0, 'CONTRIB_CAT_FAQ'),
-			array('contribs', 'CONTRIB_CAT_FAQ',		array('module_basename' => 'faq'),		TITANIA_ROOT . 'modules/'),
-			array('contribs', 0, 'CONTRIB_CAT_SUPPORT'),
-			array('contribs', 'CONTRIB_CAT_SUPPORT',	array('module_basename' => 'support'),	TITANIA_ROOT . 'modules/'),
-
-			array('authors', 0, 'AUTHORS_CAT_DETAILS'),
-			array('authors', 'AUTHORS_CAT_DETAILS',	array('module_basename' => 'details'),					TITANIA_ROOT . 'modules/'),
-			array('authors', 0, 'AUTHORS_CAT_CONTRIBUTIONS'),
-			array('authors', 'AUTHORS_CAT_CONTRIBUTIONS',	array('module_basename' => 'contributions'),	TITANIA_ROOT . 'modules/'),
-			array('authors', 0, 'AUTHORS_CAT_SUPPORT'),
-			array('authors', 'AUTHORS_CAT_SUPPORT',	array('module_basename' => 'support'),					TITANIA_ROOT . 'modules/'),
 		),
 
 		'custom' => 'titania_data',

@@ -80,12 +80,25 @@ class titania_author extends titania_database_object
 
 	/**
 	* Load Author
+	*
+	* @param mixed $user The user name/user id to load, false to use the already given user_id
 	*/
-	public function load($user_id = false)
+	public function load($user = false)
 	{
-		if ($user_id !== false)
+		if ($user === false)
 		{
-			$this->user_id = (int) $user_id;
+			$sql_where = 'u.user_id = ' . $this->user_id;
+		}
+		else
+		{
+			if (!is_numeric($user))
+			{
+				$sql_where = 'u.username_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($user)) . '\'';
+			}
+			else
+			{
+				$sql_where = 'u.user_id = ' . (int) $user;
+			}
 		}
 
 		$sql_ary = array(
@@ -99,7 +112,7 @@ class titania_author extends titania_database_object
 					'ON'	=> 'a.user_id = u.user_id'
 				),
 			),
-			'WHERE'		=> 'u.user_id = ' . $this->user_id
+			'WHERE'		=> $sql_where
 		);
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
@@ -117,21 +130,6 @@ class titania_author extends titania_database_object
 		}
 
 		return true;
-	}
-
-	/**
-	* Load data from an external source.  Mainly for when we are selecting multiple authors and want to use a single query instead of one for each author.
-	*
-	* @param mixed $user_row The user row from the query.
-	*/
-	public function load_external($user_row)
-	{
-		$this->sql_data = $user_row;
-
-		foreach ($this->sql_data as $key => $value)
-		{
-			$this->$key = $value;
-		}
 	}
 
 	/**
@@ -174,7 +172,7 @@ class titania_author extends titania_database_object
 	{
 		if ($mode == 'titania')
 		{
-			return '<a href="' . $this->get_profile_url() . '">' . get_username_string('no_profile', $this->user_id, $this->username, $this->user_colour) . '</a>';
+			return '<a href="' . $this->get_url() . '">' . get_username_string('no_profile', $this->user_id, $this->username, $this->user_colour) . '</a>';
 		}
 
 		return get_username_string($mode, $this->user_id, $this->username, $this->user_colour);
@@ -185,14 +183,9 @@ class titania_author extends titania_database_object
 	 *
 	 * @return string
 	 */
-	public function get_profile_url()
+	public function get_url()
 	{
-		if ($this->user_id)
-		{
-			return titania_sid('authors/index', 'u=' . $this->user_id);
-		}
-
-		return '';
+		return titania::$absolute_path . 'author/' . $this->username_clean;
 	}
 
 	/**
@@ -239,10 +232,10 @@ class titania_author extends titania_database_object
 			'AUTHOR_RATING'					=> $this->author_rating,
 			'AUTHOR_RATING_COUNT'			=> $this->author_rating_count,
 
-			'U_AUTHOR_PROFILE'				=> $this->get_profile_url(),
+			'U_AUTHOR_PROFILE'				=> $this->get_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),
-			'U_AUTHOR_CONTRIBUTIONS'		=> titania_sid('authors/index', 'mode=contributions&amp;u=' . $this->user_id),
+			'U_AUTHOR_CONTRIBUTIONS'		=> $this->get_url() . '/contributions',
 		);
 
 		if ($return)

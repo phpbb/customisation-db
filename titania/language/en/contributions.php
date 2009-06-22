@@ -38,10 +38,6 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'CONTRIB'						=> 'Contribution',
 	'CONTRIB_AUTHOR'				=> 'Contribution Author',
-	'CONTRIB_CAT_DETAILS'			=> 'Details',
-	'CONTRIB_CAT_FAQ'				=> 'FAQ',
-	'CONTRIB_CAT_MAIN'				=> 'Contributions',
-	'CONTRIB_CAT_SUPPORT'			=> 'Discussion/Support',
 	'CONTRIB_DESCRIPTION'			=> 'Contribution Description',
 	'CONTRIB_DETAILS'				=> 'Contribution Details',
 	'CONTRIB_FAQ'					=> 'FAQ',

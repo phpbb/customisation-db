@@ -4,11 +4,12 @@
 	<div class="main-column">
 		<div id="tabs">
 			<ul>
-				<li<!-- IF S_MODE eq 'details' --> class="activetab"<!-- ENDIF -->><a href="{U_CONTRIB_DETAILS}"><span>{L_CONTRIB_DETAILS}</span></a></li>
-				<li<!-- IF S_MODE eq 'support' --> class="activetab"<!-- ENDIF -->><a href="{U_CONTRIB_SUPPORT}"><span>{L_CONTRIB_SUPPORT}</span></a></li>
-				<li<!-- IF S_MODE eq 'faq' --> class="activetab"<!-- ENDIF -->><a href="{U_CONTRIB_FAQ}"><span>{L_CONTRIB_FAQ}</span></a></li>
+			<!-- BEGIN nav_menu -->
+				<li<!-- IF nav_menu.S_SELECTED --> id="activetab"<!-- ENDIF -->><a href="{nav_menu.U_TITLE}"><span>{nav_menu.L_TITLE}</span></a></li>
+			<!-- END nav_menu -->
 			</ul>
 		</div>
+
 		<div class="bluebg">
 			<div class="inner">
 				<span class="corners-top"><span></span></span>
