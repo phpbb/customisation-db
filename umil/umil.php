@@ -1910,7 +1910,16 @@ class umil
 		// Use sql_table_exists if available
 		if (method_exists($this->db_tools, 'sql_table_exists'))
 		{
-			return $this->db_tools->sql_table_exists($table_name);
+			$roe = $this->db->return_on_error;
+			$result = $this->db_tools->sql_table_exists($table_name);
+
+			// db_tools::sql_table_exists resets the return_on_error to false always after completing, so we must make sure we set it to true again if it was before
+			if ($roe)
+			{
+				$this->db->sql_return_on_error(true);
+			}
+
+			return $result;
 		}
 
 		if (!function_exists('get_tables'))
