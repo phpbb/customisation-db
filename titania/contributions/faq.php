@@ -77,7 +77,7 @@ switch ($action)
 
 				$message = ($action == 'edit') ? phpbb::$user->lang['FAQ_EDITED'] : phpbb::$user->lang['FAQ_CREATED'];
 				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ'], '<a href="' . titania_sid('contributions/index', "page=faq&amp;action=details&amp;c={$faq->contrib_id}&amp;f={$faq->faq_id}") . '">', '</a>');
-				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ_LIST'], '<a href="' . titania_sid('contributions/index', "page=faq&amp;c={$faq->contrib_id}") . '">', '</a>');
+				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ_LIST'], '<a href="' . titania::$contrib->get_url() . '/faq' . '">', '</a>');
 
 				trigger_error($message);
 			}
@@ -125,15 +125,14 @@ switch ($action)
 		else
 		{
 			confirm_box(false, 'DELETE_FAQ', build_hidden_fields(array(
-				'i'            => $id,
 				'page'		=> 'faq',
 				'action'	=> 'delete',
-				'c'			=> $contrib_id,
+				'c'			=> titania::$contrib->contrib_id,
 				'f'			=> $faq_id,
 			)));
 		}
 
-		redirect(titania_sid('contributions/index', "page=faq&amp;c=$contrib_id"));
+		redirect(titania::$contrib->get_url() . '/faq');
 
 	break;
 
@@ -171,7 +170,7 @@ switch ($action)
 				phpbb::$db->sql_query($sql);
 			}
 
-			redirect(titania_sid('contributions/index', "page=faq&amp;c=$contrib_id"));
+			redirect(titania::$contrib->get_url() . '/faq');
 		}
 
 	break;
