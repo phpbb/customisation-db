@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-define('TITANIA_VERSION', '0.1.3');
+define('TITANIA_VERSION', '0.1.4');
 
 
 // Include titania class
@@ -50,5 +50,5 @@ titania::initialise();
 // If the database is not installed or outdated redirect to the installer
 if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version']) || version_compare(phpbb::$config['titania_version'], TITANIA_VERSION, '<')))
 {
-	redirect(titania_sid('install/index'));
+	redirect(titania_sid('install'));
 }

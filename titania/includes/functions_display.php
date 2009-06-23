@@ -62,11 +62,13 @@ function get_contrib_type_string($type)
 /**
 * Display categories
 *
-* @param int $parent_id The parent id (only show categories under this category)
+* @param int $parent_id The parent id/name (only show categories under this category)
 * @param string $blockname The name of the template block to use (categories by default)
 */
 function display_categories($parent_id = 0, $blockname = 'categories')
 {
+	titania::load_object('category');
+
 	$sql = 'SELECT * FROM ' . TITANIA_CATEGORIES_TABLE . '
 		WHERE parent_id = ' . (int) $parent_id . '
 			AND category_visible = 1
@@ -75,13 +77,10 @@ function display_categories($parent_id = 0, $blockname = 'categories')
 
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
-		phpbb::$template->assign_block_vars($blockname, array(
-			'CATEGORY_NAME'		=> (isset(phpbb::$user->lang[$row['category_name']])) ? phpbb::$user->lang[$row['category_name']] : $row['category_name'],
-			'CATEGORY_CONTRIBS'	=> $row['category_contribs'],
-			'CATEGORY_TYPE'		=> $row['category_type'],
+		$category = new titania_category();
+		$category->__set_array($row);
 
-			'U_VIEW_CATEGORY'	=> titania_sid('index', 'c=' . $row['category_id']),
-		));
+		phpbb::$template->assign_block_vars($blockname, $category->assign_display(true));
 	}
 	phpbb::$db->sql_freeresult($result);
 }

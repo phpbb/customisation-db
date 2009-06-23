@@ -62,72 +62,43 @@ class titania_cache extends acm
 	}
 
 	/**
-	* Get the contrib authors for the specified contribution id
+	* Get the list of parents for a category
 	*
-	* @param int $contrib_id The contribution ID
-	*
-	* @return array|bool Array of author user_id's if the item exists, boolean false if the contrib item does not exist.
+	* @param int $category_id The category id to get the parents for.
 	*/
-	public function get_contrib_authors($contrib_id)
+	public function get_category_parents($category_id)
 	{
-		$contrib_id = (int) $contrib_id;
-		if (!$contrib_id)
+		$parent_list = $this->get('_titania_category_parents');
+
+		if ($parent_list === false)
 		{
-			return false;
-		}
+			$parent_list = $list = array();
 
-		// We shall group contributions by id in groups of 1000
-		$contrib_block_name = '_titania_authors_' . floor($contrib_id / 1000);
+			$sql = 'SELECT category_id, parent_id, category_name_clean FROM ' . TITANIA_CATEGORIES_TABLE . '
+				ORDER BY left_id ASC';
+			$result = phpbb::$db->sql_query($sql);
 
-		$contrib_block = $this->get($contrib_block_name);
-
-		if ($contrib_block !== false)
-		{
-			if (isset($contrib_block[$contrib_id]))
+			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				return $contrib_block[$contrib_id];
+				// need later
+				$list[$row['category_id']] = $row;
+
+				$parent_id = $row['parent_id'];
+
+				// Go through and grab all of the parents
+				while (isset($list[$parent_id]))
+				{
+					$parent_list[$row['category_id']][] = $list[$parent_id];
+
+					$parent_id = $list[$parent_id]['parent_id'];
+				}
 			}
-		}
-		else
-		{
-			// Else the cache file did not exist and we need to start over
-			$contrib_block = array();
-		}
 
-		$contrib_block[$contrib_id] = array();
+			phpbb::$db->sql_freeresult($result);
 
-		// Need to get the authors for the selected contrib
-		$sql = 'SELECT contrib_user_id FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE contrib_id = ' . $contrib_id;
-		phpbb::$db->sql_query($sql);
-		$user_id = phpbb::$db->sql_fetchfield('contrib_user_id');
-		phpbb::$db->sql_freeresult();
-
-		if (!$user_id) // Contrib does not exist
-		{
-			$contrib_block[$contrib_id] = false;
-
-			// Store the updated cache data
-			$this->put($contrib_block_name, $contrib_block);
-
-			return false;
+			$this->put('_titania_category_parents', $parent_list);
 		}
 
-		$contrib_block[$contrib_id][] = $user_id;
-
-		// Now get the co-authors
-		$sql = 'SELECT user_id FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
-			WHERE contrib_id = ' . $contrib_id;
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$contrib_block[$contrib_id][] = $row['user_id'];
-		}
-		phpbb::$db->sql_freeresult($result);
-
-		// Store the updated cache data
-		$this->put($contrib_block_name, $contrib_block);
-
-		return $contrib_block[$contrib_id];
+		return (isset($parent_list[$category_id])) ? $parent_list[$category_id] : array();
 	}
 }

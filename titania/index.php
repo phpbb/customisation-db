@@ -16,7 +16,18 @@ if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 
-$cat_id = request_var('c', 0);
+// Get the category_id
+$category = request_var('c', '');
+$category_ary = explode('-', $category);
+if ($category_ary)
+{
+	$category_id = array_pop($category_ary);
+}
+else
+{
+	$category_id = (int) $category;
+}
+
 $action = request_var('action', '');
 
 switch ($action)
@@ -77,11 +88,11 @@ switch ($action)
 	* Default (display category/contrib list)
 	*/
 	default :
-		$current_category = display_categories($cat_id);
+		display_categories($category_id);
 
-		if ($cat_id != 0)
+		if ($category_id != 0)
 		{
-			display_contribs('category', $cat_id);
+			display_contribs('category', $category_id);
 		}
 	break;
 }

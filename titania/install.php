@@ -14,7 +14,7 @@
 define('IN_TITANIA', true);
 define('IN_TITANIA_INSTALL', true);
 define('UMIL_AUTO', true);
-if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', '../');
+if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 titania::add_lang('install');
@@ -73,6 +73,10 @@ $versions = array(
 					'author_mods'			=> array('UINT', 0), // Number of mods
 					'author_styles'			=> array('UINT', 0), // Number of styles
 					'author_visible'		=> array('BOOL', 1),
+					'author_desc'			=> array('MTEXT_UNI', ''),
+					'author_desc_bitfield'	=> array('VCHAR:255', ''),
+					'author_desc_uid'		=> array('VCHAR:8', ''),
+					'author_desc_options'	=> array('UINT:11', 7),
 				),
 				'PRIMARY_KEY'	=> 'user_id',
 				'KEYS'			=> array(
@@ -86,14 +90,19 @@ $versions = array(
 			)),
 			array(TITANIA_CATEGORIES_TABLE, array(
 				'COLUMNS'		=> array(
-					'category_id'			=> array('UINT', NULL, 'auto_increment'),
-					'parent_id'				=> array('UINT', 0),
-					'left_id'				=> array('UINT', 0),
-					'right_id'				=> array('UINT', 0),
-					'category_type'			=> array('TINT:1', 0), // Check TITANIA_TYPE_ constants
-					'category_contribs'		=> array('UINT', 0), // Number of items
-					'category_visible'		=> array('BOOL', 1),
-					'category_name'			=> array('STEXT_UNI', '', 'true_sort'),
+					'category_id'				=> array('UINT', NULL, 'auto_increment'),
+					'parent_id'					=> array('UINT', 0),
+					'left_id'					=> array('UINT', 0),
+					'right_id'					=> array('UINT', 0),
+					'category_type'				=> array('TINT:1', 0), // Check TITANIA_TYPE_ constants
+					'category_contribs'			=> array('UINT', 0), // Number of items
+					'category_visible'			=> array('BOOL', 1),
+					'category_name'				=> array('STEXT_UNI', '', 'true_sort'),
+					'category_name_clean'		=> array('VCHAR_CI', ''),
+					'category_desc'				=> array('MTEXT_UNI', ''),
+					'category_desc_bitfield'	=> array('VCHAR:255', ''),
+					'category_desc_uid'			=> array('VCHAR:8', ''),
+					'category_desc_options'		=> array('UINT:11', 7),
 				),
 				'PRIMARY_KEY'	=> 'category_id',
 				'KEYS'			=> array(
@@ -110,7 +119,7 @@ $versions = array(
 					'contrib_type'					=> array('TINT:1', 0),
 					'contrib_name'					=> array('STEXT_UNI', '', 'true_sort'),
 					'contrib_name_clean'			=> array('VCHAR_CI', ''),
-					'contrib_description'			=> array('MTEXT_UNI', ''),
+					'contrib_desc'					=> array('MTEXT_UNI', ''),
 					'contrib_desc_bitfield'			=> array('VCHAR:255', ''),
 					'contrib_desc_uid'				=> array('VCHAR:8', ''),
 					'contrib_desc_options'			=> array('UINT:11', 7),
@@ -136,20 +145,24 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'contrib_id'			=> array('UINT', 0),
 					'user_id'				=> array('UINT', 0),
+					'active'				=> array('BOOL', 0),
 				),
 				'PRIMARY_KEY'	=> array('contrib_id', 'user_id'),
+				'KEYS'			=> array(
+					'active'		=> array('INDEX', 'active'),
+				),
 			)),
 			array(TITANIA_CONTRIB_FAQ_TABLE, array(
 				'COLUMNS'		=> array(
 					'faq_id'				=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'			=> array('UINT', 0),
-					'parent_id'				=> array('UINT', 0), // Removed in 0.1.1
 					'faq_order_id'			=> array('UINT', 0),
 					'faq_subject'			=> array('STEXT_UNI', '', 'true_sort'),
 					'faq_text'				=> array('MTEXT_UNI', ''),
 					'faq_text_bitfield'		=> array('VCHAR:255', ''),
 					'faq_text_uid'			=> array('VCHAR:8', ''),
 					'faq_text_options'		=> array('UINT:11', 7),
+					'faq_views'				=> array('UINT', 0),
 				),
 				'PRIMARY_KEY'	=> 'faq_id',
 				'KEYS'			=> array(
@@ -261,11 +274,15 @@ $versions = array(
 			'titania_',
 			'titania_rate',
 			'titania_rate_reset',
+			'titania_faq_create',
+			'titania_faq_edit',
+			'titania_faq_delete',
+			'titania_faq_mod',
 		),
 
 		'permission_set' => array(
-			array('ROLE_ADMIN_FULL', array('titania_rate_reset')),
-			array('ROLE_MOD_FULL', array('titania_rate_reset')),
+			array('ROLE_ADMIN_FULL', array('titania_rate_reset', 'titania_faq_mod')),
+			array('ROLE_MOD_FULL', array('titania_rate_reset', 'titania_faq_mod')),
 			array('ROLE_USER_FULL', array('titania_rate')),
 			array('ROLE_USER_STANDARD', array('titania_rate')),
 		),
@@ -280,38 +297,11 @@ $versions = array(
 		'cache_purge' => '',
 	),
 
-	'0.1.1' => array(
-		'table_column_remove' => array(
-			array(TITANIA_CONTRIB_FAQ_TABLE, 'parent_id'),
-		),
-
-		'permission_add' => array(
-			'titania_faq_create',
-			'titania_faq_edit',
-			'titania_faq_delete',
-			'titania_faq_mod',
-		),
-
-		'permission_set' => array(
-			array('ROLE_ADMIN_FULL', array('titania_faq_mod')),
-			array('ROLE_MOD_FULL', array('titania_faq_mod')),
-		),
-	),
-
-	'0.1.2' => array(
-		'table_column_add' => array(
-			array(TITANIA_AUTHORS_TABLE, 'author_desc', array('MTEXT_UNI', '')),
-			array(TITANIA_AUTHORS_TABLE, 'author_desc_bitfield', array('VCHAR:255', '')),
-			array(TITANIA_AUTHORS_TABLE, 'author_desc_uid', array('VCHAR:8', '')),
-			array(TITANIA_AUTHORS_TABLE, 'author_desc_options', array('UINT:11', 7)),
-		),
-	),
-
-	'0.1.3' => array(
-		'table_column_add' => array(
-			array(TITANIA_CONTRIB_FAQ_TABLE, 'faq_views', array('UINT', 0)),
-		),
-	),
+	// Merged in 0.1.4
+	'0.1.1' => array(),
+	'0.1.2' => array(),
+	'0.1.3' => array(),
+	'0.1.4' => array(),
 
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
@@ -333,6 +323,8 @@ function titania_data($action, $version)
 			'right_id'		=> 22,
 			'category_type'	=> TITANIA_TYPE_CATEGORY,
 			'category_name'	=> 'phpBB3',
+			'category_name_clean'	=> 'phpBB3',
+			'category_desc'			=> '',
 			'category_contribs'		=> 1,
 		),
 		array(
@@ -342,6 +334,8 @@ function titania_data($action, $version)
 			'right_id'		=> 19,
 			'category_type'	=> TITANIA_TYPE_CATEGORY,
 			'category_name'	=> 'CAT_MODIFICATIONS',
+			'category_name_clean'	=> 'modifications',
+			'category_desc'			=> '',
 			'category_contribs'		=> 1,
 		),
 		array(
@@ -351,6 +345,8 @@ function titania_data($action, $version)
 			'right_id'		=> 21,
 			'category_type'	=> TITANIA_TYPE_STYLE,
 			'category_name'	=> 'CAT_STYLES',
+			'category_name_clean'	=> 'styles',
+			'category_desc'			=> '',
 			'category_contribs'		=> 0,
 		),
 		array(
@@ -360,6 +356,8 @@ function titania_data($action, $version)
 			'right_id'		=> 4,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_COSMETIC',
+			'category_name_clean'	=> 'cosmetic',
+			'category_desc'			=> '',
 			'category_contribs'		=> 0,
 		),
 		array(
@@ -369,6 +367,8 @@ function titania_data($action, $version)
 			'right_id'		=> 6,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ADMIN_TOOLS',
+			'category_name_clean'	=> 'admin-tools',
+			'category_desc'			=> '',
 			'category_contribs'		=> 0,
 		),
 		array(
@@ -378,6 +378,8 @@ function titania_data($action, $version)
 			'right_id'		=> 8,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_SECURITY',
+			'category_name_clean'	=> 'security',
+			'category_desc'			=> '',
 			'category_contribs'		=> 0,
 		),
 		array(
@@ -387,6 +389,8 @@ function titania_data($action, $version)
 			'right_id'		=> 10,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_COMMUNICATION',
+			'category_name_clean'	=> 'communication',
+			'category_desc'			=> '',
 			'category_contribs'		=> 0,
 		),
 		array(
@@ -396,6 +400,8 @@ function titania_data($action, $version)
 			'right_id'		=> 12,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_PROFILE_UCP',
+			'category_name_clean'	=> 'profile',
+			'category_desc'			=> '',
 			'category_contribs'		=> 0,
 		),
 		array(
@@ -405,6 +411,8 @@ function titania_data($action, $version)
 			'right_id'		=> 14,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ADDONS',
+			'category_name_clean'	=> 'addons',
+			'category_desc'			=> '',
 			'category_contribs'		=> 1,
 		),
 		array(
@@ -414,6 +422,8 @@ function titania_data($action, $version)
 			'right_id'		=> 16,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ANTI_SPAM',
+			'category_name_clean'	=> 'anti-spam',
+			'category_desc'			=> '',
 			'category_contribs'		=> 0,
 		),
 		array(
@@ -423,6 +433,8 @@ function titania_data($action, $version)
 			'right_id'		=> 18,
 			'category_type'	=> TITANIA_TYPE_MOD,
 			'category_name'	=> 'CAT_ENTERTAINMENT',
+			'category_name_clean'	=> 'entertainment',
+			'category_desc'			=> '',
 			'category_contribs'		=> 1,
 		),
 	);
@@ -435,6 +447,7 @@ function titania_data($action, $version)
 		'author_website'	=> 'http://teh.nub.com/',
 		'author_contribs'	=> 1,
 		'author_mods'		=> 1,
+		'author_desc'		=> '',
 	));
 	$umil->table_row_insert(TITANIA_AUTHORS_TABLE, $author);
 
@@ -444,7 +457,7 @@ function titania_data($action, $version)
 		'contrib_type'			=> TITANIA_TYPE_MOD,
 		'contrib_name'			=> 'Nub Mod',
 		'contrib_name_clean'	=> 'nub mod',
-		'contrib_description'	=> 'This mod will turn all users into nubs.',
+		'contrib_desc'			=> 'This mod will turn all users into nubs.',
 		'contrib_desc_bitfield'	=> '',
 		'contrib_desc_uid'		=> '',
 		'contrib_desc_options'	=> 7,
