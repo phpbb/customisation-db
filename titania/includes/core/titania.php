@@ -233,33 +233,17 @@ class titania
 		}
 		else
 		{
-			$u_login_logout = append_sid(TITANIA_ROOT . 'index.' . PHP_EXT, 'mode=logout', true, phpbb::$user->session_id);
+			$u_login_logout = append_sid(self::$absolute_path . 'index.' . PHP_EXT, 'mode=logout', true, phpbb::$user->session_id);
 		}
 
-		$board = self::$absolute_board;
 		phpbb::$template->assign_vars(array(
 			// rewrite the login URL to redirect to the currently viewed page.
-			'U_LOGIN_LOGOUT'		=> $u_login_logout,
-			'LOGIN_REDIRECT'		=> self::$page,
-			'S_LOGIN_ACTION'		=> append_sid(PHPBB_ROOT_PATH . 'ucp.' . PHP_EXT, 'mode=login'),
+			'U_LOGIN_LOGOUT'			=> $u_login_logout,
+			'LOGIN_REDIRECT'			=> self::$page,
 
 			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
 			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . '/style.php?style=' . self::$config->style,
-
-			'T_THEME_PATH'				=> "{$board}styles/" . phpbb::$user->theme['theme_path'] . '/theme',
-			'T_TEMPLATE_PATH'			=> "{$board}styles/" . phpbb::$user->theme['template_path'] . '/template',
-			'T_SUPER_TEMPLATE_PATH'		=> (isset(phpbb::$user->theme['template_inherit_path']) && phpbb::$user->theme['template_inherit_path']) ? "{$board}styles/" . phpbb::$user->theme['template_inherit_path'] . '/template' : "{$board}styles/" . phpbb::$user->theme['template_path'] . '/template',
-			'T_IMAGESET_PATH'			=> "{$board}styles/" . phpbb::$user->theme['imageset_path'] . '/imageset',
-			'T_IMAGESET_LANG_PATH'		=> "{$board}styles/" . phpbb::$user->theme['imageset_path'] . '/imageset/' . phpbb::$user->data['user_lang'],
-			'T_IMAGES_PATH'				=> "{$board}images/",
-			'T_SMILIES_PATH'			=> $board . phpbb::$config['smilies_path'] . '/',
-			'T_AVATAR_PATH'				=> $board . phpbb::$config['avatar_path'] . '/',
-			'T_AVATAR_GALLERY_PATH'		=> $board . phpbb::$config['avatar_gallery_path'] . '/',
-			'T_ICONS_PATH'				=> $board . phpbb::$config['icons_path'] . '/',
-			'T_RANKS_PATH'				=> $board . phpbb::$config['ranks_path'] . '/',
-			'T_UPLOAD_PATH'				=> $board . phpbb::$config['upload_path'] . '/',
-			'T_STYLESHEET_LINK'			=> (!phpbb::$user->theme['theme_storedb']) ? "{$board}styles/" . phpbb::$user->theme['theme_path'] . '/theme/stylesheet.css' : $board . 'style.' . PHP_EXT . '?sid=' . phpbb::$user->session_id . '&amp;id=' . phpbb::$user->theme['style_id'] . '&amp;lang=' . phpbb::$user->data['user_lang'],
 		));
 	}
 
