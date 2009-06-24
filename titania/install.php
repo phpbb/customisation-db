@@ -456,7 +456,7 @@ function titania_data($action, $version)
 		'contrib_user_id'		=> phpbb::$user->data['user_id'],
 		'contrib_type'			=> TITANIA_TYPE_MOD,
 		'contrib_name'			=> 'Nub Mod',
-		'contrib_name_clean'	=> 'nub mod',
+		'contrib_name_clean'	=> 'nub_mod',
 		'contrib_desc'			=> 'This mod will turn all users into nubs.',
 		'contrib_desc_bitfield'	=> '',
 		'contrib_desc_uid'		=> '',
