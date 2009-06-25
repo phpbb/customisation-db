@@ -65,7 +65,7 @@ function get_contrib_type_string($type)
 * @param int $parent_id The parent id/name (only show categories under this category)
 * @param string $blockname The name of the template block to use (categories by default)
 */
-function display_categories($parent_id = 0, $blockname = 'categories')
+function titania_display_categories($parent_id = 0, $blockname = 'categories')
 {
 	titania::load_object('category');
 
@@ -94,7 +94,7 @@ function display_categories($parent_id = 0, $blockname = 'categories')
 * @param int $id The parent id (only show contributions under this category, author, etc)
 * @param string $blockname The name of the template block to use (contribs by default)
 */
-function display_contribs($mode, $id, $blockname = 'contribs')
+function titania_display_contribs($mode, $id, $blockname = 'contribs')
 {
 	titania::load_object('contribution');
 

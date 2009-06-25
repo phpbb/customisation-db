@@ -90,11 +90,11 @@ switch ($action)
 	* Default (display category/contrib list)
 	*/
 	default :
-		display_categories($category_id);
+		titania_display_categories($category_id);
 
 		if ($category_id != 0)
 		{
-			display_contribs('category', $category_id);
+			titania_display_contribs('category', $category_id);
 		}
 	break;
 }

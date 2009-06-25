@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-display_contribs('author', titania::$author->user_id);
+titania_display_contribs('author', titania::$author->user_id);
 
 titania::page_header('AUTHOR_CONTRIBUTIONS');
 titania::page_footer(true, 'authors/author_contributions.html');
