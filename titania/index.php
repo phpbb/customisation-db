@@ -38,13 +38,15 @@ switch ($action)
 	case 'rate' :
 		$type = request_var('type', '');
 		$id = request_var('id', 0);
+		$value = request_var('value', 0.0);
 
 		switch ($type)
 		{
 			case 'author' :
 				titania::load_object('author');
-				$object = new titania_author($id);
-				$redirect = titania_sid('authors/index', 'u=' . $id);
+				$object = new titania_author();
+				$object->load($id);
+				$redirect = $object->get_url();
 
 				if (!$object)
 				{
@@ -54,8 +56,9 @@ switch ($action)
 
 			case 'contrib' :
 				titania::load_object('contribution');
-				$object = new titania_contribution($id);
-				$redirect = titania_sid('contributions/index', 'c=' . $id);
+				$object = new titania_contribution();
+				$object->load($id);
+				$redirect = $object->get_url();
 
 				if (!$object)
 				{
@@ -72,7 +75,6 @@ switch ($action)
 		$rating = new titania_rating($type, $object);
 		$rating->load();
 
-		$value = request_var('value', 0.0);
 		$result = ($value == -1) ? $rating->delete_rating() : $rating->add_rating($value);
 		if ($result)
 		{
