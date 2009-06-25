@@ -81,13 +81,16 @@ class titania_post extends titania_database_object
 
 			'post_time'				=> array('default' => (int) titania::$time),
 			'post_edited'			=> array('default' => 0), // Post edited; 0 for not edited, timestamp if (when) last edited
+			'post_deleted'			=> array('default' => 0), // Post deleted; 0 for not edited, timestamp if (when) last edited
+
+			'post_edit_user'		=> array('default' => 0), // The last user to edit/delete the post
+			'post_edit_reason'		=> array('default' => ''), // Reason for deleting/editing
 
 			'post_subject'			=> array('default' => ''),
 			'post_text'				=> array('default' => ''),
 			'post_text_bitfield'	=> array('default' => ''),
 			'post_text_uid'			=> array('default' => ''),
 			'post_text_options'		=> array('default' => 7),
-			'post_reason'			=> array('default' => ''), // Reason for deleting/editing
 		));
 
 		switch ($type)
@@ -100,6 +103,11 @@ class titania_post extends titania_database_object
 			case 'queue' :
 			case TITANIA_POST_QUEUE :
 				$this->post_type = TITANIA_POST_QUEUE;
+			break;
+
+			case 'review' :
+			case TITANIA_POST_REVIEW :
+				$this->post_type = TITANIA_POST_REVIEW;
 			break;
 
 			default :
@@ -129,36 +137,25 @@ class titania_post extends titania_database_object
 	}
 
 	/**
-	* Submit Post
+	* Post a post
 	*/
-	public function submit()
+	public function post()
 	{
-		// If not editing an existing post we need to create a topic
-		if (!$this->post_id)
+		if (!$this->acl_get('post'))
 		{
-			if (!$this->acl_get('post'))
-			{
-				trigger_error('NO_AUTH');
-			}
+			trigger_error('NO_AUTH');
+		}
 
-			$this->topic->__set_array(array(
-				'topic_access'		=> $this->post_access,
-				'topic_approved'	=> $this->post_approved,
-				'topic_user_id'		=> $this->post_user_id,
-				'topic_time'		=> $this->post_time,
-				'topic_subject'		=> $this->post_subject,
-			));
-		}
-		else
-		{
-			if (!$this->acl_get('edit'))
-			{
-				trigger_error('NO_AUTH');
-			}
-		}
+		$this->topic->__set_array(array(
+			'topic_access'		=> $this->post_access,
+			'topic_approved'	=> $this->post_approved,
+			'topic_user_id'		=> $this->post_user_id,
+			'topic_time'		=> $this->post_time,
+			'topic_subject'		=> $this->post_subject,
+		));
 
 		// Update the postcount for the topic and submit the topic
-		$this->topic->update_postcount($this->post_access, ((isset($this->sql_data['post_access'])) ? $this->sql_data['post_access'] : false), false);
+		$this->topic->update_postcount($this->post_access, false, false);
 		$this->topic->submit();
 
 		$this->topic_id = $this->topic->topic_id;
@@ -169,6 +166,134 @@ class titania_post extends titania_database_object
 		}
 
 		return parent::submit();
+	}
+
+	/**
+	* Edit a post
+	*/
+	public function edit()
+	{
+		if (!$this->post_id)
+		{
+			return false;
+		}
+
+		if (!$this->acl_get('edit'))
+		{
+			trigger_error('NO_AUTH');
+		}
+
+		$this->topic->__set_array(array(
+			'topic_access'		=> $this->post_access,
+			'topic_approved'	=> $this->post_approved,
+			'topic_user_id'		=> $this->post_user_id,
+			'topic_time'		=> $this->post_time,
+			'topic_subject'		=> $this->post_subject,
+		));
+
+		// Update the postcount for the topic and submit the topic
+		$this->topic->update_postcount($this->post_access, $this->sql_data['post_access'], false);
+		$this->topic->submit();
+
+		$this->topic_id = $this->topic->topic_id;
+
+		if (!$this->text_parsed_for_storage)
+		{
+			$this->generate_text_for_storage();
+		}
+
+		return parent::submit();
+	}
+
+	/**
+	* Soft delete a post
+	*/
+	public function soft_delete($reason = '')
+	{
+		if (!$this->acl_get('soft_delete'))
+		{
+			trigger_error('NO_AUTH');
+		}
+
+		$this->post_deleted = titania::$time;
+		$this->post_edit_user = phpbb::$user->data['user_id'];
+		$this->post_edit_reason = $reason;
+
+		$this->topic->update_postcount($this->post_access, $this->sql_data['post_access'], false);
+
+		// Set the visibility appropriately if no posts are visibile to the public/authors
+		if ($this->topic->get_postcount(TITANIA_ACCESS_PUBLIC) == 0)
+		{
+			if ($this->topic->get_postcount(TITANIA_ACCESS_AUTHORS) == 0)
+			{
+				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
+			}
+			else
+			{
+				$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
+			}
+		}
+
+		$this->topic->submit();
+
+		parent::submit();
+	}
+
+	/**
+	* Undelete a post
+	*
+	* @param int $access_level The new access level at which to display the undeleted post at (public, authors
+	*/
+	public function undelete($access_level = TITANIA_ACCESS_PUBLIC)
+	{
+		if (!$this->acl_get('undelete'))
+		{
+			trigger_error('NO_AUTH');
+		}
+
+		$this->post_access = $access_level;
+
+		$this->topic->update_postcount($this->post_access, $this->sql_data['post_access'], false);
+
+		// Set the visibility appropriately if no posts are visibile to the public/authors
+		if ($this->topic->topic_access < $access_level)
+		{
+			$this->topic->topic_access = $access_level;
+		}
+
+		$this->topic->submit();
+
+		parent::submit();
+	}
+
+	/**
+	* Hard delete a post
+	*/
+	public function hard_delete()
+	{
+		if (!$this->acl_get('hard_delete'))
+		{
+			trigger_error('NO_AUTH');
+		}
+
+		$this->topic->update_postcount(false, $this->sql_data['post_access'], false);
+
+		// Set the visibility appropriately if no posts are visibile to the public/authors
+		if ($this->topic->get_postcount(TITANIA_ACCESS_PUBLIC) == 0)
+		{
+			$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
+			if ($this->topic->get_postcount(TITANIA_ACCESS_AUTHORS) == 0)
+			{
+				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
+				if ($this->topic->get_postcount(TITANIA_ACCESS_TEAMS) == 0)
+				{
+					// Hard delete the topic
+					$this->topic->delete();
+				}
+			}
+		}
+
+		parent::delete();
 	}
 
 	/**
@@ -206,100 +331,6 @@ class titania_post extends titania_database_object
 	{
 		return generate_text_for_edit($this->post_text, $this->post_text_uid, $this->post_text_options);
 	}
-
-	/**
-	* Soft delete a post
-	*/
-	public function soft_delete()
-	{
-		if (!$this->acl_get('soft_delete'))
-		{
-			trigger_error('NO_AUTH');
-		}
-
-		$this->post_access = TITANIA_ACCESS_TEAMS;
-
-		$this->topic->update_postcount($this->post_access, $this->sql_data['post_access'], false);
-
-		// Set the visibility appropriately if no posts are visibile to the public/authors
-		if ($this->topic->get_postcount(TITANIA_ACCESS_PUBLIC) == 0)
-		{
-			if ($this->topic->get_postcount(TITANIA_ACCESS_AUTHORS) == 0)
-			{
-				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
-			}
-			else
-			{
-				$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
-			}
-		}
-
-		$this->topic->submit();
-
-		$this->submit();
-	}
-
-	/**
-	* Undelete a post
-	*
-	* @param int $access_level The new access level at which to display the undeleted post at (public, authors
-	*/
-	public function undelete($access_level = TITANIA_ACCESS_PUBLIC)
-	{
-		if (!$this->acl_get('undelete'))
-		{
-			trigger_error('NO_AUTH');
-		}
-
-		$this->post_access = $access_level;
-
-		$this->topic->update_postcount($this->post_access, $this->sql_data['post_access'], false);
-
-		// Set the visibility appropriately if no posts are visibile to the public/authors
-		if ($this->topic->topic_access < $access_level)
-		{
-			$this->topic->topic_access = $access_level;
-		}
-
-		$this->topic->submit();
-
-		$this->submit();
-	}
-
-	/**
-	* Hard delete a post
-	*/
-	public function hard_delete()
-	{
-		if (!$this->acl_get('hard_delete'))
-		{
-			trigger_error('NO_AUTH');
-		}
-
-		$this->topic->update_postcount(false, $this->sql_data['post_access'], false);
-
-		// Set the visibility appropriately if no posts are visibile to the public/authors
-		if ($this->topic->get_postcount(TITANIA_ACCESS_PUBLIC) == 0)
-		{
-			$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
-			if ($this->topic->get_postcount(TITANIA_ACCESS_AUTHORS) == 0)
-			{
-				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
-				if ($this->topic->get_postcount(TITANIA_ACCESS_TEAMS) == 0)
-				{
-					// Hard delete the topic
-					$this->topic->delete();
-				}
-			}
-		}
-
-		parent::delete();
-	}
-
-	/**
-	* Catch an attempt to delete the post (must use the hard_delete function)
-	*/
-	public function delete() { $this->hard_delete(); }
 
 	/**
 	* Check if the current user has permission to do something
@@ -360,5 +391,28 @@ class titania_post extends titania_database_object
 		}
 
 		return false;
+	}
+
+	/**
+	* Catch an attempt to use submit
+	*/
+	public function submit()
+	{
+		if (!$this->post_id)
+		{
+			return $this->post();
+		}
+		else
+		{
+			return $this->edit();
+		}
+	}
+
+	/**
+	* Catch an attempt to delete the post (must use the hard_delete function)
+	*/
+	public function delete()
+	{
+		$this->hard_delete();
 	}
 }

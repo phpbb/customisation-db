@@ -80,6 +80,7 @@ define('TITANIA_DOWNLOAD_POST', 2);
 define('TITANIA_POST_DEFAULT', 1);
 define('TITANIA_POST_QUEUE', 2);
 define('TITANIA_POST_TRACKER', 3);
+define('TITANIA_POST_REVIEW', 4);
 
 // Access Levels
 define('TITANIA_ACCESS_TEAMS', 0);

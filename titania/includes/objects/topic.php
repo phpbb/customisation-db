@@ -60,6 +60,7 @@ class titania_topic extends titania_database_object
 			'topic_locked'			=> array('default' => false),
 			'topic_approved'		=> array('default' => true),
 			'topic_reported'		=> array('default' => false), // True if any posts in the topic are reported
+			'topic_deleted'			=> array('default' => false), // True if the topic is soft deleted
 
 			'topic_user_id'			=> array('default' => (int) phpbb::$user->data['user_id']),
 
@@ -68,6 +69,12 @@ class titania_topic extends titania_database_object
 			'topic_posts'			=> array('default' => ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
 
 			'topic_subject'			=> array('default' => ''),
+
+			'topic_last_post_id'			=> array('default' => 0),
+			'topic_last_post_user_id'		=> array('default' => 0),
+			'topic_last_post_user_colour'	=> array('default' => ''),
+			'topic_last_post_time'			=> array('default' => (int) titania::$time),
+			'topic_last_post_subject'		=> array('default' => ''),
 		));
 
 		switch ($type)
@@ -80,6 +87,11 @@ class titania_topic extends titania_database_object
 			case 'queue' :
 			case TITANIA_POST_QUEUE :
 				$this->topic_type = TITANIA_POST_QUEUE;
+			break;
+
+			case 'review' :
+			case TITANIA_POST_REVIEW :
+				$this->topic_type = TITANIA_POST_REVIEW;
 			break;
 
 			default :

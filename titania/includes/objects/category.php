@@ -213,12 +213,11 @@ class titania_category extends titania_database_object
 			'U_VIEW_CATEGORY'	=> $this->get_url(),
 		);
 
-		if (!$return)
+		if ($return)
 		{
-			phpbb::$template->assign_vars($display);
-			return;
+			return $display;
 		}
 
-		return $display;
+		phpbb::$template->assign_vars($display);
 	}
 }

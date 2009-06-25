@@ -248,32 +248,29 @@ class titania
 	}
 
 	/**
-	 * Titania Logout method to redirect the user to the Titania root instead of the phpBB Root
-	 *
-	 * @param bool $return if we are within a method, we can use the error_box instead of a trigger_error on the redirect.
-	 */
-	public static function logout($return = false)
+	* Generate the navigation tabs/menu for display
+	*
+	* @param array $nav_ary The array of data to output
+	* @param string $current_page The current page
+	*/
+	public static function generate_nav($nav_ary, $current_page)
 	{
-		if (phpbb::$user->data['user_id'] != ANONYMOUS && isset($_GET['sid']) && !is_array($_GET['sid']) && $_GET['sid'] === phpbb::$user->session_id)
+		foreach ($nav_ary as $page => $data)
 		{
-			phpbb::$user->session_kill();
-			phpbb::$user->session_begin();
-			$message = phpbb::$user->lang['LOGOUT_REDIRECT'];
-		}
-		else
-		{
-			$message = (phpbb::$user->data['user_id'] == ANONYMOUS) ? phpbb::$user->lang['LOGOUT_REDIRECT'] : phpbb::$user->lang['LOGOUT_FAILED'];
-		}
+			// If they do not have authorization, skip.
+			if (isset($data['auth']) && !$data['auth'])
+			{
+				continue;
+			}
 
-		if ($return)
-		{
-			return $message;
+			phpbb::$template->assign_block_vars('nav_menu', array(
+				'L_TITLE'		=> (isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title'],
+
+				'U_TITLE'		=> $data['url'],
+
+				'S_SELECTED'	=> ($page == $current_page) ? true : false,
+			));
 		}
-
-		meta_refresh(3, titania_sid('index'));
-
-		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . titania_sid('index') . '">', '</a> ');
-		trigger_error($message);
 	}
 
 	/**
@@ -392,6 +389,35 @@ class titania
 		$l_redirect = ($l_redirect) ? $l_redirect : 'RETURN_LAST_PAGE';
 
 		return (!$return_url) ? sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, phpbb::$user->lang[$l_redirect]) : $redirect;
+	}
+
+	/**
+	 * Titania Logout method to redirect the user to the Titania root instead of the phpBB Root
+	 *
+	 * @param bool $return if we are within a method, we can use the error_box instead of a trigger_error on the redirect.
+	 */
+	public static function logout($return = false)
+	{
+		if (phpbb::$user->data['user_id'] != ANONYMOUS && isset($_GET['sid']) && !is_array($_GET['sid']) && $_GET['sid'] === phpbb::$user->session_id)
+		{
+			phpbb::$user->session_kill();
+			phpbb::$user->session_begin();
+			$message = phpbb::$user->lang['LOGOUT_REDIRECT'];
+		}
+		else
+		{
+			$message = (phpbb::$user->data['user_id'] == ANONYMOUS) ? phpbb::$user->lang['LOGOUT_REDIRECT'] : phpbb::$user->lang['LOGOUT_FAILED'];
+		}
+
+		if ($return)
+		{
+			return $message;
+		}
+
+		meta_refresh(3, titania_sid('index'));
+
+		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . titania_sid('index') . '">', '</a> ');
+		trigger_error($message);
 	}
 
 	/**

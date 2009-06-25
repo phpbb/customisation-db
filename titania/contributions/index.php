@@ -49,41 +49,34 @@ if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['is_re
 *
 * 'filename' => array(
 *	'title'		=> 'nav menu title',
+* 	'url'		=> $page_url,
 *	'auth'		=> ($can_see_page) ? true : false, // Not required, always true if missing
 * ),
 */
-$pages = array(
+$nav_ary = array(
 	'details' => array(
 		'title'		=> 'CONTRIB_DETAILS',
+		'url'		=> titania::$contrib->get_url(),
 	),
 	'faq' => array(
 		'title'		=> 'CONTRIB_FAQ',
+		'url'		=> titania::$contrib->get_url() . '/faq',
+	),
+	'support' => array(
+		'title'		=> 'CONTRIB_SUPPORT',
+		'url'		=> titania::$contrib->get_url() . '/support',
 	),
 );
 
 // Display nav menu
-foreach ($pages as $name => $data)
-{
-	// If they do not have authorization, skip.
-	if (isset($data['auth']) && !$data['auth'])
-	{
-		continue;
-	}
-
-	phpbb::$template->assign_block_vars('nav_menu', array(
-		'L_TITLE'		=> (isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title'],
-
-		'U_TITLE'		=> titania::$contrib->get_url() . (($name != 'details') ? '/' . $name : ''),
-
-		'S_SELECTED'	=> ($page == $name) ? true : false,
-	));
-}
+titania::generate_nav($nav_ary, $page);
 
 // And now to load the appropriate page...
 switch ($page)
 {
 	case 'details' :
 	case 'faq' :
+	case 'support' :
 		include(TITANIA_ROOT . 'contributions/' . $page . '.' . PHP_EXT);
 	break;
 

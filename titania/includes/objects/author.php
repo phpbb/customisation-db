@@ -154,14 +154,6 @@ class titania_author extends titania_database_object
 	}
 
 	/**
-	* Get profile data
-	*/
-	public function get_profile_data()
-	{
-		return $this->sql_data;
-	}
-
-	/**
 	* Get username string
 	*
 	* @param mixed $mode Can be titania (for full with author view page for link), profile (for getting an url to the profile), username (for obtaining the username), colour (for obtaining the user colour), full (for obtaining a html string representing a coloured link to the users profile) or no_profile (the same as full but forcing no profile link)
@@ -197,7 +189,7 @@ class titania_author extends titania_database_object
 	{
 		if ($this->user_id)
 		{
-			return append_sid(PHPBB_ROOT_PATH . 'memberlist.' . PHP_EXT, 'u=' . $this->user_id);
+			return append_sid(titania::$absolute_board . 'memberlist.' . PHP_EXT, 'u=' . $this->user_id);
 		}
 
 		return '';

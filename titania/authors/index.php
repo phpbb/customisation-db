@@ -43,35 +43,23 @@ if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['user_
 *
 * 'filename' => array(
 *	'title'		=> 'nav menu title',
+* 	'url'		=> $page_url,
 *	'auth'		=> ($can_see_page) ? true : false, // Not required, always true if missing
 * ),
 */
-$pages = array(
+$nav_ary = array(
 	'details' => array(
 		'title'		=> 'AUTHOR_DETAILS',
+		'url'		=> titania::$author->get_url(),
 	),
 	'contributions' => array(
 		'title'		=> 'AUTHOR_CONTRIBUTIONS',
+		'url'		=> titania::$author->get_url() . '/contributions',
 	),
 );
 
 // Display nav menu
-foreach ($pages as $name => $data)
-{
-	// If they do not have authorization, skip.
-	if (isset($data['auth']) && !$data['auth'])
-	{
-		continue;
-	}
-
-	phpbb::$template->assign_block_vars('nav_menu', array(
-		'L_TITLE'		=> (isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title'],
-
-		'U_TITLE'		=> titania::$author->get_url() . (($name != 'details') ? '/' . $name : ''),
-
-		'S_SELECTED'	=> ($page == $name) ? true : false,
-	));
-}
+titania::generate_nav($nav_ary, $page);
 
 // And now to load the appropriate page...
 switch ($page)
