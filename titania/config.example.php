@@ -19,6 +19,13 @@ $config = array(
 	'phpbb_root_path' => '../community/',
 
 	/**
+	* Relative path from the phpBB installation.
+	*
+	* @param	string	Path to the titania folder from phpBB
+	*/
+	'titania_script_path' => 'titania/',
+
+	/**
 	* Prefix of the sql tables.  Not the prefix for the phpBB tables, prefix for the Titania tables only.
 	* This MUST NOT be the same as the phpBB prefix!
 	*
