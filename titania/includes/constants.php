@@ -32,11 +32,13 @@ define('TITANIA_CONTRIB_COAUTHORS_TABLE',		$table_prefix . 'contrib_coauthors');
 define('TITANIA_CONTRIB_FAQ_TABLE',				$table_prefix . 'contrib_faq');
 define('TITANIA_CONTRIB_IN_CATEGORIES_TABLE',	$table_prefix . 'contrib_in_categories');
 define('TITANIA_CONTRIB_TAGS_TABLE',			$table_prefix . 'contrib_tags');
+define('TITANIA_POSTS_TABLE',					$table_prefix . 'posts');
 define('TITANIA_QUEUE_TABLE',					$table_prefix . 'queue');
 define('TITANIA_RATINGS_TABLE',					$table_prefix . 'ratings');
 define('TITANIA_REVISIONS_TABLE',				$table_prefix . 'revisions');
 define('TITANIA_TAG_FIELDS_TABLE',				$table_prefix . 'tag_fields');
 define('TITANIA_TAG_TYPES_TABLE',				$table_prefix . 'tag_types');
+define('TITANIA_TOPICS_TABLE',					$table_prefix . 'topics');
 define('TITANIA_WATCH_TABLE',					$table_prefix . 'watch');
 
 // Contribution revision status

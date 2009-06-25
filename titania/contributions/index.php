@@ -38,7 +38,7 @@ titania::$author = titania::$contrib->author;
 // Check to see if the currently accessing user is an author
 if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['is_registered'] && !phpbb::$user->data['is_bot'])
 {
-	if (titania::$author->user_id == phpbb::$user->data['user_id'] || isset(titania::$contrib->coauthors[phpbb::$user->data['user_id']]))
+	if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
 	{
 		titania::$access_level = TITANIA_ACCESS_AUTHORS;
 	}

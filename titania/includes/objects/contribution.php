@@ -63,6 +63,15 @@ class titania_contribution extends titania_database_object
 	public $rating;
 
 	/**
+	* is_author (true when visiting user is the author)
+	* is_active_coauthor (true when visiting user is an active co-author)
+	* is_coauthor (true when visiting user is a non-active co-author)
+	*/
+	public $is_author = false;
+	public $is_active_coauthor = false;
+	public $is_coauthor = false;
+
+	/**
 	 * Constructor class for the contribution object
 	 */
 	public function __construct()
@@ -190,6 +199,20 @@ class titania_contribution extends titania_database_object
 		}
 		phpbb::$db->sql_freeresult($result);
 
+		// Check author/co-author status
+		if ($this->contrib_user_id == phpbb::$user->data['user_id'])
+		{
+			$this->is_author = true;
+		}
+		else if (isset($this->coauthors[phpbb::$user->data['user_id']]))
+		{
+			$this->is_coauthor = true;
+
+			if ($this->coauthors[phpbb::$user->data['user_id']]['active'])
+			{
+				$this->is_active_coauthor = true;
+			}
+		}
 		return true;
 	}
 
