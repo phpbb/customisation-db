@@ -101,7 +101,7 @@ class titania
 		self::$cache = new titania_cache();
 
 		// Set the absolute path
-		self::$absolute_path = generate_board_url(true) . phpbb::$user->page['root_script_path'] . titania::$config->titania_script_path;
+		self::$absolute_path = generate_board_url(true) . self::$config->titania_script_path;
 		self::$absolute_board = generate_board_url() . '/';
 
 		// Set template path and template name

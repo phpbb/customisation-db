@@ -48,19 +48,12 @@ class titania_faq extends titania_database_object
 	 */
 	private $text_parsed_for_storage = false;
 
-	/*
-	 * Contrib data
-	 *
-	 * @var array
-	 */
-	public $contrib_data		= array();
-
 	/**
 	 * Constructor class for titania faq
 	 *
 	 * @param int $faq_id
 	 */
-	public function __construct($faq_id = false, $contrib_id)
+	public function __construct($faq_id = false)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -79,11 +72,6 @@ class titania_faq extends titania_database_object
 		{
 			$this->faq_id = $faq_id;
 		}
-
-		$this->contrib_id = $contrib_id;
-
-		// getting contrib data from the contribs table
-		$this->get_contrib_data();
 	}
 
 	/**
@@ -93,6 +81,8 @@ class titania_faq extends titania_database_object
 	 */
 	public function submit()
 	{
+		$this->contrib_id = titania::$contrib->contrib_id;
+		
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
 		if (!$this->text_parsed_for_storage)
 		{
@@ -230,23 +220,53 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
-	 * Get data about contrib
-	 *
-	 * @return void
-	 */
-	public function get_contrib_data()
+	* Build view URL for a faq
+	*
+	* @param string $action
+	* @param int $faq_id
+	*
+	* @return string
+	*/
+	public function get_url($action, $faq_id = false)
 	{
-		$sql = 'SELECT *
-			FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE contrib_id = ' . $this->contrib_id;
-		$result = phpbb::$db->sql_query($sql);
-		$this->contrib_data = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);
-
-		if (!$this->contrib_data)
+		$url = titania::$absolute_path;
+		
+		// For different items we will display the URL differently
+		switch (titania::$contrib->contrib_type)
 		{
-			trigger_error('CONTRIB_NOT_FOUND');
+			case TITANIA_TYPE_MOD :
+				$url .= 'mod/';
+			break;
+
+			case TITANIA_TYPE_STYLE :
+				$url .= 'style/';
+			break;
+
+			case TITANIA_TYPE_SNIPPET :
+				$url .= 'snippet/';
+			break;
+
+			case TITANIA_TYPE_LANG_PACK :
+				$url .= 'translation/';
+			break;
+
+			default :
+				$url .= 'contribution/';
+			break;
 		}
+		
+		$url .= titania::$contrib->contrib_id . '/faq';
+		
+		if ((int) $faq_id)
+		{
+			$url .= "/$faq_id";
+		}
+		else if ($this->faq_id)
+		{
+			$url .= '/' . $this->faq_id;
+		}
+
+		return "$url/$action";
 	}
 
 	/*
@@ -276,7 +296,7 @@ class titania_faq extends titania_database_object
 	{
 		$sql = 'SELECT faq_id, faq_order_id
 			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
-			WHERE contrib_id = ' . $this->contrib_id . '
+			WHERE contrib_id = ' . titania::$contrib->contrib_id . '
 			ORDER BY faq_order_id ASC';
 		$result = phpbb::$db->sql_query($sql);
 
@@ -309,21 +329,11 @@ class titania_faq extends titania_database_object
 	{
 		$sql = 'SELECT MAX(faq_order_id) as max_order_id
 			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
-			WHERE contrib_id = ' . $this->contrib_id;
+			WHERE contrib_id = ' . titania::$contrib->contrib_id;
 		$result = phpbb::$db->sql_query_limit($sql, 1);
 		$max_order_id = phpbb::$db->sql_fetchfield('max_order_id');
 		phpbb::$db->sql_freeresult($result);
 
 		return $max_order_id + 1;
-	}
-
-	/*
-	 * Return TRUE when an user is contrib's author 
-	 *
- 	 * @return bool
-	 */	
-	public function is_contrib_author()
-	{
-		return (phpbb::$user->data['user_id'] == $this->contrib_data['contrib_user_id']) ? true : false;
 	}
 }

@@ -20,6 +20,7 @@ Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/?([^/]+)?/?$
 
 #faq
 RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/faq/([^/]+)?/?$		./contributions/index.php?c=$2&page=faq&action=$3 [NC]
 Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/faq/([^/]+)/?([^/]+)?/?$		./contributions/index.php?c=$2&page=faq&f=$3&action=$4 [NC]
 
 #categories
