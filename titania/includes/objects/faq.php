@@ -86,7 +86,7 @@ class titania_faq extends titania_database_object
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
 		if (!$this->text_parsed_for_storage)
 		{
-			$this->generate_text_for_storage(true, true, false);
+			$this->generate_text_for_storage(true, true, true);
 		}
 
 		parent::submit();
@@ -147,7 +147,7 @@ class titania_faq extends titania_database_object
 	 */
 	private function generate_text_for_display()
 	{
-		return generate_text_for_display($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options);
+		$this->faq_text = generate_text_for_display($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options);
 	}
 
 	/**
@@ -173,7 +173,7 @@ class titania_faq extends titania_database_object
 		// Text needs to be from database or parsed for database.
 		if (!$this->text_parsed_for_storage)
 		{
-			$this->generate_text_for_storage(true, true, false);
+			$this->generate_text_for_storage(true, true, true);
 		}
 
 		if ($editable)

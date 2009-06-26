@@ -168,9 +168,9 @@ switch ($action)
 						AND faq_id = $faq_id";
 				phpbb::$db->sql_query($sql);
 			}
-
-			redirect(titania::$contrib->get_url() . '/faq');
 		}
+		
+		redirect(titania::$contrib->get_url() . '/faq');
 
 	break;
 
@@ -185,7 +185,7 @@ switch ($action)
 
 		phpbb::$template->assign_vars(array(
 			'FAQ_SUBJECT'		=> $faq->faq_subject,
-			'FAQ_TEXT'		=> smiley_text($faq->get_faq_text()),
+			'FAQ_TEXT'		=> $faq->get_faq_text(),
 			'FAQ_VIEWS'		=> $faq->faq_views,
 
 			'S_DETAILS'		=> true,
