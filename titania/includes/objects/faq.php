@@ -82,7 +82,7 @@ class titania_faq extends titania_database_object
 	public function submit()
 	{
 		$this->contrib_id = titania::$contrib->contrib_id;
-		
+
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
 		if (!$this->text_parsed_for_storage)
 		{
@@ -229,34 +229,8 @@ class titania_faq extends titania_database_object
 	*/
 	public function get_url($action, $faq_id = false)
 	{
-		$url = titania::$absolute_path;
-		
-		// For different items we will display the URL differently
-		switch (titania::$contrib->contrib_type)
-		{
-			case TITANIA_TYPE_MOD :
-				$url .= 'mod/';
-			break;
+		$url = titania::$contrib->get_url() . '/faq';
 
-			case TITANIA_TYPE_STYLE :
-				$url .= 'style/';
-			break;
-
-			case TITANIA_TYPE_SNIPPET :
-				$url .= 'snippet/';
-			break;
-
-			case TITANIA_TYPE_LANG_PACK :
-				$url .= 'translation/';
-			break;
-
-			default :
-				$url .= 'contribution/';
-			break;
-		}
-		
-		$url .= titania::$contrib->contrib_id . '/faq';
-		
 		if ((int) $faq_id)
 		{
 			$url .= "/$faq_id";

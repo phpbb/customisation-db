@@ -37,7 +37,7 @@ class titania_config extends titania_object
 			'language_path'				=> array('default' => TITANIA_ROOT . 'language/'),
 			'modules_path'				=> array('default' => TITANIA_ROOT . 'modules/'),
 			'phpbb_root_path'			=> array('default' => '../community/'),
-			'titania_script_path'		=> array('default' => 'titania/'),
+			'titania_script_path'		=> array('default' => 'customisation/'),
 			'phpbbcom_profile'			=> array('default' => true),
 			'phpbbcom_viewprofile_url'	=> array('default' => 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
 			'table_prefix'				=> array('default' => 'customisation_'),
