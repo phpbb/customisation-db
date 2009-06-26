@@ -1,0 +1,31 @@
+<!-- INCLUDE authors/author_header.html -->
+
+<h2 class="section-title">{PAGE_TITLE} :: {L_DETAILS}</h2>
+
+<form id="postform" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
+
+<div class="column1">
+	<h3>{L_AUTHOR_DETAILS}</h3>
+	<table>
+		<tr>
+			<td align="right"><strong>{L_REAL_NAME}:</strong></td>
+			<td align="left">{AUTHOR_REALNAME}</td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_WEBSITE}:</strong></td>
+			<td align="left">{WEBSITE}</td>
+		</tr>
+	</table>
+</div>
+
+<div class="clear"></div>
+
+<div class="column1">
+	<h3>{L_AUTHOR_DESCRIPTION}</h3>
+
+	<!-- INCLUDE posting_text.html -->
+</div>
+
+</form>
+
+<!-- INCLUDE authors/author_footer.html -->

@@ -1,68 +1,68 @@
 <!-- INCLUDE contributions/contribution_header.html -->
 
-	<h2 class="section-title">{PAGE_TITLE} :: {L_DETAILS}</h2>
+<h2 class="section-title">{PAGE_TITLE} :: {L_DETAILS}</h2>
 
-	<div class="column1">
-		<h3>{L_CONTRIB_DETAILS}</h3>
-		<table>
-			<tr>
-				<td align="right"><strong>{L_CONTRIB_TITLE}:</strong></td>
-				<td align="left">{CONTRIB_TITLE}</td>
-			</tr>
-			<tr>
-				<td align="right"><strong>{L_DOWNLOADS_TOTAL}:</strong></td>
-				<td align="left">{CONTRIB_DOWNLOADS}<!-- IF CONTRIB_DOWNLOADS_PER_DAY --> ({CONTRIB_DOWNLOADS_PER_DAY})<!-- ENDIF --></td>
-			</tr>
-			<tr>
-				<td align="right"><strong>{L_RATING}:</strong></td>
-				<td align="left">{CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})</td>
-			</tr>
-			<!-- IF DOWNLOAD_SIZE -->
-			<tr>
-				<td align="right"><strong>{L_FILESIZE}:</strong></td>
-				<td align="left">{DOWNLOAD_SIZE}</td>
-			</tr>
-			<!-- ENDIF -->
-			<!-- IF DOWNLOAD_CHECKSUM -->
-			<tr>
-				<td align="right"><strong>{L_DOWNLOAD_CHECKSUM}:</strong></td>
-				<td align="left">{DOWNLOAD_CHECKSUM}</td>
-			</tr>
-			<!-- ENDIF -->
-			<!-- IF CONTRIB_RELEASE_DATE -->
-			<tr>
-				<td align="right"><strong>{L_CONTRIB_RELEASE_DATE}:</strong></td>
-				<td align="left">{CONTRIB_RELEASE_DATE}</td>
-			</tr>
-			<!-- ENDIF -->
-			<!-- IF CONTRIB_UPDATE_DATE -->
-			<tr>
-				<td align="right"><strong>{L_CONTRIB_UPDATE_DATE}:</strong></td>
-				<td align="left">{CONTRIB_UPDATE_DATE}</td>
-			</tr>
-			<!-- ENDIF -->
-		</table>
-	</div>
+<div class="column1">
+	<h3>{L_CONTRIB_DETAILS}</h3>
+	<table>
+		<tr>
+			<td align="right"><strong>{L_CONTRIB_TITLE}:</strong></td>
+			<td align="left">{CONTRIB_TITLE}</td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_DOWNLOADS_TOTAL}:</strong></td>
+			<td align="left">{CONTRIB_DOWNLOADS}<!-- IF CONTRIB_DOWNLOADS_PER_DAY --> ({CONTRIB_DOWNLOADS_PER_DAY})<!-- ENDIF --></td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_RATING}:</strong></td>
+			<td align="left">{CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})</td>
+		</tr>
+		<!-- IF DOWNLOAD_SIZE -->
+		<tr>
+			<td align="right"><strong>{L_FILESIZE}:</strong></td>
+			<td align="left">{DOWNLOAD_SIZE}</td>
+		</tr>
+		<!-- ENDIF -->
+		<!-- IF DOWNLOAD_CHECKSUM -->
+		<tr>
+			<td align="right"><strong>{L_DOWNLOAD_CHECKSUM}:</strong></td>
+			<td align="left">{DOWNLOAD_CHECKSUM}</td>
+		</tr>
+		<!-- ENDIF -->
+		<!-- IF CONTRIB_RELEASE_DATE -->
+		<tr>
+			<td align="right"><strong>{L_CONTRIB_RELEASE_DATE}:</strong></td>
+			<td align="left">{CONTRIB_RELEASE_DATE}</td>
+		</tr>
+		<!-- ENDIF -->
+		<!-- IF CONTRIB_UPDATE_DATE -->
+		<tr>
+			<td align="right"><strong>{L_CONTRIB_UPDATE_DATE}:</strong></td>
+			<td align="left">{CONTRIB_UPDATE_DATE}</td>
+		</tr>
+		<!-- ENDIF -->
+	</table>
+</div>
 
-	<div class="column2">
-		<h3>{L_AUTHOR_DETAILS}</h3>
-		<table>
-			<tr>
-				<td align="right"><strong>{L_CONTRIB_AUTHOR}:</strong></td>
-				<td align="left">{AUTHOR_NAME_FULL}<!-- IF AUTHOR_REALNAME --> ({AUTHOR_REALNAME})<!-- ENDIF --></td>
-			</tr>
-			<tr>
-				<td align="right"><strong>{L_CONTRIBUTIONS}:</strong></td>
-				<td align="left"><a href="{U_AUTHOR_CONTRIBUTIONS}">{L_LIST}</a></td>
-			</tr>
-		</table>
-	</div>
+<div class="column2">
+	<h3>{L_AUTHOR_DETAILS}</h3>
+	<table>
+		<tr>
+			<td align="right"><strong>{L_CONTRIB_AUTHOR}:</strong></td>
+			<td align="left">{AUTHOR_NAME_FULL}<!-- IF AUTHOR_REALNAME --> ({AUTHOR_REALNAME})<!-- ENDIF --></td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_CONTRIBUTIONS}:</strong></td>
+			<td align="left"><a href="{U_AUTHOR_CONTRIBUTIONS}">{L_LIST}</a></td>
+		</tr>
+	</table>
+</div>
 
-	<div class="clear"></div>
+<div class="clear"></div>
 
-	<!-- IF CONTRIB_DESC -->
-	<h3>{L_CONTRIB_DESCRIPTION}</h3>
-	{CONTRIB_DESC}
-	<!-- ENDIF -->
+<!-- IF CONTRIB_DESC -->
+<h3>{L_CONTRIB_DESCRIPTION}</h3>
+{CONTRIB_DESC}
+<!-- ENDIF -->
 
 <!-- INCLUDE contributions/contribution_footer.html -->

@@ -84,9 +84,9 @@ class titania_contribution extends titania_database_object
 			'contrib_name_clean'			=> array('default' => '',	'max' => 255),
 
 			'contrib_desc'					=> array('default' => ''),
-			'contrib_desc_bitfield'			=> array('default' => '',	'readonly' => true),
-			'contrib_desc_uid'				=> array('default' => '',	'readonly' => true),
-			'contrib_desc_options'			=> array('default' => 7,	'readonly' => true),
+			'contrib_desc_bitfield'			=> array('default' => ''),
+			'contrib_desc_uid'				=> array('default' => ''),
+			'contrib_desc_options'			=> array('default' => 7),
 
 			'contrib_status'				=> array('default' => TITANIA_STATUS_NEW),
 
@@ -238,15 +238,6 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	* Get contrib data
-	*/
-	public function get_data()
-	{
-		return $this->sql_data;
-	}
-
-
-	/**
 	 * Generate text for storing description into the database
 	 *
 	 * @param bool $allow_bbcode
@@ -259,7 +250,7 @@ class titania_contribution extends titania_database_object
 	{
 		generate_text_for_storage($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_bitfield, $this->contrib_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
-		$this->text_parsed_for_storage = true;
+		$this->description_parsed_for_storage = true;
 	}
 
 	/**

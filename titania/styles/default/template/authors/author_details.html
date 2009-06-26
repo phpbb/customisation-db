@@ -1,37 +1,60 @@
 <!-- INCLUDE authors/author_header.html -->
 
+<h2 class="section-title">{PAGE_TITLE} :: {L_DETAILS}</h2>
+
 <div class="column1">
-<div class="panel bg1">
-	<div class="inner"><span class="corners-top"><span></span></span>
-
-	<h3>{AUTHOR_NAME} {L_USER_INFORMATION}</h3>
-
-	<dl class="details" style="float: left; display: block; width: 60%;">
-
-		<dt>{L_AUTHOR}:</dt> <dd>{USER_FULL}</dd>
-		<dt>{L_REAL_NAME}:</dt> <dd>{REAL_NAME}</dd>
-		<dt>{L_WEBSITE}:</dt> <dd>{WEBSITE}</dd>
-    <!-- IF U_PHPBB_PROFILE -->
-	    <dt style="margin-bottom: 22px;">{L_PHPBB_PROFILE}:</dt> <dd><a href="{U_PHPBB_PROFILE}">{L_PHPBB_PROFILE}</a></dd>
-    <!-- ENDIF -->
-	</dl>
-	<span class="corners-bottom"><span></span></span></div>
-</div>
+	<h3>{L_AUTHOR_DETAILS}</h3>
+	<table>
+		<tr>
+			<td align="right"><strong>{L_AUTHOR}:</strong></td>
+			<td align="left">{AUTHOR_NAME_FULL}</td>
+		</tr>
+		<!-- IF AUTHOR_REALNAME -->
+		<tr>
+			<td align="right"><strong>{L_REAL_NAME}:</strong></td>
+			<td align="left">{AUTHOR_REALNAME}</td>
+		</tr>
+		<!-- ENDIF -->
+		<!-- IF WEBSITE -->
+		<tr>
+			<td align="right"><strong>{L_WEBSITE}:</strong></td>
+			<td align="left">{WEBSITE}</td>
+		</tr>
+		<!-- ENDIF -->
+	</table>
 </div>
 
 <div class="column2">
-<div class="panel bg2">
-	<div class="inner"><span class="corners-top"><span></span></span>
-		<h3>{L_MODO_ADVANCED}</h3>
-		<dl class="details" style="float: left; display: block; width: 60%;">
-			<dt>{L_AUTHOR_RATING}:</dt> <dd>{RATING} ({RATING_COUNT})</dd>
-			<dt>{L_AUTHOR_CONTRIBS}:</dt> <dd>{CONTRIB_COUNT}</dd>
-			<dt>{L_AUTHOR_SNIPPETS}:</dt> <dd>{SNIPPET_COUNT}</dd>
-            <dt>{L_AUTHOR_MODS}: </dt> <dd>{MOD_COUNT}</dd>
-			<dt>{L_AUTHOR_STYLES}:</dt> <dd>{STYLE_COUNT}</dd>
-		</dl>
-	<span class="corners-bottom"><span></span></span></div>
+	<h3>{L_AUTHOR_STATISTICS}</h3>
+	<table>
+		<tr>
+			<td align="right"><strong>{L_AUTHOR_RATING}:</strong></td>
+			<td align="left">{AUTHOR_RATING_STRING} ({AUTHOR_RATING_COUNT})</td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_AUTHOR_CONTRIBS}:</strong></td>
+			<td align="left">{AUTHOR_CONTRIBS}</td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_AUTHOR_MODS}:</strong></td>
+			<td align="left">{AUTHOR_MODS}</td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_AUTHOR_STYLES}:</strong></td>
+			<td align="left">{AUTHOR_STYLES}</td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_AUTHOR_SNIPPETS}:</strong></td>
+			<td align="left">{AUTHOR_SNIPPETS}</td>
+		</tr>
+	</table>
 </div>
-</div>
+
+<div class="clear"></div>
+
+<!-- IF AUTHOR_DESC -->
+<h3>{L_AUTHOR_DESC}</h3>
+{AUTHOR_DESC}
+<!-- ENDIF -->
 
 <!-- INCLUDE authors/author_footer.html -->

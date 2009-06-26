@@ -42,6 +42,13 @@ class titania_author extends titania_database_object
 	protected $sql_id_field		= 'user_id';
 
 	/**
+	 * Description parsed for storage
+	 *
+	 * @var bool
+	 */
+	private $description_parsed_for_storage = false;
+
+	/**
 	 * Rating of this author
 	 *
 	 * @var titania_rating
@@ -66,10 +73,15 @@ class titania_author extends titania_database_object
 			'author_rating_count'	=> array('default' => 0),
 
 			'author_contribs'		=> array('default' => 0),
-			'author_snippets'		=> array('default' => 0),
 			'author_mods'			=> array('default' => 0),
 			'author_styles'			=> array('default' => 0),
+			'author_snippets'		=> array('default' => 0),
 			'author_visible'		=> array('default' => TITANIA_AUTHOR_VISIBLE),
+
+			'author_desc'			=> array('default' => ''),
+			'author_desc_bitfield'	=> array('default' => ''),
+			'author_desc_uid'		=> array('default' => ''),
+			'author_desc_options'	=> array('default', 7),
 		));
 
 		if ($user_id !== false)
@@ -130,6 +142,58 @@ class titania_author extends titania_database_object
 		}
 
 		return true;
+	}
+
+	/**
+	 * Submit data for storing into the database
+	 *
+	 * @return bool
+	 */
+	public function submit()
+	{
+		// Nobody parsed the text for storage before. Parse text with lowest settings.
+		if (!$this->description_parsed_for_storage)
+		{
+			$this->generate_text_for_storage(false, false, false);
+		}
+
+		return parent::submit();
+	}
+
+	/**
+	 * Generate text for storing description into the database
+	 *
+	 * @param bool $allow_bbcode
+	 * @param bool $allow_urls
+	 * @param bool $allow_smilies
+	 *
+	 * @return void
+	 */
+	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
+	{
+		generate_text_for_storage($this->author_desc, $this->author_desc_uid, $this->author_desc_bitfield, $this->author_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
+
+		$this->description_parsed_for_storage = true;
+	}
+
+	/**
+	 * Parse description for display
+	 *
+	 * @return string
+	 */
+	private function generate_text_for_display()
+	{
+		return generate_text_for_display($this->author_desc, $this->author_desc_uid, $this->author_desc_bitfield, $this->author_desc_options);
+	}
+
+	/**
+	 * Parse description for edit
+	 *
+	 * @return string
+	 */
+	private function generate_text_for_edit()
+	{
+		return generate_text_for_edit($this->author_desc, $this->author_desc_uid, $this->author_desc_options);
 	}
 
 	/**
@@ -221,8 +285,16 @@ class titania_author extends titania_database_object
 			'AUTHOR_NAME'					=> $this->username,
 			'AUTHOR_NAME_FULL'				=> $this->get_username_string(),
 			'AUTHOR_REALNAME'				=> $this->author_realname,
+			'AUTHOR_WEBSITE'				=> $this->author_website,
+
 			'AUTHOR_RATING'					=> $this->author_rating,
+			'AUTHOR_RATING_STRING'			=> (isset($this->rating)) ? $this->rating->get_rating_string() : '',
 			'AUTHOR_RATING_COUNT'			=> $this->author_rating_count,
+
+			'AUTHOR_CONTRIBS'				=> $this->author_contribs,
+			'AUTHOR_MODS'					=> $this->author_mods,
+			'AUTHOR_STYLES'					=> $this->author_styles,
+			'AUTHOR_SNIPPETS'				=> $this->author_snippets,
 
 			'U_AUTHOR_PROFILE'				=> $this->get_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
