@@ -46,7 +46,7 @@ if (!defined('UMIL_AUTO'))
 if (!defined('IN_PHPBB'))
 {
 	define('IN_PHPBB', true);
-	include($phpbb_root_path . 'common.' . $phpEx);
+	include PHPBB_ROOT_PATH . 'common.' . PHP_EXT;
 	$user->session_begin();
 	$auth->acl($user->data);
 	$user->setup();
@@ -76,12 +76,12 @@ if (!$user->data['is_registered'])
 
 if (!class_exists('umil_frontend'))
 {
-    if (!file_exists($phpbb_root_path . 'umil/umil_frontend.' . $phpEx))
+    if (!file_exists(UMIL_ROOT_PATH . 'umil_frontend.' . PHP_EXT))
 	{
 		trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
 	}
 
-	include($phpbb_root_path . 'umil/umil_frontend.' . $phpEx);
+	include UMIL_ROOT_PATH . 'umil_frontend.' . PHP_EXT;
 }
 
 $force_display_results = request_var('display_results', (defined('DEBUG') ? true : false));

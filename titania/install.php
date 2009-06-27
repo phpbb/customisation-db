@@ -19,7 +19,7 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 titania::add_lang('install');
 
-if (!file_exists(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT))
+if (!file_exists(UMIL_ROOT_PATH . 'umil_auto.' . PHP_EXT))
 {
 	trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
 }
@@ -503,4 +503,4 @@ function titania_data($action, $version)
 	$umil->table_row_insert(TITANIA_CONTRIB_FAQ_TABLE, $faq);
 }
 
-include(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT);
+include(UMIL_ROOT_PATH . 'umil_auto.' . PHP_EXT);

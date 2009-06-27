@@ -21,6 +21,7 @@ define('IN_PHPBB', true);
 
 // Some often used path constants
 define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
+define('UMIL_ROOT_PATH', TITANIA_ROOT . titania::$config->umil_root_path);
 
 // Table names
 $table_prefix = titania::$config->table_prefix;

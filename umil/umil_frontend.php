@@ -19,12 +19,12 @@ if (!defined('IN_PHPBB'))
 
 if (!class_exists('umil'))
 {
-    if (!file_exists($phpbb_root_path . 'umil/umil.' . $phpEx))
+    if (!file_exists(UMIL_ROOT_PATH . 'umil.' . PHP_EXT))
 	{
 		trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
 	}
 
-	include($phpbb_root_path . 'umil/umil.' . $phpEx);
+	include UMIL_ROOT_PATH . 'umil.' . PHP_EXT;
 }
 
 /**
@@ -69,7 +69,7 @@ class umil_frontend extends umil
 		$user->add_lang('install');
 
 		// Setup the template
-		$template->set_custom_template($phpbb_root_path . 'umil/style', 'umil');
+		$template->set_custom_template(UMIL_ROOT_PATH . 'style', 'umil');
 
 		// The UMIL template is never stored in the database
 		$user->theme['template_storedb'] = false;
@@ -85,7 +85,7 @@ class umil_frontend extends umil
 
 		$template->assign_vars(array(
 			'SQL_LAYER'			=> $this->db->sql_layer,
-			'UMIL_ROOT_PATH'	=> $phpbb_root_path . 'umil/',
+			'UMIL_ROOT_PATH'	=> UMIL_ROOT_PATH,
 
 			'U_ADM_INDEX'		=> append_sid("{$phpbb_root_path}adm/index.$phpEx", false, true, $user->session_id),
 			'U_INDEX'			=> append_sid("{$phpbb_root_path}index.$phpEx"),

@@ -14,7 +14,8 @@
 * @ignore
 */
 define('IN_PHPBB', true);
-$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '../';
+$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './../community/';
+$umil_root_path = (defined('UMIL_ROOT_PATH')) ? UMIL_ROOT_PATH : './';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 include($phpbb_root_path . 'common.' . $phpEx);
 
@@ -24,7 +25,7 @@ $auth->acl($user->data);
 $user->setup('viewtopic');
 
 $file = request_var('file', '');
-$filename = $phpbb_root_path . 'umil/error_files/' . $file . '.txt';
+$filename = $umil_root_path . 'error_files/' . $file . '.txt';
 
 if ($user->data['user_type'] != USER_FOUNDER || // Only founders can access this.
 	!$file || // Do we have a file name?

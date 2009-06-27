@@ -170,15 +170,15 @@ class umil
 			else
 			{*/
 				// Include the umil language file.  First we check if the language file for the user's language is available, if not we check if the board's default language is available, if not we use the english file.
-				if (isset($user->data['user_lang']) && file_exists("{$phpbb_root_path}umil/language/{$user->data['user_lang']}/umil.$phpEx"))
+				if (isset($user->data['user_lang']) && file_exists(UMIL_ROOT_PATH . "language/{$user->data['user_lang']}/umil." . PHP_EXT))
 				{
 					$path = $user->data['user_lang'];
 				}
-				else if (file_exists("{$phpbb_root_path}umil/language/" . basename($config['default_lang']) . "/umil.$phpEx"))
+				else if (file_exists(UMIL_ROOT_PATH . 'language/' . basename($config['default_lang']) . '/umil.' . PHP_EXT))
 				{
 					$path = basename($config['default_lang']);
 				}
-				else if (file_exists("{$phpbb_root_path}umil/language/en/umil.$phpEx"))
+				else if (file_exists(UMIL_ROOT_PATH . 'language/en/umil.' . PHP_EXT))
 				{
 					$path = 'en';
 				}
@@ -187,7 +187,7 @@ class umil
 					trigger_error('Language Files Missing.<br /><br />Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
 				}
 
-				$user->add_lang('./../../umil/language/' . $path . '/umil');
+				$user->add_lang('../../' . UMIL_ROOT_PATH . 'language/' . $path . '/umil');
 			//}
 
 			$user->add_lang(array('acp/common', 'acp/permissions'));

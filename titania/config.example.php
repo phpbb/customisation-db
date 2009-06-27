@@ -10,6 +10,14 @@
 *
 */
 
+/**
+ * @ignore
+ */
+if (!defined('IN_TITANIA'))
+{
+	exit;
+}
+
 $config = array(
 	/**
 	* Relative path to the phpBB installation.
@@ -24,6 +32,13 @@ $config = array(
 	* @param	string	Path to the titania folder
 	*/
 	'titania_script_path' => 'customisation/',
+
+	/**
+	 * Relative path to the UMIL installation directory.
+	 *
+	 * @param	string	umil_root_path	Path relative to the titania root path
+	 */
+	'umil_root_path' => '../umil/',
 
 	/**
 	* Prefix of the sql tables.  Not the prefix for the phpBB tables, prefix for the Titania tables only.
