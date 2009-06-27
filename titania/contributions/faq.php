@@ -135,40 +135,10 @@ switch ($action)
 
 	break;
 
-	case 'move_up':
+	case 'move_up':	
 	case 'move_down':
 
-		// Get current order id...
-		$sql = 'SELECT faq_order_id as current_order
-			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . "
-			WHERE faq_id = $faq_id";
-		$result = phpbb::$db->sql_query($sql);
-		$current_order = (int) phpbb::$db->sql_fetchfield('current_order');
-		phpbb::$db->sql_freeresult($result);
-
-		if (!($current_order == 0 && $action == 'move_up'))
-		{
-			// on move_down, switch position with next order_id...
-			// on move_up, switch position with previous order_id...
-			$switch_order_id = ($action == 'move_down') ? $current_order + 1 : $current_order - 1;
-
-			$sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
-				SET faq_order_id = ' . $current_order . '
-				WHERE faq_order_id = ' . $switch_order_id . '
-					AND faq_id <> ' . $faq_id . '
-					AND contrib_id = ' . titania::$contrib->contrib_id;
-			phpbb::$db->sql_query($sql);
-
-			// Only update the other entry too if the previous entry got updated
-			if (phpbb::$db->sql_affectedrows())
-			{
-				$sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . "
-					SET faq_order_id = $switch_order_id
-					WHERE faq_order_id = $current_order
-						AND faq_id = $faq_id";
-				phpbb::$db->sql_query($sql);
-			}
-		}
+		$faq->move($action);
 		
 		redirect(titania::$contrib->get_url() . '/faq');
 
