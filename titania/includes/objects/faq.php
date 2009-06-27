@@ -93,6 +93,38 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
+	* Move a FAQ item
+	*
+	* @param string $direction (up|down)
+	*/
+	public function move($direction)
+	{
+		$sql = 'SELECT order_id FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
+			WHERE faq_order_id ' . (($direction == 'up') ? '<' : '>') . $this->faq_order_id . '
+			ORDER BY faq_order_id ' . (($direction == 'up') ? 'ASC' : 'DESC');
+		phpbb::$db->sql_query_limit($sql, 1);
+		$new_order_id = phpbb::$db->sql_fetchfield('order_id');
+		phpbb::$db->sql_freeresult();
+
+		if ($new_order_id === false)
+		{
+			return false;
+		}
+
+		// Update the item in the position where want to move it to have the current position
+		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . ' SET faq_order_id = ' . $this->faq_order_id . '
+		 	WHERE faq_order_id = ' . $new_order_id;
+		 phpbb::$db->sql_query($sql);
+
+		// Update the current faq item to have the new position
+		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . ' SET faq_order_id = ' . $new_order_id . '
+		 	WHERE faq_id = ' . $this->faq_id;
+		 phpbb::$db->sql_query($sql);
+
+		 return true;
+	}
+
+	/**
 	 * Get faq data from the database
 	 *
 	 * @return void
