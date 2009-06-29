@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil_auto.php 139 2009-05-28 00:32:44Z exreaction $
+ * @version $Id: umil_auto.php 149 2009-06-16 00:58:51Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -46,7 +46,7 @@ if (!defined('UMIL_AUTO'))
 if (!defined('IN_PHPBB'))
 {
 	define('IN_PHPBB', true);
-	include PHPBB_ROOT_PATH . 'common.' . PHP_EXT;
+	include($phpbb_root_path . 'common.' . $phpEx);
 	$user->session_begin();
 	$auth->acl($user->data);
 	$user->setup();
@@ -76,12 +76,12 @@ if (!$user->data['is_registered'])
 
 if (!class_exists('umil_frontend'))
 {
-    if (!file_exists(UMIL_ROOT_PATH . 'umil_frontend.' . PHP_EXT))
+    if (!file_exists($phpbb_root_path . 'umil/umil_frontend.' . $phpEx))
 	{
 		trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
 	}
 
-	include UMIL_ROOT_PATH . 'umil_frontend.' . PHP_EXT;
+	include($phpbb_root_path . 'umil/umil_frontend.' . $phpEx);
 }
 
 $force_display_results = request_var('display_results', (defined('DEBUG') ? true : false));

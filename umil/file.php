@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: file.php 139 2009-05-28 00:32:44Z exreaction $
+ * @version $Id: file.php 149 2009-06-16 00:58:51Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -14,8 +14,7 @@
 * @ignore
 */
 define('IN_PHPBB', true);
-$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './../community/';
-$umil_root_path = (defined('UMIL_ROOT_PATH')) ? UMIL_ROOT_PATH : './';
+$phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '../';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 include($phpbb_root_path . 'common.' . $phpEx);
 
@@ -25,7 +24,7 @@ $auth->acl($user->data);
 $user->setup('viewtopic');
 
 $file = request_var('file', '');
-$filename = $umil_root_path . 'error_files/' . $file . '.txt';
+$filename = $phpbb_root_path . 'umil/error_files/' . $file . '.txt';
 
 if ($user->data['user_type'] != USER_FOUNDER || // Only founders can access this.
 	!$file || // Do we have a file name?

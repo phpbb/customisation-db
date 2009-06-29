@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil_frontend.php 139 2009-05-28 00:32:44Z exreaction $
+ * @version $Id: umil_frontend.php 149 2009-06-16 00:58:51Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  */
@@ -19,12 +19,12 @@ if (!defined('IN_PHPBB'))
 
 if (!class_exists('umil'))
 {
-    if (!file_exists(UMIL_ROOT_PATH . 'umil.' . PHP_EXT))
+    if (!file_exists($phpbb_root_path . 'umil/umil.' . $phpEx))
 	{
 		trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
 	}
 
-	include UMIL_ROOT_PATH . 'umil.' . PHP_EXT;
+	include($phpbb_root_path . 'umil/umil.' . $phpEx);
 }
 
 /**
@@ -69,7 +69,7 @@ class umil_frontend extends umil
 		$user->add_lang('install');
 
 		// Setup the template
-		$template->set_custom_template(UMIL_ROOT_PATH . 'style', 'umil');
+		$template->set_custom_template($phpbb_root_path . 'umil/style', 'umil');
 
 		// The UMIL template is never stored in the database
 		$user->theme['template_storedb'] = false;
@@ -85,7 +85,7 @@ class umil_frontend extends umil
 
 		$template->assign_vars(array(
 			'SQL_LAYER'			=> $this->db->sql_layer,
-			'UMIL_ROOT_PATH'	=> UMIL_ROOT_PATH,
+			'UMIL_ROOT_PATH'	=> $phpbb_root_path . 'umil/',
 
 			'U_ADM_INDEX'		=> append_sid("{$phpbb_root_path}adm/index.$phpEx", false, true, $user->session_id),
 			'U_INDEX'			=> append_sid("{$phpbb_root_path}index.$phpEx"),

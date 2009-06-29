@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 149 2009-06-16 00:58:51Z exreaction $
+ * @version $Id: umil.php 152 2009-06-23 02:13:33Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -170,15 +170,15 @@ class umil
 			else
 			{*/
 				// Include the umil language file.  First we check if the language file for the user's language is available, if not we check if the board's default language is available, if not we use the english file.
-				if (isset($user->data['user_lang']) && file_exists(UMIL_ROOT_PATH . "language/{$user->data['user_lang']}/umil." . PHP_EXT))
+				if (isset($user->data['user_lang']) && file_exists("{$phpbb_root_path}umil/language/{$user->data['user_lang']}/umil.$phpEx"))
 				{
 					$path = $user->data['user_lang'];
 				}
-				else if (file_exists(UMIL_ROOT_PATH . 'language/' . basename($config['default_lang']) . '/umil.' . PHP_EXT))
+				else if (file_exists("{$phpbb_root_path}umil/language/" . basename($config['default_lang']) . "/umil.$phpEx"))
 				{
 					$path = basename($config['default_lang']);
 				}
-				else if (file_exists(UMIL_ROOT_PATH . 'language/en/umil.' . PHP_EXT))
+				else if (file_exists("{$phpbb_root_path}umil/language/en/umil.$phpEx"))
 				{
 					$path = 'en';
 				}
@@ -187,7 +187,7 @@ class umil
 					trigger_error('Language Files Missing.<br /><br />Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
 				}
 
-				$user->add_lang('../../' . UMIL_ROOT_PATH . 'language/' . $path . '/umil');
+				$user->add_lang('./../../umil/language/' . $path . '/umil');
 			//}
 
 			$user->add_lang(array('acp/common', 'acp/permissions'));
