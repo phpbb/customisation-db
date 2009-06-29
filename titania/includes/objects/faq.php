@@ -100,11 +100,10 @@ class titania_faq extends titania_database_object
 	public function move($direction)
 	{
 		$this->load();
-		
+
 		$sql = 'SELECT faq_order_id
 			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			WHERE faq_order_id ' . (($direction == 'move_up') ? '<' : '>') . $this->faq_order_id . '
-				AND contrib_id = ' . $this->contrib_id . '
 			ORDER BY faq_order_id ' . (($direction == 'move_up') ? 'DESC' : 'ASC');
 		phpbb::$db->sql_query_limit($sql, 1);
 		$new_order_id = phpbb::$db->sql_fetchfield('faq_order_id');
@@ -116,14 +115,14 @@ class titania_faq extends titania_database_object
 		}
 
 		// Update the item in the position where want to move it to have the current position
-		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . ' 
+		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			SET faq_order_id = ' . $this->faq_order_id . '
 		 	WHERE faq_order_id = ' . $new_order_id . '
 				AND contrib_id = ' . $this->contrib_id;
 		 phpbb::$db->sql_query($sql);
 
 		// Update the current faq item to have the new position
-		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . ' 
+		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			SET faq_order_id = ' . $new_order_id . '
 		 	WHERE faq_id = ' . $this->faq_id;
 		 phpbb::$db->sql_query($sql);
