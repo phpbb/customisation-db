@@ -64,8 +64,6 @@ class titania_topic extends titania_database_object
 			'topic_reported'		=> array('default' => false), // True if any posts in the topic are reported
 			'topic_deleted'			=> array('default' => false), // True if the topic is soft deleted
 
-			'topic_time'			=> array('default' => (int) titania::$time),
-
 			'topic_posts'			=> array('default' => ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
 
 			'topic_subject'			=> array('default' => ''),
@@ -190,42 +188,18 @@ class titania_topic extends titania_database_object
 
 	/**
 	* Get the URL to this topic
-	*
-	* @param bool $ugly True to force the use of ugly (normal) URLs, false to use the pretty URLs if we can.  Use ugly URLs for editing and things like that
 	*/
-	public function get_url($ugly = false)
+	public function get_url()
 	{
-		if ($ugly == false && !empty(titania::$contrib))
+		if (!empty(titania::$contrib))
 		{
 			// We are *probably* visiting a contrib page
 			$url = titania::$contrib->get_url();
 		}
-		else if ($ugly == false && !empty(titania::$author))
+		else if (!empty(titania::$author))
 		{
 			// We are *probably* viewing the author's page
 			$url = titania::$author->get_url();
-		}
-		else
-		{
-			// The ugly URL
-			switch ($this->topic_type)
-			{
-				case TITANIA_POST_TRACKER :
-					return titania_sid('contributions/index', "page=tracker&amp;c={$this->contrib_id}&amp;id={$this->topic_id}");
-				break;
-
-				case TITANIA_POST_QUEUE :
-					return titania_sid('contributions/queue', "page=queue&amp;c={$this->contrib_id}" . $post_url . $action_url);
-				break;
-
-				case TITANIA_POST_REVIEW :
-					return titania_sid('contributions/review', "page=review&amp;c={$this->contrib_id}&amp;id={$this->topic_id}");
-				break;
-
-				default :
-					return titania_sid('contributions/support', "page=support&amp;c={$this->contrib_id}&amp;id={$this->topic_id}");
-				break;
-			}
 		}
 
 		switch ($this->topic_type)
@@ -268,9 +242,9 @@ class titania_topic extends titania_database_object
 			'TOPIC_REPORTED'				=> $this->topic_reported,
 			'TOPIC_DELETED'					=> $this->topic_deleted, // @todo output this to be something useful
 			'TOPIC_ASSIGNED'				=> $this->topic_assigned, // @todo output this to be something useful
-			'TOPIC_TIME'					=> phpbb::$user->format_date($this->topic_time),
 			'TOPIC_POSTCOUNT'				=> $this->get_postcount(titania::$access_level),
 			'TOPIC_SUBJECT'					=> censor_text($this->topic_subject),
+			'TOPIC_FOLDER_IMG_ALT'			=> '',
 
 			'TOPIC_FIRST_POST_ID'			=> $this->topic_first_post_id,
 			'TOPIC_FIRST_POST_USER_ID'		=> $this->topic_first_post_user_id,
@@ -286,7 +260,7 @@ class titania_topic extends titania_database_object
 			'TOPIC_LAST_POST_SUBJECT'		=> censor_text($this->topic_last_post_subject),
 
 			'U_VIEW_TOPIC'					=> $this->get_url(),
-			'U_VIEW_LAST_POST'				=> $this->get_url(true) . "&amp;p={$this->last_post_id}#{$this->last_post_id}",
+			'U_VIEW_LAST_POST'				=> '',//$this->get_url() . "&amp;p={$this->last_post_id}#{$this->last_post_id}",
 		);
 
 		return $details;

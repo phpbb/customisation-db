@@ -233,12 +233,19 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 	$count = phpbb::$db->sql_fetchfield('cnt');
 	phpbb::$db->sql_freeresult();
 
+	// Loop de loop
+	$last_was_sticky = false;
 	$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
 		$topic = new titania_topic($row['topic_type']);
+		$topic->__set_array($row);
 
-		phpbb::$template->assign_block_vars('topics', $topic->assign_details());
+		phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
+			'S_TOPIC_TYPE_SWITCH'		=> ($last_was_sticky && !$topic->topic_sticky) ? true : false,
+		)));
+
+		$last_was_sticky = $topic->topic_sticky;
 
 		unset($topic);
 	}

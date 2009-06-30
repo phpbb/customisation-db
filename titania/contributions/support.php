@@ -43,6 +43,8 @@ switch ($action)
 	break;
 
 	default :
+		phpbb::$user->add_lang('viewforum');
+
 		titania_display_forums('contrib', titania::$contrib);
 
 		titania::page_header('CONTRIB_SUPPORT');
