@@ -303,6 +303,102 @@ $versions = array(
 	'0.1.3' => array(),
 	'0.1.4' => array(),
 
+	'0.1.5' => array(
+		'table_add' => array(
+			array(TITANIA_TOPICS_TABLE, array(
+				'COLUMNS'		=> array(
+					'topic_id'						=> array('UINT', NULL, 'auto_increment'),
+					'topic_type'					=> array('TINT:1', 0), // Post Type, TITANIA_POST_ constants
+					'topic_access'					=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
+					'topic_category'				=> array('UINT', 0), // Category for the topic. For the Tracker
+					'topic_status'					=> array('UINT', 0), // Topic Status, use tags from the DB
+					'topic_assigned'				=> array('VCHAR', 255), // Topic assigned status; u- for user, g- for group (followed by the id).  For the tracker
+					'topic_sticky'					=> array('BOOL', 0),
+					'topic_locked'					=> array('BOOL', 0),
+					'topic_approved'				=> array('BOOL', 1),
+					'topic_reported'				=> array('BOOL', 0), // True if any posts in the topic are reported
+					'topic_deleted'					=> array('BOOL', 0), // True if the topic is soft deleted
+					'topic_time'					=> array('UINT:11', 0),
+					'topic_posts'					=> array('VCHAR', ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
+					'topic_subject'					=> array('STEXT_UNI', ''),
+					'topic_first_post_id'			=> array('UINT', 0),
+					'topic_first_post_user_id'		=> array('UINT', 0),
+					'topic_first_post_username'		=> array('VCHAR_UNI', ''),
+					'topic_first_post_user_colour'	=> array('VCHAR:6', ''),
+					'topic_first_post_time'			=> array('UINT:11', 0),
+					'topic_last_post_id'			=> array('UINT', 0),
+					'topic_last_post_user_id'		=> array('UINT', 0),
+					'topic_last_post_username'		=> array('VCHAR_UNI', ''),
+					'topic_last_post_user_colour'	=> array('VCHAR:6', ''),
+					'topic_last_post_time'			=> array('UINT:11', 0),
+					'topic_last_post_subject'		=> array('STEXT_UNI', ''),
+				),
+				'PRIMARY_KEY'	=> 'topic_id',
+				'KEYS'			=> array(
+					'topic_type'			=> array('INDEX', 'topic_type'),
+					'topic_access'			=> array('INDEX', 'topic_access'),
+					'topic_category'		=> array('INDEX', 'topic_category'),
+					'topic_status'			=> array('INDEX', 'topic_status'),
+					'topic_assigned'		=> array('INDEX', 'topic_assigned'),
+					'topic_sticky'			=> array('INDEX', 'topic_sticky'),
+					'topic_approved'		=> array('INDEX', 'topic_approved'),
+					'topic_reported'		=> array('INDEX', 'topic_reported'),
+					'topic_deleted'			=> array('INDEX', 'topic_deleted'),
+					'topic_time'			=> array('INDEX', 'topic_time'),
+				),
+			)),
+			array(TITANIA_POSTS_TABLE, array(
+				'COLUMNS'		=> array(
+					'post_id'				=> array('UINT', NULL, 'auto_increment'),
+					'topic_id'				=> array('UINT', 0),
+					'post_type'				=> array('TINT:1', 0), // Post Type, TITANIA_POST_ constants
+					'post_access'			=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
+					'post_locked'			=> array('BOOL', 0),
+					'post_approved'			=> array('BOOL', 1),
+					'post_reported'			=> array('BOOL', 0),
+					'post_attachment'		=> array('BOOL', 0),
+					'post_user_id'			=> array('UINT', 0),
+					'post_ip'				=> array('VCHAR:40', ''),
+					'post_time'				=> array('UINT:11', 0),
+					'post_edited'			=> array('UINT:11', 0), // Post edited; 0 for not edited, timestamp if (when) last edited
+					'post_deleted'			=> array('UINT:11', 0), // Post deleted; 0 for not edited, timestamp if (when) last edited
+					'post_edit_user'		=> array('UINT', 0), // The last user to edit/delete the post
+					'post_edit_reason'		=> array('STEXT_UNI', ''), // Reason for deleting/editing
+					'post_subject'			=> array('STEXT_UNI', '', 'true_sort'),
+					'post_text'				=> array('XSTEXT_UNI', '', 'true_sort'),
+					'post_text_bitfield'	=> array('VCHAR:255', ''),
+					'post_text_uid'			=> array('VCHAR:8', ''),
+					'post_text_options'		=> array('UINT:11', 7),
+				),
+				'PRIMARY_KEY'	=> 'post_id',
+				'KEYS'			=> array(
+					'topic_id'				=> array('INDEX', 'topic_id'),
+					'post_type'				=> array('INDEX', 'post_type'),
+					'post_access'			=> array('INDEX', 'post_access'),
+					'post_approved'			=> array('INDEX', 'post_approved'),
+					'post_reported'			=> array('INDEX', 'post_reported'),
+					'post_user_id'			=> array('INDEX', 'post_user_id'),
+					'post_deleted'			=> array('INDEX', 'post_deleted'),
+				),
+			)),
+		),
+
+		'permission_add' => array(
+			'titania_post',
+			'titania_post_edit_own',
+			'titania_post_delete_own',
+			'titania_post_mod_own',
+			'titania_post_mod',
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array('titania_post_mod')),
+			array('ROLE_MOD_FULL', array('titania_post', 'titania_post_edit_own', 'titania_post_delete_own', 'titania_post_mod_own')),
+			array('ROLE_USER_FULL', array('titania_post', 'titania_post_edit_own')),
+			array('ROLE_USER_STANDARD', array('titania_post', 'titania_post_edit_own')),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

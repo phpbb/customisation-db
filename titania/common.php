@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-define('TITANIA_VERSION', '0.1.4');
+define('TITANIA_VERSION', '0.1.5');
 
 
 // Include titania class
