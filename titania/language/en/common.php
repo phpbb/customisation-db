@@ -81,4 +81,10 @@ $lang = array_merge($lang, array(
 	'MOVE_UP'				=> 'Move up',
 	'MOVE_DOWN'				=> 'Move down',
 	'EDIT'					=> 'Edit',
+	
+	'ACCESS_TEAMS'				=> 'Teams',
+	'ACCESS_AUTHORS'			=> 'Authors',
+	'ACCESS_PUBLIC'				=> 'Public',
+	
+	'ACCESS'				=> 'Access',
 ));

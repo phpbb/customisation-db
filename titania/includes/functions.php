@@ -29,3 +29,28 @@ function titania_sid($page, $params = false, $is_amp = true, $session_id = false
 {
 	return append_sid(titania::$absolute_path . $page . '.' . PHP_EXT, $params, $is_amp, $session_id);
 }
+
+/*
+ * Create select with Titania's accesses
+ * 
+ * @param integer $default
+ * @return string
+ */
+function titania_access_select($default = false)
+{
+	$access_types = array(
+		TITANIA_ACCESS_TEAMS 	=> 'ACCESS_TEAMS',
+		TITANIA_ACCESS_AUTHORS 	=> 'ACCESS_AUTHORS',
+		TITANIA_ACCESS_PUBLIC 	=> 'ACCESS_PUBLIC',
+	);
+	
+	$s_options = '';
+	
+	foreach ($access_types as $type => $lang_key)
+	{
+		$selected = ($default == $type) ? ' selected="selected"' : '';
+		$s_options .= '<option value="' . $type . '"' . $selected . '>' . phpbb::$user->lang[$lang_key] . '</option>';
+	}
+
+	return $s_options;
+}

@@ -66,6 +66,7 @@ class titania_faq extends titania_database_object
 			'faq_text_uid'		=> array('default' => '', 'readonly' => true),
 			'faq_text_options'	=> array('default' => 7, 'readonly' => true),
 			'faq_views'		=> array('default' => 0),
+			'faq_access'		=> array('default' => 2),
 		));
 
 		if ($faq_id !== false)

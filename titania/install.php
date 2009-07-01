@@ -398,6 +398,12 @@ $versions = array(
 		),
 	),
 
+	'0.1.6' => array(
+		'table_column_add' => array(
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'faq_access', array('TINT:1', 0)),
+		),
+	),
+	
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

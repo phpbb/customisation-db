@@ -40,6 +40,11 @@ switch ($action)
 
 		titania::page_header((($action == 'edit') ? 'EDIT_FAQ' : 'CREATE_FAQ'));
 
+		if ($action == 'edit')
+		{
+			$faq->load();
+		}
+		
 		$errors = array();
 
 		if ($submit)
@@ -51,7 +56,8 @@ switch ($action)
 
 			$faq->faq_subject 	= utf8_normalize_nfc(request_var('subject', '', true));
 			$text 			= utf8_normalize_nfc(request_var('text', '', true));
-
+			$faq->faq_access	= request_var('faq_access', TITANIA_ACCESS_PUBLIC);
+			
 			if (empty($faq->faq_subject))
 			{
 				$errors[] = phpbb::$user->lang['SUBJECT_EMPTY'];
@@ -65,8 +71,8 @@ switch ($action)
 			if (!sizeof($errors))
 			{
 				// set order id after the last
-				$faq->faq_order_id = $faq->get_next_order_id();
-
+				$faq->faq_order_id = ($action == 'add') ? $faq->get_next_order_id() : $faq->faq_order_id;
+				
 				// prepare a text to storage
 				$faq->set_faq_text($text, true, true, true);
 
@@ -83,11 +89,6 @@ switch ($action)
 			}
 		}
 
-		if ($action == 'edit')
-		{
-			$faq->load();
-		}
-
 		phpbb::$template->assign_vars(array(
 			'U_ACTION'		=> $faq->get_url($action, $faq->faq_id),
 
@@ -99,6 +100,8 @@ switch ($action)
 
 			'FAQ_SUBJECT'		=> $faq->faq_subject,
 			'FAQ_TEXT'		=> $faq->get_faq_text(true),
+			
+			'S_ACCESS_OPTIONS'	=> titania_access_select($faq->faq_access),
 		));
 
 	break;
@@ -150,6 +153,11 @@ switch ($action)
 		
 		$faq->load();
 
+		if ($faq->faq_access < titania::$access_level)
+		{
+			trigger_error('NOT_AUTHORISED');
+		}
+		
 		// increase a FAQ views counter
 		$faq->increase_views_counter();
 
@@ -168,9 +176,25 @@ switch ($action)
 
 		titania::page_header('FAQ_LIST');
 
+		// Titania's access
+		$sql_in = array();
+		
+		switch (titania::$access_level)
+		{
+			case 0:
+				$sql_in[] = TITANIA_ACCESS_TEAMS;
+			case 1:
+				$sql_in[] = TITANIA_ACCESS_AUTHORS;
+			case 2:
+			default:
+				$sql_in[] = TITANIA_ACCESS_PUBLIC;
+			break;
+		}
+		
 		$sql = 'SELECT *
 			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			WHERE contrib_id = ' . titania::$contrib->contrib_id . '
+				AND ' . $db->sql_in_set('faq_access', $sql_in) . '
 			ORDER BY faq_order_id ASC';
 		$result = phpbb::$db->sql_query($sql);
 
