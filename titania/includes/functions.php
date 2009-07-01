@@ -38,6 +38,11 @@ function titania_sid($page, $params = false, $is_amp = true, $session_id = false
  */
 function titania_access_select($default = false)
 {
+	if (titania::$access_level == TITANIA_ACCESS_PUBLIC)
+	{
+		return '';
+	}
+	
 	$access_types = array(
 		TITANIA_ACCESS_TEAMS 	=> 'ACCESS_TEAMS',
 		TITANIA_ACCESS_AUTHORS 	=> 'ACCESS_AUTHORS',

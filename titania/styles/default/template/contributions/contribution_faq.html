@@ -63,10 +63,12 @@
 					<dt><label for="subject">{L_FAQ_SUBJECT}:</label></dt>
 					<dd><input type="text" name="subject" id="subject" size="45" maxlength="60" tabindex="1" value="{FAQ_SUBJECT}" class="inputbox autowidth" /></dd>
 				</dl>
+				<!-- IF S_ACCESS_OPTIONS -->
 				<dl style="clear: left;">
 					<dt><label for="access">{L_ACCESS}:</label></dt>
 					<dd><select name="faq_access">{S_ACCESS_OPTIONS}</select></dd>
 				</dl>
+				<!-- ENDIF -->
 				<dl style="clear: left;">
 					<dt><label for="text">{L_FAQ_TEXT}:</label></dt>
 					<dd><textarea name="text" id="text" class="inputbox" cols="40" rows="5">{FAQ_TEXT}</textarea></dd>
