@@ -403,7 +403,7 @@ $versions = array(
 			array(TITANIA_CONTRIB_FAQ_TABLE, 'faq_access', array('TINT:1', 0)),
 		),
 	),
-	
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
@@ -583,22 +583,35 @@ function titania_data($action, $version)
 			'faq_id'				=> 1,
 			'contrib_id'			=> 1,
 			'faq_order_id'			=> 1,
-			'faq_subject'			=> 'FAQ example 1',
+			'faq_subject'			=> 'FAQ example 1 (teams)',
 			'faq_text'				=> 'It is only an FAQ example.',
 			'faq_text_bitfield'		=> '',
 			'faq_text_uid'			=> '',
 			'faq_text_options'		=> 7,
+			'faq_access'			=> 0,
 		),
 		array(
 			'faq_id'				=> 2,
 			'contrib_id'			=> 1,
 			'faq_order_id'			=> 2,
-			'faq_subject'			=> 'FAQ example 2',
+			'faq_subject'			=> 'FAQ example 2 (author)',
 			'faq_text'				=> 'It is only an FAQ example.',
 			'faq_text_bitfield'		=> '',
 			'faq_text_uid'			=> '',
 			'faq_text_options'		=> 7,
-		)
+			'faq_access'			=> 1,
+		),
+		array(
+			'faq_id'				=> 1,
+			'contrib_id'			=> 1,
+			'faq_order_id'			=> 1,
+			'faq_subject'			=> 'FAQ example 3 (public)',
+			'faq_text'				=> 'It is only an FAQ example.',
+			'faq_text_bitfield'		=> '',
+			'faq_text_uid'			=> '',
+			'faq_text_options'		=> 7,
+			'faq_access'			=> 2,
+		),
 	);
 
 	$umil->table_row_insert(TITANIA_CONTRIB_FAQ_TABLE, $faq);
