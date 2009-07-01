@@ -47,7 +47,12 @@ function titania_access_select($default = false)
 	$s_options = '';
 	
 	foreach ($access_types as $type => $lang_key)
-	{
+	{	
+		if (titania::$access_level > $type)
+		{
+			continue;
+		}
+		
 		$selected = ($default == $type) ? ' selected="selected"' : '';
 		$s_options .= '<option value="' . $type . '"' . $selected . '>' . phpbb::$user->lang[$lang_key] . '</option>';
 	}
