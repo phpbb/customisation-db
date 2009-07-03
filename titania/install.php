@@ -404,6 +404,12 @@ $versions = array(
 		),
 	),
 
+	'0.1.7' => array(
+		'table_column_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_views', array('UINT', 0)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

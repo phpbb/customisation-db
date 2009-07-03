@@ -22,9 +22,10 @@ function titania_template_display(&$hook, $handle, $include_once)
 {
 	global $template, $phpbb_root_path;
 
+	$board_url = generate_board_url() . '/';
 	foreach ($template->_tpldata['.'][0] as $id => &$row)
 	{
-		$row = str_replace($phpbb_root_path, generate_board_url() . '/', $row);
+		$row = str_replace($phpbb_root_path, $board_url, $row);
 
 		//echo '<br /><br />' . $id . "\t - \t";
 		//var_export($row);

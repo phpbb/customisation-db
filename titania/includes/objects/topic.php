@@ -42,6 +42,20 @@ class titania_topic extends titania_database_object
 	protected $sql_id_field			= 'topic_id';
 
 	/**
+	* True if the currently visiting user has posted in this topic
+	*
+	* @var bool
+	*/
+	public $topic_posted			= false;
+
+	/**
+	* Unread post id
+	*
+	* @var int|bool
+	*/
+	public $unread = false;
+
+	/**
 	 * Constructor class for titania topics
 	 *
 	 * @param int|string $type The type of topic ('tracker', 'queue', 'normal').  Normal/default meaning support/discussion.  Constants for the type can be sent instead of a string
@@ -65,6 +79,7 @@ class titania_topic extends titania_database_object
 			'topic_deleted'			=> array('default' => false), // True if the topic is soft deleted
 
 			'topic_posts'			=> array('default' => ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
+			'topic_views'			=> array('default' => 0), // View count
 
 			'topic_subject'			=> array('default' => ''),
 
@@ -105,6 +120,14 @@ class titania_topic extends titania_database_object
 		}
 
 		$this->topic_id = $topic_id;
+	}
+
+	/**
+	* Load tracking info for the current user
+	*/
+	public function load_tracking()
+	{
+
 	}
 
 	/**
@@ -225,12 +248,50 @@ class titania_topic extends titania_database_object
 	}
 
 	/**
+	* Generate topic status
+	*/
+	public function topic_folder_img(&$folder_img, &$folder_alt)
+	{
+		$folder = $folder_new = '';
+
+		if ($this->topic_sticky)
+		{
+			$folder = 'sticky_read';
+			$folder_new = 'sticky_unread';
+		}
+		else
+		{
+			$folder = 'topic_read';
+			$folder_new = 'topic_unread';
+
+			// Hot topic threshold is for posts in a topic, which is replies + the first post. ;)
+			if (phpbb::$config['hot_threshold'] && ($this->get_postcount(titania::$access_level) + 1) >= phpbb::$config['hot_threshold'])
+			{
+				$folder .= '_hot';
+				$folder_new .= '_hot';
+			}
+		}
+
+		$folder_img = ($this->unread) ? $folder_new : $folder;
+		$folder_alt = ($this->unread) ? 'NEW_POSTS' : 'NO_NEW_POSTS';
+
+		// Posted image?
+		if ($this->topic_posted)
+		{
+			$folder_img .= '_mine';
+		}
+	}
+
+	/**
 	* Assign details
 	*
 	* A little different from those in other classes, this one only returns the info ready for output
 	*/
 	public function assign_details()
 	{
+		$folder_img = $folder_alt = '';
+		$this->topic_folder_img($folder_img, $folder_alt);
+
 		$details = array(
 			'TOPIC_ID'						=> $this->topic_id,
 			'TOPIC_TYPE'					=> $this->topic_type,
@@ -242,9 +303,16 @@ class titania_topic extends titania_database_object
 			'TOPIC_REPORTED'				=> $this->topic_reported,
 			'TOPIC_DELETED'					=> $this->topic_deleted, // @todo output this to be something useful
 			'TOPIC_ASSIGNED'				=> $this->topic_assigned, // @todo output this to be something useful
-			'TOPIC_POSTCOUNT'				=> $this->get_postcount(titania::$access_level),
+			'TOPIC_POSTS'					=> $this->get_postcount(titania::$access_level),
+			'TOPIC_VIEWS'					=> $this->topic_views,
 			'TOPIC_SUBJECT'					=> censor_text($this->topic_subject),
-			'TOPIC_FOLDER_IMG_ALT'			=> '',
+
+			'TOPIC_FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
+			'TOPIC_FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
+			'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
+			'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
+			'TOPIC_FOLDER_IMG_WIDTH'		=> phpbb::$user->img($folder_img, '', false, '', 'width'),
+			'TOPIC_FOLDER_IMG_HEIGHT'		=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 
 			'TOPIC_FIRST_POST_ID'			=> $this->topic_first_post_id,
 			'TOPIC_FIRST_POST_USER_ID'		=> $this->topic_first_post_user_id,
@@ -252,15 +320,18 @@ class titania_topic extends titania_database_object
 			'TOPIC_FIRST_POST_USER_FULL'	=> get_username_string('full', $this->topic_first_post_user_id, $this->topic_first_post_username, $this->topic_first_post_user_colour),
 			'TOPIC_FIRST_POST_TIME'			=> phpbb::$user->format_date($this->topic_first_post_time),
 
-			'TOPIC_LAST_POST_ID'			=> $this->topic_first_post_id,
-			'TOPIC_LAST_POST_USER_ID'		=> $this->topic_first_post_user_id,
-			'TOPIC_LAST_POST_USER_COLOUR'	=> $this->topic_first_post_user_colour,
-			'TOPIC_LAST_POST_USER_FULL'		=> get_username_string('full', $this->topic_first_post_user_id, $this->topic_first_post_username, $this->topic_first_post_user_colour),
-			'TOPIC_LAST_POST_TIME'			=> phpbb::$user->format_date($this->topic_first_post_time),
+			'TOPIC_LAST_POST_ID'			=> $this->topic_last_post_id,
+			'TOPIC_LAST_POST_USER_ID'		=> $this->topic_last_post_user_id,
+			'TOPIC_LAST_POST_USER_COLOUR'	=> $this->topic_last_post_user_colour,
+			'TOPIC_LAST_POST_USER_FULL'		=> get_username_string('full', $this->topic_last_post_user_id, $this->topic_last_post_username, $this->topic_last_post_user_colour),
+			'TOPIC_LAST_POST_TIME'			=> phpbb::$user->format_date($this->topic_last_post_time),
 			'TOPIC_LAST_POST_SUBJECT'		=> censor_text($this->topic_last_post_subject),
 
+			'U_NEWEST_POST'					=> ($this->unread) ? '' : '',
 			'U_VIEW_TOPIC'					=> $this->get_url(),
 			'U_VIEW_LAST_POST'				=> '',//$this->get_url() . "&amp;p={$this->last_post_id}#{$this->last_post_id}",
+
+			'S_UNREAD_TOPIC'				=> ($this->unread) ? true : false,
 		);
 
 		return $details;

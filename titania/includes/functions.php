@@ -32,7 +32,7 @@ function titania_sid($page, $params = false, $is_amp = true, $session_id = false
 
 /*
  * Create select with Titania's accesses
- * 
+ *
  * @param integer $default
  * @return string
  */
@@ -48,9 +48,9 @@ function titania_access_select($default = false)
 		TITANIA_ACCESS_AUTHORS 	=> 'ACCESS_AUTHORS',
 		TITANIA_ACCESS_PUBLIC 	=> 'ACCESS_PUBLIC',
 	);
-	
+
 	$s_options = '';
-	
+
 	foreach ($access_types as $type => $lang_key)
 	{	
 		if (titania::$access_level > $type)

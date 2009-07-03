@@ -30,10 +30,10 @@
 					<!-- IF topics.PAGINATION --><strong class="pagination"><span>{topics.PAGINATION}</span></strong><!-- ENDIF -->
 					<!-- IF topics.ATTACH_ICON_IMG -->{topics.ATTACH_ICON_IMG} <!-- ENDIF -->{L_POST_BY_AUTHOR} {topics.TOPIC_FIRST_POST_USER_FULL} &raquo; {topics.TOPIC_FIRST_POST_TIME}
 				</dt>
-				<dd class="posts">{topics.REPLIES} <dfn>{L_REPLIES}</dfn></dd>
-				<dd class="views">{topics.VIEWS} <dfn>{L_VIEWS}</dfn></dd>
-				<dd class="lastpost"><span><dfn>{L_LAST_POST} </dfn>{L_POST_BY_AUTHOR} {topics.LAST_POST_AUTHOR_FULL}
-					<!-- IF not S_IS_BOT --><a href="{topics.U_LAST_POST}">{LAST_POST_IMG}</a> <!-- ENDIF --><br />{topics.LAST_POST_TIME}</span>
+				<dd class="posts">{topics.TOPIC_POSTS} <dfn>{L_REPLIES}</dfn></dd>
+				<dd class="views">{topics.TOPIC_VIEWS} <dfn>{L_VIEWS}</dfn></dd>
+				<dd class="lastpost"><span><dfn>{L_LAST_POST} </dfn>{L_POST_BY_AUTHOR} {topics.TOPIC_LAST_POST_USER_FULL}
+					<!-- IF not S_IS_BOT --><a href="{topics.U_VIEW_LAST_POST}">{LAST_POST_IMG}</a> <!-- ENDIF --><br />{topics.TOPIC_LAST_POST_TIME}</span>
 				</dd>
 			</dl>
 		</li>

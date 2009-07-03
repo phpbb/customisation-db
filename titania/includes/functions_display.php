@@ -233,10 +233,21 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 	$count = phpbb::$db->sql_fetchfield('cnt');
 	phpbb::$db->sql_freeresult();
 
-	// Loop de loop
-	$last_was_sticky = false;
+	// Get the data
+	$topics = $topic_ids = array();
 	$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 	while ($row = phpbb::$db->sql_fetchrow($result))
+	{
+		$topics[$row['topic_id']] = $row;
+		$topic_ids[] = $row['topic_id'];
+	}
+	phpbb::$db->sql_freeresult($result);
+
+	// Get the read info
+
+	// Loop de loop
+	$last_was_sticky = false;
+	foreach ($topics as $row)
 	{
 		$topic = new titania_topic($row['topic_type']);
 		$topic->__set_array($row);
@@ -250,4 +261,10 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 		unset($topic);
 	}
 	phpbb::$db->sql_freeresult($result);
+
+	phpbb::$template->assign_vars(array(
+		'REPORTED_IMG'		=> phpbb::$user->img('icon_topic_reported', 'TOPIC_REPORTED'),
+		'UNAPPROVED_IMG'	=> phpbb::$user->img('icon_topic_unapproved', 'TOPIC_UNAPPROVED'),
+		'NEWEST_POST_IMG'	=> phpbb::$user->img('icon_topic_newest', 'VIEW_NEWEST_POST'),
+	));
 }

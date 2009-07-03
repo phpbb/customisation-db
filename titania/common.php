@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-define('TITANIA_VERSION', '0.1.6');
+define('TITANIA_VERSION', '0.1.7');
 
 
 // Include titania class
@@ -42,6 +42,10 @@ if (!file_exists(PHPBB_ROOT_PATH . 'common.' . PHP_EXT))
 }
 // This will also check if phpBB is installed and if we have the settings we need (db etc.).
 require PHPBB_ROOT_PATH . 'common.' . PHP_EXT;
+
+// We must use our own user class...
+require TITANIA_ROOT . 'includes/core/user.' . PHP_EXT;
+$user = new titania_user();
 
 // Start session management etc.
 phpbb::initialise();
