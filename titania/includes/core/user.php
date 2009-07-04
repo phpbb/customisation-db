@@ -18,7 +18,7 @@ if (!defined('IN_TITANIA'))
 
 class titania_user extends user
 {
-	public function __constructor()
+	public function __construct()
 	{
 		$this->user();
 	}
