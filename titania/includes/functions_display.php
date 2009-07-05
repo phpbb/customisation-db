@@ -37,24 +37,58 @@ function get_version_string($version)
 *
 * @param int $type The type (check TITANIA_TYPE_ constants)
 */
-function get_contrib_type_string($type)
+function get_contrib_type_string($type, $mode = 'lang')
 {
-	switch ($type)
+	switch($mode)
 	{
-		case TITANIA_TYPE_MOD :
-			return phpbb::$user->lang['MODIFICATION'];
+		case 'url' :
+			switch ($type)
+			{
+				case TITANIA_TYPE_MOD :
+					return 'mod';
+				break;
+
+				case TITANIA_TYPE_STYLE :
+					return 'style';
+				break;
+
+				case TITANIA_TYPE_SNIPPET :
+					return 'snippet';
+				break;
+
+				case TITANIA_TYPE_LANG_PACK :
+					return 'language_pack';
+				break;
+
+				default :
+					return 'contribution';
+				break;
+			}
 		break;
 
-		case TITANIA_TYPE_STYLE :
-			return phpbb::$user->lang['STYLE'];
-		break;
+		case 'lang' :
+			switch ($type)
+			{
+				case TITANIA_TYPE_MOD :
+					return phpbb::$user->lang['MODIFICATION'];
+				break;
 
-		case TITANIA_TYPE_SNIPPET :
-			return phpbb::$user->lang['SNIPPET'];
-		break;
+				case TITANIA_TYPE_STYLE :
+					return phpbb::$user->lang['STYLE'];
+				break;
 
-		case TITANIA_TYPE_LANG_PACK :
-			return phpbb::$user->lang['LANGUAGE_PACK'];
+				case TITANIA_TYPE_SNIPPET :
+					return phpbb::$user->lang['SNIPPET'];
+				break;
+
+				case TITANIA_TYPE_LANG_PACK :
+					return phpbb::$user->lang['LANGUAGE_PACK'];
+				break;
+
+				default :
+					return phpbb::$user->lang['CONTRIBUTION'];
+				break;
+			}
 		break;
 	}
 }
@@ -120,6 +154,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 
 	$result = phpbb::$db->sql_query($sql);
 
+	$contrib_type = 0;
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
 		$contrib = new titania_contribution();
@@ -136,14 +171,23 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 			'CONTRIB_RATING'			=> $row['contrib_rating'],
 			'CONTRIB_RATING_COUNT'		=> $row['contrib_rating_count'],
 
-			'U_VIEW_CONTRIB'			=> $contrib->get_url(),
+			'U_VIEW_CONTRIB'			=> titania::$url->build_url($contrib->get_url()),
 
 			'S_CONTRIB_TYPE'			=> $row['contrib_type'],
 		));
 
+		$contrib_type = $row['contrib_type'];
+
 		unset($contrib);
 	}
 	phpbb::$db->sql_freeresult($result);
+
+	/**
+	* @todo add current category_id to submission url, so it shows as selected in the list
+	*/
+	phpbb::$template->assign_vars(array(
+		'U_SUBMIT_CONTRIB'		=> ($mode == 'category' && phpbb::$auth->acl_get('titania_contrib_submit')) ? titania::$url->build_url(get_contrib_type_string($contrib_type, 'url') . '/submit') : '',
+	));
 }
 
 /**

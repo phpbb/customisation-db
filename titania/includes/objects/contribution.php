@@ -516,35 +516,6 @@ class titania_contribution extends titania_database_object
 	*/
 	public function get_url()
 	{
-		$url = titania::$absolute_path;
-
-		// For different items we will display the URL differently
-		switch ($this->contrib_type)
-		{
-			case TITANIA_TYPE_MOD :
-				$url .= 'mod/';
-			break;
-
-			case TITANIA_TYPE_STYLE :
-				$url .= 'style/';
-			break;
-
-			case TITANIA_TYPE_SNIPPET :
-				$url .= 'snippet/';
-			break;
-
-			case TITANIA_TYPE_LANG_PACK :
-				$url .= 'translation/';
-			break;
-
-			default :
-				$url .= 'contribution/';
-			break;
-		}
-
-		// Now the contrib name
-		$url .= $this->contrib_name_clean;
-
-		return $url;
+		return get_contrib_type_string($this->contrib_type, 'url') . '/' . $this->contrib_name_clean;
 	}
 }

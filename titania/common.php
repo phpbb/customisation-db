@@ -23,6 +23,9 @@ define('TITANIA_VERSION', '0.1.7');
 require TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT;
 require TITANIA_ROOT . 'includes/core/phpbb.' . PHP_EXT;
 
+// Load the URL class
+titania::load_url();
+
 // Read config.php file
 titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);
 
@@ -54,5 +57,5 @@ titania::initialise();
 // If the database is not installed or outdated redirect to the installer
 if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version']) || version_compare(phpbb::$config['titania_version'], TITANIA_VERSION, '<')))
 {
-	redirect(titania_sid('install'));
+	redirect(append_sid(TITANIA_ROOT . 'install.' . PHP_EXT));
 }

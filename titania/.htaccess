@@ -23,6 +23,10 @@ RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/faq/([^/]+)?/?$		./contributions/index.php?c=$2&page=faq&action=$3 [NC]
 Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/faq/([^/]+)/?([^/]+)?/?$		./contributions/index.php?c=$2&page=faq&f=$3&action=$4 [NC]
 
+#rating
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^rate/?([^/]+)?$		./index.php?action=rate [NC]
+
 #categories
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^([^/]+)/([^/]+)/([^/]+)/?$	./index.php?c=$3 [NC]

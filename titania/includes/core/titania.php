@@ -50,6 +50,11 @@ class titania
 	public static $time;
 
 	/**
+	* URL Class
+	*/
+	public static $url;
+
+	/**
 	* Current User's Access level
 	*
 	* @var int $access_level Check TITANIA_ACCESS_ constants
@@ -74,6 +79,21 @@ class titania
 	*/
 	public static $contrib;
 	public static $author;
+
+	/**
+	* Load URL class
+	*/
+	public static function load_url()
+	{
+		if (!class_exists('titania_url'))
+		{
+			include(TITANIA_ROOT . 'includes/core/url.' . PHP_EXT);
+		}
+
+		self::$url = new titania_url();
+
+		self::$url->decode_url();
+	}
 
 	/*
 	 * Initialise titania:
@@ -103,6 +123,9 @@ class titania
 		// Set the absolute path
 		self::$absolute_path = generate_board_url(true) . '/' . self::$config->titania_script_path;
 		self::$absolute_board = generate_board_url() . '/';
+
+		// Set the root path for our URL class
+		self::$url->root_url = self::$absolute_path;
 
 		// Set template path and template name
 		self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
@@ -414,9 +437,9 @@ class titania
 			return $message;
 		}
 
-		meta_refresh(3, titania_sid('index'));
+		meta_refresh(3, self::$url->build_url());
 
-		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . titania_sid('index') . '">', '</a> ');
+		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . self::$url->build_url() . '">', '</a> ');
 		trigger_error($message);
 	}
 

@@ -170,11 +170,11 @@ class titania_category extends titania_database_object
 	}
 
 	/**
-	* Build view URL for a contribution
+	* Build view URL for a category
 	*/
 	public function get_url()
 	{
-		$url = titania::$absolute_path;
+		$url = '';
 
 		$parent_list = titania::$cache->get_category_parents($this->category_id);
 
@@ -210,7 +210,7 @@ class titania_category extends titania_database_object
 			'CATEGORY_CONTRIBS'	=> $this->category_contribs,
 			'CATEGORY_TYPE'		=> $this->category_type,
 
-			'U_VIEW_CATEGORY'	=> $this->get_url(),
+			'U_VIEW_CATEGORY'	=> titania::$url->build_url($this->get_url()),
 		);
 
 		if ($return)

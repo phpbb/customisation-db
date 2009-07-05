@@ -241,7 +241,7 @@ class titania_author extends titania_database_object
 	 */
 	public function get_url()
 	{
-		return titania::$absolute_path . 'author/' . $this->username_clean;
+		return 'author/' . $this->username_clean;
 	}
 
 	/**
@@ -296,10 +296,10 @@ class titania_author extends titania_database_object
 			'AUTHOR_STYLES'					=> $this->author_styles,
 			'AUTHOR_SNIPPETS'				=> $this->author_snippets,
 
-			'U_AUTHOR_PROFILE'				=> $this->get_url(),
+			'U_AUTHOR_PROFILE'				=> titania::$url->build_url($this->get_url()),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),
-			'U_AUTHOR_CONTRIBUTIONS'		=> $this->get_url() . '/contributions',
+			'U_AUTHOR_CONTRIBUTIONS'		=> titania::$url->build_url($this->get_url() . '/contributions'),
 		);
 
 		if ($return)

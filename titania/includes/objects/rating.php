@@ -192,7 +192,7 @@ class titania_rating extends titania_database_object
 	public function get_rating_string()
 	{
 		$can_rate = (phpbb::$user->data['is_registered'] && phpbb::$auth->acl_get('titania_rate') && !$this->rating_id) ? true : false;
-		$rate_url = titania_sid('index', "action=rate&amp;type={$this->rating_type}&amp;id={$this->rating_object_id}");
+		$rate_url = titania::$url->build_url('rate', array('type' => $this->rating_type, 'id' => $this->rating_object_id));
 
 		// If it has not had any ratings yet, give it 1/2 the max for the rating
 		if ($this->rating_count == 0)
@@ -207,7 +207,7 @@ class titania_rating extends titania_database_object
 			// Title will be $i/max if they've not rated it, rating/max if they have
 			$title = (($this->rating_value) ? $this->rating_value : $i) . '/' . titania::$config->max_rating;
 
-			$final_code .= ($can_rate) ? '<a href="' . $rate_url . '&amp;value=' . $i . '">' : '';
+			$final_code .= ($can_rate) ? '<a href="' . titania::$url->append_url($rate_url, array('value' => $i)) . '">' : '';
 			$final_code .= '<img id="' . $this->rating_object_id . '_' . $i . '" ';
 			if ($this->rating_id && $i <= $this->rating) // If they have rated, show their own rating in green stars
 			{
@@ -229,7 +229,7 @@ class titania_rating extends titania_database_object
 		// If they have rated already we will add the remove rating icon at the end
 		if ($this->rating_id)
 		{
-			$final_code .= ' <a href="' . $rate_url . '&amp;value=-1"><img id="' . $this->rating_object_id . '_remove" src="' . titania::$theme_path . '/images/star_remove.gif"  alt="' . phpbb::$user->lang['REMOVE_RATING'] . '" title="' . phpbb::$user->lang['REMOVE_RATING'] . '" /></a>';
+			$final_code .= ' <a href="' . $rate_url . '"><img id="' . $this->rating_object_id . '_remove" src="' . titania::$theme_path . '/images/star_remove.gif"  alt="' . phpbb::$user->lang['REMOVE_RATING'] . '" title="' . phpbb::$user->lang['REMOVE_RATING'] . '" /></a>';
 		}
 
 		$final_code .= '</span>';
