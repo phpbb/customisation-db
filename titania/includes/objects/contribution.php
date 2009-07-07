@@ -513,9 +513,16 @@ class titania_contribution extends titania_database_object
 
 	/**
 	* Build view URL for a contribution
+	*
+	* @param string $page The page we are on (Ex: faq/support/details)
 	*/
-	public function get_url()
+	public function get_url($page = '')
 	{
-		return get_contrib_type_string($this->contrib_type, 'url') . '/' . $this->contrib_name_clean;
+		if ($page)
+		{
+			return titania::$url->build_url(get_contrib_type_string($this->contrib_type, 'url') . '/' . $this->contrib_name_clean . '/' . $page);
+		}
+
+		return titania::$url->build_url(get_contrib_type_string($this->contrib_type, 'url') . '/' . $this->contrib_name_clean);
 	}
 }

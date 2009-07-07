@@ -80,21 +80,6 @@ class titania
 	public static $contrib;
 	public static $author;
 
-	/**
-	* Load URL class
-	*/
-	public static function load_url()
-	{
-		if (!class_exists('titania_url'))
-		{
-			include(TITANIA_ROOT . 'includes/core/url.' . PHP_EXT);
-		}
-
-		self::$url = new titania_url();
-
-		self::$url->decode_url();
-	}
-
 	/*
 	 * Initialise titania:
 	 *	Session management, Cache, Language ...
@@ -344,74 +329,15 @@ class titania
 	 *
 	 * @param string $redirect optional -- redirect URL absolute or relative path.
 	 * @param string $l_redirect optional -- LANG string e.g.: 'RETURN_TO_MODS'
-	 * @param array $exclude variables to exclude from params, if necessary. e.g.: array('search', 'sort');
-	 * @param bool $return_url Return only the URL path, returns generated HTML by if set to false (default)
 	 *
 	 * @return HTML link string
 	 */
-	public static function back_link($redirect = '', $l_redirect = '', $exclude = array(), $return_url = false)
+	public static function back_link($redirect, $l_redirect = '')
 	{
-		$params = $query = array();
-		$exclude = array_combine($exclude, $exclude);
-
-		if (!$redirect)
-		{
-			// we must process our own redirect
-			// full site URL based on config.
-			$site_url = phpbb::$config['server_protocol'] . phpbb::$config['server_name'] . '/';
-
-			// if HTTP_REFERER is set, and begins with the site URL, we allow it to be our redirect...
-			if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] && (strpos($_SERVER['HTTP_REFERER'], $site_url) === 0))
-			{
-				$url_scheme = parse_url($_SERVER['HTTP_REFERER']);
-
-				$redirect = $url_scheme['path'];
-				$query_ary = (isset($url_scheme['query'])) ? explode('&', $url_scheme['query']) : $query;
-
-				foreach ($query_ary as $param)
-				{
-					list($key, $value) = explode('=', $param);
-					$query[$key] = $value;
-				}
-			}
-			else
-			{
-				$redirect = self::$page;
-			}
-		}
-		else
-		{
-			$url_scheme = parse_url($redirect);
-			$redirect = $url_scheme['path'];
-			$query_ary = (isset($url_scheme['query'])) ? explode('&', $url_scheme['query']) : $query;
-
-			foreach ($query_ary as $param)
-			{
-				list($key, $value) = explode('=', $param);
-				$query[$key] = $value;
-			}
-		}
-
-		if ($exclude || !$redirect)
-		{
-			// collect the list of $_GET params to be used in the redirect string if query string not filled.
-			$query = ($query) ? $query : $_GET;
-
-			foreach ($query as $key => $value)
-			{
-				if (!isset($exclude[$key]))
-				{
-					$params[] = $key . '=' . $value;
-				}
-			}
-
-			$redirect .= ($params) ? '?' . implode('&amp;', $params) : '';
-		}
-
 		// set the redirect string (Return to previous page)
 		$l_redirect = ($l_redirect) ? $l_redirect : 'RETURN_LAST_PAGE';
 
-		return (!$return_url) ? sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, phpbb::$user->lang[$l_redirect]) : $redirect;
+		return sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, phpbb::$user->lang[$l_redirect]);
 	}
 
 	/**
@@ -515,6 +441,104 @@ class titania
 	}
 
 	/**
+	* Build Confirm box
+	* @param boolean $check True for checking if confirmed (without any additional parameters) and false for displaying the confirm box
+	* @param string $title Title/Message used for confirm box.
+	*		message text is _CONFIRM appended to title.
+	*		If title cannot be found in user->lang a default one is displayed
+	*		If title_CONFIRM cannot be found in user->lang the text given is used.
+	* @param string $u_action Form action
+	* @param string $post Hidden POST variables
+	* @param string $html_body Template used for confirm box
+	*/
+	public static function confirm_box($check, $title = '', $u_action = '', $post = array(), $html_body = 'confirm_body.html')
+	{
+		$hidden = build_hidden_fields($post);
+
+		if (isset($_POST['cancel']))
+		{
+			return false;
+		}
+
+		$confirm = false;
+		if (isset($_POST['confirm']))
+		{
+			// language frontier
+			if ($_POST['confirm'] === phpbb::$user->lang['YES'])
+			{
+				$confirm = true;
+			}
+		}
+
+		if ($check && $confirm)
+		{
+			$user_id = request_var('user_id', 0);
+			$session_id = request_var('sess', '');
+			$confirm_key = request_var('confirm_key', '');
+
+			if ($user_id != phpbb::$user->data['user_id'] || $session_id != phpbb::$user->session_id || !$confirm_key || !phpbb::$user->data['user_last_confirm_key'] || $confirm_key != phpbb::$user->data['user_last_confirm_key'])
+			{
+				return false;
+			}
+
+			// Reset user_last_confirm_key
+			$sql = 'UPDATE ' . USERS_TABLE . " SET user_last_confirm_key = ''
+				WHERE user_id = " . phpbb::$user->data['user_id'];
+			phpbb::$db->sql_query($sql);
+
+			return true;
+		}
+		else if ($check)
+		{
+			return false;
+		}
+
+		$s_hidden_fields = build_hidden_fields(array(
+			'user_id'	=> phpbb::$user->data['user_id'],
+			'sess'		=> phpbb::$user->session_id,
+			'sid'		=> phpbb::$user->session_id)
+		);
+
+		// generate activation key
+		$confirm_key = gen_rand_string(10);
+
+		self::page_header((!isset(phpbb::$user->lang[$title])) ? phpbb::$user->lang['CONFIRM'] : phpbb::$user->lang[$title]);
+
+		// If activation key already exist, we better do not re-use the key (something very strange is going on...)
+		if (request_var('confirm_key', ''))
+		{
+			// This should not occur, therefore we cancel the operation to safe the user
+			return false;
+		}
+
+		// re-add sid / transform & to &amp; for user->page (user->page is always using &)
+		if ($u_action)
+		{
+			$u_action = titania::$url->append_url($u_action, array('confirm_key' => $confirm_key));
+		}
+		else
+		{
+			$u_action = reapply_sid($phpbb_root_path . str_replace('&', '&amp;', phpbb::$user->page['page']));
+			$u_action .= ((strpos($u_action, '?') === false) ? '?' : '&amp;') . 'confirm_key=' . $confirm_key;
+		}
+
+		phpbb::$template->assign_vars(array(
+			'MESSAGE_TITLE'		=> (!isset(phpbb::$user->lang[$title])) ? phpbb::$user->lang['CONFIRM'] : phpbb::$user->lang[$title],
+			'MESSAGE_TEXT'		=> (!isset(phpbb::$user->lang[$title . '_CONFIRM'])) ? $title : phpbb::$user->lang[$title . '_CONFIRM'],
+
+			'YES_VALUE'			=> phpbb::$user->lang['YES'],
+			'S_CONFIRM_ACTION'	=> $u_action,
+			'S_HIDDEN_FIELDS'	=> $hidden . $s_hidden_fields)
+		);
+
+		$sql = 'UPDATE ' . USERS_TABLE . " SET user_last_confirm_key = '" . phpbb::$db->sql_escape($confirm_key) . "'
+			WHERE user_id = " . phpbb::$user->data['user_id'];
+		phpbb::$db->sql_query($sql);
+
+		self::page_footer(true, $html_body);
+	}
+
+	/**
 	 * Set proper page header status
 	 *
 	 * @param int $status_code
@@ -553,5 +577,20 @@ class titania
 			header('HTTP/1.1 ' . $header, false, $status_code);
 			header('Status: ' . $header, false, $status_code);
 		}
+	}
+
+	/**
+	* Load URL class
+	*/
+	public static function load_url()
+	{
+		if (!class_exists('titania_url'))
+		{
+			include(TITANIA_ROOT . 'includes/core/url.' . PHP_EXT);
+		}
+
+		self::$url = new titania_url();
+
+		self::$url->decode_url();
 	}
 }

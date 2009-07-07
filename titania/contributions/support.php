@@ -18,6 +18,9 @@ if (!defined('IN_TITANIA'))
 
 $action = request_var('action', '');
 
+// Load the contrib item
+load_contrib();
+
 switch ($action)
 {
 	case 'post' :
@@ -37,7 +40,7 @@ switch ($action)
 		}
 		else
 		{
-			confirm_box(false, 'CONTRIB_SUPPORT_DELETE');
+			titania::confirm_box(false, 'CONTRIB_SUPPORT_DELETE');
 		}
 		redirect(titania::$contrib->get_url() . '/support');
 	break;

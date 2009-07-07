@@ -18,6 +18,9 @@ if (!defined('IN_TITANIA'))
 
 titania::add_lang('authors');
 
+// Load the Contrib item
+load_contrib();
+
 titania::$contrib->assign_details();
 
 titania::page_header('CONTRIB_DETAILS');

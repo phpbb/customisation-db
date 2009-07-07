@@ -101,7 +101,7 @@ class titania_faq extends titania_database_object
 	public function move($direction)
 	{
 		$this->load();
-		
+
 		$sql = 'SELECT faq_order_id
 			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			WHERE faq_order_id ' . (($direction == 'move_up') ? '<' : '>') . $this->faq_order_id . '
@@ -117,14 +117,14 @@ class titania_faq extends titania_database_object
 		}
 
 		// Update the item in the position where want to move it to have the current position
-		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . ' 
+		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			SET faq_order_id = ' . $this->faq_order_id . '
 		 	WHERE faq_order_id = ' . $new_order_id . '
 				AND contrib_id = ' . $this->contrib_id;
 		 phpbb::$db->sql_query($sql);
 
 		// Update the current faq item to have the new position
-		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . ' 
+		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			SET faq_order_id = ' . $new_order_id . '
 		 	WHERE faq_id = ' . $this->faq_id;
 		 phpbb::$db->sql_query($sql);
@@ -269,18 +269,14 @@ class titania_faq extends titania_database_object
 	*/
 	public function get_url($action, $faq_id = false)
 	{
-		$url = titania::$contrib->get_url() . '/faq';
+		$url = titania::$contrib->get_url('faq');
 
-		if ((int) $faq_id)
+		if ($action == 'create')
 		{
-			$url .= "/$faq_id";
-		}
-		else if ($this->faq_id)
-		{
-			$url .= '/' . $this->faq_id;
+			return titania::$url->append_url($url, array('action' => $action));
 		}
 
-		return "$url/$action";
+		return titania::$url->append_url($url, array('action' => $action, 'f' => (($faq_id) ? $faq_id : $this->faq_id)));
 	}
 
 	/*

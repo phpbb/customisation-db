@@ -63,8 +63,7 @@ class titania_url
 			$params['sid'] = $_SID;
 		}
 
-		// Some quick cleanup to remove the extra separator
-		return str_replace('/' . $this->separator, '/', $this->append_url($final_url, $params));
+		return $this->append_url($final_url, $params);
 	}
 
 	/**
@@ -88,7 +87,12 @@ class titania_url
 		// Now clean and append the items
 		foreach ($params as $name => $value)
 		{
-			$url .= $this->separator . $this->url_replace($name) . $this->separator . $this->url_replace($value);
+			if (substr($url, -1) != '/')
+			{
+				$url .= $this->separator;
+			}
+
+			$url .= $this->url_replace($name) . $this->separator . $this->url_replace($value);
 		}
 
 		// Now append the anchor again
