@@ -137,7 +137,5 @@ class titania_url
 
 			$_GET[$name] = $_REQUEST[$name] = $value;
 		}
-
-		var_export($_GET);
 	}
 }
