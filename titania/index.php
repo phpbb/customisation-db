@@ -46,7 +46,7 @@ switch ($action)
 				titania::load_object('author');
 				$object = new titania_author();
 				$object->load($id);
-				$redirect = titania::$url->build_url($object->get_url());
+				$redirect = $object->get_url();
 
 				if (!$object)
 				{
@@ -58,7 +58,7 @@ switch ($action)
 				titania::load_object('contribution');
 				$object = new titania_contribution();
 				$object->load($id);
-				$redirect = titania::$url->build_url($object->get_url());
+				$redirect = $object->get_url();
 
 				if (!$object)
 				{
@@ -90,17 +90,16 @@ switch ($action)
 	* Default (display category/contrib list)
 	*/
 	default :
-		phpbb::$template->assign_vars(array(
-			// Don't move this after titania_display_contribs, as it gets over-written if we are viewing a mods/styles/etc category
-			'U_SUBMIT_CONTRIB'		=> (phpbb::$auth->acl_get('titania_contrib_submit')) ? titania::$url->build_url('contributions/submit') : '',
-		));
-
 		titania_display_categories($category_id);
 
 		if ($category_id != 0)
 		{
 			titania_display_contribs('category', $category_id);
 		}
+
+		phpbb::$template->assign_vars(array(
+			'U_SUBMIT_CONTRIB'		=> (phpbb::$auth->acl_get('titania_contrib_submit')) ? titania::$url->build_url('author/' . phpbb::$user->data['username_clean'] . '/new') : '',
+		));
 	break;
 }
 

@@ -33,7 +33,7 @@ if (!titania::$author->load($author))
 }
 
 // Check to see if the currently accessing user is the author
-if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['user_id'] == $user_id)
+if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['user_id'] == titania::$author->user_id)
 {
 	titania::$access_level = TITANIA_ACCESS_AUTHORS;
 }
@@ -54,7 +54,12 @@ $nav_ary = array(
 	),
 	'contributions' => array(
 		'title'		=> 'AUTHOR_CONTRIBUTIONS',
-		'url'		=> titania::$author->get_url() . '/contributions',
+		'url'		=> titania::$author->get_url('contributions'),
+	),
+	'submit' => array(
+		'title'		=> 'NEW_CONTRIBUTION',
+		'url'		=> titania::$author->get_url('new'),
+		'auth'		=> (titania::$author->user_id == phpbb::$user->data['user_id']) ? true : false,
 	),
 );
 
@@ -66,6 +71,7 @@ switch ($page)
 {
 	case 'details' :
 	case 'contributions' :
+	case 'new' :
 		include(TITANIA_ROOT . 'authors/' . $page . '.' . PHP_EXT);
 	break;
 

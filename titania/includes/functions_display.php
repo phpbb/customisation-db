@@ -130,7 +130,7 @@ function titania_display_categories($parent_id = 0, $blockname = 'categories')
 */
 function titania_display_contribs($mode, $id, $blockname = 'contribs')
 {
-	titania::load_object('contribution');
+	titania::load_object(array('contribution', 'author'));
 
 	switch ($mode)
 	{
@@ -160,34 +160,30 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 		$contrib = new titania_contribution();
 		$contrib->__set_array($row);
 
+		$author = new titania_author();
+		$author->__set_array($row);
+
 		phpbb::$template->assign_block_vars($blockname, array(
-			'CONTRIB_USERNAME'			=> $row['username'],
-			'CONTRIB_USERNAME_FULL'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
-			'CONTRIB_NAME'				=> $row['contrib_name'],
-			'CONTRIB_TYPE'				=> get_contrib_type_string($row['contrib_type']),
-			'CONTRIB_STATUS'			=> $row['contrib_status'],
-			'CONTRIB_DOWNLOADS'			=> $row['contrib_downloads'],
-			'CONTRIB_VIEWS'				=> $row['contrib_views'],
-			'CONTRIB_RATING'			=> $row['contrib_rating'],
-			'CONTRIB_RATING_COUNT'		=> $row['contrib_rating_count'],
+			'CONTRIB_USERNAME'			=> $contrib->username,
+			'CONTRIB_USERNAME_FULL'		=> $author->get_username_string(),
+			'CONTRIB_NAME'				=> $contrib->contrib_name,
+			'CONTRIB_TYPE'				=> get_contrib_type_string($contrib->contrib_type),
+			'CONTRIB_STATUS'			=> $contrib->contrib_status,
+			'CONTRIB_DOWNLOADS'			=> $contrib->contrib_downloads,
+			'CONTRIB_VIEWS'				=> $contrib->contrib_views,
+			'CONTRIB_RATING'			=> $contrib->contrib_rating,
+			'CONTRIB_RATING_COUNT'		=> $contrib->contrib_rating_count,
 
-			'U_VIEW_CONTRIB'			=> titania::$url->build_url($contrib->get_url()),
+			'U_VIEW_CONTRIB'			=> $contrib->get_url(),
 
-			'S_CONTRIB_TYPE'			=> $row['contrib_type'],
+			'S_CONTRIB_TYPE'			=> $contrib->contrib_type,
 		));
 
 		$contrib_type = $row['contrib_type'];
 
-		unset($contrib);
+		unset($contrib, $author);
 	}
 	phpbb::$db->sql_freeresult($result);
-
-	/**
-	* @todo add current category_id to submission url, so it shows as selected in the list
-	*/
-	phpbb::$template->assign_vars(array(
-		'U_SUBMIT_CONTRIB'		=> ($mode == 'category' && phpbb::$auth->acl_get('titania_contrib_submit')) ? titania::$url->build_url(get_contrib_type_string($contrib_type, 'url') . '/submit') : '',
-	));
 }
 
 /**
