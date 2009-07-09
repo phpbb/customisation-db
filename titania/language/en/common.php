@@ -88,4 +88,6 @@ $lang = array_merge($lang, array(
 	'ACCESS_PUBLIC'				=> 'Public',
 
 	'ACCESS'				=> 'Access',
+	
+	'NO_DESC'                              => 'You have to enter the description.',
 ));

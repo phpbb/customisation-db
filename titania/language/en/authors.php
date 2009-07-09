@@ -55,4 +55,8 @@ $lang = array_merge($lang, array(
 	'REAL_NAME'					=> 'Real Name',
 
 	'USER_INFORMATION'			=> '’s user information',
+
+	'EDIT_AUTHOR'                          => 'Edit Author',
+	
+	'AUTHOR_DATA_UPDATED'                  => 'The author’s information have been updated.',
 ));
