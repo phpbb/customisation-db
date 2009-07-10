@@ -87,6 +87,12 @@ class titania_url
 		// Now clean and append the items
 		foreach ($params as $name => $value)
 		{
+			if ($name == '#')
+			{
+				$anchor = '#' . $value;
+				continue;
+			}
+
 			if (substr($url, -1) != '/')
 			{
 				$url .= $this->separator;

@@ -57,15 +57,15 @@ class titania_faq extends titania_database_object
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
-			'faq_id'		=> array('default' => 0),
+			'faq_id'			=> array('default' => 0),
 			'contrib_id' 		=> array('default' => 0),
 			'faq_order_id' 		=> array('default' => 0),
 			'faq_subject' 		=> array('default' => '', 'max' => 255),
-			'faq_text' 		=> array('default' => ''),
+			'faq_text' 			=> array('default' => ''),
 			'faq_text_bitfield'	=> array('default' => '', 'readonly' => true),
 			'faq_text_uid'		=> array('default' => '', 'readonly' => true),
 			'faq_text_options'	=> array('default' => 7, 'readonly' => true),
-			'faq_views'		=> array('default' => 0),
+			'faq_views'			=> array('default' => 0),
 			'faq_access'		=> array('default' => 2),
 		));
 
@@ -267,16 +267,21 @@ class titania_faq extends titania_database_object
 	*
 	* @return string
 	*/
-	public function get_url($action, $faq_id = false)
+	public function get_url($action = '', $faq_id = false)
 	{
 		$url = titania::$contrib->get_url('faq');
+		$faq_id = (($faq_id) ? $faq_id : $this->faq_id);
 
 		if ($action == 'create')
 		{
 			return titania::$url->append_url($url, array('action' => $action));
 		}
+		else if (!$action)
+		{
+			return titania::$url->append_url($url, array('f' => $faq_id, '#' => 'details'));
+		}
 
-		return titania::$url->append_url($url, array('action' => $action, 'f' => (($faq_id) ? $faq_id : $this->faq_id)));
+		return titania::$url->append_url($url, array('action' => $action, 'f' => $faq_id));
 	}
 
 	/*

@@ -10,27 +10,28 @@
 
 RewriteEngine on
 
+##
+# URL's should end in ([^/]+)?
+# The last section is used for additional information in the URL (sid, style, action, etc)
+# It is handled internally, so you do not need to pass it to anything.
+##
+
 #authors
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(authors?)/([^/]+)/?([^/]+)?/?$			./authors/index.php?u=$2&page=$3 [NC]
+Rewriterule ^authors?/([^/]+)/?([^/]+)?/?([^/]+)?$			./authors/index.php?u=$1&page=$2 [NC]
 
 #contributions
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/?([^/]+)?/?$		./contributions/index.php?c=$2&page=$3 [NC]
-
-#faq
-RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/faq/([^/]+)?/?$		./contributions/index.php?c=$2&page=faq&action=$3 [NC]
-Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/faq/([^/]+)/?([^/]+)?/?$		./contributions/index.php?c=$2&page=faq&f=$3&action=$4 [NC]
+Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$		./contributions/index.php?c=$2&page=$3 [NC]
 
 #rating
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^rate/?([^/]+)?$		./index.php?action=rate [NC]
+Rewriterule ^rate/?([^/]+)?$					./index.php?action=rate [NC]
 
 #categories
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)/([^/]+)/([^/]+)/?$	./index.php?c=$3 [NC]
+Rewriterule ^([^/]+)/([^/]+)/([^/]+)/?([^/]+)?$	./index.php?c=$3 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)/([^/]+)/?$			./index.php?c=$2 [NC]
+Rewriterule ^([^/]+)/([^/]+)/?([^/]+)?$			./index.php?c=$2 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)/?$					./index.php?c=$1 [NC]
+Rewriterule ^([^/]+)/?([^/]+)?$					./index.php?c=$1 [NC]

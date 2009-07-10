@@ -89,7 +89,7 @@ switch ($action)
 				$faq->submit();
 
 				$message = ($action == 'edit') ? phpbb::$user->lang['FAQ_EDITED'] : phpbb::$user->lang['FAQ_CREATED'];
-				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ'], '<a href="' . $faq->get_url('details') . '">', '</a>');
+				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ'], '<a href="' . $faq->get_url() . '">', '</a>');
 				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ_LIST'], '<a href="' . titania::$contrib->get_url('faq') . '">', '</a>');
 
 				trigger_error($message);
@@ -149,31 +149,29 @@ switch ($action)
 
 	break;
 
-	case 'details':
-
-		titania::page_header('FAQ_DETAILS');
-
-		if ($faq->faq_access < titania::$access_level)
-		{
-			trigger_error('NOT_AUTHORISED');
-		}
-
-		// increase a FAQ views counter
-		$faq->increase_views_counter();
-
-		phpbb::$template->assign_vars(array(
-			'FAQ_SUBJECT'		=> $faq->faq_subject,
-			'FAQ_TEXT'			=> $faq->get_faq_text(),
-			'FAQ_VIEWS'			=> $faq->faq_views,
-
-			'S_DETAILS'			=> true,
-
-			'U_EDIT_FAQ'		=> (titania::$contrib->is_author || phpbb::$auth->acl_get('titania_faq_edit')) ? $faq->get_url('edit') : false,
-		));
-
-	case 'list':
 	default:
+		if ($faq_id)
+		{
+			titania::page_header('FAQ_DETAILS');
 
+			if ($faq->faq_access < titania::$access_level)
+			{
+				trigger_error('NOT_AUTHORISED');
+			}
+
+			// increase a FAQ views counter
+			$faq->increase_views_counter();
+
+			phpbb::$template->assign_vars(array(
+				'FAQ_SUBJECT'		=> $faq->faq_subject,
+				'FAQ_TEXT'			=> $faq->get_faq_text(),
+				'FAQ_VIEWS'			=> $faq->faq_views,
+
+				'S_DETAILS'			=> true,
+
+				'U_EDIT_FAQ'		=> (titania::$contrib->is_author || phpbb::$auth->acl_get('titania_faq_edit')) ? $faq->get_url('edit') : false,
+			));
+		}
 		titania::page_header('FAQ_LIST');
 
 		// Titania's access
@@ -201,7 +199,7 @@ switch ($action)
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			phpbb::$template->assign_block_vars('faqlist', array(
-				'U_FAQ'			=> $faq->get_url('details', $row['faq_id']),
+				'U_FAQ'			=> $faq->get_url('', $row['faq_id']),
 
 				'SUBJECT'		=> $row['faq_subject'],
 				'VIEWS'			=> $row['faq_views'],

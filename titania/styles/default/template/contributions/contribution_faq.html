@@ -14,7 +14,7 @@
 					<!-- BEGIN faqlist -->
 					<li>
 						<dl>
-							<dt style="float:left; display: block; width: 70%"><a href="{faqlist.U_FAQ}#f{faqlist.S_ROW_COUNT}">{faqlist.SUBJECT}</a><dt>
+							<dt style="float:left; display: block; width: 70%"><a href="{faqlist.U_FAQ}">{faqlist.SUBJECT}</a><dt>
 							<dd style="margin-left: 71%; text-align: right">
 								<!-- IF faqlist.U_MOVE_UP -->
 									<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->
@@ -35,29 +35,29 @@
 		<span class="corners-bottom"><span></span></span>
 	</div>
 	<hr class="dashed" style="margin-bottom: 10px;" />
-	
+
 	<!-- IF S_DETAILS -->
-		<a name="f{S_ROW_COUNT}"></a>
+		<a name="details"></a>
 
 		<div class="faq-item" id="f{S_ROW_COUNT}">
 			{FAQ_SUBJECT}
 		</div>
-		
+
 		<div class="faq-body">
 			{FAQ_TEXT}
 		</div>
-		
-		<p>{L_VIEWS}: {FAQ_VIEWS}</p>		
+
+		<p>{L_VIEWS}: {FAQ_VIEWS}</p>
 	<!-- ENDIF -->
 <!-- ELSEIF S_EDIT -->
 	<form action="{U_ACTION}" method="post">
 		<div class="panel">
 			<div class="inner"><span class="corners-top"><span></span></span>
-			
+
 			<h2>{L_EDIT_FAQ}<!-- IF FAQ_SUBJECT --> :: {FAQ_SUBJECT}<!-- ENDIF --></h2>
-			
+
 			<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
-			
+
 			<fieldset>
 				<dl style="clear: left;">
 					<dt><label for="subject">{L_FAQ_SUBJECT}:</label></dt>
@@ -72,18 +72,18 @@
 				<dl style="clear: left;">
 					<dt><label for="text">{L_FAQ_TEXT}:</label></dt>
 					<dd><textarea name="text" id="text" class="inputbox" cols="40" rows="5">{FAQ_TEXT}</textarea></dd>
-				</dl>				
+				</dl>
 			</fieldset>
 
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
 
 		<fieldset class="submit-buttons">
-			<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp; 
+			<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
 			<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
 			{S_FORM_TOKEN}
 		</fieldset>
-	</form>	
+	</form>
 <!-- ENDIF -->
 
 <!-- INCLUDE contributions/contribution_footer.html -->
