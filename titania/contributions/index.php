@@ -28,6 +28,7 @@ switch ($page)
 	case 'details' :
 	case 'faq' :
 	case 'support' :
+	case 'create' :
 		include(TITANIA_ROOT . 'contributions/' . $page . '.' . PHP_EXT);
 	break;
 

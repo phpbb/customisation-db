@@ -1,10 +1,8 @@
 
 <script type="text/javascript">
 // <![CDATA[
-	var form_name = 'postform';
-	var text_name = 'message';
-	var load_draft = false;
-	var upload = false;
+	var form_name = '{POSTING_FORM_NAME}';
+	var text_name = '{POSTING_TEXT_NAME}';
 
 	// Define the bbCode tags
 	var bbcode = new Array();
@@ -32,8 +30,8 @@
 		<!-- END custom_tags -->
 	}
 
-	var panels = new Array({S_POSTING_PANELS});
-	var show_panel = {S_POSTING_PANELS_DEFAULT};
+	var panels = new Array({POSTING_PANELS});
+	var show_panel = '{POSTING_PANELS_DEFAULT}';
 // ]]>
 </script>
 <script type="text/javascript" src="{T_TEMPLATE_PATH}/editor.js"></script>
@@ -126,13 +124,8 @@
 		{SMILIES_STATUS}
 	<!-- ENDIF -->
 	<!-- ENDIF -->
-	<!-- IF S_EDIT_DRAFT || S_DISPLAY_REVIEW -->
-		<!-- IF S_DISPLAY_REVIEW --><hr /><!-- ENDIF -->
-		<!-- IF S_EDIT_DRAFT --><strong><a href="{S_UCP_ACTION}">{L_BACK_TO_DRAFTS}</a></strong><!-- ENDIF -->
-		<!-- IF S_DISPLAY_REVIEW --><strong><a href="#review">{L_TOPIC_REVIEW}</a></strong><!-- ENDIF -->
-	<!-- ENDIF -->
 </div>
 
 <div id="message-box">
-	<textarea name="message" id="message" rows="15" cols="76" tabindex="3" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" class="inputbox">{MESSAGE}</textarea>
+	<textarea name="{POSTING_TEXT_NAME}" id="{POSTING_TEXT_NAME}" rows="15" cols="76" tabindex="3" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" class="inputbox">{POSTING_MESSAGE_DEFAULT}</textarea>
 </div>

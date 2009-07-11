@@ -98,7 +98,7 @@ switch ($action)
 		}
 
 		phpbb::$template->assign_vars(array(
-			'U_SUBMIT_CONTRIB'		=> (phpbb::$auth->acl_get('titania_contrib_submit')) ? titania::$url->build_url('author/' . phpbb::$user->data['username_clean'] . '/new') : '',
+			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('titania_contrib_submit')) ? titania::$url->build_url('contributions/create') : '',
 		));
 	break;
 }

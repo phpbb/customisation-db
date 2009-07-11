@@ -409,7 +409,7 @@ $versions = array(
 			array(TITANIA_TOPICS_TABLE, 'topic_views', array('UINT', 0)),
 		),
 	),
-	
+
 	'0.1.8' => array(
 		'permission_add' => array(
 			'titania_author_mod',
@@ -417,6 +417,17 @@ $versions = array(
 
 		'permission_set' => array(
 			array('ROLE_ADMIN_FULL', array('titania_author_mod')),
+		),
+	),
+
+	'0.1.9' => array(
+		'permission_add' => array(
+			'titania_contrib_submit', // Can submit contrib items
+		),
+
+		'permission_set' => array(
+			array('ROLE_USER_FULL', array('titania_contrib_submit')),
+			array('ROLE_USER_STANDARD', array('titania_contrib_submit')),
 		),
 	),
 
