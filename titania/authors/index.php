@@ -71,11 +71,11 @@ switch ($page)
 {
 	case 'details' :
 	case 'contributions' :
+	case 'edit':
 	case 'new' :
 		include(TITANIA_ROOT . 'authors/' . $page . '.' . PHP_EXT);
 	break;
 
-        case 'edit':
 	default :
 		include(TITANIA_ROOT . 'authors/details.' . PHP_EXT);
 	break;
