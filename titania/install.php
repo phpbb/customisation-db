@@ -630,9 +630,9 @@ function titania_data($action, $version)
 			'faq_access'			=> 1,
 		),
 		array(
-			'faq_id'				=> 1,
+			'faq_id'				=> 3,
 			'contrib_id'			=> 1,
-			'faq_order_id'			=> 1,
+			'faq_order_id'			=> 3,
 			'faq_subject'			=> 'FAQ example 3 (public)',
 			'faq_text'				=> 'It is only an FAQ example.',
 			'faq_text_bitfield'		=> '',
