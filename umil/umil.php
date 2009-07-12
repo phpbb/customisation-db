@@ -372,8 +372,6 @@ class umil
 		if ($action == 'install' || $action == 'update')
 		{
 			$version_installed = $db_version;
-			$custom = array();
-			
 			foreach ($versions as $version => $version_actions)
 			{
 				// If we are updating
@@ -391,12 +389,7 @@ class umil
 				{
 					if ($method == 'custom')
 					{
-						// $this->_call_custom_function($params, $action, $version);
-						$custom[] = array(
-							'params' 	=> $params, 
-							'action'	=> $action, 
-							'version'	=> $version,
-						);
+						$this->_call_custom_function($params, $action, $version);
 					}
 					else
 					{
@@ -409,15 +402,6 @@ class umil
 			
 				$version_installed = $version;
 			}
-			
-			// inserting tables on the end
-			if (sizeof($custom))
-			{
-				foreach ($custom as $option)
-				{
-					$this->_call_custom_function($option['params'], $option['action'], $option['version']);
-				}
-			}			
 
 			// update the version number or add it
 			if ($this->config_exists($version_config_name))

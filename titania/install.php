@@ -616,7 +616,6 @@ function titania_data($action, $version)
 			'faq_text_bitfield'		=> '',
 			'faq_text_uid'			=> '',
 			'faq_text_options'		=> 7,
-			'faq_access'			=> 0,
 		),
 		array(
 			'faq_id'				=> 2,
@@ -627,7 +626,6 @@ function titania_data($action, $version)
 			'faq_text_bitfield'		=> '',
 			'faq_text_uid'			=> '',
 			'faq_text_options'		=> 7,
-			'faq_access'			=> 1,
 		),
 		array(
 			'faq_id'				=> 3,
@@ -638,7 +636,6 @@ function titania_data($action, $version)
 			'faq_text_bitfield'		=> '',
 			'faq_text_uid'			=> '',
 			'faq_text_options'		=> 7,
-			'faq_access'			=> 2,
 		),
 	);
 
