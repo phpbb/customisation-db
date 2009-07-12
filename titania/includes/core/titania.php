@@ -256,6 +256,7 @@ class titania
 		else
 		{
 			$u_login_logout = append_sid(self::$absolute_board . 'ucp.' . PHP_EXT, 'mode=login&amp;redirect=' . self::$page);
+			$l_login_logout = phpbb::$user->lang['LOGIN'];
 		}
 
 		// Send a proper content-language to the output
@@ -273,9 +274,11 @@ class titania
 			'CURRENT_TIME'			=> sprintf(phpbb::$user->lang['CURRENT_TIME'], phpbb::$user->format_date(time(), false, true)),
 
 			// rewrite the login URL to redirect to the currently viewed page.
-			'U_LOGIN_LOGOUT'			=> $u_login_logout,
-			'L_LOGIN_LOGOUT'			=> $l_login_logout,
-			'LOGIN_REDIRECT'			=> self::$page,
+			'U_LOGIN_LOGOUT'		=> $u_login_logout,
+			'L_LOGIN_LOGOUT'		=> $l_login_logout,
+			'LOGIN_REDIRECT'		=> self::$page,
+			'S_LOGIN_ACTION'		=> append_sid(self::$absolute_board . 'ucp.' . PHP_EXT, 'mode=login'),
+
 
 			'SESSION_ID'				=> phpbb::$user->session_id,
 			'PHPBB_ROOT_PATH'			=> self::$absolute_board,
