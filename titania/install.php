@@ -320,6 +320,7 @@ $versions = array(
 					'topic_deleted'					=> array('BOOL', 0), // True if the topic is soft deleted
 					'topic_posts'					=> array('VCHAR', ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
 					'topic_subject'					=> array('STEXT_UNI', ''),
+					'topic_time'					=> array('UINT:11', 0),
 					'topic_first_post_id'			=> array('UINT', 0),
 					'topic_first_post_user_id'		=> array('UINT', 0),
 					'topic_first_post_username'		=> array('VCHAR_UNI', ''),
@@ -430,7 +431,7 @@ $versions = array(
 			array('ROLE_USER_STANDARD', array('titania_contrib_submit')),
 		),
 	),
-
+	
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

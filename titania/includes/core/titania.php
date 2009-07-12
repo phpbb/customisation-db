@@ -141,9 +141,8 @@ class titania
 		if (!file_exists($file) || !is_readable($file))
 		{
 			echo '<p>';
-			echo '	The titania configuration file could not be found or is inaccessible. Check your configuration.';
-			echo '	<br />';
-			echo '	To install titania you have to rename config.example.php to config.php and adjust it to your needs.';
+			echo '	The Titania configuration file could not be found or is inaccessible. Check your configuration.<br />';
+			echo '	To install Titania you have to rename config.example.php to config.php and adjust it to your needs.';
 			echo '</p>';
 
 			exit;
@@ -224,35 +223,121 @@ class titania
 	 * @param string $page_title
 	 * @param bool $display_online_list
 	 */
-	public static function page_header($page_title = '', $display_online_list = false)
+	public static function page_header($page_title = '')
 	{
+		if (defined('HEADER_INC'))
+		{
+			return;
+		}
+
+		define('HEADER_INC', true);
+
+		// gzip_compression
+		if (phpbb::$config['gzip_compress'])
+		{
+			if (@extension_loaded('zlib') && !headers_sent())
+			{
+				ob_start('ob_gzhandler');
+			}
+		}
+
 		// Check if page_title is a language string
 		if (isset(phpbb::$user->lang[$page_title]))
 		{
 			$page_title = phpbb::$user->lang[$page_title];
 		}
 
-		// Call the phpBB page_header() function, but we perform our own actions here as well.
-		page_header($page_title, $display_online_list);
-
-		if (phpbb::$user->data['user_id'] == ANONYMOUS)
+		// Generate logged in/logged out status
+		if (phpbb::$user->data['user_id'] != ANONYMOUS)
 		{
-			$u_login_logout = phpbb::$template->_rootref['U_LOGIN_LOGOUT'] . '&amp;redirect=' . self::$page;
+			$u_login_logout = append_sid(self::$absolute_path . 'index.' . PHP_EXT, 'mode=logout', true, phpbb::$user->session_id);
+			$l_login_logout = sprintf(phpbb::$user->lang['LOGOUT_USER'], phpbb::$user->data['username']);
 		}
 		else
 		{
-			$u_login_logout = append_sid(self::$absolute_path . 'index.' . PHP_EXT, 'mode=logout', true, phpbb::$user->session_id);
+			$u_login_logout = append_sid(self::$absolute_board . 'ucp.' . PHP_EXT, 'mode=login&amp;redirect=' . self::$page);
+		}
+
+		// Send a proper content-language to the output
+		$user_lang = phpbb::$user->lang['USER_LANG'];
+		if (strpos($user_lang, '-x-') !== false)
+		{
+			$user_lang = substr($user_lang, 0, strpos($user_lang, '-x-'));
 		}
 
 		phpbb::$template->assign_vars(array(
+			'SITENAME'				=> phpbb::$config['sitename'],
+			'SITE_DESCRIPTION'		=> phpbb::$config['site_desc'],
+			'PAGE_TITLE'			=> $page_title,
+			'SCRIPT_NAME'			=> str_replace('.' . PHP_EXT, '', phpbb::$user->page['page_name']),
+			'CURRENT_TIME'			=> sprintf(phpbb::$user->lang['CURRENT_TIME'], phpbb::$user->format_date(time(), false, true)),
+
 			// rewrite the login URL to redirect to the currently viewed page.
 			'U_LOGIN_LOGOUT'			=> $u_login_logout,
+			'L_LOGIN_LOGOUT'			=> $l_login_logout,
 			'LOGIN_REDIRECT'			=> self::$page,
+
+			'SESSION_ID'				=> phpbb::$user->session_id,
+			'PHPBB_ROOT_PATH'			=> self::$absolute_board,
+			'TITANIA_ROOT_PATH'			=> self::$absolute_path,
+
+			'U_BASE_URL'				=> self::$absolute_path,
+			'U_SITE_ROOT'				=> generate_board_url(true),
 
 			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
 			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . '/style.php?style=' . self::$config->style,
+
+			'U_DELETE_COOKIES'		=> append_sid(self::$absolute_board . 'ucp.' . PHP_EXT, 'mode=delete_cookies'),
+			'S_USER_LOGGED_IN'		=> (phpbb::$user->data['user_id'] != ANONYMOUS) ? true : false,
+			'S_AUTOLOGIN_ENABLED'	=> (phpbb::$config['allow_autologin']) ? true : false,
+			'S_BOARD_DISABLED'		=> (phpbb::$config['board_disable']) ? true : false,
+			'S_REGISTERED_USER'		=> (!empty(phpbb::$user->data['is_registered'])) ? true : false,
+			'S_IS_BOT'				=> (!empty(phpbb::$user->data['is_bot'])) ? true : false,
+			'S_USER_LANG'			=> $user_lang,
+			'S_USER_BROWSER'		=> (isset(phpbb::$user->data['session_browser'])) ? phpbb::$user->data['session_browser'] : phpbb::$user->lang['UNKNOWN_BROWSER'],
+			'S_USERNAME'			=> phpbb::$user->data['username'],
+			'S_CONTENT_DIRECTION'	=> phpbb::$user->lang['DIRECTION'],
+			'S_CONTENT_FLOW_BEGIN'	=> (phpbb::$user->lang['DIRECTION'] == 'ltr') ? 'left' : 'right',
+			'S_CONTENT_FLOW_END'	=> (phpbb::$user->lang['DIRECTION'] == 'ltr') ? 'right' : 'left',
+			'S_CONTENT_ENCODING'	=> 'UTF-8',
+			'S_REGISTER_ENABLED'	=> (phpbb::$config['require_activation'] != USER_ACTIVATION_DISABLE) ? true : false,
+
+			'T_STYLESHEET_LINK'		=> (!phpbb::$user->theme['theme_storedb']) ? self::$absolute_board . '/styles/' . phpbb::$user->theme['theme_path'] . '/theme/stylesheet.css' : self::$absolute_board . 'style.' . PHP_EXT . '?sid=' . phpbb::$user->session_id . '&amp;id=' . phpbb::$user->theme['style_id'] . '&amp;lang=' . phpbb::$user->data['user_lang'],
+			'T_STYLESHEET_NAME'		=> phpbb::$user->theme['theme_name'],
+
+			'SITE_LOGO_IMG'			=> phpbb::$user->img('site_logo'),
+
+			'A_COOKIE_SETTINGS'		=> addslashes('; path=' . phpbb::$config['cookie_path'] . ((!phpbb::$config['cookie_domain'] || phpbb::$config['cookie_domain'] == 'localhost' || phpbb::$config['cookie_domain'] == '127.0.0.1') ? '' : '; domain=' . phpbb::$config['cookie_domain']) . ((!phpbb::$config['cookie_secure']) ? '' : '; secure')),
 		));
+
+		// @todo allow outside modification of this function/call
+		self::header_nav();
+
+		// application/xhtml+xml not used because of IE
+		header('Content-type: text/html; charset=UTF-8');
+
+		header('Cache-Control: private, no-cache="set-cookie"');
+		header('Expires: 0');
+		header('Pragma: no-cache');
+
+		return;
+	}
+
+	/**
+	 * Header breadcrumb-type navigation
+	 */
+	public static function header_nav()
+	{
+		// @todo setup a cached array so that we can 'breadcrumb' anywhere within Titania that we go.
+		$header_nav = array(
+			array(
+				'title'		=> 'TITANIA_INDEX',
+				'url'		=> self::$absolute_path,
+			),
+		);
+
+		self::generate_nav($header_nav, '', 'nav_header');
 	}
 
 	/**
@@ -260,8 +345,9 @@ class titania
 	*
 	* @param array $nav_ary The array of data to output
 	* @param string $current_page The current page
+	* @param string $block Optionally specify a custom template block loop name
 	*/
-	public static function generate_nav($nav_ary, $current_page)
+	public static function generate_nav($nav_ary, $current_page, $block = 'nav_menu')
 	{
 		foreach ($nav_ary as $page => $data)
 		{
@@ -271,11 +357,9 @@ class titania
 				continue;
 			}
 
-			phpbb::$template->assign_block_vars('nav_menu', array(
+			phpbb::$template->assign_block_vars($block, array(
 				'L_TITLE'		=> (isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title'],
-
 				'U_TITLE'		=> $data['url'],
-
 				'S_SELECTED'	=> ($page == $current_page) ? true : false,
 			));
 		}
@@ -292,8 +376,7 @@ class titania
 		// Because I am lazy most of the time...
 		if ($template_body !== false)
 		{
-			global $template;
-			$template->set_filenames(array(
+			phpbb::$template->set_filenames(array(
 				'body' => $template_body,
 			));
 		}

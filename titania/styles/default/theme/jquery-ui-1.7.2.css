@@ -42,7 +42,7 @@
 * jQuery UI CSS Framework
 * Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)
 * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
-* To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=Verdana,%20Helvetica,%20Arial,%20sans-serif&fwDefault=bold&fsDefault=1.1em&cornerRadius=5px&bgColorHeader=098dce&bgTextureHeader=03_highlight_soft.png&bgImgOpacityHeader=70&borderColorHeader=0076B1&fcHeader=ffffff&iconColorHeader=FFFFFF&bgColorContent=FFFFFF&bgTextureContent=01_flat.png&bgImgOpacityContent=100&borderColorContent=a6c9e2&fcContent=222222&iconColorContent=469bdd&bgColorDefault=cadceb&bgTextureDefault=03_highlight_soft.png&bgImgOpacityDefault=100&borderColorDefault=c5dbec&fcDefault=333333&iconColorDefault=217bc0&bgColorHover=e9e9e9&bgTextureHover=06_inset_hard.png&bgImgOpacityHover=100&borderColorHover=0a8ed0&fcHover=D31141&iconColorHover=bc2a4d&bgColorActive=f5faff&bgTextureActive=06_inset_hard.png&bgImgOpacityActive=100&borderColorActive=c0c9d5&fcActive=D31141&iconColorActive=f9bd01&bgColorHighlight=fbec88&bgTextureHighlight=01_flat.png&bgImgOpacityHighlight=55&borderColorHighlight=fad42e&fcHighlight=363636&iconColorHighlight=2e83ff&bgColorError=fef1ec&bgTextureError=02_glass.png&bgImgOpacityError=95&borderColorError=cd0a0a&fcError=cd0a0a&iconColorError=cd0a0a&bgColorOverlay=aaaaaa&bgTextureOverlay=01_flat.png&bgImgOpacityOverlay=0&opacityOverlay=40&bgColorShadow=aaaaaa&bgTextureShadow=01_flat.png&bgImgOpacityShadow=0&opacityShadow=30&thicknessShadow=8px&offsetTopShadow=-8px&offsetLeftShadow=-8px&cornerRadiusShadow=8px
+* To view and modify this theme, visit http://bit.ly/q5ZNx
 */
 
 
@@ -280,7 +280,8 @@
 
 /* Overlays */
 .ui-widget-overlay { background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .40;filter:Alpha(Opacity=40); }
-.ui-widget-shadow { margin: -8px 0 0 -8px; padding: 8px; background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .30;filter:Alpha(Opacity=30); -moz-border-radius: 8px; -webkit-border-radius: 8px; }/* Accordion
+.ui-widget-shadow { margin: -8px 0 0 -8px; padding: 8px; background: #aaaaaa url(images/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; opacity: .30;filter:Alpha(Opacity=30); -moz-border-radius: 8px; -webkit-border-radius: 8px; }
+/* Accordion
 ----------------------------------*/
 .ui-accordion .ui-accordion-header { cursor: pointer; position: relative; margin-top: 1px; zoom: 1; }
 .ui-accordion .ui-accordion-li-fix { display: inline; }
@@ -288,7 +289,8 @@
 .ui-accordion .ui-accordion-header a { display: block; font-size: 1em; padding: .5em .5em .5em 2.2em; }
 .ui-accordion .ui-accordion-header .ui-icon { position: absolute; left: .5em; top: 50%; margin-top: -8px; }
 .ui-accordion .ui-accordion-content { padding: 1em 2.2em; border-top: 0; margin-top: -2px; position: relative; top: 1px; margin-bottom: 2px; overflow: auto; display: none; }
-.ui-accordion .ui-accordion-content-active { display: block; }/* Datepicker
+.ui-accordion .ui-accordion-content-active { display: block; }
+/* Datepicker
 ----------------------------------*/
 .ui-datepicker { width: 17em; padding: .2em .2em 0; }
 .ui-datepicker .ui-datepicker-header { position:relative; padding:.2em 0; }
@@ -349,7 +351,8 @@
     left: -4px; /*must have*/
     width: 200px; /*must have*/
     height: 200px; /*must have*/
-}/* Dialog
+}
+/* Dialog
 ----------------------------------*/
 .ui-dialog { position: relative; padding: .2em; width: 300px; }
 .ui-dialog .ui-dialog-titlebar { padding: .5em .3em .3em 1em; position: relative;  }
@@ -365,7 +368,8 @@
 /* Progressbar
 ----------------------------------*/
 .ui-progressbar { height:2em; text-align: left; }
-.ui-progressbar .ui-progressbar-value {margin: -1px; height:100%; }/* Resizable
+.ui-progressbar .ui-progressbar-value {margin: -1px; height:100%; }
+/* Resizable
 ----------------------------------*/
 .ui-resizable { position: relative;}
 .ui-resizable-handle { position: absolute;font-size: 0.1px;z-index: 99999; display: block;}
@@ -377,7 +381,8 @@
 .ui-resizable-se { cursor: se-resize; width: 12px; height: 12px; right: 1px; bottom: 1px; }
 .ui-resizable-sw { cursor: sw-resize; width: 9px; height: 9px; left: -5px; bottom: -5px; }
 .ui-resizable-nw { cursor: nw-resize; width: 9px; height: 9px; left: -5px; top: -5px; }
-.ui-resizable-ne { cursor: ne-resize; width: 9px; height: 9px; right: -5px; top: -5px;}/* Slider
+.ui-resizable-ne { cursor: ne-resize; width: 9px; height: 9px; right: -5px; top: -5px;}
+/* Slider
 ----------------------------------*/
 .ui-slider { position: relative; text-align: left; }
 .ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
@@ -393,7 +398,8 @@
 .ui-slider-vertical .ui-slider-handle { left: -.3em; margin-left: 0; margin-bottom: -.6em; }
 .ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
 .ui-slider-vertical .ui-slider-range-min { bottom: 0; }
-.ui-slider-vertical .ui-slider-range-max { top: 0; }/* Tabs
+.ui-slider-vertical .ui-slider-range-max { top: 0; }
+/* Tabs
 ----------------------------------*/
 .ui-tabs { padding: .2em; zoom: 1; }
 .ui-tabs .ui-tabs-nav { list-style: none; position: relative; padding: .2em .2em 0; }
@@ -404,3 +410,11 @@
 .ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; } /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
 .ui-tabs .ui-tabs-panel { padding: 1em 1.4em; display: block; border-width: 0; background: none; }
 .ui-tabs .ui-tabs-hide { display: none !important; }
+
+/* Titania UI Styling
+----------------------------------*/
+a.ui-button { padding: .4em 1em .4em 20px; text-decoration: none; position: relative; }
+a.ui-button span.ui-icon { margin: 0 5px 0 0; position: absolute; left: .2em; top: 50%; margin-top: -8px; }
+a.ui-button:hover { border: 1px solid #0a8ed0; background: #e9e9e9 url(images/ui-bg_inset-hard_100_e9e9e9_1x100.png) 50% 50% repeat-x; font-weight: bold; color: #D31141; outline: none; text-decoration: none; }
+a.ui-button:hover .ui-icon {background-image: url(images/ui-icons_bc2a4d_256x240.png); }
+p.ui-button { margin: 1em 0; }

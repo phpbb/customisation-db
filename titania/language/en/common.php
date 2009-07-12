@@ -36,8 +36,12 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'CREATE_CONTRIBUTION' => 'Create Contribution',
+	'ACCESS'					=> 'Access',
+	'ACCESS_TEAMS'				=> 'Teams',
+	'ACCESS_AUTHORS'			=> 'Authors',
+	'ACCESS_PUBLIC'				=> 'Public',
 	'AUTHOR_BY'					=> 'By %s',
+	'AUTHOR_PROFILE'			=> 'Your Author Profile',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
 
@@ -57,6 +61,7 @@ $lang = array_merge($lang, array(
 	'CAT_STYLES'				=> 'Styles',
 	'CONFIRM_PURGE_CACHE'		=> 'Are you sure you want to purge the cache?',
 	'CONTRIBUTIONS'				=> 'Contributions',
+	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
 
 	'DESCRIPTION'				=> 'Description',
@@ -64,30 +69,26 @@ $lang = array_merge($lang, array(
 	'DOWNLOAD_ACCESS_DENIED'	=> 'You are not allowed to download the requested file.',
 	'DOWNLOAD_NOT_FOUND'		=> 'The requested file could not be found.',
 
+	'EDIT'						=> 'Edit',
+
 	'LANGUAGE_PACK'				=> 'Language Pack',
 	'LIST'						=> 'List',
 
 	'MODIFICATION'				=> 'Modification',
+	'MOVE_UP'					=> 'Move up',
+	'MOVE_DOWN'					=> 'Move down',
+
+	'NO_DESC'					 => 'You have to enter the description.',
 
 	'PURGE_CACHE'				=> 'Purge Cache',
 
 	'RATING'					=> 'Rating',
 	'REMOVE_RATING'				=> 'Remove Rating',
+	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
 
+	'SITE_INDEX'				=> 'Site Index',
 	'SNIPPET'					=> 'Snippet',
 	'STYLE'						=> 'Style',
 
-	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
-
-	'MOVE_UP'				=> 'Move up',
-	'MOVE_DOWN'				=> 'Move down',
-	'EDIT'					=> 'Edit',
-
-	'ACCESS_TEAMS'				=> 'Teams',
-	'ACCESS_AUTHORS'			=> 'Authors',
-	'ACCESS_PUBLIC'				=> 'Public',
-
-	'ACCESS'				=> 'Access',
-
-	'NO_DESC'                              => 'You have to enter the description.',
+	'TITANIA_INDEX'				=> 'Customisation Database',
 ));

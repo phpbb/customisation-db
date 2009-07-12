@@ -18,6 +18,7 @@ if (!defined('IN_TITANIA'))
 
 define('TITANIA_VERSION', '0.1.9');
 
+define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 
 // Include titania class
 require TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT;
