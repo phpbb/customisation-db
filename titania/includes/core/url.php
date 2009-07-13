@@ -24,14 +24,30 @@ class titania_url
 	/**
 	* Separator used in the URL
 	*
-	* @var mixed
+	* @var string
 	*/
 	private $separator = '-';
 
 	/**
 	* Root URL, the Root URL to the base
+	*
+	* @var string
 	*/
-	public $root_url = '';
+	public $root_url;
+
+	/**
+	* Parameters pulled from the current URL the user is accessing
+	*
+	* @var array
+	*/
+	public $params = array();
+
+	/**
+	* Current page we are on (minus all the parameters)
+	*
+	* @var string
+	*/
+	public $current_page;
 
 	/**
 	* Build URL by appending the needed parameters to a base URL
@@ -128,8 +144,11 @@ class titania_url
 	{
 		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
 
-		// Remove everything before the last \
+		// Remove everything before the last /
 		$args = substr($url, (strrpos($url, '/') + 1));
+
+		// Store the current page
+		$this->current_page = substr($url, 0, (strrpos($url, '/') + 1));
 
 		// Split up the arguments
 		$args = explode($this->separator, $args);
@@ -145,6 +164,7 @@ class titania_url
 			$name = $args[$i];
 			$value = $args[($i + 1)];
 
+			$this->params[$name] = $value;
 			$_GET[$name] = $_REQUEST[$name] = $value;
 		}
 	}

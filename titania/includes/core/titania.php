@@ -384,36 +384,98 @@ class titania
 			));
 		}
 
-		// admin requested the cache to be purged, ensure they have permission and purge the cache.
-		if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get('a_'))
+		// Output page creation time
+		if (defined('DEBUG'))
 		{
-			if (confirm_box(true))
-			{
-				titania::$cache->purge();
+			global $starttime;
+			$mtime = explode(' ', microtime());
+			$totaltime = $mtime[0] + $mtime[1] - $starttime;
 
-				self::error_box('SUCCESS', phpbb::$user->lang['CACHE_PURGED'] . self::back_link('', '', array('cache')));
+			if (!empty($_REQUEST['explain']) && phpbb::$auth->acl_get('a_') && defined('DEBUG_EXTRA') && method_exists(phpbb::$db, 'sql_report'))
+			{
+				// gotta do a rather nasty hack here, but it works and the page is killed after the display output, so no harm to anything else
+				$GLOBALS['phpbb_root_path'] = self::$absolute_board;
+				phpbb::$db->sql_report('display');
 			}
-			else
-			{
-				$s_hidden_fields = build_hidden_fields(array(
-					'cache'		=> 'purge',
-				));
 
-				confirm_box(false, phpbb::$user->lang['CONFIRM_PURGE_CACHE'], $s_hidden_fields);
+			$debug_output = sprintf('Time : %.3fs | ' . phpbb::$db->sql_num_queries() . ' Queries | GZIP : ' . ((phpbb::$config['gzip_compress'] && @extension_loaded('zlib')) ? 'On' : 'Off') . ((phpbb::$user->load) ? ' | Load : ' . phpbb::$user->load : ''), $totaltime);
+
+			if (phpbb::$auth->acl_get('a_') && defined('DEBUG_EXTRA'))
+			{
+				if (function_exists('memory_get_usage'))
+				{
+					if ($memory_usage = memory_get_usage())
+					{
+						global $base_memory_usage;
+						$memory_usage -= $base_memory_usage;
+						$memory_usage = get_formatted_filesize($memory_usage);
+
+						$debug_output .= ' | Memory Usage: ' . $memory_usage;
+					}
+				}
+
+				$debug_output .= ' | <a href="' . self::$url->append_url(self::$url->current_page, array_merge(self::$url->params, array('explain' => 1))) . '">Explain</a>';
 			}
 		}
 
 		phpbb::$template->assign_vars(array(
-			'U_PURGE_CACHE'		=> (phpbb::$auth->acl_get('a_')) ? append_sid(self::$page, array_merge($_GET, array('cache' => 'purge'))) : '',
+			'DEBUG_OUTPUT'			=> (defined('DEBUG')) ? $debug_output : '',
+			'TRANSLATION_INFO'		=> (!empty(phpbb::$user->lang['TRANSLATION_INFO'])) ? phpbb::$user->lang['TRANSLATION_INFO'] : '',
+
+			'U_ACP'					=> (phpbb::$auth->acl_get('a_') && !empty(phpbb::$user->data['is_registered'])) ? append_sid(self::$absolute_board . 'adm/index.' . PHP_EXT, false, true, phpbb::$user->session_id) : '',
+			'U_PURGE_CACHE'			=> (phpbb::$auth->acl_get('a_')) ? self::$url->append_url(self::$url->current_page, array_merge(self::$url->params, array('cache' => 'purge'))) : '',
 		));
 
-		page_footer($run_cron);
+		// Call cron-type script
+		if (!defined('IN_CRON') && $run_cron && !phpbb::$config['board_disable'])
+		{
+			$cron_type = '';
+
+			if (self::$time - phpbb::$config['queue_interval'] > phpbb::$config['last_queue_run'] && !defined('IN_ADMIN') && file_exists(PHPBB_ROOT_PATH . 'cache/queue.' . PHP_EXT))
+			{
+				// Process email queue
+				$cron_type = 'queue';
+			}
+			else if (method_exists(phpbb::$cache, 'tidy') && self::$time - phpbb::$config['cache_gc'] > phpbb::$config['cache_last_gc'])
+			{
+				// Tidy the cache
+				$cron_type = 'tidy_cache';
+			}
+			else if (self::$time - phpbb::$config['warnings_gc'] > phpbb::$config['warnings_last_gc'])
+			{
+				$cron_type = 'tidy_warnings';
+			}
+			else if (self::$time - phpbb::$config['database_gc'] > phpbb::$config['database_last_gc'])
+			{
+				// Tidy the database
+				$cron_type = 'tidy_database';
+			}
+			else if (self::$time - phpbb::$config['search_gc'] > phpbb::$config['search_last_gc'])
+			{
+				// Tidy the search
+				$cron_type = 'tidy_search';
+			}
+			else if (self::$time - phpbb::$config['session_gc'] > phpbb::$config['session_last_gc'])
+			{
+				$cron_type = 'tidy_sessions';
+			}
+
+			if ($cron_type)
+			{
+				phpbb::$template->assign_var('RUN_CRON_TASK', '<img src="' . append_sid(self::$absolute_board . 'cron.' . PHP_EXT, 'cron_type=' . $cron_type) . '" width="1" height="1" alt="cron" />');
+			}
+		}
+
+		phpbb::$template->display('body');
+
+		garbage_collection();
+		exit_handler();
 	}
 
 	/**
 	 * Generate HTML of to the previous or a specified page.
 	 *
-	 * @param string $redirect optional -- redirect URL absolute or relative path.
+	 * @param string $redirect -- redirect URL absolute or relative path.
 	 * @param string $l_redirect optional -- LANG string e.g.: 'RETURN_TO_MODS'
 	 *
 	 * @return HTML link string
@@ -604,7 +666,7 @@ class titania
 		}
 		else
 		{
-			$u_action = reapply_sid($phpbb_root_path . str_replace('&', '&amp;', phpbb::$user->page['page']));
+			$u_action = reapply_sid(PHPBB_ROOT_PATH . str_replace('&', '&amp;', phpbb::$user->page['page']));
 			$u_action .= ((strpos($u_action, '?') === false) ? '?' : '&amp;') . 'confirm_key=' . $confirm_key;
 		}
 
@@ -614,8 +676,8 @@ class titania
 
 			'YES_VALUE'			=> phpbb::$user->lang['YES'],
 			'S_CONFIRM_ACTION'	=> $u_action,
-			'S_HIDDEN_FIELDS'	=> $hidden . $s_hidden_fields)
-		);
+			'S_HIDDEN_FIELDS'	=> $hidden . $s_hidden_fields,
+		));
 
 		$sql = 'UPDATE ' . USERS_TABLE . " SET user_last_confirm_key = '" . phpbb::$db->sql_escape($confirm_key) . "'
 			WHERE user_id = " . phpbb::$user->data['user_id'];
