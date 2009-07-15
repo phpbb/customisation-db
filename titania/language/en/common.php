@@ -91,4 +91,6 @@ $lang = array_merge($lang, array(
 	'STYLE'						=> 'Style',
 
 	'TITANIA_INDEX'				=> 'Customisation Database',
+	
+	'SELECT_CATEGORY'			=> '-- Select category --',
 ));

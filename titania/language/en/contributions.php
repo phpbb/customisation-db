@@ -42,14 +42,18 @@ $lang = array_merge($lang, array(
 	'CONTRIB_DESCRIPTION'			=> 'Contribution Description',
 	'CONTRIB_DETAILS'				=> 'Contribution Details',
 	'CONTRIB_FAQ'					=> 'FAQ',
+	'CONTRIB_TYPE'					=> 'Contribution Type',
+	'CONTRIB_CATEGORY'				=> 'Contribution Category',
 	'CONTRIB_NAME'					=> 'Contribution',
+	'CONTRIB_UNIQUE_NAME'			=> 'Contribution Unique Name',
 	'CONTRIB_RELEASE_DATE'			=> 'Release date',
 	'CONTRIB_SUPPORT'				=> 'Discussion/Support',
 	'CONTRIB_TITLE'					=> 'Contribution Title',
 	'CONTRIB_UPDATE_DATE'			=> 'Last updated',
 	'CONTRIBUTIONS'					=> 'Contributions',
 	'CONTRIB_NOT_FOUND'				=> 'The contribution you requested could not be found.',
-
+	'CONTRIB_NAME_EXISTS'			=> 'The unique name has already been reserved.',
+	
 	'DOWNLOADS'						=> 'Downloads',
 	'DOWNLOADS_PER_DAY'				=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'				=> 'Total Downloads',
@@ -57,4 +61,10 @@ $lang = array_merge($lang, array(
 	'DOWNLOAD_CHECKSUM'				=> 'MD5 checksum',
 
 	'ERROR_CONTRIB_EMAIL_FRIEND'	=> 'You are not permitted to recommend this contribution to someone else.',
+	
+	'EMPTY_CONTRIB_NAME'			=> 'Enter the contrib name',
+	'EMPTY_CONTRIB_DESC'			=> 'Enter the contrib description',
+	'EMPTY_CONTRIB_UNIQUE_NAME'		=> 'Enter your proposal for unique name for the contrib',
+	
+	'SELECT_CONTRIB_TYPE'			=> '-- Select contribution type --',
 ));

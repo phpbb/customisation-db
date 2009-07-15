@@ -114,9 +114,7 @@ class titania_contribution extends titania_database_object
 		{
 			$this->generate_text_for_storage(false, false, false);
 		}
-
-		$this->contrib_name_clean = utf8_clean_string($this->contrib_name);
-
+		
 		return parent::submit();
 	}
 
@@ -260,7 +258,7 @@ class titania_contribution extends titania_database_object
 	 */
 	private function generate_text_for_display()
 	{
-		return generate_text_for_display($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_bitfield, $this->contrib_desc_options);
+		$this->contrib_desc = generate_text_for_display($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_bitfield, $this->contrib_desc_options);
 	}
 
 	/**
@@ -270,7 +268,26 @@ class titania_contribution extends titania_database_object
 	 */
 	private function generate_text_for_edit()
 	{
-		return generate_text_for_edit($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_options);
+		decode_message($this->contrib_desc, $this->contrib_desc_uid);
+	}
+	
+	/**
+	 * Return contrib description
+	 *
+	 * @return string
+	 */
+	public function get_text($editable = false)
+	{
+		if ($editable)
+		{
+			$this->generate_text_for_edit();
+		}
+		else
+		{
+			$this->generate_text_for_display();
+		}
+		
+		return $this->contrib_desc;
 	}
 
 	/**
