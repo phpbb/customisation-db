@@ -431,7 +431,7 @@ $versions = array(
 			array('ROLE_USER_STANDARD', array('titania_contrib_submit')),
 		),
 	),
-	
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

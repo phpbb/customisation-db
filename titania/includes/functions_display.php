@@ -143,16 +143,35 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 		break;
 
 		case 'category' :
-			$sql = 'SELECT * FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' cic, ' . TITANIA_CONTRIBS_TABLE . ' c, ' . USERS_TABLE . ' u
-				WHERE cic.category_id = ' . (int) $id . '
-					AND c.contrib_id = cic.contrib_id
-					AND u.user_id = c.contrib_user_id
-					AND c.contrib_visible = 1
-				ORDER BY c.contrib_id DESC';
+			$sql = phpbb::$db->sql_build_query('SELECT', array(
+				// DO NOT change to *, we do not need all rows from ANY table with the query!
+				'SELECT'	=> 'c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, u.username, u.user_colour, u.username_clean',
+
+				'FROM'		=> array(
+					TITANIA_CONTRIB_IN_CATEGORIES_TABLE 	=> 'cic',
+				),
+
+				'LEFT_JOIN'	=> array(
+					array(
+						'FROM'	=> array(TITANIA_CONTRIBS_TABLE	=> 'c'),
+						'ON'	=> 'cic.contrib_id = c.contrib_id'
+					),
+					array(
+						'FROM'	=> array(USERS_TABLE	=> 'u'),
+						'ON'	=> 'u.user_id = c.contrib_user_id'
+					),
+				),
+
+				'WHERE'		=> 'cic.category_id = ' . (int) $id . '
+					AND c.contrib_visible = 1',
+
+				'ORDER_BY'	=> 'c.contrib_id DESC',
+			));
 		break;
 	}
 
-	$result = phpbb::$db->sql_query($sql);
+	// @todo Build sorting and limits
+	$result = phpbb::$db->sql_query_limit($sql, 25);
 
 	$contrib_type = 0;
 	while ($row = phpbb::$db->sql_fetchrow($result))
