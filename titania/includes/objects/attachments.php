@@ -131,6 +131,8 @@ class titania_attachments extends titania_database_object
 	public function create()
 	{
 		// @todo
+		// Step 1
+		// - Check if we have a file and if we do setup file_uploader
 	}
 
 	/**

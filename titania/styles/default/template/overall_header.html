@@ -48,10 +48,10 @@
 // ]]>
 </script>
 <script type="text/javascript" src="{T_TITANIA_THEME_PATH}/js/forum_fn.js"></script>
-<script type="text/javascript" src="{T_TITANIA_THEME_PATH}/js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="{T_TITANIA_THEME_PATH}/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery/jquery-ui-1.7.2.custom.min.js"></script>
 
-<script type="text/javascript" src="{T_TITANIA_TEMPLATE_PATH}/ratings.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}ratings.js"></script>
 
 <base href="{U_BASE_URL}" />
 
@@ -59,6 +59,11 @@
 <link href="{T_STYLESHEET_LINK}" rel="stylesheet" type="text/css" media="screen, projection" />
 <link href="{T_TITANIA_STYLESHEET}" rel="stylesheet" type="text/css" media="screen, projection" />
 <link href="{T_TITANIA_THEME_PATH}/jquery-ui-1.7.2.css" rel="stylesheet" type="text/css" media="screen, projection" />
+
+<!-- IF S_LIGHTBOX -->
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.lightbox-0.5.js"></script>
+<link href="{TITANIA_ROOT_PATH}css/jquery.lightbox-0.5.css" rel="stylesheet" type="text/css" media="screen, projection" />
+<!-- ENDIF -->
 
 <!-- IF S_CONTENT_DIRECTION eq 'rtl' -->
 	<link href="{T_TITANIA_THEME_PATH}/bidi.css" rel="stylesheet" type="text/css" media="screen, projection" />

@@ -89,10 +89,8 @@ switch ($action)
 				$faq->submit();
 
 				$message = ($action == 'edit') ? phpbb::$user->lang['FAQ_EDITED'] : phpbb::$user->lang['FAQ_CREATED'];
-				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ'], '<a href="' . $faq->get_url() . '">', '</a>');
-				$message .= '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_FAQ_LIST'], '<a href="' . titania::$contrib->get_url('faq') . '">', '</a>');
 
-				trigger_error($message);
+				titania::error_box($message, TITANIA_SUCCESS);
 			}
 		}
 
