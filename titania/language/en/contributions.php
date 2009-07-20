@@ -36,7 +36,6 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'NEW_TOPIC' => 'New Topic',
 	'CONTRIB'						=> 'Contribution',
 	'CONTRIB_AUTHOR'				=> 'Contribution Author',
 	'CONTRIB_DESCRIPTION'			=> 'Contribution Description',
@@ -53,7 +52,7 @@ $lang = array_merge($lang, array(
 	'CONTRIBUTIONS'					=> 'Contributions',
 	'CONTRIB_NOT_FOUND'				=> 'The contribution you requested could not be found.',
 	'CONTRIB_NAME_EXISTS'			=> 'The unique name has already been reserved.',
-	
+
 	'DOWNLOADS'						=> 'Downloads',
 	'DOWNLOADS_PER_DAY'				=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'				=> 'Total Downloads',
@@ -61,10 +60,15 @@ $lang = array_merge($lang, array(
 	'DOWNLOAD_CHECKSUM'				=> 'MD5 checksum',
 
 	'ERROR_CONTRIB_EMAIL_FRIEND'	=> 'You are not permitted to recommend this contribution to someone else.',
-	
+
 	'EMPTY_CONTRIB_NAME'			=> 'Enter the contrib name',
 	'EMPTY_CONTRIB_DESC'			=> 'Enter the contrib description',
 	'EMPTY_CONTRIB_UNIQUE_NAME'		=> 'Enter your proposal for unique name for the contrib',
-	
+
+	'LOGIN_EXPLAIN_CONTRIB'			=> 'In order to create a new contribution you need to be registered',
+
+	'NEW_TOPIC' 					=> 'New Topic',
+	'NEW_CONTRIBUTION'				=> 'New Contribution',
+
 	'SELECT_CONTRIB_TYPE'			=> '-- Select contribution type --',
 ));

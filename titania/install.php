@@ -19,6 +19,12 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 titania::add_lang('install');
 
+// Just to be on the safe side, add a php version check.
+if (version_compare(PHP_VERSION, '5.2.0') < 0)
+{
+	die('You are running an unsupported PHP version. Please upgrade to PHP 5.2.0 or higher before trying to install Titania');
+}
+
 if (!file_exists(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT))
 {
 	trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
@@ -32,7 +38,6 @@ if (titania::$config->table_prefix == $GLOBALS['table_prefix'])
 
 $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
-
 
 $versions = array(
 	'0.1.0'	=> array(
@@ -432,6 +437,11 @@ $versions = array(
 		),
 	),
 
+	'0.1.10' => array(
+		// Add Titania ext groups and default allowed extentions for these groups.
+		'custom'	=> 'titania_ext_groups',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
@@ -642,4 +652,159 @@ function titania_data($action, $version)
 	$umil->table_row_insert(TITANIA_CONTRIB_FAQ_TABLE, $faq);
 }
 
+function titania_ext_groups($action, $version)
+{
+	global $umil;
+
+	switch ($action)
+	{
+		case 'install':
+		case 'update':
+			// Add Titania ext groups.
+			$sql_ary = array(
+				array(
+					'group_name'		=> 'Titania Contributions',
+					'cat_id'			=> 0,
+					'allow_group'		=> 1,
+					'download_mode'		=> 1,
+					'upload_icon'		=> 'zip.png',
+					'max_filesize'		=> 0,
+					'allowed_forums'	=> '',
+					'allow_in_pm'		=> 0,
+				),
+				array(
+					'group_name'		=> 'Titania Screenshots',
+					'cat_id'			=> 0,
+					'allow_group'		=> 1,
+					'download_mode'		=> 1,
+					'upload_icon'		=> '',
+					'max_filesize'		=> 0,
+					'allowed_forums'	=> '',
+					'allowed_forums'	=> '',
+					'allow_in_pm'		=> 0,
+				)
+			);
+			$umil->table_row_insert(EXTENSION_GROUPS_TABLE, $sql_ary);
+
+			// Get group ids for newly created groups.
+			$sql = 'SELECT group_id, group_name
+				FROM ' . EXTENSION_GROUPS_TABLE . "
+				WHERE group_name = 'Titania Contributions'
+					OR group_name = 'Titania Screenshots'";
+			$result = phpbb::$db->sql_query($sql);
+
+			$titania_ext_groups = array();
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$titania_ext_groups[$row['group_name']] = $row['group_id'];
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			// Add default allowed extentsions to newly created groups.
+			// First we will try to find the default phpBB image and archive extenstion groups. If we find them, we will
+			// use the same file extensions that are allowed for the coresponding groups for Titania, but the site may want to configure
+			// it differntly than in the forums for Titania, which is why we have the seperate Titania extenstion groups.
+
+			// See if we can find the default phpBB groups.
+			$sql_ary = array(
+				'SELECT'	=> 'g.group_name, e.extension',
+
+				'FROM'		=> array(EXTENSION_GROUPS_TABLE 	=> 'g'),
+
+				'LEFT_JOIN'	=> array(
+					array(
+						'FROM'	=> array(EXTENSIONS_TABLE 		=> 'e'),
+						'ON'	=> 'e.group_id = g.group_id'
+					),
+				),
+
+				'WHERE'		=> "g.group_name = 'Images'
+					OR g.group_name = 'Archives'",
+			);
+			$result = phpbb::$db->sql_query(phpbb::$db->sql_build_query('SELECT', $sql_ary));
+
+			$sql_ary = array(
+				'Titania Contributions'		=> array(),
+				'Titania Screenshots'		=> array(),
+			);
+
+			// We found them!
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$which = ($row['group_name'] == 'Archives') ? 'Titania Contributions' : 'Titania Screenshots';
+
+				$sql_ary[$which][] = array(
+					'group_id'		=> $titania_ext_groups[$which],
+					'extension'		=> $row['extension'],
+				);
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			// Check to see if we have empty sql_ary. If the array is empty, we know that the default phpBB ext groups could not be
+			// found and we need to just use some default extensions.
+			if (!sizeof($sql_ary['Titania Contributions']))
+			{
+				// Only allow zip for contributions.
+				$sql_ary['Titania Contributions'] = array(
+					array(
+						'group_id'	=> $titania_ext_groups['Titania Contributions'],
+						'extension'	=> 'zip'
+					)
+				);
+			}
+
+			// No image extensions?
+			if (!sizeof($sql_ary['Titania Screenshots']))
+			{
+				$group_id = $titania_ext_groups['Titania Screenshots'];
+
+				// Only allow zip for contributions.
+				$sql_ary['Titania Screenshots'] = array(
+					array(
+						'group_id'	=> $group_id,
+						'extension'	=> 'png'
+					),
+					array(
+						'group_id' 	=> $group_id,
+						'extension'	=> 'gif'
+					),
+					array(
+						'group_id'	=> $group_id,
+						'extension'	=> 'jpg'
+					)
+				);
+			}
+
+			// Insert extensions for Titania Screenshots
+			$umil->table_row_insert(EXTENSIONS_TABLE, $sql_ary['Titania Screenshots']);
+
+			// Insert extensions for Titania Contributions
+			$umil->table_row_insert(EXTENSIONS_TABLE, $sql_ary['Titania Contributions']);
+		break;
+
+		case 'uninstall':
+			// Get group ids Titania ext groups.
+			$sql = 'SELECT group_id, group_name
+				FROM ' . EXTENSION_GROUPS_TABLE . "
+				WHERE group_name = 'Titania Contributions'
+					OR group_name = 'Titania Screenshots'";
+			$result = phpbb::$db->sql_query($sql);
+
+			$titania_ext_groups = array();
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$titania_ext_groups[$row['group_name']] = $row['group_id'];
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			// Delete extensions.
+			$umil->table_row_remove(EXTENSIONS_TABLE, array('group_id' => $titania_ext_groups['Titania Contributions']));
+			$umil->table_row_remove(EXTENSIONS_TABLE, array('group_id' => $titania_ext_groups['Titania Screenshots']));
+
+			// Delete groups.
+			$umil->table_row_remove(EXTENSION_GROUPS_TABLE, array('group_id' => $titania_ext_groups['Titania Contributions']));
+			$umil->table_row_remove(EXTENSION_GROUPS_TABLE, array('group_id' => $titania_ext_groups['Titania Screenshots']));
+		break;
+	}
+}
 include(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT);

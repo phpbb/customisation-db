@@ -67,11 +67,12 @@ if(jQuery)(
 						settings = $.extend({
 						uploader:      'uploader.swf',
 						script:        'uploader.php',
+						stylesheet:	   '',
 						folder:        '',
-						height:        30,
+						height:        26,
 						width:         110,
 						cancelImg:     'cancel.png',
-						wmode:         'opaque',
+						wmode:         'transparent',
 						scriptAccess:  'sameDomain',
 						fileDataName:  'Filedata',
 						displayData:   'percentage',
@@ -91,6 +92,7 @@ if(jQuery)(
 					if (settings.buttonImg) data += '&buttonImg=' + escape(settings.buttonImg);
 					if (settings.buttonText) data += '&buttonText=' + escape(settings.buttonText);
 					if (settings.rollover) data += '&rollover=true';
+					if (settings.stylesheet) data += '&stylesheet=' + escape(settings.stylesheet)
 					data += '&script=' + settings.script;
 					data += '&folder=' + escape(settings.folder);
 					if (settings.scriptData) {
@@ -120,7 +122,7 @@ if(jQuery)(
 						<param name="swfversion" value="9.0.0.0" />\
 						</object>';
 					} else {
-						flashElement = '<embed src="' + settings.uploader + '?fileUploadID=' + $(this).attr("id") + data + '" quality="high" width="' + settings.width + '" height="' + settings.height + '" id="' + $(this).attr("id") + 'Uploader" class="fileUploaderBtn" name="' + $(this).attr("id") + 'Uploader" allowScriptAccess="' + settings.scriptAccess + '" wmode="' + settings.wmode + '" type="application/x-shockwave-flash" />';
+						flashElement = '<embed src="' + settings.uploader + '?fileUploadID=' + $(this).attr("id") + data + '" quality="high" width="' + settings.width + '" height="' + settings.height + '" id="' + $(this).attr("id") + 'Uploader" class="fileUploaderBtn ui-button ui-state-default ui-corner-all" name="' + $(this).attr("id") + 'Uploader" allowScriptAccess="' + settings.scriptAccess + '" wmode="' + settings.wmode + '" type="application/x-shockwave-flash" />';
 					}
 					if (settings.onInit() !== false) {
 						$(this).css('display','none');

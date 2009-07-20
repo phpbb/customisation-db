@@ -16,6 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+// Make sure we have DB class.
 if (!class_exists('titania_database_object'))
 {
 	require TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT;
@@ -23,6 +24,7 @@ if (!class_exists('titania_database_object'))
 
 /**
 * Class to abstract titania downloads.
+*
 * @package Titania
 */
 class titania_attachments extends titania_database_object
@@ -112,7 +114,7 @@ class titania_attachments extends titania_database_object
 			WHERE contrib_id = ' . $contrib_id .
 				(($validated) ? ' AND contrib_validated = 1' : '');
 		phpbb::$db->sql_query($sql);
-		$attachment_id = (int) phpbb::$db->sql_fetchfield($column);
+		$attachment_id = (int) phpbb::$db->sql_fetchfield('attachment_id');
 		phpbb::$db->sql_freeresult();
 
 		if ($attachment_id)
@@ -124,15 +126,77 @@ class titania_attachments extends titania_database_object
 	}
 
 	/**
+	 * Displays an attachment
+	 *
+	 * @param int $attachment_id If false $this->attachment_id will be used.
+	 */
+	public function display($attachment_id = false)
+	{
+		if ($attachment_id)
+		{
+			$this->attachment_id = $attachment_id;
+		}
+
+		// Load attachment
+		parent::load();
+
+		// We assign block vars even though we only have one attachment because the template file is setup for multiple files.
+		phpbb::$template->assign_block_vars('file', array(
+			'FILE_ID'			=> $this->attachment_id,
+			'REAL_FILE_NAME'	=> $this->real_filename,
+			'FILE_NAME'			=> str_replace('.' . $this->extension, '', $this->real_filename),
+			'FILE_EXT'			=> $this->extension,
+			'FILE_DATE'			=> phpbb::$user->format_date($this->filetime),
+			'FILE_MIMETYPE'		=> $this->mimetype,
+			'FILE_TITLE'		=> $this->real_filename,
+		));
+	}
+
+	/**
 	* Create a new download/upload
 	*
-	* @return void
+	* @return array $filedata
 	*/
 	public function create()
 	{
+		if (!class_exists('uploader'))
+		{
+			include TITANIA_ROOT . 'includes/tools/uploader.' . PHP_EXT;
+		}
+
+		// Setup uploader tool.
+		$uploader = new titania_uploader('uploadify');
+
+		// @todo Handle errors such as incorrect file extension.
+		$filedata = $uploader->upload_file();
+
+		if (isset($file_data['error']))
+		{
+			return $filedata;
+		}
+
+		$this->attachment_type		= TITANIA_DOWNLOAD_CONTRIB;
+		$this->physical_filename	= $filedata['physical_filename'];
+		$this->real_filename		= $filedata['real_filename'];
+		$this->extension			= $filedata['extension'];
+		$this->mimetype				= $filedata['mimetype'];
+		$this->filesize				= $filedata['filesize'];
+		$this->filetime				= $filedata['filetime'];
+		$this->thumbnail			= 0;
+
+		parent::submit();
+
+		return true;
+	}
+
+	/**
+	 * Removes file from server and database.
+	 *
+	 * @return void
+	 */
+	public function delete()
+	{
 		// @todo
-		// Step 1
-		// - Check if we have a file and if we do setup file_uploader
 	}
 
 	/**

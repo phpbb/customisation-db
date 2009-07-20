@@ -114,7 +114,7 @@ class titania_contribution extends titania_database_object
 		{
 			$this->generate_text_for_storage(false, false, false);
 		}
-		
+
 		return parent::submit();
 	}
 
@@ -270,7 +270,7 @@ class titania_contribution extends titania_database_object
 	{
 		decode_message($this->contrib_desc, $this->contrib_desc_uid);
 	}
-	
+
 	/**
 	 * Return contrib description
 	 *
@@ -286,7 +286,7 @@ class titania_contribution extends titania_database_object
 		{
 			$this->generate_text_for_display();
 		}
-		
+
 		return $this->contrib_desc;
 	}
 

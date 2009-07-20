@@ -1,0 +1,79 @@
+/**
+ *
+ * Original author: Ronnie Garcia, Travis Nickels
+ * Modified by: phpBB Customisation Database Team
+ * 
+ * @version $Id$
+ * uploadify.css
+ */
+ 
+#fileInputUploader {
+	padding-top: 5px;
+	vertical-align:middle;
+}
+
+.fileUploadQueueItem {
+	font: 11px Verdana, Geneva, sans-serif;
+	background-color: #F5F5F5;
+	border: 3px solid #E5E5E5;
+	margin-top: 5px;
+	padding: 10px;
+	width: 97%;
+}
+
+.fileUploadQueueItem .cancel {
+	float: right;
+}
+
+.fileUploadProgress {
+	background-color: #FFFFFF;
+	border-top: 1px solid #808080;
+	border-left: 1px solid #808080;
+	border-right: 1px solid #C5C5C5;
+	border-bottom: 1px solid #C5C5C5;
+	margin-top: 10px;
+	width: 100%;
+}
+
+.fileUploadProgressBar {
+	background-color: #0099FF;
+}
+
+.file_info {
+	float: left;
+	display: block;
+	width: 100%;
+}
+
+.file_info img {
+	float: left;
+	padding:30px 50px;
+}
+
+.file_info ul {
+	list-style: none;
+	margin-left:40%;
+}
+
+.file_info li {
+	padding:4px 10px 12px;
+	font-size:11px;
+	line-height:20px;
+	margin-bottom:9px;
+}
+
+.file_info_small {
+	font-size: 14px;
+}
+
+.file_info_small ul {
+	list-style: none;
+}
+
+.file_info_small li {
+	float: left;
+}
+
+.file_info_small .float_right {
+	float: right;
+}
