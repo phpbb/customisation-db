@@ -44,7 +44,7 @@ $lang = array_merge($lang, array(
 	'CONTRIB_TYPE'					=> 'Contribution Type',
 	'CONTRIB_CATEGORY'				=> 'Contribution Category',
 	'CONTRIB_NAME'					=> 'Contribution',
-	'CONTRIB_UNIQUE_NAME'			=> 'Contribution Unique Name',
+	'CONTRIB_PERMALINK'				=> 'Contribution Permalink',
 	'CONTRIB_RELEASE_DATE'			=> 'Release date',
 	'CONTRIB_SUPPORT'				=> 'Discussion/Support',
 	'CONTRIB_TITLE'					=> 'Contribution Title',
@@ -53,6 +53,8 @@ $lang = array_merge($lang, array(
 	'CONTRIB_NOT_FOUND'				=> 'The contribution you requested could not be found.',
 	'CONTRIB_NAME_EXISTS'			=> 'The unique name has already been reserved.',
 
+	'CONTRIB_CREATED'				=> 'The contribution has been created successfully',
+	
 	'DOWNLOADS'						=> 'Downloads',
 	'DOWNLOADS_PER_DAY'				=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'				=> 'Total Downloads',
@@ -63,7 +65,7 @@ $lang = array_merge($lang, array(
 
 	'EMPTY_CONTRIB_NAME'			=> 'Enter the contrib name',
 	'EMPTY_CONTRIB_DESC'			=> 'Enter the contrib description',
-	'EMPTY_CONTRIB_UNIQUE_NAME'		=> 'Enter your proposal for unique name for the contrib',
+	'EMPTY_CONTRIB_PERMALINK'		=> 'Enter your proposal for permalink for the contrib',
 
 	'LOGIN_EXPLAIN_CONTRIB'			=> 'In order to create a new contribution you need to be registered',
 

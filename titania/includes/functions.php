@@ -74,14 +74,14 @@ function contrib_type_select($default = 0, $select_name = 'contrib_type')
 /*
  * Return false if the selected unique name has already reserved
  *
- * @param string $unique_name
+ * @param string $permalink
  * @return bool
  */ 
-function validate_contrib_unique_name($unique_name)
+function validate_permalink($permalink)
 {
 	$sql = 'SELECT contrib_id
 		FROM ' . TITANIA_CONTRIBS_TABLE . "
-		WHERE contrib_name_clean = '" . utf8_clean_string($unique_name) . "'";
+		WHERE contrib_name_clean = '" . utf8_clean_string($permalink) . "'";
 	$result = phpbb::$db->sql_query($sql);
 	$found = phpbb::$db->sql_fetchfield('contrib_id');
 	phpbb::$db->sql_freeresult($result);

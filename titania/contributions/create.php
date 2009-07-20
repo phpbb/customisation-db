@@ -26,7 +26,7 @@ $contrib = new titania_contribution();
 $submit = (isset($_POST['submit'])) ? true : false;
 
 $error = array();
-$contrib_unique_name = '';
+$contrib_permalink = '';
 $contrib_category = 0;
 
 titania::load_object('attachments');
@@ -36,10 +36,9 @@ if ($submit)
 {
 	$contrib->contrib_name 		= utf8_normalize_nfc(request_var('name', '', true));
 	$contrib->contrib_desc 		= utf8_normalize_nfc(request_var('description', '', true));
-	$contrib->contrib_user_id 	= phpbb::$user->data['user_id'];
 	$contrib_category			= request_var('contrib_category', 0);
 	$contrib->contrib_type		= request_var('contrib_type', 0);
-	$contrib_unique_name		= request_var('unique_name', '');
+	$contrib_permalink			= request_var('permalink', '');
 
 	if (!$contrib->contrib_type)
 	{
@@ -61,19 +60,20 @@ if ($submit)
 		$error[] = phpbb::$user->lang['EMPTY_CONTRIB_DESC'];
 	}
 
-	if (!$contrib_unique_name)
+	if (!$contrib_permalink)
 	{
-		$error[] = phpbb::$user->lang['EMPTY_CONTRIB_UNIQUE_NAME'];
+		$error[] = phpbb::$user->lang['EMPTY_CONTRIB_PERMALINK'];
 	}
 
-	if (!validate_contrib_unique_name($contrib_unique_name))
+	if (!validate_permalink($contrib_permalink))
 	{
 		$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
 	}
 
 	if (!sizeof($error))
 	{
-		$contrib->contrib_name_clean = utf8_clean_string($contrib_unique_name);
+		$contrib->contrib_user_id 		= phpbb::$user->data['user_id'];
+		$contrib->contrib_name_clean 	= utf8_clean_string($contrib_permalink);
 
 		$contrib->submit();
 
@@ -84,17 +84,19 @@ if ($submit)
 
 		phpbb::$db->sql_query($sql);
 
-		redirect($contrib->get_url());
+		meta_refresh(3, $contrib->get_url());
+		
+		titania::error_box('SUCCESS', 'CONTRIB_CREATED', TITANIA_SUCCESS);
 	}
 }
 
 $template->assign_vars(array(
-	'U_ACTION'					=> titania::$url->build_url('contributions/0/create'),
+	'U_ACTION'					=> titania::$url->build_url('contributions/create'),
 
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
 
 	'CONTRIB_NAME'				=> $contrib->contrib_name,
-	'CONTRIB_UNIQUE_NAME'		=> $contrib_unique_name,
+	'CONTRIB_PERMALINK'			=> $contrib_permalink,
 	'CONTRIB_DESC'				=> $contrib->get_text(true),
 	'CONTRIB_TYPE_SELECT'		=> contrib_type_select($contrib->contrib_type),
 	'CONTRIB_CATEGORY_SELECT'	=> contrib_category_select($contrib_category),
