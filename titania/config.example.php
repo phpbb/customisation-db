@@ -40,4 +40,9 @@ $config = array(
 	* @param	string	$titania_table_prefix	Table prefix
 	*/
 	'table_prefix' => 'customisation_',
+
+	/**
+	* Style Path (titania/style/ *path* /)
+	*/
+	'style' => 'default',
 );

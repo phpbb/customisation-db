@@ -57,8 +57,8 @@ $nav_ary = array(
 		'url'		=> titania::$author->get_url('contributions'),
 	),
 	'submit' => array(
-		'title'		=> 'NEW_CONTRIBUTION',
-		'url'		=> titania::$author->get_url('new'),
+		'title'		=> 'CREATE_CONTRIBUTION',
+		'url'		=> titania::$url->build_url('contributions/create'),
 		'auth'		=> (titania::$author->user_id == phpbb::$user->data['user_id']) ? true : false,
 	),
 );
