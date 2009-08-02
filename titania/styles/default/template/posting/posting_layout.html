@@ -1,0 +1,19 @@
+<h2><a href="{U_TITLE}">{L_TITLE}</a></h2>
+
+<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
+
+<!-- IF S_POST_REVIEW --><!-- INCLUDE posting/posting_review.html --><!-- ENDIF -->
+
+<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
+
+<!-- INCLUDE posting/posting_editor.html -->
+
+<!-- IF S_DISPLAY_REVIEW --><!-- INCLUDE posting/posting_topic_review.html --><!-- ENDIF -->
+
+</form>
+
+<script type="text/javascript">
+// <![CDATA[
+	subPanels(show_panel);
+// ]]>
+</script>

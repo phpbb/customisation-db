@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-titania::load_object(array('topic', 'post'));
+titania::load_object(array('topic', 'post', 'message'));
 
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
@@ -67,12 +67,22 @@ $action = request_var('action', '');
 switch ($action)
 {
 	case 'post' :
-		titania::page_header('CONTRIB_SUPPORT_ADD');
+		$post_object = new titania_post('normal');
+
+		$message = new titania_message($post_object);
+		$message->display();
+
+		titania::page_header('NEW_TOPIC');
+		titania::page_footer(true, 'contributions/contribution_support_post.html');
+	break;
+
+	case 'reply' :
+		titania::page_header('NEW_REPLY');
 		titania::page_footer(true, 'contributions/contribution_support_post.html');
 	break;
 
 	case 'edit' :
-		titania::page_header('CONTRIB_SUPPORT_EDIT');
+		titania::page_header('EDIT_MESSAGE');
 		titania::page_footer(true, 'contributions/contribution_support_post.html');
 	break;
 

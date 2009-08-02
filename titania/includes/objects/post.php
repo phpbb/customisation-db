@@ -329,7 +329,10 @@ class titania_post extends titania_database_object
 	 */
 	public function generate_text_for_edit()
 	{
-		return generate_text_for_edit($this->post_text, $this->post_text_uid, $this->post_text_options);
+		$text = $this->post_text;
+		decode_message($text, $this->post_text_uid);
+
+		return $text;
 	}
 
 	/**
