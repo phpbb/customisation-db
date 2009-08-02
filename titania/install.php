@@ -292,10 +292,10 @@ $versions = array(
 			array('ROLE_USER_STANDARD', array('titania_rate')),
 		),
 
-		'module_add' => array(
-			//array('titania', 0, 'TITANIA_CAT_MAIN'),
-			//array('titania', 'TITANIA_MAIN',	array('module_basename' => 'main'),		TITANIA_ROOT . 'modules/'),
-		),
+		/*'module_add' => array(
+			array('titania', 0, 'TITANIA_CAT_MAIN'),
+			array('titania', 'TITANIA_MAIN',	array('module_basename' => 'main'),		TITANIA_ROOT . 'modules/'),
+		),*/
 
 		'custom' => 'titania_data',
 
