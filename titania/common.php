@@ -64,7 +64,7 @@ if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version'])
 // admin requested the cache to be purged, ensure they have permission and purge the cache.
 if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get('a_'))
 {
-	if (confirm_box(true))
+	if (titania::confirm_box(true))
 	{
 		titania::$cache->purge();
 

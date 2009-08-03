@@ -120,7 +120,7 @@ switch ($action)
 			return;
 		}
 
-		if (confirm_box(true))
+		if (titania::confirm_box(true))
 		{
 			$faq->delete();
 

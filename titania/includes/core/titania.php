@@ -620,7 +620,7 @@ class titania
 
 		if ($check && $confirm)
 		{
-			$user_id = request_var('user_id', 0);
+			$user_id = request_var('confirm_uid', 0);
 			$session_id = request_var('sess', '');
 			$confirm_key = request_var('confirm_key', '');
 
@@ -642,10 +642,10 @@ class titania
 		}
 
 		$s_hidden_fields = build_hidden_fields(array(
-			'user_id'	=> phpbb::$user->data['user_id'],
-			'sess'		=> phpbb::$user->session_id,
-			'sid'		=> phpbb::$user->session_id)
-		);
+			'confirm_uid'	=> phpbb::$user->data['user_id'],
+			'sess'			=> phpbb::$user->session_id,
+			'sid'			=> phpbb::$user->session_id,
+		));
 
 		// generate activation key
 		$confirm_key = gen_rand_string(10);

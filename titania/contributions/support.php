@@ -87,7 +87,7 @@ switch ($action)
 	break;
 
 	case 'delete' :
-		if (confirm_box(true))
+		if (titania::confirm_box(true))
 		{
 
 		}
