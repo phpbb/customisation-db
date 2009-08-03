@@ -286,6 +286,7 @@ class titania
 
 			'U_BASE_URL'				=> self::$absolute_path,
 			'U_SITE_ROOT'				=> generate_board_url(true),
+			'U_MY_CONTRIBUTIONS'		=> (phpbb::$user->data['is_registered'] && !phpbb::$user->data['is_bot']) ? self::$url->build_url('author/' . phpbb::$user->data['username_clean']) : '',
 
 			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,

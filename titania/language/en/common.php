@@ -41,7 +41,6 @@ $lang = array_merge($lang, array(
 	'ACCESS_AUTHORS'			=> 'Authors',
 	'ACCESS_PUBLIC'				=> 'Public',
 	'AUTHOR_BY'					=> 'By %s',
-	'AUTHOR_PROFILE'			=> 'Your Author Profile',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
 
@@ -77,6 +76,7 @@ $lang = array_merge($lang, array(
 	'MODIFICATION'				=> 'Modification',
 	'MOVE_UP'					=> 'Move up',
 	'MOVE_DOWN'					=> 'Move down',
+	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
 	'NO_DESC'					 => 'You have to enter the description.',
 
@@ -91,6 +91,6 @@ $lang = array_merge($lang, array(
 	'STYLE'						=> 'Style',
 
 	'TITANIA_INDEX'				=> 'Customisation Database',
-	
+
 	'SELECT_CATEGORY'			=> '-- Select category --',
 ));
