@@ -33,8 +33,8 @@ Rewriterule ^rate/?([^/]+)?$					./index.php?action=rate [NC]
 
 #categories
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)/([^/]+)/([^/]+)/?([^/]+)?$	./index.php?c=$3 [NC]
+Rewriterule ^([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$	./index.php?c=$4 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)/([^/]+)/?([^/]+)?$			./index.php?c=$2 [NC]
+Rewriterule ^([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$			./index.php?c=$3 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)/?([^/]+)?$					./index.php?c=$1 [NC]
+Rewriterule ^([^/]+)-([0-9]+)/?([^/]+)?$					./index.php?c=$2 [NC]
