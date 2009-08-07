@@ -106,11 +106,32 @@ class titania_message
 			'POSTING_PANELS_DEFAULT'	=> 'options-panel',
 
 			'POSTING_TEXT'				=> $this->post_object->generate_text_for_edit(),
+
+			'SUBJECT'					=> $this->post_object->post_subject,
 		));
 
 		$this->display_panels();
 	}
 
+	/**
+	* Grab the posted subject from the request
+	*/
+	public function request_subject()
+	{
+		return utf8_normalize_nfc(request_var('subject', '', true));
+	}
+
+	/**
+	* Grab the posted message from the request
+	*/
+	public function request_message()
+	{
+		return utf8_normalize_nfc(request_var($this->text_name, '', true));
+	}
+
+	/**
+	* Display the panels (tabs)
+	*/
 	public function display_panels()
 	{
 		foreach ($this->posting_panels as $name => $lang)

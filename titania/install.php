@@ -442,6 +442,28 @@ $versions = array(
 		'custom'	=> 'titania_ext_groups',
 	),
 
+	'0.1.11' => array(
+		'table_column_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'contrib_id', array('UINT', 0)),
+		),
+
+		'table_index_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'contrib_id'),
+		),
+
+		'table_column_update' => array(
+			array(TITANIA_POSTS_TABLE, 'post_text', array('MTEXT_UNI', '')),
+		),
+
+		'table_index_remove' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_time'),
+		),
+
+		'table_column_remove' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_time'),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

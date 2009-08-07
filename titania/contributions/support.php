@@ -17,6 +17,8 @@ if (!defined('IN_TITANIA'))
 }
 
 titania::load_object(array('topic', 'post'));
+titania::add_lang('posting');
+phpbb::$user->add_lang('posting');
 
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
@@ -73,12 +75,33 @@ switch ($action)
 		$post_object = new titania_post('normal');
 
 		$message = new titania_message($post_object);
-		$message->display();
 
 		if ($submit)
 		{
+			$post_object->__set_array(array(
+				'post_subject'		=> $message->request_subject(),
+				'post_text'			=> $message->request_message(),
+			));
 
+			$post_object->topic->contrib_id = titania::$contrib->contrib_id;
+
+			$error = $post_object->validate();
+
+			if (sizeof($error))
+			{
+				$template->assign_var('ERROR', implode('<br />', $error));
+			}
+			else
+			{
+				$post_object->submit();
+
+				$redirect = titania::$contrib->get_url('support');
+				$redirect = titania::$url->append_url($redirect, array($post_object->post_subject => $post_object->post_id));
+				redirect($redirect);
+			}
 		}
+
+		$message->display();
 
 		titania::page_header('NEW_TOPIC');
 		titania::page_footer(true, 'contributions/contribution_support_post.html');

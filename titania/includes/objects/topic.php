@@ -66,6 +66,7 @@ class titania_topic extends titania_database_object
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
 			'topic_id'				=> array('default' => 0),
+			'contrib_id'			=> array('default' => 0),
 			'topic_type'			=> array('default' => 0), // Post Type, TITANIA_POST_ constants
 			'topic_access'			=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
 			'topic_category'		=> array('default' => 0), // Category for the topic. For the Tracker
@@ -140,7 +141,14 @@ class titania_topic extends titania_database_object
 	public function update_postcount($new_access_level, $old_access_level = false, $auto_submit = true)
 	{
 		// Get the current postcount (may be empty string, so merge with 0, 0, 0)
-		$postcount = array_merge(array(0, 0, 0), explode(':', $this->topic_posts));
+		if (!$this->topic_posts)
+		{
+			$postcount = array(0, 0, 0);
+		}
+		else
+		{
+			$postcount = array_pad(explode(':', $this->topic_posts), 3, 0);
+		}
 
 		// If we are updating a post we need to clear the postcount from the old post
 		if ($old_access_level !== false)
@@ -214,35 +222,37 @@ class titania_topic extends titania_database_object
 	*/
 	public function get_url()
 	{
+		switch ($this->topic_type)
+		{
+			case TITANIA_POST_TRACKER :
+				$page = 'tracker';
+			break;
+
+			case TITANIA_POST_QUEUE :
+				$page = 'queue';
+			break;
+
+			case TITANIA_POST_REVIEW :
+				$page = 'review';
+			break;
+
+			default :
+				$page = 'support';
+			break;
+		}
+
 		if (!empty(titania::$contrib))
 		{
 			// We are *probably* visiting a contrib page
-			$url = titania::$contrib->get_url();
+			$url = titania::$contrib->get_url($page);
 		}
 		else if (!empty(titania::$author))
 		{
 			// We are *probably* viewing the author's page
-			$url = titania::$author->get_url();
+			$url = titania::$author->get_url($page);
 		}
 
-		switch ($this->topic_type)
-		{
-			case TITANIA_POST_TRACKER :
-				$url .= '/tracker/' . $this->topic_id;
-			break;
-
-			case TITANIA_POST_QUEUE :
-				$url .= '/queue/' . $this->topic_id;
-			break;
-
-			case TITANIA_POST_REVIEW :
-				$url .= '/review/' . $this->topic_id;
-			break;
-
-			default :
-				$url .= '/support/' . $this->topic_id;
-			break;
-		}
+		$url = titania::$url->append_url($url, array('t' => $this->topic_id));
 
 		return $url;
 	}
@@ -329,7 +339,7 @@ class titania_topic extends titania_database_object
 
 			'U_NEWEST_POST'					=> ($this->unread) ? '' : '',
 			'U_VIEW_TOPIC'					=> $this->get_url(),
-			'U_VIEW_LAST_POST'				=> '',//$this->get_url() . "&amp;p={$this->last_post_id}#{$this->last_post_id}",
+			'U_VIEW_LAST_POST'				=> titania::$url->append_url($this->get_url(), array('p' => $this->topic_last_post_id, '#' => $this->topic_last_post_id)),
 
 			'S_UNREAD_TOPIC'				=> ($this->unread) ? true : false,
 		);

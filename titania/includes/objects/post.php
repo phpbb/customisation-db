@@ -137,6 +137,33 @@ class titania_post extends titania_database_object
 	}
 
 	/**
+	* Validate that all the data is correct
+	*
+	* @return array empty array on success, array with (string) errors ready for output on failure
+	*/
+	public function validate()
+	{
+		$error = array();
+
+		if (utf8_clean_string($this->post_subject) === '')
+		{
+			$error[] = phpbb::$user->lang['EMPTY_SUBJECT'];
+		}
+
+		$message_length = utf8_strlen($this->post_text);
+		if ($message_length < (int) phpbb::$config['min_post_chars'])
+		{
+			$error[] = sprintf(phpbb::$user->lang['TOO_FEW_CHARS_LIMIT'], $message_length, (int) phpbb::$config['min_post_chars']);
+		}
+		else if ($message_length > (int) phpbb::$config['max_post_chars'])
+		{
+			$error[] = sprintf($user->lang['TOO_MANY_CHARS_POST'], $message_length, (int) phpbb::$config['max_post_chars']);
+		}
+
+		return $error;
+	}
+
+	/**
 	* Post a post
 	*/
 	public function post()
@@ -150,7 +177,6 @@ class titania_post extends titania_database_object
 			'topic_access'		=> $this->post_access,
 			'topic_approved'	=> $this->post_approved,
 			'topic_user_id'		=> $this->post_user_id,
-			'topic_time'		=> $this->post_time,
 			'topic_subject'		=> $this->post_subject,
 		));
 
@@ -165,7 +191,35 @@ class titania_post extends titania_database_object
 			$this->generate_text_for_storage();
 		}
 
-		return parent::submit();
+		// If no topic_id it means we are creating a new topic, so we need to set the first_post_ data.
+		if (!$this->topic->topic_first_post_id)
+		{
+			parent::submit();
+
+			$this->topic->__set_array(array(
+				'topic_first_post_id'			=> $this->post_id,
+				'topic_first_post_user_id'		=> $this->post_user_id,
+				'topic_first_post_username'		=> phpbb::$user->data['username'],
+				'topic_first_post_user_colour'	=> phpbb::$user->data['user_colour'],
+				'topic_first_post_time'			=> $this->post_time,
+			));
+		}
+		else
+		{
+			parent::submit();
+		}
+
+		$this->topic->__set_array(array(
+			'topic_last_post_id'			=> $this->post_id,
+			'topic_last_post_user_id'		=> $this->post_user_id,
+			'topic_last_post_username'		=> phpbb::$user->data['username'],
+			'topic_last_post_user_colour'	=> phpbb::$user->data['user_colour'],
+			'topic_last_post_time'			=> $this->post_time,
+			'topic_last_post_subject'		=> $this->post_subject,
+		));
+
+		// Gotta update the topic again with the first/last post data
+		$this->topic->submit();
 	}
 
 	/**
@@ -397,10 +451,27 @@ class titania_post extends titania_database_object
 	}
 
 	/**
+	* Get the url for the post
+	*/
+	public function get_url()
+	{
+		$url = $this->topic->get_url();
+
+		$url = titania::$url->append_url($url, array('p' => $this->post_id, '#p' => $this->post_id));
+	}
+
+	/**
 	* Catch an attempt to use submit
 	*/
 	public function submit()
 	{
+		$error = $this->validate();
+
+		if (sizeof($error))
+		{
+			return $error;
+		}
+
 		if (!$this->post_id)
 		{
 			return $this->post();

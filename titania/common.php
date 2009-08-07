@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-define('TITANIA_VERSION', '0.1.10');
+define('TITANIA_VERSION', '0.1.11');
 
 define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 
