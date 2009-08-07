@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 167 2009-08-02 02:11:31Z exreaction $
+ * @version $Id: umil.php 169 2009-08-07 22:23:53Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -2198,13 +2198,10 @@ class umil
 			return;
 		}
 
-		/**
-		* $column can be empty when uninstalling a mod and table_index_remove was used, but no 3rd argument was given.
-		* In that case we'll assume that it was an index previously added by the mod (if not the author should specify a 3rd argument) and skip this to prevent an error
-		*/
+		// Let them skip the column field and just use the index name in that case as the column as well
 		if (empty($column))
 		{
-			return;
+			$column = array($index_name);
 		}
 
 		$this->get_table_name($table_name);
@@ -2219,11 +2216,6 @@ class umil
 		if (!is_array($column))
 		{
 			$column = array($column);
-		}
-
-		if (empty($column))
-		{
-			$column = array($index_name);
 		}
 
 		$this->db_tools->sql_create_index($table_name, $index_name, $column);
