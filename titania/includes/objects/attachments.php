@@ -159,10 +159,7 @@ class titania_attachments extends titania_database_object
 	*/
 	public function create()
 	{
-		if (!class_exists('uploader'))
-		{
-			include TITANIA_ROOT . 'includes/tools/uploader.' . PHP_EXT;
-		}
+		titania::load_tool('uploader');
 
 		// Setup uploader tool.
 		$uploader = new titania_uploader('uploadify');

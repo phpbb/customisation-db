@@ -22,7 +22,7 @@ Rewriterule ^authors?/([^/]+)/?([^/]+)?/?([^/]+)?$			./authors/index.php?u=$1&pa
 
 #contributions
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|snippet|translation|contributions?)/(create)/?$					./contributions/index.php?page=$2 [NC]
+Rewriterule ^(mod|style|snippet|translation|contributions?)/(create)/?([^/]+)?$					./contributions/index.php?page=$2 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$		./contributions/index.php?c=$2&page=$3 [NC]
 

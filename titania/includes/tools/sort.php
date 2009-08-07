@@ -21,7 +21,7 @@ if (!defined('IN_TITANIA'))
  *
  * @package Titania
  */
-class sort
+class titania_sort
 {
 
 	/**

@@ -201,6 +201,38 @@ class titania
 	}
 
 	/**
+	* Load a Titania Tool
+	*
+	* @param mixed $tool_name The name of the tool
+	*/
+	public static function load_tool($tool_name)
+	{
+		if (is_array($tool_name))
+		{
+			foreach ($tool_name as $name)
+			{
+				self::load_tool($name);
+			}
+
+			return;
+		}
+
+		$tool_name = preg_replace('#[^A-Za-z0-9]#', '', $tool_name);
+
+		if (class_exists('titania_' . $tool_name))
+		{
+			return;
+		}
+
+		if (!file_exists(TITANIA_ROOT . 'includes/tools/' . $tool_name . '.' . PHP_EXT))
+		{
+			trigger_error('Missing Tool: ' . $tool_name);
+		}
+
+		include(TITANIA_ROOT . 'includes/tools/' . $tool_name . '.' . PHP_EXT);
+	}
+
+	/**
 	 * Add a phpBB language file
 	 *
 	 * @param mixed $lang_set

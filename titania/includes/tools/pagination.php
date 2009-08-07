@@ -26,7 +26,7 @@ if (!class_exists('titania_object'))
  *
  * @package Titania
  */
-class pagination extends titania_object
+class titania_pagination extends titania_object
 {
 	/**
 	 * Constants
@@ -173,7 +173,7 @@ class pagination extends titania_object
 		{
 			unset($params['start']);
 		}
-		
+
 		unset($params['sid']);
 
 		return (!empty($params)) ? append_sid($page, $params) : append_sid($page);

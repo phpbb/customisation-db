@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-titania::load_object(array('topic', 'post', 'message'));
+titania::load_object(array('topic', 'post'));
 
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
@@ -62,15 +62,23 @@ else
 	load_contrib();
 }
 
+$submit = (isset($_POST['submit'])) ? true : false;
 $action = request_var('action', '');
 
 switch ($action)
 {
 	case 'post' :
+		titania::load_tool('message');
+
 		$post_object = new titania_post('normal');
 
 		$message = new titania_message($post_object);
 		$message->display();
+
+		if ($submit)
+		{
+
+		}
 
 		titania::page_header('NEW_TOPIC');
 		titania::page_footer(true, 'contributions/contribution_support_post.html');
