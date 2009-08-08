@@ -49,11 +49,17 @@ class titania_contribution extends titania_database_object
 	private $description_parsed_for_storage = false;
 
 	/**
-	 * Author of this contribution
+	 * Author & co-authors of this contribution
 	 *
 	 * @var titania_author
 	 */
 	public $author;
+	public $coauthors = array();
+
+	/**
+	* Revisions array
+	*/
+	public $revisions = array();
 
 	/**
 	 * Rating of this contribution
@@ -185,18 +191,6 @@ class titania_contribution extends titania_database_object
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		// Load the revisions list
-		$this->revisions = array();
-		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
-			WHERE contrib_id = ' . $this->contrib_id . '
-			ORDER BY revision_id DESC';
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$this->revisions[$row['revision_id']] = $row;
-		}
-		phpbb::$db->sql_freeresult($result);
-
 		// Check author/co-author status
 		if ($this->contrib_user_id == phpbb::$user->data['user_id'])
 		{
@@ -233,6 +227,28 @@ class titania_contribution extends titania_database_object
 		$this->rating->assign_common();
 
 		return $this->rating;
+	}
+
+	/**
+	* Get the revisions for this contrib item
+	* (not always needed, so save us a query when it's not needed)
+	*/
+	public function get_revisions()
+	{
+		if (sizeof($this->revisions))
+		{
+			return;
+		}
+
+		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id . '
+			ORDER BY revision_id DESC';
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$this->revisions[$row['revision_id']] = $row;
+		}
+		phpbb::$db->sql_freeresult($result);
 	}
 
 	/**
@@ -335,148 +351,6 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 * Recommend contribution to a friend
-	 *
-	 * @return bool		true if mail sent
-	 *
-	 * @todo I think this should be moved out from here.  Takes up a lot of lines and handling it should be the job of the module
-	 */
-	public function email_friend()
-	{
-		phpbb::$user->add_lang('memberlist');
-
-		if (!phpbb::$config['email_enable'])
-		{
-			titania::error_box('ERROR', 'EMAIL_DISABLED', TITANIA_ERROR, HEADER_SERVICE_UNAVAILABLE);
-
-			return false;
-		}
-
-		if (!phpbb::$user->data['is_registered'] || phpbb::$user->data['is_bot'] || !phpbb::$auth->acl_get('u_sendemail'))
-		{
-			if (phpbb::$user->data['user_id'] == ANONYMOUS)
-			{
-				login_box(titania::$page, phpbb::$user->lang['ERROR_CONTRIB_EMAIL_FRIEND']);
-			}
-
-			titania::error_box('ERROR', 'ERROR_CONTRIB_EMAIL_FRIEND', TITANIA_ERROR, HEADER_FORBIDDEN);
-
-			return false;
-		}
-
-		// Are we trying to abuse the facility?
-		if (titania::$time - phpbb::$user->data['user_emailtime'] < phpbb::$config['flood_interval'])
-		{
-			titania::trigger_error('FLOOD_EMAIL_LIMIT', E_USER_NOTICE, HEADER_SERVICE_UNAVAILABLE);
-		}
-
-		$name		= utf8_normalize_nfc(request_var('name', '', true));
-		$email		= request_var('email', '');
-		$email_lang	= request_var('lang', phpbb::$config['default_lang']);
-		$message	= utf8_normalize_nfc(request_var('message', '', true));
-		$cc			= (isset($_POST['cc_email'])) ? true : false;
-		$submit		= (isset($_POST['submit'])) ? true : false;
-
-		add_form_key('contrib_email');
-
-		phpbb::$template->assign_vars(array(
-			'S_LANG_OPTIONS'	=> language_select($email_lang),
-			'S_POST_ACTION'		=> append_sid(titania::$page, array('id' => 'email', 'contrib_id' => $this->contrib_id)),
-		));
-
-		$error = array();
-
-		if ($submit)
-		{
-			if (!check_form_key('contrib_email'))
-			{
-				$error[] = 'FORM_INVALID';
-			}
-
-			if (!$email || !preg_match('/^' . get_preg_expression('email') . '$/i', $email))
-			{
-				$error[] = 'EMPTY_ADDRESS_EMAIL';
-			}
-
-			if (!$name)
-			{
-				$error[] = 'EMPTY_NAME_EMAIL';
-			}
-
-			if (!empty($error))
-			{
-				titania::error_box('ERROR', $error, TITANIA_ERROR);
-
-				return false;
-			}
-
-			if (!class_exists('messenger'))
-			{
-				require PHPBB_ROOT_PATH . 'includes/functions_messenger.' . PHP_EXT;
-			}
-
-			$sql = 'UPDATE ' . USERS_TABLE . '
-				SET user_emailtime = ' . titania::$time . '
-				WHERE user_id = ' . (int) phpbb::$user->data['user_id'];
-			$result = phpbb::$db->sql_query($sql);
-
-			$mail_to_users = array();
-			$mail_to_users[] = array(
-				'email_lang'	=> $email_lang,
-				'email'			=> $email,
-				'name'			=> $name,
-			);
-
-			// Ok, now the same email if CC specified, but without exposing the users email address
-			if ($cc)
-			{
-				$mail_to_users[] = array(
-					'email_lang'	=> phpbb::$user->data['user_lang'],
-					'email'			=> phpbb::$user->data['user_email'],
-					'name'			=> phpbb::$user->data['username'],
-				);
-			}
-
-			$lang_path = phpbb::$user->lang_path;
-			phpbb::$user->set_custom_lang_path(titania::$config->language_path);
-
-			$messenger = new messenger(false);
-
-			foreach ($mail_to_users as $row)
-			{
-				$messenger->template('contrib_recommend', $row['email_lang']);
-				$messenger->replyto(phpbb::$user->data['user_email']);
-				$messenger->to($row['email'], $row['name']);
-
-				$messenger->headers('X-AntiAbuse: Board servername - ' . phpbb::$config['server_name']);
-				$messenger->headers('X-AntiAbuse: User_id - ' . (int) phpbb::$user->data['user_id']);
-				$messenger->headers('X-AntiAbuse: Username - ' . phpbb::$user->data['username']);
-				$messenger->headers('X-AntiAbuse: User IP - ' . phpbb::$user->ip);
-
-				$messenger->assign_vars(array(
-					'BOARD_CONTACT'	=> phpbb::$config['board_contact'],
-					'TO_USERNAME'	=> htmlspecialchars_decode($name),
-					'FROM_USERNAME'	=> htmlspecialchars_decode(phpbb::$user->data['username']),
-					'MESSAGE'		=> htmlspecialchars_decode($message),
-
-					'CONTRIB_TITLE'	=> htmlspecialchars_decode($this->contrib_name),
-					'U_CONTRIB'		=> append_sid(titania::$page, array('contrib_id' => $this->contrib_id, 'id' => 'details'), true, ''),
-				));
-
-				$messenger->send(NOTIFY_EMAIL);
-			}
-
-			phpbb::$user->set_custom_lang_path($lang_path);
-
-			titania::error_box('SUCCESS', 'EMAIL_SENT', TITANIA_SUCCESS);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Passes details to the template
 	 *
 	 * @param bool $return True if you want the data prepared for output and returned as an array, false to output to the template
@@ -485,6 +359,9 @@ class titania_contribution extends titania_database_object
 	{
 		// Get the rating object
 		$this->get_rating();
+
+		// Get revisions
+		$this->get_revisions();
 
 		// Output author data
 		$this->author->assign_details();

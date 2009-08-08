@@ -17,11 +17,11 @@ if (!defined('IN_TITANIA'))
 }
 
 titania::load_object(array('topic', 'post'));
-titania::add_lang('posting');
-phpbb::$user->add_lang('posting');
 
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
+$start = request_var('start', 0);
+$limit = phpbb::$config['posts_per_page'];
 
 // Load the topic and contrib items
 if ($post_id)
@@ -43,6 +43,16 @@ if ($post_id)
 	$topic = new titania_topic(TITANIA_POST_DEFAULT, $topic_id);
 	$topic->__set_array($topic_row);
 	unset($topic_row);
+
+	// Figure out the appropriate start position
+	$sql = 'SELECT COUNT(post_id) as start FROM ' . TITANIA_POSTS_TABLE . '
+		WHERE post_id < ' . $post_id . '
+			AND topic_id = ' . $topic_id;
+	phpbb::$db->sql_query($sql);
+	$start = phpbb::$db->sql_fetchfield('start');
+	phpbb::$db->sql_freeresult();
+
+	$start = ($start > 0) ? (floor($start / $limit) * $limit) : 0;
 
 	// Load the contrib item
 	load_contrib($topic->contrib_id);
@@ -70,6 +80,8 @@ $action = request_var('action', '');
 switch ($action)
 {
 	case 'post' :
+		titania::add_lang('posting');
+		phpbb::$user->add_lang('posting');
 		titania::load_tool('message');
 
 		$post_object = new titania_post('normal');
@@ -132,13 +144,22 @@ switch ($action)
 	default :
 		phpbb::$user->add_lang('viewforum');
 
-		titania_display_forums('contrib', titania::$contrib);
+		if ($topic_id)
+		{
 
-		phpbb::$template->assign_vars(array(
-			'U_CREATE_TOPIC'		=> (phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => 'post')) : '',
-		));
+			titania::page_header(phpbb::$user->lang['CONTRIB_SUPPORT'] . ' - ' . censor_text($topic->topic_subject));
+		}
+		else
+		{
+			titania_display_forums('contrib', titania::$contrib);
 
-		titania::page_header('CONTRIB_SUPPORT');
+			phpbb::$template->assign_vars(array(
+				'U_CREATE_TOPIC'		=> (phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => 'post')) : '',
+			));
+
+			titania::page_header('CONTRIB_SUPPORT');
+		}
+
 		titania::page_footer(true, 'contributions/contribution_support.html');
 	break;
 }
