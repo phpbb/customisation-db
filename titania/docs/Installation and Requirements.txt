@@ -1,0 +1,11 @@
+Requirements:
+	phpBB 3.0.6+
+	PHP 5.2+
+	Mod Rewrite
+
+How to install:
+	1. Get and install the latest version of phpBB
+	2. Copy the titania directory the location you want on your server (will be refered to as titania/ from now on)
+	3. Copy titania/config.example.php to config.php; edit settings as required
+	4. Visit any page in titania/ in your browser and run the installer script
+	5. Done!
