@@ -103,14 +103,93 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
+	* Submit data in the post_data format (from includes/tools/message.php)
+	*
+	* @param mixed $post_data
+	*/
+	public function post_data($post_data)
+	{
+		$this->__set_array(array(
+			'contrib_id'		=> titania::$contrib->contrib_id,
+			'faq_subject'		=> $post_data['subject'],
+			'faq_text'			=> $post_data['message'],
+			'faq_access'		=> $post_data['access'],
+		));
+
+		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
+	}
+
+	/**
+	* Build view URL for a faq
+	*
+	* @param string $action
+	* @param int $faq_id
+	*
+	* @return string
+	*/
+	public function get_url($action = '', $faq_id = false)
+	{
+		$url = titania::$contrib->get_url('faq');
+		$faq_id = (($faq_id) ? $faq_id : $this->faq_id);
+
+		if ($action == 'create')
+		{
+			return titania::$url->append_url($url, array('action' => $action));
+		}
+		else if (!$action)
+		{
+			return titania::$url->append_url($url, array('f' => $faq_id, '#' => 'details'));
+		}
+
+		return titania::$url->append_url($url, array('action' => $action, 'f' => $faq_id));
+	}
+
+	/**
+	 * Parse text to store in database
+	 *
+	 * @param bool $allow_bbcode
+	 * @param bool $allow_urls
+	 * @param bool $allow_smilies
+	 *
+	 * @return void
+	 */
+	public function generate_text_for_storage($allow_bbcode = false, $allow_urls = false, $allow_smilies = false)
+	{
+		titania_generate_text_for_storage($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options, $allow_bbcode, $allow_urls, $allow_smilies);
+
+		$this->text_parsed_for_storage = true;
+	}
+
+	/**
+	 * Parse text for display
+	 *
+	 * @return string text content from database for display
+	 */
+	public function generate_text_for_display()
+	{
+		return titania_generate_text_for_display($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options);
+	}
+
+	/**
+	 * Parse text for edit
+	 *
+	 * @return string text content from database for editing
+	 */
+	public function generate_text_for_edit()
+	{
+		return array_merge(titania_generate_text_for_edit($this->faq_text, $this->faq_text_uid, $this->faq_text_options), array(
+			'options'	=> $this->faq_text_options,
+			'subject'	=> $this->faq_subject,
+		));
+	}
+
+	/**
 	 * Update data or submit new faq
 	 *
 	 * @return void
 	 */
 	public function submit()
 	{
-		$this->contrib_id = titania::$contrib->contrib_id;
-
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
 		if (!$this->text_parsed_for_storage)
 		{
@@ -155,70 +234,6 @@ class titania_faq extends titania_database_object
 		 phpbb::$db->sql_query($sql);
 
 		 return true;
-	}
-
-	/**
-	 * Parse text to store in database
-	 *
-	 * @param bool $allow_bbcode
-	 * @param bool $allow_urls
-	 * @param bool $allow_smilies
-	 *
-	 * @return void
-	 */
-	public function generate_text_for_storage($allow_bbcode = false, $allow_urls = false, $allow_smilies = false)
-	{
-		generate_text_for_storage($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options, $allow_bbcode, $allow_urls, $allow_smilies);
-
-		$this->text_parsed_for_storage = true;
-	}
-
-	/**
-	 * Parse text for display
-	 *
-	 * @return string text content from database for display
-	 */
-	public function generate_text_for_display()
-	{
-		return generate_text_for_display($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options);
-	}
-
-	/**
-	 * Parse text for edit
-	 *
-	 * @return string text content from database for editing
-	 */
-	public function generate_text_for_edit()
-	{
-		return array_merge(generate_text_for_edit($this->faq_text, $this->faq_text_uid, $this->faq_text_options), array(
-			'options'	=> $this->faq_text_options,
-			'subject'	=> $this->faq_subject,
-		));
-	}
-
-	/**
-	* Build view URL for a faq
-	*
-	* @param string $action
-	* @param int $faq_id
-	*
-	* @return string
-	*/
-	public function get_url($action = '', $faq_id = false)
-	{
-		$url = titania::$contrib->get_url('faq');
-		$faq_id = (($faq_id) ? $faq_id : $this->faq_id);
-
-		if ($action == 'create')
-		{
-			return titania::$url->append_url($url, array('action' => $action));
-		}
-		else if (!$action)
-		{
-			return titania::$url->append_url($url, array('f' => $faq_id, '#' => 'details'));
-		}
-
-		return titania::$url->append_url($url, array('action' => $action, 'f' => $faq_id));
 	}
 
 	/*

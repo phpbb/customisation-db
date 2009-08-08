@@ -12,7 +12,6 @@
 					<li class="header">
 						<dl class="icon">
 							<dt>{L_FAQ_LIST}</dt>
-							<dd class="views">{L_VIEWS}</dd>
 							<!-- IF faqlist.U_MOVE_UP or faqlist.U_MOVE_DOWN or faqlist.U_EDIT or faqlist.U_DELETE--><dd class="lastpost"><span></span></dd><!-- ENDIF -->
 						</dl>
 					</li>
@@ -23,7 +22,6 @@
 					<li class="row<!-- IF faqlist.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 						<dl class="icon" style="background-image: url({topics.TOPIC_FOLDER_IMG_SRC}); background-repeat: no-repeat;">
 							<dt title="{topics.TOPIC_FOLDER_IMG_ALT}"><a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a></dt>
-							<dd class="views">{faqlist.VIEWS} <dfn>{L_VIEWS}</dfn></dd>
 							<dd class="lastpost"><span>
 								<!-- IF faqlist.U_MOVE_UP -->
 									<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->

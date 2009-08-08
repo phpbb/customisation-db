@@ -94,14 +94,7 @@ switch ($action)
 		{
 			$post_data = $message->request_data();
 
-			$post_object->__set_array(array(
-				'post_subject'		=> $post_data['subject'],
-				'post_text'			=> $post_data['message'],
-				'post_access'		=> $post_data['access'],
-			));
-			$post_object->topic->contrib_id = titania::$contrib->contrib_id;
-
-			$post_object->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
+			$post_object->post_data($post_data);
 
 			$error = $post_object->validate();
 

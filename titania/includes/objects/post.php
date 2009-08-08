@@ -133,7 +133,6 @@ class titania_post extends titania_database_object
 			titania::load_object('topic');
 			$this->topic = new titania_topic($this->post_type);
 		}
-
 	}
 
 	/**
@@ -161,6 +160,163 @@ class titania_post extends titania_database_object
 		}
 
 		return $error;
+	}
+
+	/**
+	* Submit data in the post_data format (from includes/tools/message.php)
+	*
+	* @param mixed $post_data
+	*/
+	public function post_data($post_data)
+	{
+		$this->__set_array(array(
+			'post_subject'		=> $post_data['subject'],
+			'post_text'			=> $post_data['message'],
+			'post_access'		=> $post_data['access'],
+		));
+		$this->topic->contrib_id = titania::$contrib->contrib_id;
+
+		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
+	}
+
+	/**
+	* Get the url for the post
+	*/
+	public function get_url()
+	{
+		$url = $this->topic->get_url();
+
+		$url = titania::$url->append_url($url, array('p' => $this->post_id, '#p' => $this->post_id));
+	}
+
+	/**
+	 * Parse text to store in database
+	 *
+	 * @param bool $allow_bbcode
+	 * @param bool $allow_urls
+	 * @param bool $allow_smilies
+	 *
+	 * @return void
+	 */
+	public function generate_text_for_storage($allow_bbcode = true, $allow_urls = true, $allow_smilies = true)
+	{
+		titania_generate_text_for_storage($this->post_text, $this->post_text_uid, $this->post_text_bitfield, $this->post_text_options, $allow_bbcode, $allow_urls, $allow_smilies);
+
+		$this->text_parsed_for_storage = true;
+	}
+
+	/**
+	 * Parse text for display
+	 *
+	 * @return string text content from database for display
+	 */
+	public function generate_text_for_display()
+	{
+		return titania_generate_text_for_display($this->post_text, $this->post_text_uid, $this->post_text_bitfield, $this->post_text_options);
+	}
+
+	/**
+	 * Parse text for edit
+	 *
+	 * @return array of data for editing
+	 */
+	public function generate_text_for_edit()
+	{
+		return array_merge(titania_generate_text_for_edit($this->post_text, $this->post_text_uid, $this->post_text_options), array(
+			'options'	=> $this->post_text_options,
+			'subject'	=> $this->post_subject,
+		));
+	}
+
+	/**
+	* Check if the current user has permission to do something
+	*
+	* @param string $option The auth option to check ('post', 'edit', 'soft_delete', 'hard_delete')
+	*
+	* @return bool True if they have permission False if not
+	*/
+	public function acl_get($option)
+	{
+		// First check anonymous/bots for things they can *never* do
+		$no_anon = array('edit', 'soft_delete', 'undelete', 'hard_delete');
+		$no_bot = array('post', 'edit', 'soft_delete', 'undelete', 'hard_delete');
+		if ((!phpbb::$user->data['is_registered'] && in_array($option, $no_anon)) || (phpbb::$user->data['is_bot'] && in_array($option, $no_bot)))
+		{
+			return false;
+		}
+
+		$is_poster = ($this->post_user_id == phpbb::$user->data['user_id']) ? true : false; // Poster
+		$is_author = titania::$access_level == TITANIA_ACCESS_AUTHORS; // Contribution author
+
+		switch ($option)
+		{
+			case 'post' :
+				if (phpbb::$auth->acl_get('titania_post') || // Can post
+					($is_author && phpbb::$auth->acl_get('titania_post_mod_own')) || // Is contrib author and can moderate own
+					phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
+				{
+					return true;
+				}
+			break;
+
+			case 'edit' :
+				if (($is_poster && phpbb::$auth->acl_get('titania_post_edit_own')) || // Is poster and can edit own
+					($is_author && phpbb::$auth->acl_get('titania_post_mod_own')) || // Is contrib author and can moderate own
+					phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
+				{
+					return true;
+				}
+			break;
+
+			case 'soft_delete' :
+				if (($is_poster && phpbb::$auth->acl_get('titania_post_delete_own')) || // Is poster and can delete own
+					($is_author && phpbb::$auth->acl_get('titania_post_mod_own')) || // Is contrib author and can moderate own
+					phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
+				{
+					return true;
+				}
+			break;
+
+			case 'undelete' :
+			case 'hard_delete' :
+				if (phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
+				{
+					return true;
+				}
+			break;
+		}
+
+		return false;
+	}
+
+	/**
+	* Catch an attempt to use submit
+	*/
+	public function submit()
+	{
+		$error = $this->validate();
+
+		if (sizeof($error))
+		{
+			return $error;
+		}
+
+		if (!$this->post_id)
+		{
+			return $this->post();
+		}
+		else
+		{
+			return $this->edit();
+		}
+	}
+
+	/**
+	* Catch an attempt to delete the post (must use the hard_delete function)
+	*/
+	public function delete()
+	{
+		$this->hard_delete();
 	}
 
 	/**
@@ -348,145 +504,5 @@ class titania_post extends titania_database_object
 		}
 
 		parent::delete();
-	}
-
-	/**
-	 * Parse text to store in database
-	 *
-	 * @param bool $allow_bbcode
-	 * @param bool $allow_urls
-	 * @param bool $allow_smilies
-	 *
-	 * @return void
-	 */
-	public function generate_text_for_storage($allow_bbcode = true, $allow_urls = true, $allow_smilies = true)
-	{
-		generate_text_for_storage($this->post_text, $this->post_text_uid, $this->post_text_bitfield, $this->post_text_options, $allow_bbcode, $allow_urls, $allow_smilies);
-
-		$this->text_parsed_for_storage = true;
-	}
-
-	/**
-	 * Parse text for display
-	 *
-	 * @return string text content from database for display
-	 */
-	public function generate_text_for_display()
-	{
-		return generate_text_for_display($this->post_text, $this->post_text_uid, $this->post_text_bitfield, $this->post_text_options);
-	}
-
-	/**
-	 * Parse text for edit
-	 *
-	 * @return array of data for editing
-	 */
-	public function generate_text_for_edit()
-	{
-		return array_merge(generate_text_for_edit($this->post_text, $this->post_text_uid, $this->post_text_options), array(
-			'options'	=> $this->post_text_options,
-			'subject'	=> $this->post_subject,
-		));
-	}
-
-	/**
-	* Check if the current user has permission to do something
-	*
-	* @param string $option The auth option to check ('post', 'edit', 'soft_delete', 'hard_delete')
-	*
-	* @return bool True if they have permission False if not
-	*/
-	public function acl_get($option)
-	{
-		// First check anonymous/bots for things they can *never* do
-		$no_anon = array('edit', 'soft_delete', 'undelete', 'hard_delete');
-		$no_bot = array('post', 'edit', 'soft_delete', 'undelete', 'hard_delete');
-		if ((!phpbb::$user->data['is_registered'] && in_array($option, $no_anon)) || (phpbb::$user->data['is_bot'] && in_array($option, $no_bot)))
-		{
-			return false;
-		}
-
-		$is_poster = ($this->post_user_id == phpbb::$user->data['user_id']) ? true : false; // Poster
-		$is_author = titania::$access_level == TITANIA_ACCESS_AUTHORS; // Contribution author
-
-		switch ($option)
-		{
-			case 'post' :
-				if (phpbb::$auth->acl_get('titania_post') || // Can post
-					($is_author && phpbb::$auth->acl_get('titania_post_mod_own')) || // Is contrib author and can moderate own
-					phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
-				{
-					return true;
-				}
-			break;
-
-			case 'edit' :
-				if (($is_poster && phpbb::$auth->acl_get('titania_post_edit_own')) || // Is poster and can edit own
-					($is_author && phpbb::$auth->acl_get('titania_post_mod_own')) || // Is contrib author and can moderate own
-					phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
-				{
-					return true;
-				}
-			break;
-
-			case 'soft_delete' :
-				if (($is_poster && phpbb::$auth->acl_get('titania_post_delete_own')) || // Is poster and can delete own
-					($is_author && phpbb::$auth->acl_get('titania_post_mod_own')) || // Is contrib author and can moderate own
-					phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
-				{
-					return true;
-				}
-			break;
-
-			case 'undelete' :
-			case 'hard_delete' :
-				if (phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
-				{
-					return true;
-				}
-			break;
-		}
-
-		return false;
-	}
-
-	/**
-	* Get the url for the post
-	*/
-	public function get_url()
-	{
-		$url = $this->topic->get_url();
-
-		$url = titania::$url->append_url($url, array('p' => $this->post_id, '#p' => $this->post_id));
-	}
-
-	/**
-	* Catch an attempt to use submit
-	*/
-	public function submit()
-	{
-		$error = $this->validate();
-
-		if (sizeof($error))
-		{
-			return $error;
-		}
-
-		if (!$this->post_id)
-		{
-			return $this->post();
-		}
-		else
-		{
-			return $this->edit();
-		}
-	}
-
-	/**
-	* Catch an attempt to delete the post (must use the hard_delete function)
-	*/
-	public function delete()
-	{
-		$this->hard_delete();
 	}
 }

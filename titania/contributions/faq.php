@@ -56,13 +56,7 @@ switch ($action)
 		{
 			$post_data = $message->request_data();
 
-			$faq->__set_array(array(
-				'faq_subject'		=> $post_data['subject'],
-				'faq_text'			=> $post_data['message'],
-				'faq_access'		=> $post_data['access'],
-			));
-
-			$faq->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
+			$faq->post_data($post_data);
 
 			$error = $faq->validate();
 
@@ -87,6 +81,8 @@ switch ($action)
 		$message->display();
 
 		phpbb::$template->assign_vars(array(
+			'L_POST_A'			=> phpbb::$user->lang[(($action == 'edit') ? 'EDIT_FAQ' : 'CREATE_FAQ')],
+
 			'S_EDIT'			=> true,
 			'S_POST_ACTION'		=> $faq->get_url($action, $faq->faq_id),
 		));
