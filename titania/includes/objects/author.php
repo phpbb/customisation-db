@@ -193,9 +193,7 @@ class titania_author extends titania_database_object
 	 */
 	public function generate_text_for_edit()
 	{
-        decode_message($this->author_desc, $this->author_desc_uid);
-        
-        return $this->author_desc;
+		return generate_text_for_edit($this->author_desc, $this->author_desc_uid, $this->author_desc_options);
 	}
 
 	/**
@@ -282,12 +280,12 @@ class titania_author extends titania_database_object
 
 		return '';
 	}
-	
+
 	/**
 	 * Get correct webiste url
 	 *
 	 * @return string
-	 */	
+	 */
 	public function get_website_url()
 	{
 		if (!$this->author_website || strpos($this->author_website, 'http://') !== false)
@@ -321,7 +319,7 @@ class titania_author extends titania_database_object
 			'AUTHOR_SNIPPETS'				=> $this->author_snippets,
 
             'AUTHOR_DESC'                   => $this->generate_text_for_display(),
-            
+
 			'U_EDIT_AUTHOR'                 => $this->get_url('edit'),
 			'U_AUTHOR_PROFILE'				=> $this->get_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),

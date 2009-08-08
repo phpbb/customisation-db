@@ -36,34 +36,22 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'SORT_SUBJECT'			=> 'Subject',
-	'SORT_VIEWS'			=> 'Views',
-	
 	'CREATE_FAQ'			=> 'Create an new FAQ entry',
 	'EDIT_FAQ'			=> 'Edit FAQ',
-	
+
 	'DELETE_FAQ'			=> 'Delete FAQ',
 	'DELETE_FAQ_CONFIRM'		=> 'Are you sure delete the FAQ?',
-	
+
 	'FAQ_DETAILS'			=> 'FAQ Details Page',
 	'FAQ_LIST'			=> 'FAQ List',
-
-	'SUBJECT_EMPTY'			=> 'You need to enter a subject',
-	'TEXT_EMPTY'			=> 'You need to enter a text',
-
-	'RETURN_FAQ'			=> '%sReturn to FAQ Details Page%s',
-	'RETURN_FAQ_LIST'		=> '%sReturn to FAQ List%s',
 
 	'FAQ_CREATED'			=> 'This FAQ has been created successfully.',
 	'FAQ_EDITED'			=> 'This FAQ has been edited successfully.',
 	'FAQ_DELETED'			=> 'This FAQ has been deleted successfully.',
-	
-	'FAQ_SUBJECT'			=> 'Subject',
-	'FAQ_TEXT'			=> 'Text',
-	
+
 	'FAQ_NOT_FOUND'			=> 'The FAQ specified could not be found.',
-	
+
 	'NO_FAQ'			=> 'Nobody created an FAQ entry yet.',
-	
+
 	'FAQ_DELETED'			=> 'The FAQ entry has been deleted.',
 ));

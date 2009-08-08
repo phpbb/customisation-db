@@ -57,6 +57,7 @@ if ($submit)
 	}
 }
 
+$for_edit = titania::$author->generate_text_for_edit();
 $template->assign_vars(array(
 	'S_POST_ACTION'		=> titania::$author->get_url('edit'),
 
@@ -67,7 +68,7 @@ $template->assign_vars(array(
 
 	'POSTING_FORM_NAME'			=> 'postform',
 	'POSTING_TEXT_NAME'			=> 'message',
-	'POSTING_MESSAGE_DEFAULT'	=> titania::$author->generate_text_for_edit(),
+	'POSTING_MESSAGE_DEFAULT'	=> $for_edit['text'],
 ));
 
 display_posting_bbcode_smilies(titania::$author->author_desc_options, true, true); // @todo BBCode permissions

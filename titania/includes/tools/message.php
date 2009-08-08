@@ -50,6 +50,20 @@ class titania_message
 	public $post_object = false;
 
 	/**
+	* Permissions
+	*/
+	public $auth_bbcode = false;
+	public $auth_smilies = false;
+	public $auth_attachments = false;
+	public $auth_polls = false;
+
+	/**
+	* Extra options
+	*/
+	public $display_error = true; // Make sure you output the error yourself if you set to false!
+	public $display_subject = true;
+
+	/**
 	* Array of posting panels
 	*
 	* @var array
@@ -60,6 +74,14 @@ class titania_message
 
 	public function __construct($post_object)
 	{
+		titania::add_lang('posting');
+		phpbb::$user->add_lang('posting');
+
+		if (!function_exists('titania_access_select'))
+		{
+			include(TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT);
+		}
+
 		$this->post_object = $post_object;
 	}
 
@@ -70,12 +92,19 @@ class titania_message
 	{
 		phpbb::$user->add_lang('posting');
 
-		if (true) // can attach
+		$for_edit = $this->post_object->generate_text_for_edit();
+
+		// Initialize our post options class
+		$post_options = new post_options();
+		$post_options->set_auth($this->auth_bbcode, $this->auth_smilies, true, true, true);
+		$post_options->set_status($for_edit['allow_bbcode'], $for_edit['allow_smilies'], $for_edit['allow_urls']);
+
+		if ($this->auth_attachments)
 		{
 			$this->posting_panels['attach-panel'] = 'ATTACH';
 		}
 
-		if (true) // can post poll
+		if ($this->auth_polls)
 		{
 			$this->posting_panels['poll-panel'] = 'POLL';
 		}
@@ -84,30 +113,38 @@ class titania_message
 		add_form_key($this->form_name);
 
 		// Generate smiley listing
-		$this->generate_smilies('inline', false);
+		if ($post_options->get_status('smilies'))
+		{
+			$this->generate_smilies('inline', false);
+		}
 
 		// Build custom bbcodes array
-		if (!function_exists('display_custom_bbcodes'))
+		if ($post_options->get_status('bbcode'))
 		{
-			include(PHPBB_ROOT_PATH . 'includes/functions_display.' . PHP_EXT);
+			if (!function_exists('display_custom_bbcodes'))
+			{
+				include(PHPBB_ROOT_PATH . 'includes/functions_display.' . PHP_EXT);
+			}
+			display_custom_bbcodes();
 		}
-		display_custom_bbcodes();
 
-		// Post options stuff...
-		$post_options = new post_options();
-		$post_options->set_auth(true, true, true, true, true);
-		$post_options->set_status(true, true, true);
 		$post_options->set_in_template();
 
 		phpbb::$template->assign_vars(array(
+			'ACCESS_OPTIONS'			=> titania_access_select(),
+
 			'POSTING_FORM_NAME'			=> $this->form_name,
 			'POSTING_TEXT_NAME'			=> $this->text_name,
 
 			'POSTING_PANELS_DEFAULT'	=> 'options-panel',
 
-			'POSTING_TEXT'				=> $this->post_object->generate_text_for_edit(),
+			'POSTING_TEXT'				=> $for_edit['text'],
 
-			'SUBJECT'					=> $this->post_object->post_subject,
+			'SUBJECT'					=> (isset($for_edit['subject'])) ? $for_edit['subject'] : '',
+
+			'S_DISPLAY_ERROR'			=> $this->display_error,
+			'S_DISPLAY_SUBJECT'			=> $this->display_subject,
+			'S_FORM_ENCTYPE'			=> '',
 		));
 
 		$this->display_panels();
@@ -116,17 +153,26 @@ class titania_message
 	/**
 	* Grab the posted subject from the request
 	*/
-	public function request_subject()
+	public function request_data()
 	{
-		return utf8_normalize_nfc(request_var('subject', '', true));
-	}
+		// Initialize our post options class
+		$post_options = new post_options();
+		$post_options->set_auth($this->auth_bbcode, $this->auth_smilies, true, true, true);
 
-	/**
-	* Grab the posted message from the request
-	*/
-	public function request_message()
-	{
-		return utf8_normalize_nfc(request_var($this->text_name, '', true));
+		$bbcode_disabled = (isset($_POST['disable_bbcode']) || !$post_options->get_status('bbcode')) ? true : false;
+		$smilies_disabled = (isset($_POST['disable_smilies']) || !$post_options->get_status('smilies')) ? true : false;
+		$magic_url_disabled = (isset($_POST['disable_magic_url'])) ? true : false;
+
+		return array(
+			'subject'		=> utf8_normalize_nfc(request_var('subject', '', true)),
+			'message'		=> utf8_normalize_nfc(request_var($this->text_name, '', true)),
+			'options'		=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
+			'access'		=> request_var('message_access', TITANIA_ACCESS_PUBLIC),
+
+			'bbcode_enabled'	=> !$bbcode_disabled,
+			'smilies_enabled'	=> !$smilies_disabled,
+			'magic_url_enabled'	=> !$magic_url_disabled,
+		);
 	}
 
 	/**
@@ -248,6 +294,12 @@ class post_options
 		$this->auth_img = $img;
 		$this->auth_url = $url;
 		$this->auth_flash = $flash;
+
+		$this->bbcode_status = (phpbb::$config['allow_bbcode'] && $this->auth_bbcode) ? true : false;
+		$this->smilies_status = (phpbb::$config['allow_smilies'] && $this->auth_smilies) ? true : false;
+		$this->img_status = ($this->auth_img && $this->bbcode_status) ? true : false;
+		$this->url_status = (phpbb::$config['allow_post_links'] && $this->auth_url && $this->bbcode_status) ? true : false;
+		$this->flash_status = ($this->auth_flash && $this->bbcode_status) ? true : false;
 	}
 
 	/**
@@ -255,15 +307,20 @@ class post_options
 	 */
 	public function set_status($bbcode, $smilies, $url)
 	{
-		$this->bbcode_status = (phpbb::$config['allow_bbcode'] && $this->auth_bbcode) ? true : false;
-		$this->smilies_status = (phpbb::$config['allow_smilies'] && $this->auth_smilies) ? true : false;
-		$this->img_status = ($this->auth_img && $this->bbcode_status) ? true : false;
-		$this->url_status = (phpbb::$config['allow_post_links'] && $this->auth_url && $this->bbcode_status) ? true : false;
-		$this->flash_status = ($this->auth_flash && $this->bbcode_status) ? true : false;
-
 		$this->enable_bbcode = ($this->bbcode_status && $bbcode) ? true : false;
 		$this->enable_smilies = ($this->smilies_status && $smilies) ? true : false;
 		$this->enable_magic_url = ($this->url_status && $url) ? true : false;
+	}
+
+	/**
+	* Get the status of a type
+	*
+	* @param mixed $mode (bbcode|smilies|img|url|flash)
+	*/
+	public function get_status($mode)
+	{
+		$var = $mode . '_status';
+		return $this->{$var};
 	}
 
 	/**

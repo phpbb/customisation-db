@@ -284,7 +284,7 @@ class titania_contribution extends titania_database_object
 	 */
 	private function generate_text_for_edit()
 	{
-		decode_message($this->contrib_desc, $this->contrib_desc_uid);
+		return generate_text_for_edit($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_options);
 	}
 
 	/**

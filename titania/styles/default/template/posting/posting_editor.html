@@ -4,12 +4,14 @@
 	<h3>{L_POST_A}</h3>
 
 	<fieldset class="fields1">
-		<!-- IF ERROR --><p class="error">{ERROR}</p><!-- ENDIF -->
+		<!-- IF ERROR and S_DISPLAY_ERROR --><p class="error">{ERROR}</p><!-- ENDIF -->
 
+		<!-- IF S_DISPLAY_SUBJECT -->
 		<dl style="clear: left;">
 			<dt><label for="subject">{L_SUBJECT}:</label></dt>
 			<dd><input type="text" name="subject" id="subject" size="45" maxlength="60" tabindex="2" value="{SUBJECT}" class="inputbox autowidth" /></dd>
 		</dl>
+		<!-- ENDIF -->
 
 		<!-- IF S_CONFIRM_CODE -->
 			<!-- !INCLUDE {CAPTCHA_TEMPLATE} -->
@@ -78,3 +80,9 @@
 <!-- BEGIN panels -->
 	{panels.OUTPUT}
 <!-- END panels -->
+
+<script type="text/javascript">
+// <![CDATA[
+	subPanels(show_panel);
+// ]]>
+</script>

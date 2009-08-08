@@ -3,19 +3,28 @@
 <h2 class="section-title">{CONTRIB_NAME} :: {L_FAQ}</h2>
 
 <!-- IF S_LIST -->
-	<div>
-		<!-- IF U_CREATE_FAQ --><p class="ui-button"><a href="{U_CREATE_FAQ}" id="create-faq" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_FAQ}</a></p><!-- ENDIF -->
-		<!-- IF U_FAQ_MANAGEMENT --><p style="float: right"><a href="{U_FAQ_MANAGEMENT}">{L_FAQ_MANAGEMENT}</a></p><!-- ENDIF -->
-	</div>
-	<div class="faq-list">
-		<span class="corners-top"><span></span></span>
-			<!-- IF .faqlist -->
-				<ul>
-					<!-- BEGIN faqlist -->
-					<li>
-						<dl>
-							<dt style="float:left; display: block; width: 70%"><a href="{faqlist.U_FAQ}">{faqlist.SUBJECT}</a><dt>
-							<dd style="margin-left: 71%; text-align: right">
+	<!-- IF U_CREATE_FAQ --><p class="ui-button"><a href="{U_CREATE_FAQ}" id="create-faq" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_FAQ}</a></p><!-- ENDIF -->
+
+	<!-- IF .faqlist -->
+		<div class="forumbg">
+			<div class="inner"><span class="corners-top"><span></span></span>
+				<ul class="topiclist">
+					<li class="header">
+						<dl class="icon">
+							<dt>{L_FAQ_LIST}</dt>
+							<dd class="views">{L_VIEWS}</dd>
+							<!-- IF faqlist.U_MOVE_UP or faqlist.U_MOVE_DOWN or faqlist.U_EDIT or faqlist.U_DELETE--><dd class="lastpost"><span></span></dd><!-- ENDIF -->
+						</dl>
+					</li>
+				</ul>
+				<ul class="topiclist topics">
+
+				<!-- BEGIN faqlist -->
+					<li class="row<!-- IF faqlist.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+						<dl class="icon" style="background-image: url({topics.TOPIC_FOLDER_IMG_SRC}); background-repeat: no-repeat;">
+							<dt title="{topics.TOPIC_FOLDER_IMG_ALT}"><a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a></dt>
+							<dd class="views">{faqlist.VIEWS} <dfn>{L_VIEWS}</dfn></dd>
+							<dd class="lastpost"><span>
 								<!-- IF faqlist.U_MOVE_UP -->
 									<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->
 								<!-- ENDIF -->
@@ -24,65 +33,37 @@
 								<!-- ENDIF -->
 								<!-- IF faqlist.U_EDIT --><a href="{faqlist.U_EDIT}">{ICON_EDIT}</a><!-- ENDIF -->
 								<!-- IF faqlist.U_DELETE -->&nbsp;<a href="{faqlist.U_DELETE}">{ICON_DELETE}</a><!-- ENDIF -->
-							</dd>
+							</span></dd>
 						</dl>
 					</li>
-					<!-- END faqlist-->
+				<!-- END faqlist-->
 				</ul>
-			<!-- ELSE -->
-				<p>{L_NO_FAQ}</p>
-			<!-- ENDIF -->
-		<span class="corners-bottom"><span></span></span>
-	</div>
-	<hr class="dashed" style="margin-bottom: 10px;" />
-
-	<!-- IF S_DETAILS -->
-		<a name="details"></a>
-
-		<div class="faq-item" id="f{S_ROW_COUNT}">
-			{FAQ_SUBJECT}
-		</div>
-
-		<div class="faq-body">
-			{FAQ_TEXT}
-		</div>
-
-		<p>{L_VIEWS}: {FAQ_VIEWS}</p>
-	<!-- ENDIF -->
-<!-- ELSEIF S_EDIT -->
-	<form action="{U_ACTION}" method="post">
-		<div class="panel">
-			<div class="inner"><span class="corners-top"><span></span></span>
-
-			<h2>{L_EDIT_FAQ}<!-- IF FAQ_SUBJECT --> :: {FAQ_SUBJECT}<!-- ENDIF --></h2>
-
-			<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
-
-			<fieldset>
-				<dl style="clear: left;">
-					<dt><label for="subject">{L_FAQ_SUBJECT}:</label></dt>
-					<dd><input type="text" name="subject" id="subject" size="45" maxlength="60" tabindex="1" value="{FAQ_SUBJECT}" class="inputbox autowidth" /></dd>
-				</dl>
-				<!-- IF S_ACCESS_OPTIONS -->
-				<dl style="clear: left;">
-					<dt><label for="access">{L_ACCESS}:</label></dt>
-					<dd><select name="faq_access">{S_ACCESS_OPTIONS}</select></dd>
-				</dl>
-				<!-- ENDIF -->
-				<dl style="clear: left;">
-					<dt><label for="text">{L_FAQ_TEXT}:</label></dt>
-					<dd><textarea name="text" id="text" class="inputbox" cols="40" rows="5">{FAQ_TEXT}</textarea></dd>
-				</dl>
-			</fieldset>
-
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
+	<!-- ELSE -->
+		<div class="panel">
+			<div class="inner"><span class="corners-top"><span></span></span>
+			<strong>{L_NO_FAQ}</strong>
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
+	<!-- ENDIF -->
 
-		<fieldset class="submit-buttons">
-			<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
-			<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
-			{S_FORM_TOKEN}
-		</fieldset>
+	<!-- IF U_CREATE_FAQ --><p class="ui-button"><a href="{U_CREATE_FAQ}" id="create-faq" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_FAQ}</a></p><!-- ENDIF -->
+<!-- ELSEIF S_DETAILS -->
+	<div class="faq-item" id="f{S_ROW_COUNT}">
+		{FAQ_SUBJECT}
+	</div>
+
+	<div class="faq-body">
+		{FAQ_TEXT}
+	</div>
+
+	<p>{L_VIEWS}: {FAQ_VIEWS}</p>
+<!-- ELSEIF S_EDIT -->
+	<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
+		<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
+
+		<!-- INCLUDE posting/posting_editor.html -->
 	</form>
 <!-- ENDIF -->
 

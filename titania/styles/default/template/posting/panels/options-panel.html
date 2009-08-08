@@ -2,6 +2,10 @@
 	<div class="inner"><span class="corners-top"><span></span></span>
 
 	<fieldset class="fields1">
+		<!-- IF ACCESS_OPTIONS -->
+			<div><select name="message_access">{ACCESS_OPTIONS}</select></div>
+		<!-- ENDIF -->
+
 		<!-- IF S_BBCODE_ALLOWED -->
 			<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{S_BBCODE_CHECKED} /> {L_DISABLE_BBCODE}</label></div>
 		<!-- ENDIF -->
@@ -50,6 +54,6 @@
 		</dl>
 		<!-- ENDIF -->
 	</fieldset>
-	
+
 	<span class="corners-bottom"><span></span></span></div>
 </div>

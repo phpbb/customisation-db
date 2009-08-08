@@ -17,6 +17,7 @@ if (!defined('IN_TITANIA'))
 }
 
 titania::load_object(array('topic', 'post'));
+titania::add_lang('posting');
 
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
@@ -76,30 +77,40 @@ else
 
 $submit = (isset($_POST['submit'])) ? true : false;
 $action = request_var('action', '');
+$s_post_action = titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => $action));
 
 switch ($action)
 {
 	case 'post' :
-		titania::add_lang('posting');
-		phpbb::$user->add_lang('posting');
-		titania::load_tool('message');
-
 		$post_object = new titania_post('normal');
 
+		// Load the message object
+		titania::load_tool('message');
 		$message = new titania_message($post_object);
+		$message->auth_bbcode = phpbb::$auth->acl_get('titania_bbcode');
+		$message->auth_smilies = phpbb::$auth->acl_get('titania_smilies');
 
 		if ($submit)
 		{
-			$post_object->__set_array(array(
-				'post_subject'		=> $message->request_subject(),
-				'post_text'			=> $message->request_message(),
-			));
+			$post_data = $message->request_data();
 
+			$post_object->__set_array(array(
+				'post_subject'		=> $post_data['subject'],
+				'post_text'			=> $post_data['message'],
+				'post_access'		=> $post_data['access'],
+			));
 			$post_object->topic->contrib_id = titania::$contrib->contrib_id;
+
+			$post_object->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
 
 			$error = $post_object->validate();
 
-			if (sizeof($error))
+			if (!check_form_key('post_form'))
+			{
+				$error[] = phpbb::$user->lang['FORM_INVALID'];
+			}
+
+			if (!sizeof($error))
 			{
 				$template->assign_var('ERROR', implode('<br />', $error));
 			}
@@ -113,7 +124,12 @@ switch ($action)
 			}
 		}
 
+		add_form_key('post_form');
 		$message->display();
+
+		phpbb::$template->assign_vars(array(
+			'S_POST_ACTION'		=> $s_post_action,
+		));
 
 		titania::page_header('NEW_TOPIC');
 		titania::page_footer(true, 'contributions/contribution_support_post.html');
@@ -147,6 +163,10 @@ switch ($action)
 		if ($topic_id)
 		{
 
+			phpbb::$template->assign_vars(array(
+				'U_POST_REPLY'			=> (phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url($topic->get_url(), array('action' => 'reply')) : '',
+			));
+
 			titania::page_header(phpbb::$user->lang['CONTRIB_SUPPORT'] . ' - ' . censor_text($topic->topic_subject));
 		}
 		else
@@ -154,7 +174,9 @@ switch ($action)
 			titania_display_forums('contrib', titania::$contrib);
 
 			phpbb::$template->assign_vars(array(
-				'U_CREATE_TOPIC'		=> (phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => 'post')) : '',
+				'U_CREATE_TOPIC'		=> (phpbb::$auth->acl_get('titania_topic')) ? titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => 'post')) : '',
+
+				'S_TOPIC_LIST'			=> true,
 			));
 
 			titania::page_header('CONTRIB_SUPPORT');

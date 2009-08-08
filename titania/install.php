@@ -277,12 +277,12 @@ $versions = array(
 
 		'permission_add' => array(
 			'titania_',
-			'titania_rate',
-			'titania_rate_reset',
-			'titania_faq_create',
-			'titania_faq_edit',
-			'titania_faq_delete',
-			'titania_faq_mod',
+			'titania_rate', // Can rate items
+			'titania_rate_reset', // Can reset the rating on items
+			'titania_faq_create', // Can create FAQ entries
+			'titania_faq_edit', // Can edit own FAQ entries
+			'titania_faq_delete', // Can delete own FAQ entries
+			'titania_faq_mod', // Can moderate FAQ entries
 		),
 
 		'permission_set' => array(
@@ -389,11 +389,11 @@ $versions = array(
 		),
 
 		'permission_add' => array(
-			'titania_post',
-			'titania_post_edit_own',
-			'titania_post_delete_own',
-			'titania_post_mod_own',
-			'titania_post_mod',
+			'titania_post', // Can create new posts
+			'titania_post_edit_own', // Can edit own posts
+			'titania_post_delete_own', // Can delete own posts
+			'titania_post_mod_own', // Can moderate own topics
+			'titania_post_mod', // Can moderate topics
 		),
 
 		'permission_set' => array(
@@ -418,7 +418,7 @@ $versions = array(
 
 	'0.1.8' => array(
 		'permission_add' => array(
-			'titania_author_mod',
+			'titania_author_mod', // Can moderate author profiles
 		),
 
 		'permission_set' => array(
@@ -461,6 +461,19 @@ $versions = array(
 
 		'table_column_remove' => array(
 			array(TITANIA_TOPICS_TABLE, 'topic_time'),
+		),
+	),
+
+	'0.1.12' => array(
+		'permission_add' => array(
+			'titania_topic', // Can create new topics
+			'titania_bbcode', // Can post bbcode
+			'titania_smilies', // Can post smilies
+		),
+
+		'permission_set' => array(
+			array('ROLE_USER_FULL', array('titania_topic', 'titania_bbcode', 'titania_smilies')),
+			array('ROLE_USER_STANDARD', array('titania_topic', 'titania_bbcode', 'titania_smilies')),
 		),
 	),
 

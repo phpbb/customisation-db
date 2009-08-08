@@ -76,6 +76,33 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
+	* Validate that all the data is correct
+	*
+	* @return array empty array on success, array with (string) errors ready for output on failure
+	*/
+	public function validate()
+	{
+		$error = array();
+
+		if (utf8_clean_string($this->faq_subject) === '')
+		{
+			$error[] = phpbb::$user->lang['EMPTY_SUBJECT'];
+		}
+
+		$message_length = utf8_strlen($this->faq_text);
+		if ($message_length < (int) phpbb::$config['min_post_chars'])
+		{
+			$error[] = sprintf(phpbb::$user->lang['TOO_FEW_CHARS_LIMIT'], $message_length, (int) phpbb::$config['min_post_chars']);
+		}
+		else if ($message_length > (int) phpbb::$config['max_post_chars'])
+		{
+			$error[] = sprintf($user->lang['TOO_MANY_CHARS_POST'], $message_length, (int) phpbb::$config['max_post_chars']);
+		}
+
+		return $error;
+	}
+
+	/**
 	 * Update data or submit new faq
 	 *
 	 * @return void
@@ -87,7 +114,7 @@ class titania_faq extends titania_database_object
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
 		if (!$this->text_parsed_for_storage)
 		{
-			$this->generate_text_for_storage(true, true, true);
+			$this->generate_text_for_storage();
 		}
 
 		parent::submit();
@@ -100,8 +127,6 @@ class titania_faq extends titania_database_object
 	*/
 	public function move($direction)
 	{
-		$this->load();
-
 		$sql = 'SELECT faq_order_id
 			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			WHERE faq_order_id ' . (($direction == 'move_up') ? '<' : '>') . $this->faq_order_id . '
@@ -133,28 +158,6 @@ class titania_faq extends titania_database_object
 	}
 
 	/**
-	 * Get faq data from the database
-	 *
-	 * @return void
-	 */
-	public function load()
-	{
-		parent::load();
-
-		$this->text_parsed_for_storage = true;
-	}
-
-	/**
-	 * Delete an entry
-	 *
-	 * @return void
-	 */
-	public function delete()
-	{
-		parent::delete();
-	}
-
-	/**
 	 * Parse text to store in database
 	 *
 	 * @param bool $allow_bbcode
@@ -163,19 +166,9 @@ class titania_faq extends titania_database_object
 	 *
 	 * @return void
 	 */
-	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
+	public function generate_text_for_storage($allow_bbcode = false, $allow_urls = false, $allow_smilies = false)
 	{
-		$faq_text = $this->faq_text;
-		$faq_text_uid = $this->faq_text_uid;
-		$faq_text_bitfield = $this->faq_text_bitfield;
-		$faq_text_options = $this->faq_text_options;
-
-		generate_text_for_storage($faq_text, $faq_text_uid, $faq_text_bitfield, $faq_text_options, $allow_bbcode, $allow_urls, $allow_smilies);
-
-		$this->faq_text = $faq_text;
-		$this->faq_text_uid = $faq_text_uid;
-		$this->faq_text_bitfield = $faq_text_bitfield;
-		$this->faq_text_options = $faq_text_options;
+		generate_text_for_storage($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
 		$this->text_parsed_for_storage = true;
 	}
@@ -185,9 +178,9 @@ class titania_faq extends titania_database_object
 	 *
 	 * @return string text content from database for display
 	 */
-	private function generate_text_for_display()
+	public function generate_text_for_display()
 	{
-		$this->faq_text = generate_text_for_display($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options);
+		return generate_text_for_display($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options);
 	}
 
 	/**
@@ -195,68 +188,12 @@ class titania_faq extends titania_database_object
 	 *
 	 * @return string text content from database for editing
 	 */
-	private function generate_text_for_edit()
+	public function generate_text_for_edit()
 	{
-		$return = generate_text_for_edit($this->faq_text, $this->faq_text_uid, $this->faq_text_options);
-		$this->faq_text = $return['text'];
-	}
-
-	/**
-	 * Getter function for faq_text
-	 *
-	 * @param bool $editable
-	 *
-	 * @return string generate_text_for edit if editable is true, or display if false
-	 */
-	public function get_faq_text($editable = false)
-	{
-		// Text needs to be from database or parsed for database.
-		if (!$this->text_parsed_for_storage)
-		{
-			$this->generate_text_for_storage(true, true, true);
-		}
-
-		if ($editable)
-		{
-			$this->generate_text_for_edit();
-		}
-		else
-		{
-			$this->generate_text_for_display();
-		}
-
-		return $this->faq_text;
-	}
-
-	/**
-	 * Setter function for faq_text
-	 *
-	 * @param string $text
-	 * @param string $uid
-	 * @param string $bitfield
-	 * @param int $flags
-	 *
-	 * @return void
-	 */
-	public function set_faq_text($text, $uid = false, $bitfield = false, $flags = false)
-	{
-		$this->faq_text = $text;
-		$this->text_parsed_for_storage = false;
-
-		if ($uid !== false)
-		{
-			$this->faq_text_uid = $uid;
-		}
-
-		if ($bitfield !== false)
-		{
-			$this->faq_text_bitfield = $bitfield;
-		}
-
-		if ($flags !== false)
-		{
-			$this->faq_text_options = $flags;
-		}
+		return array_merge(generate_text_for_edit($this->faq_text, $this->faq_text_uid, $this->faq_text_options), array(
+			'options'	=> $this->faq_text_options,
+			'subject'	=> $this->faq_subject,
+		));
 	}
 
 	/**

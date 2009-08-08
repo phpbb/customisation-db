@@ -2,10 +2,18 @@
 
 <h2 class="section-title">{PAGE_TITLE} :: {L_DETAILS}</h2>
 
-<!-- IF U_CREATE_TOPIC --><p class="ui-button"><a href="{U_CREATE_TOPIC}" id="create-topic" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_NEW_TOPIC}</a></p><!-- ENDIF -->
+<!-- IF S_TOPIC_LIST -->
+	<!-- IF U_CREATE_TOPIC --><p class="ui-button"><a href="{U_CREATE_TOPIC}" id="create-topic" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_NEW_TOPIC}</a></p><!-- ENDIF -->
 
-<!-- INCLUDE topic_list.html -->
+	<!-- INCLUDE topic_list.html -->
 
-<!-- IF U_CREATE_TOPIC --><p class="ui-button"><a href="{U_CREATE_TOPIC}" id="create-topic" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_NEW_TOPIC}</a></p><!-- ENDIF -->
+	<!-- IF U_CREATE_TOPIC --><p class="ui-button"><a href="{U_CREATE_TOPIC}" id="create-topic" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_NEW_TOPIC}</a></p><!-- ENDIF -->
+<!-- ELSE -->
+	<!-- IF U_POST_REPLY --><p class="ui-button"><a href="{U_POST_REPLY}" id="post-reply" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_POST_REPLY}</a></p><!-- ENDIF -->
+
+	<!-- INCLUDE post_list.html -->
+
+	<!-- IF U_POST_REPLY --><p class="ui-button"><a href="{U_POST_REPLY}" id="post-reply" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_POST_REPLY}</a></p><!-- ENDIF -->
+<!-- ENDIF -->
 
 <!-- INCLUDE contributions/contribution_footer.html -->

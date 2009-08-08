@@ -379,14 +379,14 @@ class titania_post extends titania_database_object
 	/**
 	 * Parse text for edit
 	 *
-	 * @return string text content from database for editing
+	 * @return array of data for editing
 	 */
 	public function generate_text_for_edit()
 	{
-		$text = $this->post_text;
-		decode_message($text, $this->post_text_uid);
-
-		return $text;
+		return array_merge(generate_text_for_edit($this->post_text, $this->post_text_uid, $this->post_text_options), array(
+			'options'	=> $this->post_text_options,
+			'subject'	=> $this->post_subject,
+		));
 	}
 
 	/**

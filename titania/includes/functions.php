@@ -30,9 +30,9 @@ function contrib_category_select($default = 0, $select_name = 'contrib_category'
 		WHERE category_type = 1
 			AND category_visible = 1';
 	$result = phpbb::$db->sql_query($sql);
-	
+
 	$options = '<option value="0">' . phpbb::$user->lang['SELECT_CATEGORY'] . '</option>';
-	
+
 	while ($category = phpbb::$db->sql_fetchrow($result))
 	{
 		$category_name = (isset(phpbb::$user->lang[$category['category_name']])) ? phpbb::$user->lang[$category['category_name']] : $category['category_name'];
@@ -40,7 +40,7 @@ function contrib_category_select($default = 0, $select_name = 'contrib_category'
 		$options .= '<option value="' . $category['category_id'] . '"' . $selected . '>' . $category_name . '</option>';
 	}
 	phpbb::$db->sql_freeresult($result);
-	
+
 	return '<select id="' . $select_name . '" name="' . $select_name . '">' . $options . '</select>';
 }
 
@@ -50,7 +50,7 @@ function contrib_category_select($default = 0, $select_name = 'contrib_category'
  * @param int $default
  * @param string $select_name
  * @return string
- */ 
+ */
 function contrib_type_select($default = 0, $select_name = 'contrib_type')
 {
 	$types = array(
@@ -59,15 +59,15 @@ function contrib_type_select($default = 0, $select_name = 'contrib_type')
 		TITANIA_TYPE_SNIPPET	=> 'SNIPPET',
 		TITANIA_TYPE_LANG_PACK	=> 'LANGUAGE_PACK',
 	);
-	
+
 	$options = '<option value="0">' . phpbb::$user->lang['SELECT_CONTRIB_TYPE'] . '</option>';
-	
+
 	foreach ($types as $key => $lang)
-	{	
+	{
 		$selected = ($key == $default) ? ' selected="selected"' : '';
 		$options .= '<option value="' . $key . '"' . $selected . '>' . phpbb::$user->lang[$lang] . '</option>';
 	}
-	
+
 	return '<select id="' . $select_name . '" name="' . $select_name . '">' . $options . '</select>';
 }
 
@@ -76,7 +76,7 @@ function contrib_type_select($default = 0, $select_name = 'contrib_type')
  *
  * @param string $permalink
  * @return bool
- */ 
+ */
 function validate_permalink($permalink)
 {
 	$sql = 'SELECT contrib_id
@@ -85,7 +85,7 @@ function validate_permalink($permalink)
 	$result = phpbb::$db->sql_query($sql);
 	$found = phpbb::$db->sql_fetchfield('contrib_id');
 	phpbb::$db->sql_freeresult($result);
-	
+
 	return ($found) ? false : true;
 }
 
@@ -102,42 +102,6 @@ function titania_sid($page, $params = false, $is_amp = true, $session_id = false
 {
 	return append_sid(titania::$absolute_path . $page . '.' . PHP_EXT, $params, $is_amp, $session_id);
 }
-
-/*
- * Create select with Titania's accesses
- *
- * @param integer $default
- * @return string
- */
-function titania_access_select($default = false)
-{
-	if (titania::$access_level == TITANIA_ACCESS_PUBLIC)
-	{
-		return '';
-	}
-
-	$access_types = array(
-		TITANIA_ACCESS_TEAMS 	=> 'ACCESS_TEAMS',
-		TITANIA_ACCESS_AUTHORS 	=> 'ACCESS_AUTHORS',
-		TITANIA_ACCESS_PUBLIC 	=> 'ACCESS_PUBLIC',
-	);
-
-	$s_options = '';
-
-	foreach ($access_types as $type => $lang_key)
-	{
-		if (titania::$access_level > $type)
-		{
-			continue;
-		}
-
-		$selected = ($default == $type) ? ' selected="selected"' : '';
-		$s_options .= '<option value="' . $type . '"' . $selected . '>' . phpbb::$user->lang[$lang_key] . '</option>';
-	}
-
-	return $s_options;
-}
-
 
 /**
 * Error and message handler, call with trigger_error if reqd

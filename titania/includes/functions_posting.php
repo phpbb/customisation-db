@@ -30,123 +30,56 @@ function get_posting_options($bbcode, $smilies, $url)
 }
 
 /**
-* Display posting bbcode/smilies
+* Reverses the posting options
 *
-* @param mixed $display _options for the item, see get_posting_options
-* @param bool $auth_bbcode Are they allowed to post BBCode?
-* @param bool $auth_smilies Are they allowed to post Smilies?
-* @param bool $auth_flash Are they allowed to post Flash?
+* @param int $options The given posting options
+* @param bool $bbcode
+* @param bool $smilies
+* @param bool $url
 */
-function display_posting_bbcode_smilies($options = 7, $auth_bbcode = true, $auth_smilies = true, $auth_flash = false)
+function reverse_posting_options($options, &$bbcode, &$smilies, &$url)
 {
-	$bbcode_status = (phpbb::$config['allow_bbcode'] && $auth_bbcode) ? true : false;
-	$smilies_status = (phpbb::$config['allow_smilies'] && $auth_smilies) ? true : false;
-	$img_status = ($bbcode_status) ? true : false;
-	$url_status = (phpbb::$config['allow_post_links'] && $bbcode_status) ? true : false;
-	$flash_status = ($auth_flash && $bbcode_status) ? true : false;
-
-	$enable_bbcode = ($bbcode_status && ($options & OPTION_FLAG_BBCODE)) ? true : false;
-	$enable_smilies = ($smilies_status && ($options & OPTION_FLAG_SMILIES)) ? true : false;
-	$enable_magic_url = ($url_status && ($options & OPTION_FLAG_LINKS)) ? true : false;
-
-	if ($bbcode_status)
-	{
-		if (!function_exists('display_custom_bbcodes'))
-		{
-			include(PHPBB_ROOT_PATH . 'includes/functions_display.' . PHP_EXT);
-		}
-
-		// Build custom bbcodes array
-		display_custom_bbcodes();
-
-		if ($smilies_status)
-		{
-			// Generate smiley listing
-			titania_generate_smilies();
-		}
-	}
-
-	phpbb::$template->assign_vars(array(
-		// If they hit preview or submit and got an error, or are editing their post make sure we carry their existing post info & options over
-		'S_BBCODE_CHECKED'			=> ($enable_bbcode) ? '' : ' checked="checked"',
-		'S_SMILIES_CHECKED'			=> ($enable_smilies) ? '' : ' checked="checked"',
-		'S_MAGIC_URL_CHECKED'		=> ($enable_magic_url) ? '' : ' checked="checked"',
-
-		// To show the Options: section on the bottom left
-		'BBCODE_STATUS'				=> sprintf(phpbb::$user->lang[(($bbcode_status) ? 'BBCODE_IS_ON' : 'BBCODE_IS_OFF')], '<a href="' . append_sid(titania::$absolute_board . 'faq.' . PHP_EXT, 'mode=bbcode') . '">', '</a>'),
-		'IMG_STATUS'				=> ($img_status) ? phpbb::$user->lang['IMAGES_ARE_ON'] : phpbb::$user->lang['IMAGES_ARE_OFF'],
-		'FLASH_STATUS'				=> ($flash_status) ? phpbb::$user->lang['FLASH_IS_ON'] : phpbb::$user->lang['FLASH_IS_OFF'],
-		'SMILIES_STATUS'			=> ($smilies_status) ? phpbb::$user->lang['SMILIES_ARE_ON'] : phpbb::$user->lang['SMILIES_ARE_OFF'],
-		'URL_STATUS'				=> ($url_status) ? phpbb::$user->lang['URL_IS_ON'] : phpbb::$user->lang['URL_IS_OFF'],
-
-		// To show the option to turn each off while posting
-		'S_BBCODE_ALLOWED'			=> $bbcode_status,
-		'S_SMILIES_ALLOWED'			=> $smilies_status,
-		'S_LINKS_ALLOWED'			=> $url_status,
-
-		// To show the BBCode buttons for each on top
-		'S_BBCODE_IMG'				=> $img_status,
-		'S_BBCODE_URL'				=> $url_status,
-		'S_BBCODE_FLASH'			=> $flash_status,
-		'S_BBCODE_QUOTE'			=> true,
-	));
+	$bbcode = ($options & OPTION_FLAG_BBCODE) ? true : false;
+	$smilies = ($options & OPTION_FLAG_SMILIES) ? true : false;
+	$url = ($options & OPTION_FLAG_LINKS) ? true : false;
 }
 
-/**
-* Fill smiley templates (or just the variables) with smilies
-*/
-function titania_generate_smilies()
+/*
+ * Create select with Titania's accesses
+ *
+ * @param integer $default
+ * @return string
+ */
+function titania_access_select($default = false)
 {
-	$display_link = false;
-	$sql = 'SELECT smiley_id
-		FROM ' . SMILIES_TABLE . '
-		WHERE display_on_posting = 0';
-	$result = phpbb::$db->sql_query_limit($sql, 1, 0, 3600);
-
-	if ($row = phpbb::$db->sql_fetchrow($result))
+	if (titania::$access_level == TITANIA_ACCESS_PUBLIC)
 	{
-		$display_link = true;
+		return '';
 	}
-	phpbb::$db->sql_freeresult($result);
 
-	$last_url = '';
+	$access_types = array(
+		TITANIA_ACCESS_TEAMS 	=> 'ACCESS_TEAMS',
+		TITANIA_ACCESS_AUTHORS 	=> 'ACCESS_AUTHORS',
+		TITANIA_ACCESS_PUBLIC 	=> 'ACCESS_PUBLIC',
+	);
 
-	$sql = 'SELECT *
-		FROM ' . SMILIES_TABLE . '
-			WHERE display_on_posting = 1
-		ORDER BY smiley_order';
-	$result = phpbb::$db->sql_query($sql, 3600);
-
-	$smilies = array();
-	while ($row = phpbb::$db->sql_fetchrow($result))
+	if (!$default)
 	{
-		if (empty($smilies[$row['smiley_url']]))
+		$default = TITANIA_ACCESS_PUBLIC;
+	}
+
+	$s_options = '';
+
+	foreach ($access_types as $type => $lang_key)
+	{
+		if (titania::$access_level > $type)
 		{
-			$smilies[$row['smiley_url']] = $row;
+			continue;
 		}
-	}
-	phpbb::$db->sql_freeresult($result);
 
-	if (sizeof($smilies))
-	{
-		foreach ($smilies as $row)
-		{
-			phpbb::$template->assign_block_vars('smiley', array(
-				'SMILEY_CODE'	=> $row['code'],
-				'A_SMILEY_CODE'	=> addslashes($row['code']),
-				'SMILEY_IMG'	=> titania::$absolute_board . phpbb::$config['smilies_path'] . '/' . $row['smiley_url'],
-				'SMILEY_WIDTH'	=> $row['smiley_width'],
-				'SMILEY_HEIGHT'	=> $row['smiley_height'],
-				'SMILEY_DESC'	=> $row['emotion'])
-			);
-		}
+		$selected = ($default == $type) ? ' selected="selected"' : '';
+		$s_options .= '<option value="' . $type . '"' . $selected . '>' . phpbb::$user->lang[$lang_key] . '</option>';
 	}
 
-	if ($display_link)
-	{
-		phpbb::$template->assign_vars(array(
-			'S_SHOW_SMILEY_LINK' 	=> true,
-			'U_MORE_SMILIES' 		=> append_sid(titania::$absolute_board . 'posting.' . PHP_EXT, 'mode=smilies&amp;f=' . $forum_id))
-		);
-	}
+	return $s_options;
 }
