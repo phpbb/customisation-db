@@ -1,32 +1,29 @@
-<!-- BEGIN file -->
-	<div class="upload_item" id="upload_{file.FILE_ID}">
+<!-- BEGIN attachment -->
+	<div class="upload_item" id="upload_{attachment.ID}">
 		<div class="file_info_small" id="file_info_small_1">
 			<ul>
-				<li class="file_name">{file.FILE_NAME}</li>
-				<li class="hide float_right" id="{file.FILE_ID}"><a id="show_hide_{file.FILE_ID}" href="javascript:void;">{L_HIDE}</a></li>
+				<li class="file_name">{attachment.NAME}</li>
+				<li class="hide float_right" id="{attachment.ID}"><a id="show_hide_{attachment.ID}" href="javascript:void;"><!-- IF S_HIDE_ATTACHMENT -->{L_SHOW}<!-- ELSE -->{L_HIDE}<!-- ENDIF --></a></li>
 				
 			</ul>
 		</div>
-		<div id="file_info_main_{file.FILE_ID}" style="display: none;">
+		<div id="file_info_main_{attachment.ID}" <!-- IF S_HIDE_ATTACHMENT -->style="display: none;"<!-- ENDIF -->>
 			<div class="file_info">
 				<img src="{T_TITANIA_THEME_PATH}/images/zip.png" width="64px" height="64px" />
 				<ul>
-					<li>{file.REAL_FILE_NAME}</li>
-					<li>{file.FILE_MIMETYPE}</li>
-					<li>{file.FILE_DATE}</li>
+					<li>{attachment.REAL_NAME}</li>
+					<li>{attachment.MIMETYPE}</li>
+					<li>{attachment.DATE}</li>
 				</ul>
 			</div>
 			<fieldset style="clear: both;">
 				<dl style="clear: left;">
 					<dt><label for="title">{L_FILE_TITLE}:</label></dt>
-					<dd><input type="text" name="title[{file.FILE_ID}]" id="name" size="45" maxlength="60" tabindex="1" value="{file.FILE_NAME}" class="inputbox autowidth" /></dd>
-				</dl>
-				<dl style="clear: left;">
-					<dt><label for="file_description">{L_FILE_DESCRIPTION}:</label></dt>
-					<dd><textarea name="file_description[{file.FILE_ID}]" id="file_description" class="inputbox" cols="40" rows="5">{file.FILE_DESC}</textarea></dd>
+					<dd><input type="text" name="title[{file.ATTACHMENT_ID}]" id="name" size="45" maxlength="60" tabindex="1" value="{attachment.NAME}" class="inputbox autowidth" /></dd>
 				</dl>
 			</fieldset>
 		</div>
 	</div>
+	{attachment.S_HIDDEN_FIELDS}
 	<hr />
-<!-- END file -->
+<!-- END attachment -->

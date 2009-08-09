@@ -5,23 +5,21 @@
 
 		// Create file uploader.
 		$('#fileInput').fileUpload ({
-			'uploader'  : '/titania/js/uploadify/uploader.swf',
-			'script'    : '/titania/upload.php',
-			'cancelImg' : '{T_TITANIA_THEME_PATH}/images/cancel.png',
-			'auto'      : true,
-			'multi'		: true,
-			'buttonText': 'Select Files',
-			'width'		: '110px',
-			'height'	: '22px',
-			'fileDataName': 'uploadify',
-			'onComplete': onComplete,
+			'uploader'  	: '{UPLOADER}',
+			'script'    	: '{UPLOAD_SCRIPT}',
+			'cancelImg' 	: '{T_TITANIA_THEME_PATH}/images/cancel.png',
+			'auto'      	: true,
+			'multi'			: true,
+			'buttonText'	: '{L_SELECT_FILES}',
+			'width'			: '110px',
+			'height'		: '22px',
+			'fileDataName'	: 'uploadify',
+			'onComplete'	: onComplete,
 		});
 		
 		// onComplete function.
 		function onComplete(event, queueId, fileObj, response, data)
 		{
-			console.log(response);
-			
 			// Parse response as JSON.
 			var response = window["eval"]("(" + response + ")");
 
@@ -47,8 +45,6 @@
 			$('show_hide_' + id).val('{L_CLOSE}');
 		});
 	});
-
-	
 --></script>
 
 <h2 class="section-title">{L_ATTACHMENTS}</h2>

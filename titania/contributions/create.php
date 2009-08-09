@@ -77,6 +77,9 @@ if ($submit)
 
 		$contrib->submit();
 
+		// Update are attachments.
+		$attachment->update_orphans($contrib->contrib_id);
+
 		$sql = 'INSERT INTO ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', array(
 			'contrib_id' 	=> $contrib->contrib_id,
 			'category_id'	=> $contrib_category,
@@ -85,7 +88,7 @@ if ($submit)
 		phpbb::$db->sql_query($sql);
 
 		meta_refresh(3, $contrib->get_url());
-		
+
 		titania::error_box('SUCCESS', 'CONTRIB_CREATED', TITANIA_SUCCESS);
 	}
 }

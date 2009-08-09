@@ -43,5 +43,6 @@ $lang = array_merge($lang, array(
 
 	'HIDE'					=> 'Hide',
 
+	'SELECT_FILES'			=> 'Select Files',
 	'SHOW'					=> 'Show',
 ));

@@ -44,7 +44,9 @@ if (!$filedata['error'])
 
 	header('Content-type: application/json');
 
-	$attachment->display($attachment->attachment_id);
+	$attachment->display_attachments($attachment->attachment_id);
+
+	// No page_header();
 
 	$response = array(
 		'html' 	=> phpbb::$template->assign_display('file'),

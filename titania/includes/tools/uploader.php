@@ -39,7 +39,7 @@ class titania_uploader extends fileupload
 	private $file_type = '';
 
 	/**
-	 * Enter description here...
+	 * Class constructor
 	 *
 	 * @param string $form_name Form name from where we can find the file.
 	 * @param int $contrib_id The contribution id which the attachment belongs to, if 0, the attachment will be an orphan and the
@@ -57,15 +57,16 @@ class titania_uploader extends fileupload
 	}
 
 	/**
-	 * Uploads a file to server.
+	 * Uploads a file to server
 	 *
-	 * @todo This method should not be so long...
-	 *
-	 * @return unknown
+	 * @return array filedata
 	 */
 	public function upload_file()
 	{
-		$filedata['post_attach'] = ($this->is_valid($this->form_name)) ? true : false;
+		$filedata = array(
+			'error'			=> array(),
+			'post_attach'	=> ($this->is_valid($this->form_name)) ? true : false,
+		);
 
 		if (!$filedata['post_attach'])
 		{
@@ -112,6 +113,7 @@ class titania_uploader extends fileupload
 		$filedata['physical_filename'] = $file->get('realname');
 		$filedata['real_filename'] = $file->get('uploadname');
 		$filedata['filetime'] = time();
+		$filedata['md5_checksum'] = md5_file($file->get('destination_file'));
 
 		// Check our complete quota
 		//@todo Seperate config for titania attachments

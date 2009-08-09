@@ -62,6 +62,13 @@ class titania_contribution extends titania_database_object
 	public $revisions = array();
 
 	/**
+	 * Attachment object
+	 *
+	 * @var attachment object
+	 */
+	public $attachment;
+
+	/**
 	 * Rating of this contribution
 	 *
 	 * @var titania_rating
@@ -159,11 +166,15 @@ class titania_contribution extends titania_database_object
 
 		$this->description_parsed_for_storage = true;
 
-		titania::load_object('author');
+		titania::load_object(array('author', 'attachments'));
 
 		// Get the author
 		$this->author = new titania_author($this->contrib_user_id);
 		$this->author->load();
+
+		// Get the attachments
+		$this->attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, $this->contrib_id);
+		$this->attachment->display_attachments();
 
 		// Load co-authors list
 		$this->coauthors = array();
@@ -188,6 +199,19 @@ class titania_contribution extends titania_database_object
 		{
 			$this->coauthors[$row['user_id']] = new titania_author($row['user_id']);
 			$this->coauthors[$row['user_id']]->__set_array($row);
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Load the revisions list
+		$this->revisions = array();
+		$sql = 'SELECT *
+			FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id . '
+			ORDER BY revision_id DESC';
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$this->revisions[$row['revision_id']] = $row;
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -392,12 +416,9 @@ class titania_contribution extends titania_database_object
 				'REVISION_NAME'		=> $revision['revision_name'],
 				'REVISION_TIME'		=> phpbb::$user->format_date($revision['revision_time']),
 
-				'U_DOWNLOAD'		=> '',
-
 				'S_VALIDATED'		=> ($revision['contrib_validated']) ? true : false,
 			));
 		}
-
 
 		if (!phpbb::$user->data['is_bot'])
 		{

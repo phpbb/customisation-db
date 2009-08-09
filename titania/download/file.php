@@ -15,17 +15,14 @@ define('IN_TITANIA', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
-require TITANIA_ROOT . 'includes/objects/download.' . PHP_EXT;
-
-// Add language data
-titania::add_lang('download');
+require TITANIA_ROOT . 'includes/objects/attachments.' . PHP_EXT;
 
 // Request vars
 $download_id	= request_var('id', 0);
 $contrib_id		= request_var('contrib_id', 0);
 
 // Instantiate a download object
-$download = new titania_download($download_id);
+$download = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, $download_id);
 
 try
 {

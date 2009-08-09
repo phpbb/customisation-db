@@ -52,7 +52,7 @@ function load_contrib($contrib = false)
 	}
 
 	// Load the contribution
-	titania::load_object(array('contribution', 'author'));
+	titania::load_object('contribution');
 	titania::$contrib = new titania_contribution();
 
 	if (!titania::$contrib->load($contrib))
