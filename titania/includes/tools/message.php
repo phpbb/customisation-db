@@ -62,6 +62,7 @@ class titania_message
 	*/
 	public $display_error = true; // Make sure you output the error yourself if you set to false!
 	public $display_subject = true;
+	public $attachments_group = 0; // The attachment extensions group to allow
 
 	/**
 	* Array of posting panels
