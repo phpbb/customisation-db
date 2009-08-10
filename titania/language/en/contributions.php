@@ -66,7 +66,9 @@ $lang = array_merge($lang, array(
 	'EMPTY_CONTRIB_NAME'			=> 'Enter the contrib name',
 	'EMPTY_CONTRIB_DESC'			=> 'Enter the contrib description',
 	'EMPTY_CONTRIB_PERMALINK'		=> 'Enter your proposal for permalink for the contrib',
-
+	'EMPTY_CONTRIB_TYPE'			=> 'Select one contrib type at least',
+	'EMPTY_CATEGORY'				=> 'Select one category at least',
+	
 	'LOGIN_EXPLAIN_CONTRIB'			=> 'In order to create a new contribution you need to be registered',
 
 	'NEW_TOPIC' 					=> 'New Topic',

@@ -8,11 +8,23 @@
 	<fieldset>
 		<dl style="clear: left;">
 			<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
-			<dd>{CONTRIB_TYPE_SELECT}</dd>
+			<dd>
+				<select name="contrib_type" id="contrib_type">
+					<!-- BEGIN type_select -->
+					<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{type_select.NAME}</option>
+					<!-- END type_select -->
+				</select>
+			</dd>
 		</dl>
 		<dl style="clear: left;">
 			<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label></dt>
-			<dd>{CONTRIB_CATEGORY_SELECT}</dd>
+			<dd>
+				<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="4">
+					<!-- BEGIN category_select -->
+					<option value="{category_select.VALUE}"<!-- IF category_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{category_select.NAME}</option>
+					<!-- END category_select -->
+				</select>			
+			</dd>
 		</dl>
 		<dl style="clear: left;">
 			<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
