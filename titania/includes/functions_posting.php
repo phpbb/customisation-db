@@ -16,6 +16,69 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+/*
+ * This is a temporary function
+ *
+ * @param array $selected
+ * @return void
+ */
+function generate_category_select($selected = false)
+{
+	if (!is_array($selected))
+	{
+		$selected = array($selected);
+	}
+	
+	$sql = 'SELECT *
+		FROM ' . TITANIA_CATEGORIES_TABLE . '
+		WHERE category_visible = 1';
+	$result = phpbb::$db->sql_query($sql);
+
+	while ($category = phpbb::$db->sql_fetchrow($result))
+	{
+		phpbb::$template->assign_block_vars('category_select', array(
+			'S_IS_SELECTED'		=> (in_array($category['category_id'], $selected)) ? true : false,
+			
+			'VALUE'				=> $category['category_id'],
+			'NAME'				=> (isset(phpbb::$user->lang[$category['category_name']])) ? phpbb::$user->lang[$category['category_name']] : $category['category_name'],
+		));
+	}
+	phpbb::$db->sql_freeresult($result);
+}
+
+/*
+ * Create a select with the contrib types
+ *
+ * @param array $selected
+ * @return void
+ */
+function generate_type_select($selected = false)
+{
+	phpbb::$template->assign_block_vars('type_select', array(
+		'S_IS_SELECTED'		=> ($selected) ? false : true,
+		
+		'VALUE'				=> 0,
+		'NAME'				=> phpbb::$user->lang['SELECT_CONTRIB_TYPE'],
+	));
+	
+	$select_items = array(
+		TITANIA_TYPE_MOD 		=> 'MODIFICATION',
+		TITANIA_TYPE_STYLE		=> 'STYLE',
+		TITANIA_TYPE_SNIPPET	=> 'SNIPPET',
+		TITANIA_TYPE_LANG_PACK	=> 'LANGUAGE_PACK',
+	);
+	
+	foreach ($select_items as $key => $lang_key)
+	{
+		phpbb::$template->assign_block_vars('type_select', array(
+			'S_IS_SELECTED'		=> ($key === $selected) ? true : false,
+			
+			'VALUE'				=> $key,
+			'NAME'				=> phpbb::$user->lang[$lang_key],
+		));
+	}
+}
+	
 /**
 * Generate the _options flag from the given settings
 *

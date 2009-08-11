@@ -16,6 +16,11 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+if (!function_exists('generate_type_select') || !function_exists('generate_category_select'))
+{
+	require TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT;
+}
+
 //@todo Logged in users only.
 
 titania::add_lang('attachments');
@@ -30,23 +35,29 @@ $attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, $contrib->contri
 
 $contrib->contrib_name 			= utf8_normalize_nfc(request_var('name', '', true));
 $contrib->contrib_desc 			= utf8_normalize_nfc(request_var('description', '', true));
-$contrib->contrib_categories	= request_var('contrib_category', array(0));
+$contrib_categories				= request_var('contrib_category', array(0));
 $contrib->contrib_type			= request_var('contrib_type', 0);
-$contrib->contrib_name_clean	= request_var('permalink', '');
+$contrib->contrib_name_clean	= request_var('permalink', '', true);
 
 if ($submit)
 {
-	$error = $contrib->validate_data();
+	$error = $contrib->validate_data($contrib_categories);
 	
 	if (!sizeof($error))
 	{
+		// only if we are inserting the data
+		if (!$contrib->contrib_id)
+		{
+			$contrib->contrib_user_id = phpbb::$user->data['user_id'];
+		}
+		
 		// Temporary
-		$contrib->contrib_visible = TITANIA_STATUS_APPROVED;
+		$contrib->contrib_visible = 1;
 		
 		$contrib->submit();
 
 		// Create relations
-		$contrib->put_contrib_in_categories();
+		$contrib->put_contrib_in_categories($contrib_categories);
 		
 		// Update are attachments.
 		$attachment->update_orphans($contrib->contrib_id);
@@ -58,10 +69,8 @@ if ($submit)
 }
 
 // Generate the selects
-$contrib->generate_type_select($contrib->contrib_type);
-$contrib->generate_category_select($contrib->contrib_categories);
-
-$for_edit = $contrib->generate_text_for_edit();
+generate_type_select($contrib->contrib_type);
+generate_category_select($contrib_categories);
 
 $template->assign_vars(array(
 	'U_ACTION'					=> titania::$url->build_url('contributions/create'),
@@ -70,7 +79,7 @@ $template->assign_vars(array(
 
 	'CONTRIB_NAME'				=> $contrib->contrib_name,
 	'CONTRIB_PERMALINK'			=> $contrib->contrib_name_clean,
-	'CONTRIB_DESC'				=> $for_edit['text'],
+	'CONTRIB_DESC'				=> $contrib->contrib_desc,
 ));
 
 titania::page_header('CREATE_CONTRIBUTION');

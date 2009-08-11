@@ -83,11 +83,6 @@ class titania_contribution extends titania_database_object
 	public $is_author = false;
 	public $is_active_coauthor = false;
 	public $is_coauthor = false;
-
-	/**
-	 * Contrib categories array
-	 */
-	public $contrib_categories = array();
 	
 	/**
 	 * Constructor class for the contribution object
@@ -127,13 +122,6 @@ class titania_contribution extends titania_database_object
 	 */
 	public function submit()
 	{
-		// only if we are inserting the data
-		if (!$this->contrib_id)
-		{
-			$this->contrib_user_id 		= phpbb::$user->data['user_id'];
-			$this->contrib_name_clean 	= utf8_clean_string($this->contrib_name_clean);
-		}
-		
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
 		if (!$this->description_parsed_for_storage)
 		{
@@ -143,7 +131,7 @@ class titania_contribution extends titania_database_object
 		return parent::submit();
 	}
 	
-	public function validate_data()
+	public function validate_data($contrib_categories = array())
 	{
 		$error = array();
 		
@@ -157,7 +145,7 @@ class titania_contribution extends titania_database_object
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_TYPE'];
 		}
 		
-		if (!$this->contrib_categories)
+		if (!$contrib_categories)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
 		}
@@ -170,6 +158,10 @@ class titania_contribution extends titania_database_object
 		if (!$this->contrib_name_clean)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_PERMALINK'];
+		}
+		elseif (clean_url_string($this->contrib_name_clean) !== $this->contrib_name_clean)
+		{
+			$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], clean_url_string($this->contrib_name_clean));
 		}
 		elseif (!$this->validate_permalink($this->contrib_name_clean))
 		{
@@ -489,75 +481,12 @@ class titania_contribution extends titania_database_object
 	}
 	
 	/*
-	 * This is a temporary function
-	 *
-	 * @param array $selected
-	 * @return void
-	 */
-	public function generate_category_select($selected = false)
-	{
-		if (!is_array($selected))
-		{
-			$selected = array($selected);
-		}
-		
-		$sql = 'SELECT *
-			FROM ' . TITANIA_CATEGORIES_TABLE . '
-			WHERE category_visible = 1';
-		$result = phpbb::$db->sql_query($sql);
-
-		while ($category = phpbb::$db->sql_fetchrow($result))
-		{
-			phpbb::$template->assign_block_vars('category_select', array(
-				'S_IS_SELECTED'		=> (in_array($category['category_id'], $selected)) ? true : false,
-				
-				'VALUE'				=> $category['category_id'],
-				'NAME'				=> (isset(phpbb::$user->lang[$category['category_name']])) ? phpbb::$user->lang[$category['category_name']] : $category['category_name'],
-			));
-		}
-		phpbb::$db->sql_freeresult($result);
-	}
-	
-	/*
-	 * Create a select with the contrib types
-	 *
-	 * @param array $selected
-	 * @return void
-	 */
-	public function generate_type_select($selected = false)
-	{
-		phpbb::$template->assign_block_vars('type_select', array(
-			'S_IS_SELECTED'		=> ($selected) ? false : true,
-			
-			'VALUE'				=> 0,
-			'NAME'				=> phpbb::$user->lang['SELECT_CONTRIB_TYPE'],
-		));
-		
-		$select_items = array(
-			TITANIA_TYPE_MOD 		=> 'MODIFICATION',
-			TITANIA_TYPE_STYLE		=> 'STYLE',
-			TITANIA_TYPE_SNIPPET	=> 'SNIPPET',
-			TITANIA_TYPE_LANG_PACK	=> 'LANGUAGE_PACK',
-		);
-		
-		foreach ($select_items as $key => $lang_key)
-		{
-			phpbb::$template->assign_block_vars('type_select', array(
-				'S_IS_SELECTED'		=> ($key === $selected) ? true : false,
-				
-				'VALUE'				=> $key,
-				'NAME'				=> phpbb::$user->lang[$lang_key],
-			));
-		}
-	}
-	
-	/*
 	 * Set the relations between contribs and categories
 	 *
 	 * @param bool $update
 	 * @return void
 	 */
-	public function put_contrib_in_categories($update = false)
+	public function put_contrib_in_categories($contrib_categories = array(), $update = false)
 	{
 		// Prune the old relations if we are updating the contrib
 		if ($update)
@@ -568,13 +497,13 @@ class titania_contribution extends titania_database_object
 			$db->sql_query($sql);
 		}
 		
-		if (!sizeof($this->contrib_categories))
+		if (!sizeof($contrib_categories))
 		{
 			return;
 		}		
 		
 		$sql_ary = array();
-		foreach ($this->contrib_categories as $category_id)
+		foreach ($contrib_categories as $category_id)
 		{
 			$sql_ary[] = array(
 				'contrib_id' 	=> $this->contrib_id,

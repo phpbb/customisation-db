@@ -75,4 +75,6 @@ $lang = array_merge($lang, array(
 	'NEW_CONTRIBUTION'				=> 'New Contribution',
 
 	'SELECT_CONTRIB_TYPE'			=> '-- Select contribution type --',
+	
+	'INVALID_PERMALINK'				=> 'You need to enter a valid permalink, for example: %s',
 ));

@@ -17,6 +17,25 @@ if (!defined('IN_TITANIA'))
 }
 
 /**
+ * Create a SEO friendly string
+ *
+ * @param string $string
+ * @param bool $return_string
+ * @param string $separator
+ * @return string
+ */
+function clean_url_string($string, $separator = '-')
+{
+	$string = str_replace(array('-', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':'), '', $string);
+	$string = utf8_strtolower($string); 
+	$string = preg_replace('/[^a-z0-9 -]/', '', $string);   
+	$string = str_replace(' ', $separator, $string);  
+	$string = preg_replace('/[\s-]+/', '-', $string);
+	
+	return utf8_clean_string(trim($string, $separator));
+}
+
+/**
 * Titania append_sid function.  Why?  Because this is easier. :P
 *
 * @param mixed $page What you would put between TITANIA_ROOT and '.' . PHP_EXT (if this doesn't work for you, use append_sid!)
