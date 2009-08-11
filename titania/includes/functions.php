@@ -26,11 +26,10 @@ if (!defined('IN_TITANIA'))
  */
 function clean_url_string($string, $separator = '-')
 {
-	$string = str_replace(array('-', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':'), '', $string);
 	$string = utf8_strtolower($string); 
-	$string = preg_replace('/[^a-z0-9 -]/', '', $string);   
-	$string = str_replace(' ', $separator, $string);  
-	$string = preg_replace('/[\s-]+/', '-', $string);
+	$string = str_replace(array('&amp;', '&lt;', '&gt;', '&quot;'), '', $string);
+	$string = preg_replace('/[^a-z0-9 -]/', '', $string); 
+	$string = preg_replace('/[\s-]+/', $separator, $string);
 	
 	return utf8_clean_string(trim($string, $separator));
 }
