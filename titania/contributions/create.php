@@ -42,7 +42,7 @@ $contrib->contrib_name_clean	= request_var('permalink', '', true);
 if ($submit)
 {
 	$error = $contrib->validate_data($contrib_categories);
-	
+
 	if (!sizeof($error))
 	{
 		// only if we are inserting the data
@@ -50,15 +50,15 @@ if ($submit)
 		{
 			$contrib->contrib_user_id = phpbb::$user->data['user_id'];
 		}
-		
+
 		// Temporary
 		$contrib->contrib_visible = 1;
-		
+
 		$contrib->submit();
 
 		// Create relations
 		$contrib->put_contrib_in_categories($contrib_categories);
-		
+
 		// Update are attachments.
 		$attachment->update_orphans($contrib->contrib_id);
 
@@ -75,7 +75,7 @@ generate_category_select($contrib_categories);
 $template->assign_vars(array(
 	'U_ACTION'					=> titania::$url->build_url('contributions/create'),
 
-	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
+	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 
 	'CONTRIB_NAME'				=> $contrib->contrib_name,
 	'CONTRIB_PERMALINK'			=> $contrib->contrib_name_clean,
