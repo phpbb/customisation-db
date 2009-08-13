@@ -56,6 +56,11 @@ $nav_ary = array(
 		'title'		=> 'AUTHOR_CONTRIBUTIONS',
 		'url'		=> titania::$author->get_url('contributions'),
 	),
+	'support' => array(
+		'title'		=> 'AUTHOR_SUPPORT',
+		'url'		=> titania::$author->get_url('support'),
+		'auth'		=> (phpbb::$user->data['user_id'] == titania::$author->user_id) ? true : false,
+	),
 	'submit' => array(
 		'title'		=> 'CREATE_CONTRIBUTION',
 		'url'		=> titania::$url->build_url('contributions/create'),
@@ -72,7 +77,7 @@ switch ($page)
 	case 'details' :
 	case 'contributions' :
 	case 'edit':
-	case 'new' :
+	case 'support' :
 		include(TITANIA_ROOT . 'authors/' . $page . '.' . PHP_EXT);
 	break;
 

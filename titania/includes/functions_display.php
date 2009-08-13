@@ -221,12 +221,14 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 	$limit = request_var('limit', ((isset($options['limit'])) ? (int) $options['limit'] : 10));
 
 	$sql_ary = array(
-		'SELECT' => '*',
+		'SELECT' => 't.*, c.contrib_type, c.contrib_name_clean',
 		'FROM'		=> array(
 			TITANIA_TOPICS_TABLE => 't',
+			TITANIA_CONTRIBS_TABLE => 'c',
 		),
-		'WHERE' => 'topic_access >= ' . titania::$access_level,
-		'ORDER_BY'	=> 'topic_sticky DESC',
+		'WHERE' => 'topic_access >= ' . titania::$access_level . '
+			AND c.contrib_id = t.contrib_id',
+		'ORDER_BY'	=> 't.topic_sticky DESC',
 	);
 
 	// Sort options
@@ -236,49 +238,54 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 	}
 	else
 	{
-		$sql_ary['ORDER_BY'] .= ', topic_last_post_time DESC';
+		$sql_ary['ORDER_BY'] .= ', t.topic_last_post_time DESC';
 	}
 
 	// If they are not moderators we need to add some more checks
 	if (!phpbb::$auth->acl_get('titania_post_mod'))
 	{
-		$sql_ary['WHERE'] .= ' AND topic_deleted = 0';
-		$sql_ary['WHERE'] .= ' AND topic_approved = 1';
+		$sql_ary['WHERE'] .= ' AND t.topic_deleted = 0';
+		$sql_ary['WHERE'] .= ' AND t.topic_approved = 1';
 	}
 
 	// type specific things
 	switch ($type)
 	{
 		case 'tracker' :
-			$sql_ary['WHERE'] .= ' AND topic_type = ' . TITANIA_POST_TRACKER;
+			$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
+			$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_TRACKER;
 
 			if (isset($options['category']))
 			{
-				$sql_ary['WHERE'] .= ' AND topic_category = ' . (int) $options['category'];
+				$sql_ary['WHERE'] .= ' AND t.topic_category = ' . (int) $options['category'];
 			}
 		break;
 
 		case 'queue' :
-			$sql_ary['WHERE'] .= ' AND topic_type = ' . TITANIA_POST_QUEUE;
-		break;
-
-		case 'review' :
-			$sql_ary['WHERE'] .= ' AND topic_type = ' . TITANIA_POST_REVIEW;
+			$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
+			$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_QUEUE;
 		break;
 
 		case 'author_support' :
-			$sql_ary['WHERE'] .= ' AND topic_type = ' . TITANIA_POST_DEFAULT;
-			$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('contrib_id', titania::$cache->get_author_contribs($object->user_id));
+			$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
+			$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', $contrib_ids);
+
+			$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_DEFAULT;
+			$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', titania::$cache->get_author_contribs($object->user_id));
 		break;
 
 		case 'author_tracker' :
-			$sql_ary['WHERE'] .= ' AND topic_type = ' . TITANIA_POST_TRACKER;
-			$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('contrib_id', titania::$cache->get_author_contribs($object->user_id));
+			$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
+			$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', $contrib_ids);
+
+			$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_TRACKER;
+			$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', titania::$cache->get_author_contribs($object->user_id));
 		break;
 
 		case 'support' :
 		default :
-			$sql_ary['WHERE'] .= ' AND topic_type = ' . TITANIA_POST_DEFAULT;
+			$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
+			$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_DEFAULT;
 		break;
 	}
 

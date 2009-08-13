@@ -249,7 +249,15 @@ class titania_topic extends titania_database_object
 		else if (!empty(titania::$author))
 		{
 			// We are *probably* viewing the author's page
-			$url = titania::$author->get_url($page);
+			if (isset($this->contrib_type) && isset($this->contrib_name_clean))
+			{
+				// Yay, generate good urls
+				$url = titania::$url->build_url(get_contrib_type_string($this->contrib_type, 'url') . '/' . $this->contrib_name_clean . '/' . $page);
+			}
+			else
+			{
+				$url = titania::$author->get_url($page);
+			}
 		}
 
 		$url = titania::$url->append_url($url, array('t' => $this->topic_id));
