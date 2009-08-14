@@ -54,6 +54,7 @@ class titania_url
 	*
 	* @param string $base The base URL, Ex: customisation/mod/
 	* @param array $params Array of parameters we need to clean and append to the base url
+	* @return string
 	*/
 	public function build_url($base, $params = array())
 	{
@@ -89,6 +90,7 @@ class titania_url
 	*
 	* @param string $url The URL we currently have
 	* @param array $params Array of parameters we need to clean and append to the base url
+	* @return string
 	*/
 	public function append_url($url, $params = array())
 	{
@@ -124,15 +126,33 @@ class titania_url
 	}
 
 	/**
+	* Create a safe string for the URL's
+	*
+	* @param string $string
+	* @return string
+	*/
+	public function url_slug($string)
+	{
+		$string = $this->url_replace($string, false);
+		
+		return utf8_clean_string(utf8_strtolower($string));
+	}
+	
+	/**
 	* URL Replace
 	*
 	* Replaces tags and other items that could break the URL's
+	*
+	* @param string $url
+	* @param bool $urlencode
+	* @return string
 	*/
-	public function url_replace($url)
+	public function url_replace($url, $urlencode = true)
 	{
-		$match = array('#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', $this->separator);
-
-		return urlencode(str_replace($match, '', $url));
+		$match 	= array('#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', $this->separator);
+		$url 	= str_replace($match, '', $url);
+		
+		return ($urlencode) ? urlencode($url) : $url;
 	}
 
 	/**
