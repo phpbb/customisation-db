@@ -105,7 +105,14 @@ class titania_url
 		// Now clean and append the items
 		foreach ($params as $name => $value)
 		{
-			if ($name == '#')
+			// Special case when we just want to add one thing to the URL (ex, the topic title)
+			if (is_int($name))
+			{
+				$url .= $this->url_replace($value);
+				continue;
+			}
+
+			if ($name === '#')
 			{
 				$anchor = '#' . $value;
 				continue;
@@ -126,7 +133,7 @@ class titania_url
 	}
 
 	/**
-	* Create a safe string for the URL's
+	* Create a safe string for the URLs
 	*
 	* @param string $string
 	* @return string
@@ -134,14 +141,17 @@ class titania_url
 	public function url_slug($string)
 	{
 		$string = $this->url_replace($string, false);
-		
+
+		// Replace any number of spaces with a single underscore
+		$string = preg_replace('#[\s]+#', '_', $string);
+
 		return utf8_clean_string(utf8_strtolower($string));
 	}
-	
+
 	/**
 	* URL Replace
 	*
-	* Replaces tags and other items that could break the URL's
+	* Replaces tags and other items that could break the URLs
 	*
 	* @param string $url
 	* @param bool $urlencode
@@ -149,9 +159,9 @@ class titania_url
 	*/
 	public function url_replace($url, $urlencode = true)
 	{
-		$match 	= array('#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', $this->separator);
-		$url 	= str_replace($match, '', $url);
-		
+		$match	= array('#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', $this->separator);
+		$url	= str_replace($match, '', $url);
+
 		return ($urlencode) ? urlencode($url) : $url;
 	}
 
@@ -178,8 +188,13 @@ class titania_url
 			return;
 		}
 
-		// Go through all the arguments and put them in $_GET & $_REQUEST
-		for ($i = 0; $i < sizeof($args); $i+=2)
+		/**
+		* Go through all the arguments and put them in $_GET & $_REQUEST
+		*
+		* Going through all of them and setting $x to the value of $y (the next value in the args array) seems to be the safest way to make sure we get them all
+		*	if we don't do this then urls like topic_title-t-1 would break because topic_title = t and 1 is ignored, this way topic_title = t and t = 1, so we should be good
+		*/
+		for ($i = 0; $i < (sizeof($args) - 1); $i++)
 		{
 			$name = $args[$i];
 			$value = $args[($i + 1)];

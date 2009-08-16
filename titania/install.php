@@ -484,8 +484,39 @@ $versions = array(
 		),
 	),
 
+	'0.1.14' => array(
+		'table_column_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_subject_clean', array('STEXT_UNI', '')),
+		),
+		'custom' => 'titania_update',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
+
+function titania_update($action, $version)
+{
+	if ($action != 'update')
+	{
+		return;
+	}
+
+	switch ($version)
+	{
+		case '0.1.13' :
+			$sql = 'SELECT topic_id, topic_subject FROM ' . TITANIA_TOPICS_TABLE;
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . ' SET
+					topic_subject_clean = \'' . phpbb::$db->sql_escape(titania::$url->url_slug($row['topic_subject'])) . '\'
+					WHERE topic_id = ' . $row['topic_id'];
+				phpbb::$db->sql_query($sql);
+			}
+			phpbb::$db->sql_freeresult($result);
+		break;
+	}
+}
 
 function titania_data($action, $version)
 {

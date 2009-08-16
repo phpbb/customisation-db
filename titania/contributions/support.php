@@ -22,7 +22,7 @@ titania::add_lang('posting');
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
 $start = request_var('start', 0);
-$limit = phpbb::$config['posts_per_page'];
+$limit = request_var('limit', phpbb::$config['posts_per_page']);
 
 // Load the topic and contrib items
 if ($post_id)
@@ -123,7 +123,7 @@ switch ($action)
 				$post_object->submit();
 
 				$redirect = titania::$contrib->get_url('support');
-				$redirect = titania::$url->append_url($redirect, array($post_object->post_subject => $post_object->post_id));
+				$redirect = titania::$url->append_url($redirect, array($post_object->topic->topic_subject_clean, 't' => $post_object->topic_id));
 				redirect($redirect);
 			}
 		}
@@ -167,9 +167,6 @@ switch ($action)
 
 		if ($topic_id)
 		{
-			$start = request_var('start', 0);
-			$limit = request_var('limit', phpbb::$config['posts_per_page']);
-
 			phpbb::$template->assign_vars(array(
 				'U_POST_REPLY'			=> (phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url($topic->get_url(), array('action' => 'reply')) : '',
 			));

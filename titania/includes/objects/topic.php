@@ -83,6 +83,7 @@ class titania_topic extends titania_database_object
 			'topic_views'			=> array('default' => 0), // View count
 
 			'topic_subject'			=> array('default' => ''),
+			'topic_subject_clean'	=> array('default' => ''),
 
 			'topic_first_post_id'			=> array('default' => 0),
 			'topic_first_post_user_id'		=> array('default' => 0),
@@ -121,6 +122,13 @@ class titania_topic extends titania_database_object
 		}
 
 		$this->topic_id = $topic_id;
+	}
+
+	public function submit()
+	{
+		$this->topic_subject_clean = titania::$url->url_slug($this->topic_subject);
+
+		return parent::submit();
 	}
 
 	/**
@@ -260,7 +268,7 @@ class titania_topic extends titania_database_object
 			}
 		}
 
-		$url = titania::$url->append_url($url, array('t' => $this->topic_id));
+		$url = titania::$url->append_url($url, array($this->topic_subject_clean, 't' => $this->topic_id));
 
 		return $url;
 	}
