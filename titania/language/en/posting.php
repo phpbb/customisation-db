@@ -42,4 +42,6 @@ $lang = array_merge($lang, array(
 	'ACCESS_PUBLIC'				=> 'Public Access',
 
 	'STICKIES'			=> 'Stickies',
+	'STICKY_TOPIC'		=> 'Sticky Topic',
+	'POST_A_NEW_TOPIC'	=> 'Post a new topic',
 ));

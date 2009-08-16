@@ -283,11 +283,17 @@ class titania_topic extends titania_database_object
 			$folder_new = 'topic_unread';
 
 			// Hot topic threshold is for posts in a topic, which is replies + the first post. ;)
-			if (phpbb::$config['hot_threshold'] && ($this->get_postcount(titania::$access_level) + 1) >= phpbb::$config['hot_threshold'])
+			if (phpbb::$config['hot_threshold'] && ($this->get_postcount() + 1) >= phpbb::$config['hot_threshold'])
 			{
 				$folder .= '_hot';
 				$folder_new .= '_hot';
 			}
+		}
+
+		if ($this->topic_locked)
+		{
+			$folder .= '_locked';
+			$folder_new .= '_locked';
 		}
 
 		$folder_img = ($this->unread) ? $folder_new : $folder;
@@ -321,7 +327,7 @@ class titania_topic extends titania_database_object
 			'TOPIC_REPORTED'				=> $this->topic_reported,
 			'TOPIC_DELETED'					=> $this->topic_deleted, // @todo output this to be something useful
 			'TOPIC_ASSIGNED'				=> $this->topic_assigned, // @todo output this to be something useful
-			'TOPIC_POSTS'					=> $this->get_postcount(titania::$access_level),
+			'TOPIC_POSTS'					=> $this->get_postcount(),
 			'TOPIC_VIEWS'					=> $this->topic_views,
 			'TOPIC_SUBJECT'					=> censor_text($this->topic_subject),
 

@@ -2,10 +2,6 @@
 	<div class="inner"><span class="corners-top"><span></span></span>
 
 	<fieldset class="fields1">
-		<!-- IF ACCESS_OPTIONS -->
-			<div><select name="message_access">{ACCESS_OPTIONS}</select></div>
-		<!-- ENDIF -->
-
 		<!-- IF S_BBCODE_ALLOWED -->
 			<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{S_BBCODE_CHECKED} /> {L_DISABLE_BBCODE}</label></div>
 		<!-- ENDIF -->
@@ -21,30 +17,21 @@
 		<!-- IF S_NOTIFY_ALLOWED -->
 			<div><label for="notify"><input type="checkbox" name="notify" id="notify"{S_NOTIFY_CHECKED} /> {L_NOTIFY_REPLY}</label></div>
 		<!-- ENDIF -->
+
+		<hr class="dashed" />
+		
+		<!-- IF ACCESS_OPTIONS -->
+			<div><select name="message_access">{ACCESS_OPTIONS}</select></div>
+		<!-- ENDIF -->
+
+		<!-- IF S_STICKY_TOPIC_ALLOWED -->
+			<div><label for="sticky_topic"><input type="checkbox" name="sticky_topic" id="sticky_topic"{S_STICKY_TOPIC_CHECKED} /> {L_STICKY_TOPIC}</label></div>
+		<!-- ENDIF -->
 		<!-- IF S_LOCK_TOPIC_ALLOWED -->
 			<div><label for="lock_topic"><input type="checkbox" name="lock_topic" id="lock_topic"{S_LOCK_TOPIC_CHECKED} /> {L_LOCK_TOPIC}</label></div>
 		<!-- ENDIF -->
 		<!-- IF S_LOCK_POST_ALLOWED -->
 			<div><label for="lock_post"><input type="checkbox" name="lock_post" id="lock_post"{S_LOCK_POST_CHECKED} /> {L_LOCK_POST} [{L_LOCK_POST_EXPLAIN}]</label></div>
-		<!-- ENDIF -->
-
-		<!-- IF S_TYPE_TOGGLE or S_TOPIC_TYPE_ANNOUNCE or S_TOPIC_TYPE_STICKY -->
-		<hr class="dashed" />
-		<!-- ENDIF -->
-
-		<!-- IF S_TYPE_TOGGLE -->
-		<dl>
-			<dt><label for="topic_type-0"><!-- IF S_EDIT_POST -->{L_CHANGE_TOPIC_TO}<!-- ELSE -->{L_POST_TOPIC_AS}<!-- ENDIF -->:</label></dt>
-			<dd><!-- BEGIN topic_type --><label for="topic_type-{topic_type.VALUE}"><input type="radio" name="topic_type" id="topic_type-{topic_type.VALUE}" value="{topic_type.VALUE}"{topic_type.S_CHECKED} />{topic_type.L_TOPIC_TYPE}</label> <!-- END topic_type --></dd>
-		</dl>
-		<!-- ENDIF -->
-
-		<!-- IF S_TOPIC_TYPE_ANNOUNCE or S_TOPIC_TYPE_STICKY -->
-		<dl>
-			<dt><label for="topic_time_limit">{L_STICK_TOPIC_FOR}:</label></dt>
-			<dd><label for="topic_time_limit"><input type="text" name="topic_time_limit" id="topic_time_limit" size="3" maxlength="3" value="{TOPIC_TIME_LIMIT}" class="inputbox autowidth" /> {L_DAYS}</label></dd>
-			<dd>{L_STICK_TOPIC_FOR_EXPLAIN}</dd>
-		</dl>
 		<!-- ENDIF -->
 
 		<!-- IF S_EDIT_REASON -->

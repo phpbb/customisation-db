@@ -39,7 +39,7 @@ $lang = array_merge($lang, array(
 	'AUTHOR_BY'					=> 'By %s',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
-
+'CONTRIBUTION' => 'Contribution',
 	'CACHE_PURGED'				=> 'Cache has been successfully purged',
 	'CATEGORY'					=> 'Category',
 	'CAT_ADDONS'				=> 'Add-ons',

@@ -49,8 +49,10 @@ switch ($action)
 		// Load the message object
 		titania::load_tool('message');
 		$message = new titania_message($faq);
-		$message->auth_bbcode = phpbb::$auth->acl_get('titania_bbcode');
-		$message->auth_smilies = phpbb::$auth->acl_get('titania_smilies');
+		$message->set_auth(array(
+			'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
+			'smilies'	=> phpbb::$auth->acl_get('titania_smilies'),
+		));
 
 		if ($submit)
 		{
@@ -60,9 +62,9 @@ switch ($action)
 
 			$error = $faq->validate();
 
-			if (!check_form_key('postform'))
+			if (($validate_form_key = $message->validate_form_key()) !== false)
 			{
-				$error[] = phpbb::$user->lang['FORM_INVALID'];
+				$error[] = $validate_form_key;
 			}
 
 			if (sizeof($error))

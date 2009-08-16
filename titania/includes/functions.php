@@ -17,20 +17,6 @@ if (!defined('IN_TITANIA'))
 }
 
 /**
-* Titania append_sid function.  Why?  Because this is easier. :P
-*
-* @param mixed $page What you would put between TITANIA_ROOT and '.' . PHP_EXT (if this doesn't work for you, use append_sid!)
-* @param mixed $params Same as append_sid
-* @param mixed $is_amp Same as append_sid
-* @param mixed $session_id Same as append_sid
-* @return string Same as append_sid
-*/
-function titania_sid($page, $params = false, $is_amp = true, $session_id = false)
-{
-	return append_sid(titania::$absolute_path . $page . '.' . PHP_EXT, $params, $is_amp, $session_id);
-}
-
-/**
 * Error and message handler, call with trigger_error if reqd
 */
 function titania_msg_handler($errno, $msg_text, $errfile, $errline)

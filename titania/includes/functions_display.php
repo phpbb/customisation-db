@@ -36,60 +36,40 @@ function get_version_string($version)
 * Get contribution type string (from the type id)
 *
 * @param int $type The type (check TITANIA_TYPE_ constants)
+* @param string $mode The mode (url|lang)
 */
 function get_contrib_type_string($type, $mode = 'lang')
 {
-	switch($mode)
+	$types = array(
+		TITANIA_TYPE_MOD	=> array(
+			'url'	=> 'mod',
+			'lang'	=> phpbb::$user->lang['MODIFICATION'],
+		),
+		TITANIA_TYPE_STYLE	=> array(
+			'url'	=> 'style',
+			'lang'	=> phpbb::$user->lang['STYLE'],
+		),
+		TITANIA_TYPE_SNIPPET	=> array(
+			'url'	=> 'snippet',
+			'lang'	=> phpbb::$user->lang['SNIPPET'],
+		),
+		TITANIA_TYPE_LANG_PACK	=> array(
+			'url'	=> 'language_pack',
+			'lang'	=> phpbb::$user->lang['LANGUAGE_PACK'],
+		),
+		'default'	=> array(
+			'url'	=> 'contribution',
+			'lang'	=> phpbb::$user->lang['CONTRIBUTION'],
+		),
+	);
+
+	if (isset($types[$type]))
 	{
-		case 'url' :
-			switch ($type)
-			{
-				case TITANIA_TYPE_MOD :
-					return 'mod';
-				break;
-
-				case TITANIA_TYPE_STYLE :
-					return 'style';
-				break;
-
-				case TITANIA_TYPE_SNIPPET :
-					return 'snippet';
-				break;
-
-				case TITANIA_TYPE_LANG_PACK :
-					return 'language_pack';
-				break;
-
-				default :
-					return 'contribution';
-				break;
-			}
-		break;
-
-		case 'lang' :
-			switch ($type)
-			{
-				case TITANIA_TYPE_MOD :
-					return phpbb::$user->lang['MODIFICATION'];
-				break;
-
-				case TITANIA_TYPE_STYLE :
-					return phpbb::$user->lang['STYLE'];
-				break;
-
-				case TITANIA_TYPE_SNIPPET :
-					return phpbb::$user->lang['SNIPPET'];
-				break;
-
-				case TITANIA_TYPE_LANG_PACK :
-					return phpbb::$user->lang['LANGUAGE_PACK'];
-				break;
-
-				default :
-					return phpbb::$user->lang['CONTRIBUTION'];
-				break;
-			}
-		break;
+		return $types[$type][$mode];
+	}
+	else
+	{
+		return $types['default'][$mode];
 	}
 }
 
@@ -213,12 +193,9 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 * @param object|boolean $sort The sort object (includes/tools/sort.php)
 * @param array $options Extra options (limit, category (for tracker))
 */
-function titania_display_forums($type, $object = false, $sort = false, $options = array('limit' => 10))
+function titania_display_forums($type, $object = false, $sort = false, $options = array('start' => 0, 'limit' => 10))
 {
 	titania::load_object('topic');
-
-	$start = request_var('start', 0);
-	$limit = request_var('limit', ((isset($options['limit'])) ? (int) $options['limit'] : 10));
 
 	$sql_ary = array(
 		'SELECT' => 't.*, c.contrib_type, c.contrib_name_clean',
@@ -226,7 +203,7 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 			TITANIA_TOPICS_TABLE => 't',
 			TITANIA_CONTRIBS_TABLE => 'c',
 		),
-		'WHERE' => 'topic_access >= ' . titania::$access_level . '
+		'WHERE' => 't.topic_access >= ' . titania::$access_level . '
 			AND c.contrib_id = t.contrib_id',
 		'ORDER_BY'	=> 't.topic_sticky DESC',
 	);
@@ -301,7 +278,7 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 
 	// Get the data
 	$topics = $topic_ids = array();
-	$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
+	$result = phpbb::$db->sql_query_limit($sql, $options['limit'], $options['start']);
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
 		$topics[$row['topic_id']] = $row;
@@ -333,4 +310,16 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 		'UNAPPROVED_IMG'	=> phpbb::$user->img('icon_topic_unapproved', 'TOPIC_UNAPPROVED'),
 		'NEWEST_POST_IMG'	=> phpbb::$user->img('icon_topic_newest', 'VIEW_NEWEST_POST'),
 	));
+}
+
+/**
+* Display topic section for support/tracker/etc
+*
+ @param int $topic_id The topic_id
+ @param object|boolean $sort The sort object (includes/tools/sort.php)
+* @param array $options Extra options (limit, category (for tracker))
+*/
+function titania_display_topic($topic_id, $sort = false, $options = array('start' => 0, 'limit' => 10))
+{
+
 }

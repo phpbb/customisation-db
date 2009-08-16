@@ -22,27 +22,6 @@ if (!defined('IN_TITANIA'))
 class titania_message
 {
 	/**
-	* Hidden fields to display on the posting page
-	*
-	* @var string
-	*/
-	public $s_hidden_fields = '';
-
-	/**
-	* Form Name
-	*
-	* @var string
-	*/
-	public $form_name = 'postform';
-
-	/**
-	* Textarea Name
-	*
-	* @var string
-	*/
-	public $text_name = 'message';
-
-	/**
 	* Post Object
 	*
 	* @var object
@@ -50,19 +29,37 @@ class titania_message
 	public $post_object = false;
 
 	/**
-	* Permissions
+	* Hidden fields to display on the posting page
+	*
+	* @var string
 	*/
-	public $auth_bbcode = false;
-	public $auth_smilies = false;
-	public $auth_attachments = false;
-	public $auth_polls = false;
+	public $s_hidden_fields = array();
 
 	/**
-	* Extra options
+	* Permissions, set with set_auth() function
 	*/
-	public $display_error = true; // Make sure you output the error yourself if you set to false!
-	public $display_subject = true;
-	public $attachments_group = 0; // The attachment extensions group to allow
+	private $auth = array(
+		'bbcode'		=> false,
+		'smilies'		=> false,
+		'attachments'	=> false,
+		'polls'			=> false,
+		'sticky_topic'	=> false,
+		'lock_topic'	=> false,
+		'lock_post'		=> false,
+	);
+
+	/**
+	* Settings, set with set_settings() function
+	*/
+	private $settings = array(
+		'form_name'				=> 'postform',
+		'text_name'				=> 'message',
+		'display_error'			=> true, // If set to false make sure you output the error in the template yourself (turns the S_DISPLAY_ERROR on/off)
+		'display_subject'		=> true, // Display the subject field or not
+		'display_edit_reason'	=> false, // Display the edit reason field or not
+		'display_captcha'		=> false, // Display the captcha or not
+		'attachments_group'		=> 0, // The attachment extensions group to allow
+	);
 
 	/**
 	* Array of posting panels
@@ -87,31 +84,49 @@ class titania_message
 	}
 
 	/**
+	* Set the auth settings
+	*
+	* @param array $auth
+	*/
+	public function set_auth($auth)
+	{
+		$this->auth = array_merge($this->auth, $auth);
+	}
+
+	/**
+	* Set the settings
+	*
+	* @param array $settings
+	*/
+	public function set_settings($settings)
+	{
+		$this->settings = array_merge($this->settings, $settings);
+	}
+
+	/**
 	* Display the message box
 	*/
 	public function display()
 	{
-		phpbb::$user->add_lang('posting');
-
 		$for_edit = $this->post_object->generate_text_for_edit();
 
 		// Initialize our post options class
 		$post_options = new post_options();
-		$post_options->set_auth($this->auth_bbcode, $this->auth_smilies, true, true, true);
+		$post_options->set_auth($this->auth['bbcode'], $this->auth['smilies'], true, true, true);
 		$post_options->set_status($for_edit['allow_bbcode'], $for_edit['allow_smilies'], $for_edit['allow_urls']);
 
-		if ($this->auth_attachments)
+		if ($this->auth['attachments'])
 		{
 			$this->posting_panels['attach-panel'] = 'ATTACH';
 		}
 
-		if ($this->auth_polls)
+		if ($this->auth['polls'])
 		{
 			$this->posting_panels['poll-panel'] = 'POLL';
 		}
 
 		// Add the forum key
-		add_form_key($this->form_name);
+		add_form_key($this->settings['form_name']);
 
 		// Generate smiley listing
 		if ($post_options->get_status('smilies'))
@@ -129,13 +144,37 @@ class titania_message
 			display_custom_bbcodes();
 		}
 
+		// Display the Captcha if required
+		if ($this->settings['display_captcha'])
+		{
+			if (!class_exists('phpbb_captcha_factory'))
+			{
+				include(PHPBB_ROOT_PATH . 'includes/captcha/captcha_factory.' . PHP_EXT);
+			}
+
+			$captcha =& phpbb_captcha_factory::get_instance(phpbb::$config['captcha_plugin']);
+			$captcha->init(CONFIRM_POST);
+
+			if ($captcha->validate($this->request_data()) !== false)
+			{
+				phpbb::$template->assign_vars(array(
+					'CAPTCHA_TEMPLATE'		=> $captcha->get_template(),
+					'CONFIRM_IMAGE_LINK'	=> append_sid(titania::$absolute_board . 'ucp.' . PHP_EXT, 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type),// Use proper captcha link
+				));
+			}
+
+			$this->s_hidden_fields = array_merge($this->s_hidden_fields, $captcha->get_hidden_fields());
+		}
+
 		$post_options->set_in_template();
 
 		phpbb::$template->assign_vars(array(
 			'ACCESS_OPTIONS'			=> titania_access_select(),
 
-			'POSTING_FORM_NAME'			=> $this->form_name,
-			'POSTING_TEXT_NAME'			=> $this->text_name,
+			'EDIT_REASON'				=> (isset($for_edit['edit_reason'])) ? $for_edit['edit_reason'] : '',
+
+			'POSTING_FORM_NAME'			=> $this->settings['form_name'],
+			'POSTING_TEXT_NAME'			=> $this->settings['text_name'],
 
 			'POSTING_PANELS_DEFAULT'	=> 'options-panel',
 
@@ -143,9 +182,14 @@ class titania_message
 
 			'SUBJECT'					=> (isset($for_edit['subject'])) ? $for_edit['subject'] : '',
 
-			'S_DISPLAY_ERROR'			=> $this->display_error,
-			'S_DISPLAY_SUBJECT'			=> $this->display_subject,
+			'S_DISPLAY_ERROR'			=> $this->settings['display_error'],
+			'S_DISPLAY_SUBJECT'			=> $this->settings['display_subject'],
+			'S_STICKY_TOPIC_ALLOWED'	=> $this->auth['sticky_topic'],
+			'S_LOCK_TOPIC_ALLOWED'		=> $this->auth['lock_topic'],
+			'S_LOCK_POST_ALLOWED'		=> $this->auth['lock_post'],
+			'S_EDIT_REASON'				=> $this->settings['display_edit_reason'],
 			'S_FORM_ENCTYPE'			=> '',
+			'S_HIDDEN_FIELDS'			=> build_hidden_fields($this->s_hidden_fields),
 		));
 
 		$this->display_panels();
@@ -158,22 +202,59 @@ class titania_message
 	{
 		// Initialize our post options class
 		$post_options = new post_options();
-		$post_options->set_auth($this->auth_bbcode, $this->auth_smilies, true, true, true);
+		$post_options->set_auth($this->auth['bbcode'], $this->auth['smilies'], true, true, true);
 
 		$bbcode_disabled = (isset($_POST['disable_bbcode']) || !$post_options->get_status('bbcode')) ? true : false;
 		$smilies_disabled = (isset($_POST['disable_smilies']) || !$post_options->get_status('smilies')) ? true : false;
 		$magic_url_disabled = (isset($_POST['disable_magic_url'])) ? true : false;
 
 		return array(
-			'subject'		=> utf8_normalize_nfc(request_var('subject', '', true)),
-			'message'		=> utf8_normalize_nfc(request_var($this->text_name, '', true)),
-			'options'		=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
-			'access'		=> request_var('message_access', TITANIA_ACCESS_PUBLIC),
+			'subject'			=> utf8_normalize_nfc(request_var('subject', '', true)),
+			'message'			=> utf8_normalize_nfc(request_var($this->settings['text_name'], '', true)),
+			'options'			=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
+			'access'			=> request_var('message_access', TITANIA_ACCESS_PUBLIC),
 
 			'bbcode_enabled'	=> !$bbcode_disabled,
 			'smilies_enabled'	=> !$smilies_disabled,
 			'magic_url_enabled'	=> !$magic_url_disabled,
+
+			'sticky_topic'		=> ($this->auth['sticky_topic'] && isset($_POST['sticky_topic'])) ? true : false,
+			'lock_topic'		=> ($this->auth['lock_topic'] && isset($_POST['lock_topic'])) ? true : false,
+			'lock_post'			=> ($this->auth['lock_post'] && isset($_POST['lock_post'])) ? true : false,
 		);
+	}
+
+	/**
+	* If you display the captcha, run this function to check if they entered the correct captcha setting
+	*
+	* @return mixed $captcha->validate(); results (false on success, error string on failure)
+	*/
+	public function validate_captcha()
+	{
+		if (!class_exists('phpbb_captcha_factory'))
+		{
+			include(PHPBB_ROOT_PATH . 'includes/captcha/captcha_factory.' . PHP_EXT);
+		}
+
+		$captcha =& phpbb_captcha_factory::get_instance(phpbb::$config['captcha_plugin']);
+		$captcha->init(CONFIRM_POST);
+
+		return $captcha->validate($this->request_data());
+	}
+
+	/**
+	* Validate the form key
+	*
+	* @return mixed false on success, error string on failure
+	*/
+	public function validate_form_key()
+	{
+		if (!check_form_key($this->settings['form_name']))
+		{
+			return phpbb::$user->lang['FORM_INVALID'];
+		}
+
+		return false;
 	}
 
 	/**
@@ -240,27 +321,6 @@ class titania_message
 			}
 		}
 		phpbb::$db->sql_freeresult($result);
-	}
-
-	/**
-	* handle_captcha
-	*
-	* @param string $mode The mode, build or check, to either build the captcha/confirm box, or to check if the user entered the correct confirm_code
-	*
-	* @return Returns
-	*	- True if the captcha code is correct and $mode is check or they do not need to view the captcha (permissions)
-	*	- False if the captcha code is incorrect, or not given and $mode is check
-	*/
-	public function handle_captcha($mode)
-	{
-		if ($mode == 'check')
-		{
-			return true;
-		}
-		else if ($mode == 'build' && !$this->handle_captcha('check'))
-		{
-
-		}
 	}
 }
 

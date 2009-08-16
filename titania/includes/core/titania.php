@@ -120,6 +120,10 @@ class titania
 		phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
 		phpbb::$user->theme['template_storedb'] = false;
 
+		// Inherit from the boards prosilver (currently required for the Captcha)
+		phpbb::$user->theme['template_inherits_id'] = 1; // Doesn't seem to matter what number I put in here...
+		phpbb::$template->inherit_root = PHPBB_ROOT_PATH . 'styles/prosilver/template';
+
 		// Access Level check for teams access
 		self::$access_level = TITANIA_ACCESS_PUBLIC;
 		if (in_array(phpbb::$user->data['group_id'], self::$config->team_groups))
