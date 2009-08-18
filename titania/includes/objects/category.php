@@ -144,7 +144,7 @@ class titania_category extends titania_database_object
 	 */
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
-		titania_generate_text_for_storage($this->category_desc, $this->category_desc_uid, $this->category_desc_bitfield, $this->category_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
+		generate_text_for_storage($this->category_desc, $this->category_desc_uid, $this->category_desc_bitfield, $this->category_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
 		$this->text_parsed_for_storage = true;
 	}
@@ -156,7 +156,7 @@ class titania_category extends titania_database_object
 	 */
 	private function generate_text_for_display()
 	{
-		return titania_generate_text_for_display($this->category_desc, $this->category_desc_uid, $this->category_desc_bitfield, $this->category_desc_options);
+		return generate_text_for_display($this->category_desc, $this->category_desc_uid, $this->category_desc_bitfield, $this->category_desc_options);
 	}
 
 	/**
@@ -166,7 +166,7 @@ class titania_category extends titania_database_object
 	 */
 	private function generate_text_for_edit()
 	{
-		return titania_generate_text_for_edit($this->category_desc, $this->category_desc_uid, $this->category_desc_options);
+		return generate_text_for_edit($this->category_desc, $this->category_desc_uid, $this->category_desc_options);
 	}
 
 	/**

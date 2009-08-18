@@ -155,7 +155,7 @@ class titania_faq extends titania_database_object
 	 */
 	public function generate_text_for_storage($allow_bbcode = false, $allow_urls = false, $allow_smilies = false)
 	{
-		titania_generate_text_for_storage($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options, $allow_bbcode, $allow_urls, $allow_smilies);
+		generate_text_for_storage($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
 		$this->text_parsed_for_storage = true;
 	}
@@ -167,7 +167,7 @@ class titania_faq extends titania_database_object
 	 */
 	public function generate_text_for_display()
 	{
-		return titania_generate_text_for_display($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options);
+		return generate_text_for_display($this->faq_text, $this->faq_text_uid, $this->faq_text_bitfield, $this->faq_text_options);
 	}
 
 	/**
@@ -177,7 +177,7 @@ class titania_faq extends titania_database_object
 	 */
 	public function generate_text_for_edit()
 	{
-		return array_merge(titania_generate_text_for_edit($this->faq_text, $this->faq_text_uid, $this->faq_text_options), array(
+		return array_merge(generate_text_for_edit($this->faq_text, $this->faq_text_uid, $this->faq_text_options), array(
 			'options'	=> $this->faq_text_options,
 			'subject'	=> $this->faq_subject,
 		));

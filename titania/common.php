@@ -19,6 +19,7 @@ if (!defined('IN_TITANIA'))
 define('TITANIA_VERSION', '0.1.14');
 
 define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
+define('PHPBB_USE_BOARD_URL_PATH', true);
 
 // Include titania class
 require TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT;
@@ -48,8 +49,8 @@ if (!file_exists(PHPBB_ROOT_PATH . 'common.' . PHP_EXT))
 require PHPBB_ROOT_PATH . 'common.' . PHP_EXT;
 
 // We must use our own user class...
-require TITANIA_ROOT . 'includes/core/user.' . PHP_EXT;
-$user = new titania_user();
+//require TITANIA_ROOT . 'includes/core/user.' . PHP_EXT;
+//$user = new titania_user();
 
 // Start session management etc.
 phpbb::initialise();

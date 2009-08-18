@@ -171,7 +171,7 @@ class titania_author extends titania_database_object
 	 */
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
-		titania_generate_text_for_storage($this->author_desc, $this->author_desc_uid, $this->author_desc_bitfield, $this->author_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
+		generate_text_for_storage($this->author_desc, $this->author_desc_uid, $this->author_desc_bitfield, $this->author_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
 		$this->description_parsed_for_storage = true;
 	}
@@ -183,7 +183,7 @@ class titania_author extends titania_database_object
 	 */
 	public function generate_text_for_display()
 	{
-		return titania_generate_text_for_display($this->author_desc, $this->author_desc_uid, $this->author_desc_bitfield, $this->author_desc_options);
+		return generate_text_for_display($this->author_desc, $this->author_desc_uid, $this->author_desc_bitfield, $this->author_desc_options);
 	}
 
 	/**
@@ -193,7 +193,7 @@ class titania_author extends titania_database_object
 	 */
 	public function generate_text_for_edit()
 	{
-		return titania_generate_text_for_edit($this->author_desc, $this->author_desc_uid, $this->author_desc_options);
+		return generate_text_for_edit($this->author_desc, $this->author_desc_uid, $this->author_desc_options);
 	}
 
 	/**

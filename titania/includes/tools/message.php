@@ -131,7 +131,12 @@ class titania_message
 		// Generate smiley listing
 		if ($post_options->get_status('smilies'))
 		{
-			$this->generate_smilies('inline', false);
+			if (!function_exists('generate_smilies'))
+			{
+				include(PHPBB_ROOT_PATH . 'includes/functions_posting.' . PHP_EXT);
+			}
+
+			generate_smilies('inline', false);
 		}
 
 		// Build custom bbcodes array
@@ -275,52 +280,6 @@ class titania_message
 				'OUTPUT'	=> phpbb::$template->assign_display($name),
 			));
 		}
-	}
-
-	/**
-	* Fill smiley templates (or just the variables) with smilies, either in a window or inline
-	*/
-	public function generate_smilies()
-	{
-		// More smilies link
-		$sql = 'SELECT smiley_id
-			FROM ' . SMILIES_TABLE . '
-			WHERE display_on_posting = 0';
-		$result = phpbb::$db->sql_query_limit($sql, 1, 0, 3600);
-		if ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			phpbb::$template->assign_vars(array(
-				'S_SHOW_SMILEY_LINK' 	=> true,
-				'U_MORE_SMILIES' 		=> append_sid(titania::$absolute_board . 'posting.' . PHP_EXT, 'mode=smilies'))
-			);
-		}
-		phpbb::$db->sql_freeresult($result);
-
-
-		$sql = 'SELECT *
-			FROM ' . SMILIES_TABLE . '
-			WHERE display_on_posting = 1
-			ORDER BY smiley_order';
-		$result = phpbb::$db->sql_query($sql, 3600);
-
-		$smilies = array();
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			if (empty($smilies[$row['smiley_url']]))
-			{
-				$smilies[$row['smiley_url']] = $row;
-
-				phpbb::$template->assign_block_vars('smiley', array(
-					'SMILEY_CODE'	=> $row['code'],
-					'A_SMILEY_CODE'	=> addslashes($row['code']),
-					'SMILEY_IMG'	=> titania::$absolute_board . phpbb::$config['smilies_path'] . '/' . $row['smiley_url'],
-					'SMILEY_WIDTH'	=> $row['smiley_width'],
-					'SMILEY_HEIGHT'	=> $row['smiley_height'],
-					'SMILEY_DESC'	=> $row['emotion'])
-				);
-			}
-		}
-		phpbb::$db->sql_freeresult($result);
 	}
 }
 
