@@ -1,8 +1,7 @@
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/uploadify/jquery.uploadify.js"></script>
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.json-1.3.min.js"></script>
 <script type="text/javascript"><!--
 	$(document).ready(function() {
-
+				
 		// Create file uploader.
 		$('#fileInput').fileUpload ({
 			'uploader'  	: '{UPLOADER}',
@@ -19,14 +18,25 @@
 		
 		// onComplete function.
 		function onComplete(event, queueId, fileObj, response, data)
-		{
+		{			
 			// Parse response as JSON.
 			var response = window["eval"]("(" + response + ")");
 
-			$("#uploads").append(response.html)
-			$('#file_info_main_' + response.id).slideDown('slow');
+			if (response.error)
+			{
+				$('#errorbox_msg').text(response.error);
+				$('#errorbox').fadeIn('slow');
+
+				setTimeout("$('#errorbox').fadeOut('slow');", 10000);
+			}
+			else
+			{
+				$("#uploads").append(response.html)
+				$('#file_info_main_' + response.id).slideDown('slow');
+			}
 		}
 
+		
 		$('.hide').live('click', function() { 
 			var id = $(this).attr('id');
 
@@ -48,6 +58,13 @@
 --></script>
 
 <h2 class="section-title">{L_ATTACHMENTS}</h2>
+
+<div id="errorbox" class="errorbox" style="display: none;">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<h3 id="errorbox_title">Error</h3>
+		<p id="errorbox_msg"></p>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
 
 <div style="font-size: 14px;">{L_CHOOSE_FILES}: <input type="file" class="inputbox autowidth" value="" maxlength="262144" id="fileInput" name="fileInput"/></div>
 

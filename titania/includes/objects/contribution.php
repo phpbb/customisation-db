@@ -62,13 +62,6 @@ class titania_contribution extends titania_database_object
 	public $revisions = array();
 
 	/**
-	 * Attachment object
-	 *
-	 * @var attachment object
-	 */
-	public $attachment;
-
-	/**
 	 * Rating of this contribution
 	 *
 	 * @var titania_rating

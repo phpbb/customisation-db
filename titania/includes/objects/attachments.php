@@ -50,13 +50,20 @@ class titania_attachments extends titania_database_object
 	protected $sql_id_field		= 'attachment_id';
 
 	/**
+	 * Upload class
+	 *
+	 * @var object
+	 */
+	public $uploader;
+
+	/**
 	 * Constructor for download class
 	 *
-	 * @param int $download_id
-	 * @param object $contrib
+	 * @param int $attachment_type Attachment type (check TITANIA_DOWNLOAD_ for constants)
+	 * @param object $object_id int
 	 * @param int $object_id
 	 */
-	public function __construct($type, $object_id = false)
+	public function __construct($attachment_type, $object_id = false)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -84,12 +91,13 @@ class titania_attachments extends titania_database_object
 		// Do we have an object that we need to load.
 		if ($object_id === false)
 		{
+			$this->attachment_type = $attachment_type;
 			$this->filetime = titania::$time;
 		}
 		else
 		{
 			$this->object_id = $object_id;
-			$this->load_object($type);
+			$this->load_object($attachment_type);
 		}
 
 		// Assign common template data for uploader.
@@ -108,18 +116,25 @@ class titania_attachments extends titania_database_object
 	/**
 	 * Allows to load data identified by object_id
 	 *
-	 * @param int $download_type The type of download (check TITANIA_DOWNLOAD_ constants)
+	 * @param int $attachment_type The type of download (check TITANIA_DOWNLOAD_ constants)
 	 *
 	 * @return void
 	 */
-	public function load_object()
+	public function load_object($attachment_type)
 	{
-		// @todo This funtion should check the status of the relase as well as
-		$this->sql_id_field = 'object_id';
+		// @todo This funtion should check the status of the relase.
 
-		parent::load();
+		// We build our own query here due to needing to check the attachment_type.
+		// @todo Add suppport for more complex where statements in database object.
+		$sql = 'SELECT ' .  implode(', ', array_keys($this->object_config)) . '
+			FROM ' . $this->sql_table . '
+			WHERE object_id = ' . $this->object_id . '
+				AND attachment_type = ' . $attachment_type;
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
 
-		$this->sql_id_field = 'attachment_id';
+		$this->__set_array($row);
 	}
 
 	/**
@@ -199,29 +214,28 @@ class titania_attachments extends titania_database_object
 		titania::load_tool('uploader');
 
 		// Setup uploader tool.
-		$uploader = new titania_uploader('uploadify');
+		$this->uploader = new titania_uploader('uploadify');
 
-		// @todo Handle errors such as incorrect file extension.
-		$filedata = $uploader->upload_file();
+		// Try uploading the file.
+		$this->uploader->upload_file();
 
-		if (sizeof($filedata['error']))
+		// If we had no problems we can submit the data to the database.
+		if (!sizeof($this->uploader->filedata['error']))
 		{
-			return $filedata;
+			$this->physical_filename	= $this->uploader->filedata['physical_filename'];
+			$this->real_filename		= $this->uploader->filedata['real_filename'];
+			$this->extension			= $this->uploader->filedata['extension'];
+			$this->mimetype				= $this->uploader->filedata['mimetype'];
+			$this->filesize				= $this->uploader->filedata['filesize'];
+			$this->filetime				= $this->uploader->filedata['filetime'];
+			$this->hash					= $this->uploader->filedata['md5_checksum'];
+			$this->thumbnail			= 0; // @todo
+
+			parent::submit();
 		}
 
-		$this->attachment_type		= TITANIA_DOWNLOAD_CONTRIB;
-		$this->physical_filename	= $filedata['physical_filename'];
-		$this->real_filename		= $filedata['real_filename'];
-		$this->extension			= $filedata['extension'];
-		$this->mimetype				= $filedata['mimetype'];
-		$this->filesize				= $filedata['filesize'];
-		$this->filetime				= $filedata['filetime'];
-		$this->hash					= $filedata['md5_checksum'];
-		$this->thumbnail			= 0; // @todo
-
-		parent::submit();
-
-		return true;
+		// Display results.
+		$this->uploader->response($this);
 	}
 
 	/**
@@ -335,6 +349,8 @@ class titania_attachments extends titania_database_object
 	public function delete()
 	{
 		// @todo
+
+		// This function will need to handle contrib revisions.
 	}
 
 	/**
@@ -487,11 +503,12 @@ class titania_attachments extends titania_database_object
 			'TITLE'			=> $this->real_filename,
 		));
 
-		// If there is no attachment data it means we only have one attachment so assign download information as well.
-		if (!sizeof($this->attachment_data))
+		// If there is no attachment data and no uploader object, we only have one attachment so assign download information as well.
+		if (!sizeof($this->attachment_data) && !$this->uploader)
 		{
 			phpbb::$template->assign_vars(array(
-				'U_DOWNLOAD'		=> append_sid('/' . titania::$config->titania_script_path . 'download/file.' . PHP_EXT, array('contrib_id' => $this->object_id)),
+				// @todo Reformat link. Should have a method for building links for titania.
+				'U_DOWNLOAD'		=> append_sid(DIRECTORY_SEPARATOR . titania::$config->titania_script_path . 'download/file.' . PHP_EXT, array('contrib_id' => $this->object_id)),
 
 				'DOWNLOAD_SIZE'		=> get_formatted_filesize($this->filesize),
 				'DOWNLOAD_CHECKSUM'	=> $this->hash,

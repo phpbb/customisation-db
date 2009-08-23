@@ -52,9 +52,13 @@ function load_contrib($contrib = false)
 	}
 
 	// Load the contribution
-	titania::load_object('contribution');
+	titania::load_object(array('contribution', 'attachments'));
 	titania::$contrib = new titania_contribution();
 
+	// Get the attachments
+	$attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, titania::$contrib->contrib_id);
+	$attachment->display_attachments();
+		
 	if (!titania::$contrib->load($contrib))
 	{
 		trigger_error('CONTRIB_NOT_FOUND');
