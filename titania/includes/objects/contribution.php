@@ -76,7 +76,7 @@ class titania_contribution extends titania_database_object
 	public $is_author = false;
 	public $is_active_coauthor = false;
 	public $is_coauthor = false;
-	
+
 	/**
 	 * Constructor class for the contribution object
 	 */
@@ -123,11 +123,11 @@ class titania_contribution extends titania_database_object
 
 		return parent::submit();
 	}
-	
+
 	public function validate_data($contrib_categories = array())
 	{
 		$error = array();
-		
+
 		if (utf8_clean_string($this->contrib_name) == '')
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_NAME'];
@@ -137,7 +137,7 @@ class titania_contribution extends titania_database_object
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_TYPE'];
 		}
-		
+
 		if (!$contrib_categories)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
@@ -160,7 +160,7 @@ class titania_contribution extends titania_database_object
 		{
 			$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
 		}
-	
+
 		return $error;
 	}
 
@@ -178,10 +178,10 @@ class titania_contribution extends titania_database_object
 		$result = phpbb::$db->sql_query($sql);
 		$found = phpbb::$db->sql_fetchfield('contrib_id');
 		phpbb::$db->sql_freeresult($result);
-		
+
 		return ($found) ? false : true;
 	}
-	
+
 	/**
 	 * Load the contrib
 	 *
@@ -222,10 +222,6 @@ class titania_contribution extends titania_database_object
 		// Get the author
 		$this->author = new titania_author($this->contrib_user_id);
 		$this->author->load();
-
-		// Get the attachments
-		$this->attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, $this->contrib_id);
-		$this->attachment->display_attachments();
 
 		// Load co-authors list
 		$this->coauthors = array();
@@ -472,7 +468,7 @@ class titania_contribution extends titania_database_object
 
 		return titania::$url->build_url(get_contrib_type_string($this->contrib_type, 'url') . '/' . $this->contrib_name_clean);
 	}
-	
+
 	/*
 	 * Set the relations between contribs and categories
 	 *
@@ -489,12 +485,12 @@ class titania_contribution extends titania_database_object
 				WHERE contrib_id = ' . $this->contrib_id;
 			$db->sql_query($sql);
 		}
-		
+
 		if (!sizeof($contrib_categories))
 		{
 			return;
-		}		
-		
+		}
+
 		$sql_ary = array();
 		foreach ($contrib_categories as $category_id)
 		{
