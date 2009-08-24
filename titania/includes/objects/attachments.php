@@ -134,7 +134,10 @@ class titania_attachments extends titania_database_object
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 
-		$this->__set_array($row);
+		if (!empty($row))
+		{
+			$this->__set_array($row);
+		}
 	}
 
 	/**
