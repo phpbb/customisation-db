@@ -148,19 +148,22 @@ class titania_contribution extends titania_database_object
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_DESC'];
 		}
 
-		if (!$this->contrib_name_clean)
+		if (!$this->contrib_id)
 		{
-			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_PERMALINK'];
+			if (!$this->contrib_name_clean)
+			{
+				$error[] = phpbb::$user->lang['EMPTY_CONTRIB_PERMALINK'];
+			}
+			elseif (titania::$url->url_slug($this->contrib_name_clean) !== $this->contrib_name_clean)
+			{
+				$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania::$url->url_slug($this->contrib_name_clean));
+			}
+			elseif (!$this->validate_permalink($this->contrib_name_clean))
+			{
+				$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
+			}
 		}
-		elseif (titania::$url->url_slug($this->contrib_name_clean) !== $this->contrib_name_clean)
-		{
-			$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania::$url->url_slug($this->contrib_name_clean));
-		}
-		elseif (!$this->validate_permalink($this->contrib_name_clean))
-		{
-			$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
-		}
-
+		
 		return $error;
 	}
 
@@ -483,7 +486,7 @@ class titania_contribution extends titania_database_object
 			$sql = 'DELETE
 				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
 				WHERE contrib_id = ' . $this->contrib_id;
-			$db->sql_query($sql);
+			phpbb::$db->sql_query($sql);
 		}
 
 		if (!sizeof($contrib_categories))

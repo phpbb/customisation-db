@@ -73,7 +73,10 @@ $lang = array_merge($lang, array(
 
 	'NEW_TOPIC' 					=> 'New Topic',
 	'NEW_CONTRIBUTION'				=> 'New Contribution',
-
+	'EDIT_CONTRIBUTION'				=> 'Edit Contribution',
+	
+	'CONTRIB_EDITED'				=> 'The contribution has been successfully edited.',
+	
 	'SELECT_CONTRIB_TYPE'			=> '-- Select contribution type --',
 	
 	'INVALID_PERMALINK'				=> 'You need to enter a valid permalink, for example: %s',

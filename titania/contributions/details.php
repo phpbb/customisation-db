@@ -23,6 +23,10 @@ load_contrib();
 
 titania::$contrib->assign_details();
 
+phpbb::$template->assign_vars(array(
+	'U_EDIT_CONTRIBUTION'	=> titania::$contrib->get_url('edit'),
+));
+
 titania::page_header('CONTRIB_DETAILS');
 titania::page_footer(true, 'contributions/contribution_details.html');
 
