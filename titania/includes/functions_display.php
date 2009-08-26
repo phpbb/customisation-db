@@ -321,5 +321,10 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 */
 function titania_display_topic($topic_id, $sort = false, $options = array('start' => 0, 'limit' => 10))
 {
+	// array of posts
+	$topic = array();
 
+	$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
+		WHERE p.topic_id = ' . (int) $topic_id . '
+			AND u.user_id = p.user_id';
 }

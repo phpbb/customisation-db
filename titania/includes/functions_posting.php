@@ -28,7 +28,7 @@ function generate_category_select($selected = false)
 	{
 		$selected = array($selected);
 	}
-	
+
 	$sql = 'SELECT *
 		FROM ' . TITANIA_CATEGORIES_TABLE . '
 		WHERE category_visible = 1';
@@ -38,8 +38,9 @@ function generate_category_select($selected = false)
 	{
 		phpbb::$template->assign_block_vars('category_select', array(
 			'S_IS_SELECTED'		=> (in_array($category['category_id'], $selected)) ? true : false,
-			
+
 			'VALUE'				=> $category['category_id'],
+			'TYPE'				=> $category['category_type'],
 			'NAME'				=> (isset(phpbb::$user->lang[$category['category_name']])) ? phpbb::$user->lang[$category['category_name']] : $category['category_name'],
 		));
 	}
@@ -56,29 +57,29 @@ function generate_type_select($selected = false)
 {
 	phpbb::$template->assign_block_vars('type_select', array(
 		'S_IS_SELECTED'		=> ($selected) ? false : true,
-		
+
 		'VALUE'				=> 0,
 		'NAME'				=> phpbb::$user->lang['SELECT_CONTRIB_TYPE'],
 	));
-	
+
 	$select_items = array(
 		TITANIA_TYPE_MOD 		=> 'MODIFICATION',
 		TITANIA_TYPE_STYLE		=> 'STYLE',
 		TITANIA_TYPE_SNIPPET	=> 'SNIPPET',
 		TITANIA_TYPE_LANG_PACK	=> 'LANGUAGE_PACK',
 	);
-	
+
 	foreach ($select_items as $key => $lang_key)
 	{
 		phpbb::$template->assign_block_vars('type_select', array(
 			'S_IS_SELECTED'		=> ($key === $selected) ? true : false,
-			
+
 			'VALUE'				=> $key,
 			'NAME'				=> phpbb::$user->lang[$lang_key],
 		));
 	}
 }
-	
+
 /**
 * Generate the _options flag from the given settings
 *
