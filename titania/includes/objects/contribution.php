@@ -163,7 +163,7 @@ class titania_contribution extends titania_database_object
 				$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
 			}
 		}
-		
+
 		return $error;
 	}
 
@@ -298,7 +298,6 @@ class titania_contribution extends titania_database_object
 
 		$this->rating = new titania_rating('contrib', $this);
 		$this->rating->load();
-		$this->rating->assign_common();
 
 		return $this->rating;
 	}

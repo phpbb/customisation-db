@@ -212,7 +212,6 @@ class titania_author extends titania_database_object
 
 		$this->rating = new titania_rating('author', $this);
 		$this->rating->load();
-		$this->rating->assign_common();
 
 		return $this->rating;
 	}

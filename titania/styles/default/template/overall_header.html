@@ -25,6 +25,9 @@
 	      about phpBB please visit http://www.phpbb.com
 -->
 
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.7.2.custom.min.js"></script>
+
 <script type="text/javascript">
 // <![CDATA[
 	var spacer_img = '{U_BASE_URL}/images/spacer.gif';
@@ -46,13 +49,22 @@
 	var orange_star= new Image(16,16);
 	orange_star.src = "{UA_ORANGE_STAR_SRC}";
 	var max_rating = "{UA_MAX_RATING}";
+
+	$(document).ready(function(){
+		// Rating stuff
+		$("ul.rating li a").click(function(event){
+			event.preventDefault();
+		});
+		$("ul.rating li a").hover(
+			function(){
+			},
+			function(){
+			}
+		);
+	});
+
 // ]]>
 </script>
-<script type="text/javascript" src="{T_TITANIA_THEME_PATH}/js/forum_fn.js"></script>
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.7.2.custom.min.js"></script>
-
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/ratings.js"></script>
 
 <link href="{T_TITANIA_THEME_PATH}/print.css" rel="stylesheet" type="text/css" media="print" title="printonly" />
 <link href="{T_STYLESHEET_LINK}" rel="stylesheet" type="text/css" media="screen, projection" />

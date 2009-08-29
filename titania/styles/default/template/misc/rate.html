@@ -1,0 +1,7 @@
+<ul class="rating" id="rating_{OBJECT_ID}">
+<!-- BEGIN stars -->
+	<li><a href="{stars.RATE_URL}">
+		<img id="{OBJECT_ID}_{stars.ID}" src="<!-- IF S_HAS_RATED && stars.ID <= OBJECT_RATING -->{UA_GREEN_STAR_SRC}<!-- ELSEIF not S_HAS_RATED && stars.ID <= OBJECT_RATING -->{UA_ORANGE_STAR_SRC}<!-- ELSE -->{UA_GREY_STAR_SRC}<!-- ENDIF -->" />
+	</a></li>
+<!-- END stars -->
+</ul>
