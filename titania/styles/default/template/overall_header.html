@@ -57,8 +57,22 @@
 		});
 		$("ul.rating li a").hover(
 			function(){
+				// Over function. This will just change the stars to all green.
+
+				// Get the child img id which holds some info we need.
+				var child = $(this).children().attr('id');
+
+				// Child contains the object_id and the star number.
+				var object = child.split('_');
+
+				// Set the red stars that we neeed to.
+				for (i = 1; i <= object[1]; i++)
+				{
+					$('#' + object[0] + '_' + i).attr({src: red_star.src});
+				}
 			},
 			function(){
+				// Out function. Reset to default stars.
 			}
 		);
 	});
