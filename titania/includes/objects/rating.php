@@ -280,7 +280,13 @@ class titania_rating extends titania_database_object
 
 		parent::submit();
 
-		$this->resync();
+		// This is accurate enough as long as we have at least 2 decimal places
+		$rating = round(($this->rating * $this->rating_count + $this->rating_value) / ($this->rating_count + 1), 2);
+		$sql = "UPDATE {$this->cache_table} SET
+			{$this->cache_rating} = $rating,
+			{$this->cache_rating_count} = {$this->cache_rating_count} + 1
+			WHERE {$this->object_column} = {$this->rating_object_id}";
+		phpbb::$db->sql_query($sql);
 
 		return true;
 	}
@@ -297,7 +303,13 @@ class titania_rating extends titania_database_object
 
 		parent::delete();
 
-		$this->resync();
+		// This is accurate enough as long as we have at least 2 decimal places
+		$rating = round(($this->rating * $this->rating_count - $this->rating_value) / ($this->rating_count - 1), 2);
+		$sql = "UPDATE {$this->cache_table} SET
+			{$this->cache_rating} = $rating,
+			{$this->cache_rating_count} = {$this->cache_rating_count} - 1
+			WHERE {$this->object_column} = {$this->rating_object_id}";
+		phpbb::$db->sql_query($sql);
 
 		return true;
 	}
