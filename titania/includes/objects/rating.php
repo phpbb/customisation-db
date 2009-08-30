@@ -208,55 +208,28 @@ class titania_rating extends titania_database_object
 			'OBJECT_ID'				=> $this->rating_object_id,
 			'OBJECT_RATING'			=> round($this->rating),
 
+			'RATE_URL'				=> $rate_url,
+
 			'S_HAS_RATED'			=> ($this->rating_id) ? true : false,
 
 			'UA_GREY_STAR_SRC'		=> titania::$theme_path . '/images/star_grey.gif',
 			'UA_GREEN_STAR_SRC'		=> titania::$theme_path . '/images/star_green.gif',
 			'UA_RED_STAR_SRC'		=> titania::$theme_path . '/images/star_red.gif',
 			'UA_ORANGE_STAR_SRC'	=> titania::$theme_path . '/images/star_orange.gif',
+			'UA_REMOVE_STAR_SRC'	=> titania::$theme_path . '/images/star_remove.gif',
 			'UA_MAX_RATING'			=> titania::$config->max_rating,
 		));
 
 		for ($i = 1; $i <= titania::$config->max_rating; $i++)
 		{
 			phpbb::$template->assign_block_vars('stars', array(
+				'ALT'		=> (($this->rating_value) ? $this->rating_value : $i) . '/' . titania::$config->max_rating,
 				'ID'		=> $i,
 				'RATE_URL'	=> titania::$url->append_url($rate_url, array('value' => $i)),
 			));
-			/*
-			// Title will be $i/max if they've not rated it, rating/max if they have
-			$title = (($this->rating_value) ? $this->rating_value : $i) . '/' . titania::$config->max_rating;
-
-			$final_code .= ($can_rate) ? '<a href="' . titania::$url->append_url($rate_url, array('value' => $i)) . '">' : '';
-			$final_code .= '<img id="' . $this->rating_object_id . '_' . $i . '" ';
-			if ($this->rating_id && $i <= $this->rating) // If they have rated, show their own rating in green stars
-			{
-				$final_code .= 'src="' . titania::$theme_path . '/images/star_green.gif" ';
-			}
-			else if (!$this->rating_id && $i <= round($this->rating)) // Round because we only have full stars ATM, orange stars for the average rating (if the user has not rated)
-			{
-				$final_code .= 'src="' . titania::$theme_path . '/images/star_orange.gif" ';
-			}
-			else // show the rest in grey stars
-			{
-				$final_code .= 'src="' . titania::$theme_path . '/images/star_grey.gif" ';
-			}
-			$final_code .= ($can_rate) ? "onmouseover=\"ratingHover('{$i}', '{$this->rating_object_id}')\"  onmouseout=\"ratingUnHover('{$this->rating}', '{$this->rating_object_id}')\"  onmousedown=\"ratingDown('{$i}', '{$this->rating_object_id}')\"" : '';
-			$final_code .= ' alt="' . $title . '" title="' . $title . '" />';
-			$final_code .= ($can_rate) ? '</a>' : '';*/
 		}
 
 		return phpbb::$template->assign_display('rate', '', true);
-
-		// If they have rated already we will add the remove rating icon at the end
-		if ($this->rating_id)
-		{
-			$final_code .= ' <a href="' . $rate_url . '"><img id="' . $this->rating_object_id . '_remove" src="' . titania::$theme_path . '/images/star_remove.gif"  alt="' . phpbb::$user->lang['REMOVE_RATING'] . '" title="' . phpbb::$user->lang['REMOVE_RATING'] . '" /></a>';
-		}
-
-		$final_code .= '</span>';
-
-		return $final_code;
 	}
 
 	/**

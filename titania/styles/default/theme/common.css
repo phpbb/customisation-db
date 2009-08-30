@@ -429,3 +429,12 @@ div#top {
 .faq-body .corners-bottom span {
 	margin-right: -6px;
 }
+
+/* Rating Code */
+ul.rating {
+	list-style-type: none;
+	display: inline;
+}
+ul.rating li {
+	display: inline;
+}

@@ -319,7 +319,7 @@ class titania_author extends titania_database_object
 
             'AUTHOR_DESC'                   => $this->generate_text_for_display(),
 
-			'U_EDIT_AUTHOR'                 => $this->get_url('edit'),
+			'U_EDIT_AUTHOR'                 => (phpbb::$user->data['user_id'] == $this->user_id  || phpbb::$auth->acl_get('titania_author_mod')) ? $this->get_url('edit') : '',
 			'U_AUTHOR_PROFILE'				=> $this->get_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),

@@ -1,7 +1,16 @@
 <ul class="rating" id="rating_{OBJECT_ID}">
 <!-- BEGIN stars -->
-	<li><a href="{stars.RATE_URL}">
-		<img id="{OBJECT_ID}_{stars.ID}" src="<!-- IF S_HAS_RATED && stars.ID <= OBJECT_RATING -->{UA_GREEN_STAR_SRC}<!-- ELSEIF not S_HAS_RATED && stars.ID <= OBJECT_RATING -->{UA_ORANGE_STAR_SRC}<!-- ELSE -->{UA_GREY_STAR_SRC}<!-- ENDIF -->" />
-	</a></li>
+	<li><a href="{stars.RATE_URL}"><img id="{OBJECT_ID}_{stars.ID}" alt="{stars.ALT}" title="{stars.ALT}"
+	<!-- IF S_HAS_RATED && stars.ID <= OBJECT_RATING -->
+		class="green" src="{UA_GREEN_STAR_SRC}"
+	<!-- ELSEIF not S_HAS_RATED && stars.ID <= OBJECT_RATING -->
+		class="orange" src="{UA_ORANGE_STAR_SRC}"
+	<!-- ELSE -->
+		class="grey" src="{UA_GREY_STAR_SRC}"
+	<!-- ENDIF -->
+	/></a></li>
 <!-- END stars -->
+	<li><a href="{RATE_URL}">
+		<img id="{OBJECT_ID}_remove" class="remove" src="{UA_REMOVE_STAR_SRC}" alt="{L_REMOVE_RATING}" title="{L_REMOVE_RATING}">
+	</a></li>
 </ul>
