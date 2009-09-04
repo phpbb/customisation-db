@@ -27,6 +27,7 @@
 
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/common.js"></script>
 
 <script type="text/javascript">
 // <![CDATA[
@@ -49,45 +50,6 @@
 	var orange_star= new Image(16,16);
 	orange_star.src = "{UA_ORANGE_STAR_SRC}";
 	var max_rating = "{UA_MAX_RATING}";
-
-	$(document).ready(function(){
-		// Rating stuff
-		$("ul.rating li a").click(function(event){
-			event.preventDefault();
-		});
-		$("ul.rating li a").hover(
-			function(){
-				// Over function. This will change the stars up to the point that was hovered on to red
-
-				// Get the child img id which holds some info we need.
-				var child = $(this).children().attr('id');
-
-				// Child contains the object_id and the star number.
-				var object = child.split('_');
-
-				// Set the red stars that we neeed to.
-				for (i = 1; i <= object[1]; i++)
-				{
-					$('#' + object[0] + '_' + i).attr({src: red_star.src});
-				}
-			},
-			function(){
-				// Out function. Reset to default stars
-				$("ul.rating li a img.green").each(function() {
-					$(this).attr({src: green_star.src});
-				});
-
-				$("ul.rating li a img.orange").each(function() {
-					$(this).attr({src: orange_star.src});
-				});
-
-				$("ul.rating li a img.grey").each(function() {
-					$(this).attr({src: grey_star.src});
-				});
-			}
-		);
-	});
-
 // ]]>
 </script>
 

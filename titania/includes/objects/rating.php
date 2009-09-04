@@ -220,6 +220,9 @@ class titania_rating extends titania_database_object
 			'UA_MAX_RATING'			=> titania::$config->max_rating,
 		));
 
+		// reset the stars block
+		phpbb::$template->destroy_block_vars('stars');
+
 		for ($i = 1; $i <= titania::$config->max_rating; $i++)
 		{
 			phpbb::$template->assign_block_vars('stars', array(
@@ -244,7 +247,7 @@ class titania_rating extends titania_database_object
 			return false;
 		}
 
-		if ($rating < 0 || $rating > titania::$config->max_rating)
+		if ($rating < 0 || $rating > titania::$config->max_rating || $this->rating_id)
 		{
 			return false;
 		}
@@ -275,12 +278,26 @@ class titania_rating extends titania_database_object
 
 		parent::delete();
 
-		// This is accurate enough as long as we have at least 2 decimal places
-		$sql = "UPDATE {$this->cache_table} SET
-			{$this->cache_rating} = ({$this->cache_rating} * {$this->rating_count} - {$this->rating_value}) / ({$this->rating_count} - 1),
-			{$this->cache_rating_count} = {$this->cache_rating_count} - 1
-			WHERE {$this->object_column} = {$this->rating_object_id}";
-		phpbb::$db->sql_query($sql);
+		if ($this->rating_count == 1)
+		{
+			$sql_ary = array(
+				$this->cache_rating			=> 0,
+				$this->cache_rating_count	=> 0,
+			);
+
+			$sql = 'UPDATE ' . $this->cache_table . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+				WHERE ' . $this->object_column . ' = ' . $this->rating_object_id;
+			phpbb::$db->sql_query($sql);
+		}
+		else
+		{
+			// This is accurate enough as long as we have at least 2 decimal places
+			$sql = "UPDATE {$this->cache_table} SET
+				{$this->cache_rating} = ({$this->cache_rating} * {$this->rating_count} - {$this->rating_value}) / ({$this->rating_count} - 1),
+				{$this->cache_rating_count} = {$this->cache_rating_count} - 1
+				WHERE {$this->object_column} = {$this->rating_object_id}";
+			phpbb::$db->sql_query($sql);
+		}
 
 		return true;
 	}

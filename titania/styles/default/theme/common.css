@@ -3,6 +3,10 @@
  * common.css
  */
 
+.hidden {
+	display: none !important;
+}
+
 .successbox, .errorbox {
 	padding: 0 10px;
 	margin: 10px 0;
@@ -126,12 +130,12 @@
 .contrib-content {
 	background-color: #FFFFFF;
 	padding: 0 5px;
-} 
+}
 
 h2.section-title {
-	color: #425667; 
-	margin-top: .5em; 
-	text-align: center; 
+	color: #425667;
+	margin-top: .5em;
+	text-align: center;
 	position: relative;
 }
 
@@ -163,7 +167,7 @@ h2.section-title {
 
 .advanced-search label {
 	display: block;
-	
+
 }
 
 label#main {
@@ -209,7 +213,7 @@ label#main {
 
 #tabs .activetab a {
 	background-image: url("./images/tab_bg.gif");
-	color: #FFFFFF; 
+	color: #FFFFFF;
 	border-color: #027BB8;
 }
 
@@ -241,7 +245,7 @@ label#main {
 
 .half h3 {
 	margin: 0;
-	color: #BC2A4D; 
+	color: #BC2A4D;
 }
 
 #left dl.details dt {
@@ -289,12 +293,12 @@ li.row dd {
 .faq-list {
 	float: left;
 	background-color: #E4EDF1;
-	border: 1px solid #B8CFDB;	
+	border: 1px solid #B8CFDB;
 	margin-bottom: 5px;
 	padding: 0 5px;
 	font-size: 1.1em;
 	margin-top: 5px;
-	display: block; 
+	display: block;
 	width: 98.25%; /* Need to look over this again - IE doesn't want to play nice */
 }
 
@@ -335,7 +339,7 @@ dl.codebox code {
 }
 
 div#top {
-	clear: both; 
+	clear: both;
 	margin-top: 15px;
 }
 
@@ -431,10 +435,10 @@ div#top {
 }
 
 /* Rating Code */
-ul.rating {
+ul.rating, ul.rated {
 	list-style-type: none;
 	display: inline;
 }
-ul.rating li {
+ul.rating li, ul.rated li {
 	display: inline;
 }
