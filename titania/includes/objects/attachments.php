@@ -57,6 +57,13 @@ class titania_attachments extends titania_database_object
 	public $uploader;
 
 	/**
+	 * True if the object has an attachment.
+	 *
+	 * @var bool
+	 */
+	public $has_attachments = false;
+
+	/**
 	 * Constructor for download class
 	 *
 	 * @param int $attachment_type Attachment type (check TITANIA_DOWNLOAD_ for constants)
@@ -136,6 +143,7 @@ class titania_attachments extends titania_database_object
 
 		if (!empty($row))
 		{
+			$this->has_attachments = true;
 			$this->__set_array($row);
 		}
 	}
@@ -167,7 +175,7 @@ class titania_attachments extends titania_database_object
 			return false;
 		}
 
-		parent::load();
+		$this->has_attachments = parent::load();
 	}
 
 	/**
@@ -181,7 +189,7 @@ class titania_attachments extends titania_database_object
 	public function display_attachments($hide_attachement_detail = true)
 	{
 		// Single attachment. This will happen if we are displaying a download for a contrib or a post.
-		if (!sizeof($this->attachment_data) && !$this->attachment_id)
+		if (!sizeof($this->attachment_data) && !$this->attachment_id && $this->object_id === false)
 		{
 			parent::load();
 
@@ -509,7 +517,7 @@ class titania_attachments extends titania_database_object
 		));
 
 		// If there is no attachment data and no uploader object, we only have one attachment so assign download information as well.
-		if (!sizeof($this->attachment_data) && !$this->uploader)
+		if (!sizeof($this->attachment_data) && !$this->uploader && $this->has_attachments)
 		{
 			phpbb::$template->assign_vars(array(
 				// @todo Reformat link. Should have a method for building links for titania.
