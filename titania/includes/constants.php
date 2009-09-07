@@ -59,13 +59,6 @@ define('TAG_TYPE_COMPLEXITY', 3);
 define('TITANIA_ERROR', 1);
 define('TITANIA_SUCCESS', 2);
 
-// Contribution type
-define('TITANIA_TYPE_CATEGORY', 0); // Used in categories
-define('TITANIA_TYPE_MOD', 1);
-define('TITANIA_TYPE_STYLE', 2);
-define('TITANIA_TYPE_SNIPPET', 3);
-define('TITANIA_TYPE_LANG_PACK', 4);
-
 // Author constants
 define('TITANIA_AUTHOR_HIDDEN', 0);
 define('TITANIA_AUTHOR_VISIBLE', 1);

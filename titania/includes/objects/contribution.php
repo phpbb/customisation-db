@@ -465,10 +465,10 @@ class titania_contribution extends titania_database_object
 	{
 		if ($page)
 		{
-			return titania::$url->build_url(get_contrib_type_string($this->contrib_type, 'url') . '/' . $this->contrib_name_clean . '/' . $page);
+			return titania::$url->build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
 		}
 
-		return titania::$url->build_url(get_contrib_type_string($this->contrib_type, 'url') . '/' . $this->contrib_name_clean);
+		return titania::$url->build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean);
 	}
 
 	/*

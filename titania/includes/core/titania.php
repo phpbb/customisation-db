@@ -43,6 +43,13 @@ class titania
 	public static $cache;
 
 	/**
+	 * Instance of the titania_types class
+	 *
+	 * @var object titania_types
+	 */
+	public static $types;
+
+	/**
 	 * Request time (unix timestamp)
 	 *
 	 * @var int
@@ -133,6 +140,9 @@ class titania
 
 		// Add common titania language file
 		self::add_lang('common');
+
+		// Load the types
+		self::load_types();
 	}
 
 	/**
@@ -777,5 +787,34 @@ class titania
 		self::$url = new titania_url();
 
 		self::$url->decode_url();
+	}
+
+	/**
+	 * Load types
+	 */
+	public static function load_types()
+	{
+		$dh = @opendir(TITANIA_ROOT . 'includes/types/');
+
+		if (!$dh)
+		{
+			trigger_error('Could not open the types directory');
+		}
+
+		while (($fname = readdir($dh)) !== false)
+		{
+			if (strpos($fname, '.' . PHP_EXT))
+			{
+				include(TITANIA_ROOT . 'includes/types/' . $fname);
+
+				$class_name = 'titania_type_' . substr($fname, 0, strpos($fname, '.' . PHP_EXT));
+
+				$class = new $class_name;
+
+				self::$types[$class->id] = $class;
+			}
+		}
+
+		closedir($dh);
 	}
 }

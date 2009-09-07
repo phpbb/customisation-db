@@ -33,47 +33,6 @@ function get_version_string($version)
 }
 
 /**
-* Get contribution type string (from the type id)
-*
-* @param int $type The type (check TITANIA_TYPE_ constants)
-* @param string $mode The mode (url|lang)
-*/
-function get_contrib_type_string($type, $mode = 'lang')
-{
-	$types = array(
-		TITANIA_TYPE_MOD	=> array(
-			'url'	=> 'mod',
-			'lang'	=> phpbb::$user->lang['MODIFICATION'],
-		),
-		TITANIA_TYPE_STYLE	=> array(
-			'url'	=> 'style',
-			'lang'	=> phpbb::$user->lang['STYLE'],
-		),
-		TITANIA_TYPE_SNIPPET	=> array(
-			'url'	=> 'snippet',
-			'lang'	=> phpbb::$user->lang['SNIPPET'],
-		),
-		TITANIA_TYPE_LANG_PACK	=> array(
-			'url'	=> 'language_pack',
-			'lang'	=> phpbb::$user->lang['LANGUAGE_PACK'],
-		),
-		'default'	=> array(
-			'url'	=> 'contribution',
-			'lang'	=> phpbb::$user->lang['CONTRIBUTION'],
-		),
-	);
-
-	if (isset($types[$type]))
-	{
-		return $types[$type][$mode];
-	}
-	else
-	{
-		return $types['default'][$mode];
-	}
-}
-
-/**
 * Display categories
 *
 * @param int $parent_id The parent id/name (only show categories under this category)
@@ -166,7 +125,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 			'CONTRIB_USERNAME'			=> $contrib->username,
 			'CONTRIB_USERNAME_FULL'		=> $author->get_username_string(),
 			'CONTRIB_NAME'				=> $contrib->contrib_name,
-			'CONTRIB_TYPE'				=> get_contrib_type_string($contrib->contrib_type),
+			'CONTRIB_TYPE'				=> titania::$types[$contrib->contrib_type]->lang,
 			'CONTRIB_STATUS'			=> $contrib->contrib_status,
 			'CONTRIB_DOWNLOADS'			=> $contrib->contrib_downloads,
 			'CONTRIB_VIEWS'				=> $contrib->contrib_views,

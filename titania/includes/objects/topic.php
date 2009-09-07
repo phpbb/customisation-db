@@ -260,7 +260,7 @@ class titania_topic extends titania_database_object
 			if (isset($this->contrib_type) && isset($this->contrib_name_clean))
 			{
 				// Yay, generate good urls
-				$url = titania::$url->build_url(get_contrib_type_string($this->contrib_type, 'url') . '/' . $this->contrib_name_clean . '/' . $page);
+				$url = titania::$url->build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
 			}
 			else
 			{

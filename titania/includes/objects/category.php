@@ -57,10 +57,10 @@ class titania_category extends titania_database_object
 		$this->object_config = array_merge($this->object_config, array(
 			'category_id'					=> array('default' => 0),
 			'parent_id'						=> array('default' => 0),
-			'left_id'						=> array('default' => TITANIA_TYPE_CATEGORY),
+			'left_id'						=> array('default' => 0),
 			'right_id'						=> array('default' => 0),
 
-			'category_type'					=> array('default' => 0), // Check TITANIA_TYPE_ constants
+			'category_type'					=> array('default' => 0),
 			'category_contribs'				=> array('default' => 0), // Number of items
 			'category_visible'				=> array('default' => true),
 

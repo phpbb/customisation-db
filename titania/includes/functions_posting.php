@@ -62,20 +62,13 @@ function generate_type_select($selected = false)
 		'NAME'				=> phpbb::$user->lang['SELECT_CONTRIB_TYPE'],
 	));
 
-	$select_items = array(
-		TITANIA_TYPE_MOD 		=> 'MODIFICATION',
-		TITANIA_TYPE_STYLE		=> 'STYLE',
-		TITANIA_TYPE_SNIPPET	=> 'SNIPPET',
-		TITANIA_TYPE_LANG_PACK	=> 'LANGUAGE_PACK',
-	);
-
-	foreach ($select_items as $key => $lang_key)
+	foreach (titania::$types as $key => $type)
 	{
 		phpbb::$template->assign_block_vars('type_select', array(
 			'S_IS_SELECTED'		=> ($key === $selected) ? true : false,
 
 			'VALUE'				=> $key,
-			'NAME'				=> phpbb::$user->lang[$lang_key],
+			'NAME'				=> $type->lang,
 		));
 	}
 }
