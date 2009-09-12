@@ -1,0 +1,40 @@
+<!-- INCLUDE contributions/contribution_header.html -->
+
+<h2 class="section-title">{CONTRIB_NAME} :: {L_REVISIONS}</h2>
+
+<p class="ui-button"><a href="{U_CREATE_FAQ}" id="create-faq" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_ADD_REVISION}</a></p>
+
+<!-- IF .revisions -->
+	<div class="forumbg">
+		<div class="inner"><span class="corners-top"><span></span></span>
+			<table>
+				<thead>
+					<tr>
+						<th>{L_REVISION}</th>
+						<th>{L_CREATED}</th>
+						<th>{L_VALIDATED}</th>
+						<th>{L_VALIDATED_DATE}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- BEGIN revisions -->
+						<tr>
+							<td>#{L_REVISION}_{revisions.REVISION_ID}</td>
+							<td>{revisions.CREATED}</td>
+							<td>{revisions.VALIDATED}</td>
+							<td>{revisions.VALIDATED_DATE}</td>
+						</tr>
+					<!-- END revisions -->
+				</tbody>
+			</table>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+<!-- ELSE -->
+	<div class="panel">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<strong>{L_NO_REVISIONS}</strong>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+<!-- ENDIF -->
+	
+<!-- INCLUDE contributions/contribution_footer.html -->

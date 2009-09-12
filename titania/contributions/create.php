@@ -33,9 +33,6 @@ $contrib = new titania_contribution();
 
 $submit = (isset($_POST['submit'])) ? true : false;
 
-titania::load_object('attachments');
-$attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB);
-
 $contrib->contrib_name 			= utf8_normalize_nfc(request_var('name', '', true));
 $contrib->contrib_desc 			= utf8_normalize_nfc(request_var('description', '', true));
 $contrib_categories				= request_var('contrib_category', array(0));

@@ -492,13 +492,21 @@ $versions = array(
 	),
 
 	'0.1.15' => array(
-		'permission_add' => array(
+		 'permission_add' => array(
 			'titania_contrib_mod',
-		),
+			),
 
-		'permission_set' => array(
-			array('ROLE_ADMIN_FULL', array('titania_contrib_mod')),
+			'permission_set' => array(
+				array('ROLE_ADMIN_FULL', array('titania_contrib_mod')),
+			),
+        ),
+
+	'0.1.16' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'validation_date', array('UINT:11', 0)),
+			array(TITANIA_REVISIONS_TABLE, 'revision_version', array('VCHAR', '')),
 		),
+		'custom' => 'titania_update',
 	),
 
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
