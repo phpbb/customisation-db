@@ -1,10 +1,10 @@
 <!-- INCLUDE contributions/contribution_header.html -->
 
-<h2 class="section-title">{PAGE_TITLE} :: {L_EDIT_CONTRIBUTION}</h2>
+<h2 class="section-title">{CONTRIB_NAME} :: {PAGE_TITLE}</h2>
 
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
-<form action="{U_ACTION}" method="post">
+<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
 	<fieldset>
 		<dl style="clear: left;">
 			<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
@@ -23,21 +23,15 @@
 					<!-- BEGIN category_select -->
 					<option value="{category_select.VALUE}"<!-- IF category_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{category_select.NAME}</option>
 					<!-- END category_select -->
-				</select>			
+				</select>
 			</dd>
 		</dl>
 		<dl style="clear: left;">
 			<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
-			<dd><input type="text" name="name" id="name" size="45" maxlength="60" tabindex="1" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
+			<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
 		</dl>
-		<dl style="clear: left;">
-			<dt><label for="description">{L_CONTRIB_DESCRIPTION}:</label></dt>
-			<dd><textarea name="description" id="description" class="inputbox" cols="40" rows="5">{CONTRIB_DESC}</textarea></dd>
-		</dl>
-	</fieldset>	
-	
-	<!-- INCLUDE uploadify.html -->
-
+		<!-- INCLUDE posting/posting_basic_editor.html -->
+	</fieldset>
 	<fieldset class="submit-buttons">
 		<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
 		<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />

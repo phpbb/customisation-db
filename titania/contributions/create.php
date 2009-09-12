@@ -21,7 +21,10 @@ if (!function_exists('generate_type_select') || !function_exists('generate_categ
 	require TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT;
 }
 
-//@todo Logged in users only.
+if (!phpbb::$auth->acl_get('titania_contrib_submit'))
+{
+	trigger_error('NO_AUTH');
+}
 
 titania::add_lang('attachments');
 titania::load_object('contribution');
@@ -41,7 +44,7 @@ $contrib->contrib_name_clean	= request_var('permalink', '', true);
 
 if ($submit)
 {
-	$error = $contrib->validate_data($contrib_categories);
+	$error = $contrib->validate($contrib_categories);
 
 	if (!sizeof($error))
 	{

@@ -21,29 +21,45 @@ if (!function_exists('generate_type_select') || !function_exists('generate_categ
 	require TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT;
 }
 
-//@todo Logged in users only.
+if (titania::$access_level > TITANIA_ACCESS_AUTHORS && !phpbb::$auth->acl_get('titania_contrib_mod'))
+{
+	trigger_error('NO_AUTH');
+}
 
-titania::add_lang('attachments');
 titania::load_object('contribution');
-
 load_contrib();
+titania::$contrib->assign_details();
+
+// Load the message object
+titania::load_tool('message');
+$message = new titania_message(titania::$contrib);
+$message->set_auth(array(
+	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
+	'smilies'	=> phpbb::$auth->acl_get('titania_smilies'),
+));
+$message->set_settings(array(
+	'display_error'		=> false,
+	'display_subject'	=> false,
+	'subject_name'		=> 'name',
+));
 
 $submit = (isset($_POST['submit'])) ? true : false;
-
-titania::load_object('attachments');
-$attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, titania::$contrib->contrib_id);
-$attachment->display_attachments();
 
 $contrib_categories = array();
 
 if ($submit)
 {
-	titania::$contrib->contrib_name 		= utf8_normalize_nfc(request_var('name', '', true));
-	titania::$contrib->contrib_desc 		= utf8_normalize_nfc(request_var('description', '', true));
-	$contrib_categories						= request_var('contrib_category', array(0));
-	titania::$contrib->contrib_type			= request_var('contrib_type', 0);
+	$post_data = $message->request_data();
 
-	$error = titania::$contrib->validate_data($contrib_categories);
+	titania::$contrib->post_data($post_data);
+	$contrib_categories = request_var('contrib_category', array(0));
+
+	$error = titania::$contrib->validate($contrib_categories);
+
+	if (($validate_form_key = $message->validate_form_key()) !== false)
+	{
+		$error[] = $validate_form_key;
+	}
 
 	if (!sizeof($error))
 	{
@@ -52,12 +68,9 @@ if ($submit)
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories, true);
 
-		// Update are attachments.
-		$attachment->update_orphans(titania::$contrib->contrib_id);
-
 		meta_refresh(3, titania::$contrib->get_url());
 
-		titania::error_box('SUCCESS', 'CONTRIB_EDITED', TITANIA_SUCCESS);
+		titania::error_box('SUCCESS', 'CONTRIB_UPDATED', TITANIA_SUCCESS);
 	}
 }
 else
@@ -76,15 +89,13 @@ else
 // Generate the selects
 generate_type_select(titania::$contrib->contrib_type);
 generate_category_select($contrib_categories);
+$message->display();
 
 $template->assign_vars(array(
-	'U_ACTION'					=> titania::$contrib->get_url('edit'),
+	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
 
 	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
-
-	'CONTRIB_NAME'				=> titania::$contrib->contrib_name,
-	'CONTRIB_DESC'				=> titania::$contrib->contrib_desc,
 ));
 
-titania::page_header('EDIT_CONTRIBUTION');
-titania::page_footer(true, 'contributions/contribution_edit.html');
+titania::page_header('MANAGE_CONTRIBUTION');
+titania::page_footer(true, 'contributions/contribution_manage.html');

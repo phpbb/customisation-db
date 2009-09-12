@@ -4,7 +4,7 @@ Hello {TO_USERNAME},
 
 This e-mail was sent from "{SITENAME}" by {FROM_USERNAME} who thought you may be interested in the following MOD:
 
-{CONTRIB_TITLE}
+{CONTRIB_NAME}
 
 You can find it at:
 

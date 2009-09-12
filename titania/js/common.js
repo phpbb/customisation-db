@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+/*
 	// AJAX Rate
 	$("ul.rating li a, ul.rated li a").click(function(event){
 		event.preventDefault();
@@ -46,7 +46,7 @@ $(document).ready(function(){
 			}
 		});
 	});
-
+*/
 	// Rating hover functions
 	$("ul.rating li a").hover(
 		function(){

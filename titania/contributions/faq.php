@@ -79,7 +79,6 @@ switch ($action)
 			}
 		}
 
-		add_form_key('postform');
 		$message->display();
 
 		phpbb::$template->assign_vars(array(
@@ -93,8 +92,6 @@ switch ($action)
 	break;
 
 	case 'delete':
-
-		titania::page_header('DELETE_FAQ');
 
 		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_delete') && !titania::$contrib->is_author)
 		{

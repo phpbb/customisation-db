@@ -124,7 +124,7 @@ class titania_contribution extends titania_database_object
 		return parent::submit();
 	}
 
-	public function validate_data($contrib_categories = array())
+	public function validate($contrib_categories = array())
 	{
 		$error = array();
 
@@ -165,6 +165,21 @@ class titania_contribution extends titania_database_object
 		}
 
 		return $error;
+	}
+
+	/**
+	* Submit data in the post_data format (from includes/tools/message.php)
+	*
+	* @param mixed $post_data
+	*/
+	public function post_data($post_data)
+	{
+		$this->__set_array(array(
+			'contrib_name'		=> $post_data['subject'],
+			'contrib_desc'		=> $post_data['message'],
+		));
+
+		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
 	}
 
 	/*
@@ -422,7 +437,7 @@ class titania_contribution extends titania_database_object
 
 		phpbb::$template->assign_vars(array(
 			// Contribution data
-			'CONTRIB_TITLE'					=> $this->contrib_name,
+			'CONTRIB_NAME'					=> $this->contrib_name,
 			'CONTRIB_DESC'					=> $this->generate_text_for_display(),
 
 			'CONTRIB_VIEWS'					=> $this->contrib_views,

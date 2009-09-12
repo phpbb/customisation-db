@@ -29,7 +29,7 @@ switch ($page)
 	case 'faq' :
 	case 'support' :
 	case 'create' :
-	case 'edit' :
+	case 'manage' :
 		include(TITANIA_ROOT . 'contributions/' . $page . '.' . PHP_EXT);
 	break;
 
@@ -98,6 +98,11 @@ function load_contrib($contrib = false)
 		'support' => array(
 			'title'		=> 'CONTRIB_SUPPORT',
 			'url'		=> titania::$contrib->get_url('support'),
+		),
+		'manage' => array(
+			'title'		=> 'CONTRIB_MANAGE',
+			'url'		=> titania::$contrib->get_url('manage'),
+			'auth'		=> (titania::$access_level <= TITANIA_ACCESS_AUTHORS || phpbb::$auth->acl_get('titania_contrib_mod'))
 		),
 	);
 

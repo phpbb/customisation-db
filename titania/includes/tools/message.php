@@ -54,6 +54,7 @@ class titania_message
 	private $settings = array(
 		'form_name'				=> 'postform',
 		'text_name'				=> 'message',
+		'subject_name'			=> 'subject',
 		'display_error'			=> true, // If set to false make sure you output the error in the template yourself (turns the S_DISPLAY_ERROR on/off)
 		'display_subject'		=> true, // Display the subject field or not
 		'display_edit_reason'	=> false, // Display the edit reason field or not
@@ -180,6 +181,7 @@ class titania_message
 
 			'POSTING_FORM_NAME'			=> $this->settings['form_name'],
 			'POSTING_TEXT_NAME'			=> $this->settings['text_name'],
+			'POSTING_SUBJECT_NAME'		=> $this->settings['subject_name'],
 
 			'POSTING_PANELS_DEFAULT'	=> 'options-panel',
 
@@ -214,7 +216,7 @@ class titania_message
 		$magic_url_disabled = (isset($_POST['disable_magic_url'])) ? true : false;
 
 		return array(
-			'subject'			=> utf8_normalize_nfc(request_var('subject', '', true)),
+			'subject'			=> utf8_normalize_nfc(request_var($this->settings['subject_name'], '', true)),
 			'message'			=> utf8_normalize_nfc(request_var($this->settings['text_name'], '', true)),
 			'options'			=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
 			'access'			=> request_var('message_access', TITANIA_ACCESS_PUBLIC),

@@ -491,6 +491,16 @@ $versions = array(
 		'custom' => 'titania_update',
 	),
 
+	'0.1.15' => array(
+		'permission_add' => array(
+			'titania_contrib_mod',
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array('titania_contrib_mod')),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

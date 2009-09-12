@@ -140,7 +140,7 @@ class titania_email
 					'FROM_USERNAME'	=> htmlspecialchars_decode(phpbb::$user->data['username']),
 					'MESSAGE'		=> htmlspecialchars_decode($message),
 
-					'CONTRIB_TITLE'	=> htmlspecialchars_decode($this->contrib_name),
+					'CONTRIB_NAME'	=> htmlspecialchars_decode($this->contrib_name),
 					'U_CONTRIB'		=> append_sid(titania::$page, array('contrib_id' => $this->contrib_id, 'id' => 'details'), true, ''),
 				));
 
