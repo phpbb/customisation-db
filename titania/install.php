@@ -506,7 +506,6 @@ $versions = array(
 			array(TITANIA_REVISIONS_TABLE, 'validation_date', array('UINT:11', 0)),
 			array(TITANIA_REVISIONS_TABLE, 'revision_version', array('VCHAR', '')),
 		),
-		'custom' => 'titania_update',
 	),
 
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!

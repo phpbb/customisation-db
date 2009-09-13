@@ -100,6 +100,10 @@ function load_contrib($contrib = false)
 			'title'		=> 'CONTRIB_SUPPORT',
 			'url'		=> titania::$contrib->get_url('support'),
 		),
+		'mange' => array(
+			'title'		=> 'CONTRIB_MANAGE',
+			'url'		=> titania::$contrib->get_url('manage'),
+		),
 		'revisions' => array(
 			'title'		=> 'CONTRIB_REVISIONS',
 			'url'		=> titania::$contrib->get_url('revisions'),
