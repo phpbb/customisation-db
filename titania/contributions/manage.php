@@ -21,14 +21,14 @@ if (!function_exists('generate_type_select') || !function_exists('generate_categ
 	require TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT;
 }
 
-if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor || phpbb::$auth->acl_get('titania_contrib_mod'))
-{
-	trigger_error('NO_AUTH');
-}
-
 titania::load_object('contribution');
 load_contrib();
 titania::$contrib->assign_details();
+
+if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('titania_contrib_mod'))
+{
+	trigger_error('NO_AUTH');
+}
 
 // Load the message object
 titania::load_tool('message');
