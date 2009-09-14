@@ -70,6 +70,8 @@ $lang = array_merge($lang, array(
 
 	'LOGIN_EXPLAIN_CONTRIB'			=> 'In order to create a new contribution you need to be registered',
 
+	'NO_CATEGORY'	=> 'The selected category does not exist',
+	'WRONG_CATEGORY' => 'You can only put this contribution in the same category type as the contribution type.',
 	'NEW_TOPIC' 					=> 'New Topic',
 	'NEW_CONTRIBUTION'				=> 'New Contribution',
 	'EDIT_CONTRIBUTION'				=> 'Edit Contribution',

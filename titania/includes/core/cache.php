@@ -30,32 +30,28 @@ class titania_cache extends acm
 	/**
 	 * Get categories by tag type
 	 *
-	 * @param int $tag_type
-	 * @return array of category data (field_name and field_desc)
+	 * @return array of categories
 	 */
-	public function get_categories($tag_type = TAG_TYPE_MOD_CATEGORY)
+	public function get_categories()
 	{
-		$categories = $this->get('_titania_categories_' . $tag_type);
+		$categories = $this->get('_titania_categories');
 
-		if (!$categories)
+		if ($categories === false)
 		{
 			$categories = array();
-			$sql = 'SELECT * FROM ' . TITANIA_TAG_FIELDS_TABLE . '
-						WHERE tag_type_id = ' . (int) $tag_type;
+
+			$sql = 'SELECT *
+				FROM ' . TITANIA_CATEGORIES_TABLE . '
+				ORDER BY left_id ASC';
 			$result = phpbb::$db->sql_query($sql);
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$categories[$row['tag_id']] = array(
-					'id'			=> $row['tag_id'],
-					'name'			=> $row['tag_field_name'],
-					'clean_name'	=> $row['tag_clean_name'],
-					'desc'			=> $row['tag_field_desc'],
-				);
+				$categories[$row['category_id']] = $row;
 			}
 			phpbb::$db->sql_freeresult($result);
 
-			$this->put('_titania_categories_' . $tag_type, $categories);
+			$this->put('_titania_categories', $categories);
 		}
 
 		return $categories;
@@ -65,6 +61,11 @@ class titania_cache extends acm
 	* Get the list of parents for a category
 	*
 	* @param int $category_id The category id to get the parents for.
+	* @return returns an array of the categories parents, ex:
+	* array(
+	* 	array('category_id' => 2, 'parent_id' =>  1, 'category_name_clean' => 'Modifications'),
+	* 	array('category_id' => 1, 'parent_id' =>  0, 'category_name_clean' => 'phpBB3'),
+	* ),
 	*/
 	public function get_category_parents($category_id)
 	{

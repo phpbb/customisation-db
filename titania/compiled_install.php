@@ -42,7 +42,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.14'	=> array(
+	'0.1.16'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -277,13 +277,17 @@ $versions = array(
 					'contrib_id'			=> array('UINT', 0),
 					'contrib_validated'		=> array('BOOL', 0),
 					'attachment_id'			=> array('UINT', 0),
+					'revision_version'		=> array('VCHAR', ''),
 					'revision_name'			=> array('STEXT_UNI', '', 'true_sort'),
 					'revision_time'			=> array('UINT:11', 0),
+					'validation_date'		=> array('UINT:11', 0),
 				),
 				'PRIMARY_KEY'	=> 'revision_id',
 				'KEYS'			=> array(
 					'contrib_id'			=> array('INDEX', 'contrib_id'),
 					'contrib_validated'		=> array('INDEX', 'contrib_validated'),
+					'revision_time'			=> array('INDEX', 'revision_time'),
+					'validation_date'		=> array('INDEX', 'validation_date'),
 				),
 			)),
 			array(TITANIA_TAG_FIELDS_TABLE, array(
@@ -367,6 +371,7 @@ $versions = array(
 			'titania_author_mod',		// Can moderate author profiles
 
 			'titania_contrib_submit',	// Can submit contrib items
+			'titania_contrib_mod',		// Can moderate contrib items (manage them globally)
 
 			'titania_rate',				// Can rate items
 			'titania_rate_reset',		// Can reset the rating on items
@@ -387,7 +392,7 @@ $versions = array(
 		),
 
 		'permission_set' => array(
-			array('ROLE_ADMIN_FULL', array('titania_rate_reset', 'titania_faq_mod', 'titania_post_mod', 'titania_author_mod')),
+			array('ROLE_ADMIN_FULL', array('titania_rate_reset', 'titania_faq_mod', 'titania_post_mod', 'titania_author_mod', 'titania_contrib_mod')),
 			array('ROLE_MOD_FULL', array('titania_rate_reset', 'titania_faq_mod', 'titania_post', 'titania_post_edit_own', 'titania_post_delete_own', 'titania_post_mod_own')),
 			array('ROLE_USER_FULL', array('titania_rate', 'titania_post', 'titania_post_edit_own', 'titania_contrib_submit', 'titania_topic', 'titania_bbcode', 'titania_smilies')),
 			array('ROLE_USER_STANDARD', array('titania_rate', 'titania_post', 'titania_post_edit_own', 'titania_contrib_submit', 'titania_topic', 'titania_bbcode', 'titania_smilies')),
@@ -438,7 +443,7 @@ function titania_data($action, $version)
 			'parent_id'		=> 1,
 			'left_id'		=> 20,
 			'right_id'		=> 21,
-			'category_type'	=> 3,
+			'category_type'	=> 2,
 			'category_name'	=> 'CAT_STYLES',
 			'category_name_clean'	=> 'styles',
 			'category_desc'			=> '',

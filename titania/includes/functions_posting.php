@@ -17,7 +17,7 @@ if (!defined('IN_TITANIA'))
 }
 
 /*
- * This is a temporary function
+ * Generate the category select (much is from the make_jumpbox function)
  *
  * @param array $selected
  * @return void
@@ -29,22 +29,45 @@ function generate_category_select($selected = false)
 		$selected = array($selected);
 	}
 
-	$sql = 'SELECT *
-		FROM ' . TITANIA_CATEGORIES_TABLE . '
-		WHERE category_visible = 1';
-	$result = phpbb::$db->sql_query($sql);
+	$right = $padding = 0;
+	$padding_store = array('0' => 0);
 
-	while ($category = phpbb::$db->sql_fetchrow($result))
+	$categories = titania::$cache->get_categories();
+
+	foreach ($categories as $row)
 	{
-		phpbb::$template->assign_block_vars('category_select', array(
-			'S_IS_SELECTED'		=> (in_array($category['category_id'], $selected)) ? true : false,
+		if ($row['left_id'] < $right)
+		{
+			$padding++;
+			$padding_store[$row['parent_id']] = $padding;
+		}
+		else if ($row['left_id'] > $right + 1)
+		{
+			$padding = (isset($padding_store[$row['parent_id']])) ? $padding_store[$row['parent_id']] : $padding;
+		}
 
-			'VALUE'				=> $category['category_id'],
-			'TYPE'				=> $category['category_type'],
-			'NAME'				=> (isset(phpbb::$user->lang[$category['category_name']])) ? phpbb::$user->lang[$category['category_name']] : $category['category_name'],
+		$right = $row['right_id'];
+
+		if ($row['category_type'] == 0 && ($row['left_id'] + 1 == $row['right_id']))
+		{
+			// Non-postable forum with no subforums, don't display
+			continue;
+		}
+
+		phpbb::$template->assign_block_vars('category_select', array(
+			'S_SELECTED'		=> (in_array($row['category_id'], $selected)) ? true : false,
+			'S_DISABLED'		=> ($row['category_type'] == 0) ? true : false,
+
+			'VALUE'				=> $row['category_id'],
+			'TYPE'				=> $row['category_type'],
+			'NAME'				=> (isset(phpbb::$user->lang[$row['category_name']])) ? phpbb::$user->lang[$row['category_name']] : $row['category_name'],
 		));
+
+		for ($i = 0; $i < $padding; $i++)
+		{
+			phpbb::$template->assign_block_vars('category_select.level', array());
+		}
 	}
-	phpbb::$db->sql_freeresult($result);
 }
 
 /*
@@ -56,7 +79,7 @@ function generate_category_select($selected = false)
 function generate_type_select($selected = false)
 {
 	phpbb::$template->assign_block_vars('type_select', array(
-		'S_IS_SELECTED'		=> ($selected) ? false : true,
+		'S_IS_SELECTED'		=> ($selected === false) ? true : false,
 
 		'VALUE'				=> 0,
 		'NAME'				=> phpbb::$user->lang['SELECT_CONTRIB_TYPE'],

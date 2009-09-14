@@ -23,7 +23,6 @@ if (!function_exists('generate_type_select') || !function_exists('generate_categ
 
 titania::load_object('contribution');
 load_contrib();
-titania::$contrib->assign_details();
 
 if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('titania_contrib_mod'))
 {
@@ -66,9 +65,7 @@ if ($submit)
 		titania::$contrib->submit();
 
 		// Create relations
-		titania::$contrib->put_contrib_in_categories($contrib_categories, true);
-
-		meta_refresh(3, titania::$contrib->get_url());
+		titania::$contrib->put_contrib_in_categories($contrib_categories);
 
 		titania::error_box('SUCCESS', 'CONTRIB_UPDATED', TITANIA_SUCCESS);
 	}
@@ -86,9 +83,10 @@ else
 	phpbb::$db->sql_freeresult($result);
 }
 
-// Generate the selects
+// Generate some stuff
 generate_type_select(titania::$contrib->contrib_type);
 generate_category_select($contrib_categories);
+titania::$contrib->assign_details();
 $message->display();
 
 $template->assign_vars(array(

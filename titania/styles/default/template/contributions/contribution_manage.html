@@ -1,6 +1,6 @@
 <!-- INCLUDE contributions/contribution_header.html -->
 
-<h2 class="section-title">{CONTRIB_NAME} :: {PAGE_TITLE}</h2>
+<h2 class="section-title"><!-- IF CONTRIB_NAME -->{CONTRIB_NAME} :: {PAGE_TITLE}<!-- ELSE -->{PAGE_TITLE}<!-- ENDIF --></h2>
 
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
@@ -17,11 +17,13 @@
 			</dd>
 		</dl>
 		<dl style="clear: left;">
-			<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label></dt>
+			<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label><br /><span>{L_MULTI_SELECT_EXPLAIN}</span></dt>
 			<dd>
-				<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="4">
+				<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="5">
 					<!-- BEGIN category_select -->
-					<option value="{category_select.VALUE}"<!-- IF category_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{category_select.NAME}</option>
+					<option value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
+						<!-- BEGIN level -->&nbsp; &nbsp;<!-- END level -->{category_select.NAME}
+					</option>
 					<!-- END category_select -->
 				</select>
 			</dd>
@@ -30,8 +32,18 @@
 			<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
 			<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
 		</dl>
-		<!-- INCLUDE posting/posting_basic_editor.html -->
+		<!-- IF S_CREATE -->
+		<dl style="clear: left;">
+			<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label></dt>
+			<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" tabindex="1" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
+		</dl>
+		<!-- ENDIF -->
+		<dl style="clear: left;">
+			<dt><label for="{POSTING_TEXT_NAME}">{L_CONTRIB_DESCRIPTION}:</label></dt>
+			<dd></dd>
+		</dl>
 	</fieldset>
+	<!-- INCLUDE posting/posting_basic_editor.html -->
 	<fieldset class="submit-buttons">
 		<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
 		<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />

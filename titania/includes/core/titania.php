@@ -816,5 +816,7 @@ class titania
 		}
 
 		closedir($dh);
+
+		ksort(self::$types);
 	}
 }

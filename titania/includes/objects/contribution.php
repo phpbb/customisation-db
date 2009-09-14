@@ -142,6 +142,22 @@ class titania_contribution extends titania_database_object
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
 		}
+		else
+		{
+			$categories	= titania::$cache->get_categories();
+
+			foreach ($contrib_categories as $category)
+			{
+				if (!isset($categories[$category]))
+				{
+					$error[] = phpbb::$user->lang['NO_CATEGORY'];
+				}
+				else if ($categories[$category]['category_type'] != $this->contrib_type)
+				{
+					$error[] = phpbb::$user->lang['WRONG_CATEGORY'];
+				}
+			}
+		}
 
 		if (!$this->contrib_desc)
 		{
@@ -492,30 +508,78 @@ class titania_contribution extends titania_database_object
 	 * @param bool $update
 	 * @return void
 	 */
-	public function put_contrib_in_categories($contrib_categories = array(), $update = false)
+	public function put_contrib_in_categories($contrib_categories = array())
 	{
-		// Prune the old relations if we are updating the contrib
-		if ($update)
+		if (!$this->contrib_id)
 		{
-			$sql = 'DELETE
-				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
-				WHERE contrib_id = ' . $this->contrib_id;
+			return;
+		}
+
+		// Get all of the categories that we are in and their parents to resync the count
+		$categories_to_update = array();
+		$sql = 'SELECT category_id FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$categories_to_update[] = $row['category_id'];
+
+			$parents = titania::$cache->get_category_parents($row['category_id']);
+			foreach ($parents as $parent)
+			{
+				$categories_to_update[] = $parent['category_id'];
+			}
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Resync the count
+		if (sizeof($categories_to_update))
+		{
+			$categories_to_update = array_unique($categories_to_update);
+
+			$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . '
+				SET category_contribs = category_contribs - 1
+				WHERE ' . phpbb::$db->sql_in_set('category_id', $categories_to_update);
 			phpbb::$db->sql_query($sql);
 		}
+
+		// Remove them from the old categories
+		$sql = 'DELETE
+			FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
 
 		if (!sizeof($contrib_categories))
 		{
 			return;
 		}
 
-		$sql_ary = array();
+		$categories_to_update = $sql_ary = array();
 		foreach ($contrib_categories as $category_id)
 		{
 			$sql_ary[] = array(
 				'contrib_id' 	=> $this->contrib_id,
 				'category_id'	=> $category_id,
 			);
+
+			$categories_to_update[] = $category_id;
+			$parents = titania::$cache->get_category_parents($category_id);
+			foreach ($parents as $parent)
+			{
+				$categories_to_update[] = $parent['category_id'];
+			}
 		}
 		phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
+
+		// Resync the count
+		if (sizeof($categories_to_update))
+		{
+			$categories_to_update = array_unique($categories_to_update);
+
+			$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . '
+				SET category_contribs = category_contribs + 1
+				WHERE ' . phpbb::$db->sql_in_set('category_id', $categories_to_update);
+			phpbb::$db->sql_query($sql);
+		}
 	}
 }

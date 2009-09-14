@@ -40,6 +40,7 @@ $lang = array_merge($lang, array(
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
 'CONTRIBUTION' => 'Contribution',
+'MULTI_SELECT_EXPLAIN' => 'Hold down CTRL and click to select multiple.',
 	'CACHE_PURGED'				=> 'Cache has been successfully purged',
 	'CATEGORY'					=> 'Category',
 	'CAT_ADDONS'				=> 'Add-ons',

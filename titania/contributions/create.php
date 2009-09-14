@@ -27,60 +27,77 @@ if (!phpbb::$auth->acl_get('titania_contrib_submit'))
 }
 
 titania::add_lang('attachments');
-titania::load_object('contribution');
+titania::load_object(array('contribution', 'author'));
 
-$contrib = new titania_contribution();
+titania::$contrib = new titania_contribution();
+
+titania::$contrib->contrib_user_id = phpbb::$user->data['user_id'];
+titania::$contrib->author = new titania_author(phpbb::$user->data['user_id']);
+titania::$contrib->author->load();
+
+// Load the message object
+titania::load_tool('message');
+$message = new titania_message(titania::$contrib);
+$message->set_auth(array(
+	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
+	'smilies'	=> phpbb::$auth->acl_get('titania_smilies'),
+));
+$message->set_settings(array(
+	'display_error'		=> false,
+	'display_subject'	=> false,
+	'subject_name'		=> 'name',
+));
 
 $submit = (isset($_POST['submit'])) ? true : false;
 
-$contrib->contrib_name 			= utf8_normalize_nfc(request_var('name', '', true));
-$contrib->contrib_desc 			= utf8_normalize_nfc(request_var('description', '', true));
-$contrib_categories				= request_var('contrib_category', array(0));
-$contrib->contrib_type			= request_var('contrib_type', 0);
-$contrib->contrib_name_clean	= request_var('permalink', '', true);
+$contrib_categories = array();
 
 if ($submit)
 {
-	$error = $contrib->validate($contrib_categories);
+	$post_data = $message->request_data();
+
+	titania::$contrib->post_data($post_data);
+	$contrib_categories = request_var('contrib_category', array(0));
+	titania::$contrib->__set_array(array(
+		'contrib_type'			=> request_var('contrib_type', 0),
+		'contrib_name_clean'	=> request_var('permalink', '', true),
+		'contrib_visible'		=> 1,
+	));
+
+	$error = titania::$contrib->validate($contrib_categories);
+
+	if (($validate_form_key = $message->validate_form_key()) !== false)
+	{
+		$error[] = $validate_form_key;
+	}
 
 	if (!sizeof($error))
 	{
-		// only if we are inserting the data
-		if (!$contrib->contrib_id)
-		{
-			$contrib->contrib_user_id = phpbb::$user->data['user_id'];
-		}
-
-		// Temporary
-		$contrib->contrib_visible = 1;
-
-		$contrib->submit();
+		titania::$contrib->submit();
 
 		// Create relations
-		$contrib->put_contrib_in_categories($contrib_categories);
+		titania::$contrib->put_contrib_in_categories($contrib_categories);
 
 		// Update are attachments.
-		$attachment->update_orphans($contrib->contrib_id);
+		$attachment->update_orphans(titania::$contrib->contrib_id);
 
-		meta_refresh(3, $contrib->get_url());
-
-		titania::error_box('SUCCESS', 'CONTRIB_CREATED', TITANIA_SUCCESS);
+		redirect(titania::$contrib->get_url());
 	}
 }
 
-// Generate the selects
-generate_type_select($contrib->contrib_type);
+// Generate some stuff
+generate_type_select(titania::$contrib->contrib_type);
 generate_category_select($contrib_categories);
+titania::$contrib->assign_details();
+$message->display();
 
 $template->assign_vars(array(
-	'U_ACTION'					=> titania::$url->build_url('contributions/create'),
+	'S_POST_ACTION'		=> titania::$url->build_url('contributions/create'),
+	'S_CREATE'			=> true,
 
-	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
-
-	'CONTRIB_NAME'				=> $contrib->contrib_name,
-	'CONTRIB_PERMALINK'			=> $contrib->contrib_name_clean,
-	'CONTRIB_DESC'				=> $contrib->contrib_desc,
+	'CONTRIB_PERMALINK'	=> titania::$contrib->contrib_name_clean,
+	'ERROR_MSG'			=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 ));
 
 titania::page_header('CREATE_CONTRIBUTION');
-titania::page_footer(true, 'contributions/contribution_create.html');
+titania::page_footer(true, 'contributions/contribution_manage.html');
