@@ -30,10 +30,9 @@ switch ($action)
 {
 	case 'create':
 	case 'edit':
-		// For now we will only check basic permisions. Must be an anther or team member to manage revisions.
-		if (!titania::$contrib->is_author || titania::$access_level > TITANIA_ACCESS_TEAMS)
+		if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor || phpbb::$auth->acl_get('titania_contrib_mod'))
 		{
-			return;
+			trigger_error('NO_AUTH');
 		}
 
 		if ($submit)
