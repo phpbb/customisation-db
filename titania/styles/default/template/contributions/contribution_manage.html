@@ -6,7 +6,16 @@
 
 <form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
 	<fieldset>
+		<dl>
+			<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
+			<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
+		</dl>
+		<!-- IF S_CREATE -->
 		<dl style="clear: left;">
+			<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label></dt>
+			<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
+		</dl>
+		<dl>
 			<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
 			<dd>
 				<select name="contrib_type" id="contrib_type">
@@ -16,7 +25,16 @@
 				</select>
 			</dd>
 		</dl>
-		<dl style="clear: left;">
+		<!-- ENDIF -->
+		<dl>
+			<dt><label for="{POSTING_TEXT_NAME}">{L_CONTRIB_DESCRIPTION}:</label></dt>
+			<dd></dd>
+		</dl>
+	</fieldset>
+	<!-- INCLUDE posting/posting_basic_editor.html -->
+	<h3></h3>
+	<fieldset>
+		<dl>
 			<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label><br /><span>{L_MULTI_SELECT_EXPLAIN}</span></dt>
 			<dd>
 				<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="5">
@@ -28,22 +46,13 @@
 				</select>
 			</dd>
 		</dl>
-		<dl style="clear: left;">
-			<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
-			<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
-		</dl>
-		<!-- IF S_CREATE -->
-		<dl style="clear: left;">
-			<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label></dt>
-			<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" tabindex="1" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
-		</dl>
-		<!-- ENDIF -->
-		<dl style="clear: left;">
-			<dt><label for="{POSTING_TEXT_NAME}">{L_CONTRIB_DESCRIPTION}:</label></dt>
-			<dd></dd>
+		<dl>
+			<dt><label for="contrib_authors">{L_CONTRIB_AUTHORS}:</label><br /><span>{L_CONTRIB_AUTHORS_EXPLAIN}</span></dt>
+			<dd>
+				<textarea name="contrib_authors" id="contrib_authors">{CONTRIB_AUTHORS}</textarea>
+			</dd>
 		</dl>
 	</fieldset>
-	<!-- INCLUDE posting/posting_basic_editor.html -->
 	<fieldset class="submit-buttons">
 		<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
 		<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
