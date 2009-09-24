@@ -70,7 +70,7 @@ class titania_attachments extends titania_database_object
 	 * @param object $object_id int
 	 * @param int $object_id
 	 */
-	public function __construct($attachment_type, $object_id = false)
+	public function __construct($attachment_type, $object_id = false, $attachment_explain = false, $upload_params = array())
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -95,6 +95,9 @@ class titania_attachments extends titania_database_object
 			'is_orphan'				=> array('default' => 1),
 		));
 
+		// Add language file
+		titania::add_lang('attachments');
+
 		// Do we have an object that we need to load.
 		if ($object_id === false)
 		{
@@ -108,7 +111,7 @@ class titania_attachments extends titania_database_object
 		}
 
 		// Assign common template data for uploader.
-		$this->assign_common_template();
+		$this->assign_common_template($upload_params);
 
 		// Get attachment data, we almost always need this info.
 		$this->get_submitted_attachments();
@@ -118,10 +121,13 @@ class titania_attachments extends titania_database_object
 		{
 			$this->display_attachments();
 		}
+
+		// Add the explanation text.
+		phpbb::$template->assign_var('ATTACHMENT_EXPLAIN', $attachment_explain);
 	}
 
 	/**
-	 * Allows to load data identified by object_id
+	 * Allows to load data identified by object_id. Does not handle revisions.
 	 *
 	 * @param int $attachment_type The type of download (check TITANIA_DOWNLOAD_ constants)
 	 *
@@ -220,12 +226,12 @@ class titania_attachments extends titania_database_object
 	*
 	* @return array $filedata
 	*/
-	public function create()
+	public function create($form_name, $upload_file_tpl, $file_type = 'contrib')
 	{
 		titania::load_tool('uploader');
 
 		// Setup uploader tool.
-		$this->uploader = new titania_uploader('uploadify');
+		$this->uploader = new titania_uploader($form_name, $upload_file_tpl);
 
 		// Try uploading the file.
 		$this->uploader->upload_file();
@@ -479,11 +485,13 @@ class titania_attachments extends titania_database_object
 	 * Enter description here...
 	 *
 	 */
-	private function assign_common_template()
+	private function assign_common_template($upload_params)
 	{
 		phpbb::$template->assign_vars(array(
+			'ON_COMPLETE'	=> 'onComplete',
+
 			'UPLOADER'		=> DIRECTORY_SEPARATOR . titania::$config->titania_script_path . 'js/uploadify/uploader.swf',
-			'UPLOAD_SCRIPT'	=> DIRECTORY_SEPARATOR . append_sid(titania::$config->titania_script_path . 'upload.' . PHP_EXT),
+			'UPLOAD_SCRIPT'	=> DIRECTORY_SEPARATOR . append_sid(titania::$config->titania_script_path . 'upload.' . PHP_EXT, $upload_params),
 		));
 	}
 
@@ -498,15 +506,12 @@ class titania_attachments extends titania_database_object
 			'attachment_data'	=> array(
 				$this->attachment_id = array(
 					'attachment_id'	=> $this->attachment_id,
-					'is_orphan'		=> $this->is_orphan
+					'is_orphan'		=> $this->is_orphan,
 				),
 			),
 		);
 
 		phpbb::$template->assign_block_vars('attachment', array(
-			'S_HIDDEN_FIELDS'	=> build_hidden_fields($hidden_fields),
-			'S_HIDE_ATTACHMENT'	=> $hide_attachement_detail,
-
 			'ID'			=> $this->attachment_id,
 			'REAL_NAME'		=> $this->real_filename,
 			'NAME'			=> str_replace('.' . $this->extension, '', $this->real_filename),
@@ -514,6 +519,9 @@ class titania_attachments extends titania_database_object
 			'DATE'			=> phpbb::$user->format_date($this->filetime),
 			'MIMETYPE'		=> $this->mimetype,
 			'TITLE'			=> $this->real_filename,
+
+			'S_HIDDEN_FIELDS'	=> build_hidden_fields($hidden_fields),
+			'S_HIDE_ATTACHMENT'	=> $hide_attachement_detail,
 		));
 
 		// If there is no attachment data and no uploader object, we only have one attachment so assign download information as well.

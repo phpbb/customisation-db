@@ -21,25 +21,26 @@ titania::load_object('attachments');
 titania::add_lang('attachments');
 
 // Request some variables.
-$delete 		= request_var('delete', '');
-$attachment_id 	= request_var('attachment_id', false);
-// @todo For now this will always be a download for a contrib untill uploadify class if built to handle the SWF object or the form that
-// that user submits.
-$attachment_type = request_var('attachment_type', TITANIA_DOWNLOAD_CONTRIB);
+$delete 			= request_var('delete', false);
+$attachment_id 		= request_var('attachment_id', false);
+$form_name			= request_var('form_name', 'uploadify');
+$upload_file_tpl	= request_var('upload_file', '');
+$attachment_type	= request_var('file_type', TITANIA_DOWNLOAD_CONTRIB);
 
 // Setup attachment object.
 $attachment = new titania_attachments($attachment_type, $attachment_id);
 
 // Do we want to delete an attachment?
-if ($delete)
+if ($delete && $attachment_id)
 {
-	$attachment->object_id = $delete;
+    // @todo
+	$attachment->object_id = $attachment_id;
 	$attachment->delete();
 }
 else
 {
 	// If we reach this point, try to create an attachment, if this fails the upload response method will catch it.
-	$attachment->create();
+	$attachment->create($form_name, $upload_file_tpl);
 }
 
 // The attachment class handles the response and calls the page_header and page_footer functions.

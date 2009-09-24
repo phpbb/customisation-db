@@ -2,7 +2,7 @@
 /**
 *
 * @package Titania
-* @version $Id$
+* @version $Id:$
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -66,21 +66,26 @@ class titania_uploader extends fileupload
 	private $ajax = true;
 
 	/**
+	 * @var Template file that displays uploaded attachments
+	 */
+	private $upload_file_tpl = '';
+
+	/**
 	 * Class constructor
 	 *
 	 * @param string $form_name Form name from where we can find the file.
-	 * @param int $object_id The contribution id which the attachment belongs to, if 0, the attachment will be an orphan and the
-	 * attachment record in the DB should be updated once the contrib_id is known.
+	 * @param string $file_type Type of file, used for allowed extenstions. @todo
+	 * @param string $upload_file_tpl Template file that displays uploaded attachments
 	 */
-	public function __construct($form_name = 'uploadify', $object_id = 0, $file_type = 'contrib')
+	public function __construct($form_name = 'uploadify', $file_type = 'contrib', $upload_file_tpl = false, $reponse_type = TITANIA_UPLOAD_RESPONSE_HTML)
 	{
 		// Set class variables.
-		$this->form_name = $form_name;
-		$this->object_id = $object_id;
-		$this->file_type = $file_type;
-		$this->file_attachment = ($this->is_valid($this->form_name)) ? true : false;
+		$this->form_name 		= $form_name;
+		$this->file_type		= $file_type;
+		$this->file_attachment 	= ($this->is_valid($this->form_name)) ? true : false;
+		$this->upload_file_tpl 	= $upload_file_tpl;
 
-		// Are we in a ajax request?
+		// Are we in a ajax request? @todo May not need this. Think we should only support AJAX IMO
 		$this->ajax = request_var('ajax', true);
 
 		// Add posting language for the attachment language strings.
@@ -132,7 +137,7 @@ class titania_uploader extends fileupload
 		// @todo config for Titania upload path.
 		$file->move_file(TITANIA_ROOT . 'files/', false, true);
 
-		if (sizeof($file->error))
+		if (!empty($file->error))
 		{
 			$file->remove();
 			$this->filedata['error'] = array_merge($this->filedata['error'], $file->error);
@@ -159,8 +164,6 @@ class titania_uploader extends fileupload
 				$this->filedata['post_attach'] = false;
 
 				$file->remove();
-
-				var_dump($this->filedata);
 
 				return false;
 			}
@@ -207,7 +210,8 @@ class titania_uploader extends fileupload
 			));
 		}
 
-		if (sizeof($this->filedata['error']))
+		// Do we have any errors?
+		if (!empty($this->filedata['error']))
 		{
 			// Upload error.
 			$response = array(
@@ -218,13 +222,23 @@ class titania_uploader extends fileupload
 		}
 		else if ($this->filedata['post_attach'])
 		{
+			$file = ($this->upload_file_tpl) ? $this->upload_file_tpl : 'uploadify_file';
+
+			// Add any language files we need.
+			if ($attachment->attachment_type == TITANIA_DOWNLOAD_CONTRIB)
+			{
+				titania::add_lang('revisions');
+			}
+
+			// Set template file.
 			phpbb::$template->set_filenames(array(
-				'file'		=> 'uploadify_file.html'
+				'file'		=> $file . '.html'
 			));
 
+			// Display attachment info
 			$attachment->display_attachments();
 
-			// We uploaded a file successfully.
+			// We uploaded a file successfully, now send response
 			$response = array(
 				'html'	=> phpbb::$template->assign_display('file'),
 				'id'	=> $attachment->attachment_id,
@@ -237,8 +251,8 @@ class titania_uploader extends fileupload
 			// @todo Something is wrong, just display general error.
 		}
 
+		// Call page header and footer.
 		titania::page_header();
-
 		titania::page_footer();
 	}
 
