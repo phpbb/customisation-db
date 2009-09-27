@@ -36,27 +36,26 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'AUTHOR_CONTRIBUTIONS'		=> 'Contributions',
-	'AUTHOR_DETAILS'			=> 'Author Details',
-	'AUTHOR_NOT_FOUND'			=> 'Author not found',
-	'AUTHOR_SUPPORT'			=> 'Support',
-	'AUTHOR_RATING' => 'Author Rating',
-	'AUTHOR_CONTRIBS' => 'Author Contributions',
-	'AUTHOR_STATISTICS' => 'Author Statistics',
+	'AUTHOR_CONTRIBS'		=> 'Contributions',
+	'AUTHOR_CONTRIBUTIONS'	=> 'Contributions',
+	'AUTHOR_DATA_UPDATED'	=> 'The author’s information have been updated.',
+	'AUTHOR_DESC'			=> 'Author Description',
+	'AUTHOR_DETAILS'		=> 'Author Details',
+	'AUTHOR_MODS'			=> 'Modifications',
+	'AUTHOR_NOT_FOUND'		=> 'Author not found',
+	'AUTHOR_RATING'			=> 'Author Rating',
+	'AUTHOR_SNIPPETS'		=> 'Snippets',
+	'AUTHOR_STATISTICS'		=> 'Author Statistics',
+	'AUTHOR_STYLES'			=> 'Styles',
+	'AUTHOR_SUPPORT'		=> 'Support',
 
-	'AUTHOR_CONTRIBS' => 'Contributions',
-	'AUTHOR_MODS' => 'Modifications',
-	'AUTHOR_STYLES' => 'Styles',
-	'AUTHOR_SNIPPETS' => 'Snippets',
-	'AUTHOR_DESC' => 'Author Description',
+	'EDIT_AUTHOR'			=> 'Edit Author',
 
-	'PHPBB_PROFILE'				=> 'phpBB.com profile',
+	'PHPBB_PROFILE'			=> 'phpBB.com profile',
 
-	'REAL_NAME'					=> 'Real Name',
+	'REAL_NAME'				=> 'Real Name',
 
-	'USER_INFORMATION'			=> '’s user information',
-
-	'EDIT_AUTHOR'                          => 'Edit Author',
-	
-	'AUTHOR_DATA_UPDATED'                  => 'The author’s information have been updated.',
+	'USER_INFORMATION'		=> '’s user information',
 ));
+
+?>

@@ -4,7 +4,7 @@
 * authors [English]
 *
 * @package Titania
-* @version $Id:$
+* @version $Id$
 * @copyright (c) 2009 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -37,6 +37,10 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ADD_REVISION'	=> 'Add New Revision',
+
 	'NO_REVISIONS'	=> 'No revisions for this contribution exist',
+
 	'REVISIONS'		=> 'Revisions',
 ));
+
+?>

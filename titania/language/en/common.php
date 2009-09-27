@@ -39,8 +39,7 @@ $lang = array_merge($lang, array(
 	'AUTHOR_BY'					=> 'By %s',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
-'CONTRIBUTION' => 'Contribution',
-'MULTI_SELECT_EXPLAIN' => 'Hold down CTRL and click to select multiple.',
+
 	'CACHE_PURGED'				=> 'Cache has been successfully purged',
 	'CATEGORY'					=> 'Category',
 	'CAT_ADDONS'				=> 'Add-ons',
@@ -56,6 +55,7 @@ $lang = array_merge($lang, array(
 	'CAT_SNIPPETS'				=> 'Snippets',
 	'CAT_STYLES'				=> 'Styles',
 	'CONFIRM_PURGE_CACHE'		=> 'Are you sure you want to purge the cache?',
+	'CONTRIBUTION'				=> 'Contribution',
 	'CONTRIBUTIONS'				=> 'Contributions',
 	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
@@ -71,11 +71,12 @@ $lang = array_merge($lang, array(
 	'LIST'						=> 'List',
 
 	'MODIFICATION'				=> 'Modification',
-	'MOVE_UP'					=> 'Move up',
 	'MOVE_DOWN'					=> 'Move down',
+	'MOVE_UP'					=> 'Move up',
+	'MULTI_SELECT_EXPLAIN'		=> 'Hold down CTRL and click to select multiple.',
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
-	'NO_DESC'					 => 'You have to enter the description.',
+	'NO_DESC'					=> 'You have to enter the description.',
 
 	'PURGE_CACHE'				=> 'Purge Cache',
 
@@ -83,11 +84,12 @@ $lang = array_merge($lang, array(
 	'REMOVE_RATING'				=> 'Remove Rating',
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
 
+	'SELECT_CATEGORY'			=> '-- Select category --',
 	'SITE_INDEX'				=> 'Site Index',
 	'SNIPPET'					=> 'Snippet',
 	'STYLE'						=> 'Style',
 
 	'TITANIA_INDEX'				=> 'Customisation Database',
-
-	'SELECT_CATEGORY'			=> '-- Select category --',
 ));
+
+?>

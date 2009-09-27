@@ -36,13 +36,15 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'CHOOSE_FILES'			=> 'Choose Files to upload',
+	'CHOOSE_FILES'		=> 'Choose Files to upload',
 
-	'FILE_DESCRIPTION'		=> 'File Description',
-	'FILE_TITLE'			=> 'File Title',
+	'FILE_DESCRIPTION'	=> 'File Description',
+	'FILE_TITLE'		=> 'File Title',
 
-	'HIDE'					=> 'Hide',
+	'HIDE'				=> 'Hide',
 
-	'SELECT_FILES'			=> 'Select Files',
-	'SHOW'					=> 'Show',
+	'SELECT_FILES'		=> 'Select Files',
+	'SHOW'				=> 'Show',
 ));
+
+?>

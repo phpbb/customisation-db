@@ -37,21 +37,20 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'CREATE_FAQ'			=> 'New FAQ',
-	'EDIT_FAQ'			=> 'Edit FAQ',
 
 	'DELETE_FAQ'			=> 'Delete FAQ',
-	'DELETE_FAQ_CONFIRM'		=> 'Are you sure delete the FAQ?',
+	'DELETE_FAQ_CONFIRM'	=> 'Are you sure delete the FAQ?',
 
-	'FAQ_DETAILS'			=> 'FAQ Details Page',
-	'FAQ_LIST'			=> 'FAQ List',
+	'EDIT_FAQ'				=> 'Edit FAQ',
 
 	'FAQ_CREATED'			=> 'This FAQ has been created successfully.',
+	'FAQ_DELETED'			=> 'The FAQ entry has been deleted.',
+	'FAQ_DETAILS'			=> 'FAQ Details Page',
 	'FAQ_EDITED'			=> 'This FAQ has been edited successfully.',
-	'FAQ_DELETED'			=> 'This FAQ has been deleted successfully.',
-
+	'FAQ_LIST'				=> 'FAQ List',
 	'FAQ_NOT_FOUND'			=> 'The FAQ specified could not be found.',
 
-	'NO_FAQ'			=> 'Nobody created an FAQ entry yet.',
-
-	'FAQ_DELETED'			=> 'The FAQ entry has been deleted.',
+	'NO_FAQ'				=> 'Nobody created an FAQ entry yet.',
 ));
+
+?>
