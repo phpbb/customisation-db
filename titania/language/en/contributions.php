@@ -36,6 +36,12 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+'CONTRIB_ACTIVE_AUTHORS' => 'Active Co-Authors',
+'CONTRIB_AUTHORS_EXPLAIN' => 'Enter in the co-author names, one co-author username per line.',
+'CONTRIB_ACTIVE_AUTHORS_EXPLAIN' => 'Active co-authors can manage most parts of the modification (need to get more details here after we finish more).',
+'CANNOT_ADD_SELF_COAUTHOR' => 'You are the main author, you can not add yourself to the list of co-authors.',
+'CONTRIB_NONACTIVE_AUTHORS_EXPLAIN' => 'Nonactive co-authors can not manage anything for the modification and are only listed as previous authors.',
+'CONTRIB_NONACTIVE_AUTHORS' => 'Non-Active Co-Authors (Past Contributors)',
 	'CONTRIB'						=> 'Contribution',
 	'CONTRIB_AUTHOR'				=> 'Contribution Author',
 	'CONTRIB_DESCRIPTION'			=> 'Contribution Description',
@@ -72,6 +78,8 @@ $lang = array_merge($lang, array(
 
 	'NO_CATEGORY'	=> 'The selected category does not exist',
 	'WRONG_CATEGORY' => 'You can only put this contribution in the same category type as the contribution type.',
+	'COULD_NOT_FIND_USERS' => 'Could not find the following users: %s',
+	'DUPLICATE_AUTHORS' => 'You have the following authors listed as both active and non-active (they can not be both): %s',
 	'NEW_TOPIC' 					=> 'New Topic',
 	'NEW_CONTRIBUTION'				=> 'New Contribution',
 	'EDIT_CONTRIBUTION'				=> 'Edit Contribution',

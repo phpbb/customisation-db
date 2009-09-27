@@ -502,6 +502,53 @@ class titania_contribution extends titania_database_object
 		return titania::$url->build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean);
 	}
 
+	/**
+	* Set coauthors for contrib item
+	*
+	* @param array $active array of active coauthor user_ids
+	* @param array $nonactive array of nonactive coauthor user_ids
+	* @param bool $reset true to reset the coauthors and only add the ones given, false to keep past coauthors and just add some new ones
+	*/
+	public function set_coauthors($active, $nonactive = array(), $reset = false)
+	{
+		if ($reset)
+		{
+			$sql = 'DELETE FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+				WHERE contrib_id = ' . (int) $this->contrib_id;
+				phpbb::$db->sql_query($sql);
+		}
+
+		if (sizeof($active))
+		{
+			$sql_ary = array();
+			foreach ($active as $user_id)
+			{
+				$sql_ary[] = array(
+					'contrib_id'	=> $this->contrib_id,
+					'user_id'		=> $user_id,
+					'active'		=> true,
+				);
+			}
+
+			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
+		}
+
+		if (sizeof($nonactive))
+		{
+			$sql_ary = array();
+			foreach ($nonactive as $user_id)
+			{
+				$sql_ary[] = array(
+					'contrib_id'	=> $this->contrib_id,
+					'user_id'		=> $user_id,
+					'active'		=> false,
+				);
+			}
+
+			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
+		}
+	}
+
 	/*
 	 * Set the relations between contribs and categories
 	 *

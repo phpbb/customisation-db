@@ -60,9 +60,25 @@ if ($submit)
 		$error[] = $validate_form_key;
 	}
 
+	$missing_active = $missing_nonactive = array();
+	$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
+	$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
+	get_author_ids_from_list($active_coauthors_list, $missing_active);
+	get_author_ids_from_list($nonactive_coauthors_list, $missing_nonactive);
+	if (sizeof($missing_active) || sizeof($missing_nonactive))
+	{
+		$error[] = sprintf(phpbb::$user->lang['COULD_NOT_FIND_USERS'], implode(', ', array_merge($missing_active, $missing_nonactive)));
+	}
+	if (array_intersect($active_coauthors_list, $nonactive_coauthors_list))
+	{
+		$error[] = sprintf(phpbb::$user->lang['DUPLICATE_AUTHORS'], implode(', ', array_keys(array_intersect($active_coauthors_list, $nonactive_coauthors_list))));
+	}
+
 	if (!sizeof($error))
 	{
 		titania::$contrib->submit();
+
+		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
 
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
@@ -81,6 +97,21 @@ else
 		$contrib_categories[] = $row['category_id'];
 	}
 	phpbb::$db->sql_freeresult($result);
+
+	$active_coauthors = $nonactive_coauthors = array();
+	foreach (titania::$contrib->coauthors as $coauthor)
+	{
+		if ($coauthor->active)
+		{
+			$active_coauthors[] = $coauthor->username;
+		}
+		else
+		{
+			$nonactive_coauthors[] = $coauthor->username;
+		}
+	}
+	$active_coauthors = implode("\n", $active_coauthors);
+	$nonactive_coauthors = implode("\n", $nonactive_coauthors);
 }
 
 // Generate some stuff
@@ -93,6 +124,8 @@ $template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
 
 	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
+	'ACTIVE_COAUTHORS'			=> $active_coauthors,
+	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
 ));
 
 titania::page_header('MANAGE_CONTRIBUTION');

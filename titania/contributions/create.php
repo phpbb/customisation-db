@@ -71,9 +71,29 @@ if ($submit)
 		$error[] = $validate_form_key;
 	}
 
+	$missing_active = $missing_nonactive = array();
+	$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
+	$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
+	get_author_ids_from_list($active_coauthors_list, $missing_active);
+	get_author_ids_from_list($nonactive_coauthors_list, $missing_nonactive);
+	if (sizeof($missing_active) || sizeof($missing_nonactive))
+	{
+		$error[] = sprintf(phpbb::$user->lang['COULD_NOT_FIND_USERS'], implode(', ', array_merge($missing_active, $missing_nonactive)));
+	}
+	if (array_intersect($active_coauthors_list, $nonactive_coauthors_list))
+	{
+		$error[] = sprintf(phpbb::$user->lang['DUPLICATE_AUTHORS'], implode(', ', array_keys(array_intersect($active_coauthors_list, $nonactive_coauthors_list))));
+	}
+	if (isset($active_coauthors_list[phpbb::$user->data['username']]) || isset($nonactive_coauthors_list[phpbb::$user->data['username']]))
+	{
+		$error[] = phpbb::$user->lang['CANNOT_ADD_SELF_COAUTHOR'];
+	}
+
 	if (!sizeof($error))
 	{
 		titania::$contrib->submit();
+
+		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
 
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
@@ -97,6 +117,8 @@ $template->assign_vars(array(
 
 	'CONTRIB_PERMALINK'	=> titania::$contrib->contrib_name_clean,
 	'ERROR_MSG'			=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
+	'ACTIVE_COAUTHORS'			=> $active_coauthors,
+	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
 ));
 
 titania::page_header('CREATE_CONTRIBUTION');

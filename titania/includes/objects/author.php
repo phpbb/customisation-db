@@ -81,7 +81,7 @@ class titania_author extends titania_database_object
 			'author_desc'			=> array('default' => ''),
 			'author_desc_bitfield'	=> array('default' => ''),
 			'author_desc_uid'		=> array('default' => ''),
-			'author_desc_options'	=> array('default', 7),
+			'author_desc_options'	=> array('default' => 7),
 		));
 
 		if ($user_id !== false)
