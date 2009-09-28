@@ -167,6 +167,11 @@ switch ($action)
 
 		if ($topic_id)
 		{
+			$start = request_var('start', 0);
+			$limit = request_var('limit', (int) phpbb::$config['topics_per_page']);
+
+			titania_display_topic($topic, false, array('start' => $start, 'limit' => $limit));
+
 			phpbb::$template->assign_vars(array(
 				'U_POST_REPLY'			=> (phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url($topic->get_url(), array('action' => 'reply')) : '',
 			));

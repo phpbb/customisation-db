@@ -176,7 +176,7 @@ class titania_pagination extends titania_object
 
 		unset($params['sid']);
 
-		return (!empty($params)) ? append_sid($page, $params) : append_sid($page);
+		return (!empty($params)) ? phpbb::append_sid($page, $params) : phpbb::append_sid($page);
 	}
 
 	/**

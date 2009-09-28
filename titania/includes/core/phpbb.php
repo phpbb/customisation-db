@@ -42,4 +42,23 @@ class phpbb
 		self::$user		= &$user;
 		self::$cache	= &$cache;
 	}
+
+	/**
+	* Shortcut for phpbb's append_sid function (do not send the root path/phpext in the url part)
+	*
+	* @param mixed $url
+	* @param mixed $params
+	* @param mixed $is_amp
+	* @param mixed $session_id
+	* @return string
+	*/
+	public static function append_sid($url, $params = false, $is_amp = true, $session_id = false)
+	{
+		if (!strpos($url, '.' . PHP_EXT))
+		{
+			$url = titania::$absolute_board . $url . '.' . PHP_EXT;
+		}
+
+		return append_sid($url, $params, $is_amp, $session_id);
+	}
 }

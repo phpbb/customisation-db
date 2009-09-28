@@ -259,7 +259,7 @@ class titania_author extends titania_database_object
 	{
 		if ($this->user_id)
 		{
-			return append_sid(titania::$absolute_board . 'memberlist.' . PHP_EXT, 'u=' . $this->user_id);
+			return phpbb::append_sid('memberlist', 'u=' . $this->user_id);
 		}
 
 		return '';
@@ -281,7 +281,7 @@ class titania_author extends titania_database_object
 	}
 
 	/**
-	 * Get correct webiste url
+	 * Get correct website url
 	 *
 	 * @return string
 	 */
@@ -325,6 +325,12 @@ class titania_author extends titania_database_object
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),
 			'U_AUTHOR_CONTRIBUTIONS'		=> $this->get_url('contributions'),
 		);
+
+		/* @todo: automatically display the common author data too...
+		if (isset($this->sql_data))
+		{
+			$vars = array_merge($vars, assign_user_details($this->sql_data));
+		}*/
 
 		if ($return)
 		{

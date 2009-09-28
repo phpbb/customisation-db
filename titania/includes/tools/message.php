@@ -165,7 +165,7 @@ class titania_message
 			{
 				phpbb::$template->assign_vars(array(
 					'CAPTCHA_TEMPLATE'		=> $captcha->get_template(),
-					'CONFIRM_IMAGE_LINK'	=> append_sid(titania::$absolute_board . 'ucp.' . PHP_EXT, 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type),// Use proper captcha link
+					'CONFIRM_IMAGE_LINK'	=> phpbb::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type),// Use proper captcha link
 				));
 			}
 
@@ -358,7 +358,7 @@ class post_options
 			'S_MAGIC_URL_CHECKED'		=> ($this->enable_magic_url) ? '' : ' checked="checked"',
 
 			// To show the Options: section on the bottom left
-			'BBCODE_STATUS'				=> sprintf(phpbb::$user->lang[(($this->bbcode_status) ? 'BBCODE_IS_ON' : 'BBCODE_IS_OFF')], '<a href="' . append_sid(titania::$absolute_board . 'faq.' . PHP_EXT, 'mode=bbcode') . '">', '</a>'),
+			'BBCODE_STATUS'				=> sprintf(phpbb::$user->lang[(($this->bbcode_status) ? 'BBCODE_IS_ON' : 'BBCODE_IS_OFF')], '<a href="' . phpbb::append_sid('faq', 'mode=bbcode') . '">', '</a>'),
 			'IMG_STATUS'				=> ($this->img_status) ? phpbb::$user->lang['IMAGES_ARE_ON'] : phpbb::$user->lang['IMAGES_ARE_OFF'],
 			'FLASH_STATUS'				=> ($this->flash_status) ? phpbb::$user->lang['FLASH_IS_ON'] : phpbb::$user->lang['FLASH_IS_OFF'],
 			'SMILIES_STATUS'			=> ($this->smilies_status) ? phpbb::$user->lang['SMILIES_ARE_ON'] : phpbb::$user->lang['SMILIES_ARE_OFF'],

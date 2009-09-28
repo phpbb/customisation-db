@@ -59,7 +59,7 @@ titania::initialise();
 // If the database is not installed or outdated redirect to the installer
 if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version']) || version_compare(phpbb::$config['titania_version'], TITANIA_VERSION, '<')))
 {
-	redirect(append_sid(TITANIA_ROOT . 'install.' . PHP_EXT));
+	redirect(phpbb::append_sid(TITANIA_ROOT . 'install.' . PHP_EXT));
 }
 
 // admin requested the cache to be purged, ensure they have permission and purge the cache.

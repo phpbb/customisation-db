@@ -179,6 +179,6 @@ titania::page_footer(true, 'contributions/contribution_details.html');
 		'ERROR_MESSAGE'		=> (sizeof($error)) ? implode('<br />', $error) : '',
 
 		'S_LANG_OPTIONS'	=> language_select($email_lang),
-		'S_POST_ACTION'		=> append_sid($this->page, 'id=details&amp;mode=email&amp;mod=' . $mod_id),
+		'S_POST_ACTION'		=> phpbb::append_sid($this->page, 'id=details&amp;mode=email&amp;mod=' . $mod_id),
 	));
 }*/

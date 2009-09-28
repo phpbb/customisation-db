@@ -296,12 +296,12 @@ class titania
 		// Generate logged in/logged out status
 		if (phpbb::$user->data['user_id'] != ANONYMOUS)
 		{
-			$u_login_logout = append_sid(self::$absolute_path . 'index.' . PHP_EXT, 'mode=logout', true, phpbb::$user->session_id);
+			$u_login_logout = phpbb::append_sid(self::$absolute_path . 'index.' . PHP_EXT, 'mode=logout', true, phpbb::$user->session_id);
 			$l_login_logout = sprintf(phpbb::$user->lang['LOGOUT_USER'], phpbb::$user->data['username']);
 		}
 		else
 		{
-			$u_login_logout = append_sid(self::$absolute_board . 'ucp.' . PHP_EXT, 'mode=login&amp;redirect=' . self::$page);
+			$u_login_logout = phpbb::append_sid('ucp', 'mode=login&amp;redirect=' . self::$page);
 			$l_login_logout = phpbb::$user->lang['LOGIN'];
 		}
 
@@ -323,7 +323,7 @@ class titania
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
 			'L_LOGIN_LOGOUT'		=> $l_login_logout,
 			'LOGIN_REDIRECT'		=> self::$page,
-			'S_LOGIN_ACTION'		=> append_sid(self::$absolute_board . 'ucp.' . PHP_EXT, 'mode=login'),
+			'S_LOGIN_ACTION'		=> phpbb::append_sid('ucp', 'mode=login'),
 
 
 			'SESSION_ID'				=> phpbb::$user->session_id,
@@ -338,7 +338,7 @@ class titania
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
 			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . '/style.php?style=' . self::$config->style,
 
-			'U_DELETE_COOKIES'		=> append_sid(self::$absolute_board . 'ucp.' . PHP_EXT, 'mode=delete_cookies'),
+			'U_DELETE_COOKIES'		=> phpbb::append_sid('ucp', 'mode=delete_cookies'),
 			'S_USER_LOGGED_IN'		=> (phpbb::$user->data['user_id'] != ANONYMOUS) ? true : false,
 			'S_AUTOLOGIN_ENABLED'	=> (phpbb::$config['allow_autologin']) ? true : false,
 			'S_BOARD_DISABLED'		=> (phpbb::$config['board_disable']) ? true : false,
@@ -469,7 +469,7 @@ class titania
 			'DEBUG_OUTPUT'			=> (defined('DEBUG')) ? $debug_output : '',
 			'TRANSLATION_INFO'		=> (!empty(phpbb::$user->lang['TRANSLATION_INFO'])) ? phpbb::$user->lang['TRANSLATION_INFO'] : '',
 
-			'U_ACP'					=> (phpbb::$auth->acl_get('a_') && !empty(phpbb::$user->data['is_registered'])) ? append_sid(self::$absolute_board . 'adm/index.' . PHP_EXT, false, true, phpbb::$user->session_id) : '',
+			'U_ACP'					=> (phpbb::$auth->acl_get('a_') && !empty(phpbb::$user->data['is_registered'])) ? phpbb::append_sid('adm/index', false, true, phpbb::$user->session_id) : '',
 			'U_PURGE_CACHE'			=> (phpbb::$auth->acl_get('a_')) ? self::$url->append_url(self::$url->current_page, array_merge(self::$url->params, array('cache' => 'purge'))) : '',
 		));
 
@@ -509,7 +509,7 @@ class titania
 
 			if ($cron_type)
 			{
-				phpbb::$template->assign_var('RUN_CRON_TASK', '<img src="' . append_sid(self::$absolute_board . 'cron.' . PHP_EXT, 'cron_type=' . $cron_type) . '" width="1" height="1" alt="cron" />');
+				phpbb::$template->assign_var('RUN_CRON_TASK', '<img src="' . phpbb::append_sid('cron', 'cron_type=' . $cron_type) . '" width="1" height="1" alt="cron" />');
 			}
 		}
 

@@ -33,6 +33,59 @@ function get_version_string($version)
 }
 
 /**
+* Assign user details (prepared for output to template)
+*
+* @param mixed $row
+*/
+function assign_user_details($row)
+{
+	$poster_id = $row['user_id'];
+
+	if (!function_exists('get_user_rank'))
+	{
+		include(PHPBB_ROOT_PATH . 'includes/functions_display.' . PHP_EXT);
+	}
+
+	get_user_rank($row['user_rank'], $row['user_posts'], $row['rank_title'], $row['rank_image'], $row['rank_image_src']);
+
+	return array(
+		'USER_FULL'				=> get_username_string('full', $poster_id, $row['username'], $row['user_colour']),
+		'USER_COLOUR'			=> get_username_string('colour', $poster_id, $row['username'], $row['user_colour']),
+		'USERNAME'				=> get_username_string('username', $poster_id, $row['username'], $row['user_colour']),
+
+		'RANK_TITLE'			=> $row['rank_title'],
+		'RANK_IMG'				=> $row['rank_image'],
+		'RANK_IMG_SRC'			=> $row['rank_image_src'],
+		'USER_JOINED'			=> phpbb::$user->format_date($row['user_regdate']),
+		'USER_POSTS'			=> $row['user_posts'],
+		'USER_FROM'				=> $row['user_from'],
+		'USER_AVATAR'			=> (phpbb::$user->optionget('viewavatars')) ? get_user_avatar($row['user_avatar'], $row['user_avatar_type'], $row['user_avatar_width'], $row['user_avatar_height']) : '',
+		'USER_WARNINGS'			=> $row['user_warnings'],
+//		'USER_AGE'				=> $row['age'],
+
+		'ICQ_STATUS_IMG'		=> (!empty($row['user_icq'])) ? '<img src="http://web.icq.com/whitepages/online?icq=' . $row['user_icq'] . '&amp;img=5" width="18" height="18" alt="" />' : '',
+//		'ONLINE_IMG'			=> ($poster_id == ANONYMOUS || !phpbb::$config['load_onlinetrack']) ? '' : (($row['online']) ? phpbb::$user->img('icon_user_online', 'ONLINE') : phpbb::$user->img('icon_user_offline', 'OFFLINE')),
+//		'S_ONLINE'				=> ($poster_id == ANONYMOUS || !phpbb::$config['load_onlinetrack']) ? false : (($row['online']) ? true : false),
+//		'S_FRIEND'				=> ($row['friend']) ? true : false,
+
+// @todo: info link...need to build the mcp stuff first.
+//		'U_INFO'				=> ($auth->acl_get('m_info', $forum_id)) ? phpbb::append_sid('mcp', "i=main&amp;mode=post_details&amp;f=$forum_id&amp;p=" . $row['post_id'], true, phpbb::$user->session_id) : '',
+		'U_USER_PROFILE'		=> get_username_string('profile', $poster_id, $row['username'], $row['user_colour']),
+		'U_SEARCH'				=> (phpbb::$auth->acl_get('u_search')) ? phpbb::append_sid('search', "author_id=$poster_id&amp;sr=posts") : '',
+		'U_PM'					=> ($poster_id != ANONYMOUS && phpbb::$config['allow_privmsg'] && phpbb::$auth->acl_get('u_sendpm') && ($row['user_allow_pm'] || phpbb::$auth->acl_gets('a_', 'm_') || phpbb::$auth->acl_getf_global('m_'))) ? phpbb::append_sid('ucp', 'i=pm&amp;mode=compose') : '',
+		'U_EMAIL'				=> (!empty($row['user_allow_viewemail']) || phpbb::$auth->acl_get('a_email')) ? ((phpbb::$config['board_email_form'] && phpbb::$config['email_enable']) ? phpbb::append_sid('memberlist', "mode=email&amp;u=$poster_id") : ((phpbb::$config['board_hide_emails'] && !phpbb::$auth->acl_get('a_email')) ? '' : 'mailto:' . $row['user_email'])) : '',
+		'U_WWW'					=> $row['user_website'],
+		'U_ICQ'					=> (!empty($row['user_icq'])) ? 'http://www.icq.com/people/webmsg.php?to=' . $row['user_icq'] : '',
+		'U_AIM'					=>($row['user_aim'] && phpbb::$auth->acl_get('u_sendim')) ? phpbb::append_sid('memberlist', "mode=contact&amp;action=aim&amp;u=$poster_id") : '',
+		'U_MSN'					=> ($row['user_msnm'] && phpbb::$auth->acl_get('u_sendim')) ? phpbb::append_sid('memberlist', "mode=contact&amp;action=msnm&amp;u=$poster_id") : '',
+		'U_YIM'					=> ($row['user_yim']) ? 'http://edit.yahoo.com/config/send_webmesg?.target=' . urlencode($row['user_yim']) . '&amp;.src=pg' : '',
+		'U_JABBER'				=> ($row['user_jabber'] && phpbb::$auth->acl_get('u_sendim')) ? phpbb::append_sid('memberlist', "mode=contact&amp;action=jabber&amp;u=$poster_id") : '',
+
+
+	);
+}
+
+/**
 * Display categories
 *
 * @param int $parent_id The parent id/name (only show categories under this category)
@@ -274,16 +327,84 @@ function titania_display_forums($type, $object = false, $sort = false, $options 
 /**
 * Display topic section for support/tracker/etc
 *
- @param int $topic_id The topic_id
+ @param object $topic The topic object
  @param object|boolean $sort The sort object (includes/tools/sort.php)
 * @param array $options Extra options (limit, category (for tracker))
 */
-function titania_display_topic($topic_id, $sort = false, $options = array('start' => 0, 'limit' => 10))
+function titania_display_topic($topic, $sort = false, $options = array('start' => 0, 'limit' => 10))
 {
-	// array of posts
-	$topic = array();
+	titania::load_object('post');
 
-	$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
-		WHERE p.topic_id = ' . (int) $topic_id . '
-			AND u.user_id = p.user_id';
+	$sql_ary = array(
+		'SELECT' => 'p.*, u.*',
+		'FROM'		=> array(
+			TITANIA_POSTS_TABLE => 'p',
+			USERS_TABLE => 'u',
+		),
+		'WHERE' => 'p.post_access >= ' . titania::$access_level . '
+			AND p.topic_id = ' . (int) $topic->topic_id . '
+			AND u.user_id = p.post_user_id',
+		'ORDER_BY'	=> 'p.post_time DESC',
+	);
+
+	// Sort options
+	if ($sort !== false)
+	{
+		$sql_ary['ORDER_BY'] = $sort->get_order_by();
+	}
+
+	// Main SQL Query
+	$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
+	// Count SQL Query
+	$sql_ary['SELECT'] = 'COUNT(post_id) AS cnt';
+	$count_sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+	phpbb::$db->sql_query($count_sql);
+	$count = phpbb::$db->sql_fetchfield('cnt');
+	phpbb::$db->sql_freeresult();
+
+	// Get the data
+	$posts = $post_ids = array();
+	$result = phpbb::$db->sql_query_limit($sql, $options['limit'], $options['start']);
+	while ($row = phpbb::$db->sql_fetchrow($result))
+	{
+		$posts[$row['post_id']] = $row;
+		$post_ids[] = $row['post_id'];
+	}
+	phpbb::$db->sql_freeresult($result);
+
+	// Get the read info
+
+	// Loop de loop
+	foreach ($posts as $row)
+	{
+		$post = new titania_post($topic->topic_type);
+		$post->__set_array($row);
+
+		phpbb::$template->assign_block_vars('posts', array_merge($post->assign_details(), assign_user_details($row)));
+
+		unset($post);
+	}
+	phpbb::$db->sql_freeresult($result);
+
+	phpbb::$template->assign_vars(array(
+		'REPORT_IMG'		=> phpbb::$user->img('icon_post_report', 'REPORT_POST'),
+		'REPORTED_IMG'		=> phpbb::$user->img('icon_topic_reported', 'TOPIC_REPORTED'),
+		'UNAPPROVED_IMG'	=> phpbb::$user->img('icon_topic_unapproved', 'TOPIC_UNAPPROVED'),
+		'WARN_IMG'			=> phpbb::$user->img('icon_user_warn', 'WARN_USER'),
+
+		'EDIT_IMG' 			=> phpbb::$user->img('icon_post_edit', 'EDIT_POST'),
+		'DELETE_IMG' 		=> phpbb::$user->img('icon_post_delete', 'DELETE_POST'),
+		'INFO_IMG' 			=> phpbb::$user->img('icon_post_info', 'VIEW_INFO'),
+		'PROFILE_IMG'		=> phpbb::$user->img('icon_user_profile', 'READ_PROFILE'),
+		'SEARCH_IMG' 		=> phpbb::$user->img('icon_user_search', 'SEARCH_USER_POSTS'),
+		'PM_IMG' 			=> phpbb::$user->img('icon_contact_pm', 'SEND_PRIVATE_MESSAGE'),
+		'EMAIL_IMG' 		=> phpbb::$user->img('icon_contact_email', 'SEND_EMAIL'),
+		'WWW_IMG' 			=> phpbb::$user->img('icon_contact_www', 'VISIT_WEBSITE'),
+		'ICQ_IMG' 			=> phpbb::$user->img('icon_contact_icq', 'ICQ'),
+		'AIM_IMG' 			=> phpbb::$user->img('icon_contact_aim', 'AIM'),
+		'MSN_IMG' 			=> phpbb::$user->img('icon_contact_msnm', 'MSNM'),
+		'YIM_IMG' 			=> phpbb::$user->img('icon_contact_yahoo', 'YIM'),
+		'JABBER_IMG'		=> phpbb::$user->img('icon_contact_jabber', 'JABBER') ,
+	));
 }

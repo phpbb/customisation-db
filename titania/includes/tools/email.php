@@ -62,7 +62,7 @@ class titania_email
 
 		phpbb::$template->assign_vars(array(
 			'S_LANG_OPTIONS'	=> language_select($email_lang),
-			'S_POST_ACTION'		=> append_sid(titania::$page, array('id' => 'email', 'contrib_id' => $this->contrib_id)),
+			'S_POST_ACTION'		=> phpbb::append_sid(titania::$page, array('id' => 'email', 'contrib_id' => $this->contrib_id)),
 		));
 
 		$error = array();
@@ -141,7 +141,7 @@ class titania_email
 					'MESSAGE'		=> htmlspecialchars_decode($message),
 
 					'CONTRIB_NAME'	=> htmlspecialchars_decode($this->contrib_name),
-					'U_CONTRIB'		=> append_sid(titania::$page, array('contrib_id' => $this->contrib_id, 'id' => 'details'), true, ''),
+					'U_CONTRIB'		=> phpbb::append_sid(titania::$page, array('contrib_id' => $this->contrib_id, 'id' => 'details'), true, ''),
 				));
 
 				$messenger->send(NOTIFY_EMAIL);

@@ -56,6 +56,13 @@ class titania_post extends titania_database_object
 	public $topic					= NULL;
 
 	/**
+	* Unread post id
+	*
+	* @var int|bool
+	*/
+	public $unread = false;
+
+	/**
 	 * Constructor class for titania posts
 	 *
 	 * @param int|string $type The type of post ('tracker', 'queue', 'normal').  Normal/default meaning support/discussion.  Constants for the type can be sent instead of a string
@@ -508,5 +515,39 @@ class titania_post extends titania_database_object
 		}
 
 		parent::delete();
+	}
+
+	/**
+	* Assign details
+	*
+	* A little different from those in other classes, this one only returns the info ready for output
+	*/
+	public function assign_details()
+	{
+		$details = array(
+			'POST_ID'						=> $this->post_id,
+			'TOPIC_ID'						=> $this->topic_id,
+			'POST_TYPE'						=> $this->post_type,
+			'POST_ACCESS'					=> $this->post_access,
+			'POST_LOCKED'					=> $this->post_locked,
+			'POST_APPROVED'					=> $this->post_approved,
+			'POST_REPORTED'					=> $this->post_reported,
+			'POST_ATTACHMENT'				=> $this->post_attachment,
+			'POST_USER_ID'					=> $this->post_user_id,
+			'POST_IP'						=> $this->post_ip,
+			'POST_TIME'						=> phpbb::$user->format_date($this->post_time),
+			'POST_EDITED'					=> $this->post_edited,
+			'POST_DELETED'					=> $this->post_deleted, // @todo output this to be something useful
+			'POST_EDIT_USER'				=> $this->post_edit_user,
+			'POST_EDIT_REASON'				=> censor_text($this->post_edit_reason),
+			'POST_SUBJECT'					=> censor_text($this->post_subject),
+			'POST_TEXT'						=> $this->generate_text_for_display(),
+
+			'U_VIEW_POST'					=> $this->get_url(),
+
+			'S_UNREAD_POST'					=> ($this->unread) ? true : false, // remember that you must set this up extra...
+		);
+
+		return $details;
 	}
 }
