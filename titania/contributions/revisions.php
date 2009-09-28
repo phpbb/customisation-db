@@ -16,100 +16,104 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+// Setup basic variables and objects
 titania::load_object('revision');
 titania::add_lang('revisions');
+titania::load_object('attachments');
 
 $action 	= request_var('action', '');
 $submit		= isset($_POST['submit']) ? true : false;
+$form_key	= 'revisions';
+$revision	= new titania_revision();
+$revision->attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, 'revisions');
 
-$revision = new titania_revision();
-
+// Load contrib information
 load_contrib();
 
 switch ($action)
 {
 	case 'create':
 	case 'edit':
-		if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('titania_contrib_mod'))
-		{
-			trigger_error('NO_AUTH');
-		}
 
 		if ($submit)
 		{
-			$error = $faq->validate();
+			$error = array();
 
-			if (($validate_form_key = $message->validate_form_key()) !== false)
+			$revision->request_data();
+
+			// Check form key
+			if (!check_form_key($form_key))
 			{
-				$error[] = $validate_form_key;
+				// @todo If a user does not submit the form in time, we should send back fresh form toekens, or
+				// we can have the form disaper after a certain length of time to avoid this. However we still
+				// must check this for security if we use JS to hide or disable the form after a length of time
+				// has passed.
+				$error[] = phpbb::$user->lang['FORM_INVALID'];
 			}
 
 			if (sizeof($error))
 			{
-				$template->assign_var('ERROR', implode('<br />', $error));
+				phpbb::$template->assign_var('ERROR', implode('<br />', $error));
 			}
 			else
 			{
-				$faq->submit();
+				$revision->submit();
+				$revision->attachment->update_orphans($revision->revision_id, $revision->attachment_id);
 
-				redirect($faq->get_url());
+				// Setup response.
+				phpbb::$template->set_filenames(array(
+					'revisions'		=> 'contributions/contribution_revisions_list.html',
+				));
+
+				$revision->display();
+
+				$error['html'] = phpbb::$template->assign_display('revisions');
+
 			}
 		}
 
-		add_form_key('postform');
+		// Set header for JSON response.
+		header('Content-type: application/json');
 
-		phpbb::$template->assign_vars(array(
-			'L_POST_A'			=> phpbb::$user->lang[(($action == 'edit') ? 'EDIT_FAQ' : 'CREATE_FAQ')],
+		// We dont want the page_header to run.
+		define('HEADER_INC', true);
 
-			'S_EDIT'			=> true,
-			'S_POST_ACTION'		=> $faq->get_url($action, $faq->faq_id),
+		// Set up the template.
+		phpbb::$template->set_filenames(array(
+			'body'		=> 'json_response.html',
 		));
 
-		titania::page_header((($action == 'edit') ? 'EDIT_FAQ' : 'CREATE_FAQ'));
+		phpbb::$template->assign_vars(array(
+			'JSON'				=> json_encode($error),
+		));
+
+		titania::page_header();
+		titania::page_footer(false);
 	break;
 
 	default:
 
 		titania::page_header('REVISIONS');
 
-		// Titania's access
-		$sql_in = array();
+		add_form_key($form_key);
 
-		switch (titania::$access_level)
+		$can_manage = true;
+
+		// For now we will only check basic permisions. Must be an anther or team member to manage revisions.
+		if (!titania::$contrib->is_author || titania::$access_level > TITANIA_ACCESS_TEAMS)
 		{
-			case 0:
-				$sql_in[] = TITANIA_ACCESS_TEAMS;
-			case 1:
-				$sql_in[] = TITANIA_ACCESS_AUTHORS;
-			case 2:
-			default:
-				$sql_in[] = TITANIA_ACCESS_PUBLIC;
-			break;
+			$can_manage = false;
 		}
 
-		$sql = 'SELECT *
-			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
-			WHERE contrib_id = ' . titania::$contrib->contrib_id . '
-				AND ' . $db->sql_in_set('faq_access', $sql_in) . '
-			ORDER BY faq_order_id ASC';
-		$result = phpbb::$db->sql_query($sql);
-
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			phpbb::$template->assign_block_vars('faqlist', array(
-
-				'SUBJECT'		=> $row['faq_subject'],
-				'VIEWS'			=> $row['faq_views'],
-
-			));
-		}
-		phpbb::$db->sql_freeresult($result);
-
-		$can_add = ((titania::$contrib->is_author) ? true : ((titania::$access_level > TITANIA_ACCESS_TEAMS) ? false : true));
+		$revision->display();
 
 		phpbb::$template->assign_vars(array(
-			'S_ADD'	=> $can_add,
+			'CAN_MANAGE'			=> $can_manage,
+			'U_SUBMIT_REVISION'		=> $revision->get_url('create'),
 		));
+
+		// Setup uploader.
+		$revision->attachment->display_uploader(array('on_complete' => 'revision_upload_complete'), array('object_type' => 'revisions'));
 	break;
 }
 

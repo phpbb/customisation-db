@@ -25,7 +25,6 @@ titania::$contrib->assign_details();
 
 // Get the attachments
 $attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, titania::$contrib->contrib_id);
-$attachment->display_attachments();
 
 phpbb::$template->assign_vars(array(
 	'U_EDIT_CONTRIBUTION'	=> titania::$contrib->get_url('edit'),

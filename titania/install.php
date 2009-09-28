@@ -508,6 +508,22 @@ $versions = array(
 		),
 	),
 
+	'0.1.17' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_release_notes', array('VCHAR', '')),
+			array(TITANIA_REVISIONS_TABLE, 'revision_validation_notes', array('VCHAR', '')),
+		),
+	),
+
+	'0.1.18' => array(
+		'table_column_remove' => array(
+			array(TITANIA_REVISIONS_TABLE, 'contrib_validated'),
+		),
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revison_validated'),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

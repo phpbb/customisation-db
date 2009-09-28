@@ -54,7 +54,7 @@ class titania_attachments extends titania_database_object
 	 *
 	 * @var object
 	 */
-	public $uploader;
+	public $uploader = false;
 
 	/**
 	 * True if the object has an attachment.
@@ -64,14 +64,26 @@ class titania_attachments extends titania_database_object
 	public $has_attachments = false;
 
 	/**
-	 * Constructor for download class
+	 *
+	 * @var unknown_type
+	 */
+	public $object_type = 'contrib';
+
+	/**
+	 * Constructor for attachment/download class
 	 *
 	 * @param int $attachment_type Attachment type (check TITANIA_DOWNLOAD_ for constants)
+	 * @param string $object_type What object is using this class. (Ex: revisions, posting, faq etc. This tells
+	 * the class what files to load for displaying attachments. If you use revisions, make sure a template file called
+	 * attachment_file_revisions.html exists.
 	 * @param object $object_id int
 	 * @param int $object_id
 	 */
-	public function __construct($attachment_type, $object_id = false, $attachment_explain = false, $upload_params = array())
+	public function __construct($attachment_type, $object_type, $object_id = false)
 	{
+		// Add language file
+		titania::add_lang('attachments');
+
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
 			'attachment_id'			=> array('default' => 0),
@@ -95,8 +107,7 @@ class titania_attachments extends titania_database_object
 			'is_orphan'				=> array('default' => 1),
 		));
 
-		// Add language file
-		titania::add_lang('attachments');
+		$this->object_type = $object_type;
 
 		// Do we have an object that we need to load.
 		if ($object_id === false)
@@ -110,20 +121,24 @@ class titania_attachments extends titania_database_object
 			$this->load_object($attachment_type);
 		}
 
-		// Assign common template data for uploader.
-		$this->assign_common_template($upload_params);
-
 		// Get attachment data, we almost always need this info.
 		$this->get_submitted_attachments();
+	}
 
-		// Do we need to display attachments?
-		if (sizeof($this->attachment_data))
-		{
-			$this->display_attachments();
-		}
+	/**
+	 *
+	 * @param $uploader_params
+	 * @param $upload_scrip_params
+	 * @return unknown_type
+	 */
+	public function display_uploader($uploadify_settings = array(), $upload_scrip_params = array())
+	{
+		phpbb::$template->assign_vars(array(
+			'ON_COMPLETE'	=> (isset($uploadify_settings['on_complete'])) ? $uploadify_settings['on_complete'] : 'onComplete',
 
-		// Add the explanation text.
-		phpbb::$template->assign_var('ATTACHMENT_EXPLAIN', $attachment_explain);
+			'UPLOADER'		=> DIRECTORY_SEPARATOR . titania::$config->titania_script_path . 'js/uploadify/uploader.swf',
+			'UPLOAD_SCRIPT'	=> DIRECTORY_SEPARATOR . append_sid(titania::$config->titania_script_path . 'upload.' . PHP_EXT, $upload_scrip_params),
+		));
 	}
 
 	/**
@@ -185,53 +200,16 @@ class titania_attachments extends titania_database_object
 	}
 
 	/**
-	 * Displays attachments
-	 *
-	 * Data is pulled from $this->attachment_data;
-	 *
-	 * @param bool $hide_attachement_detail If temlpate variable for hiding the attachment will be sent.
-	 *
-	 */
-	public function display_attachments($hide_attachement_detail = true)
-	{
-		// Single attachment. This will happen if we are displaying a download for a contrib or a post.
-		if (!sizeof($this->attachment_data) && !$this->attachment_id && $this->object_id === false)
-		{
-			parent::load();
-
-			$this->assign_template($hide_attachement_detail);
-		}
-		// Multiple attachments.
-		else if (sizeof($this->attachment_data))
-		{
-			// Loop through all our attachments and display.
-			foreach ($this->attachment_data as $attachment)
-			{
-				// Set object for attachment data and send to template.
-				$this->__set_array($attachment);
-
-				$this->assign_template($hide_attachement_detail);
-			}
-		}
-		else
-		{
-			$this->assign_template();
-		}
-
-		return;
-	}
-
-	/**
 	* Create a new attachment
 	*
 	* @return array $filedata
 	*/
-	public function create($form_name, $upload_file_tpl, $file_type = 'contrib')
+	public function create($form_name, $file_type = 'contrib')
 	{
 		titania::load_tool('uploader');
 
 		// Setup uploader tool.
-		$this->uploader = new titania_uploader($form_name, $upload_file_tpl);
+		$this->uploader = new titania_uploader($form_name);
 
 		// Try uploading the file.
 		$this->uploader->upload_file();
@@ -271,15 +249,15 @@ class titania_attachments extends titania_database_object
 		}
 		$not_orphan = $orphan = array();
 
-		foreach ($attachment_data as $pos => $var_ary)
+		foreach ($attachment_data as $attachment)
 		{
-			if ($var_ary['is_orphan'])
+			if ($attachment['is_orphan'])
 			{
-				$orphan[(int) $var_ary['attachment_id']] = $pos;
+				$orphan[(int) $attachment['attachment_id']] = $attachment['attachmnet_id'];
 			}
 			else
 			{
-				$not_orphan[(int) $var_ary['attachment_id']] = $pos;
+				$not_orphan[(int) $attachment['attachment_id']] = $attachment['attachmnet_id'];
 			}
 		}
 
@@ -325,22 +303,44 @@ class titania_attachments extends titania_database_object
 	}
 
 	/**
+	 * Changes a file name.
+	 *
+	 * @param $file_name Name the file should have.
+	 * @param $object_id Object id of the file to change. If false, it will change the file that is
+	 * currently loaded, $this->attachment_id. If that is false, this will return false.
+	 *
+	 * @return unknown_type
+	 */
+	public function change_file_name($file_name, $object_id = false)
+	{
+		// @todo
+	}
+
+	/**
 	 * Updates submmited orphan attachments to be assigned to the current object_id
 	 *
 	 * @param int $object_id Object id that attachment should be assigned to.
 	 */
-	public function update_orphans($object_id)
+	public function update_orphans($object_id, $attachment_id = false)
 	{
 		$this->object_id = $object_id;
 		$attachment_ids = array();
 
-		// Loop through attachments.
-		foreach ($this->attachment_data as $attachment)
+		// If no attachment id is passed, we will update all the attachments in the attachment data array.
+		if ($attachment_id === false)
 		{
-			if ($attachment['is_orphan'])
+			// Loop through attachments.
+			foreach ($this->attachment_data as $attachment)
 			{
-				$attachment_ids[] = $attachment['attachment_id'];
+				if ($attachment['is_orphan'])
+				{
+					$attachment_ids[] = $attachment['attachment_id'];
+				}
 			}
+		}
+		else
+		{
+			$attachment_ids[] = $attachment_id;
 		}
 
 		// Do we need to update?
@@ -481,18 +481,9 @@ class titania_attachments extends titania_database_object
 		exit;
 	}
 
-	/**
-	 * Enter description here...
-	 *
-	 */
-	private function assign_common_template($upload_params)
+	public function display($hide_attachment_detail = false)
 	{
-		phpbb::$template->assign_vars(array(
-			'ON_COMPLETE'	=> 'onComplete',
-
-			'UPLOADER'		=> DIRECTORY_SEPARATOR . titania::$config->titania_script_path . 'js/uploadify/uploader.swf',
-			'UPLOAD_SCRIPT'	=> DIRECTORY_SEPARATOR . append_sid(titania::$config->titania_script_path . 'upload.' . PHP_EXT, $upload_params),
-		));
+		$this->assign_template($hide_attachment_detail);
 	}
 
 	/**
@@ -503,12 +494,8 @@ class titania_attachments extends titania_database_object
 	private function assign_template($hide_attachement_detail = false)
 	{
 		$hidden_fields = array(
-			'attachment_data'	=> array(
-				$this->attachment_id = array(
-					'attachment_id'	=> $this->attachment_id,
-					'is_orphan'		=> $this->is_orphan,
-				),
-			),
+			'attachment_id'	=> $this->attachment_id,
+			'is_orphan'		=> $this->is_orphan,
 		);
 
 		phpbb::$template->assign_block_vars('attachment', array(

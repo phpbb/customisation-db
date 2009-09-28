@@ -1,0 +1,21 @@
+<!-- BEGIN attachment -->
+<fieldset>
+	<dl>
+		<dt><label for="title">{L_FILE_TITLE}:</label></dt>
+		<dd><input type="text" name="title[{attachment.ATTACHMENT_ID}]" id="file_name" size="45" maxlength="60" tabindex="1" value="{attachment.NAME}" class="inputbox autowidth required" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="revision_release_notes">{L_REVISION_NOTES}:</label></dt>
+		<dd><textarea style="height: 130px; width: 68%;" rows="" cols="" maxlength="255" name="revision_release_notes" class="input"></textarea></dd>
+	</dl>
+	<dl>
+		<dt><label for="revision_validation_notes">{L_VALIDATION_NOTES}:</label></dt>
+		<dd><textarea style="height: 130px; width: 68%;" rows="" cols="" maxlength="255" name="revision_validation_notes" class="input"></textarea></dd>
+	</dl>
+</fieldset>
+<fieldset class="submit-buttons">
+	<input class="button2" value="{L_SAVE}" name="submit" type="submit" />
+</fieldset>
+{attachment.S_HIDDEN_FIELDS}
+<hr />
+<!-- END attachment -->

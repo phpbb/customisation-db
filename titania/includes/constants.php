@@ -68,8 +68,13 @@ define('TITANIA_RATING_AUTHOR', 1);
 define('TITANIA_RATING_CONTRIB', 2);
 
 // Download types
-define('TITANIA_DOWNLOAD_CONTRIB', 1);
-define('TITANIA_DOWNLOAD_POST', 2);
+define('TITANIA_DOWNLOAD_CONTRIB', 	1);
+define('TITANIA_DOWNLOAD_POST', 	2);
+define('TITANIA_DOWNLOAD_FAQ', 		3);
+
+// Upload responses
+define('TITANIA_UPLOAD_RESPONSE_HTML', 1);
+define('TITANIA_UPLOAD_RESPONSE_JSON', 2);
 
 // Post types
 define('TITANIA_POST_DEFAULT', 1);

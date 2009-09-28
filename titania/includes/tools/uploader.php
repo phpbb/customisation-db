@@ -196,19 +196,16 @@ class titania_uploader extends fileupload
 	 */
 	public function response($attachment)
 	{
-		if ($this->ajax)
-		{
-			// Set header for JSON response.
-			header('Content-type: application/json');
+		// Set header for JSON response.
+		header('Content-type: application/json');
 
-			// We dont want the page_header to run.
-			define('HEADER_INC', true);
+		// We dont want the page_header to run.
+		define('HEADER_INC', true);
 
-			// Set up the template.
-			phpbb::$template->set_filenames(array(
-				'body'		=> 'json_response.html',
-			));
-		}
+		// Set up the template.
+		phpbb::$template->set_filenames(array(
+			'body'		=> 'json_response.html',
+		));
 
 		// Do we have any errors?
 		if (!empty($this->filedata['error']))
@@ -222,21 +219,38 @@ class titania_uploader extends fileupload
 		}
 		else if ($this->filedata['post_attach'])
 		{
-			$file = ($this->upload_file_tpl) ? $this->upload_file_tpl : 'uploadify_file';
-
 			// Add any language files we need.
+			// Since we cant tell the script what to invlude, we have to find out ourself
 			if ($attachment->attachment_type == TITANIA_DOWNLOAD_CONTRIB)
 			{
 				titania::add_lang('revisions');
 			}
+			else if ($attachment->attachment_type == TITANIA_DOWNLOAD_FAQ)
+			{
+				titania::add_lang('faq');
+			}
+			else if ($attachment->attachment_type == TITANIA_DOWNLOAD_POST)
+			{
+				titania::add_lang('posting');
+			}
+
+			$file = '';
+			if (file_exists(TITANIA_ROOT . 'styles/' . titania::$config->style . '/template/uploadify_' . $attachment->object_type . '_file.html'))
+			{
+				$file = 'uploadify_' . $attachment->object_type . '_file.html';
+			}
+			else
+			{
+				$file = 'uploadify_file.html';
+			}
 
 			// Set template file.
 			phpbb::$template->set_filenames(array(
-				'file'		=> $file . '.html'
+				'file'		=> $file
 			));
 
 			// Display attachment info
-			$attachment->display_attachments();
+			$attachment->display();
 
 			// We uploaded a file successfully, now send response
 			$response = array(
@@ -253,7 +267,7 @@ class titania_uploader extends fileupload
 
 		// Call page header and footer.
 		titania::page_header();
-		titania::page_footer();
+		titania::page_footer(false);
 	}
 
 	/**

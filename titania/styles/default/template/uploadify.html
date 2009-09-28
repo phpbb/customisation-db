@@ -1,24 +1,26 @@
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/uploadify/jquery.uploadify.js"></script>
-<script type="text/javascript"><!--
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/uploadify/swfobject.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/uploadify/jquery.uploadify.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
 	$(document).ready(function() {
 				
 		// Create file uploader.
-		$('#fileInput').fileUpload ({
+		$('#fileInput').uploadify ({
 			'uploader'  	: '{UPLOADER}',
 			'script'    	: '{UPLOAD_SCRIPT}',
 			'cancelImg' 	: '{T_TITANIA_THEME_PATH}/images/cancel.png',
 			'auto'      	: true,
-			'multi'			: true,
-			'buttonText'	: '{L_SELECT_FILES}',
-			'width'			: '110px',
-			'height'		: '22px',
 			'fileDataName'	: 'uploadify',
-			'onComplete'	: onComplete,
+			'onComplete'	: {ON_COMPLETE},
+			'buttonText'	: '{L_SELECT_FILE}',
+			'height'		: 22,
+			'width'			: 110,
+			'wmode'			: 'transparent'
 		});
 		
 		// onComplete function.
 		function onComplete(event, queueId, fileObj, response, data)
-		{			
+		{
 			// Parse response as JSON.
 			var response = window["eval"]("(" + response + ")");
 
@@ -55,23 +57,29 @@
 			$('show_hide_' + id).val('{L_CLOSE}');
 		});
 	});
---></script>
+// ]]
+</script>
 
-<h2 class="section-title">{L_ATTACHMENTS}</h2>
 
-<div id="errorbox" class="errorbox" style="display: none;">
-	<div class="inner"><span class="corners-top"><span></span></span>
-	<h3 id="errorbox_title">Error</h3>
-		<p id="errorbox_msg"></p>
-	<span class="corners-bottom"><span></span></span></div>
-</div>
-
-<div style="font-size: 14px;">{L_CHOOSE_FILES}: <input type="file" class="inputbox autowidth" value="" maxlength="262144" id="fileInput" name="fileInput"/></div>
-
-<hr />
-
-<div id="uploads">
-	<!-- INCLUDE uploadify_file.html -->
+<div id="upload_container">
+	<!-- IF ATTACHMENT_EXPLAIN -->
+	<div class="pannel">
+		<div class="inner"><span class="corners-top"><span></span></span>
+			<p>{ATTACHMENT_EXPLAIN}</p>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+	<!-- ENDIF -->
+	
+	<div id="errorbox" class="errorbox" style="display: none;">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<h3 id="errorbox_title">Error</h3>
+			<p id="errorbox_msg"></p>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+	
+	<input type="file" class="inputbox autowidth" value="" maxlength="262144" id="fileInput" name="fileInput"/>
+	
+	<hr />
 </div>
 
 <!-- IF .file --><hr /><br /><!-- ENDIF -->

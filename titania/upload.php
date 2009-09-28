@@ -22,25 +22,25 @@ titania::add_lang('attachments');
 
 // Request some variables.
 $delete 			= request_var('delete', false);
-$attachment_id 		= request_var('attachment_id', false);
+$object_id 			= request_var('attachment_id', false);
 $form_name			= request_var('form_name', 'uploadify');
-$upload_file_tpl	= request_var('upload_file', '');
-$attachment_type	= request_var('file_type', TITANIA_DOWNLOAD_CONTRIB);
+$object_type		= request_var('object_type', '');
+$attachment_type	= request_var('attachment_type', TITANIA_DOWNLOAD_CONTRIB);
 
 // Setup attachment object.
-$attachment = new titania_attachments($attachment_type, $attachment_id);
+$attachment = new titania_attachments($attachment_type, $object_type, $object_id);
 
 // Do we want to delete an attachment?
-if ($delete && $attachment_id)
+if ($delete && $object_id)
 {
     // @todo
-	$attachment->object_id = $attachment_id;
+	$attachment->object_id = $object_id;
 	$attachment->delete();
 }
 else
 {
 	// If we reach this point, try to create an attachment, if this fails the upload response method will catch it.
-	$attachment->create($form_name, $upload_file_tpl);
+	$attachment->create($form_name);
 }
 
 // The attachment class handles the response and calls the page_header and page_footer functions.

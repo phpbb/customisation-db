@@ -7,25 +7,22 @@
  * uploadify.css
  */
  
-#fileInputUploader {
-	padding-top: 5px;
-	vertical-align:middle;
-}
-
-.fileUploadQueueItem {
+.uploadifyQueueItem {
 	font: 11px Verdana, Geneva, sans-serif;
+	border: 2px solid #E5E5E5;
 	background-color: #F5F5F5;
-	border: 3px solid #E5E5E5;
 	margin-top: 5px;
 	padding: 10px;
-	width: 97%;
+	width: 350px;
 }
-
-.fileUploadQueueItem .cancel {
+.uploadifyError {
+	border: 2px solid #FBCBBC !important;
+	background-color: #FDE5DD !important;
+}
+.uploadifyQueueItem .cancel {
 	float: right;
 }
-
-.fileUploadProgress {
+.uploadifyProgress {
 	background-color: #FFFFFF;
 	border-top: 1px solid #808080;
 	border-left: 1px solid #808080;
@@ -34,9 +31,10 @@
 	margin-top: 10px;
 	width: 100%;
 }
-
-.fileUploadProgressBar {
+.uploadifyProgressBar {
 	background-color: #0099FF;
+	width: 1px;
+	height: 3px;
 }
 
 .file_info {

@@ -7,24 +7,25 @@
 	display: none !important;
 }
 
-.successbox, .errorbox {
+.successbox, .errorbox, .noticebox {
 	padding: 0 10px;
 	margin: 10px 0;
 	color: #FFFFFF;
 	text-align: center;
 }
 
-.errorbox span.corners-top , .successbox span.corners-top {
+.errorbox span.corners-top , .successbox span.corners-top, .noticebox span.corners-top {
 	margin: 0 -10px 5px -10px;
 }
 
-.errorbox span.corners-bottom , .successbox span.corners-bottom {
+.errorbox span.corners-bottom , .successbox span.corners-bottom, .noticebox span.corners-bottom {
 	margin: 5px -10px 0 -10px;
 }
 
 .success {
 	color: #228822;
 }
+
 
 .error {
 	color: #BC2A4D;
@@ -34,14 +35,27 @@
 	background-color: #228822;
 }
 
+.noticebox {
+	color: #000000;
+	background-color: #ecf53e;
+}
+
 .errorbox {
 	background-color: #BC2A4D;
 }
 
-* html .errorbox, * html .successbox { height: 1%; } /* Pixel shift fix for IE */
+* html .errorbox, * html .successbox, * html .noticebox { height: 1%; } /* Pixel shift fix for IE */
 
 .successbox h3, .errorbox h3 {
 	color: #FFFFFF;
+	margin: 0 0 0.5em;
+	font-size: 1.5em;
+	font-family: "Lucida Grande",Verdana,Helvetica,Arial,sans-serif;
+	border: none;
+}
+
+.noticebox h3 {
+	color: #000000;
 	margin: 0 0 0.5em;
 	font-size: 1.5em;
 	font-family: "Lucida Grande",Verdana,Helvetica,Arial,sans-serif;
@@ -54,8 +68,15 @@
 	margin-bottom: 0;
 }
 
+.noticebox p {
+	color: #000000;
+	font-size: 1em;
+	margin-bottom: 0;
+}
+
 .errorbox a:link, .errorbox a:active, .errorbox a:visited,
-.successbox a:link, .successbox a:active, .successbox a:visited {
+.successbox a:link, .successbox a:active, .successbox a:visited,
+.noticebox a:link, .noticebox a:active, .noticebox a:visited {
 	color: #DBD7D1;
 	text-decoration: underline;
 	font-weight: bold;
@@ -65,6 +86,22 @@
 	color: #FFFFFF;
 	text-decoration: none;
 	font-weight: bold;
+}
+
+.noticebox a:hover {
+	color: #FFFFFF;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.error_outline {
+	border-color: #BC2A4D;
+	border-width: 1px;
+	border-style: solid;
+}
+
+fieldset dl:hover dt label.error {
+	color: #BC2A4D;
 }
 
 /* move this to a other file later ;) */

@@ -27,6 +27,14 @@ if (!class_exists('titania_database_object'))
 */
 class titania_revision extends titania_database_object
 {
+
+	/**
+	 * Attachment Object
+	 *
+	 * @var object
+	 */
+	public $attachment = '';
+
 	/**
 	 * SQL Table
 	 *
@@ -67,6 +75,20 @@ class titania_revision extends titania_database_object
 	}
 
 	/**
+	 *
+	 * @return unknown_type
+	 */
+	public function request_data()
+	{
+		$this->__set_array(array(
+			'revision_name'			=> request_var('revision_name', '', true),
+			'contrib_id'			=> (int) titania::$contrib->contrib_id,
+			'revision_validated'	=> request_var('contrib_validated', 0),
+			'attachment_id'			=> request_var('attachment_id', 0),
+		));
+	}
+
+	/**
 	* Validate that all the data is correct
 	*
 	* @return array empty array on success, array with (string) errors ready for output on failure
@@ -81,6 +103,53 @@ class titania_revision extends titania_database_object
 	 */
 	public function display()
 	{
+		// @todo Hanlde unvalidate and validated revisions basesd on if this is a team member, author or user.
+		$sql = 'SELECT *
+			FROM ' . $this->sql_table . '
+			WHERE contrib_id = ' . (int) titania::$contrib->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
 
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			phpbb::$template->assign_block_vars('revisions', array(
+				'REVISION_ID'		=> $row['revision_id'],
+				'CREATED'			=> phpbb::$user->format_date($row['revision_time']),
+				// This may need to be changed when the queue is done.
+				'VALIDATED_DATE'	=> ($row['validation_date']) ? phpbb::$user->format_date($row['validation_date']) : phpbb::$user->lang['NOT_VALIDATED'],
+			));
+		}
+		phpbb::$db->sql_freeresult($result);
+
+	}
+
+	/**
+	 * Place holder. This function should make sure this new revision shows in the queue as well.
+	 *
+	 */
+	public function submit()
+	{
+		// Submit the revision.
+		parent::submit();
+	}
+
+	/**
+	* Build view URL for revisions
+	*
+	* @param string $action
+	* @param int $revision_id
+	*
+	* @return string
+	*/
+	public function get_url($action = '', $revision_id = false)
+	{
+		$url = titania::$contrib->get_url('revisions');
+		$revision_id = (($revision_id) ? $revision_id : $this->revision_id);
+
+		if ($action == 'create')
+		{
+			return titania::$url->append_url($url, array('action' => $action));
+		}
+
+		return titania::$url->append_url($url, array('action' => $action, 'r' => $revision_id));
 	}
 }

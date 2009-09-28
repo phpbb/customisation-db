@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-define('TITANIA_VERSION', '0.1.16');
+define('TITANIA_VERSION', '0.1.18');
 
 define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 define('PHPBB_USE_BOARD_URL_PATH', true);

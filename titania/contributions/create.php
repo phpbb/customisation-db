@@ -26,7 +26,6 @@ if (!phpbb::$auth->acl_get('titania_contrib_submit'))
 	trigger_error('NO_AUTH');
 }
 
-titania::add_lang('attachments');
 titania::load_object(array('contribution', 'author'));
 
 titania::$contrib = new titania_contribution();
