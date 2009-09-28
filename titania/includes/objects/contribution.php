@@ -477,7 +477,7 @@ class titania_contribution extends titania_database_object
 				'REVISION_NAME'		=> $revision['revision_name'],
 				'REVISION_TIME'		=> phpbb::$user->format_date($revision['revision_time']),
 
-				'S_VALIDATED'		=> ($revision['contrib_validated']) ? true : false,
+				'S_VALIDATED'		=> ($revision['revison_validated']) ? true : false,
 			));
 		}
 

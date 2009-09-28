@@ -520,7 +520,7 @@ $versions = array(
 			array(TITANIA_REVISIONS_TABLE, 'contrib_validated'),
 		),
 		'table_column_add' => array(
-			array(TITANIA_REVISIONS_TABLE, 'revison_validated'),
+			array(TITANIA_REVISIONS_TABLE, 'revison_validated', array('UINT:11', 0)),
 		),
 	),
 
