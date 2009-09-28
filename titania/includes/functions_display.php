@@ -41,12 +41,15 @@ function assign_user_details($row)
 {
 	$poster_id = $row['user_id'];
 
-	if (!function_exists('get_user_rank'))
-	{
-		include(PHPBB_ROOT_PATH . 'includes/functions_display.' . PHP_EXT);
-	}
+	phpbb::_include('functions_display', 'get_user_rank');
 
 	get_user_rank($row['user_rank'], $row['user_posts'], $row['rank_title'], $row['rank_image'], $row['rank_image_src']);
+
+	// End signature parsing, only if needed
+	if ($row['user_sig'] && $config['allow_sig'] && $user->optionget('viewsigs'))
+	{
+		$row['user_sig'] = generate_text_for_display($row['user_sig'], $row['user_sig_bbcode_uid'], $row['user_sig_bbcode_bitfield'], 7);
+	}
 
 	return array(
 		'USER_FULL'				=> get_username_string('full', $poster_id, $row['username'], $row['user_colour']),
@@ -62,6 +65,7 @@ function assign_user_details($row)
 		'USER_AVATAR'			=> (phpbb::$user->optionget('viewavatars')) ? get_user_avatar($row['user_avatar'], $row['user_avatar_type'], $row['user_avatar_width'], $row['user_avatar_height']) : '',
 		'USER_WARNINGS'			=> $row['user_warnings'],
 //		'USER_AGE'				=> $row['age'],
+		'USER_SIG'				=> $row['user_sig'],
 
 		'ICQ_STATUS_IMG'		=> (!empty($row['user_icq'])) ? '<img src="http://web.icq.com/whitepages/online?icq=' . $row['user_icq'] . '&amp;img=5" width="18" height="18" alt="" />' : '',
 //		'ONLINE_IMG'			=> ($poster_id == ANONYMOUS || !phpbb::$config['load_onlinetrack']) ? '' : (($row['online']) ? phpbb::$user->img('icon_user_online', 'ONLINE') : phpbb::$user->img('icon_user_offline', 'OFFLINE')),
@@ -80,8 +84,6 @@ function assign_user_details($row)
 		'U_MSN'					=> ($row['user_msnm'] && phpbb::$auth->acl_get('u_sendim')) ? phpbb::append_sid('memberlist', "mode=contact&amp;action=msnm&amp;u=$poster_id") : '',
 		'U_YIM'					=> ($row['user_yim']) ? 'http://edit.yahoo.com/config/send_webmesg?.target=' . urlencode($row['user_yim']) . '&amp;.src=pg' : '',
 		'U_JABBER'				=> ($row['user_jabber'] && phpbb::$auth->acl_get('u_sendim')) ? phpbb::append_sid('memberlist', "mode=contact&amp;action=jabber&amp;u=$poster_id") : '',
-
-
 	);
 }
 
@@ -336,10 +338,16 @@ function titania_display_topic($topic, $sort = false, $options = array('start' =
 	titania::load_object('post');
 
 	$sql_ary = array(
-		'SELECT' => 'p.*, u.*',
+		'SELECT' => 'p.*, u.*, z.friend, z.foe',
 		'FROM'		=> array(
 			TITANIA_POSTS_TABLE => 'p',
 			USERS_TABLE => 'u',
+		),
+		'LEFT_JOIN'	=> array(
+			array(
+				'FROM'	=> array(ZEBRA_TABLE => 'z'),
+				'ON'	=> 'z.user_id = ' . phpbb::$user->data['user_id'] . ' AND z.zebra_id = p.post_user_id'
+			)
 		),
 		'WHERE' => 'p.post_access >= ' . titania::$access_level . '
 			AND p.topic_id = ' . (int) $topic->topic_id . '
@@ -364,17 +372,58 @@ function titania_display_topic($topic, $sort = false, $options = array('start' =
 	phpbb::$db->sql_freeresult();
 
 	// Get the data
-	$posts = $post_ids = array();
+	$posts = $user_ids = array();
 	$result = phpbb::$db->sql_query_limit($sql, $options['limit'], $options['start']);
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
 		$posts[$row['post_id']] = $row;
-		$post_ids[] = $row['post_id'];
+		$user_ids[] = $row['user_id'];
 	}
 	phpbb::$db->sql_freeresult($result);
 
-	// Get the read info
+	// Load custom profile fields
+/*	if (phpbb::$config['load_cpf_viewtopic'])
+	{
+		phpbb::_include('functions_profile_fields', false, 'custom_profile');
 
+		$cp = new custom_profile();
+
+		// Grab all profile fields from users in id cache for later use - similar to the poster cache
+		$profile_fields_tmp = $cp->generate_profile_fields_template('grab', $id_cache);
+
+		// filter out fields not to be displayed on viewtopic. Yes, it's a hack, but this shouldn't break any MODs.
+		$profile_fields_cache = array();
+		foreach ($profile_fields_tmp as $profile_user_id => $profile_fields)
+		{
+			$profile_fields_cache[$profile_user_id] = array();
+			foreach ($profile_fields as $used_ident => $profile_field)
+			{
+				if ($profile_field['data']['field_show_on_vt'])
+				{
+					$profile_fields_cache[$profile_user_id][$used_ident] = $profile_field;
+				}
+			}
+		}
+		unset($profile_fields_tmp);
+	}
+
+	// Generate online information for user
+	if ($config['load_onlinetrack'] && sizeof($id_cache))
+	{
+		$sql = 'SELECT session_user_id, MAX(session_time) as online_time, MIN(session_viewonline) AS viewonline
+			FROM ' . SESSIONS_TABLE . '
+			WHERE ' . $db->sql_in_set('session_user_id', $id_cache) . '
+			GROUP BY session_user_id';
+		$result = $db->sql_query($sql);
+
+		$update_time = $config['load_online_time'] * 60;
+		while ($row = $db->sql_fetchrow($result))
+		{
+			$user_cache[$row['session_user_id']]['online'] = (time() - $update_time < $row['online_time'] && (($row['viewonline']) || $auth->acl_get('u_viewonline'))) ? true : false;
+		}
+		$db->sql_freeresult($result);
+	}
+*/
 	// Loop de loop
 	foreach ($posts as $row)
 	{
@@ -382,7 +431,9 @@ function titania_display_topic($topic, $sort = false, $options = array('start' =
 		$post->__set_array($row);
 
 		phpbb::$template->assign_block_vars('posts', array_merge($post->assign_details(), assign_user_details($row)));
-
+//S_IGNORE_POST
+//POST_ICON_IMG
+//MINI_POST_IMG
 		unset($post);
 	}
 	phpbb::$db->sql_freeresult($result);

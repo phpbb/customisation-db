@@ -16,17 +16,10 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!class_exists('diff'))
-{
-	require(PHPBB_ROOT_PATH . 'includes/diff/diff.' . PHP_EXT);
-	require(PHPBB_ROOT_PATH . 'includes/diff/engine.' . PHP_EXT);
-	require(PHPBB_ROOT_PATH . 'includes/diff/renderer.' . PHP_EXT);
-}
-
-if (!class_exists('compress'))
-{
-    require(PHPBB_ROOT_PATH . 'includes/functions_compress.' . PHP_EXT);
-}
+phpbb::_include('diff/diff', false, 'diff');
+phpbb::_include('diff/engine', false, 'diff');
+phpbb::_include('diff/renderer', false, 'diff');
+phpbb::_include('functions_compress', false, 'compress');
 
 /**
 * Class to create diffs for updated versions

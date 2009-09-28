@@ -113,7 +113,7 @@ titania::page_footer(true, 'contributions/contribution_details.html');
 				WHERE user_id = ' . phpbb::$user->data['user_id'];
 			$result = phpbb::$db->sql_query($sql);
 
-			include_once(PHPBB_ROOT_PATH . 'includes/functions_messenger.' . PHP_EXT);
+			phpbb::_include('functions_messenger', false, 'messenger');
 			$messenger = new messenger(false);
 
 			$mail_to_users = array();

@@ -61,4 +61,32 @@ class phpbb
 
 		return append_sid($url, $params, $is_amp, $session_id);
 	}
+
+	/**
+	* Include a phpBB includes file
+	*
+	* @param string $file The name of the file
+	* @param string|bool $function_check Bool false to ignore; string function name to check if the function exists (and not load the file if it does)
+	* @param string|bool $class_check Bool false to ignore; string class name to check if the class exists (and not load the file if it does)
+	*/
+	public static function _include($file, $function_check = false, $class_check = false)
+	{
+		if ($function_check !== false)
+		{
+			if (function_exists($function_check))
+			{
+				return;
+			}
+		}
+
+		if ($class_check !== false)
+		{
+			if (class_exists($class_check))
+			{
+				return;
+			}
+		}
+
+		include(PHPBB_ROOT_PATH . 'includes/' . $file . '.' . PHP_EXT);
+	}
 }

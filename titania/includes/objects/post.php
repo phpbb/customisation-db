@@ -530,8 +530,6 @@ class titania_post extends titania_database_object
 			'POST_TYPE'						=> $this->post_type,
 			'POST_ACCESS'					=> $this->post_access,
 			'POST_LOCKED'					=> $this->post_locked,
-			'POST_APPROVED'					=> $this->post_approved,
-			'POST_REPORTED'					=> $this->post_reported,
 			'POST_ATTACHMENT'				=> $this->post_attachment,
 			'POST_USER_ID'					=> $this->post_user_id,
 			'POST_IP'						=> $this->post_ip,
@@ -542,10 +540,15 @@ class titania_post extends titania_database_object
 			'POST_EDIT_REASON'				=> censor_text($this->post_edit_reason),
 			'POST_SUBJECT'					=> censor_text($this->post_subject),
 			'POST_TEXT'						=> $this->generate_text_for_display(),
+			//EDITED_MESSAGE
 
 			'U_VIEW_POST'					=> $this->get_url(),
+			//U_MCP_APPROVE
+			//U_MCP_REPORT
 
 			'S_UNREAD_POST'					=> ($this->unread) ? true : false, // remember that you must set this up extra...
+			'S_POST_APPROVED'				=> $this->post_approved,
+			'S_POST_REPORTED'				=> $this->post_reported,
 		);
 
 		return $details;

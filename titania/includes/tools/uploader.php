@@ -16,10 +16,8 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!class_exists('fileupload'))
-{
-	include PHPBB_ROOT_PATH . 'includes/functions_upload.' . PHP_EXT;
-}
+
+phpbb::_include('functions_upload', false, 'fileupload');
 
 /**
  * Handles uploading attachments for Titania.

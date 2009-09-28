@@ -132,10 +132,7 @@ class titania_message
 		// Generate smiley listing
 		if ($post_options->get_status('smilies'))
 		{
-			if (!function_exists('generate_smilies'))
-			{
-				include(PHPBB_ROOT_PATH . 'includes/functions_posting.' . PHP_EXT);
-			}
+			phpbb::_include('functions_posting', 'generate_smilies');
 
 			generate_smilies('inline', false);
 		}
@@ -143,20 +140,15 @@ class titania_message
 		// Build custom bbcodes array
 		if ($post_options->get_status('bbcode'))
 		{
-			if (!function_exists('display_custom_bbcodes'))
-			{
-				include(PHPBB_ROOT_PATH . 'includes/functions_display.' . PHP_EXT);
-			}
+			phpbb::_include('functions_display', 'display_custom_bbcodes');
+
 			display_custom_bbcodes();
 		}
 
 		// Display the Captcha if required
 		if ($this->settings['display_captcha'])
 		{
-			if (!class_exists('phpbb_captcha_factory'))
-			{
-				include(PHPBB_ROOT_PATH . 'includes/captcha/captcha_factory.' . PHP_EXT);
-			}
+			phpbb::_include('captcha/captcha_factory', false, 'phpbb_captcha_factory');
 
 			$captcha =& phpbb_captcha_factory::get_instance(phpbb::$config['captcha_plugin']);
 			$captcha->init(CONFIRM_POST);
@@ -238,10 +230,7 @@ class titania_message
 	*/
 	public function validate_captcha()
 	{
-		if (!class_exists('phpbb_captcha_factory'))
-		{
-			include(PHPBB_ROOT_PATH . 'includes/captcha/captcha_factory.' . PHP_EXT);
-		}
+		phpbb::_include('captcha/captcha_factory', false, 'phpbb_captcha_factory');
 
 		$captcha =& phpbb_captcha_factory::get_instance(phpbb::$config['captcha_plugin']);
 		$captcha->init(CONFIRM_POST);

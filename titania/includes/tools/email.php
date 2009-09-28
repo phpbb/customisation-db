@@ -91,10 +91,7 @@ class titania_email
 				return false;
 			}
 
-			if (!class_exists('messenger'))
-			{
-				require PHPBB_ROOT_PATH . 'includes/functions_messenger.' . PHP_EXT;
-			}
+			phpbb::_include('functions_messenger', false, 'messenger');
 
 			$sql = 'UPDATE ' . USERS_TABLE . '
 				SET user_emailtime = ' . titania::$time . '

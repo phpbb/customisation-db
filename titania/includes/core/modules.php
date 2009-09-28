@@ -16,10 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!class_exists('p_master'))
-{
-	require(PHPBB_ROOT_PATH . 'includes/functions_module.' . PHP_EXT);
-}
+phpbb::_include('functions_module', false, 'p_master');
 
 /**
  * @package modules
