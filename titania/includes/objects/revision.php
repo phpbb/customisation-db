@@ -60,7 +60,7 @@ class titania_revision extends titania_database_object
 		$this->object_config = array_merge($this->object_config, array(
 			'revision_id'			=> array('default' => 0),
 			'contrib_id' 			=> array('default' => 0),
-			'contrib_validated'		=> array('default' => 0),
+			'revision_validated'	=> array('default' => 0),
 			'attachment_id' 		=> array('default' => 0),
 			'revision_name' 		=> array('default' => '', 'max' => 255),
 			'revision_time'			=> array('default' => (int) titania::$time),
