@@ -76,7 +76,7 @@ switch ($page)
 {
 	case 'details' :
 	case 'contributions' :
-	case 'edit':
+	case 'manage':
 	case 'support' :
 		include(TITANIA_ROOT . 'authors/' . $page . '.' . PHP_EXT);
 	break;

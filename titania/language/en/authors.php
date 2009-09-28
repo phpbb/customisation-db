@@ -49,13 +49,16 @@ $lang = array_merge($lang, array(
 	'AUTHOR_STYLES'			=> 'Styles',
 	'AUTHOR_SUPPORT'		=> 'Support',
 
-	'EDIT_AUTHOR'			=> 'Edit Author',
 
 	'PHPBB_PROFILE'			=> 'phpBB.com profile',
 
 	'REAL_NAME'				=> 'Real Name',
 
 	'USER_INFORMATION'		=> '’s user information',
+
+	'MANAGE_AUTHOR'			=> 'Manage Author',
+	
+	'AUTHOR_DATA_UPDATED'	=> 'The author’s information have been updated.',
 ));
 
 ?>

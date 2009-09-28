@@ -161,6 +161,20 @@ class titania_author extends titania_database_object
 	}
 
 	/**
+	* Submit data in the post_data format
+	*
+	* @param mixed $post_data
+	*/
+	public function post_data($post_data)
+	{
+		$this->__set_array(array(
+			'author_desc'		=> $post_data['message'],
+		));
+		
+		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
+	}
+	
+	/**
 	 * Generate text for storing description into the database
 	 *
 	 * @param bool $allow_bbcode
@@ -319,7 +333,7 @@ class titania_author extends titania_database_object
 
             'AUTHOR_DESC'                   => $this->generate_text_for_display(),
 
-			'U_EDIT_AUTHOR'                 => (phpbb::$user->data['user_id'] == $this->user_id  || phpbb::$auth->acl_get('titania_author_mod')) ? $this->get_url('edit') : '',
+			'U_MANAGE_AUTHOR'                 => (phpbb::$user->data['user_id'] == $this->user_id  || phpbb::$auth->acl_get('titania_author_mod')) ? $this->get_url('manage') : '',
 			'U_AUTHOR_PROFILE'				=> $this->get_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),
@@ -339,4 +353,5 @@ class titania_author extends titania_database_object
 
 		phpbb::$template->assign_vars($vars);
 	}
+	
 }
