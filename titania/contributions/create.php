@@ -50,6 +50,7 @@ $message->set_settings(array(
 $submit = (isset($_POST['submit'])) ? true : false;
 
 $contrib_categories = array();
+$active_coauthors = $nonactive_coauthors = '';
 
 if ($submit)
 {
@@ -111,13 +112,13 @@ titania::$contrib->assign_details();
 $message->display();
 
 $template->assign_vars(array(
-	'S_POST_ACTION'		=> titania::$url->build_url('contributions/create'),
-	'S_CREATE'			=> true,
+	'S_POST_ACTION'			=> titania::$url->build_url('contributions/create'),
+	'S_CREATE'				=> true,
 
-	'CONTRIB_PERMALINK'	=> titania::$contrib->contrib_name_clean,
-	'ERROR_MSG'			=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
-	'ACTIVE_COAUTHORS'			=> $active_coauthors,
-	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
+	'CONTRIB_PERMALINK'		=> titania::$contrib->contrib_name_clean,
+	'ERROR_MSG'				=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
+	'ACTIVE_COAUTHORS'		=> $active_coauthors,
+	'NONACTIVE_COAUTHORS'	=> $nonactive_coauthors,
 ));
 
 titania::page_header('CREATE_CONTRIBUTION');
