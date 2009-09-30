@@ -556,11 +556,16 @@ class titania_contribution extends titania_database_object
 	 */
 	public function set_contrib_user_id($id)
 	{
-		// @todo adjust author's counts accordingly and add them to past contributors
+		// @todo adjust author's counts accordingly
+		$prior = $this->contrib_user_id;
+		
 		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
 					SET contrib_user_id = ' . (int) $id . '
 						WHERE contrib_id = ' . $this->contrib_id;
-				phpbb::$db->sql_query($sql);
+		phpbb::$db->sql_query($sql);
+		
+		// Set old user as previous contributor
+		self::set_coauthors(array(), array($prior));
 	}
 
 	/*
