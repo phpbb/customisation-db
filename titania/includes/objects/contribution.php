@@ -120,6 +120,17 @@ class titania_contribution extends titania_database_object
 		{
 			$this->generate_text_for_storage(false, false, false);
 		}
+		
+		// New entry
+		if (!$this->contrib_id)
+		{
+			// Update contrib count for author
+			$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
+					SET author_contribs = author_contribs + 1
+					WHERE user_id = ' . phpbb::$user->data['user_id'];
+			phpbb::$db->sql_query($sql);
+		}
+			
 
 		return parent::submit();
 	}
@@ -513,11 +524,34 @@ class titania_contribution extends titania_database_object
 	{
 		if ($reset)
 		{
+			// Grab the current contribs
+			$sql = 'SELECT user_id
+				FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+				WHERE contrib_id = ' . (int) $this->contrib_id;
+			$result = phpbb::$db->sql_query($sql);
+			
+			$decrement_list = array();
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$decrement_list[] = $row['user_id'];
+			}
+			phpbb::$db->sql_freeresult($result);
+			
+			if (sizeof($decrement_list))
+			{
+				$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
+					SET author_contribs = author_contribs - 1
+					WHERE ' . phpbb::$db->sql_in_set('user_id', $decrement_list);
+				phpbb::$db->sql_query($sql);
+			}
+			
 			$sql = 'DELETE FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
 				WHERE contrib_id = ' . (int) $this->contrib_id;
 				phpbb::$db->sql_query($sql);
 		}
-
+		
+		$increment_list = array();
+		
 		if (sizeof($active))
 		{
 			$sql_ary = array();
@@ -528,6 +562,8 @@ class titania_contribution extends titania_database_object
 					'user_id'		=> $user_id,
 					'active'		=> true,
 				);
+				
+				$increment_list[] = $user_id;
 			}
 
 			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
@@ -543,9 +579,19 @@ class titania_contribution extends titania_database_object
 					'user_id'		=> $user_id,
 					'active'		=> false,
 				);
+				
+				$increment_list[] = $user_id;
 			}
 
 			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
+			
+			if (sizeof($increment_list))
+			{
+				$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
+					SET author_contribs = author_contribs + 1
+					WHERE ' . phpbb::$db->sql_in_set('user_id', $increment_list);
+				phpbb::$db->sql_query($sql);
+			}
 		}
 	}
 	
@@ -560,12 +606,18 @@ class titania_contribution extends titania_database_object
 		$prior = $this->contrib_user_id;
 		
 		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-					SET contrib_user_id = ' . (int) $id . '
-						WHERE contrib_id = ' . $this->contrib_id;
+			SET contrib_user_id = ' . (int) $id . '
+			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 		
 		// Set old user as previous contributor
 		self::set_coauthors(array(), array($prior));
+		
+		// Decrement the contrib counter as creating already raised it
+		$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
+			SET author_contribs = author_contribs - 1
+			WHERE user_id = ' . (int) $id;
+		phpbb::$db->sql_query($sql);
 	}
 
 	/*
