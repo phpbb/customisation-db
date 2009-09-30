@@ -44,8 +44,21 @@ $message->set_settings(array(
 
 $submit = (isset($_POST['submit'])) ? true : false;
 
+$change_owner = request_var('change_owner', '', true); // Blame Nathan, he said this was okay
+
 $contrib_categories = array();
 
+if (titania::confirm_box(true)) // Confirming author change
+{
+	$change_owner_id = request_var('change_owner_id', 0);
+					
+	if ($change_owner_id > 0)
+	{
+		titania::$contrib->set_contrib_user_id($change_owner_id);
+		trigger_error('CONTRIB_OWNER_UPDATED');
+	}
+}
+	
 if ($submit)
 {
 	$post_data = $message->request_data();
@@ -73,6 +86,20 @@ if ($submit)
 	{
 		$error[] = sprintf(phpbb::$user->lang['DUPLICATE_AUTHORS'], implode(', ', array_keys(array_intersect($active_coauthors_list, $nonactive_coauthors_list))));
 	}
+	if ($change_owner != '')
+	{
+		$sql = 'SELECT user_id
+				FROM ' . USERS_TABLE . "
+				WHERE username_clean = '" . phpbb::$db->sql_escape(utf8_clean_string($change_owner)) . "'";
+			$result = phpbb::$db->sql_query($sql);
+			$change_owner_id = (int) phpbb::$db->sql_fetchfield('user_id');
+			phpbb::$db->sql_freeresult($result);
+		
+		if ($change_owner_id < 1)
+		{
+			$error[] = sprintf(phpbb::$user->lang['CONTRIB_CHANGE_OWNER_NOT_FOUND'], $change_owner);
+		}
+	}
 
 	if (!sizeof($error))
 	{
@@ -82,8 +109,21 @@ if ($submit)
 
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
-
-		titania::error_box('SUCCESS', 'CONTRIB_UPDATED', TITANIA_SUCCESS);
+		
+		if ($change_owner == '')
+		{
+			titania::error_box('SUCCESS', 'CONTRIB_UPDATED', TITANIA_SUCCESS);
+		}
+		else
+		{
+			$s_hidden_fields = array(
+				'submit'			=> true,
+				'change_owner'		=> $change_owner,
+				'change_owner_id'	=> $change_owner_id,
+			);
+			
+			titania::confirm_box(false, sprintf(phpbb::$user->lang['CONTRIB_CONFIRM_OWNER_CHANGE'], '<a href="' .  phpbb::append_sid('memberlist', 'mode=viewprofile&amp;u=' . $change_owner_id) . '">' . $change_owner . '</a>'), titania::$url->append_url(titania::$url->current_page), $s_hidden_fields);
+		}
 	}
 }
 else
@@ -127,6 +167,7 @@ $template->assign_vars(array(
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
 ));
+
 
 titania::page_header('MANAGE_CONTRIBUTION');
 titania::page_footer(true, 'contributions/contribution_manage.html');

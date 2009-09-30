@@ -548,6 +548,20 @@ class titania_contribution extends titania_database_object
 			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
 		}
 	}
+	
+	/*
+	 * Set a new contrib_user_id for the current contribution
+	 *
+	 * @param int $id
+	 */
+	public function set_contrib_user_id($id)
+	{
+		// @todo adjust author's counts accordingly and add them to past contributors
+		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+					SET contrib_user_id = ' . (int) $id . '
+						WHERE contrib_id = ' . $this->contrib_id;
+				phpbb::$db->sql_query($sql);
+	}
 
 	/*
 	 * Set the relations between contribs and categories

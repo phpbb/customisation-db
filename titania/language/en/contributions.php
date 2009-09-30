@@ -68,7 +68,7 @@ $lang = array_merge($lang, array(
 	'DOWNLOAD_CHECKSUM'					=> 'MD5 checksum',
 	'DUPLICATE_AUTHORS'					=> 'You have the following authors listed as both active and non-active (they can not be both): %s',
 
-	'EDIT_CONTRIBUTION'					=> 'Edit Contribution',
+	'MANAGE_CONTRIBUTION'					=> 'Manage Contribution',
 	'EMPTY_CATEGORY'					=> 'Select one category at least',
 	'EMPTY_CONTRIB_DESC'				=> 'Enter the contrib description',
 	'EMPTY_CONTRIB_NAME'				=> 'Enter the contrib name',
@@ -87,6 +87,12 @@ $lang = array_merge($lang, array(
 	'SELECT_CONTRIB_TYPE'				=> '-- Select contribution type --',
 
 	'WRONG_CATEGORY'					=> 'You can only put this contribution in the same category type as the contribution type.',
+	
+	'CONTRIB_CHANGE_OWNER'				=> 'Change Owner',
+	'CONTRIB_CHANGE_OWNER_EXPLAIN'		=> 'Input a username here to set this user as the owner. By changing this, you will be set as a Non-contributing Author.',
+	'CONTRIB_CONFIRM_OWNER_CHANGE'		=> 'Are you sure you want to assign ownership to %s? This will prevent you from managing the project and cannot be undone.',
+	'CONTRIB_CHANGE_OWNER_NOT_FOUND'	=> 'The user you attempted to set as owner, %s, was not found.',
+	'CONTRIB_OWNER_UPDATED'				=> 'The owner has been changed.',
 ));
 
 ?>
