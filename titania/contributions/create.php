@@ -98,9 +98,6 @@ if ($submit)
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
 
-		// Update are attachments.
-		$attachment->update_orphans(titania::$contrib->contrib_id);
-
 		redirect(titania::$contrib->get_url());
 	}
 }
