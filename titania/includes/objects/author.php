@@ -163,6 +163,18 @@ class titania_author extends titania_database_object
 		return parent::submit();
 	}
 
+	public function validate()
+	{
+		$error = array();
+
+		if ($this->author_website && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]+\.[a-z]{2,4}#i', $this->author_website))
+		{
+			$error[] = phpbb::$user->lang['WRONG_DATA_WEBSITE'];
+		}
+
+		return $error;
+	}
+
 	/**
 	* Submit data in the post_data format
 	*
@@ -324,6 +336,7 @@ class titania_author extends titania_database_object
 			'AUTHOR_NAME_FULL'				=> $this->get_username_string(),
 			'AUTHOR_REALNAME'				=> $this->author_realname,
 			'AUTHOR_WEBSITE'				=> $this->get_website_url(),
+			'AUTHOR_WEBSITE_LINK'			=> '<a href="' . $this->get_website_url() . '">' . $this->get_website_url() . '</a>',
 
 			'AUTHOR_RATING'					=> $this->author_rating,
 			'AUTHOR_RATING_STRING'			=> (isset($this->rating)) ? $this->rating->get_rating_string() : '',
