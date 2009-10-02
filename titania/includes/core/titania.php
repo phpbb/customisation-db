@@ -803,13 +803,15 @@ class titania
 
 		while (($fname = readdir($dh)) !== false)
 		{
-			if (strpos($fname, '.' . PHP_EXT))
+			if (strpos($fname, '.' . PHP_EXT) && substr($fname, 0, 1) != '_')
 			{
 				include(TITANIA_ROOT . 'includes/types/' . $fname);
 
 				$class_name = 'titania_type_' . substr($fname, 0, strpos($fname, '.' . PHP_EXT));
 
 				$class = new $class_name;
+
+				$class->auto_install();
 
 				self::$types[$class->id] = $class;
 			}

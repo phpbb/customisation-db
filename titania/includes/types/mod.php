@@ -33,6 +33,13 @@ class titania_type_mod
 	public $url = 'mod';
 
 	/**
+	 * The name of the field used to hold the number of this item in the authors table
+	 *
+	 * @var string author count
+	 */
+	public $author_count = 'author_mods';
+
+	/**
 	 * The language key, initialize in constructor
 	 *
 	 * @var string Language key
@@ -42,5 +49,15 @@ class titania_type_mod
 	public function __construct()
 	{
 		$this->lang = phpbb::$user->lang['MODIFICATION'];
+	}
+
+	/**
+	* Automatically install the type if required
+	*
+	* For adding type specific permissions, etc.  For now ignore
+	*/
+	public function auto_install()
+	{
+		return;
 	}
 }

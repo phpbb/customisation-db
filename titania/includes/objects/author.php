@@ -73,9 +73,6 @@ class titania_author extends titania_database_object
 			'author_rating_count'	=> array('default' => 0),
 
 			'author_contribs'		=> array('default' => 0),
-			'author_mods'			=> array('default' => 0),
-			'author_styles'			=> array('default' => 0),
-			'author_snippets'		=> array('default' => 0),
 			'author_visible'		=> array('default' => TITANIA_AUTHOR_VISIBLE),
 
 			'author_desc'			=> array('default' => ''),
@@ -83,6 +80,12 @@ class titania_author extends titania_database_object
 			'author_desc_uid'		=> array('default' => ''),
 			'author_desc_options'	=> array('default' => 7),
 		));
+
+		// Load the count for different types
+		foreach (titania::$types as $type)
+		{
+			$this->object_config[$type->author_count] = array('default' => 0);
+		}
 
 		if ($user_id !== false)
 		{
@@ -170,10 +173,10 @@ class titania_author extends titania_database_object
 		$this->__set_array(array(
 			'author_desc'		=> $post_data['message'],
 		));
-		
+
 		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
 	}
-	
+
 	/**
 	 * Generate text for storing description into the database
 	 *
@@ -327,18 +330,24 @@ class titania_author extends titania_database_object
 			'AUTHOR_RATING_COUNT'			=> $this->author_rating_count,
 
 			'AUTHOR_CONTRIBS'				=> $this->author_contribs,
-			'AUTHOR_MODS'					=> $this->author_mods,
-			'AUTHOR_STYLES'					=> $this->author_styles,
-			'AUTHOR_SNIPPETS'				=> $this->author_snippets,
 
             'AUTHOR_DESC'                   => $this->generate_text_for_display(),
 
-			'U_MANAGE_AUTHOR'                 => (phpbb::$user->data['user_id'] == $this->user_id  || phpbb::$auth->acl_get('titania_author_mod')) ? $this->get_url('manage') : '',
+			'U_MANAGE_AUTHOR'				=> (phpbb::$user->data['user_id'] == $this->user_id  || phpbb::$auth->acl_get('titania_author_mod')) ? $this->get_url('manage') : '',
 			'U_AUTHOR_PROFILE'				=> $this->get_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),
 			'U_AUTHOR_CONTRIBUTIONS'		=> $this->get_url('contributions'),
 		);
+
+		// Output the count for different types
+		foreach (titania::$types as $type)
+		{
+			phpbb::$template->assign_block_vars('type_counts', array(
+				'NAME'	=> (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? phpbb::$user->lang[strtoupper($type->author_count)] : strtoupper($type->author_count),
+				'VALUE'	=> $this->{$type->author_count}
+			));
+		}
 
 		/* @todo: automatically display the common author data too...
 		if (isset($this->sql_data))
@@ -353,5 +362,5 @@ class titania_author extends titania_database_object
 
 		phpbb::$template->assign_vars($vars);
 	}
-	
+
 }

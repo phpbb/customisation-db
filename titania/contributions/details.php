@@ -26,10 +26,6 @@ titania::$contrib->assign_details();
 // Get the attachments
 $attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, titania::$contrib->contrib_id);
 
-phpbb::$template->assign_vars(array(
-	'U_MANAGE_CONTRIBUTION'	=> titania::$contrib->get_url('manage'),
-));
-
 titania::page_header('CONTRIB_DETAILS');
 titania::page_footer(true, 'contributions/contribution_details.html');
 
