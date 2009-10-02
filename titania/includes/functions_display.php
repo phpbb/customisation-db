@@ -382,17 +382,17 @@ function titania_display_topic($topic, $sort = false, $options = array('start' =
 	phpbb::$db->sql_freeresult($result);
 
 	// Load custom profile fields
-/*	if (phpbb::$config['load_cpf_viewtopic'])
+	$profile_fields_cache = array();
+	if (phpbb::$config['load_cpf_viewtopic'])
 	{
 		phpbb::_include('functions_profile_fields', false, 'custom_profile');
 
 		$cp = new custom_profile();
 
 		// Grab all profile fields from users in id cache for later use - similar to the poster cache
-		$profile_fields_tmp = $cp->generate_profile_fields_template('grab', $id_cache);
+		$profile_fields_tmp = $cp->generate_profile_fields_template('grab', $user_ids);
 
 		// filter out fields not to be displayed on viewtopic. Yes, it's a hack, but this shouldn't break any MODs.
-		$profile_fields_cache = array();
 		foreach ($profile_fields_tmp as $profile_user_id => $profile_fields)
 		{
 			$profile_fields_cache[$profile_user_id] = array();
@@ -408,22 +408,23 @@ function titania_display_topic($topic, $sort = false, $options = array('start' =
 	}
 
 	// Generate online information for user
-	if ($config['load_onlinetrack'] && sizeof($id_cache))
+	$online_cache = array();
+	if (phpbb::$config['load_onlinetrack'] && sizeof($user_ids))
 	{
 		$sql = 'SELECT session_user_id, MAX(session_time) as online_time, MIN(session_viewonline) AS viewonline
 			FROM ' . SESSIONS_TABLE . '
-			WHERE ' . $db->sql_in_set('session_user_id', $id_cache) . '
+			WHERE ' . phpbb::$db->sql_in_set('session_user_id', $user_ids) . '
 			GROUP BY session_user_id';
-		$result = $db->sql_query($sql);
+		$result = phpbb::$db->sql_query($sql);
 
-		$update_time = $config['load_online_time'] * 60;
-		while ($row = $db->sql_fetchrow($result))
+		$update_time = phpbb::$config['load_online_time'] * 60;
+		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$user_cache[$row['session_user_id']]['online'] = (time() - $update_time < $row['online_time'] && (($row['viewonline']) || $auth->acl_get('u_viewonline'))) ? true : false;
+			$online_cache[$row['session_user_id']]['online'] = (time() - $update_time < $row['online_time'] && (($row['viewonline']) || phpbb::$auth->acl_get('u_viewonline'))) ? true : false;
 		}
-		$db->sql_freeresult($result);
+		phpbb::$db->sql_freeresult($result);
 	}
-*/
+
 	// Loop de loop
 	foreach ($posts as $row)
 	{

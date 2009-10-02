@@ -29,7 +29,7 @@ if ($post_id)
 {
 	$sql = 'SELECT t.* FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t
 		WHERE p.post_id = ' . $post_id . '
-			AND t.topic_id = p.post_id';
+			AND t.topic_id = p.topic_id';
 	$result = phpbb::$db->sql_query($sql);
 	$topic_row = phpbb::$db->sql_fetchrow($result);
 	phpbb::$db->sql_freeresult($result);
@@ -81,7 +81,21 @@ $action = request_var('action', '');
 switch ($action)
 {
 	case 'post' :
-		$post_object = new titania_post('normal');
+	case 'reply' :
+		if (($action == 'post' && !phpbb::$auth->acl_get('titania_topic')) || ($action == 'reply' && (!$topic_id || !phpbb::$auth->acl_get('titania_post'))))
+		{
+			trigger_error('NO_AUTH');
+		}
+
+		if ($action == 'post')
+		{
+			$post_object = new titania_post('normal');
+			$post_object->topic->contrib_id = titania::$contrib->contrib_id;
+		}
+		else
+		{
+			$post_object = new titania_post('normal', $topic);
+		}
 
 		// Load the message object
 		titania::load_tool('message');
@@ -89,11 +103,12 @@ switch ($action)
 		$message->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('titania_smilies'),
-			'sticky_topic'	=> (phpbb::$auth->acl_get('titania_post_mod') || titania::$access_level <= TITANIA_ACCESS_AUTHORS) ? true : false,
-			'lock_topic'	=> (phpbb::$auth->acl_get('titania_post_mod') || titania::$access_level <= TITANIA_ACCESS_AUTHORS) ? true : false,
+			'sticky_topic'	=> ($action == 'post' && (phpbb::$auth->acl_get('titania_post_mod') || titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('titania_post_mod') || phpbb::$auth->acl_get('titania_post_mod_own')) ? true : false,
 		));
 		$message->set_settings(array(
-			'display_captcha'	=> (!phpbb::$user->data['is_registered']) ? true : false,
+			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
+			'subject_default_override'	=> ($action == 'reply') ? 'Re: ' . $topic->topic_subject : false,
 		));
 
 		if ($submit)
@@ -101,7 +116,6 @@ switch ($action)
 			$post_data = $message->request_data();
 
 			$post_object->post_data($post_data);
-			$post_object->topic->contrib_id = titania::$contrib->contrib_id;
 
 			$error = $post_object->validate();
 
@@ -123,25 +137,19 @@ switch ($action)
 				$post_object->submit();
 
 				$redirect = titania::$contrib->get_url('support');
-				$redirect = titania::$url->append_url($redirect, array($post_object->topic->topic_subject_clean, 't' => $post_object->topic_id));
+				$redirect = titania::$url->append_url($redirect, array($post_object->topic->topic_subject_clean, 't' => $post_object->topic_id, 'p' => $post_object->post_id, '#p' => $post_object->post_id));
 				redirect($redirect);
 			}
 		}
 
-		add_form_key('post_form');
 		$message->display();
 
 		phpbb::$template->assign_vars(array(
-			'L_POST_A'			=> phpbb::$user->lang['POST_A_NEW_TOPIC'],
-			'S_POST_ACTION'		=> titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => $action)),
+			'L_POST_A'			=> phpbb::$user->lang[(($action == 'post') ? 'POST_TOPIC' : 'POST_REPLY')],
+			'S_POST_ACTION'		=> ($topic_id) ? titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => $action, 't' => $topic_id)) : titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => $action)),
 		));
 
-		titania::page_header('NEW_TOPIC');
-		titania::page_footer(true, 'contributions/contribution_support_post.html');
-	break;
-
-	case 'reply' :
-		titania::page_header('NEW_REPLY');
+		titania::page_header(($action == 'post') ? 'NEW_TOPIC' : 'POST_REPLY');
 		titania::page_footer(true, 'contributions/contribution_support_post.html');
 	break;
 

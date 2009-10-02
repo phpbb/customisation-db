@@ -140,6 +140,8 @@ class titania_post extends titania_database_object
 			titania::load_object('topic');
 			$this->topic = new titania_topic($this->post_type);
 		}
+
+		$this->topic_id = $this->topic->topic_id;
 	}
 
 	/**
@@ -243,11 +245,17 @@ class titania_post extends titania_database_object
 	* Check if the current user has permission to do something
 	*
 	* @param string $option The auth option to check ('post', 'edit', 'soft_delete', 'hard_delete')
+	* @param object $contrib The contrib object this is for (false to use titania::$contrib)
 	*
 	* @return bool True if they have permission False if not
 	*/
-	public function acl_get($option)
+	public function acl_get($option, $contrib = false)
 	{
+		if ($contrib === false)
+		{
+			$contrib = titania::$contrib;
+		}
+
 		// First check anonymous/bots for things they can *never* do
 		$no_anon = array('edit', 'soft_delete', 'undelete', 'hard_delete');
 		$no_bot = array('post', 'edit', 'soft_delete', 'undelete', 'hard_delete');
@@ -257,7 +265,7 @@ class titania_post extends titania_database_object
 		}
 
 		$is_poster = ($this->post_user_id == phpbb::$user->data['user_id']) ? true : false; // Poster
-		$is_author = titania::$access_level == TITANIA_ACCESS_AUTHORS; // Contribution author
+		$is_author = $contrib->is_author || $contrib->is_active_coauthor; // Contribution author
 
 		switch ($option)
 		{
@@ -340,18 +348,20 @@ class titania_post extends titania_database_object
 			trigger_error('NO_AUTH');
 		}
 
-		$this->topic->__set_array(array(
-			'topic_access'		=> $this->post_access,
-			'topic_approved'	=> $this->post_approved,
-			'topic_user_id'		=> $this->post_user_id,
-			'topic_subject'		=> $this->post_subject,
-		));
+		// Create the topic if required
+		if (!$this->topic->topic_id)
+		{
+			$this->topic->__set_array(array(
+				'topic_access'		=> $this->post_access,
+				'topic_approved'	=> $this->post_approved,
+				'topic_user_id'		=> $this->post_user_id,
+				'topic_subject'		=> $this->post_subject,
+			));
 
-		// Update the postcount for the topic and submit the topic
-		$this->topic->update_postcount($this->post_access, false, false);
-		$this->topic->submit();
+			$this->topic->submit();
 
-		$this->topic_id = $this->topic->topic_id;
+			$this->topic_id = $this->topic->topic_id;
+		}
 
 		if (!$this->text_parsed_for_storage)
 		{
@@ -385,7 +395,8 @@ class titania_post extends titania_database_object
 			'topic_last_post_subject'		=> $this->post_subject,
 		));
 
-		// Gotta update the topic again with the first/last post data
+		// Gotta update the topic again with the first/last post data and update teh post count
+		$this->topic->update_postcount($this->post_access, false, false);
 		$this->topic->submit();
 	}
 

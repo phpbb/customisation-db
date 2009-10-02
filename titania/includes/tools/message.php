@@ -60,6 +60,9 @@ class titania_message
 		'display_edit_reason'	=> false, // Display the edit reason field or not
 		'display_captcha'		=> false, // Display the captcha or not
 		'attachments_group'		=> 0, // The attachment extensions group to allow
+
+		'subject_default_override'	=> false, // Force over-ride the subject with one you specify, false to use the one gotten from the post object
+		'text_default_override'		=> false, // Force over-ride the text with one you specify, false to use the one gotten from the post object
 	);
 
 	/**
@@ -177,9 +180,9 @@ class titania_message
 
 			'POSTING_PANELS_DEFAULT'	=> 'options-panel',
 
-			'POSTING_TEXT'				=> $for_edit['text'],
+			'POSTING_TEXT'				=> ($this->settings['text_default_override'] !== false) ? $this->settings['text_default_override'] : $for_edit['text'],
 
-			'SUBJECT'					=> (isset($for_edit['subject'])) ? $for_edit['subject'] : '',
+			'SUBJECT'					=> ($this->settings['subject_default_override'] !== false) ? $this->settings['subject_default_override'] : ((isset($for_edit['subject'])) ? $for_edit['subject'] : ''),
 
 			'S_DISPLAY_ERROR'			=> $this->settings['display_error'],
 			'S_DISPLAY_SUBJECT'			=> $this->settings['display_subject'],
