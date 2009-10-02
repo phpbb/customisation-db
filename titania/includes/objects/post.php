@@ -197,9 +197,31 @@ class titania_post extends titania_database_object
 	*/
 	public function get_url()
 	{
-		$url = $this->topic->get_url();
+		if (is_object($this->topic))
+		{
+			return titania::$url->append_url($this->topic->get_url(), array('p' => $this->post_id, '#p' => $this->post_id));
+		}
 
-		$url = titania::$url->append_url($url, array('p' => $this->post_id, '#p' => $this->post_id));
+		switch ($this->post_type)
+		{
+			case TITANIA_POST_TRACKER :
+				$page = 'tracker';
+			break;
+
+			case TITANIA_POST_QUEUE :
+				$page = 'queue';
+			break;
+
+			case TITANIA_POST_REVIEW :
+				$page = 'review';
+			break;
+
+			default :
+				$page = 'support';
+			break;
+		}
+
+		return titania::$url->build_url($page, array('p', $this->post_id, '#p' => $this->post_id));
 	}
 
 	/**

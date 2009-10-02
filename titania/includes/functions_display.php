@@ -352,7 +352,7 @@ function titania_display_topic($topic, $sort = false, $options = array('start' =
 		'WHERE' => 'p.post_access >= ' . titania::$access_level . '
 			AND p.topic_id = ' . (int) $topic->topic_id . '
 			AND u.user_id = p.post_user_id',
-		'ORDER_BY'	=> 'p.post_time DESC',
+		'ORDER_BY'	=> 'p.post_time ASC',
 	);
 
 	// Sort options
@@ -428,7 +428,7 @@ function titania_display_topic($topic, $sort = false, $options = array('start' =
 	// Loop de loop
 	foreach ($posts as $row)
 	{
-		$post = new titania_post($topic->topic_type);
+		$post = new titania_post($topic->topic_type, $topic);
 		$post->__set_array($row);
 
 		phpbb::$template->assign_block_vars('posts', array_merge($post->assign_details(), assign_user_details($row)));

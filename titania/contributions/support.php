@@ -136,9 +136,7 @@ switch ($action)
 			{
 				$post_object->submit();
 
-				$redirect = titania::$contrib->get_url('support');
-				$redirect = titania::$url->append_url($redirect, array($post_object->topic->topic_subject_clean, 't' => $post_object->topic_id, 'p' => $post_object->post_id, '#p' => $post_object->post_id));
-				redirect($redirect);
+				redirect($post_object->get_url());
 			}
 		}
 

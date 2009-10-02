@@ -112,9 +112,9 @@ class titania_url
 				continue;
 			}
 
-			if ($name === '#')
+			if (substr($name, 0, 1) == '#')
 			{
-				$anchor = '#' . $value;
+				$anchor = $name . $value;
 				continue;
 			}
 
