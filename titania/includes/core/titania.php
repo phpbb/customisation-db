@@ -688,14 +688,15 @@ class titania
 			return false;
 		}
 
+		// generate activation key
+		$confirm_key = gen_rand_string(10);
+
 		$s_hidden_fields = build_hidden_fields(array(
 			'confirm_uid'	=> phpbb::$user->data['user_id'],
+			'confirm_key'	=> $confirm_key,
 			'sess'			=> phpbb::$user->session_id,
 			'sid'			=> phpbb::$user->session_id,
 		));
-
-		// generate activation key
-		$confirm_key = gen_rand_string(10);
 
 		self::page_header((!isset(phpbb::$user->lang[$title])) ? phpbb::$user->lang['CONFIRM'] : phpbb::$user->lang[$title]);
 
@@ -709,7 +710,7 @@ class titania
 		// re-add sid / transform & to &amp; for user->page (user->page is always using &)
 		if ($u_action)
 		{
-			$u_action = titania::$url->append_url($u_action, array('confirm_key' => $confirm_key));
+			$u_action = titania::$url->append_url($u_action);
 		}
 		else
 		{
