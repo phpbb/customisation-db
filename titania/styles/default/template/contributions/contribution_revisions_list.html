@@ -7,7 +7,6 @@
 						<th>{L_REVISION}</th>
 						<th>{L_CREATED}</th>
 						<th>{L_VALIDATED}</th>
-						<th>{L_VALIDATED_DATE}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -16,7 +15,7 @@
 							<td>#{revisions.REVISION_ID}</td>
 							<td>{revisions.CREATED}</td>
 							<td>{revisions.VALIDATED}</td>
-							<td>{revisions.VALIDATED_DATE}</td>
+							<td>{revisions.VALIDATED_DATE} <span class="rightside"><a href="{revisions.U_DELETE_REVISION}"><img src="{IMG_ICON_DELETE}" alt="{L_DELETE_REVISION}" title="{L_DELETE_REVISION}" /></a></span></td>
 						</tr>
 					<!-- END revisions -->
 				</tbody>

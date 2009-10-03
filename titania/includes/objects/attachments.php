@@ -136,8 +136,8 @@ class titania_attachments extends titania_database_object
 		phpbb::$template->assign_vars(array(
 			'ON_COMPLETE'	=> (isset($uploadify_settings['on_complete'])) ? $uploadify_settings['on_complete'] : 'onComplete',
 
-			'UPLOADER'		=> generate_board_url(true) . '/' . titania::$config->titania_script_path . 'js/uploadify/uploader.swf',
-			'UPLOAD_SCRIPT'	=> generate_board_url(true) . '/' . append_sid(titania::$config->titania_script_path . 'upload.' . PHP_EXT, $upload_scrip_params),
+			'UPLOADER'		=> titania::$url->root_url . 'js/uploadify/uploader.swf',
+			'UPLOAD_SCRIPT'	=> append_sid(titania::$url->root_url . 'upload.' . PHP_EXT, $upload_scrip_params),
 		));
 	}
 

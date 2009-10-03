@@ -41,6 +41,9 @@ $lang = array_merge($lang, array(
 	'CREATED'					=> 'Created',
 	'CREATE_REVISION'			=> 'Create new revision',
 
+	'DELETE_REVISION'			=> 'Delete Revision',
+	'DELETE_REVISION_CONFIRM'	=> 'Are you sure you wish to delete this revision and its files?',
+
 	'NO_REVISIONS'				=> 'No revisions for this contribution exist',
 	'NOT_VALIDATED'				=> '<b>Currently not validated</b>',
 

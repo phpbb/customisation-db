@@ -104,6 +104,10 @@ fieldset dl:hover dt label.error {
 	color: #BC2A4D;
 }
 
+.rightside {
+	float: right;
+}
+
 /* move this to a other file later ;) */
 #list-db ul.topiclist dt {
 	font-weight: normal;

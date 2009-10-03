@@ -116,9 +116,13 @@ class titania_revision extends titania_database_object
 				'CREATED'			=> phpbb::$user->format_date($row['revision_time']),
 				// This may need to be changed when the queue is done.
 				'VALIDATED_DATE'	=> ($row['validation_date']) ? phpbb::$user->format_date($row['validation_date']) : phpbb::$user->lang['NOT_VALIDATED'],
+
+				'U_DELETE_REVISION'	=> $this->get_url('delete', $row['revision_id']),
 			));
 		}
 		phpbb::$db->sql_freeresult($result);
+
+		phpbb::$template->assign_var('IMG_ICON_DELETE', titania::$style_path . 'theme/images/delete.png');
 
 	}
 
