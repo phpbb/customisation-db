@@ -6,9 +6,30 @@
 
 <noscript>{L_JAVASCRIPT_REQUIRED}</noscript>
 
-<div id="revision_holder"> <!-- Used for Javascript, keep this ID somewhere if changing style! -->
-	<!-- INCLUDE contributions/contribution_revisions_list.html -->
+<!-- IF .revisions -->
+<div class="forumbg">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<table cellspacing="1" class="table1">
+			<thead>
+				<tr>
+					<th>{L_REVISION}</th>
+					<th>{L_CREATED}</th>
+					<th>{L_VALIDATED}</th>
+				</tr>
+			</thead>
+			<tbody id="revision_holder">
+				<!-- INCLUDE contributions/contribution_revisions_list.html -->
+			</tbody>
+		</table>
+	<span class="corners-bottom"><span></span></span></div>
 </div>
+<!-- ELSE -->		
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<strong>{L_NO_REVISIONS}</strong>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
 
 <!-- IF CAN_MANAGE -->
 <br />
@@ -17,25 +38,18 @@
 <div class="upload_container">
 	<!-- INCLUDE uploadify.html -->
 	
-	<div id="noticebox" class="noticebox unsaved" style="display: none;">
-		<div class="inner"><span class="corners-top"><span></span></span>
-		<h3 id="noticebox_title">Notice</h3>
-			<p id="noticebox_msg">You have unsaved changes, be sure to save them before you leave this page!</p>
-		<span class="corners-bottom"><span></span></span></div>
-	</div>
 
-
-		<div class="upload_item">
-			<div class="upload_summary" style="display: none;">
-				<p class="upload_success">You're file has been uploaded successfully, you may now enter the information about the
-				new revision below</p>
-			</div>
-			<form id="revision_submit" method="post" action="{U_SUBMIT_REVISION}" enctype="multipart/form-data">
-				<div id="uploads" style="display:none;">
-		
-				</div>	
-				{S_FORM_TOKEN}
-			</form>
+	<div class="upload_item">
+		<div class="upload_summary" style="display: none;">
+			<p class="upload_success">You're file has been uploaded successfully, you may now enter the information about the
+			new revision below</p>
+		</div>
+		<form id="revision_submit" method="post" action="{U_SUBMIT_REVISION}" enctype="multipart/form-data">
+			<div id="uploads" style="display:none;">
+	
+			</div>	
+			{S_FORM_TOKEN}
+		</form>
 	</div>
 </div>
 <!-- ENDIF -->

@@ -71,9 +71,12 @@ class titania_revisons_page
 							'revisions'		=> 'contributions/contribution_revisions_list.html',
 						));
 
-						$revision->display();
+						$revision->display($revision->revision_id);
 
-						$error['html'] = phpbb::$template->assign_display('revisions');
+						phpbb::$template->assign_var('S_AJAX', true);
+
+						$error['html'] 	= phpbb::$template->assign_display('revisions');
+						$error['id'] 	= $revision->revision_id;
 
 					}
 				}

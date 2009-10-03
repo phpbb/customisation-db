@@ -19,9 +19,12 @@ $(document).ready(function() {
 				dataType: 'json',
 				success: function(data, textStatus)
 				{
-					$('#uploads').slideUp('slow');
-					$('#upload_container').fadeIn('slow');
-					$('#revision_holder').html(data.html);
+					$('#uploads').slideUp('slow', function() {
+						$('#upload_container').fadeIn('slow', function() {
+							$('#revision_holder').append(data.html);
+							$('#revision-' + data.id).show().effect('highlight', {}, 3000);
+						});
+					});
 				}
 			});
 			
@@ -37,14 +40,15 @@ function revision_upload_complete(event, queueId, fileObj, response, data)
 	if (response.error && response.error != '')
 	{
 		$('#errorbox_msg').text(response.error);
-		$('#errorbox').fadeIn('slow');
+		$('#errorbox').slideDown('slow');
 
 		setTimeout("$('#errorbox').fadeOut('slow');", 10000);
 	}
 	else
 	{
-		$('#upload_container').slideUp(1000);
-		$('#uploads').html(response.html).slideDown('slow');
+		$('#upload_container').slideUp('slow', function () {
+			$('#uploads').html(response.html).slideDown('slow')
+		});
 		$('#errorbox').css('display', 'none');
 	}
 }

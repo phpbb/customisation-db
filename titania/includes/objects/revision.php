@@ -101,12 +101,13 @@ class titania_revision extends titania_database_object
 	/**
 	 *
 	 */
-	public function display()
+	public function display($revision_id = false)
 	{
 		// @todo Hanlde unvalidate and validated revisions basesd on if this is a team member, author or user.
 		$sql = 'SELECT *
 			FROM ' . $this->sql_table . '
-			WHERE contrib_id = ' . (int) titania::$contrib->contrib_id;
+			WHERE contrib_id = ' . (int) titania::$contrib->contrib_id .
+			(($revision_id !== false) ? ' AND revision_id = ' . (int) $revision_id : '');
 		$result = phpbb::$db->sql_query($sql);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
