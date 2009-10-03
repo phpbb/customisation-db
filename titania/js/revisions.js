@@ -42,7 +42,7 @@ function revision_upload_complete(event, queueId, fileObj, response, data)
 		$('#errorbox_msg').text(response.error);
 		$('#errorbox').slideDown('slow');
 
-		setTimeout("$('#errorbox').fadeOut('slow');", 10000);
+		setTimeout("$('#errorbox').fadeOut('slow');", 1000);
 	}
 	else
 	{
