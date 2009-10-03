@@ -180,6 +180,7 @@ class titania_faq extends titania_database_object
 		return array_merge(generate_text_for_edit($this->faq_text, $this->faq_text_uid, $this->faq_text_options), array(
 			'options'	=> $this->faq_text_options,
 			'subject'	=> $this->faq_subject,
+			'access'	=> $this->faq_access,
 		));
 	}
 

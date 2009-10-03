@@ -170,7 +170,7 @@ class titania_message
 		$post_options->set_in_template();
 
 		phpbb::$template->assign_vars(array(
-			'ACCESS_OPTIONS'			=> titania_access_select(),
+			'ACCESS_OPTIONS'			=> titania_access_select((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC),
 
 			'EDIT_REASON'				=> (isset($for_edit['edit_reason'])) ? $for_edit['edit_reason'] : '',
 

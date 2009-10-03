@@ -143,7 +143,7 @@ function titania_access_select($default = false)
 		TITANIA_ACCESS_PUBLIC 	=> 'ACCESS_PUBLIC',
 	);
 
-	if (!$default)
+	if ($default === false)
 	{
 		$default = TITANIA_ACCESS_PUBLIC;
 	}
@@ -158,6 +158,7 @@ function titania_access_select($default = false)
 		}
 
 		$selected = ($default == $type) ? ' selected="selected"' : '';
+
 		$s_options .= '<option value="' . $type . '"' . $selected . '>' . phpbb::$user->lang[$lang_key] . '</option>';
 	}
 

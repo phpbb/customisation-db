@@ -406,7 +406,7 @@ $versions = array(
 
 	'0.1.6' => array(
 		'table_column_add' => array(
-			array(TITANIA_CONTRIB_FAQ_TABLE, 'faq_access', array('TINT:1', 0)),
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'faq_access', array('TINT:1', 2)),
 		),
 	),
 

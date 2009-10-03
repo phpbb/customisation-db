@@ -152,25 +152,10 @@ switch ($action)
 		{
 			titania::page_header('FAQ_LIST');
 
-			// Titania's access
-			$sql_in = array();
-
-			switch (titania::$access_level)
-			{
-				case 0:
-					$sql_in[] = TITANIA_ACCESS_TEAMS;
-				case 1:
-					$sql_in[] = TITANIA_ACCESS_AUTHORS;
-				case 2:
-				default:
-					$sql_in[] = TITANIA_ACCESS_PUBLIC;
-				break;
-			}
-
 			$sql = 'SELECT *
 				FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
 				WHERE contrib_id = ' . titania::$contrib->contrib_id . '
-					AND ' . $db->sql_in_set('faq_access', $sql_in) . '
+					AND faq_access >= ' . titania::$access_level . '
 				ORDER BY faq_order_id ASC';
 			$result = phpbb::$db->sql_query($sql);
 
