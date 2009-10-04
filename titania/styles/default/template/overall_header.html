@@ -50,6 +50,12 @@
 	var orange_star= new Image(16,16);
 	orange_star.src = "{UA_ORANGE_STAR_SRC}";
 	var max_rating = "{UA_MAX_RATING}";
+
+	<!-- IF S_HIDE_ERROR_BOX -->
+	$(document).ready(function() {
+		setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
+	});
+	<!-- ENDIF -->
 // ]]>
 </script>
 

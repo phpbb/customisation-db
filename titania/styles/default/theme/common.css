@@ -151,6 +151,10 @@ fieldset dl:hover dt label.error {
 	padding-left: 5px;
 }
 
+.menu_bar ul.linklist {
+	margin: 1em 0; 
+}
+
 /* proto code
 ---------------------------------------- */
 #wrap {

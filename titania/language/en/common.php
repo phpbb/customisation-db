@@ -80,6 +80,7 @@ $lang = array_merge($lang, array(
 
 	'NO_DESC'					=> 'You have to enter the description.',
 
+	'ORDER'						=> 'Order',
 	'PURGE_CACHE'				=> 'Purge Cache',
 
 	'RATING'					=> 'Rating',
@@ -87,8 +88,10 @@ $lang = array_merge($lang, array(
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
 
 	'SELECT_CATEGORY'			=> '-- Select category --',
+	'SELECT_SORT_METHOD'		=> 'Sort By',
 	'SITE_INDEX'				=> 'Site Index',
 	'SNIPPET'					=> 'Snippet',
+	'SORT_CONTRIB_NAME'			=> 'Contribution Name',
 	'STYLE'						=> 'Style',
 
 	'TITANIA_INDEX'				=> 'Customisation Database',

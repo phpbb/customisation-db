@@ -633,6 +633,12 @@ class titania
 				'MESSAGE'	=> (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message,
 			));
 		}
+
+		// Setup the error box to hide.
+		phpbb::$template->assign_vars(array(
+			'S_HIDE_ERROR_BOX'		=> true,
+			'ERRORBOX_CLASS'		=> $block,
+		));
 	}
 
 	/**

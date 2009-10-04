@@ -20,9 +20,13 @@ $(document).ready(function() {
 				success: function(data, textStatus)
 				{
 					$('#uploads').slideUp('slow', function() {
+						$('#no_revisions').fadeOut('slow');
 						$('#upload_container').fadeIn('slow', function() {
-							$('#revision_holder').append(data.html);
-							$('#revision-' + data.id).show().effect('highlight', {}, 3000);
+							// @todo When the revisions are not a table layout, we can have better effects.
+							$('#revisions_list').show('slow', function() {
+								$('#revision_holder').append(data.html);
+								$('#revision-' + data.id).show().effect('highlight', {}, 3000);
+							});
 						});
 					});
 				}
@@ -42,12 +46,14 @@ function revision_upload_complete(event, queueId, fileObj, response, data)
 		$('#errorbox_msg').text(response.error);
 		$('#errorbox').slideDown('slow');
 
-		setTimeout("$('#errorbox').fadeOut('slow');", 1000);
+		setTimeout("$('#errorbox').fadeOut('slow');", 5000);
 	}
 	else
 	{
 		$('#upload_container').slideUp('slow', function () {
-			$('#uploads').html(response.html).slideDown('slow')
+			$('#revisions_list').slideUp('slow', function() {
+				$('#uploads').html(response.html).slideDown('slow')
+			});
 		});
 		$('#errorbox').css('display', 'none');
 	}

@@ -7,7 +7,7 @@
 <noscript>{L_JAVASCRIPT_REQUIRED}</noscript>
 
 <!-- IF .revisions -->
-<div class="forumbg">
+<div class="forumbg" id="revisions_list">
 	<div class="inner"><span class="corners-top"><span></span></span>
 		<table cellspacing="1" class="table1">
 			<thead>
@@ -24,9 +24,27 @@
 	<span class="corners-bottom"><span></span></span></div>
 </div>
 <!-- ELSE -->		
-<div class="panel">
+<div class="panel" id="no_revisions">
 	<div class="inner"><span class="corners-top"><span></span></span>
 	<strong>{L_NO_REVISIONS}</strong>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- This div needs to be here at all times! -->
+<div class="forumbg" id="revisions_list" style="display: none;">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<table cellspacing="1" class="table1">
+			<thead>
+				<tr>
+					<th>{L_REVISION}</th>
+					<th>{L_CREATED}</th>
+					<th>{L_VALIDATED}</th>
+				</tr>
+			</thead>
+			<tbody id="revision_holder">
+				<!-- INCLUDE contributions/contribution_revisions_list.html -->
+			</tbody>
+		</table>
 	<span class="corners-bottom"><span></span></span></div>
 </div>
 <!-- ENDIF -->
