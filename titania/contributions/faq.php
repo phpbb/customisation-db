@@ -23,9 +23,9 @@ $faq_id		= request_var('f', 0);
 $action 	= request_var('action', '');
 $submit		= isset($_POST['submit']) ? true : false;
 
-$faq = new titania_faq($faq_id);
-
 load_contrib();
+
+$faq = new titania_faq($faq_id);
 
 switch ($action)
 {

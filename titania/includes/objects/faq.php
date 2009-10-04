@@ -76,6 +76,16 @@ class titania_faq extends titania_database_object
 		}
 	}
 
+	public function load()
+	{
+		parent::load();
+
+		if (titania::$contrib->contrib_id != $this->contrib_id)
+		{
+			trigger_error(phpbb::$user->lang['FAQ_NOT_FOUND']);
+		}
+	}
+
 	/**
 	* Validate that all the data is correct
 	*
