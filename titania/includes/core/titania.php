@@ -810,7 +810,7 @@ class titania
 
 		while (($fname = readdir($dh)) !== false)
 		{
-			if (strpos($fname, '.' . PHP_EXT) && substr($fname, 0, 1) != '_')
+			if (strpos($fname, '.' . PHP_EXT) && substr($fname, 0, 1) != '_' && $fname != 'base.' . PHP_EXT)
 			{
 				include(TITANIA_ROOT . 'includes/types/' . $fname);
 

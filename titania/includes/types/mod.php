@@ -16,7 +16,12 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-class titania_type_mod
+if (!class_exists('titania_type_base'))
+{
+	include(TITANIA_ROOT . 'includes/types/base.' . PHP_EXT);
+}
+
+class titania_type_mod extends titania_type_base
 {
 	/**
 	 * The type id
@@ -38,13 +43,6 @@ class titania_type_mod
 	 * @var string author count
 	 */
 	public $author_count = 'author_mods';
-
-	/**
-	 * The language key, initialize in constructor
-	 *
-	 * @var string Language key
-	 */
-	public $lang = '';
 
 	public function __construct()
 	{
