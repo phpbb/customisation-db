@@ -25,17 +25,7 @@ $submit		= isset($_POST['submit']) ? true : false;
 
 $faq = new titania_faq($faq_id);
 
-// Load the FAQ/Contrib item
-if ($faq_id)
-{
-	$faq->load();
-
-	load_contrib($faq->contrib_id);
-}
-else
-{
-	load_contrib();
-}
+load_contrib();
 
 switch ($action)
 {
@@ -69,7 +59,7 @@ switch ($action)
 
 			if (sizeof($error))
 			{
-				$template->assign_var('ERROR', implode('<br />', $error));
+				phpbb::$template->assign_var('ERROR', implode('<br />', $error));
 			}
 			else
 			{

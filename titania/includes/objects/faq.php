@@ -72,6 +72,7 @@ class titania_faq extends titania_database_object
 		if ($faq_id !== false)
 		{
 			$this->faq_id = $faq_id;
+			$this->load();
 		}
 	}
 
@@ -251,7 +252,7 @@ class titania_faq extends titania_database_object
 
 		$sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
 			SET faq_views = faq_views + 1
-			WHERE faq_id = ' . $this->faq_id;
+			WHERE faq_id = ' . (int) $this->faq_id;
 		phpbb::$db->sql_query($sql);
 	}
 
