@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 169 2009-08-07 22:23:53Z exreaction $
+ * @version $Id: umil.php 177 2009-09-19 03:18:41Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -232,7 +232,7 @@ class umil
 		$args = func_get_args();
 		$this->command = call_user_func_array(array($this, 'get_output_text'), $args);
 
-		$this->result = $user->lang['SUCCESS'];
+		$this->result = (isset($user->lang['SUCCESS'])) ? $user->lang['SUCCESS'] : 'SUCCESS';
 		$this->db->sql_return_on_error(true);
 
 		//$this->db->sql_transaction('begin');
@@ -1065,19 +1065,19 @@ class umil
 	*
 	* @param string $class The module class(acp|mcp|ucp)
 	* @param int|string|bool $parent The parent module_id|module_langname (0 for no parent).  Use false to ignore the parent check and check class wide.
-	* @param mixed $module The module_langname you would like to check for to see if it exists
+	* @param int|string $module The module_id|module_langname you would like to check for to see if it exists
 	*/
 	function module_exists($class, $parent, $module)
 	{
 		$class = $this->db->sql_escape($class);
 		$module = $this->db->sql_escape($module);
 
-		// Allows '' to be sent
-		$parent = (!$parent) ? 0 : $parent;
-
 		$parent_sql = '';
 		if ($parent !== false)
 		{
+			// Allows '' to be sent as 0
+			$parent = (!$parent) ? 0 : $parent;
+
 			if (!is_numeric($parent))
 			{
 				$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
@@ -1103,7 +1103,7 @@ class umil
 		$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
 			WHERE module_class = '$class'
 			$parent_sql
-			AND module_langname = '$module'";
+			AND " . ((is_numeric($module)) ? 'module_id = ' . (int) $module : "module_langname = '$module'");
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
@@ -1162,7 +1162,7 @@ class umil
 			return $this->umil_end('FAIL');
 		}
 
-        // Allows '' to be sent
+        // Allows '' to be sent as 0
 		$parent = (!$parent) ? 0 : $parent;
 
 		// allow sending the name as a string in $data to create a category
@@ -1242,7 +1242,7 @@ class umil
 
 			$parent = $data['parent_id'] = $row['module_id'];
 		}
-		else if ($parent && !$this->module_exists($class, false, $parent))
+		else if (!$this->module_exists($class, false, $parent))
 		{
 			return $this->umil_end('PARENT_NOT_EXIST');
 		}
@@ -1350,9 +1350,6 @@ class umil
 			return;
 		}
 
-        // Allows '' to be sent
-		$parent = (!$parent) ? 0 : $parent;
-
 		// Imitation of module_add's "automatic" and "manual" method so the uninstaller works from the same set of instructions for umil_auto
 		if (is_array($module))
 		{
@@ -1414,6 +1411,9 @@ class umil
 			$parent_sql = '';
 			if ($parent !== false)
 			{
+				// Allows '' to be sent as 0
+				$parent = (!$parent) ? 0 : $parent;
+
 				if (!is_numeric($parent))
 				{
 					$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
