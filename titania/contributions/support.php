@@ -17,54 +17,38 @@ if (!defined('IN_TITANIA'))
 }
 
 titania::load_object(array('topic', 'post'));
+titania::load_overlord(array('topics', 'posts'));
+
 titania::add_lang('posting');
 
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
-$start = request_var('start', 0);
-$limit = request_var('limit', (int) phpbb::$config['posts_per_page']);
 
 // Load the topic and contrib items
 if ($post_id)
 {
-	$sql = 'SELECT t.* FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t
-		WHERE p.post_id = ' . $post_id . '
-			AND t.topic_id = p.topic_id';
-	$result = phpbb::$db->sql_query($sql);
-	$topic_row = phpbb::$db->sql_fetchrow($result);
-	phpbb::$db->sql_freeresult($result);
+	$topic_id = topics_overlord::load_topic_from_post($post_id);
 
-	if (!$topic_row)
+	if (!$topic_id)
 	{
 		trigger_error('NO_TOPIC');
 	}
 
-	// Load the topic object
-	$topic_id = $topic_row['topic_id'];
-	$topic = new titania_topic(TITANIA_POST_DEFAULT, $topic_id);
-	$topic->__set_array($topic_row);
-	unset($topic_row);
-
-	// Figure out the appropriate start position
-	$sql = 'SELECT COUNT(post_id) as start FROM ' . TITANIA_POSTS_TABLE . '
-		WHERE post_id < ' . $post_id . '
-			AND topic_id = ' . $topic_id;
-	phpbb::$db->sql_query($sql);
-	$start = phpbb::$db->sql_fetchfield('start');
-	phpbb::$db->sql_freeresult();
-
-	$start = ($start > 0) ? (floor($start / $limit) * $limit) : 0;
+	$topic = topics_overlord::$topics[$topic_id];
 
 	// Load the contrib item
 	load_contrib($topic->contrib_id);
 }
 else if ($topic_id)
 {
-	$topic = new titania_topic(TITANIA_POST_DEFAULT, $topic_id);
-	if (!$topic->load())
+	topics_overlord::load_topic($topic_id);
+
+	if (!isset(topics_overlord::$topics[$topic_id]))
 	{
 		trigger_error('NO_TOPIC');
 	}
+
+	$topic = topics_overlord::$topics[$topic_id];
 
 	// Load the contrib item
 	load_contrib($topic->contrib_id);
@@ -173,29 +157,13 @@ switch ($action)
 
 		if ($topic_id)
 		{
-			$start = request_var('start', 0);
-			$limit = request_var('limit', (int) phpbb::$config['topics_per_page']);
-
-			titania_display_topic($topic, false, array('start' => $start, 'limit' => $limit));
-
-			phpbb::$template->assign_vars(array(
-				'U_POST_REPLY'			=> (phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url($topic->get_url(), array('action' => 'reply')) : '',
-			));
+			posts_overlord::display_topic_complete($topic);
 
 			titania::page_header(phpbb::$user->lang['CONTRIB_SUPPORT'] . ' - ' . censor_text($topic->topic_subject));
 		}
 		else
 		{
-			$start = request_var('start', 0);
-			$limit = request_var('limit', (int) phpbb::$config['topics_per_page']);
-
-			titania_display_forums('contrib', titania::$contrib, false, array('start' => $start, 'limit' => $limit));
-
-			phpbb::$template->assign_vars(array(
-				'U_CREATE_TOPIC'		=> (phpbb::$auth->acl_get('titania_topic')) ? titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => 'post')) : '',
-
-				'S_TOPIC_LIST'			=> true,
-			));
+			topics_overlord::display_forums_complete('support', titania::$contrib);
 
 			titania::page_header('CONTRIB_SUPPORT');
 		}

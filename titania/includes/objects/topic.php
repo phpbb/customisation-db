@@ -61,7 +61,7 @@ class titania_topic extends titania_database_object
 	 * @param int|string $type The type of topic ('tracker', 'queue', 'normal').  Normal/default meaning support/discussion.  Constants for the type can be sent instead of a string
 	 * @param int $topic_id The topic_id, 0 for making a new topic
 	 */
-	public function __construct($type, $topic_id = 0)
+	public function __construct($type = 0, $topic_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -78,6 +78,8 @@ class titania_topic extends titania_database_object
 			'topic_approved'		=> array('default' => true),
 			'topic_reported'		=> array('default' => false), // True if any posts in the topic are reported
 			'topic_deleted'			=> array('default' => false), // True if the topic is soft deleted
+
+			'topic_time'			=> array('default' => (int) titania::$time),
 
 			'topic_posts'			=> array('default' => ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
 			'topic_views'			=> array('default' => 0), // View count

@@ -143,6 +143,9 @@ class titania
 
 		// Load the types
 		self::load_types();
+
+		// Load the users overlord
+		self::load_overlord('users');
 	}
 
 	/**
@@ -180,6 +183,38 @@ class titania
 		}
 
 		self::$config->read_array($config);
+	}
+
+	/**
+	* Load a Titania Overlord Object
+	*
+	* @param mixed $overlord_name The name of the overlord
+	*/
+	public static function load_overlord($overlord_name)
+	{
+		if (is_array($overlord_name))
+		{
+			foreach ($overlord_name as $name)
+			{
+				self::load_overlord($name);
+			}
+
+			return;
+		}
+
+		$overlord_name = preg_replace('#[^A-Za-z0-9]#', '', $overlord_name);
+
+		if (class_exists($overlord_name . '_overlord'))
+		{
+			return;
+		}
+
+		if (!file_exists(TITANIA_ROOT . 'includes/overlords/' . $overlord_name . '.' . PHP_EXT))
+		{
+			trigger_error('Missing Object: ' . $overlord_name);
+		}
+
+		include(TITANIA_ROOT . 'includes/overlords/' . $overlord_name . '.' . PHP_EXT);
 	}
 
 	/**

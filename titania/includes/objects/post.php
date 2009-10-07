@@ -69,7 +69,7 @@ class titania_post extends titania_database_object
 	 * @param object|bool|int $topic The topic object, topic_id to load it ourselves for an existing topic, boolean false for making a new post (we will create the topic object)
 	 * @param int $post_id The post_id, 0 for making a new post
 	 */
-	public function __construct($type, $topic = false, $post_id = 0)
+	public function __construct($type = 0, $topic = false, $post_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -391,32 +391,35 @@ class titania_post extends titania_database_object
 			$this->generate_text_for_storage();
 		}
 
-		// If no topic_id it means we are creating a new topic, so we need to set the first_post_ data.
-		if (!$this->topic->topic_first_post_id)
-		{
-			parent::submit();
+		parent::submit();
 
+		// If no topic_id it means we are creating a new topic, so we need to set the first_post_ data.
+		// Respect the post_time!  If for some reason we want to insert a post before the first one...
+		if (!$this->topic->topic_first_post_id || $this->topic->topic_first_post_time > $this->post_time)
+		{
 			$this->topic->__set_array(array(
 				'topic_first_post_id'			=> $this->post_id,
 				'topic_first_post_user_id'		=> $this->post_user_id,
 				'topic_first_post_username'		=> phpbb::$user->data['username'],
 				'topic_first_post_user_colour'	=> phpbb::$user->data['user_colour'],
 				'topic_first_post_time'			=> $this->post_time,
+
+				'topic_time'					=> $this->post_time,
 			));
 		}
-		else
-		{
-			parent::submit();
-		}
 
-		$this->topic->__set_array(array(
-			'topic_last_post_id'			=> $this->post_id,
-			'topic_last_post_user_id'		=> $this->post_user_id,
-			'topic_last_post_username'		=> phpbb::$user->data['username'],
-			'topic_last_post_user_colour'	=> phpbb::$user->data['user_colour'],
-			'topic_last_post_time'			=> $this->post_time,
-			'topic_last_post_subject'		=> $this->post_subject,
-		));
+		// Respect the post_time!  If for some reason we want to insert a post before the last one...
+		if ($this->topic->topic_last_post_time < $this->post_time)
+		{
+			$this->topic->__set_array(array(
+				'topic_last_post_id'			=> $this->post_id,
+				'topic_last_post_user_id'		=> $this->post_user_id,
+				'topic_last_post_username'		=> phpbb::$user->data['username'],
+				'topic_last_post_user_colour'	=> phpbb::$user->data['user_colour'],
+				'topic_last_post_time'			=> $this->post_time,
+				'topic_last_post_subject'		=> $this->post_subject,
+			));
+		}
 
 		// Gotta update the topic again with the first/last post data and update teh post count
 		$this->topic->update_postcount($this->post_access, false, false);

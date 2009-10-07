@@ -174,7 +174,7 @@ $versions = array(
 					'faq_text_uid'			=> array('VCHAR:8', ''),
 					'faq_text_options'		=> array('UINT:11', 7),
 					'faq_views'				=> array('UINT', 0),
-					'faq_access'			=> array('TINT:1', 0),
+					'faq_access'			=> array('TINT:1', 2),
 				),
 				'PRIMARY_KEY'	=> 'faq_id',
 				'KEYS'			=> array(

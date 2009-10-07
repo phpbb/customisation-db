@@ -524,6 +524,15 @@ $versions = array(
 		),
 	),
 
+	'0.1.19' => array(
+		'table_column_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_time', array('UINT:11', 0)),
+		),
+		'table_index_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_time'),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

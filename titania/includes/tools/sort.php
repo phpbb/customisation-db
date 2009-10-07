@@ -43,14 +43,14 @@ class titania_sort
 	 *
 	 * @var string
 	 */
-	protected $sort_key = '';
+	public $sort_key = '';
 
 	/**
 	 * User selected sort direction
 	 *
 	 * @var string
 	 */
-	protected $sort_dir = '';
+	public $sort_dir = '';
 
 	/**
 	 * Default sort key for the page
@@ -64,27 +64,17 @@ class titania_sort
 	 *
 	 * @var string
 	 */
-	public $default_dir = '';
+	public $default_dir = 'a';
 
 	/**
 	 * Sort direction text shown to user, used for select box
 	 *
 	 * @var unknown_type
 	 */
-	protected $sort_dir_text = array();
-
-	/**
-	 * Set some default values for the sort object
-	 */
-	public function __construct()
-	{
-		$this->sort_dir_text = array(
-			'a' => phpbb::$user->lang['ASCENDING'],
-			'd' => phpbb::$user->lang['DESCENDING'],
-		);
-
-		$this->default_dir = 'a';
-	}
+	public $sort_dir_text = array(
+		'a' => 'ASCENDING',
+		'd' => 'DESCENDING',
+	);
 
 	/**
 	 * Setup the sort key and direction -- calls request_var for sort key and sort dir.
@@ -93,86 +83,16 @@ class titania_sort
 	 * @param string $sk name of sort key _REQUEST field
 	 * @param string $sd name of sort dir _REQUEST field
 	 */
-	public function sort_request($default_key, $sk = 'sk', $sd = 'sd')
+	public function sort_request($default_key = false, $sk = 'sk', $sd = 'sd')
 	{
 		// default_key may already be set, check to ensure we want to set it.
-		if ($default_key)
+		if ($default_key !== false)
 		{
-			$this->set_default_key($default_key);
+			$this->default_key = $default_key;
 		}
 
-		$this->set_sort_key(request_var($sk, $this->default_key));
-		$this->set_sort_dir(request_var($sd, $this->default_dir));
-
-		return true;
-	}
-
-	/**
-	 * Set the default sort key
-	 *
-	 * @param string $default_key
-	 */
-	public function set_default_key($default_key)
-	{
-		$this->default_key = $default_key;
-
-		return true;
-	}
-
-	/**
-	 * Set the user selected sort key
-	 *
-	 * @param string $sort_key
-	 */
-	public function set_sort_key($sort_key)
-	{
-		$this->sort_key = $sort_key;
-
-		return true;
-	}
-
-	/**
-	 * Get the set sort key
-	 *
-	 * @param bool $return_default if set to false, this method will not return the sort key if it is also the default key
-	 * @return string sort_key
-	 */
-	public function get_sort_key($return_default = true)
-	{
-		if (!$return_default && $this->sort_key == $this->default_key)
-		{
-			return false;
-		}
-
-		return $this->sort_key;
-	}
-
-	/**
-	 * Set the user selected sort direction
-	 *
-	 * @param string $sort_dir
-	 */
-	public function set_sort_dir($sort_dir)
-	{
-		$this->sort_dir = $sort_dir;
-
-		return true;
-	}
-
-	/**
-	 * Get the set sort direction
-	 *
-	 * @param bool $return_default if set to false, this method will not return the sort dir if it is also the default direction
-	 * @return string sort_dir
-	 */
-	public function get_sort_dir($return_default = true)
-	{
-		if (!$return_default && $this->sort_dir == $this->default_dir)
-		{
-			return false;
-		}
-
-		return $this->sort_dir;
+		$this->sort_key = request_var($sk, $this->default_key);
+		$this->sort_dir = request_var($sd, $this->default_dir);
 	}
 
 	/**
@@ -182,7 +102,7 @@ class titania_sort
 	 * <code>
 	 * 	$sort->set_sort_keys(array(
 	 * 		'a'	=> array('SORT_LANG_KEY1',	't.some_sql_field'),
-	 * 		'b'	=> array('SORT_LANG_KEY2',	't.another_sql', 'default' => true),
+	 * 		'b'	=> array('SORT_LANG_KEY2',	't.another_sql', true), // this is the default
 	 * 		'c'	=> array('ANOTHER_LANG',	'a.sql_field'),
 	 * ));
 	 * </code>
@@ -194,15 +114,15 @@ class titania_sort
 		foreach ($sort_keys as $key => $option)
 		{
 			// text lang sort key
-			$this->sort_key_text[$key] = phpbb::$user->lang[$option[0]];
+			$this->sort_key_text[$key] = $option[0];
 
 			// sql sort key
 			$this->sort_key_sql[$key] = $option[1];
 
 			// if the third array increment is set to true, this key is set to default
-			if ((isset($option[2]) && $option[2]) || (isset($option['default']) && $option['default']))
+			if ((isset($option[2]) && $option[2]))
 			{
-				$this->set_default_key($key);
+				$this->default_key = $key;
 			}
 		}
 
@@ -236,7 +156,7 @@ class titania_sort
 		foreach ($this->sort_key_text as $key => $value)
 		{
 			$selected = ($this->sort_key == $key) ? ' selected="selected"' : '';
-			$s_sort_key .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
+			$s_sort_key .= '<option value="' . $key . '"' . $selected . '>' . ((isset(phpbb::$user->lang[$value])) ? phpbb::$user->lang[$value] : $value) . '</option>';
 		}
 
 		return $s_sort_key;
@@ -253,7 +173,7 @@ class titania_sort
 		foreach ($this->sort_dir_text as $key => $value)
 		{
 			$selected = ($this->sort_dir == $key) ? ' selected="selected"' : '';
-			$s_sort_dir .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
+			$s_sort_dir .= '<option value="' . $key . '"' . $selected . '>' . ((isset(phpbb::$user->lang[$value])) ? phpbb::$user->lang[$value] : $value) . '</option>';
 		}
 
 		return $s_sort_dir;
