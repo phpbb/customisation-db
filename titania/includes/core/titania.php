@@ -186,35 +186,41 @@ class titania
 	}
 
 	/**
+	 * Autoload any objects, tools, or overlords.
+	 * This autoload function does not handle core classes right now however it will once the naming of them is the same.
+	 *
+	 * @param $class_name
+	 *
+	 */
+	public static function autoload($class_name)
+	{
+		$directories = array(
+			'objects',
+			'tools',
+			'overlords'
+		);
+
+		foreach ($directories as $dir)
+		{
+			$class_name = preg_replace(array('#[^A-Za-z0-9]#', '#titania#', '#overlord#'), '', $class_name);
+
+			if (file_exists(TITANIA_ROOT . 'includes/' . $dir . '/' . $class_name . '.' . PHP_EXT))
+			{
+				include(TITANIA_ROOT . 'includes/' . $dir . '/' . $class_name . '.' . PHP_EXT);
+			}
+		}
+
+		// No error if file cant be found!
+	}
+
+	/**
 	* Load a Titania Overlord Object
 	*
 	* @param mixed $overlord_name The name of the overlord
 	*/
 	public static function load_overlord($overlord_name)
 	{
-		if (is_array($overlord_name))
-		{
-			foreach ($overlord_name as $name)
-			{
-				self::load_overlord($name);
-			}
-
-			return;
-		}
-
-		$overlord_name = preg_replace('#[^A-Za-z0-9]#', '', $overlord_name);
-
-		if (class_exists($overlord_name . '_overlord'))
-		{
-			return;
-		}
-
-		if (!file_exists(TITANIA_ROOT . 'includes/overlords/' . $overlord_name . '.' . PHP_EXT))
-		{
-			trigger_error('Missing Object: ' . $overlord_name);
-		}
-
-		include(TITANIA_ROOT . 'includes/overlords/' . $overlord_name . '.' . PHP_EXT);
+		return;
 	}
 
 	/**
@@ -224,29 +230,7 @@ class titania
 	*/
 	public static function load_object($object_name)
 	{
-		if (is_array($object_name))
-		{
-			foreach ($object_name as $name)
-			{
-				self::load_object($name);
-			}
-
-			return;
-		}
-
-		$object_name = preg_replace('#[^A-Za-z0-9]#', '', $object_name);
-
-		if (class_exists('titania_' . $object_name))
-		{
-			return;
-		}
-
-		if (!file_exists(TITANIA_ROOT . 'includes/objects/' . $object_name . '.' . PHP_EXT))
-		{
-			trigger_error('Missing Object: ' . $object_name);
-		}
-
-		include(TITANIA_ROOT . 'includes/objects/' . $object_name . '.' . PHP_EXT);
+		return;
 	}
 
 	/**
@@ -256,29 +240,7 @@ class titania
 	*/
 	public static function load_tool($tool_name)
 	{
-		if (is_array($tool_name))
-		{
-			foreach ($tool_name as $name)
-			{
-				self::load_tool($name);
-			}
-
-			return;
-		}
-
-		$tool_name = preg_replace('#[^A-Za-z0-9]#', '', $tool_name);
-
-		if (class_exists('titania_' . $tool_name))
-		{
-			return;
-		}
-
-		if (!file_exists(TITANIA_ROOT . 'includes/tools/' . $tool_name . '.' . PHP_EXT))
-		{
-			trigger_error('Missing Tool: ' . $tool_name);
-		}
-
-		include(TITANIA_ROOT . 'includes/tools/' . $tool_name . '.' . PHP_EXT);
+		return;
 	}
 
 	/**

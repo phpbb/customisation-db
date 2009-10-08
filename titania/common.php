@@ -76,3 +76,5 @@ if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get(
 		titania::confirm_box(false, phpbb::$user->lang['CONFIRM_PURGE_CACHE'], titania::$url->append_url(titania::$url->current_page, array_merge(titania::$url->params, array('cache' => 'purge'))));
 	}
 }
+
+spl_autoload_register(array('titania', 'autoload'));
