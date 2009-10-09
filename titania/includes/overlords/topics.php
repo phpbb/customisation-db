@@ -250,13 +250,17 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		}
 		phpbb::$db->sql_freeresult($result);
 
+		// @todo Get the read info
+
 		$topic = new titania_topic();
 
 		// Loop de loop
 		$last_was_sticky = false;
 		foreach ($topic_ids as $topic_id)
 		{
-			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(self::$topics[$topic_id]), array(
+			$topic->__set_array(self::$topics[$topic_id]);
+
+			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'S_TOPIC_TYPE_SWITCH'		=> ($last_was_sticky && !$topic->topic_sticky) ? true : false,
 			)));
 

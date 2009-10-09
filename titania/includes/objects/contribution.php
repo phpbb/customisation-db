@@ -477,10 +477,13 @@ class titania_contribution extends titania_database_object
 		$this->author->assign_details();
 
 		// Display Co-authors
+		$coauthor = new titania_author();
 		foreach ($this->coauthors as $user_id => $row)
 		{
-			phpbb::$template->assign_block_vars($this->author->assign_details(true, $row));
+			$coauthor->__set_array($row);
+			phpbb::$template->assign_block_vars($coauthor->assign_details(true));
 		}
+		unset($coauthor);
 
 		// Display Revisions
 		foreach ($this->revisions as $revision_id => $revision)

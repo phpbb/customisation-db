@@ -321,13 +321,8 @@ class titania_topic extends titania_database_object
 	*
 	* A little different from those in other classes, this one only returns the info ready for output
 	*/
-	public function assign_details($data = false)
+	public function assign_details()
 	{
-		if ($data !== false)
-		{
-			$this->__set_array($data);
-		}
-
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);
 

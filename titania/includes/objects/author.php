@@ -327,14 +327,8 @@ class titania_author extends titania_database_object
 	 *
 	 * @param bool $return True if you want the data prepared for output and returned as an array, false to output to the template
 	 */
-	public function assign_details($return = false, $row = false)
+	public function assign_details($return = false)
 	{
-		// Set new data if passed in.
-		if ($row !== false)
-		{
-			$this->__set($row);
-		}
-
 		$vars = array(
 			'AUTHOR_NAME'					=> $this->username,
 			'AUTHOR_NAME_FULL'				=> $this->get_username_string(),
