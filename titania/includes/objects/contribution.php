@@ -230,13 +230,8 @@ class titania_contribution extends titania_database_object
 	 *
 	 * @return bool True if the contrib exists, false if not
 	 */
-	public function load($contrib = false)
+	public function load($contrib)
 	{
-		if ($contrib == false)
-		{
-			$contrib = request_var('c', '');
-		}
-
 		$sql_ary = array(
 			'SELECT'	=> 'c.*, a.*, u.*',
 			'FROM' 		=> array($this->sql_table => 'c'),
