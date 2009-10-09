@@ -138,8 +138,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$result = phpbb::$db->sql_query_limit($sql, $options['limit'], $options['start']);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			self::$posts[$row['post_id']] = new titania_post();
-			self::$posts[$row['post_id']]->__set_array($row);
+			self::$posts[$row['post_id']] = $row;
 
 			$post_ids[] = $row['post_id'];
 			$user_ids[] = $row['post_user_id'];
@@ -149,17 +148,23 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		// load the user data
 		users_overlord::load($user_ids);
 
+		$post = new titania_post();
+
 		// Loop de loop
 		foreach ($post_ids as $post_id)
 		{
+			$post->__set_array(self::$posts[$post_id]);
+
 			phpbb::$template->assign_block_vars('posts', array_merge(
-				self::$posts[$post_id]->assign_details(),
-				users_overlord::assign_details(self::$posts[$post_id]->post_user_id)
+				$post->assign_details(),
+				users_overlord::assign_details($post->post_user_id)
 			));
 	//S_IGNORE_POST
 	//POST_ICON_IMG
 	//MINI_POST_IMG
 		}
+
+		unset($post);
 	}
 
 	public static function assign_common()
