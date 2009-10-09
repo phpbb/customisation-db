@@ -17,9 +17,7 @@ if (!defined('IN_TITANIA'))
 }
 
 // Setup basic variables and objects
-titania::load_object('revision');
 titania::add_lang('revisions');
-titania::load_object('attachments');
 
 $action 	= request_var('action', '');
 

@@ -158,6 +158,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	{
 		titania::load_object('topic');
 
+		$topic_ids = array();
+
 		$sql_ary = array(
 			'SELECT' => 't.*',
 			'FROM'		=> array(
@@ -229,6 +231,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Count SQL Query
+		// @todo This is done by pagination class...
 		$sql_ary['SELECT'] = 'COUNT(topic_id) AS cnt';
 		$count_sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		phpbb::$db->sql_query($count_sql);
@@ -236,30 +239,32 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		phpbb::$db->sql_freeresult();
 
 		// Get the data
-		$topic_ids = array();
 		$result = phpbb::$db->sql_query_limit($sql, $options['limit'], $options['start']);
+
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			self::$topics[$row['topic_id']] = new titania_topic();
-			self::$topics[$row['topic_id']]->__set_array($row);
+			// DO NOT create a new object for every row. Adds way to much memory when you deal with large topics!!!!
+			self::$topics[$row['topic_id']] = $row;
 
 			$topic_ids[] = $row['topic_id'];
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		// Get the read info
+		$topic = new titania_topic();
 
 		// Loop de loop
 		$last_was_sticky = false;
 		foreach ($topic_ids as $topic_id)
 		{
-			phpbb::$template->assign_block_vars('topics', array_merge(self::$topics[$topic_id]->assign_details(), array(
-				'S_TOPIC_TYPE_SWITCH'		=> ($last_was_sticky && !self::$topics[$topic_id]->topic_sticky) ? true : false,
+			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(self::$topics[$topic_id]), array(
+				'S_TOPIC_TYPE_SWITCH'		=> ($last_was_sticky && !$topic->topic_sticky) ? true : false,
 			)));
 
-			$last_was_sticky = self::$topics[$topic_id]->topic_sticky;
+			$last_was_sticky = $topic->topic_sticky;
 		}
 		phpbb::$db->sql_freeresult($result);
+
+		unset($topic);
 	}
 
 	public static function assign_common()

@@ -21,7 +21,6 @@ if (!function_exists('generate_type_select') || !function_exists('generate_categ
 	require TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT;
 }
 
-titania::load_object('contribution');
 load_contrib();
 
 if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('titania_contrib_mod'))
@@ -30,7 +29,6 @@ if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !
 }
 
 // Load the message object
-titania::load_tool('message');
 $message = new titania_message(titania::$contrib);
 $message->set_auth(array(
 	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
@@ -51,14 +49,14 @@ $contrib_categories = array();
 if (titania::confirm_box(true)) // Confirming author change
 {
 	$change_owner_id = request_var('change_owner_id', 0);
-					
+
 	if ($change_owner_id > 0)
 	{
 		titania::$contrib->set_contrib_user_id($change_owner_id);
 		trigger_error('CONTRIB_OWNER_UPDATED');
 	}
 }
-	
+
 if ($submit)
 {
 	$post_data = $message->request_data();
@@ -94,7 +92,7 @@ if ($submit)
 			$result = phpbb::$db->sql_query($sql);
 			$change_owner_id = (int) phpbb::$db->sql_fetchfield('user_id');
 			phpbb::$db->sql_freeresult($result);
-		
+
 		if ($change_owner_id < 1)
 		{
 			$error[] = sprintf(phpbb::$user->lang['CONTRIB_CHANGE_OWNER_NOT_FOUND'], $change_owner);
@@ -109,7 +107,7 @@ if ($submit)
 
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
-		
+
 		if ($change_owner == '')
 		{
 			titania::error_box('SUCCESS', 'CONTRIB_UPDATED', TITANIA_SUCCESS);
@@ -121,7 +119,7 @@ if ($submit)
 				'change_owner'		=> $change_owner,
 				'change_owner_id'	=> $change_owner_id,
 			);
-			
+
 			titania::confirm_box(false, sprintf(phpbb::$user->lang['CONTRIB_CONFIRM_OWNER_CHANGE'], '<a href="' .  phpbb::append_sid('memberlist', 'mode=viewprofile&amp;u=' . $change_owner_id) . '">' . $change_owner . '</a>'), titania::$url->append_url(titania::$url->current_page), $s_hidden_fields);
 		}
 	}
@@ -160,14 +158,13 @@ generate_category_select($contrib_categories);
 titania::$contrib->assign_details();
 $message->display();
 
-$template->assign_vars(array(
+phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
 
 	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
 ));
-
 
 titania::page_header('MANAGE_CONTRIBUTION');
 titania::page_footer(true, 'contributions/contribution_manage.html');

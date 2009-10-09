@@ -135,17 +135,13 @@ class titania_message
 		// Generate smiley listing
 		if ($post_options->get_status('smilies'))
 		{
-			phpbb::_include('functions_posting', 'generate_smilies');
-
-			generate_smilies('inline', false);
+			phpbb::generate_smilies('inline', false);
 		}
 
 		// Build custom bbcodes array
 		if ($post_options->get_status('bbcode'))
 		{
-			phpbb::_include('functions_display', 'display_custom_bbcodes');
-
-			display_custom_bbcodes();
+			phpbb::display_custom_bbcodes();
 		}
 
 		// Display the Captcha if required

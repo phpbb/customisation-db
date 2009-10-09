@@ -54,7 +54,6 @@ function load_contrib($contrib = false)
 	}
 
 	// Load the contribution
-	titania::load_object(array('contribution', 'attachments'));
 	titania::$contrib = new titania_contribution();
 
 	if (!titania::$contrib->load($contrib))

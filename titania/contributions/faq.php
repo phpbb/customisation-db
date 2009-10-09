@@ -16,7 +16,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-titania::load_object('faq');
 titania::add_lang('faq');
 
 $faq_id		= request_var('f', 0);
@@ -27,17 +26,23 @@ load_contrib();
 
 $faq = new titania_faq($faq_id);
 
+// Make sure the ids match up. Dont show the faq unless we have the correct mod loaded / in the url.
+
+if ($contrib->contrib_id != $faq->contrib_id && $faq->faq_id !== 0)
+{
+	trigger_error(phpbb::$user->lang['FAQ_NOT_FOUND']);
+}
+
 switch ($action)
 {
 	case 'create':
 	case 'edit':
-		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_' . $action) && !titania::$contrib->is_author)
+		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_' . $action) && !$contrib->is_author)
 		{
 			return;
 		}
 
 		// Load the message object
-		titania::load_tool('message');
 		$message = new titania_message($faq);
 		$message->set_auth(array(
 			'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),

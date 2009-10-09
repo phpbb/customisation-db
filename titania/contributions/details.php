@@ -20,7 +20,6 @@ titania::add_lang('authors');
 
 // Load the Contrib item
 load_contrib();
-
 titania::$contrib->assign_details();
 
 // Get the attachments
