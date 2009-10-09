@@ -22,24 +22,30 @@ $faq_id		= request_var('f', 0);
 $action 	= request_var('action', '');
 $submit		= isset($_POST['submit']) ? true : false;
 
-load_contrib();
-
-$faq = new titania_faq($faq_id);
-
-// Make sure the ids match up. Dont show the faq unless we have the correct mod loaded / in the url.
-
-if ($contrib->contrib_id != $faq->contrib_id && $faq->faq_id !== 0)
+if ($faq_id)
 {
-	trigger_error(phpbb::$user->lang['FAQ_NOT_FOUND']);
+	$faq = new titania_faq($faq_id);
+
+	if (!$faq->contrib_id)
+	{
+		// Faq does not exist
+		trigger_error('FAQ_NOT_FOUND');
+	}
+
+	load_contrib($faq->contrib_id);
+}
+else
+{
+	load_contrib();
 }
 
 switch ($action)
 {
 	case 'create':
 	case 'edit':
-		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_' . $action) && !$contrib->is_author)
+		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_' . $action) && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
 		{
-			return;
+			trigger_error('NO_AUTH');
 		}
 
 		// Load the message object
@@ -87,10 +93,9 @@ switch ($action)
 	break;
 
 	case 'delete':
-
-		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_delete') && !titania::$contrib->is_author)
+		if (!phpbb::$auth->acl_get('titania_faq_mod') && !phpbb::$auth->acl_get('titania_faq_delete') && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
 		{
-			return;
+			trigger_error('NO_AUTH');
 		}
 
 		if (titania::confirm_box(true))
@@ -113,6 +118,10 @@ switch ($action)
 
 	case 'move_up':
 	case 'move_down':
+		if (!phpbb::$auth->acl_get('titania_faq_mod') && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
+		{
+			trigger_error('NO_AUTH');
+		}
 
 		$faq->move($action);
 

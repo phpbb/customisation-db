@@ -44,14 +44,11 @@ switch ($page)
 *
 * Call this AFTER you have loaded the main object (like the FAQ item if requested for example)
 *
-* @param mixed $contrib contrib_id or contrib name, or do not set and we'll load what was sent in the URL (always send if you have loaded an item for this contrib!)
+* @param mixed $contrib contrib_id (always send if you have loaded an item for this contrib!)
 */
-function load_contrib($contrib = false)
+function load_contrib($contrib_id = false)
 {
-	if (!$contrib)
-	{
-		$contrib = request_var('c', '');
-	}
+	$contrib = request_var('c', '');
 
 	// Load the contribution
 	titania::$contrib = new titania_contribution();
@@ -59,6 +56,16 @@ function load_contrib($contrib = false)
 	if (!titania::$contrib->load($contrib))
 	{
 		trigger_error('CONTRIB_NOT_FOUND');
+	}
+
+	// Make sure the contrib requested is the same as the contrib loaded
+	if ($contrib_id !== false)
+	{
+		if ($contrib_id != titania::$contrib->contrib_id)
+		{
+			// Mismatch, redirect them to the new page? @todo - mtotheikle
+			trigger_error('CONTRIB_NOT_FOUND');
+		}
 	}
 
 	// Put the author in titania::$author
