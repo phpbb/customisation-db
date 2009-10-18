@@ -317,6 +317,7 @@ class titania_contribution extends titania_database_object
 				$this->is_active_coauthor = true;
 			}
 		}
+
 		return true;
 	}
 
@@ -330,9 +331,8 @@ class titania_contribution extends titania_database_object
 		if ($this->rating)
 		{
 			return $this->rating;
-		}
 
-		titania::load_object('rating');
+		}
 
 		$this->rating = new titania_rating('contrib', $this);
 		$this->rating->load();
@@ -472,11 +472,9 @@ class titania_contribution extends titania_database_object
 		$this->author->assign_details();
 
 		// Display Co-authors
-		$coauthor = new titania_author();
 		foreach ($this->coauthors as $user_id => $row)
 		{
-			$coauthor->__set_array($row);
-			phpbb::$template->assign_block_vars($coauthor->assign_details(true));
+			phpbb::$template->assign_block_vars($this->author->assign_details(true, $row));
 		}
 		unset($coauthor);
 

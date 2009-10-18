@@ -65,8 +65,6 @@ class topics_overlord
 	*/
 	public static function load_topic($topic_id)
 	{
-		titania::load_object('topic');
-
 		if (!is_array($topic_id))
 		{
 			$topic_id = array($topic_id);
@@ -87,8 +85,7 @@ class topics_overlord
 
 		while($row = phpbb::$db->sql_fetchrow($result))
 		{
-			self::$topics[$row['topic_id']] = new titania_topic();
-			self::$topics[$row['topic_id']]->__set_array($row);
+			self::$topics[$row['topic_id']] = $row;
 		}
 
 		phpbb::$db->sql_freeresult($result);
@@ -106,13 +103,14 @@ class topics_overlord
 		$limit = request_var('limit', (int) phpbb::$config['topics_per_page']);
 
 		// Setup the sort tool
-		titania::load_tool('sort');
 		$sort = new titania_sort();
 		$sort->set_sort_keys(self::$sort_by);
+
 		if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
 		{
 			$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
 		}
+
 		$sort->default_dir = phpbb::$user->data['user_topic_sortby_dir'];
 
 		// if a post_id was given we must start from the appropriate page

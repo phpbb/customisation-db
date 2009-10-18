@@ -58,7 +58,6 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		$limit = request_var('limit', (int) phpbb::$config['posts_per_page']);
 
 		// Setup the sort tool
-		titania::load_tool('sort');
 		$sort = new titania_sort();
 		$sort->set_sort_keys(self::$sort_by);
 		if (isset(self::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
@@ -105,8 +104,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	*/
 	public static function display_topic($topic, $sort = false, $options = array('start' => 0, 'limit' => 10))
 	{
-		titania::load_object('post');
-
 		$sql_ary = array(
 			'SELECT' => 'p.*',
 			'FROM'		=> array(

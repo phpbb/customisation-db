@@ -50,7 +50,7 @@ if (titania::confirm_box(true)) // Confirming author change
 {
 	$change_owner_id = request_var('change_owner_id', 0);
 
-	if ($change_owner_id > 0)
+	if ($change_owner_id !== ANONYMOUS && $change_owner_id)
 	{
 		titania::$contrib->set_contrib_user_id($change_owner_id);
 		trigger_error('CONTRIB_OWNER_UPDATED');
@@ -139,13 +139,15 @@ else
 	$active_coauthors = $nonactive_coauthors = array();
 	foreach (titania::$contrib->coauthors as $coauthor)
 	{
-		if ($coauthor->active)
+		titania::$contrib->author->__set_array($coauthor);
+
+		if (titania::$contrib->author->active)
 		{
-			$active_coauthors[] = $coauthor->username;
+			$active_coauthors[] = titania::$contrib->author->username;
 		}
 		else
 		{
-			$nonactive_coauthors[] = $coauthor->username;
+			$nonactive_coauthors[] = titania::$contrib->author->username;
 		}
 	}
 	$active_coauthors = implode("\n", $active_coauthors);

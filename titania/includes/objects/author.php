@@ -139,10 +139,7 @@ class titania_author extends titania_database_object
 			return false;
 		}
 
-		foreach ($this->sql_data as $key => $value)
-		{
-			$this->$key = $value;
-		}
+		$this->__set_array($this->sql_data);
 
 		return true;
 	}
@@ -327,8 +324,18 @@ class titania_author extends titania_database_object
 	 *
 	 * @param bool $return True if you want the data prepared for output and returned as an array, false to output to the template
 	 */
-	public function assign_details($return = false)
+	public function assign_details($return = false, $row= false, $revert = true)
 	{
+		// Set special data to display
+		if ($row !== false)
+		{
+			if ($revert)
+			{
+				$backup = $this->object_data;
+			}
+			$this->__set_array($row);
+		}
+
 		$vars = array(
 			'AUTHOR_NAME'					=> $this->username,
 			'AUTHOR_NAME_FULL'				=> $this->get_username_string(),
@@ -365,6 +372,13 @@ class titania_author extends titania_database_object
 		{
 			$vars = array_merge($vars, assign_user_details($this->sql_data));
 		}*/
+
+		// Revert data
+		if ($revert && $row !== false)
+		{
+			$this->__set_array($backup);
+			unset($backup);
+		}
 
 		if ($return)
 		{

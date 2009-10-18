@@ -114,7 +114,7 @@ switch ($action)
 
 			if (sizeof($error))
 			{
-				$template->assign_var('ERROR', implode('<br />', $error));
+				phpbb::$template->assign_var('ERROR', implode('<br />', $error));
 			}
 			else
 			{
