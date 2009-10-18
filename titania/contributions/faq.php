@@ -22,10 +22,11 @@ $faq_id		= request_var('f', 0);
 $action 	= request_var('action', '');
 $submit		= isset($_POST['submit']) ? true : false;
 
+// Setup faq object
+$faq = new titania_faq($faq_id);
+
 if ($faq_id)
 {
-	$faq = new titania_faq($faq_id);
-
 	if (!$faq->contrib_id)
 	{
 		// Faq does not exist
