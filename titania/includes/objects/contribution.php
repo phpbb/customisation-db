@@ -297,6 +297,7 @@ class titania_contribution extends titania_database_object
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$this->coauthors[$row['user_id']] = $row;
+			users_overlord::$users[$row['user_id']] = $row;
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -331,7 +332,6 @@ class titania_contribution extends titania_database_object
 		if ($this->rating)
 		{
 			return $this->rating;
-
 		}
 
 		$this->rating = new titania_rating('contrib', $this);
@@ -474,9 +474,11 @@ class titania_contribution extends titania_database_object
 		// Display Co-authors
 		foreach ($this->coauthors as $user_id => $row)
 		{
-			phpbb::$template->assign_block_vars($this->author->assign_details(true, $row));
+			if ($row['author_visible'])
+			{
+				phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
+			}
 		}
-		unset($coauthor);
 
 		// Display Revisions
 		foreach ($this->revisions as $revision_id => $revision)
@@ -516,6 +518,8 @@ class titania_contribution extends titania_database_object
 	* @param array $active array of active coauthor user_ids
 	* @param array $nonactive array of nonactive coauthor user_ids
 	* @param bool $reset true to reset the coauthors and only add the ones given, false to keep past coauthors and just add some new ones
+	*
+	* @todo update $this->coauthors
 	*/
 	public function set_coauthors($active, $nonactive = array(), $reset = false)
 	{

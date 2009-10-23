@@ -137,17 +137,15 @@ else
 	phpbb::$db->sql_freeresult($result);
 
 	$active_coauthors = $nonactive_coauthors = array();
-	foreach (titania::$contrib->coauthors as $coauthor)
+	foreach (titania::$contrib->coauthors as $row)
 	{
-		titania::$contrib->author->__set_array($coauthor);
-
-		if (titania::$contrib->author->active)
+		if ($row['active'])
 		{
-			$active_coauthors[] = titania::$contrib->author->username;
+			$active_coauthors[] = $row['username'];
 		}
 		else
 		{
-			$nonactive_coauthors[] = titania::$contrib->author->username;
+			$nonactive_coauthors[] = $row['username'];
 		}
 	}
 	$active_coauthors = implode("\n", $active_coauthors);
