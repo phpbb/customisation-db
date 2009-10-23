@@ -40,8 +40,6 @@ function get_version_string($version)
 */
 function titania_display_categories($parent_id = 0, $blockname = 'categories')
 {
-	titania::load_object('category');
-
 	$sql = 'SELECT * FROM ' . TITANIA_CATEGORIES_TABLE . '
 		WHERE parent_id = ' . (int) $parent_id . '
 			AND category_visible = 1
@@ -69,18 +67,15 @@ function titania_display_categories($parent_id = 0, $blockname = 'categories')
 */
 function titania_display_contribs($mode, $id, $blockname = 'contribs')
 {
-	titania::load_object(array('contribution', 'author'));
-	titania::load_tool(array('sort', 'pagination'));
-
 	// Setup sorting.
 	$sort = new titania_sort();
-	$sort->sort_request('');
+	$sort->sort_request();
 
 	switch ($mode)
 	{
 		case 'author' :
 			$sort->set_sort_keys(array(
-				array('SORT_CONTRIB_NAME',		'c.contrib_name', 'default' => true),
+				array('SORT_CONTRIB_NAME',		'c.contrib_name', true),
 			));
 
 			$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . USERS_TABLE . ' u
@@ -92,7 +87,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 
 		case 'category' :
 			$sort->set_sort_keys(array(
-				array('SORT_CONTRIB_NAME',			'c.contrib_name', 'default' => true),
+				array('SORT_CONTRIB_NAME',			'c.contrib_name', true),
 			));
 
 			$sql = phpbb::$db->sql_build_query('SELECT', array(
@@ -126,16 +121,16 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 	$pagination = new titania_pagination();
 	$start = $pagination->get_start(0);
 	$limit = $pagination->get_limit();
+	$contrib_type = 0;
+	$author = new titania_author();
+	$contrib = new titania_contribution();
 
 	$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 
-	$contrib_type = 0;
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
-		$contrib = new titania_contribution();
 		$contrib->__set_array($row);
 
-		$author = new titania_author();
 		$author->__set_array($row);
 
 		phpbb::$template->assign_block_vars($blockname, array(
@@ -155,14 +150,13 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 		));
 
 		$contrib_type = $row['contrib_type'];
-
-		unset($contrib, $author);
 	}
 	phpbb::$db->sql_freeresult($result);
+	unset($contrib, $author);
 
 	$pagination->set_params(array(
-		'sk'		=> $sort->get_sort_key(false),
-		'sd'		=> $sort->get_sort_dir(false),
+		'sk'		=> $sort->sort_key,
+		'sd'		=> $sort->sort_dir,
 	));
 
 	$pagination->build_pagination('');
