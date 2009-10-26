@@ -31,6 +31,7 @@ switch ($page)
 	case 'create' :
 	case 'manage' :
 	case 'revisions' :
+	case 'previews' :
 		include(TITANIA_ROOT . 'contributions/' . $page . '.' . PHP_EXT);
 	break;
 

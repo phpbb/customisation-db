@@ -1,0 +1,65 @@
+<!-- INCLUDE contributions/contribution_header.html -->
+<h2 class="section-title">{CONTRIB_NAME} :: {L_PREVIEWS}</h2>
+
+<noscript>{L_JAVASCRIPT_REQUIRED}</noscript>
+
+<!-- IF .revisions -->
+<div class="forumbg" id="revisions_list">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<table cellspacing="1" class="table1">
+			<thead>
+				<tr>
+					<th>{L_REVISION}</th>
+					<th>{L_CREATED}</th>
+					<th>{L_VALIDATED}</th>
+				</tr>
+			</thead>
+			<tbody id="revision_holder">
+				<!-- INCLUDE contributions/contribution_revisions_list.html -->
+			</tbody>
+		</table>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ELSE -->	
+<!-- This div needs to be here at all times! -->
+<div class="forumbg" id="revisions_list" style="display: none;">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<table cellspacing="1" class="table1">
+			<thead>
+				<tr>
+					<th>{L_REVISION}</th>
+					<th>{L_CREATED}</th>
+					<th>{L_VALIDATED}</th>
+				</tr>
+			</thead>
+			<tbody id="revision_holder">
+				<!-- INCLUDE contributions/contribution_revisions_list.html -->
+			</tbody>
+		</table>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
+
+<!-- IF CAN_MANAGE -->
+<br />
+<hr />
+
+<div class="upload_container">
+	<!-- INCLUDE uploadify.html -->
+	
+
+	<div class="upload_item">
+		<div class="upload_summary" style="display: none;">
+			<p class="upload_success">You're file has been uploaded successfully, you may now enter the information about the
+			new revision below</p>
+		</div>
+		<form id="revision_submit" method="post" action="{U_SUBMIT_REVISION}" enctype="multipart/form-data">
+			<div id="uploads" style="display:none;">
+	
+			</div>	
+			{S_FORM_TOKEN}
+		</form>
+	</div>
+</div>
+<!-- ENDIF -->
+<!-- INCLUDE contributions/contribution_footer.html -->
