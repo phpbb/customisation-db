@@ -22,22 +22,22 @@ Rewriterule ^authors?/([^/]+)/?([^/]+)?/?([^/]+)?$			./authors/index.php?u=$1&pa
 
 #contributions
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|snippet|translation|contributions?)/(create)/?([^/]+)?$					./contributions/index.php?page=$2 [NC]
+Rewriterule ^(mod|style|snippet|translation|contributions?)/(create)/?([^/]+)?$					./contributions/index.php?page=$2&type=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$		./contributions/index.php?c=$2&page=$3 [NC]
+Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			./contributions/index.php?c=$2&page=$3&type=$1 [NC]
 
 #topics/posts (when missing contrib name)
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(tracker|queue|support)/([^/]+)?$					./contributions/index.php?page=$1 [NC]
+Rewriterule ^(tracker|queue|support)/([^/]+)?$				./contributions/index.php?page=$1 [NC]
 
 #rating
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^rate/?([^/]+)?$					./index.php?action=rate [NC]
+Rewriterule ^rate/?([^/]+)?$						./index.php?action=rate [NC]
 
 #categories
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$	./index.php?c=$4 [NC]
+Rewriterule ^([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$		./index.php?c=$4 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$			./index.php?c=$3 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)-([0-9]+)/?([^/]+)?$					./index.php?c=$2 [NC]
+Rewriterule ^([^/]+)-([0-9]+)/?([^/]+)?$				./index.php?c=$2 [NC]
