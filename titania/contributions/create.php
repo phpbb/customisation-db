@@ -26,16 +26,14 @@ if (!phpbb::$auth->acl_get('titania_contrib_submit'))
 	trigger_error('NO_AUTH');
 }
 
-titania::load_object(array('contribution', 'author'));
-
 titania::$contrib = new titania_contribution();
-
 titania::$contrib->contrib_user_id = phpbb::$user->data['user_id'];
 titania::$contrib->author = new titania_author(phpbb::$user->data['user_id']);
 titania::$contrib->author->load();
 
+$tag = new titania_tag();
+
 // Load the message object
-titania::load_tool('message');
 $message = new titania_message(titania::$contrib);
 $message->set_auth(array(
 	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
@@ -89,26 +87,27 @@ if ($submit)
 		$error[] = phpbb::$user->lang['CANNOT_ADD_SELF_COAUTHOR'];
 	}
 
+	// @todo check that the tags are valid in the tag class.
+
 	if (!sizeof($error))
 	{
 		titania::$contrib->submit();
 
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
 
-		// Create relations
-		titania::$contrib->put_contrib_in_categories($contrib_categories);
-
 		redirect(titania::$contrib->get_url());
 	}
 }
 
 // Generate some stuff
-generate_type_select(titania::$contrib->contrib_type);
-generate_category_select($contrib_categories);
+titania::$type->build_type_selection(titania::$contrib->contrib_type);
 titania::$contrib->assign_details();
+
+$tag->build_cat_selection(titania::$type->types, $contrib_categories);
+
 $message->display();
 
-$template->assign_vars(array(
+phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'			=> titania::$url->build_url('contributions/create'),
 	'S_CREATE'				=> true,
 

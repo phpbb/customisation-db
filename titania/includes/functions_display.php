@@ -33,32 +33,6 @@ function get_version_string($version)
 }
 
 /**
-* Display categories
-*
-* @param int $parent_id The parent id/name (only show categories under this category)
-* @param string $blockname The name of the template block to use (categories by default)
-*/
-function titania_display_categories($parent_id = 0, $blockname = 'categories')
-{
-	$sql = 'SELECT * FROM ' . TITANIA_CATEGORIES_TABLE . '
-		WHERE parent_id = ' . (int) $parent_id . '
-			AND category_visible = 1
-		ORDER BY left_id ASC';
-	$result = phpbb::$db->sql_query($sql);
-
-	while ($row = phpbb::$db->sql_fetchrow($result))
-	{
-		$category = new titania_category();
-		$category->__set_array($row);
-
-		phpbb::$template->assign_block_vars($blockname, $category->assign_display(true));
-
-		unset($category);
-	}
-	phpbb::$db->sql_freeresult($result);
-}
-
-/**
 * Display contributions
 *
 * @param string $mode The mode (category, author)
@@ -95,7 +69,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 				'SELECT'	=> 'c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, u.username, u.user_colour, u.username_clean',
 
 				'FROM'		=> array(
-					TITANIA_CONTRIB_IN_CATEGORIES_TABLE 	=> 'cic',
+					TITANIA_CONTRIB_TAGS_TABLE 	=> 'cic',
 				),
 
 				'LEFT_JOIN'	=> array(
@@ -109,7 +83,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 					),
 				),
 
-				'WHERE'		=> 'cic.category_id = ' . (int) $id . '
+				'WHERE'		=> 'cic.tag_id = ' . (int) $id . '
 					AND c.contrib_visible = 1',
 
 				'ORDER_BY'	=> $sort->get_order_by(),
@@ -137,7 +111,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 			'CONTRIB_USERNAME'			=> $contrib->username,
 			'CONTRIB_USERNAME_FULL'		=> $author->get_username_string(),
 			'CONTRIB_NAME'				=> $contrib->contrib_name,
-			'CONTRIB_TYPE'				=> titania::$types[$contrib->contrib_type]->lang,
+			'CONTRIB_TYPE'				=> titania::$type->types[$contrib->contrib_type],
 			'CONTRIB_STATUS'			=> $contrib->contrib_status,
 			'CONTRIB_DOWNLOADS'			=> $contrib->contrib_downloads,
 			'CONTRIB_VIEWS'				=> $contrib->contrib_views,

@@ -82,9 +82,9 @@ class titania_author extends titania_database_object
 		));
 
 		// Load the count for different types
-		foreach (titania::$types as $type)
+		foreach (titania::$type->types as $type)
 		{
-			$this->object_config[$type->author_count] = array('default' => 0);
+			$this->object_config[$type['author_count_field']] = array('default' => 0);
 		}
 
 		if ($user_id !== false)
@@ -359,11 +359,11 @@ class titania_author extends titania_database_object
 		);
 
 		// Output the count for different types
-		foreach (titania::$types as $type)
+		foreach (titania::$type as $type)
 		{
 			phpbb::$template->assign_block_vars('type_counts', array(
-				'NAME'	=> (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? phpbb::$user->lang[strtoupper($type->author_count)] : strtoupper($type->author_count),
-				'VALUE'	=> $this->{$type->author_count}
+				//'NAME'	=> (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? phpbb::$user->lang[strtoupper($type->author_count)] : strtoupper($type->author_count),
+				//'VALUE'	=> $this->{$type->author_count}
 			));
 		}
 

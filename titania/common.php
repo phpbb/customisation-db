@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-define('TITANIA_VERSION', '0.1.19');
+define('TITANIA_VERSION', '0.1.20');
 
 define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 define('PHPBB_USE_BOARD_URL_PATH', true);
@@ -52,7 +52,9 @@ require PHPBB_ROOT_PATH . 'common.' . PHP_EXT;
 //require TITANIA_ROOT . 'includes/core/user.' . PHP_EXT;
 //$user = new titania_user();
 
-// Start session management etc.
+spl_autoload_register(array('titania', 'autoload'));
+
+// Everything is loaded, lets start session management.
 phpbb::initialise();
 titania::initialise();
 
@@ -76,5 +78,3 @@ if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get(
 		titania::confirm_box(false, phpbb::$user->lang['CONFIRM_PURGE_CACHE'], titania::$url->append_url(titania::$url->current_page, array_merge(titania::$url->params, array('cache' => 'purge'))));
 	}
 }
-
-spl_autoload_register(array('titania', 'autoload'));

@@ -43,11 +43,11 @@ class titania
 	public static $cache;
 
 	/**
-	 * Instance of the titania_types class
+	 * Instance of the titania_type class
 	 *
-	 * @var object titania_types
+	 * @var object titania_type
 	 */
-	public static $types;
+	public static $type;
 
 	/**
 	 * Request time (unix timestamp)
@@ -110,19 +110,19 @@ class titania
 		{
 			include TITANIA_ROOT . 'includes/core/cache.' . PHP_EXT;
 		}
-		self::$cache = new titania_cache();
+		self::$cache 	= new titania_cache();
 
 		// Set the absolute path
-		self::$absolute_path = generate_board_url(true) . '/' . self::$config->titania_script_path;
-		self::$absolute_board = generate_board_url() . '/';
+		self::$absolute_path 	= generate_board_url(true) . '/' . self::$config->titania_script_path;
+		self::$absolute_board 	= generate_board_url() . '/';
 
 		// Set the root path for our URL class
 		self::$url->root_url = self::$absolute_path;
 
 		// Set template path and template name
-		self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
-		self::$template_path = self::$style_path . 'template';
-		self::$theme_path = self::$style_path . 'theme';
+		self::$style_path 		= self::$absolute_path . 'styles/' . self::$config->style . '/';
+		self::$template_path 	= self::$style_path . 'template';
+		self::$theme_path 		= self::$style_path . 'theme';
 
 		phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
 		phpbb::$user->theme['template_storedb'] = false;
@@ -141,11 +141,13 @@ class titania
 		// Add common titania language file
 		self::add_lang('common');
 
-		// Load the types
-		self::load_types();
-
 		// Load the users overlord
 		self::load_overlord('users');
+
+		if (!defined('IN_TITANIA_INSTALL'))
+		{
+			self::$type = new titania_type();
+		}
 	}
 
 	/**
@@ -791,38 +793,5 @@ class titania
 		self::$url = new titania_url();
 
 		self::$url->decode_url();
-	}
-
-	/**
-	 * Load types
-	 */
-	public static function load_types()
-	{
-		$dh = @opendir(TITANIA_ROOT . 'includes/types/');
-
-		if (!$dh)
-		{
-			trigger_error('Could not open the types directory');
-		}
-
-		while (($fname = readdir($dh)) !== false)
-		{
-			if (strpos($fname, '.' . PHP_EXT) && substr($fname, 0, 1) != '_' && $fname != 'base.' . PHP_EXT)
-			{
-				include(TITANIA_ROOT . 'includes/types/' . $fname);
-
-				$class_name = 'titania_type_' . substr($fname, 0, strpos($fname, '.' . PHP_EXT));
-
-				$class = new $class_name;
-
-				$class->auto_install();
-
-				self::$types[$class->id] = $class;
-			}
-		}
-
-		closedir($dh);
-
-		ksort(self::$types);
 	}
 }

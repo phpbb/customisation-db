@@ -26,7 +26,7 @@ class titania_url
 	*
 	* @var string
 	*/
-	private $separator = '-';
+	private static $separator = '-';
 
 	/**
 	* Root URL, the Root URL to the base
@@ -120,10 +120,10 @@ class titania_url
 
 			if (substr($url, -1) != '/')
 			{
-				$url .= $this->separator;
+				$url .= self::$separator;
 			}
 
-			$url .= $this->url_replace($name) . $this->separator . $this->url_replace($value);
+			$url .= $this->url_replace($name) . self::$separator . $this->url_replace($value);
 		}
 
 		// Now append the anchor again
@@ -138,9 +138,9 @@ class titania_url
 	* @param string $string
 	* @return string
 	*/
-	public function url_slug($string)
+	public static function url_slug($string)
 	{
-		$string = $this->url_replace($string, false);
+		$string = self::url_replace($string, false);
 
 		// Replace any number of spaces with a single underscore
 		$string = preg_replace('#[\s]+#', '_', $string);
@@ -157,9 +157,9 @@ class titania_url
 	* @param bool $urlencode
 	* @return string
 	*/
-	public function url_replace($url, $urlencode = true)
+	public static function url_replace($url, $urlencode = true)
 	{
-		$match	= array('#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', $this->separator);
+		$match	= array('#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', self::$separator);
 		$url	= str_replace($match, '', $url);
 
 		return ($urlencode) ? urlencode($url) : $url;
@@ -181,7 +181,7 @@ class titania_url
 		$this->current_page = substr($url, 0, (strrpos($url, '/') + 1));
 
 		// Split up the arguments
-		$args = explode($this->separator, $args);
+		$args = explode(self::$separator, $args);
 
 		if (sizeof($args) < 2)
 		{

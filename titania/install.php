@@ -39,6 +39,10 @@ if (titania::$config->table_prefix == $GLOBALS['table_prefix'])
 $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
+$options = array(
+	'display_empty_cats'	=> array('lang' => 'DISPLAY_EMPTY_CATS', 'type' => 'radio:yes_no', 'default' => false),
+);
+
 $versions = array(
 	'0.1.0'	=> array(
 		'table_add' => array(
@@ -533,8 +537,81 @@ $versions = array(
 		),
 	),
 
+	'0.1.20' => array(
+		'table_remove'	=> TITANIA_TAG_TYPES_TABLE,
+
+		'table_add'		=> array(
+			array(TITANIA_TYPES_TABLE, array(
+				'COLUMNS'		=> array(
+					'type_id'				=> array('UINT', NULL, 'auto_increment'),
+					'type_name'				=> array('STEXT_UNI', ''),
+					'author_count_field'	=> array('STEXT_UNI', ''),
+					'type_slug'				=> array('VCHAR_CI', ''),
+				),
+				'PRIMARY_KEY'	=> 'type_id',
+			)),
+		),
+
+		'table_column_add' => array(
+			array(TITANIA_TAG_FIELDS_TABLE, 'tag_contrib_type', array('UINT:11', 0)),
+			array(TITANIA_TAG_FIELDS_TABLE, 'tag_items', array('UINT:11', 0)),
+		),
+
+		'custom'	=>	'install_types',
+
+		'config_add'	=> array(
+			array('titania_display_empty_cats', request_var('display_empty_cats', 0))
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
+
+function install_types($action, $version)
+{
+	if ($action != 'install')
+	{
+		return;
+	}
+
+	$type = new titania_type();
+
+	// Insert categories
+	$categories = array(
+		'CAT_ADMIN_TOOLS',
+		'CAT_SECURITY',
+		'CAT_COMMUNICATION',
+		'CAT_PROFILE_UCP',
+		'CAT_ADDONS',
+		'CAT_ANTI_SPAM',
+		'CAT_ENTERTAINMENT',
+		'CAT_COSMETIC',
+	);
+
+	$tag = new titania_tag();
+
+	foreach ($categories as $cat_name)
+	{
+		$tag->tag_field_name = $cat_name;
+		$tag->tag_clean_name = titania_url::url_slug($cat_name);
+		$tag->tag_type_id = titania_tag::TYPE_CATEGORY;
+
+		if ($cat_name == 'CAT_STYLES' || $cat_name == 'CAT_COSMETIC')
+		{
+			$tag->tag_contrib_type = $type->type_style;
+		}
+		else
+		{
+			$tag->tag_contrib_type = $type->type_mod;
+		}
+
+		$tag->insert();
+		unset($tag->tag_id);
+	}
+
+	// Tag the test mod
+	$tag->tag_item(1, 5);
+}
 
 function titania_update($action, $version)
 {

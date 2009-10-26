@@ -90,16 +90,34 @@ switch ($action)
 	* Default (display category/contrib list)
 	*/
 	default :
-		titania_display_categories($category_id);
 
-		if ($category_id != 0)
+		if ($category_id)
 		{
+			titania::add_lang('contributions');
 			titania_display_contribs('category', $category_id);
-		}
 
-		phpbb::$template->assign_vars(array(
-			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('titania_contrib_submit')) ? titania::$url->build_url('contributions/create') : '',
-		));
+			phpbb::$template->assign_vars(array(
+				'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('titania_contrib_submit')) ? titania::$url->build_url('contributions/create') : '',
+			));
+		}
+		else
+		{
+			$categories = titania::$cache->get_categories();
+
+			$tag = new titania_tag();
+
+			foreach ($categories as $cat_id => $row)
+			{
+				$tag->__set_array($row);
+
+				if (!phpbb::$config['titania_display_empty_cats'] && !$tag->tag_items)
+				{
+					continue;
+				}
+
+				phpbb::$template->assign_block_vars('categories', $tag->assign_display(true));
+			}
+		}
 	break;
 }
 

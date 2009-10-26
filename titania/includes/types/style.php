@@ -16,47 +16,15 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!class_exists('titania_type_base'))
+class titania_type_style
 {
-	include(TITANIA_ROOT . 'includes/types/base.' . PHP_EXT);
-}
-
-
-class titania_type_style extends titania_type_base
-{
-	/**
-	 * The type id
-	 *
-	 * @var int type id (for custom types not specified in titania to start, please start with 10 in case we add any extra later)
-	 */
-	public $id = 2;
-
-	/**
-	 * For the url slug
-	 *
-	 * @var string portion to be used in the URL slug
-	 */
-	public $url = 'style';
-
-	/**
-	 * The name of the field used to hold the number of this item in the authors table
-	 *
-	 * @var string author count
-	 */
-	public $author_count = 'author_styles';
-
-	public function __construct()
+	public static function get_type_data()
 	{
-		$this->lang = phpbb::$user->lang['STYLE'];
-	}
+		return array(
+			'type_name'				=> phpbb::$user->lang['STYLE'],
+			'type_slug' 			=> 'style',
+			'author_count_field' 	=> 'author_styles',
+		);
 
-	/**
-	* Automatically install the type if required
-	*
-	* For adding type specific permissions, etc.  For now ignore
-	*/
-	public function auto_install()
-	{
-		return;
 	}
 }
