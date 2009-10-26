@@ -1,4 +1,5 @@
-<!-- IF .contribs -->
+<!-- IF not .categories -->
+
 <div class="forumbg forumbg-table">
 	<div class="inner"><span class="corners-top"><span></span></span>
 
@@ -7,6 +8,10 @@
 			<tr class="<!-- IF contribs.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
 				<td><a href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a><br />
 				{L_AUTHOR}: {contribs.CONTRIB_USERNAME_FULL} </td>
+			</tr>
+		<!-- BEGINELSE -->
+			<tr class="bg1">
+				<td align="center">{L_NO_CONTRIBS}</td>
 			</tr>
 		<!-- END contribs -->
 	</table>
