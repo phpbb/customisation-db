@@ -119,7 +119,7 @@ class titania_rating extends titania_database_object
 	 * @param string $type The type of rating ('author', 'contrib')
 	 * @param object $object The object we will be rating (author/contrib object)
 	 */
-	public function __construct($type, $object)
+	public function __construct($type, $object = false)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -130,24 +130,22 @@ class titania_rating extends titania_database_object
 			'rating_value'			=> array('default' => 0.0),
 		));
 
-		$this->rating_type = $type;
+		$this->rating_type	= request_var('type', '');
+		$id		= request_var('id', 0);
+		$value	= request_var('value', -1.0);
 
 		switch($this->rating_type)
 		{
-			case 'author' :
-				$this->rating_type_id = TITANIA_RATING_AUTHOR;
-				$this->cache_table = TITANIA_AUTHORS_TABLE;
-				$this->cache_rating = 'author_rating';
-				$this->cache_rating_count = 'author_rating_count';
-				$this->object_column = 'user_id';
+			case 'author':
+				$redirect = $this->rate_author($id);
 			break;
 
-			case 'contrib' :
-				$this->rating_type_id = TITANIA_RATING_CONTRIB;
-				$this->cache_table = TITANIA_CONTRIBS_TABLE;
-				$this->cache_rating = 'contrib_rating';
-				$this->cache_rating_count = 'contrib_rating_count';
-				$this->object_column = 'contrib_id';
+			case 'contrib':
+				$redirect = $this->rate_contrib($id);
+			break;
+
+			default:
+				trigger_error('BAD_RATING');
 			break;
 		}
 
@@ -155,6 +153,72 @@ class titania_rating extends titania_database_object
 		$this->rating = $object->{$this->cache_rating};
 		$this->rating_count = $object->{$this->cache_rating_count};
 		$this->rating_object_id = $object->{$this->object_column};
+
+		// Add or remove rating depending on value
+		$result = ($value == -1) ? $this->delete_rating() : $this->add_rating($value);
+		if ($result)
+		{
+			// Redirect to the specified URL by the rating object
+			redirect($redirect);
+		}
+		else
+		{
+			trigger_error('BAD_RATING');
+		}
+	}
+
+	/**
+	 * Rate an Author
+	 *
+	 * @param int $id
+	 *
+	 * @return Return the redirect URL
+	 */
+	public function rate_author($id)
+	{
+		titania::load_object('author');
+		$object = new titania_author();
+		$object->load($id);
+
+		if (!$object)
+		{
+			trigger_error('AUTHOR_NOT_FOUND');
+		}
+
+		$this->rating_type_id = TITANIA_RATING_AUTHOR;
+		$this->cache_table = TITANIA_AUTHORS_TABLE;
+		$this->cache_rating = 'author_rating';
+		$this->cache_rating_count = 'author_rating_count';
+		$this->object_column = 'user_id';
+
+		return $object->get_url();
+	}
+
+	/**
+	 * Rate a contrib
+	 *
+	 * @param int $id
+	 *
+	 * @return Return the redirect URL
+	 */
+	public function rate_contrib($id)
+	{
+		titania::load_object('contribution');
+		$object = new titania_contribution();
+		$object->load($id);
+
+		if (!$object)
+		{
+			trigger_error('CONTRIB_NOT_FOUND');
+		}
+
+		$this->rating_type_id = TITANIA_RATING_CONTRIB;
+		$this->cache_table = TITANIA_CONTRIBS_TABLE;
+		$this->cache_rating = 'contrib_rating';
+		$this->cache_rating_count = 'contrib_rating_count';
+		$this->object_column = 'contrib_id';
+
+		return $object->get_url();
 	}
 
 	/**
