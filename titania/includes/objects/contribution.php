@@ -323,8 +323,7 @@ class titania_contribution extends titania_database_object
 			return $this->rating;
 		}
 
-		$this->rating = new titania_rating('contrib');
-		$this->rating->set_rating_object($this);
+		$this->rating = new titania_rating('contrib', $this);
 		$this->rating->load();
 
 		return $this->rating;

@@ -119,7 +119,7 @@ class titania_rating extends titania_database_object
 	 * @param string $type The type of rating ('author', 'contrib')
 	 * @param object $object The object we will be rating (author/contrib object)
 	 */
-	public function __construct($type = '')
+	public function __construct($type = '', $object = false)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -132,6 +132,11 @@ class titania_rating extends titania_database_object
 
 		$this->rating_type	= ($type) ? $type : request_var('type', '');
 		$this->set_rating_type($this->rating_type);
+
+		if ($object)
+		{
+			$this->set_rating_object($object);
+		}
 	}
 
 	/**
@@ -212,7 +217,7 @@ class titania_rating extends titania_database_object
 	 *
 	 * @return Return the redirect URL
 	 */
-	public function rate_author($id)
+	public function set_rate_author($id)
 	{
 		titania::load_object('author');
 		$object = new titania_author();
@@ -235,7 +240,7 @@ class titania_rating extends titania_database_object
 	 *
 	 * @return Return the redirect URL
 	 */
-	public function rate_contrib($id, $object = false)
+	public function set_rate_contrib($id, $object = false)
 	{
 		titania::load_object('contribution');
 		$object = new titania_contribution();
@@ -253,23 +258,27 @@ class titania_rating extends titania_database_object
 
 	/**
 	 * Determine the rating type and setup the objects for rating.
+	 * This is mostly a wrapper method.
 	 *
 	 * @param mixed $id Contrib or Author ID being rated.
 	 */
-	public function setup_rating_type($id = false)
+	public function determine_rating($id = false)
 	{
 		$id		= ($id !== false) ? $id : request('id', 0);
 
 		switch ($this->rating_type)
 		{
 			case 'author':
-				$redirect = $this->rate_author($id);
+				$redirect = $this->set_rate_author($id);
 			break;
 
 			case 'contrib':
-				$redirect = $this->rate_contrib($id);
+				$redirect = $this->set_rate_contrib($id);
 			break;
 		}
+
+		$this->load();
+		$this->set_rating();
 	}
 
 	/**

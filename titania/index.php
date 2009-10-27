@@ -32,9 +32,7 @@ switch ($action)
 	case 'rate' :
 		titania::load_object('rating');
 		$rating = new titania_rating();
-		$rating->setup_rating_type();
-		$rating->load();
-		$rating->set_rating();
+		$rating->determine_rating();
 	break;
 
 	/**

@@ -234,8 +234,7 @@ class titania_author extends titania_database_object
 			return $this->rating;
 		}
 
-		$this->rating = new titania_rating('author');
-		$this->rating->set_rating_object($this);
+		$this->rating = new titania_rating('author', $this);
 		$this->rating->load();
 
 		return $this->rating;
