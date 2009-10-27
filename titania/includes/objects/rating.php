@@ -119,7 +119,7 @@ class titania_rating extends titania_database_object
 	 * @param string $type The type of rating ('author', 'contrib')
 	 * @param object $object The object we will be rating (author/contrib object)
 	 */
-	public function __construct($type = '', $object = false)
+	public function __construct($type = '')
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -131,9 +131,16 @@ class titania_rating extends titania_database_object
 		));
 
 		$this->rating_type	= ($type) ? $type : request_var('type', '');
-
 		$this->set_rating_type($this->rating_type);
+	}
 
+	/**
+	 * Set the rating object params
+	 *
+	 * @param object $object
+	 */
+	public function set_rating_object($object)
+	{
 		// Get the rating, rating count, and item id
 		$this->rating = $object->{$this->cache_rating};
 		$this->rating_count = $object->{$this->cache_rating_count};
@@ -202,23 +209,21 @@ class titania_rating extends titania_database_object
 	 * Rate an Author
 	 *
 	 * @param int $id
-	 * @param mixed $object
 	 *
 	 * @return Return the redirect URL
 	 */
-	public function rate_author($id, $object = false)
+	public function rate_author($id)
 	{
-		if ($object === false)
-		{
-			titania::load_object('author');
-			$object = new titania_author();
-			$object->load($id);
-		}
+		titania::load_object('author');
+		$object = new titania_author();
+		$object->load($id);
 
 		if (!$object)
 		{
 			trigger_error('AUTHOR_NOT_FOUND');
 		}
+
+		$this->set_rating_object($object);
 
 		return $object->get_url();
 	}
@@ -227,37 +232,33 @@ class titania_rating extends titania_database_object
 	 * Rate a contrib
 	 *
 	 * @param int $id
-	 * @param mixed $object
 	 *
 	 * @return Return the redirect URL
 	 */
 	public function rate_contrib($id, $object = false)
 	{
-		if ($object === false)
-		{
-			titania::load_object('contribution');
-			$object = new titania_contribution();
-			$object->load($id);
-		}
+		titania::load_object('contribution');
+		$object = new titania_contribution();
+		$object->load($id);
 
 		if (!$object)
 		{
 			trigger_error('CONTRIB_NOT_FOUND');
 		}
 
+		$this->set_rating_object($object);
+
 		return $object->get_url();
 	}
 
 	/**
-	 * Set the rating value
+	 * Determine the rating type and setup the objects for rating.
 	 *
-	 * @param mixed $id
-	 * @param mixed $value
+	 * @param mixed $id Contrib or Author ID being rated.
 	 */
-	public function set_rating($id = false, $value = false)
+	public function setup_rating_type($id = false)
 	{
 		$id		= ($id !== false) ? $id : request('id', 0);
-		$value	= ($value !== false) ? $value : request_var('value', -1.0);
 
 		switch ($this->rating_type)
 		{
@@ -269,6 +270,16 @@ class titania_rating extends titania_database_object
 				$redirect = $this->rate_contrib($id);
 			break;
 		}
+	}
+
+	/**
+	 * Set/Run the rating value
+	 *
+	 * @param mixed $value
+	 */
+	public function set_rating($value = false)
+	{
+		$value	= ($value !== false) ? $value : request_var('value', -1.0);
 
 		// Add or remove rating depending on value
 		$result = ($value == -1) ? $this->delete_rating() : $this->add_rating($value);
