@@ -141,9 +141,6 @@ class titania
 		// Add common titania language file
 		self::add_lang('common');
 
-		// Load the users overlord
-		self::load_overlord('users');
-
 		if (!defined('IN_TITANIA_INSTALL'))
 		{
 			self::$type = new titania_type();
