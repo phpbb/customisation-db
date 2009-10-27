@@ -20,7 +20,7 @@ require TITANIA_ROOT . 'common.' . PHP_EXT;
 $category = request_var('c', '');
 $category_ary = explode('-', $category);
 
-$category_id = ($category_ary) ? array_pop($category_ary) : (int) $category;
+$category_id = ($category_ary) ? (int) array_pop($category_ary) : (int) $category;
 
 $action = request_var('action', '');
 
@@ -33,6 +33,7 @@ switch ($action)
 		titania::load_object('rating');
 		$rating = new titania_rating();
 		$rating->load();
+		$rating->set_rating();
 	break;
 
 	/**
