@@ -131,13 +131,11 @@ class titania_post extends titania_database_object
 		}
 		else if (is_int($topic))
 		{
-			titania::load_object('topic');
 			$this->topic = new titania_topic($this->post_type, $topic);
 			$this->topic->load();
 		}
 		else
 		{
-			titania::load_object('topic');
 			$this->topic = new titania_topic($this->post_type);
 		}
 

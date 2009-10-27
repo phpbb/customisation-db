@@ -16,7 +16,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-titania::load_object('author');
 titania::$author->load();
 
 if (titania::$author->user_id != phpbb::$user->data['user_id'] && !phpbb::$auth->acl_get('titania_author_mod'))
@@ -24,7 +23,6 @@ if (titania::$author->user_id != phpbb::$user->data['user_id'] && !phpbb::$auth-
 	trigger_error('NOT_AUTHORISED');
 }
 
-titania::load_tool('message');
 $message = new titania_message(titania::$author);
 $message->set_auth(array(
 	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),

@@ -16,9 +16,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-titania::load_object(array('topic', 'post'));
-titania::load_overlord(array('topics', 'posts'));
-
 titania::add_lang('posting');
 
 $post_id = request_var('p', 0);
@@ -82,7 +79,6 @@ switch ($action)
 		}
 
 		// Load the message object
-		titania::load_tool('message');
 		$message = new titania_message($post_object);
 		$message->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('titania_bbcode'),

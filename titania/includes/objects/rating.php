@@ -219,7 +219,6 @@ class titania_rating extends titania_database_object
 	 */
 	public function set_rate_author($id)
 	{
-		titania::load_object('author');
 		$object = new titania_author();
 		$object->load($id);
 
@@ -242,7 +241,6 @@ class titania_rating extends titania_database_object
 	 */
 	public function set_rate_contrib($id, $object = false)
 	{
-		titania::load_object('contribution');
 		$object = new titania_contribution();
 		$object->load($id);
 

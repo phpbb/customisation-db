@@ -16,8 +16,6 @@ if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 
-titania::load_object('attachments');
-
 // Request vars
 $download_id	= request_var('id', 0);
 $contrib_id		= request_var('contrib_id', 0);

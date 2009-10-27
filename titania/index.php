@@ -30,7 +30,6 @@ switch ($action)
 	* Rate something & remove a rating from something
 	*/
 	case 'rate' :
-		titania::load_object('rating');
 		$rating = new titania_rating();
 		$rating->determine_rating();
 	break;

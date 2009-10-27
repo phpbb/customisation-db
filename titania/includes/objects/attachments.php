@@ -206,8 +206,6 @@ class titania_attachments extends titania_database_object
 	*/
 	public function create($form_name, $file_type = 'contrib')
 	{
-		titania::load_tool('uploader');
-
 		// Setup uploader tool.
 		$this->uploader = new titania_uploader($form_name);
 

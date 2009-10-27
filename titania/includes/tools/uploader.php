@@ -2,7 +2,7 @@
 /**
 *
 * @package Titania
-* @version $Id:$
+* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -280,9 +280,6 @@ class titania_uploader extends fileupload
 	*/
 	public function form_upload($form_name)
 	{
-		// Load our own file spec tool that expands the phpBB default version.
-		titania::load_tool('filespec');
-
 		unset($_FILES[$form_name]['local_mode']);
 		$file = new titania_filespec($_FILES[$form_name], $this);
 

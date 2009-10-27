@@ -24,7 +24,6 @@ $author = request_var('u', '');
 titania::add_lang('authors');
 
 // Load the contribution
-titania::load_object('author');
 titania::$author = new titania_author();
 
 if (!titania::$author->load($author))

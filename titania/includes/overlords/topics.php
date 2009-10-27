@@ -154,8 +154,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	*/
 	public static function display_forums($type, $object = false, $sort = false, $options = array('start' => 0, 'limit' => 10))
 	{
-		titania::load_object('topic');
-
 		$topic_ids = array();
 
 		$sql_ary = array(

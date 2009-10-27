@@ -2,7 +2,7 @@
 /**
  *
  * @package Titania Attachments
- * @version $Id:$
+ * @version $Id$
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -17,7 +17,6 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
 // Some basic stuff
-titania::load_object('attachments');
 titania::add_lang('attachments');
 
 // Request some variables.

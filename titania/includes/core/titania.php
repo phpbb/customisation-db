@@ -201,7 +201,7 @@ class titania
 
 		foreach ($directories as $dir)
 		{
-			$class_name = preg_replace(array('#[^A-Za-z0-9]#', '#titania#', '#overlord#'), '', $class_name);
+			$class_name = preg_replace(array('#[^A-Za-z0-9_]#', '#titania_#', '#overlord_#'), '', $class_name);
 
 			if (file_exists(TITANIA_ROOT . 'includes/' . $dir . '/' . $class_name . '.' . PHP_EXT))
 			{
@@ -210,36 +210,6 @@ class titania
 		}
 
 		// No error if file cant be found!
-	}
-
-	/**
-	* Load a Titania Overlord Object
-	*
-	* @param mixed $overlord_name The name of the overlord
-	*/
-	public static function load_overlord($overlord_name)
-	{
-		return;
-	}
-
-	/**
-	* Load a Titania Object
-	*
-	* @param mixed $object_name The name of the object
-	*/
-	public static function load_object($object_name)
-	{
-		return;
-	}
-
-	/**
-	* Load a Titania Tool
-	*
-	* @param mixed $tool_name The name of the tool
-	*/
-	public static function load_tool($tool_name)
-	{
-		return;
 	}
 
 	/**
