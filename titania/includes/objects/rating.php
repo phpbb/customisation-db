@@ -172,10 +172,7 @@ class titania_rating extends titania_database_object
 
 		if ($this->sql_data)
 		{
-			foreach ($this->sql_data as $key => $value)
-			{
-				$this->$key = $value;
-			}
+			$this->__set_array($this->sql_data);
 		}
 	}
 
@@ -189,19 +186,19 @@ class titania_rating extends titania_database_object
 		switch ($type)
 		{
 			case 'author':
-				$this->rating_type_id = TITANIA_RATING_AUTHOR;
-				$this->cache_table = TITANIA_AUTHORS_TABLE;
-				$this->cache_rating = 'author_rating';
-				$this->cache_rating_count = 'author_rating_count';
-				$this->object_column = 'user_id';
+				$this->rating_type_id 		= TITANIA_RATING_AUTHOR;
+				$this->cache_table 			= TITANIA_AUTHORS_TABLE;
+				$this->cache_rating 		= 'author_rating';
+				$this->cache_rating_count 	= 'author_rating_count';
+				$this->object_column 		= 'user_id';
 			break;
 
 			case 'contrib':
-				$this->rating_type_id = TITANIA_RATING_CONTRIB;
-				$this->cache_table = TITANIA_CONTRIBS_TABLE;
-				$this->cache_rating = 'contrib_rating';
-				$this->cache_rating_count = 'contrib_rating_count';
-				$this->object_column = 'contrib_id';
+				$this->rating_type_id 		= TITANIA_RATING_CONTRIB;
+				$this->cache_table 			= TITANIA_CONTRIBS_TABLE;
+				$this->cache_rating 		= 'contrib_rating';
+				$this->cache_rating_count 	= 'contrib_rating_count';
+				$this->object_column 		= 'contrib_id';
 			break;
 
 			default:
