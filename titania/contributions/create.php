@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!function_exists('generate_type_select') || !function_exists('generate_category_select'))
+if (!function_exists('generate_type_select'))
 {
 	require TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT;
 }
@@ -28,6 +28,8 @@ if (!phpbb::$auth->acl_get('titania_contrib_submit'))
 
 titania::$contrib = new titania_contribution();
 titania::$contrib->contrib_user_id = phpbb::$user->data['user_id'];
+
+// @todo No need to have the author object inside the contrib object...
 titania::$contrib->author = new titania_author(phpbb::$user->data['user_id']);
 titania::$contrib->author->load();
 
@@ -69,15 +71,13 @@ if ($submit)
 		$error[] = $validate_form_key;
 	}
 
+	// @todo Only call get_author_ids_from_list once and move it to the author object
 	$missing_active = $missing_nonactive = array();
 	$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
 	$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 	get_author_ids_from_list($active_coauthors_list, $missing_active);
 	get_author_ids_from_list($nonactive_coauthors_list, $missing_nonactive);
-	if (sizeof($missing_active) || sizeof($missing_nonactive))
-	{
-		$error[] = sprintf(phpbb::$user->lang['COULD_NOT_FIND_USERS'], implode(', ', array_merge($missing_active, $missing_nonactive)));
-	}
+
 	if (array_intersect($active_coauthors_list, $nonactive_coauthors_list))
 	{
 		$error[] = sprintf(phpbb::$user->lang['DUPLICATE_AUTHORS'], implode(', ', array_keys(array_intersect($active_coauthors_list, $nonactive_coauthors_list))));
@@ -89,9 +89,16 @@ if ($submit)
 
 	// @todo check that the tags are valid in the tag class.
 
-	if (!sizeof($error))
+	if (empty($error))
 	{
+		// Create the contrib
 		titania::$contrib->submit();
+
+		// Update the coauthors lists and create any authors that dont exist
+		// @todo test that values get updated correctly with multiple and single coauthors. I have
+		// tested it a little, just need to make sure.
+		$update_authors = array_merge($active_coauthors_list, $nonactive_coauthors_list);
+		titania::$contrib->author->add_author_contrib_count($update_authors, true);
 
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
 
@@ -112,7 +119,7 @@ phpbb::$template->assign_vars(array(
 	'S_CREATE'				=> true,
 
 	'CONTRIB_PERMALINK'		=> titania::$contrib->contrib_name_clean,
-	'ERROR_MSG'				=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
+	'ERROR_MSG'				=> ($submit && empty($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'		=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'	=> $nonactive_coauthors,
 ));
