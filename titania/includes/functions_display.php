@@ -83,7 +83,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 					),
 				),
 
-				'WHERE'		=> 'cic.tag_id = ' . (int) $id . '
+				'WHERE'		=> 'ct.tag_id = ' . (int) $id . '
 					AND c.contrib_visible = 1',
 
 				'ORDER_BY'	=> $sort->get_order_by(),
