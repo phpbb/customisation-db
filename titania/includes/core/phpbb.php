@@ -41,6 +41,11 @@ class phpbb
 		self::$template	= &$template;
 		self::$user		= &$user;
 		self::$cache	= &$cache;
+
+		// Start session management
+		self::$user->session_begin();
+		self::$auth->acl(phpbb::$user->data);
+		self::$user->setup();
 	}
 
 	/**

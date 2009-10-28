@@ -97,11 +97,6 @@ class titania
 	{
 		global $starttime;
 
-		// Start session management
-		phpbb::$user->session_begin();
-		phpbb::$auth->acl(phpbb::$user->data);
-		phpbb::$user->setup();
-
 		self::$page = htmlspecialchars(phpbb::$user->page['script_path'] . phpbb::$user->page['page_name']);
 		self::$time = (int) $starttime;
 

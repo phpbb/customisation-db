@@ -48,21 +48,18 @@ if (!file_exists(PHPBB_ROOT_PATH . 'common.' . PHP_EXT))
 // This will also check if phpBB is installed and if we have the settings we need (db etc.).
 require PHPBB_ROOT_PATH . 'common.' . PHP_EXT;
 
-// We must use our own user class...
-//require TITANIA_ROOT . 'includes/core/user.' . PHP_EXT;
-//$user = new titania_user();
-
 spl_autoload_register(array('titania', 'autoload'));
 
 // Everything is loaded, lets start session management.
 phpbb::initialise();
-titania::initialise();
 
 // If the database is not installed or outdated redirect to the installer
 if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version']) || version_compare(phpbb::$config['titania_version'], TITANIA_VERSION, '<')))
 {
 	redirect(phpbb::append_sid(TITANIA_ROOT . 'install.' . PHP_EXT));
 }
+
+titania::initialise();
 
 // admin requested the cache to be purged, ensure they have permission and purge the cache.
 if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get('a_'))
