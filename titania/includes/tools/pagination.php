@@ -250,7 +250,7 @@ class titania_pagination extends titania_object
 	 *
 	 * @param string $page path/page to be used in pagination url
 	 */
-	public function build_pagination($page)
+	public function build_pagination($page = '')
 	{
 		$this->set_params(array(
 			$this->limit_name	=> ($this->limit == $this->default_limit) ? false : $this->limit,

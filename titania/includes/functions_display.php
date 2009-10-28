@@ -69,13 +69,13 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 				'SELECT'	=> 'c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, u.username, u.user_colour, u.username_clean',
 
 				'FROM'		=> array(
-					TITANIA_CONTRIB_TAGS_TABLE 	=> 'cic',
+					TITANIA_CONTRIB_TAGS_TABLE 	=> 'ct',
 				),
 
 				'LEFT_JOIN'	=> array(
 					array(
 						'FROM'	=> array(TITANIA_CONTRIBS_TABLE	=> 'c'),
-						'ON'	=> 'cic.contrib_id = c.contrib_id'
+						'ON'	=> 'ct.contrib_id = c.contrib_id'
 					),
 					array(
 						'FROM'	=> array(USERS_TABLE	=> 'u'),
@@ -93,18 +93,17 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 
 	// Setup pagination.
 	$pagination = new titania_pagination();
-	$start = $pagination->get_start(0);
-	$limit = $pagination->get_limit();
-	$contrib_type = 0;
-	$author = new titania_author();
-	$contrib = new titania_contribution();
+	$author 	= new titania_author();
+	$contrib 	= new titania_contribution();
+	$start 		= $pagination->get_start();
+	$limit 		= $pagination->get_limit();
 
 	$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
+		// Set objects with the data
 		$contrib->__set_array($row);
-
 		$author->__set_array($row);
 
 		phpbb::$template->assign_block_vars($blockname, array(
@@ -122,8 +121,6 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 
 			'S_CONTRIB_TYPE'			=> $contrib->contrib_type,
 		));
-
-		$contrib_type = $row['contrib_type'];
 	}
 	phpbb::$db->sql_freeresult($result);
 	unset($contrib, $author);
@@ -133,7 +130,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 		'sd'		=> $sort->sort_dir,
 	));
 
-	$pagination->build_pagination('');
+	$pagination->build_pagination();
 
 	phpbb::$template->assign_vars(array(
 		'U_ACTION'			=> titania::$url->current_page,
