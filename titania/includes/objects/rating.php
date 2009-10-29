@@ -259,7 +259,7 @@ class titania_rating extends titania_database_object
 	 */
 	public function determine_rating($id = false)
 	{
-		$id		= ($id !== false) ? $id : request('id', 0);
+		$id		= ($id !== false) ? $id : request_var('id', 0);
 
 		switch ($this->rating_type)
 		{
@@ -273,7 +273,7 @@ class titania_rating extends titania_database_object
 		}
 
 		$this->load();
-		$this->set_rating();
+		$this->set_rating($redirect);
 	}
 
 	/**
@@ -281,7 +281,7 @@ class titania_rating extends titania_database_object
 	 *
 	 * @param mixed $value
 	 */
-	public function set_rating($value = false)
+	public function set_rating($redirect, $value = false)
 	{
 		$value	= ($value !== false) ? $value : request_var('value', -1.0);
 
