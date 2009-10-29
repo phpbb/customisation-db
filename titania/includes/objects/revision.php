@@ -27,14 +27,6 @@ if (!class_exists('titania_database_object'))
 */
 class titania_revision extends titania_database_object
 {
-
-	/**
-	 * Attachment Object
-	 *
-	 * @var object
-	 */
-	public $attachment = '';
-
 	/**
 	 * SQL Table
 	 *
