@@ -1,61 +1,7 @@
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/uploadify/swfobject.js"></script>
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/uploadify/jquery.uploadify.min.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 	$(document).ready(function() {
-				
-		// Create file uploader.
-		$('#fileInput').uploadify ({
-			'uploader'  	: '{UPLOADER}',
-			'script'    	: '{UPLOAD_SCRIPT}',
-			'cancelImg' 	: '{T_TITANIA_THEME_PATH}/images/cancel.png',
-			'auto'      	: true,
-			'fileDataName'	: 'uploadify',
-			'onComplete'	: {ON_COMPLETE},
-			'buttonText'	: '{L_SELECT_FILE}',
-			'height'		: 22,
-			'width'			: 110,
-			'wmode'			: 'transparent'
-		});
-		
-		// onComplete function.
-		function onComplete(event, queueId, fileObj, response, data)
-		{
-			// Parse response as JSON.
-			var response = window["eval"]("(" + response + ")");
 
-			if (response.error)
-			{
-				$('#errorbox_msg').text(response.error);
-				$('#errorbox').fadeIn('slow');
-
-				setTimeout("$('#errorbox').fadeOut('slow');", 10000);
-			}
-			else
-			{
-				$("#uploads").append(response.html)
-				$('#file_info_main_' + response.id).slideDown('slow');
-			}
-		}
-
-		
-		$('.hide').live('click', function() { 
-			var id = $(this).attr('id');
-
-			$('#file_info_main_' + id).slideToggle('slow');
-
-			var link_text = $(this).children('a');
-
-			if (link_text.html() == '{L_SHOW}')
-			{
-				link_text.html('{L_HIDE}');
-			}
-			else
-			{
-				link_text.html('{L_SHOW}');
-			}
-			$('show_hide_' + id).val('{L_CLOSE}');
-		});
 	});
 // ]]
 </script>
@@ -77,7 +23,7 @@
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
 	
-	<input type="file" class="inputbox autowidth" value="" maxlength="262144" id="fileInput" name="fileInput"/>
+	<input type="file" name="file" id="upload-field"/>
 	
 	<hr />
 </div>
