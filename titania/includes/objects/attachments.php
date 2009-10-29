@@ -234,7 +234,7 @@ class titania_attachments extends titania_database_object
 	/**
 	 * Name explains it all.
 	 *
-	 * Gets all the attachments thave have been submitted.
+	 * Gets all the attachments that have been submitted.
 	 *
 	 */
 	public function get_submitted_attachments()
@@ -342,7 +342,7 @@ class titania_attachments extends titania_database_object
 		}
 
 		// Do we need to update?
-		if (sizeof($attachment_ids))
+		if ($attachment_ids)
 		{
 			$data = array(
 				'is_orphan'		=> 0,
