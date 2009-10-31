@@ -254,38 +254,7 @@ class titania_tag extends titania_database_object
 		}
 		else
 		{
-			throw new UnknownTagCategory($tag_id);
+			return false;
 		}
-	}
-}
-
-/**
- * Exceptions
- *
- * We do not use language strings here, these are for debugging and should be caught when using this class.
- *
- */
-
-/**
- * Unknown tag category exception
- *
- */
-class UnknownTagCategory extends Exception
-{
-	function __construct($tag_id, $code = 0)
-	{
-		parent::__construct('Tag Id: ' . $tag_id . ' does not exist', $code);
-	}
-}
-
-/**
- * Insert exception
- *
- */
-class InsertError extends Exception
-{
-	function __construct($code = 0)
-	{
-		parent::__construct('Unable to tag item, please try again', $code);
 	}
 }
