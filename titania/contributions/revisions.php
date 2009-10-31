@@ -32,7 +32,7 @@ class titania_revisons_page
 		$submit		= isset($_POST['submit']) ? true : false;
 		$form_key	= 'revisions';
 		$revision	= new titania_revision(request_var('r', 0));
-		$attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, 'revisions');
+		$revision->attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, 'revisions');
 
 		switch ($action)
 		{
@@ -62,7 +62,7 @@ class titania_revisons_page
 					else
 					{
 						$revision->submit();
-						$attachment->update_orphans($revision->revision_id, $revision->attachment_id);
+						$revision->attachment->update_orphans($revision->revision_id, $revision->attachment_id);
 
 						// Setup response.
 						phpbb::$template->set_filenames(array(
@@ -138,13 +138,12 @@ class titania_revisons_page
 				));
 
 				// Setup uploader.
-				$attachment->display_uploader(array('on_complete' => 'revision_upload_complete'), array('object_type' => 'revisions'));
+				$revision->attachment->display_uploader(array('on_complete' => 'revision_upload_complete'), array('object_type' => 'revisions'));
 			break;
 		}
 
 		phpbb::$template->assign_vars(array(
-			'CONTRIB_NAME'			=> titania::$contrib->contrib_name,
-			'ATTACHMENT_EXPLAIN'	=> phpbb::$user->lang['REVISION_UPLOAD_EXPLAIN'],
+			'CONTRIB_NAME'		=> titania::$contrib->contrib_name,
 		));
 
 		titania::page_footer(false, 'contributions/contribution_revisions.html');
