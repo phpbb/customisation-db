@@ -726,8 +726,6 @@ class titania_contribution extends titania_database_object
 		// If the author profile does not exist set it up
 		if (!phpbb::$db->sql_affectedrows())
 		{
-			titania::load_object('author');
-
 			$author = new titania_author($user_id);
 			$author->load();
 

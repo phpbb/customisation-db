@@ -43,7 +43,6 @@ switch ($action)
 		switch ($type)
 		{
 			case 'author' :
-				titania::load_object('author');
 				$object = new titania_author();
 				$object->load($id);
 				$redirect = $object->get_url();
@@ -55,7 +54,6 @@ switch ($action)
 			break;
 
 			case 'contrib' :
-				titania::load_object('contribution');
 				$object = new titania_contribution();
 				$object->load($id);
 				$redirect = $object->get_url();
@@ -71,7 +69,6 @@ switch ($action)
 			break;
 		}
 
-		titania::load_object('rating');
 		$rating = new titania_rating($type, $object);
 		$rating->load();
 

@@ -26,8 +26,6 @@ if (!phpbb::$auth->acl_get('titania_contrib_submit'))
 	trigger_error('NO_AUTH');
 }
 
-titania::load_object(array('contribution', 'author'));
-
 titania::$contrib = new titania_contribution();
 
 titania::$contrib->contrib_user_id = phpbb::$user->data['user_id'];
@@ -35,7 +33,6 @@ titania::$contrib->author = new titania_author(phpbb::$user->data['user_id']);
 titania::$contrib->author->load();
 
 // Load the message object
-titania::load_tool('message');
 $message = new titania_message(titania::$contrib);
 $message->set_auth(array(
 	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
