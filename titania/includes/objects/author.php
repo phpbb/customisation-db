@@ -16,6 +16,11 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+if (!class_exists('titania_database_object'))
+{
+	require TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT;
+}
+
 /**
 * Class to abstract titania authors.
 * @package Titania
@@ -77,9 +82,9 @@ class titania_author extends titania_database_object
 		));
 
 		// Load the count for different types
-		foreach (titania::$type->types as $type)
+		foreach (titania::$types as $type)
 		{
-			$this->object_config[$type['author_count_field']] = array('default' => 0);
+			$this->object_config[$type->author_count] = array('default' => 0);
 		}
 
 		if ($user_id !== false)
@@ -112,7 +117,7 @@ class titania_author extends titania_database_object
 		}
 
 		$sql_ary = array(
-			'SELECT' => 'a.*, u.*',
+			'SELECT' => 'a.*, u.*', // Don't change to *!
 			'FROM'		=> array(
 				USERS_TABLE => 'u',
 			),
@@ -155,9 +160,6 @@ class titania_author extends titania_database_object
 		return parent::submit();
 	}
 
-	/**
-	 * Validate Author website
-	 */
 	public function validate()
 	{
 		$error = array();
@@ -193,7 +195,7 @@ class titania_author extends titania_database_object
 	 *
 	 * @return void
 	 */
-	public function generate_text_for_storage($allow_urls = true, $allow_bbcode = false, $allow_smilies = false)
+	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
 		generate_text_for_storage($this->author_desc, $this->author_desc_uid, $this->author_desc_bitfield, $this->author_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
@@ -347,9 +349,9 @@ class titania_author extends titania_database_object
 
 			'AUTHOR_CONTRIBS'				=> $this->author_contribs,
 
-			'AUTHOR_DESC'					=> $this->generate_text_for_display(),
+            'AUTHOR_DESC'                   => $this->generate_text_for_display(),
 
-			'U_MANAGE_AUTHOR'				=> (phpbb::$user->data['user_id'] == $this->user_id	 || phpbb::$auth->acl_get('titania_author_mod')) ? $this->get_url('manage') : '',
+			'U_MANAGE_AUTHOR'				=> (phpbb::$user->data['user_id'] == $this->user_id  || phpbb::$auth->acl_get('titania_author_mod')) ? $this->get_url('manage') : '',
 			'U_AUTHOR_PROFILE'				=> $this->get_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),
@@ -357,11 +359,11 @@ class titania_author extends titania_database_object
 		);
 
 		// Output the count for different types
-		foreach (titania::$type as $type)
+		foreach (titania::$types as $type)
 		{
 			phpbb::$template->assign_block_vars('type_counts', array(
-				//'NAME'	=> (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? phpbb::$user->lang[strtoupper($type->author_count)] : strtoupper($type->author_count),
-				//'VALUE'	=> $this->{$type->author_count}
+				'NAME'	=> (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? phpbb::$user->lang[strtoupper($type->author_count)] : strtoupper($type->author_count),
+				'VALUE'	=> $this->{$type->author_count}
 			));
 		}
 
@@ -386,196 +388,4 @@ class titania_author extends titania_database_object
 		phpbb::$template->assign_vars($vars);
 	}
 
-	/**
-	* De-Increment the contrib count for an author by count
-	*
-	* @param int|array $user_id
-	* @param int $count
-	*/
-	public function remove_author_contrib($user_id, $count = 1)
-	{
-		$user_ary = self::convert_array($user_id);
-
-		$sql = 'UPDATE ' . $this->sql_table . ' SET
-			author_contribs = author_contribs - ' . (int) $count . ', ' .
-			titania::$type->types[titania::$contrib->contrib_type]['author_count_field'] . ' = ' .
-				titania::$type->types[titania::$contrib->contrib_type]['author_count_field'] . ' - ' . (int) $count . '
-			WHERE ' . phpbb::$db->sql_in_set('user_id', $user_ary);
-		phpbb::$sql->sql_query($sql);
-	}
-
-	/**
-	* Increment the contrib count for an author by count
-	* Creates authors if they do not exist.
-	*
-	* @param int|array $user_id
-	* @param int $count
-	*/
-	public function add_author_contrib_count($user_id, $count = 1, $check_exists = false)
-	{
-		if ($check_exists)
-		{
-			$this->check_author_exists($user_id);
-		}
-
-		$user_ary = self::convert_array($user_id);
-
-		// Build the sql query
-		$sql = 'UPDATE ' . $this->sql_table . ' SET
-			author_contribs = author_contribs + ' . (int) $count . ', ' .
-			titania::$type->types[titania::$contrib->contrib_type]['author_count_field'] . ' = ' .
-				titania::$type->types[titania::$contrib->contrib_type]['author_count_field'] . ' + ' . (int) $count . '
-			WHERE ' . phpbb::$db->sql_in_set('user_id', $user_ary);
-		phpbb::$sql->sql_query($sql);
-	}
-
-	/**
-	 * Checks if an author exists
-	 *
-	 * @param unknown_type $user_id
-	 */
-	private function check_author_exists($user_id)
-	{
-		static $cache;
-
-		// @todo implement cache variable
-
-		// Create copy of our array so we know who we have and who we dont
-		$missing_users = $user_ary = self::convert_array($user_id);
-
-		$sql = 'SELECT user_id
-			FROM ' . $this->sql_table . '
-			WHERE ' . phpbb::$db->sql_in_set('user_id', $user_ary);
-		$result = phpbb::$db->sql_query($sql);
-
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			unset($missing_users[$row['user_id']]);
-		}
-
-		if ($missing_users)
-		{
-			$this->multi_insert($missing_users);
-		}
-	}
-
-	/**
-	 * Converts a value into an array that has the keys and values
-	 * the same or formats the given array into the correct format
-	 *
-	 * @param mixed $value
-	 */
-	private static function convert_to_array($value)
-	{
-		// Set the user array to be the user id
-		if (is_array($value))
-		{
-    		$ary = array_combine(array_keys($value), $value);
-        }
-        else
-        {
-            $user_ary[$value] = $value;
-        }
-
-        return $ary;
-	}
-
-	/**
-	* Set coauthors for contrib item
-	*
-	* @param array $active array of active coauthor user_ids
-	* @param array $nonactive array of nonactive coauthor user_ids
-	* @param bool $reset true to reset the coauthors and only add the ones given, false to keep past coauthors and just add some new ones
-	*
-	* @todo update $this->coauthors
-	*/
-	public function set_coauthors($active, $nonactive = array(), $reset = false)
-	{
-		if ($reset)
-		{
-			// Grab the current contribs
-			$sql = 'SELECT user_id
-				FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
-				WHERE contrib_id = ' . (int) $this->contrib_id;
-			$result = phpbb::$db->sql_query($sql);
-
-			$decrement_list = array();
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$decrement_list[] = $row['user_id'];
-			}
-			phpbb::$db->sql_freeresult($result);
-
-			if (!empty($decrement_list))
-			{
-				// Don't need to call change_author_contrib_count here, since they should already exist and it uses quite a few extra queries
-				$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
-					SET author_contribs = author_contribs - 1
-					WHERE ' . phpbb::$db->sql_in_set('user_id', $decrement_list);
-				phpbb::$db->sql_query($sql);
-			}
-
-			$sql = 'DELETE FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
-				WHERE contrib_id = ' . (int) $this->contrib_id;
-			phpbb::$db->sql_query($sql);
-		}
-
-		if (!empty($active))
-		{
-			$sql_ary = array();
-			foreach ($active as $user_id)
-			{
-				$sql_ary[] = array(
-					'contrib_id'	=> $this->contrib_id,
-					'user_id'		=> $user_id,
-					'active'		=> true,
-				);
-			}
-
-			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
-
-			// Increment the contrib counter
-			$this->change_author_contrib_count($active);
-		}
-
-		if (!empty($nonactive))
-		{
-			$sql_ary = array();
-			foreach ($nonactive as $user_id)
-			{
-				$sql_ary[] = array(
-					'contrib_id'	=> $this->contrib_id,
-					'user_id'		=> $user_id,
-					'active'		=> false,
-				);
-			}
-
-			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
-
-			// Increment the contrib counter
-			$this->change_author_contrib_count($nonactive);
-		}
-	}
-
-	/**
-	 * Creates multiple authors with the given user_ids.
-	 * Does not check to see if authors exists!
-	 *
-	 * @param int|array $user_ids
-	 */
-	private function multi_insert($user_ids)
-	{
-		$user_ary = (is_array($user_ids)) ? $user_ids : $user_ary[] = $user_id;
-
-		// Type cast here and build the user_ary into the data to be inserted
-		foreach ($user_ary as $user_id)
-		{
-			$sql_ary[]['user_id'] = (int) $user_id;
-		}
-echo '<pre>';
-		var_dump($sql_ary);
-		// Insert the data
-		phpbb::$db->sql_multi_insert(TITANIA_AUTHORS_TABLE, $sql_ary);
-
-	}
 }

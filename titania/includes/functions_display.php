@@ -33,6 +33,32 @@ function get_version_string($version)
 }
 
 /**
+* Display categories
+*
+* @param int $parent_id The parent id/name (only show categories under this category)
+* @param string $blockname The name of the template block to use (categories by default)
+*/
+function titania_display_categories($parent_id = 0, $blockname = 'categories')
+{
+	$sql = 'SELECT * FROM ' . TITANIA_CATEGORIES_TABLE . '
+		WHERE parent_id = ' . (int) $parent_id . '
+			AND category_visible = 1
+		ORDER BY left_id ASC';
+	$result = phpbb::$db->sql_query($sql);
+
+	while ($row = phpbb::$db->sql_fetchrow($result))
+	{
+		$category = new titania_category();
+		$category->__set_array($row);
+
+		phpbb::$template->assign_block_vars($blockname, $category->assign_display(true));
+
+		unset($category);
+	}
+	phpbb::$db->sql_freeresult($result);
+}
+
+/**
 * Display contributions
 *
 * @param string $mode The mode (category, author)
@@ -69,13 +95,13 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 				'SELECT'	=> 'c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, u.username, u.user_colour, u.username_clean',
 
 				'FROM'		=> array(
-					TITANIA_CONTRIB_TAGS_TABLE 	=> 'ct',
+					TITANIA_CONTRIB_IN_CATEGORIES_TABLE 	=> 'cic',
 				),
 
 				'LEFT_JOIN'	=> array(
 					array(
 						'FROM'	=> array(TITANIA_CONTRIBS_TABLE	=> 'c'),
-						'ON'	=> 'ct.contrib_id = c.contrib_id'
+						'ON'	=> 'cic.contrib_id = c.contrib_id'
 					),
 					array(
 						'FROM'	=> array(USERS_TABLE	=> 'u'),
@@ -83,7 +109,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 					),
 				),
 
-				'WHERE'		=> 'ct.tag_id = ' . (int) $id . '
+				'WHERE'		=> 'cic.category_id = ' . (int) $id . '
 					AND c.contrib_visible = 1',
 
 				'ORDER_BY'	=> $sort->get_order_by(),
@@ -93,24 +119,25 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 
 	// Setup pagination.
 	$pagination = new titania_pagination();
-	$author 	= new titania_author();
-	$contrib 	= new titania_contribution();
-	$start 		= $pagination->get_start();
-	$limit 		= $pagination->get_limit();
+	$start = $pagination->get_start(0);
+	$limit = $pagination->get_limit();
+	$contrib_type = 0;
+	$author = new titania_author();
+	$contrib = new titania_contribution();
 
 	$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
-		// Set objects with the data
 		$contrib->__set_array($row);
+
 		$author->__set_array($row);
 
 		phpbb::$template->assign_block_vars($blockname, array(
 			'CONTRIB_USERNAME'			=> $contrib->username,
 			'CONTRIB_USERNAME_FULL'		=> $author->get_username_string(),
 			'CONTRIB_NAME'				=> $contrib->contrib_name,
-			'CONTRIB_TYPE'				=> titania::$type->types[$contrib->contrib_type],
+			'CONTRIB_TYPE'				=> titania::$types[$contrib->contrib_type]->lang,
 			'CONTRIB_STATUS'			=> $contrib->contrib_status,
 			'CONTRIB_DOWNLOADS'			=> $contrib->contrib_downloads,
 			'CONTRIB_VIEWS'				=> $contrib->contrib_views,
@@ -121,6 +148,8 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 
 			'S_CONTRIB_TYPE'			=> $contrib->contrib_type,
 		));
+
+		$contrib_type = $row['contrib_type'];
 	}
 	phpbb::$db->sql_freeresult($result);
 	unset($contrib, $author);
@@ -130,7 +159,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 		'sd'		=> $sort->sort_dir,
 	));
 
-	$pagination->build_pagination();
+	$pagination->build_pagination('');
 
 	phpbb::$template->assign_vars(array(
 		'U_ACTION'			=> titania::$url->current_page,

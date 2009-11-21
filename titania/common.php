@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-define('TITANIA_VERSION', '0.1.21');
+define('TITANIA_VERSION', '0.1.19');
 
 define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 define('PHPBB_USE_BOARD_URL_PATH', true);
@@ -48,9 +48,7 @@ if (!file_exists(PHPBB_ROOT_PATH . 'common.' . PHP_EXT))
 // This will also check if phpBB is installed and if we have the settings we need (db etc.).
 require PHPBB_ROOT_PATH . 'common.' . PHP_EXT;
 
-spl_autoload_register(array('titania', 'autoload'));
-
-// Everything is loaded, lets start session management.
+// Start session management etc.
 phpbb::initialise();
 
 // If the database is not installed or outdated redirect to the installer
@@ -75,3 +73,5 @@ if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get(
 		titania::confirm_box(false, phpbb::$user->lang['CONFIRM_PURGE_CACHE'], titania::$url->append_url(titania::$url->current_page, array_merge(titania::$url->params, array('cache' => 'purge'))));
 	}
 }
+
+spl_autoload_register(array('titania', 'autoload'));

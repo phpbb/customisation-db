@@ -40,7 +40,7 @@
 				<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="5">
 					<!-- BEGIN category_select -->
 					<option value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
-						<!-- IF not category_select.S_DISABLED -->&nbsp; &nbsp;<!-- ENDIF -->{category_select.NAME}
+						<!-- BEGIN level -->&nbsp; &nbsp;<!-- END level -->{category_select.NAME}
 					</option>
 					<!-- END category_select -->
 				</select>

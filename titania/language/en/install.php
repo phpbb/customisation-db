@@ -37,8 +37,6 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
-
-	'DISPLAY_EMPTY_CATS'		=> 'Display empty categories',
 ));
 
 ?>

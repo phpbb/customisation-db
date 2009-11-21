@@ -30,66 +30,77 @@ class titania_cache extends acm
 	/**
 	 * Get categories by tag type
 	 *
-	 * @param int $tag_type
-	 * @return array of category data (field_name and field_desc)
+	 * @return array of categories
 	 */
-	public function get_categories($tag_type = titania_tag::TYPE_CATEGORY)
+	public function get_categories()
 	{
-		//$categories = $this->get('_titania_categories_' . $tag_type);
+		$categories = $this->get('_titania_categories');
 
-		if (!$categories)
+		if ($categories === false)
 		{
 			$categories = array();
-			$sql = 'SELECT tag_id, tag_field_name, tag_clean_name, tag_field_desc, tag_items, tag_contrib_type
-						FROM ' . TITANIA_TAG_FIELDS_TABLE . '
-						WHERE tag_type_id = ' . (int) $tag_type;
+
+			$sql = 'SELECT *
+				FROM ' . TITANIA_CATEGORIES_TABLE . '
+				ORDER BY left_id ASC';
 			$result = phpbb::$db->sql_query($sql);
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$categories[$row['tag_id']] = array(
-					'tag_id'				=> $row['tag_id'],
-					'tag_field_name'		=> $row['tag_field_name'],
-					'tag_clean_name'		=> $row['tag_clean_name'],
-					'tag_field_desc'		=> $row['tag_field_desc'],
-					'tag_items'				=> $row['tag_items'],
-					'tag_contrib_type'		=> $row['tag_contrib_type'],
-				);
+				$categories[$row['category_id']] = $row;
 			}
 			phpbb::$db->sql_freeresult($result);
 
-			$this->put('_titania_categories_' . $tag_type, $categories);
+			$this->put('_titania_categories', $categories);
 		}
 
 		return $categories;
 	}
 
-	public function get_types()
+	/**
+	* Get the list of parents for a category
+	*
+	* @param int $category_id The category id to get the parents for.
+	* @return returns an array of the categories parents, ex:
+	* array(
+	* 	array('category_id' => 2, 'parent_id' =>  1, 'category_name_clean' => 'Modifications'),
+	* 	array('category_id' => 1, 'parent_id' =>  0, 'category_name_clean' => 'phpBB3'),
+	* ),
+	*/
+	public function get_category_parents($category_id)
 	{
-		$types = $this->get('_titania_types');
+		$parent_list = $this->get('_titania_category_parents');
 
-		if (!$types)
+		if ($parent_list === false)
 		{
-			$types = array();
-			$sql = 'SELECT type_id, type_name, type_slug, author_count_field
-						FROM ' . TITANIA_TYPES_TABLE;
+			$parent_list = $list = array();
+
+			$sql = 'SELECT category_id, parent_id, category_name_clean FROM ' . TITANIA_CATEGORIES_TABLE . '
+				ORDER BY left_id ASC';
 			$result = phpbb::$db->sql_query($sql);
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$types[$row['type_id']] = array(
-					'type_id'				=> $row['type_id'],
-					'type_name'				=> $row['type_name'],
-					'author_count_field'	=> $row['author_count_field'],
-					'type_slug'				=> $row['type_slug'],
-				);
+				// need later
+				$list[$row['category_id']] = $row;
+
+				$parent_id = $row['parent_id'];
+
+				// Go through and grab all of the parents
+				while (isset($list[$parent_id]))
+				{
+					$parent_list[$row['category_id']][] = $list[$parent_id];
+
+					$parent_id = $list[$parent_id]['parent_id'];
+				}
 			}
+
 			phpbb::$db->sql_freeresult($result);
 
-			$this->put('_titania_types', $types);
+			$this->put('_titania_category_parents', $parent_list);
 		}
 
-		return $types;
+		return (isset($parent_list[$category_id])) ? $parent_list[$category_id] : array();
 	}
 
 	/**
