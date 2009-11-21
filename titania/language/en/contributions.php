@@ -84,7 +84,6 @@ $lang = array_merge($lang, array(
 	'NEW_CONTRIBUTION'					=> 'New Contribution',
 	'NEW_TOPIC'							=> 'New Topic',
 	'NO_CATEGORY'						=> 'The selected category does not exist',
-	'NO_CONTRIBS'						=> 'No contributions could be found',
 
 	'SELECT_CONTRIB_TYPE'				=> '-- Select contribution type --',
 

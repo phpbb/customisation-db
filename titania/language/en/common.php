@@ -79,6 +79,7 @@ $lang = array_merge($lang, array(
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
 	'NO_DESC'					=> 'You have to enter the description.',
+	'NO_CONTRIBS'				=> 'No contributions could be found',
 
 	'ORDER'						=> 'Order',
 	'PURGE_CACHE'				=> 'Purge Cache',
