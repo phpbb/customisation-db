@@ -106,7 +106,7 @@ switch ($action)
 			// fix an entries order
 			$faq->cleanup_order();
 
-			trigger_error(phpbb::$user->lang['FAQ_DELETED'] . titania::back_link(titania::$contrib->get_url('faq')));
+			redirect(titania::$contrib->get_url('faq'));
 		}
 		else
 		{

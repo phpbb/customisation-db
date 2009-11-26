@@ -104,7 +104,7 @@ class titania_revisons_page
 				{
 					$revision->delete();
 
-					titania::error_box('Success', 'Revision Deleted');
+					titania::error_box('SUCCESS', 'Revision Deleted');
 
 					self::main('display');
 				}

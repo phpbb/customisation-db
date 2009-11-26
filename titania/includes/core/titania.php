@@ -107,18 +107,16 @@ class titania
 		}
 		self::$cache = new titania_cache();
 
-		// Set the absolute path
+		// Set the absolute titania/board path
 		self::$absolute_path = generate_board_url(true) . '/' . self::$config->titania_script_path;
 		self::$absolute_board = generate_board_url() . '/';
 
-		// Set the root path for our URL class
-		self::$url->root_url = self::$absolute_path;
-
-		// Set template path and template name
+		// Set the style path, template path, and template name
 		self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
 		self::$template_path = self::$style_path . 'template';
 		self::$theme_path = self::$style_path . 'theme';
 
+		// Set the paths for phpBB
 		phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
 		phpbb::$user->theme['template_storedb'] = false;
 
@@ -126,7 +124,7 @@ class titania
 		phpbb::$user->theme['template_inherits_id'] = 1; // Doesn't seem to matter what number I put in here...
 		phpbb::$template->inherit_root = PHPBB_ROOT_PATH . 'styles/prosilver/template';
 
-		// Access Level check for teams access
+		// Setup the Access Level
 		self::$access_level = TITANIA_ACCESS_PUBLIC;
 		if (in_array(phpbb::$user->data['group_id'], self::$config->team_groups))
 		{
@@ -136,8 +134,13 @@ class titania
 		// Add common titania language file
 		self::add_lang('common');
 
-		// Load the types
+		// Load the contrib types
 		self::load_types();
+
+		// Initialise the URL class
+		self::$url = new titania_url();
+		self::$url->decode_url();
+		self::$url->root_url = self::$absolute_path;
 	}
 
 	/**
@@ -149,32 +152,19 @@ class titania
 	{
 		if (!file_exists($file) || !is_readable($file))
 		{
-			echo '<p>';
-			echo '	The Titania configuration file could not be found or is inaccessible. Check your configuration.<br />';
-			echo '	To install Titania you have to rename config.example.php to config.php and adjust it to your needs.';
-			echo '</p>';
-
-			exit;
+			die('<p>The Titania configuration file could not be found or is inaccessible. Check your configuration.</p>');
 		}
 
 		require($file);
 
-		if (!isset(self::$config))
-		{
-			if (!class_exists('titania_config'))
-			{
-				require TITANIA_ROOT . 'includes/core/config.' . PHP_EXT;
-			}
-
-			self::$config = new titania_config();
-		}
+		self::$config = new titania_config();
 
 		if (!is_array($config))
 		{
 			$config = array();
 		}
 
-		self::$config->read_array($config);
+		self::$config->__set_array($config);
 	}
 
 	/**
@@ -186,19 +176,22 @@ class titania
 	 */
 	public static function autoload($class_name)
 	{
+		// Remove titania/overlord from the class name
+		$class_name = str_replace(array('titania_', '_overlord'), '', $class_name);
+
 		$directories = array(
 			'objects',
 			'tools',
-			'overlords'
+			'overlords',
+			'core',
 		);
 
 		foreach ($directories as $dir)
 		{
-			$class_name = preg_replace(array('#[^A-Za-z0-9_]#', '#titania_#', '#overlord_#'), '', $class_name);
-
 			if (file_exists(TITANIA_ROOT . 'includes/' . $dir . '/' . $class_name . '.' . PHP_EXT))
 			{
 				include(TITANIA_ROOT . 'includes/' . $dir . '/' . $class_name . '.' . PHP_EXT);
+				return;
 			}
 		}
 
@@ -214,11 +207,15 @@ class titania
 	 */
 	public static function add_lang($lang_set, $use_db = false, $use_help = false)
 	{
+		// Store so we can reset it back
 		$old_path = phpbb::$user->lang_path;
 
+		// Set the custom language path to our working language directory
 		phpbb::$user->set_custom_lang_path(self::$config->language_path);
+
 		phpbb::$user->add_lang($lang_set, $use_db, $use_help);
 
+		// Reset the custom language path to the original directory
 		phpbb::$user->set_custom_lang_path($old_path);
 	}
 
@@ -237,20 +234,8 @@ class titania
 
 		define('HEADER_INC', true);
 
-		// gzip_compression
-		if (phpbb::$config['gzip_compress'])
-		{
-			if (@extension_loaded('zlib') && !headers_sent())
-			{
-				ob_start('ob_gzhandler');
-			}
-		}
-
-		// Check if page_title is a language string
-		if (isset(phpbb::$user->lang[$page_title]))
-		{
-			$page_title = phpbb::$user->lang[$page_title];
-		}
+		// Do the phpBB page header stuff first
+		phpbb::page_header($page_title);
 
 		// Generate logged in/logged out status
 		if (phpbb::$user->data['user_id'] != ANONYMOUS)
@@ -264,28 +249,11 @@ class titania
 			$l_login_logout = phpbb::$user->lang['LOGIN'];
 		}
 
-		// Send a proper content-language to the output
-		$user_lang = phpbb::$user->lang['USER_LANG'];
-		if (strpos($user_lang, '-x-') !== false)
-		{
-			$user_lang = substr($user_lang, 0, strpos($user_lang, '-x-'));
-		}
-
 		phpbb::$template->assign_vars(array(
-			'SITENAME'				=> phpbb::$config['sitename'],
-			'SITE_DESCRIPTION'		=> phpbb::$config['site_desc'],
-			'PAGE_TITLE'			=> $page_title,
-			'SCRIPT_NAME'			=> str_replace('.' . PHP_EXT, '', phpbb::$user->page['page_name']),
-			'CURRENT_TIME'			=> sprintf(phpbb::$user->lang['CURRENT_TIME'], phpbb::$user->format_date(time(), false, true)),
+			'U_LOGIN_LOGOUT'			=> $u_login_logout,
+			'L_LOGIN_LOGOUT'			=> $l_login_logout,
+			'LOGIN_REDIRECT'			=> self::$page,
 
-			// rewrite the login URL to redirect to the currently viewed page.
-			'U_LOGIN_LOGOUT'		=> $u_login_logout,
-			'L_LOGIN_LOGOUT'		=> $l_login_logout,
-			'LOGIN_REDIRECT'		=> self::$page,
-			'S_LOGIN_ACTION'		=> phpbb::append_sid('ucp', 'mode=login'),
-
-
-			'SESSION_ID'				=> phpbb::$user->session_id,
 			'PHPBB_ROOT_PATH'			=> self::$absolute_board,
 			'TITANIA_ROOT_PATH'			=> self::$absolute_path,
 
@@ -296,82 +264,9 @@ class titania
 			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
 			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . '/style.php?style=' . self::$config->style,
-
-			'U_DELETE_COOKIES'		=> phpbb::append_sid('ucp', 'mode=delete_cookies'),
-			'S_USER_LOGGED_IN'		=> (phpbb::$user->data['user_id'] != ANONYMOUS) ? true : false,
-			'S_AUTOLOGIN_ENABLED'	=> (phpbb::$config['allow_autologin']) ? true : false,
-			'S_BOARD_DISABLED'		=> (phpbb::$config['board_disable']) ? true : false,
-			'S_REGISTERED_USER'		=> (!empty(phpbb::$user->data['is_registered'])) ? true : false,
-			'S_IS_BOT'				=> (!empty(phpbb::$user->data['is_bot'])) ? true : false,
-			'S_USER_LANG'			=> $user_lang,
-			'S_USER_BROWSER'		=> (isset(phpbb::$user->data['session_browser'])) ? phpbb::$user->data['session_browser'] : phpbb::$user->lang['UNKNOWN_BROWSER'],
-			'S_USERNAME'			=> phpbb::$user->data['username'],
-			'S_CONTENT_DIRECTION'	=> phpbb::$user->lang['DIRECTION'],
-			'S_CONTENT_FLOW_BEGIN'	=> (phpbb::$user->lang['DIRECTION'] == 'ltr') ? 'left' : 'right',
-			'S_CONTENT_FLOW_END'	=> (phpbb::$user->lang['DIRECTION'] == 'ltr') ? 'right' : 'left',
-			'S_CONTENT_ENCODING'	=> 'UTF-8',
-			'S_REGISTER_ENABLED'	=> (phpbb::$config['require_activation'] != USER_ACTIVATION_DISABLE) ? true : false,
-
-			'T_STYLESHEET_LINK'		=> (!phpbb::$user->theme['theme_storedb']) ? self::$absolute_board . '/styles/' . phpbb::$user->theme['theme_path'] . '/theme/stylesheet.css' : self::$absolute_board . 'style.' . PHP_EXT . '?sid=' . phpbb::$user->session_id . '&amp;id=' . phpbb::$user->theme['style_id'] . '&amp;lang=' . phpbb::$user->data['user_lang'],
-			'T_STYLESHEET_NAME'		=> phpbb::$user->theme['theme_name'],
-
-			'SITE_LOGO_IMG'			=> phpbb::$user->img('site_logo'),
-
-			'A_COOKIE_SETTINGS'		=> addslashes('; path=' . phpbb::$config['cookie_path'] . ((!phpbb::$config['cookie_domain'] || phpbb::$config['cookie_domain'] == 'localhost' || phpbb::$config['cookie_domain'] == '127.0.0.1') ? '' : '; domain=' . phpbb::$config['cookie_domain']) . ((!phpbb::$config['cookie_secure']) ? '' : '; secure')),
+			'T_STYLESHEET_LINK'			=> (!phpbb::$user->theme['theme_storedb']) ? self::$absolute_board . '/styles/' . phpbb::$user->theme['theme_path'] . '/theme/stylesheet.css' : self::$absolute_board . 'style.' . PHP_EXT . '?sid=' . phpbb::$user->session_id . '&amp;id=' . phpbb::$user->theme['style_id'] . '&amp;lang=' . phpbb::$user->data['user_lang'],
+			'T_STYLESHEET_NAME'			=> phpbb::$user->theme['theme_name'],
 		));
-
-		// @todo allow outside modification of this function/call
-		self::header_nav();
-
-		// application/xhtml+xml not used because of IE
-		header('Content-type: text/html; charset=UTF-8');
-
-		header('Cache-Control: private, no-cache="set-cookie"');
-		header('Expires: 0');
-		header('Pragma: no-cache');
-
-		return;
-	}
-
-	/**
-	 * Header breadcrumb-type navigation
-	 */
-	public static function header_nav()
-	{
-		// @todo setup a cached array so that we can 'breadcrumb' anywhere within Titania that we go.
-		$header_nav = array(
-			array(
-				'title'		=> 'TITANIA_INDEX',
-				'url'		=> self::$absolute_path,
-			),
-		);
-
-		self::generate_nav($header_nav, '', 'nav_header');
-	}
-
-	/**
-	* Generate the navigation tabs/menu for display
-	*
-	* @param array $nav_ary The array of data to output
-	* @param string $current_page The current page
-	* @param string $block Optionally specify a custom template block loop name
-	*/
-	public static function generate_nav($nav_ary, $current_page, $block = 'nav_menu')
-	{
-		foreach ($nav_ary as $page => $data)
-		{
-			// If they do not have authorization, skip.
-			if (isset($data['auth']) && !$data['auth'])
-			{
-				continue;
-			}
-
-			phpbb::$template->assign_block_vars($block, array(
-				'L_TITLE'		=> (isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title'],
-				'U_TITLE'		=> $data['url'],
-				'S_SELECTED'	=> ($page == $current_page) ? true : false,
-			));
-		}
 	}
 
 	/**
@@ -390,7 +285,7 @@ class titania
 			));
 		}
 
-		// Output page creation time
+		// Output page creation time (can not move phpBB side because of a hack we do in here)
 		if (defined('DEBUG'))
 		{
 			global $starttime;
@@ -426,72 +321,36 @@ class titania
 
 		phpbb::$template->assign_vars(array(
 			'DEBUG_OUTPUT'			=> (defined('DEBUG')) ? $debug_output : '',
-			'TRANSLATION_INFO'		=> (!empty(phpbb::$user->lang['TRANSLATION_INFO'])) ? phpbb::$user->lang['TRANSLATION_INFO'] : '',
-
-			'U_ACP'					=> (phpbb::$auth->acl_get('a_') && !empty(phpbb::$user->data['is_registered'])) ? phpbb::append_sid('adm/index', false, true, phpbb::$user->session_id) : '',
 			'U_PURGE_CACHE'			=> (phpbb::$auth->acl_get('a_')) ? self::$url->append_url(self::$url->current_page, array_merge(self::$url->params, array('cache' => 'purge'))) : '',
 		));
 
-		// Call cron-type script
-		if (!defined('IN_CRON') && $run_cron && !phpbb::$config['board_disable'])
-		{
-			$cron_type = '';
-
-			if (self::$time - phpbb::$config['queue_interval'] > phpbb::$config['last_queue_run'] && !defined('IN_ADMIN') && file_exists(PHPBB_ROOT_PATH . 'cache/queue.' . PHP_EXT))
-			{
-				// Process email queue
-				$cron_type = 'queue';
-			}
-			else if (method_exists(phpbb::$cache, 'tidy') && self::$time - phpbb::$config['cache_gc'] > phpbb::$config['cache_last_gc'])
-			{
-				// Tidy the cache
-				$cron_type = 'tidy_cache';
-			}
-			else if (self::$time - phpbb::$config['warnings_gc'] > phpbb::$config['warnings_last_gc'])
-			{
-				$cron_type = 'tidy_warnings';
-			}
-			else if (self::$time - phpbb::$config['database_gc'] > phpbb::$config['database_last_gc'])
-			{
-				// Tidy the database
-				$cron_type = 'tidy_database';
-			}
-			else if (self::$time - phpbb::$config['search_gc'] > phpbb::$config['search_last_gc'])
-			{
-				// Tidy the search
-				$cron_type = 'tidy_search';
-			}
-			else if (self::$time - phpbb::$config['session_gc'] > phpbb::$config['session_last_gc'])
-			{
-				$cron_type = 'tidy_sessions';
-			}
-
-			if ($cron_type)
-			{
-				phpbb::$template->assign_var('RUN_CRON_TASK', '<img src="' . phpbb::append_sid('cron', 'cron_type=' . $cron_type) . '" width="1" height="1" alt="cron" />');
-			}
-		}
-
-		phpbb::$template->display('body');
-
-		garbage_collection();
-		exit_handler();
+		// Call the phpBB footer function
+		phpbb::page_footer($run_cron);
 	}
 
 	/**
-	 * Generate HTML of to the previous or a specified page.
-	 *
-	 * @param string $redirect -- redirect URL absolute or relative path.
-	 * @param string $l_redirect optional -- LANG string e.g.: 'RETURN_TO_MODS'
-	 *
-	 * @return HTML link string
-	 */
-	public static function back_link($redirect, $l_redirect = '')
+	* Generate the navigation tabs/menu for display
+	*
+	* @param array $nav_ary The array of data to output
+	* @param string $current_page The current page
+	* @param string $block Optionally specify a custom template block loop name
+	*/
+	public static function generate_nav($nav_ary, $current_page, $block = 'nav_menu')
 	{
-		// set the redirect string (Return to previous page)
-		$l_redirect = ($l_redirect) ? $l_redirect : 'RETURN_LAST_PAGE';
+		foreach ($nav_ary as $page => $data)
+		{
+			// If they do not have authorization, skip.
+			if (isset($data['auth']) && !$data['auth'])
+			{
+				continue;
+			}
 
-		return sprintf('<br /><br /><a href="%1$s">%2$s</a>', $redirect, phpbb::$user->lang[$l_redirect]);
+			phpbb::$template->assign_block_vars($block, array(
+				'L_TITLE'		=> (isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title'],
+				'U_TITLE'		=> $data['url'],
+				'S_SELECTED'	=> ($page == $current_page) ? true : false,
+			));
+		}
 	}
 
 	/**
@@ -521,35 +380,6 @@ class titania
 
 		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . self::$url->build_url() . '">', '</a> ');
 		trigger_error($message);
-	}
-
-	/**
-	 * Wrapper for phpBB function trigger_error (with added http response code)
-	 *
-	 * @param string	$error_msg		error message or language string
-	 * @param int		$error_type		error type e.g. E_USER_NOTICE
-	 * @param int		$status_code	http response code
-	 * @param string	$title			Optional message header title
-	 *
-	 * @return void
-	 */
-	public static function trigger_error($error_msg, $error_type = E_USER_NOTICE, $status_code = NULL, $title = '')
-	{
-		global $msg_title, $msg_long_text, $msg_template;
-
-		$msg_template = &phpbb::$template;
-
-		if ($status_code)
-		{
-			self::set_header_status($status_code);
-		}
-
-		if ($title)
-		{
-			$msg_title = isset(phpbb::$user->lang[$title]) ? phpbb::$user->lang[$title] : $title;
-		}
-
-		trigger_error($error_msg, $error_type);
 	}
 
 	/**
@@ -675,7 +505,7 @@ class titania
 		// re-add sid / transform & to &amp; for user->page (user->page is always using &)
 		if ($u_action)
 		{
-			$u_action = titania::$url->append_url($u_action);
+			$u_action = self::$url->append_url($u_action);
 		}
 		else
 		{
@@ -741,21 +571,6 @@ class titania
 	}
 
 	/**
-	* Load URL class
-	*/
-	public static function load_url()
-	{
-		if (!class_exists('titania_url'))
-		{
-			include(TITANIA_ROOT . 'includes/core/url.' . PHP_EXT);
-		}
-
-		self::$url = new titania_url();
-
-		self::$url->decode_url();
-	}
-
-	/**
 	 * Load types
 	 */
 	public static function load_types()
@@ -786,5 +601,33 @@ class titania
 		closedir($dh);
 
 		ksort(self::$types);
+	}
+
+	/**
+	* Include a Titania includes file
+	*
+	* @param string $file The name of the file
+	* @param string|bool $function_check Bool false to ignore; string function name to check if the function exists (and not load the file if it does)
+	* @param string|bool $class_check Bool false to ignore; string class name to check if the class exists (and not load the file if it does)
+	*/
+	public static function _include($file, $function_check = false, $class_check = false)
+	{
+		if ($function_check !== false)
+		{
+			if (function_exists($function_check))
+			{
+				return;
+			}
+		}
+
+		if ($class_check !== false)
+		{
+			if (class_exists($class_check))
+			{
+				return;
+			}
+		}
+
+		include(TITANIA_ROOT . 'includes/' . $file . '.' . PHP_EXT);
 	}
 }

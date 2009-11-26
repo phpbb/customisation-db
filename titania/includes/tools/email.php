@@ -48,7 +48,7 @@ class titania_email
 		// Are we trying to abuse the facility?
 		if (titania::$time - phpbb::$user->data['user_emailtime'] < phpbb::$config['flood_interval'])
 		{
-			titania::trigger_error('FLOOD_EMAIL_LIMIT', E_USER_NOTICE, HEADER_SERVICE_UNAVAILABLE);
+			trigger_error('FLOOD_EMAIL_LIMIT', E_USER_NOTICE);
 		}
 
 		$name		= utf8_normalize_nfc(request_var('name', '', true));

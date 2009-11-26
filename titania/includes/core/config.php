@@ -48,12 +48,4 @@ class titania_config extends titania_object
 			'max_rating'				=> array('default' => 5),
 		));
 	}
-
-	/**
-	 * Read configuration settings from assoc. array
-	 */
-	public function read_array($config)
-	{
-		$this->__set_array($config);
-	}
 }

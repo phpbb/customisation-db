@@ -87,6 +87,8 @@ switch ($action)
 	* Default (display category/contrib list)
 	*/
 	default :
+		titania::_include('functions_display', 'titania_display_categories');
+
 		titania_display_categories($category_id);
 
 		if ($category_id != 0)

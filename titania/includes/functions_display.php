@@ -17,22 +17,6 @@ if (!defined('IN_TITANIA'))
 }
 
 /**
-* Get version string from version number
-*
-* @param int|string $version The version number 2/20/200 for 2.0.0, 3/30/300 for 3.0.0, 32/320 for 3.2.0
-*/
-function get_version_string($version)
-{
-	$version = (string) $version;
-
-	$major = (isset($version[0])) ? $version[0] : 0;
-	$minor = (isset($version[1])) ? $version[1] : 0;
-	$revision = (isset($version[2])) ? substr($version, 2) : 0;
-
-	return sprintf('%u.%u.%u', $major, $minor, $revision);
-}
-
-/**
 * Display categories
 *
 * @param int $parent_id The parent id/name (only show categories under this category)
@@ -46,16 +30,17 @@ function titania_display_categories($parent_id = 0, $blockname = 'categories')
 		ORDER BY left_id ASC';
 	$result = phpbb::$db->sql_query($sql);
 
+	$category = new titania_category();
+	
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
-		$category = new titania_category();
 		$category->__set_array($row);
 
 		phpbb::$template->assign_block_vars($blockname, $category->assign_display(true));
-
-		unset($category);
 	}
 	phpbb::$db->sql_freeresult($result);
+
+	unset($category);
 }
 
 /**

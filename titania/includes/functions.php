@@ -17,6 +17,22 @@ if (!defined('IN_TITANIA'))
 }
 
 /**
+* Get version string from version number
+*
+* @param int|string $version The version number 2/20/200 for 2.0.0, 3/30/300 for 3.0.0, 32/320 for 3.2.0
+*/
+function get_version_string($version)
+{
+	$version = (string) $version;
+
+	$major = (isset($version[0])) ? $version[0] : 0;
+	$minor = (isset($version[1])) ? $version[1] : 0;
+	$revision = (isset($version[2])) ? substr($version, 2) : 0;
+
+	return sprintf('%u.%u.%u', $major, $minor, $revision);
+}
+
+/**
 * Error and message handler, call with trigger_error if reqd
 */
 function titania_msg_handler($errno, $msg_text, $errfile, $errline)
