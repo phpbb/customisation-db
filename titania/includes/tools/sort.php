@@ -136,6 +136,12 @@ class titania_sort
 	 */
 	public function get_order_by()
 	{
+		// If the sort_request function was not run yet we shall run it
+		if (!$this->sort_key || !$this->sort_dir)
+		{
+			$this->sort_request();
+		}
+
 		// Sorting and order
 		if (!isset($this->sort_key_sql[$this->sort_key]))
 		{

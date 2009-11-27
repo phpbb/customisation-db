@@ -26,12 +26,12 @@ if ($post_id)
 {
 	$topic_id = topics_overlord::load_topic_from_post($post_id);
 
-	if (!$topic_id)
+	// Load the topic into a topic object
+	$topic = topics_overlord::get_topic_object($topic_id);
+	if ($topic === false)
 	{
 		trigger_error('NO_TOPIC');
 	}
-
-	$topic = topics_overlord::$topics[$topic_id];
 
 	// Load the contrib item
 	load_contrib($topic->contrib_id);
@@ -40,12 +40,12 @@ else if ($topic_id)
 {
 	topics_overlord::load_topic($topic_id);
 
-	if (!isset(topics_overlord::$topics[$topic_id]))
+	// Load the topic into a topic object
+	$topic = topics_overlord::get_topic_object($topic_id);
+	if ($topic === false)
 	{
 		trigger_error('NO_TOPIC');
 	}
-
-	$topic = topics_overlord::$topics[$topic_id];
 
 	// Load the contrib item
 	load_contrib($topic->contrib_id);

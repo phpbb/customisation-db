@@ -28,9 +28,28 @@ class posts_overlord
 
 	public static $sort_by = array(
 		'a' => array('AUTHOR', 'u.username_clean'),
-		't' => array('POST_TIME', 'p.post_time'),
+		't' => array('POST_TIME', 'p.post_time', true),
 		's' => array('SUBJECT', 'p.post_subject'),
 	);
+
+	/**
+	 * Get the post object
+	 *
+	 * @param <int> $post_id
+	 * @return <object|bool> False if the post does not exist in the self::$posts array (load it first!) post object if it exists
+	 */
+	public static function get_post_object($post_id)
+	{
+		if (!isset(self::$posts[$post_id]))
+		{
+			return false;
+		}
+
+		$post = new titania_post();
+		$post->__set_array(self::$posts[$post_id]);
+
+		return $post;
+	}
 
 /*
 user_post_show_days
@@ -54,9 +73,6 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 	*/
 	public static function display_topic_complete($topic)
 	{
-		$start = request_var('start', 0);
-		$limit = request_var('limit', (int) phpbb::$config['posts_per_page']);
-
 		// Setup the sort tool
 		$sort = new titania_sort();
 		$sort->set_sort_keys(self::$sort_by);
@@ -66,19 +82,24 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		}
 		$sort->default_dir = phpbb::$user->data['user_post_sortby_dir'];
 
+		// Setup the pagination tool
+		$pagination = new titania_pagination();
+		$pagination->default_limit = phpbb::$config['posts_per_page'];
+		$pagination->request();
+
 		// if a post_id was given we must start from the appropriate page
 		$post_id = request_var('p', 0);
 		if ($post_id)
 		{
-			$sql = 'SELECT COUNT(post_id) as start FROM ' . TITANIA_POSTS_TABLE . '
-				WHERE post_id < ' . $post_id . '
-					AND topic_id = ' . $topic_id . '
+			$sql = 'SELECT COUNT(p.post_id) as start FROM ' . TITANIA_POSTS_TABLE . ' p
+				WHERE p.post_id < ' . $post_id . '
+					AND p.topic_id = ' . $topic->topic_id . '
 				ORDER BY ' . $sort->get_order_by();
 			phpbb::$db->sql_query($sql);
 			$start = phpbb::$db->sql_fetchfield('start');
 			phpbb::$db->sql_freeresult();
 
-			$start = ($start > 0) ? (floor($start / $limit) * $limit) : 0;
+			$pagination->start = ($pagination->start > 0) ? (floor($pagination->start / $pagination->limit) * $pagination->limit) : 0;
 		}
 
 /*
@@ -87,11 +108,13 @@ user_topic_show_days
 $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DAY'], 7 => $user->lang['7_DAYS'], 14 => $user->lang['2_WEEKS'], 30 => $user->lang['1_MONTH'], 90 => $user->lang['3_MONTHS'], 180 => $user->lang['6_MONTHS'], 365 => $user->lang['1_YEAR']);
 */
 
-		self::display_topic($topic, $sort, array('start' => $start, 'limit' => $limit));
+		self::display_topic($topic, $sort, $pagination);
 		self::assign_common();
 
 		phpbb::$template->assign_vars(array(
-			'U_POST_REPLY'			=> ($topic !== false && phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url($topic->get_url(), array('action' => 'reply')) : '',
+			'U_POST_REPLY'		=> ($topic !== false && phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url($topic->get_url(), array('action' => 'reply')) : '',
+
+			'S_IS_LOCKED'		=> (bool) $topic->topic_locked,
 		));
 	}
 
@@ -100,9 +123,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	*
 	 @param object $topic The topic object
 	 @param object|boolean $sort The sort object (includes/tools/sort.php)
-	* @param array $options Extra options (limit, category (for tracker))
 	*/
-	public static function display_topic($topic, $sort = false, $options = array('start' => 0, 'limit' => 10))
+	public static function display_topic($topic, $sort = false, $pagination = false)
 	{
 		$sql_ary = array(
 			'SELECT' => 'p.*',
@@ -123,16 +145,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		// Main SQL Query
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
-		// Count SQL Query
-		$sql_ary['SELECT'] = 'COUNT(post_id) AS cnt';
-		$count_sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
-		phpbb::$db->sql_query($count_sql);
-		$count = phpbb::$db->sql_fetchfield('cnt');
-		phpbb::$db->sql_freeresult();
+		// Handle pagination
+		$pagination->sql_count($sql_ary, 'post_id');
+		$pagination->build_pagination($topic->get_url());
 
 		// Get the data
 		$post_ids = $user_ids = array();
-		$result = phpbb::$db->sql_query_limit($sql, $options['limit'], $options['start']);
+		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			self::$posts[$row['post_id']] = $row;

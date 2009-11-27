@@ -60,6 +60,12 @@ class titania_url
 	{
 		global $_SID;
 
+		// Prevent rebuilding...
+		if ($this->is_built($base))
+		{
+			return $this->append_url($base, $params);
+		}
+
 		$final_url = $this->root_url . $base;
 
 		// Append a / at the end if required
@@ -81,6 +87,22 @@ class titania_url
 		}
 
 		return $this->append_url($final_url, $params);
+	}
+
+	/**
+	 * Check if the url was built once already (contains the root URL)
+	 *
+	 * @param <string> $base The URL you want to check
+	 * @return <bool> True if it was already built, false if it was not
+	 */
+	public function is_built($base)
+	{
+		if (strpos($base, $this->root_url) !== false)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

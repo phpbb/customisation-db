@@ -16,11 +16,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!class_exists('titania_object'))
-{
-	require TITANIA_ROOT . 'includes/core/object.' . PHP_EXT;
-}
-
 /**
  * Class to generate pagination
  *
@@ -35,13 +30,6 @@ class titania_pagination extends titania_object
 	const OFFSET_LIMIT_MAX = 100;
 
 	/**
-	 * URL Params
-	 *
-	 * @var array
-	 */
-	private $params = array();
-
-	/**
 	 * Set some default variables, set template_vars default values
 	 */
 	public function __construct()
@@ -49,23 +37,31 @@ class titania_pagination extends titania_object
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
 			'start'			=> array('default' => 0),
+			'start_name'	=> array('default' => 'start'),
 			'limit'			=> array('default' => self::OFFSET_LIMIT_DEFAULT),
 			'limit_name'	=> array('default' => 'limit'),
 			'default_limit'	=> array('default' => self::OFFSET_LIMIT_DEFAULT),
 			'max_limit'		=> array('default' => self::OFFSET_LIMIT_MAX),
-			'results'		=> array('default' => 0),
-			'total_results'	=> array('default' => 0),
-			'url'			=> array('default' => ''),
+			'total'			=> array('default' => 0),
 			'result_lang'	=> array('default' => 'RETURNED_RESULTS'),
 			'template_vars'	=> array(
 				'default' => array(
-					'TOTAL_ROWS'	=> 'TOTAL_ROWS',
 					'PAGINATION'	=> 'PAGINATION',
 					'PAGE_NUMBER'	=> 'PAGE_NUMBER',
 					'S_MODE_ACTION'	=> 'S_MODE_ACTION',
+					'S_NUM_POSTS'	=> 'S_NUM_POSTS',
 				),
 			),
 		));
+	}
+
+	/**
+	 * Request function to run the start and limit grabbing functions
+	 */
+	public function request()
+	{
+		$this->get_start();
+		$this->get_limit();
 	}
 
 	/**
@@ -77,7 +73,7 @@ class titania_pagination extends titania_object
 	 */
 	public function get_start($default = 0)
 	{
-		$this->start = request_var('start', (int) $default);
+		$this->start = request_var($this->start_name, (int) $default);
 
 		return $this->start;
 	}
@@ -86,16 +82,17 @@ class titania_pagination extends titania_object
 	 * Set limit variable for pagination
 	 *
 	 * @param int $default default Offset/Limit -- uses the constant if unset.
-	 * @param string $limit_name set a custom 'limit' param key name
 	 *
 	 * @return int	$limit
 	 */
-	public function get_limit($default = self::OFFSET_LIMIT_DEFAULT, $limit_name = 'limit')
+	public function get_limit($default = false)
 	{
-		$limit = request_var($limit_name, (int) $default);
+		if ($default !== false)
+		{
+			$this->default_limit = $default;
+		}
 
-		$this->default_limit = $default;
-		$this->limit_name = $limit_name;
+		$limit = request_var($this->limit_name, (int) $this->default_limit);
 
 		// Don't allow limits of 0 which is unlimited results. Instead use the max limit.
 		$limit = ($limit == 0) ? $this->max_limit : $limit;
@@ -106,170 +103,128 @@ class titania_pagination extends titania_object
 		return $this->limit;
 	}
 
-	/**
-	 * Set URL parameters
-	 *
-	 * @param array $params
-	 */
-	public function set_params($params)
+	public function sql_count($sql_ary, $field)
 	{
-		foreach ($params as $key => $value)
-		{
-			if ($value)
-			{
-				$this->params[(string) $key] = (string) $value;
-			}
-		}
-	}
+		$sql_ary['SELECT'] = "COUNT($field) AS cnt";
+		$count_sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		phpbb::$db->sql_query($count_sql);
+		$this->total = phpbb::$db->sql_fetchfield('cnt');
+		phpbb::$db->sql_freeresult();
 
-	/**
-	 * Set single URL parameter
-	 *
-	 * @param string $key
-	 * @param string $value
-	 */
-	public function set_param($key, $value)
-	{
-		$this->params[(string) $key] = (string) $value;
-	}
-
-	/**
-	 * The phpBB generate_pagination function always appends the start parameter to the URL.
-	 * Therefore we ensure that we don't pass this param in those functions if pagination_url is set to false
-	 *
-	 * @param string $page
-	 * @param bool $pagination_url set to true if being passed to the generate_pagination function
-	 *
-	 * @return string
-	 */
-	private function get_url($page, $pagination_url = false)
-	{
-		$url = parse_url($page);
-
-		if (is_array($url) && !empty($url['query']))
-		{
-			$url['query'] = str_replace('&amp;', '&', $url['query']);
-			$param_ary = explode('&', $url['query']);
-			foreach ($param_ary as $param)
-			{
-				list($key, $value) = explode('=', $param);
-				$this->params[(string) $key] = $value;
-			}
-
-			foreach($url as $key => $value)
-			{
-				if ($key == 'query')
-				{
-					continue;
-				}
-
-				$page = $value;
-			}
-		}
-
-		$params = $this->params;
-
-		if ($pagination_url)
-		{
-			unset($params['start']);
-		}
-
-		unset($params['sid']);
-
-		return (!empty($params)) ? phpbb::append_sid($page, $params) : phpbb::append_sid($page);
-	}
-
-	/**
-	 * Set custom template variables
-	 *
-	 * Options: TOTAL_ROWS, PAGINATION, PAGE_NUMBER and S_MODE_ACTION.
-	 *	Only specify those that need to be changed from default.
-	 *
-	 * Usage:
-	 * <code>
-	 * $pagination->set_template_vars(array(
-	 * 		'TOTAL_ROWS'	=> 'TOTAL_STYLES',
-	 * 		'PAGINATION'	=> 'U_PAGINATION',
-	 * ));
-	 * </code>
-	 *
-	 * @param unknown_type $template_vars
-	 */
-	public function set_template_vars($template_vars)
-	{
-		foreach ($template_vars as $key => $lang)
-		{
-			$this->template_vars[$key] = $lang;
-		}
-	}
-
-	/**
-	 * Set single template variable
-	 *
-	 * @param string $key
-	 * @param string $value
-	 */
-	public function set_template_var($key, $value)
-	{
-		$this->template_vars[$key] = $value;
-	}
-
-	/**
-	 * Total result count based on sql_ary query
-	 *
-	 * @param array $sql_ary SQL array used for sql_build_query()
-	 * @param string $field_name sql_field to count. i.e.: 'c.contrib_id'
-	 */
-	public function sql_total_count($sql_ary, $field_name, $results = 0)
-	{
-		// If the number of results returned is less than the limit and if start <> 0, we don't need to make a second query
-		if ($results < $this->limit && !$this->start)
-		{
-			$this->total_results = $results;
-		}
-		else
-		{
-			// now count the number of results based on the perameters specified in sql_ary
-			$sql_ary['SELECT'] = "COUNT($field_name) AS total_count";
-			$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
-			$result = phpbb::$db->sql_query($sql);
-			$this->total_results = phpbb::$db->sql_fetchfield('total_count');
-			phpbb::$db->sql_freeresult($result);
-		}
-
-		if ($results)
-		{
-			$this->results = $results;
-		}
-
-		return $this->total_results;
+		return $this->total;
 	}
 
 	/**
 	 * Build pagination and send to template
 	 *
 	 * @param string $page path/page to be used in pagination url
+	 * @param string $tpl_prefix The tpl_prefix if you need to use one (in the generate_pagination function)
 	 */
-	public function build_pagination($page = '')
+	public function build_pagination($page, $tpl_prefix = '')
 	{
-		$this->set_params(array(
-			$this->limit_name	=> ($this->limit == $this->default_limit) ? false : $this->limit,
-			'start'				=> ($this->start == 0) ? false : $this->start,
-		));
+		$params = array();
+		if ($this->limit != $this->default_limit)
+		{
+			$params[$this->limit_name] = $this->limit;
+		}
 
-		$this->url = $this->get_url($page);
-		$pagination_url = $this->get_url($page, true);
-
-		$results = ($this->results) ? $this->results : $this->total_results;
+		$pagination_url = titania::$url->build_url($page, $params);
 
 		phpbb::$template->assign_vars(array(
-			$this->template_vars['TOTAL_ROWS']	=> phpbb::$user->lang($this->result_lang, $results, $this->total_results),
-			$this->template_vars['PAGINATION']	=> generate_pagination($pagination_url, $this->total_results, $this->limit, $this->start),
-			$this->template_vars['PAGE_NUMBER']	=> on_page($this->total_results, $this->limit, $this->start),
+			$this->template_vars['PAGINATION']		=> $this->generate_pagination($pagination_url, false, false, false, true, $tpl_prefix),
+			$this->template_vars['PAGE_NUMBER']		=> on_page($this->total, $this->limit, $this->start),
 
-			$this->template_vars['S_MODE_ACTION']	=> $this->url,
+			$this->template_vars['S_MODE_ACTION']	=> $pagination_url,
+			$this->template_vars['S_NUM_POSTS']		=> $this->total,
 		));
 
 		return true;
+	}
+
+	/**
+	 * Generate pagination (similar to phpBB's generate_pagination function, only with some minor tweaks to work in this class better and use proper URLs)
+	 *
+	 * @param <string> $base_url
+	 * @param <int|bool> $num_items Bool false to use $this->total
+	 * @param <int|bool> $per_page Bool false to use $this->limit
+	 * @param <int|bool> $start_item Bool false to use $this->start
+	 * @param <bool> $add_prevnext_text
+	 * @param <string|bool> $tpl_prefix
+	 * @return <string>
+	 */
+	public function generate_pagination($base_url, $num_items = false, $per_page = false, $start_item = false, $add_prevnext_text = true, $tpl_prefix = '')
+	{
+		$num_items = ($num_items === false) ? $this->total : $num_items;
+		$per_page = ($per_page === false) ? $this->limit : $per_page;
+		$start_item = ($start_item === false) ? $this->start : $start_item;
+
+		$seperator = '<span class="page-sep">' . phpbb::$user->lang['COMMA_SEPARATOR'] . '</span>';
+		$total_pages = ceil($num_items / $per_page);
+		$on_page = floor($start_item / $per_page) + 1;
+		$page_string = ($on_page == 1) ? '<strong>1</strong>' : '<a href="' . $base_url . '">1</a>';
+
+		if ($total_pages == 1 || !$num_items)
+		{
+			return false;
+		}
+
+		if ($total_pages > 5)
+		{
+			$start_cnt = min(max(1, $on_page - 4), $total_pages - 5);
+			$end_cnt = max(min($total_pages, $on_page + 4), 6);
+
+			$page_string .= ($start_cnt > 1) ? ' ... ' : $seperator;
+
+			for ($i = $start_cnt + 1; $i < $end_cnt; $i++)
+			{
+				$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania::$url->append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
+				if ($i < $end_cnt - 1)
+				{
+					$page_string .= $seperator;
+				}
+			}
+
+			$page_string .= ($end_cnt < $total_pages) ? ' ... ' : $seperator;
+		}
+		else
+		{
+			$page_string .= $seperator;
+
+			for ($i = 2; $i < $total_pages; $i++)
+			{
+				$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania::$url->append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
+				if ($i < $total_pages)
+				{
+					$page_string .= $seperator;
+				}
+			}
+		}
+
+		$page_string .= ($on_page == $total_pages) ? '<strong>' . $total_pages . '</strong>' : '<a href="' . titania::$url->append_url($base_url, array($this->start_name => (($total_pages - 1) * $per_page))) . '">' . $total_pages . '</a>';
+
+		if ($add_prevnext_text)
+		{
+			if ($on_page != 1)
+			{
+				$page_string = '<a href="' . titania::$url->append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page))) . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
+			}
+
+			if ($on_page != $total_pages)
+			{
+				$page_string .= '&nbsp;&nbsp;<a href="' . titania::$url->append_url($base_url, array($this->start_name => ($on_page * $per_page))) . '">' . phpbb::$user->lang['NEXT'] . '</a>';
+			}
+		}
+
+		phpbb::$template->assign_vars(array(
+			$tpl_prefix . 'BASE_URL'		=> $base_url,
+			'A_' . $tpl_prefix . 'BASE_URL'	=> addslashes($base_url),
+			$tpl_prefix . 'PER_PAGE'		=> $per_page,
+
+			$tpl_prefix . 'PREVIOUS_PAGE'	=> ($on_page == 1) ? '' : titania::$url->append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page))),
+			$tpl_prefix . 'NEXT_PAGE'		=> ($on_page == $total_pages) ? '' : titania::$url->append_url($base_url, array($this->start_name => ($on_page * $per_page))),
+			$tpl_prefix . 'TOTAL_PAGES'		=> $total_pages,
+		));
+
+		return $page_string;
 	}
 }

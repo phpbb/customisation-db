@@ -92,6 +92,25 @@ class topics_overlord
 	}
 
 	/**
+	 * Get the topic object
+	 *
+	 * @param <int> $topic_id
+	 * @return <object|bool> False if the topic does not exist in the self::$topics array (load it first!) topic object if it exists
+	 */
+	public static function get_topic_object($topic_id)
+	{
+		if (!isset(self::$topics[$topic_id]))
+		{
+			return false;
+		}
+
+		$topic = new titania_topic();
+		$topic->__set_array(self::$topics[$topic_id]);
+
+		return $topic;
+	}
+
+	/**
 	* Do everything we need to display the forum like page
 	*
 	* @param string $type
