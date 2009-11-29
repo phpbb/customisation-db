@@ -118,19 +118,19 @@ class topics_overlord
 	*/
 	public static function display_forums_complete($type, $object = false)
 	{
-		$start = request_var('start', 0);
-		$limit = request_var('limit', (int) phpbb::$config['topics_per_page']);
-
 		// Setup the sort tool
 		$sort = new titania_sort();
 		$sort->set_sort_keys(self::$sort_by);
-
 		if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
 		{
 			$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
 		}
-
 		$sort->default_dir = phpbb::$user->data['user_topic_sortby_dir'];
+
+		// Setup the pagination tool
+		$pagination = new titania_pagination();
+		$pagination->default_limit = phpbb::$config['topics_per_page'];
+		$pagination->request();
 
 		// if a post_id was given we must start from the appropriate page
 		$post_id = request_var('p', 0);
@@ -153,12 +153,10 @@ user_topic_show_days
 $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DAY'], 7 => $user->lang['7_DAYS'], 14 => $user->lang['2_WEEKS'], 30 => $user->lang['1_MONTH'], 90 => $user->lang['3_MONTHS'], 180 => $user->lang['6_MONTHS'], 365 => $user->lang['1_YEAR']);
 */
 
-		self::display_forums($type, $object, $sort, array('start' => $start, 'limit' => $limit));
+		self::display_forums($type, $object, $sort, $pagination);
 		self::assign_common();
 
 		phpbb::$template->assign_vars(array(
-			'U_CREATE_TOPIC'		=> (phpbb::$auth->acl_get('titania_topic')) ? titania::$url->append_url($object->get_url('support'), array('action' => 'post')) : '',
-
 			'S_TOPIC_LIST'			=> true,
 		));
 	}
@@ -169,9 +167,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	* @param string $type The type (support, review, queue, tracker, author_support, author_tracker) author_ for displaying posts from the areas the given author is involved in (either an author/co-author)
 	* @param object|boolean $object The object (for contrib related (support, review, queue, tracker) and author_ modes)
 	* @param object|boolean $sort The sort object (includes/tools/sort.php)
-	* @param array $options Extra options (limit, category (for tracker))
+	* @param object|boolean $pagination The pagination object (includes/tools/pagination.php)
 	*/
-	public static function display_forums($type, $object = false, $sort = false, $options = array('start' => 0, 'limit' => 10))
+	public static function display_forums($type, $object = false, $sort = false, $pagination = false)
 	{
 		$topic_ids = array();
 
@@ -205,6 +203,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		switch ($type)
 		{
 			case 'tracker' :
+				$page_url = $object->get_url('tracker');
 				$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_TRACKER;
 
@@ -214,12 +213,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				}
 			break;
 
-			case 'queue' :
-				$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
-				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_QUEUE;
-			break;
+			//case 'queue' :
+			//	$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
+			//	$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_QUEUE;
+			//break;
 
 			case 'author_support' :
+				$page_url = $object->get_url('support');
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
 				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', $contrib_ids);
 
@@ -228,6 +228,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			break;
 
 			case 'author_tracker' :
+				$page_url = $object->get_url('tracker');
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
 				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', $contrib_ids);
 
@@ -237,6 +238,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			case 'support' :
 			default :
+				$page_url = $object->get_url('support');
 				$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_DEFAULT;
 			break;
@@ -245,27 +247,23 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		// Main SQL Query
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
-		// Count SQL Query
-		// @todo This is done by pagination class...
-		$sql_ary['SELECT'] = 'COUNT(topic_id) AS cnt';
-		$count_sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
-		phpbb::$db->sql_query($count_sql);
-		$count = phpbb::$db->sql_fetchfield('cnt');
-		phpbb::$db->sql_freeresult();
+		// Handle pagination
+		$pagination->sql_count($sql_ary, 'topic_id');
+		$pagination->build_pagination($page_url);
 
 		// Get the data
-		$result = phpbb::$db->sql_query_limit($sql, $options['limit'], $options['start']);
+		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			// DO NOT create a new object for every row. Adds way to much memory when you deal with large topics!!!!
 			self::$topics[$row['topic_id']] = $row;
 
 			$topic_ids[] = $row['topic_id'];
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		// @todo Get the read info
+		// Grab the tracking info
+		titania_tracking::get_tracks(TITANIA_TRACK_TOPICS, $topic_ids);
 
 		$topic = new titania_topic();
 

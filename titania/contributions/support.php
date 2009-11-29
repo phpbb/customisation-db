@@ -84,7 +84,7 @@ switch ($action)
 			'bbcode'		=> phpbb::$auth->acl_get('titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('titania_smilies'),
 			'sticky_topic'	=> ($action == 'post' && (phpbb::$auth->acl_get('titania_post_mod') || titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
-			'lock_topic'	=> (phpbb::$auth->acl_get('titania_post_mod') || phpbb::$auth->acl_get('titania_post_mod_own')) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('titania_post_mod') || phpbb::$auth->acl_get('titania_post_mod_own')) ? true : false, // @todo correct mod_own permissions for reply
 		));
 		$message->set_settings(array(
 			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
@@ -103,6 +103,8 @@ switch ($action)
 			{
 				$error[] = $validate_form_key;
 			}
+
+			// @todo use permissions for captcha
 			if (!phpbb::$user->data['is_registered'] && ($validate_captcha = $message->validate_captcha()) !== false)
 			{
 				$error[] = $validate_captcha;
@@ -156,12 +158,22 @@ switch ($action)
 			posts_overlord::display_topic_complete($topic);
 
 			titania::page_header(phpbb::$user->lang['CONTRIB_SUPPORT'] . ' - ' . censor_text($topic->topic_subject));
+
+			if (phpbb::$auth->acl_get('titania_post'))
+			{
+				phpbb::$template->assign_var('U_POST_REPLY', titania::$url->append_url($topic->get_url(), array('action' => 'reply')));
+			}
 		}
 		else
 		{
 			topics_overlord::display_forums_complete('support', titania::$contrib);
 
 			titania::page_header('CONTRIB_SUPPORT');
+
+			if (phpbb::$auth->acl_get('titania_topic'))
+			{
+				phpbb::$template->assign_var('U_POST_TOPIC', titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => 'post')));
+			}
 		}
 
 		titania::page_footer(true, 'contributions/contribution_support.html');

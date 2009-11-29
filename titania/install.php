@@ -533,6 +533,20 @@ $versions = array(
 		),
 	),
 
+	'0.1.20' => array(
+		'table_add' => array(
+			array(TITANIA_TRACK_TABLE, array(
+				'COLUMNS'		=> array(
+					'track_type'			=> array('UINT', 0),
+					'track_id'				=> array('UINT', 0),
+					'track_user_id'			=> array('UINT', 0),
+					'track_time'			=> array('UINT:11', 0),
+				),
+				'PRIMARY_KEY'	=> array('track_type', 'track_id', 'track_user_id'),
+			)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

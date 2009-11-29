@@ -49,11 +49,11 @@ class titania_topic extends titania_database_object
 	public $topic_posted			= false;
 
 	/**
-	* Unread post id
+	* Unread
 	*
-	* @var int|bool
+	* @var bool
 	*/
-	public $unread = false;
+	public $unread = true;
 
 	/**
 	 * Constructor class for titania topics
@@ -131,14 +131,6 @@ class titania_topic extends titania_database_object
 		$this->topic_subject_clean = titania::$url->url_slug($this->topic_subject);
 
 		return parent::submit();
-	}
-
-	/**
-	* Load tracking info for the current user
-	*/
-	public function load_tracking()
-	{
-
 	}
 
 	/**
@@ -323,6 +315,18 @@ class titania_topic extends titania_database_object
 	*/
 	public function assign_details()
 	{
+		// Check read status
+		$this->unread = true;
+		if (isset(titania_tracking::$store[TITANIA_TRACK_TOPICS][$this->topic_id][phpbb::$user->data['user_id']]))
+		{
+			$last_track = titania_tracking::$store[TITANIA_TRACK_TOPICS][$this->topic_id][phpbb::$user->data['user_id']];
+
+			if ($last_track >= $this->topic_last_post_time)
+			{
+				$this->unread = false;
+			}
+		}
+
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);
 

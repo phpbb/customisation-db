@@ -16,14 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-phpbb::$user->add_lang('viewforum');
-titania::add_lang('posting');
-
-titania_display_forums('author_support', titania::$author);
-
-phpbb::$template->assign_vars(array(
-	'S_TOPIC_LIST'			=> true,
-));
+topics_overlord::display_forums_complete('author_support', titania::$author);
 
 titania::page_header('AUTHOR_SUPPORT');
 

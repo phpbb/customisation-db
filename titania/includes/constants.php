@@ -44,6 +44,7 @@ define('TITANIA_REVISIONS_TABLE',				$table_prefix . 'revisions');
 define('TITANIA_TAG_FIELDS_TABLE',				$table_prefix . 'tag_fields');
 define('TITANIA_TAG_TYPES_TABLE',				$table_prefix . 'tag_types');
 define('TITANIA_TOPICS_TABLE',					$table_prefix . 'topics');
+define('TITANIA_TRACK_TABLE',					$table_prefix . 'track');
 define('TITANIA_WATCH_TABLE',					$table_prefix . 'watch');
 
 // Contribution revision status
@@ -91,6 +92,9 @@ define('TITANIA_POST_REVIEW', 4);
 define('TITANIA_ACCESS_TEAMS', 0);
 define('TITANIA_ACCESS_AUTHORS', 1);
 define('TITANIA_ACCESS_PUBLIC', 2);
+
+// Tracking types
+define('TITANIA_TRACK_TOPICS', 1);
 
 // Header status codes
 define('HEADER_OK',						200);

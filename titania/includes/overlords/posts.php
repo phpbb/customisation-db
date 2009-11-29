@@ -112,8 +112,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		self::assign_common();
 
 		phpbb::$template->assign_vars(array(
-			'U_POST_REPLY'		=> ($topic !== false && phpbb::$auth->acl_get('titania_post')) ? titania::$url->append_url($topic->get_url(), array('action' => 'reply')) : '',
-
 			'S_IS_LOCKED'		=> (bool) $topic->topic_locked,
 		));
 	}
@@ -121,8 +119,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	/**
 	* Display topic section for support/tracker/etc
 	*
-	 @param object $topic The topic object
-	 @param object|boolean $sort The sort object (includes/tools/sort.php)
+	* @param object $topic The topic object
+	* @param object|boolean $sort The sort object (includes/tools/sort.php)
+	* @param object|boolean $pagination The pagination object (includes/tools/pagination.php)
 	*/
 	public static function display_topic($topic, $sort = false, $pagination = false)
 	{
@@ -151,6 +150,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 		// Get the data
 		$post_ids = $user_ids = array();
+		$last_post_time = 0;  // tracking
 		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -158,8 +158,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			$post_ids[] = $row['post_id'];
 			$user_ids[] = $row['post_user_id'];
+
+			$last_post_time = $row['post_time']; // tracking
 		}
 		phpbb::$db->sql_freeresult($result);
+
+		// Store tracking data
+		titania_tracking::track(TITANIA_TRACK_TOPICS, $topic->topic_id, false, $last_post_time);
 
 		// load the user data
 		users_overlord::load($user_ids);
