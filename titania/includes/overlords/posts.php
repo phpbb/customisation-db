@@ -99,7 +99,26 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 			$start = phpbb::$db->sql_fetchfield('start');
 			phpbb::$db->sql_freeresult();
 
-			$pagination->start = ($pagination->start > 0) ? (floor($pagination->start / $pagination->limit) * $pagination->limit) : 0;
+			$pagination->start = ($start > 0) ? (floor($start / $pagination->limit) * $pagination->limit) : 0;
+		}
+
+		// check to see if they want to view the latest unread post
+		if (request_var('view', '') == 'unread')
+		{
+			$mark_time = titania_tracking::get_track(TITANIA_TRACK_TOPICS, $topic->topic_id);
+
+			if ($mark_time > 0)
+			{
+				$sql = 'SELECT COUNT(p.post_id) as start FROM ' . TITANIA_POSTS_TABLE . ' p
+					WHERE p.post_time <= ' . $mark_time . '
+						AND p.topic_id = ' . $topic->topic_id . '
+					ORDER BY post_time ASC';
+				phpbb::$db->sql_query($sql);
+				$start = phpbb::$db->sql_fetchfield('start');
+				phpbb::$db->sql_freeresult();
+
+				$pagination->start = ($start > 0) ? (floor($start / $pagination->limit) * $pagination->limit) : 0;
+			}
 		}
 
 /*
@@ -159,12 +178,15 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$post_ids[] = $row['post_id'];
 			$user_ids[] = $row['post_user_id'];
 
-			$last_post_time = $row['post_time']; // tracking
+			$last_post_time = $row['post_time']; // to set tracking
 		}
 		phpbb::$db->sql_freeresult($result);
 
+		// Grab the tracking data
+		$last_mark_time = titania_tracking::get_track(TITANIA_TRACK_TOPICS, $topic->topic_id);
+
 		// Store tracking data
-		titania_tracking::track(TITANIA_TRACK_TOPICS, $topic->topic_id, false, $last_post_time);
+		titania_tracking::track(TITANIA_TRACK_TOPICS, $topic->topic_id, $last_post_time);
 
 		// load the user data
 		users_overlord::load($user_ids);
@@ -172,17 +194,23 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$post = new titania_post();
 
 		// Loop de loop
+		$prev_post_time = 0;
 		foreach ($post_ids as $post_id)
 		{
 			$post->__set_array(self::$posts[$post_id]);
 
 			phpbb::$template->assign_block_vars('posts', array_merge(
 				$post->assign_details(),
-				users_overlord::assign_details($post->post_user_id)
+				users_overlord::assign_details($post->post_user_id),
+				array(
+					'S_FIRST_UNREAD'	=> ($post->post_time >= $last_mark_time && $prev_post_time < $last_mark_time) ? true : false,
+				)
 			));
 	//S_IGNORE_POST
 	//POST_ICON_IMG
 	//MINI_POST_IMG
+
+			$prev_post_time = $post->post_time;
 		}
 
 		unset($post);

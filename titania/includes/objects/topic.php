@@ -360,7 +360,7 @@ class titania_topic extends titania_database_object
 			'TOPIC_LAST_POST_TIME'			=> phpbb::$user->format_date($this->topic_last_post_time),
 			'TOPIC_LAST_POST_SUBJECT'		=> censor_text($this->topic_last_post_subject),
 
-			'U_NEWEST_POST'					=> ($this->unread) ? '' : '',
+			'U_NEWEST_POST'					=> ($this->unread) ? titania::$url->append_url($this->get_url(), array('view' => 'unread', '#' => 'unread')) : '',
 			'U_VIEW_TOPIC'					=> $this->get_url(),
 			'U_VIEW_LAST_POST'				=> titania::$url->append_url($this->get_url(), array('p' => $this->topic_last_post_id, '#' => $this->topic_last_post_id)),
 

@@ -132,21 +132,6 @@ class topics_overlord
 		$pagination->default_limit = phpbb::$config['topics_per_page'];
 		$pagination->request();
 
-		// if a post_id was given we must start from the appropriate page
-		$post_id = request_var('p', 0);
-		if ($post_id)
-		{
-			$sql = 'SELECT COUNT(post_id) as start FROM ' . TITANIA_POSTS_TABLE . '
-				WHERE post_id < ' . $post_id . '
-					AND topic_id = ' . $topic_id . '
-				ORDER BY ' . $sort->get_order_by();
-			phpbb::$db->sql_query($sql);
-			$start = phpbb::$db->sql_fetchfield('start');
-			phpbb::$db->sql_freeresult();
-
-			$start = ($start > 0) ? (floor($start / $limit) * $limit) : 0;
-		}
-
 /*
 user_topic_show_days
 

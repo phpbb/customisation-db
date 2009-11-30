@@ -38,9 +38,8 @@ class titania_tracking
 
 	public static function track($type, $id, $time = false)
 	{
+		// Ignore
 		self::get_track_cookie();
-
-		self::$store[$type][$id] = ($time === false) ? titania::$time : (int) $time;
 
 		// Cookie storage method
 		if (!phpbb::$user->data['is_registered']) // @todo support the option to use cookies for all
@@ -49,18 +48,36 @@ class titania_tracking
 			return;
 		}
 
-		$sql_ary = array(
-			'track_type'		=> (int) $type,
-			'track_id'			=> (int) $id,
-			'track_user_id'		=> phpbb::$user->data['user_id'],
-			'track_time'		=> ($time === false) ? titania::$time : (int) $time,
-		);
-		
-		phpbb::$db->sql_query('INSERT INTO ' . self::$sql_table . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+		if (self::get_track($type, $id) >= (($time === false) ? titania::$time : (int) $time))
+		{
+			return;
+		}
+
+		$sql = 'UPDATE ' . self::$sql_table . '
+			SET track_time = ' . (($time === false) ? titania::$time : (int) $time) . '
+			WHERE track_type = ' . (int) $type . '
+				AND track_id = ' . (int) $id . '
+				AND track_user_id = ' . (int) phpbb::$user->data['user_id'];
+		phpbb::$db->sql_query($sql);
+
+		if (!phpbb::$db->sql_affectedrows() && self::get_track($type, $id) == 0)
+		{
+			$sql_ary = array(
+				'track_type'		=> (int) $type,
+				'track_id'			=> (int) $id,
+				'track_user_id'		=> (int) phpbb::$user->data['user_id'],
+				'track_time'		=> ($time === false) ? titania::$time : (int) $time,
+			);
+
+			phpbb::$db->sql_query('INSERT INTO ' . self::$sql_table . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+		}
+
+		self::$store[$type][$id] = ($time === false) ? titania::$time : (int) $time;
 	}
 
 	public static function get_track($type, $id, $no_query = false)
 	{
+		// Ignore
 		self::get_track_cookie();
 
 		if (isset(self::$store[$type][$id]))
@@ -75,7 +92,7 @@ class titania_tracking
 
 		$sql = 'SELECT track_time FROM ' . self::$sql_table . '
 			WHERE track_type = ' . (int) $type . '
-			AND track_track_id = ' . (int) $id . '
+			AND track_id = ' . (int) $id . '
 			AND track_user_id = ' . phpbb::$user->data['user_id'];
 		phpbb::$db->sql_query($sql);
 
@@ -88,6 +105,7 @@ class titania_tracking
 
 	public static function get_tracks($type, $ids)
 	{
+		// Ignore
 		self::get_track_cookie();
 
 		if (!phpbb::$user->data['is_registered']) // @todo support the option to use cookies for all
