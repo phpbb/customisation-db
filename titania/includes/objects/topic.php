@@ -317,14 +317,9 @@ class titania_topic extends titania_database_object
 	{
 		// Check read status
 		$this->unread = true;
-		if (isset(titania_tracking::$store[TITANIA_TRACK_TOPICS][$this->topic_id][phpbb::$user->data['user_id']]))
+		if (titania_tracking::get_track(TITANIA_TRACK_TOPICS, $this->topic_id, true) >= $this->topic_last_post_time)
 		{
-			$last_track = titania_tracking::$store[TITANIA_TRACK_TOPICS][$this->topic_id][phpbb::$user->data['user_id']];
-
-			if ($last_track >= $this->topic_last_post_time)
-			{
-				$this->unread = false;
-			}
+			$this->unread = false;
 		}
 
 		$folder_img = $folder_alt = '';
