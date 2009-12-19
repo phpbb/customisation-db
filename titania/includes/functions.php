@@ -203,7 +203,7 @@ function titania_msg_handler($errno, $msg_text, $errfile, $errline)
 			}
 
 			phpbb::$template->set_filenames(array(
-				'body' => 'message_body.html')
+				'body' => 'common/message_body.html')
 			);
 
 			phpbb::$template->assign_vars(array(

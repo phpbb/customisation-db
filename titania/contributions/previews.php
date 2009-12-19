@@ -86,7 +86,7 @@ class titania_previews_page
 
 				// Set up the template.
 				phpbb::$template->set_filenames(array(
-					'body'		=> 'json_response.html',
+					'body'		=> 'common/json_response.html',
 				));
 
 				phpbb::$template->assign_vars(array(

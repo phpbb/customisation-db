@@ -201,7 +201,7 @@ class titania_rating extends titania_database_object
 		}
 
 		phpbb::$template->set_filenames(array(
-			'rate'	=> 'misc/rate.html',
+			'rate'	=> 'common/rate.html',
 		));
 
 		phpbb::$template->assign_vars(array(

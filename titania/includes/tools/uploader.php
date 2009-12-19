@@ -202,7 +202,7 @@ class titania_uploader extends fileupload
 
 		// Set up the template.
 		phpbb::$template->set_filenames(array(
-			'body'		=> 'json_response.html',
+			'body'		=> 'common/json_response.html',
 		));
 
 		// Do we have any errors?
@@ -233,13 +233,13 @@ class titania_uploader extends fileupload
 			}
 
 			$file = '';
-			if (file_exists(TITANIA_ROOT . 'styles/' . titania::$config->style . '/template/uploadify_' . $attachment->object_type . '_file.html'))
+			if (file_exists(TITANIA_ROOT . 'styles/' . titania::$config->style . '/template/uploadify/uploadify_' . $attachment->object_type . '_file.html'))
 			{
-				$file = 'uploadify_' . $attachment->object_type . '_file.html';
+				$file = 'uploadify/uploadify_' . $attachment->object_type . '_file.html';
 			}
 			else
 			{
-				$file = 'uploadify_file.html';
+				$file = 'uploadify/uploadify_file.html';
 			}
 
 			// Set template file.
