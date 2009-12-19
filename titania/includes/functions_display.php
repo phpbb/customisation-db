@@ -16,6 +16,44 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+function titania_topic_folder_img(&$folder_img, &$folder_alt, $post_count = 0, $unread = false, $posted = false, $sticky = false, $locked = false)
+{
+	$folder = $folder_new = '';
+
+	if ($sticky)
+	{
+		$folder = 'sticky_read';
+		$folder_new = 'sticky_unread';
+	}
+	else
+	{
+		$folder = 'topic_read';
+		$folder_new = 'topic_unread';
+
+		// Hot topic threshold is for posts in a topic, which is replies + the first post. ;)
+		if (phpbb::$config['hot_threshold'] && ($post_count + 1) >= phpbb::$config['hot_threshold'])
+		{
+			$folder .= '_hot';
+			$folder_new .= '_hot';
+		}
+	}
+
+	if ($locked)
+	{
+		$folder .= '_locked';
+		$folder_new .= '_locked';
+	}
+
+	$folder_img = ($unread) ? $folder_new : $folder;
+	$folder_alt = ($unread) ? 'NEW_POSTS' : 'NO_NEW_POSTS';
+
+	// Posted image?
+	if ($posted)
+	{
+		$folder_img .= '_mine';
+	}
+}
+
 /**
 * Display categories
 *

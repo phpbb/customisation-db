@@ -29,6 +29,10 @@ class titania_tracking
 	 */
 	public static $store = array();
 
+	/**
+	 *
+	 * @var <bool> Have we grabbed the sent cookies or not?
+	 */
 	private static $grabbed_cookies = false;
 
 	/**

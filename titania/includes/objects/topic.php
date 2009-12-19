@@ -272,40 +272,7 @@ class titania_topic extends titania_database_object
 	*/
 	public function topic_folder_img(&$folder_img, &$folder_alt)
 	{
-		$folder = $folder_new = '';
-
-		if ($this->topic_sticky)
-		{
-			$folder = 'sticky_read';
-			$folder_new = 'sticky_unread';
-		}
-		else
-		{
-			$folder = 'topic_read';
-			$folder_new = 'topic_unread';
-
-			// Hot topic threshold is for posts in a topic, which is replies + the first post. ;)
-			if (phpbb::$config['hot_threshold'] && ($this->get_postcount() + 1) >= phpbb::$config['hot_threshold'])
-			{
-				$folder .= '_hot';
-				$folder_new .= '_hot';
-			}
-		}
-
-		if ($this->topic_locked)
-		{
-			$folder .= '_locked';
-			$folder_new .= '_locked';
-		}
-
-		$folder_img = ($this->unread) ? $folder_new : $folder;
-		$folder_alt = ($this->unread) ? 'NEW_POSTS' : 'NO_NEW_POSTS';
-
-		// Posted image?
-		if ($this->topic_posted)
-		{
-			$folder_img .= '_mine';
-		}
+		titania_topic_folder_img($folder_img, $folder_alt, $this->get_postcount(), $this->unread, $this->topic_posted, $this->topic_sticky, $this->topic_locked);
 	}
 
 	/**

@@ -95,6 +95,7 @@ define('TITANIA_ACCESS_PUBLIC', 2);
 
 // Tracking types
 define('TITANIA_TRACK_TOPICS', 1);
+define('TITANIA_TRACK_FAQ', 2);
 
 // Header status codes
 define('HEADER_OK',						200);

@@ -143,6 +143,9 @@ switch ($action)
 			// increase a FAQ views counter
 			$faq->increase_views_counter();
 
+			// tracking
+			titania_tracking::track(TITANIA_TRACK_FAQ, $faq_id);
+
 			phpbb::$template->assign_vars(array(
 				'FAQ_SUBJECT'		=> $faq->faq_subject,
 				'FAQ_TEXT'			=> $faq->generate_text_for_display(),
@@ -157,20 +160,62 @@ switch ($action)
 		{
 			titania::page_header('FAQ_LIST');
 
-			$sql = 'SELECT *
-				FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
-				WHERE contrib_id = ' . titania::$contrib->contrib_id . '
-					AND faq_access >= ' . titania::$access_level . '
-				ORDER BY faq_order_id ASC';
-			$result = phpbb::$db->sql_query($sql);
+			titania::_include('functions_display', 'titania_topic_folder_img');
+
+			// Setup the pagination tool
+			$pagination = new titania_pagination();
+			$pagination->default_limit = phpbb::$config['topics_per_page'];
+			$pagination->request();
+			$faqs = array();
+
+			$sql_ary = array(
+				'SELECT' => 'f.*',
+				'FROM'		=> array(
+					TITANIA_CONTRIB_FAQ_TABLE => 'f',
+				),
+				'WHERE' => 'f.contrib_id = ' . titania::$contrib->contrib_id . '
+						AND f.faq_access >= ' . titania::$access_level,
+				'ORDER_BY'	=> 'f.faq_order_id DESC',
+			);
+
+			// Main SQL Query
+			$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
+			// Handle pagination
+			$pagination->sql_count($sql_ary, 'faq_id');
+			$pagination->build_pagination($faq->get_url());
+
+			// Get the data
+			$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
+				$faqs[$row['faq_id']] = $row;
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			// Grab the tracking info
+			titania_tracking::get_tracks(TITANIA_TRACK_FAQ, array_keys($faqs));
+
+			// Output
+			foreach ($faqs as $id => $row)
+			{
+				$folder_img = $folder_alt = '';
+				$unread = (titania_tracking::get_track(TITANIA_TRACK_FAQ, $id, true) === 0) ? true : false;
+				titania_topic_folder_img($folder_img, $folder_alt, 0, $unread);
+
 				phpbb::$template->assign_block_vars('faqlist', array(
 					'U_FAQ'			=> $faq->get_url('', $row['faq_id']),
 
 					'SUBJECT'		=> $row['faq_subject'],
 					'VIEWS'			=> $row['faq_views'],
+
+					'TOPIC_FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
+					'TOPIC_FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
+					'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
+					'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
+					'TOPIC_FOLDER_IMG_WIDTH'		=> phpbb::$user->img($folder_img, '', false, '', 'width'),
+					'TOPIC_FOLDER_IMG_HEIGHT'		=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 
 					'U_MOVE_UP'		=> (phpbb::$auth->acl_get('titania_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_up', $row['faq_id']) : false,
 					'U_MOVE_DOWN'	=> (phpbb::$auth->acl_get('titania_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_down', $row['faq_id']) : false,
@@ -178,7 +223,6 @@ switch ($action)
 					'U_DELETE'		=> (phpbb::$auth->acl_get('titania_faq_mod') || phpbb::$auth->acl_get('titania_faq_delete') || titania::$contrib->is_author) ? $faq->get_url('delete', $row['faq_id']) : false,
 				));
 			}
-			phpbb::$db->sql_freeresult($result);
 
 			phpbb::$template->assign_vars(array(
 				'ICON_MOVE_UP'				=> '<img src="' . titania::$absolute_board . 'adm/images/icon_up.gif" alt="' . phpbb::$user->lang['MOVE_UP'] . '" title="' . phpbb::$user->lang['MOVE_UP'] . '" />',
