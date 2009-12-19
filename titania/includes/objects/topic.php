@@ -272,6 +272,8 @@ class titania_topic extends titania_database_object
 	*/
 	public function topic_folder_img(&$folder_img, &$folder_alt)
 	{
+		titania::_include('functions_display', 'titania_topic_folder_img');
+
 		titania_topic_folder_img($folder_img, $folder_alt, $this->get_postcount(), $this->unread, $this->topic_posted, $this->topic_sticky, $this->topic_locked);
 	}
 

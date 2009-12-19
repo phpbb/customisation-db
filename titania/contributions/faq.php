@@ -200,6 +200,7 @@ switch ($action)
 			// Output
 			foreach ($faqs as $id => $row)
 			{
+				// @todo probably should setup an edit time or something for better read tracking in case it was edited
 				$folder_img = $folder_alt = '';
 				$unread = (titania_tracking::get_track(TITANIA_TRACK_FAQ, $id, true) === 0) ? true : false;
 				titania_topic_folder_img($folder_img, $folder_alt, 0, $unread);
