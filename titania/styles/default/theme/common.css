@@ -3,6 +3,11 @@
  * common.css
  */
 
+.contrib-content {
+	background-color: #FFFFFF;
+	padding: 0 5px;
+}
+
 .hidden {
 	display: none !important;
 }
@@ -104,57 +109,6 @@ fieldset dl:hover dt label.error {
 	color: #BC2A4D;
 }
 
-.rightside {
-	float: right;
-}
-
-/* move this to a other file later ;) */
-#list-db ul.topiclist dt {
-	font-weight: normal;
-	width: 29%;
-}
-
-#list-db li.row dt , #list-db li.row dd.download-count, #list-db li.row dd.added , #list-db li.row dd.last-update  {
-	margin-top: 20px;
-}
-
-#list-db .rating {
-	float: right;
-	margin-top: -11px;
-}
-
-#list-db dd.download-count {
-	width: 10%;
-	text-align: center;
-}
-
-#list-db dd.description {
-	width: 29%;
-	padding-left: 5px;
-}
-
-#list-db li.row dd {
-	font-size: 1.1em;
-}
-
-#list-db dd.added {
-	width: 14%;
-	padding-left: 5px;
-}
-
-#list-db dd.added {
-	width: 15%;
-	padding-left: 5px;
-}
-
-#list-db dd.last-update {
-	padding-left: 5px;
-}
-
-.menu_bar ul.linklist {
-	margin: 1em 0; 
-}
-
 /* proto code
 ---------------------------------------- */
 #wrap {
@@ -162,79 +116,11 @@ fieldset dl:hover dt label.error {
 	margin: 0 auto;
 }
 
-.main-content {
-	margin: 20px 0;
-	clear: both;
-	display: block;
-}
-
-.main-column {
-	margin-left: 1%;
-}
-
-.contrib-content {
-	background-color: #FFFFFF;
-	padding: 0 5px;
-}
-
 h2.section-title {
 	color: #425667;
 	margin-top: .5em;
 	text-align: center;
 	position: relative;
-}
-
-/* Menu/Search Column
----------------------------------------- */
-.menu-column {
-	width: 21%;
-	float: left;
-}
-
-.menubg {
-	background: url("./images/menubg.gif") repeat-x #027BB8;
-	padding: 0 5px;
-	margin-top: 27px;
-}
-
-.menubg.no-space {
-	margin-top: 0;
-	padding: 0 5px;
-}
-
-.menu-title {
-	color: #FFFFFF;
-	text-align: center;
-	display: block;
-	font-size: 1.2em;
-	margin-bottom: 1em;
-}
-
-.advanced-search label {
-	display: block;
-
-}
-
-label#main {
-	margin-top: 10px;
-}
-
-.contrib-menu {
-	list-style-type: none;
-	margin: 0;
-}
-
-.contrib-menu li {
-	border-bottom: 1px solid #CCDEE7;
-}
-.contrib-menu li a {
-	padding: 2px 5px;
-	display: block;
-}
-
-.contrib-menu a:hover {
-	background-color: #DDECF3;
-	text-decoration: none;
 }
 
 /* Main contrib tabs - overwriting some of the code from prosilver
@@ -281,58 +167,7 @@ label#main {
 	margin-top: 5px;
 }
 
-/* This still needs a clean-up */
-.half {
-	width: 48%;
-	float: left;
-	margin-right: 2%;
-}
-
-.half h3 {
-	margin: 0;
-	color: #BC2A4D;
-}
-
-#left dl.details dt {
-	width: 40%;
-}
-
-#left dl.details dd {
-	width: 58%;
-}
-.half dl.details dt {
-	font-weight: bold;
-}
-
-#right dl.details dt {
-	width: 35%;
-}
-
-#right dl.details dd {
-	width: auto;
-}
-
-.forabg {
-	background-image: url("./images/forabg.gif");
-}
-
-li.row dl dt, li.header dl dt {
-	width: 60%;
-}
-
-li.header dd {
-	width: auto;
-}
-
-li.row dd {
-	width: auto;
-	line-height: normal;
-	font-size: 1em;
-	text-align: left;
-	padding-left: 3px !important;
-}
 /****************************************/
-
 /* FAQ Page
 ---------------------------------------- */
 .faq-list {
@@ -386,30 +221,6 @@ dl.codebox code {
 div#top {
 	clear: both;
 	margin-top: 15px;
-}
-
-/* Screenshots
----------------------------------------- */
-.screenshot {
-	width: 33.3%;
-	float: left;
-	display: block;
-	min-height: 200px;
-	margin: 10px 0;
-	text-align: center;
-}
-
-.screenshot img {
-	padding: 2px;
-	border: 1px solid #919191;
-}
-
-.screenshot a:hover {
-	text-decoration: none;
-	color: #2B5D75;
-}
-.screenshot a:hover img {
-	border-color: #2B5D75;
 }
 
 /* Custom Corners
