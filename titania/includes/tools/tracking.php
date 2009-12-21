@@ -79,6 +79,20 @@ class titania_tracking
 		self::$store[$type][$id] = ($time === false) ? titania::$time : (int) $time;
 	}
 
+	/**
+	 * Check if an item is unread
+	 *
+	 * @param <int> $type The type id of the item
+	 * @param <int> $id The id of the item
+	 * @param <int> $last_update The last time the item was updated
+	 * @param <bool> $no_query True if we
+	 * @return <bool> True if the item is unread, false if it is read
+	 */
+	public static function is_unread($type, $id, $last_update, $no_query = true)
+	{
+		return ($last_update >= self::get_track($type, $id, $no_query)) ? true : false;
+	}
+
 	public static function get_track($type, $id, $no_query = false)
 	{
 		// Ignore
@@ -107,21 +121,6 @@ class titania_tracking
 		return self::$store[$type][$id];
 	}
 
-	/**
-	 * Put the data in self::$store, for when you've already grabbed the info yourself
-	 *
-	 * @param <int> $type The type id of the item
-	 * @param <int> $id The id of the item
-	 * @param <int> $track_time The time it was last marked
-	 */
-	public static function store_track($type, $id, $track_time)
-	{
-		// Ignore
-		self::get_track_cookie();
-
-		self::$store[$type][(int) $id] = (int) $track_time;
-	}
-
 	public static function get_tracks($type, $ids)
 	{
 		// Ignore
@@ -142,8 +141,22 @@ class titania_tracking
 		{
 			self::$store[$type][$row['track_id']] = $row['track_time'];
 		}
-
 		phpbb::$db->sql_freeresult($result);
+	}
+
+	/**
+	 * Put the data in self::$store, for when you've already grabbed the info yourself
+	 *
+	 * @param <int> $type The type id of the item
+	 * @param <int> $id The id of the item
+	 * @param <int> $track_time The time it was last marked
+	 */
+	public static function store_track($type, $id, $track_time)
+	{
+		// Ignore
+		self::get_track_cookie();
+
+		self::$store[$type][(int) $id] = (int) $track_time;
 	}
 
 	public static function clear_track($type, $id)

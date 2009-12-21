@@ -285,11 +285,7 @@ class titania_topic extends titania_database_object
 	public function assign_details()
 	{
 		// Check read status
-		$this->unread = true;
-		if (titania_tracking::get_track(TITANIA_TRACK_TOPICS, $this->topic_id, true) >= $this->topic_last_post_time)
-		{
-			$this->unread = false;
-		}
+		$this->unread = titania_tracking::is_unread(TITANIA_TRACK_TOPICS, $this->topic_id, $this->topic_last_post_time);
 
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);
@@ -309,13 +305,6 @@ class titania_topic extends titania_database_object
 			'TOPIC_VIEWS'					=> $this->topic_views,
 			'TOPIC_SUBJECT'					=> censor_text($this->topic_subject),
 
-			'TOPIC_FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
-			'TOPIC_FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
-			'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
-			'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
-			'TOPIC_FOLDER_IMG_WIDTH'		=> phpbb::$user->img($folder_img, '', false, '', 'width'),
-			'TOPIC_FOLDER_IMG_HEIGHT'		=> phpbb::$user->img($folder_img, '', false, '', 'height'),
-
 			'TOPIC_FIRST_POST_ID'			=> $this->topic_first_post_id,
 			'TOPIC_FIRST_POST_USER_ID'		=> $this->topic_first_post_user_id,
 			'TOPIC_FIRST_POST_USER_COLOUR'	=> $this->topic_first_post_user_colour,
@@ -334,6 +323,13 @@ class titania_topic extends titania_database_object
 			'U_VIEW_LAST_POST'				=> titania_url::append_url($this->get_url(), array('p' => $this->topic_last_post_id, '#' => $this->topic_last_post_id)),
 
 			'S_UNREAD_TOPIC'				=> ($this->unread) ? true : false,
+
+			'TOPIC_FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
+			'TOPIC_FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
+			'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
+			'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
+			'TOPIC_FOLDER_IMG_WIDTH'		=> phpbb::$user->img($folder_img, '', false, '', 'width'),
+			'TOPIC_FOLDER_IMG_HEIGHT'		=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 		);
 
 		return $details;

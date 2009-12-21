@@ -547,6 +547,12 @@ $versions = array(
 		),
 	),
 
+	'0.1.21' => array(
+		'table_column_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_last_update', array('TIMESTAMP', 0)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

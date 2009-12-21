@@ -105,6 +105,9 @@ class titania_contribution extends titania_database_object
 
 			'contrib_rating'				=> array('default' => 0.0),
 			'contrib_rating_count'			=> array('default' => 0),
+			
+			// Last time the contrib item was updated (created or added a new revision, etc).  Used for tracking
+			'contrib_last_update'			=> array('default' => titania::$time),
 		));
 	}
 
@@ -144,24 +147,26 @@ class titania_contribution extends titania_database_object
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_TYPE'];
 		}
-
-		if (!$contrib_categories)
-		{
-			$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
-		}
 		else
 		{
-			$categories	= titania::$cache->get_categories();
-
-			foreach ($contrib_categories as $category)
+			if (!$contrib_categories)
 			{
-				if (!isset($categories[$category]))
+				$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
+			}
+			else
+			{
+				$categories	= titania::$cache->get_categories();
+
+				foreach ($contrib_categories as $category)
 				{
-					$error[] = phpbb::$user->lang['NO_CATEGORY'];
-				}
-				else if ($categories[$category]['category_type'] != $this->contrib_type)
-				{
-					$error[] = phpbb::$user->lang['WRONG_CATEGORY'];
+					if (!isset($categories[$category]))
+					{
+						$error[] = phpbb::$user->lang['NO_CATEGORY'];
+					}
+					else if ($categories[$category]['category_type'] != $this->contrib_type)
+					{
+						$error[] = phpbb::$user->lang['WRONG_CATEGORY'];
+					}
 				}
 			}
 		}

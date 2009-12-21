@@ -110,6 +110,13 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 					USERS_TABLE				=> 'u',
 				),
 
+				'LEFT_JOIN'	=> array(
+					array(
+						'FROM'	=> array(TITANIA_TRACK_TABLE => 'tt'),
+						'ON'	=> 'tt.track_type = ' . TITANIA_TRACK_CONTRIB . ' AND tt.track_id = c.contrib_id',
+					),
+				),
+
 				'WHERE'		=> 'c.contrib_user_id = ' . (int) $id . '
 					AND u.user_id = c.contrib_user_id
 					AND c.contrib_visible = 1',
@@ -125,7 +132,9 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 
 			$sql_ary = array(
 				// DO NOT change to *, we do not need all rows from ANY table with the query!
-				'SELECT'	=> 'c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, u.username, u.user_colour, u.username_clean',
+				'SELECT'	=> 'c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update,
+					u.username, u.user_colour, u.username_clean,
+					tt.track_time',
 
 				'FROM'		=> array(
 					TITANIA_CONTRIB_IN_CATEGORIES_TABLE 	=> 'cic',
@@ -134,11 +143,15 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 				'LEFT_JOIN'	=> array(
 					array(
 						'FROM'	=> array(TITANIA_CONTRIBS_TABLE	=> 'c'),
-						'ON'	=> 'cic.contrib_id = c.contrib_id'
+						'ON'	=> 'cic.contrib_id = c.contrib_id',
 					),
 					array(
 						'FROM'	=> array(USERS_TABLE	=> 'u'),
-						'ON'	=> 'u.user_id = c.contrib_user_id'
+						'ON'	=> 'u.user_id = c.contrib_user_id',
+					),
+					array(
+						'FROM'	=> array(TITANIA_TRACK_TABLE => 'tt'),
+						'ON'	=> 'tt.track_type = ' . TITANIA_TRACK_CONTRIB . ' AND tt.track_id = c.contrib_id',
 					),
 				),
 
@@ -174,6 +187,13 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 
 		$author->__set_array($row);
 
+		// Store the tracking info we grabbed in the tool
+		titania_tracking::store_track(TITANIA_TRACK_CONTRIB, $contrib->contrib_id, $row['track_time']);
+
+		// Get the folder image
+		$folder_img = $folder_alt = '';
+		titania_topic_folder_img($folder_img, $folder_alt, 0, titania_tracking::is_unread(TITANIA_TRACK_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update));
+
 		phpbb::$template->assign_block_vars($blockname, array(
 			'CONTRIB_USERNAME'			=> $contrib->username,
 			'CONTRIB_USERNAME_FULL'		=> $author->get_username_string(),
@@ -188,6 +208,13 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 			'U_VIEW_CONTRIB'			=> $contrib->get_url(),
 
 			'S_CONTRIB_TYPE'			=> $contrib->contrib_type,
+
+			'FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
+			'FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
+			'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
+			'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
+			'FOLDER_IMG_WIDTH'			=> phpbb::$user->img($folder_img, '', false, '', 'width'),
+			'FOLDER_IMG_HEIGHT'			=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 		));
 
 		$contrib_type = $row['contrib_type'];
