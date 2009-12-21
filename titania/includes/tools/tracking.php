@@ -107,6 +107,21 @@ class titania_tracking
 		return self::$store[$type][$id];
 	}
 
+	/**
+	 * Put the data in self::$store, for when you've already grabbed the info yourself
+	 *
+	 * @param <int> $type The type id of the item
+	 * @param <int> $id The id of the item
+	 * @param <int> $track_time The time it was last marked
+	 */
+	public static function store_track($type, $id, $track_time)
+	{
+		// Ignore
+		self::get_track_cookie();
+
+		self::$store[$type][(int) $id] = (int) $track_time;
+	}
+
 	public static function get_tracks($type, $ids)
 	{
 		// Ignore

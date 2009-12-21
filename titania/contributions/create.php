@@ -106,7 +106,7 @@ titania::$contrib->assign_details();
 $message->display();
 
 $template->assign_vars(array(
-	'S_POST_ACTION'			=> titania::$url->build_url('contributions/create'),
+	'S_POST_ACTION'			=> titania_url::build_url('contributions/create'),
 	'S_CREATE'				=> true,
 
 	'CONTRIB_PERMALINK'		=> titania::$contrib->contrib_name_clean,

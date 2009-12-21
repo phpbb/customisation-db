@@ -38,9 +38,9 @@ class titania_previews extends titania_attachments
 
 		if ($action == 'create')
 		{
-			return titania::$url->append_url($url, array('action' => $action));
+			return titania_url::append_url($url, array('action' => $action));
 		}
 
-		return titania::$url->append_url($url, array('action' => $action, 'p' => $preview_id));
+		return titania_url::append_url($url, array('action' => $action, 'p' => $preview_id));
 	}
 }

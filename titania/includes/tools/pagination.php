@@ -128,7 +128,7 @@ class titania_pagination extends titania_object
 			$params[$this->limit_name] = $this->limit;
 		}
 
-		$pagination_url = titania::$url->build_url($page, $params);
+		$pagination_url = titania_url::build_url($page, $params);
 
 		phpbb::$template->assign_vars(array(
 			$this->template_vars['PAGINATION']		=> $this->generate_pagination($pagination_url, false, false, false, true, $tpl_prefix),
@@ -177,7 +177,7 @@ class titania_pagination extends titania_object
 
 			for ($i = $start_cnt + 1; $i < $end_cnt; $i++)
 			{
-				$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania::$url->append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
+				$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
 				if ($i < $end_cnt - 1)
 				{
 					$page_string .= $seperator;
@@ -192,7 +192,7 @@ class titania_pagination extends titania_object
 
 			for ($i = 2; $i < $total_pages; $i++)
 			{
-				$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania::$url->append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
+				$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
 				if ($i < $total_pages)
 				{
 					$page_string .= $seperator;
@@ -200,7 +200,7 @@ class titania_pagination extends titania_object
 			}
 		}
 
-		$page_string .= ($on_page == $total_pages) ? '<strong>' . $total_pages . '</strong>' : '<a href="' . titania::$url->append_url($base_url, array($this->start_name => (($total_pages - 1) * $per_page))) . '">' . $total_pages . '</a>';
+		$page_string .= ($on_page == $total_pages) ? '<strong>' . $total_pages . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($total_pages - 1) * $per_page))) . '">' . $total_pages . '</a>';
 
 		if ($add_prevnext_text)
 		{
@@ -210,12 +210,12 @@ class titania_pagination extends titania_object
 			}
 			else if ($on_page != 1)
 			{
-				$page_string = '<a href="' . titania::$url->append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page))) . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
+				$page_string = '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page))) . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
 			}
 
 			if ($on_page != $total_pages)
 			{
-				$page_string .= '&nbsp;&nbsp;<a href="' . titania::$url->append_url($base_url, array($this->start_name => ($on_page * $per_page))) . '">' . phpbb::$user->lang['NEXT'] . '</a>';
+				$page_string .= '&nbsp;&nbsp;<a href="' . titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))) . '">' . phpbb::$user->lang['NEXT'] . '</a>';
 			}
 		}
 
@@ -224,8 +224,8 @@ class titania_pagination extends titania_object
 			'A_' . $tpl_prefix . 'BASE_URL'	=> addslashes($base_url),
 			$tpl_prefix . 'PER_PAGE'		=> $per_page,
 
-			$tpl_prefix . 'PREVIOUS_PAGE'	=> ($on_page == 2) ? $base_url : (($on_page == 1) ? '' : titania::$url->append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page)))),
-			$tpl_prefix . 'NEXT_PAGE'		=> ($on_page == $total_pages) ? '' : titania::$url->append_url($base_url, array($this->start_name => ($on_page * $per_page))),
+			$tpl_prefix . 'PREVIOUS_PAGE'	=> ($on_page == 2) ? $base_url : (($on_page == 1) ? '' : titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page)))),
+			$tpl_prefix . 'NEXT_PAGE'		=> ($on_page == $total_pages) ? '' : titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))),
 			$tpl_prefix . 'TOTAL_PAGES'		=> $total_pages,
 		));
 

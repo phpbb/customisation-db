@@ -128,7 +128,7 @@ class titania_topic extends titania_database_object
 
 	public function submit()
 	{
-		$this->topic_subject_clean = titania::$url->url_slug($this->topic_subject);
+		$this->topic_subject_clean = titania_url::url_slug($this->topic_subject);
 
 		return parent::submit();
 	}
@@ -254,7 +254,7 @@ class titania_topic extends titania_database_object
 			if (isset($this->contrib_type) && isset($this->contrib_name_clean))
 			{
 				// Yay, generate good urls
-				$url = titania::$url->build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
+				$url = titania_url::build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
 			}
 			else
 			{
@@ -262,7 +262,7 @@ class titania_topic extends titania_database_object
 			}
 		}
 
-		$url = titania::$url->append_url($url, array($this->topic_subject_clean, 't' => $this->topic_id));
+		$url = titania_url::append_url($url, array($this->topic_subject_clean, 't' => $this->topic_id));
 
 		return $url;
 	}
@@ -329,9 +329,9 @@ class titania_topic extends titania_database_object
 			'TOPIC_LAST_POST_TIME'			=> phpbb::$user->format_date($this->topic_last_post_time),
 			'TOPIC_LAST_POST_SUBJECT'		=> censor_text($this->topic_last_post_subject),
 
-			'U_NEWEST_POST'					=> ($this->unread) ? titania::$url->append_url($this->get_url(), array('view' => 'unread', '#' => 'unread')) : '',
+			'U_NEWEST_POST'					=> ($this->unread) ? titania_url::append_url($this->get_url(), array('view' => 'unread', '#' => 'unread')) : '',
 			'U_VIEW_TOPIC'					=> $this->get_url(),
-			'U_VIEW_LAST_POST'				=> titania::$url->append_url($this->get_url(), array('p' => $this->topic_last_post_id, '#' => $this->topic_last_post_id)),
+			'U_VIEW_LAST_POST'				=> titania_url::append_url($this->get_url(), array('p' => $this->topic_last_post_id, '#' => $this->topic_last_post_id)),
 
 			'S_UNREAD_TOPIC'				=> ($this->unread) ? true : false,
 		);

@@ -1,25 +1,31 @@
 <!-- IF .categories -->
-
-<div class="forumbg forumbg-table">
+<div class="forabg">
 	<div class="inner"><span class="corners-top"><span></span></span>
+	<ul class="topiclist">
+		<li class="header">
+			<dl class="icon">
+				<dt>{L_CATEGORY}</dt>
+				<dd class="topics">{L_CONTRIBUTIONS}</dd>
+			</dl>
+		</li>
+	</ul>
+	<ul class="topiclist forums">
 
-		<table class="table1" cellspacing="1" id="modlist">
-		<thead>
-		<tr>
-			<th>{L_CATEGORY}</th>
-			<th>{L_CONTRIBUTIONS}</th>
-		</tr>
-		</thead>
-		<tbody>
-		<!-- BEGIN categories -->
-			<tr class="<!-- IF categories.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
-				<td><a href="{categories.U_VIEW_CATEGORY}">{categories.CATEGORY_NAME}</a></td>
-				<td>{categories.CATEGORY_CONTRIBS}</td>
-			</tr>
+	<!-- BEGIN categories -->
+		<li class="row">
+			<dl class="icon" style="background-image: url({categories.FORUM_FOLDER_IMG_SRC}); background-repeat: no-repeat;">
+				<dt title="{categories.FORUM_FOLDER_IMG_ALT}">
+					<!-- IF categories.FORUM_IMAGE --><span class="forum-image">{categories.FORUM_IMAGE}</span><!-- ENDIF -->
+					<a href="{categories.U_VIEW_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a><br />
+					{categories.FORUM_DESC}
+					<!-- IF categories.SUBFORUMS and categories.S_LIST_SUBFORUMS --><br /><strong>{categories.L_SUBFORUM_STR}</strong> {categories.SUBFORUMS}<!-- ENDIF -->
+				</dt>
+				<dd class="topics">{categories.CATEGORY_CONTRIBS} <dfn>{L_CONTRIBUTIONS}</dfn></dd>
+			</dl>
+		</li>
 		<!-- END categories -->
-	</tbody>
-	</table>
 
+		</ul>
 	<span class="corners-bottom"><span></span></span></div>
 </div>
 <!-- ENDIF -->

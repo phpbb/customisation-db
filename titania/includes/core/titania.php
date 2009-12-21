@@ -57,11 +57,6 @@ class titania
 	public static $time;
 
 	/**
-	* URL Class
-	*/
-	public static $url;
-
-	/**
 	* Current User's Access level
 	*
 	* @var int $access_level Check TITANIA_ACCESS_ constants
@@ -138,9 +133,8 @@ class titania
 		self::load_types();
 
 		// Initialise the URL class
-		self::$url = new titania_url();
-		self::$url->decode_url();
-		self::$url->root_url = self::$absolute_path;
+		titania_url::$root_url = self::$absolute_path;
+		titania_url::decode_url(self::$config->titania_script_path);
 	}
 
 	/**
@@ -259,7 +253,7 @@ class titania
 
 			'U_BASE_URL'				=> self::$absolute_path,
 			'U_SITE_ROOT'				=> generate_board_url(true),
-			'U_MY_CONTRIBUTIONS'		=> (phpbb::$user->data['is_registered'] && !phpbb::$user->data['is_bot']) ? self::$url->build_url('author/' . phpbb::$user->data['username_clean']) : '',
+			'U_MY_CONTRIBUTIONS'		=> (phpbb::$user->data['is_registered'] && !phpbb::$user->data['is_bot']) ? titania_url::build_url('author/' . phpbb::$user->data['username_clean']) : '',
 
 			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
@@ -315,13 +309,13 @@ class titania
 					}
 				}
 
-				$debug_output .= ' | <a href="' . self::$url->append_url(self::$url->current_page, array_merge(self::$url->params, array('explain' => 1))) . '">Explain</a>';
+				$debug_output .= ' | <a href="' . titania_url::append_url(titania_url::$current_page, array_merge(titania_url::$params, array('explain' => 1))) . '">Explain</a>';
 			}
 		}
 
 		phpbb::$template->assign_vars(array(
 			'DEBUG_OUTPUT'			=> (defined('DEBUG')) ? $debug_output : '',
-			'U_PURGE_CACHE'			=> (phpbb::$auth->acl_get('a_')) ? self::$url->append_url(self::$url->current_page, array_merge(self::$url->params, array('cache' => 'purge'))) : '',
+			'U_PURGE_CACHE'			=> (phpbb::$auth->acl_get('a_')) ? titania_url::append_url(titania_url::$current_page, array_merge(titania_url::$params, array('cache' => 'purge'))) : '',
 		));
 
 		// Call the phpBB footer function
@@ -376,9 +370,9 @@ class titania
 			return $message;
 		}
 
-		meta_refresh(3, self::$url->build_url());
+		meta_refresh(3, titania_url::build_url());
 
-		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . self::$url->build_url() . '">', '</a> ');
+		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . titania_url::build_url() . '">', '</a> ');
 		trigger_error($message);
 	}
 
@@ -503,9 +497,10 @@ class titania
 		}
 
 		// re-add sid / transform & to &amp; for user->page (user->page is always using &)
+		// @todo look into the urls we are generating here
 		if ($u_action)
 		{
-			$u_action = self::$url->append_url($u_action);
+			$u_action = titania_url::build_url($u_action);
 		}
 		else
 		{

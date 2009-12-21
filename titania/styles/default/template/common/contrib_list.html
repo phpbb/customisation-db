@@ -1,21 +1,30 @@
-<!-- IF not .categories -->
+<div class="forumbg">
+<div class="inner"><span class="corners-top"><span></span></span>
+<ul class="topiclist">
+	<li class="header">
+		<dl class="icon">
+			<dt>{L_CONTRIBUTIONS}</dt>
+		</dl>
+	</li>
+</ul>
+<ul class="topiclist topics">
 
-<div class="forumbg forumbg-table">
-	<div class="inner"><span class="corners-top"><span></span></span>
+<!-- BEGIN contribs -->
+	<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+		<dl class="icon" style="background-image: url({contribs.FOLDER_IMG_SRC}); background-repeat: no-repeat;">
+			<dt title="{contribs.FOLDER_IMG_ALT}"><a href="{contribs.U_VIEW_CONTRIB}" class="topictitle">{contribs.CONTRIB_NAME}</a><br />
+				{L_AUTHOR} {contribs.CONTRIB_USERNAME_FULL}
+			</dt>
+		</dl>
+	</li>
+<!-- BEGINELSE -->
+	<li class="row bg1">
+		<dl>
+			<dt>{L_NO_CONTRIBS}</dt>
+		</dl>
+	</li>
+<!-- END contribs -->
 
-	<table class="table1" cellspacing="1" id="modlist">
-		<!-- BEGIN contribs -->
-			<tr class="<!-- IF contribs.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
-				<td><a href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a><br />
-				{L_AUTHOR}: {contribs.CONTRIB_USERNAME_FULL} </td>
-			</tr>
-		<!-- BEGINELSE -->
-			<tr class="bg1">
-				<td align="center">{L_NO_CONTRIBS}</td>
-			</tr>
-		<!-- END contribs -->
-	</table>
-
+		</ul>
 	<span class="corners-bottom"><span></span></span></div>
 </div>
-<!-- ENDIF -->

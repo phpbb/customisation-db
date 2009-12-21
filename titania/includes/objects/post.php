@@ -197,7 +197,7 @@ class titania_post extends titania_database_object
 	{
 		if (is_object($this->topic))
 		{
-			return titania::$url->append_url($this->topic->get_url(), array('p' => $this->post_id, '#p' => $this->post_id));
+			return titania_url::append_url($this->topic->get_url(), array('p' => $this->post_id, '#p' => $this->post_id));
 		}
 
 		switch ($this->post_type)
@@ -219,7 +219,7 @@ class titania_post extends titania_database_object
 			break;
 		}
 
-		return titania::$url->build_url($page, array('p', $this->post_id, '#p' => $this->post_id));
+		return titania_url::build_url($page, array('p', $this->post_id, '#p' => $this->post_id));
 	}
 
 	/**

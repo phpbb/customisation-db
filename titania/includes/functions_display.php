@@ -82,13 +82,14 @@ function titania_display_categories($parent_id = 0, $blockname = 'categories')
 }
 
 /**
-* Display contributions
-*
-* @param string $mode The mode (category, author)
-* @param int $id The parent id (only show contributions under this category, author, etc)
-* @param string $blockname The name of the template block to use (contribs by default)
-*/
-function titania_display_contribs($mode, $id, $blockname = 'contribs')
+ * Display contributions
+ *
+ * @param string $mode The mode (category, author)
+ * @param int $id The parent id (only show contributions under this category, author, etc)
+ * @param string $pagination_url The url to display for pagination.
+ * @param string $blockname The name of the template block to use (contribs by default)
+ */
+function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'contribs')
 {
 	// Setup sorting.
 	$sort = new titania_sort();
@@ -101,11 +102,20 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 				array('SORT_CONTRIB_NAME',		'c.contrib_name', true),
 			));
 
-			$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . USERS_TABLE . ' u
-				WHERE c.contrib_user_id = ' . (int) $id . '
+			$sql_ary = array(
+				'SELECT'	=> '*',
+
+				'FROM'		=> array(
+					TITANIA_CONTRIBS_TABLE	=> 'c',
+					USERS_TABLE				=> 'u',
+				),
+
+				'WHERE'		=> 'c.contrib_user_id = ' . (int) $id . '
 					AND u.user_id = c.contrib_user_id
-					AND c.contrib_visible = 1
-				ORDER BY ' . $sort->get_order_by();
+					AND c.contrib_visible = 1',
+
+				'ORDER_BY'	=> $sort->get_order_by(),
+			);
 		break;
 
 		case 'category' :
@@ -113,7 +123,7 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 				array('SORT_CONTRIB_NAME',			'c.contrib_name', true),
 			));
 
-			$sql = phpbb::$db->sql_build_query('SELECT', array(
+			$sql_ary = array(
 				// DO NOT change to *, we do not need all rows from ANY table with the query!
 				'SELECT'	=> 'c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, u.username, u.user_colour, u.username_clean',
 
@@ -136,19 +146,27 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 					AND c.contrib_visible = 1',
 
 				'ORDER_BY'	=> $sort->get_order_by(),
-			));
+			);
 		break;
 	}
 
-	// Setup pagination.
+	// Setup the pagination tool
 	$pagination = new titania_pagination();
-	$start = $pagination->get_start(0);
-	$limit = $pagination->get_limit();
-	$contrib_type = 0;
+	$pagination->default_limit = phpbb::$config['topics_per_page'];
+	$pagination->request();
+
+	// Main SQL Query
+	$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
+	// Handle pagination
+	$pagination->sql_count($sql_ary, 'c.contrib_id');
+	$pagination->build_pagination($pagination_url);
+
+	// Setup some objects we'll use for temps
 	$author = new titania_author();
 	$contrib = new titania_contribution();
 
-	$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
+	$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
 
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
@@ -177,15 +195,8 @@ function titania_display_contribs($mode, $id, $blockname = 'contribs')
 	phpbb::$db->sql_freeresult($result);
 	unset($contrib, $author);
 
-	$pagination->set_params(array(
-		'sk'		=> $sort->sort_key,
-		'sd'		=> $sort->sort_dir,
-	));
-
-	$pagination->build_pagination('');
-
 	phpbb::$template->assign_vars(array(
-		'U_ACTION'			=> titania::$url->current_page,
+		'U_ACTION'			=> titania_url::$current_page,
 		'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
 		'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
 	));

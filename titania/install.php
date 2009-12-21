@@ -565,7 +565,7 @@ function titania_update($action, $version)
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
 				$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . ' SET
-					topic_subject_clean = \'' . phpbb::$db->sql_escape(titania::$url->url_slug($row['topic_subject'])) . '\'
+					topic_subject_clean = \'' . phpbb::$db->sql_escape(titania_url::url_slug($row['topic_subject'])) . '\'
 					WHERE topic_id = ' . $row['topic_id'];
 				phpbb::$db->sql_query($sql);
 			}

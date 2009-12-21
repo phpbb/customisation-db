@@ -152,9 +152,9 @@ class titania_revision extends titania_database_object
 
 		if ($action == 'create')
 		{
-			return titania::$url->append_url($url, array('action' => $action));
+			return titania_url::append_url($url, array('action' => $action));
 		}
 
-		return titania::$url->append_url($url, array('action' => $action, 'r' => $revision_id));
+		return titania_url::append_url($url, array('action' => $action, 'r' => $revision_id));
 	}
 }

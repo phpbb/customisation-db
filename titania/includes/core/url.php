@@ -26,28 +26,28 @@ class titania_url
 	*
 	* @var string
 	*/
-	private $separator = '-';
+	private static $separator = '-';
 
 	/**
 	* Root URL, the Root URL to the base
 	*
 	* @var string
 	*/
-	public $root_url;
+	public static $root_url;
 
 	/**
 	* Parameters pulled from the current URL the user is accessing
 	*
 	* @var array
 	*/
-	public $params = array();
+	public static $params = array();
 
 	/**
 	* Current page we are on (minus all the parameters)
 	*
 	* @var string
 	*/
-	public $current_page;
+	public static $current_page;
 
 	/**
 	* Build URL by appending the needed parameters to a base URL
@@ -56,17 +56,17 @@ class titania_url
 	* @param array $params Array of parameters we need to clean and append to the base url
 	* @return string
 	*/
-	public function build_url($base, $params = array())
+	public static function build_url($base, $params = array())
 	{
 		global $_SID;
 
 		// Prevent rebuilding...
-		if ($this->is_built($base))
+		if (self::is_built($base))
 		{
-			return $this->append_url($base, $params);
+			return self::append_url($base, $params);
 		}
 
-		$final_url = $this->root_url . $base;
+		$final_url = self::$root_url . $base;
 
 		// Append a / at the end if required
 		if (substr($final_url, -1) != '/')
@@ -86,7 +86,7 @@ class titania_url
 			$params['sid'] = $_SID;
 		}
 
-		return $this->append_url($final_url, $params);
+		return self::append_url($final_url, $params);
 	}
 
 	/**
@@ -95,9 +95,9 @@ class titania_url
 	 * @param <string> $base The URL you want to check
 	 * @return <bool> True if it was already built, false if it was not
 	 */
-	public function is_built($base)
+	public static function is_built($base)
 	{
-		if (strpos($base, $this->root_url) !== false)
+		if (strpos($base, self::$root_url) !== false)
 		{
 			return true;
 		}
@@ -114,7 +114,7 @@ class titania_url
 	* @param array $params Array of parameters we need to clean and append to the base url
 	* @return string
 	*/
-	public function append_url($url, $params = array())
+	public static function append_url($url, $params = array())
 	{
 		// Extract the anchor from the end of the base if there is one
 		$anchor = '';
@@ -130,7 +130,7 @@ class titania_url
 			// Special case when we just want to add one thing to the URL (ex, the topic title)
 			if (is_int($name))
 			{
-				$url .= $this->url_replace($value);
+				$url .= self::url_replace($value);
 				continue;
 			}
 
@@ -142,10 +142,10 @@ class titania_url
 
 			if (substr($url, -1) != '/')
 			{
-				$url .= $this->separator;
+				$url .= self::$separator;
 			}
 
-			$url .= $this->url_replace($name) . $this->separator . $this->url_replace($value);
+			$url .= self::url_replace($name) . self::$separator . self::url_replace($value);
 		}
 
 		// Now append the anchor again
@@ -160,9 +160,9 @@ class titania_url
 	* @param string $string
 	* @return string
 	*/
-	public function url_slug($string)
+	public static function url_slug($string)
 	{
-		$string = $this->url_replace($string, false);
+		$string = self::url_replace($string, false);
 
 		// Replace any number of spaces with a single underscore
 		$string = preg_replace('#[\s]+#', '_', $string);
@@ -179,9 +179,9 @@ class titania_url
 	* @param bool $urlencode
 	* @return string
 	*/
-	public function url_replace($url, $urlencode = true)
+	public static function url_replace($url, $urlencode = true)
 	{
-		$match	= array('#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', $this->separator);
+		$match	= array('#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', self::$separator);
 		$url	= str_replace($match, '', $url);
 
 		return ($urlencode) ? urlencode($url) : $url;
@@ -192,18 +192,20 @@ class titania_url
 	*
 	* This function should be called before phpBB is initialized
 	*/
-	public function decode_url()
+	public static function decode_url($script_path)
 	{
 		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
 
-		// Remove everything before the last /
+		// Grab the arguments
 		$args = substr($url, (strrpos($url, '/') + 1));
 
 		// Store the current page
-		$this->current_page = substr($url, 0, (strrpos($url, '/') + 1));
+		self::$current_page = substr($url, 0, (strrpos($url, '/') + 1));
+		self::$current_page = (self::$current_page[0] == '/') ? substr(self::$current_page, 1) : self::$current_page;
+		self::$current_page = str_replace($script_path, '', self::$root_url) . self::$current_page;
 
 		// Split up the arguments
-		$args = explode($this->separator, $args);
+		$args = explode(self::$separator, $args);
 
 		if (sizeof($args) < 2)
 		{
@@ -221,7 +223,7 @@ class titania_url
 			$name = $args[$i];
 			$value = $args[($i + 1)];
 
-			$this->params[$name] = $value;
+			self::$params[$name] = $value;
 			$_GET[$name] = $_REQUEST[$name] = $value;
 		}
 	}

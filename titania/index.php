@@ -93,11 +93,11 @@ switch ($action)
 
 		if ($category_id != 0)
 		{
-			titania_display_contribs('category', $category_id);
+			titania_display_contribs('category', $category_id, titania_url::$current_page);
 		}
 
 		phpbb::$template->assign_vars(array(
-			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('titania_contrib_submit')) ? titania::$url->build_url('contributions/create') : '',
+			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('titania_contrib_submit')) ? titania_url::build_url('contributions/create') : '',
 		));
 	break;
 }

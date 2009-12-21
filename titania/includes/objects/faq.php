@@ -135,14 +135,14 @@ class titania_faq extends titania_database_object
 
 		if ($action == 'create')
 		{
-			return titania::$url->append_url($url, array('action' => $action));
+			return titania_url::append_url($url, array('action' => $action));
 		}
 		else if (!$action)
 		{
-			return titania::$url->append_url($url, array('f' => $faq_id, '#' => 'details'));
+			return titania_url::append_url($url, array('f' => $faq_id, '#' => 'details'));
 		}
 
-		return titania::$url->append_url($url, array('action' => $action, 'f' => $faq_id));
+		return titania_url::append_url($url, array('action' => $action, 'f' => $faq_id));
 	}
 
 	/**

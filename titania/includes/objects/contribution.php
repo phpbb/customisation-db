@@ -177,9 +177,9 @@ class titania_contribution extends titania_database_object
 			{
 				$error[] = phpbb::$user->lang['EMPTY_CONTRIB_PERMALINK'];
 			}
-			elseif (titania::$url->url_slug($this->contrib_name_clean) !== $this->contrib_name_clean)
+			elseif (titania_url::url_slug($this->contrib_name_clean) !== $this->contrib_name_clean)
 			{
-				$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania::$url->url_slug($this->contrib_name_clean));
+				$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania_url::url_slug($this->contrib_name_clean));
 			}
 			elseif (!$this->validate_permalink($this->contrib_name_clean))
 			{
@@ -506,10 +506,10 @@ class titania_contribution extends titania_database_object
 	{
 		if ($page)
 		{
-			return titania::$url->build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
+			return titania_url::build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
 		}
 
-		return titania::$url->build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean);
+		return titania_url::build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean);
 	}
 
 	/**

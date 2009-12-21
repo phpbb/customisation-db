@@ -210,7 +210,7 @@ class titania_category extends titania_database_object
 			'CATEGORY_CONTRIBS'	=> $this->category_contribs,
 			'CATEGORY_TYPE'		=> $this->category_type,
 
-			'U_VIEW_CATEGORY'	=> titania::$url->build_url($this->get_url()),
+			'U_VIEW_CATEGORY'	=> titania_url::build_url($this->get_url()),
 		);
 
 		if ($return)

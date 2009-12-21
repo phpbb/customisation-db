@@ -126,7 +126,7 @@ switch ($action)
 
 		phpbb::$template->assign_vars(array(
 			'L_POST_A'			=> phpbb::$user->lang[(($action == 'post') ? 'POST_TOPIC' : 'POST_REPLY')],
-			'S_POST_ACTION'		=> ($topic_id) ? titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => $action, 't' => $topic_id)) : titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => $action)),
+			'S_POST_ACTION'		=> ($topic_id) ? titania_url::append_url(titania::$contrib->get_url('support'), array('action' => $action, 't' => $topic_id)) : titania_url::append_url(titania::$contrib->get_url('support'), array('action' => $action)),
 		));
 
 		titania::page_header(($action == 'post') ? 'NEW_TOPIC' : 'POST_REPLY');
@@ -161,7 +161,7 @@ switch ($action)
 
 			if (phpbb::$auth->acl_get('titania_post'))
 			{
-				phpbb::$template->assign_var('U_POST_REPLY', titania::$url->append_url($topic->get_url(), array('action' => 'reply')));
+				phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(), array('action' => 'reply')));
 			}
 		}
 		else
@@ -172,7 +172,7 @@ switch ($action)
 
 			if (phpbb::$auth->acl_get('titania_topic'))
 			{
-				phpbb::$template->assign_var('U_POST_TOPIC', titania::$url->append_url(titania::$contrib->get_url('support'), array('action' => 'post')));
+				phpbb::$template->assign_var('U_POST_TOPIC', titania_url::append_url(titania::$contrib->get_url('support'), array('action' => 'post')));
 			}
 		}
 

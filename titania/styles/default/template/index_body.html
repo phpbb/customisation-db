@@ -2,50 +2,40 @@
 
 <h2 class="solo">{L_CUSTOMISATION_DATABASE}</h2>
 
-<!-- IF U_CREATE_CONTRIBUTION -->
-<div class="menu_bar">
-<ul class="ui-button linklist leftside">
-	<li><a href="{U_CREATE_CONTRIBUTION}" id="create-contrib" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_CONTRIBUTION}</a></li>
-</ul>
-<ul class="linklist rightside">
-	<li>
-		<form method="post" action="{U_ACTION}" name="contrib_list" id="contrib_list">
-			<fieldset>
-				<!-- IF PREVIOUS_PAGE --><a href="{PREVIOUS_PAGE}" class="left-box {S_CONTENT_FLOW_BEGIN}">{L_PREVIOUS}</a><!-- ENDIF -->
-				<!-- IF NEXT_PAGE --><a href="{NEXT_PAGE}" class="right-box {S_CONTENT_FLOW_END}">{L_NEXT}</a><!-- ENDIF -->
-				<!-- IF S_MODE_SELECT --><label for="sk">{L_SELECT_SORT_METHOD}: <select name="sk" id="sk">{S_MODE_SELECT}</select></label>
-				<label for="sd">{L_ORDER}: <select name="sd" id="sd">{S_ORDER_SELECT}</select> <input type="submit" name="sort" value="{L_SUBMIT}" class="button2" /></label>
-				<!-- ENDIF -->
-			</fieldset>
-		</form>
-	</li>
-</ul>
+<div class="topic-actions">
+	<div class="buttons">
+	<!-- IF U_CREATE_CONTRIBUTION -->
+		<p class="ui-button"><a href="{U_CREATE_CONTRIBUTION}" id="create-contrib" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_CONTRIBUTION}</a></p>
+	<!-- ENDIF -->
+	</div>
+
+	<!-- IF PAGINATION or TOTAL_POSTS -->
+		<div class="pagination">
+			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_POSTS}
+			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+		</div>
+	<!-- ENDIF -->
 </div>
-<!-- ENDIF -->
 
 <!-- INCLUDE common/category_list.html -->
 
-<!-- INCLUDE common/contrib_list.html -->
-
-<!-- IF U_CREATE_CONTRIBUTION -->
-<div class="menu_bar">
-<ul class="ui-button linklist leftside">
-	<li><a href="{U_CREATE_CONTRIBUTION}" id="create-contrib" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_CONTRIBUTION}</a></li>
-</ul>
-<ul class="linklist rightside">
-	<li>
-		<form method="post" action="{U_ACTION}" name="contrib_list" id="contrib_list">
-			<fieldset>
-				<!-- IF PREVIOUS_PAGE --><a href="{PREVIOUS_PAGE}" class="left-box {S_CONTENT_FLOW_BEGIN}">{L_PREVIOUS}</a><!-- ENDIF -->
-				<!-- IF NEXT_PAGE --><a href="{NEXT_PAGE}" class="right-box {S_CONTENT_FLOW_END}">{L_NEXT}</a><!-- ENDIF -->
-				<!-- IF S_MODE_SELECT --><label for="sk">{L_SELECT_SORT_METHOD}: <select name="sk" id="sk">{S_MODE_SELECT}</select></label>
-				<label for="sd">{L_ORDER}: <select name="sd" id="sd">{S_ORDER_SELECT}</select> <input type="submit" name="sort" value="{L_SUBMIT}" class="button2" /></label>
-				<!-- ENDIF -->
-			</fieldset>
-		</form>
-	</li>
-</ul>
-</div>
+<!-- IF not .categories -->
+	<!-- INCLUDE common/contrib_list.html -->
 <!-- ENDIF -->
+
+<div class="topic-actions">
+	<div class="buttons">
+	<!-- IF U_CREATE_CONTRIBUTION -->
+		<p class="ui-button"><a href="{U_CREATE_CONTRIBUTION}" id="create-contrib" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_CONTRIBUTION}</a></p>
+	<!-- ENDIF -->
+	</div>
+
+	<!-- IF PAGINATION or TOTAL_POSTS -->
+		<div class="pagination">
+			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_POSTS}
+			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+		</div>
+	<!-- ENDIF -->
+</div>
 
 <!-- INCLUDE common/overall_footer.html -->

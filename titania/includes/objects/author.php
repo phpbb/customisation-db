@@ -268,10 +268,10 @@ class titania_author extends titania_database_object
 	{
 		if ($page)
 		{
-			return titania::$url->build_url('author/' . $this->username_clean . '/' . $page);
+			return titania_url::build_url('author/' . $this->username_clean . '/' . $page);
 		}
 
-		return titania::$url->build_url('author/' . $this->username_clean);
+		return titania_url::build_url('author/' . $this->username_clean);
 	}
 
 	/**
