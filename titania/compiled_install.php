@@ -42,7 +42,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.16'	=> array(
+	'0.1.21'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -140,6 +140,7 @@ $versions = array(
 					'contrib_rating'				=> array('DECIMAL', 0),
 					'contrib_rating_count'			=> array('UINT', 0),
 					'contrib_visible'				=> array('BOOL', 1),
+					'contrib_last_update'			=> array('TIMESTAMP', 0),
 				),
 				'PRIMARY_KEY'	=> 'contrib_id',
 				'KEYS'			=> array(
@@ -273,14 +274,16 @@ $versions = array(
 			)),
 			array(TITANIA_REVISIONS_TABLE, array(
 				'COLUMNS'		=> array(
-					'revision_id'			=> array('UINT', NULL, 'auto_increment'),
-					'contrib_id'			=> array('UINT', 0),
-					'contrib_validated'		=> array('BOOL', 0),
-					'attachment_id'			=> array('UINT', 0),
-					'revision_version'		=> array('VCHAR', ''),
-					'revision_name'			=> array('STEXT_UNI', '', 'true_sort'),
-					'revision_time'			=> array('UINT:11', 0),
-					'validation_date'		=> array('UINT:11', 0),
+					'revision_id'				=> array('UINT', NULL, 'auto_increment'),
+					'contrib_id'				=> array('UINT', 0),
+					'attachment_id'				=> array('UINT', 0),
+					'revision_version'			=> array('VCHAR', ''),
+					'revision_name'				=> array('STEXT_UNI', '', 'true_sort'),
+					'revision_time'				=> array('UINT:11', 0),
+					'validation_date'			=> array('UINT:11', 0),
+					'revision_release_notes'	=> array('VCHAR', ''),
+					'revision_validation_notes'	=> array('VCHAR', ''),
+					'revision_validated'		=> array('UINT:11', 0),
 				),
 				'PRIMARY_KEY'	=> 'revision_id',
 				'KEYS'			=> array(
@@ -319,6 +322,7 @@ $versions = array(
 					'topic_category'				=> array('UINT', 0), // Category for the topic. For the Tracker
 					'topic_status'					=> array('UINT', 0), // Topic Status, use tags from the DB
 					'topic_assigned'				=> array('VCHAR:255', ''), // Topic assigned status; u- for user, g- for group (followed by the id).  For the tracker
+					'topic_time'					
 					'topic_sticky'					=> array('BOOL', 0),
 					'topic_locked'					=> array('BOOL', 0),
 					'topic_approved'				=> array('BOOL', 1),
@@ -352,7 +356,17 @@ $versions = array(
 					'topic_approved'		=> array('INDEX', 'topic_approved'),
 					'topic_reported'		=> array('INDEX', 'topic_reported'),
 					'topic_deleted'			=> array('INDEX', 'topic_deleted'),
+					'topic_time'			=> array('INDEX', 'topic_time'),
 				),
+			)),
+			array(TITANIA_TRACK_TABLE, array(
+				'COLUMNS'		=> array(
+					'track_type'			=> array('UINT', 0),
+					'track_id'				=> array('UINT', 0),
+					'track_user_id'			=> array('UINT', 0),
+					'track_time'			=> array('UINT:11', 0),
+				),
+				'PRIMARY_KEY'	=> array('track_type', 'track_id', 'track_user_id'),
 			)),
 			array(TITANIA_WATCH_TABLE, array(
 				'COLUMNS'		=> array(
