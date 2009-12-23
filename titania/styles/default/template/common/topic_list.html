@@ -1,22 +1,20 @@
-<!-- BEGIN topics -->
-	<!-- IF topics.S_FIRST_ROW -->
-		<div class="topic-actions">
-			<div class="buttons">
-			<!-- IF U_POST_TOPIC -->
-				<p class="ui-button"><a href="{U_POST_TOPIC}" id="create-topic" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_NEW_TOPIC}</a></p>
-			<!-- ENDIF -->
-			</div>
-
-			<!-- IF PAGINATION or TOTAL_POSTS -->
-				<div class="pagination">
-					<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_POSTS}
-					<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-				</div>
-			<!-- ENDIF -->
-		</div>
-		<div class="clear"></div>
+<div class="topic-actions">
+	<div class="buttons">
+	<!-- IF U_POST_TOPIC -->
+		<p class="ui-button"><a href="{U_POST_TOPIC}" id="create-topic" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_NEW_TOPIC}</a></p>
 	<!-- ENDIF -->
+	</div>
 
+	<!-- IF PAGINATION or TOTAL_POSTS -->
+		<div class="pagination">
+			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_POSTS}
+			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+		</div>
+	<!-- ENDIF -->
+</div>
+<div class="clear"></div>
+
+<!-- BEGIN topics -->
 	<!-- IF topics.S_TOPIC_TYPE_SWITCH and not topics.S_FIRST_ROW -->
 		</ul>
 		<span class="corners-bottom"><span></span></span></div>
@@ -59,21 +57,6 @@
 				</ul>
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
-
-		<div class="topic-actions">
-			<div class="buttons">
-			<!-- IF U_POST_TOPIC -->
-				<p class="ui-button"><a href="{U_POST_TOPIC}" id="create-topic" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_NEW_TOPIC}</a></p>
-			<!-- ENDIF -->
-			</div>
-
-			<!-- IF PAGINATION or TOTAL_POSTS -->
-				<div class="pagination">
-					<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_POSTS}
-					<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-				</div>
-			<!-- ENDIF -->
-		</div>
 	<!-- ENDIF -->
 
 <!-- BEGINELSE -->
@@ -83,3 +66,18 @@
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
 <!-- END topics -->
+
+<div class="topic-actions">
+	<div class="buttons">
+	<!-- IF U_POST_TOPIC -->
+		<p class="ui-button"><a href="{U_POST_TOPIC}" id="create-topic" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_NEW_TOPIC}</a></p>
+	<!-- ENDIF -->
+	</div>
+
+	<!-- IF PAGINATION or TOTAL_POSTS -->
+		<div class="pagination">
+			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_POSTS}
+			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+		</div>
+	<!-- ENDIF -->
+</div>

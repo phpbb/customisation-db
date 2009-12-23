@@ -69,7 +69,7 @@ class titania_post extends titania_database_object
 	 * @param object|bool|int $topic The topic object, topic_id to load it ourselves for an existing topic, boolean false for making a new post (we will create the topic object)
 	 * @param int $post_id The post_id, 0 for making a new post
 	 */
-	public function __construct($type = 0, $topic = false, $post_id = 0)
+	public function __construct($type = TITANIA_POST_DEFAULT, $topic = false, $post_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -193,11 +193,21 @@ class titania_post extends titania_database_object
 	/**
 	* Get the url for the post
 	*/
-	public function get_url()
+	public function get_url($action = false)
 	{
+		$append = array(
+			'p' => $this->post_id,
+			'#p' => $this->post_id,
+		);
+
+		if ($action)
+		{
+			$append['action'] = $action;
+		}
+
 		if (is_object($this->topic))
 		{
-			return titania_url::append_url($this->topic->get_url(), array('p' => $this->post_id, '#p' => $this->post_id));
+			return titania_url::append_url($this->topic->get_url(), $append);
 		}
 
 		switch ($this->post_type)
@@ -219,7 +229,7 @@ class titania_post extends titania_database_object
 			break;
 		}
 
-		return titania_url::build_url($page, array('p', $this->post_id, '#p' => $this->post_id));
+		return titania_url::build_url($page, $append);
 	}
 
 	/**
@@ -306,6 +316,10 @@ class titania_post extends titania_database_object
 				{
 					return true;
 				}
+			break;
+
+			case 'delete' :
+				return ($this->post_deleted) ? $this->acl_get('hard_delete', $contrib) : $this->acl_get('soft_delete', $contrib);
 			break;
 
 			case 'soft_delete' :
@@ -577,7 +591,13 @@ class titania_post extends titania_database_object
 			'POST_TEXT'						=> $this->generate_text_for_display(),
 			//EDITED_MESSAGE
 
-			'U_VIEW_POST'					=> $this->get_url(),
+			'U_VIEW'						=> $this->get_url(),
+			'U_EDIT'						=> $this->acl_get('edit') ? $this->get_url('edit') : '',
+			'U_DELETE'						=> $this->acl_get('delete') ? $this->get_url('delete') : '',
+			'U_REPORT'						=> $this->get_url('report'),
+			'U_WARN'						=> $this->get_url('warn'),
+			'U_INFO'						=> $this->get_url('info'),
+			'U_QUOTE'						=> $this->acl_get('post') ? $this->get_url('quote') : '',
 			//U_MCP_APPROVE
 			//U_MCP_REPORT
 

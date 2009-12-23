@@ -126,7 +126,7 @@ class titania_tracking
 		// Ignore
 		self::get_track_cookie();
 
-		if (!phpbb::$user->data['is_registered']) // @todo support the option to use cookies for all
+		if (!sizeof($ids) || !phpbb::$user->data['is_registered']) // @todo support the option to use cookies for all
 		{
 			return;
 		}

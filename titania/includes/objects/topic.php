@@ -61,7 +61,7 @@ class titania_topic extends titania_database_object
 	 * @param int|string $type The type of topic ('tracker', 'queue', 'normal').  Normal/default meaning support/discussion.  Constants for the type can be sent instead of a string
 	 * @param int $topic_id The topic_id, 0 for making a new topic
 	 */
-	public function __construct($type = 0, $topic_id = 0)
+	public function __construct($type = TITANIA_POST_DEFAULT, $topic_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(

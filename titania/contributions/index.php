@@ -60,13 +60,11 @@ function load_contrib($contrib_id = false)
 	}
 
 	// Make sure the contrib requested is the same as the contrib loaded
-	if ($contrib_id !== false)
+	if ($contrib_id !== false && $contrib_id != titania::$contrib->contrib_id)
 	{
-		if ($contrib_id != titania::$contrib->contrib_id)
-		{
-			// Mismatch, redirect them to the new page? @todo - mtotheikle
-			trigger_error('CONTRIB_NOT_FOUND');
-		}
+		// Mismatch
+		// @todo redirect them to the new page
+		trigger_error('CONTRIB_NOT_FOUND');
 	}
 
 	// Put the author in titania::$author

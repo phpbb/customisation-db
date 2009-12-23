@@ -191,7 +191,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		// load the user data
 		users_overlord::load($user_ids);
 
-		$post = new titania_post();
+		$post = new titania_post($topic->topic_type, $topic);
 
 		// Loop de loop
 		$prev_post_time = 0;
