@@ -110,19 +110,14 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 					USERS_TABLE				=> 'u',
 				),
 
-				'LEFT_JOIN'	=> array(
-					array(
-						'FROM'	=> array(TITANIA_TRACK_TABLE => 'tt'),
-						'ON'	=> 'tt.track_type = ' . TITANIA_TRACK_CONTRIB . ' AND tt.track_id = c.contrib_id',
-					),
-				),
-
 				'WHERE'		=> 'c.contrib_user_id = ' . (int) $id . '
 					AND u.user_id = c.contrib_user_id
 					AND c.contrib_visible = 1',
 
 				'ORDER_BY'	=> $sort->get_order_by(),
 			);
+
+			titania_tracking::get_track_sql($sql_ary, TITANIA_TRACK_CONTRIB, 'c.contrib_id');
 		break;
 
 		case 'category' :
@@ -133,8 +128,7 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 			$sql_ary = array(
 				// DO NOT change to *, we do not need all rows from ANY table with the query!
 				'SELECT'	=> 'c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update,
-					u.username, u.user_colour, u.username_clean,
-					tt.track_time',
+					u.username, u.user_colour, u.username_clean',
 
 				'FROM'		=> array(
 					TITANIA_CONTRIB_IN_CATEGORIES_TABLE 	=> 'cic',
@@ -149,10 +143,6 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 						'FROM'	=> array(USERS_TABLE	=> 'u'),
 						'ON'	=> 'u.user_id = c.contrib_user_id',
 					),
-					array(
-						'FROM'	=> array(TITANIA_TRACK_TABLE => 'tt'),
-						'ON'	=> 'tt.track_type = ' . TITANIA_TRACK_CONTRIB . ' AND tt.track_id = c.contrib_id',
-					),
 				),
 
 				'WHERE'		=> 'cic.category_id = ' . (int) $id . '
@@ -160,6 +150,8 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 
 				'ORDER_BY'	=> $sort->get_order_by(),
 			);
+
+			titania_tracking::get_track_sql($sql_ary, TITANIA_TRACK_CONTRIB, 'c.contrib_id');
 		break;
 	}
 

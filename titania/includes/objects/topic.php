@@ -32,21 +32,29 @@ class titania_topic extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table			= TITANIA_TOPICS_TABLE;
+	protected $sql_table = TITANIA_TOPICS_TABLE;
 
 	/**
 	 * SQL identifier field
 	 *
 	 * @var string
 	 */
-	protected $sql_id_field			= 'topic_id';
+	protected $sql_id_field = 'topic_id';
+
+	/**
+	 * Contrib object or array of data
+	 * If you can not give an object you must at least have an array containing the contrib_type and contrib_name_clean
+	 *
+	 * @var object|array
+	 */
+	public $contrib;
 
 	/**
 	* True if the currently visiting user has posted in this topic
 	*
 	* @var bool
 	*/
-	public $topic_posted			= false;
+	public $topic_posted = false;
 
 	/**
 	* Unread
@@ -59,33 +67,34 @@ class titania_topic extends titania_database_object
 	 * Constructor class for titania topics
 	 *
 	 * @param int|string $type The type of topic ('tracker', 'queue', 'normal').  Normal/default meaning support/discussion.  Constants for the type can be sent instead of a string
+	 * @param object|array $contrib The contrib object or an array meeting the requirements (see comments for $contrib var above)
 	 * @param int $topic_id The topic_id, 0 for making a new topic
 	 */
-	public function __construct($type = TITANIA_POST_DEFAULT, $topic_id = 0)
+	public function __construct($type = TITANIA_POST_DEFAULT, $contrib = array(), $topic_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
-			'topic_id'				=> array('default' => 0),
-			'contrib_id'			=> array('default' => 0),
-			'topic_type'			=> array('default' => 0), // Post Type, TITANIA_POST_ constants
-			'topic_access'			=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
-			'topic_category'		=> array('default' => 0), // Category for the topic. For the Tracker
+			'topic_id'						=> array('default' => 0),
+			'contrib_id'					=> array('default' => 0),
+			'topic_type'					=> array('default' => 0), // Post Type, TITANIA_POST_ constants
+			'topic_access'					=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
+			'topic_category'				=> array('default' => 0), // Category for the topic. For the Tracker
 
-			'topic_status'			=> array('default' => 0), // Topic Status, use tags from the DB
-			'topic_assigned'		=> array('default' => ''), // Topic assigned status; u- for user, g- for group (followed by the id).  For the tracker
-			'topic_sticky'			=> array('default' => false),
-			'topic_locked'			=> array('default' => false),
-			'topic_approved'		=> array('default' => true),
-			'topic_reported'		=> array('default' => false), // True if any posts in the topic are reported
-			'topic_deleted'			=> array('default' => false), // True if the topic is soft deleted
+			'topic_status'					=> array('default' => 0), // Topic Status, use tags from the DB
+			'topic_assigned'				=> array('default' => ''), // Topic assigned status; u- for user, g- for group (followed by the id).  For the tracker
+			'topic_sticky'					=> array('default' => false),
+			'topic_locked'					=> array('default' => false),
+			'topic_approved'				=> array('default' => true),
+			'topic_reported'				=> array('default' => false), // True if any posts in the topic are reported
+			'topic_deleted'					=> array('default' => false), // True if the topic is soft deleted
 
-			'topic_time'			=> array('default' => (int) titania::$time),
+			'topic_time'					=> array('default' => (int) titania::$time),
 
-			'topic_posts'			=> array('default' => ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
-			'topic_views'			=> array('default' => 0), // View count
+			'topic_posts'					=> array('default' => ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
+			'topic_views'					=> array('default' => 0), // View count
 
-			'topic_subject'			=> array('default' => ''),
-			'topic_subject_clean'	=> array('default' => ''),
+			'topic_subject'					=> array('default' => ''),
+			'topic_subject_clean'			=> array('default' => ''),
 
 			'topic_first_post_id'			=> array('default' => 0),
 			'topic_first_post_user_id'		=> array('default' => 0),
@@ -100,6 +109,12 @@ class titania_topic extends titania_database_object
 			'topic_last_post_time'			=> array('default' => (int) titania::$time),
 			'topic_last_post_subject'		=> array('default' => ''),
 		));
+
+		// Handle the contrib
+		if (is_object($contrib) || is_array($contrib))
+		{
+			$this->contrib = $contrib;
+		}
 
 		switch ($type)
 		{
@@ -243,23 +258,17 @@ class titania_topic extends titania_database_object
 			break;
 		}
 
-		if (!empty(titania::$contrib))
+		if (is_object($this->contrib))
 		{
-			// We are *probably* visiting a contrib page
-			$url = titania::$contrib->get_url($page);
+			$url = $this->contrib->get_url($page);
 		}
-		else if (!empty(titania::$author))
+		else if (isset($this->contrib['contrib_type']))
 		{
-			// We are *probably* viewing the author's page
-			if (isset($this->contrib_type) && isset($this->contrib_name_clean))
-			{
-				// Yay, generate good urls
-				$url = titania_url::build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
-			}
-			else
-			{
-				$url = titania::$author->get_url($page);
-			}
+			$url = titania_url::build_url(titania::$types[$this->contrib['contrib_type']]->url . '/' . $this->contrib['contrib_name_clean'] . '/' . $page);
+		}
+		else
+		{
+			throw new Exception('Missing contribution data');
 		}
 
 		$url = titania_url::append_url($url, array($this->topic_subject_clean, 't' => $this->topic_id));

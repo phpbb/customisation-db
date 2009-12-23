@@ -90,7 +90,7 @@ class titania_tracking
 	 */
 	public static function is_unread($type, $id, $last_update, $no_query = true)
 	{
-		return ($last_update >= self::get_track($type, $id, $no_query)) ? true : false;
+		return ($last_update > self::get_track($type, $id, $no_query)) ? true : false;
 	}
 
 	public static function get_track($type, $id, $no_query = false)
@@ -142,6 +142,18 @@ class titania_tracking
 			self::$store[$type][$row['track_id']] = $row['track_time'];
 		}
 		phpbb::$db->sql_freeresult($result);
+	}
+
+	public static function get_track_sql(&$sql_ary, $type, $id_field, $prefix = 'tt')
+	{
+		$sql_ary['LEFT_JOIN'] = (!isset($sql_ary['LEFT_JOIN'])) ? array() : $sql_ary['LEFT_JOIN'];
+
+		$sql_ary['LEFT_JOIN'][] = array(
+			'FROM'	=> array(TITANIA_TRACK_TABLE => $prefix),
+			'ON'	=> "{$prefix}.track_type = $type AND {$prefix}.track_id = $id_field",
+		);
+
+		$sql_ary['SELECT'] .= ", {$prefix}.track_time";
 	}
 
 	/**

@@ -42,9 +42,22 @@ class topics_overlord
 	*/
 	public static function load_topic_from_post($post_id)
 	{
-		$sql = 'SELECT t.* FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t
-			WHERE p.post_id = ' . (int) $post_id . '
-				AND t.topic_id = p.topic_id';
+		$sql_ary = array(
+			'SELECT' => 't.*, c.contrib_type, c.contrib_name_clean',
+
+			'FROM'		=> array(
+				TITANIA_POSTS_TABLE		=> 'p',
+				TITANIA_TOPICS_TABLE	=> 't',
+				TITANIA_CONTRIBS_TABLE	=> 'c',
+			),
+
+			'WHERE' => 'p.post_id = ' . (int) $post_id . '
+				AND t.topic_id = p.topic_id
+				AND t.topic_access >= ' . titania::$access_level . '
+				AND c.contrib_id = t.contrib_id',
+		);
+
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		$result = phpbb::$db->sql_query($sql);
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
@@ -78,9 +91,21 @@ class topics_overlord
 			return;
 		}
 
-		$sql = 'SELECT * FROM ' . TITANIA_TOPICS_TABLE . '
-			WHERE ' . phpbb::$db->sql_in_set('topic_id', $topic_id) . '
-			AND topic_access >= ' . titania::$access_level;
+		$sql_ary = array(
+			'SELECT' => 't.*, c.contrib_type, c.contrib_name_clean',
+
+			'FROM'		=> array(
+				TITANIA_TOPICS_TABLE	=> 't',
+				TITANIA_CONTRIBS_TABLE	=> 'c',
+			),
+
+			'WHERE' => phpbb::$db->sql_in_set('topic_id', $topic_id) . '
+				AND t.topic_access >= ' . titania::$access_level . '
+				AND c.contrib_id = t.contrib_id',
+		);
+
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
 		$result = phpbb::$db->sql_query($sql);
 
 		while($row = phpbb::$db->sql_fetchrow($result))
@@ -106,6 +131,17 @@ class topics_overlord
 
 		$topic = new titania_topic();
 		$topic->__set_array(self::$topics[$topic_id]);
+		if (is_object(titania::$contrib) && titania::$contrib->contrib_id == self::$topics[$topic_id]['contrib_id'])
+		{
+			$topic->contrib = titania::$contrib;
+		}
+		else if (isset(self::$topics[$topic_id]['contrib_type']))
+		{
+			$topic->contrib = array(
+				'contrib_type'			=> self::$topics[$topic_id]['contrib_type'],
+				'contrib_name_clean'	=> self::$topics[$topic_id]['contrib_name_clean'],
+			);
+		}
 
 		return $topic;
 	}
@@ -118,27 +154,13 @@ class topics_overlord
 	*/
 	public static function display_forums_complete($type, $object = false)
 	{
-		// Setup the sort tool
-		$sort = new titania_sort();
-		$sort->set_sort_keys(self::$sort_by);
-		if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
-		{
-			$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
-		}
-		$sort->default_dir = phpbb::$user->data['user_topic_sortby_dir'];
-
-		// Setup the pagination tool
-		$pagination = new titania_pagination();
-		$pagination->default_limit = phpbb::$config['topics_per_page'];
-		$pagination->request();
-
 /*
 user_topic_show_days
 
 $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DAY'], 7 => $user->lang['7_DAYS'], 14 => $user->lang['2_WEEKS'], 30 => $user->lang['1_MONTH'], 90 => $user->lang['3_MONTHS'], 180 => $user->lang['6_MONTHS'], 365 => $user->lang['1_YEAR']);
 */
 
-		self::display_forums($type, $object, $sort, $pagination);
+		self::display_forums($type, $object);
 		self::assign_common();
 
 		phpbb::$template->assign_vars(array(
@@ -156,26 +178,43 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	*/
 	public static function display_forums($type, $object = false, $sort = false, $pagination = false)
 	{
+		if ($sort === false)
+		{
+			// Setup the sort tool
+			$sort = new titania_sort();
+			$sort->set_sort_keys(self::$sort_by);
+			if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
+			{
+				$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
+			}
+			$sort->default_dir = phpbb::$user->data['user_topic_sortby_dir'];
+		}
+
+		if ($pagination === false)
+		{
+			// Setup the pagination tool
+			$pagination = new titania_pagination();
+			$pagination->default_limit = phpbb::$config['topics_per_page'];
+			$pagination->request();
+		}
+
 		$topic_ids = array();
 
 		$sql_ary = array(
-			'SELECT' => 't.*',
+			'SELECT' => 't.*, c.contrib_type, c.contrib_name_clean',
+
 			'FROM'		=> array(
-				TITANIA_TOPICS_TABLE => 't',
+				TITANIA_TOPICS_TABLE	=> 't',
+				TITANIA_CONTRIBS_TABLE	=> 'c',
 			),
-			'WHERE' => 't.topic_access >= ' . titania::$access_level,
-			'ORDER_BY'	=> 't.topic_sticky DESC',
+
+			'WHERE' => 't.topic_access >= ' . titania::$access_level . '
+				AND c.contrib_id = t.contrib_id',
+			
+			'ORDER_BY'	=> 't.topic_sticky DESC, ' . $sort->get_order_by(),
 		);
 
-		// Sort options
-		if ($sort !== false)
-		{
-			$sql_ary['ORDER_BY'] .= ', ' . $sort->get_order_by();
-		}
-		else
-		{
-			$sql_ary['ORDER_BY'] .= ', t.topic_last_post_time DESC';
-		}
+		titania_tracking::get_track_sql($sql_ary, TITANIA_TRACK_TOPICS, 't.topic_id');
 
 		// If they are not moderators we need to add some more checks
 		if (!phpbb::$auth->acl_get('titania_post_mod'))
@@ -236,27 +275,25 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$pagination->sql_count($sql_ary, 'topic_id');
 		$pagination->build_pagination($page_url);
 
+		$topic = new titania_topic();
+		$last_was_sticky = false;
+
 		// Get the data
 		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			// Store the tracking info we grabbed in the tool
+			titania_tracking::store_track(TITANIA_TRACK_TOPICS, $row['topic_id'], $row['track_time']);
+
 			self::$topics[$row['topic_id']] = $row;
 
-			$topic_ids[] = $row['topic_id'];
-		}
-		phpbb::$db->sql_freeresult($result);
+			$topic->__set_array($row);
 
-		// Grab the tracking info
-		titania_tracking::get_tracks(TITANIA_TRACK_TOPICS, $topic_ids);
-
-		$topic = new titania_topic();
-
-		// Loop de loop
-		$last_was_sticky = false;
-		foreach ($topic_ids as $topic_id)
-		{
-			$topic->__set_array(self::$topics[$topic_id]);
+			$topic->contrib = array(
+				'contrib_type'			=> $row['contrib_type'],
+				'contrib_name_clean'	=> $row['contrib_name_clean'],
+			);
 
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'S_TOPIC_TYPE_SWITCH'		=> ($last_was_sticky && !$topic->topic_sticky) ? true : false,

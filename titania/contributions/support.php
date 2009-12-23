@@ -35,6 +35,8 @@ if ($post_id)
 
 	// Load the contrib item
 	load_contrib($topic->contrib_id);
+
+	$topic->contrib = titania::$contrib;
 }
 else if ($topic_id)
 {
@@ -49,6 +51,8 @@ else if ($topic_id)
 
 	// Load the contrib item
 	load_contrib($topic->contrib_id);
+
+	$topic->contrib = titania::$contrib;
 }
 else
 {

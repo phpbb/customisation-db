@@ -144,21 +144,38 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	*/
 	public static function display_topic($topic, $sort = false, $pagination = false)
 	{
+		if ($sort === false)
+		{
+			// Setup the sort tool
+			$sort = new titania_sort();
+			$sort->set_sort_keys(self::$sort_by);
+			if (isset(self::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
+			{
+				$sort->default_key = phpbb::$user->data['user_post_sortby_type'];
+			}
+			$sort->default_dir = phpbb::$user->data['user_post_sortby_dir'];
+		}
+
+		if ($pagination === false)
+		{
+			// Setup the pagination tool
+			$pagination = new titania_pagination();
+			$pagination->default_limit = phpbb::$config['posts_per_page'];
+			$pagination->request();
+		}
+
 		$sql_ary = array(
 			'SELECT' => 'p.*',
+
 			'FROM'		=> array(
 				TITANIA_POSTS_TABLE => 'p',
 			),
+
 			'WHERE' => 'p.post_access >= ' . titania::$access_level . '
 				AND p.topic_id = ' . (int) $topic->topic_id,
-			'ORDER_BY'	=> 'p.post_time ASC',
-		);
 
-		// Sort options
-		if ($sort !== false)
-		{
-			$sql_ary['ORDER_BY'] = $sort->get_order_by();
-		}
+			'ORDER_BY'	=> $sort->get_order_by(),
+		);
 
 		// Main SQL Query
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
