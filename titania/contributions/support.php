@@ -36,20 +36,6 @@ if ($post_id)
 	// Load the contrib item
 	load_contrib($topic->contrib_id);
 	$topic->contrib = titania::$contrib;
-
-	// Finally, load the post into a post object
-	posts_overlord::load_post($post_id);
-	$post = posts_overlord::get_post_object($post_id);
-	if ($post === false)
-	{
-		trigger_error('NO_POST');
-	}
-
-	// Try to make sure the URL is correct
-	if ($post->topic_id != request_var('t', 0))
-	{
-		redirect($post->get_url());
-	}
 }
 else if ($topic_id)
 {
@@ -98,7 +84,14 @@ switch ($action)
 		{
 			$post = new titania_post(TITANIA_POST_DEFAULT, $topic);
 		}
-		// $post already set above for editing
+		else
+		{
+			$post = new titania_post(TITANIA_POST_DEFAULT, $topic, $post_id);
+			if ($post->load() === false)
+			{
+				trigger_error('NO_POST');
+			}
+		}
 
 		// Load the message object
 		$message = new titania_message($post);
@@ -185,6 +178,12 @@ switch ($action)
 	case 'delete' :
 	case 'undelete' :
 		phpbb::$user->add_lang('posting');
+
+		$post = new titania_post(TITANIA_POST_DEFAULT, $topic, $post_id);
+		if ($post->load() === false)
+		{
+			trigger_error('NO_POST');
+		}
 
 		if (titania::confirm_box(true))
 		{

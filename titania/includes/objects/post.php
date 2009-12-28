@@ -459,6 +459,11 @@ class titania_post extends titania_database_object
 	*/
 	public function edit()
 	{
+		if (empty($this->sql_data))
+		{
+			throw new exception('Submitting an edited post requires you load it through the load() function (we require the original information).');
+		}
+
 		if (!$this->post_id)
 		{
 			return false;
@@ -546,7 +551,7 @@ class titania_post extends titania_database_object
 			trigger_error('NO_AUTH');
 		}
 
-		$this->topic->update_postcount(false, $this->sql_data['post_access'], false);
+		$this->topic->update_postcount(false, $this->post_access, false);
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
 		if ($this->topic->get_postcount(TITANIA_ACCESS_PUBLIC) == 0)
