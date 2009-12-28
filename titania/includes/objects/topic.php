@@ -237,8 +237,18 @@ class titania_topic extends titania_database_object
 	/**
 	* Get the URL to this topic
 	*/
-	public function get_url()
+	public function get_url($action = false)
 	{
+		$append = array(
+			$this->topic_subject_clean,
+			't' => $this->topic_id,
+		);
+
+		if ($action)
+		{
+			$append['action'] = $action;
+		}
+
 		switch ($this->topic_type)
 		{
 			case TITANIA_POST_TRACKER :
@@ -271,7 +281,7 @@ class titania_topic extends titania_database_object
 			throw new Exception('Missing contribution data');
 		}
 
-		$url = titania_url::append_url($url, array($this->topic_subject_clean, 't' => $this->topic_id));
+		$url = titania_url::append_url($url, $append);
 
 		return $url;
 	}

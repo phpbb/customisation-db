@@ -62,12 +62,14 @@ $lang = array_merge($lang, array(
 	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
 
+	'DELETED_MESSAGE'			=> 'Last deleted by %1$s on %2$s - <a href="%3$s">Click here to undelete this message</a>',
 	'DESCRIPTION'				=> 'Description',
 	'DETAILS'					=> 'Details',
 	'DOWNLOAD_ACCESS_DENIED'	=> 'You are not allowed to download the requested file.',
 	'DOWNLOAD_NOT_FOUND'		=> 'The requested file could not be found.',
 
 	'EDIT'						=> 'Edit',
+	'EDITED_MESSAGE'			=> 'Last edited by %1$s on %2$s',
 
 	'LANGUAGE_PACK'				=> 'Language Pack',
 	'LIST'						=> 'List',
@@ -80,6 +82,8 @@ $lang = array_merge($lang, array(
 
 	'NO_DESC'					=> 'You have to enter the description.',
 	'NO_CONTRIBS'				=> 'No contributions could be found',
+	'NO_POST'					=> 'The requested post does not exist.',
+	'NO_TOPIC'					=> 'The requested topic does not exist.',
 
 	'ORDER'						=> 'Order',
 	'PURGE_CACHE'				=> 'Purge Cache',

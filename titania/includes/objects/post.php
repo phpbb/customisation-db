@@ -90,8 +90,9 @@ class titania_post extends titania_database_object
 			'post_edited'			=> array('default' => 0), // Post edited; 0 for not edited, timestamp if (when) last edited
 			'post_deleted'			=> array('default' => 0), // Post deleted; 0 for not edited, timestamp if (when) last edited
 
-			'post_edit_user'		=> array('default' => 0), // The last user to edit/delete the post
+			'post_edit_user'		=> array('default' => 0), // The last user to edit the post
 			'post_edit_reason'		=> array('default' => ''), // Reason for deleting/editing
+			'post_delete_user'		=> array('default' => 0), // The last user to delete the post
 
 			'post_subject'			=> array('default' => ''),
 			'post_text'				=> array('default' => ''),
@@ -191,18 +192,24 @@ class titania_post extends titania_database_object
 	}
 
 	/**
-	* Get the url for the post
-	*/
-	public function get_url($action = false)
+	 * Get the url for the post
+	 *
+	 * @param <string> $action An action (anchor will not be included if an action is sent)
+	 * @param <bool> $use_anchor False to leave the anchor off of the URL
+	 */
+	public function get_url($action = false, $use_anchor = true)
 	{
 		$append = array(
 			'p' => $this->post_id,
-			'#p' => $this->post_id,
 		);
 
 		if ($action)
 		{
 			$append['action'] = $action;
+		}
+		else if ($use_anchor)
+		{
+			$append['#p'] = $this->post_id;
 		}
 
 		if (is_object($this->topic))
@@ -296,7 +303,8 @@ class titania_post extends titania_database_object
 		}
 
 		$is_poster = ($this->post_user_id == phpbb::$user->data['user_id']) ? true : false; // Poster
-		$is_author = $contrib->is_author || $contrib->is_active_coauthor; // Contribution author
+		$is_author = ($contrib->is_author || $contrib->is_active_coauthor) ? true : false; // Contribution author
+		$is_deleter = ($this->post_delete_user == phpbb::$user->data['user_id']) ? true : false;
 
 		switch ($option)
 		{
@@ -332,6 +340,14 @@ class titania_post extends titania_database_object
 			break;
 
 			case 'undelete' :
+				if (($is_poster && $is_deleter && phpbb::$auth->acl_get('titania_post_delete_own')) || // Is poster and can delete own and did delete their own
+					($is_author && $is_deleter && phpbb::$auth->acl_get('titania_post_mod_own')) || // Is contrib author and can moderate own and did delete the message
+					phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
+				{
+					return true;
+				}
+			break;
+
 			case 'hard_delete' :
 				if (phpbb::$auth->acl_get('titania_post_mod')) // Can moderate posts
 				{
@@ -453,13 +469,15 @@ class titania_post extends titania_database_object
 			trigger_error('NO_AUTH');
 		}
 
-		$this->topic->__set_array(array(
-			'topic_access'		=> $this->post_access,
-			'topic_approved'	=> $this->post_approved,
-			'topic_user_id'		=> $this->post_user_id,
-			'topic_time'		=> $this->post_time,
-			'topic_subject'		=> $this->post_subject,
-		));
+		if ($this->post_id == $this->topic->topic_first_post_id)
+		{
+			$this->topic->__set_array(array(
+				'topic_access'		=> $this->post_access,
+				'topic_user_id'		=> $this->post_user_id,
+				'topic_time'		=> $this->post_time,
+				'topic_subject'		=> $this->post_subject,
+			));
+		}
 
 		// Update the postcount for the topic and submit the topic
 		$this->topic->update_postcount($this->post_access, $this->sql_data['post_access'], false);
@@ -486,23 +504,11 @@ class titania_post extends titania_database_object
 		}
 
 		$this->post_deleted = titania::$time;
-		$this->post_edit_user = phpbb::$user->data['user_id'];
+		$this->post_delete_user = phpbb::$user->data['user_id'];
 		$this->post_edit_reason = $reason;
 
-		$this->topic->update_postcount($this->post_access, $this->sql_data['post_access'], false);
-
-		// Set the visibility appropriately if no posts are visibile to the public/authors
-		if ($this->topic->get_postcount(TITANIA_ACCESS_PUBLIC) == 0)
-		{
-			if ($this->topic->get_postcount(TITANIA_ACCESS_AUTHORS) == 0)
-			{
-				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
-			}
-			else
-			{
-				$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
-			}
-		}
+		// A bit of a hack here - assuming team access can view soft deleted posts (and that even if it is wrong, perfect accuracy isn't a big deal for teams)
+		$this->topic->update_postcount(TITANIA_ACCESS_TEAMS, $this->post_access, false);
 
 		$this->topic->submit();
 
@@ -511,25 +517,19 @@ class titania_post extends titania_database_object
 
 	/**
 	* Undelete a post
-	*
-	* @param int $access_level The new access level at which to display the undeleted post at (public, authors
 	*/
-	public function undelete($access_level = TITANIA_ACCESS_PUBLIC)
+	public function undelete()
 	{
 		if (!$this->acl_get('undelete'))
 		{
 			trigger_error('NO_AUTH');
 		}
 
-		$this->post_access = $access_level;
+		// Reverse the hack for soft delete
+		$this->topic->update_postcount($this->post_access, TITANIA_ACCESS_TEAMS, false);
 
-		$this->topic->update_postcount($this->post_access, $this->sql_data['post_access'], false);
-
-		// Set the visibility appropriately if no posts are visibile to the public/authors
-		if ($this->topic->topic_access < $access_level)
-		{
-			$this->topic->topic_access = $access_level;
-		}
+		$this->post_deleted = 0;
+		$this->post_delete_user = 0;
 
 		$this->topic->submit();
 
@@ -583,13 +583,11 @@ class titania_post extends titania_database_object
 			'POST_USER_ID'					=> $this->post_user_id,
 			'POST_IP'						=> $this->post_ip,
 			'POST_TIME'						=> phpbb::$user->format_date($this->post_time),
-			'POST_EDITED'					=> $this->post_edited,
-			'POST_DELETED'					=> $this->post_deleted, // @todo output this to be something useful
-			'POST_EDIT_USER'				=> $this->post_edit_user,
 			'POST_EDIT_REASON'				=> censor_text($this->post_edit_reason),
 			'POST_SUBJECT'					=> censor_text($this->post_subject),
 			'POST_TEXT'						=> $this->generate_text_for_display(),
-			//EDITED_MESSAGE
+			'EDITED_MESSAGE'				=> ($this->post_edited) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], users_overlord::get_user($this->post_edit_user, '_full'), phpbb::$user->format_date($this->post_edited)) : '',
+			'DELETED_MESSAGE'				=> ($this->post_deleted != 0) ? sprintf(phpbb::$user->lang['DELETED_MESSAGE'], users_overlord::get_user($this->post_delete_user, '_full'), phpbb::$user->format_date($this->post_deleted), $this->get_url('undelete')) : '',
 
 			'U_VIEW'						=> $this->get_url(),
 			'U_EDIT'						=> $this->acl_get('edit') ? $this->get_url('edit') : '',
@@ -604,6 +602,7 @@ class titania_post extends titania_database_object
 			'S_UNREAD_POST'					=> ($this->unread) ? true : false, // remember that you must set this up extra...
 			'S_POST_APPROVED'				=> $this->post_approved,
 			'S_POST_REPORTED'				=> $this->post_reported,
+			'S_POST_DELETED'				=> ($this->post_deleted != 0) ? true : false,
 		);
 
 		return $details;

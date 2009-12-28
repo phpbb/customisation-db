@@ -137,16 +137,53 @@ class users_overlord
 		}
 	}
 
-	public static function assign_details($user_id)
+	/**
+	 * Retrieve the data on a user
+	 *
+	 * @param <type> $user_id The user_id
+	 * @param <type> $field The field you want (leave blank to return the full row)
+	 * @param <type> $query True to query the DB for the user if not already loaded
+	 */
+	public static function get_user($user_id, $field = false, $query = false)
 	{
-		// If the user does not exist, display the anonymous uer
+		if ($query)
+		{
+			// Load the user if not already done
+			self::load_users(array($user_id));
+		}
+
+		// If the user does not exist, use the anonymous uer
 		if (!isset(self::$users[$user_id]))
 		{
 			$user_id = ANONYMOUS;
 		}
 
-		// Shortcut
-		$row = self::$users[$user_id];
+		// Special things...
+		if ($field[0] == '_')
+		{
+			switch ($field)
+			{
+				case '_profile' :
+				case '_username' :
+				case '_colour' :
+				case '_full' :
+				case '_no_profile' :
+					return get_username_string(substr($field, 1), $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour']);
+				break;
+			}
+		}
+
+		if ($field)
+		{
+			return self::$users[$user_id][$field];
+		}
+
+		return self::$users[$user_id];
+	}
+
+	public static function assign_details($user_id)
+	{
+		$row = self::get_user($user_id);
 
 		phpbb::_include('functions_display', 'get_user_rank');
 

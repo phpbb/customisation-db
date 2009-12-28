@@ -17,7 +17,7 @@ if (!defined('IN_TITANIA'))
 }
 
 // Version number (only used for the installer)
-define('TITANIA_VERSION', '0.1.21');
+define('TITANIA_VERSION', '0.1.22');
 
 define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 define('PHPBB_USE_BOARD_URL_PATH', true);
@@ -35,7 +35,7 @@ spl_autoload_register(array('titania', 'autoload'));
 // Read config.php file
 titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);
 
-// Include the constants (after reading the Titania config file, but before loading the phpBB Common file)
+// Include the constants (after reading the Titania config file, but before loading the phpBB common file)
 titania::_include('constants');
 
 // Include common phpBB files and functions.

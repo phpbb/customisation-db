@@ -33,6 +33,71 @@ class posts_overlord
 	);
 
 	/**
+	 * Generate the permissions stuff for sql queries to the posts table (handles post_access, post_deleted, post_approved)
+	 *
+	 * @param <string> $prefix prefix for the query
+	 * @param <bool> $where true to use WHERE, false if you already did use WHERE
+	 * @return <string>
+	 */
+	public static function sql_permissions($prefix = 'p.', $where = false)
+	{
+		$sql = ($where) ? ' WHERE' : ' AND';
+		
+		$sql .= " ({$prefix}post_access >= " . titania::$access_level . " OR {$prefix}post_user_id = " . phpbb::$user->data['user_id'] . ')';
+
+		if (phpbb::$auth->acl_get('titania_post_mod'))
+		{
+			$sql .= " AND {$prefix}post_approved = 1";
+			$sql .= " AND ({$prefix}post_deleted = 0 OR {$prefix}post_deleted = " . phpbb::$user->data['user_id'] . ')';
+		}
+
+		return $sql;
+	}
+
+	/**
+	 * Load a post
+	 *
+	 * @param <int|array> $post_id The post_id or array of post_id's
+	 */
+	public static function load_post($post_id)
+	{
+		if (!is_array($post_id))
+		{
+			$post_id = array($post_id);
+		}
+
+		// Only get the rows for those we have not gotten already
+		$post_id = array_diff($post_id, array_keys(self::$posts));
+
+		if (!sizeof($post_id))
+		{
+			return;
+		}
+
+		$sql_ary = array(
+			'SELECT'	=> '*',
+
+			'FROM'		=> array(
+				TITANIA_POSTS_TABLE	=> 'p',
+			),
+
+			'WHERE'		=> phpbb::$db->sql_in_set('p.post_id', $post_id) .
+				self::sql_permissions('p.'),
+		);
+
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
+		$result = phpbb::$db->sql_query($sql);
+
+		while($row = phpbb::$db->sql_fetchrow($result))
+		{
+			self::$posts[$row['post_id']] = $row;
+		}
+
+		phpbb::$db->sql_freeresult($result);
+	}
+
+	/**
 	 * Get the post object
 	 *
 	 * @param <int> $post_id
@@ -45,7 +110,10 @@ class posts_overlord
 			return false;
 		}
 
-		$post = new titania_post();
+		// One can hope...
+		$topic = topics_overlord::get_topic_object(self::$posts[$post_id]['topic_id']);
+
+		$post = new titania_post(self::$posts[$post_id]['post_type'], $topic);
 		$post->__set_array(self::$posts[$post_id]);
 
 		return $post;
@@ -93,7 +161,8 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		{
 			$sql = 'SELECT COUNT(p.post_id) as start FROM ' . TITANIA_POSTS_TABLE . ' p
 				WHERE p.post_id < ' . $post_id . '
-					AND p.topic_id = ' . $topic->topic_id . '
+					AND p.topic_id = ' . $topic->topic_id .
+					self::sql_permissions('p.') . '
 				ORDER BY ' . $sort->get_order_by();
 			phpbb::$db->sql_query($sql);
 			$start = phpbb::$db->sql_fetchfield('start');
@@ -111,7 +180,8 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 			{
 				$sql = 'SELECT COUNT(p.post_id) as start FROM ' . TITANIA_POSTS_TABLE . ' p
 					WHERE p.post_time <= ' . $mark_time . '
-						AND p.topic_id = ' . $topic->topic_id . '
+						AND p.topic_id = ' . $topic->topic_id .
+						self::sql_permissions('p.') . '
 					ORDER BY post_time ASC';
 				phpbb::$db->sql_query($sql);
 				$start = phpbb::$db->sql_fetchfield('start');
@@ -165,14 +235,14 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		}
 
 		$sql_ary = array(
-			'SELECT' => 'p.*',
+			'SELECT'	=> 'p.*',
 
 			'FROM'		=> array(
 				TITANIA_POSTS_TABLE => 'p',
 			),
 
-			'WHERE' => 'p.post_access >= ' . titania::$access_level . '
-				AND p.topic_id = ' . (int) $topic->topic_id,
+			'WHERE'		=> 'p.topic_id = ' . (int) $topic->topic_id .
+				self::sql_permissions('p.'),
 
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
@@ -194,6 +264,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			$post_ids[] = $row['post_id'];
 			$user_ids[] = $row['post_user_id'];
+			$user_ids[] = $row['post_edit_user'];
 
 			$last_post_time = $row['post_time']; // to set tracking
 		}
@@ -255,5 +326,45 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'YIM_IMG' 			=> phpbb::$user->img('icon_contact_yahoo', 'YIM'),
 			'JABBER_IMG'		=> phpbb::$user->img('icon_contact_jabber', 'JABBER') ,
 		));
+	}
+
+	/**
+	 * Find the next or previous post id in a topic
+	 *
+	 * @param <type> $topic_id the topic_id of the current item
+	 * @param <type> $post_id the post_id of the current item
+	 * @param <string> $dir the direction (next, prev)
+	 * @param <bool> $try_other_dir Try the other direction if we can not find one
+	 * @return <int> $post_id the requested id
+	 */
+	public static function next_prev_post_id($topic_id, $post_id, $dir = 'next', $try_other_dir = true)
+	{
+		$sql_ary = array(
+			'SELECT'	=> 'post_id',
+
+			'FROM'		=> array(
+				TITANIA_POSTS_TABLE	=> 'p',
+			),
+
+			'WHERE'		=> 'p.topic_id = ' . (int) $topic_id . '
+				AND p.post_id ' . (($dir == 'next') ? '> ' : '< ') . (int) $post_id .
+				self::sql_permissions('p.'),
+
+			'ORDER_BY'	=> 'p.post_id ' . (($dir == 'next') ? 'ASC' : 'DESC'),
+		);
+
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
+		phpbb::$db->sql_query_limit($sql, 1);
+		$post_id = phpbb::$db->sql_fetchfield('post_id');
+		phpbb::$db->sql_freeresult();
+
+		if ($post_id == false && $try_other_dir)
+		{
+			// Could not find one in the direction we were going...try the other direction...
+			return self::next_prev_post_id($topic_id, $post_id, (($dir == 'next') ? 'prev' : 'next'), false);
+		}
+
+		return $post_id;
 	}
 }

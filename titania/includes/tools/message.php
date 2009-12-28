@@ -17,27 +17,27 @@ if (!defined('IN_TITANIA'))
 }
 
 /**
-* Message handler class for Titania
-*/
+ * Message handler class for Titania
+ */
 class titania_message
 {
 	/**
-	* Post Object
-	*
-	* @var object
-	*/
+	 * Post Object
+	 *
+	 * @var object
+	 */
 	public $post_object = false;
 
 	/**
-	* Hidden fields to display on the posting page
-	*
-	* @var string
-	*/
+	 * Hidden fields to display on the posting page
+	 *
+	 * @var string
+	 */
 	public $s_hidden_fields = array();
 
 	/**
-	* Permissions, set with set_auth() function
-	*/
+	 * Permissions, set with set_auth() function
+	 */
 	private $auth = array(
 		'bbcode'		=> false,
 		'smilies'		=> false,
@@ -49,8 +49,8 @@ class titania_message
 	);
 
 	/**
-	* Settings, set with set_settings() function
-	*/
+	 * Settings, set with set_settings() function
+	 */
 	private $settings = array(
 		'form_name'				=> 'postform',
 		'text_name'				=> 'message',
@@ -66,10 +66,10 @@ class titania_message
 	);
 
 	/**
-	* Array of posting panels
-	*
-	* @var array
-	*/
+	 * Array of posting panels
+	 *
+	 * @var array
+	 */
 	private $posting_panels = array(
 		'options-panel'			=> 'OPTIONS',
 	);
@@ -88,28 +88,28 @@ class titania_message
 	}
 
 	/**
-	* Set the auth settings
-	*
-	* @param array $auth
-	*/
+	 * Set the auth settings
+	 *
+	 * @param array $auth
+	 */
 	public function set_auth($auth)
 	{
 		$this->auth = array_merge($this->auth, $auth);
 	}
 
 	/**
-	* Set the settings
-	*
-	* @param array $settings
-	*/
+	 * Set the settings
+	 *
+	 * @param array $settings
+	 */
 	public function set_settings($settings)
 	{
 		$this->settings = array_merge($this->settings, $settings);
 	}
 
 	/**
-	* Display the message box
-	*/
+	 * Display the message box
+	 */
 	public function display()
 	{
 		$for_edit = $this->post_object->generate_text_for_edit();
@@ -198,8 +198,27 @@ class titania_message
 	}
 
 	/**
-	* Grab the posted subject from the request
-	*/
+	 * Output a basic preview
+	 */
+	public function preview()
+	{	
+		$for_edit = $this->post_object->generate_text_for_edit(); // Use the info from the post object instead of request_data
+
+		// This seems unneccessary, it works as expected without running generate_text_for_storage first.
+		//$request_data = $this->request_data();
+		//$this->post_object->generate_text_for_storage($request_data['bbcode_enabled'], $request_data['magic_url_enabled'], $request_data['smilies_enabled']);
+
+		phpbb::$template->assign_vars(array(
+			'PREVIEW_SUBJECT'		=> censor_text($for_edit['subject']),
+			'PREVIEW_MESSAGE'		=> $this->post_object->generate_text_for_display(),
+
+			'S_DISPLAY_PREVIEW'		=> true,
+		));
+	}
+
+	/**
+	 * Grab the posted subject from the request
+	 */
 	public function request_data()
 	{
 		// Initialize our post options class
@@ -227,10 +246,10 @@ class titania_message
 	}
 
 	/**
-	* If you display the captcha, run this function to check if they entered the correct captcha setting
-	*
-	* @return mixed $captcha->validate(); results (false on success, error string on failure)
-	*/
+	 * If you display the captcha, run this function to check if they entered the correct captcha setting
+	 *
+	 * @return mixed $captcha->validate(); results (false on success, error string on failure)
+	 */
 	public function validate_captcha()
 	{
 		phpbb::_include('captcha/captcha_factory', false, 'phpbb_captcha_factory');
@@ -242,10 +261,10 @@ class titania_message
 	}
 
 	/**
-	* Validate the form key
-	*
-	* @return mixed false on success, error string on failure
-	*/
+	 * Validate the form key
+	 *
+	 * @return mixed false on success, error string on failure
+	 */
 	public function validate_form_key()
 	{
 		if (!check_form_key($this->settings['form_name']))
@@ -257,8 +276,8 @@ class titania_message
 	}
 
 	/**
-	* Display the panels (tabs)
-	*/
+	 * Display the panels (tabs)
+	 */
 	public function display_panels()
 	{
 		foreach ($this->posting_panels as $name => $lang)
@@ -278,8 +297,8 @@ class titania_message
 }
 
 /**
-* Check permission and settings for bbcode, img, url, etc
-*/
+ * Check permission and settings for bbcode, img, url, etc
+ */
 class post_options
 {
 	// directly from permissions

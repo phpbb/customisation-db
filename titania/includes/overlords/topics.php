@@ -35,6 +35,27 @@ class topics_overlord
 	);
 
 	/**
+	 * Generate the permissions stuff for sql queries to the topics table (handles topic_access, topict_deleted, topic_approved)
+	 *
+	 * @param <string> $prefix prefix for the query
+	 * @param <bool> $where true to use WHERE, false if you already did use WHERE
+	 * @return <string>
+	 */
+	public static function sql_permissions($prefix = 't.', $where = false)
+	{
+		$sql = ($where) ? ' WHERE' : ' AND';
+		$sql .= " ({$prefix}topic_access >= " . titania::$access_level . " OR {$prefix}topic_first_post_user_id = " . phpbb::$user->data['user_id'] . ")
+			AND ({$prefix}topic_deleted = 0 OR {$prefix}topic_deleted = " . phpbb::$user->data['user_id'] . ')';
+
+		if (phpbb::$auth->acl_get('titania_post_mod'))
+		{
+			$sql .= " AND {$prefix}topic_approved = 1";
+		}
+
+		return $sql;
+	}
+
+	/**
 	* Load a topic from a post
 	*
 	* @param int $post_id
@@ -53,8 +74,8 @@ class topics_overlord
 
 			'WHERE' => 'p.post_id = ' . (int) $post_id . '
 				AND t.topic_id = p.topic_id
-				AND t.topic_access >= ' . titania::$access_level . '
-				AND c.contrib_id = t.contrib_id',
+				AND c.contrib_id = t.contrib_id' .
+				self::sql_permissions('t.'),
 		);
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
@@ -99,9 +120,9 @@ class topics_overlord
 				TITANIA_CONTRIBS_TABLE	=> 'c',
 			),
 
-			'WHERE' => phpbb::$db->sql_in_set('topic_id', $topic_id) . '
-				AND t.topic_access >= ' . titania::$access_level . '
-				AND c.contrib_id = t.contrib_id',
+			'WHERE' => phpbb::$db->sql_in_set('t.topic_id', $topic_id) . '
+				AND c.contrib_id = t.contrib_id' .
+				self::sql_permissions('t.'),
 		);
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
@@ -208,20 +229,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				TITANIA_CONTRIBS_TABLE	=> 'c',
 			),
 
-			'WHERE' => 't.topic_access >= ' . titania::$access_level . '
-				AND c.contrib_id = t.contrib_id',
+			'WHERE' => 'c.contrib_id = t.contrib_id' .
+				self::sql_permissions('t.'),
 			
 			'ORDER_BY'	=> 't.topic_sticky DESC, ' . $sort->get_order_by(),
 		);
 
 		titania_tracking::get_track_sql($sql_ary, TITANIA_TRACK_TOPICS, 't.topic_id');
-
-		// If they are not moderators we need to add some more checks
-		if (!phpbb::$auth->acl_get('titania_post_mod'))
-		{
-			$sql_ary['WHERE'] .= ' AND t.topic_deleted = 0';
-			$sql_ary['WHERE'] .= ' AND t.topic_approved = 1';
-		}
 
 		// type specific things
 		switch ($type)

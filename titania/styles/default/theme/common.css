@@ -298,3 +298,8 @@ ul.rating, ul.rated {
 ul.rating li, ul.rated li {
 	display: inline;
 }
+
+/* Soft deleted item */
+.deleted {
+	background-color: #B1B7BB;
+}

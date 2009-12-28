@@ -17,7 +17,7 @@
 
 <!-- BEGIN posts -->
 	<!-- IF posts.S_FIRST_UNREAD --><a id="unread"></a><!-- ENDIF -->
-	<div id="p{posts.POST_ID}" class="post <!-- IF posts.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF posts.S_UNREAD_POST --> unreadpost<!-- ENDIF --><!-- IF posts.S_POST_REPORTED --> reported<!-- ENDIF --><!-- IF posts.S_ONLINE and not posts.S_IGNORE_POST --> online<!-- ENDIF -->">
+	<div id="p{posts.POST_ID}" class="post <!-- IF posts.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF posts.S_UNREAD_POST --> unreadpost<!-- ENDIF --><!-- IF posts.S_POST_REPORTED --> reported<!-- ENDIF --><!-- IF posts.S_POST_DELETED --> deleted<!-- ENDIF --><!-- IF posts.S_ONLINE and not posts.S_IGNORE_POST --> online<!-- ENDIF -->">
 		<div class="inner"><span class="corners-top"><span></span></span>
 
 		<div class="postbody">
@@ -50,8 +50,9 @@
 
 			<div class="content">{posts.POST_TEXT}</div>
 
-			<!-- IF posts.EDIT_REASON -->
-				<div class="notice">{posts.EDITED_MESSAGE}
+			<!-- IF posts.EDITED_MESSAGE or posts.DELETED_MESSAGE -->
+				<div class="notice">
+					{posts.EDITED_MESSAGE}<!-- IF posts.EDITED_MESSAGE and posts.DELETED_MESSAGE --><br /><!-- ENDIF -->{posts.DELETED_MESSAGE}
 					<!-- IF posts.POST_EDIT_REASON --><br /><strong>{L_REASON}:</strong> <em>{posts.POST_EDIT_REASON}</em><!-- ENDIF -->
 				</div>
 			<!-- ENDIF -->
