@@ -213,7 +213,8 @@ class titania_url
 
 			if (sizeof($arg) == 1)
 			{
-				self::$params[$arg[0]] = $arg[0];
+				self::$params[] = $arg[0];
+				$_GET[$arg[0]] = $_REQUEST[$arg[0]] = $arg[0];
 
 				continue;
 			}
