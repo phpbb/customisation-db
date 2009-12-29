@@ -130,7 +130,7 @@ class titania_url
 			// Special case when we just want to add one thing to the URL (ex, the topic title)
 			if (is_int($name))
 			{
-				$url .= self::url_replace($value);
+				$url .= ((substr($url, -1) != '/') ? self::$separator : '') . self::url_replace($value);
 				continue;
 			}
 
@@ -145,7 +145,7 @@ class titania_url
 				$url .= self::$separator;
 			}
 
-			$url .= self::url_replace($name) . self::$separator . self::url_replace($value);
+			$url .= self::url_replace($name) . '_' . self::url_replace($value);
 		}
 
 		// Now append the anchor again
@@ -207,24 +207,19 @@ class titania_url
 		// Split up the arguments
 		$args = explode(self::$separator, $args);
 
-		if (sizeof($args) < 2)
+		foreach ($args as $arg)
 		{
-			return;
-		}
+			$arg = explode('_', $arg, 2);
 
-		/**
-		* Go through all the arguments and put them in $_GET & $_REQUEST
-		*
-		* Going through all of them and setting $x to the value of $y (the next value in the args array) seems to be the safest way to make sure we get them all
-		*	if we don't do this then urls like topic_title-t-1 would break because topic_title = t and 1 is ignored, this way topic_title = t and t = 1, so we should be good
-		*/
-		for ($i = 0; $i < (sizeof($args) - 1); $i++)
-		{
-			$name = $args[$i];
-			$value = $args[($i + 1)];
+			if (sizeof($arg) == 1)
+			{
+				self::$params[$arg[0]] = $arg[0];
 
-			self::$params[$name] = $value;
-			$_GET[$name] = $_REQUEST[$name] = $value;
+				continue;
+			}
+
+			self::$params[$arg[0]] = $arg[1];
+			$_GET[$arg[0]] = $_REQUEST[$arg[0]] = $arg[1];
 		}
 	}
 }
