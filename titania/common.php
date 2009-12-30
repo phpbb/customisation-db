@@ -64,3 +64,17 @@ if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get(
 
 	titania::error_box('SUCCESS', phpbb::$user->lang['CACHE_PURGED']);
 }
+
+// admin requested a sync
+if (isset($_GET['sync']) && phpbb::$auth->acl_get('a_'))
+{
+	$sync = new titania_sync();
+	$method = explode('_', request_var('sync', ''), 2);
+
+	if (method_exists($sync, $method[0]))
+	{
+		$sync->$method[0]($method[1]);
+	}
+
+	titania::error_box('SUCCESS', 'Sync Success');
+}
