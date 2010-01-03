@@ -123,7 +123,7 @@ class titania_author extends titania_database_object
 			),
 			'LEFT_JOIN'	=> array(
 				array(
-					'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
+					'FROM'	=> array($this->sql_table => 'a'),
 					'ON'	=> 'a.user_id = u.user_id'
 				),
 			),

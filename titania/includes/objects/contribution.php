@@ -219,7 +219,7 @@ class titania_contribution extends titania_database_object
 	public function validate_permalink($permalink)
 	{
 		$sql = 'SELECT contrib_id
-			FROM ' . TITANIA_CONTRIBS_TABLE . "
+			FROM ' . $this->sql_table . "
 			WHERE contrib_name_clean = '" . phpbb::$db->sql_escape($permalink) . "'";
 		$result = phpbb::$db->sql_query($sql);
 		$found = phpbb::$db->sql_fetchfield('contrib_id');
@@ -601,7 +601,7 @@ class titania_contribution extends titania_database_object
 	 */
 	public function set_contrib_user_id($user_id)
 	{
-		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+		$sql = 'UPDATE ' . $this->sql_table . '
 			SET contrib_user_id = ' . (int) $user_id . '
 			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);

@@ -209,7 +209,7 @@ class titania_faq extends titania_database_object
 	public function move($direction)
 	{
 		$sql = 'SELECT faq_order_id
-			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
+			FROM ' . $this->sql_table . '
 			WHERE faq_order_id ' . (($direction == 'move_up') ? '<' : '>') . $this->faq_order_id . '
 				AND contrib_id = ' . $this->contrib_id . '
 			ORDER BY faq_order_id ' . (($direction == 'move_up') ? 'DESC' : 'ASC');
@@ -223,14 +223,14 @@ class titania_faq extends titania_database_object
 		}
 
 		// Update the item in the position where want to move it to have the current position
-		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
+		 $sql = 'UPDATE ' . $this->sql_table . '
 			SET faq_order_id = ' . $this->faq_order_id . '
 		 	WHERE faq_order_id = ' . $new_order_id . '
 				AND contrib_id = ' . $this->contrib_id;
 		 phpbb::$db->sql_query($sql);
 
 		// Update the current faq item to have the new position
-		 $sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
+		 $sql = 'UPDATE ' . $this->sql_table . '
 			SET faq_order_id = ' . $new_order_id . '
 		 	WHERE faq_id = ' . $this->faq_id;
 		 phpbb::$db->sql_query($sql);
@@ -250,7 +250,7 @@ class titania_faq extends titania_database_object
 			return;
 		}
 
-		$sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . '
+		$sql = 'UPDATE ' . $this->sql_table . '
 			SET faq_views = faq_views + 1
 			WHERE faq_id = ' . (int) $this->faq_id;
 		phpbb::$db->sql_query($sql);
@@ -264,7 +264,7 @@ class titania_faq extends titania_database_object
 	public function cleanup_order()
 	{
 		$sql = 'SELECT faq_id, faq_order_id
-			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
+			FROM ' . $this->sql_table . '
 			WHERE contrib_id = ' . titania::$contrib->contrib_id . '
 			ORDER BY faq_order_id ASC';
 		$result = phpbb::$db->sql_query($sql);
@@ -279,7 +279,7 @@ class titania_faq extends titania_database_object
 
 				if ($row['faq_order_id'] != $order)
 				{
-					phpbb::$db->sql_query('UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . "
+					phpbb::$db->sql_query('UPDATE ' . $this->sql_table . "
 						SET faq_order_id = $order
 						WHERE faq_id = {$row['faq_id']}");
 				}
@@ -297,7 +297,7 @@ class titania_faq extends titania_database_object
 	public function get_next_order_id()
 	{
 		$sql = 'SELECT MAX(faq_order_id) as max_order_id
-			FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
+			FROM ' . $this->sql_table . '
 			WHERE contrib_id = ' . titania::$contrib->contrib_id;
 		$result = phpbb::$db->sql_query_limit($sql, 1);
 		$max_order_id = phpbb::$db->sql_fetchfield('max_order_id');
