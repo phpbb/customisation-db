@@ -193,7 +193,7 @@ class titania
 	}
 
 	/**
-	 * Add a phpBB language file
+	 * Add a Titania language file
 	 *
 	 * @param mixed $lang_set
 	 * @param bool $use_db

@@ -99,8 +99,9 @@ switch ($action)
 		$message->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('titania_smilies'),
-			'sticky_topic'	=> (($action == 'post' || $action == 'edit') && (phpbb::$auth->acl_get('titania_post_mod') || titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
-			'lock_topic'	=> (phpbb::$auth->acl_get('titania_post_mod') || phpbb::$auth->acl_get('titania_post_mod_own')) ? true : false, // @todo correct mod_own permissions
+			'lock'			=> ($action == 'edit' && $post->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('titania_post_mod')) ? true : false,
+			'sticky_topic'	=> (($action == 'post' || ($action == 'edit' && $post_id == $post->topic->topic_first_post_id)) && (phpbb::$auth->acl_get('titania_post_mod') || titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('titania_post_mod') || (phpbb::$auth->acl_get('titania_post_mod_own') && $post->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
 		));
 		$message->set_settings(array(
 			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
@@ -109,17 +110,13 @@ switch ($action)
 
 		if ($preview)
 		{
-			$post_data = $message->request_data();
-
-			$post->post_data($post_data);
+			$post->post_data($message);
 
 			$message->preview();
 		}
 		else if ($submit)
 		{
-			$post_data = $message->request_data();
-
-			$post->post_data($post_data);
+			$post->post_data($message);
 
 			$error = $post->validate();
 

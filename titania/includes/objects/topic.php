@@ -310,6 +310,7 @@ class titania_topic extends titania_database_object
 		$this->topic_folder_img($folder_img, $folder_alt);
 
 		$details = array(
+		//@todo - go through vars in output and make sure we output all needed and used ones
 			'TOPIC_ID'						=> $this->topic_id,
 			'TOPIC_TYPE'					=> $this->topic_type,
 			'TOPIC_ACCESS'					=> $this->topic_access,
@@ -320,7 +321,7 @@ class titania_topic extends titania_database_object
 			'TOPIC_REPORTED'				=> $this->topic_reported,
 			'TOPIC_DELETED'					=> $this->topic_deleted, // @todo output this to be something useful
 			'TOPIC_ASSIGNED'				=> $this->topic_assigned, // @todo output this to be something useful
-			'TOPIC_POSTS'					=> $this->get_postcount(),
+			'TOPIC_REPLIES'					=> ($this->get_postcount() - 1), // Number of replies (posts minus the OP)
 			'TOPIC_VIEWS'					=> $this->topic_views,
 			'TOPIC_SUBJECT'					=> censor_text($this->topic_subject),
 

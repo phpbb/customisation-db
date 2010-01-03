@@ -38,20 +38,20 @@ class titania_message
 	/**
 	 * Permissions, set with set_auth() function
 	 */
-	private $auth = array(
+	public $auth = array(
 		'bbcode'		=> false,
 		'smilies'		=> false,
 		'attachments'	=> false,
 		'polls'			=> false,
+		'lock'			=> false,
 		'sticky_topic'	=> false,
 		'lock_topic'	=> false,
-		'lock_post'		=> false,
 	);
 
 	/**
 	 * Settings, set with set_settings() function
 	 */
-	private $settings = array(
+	public $settings = array(
 		'form_name'				=> 'postform',
 		'text_name'				=> 'message',
 		'subject_name'			=> 'subject',
@@ -187,8 +187,11 @@ class titania_message
 			'S_DISPLAY_ERROR'			=> $this->settings['display_error'],
 			'S_DISPLAY_SUBJECT'			=> $this->settings['display_subject'],
 			'S_STICKY_TOPIC_ALLOWED'	=> $this->auth['sticky_topic'],
+			'S_STICKY_TOPIC_CHECKED'	=> (isset($for_edit['topic_sticky'])) ? $for_edit['topic_sticky'] : false,
 			'S_LOCK_TOPIC_ALLOWED'		=> $this->auth['lock_topic'],
-			'S_LOCK_POST_ALLOWED'		=> $this->auth['lock_post'],
+			'S_LOCK_TOPIC_CHECKED'		=> (isset($for_edit['topic_locked'])) ? $for_edit['topic_locked'] : false,
+			'S_LOCK_POST_ALLOWED'		=> $this->auth['lock'],
+			'S_LOCK_POST_CHECKED'		=> (isset($for_edit['locked'])) ? $for_edit['locked'] : false,
 			'S_EDIT_REASON'				=> $this->settings['display_edit_reason'],
 			'S_FORM_ENCTYPE'			=> '',
 			'S_HIDDEN_FIELDS'			=> build_hidden_fields($this->s_hidden_fields),
@@ -201,7 +204,7 @@ class titania_message
 	 * Output a basic preview
 	 */
 	public function preview()
-	{	
+	{
 		$for_edit = $this->post_object->generate_text_for_edit(); // Use the info from the post object instead of request_data
 
 		// This seems unneccessary, it works as expected without running generate_text_for_storage first.
@@ -230,10 +233,11 @@ class titania_message
 		$magic_url_disabled = (isset($_POST['disable_magic_url'])) ? true : false;
 
 		return array(
-			'subject'			=> utf8_normalize_nfc(request_var($this->settings['subject_name'], '', true)),
-			'message'			=> utf8_normalize_nfc(request_var($this->settings['text_name'], '', true)),
-			'options'			=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
-			'access'			=> request_var('message_access', TITANIA_ACCESS_PUBLIC),
+			'subject'	=> utf8_normalize_nfc(request_var($this->settings['subject_name'], '', true)),
+			'message'	=> utf8_normalize_nfc(request_var($this->settings['text_name'], '', true)),
+			'options'	=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
+			'access'	=> request_var('message_access', TITANIA_ACCESS_PUBLIC),
+			'lock'		=> ($this->auth['lock'] && isset($_POST['lock'])) ? true : false,
 
 			'bbcode_enabled'	=> !$bbcode_disabled,
 			'smilies_enabled'	=> !$smilies_disabled,
@@ -241,7 +245,6 @@ class titania_message
 
 			'sticky_topic'		=> ($this->auth['sticky_topic'] && isset($_POST['sticky_topic'])) ? true : false,
 			'lock_topic'		=> ($this->auth['lock_topic'] && isset($_POST['lock_topic'])) ? true : false,
-			'lock_post'			=> ($this->auth['lock_post'] && isset($_POST['lock_post'])) ? true : false,
 		);
 	}
 

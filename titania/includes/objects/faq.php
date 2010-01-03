@@ -106,10 +106,12 @@ class titania_faq extends titania_database_object
 	/**
 	* Submit data in the post_data format (from includes/tools/message.php)
 	*
-	* @param mixed $post_data
+	* @param object $message The message object
 	*/
-	public function post_data($post_data)
+	public function post_data($message)
 	{
+		$post_data = $message->request_data();
+
 		$this->__set_array(array(
 			'contrib_id'		=> titania::$contrib->contrib_id,
 			'faq_subject'		=> $post_data['subject'],

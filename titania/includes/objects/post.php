@@ -173,19 +173,21 @@ class titania_post extends titania_database_object
 	/**
 	* Submit data in the post_data format (from includes/tools/message.php)
 	*
-	* @param mixed $post_data
+	* @param object $message The message object
 	*/
-	public function post_data($post_data)
+	public function post_data($message)
 	{
+		$post_data = $message->request_data();
+
 		$this->__set_array(array(
 			'post_subject'		=> $post_data['subject'],
 			'post_text'			=> $post_data['message'],
 			'post_access'		=> $post_data['access'],
-			'post_locked'		=> $post_data['lock_post'],
+			'post_locked'		=> $post_data['lock'],
 		));
 		$this->topic->__set_array(array(
-			'topic_sticky'		=> $post_data['sticky_topic'],
-			'topic_locked'		=> $post_data['lock_topic'],
+			'topic_sticky'		=> ($message->auth['sticky_topic']) ? $post_data['sticky_topic'] : $this->topic->topic_sticky,
+			'topic_locked'		=> ($message->auth['lock_topic']) ? $post_data['lock_topic'] : $this->topic->topic_locked,
 		));
 
 		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
@@ -276,6 +278,10 @@ class titania_post extends titania_database_object
 			'options'	=> $this->post_text_options,
 			'subject'	=> $this->post_subject,
 			'access'	=> $this->post_access,
+			'locked'	=> $this->post_locked,
+
+			'topic_sticky'	=> $this->topic->topic_sticky,
+			'topic_locked'	=> $this->topic->topic_locked,
 		));
 	}
 
@@ -437,7 +443,7 @@ class titania_post extends titania_database_object
 		}
 
 		// Respect the post_time!  If for some reason we want to insert a post before the last one...
-		if ($this->topic->topic_last_post_time < $this->post_time)
+		if (!$this->topic->topic_last_post_id || $this->topic->topic_last_post_time < $this->post_time)
 		{
 			$this->topic->__set_array(array(
 				'topic_last_post_id'			=> $this->post_id,

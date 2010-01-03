@@ -58,9 +58,7 @@ switch ($action)
 
 		if ($submit)
 		{
-			$post_data = $message->request_data();
-
-			$faq->post_data($post_data);
+			$faq->post_data($message);
 
 			$error = $faq->validate();
 

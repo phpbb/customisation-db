@@ -51,9 +51,7 @@ $active_coauthors = $nonactive_coauthors = '';
 
 if ($submit)
 {
-	$post_data = $message->request_data();
-
-	titania::$contrib->post_data($post_data);
+	titania::$contrib->post_data($message);
 	$contrib_categories = request_var('contrib_category', array(0));
 	titania::$contrib->__set_array(array(
 		'contrib_type'			=> request_var('contrib_type', 0),

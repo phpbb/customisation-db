@@ -37,9 +37,7 @@ $submit = (isset($_POST['submit'])) ? true : false;
 
 if ($submit)
 {
-	$post_data = $message->request_data();
-
-	titania::$author->post_data($post_data);
+	titania::$author->post_data($message);
 
 	titania::$author->__set_array(array(
 		'author_realname'	=> utf8_normalize_nfc(request_var('realname', '', true)),

@@ -105,7 +105,7 @@ class titania_contribution extends titania_database_object
 
 			'contrib_rating'				=> array('default' => 0.0),
 			'contrib_rating_count'			=> array('default' => 0),
-			
+
 			// Last time the contrib item was updated (created or added a new revision, etc).  Used for tracking
 			'contrib_last_update'			=> array('default' => titania::$time),
 		));
@@ -198,10 +198,12 @@ class titania_contribution extends titania_database_object
 	/**
 	* Submit data in the post_data format (from includes/tools/message.php)
 	*
-	* @param mixed $post_data
+	* @param object $message The message object
 	*/
-	public function post_data($post_data)
+	public function post_data($message)
 	{
+		$post_data = $message->request_data();
+
 		$this->__set_array(array(
 			'contrib_name'		=> $post_data['subject'],
 			'contrib_desc'		=> $post_data['message'],
@@ -305,9 +307,6 @@ class titania_contribution extends titania_database_object
 			users_overlord::$users[$row['user_id']] = $row;
 		}
 		phpbb::$db->sql_freeresult($result);
-
-		// Load the revisions list
-		// Let revision object load revisions ;) @todo
 
 		// Check author/co-author status
 		if ($this->contrib_user_id == phpbb::$user->data['user_id'])

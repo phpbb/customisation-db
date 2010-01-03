@@ -18,20 +18,20 @@
 			<div><label for="notify"><input type="checkbox" name="notify" id="notify"{S_NOTIFY_CHECKED} /> {L_NOTIFY_REPLY}</label></div>
 		<!-- ENDIF -->
 
-		<hr class="dashed" />
-		
+		<br />
+
 		<!-- IF ACCESS_OPTIONS -->
 			<div><select name="message_access">{ACCESS_OPTIONS}</select></div>
 		<!-- ENDIF -->
 
 		<!-- IF S_STICKY_TOPIC_ALLOWED -->
-			<div><label for="sticky_topic"><input type="checkbox" name="sticky_topic" id="sticky_topic"{S_STICKY_TOPIC_CHECKED} /> {L_STICKY_TOPIC}</label></div>
+			<div><label for="sticky_topic"><input type="checkbox" name="sticky_topic" id="sticky_topic"<!-- IF S_STICKY_TOPIC_CHECKED --> checked="checked"<!-- ENDIF --> /> {L_STICKY_TOPIC}</label></div>
 		<!-- ENDIF -->
 		<!-- IF S_LOCK_TOPIC_ALLOWED -->
-			<div><label for="lock_topic"><input type="checkbox" name="lock_topic" id="lock_topic"{S_LOCK_TOPIC_CHECKED} /> {L_LOCK_TOPIC}</label></div>
+			<div><label for="lock_topic"><input type="checkbox" name="lock_topic" id="lock_topic"<!-- IF S_LOCK_TOPIC_CHECKED --> checked="checked"<!-- ENDIF --> /> {L_LOCK_TOPIC}</label></div>
 		<!-- ENDIF -->
 		<!-- IF S_LOCK_POST_ALLOWED -->
-			<div><label for="lock_post"><input type="checkbox" name="lock_post" id="lock_post"{S_LOCK_POST_CHECKED} /> {L_LOCK_POST} [{L_LOCK_POST_EXPLAIN}]</label></div>
+			<div><label for="lock_post"><input type="checkbox" name="lock_post" id="lock_post"<!-- IF S_LOCK_POST_CHECKED --> checked="checked"<!-- ENDIF --> /> {L_LOCK_POST} [{L_LOCK_POST_EXPLAIN}]</label></div>
 		<!-- ENDIF -->
 
 		<!-- IF S_EDIT_REASON -->

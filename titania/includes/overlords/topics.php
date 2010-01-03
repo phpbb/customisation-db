@@ -28,7 +28,7 @@ class topics_overlord
 
 	public static $sort_by = array(
 		'a' => array('AUTHOR', 't.topic_first_post_username'),
-		't' => array('POST_TIME', 't.topic_time', true),
+		't' => array('POST_TIME', 't.topic_last_post_time', true),
 		's' => array('SUBJECT', 't.topic_subject'),
 		//'r' => array('REPLIES', ),
 		'v' => array('VIEWS', 't.topic_views'),
@@ -231,7 +231,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			'WHERE' => 'c.contrib_id = t.contrib_id' .
 				self::sql_permissions('t.'),
-			
+
 			'ORDER_BY'	=> 't.topic_sticky DESC, ' . $sort->get_order_by(),
 		);
 
