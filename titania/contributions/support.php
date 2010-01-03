@@ -77,7 +77,8 @@ switch ($action)
 
 		if ($action == 'post')
 		{
-			$post = new titania_post(TITANIA_POST_DEFAULT);
+			$topic = new titania_topic(TITANIA_POST_DEFAULT, titania::$contrib);
+			$post = new titania_post(TITANIA_POST_DEFAULT, $topic);
 			$post->topic->contrib_id = titania::$contrib->contrib_id;
 		}
 		else if ($action == 'reply')
@@ -199,7 +200,7 @@ switch ($action)
 				{
 					redirect(titania_url::append_url($topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
 				}
-				
+
 				redirect($topic->get_url());
 			}
 			else
