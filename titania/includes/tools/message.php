@@ -252,7 +252,7 @@ class titania_message
 			'options'			=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
 			'access'			=> request_var('message_access', TITANIA_ACCESS_PUBLIC),
 			'lock'				=> ($this->auth['lock'] && isset($_POST['lock'])) ? true : false,
-			'has_attachments'	=> ($this->attachments !== false && sizeof($this->attachments->get_attachments())) ? true : false,
+			'has_attachments'	=> ($attachments !== false && sizeof($attachments->get_attachments())) ? true : false,
 
 			'bbcode_enabled'	=> !$bbcode_disabled,
 			'smilies_enabled'	=> !$smilies_disabled,
