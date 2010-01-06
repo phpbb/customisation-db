@@ -322,7 +322,7 @@ $versions = array(
 					'topic_category'				=> array('UINT', 0), // Category for the topic. For the Tracker
 					'topic_status'					=> array('UINT', 0), // Topic Status, use tags from the DB
 					'topic_assigned'				=> array('VCHAR:255', ''), // Topic assigned status; u- for user, g- for group (followed by the id).  For the tracker
-					'topic_time'					
+					'topic_time'					=> array('UINT:11', 0),
 					'topic_sticky'					=> array('BOOL', 0),
 					'topic_locked'					=> array('BOOL', 0),
 					'topic_approved'				=> array('BOOL', 1),

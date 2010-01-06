@@ -237,40 +237,23 @@ class titania_cache extends acm
 	{
 		if (($extensions = $this->get('_titania_extensions')) === false)
 		{
-			$extensions = array(
-				'_allowed_contrib'		=> array(),
-				'_allowed_screenshot'	=> array(),
-			);
+			$extensions = array();
 
-			// The rule is to only allow those extensions defined. ;)
 			$sql = 'SELECT e.extension, g.*
-				FROM ' . EXTENSIONS_TABLE . ' e, ' . EXTENSION_GROUPS_TABLE . " g
-				WHERE e.group_id = g.group_id
-					AND (g.group_name = 'Titania Contributions' OR g.group_name = 'Titania Screenshots')";
+				FROM ' . EXTENSIONS_TABLE . ' e, ' . EXTENSION_GROUPS_TABLE . ' g
+				WHERE e.group_id = g.group_id';
 			$result = phpbb::$db->sql_query($sql);
 
-			while ($row =  phpbb::$db->sql_fetchrow($result))
+			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
 				$extension = strtolower(trim($row['extension']));
 
-				$extensions[$extension] = array(
+				$extensions[$row['group_name']][$extension] = array(
 					'display_cat'	=> (int) $row['cat_id'],
 					'download_mode'	=> (int) $row['download_mode'],
 					'upload_icon'	=> trim($row['upload_icon']),
 					'max_filesize'	=> (int) $row['max_filesize'],
-					'allow_group'	=> $row['allow_group'],
-					'allow_in_pm'	=> $row['allow_in_pm'],
 				);
-
-				// Store allowed extensions forum wise
-				if ($row['group_name'] == 'Titania Contributions')
-				{
-					$extensions['_allowed_contrib'][$extension] = 0;
-				}
-				else if ($row['group_name'] == 'Titania Screenshots')
-				{
-					$extensions['_allowed_screenshot'][$extension] = 0;
-				}
 			}
 			 phpbb::$db->sql_freeresult($result);
 

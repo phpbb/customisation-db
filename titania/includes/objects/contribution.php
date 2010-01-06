@@ -488,10 +488,10 @@ class titania_contribution extends titania_database_object
 		foreach ($this->revisions as $revision_id => $revision)
 		{
 			phpbb::$template->assign_block_vars('revisions', array(
-				'REVISION_NAME'		=> $revision['revision_name'],
+				'REVISION_NAME'		=> censor_text($revision['revision_name']),
 				'REVISION_TIME'		=> phpbb::$user->format_date($revision['revision_time']),
 
-				'S_VALIDATED'		=> ($revision['revison_validated']) ? true : false,
+				'S_VALIDATED'		=> ($revision['revision_validated']) ? true : false,
 			));
 		}
 

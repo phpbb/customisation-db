@@ -36,6 +36,9 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+	'REVISION'					=> 'Revision',
+	'REVISIONS'					=> 'Revisions',
+
 	'CANNOT_ADD_SELF_COAUTHOR'			=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CONTRIB'							=> 'Contribution',
 	'CONTRIBUTIONS'						=> 'Contributions',

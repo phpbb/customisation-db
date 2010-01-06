@@ -16,6 +16,10 @@ RewriteEngine on
 # It is handled internally, so you do not need to pass it to anything.
 ##
 
+#download
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^download/([^/]+)$		./download/file.php [NC]
+
 #authors
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^authors?/([^/]+)/?([^/]+)?/?([^/]+)?$			./authors/index.php?u=$1&page=$2 [NC]

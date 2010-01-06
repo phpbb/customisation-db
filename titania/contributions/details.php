@@ -27,7 +27,7 @@ titania::$contrib->assign_details();
 titania_tracking::track(TITANIA_TRACK_CONTRIB, titania::$contrib->contrib_id);
 
 // Get the attachments
-$attachment = new titania_attachments(TITANIA_DOWNLOAD_CONTRIB, titania::$contrib->contrib_id);
+$attachment = new titania_attachment(TITANIA_DOWNLOAD_CONTRIB, titania::$contrib->contrib_id);
 
 titania::page_header('CONTRIB_DETAILS');
 titania::page_footer(true, 'contributions/contribution_details.html');

@@ -56,6 +56,7 @@ define('TITANIA_STATUS_ATTENTION', 4);
 define('TITANIA_STATUS_APPROVE', 5); // Awaiting approve
 define('TITANIA_STATUS_DENY', 6); // Awating deny
 
+
 // Tag types
 define('TAG_TYPE_MOD_CATEGORY', 1);
 define('TAG_TYPE_COMPONENT', 2);
@@ -74,9 +75,16 @@ define('TITANIA_RATING_AUTHOR', 1);
 define('TITANIA_RATING_CONTRIB', 2);
 
 // Download types
-define('TITANIA_DOWNLOAD_CONTRIB', 	1);
-define('TITANIA_DOWNLOAD_POST', 	2);
-define('TITANIA_DOWNLOAD_FAQ', 		3);
+define('TITANIA_DOWNLOAD_CONTRIB', 1);
+define('TITANIA_DOWNLOAD_SCREENSHOTS', 2);
+define('TITANIA_DOWNLOAD_FAQ', 3);
+define('TITANIA_DOWNLOAD_SUPPORT', 4);
+
+// Attachment extension groups; use the group_name stored in the phpbb extension groups table
+define('TITANIA_ATTACH_EXT_CONTRIB', 'Titania Contributions');
+define('TITANIA_ATTACH_EXT_SCREENSHOTS', 'Titania Screenshots');
+define('TITANIA_ATTACH_EXT_FAQ', 'Titania Posts: FAQ');
+define('TITANIA_ATTACH_EXT_SUPPORT', 'Titania Posts: Support');
 
 // Upload responses
 define('TITANIA_UPLOAD_RESPONSE_HTML', 1);

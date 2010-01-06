@@ -4,7 +4,7 @@
 
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
-<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
+<form id="contrib_manage" name="contrib_manage" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
 	<fieldset>
 		<dl>
 			<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
@@ -32,7 +32,7 @@
 		</dl>
 	</fieldset>
 	<!-- INCLUDE posting/posting_basic_editor.html -->
-	<h3></h3>
+	<h3>{L_OPTIONS}</h3>
 	<fieldset>
 		<dl>
 			<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label><br /><span>{L_MULTI_SELECT_EXPLAIN}</span></dt>
@@ -67,6 +67,10 @@
 			</dd>
 		</dl>
 	</fieldset>
+
+	<h3>{L_REVISIONS}</h3>
+	{REVISION_UPLOADER}
+
 	<fieldset class="submit-buttons">
 		<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
 		<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />

@@ -1,0 +1,33 @@
+<fieldset class="fields2">
+<dl>
+	<dt><label for="fileupload">{L_FILENAME}:</label></dt>
+	<dd>
+		<input type="file" name="{FORM_NAME}" id="{FORM_NAME}"<!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
+		<input type="submit" name="add_file" value="{L_ADD_FILE}" class="button2" onclick="upload = true;" />
+	</dd>
+</dl>
+<dl>
+	<dt><label for="revision_name">{L_REVISION_NAME}:</label></dt>
+	<dd><textarea name="revision_name" id="revision_name" rows="1" cols="40" class="inputbox autowidth">{FILE_COMMENT}</textarea></dd>
+</dl>
+<dl>
+	<dt><label for="revision_version">{L_REVISION_VERSION}:</label></dt>
+	<dd><textarea name="revision_version" id="revision_version" rows="1" cols="40" class="inputbox autowidth">{FILE_COMMENT}</textarea></dd>
+</dl>
+<!-- BEGIN attach_row -->
+	<hr class="dashed" />
+	<dl>
+		<dt><label for="revision_name_{attach_row.ATTACH_ID}">{L_REVISION_NAME}:</label></dt>
+		<dd><textarea name="revision_name_{attach_row.ATTACH_ID}" id="revision_name_{attach_row.ATTACH_ID}" rows="1" cols="35" class="inputbox">{attach_row.REVISION_NAME}</textarea></dd>
+		<dt><label for="revision_version_{attach_row.ATTACH_ID}">{L_REVISION_VERSION}:</label></dt>
+		<dd><textarea name="revision_version_{attach_row.ATTACH_ID}" id="version_list_{attach_row.ATTACH_ID}" rows="1" cols="35" class="inputbox">{attach_row.REVISION_VERSION}</textarea></dd>
+		<dd><a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a></dd>
+		<dd style="margin-top: 5px;">
+			<!-- IF S_INLINE_ATTACHMENT_OPTIONS --><input type="button" value="{L_PLACE_INLINE}" onclick="attach_inline({attach_row.ATTACH_ID}, '{attach_row.A_FILENAME}');" class="button2" />&nbsp; <!-- ENDIF -->
+			<input type="submit" name="delete_file[{attach_row.ATTACH_ID}]" value="{L_DELETE_FILE}" class="button2" />
+			<input type="hidden" name="{FORM_NAME}_attachments[]" value="{attach_row.ATTACH_ID}" />
+		</dd>
+	</dl>
+	{attach_row.S_HIDDEN}
+<!-- END attach_row -->
+</fieldset>

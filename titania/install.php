@@ -559,6 +559,36 @@ $versions = array(
 		),
 	),
 
+	'0.1.23' => array(
+		'table_column_add' => array(
+			array(TITANIA_ATTACHMENTS_TABLE, 'object_type', array('UINT', 0)),
+		),
+		'table_index_add' => array(
+			array(TITANIA_ATTACHMENTS_TABLE, 'object_type'),
+		),
+		'table_index_remove' => array(
+			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_type')
+		),
+		'table_column_remove' => array(
+			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_type'),
+		),
+	),
+
+	'0.1.24' => array(
+		'table_column_add' => array(
+			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_comment', array('TEXT_UNI', '')),
+		),
+		'table_index_remove' => array(
+			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_status')
+		),
+		'table_column_remove' => array(
+			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_status'),
+		),
+		'table_index_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_last_post_time'),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
@@ -795,156 +825,92 @@ function titania_data($action, $version)
 
 function titania_ext_groups($action, $version)
 {
-	global $umil;
+	$ext_groups = array(
+		TITANIA_ATTACH_EXT_CONTRIB		=> array('default' => 'Archives', 'sql' => array('upload_icon' => 'zip.png')),
+		TITANIA_ATTACH_EXT_SCREENSHOTS	=> array('default' => 'Images'),
+		TITANIA_ATTACH_EXT_SUPPORT		=> array('default' => array('Archives', 'Images')),
+		TITANIA_ATTACH_EXT_FAQ			=> array('default' => array('Archives', 'Images')),
+	);
 
 	switch ($action)
 	{
 		case 'install':
 		case 'update':
 			// Add Titania ext groups.
-			$sql_ary = array(
-				array(
-					'group_name'		=> 'Titania Contributions',
+			foreach ($ext_groups as $group_name => $extra)
+			{
+				$sql_ary = array(
+					'group_name'		=> $group_name,
 					'cat_id'			=> 0,
-					'allow_group'		=> 1,
-					'download_mode'		=> 1,
-					'upload_icon'		=> 'zip.png',
-					'max_filesize'		=> 0,
-					'allowed_forums'	=> '',
-					'allow_in_pm'		=> 0,
-				),
-				array(
-					'group_name'		=> 'Titania Screenshots',
-					'cat_id'			=> 0,
-					'allow_group'		=> 1,
+					'allow_group'		=> 0,
 					'download_mode'		=> 1,
 					'upload_icon'		=> '',
 					'max_filesize'		=> 0,
 					'allowed_forums'	=> '',
-					'allowed_forums'	=> '',
 					'allow_in_pm'		=> 0,
-				)
-			);
-			$umil->table_row_insert(EXTENSION_GROUPS_TABLE, $sql_ary);
-
-			// Get group ids for newly created groups.
-			$sql = 'SELECT group_id, group_name
-				FROM ' . EXTENSION_GROUPS_TABLE . "
-				WHERE group_name = 'Titania Contributions'
-					OR group_name = 'Titania Screenshots'";
-			$result = phpbb::$db->sql_query($sql);
-
-			$titania_ext_groups = array();
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$titania_ext_groups[$row['group_name']] = $row['group_id'];
-			}
-			phpbb::$db->sql_freeresult($result);
-
-			// Add default allowed extentsions to newly created groups.
-			// First we will try to find the default phpBB image and archive extenstion groups. If we find them, we will
-			// use the same file extensions that are allowed for the coresponding groups for Titania, but the site may want to configure
-			// it differntly than in the forums for Titania, which is why we have the seperate Titania extenstion groups.
-
-			// See if we can find the default phpBB groups.
-			$sql_ary = array(
-				'SELECT'	=> 'g.group_name, e.extension',
-
-				'FROM'		=> array(EXTENSION_GROUPS_TABLE 	=> 'g'),
-
-				'LEFT_JOIN'	=> array(
-					array(
-						'FROM'	=> array(EXTENSIONS_TABLE 		=> 'e'),
-						'ON'	=> 'e.group_id = g.group_id'
-					),
-				),
-
-				'WHERE'		=> "g.group_name = 'Images'
-					OR g.group_name = 'Archives'",
-			);
-			$result = phpbb::$db->sql_query(phpbb::$db->sql_build_query('SELECT', $sql_ary));
-
-			$sql_ary = array(
-				'Titania Contributions'		=> array(),
-				'Titania Screenshots'		=> array(),
-			);
-
-			// We found them!
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$which = ($row['group_name'] == 'Archives') ? 'Titania Contributions' : 'Titania Screenshots';
-
-				$sql_ary[$which][] = array(
-					'group_id'		=> $titania_ext_groups[$which],
-					'extension'		=> $row['extension'],
 				);
+				if (isset($extra['sql']))
+				{
+					$sql_ary = array_merge($sql_ary, $extra['sql']);
+				}
+
+				phpbb::$db->sql_query('INSERT INTO ' . EXTENSION_GROUPS_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+				$group_id = phpbb::$db->sql_nextid();
+
+				if (isset($extra['default']))
+				{
+					$sql_ary = array(
+						'SELECT'	=> 'e.extension',
+
+						'FROM'		=> array(EXTENSION_GROUPS_TABLE 	=> 'g'),
+
+						'LEFT_JOIN'	=> array(
+							array(
+								'FROM'	=> array(EXTENSIONS_TABLE 		=> 'e'),
+								'ON'	=> 'e.group_id = g.group_id'
+							),
+						),
+
+						'WHERE'		=> ((is_array($extra['default'])) ? phpbb::$db->sql_in_set('g.group_name', $extra['default']) : "g.group_name = '{$extra['default']}'"),
+					);
+					$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+					$result = phpbb::$db->sql_query($sql);
+
+					$sql_ary = array();
+
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$sql_ary[] = array(
+							'group_id'		=> $group_id,
+							'extension'		=> $row['extension'],
+						);
+					}
+
+					phpbb::$db->sql_freeresult($result);
+
+					phpbb::$db->sql_multi_insert(EXTENSIONS_TABLE, $sql_ary);
+				}
 			}
-			phpbb::$db->sql_freeresult($result);
-
-			// Check to see if we have empty sql_ary. If the array is empty, we know that the default phpBB ext groups could not be
-			// found and we need to just use some default extensions.
-			if (!sizeof($sql_ary['Titania Contributions']))
-			{
-				// Only allow zip for contributions.
-				$sql_ary['Titania Contributions'] = array(
-					array(
-						'group_id'	=> $titania_ext_groups['Titania Contributions'],
-						'extension'	=> 'zip'
-					)
-				);
-			}
-
-			// No image extensions?
-			if (!sizeof($sql_ary['Titania Screenshots']))
-			{
-				$group_id = $titania_ext_groups['Titania Screenshots'];
-
-				// Only allow zip for contributions.
-				$sql_ary['Titania Screenshots'] = array(
-					array(
-						'group_id'	=> $group_id,
-						'extension'	=> 'png'
-					),
-					array(
-						'group_id' 	=> $group_id,
-						'extension'	=> 'gif'
-					),
-					array(
-						'group_id'	=> $group_id,
-						'extension'	=> 'jpg'
-					)
-				);
-			}
-
-			// Insert extensions for Titania Screenshots
-			$umil->table_row_insert(EXTENSIONS_TABLE, $sql_ary['Titania Screenshots']);
-
-			// Insert extensions for Titania Contributions
-			$umil->table_row_insert(EXTENSIONS_TABLE, $sql_ary['Titania Contributions']);
 		break;
 
 		case 'uninstall':
 			// Get group ids Titania ext groups.
-			$sql = 'SELECT group_id, group_name
-				FROM ' . EXTENSION_GROUPS_TABLE . "
-				WHERE group_name = 'Titania Contributions'
-					OR group_name = 'Titania Screenshots'";
+			$sql = 'SELECT group_id
+				FROM ' . EXTENSION_GROUPS_TABLE . '
+				WHERE ' . phpbb::$db->sql_in_set('group_name', array_keys($ext_groups));
 			$result = phpbb::$db->sql_query($sql);
 
-			$titania_ext_groups = array();
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$titania_ext_groups[$row['group_name']] = $row['group_id'];
+				$sql = 'DELETE FROM ' . EXTENSIONS_TABLE . '
+					WHERE group_id = ' . $row['group_id'];
+				phpbb::$db->sql_query($sql);
 			}
 			phpbb::$db->sql_freeresult($result);
 
-			// Delete extensions.
-			$umil->table_row_remove(EXTENSIONS_TABLE, array('group_id' => $titania_ext_groups['Titania Contributions']));
-			$umil->table_row_remove(EXTENSIONS_TABLE, array('group_id' => $titania_ext_groups['Titania Screenshots']));
-
-			// Delete groups.
-			$umil->table_row_remove(EXTENSION_GROUPS_TABLE, array('group_id' => $titania_ext_groups['Titania Contributions']));
-			$umil->table_row_remove(EXTENSION_GROUPS_TABLE, array('group_id' => $titania_ext_groups['Titania Screenshots']));
+			$sql = 'DELETE FROM ' . EXTENSION_GROUPS_TABLE . '
+				WHERE ' . phpbb::$db->sql_in_set('group_name', array_keys($ext_groups));
+			phpbb::$db->sql_query($sql);
 		break;
 	}
 }

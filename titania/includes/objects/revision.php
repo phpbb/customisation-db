@@ -49,12 +49,7 @@ class titania_revision extends titania_database_object
 	 */
 	protected $sql_id_field		= 'revision_id';
 
-	/**
-	 * Constructor class for titania faq
-	 *
-	 * @param int $faq_id
-	 */
-	public function __construct($revision_id = false)
+	public function __construct($contrib_id = false, $revision_id = false)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -68,93 +63,54 @@ class titania_revision extends titania_database_object
 			'revision_version'		=> array('default' => ''),
 		));
 
-		if ($revision_id !== false)
-		{
-			$this->revision_id = $revision_id;
-		}
+		$this->contrib_id = $contrib_id;
+		$this->revision_id = $revision_id;
 	}
 
 	/**
 	 *
-	 * @return unknown_type
 	 */
-	public function request_data()
+	public function display()
 	{
-		$this->__set_array(array(
-			'revision_name'			=> request_var('revision_name', '', true),
-			'contrib_id'			=> (int) titania::$contrib->contrib_id,
-			'revision_validated'	=> request_var('contrib_validated', 0),
-			'attachment_id'			=> request_var('attachment_id', 0),
+		phpbb::$template->assign_block_vars('revisions', array(
+			'REVISION_ID'		=> $this->revision_id,
+			'CREATED'			=> phpbb::$user->format_date($this->revision_time),
+			'NAME'				=> censor_text($this->revision_name),
+			'VERSION'			=> $this->revision_version,
+			'VALIDATED_DATE'	=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
+
+			'S_VALIDATED'		=> $this->revision_validated,
 		));
 	}
 
 	/**
-	* Validate that all the data is correct
-	*
-	* @return array empty array on success, array with (string) errors ready for output on failure
-	*/
-	public function validate()
-	{
-
-	}
-
-	/**
-	 *
-	 */
-	public function display($revision_id = false)
-	{
-		// @todo Hanlde unvalidate and validated revisions basesd on if this is a team member, author or user.
-		$sql = 'SELECT *
-			FROM ' . $this->sql_table . '
-			WHERE contrib_id = ' . (int) titania::$contrib->contrib_id .
-			(($revision_id !== false) ? ' AND revision_id = ' . (int) $revision_id : '');
-		$result = phpbb::$db->sql_query($sql);
-
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			phpbb::$template->assign_block_vars('revisions', array(
-				'REVISION_ID'		=> $row['revision_id'],
-				'CREATED'			=> phpbb::$user->format_date($row['revision_time']),
-				// This may need to be changed when the queue is done.
-				'VALIDATED_DATE'	=> ($row['validation_date']) ? phpbb::$user->format_date($row['validation_date']) : phpbb::$user->lang['NOT_VALIDATED'],
-
-				'U_DELETE_REVISION'	=> $this->get_url('delete', $row['revision_id']),
-			));
-		}
-		phpbb::$db->sql_freeresult($result);
-
-		phpbb::$template->assign_var('IMG_ICON_DELETE', titania::$style_path . 'theme/images/delete.png');
-
-	}
-
-	/**
-	 * Place holder. This function should make sure this new revision shows in the queue as well.
-	 *
+	 * Put the contrib item in the queue
 	 */
 	public function submit()
 	{
-		// Submit the revision.
+		// Update the contrib_last_update if required here
+		if (!titania::$config->require_validation)
+		{
+			$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+				SET contrib_last_update = ' . titania::$time . '
+				WHERE contrib_id = ' . $this->contrib_id;
+			phpbb::$db->sql_query($sql);
+		}
+
+		// Put in the queue
+		if (titania::$config->use_queue)
+		{
+
+		}
+
 		parent::submit();
 	}
 
 	/**
-	* Build view URL for revisions
-	*
-	* @param string $action
-	* @param int $revision_id
-	*
-	* @return string
-	*/
-	public function get_url($action = '', $revision_id = false)
+	 * Download URL
+	 */
+	public function get_url()
 	{
-		$url = titania::$contrib->get_url('revisions');
-		$revision_id = (($revision_id) ? $revision_id : $this->revision_id);
-
-		if ($action == 'create')
-		{
-			return titania_url::append_url($url, array('action' => $action));
-		}
-
-		return titania_url::append_url($url, array('action' => $action, 'r' => $revision_id));
+		return titania_url::build_url('download', array('id' => $this->attachment_id));
 	}
 }

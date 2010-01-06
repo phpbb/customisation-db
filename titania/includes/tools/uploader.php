@@ -21,19 +21,16 @@ phpbb::_include('functions_upload', false, 'fileupload');
 
 /**
  * Handles uploading attachments for Titania.
- *
- * Still needs a lot of work done.
- *
- * @todo Resize all images.
  */
 class titania_uploader extends fileupload
 {
 	/**
-	 * Set some defualt class variables that we need.
+	 * Some vars we need
 	 *
 	 * @var mix
 	 */
 	public $form_name = '';
+	public $ext_group = '';
 
 	/**
 	 * Array of data holding informatiom about the file being uploaded.
@@ -43,51 +40,16 @@ class titania_uploader extends fileupload
 	public $filedata = array();
 
 	/**
-	 * Enter description here...
-	 *
-	 * @var unknown_type
-	 */
-	private $object_id = 0;
-
-	/**
-	 * Enter description here...
-	 *
-	 * @var unknown_type
-	 */
-	private $file_type = '';
-
-	/**
-	 * Is this an ajax call?
-	 *
-	 * @var bool
-	 */
-	private $ajax = true;
-
-	/**
-	 * @var Template file that displays uploaded attachments
-	 */
-	private $upload_file_tpl = '';
-
-	/**
 	 * Class constructor
 	 *
 	 * @param string $form_name Form name from where we can find the file.
-	 * @param string $file_type Type of file, used for allowed extenstions. @todo
-	 * @param string $upload_file_tpl Template file that displays uploaded attachments
+	 * @param string $ext_group The name of the extension group (TITANIA_ATTACH_EXT_ constants)
 	 */
-	public function __construct($form_name = 'uploadify', $file_type = 'contrib', $upload_file_tpl = false, $reponse_type = TITANIA_UPLOAD_RESPONSE_HTML)
+	public function __construct($form_name, $ext_group)
 	{
 		// Set class variables.
-		$this->form_name 		= $form_name;
-		$this->file_type		= $file_type;
-		$this->file_attachment 	= ($this->is_valid($this->form_name)) ? true : false;
-		$this->upload_file_tpl 	= $upload_file_tpl;
-
-		// Are we in a ajax request? @todo May not need this. Think we should only support AJAX IMO
-		$this->ajax = request_var('ajax', true);
-
-		// Add posting language for the attachment language strings.
-		phpbb::$user->add_lang('posting');
+		$this->form_name = $form_name;
+		$this->ext_group = $ext_group;
 	}
 
 	/**
@@ -95,11 +57,11 @@ class titania_uploader extends fileupload
 	 *
 	 * @return array filedata
 	 */
-	public function upload_file()
+	public function upload_file($move_dir = '')
 	{
 		$this->filedata = array(
 			'error'			=> array(),
-			'post_attach'	=> $this->file_attachment,
+			'post_attach'	=> $this->is_valid($this->form_name),
 		);
 
 		if (!$this->filedata['post_attach'])
@@ -109,9 +71,8 @@ class titania_uploader extends fileupload
 			return false;
 		}
 
-		// @todo Allow more dynamic extensions
 		$extensions = titania::$cache->obtain_attach_extensions();
-		$this->set_allowed_extensions(array_keys($extensions['_allowed_' . $this->file_type]));
+		$this->set_allowed_extensions(array_keys($extensions[$this->ext_group]));
 
 		$file = $this->form_upload($this->form_name);
 
@@ -122,8 +83,6 @@ class titania_uploader extends fileupload
 			return false;
 		}
 
-		// @todo Support attachment categories
-
 		// Set max file size for anyone but team members.
 		if (titania::$access_level != TITANIA_ACCESS_TEAMS)
 		{
@@ -132,8 +91,16 @@ class titania_uploader extends fileupload
 
 		$file->clean_filename('unique', phpbb::$user->data['user_id'] . '_');
 
-		// @todo config for Titania upload path.
-		$file->move_file(TITANIA_ROOT . 'files/', false, true);
+		// Move files into their own directory depending on the extension group assigned.  Should keep at least some of it organized.
+		$move_dir = preg_replace('#[^a-z0-9_/]#', '', str_replace(' ', '_', utf8_strtolower($this->ext_group))) . '/';
+
+		if (!file_exists(titania::$config->upload_path . $move_dir))
+		{
+			@mkdir(titania::$config->upload_path . $move_dir);
+			phpbb_chmod(titania::$config->upload_path . $move_dir, CHMOD_ALL);
+		}
+
+		$file->move_file(titania::$config->upload_path . $move_dir, false, true);
 
 		if (!empty($file->error))
 		{
@@ -147,28 +114,13 @@ class titania_uploader extends fileupload
 		$this->filedata['filesize'] = $file->get('filesize');
 		$this->filedata['mimetype'] = $file->get('mimetype');
 		$this->filedata['extension'] = $file->get('extension');
-		$this->filedata['physical_filename'] = $file->get('realname');
+		$this->filedata['physical_filename'] = $move_dir . $file->get('realname');
 		$this->filedata['real_filename'] = $file->get('uploadname');
 		$this->filedata['filetime'] = time();
 		$this->filedata['md5_checksum'] = md5_file($file->get('destination_file'));
 
-		// Check our complete quota
-		//@todo Seperate config for titania attachments
-		if (phpbb::$config['attachment_quota'])
-		{
-			if (phpbb::$config['upload_dir_size'] + $file->get('filesize') > phpbb::$config['attachment_quota'])
-			{
-				$this->filedata['error'][] = phpbb::$user->lang['ATTACH_QUOTA_REACHED'];
-				$this->filedata['post_attach'] = false;
-
-				$file->remove();
-
-				return false;
-			}
-		}
-
 		// Check free disk space
-		if ($free_space = @disk_free_space(PHPBB_ROOT_PATH . phpbb::$config['upload_path']))
+		if ($free_space = @disk_free_space(titania::$config->upload_path))
 		{
 			if ($free_space <= $file->get('filesize'))
 			{
@@ -183,89 +135,6 @@ class titania_uploader extends fileupload
 
 		// Yippe!! File uploaded with no problems...
 		return true;
-	}
-
-	/**
-	 * Displays results of upload.
-	 *
-	 * Handles displaying errors and generating newly uploaded file data.
-	 *
-	 * @vat object $attachment Attachment object.
-	 */
-	public function response($attachment)
-	{
-		// Set header for JSON response.
-		header('Content-type: application/json');
-
-		// We dont want the page_header to run.
-		define('HEADER_INC', true);
-
-		// Set up the template.
-		phpbb::$template->set_filenames(array(
-			'body'		=> 'common/json_response.html',
-		));
-
-		// Do we have any errors?
-		if (!empty($this->filedata['error']))
-		{
-			// Upload error.
-			$response = array(
-				'error'	=> implode('<br />', $this->filedata['error']),
-			);
-
-			phpbb::$template->assign_var('JSON', json_encode($response));
-		}
-		else if ($this->filedata['post_attach'])
-		{
-			// Add any language files we need.
-			// Since we cant tell the script what to invlude, we have to find out ourself
-			if ($attachment->attachment_type == TITANIA_DOWNLOAD_CONTRIB)
-			{
-				titania::add_lang('revisions');
-			}
-			else if ($attachment->attachment_type == TITANIA_DOWNLOAD_FAQ)
-			{
-				titania::add_lang('faq');
-			}
-			else if ($attachment->attachment_type == TITANIA_DOWNLOAD_POST)
-			{
-				titania::add_lang('posting');
-			}
-
-			$file = '';
-			if (file_exists(TITANIA_ROOT . 'styles/' . titania::$config->style . '/template/uploadify/uploadify_' . $attachment->object_type . '_file.html'))
-			{
-				$file = 'uploadify/uploadify_' . $attachment->object_type . '_file.html';
-			}
-			else
-			{
-				$file = 'uploadify/uploadify_file.html';
-			}
-
-			// Set template file.
-			phpbb::$template->set_filenames(array(
-				'file'		=> $file
-			));
-
-			// Display attachment info
-			$attachment->display();
-
-			// We uploaded a file successfully, now send response
-			$response = array(
-				'html'	=> phpbb::$template->assign_display('file'),
-				'id'	=> $attachment->attachment_id,
-			);
-
-			phpbb::$template->assign_var('JSON', json_encode($response));
-		}
-		else
-		{
-			// @todo Something is wrong, just display general error.
-		}
-
-		// Call page header and footer.
-		titania::page_header();
-		titania::page_footer(false);
 	}
 
 	/**
