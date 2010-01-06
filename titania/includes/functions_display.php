@@ -69,7 +69,7 @@ function titania_display_categories($parent_id = 0, $blockname = 'categories')
 	$result = phpbb::$db->sql_query($sql);
 
 	$category = new titania_category();
-	
+
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
 		$category->__set_array($row);
@@ -117,7 +117,7 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 				'ORDER_BY'	=> $sort->get_order_by(),
 			);
 
-			titania_tracking::get_track_sql($sql_ary, TITANIA_TRACK_CONTRIB, 'c.contrib_id');
+			titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 		break;
 
 		case 'category' :
@@ -151,7 +151,7 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 				'ORDER_BY'	=> $sort->get_order_by(),
 			);
 
-			titania_tracking::get_track_sql($sql_ary, TITANIA_TRACK_CONTRIB, 'c.contrib_id');
+			titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 		break;
 	}
 
@@ -180,11 +180,11 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 		$author->__set_array($row);
 
 		// Store the tracking info we grabbed in the tool
-		titania_tracking::store_track(TITANIA_TRACK_CONTRIB, $contrib->contrib_id, $row['track_time']);
+		titania_tracking::store_track(TITANIA_CONTRIB, $contrib->contrib_id, $row['track_time']);
 
 		// Get the folder image
 		$folder_img = $folder_alt = '';
-		titania_topic_folder_img($folder_img, $folder_alt, 0, titania_tracking::is_unread(TITANIA_TRACK_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update));
+		titania_topic_folder_img($folder_img, $folder_alt, 0, titania_tracking::is_unread(TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update));
 
 		phpbb::$template->assign_block_vars($blockname, array(
 			'CONTRIB_USERNAME'			=> $contrib->username,

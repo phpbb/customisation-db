@@ -69,13 +69,13 @@ class titania_post extends titania_database_object
 	 * @param object|bool|int $topic The topic object, topic_id to load it ourselves for an existing topic, boolean false for making a new post (we will create the topic object)
 	 * @param int $post_id The post_id, 0 for making a new post
 	 */
-	public function __construct($type = TITANIA_POST_DEFAULT, $topic = false, $post_id = 0)
+	public function __construct($type = TITANIA_SUPPORT, $topic = false, $post_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
 			'post_id'				=> array('default' => 0),
 			'topic_id'				=> array('default' => 0),
-			'post_type'				=> array('default' => 0), // Post Type, TITANIA_POST_ constants
+			'post_type'				=> array('default' => 0), // Post Type, Main TITANIA_ constants
 			'post_access'			=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
 
 			'post_locked'			=> array('default' => false),
@@ -104,22 +104,17 @@ class titania_post extends titania_database_object
 		switch ($type)
 		{
 			case 'tracker' :
-			case TITANIA_POST_TRACKER :
-				$this->post_type = TITANIA_POST_TRACKER;
+			case TITANIA_TRACKER :
+				$this->post_type = TITANIA_TRACKER;
 			break;
 
 			case 'queue' :
-			case TITANIA_POST_QUEUE :
-				$this->post_type = TITANIA_POST_QUEUE;
-			break;
-
-			case 'review' :
-			case TITANIA_POST_REVIEW :
-				$this->post_type = TITANIA_POST_REVIEW;
+			case TITANIA_QUEUE :
+				$this->post_type = TITANIA_QUEUE;
 			break;
 
 			default :
-				$this->post_type = TITANIA_POST_DEFAULT;
+				$this->post_type = TITANIA_SUPPORT;
 			break;
 		}
 
@@ -221,16 +216,12 @@ class titania_post extends titania_database_object
 
 		switch ($this->post_type)
 		{
-			case TITANIA_POST_TRACKER :
+			case TITANIA_TRACKER :
 				$page = 'tracker';
 			break;
 
-			case TITANIA_POST_QUEUE :
+			case TITANIA_QUEUE :
 				$page = 'queue';
-			break;
-
-			case TITANIA_POST_REVIEW :
-				$page = 'review';
 			break;
 
 			default :
@@ -282,6 +273,9 @@ class titania_post extends titania_database_object
 
 			'topic_sticky'	=> $this->topic->topic_sticky,
 			'topic_locked'	=> $this->topic->topic_locked,
+
+			'object_type'	=> $this->post_type,
+			'object_id'		=> $this->post_id,
 		));
 	}
 

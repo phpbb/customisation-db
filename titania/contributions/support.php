@@ -77,17 +77,17 @@ switch ($action)
 
 		if ($action == 'post')
 		{
-			$topic = new titania_topic(TITANIA_POST_DEFAULT, titania::$contrib);
-			$post = new titania_post(TITANIA_POST_DEFAULT, $topic);
+			$topic = new titania_topic(TITANIA_SUPPORT, titania::$contrib);
+			$post = new titania_post(TITANIA_SUPPORT, $topic);
 			$post->topic->contrib_id = titania::$contrib->contrib_id;
 		}
 		else if ($action == 'reply')
 		{
-			$post = new titania_post(TITANIA_POST_DEFAULT, $topic);
+			$post = new titania_post(TITANIA_SUPPORT, $topic);
 		}
 		else
 		{
-			$post = new titania_post(TITANIA_POST_DEFAULT, $topic, $post_id);
+			$post = new titania_post(TITANIA_SUPPORT, $topic, $post_id);
 			if ($post->load() === false)
 			{
 				trigger_error('NO_POST');
@@ -177,7 +177,7 @@ switch ($action)
 	case 'undelete' :
 		phpbb::$user->add_lang('posting');
 
-		$post = new titania_post(TITANIA_POST_DEFAULT, $topic, $post_id);
+		$post = new titania_post(TITANIA_SUPPORT, $topic, $post_id);
 		if ($post->load() === false)
 		{
 			trigger_error('NO_POST');

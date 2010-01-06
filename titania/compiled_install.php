@@ -42,15 +42,16 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.21'	=> array(
+	'0.1.25'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
 					'attachment_id'			=> array('UINT', NULL, 'auto_increment'),
-					'attachment_type'		=> array('TINT:1', 0),
+					'object_type'			=> array('TINT:1', 0),
 					'object_id'				=> array('UINT', 0),
-					'attachment_status'		=> array('TINT:1', 0),
 					'attachment_access'		=> array('UINT', 2),
+					'attachment_comment'	=> array('TEXT_UNI', ''),
+					'attachment_directory'	=> array('VCHAR', ''),
 					'physical_filename'		=> array('VCHAR', ''),
 					'real_filename'			=> array('VCHAR', ''),
 					'download_count'		=> array('UINT', 0),
@@ -64,9 +65,8 @@ $versions = array(
 				),
 				'PRIMARY_KEY'	=> 'attachment_id',
 				'KEYS'			=> array(
-					'attachment_type'		=> array('INDEX', 'attachment_type'),
+					'object_type'			=> array('INDEX', 'object_type'),
 					'object_id'				=> array('INDEX', 'object_id'),
-					'attachment_status'		=> array('INDEX', 'attachment_status'),
 					'attachment_access'		=> array('INDEX', 'attachment_access'),
 					'is_orphan'				=> array('INDEX', 'is_orphan'),
 				),
@@ -203,7 +203,7 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'post_id'				=> array('UINT', NULL, 'auto_increment'),
 					'topic_id'				=> array('UINT', 0),
-					'post_type'				=> array('TINT:1', 0), // Post Type, TITANIA_POST_ constants
+					'post_type'				=> array('TINT:1', 0), // Post Type, Main TITANIA_ constants
 					'post_access'			=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
 					'post_locked'			=> array('BOOL', 0),
 					'post_approved'			=> array('BOOL', 1),
@@ -214,7 +214,8 @@ $versions = array(
 					'post_time'				=> array('UINT:11', 0),
 					'post_edited'			=> array('UINT:11', 0), // Post edited; 0 for not edited, timestamp if (when) last edited
 					'post_deleted'			=> array('UINT:11', 0), // Post deleted; 0 for not edited, timestamp if (when) last edited
-					'post_edit_user'		=> array('UINT', 0), // The last user to edit/delete the post
+					'post_delete_user'		=> array('UINT', 0), // The last user to delete the post
+					'post_edit_user'		=> array('UINT', 0), // The last user to edit the post
 					'post_edit_reason'		=> array('STEXT_UNI', ''), // Reason for deleting/editing
 					'post_subject'			=> array('STEXT_UNI', '', 'true_sort'),
 					'post_text'				=> array('MTEXT_UNI', '', 'true_sort'),
@@ -317,7 +318,7 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'topic_id'						=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'					=> array('UINT', 0),
-					'topic_type'					=> array('TINT:1', 0), // Post Type, TITANIA_POST_ constants
+					'topic_type'					=> array('TINT:1', 0), // Post Type, Main TITANIA_ constants
 					'topic_access'					=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
 					'topic_category'				=> array('UINT', 0), // Category for the topic. For the Tracker
 					'topic_status'					=> array('UINT', 0), // Topic Status, use tags from the DB
@@ -357,6 +358,7 @@ $versions = array(
 					'topic_reported'		=> array('INDEX', 'topic_reported'),
 					'topic_deleted'			=> array('INDEX', 'topic_deleted'),
 					'topic_time'			=> array('INDEX', 'topic_time'),
+					'topic_last_post_time'	=> array('INDEX', 'topic_last_post_time'),
 				),
 			)),
 			array(TITANIA_TRACK_TABLE, array(

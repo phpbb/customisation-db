@@ -42,7 +42,7 @@ class posts_overlord
 	public static function sql_permissions($prefix = 'p.', $where = false)
 	{
 		$sql = ($where) ? ' WHERE' : ' AND';
-		
+
 		$sql .= " ({$prefix}post_access >= " . titania::$access_level . " OR {$prefix}post_user_id = " . phpbb::$user->data['user_id'] . ')';
 
 		if (phpbb::$auth->acl_get('titania_post_mod'))
@@ -174,7 +174,7 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		// check to see if they want to view the latest unread post
 		if (request_var('view', '') == 'unread')
 		{
-			$mark_time = titania_tracking::get_track(TITANIA_TRACK_TOPICS, $topic->topic_id);
+			$mark_time = titania_tracking::get_track(TITANIA_TOPIC, $topic->topic_id);
 
 			if ($mark_time > 0)
 			{
@@ -271,10 +271,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		phpbb::$db->sql_freeresult($result);
 
 		// Grab the tracking data
-		$last_mark_time = titania_tracking::get_track(TITANIA_TRACK_TOPICS, $topic->topic_id);
+		$last_mark_time = titania_tracking::get_track(TITANIA_TOPIC, $topic->topic_id);
 
 		// Store tracking data
-		titania_tracking::track(TITANIA_TRACK_TOPICS, $topic->topic_id, $last_post_time);
+		titania_tracking::track(TITANIA_TOPIC, $topic->topic_id, $last_post_time);
 
 		// load the user data
 		users_overlord::load($user_ids);

@@ -49,7 +49,7 @@ $change_owner = request_var('change_owner', '', true); // Blame Nathan, he said 
 $contrib_categories = array();
 
 // Setup the revisions
-$revision_attachment = new titania_attachment(TITANIA_DOWNLOAD_CONTRIB, titania::$contrib->contrib_id);
+$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 $revision_attachment->additional_fields = array(
 	'REVISION_NAME'		=> 'revision_name',
 	'REVISION_VERSION'	=> 'revision_version',

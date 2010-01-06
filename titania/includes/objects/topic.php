@@ -70,13 +70,13 @@ class titania_topic extends titania_database_object
 	 * @param object|array $contrib The contrib object or an array meeting the requirements (see comments for $contrib var above)
 	 * @param int $topic_id The topic_id, 0 for making a new topic
 	 */
-	public function __construct($type = TITANIA_POST_DEFAULT, $contrib = array(), $topic_id = 0)
+	public function __construct($type = TITANIA_SUPPORT, $contrib = array(), $topic_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
 			'topic_id'						=> array('default' => 0),
 			'contrib_id'					=> array('default' => 0),
-			'topic_type'					=> array('default' => 0), // Post Type, TITANIA_POST_ constants
+			'topic_type'					=> array('default' => 0), // Post Type, Main TITANIA_ constants
 			'topic_access'					=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
 			'topic_category'				=> array('default' => 0), // Category for the topic. For the Tracker
 
@@ -119,22 +119,17 @@ class titania_topic extends titania_database_object
 		switch ($type)
 		{
 			case 'tracker' :
-			case TITANIA_POST_TRACKER :
-				$this->topic_type = TITANIA_POST_TRACKER;
+			case TITANIA_TRACKER :
+				$this->topic_type = TITANIA_TRACKER;
 			break;
 
 			case 'queue' :
-			case TITANIA_POST_QUEUE :
-				$this->topic_type = TITANIA_POST_QUEUE;
-			break;
-
-			case 'review' :
-			case TITANIA_POST_REVIEW :
-				$this->topic_type = TITANIA_POST_REVIEW;
+			case TITANIA_QUEUE :
+				$this->topic_type = TITANIA_QUEUE;
 			break;
 
 			default :
-				$this->topic_type = TITANIA_POST_DEFAULT;
+				$this->topic_type = TITANIA_SUPPORT;
 			break;
 		}
 
@@ -251,16 +246,12 @@ class titania_topic extends titania_database_object
 
 		switch ($this->topic_type)
 		{
-			case TITANIA_POST_TRACKER :
+			case TITANIA_TRACKER :
 				$page = 'tracker';
 			break;
 
-			case TITANIA_POST_QUEUE :
+			case TITANIA_QUEUE :
 				$page = 'queue';
-			break;
-
-			case TITANIA_POST_REVIEW :
-				$page = 'review';
 			break;
 
 			default :
@@ -304,7 +295,7 @@ class titania_topic extends titania_database_object
 	public function assign_details()
 	{
 		// Check read status
-		$this->unread = titania_tracking::is_unread(TITANIA_TRACK_TOPICS, $this->topic_id, $this->topic_last_post_time);
+		$this->unread = titania_tracking::is_unread(TITANIA_TOPIC, $this->topic_id, $this->topic_last_post_time);
 
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);

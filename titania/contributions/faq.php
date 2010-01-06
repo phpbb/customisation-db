@@ -61,6 +61,7 @@ switch ($action)
 			$faq->post_data($message);
 
 			$error = $faq->validate();
+			$error = array_merge($error, $message->error);
 
 			if (($validate_form_key = $message->validate_form_key()) !== false)
 			{
@@ -74,6 +75,7 @@ switch ($action)
 			else
 			{
 				$faq->submit();
+				$message->submit($faq->faq_id);
 
 				redirect($faq->get_url());
 			}
@@ -142,7 +144,7 @@ switch ($action)
 			$faq->increase_views_counter();
 
 			// tracking
-			titania_tracking::track(TITANIA_TRACK_FAQ, $faq_id);
+			titania_tracking::track(TITANIA_FAQ, $faq_id);
 
 			phpbb::$template->assign_vars(array(
 				'FAQ_SUBJECT'		=> $faq->faq_subject,
@@ -193,14 +195,14 @@ switch ($action)
 			phpbb::$db->sql_freeresult($result);
 
 			// Grab the tracking info
-			titania_tracking::get_tracks(TITANIA_TRACK_FAQ, array_keys($faqs));
+			titania_tracking::get_tracks(TITANIA_FAQ, array_keys($faqs));
 
 			// Output
 			foreach ($faqs as $id => $row)
 			{
 				// @todo probably should setup an edit time or something for better read tracking in case it was edited
 				$folder_img = $folder_alt = '';
-				$unread = (titania_tracking::get_track(TITANIA_TRACK_FAQ, $id, true) === 0) ? true : false;
+				$unread = (titania_tracking::get_track(TITANIA_FAQ, $id, true) === 0) ? true : false;
 				titania_topic_folder_img($folder_img, $folder_alt, 0, $unread);
 
 				phpbb::$template->assign_block_vars('faqlist', array(

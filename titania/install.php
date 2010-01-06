@@ -313,7 +313,7 @@ $versions = array(
 			array(TITANIA_TOPICS_TABLE, array(
 				'COLUMNS'		=> array(
 					'topic_id'						=> array('UINT', NULL, 'auto_increment'),
-					'topic_type'					=> array('TINT:1', 0), // Post Type, TITANIA_POST_ constants
+					'topic_type'					=> array('TINT:1', 0), // Post Type, Main TITANIA_ constants
 					'topic_access'					=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
 					'topic_category'				=> array('UINT', 0), // Category for the topic. For the Tracker
 					'topic_status'					=> array('UINT', 0), // Topic Status, use tags from the DB
@@ -356,7 +356,7 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'post_id'				=> array('UINT', NULL, 'auto_increment'),
 					'topic_id'				=> array('UINT', 0),
-					'post_type'				=> array('TINT:1', 0), // Post Type, TITANIA_POST_ constants
+					'post_type'				=> array('TINT:1', 0), // Post Type, Main TITANIA_ constants
 					'post_access'			=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
 					'post_locked'			=> array('BOOL', 0),
 					'post_approved'			=> array('BOOL', 1),

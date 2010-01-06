@@ -181,9 +181,11 @@ class titania_faq extends titania_database_object
 	public function generate_text_for_edit()
 	{
 		return array_merge(generate_text_for_edit($this->faq_text, $this->faq_text_uid, $this->faq_text_options), array(
-			'options'	=> $this->faq_text_options,
-			'subject'	=> $this->faq_subject,
-			'access'	=> $this->faq_access,
+			'options'		=> $this->faq_text_options,
+			'subject'		=> $this->faq_subject,
+			'access'		=> $this->faq_access,
+			'object_type'	=> TITANIA_FAQ,
+			'object_id'		=> $this->faq_id,
 		));
 	}
 

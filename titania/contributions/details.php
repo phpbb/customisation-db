@@ -28,7 +28,7 @@ titania::$contrib->assign_details();
 
 // Set tracking
 // @todo tracking currently only handles initial creation, should work for updates to mods as well
-titania_tracking::track(TITANIA_TRACK_CONTRIB, titania::$contrib->contrib_id);
+titania_tracking::track(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 
 titania::page_header('CONTRIB_DETAILS');
 titania::page_footer(true, 'contributions/contribution_details.html');

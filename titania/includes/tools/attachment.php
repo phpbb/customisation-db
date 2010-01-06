@@ -79,7 +79,7 @@ class titania_attachment extends titania_database_object
 	/**
 	 * Constructor for attachment/download class
 	 *
-	 * @param int $object_type Attachment type (check TITANIA_DOWNLOAD_ for constants)
+	 * @param int $object_type Attachment type (check main type constants)
 	 * @param object $object_id int
 	 */
 	public function __construct($object_type, $object_id = false)
@@ -133,15 +133,17 @@ class titania_attachment extends titania_database_object
 	*
 	* @param array $attachment_ids
 	*/
-	public function load_attachments($attachment_ids)
+	public function load_attachments($attachment_ids = false)
 	{
-		if (!sizeof($attachment_ids))
+		if (!sizeof($attachment_ids) && $attachment_ids !== false)
 		{
 			return;
 		}
 
 		$sql = 'SELECT * FROM ' . $this->sql_table . '
-			WHERE ' . phpbb::$db->sql_in_set('attachment_id', $attachment_ids);
+			WHERE object_type = ' . (int) $this->object_type . '
+				AND object_id = ' . (int) $this->object_id .
+				(($attachment_ids !== false) ? ' AND ' . phpbb::$db->sql_in_set('attachment_id', $attachment_ids) : '');
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -280,6 +282,9 @@ class titania_attachment extends titania_database_object
 					$this->attachments[$this->attachment_id][$row_key] = utf8_normalize_nfc(request_var($row_key, '', true));
 				}
 			}
+
+			// We do not want to upload it again if this function is called again.
+			unset($_FILES[$this->form_name]);
 		}
 	}
 
@@ -307,6 +312,7 @@ class titania_attachment extends titania_database_object
 
 		// Update access and is_orphan
 		$sql_ary = array(
+			'object_id'			=> $this->object_id, // needed when items are attached during initial creation.
 			'attachment_access'	=> $attachment_access,
 			'is_orphan'			=> 0,
 		);

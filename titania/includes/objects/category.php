@@ -166,7 +166,10 @@ class titania_category extends titania_database_object
 	 */
 	private function generate_text_for_edit()
 	{
-		return generate_text_for_edit($this->category_desc, $this->category_desc_uid, $this->category_desc_options);
+		return array_merge(generate_text_for_edit($this->category_desc, $this->category_desc_uid, $this->category_desc_options), array(
+			'object_type'	=> TITANIA_CATEGORY,
+			'object_id'		=> $this->user_id,
+		));
 	}
 
 	/**

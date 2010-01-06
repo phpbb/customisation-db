@@ -56,11 +56,15 @@ define('TITANIA_STATUS_ATTENTION', 4);
 define('TITANIA_STATUS_APPROVE', 5); // Awaiting approve
 define('TITANIA_STATUS_DENY', 6); // Awating deny
 
-
-// Tag types
-define('TAG_TYPE_MOD_CATEGORY', 1);
-define('TAG_TYPE_COMPONENT', 2);
-define('TAG_TYPE_COMPLEXITY', 3);
+// Main TYPE constants (use whenever possible)
+define('TITANIA_CONTRIB', 1);
+define('TITANIA_FAQ', 2);
+define('TITANIA_QUEUE', 3);
+define('TITANIA_SUPPORT', 4);
+define('TITANIA_TRACKER', 5);
+define('TITANIA_TOPIC', 6);
+define('TITANIA_AUTHOR', 7);
+define('TITANIA_CATEGORY', 8);
 
 // Errorbox types
 define('TITANIA_ERROR', 1);
@@ -70,41 +74,16 @@ define('TITANIA_SUCCESS', 2);
 define('TITANIA_AUTHOR_HIDDEN', 0);
 define('TITANIA_AUTHOR_VISIBLE', 1);
 
-// Rating Type Constants
-define('TITANIA_RATING_AUTHOR', 1);
-define('TITANIA_RATING_CONTRIB', 2);
-
-// Download types
-define('TITANIA_DOWNLOAD_CONTRIB', 1);
-define('TITANIA_DOWNLOAD_SCREENSHOTS', 2);
-define('TITANIA_DOWNLOAD_FAQ', 3);
-define('TITANIA_DOWNLOAD_SUPPORT', 4);
-
 // Attachment extension groups; use the group_name stored in the phpbb extension groups table
 define('TITANIA_ATTACH_EXT_CONTRIB', 'Titania Contributions');
 define('TITANIA_ATTACH_EXT_SCREENSHOTS', 'Titania Screenshots');
 define('TITANIA_ATTACH_EXT_FAQ', 'Titania Posts: FAQ');
 define('TITANIA_ATTACH_EXT_SUPPORT', 'Titania Posts: Support');
 
-// Upload responses
-define('TITANIA_UPLOAD_RESPONSE_HTML', 1);
-define('TITANIA_UPLOAD_RESPONSE_JSON', 2);
-
-// Post types
-define('TITANIA_POST_DEFAULT', 1);
-define('TITANIA_POST_QUEUE', 2);
-define('TITANIA_POST_TRACKER', 3);
-define('TITANIA_POST_REVIEW', 4);
-
 // Access Levels
 define('TITANIA_ACCESS_TEAMS', 0);
 define('TITANIA_ACCESS_AUTHORS', 1);
 define('TITANIA_ACCESS_PUBLIC', 2);
-
-// Tracking types
-define('TITANIA_TRACK_TOPICS', 1);
-define('TITANIA_TRACK_FAQ', 2);
-define('TITANIA_TRACK_CONTRIB', 3);
 
 // Header status codes
 define('HEADER_OK',						200);

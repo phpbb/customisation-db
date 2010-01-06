@@ -235,7 +235,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'ORDER_BY'	=> 't.topic_sticky DESC, ' . $sort->get_order_by(),
 		);
 
-		titania_tracking::get_track_sql($sql_ary, TITANIA_TRACK_TOPICS, 't.topic_id');
+		titania_tracking::get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
 
 		// type specific things
 		switch ($type)
@@ -243,7 +243,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			case 'tracker' :
 				$page_url = $object->get_url('tracker');
 				$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
-				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_TRACKER;
+				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_TRACKER;
 
 				if (isset($options['category']))
 				{
@@ -253,7 +253,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			//case 'queue' :
 			//	$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
-			//	$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_QUEUE;
+			//	$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_QUEUE;
 			//break;
 
 			case 'author_support' :
@@ -261,7 +261,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
 				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', $contrib_ids);
 
-				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_DEFAULT;
+				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
 				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', titania::$cache->get_author_contribs($object->user_id));
 			break;
 
@@ -270,7 +270,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
 				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', $contrib_ids);
 
-				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_TRACKER;
+				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_TRACKER;
 				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', titania::$cache->get_author_contribs($object->user_id));
 			break;
 
@@ -278,7 +278,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			default :
 				$page_url = $object->get_url('support');
 				$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
-				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_POST_DEFAULT;
+				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
 			break;
 		}
 
@@ -298,7 +298,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			// Store the tracking info we grabbed in the tool
-			titania_tracking::store_track(TITANIA_TRACK_TOPICS, $row['topic_id'], $row['track_time']);
+			titania_tracking::store_track(TITANIA_TOPIC, $row['topic_id'], $row['track_time']);
 
 			self::$topics[$row['topic_id']] = $row;
 

@@ -221,7 +221,10 @@ class titania_author extends titania_database_object
 	 */
 	public function generate_text_for_edit()
 	{
-		return generate_text_for_edit($this->author_desc, $this->author_desc_uid, $this->author_desc_options);
+		return array_merge(generate_text_for_edit($this->author_desc, $this->author_desc_uid, $this->author_desc_options), array(
+			'object_type'	=> TITANIA_AUTHOR,
+			'object_id'		=> $this->user_id,
+		));
 	}
 
 	/**

@@ -105,7 +105,7 @@ else
 	phpbb::$db->sql_query($sql);
 
 	// Update download count for the contrib object as well
-	if ($attachment['object_type'] == TITANIA_DOWNLOAD_CONTRIB)
+	if ($attachment['object_type'] == TITANIA_CONTRIB)
 	{
 		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
 			SET contrib_downloads = contrib_downloads + 1
