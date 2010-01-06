@@ -56,11 +56,11 @@ $lang = array_merge($lang, array(
 	'CAT_STYLES'				=> 'Styles',
 	'CONFIRM_PURGE_CACHE'		=> 'Are you sure you want to purge the cache?',
 	'CONTRIB_MANAGE'			=> 'Manage Contribution',
-	'CONTRIB_REVISIONS'			=> 'Manage Contribution Revisions',
 	'CONTRIBUTION'				=> 'Contribution',
 	'CONTRIBUTIONS'				=> 'Contributions',
 	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
+	'DOWNLOAD' => 'Download',
 
 	'DELETED_MESSAGE'			=> 'Last deleted by %1$s on %2$s - <a href="%3$s">Click here to undelete this message</a>',
 	'DESCRIPTION'				=> 'Description',

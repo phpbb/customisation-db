@@ -11,43 +11,42 @@
 		</tr>
 		<tr>
 			<td align="right"><strong>{L_DOWNLOADS_TOTAL}:</strong></td>
-			<td align="left">{CONTRIB_DOWNLOADS}<!-- IF CONTRIB_DOWNLOADS_PER_DAY --> ({CONTRIB_DOWNLOADS_PER_DAY})<!-- ENDIF --></td>
+			<td align="left">{CONTRIB_DOWNLOADS}</td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_CONTRIB_UPDATE_DATE}:</strong></td>
+			<td align="left">{CONTRIB_UPDATE_DATE}</td>
 		</tr>
 		<tr>
 			<td align="right"><strong>{L_RATING}:</strong></td>
 			<td align="left">{CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})</td>
 		</tr>
-		<!-- IF DOWNLOAD_SIZE -->
+	</table>
+	<!-- IF U_DOWNLOAD -->
+	<h3>{L_DOWNLOAD}</h3>
+	<table>
+		<tr>
+			<td align="right"><strong>{L_REVISION_NAME}:</strong></td>
+			<td align="left">{DOWNLOAD_NAME}</td>
+		</tr>
+		<tr>
+			<td align="right"><strong>{L_REVISION_VERSION}:</strong></td>
+			<td align="left">{DOWNLOAD_VERSION}</td>
+		</tr>
 		<tr>
 			<td align="right"><strong>{L_FILESIZE}:</strong></td>
 			<td align="left">{DOWNLOAD_SIZE}</td>
 		</tr>
-		<!-- ENDIF -->
-		<!-- IF DOWNLOAD_CHECKSUM -->
 		<tr>
 			<td align="right"><strong>{L_DOWNLOAD_CHECKSUM}:</strong></td>
 			<td align="left">{DOWNLOAD_CHECKSUM}</td>
 		</tr>
-		<!-- ENDIF -->
-		<!-- IF U_DOWNLOAD -->
 		<tr>
 			<td align="right"><strong>{L_DOWNLOAD}:</strong></td>
 			<td align="left"><a href="{U_DOWNLOAD}">{L_DOWNLOAD}</a></td>
 		</tr>
-		<!-- ENDIF -->
-		<!-- IF CONTRIB_RELEASE_DATE -->
-		<tr>
-			<td align="right"><strong>{L_CONTRIB_RELEASE_DATE}:</strong></td>
-			<td align="left">{CONTRIB_RELEASE_DATE}</td>
-		</tr>
-		<!-- ENDIF -->
-		<!-- IF CONTRIB_UPDATE_DATE -->
-		<tr>
-			<td align="right"><strong>{L_CONTRIB_UPDATE_DATE}:</strong></td>
-			<td align="left">{CONTRIB_UPDATE_DATE}</td>
-		</tr>
-		<!-- ENDIF -->
 	</table>
+	<!-- ENDIF -->
 </div>
 
 <div class="column2">
@@ -62,6 +61,17 @@
 			<td align="left"><a href="{U_AUTHOR_CONTRIBUTIONS}">{L_LIST}</a></td>
 		</tr>
 	</table>
+	<!-- IF .revisions -->
+	<h3>{L_REVISIONS}</h3>
+	<table>
+	<!-- BEGIN revisions -->
+		<tr>
+			<td align="right"><strong>{revisions.NAME}:</strong></td>
+			<td align="left">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --></td>
+		</tr>
+	<!-- END revisions -->
+	</table>
+	<!-- ENDIF -->
 </div>
 
 <div class="clear"></div>

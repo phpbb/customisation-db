@@ -92,6 +92,7 @@ class titania_attachment extends titania_database_object
 			'object_id'				=> array('default' => 0),
 
 			'physical_filename'		=> array('default' => '',	'max' => 255),
+			'attachment_directory'	=> array('default' => '',	'max' => 255),
 			'real_filename'			=> array('default' => '',	'max' => 255),
 			'attachment_comment'	=> array('default' => ''),
 
@@ -246,7 +247,7 @@ class titania_attachment extends titania_database_object
 			$this->uploader = new titania_uploader($this->form_name, $ext_group);
 
 			// Try uploading the file.
-			$this->uploader->upload_file($ext_group);
+			$this->uploader->upload_file();
 
 			// Store for easier access
 			$this->error = $this->uploader->filedata['error'];
@@ -256,6 +257,7 @@ class titania_attachment extends titania_database_object
 			{
 				$this->__set_array(array(
 					'physical_filename'		=> $this->uploader->filedata['physical_filename'],
+					'attachment_directory'	=> $this->uploader->filedata['attachment_directory'],
 					'real_filename'			=> $this->uploader->filedata['real_filename'],
 					'extension'				=> $this->uploader->filedata['extension'],
 					'mimetype'				=> $this->uploader->filedata['mimetype'],

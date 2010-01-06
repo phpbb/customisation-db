@@ -38,6 +38,9 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'REVISION'					=> 'Revision',
 	'REVISIONS'					=> 'Revisions',
+	'REVISION_NAME' => 'Revision Name',
+	'REVISION_VERSION' => 'Revision Version',
+	'NOT_VALIDATED'	=> 'Not Validated',
 
 	'CANNOT_ADD_SELF_COAUTHOR'			=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CONTRIB'							=> 'Contribution',

@@ -33,7 +33,7 @@ class titania_revision extends titania_database_object
 	 *
 	 * @var object
 	 */
-	public $attachment = '';
+	public $attachment			= '';
 
 	/**
 	 * SQL Table
@@ -67,19 +67,18 @@ class titania_revision extends titania_database_object
 		$this->revision_id = $revision_id;
 	}
 
-	/**
-	 *
-	 */
-	public function display()
+	public function display($tpl_block = 'revisions')
 	{
-		phpbb::$template->assign_block_vars('revisions', array(
+		phpbb::$template->assign_block_vars($tpl_block, array(
 			'REVISION_ID'		=> $this->revision_id,
 			'CREATED'			=> phpbb::$user->format_date($this->revision_time),
 			'NAME'				=> censor_text($this->revision_name),
 			'VERSION'			=> $this->revision_version,
 			'VALIDATED_DATE'	=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
 
-			'S_VALIDATED'		=> $this->revision_validated,
+			'U_DOWNLOAD'		=> $this->get_url(),
+
+			'S_VALIDATED'		=> (!$this->revision_validated && titania::$config->use_queue) ? false : true,
 		));
 	}
 

@@ -21,7 +21,6 @@ if (!function_exists('generate_type_select') || !function_exists('generate_categ
 	require TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT;
 }
 
-titania::add_lang('revisions');
 load_contrib();
 
 if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('titania_contrib_mod'))

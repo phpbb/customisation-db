@@ -57,9 +57,10 @@ class titania_contribution extends titania_database_object
 	public $coauthors = array();
 
 	/**
-	* Revisions array
+	* Revisions, download array
 	*/
 	public $revisions = array();
+	public $download = array();
 
 	/**
 	 * Rating of this contribution
@@ -356,13 +357,28 @@ class titania_contribution extends titania_database_object
 		}
 
 		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
-			WHERE contrib_id = ' . $this->contrib_id . '
+			WHERE contrib_id = ' . $this->contrib_id .
+			((titania::$config->require_validation && !titania::$access_level == TITANIA_ACCESS_TEAMS) ? ' AND revision_validated = 1 ' : '') . '
 			ORDER BY revision_id DESC';
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$this->revisions[$row['revision_id']] = $row;
 		}
+		phpbb::$db->sql_freeresult($result);
+	}
+
+	/**
+	* Get the latest revision (to download)
+	*/
+	public function get_download()
+	{
+		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_ATTACHMENTS_TABLE . ' a
+			WHERE a.attachment_id = r.attachment_id ' .
+			((titania::$config->require_validation) ? ' AND r.revision_validated = 1 ' : '') . '
+			ORDER BY r.revision_id';
+		$result = phpbb::$db->sql_query_limit($sql, 1);
+		$this->download = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 	}
 
@@ -403,35 +419,6 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 * Get downloads per day
-	 *
-	 * @return string
-	 *
-	 * @todo Get the oldest revision_id to display this?
-	 */
-	public function get_downloads_per_day()
-	{
-		return 0;
-
-		// Cannot calculate anything without release date
-		// No point in showing this if there were no downloads
-		if (!$this->contrib_release_date || !$this->contrib_downloads)
-		{
-			return '';
-		}
-
-		$time_elapsed = titania::$time - $this->contrib_release_date;
-
-		// The release was just today, show nothing.
-		if ($time_elapsed <= 86400)
-		{
-			return '';
-		}
-
-		return sprintf(phpbb::$user->lang['DOWNLOADS_PER_DAY'], $this->contrib_downloads / ($time_elapsed / 86400));
-	}
-
-	/**
 	* Immediately increases the view counter for this contribution
 	*
 	* @return void
@@ -456,20 +443,25 @@ class titania_contribution extends titania_database_object
 		// Get the rating object
 		$this->get_rating();
 
-		// Get revisions
-		$this->get_revisions();
-
 		phpbb::$template->assign_vars(array(
 			// Contribution data
 			'CONTRIB_NAME'					=> $this->contrib_name,
 			'CONTRIB_DESC'					=> $this->generate_text_for_display(),
-
 			'CONTRIB_VIEWS'					=> $this->contrib_views,
-			'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
+			'CONTRIB_UPDATE_DATE'			=> phpbb::$user->format_date($this->contrib_last_update),
 
 			'CONTRIB_RATING'				=> $this->contrib_rating,
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
 			'CONTRIB_RATING_STRING'			=> $this->rating->get_rating_string(),
+
+			// Download data
+			'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
+			'DOWNLOAD_SIZE'					=> (isset($this->download['filesize'])) ? $this->download['filesize'] : '',
+			'DOWNLOAD_CHECKSUM'				=> (isset($this->download['hash'])) ? $this->download['hash'] : '',
+			'DOWNLOAD_NAME'					=> (isset($this->download['revision_name'])) ? censor_text($this->download['revision_name']) : '',
+			'DOWNLOAD_VERSION'				=> (isset($this->download['revision_version'])) ? censor_text($this->download['revision_version']) : '',
+
+			'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
 		));
 
 		// Display real author
@@ -485,15 +477,17 @@ class titania_contribution extends titania_database_object
 		}
 
 		// Display Revisions
-		foreach ($this->revisions as $revision_id => $revision)
+		if (sizeof($this->revisions))
 		{
-			phpbb::$template->assign_block_vars('revisions', array(
-				'REVISION_NAME'		=> censor_text($revision['revision_name']),
-				'REVISION_TIME'		=> phpbb::$user->format_date($revision['revision_time']),
-
-				'S_VALIDATED'		=> ($revision['revision_validated']) ? true : false,
-			));
+			$revision = new titania_revision();
+			foreach ($this->revisions as $revision_id => $row)
+			{
+				$revision->__set_array($row);
+				$revision->display();
+			}
+			unset($revision);
 		}
+
 
 		if (!phpbb::$user->data['is_bot'])
 		{

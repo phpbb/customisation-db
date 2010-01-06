@@ -52,7 +52,7 @@ if (!$attachment)
 	trigger_error('ERROR_NO_ATTACHMENT');
 }
 
-$attachment['physical_filename'] = utf8_basename($attachment['physical_filename']);
+$attachment['physical_filename'] = utf8_basename($attachment['attachment_directory']) . '/' . utf8_basename($attachment['physical_filename']);
 
 if ($attachment['is_orphan'])
 {
@@ -101,18 +101,27 @@ else
 	// Update download count
 	$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
 		SET download_count = download_count + 1
-		WHERE attachment_id = ' . $attachment['attach_id'];
+		WHERE attachment_id = ' . $attachment['attachment_id'];
 	phpbb::$db->sql_query($sql);
+
+	// Update download count for the contrib object as well
+	if ($attachment['object_type'] == TITANIA_DOWNLOAD_CONTRIB)
+	{
+		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+			SET contrib_downloads = contrib_downloads + 1
+			WHERE contrib_id = ' . $attachment['object_id'];
+		phpbb::$db->sql_query($sql);
+	}
 }
 
 if ($mode === 'view' && (strpos($attachment['mimetype'], 'image') === 0) && ((strpos(strtolower(phpbb::$user->browser), 'msie') !== false) && (strpos(strtolower(phpbb::$user->browser), 'msie 8.0') === false)))
 {
-	wrap_img_in_html(titania_url::build_url('download', array('id' => $attachment['attach_id'])), $attachment['real_filename']);
+	wrap_img_in_html(titania_url::build_url('download', array('id' => $attachment['attachment_id'])), $attachment['real_filename']);
 	file_gc();
 }
 else
 {
-	send_file_to_browser($attachment, titania::$config['upload_path']);
+	send_file_to_browser($attachment, titania::$config->upload_path);
 	file_gc();
 }
 

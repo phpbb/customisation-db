@@ -57,7 +57,7 @@ class titania_uploader extends fileupload
 	 *
 	 * @return array filedata
 	 */
-	public function upload_file($move_dir = '')
+	public function upload_file()
 	{
 		$this->filedata = array(
 			'error'			=> array(),
@@ -92,7 +92,7 @@ class titania_uploader extends fileupload
 		$file->clean_filename('unique', phpbb::$user->data['user_id'] . '_');
 
 		// Move files into their own directory depending on the extension group assigned.  Should keep at least some of it organized.
-		$move_dir = preg_replace('#[^a-z0-9_/]#', '', str_replace(' ', '_', utf8_strtolower($this->ext_group))) . '/';
+		$move_dir = preg_replace('#[^a-z0-9_/]#', '', str_replace(' ', '_', utf8_strtolower($this->ext_group)));
 
 		if (!file_exists(titania::$config->upload_path . $move_dir))
 		{
@@ -114,7 +114,8 @@ class titania_uploader extends fileupload
 		$this->filedata['filesize'] = $file->get('filesize');
 		$this->filedata['mimetype'] = $file->get('mimetype');
 		$this->filedata['extension'] = $file->get('extension');
-		$this->filedata['physical_filename'] = $move_dir . $file->get('realname');
+		$this->filedata['physical_filename'] = $file->get('realname');
+		$this->filedata['attachment_directory'] = $move_dir;
 		$this->filedata['real_filename'] = $file->get('uploadname');
 		$this->filedata['filetime'] = time();
 		$this->filedata['md5_checksum'] = md5_file($file->get('destination_file'));

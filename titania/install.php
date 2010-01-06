@@ -589,6 +589,12 @@ $versions = array(
 		),
 	),
 
+	'0.1.25' => array(
+		'table_column_add' => array(
+			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_directory', array('VCHAR', '')),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
