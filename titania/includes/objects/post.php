@@ -175,14 +175,14 @@ class titania_post extends titania_database_object
 		$post_data = $message->request_data();
 
 		$this->__set_array(array(
-			'post_subject'		=> $post_data['subject'],
-			'post_text'			=> $post_data['message'],
-			'post_access'		=> $post_data['access'],
-			'post_locked'		=> $post_data['lock'],
+			'post_subject'			=> $post_data['subject'],
+			'post_text'				=> $post_data['message'],
+			'post_access'			=> $post_data['access'],
+			'post_locked'			=> $post_data['lock'],
 		));
 		$this->topic->__set_array(array(
-			'topic_sticky'		=> ($message->auth['sticky_topic']) ? $post_data['sticky_topic'] : $this->topic->topic_sticky,
-			'topic_locked'		=> ($message->auth['lock_topic']) ? $post_data['lock_topic'] : $this->topic->topic_locked,
+			'topic_sticky'			=> ($message->auth['sticky_topic']) ? $post_data['sticky_topic'] : $this->topic->topic_sticky,
+			'topic_locked'			=> ($message->auth['lock_topic']) ? $post_data['lock_topic'] : $this->topic->topic_locked,
 		));
 
 		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);

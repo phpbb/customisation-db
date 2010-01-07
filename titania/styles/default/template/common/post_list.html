@@ -50,6 +50,15 @@
 
 			<div class="content">{posts.POST_TEXT}</div>
 
+			<!-- IF .posts.attachment -->
+				<dl class="attachbox">
+					<dt>{L_ATTACHMENTS}</dt>
+					<!-- BEGIN attachment -->
+						<dd>{posts.attachment.DISPLAY_ATTACHMENT}</dd>
+					<!-- END attachment -->
+				</dl>
+			<!-- ENDIF -->
+
 			<!-- IF posts.EDITED_MESSAGE or posts.DELETED_MESSAGE -->
 				<div class="notice">
 					{posts.EDITED_MESSAGE}<!-- IF posts.EDITED_MESSAGE and posts.DELETED_MESSAGE --><br /><!-- ENDIF -->{posts.DELETED_MESSAGE}

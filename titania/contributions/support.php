@@ -102,10 +102,12 @@ switch ($action)
 			'lock'			=> ($action == 'edit' && $post->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('titania_post_mod')) ? true : false,
 			'sticky_topic'	=> (($action == 'post' || ($action == 'edit' && $post_id == $post->topic->topic_first_post_id)) && (phpbb::$auth->acl_get('titania_post_mod') || titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
 			'lock_topic'	=> (phpbb::$auth->acl_get('titania_post_mod') || (phpbb::$auth->acl_get('titania_post_mod_own') && $post->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
+			'attachments'	=> phpbb::$auth->acl_get('titania_post_attach'),
 		));
 		$message->set_settings(array(
 			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
 			'subject_default_override'	=> ($action == 'reply') ? 'Re: ' . $topic->topic_subject : false,
+			'attachments_group'			=> TITANIA_ATTACH_EXT_SUPPORT,
 		));
 
 		if ($preview)
@@ -138,6 +140,8 @@ switch ($action)
 			else
 			{
 				$post->submit();
+
+				$message->submit($post->post_access);
 
 				redirect($post->get_url());
 			}

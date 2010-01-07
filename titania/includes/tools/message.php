@@ -43,6 +43,13 @@ class titania_message
 	public $error = array();
 
 	/**
+	* Attachment object
+	*
+	* @var mixed
+	*/
+	public $attachments;
+
+	/**
 	 * Permissions, set with set_auth() function
 	 */
 	public $auth = array(
@@ -67,7 +74,7 @@ class titania_message
 		'display_edit_reason'	=> false, // Display the edit reason field or not
 		'display_captcha'		=> false, // Display the captcha or not
 		'attachments_group'		=> 0, // The attachment extensions group to allow
-		'attachments_tpl'		=> 'posting/attachments/default.html', // Attachments template to use for output
+		'attachment_tpl'		=> 'posting/attachments/default.html', // Attachments template to use for output
 
 		'subject_default_override'	=> false, // Force over-ride the subject with one you specify, false to use the one gotten from the post object
 		'text_default_override'		=> false, // Force over-ride the text with one you specify, false to use the one gotten from the post object
@@ -128,7 +135,7 @@ class titania_message
 		$post_options->set_status($for_edit['allow_bbcode'], $for_edit['allow_smilies'], $for_edit['allow_urls']);
 
 		// Setup the attachments!
-		$attachments = $this->setup_attachments();
+		$this->setup_attachments();
 
 		if ($this->auth['polls'])
 		{
@@ -184,13 +191,13 @@ class titania_message
 			'POSTING_TEXT_NAME'			=> $this->settings['text_name'],
 			'POSTING_SUBJECT_NAME'		=> $this->settings['subject_name'],
 
-			'POSTING_PANELS_DEFAULT'	=> 'options-panel',
+			'POSTING_PANELS_DEFAULT'	=> ($this->attachments !== false && $this->attachments->uploaded) ? 'attach-panel' : 'options-panel',
 
 			'POSTING_TEXT'				=> ($this->settings['text_default_override'] !== false) ? $this->settings['text_default_override'] : $for_edit['text'],
 
 			'SUBJECT'					=> ($this->settings['subject_default_override'] !== false) ? $this->settings['subject_default_override'] : ((isset($for_edit['subject'])) ? $for_edit['subject'] : ''),
 
-			'UPLOADER'					=> ($attachments !== false) ? $attachments->parse_uploader($this->settings['attachment_tpl']) : '',
+			'UPLOADER'					=> ($this->attachments !== false) ? $this->attachments->parse_uploader($this->settings['attachment_tpl']) : '',
 
 			'S_DISPLAY_ERROR'			=> $this->settings['display_error'],
 			'S_DISPLAY_SUBJECT'			=> $this->settings['display_subject'],
@@ -201,7 +208,7 @@ class titania_message
 			'S_LOCK_POST_ALLOWED'		=> $this->auth['lock'],
 			'S_LOCK_POST_CHECKED'		=> (isset($for_edit['locked'])) ? $for_edit['locked'] : false,
 			'S_EDIT_REASON'				=> $this->settings['display_edit_reason'],
-			'S_FORM_ENCTYPE'			=> ($attachments !== false) ? ' enctype="multipart/form-data"' : '',
+			'S_FORM_ENCTYPE'			=> ($this->attachments !== false) ? ' enctype="multipart/form-data"' : '',
 			'S_HIDDEN_FIELDS'			=> build_hidden_fields($this->s_hidden_fields),
 		));
 
@@ -214,7 +221,7 @@ class titania_message
 	public function preview()
 	{
 		// Setup the attachments!
-		$attachments = $this->setup_attachments();
+		$this->setup_attachments();
 
 		$for_edit = $this->post_object->generate_text_for_edit(); // Use the info from the post object instead of request_data
 
@@ -236,7 +243,7 @@ class titania_message
 	public function request_data()
 	{
 		// Setup the attachments!
-		$attachments = $this->setup_attachments();
+		$this->setup_attachments();
 
 		// Initialize our post options class
 		$post_options = new post_options();
@@ -252,7 +259,7 @@ class titania_message
 			'options'			=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
 			'access'			=> request_var('message_access', TITANIA_ACCESS_PUBLIC),
 			'lock'				=> ($this->auth['lock'] && isset($_POST['lock'])) ? true : false,
-			'has_attachments'	=> ($attachments !== false && sizeof($attachments->get_attachments())) ? true : false,
+			'has_attachments'	=> ($this->attachments !== false && sizeof($this->attachments->get_attachments())) ? true : false,
 
 			'bbcode_enabled'	=> !$bbcode_disabled,
 			'smilies_enabled'	=> !$smilies_disabled,
@@ -271,11 +278,12 @@ class titania_message
 		$for_edit = $this->post_object->generate_text_for_edit();
 
 		// Setup the attachments!
-		$attachments = $this->setup_attachments();
+		$this->setup_attachments();
 
-		if ($attachments !== false)
+		if ($this->attachments !== false)
 		{
-			$attachments->submit($for_edit['access']);
+			$this->attachments->object_id = $for_edit['object_id'];
+			$this->attachments->submit($for_edit['access']);
 		}
 	}
 
@@ -335,21 +343,23 @@ class titania_message
 	*/
 	private function setup_attachments()
 	{
-		$for_edit = $this->post_object->generate_text_for_edit();
+		// We set it up already...
+		if (is_object($this->attachments))
+		{
+			return;
+		}
 
-		$attachments = false;
+		$for_edit = $this->post_object->generate_text_for_edit();
 		if ($this->auth['attachments'] && isset($for_edit['object_type']) && $this->settings['attachments_group'])
 		{
 			$this->posting_panels['attach-panel'] = 'ATTACH';
 
-			$attachments = new titania_attachment($for_edit['object_type'], $for_edit['object_id']);
-			$attachments->load_attachments();
-			$attachments->upload($this->settings['attachments_group']);
-			$this->error = array_merge($this->error, $attachments->error);
-			$attachments->error = array(); // Empty the error array to prevent showing duplicates
+			$this->attachments = new titania_attachment($for_edit['object_type'], $for_edit['object_id']);
+			$this->attachments->load_attachments();
+			$this->attachments->upload($this->settings['attachments_group']);
+			$this->error = array_merge($this->error, $this->attachments->error);
+			$this->attachments->error = array(); // Empty the error array to prevent showing duplicates
 		}
-
-		return $attachments;
 	}
 }
 

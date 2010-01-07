@@ -77,6 +77,13 @@ class titania_attachment extends titania_database_object
 	public $error				= array();
 
 	/**
+	* Did we upload a file?
+	*
+	* @param bool True if we did False if not
+	*/
+	public $uploaded = false;
+
+	/**
 	 * Constructor for attachment/download class
 	 *
 	 * @param int $object_type Attachment type (check main type constants)
@@ -285,6 +292,8 @@ class titania_attachment extends titania_database_object
 
 			// We do not want to upload it again if this function is called again.
 			unset($_FILES[$this->form_name]);
+
+			$this->uploaded = true;
 		}
 	}
 
@@ -297,6 +306,11 @@ class titania_attachment extends titania_database_object
 	*/
 	public function submit($attachment_access)
 	{
+		if (!sizeof($this->attachments))
+		{
+			return;
+		}
+
 		// Update the attachment comments if necessary
 		foreach ($this->attachments as $attachment_id => $row)
 		{

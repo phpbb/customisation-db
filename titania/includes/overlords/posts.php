@@ -261,12 +261,24 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			self::$posts[$row['post_id']] = $row;
+			self::$posts[$row['post_id']]['attachments'] = array();
 
 			$post_ids[] = $row['post_id'];
 			$user_ids[] = $row['post_user_id'];
 			$user_ids[] = $row['post_edit_user'];
 
 			$last_post_time = $row['post_time']; // to set tracking
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Grab any attachments
+		$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+			WHERE object_type = ' . (int) $topic->topic_type . '
+				AND ' . phpbb::$db->sql_in_set('object_id', $post_ids);
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			self::$posts[$row['object_id']]['attachments'][] = $row;
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -297,6 +309,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	//S_IGNORE_POST
 	//POST_ICON_IMG
 	//MINI_POST_IMG
+
+			foreach (self::$posts[$post_id]['attachments'] as $attachment)
+			{
+				$template->assign_block_vars('posts.attachment', array(
+					'DISPLAY_ATTACHMENT'	=> $attachment,
+				));
+			}
 
 			$prev_post_time = $post->post_time;
 		}

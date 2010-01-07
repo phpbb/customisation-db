@@ -21,6 +21,7 @@ titania::add_lang('faq');
 $faq_id		= request_var('f', 0);
 $action 	= request_var('action', '');
 $submit		= isset($_POST['submit']) ? true : false;
+$preview	= isset($_POST['preview']) ? true : false;
 
 // Setup faq object
 $faq = new titania_faq($faq_id);
@@ -52,11 +53,21 @@ switch ($action)
 		// Load the message object
 		$message = new titania_message($faq);
 		$message->set_auth(array(
-			'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
-			'smilies'	=> phpbb::$auth->acl_get('titania_smilies'),
+			'bbcode'		=> phpbb::$auth->acl_get('titania_bbcode'),
+			'smilies'		=> phpbb::$auth->acl_get('titania_smilies'),
+			'attachments'	=> true,
+		));
+		$message->set_settings(array(
+			'attachments_group'		=> TITANIA_ATTACH_EXT_FAQ,
 		));
 
-		if ($submit)
+		if ($preview)
+		{
+			$faq->post_data($message);
+
+			$message->preview();
+		}
+		else if ($submit)
 		{
 			$faq->post_data($message);
 

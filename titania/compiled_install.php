@@ -42,7 +42,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.25'	=> array(
+	'0.1.26'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -405,13 +405,14 @@ $versions = array(
 			'titania_post_delete_own',	// Can delete own posts
 			'titania_post_mod_own',		// Can moderate own topics
 			'titania_post_mod',			// Can moderate topics
+			'titania_post_attach',		// Can attach files to posts
 		),
 
 		'permission_set' => array(
 			array('ROLE_ADMIN_FULL', array('titania_rate_reset', 'titania_faq_mod', 'titania_post_mod', 'titania_author_mod', 'titania_contrib_mod')),
 			array('ROLE_MOD_FULL', array('titania_rate_reset', 'titania_faq_mod', 'titania_post', 'titania_post_edit_own', 'titania_post_delete_own', 'titania_post_mod_own')),
-			array('ROLE_USER_FULL', array('titania_rate', 'titania_post', 'titania_post_edit_own', 'titania_contrib_submit', 'titania_topic', 'titania_bbcode', 'titania_smilies')),
-			array('ROLE_USER_STANDARD', array('titania_rate', 'titania_post', 'titania_post_edit_own', 'titania_contrib_submit', 'titania_topic', 'titania_bbcode', 'titania_smilies')),
+			array('ROLE_USER_FULL', array('titania_rate', 'titania_post', 'titania_post_edit_own', 'titania_contrib_submit', 'titania_topic', 'titania_bbcode', 'titania_smilies', 'titania_post_attach')),
+			array('ROLE_USER_STANDARD', array('titania_rate', 'titania_post', 'titania_post_edit_own', 'titania_contrib_submit', 'titania_topic', 'titania_bbcode', 'titania_smilies', 'titania_post_attach')),
 		),
 
 		'custom' => array('titania_data', 'titania_ext_groups'),

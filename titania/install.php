@@ -595,6 +595,17 @@ $versions = array(
 		),
 	),
 
+	'0.1.26' => array(
+		'permission_add' => array(
+			'titania_post_attach',
+		),
+
+		'permission_set' => array(
+			array('ROLE_USER_FULL', array('titania_post_attach')),
+			array('ROLE_USER_STANDARD', array('titania_post_attach')),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
