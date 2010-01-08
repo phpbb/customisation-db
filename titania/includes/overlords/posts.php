@@ -292,6 +292,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		users_overlord::load($user_ids);
 
 		$post = new titania_post($topic->topic_type, $topic);
+		$attachments = new titania_attachment(false, false);
 
 		// Loop de loop
 		$prev_post_time = 0;
@@ -299,20 +300,26 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		{
 			$post->__set_array(self::$posts[$post_id]);
 
+			$attachments->clear_attachments();
+			$attachments->store_attachments(self::$posts[$post_id]['attachments']);
+
+			// Parse attachments before outputting the message
+			$parsed_attachments = $attachments->parse_attachments($post->post_text);
+
 			phpbb::$template->assign_block_vars('posts', array_merge(
 				$post->assign_details(),
 				users_overlord::assign_details($post->post_user_id),
 				array(
-					'S_FIRST_UNREAD'	=> ($post->post_time >= $last_mark_time && $prev_post_time < $last_mark_time) ? true : false,
+					'S_FIRST_UNREAD'		=> ($post->post_time >= $last_mark_time && $prev_post_time < $last_mark_time) ? true : false,
 				)
 			));
 	//S_IGNORE_POST
 	//POST_ICON_IMG
 	//MINI_POST_IMG
 
-			foreach (self::$posts[$post_id]['attachments'] as $attachment)
+			foreach ($parsed_attachments as $attachment)
 			{
-				$template->assign_block_vars('posts.attachment', array(
+				phpbb::$template->assign_block_vars('posts.attachment', array(
 					'DISPLAY_ATTACHMENT'	=> $attachment,
 				));
 			}
@@ -320,7 +327,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$prev_post_time = $post->post_time;
 		}
 
-		unset($post);
+		unset($post, $attachments);
 	}
 
 	public static function assign_common()

@@ -75,15 +75,28 @@
 		<!-- ENDIF -->
 	</div>
 <!-- ELSEIF S_DETAILS -->
-	<div class="faq-item" id="f{S_ROW_COUNT}">
-		{FAQ_SUBJECT}
-	</div>
+	<div id="p{posts.POST_ID}" class="post bg1">
+		<div class="inner"><span class="corners-top"><span></span></span>
 
-	<div class="faq-body">
-		{FAQ_TEXT}
-	</div>
+		<div class="postbody">
+			<h3>{FAQ_SUBJECT}</h3>
 
-	<p>{L_VIEWS}: {FAQ_VIEWS}</p>
+			<div class="content">{FAQ_TEXT}</div>
+
+			<!-- IF .attachment -->
+				<dl class="attachbox">
+					<dt>{L_ATTACHMENTS}</dt>
+					<!-- BEGIN attachment -->
+						<dd>{attachment.DISPLAY_ATTACHMENT}</dd>
+					<!-- END attachment -->
+				</dl>
+			<!-- ENDIF -->
+		</div>
+
+		<div class="back2top"><a href="#wrap" class="top" title="{L_BACK_TO_TOP}">{L_BACK_TO_TOP}</a></div>
+
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
 <!-- ELSEIF S_EDIT -->
 	<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
 		<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->

@@ -157,6 +157,11 @@ switch ($action)
 			// tracking
 			titania_tracking::track(TITANIA_FAQ, $faq_id);
 
+			// Grab attachments
+			$attachments = new titania_attachment(TITANIA_FAQ, $faq->faq_id);
+			$attachments->load_attachments();
+			$parsed_attachments = $attachments->parse_attachments($faq->faq_text);
+
 			phpbb::$template->assign_vars(array(
 				'FAQ_SUBJECT'		=> $faq->faq_subject,
 				'FAQ_TEXT'			=> $faq->generate_text_for_display(),
@@ -166,6 +171,13 @@ switch ($action)
 
 				'U_EDIT_FAQ'		=> (titania::$contrib->is_author || phpbb::$auth->acl_get('titania_faq_edit')) ? $faq->get_url('edit') : false,
 			));
+
+			foreach ($parsed_attachments as $attachment)
+			{
+				phpbb::$template->assign_block_vars('attachment', array(
+					'DISPLAY_ATTACHMENT'	=> $attachment,
+				));
+			}
 		}
 		else
 		{
