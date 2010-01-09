@@ -37,6 +37,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 'MANAGE' => 'Manage',
+'NO_AUTH' => 'You are not authorized to see this page.',
 	'AUTHOR_BY'					=> 'By %s',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
