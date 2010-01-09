@@ -150,7 +150,9 @@ class titania_tracking
 
 		$sql_ary['LEFT_JOIN'][] = array(
 			'FROM'	=> array(TITANIA_TRACK_TABLE => $prefix),
-			'ON'	=> "{$prefix}.track_type = $type AND {$prefix}.track_id = $id_field",
+			'ON'	=> "{$prefix}.track_type = $type
+				AND {$prefix}.track_id = $id_field
+				AND {$prefix}.track_user_id = " . phpbb::$user->data['user_id'],
 		);
 
 		$sql_ary['SELECT'] .= ", {$prefix}.track_time";

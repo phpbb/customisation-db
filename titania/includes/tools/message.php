@@ -47,7 +47,7 @@ class titania_message
 	*
 	* @var mixed
 	*/
-	public $attachments;
+	public $attachments = false;
 
 	/**
 	 * Permissions, set with set_auth() function

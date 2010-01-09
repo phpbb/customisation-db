@@ -99,7 +99,14 @@ class titania_revision extends titania_database_object
 		// Put in the queue
 		if (titania::$config->use_queue)
 		{
-
+			titania::add_lang('manage');
+			$post = new titania_post(TITANIA_QUEUE);
+			$post->__set_array(array(
+				'post_subject'			=> $this->revision_name . ' - ' . $this->revision_version,
+				'post_text'				=> sprintf(phpbb::$user->lang['VALIDATION_POST'], $this->get_url()),
+				'post_access'			=> TITANIA_ACCESS_AUTHORS,
+			));
+			$post->submit();
 		}
 
 		parent::submit();

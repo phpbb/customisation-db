@@ -54,12 +54,17 @@ $revision_attachment->additional_fields = array(
 	'REVISION_NAME'		=> 'revision_name',
 	'REVISION_VERSION'	=> 'revision_version',
 );
-$attachment_ids = array();
-foreach (titania::$contrib->revisions as $row)
+// Need to load revisions differently, can not use the load_attachments function (yes, revisions are loaded already, but this is easier)
+$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . ' a, ' . TITANIA_REVISIONS_TABLE . ' r
+	WHERE object_type = ' . TITANIA_CONTRIB . '
+		AND object_id = ' . titania::$contrib->contrib_id;
+$result = phpbb::$db->sql_query($sql);
+$rowset = phpbb::$db->sql_fetchrowset($result);
+if ($rowset)
 {
-	$attachment_ids[] = $row['attachment_id'];
+	$revision_attachment->store_attachments($rowset);
 }
-$revision_attachment->load_attachments($attachment_ids);
+phpbb::$db->sql_freeresult($result);
 
 // Upload files if sent
 $revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);

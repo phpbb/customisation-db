@@ -230,9 +230,12 @@ class titania_topic extends titania_database_object
 	}
 
 	/**
-	* Get the URL to this topic
-	*/
-	public function get_url($action = false)
+	 * Get the URL to this topic
+	 *
+	 * @param string|bool $action The topic action if any
+	 * @param string|bool $base_url Use your own base url instead of the one from the contribution
+	 */
+	public function get_url($action = false, $base_url = false)
 	{
 		$append = array(
 			$this->topic_subject_clean,
@@ -251,7 +254,7 @@ class titania_topic extends titania_database_object
 			break;
 
 			case TITANIA_QUEUE :
-				$page = 'queue';
+				// Do nothing, we use a different URL completely
 			break;
 
 			default :
@@ -259,7 +262,11 @@ class titania_topic extends titania_database_object
 			break;
 		}
 
-		if (is_object($this->contrib))
+		if ($base_url !== false)
+		{
+			$url = $base_url;
+		}
+		else if (is_object($this->contrib))
 		{
 			$url = $this->contrib->get_url($page);
 		}

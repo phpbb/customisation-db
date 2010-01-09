@@ -48,6 +48,7 @@ switch ($page)
 function load_contrib($contrib_id = false)
 {
 	$contrib = request_var('c', '');
+	$type = request_var('type', '');
 
 	// Load the contribution
 	titania::$contrib = new titania_contribution();
@@ -58,11 +59,10 @@ function load_contrib($contrib_id = false)
 	}
 
 	// Make sure the contrib requested is the same as the contrib loaded
-	if ($contrib_id !== false && $contrib_id != titania::$contrib->contrib_id)
+	if (($contrib_id !== false && $contrib_id != titania::$contrib->contrib_id) || $type != titania_types::$types[titania::$contrib->contrib_type]->url)
 	{
-		// Mismatch
-		// @todo redirect them to the new page
-		trigger_error('CONTRIB_NOT_FOUND');
+		// Mismatch, redirect
+		redirect(titania::$contrib->get_url(basename(request_var('page', 'details'))));
 	}
 
 	// Put the author in titania::$author

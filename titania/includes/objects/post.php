@@ -32,28 +32,28 @@ class titania_post extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table			= TITANIA_POSTS_TABLE;
+	protected $sql_table = TITANIA_POSTS_TABLE;
 
 	/**
 	 * SQL identifier field
 	 *
 	 * @var string
 	 */
-	protected $sql_id_field			= 'post_id';
+	protected $sql_id_field = 'post_id';
 
 	/**
 	* Text ready for storage
 	*
 	* @var bool
 	*/
-	private $text_parsed_for_storage	= false;
+	private $text_parsed_for_storage = false;
 
 	/**
 	* Topic Object
 	*
 	* @var object
 	*/
-	public $topic					= NULL;
+	public $topic = NULL;
 
 	/**
 	* Unread post id
@@ -191,10 +191,11 @@ class titania_post extends titania_database_object
 	/**
 	 * Get the url for the post
 	 *
-	 * @param <string> $action An action (anchor will not be included if an action is sent)
-	 * @param <bool> $use_anchor False to leave the anchor off of the URL
+	 * @param string|bool $action An action (anchor will not be included if an action is sent)
+	 * @param bool $use_anchor False to leave the anchor off of the URL
+	 * @param string|bool $base_url Use your own base url instead of the one from the contribution (make sure $this->topic is setup before you use this)
 	 */
-	public function get_url($action = false, $use_anchor = true)
+	public function get_url($action = false, $use_anchor = true, $base_url = false)
 	{
 		$append = array(
 			'p' => $this->post_id,
@@ -211,7 +212,7 @@ class titania_post extends titania_database_object
 
 		if (is_object($this->topic))
 		{
-			return titania_url::append_url($this->topic->get_url(), $append);
+			return titania_url::append_url($this->topic->get_url(), $append, $base_url);
 		}
 
 		switch ($this->post_type)
@@ -221,7 +222,7 @@ class titania_post extends titania_database_object
 			break;
 
 			case TITANIA_QUEUE :
-				$page = 'queue';
+				// Do nothing, we use a different URL completely
 			break;
 
 			default :

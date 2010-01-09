@@ -22,8 +22,6 @@ Rewriterule ^download/([^/]+)$									./download/file.php [NC]
 
 #manage
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^manage?/queue/([^/]+)?/?([^/]+)?$					./manage/index.php?page=queue&queue=$1 [NC]
-RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^manage?/([^/]+)?/?([^/]+)?$						./manage/index.php?page=$1 [NC]
 
 #authors

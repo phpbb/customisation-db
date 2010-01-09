@@ -50,7 +50,7 @@ switch ($page)
 	break;
 
 	default :
-		//include(TITANIA_ROOT . 'manage/details.' . PHP_EXT);
+		include(TITANIA_ROOT . 'manage/queue.' . PHP_EXT);
 		exit;
 	break;
 }

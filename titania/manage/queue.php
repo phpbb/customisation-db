@@ -21,6 +21,9 @@ $topic_id = request_var('t', 0);
 $queue_type = request_var('queue', '');
 $queue_type = titania_types::type_from_url($queue_type);
 
+// Setup the base url we will use
+$base_url = titania_url::build_url('manage/queue');
+
 if ($queue_type === false)
 {
 	// We need to select the queue if they only have one that they can access, else display the list
@@ -36,9 +39,25 @@ if ($queue_type === false)
 	}
 	else
 	{
-		die('no');
+		foreach ($authed as $type_id)
+		{
+			phpbb::$template->assign_block_vars('categories', array(
+				'U_VIEW_CATEGORY'	=> titania_url::append_url($base_url, array('queue' => titania_types::$types[$type_id]->url)),
+				'CATEGORY_NAME'		=> titania_types::$types[$type_id]->lang,
+			));
+		}
+
+		phpbb::$template->assign_vars(array(
+			'S_QUEUE_LIST'	=> true,
+		));
+
+		titania::page_header('VALIDATION_QUEUE');
+		titania::page_footer(true, 'manage/queue.html');
 	}
 }
+
+// Add the queue type to the base url
+$base_url = titania_url::append_url($base_url, array('queue' => titania_types::$types[$queue_type]->url));
 
 // Load the topic and contrib items
 if ($post_id)
@@ -51,10 +70,6 @@ if ($post_id)
 	{
 		trigger_error('NO_TOPIC');
 	}
-
-	// Load the contrib item
-	load_contrib($topic->contrib_id);
-	$topic->contrib = titania::$contrib;
 }
 else if ($topic_id)
 {
@@ -66,16 +81,6 @@ else if ($topic_id)
 	{
 		trigger_error('NO_TOPIC');
 	}
-
-	// Load the contrib item
-	load_contrib($topic->contrib_id);
-
-	$topic->contrib = titania::$contrib;
-}
-else
-{
-	// Load the contrib item
-	load_contrib();
 }
 
 $submit = (isset($_POST['submit'])) ? true : false;
@@ -92,17 +97,16 @@ switch ($action)
 
 		if ($action == 'post')
 		{
-			$topic = new titania_topic(TITANIA_QUEUE, titania::$contrib);
-			$post = new titania_post(TITANIA_SUPPORT, $topic);
-			$post->topic->contrib_id = titania::$contrib->contrib_id;
+			$topic = new titania_topic(TITANIA_QUEUE);
+			$post = new titania_post(TITANIA_QUEUE, $topic);
 		}
 		else if ($action == 'reply')
 		{
-			$post = new titania_post(TITANIA_SUPPORT, $topic);
+			$post = new titania_post(TITANIA_QUEUE, $topic);
 		}
 		else
 		{
-			$post = new titania_post(TITANIA_SUPPORT, $topic, $post_id);
+			$post = new titania_post(TITANIA_QUEUE, $topic, $post_id);
 			if ($post->load() === false)
 			{
 				trigger_error('NO_POST');
@@ -120,7 +124,6 @@ switch ($action)
 			'attachments'	=> phpbb::$auth->acl_get('titania_post_attach'),
 		));
 		$message->set_settings(array(
-			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
 			'subject_default_override'	=> ($action == 'reply') ? 'Re: ' . $topic->topic_subject : false,
 			'attachments_group'			=> TITANIA_ATTACH_EXT_SUPPORT,
 		));
@@ -168,35 +171,35 @@ switch ($action)
 		{
 			case 'post' :
 				phpbb::$template->assign_vars(array(
-					'S_POST_ACTION'		=> titania_url::append_url(titania::$contrib->get_url('support'), array('action' => $action)),
+					'S_POST_ACTION'		=> titania_url::append_url($base_url, array('action' => $action)),
 					'L_POST_A'			=> phpbb::$user->lang['POST_TOPIC'],
 				));
 				titania::page_header('NEW_TOPIC');
 			break;
 			case 'reply' :
 				phpbb::$template->assign_vars(array(
-					'S_POST_ACTION'		=> $topic->get_url('reply'),
+					'S_POST_ACTION'		=> $topic->get_url($action, $base_url),
 					'L_POST_A'			=> phpbb::$user->lang['POST_REPLY'],
 				));
 				titania::page_header('POST_REPLY');
 			break;
 			case 'edit' :
 				phpbb::$template->assign_vars(array(
-					'S_POST_ACTION'		=> $post->get_url('edit'),
+					'S_POST_ACTION'		=> $post->get_url($action, false, $base_url),
 					'L_POST_A'			=> phpbb::$user->lang['EDIT_POST'],
 				));
 				titania::page_header('EDIT_POST');
 			break;
 		}
 
-		titania::page_footer(true, 'contributions/contribution_support_post.html');
+		titania::page_footer(true, 'manage/queue_post.html');
 	break;
 
 	case 'delete' :
 	case 'undelete' :
 		phpbb::$user->add_lang('posting');
 
-		$post = new titania_post(TITANIA_SUPPORT, $topic, $post_id);
+		$post = new titania_post(TITANIA_QUEUE, $topic, $post_id);
 		if ($post->load() === false)
 		{
 			trigger_error('NO_POST');
@@ -217,20 +220,20 @@ switch ($action)
 					redirect(titania_url::append_url($topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
 				}
 
-				redirect($topic->get_url());
+				redirect($topic->get_url(false, $base_url));
 			}
 			else
 			{
 				$post->undelete();
 
-				redirect($post->get_url());
+				redirect($post->get_url(false, true, $base_url));
 			}
 		}
 		else
 		{
 			titania::confirm_box(false, (($action == 'delete') ? 'DELETE_POST' : 'UNDELETE_POST'), $post->get_url($action));
 		}
-		redirect($post->get_url());
+		redirect($post->get_url(false, true, $base_url));
 	break;
 
 	default :
@@ -240,25 +243,17 @@ switch ($action)
 		{
 			posts_overlord::display_topic_complete($topic);
 
-			titania::page_header(phpbb::$user->lang['CONTRIB_SUPPORT'] . ' - ' . censor_text($topic->topic_subject));
+			titania::page_header(phpbb::$user->lang['VALIDATION_QUEUE'] . ' - ' . censor_text($topic->topic_subject));
 
-			if (phpbb::$auth->acl_get('titania_post'))
-			{
-				phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(), array('action' => 'reply')));
-			}
+			phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(false, $base_url), array('action' => 'reply')));
 		}
 		else
 		{
-			topics_overlord::display_forums_complete('support', titania::$contrib);
+			topics_overlord::display_forums_complete('queue');
 
-			titania::page_header('CONTRIB_SUPPORT');
-
-			if (phpbb::$auth->acl_get('titania_topic'))
-			{
-				phpbb::$template->assign_var('U_POST_TOPIC', titania_url::append_url(titania::$contrib->get_url('support'), array('action' => 'post')));
-			}
+			titania::page_header('VALIDATION_QUEUE');
 		}
 
-		titania::page_footer(true, 'contributions/contribution_support.html');
+		titania::page_footer(true, 'manage/queue.html');
 	break;
 }

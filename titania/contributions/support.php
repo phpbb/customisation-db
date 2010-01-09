@@ -166,7 +166,7 @@ switch ($action)
 			break;
 			case 'edit' :
 				phpbb::$template->assign_vars(array(
-					'S_POST_ACTION'		=> $post->get_url('edit'),
+					'S_POST_ACTION'		=> $post->get_url('edit', false),
 					'L_POST_A'			=> phpbb::$user->lang['EDIT_POST'],
 				));
 				titania::page_header('EDIT_POST');
