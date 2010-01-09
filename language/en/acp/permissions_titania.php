@@ -84,7 +84,7 @@ if (empty($lang) || !is_array($lang))
 	),
 ));*/
 
-$lang['permission_type']['titania_'] = 'Titania';
+$lang['permission_type']['titania_'] = 'Titania Permissions';
 
 $lang['permission_cat']['moderate'] = 'Moderate';
 $lang['permission_cat']['contrib'] = 'Contributions';
@@ -93,6 +93,8 @@ $lang['permission_cat']['queue'] = 'Queue';
 $lang = array_merge($lang, array(
 	'ACL_TYPE_TITANIA_'					=> 'Titania Permissions',
 	'ACL_TYPE_GLOBAL_TITANIA_'			=> 'Titania Permissions',
+
+	'acl_a_titaniaauth'					=> array('lang' => 'Can alter Titania permission class', 'cat' => 'permissions'),
 
 	// Author related
 	'acl_titania_author_mod'			=> array('lang' => 'Can moderate author profiles', 'cat' => 'moderate'),
