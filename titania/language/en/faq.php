@@ -52,5 +52,3 @@ $lang = array_merge($lang, array(
 
 	'NO_FAQ'				=> 'Nobody created an FAQ entry yet.',
 ));
-
-?>

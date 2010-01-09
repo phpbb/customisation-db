@@ -36,8 +36,6 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'MANAGE' => 'Manage',
-'NO_AUTH' => 'You are not authorized to see this page.',
 	'AUTHOR_BY'					=> 'By %s',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
@@ -57,16 +55,16 @@ $lang = array_merge($lang, array(
 	'CAT_SNIPPETS'				=> 'Snippets',
 	'CAT_STYLES'				=> 'Styles',
 	'CONFIRM_PURGE_CACHE'		=> 'Are you sure you want to purge the cache?',
-	'CONTRIB_MANAGE'			=> 'Manage Contribution',
 	'CONTRIBUTION'				=> 'Contribution',
 	'CONTRIBUTIONS'				=> 'Contributions',
+	'CONTRIB_MANAGE'			=> 'Manage Contribution',
 	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
-	'DOWNLOAD' => 'Download',
 
 	'DELETED_MESSAGE'			=> 'Last deleted by %1$s on %2$s - <a href="%3$s">Click here to undelete this message</a>',
 	'DESCRIPTION'				=> 'Description',
 	'DETAILS'					=> 'Details',
+	'DOWNLOAD'					=> 'Download',
 	'DOWNLOAD_ACCESS_DENIED'	=> 'You are not allowed to download the requested file.',
 	'DOWNLOAD_NOT_FOUND'		=> 'The requested file could not be found.',
 
@@ -76,18 +74,21 @@ $lang = array_merge($lang, array(
 	'LANGUAGE_PACK'				=> 'Language Pack',
 	'LIST'						=> 'List',
 
+	'MANAGE'					=> 'Manage',
 	'MODIFICATION'				=> 'Modification',
 	'MOVE_DOWN'					=> 'Move down',
 	'MOVE_UP'					=> 'Move up',
 	'MULTI_SELECT_EXPLAIN'		=> 'Hold down CTRL and click to select multiple.',
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
-	'NO_DESC'					=> 'You have to enter the description.',
+	'NO_AUTH'					=> 'You are not authorized to see this page.',
 	'NO_CONTRIBS'				=> 'No contributions could be found',
+	'NO_DESC'					=> 'You have to enter the description.',
 	'NO_POST'					=> 'The requested post does not exist.',
 	'NO_TOPIC'					=> 'The requested topic does not exist.',
 
 	'ORDER'						=> 'Order',
+
 	'PURGE_CACHE'				=> 'Purge Cache',
 
 	'RATING'					=> 'Rating',
@@ -103,5 +104,3 @@ $lang = array_merge($lang, array(
 
 	'TITANIA_INDEX'				=> 'Customisation Database',
 ));
-
-?>

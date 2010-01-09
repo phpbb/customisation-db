@@ -36,13 +36,6 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'CONTRIB_UPDATED' => 'The contribution has been successfully updated.',
-	'REVISION'					=> 'Revision',
-	'REVISIONS'					=> 'Revisions',
-	'REVISION_NAME' => 'Revision Name',
-	'REVISION_VERSION' => 'Revision Version',
-	'NOT_VALIDATED'	=> 'Not Validated',
-
 	'CANNOT_ADD_SELF_COAUTHOR'			=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CONTRIB'							=> 'Contribution',
 	'CONTRIBUTIONS'						=> 'Contributions',
@@ -51,6 +44,10 @@ $lang = array_merge($lang, array(
 	'CONTRIB_AUTHOR'					=> 'Contribution Author',
 	'CONTRIB_AUTHORS_EXPLAIN'			=> 'Enter in the co-author names, one co-author username per line.',
 	'CONTRIB_CATEGORY'					=> 'Contribution Category',
+	'CONTRIB_CHANGE_OWNER'				=> 'Change Owner',
+	'CONTRIB_CHANGE_OWNER_EXPLAIN'		=> 'Input a username here to set this user as the owner. By changing this, you will be set as a Non-contributing Author.',
+	'CONTRIB_CHANGE_OWNER_NOT_FOUND'	=> 'The user you attempted to set as owner, %s, was not found.',
+	'CONTRIB_CONFIRM_OWNER_CHANGE'		=> 'Are you sure you want to assign ownership to %s? This will prevent you from managing the project and cannot be undone.',
 	'CONTRIB_CREATED'					=> 'The contribution has been created successfully',
 	'CONTRIB_DESCRIPTION'				=> 'Contribution Description',
 	'CONTRIB_DETAILS'					=> 'Contribution Details',
@@ -61,10 +58,12 @@ $lang = array_merge($lang, array(
 	'CONTRIB_NONACTIVE_AUTHORS'			=> 'Non-Active Co-Authors (Past Contributors)',
 	'CONTRIB_NONACTIVE_AUTHORS_EXPLAIN'	=> 'Nonactive co-authors can not manage anything for the modification and are only listed as previous authors.',
 	'CONTRIB_NOT_FOUND'					=> 'The contribution you requested could not be found.',
+	'CONTRIB_OWNER_UPDATED'				=> 'The owner has been changed.',
 	'CONTRIB_PERMALINK'					=> 'Contribution Permalink',
 	'CONTRIB_RELEASE_DATE'				=> 'Release date',
 	'CONTRIB_SUPPORT'					=> 'Discussion/Support',
 	'CONTRIB_TYPE'						=> 'Contribution Type',
+	'CONTRIB_UPDATED'					=> 'The contribution has been successfully updated.',
 	'CONTRIB_UPDATE_DATE'				=> 'Last updated',
 	'COULD_NOT_FIND_USERS'				=> 'Could not find the following users: %s',
 
@@ -90,17 +89,15 @@ $lang = array_merge($lang, array(
 
 	'NEW_CONTRIBUTION'					=> 'New Contribution',
 	'NEW_TOPIC'							=> 'New Topic',
+	'NOT_VALIDATED'						=> 'Not Validated',
 	'NO_CATEGORY'						=> 'The selected category does not exist',
+
+	'REVISION'							=> 'Revision',
+	'REVISIONS'							=> 'Revisions',
+	'REVISION_NAME'						=> 'Revision Name',
+	'REVISION_VERSION'					=> 'Revision Version',
 
 	'SELECT_CONTRIB_TYPE'				=> '-- Select contribution type --',
 
 	'WRONG_CATEGORY'					=> 'You can only put this contribution in the same category type as the contribution type.',
-
-	'CONTRIB_CHANGE_OWNER'				=> 'Change Owner',
-	'CONTRIB_CHANGE_OWNER_EXPLAIN'		=> 'Input a username here to set this user as the owner. By changing this, you will be set as a Non-contributing Author.',
-	'CONTRIB_CONFIRM_OWNER_CHANGE'		=> 'Are you sure you want to assign ownership to %s? This will prevent you from managing the project and cannot be undone.',
-	'CONTRIB_CHANGE_OWNER_NOT_FOUND'	=> 'The user you attempted to set as owner, %s, was not found.',
-	'CONTRIB_OWNER_UPDATED'				=> 'The owner has been changed.',
 ));
-
-?>
