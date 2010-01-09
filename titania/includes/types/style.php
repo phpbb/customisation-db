@@ -51,12 +51,74 @@ class titania_type_style extends titania_type_base
 	}
 
 	/**
+	* Check auth level
+	*
+	* @param string $auth ('view', 'test', 'validate')
+	* @return bool
+	*/
+	public function acl_get($auth)
+	{
+		switch ($auth)
+		{
+			// Can view the style queue
+			case 'view' :
+				return phpbb::$auth->acl_get('titania_style_queue');
+			break;
+
+			// Can validate styles in the queue
+			case 'validate' :
+				return phpbb::$auth->acl_get('titania_style_validate');
+			break;
+
+			// Can moderate styles
+			case 'moderate' :
+				return phpbb::$auth->acl_get('titania_style_moderate');
+			break;
+		}
+
+		return false;
+	}
+
+	/**
 	* Automatically install the type if required
 	*
-	* For adding type specific permissions, etc.  For now ignore
+	* For adding type specific permissions, etc.
 	*/
 	public function auto_install()
 	{
-		return;
+		if (!isset(phpbb::$config['titania_num_styles']))
+		{
+			if (!class_exists('umil'))
+			{
+				include(PHPBB_ROOT_PATH . 'umil/umil.' . PHP_EXT);
+			}
+
+			$umil = new umil(true, phpbb::$db);
+
+			// Permissions
+			$umil->permission_add(array(
+				'titania_style_queue',
+				'titania_style_validate',
+				'titania_style_moderate',
+			));
+
+			// Style count holder
+			$umil->config_add('titania_num_styles', 0, true);
+		}
+	}
+
+	public function increment_count()
+	{
+		set_config('titania_num_styles', ++phpbb::$config['titania_num_styles'], true);
+	}
+
+	public function decrement_count()
+	{
+		set_config('titania_num_styles', --phpbb::$config['titania_num_styles'], true);
+	}
+
+	public function get_count()
+	{
+		return phpbb::$config['titania_num_styles'];
 	}
 }

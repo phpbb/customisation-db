@@ -606,6 +606,16 @@ $versions = array(
 		),
 	),
 
+	'0.1.27' => array(
+		'permission_add' => array(
+			'a_titaniaauth', // Can manage titania permissions
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array('a_titaniaauth')),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

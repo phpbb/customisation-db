@@ -16,8 +16,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-titania::add_lang('posting');
-
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
 
@@ -68,6 +66,7 @@ switch ($action)
 	case 'post' :
 	case 'reply' :
 	case 'edit' :
+		titania::add_lang('posting');
 		phpbb::$user->add_lang('posting');
 
 		if ($action != 'edit' && (($action == 'post' && !phpbb::$auth->acl_get('titania_topic')) || ($action == 'reply' && (!$topic_id || !phpbb::$auth->acl_get('titania_post')))))

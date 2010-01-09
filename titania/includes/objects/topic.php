@@ -265,7 +265,7 @@ class titania_topic extends titania_database_object
 		}
 		else if (isset($this->contrib['contrib_type']))
 		{
-			$url = titania_url::build_url(titania::$types[$this->contrib['contrib_type']]->url . '/' . $this->contrib['contrib_name_clean'] . '/' . $page);
+			$url = titania_url::build_url(titania_types::$types[$this->contrib['contrib_type']]->url . '/' . $this->contrib['contrib_name_clean'] . '/' . $page);
 		}
 		else
 		{

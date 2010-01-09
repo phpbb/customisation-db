@@ -85,7 +85,7 @@ function generate_type_select($selected = false)
 		'NAME'				=> phpbb::$user->lang['SELECT_CONTRIB_TYPE'],
 	));
 
-	foreach (titania::$types as $key => $type)
+	foreach (titania_types::$types as $key => $type)
 	{
 		phpbb::$template->assign_block_vars('type_select', array(
 			'S_IS_SELECTED'		=> ($key === $selected) ? true : false,

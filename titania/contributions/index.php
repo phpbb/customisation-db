@@ -102,7 +102,7 @@ function load_contrib($contrib_id = false)
 		'manage' => array(
 			'title'		=> 'CONTRIB_MANAGE',
 			'url'		=> titania::$contrib->get_url('manage'),
-			'auth'		=> (titania::$contrib->is_author || titania::$contrib->is_active_coauthor || phpbb::$auth->acl_get('titania_contrib_mod'))
+			'auth'		=> (titania::$contrib->is_author || titania::$contrib->is_active_coauthor || phpbb::$auth->acl_get('titania_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 		),
 	);
 

@@ -23,7 +23,7 @@ if (!function_exists('generate_type_select') || !function_exists('generate_categ
 
 load_contrib();
 
-if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('titania_contrib_mod'))
+if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('titania_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 {
 	trigger_error('NO_AUTH');
 }

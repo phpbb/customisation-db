@@ -50,12 +50,74 @@ class titania_type_mod extends titania_type_base
 	}
 
 	/**
+	* Check auth level
+	*
+	* @param string $auth ('view', 'test', 'validate')
+	* @return bool
+	*/
+	public function acl_get($auth)
+	{
+		switch ($auth)
+		{
+			// Can view the mod queue
+			case 'view' :
+				return phpbb::$auth->acl_get('titania_mod_queue');
+			break;
+
+			// Can validate mods in the queue
+			case 'validate' :
+				return phpbb::$auth->acl_get('titania_mod_validate');
+			break;
+
+			// Can moderate mods
+			case 'moderate' :
+				return phpbb::$auth->acl_get('titania_mod_moderate');
+			break;
+		}
+
+		return false;
+	}
+
+	/**
 	* Automatically install the type if required
 	*
-	* For adding type specific permissions, etc.  For now ignore
+	* For adding type specific permissions, etc.
 	*/
 	public function auto_install()
 	{
-		return;
+		if (!isset(phpbb::$config['titania_num_mods']))
+		{
+			if (!class_exists('umil'))
+			{
+				include(PHPBB_ROOT_PATH . 'umil/umil.' . PHP_EXT);
+			}
+
+			$umil = new umil(true, phpbb::$db);
+
+			// Permissions
+			$umil->permission_add(array(
+				'titania_mod_queue',
+				'titania_mod_validate',
+				'titania_mod_moderate',
+			));
+
+			// Mod count holder
+			$umil->config_add('titania_num_mods', 0, true);
+		}
+	}
+
+	public function increment_count()
+	{
+		set_config('titania_num_mods', ++phpbb::$config['titania_num_mods'], true);
+	}
+
+	public function decrement_count()
+	{
+		set_config('titania_num_mods', --phpbb::$config['titania_num_mods'], true);
+	}
+
+	public function get_count()
+	{
+		return phpbb::$config['titania_num_mods'];
 	}
 }

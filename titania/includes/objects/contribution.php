@@ -507,10 +507,10 @@ class titania_contribution extends titania_database_object
 	{
 		if ($page)
 		{
-			return titania_url::build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
+			return titania_url::build_url(titania_types::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
 		}
 
-		return titania_url::build_url(titania::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean);
+		return titania_url::build_url(titania_types::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean);
 	}
 
 	/**
@@ -719,7 +719,7 @@ class titania_contribution extends titania_database_object
 		// Increment the contrib counter for the new owner
 		$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . "
 			SET author_contribs = author_contribs $action 1, " .
-				titania::$types[$this->contrib_type]->author_count . ' = ' . titania::$types[$this->contrib_type]->author_count . " $action 1
+				titania_types::$types[$this->contrib_type]->author_count . ' = ' . titania_types::$types[$this->contrib_type]->author_count . " $action 1
 			WHERE user_id = $user_id " .
 				(($action == '-') ? 'AND author_contribs > 0' : '');
 		phpbb::$db->sql_query($sql);
@@ -732,7 +732,7 @@ class titania_contribution extends titania_database_object
 
 			$author->__set_array(array(
 				'author_contribs'	=> 1,
-				titania::$types[$this->contrib_type]->author_count => 1,
+				titania_types::$types[$this->contrib_type]->author_count => 1,
 			));
 
 			$author->submit();
