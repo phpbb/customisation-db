@@ -193,9 +193,8 @@ class titania_post extends titania_database_object
 	 *
 	 * @param string|bool $action An action (anchor will not be included if an action is sent)
 	 * @param bool $use_anchor False to leave the anchor off of the URL
-	 * @param string|bool $base_url Use your own base url instead of the one from the contribution (make sure $this->topic is setup before you use this)
 	 */
-	public function get_url($action = false, $use_anchor = true, $base_url = false)
+	public function get_url($action = false, $use_anchor = true)
 	{
 		$append = array(
 			'p' => $this->post_id,
@@ -212,7 +211,7 @@ class titania_post extends titania_database_object
 
 		if (is_object($this->topic))
 		{
-			return titania_url::append_url($this->topic->get_url(), $append, $base_url);
+			return titania_url::append_url($this->topic->get_url(), $append);
 		}
 
 		switch ($this->post_type)
@@ -222,7 +221,8 @@ class titania_post extends titania_database_object
 			break;
 
 			case TITANIA_QUEUE :
-				// Do nothing, we use a different URL completely
+				// We use a different URL completely
+				return titania_url::build_url('manage/queue', $append);
 			break;
 
 			default :

@@ -482,7 +482,7 @@ class titania_contribution extends titania_database_object
 		// Display Revisions
 		if (sizeof($this->revisions))
 		{
-			$revision = new titania_revision();
+			$revision = new titania_revision($this);
 			foreach ($this->revisions as $revision_id => $row)
 			{
 				$revision->__set_array($row);

@@ -58,19 +58,42 @@ $revision_attachment->additional_fields = array(
 	'REVISION_VERSION'	=> 'revision_version',
 );
 // Need to load revisions differently, can not use the load_attachments function (yes, revisions are loaded already, but this is easier)
+$rowset = array();
 $sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . ' a, ' . TITANIA_REVISIONS_TABLE . ' r
 	WHERE object_type = ' . TITANIA_CONTRIB . '
 		AND object_id = ' . titania::$contrib->contrib_id;
 $result = phpbb::$db->sql_query($sql);
-$rowset = phpbb::$db->sql_fetchrowset($result);
-if ($rowset)
+while ($row = phpbb::$db->sql_fetchrow($result))
 {
-	$revision_attachment->store_attachments($rowset);
+	$rowset[] = array_merge($row, array(
+		// If we use the queue, do not let revisions be deleted, contact team plz (otherwise it is either approved or in the queue)
+		'no_delete' => (titania::$config->use_queue || $row['revision_validated']) ? true : false,
+	));
 }
 phpbb::$db->sql_freeresult($result);
 
-// Upload files if sent
-$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
+$revision_attachment->store_attachments($rowset);
+
+// Upload files if sent.  Do not allow submission of attachments if there is already something in the queue
+if (titania::$config->use_queue)
+{
+	$sql = 'SELECT COUNT(topic_id) AS cnt FROM ' . TITANIA_TOPICS_TABLE . '
+		WHERE topic_type = ' . TITANIA_QUEUE . '
+			AND contrib_id = ' . titania::$contrib->contrib_id;
+	phpbb::$db->sql_query($sql);
+	$cnt = phpbb::$db->sql_fetchfield('cnt');
+	phpbb::$db->sql_freeresult($result);
+	if (!$cnt)
+	{
+		phpbb::$template->assign_var('S_CAN_ATTACH', true);
+		$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
+	}
+}
+else
+{
+	phpbb::$template->assign_var('S_CAN_ATTACH', true);
+	$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
+}
 
 if (titania::confirm_box(true)) // Confirming author change
 {
@@ -143,14 +166,19 @@ if ($submit)
 
 		// Revisions
 		$new_attachments = $revision_attachment->get_attachments();
-		$new_revisions = array_diff(array_keys($new_attachments), titania::$contrib->revisions);
+		$existing_attachments = array();
+		foreach (titania::$contrib->revisions as $row)
+		{
+			$existing_attachments[$row['attachment_id']] = $row['revision_id'];
+		}
+		$new_revisions = array_diff(array_keys($new_attachments), array_keys($existing_attachments));
 
 		// First create the new revisions, if any
 		if (sizeof($new_revisions))
 		{
 			foreach ($new_revisions as $attachment_id)
 			{
-				$revision = new titania_revision(titania::$contrib->contrib_id);
+				$revision = new titania_revision(titania::$contrib);
 
 				$revision->__set_array(array(
 					'attachment_id'		=> $attachment_id,
@@ -158,7 +186,22 @@ if ($submit)
 					'revision_version'	=> utf8_normalize_nfc(request_var('revision_version_' . $attachment_id, '', true)),
 				));
 
-				$revision->submit();
+				$revision->submit(titania::$contrib->contrib_name);
+			}
+		}
+		if (sizeof($existing_attachments))
+		{
+			foreach ($existing_attachments as $attachment_id => $revision_id)
+			{
+				$revision = new titania_revision(titania::$contrib);
+				$revision->__set_array(titania::$contrib->revisions[$revision_id]);
+
+				$revision->__set_array(array(
+					'revision_name'		=> utf8_normalize_nfc(request_var('revision_name_' . $attachment_id, '', true)),
+					'revision_version'	=> utf8_normalize_nfc(request_var('revision_version_' . $attachment_id, '', true)),
+				));
+
+				$revision->submit(titania::$contrib->contrib_name);
 			}
 		}
 		$revision_attachment->submit(TITANIA_ACCESS_PUBLIC);

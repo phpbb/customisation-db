@@ -191,6 +191,8 @@ class titania_attachment extends titania_database_object
 
 			// Make sure the form type is correct...doing it here just in case someone leaves {S_FORM_ENCTYPE} and forgets about it
 			'S_FORM_ENCTYPE'	=> ' enctype="multipart/form-data"',
+
+			//'S_INLINE_ATTACHMENT_OPTIONS'	=>
 		));
 
 		// Sort correctly
@@ -213,6 +215,8 @@ class titania_attachment extends titania_database_object
 				'ATTACH_ID'			=> $row['attachment_id'],
 
 				'U_VIEW_ATTACHMENT'	=> titania_url::build_url('download', array('id' => $row['attachment_id'])),
+
+				'S_DELETE'			=> (!isset($row['no_delete']) || !$row['no_delete']) ? true : false,
 			);
 
 			// Allow additional things to be outputted

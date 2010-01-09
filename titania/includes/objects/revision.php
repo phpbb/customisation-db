@@ -33,23 +33,30 @@ class titania_revision extends titania_database_object
 	 *
 	 * @var object
 	 */
-	public $attachment			= '';
+	public $attachment = '';
 
 	/**
 	 * SQL Table
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= TITANIA_REVISIONS_TABLE;
+	protected $sql_table = TITANIA_REVISIONS_TABLE;
 
 	/**
 	 * SQL identifier field
 	 *
 	 * @var string
 	 */
-	protected $sql_id_field		= 'revision_id';
+	protected $sql_id_field = 'revision_id';
 
-	public function __construct($contrib_id = false, $revision_id = false)
+	/**
+	* Contribution object
+	*
+	* @var object
+	*/
+	public $contrib = false;
+
+	public function __construct($contrib, $revision_id = false)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -63,7 +70,8 @@ class titania_revision extends titania_database_object
 			'revision_version'		=> array('default' => ''),
 		));
 
-		$this->contrib_id = $contrib_id;
+		$this->contrib = $contrib;
+		$this->contrib_id = $this->contrib->contrib_id;
 		$this->revision_id = $revision_id;
 	}
 
@@ -85,28 +93,36 @@ class titania_revision extends titania_database_object
 	/**
 	 * Put the contrib item in the queue
 	 */
-	public function submit()
+	public function submit($contrib_name)
 	{
-		// Update the contrib_last_update if required here
-		if (!titania::$config->require_validation)
+		// Some stuff for new submissions
+		if (!$this->revision_id)
 		{
-			$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-				SET contrib_last_update = ' . titania::$time . '
-				WHERE contrib_id = ' . $this->contrib_id;
-			phpbb::$db->sql_query($sql);
-		}
+			// Update the contrib_last_update if required here
+			if (!titania::$config->require_validation)
+			{
+				$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+					SET contrib_last_update = ' . titania::$time . '
+					WHERE contrib_id = ' . $this->contrib_id;
+				phpbb::$db->sql_query($sql);
+			}
 
-		// Put in the queue
-		if (titania::$config->use_queue)
-		{
-			titania::add_lang('manage');
-			$post = new titania_post(TITANIA_QUEUE);
-			$post->__set_array(array(
-				'post_subject'			=> $this->revision_name . ' - ' . $this->revision_version,
-				'post_text'				=> sprintf(phpbb::$user->lang['VALIDATION_POST'], $this->get_url()),
-				'post_access'			=> TITANIA_ACCESS_AUTHORS,
-			));
-			$post->submit();
+			// Put in the queue if required
+			if (titania::$config->use_queue)
+			{
+				titania::add_lang('manage');
+				$post = new titania_post(TITANIA_QUEUE);
+				$post->topic->contrib = $this->contrib;
+				$post->__set_array(array(
+					'post_subject'		=> $contrib_name . ' - ' . $this->revision_version,
+					'post_text'			=> sprintf(phpbb::$user->lang['VALIDATION_POST'], $this->get_url()),
+					'post_access'		=> TITANIA_ACCESS_AUTHORS,
+				));
+				$post->topic->__set_array(array(
+					'contrib_id'		=> $this->contrib->contrib_id,
+				));
+				$post->submit();
+			}
 		}
 
 		parent::submit();

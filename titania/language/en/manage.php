@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'VALIDATION_QUEUE' => 'Validation Queue',
-	'VALIDATION_POST' => 'Submission for validation<br /><br /><a href="%1$s">Download Revision</a>',
+	'VALIDATION_POST' => "Submission for validation\n\n[url=%1\$s]Download Revision[/url]",
 ));
 
 ?>

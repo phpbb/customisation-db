@@ -233,9 +233,8 @@ class titania_topic extends titania_database_object
 	 * Get the URL to this topic
 	 *
 	 * @param string|bool $action The topic action if any
-	 * @param string|bool $base_url Use your own base url instead of the one from the contribution
 	 */
-	public function get_url($action = false, $base_url = false)
+	public function get_url($action = false)
 	{
 		$append = array(
 			$this->topic_subject_clean,
@@ -254,7 +253,20 @@ class titania_topic extends titania_database_object
 			break;
 
 			case TITANIA_QUEUE :
-				// Do nothing, we use a different URL completely
+				// We use a different URL completely
+				if (is_object($this->contrib))
+				{
+					$append['queue'] = titania_types::$types[$this->contrib->contrib_type]->url;
+				}
+				else if (isset($this->contrib['contrib_type']))
+				{
+					$append['queue'] = titania_types::$types[$this->contrib['contrib_type']]->url;
+				}
+				else
+				{
+					throw new Exception('Missing contribution data');
+				}
+				return titania_url::build_url('manage/queue', $append);
 			break;
 
 			default :
@@ -262,11 +274,7 @@ class titania_topic extends titania_database_object
 			break;
 		}
 
-		if ($base_url !== false)
-		{
-			$url = $base_url;
-		}
-		else if (is_object($this->contrib))
+		if (is_object($this->contrib))
 		{
 			$url = $this->contrib->get_url($page);
 		}
