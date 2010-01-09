@@ -193,6 +193,18 @@ class titania_attachment extends titania_database_object
 			'S_FORM_ENCTYPE'	=> ' enctype="multipart/form-data"',
 		));
 
+		// Sort correctly
+		if (phpbb::$config['display_order'])
+		{
+			// Ascending sort
+			krsort($this->attachments);
+		}
+		else
+		{
+			// Descending sort
+			ksort($this->attachments);
+		}
+
 		foreach ($this->attachments as $row)
 		{
 			$output = array(

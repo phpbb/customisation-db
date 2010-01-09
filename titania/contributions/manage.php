@@ -48,6 +48,9 @@ $submit = (isset($_POST['submit'])) ? true : false;
 $change_owner = request_var('change_owner', '', true); // Blame Nathan, he said this was okay
 $contrib_categories = array();
 
+// Hack for displaying the revisions in order from recent to oldest
+phpbb::$config['display_order'] = true;
+
 // Setup the revisions
 $revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 $revision_attachment->additional_fields = array(
