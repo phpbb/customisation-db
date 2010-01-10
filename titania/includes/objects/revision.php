@@ -68,6 +68,9 @@ class titania_revision extends titania_database_object
 			'revision_time'			=> array('default' => (int) titania::$time),
 			'validation_date'		=> array('default' => 0),
 			'revision_version'		=> array('default' => ''),
+			'phpbb_version'			=> array('default' => ''),
+			'install_time'			=> array('default' => 0),
+			'install_level'			=> array('default' => 0),
 		));
 
 		$this->contrib = $contrib;

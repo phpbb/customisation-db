@@ -281,10 +281,10 @@ $versions = array(
 					'revision_version'			=> array('VCHAR', ''),
 					'revision_name'				=> array('STEXT_UNI', '', 'true_sort'),
 					'revision_time'				=> array('UINT:11', 0),
-					'validation_date'			=> array('UINT:11', 0),
 					'revision_release_notes'	=> array('VCHAR', ''),
 					'revision_validation_notes'	=> array('VCHAR', ''),
 					'revision_validated'		=> array('UINT:11', 0),
+					'validation_date'			=> array('UINT:11', 0),
 				),
 				'PRIMARY_KEY'	=> 'revision_id',
 				'KEYS'			=> array(

@@ -616,6 +616,34 @@ $versions = array(
 		),
 	),
 
+	'0.1.28' => array(
+		'table_remove' => array(
+			TITANIA_CONTRIB_TAGS_TABLE,
+			TITANIA_QUEUE_TABLE,
+		),
+
+		'table_add' => array(
+			array(TITANIA_TAG_APPLIED_TABLE, array(
+				'COLUMNS'		=> array(
+					'object_type'			=> array('UINT', 0),
+					'object_id'				=> array('UINT', 0),
+					'tag_id'				=> array('UINT', 0),
+					'tag_value'				=> array('STEXT_UNI', '', 'true_sort'),
+				),
+				'PRIMARY_KEY'	=> array('object_type', 'object_id', 'tag_id'),
+			)),
+		),
+
+		'table_column_add' => array(
+			array(TITANIA_TAG_FIELDS_TABLE, 'no_delete', array('BOOL', 0)), // A few tags we have to hard-code (like new status for a queue item)
+			array(TITANIA_REVISIONS_TABLE, 'phpbb_version', array('STEXT', '')), // Store the phpBB version(s) supported
+			array(TITANIA_REVISIONS_TABLE, 'install_time', array('USINT', 0)), // How long to install?
+			array(TITANIA_REVISIONS_TABLE, 'install_level', array('TINT:1', 0)), // How hard to install?
+		),
+
+		'custom' => 'titania_add_tags',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
@@ -641,6 +669,67 @@ function titania_update($action, $version)
 			phpbb::$db->sql_freeresult($result);
 		break;
 	}
+}
+
+function titania_add_tags($action, $version)
+{
+	global $umil;
+
+	// Empty the tag tables first
+	$sql = 'DELETE FROM ' . TITANIA_TAG_TYPES_TABLE;
+	phpbb::$db->sql_query($sql);
+	$sql = 'DELETE FROM ' . TITANIA_TAG_FIELDS_TABLE;
+	phpbb::$db->sql_query($sql);
+
+	$tag_types = array(
+		array(
+			'tag_type_id'	=> 1,
+			'tag_type_name'	=> 'Validation Queue',
+		)
+	);
+
+	$umil->table_row_insert(TITANIA_TAG_TYPES_TABLE, $tag_types);
+
+	$tags = array(
+		array(
+			'tag_id'			=> 1,
+			'tag_type_id'		=> 1,
+			'tag_field_name'	=> 'QUEUE_NEW',
+			'tag_clean_name'	=> 'new',
+			'no_delete'			=> true,
+		),
+		// Leave space for others if we need to hard-code any
+		array(
+			'tag_id'			=> 15,
+			'tag_type_id'		=> 1,
+			'tag_field_name'	=> 'QUEUE_ATTENTION',
+			'tag_clean_name'	=> 'attention',
+			'no_delete'			=> false,
+		),
+		array(
+			'tag_id'			=> 16,
+			'tag_type_id'		=> 1,
+			'tag_field_name'	=> 'QUEUE_REPACK',
+			'tag_clean_name'	=> 'repack',
+			'no_delete'			=> false,
+		),
+		array(
+			'tag_id'			=> 17,
+			'tag_type_id'		=> 1,
+			'tag_field_name'	=> 'QUEUE_VALIDATING',
+			'tag_clean_name'	=> 'validating',
+			'no_delete'			=> false,
+		),
+		array(
+			'tag_id'			=> 18,
+			'tag_type_id'		=> 1,
+			'tag_field_name'	=> 'QUEUE_TESTING',
+			'tag_clean_name'	=> 'testing',
+			'no_delete'			=> false,
+		),
+	);
+
+	$umil->table_row_insert(TITANIA_TAG_FIELDS_TABLE, $tags);
 }
 
 function titania_data($action, $version)

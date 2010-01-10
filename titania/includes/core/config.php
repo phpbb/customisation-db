@@ -37,6 +37,7 @@ class titania_config extends titania_object
 			'phpbb_root_path'			=> array('default' => '../community/'),
 			'titania_script_path'		=> array('default' => 'customisation/'),
 			'upload_path'				=> array('default' => TITANIA_ROOT . 'files/'),
+			'contrib_temp_path'			=> array('default' => TITANIA_ROOT . 'files/contrib_temp/'),
 			'language_path'				=> array('default' => TITANIA_ROOT . 'language/'),
 
 			'phpbbcom_profile'			=> array('default' => true),

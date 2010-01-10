@@ -36,25 +36,25 @@ define('TITANIA_CONTRIBS_TABLE',				$table_prefix . 'contribs');
 define('TITANIA_CONTRIB_COAUTHORS_TABLE',		$table_prefix . 'contrib_coauthors');
 define('TITANIA_CONTRIB_FAQ_TABLE',				$table_prefix . 'contrib_faq');
 define('TITANIA_CONTRIB_IN_CATEGORIES_TABLE',	$table_prefix . 'contrib_in_categories');
-define('TITANIA_CONTRIB_TAGS_TABLE',			$table_prefix . 'contrib_tags');
+define('TITANIA_CONTRIB_TAGS_TABLE',			$table_prefix . 'contrib_tags');  // todo remove
 define('TITANIA_POSTS_TABLE',					$table_prefix . 'posts');
-define('TITANIA_QUEUE_TABLE',					$table_prefix . 'queue');
+define('TITANIA_QUEUE_TABLE',					$table_prefix . 'queue');  // todo remove
 define('TITANIA_RATINGS_TABLE',					$table_prefix . 'ratings');
 define('TITANIA_REVISIONS_TABLE',				$table_prefix . 'revisions');
+define('TITANIA_TAG_APPLIED_TABLE',				$table_prefix . 'tag_applied');
 define('TITANIA_TAG_FIELDS_TABLE',				$table_prefix . 'tag_fields');
 define('TITANIA_TAG_TYPES_TABLE',				$table_prefix . 'tag_types');
 define('TITANIA_TOPICS_TABLE',					$table_prefix . 'topics');
 define('TITANIA_TRACK_TABLE',					$table_prefix . 'track');
 define('TITANIA_WATCH_TABLE',					$table_prefix . 'watch');
 
-// Contribution revision status
-define('TITANIA_STATUS_NEW', 0);
-define('TITANIA_STATUS_APPROVED', 1);
-define('TITANIA_STATUS_DENIED', 2);
-define('TITANIA_STATUS_TESTING', 3);
-define('TITANIA_STATUS_ATTENTION', 4);
-define('TITANIA_STATUS_APPROVE', 5); // Awaiting approve
-define('TITANIA_STATUS_DENY', 6); // Awating deny
+// Contribution revision/queue status
+define('TITANIA_QUEUE_HIDE', 0); // Special case to hide revisions from the queue as they are in the process of being created (so we can store stuff like MPV, Automod test)
+define('TITANIA_QUEUE_NEW', 1);
+
+// Contrib status
+define('TITANIA_CONTRIB_NEW', 1);
+define('TITANIA_CONTRIB_APPROVED', 2);
 
 // Main TYPE constants (use whenever possible)
 define('TITANIA_CONTRIB', 1);

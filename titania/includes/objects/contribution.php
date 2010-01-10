@@ -95,7 +95,7 @@ class titania_contribution extends titania_database_object
 			'contrib_desc_uid'				=> array('default' => ''),
 			'contrib_desc_options'			=> array('default' => 7),
 
-			'contrib_status'				=> array('default' => 0), // todo remove?
+			'contrib_status'				=> array('default' => TITANIA_CONTRIB_NEW),
 
 			'contrib_user_id'				=> array('default' => 0),
 
