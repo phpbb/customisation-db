@@ -17,7 +17,7 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
 // Setup some vars
-$page = basename(request_var('page', 'details'));
+$page = basename(request_var('page', ''));
 
 // Add common lang
 titania::add_lang('contributions');
@@ -25,7 +25,6 @@ titania::add_lang('contributions');
 // And now to load the appropriate page...
 switch ($page)
 {
-	case 'details' :
 	case 'faq' :
 	case 'support' :
 	case 'create' :
@@ -87,7 +86,7 @@ function load_contrib($contrib_id = false)
 	* ),
 	*/
 	$nav_ary = array(
-		'details' => array(
+		''				=> array(
 			'title'		=> 'CONTRIB_DETAILS',
 			'url'		=> titania::$contrib->get_url(),
 		),
@@ -107,6 +106,6 @@ function load_contrib($contrib_id = false)
 	);
 
 	// Display nav menu
-	$page = request_var('page', 'details');
+	$page = basename(request_var('page', ''));
 	titania::generate_nav($nav_ary, $page);
 }

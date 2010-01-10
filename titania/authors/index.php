@@ -17,7 +17,7 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
 // Setup some vars
-$page = basename(request_var('page', 'details'));
+$page = basename(request_var('page', ''));
 $author = request_var('u', '');
 
 // Add common lang
@@ -47,7 +47,7 @@ if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['user_
 * ),
 */
 $nav_ary = array(
-	'details' => array(
+	'' 				=> array(
 		'title'		=> 'AUTHOR_DETAILS',
 		'url'		=> titania::$author->get_url(),
 	),
@@ -73,7 +73,6 @@ titania::generate_nav($nav_ary, $page);
 // And now to load the appropriate page...
 switch ($page)
 {
-	case 'details' :
 	case 'contributions' :
 	case 'manage':
 	case 'support' :
