@@ -95,7 +95,7 @@ class titania_contribution extends titania_database_object
 			'contrib_desc_uid'				=> array('default' => ''),
 			'contrib_desc_options'			=> array('default' => 7),
 
-			'contrib_status'				=> array('default' => TITANIA_STATUS_NEW),
+			'contrib_status'				=> array('default' => 0), // todo remove?
 
 			'contrib_user_id'				=> array('default' => 0),
 
@@ -405,7 +405,7 @@ class titania_contribution extends titania_database_object
 	 */
 	public function generate_text_for_display()
 	{
-		$this->contrib_desc = generate_text_for_display($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_bitfield, $this->contrib_desc_options);
+		return generate_text_for_display($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_bitfield, $this->contrib_desc_options);
 	}
 
 	/**
