@@ -16,18 +16,6 @@ if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 
-// Get the category_id
-$category = request_var('c', '');
-$category_ary = explode('-', $category);
-if ($category_ary)
-{
-	$category_id = array_pop($category_ary);
-}
-else
-{
-	$category_id = (int) $category;
-}
-
 $action = request_var('action', '');
 
 switch ($action)
@@ -88,6 +76,18 @@ switch ($action)
 	*/
 	default :
 		titania::_include('functions_display', 'titania_display_categories');
+
+		// Get the category_id
+		$category = request_var('c', '');
+		$category_ary = explode('-', $category);
+		if ($category_ary)
+		{
+			$category_id = array_pop($category_ary);
+		}
+		else
+		{
+			$category_id = (int) $category;
+		}
 
 		titania_display_categories($category_id);
 

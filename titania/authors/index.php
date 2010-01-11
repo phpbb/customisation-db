@@ -16,14 +16,11 @@ if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', '../');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
-// Setup some vars
-$page = basename(request_var('page', ''));
-$author = request_var('u', '');
-
 // Add common lang
 titania::add_lang('authors');
 
-// Load the contribution
+// Load the author
+$author = request_var('u', '');
 titania::$author = new titania_author();
 
 if (!titania::$author->load($author))
@@ -68,7 +65,20 @@ $nav_ary = array(
 );
 
 // Display nav menu
+$page = request_var('page', '');
+$page = (isset($nav_ary[$page])) ? $page : '';
 titania::generate_nav($nav_ary, $page);
+
+// Generate the main breadcrumbs
+titania::generate_breadcrumbs(array(
+	titania::$author->username	=> titania::$author->get_url(),
+));
+if ($page)
+{
+	titania::generate_breadcrumbs(array(
+		$nav_ary[$page]['title']	=> $nav_ary[$page]['url'],
+	));
+}
 
 // And now to load the appropriate page...
 switch ($page)

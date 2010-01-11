@@ -181,6 +181,7 @@ class titania_category extends titania_database_object
 
 		$parent_list = titania::$cache->get_category_parents($this->category_id);
 
+		// Pop the last two categories from the parents and attach them to the url
 		$parent_array = array();
 		if (!empty($parent_list))
 		{

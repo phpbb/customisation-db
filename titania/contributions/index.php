@@ -105,6 +105,18 @@ function load_contrib($contrib_id = false)
 	);
 
 	// Display nav menu
-	$page = basename(request_var('page', ''));
+	$page = request_var('page', '');
+	$page = (isset($nav_ary[$page])) ? $page : '';
 	titania::generate_nav($nav_ary, $page);
+
+	// Generate the main breadcrumbs
+	titania::generate_breadcrumbs(array(
+		titania::$contrib->contrib_name	=> titania::$contrib->get_url(),
+	));
+	if ($page)
+	{
+		titania::generate_breadcrumbs(array(
+			$nav_ary[$page]['title']	=> $nav_ary[$page]['url'],
+		));
+	}
 }

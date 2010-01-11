@@ -129,6 +129,11 @@ class titania
 		// Initialise the URL class
 		titania_url::$root_url = self::$absolute_path;
 		titania_url::decode_url(self::$config->titania_script_path);
+
+		// Generate the root breadcrumb that displays on every page
+		self::generate_breadcrumbs(array(
+			'CUSTOMISATION_DATABASE'	=> titania_url::build_url(''),
+		));
 	}
 
 	/**
@@ -338,6 +343,23 @@ class titania
 				'L_TITLE'		=> (isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title'],
 				'U_TITLE'		=> $data['url'],
 				'S_SELECTED'	=> ($page == $current_page) ? true : false,
+			));
+		}
+	}
+
+	/**
+	* Generate the breadcrumbs for display
+	*
+	* @param array $breadcrumbs The array of data to output
+	* @param string $block Optionally specify a custom template block loop name
+	*/
+	public static function generate_breadcrumbs($breadcrumbs, $block = 'nav_header')
+	{
+		foreach ($breadcrumbs as $title => $url)
+		{
+			phpbb::$template->assign_block_vars($block, array(
+				'L_TITLE'		=> (isset(phpbb::$user->lang[$title])) ? phpbb::$user->lang[$title] : $title,
+				'U_TITLE'		=> $url,
 			));
 		}
 	}
