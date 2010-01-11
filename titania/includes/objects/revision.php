@@ -63,7 +63,8 @@ class titania_revision extends titania_database_object
 			'phpbb_version'			=> array('default' => ''),
 			'install_time'			=> array('default' => 0),
 			'install_level'			=> array('default' => 0),
-			'revision_submitted'	=> array('default' => false),
+			'revision_submitted'	=> array('default' => false), // False if it is still in the process of being submitted/verified; True if submission has finished
+			'queue_topic_id'		=> array('default' => 0),
 		));
 
 		$this->contrib = $contrib;
@@ -89,7 +90,7 @@ class titania_revision extends titania_database_object
 	/**
 	 * Handle some stuff we need when submitting an attachment
 	 */
-	public function submit($contrib_name = '')
+	public function submit()
 	{
 		if ($this->revision_id && empty($this->sql_data))
 		{
@@ -97,7 +98,7 @@ class titania_revision extends titania_database_object
 		}
 
 		// Some stuff for new submissions
-		if ($this->revision_id && !$this->sql_data['revision_submitted'] && $this->revision_submitted)
+		if (!$this->revision_id && $this->revision_submitted || ($this->revision_id && !$this->sql_data['revision_submitted'] && $this->revision_submitted))
 		{
 			// Update the contrib_last_update if required here
 			if (!titania::$config->require_validation)
@@ -108,25 +109,57 @@ class titania_revision extends titania_database_object
 				phpbb::$db->sql_query($sql);
 			}
 
-			// Put in the queue if required
-			if (titania::$config->use_queue)
-			{
-				titania::add_lang('manage');
-				$post = new titania_post(TITANIA_QUEUE);
-				$post->topic->contrib = $this->contrib;
-				$post->__set_array(array(
-					'post_subject'		=> $contrib_name . ' - ' . $this->revision_version,
-					'post_text'			=> sprintf(phpbb::$user->lang['VALIDATION_POST'], $this->get_url()),
-					'post_access'		=> TITANIA_ACCESS_AUTHORS,
-				));
-				$post->topic->__set_array(array(
-					'contrib_id'		=> $this->contrib->contrib_id,
-				));
-				$post->submit();
-			}
+			// Create queue topic if required
+			$this->queue_topic();
 		}
 
 		parent::submit();
+	}
+
+	/**
+	* Handle the queue topic
+	*
+	* @param mixed $add_to_message A string to attach to the post_text of the post (if the topic already exists, appends to the already created post, else adds to the new topic we'll make)
+	*/
+	public function queue_topic($add_to_message = '')
+	{
+		if (!titania::$config->use_queue)
+		{
+			return;
+		}
+
+		titania::add_lang('manage');
+
+		if (!$this->queue_topic_id)
+		{
+			$post = new titania_post(TITANIA_QUEUE);
+			$post->topic->contrib = $this->contrib;
+			$post->__set_array(array(
+				'post_subject'		=> $this->contrib->contrib_name . ' - ' . $this->revision_version,
+				'post_text'			=> sprintf(phpbb::$user->lang['VALIDATION_POST'], $this->get_url()) . $add_to_message,
+				'post_access'		=> TITANIA_ACCESS_AUTHORS,
+			));
+			$post->topic->__set_array(array(
+				'contrib_id'		=> $this->contrib->contrib_id,
+			));
+			$post->submit();
+
+			$this->queue_topic_id = $post->topic->topic_id;
+		}
+		else if ($add_to_message)
+		{
+			// Load the post and topic
+			$topic = new titania_topic(TITANIA_QUEUE, $this->contrib, $this->queue_topic_id);
+			$topic->load();
+
+			$post = new titania_post(TITANIA_QUEUE, $topic, $topic->topic_first_post_id);
+			$post->load();
+
+			// Add to the post text what is wanted
+			$post->post_text .= $add_to_message;
+
+			$post->submit();
+		}
 	}
 
 	/**

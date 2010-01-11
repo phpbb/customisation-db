@@ -87,16 +87,17 @@ if (request_var('new_revision_step', 0) > 0)
 			// Success, create a new revision
 			$revision = new titania_revision(titania::$contrib);
 			$revision->__set_array(array(
-				'attachment_id'		=> $revision_attachment->attachment_id,
-				'revision_name'		=> utf8_normalize_nfc(request_var('revision_name', '', true)),
-				'revision_version'	=> $revision_version,
+				'attachment_id'			=> $revision_attachment->attachment_id,
+				'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', '', true)),
+				'revision_version'		=> $revision_version,
+				'revision_submitted'	=> true,
 			));
 			$revision->submit();
 		}
-		titania::error_box('SUCCESS', 'REVISION_SUBMITTED', TITANIA_SUCCESS);
 	}
 
 	$submit = false; // Set submit as false to keep the main stuff from being resubmitted again
+	titania::error_box('SUCCESS', 'REVISION_SUBMITTED', TITANIA_SUCCESS);
 }
 
 /**

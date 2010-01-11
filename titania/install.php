@@ -650,6 +650,12 @@ $versions = array(
 		)),
 	),
 
+	'0.1.30' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'queue_topic_id', array('UINT', 0)),  // Store the queue topic id so we can track it
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
