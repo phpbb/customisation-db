@@ -1,27 +1,30 @@
 <!-- INCLUDE contributions/contribution_header.html -->
 
-<h2 class="section-title">{CONTRIB_NAME} :: {PAGE_TITLE}</h2>
+<div class="left-column">
+	<div class="container demo">
+		<div class="inner"><span class="corners-top"><span></span></span>
+			<img src="{T_TITANIA_THEME_PATH}/images/demo.gif" alt="" /><br /><a href="">View Demo</a>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+</div>
 
-<div class="column1">
-	<h3>{L_CONTRIB_DETAILS}</h3>
-	<table>
-		<tr>
-			<td align="right"><strong>{L_CONTRIB_NAME}:</strong></td>
-			<td align="left">{CONTRIB_NAME}</td>
-		</tr>
-		<tr>
-			<td align="right"><strong>{L_DOWNLOADS_TOTAL}:</strong></td>
-			<td align="left">{CONTRIB_DOWNLOADS}</td>
-		</tr>
-		<tr>
-			<td align="right"><strong>{L_CONTRIB_UPDATE_DATE}:</strong></td>
-			<td align="left">{CONTRIB_UPDATE_DATE}</td>
-		</tr>
-		<tr>
-			<td align="right"><strong>{L_RATING}:</strong></td>
-			<td align="left">{CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})</td>
-		</tr>
-	</table>
+<div class="container right-column">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<!-- IF CONTRIB_DESC -->
+		<dl><dt><strong>{L_DESCRIPTION}</strong></dt><dd>{CONTRIB_DESC}</dd>
+		<br />
+		<!-- ENDIF -->
+		<dl class="contrib-info">
+			<dt><strong>{L_CONTRIB_UPDATE_DATE}</strong></dt>
+			<dd>{CONTRIB_UPDATE_DATE}</dd>
+			<dt><strong>{L_AUTHOR}</strong></dt>
+			<dd>{AUTHOR_NAME_FULL}</dd>
+			<dt><strong>{L_DOWNLOADS_TOTAL}</strong></dt>
+			<dd>{CONTRIB_DOWNLOADS}</dd>
+			<dt><strong>{L_RATING}</strong></dt>
+			<dd>{CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})</dd>
+		</dl>
+
 	<!-- IF U_DOWNLOAD -->
 	<h3>{L_DOWNLOAD}</h3>
 	<table>
@@ -47,20 +50,7 @@
 		</tr>
 	</table>
 	<!-- ENDIF -->
-</div>
 
-<div class="column2">
-	<h3>{L_AUTHOR_DETAILS}</h3>
-	<table>
-		<tr>
-			<td align="right"><strong>{L_CONTRIB_AUTHOR}:</strong></td>
-			<td align="left">{AUTHOR_NAME_FULL}<!-- IF AUTHOR_REALNAME --> ({AUTHOR_REALNAME})<!-- ENDIF --></td>
-		</tr>
-		<tr>
-			<td align="right"><strong>{L_CONTRIBUTIONS}:</strong></td>
-			<td align="left"><a href="{U_AUTHOR_CONTRIBUTIONS}">{L_LIST}</a></td>
-		</tr>
-	</table>
 	<!-- IF .revisions -->
 	<h3>{L_REVISIONS}</h3>
 	<table>
@@ -72,13 +62,9 @@
 	<!-- END revisions -->
 	</table>
 	<!-- ENDIF -->
+	<span class="corners-bottom"><span></span</span></div>
 </div>
 
 <div class="clear"></div>
-
-<!-- IF CONTRIB_DESC -->
-<h3>{L_CONTRIB_DESCRIPTION}</h3>
-{CONTRIB_DESC}
-<!-- ENDIF -->
 
 <!-- INCLUDE contributions/contribution_footer.html -->

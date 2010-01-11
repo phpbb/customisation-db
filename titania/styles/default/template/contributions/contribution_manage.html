@@ -1,6 +1,6 @@
 <!-- INCLUDE contributions/contribution_header.html -->
 
-<h2 class="section-title"><!-- IF CONTRIB_NAME -->{CONTRIB_NAME} :: {PAGE_TITLE}<!-- ELSE -->{PAGE_TITLE}<!-- ENDIF --></h2>
+<h3 class="section-name">{PAGE_TITLE}</h3>
 
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
@@ -18,75 +18,85 @@
 			{S_FORM_TOKEN}
 		</fieldset>
 	<!-- ELSE -->
-		<fieldset>
-			<dl>
-				<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
-				<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
-			</dl>
-			<!-- IF S_CREATE -->
-			<dl style="clear: left;">
-				<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label></dt>
-				<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
-			</dl>
-			<dl>
-				<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
-				<dd>
-					<select name="contrib_type" id="contrib_type">
-						<!-- BEGIN type_select -->
-						<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{type_select.NAME}</option>
-						<!-- END type_select -->
-					</select>
-				</dd>
-			</dl>
-			<!-- ENDIF -->
-			<dl>
-				<dt><label for="{POSTING_TEXT_NAME}">{L_CONTRIB_DESCRIPTION}:</label></dt>
-				<dd></dd>
-			</dl>
-		</fieldset>
-		<!-- INCLUDE posting/posting_basic_editor.html -->
-		<h3>{L_OPTIONS}</h3>
-		<fieldset>
-			<dl>
-				<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label><br /><span>{L_MULTI_SELECT_EXPLAIN}</span></dt>
-				<dd>
-					<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="5">
-						<!-- BEGIN category_select -->
-						<option value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
-							<!-- BEGIN level -->&nbsp; &nbsp;<!-- END level -->{category_select.NAME}
-						</option>
-						<!-- END category_select -->
-					</select>
-				</dd>
-			</dl>
-			<!-- IF not S_CREATE -->
-			<dl>
-				<dt><label for="change_owner">{L_CONTRIB_CHANGE_OWNER}:</label><br /><span>{L_CONTRIB_CHANGE_OWNER_EXPLAIN}</span></dt>
-				<dd>
-					<input type="text" name="change_owner" id="change_owner" />
-				</dd>
-			</dl>
-			<!-- ENDIF -->
-			<dl>
-				<dt><label for="active_coauthors">{L_CONTRIB_ACTIVE_AUTHORS}:</label><br /><span>{L_CONTRIB_ACTIVE_AUTHORS_EXPLAIN}<br /><br />{L_CONTRIB_AUTHORS_EXPLAIN}</span></dt>
-				<dd>
-					<textarea name="active_coauthors" id="active_coauthors">{ACTIVE_COAUTHORS}</textarea>
-				</dd>
-			</dl>
-			<dl>
-				<dt><label for="nonactive_coauthors">{L_CONTRIB_NONACTIVE_AUTHORS}:</label><br /><span>{L_CONTRIB_NONACTIVE_AUTHORS_EXPLAIN}<br /><br />{L_CONTRIB_AUTHORS_EXPLAIN}</span></dt>
-				<dd>
-					<textarea name="nonactive_coauthors" id="nonactive_coauthors">{NONACTIVE_COAUTHORS}</textarea>
-				</dd>
-			</dl>
-		</fieldset>
+		<div class="container">
+			<div class="inner"><span class="corners-top"><span></span></span>
+				<fieldset>
+					<dl>
+						<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
+						<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
+					</dl>
+					<!-- IF S_CREATE -->
+					<dl style="clear: left;">
+						<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label></dt>
+						<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
+					</dl>
+					<dl>
+						<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
+						<dd>
+							<select name="contrib_type" id="contrib_type">
+								<!-- BEGIN type_select -->
+								<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{type_select.NAME}</option>
+								<!-- END type_select -->
+							</select>
+						</dd>
+					</dl>
+					<!-- ENDIF -->
+					<dl>
+						<dt><label for="{POSTING_TEXT_NAME}">{L_CONTRIB_DESCRIPTION}:</label></dt>
+						<dd></dd>
+					</dl>
+				</fieldset>
 
-		<fieldset class="submit-buttons">
-			<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
-			<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
-			<input type="submit" name="new_revision" value="{L_SUBMIT_NEW_REVISION}" class="button1" />
-			{S_FORM_TOKEN}
-		</fieldset>
+		<!-- INCLUDE posting/posting_basic_editor.html -->
+
+				<h3>{L_OPTIONS}</h3>
+				<fieldset>
+					<dl>
+						<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label><br /><span>{L_MULTI_SELECT_EXPLAIN}</span></dt>
+						<dd>
+							<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="5">
+								<!-- BEGIN category_select -->
+								<option value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
+									<!-- BEGIN level -->&nbsp; &nbsp;<!-- END level -->{category_select.NAME}
+								</option>
+								<!-- END category_select -->
+							</select>
+						</dd>
+					</dl>
+					<!-- IF not S_CREATE -->
+					<dl>
+						<dt><label for="change_owner">{L_CONTRIB_CHANGE_OWNER}:</label><br /><span>{L_CONTRIB_CHANGE_OWNER_EXPLAIN}</span></dt>
+						<dd>
+							<input class="inputbox autowidth" type="text" name="change_owner" id="change_owner" />
+						</dd>
+					</dl>
+					<!-- ENDIF -->
+					<dl>
+						<dt><label for="active_coauthors">{L_CONTRIB_ACTIVE_AUTHORS}:</label><br /><span>{L_CONTRIB_ACTIVE_AUTHORS_EXPLAIN}<br /><br />{L_CONTRIB_AUTHORS_EXPLAIN}</span></dt>
+						<dd>
+							<textarea class="inputbox" name="active_coauthors" id="active_coauthors">{ACTIVE_COAUTHORS}</textarea>
+						</dd>
+					</dl>
+					<dl>
+						<dt><label for="nonactive_coauthors">{L_CONTRIB_NONACTIVE_AUTHORS}:</label><br /><span>{L_CONTRIB_NONACTIVE_AUTHORS_EXPLAIN}<br /><br />{L_CONTRIB_AUTHORS_EXPLAIN}</span></dt>
+						<dd>
+							<textarea class="inputbox" name="nonactive_coauthors" id="nonactive_coauthors">{NONACTIVE_COAUTHORS}</textarea>
+						</dd>
+					</dl>
+				</fieldset>
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
+		
+		<div class="container">
+			<div class="inner"><span class="corners-top"><span></span></span>
+				<fieldset class="submit-buttons">
+					<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
+					<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
+					<input type="submit" name="new_revision" value="{L_SUBMIT_NEW_REVISION}" class="button1" />
+					{S_FORM_TOKEN}
+				</fieldset>
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
 	<!-- ENDIF -->
 </form>
 

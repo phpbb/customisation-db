@@ -1,42 +1,26 @@
 <!-- INCLUDE contributions/contribution_header.html -->
 
-<h2 class="section-title">{CONTRIB_NAME} :: {L_FAQ}</h2>
+<h3 class="section-name">{L_FAQ_EXPANDED}</h3>
 
 <!-- IF S_LIST -->
-	<div class="topic-actions">
-		<div class="buttons">
-		<!-- IF U_CREATE_FAQ -->
-			<p class="ui-button"><a href="{U_CREATE_FAQ}" id="create-faq" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_FAQ}</a></p>
-		<!-- ENDIF -->
-		</div>
 
 		<!-- IF PAGINATION or TOTAL_POSTS -->
+		<div class="topic-actions">
 			<div class="pagination">
 				<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_POSTS}
 				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
 			</div>
+			</div>
 		<!-- ENDIF -->
-	</div>
 	<div class="clear"></div>
 
 	<!-- IF .faqlist -->
-		<div class="forumbg">
+		<div class="container">
 			<div class="inner"><span class="corners-top"><span></span></span>
-				<ul class="topiclist">
-					<li class="header">
-						<dl class="icon">
-							<dt>{L_FAQ_LIST}</dt>
-							<!-- IF faqlist.U_MOVE_UP or faqlist.U_MOVE_DOWN or faqlist.U_EDIT or faqlist.U_DELETE--><dd class="lastpost"><span></span></dd><!-- ENDIF -->
-						</dl>
-					</li>
-				</ul>
-				<ul class="topiclist topics">
-
+				<ul class="basic">
 				<!-- BEGIN faqlist -->
-					<li class="row<!-- IF faqlist.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
-						<dl class="icon" style="background-image: url({faqlist.TOPIC_FOLDER_IMG_SRC}); background-repeat: no-repeat;">
-							<dt title="{faqlist.TOPIC_FOLDER_IMG_ALT}"><a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a></dt>
-							<dd class="lastpost"><span>
+					<li<!-- IF faqlist.S_LAST_ROW --> style="border-bottom: none;"<!-- ENDIF -->><a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a>
+							<span>
 								<!-- IF faqlist.U_MOVE_UP -->
 									<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->
 								<!-- ENDIF -->
@@ -45,9 +29,8 @@
 								<!-- ENDIF -->
 								<!-- IF faqlist.U_EDIT --><a href="{faqlist.U_EDIT}">{ICON_EDIT}</a><!-- ENDIF -->
 								<!-- IF faqlist.U_DELETE -->&nbsp;<a href="{faqlist.U_DELETE}">{ICON_DELETE}</a><!-- ENDIF -->
-							</span></dd>
-						</dl>
-					</li>
+							</span>
+					</li>	
 				<!-- END faqlist-->
 				</ul>
 			<span class="corners-bottom"><span></span></span></div>

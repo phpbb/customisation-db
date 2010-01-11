@@ -1,8 +1,9 @@
 <!-- INCLUDE authors/author_header.html -->
 
-<h2 class="section-title">{PAGE_TITLE} :: {L_DETAILS}</h2>
+<h3 class="section-name">{PAGE_TITLE}</h3>
 
-<div class="column1">
+<div class="container">
+	<div class="inner"><span class="corners-top"><span></span></span>
 	<h3>{L_AUTHOR_DETAILS}</h3>
 	<table>
 		<tr>
@@ -22,9 +23,9 @@
 		</tr>
 		<!-- ENDIF -->
 	</table>
-</div>
 
-<div class="column2">
+
+
 	<h3>{L_AUTHOR_STATISTICS}</h3>
 	<table>
 		<tr>
@@ -42,7 +43,7 @@
 		</tr>
 		<!-- END type_counts -->
 	</table>
-</div>
+
 
 <div class="clear"></div>
 
@@ -50,5 +51,6 @@
 <h3>{L_AUTHOR_DESC}</h3>
 {AUTHOR_DESC}
 <!-- ENDIF -->
-
+	<span class="corners-bottom"><span></span></span></div>
+</div>
 <!-- INCLUDE authors/author_footer.html -->
