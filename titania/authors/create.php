@@ -26,6 +26,8 @@ if (!phpbb::$auth->acl_get('titania_contrib_submit'))
 	trigger_error('NO_AUTH');
 }
 
+titania::add_lang('contributions');
+
 titania::$contrib = new titania_contribution();
 
 titania::$contrib->contrib_user_id = phpbb::$user->data['user_id'];

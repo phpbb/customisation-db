@@ -42,6 +42,7 @@ $lang = array_merge($lang, array(
 'SUBDIRECTORY_LIMIT' => 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
 'COULD_NOT_FIND_ROOT' => 'I\'ve searched through your package and was unable to find the main directory.  Please be sure there is an xml file with the name install in it somewhere in the zip package.',
 'REVISION_SUBMITTED' => 'The revision has been submitted successfully.',
+'SUBMIT_NEW_REVISION' => 'Submit and add new revision',
 	'CANNOT_ADD_SELF_COAUTHOR'			=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CONTRIB'							=> 'Contribution',
 	'CONTRIBUTIONS'						=> 'Contributions',
