@@ -1,10 +1,8 @@
 <fieldset class="fields2">
-<!-- IF S_CAN_ATTACH -->
 <dl>
 	<dt><label for="fileupload">{L_FILENAME}:</label></dt>
 	<dd>
 		<input type="file" name="{FORM_NAME}" id="{FORM_NAME}"<!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
-		<input type="submit" name="add_file" value="{L_ADD_FILE}" class="button2" onclick="upload = true;" />
 	</dd>
 </dl>
 <dl>
@@ -15,19 +13,4 @@
 	<dt><label for="revision_version">{L_REVISION_VERSION}:</label></dt>
 	<dd><input type="text" name="revision_version" id="revision_version" class="inputbox autowidth" value="{FILE_COMMENT}" /></dd>
 </dl>
-<!-- ENDIF -->
-<!-- BEGIN attach_row -->
-	<!-- IF not attach_row.S_FIRST_ROW or S_CAN_ATTACH --><hr class="dashed" /><!-- ENDIF -->
-	<dl>
-		<dt><label for="revision_name_{attach_row.ATTACH_ID}">{L_REVISION_NAME}:</label></dt>
-		<dd><input type="text" name="revision_name_{attach_row.ATTACH_ID}" id="revision_name_{attach_row.ATTACH_ID}" class="inputbox autowidth" value="{attach_row.REVISION_NAME}" /></dd>
-		<dt><label for="revision_version_{attach_row.ATTACH_ID}">{L_REVISION_VERSION}:</label></dt>
-		<dd><input type="text" name="revision_version_{attach_row.ATTACH_ID}" id="version_list_{attach_row.ATTACH_ID}" class="inputbox autowidth" value="{attach_row.REVISION_VERSION}" /></dd>
-		<dd><a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a></dd>
-		<dd style="margin-top: 5px;">
-			<!-- IF attach_row.S_DELETE --><input type="submit" name="delete_file[{attach_row.ATTACH_ID}]" value="{L_DELETE_FILE}" class="button2" /><!-- ENDIF -->
-			<input type="hidden" name="{FORM_NAME}_attachments[]" value="{attach_row.ATTACH_ID}" />
-		</dd>
-	</dl>
-<!-- END attach_row -->
 </fieldset>

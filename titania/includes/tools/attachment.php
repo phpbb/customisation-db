@@ -28,21 +28,21 @@ class titania_attachment extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= TITANIA_ATTACHMENTS_TABLE;
+	protected $sql_table = TITANIA_ATTACHMENTS_TABLE;
 
 	/**
 	 * SQL identifier field
 	 *
 	 * @var string
 	 */
-	protected $sql_id_field		= 'attachment_id';
+	protected $sql_id_field = 'attachment_id';
 
 	/**
 	* Handles the name of the form field
 	*
 	* @var string
 	*/
-	protected $form_name		= '';
+	protected $form_name = '';
 
 	/**
 	* Additional fields to handle during output
@@ -51,7 +51,7 @@ class titania_attachment extends titania_database_object
 	*
 	* @var array
 	*/
-	public $additional_fields	= array();
+	public $additional_fields = array();
 
 	/**
 	* Stores the currently attached attachments to the object (send with store_attachments())
@@ -60,21 +60,21 @@ class titania_attachment extends titania_database_object
 	*
 	* @var array
 	*/
-	private $attachments		= array();
+	private $attachments = array();
 
 	/**
 	 * Upload class
 	 *
 	 * @var object
 	 */
-	public $uploader			= false;
+	public $uploader = false;
 
 	/**
 	* Stores the errors (if any) when attaching
 	*
 	* @var array
 	*/
-	public $error				= array();
+	public $error = array();
 
 	/**
 	* Did we upload a file?
@@ -119,6 +119,8 @@ class titania_attachment extends titania_database_object
 		$this->object_id = (int) $object_id;
 
 		$this->form_name = 'titania_attachment_' . $this->object_type . '_' . $this->object_id;
+
+		phpbb::$user->add_lang('posting');
 	}
 
 	/**
@@ -183,8 +185,6 @@ class titania_attachment extends titania_database_object
 	 */
 	public function parse_uploader($tpl_file = 'posting/attachments/default.html')
 	{
-		titania::add_lang('attachments');
-
 		phpbb::$template->assign_vars(array(
 			'FORM_NAME'			=> $this->form_name,
 			'MAX_LENGTH'		=> (titania::$access_level != TITANIA_ACCESS_TEAMS) ? phpbb::$config['max_filesize'] : false,

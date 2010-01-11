@@ -36,6 +36,11 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+'NO_REVISION_ATTACHMENT' => 'Please select a file to upload',
+'NO_REVISION_VERSION' => 'Please enter a version for the revision',
+'NEW_REVISION' => 'New Revision',
+'SUBDIRECTORY_LIMIT' => 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
+'COULD_NOT_FIND_ROOT' => 'I\'ve searched through your package and was unable to find the main directory.  Please be sure there is an xml file with the name install in it somewhere in the zip package.',
 	'CANNOT_ADD_SELF_COAUTHOR'			=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CONTRIB'							=> 'Contribution',
 	'CONTRIBUTIONS'						=> 'Contributions',

@@ -62,7 +62,7 @@ class titania_revision extends titania_database_object
 		$this->object_config = array_merge($this->object_config, array(
 			'revision_id'			=> array('default' => 0),
 			'contrib_id' 			=> array('default' => 0),
-			'revision_validated'	=> array('default' => 0),
+			'revision_validated'	=> array('default' => false),
 			'attachment_id' 		=> array('default' => 0),
 			'revision_name' 		=> array('default' => '', 'max' => 255),
 			'revision_time'			=> array('default' => (int) titania::$time),
@@ -71,6 +71,7 @@ class titania_revision extends titania_database_object
 			'phpbb_version'			=> array('default' => ''),
 			'install_time'			=> array('default' => 0),
 			'install_level'			=> array('default' => 0),
+			'revision_submitted'	=> array('default' => false),
 		));
 
 		$this->contrib = $contrib;
@@ -94,12 +95,17 @@ class titania_revision extends titania_database_object
 	}
 
 	/**
-	 * Put the contrib item in the queue
+	 * Handle some stuff we need when submitting an attachment
 	 */
-	public function submit($contrib_name)
+	public function submit($contrib_name = '')
 	{
+		if ($this->revision_id && empty($this->sql_data))
+		{
+			throw new exception('Submitting an edit to a contribution item requires you load it through the $revision->load() method');
+		}
+
 		// Some stuff for new submissions
-		if (!$this->revision_id)
+		if ($this->revision_id && !$this->sql_data['revision_submitted'] && $this->revision_submitted)
 		{
 			// Update the contrib_last_update if required here
 			if (!titania::$config->require_validation)

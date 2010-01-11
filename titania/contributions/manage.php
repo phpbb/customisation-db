@@ -16,10 +16,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!function_exists('generate_type_select') || !function_exists('generate_category_select'))
-{
-	require TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT;
-}
+titania::_include('functions_posting', 'generate_type_select');
 
 load_contrib();
 
@@ -28,74 +25,101 @@ if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !
 	trigger_error('NO_AUTH');
 }
 
-// Load the message object
-$message = new titania_message(titania::$contrib);
-$message->set_auth(array(
-	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
-	'smilies'	=> phpbb::$auth->acl_get('titania_smilies'),
-));
-$message->set_settings(array(
-	'display_error'		=> false,
-	'display_subject'	=> false,
-	'subject_name'		=> 'name',
-));
-
-// Load the revisions
-titania::$contrib->get_revisions();
-
-// Set some vars up
-$submit = (isset($_POST['submit'])) ? true : false;
+// Set some main vars up
+$submit = (isset($_POST['submit']) || isset($_POST['new_revision'])) ? true : false;
+$new_revision = (isset($_POST['new_revision'])) ? true : false;
+$new_revision_step = request_var('new_revision_step', 0);
 $change_owner = request_var('change_owner', '', true); // Blame Nathan, he said this was okay
 $contrib_categories = array();
 
-// Hack for displaying the revisions in order from recent to oldest
-phpbb::$config['display_order'] = true;
-
-// Setup the revisions
-$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
-$revision_attachment->additional_fields = array(
-	'REVISION_NAME'		=> 'revision_name',
-	'REVISION_VERSION'	=> 'revision_version',
-);
-// Need to load revisions differently, can not use the load_attachments function (yes, revisions are loaded already, but this is easier)
-$rowset = array();
-$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . ' a, ' . TITANIA_REVISIONS_TABLE . ' r
-	WHERE object_type = ' . TITANIA_CONTRIB . '
-		AND object_id = ' . titania::$contrib->contrib_id;
-$result = phpbb::$db->sql_query($sql);
-while ($row = phpbb::$db->sql_fetchrow($result))
+/**
+* ---------------------------- Create a new revision ----------------------------
+*/
+if ($new_revision_step > 0)
 {
-	$rowset[] = array_merge($row, array(
-		// If we use the queue, do not let revisions be deleted, contact team plz (otherwise it is either approved or in the queue)
-		'no_delete' => (titania::$config->use_queue || $row['revision_validated']) ? true : false,
-	));
-}
-phpbb::$db->sql_freeresult($result);
-
-$revision_attachment->store_attachments($rowset);
-
-// Upload files if sent.  Do not allow submission of attachments if there is already something in the queue
-if (titania::$config->use_queue)
-{
-	$sql = 'SELECT COUNT(topic_id) AS cnt FROM ' . TITANIA_TOPICS_TABLE . '
-		WHERE topic_type = ' . TITANIA_QUEUE . '
-			AND contrib_id = ' . titania::$contrib->contrib_id;
-	phpbb::$db->sql_query($sql);
-	$cnt = phpbb::$db->sql_fetchfield('cnt');
-	phpbb::$db->sql_freeresult($result);
-	if (!$cnt)
+	$error = array();
+	if (!check_form_key('new_revision'))
 	{
-		phpbb::$template->assign_var('S_CAN_ATTACH', true);
-		$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
+		$error[] = phpbb::$user->lang['FORM_INVALID'];
 	}
 }
-else
+switch ($new_revision_step)
 {
-	phpbb::$template->assign_var('S_CAN_ATTACH', true);
-	$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
+	case 0 :
+		// Don't do anything, we handle the start later (after submission)
+	break;
+
+	case 1 :
+		// Upload the revision
+		$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
+		$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
+		$revision_version = utf8_normalize_nfc(request_var('revision_version', '', true));
+
+		// Check for errors
+		$error = array_merge($error, $revision_attachment->error);
+		if (!$revision_attachment->uploaded)
+		{
+			$error[] = phpbb::$user->lang['NO_REVISION_ATTACHMENT'];
+		}
+		if (!$revision_version)
+		{
+			$error[] = phpbb::$user->lang['NO_REVISION_VERSION'];
+		}
+
+		if (sizeof($error))
+		{
+			// Start over...
+			phpbb::$template->assign_vars(array(
+				'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
+			));
+		}
+		else
+		{
+			// Success, create a new revision to start
+			$revision = new titania_revision(titania::$contrib);
+			$revision->__set_array(array(
+				'attachment_id'		=> $revision_attachment->attachment_id,
+				'revision_name'		=> utf8_normalize_nfc(request_var('revision_name', '', true)),
+				'revision_version'	=> $revision_version,
+			));
+			$revision->submit();
+
+			$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
+			$new_dir_name = titania::$contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision_version));
+
+			// Start up the machine
+			$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
+
+			// Clean the package
+			$contrib_tools->clean_package();
+
+			// Restore the root package directory
+			$contrib_tools->restore_root();
+
+			$error = array_merge($error, $contrib_tools->error);
+		}
+	break;
+}
+if ($new_revision_step > 0)
+{
+	phpbb::$template->assign_vars(array(
+		'ERROR_MSG'			=> (sizeof($error)) ? implode('<br />', $error) : '',
+		'STEP'				=> (sizeof($error)) ? ($new_revision_step - 1) : $new_revision_step,
+		'NEXT_STEP'			=> (sizeof($error)) ? $new_revision_step : ($new_revision_step + 1),
+
+		'S_NEW_REVISION'	=> true,
+	));
+
+	add_form_key('new_revision');
+
+	titania::page_header('NEW_REVISION');
+	titania::page_footer(true, 'contributions/contribution_manage.html');
 }
 
-if (titania::confirm_box(true)) // Confirming author change
+/**
+* ---------------------------- Confirm main author change ----------------------------
+*/
+if (titania::confirm_box(true))
 {
 	if (!titania::$contrib->is_author)
 	{
@@ -110,6 +134,22 @@ if (titania::confirm_box(true)) // Confirming author change
 		trigger_error('CONTRIB_OWNER_UPDATED');
 	}
 }
+
+/**
+* ---------------------------- Main Page ----------------------------
+*/
+
+// Load the message object
+$message = new titania_message(titania::$contrib);
+$message->set_auth(array(
+	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
+	'smilies'	=> phpbb::$auth->acl_get('titania_smilies'),
+));
+$message->set_settings(array(
+	'display_error'		=> false,
+	'display_subject'	=> false,
+	'subject_name'		=> 'name',
+));
 
 if ($submit)
 {
@@ -152,8 +192,6 @@ if ($submit)
 		}
 	}
 
-	$error = array_merge($error, $revision_attachment->error);
-
 	// Did we succeed or have an error?
 	if (!sizeof($error))
 	{
@@ -163,48 +201,6 @@ if ($submit)
 
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
-
-		// Revisions
-		$new_attachments = $revision_attachment->get_attachments();
-		$existing_attachments = array();
-		foreach (titania::$contrib->revisions as $row)
-		{
-			$existing_attachments[$row['attachment_id']] = $row['revision_id'];
-		}
-		$new_revisions = array_diff(array_keys($new_attachments), array_keys($existing_attachments));
-
-		// First create the new revisions, if any
-		if (sizeof($new_revisions))
-		{
-			foreach ($new_revisions as $attachment_id)
-			{
-				$revision = new titania_revision(titania::$contrib);
-
-				$revision->__set_array(array(
-					'attachment_id'		=> $attachment_id,
-					'revision_name'		=> utf8_normalize_nfc(request_var('revision_name_' . $attachment_id, '', true)),
-					'revision_version'	=> utf8_normalize_nfc(request_var('revision_version_' . $attachment_id, '', true)),
-				));
-
-				$revision->submit(titania::$contrib->contrib_name);
-			}
-		}
-		if (sizeof($existing_attachments))
-		{
-			foreach ($existing_attachments as $attachment_id => $revision_id)
-			{
-				$revision = new titania_revision(titania::$contrib);
-				$revision->__set_array(titania::$contrib->revisions[$revision_id]);
-
-				$revision->__set_array(array(
-					'revision_name'		=> utf8_normalize_nfc(request_var('revision_name_' . $attachment_id, '', true)),
-					'revision_version'	=> utf8_normalize_nfc(request_var('revision_version_' . $attachment_id, '', true)),
-				));
-
-				$revision->submit(titania::$contrib->contrib_name);
-			}
-		}
-		$revision_attachment->submit(TITANIA_ACCESS_PUBLIC);
 
 		if ($change_owner == '')
 		{
@@ -219,6 +215,20 @@ if ($submit)
 			);
 
 			titania::confirm_box(false, sprintf(phpbb::$user->lang['CONTRIB_CONFIRM_OWNER_CHANGE'], '<a href="' .  phpbb::append_sid('memberlist', 'mode=viewprofile&amp;u=' . $change_owner_id) . '">' . $change_owner . '</a>'), titania_url::append_url(titania_url::$current_page), $s_hidden_fields);
+		}
+
+		// Begin the stuff for uploading a new revision (this is continued above on the next page submission)
+		if ($new_revision)
+		{
+			$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
+			phpbb::$template->assign_vars(array(
+				'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
+				'STEP'					=> 0,
+				'NEXT_STEP'				=> 1,
+
+				'S_NEW_REVISION'		=> true,
+			));
+			add_form_key('new_revision');
 		}
 	}
 }
@@ -262,8 +272,6 @@ phpbb::$template->assign_vars(array(
 	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
-
-	'REVISION_UPLOADER'			=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
 ));
 
 titania::page_header('MANAGE_CONTRIBUTION');
