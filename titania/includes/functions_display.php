@@ -131,16 +131,16 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 					u.username, u.user_colour, u.username_clean',
 
 				'FROM'		=> array(
-					TITANIA_CONTRIB_IN_CATEGORIES_TABLE 	=> 'cic',
+					TITANIA_CONTRIB_IN_CATEGORIES_TABLE => 'cic',
 				),
 
 				'LEFT_JOIN'	=> array(
 					array(
-						'FROM'	=> array(TITANIA_CONTRIBS_TABLE	=> 'c'),
+						'FROM'	=> array(TITANIA_CONTRIBS_TABLE => 'c'),
 						'ON'	=> 'cic.contrib_id = c.contrib_id',
 					),
 					array(
-						'FROM'	=> array(USERS_TABLE	=> 'u'),
+						'FROM'	=> array(USERS_TABLE => 'u'),
 						'ON'	=> 'u.user_id = c.contrib_user_id',
 					),
 				),
@@ -153,6 +153,18 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 
 			titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 		break;
+	}
+
+	// Permissions
+	if (titania::$config->require_validation && !titania::$access_level == TITANIA_ACCESS_TEAMS)
+	{
+		$sql_ary['LEFT_JOIN'][] = array(
+			'FROM'	=> array(TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc'),
+			'ON'	=> 'cc.contrib_id = c.contrib_id AND cc.user_id = ' . phpbb::$user->data['user_id'],
+		);
+		$sql_ary['WHERE'] .= ' AND (c.contrib_status <> ' . TITANIA_CONTRIB_NEW . '
+			OR c.contrib_user_id = ' . phpbb::$user->data['user_id'] . '
+			OR cc.active = 1)';
 	}
 
 	// Setup the pagination tool

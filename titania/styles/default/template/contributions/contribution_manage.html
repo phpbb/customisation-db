@@ -27,7 +27,7 @@
 					</dl>
 					<!-- IF S_CREATE -->
 					<dl style="clear: left;">
-						<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label></dt>
+						<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label><br /><span>{L_CONTRIB_PERMALINK_EXPLAIN}</span></dt>
 						<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
 					</dl>
 					<dl>
@@ -86,13 +86,13 @@
 				</fieldset>
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
-		
+
 		<div class="container">
 			<div class="inner"><span class="corners-top"><span></span></span>
 				<fieldset class="submit-buttons">
 					<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
 					<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
-					<input type="submit" name="new_revision" value="{L_SUBMIT_NEW_REVISION}" class="button1" />
+					<!-- IF not S_CREATE --><input type="submit" name="new_revision" value="{L_SUBMIT_NEW_REVISION}" class="button1" /><!-- ENDIF -->
 					{S_FORM_TOKEN}
 				</fieldset>
 			<span class="corners-bottom"><span></span></span></div>

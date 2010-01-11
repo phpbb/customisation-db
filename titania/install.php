@@ -893,7 +893,7 @@ function titania_data($action, $version)
 		'contrib_desc_bitfield'	=> '',
 		'contrib_desc_uid'		=> '',
 		'contrib_desc_options'	=> 7,
-		'contrib_status'		=> TITANIA_STATUS_NEW,
+		'contrib_status'		=> TITANIA_CONTRIB_NEW,
 	));
 	$umil->table_row_insert(TITANIA_CONTRIBS_TABLE, $mod);
 
