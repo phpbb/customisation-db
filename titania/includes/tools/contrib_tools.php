@@ -55,9 +55,9 @@ class titania_contrib_tools
 	* @param string $zip Full path to the zip package
 	* @param string $new_dir_name name of the directory you want to use in the zip package to
 	*/
-	public function __construct($zip, $new_dir_name = '')
+	public function __construct($original_zip, $new_dir_name = '')
 	{
-		$this->original_zip = $zip;
+		$this->original_zip = $original_zip;
 		$this->new_dir_name = utf8_basename($new_dir_name);
 		$this->unzip_dir = titania::$config->contrib_temp_path . $this->new_dir_name . '/';
 
@@ -129,6 +129,8 @@ class titania_contrib_tools
 	/**
 	* Find the root directory of the mod package and place it appropriately so we have package.zip/mod_name_1_0_0/(install files)
 	* After finding the root, moves it to be in the correct path we need
+	*
+	* @todo This only handles mod packages (containing an install xml file)
 	*/
 	public function restore_root()
 	{
