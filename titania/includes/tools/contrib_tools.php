@@ -61,6 +61,9 @@ class titania_contrib_tools
 		$this->new_dir_name = utf8_basename($new_dir_name);
 		$this->unzip_dir = titania::$config->contrib_temp_path . $this->new_dir_name . '/';
 
+		// Clear out old stuff if there is anything here...
+		$this->rmdir_recursive($this->unzip_dir);
+
 		phpbb::_include('functions_compress', false, 'compress_zip');
 
 		// Unzip to our temp directory
@@ -90,6 +93,11 @@ class titania_contrib_tools
 		// Array of the things we want to remove
 		$dirs_to_remove = array('.git', '.svn', 'CVS', '.settings');
 		$files_to_remove = array('desktop.ini', 'Thumbs.db', '.DS_Store', '.project', '.buildpath', '.gitmodules', '.gitignore');
+
+		if (!is_dir($this->unzip_dir . $sub_dir))
+		{
+				return true;
+		}
 
         foreach (scandir($this->unzip_dir . $sub_dir) as $item)
 		{
@@ -146,6 +154,11 @@ class titania_contrib_tools
 				$sub_dir = substr($sub_dir, (strpos($sub_dir, '/') - 1));
 			}
 
+			if (!is_dir($this->unzip_dir))
+			{
+				return false;
+			}
+
 			// First remove everything but the subdirectory that the package root is in
 			foreach (scandir($this->unzip_dir) as $item)
 			{
@@ -191,6 +204,10 @@ class titania_contrib_tools
 
 		// Replace any leading slash
 		$sub_dir = (isset($sub_dir[0]) && $sub_dir[0] == '/') ? substr($sub_dir, 1) : $sub_dir;
+		if (!is_dir($this->unzip_dir . $sub_dir))
+		{
+			return false;
+		}
 
         foreach (scandir($this->unzip_dir . $sub_dir) as $item)
 		{
@@ -227,6 +244,47 @@ class titania_contrib_tools
         return false;
     }
 
+    /**
+    * Replace the original zip with the package we generated
+    */
+    public function replace_zip()
+    {
+    	@unlink($this->original_zip);
+
+		$zip = new compress_zip('w', $this->original_zip);
+
+		$this->_replace_zip($zip);
+
+		$zip->close();
+    }
+
+    /**
+    * Helper to add the files in the new zip package
+    */
+    private function _replace_zip($zip, $sub_dir = '')
+    {
+		// Replace any leading slash
+		$sub_dir = (isset($sub_dir[0]) && $sub_dir[0] == '/') ? substr($sub_dir, 1) : $sub_dir;
+
+		foreach (scandir($this->unzip_dir . $sub_dir) as $item)
+		{
+            if ($item == '.' || $item == '..')
+			{
+				continue;
+			}
+
+			if (is_dir($this->unzip_dir . $sub_dir . '/' . $item))
+			{
+				$this->_replace_zip($zip, $sub_dir . '/' . $item);
+			}
+			else
+			{
+				$zip->add_custom_file($this->unzip_dir . $sub_dir . '/' . $item, $this->new_dir_name . '/' . $sub_dir . '/' . $item);
+			}
+		}
+    }
+
+
 	/**
 	* Remove the temporary files we created
 	*/
@@ -246,6 +304,11 @@ class titania_contrib_tools
 		if (!is_dir($destination) && is_dir($source))
 		{
 			$this->mkdir_recursive($destination);
+		}
+
+		if (!is_dir($source))
+		{
+			return false;
 		}
 
 		foreach (scandir($source) as $item)

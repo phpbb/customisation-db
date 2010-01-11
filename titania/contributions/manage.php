@@ -27,29 +27,28 @@ if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !
 
 // Set some main vars up
 $submit = (isset($_POST['submit']) || isset($_POST['new_revision'])) ? true : false;
-$new_revision = (isset($_POST['new_revision'])) ? true : false;
-$new_revision_step = request_var('new_revision_step', 0);
 $change_owner = request_var('change_owner', '', true); // Blame Nathan, he said this was okay
 $contrib_categories = array();
 
 /**
 * ---------------------------- Create a new revision ----------------------------
 */
-if ($new_revision_step > 0)
+if (request_var('new_revision_step', 0) > 0)
 {
-	$error = array();
-	if (!check_form_key('new_revision'))
+	// Each different type requires different handling of revisions
+	if (method_exists(titania_types::$types[titania::$contrib->contrib_type], 'create_revision'))
 	{
-		$error[] = phpbb::$user->lang['FORM_INVALID'];
+		titania_types::$types[titania::$contrib->contrib_type]->create_revision(titania::$contrib);
 	}
-}
-switch ($new_revision_step)
-{
-	case 0 :
-		// Don't do anything, we handle the start later (after submission)
-	break;
+	else
+	{
+		// Basic creation, needs nothing more
+		$error = array();
+		if (!check_form_key('new_revision'))
+		{
+			$error[] = phpbb::$user->lang['FORM_INVALID'];
+		}
 
-	case 1 :
 		// Upload the revision
 		$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 		$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
@@ -71,11 +70,21 @@ switch ($new_revision_step)
 			// Start over...
 			phpbb::$template->assign_vars(array(
 				'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
+				'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : '',
+				'STEP'					=> (sizeof($error)) ? ($new_revision_step - 1) : $new_revision_step,
+				'NEXT_STEP'				=> (sizeof($error)) ? $new_revision_step : ($new_revision_step + 1),
+
+				'S_NEW_REVISION'		=> true,
 			));
+
+			add_form_key('new_revision');
+
+			titania::page_header('NEW_REVISION');
+			titania::page_footer(true, 'contributions/contribution_manage.html');
 		}
 		else
 		{
-			// Success, create a new revision to start
+			// Success, create a new revision
 			$revision = new titania_revision(titania::$contrib);
 			$revision->__set_array(array(
 				'attachment_id'		=> $revision_attachment->attachment_id,
@@ -83,37 +92,11 @@ switch ($new_revision_step)
 				'revision_version'	=> $revision_version,
 			));
 			$revision->submit();
-
-			$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
-			$new_dir_name = titania::$contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision_version));
-
-			// Start up the machine
-			$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
-
-			// Clean the package
-			$contrib_tools->clean_package();
-
-			// Restore the root package directory
-			$contrib_tools->restore_root();
-
-			$error = array_merge($error, $contrib_tools->error);
 		}
-	break;
-}
-if ($new_revision_step > 0)
-{
-	phpbb::$template->assign_vars(array(
-		'ERROR_MSG'			=> (sizeof($error)) ? implode('<br />', $error) : '',
-		'STEP'				=> (sizeof($error)) ? ($new_revision_step - 1) : $new_revision_step,
-		'NEXT_STEP'			=> (sizeof($error)) ? $new_revision_step : ($new_revision_step + 1),
+		titania::error_box('SUCCESS', 'REVISION_SUBMITTED', TITANIA_SUCCESS);
+	}
 
-		'S_NEW_REVISION'	=> true,
-	));
-
-	add_form_key('new_revision');
-
-	titania::page_header('NEW_REVISION');
-	titania::page_footer(true, 'contributions/contribution_manage.html');
+	$submit = false; // Set submit as false to keep the main stuff from being resubmitted again
 }
 
 /**
@@ -218,7 +201,7 @@ if ($submit)
 		}
 
 		// Begin the stuff for uploading a new revision (this is continued above on the next page submission)
-		if ($new_revision)
+		if (isset($_POST['new_revision']))
 		{
 			$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 			phpbb::$template->assign_vars(array(
