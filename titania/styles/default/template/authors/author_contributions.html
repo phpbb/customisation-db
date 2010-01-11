@@ -5,20 +5,26 @@
 
 <div class="container">
 	<div class="inner"><span class="corners-top"><span></span></span>
-		<div class="forumbg forumbg-table">
-			<div class="inner"><span class="corners-top"><span></span></span>
-		
-			<table class="table1" cellspacing="1" id="modlist">
-				<!-- BEGIN contribs -->
-					<tr class="<!-- IF contribs.S_ROW_COUNT is even -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
-						<td><a href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a> ({contribs.CONTRIB_TYPE})<br />
-						{L_AUTHOR}: {contribs.CONTRIB_USERNAME_FULL} </td>
-					</tr>
-				<!-- END contribs -->
-			</table>
-		
-			<span class="corners-bottom"><span></span></span></div>
-		</div>
+		<ul class="topiclist">
+			<li class="header">
+				<dl>
+					<dt>{L_CONTRIBUTIONS}</dt>
+					<dd class="type">{L_TYPE}</dd>
+					<dd class="contrib-author">{L_AUTHOR}</dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist cplist" id="modlist">
+		<!-- BEGIN contribs -->
+			<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+				<dl>
+					<dt><a class="topictitle" href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a></dt>
+					<dd class="type">{contribs.CONTRIB_TYPE}</dd>
+					<dd class="contrib-author">{contribs.CONTRIB_USERNAME_FULL}</dd>
+				</dl>
+			</li>
+			<!-- END contribs -->
+		</ul>
 	<span class="corners-bottom"><span></span></span></div>
 </div>
 

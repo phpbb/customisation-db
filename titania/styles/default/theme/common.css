@@ -9,6 +9,15 @@ h2.panel-name {
 	display: inline;
 }
 
+h3.section-name {
+	font-size: 1.4em;
+	font-weight: normal;
+	text-transform: none;
+	color: #333333;
+	border: 0;
+	margin: 0;
+}
+
 .main-panel {
 	background-color: #C6D8E5;
 	padding: 0 10px;
@@ -40,11 +49,13 @@ h2.panel-name {
 
 .right-column {
 	margin-left: 190px;
+	position: relative;
 }
 
 .left-column {
 	width: 180px;
 	float: left;
+	position: relative;
 }
 
 .container span.corners-top, .container span.corners-bottom {
@@ -107,6 +118,7 @@ h2.panel-name {
 }
 
 a.download-main {
+	height: 21px;
 	padding-top: 30px;
 	padding-right: 41px;
 	text-align: right;
@@ -116,21 +128,19 @@ a.download-main {
 	text-decoration: none;
 }
 
-dl.contrib-info dt, dl.contrib-info dd {
+ul.general-info li {
+	list-style: none;
 	display: block;
-	float: left;
 	border-bottom: 1px dotted #DEDEDE;
 	font-size: 1.1em;
+	vertical-align: middle;
 	line-height: 20px;
 }
 
-dl.contrib-info dt {
+ul.general-info li strong {
 	width: 20%;
-}
-
-dl.contrib-info dd {
-	width: 79%;
-	clear: right;
+	display: block;
+	float: left;
 }
 
 ul.basic li {
@@ -156,15 +166,32 @@ ul.basic a {
 	font-weight: normal;
 }
 
-h3.section-name {
-	font-size: 1.4em;
-	font-weight: normal;
-	text-transform: none;
-	color: #333333;
-	border: 0;
-	margin: 0;
+.container li.header dt, .container li.header dd {
+	color: #000000;
+	margin-bottom: 2px;
 }
 
+.container .cplist li.row {
+	border-bottom: 1px solid #B5C1CB;
+	border-top: 1px solid #F9F9F9;
+}
+
+.container dd.type {
+	width: 15%;
+	text-align: center;
+	padding-left: 5px;	
+	padding-right: 5px;	
+}
+
+.container dd.contrib-author {
+	width: 20%;
+	padding-left: 5px;	
+	padding-right: 5px;
+}
+
+.container .cplist dd.type, .container .cplist dd.contrib-author {
+	font-size: 1.1em;
+}
 
 
 

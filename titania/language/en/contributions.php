@@ -106,6 +106,8 @@ $lang = array_merge($lang, array(
 	'REVISION_VERSION'					=> 'Revision Version',
 
 	'SELECT_CONTRIB_TYPE'				=> '-- Select contribution type --',
+	
+	'VIEW_DEMO'							=> 'View Demo',
 
 	'WRONG_CATEGORY'					=> 'You can only put this contribution in the same category type as the contribution type.',
 ));

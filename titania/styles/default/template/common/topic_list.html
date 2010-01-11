@@ -1,3 +1,4 @@
+<!-- IF U_POST_TOPIC or PAGINATION or TOTAL_POSTS -->
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_POST_TOPIC -->
@@ -12,18 +13,15 @@
 		</div>
 	<!-- ENDIF -->
 </div>
+<!-- ENDIF -->
 <div class="clear"></div>
 
 <!-- BEGIN topics -->
 	<!-- IF topics.S_TOPIC_TYPE_SWITCH and not topics.S_FIRST_ROW -->
 		</ul>
-		<span class="corners-bottom"><span></span></span></div>
-	</div>
 	<!-- ENDIF -->
 
 	<!-- IF topics.S_FIRST_ROW or topics.S_TOPIC_TYPE_SWITCH -->
-		<div class="forumbg<!-- IF topics.TOPIC_STICKY --> announcement<!-- ENDIF -->">
-		<div class="inner"><span class="corners-top"><span></span></span>
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="icon">
@@ -34,7 +32,7 @@
 				</dl>
 			</li>
 		</ul>
-		<ul class="topiclist topics">
+		<ul class="topiclist cplist">
 	<!-- ENDIF -->
 
 		<li class="row<!-- IF topics.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topics.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topics.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">
@@ -55,8 +53,6 @@
 
 	<!-- IF topics.S_LAST_ROW -->
 				</ul>
-			<span class="corners-bottom"><span></span></span></div>
-		</div>
 	<!-- ENDIF -->
 
 <!-- BEGINELSE -->
@@ -67,6 +63,7 @@
 	</div>
 <!-- END topics -->
 
+<!-- IF U_POST_TOPIC or PAGINATION or TOTAL_POSTS -->
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_POST_TOPIC -->
@@ -81,3 +78,4 @@
 		</div>
 	<!-- ENDIF -->
 </div>
+<!-- ENDIF -->

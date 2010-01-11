@@ -3,69 +3,61 @@
 <div class="left-column">
 	<div class="container demo">
 		<div class="inner"><span class="corners-top"><span></span></span>
-			<img src="{T_TITANIA_THEME_PATH}/images/demo.gif" alt="" /><br /><a href="">View Demo</a>
+			<img src="{T_TITANIA_THEME_PATH}/images/demo.gif" alt="" /><br /><a href="">{L_VIEW_DEMO}</a>
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
+	<!-- IF U_DOWNLOAD -->
 	<div class="download-button">
-		<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD}">{DOWLOAD_SIZE}296029 Bytes</a>
+		<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD}">{DOWNLOAD_SIZE}</a>
 	</div>
+	<!-- ENDIF -->
 </div>
 
-<div class="container right-column">
-	<div class="inner"><span class="corners-top"><span></span></span>
-		<!-- IF CONTRIB_DESC -->
-		<dl><dt><strong>{L_DESCRIPTION}</strong></dt><dd>{CONTRIB_DESC}</dd>
-		<br />
+<div class="right-column">
+	<div class="container">
+		<div class="inner"><span class="corners-top"><span></span></span>
+			<!-- IF CONTRIB_DESC -->
+			<dl><dt><strong>{L_DESCRIPTION}</strong></dt><dd>{CONTRIB_DESC}</dd>
+			<br />
+			<!-- ENDIF -->
+			<ul class="general-info">
+				<li>
+					<strong>{L_AUTHOR}</strong> {AUTHOR_NAME_FULL}
+				</li>
+				<li>
+					<strong>{L_VERSION}</strong> {DOWNLOAD_VERSION}
+				</li>
+				<li>
+					<strong>{L_CONTRIB_UPDATE_DATE}</strong> {CONTRIB_UPDATE_DATE}
+				</li>
+				<li>
+					<strong>{L_DOWNLOAD_CHECKSUM}</strong> {DOWNLOAD_CHECKSUM}
+				</li>
+				<!-- IF DOWNLOAD_NAME --><li>
+					<strong>{L_REVISION_NAME}</strong> {DOWNLOAD_NAME}
+				</li><!-- ENDIF -->		
+				<li>
+					<strong>{L_DOWNLOADS_TOTAL}</strong> {CONTRIB_DOWNLOADS}
+				</li>
+				<li>
+					<strong>{L_RATING}</strong> {CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})
+				</li>
+			</ul>
+		
+		<div class="clear"></div>
+		<!-- IF .revisions -->
+		<h3>{L_REVISIONS}</h3>
+		<table>
+		<!-- BEGIN revisions -->
+			<tr>
+				<td align="right"><strong>{revisions.NAME}:</strong></td>
+				<td align="left">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --></td>
+			</tr>
+		<!-- END revisions -->
+		</table>
 		<!-- ENDIF -->
-		<dl class="contrib-info">
-			<dt><strong>{L_CONTRIB_UPDATE_DATE}</strong></dt>
-			<dd>{CONTRIB_UPDATE_DATE}</dd>
-			<dt><strong>{L_AUTHOR}</strong></dt>
-			<dd>{AUTHOR_NAME_FULL}</dd>
-			<dt><strong>{L_DOWNLOADS_TOTAL}</strong></dt>
-			<dd>{CONTRIB_DOWNLOADS}</dd>
-			<dt><strong>{L_RATING}</strong></dt>
-			<dd>{CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})</dd>
-		</dl>
-
-	<!-- IF U_DOWNLOAD -->
-	<h3>{L_DOWNLOAD}</h3>
-	<table>
-		<tr>
-			<td align="right"><strong>{L_REVISION_NAME}:</strong></td>
-			<td align="left">{DOWNLOAD_NAME}</td>
-		</tr>
-		<tr>
-			<td align="right"><strong>{L_REVISION_VERSION}:</strong></td>
-			<td align="left">{DOWNLOAD_VERSION}</td>
-		</tr>
-		<tr>
-			<td align="right"><strong>{L_FILESIZE}:</strong></td>
-			<td align="left">{DOWNLOAD_SIZE}</td>
-		</tr>
-		<tr>
-			<td align="right"><strong>{L_DOWNLOAD_CHECKSUM}:</strong></td>
-			<td align="left">{DOWNLOAD_CHECKSUM}</td>
-		</tr>
-		<tr>
-			<td align="right"><strong>{L_DOWNLOAD}:</strong></td>
-			<td align="left"><a href="{U_DOWNLOAD}">{L_DOWNLOAD}</a></td>
-		</tr>
-	</table>
-	<!-- ENDIF -->
-
-	<!-- IF .revisions -->
-	<h3>{L_REVISIONS}</h3>
-	<table>
-	<!-- BEGIN revisions -->
-		<tr>
-			<td align="right"><strong>{revisions.NAME}:</strong></td>
-			<td align="left">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --></td>
-		</tr>
-	<!-- END revisions -->
-	</table>
-	<!-- ENDIF -->
-	<span class="corners-bottom"><span></span</span></div>
+		<span class="corners-bottom"><span></span</span></div>
+	</div>
 </div>
 
 <div class="clear"></div>

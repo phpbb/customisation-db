@@ -26,10 +26,10 @@
 				<!-- BEGIN faqlist -->
 					<li<!-- IF faqlist.S_LAST_ROW --> style="border-bottom: none;"<!-- ENDIF -->><a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a>
 							<span>
-								<!-- IF faqlist.U_MOVE_UP -->
+								<!-- IF faqlist.U_MOVE_UP and HIDE_FOR_NOW -->
 									<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->
 								<!-- ENDIF -->
-								<!-- IF faqlist.U_MOVE_DOWN -->
+								<!-- IF faqlist.U_MOVE_DOWN and HIDE_FOR_NOW -->
 									<!-- IF faqlist.S_LAST_ROW -->{ICON_MOVE_DOWN_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_DOWN}">{ICON_MOVE_DOWN}</a>&nbsp;<!-- ENDIF -->
 								<!-- ENDIF -->
 								<!-- IF faqlist.U_EDIT --><a href="{faqlist.U_EDIT}">{ICON_EDIT}</a><!-- ENDIF -->
