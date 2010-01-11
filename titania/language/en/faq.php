@@ -39,7 +39,7 @@ $lang = array_merge($lang, array(
 	'CREATE_FAQ'			=> 'New FAQ',
 
 	'DELETE_FAQ'			=> 'Delete FAQ',
-	'DELETE_FAQ_CONFIRM'	=> 'Are you sure delete the FAQ?',
+	'DELETE_FAQ_CONFIRM'	=> 'Are you sure that you want to delete this FAQ?',
 
 	'EDIT_FAQ'				=> 'Edit FAQ',
 
@@ -49,7 +49,7 @@ $lang = array_merge($lang, array(
 	'FAQ_EDITED'			=> 'This FAQ has been edited successfully.',
 	'FAQ_EXPANDED'			=> 'Frequently Asked Questions',
 	'FAQ_LIST'				=> 'FAQ List',
-	'FAQ_NOT_FOUND'			=> 'The FAQ specified could not be found.',
+	'FAQ_NOT_FOUND'			=> 'The specified FAQ could not be found.',
 
-	'NO_FAQ'				=> 'Nobody created an FAQ entry yet.',
+	'NO_FAQ'				=> 'There are no FAQ entries.',
 ));

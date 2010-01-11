@@ -99,6 +99,23 @@ h2.panel-name {
 	color: #4B6778;
 }
 
+.download-button {
+	background: url("{T_THEME_PATH}/images/download_bg.gif") no-repeat 0 0;
+	width: 176px;
+	height: 51px;
+	margin: 10px auto 0 auto;
+}
+
+a.download-main {
+	padding-top: 30px;
+	padding-right: 41px;
+	text-align: right;
+	color: #FFFFFF;
+	font-weight: bold;
+	display: block;
+	text-decoration: none;
+}
+
 dl.contrib-info dt, dl.contrib-info dd {
 	display: block;
 	float: left;
@@ -128,6 +145,11 @@ ul.basic li span {
 	border-left: 1px dotted #B5B5B5;
 	padding-left: 5px;
 	line-height: 20px;
+	margin-top: -2px;
+}
+
+ul.basic li span img {
+	vertical-align: middle;
 }
 
 ul.basic a {
