@@ -439,12 +439,15 @@ class titania_contribution extends titania_database_object
 	/**
 	 * Passes details to the template
 	 *
-	 * @param bool $return True if you want the data prepared for output and returned as an array, false to output to the template
+	 * @param bool $simple True to output a simpler version (on the non-main pages)
 	 */
-	public function assign_details()
+	public function assign_details($simple = false)
 	{
-		// Get the rating object
-		$this->get_rating();
+		if (!$simple)
+		{
+			// Get the rating object
+			$this->get_rating();
+		}
 
 		phpbb::$template->assign_vars(array(
 			// Contribution data
@@ -455,7 +458,7 @@ class titania_contribution extends titania_database_object
 
 			'CONTRIB_RATING'				=> $this->contrib_rating,
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
-			'CONTRIB_RATING_STRING'			=> $this->rating->get_rating_string(),
+			'CONTRIB_RATING_STRING'			=> (!$simple) ? $this->rating->get_rating_string() : '',
 
 			// Download data
 			'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
@@ -470,31 +473,34 @@ class titania_contribution extends titania_database_object
 		// Display real author
 		$this->author->assign_details();
 
-		// Display Co-authors
-		foreach ($this->coauthors as $user_id => $row)
+		if (!$simple)
 		{
-			if ($row['author_visible'])
+			// Display Co-authors
+			foreach ($this->coauthors as $user_id => $row)
 			{
-				phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
+				if ($row['author_visible'])
+				{
+					phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
+				}
 			}
-		}
 
-		// Display Revisions
-		if (sizeof($this->revisions))
-		{
-			$revision = new titania_revision($this);
-			foreach ($this->revisions as $revision_id => $row)
+			// Display Revisions
+			if (sizeof($this->revisions))
 			{
-				$revision->__set_array($row);
-				$revision->display();
+				$revision = new titania_revision($this);
+				foreach ($this->revisions as $revision_id => $row)
+				{
+					$revision->__set_array($row);
+					$revision->display();
+				}
+				unset($revision);
 			}
-			unset($revision);
-		}
 
 
-		if (!phpbb::$user->data['is_bot'])
-		{
-			$this->increase_view_counter();
+			if (!phpbb::$user->data['is_bot'])
+			{
+				$this->increase_view_counter();
+			}
 		}
 	}
 

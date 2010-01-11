@@ -41,6 +41,9 @@ else
 	load_contrib();
 }
 
+// Output the simple info on the contrib
+titania::$contrib->assign_details(true);
+
 switch ($action)
 {
 	case 'create':
