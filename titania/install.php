@@ -297,7 +297,10 @@ $versions = array(
 			array('titania', 'TITANIA_MAIN',	array('module_basename' => 'main'),		TITANIA_ROOT . 'modules/'),
 		),*/
 
-		'custom' => 'titania_data',
+		'custom' => array(
+			'titania_data',
+			'titania_uninstall',
+		),
 
 		'cache_purge' => '',
 	),
@@ -680,6 +683,22 @@ function titania_update($action, $version)
 			}
 			phpbb::$db->sql_freeresult($result);
 		break;
+	}
+}
+
+function titania_uninstall($action, $version)
+{
+	if ($action != 'uninstall')
+	{
+		return;
+	}
+
+	/**
+	* Uninstall the types (prevent errors)
+	*/
+	foreach (titania_types::$types as $class)
+	{
+		$class->uninstall();
 	}
 }
 

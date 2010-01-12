@@ -215,4 +215,31 @@ class titania_type_mod extends titania_type_base
 		titania::page_header('NEW_REVISION');
 		titania::page_footer(true, 'contributions/contribution_manage.html');
 	}
+
+
+	/**
+	* Uninstall the type
+	*/
+	public function uninstall()
+	{
+		if (isset(phpbb::$config['titania_num_mods']))
+		{
+			if (!class_exists('umil'))
+			{
+				include(PHPBB_ROOT_PATH . 'umil/umil.' . PHP_EXT);
+			}
+
+			$umil = new umil(true, phpbb::$db);
+
+			// Permissions
+			$umil->permission_remove(array(
+				'titania_mod_queue',
+				'titania_mod_validate',
+				'titania_mod_moderate',
+			));
+
+			// Mod count holder
+			$umil->config_remove('titania_num_mods');
+		}
+	}
 }

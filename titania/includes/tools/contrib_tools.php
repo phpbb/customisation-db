@@ -91,8 +91,8 @@ class titania_contrib_tools
 		$sub_dir = (isset($sub_dir[0]) && $sub_dir[0] == '/') ? substr($sub_dir, 1) : $sub_dir;
 
 		// Array of the things we want to remove
-		$dirs_to_remove = array('.git', '.svn', 'CVS', '.settings');
-		$files_to_remove = array('desktop.ini', 'Thumbs.db', '.DS_Store', '.project', '.buildpath', '.gitmodules', '.gitignore');
+		$dirs_to_remove = array('.git', '.svn', 'CVS');
+		$files_to_remove = array('desktop.ini', 'Thumbs.db', '.DS_Store', '.gitmodules', '.gitignore');
 
 		if (!is_dir($this->unzip_dir . $sub_dir))
 		{

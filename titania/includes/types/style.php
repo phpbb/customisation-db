@@ -121,4 +121,30 @@ class titania_type_style extends titania_type_base
 	{
 		return phpbb::$config['titania_num_styles'];
 	}
+
+	/**
+	* Uninstall the type
+	*/
+	public function uninstall()
+	{
+		if (isset(phpbb::$config['titania_num_mods']))
+		{
+			if (!class_exists('umil'))
+			{
+				include(PHPBB_ROOT_PATH . 'umil/umil.' . PHP_EXT);
+			}
+
+			$umil = new umil(true, phpbb::$db);
+
+			// Permissions
+			$umil->permission_remove(array(
+				'titania_style_queue',
+				'titania_style_validate',
+				'titania_style_moderate',
+			));
+
+			// Mod count holder
+			$umil->config_remove('titania_num_styles');
+		}
+	}
 }
