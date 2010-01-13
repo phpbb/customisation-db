@@ -191,13 +191,11 @@ class titania_message
 			'POSTING_TEXT_NAME'			=> $this->settings['text_name'],
 			'POSTING_SUBJECT_NAME'		=> $this->settings['subject_name'],
 
-			'POSTING_PANELS_DEFAULT'	=> ($this->attachments !== false && $this->attachments->uploaded) ? 'attach-panel' : 'options-panel',
+			'POSTING_PANELS_DEFAULT'	=> 'options-panel',
 
 			'POSTING_TEXT'				=> ($this->settings['text_default_override'] !== false) ? $this->settings['text_default_override'] : $for_edit['text'],
 
 			'SUBJECT'					=> ($this->settings['subject_default_override'] !== false) ? $this->settings['subject_default_override'] : ((isset($for_edit['subject'])) ? $for_edit['subject'] : ''),
-
-			'UPLOADER'					=> ($this->attachments !== false) ? $this->attachments->parse_uploader($this->settings['attachment_tpl']) : '',
 
 			'S_DISPLAY_ERROR'			=> $this->settings['display_error'],
 			'S_DISPLAY_SUBJECT'			=> $this->settings['display_subject'],
@@ -208,9 +206,17 @@ class titania_message
 			'S_LOCK_POST_ALLOWED'		=> $this->auth['lock'],
 			'S_LOCK_POST_CHECKED'		=> (isset($for_edit['locked'])) ? $for_edit['locked'] : false,
 			'S_EDIT_REASON'				=> $this->settings['display_edit_reason'],
-			'S_FORM_ENCTYPE'			=> ($this->attachments !== false) ? ' enctype="multipart/form-data"' : '',
 			'S_HIDDEN_FIELDS'			=> build_hidden_fields($this->s_hidden_fields),
 		));
+
+		if ($this->attachments)
+		{
+			phpbb::$template->assign_vars(array(
+				'UPLOADER'					=> $this->attachments->parse_uploader($this->settings['attachment_tpl']),
+				'S_FORM_ENCTYPE'			=> ' enctype="multipart/form-data"',
+				'POSTING_PANELS_DEFAULT'	=> ($this->attachments->uploaded) ? 'attach-panel' : 'options-panel',
+			));
+		}
 
 		$this->display_panels();
 	}

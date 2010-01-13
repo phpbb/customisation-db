@@ -7,18 +7,29 @@
 
 <form id="contrib_manage" name="contrib_manage" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
 	<!-- IF S_NEW_REVISION -->
-		<!-- IF STEP == 0 -->
-			{REVISION_UPLOADER}
-		<!-- ELSEIF STEP == 1 -->
-			{MPV_RESULTS}
-		<!-- ENDIF -->
+		<div class="container">
+			<div class="inner"><span class="corners-top"><span></span></span>
+				{REVISION_UPLOADER}
+				<!-- IF MPV_TEST_WARNING -->
+					{L_MPV_TEST}
+				<!-- ENDIF -->
+				<!-- IF MPV_RESULTS -->
+					<p class="error">{L_MPV_RESULTS}</p>
+					<hr class="dashed" />
+					{MPV_RESULTS}<br />
+					<br />
+					<hr class="dashed" />
+					<strong>{L_AUTOMOD_TEST}</strong>
+				<!-- ENDIF -->
 
-		<fieldset class="submit-buttons">
-			<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
-			<input type="submit" name="new_revision" value="{L_CONTINUE}" class="button1" />
-			<input type="hidden" name="new_revision_step" value="{NEXT_STEP}" />
-			{S_FORM_TOKEN}
-		</fieldset>
+				<fieldset class="submit-buttons">
+					<input type="submit" name="new_revision" value="{L_CONTINUE}" class="button1" />
+					<input type="hidden" name="new_revision_step" value="{NEXT_STEP}" />
+					<input type="hidden" name="revision_id" value="{REVISION_ID}" />
+					{S_FORM_TOKEN}
+				</fieldset>
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
 	<!-- ELSE -->
 		<div class="container">
 			<div class="inner"><span class="corners-top"><span></span></span>
@@ -28,7 +39,7 @@
 						<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
 					</dl>
 					<!-- IF S_CREATE -->
-					<dl style="clear: left;">
+					<dl>
 						<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label><br /><span>{L_CONTRIB_PERMALINK_EXPLAIN}</span></dt>
 						<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
 					</dl>

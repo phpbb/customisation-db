@@ -127,6 +127,7 @@ class titania_type_mod extends titania_type_base
 	public function create_revision($contrib)
 	{
 		$new_revision_step = request_var('new_revision_step', 0);
+		$revision_id = request_var('revision_id', 0);
 
 		$error = array();
 		if (!check_form_key('postform'))
@@ -173,6 +174,7 @@ class titania_type_mod extends titania_type_base
 						'revision_version'	=> $revision_version,
 					));
 					$revision->submit();
+					$revision_id = $revision->revision_id;
 					$revision->queue_topic(true);  // Hide the queue topic
 
 					$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
@@ -207,28 +209,50 @@ class titania_type_mod extends titania_type_base
 						// Remove our temp files
 						$contrib_tools->remove_temp_files();
 
-						// Run MPV
-						$mpv_results = false;//$contrib_tools->mpv($download_package);
-
-						if ($mpv_results === false)
-						{
-							// Assign this error separately, it's not something wrong with the package but some server issue
-							phpbb::$template->assign_var('NOTICE', implode('<br />', $contrib_tools->error));
-
-							// Add the test failed notice to the queue
-							$revision->queue_topic(sprintf(phpbb::$user->lang['MPV_TEST_FAILED_QUEUE_MSG'], $download_package));
-						}
-						else
-						{
-							phpbb::$template->assign_var('MPV_RESULTS', $mpv_results);
-
-							// Add the MPV Results to the queue topic
-							$revision->queue_topic(true, $mpv_results);
-						}
-
-						// Add the results to the queue topic
-						$revision->queue_topic(true, $mpv_results);
+						phpbb::$template->assign_var('MPV_TEST_WARNING', true);
 					}
+				}
+			break;
+
+			case 2 :
+				$revision = new titania_revision(titania::$contrib, $revision_id);
+				if (!$revision->load())
+				{
+					trigger_error('NO_REVISION');
+				}
+				$revision_attachment = new titania_attachment(TITANIA_CONTRIB);
+				$revision_attachment->attachment_id = $revision->attachment_id;
+				if (!$revision_attachment->load())
+				{
+					trigger_error('ERROR_NO_ATTACHMENT');
+				}
+
+				$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
+				$download_package = titania_url::build_url('download', array('id' => $revision_attachment->attachment_id));
+
+				// Start up the machine
+				$contrib_tools = new titania_contrib_tools($zip_file);
+
+				// Run MPV
+				$mpv_results = $contrib_tools->mpv($download_package);
+
+				if ($mpv_results === false)
+				{
+					// Assign this error separately, it's not something wrong with the package but some server issue
+					phpbb::$template->assign_var('NOTICE', implode('<br />', $contrib_tools->error));
+
+					// Add the test failed notice to the queue
+					$revision->queue_topic(true, sprintf(phpbb::$user->lang['MPV_TEST_FAILED_QUEUE_MSG'], $download_package));
+				}
+				else
+				{
+					// Add the MPV Results to the queue topic
+					$revision->queue_topic(true, $mpv_results);
+
+					$uid = $bitfield = $flags = false;
+					generate_text_for_storage($mpv_results, $uid, $bitfield, $flags, true, true, true);
+					$mpv_results = generate_text_for_display($mpv_results, $uid, $bitfield, $flags);
+					phpbb::$template->assign_var('MPV_RESULTS', $mpv_results);
 				}
 			break;
 		}
@@ -237,6 +261,7 @@ class titania_type_mod extends titania_type_base
 			'ERROR_MSG'			=> (sizeof($error)) ? implode('<br />', $error) : '',
 			'STEP'				=> (sizeof($error)) ? ($new_revision_step - 1) : $new_revision_step,
 			'NEXT_STEP'			=> (sizeof($error)) ? $new_revision_step : ($new_revision_step + 1),
+			'REVISION_ID'		=> $revision_id,
 
 			'S_NEW_REVISION'	=> true,
 		));

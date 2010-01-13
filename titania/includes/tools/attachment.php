@@ -273,7 +273,6 @@ class titania_attachment extends titania_database_object
 		// @todo (just hide them for now - remove when submit() happens)
 
 		// Finally upload new items if required
-		//if (isset($_FILES[$this->form_name]) && !empty($_FILES[$this->form_name]))
 		if ((isset($_FILES[$this->form_name]) && $_FILES[$this->form_name]['name'] != 'none' && trim($_FILES[$this->form_name]['name'])))
 		{
 			// Setup uploader tool.

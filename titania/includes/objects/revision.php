@@ -156,7 +156,7 @@ class titania_revision extends titania_database_object
 			$post->topic->contrib = $this->contrib;
 			$post->__set_array(array(
 				'post_subject'		=> $this->contrib->contrib_name . ' - ' . $this->revision_version,
-				'post_text'			=> sprintf(phpbb::$user->lang['VALIDATION_POST'], $this->get_url()) . $add_to_message,
+				'post_text'			=> sprintf(phpbb::$user->lang['VALIDATION_POST'], $this->contrib->get_url(), $this->get_url()) . $add_to_message,
 				'post_access'		=> TITANIA_ACCESS_AUTHORS,
 			));
 			$post->topic->__set_array(array(
@@ -166,6 +166,10 @@ class titania_revision extends titania_database_object
 			$post->submit();
 
 			$this->queue_topic_id = $post->topic->topic_id;
+
+			$sql = 'UPDATE ' . $this->sql_table . ' SET queue_topic_id = ' . (int) $this->queue_topic_id . '
+				WHERE revision_id = ' . $this->revision_id;
+			phpbb::$db->sql_query($sql);
 		}
 		else
 		{
@@ -175,6 +179,8 @@ class titania_revision extends titania_database_object
 
 			$post = new titania_post(TITANIA_QUEUE, $topic, $topic->topic_first_post_id);
 			$post->load();
+			$for_edit = $post->generate_text_for_edit();
+			$post->post_text = $for_edit['text'];
 
 			// Remove what was wanted, if any
 			if ($remove_from_message !== false)
@@ -187,6 +193,9 @@ class titania_revision extends titania_database_object
 			{
 				$post->post_text .= $add_to_message;
 			}
+
+			// Reparse the text
+			$post->reparse();
 
 			$post->topic->__set_array(array(
 				'topic_status'		=> ($hide_topic) ? TITANIA_QUEUE_HIDE : TITANIA_QUEUE_NEW,

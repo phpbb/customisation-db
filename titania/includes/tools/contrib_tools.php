@@ -53,23 +53,27 @@ class titania_contrib_tools
 
 	/**
 	* @param string $zip Full path to the zip package
-	* @param string $new_dir_name name of the directory you want to use in the zip package to
+	* @param string $new_dir_name name of the directory you want to use in the zip package (leave blank if the initial steps have been run already)
 	*/
 	public function __construct($original_zip, $new_dir_name = '')
 	{
 		$this->original_zip = $original_zip;
-		$this->new_dir_name = utf8_basename($new_dir_name);
-		$this->unzip_dir = titania::$config->contrib_temp_path . $this->new_dir_name . '/';
 
-		// Clear out old stuff if there is anything here...
-		$this->rmdir_recursive($this->unzip_dir);
+		if ($new_dir_name)
+		{
+			$this->new_dir_name = utf8_basename($new_dir_name);
+			$this->unzip_dir = titania::$config->contrib_temp_path . $this->new_dir_name . '/';
 
-		phpbb::_include('functions_compress', false, 'compress_zip');
+			// Clear out old stuff if there is anything here...
+			$this->rmdir_recursive($this->unzip_dir);
 
-		// Unzip to our temp directory
-		$zip = new compress_zip('r', $this->original_zip);
-		$zip->extract($this->unzip_dir);
-		$zip->close();
+			phpbb::_include('functions_compress', false, 'compress_zip');
+
+			// Unzip to our temp directory
+			$zip = new compress_zip('r', $this->original_zip);
+			$zip->extract($this->unzip_dir);
+			$zip->close();
+		}
 	}
 
 	/**
@@ -299,7 +303,7 @@ class titania_contrib_tools
 
 		$server = $server_list[array_rand($server_list)];
 
-		$mpv_result = $this->get_remote_file($server['host'], $server['directory'], $server['file'] . '?' . $download_location);
+		$mpv_result = $this->get_remote_file($server['host'], $server['directory'], $server['file'] . '?titania-' . $download_location);
 
 		if ($mpv_result === false)
 		{

@@ -134,8 +134,6 @@ class titania_post extends titania_database_object
 		{
 			$this->topic = new titania_topic($this->post_type);
 		}
-
-		$this->topic_id = $this->topic->topic_id;
 	}
 
 	/**
@@ -570,6 +568,21 @@ class titania_post extends titania_database_object
 		}
 
 		parent::delete();
+	}
+
+	/**
+	* Reparse the post text without editing (or with editing, just not recieving the raw code from the user and doing an internal edit)
+	*/
+	public function reparse()
+	{
+		$for_edit = $this->generate_text_for_edit();
+		$this->post_text = $for_edit['text'];
+
+		// Emulate what happens when sent from the user
+		$this->post_text = html_entity_decode($this->post_text);
+		set_var($this->post_text, $this->post_text, 'string', true);
+
+		$this->generate_text_for_storage($for_edit['allow_bbcode'], $for_edit['allow_urls'], $for_edit['allow_smilies']);
 	}
 
 	/**
