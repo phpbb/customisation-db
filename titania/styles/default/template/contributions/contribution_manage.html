@@ -2,6 +2,7 @@
 
 <h3 class="section-name">{PAGE_TITLE}</h3>
 
+<!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
 <form id="contrib_manage" name="contrib_manage" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
@@ -9,6 +10,7 @@
 		<!-- IF STEP == 0 -->
 			{REVISION_UPLOADER}
 		<!-- ELSEIF STEP == 1 -->
+			{MPV_RESULTS}
 		<!-- ENDIF -->
 
 		<fieldset class="submit-buttons">

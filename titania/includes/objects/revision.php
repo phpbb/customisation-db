@@ -116,12 +116,30 @@ class titania_revision extends titania_database_object
 		parent::submit();
 	}
 
+	public function delete()
+	{
+		if ($this->queue_topic_id)
+		{
+			$topic = new titania_topic(TITANIA_QUEUE, $this->contrib, $this->queue_topic_id);
+			$topic->delete();
+		}
+
+		$attachment = new titania_attachment(TITANIA_CONTRIB);
+		$attachment->attachment_id = $this->attachment_id;
+		$attachment->load();
+		$attachment->delete();
+
+		parent::delete();
+	}
+
 	/**
 	* Handle the queue topic
 	*
-	* @param mixed $add_to_message A string to attach to the post_text of the post (if the topic already exists, appends to the already created post, else adds to the new topic we'll make)
+	* @param bool $hide_topic True to keep it hidden from the queue yet (during the process of creating the revision yet)
+	* @param string $add_to_message A string to attach to the post_text of the post (if the topic already exists, appends to the already created post, else adds to the new topic we'll make)
+	* @param regex|bool $remove_from_message Remove something from the message (only when editing).  Used for removing an error message that was added after a test succeeds
 	*/
-	public function queue_topic($add_to_message = '')
+	public function queue_topic($hide_topic = false, $add_to_message = '', $remove_from_message = false)
 	{
 		if (!titania::$config->use_queue)
 		{
@@ -129,6 +147,8 @@ class titania_revision extends titania_database_object
 		}
 
 		titania::add_lang('manage');
+
+		$add_to_message = ($add_to_message) ? "\n\n" . $add_to_message : '';
 
 		if (!$this->queue_topic_id)
 		{
@@ -141,12 +161,13 @@ class titania_revision extends titania_database_object
 			));
 			$post->topic->__set_array(array(
 				'contrib_id'		=> $this->contrib->contrib_id,
+				'topic_status'		=> ($hide_topic) ? TITANIA_QUEUE_HIDE : TITANIA_QUEUE_NEW,
 			));
 			$post->submit();
 
 			$this->queue_topic_id = $post->topic->topic_id;
 		}
-		else if ($add_to_message)
+		else
 		{
 			// Load the post and topic
 			$topic = new titania_topic(TITANIA_QUEUE, $this->contrib, $this->queue_topic_id);
@@ -155,8 +176,21 @@ class titania_revision extends titania_database_object
 			$post = new titania_post(TITANIA_QUEUE, $topic, $topic->topic_first_post_id);
 			$post->load();
 
+			// Remove what was wanted, if any
+			if ($remove_from_message !== false)
+			{
+				$post->post_text = preg_replace($remove_from_message, '', $post->post_text);
+			}
+
 			// Add to the post text what is wanted
-			$post->post_text .= $add_to_message;
+			if ($add_to_message)
+			{
+				$post->post_text .= $add_to_message;
+			}
+
+			$post->topic->__set_array(array(
+				'topic_status'		=> ($hide_topic) ? TITANIA_QUEUE_HIDE : TITANIA_QUEUE_NEW,
+			));
 
 			$post->submit();
 		}

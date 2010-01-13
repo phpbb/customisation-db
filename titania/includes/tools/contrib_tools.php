@@ -73,7 +73,7 @@ class titania_contrib_tools
 	}
 
 	/**
-	* Clean crap out of the directories that should not be in mod packages
+	* Clean crap out of the directories that should not be in packages
 	*
 	* Ignore the variables, don't send anything, this is a recursive function
 	*/
@@ -87,16 +87,13 @@ class titania_contrib_tools
 			trigger_error('SUBDIRECTORY_LIMIT');
 		}
 
-		// Replace any leading slash
-		$sub_dir = (isset($sub_dir[0]) && $sub_dir[0] == '/') ? substr($sub_dir, 1) : $sub_dir;
-
 		// Array of the things we want to remove
-		$dirs_to_remove = array('.git', '.svn', 'CVS');
+		$dirs_to_remove = array('.git', '.svn', 'CVS', '__MACOSX');
 		$files_to_remove = array('desktop.ini', 'Thumbs.db', '.DS_Store', '.gitmodules', '.gitignore');
 
 		if (!is_dir($this->unzip_dir . $sub_dir))
 		{
-				return true;
+			return true;
 		}
 
         foreach (scandir($this->unzip_dir . $sub_dir) as $item)
@@ -106,20 +103,17 @@ class titania_contrib_tools
 				continue;
 			}
 
-			if (in_array($item, $dirs_to_remove))
+			if (in_array($item, $dirs_to_remove) && is_dir($this->unzip_dir . $sub_dir . $item))
 			{
-				$this->rmdir_recursive($this->unzip_dir . $sub_dir . '/' . $item);
+				$this->rmdir_recursive($this->unzip_dir . $sub_dir . $item . '/');
 			}
-			else if (in_array($item, $files_to_remove))
+			else if (in_array($item, $files_to_remove) && is_file($this->unzip_dir . $sub_dir . $item))
 			{
-				@unlink($this->unzip_dir . $sub_dir . '/' . $item);
+				@unlink($this->unzip_dir . $sub_dir . $item);
 			}
-			else if (is_dir($this->unzip_dir . $sub_dir . '/' . $item))
+			else if (is_dir($this->unzip_dir . $sub_dir . $item))
 			{
-				if ($this->clean_package($sub_dir . '/' . $item, ($cnt + 1)) === false)
-				{
-					return false;
-				}
+				$this->clean_package($sub_dir. $item . '/', ($cnt + 1));
 			}
         }
 
@@ -146,44 +140,38 @@ class titania_contrib_tools
 		}
 
 		// Move it to the correct location
-		if ($package_root != $this->unzip_dir)
+		if ($package_root != '')
 		{
 			// Find the main subdirectory off the unzip dir
-			$sub_dir = str_replace($this->unzip_dir, '', $package_root);
-			$sub_dir = (isset($sub_dir[0]) && $sub_dir[0] == '/') ? substr($sub_dir, 1) : $sub_dir; // Remove leading slash if any
+			$sub_dir = $package_root;
 			if (strpos($sub_dir, '/') !== false)
 			{
-				$sub_dir = substr($sub_dir, (strpos($sub_dir, '/') - 1));
-			}
-
-			if (!is_dir($this->unzip_dir))
-			{
-				return false;
+				$sub_dir = substr($sub_dir, 0, strpos($sub_dir, '/'));
 			}
 
 			// First remove everything but the subdirectory that the package root is in
 			foreach (scandir($this->unzip_dir) as $item)
 			{
-	            if ($item == '.' || $item == '..' || $item == $sub_dir)
+	            if ($item == '.' || $item == '..' || ($item == $sub_dir && is_dir($this->unzip_dir . $item)))
 				{
 					continue;
 				}
 
-				if (is_dir($this->unzip_dir . $sub_dir . '/' . $item))
+				if (is_dir($this->unzip_dir . $item))
 				{
-					$this->rmdir_recursive($this->unzip_dir . $sub_dir . '/' . $item);
+					$this->rmdir_recursive($this->unzip_dir . $item . '/');
 				}
 				else
 				{
-					@unlink($this->unzip_dir . $sub_dir . '/' . $item);
+					@unlink($this->unzip_dir . $item);
 				}
 			}
 
 			// Now move the package root to our unzip directory
-			$this->mvdir_recursive($package_root, $this->unzip_dir);
+			$this->mvdir_recursive($this->unzip_dir . $package_root, $this->unzip_dir);
 
 			// Now remove the old directory
-			$this->rmdir_recursive($this->unzip_dir . $sub_dir);
+			$this->rmdir_recursive($this->unzip_dir . $sub_dir . '/');
 		}
 
 		return true;
@@ -204,8 +192,6 @@ class titania_contrib_tools
 			trigger_error('SUBDIRECTORY_LIMIT');
 		}
 
-		// Replace any leading slash
-		$sub_dir = (isset($sub_dir[0]) && $sub_dir[0] == '/') ? substr($sub_dir, 1) : $sub_dir;
 		if (!is_dir($this->unzip_dir . $sub_dir))
 		{
 			return false;
@@ -221,7 +207,7 @@ class titania_contrib_tools
 			if (strpos($item, 'install') !== false && substr($item, -4) == '.xml')
 			{
 				// Found an install xml file
-				return $this->unzip_dir . $sub_dir;
+				return $sub_dir;
 			}
         }
 
@@ -233,10 +219,9 @@ class titania_contrib_tools
 				continue;
 			}
 
-			if (is_dir($this->unzip_dir . $sub_dir . '/' . $item))
+			if (is_dir($this->unzip_dir . $sub_dir . $item))
 			{
-				$root_dir = $this->find_root($sub_dir . '/' . $item, ($cnt + 1));
-				if ($root_dir !== false)
+				if (($root_dir = $this->find_root($sub_dir . $item . '/', ($cnt + 1))) !== false)
 				{
 					return $root_dir;
 				}
@@ -263,10 +248,12 @@ class titania_contrib_tools
     /**
     * Helper to add the files in the new zip package
     */
-    private function _replace_zip($zip, $sub_dir = '')
+    private function _replace_zip(&$zip, $sub_dir = '')
     {
-		// Replace any leading slash
-		$sub_dir = (isset($sub_dir[0]) && $sub_dir[0] == '/') ? substr($sub_dir, 1) : $sub_dir;
+    	if (!is_dir($this->unzip_dir . $sub_dir))
+    	{
+			return;
+		}
 
 		foreach (scandir($this->unzip_dir . $sub_dir) as $item)
 		{
@@ -275,13 +262,13 @@ class titania_contrib_tools
 				continue;
 			}
 
-			if (is_dir($this->unzip_dir . $sub_dir . '/' . $item))
+			if (is_dir($this->unzip_dir . $sub_dir . $item))
 			{
-				$this->_replace_zip($zip, $sub_dir . '/' . $item);
+				$this->_replace_zip($zip, $sub_dir . $item . '/');
 			}
 			else
 			{
-				$zip->add_custom_file($this->unzip_dir . $sub_dir . '/' . $item, $this->new_dir_name . '/' . $sub_dir . '/' . $item);
+				$zip->add_custom_file($this->unzip_dir . $sub_dir . $item, $this->new_dir_name . '/' . $sub_dir . $item);
 			}
 		}
     }
@@ -296,6 +283,40 @@ class titania_contrib_tools
 	}
 
 	/**
+	* Send the test to an MPV server and return the results
+	*
+	* @return False on error (check $this->error) results on success
+	*/
+	public function mpv($download_location)
+	{
+		$server_list = array(
+			array(
+				'host'		=> 'mpv.davidiq.net',
+				'directory'	=> '',
+				'file'		=> 'index.php',
+			),
+		);
+
+		$server = $server_list[array_rand($server_list)];
+
+		$mpv_result = $this->get_remote_file($server['host'], $server['directory'], $server['file'] . '?' . $download_location);
+
+		if ($mpv_result === false)
+		{
+			$this->error[] = phpbb::$user->lang['MPV_TEST_FAILED'];
+			return false;
+		}
+		else
+		{
+			$mpv_result = str_replace('<br />', "\n", $mpv_result);
+			set_var($mpv_result, $mpv_result, 'string', true);
+			$mpv_result = utf8_normalize_nfc($mpv_result);
+
+			return $mpv_result;
+		}
+	}
+
+	/**
 	* Move a directory and children
 	*
 	* @param mixed $source
@@ -303,14 +324,14 @@ class titania_contrib_tools
 	*/
 	function mvdir_recursive($source, $destination)
 	{
-		if (!is_dir($destination) && is_dir($source))
-		{
-			$this->mkdir_recursive($destination);
-		}
-
 		if (!is_dir($source))
 		{
 			return false;
+		}
+
+		if (!is_dir($destination))
+		{
+			$this->mkdir_recursive($destination);
 		}
 
 		foreach (scandir($source) as $item)
@@ -320,14 +341,14 @@ class titania_contrib_tools
 				continue;
 			}
 
-			if (is_dir($source . '/' . $item))
+			if (is_dir($source . $item))
 			{
-				$this->mvdir_recursive($source . '/' . $item, $destination . '/' . $item);
+				$this->mvdir_recursive($source . $item . '/', $destination . $item . '/');
 			}
-			else if (is_file($source . '/' . $item))
+			else if (is_file($source . $item))
 			{
-				@copy($source . '/' . $item, $destination . '/' . $item);
-				phpbb_chmod($destination . '/' . $item, CHMOD_READ | CHMOD_WRITE);
+				@copy($source . $item, $destination . $item);
+				phpbb_chmod($destination . $item, CHMOD_READ | CHMOD_WRITE);
 			}
 		}
 	}
@@ -356,10 +377,7 @@ class titania_contrib_tools
 				$str = (!empty($str)) ? $str . '/' . $folder : $folder;
 				if (!is_dir($str))
 				{
-					if (!@mkdir($str, 0777))
-					{
-						trigger_error("Could not create directory $folder");
-					}
+					@mkdir($str, 0777);
 					phpbb_chmod($str, CHMOD_READ | CHMOD_WRITE);
 				}
 			}
@@ -379,15 +397,9 @@ class titania_contrib_tools
 			return false;
 		}
 
-		if (!file_exists($target_filename))
+		if (!is_dir($target_filename))
 		{
-			return true;
-		}
-
-		if (!is_dir($target_filename) && is_file($target_filename))
-		{
-			phpbb_chmod($target_filename, CHMOD_ALL);
-			return @unlink($target_filename);
+			return;
 		}
 
         foreach (scandir($target_filename) as $item)
@@ -396,16 +408,64 @@ class titania_contrib_tools
 			{
 				continue;
 			}
-            if (!$this->rmdir_recursive($target_filename . "/" . $item))
+
+			if (is_dir($target_filename . $item))
 			{
-				phpbb_chmod($target_filename . "/" . $item, CHMOD_ALL);
-                if (!$this->rmdir_recursive($target_filename . "/" . $item))
-				{
-					return false;
-				}
-            }
+				$this->rmdir_recursive($target_filename . $item . '/');
+			}
+			else
+			{
+				@unlink($target_filename . $item);
+			}
         }
 
 		return @rmdir($target_filename);
+	}
+
+	/**
+	* Retrieve contents from remotely stored file (mostly copied from functions_admin.php)
+	* Modified to ignore errors
+	*/
+	function get_remote_file($host, $directory, $filename, $port = 80, $timeout = 10)
+	{
+		$errstr = '';
+		if ($fsock = @fsockopen($host, $port, $errno, $errstr, $timeout))
+		{
+			@fputs($fsock, "GET $directory/$filename HTTP/1.1\r\n");
+			@fputs($fsock, "HOST: $host\r\n");
+			@fputs($fsock, "Connection: close\r\n\r\n");
+
+			$file_info = '';
+			$get_info = false;
+
+			while (!@feof($fsock))
+			{
+				if ($get_info)
+				{
+					$file_info .= @fread($fsock, 1024);
+				}
+				else
+				{
+					$line = @fgets($fsock, 1024);
+					if ($line == "\r\n")
+					{
+						$get_info = true;
+					}
+					else if (stripos($line, '404 not found') !== false)
+					{
+						$this->error[] = '404';
+						return false;
+					}
+				}
+			}
+			@fclose($fsock);
+		}
+		else
+		{
+			$this->error[] = $errstr;
+			return false;
+		}
+
+		return $file_info;
 	}
 }

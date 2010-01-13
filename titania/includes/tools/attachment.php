@@ -94,7 +94,7 @@ class titania_attachment extends titania_database_object
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
 			'attachment_id'			=> array('default' => 0),
-			'attachment_access'		=> array('default' => 0),
+			'attachment_access'		=> array('default' => TITANIA_ACCESS_PUBLIC),
 			'object_type'			=> array('default' => 0),
 			'object_id'				=> array('default' => 0),
 
@@ -368,7 +368,12 @@ class titania_attachment extends titania_database_object
 	 */
 	public function delete()
 	{
-		// @todo
+		if ($this->attachment_id)
+		{
+			@unlink(titania::$config->upload_path . $this->attachment_directory . '/' . utf8_basename($this->attachment_directory) . '/' . utf8_basename($this->physical_filename));
+
+			parent::delete();
+		}
 	}
 
 	/**

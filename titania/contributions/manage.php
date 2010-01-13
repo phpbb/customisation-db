@@ -44,13 +44,14 @@ if (request_var('new_revision_step', 0) > 0)
 	{
 		// Basic creation, needs nothing more
 		$error = array();
-		if (!check_form_key('new_revision'))
+		if (!check_form_key('postform'))
 		{
 			$error[] = phpbb::$user->lang['FORM_INVALID'];
 		}
 
 		// Upload the revision
 		$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
+		$revision_attachment->is_orphan = false;
 		$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
 		$revision_version = utf8_normalize_nfc(request_var('revision_version', '', true));
 
@@ -77,7 +78,7 @@ if (request_var('new_revision_step', 0) > 0)
 				'S_NEW_REVISION'		=> true,
 			));
 
-			add_form_key('new_revision');
+			add_form_key('postform');
 
 			titania::page_header('NEW_REVISION');
 			titania::page_footer(true, 'contributions/contribution_manage.html');
@@ -186,11 +187,11 @@ if ($submit)
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
 
-		if ($change_owner == '')
+		if ($change_owner == '' && !isset($_POST['new_revision']))
 		{
 			titania::error_box('SUCCESS', 'CONTRIB_UPDATED', TITANIA_SUCCESS);
 		}
-		else
+		else if ($change_owner)
 		{
 			$s_hidden_fields = array(
 				'submit'			=> true,
@@ -212,7 +213,6 @@ if ($submit)
 
 				'S_NEW_REVISION'		=> true,
 			));
-			add_form_key('new_revision');
 		}
 	}
 }

@@ -129,7 +129,7 @@ class titania_type_mod extends titania_type_base
 		$new_revision_step = request_var('new_revision_step', 0);
 
 		$error = array();
-		if (!check_form_key('new_revision'))
+		if (!check_form_key('postform'))
 		{
 			$error[] = phpbb::$user->lang['FORM_INVALID'];
 		}
@@ -139,6 +139,7 @@ class titania_type_mod extends titania_type_base
 			case 1 :
 				// Upload the revision
 				$revision_attachment = new titania_attachment(TITANIA_CONTRIB, $contrib->contrib_id);
+				$revision_attachment->is_orphan = false;
 				$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
 				$revision_version = utf8_normalize_nfc(request_var('revision_version', '', true));
 
@@ -159,6 +160,8 @@ class titania_type_mod extends titania_type_base
 					phpbb::$template->assign_vars(array(
 						'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
 					));
+
+					$revision_attachment->delete();
 				}
 				else
 				{
@@ -170,9 +173,11 @@ class titania_type_mod extends titania_type_base
 						'revision_version'	=> $revision_version,
 					));
 					$revision->submit();
+					$revision->queue_topic(true);  // Hide the queue topic
 
 					$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
 					$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision_version));
+					$download_package = titania_url::build_url('download', array('id' => $revision_attachment->attachment_id));
 
 					// Start up the machine
 					$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
@@ -191,12 +196,38 @@ class titania_type_mod extends titania_type_base
 						phpbb::$template->assign_vars(array(
 							'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
 						));
+
+						$revision->delete();
 					}
 					else
 					{
 						// Replace the uploaded zip package with the new one
 						$contrib_tools->replace_zip();
+
+						// Remove our temp files
 						$contrib_tools->remove_temp_files();
+
+						// Run MPV
+						$mpv_results = false;//$contrib_tools->mpv($download_package);
+
+						if ($mpv_results === false)
+						{
+							// Assign this error separately, it's not something wrong with the package but some server issue
+							phpbb::$template->assign_var('NOTICE', implode('<br />', $contrib_tools->error));
+
+							// Add the test failed notice to the queue
+							$revision->queue_topic(sprintf(phpbb::$user->lang['MPV_TEST_FAILED_QUEUE_MSG'], $download_package));
+						}
+						else
+						{
+							phpbb::$template->assign_var('MPV_RESULTS', $mpv_results);
+
+							// Add the MPV Results to the queue topic
+							$revision->queue_topic(true, $mpv_results);
+						}
+
+						// Add the results to the queue topic
+						$revision->queue_topic(true, $mpv_results);
 					}
 				}
 			break;
@@ -210,7 +241,7 @@ class titania_type_mod extends titania_type_base
 			'S_NEW_REVISION'	=> true,
 		));
 
-		add_form_key('new_revision');
+		add_form_key('postform');
 
 		titania::page_header('NEW_REVISION');
 		titania::page_footer(true, 'contributions/contribution_manage.html');

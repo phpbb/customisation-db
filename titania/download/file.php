@@ -54,16 +54,9 @@ if (!$attachment)
 
 $attachment['physical_filename'] = utf8_basename($attachment['attachment_directory']) . '/' . utf8_basename($attachment['physical_filename']);
 
-if ($attachment['is_orphan'])
+if ($attachment['is_orphan'] && !phpbb::$auth->acl_get('a_attach'))
 {
-	// We allow admins having attachment permissions to see orphan attachments...
-	$own_attachment = (phpbb::$auth->acl_get('a_attach') || $attachment['poster_id'] == phpbb::$user->data['user_id']) ? true : false;
-
-	if (!$own_attachment)
-	{
-		trigger_error('ERROR_NO_ATTACHMENT');
-	}
-
+	trigger_error('ERROR_NO_ATTACHMENT');
 }
 else if ($attachment['attachment_access'] < titania::$access_level || !download_allowed())
 {
@@ -152,7 +145,7 @@ function wrap_img_in_html($src, $title)
 */
 function send_file_to_browser($attachment, $upload_dir)
 {
-	$filename = $upload_dir . '/' . $attachment['physical_filename'];
+	$filename = $upload_dir . $attachment['physical_filename'];
 
 	if (!@file_exists($filename))
 	{

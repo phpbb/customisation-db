@@ -144,6 +144,19 @@ class titania_topic extends titania_database_object
 	}
 
 	/**
+	* Delete the stuff for this topic
+	* @todo remove more stuff...make sure we update the search system too later
+	*/
+	public function delete()
+	{
+		$sql = 'DELETE FROM ' . TITANIA_POSTS_TABLE . '
+			WHERE topic_id = ' . (int) $this->topic_id;
+		phpbb::$db->sql_query($sql);
+
+		parent::delete();
+	}
+
+	/**
 	* Update postcount (for adding/updating/deleting a post
 	*
 	* @param int|bool $new_access_level The new access level (false for hard deleting a post)

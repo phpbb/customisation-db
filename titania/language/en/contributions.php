@@ -43,6 +43,8 @@ $lang = array_merge($lang, array(
 'COULD_NOT_FIND_ROOT' => 'I\'ve searched through your package and was unable to find the main directory.  Please be sure there is an xml file with the name install in it somewhere in the zip package.',
 'REVISION_SUBMITTED' => 'The revision has been submitted successfully.',
 'SUBMIT_NEW_REVISION' => 'Submit and add new revision',
+'MPV_TEST_FAILED' => 'Sorry, the automatic MPV test failed and I can not give you your MPV test results.  Please continue.',
+'MPV_TEST_FAILED_QUEUE_MSG' => '<!-- MPV FAIL MESSAGE -->Automated MPV test failed.  <a href="%s">Click here to attempt running MPV automatically again</a><!-- END MPV FAIL MESSAGE -->',
 	'CANNOT_ADD_SELF_COAUTHOR'			=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CONTRIB'							=> 'Contribution',
 	'CONTRIBUTIONS'						=> 'Contributions',
@@ -106,7 +108,7 @@ $lang = array_merge($lang, array(
 	'REVISION_VERSION'					=> 'Revision Version',
 
 	'SELECT_CONTRIB_TYPE'				=> '-- Select contribution type --',
-	
+
 	'VIEW_DEMO'							=> 'View Demo',
 
 	'WRONG_CATEGORY'					=> 'You can only put this contribution in the same category type as the contribution type.',
