@@ -256,7 +256,8 @@ class titania_type_mod extends titania_type_base
 					phpbb::$template->assign_var('MPV_RESULTS', $mpv_results);
 				}
 			break;
-
+/*
+Lets skip this for now
 			case 3 :
 				$revision = new titania_revision(titania::$contrib, $revision_id);
 				if (!$revision->load())
@@ -270,7 +271,29 @@ class titania_type_mod extends titania_type_base
 					trigger_error('ERROR_NO_ATTACHMENT');
 				}
 
-				// No Automod test yet...
+				$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
+				$download_package = titania_url::build_url('download', array('id' => $revision_attachment->attachment_id));
+				$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
+
+				// Start up the machine
+				$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
+
+				// Prepare the phpbb files for automod
+				$phpbb_path = $contrib_tools->automod_phpbb_files($revision->phpbb_version);
+
+				// Automod test
+				$details = $results = '';
+				$contrib_tools->automod($phpbb_path, $details, $results);
+
+				phpbb::$template->assign_var('AUTOMOD_RESULTS', $results);
+			break;
+*/
+			case 3 :
+				$revision = new titania_revision(titania::$contrib, $revision_id);
+				if (!$revision->load())
+				{
+					trigger_error('NO_REVISION');
+				}
 
 				// Update the revision to be submitted, which unhides the queue topic and updates the contrib_last_update time
 				$revision->revision_submitted = true;

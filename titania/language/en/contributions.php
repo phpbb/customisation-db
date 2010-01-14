@@ -48,6 +48,7 @@ $lang = array_merge($lang, array(
 'MPV_TEST_FAILED_QUEUE_MSG' => 'Automated MPV test failed.  [url=%s]Click here to attempt running MPV automatically again[/url]',
 'MPV_TEST' => 'New revision has been submitted successfully!<br /><br />Next we will automatically test it against MPV and show you the results (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 'MPV_RESULTS' => '<strong>Please check over the MPV results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
+'AUTOMOD_RESULTS' => '<strong>Please check over the Automod install results and make sure that nothing needs to be fixed.<br /><br />If an error comes up and you are certain that the error is incorrect, just hit continue below.</strong>',
 'AUTOMOD_TEST' => 'Next we will automatically test it against Automod and show you the results (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 	'CANNOT_ADD_SELF_COAUTHOR'			=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CONTRIB'							=> 'Contribution',

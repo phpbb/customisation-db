@@ -772,6 +772,6 @@ class titania_contribution extends titania_database_object
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 
-		return ($row === false) ? false : true;
+		return (!$row) ? false : true;
 	}
 }

@@ -92,7 +92,7 @@ switch ($action)
 		$revision->contrib = $contrib;
 		if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 		{
-			//trigger_error('NO_AUTH');
+			trigger_error('NO_AUTH');
 		}
 		$revision_attachment = new titania_attachment(TITANIA_CONTRIB);
 		$revision_attachment->attachment_id = $revision->attachment_id;
@@ -128,10 +128,14 @@ switch ($action)
 		}
 		else if ($action == 'automod')
 		{
+			exit;
 			$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
 
 			// Start up the machine
 			$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
+
+			//$contrib_tools->restore_root();
+			//$contrib_tools->replace_zip();
 
 			// Prepare the phpbb files for automod
 			$phpbb_path = $contrib_tools->automod_phpbb_files($revision->phpbb_version);
