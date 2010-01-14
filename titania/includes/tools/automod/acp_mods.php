@@ -584,15 +584,19 @@ class acp_mods
 		}
 		else
 		{
-			global $db;
-			// reset the class parameters to refelect the proper directory
-			$sql = 'SELECT mod_path FROM ' . MODS_TABLE . '
-				WHERE mod_id = ' . request_var('parent', 0);
-			$result = $db->sql_query($sql);
-
-			if ($row = $db->sql_fetchrow($result))
+			$parent = request_var('parent', 0);
+			if ($parent)
 			{
-				$this->mod_root = dirname($row['mod_path']) . '/';
+				global $db;
+				// reset the class parameters to refelect the proper directory
+				$sql = 'SELECT mod_path FROM ' . MODS_TABLE . '
+					WHERE mod_id = ' . (int) $parent;
+				$result = $db->sql_query($sql);
+	
+				if ($row = $db->sql_fetchrow($result))
+				{
+					$this->mod_root = dirname($row['mod_path']) . '/';
+				}
 			}
 
 			if (strpos($mod_ident, $this->mods_dir) === false)

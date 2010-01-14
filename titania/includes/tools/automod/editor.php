@@ -1219,7 +1219,11 @@ class editor_manual extends editor
 
 		// don't include extra dirs in zip file
 		$strip_position = strpos($new_filename, '_edited') + 8; // want the end of the string
-		$strip_position += strpos($new_filename, '_uninst') + 7;
+		if (!$strip_position)
+		{
+			$strip_position = strpos($new_filename, '_uninst') + 7;
+		}
+
 		$new_filename = 'files/' . substr($new_filename, $strip_position);
 
 		if (!$this->compress->add_data($file_contents, $new_filename))

@@ -92,7 +92,7 @@ switch ($action)
 		$revision->contrib = $contrib;
 		if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 		{
-			trigger_error('NO_AUTH');
+			//trigger_error('NO_AUTH');
 		}
 		$revision_attachment = new titania_attachment(TITANIA_CONTRIB);
 		$revision_attachment->attachment_id = $revision->attachment_id;
@@ -139,9 +139,11 @@ switch ($action)
 			// Automod test
 			$details = $results = '';
 			$contrib_tools->automod($phpbb_path, $details, $results);
-			var_dump($details);
-			echo '<br /><br /><br />';
+			//var_dump($details);
+			//echo '<br /><br /><br />';
 			echo $results;
+			exit;
+
 		}
 	break;
 

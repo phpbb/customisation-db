@@ -423,15 +423,38 @@ class titania_contrib_tools
 		titania::_include('tools/automod/mod_parser', false, 'parser');
 		titania::_include('tools/automod/functions_mods', 'test_ftp_connection');
 
+		titania::add_lang('automod');
+
+		// Find the main modx file
+		$modx_file = $this->unzip_dir . $this->new_dir_name . '/';
+		if (file_exists($modx_file . 'install.xml'))
+		{
+			$modx_file .= 'install.xml';
+		}
+		else
+		{
+			// Find the first item with install in the name
+			foreach (scandir($modx_file) as $item)
+			{
+		       if (strpos($item, 'install') !== false && strpos($item, '.xml') !== false)
+		       {
+				   $modx_file .= $item;
+				   break;
+		       }
+			}
+		}
+
 		// HAX
 		global $phpbb_root_path;
 		$phpbb_root_path = $phpbb_path;
 
 		// The real stuff
+		$acp_mods = new acp_mods;
+		$acp_mods->mods_dir = titania::$config->contrib_temp_path;
 		$editor = new editor_direct;
-		//$details = acp_mods::mod_details($this->unzip_dir);
-		$actions = acp_mods::mod_actions($this->unzip_dir);
-		$installed = acp_mods::process_edits($editor, $actions, $details, false, true, false);
+		$details = $acp_mods->mod_details($modx_file, false);
+		$actions = $acp_mods->mod_actions($modx_file);
+		$installed = $acp_mods->process_edits($editor, $actions, $details, false, true, false);
 
 		// Reverse HAX
 		$phpbb_root_path = PHPBB_ROOT_PATH;
@@ -440,7 +463,7 @@ class titania_contrib_tools
 			'automod'	=> 'contributions/automod.html',
 		));
 
-		$result = phpbb::$template->assign_display('automod');
+		$results = phpbb::$template->assign_display('automod');
 
 		return $installed;
 	}
