@@ -1,0 +1,121 @@
+<!-- IF S_DISPLAY_DETAILS -->
+	<!-- IF S_NEW_FILES -->
+	<fieldset>
+		<legend>{L_NEW_FILES}</legend>
+
+		<table cellspacing="1">
+			<col class="row1" /><col class="row1" /><col class="row2" />
+		<thead>
+		<tr>
+			<th>{L_SOURCE}</th>
+			<th>{L_TARGET}</th>
+			<th>{L_STATUS}</th>
+		</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN new_files -->
+				<tr>
+					<td><strong>{new_files.SOURCE}<!-- IF new_files.S_MISSING_FILE -->&nbsp;&nbsp;&nbsp;<strong><font color="red">({L_FILE_MISSING})</font><!-- ENDIF --></strong></td>
+					<td>{new_files.TARGET}</td>
+					<!-- IF S_INSTALL -->
+						<td><!-- IF new_files.S_SUCCESS --><font color="green">{L_SUCCESS}</font><!-- ELSEIF new_files.S_NO_COPY_ATTEMPT -->{L_MANUAL_COPY}<!-- ELSE --><font color="red">{L_ERROR}</font><!-- ENDIF --></td>
+					<!-- ENDIF -->
+				</tr>
+			<!-- END new_files -->
+		</tbody>
+		</table>
+	</fieldset>
+	<!-- ENDIF -->
+
+	<!-- IF S_REMOVING_FILES -->
+	<fieldset>
+		<legend>{L_REMOVING_FILES}</legend>
+
+		<table cellspacing="1">
+			<col class="row1" width="50%" /><col class="row2" />
+		<thead>
+		<tr>
+			<th>{L_SOURCE}</th>
+		</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN removing_files -->
+				<tr>
+					<td><strong>{removing_files.FILENAME}</strong><!-- IF removing_files.S_MISSING_FILE -->&nbsp;&nbsp;&nbsp;<strong><font color="red">({L_FILE_MISSING})</font></strong>&nbsp;<!-- ENDIF --></td>
+				</tr>
+			<!-- END removing_files -->
+		</tbody>
+		</table>
+	</fieldset>
+	<!-- ENDIF -->
+
+	<!-- IF S_SQL -->
+	<fieldset>
+		<legend>{L_SQL_QUERIES}</legend>
+		<!-- BEGIN sql_queries -->
+			<!-- IF S_PRE_UNINSTALL -->
+		<table cellspacing="1">
+			<col class="row1" width="50%" /><col class="row2" />
+		<thead>
+		<tr>
+			<th>{L_ORIGINAL}</th>
+			<th>{L_REVERSE}</th>
+		</tr>
+		</thead>
+		<tbody>
+			<!-- BEGIN sql_queries -->
+				<tr>
+					<td><strong>{sql_queries.ORIGINAL_QUERY}</strong></td>
+					<td><strong><!-- IF sql_queries.S_UNKNOWN_REVERSE -->&nbsp;&nbsp;&nbsp;<strong><font color="red">{L_UNKNOWN_QUERY_REVERSE}!</font></strong>&nbsp;<!-- ELSE -->{sql_queries.REVERSE_QUERY}<!-- ENDIF --></strong></td>
+				</tr>
+			<!-- END sql_queries -->
+		</tbody>
+		</table>
+			<!-- ELSE -->
+			<fieldset>
+				<strong><!-- IF S_CHANGE_FILES --><!-- IF sql_queries.S_SUCCESS --><font color="green">{L_SUCCESS}:</font><br /><!-- ELSE --><font color="red">{L_ERROR}:</font>{sql_queries.ERROR_MSG}<br /><!-- ENDIF --><!-- ENDIF -->{sql_queries.QUERY}</strong>
+			</fieldset>
+			<!-- ENDIF -->
+		<!-- END sql_queries -->
+	</fieldset>
+	<!-- ENDIF -->
+
+	<!-- IF S_EDITS -->
+	<h2>{L_FILE_EDITS}</h2>
+	<!-- BEGIN edit_files -->
+	<fieldset>
+		<legend>{edit_files.FILENAME}</legend>
+		<!-- IF edit_files.S_MISSING_FILE -->
+		<strong><font color="red">{L_FILE_MISSING}</font></strong>
+		<!-- ELSEIF edit_files.INHERIT_MSG -->
+		<strong>{edit_files.INHERIT_MSG}</strong>
+		<!-- ENDIF -->
+		<!-- BEGIN finds -->
+		<fieldset>
+			<h4 style="margin: 0; padding:0;">{L_FIND}</h4>
+			<!-- IF edit_files.finds.COMMENT --><p><strong>{L_COMMENT}</strong>: {edit_files.finds.COMMENT}</p><!-- ENDIF -->
+			<pre style="overflow-x: scroll;">{edit_files.finds.FIND_STRING}</pre>
+			<!-- IF edit_files.finds.S_MISSING_FIND -->
+			<strong><font color="red">{L_FIND_MISSING}</font></strong>
+			<!-- ENDIF -->
+			<!-- BEGIN actions -->
+				<div>
+					<hr style="padding-top: 10px; margin-top: 10px;" />
+					<h4 style="margin: 0; padding:0;">{edit_files.finds.actions.NAME}</h4>
+					<pre style="overflow-x: scroll;">{edit_files.finds.actions.COMMAND}</pre>
+					<!-- BEGIN inline -->
+						<hr style="padding-top: 10px; margin-top: 10px;" />
+						<h4 style="margin: 0; padding:0;">{edit_files.finds.actions.inline.NAME}</h4>
+						<!-- IF edit_files.finds.actions.inline.COMMENT --><p><strong>{L_COMMENT}</strong>:<p>{edit_files.finds.actions.inline.COMMENT}</p><!-- ENDIF -->
+						<pre style="overflow-x: scroll;">{edit_files.finds.actions.inline.COMMAND}</pre>
+						<!-- IF not edit_files.finds.actions.inline.S_SUCCESS and S_CHANGE_FILES --><span>{L_INLINE_FIND_MISSING}</span><!-- ENDIF -->
+					<!-- END inline -->
+					<!-- IF S_CHANGE_FILES --><!-- IF edit_files.finds.actions.S_SUCCESS --><font color="green">{L_SUCCESS}</font><!-- ELSE --><font color="red">{L_FIND_MISSING}</font><!-- ENDIF --><!-- ENDIF -->
+				</div>
+			<!-- END actions -->
+			</fieldset>
+		<!-- END finds -->
+		</fieldset>
+		<!-- END edit_files -->
+	<!-- ENDIF -->
+<!-- ENDIF -->

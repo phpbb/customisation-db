@@ -55,6 +55,11 @@ class titania_config extends titania_object
 			'require_validation'		=> array('default' => true),
 			'use_queue'					=> array('default' => true),
 
+			// Latest versions array
+			'phpbb_versions'			=> array('default' => array(
+				'30'	=> '3.0.6',  // We only support 3.0.x right now, will be changed in the future
+			)),
+
 			'mpv_server_list'			=> array('default' => array(
 				array(
 					'host'		=> 'mpv.davidiq.net',

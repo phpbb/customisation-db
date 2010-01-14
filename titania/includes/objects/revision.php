@@ -101,6 +101,12 @@ class titania_revision extends titania_database_object
 			throw new exception('Submitting an edit to a contribution item requires you load it through the $revision->load() method');
 		}
 
+		if (!$this->revision_id)
+		{
+			// Set to the correct phpBB version (only support 3.0.x for now)
+			$this->phpbb_version = titania::$config->phpbb_versions['30'];
+		}
+
 		// Some stuff for new submissions
 		if (!$this->revision_id && $this->revision_submitted || ($this->revision_id && !$this->sql_data['revision_submitted'] && $this->revision_submitted))
 		{

@@ -184,10 +184,21 @@ class titania_contrib_tools
 	/**
 	* Find the root directory of the mod package
 	*
-	* Ignore the variables, don't send anything, this is a recursive function
+	* Ignore the variables other than $directory and $find, this is a recursive function
+	*
+	* @param string $directory The directory to search for (false to use $this->unzip_dir)
+	* @param array $find An array of items to search for.  Root array is to search for any one of the files, child arrays hold the things we will check for in each
+	* array(
+	*	array( // Search for an install .xml file
+	*		'install',
+	* 		'.xml',
+	* 	)
+	* )
 	*/
-	public function find_root($sub_dir = '', $cnt = 0)
+	public function find_root($directory = false, $find = array(array('install', '.xml')), $sub_dir = '', $cnt = 0)
 	{
+		$directory = ($directory === false) ? $this->unzip_dir : $directory;
+
 		// Ok, have to draw the line somewhere; 50 sub directories is insane
 		if ($cnt > 50)
 		{
@@ -196,36 +207,54 @@ class titania_contrib_tools
 			trigger_error('SUBDIRECTORY_LIMIT');
 		}
 
-		if (!is_dir($this->unzip_dir . $sub_dir))
+		if (!is_dir($directory . $sub_dir))
 		{
 			return false;
 		}
 
-        foreach (scandir($this->unzip_dir . $sub_dir) as $item)
+        foreach (scandir($directory . $sub_dir) as $item)
 		{
             if ($item == '.' || $item == '..')
 			{
 				continue;
 			}
 
-			if (strpos($item, 'install') !== false && substr($item, -4) == '.xml')
+			// Search for the files
+			foreach ($find as $file_search)
 			{
-				// Found an install xml file
-				return $sub_dir;
+				$match = 0;
+
+				// Search each subset to make sure they all exist
+				foreach ($file_search as $check)
+				{
+					if (strpos($item, $check) !== false)
+					{
+						$match++;
+					}
+					else
+					{
+						break;
+					}
+				}
+
+				if ($match == sizeof($file_search))
+				{
+					return $sub_dir;
+				}
 			}
         }
 
         // We failed the scan of this directory, let's try some children
-        foreach (scandir($this->unzip_dir . $sub_dir) as $item)
+        foreach (scandir($directory . $sub_dir) as $item)
 		{
             if ($item == '.' || $item == '..')
 			{
 				continue;
 			}
 
-			if (is_dir($this->unzip_dir . $sub_dir . $item))
+			if (is_dir($directory . $sub_dir . $item))
 			{
-				if (($root_dir = $this->find_root($sub_dir . $item . '/', ($cnt + 1))) !== false)
+				if (($root_dir = $this->find_root($directory, $find, $sub_dir . $item . '/', ($cnt + 1))) !== false)
 				{
 					return $root_dir;
 				}
@@ -312,6 +341,108 @@ class titania_contrib_tools
 
 			return $mpv_result;
 		}
+	}
+
+	/**
+	* Prepare the files to test automod with
+	*
+	* @param string $version Version string of the revision (30 for 3.0.x, 32 for 3.2.x, etc)
+	*/
+	public function automod_phpbb_files($version)
+	{
+		$version = titania::$config->phpbb_versions[$version];
+		$phpbb_root = titania::$config->contrib_temp_path . 'phpbb/' . $version . '/';
+
+		if (!file_exists($phpbb_root))
+		{
+			// Need to unzip
+			phpbb::_include('functions_compress', false, 'compress_zip');
+
+			// Unzip to our temp directory
+			$zip = new compress_zip('r', TITANIA_ROOT . 'includes/tools/automod/phpbb/phpBB-' . $version . '.zip');
+			$zip->extract($phpbb_root);
+			$zip->close();
+
+			// Find the phpBB root
+			$package_root = $this->find_root($phpbb_root, array(array('common.php')));
+
+			// Move it to the correct location
+			if ($package_root != '')
+			{
+				// Find the main subdirectory off the unzip dir
+				$sub_dir = $package_root;
+				if (strpos($sub_dir, '/') !== false)
+				{
+					$sub_dir = substr($sub_dir, 0, strpos($sub_dir, '/'));
+				}
+
+				// First remove everything but the subdirectory that the package root is in
+				foreach (scandir($phpbb_root) as $item)
+				{
+		            if ($item == '.' || $item == '..' || ($item == $sub_dir && is_dir($phpbb_root . $item)))
+					{
+						continue;
+					}
+
+					if (is_dir($phpbb_root . $item))
+					{
+						$this->rmdir_recursive($phpbb_root . $item . '/');
+					}
+					else
+					{
+						@unlink($phpbb_root . $item);
+					}
+				}
+
+				// Now move the package root to our unzip directory
+				$this->mvdir_recursive($phpbb_root . $package_root, $phpbb_root);
+
+				// Now remove the old directory
+				$this->rmdir_recursive($phpbb_root . $sub_dir . '/');
+			}
+		}
+
+		return $phpbb_root;
+	}
+
+	/**
+	* Automod test
+	* TY AJD
+	*
+	* @param string $phpbb_path Path to phpBB files we run the test on
+	* @param string $details Will hold the details of the mod
+	* @param string $results Will hold the results for output
+	* @return bool true on success, false on failure
+	*/
+	public function automod($phpbb_path, &$details, &$results)
+	{
+		phpbb::_include('functions_transfer', false, 'transfer');
+		phpbb::_include('functions_admin', 'recalc_nested_sets');
+		titania::_include('tools/automod/acp_mods', false, 'acp_mods');
+		titania::_include('tools/automod/editor', false, 'editor');
+		titania::_include('tools/automod/mod_parser', false, 'parser');
+		titania::_include('tools/automod/functions_mods', 'test_ftp_connection');
+
+		// HAX
+		global $phpbb_root_path;
+		$phpbb_root_path = $phpbb_path;
+
+		// The real stuff
+		$editor = new editor_direct;
+		//$details = acp_mods::mod_details($this->unzip_dir);
+		$actions = acp_mods::mod_actions($this->unzip_dir);
+		$installed = acp_mods::process_edits($editor, $actions, $details, false, true, false);
+
+		// Reverse HAX
+		$phpbb_root_path = PHPBB_ROOT_PATH;
+
+		phpbb::$template->set_filenames(array(
+			'automod'	=> 'contributions/automod.html',
+		));
+
+		$result = phpbb::$template->assign_display('automod');
+
+		return $installed;
 	}
 
 	/**
