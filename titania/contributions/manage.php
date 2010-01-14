@@ -35,6 +35,11 @@ $contrib_categories = array();
 */
 if (request_var('new_revision_step', 0) > 0)
 {
+	if (titania::$contrib->in_queue())
+	{
+		trigger_error('REVISION_IN_QUEUE');
+	}
+
 	// Each different type requires different handling of revisions
 	if (method_exists(titania_types::$types[titania::$contrib->contrib_type], 'create_revision'))
 	{
@@ -205,6 +210,11 @@ if ($submit)
 		// Begin the stuff for uploading a new revision (this is continued above on the next page submission)
 		if (isset($_POST['new_revision']))
 		{
+			if (titania::$contrib->in_queue())
+			{
+				trigger_error('REVISION_IN_QUEUE');
+			}
+
 			$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 			phpbb::$template->assign_vars(array(
 				'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
@@ -252,6 +262,7 @@ $message->display();
 
 phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
+	'S_SUBMIT_NEW_REVISION'		=> true,//(!titania::$contrib->in_queue()),  Do we show them the link even if they can not upload?  I say yes so that they receive the error and know why they can not submit a new revision
 
 	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,

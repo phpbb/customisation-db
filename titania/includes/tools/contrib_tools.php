@@ -293,13 +293,7 @@ class titania_contrib_tools
 	*/
 	public function mpv($download_location)
 	{
-		$server_list = array(
-			array(
-				'host'		=> 'mpv.davidiq.net',
-				'directory'	=> '',
-				'file'		=> 'index.php',
-			),
-		);
+		$server_list = titania::$config->mpv_server_list;
 
 		$server = $server_list[array_rand($server_list)];
 

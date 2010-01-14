@@ -35,7 +35,7 @@ $nav_ary = array(
 	'queue' => array(
 		'title'		=> 'VALIDATION_QUEUE',
 		'url'		=> titania_url::build_url('manage/queue/'),
-		'auth'		=> (titania::$access_level == TITANIA_ACCESS_TEAMS) ? true : false, // for now
+		'auth'		=> (sizeof(titania_types::find_authed('view'))) ? true : false,
 	),
 );
 

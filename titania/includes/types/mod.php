@@ -242,7 +242,8 @@ class titania_type_mod extends titania_type_base
 					phpbb::$template->assign_var('NOTICE', implode('<br />', $contrib_tools->error));
 
 					// Add the test failed notice to the queue
-					$revision->queue_topic(true, sprintf(phpbb::$user->lang['MPV_TEST_FAILED_QUEUE_MSG'], $download_package));
+					$retest = titania_url::build_url('index/mpv', array('revision' => $revision->revision_id));
+					$revision->queue_topic(true, sprintf(phpbb::$user->lang['MPV_TEST_FAILED_QUEUE_MSG'], $retest));
 				}
 				else
 				{
@@ -254,6 +255,28 @@ class titania_type_mod extends titania_type_base
 					$mpv_results = generate_text_for_display($mpv_results, $uid, $bitfield, $flags);
 					phpbb::$template->assign_var('MPV_RESULTS', $mpv_results);
 				}
+			break;
+
+			case 3 :
+				$revision = new titania_revision(titania::$contrib, $revision_id);
+				if (!$revision->load())
+				{
+					trigger_error('NO_REVISION');
+				}
+				$revision_attachment = new titania_attachment(TITANIA_CONTRIB);
+				$revision_attachment->attachment_id = $revision->attachment_id;
+				if (!$revision_attachment->load())
+				{
+					trigger_error('ERROR_NO_ATTACHMENT');
+				}
+
+				// No Automod test yet...
+
+				// Update the revision to be submitted, which unhides the queue topic and updates the contrib_last_update time
+				$revision->revision_submitted = true;
+				$revision->submit();
+
+				return;
 			break;
 		}
 

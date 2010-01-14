@@ -67,8 +67,12 @@ class titania_revision extends titania_database_object
 			'queue_topic_id'		=> array('default' => 0),
 		));
 
-		$this->contrib = $contrib;
-		$this->contrib_id = $this->contrib->contrib_id;
+		if ($contrib)
+		{
+			$this->contrib = $contrib;
+			$this->contrib_id = $this->contrib->contrib_id;
+		}
+
 		$this->revision_id = $revision_id;
 	}
 
@@ -170,6 +174,8 @@ class titania_revision extends titania_database_object
 			$sql = 'UPDATE ' . $this->sql_table . ' SET queue_topic_id = ' . (int) $this->queue_topic_id . '
 				WHERE revision_id = ' . $this->revision_id;
 			phpbb::$db->sql_query($sql);
+
+			return $post->topic->get_url();
 		}
 		else
 		{
@@ -202,6 +208,8 @@ class titania_revision extends titania_database_object
 			));
 
 			$post->submit();
+
+			return $post->topic->get_url();
 		}
 	}
 

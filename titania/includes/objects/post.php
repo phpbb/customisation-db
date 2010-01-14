@@ -288,7 +288,11 @@ class titania_post extends titania_database_object
 	*/
 	public function acl_get($option, $contrib = false)
 	{
-		if ($contrib === false)
+		if ($contrib === false && isset($this->topic->contrib) && is_object($this->topic->contrib))
+		{
+			$contrib = $this->topic->contrib;
+		}
+		else if ($contrib === false)
 		{
 			$contrib = titania::$contrib;
 		}

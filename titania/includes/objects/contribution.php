@@ -57,8 +57,8 @@ class titania_contribution extends titania_database_object
 	public $coauthors = array();
 
 	/**
-	* Revisions, download array
-	*/
+	 * Revisions, download array
+	 */
 	public $revisions = array();
 	public $download = array();
 
@@ -70,10 +70,10 @@ class titania_contribution extends titania_database_object
 	public $rating;
 
 	/**
-	* is_author (true when visiting user is the author)
-	* is_active_coauthor (true when visiting user is an active co-author)
-	* is_coauthor (true when visiting user is a non-active co-author)
-	*/
+	 * is_author (true when visiting user is the author)
+	 * is_active_coauthor (true when visiting user is an active co-author)
+	 * is_coauthor (true when visiting user is a non-active co-author)
+	 */
 	public $is_author = false;
 	public $is_active_coauthor = false;
 	public $is_coauthor = false;
@@ -197,10 +197,10 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	* Submit data in the post_data format (from includes/tools/message.php)
-	*
-	* @param object $message The message object
-	*/
+	 * Submit data in the post_data format (from includes/tools/message.php)
+	 *
+	 * @param object $message The message object
+	 */
 	public function post_data($message)
 	{
 		$post_data = $message->request_data();
@@ -346,9 +346,9 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	* Get the revisions for this contrib item
-	* (not always needed, so save us a query when it's not needed)
-	*/
+	 * Get the revisions for this contrib item
+	 * (not always needed, so save us a query when it's not needed)
+	 */
 	public function get_revisions()
 	{
 		if (sizeof($this->revisions))
@@ -358,7 +358,8 @@ class titania_contribution extends titania_database_object
 
 		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
 			WHERE contrib_id = ' . $this->contrib_id .
-			((titania::$config->require_validation && !titania::$access_level == TITANIA_ACCESS_TEAMS) ? ' AND revision_validated = 1 ' : '') . '
+				((titania::$config->require_validation && !titania::$access_level == TITANIA_ACCESS_TEAMS) ? ' AND revision_validated = 1 ' : '') . '
+				AND revision_submitted = 1
 			ORDER BY revision_id DESC';
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
@@ -369,13 +370,20 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	* Get the latest revision (to download)
-	*/
+	 * Get the latest revision (to download)
+	 * Stored in $this->download; only gets the latest validated (if validation is required)
+	 */
 	public function get_download()
 	{
+		if ($this->download)
+		{
+			return;
+		}
+
 		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_ATTACHMENTS_TABLE . ' a
 			WHERE a.attachment_id = r.attachment_id ' .
-			((titania::$config->require_validation) ? ' AND r.revision_validated = 1 ' : '') . '
+				((titania::$config->require_validation) ? ' AND r.revision_validated = 1 ' : '') . '
+				AND revision_submitted = 1
 			ORDER BY r.revision_id';
 		$result = phpbb::$db->sql_query_limit($sql, 1);
 		$this->download = phpbb::$db->sql_fetchrow($result);
@@ -743,5 +751,27 @@ class titania_contribution extends titania_database_object
 
 			$author->submit();
 		}
+	}
+
+	/**
+	 * Check if there is a revision in the queue
+	 *
+	 */
+	public function in_queue()
+	{
+		if (!titania::$config->use_queue)
+		{
+			return false;
+		}
+
+		$sql = 'SELECT revision_id FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE contrib_id = ' . (int) $this->contrib_id . '
+				AND revision_validated = 0
+				AND revision_submitted = 1';
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		return ($row === false) ? false : true;
 	}
 }

@@ -54,6 +54,14 @@ class titania_config extends titania_object
 			// Validation/queue related
 			'require_validation'		=> array('default' => true),
 			'use_queue'					=> array('default' => true),
+
+			'mpv_server_list'			=> array('default' => array(
+				array(
+					'host'		=> 'mpv.davidiq.net',
+					'directory'	=> '',
+					'file'		=> 'index.php',
+				),
+			)),
 		));
 	}
 }

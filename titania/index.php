@@ -72,6 +72,62 @@ switch ($action)
 	break;
 
 	/**
+	* Rerun the MPV or Automod test for the queue
+	*/
+	case 'mpv' :
+		$revision_id = request_var('revision', 0);
+		titania::add_lang('contributions');
+
+		$revision = new titania_revision(false, $revision_id);
+		if (!$revision->load())
+		{
+			trigger_error('NO_REVISION');
+		}
+		$contrib = new titania_contribution();
+		if (!$contrib->load($revision->contrib_id))
+		{
+			trigger_error('CONTRIB_NOT_FOUND');
+		}
+		$revision->contrib = $contrib;
+		if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
+		{
+			trigger_error('NO_AUTH');
+		}
+		$revision_attachment = new titania_attachment(TITANIA_CONTRIB);
+		$revision_attachment->attachment_id = $revision->attachment_id;
+		if (!$revision_attachment->load())
+		{
+			trigger_error('ERROR_NO_ATTACHMENT');
+		}
+
+		if ($action == 'mpv')
+		{
+			$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
+			$download_package = titania_url::build_url('download', array('id' => $revision_attachment->attachment_id));
+
+			// Start up the machine
+			$contrib_tools = new titania_contrib_tools($zip_file);
+
+			// Run MPV
+			$mpv_results = $contrib_tools->mpv($download_package);
+
+			if ($mpv_results === false)
+			{
+				// Too lazy to write another one...teams only anyways
+				trigger_error('MPV_TEST_FAILED');
+			}
+			else
+			{
+				// Add the MPV Results to the queue topic
+				$pattern = '#' . str_replace(array('[', ']', '%s'), array('\[', '\]', '([^"]+)'), phpbb::$user->lang['MPV_TEST_FAILED_QUEUE_MSG']) . '#';
+				$redirect = $revision->queue_topic(false, $mpv_results, $pattern);
+
+				redirect($redirect);
+			}
+		}
+	break;
+
+	/**
 	* Default (display category/contrib list)
 	*/
 	default :

@@ -42,6 +42,10 @@ Rewriterule ^(tracker|queue|support)/([^/]+)?$					./contributions/index.php?pag
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^rate/?([^/]+)?$									./index.php?action=rate [NC]
 
+#misc index stuff
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^index/([^/]+)/([^/]+)?$								./index.php?action=$1 [NC]
+
 #categories
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$		./index.php?c=$4 [NC]
