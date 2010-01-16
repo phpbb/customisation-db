@@ -58,7 +58,6 @@ $replace = array(
 	'{T_THEME_PATH}'			=> "$path/styles/$style/theme",
 	'{T_TEMPLATE_PATH}'			=> "$path/styles/$style/template",
 	'{T_IMAGESET_PATH}'			=> "$path/styles/$style/imageset",
-	'{S_USER_LANG}'				=> preg_replace('#[^a-z]#', '', $_GET['lang']),
 );
 $stylesheet = str_replace(array_keys($replace), array_values($replace), $stylesheet);
 
