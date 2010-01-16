@@ -22,20 +22,19 @@ h3.section-name {
 	background-color: #C6D8E5;
 	padding: 0 10px;
 	clear: both;
+	position: relative;
+	overflow: hidden;
 }
 
-.main-panel .corners-top, .main-panel .corners-bottom {
+.main-panel span.corners-top, .main-panel span.corners-bottom {
 	margin: 0 -10px;
 }
 
 .container {
 	background-color: #FFFFFF;
-	padding: 0 5px;
+	padding: 0 10px;
 	margin: 5px 0;
-}
-
-.container .inner .corners-top, .container .inner .corners-bottom {
-	margin: 0 -5px;
+	overflow: hidden;
 }
 
 .container.demo {
@@ -49,20 +48,18 @@ h3.section-name {
 
 .right-column {
 	margin-left: 190px;
-	position: relative;
 }
 
 .left-column {
 	width: 180px;
 	float: left;
-	position: relative;
 }
 
-.container span.corners-top, .container span.corners-bottom {
+span.corners-top.main-corners, span.corners-bottom.main-corners {
 	background-image: url("{T_THEME_PATH}/images/corners_left.png");
 }
 
-.container span.corners-top span, .container span.corners-bottom span {
+span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 	background-image: url("{T_THEME_PATH}/images/corners_right.png");
 }
 
@@ -150,12 +147,12 @@ ul.basic li {
 	margin: 0 -5px;
 }
 
-ul.basic li span {
+ul.basic li div {
 	float: right;
 	border-left: 1px dotted #B5B5B5;
 	padding-left: 5px;
 	line-height: 20px;
-	margin-top: -2px;
+	display: inline;
 }
 
 ul.basic li span img {

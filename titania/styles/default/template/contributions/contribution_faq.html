@@ -4,28 +4,31 @@
 
 <!-- IF S_LIST -->
 
-<!-- BEGIN faqlist -->
-	<!-- IF faqlist.S_ROW_COUNT > 10 -->
-		<!-- DEFINE $TOP_PAGINATION = true -->
-	<!-- ENDIF -->
-<!-- END faqlist -->
-
-<!-- IF PAGINATION or TOTAL_POSTS -->
+<!-- IF U_CREATE_FAQ or PAGINATION or TOTAL_POSTS -->
 	<div class="topic-actions">
+		<div class="buttons">
+		<!-- IF U_CREATE_FAQ -->
+			<p class="ui-button"><a href="{U_CREATE_FAQ}" id="create-faq" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_FAQ}</a></p>
+		<!-- ENDIF -->
+		</div>
+		
+		<!-- IF PAGINATION or TOTAL_POSTS -->
 		<div class="pagination">
 			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
 		</div>
+		<!-- ENDIF -->
 	</div>
 <!-- ENDIF -->
 	<div class="clear"></div>
 	
 	<div class="container">
-		<div class="inner"><span class="corners-top"><span></span></span>	
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>	
 		<!-- IF .faqlist -->
 				<ul class="basic">
 				<!-- BEGIN faqlist -->
 					<li<!-- IF faqlist.S_LAST_ROW --> style="border-bottom: none;"<!-- ENDIF -->><a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a>
-							<span>
+							<!-- IF faqlist.U_MOVE_UP or faqlist.U_MOVE_DOWN or faqlist.U_EDIT or faqlist.U_DELETE -->
+							<div>
 								<!-- IF faqlist.U_MOVE_UP and HIDE_FOR_NOW -->
 									<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->
 								<!-- ENDIF -->
@@ -34,16 +37,17 @@
 								<!-- ENDIF -->
 								<!-- IF faqlist.U_EDIT --><a href="{faqlist.U_EDIT}">{ICON_EDIT}</a><!-- ENDIF -->
 								<!-- IF faqlist.U_DELETE -->&nbsp;<a href="{faqlist.U_DELETE}">{ICON_DELETE}</a><!-- ENDIF -->
-							</span>
+							</div>
+							<!-- ENDIF -->
 					</li>	
 				<!-- END faqlist-->
 				</ul>
 		<!-- ELSE -->
 			<strong>{L_NO_FAQ}</strong>
 		<!-- ENDIF -->
-		<span class="corners-bottom"><span></span></span></div>
+		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
-	<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) and $TOP_PAGINATION -->
+	<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
 	<div class="topic-actions">
 		<div class="buttons">
 		<!-- IF U_CREATE_FAQ -->
@@ -60,7 +64,7 @@
 	<!-- ENDIF -->
 <!-- ELSEIF S_DETAILS -->
 	<div id="p{posts.POST_ID}" class="post container">
-		<div class="inner"><span class="corners-top"><span></span></span>
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<div class="postbody">
 				<h3>{FAQ_SUBJECT}</h3>
 	
@@ -77,7 +81,7 @@
 			</div>
 	
 			<div class="back2top"><a href="#wrap" class="top" title="{L_BACK_TO_TOP}">{L_BACK_TO_TOP}</a></div>
-		<span class="corners-bottom"><span></span></span></div>
+		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
 <!-- ELSEIF S_EDIT -->
 	<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
