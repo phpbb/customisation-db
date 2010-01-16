@@ -16,6 +16,7 @@ h3.section-name {
 	color: #333333;
 	border: 0;
 	margin: 8px 0;
+	clear: both;
 }
 
 .main-panel {
@@ -150,6 +151,10 @@ dd.faq-tools {
 	width: 13%;
 	text-align: right;
 	border: 0 !important;
+}
+
+dd.general {
+	padding-left: 5px !important;
 }
 
 .container li.header dt, .container li.header dd {

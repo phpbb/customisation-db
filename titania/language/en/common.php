@@ -86,6 +86,7 @@ $lang = array_merge($lang, array(
 	'NO_CONTRIBS'				=> 'No contributions could be found',
 	'NO_DESC'					=> 'You have to enter the description.',
 	'NO_POST'					=> 'The requested post does not exist.',
+	'NO_REVISION_NAME'			=> 'No revision name provided',
 	'NO_TOPIC'					=> 'The requested topic does not exist.',
 
 	'ORDER'						=> 'Order',
@@ -105,4 +106,6 @@ $lang = array_merge($lang, array(
 
 	'TITANIA_INDEX'				=> 'Customisation Database',
 	'TYPE'						=> 'Type',
+	
+	'VERSION'					=> 'Version',
 ));

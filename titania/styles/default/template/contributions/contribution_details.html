@@ -18,8 +18,12 @@
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<!-- IF CONTRIB_DESC -->
 			<dl id="contrib-description"><dt><strong>{L_DESCRIPTION}</strong></dt><dd>{CONTRIB_DESC}</dd></dl>
-			<br />
 			<!-- ENDIF -->
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+
+	<div class="container">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<ul class="general-info">
 				<li>
 					<strong>{L_AUTHOR}</strong> {AUTHOR_NAME_FULL}
@@ -39,23 +43,34 @@
 				<li>
 					<strong>{L_DOWNLOADS_TOTAL}</strong> {CONTRIB_DOWNLOADS}
 				</li>
-				<li>
+				<li style="border-bottom: 0;">
 					<strong>{L_RATING}</strong> {CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})
 				</li>
 			</ul>
-		
-		<div class="clear"></div>
+	
 		<!-- IF .revisions -->
-		<h3>{L_REVISIONS}</h3>
-		<table>
-		<!-- BEGIN revisions -->
-			<tr>
-				<td align="right"><strong>{revisions.NAME}:</strong></td>
-				<td align="left">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --></td>
-			</tr>
-		<!-- END revisions -->
-		</table>
+			<br />
+			<br />					
+			<ul class="topiclist">
+				<li class="header">
+					<dl>
+						<dt>{L_REVISIONS}</dt>
+						<dd></dd>
+					</dl>
+				</li>
+			</ul>
+			<ul class="topiclist cplist">
+			<!-- BEGIN revisions -->
+				<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+					<dl>
+						<dt><strong><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></strong></dt>
+						<dd class="general">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --></dd>
+					</dl>
+				</li>
+			<!-- END revisions -->	
+			</ul>
 		<!-- ENDIF -->
+	
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
 </div>
