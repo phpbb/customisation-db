@@ -659,6 +659,13 @@ $versions = array(
 		),
 	),
 
+	'0.1.31' => array(
+		'table_column_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_demo', array('VCHAR_UNI:200', '')),
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_topic', array('UINT', 0)), // Store the old topic_id from ariel for the forums
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
