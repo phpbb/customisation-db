@@ -16,52 +16,6 @@ h3.section-name {
 	color: #333333;
 	border: 0;
 	margin: 8px 0;
-	clear: both;
-}
-
-.main-panel {
-	background-color: #C6D8E5;
-	padding: 0 10px;
-	clear: both;
-	position: relative;
-	overflow: hidden;
-}
-
-.main-panel span.corners-top, .main-panel span.corners-bottom {
-	margin: 0 -10px;
-}
-
-.container {
-	background-color: #FFFFFF;
-	padding: 0 10px;
-	margin: 5px 0;
-	overflow: hidden;
-}
-
-.container.demo {
-	text-align: center;
-}
-
-.container.demo a {
-	font-weight: bold;
-	color: #333333;
-}
-
-.right-column {
-	margin-left: 190px;
-}
-
-.left-column {
-	width: 180px;
-	float: left;
-}
-
-span.corners-top.main-corners, span.corners-bottom.main-corners {
-	background-image: url("{T_THEME_PATH}/images/corners_left.png");
-}
-
-span.corners-top.main-corners span, span.corners-bottom.main-corners span {
-	background-image: url("{T_THEME_PATH}/images/corners_right.png");
 }
 
 .tabs {
@@ -108,6 +62,53 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 	color: #4B6778;
 }
 
+.main-panel {
+	background-color: #C6D8E5;
+	padding: 0 10px;
+	clear: both;
+	position: relative;
+	overflow: hidden;
+}
+
+.main-panel span.corners-top, .main-panel span.corners-bottom {
+	margin: 0 -10px;
+}
+
+.container {
+	background-color: #FFFFFF;
+	padding: 0 10px;
+	margin: 5px 0;
+	overflow: hidden;
+}
+
+span.corners-top.main-corners, span.corners-bottom.main-corners {
+	background-image: url("{T_THEME_PATH}/images/corners_left.png");
+}
+
+span.corners-top.main-corners span, span.corners-bottom.main-corners span {
+	background-image: url("{T_THEME_PATH}/images/corners_right.png");
+}
+
+/* Contribution Details
+--------------------------------------------- */
+.container.demo {
+	text-align: center;
+}
+
+.container.demo a {
+	font-weight: bold;
+	color: #333333;
+}
+
+.right-column {
+	margin-left: 190px;
+}
+
+.left-column {
+	width: 180px;
+	float: left;
+}
+
 .download-button {
 	background: transparent none no-repeat 0 0;
 	margin: 10px auto 0 auto;
@@ -142,6 +143,9 @@ ul.general-info li strong {
 	display: block;
 	float: left;
 }
+
+/* Listings
+--------------------------------------------- */
 
 #faqlist .topiclist dt {
 	width: 85%;	
@@ -200,16 +204,6 @@ ul.rating li, ul.rated li {
 	background-color: #FFFFFF;
 	border: 1px solid #BC2A4D;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -322,18 +316,3 @@ fieldset dl:hover dt label.error {
 	width: 900px;
 	margin: 0 auto;
 }
-
-
-/* Main contrib tabs - overwriting some of the code from prosilver
----------------------------------------- */
-
-
-dl.codebox code {
-	font-size: 1em;
-}
-
-div#top {
-	clear: both;
-	margin-top: 15px;
-}
-

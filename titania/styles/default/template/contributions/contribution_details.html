@@ -14,14 +14,14 @@
 </div>
 
 <div class="right-column">
-	<div class="container">
+	<!-- IF CONTRIB_DESC -->
+	<div class="container" id="contrib-description">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
-			<!-- IF CONTRIB_DESC -->
-			<dl id="contrib-description"><dt><strong>{L_DESCRIPTION}</strong></dt><dd>{CONTRIB_DESC}</dd></dl>
-			<!-- ENDIF -->
+			<dl><dt><strong>{L_DESCRIPTION}</strong></dt><dd>{CONTRIB_DESC}</dd></dl>
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
-
+	<!-- ENDIF -->
+	
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<ul class="general-info">
