@@ -52,4 +52,6 @@ $lang = array_merge($lang, array(
 	'FAQ_NOT_FOUND'			=> 'The specified FAQ could not be found.',
 
 	'NO_FAQ'				=> 'There are no FAQ entries.',
+	
+	'QUESTIONS'				=> 'Questions',
 ));

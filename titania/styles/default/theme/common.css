@@ -15,7 +15,7 @@ h3.section-name {
 	text-transform: none;
 	color: #333333;
 	border: 0;
-	margin: 0;
+	margin: 8px 0;
 }
 
 .main-panel {
@@ -108,9 +108,7 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 }
 
 .download-button {
-	background: url("{T_THEME_PATH}/images/download_bg.gif") no-repeat 0 0;
-	width: 176px;
-	height: 51px;
+	background: transparent none no-repeat 0 0;
 	margin: 10px auto 0 auto;
 }
 
@@ -123,6 +121,10 @@ a.download-main {
 	font-weight: bold;
 	display: block;
 	text-decoration: none;
+}
+
+#contrib-description {
+	font-size: 1.1em;
 }
 
 ul.general-info li {
@@ -140,27 +142,14 @@ ul.general-info li strong {
 	float: left;
 }
 
-ul.basic li {
-	border-bottom: 1px dotted #B5B5B5;
-	list-style: none;
-	padding: 2px 10px;
-	margin: 0 -5px;
+#faqlist .topiclist dt {
+	width: 85%;	
 }
 
-ul.basic li div {
-	float: right;
-	border-left: 1px dotted #B5B5B5;
-	padding-left: 5px;
-	line-height: 20px;
-	display: inline;
-}
-
-ul.basic li span img {
-	vertical-align: middle;
-}
-
-ul.basic a {
-	font-weight: normal;
+dd.faq-tools {
+	width: 13%;
+	text-align: right;
+	border: 0 !important;
 }
 
 .container li.header dt, .container li.header dd {
@@ -188,6 +177,23 @@ ul.basic a {
 
 .container .cplist dd.type, .container .cplist dd.contrib-author {
 	font-size: 1.1em;
+}
+
+/* Rating Code */
+ul.rating, ul.rated {
+	list-style-type: none;
+	display: inline;
+}
+
+ul.rating li, ul.rated li {
+	display: inline;
+	border: 0;
+}
+
+/* Soft deleted item */
+.deleted {
+	background-color: #FFFFFF;
+	border: 1px solid #BC2A4D;
 }
 
 
@@ -326,17 +332,3 @@ div#top {
 	margin-top: 15px;
 }
 
-
-/* Rating Code */
-ul.rating, ul.rated {
-	list-style-type: none;
-	display: inline;
-}
-ul.rating li, ul.rated li {
-	display: inline;
-}
-
-/* Soft deleted item */
-.deleted {
-	background-color: #B1B7BB;
-}

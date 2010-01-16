@@ -1,7 +1,7 @@
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
-		<p class="ui-button"><a href="{U_POST_REPLY}" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon <!-- IF S_IS_LOCKED -->ui-icon-locked<!-- ELSE -->ui-icon-pencil<!-- ENDIF -->"></span><!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF --></a></p>
+		<div class="<!-- IF S_IS_LOCKED -->locked-icon<!-- ELSE -->reply-icon<!-- ENDIF -->"><a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->"><span></span><!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF --></a></div>
 	<!-- ENDIF -->
 	</div>
 
@@ -127,7 +127,7 @@
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
-		<p class="ui-button"><a href="{U_POST_REPLY}" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon <!-- IF S_IS_LOCKED -->ui-icon-locked<!-- ELSE -->ui-icon-pencil<!-- ENDIF -->"></span><!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF --></a></p>
+		<div class="<!-- IF S_IS_LOCKED -->locked-icon<!-- ELSE -->reply-icon<!-- ENDIF -->"><a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->"><span></span><!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF --></a></div>
 	<!-- ENDIF -->
 	</div>
 

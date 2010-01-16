@@ -3,65 +3,79 @@
 <h3 class="section-name">{L_FAQ_EXPANDED}</h3>
 
 <!-- IF S_LIST -->
-
-<!-- IF U_CREATE_FAQ or PAGINATION or TOTAL_POSTS -->
-	<div class="topic-actions">
-		<div class="buttons">
-		<!-- IF U_CREATE_FAQ -->
-			<p class="ui-button"><a href="{U_CREATE_FAQ}" id="create-faq" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_FAQ}</a></p>
-		<!-- ENDIF -->
-		</div>
-		
-		<!-- IF PAGINATION or TOTAL_POSTS -->
-		<div class="pagination">
-			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-		</div>
-		<!-- ENDIF -->
-	</div>
-<!-- ENDIF -->
-	<div class="clear"></div>
 	
-	<div class="container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>	
-		<!-- IF .faqlist -->
-				<ul class="basic">
-				<!-- BEGIN faqlist -->
-					<li<!-- IF faqlist.S_LAST_ROW --> style="border-bottom: none;"<!-- ENDIF -->><a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a>
-							<!-- IF faqlist.U_MOVE_UP or faqlist.U_MOVE_DOWN or faqlist.U_EDIT or faqlist.U_DELETE -->
-							<div>
-								<!-- IF faqlist.U_MOVE_UP and HIDE_FOR_NOW -->
-									<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->
-								<!-- ENDIF -->
-								<!-- IF faqlist.U_MOVE_DOWN and HIDE_FOR_NOW -->
-									<!-- IF faqlist.S_LAST_ROW -->{ICON_MOVE_DOWN_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_DOWN}">{ICON_MOVE_DOWN}</a>&nbsp;<!-- ENDIF -->
-								<!-- ENDIF -->
-								<!-- IF faqlist.U_EDIT --><a href="{faqlist.U_EDIT}">{ICON_EDIT}</a><!-- ENDIF -->
-								<!-- IF faqlist.U_DELETE -->&nbsp;<a href="{faqlist.U_DELETE}">{ICON_DELETE}</a><!-- ENDIF -->
-							</div>
+	<div class="container" id="faqlist">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
+			<div class="topic-actions">
+				<div class="buttons">
+				<!-- IF U_CREATE_FAQ -->
+					<div class="faq-icon"><a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}"><span></span>{L_CREATE_FAQ}</a></div>
+				<!-- ENDIF -->
+				</div>
+		
+				<!-- IF PAGINATION or TOTAL_POSTS -->
+					<div class="pagination">
+						<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+					</div>
+				<!-- ENDIF -->
+			</div>
+			<!-- ENDIF -->	
+
+			<!-- BEGIN faqlist -->
+			<!-- IF faqlist.S_FIRST_ROW -->			
+			<ul class="topiclist">
+				<li class="header">
+					<dl>
+						<dt>{L_QUESTIONS}</dt>
+						<dd></dd>
+					</dl>
+				</li>
+			</ul>
+			<ul class="topiclist cplist">
+			<!-- ENDIF -->
+				<li class="row<!-- IF faqlist.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+					<dl>
+						<dt><a class="topictitle" href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a></dt>
+						<dd class="faq-tools">
+							<!-- IF faqlist.U_MOVE_UP and HIDE_FOR_NOW -->
+								<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->
 							<!-- ENDIF -->
-					</li>	
-				<!-- END faqlist-->
-				</ul>
-		<!-- ELSE -->
-			<strong>{L_NO_FAQ}</strong>
-		<!-- ENDIF -->
+							<!-- IF faqlist.U_MOVE_DOWN and HIDE_FOR_NOW -->
+								<!-- IF faqlist.S_LAST_ROW -->{ICON_MOVE_DOWN_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_DOWN}">{ICON_MOVE_DOWN}</a>&nbsp;<!-- ENDIF -->
+							<!-- ENDIF -->
+							<!-- IF faqlist.U_EDIT --><a href="{faqlist.U_EDIT}">{ICON_EDIT}</a><!-- ENDIF -->
+							<!-- IF faqlist.U_DELETE -->&nbsp;<a href="{faqlist.U_DELETE}">{ICON_DELETE}</a><!-- ENDIF -->
+						</dd>
+					</dl>
+				</li>
+			<!-- IF faqlist.S_LAST_ROW --></ul><!-- ENDIF -->	
+			<!-- BEGINELSE -->
+			<div class="panel">
+				<div class="inner"><span class="corners-top"><span></span></span>
+					<strong>{L_NO_FAQ}</strong>
+				<span class="corners-bottom"><span></span></span></div>
+			</div>
+			<!-- END contribs -->
+		
+			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
+			<div class="topic-actions">
+				<div class="buttons">
+				<!-- IF U_CREATE_FAQ -->
+					<div class="faq-icon"><a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}"><span></span>{L_CREATE_FAQ}</a></div>
+				<!-- ENDIF -->
+				</div>
+		
+				<!-- IF PAGINATION or TOTAL_POSTS -->
+					<div class="pagination">
+						<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+					</div>
+				<!-- ENDIF -->
+			</div>
+			<!-- ENDIF -->
+	
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
-	<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
-	<div class="topic-actions">
-		<div class="buttons">
-		<!-- IF U_CREATE_FAQ -->
-			<p class="ui-button"><a href="{U_CREATE_FAQ}" id="create-faq" class="ui-button ui-state-default ui-corner-all"><span class="ui-icon ui-icon-plus"></span>{L_CREATE_FAQ}</a></p>
-		<!-- ENDIF -->
-		</div>
-
-		<!-- IF PAGINATION or TOTAL_POSTS -->
-			<div class="pagination">
-				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-			</div>
-		<!-- ENDIF -->
-	</div>
-	<!-- ENDIF -->
 <!-- ELSEIF S_DETAILS -->
 	<div id="p{posts.POST_ID}" class="post container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
@@ -84,11 +98,15 @@
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
 <!-- ELSEIF S_EDIT -->
-	<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
-		<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
-
-		<!-- INCLUDE posting/posting_editor.html -->
-	</form>
+	<div class="container">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>		
+			<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
+				<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
+		
+				<!-- INCLUDE posting/posting_editor.html -->
+			</form>
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
 <!-- ENDIF -->
 
 
