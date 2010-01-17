@@ -3,6 +3,8 @@
  * common.css
  */
 
+/* Common styles
+--------------------------------------------- */
 h2.panel-name {
 	float: left;
 	width: auto;
@@ -147,7 +149,6 @@ ul.general-info li strong {
 
 /* Author Profile
 --------------------------------------------- */
-
 .no-avatar {
 	background: url("{T_THEME_PATH}/images/no_avatar.gif") no-repeat 0 0;
 	width: 118px;
@@ -159,7 +160,6 @@ ul.general-info li strong {
 
 /* Listings
 --------------------------------------------- */
-
 #faqlist .topiclist dt {
 	width: 85%;	
 	padding: 4px 5px;

@@ -1,30 +1,39 @@
 <!-- INCLUDE authors/author_header.html -->
 
-<h2 class="section-title">{PAGE_TITLE} :: {L_DETAILS}</h2>
+<h3 class="section-name">{PAGE_TITLE}</h2>
 
-<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+<div class="container">
+	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+		
+		<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
+			<fieldset>
+				<dl>
+					<dt><label for="name">{L_REAL_NAME}:</label></dt>
+					<dd><input type="text" name="realname" id="realname" size="45" maxlength="60" value="{AUTHOR_REALNAME}" class="inputbox autowidth" /></dd>
+				</dl>
+				<dl>
+					<dt><label for="website">{L_WEBSITE}:</label>
+					<dd><input type="text" name="website" id="website" size="45" maxlength="60" value="{AUTHOR_WEBSITE}" class="inputbox autowidth" /></dd>
+				</dl>
+				<dl>
+					<dt><label for="{POSTING_TEXT_NAME}">{L_AUTHOR_DESC}:</label></dt>
+				</dl>
+			</fieldset>
+			<!-- INCLUDE posting/posting_basic_editor.html -->
+	<span class="corners-bottom main-corners"><span></span></span></div>
+</div>
 
-<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
-	<fieldset>
-		<dl>
-			<dt><label for="name">{L_REAL_NAME}:</label></dt>
-			<dd><input type="text" name="realname" id="realname" size="45" maxlength="60" value="{AUTHOR_REALNAME}" class="inputbox autowidth" /></dd>
-		</dl>
-		<dl>
-			<dt><label for="website">{L_WEBSITE}:</label>
-			<dd><input type="text" name="website" id="website" size="45" maxlength="60" value="{AUTHOR_WEBSITE}" class="inputbox autowidth" /></dd>
-		</dl>
-		<dl>
-			<dt><label for="{POSTING_TEXT_NAME}">{L_AUTHOR_DESC}:</label></dt>
-		</dl>
-	</fieldset>
-	<!-- INCLUDE posting/posting_basic_editor.html -->
-	<fieldset class="submit-buttons">
-		<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
-		<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
-		{S_FORM_TOKEN}
-	</fieldset>
-</form>
+<div class="container">
+	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<fieldset class="submit-buttons">
+				<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
+				<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
+				{S_FORM_TOKEN}
+			</fieldset>
+		</form>
+	<span class="corners-bottom main-corners"><span></span></span></div>
+</div>
 
 
 <!-- INCLUDE authors/author_footer.html -->
