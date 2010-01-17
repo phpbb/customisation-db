@@ -62,6 +62,11 @@ $nav_ary = array(
 		'url'		=> titania::$author->get_url('create'),
 		'auth'		=> (titania::$author->user_id == phpbb::$user->data['user_id']) ? true : false,
 	),
+	'manage' => array(
+		'title'		=> 'MANAGE_AUTHOR',
+		'url'		=> titania::$author->get_url('manage'),
+		'auth'		=> (titania::$author->user_id != phpbb::$user->data['user_id'] && !phpbb::$auth->acl_get('titania_author_mod')) ? false : true,
+	),
 );
 
 // Display nav menu
