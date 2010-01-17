@@ -288,7 +288,7 @@ class titania_author extends titania_database_object
 	{
 		if ($this->user_id)
 		{
-			return phpbb::append_sid('memberlist', 'u=' . $this->user_id);
+			return phpbb::append_sid('memberlist', 'mode=viewprofile&amp;u=' . $this->user_id);
 		}
 
 		return '';

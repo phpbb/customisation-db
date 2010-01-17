@@ -4,13 +4,16 @@
 	<div class="container demo">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<img src="{T_TITANIA_THEME_PATH}/images/demo.gif" alt="" /><br /><a href="">{L_VIEW_DEMO}</a>
+			
+			<!-- IF U_DOWNLOAD -->
+			<hr class="dashed" />
+			<div class="download-button">
+				<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE} {L_BYTES}</a>
+			</div>
+			<!-- ENDIF -->
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
-	<!-- IF U_DOWNLOAD -->
-	<div class="download-button">
-		<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE}</a>
-	</div>
-	<!-- ENDIF -->
+
 </div>
 
 <div class="right-column">
@@ -28,6 +31,11 @@
 				<li>
 					<strong>{L_AUTHOR}</strong> {AUTHOR_NAME_FULL}
 				</li>
+				<!-- IF .coauthors -->
+				<li>
+					<strong>{L_CO_AUTHORS}</strong> <!-- BEGIN coauthors -->{coauthors.AUTHOR_NAME_FULL}<!-- IF not coauthors.S_LAST_ROW -->, <!-- ENDIF --><!-- END coauthors -->
+				</li>
+				<!-- ENDIF -->
 				<li>
 					<strong>{L_VERSION}</strong> {DOWNLOAD_VERSION}
 				</li>

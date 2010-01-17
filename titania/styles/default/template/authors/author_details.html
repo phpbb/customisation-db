@@ -1,56 +1,53 @@
 <!-- INCLUDE authors/author_header.html -->
 
-<h3 class="section-name">{PAGE_TITLE}</h3>
-
-<div class="container">
-	<div class="inner"><span class="corners-top main-corners"><span></span></span>
-	<h3>{L_AUTHOR_DETAILS}</h3>
-	<table>
-		<tr>
-			<td align="right"><strong>{L_AUTHOR}:</strong></td>
-			<td align="left">{AUTHOR_NAME_FULL} <!-- IF U_MANAGE_AUTHOR -->[ <a href="{U_MANAGE_AUTHOR}">{L_MANAGE_AUTHOR}</a> ]<!-- ENDIF --></td>
-		</tr>
-		<!-- IF AUTHOR_REALNAME -->
-		<tr>
-			<td align="right"><strong>{L_REAL_NAME}:</strong></td>
-			<td align="left">{AUTHOR_REALNAME}</td>
-		</tr>
-		<!-- ENDIF -->
-		<!-- IF AUTHOR_WEBSITE -->
-		<tr>
-			<td align="right"><strong>{L_WEBSITE}:</strong></td>
-			<td align="left">{AUTHOR_WEBSITE_LINK}</td>
-		</tr>
-		<!-- ENDIF -->
-	</table>
-
-
-
-	<h3>{L_AUTHOR_STATISTICS}</h3>
-	<table>
-		<tr>
-			<td align="right"><strong>{L_AUTHOR_RATING}:</strong></td>
-			<td align="left">{AUTHOR_RATING_STRING} ({AUTHOR_RATING_COUNT})</td>
-		</tr>
-		<tr>
-			<td align="right"><strong>{L_AUTHOR_CONTRIBS}:</strong></td>
-			<td align="left">{AUTHOR_CONTRIBS}</td>
-		</tr>
-		<!-- BEGIN type_counts -->
-		<tr>
-			<td align="right"><strong>{type_counts.NAME}:</strong></td>
-			<td align="left">{type_counts.VALUE}</td>
-		</tr>
-		<!-- END type_counts -->
-	</table>
-
-
-<div class="clear"></div>
-
-<!-- IF AUTHOR_DESC -->
-<h3>{L_AUTHOR_DESC}</h3>
-{AUTHOR_DESC}
-<!-- ENDIF -->
-	<span class="corners-bottom main-corners"><span></span></span></div>
+<div class="left-column">
+	<div class="container demo">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<div class="no-avatar">{L_NO_AVATAR}</div>
+			<!-- IF U_AUTHOR_PROFILE_PHPBB --><a href="{U_AUTHOR_PROFILE_PHPBB}">{L_VIEW_USER_PROFILE}</a><!-- ENDIF -->
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+</div>
+<div class="right-column">
+	<!-- IF AUTHOR_DESC -->
+	<div class="container" id="contrib-desc">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<dl>
+				<dt>{L_AUTHOR_DESC}</dt>
+				<dd>{AUTHOR_DESC}</dd>
+			</dl>
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+	<!-- ENDIF -->
+	<div class="container">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<ul class="general-info">
+				<li>
+					<strong>{L_AUTHOR}</strong> {AUTHOR_NAME_FULL} <!-- IF U_MANAGE_AUTHOR -->[ <a href="{U_MANAGE_AUTHOR}">{L_MANAGE_AUTHOR}</a> ]<!-- ENDIF -->
+				</li>
+				<!-- IF AUTHOR_REALNAME -->
+				<li>
+					<strong>{L_REAL_NAME}</strong> {AUTHOR_REALNAME}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF U_AUTHOR_PROFILE_PHPBB_COM -->
+				<li>
+					<strong>{L_PHPBB_PROFILE}</strong> <a href="{U_AUTHOR_PROFILE_PHPBB_COM}">{L_VIEW}</a>
+				</li>
+				<!-- ENDIF -->
+				<!-- IF AUTHOR_WEBSITE -->
+				<li>
+					<strong>{L_WEBSITE}</strong> {AUTHOR_WEBSITE_LINK}
+				</li>
+				<!-- ENDIF -->
+				<li>
+					<strong>{L_AUTHOR_RATING}</strong> {AUTHOR_RATING_STRING} ({AUTHOR_RATING_COUNT})
+				</li>
+				<li style="border: 0;">
+					<strong>{L_AUTHOR_CONTRIBS}</strong>{AUTHOR_CONTRIBS} (<a href="{U_AUTHOR_CONTRIBUTIONS}"><!-- BEGIN type_counts -->{type_counts.VALUE} {type_counts.NAME}<!-- IF not type_counts.S_LAST_ROW -->, <!-- ENDIF --><!-- END type_counts --></a>)
+				</li>
+			</ul>
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
 </div>
 <!-- INCLUDE authors/author_footer.html -->

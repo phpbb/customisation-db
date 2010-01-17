@@ -1,3 +1,4 @@
+<!-- IF U_POST_REPLY or PAGINATION or TOTAL_POSTS -->
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
@@ -14,6 +15,7 @@
 
 </div>
 <div class="clear"></div>
+<!-- ENDIF -->
 
 <!-- BEGIN posts -->
 	<!-- IF posts.S_FIRST_UNREAD --><a id="unread"></a><!-- ENDIF -->
@@ -124,6 +126,7 @@
 	<!-- INCLUDE posting/quickreply_editor.html -->
 <!-- ENDIF -->
 
+<!-- IF U_POST_REPLY or PAGINATION or TOTAL_POSTS -->
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
@@ -138,3 +141,4 @@
 		</div>
 	<!-- ENDIF -->
 </div>
+<!-- ENDIF -->

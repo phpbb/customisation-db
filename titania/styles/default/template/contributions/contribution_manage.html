@@ -8,7 +8,7 @@
 <form id="contrib_manage" name="contrib_manage" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
 	<!-- IF S_NEW_REVISION -->
 		<div class="container">
-			<div class="inner"><span class="corners-top"><span></span></span>
+			<div class="inner"><span class="corners-top main-corners"><span></span></span>
 				{REVISION_UPLOADER}
 				<!-- IF MPV_TEST_WARNING -->
 					{L_MPV_TEST}
@@ -28,7 +28,7 @@
 					<input type="hidden" name="revision_id" value="{REVISION_ID}" />
 					{S_FORM_TOKEN}
 				</fieldset>
-			<span class="corners-bottom"><span></span></span></div>
+			<span class="corners-bottom main-corners"><span></span></span></div>
 		</div>
 	<!-- ELSE -->
 		<div class="container">

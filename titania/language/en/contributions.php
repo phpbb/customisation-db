@@ -51,6 +51,7 @@ $lang = array_merge($lang, array(
 'AUTOMOD_RESULTS' => '<strong>Please check over the Automod install results and make sure that nothing needs to be fixed.<br /><br />If an error comes up and you are certain that the error is incorrect, just hit continue below.</strong>',
 'AUTOMOD_TEST' => 'Next we will automatically test it against Automod and show you the results (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 	'CANNOT_ADD_SELF_COAUTHOR'			=> 'You are the main author, you can not add yourself to the list of co-authors.',
+	'CO_AUTHORS'						=> 'Co-Authors',
 	'CONTRIB'							=> 'Contribution',
 	'CONTRIBUTIONS'						=> 'Contributions',
 	'CONTRIB_ACTIVE_AUTHORS'			=> 'Active Co-Authors',

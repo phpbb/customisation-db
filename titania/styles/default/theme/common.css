@@ -64,6 +64,7 @@ h3.section-name {
 
 .main-panel {
 	background-color: #C6D8E5;
+	margin-bottom: 15px;
 	padding: 0 10px;
 	clear: both;
 	position: relative;
@@ -101,11 +102,11 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 }
 
 .right-column {
-	margin-left: 190px;
+	margin-left: 210px;
 }
 
 .left-column {
-	width: 180px;
+	width: 200px;
 	float: left;
 }
 
@@ -119,7 +120,7 @@ a.download-main {
 	padding-top: 30px;
 	padding-right: 41px;
 	text-align: right;
-	color: #FFFFFF;
+	color: #FFFFFF !important;
 	font-weight: bold;
 	display: block;
 	text-decoration: none;
@@ -139,9 +140,21 @@ ul.general-info li {
 }
 
 ul.general-info li strong {
-	width: 20%;
+	width: 25%;
 	display: block;
 	float: left;
+}
+
+/* Author Profile
+--------------------------------------------- */
+
+.no-avatar {
+	background: url("{T_THEME_PATH}/images/no_avatar.gif") no-repeat 0 0;
+	width: 118px;
+	height: 17px;
+	padding-top: 103px;
+	margin: auto;
+	color: #D8D8D7;
 }
 
 /* Listings
@@ -149,6 +162,7 @@ ul.general-info li strong {
 
 #faqlist .topiclist dt {
 	width: 85%;	
+	padding: 4px 5px;
 }
 
 dd.faq-tools {

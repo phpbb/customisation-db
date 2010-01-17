@@ -108,4 +108,5 @@ $lang = array_merge($lang, array(
 	'TYPE'						=> 'Type',
 	
 	'VERSION'					=> 'Version',
+	'VIEW'						=> 'View',
 ));

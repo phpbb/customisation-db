@@ -51,10 +51,14 @@ $lang = array_merge($lang, array(
 	'AUTHOR_SUPPORT'		=> 'Support',
 
 	'MANAGE_AUTHOR'			=> 'Manage Author',
+	
+	'NO_AVATAR'				=> 'No avatar',
 
 	'PHPBB_PROFILE'			=> 'phpBB.com profile',
 
 	'REAL_NAME'				=> 'Real Name',
 
 	'USER_INFORMATION'		=> '’s user information',
+	
+	'VIEW_USER_PROFILE'		=> 'View user profile',
 ));
