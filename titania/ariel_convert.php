@@ -115,6 +115,8 @@ switch ($step)
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			// @todo attachments table
+
 			$sql_ary = array(
 				'revision_id'				=> $row['revision_id'],
 				'contrib_id'				=> $row['contrib_id'],

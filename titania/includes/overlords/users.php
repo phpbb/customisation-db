@@ -184,6 +184,7 @@ class users_overlord
 	public static function assign_details($user_id)
 	{
 		$row = self::get_user($user_id);
+		$user_id = $row['user_id']; // Re-assign properly...in case it gives us the anonymous user
 
 		phpbb::_include('functions_display', 'get_user_rank');
 
@@ -194,6 +195,12 @@ class users_overlord
 		{
 			$row['user_sig'] = generate_text_for_display($row['user_sig'], $row['user_sig_bbcode_uid'], $row['user_sig_bbcode_bitfield'], 7);
 		}
+
+		// IT'S A HACK!
+		global $phpbb_root_path;
+		$phpbb_root_path = titania::$absolute_board;
+		$user_avatar = (phpbb::$user->optionget('viewavatars')) ? get_user_avatar($row['user_avatar'], $row['user_avatar_type'], $row['user_avatar_width'], $row['user_avatar_height']) : '';
+		$phpbb_root_path = PHPBB_ROOT_PATH;
 
 		return array(
 			'USER_FULL'				=> get_username_string('full', $user_id, $row['username'], $row['user_colour']),
@@ -206,7 +213,7 @@ class users_overlord
 			'USER_JOINED'			=> phpbb::$user->format_date($row['user_regdate']),
 			'USER_POSTS'			=> $row['user_posts'],
 			'USER_FROM'				=> $row['user_from'],
-			'USER_AVATAR'			=> (phpbb::$user->optionget('viewavatars')) ? get_user_avatar($row['user_avatar'], $row['user_avatar_type'], $row['user_avatar_width'], $row['user_avatar_height']) : '',
+			'USER_AVATAR'			=> $user_avatar,
 			'USER_WARNINGS'			=> $row['user_warnings'],
 	//		'USER_AGE'				=> $row['age'],
 			'USER_SIG'				=> $row['user_sig'],

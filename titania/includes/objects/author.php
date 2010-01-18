@@ -141,6 +141,9 @@ class titania_author extends titania_database_object
 
 		$this->__set_array($this->sql_data);
 
+		// Store in the users overlord as well
+		users_overlord::$users[$this->user_id] = $this->sql_data;
+
 		return true;
 	}
 
@@ -356,12 +359,17 @@ class titania_author extends titania_database_object
 
             'AUTHOR_DESC'                   => $this->generate_text_for_display(),
 
-			'U_MANAGE_AUTHOR'				=> (phpbb::$user->data['user_id'] == $this->user_id  || phpbb::$auth->acl_get('titania_author_mod')) ? $this->get_url('manage') : '',
 			'U_AUTHOR_PROFILE'				=> $this->get_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
 			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),
 			'U_AUTHOR_CONTRIBUTIONS'		=> $this->get_url('contributions'),
 		);
+
+		// Add to it the common user details
+		if (isset(users_overlord::$users[$this->user_id]))
+		{
+			$vars = array_merge(users_overlord::assign_details($this->user_id), $vars);
+		}
 
 		// Output the count for different types
 		foreach (titania_types::$types as $type)
