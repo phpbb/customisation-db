@@ -62,6 +62,12 @@ switch ($step)
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			if ($row['contrib_phpbb_version'][0] != '3')
+			{
+				// Skip 2.0 mods
+				continue;
+			}
+
 			$permalink = titania_url::url_slug($row['contrib_name']);
 			$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIBS_TABLE . '
 				WHERE contrib_name_clean = \'' . phpbb::$db->sql_escape($permalink) . '\'';
@@ -115,12 +121,38 @@ switch ($step)
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			// @todo attachments table
+			if ($row['revision_phpbb_version'][0] != '3' || (!strpos($row['revision_filename'], '.mod') && !strpos($row['revision_filename'], '.zip')))
+			{
+				// Skip 2.0 mods and broken filenames (broken filenames seem to only be on really old files)
+				continue;
+			}
+
+			$sql_ary = array(
+				'object_type'			=> TITANIA_CONTRIB,
+				'object_id'				=> $row['contrib_id'],
+				'attachment_access'		=> TITANIA_ACCESS_PUBLIC,
+				'attachment_comment'	=> '',
+				'attachment_directory'	=> 'titania_contributions',
+				'physical_filename'		=> $row['revision_filename_internal'],
+				'real_filename'			=> $row['revision_filename'],
+				'download_count'		=> 0,
+				'filesize'				=> $row['revision_filesize'],
+				'filetime'				=> $row['revision_date'],
+				'extension'				=> (strpos($row['revision_filename'], '.zip')) ? 'zip' : 'mod',
+				'mimetype'				=> (strpos($row['revision_filename'], '.zip')) ? 'application/x-zip-compressed' : 'text/plain',
+				'hash'					=> $row['revision_md5'],
+				'thumbnail'				=> 0,
+				'is_orphan'				=> 0,
+			);
+
+			// Insert
+			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_ATTACHMENTS_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+			$attach_id = phpbb::$db->sql_nextid();
 
 			$sql_ary = array(
 				'revision_id'				=> $row['revision_id'],
 				'contrib_id'				=> $row['contrib_id'],
-				'attachment_id'				=> 0, // @todo
+				'attachment_id'				=> $attach_id,
 				'revision_version'			=> $row['revision_version'],
 				'revision_name'				=> $row['revision_name'],
 				'revision_time'				=> $row['revision_date'],

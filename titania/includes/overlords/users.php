@@ -191,7 +191,12 @@ class users_overlord
 		// IT'S A HACK!
 		global $phpbb_root_path;
 		$phpbb_root_path = titania::$absolute_board;
+
+		// Get user rank and avatar (need hacks for this)
 		get_user_rank($row['user_rank'], $row['user_posts'], $row['rank_title'], $row['rank_image'], $row['rank_image_src']);
+		$user_avatar = (phpbb::$user->optionget('viewavatars')) ? get_user_avatar($row['user_avatar'], $row['user_avatar_type'], $row['user_avatar_width'], $row['user_avatar_height']) : '';
+
+		// Undo
 		$phpbb_root_path = PHPBB_ROOT_PATH;
 
 		// End signature parsing, only if needed
@@ -199,12 +204,6 @@ class users_overlord
 		{
 			$row['user_sig'] = generate_text_for_display($row['user_sig'], $row['user_sig_bbcode_uid'], $row['user_sig_bbcode_bitfield'], 7);
 		}
-
-		// IT'S A HACK!
-		global $phpbb_root_path;
-		$phpbb_root_path = titania::$absolute_board;
-		$user_avatar = (phpbb::$user->optionget('viewavatars')) ? get_user_avatar($row['user_avatar'], $row['user_avatar_type'], $row['user_avatar_width'], $row['user_avatar_height']) : '';
-		$phpbb_root_path = PHPBB_ROOT_PATH;
 
 		return array(
 			'USER_FULL'				=> get_username_string('full', $user_id, $row['username'], $row['user_colour']),
