@@ -188,7 +188,11 @@ class users_overlord
 
 		phpbb::_include('functions_display', 'get_user_rank');
 
+		// IT'S A HACK!
+		global $phpbb_root_path;
+		$phpbb_root_path = titania::$absolute_board;
 		get_user_rank($row['user_rank'], $row['user_posts'], $row['rank_title'], $row['rank_image'], $row['rank_image_src']);
+		$phpbb_root_path = PHPBB_ROOT_PATH;
 
 		// End signature parsing, only if needed
 		if ($row['user_sig'] && phpbb::$config['allow_sig'] && phpbb::$user->optionget('viewsigs'))
