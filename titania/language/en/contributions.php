@@ -83,7 +83,6 @@ $lang = array_merge($lang, array(
 	'CONTRIB_UPDATE_DATE'				=> 'Last updated',
 	'COULD_NOT_FIND_USERS'				=> 'Could not find the following users: %s',
 
-	'DOWNLOADS'							=> 'Downloads',
 	'DOWNLOADS_PER_DAY'					=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'					=> 'Total Downloads',
 	'DOWNLOADS_VERSION'					=> 'Version Downloads',

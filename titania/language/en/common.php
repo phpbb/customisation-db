@@ -66,6 +66,7 @@ $lang = array_merge($lang, array(
 	'DESCRIPTION'				=> 'Description',
 	'DETAILS'					=> 'Details',
 	'DOWNLOAD'					=> 'Download',
+	'DOWNLOADS'					=> 'Downloads',
 	'DOWNLOAD_ACCESS_DENIED'	=> 'You are not allowed to download the requested file.',
 	'DOWNLOAD_NOT_FOUND'		=> 'The requested file could not be found.',
 

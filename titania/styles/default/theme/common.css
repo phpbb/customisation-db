@@ -51,7 +51,12 @@ h3.section-name {
 }
 
 .tabs a:hover {
+	background-position: 0 -57px;
 	text-decoration: none;
+}
+
+.tabs a:hover span {
+	background-position: 100% -57px;
 }
 
 .tabs #activetab a {
@@ -173,6 +178,7 @@ dd.faq-tools {
 
 dd.general {
 	padding-left: 5px !important;
+	font-size: 1.1em;
 }
 
 .container li.header dt, .container li.header dd {
