@@ -32,6 +32,9 @@ $start = request_var('start', 0);
 $total = 0;
 $display_message = '';
 
+// Ignore errors (duplicate entries)
+phpbb::$db->sql_return_on_error(true);
+
 switch ($step)
 {
 	case 0 :
@@ -58,7 +61,7 @@ switch ($step)
 		$sql = 'SELECT * FROM ' . $ariel_prefix . 'contribs c, ' . $ariel_prefix . 'contrib_topics t
 			WHERE t.contrib_id = c.contrib_id
 				AND t.topic_type = 1
-			ORDER BY contrib_id ASC'; // @todo topic_type
+			ORDER BY c.contrib_id ASC'; // @todo topic_type
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -74,22 +77,30 @@ switch ($step)
 			$p_result = phpbb::$db->sql_query($sql);
 			if (phpbb::$db->sql_fetchrow($p_result))
 			{
-				// just trigger an error for now, we may not actually have conflicts.  Change later if we do
-				trigger_error('Conflict! - ' . $permalink);
+				$permalink .= '_2';
+				$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIBS_TABLE . '
+					WHERE contrib_name_clean = \'' . phpbb::$db->sql_escape($permalink) . '\'';
+				$p_result = phpbb::$db->sql_query($sql);
+				if (phpbb::$db->sql_fetchrow($p_result))
+				{
+					// just trigger an error for now, we may not actually have conflicts.  Change later if we do
+					trigger_error('Conflict! - ' . $permalink);
+				}
+				phpbb::$db->sql_freeresult($p_result);
 			}
 			phpbb::$db->sql_freeresult($p_result);
 
 			$sql_ary = array(
 				'contrib_id'					=> $row['contrib_id'],
 				'contrib_user_id'				=> $row['user_id'],
-				'contrib_type'					=> $row['contrib_type'], // @todo
+				'contrib_type'					=> $row['contrib_type'],
 				'contrib_name'					=> $row['contrib_name'],
 				'contrib_name_clean'			=> $permalink,
 				'contrib_desc'					=> $row['contrib_description'],
 				'contrib_desc_bitfield'			=> '',
 				'contrib_desc_uid'				=> '',
 				'contrib_desc_options'			=> 7,
-				'contrib_status'				=> TITANIA_CONTRIB_NEW, // @todo
+				'contrib_status'				=> TITANIA_CONTRIB_APPROVED,
 				'contrib_downloads'				=> $row['contrib_downloads'],
 				'contrib_views'					=> 0,
 				'contrib_rating'				=> 0,
@@ -103,7 +114,77 @@ switch ($step)
 			// Insert
 			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIBS_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
 
-			// @todo Categories
+			if ($row['contrib_type'] == 2)
+			{
+				$sql_ary = array(
+					'contrib_id'	=> $row['contrib_id'],
+					'category_id'	=> 3, // Styles
+				);
+				phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ' . phpbb::$db->sql_build_array($sql_ary));
+			}
+			else
+			{
+				$sql = 'SELECT tag_id FROM ' . $ariel_prefix . 'contrib_tags
+					WHERE contrib_id = ' . (int) $row['contrib_id'];
+				$result = phpbb::$db->sql_query($sql);
+				while ($tag_id = phpbb::$db->sql_fetchfield('tag_id', $result))
+				{
+					$sql_ary = array(
+						'contrib_id'	=> $row['contrib_id'],
+					);
+
+					switch ($tag_id)
+					{
+						case 30 :
+							// Add-ons
+							$sql_ary['category_id'] = 9;
+						break;
+						case 31 :
+							// Cosmetic
+							$sql_ary['category_id'] = 4;
+						break;
+						case 32 :
+							// Admin Tools
+							$sql_ary['category_id'] = 5;
+						break;
+						case 33 :
+							// Syndication -> Communication
+							$sql_ary['category_id'] = 7;
+						break;
+						case 34 :
+							// BBCode -> Communication
+							$sql_ary['category_id'] = 7;
+						break;
+						case 35 :
+							// Security
+							$sql_ary['category_id'] = 6;
+						break;
+						case 36 :
+							// Communication
+							$sql_ary['category_id'] = 7;
+						break;
+						case 37 :
+							// Profile
+							$sql_ary['category_id'] = 8;
+						break;
+						case 106 :
+							// Anti-Spam
+							$sql_ary['category_id'] = 10;
+						break;
+						case 107 :
+							// Moderator tools -> Admin tools
+							$sql_ary['category_id'] = 5;
+						break;
+						case 108 :
+							// Entertainment
+							$sql_ary['category_id'] = 11;
+						break;
+					}
+
+					phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ' . phpbb::$db->sql_build_array($sql_ary));
+				}
+				phpbb::$db->sql_freeresult($result);
+			}
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -118,7 +199,7 @@ switch ($step)
 
 		$sql = 'SELECT * FROM ' . $ariel_prefix . 'contrib_revisions
 			ORDER BY revision_id ASC';
-		$result = phpbb::$db->sql_query($sql);
+		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			if ($row['revision_phpbb_version'][0] != '3' || (!strpos($row['revision_filename'], '.mod') && !strpos($row['revision_filename'], '.zip')))
@@ -156,7 +237,7 @@ switch ($step)
 				'revision_version'			=> $row['revision_version'],
 				'revision_name'				=> $row['revision_name'],
 				'revision_time'				=> $row['revision_date'],
-				'revision_validated'		=> false, // @todo
+				'revision_validated'		=> true,
 				'validation_date'			=> $row['revision_date'],
 				'phpbb_version'				=> $row['revision_phpbb_version'],
 				'install_time'				=> 0,
@@ -165,7 +246,7 @@ switch ($step)
 			);
 
 			// Insert
-			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIBS_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_REVISIONS_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
 
 			// Update the contrib_last_update
 			$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
@@ -243,5 +324,7 @@ else
 	$display_message .= '...done with ' . ($start + $limit) . ' of ' . $total;
 }
 
-meta_refresh(0, $next);
+$display_message .= '<br /><br /><a href="' . $next . '">Manual Continue</a>';
+
+//meta_refresh(0, $next);
 trigger_error($display_message);
