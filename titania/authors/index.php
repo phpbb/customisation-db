@@ -20,13 +20,14 @@ include(TITANIA_ROOT . 'common.' . PHP_EXT);
 titania::add_lang('authors');
 
 // Load the author
-$author = request_var('u', '');
+$author = utf8_normalize_nfc(request_var('u', '', true));
 titania::$author = new titania_author();
 
 if (!titania::$author->load($author))
 {
 	trigger_error('AUTHOR_NOT_FOUND');
 }
+titania::$author->assign_details();
 
 // Check to see if the currently accessing user is the author
 if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['user_id'] == titania::$author->user_id)

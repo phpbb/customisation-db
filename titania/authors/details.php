@@ -16,8 +16,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-titania::$author->load();
-
 titania::$author->get_rating();
 titania::$author->assign_details();
 

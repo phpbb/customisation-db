@@ -347,6 +347,7 @@ class titania_author extends titania_database_object
 		$vars = array(
 			'AUTHOR_NAME'					=> $this->username,
 			'AUTHOR_NAME_FULL'				=> $this->get_username_string(),
+			'AUTHOR_NAME_FULL_PHPBB'		=> $this->get_username_string('full'),
 			'AUTHOR_REALNAME'				=> $this->author_realname,
 			'AUTHOR_WEBSITE'				=> $this->get_website_url(),
 			'AUTHOR_WEBSITE_LINK'			=> '<a href="' . $this->get_website_url() . '">' . $this->get_website_url() . '</a>',
