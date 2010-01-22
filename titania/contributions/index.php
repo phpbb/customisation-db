@@ -45,7 +45,7 @@ switch ($page)
 */
 function load_contrib($contrib_id = false)
 {
-	$contrib = request_var('c', '');
+	$contrib = utf8_normalize_nfc(request_var('c', '', true));
 	$type = request_var('type', '');
 
 	// Load the contribution

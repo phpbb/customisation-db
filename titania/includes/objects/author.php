@@ -373,6 +373,7 @@ class titania_author extends titania_database_object
 		}
 
 		// Output the count for different types
+		phpbb::$template->destroy_block_vars('type_counts');
 		foreach (titania_types::$types as $type)
 		{
 			phpbb::$template->assign_block_vars('type_counts', array(
