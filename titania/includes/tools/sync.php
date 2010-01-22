@@ -86,7 +86,7 @@ class titania_sync
 	public function _get_contrib_count($category_id)
 	{
 		// Bundle up the children in a nice array
-		$child_list = array();
+		$child_list = array($category_id);
 		$sql = 'SELECT left_id, right_id FROM ' . TITANIA_CATEGORIES_TABLE . '
 			WHERE category_id = ' . (int) $category_id . '
 			ORDER BY left_id ASC';
@@ -117,8 +117,8 @@ class titania_sync
 				TITANIA_CONTRIBS_TABLE => 'c',
 			),
 
-			'WHERE'		=> 'cic.contrib_id = c.contrib_id ' .
-				((sizeof($child_list)) ? ' AND ' . phpbb::$db->sql_in_set('cic.category_id', $child_list) : '' ) . '
+			'WHERE'		=> 'cic.contrib_id = c.contrib_id
+				AND ' . phpbb::$db->sql_in_set('cic.category_id', $child_list) . '
 				AND c.contrib_visible = 1' .
 				((titania::$config->require_validation) ? ' AND c.contrib_status <> ' . TITANIA_CONTRIB_NEW : ''),
 		);

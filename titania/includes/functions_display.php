@@ -199,7 +199,7 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 		titania_topic_folder_img($folder_img, $folder_alt, 0, titania_tracking::is_unread(TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update));
 
 		phpbb::$template->assign_block_vars($blockname, array(
-			'CONTRIB_USERNAME'			=> $contrib->username,
+			'CONTRIB_USERNAME'			=> $author->get_username_string('username'),
 			'CONTRIB_USERNAME_FULL'		=> $author->get_username_string(),
 			'CONTRIB_NAME'				=> $contrib->contrib_name,
 			'CONTRIB_TYPE'				=> titania_types::$types[$contrib->contrib_type]->lang,

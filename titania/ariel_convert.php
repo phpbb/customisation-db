@@ -55,10 +55,24 @@ switch ($step)
 		$total = phpbb::$db->sql_fetchfield('cnt');
 		phpbb::$db->sql_freeresult();
 
-		$sql = 'SELECT * FROM ' . $ariel_prefix . 'contribs c, ' . $ariel_prefix . 'contrib_topics t
-			WHERE t.contrib_id = c.contrib_id
-				AND t.topic_type = 5
-			ORDER BY c.contrib_id ASC';
+		$sql_ary = array(
+			'SELECT'	=> 't.*, c.*',
+
+			'FROM'		=> array(
+				$ariel_prefix . 'contribs' => 'c',
+			),
+
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array($ariel_prefix . 'contrib_topics' => 't'),
+					'ON'	=> 't.contrib_id = c.contrib_id AND t.topic_type = 5',
+				),
+			),
+
+			'ORDER_BY'	=> 'c.contrib_id ASC',
+		);
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -69,23 +83,29 @@ switch ($step)
 			}
 
 			$permalink = titania_url::url_slug($row['contrib_name']);
-			$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIBS_TABLE . '
-				WHERE contrib_name_clean = \'' . phpbb::$db->sql_escape($permalink) . '\'';
-			$p_result = phpbb::$db->sql_query($sql);
-			if (phpbb::$db->sql_fetchrow($p_result))
-			{
-				$permalink .= '_2';
-				$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIBS_TABLE . '
-					WHERE contrib_name_clean = \'' . phpbb::$db->sql_escape($permalink) . '\'';
-				$p1_result = phpbb::$db->sql_query($sql);
-				if (phpbb::$db->sql_fetchrow($p1_result))
+			$conflict = $cnt = false;
+			do {
+				if ($cnt !== false && $cnt > 10)
 				{
-					// just trigger an error for now, we may not actually have conflicts.  Change later if we do
-					trigger_error('Conflict! - ' . $permalink);
+					trigger_error('Bad.');
 				}
-				phpbb::$db->sql_freeresult($p1_result);
-			}
-			phpbb::$db->sql_freeresult($p_result);
+
+				$permalink_test = ($cnt !== false) ? $permalink . '_' . $cnt : $permalink;
+				$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIBS_TABLE . '
+					WHERE contrib_name_clean = \'' . phpbb::$db->sql_escape($permalink_test) . '\'';
+				$p_result = phpbb::$db->sql_query($sql);
+				if (phpbb::$db->sql_fetchrow($p_result))
+				{
+					$conflict = true;
+					$cnt = ($cnt === false) ? 2 : $cnt + 1;
+				}
+				else
+				{
+					$conflict = false;
+					$permalink = $permalink_test;
+				}
+				phpbb::$db->sql_freeresult($p_result);
+			} while ($conflict == true);
 
 			$sql_ary = array(
 				'contrib_id'					=> $row['contrib_id'],
@@ -105,11 +125,11 @@ switch ($step)
 				'contrib_visible'				=> 1,
 				'contrib_last_update'			=> 0, // Update with ariel revisions table
 				'contrib_demo'					=> $row['contrib_style_demo'],
-				'contrib_topic'					=> $row['topic_id'],
+				'contrib_topic'					=> ($row['topic_id']) ? $row['topic_id'] : 0,
 			);
 
 			// Insert
-			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIBS_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+			titania_insert(TITANIA_CONTRIBS_TABLE, $sql_ary);
 
 			if ($row['contrib_type'] == 2)
 			{
@@ -117,20 +137,22 @@ switch ($step)
 					'contrib_id'	=> $row['contrib_id'],
 					'category_id'	=> 3, // Styles
 				);
-				phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+
+				// Insert
+				titania_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
 			}
 			else
 			{
 				$sql = 'SELECT tag_id FROM ' . $ariel_prefix . 'contrib_tags
 					WHERE contrib_id = ' . (int) $row['contrib_id'];
-				$result = phpbb::$db->sql_query($sql);
-				while ($tag_id = phpbb::$db->sql_fetchfield('tag_id', $result))
+				$result1 = phpbb::$db->sql_query($sql);
+				while ($tag_row = phpbb::$db->sql_fetchrow($result1))
 				{
 					$sql_ary = array(
 						'contrib_id'	=> $row['contrib_id'],
 					);
 
-					switch ($tag_id)
+					switch ($tag_row['tag_id'])
 					{
 						case 30 :
 							// Add-ons
@@ -178,9 +200,13 @@ switch ($step)
 						break;
 					}
 
-					phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+					// Insert
+					if (isset($sql_ary['category_id']))
+					{
+						titania_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
+					}
 				}
-				phpbb::$db->sql_freeresult($result);
+				phpbb::$db->sql_freeresult($result1);
 			}
 		}
 		phpbb::$db->sql_freeresult($result);
@@ -224,8 +250,7 @@ switch ($step)
 			);
 
 			// Insert
-			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_ATTACHMENTS_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
-			$attach_id = phpbb::$db->sql_nextid();
+			$attach_id = titania_insert(TITANIA_ATTACHMENTS_TABLE, $sql_ary);
 
 			$sql_ary = array(
 				'revision_id'				=> $row['revision_id'],
@@ -243,7 +268,7 @@ switch ($step)
 			);
 
 			// Insert
-			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_REVISIONS_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+			titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
 
 			// Update the contrib_last_update
 			$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
@@ -294,7 +319,7 @@ switch ($step)
 			}
 
 			// Insert
-			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_AUTHORS_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+			titania_insert(TITANIA_AUTHORS_TABLE, $sql_ary);
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -332,3 +357,22 @@ $display_message .= '<br /><br /><a href="' . $next . '">Manual Continue</a>';
 
 meta_refresh(1, $next);
 trigger_error($display_message);
+
+function titania_insert($table, $sql_ary)
+{
+	$sql = 'INSERT INTO ' . $table . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary);
+
+	phpbb::$db->sql_return_on_error(true);
+
+	phpbb::$db->sql_query($sql);
+
+	if (phpbb::$db->sql_error_triggered && phpbb::$db->sql_error_returned['code'] != 1062) // Ignore duplicate entry errors
+	{
+		echo '<br />' . $sql . '<br />';
+		echo 'SQL ERROR [ ' . phpbb::$db->sql_layer . ' ]<br /><br />' . phpbb::$db->sql_error_returned['message'] . ' [' . phpbb::$db->sql_error_returned['code'] . ']<br />';
+	}
+
+	phpbb::$db->sql_return_on_error(false);
+
+	return phpbb::$db->sql_nextid();
+}
