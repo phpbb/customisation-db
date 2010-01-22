@@ -23,7 +23,7 @@ if (!phpbb::$user->data['user_type'] == USER_FOUNDER)
 
 // Table prefix
 $ariel_prefix = 'community_site_';
-$limit = 500;
+$limit = 1000;
 
 $step = request_var('step', 0);
 $start = request_var('start', 0);
@@ -31,9 +31,6 @@ $start = request_var('start', 0);
 // Populated later
 $total = 0;
 $display_message = '';
-
-// Ignore errors (duplicate entries)
-phpbb::$db->sql_return_on_error(true);
 
 switch ($step)
 {
@@ -60,8 +57,8 @@ switch ($step)
 
 		$sql = 'SELECT * FROM ' . $ariel_prefix . 'contribs c, ' . $ariel_prefix . 'contrib_topics t
 			WHERE t.contrib_id = c.contrib_id
-				AND t.topic_type = 1
-			ORDER BY c.contrib_id ASC'; // @todo topic_type
+				AND t.topic_type = 5
+			ORDER BY c.contrib_id ASC';
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -80,13 +77,13 @@ switch ($step)
 				$permalink .= '_2';
 				$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIBS_TABLE . '
 					WHERE contrib_name_clean = \'' . phpbb::$db->sql_escape($permalink) . '\'';
-				$p_result = phpbb::$db->sql_query($sql);
-				if (phpbb::$db->sql_fetchrow($p_result))
+				$p1_result = phpbb::$db->sql_query($sql);
+				if (phpbb::$db->sql_fetchrow($p1_result))
 				{
 					// just trigger an error for now, we may not actually have conflicts.  Change later if we do
 					trigger_error('Conflict! - ' . $permalink);
 				}
-				phpbb::$db->sql_freeresult($p_result);
+				phpbb::$db->sql_freeresult($p1_result);
 			}
 			phpbb::$db->sql_freeresult($p_result);
 
@@ -120,7 +117,7 @@ switch ($step)
 					'contrib_id'	=> $row['contrib_id'],
 					'category_id'	=> 3, // Styles
 				);
-				phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ' . phpbb::$db->sql_build_array($sql_ary));
+				phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
 			}
 			else
 			{
@@ -181,7 +178,7 @@ switch ($step)
 						break;
 					}
 
-					phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ' . phpbb::$db->sql_build_array($sql_ary));
+					phpbb::$db->sql_query('INSERT INTO ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
 				}
 				phpbb::$db->sql_freeresult($result);
 			}
@@ -305,6 +302,13 @@ switch ($step)
 	break;
 
 	case 5 :
+		$sync = new titania_sync;
+		$sync->categories('count');
+
+		$display_message = 'Syncing';
+	break;
+
+	case 6 :
 		phpbb::$cache->purge();
 
 		trigger_error('Ariel Conversion Finished!');
@@ -326,5 +330,5 @@ else
 
 $display_message .= '<br /><br /><a href="' . $next . '">Manual Continue</a>';
 
-//meta_refresh(0, $next);
+meta_refresh(1, $next);
 trigger_error($display_message);

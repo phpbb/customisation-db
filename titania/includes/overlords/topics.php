@@ -287,7 +287,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$pagination->sql_count($sql_ary, 'topic_id');
+		$pagination->sql_count($sql_ary, 't.topic_id');
 		$pagination->build_pagination($page_url);
 
 		$topic = new titania_topic();

@@ -251,7 +251,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$pagination->sql_count($sql_ary, 'post_id');
+		$pagination->sql_count($sql_ary, 'p.post_id');
 		$pagination->build_pagination($topic->get_url());
 
 		// Get the data
