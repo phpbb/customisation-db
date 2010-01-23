@@ -381,10 +381,11 @@ class titania_contribution extends titania_database_object
 		}
 
 		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_ATTACHMENTS_TABLE . ' a
-			WHERE a.attachment_id = r.attachment_id ' .
+			WHERE r.contrib_id = ' . $this->contrib_id . '
+				AND a.attachment_id = r.attachment_id ' .
 				((titania::$config->require_validation) ? ' AND r.revision_validated = 1 ' : '') . '
 				AND revision_submitted = 1
-			ORDER BY r.revision_id';
+			ORDER BY r.revision_id DESC';
 		$result = phpbb::$db->sql_query_limit($sql, 1);
 		$this->download = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
@@ -449,7 +450,7 @@ class titania_contribution extends titania_database_object
 	 *
 	 * @param bool $simple True to output a simpler version (on the non-main pages)
 	 */
-	public function assign_details($simple = false)
+	public function assign_details($simple = false, $return = false)
 	{
 		if (!$simple)
 		{
@@ -457,12 +458,13 @@ class titania_contribution extends titania_database_object
 			$this->get_rating();
 		}
 
-		phpbb::$template->assign_vars(array(
+		$vars = array(
 			// Contribution data
 			'CONTRIB_NAME'					=> $this->contrib_name,
 			'CONTRIB_DESC'					=> $this->generate_text_for_display(),
 			'CONTRIB_VIEWS'					=> $this->contrib_views,
 			'CONTRIB_UPDATE_DATE'			=> phpbb::$user->format_date($this->contrib_last_update),
+			'CONTRIB_STATUS'				=> $this->contrib_status,
 
 			'CONTRIB_RATING'				=> $this->contrib_rating,
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
@@ -476,40 +478,59 @@ class titania_contribution extends titania_database_object
 			'DOWNLOAD_VERSION'				=> (isset($this->download['revision_version'])) ? censor_text($this->download['revision_version']) : '',
 
 			'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
-		));
+			'U_VIEW_CONTRIB'				=> $this->get_url(),
+
+			'S_CONTRIB_VALIDATED'			=> ($this->contrib_status == TITANIA_CONTRIB_NEW) ? true : false,
+		);
 
 		// Display real author
-		$this->author->assign_details();
+		if ($return)
+		{
+			$vars = array_merge($vars, $this->author->assign_details(true));
+		}
+		else
+		{
+			$this->author->assign_details();
+		}
 
 		if (!$simple)
 		{
-			// Display Co-authors
-			foreach ($this->coauthors as $user_id => $row)
+			if (!$return)
 			{
-				if ($row['author_visible'])
+				// Display Co-authors
+				foreach ($this->coauthors as $user_id => $row)
 				{
-					phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
+					if ($row['author_visible'])
+					{
+						phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
+					}
+				}
+
+				// Display Revisions
+				if (sizeof($this->revisions))
+				{
+					$revision = new titania_revision($this);
+					foreach ($this->revisions as $revision_id => $row)
+					{
+						$revision->__set_array($row);
+						$revision->display();
+					}
+					unset($revision);
 				}
 			}
-
-			// Display Revisions
-			if (sizeof($this->revisions))
-			{
-				$revision = new titania_revision($this);
-				foreach ($this->revisions as $revision_id => $row)
-				{
-					$revision->__set_array($row);
-					$revision->display();
-				}
-				unset($revision);
-			}
-
 
 			if (!phpbb::$user->data['is_bot'])
 			{
 				$this->increase_view_counter();
 			}
 		}
+
+		if ($return)
+		{
+			return $vars;
+		}
+
+		phpbb::$template->assign_vars($vars);
 	}
 
 	/**

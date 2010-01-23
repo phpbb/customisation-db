@@ -11,10 +11,10 @@
 <ul class="topiclist topics">
 
 <!-- BEGIN contribs -->
-	<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+	<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF contribs.S_CONTRIB_VALIDATED --> reported<!-- ENDIF -->">
 		<dl>
 			<dt><a href="{contribs.U_VIEW_CONTRIB}" class="topictitle">{contribs.CONTRIB_NAME}</a><br />
-				{L_AUTHOR}: {contribs.CONTRIB_USERNAME_FULL}
+				{L_AUTHOR}: {contribs.AUTHOR_NAME_FULL}
 			</dt>
 			<dd class="general">
 				<!-- IF contribs.CONTRIB_DOWNLOADS -->{L_DOWNLOADS}: {contribs.CONTRIB_DOWNLOADS}<br /><!-- ENDIF -->

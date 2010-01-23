@@ -9,6 +9,16 @@
  */
 
 /**
+* Instructions!
+*
+* Ariel needs indexes or this will take forever
+* ALTER TABLE community_site_queue ADD INDEX (contrib_id)
+* ALTER TABLE community_site_queue ADD INDEX (revision_id)
+* ALTER TABLE community_site_queue ADD INDEX (queue_status)
+* ALTER TABLE community_site_contrib_tags ADD INDEX (contrib_id)
+*/
+
+/**
  * @ignore
  */
 define('IN_TITANIA', true);
@@ -65,7 +75,7 @@ switch ($step)
 			'LEFT_JOIN'	=> array(
 				array(
 					'FROM'	=> array($ariel_prefix . 'contrib_topics' => 't'),
-					'ON'	=> 't.contrib_id = c.contrib_id AND t.topic_type = 5',
+					'ON'	=> 't.contrib_id = c.contrib_id AND t.topic_type = 1',
 				),
 			),
 
@@ -82,14 +92,34 @@ switch ($step)
 				continue;
 			}
 
+			$ignore = array(-1, 3, 5);
+			if (in_array($row['contrib_status'], $ignore))
+			{
+				// Skip contribs that were denied
+				continue;
+			}
+
+			// Things were marked as new in ariel even though they were pulled/denied?  @todo Figure out what is going on
+			if ($row['contrib_status'] == 0)
+			{
+				$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . $ariel_prefix . 'queue
+					WHERE ' . phpbb::$db->sql_in_set('queue_status', array(1, 2, 3, 4)) . '
+						AND contrib_id = ' . $row['contrib_id'];
+				$result1 = phpbb::$db->sql_query($sql);
+				$cnt = phpbb::$db->sql_fetchfield('cnt', $result1);
+				phpbb::$db->sql_freeresult($result1);
+
+				if (!$cnt)
+				{
+					echo $row['contrib_name'] . '<br />';
+					// Somebody changed the status manually to new, should have been 3
+					continue;
+				}
+			}
+
 			$permalink = titania_url::url_slug($row['contrib_name']);
 			$conflict = $cnt = false;
 			do {
-				if ($cnt !== false && $cnt > 10)
-				{
-					trigger_error('Bad.');
-				}
-
 				$permalink_test = ($cnt !== false) ? $permalink . '_' . $cnt : $permalink;
 				$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIBS_TABLE . '
 					WHERE contrib_name_clean = \'' . phpbb::$db->sql_escape($permalink_test) . '\'';
@@ -114,9 +144,9 @@ switch ($step)
 				'contrib_name'					=> $row['contrib_name'],
 				'contrib_name_clean'			=> $permalink,
 				'contrib_desc'					=> $row['contrib_description'],
-				'contrib_desc_bitfield'			=> '',
-				'contrib_desc_uid'				=> '',
-				'contrib_desc_options'			=> 7,
+				'contrib_desc_bitfield'			=> $row['contrib_bbcode_bitfield'],
+				'contrib_desc_uid'				=> $row['contrib_bbcode_uid'],
+				'contrib_desc_options'			=> $row['contrib_bbcode_flags'],
 				'contrib_status'				=> TITANIA_CONTRIB_APPROVED,
 				'contrib_downloads'				=> $row['contrib_downloads'],
 				'contrib_views'					=> 0,
@@ -220,14 +250,37 @@ switch ($step)
 		$total = phpbb::$db->sql_fetchfield('cnt');
 		phpbb::$db->sql_freeresult();
 
-		$sql = 'SELECT * FROM ' . $ariel_prefix . 'contrib_revisions
-			ORDER BY revision_id ASC';
+		$sql_ary = array(
+			'SELECT'	=> 'q.*, r.*',
+
+			'FROM'		=> array(
+				$ariel_prefix . 'contrib_revisions' => 'r',
+			),
+
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array($ariel_prefix . 'queue' => 'q'),
+					'ON'	=> 'q.revision_id = r.revision_id',
+				),
+			),
+
+			'ORDER_BY'	=> 'r.revision_id ASC',
+		);
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			if ($row['revision_phpbb_version'][0] != '3' || (!strpos($row['revision_filename'], '.mod') && !strpos($row['revision_filename'], '.zip')))
 			{
 				// Skip 2.0 mods and broken filenames (broken filenames seem to only be on really old files)
+				continue;
+			}
+
+			$ignore = array(-2, -3, -4, -5, -6);
+			if (in_array($row['queue_status'], $ignore))
+			{
+				// Skip revisions that were denied, canned, etc
 				continue;
 			}
 
@@ -259,7 +312,7 @@ switch ($step)
 				'revision_version'			=> $row['revision_version'],
 				'revision_name'				=> $row['revision_name'],
 				'revision_time'				=> $row['revision_date'],
-				'revision_validated'		=> true,
+				'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
 				'validation_date'			=> $row['revision_date'],
 				'phpbb_version'				=> $row['revision_phpbb_version'],
 				'install_time'				=> 0,
@@ -269,6 +322,8 @@ switch ($step)
 
 			// Insert
 			titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
+
+			// @todo Queue
 
 			// Update the contrib_last_update
 			$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
@@ -328,6 +383,9 @@ switch ($step)
 
 	case 5 :
 		$sync = new titania_sync;
+
+		$sync->contribs('validated');
+
 		$sync->categories('count');
 
 		$display_message = 'Syncing';
@@ -355,7 +413,7 @@ else
 
 $display_message .= '<br /><br /><a href="' . $next . '">Manual Continue</a>';
 
-meta_refresh(1, $next);
+//meta_refresh(0, $next);
 trigger_error($display_message);
 
 function titania_insert($table, $sql_ary)

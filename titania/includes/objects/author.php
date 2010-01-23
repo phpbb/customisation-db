@@ -373,13 +373,16 @@ class titania_author extends titania_database_object
 		}
 
 		// Output the count for different types
-		phpbb::$template->destroy_block_vars('type_counts');
-		foreach (titania_types::$types as $type)
+		if (!$return)
 		{
-			phpbb::$template->assign_block_vars('type_counts', array(
-				'NAME'	=> (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? phpbb::$user->lang[strtoupper($type->author_count)] : strtoupper($type->author_count),
-				'VALUE'	=> $this->{$type->author_count}
-			));
+			phpbb::$template->destroy_block_vars('type_counts');
+			foreach (titania_types::$types as $type)
+			{
+				phpbb::$template->assign_block_vars('type_counts', array(
+					'NAME'	=> (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? phpbb::$user->lang[strtoupper($type->author_count)] : strtoupper($type->author_count),
+					'VALUE'	=> $this->{$type->author_count}
+				));
+			}
 		}
 
 		/* @todo: automatically display the common author data too...

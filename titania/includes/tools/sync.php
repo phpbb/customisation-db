@@ -54,6 +54,40 @@ class titania_sync
 	}
 
 	/**
+	* Sync contribs
+	*
+	* @param string $mode The mode (validated)
+	* @param int $contrib_id Contrib id to limit to
+	*/
+	public function contribs($mode, $contrib_id = false)
+	{
+		switch ($mode)
+		{
+			case 'validated' :
+				$sql = 'SELECT contrib_id, contrib_status FROM ' . TITANIA_CONTRIBS_TABLE .
+					(($contrib_id) ? ' WHERE contrib_id = ' . (int) $contrib_id : '');
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . TITANIA_REVISIONS_TABLE . '
+						WHERE contrib_id = ' . $row['contrib_id'] . '
+							AND revision_validated = 1';
+					$result1 = phpbb::$db->sql_query($sql);
+					$cnt = phpbb::$db->sql_fetchfield('cnt', $result1);
+					phpbb::$db->sql_freeresult($result1);
+
+					if (($cnt > 0 && $row['contrib_status'] == TITANIA_CONTRIB_NEW) || ($cnt == 0 && $row['contrib_status'] == TITANIA_CONTRIB_APPROVED))
+					{
+						$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . ' SET contrib_status = ' . (($cnt > 0) ? TITANIA_CONTRIB_APPROVED : TITANIA_CONTRIB_NEW) . '
+							WHERE contrib_id = ' . $row['contrib_id'];
+						phpbb::$db->sql_query($sql);
+					}
+				}
+			break;
+		}
+	}
+
+	/**
 	 * Sync topics
 	 *
 	 * @param <type> $mode The mode (post_count - topics_posts field)

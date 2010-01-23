@@ -180,8 +180,8 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 	$pagination->build_pagination($pagination_url);
 
 	// Setup some objects we'll use for temps
-	$author = new titania_author();
 	$contrib = new titania_contribution();
+	$contrib->author = new titania_author();
 
 	$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
 
@@ -189,7 +189,7 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 	{
 		$contrib->__set_array($row);
 
-		$author->__set_array($row);
+		$contrib->author->__set_array($row);
 
 		// Store the tracking info we grabbed in the tool
 		titania_tracking::store_track(TITANIA_CONTRIB, $contrib->contrib_id, $row['track_time']);
@@ -198,33 +198,19 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 		$folder_img = $folder_alt = '';
 		titania_topic_folder_img($folder_img, $folder_alt, 0, titania_tracking::is_unread(TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update));
 
-		phpbb::$template->assign_block_vars($blockname, array(
-			'CONTRIB_USERNAME'			=> $author->get_username_string('username'),
-			'CONTRIB_USERNAME_FULL'		=> $author->get_username_string(),
-			'CONTRIB_NAME'				=> $contrib->contrib_name,
-			'CONTRIB_TYPE'				=> titania_types::$types[$contrib->contrib_type]->lang,
-			'CONTRIB_STATUS'			=> $contrib->contrib_status,
-			'CONTRIB_DOWNLOADS'			=> $contrib->contrib_downloads,
-			'CONTRIB_VIEWS'				=> $contrib->contrib_views,
-			'CONTRIB_RATING'			=> $contrib->contrib_rating,
-			'CONTRIB_RATING_COUNT'		=> $contrib->contrib_rating_count,
-
-			'U_VIEW_CONTRIB'			=> $contrib->get_url(),
-
-			'S_CONTRIB_TYPE'			=> $contrib->contrib_type,
-
+		phpbb::$template->assign_block_vars($blockname, array_merge($contrib->assign_details(true, true), array(
 			'FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
 			'FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
 			'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
 			'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
 			'FOLDER_IMG_WIDTH'			=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 			'FOLDER_IMG_HEIGHT'			=> phpbb::$user->img($folder_img, '', false, '', 'height'),
-		));
+		)));
 
 		$contrib_type = $row['contrib_type'];
 	}
 	phpbb::$db->sql_freeresult($result);
-	unset($contrib, $author);
+	unset($contrib);
 
 	phpbb::$template->assign_vars(array(
 		'U_ACTION'			=> titania_url::$current_page,
