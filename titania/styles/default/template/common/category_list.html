@@ -1,11 +1,11 @@
 <!-- IF .categories -->
-<div class="forabg">
+<div class="forabg" id="categories">
 	<div class="inner"><span class="corners-top"><span></span></span>
 	<ul class="topiclist">
 		<li class="header">
-			<dl class="icon">
+			<dl>
 				<dt>{L_CATEGORY}</dt>
-				<dd class="topics">{L_CONTRIBUTIONS}</dd>
+				<dd class="general">{L_CONTRIBUTIONS}</dd>
 			</dl>
 		</li>
 	</ul>
@@ -13,14 +13,14 @@
 
 	<!-- BEGIN categories -->
 		<li class="row">
-			<dl class="icon" style="background-image: url({categories.FORUM_FOLDER_IMG_SRC}); background-repeat: no-repeat;">
+			<dl>
 				<dt title="{categories.FORUM_FOLDER_IMG_ALT}">
 					<!-- IF categories.FORUM_IMAGE --><span class="forum-image">{categories.FORUM_IMAGE}</span><!-- ENDIF -->
 					<a href="{categories.U_VIEW_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a><br />
 					{categories.FORUM_DESC}
 					<!-- IF categories.SUBFORUMS and categories.S_LIST_SUBFORUMS --><br /><strong>{categories.L_SUBFORUM_STR}</strong> {categories.SUBFORUMS}<!-- ENDIF -->
 				</dt>
-				<dd class="topics">{categories.CATEGORY_CONTRIBS} <dfn>{L_CONTRIBUTIONS}</dfn></dd>
+				<dd class="general">{categories.CATEGORY_CONTRIBS} <dfn>{L_CONTRIBUTIONS}</dfn></dd>
 			</dl>
 		</li>
 		<!-- END categories -->

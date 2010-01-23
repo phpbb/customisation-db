@@ -181,6 +181,10 @@ dd.general {
 	font-size: 1.1em;
 }
 
+#categories .forums dd.general {
+	font-size: 1.2em;
+}
+
 .container li.header dt, .container li.header dd {
 	color: #000000;
 	margin-bottom: 2px;
