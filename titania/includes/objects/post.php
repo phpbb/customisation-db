@@ -413,9 +413,9 @@ class titania_post extends titania_database_object
 			));
 
 			$this->topic->submit();
-
-			$this->topic_id = $this->topic->topic_id;
 		}
+
+		$this->topic_id = $this->topic->topic_id;
 
 		if (!$this->text_parsed_for_storage)
 		{

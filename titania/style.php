@@ -1,12 +1,13 @@
 <?php
 /**
-*
+ *
  * @package titania
-* @version $Id$
+ * @version $Id$
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
-*
-*/
+ *
+ * @todo Check over this whole style.php file...
+ */
 
 /**
 * @ignore
@@ -50,7 +51,8 @@ $path = get_path() . '/';
 // adjust paths
 $stylesheet = str_replace('./', $path . 'styles/' . $style . '/theme/', $stylesheet);
 
-header('Expires: 0');
+$expire_time = 7*86400;
+header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + $expire_time));
 header('Content-type: text/css; charset=UTF-8');
 
 // Parse Theme Data
