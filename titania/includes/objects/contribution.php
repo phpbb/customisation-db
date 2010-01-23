@@ -465,6 +465,7 @@ class titania_contribution extends titania_database_object
 			'CONTRIB_VIEWS'					=> $this->contrib_views,
 			'CONTRIB_UPDATE_DATE'			=> phpbb::$user->format_date($this->contrib_last_update),
 			'CONTRIB_STATUS'				=> $this->contrib_status,
+			'CONTRIB_TYPE'					=> titania_types::$types[$this->contrib_type]->lang,
 
 			'CONTRIB_RATING'				=> $this->contrib_rating,
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
