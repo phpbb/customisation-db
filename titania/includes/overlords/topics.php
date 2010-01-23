@@ -120,7 +120,7 @@ class topics_overlord
 				TITANIA_CONTRIBS_TABLE	=> 'c',
 			),
 
-			'WHERE' => phpbb::$db->sql_in_set('t.topic_id', $topic_id) . '
+			'WHERE' => phpbb::$db->sql_in_set('t.topic_id', array_map('intval', $topic_id)) . '
 				AND c.contrib_id = t.contrib_id' .
 				self::sql_permissions('t.'),
 		);
@@ -260,19 +260,19 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			case 'author_support' :
 				$page_url = $object->get_url('support');
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', $contrib_ids);
+				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', array_map('intval', $contrib_ids));
 
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', titania::$cache->get_author_contribs($object->user_id));
+				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', array_map('intval', titania::$cache->get_author_contribs($object->user_id)));
 			break;
 
 			case 'author_tracker' :
 				$page_url = $object->get_url('tracker');
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', $contrib_ids);
+				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', array_map('intval', $contrib_ids));
 
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_TRACKER;
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', titania::$cache->get_author_contribs($object->user_id));
+				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', array_map('intval', titania::$cache->get_author_contribs($object->user_id)));
 			break;
 
 			case 'support' :

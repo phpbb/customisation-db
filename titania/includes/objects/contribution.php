@@ -558,7 +558,7 @@ class titania_contribution extends titania_database_object
 				// Don't need to call change_author_contrib_count here, since they should already exist and it uses quite a few extra queries
 				$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
 					SET author_contribs = author_contribs - 1
-					WHERE ' . phpbb::$db->sql_in_set('user_id', $decrement_list);
+					WHERE ' . phpbb::$db->sql_in_set('user_id', array_map('intval', $decrement_list));
 				phpbb::$db->sql_query($sql);
 			}
 
@@ -665,7 +665,7 @@ class titania_contribution extends titania_database_object
 
 			$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . '
 				SET category_contribs = category_contribs - 1
-				WHERE ' . phpbb::$db->sql_in_set('category_id', $categories_to_update);
+				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories_to_update));
 			phpbb::$db->sql_query($sql);
 		}
 
@@ -704,7 +704,7 @@ class titania_contribution extends titania_database_object
 
 			$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . '
 				SET category_contribs = category_contribs + 1
-				WHERE ' . phpbb::$db->sql_in_set('category_id', $categories_to_update);
+				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories_to_update));
 			phpbb::$db->sql_query($sql);
 		}
 	}

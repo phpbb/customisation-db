@@ -152,7 +152,7 @@ class titania_attachment extends titania_database_object
 		$sql = 'SELECT * FROM ' . $this->sql_table . '
 			WHERE object_type = ' . (int) $this->object_type . '
 				AND object_id = ' . (int) $this->object_id .
-				(($attachment_ids !== false) ? ' AND ' . phpbb::$db->sql_in_set('attachment_id', $attachment_ids) : '');
+				(($attachment_ids !== false) ? ' AND ' . phpbb::$db->sql_in_set('attachment_id', array_map('intval', $attachment_ids)) : '');
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -258,7 +258,7 @@ class titania_attachment extends titania_database_object
 		if (sizeof($to_query))
 		{
 			$sql = 'SELECT * FROM ' . $this->sql_table . '
-				WHERE ' . phpbb::$db->sql_in_set('attachment_id', $to_query) . '
+				WHERE ' . phpbb::$db->sql_in_set('attachment_id', array_map('intval', $to_query)) . '
 					AND object_type = ' . (int) $this->object_type . '
 					AND object_id = ' . (int) $this->object_id; // Don't let them be messin with us
 			$result = phpbb::$db->sql_query($sql);
@@ -356,7 +356,7 @@ class titania_attachment extends titania_database_object
 
 		$sql = 'UPDATE ' . $this->sql_table . '
 			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-			WHERE ' . phpbb::$db->sql_in_set('attachment_id', array_keys($this->attachments));
+			WHERE ' . phpbb::$db->sql_in_set('attachment_id', array_map('intval', array_keys($this->attachments)));
 		phpbb::$db->sql_query($sql);
 	}
 

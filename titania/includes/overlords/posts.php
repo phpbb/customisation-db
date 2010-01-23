@@ -81,7 +81,7 @@ class posts_overlord
 				TITANIA_POSTS_TABLE	=> 'p',
 			),
 
-			'WHERE'		=> phpbb::$db->sql_in_set('p.post_id', $post_id) .
+			'WHERE'		=> phpbb::$db->sql_in_set('p.post_id', array_map('intval', $post_id)) .
 				self::sql_permissions('p.'),
 		);
 
@@ -274,7 +274,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		// Grab any attachments
 		$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . '
 			WHERE object_type = ' . (int) $topic->topic_type . '
-				AND ' . phpbb::$db->sql_in_set('object_id', $post_ids);
+				AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', $post_ids));
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{

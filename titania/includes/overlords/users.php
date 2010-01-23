@@ -59,7 +59,7 @@ class users_overlord
 					'ON'	=> 'z.user_id = ' . phpbb::$user->data['user_id'] . ' AND z.zebra_id = u.user_id'
 				)
 			),
-			'WHERE' => phpbb::$db->sql_in_set('u.user_id', $user_ids),
+			'WHERE' => phpbb::$db->sql_in_set('u.user_id', array_map('intval', $user_ids)),
 		);
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
@@ -124,7 +124,7 @@ class users_overlord
 		{
 			$sql = 'SELECT session_user_id, MAX(session_time) as online_time, MIN(session_viewonline) AS viewonline
 				FROM ' . SESSIONS_TABLE . '
-				WHERE ' . phpbb::$db->sql_in_set('session_user_id', $user_ids) . '
+				WHERE ' . phpbb::$db->sql_in_set('session_user_id', array_map('intval', $user_ids)) . '
 				GROUP BY session_user_id';
 			$result = phpbb::$db->sql_query($sql);
 

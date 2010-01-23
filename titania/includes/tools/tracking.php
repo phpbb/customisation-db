@@ -133,7 +133,7 @@ class titania_tracking
 
 		$sql = 'SELECT track_id, track_time FROM ' . self::$sql_table . '
 			WHERE track_type = ' . (int) $type . '
-			AND ' . phpbb::$db->sql_in_set('track_id', $ids) . '
+			AND ' . phpbb::$db->sql_in_set('track_id', array_map('intval', $ids)) . '
 			AND track_user_id = ' . phpbb::$user->data['user_id'];
 		$result = phpbb::$db->sql_query($sql);
 
