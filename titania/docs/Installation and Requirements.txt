@@ -13,9 +13,9 @@ How to install:
 includes/acp/acp_permissions.php
 
 Find:
-this->permission_dropdown = array('u_', 'm_', 'a_');
+$this->permission_dropdown = array('u_', 'm_', 'a_');
 
 Replace with:
-this->permission_dropdown = array('u_', 'm_', 'a_', 'titania_');
+$this->permission_dropdown = array('u_', 'm_', 'a_', 'titania_');
 
 	6. Done!
