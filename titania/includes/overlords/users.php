@@ -229,7 +229,7 @@ class users_overlord
 
 	// @todo: info link...need to build the mcp stuff first.
 	//		'U_INFO'				=> ($auth->acl_get('m_info', $forum_id)) ? phpbb::append_sid('mcp', "i=main&amp;mode=post_details&amp;f=$forum_id&amp;p=" . $row['post_id'], true, phpbb::$user->session_id) : '',
-			'U_USER_PROFILE'		=> get_username_string('profile', $user_id, $row['username'], $row['user_colour']),
+			'U_USER_PROFILE'		=> get_username_string('profile', $user_id, $row['username'], $row['user_colour'], false, phpbb::append_sid('memberlist', 'mode=viewprofile&amp;u=' . $user_id)),
 			'U_SEARCH'				=> (phpbb::$auth->acl_get('u_search')) ? phpbb::append_sid('search', "author_id=$user_id&amp;sr=posts") : '',
 			'U_PM'					=> ($user_id != ANONYMOUS && phpbb::$config['allow_privmsg'] && phpbb::$auth->acl_get('u_sendpm') && ($row['user_allow_pm'] || phpbb::$auth->acl_gets('a_', 'm_') || phpbb::$auth->acl_getf_global('m_'))) ? phpbb::append_sid('ucp', 'i=pm&amp;mode=compose') : '',
 			'U_EMAIL'				=> (!empty($row['user_allow_viewemail']) || phpbb::$auth->acl_get('a_email')) ? ((phpbb::$config['board_email_form'] && phpbb::$config['email_enable']) ? phpbb::append_sid('memberlist', "mode=email&amp;u=$user_id") : ((phpbb::$config['board_hide_emails'] && !phpbb::$auth->acl_get('a_email')) ? '' : 'mailto:' . $row['user_email'])) : '',
