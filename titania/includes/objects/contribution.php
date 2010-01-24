@@ -484,7 +484,7 @@ class titania_contribution extends titania_database_object
 			'U_VIEW_CONTRIB'				=> ($this->contrib_type) ? $this->get_url() : '', // Don't cause an error while we create a contrib item
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
 
-			'S_CONTRIB_VALIDATED'			=> ($this->contrib_status == TITANIA_CONTRIB_NEW) ? true : false,
+			'S_CONTRIB_VALIDATED'			=> ($this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
 		);
 
 		// Display real author
