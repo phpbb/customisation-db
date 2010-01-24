@@ -40,21 +40,29 @@
 					<strong>{L_CO_AUTHORS}</strong> <!-- BEGIN coauthors -->{coauthors.AUTHOR_NAME_FULL}<!-- IF not coauthors.S_LAST_ROW -->, <!-- ENDIF --><!-- END coauthors -->
 				</li>
 				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_VERSION -->
 				<li>
 					<strong>{L_VERSION}</strong> {DOWNLOAD_VERSION}
 				</li>
+				<!-- ENDIF -->
 				<li>
 					<strong>{L_CONTRIB_UPDATE_DATE}</strong> {CONTRIB_UPDATE_DATE}
 				</li>
+				<!-- IF DOWNLOAD_CHECKSUM -->
 				<li>
 					<strong>{L_DOWNLOAD_CHECKSUM}</strong> {DOWNLOAD_CHECKSUM}
 				</li>
-				<!-- IF DOWNLOAD_NAME --><li>
+				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_NAME -->
+				<li>
 					<strong>{L_REVISION_NAME}</strong> {DOWNLOAD_NAME}
-				</li><!-- ENDIF -->
+				</li>
+				<!-- ENDIF -->
+				<!-- IF CONTRIB_DOWNLOADS -->
 				<li>
 					<strong>{L_DOWNLOADS_TOTAL}</strong> {CONTRIB_DOWNLOADS}
 				</li>
+				<!-- ENDIF -->
 				<li style="border-bottom: 0;">
 					<strong>{L_RATING}</strong> {CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})
 				</li>
