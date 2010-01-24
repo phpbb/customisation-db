@@ -33,6 +33,12 @@
 	var panels = new Array(<!-- BEGIN panels -->'{panels.NAME}'<!-- IF not panels.S_LAST_ROW -->, <!-- ENDIF --><!-- END panels -->);
 	var show_panel = '{POSTING_PANELS_DEFAULT}';
 
+	function titania_post_submit()
+	{
+		// Store the opened panel so we can display it again
+		$('input:hidden[name=open_panel]').val(show_panel);
+	}
+
 // ]]>
 </script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/editor.js"></script>

@@ -217,6 +217,8 @@ class titania_attachment extends titania_database_object
 				'U_VIEW_ATTACHMENT'	=> titania_url::build_url('download', array('id' => $row['attachment_id'])),
 
 				'S_DELETE'			=> (!isset($row['no_delete']) || !$row['no_delete']) ? true : false,
+
+				//'S_DELETED'			=> (isset($row['deleted']) && $row['deleted']) ? true : false,
 			);
 
 			// Allow additional things to be outputted
@@ -270,7 +272,27 @@ class titania_attachment extends titania_database_object
 		}
 
 		// Next, delete those requested
-		// @todo (just hide them for now - remove when submit() happens)
+		$delete = request_var('delete_file', array(0));
+		foreach ($delete as $attach_id => $null)
+		{
+			$this->delete($attach_id);
+
+			// Sometime I'll look into this again; having it setup to only delete attachments after the form is submitted
+			/*if (isset($this->attachments[$attach_id]))
+			{
+				$this->attachments[$attach_id]['deleted'] = true;
+			}*/
+		}
+
+		// And undelete any
+		/*$undelete = request_var('undelete_file', array(0));
+		foreach ($delete as $attach_id => $null)
+		{
+			if (isset($this->attachments[$attach_id]))
+			{
+				$this->attachments[$attach_id]['deleted'] = false;
+			}
+		}*/
 
 		// Finally upload new items if required
 		if ((isset($_FILES[$this->form_name]) && $_FILES[$this->form_name]['name'] != 'none' && trim($_FILES[$this->form_name]['name'])))
@@ -337,6 +359,14 @@ class titania_attachment extends titania_database_object
 		// Update the attachment comments if necessary
 		foreach ($this->attachments as $attachment_id => $row)
 		{
+			// Delete those requested
+			/*if (isset($row['deleted']) && $row['deleted'])
+			{
+				$this->delete($attachment_id);
+
+				continue;
+			}*/
+
 			$attachment_comment = utf8_normalize_nfc(request_var('attachment_comment_' . $attachment_id, '', true));
 			if ($row['attachment_comment'] != $attachment_comment)
 			{
@@ -346,6 +376,12 @@ class titania_attachment extends titania_database_object
 				phpbb::$db->sql_query($sql);
 			}
 		}
+
+		// Check again...could have deleted all of those attached
+		/*if (!sizeof($this->attachments))
+		{
+			return;
+		}*/
 
 		// Update access and is_orphan
 		$sql_ary = array(
@@ -365,13 +401,26 @@ class titania_attachment extends titania_database_object
 	 *
 	 * @return void
 	 */
-	public function delete()
+	public function delete($attachment_id = false)
 	{
-		if ($this->attachment_id)
+		$attachment_id = ($attachment_id === false) ? $this->attachment_id : (int) $attachment_id;
+
+		if ($attachment_id == $this->attachment_id)
 		{
 			@unlink(titania::$config->upload_path . $this->attachment_directory . '/' . utf8_basename($this->attachment_directory) . '/' . utf8_basename($this->physical_filename));
-
 			parent::delete();
+		}
+		else if (isset($this->attachments[$attachment_id]))
+		{
+			@unlink(titania::$config->upload_path . $this->attachments[$attachment_id]['attachment_directory'] . '/' . utf8_basename($this->attachments[$attachment_id]['attachment_directory']) . '/' . utf8_basename($this->attachments[$attachment_id]['physical_filename']));
+
+			$sql = 'DELETE FROM ' . $this->sql_table . ' WHERE attachment_id = ' . $attachment_id;
+			phpbb::$db->sql_query($sql);
+		}
+
+		if (isset($this->attachments[$attachment_id]))
+		{
+			unset($this->attachments[$attachment_id]);
 		}
 	}
 

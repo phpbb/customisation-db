@@ -182,6 +182,10 @@ class titania_message
 
 		$post_options->set_in_template();
 
+		// Save the opened panel to show again
+		$default_panel = request_var('open_panel', 'options-panel');
+		$default_panel = (isset($this->posting_panels[$default_panel])) ? $default_panel :  'options-panel';
+
 		phpbb::$template->assign_vars(array(
 			'ACCESS_OPTIONS'			=> titania_access_select((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC),
 
@@ -191,7 +195,7 @@ class titania_message
 			'POSTING_TEXT_NAME'			=> $this->settings['text_name'],
 			'POSTING_SUBJECT_NAME'		=> $this->settings['subject_name'],
 
-			'POSTING_PANELS_DEFAULT'	=> 'options-panel',
+			'POSTING_PANELS_DEFAULT'	=> $default_panel,
 
 			'POSTING_TEXT'				=> ($this->settings['text_default_override'] !== false) ? $this->settings['text_default_override'] : $for_edit['text'],
 
@@ -214,7 +218,6 @@ class titania_message
 			phpbb::$template->assign_vars(array(
 				'UPLOADER'					=> $this->attachments->parse_uploader($this->settings['attachment_tpl']),
 				'S_FORM_ENCTYPE'			=> ' enctype="multipart/form-data"',
-				'POSTING_PANELS_DEFAULT'	=> ($this->attachments->uploaded) ? 'attach-panel' : 'options-panel',
 			));
 		}
 
@@ -251,6 +254,8 @@ class titania_message
 		// Setup the attachments!
 		$this->setup_attachments();
 
+		$for_edit = $this->post_object->generate_text_for_edit();
+
 		// Initialize our post options class
 		$post_options = new post_options();
 		$post_options->set_auth($this->auth['bbcode'], $this->auth['smilies'], true, true, true);
@@ -260,10 +265,10 @@ class titania_message
 		$magic_url_disabled = (isset($_POST['disable_magic_url'])) ? true : false;
 
 		return array(
-			'subject'			=> utf8_normalize_nfc(request_var($this->settings['subject_name'], '', true)),
-			'message'			=> utf8_normalize_nfc(request_var($this->settings['text_name'], '', true)),
+			'subject'			=> utf8_normalize_nfc(request_var($this->settings['subject_name'], $for_edit['subject'], true)),
+			'message'			=> utf8_normalize_nfc(request_var($this->settings['text_name'], $for_edit['text'], true)),
 			'options'			=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
-			'access'			=> request_var('message_access', TITANIA_ACCESS_PUBLIC),
+			'access'			=> request_var('message_access', (int) ((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC)),
 			'lock'				=> ($this->auth['lock'] && isset($_POST['lock'])) ? true : false,
 			'has_attachments'	=> ($this->attachments !== false && sizeof($this->attachments->get_attachments())) ? true : false,
 

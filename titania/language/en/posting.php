@@ -36,6 +36,8 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+'UNDELETE_FILE' => 'Cancel Delete',
+'FILE_DELETED' => 'This file will be deleted when you submit',
 	'ACCESS'			=> 'Access Level',
 	'ACCESS_AUTHORS'	=> 'Authors Access',
 	'ACCESS_PUBLIC'		=> 'Public Access',

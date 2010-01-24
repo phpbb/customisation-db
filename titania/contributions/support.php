@@ -120,16 +120,14 @@ switch ($action)
 			'attachments_group'			=> TITANIA_ATTACH_EXT_SUPPORT,
 		));
 
+		$post->post_data($message);
+
 		if ($preview)
 		{
-			$post->post_data($message);
-
 			$message->preview();
 		}
 		else if ($submit)
 		{
-			$post->post_data($message);
-
 			$error = $post->validate();
 
 			if (($validate_form_key = $message->validate_form_key()) !== false)
