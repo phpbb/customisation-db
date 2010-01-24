@@ -95,6 +95,8 @@ class titania_contribution extends titania_database_object
 			'contrib_desc_uid'				=> array('default' => ''),
 			'contrib_desc_options'			=> array('default' => 7),
 
+			'contrib_demo'					=> array('default' => ''),
+
 			'contrib_status'				=> array('default' => TITANIA_CONTRIB_NEW),
 
 			'contrib_user_id'				=> array('default' => 0),
@@ -480,6 +482,7 @@ class titania_contribution extends titania_database_object
 
 			'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
 			'U_VIEW_CONTRIB'				=> ($this->contrib_type) ? $this->get_url() : '', // Don't cause an error while we create a contrib item
+			'U_VIEW_DEMO'					=> $this->contrib_demo,
 
 			'S_CONTRIB_VALIDATED'			=> ($this->contrib_status == TITANIA_CONTRIB_NEW) ? true : false,
 		);

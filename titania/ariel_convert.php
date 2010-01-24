@@ -162,7 +162,7 @@ switch ($step)
 				'contrib_rating_count'			=> 0,
 				'contrib_visible'				=> 1,
 				'contrib_last_update'			=> 0, // Update with ariel revisions table
-				'contrib_demo'					=> $row['contrib_style_demo'],
+				'contrib_demo'					=> ($row['contrib_style_demo']) ? 'http://www.phpbb.com/styles/demo/3.0/index.php?style_id=' . $row['contrib_style_demo'] : '',
 				'contrib_topic'					=> ($row['topic_id']) ? $row['topic_id'] : 0,
 			);
 
@@ -321,7 +321,7 @@ switch ($step)
 				'revision_name'				=> $row['revision_name'],
 				'revision_time'				=> $row['revision_date'],
 				'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
-				'validation_date'			=> $row['revision_date'],
+				'validation_date'			=> ($row['queue_status'] == -1) ? $row['revision_date'] : 0,
 				'phpbb_version'				=> $row['revision_phpbb_version'],
 				'install_time'				=> 0,
 				'install_level'				=> 0,
@@ -334,11 +334,14 @@ switch ($step)
 			// @todo Queue
 
 			// Update the contrib_last_update
-			$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-				SET contrib_last_update = ' . (int) $row['revision_date'] . '
-				WHERE contrib_id = ' . (int) $row['contrib_id'] . '
-					AND contrib_last_update < ' . (int) $row['revision_date'];
-			phpbb::$db->sql_query($sql);
+			if ($row['queue_status'] == -1 || !titania::$config->require_validation)
+			{
+				$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+					SET contrib_last_update = ' . (int) $row['revision_date'] . '
+					WHERE contrib_id = ' . (int) $row['contrib_id'] . '
+						AND contrib_last_update < ' . (int) $row['revision_date'];
+				phpbb::$db->sql_query($sql);
+			}
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -421,7 +424,7 @@ else
 
 $display_message .= '<br /><br /><a href="' . $next . '">Manual Continue</a>';
 
-//meta_refresh(0, $next);
+meta_refresh(0, $next);
 trigger_error($display_message);
 
 function titania_insert($table, $sql_ary)
