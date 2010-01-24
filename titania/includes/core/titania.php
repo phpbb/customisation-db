@@ -230,23 +230,7 @@ class titania
 		// Do the phpBB page header stuff first
 		phpbb::page_header($page_title);
 
-		// Generate logged in/logged out status
-		if (phpbb::$user->data['user_id'] != ANONYMOUS)
-		{
-			$u_login_logout = phpbb::append_sid(self::$absolute_path . 'index.' . PHP_EXT, 'mode=logout', true, phpbb::$user->session_id);
-			$l_login_logout = sprintf(phpbb::$user->lang['LOGOUT_USER'], phpbb::$user->data['username']);
-		}
-		else
-		{
-			$u_login_logout = phpbb::append_sid('ucp', 'mode=login&amp;redirect=' . self::$page);
-			$l_login_logout = phpbb::$user->lang['LOGIN'];
-		}
-
 		phpbb::$template->assign_vars(array(
-			'U_LOGIN_LOGOUT'			=> $u_login_logout,
-			'L_LOGIN_LOGOUT'			=> $l_login_logout,
-			'LOGIN_REDIRECT'			=> self::$page,
-
 			'PHPBB_ROOT_PATH'			=> self::$absolute_board,
 			'TITANIA_ROOT_PATH'			=> self::$absolute_path,
 
