@@ -227,6 +227,7 @@ class titania_pagination extends titania_object
 			$tpl_prefix . 'PREVIOUS_PAGE'	=> ($on_page == 2) ? $base_url : (($on_page == 1) ? '' : titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page)))),
 			$tpl_prefix . 'NEXT_PAGE'		=> ($on_page == $total_pages) ? '' : titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))),
 			$tpl_prefix . 'TOTAL_PAGES'		=> $total_pages,
+			$tpl_prefix . 'TOTAL_ITEMS'		=> $num_items,
 		));
 
 		return $page_string;
