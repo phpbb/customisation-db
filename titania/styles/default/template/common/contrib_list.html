@@ -4,6 +4,7 @@
 	<li class="header">
 		<dl>
 			<dt>{L_CONTRIBUTIONS}</dt>
+			<dd class="author">{L_AUTHOR}</dd>
 			<dd class="general">{L_INFORMATION}</dd>
 		</dl>
 	</li>
@@ -13,9 +14,11 @@
 <!-- BEGIN contribs -->
 	<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF contribs.S_CONTRIB_VALIDATED --> reported<!-- ENDIF -->">
 		<dl>
-			<dt><a href="{contribs.U_VIEW_CONTRIB}" class="topictitle">{contribs.CONTRIB_NAME}</a><br />
-				{L_AUTHOR}: {contribs.AUTHOR_NAME_FULL}
+			<dt><a href="{contribs.U_VIEW_CONTRIB}" class="topictitle">{contribs.CONTRIB_NAME}</a>
 			</dt>
+			<dd class="author">
+				{contribs.AUTHOR_NAME_FULL}
+			</dd>
 			<dd class="general">
 				<!-- IF contribs.CONTRIB_DOWNLOADS -->{L_DOWNLOADS}: {contribs.CONTRIB_DOWNLOADS}<br /><!-- ENDIF -->
 				<!-- IF contribs.CONTRIB_RATING -->{L_RATING}: {contribs.CONTRIB_RATING} / 5<br /><!-- ENDIF -->
