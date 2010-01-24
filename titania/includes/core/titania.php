@@ -97,7 +97,7 @@ class titania
 
 		// Set the absolute titania/board path
 		self::$absolute_path = generate_board_url(true) . '/' . self::$config->titania_script_path;
-		self::$absolute_board = generate_board_url() . '/';
+		self::$absolute_board = generate_board_url(true) . '/' . self::$config->phpbb_script_path;
 
 		// Set the style path, template path, and template name
 		self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';

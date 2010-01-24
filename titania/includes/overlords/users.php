@@ -206,9 +206,9 @@ class users_overlord
 		}
 
 		return array(
-			'USER_FULL'				=> get_username_string('full', $user_id, $row['username'], $row['user_colour']),
-			'USER_COLOUR'			=> get_username_string('colour', $user_id, $row['username'], $row['user_colour']),
-			'USERNAME'				=> get_username_string('username', $user_id, $row['username'], $row['user_colour']),
+			'USER_FULL'				=> get_username_string('full', $user_id, $row['username'], $row['user_colour'], false, phpbb::append_sid('memberlist', 'mode=viewprofile&amp;u=' . $user_id)),
+			'USER_COLOUR'			=> get_username_string('colour', $user_id, $row['username'], $row['user_colour'], false, phpbb::append_sid('memberlist', 'mode=viewprofile&amp;u=' . $user_id)),
+			'USERNAME'				=> get_username_string('username', $user_id, $row['username'], $row['user_colour'], false, phpbb::append_sid('memberlist', 'mode=viewprofile&amp;u=' . $user_id)),
 
 			'RANK_TITLE'			=> $row['rank_title'],
 			'RANK_IMG'				=> $row['rank_image'],

@@ -29,6 +29,13 @@ $config = array(
 	/**
 	* Relative path from the server root (generate_board_url(true))
 	*
+	* @param	string	Path to the phpBB folder
+	*/
+	'phpbb_script_path' => 'phpBB/',
+
+	/**
+	* Relative path from the server root (generate_board_url(true))
+	*
 	* @param	string	Path to the titania folder
 	*/
 	'titania_script_path' => 'customisation/',

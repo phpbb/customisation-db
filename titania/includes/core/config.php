@@ -35,6 +35,7 @@ class titania_config extends titania_object
 	{
 		$this->object_config = array_merge($this->object_config, array(
 			'phpbb_root_path'			=> array('default' => '../community/'),
+			'phpbb_script_path'			=> array('default' => 'community/'),
 			'titania_script_path'		=> array('default' => 'customisation/'),
 			'upload_path'				=> array('default' => TITANIA_ROOT . 'files/'),
 			'contrib_temp_path'			=> array('default' => TITANIA_ROOT . 'files/contrib_temp/'),

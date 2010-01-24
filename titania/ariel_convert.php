@@ -111,7 +111,15 @@ switch ($step)
 
 				if (!$cnt)
 				{
-					echo $row['contrib_name'] . '<br />';
+					$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . $ariel_prefix . 'queue
+						WHERE queue_status = -1
+							AND contrib_id = ' . $row['contrib_id'];
+					$result1 = phpbb::$db->sql_query($sql);
+					$cnt1 = phpbb::$db->sql_fetchfield('cnt', $result1);
+					phpbb::$db->sql_freeresult($result1);
+
+					echo (($cnt1) ? '<strong>' : '') . $row['contrib_name'] . ' approved: ' . $cnt1 . (($cnt1) ? '</strong>' : '') . '<br />';
+
 					// Somebody changed the status manually to new, should have been 3
 					continue;
 				}
