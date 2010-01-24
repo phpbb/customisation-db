@@ -125,6 +125,7 @@ class phpbb
 		}
 
 		// Generate logged in/logged out status
+		$l_login_redirect = titania_url::build_url(titania_url::$current_page, titania_url::$params);
 		if (self::$user->data['user_id'] != ANONYMOUS)
 		{
 			$u_login_logout = self::append_sid('ucp', 'mode=logout', true, self::$user->session_id);
@@ -132,7 +133,7 @@ class phpbb
 		}
 		else
 		{
-			$u_login_logout = self::append_sid('ucp', 'mode=login&amp;redirect=' . titania_url::build_url(titania_url::$current_page, titania_url::$params));
+			$u_login_logout = self::append_sid('ucp', 'mode=login&amp;redirect=' . $l_login_redirect);
 			$l_login_logout = self::$user->lang['LOGIN'];
 		}
 
@@ -148,6 +149,7 @@ class phpbb
 			'S_LOGIN_ACTION'		=> self::append_sid('ucp', 'mode=login'),
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
 			'L_LOGIN_LOGOUT'		=> $l_login_logout,
+			'LOGIN_REDIRECT'		=> $l_login_redirect,
 
 			'SESSION_ID'			=> self::$user->session_id,
 
