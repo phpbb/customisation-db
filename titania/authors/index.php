@@ -56,7 +56,7 @@ $nav_ary = array(
 	'support' => array(
 		'title'		=> 'AUTHOR_SUPPORT',
 		'url'		=> titania::$author->get_url('support'),
-		'auth'		=> (phpbb::$user->data['user_id'] == titania::$author->user_id) ? true : false,
+		'auth'		=> (phpbb::$user->data['user_id'] == titania::$author->user_id && sizeof(titania::$cache->get_author_contribs(titania::$author->user_id))) ? true : false,
 	),
 	'create' => array(
 		'title'		=> 'CREATE_CONTRIBUTION',
