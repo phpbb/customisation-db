@@ -57,7 +57,6 @@ if ($submit)
 	$contrib_categories = request_var('contrib_category', array(0));
 	titania::$contrib->__set_array(array(
 		'contrib_type'			=> request_var('contrib_type', 0),
-		'contrib_name'			=> request_var('name', '', true),
 		'contrib_name_clean'	=> request_var('permalink', '', true),
 		'contrib_visible'		=> 1,
 	));
@@ -110,7 +109,6 @@ $template->assign_vars(array(
 	'S_POST_ACTION'			=> titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/create'),
 	'S_CREATE'				=> true,
 
-	'CONTRIB_NAME'			=> titania::$contrib->contrib_name,
 	'CONTRIB_PERMALINK'		=> titania::$contrib->contrib_name_clean,
 	'ERROR_MSG'				=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'		=> $active_coauthors,
