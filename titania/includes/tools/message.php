@@ -265,8 +265,8 @@ class titania_message
 		$magic_url_disabled = (isset($_POST['disable_magic_url'])) ? true : false;
 
 		return array(
-			'subject'			=> utf8_normalize_nfc(request_var($this->settings['subject_name'], '', true)),
-			'message'			=> utf8_normalize_nfc(request_var($this->settings['text_name'], $for_edit['text'], true)),
+			'subject'			=> utf8_normalize_nfc(request_var($this->settings['subject_name'], ((isset($for_edit['subject'])) ? $for_edit['subject'] : ''), true)),
+			'message'			=> utf8_normalize_nfc(request_var($this->settings['text_name'], ((isset($for_edit['text'])) ? $for_edit['text'] : ''), true)),
 			'options'			=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
 			'access'			=> request_var('message_access', (int) ((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC)),
 			'lock'				=> ($this->auth['lock'] && isset($_POST['lock'])) ? true : false,
