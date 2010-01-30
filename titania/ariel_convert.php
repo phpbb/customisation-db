@@ -99,7 +99,7 @@ switch ($step)
 				continue;
 			}
 
-			// Things were marked as new in ariel even though they were pulled/denied?  @todo Figure out what is going on
+			// Ignore things marked as new that do not have contributions in the queue
 			if ($row['contrib_status'] == 0)
 			{
 				$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . $ariel_prefix . 'queue
@@ -111,14 +111,14 @@ switch ($step)
 
 				if (!$cnt)
 				{
-					$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . $ariel_prefix . 'queue
+					/*$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . $ariel_prefix . 'queue
 						WHERE queue_status = -1
 							AND contrib_id = ' . $row['contrib_id'];
 					$result1 = phpbb::$db->sql_query($sql);
 					$cnt1 = phpbb::$db->sql_fetchfield('cnt', $result1);
 					phpbb::$db->sql_freeresult($result1);
 
-					echo (($cnt1) ? '<strong>' : '') . $row['contrib_name'] . ' approved: ' . $cnt1 . (($cnt1) ? '</strong>' : '') . '<br />';
+					echo (($cnt1) ? '<strong>' : '') . $row['contrib_name'] . ' approved: ' . $cnt1 . (($cnt1) ? '</strong>' : '') . '<br />';*/
 
 					// Somebody changed the status manually to new, should have been 3
 					continue;
@@ -331,8 +331,6 @@ switch ($step)
 			// Insert
 			titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
 
-			// @todo Queue
-
 			// Update the contrib_last_update
 			if ($row['queue_status'] == -1 || !titania::$config->require_validation)
 			{
@@ -347,6 +345,8 @@ switch ($step)
 
 		$display_message = 'Revisions table';
 	break;
+
+	// @todo Queue
 
 	case 4 :
 		$sql = 'SELECT DISTINCT(contrib_user_id) AS user_id FROM ' . TITANIA_CONTRIBS_TABLE;
