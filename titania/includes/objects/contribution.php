@@ -149,7 +149,7 @@ class titania_contribution extends titania_database_object
 			'author'		=> $this->contrib_user_id,
 			'date'			=> $this->contrib_last_update,
 			'url'			=> titania_url::unbuild_url($this->get_url()),
-			'approved'		=> (!titania::$config->require_validation || $this->contrib_status != TITANIA_CONTRIB_NEW) ? true : false,
+			'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
 		);
 
 		titania_search::index($this->contrib_type, $this->contrib_id, $data, $update);

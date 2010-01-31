@@ -64,8 +64,9 @@ class titania_sync
 		switch ($mode)
 		{
 			case 'validated' :
-				$sql = 'SELECT contrib_id, contrib_status FROM ' . TITANIA_CONTRIBS_TABLE .
-					(($contrib_id) ? ' WHERE contrib_id = ' . (int) $contrib_id : '');
+				$sql = 'SELECT contrib_id, contrib_status FROM ' . TITANIA_CONTRIBS_TABLE . '
+					WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED .
+					(($contrib_id) ? ' AND contrib_id = ' . (int) $contrib_id : '');
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
@@ -108,7 +109,7 @@ class titania_sync
 						'author'		=> $contrib->contrib_user_id,
 						'date'			=> $contrib->contrib_last_update,
 						'url'			=> titania_url::unbuild_url($contrib->get_url()),
-						'approved'		=> (!titania::$config->require_validation || $contrib->contrib_status != TITANIA_CONTRIB_NEW) ? true : false,
+						'approved'		=> (!titania::$config->require_validation || $contrib->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
 					);
 				}
 				phpbb::$db->sql_freeresult($result);
@@ -185,7 +186,7 @@ class titania_sync
 			'WHERE'		=> 'cic.contrib_id = c.contrib_id
 				AND ' . phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $child_list)) . '
 				AND c.contrib_visible = 1' .
-				((titania::$config->require_validation) ? ' AND c.contrib_status <> ' . TITANIA_CONTRIB_NEW : ''),
+				((titania::$config->require_validation) ? ' AND c.contrib_status == ' . TITANIA_CONTRIB_APPROVED : ''),
 		);
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		phpbb::$db->sql_query($sql);

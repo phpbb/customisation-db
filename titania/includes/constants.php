@@ -53,8 +53,9 @@ define('TITANIA_QUEUE_HIDE', 0); // Special case to hide revisions from the queu
 define('TITANIA_QUEUE_NEW', 1);
 
 // Contrib status
-define('TITANIA_CONTRIB_NEW', 1);
-define('TITANIA_CONTRIB_APPROVED', 2);
+define('TITANIA_CONTRIB_NEW', 1); // Does not have any validated revisions
+define('TITANIA_CONTRIB_APPROVED', 2); // Has at least one validated revision
+define('TITANIA_CONTRIB_CLEANED', 3); // From Ariel Conversion - Cleaned up old mods
 
 // Main TYPE constants (use whenever possible)
 define('TITANIA_CONTRIB', 1);

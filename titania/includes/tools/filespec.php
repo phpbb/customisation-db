@@ -2,7 +2,7 @@
 /**
 *
 * @package Titania
-* @version $Id:$
+* @version $Id$
 * @copyright (c) 2009 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -20,7 +20,6 @@ class titania_filespec extends filespec
 {
 /**
 	* Move file to destination folder
-	* The phpbb_root_path variable will be applied to the destination path
 	*
 	* @param string $destination_path Destination path, for example $config['avatar_path']
 	* @param bool $overwrite If set to true, an already existing file will be overwritten

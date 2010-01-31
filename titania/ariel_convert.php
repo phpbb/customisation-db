@@ -31,6 +31,9 @@ if (!phpbb::$user->data['user_type'] == USER_FOUNDER)
 	trigger_error('NO_AUTH');
 }
 
+// Hack for local
+phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? 'ariel_files' : phpbb::$config['site_upload_dir'];
+
 // Table prefix
 $ariel_prefix = 'community_site_';
 $limit = 1000;
@@ -56,7 +59,21 @@ switch ($step)
 			phpbb::$db->sql_query('TRUNCATE TABLE ' . $table);
 		}
 
-		$display_message = 'Truncating Tables';
+		// Clean up the files directory
+		foreach (scandir(titania::$config->upload_path) as $item)
+		{
+            if ($item == '.' || $item == '..' || $item == '.svn' || $item == 'contrib_temp')
+			{
+				continue;
+			}
+
+			if (is_dir(titania::$config->upload_path . $item))
+			{
+				titania_rmdir_recursive(titania::$config->upload_path . $item . '/');
+			}
+		}
+
+		$display_message = 'Truncating Tables, Cleaning File Storage';
 	break;
 
 	case 2 :
@@ -86,22 +103,10 @@ switch ($step)
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			if ($row['contrib_phpbb_version'][0] != '3')
+			$ignore = array(-1, 3);
+			if ($row['contrib_phpbb_version'][0] != '3' || in_array($row['contrib_status'], $ignore) || !in_array($row['contrib_type'], array_keys(titania_types::$types)))
 			{
-				// Skip 2.0 mods
-				continue;
-			}
-
-			$ignore = array(-1, 3, 5);
-			if (in_array($row['contrib_status'], $ignore))
-			{
-				// Skip contribs that were denied
-				continue;
-			}
-
-			// Skip weird ones
-			if (!in_array($row['contrib_type'], array_keys(titania_types::$types)))
-			{
+				// Skip 2.0 mods, contribs that were denied or pulled and weird ones
 				continue;
 			}
 
@@ -117,15 +122,6 @@ switch ($step)
 
 				if (!$cnt)
 				{
-					/*$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . $ariel_prefix . 'queue
-						WHERE queue_status = -1
-							AND contrib_id = ' . $row['contrib_id'];
-					$result1 = phpbb::$db->sql_query($sql);
-					$cnt1 = phpbb::$db->sql_fetchfield('cnt', $result1);
-					phpbb::$db->sql_freeresult($result1);
-
-					echo (($cnt1) ? '<strong>' : '') . $row['contrib_name'] . ' approved: ' . $cnt1 . (($cnt1) ? '</strong>' : '') . '<br />';*/
-
 					// Somebody changed the status manually to new, should have been 3
 					continue;
 				}
@@ -151,6 +147,19 @@ switch ($step)
 				phpbb::$db->sql_freeresult($p_result);
 			} while ($conflict == true);
 
+			switch ((int) $row['contrib_status'])
+			{
+				case 4 : // Cleaned
+					$contrib_status = TITANIA_CONTRIB_CLEANED;
+				break;
+
+				// None have been pulled for security reasons...
+
+				default :
+					$contrib_status = TITANIA_CONTRIB_APPROVED;
+				break;
+			}
+
 			$sql_ary = array(
 				'contrib_id'					=> $row['contrib_id'],
 				'contrib_user_id'				=> $row['user_id'],
@@ -161,7 +170,7 @@ switch ($step)
 				'contrib_desc_bitfield'			=> $row['contrib_bbcode_bitfield'],
 				'contrib_desc_uid'				=> $row['contrib_bbcode_uid'],
 				'contrib_desc_options'			=> $row['contrib_bbcode_flags'],
-				'contrib_status'				=> TITANIA_CONTRIB_APPROVED,
+				'contrib_status'				=> $contrib_status,
 				'contrib_downloads'				=> $row['contrib_downloads'],
 				'contrib_views'					=> 0,
 				'contrib_rating'				=> 0,
@@ -264,90 +273,137 @@ switch ($step)
 		$total = phpbb::$db->sql_fetchfield('cnt');
 		phpbb::$db->sql_freeresult();
 
-		$sql_ary = array(
-			'SELECT'	=> 'q.*, r.*',
+$sql_ary = array(
+	'SELECT'	=> 'q.*, r.*, c.contrib_name, c.contrib_phpbb_version, c.contrib_status, c.contrib_type',
 
-			'FROM'		=> array(
-				$ariel_prefix . 'contrib_revisions' => 'r',
-			),
+	'FROM'		=> array(
+		$ariel_prefix . 'contrib_revisions' => 'r',
+		$ariel_prefix . 'contribs' => 'c',
+	),
 
-			'LEFT_JOIN'	=> array(
-				array(
-					'FROM'	=> array($ariel_prefix . 'queue' => 'q'),
-					'ON'	=> 'q.revision_id = r.revision_id',
-				),
-			),
+	'LEFT_JOIN'	=> array(
+		array(
+			'FROM'	=> array($ariel_prefix . 'queue' => 'q'),
+			'ON'	=> 'q.revision_id = r.revision_id',
+		),
+	),
 
-			'ORDER_BY'	=> 'r.revision_id ASC',
-		);
-		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+	'WHERE'		=> 'c.contrib_id = r.contrib_id',
 
-		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			if ($row['revision_phpbb_version'][0] != '3' || (!strpos($row['revision_filename'], '.mod') && !strpos($row['revision_filename'], '.zip')))
+	'ORDER_BY'	=> 'r.revision_id ASC',
+);
+$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+
+$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
+while ($row = phpbb::$db->sql_fetchrow($result))
+{
+	$ignore = array(-1, 3);
+	if ($row['contrib_phpbb_version'][0] != '3' || in_array($row['contrib_status'], $ignore) || !in_array($row['contrib_type'], array_keys(titania_types::$types)))
+	{
+		// Skip 2.0 mods, contribs that were denied or pulled and weird ones
+		continue;
+	}
+
+	if ($row['revision_phpbb_version'][0] != '3')
+	{
+		//echo 'Revision phpBB version is ' . $row['revision_phpbb_version'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_id'] . '<br />';
+	}
+
+	$ignore = array(-2, -3, -4, -5, -6);
+	if (in_array($row['queue_status'], $ignore))
+	{
+		// Skip revisions that were denied, canned, etc
+		continue;
+	}
+
+	// mime_content_type bitches on me without using realpath
+	$filename = realpath(PHPBB_ROOT_PATH . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
+	if (!file_exists($filename))
+	{
+		echo 'Could Not Find File - ' . $filename . '<br />';
+		continue;
+	}
+	$mime_type = mime_content_type($filename);
+
+	switch ($mime_type)
+	{
+		case 'application/zip' :
+		case 'application/octet-stream' :
+			if (!strpos($row['revision_filename'], '.zip'))
 			{
-				// Skip 2.0 mods and broken filenames (broken filenames seem to only be on really old files)
-				continue;
+				$row['revision_filename'] .= '.zip';
 			}
+		break;
 
-			$ignore = array(-2, -3, -4, -5, -6);
-			if (in_array($row['queue_status'], $ignore))
-			{
-				// Skip revisions that were denied, canned, etc
-				continue;
-			}
+		default :
+			//echo $row['revision_filename'] . ' ' . $mime_type . ' ' . $filename . '<br />';
+			continue;
+		break;
+	}
 
-			$sql_ary = array(
-				'object_type'			=> TITANIA_CONTRIB,
-				'object_id'				=> $row['contrib_id'],
-				'attachment_access'		=> TITANIA_ACCESS_PUBLIC,
-				'attachment_comment'	=> '',
-				'attachment_directory'	=> 'titania_contributions',
-				'physical_filename'		=> $row['revision_filename_internal'],
-				'real_filename'			=> $row['revision_filename'],
-				'download_count'		=> 0,
-				'filesize'				=> $row['revision_filesize'],
-				'filetime'				=> $row['revision_date'],
-				'extension'				=> (strpos($row['revision_filename'], '.zip')) ? 'zip' : 'mod',
-				'mimetype'				=> (strpos($row['revision_filename'], '.zip')) ? 'application/x-zip-compressed' : 'text/plain',
-				'hash'					=> $row['revision_md5'],
-				'thumbnail'				=> 0,
-				'is_orphan'				=> 0,
-			);
+	$move_dir = 'titania_contributions';
+	$move_file = md5(unique_id());
+	if (!file_exists(titania::$config->upload_path . $move_dir))
+	{
+		mkdir(titania::$config->upload_path . $move_dir);
+		phpbb_chmod(titania::$config->upload_path . $move_dir, CHMOD_ALL);
+	}
+	if (!copy($filename, titania::$config->upload_path . $move_dir . '/' . $move_file))
+	{
+		echo 'Could Not Copy File - ' . $filename . '<br />';
+		continue;
+	}
 
-			// Insert
-			$attach_id = titania_insert(TITANIA_ATTACHMENTS_TABLE, $sql_ary);
+	$sql_ary = array(
+		'object_type'			=> TITANIA_CONTRIB,
+		'object_id'				=> $row['contrib_id'],
+		'attachment_access'		=> TITANIA_ACCESS_PUBLIC,
+		'attachment_comment'	=> '',
+		'attachment_directory'	=> $move_dir,
+		'physical_filename'		=> $move_file,
+		'real_filename'			=> $row['revision_filename'],
+		'download_count'		=> 0,
+		'filesize'				=> $row['revision_filesize'],
+		'filetime'				=> $row['revision_date'],
+		'extension'				=> (strpos($row['revision_filename'], '.zip')) ? 'zip' : 'mod',
+		'mimetype'				=> (strpos($row['revision_filename'], '.zip')) ? 'application/x-zip-compressed' : 'text/plain',
+		'hash'					=> $row['revision_md5'],
+		'thumbnail'				=> 0,
+		'is_orphan'				=> 0,
+	);
 
-			$sql_ary = array(
-				'revision_id'				=> $row['revision_id'],
-				'contrib_id'				=> $row['contrib_id'],
-				'attachment_id'				=> $attach_id,
-				'revision_version'			=> $row['revision_version'],
-				'revision_name'				=> $row['revision_name'],
-				'revision_time'				=> $row['revision_date'],
-				'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
-				'validation_date'			=> ($row['queue_status'] == -1) ? $row['revision_date'] : 0,
-				'phpbb_version'				=> $row['revision_phpbb_version'],
-				'install_time'				=> 0,
-				'install_level'				=> 0,
-				'revision_submitted'		=> 1,
-			);
+	// Insert
+	$attach_id = titania_insert(TITANIA_ATTACHMENTS_TABLE, $sql_ary);
 
-			// Insert
-			titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
+	$sql_ary = array(
+		'revision_id'				=> $row['revision_id'],
+		'contrib_id'				=> $row['contrib_id'],
+		'attachment_id'				=> $attach_id,
+		'revision_version'			=> $row['revision_version'],
+		'revision_name'				=> $row['revision_name'],
+		'revision_time'				=> $row['revision_date'],
+		'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
+		'validation_date'			=> ($row['queue_status'] == -1) ? $row['revision_date'] : 0,
+		'phpbb_version'				=> $row['revision_phpbb_version'],
+		'install_time'				=> 0,
+		'install_level'				=> 0,
+		'revision_submitted'		=> 1,
+	);
 
-			// Update the contrib_last_update
-			if ($row['queue_status'] == -1 || !titania::$config->require_validation)
-			{
-				$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-					SET contrib_last_update = ' . (int) $row['revision_date'] . '
-					WHERE contrib_id = ' . (int) $row['contrib_id'] . '
-						AND contrib_last_update < ' . (int) $row['revision_date'];
-				phpbb::$db->sql_query($sql);
-			}
-		}
-		phpbb::$db->sql_freeresult($result);
+	// Insert
+	titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
+
+	// Update the contrib_last_update
+	if ($row['queue_status'] == -1 || !titania::$config->require_validation)
+	{
+		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+			SET contrib_last_update = ' . (int) $row['revision_date'] . '
+			WHERE contrib_id = ' . (int) $row['contrib_id'] . '
+				AND contrib_last_update < ' . (int) $row['revision_date'];
+		phpbb::$db->sql_query($sql);
+	}
+}
+phpbb::$db->sql_freeresult($result);
 
 		$display_message = 'Revisions table';
 	break;
@@ -441,7 +497,12 @@ else
 
 $display_message .= '<br /><br /><a href="' . $next . '">Manual Continue</a>';
 
-meta_refresh(0, $next);
+// Meta refresh only if no errors
+if (!headers_sent())
+{
+	meta_refresh(0, $next);
+}
+
 trigger_error($display_message);
 
 function titania_insert($table, $sql_ary)
@@ -461,4 +522,31 @@ function titania_insert($table, $sql_ary)
 	phpbb::$db->sql_return_on_error(false);
 
 	return phpbb::$db->sql_nextid();
+}
+
+function titania_rmdir_recursive($target_filename)
+{
+	if (!is_dir($target_filename))
+	{
+		return;
+	}
+
+    foreach (scandir($target_filename) as $item)
+	{
+        if ($item == '.' || $item == '..')
+		{
+			continue;
+		}
+
+		if (is_dir($target_filename . $item))
+		{
+			titania_rmdir_recursive($target_filename . $item . '/');
+		}
+		else
+		{
+			@unlink($target_filename . $item);
+		}
+    }
+
+	return @rmdir($target_filename);
 }
