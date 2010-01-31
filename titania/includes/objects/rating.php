@@ -191,7 +191,7 @@ class titania_rating extends titania_database_object
 	*/
 	public function get_rating_string()
 	{
-		$can_rate = (phpbb::$user->data['is_registered'] && phpbb::$auth->acl_get('titania_rate') && !$this->rating_id) ? true : false;
+		$can_rate = (phpbb::$user->data['is_registered'] && phpbb::$auth->acl_get('u_titania_rate') && !$this->rating_id) ? true : false;
 		$rate_url = titania_url::build_url('rate', array('type' => $this->rating_type, 'id' => $this->rating_object_id));
 
 		// If it has not had any ratings yet, give it 1/2 the max for the rating
@@ -242,7 +242,7 @@ class titania_rating extends titania_database_object
 	*/
 	public function add_rating($rating)
 	{
-		if (!phpbb::$user->data['is_registered'] || !phpbb::$auth->acl_get('titania_rate'))
+		if (!phpbb::$user->data['is_registered'] || !phpbb::$auth->acl_get('u_titania_rate'))
 		{
 			return false;
 		}
@@ -334,7 +334,7 @@ class titania_rating extends titania_database_object
 	*/
 	public function reset_rating()
 	{
-		if (!phpbb::$auth->acl_get('titania_rate_reset'))
+		if (!phpbb::$auth->acl_get('u_titania_rate_reset'))
 		{
 			return false;
 		}

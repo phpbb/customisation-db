@@ -21,7 +21,7 @@ if (!function_exists('generate_type_select') || !function_exists('generate_categ
 	require TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT;
 }
 
-if (!phpbb::$auth->acl_get('titania_contrib_submit'))
+if (!phpbb::$auth->acl_get('u_titania_contrib_submit'))
 {
 	trigger_error('NO_AUTH');
 }
@@ -37,8 +37,8 @@ titania::$contrib->author->load();
 // Load the message object
 $message = new titania_message(titania::$contrib);
 $message->set_auth(array(
-	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
-	'smilies'	=> phpbb::$auth->acl_get('titania_smilies'),
+	'bbcode'	=> phpbb::$auth->acl_get('u_titania_bbcode'),
+	'smilies'	=> phpbb::$auth->acl_get('u_titania_smilies'),
 ));
 $message->set_settings(array(
 	'display_error'		=> false,

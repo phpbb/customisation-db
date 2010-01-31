@@ -62,17 +62,17 @@ class titania_type_style extends titania_type_base
 		{
 			// Can view the style queue
 			case 'view' :
-				return phpbb::$auth->acl_get('titania_style_queue');
+				return phpbb::$auth->acl_get('u_titania_style_queue');
 			break;
 
 			// Can validate styles in the queue
 			case 'validate' :
-				return phpbb::$auth->acl_get('titania_style_validate');
+				return phpbb::$auth->acl_get('u_titania_style_validate');
 			break;
 
 			// Can moderate styles
 			case 'moderate' :
-				return phpbb::$auth->acl_get('titania_style_moderate');
+				return phpbb::$auth->acl_get('u_titania_style_moderate');
 			break;
 		}
 
@@ -97,9 +97,9 @@ class titania_type_style extends titania_type_base
 
 			// Permissions
 			$umil->permission_add(array(
-				'titania_style_queue',
-				'titania_style_validate',
-				'titania_style_moderate',
+				'u_titania_style_queue',
+				'u_titania_style_validate',
+				'u_titania_style_moderate',
 			));
 
 			// Style count holder
@@ -138,9 +138,9 @@ class titania_type_style extends titania_type_base
 
 			// Permissions
 			$umil->permission_remove(array(
-				'titania_style_queue',
-				'titania_style_validate',
-				'titania_style_moderate',
+				'u_titania_style_queue',
+				'u_titania_style_validate',
+				'u_titania_style_moderate',
 			));
 
 			// Mod count holder

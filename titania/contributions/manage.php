@@ -20,7 +20,7 @@ titania::_include('functions_posting', 'generate_type_select');
 
 load_contrib();
 
-if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('titania_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('u_titania_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 {
 	trigger_error('NO_AUTH');
 }
@@ -132,8 +132,8 @@ if (titania::confirm_box(true))
 // Load the message object
 $message = new titania_message(titania::$contrib);
 $message->set_auth(array(
-	'bbcode'	=> phpbb::$auth->acl_get('titania_bbcode'),
-	'smilies'	=> phpbb::$auth->acl_get('titania_smilies'),
+	'bbcode'	=> phpbb::$auth->acl_get('u_titania_bbcode'),
+	'smilies'	=> phpbb::$auth->acl_get('u_titania_smilies'),
 ));
 $message->set_settings(array(
 	'display_error'		=> false,

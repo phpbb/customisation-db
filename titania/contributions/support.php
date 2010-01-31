@@ -80,7 +80,7 @@ switch ($action)
 		titania::add_lang('posting');
 		phpbb::$user->add_lang('posting');
 
-		if ($action != 'edit' && (($action == 'post' && !phpbb::$auth->acl_get('titania_topic')) || ($action == 'reply' && (!$topic_id || !phpbb::$auth->acl_get('titania_post')))))
+		if ($action != 'edit' && (($action == 'post' && !phpbb::$auth->acl_get('u_titania_topic')) || ($action == 'reply' && (!$topic_id || !phpbb::$auth->acl_get('u_titania_post')))))
 		{
 			trigger_error('NO_AUTH');
 		}
@@ -107,12 +107,12 @@ switch ($action)
 		// Load the message object
 		$message = new titania_message($post);
 		$message->set_auth(array(
-			'bbcode'		=> phpbb::$auth->acl_get('titania_bbcode'),
-			'smilies'		=> phpbb::$auth->acl_get('titania_smilies'),
-			'lock'			=> ($action == 'edit' && $post->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('titania_post_mod')) ? true : false,
-			'sticky_topic'	=> (($action == 'post' || ($action == 'edit' && $post_id == $post->topic->topic_first_post_id)) && (phpbb::$auth->acl_get('titania_post_mod') || titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
-			'lock_topic'	=> (phpbb::$auth->acl_get('titania_post_mod') || (phpbb::$auth->acl_get('titania_post_mod_own') && $post->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
-			'attachments'	=> phpbb::$auth->acl_get('titania_post_attach'),
+			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
+			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
+			'lock'			=> ($action == 'edit' && $post->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('u_titania_post_mod')) ? true : false,
+			'sticky_topic'	=> (($action == 'post' || ($action == 'edit' && $post_id == $post->topic->topic_first_post_id)) && (phpbb::$auth->acl_get('u_titania_post_mod') || titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
+			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message->set_settings(array(
 			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
@@ -235,7 +235,7 @@ switch ($action)
 
 			titania::page_header(phpbb::$user->lang['CONTRIB_SUPPORT'] . ' - ' . censor_text($topic->topic_subject));
 
-			if (phpbb::$auth->acl_get('titania_post'))
+			if (phpbb::$auth->acl_get('u_titania_post'))
 			{
 				phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(), array('action' => 'reply')));
 			}
@@ -246,7 +246,7 @@ switch ($action)
 
 			titania::page_header('CONTRIB_SUPPORT');
 
-			if (phpbb::$auth->acl_get('titania_topic'))
+			if (phpbb::$auth->acl_get('u_titania_topic'))
 			{
 				phpbb::$template->assign_var('U_POST_TOPIC', titania_url::append_url(titania::$contrib->get_url('support'), array('action' => 'post')));
 			}

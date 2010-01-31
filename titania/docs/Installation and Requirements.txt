@@ -8,14 +8,4 @@ How to install:
 	2. Copy the titania directory the location you want on your server (will be refered to as titania/ from now on)
 	3. Copy titania/config.example.php to config.php; edit settings as required
 	4. Visit any page in titania/ in your browser and run the installer script
-	5. Edit file (hopefully this is temporary, until we find a better way or setup our own permissions panel):
-
-includes/acp/acp_permissions.php
-
-Find:
-$this->permission_dropdown = array('u_', 'm_', 'a_');
-
-Replace with:
-$this->permission_dropdown = array('u_', 'm_', 'a_', 'titania_');
-
-	6. Done!
+	5. Done!

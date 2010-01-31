@@ -18,8 +18,10 @@ define('IN_TITANIA_INSTALL', true);
 define('UMIL_AUTO', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
-require TITANIA_ROOT . 'common.' . PHP_EXT;
+include(TITANIA_ROOT . 'common.' . PHP_EXT);
 titania::add_lang('install');
+
+include(TITANIA_ROOT . 'includes/functions_install.' . PHP_EXT);
 
 // Just to be on the safe side, add a php version check.
 if (version_compare(PHP_VERSION, '5.2.0') < 0)
@@ -42,7 +44,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.26'	=> array(
+	'0.1.31'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -141,6 +143,8 @@ $versions = array(
 					'contrib_rating_count'			=> array('UINT', 0),
 					'contrib_visible'				=> array('BOOL', 1),
 					'contrib_last_update'			=> array('TIMESTAMP', 0),
+					'contrib_demo'					=> array('VCHAR_UNI:200', ''),
+					'contrib_topic'					=> array('UINT', 0), // Store the old topic_id from ariel for the forums
 				),
 				'PRIMARY_KEY'	=> 'contrib_id',
 				'KEYS'			=> array(
@@ -191,14 +195,6 @@ $versions = array(
 				),
 				'PRIMARY_KEY'	=> array('contrib_id', 'category_id'),
 			)),
-			array(TITANIA_CONTRIB_TAGS_TABLE, array(
-				'COLUMNS'		=> array(
-					'contrib_id'			=> array('UINT', 0),
-					'tag_id'				=> array('UINT', 0),
-					'tag_value'				=> array('STEXT_UNI', '', 'true_sort'),
-				),
-				'PRIMARY_KEY'	=> array('contrib_id', 'tag_id'),
-			)),
 			array(TITANIA_POSTS_TABLE, array(
 				'COLUMNS'		=> array(
 					'post_id'				=> array('UINT', NULL, 'auto_increment'),
@@ -242,10 +238,10 @@ $versions = array(
 					'queue_type'			=> array('TINT:1', 0),
 					'queue_status'			=> array('TINT:1', 0),
 					'submitter_user_id'		=> array('UINT', 0),
-					'queue_notes'			=> array('MTEXT_UNI', ''), // Not sure why we need this?
-					'queue_notes_bitfield'	=> array('VCHAR:255', ''), // Not sure why we need this?
-					'queue_notes_uid'		=> array('VCHAR:8', ''), // Not sure why we need this?
-					'queue_notes_options'	=> array('UINT:11', 7), // Not sure why we need this?
+					'queue_notes'			=> array('MTEXT_UNI', ''),
+					'queue_notes_bitfield'	=> array('VCHAR:255', ''),
+					'queue_notes_uid'		=> array('VCHAR:8', ''),
+					'queue_notes_options'	=> array('UINT:11', 7),
 					'queue_progress'		=> array('TINT:3', 0),
 					'queue_submit_time'		=> array('UINT:11', 0),
 					'queue_close_time'		=> array('UINT:11', 0),
@@ -285,6 +281,11 @@ $versions = array(
 					'revision_validation_notes'	=> array('VCHAR', ''),
 					'revision_validated'		=> array('UINT:11', 0),
 					'validation_date'			=> array('UINT:11', 0),
+					'phpbb_version'				=> array('STEXT', 0),
+					'install_time'				=> array('USINT', 0),
+					'install_level'				=> array('TINT:1', 0),
+					'revision_submitted'		=> array('BOOL', 0), // So we can hide the revision while we are creating it, false means someone is working on creating it (or did not finish creating it)
+					'queue_topic_id'			=> array('UINT:11', 0), // Store the queue topic id so we can track it
 				),
 				'PRIMARY_KEY'	=> 'revision_id',
 				'KEYS'			=> array(
@@ -292,7 +293,17 @@ $versions = array(
 					'contrib_validated'		=> array('INDEX', 'contrib_validated'),
 					'revision_time'			=> array('INDEX', 'revision_time'),
 					'validation_date'		=> array('INDEX', 'validation_date'),
+					'revision_submitted'	=> array('INDEX', 'revision_submitted'),
 				),
+			)),
+			array(TITANIA_TAG_APPLIED_TABLE, array(
+				'COLUMNS'		=> array(
+					'object_type'			=> array('UINT', 0),
+					'object_id'				=> array('UINT', 0),
+					'tag_id'				=> array('UINT', 0),
+					'tag_value'				=> array('STEXT_UNI', '', 'true_sort'),
+				),
+				'PRIMARY_KEY'	=> array('object_type', 'object_id', 'tag_id'),
 			)),
 			array(TITANIA_TAG_FIELDS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -301,6 +312,7 @@ $versions = array(
 					'tag_field_name'		=> array('XSTEXT_UNI', '', 'true_sort'),
 					'tag_clean_name'		=> array('XSTEXT_UNI', '', 'true_sort'),
 					'tag_field_desc'		=> array('STEXT_UNI', '', 'true_sort'),
+					'no_delete'				=> array('BOOL', 0), // A few tags we have to hard-code (like new status for a queue item)
 				),
 				'PRIMARY_KEY'	=> 'tag_id',
 				'KEYS'			=> array(
@@ -382,33 +394,33 @@ $versions = array(
 		),
 
 		'permission_add' => array(
-			'titania_',
+			'u_titania_',
 
-			'titania_author_mod',		// Can moderate author profiles
+			'u_titania_author_mod',			// Can moderate author profiles
 
-			'titania_contrib_submit',	// Can submit contrib items
-			'titania_contrib_mod',		// Can moderate contrib items (manage them globally)
+			'u_titania_contrib_submit',		// Can submit contrib items
+			'u_titania_contrib_mod',		// Can moderate contrib items (manage them globally)
 
-			'titania_rate',				// Can rate items
-			'titania_rate_reset',		// Can reset the rating on items
+			'u_titania_rate',				// Can rate items
+			'u_titania_rate_reset',			// Can reset the rating on items
 
-			'titania_faq_create',		// Can create FAQ entries
-			'titania_faq_edit',			// Can edit own FAQ entries
-			'titania_faq_delete',		// Can delete own FAQ entries
-			'titania_faq_mod',			// Can moderate FAQ entries
+			'u_titania_faq_create',			// Can create FAQ entries
+			'u_titania_faq_edit',			// Can edit own FAQ entries
+			'u_titania_faq_delete',			// Can delete own FAQ entries
+			'u_titania_faq_mod',			// Can moderate FAQ entries
 
-			'titania_topic',			// Can create new topics
-			'titania_bbcode',			// Can post bbcode
-			'titania_smilies',			// Can post smilies
-			'titania_post',				// Can create new posts
-			'titania_post_edit_own',	// Can edit own posts
-			'titania_post_delete_own',	// Can delete own posts
-			'titania_post_mod_own',		// Can moderate own topics
-			'titania_post_mod',			// Can moderate topics
-			'titania_post_attach',		// Can attach files to posts
+			'u_titania_topic',				// Can create new topics
+			'u_titania_bbcode',				// Can post bbcode
+			'u_titania_smilies',			// Can post smilies
+			'u_titania_post',				// Can create new posts
+			'u_titania_post_edit_own',		// Can edit own posts
+			'u_titania_post_delete_own',	// Can delete own posts
+			'u_titania_post_mod_own',		// Can moderate own topics
+			'u_titania_post_mod',			// Can moderate topics
+			'u_titania_post_attach',		// Can attach files to posts
 		),
 
-		'custom' => array('titania_data', 'titania_ext_groups'),
+		'custom' => 'titania_custom',
 
 		'cache_purge' => '',
 	),
@@ -416,295 +428,4 @@ $versions = array(
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
-function titania_data($action, $version)
-{
-	global $umil;
-
-	if ($action != 'install')
-	{
-		return;
-	}
-
-	$categories = array(
-		array(
-			'category_id'	=> 1,
-			'parent_id'		=> 0,
-			'left_id'		=> 1,
-			'right_id'		=> 22,
-			'category_type'	=> 0,
-			'category_name'	=> 'phpBB3',
-			'category_name_clean'	=> 'phpBB3',
-			'category_desc'			=> '',
-			'category_contribs'		=> 1,
-		),
-		array(
-			'category_id'	=> 2,
-			'parent_id'		=> 1,
-			'left_id'		=> 2,
-			'right_id'		=> 19,
-			'category_type'	=> 0,
-			'category_name'	=> 'CAT_MODIFICATIONS',
-			'category_name_clean'	=> 'modifications',
-			'category_desc'			=> '',
-			'category_contribs'		=> 1,
-		),
-		array(
-			'category_id'	=> 3,
-			'parent_id'		=> 1,
-			'left_id'		=> 20,
-			'right_id'		=> 21,
-			'category_type'	=> 2,
-			'category_name'	=> 'CAT_STYLES',
-			'category_name_clean'	=> 'styles',
-			'category_desc'			=> '',
-			'category_contribs'		=> 0,
-		),
-		array(
-			'category_id'	=> 4,
-			'parent_id'		=> 2,
-			'left_id'		=> 3,
-			'right_id'		=> 4,
-			'category_type'	=> 1,
-			'category_name'	=> 'CAT_COSMETIC',
-			'category_name_clean'	=> 'cosmetic',
-			'category_desc'			=> '',
-			'category_contribs'		=> 0,
-		),
-		array(
-			'category_id'	=> 5,
-			'parent_id'		=> 2,
-			'left_id'		=> 5,
-			'right_id'		=> 6,
-			'category_type'	=> 1,
-			'category_name'	=> 'CAT_ADMIN_TOOLS',
-			'category_name_clean'	=> 'admin-tools',
-			'category_desc'			=> '',
-			'category_contribs'		=> 0,
-		),
-		array(
-			'category_id'	=> 6,
-			'parent_id'		=> 2,
-			'left_id'		=> 7,
-			'right_id'		=> 8,
-			'category_type'	=> 1,
-			'category_name'	=> 'CAT_SECURITY',
-			'category_name_clean'	=> 'security',
-			'category_desc'			=> '',
-			'category_contribs'		=> 0,
-		),
-		array(
-			'category_id'	=> 7,
-			'parent_id'		=> 2,
-			'left_id'		=> 9,
-			'right_id'		=> 10,
-			'category_type'	=> 1,
-			'category_name'	=> 'CAT_COMMUNICATION',
-			'category_name_clean'	=> 'communication',
-			'category_desc'			=> '',
-			'category_contribs'		=> 0,
-		),
-		array(
-			'category_id'	=> 8,
-			'parent_id'		=> 2,
-			'left_id'		=> 11,
-			'right_id'		=> 12,
-			'category_type'	=> 1,
-			'category_name'	=> 'CAT_PROFILE_UCP',
-			'category_name_clean'	=> 'profile',
-			'category_desc'			=> '',
-			'category_contribs'		=> 0,
-		),
-		array(
-			'category_id'	=> 9,
-			'parent_id'		=> 2,
-			'left_id'		=> 13,
-			'right_id'		=> 14,
-			'category_type'	=> 1,
-			'category_name'	=> 'CAT_ADDONS',
-			'category_name_clean'	=> 'addons',
-			'category_desc'			=> '',
-			'category_contribs'		=> 1,
-		),
-		array(
-			'category_id'	=> 10,
-			'parent_id'		=> 2,
-			'left_id'		=> 15,
-			'right_id'		=> 16,
-			'category_type'	=> 1,
-			'category_name'	=> 'CAT_ANTI_SPAM',
-			'category_name_clean'	=> 'anti-spam',
-			'category_desc'			=> '',
-			'category_contribs'		=> 0,
-		),
-		array(
-			'category_id'	=> 11,
-			'parent_id'		=> 2,
-			'left_id'		=> 17,
-			'right_id'		=> 18,
-			'category_type'	=> 1,
-			'category_name'	=> 'CAT_ENTERTAINMENT',
-			'category_name_clean'	=> 'entertainment',
-			'category_desc'			=> '',
-			'category_contribs'		=> 1,
-		),
-	);
-
-	$umil->table_row_insert(TITANIA_CATEGORIES_TABLE, $categories);
-}
-
-function titania_ext_groups($action, $version)
-{
-	global $umil;
-
-	switch ($action)
-	{
-		case 'install':
-		case 'update':
-			// Add Titania ext groups.
-			$sql_ary = array(
-				array(
-					'group_name'		=> 'Titania Contributions',
-					'cat_id'			=> 0,
-					'allow_group'		=> 1,
-					'download_mode'		=> 1,
-					'upload_icon'		=> 'zip.png',
-					'max_filesize'		=> 0,
-					'allowed_forums'	=> '',
-					'allow_in_pm'		=> 0,
-				),
-				array(
-					'group_name'		=> 'Titania Screenshots',
-					'cat_id'			=> 0,
-					'allow_group'		=> 1,
-					'download_mode'		=> 1,
-					'upload_icon'		=> '',
-					'max_filesize'		=> 0,
-					'allowed_forums'	=> '',
-					'allowed_forums'	=> '',
-					'allow_in_pm'		=> 0,
-				)
-			);
-			$umil->table_row_insert(EXTENSION_GROUPS_TABLE, $sql_ary);
-
-			// Get group ids for newly created groups.
-			$sql = 'SELECT group_id, group_name
-				FROM ' . EXTENSION_GROUPS_TABLE . "
-				WHERE group_name = 'Titania Contributions'
-					OR group_name = 'Titania Screenshots'";
-			$result = phpbb::$db->sql_query($sql);
-
-			$titania_ext_groups = array();
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$titania_ext_groups[$row['group_name']] = $row['group_id'];
-			}
-			phpbb::$db->sql_freeresult($result);
-
-			// Add default allowed extentsions to newly created groups.
-			// First we will try to find the default phpBB image and archive extenstion groups. If we find them, we will
-			// use the same file extensions that are allowed for the coresponding groups for Titania, but the site may want to configure
-			// it differntly than in the forums for Titania, which is why we have the seperate Titania extenstion groups.
-
-			// See if we can find the default phpBB groups.
-			$sql_ary = array(
-				'SELECT'	=> 'g.group_name, e.extension',
-
-				'FROM'		=> array(EXTENSION_GROUPS_TABLE 	=> 'g'),
-
-				'LEFT_JOIN'	=> array(
-					array(
-						'FROM'	=> array(EXTENSIONS_TABLE 		=> 'e'),
-						'ON'	=> 'e.group_id = g.group_id'
-					),
-				),
-
-				'WHERE'		=> "g.group_name = 'Images'
-					OR g.group_name = 'Archives'",
-			);
-			$result = phpbb::$db->sql_query(phpbb::$db->sql_build_query('SELECT', $sql_ary));
-
-			$sql_ary = array(
-				'Titania Contributions'		=> array(),
-				'Titania Screenshots'		=> array(),
-			);
-
-			// We found them!
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$which = ($row['group_name'] == 'Archives') ? 'Titania Contributions' : 'Titania Screenshots';
-
-				$sql_ary[$which][] = array(
-					'group_id'		=> $titania_ext_groups[$which],
-					'extension'		=> $row['extension'],
-				);
-			}
-			phpbb::$db->sql_freeresult($result);
-
-			// Check to see if we have empty sql_ary. If the array is empty, we know that the default phpBB ext groups could not be
-			// found and we need to just use some default extensions.
-			if (!sizeof($sql_ary['Titania Contributions']))
-			{
-				// Only allow zip for contributions.
-				$sql_ary['Titania Contributions'] = array(
-					array(
-						'group_id'	=> $titania_ext_groups['Titania Contributions'],
-						'extension'	=> 'zip'
-					)
-				);
-			}
-
-			// No image extensions?
-			if (!sizeof($sql_ary['Titania Screenshots']))
-			{
-				$group_id = $titania_ext_groups['Titania Screenshots'];
-
-				// Only allow zip for contributions.
-				$sql_ary['Titania Screenshots'] = array(
-					array(
-						'group_id'	=> $group_id,
-						'extension'	=> 'png'
-					),
-					array(
-						'group_id' 	=> $group_id,
-						'extension'	=> 'gif'
-					),
-					array(
-						'group_id'	=> $group_id,
-						'extension'	=> 'jpg'
-					)
-				);
-			}
-
-			// Insert extensions for Titania Screenshots
-			$umil->table_row_insert(EXTENSIONS_TABLE, $sql_ary['Titania Screenshots']);
-
-			// Insert extensions for Titania Contributions
-			$umil->table_row_insert(EXTENSIONS_TABLE, $sql_ary['Titania Contributions']);
-		break;
-
-		case 'uninstall':
-			// Get group ids Titania ext groups.
-			$sql = 'SELECT group_id, group_name
-				FROM ' . EXTENSION_GROUPS_TABLE . "
-				WHERE group_name = 'Titania Contributions'
-					OR group_name = 'Titania Screenshots'";
-			$result = phpbb::$db->sql_query($sql);
-
-			$titania_ext_groups = array();
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$titania_ext_groups[$row['group_name']] = $row['group_id'];
-			}
-			phpbb::$db->sql_freeresult($result);
-
-			// Delete extensions.
-			$umil->table_row_remove(EXTENSIONS_TABLE, array('group_id' => $titania_ext_groups['Titania Contributions']));
-			$umil->table_row_remove(EXTENSIONS_TABLE, array('group_id' => $titania_ext_groups['Titania Screenshots']));
-
-			// Delete groups.
-			$umil->table_row_remove(EXTENSION_GROUPS_TABLE, array('group_id' => $titania_ext_groups['Titania Contributions']));
-			$umil->table_row_remove(EXTENSION_GROUPS_TABLE, array('group_id' => $titania_ext_groups['Titania Screenshots']));
-		break;
-	}
-}
 include(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT);
