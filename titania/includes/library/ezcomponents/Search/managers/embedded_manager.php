@@ -3,8 +3,8 @@
  * File containing the ezcSearchEmbeddedManager class
  *
  * @package Search
- * @version 1.0.8
- * @copyright Copyright (C) 2005-2009 eZ Systems AS. All rights reserved.
+ * @version //autogen//
+ * @copyright Copyright (C) 2005-2010 eZ Systems AS. All rights reserved.
  * @license http://ez.no/licenses/new_bsd New BSD License
  */
 
@@ -15,7 +15,7 @@
  * definition. This method is required to return an ezcSearchDocumentDefinition
  * object. The method is part of the interface ezcSearchDefinitionProvider.
  *
- * @version 1.0.8
+ * @version //autogen//
  * @package Search
  */
 class ezcSearchEmbeddedManager implements ezcSearchDefinitionManager

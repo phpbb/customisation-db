@@ -48,7 +48,6 @@ class phpbb_ezcomponents_loader
 		$ezc_path = TITANIA_ROOT . 'includes/library/ezcomponents/';
 
 		// retrieve the autoload list
-		//$classes = include($ezc_path . ucfirst($component) . '/' . $component . '_autoload.php');
 		$classes = include($ezc_path . ucfirst($component) . '/' . $component . '_autoload.php');
 
 		// include all files related to this component

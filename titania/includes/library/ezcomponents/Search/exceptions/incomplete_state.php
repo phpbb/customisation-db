@@ -3,8 +3,8 @@
  * File containing the ezcSearchIncompleteStateException class.
  *
  * @package Search
- * @version 1.0.8
- * @copyright Copyright (C) 2005-2009 eZ Systems AS. All rights reserved.
+ * @version //autogentag//
+ * @copyright Copyright (C) 2005-2010 eZ Systems AS. All rights reserved.
  * @license http://ez.no/licenses/new_bsd New BSD License
  */
 
@@ -13,7 +13,7 @@
  * getState().
  *
  * @package Search
- * @version 1.0.8
+ * @version //autogentag//
  */
 class ezcSearchIncompleteStateException extends ezcSearchException
 {

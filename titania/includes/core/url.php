@@ -155,6 +155,25 @@ class titania_url
 	}
 
 	/**
+	* Unbuild a url (used for the indexer)
+	*
+	* @param mixed $url
+	*/
+	public static function unbuild_url($url)
+	{
+		// Remove the root url
+		$url = str_replace(self::$root_url, '', $url);
+
+		// Replace SID
+		$url = preg_replace('#sid' . self::$separator . '[a-z0-9]+#', '', $url);
+
+		// Replace style
+		$url = preg_replace('#style' . self::$separator . '[0-9]+#', '', $url);
+
+		return $url;
+	}
+
+	/**
 	* Create a safe string for the URLs
 	*
 	* @param string $string

@@ -83,6 +83,37 @@ class titania_sync
 						phpbb::$db->sql_query($sql);
 					}
 				}
+				phpbb::$db->sql_freeresult($result);
+			break;
+
+			case 'index' :
+				$data = array();
+				$contrib = new titania_contribution;
+
+				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE .
+					(($contrib_id) ? ' WHERE contrib_id = ' . (int) $contrib_id : '');
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$contrib->__set_array($row);
+
+					$for_edit = $contrib->generate_text_for_edit();
+
+					$data[] = array(
+						'object_type'	=> $contrib->contrib_type,
+						'object_id'		=> $contrib->contrib_id,
+
+						'title'			=> $contrib->contrib_name,
+						'text'			=> $for_edit['text'],
+						'author'		=> $contrib->contrib_user_id,
+						'date'			=> $contrib->contrib_last_update,
+						'url'			=> titania_url::unbuild_url($contrib->get_url()),
+						'approved'		=> (!titania::$config->require_validation || $contrib->contrib_status != TITANIA_CONTRIB_NEW) ? true : false,
+					);
+				}
+				phpbb::$db->sql_freeresult($result);
+
+				titania_search::mass_index($data);
 			break;
 		}
 	}

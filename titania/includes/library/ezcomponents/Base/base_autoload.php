@@ -39,7 +39,7 @@ return array(
     'ezcBaseFileFindContext'                      => 'Base/structs/file_find_context.php',
     'ezcBaseInit'                                 => 'Base/init.php',
     'ezcBaseMetaData'                             => 'Base/metadata.php',
-    'ezcBaseMetaDataPearReader'                   => 'Base/metadata/pear.php',
+    //'ezcBaseMetaDataPearReader'                   => 'Base/metadata/pear.php',
     'ezcBaseMetaDataTarballReader'                => 'Base/metadata/tarball.php',
     'ezcBasePersistable'                          => 'Base/interfaces/persistable.php',
     'ezcBaseRepositoryDirectory'                  => 'Base/structs/repository_directory.php',

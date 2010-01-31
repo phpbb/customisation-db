@@ -99,6 +99,12 @@ switch ($step)
 				continue;
 			}
 
+			// Skip weird ones
+			if (!in_array($row['contrib_type'], array_keys(titania_types::$types)))
+			{
+				continue;
+			}
+
 			// Ignore things marked as new that do not have contributions in the queue
 			if ($row['contrib_status'] == 0)
 			{
@@ -403,6 +409,17 @@ switch ($step)
 	break;
 
 	case 6 :
+		$sync = new titania_sync;
+
+		// Truncate index first
+		titania_search::truncate();
+
+		$sync->contribs('index');
+
+		$display_message = 'Indexing';
+	break;
+
+	case 7 :
 		phpbb::$cache->purge();
 
 		trigger_error('Ariel Conversion Finished!');

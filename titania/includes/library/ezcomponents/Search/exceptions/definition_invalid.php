@@ -3,8 +3,8 @@
  * File containing the ezcSearchDefinitionInvalidException class.
  *
  * @package Search
- * @version 1.0.8
- * @copyright Copyright (C) 2005-2009 eZ Systems AS. All rights reserved.
+ * @version //autogentag//
+ * @copyright Copyright (C) 2005-2010 eZ Systems AS. All rights reserved.
  * @license http://ez.no/licenses/new_bsd New BSD License
  */
 
@@ -12,7 +12,7 @@
  * This exception is thrown when a definition file for a class is invalid.
  *
  * @package Search
- * @version 1.0.8
+ * @version //autogentag//
  */
 class ezcSearchDefinitionInvalidException extends ezcSearchException
 {

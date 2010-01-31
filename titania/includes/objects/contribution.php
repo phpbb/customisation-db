@@ -127,14 +127,32 @@ class titania_contribution extends titania_database_object
 			$this->generate_text_for_storage(false, false, false);
 		}
 
-		// New entry
-		if (!$this->contrib_id)
+		// Increment the contrib counter
+		if (!$this->contrib_id && (!titania::$config->require_validation || $this->contrib_status != TITANIA_CONTRIB_NEW))
 		{
-			// Increment the contrib counter
 			$this->change_author_contrib_count($this->contrib_user_id);
 		}
 
-		return parent::submit();
+		// Update index or insert?
+		$update = false;
+		if ($this->contrib_id)
+		{
+			$update = true;
+		}
+
+		parent::submit();
+
+		// Index!
+		$data = array(
+			'title'			=> $this->contrib_name,
+			'text'			=> $this->contrib_desc,
+			'author'		=> $this->contrib_user_id,
+			'date'			=> $this->contrib_last_update,
+			'url'			=> titania_url::unbuild_url($this->get_url()),
+			'approved'		=> (!titania::$config->require_validation || $this->contrib_status != TITANIA_CONTRIB_NEW) ? true : false,
+		);
+
+		titania_search::index($this->contrib_type, $this->contrib_id, $data, $update);
 	}
 
 	public function validate($contrib_categories = array())

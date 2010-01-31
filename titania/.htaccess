@@ -36,7 +36,7 @@ Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/?([^/]+)?/?(
 
 #topics/posts (when missing contrib name)
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(tracker|queue|support)/([^/]+)?$					./contributions/index.php?page=$1 [NC]
+Rewriterule ^(tracker|support)/([^/]+)?$						./contributions/index.php?page=$1 [NC]
 
 #rating
 RewriteCond %{REQUEST_FILENAME} !-f

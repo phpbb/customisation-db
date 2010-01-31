@@ -455,6 +455,18 @@ class titania_post extends titania_database_object
 		// Gotta update the topic again with the first/last post data and update teh post count
 		$this->topic->update_postcount($this->post_access, false, false);
 		$this->topic->submit();
+
+		// Index!
+		titania_search::index($this->post_type, $this->post_id, array(
+			'title'			=> $this->post_subject,
+			'text'			=> $this->post_text,
+			'author'		=> $this->post_user_id,
+			'date'			=> $this->post_time,
+			'url'			=> titania_url::unbuild_url($this->get_url()),
+			'access_level'	=> $this->post_access,
+			'approved'		=> $this->post_approved,
+			'reported'		=> $this->post_reported,
+		));
 	}
 
 	/**
@@ -498,7 +510,19 @@ class titania_post extends titania_database_object
 			$this->generate_text_for_storage();
 		}
 
-		return parent::submit();
+		parent::submit();
+
+		// Index!
+		titania_search::update($this->post_type, $this->post_id, array(
+			'title'			=> $this->post_subject,
+			'text'			=> $this->post_text,
+			'author'		=> $this->post_user_id,
+			'date'			=> $this->post_time,
+			'url'			=> titania_url::unbuild_url($this->get_url()),
+			'access_level'	=> $this->post_access,
+			'approved'		=> $this->post_approved,
+			'reported'		=> $this->post_reported,
+		));
 	}
 
 	/**

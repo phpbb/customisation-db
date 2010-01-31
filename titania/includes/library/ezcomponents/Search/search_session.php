@@ -3,8 +3,8 @@
  * File containing the ezcSearchSession class.
  *
  * @package Search
- * @version 1.0.8
- * @copyright Copyright (C) 2005-2009 eZ Systems AS. All rights reserved.
+ * @version //autogen//
+ * @copyright Copyright (C) 2005-2010 eZ Systems AS. All rights reserved.
  * @license http://ez.no/licenses/new_bsd New BSD License
  */
 
@@ -17,7 +17,7 @@
  *                The persistent definition manager set in the constructor.
  *
  * @package Search
- * @version 1.0.8
+ * @version //autogen//
  * @mainclass
  */
 class ezcSearchSession
