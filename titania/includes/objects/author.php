@@ -262,7 +262,7 @@ class titania_author extends titania_database_object
 			return '<a href="' . $this->get_url() . '">' . get_username_string('no_profile', $this->user_id, $this->username, $this->user_colour) . '</a>';
 		}
 
-		return get_username_string($mode, $this->user_id, $this->username, $this->user_colour);
+		return get_username_string($mode, $this->user_id, $this->username, $this->user_colour, phpbb::append_sid('memberlist', 'mode=viewprofile'));
 	}
 
 	/**

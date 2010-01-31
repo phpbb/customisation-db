@@ -347,13 +347,13 @@ class titania_topic extends titania_database_object
 			'TOPIC_FIRST_POST_ID'			=> $this->topic_first_post_id,
 			'TOPIC_FIRST_POST_USER_ID'		=> $this->topic_first_post_user_id,
 			'TOPIC_FIRST_POST_USER_COLOUR'	=> $this->topic_first_post_user_colour,
-			'TOPIC_FIRST_POST_USER_FULL'	=> get_username_string('full', $this->topic_first_post_user_id, $this->topic_first_post_username, $this->topic_first_post_user_colour),
+			'TOPIC_FIRST_POST_USER_FULL'	=> get_username_string('full', $this->topic_first_post_user_id, $this->topic_first_post_username, $this->topic_first_post_user_colour, phpbb::append_sid('memberlist', 'mode=viewprofile')),
 			'TOPIC_FIRST_POST_TIME'			=> phpbb::$user->format_date($this->topic_first_post_time),
 
 			'TOPIC_LAST_POST_ID'			=> $this->topic_last_post_id,
 			'TOPIC_LAST_POST_USER_ID'		=> $this->topic_last_post_user_id,
 			'TOPIC_LAST_POST_USER_COLOUR'	=> $this->topic_last_post_user_colour,
-			'TOPIC_LAST_POST_USER_FULL'		=> get_username_string('full', $this->topic_last_post_user_id, $this->topic_last_post_username, $this->topic_last_post_user_colour),
+			'TOPIC_LAST_POST_USER_FULL'		=> get_username_string('full', $this->topic_last_post_user_id, $this->topic_last_post_username, $this->topic_last_post_user_colour, phpbb::append_sid('memberlist', 'mode=viewprofile')),
 			'TOPIC_LAST_POST_TIME'			=> phpbb::$user->format_date($this->topic_last_post_time),
 			'TOPIC_LAST_POST_SUBJECT'		=> censor_text($this->topic_last_post_subject),
 
