@@ -84,53 +84,37 @@ if (empty($lang) || !is_array($lang))
 	),
 ));*/
 
-$lang['permission_type']['titania_'] = 'Titania Permissions';
-
-$lang['permission_cat']['moderate'] = 'Moderate';
-$lang['permission_cat']['contrib'] = 'Contributions';
-$lang['permission_cat']['queue'] = 'Queue';
+$lang['permission_cat']['titania'] = 'Titania';
+$lang['permission_cat']['titania_moderate'] = 'Titania Moderate';
 
 $lang = array_merge($lang, array(
-	'ACL_TYPE_TITANIA_'					=> 'Titania Permissions',
-	'ACL_TYPE_GLOBAL_TITANIA_'			=> 'Titania Permissions',
+	// Common
+	'acl_u_titania_contrib_submit'		=> array('lang' => 'Can submit contributions', 'cat' => 'titania'),
+	'acl_u_titania_faq_create'			=> array('lang' => 'Can create FAQ entries (for own Contributions)', 'cat' => 'titania'),
+	'acl_u_titania_faq_edit'			=> array('lang' => 'Can edit FAQ entries (for own Contributions)', 'cat' => 'titania'),
+	'acl_u_titania_faq_delete'			=> array('lang' => 'Can delete FAQ entries (for own Contributions)', 'cat' => 'titania'),
+	'acl_u_titania_rate'				=> array('lang' => 'Can rate items', 'cat' => 'titania'),
+	'acl_u_titania_topic'				=> array('lang' => 'Can create new topics', 'cat' => 'titania'),
+	'acl_u_titania_post'				=> array('lang' => 'Can create new posts', 'cat' => 'titania'),
+	'acl_u_titania_post_edit_own'		=> array('lang' => 'Can edit own posts', 'cat' => 'titania'),
+	'acl_u_titania_post_delete_own'		=> array('lang' => 'Can delete own posts', 'cat' => 'titania'),
+	'acl_u_titania_post_mod_own'		=> array('lang' => 'Can moderate own topics', 'cat' => 'titania'),
+	'acl_u_titania_post_attach'			=> array('lang' => 'Can attach files to posts', 'cat' => 'titania'),
+	'acl_u_titania_bbcode'				=> array('lang' => 'Can post BBCode', 'cat' => 'titania'),
+	'acl_u_titania_smilies'				=> array('lang' => 'Can post smilies', 'cat' => 'titania'),
 
-	'acl_a_titaniaauth'					=> array('lang' => 'Can alter Titania permission class', 'cat' => 'permissions'),
-
-	// Author related
-	'acl_titania_author_mod'			=> array('lang' => 'Can moderate author profiles', 'cat' => 'moderate'),
-
-	// Contribution related
-	'acl_titania_contrib_submit'		=> array('lang' => 'Can submit contributions', 'cat' => 'contrib'),
-	'acl_titania_contrib_mod'			=> array('lang' => 'Can moderate (all) contributions', 'cat' => 'moderate'),
-	'acl_titania_faq_create'			=> array('lang' => 'Can create FAQ entries (for own Contributions)', 'cat' => 'contrib'),
-	'acl_titania_faq_edit'				=> array('lang' => 'Can edit FAQ entries (for own Contributions)', 'cat' => 'contrib'),
-	'acl_titania_faq_delete'			=> array('lang' => 'Can delete FAQ entries (for own Contributions)', 'cat' => 'contrib'),
-	'acl_titania_faq_mod'				=> array('lang' => 'Can moderate FAQ entries', 'cat' => 'moderate'),
-
-	// Rating
-	'acl_titania_rate'					=> array('lang' => 'Can rate items', 'cat' => 'actions'),
-	'acl_titania_rate_reset'			=> array('lang' => 'Can reset ratings', 'cat' => 'moderate'),
-
-	// Posts/Topics
-	'acl_titania_topic'					=> array('lang' => 'Can create new topics', 'cat' => 'post'),
-	'acl_titania_post'					=> array('lang' => 'Can create new posts', 'cat' => 'post'),
-	'acl_titania_post_edit_own'			=> array('lang' => 'Can edit own posts', 'cat' => 'post'),
-	'acl_titania_post_delete_own'		=> array('lang' => 'Can delete own posts', 'cat' => 'post'),
-	'acl_titania_post_mod_own'			=> array('lang' => 'Can moderate own topics', 'cat' => 'post'),
-	'acl_titania_post_mod'				=> array('lang' => 'Can moderate topics', 'cat' => 'moderate'),
-	'acl_titania_post_attach'			=> array('lang' => 'Can attach files to posts', 'cat' => 'post'),
-	'acl_titania_bbcode'				=> array('lang' => 'Can post BBCode', 'cat' => 'post'),
-	'acl_titania_smilies'				=> array('lang' => 'Can post smilies', 'cat' => 'post'),
-
-	// Modifications
-	'acl_titania_mod_queue'				=> array('lang' => 'Can see Modifications Queue', 'cat' => 'queue'),
-	'acl_titania_mod_validate'			=> array('lang' => 'Can validate Modifications', 'cat' => 'queue'),
-	'acl_titania_mod_moderate'			=> array('lang' => 'Can moderate Modifications', 'cat' => 'moderate'),
-
-	// Styles
-	'acl_titania_style_queue'			=> array('lang' => 'Can see Styles Queue', 'cat' => 'queue'),
-	'acl_titania_style_validate'		=> array('lang' => 'Can validate Styles', 'cat' => 'queue'),
-	'acl_titania_style_moderate'		=> array('lang' => 'Can moderate Styles', 'cat' => 'moderate'),
+	// Moderation
+	'acl_u_titania_author_mod'			=> array('lang' => 'Can moderate author profiles', 'cat' => 'titania_moderate'),
+	'acl_u_titania_contrib_mod'			=> array('lang' => 'Can moderate (all) contributions', 'cat' => 'titania_moderate'),
+	'acl_u_titania_faq_mod'				=> array('lang' => 'Can moderate FAQ entries', 'cat' => 'titania_moderate'),
+	'acl_u_titania_rate_reset'			=> array('lang' => 'Can reset ratings', 'cat' => 'titania_moderate'),
+	'acl_u_titania_post_mod'			=> array('lang' => 'Can moderate topics', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_queue'			=> array('lang' => 'Can see Modifications Queue', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_validate'		=> array('lang' => 'Can validate Modifications', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_moderate'		=> array('lang' => 'Can moderate Modifications', 'cat' => 'titania_moderate'),
+	'acl_u_titania_style_queue'			=> array('lang' => 'Can see Styles Queue', 'cat' => 'titania_moderate'),
+	'acl_u_titania_style_validate'		=> array('lang' => 'Can validate Styles', 'cat' => 'titania_moderate'),
+	'acl_u_titania_style_moderate'		=> array('lang' => 'Can moderate Styles', 'cat' => 'titania_moderate'),
 ));
 
 ?>
