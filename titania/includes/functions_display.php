@@ -162,7 +162,7 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 			'FROM'	=> array(TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc'),
 			'ON'	=> 'cc.contrib_id = c.contrib_id AND cc.user_id = ' . phpbb::$user->data['user_id'],
 		);
-		$sql_ary['WHERE'] .= ' AND (c.contrib_status == ' . TITANIA_CONTRIB_APPROVED . '
+		$sql_ary['WHERE'] .= ' AND (c.contrib_status = ' . TITANIA_CONTRIB_APPROVED . '
 			OR c.contrib_user_id = ' . phpbb::$user->data['user_id'] . '
 			OR cc.active = 1)';
 	}

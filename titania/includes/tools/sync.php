@@ -186,7 +186,7 @@ class titania_sync
 			'WHERE'		=> 'cic.contrib_id = c.contrib_id
 				AND ' . phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $child_list)) . '
 				AND c.contrib_visible = 1' .
-				((titania::$config->require_validation) ? ' AND c.contrib_status == ' . TITANIA_CONTRIB_APPROVED : ''),
+				((titania::$config->require_validation) ? ' AND c.contrib_status = ' . TITANIA_CONTRIB_APPROVED : ''),
 		);
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		phpbb::$db->sql_query($sql);
