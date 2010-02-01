@@ -112,7 +112,7 @@ class titania_cache extends acm
 	*/
 	public function get_author_contribs($user_id)
 	{
-		$author_id = (int) $author_id;
+		$user_id = (int) $user_id;
 
 		// We shall group authors by id in groups of 2500
 		$author_block_name = '_titania_authors_' . floor($user_id / 2500);
@@ -160,6 +160,31 @@ class titania_cache extends acm
 		$this->put($author_block_name, $author_block);
 
 		return $author_block[$user_id];
+	}
+
+	/**
+	* Reset the author contribs for a certain user
+	*
+	* @param mixed $user_id
+	*/
+	public function reset_author_contribs($user_id)
+	{
+		$user_id = (int) $user_id;
+
+		// We shall group authors by id in groups of 2500
+		$author_block_name = '_titania_authors_' . floor($user_id / 2500);
+
+		$author_block = $this->get($author_block_name);
+
+		if ($author_block === false || !isset($author_block[$user_id]))
+		{
+			return;
+		}
+
+		unset($author_block[$user_id]);
+
+		// Store the updated cache data
+		$this->put($author_block_name, $author_block);
 	}
 
 	/**

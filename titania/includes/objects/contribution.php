@@ -116,8 +116,7 @@ class titania_contribution extends titania_database_object
 
 	/**
 	 * Submit data for storing into the database
-	 *
-	 * @return bool
+	 * DO NOT USE THIS FUNCTION TO CHANGE THE STATUS ELSE THE AUTHORS CONTRIB COUNT WILL BE INCORRECT (use change_status function)!
 	 */
 	public function submit()
 	{
@@ -127,18 +126,14 @@ class titania_contribution extends titania_database_object
 			$this->generate_text_for_storage(false, false, false);
 		}
 
-		// Increment the contrib counter
-		if (!$this->contrib_id && (!titania::$config->require_validation || $this->contrib_status != TITANIA_CONTRIB_NEW))
+		if (!$this->contrib_id)
 		{
+			// Increment the contrib counter
 			$this->change_author_contrib_count($this->contrib_user_id);
 		}
 
-		// Update index or insert?
-		$update = false;
-		if ($this->contrib_id)
-		{
-			$update = true;
-		}
+		// Update index or insert (must do before submitting)?
+		$update = ($this->contrib_id) ? false : true;
 
 		parent::submit();
 
@@ -153,6 +148,52 @@ class titania_contribution extends titania_database_object
 		);
 
 		titania_search::index($this->contrib_type, $this->contrib_id, $data, $update);
+	}
+
+	/**
+	 * Change the status of this contrib item.
+	 * YOU MUST USE THIS FUNCTION TO CHANGE THE STATUS ELSE THE AUTHORS CONTRIB COUNT WILL BE INCORRECT!
+	 *
+	 * @param int $new_status
+	 */
+	public function change_status($new_status)
+	{
+		$new_status = (int) $new_status;
+
+		if ($this->contrib_status == $new_status)
+		{
+			return;
+		}
+
+		// Grab the current authors
+		$author_list = array($this->contrib_user_id);
+		$sql = 'SELECT user_id
+			FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+			WHERE contrib_id = ' . (int) $this->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$author_list[] = $row['user_id'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		if ($this->contrib_status != TITANIA_CONTRIB_APPROVED)
+		{
+			// Approving this contribution item...
+			$this->change_author_contrib_count($author_list);
+		}
+		else
+		{
+			// Disapproving this contribution item...
+			$this->change_author_contrib_count($author_list, '-', true);
+		}
+
+		$this->contrib_status = $new_status;
+
+		$sql = 'UPDATE ' . $this->sql_table . '
+			SET contrib_status = ' . $this->contrib_status . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
 	}
 
 	public function validate($contrib_categories = array())
@@ -583,31 +624,29 @@ class titania_contribution extends titania_database_object
 	{
 		if ($reset)
 		{
-			// Grab the current contribs
+			// Grab the current co-authors
+			$current_list = array();
 			$sql = 'SELECT user_id
 				FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
 				WHERE contrib_id = ' . (int) $this->contrib_id;
 			$result = phpbb::$db->sql_query($sql);
-
-			$decrement_list = array();
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$decrement_list[] = $row['user_id'];
+				$current_list[] = $row['user_id'];
+
+				// reset each of the authors cached contrib list
+				phpbb::$cache->reset_author_contribs($row['user_id']);
 			}
 			phpbb::$db->sql_freeresult($result);
 
-			if (sizeof($decrement_list))
+			if (sizeof($current_list))
 			{
-				// Don't need to call change_author_contrib_count here, since they should already exist and it uses quite a few extra queries
-				$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
-					SET author_contribs = author_contribs - 1
-					WHERE ' . phpbb::$db->sql_in_set('user_id', array_map('intval', $decrement_list));
+				$this->change_author_contrib_count($current_list, '-');
+
+				$sql = 'DELETE FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+					WHERE contrib_id = ' . (int) $this->contrib_id;
 				phpbb::$db->sql_query($sql);
 			}
-
-			$sql = 'DELETE FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
-				WHERE contrib_id = ' . (int) $this->contrib_id;
-			phpbb::$db->sql_query($sql);
 		}
 
 		if (sizeof($active))
@@ -620,6 +659,9 @@ class titania_contribution extends titania_database_object
 					'user_id'		=> $user_id,
 					'active'		=> true,
 				);
+
+				// reset each of the authors cached contrib list
+				phpbb::$cache->reset_author_contribs($user_id);
 			}
 
 			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
@@ -638,6 +680,9 @@ class titania_contribution extends titania_database_object
 					'user_id'		=> $user_id,
 					'active'		=> false,
 				);
+
+				// reset each of the authors cached contrib list
+				phpbb::$cache->reset_author_contribs($user_id);
 			}
 
 			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
@@ -650,25 +695,86 @@ class titania_contribution extends titania_database_object
 	/*
 	 * Set a new contrib_user_id for the current contribution
 	 *
-	 * @param int $id
+	 * @param int $user_id The new user_id that will be the owner
 	 */
 	public function set_contrib_user_id($user_id)
 	{
+		// Delete them from the co-authors list if they are in it...
+		$sql = 'DELETE FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id . '
+				AND user_id = ' . (int) $user_id;
+		phpbb::$db->sql_query($sql);
+
+		// Update the data for this contrib item
 		$sql = 'UPDATE ' . $this->sql_table . '
 			SET contrib_user_id = ' . (int) $user_id . '
 			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
+		// Reset the author contribs that are cached for the new owner
+		phpbb::$cache->reset_author_contribs($user_id);
+
 		// Increment the contrib counter for the new owner
 		$this->change_author_contrib_count($user_id);
 
-		// Decrement the contrib counter for the old owner (setting as a co-author increments it)
+		// Decrement the contrib counter for the old owner (setting as a co-author increments it again)
 		$this->change_author_contrib_count($this->contrib_user_id, '-');
 
 		// Set old user as previous contributor
 		$this->set_coauthors(array(), array($this->contrib_user_id));
 
 		$this->contrib_user_id = $user_id;
+	}
+
+	/**
+	* Increment the contrib count for an author (also verifies that there is a row in the authors table)
+	* Always use this when updating the count for an author!
+	*
+	* @param int|array $user_id
+	* @param string action + or -
+	* @param bool $force Ignore the check on require_validation, contrib_status (DO NOT USE UNLESS YOU HAVE A VERY GOOD REASON; should only be required by the update_status function)
+	*/
+	private function change_author_contrib_count($user_id, $action = '+', $force = false)
+	{
+		// Don't change if it's not approved
+		if ($force == false && (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED))
+		{
+			return;
+		}
+
+		if (is_array($user_id))
+		{
+			foreach ($user_id as $uid)
+			{
+				$this->change_author_contrib_count($uid, $action, $force);
+			}
+			return;
+		}
+
+		$user_id = (int) $user_id;
+		$action = ($action == '-') ? '-' : '+';
+
+		// Increment/Decrement the contrib counter for the new owner
+		$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . "
+			SET author_contribs = author_contribs $action 1, " .
+				titania_types::$types[$this->contrib_type]->author_count . ' = ' . titania_types::$types[$this->contrib_type]->author_count . " $action 1
+			WHERE user_id = $user_id " .
+				(($action == '-') ? 'AND author_contribs > 0' : '');
+		phpbb::$db->sql_query($sql);
+
+		// If the author profile does not exist set it up
+		if (!phpbb::$db->sql_affectedrows())
+		{
+			$author = new titania_author($user_id);
+			$author->load();
+
+			$author->__set_array(array(
+				'author_contribs'	=> 1,
+				titania_types::$types[$this->contrib_type]->author_count => 1,
+			));
+
+			$author->submit();
+		}
 	}
 
 	/*
@@ -753,52 +859,9 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	* Increment the contrib count for an author (also verifies that there is a row in the authors table)
-	* Always use this when updating the count for an author!
-	*
-	* @param int|array $user_id
-	* @param string action + or -
-	*/
-	private function change_author_contrib_count($user_id, $action = '+')
-	{
-		if (is_array($user_id))
-		{
-			foreach ($user_id as $uid)
-			{
-				$this->change_author_contrib_count($uid, $action);
-			}
-			return;
-		}
-
-		$user_id = (int) $user_id;
-		$action = ($action == '-') ? '-' : '+';
-
-		// Increment the contrib counter for the new owner
-		$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . "
-			SET author_contribs = author_contribs $action 1, " .
-				titania_types::$types[$this->contrib_type]->author_count . ' = ' . titania_types::$types[$this->contrib_type]->author_count . " $action 1
-			WHERE user_id = $user_id " .
-				(($action == '-') ? 'AND author_contribs > 0' : '');
-		phpbb::$db->sql_query($sql);
-
-		// If the author profile does not exist set it up
-		if (!phpbb::$db->sql_affectedrows())
-		{
-			$author = new titania_author($user_id);
-			$author->load();
-
-			$author->__set_array(array(
-				'author_contribs'	=> 1,
-				titania_types::$types[$this->contrib_type]->author_count => 1,
-			));
-
-			$author->submit();
-		}
-	}
-
-	/**
 	 * Check if there is a revision in the queue
 	 *
+	 * @return true if there is, false if not
 	 */
 	public function in_queue()
 	{
