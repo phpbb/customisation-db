@@ -3,7 +3,7 @@
 <h3 class="section-name">{L_FAQ_EXPANDED}</h3>
 
 <!-- IF S_LIST -->
-	
+
 	<div class="container" id="faqlist">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
@@ -13,17 +13,17 @@
 					<div class="faq-icon"><a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}"><span></span>{L_CREATE_FAQ}</a></div>
 				<!-- ENDIF -->
 				</div>
-		
+
 				<!-- IF PAGINATION or TOTAL_POSTS -->
 					<div class="pagination">
 						<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
 					</div>
 				<!-- ENDIF -->
 			</div>
-			<!-- ENDIF -->	
+			<!-- ENDIF -->
 
 			<!-- BEGIN faqlist -->
-			<!-- IF faqlist.S_FIRST_ROW -->			
+			<!-- IF faqlist.S_FIRST_ROW -->
 			<ul class="topiclist">
 				<li class="header">
 					<dl>
@@ -49,7 +49,7 @@
 						</dd>
 					</dl>
 				</li>
-			<!-- IF faqlist.S_LAST_ROW --></ul><!-- ENDIF -->	
+			<!-- IF faqlist.S_LAST_ROW --></ul><!-- ENDIF -->
 			<!-- BEGINELSE -->
 			<div class="panel">
 				<div class="inner"><span class="corners-top"><span></span></span>
@@ -57,7 +57,7 @@
 				<span class="corners-bottom"><span></span></span></div>
 			</div>
 			<!-- END contribs -->
-		
+
 			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
 			<div class="topic-actions">
 				<div class="buttons">
@@ -65,7 +65,7 @@
 					<div class="faq-icon"><a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}"><span></span>{L_CREATE_FAQ}</a></div>
 				<!-- ENDIF -->
 				</div>
-		
+
 				<!-- IF PAGINATION or TOTAL_POSTS -->
 					<div class="pagination">
 						<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
@@ -73,7 +73,7 @@
 				<!-- ENDIF -->
 			</div>
 			<!-- ENDIF -->
-	
+
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
 <!-- ELSEIF S_DETAILS -->
@@ -81,9 +81,9 @@
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<div class="postbody">
 				<h3>{FAQ_SUBJECT}</h3>
-	
+
 				<div class="content">{FAQ_TEXT}</div>
-	
+
 				<!-- IF .attachment -->
 					<dl class="attachbox">
 						<dt>{L_ATTACHMENTS}</dt>
@@ -93,16 +93,16 @@
 					</dl>
 				<!-- ENDIF -->
 			</div>
-	
+
 			<div class="back2top"><a href="#wrap" class="top" title="{L_BACK_TO_TOP}">{L_BACK_TO_TOP}</a></div>
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
 <!-- ELSEIF S_EDIT -->
 	<div class="container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>		
-			<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" onsubmit="titania_post_submit();" {S_FORM_ENCTYPE}>
 				<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
-		
+
 				<!-- INCLUDE posting/posting_editor.html -->
 			</form>
 		<span class="corners-bottom main-corners"><span></span></span></div>
