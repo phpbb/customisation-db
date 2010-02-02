@@ -32,14 +32,14 @@ class titania_author extends titania_database_object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= TITANIA_AUTHORS_TABLE;
+	protected $sql_table = TITANIA_AUTHORS_TABLE;
 
 	/**
 	 * SQL identifier field
 	 *
 	 * @var string
 	 */
-	protected $sql_id_field		= 'user_id';
+	protected $sql_id_field = 'author_id';
 
 	/**
 	 * Description parsed for storage
@@ -64,6 +64,7 @@ class titania_author extends titania_database_object
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
+			'author_id'				=> array('default' => 0),
 			'user_id'				=> array('default' => 0),
 			'phpbb_user_id'			=> array('default' => 0),
 
@@ -154,6 +155,11 @@ class titania_author extends titania_database_object
 	 */
 	public function submit()
 	{
+		if (!$this->user_id)
+		{
+			throw new exception('No user_id!');
+		}
+
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
 		if (!$this->description_parsed_for_storage)
 		{

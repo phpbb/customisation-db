@@ -75,6 +75,7 @@ $versions = array(
 			)),
 			array(TITANIA_AUTHORS_TABLE, array(
 				'COLUMNS'		=> array(
+					'author_id'				=> array('UINT', NULL, 'auto_increment'),
 					'user_id'				=> array('UINT', 0),
 					'phpbb_user_id'			=> array('UINT', 0),
 					'author_realname'		=> array('VCHAR_CI', ''),
@@ -91,8 +92,9 @@ $versions = array(
 					'author_desc_uid'		=> array('VCHAR:8', ''),
 					'author_desc_options'	=> array('UINT:11', 7),
 				),
-				'PRIMARY_KEY'	=> 'user_id',
+				'PRIMARY_KEY'	=> 'author_id',
 				'KEYS'			=> array(
+					'user_id'				=> array('UNIQUE', 'user_id'),
 					'author_rating'			=> array('INDEX', 'author_rating'),
 					'author_contribs'		=> array('INDEX', 'author_contribs'),
 					'author_snippets'		=> array('INDEX', 'author_snippets'),
@@ -396,19 +398,17 @@ $versions = array(
 		'permission_add' => array(
 			'u_titania_',
 
-			'u_titania_author_mod',			// Can moderate author profiles
+			'm_titania_author_mod',			// Can moderate author profiles
+			'm_titania_contrib_mod',		// Can moderate all contrib items
+			'm_titania_rate_reset',			// Can reset the rating on items
+			'm_titania_faq_mod',			// Can moderate FAQ entries
+			'm_titania_post_mod',			// Can moderate topics
 
 			'u_titania_contrib_submit',		// Can submit contrib items
-			'u_titania_contrib_mod',		// Can moderate contrib items (manage them globally)
-
 			'u_titania_rate',				// Can rate items
-			'u_titania_rate_reset',			// Can reset the rating on items
-
 			'u_titania_faq_create',			// Can create FAQ entries
 			'u_titania_faq_edit',			// Can edit own FAQ entries
 			'u_titania_faq_delete',			// Can delete own FAQ entries
-			'u_titania_faq_mod',			// Can moderate FAQ entries
-
 			'u_titania_topic',				// Can create new topics
 			'u_titania_bbcode',				// Can post bbcode
 			'u_titania_smilies',			// Can post smilies
@@ -416,9 +416,47 @@ $versions = array(
 			'u_titania_post_edit_own',		// Can edit own posts
 			'u_titania_post_delete_own',	// Can delete own posts
 			'u_titania_post_mod_own',		// Can moderate own topics
-			'u_titania_post_mod',			// Can moderate topics
 			'u_titania_post_attach',		// Can attach files to posts
 		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array(
+				'm_titania_author_mod',			// Can moderate author profiles
+				'm_titania_contrib_mod',		// Can moderate all contrib items
+				'm_titania_rate_reset',			// Can reset the rating on items
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
+			)),
+			array('ROLE_USER_STANDARD', array(
+				'u_titania_contrib_submit',		// Can submit contrib items
+				'u_titania_rate',				// Can rate items
+				'u_titania_faq_create',			// Can create FAQ entries
+				'u_titania_faq_edit',			// Can edit own FAQ entries
+				'u_titania_faq_delete',			// Can delete own FAQ entries
+				'u_titania_topic',				// Can create new topics
+				'u_titania_bbcode',				// Can post bbcode
+				'u_titania_smilies',			// Can post smilies
+				'u_titania_post',				// Can create new posts
+				'u_titania_post_edit_own',		// Can edit own posts
+				'u_titania_post_delete_own',	// Can delete own posts
+				'u_titania_post_attach',		// Can attach files to posts
+			)),
+			array('ROLE_USER_FULL', array(
+				'u_titania_contrib_submit',		// Can submit contrib items
+				'u_titania_rate',				// Can rate items
+				'u_titania_faq_create',			// Can create FAQ entries
+				'u_titania_faq_edit',			// Can edit own FAQ entries
+				'u_titania_faq_delete',			// Can delete own FAQ entries
+				'u_titania_topic',				// Can create new topics
+				'u_titania_bbcode',				// Can post bbcode
+				'u_titania_smilies',			// Can post smilies
+				'u_titania_post',				// Can create new posts
+				'u_titania_post_edit_own',		// Can edit own posts
+				'u_titania_post_delete_own',	// Can delete own posts
+				'u_titania_post_attach',		// Can attach files to posts
+			)),
+		),
+
 
 		'custom' => 'titania_custom',
 

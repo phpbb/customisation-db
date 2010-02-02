@@ -334,7 +334,7 @@ class titania_rating extends titania_database_object
 	*/
 	public function reset_rating()
 	{
-		if (!phpbb::$auth->acl_get('u_titania_rate_reset'))
+		if (!phpbb::$auth->acl_get('m_titania_rate_reset'))
 		{
 			return false;
 		}

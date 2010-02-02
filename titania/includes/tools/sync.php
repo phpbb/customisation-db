@@ -70,7 +70,6 @@ class titania_sync
 						$sql_ary['author_contribs'] += $cnt;
 						$sql_ary[$class->author_count] = $cnt;
 					}
-
 					// Increment/Decrement the contrib counter for the new owner
 					$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
 						SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
@@ -80,11 +79,8 @@ class titania_sync
 					// If the author profile does not exist set it up
 					if (!phpbb::$db->sql_affectedrows())
 					{
-						$author = new titania_author($user_id);
-						$author->load();
-
+						$author = new titania_author($row['user_id']);
 						$author->__set_array($sql_ary);
-
 						$author->submit();
 					}
 				}

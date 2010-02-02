@@ -643,6 +643,11 @@ class titania_contribution extends titania_message_object
 	 */
 	public function set_contrib_user_id($user_id)
 	{
+		if ($this->contrib_user_id == $user_id)
+		{
+			return;
+		}
+
 		// Delete them from the co-authors list if they are in it...
 		$sql = 'DELETE FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
 			WHERE contrib_id = ' . $this->contrib_id . '
@@ -680,18 +685,29 @@ class titania_contribution extends titania_message_object
 	*/
 	private function change_author_contrib_count($user_id, $action = '+', $force = false)
 	{
-		// Don't change if it's not approved
-		if ($force == false && (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED))
-		{
-			return;
-		}
-
 		if (is_array($user_id))
 		{
 			foreach ($user_id as $uid)
 			{
 				$this->change_author_contrib_count($uid, $action, $force);
 			}
+			return;
+		}
+
+		// Make sure the author exists, if not we create one (do this before returning if not approved...else we need to duplicate this code in a bunch of places)
+		$sql = 'SELECT user_id FROM ' . TITANIA_AUTHORS_TABLE . '
+			WHERE user_id = ' . (int) $user_id;
+		phpbb::$db->sql_query($sql);
+		if (!phpbb::$db->sql_fetchfield('user_id'))
+		{
+			$author = new titania_author($user_id);
+			$author->submit();
+		}
+		phpbb::$db->sql_freeresult();
+
+		// Don't change if it's not approved
+		if ($force == false && (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED))
+		{
 			return;
 		}
 
@@ -705,20 +721,6 @@ class titania_contribution extends titania_message_object
 			WHERE user_id = $user_id " .
 				(($action == '-') ? 'AND author_contribs > 0' : '');
 		phpbb::$db->sql_query($sql);
-
-		// If the author profile does not exist set it up
-		if (!phpbb::$db->sql_affectedrows())
-		{
-			$author = new titania_author($user_id);
-			$author->load();
-
-			$author->__set_array(array(
-				'author_contribs'	=> 1,
-				titania_types::$types[$this->contrib_type]->author_count => 1,
-			));
-
-			$author->submit();
-		}
 	}
 
 	/*

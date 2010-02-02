@@ -31,6 +31,9 @@ if (!phpbb::$user->data['user_type'] == USER_FOUNDER)
 	trigger_error('NO_AUTH');
 }
 
+// Hopefully this helps
+@set_time_limit(0);
+
 // Hack for local
 phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? 'ariel_files' : phpbb::$config['site_upload_dir'];
 
@@ -411,47 +414,11 @@ phpbb::$db->sql_freeresult($result);
 	// @todo Queue
 
 	case 4 :
-		$sql = 'SELECT DISTINCT(contrib_user_id) AS user_id FROM ' . TITANIA_CONTRIBS_TABLE;
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$sql_ary = array(
-				'user_id'				=> $row['user_id'],
-				'phpbb_user_id'			=> $row['user_id'],
-				'author_realname'		=> '',
-				'author_website'		=> '',
-				'author_rating'			=> 0,
-				'author_rating_count'	=> 0,
-				'author_contribs'		=> 0,
-				'author_snippets'		=> 0,
-				'author_mods'			=> 0,
-				'author_styles'			=> 0,
-				'author_visible'		=> 1,
-				'author_desc'			=> '',
-				'author_desc_bitfield'	=> '',
-				'author_desc_uid'		=> '',
-				'author_desc_options'	=> 7,
-			);
+		$sync = new titania_sync;
 
-			// Count the contribution totals for each user
-			foreach (titania_types::$types as $type_id => $class)
-			{
-				$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
-					WHERE contrib_type = ' . (int) $type_id . '
-						AND contrib_user_id = ' . (int) $row['user_id'];
-				phpbb::$db->sql_query($sql);
-				$cnt = phpbb::$db->sql_fetchfield('cnt');
+		$sync->authors('count');
 
-				$sql_ary['author_contribs'] += $cnt;
-				$sql_ary[$class->author_count] += $cnt;
-			}
-
-			// Insert
-			titania_insert(TITANIA_AUTHORS_TABLE, $sql_ary);
-		}
-		phpbb::$db->sql_freeresult($result);
-
-		$display_message = 'Authors table';
+		$display_message = 'Authors';
 	break;
 
 	case 5 :

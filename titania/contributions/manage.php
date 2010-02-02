@@ -20,7 +20,7 @@ titania::_include('functions_posting', 'generate_type_select');
 
 load_contrib();
 
-if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('u_titania_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('m_titania_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 {
 	trigger_error('NO_AUTH');
 }
@@ -111,7 +111,7 @@ if (request_var('new_revision_step', 0) > 0)
 */
 if (titania::confirm_box(true))
 {
-	if (!titania::$contrib->is_author && !phpbb::$auth->acl_get('u_titania_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+	if (!titania::$contrib->is_author && !phpbb::$auth->acl_get('m_titania_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 	{
 		trigger_error('NO_AUTH');
 	}
@@ -122,6 +122,7 @@ if (titania::confirm_box(true))
 	{
 		titania::$contrib->set_contrib_user_id($change_owner_id);
 
+		load_contrib(); // Reload the contrib (to make sure the authors list is updated)
 		$submit = false; // Set submit as false to keep the main stuff from being resubmitted again
 		titania::error_box('SUCCESS', 'CONTRIB_OWNER_UPDATED', TITANIA_SUCCESS);
 	}

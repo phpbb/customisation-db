@@ -18,7 +18,7 @@ if (!defined('IN_TITANIA'))
 
 titania::$author->load();
 
-if (titania::$author->user_id != phpbb::$user->data['user_id'] && !phpbb::$auth->acl_get('u_titania_author_mod'))
+if (titania::$author->user_id != phpbb::$user->data['user_id'] && !phpbb::$auth->acl_get('m_titania_author_mod'))
 {
 	trigger_error('NOT_AUTHORISED');
 }

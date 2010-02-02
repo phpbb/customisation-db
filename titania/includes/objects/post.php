@@ -314,7 +314,7 @@ class titania_post extends titania_database_object
 			case 'post' :
 				if (phpbb::$auth->acl_get('u_titania_post') || // Can post
 					($is_author && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
-					phpbb::$auth->acl_get('u_titania_post_mod')) // Can moderate posts
+					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
 				{
 					return true;
 				}
@@ -323,7 +323,7 @@ class titania_post extends titania_database_object
 			case 'edit' :
 				if (($is_poster && phpbb::$auth->acl_get('u_titania_post_edit_own')) || // Is poster and can edit own
 					($is_author && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
-					phpbb::$auth->acl_get('u_titania_post_mod')) // Can moderate posts
+					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
 				{
 					return true;
 				}
@@ -336,7 +336,7 @@ class titania_post extends titania_database_object
 			case 'soft_delete' :
 				if (($is_poster && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own
 					($is_author && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
-					phpbb::$auth->acl_get('u_titania_post_mod')) // Can moderate posts
+					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
 				{
 					return true;
 				}
@@ -345,14 +345,14 @@ class titania_post extends titania_database_object
 			case 'undelete' :
 				if (($is_poster && $is_deleter && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own and did delete their own
 					($is_author && $is_deleter && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own and did delete the message
-					phpbb::$auth->acl_get('u_titania_post_mod')) // Can moderate posts
+					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
 				{
 					return true;
 				}
 			break;
 
 			case 'hard_delete' :
-				if (phpbb::$auth->acl_get('u_titania_post_mod')) // Can moderate posts
+				if (phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
 				{
 					return true;
 				}

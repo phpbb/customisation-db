@@ -66,7 +66,7 @@ $nav_ary = array(
 	'manage' => array(
 		'title'		=> 'MANAGE_AUTHOR',
 		'url'		=> titania::$author->get_url('manage'),
-		'auth'		=> (titania::$author->user_id != phpbb::$user->data['user_id'] && !phpbb::$auth->acl_get('u_titania_author_mod')) ? false : true,
+		'auth'		=> (titania::$author->user_id != phpbb::$user->data['user_id'] && !phpbb::$auth->acl_get('m_titania_author_mod')) ? false : true,
 	),
 );
 

@@ -85,6 +85,8 @@ class titania_type_mod extends titania_type_base
 	*/
 	public function auto_install()
 	{
+		// If you change anything in here, remember to add the reverse to the uninstall() function below!
+
 		if (!isset(phpbb::$config['titania_num_mods']))
 		{
 			if (!class_exists('umil'))
@@ -96,9 +98,9 @@ class titania_type_mod extends titania_type_base
 
 			// Permissions
 			$umil->permission_add(array(
-				'u_titania_mod_queue',
-				'u_titania_mod_validate',
-				'u_titania_mod_moderate',
+				'm_titania_mod_queue',
+				'm_titania_mod_validate',
+				'm_titania_mod_moderate',
 			));
 
 			// Mod count holder
@@ -335,9 +337,9 @@ Lets skip this for now
 
 			// Permissions
 			$umil->permission_remove(array(
-				'u_titania_mod_queue',
-				'u_titania_mod_validate',
-				'u_titania_mod_moderate',
+				'm_titania_mod_queue',
+				'm_titania_mod_validate',
+				'm_titania_mod_moderate',
 			));
 
 			// Mod count holder

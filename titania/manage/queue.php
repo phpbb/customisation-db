@@ -128,7 +128,7 @@ switch ($action)
 		$message->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
-			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('m_titania_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message->set_settings(array(

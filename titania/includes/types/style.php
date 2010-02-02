@@ -86,6 +86,8 @@ class titania_type_style extends titania_type_base
 	*/
 	public function auto_install()
 	{
+		// If you change anything in here, remember to add the reverse to the uninstall() function below!
+
 		if (!isset(phpbb::$config['titania_num_styles']))
 		{
 			if (!class_exists('umil'))
@@ -97,9 +99,9 @@ class titania_type_style extends titania_type_base
 
 			// Permissions
 			$umil->permission_add(array(
-				'u_titania_style_queue',
-				'u_titania_style_validate',
-				'u_titania_style_moderate',
+				'm_titania_style_queue',
+				'm_titania_style_validate',
+				'm_titania_style_moderate',
 			));
 
 			// Style count holder
@@ -138,9 +140,9 @@ class titania_type_style extends titania_type_base
 
 			// Permissions
 			$umil->permission_remove(array(
-				'u_titania_style_queue',
-				'u_titania_style_validate',
-				'u_titania_style_moderate',
+				'm_titania_style_queue',
+				'm_titania_style_validate',
+				'm_titania_style_moderate',
 			));
 
 			// Mod count holder
