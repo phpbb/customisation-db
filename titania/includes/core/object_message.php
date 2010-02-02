@@ -66,7 +66,7 @@ abstract class titania_message_object extends titania_database_object
 	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
 	{
 		$message = $message_uid = $message_bitfield = $message_options = false;
-		$this->get_message_fields(&$message, &$message_uid, &$message_bitfield, &$message_options);
+		$this->get_message_fields($message, $message_uid, $message_bitfield, $message_options);
 
 		generate_text_for_storage($message, $message_uid, $message_bitfield, $message_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
@@ -81,7 +81,7 @@ abstract class titania_message_object extends titania_database_object
 	public function generate_text_for_display()
 	{
 		$message = $message_uid = $message_bitfield = $message_options = false;
-		$this->get_message_fields(&$message, &$message_uid, &$message_bitfield, &$message_options);
+		$this->get_message_fields($message, $message_uid, $message_bitfield, $message_options);
 
 		return generate_text_for_display($message, $message_uid, $message_bitfield, $message_options);
 	}
@@ -100,7 +100,7 @@ abstract class titania_message_object extends titania_database_object
 		);
 
 		$message = $message_uid = $message_bitfield = $message_options = false;
-		$this->get_message_fields(&$message, &$message_uid, &$message_bitfield, &$message_options);
+		$this->get_message_fields($message, $message_uid, $message_bitfield, $message_options);
 
 		// Outputted via call to generate_text_for_edit()
 		//'allow_bbcode'
