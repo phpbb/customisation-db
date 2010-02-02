@@ -12,9 +12,9 @@
 <ul class="topiclist topics">
 
 <!-- BEGIN contribs -->
-	<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF not contribs.S_CONTRIB_VALIDATED --> reported<!-- ENDIF -->">
+	<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 		<dl class="icon" style="background-image: url({contribs.FOLDER_IMG_SRC}); background-repeat: no-repeat;">
-			<dt><a href="{contribs.U_VIEW_CONTRIB}" class="topictitle">{contribs.CONTRIB_NAME}</a>
+			<dt><a href="{contribs.U_VIEW_CONTRIB}" class="topictitle">{contribs.CONTRIB_NAME}</a> <!-- IF not contribs.S_CONTRIB_VALIDATED --><img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="" /><!-- ENDIF -->
 			</dt>
 			<dd class="author">
 				{contribs.AUTHOR_NAME_FULL}
