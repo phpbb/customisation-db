@@ -16,37 +16,37 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!class_exists('titania_database_object'))
+if (!class_exists('titania_message_object'))
 {
-	require TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT;
+	require TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT;
 }
 
 /**
  * Class to abstract contributions.
  * @package Titania
  */
-class titania_contribution extends titania_database_object
+class titania_contribution extends titania_message_object
 {
 	/**
 	 * Database table to be used for the contribution object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= TITANIA_CONTRIBS_TABLE;
+	protected $sql_table = TITANIA_CONTRIBS_TABLE;
 
 	/**
 	 * Primary sql identifier for the contribution object
 	 *
 	 * @var string
 	 */
-	protected $sql_id_field		= 'contrib_id';
+	protected $sql_id_field = 'contrib_id';
 
 	/**
-	 * Description parsed for storage
+	 * Object type (for message tool)
 	 *
-	 * @var bool
+	 * @var string
 	 */
-	private $description_parsed_for_storage = false;
+	protected $object_type = TITANIA_CONTRIB;
 
 	/**
 	 * Author & co-authors of this contribution
@@ -87,13 +87,13 @@ class titania_contribution extends titania_database_object
 		$this->object_config = array_merge($this->object_config, array(
 			'contrib_id'					=> array('default' => 0),
 			'contrib_type'					=> array('default' => 0),
-			'contrib_name'					=> array('default' => '',	'max' => 255),
+			'contrib_name'					=> array('default' => '',	'max' => 255,	'message_field' => 'subject'),
 			'contrib_name_clean'			=> array('default' => '',	'max' => 255),
 
-			'contrib_desc'					=> array('default' => ''),
-			'contrib_desc_bitfield'			=> array('default' => ''),
-			'contrib_desc_uid'				=> array('default' => ''),
-			'contrib_desc_options'			=> array('default' => 7),
+			'contrib_desc'					=> array('default' => '',	'message_field' => 'message'),
+			'contrib_desc_bitfield'			=> array('default' => '',	'message_field' => 'message_bitfield'),
+			'contrib_desc_uid'				=> array('default' => '',	'message_field' => 'message_uid'),
+			'contrib_desc_options'			=> array('default' => 7,	'message_field' => 'message_options'),
 
 			'contrib_demo'					=> array('default' => ''),
 
@@ -255,23 +255,6 @@ class titania_contribution extends titania_database_object
 		}
 
 		return $error;
-	}
-
-	/**
-	 * Submit data in the post_data format (from includes/tools/message.php)
-	 *
-	 * @param object $message The message object
-	 */
-	public function post_data($message)
-	{
-		$post_data = $message->request_data();
-
-		$this->__set_array(array(
-			'contrib_name'		=> $post_data['subject'],
-			'contrib_desc'		=> $post_data['message'],
-		));
-
-		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
 	}
 
 	/*
@@ -453,45 +436,6 @@ class titania_contribution extends titania_database_object
 	}
 
 	/**
-	 * Generate text for storing description into the database
-	 *
-	 * @param bool $allow_bbcode
-	 * @param bool $allow_urls
-	 * @param bool $allow_smilies
-	 *
-	 * @return void
-	 */
-	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
-	{
-		generate_text_for_storage($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_bitfield, $this->contrib_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
-
-		$this->description_parsed_for_storage = true;
-	}
-
-	/**
-	 * Parse description for display
-	 *
-	 * @return string
-	 */
-	public function generate_text_for_display()
-	{
-		return generate_text_for_display($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_bitfield, $this->contrib_desc_options);
-	}
-
-	/**
-	 * Parse description for edit
-	 *
-	 * @return string
-	 */
-	public function generate_text_for_edit()
-	{
-		return array_merge(generate_text_for_edit($this->contrib_desc, $this->contrib_desc_uid, $this->contrib_desc_options), array(
-			'object_type'	=> TITANIA_CONTRIB,
-			'object_id'		=> $this->contrib_id,
-		));
-	}
-
-	/**
 	* Immediately increases the view counter for this contribution
 	*
 	* @return void
@@ -635,7 +579,7 @@ class titania_contribution extends titania_database_object
 				$current_list[] = $row['user_id'];
 
 				// reset each of the authors cached contrib list
-				phpbb::$cache->reset_author_contribs($row['user_id']);
+				titania::$cache->reset_author_contribs($row['user_id']);
 			}
 			phpbb::$db->sql_freeresult($result);
 
@@ -661,7 +605,7 @@ class titania_contribution extends titania_database_object
 				);
 
 				// reset each of the authors cached contrib list
-				phpbb::$cache->reset_author_contribs($user_id);
+				titania::$cache->reset_author_contribs($user_id);
 			}
 
 			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
@@ -682,7 +626,7 @@ class titania_contribution extends titania_database_object
 				);
 
 				// reset each of the authors cached contrib list
-				phpbb::$cache->reset_author_contribs($user_id);
+				titania::$cache->reset_author_contribs($user_id);
 			}
 
 			phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_COAUTHORS_TABLE, $sql_ary);
@@ -712,7 +656,7 @@ class titania_contribution extends titania_database_object
 		phpbb::$db->sql_query($sql);
 
 		// Reset the author contribs that are cached for the new owner
-		phpbb::$cache->reset_author_contribs($user_id);
+		titania::$cache->reset_author_contribs($user_id);
 
 		// Increment the contrib counter for the new owner
 		$this->change_author_contrib_count($user_id);

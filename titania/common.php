@@ -68,13 +68,12 @@ if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get(
 // admin requested a sync
 if (isset($_GET['sync']) && phpbb::$auth->acl_get('a_'))
 {
-	$sync = new titania_sync();
+	$sync = new titania_sync;
 	$method = explode('_', request_var('sync', ''), 2);
 
-	if (method_exists($sync, $method[0]))
+	if ($method[1] && method_exists($sync, $method[0]))
 	{
 		$sync->$method[0]($method[1]);
+		titania::error_box('SUCCESS', 'Sync Success');
 	}
-
-	titania::error_box('SUCCESS', 'Sync Success');
 }

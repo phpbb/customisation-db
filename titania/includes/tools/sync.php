@@ -27,6 +27,66 @@ if (!defined('IN_TITANIA'))
 class titania_sync
 {
 	/**
+	* Sync authors
+	*
+	* @param string $mode The mode (count)
+	* @param int $user_id User id to limit to
+	*/
+	public function author($mode, $user_id = false)
+	{
+		switch ($mode)
+		{
+			case 'count' :
+				$sql = 'SELECT DISTINCT(contrib_user_id) AS user_id FROM ' . TITANIA_CONTRIBS_TABLE .
+					(($user_id !== false) ? ' WHERE contrib_user_id = ' . (int) $user_id : '');
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$sql_ary = array(
+						'author_contribs' => 0,
+					);
+
+					// Count the contribution totals for each user
+					foreach (titania_types::$types as $type_id => $class)
+					{
+						$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
+							WHERE contrib_type = ' . (int) $type_id . '
+								AND contrib_user_id = ' . (int) $row['user_id'];
+						phpbb::$db->sql_query($sql);
+						$cnt = phpbb::$db->sql_fetchfield('cnt');
+
+						$sql_ary['author_contribs'] += $cnt;
+						$sql_ary[$class->author_count] = $cnt;
+					}
+
+					if ($row['user_id'] == 202401)
+					{
+						var_dump($sql_ary);
+					}
+
+					// Increment/Decrement the contrib counter for the new owner
+					$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
+						SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+							WHERE user_id = ' . $row['user_id'];
+					phpbb::$db->sql_query($sql);
+
+					// If the author profile does not exist set it up
+					if (!phpbb::$db->sql_affectedrows())
+					{
+						$author = new titania_author($user_id);
+						$author->load();
+
+						$author->__set_array($sql_ary);
+
+						$author->submit();
+					}
+				}
+				phpbb::$db->sql_freeresult($result);
+			break;
+		}
+	}
+
+	/**
 	* Sync categories
 	*
 	* @param string $mode The mode (count)
@@ -49,6 +109,7 @@ class titania_sync
 						phpbb::$db->sql_query($sql);
 					}
 				}
+				phpbb::$db->sql_freeresult($result);
 			break;
 		}
 	}
