@@ -146,6 +146,11 @@ class titania_tracking
 
 	public static function get_track_sql(&$sql_ary, $type, $id_field, $prefix = 'tt')
 	{
+		if (!phpbb::$user->data['is_registered']) // @todo support the option to use cookies for all
+		{
+			return;
+		}
+
 		$sql_ary['LEFT_JOIN'] = (!isset($sql_ary['LEFT_JOIN'])) ? array() : $sql_ary['LEFT_JOIN'];
 
 		$sql_ary['LEFT_JOIN'][] = array(
@@ -205,6 +210,8 @@ class titania_tracking
 
 	private static function track_cookie($type, $id, $time = false)
 	{
+		self::$store[$type][$id] = ($time === false) ? titania::$time : (int) $time;
+
 		phpbb::$user->set_cookie('titania_track', serialize(self::$store), (titania::$time + 31536000));
 	}
 
@@ -215,7 +222,7 @@ class titania_tracking
 			return;
 		}
 
-		$cookie = request_var(phpbb::$config['cookie_name'] . '_' . 'titania_track', '', false, true);
+		$cookie = request_var(phpbb::$config['cookie_name'] . '_titania_track', '', false, true);
 		if ($cookie)
 		{
 			self::$store = unserialize($cookie);

@@ -135,7 +135,7 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 
 			$sql_ary = array(
 				// DO NOT change to *, we do not need all rows from ANY table with the query!
-				'SELECT'	=> 'c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update,
+				'SELECT'	=> 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update,
 					u.username, u.user_colour, u.username_clean',
 
 				'FROM'		=> array(
@@ -200,7 +200,10 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 		$contrib->author->__set_array($row);
 
 		// Store the tracking info we grabbed in the tool
-		titania_tracking::store_track(TITANIA_CONTRIB, $contrib->contrib_id, $row['track_time']);
+		if (isset($row['track_time']))
+		{
+			titania_tracking::store_track(TITANIA_CONTRIB, $contrib->contrib_id, $row['track_time']);
+		}
 
 		// Get the folder image
 		$folder_img = $folder_alt = '';

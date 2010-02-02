@@ -299,7 +299,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			// Store the tracking info we grabbed in the tool
-			titania_tracking::store_track(TITANIA_TOPIC, $row['topic_id'], $row['track_time']);
+			if (isset($row['track_time']))
+			{
+				titania_tracking::store_track(TITANIA_TOPIC, $row['topic_id'], $row['track_time']);
+			}
 
 			self::$topics[$row['topic_id']] = $row;
 
