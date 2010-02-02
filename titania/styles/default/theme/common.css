@@ -137,6 +137,13 @@ a.download-main {
 	font-size: 1.1em;
 }
 
+#contrib-description dt {
+	margin-bottom: 3px;
+	padding-bottom: 3px;
+	border-bottom: 1px dotted #DEDEDE;
+	
+}
+
 ul.general-info li {
 	list-style: none;
 	display: block;
