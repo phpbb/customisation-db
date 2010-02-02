@@ -5,7 +5,7 @@
 <!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
-<form id="contrib_manage" name="contrib_manage" method="post" action="{S_POST_ACTION}"{S_FORM_ENCTYPE}>
+<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" onsubmit="titania_post_submit();" {S_FORM_ENCTYPE}>
 	<!-- IF S_NEW_REVISION -->
 		<div class="container">
 			<div class="inner"><span class="corners-top main-corners"><span></span></span>
