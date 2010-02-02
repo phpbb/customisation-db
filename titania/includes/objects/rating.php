@@ -211,6 +211,7 @@ class titania_rating extends titania_database_object
 			'RATE_URL'				=> $rate_url,
 
 			'S_HAS_RATED'			=> ($this->rating_id) ? true : false,
+			'S_CAN_RATE'			=> $can_rate,
 
 			'UA_GREY_STAR_SRC'		=> titania::$theme_path . '/images/star_grey.gif',
 			'UA_GREEN_STAR_SRC'		=> titania::$theme_path . '/images/star_green.gif',
@@ -225,8 +226,9 @@ class titania_rating extends titania_database_object
 
 		for ($i = 1; $i <= titania::$config->max_rating; $i++)
 		{
+			$rating = (!$can_rate) ? $this->rating :  (($this->rating_value) ? $this->rating_value : $i);
 			phpbb::$template->assign_block_vars('stars', array(
-				'ALT'		=> (($this->rating_value) ? $this->rating_value : $i) . '/' . titania::$config->max_rating,
+				'ALT'		=> $rating . '/' . titania::$config->max_rating,
 				'ID'		=> $i,
 				'RATE_URL'	=> titania_url::append_url($rate_url, array('value' => $i)),
 			));
