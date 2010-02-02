@@ -649,10 +649,23 @@ class titania_contribution extends titania_message_object
 		}
 
 		// Delete them from the co-authors list if they are in it...
-		$sql = 'DELETE FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+		$sql = 'SELECT COUNT(contrib_id) FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
 			WHERE contrib_id = ' . $this->contrib_id . '
 				AND user_id = ' . (int) $user_id;
-		phpbb::$db->sql_query($sql);
+		$result = phpbb::$db->sql_query($sql);
+		if (phpbb::$db->sql_fetchrow($result))
+		{
+			$sql = 'DELETE FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+				WHERE contrib_id = ' . $this->contrib_id . '
+					AND user_id = ' . (int) $user_id;
+			phpbb::$db->sql_query($sql);
+		}
+		else
+		{
+			// Increment the contrib counter for the new owner
+			$this->change_author_contrib_count($user_id);
+		}
+		phpbb::$db->sql_freeresult($result);
 
 		// Update the data for this contrib item
 		$sql = 'UPDATE ' . $this->sql_table . '
@@ -662,9 +675,6 @@ class titania_contribution extends titania_message_object
 
 		// Reset the author contribs that are cached for the new owner
 		titania::$cache->reset_author_contribs($user_id);
-
-		// Increment the contrib counter for the new owner
-		$this->change_author_contrib_count($user_id);
 
 		// Decrement the contrib counter for the old owner (setting as a co-author increments it again)
 		$this->change_author_contrib_count($this->contrib_user_id, '-');

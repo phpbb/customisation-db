@@ -54,22 +54,8 @@ class titania_sync
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
-					$sql_ary = array(
-						'author_contribs' => 0,
-					);
+					$sql_ary = $this->_get_author_count($row['user_id']);
 
-					// Count the contribution totals for each user
-					foreach (titania_types::$types as $type_id => $class)
-					{
-						$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
-							WHERE contrib_type = ' . (int) $type_id . '
-								AND contrib_user_id = ' . (int) $row['user_id'];
-						phpbb::$db->sql_query($sql);
-						$cnt = phpbb::$db->sql_fetchfield('cnt');
-
-						$sql_ary['author_contribs'] += $cnt;
-						$sql_ary[$class->author_count] = $cnt;
-					}
 					// Increment/Decrement the contrib counter for the new owner
 					$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
 						SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
@@ -286,5 +272,43 @@ class titania_sync
 		phpbb::$db->sql_freeresult($result);
 
 		return ($teams + $authors + $public) . ':' . ($authors + $public) . ':' . $public;
+	}
+
+	public function _get_author_count($user_id)
+	{
+		$sql_ary = array(
+			'author_contribs' => 0,
+		);
+		foreach (titania_types::$types as $type_id => $class)
+		{
+			$sql_ary[$class->author_count] = 0;
+		}
+
+		// Count the contribution totals for each user
+		foreach (titania_types::$types as $type_id => $class)
+		{
+			// Main authors
+			$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
+				WHERE contrib_type = ' . (int) $type_id . '
+					AND contrib_user_id = ' . (int) $user_id;
+			phpbb::$db->sql_query($sql);
+			$cnt = phpbb::$db->sql_fetchfield('cnt');
+
+			$sql_ary['author_contribs'] += $cnt;
+			$sql_ary[$class->author_count] += $cnt;
+
+			// Co-authors
+			$sql = 'SELECT COUNT(c.contrib_id) AS cnt FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' cc, ' . TITANIA_CONTRIBS_TABLE . ' c
+				WHERE c.contrib_type = ' . (int) $type_id . '
+					AND cc.user_id = ' . (int) $user_id . '
+					AND c.contrib_id = cc.contrib_id';
+			phpbb::$db->sql_query($sql);
+			$cnt = phpbb::$db->sql_fetchfield('cnt');
+
+			$sql_ary['author_contribs'] += $cnt;
+			$sql_ary[$class->author_count] += $cnt;
+		}
+
+		return $sql_ary;
 	}
 }

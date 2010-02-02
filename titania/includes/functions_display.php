@@ -102,6 +102,14 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 				array('SORT_CONTRIB_NAME',		'c.contrib_name', true),
 			));
 
+			// Get the contrib_ids this user is an author in (includes as a co-author)
+			$contrib_ids = titania::$cache->get_author_contribs($id);
+
+			if (!sizeof($contrib_ids))
+			{
+				return;
+			}
+
 			$sql_ary = array(
 				'SELECT'	=> '*',
 
@@ -110,7 +118,7 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 					USERS_TABLE				=> 'u',
 				),
 
-				'WHERE'		=> 'c.contrib_user_id = ' . (int) $id . '
+				'WHERE'		=> phpbb::$db->sql_in_set('c.contrib_id', $contrib_ids) . '
 					AND u.user_id = c.contrib_user_id
 					AND c.contrib_visible = 1',
 
