@@ -32,11 +32,23 @@ class titania_sync
 	* @param string $mode The mode (count)
 	* @param int $user_id User id to limit to
 	*/
-	public function author($mode, $user_id = false)
+	public function authors($mode, $user_id = false)
 	{
 		switch ($mode)
 		{
 			case 'count' :
+				// Reset the count for all authors first
+				$sql_ary = array(
+					'author_contribs' => 0,
+				);
+				foreach (titania_types::$types as $type_id => $class)
+				{
+					$sql_ary[$class->author_count] = 0;
+				}
+				$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
+					SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary);
+				phpbb::$db->sql_query($sql);
+
 				$sql = 'SELECT DISTINCT(contrib_user_id) AS user_id FROM ' . TITANIA_CONTRIBS_TABLE .
 					(($user_id !== false) ? ' WHERE contrib_user_id = ' . (int) $user_id : '');
 				$result = phpbb::$db->sql_query($sql);
@@ -57,11 +69,6 @@ class titania_sync
 
 						$sql_ary['author_contribs'] += $cnt;
 						$sql_ary[$class->author_count] = $cnt;
-					}
-
-					if ($row['user_id'] == 202401)
-					{
-						var_dump($sql_ary);
 					}
 
 					// Increment/Decrement the contrib counter for the new owner
