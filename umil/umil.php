@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 188 2009-11-03 00:43:38Z exreaction $
+ * @version $Id: umil.php 196 2010-02-03 04:04:36Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -1672,6 +1672,107 @@ class umil
 	}
 
 	/**
+	* Add a new permission role
+	*
+	* @param string $role_name The new role name
+	* @param sting $role_type The type (u_, m_, a_)
+	*/
+	function permission_role_add($role_name, $role_type = '', $role_description = '')
+	{
+		global $db;
+
+		// Multicall
+		if ($this->multicall(__FUNCTION__, $role_name))
+		{
+			return;
+		}
+
+		$sql = 'SELECT role_id FROM ' . ACL_ROLES_TABLE . '
+			WHERE role_name = \'' . $db->sql_escape($role_name) . '\'';
+		$db->sql_query($sql);
+		$role_id = $db->sql_fetchfield('role_id');
+
+		if ($role_id)
+		{
+			return;
+		}
+
+		$sql = 'SELECT MAX(role_order) AS max FROM ' . ACL_ROLES_TABLE . '
+			WHERE role_type = \'' . $db->sql_escape($role_type) . '\'';
+		$db->sql_query($sql);
+		$role_order = $db->sql_fetchfield('max');
+		$role_order = (!$role_order) ? 1 : $role_order + 1;
+
+		$sql_ary = array(
+			'role_name'			=> $role_name,
+			'role_description'	=> $role_description,
+			'role_type'			=> $role_type,
+			'role_order'		=> $role_order,
+		);
+
+		$sql = 'INSERT INTO ' . ACL_ROLES_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
+		$db->sql_query($sql);
+	}
+
+	/**
+	* Update the name on a permission role
+	*
+	* @param string $old_role_name The old role name
+	* @param string $new_role_name The new role name
+	*/
+	function permission_role_update($old_role_name, $new_role_name = '')
+	{
+		global $db;
+
+		// Multicall
+		if ($this->multicall(__FUNCTION__, $role_name))
+		{
+			return;
+		}
+
+		$sql = 'UPDATE ' . ACL_ROLES_TABLE . '
+			SET role_name = \'' . $db->sql_escape($new_role_name) . '\'
+			WHERE role_name = \'' . $db->sql_escape($old_role_name) . '\'';
+		$db->sql_query($sql);
+	}
+
+	/**
+	* Remove a permission role
+	*
+	* @param string $role_name The role name to remove
+	*/
+	function permission_role_remove($role_name)
+	{
+		global $db;
+
+		// Multicall
+		if ($this->multicall(__FUNCTION__, $role_name))
+		{
+			return;
+		}
+
+		$sql = 'SELECT role_id FROM ' . ACL_ROLES_TABLE . '
+			WHERE role_name = \'' . $db->sql_escape($role_name) . '\'';
+		$db->sql_query($sql);
+		$role_id = $db->sql_fetchfield('role_id');
+
+		if (!$role_id)
+		{
+			return;
+		}
+
+		$sql = 'DELETE FROM ' . ACL_ROLES_DATA_TABLE . '
+			WHERE role_id = ' . $role_id;
+		$db->sql_query($sql);
+
+		$sql = 'DELETE FROM ' . ACL_ROLES_TABLE . '
+			WHERE role_id = ' . $role_id;
+		$db->sql_query($sql);
+
+		$auth->acl_clear_prefetch();
+	}
+
+	/**
 	* Permission Set
 	*
 	* Allows you to set permissions for a certain group/role
@@ -2627,7 +2728,7 @@ class umil
 						$sql .= "DEFAULT nextval('{$table_name}_seq'),\n";
 
 						// Make sure the sequence will be created before creating the table
-						//$sql .= "CREATE SEQUENCE {$table_name}_seq;\n\n" . $sql;
+						$sql .= "CREATE SEQUENCE {$table_name}_seq;\n\n" . $sql;
 					}
 					else
 					{
