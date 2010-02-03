@@ -187,83 +187,46 @@ switch ($step)
 			// Insert
 			titania_insert(TITANIA_CONTRIBS_TABLE, $sql_ary);
 
-			if ($row['contrib_type'] == 2)
+			$sql = 'SELECT tag_id FROM ' . $ariel_prefix . 'contrib_tags
+				WHERE contrib_id = ' . (int) $row['contrib_id'];
+			$result1 = phpbb::$db->sql_query($sql);
+			while ($tag_row = phpbb::$db->sql_fetchrow($result1))
 			{
 				$sql_ary = array(
 					'contrib_id'	=> $row['contrib_id'],
-					'category_id'	=> 3, // Styles
 				);
 
-				// Insert
-				titania_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
-			}
-			else
-			{
-				$sql = 'SELECT tag_id FROM ' . $ariel_prefix . 'contrib_tags
-					WHERE contrib_id = ' . (int) $row['contrib_id'];
-				$result1 = phpbb::$db->sql_query($sql);
-				while ($tag_row = phpbb::$db->sql_fetchrow($result1))
+				$tags_to_cats = array(
+					9 => 13, // Board Styles
+					10 => 14, // Smilies
+					11 => 16, // Ranks
+					12 => 15, // Avatars
+					30 => 9, // Add-ons
+					31 => 4, // Cosmetic
+					32 => 5, // Admin Tools -> Tools
+					33 => 7, // Syndication -> Communication
+					34 => 7, // BBCode -> Communication
+					35 => 6, // Security
+					36 => 7, // Communication
+					37 => 8, // Profile
+					106 => 10, // Anti-Spam
+					107 => 5, // Moderator Tools -> Tools
+					108 => 11, // Entertainment
+					155 => 13, // Imageset -> Board Styles
+					165 => 13, // Theme -> Board Styles
+					175 => 13, // Template -> Board Styles
+					195 => 17, // Topic Icons -> Miscellaneous
+					235 => 17, // Tools -> Miscellaneous
+				);
+
+				if (isset($tags_to_cats[$tag_row['tag_id']]))
 				{
-					$sql_ary = array(
-						'contrib_id'	=> $row['contrib_id'],
-					);
+					$sql_ary['category_id'] = $tags_to_cats[$tag_row['tag_id']];
 
-					switch ($tag_row['tag_id'])
-					{
-						case 30 :
-							// Add-ons
-							$sql_ary['category_id'] = 9;
-						break;
-						case 31 :
-							// Cosmetic
-							$sql_ary['category_id'] = 4;
-						break;
-						case 32 :
-							// Admin Tools
-							$sql_ary['category_id'] = 5;
-						break;
-						case 33 :
-							// Syndication -> Communication
-							$sql_ary['category_id'] = 7;
-						break;
-						case 34 :
-							// BBCode -> Communication
-							$sql_ary['category_id'] = 7;
-						break;
-						case 35 :
-							// Security
-							$sql_ary['category_id'] = 6;
-						break;
-						case 36 :
-							// Communication
-							$sql_ary['category_id'] = 7;
-						break;
-						case 37 :
-							// Profile
-							$sql_ary['category_id'] = 8;
-						break;
-						case 106 :
-							// Anti-Spam
-							$sql_ary['category_id'] = 10;
-						break;
-						case 107 :
-							// Moderator tools -> Admin tools
-							$sql_ary['category_id'] = 5;
-						break;
-						case 108 :
-							// Entertainment
-							$sql_ary['category_id'] = 11;
-						break;
-					}
-
-					// Insert
-					if (isset($sql_ary['category_id']))
-					{
-						titania_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
-					}
+					titania_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
 				}
-				phpbb::$db->sql_freeresult($result1);
 			}
+			phpbb::$db->sql_freeresult($result1);
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -276,137 +239,137 @@ switch ($step)
 		$total = phpbb::$db->sql_fetchfield('cnt');
 		phpbb::$db->sql_freeresult();
 
-$sql_ary = array(
-	'SELECT'	=> 'q.*, r.*, c.contrib_name, c.contrib_phpbb_version, c.contrib_status, c.contrib_type',
+		$sql_ary = array(
+			'SELECT'	=> 'q.*, r.*, c.contrib_name, c.contrib_phpbb_version, c.contrib_status, c.contrib_type',
 
-	'FROM'		=> array(
-		$ariel_prefix . 'contrib_revisions' => 'r',
-		$ariel_prefix . 'contribs' => 'c',
-	),
+			'FROM'		=> array(
+				$ariel_prefix . 'contrib_revisions' => 'r',
+				$ariel_prefix . 'contribs' => 'c',
+			),
 
-	'LEFT_JOIN'	=> array(
-		array(
-			'FROM'	=> array($ariel_prefix . 'queue' => 'q'),
-			'ON'	=> 'q.revision_id = r.revision_id',
-		),
-	),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array($ariel_prefix . 'queue' => 'q'),
+					'ON'	=> 'q.revision_id = r.revision_id',
+				),
+			),
 
-	'WHERE'		=> 'c.contrib_id = r.contrib_id',
+			'WHERE'		=> 'c.contrib_id = r.contrib_id',
 
-	'ORDER_BY'	=> 'r.revision_id ASC',
-);
-$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+			'ORDER_BY'	=> 'r.revision_id ASC',
+		);
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
-$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
-while ($row = phpbb::$db->sql_fetchrow($result))
-{
-	$ignore = array(-1, 3);
-	if ($row['contrib_phpbb_version'][0] != '3' || in_array($row['contrib_status'], $ignore) || !in_array($row['contrib_type'], array_keys(titania_types::$types)))
-	{
-		// Skip 2.0 mods, contribs that were denied or pulled and weird ones
-		continue;
-	}
-
-	if ($row['revision_phpbb_version'][0] != '3')
-	{
-		//echo 'Revision phpBB version is ' . $row['revision_phpbb_version'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_id'] . '<br />';
-	}
-
-	$ignore = array(-2, -3, -4, -5, -6);
-	if (in_array($row['queue_status'], $ignore))
-	{
-		// Skip revisions that were denied, canned, etc
-		continue;
-	}
-
-	// mime_content_type bitches on me without using realpath
-	$filename = realpath(PHPBB_ROOT_PATH . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
-	if (!file_exists($filename))
-	{
-		echo 'Could Not Find File - ' . $filename . '<br />';
-		continue;
-	}
-	$mime_type = mime_content_type($filename);
-
-	switch ($mime_type)
-	{
-		case 'application/zip' :
-		case 'application/octet-stream' :
-			if (!strpos($row['revision_filename'], '.zip'))
+		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$ignore = array(-1, 3);
+			if ($row['contrib_phpbb_version'][0] != '3' || in_array($row['contrib_status'], $ignore) || !in_array($row['contrib_type'], array_keys(titania_types::$types)))
 			{
-				$row['revision_filename'] .= '.zip';
+				// Skip 2.0 mods, contribs that were denied or pulled and weird ones
+				continue;
 			}
-		break;
 
-		default :
-			//echo $row['revision_filename'] . ' ' . $mime_type . ' ' . $filename . '<br />';
-			continue;
-		break;
-	}
+			if ($row['revision_phpbb_version'][0] != '3')
+			{
+				//echo 'Revision phpBB version is ' . $row['revision_phpbb_version'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_id'] . '<br />';
+			}
 
-	$move_dir = 'titania_contributions';
-	$move_file = md5(unique_id());
-	if (!file_exists(titania::$config->upload_path . $move_dir))
-	{
-		mkdir(titania::$config->upload_path . $move_dir);
-		phpbb_chmod(titania::$config->upload_path . $move_dir, CHMOD_ALL);
-	}
-	if (!copy($filename, titania::$config->upload_path . $move_dir . '/' . $move_file))
-	{
-		echo 'Could Not Copy File - ' . $filename . '<br />';
-		continue;
-	}
+			$ignore = array(-2, -3, -4, -5, -6);
+			if (in_array($row['queue_status'], $ignore))
+			{
+				// Skip revisions that were denied, canned, etc
+				continue;
+			}
 
-	$sql_ary = array(
-		'object_type'			=> TITANIA_CONTRIB,
-		'object_id'				=> $row['contrib_id'],
-		'attachment_access'		=> TITANIA_ACCESS_PUBLIC,
-		'attachment_comment'	=> '',
-		'attachment_directory'	=> $move_dir,
-		'physical_filename'		=> $move_file,
-		'real_filename'			=> $row['revision_filename'],
-		'download_count'		=> 0,
-		'filesize'				=> $row['revision_filesize'],
-		'filetime'				=> $row['revision_date'],
-		'extension'				=> (strpos($row['revision_filename'], '.zip')) ? 'zip' : 'mod',
-		'mimetype'				=> (strpos($row['revision_filename'], '.zip')) ? 'application/x-zip-compressed' : 'text/plain',
-		'hash'					=> $row['revision_md5'],
-		'thumbnail'				=> 0,
-		'is_orphan'				=> 0,
-	);
+			// mime_content_type bitches on me without using realpath
+			$filename = realpath(PHPBB_ROOT_PATH . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
+			if (!file_exists($filename))
+			{
+				echo 'Could Not Find File - ' . $filename . '<br />';
+				continue;
+			}
+			$mime_type = mime_content_type($filename);
 
-	// Insert
-	$attach_id = titania_insert(TITANIA_ATTACHMENTS_TABLE, $sql_ary);
+			switch ($mime_type)
+			{
+				case 'application/zip' :
+				case 'application/octet-stream' :
+					if (!strpos($row['revision_filename'], '.zip'))
+					{
+						$row['revision_filename'] .= '.zip';
+					}
+				break;
 
-	$sql_ary = array(
-		'revision_id'				=> $row['revision_id'],
-		'contrib_id'				=> $row['contrib_id'],
-		'attachment_id'				=> $attach_id,
-		'revision_version'			=> $row['revision_version'],
-		'revision_name'				=> $row['revision_name'],
-		'revision_time'				=> $row['revision_date'],
-		'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
-		'validation_date'			=> ($row['queue_status'] == -1) ? $row['revision_date'] : 0,
-		'phpbb_version'				=> $row['revision_phpbb_version'],
-		'install_time'				=> 0,
-		'install_level'				=> 0,
-		'revision_submitted'		=> 1,
-	);
+				default :
+					//echo $row['revision_filename'] . ' ' . $mime_type . ' ' . $filename . '<br />';
+					continue;
+				break;
+			}
 
-	// Insert
-	titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
+			$move_dir = 'titania_contributions';
+			$move_file = md5(unique_id());
+			if (!file_exists(titania::$config->upload_path . $move_dir))
+			{
+				mkdir(titania::$config->upload_path . $move_dir);
+				phpbb_chmod(titania::$config->upload_path . $move_dir, CHMOD_ALL);
+			}
+			if (!copy($filename, titania::$config->upload_path . $move_dir . '/' . $move_file))
+			{
+				echo 'Could Not Copy File - ' . $filename . '<br />';
+				continue;
+			}
 
-	// Update the contrib_last_update
-	if ($row['queue_status'] == -1 || !titania::$config->require_validation)
-	{
-		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-			SET contrib_last_update = ' . (int) $row['revision_date'] . '
-			WHERE contrib_id = ' . (int) $row['contrib_id'] . '
-				AND contrib_last_update < ' . (int) $row['revision_date'];
-		phpbb::$db->sql_query($sql);
-	}
-}
-phpbb::$db->sql_freeresult($result);
+			$sql_ary = array(
+				'object_type'			=> TITANIA_CONTRIB,
+				'object_id'				=> $row['contrib_id'],
+				'attachment_access'		=> TITANIA_ACCESS_PUBLIC,
+				'attachment_comment'	=> '',
+				'attachment_directory'	=> $move_dir,
+				'physical_filename'		=> $move_file,
+				'real_filename'			=> $row['revision_filename'],
+				'download_count'		=> 0,
+				'filesize'				=> $row['revision_filesize'],
+				'filetime'				=> $row['revision_date'],
+				'extension'				=> (strpos($row['revision_filename'], '.zip')) ? 'zip' : 'mod',
+				'mimetype'				=> (strpos($row['revision_filename'], '.zip')) ? 'application/x-zip-compressed' : 'text/plain',
+				'hash'					=> $row['revision_md5'],
+				'thumbnail'				=> 0,
+				'is_orphan'				=> 0,
+			);
+
+			// Insert
+			$attach_id = titania_insert(TITANIA_ATTACHMENTS_TABLE, $sql_ary);
+
+			$sql_ary = array(
+				'revision_id'				=> $row['revision_id'],
+				'contrib_id'				=> $row['contrib_id'],
+				'attachment_id'				=> $attach_id,
+				'revision_version'			=> $row['revision_version'],
+				'revision_name'				=> $row['revision_name'],
+				'revision_time'				=> $row['revision_date'],
+				'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
+				'validation_date'			=> ($row['queue_status'] == -1) ? $row['revision_date'] : 0,
+				'phpbb_version'				=> $row['revision_phpbb_version'],
+				'install_time'				=> 0,
+				'install_level'				=> 0,
+				'revision_submitted'		=> 1,
+			);
+
+			// Insert
+			titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
+
+			// Update the contrib_last_update
+			if ($row['queue_status'] == -1 || !titania::$config->require_validation)
+			{
+				$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+					SET contrib_last_update = ' . (int) $row['revision_date'] . '
+					WHERE contrib_id = ' . (int) $row['contrib_id'] . '
+						AND contrib_last_update < ' . (int) $row['revision_date'];
+				phpbb::$db->sql_query($sql);
+			}
+		}
+		phpbb::$db->sql_freeresult($result);
 
 		$display_message = 'Revisions table';
 	break;

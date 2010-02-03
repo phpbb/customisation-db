@@ -37,6 +37,11 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 'CONTINUE' => 'Continue',
+'CAT_MISC' => 'Miscellaneous',
+'CAT_BOARD_STYLES' => 'Board Styles',
+'CAT_SMILIES' => 'Smilies',
+'CAT_AVATARS' => 'Avatars',
+'CAT_RANKS' => 'Ranks',
 	'AUTHOR_BY'					=> 'By %s',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
@@ -44,7 +49,7 @@ $lang = array_merge($lang, array(
 	'CACHE_PURGED'				=> 'Cache has been successfully purged',
 	'CATEGORY'					=> 'Category',
 	'CAT_ADDONS'				=> 'Add-ons',
-	'CAT_ADMIN_TOOLS'			=> 'Admin Tools',
+	'CAT_TOOLS'					=> 'Tools',
 	'CAT_ANTI_SPAM'				=> 'Anti-Spam',
 	'CAT_COMMUNICATION'			=> 'Communication',
 	'CAT_COSMETIC'				=> 'Cosmetic',
@@ -107,7 +112,7 @@ $lang = array_merge($lang, array(
 
 	'TITANIA_INDEX'				=> 'Customisation Database',
 	'TYPE'						=> 'Type',
-	
+
 	'VERSION'					=> 'Version',
 	'VIEW'						=> 'View',
 ));
