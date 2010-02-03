@@ -16,16 +16,16 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!class_exists('titania_database_object'))
+if (!class_exists('titania_message_object'))
 {
-	require TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT;
+	require TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT;
 }
 
 /**
 * Class to abstract titania posts
 * @package Titania
 */
-class titania_post extends titania_database_object
+class titania_post extends titania_message_object
 {
 	/**
 	 * SQL Table
@@ -42,11 +42,11 @@ class titania_post extends titania_database_object
 	protected $sql_id_field = 'post_id';
 
 	/**
-	* Text ready for storage
-	*
-	* @var bool
-	*/
-	private $text_parsed_for_storage = false;
+	 * Object type (for message tool)
+	 *
+	 * @var string
+	 */
+	protected $object_type = 'post_type';
 
 	/**
 	* Topic Object
@@ -76,9 +76,9 @@ class titania_post extends titania_database_object
 			'post_id'				=> array('default' => 0),
 			'topic_id'				=> array('default' => 0),
 			'post_type'				=> array('default' => 0), // Post Type, Main TITANIA_ constants
-			'post_access'			=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
+			'post_access'			=> array('default' => TITANIA_ACCESS_PUBLIC,	'message_field' => 'access'), // Access level, TITANIA_ACCESS_ constants
 
-			'post_locked'			=> array('default' => false),
+			'post_locked'			=> array('default' => false,	'message_field' => 'lock'),
 			'post_approved'			=> array('default' => true),
 			'post_reported'			=> array('default' => false),
 			'post_attachment'		=> array('default' => false),
@@ -94,11 +94,11 @@ class titania_post extends titania_database_object
 			'post_edit_reason'		=> array('default' => ''), // Reason for deleting/editing
 			'post_delete_user'		=> array('default' => 0), // The last user to delete the post
 
-			'post_subject'			=> array('default' => ''),
-			'post_text'				=> array('default' => ''),
-			'post_text_bitfield'	=> array('default' => ''),
-			'post_text_uid'			=> array('default' => ''),
-			'post_text_options'		=> array('default' => 7),
+			'post_subject'			=> array('default' => '',	'message_field' => 'subject', 'max' => 255),
+			'post_text'				=> array('default' => '',	'message_field' => 'message'),
+			'post_text_bitfield'	=> array('default' => '',	'message_field' => 'message_bitfield'),
+			'post_text_uid'			=> array('default' => '',	'message_field' => 'message_uid'),
+			'post_text_options'		=> array('default' => 7,	'message_field' => 'message_options'),
 		));
 
 		switch ($type)
@@ -172,18 +172,12 @@ class titania_post extends titania_database_object
 	{
 		$post_data = $message->request_data();
 
-		$this->__set_array(array(
-			'post_subject'			=> $post_data['subject'],
-			'post_text'				=> $post_data['message'],
-			'post_access'			=> $post_data['access'],
-			'post_locked'			=> $post_data['lock'],
-		));
 		$this->topic->__set_array(array(
 			'topic_sticky'			=> ($message->auth['sticky_topic']) ? $post_data['sticky_topic'] : $this->topic->topic_sticky,
 			'topic_locked'			=> ($message->auth['lock_topic']) ? $post_data['lock_topic'] : $this->topic->topic_locked,
 		));
 
-		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
+		parent::post_data($message);
 	}
 
 	/**
@@ -232,49 +226,15 @@ class titania_post extends titania_database_object
 	}
 
 	/**
-	 * Parse text to store in database
-	 *
-	 * @param bool $allow_bbcode
-	 * @param bool $allow_urls
-	 * @param bool $allow_smilies
-	 *
-	 * @return void
-	 */
-	public function generate_text_for_storage($allow_bbcode = true, $allow_urls = true, $allow_smilies = true)
-	{
-		generate_text_for_storage($this->post_text, $this->post_text_uid, $this->post_text_bitfield, $this->post_text_options, $allow_bbcode, $allow_urls, $allow_smilies);
-
-		$this->text_parsed_for_storage = true;
-	}
-
-	/**
-	 * Parse text for display
-	 *
-	 * @return string text content from database for display
-	 */
-	public function generate_text_for_display()
-	{
-		return generate_text_for_display($this->post_text, $this->post_text_uid, $this->post_text_bitfield, $this->post_text_options);
-	}
-
-	/**
 	 * Parse text for edit
 	 *
 	 * @return array of data for editing
 	 */
 	public function generate_text_for_edit()
 	{
-		return array_merge(generate_text_for_edit($this->post_text, $this->post_text_uid, $this->post_text_options), array(
-			'options'	=> $this->post_text_options,
-			'subject'	=> $this->post_subject,
-			'access'	=> $this->post_access,
-			'locked'	=> $this->post_locked,
-
+		return array_merge(parent::generate_text_for_edit(), array(
 			'topic_sticky'	=> $this->topic->topic_sticky,
 			'topic_locked'	=> $this->topic->topic_locked,
-
-			'object_type'	=> $this->post_type,
-			'object_id'		=> $this->post_id,
 		));
 	}
 
@@ -417,7 +377,7 @@ class titania_post extends titania_database_object
 
 		$this->topic_id = $this->topic->topic_id;
 
-		if (!$this->text_parsed_for_storage)
+		if (!$this->message_parsed_for_storage)
 		{
 			$this->generate_text_for_storage();
 		}
@@ -505,7 +465,7 @@ class titania_post extends titania_database_object
 
 		$this->topic_id = $this->topic->topic_id;
 
-		if (!$this->text_parsed_for_storage)
+		if (!$this->message_parsed_for_storage)
 		{
 			$this->generate_text_for_storage();
 		}

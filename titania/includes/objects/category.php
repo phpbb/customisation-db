@@ -16,37 +16,37 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!class_exists('titania_database_object'))
+if (!class_exists('titania_message_object'))
 {
-	require TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT;
+	require TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT;
 }
 
 /**
  * Class to abstract categories.
  * @package Titania
  */
-class titania_category extends titania_database_object
+class titania_category extends titania_message_object
 {
 	/**
 	 * Database table to be used for the contribution object
 	 *
 	 * @var string
 	 */
-	protected $sql_table		= TITANIA_CATEGORIES_TABLE;
+	protected $sql_table = TITANIA_CATEGORIES_TABLE;
 
 	/**
 	 * Primary sql identifier for the contribution object
 	 *
 	 * @var string
 	 */
-	protected $sql_id_field		= 'category_id';
+	protected $sql_id_field = 'category_id';
 
 	/**
-	 * Description parsed for storage
+	 * Object type (for message tool)
 	 *
-	 * @var bool
+	 * @var string
 	 */
-	private $description_parsed_for_storage = false;
+	protected $object_type = TITANIA_CATEGORY;
 
 	/**
 	 * Constructor class for the contribution object
@@ -64,13 +64,13 @@ class titania_category extends titania_database_object
 			'category_contribs'				=> array('default' => 0), // Number of items
 			'category_visible'				=> array('default' => true),
 
-			'category_name'					=> array('default' => ''),
+			'category_name'					=> array('default' => '',	'message_field' => 'subject'),
 			'category_name_clean'			=> array('default' => ''),
 
-			'category_desc'					=> array('default' => ''),
-			'category_desc_bitfield'		=> array('default' => '',	'readonly' => true),
-			'category_desc_uid'				=> array('default' => '',	'readonly' => true),
-			'category_desc_options'			=> array('default' => 7,	'readonly' => true),
+			'category_desc'					=> array('default' => '',	'message_field' => 'message'),
+			'category_desc_bitfield'		=> array('default' => '',	'message_field' => 'message_bitfield'),
+			'category_desc_uid'				=> array('default' => '',	'message_field' => 'message_uid'),
+			'category_desc_options'			=> array('default' => 7,	'message_field' => 'message_options'),
 		));
 	}
 
@@ -82,9 +82,9 @@ class titania_category extends titania_database_object
 	public function submit()
 	{
 		// Nobody parsed the text for storage before. Parse text with lowest settings.
-		if (!$this->description_parsed_for_storage)
+		if (!$this->message_parsed_for_storage)
 		{
-			$this->generate_text_for_storage(false, false, false);
+			$this->generate_text_for_storage();
 		}
 
 		$this->contrib_name_clean = utf8_clean_string($this->contrib_name);
@@ -131,45 +131,6 @@ class titania_category extends titania_database_object
 		$this->description_parsed_for_storage = true;
 
 		return true;
-	}
-
-	/**
-	 * Generate text for storing description into the database
-	 *
-	 * @param bool $allow_bbcode
-	 * @param bool $allow_urls
-	 * @param bool $allow_smilies
-	 *
-	 * @return void
-	 */
-	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
-	{
-		generate_text_for_storage($this->category_desc, $this->category_desc_uid, $this->category_desc_bitfield, $this->category_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
-
-		$this->text_parsed_for_storage = true;
-	}
-
-	/**
-	 * Parse description for display
-	 *
-	 * @return string
-	 */
-	private function generate_text_for_display()
-	{
-		return generate_text_for_display($this->category_desc, $this->category_desc_uid, $this->category_desc_bitfield, $this->category_desc_options);
-	}
-
-	/**
-	 * Parse description for edit
-	 *
-	 * @return string
-	 */
-	private function generate_text_for_edit()
-	{
-		return array_merge(generate_text_for_edit($this->category_desc, $this->category_desc_uid, $this->category_desc_options), array(
-			'object_type'	=> TITANIA_CATEGORY,
-			'object_id'		=> $this->user_id,
-		));
 	}
 
 	/**

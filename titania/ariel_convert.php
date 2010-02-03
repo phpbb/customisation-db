@@ -48,6 +48,29 @@ $start = request_var('start', 0);
 $total = 0;
 $display_message = '';
 
+$tags_to_cats = array(
+	9 => 13, // Board Styles
+	10 => 14, // Smilies
+	11 => 16, // Ranks
+	12 => 15, // Avatars
+	30 => 9, // Add-ons
+	31 => 4, // Cosmetic
+	32 => 5, // Admin Tools -> Tools
+	33 => 7, // Syndication -> Communication
+	34 => 7, // BBCode -> Communication
+	35 => 6, // Security
+	36 => 7, // Communication
+	37 => 8, // Profile
+	106 => 10, // Anti-Spam
+	107 => 5, // Moderator Tools -> Tools
+	108 => 11, // Entertainment
+	155 => 13, // Imageset -> Board Styles
+	165 => 13, // Theme -> Board Styles
+	175 => 13, // Template -> Board Styles
+	195 => 17, // Topic Icons -> Miscellaneous
+	235 => 17, // Tools -> Miscellaneous
+);
+
 switch ($step)
 {
 	case 0 :
@@ -194,29 +217,6 @@ switch ($step)
 			{
 				$sql_ary = array(
 					'contrib_id'	=> $row['contrib_id'],
-				);
-
-				$tags_to_cats = array(
-					9 => 13, // Board Styles
-					10 => 14, // Smilies
-					11 => 16, // Ranks
-					12 => 15, // Avatars
-					30 => 9, // Add-ons
-					31 => 4, // Cosmetic
-					32 => 5, // Admin Tools -> Tools
-					33 => 7, // Syndication -> Communication
-					34 => 7, // BBCode -> Communication
-					35 => 6, // Security
-					36 => 7, // Communication
-					37 => 8, // Profile
-					106 => 10, // Anti-Spam
-					107 => 5, // Moderator Tools -> Tools
-					108 => 11, // Entertainment
-					155 => 13, // Imageset -> Board Styles
-					165 => 13, // Theme -> Board Styles
-					175 => 13, // Template -> Board Styles
-					195 => 17, // Topic Icons -> Miscellaneous
-					235 => 17, // Tools -> Miscellaneous
 				);
 
 				if (isset($tags_to_cats[$tag_row['tag_id']]))

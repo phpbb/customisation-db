@@ -34,7 +34,7 @@ abstract class titania_message_object extends titania_database_object
 	 *
 	 * @var bool
 	 */
-	protected $description_parsed_for_storage = false;
+	protected $message_parsed_for_storage = false;
 
 	/**
 	 * Submit data in the post_data format (from includes/tools/message.php)
@@ -63,14 +63,16 @@ abstract class titania_message_object extends titania_database_object
 	 * @param bool $allow_urls
 	 * @param bool $allow_smilies
 	 */
-	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
+	public function generate_text_for_storage($allow_bbcode = false, $allow_urls = false, $allow_smilies = false)
 	{
 		$message = $message_uid = $message_bitfield = $message_options = false;
 		$this->get_message_fields($message, $message_uid, $message_bitfield, $message_options);
 
 		generate_text_for_storage($message, $message_uid, $message_bitfield, $message_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
-		$this->description_parsed_for_storage = true;
+		$this->set_message_fields($message, $message_uid, $message_bitfield, $message_options);
+
+		$this->message_parsed_for_storage = true;
 	}
 
 	/**
@@ -95,7 +97,8 @@ abstract class titania_message_object extends titania_database_object
 	{
 		// Add the object type and object id
 		$for_edit = array(
-			'object_type'	=> $this->object_type,
+			// Object types can be setup to grab the value of another field (such as $this->post_type) by setting $this->object_type to the field name (post_type)
+			'object_type'	=> (is_string($this->object_type) && isset($this->{$this->object_type})) ? $this->{$this->object_type} : $this->object_type,
 			'object_id'		=> $this->{$this->sql_id_field},
 		);
 
@@ -143,6 +146,34 @@ abstract class titania_message_object extends titania_database_object
 
 					case 'message_options' :
 						$message_options = $this->$field;
+					break;
+				}
+			}
+		}
+	}
+
+	private function set_message_fields($message, $message_uid, $message_bitfield, $message_options)
+	{
+		foreach ($this->object_config as $field => $options)
+		{
+			if (isset($options['message_field']))
+			{
+				switch ($options['message_field'])
+				{
+					case 'message' :
+						$this->$field = $message;
+					break;
+
+					case 'message_uid' :
+						$this->$field = $message_uid;
+					break;
+
+					case 'message_bitfield' :
+						$this->$field = $message_bitfield;
+					break;
+
+					case 'message_options' :
+						$this->$field = $message_options;
 					break;
 				}
 			}
