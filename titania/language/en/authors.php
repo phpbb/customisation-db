@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
 *
 * authors [English]
@@ -38,7 +38,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'AUTHOR_CONTRIBS'		=> 'Contributions',
 	'AUTHOR_CONTRIBUTIONS'	=> 'Contributions',
-	'AUTHOR_DATA_UPDATED'	=> 'The author’s information have been updated.',
+	'AUTHOR_DATA_UPDATED'	=> 'The author’s information has been updated.',
 	'AUTHOR_DESC'			=> 'Author Description',
 	'AUTHOR_DETAILS'		=> 'Author Details',
 	'AUTHOR_MODS'			=> 'Modifications',
