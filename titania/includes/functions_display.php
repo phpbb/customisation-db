@@ -89,17 +89,30 @@ function titania_display_categories($parent_id = 0, $blockname = 'categories')
  * @param string $pagination_url The url to display for pagination.
  * @param string $blockname The name of the template block to use (contribs by default)
  */
-function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'contribs')
+function titania_display_contribs($mode, $id, $sort = false, $pagination = false, $blockname = 'contribs')
 {
-	// Setup sorting.
-	$sort = new titania_sort();
-	$sort->sort_request();
+	if ($sort === false)
+	{
+		// Setup the sort tool
+		$sort = new titania_sort();
+		$sort->default_key = 'c';
+	}
+
+	if ($pagination === false)
+	{
+		// Setup the pagination tool
+		$pagination = new titania_pagination();
+		$pagination->default_limit = phpbb::$config['topics_per_page'];
+		$pagination->request();
+	}
+	$pagination->result_lang = 'TOTAL_CONTRIBS';
 
 	switch ($mode)
 	{
 		case 'author' :
 			$sort->set_sort_keys(array(
-				array('SORT_CONTRIB_NAME',		'c.contrib_name', true),
+				't' => array('UPDATE_TIME', 'c.contrib_last_update'),
+				'c' => array('SORT_CONTRIB_NAME', 'c.contrib_name'),
 			));
 
 			// Get the contrib_ids this user is an author in (includes as a co-author)
@@ -130,7 +143,9 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 
 		case 'category' :
 			$sort->set_sort_keys(array(
-				array('SORT_CONTRIB_NAME',			'c.contrib_name', true),
+				'a' => array('AUTHOR', 'u.username_clean'),
+				't' => array('UPDATE_TIME', 'c.contrib_last_update'),
+				'c' => array('SORT_CONTRIB_NAME', 'c.contrib_name'),
 			));
 
 			$sql_ary = array(
@@ -175,17 +190,12 @@ function titania_display_contribs($mode, $id, $pagination_url, $blockname = 'con
 			OR cc.active = 1)';
 	}
 
-	// Setup the pagination tool
-	$pagination = new titania_pagination();
-	$pagination->default_limit = phpbb::$config['topics_per_page'];
-	$pagination->request();
-
 	// Main SQL Query
 	$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 	// Handle pagination
 	$pagination->sql_count($sql_ary, 'c.contrib_id');
-	$pagination->build_pagination($pagination_url);
+	$pagination->build_pagination(titania_url::build_url(titania_url::$current_page, titania_url::$params));
 
 	// Setup some objects we'll use for temps
 	$contrib = new titania_contribution();

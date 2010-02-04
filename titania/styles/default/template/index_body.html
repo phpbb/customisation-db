@@ -2,7 +2,7 @@
 
 <h2 class="solo">{L_CUSTOMISATION_DATABASE}</h2>
 
-<!-- IF U_CREATE_CONTRIBUTION or PAGINATION or TOTAL_POSTS -->
+<!-- IF U_CREATE_CONTRIBUTION or PAGINATION or TOTAL_RESULTS -->
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_CREATE_CONTRIBUTION -->
@@ -10,9 +10,9 @@
 	<!-- ENDIF -->
 	</div>
 
-	<!-- IF PAGINATION or TOTAL_POSTS -->
+	<!-- IF PAGINATION or TOTAL_RESULTS -->
 		<div class="pagination">
-			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_ITEMS}
+			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_RESULTS}
 			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
 		</div>
 	<!-- ENDIF -->
@@ -25,7 +25,7 @@
 	<!-- INCLUDE common/contrib_list.html -->
 <!-- ENDIF -->
 
-<!-- IF U_CREATE_CONTRIBUTION or PAGINATION or TOTAL_POSTS -->
+<!-- IF U_CREATE_CONTRIBUTION or PAGINATION or TOTAL_RESULTS -->
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_CREATE_CONTRIBUTION -->
@@ -33,9 +33,9 @@
 	<!-- ENDIF -->
 	</div>
 
-	<!-- IF PAGINATION or TOTAL_POSTS -->
+	<!-- IF PAGINATION or TOTAL_RESULTS -->
 		<div class="pagination">
-			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_ITEMS}
+			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_RESULTS}
 			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
 		</div>
 	<!-- ENDIF -->

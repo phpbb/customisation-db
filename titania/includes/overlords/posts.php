@@ -233,6 +233,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$pagination->default_limit = phpbb::$config['posts_per_page'];
 			$pagination->request();
 		}
+		$pagination->result_lang = 'TOTAL_POSTS';
 
 		$sql_ary = array(
 			'SELECT'	=> 'p.*',

@@ -43,7 +43,7 @@ class titania_pagination extends titania_object
 			'default_limit'	=> array('default' => self::OFFSET_LIMIT_DEFAULT),
 			'max_limit'		=> array('default' => self::OFFSET_LIMIT_MAX),
 			'total'			=> array('default' => 0),
-			'result_lang'	=> array('default' => 'RETURNED_RESULTS'),
+			'result_lang'	=> array('default' => 'TOTAL_RESULTS'), // sprintf'd into 'TOTAL_RESULTS' output;  Should have TOTAL_RESULTS and TOTAL_RESULTS_ONE strings
 			'template_vars'	=> array(
 				'default' => array(
 					'PAGINATION'	=> 'PAGINATION',
@@ -106,6 +106,8 @@ class titania_pagination extends titania_object
 	public function sql_count($sql_ary, $field)
 	{
 		$sql_ary['SELECT'] = "COUNT($field) AS cnt";
+		unset($sql_ary['ORDER_BY']);
+
 		$count_sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		phpbb::$db->sql_query($count_sql);
 		$this->total = phpbb::$db->sql_fetchfield('cnt');
@@ -161,73 +163,89 @@ class titania_pagination extends titania_object
 		$seperator = '<span class="page-sep">' . phpbb::$user->lang['COMMA_SEPARATOR'] . '</span>';
 		$total_pages = ceil($num_items / $per_page);
 		$on_page = floor($start_item / $per_page) + 1;
-		$page_string = ($on_page == 1) ? '<strong>1</strong>' : '<a href="' . $base_url . '">1</a>';
+		$page_string = '';
 
-		if ($total_pages == 1 || !$num_items)
+		if (!$num_items)
 		{
 			return false;
 		}
 
-		if ($total_pages > 5)
+		if ($total_pages > 1)
 		{
-			$start_cnt = min(max(1, $on_page - 4), $total_pages - 5);
-			$end_cnt = max(min($total_pages, $on_page + 4), 6);
+			$page_string = ($on_page == 1) ? '<strong>1</strong>' : '<a href="' . $base_url . '">1</a>';
 
-			$page_string .= ($start_cnt > 1) ? ' ... ' : $seperator;
-
-			for ($i = $start_cnt + 1; $i < $end_cnt; $i++)
+			if ($total_pages > 5)
 			{
-				$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
-				if ($i < $end_cnt - 1)
+				$start_cnt = min(max(1, $on_page - 4), $total_pages - 5);
+				$end_cnt = max(min($total_pages, $on_page + 4), 6);
+
+				$page_string .= ($start_cnt > 1) ? ' ... ' : $seperator;
+
+				for ($i = $start_cnt + 1; $i < $end_cnt; $i++)
 				{
-					$page_string .= $seperator;
+					$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
+					if ($i < $end_cnt - 1)
+					{
+						$page_string .= $seperator;
+					}
+				}
+
+				$page_string .= ($end_cnt < $total_pages) ? ' ... ' : $seperator;
+			}
+			else
+			{
+				$page_string .= $seperator;
+
+				for ($i = 2; $i < $total_pages; $i++)
+				{
+					$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
+					if ($i < $total_pages)
+					{
+						$page_string .= $seperator;
+					}
 				}
 			}
 
-			$page_string .= ($end_cnt < $total_pages) ? ' ... ' : $seperator;
+			$page_string .= ($on_page == $total_pages) ? '<strong>' . $total_pages . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($total_pages - 1) * $per_page))) . '">' . $total_pages . '</a>';
+
+			if ($add_prevnext_text)
+			{
+				if ($on_page == 2)
+				{
+					$page_string = '<a href="' . $base_url . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
+				}
+				else if ($on_page != 1)
+				{
+					$page_string = '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page))) . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
+				}
+
+				if ($on_page != $total_pages)
+				{
+					$page_string .= '&nbsp;&nbsp;<a href="' . titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))) . '">' . phpbb::$user->lang['NEXT'] . '</a>';
+				}
+			}
+		}
+
+		if ($num_items == 1)
+		{
+			$total_results = (isset(phpbb::$user->lang[$this->result_lang . '_ONE'])) ? phpbb::$user->lang[$this->result_lang . '_ONE'] : phpbb::$user->lang['TOTAL_RESULTS_ONE'];
 		}
 		else
 		{
-			$page_string .= $seperator;
-
-			for ($i = 2; $i < $total_pages; $i++)
-			{
-				$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
-				if ($i < $total_pages)
-				{
-					$page_string .= $seperator;
-				}
-			}
-		}
-
-		$page_string .= ($on_page == $total_pages) ? '<strong>' . $total_pages . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($total_pages - 1) * $per_page))) . '">' . $total_pages . '</a>';
-
-		if ($add_prevnext_text)
-		{
-			if ($on_page == 2)
-			{
-				$page_string = '<a href="' . $base_url . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
-			}
-			else if ($on_page != 1)
-			{
-				$page_string = '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page))) . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
-			}
-
-			if ($on_page != $total_pages)
-			{
-				$page_string .= '&nbsp;&nbsp;<a href="' . titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))) . '">' . phpbb::$user->lang['NEXT'] . '</a>';
-			}
+			$total_results = (isset(phpbb::$user->lang[$this->result_lang])) ? sprintf(phpbb::$user->lang[$this->result_lang], $num_items) : sprintf(phpbb::$user->lang['TOTAL_RESULTS'], $num_items);
 		}
 
 		phpbb::$template->assign_vars(array(
 			$tpl_prefix . 'BASE_URL'		=> $base_url,
 			'A_' . $tpl_prefix . 'BASE_URL'	=> addslashes($base_url),
 			$tpl_prefix . 'PER_PAGE'		=> $per_page,
+			$tpl_prefix . 'ON_PAGE'			=> $on_page,
 
 			$tpl_prefix . 'PREVIOUS_PAGE'	=> ($on_page == 2) ? $base_url : (($on_page == 1) ? '' : titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page)))),
 			$tpl_prefix . 'NEXT_PAGE'		=> ($on_page == $total_pages) ? '' : titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))),
 			$tpl_prefix . 'TOTAL_PAGES'		=> $total_pages,
 			$tpl_prefix . 'TOTAL_ITEMS'		=> $num_items,
+			$tpl_prefix . 'TOTAL_RESULTS'	=> $total_results,
 		));
 
 		return $page_string;

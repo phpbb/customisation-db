@@ -173,7 +173,7 @@ switch ($action)
 
 		if ($category_id != 0)
 		{
-			titania_display_contribs('category', $category_id, titania_url::$current_page);
+			titania_display_contribs('category', $category_id);
 		}
 
 		phpbb::$template->assign_vars(array(

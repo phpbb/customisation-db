@@ -496,6 +496,27 @@ $versions = array(
 	),
 	// Merged in 0.1.31
 
+	'0.1.32' => array(
+		'table_index_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_last_update'),
+		),
+		'table_remove' => array(
+			TITANIA_WATCH_TABLE,
+		),
+		'table_add' => array(
+			array(TITANIA_WATCH_TABLE, array(
+				'COLUMNS'		=> array(
+					'watch_type'			=> array('TINT:1', 0),
+					'watch_object_type'		=> array('UINT', 0),
+					'watch_object_id'		=> array('UINT', 0),
+					'watch_user_id'			=> array('UINT', 0),
+					'watch_mark_time'		=> array('UINT:11', 0),
+				),
+				'PRIMARY_KEY'	=> array('watch_object_type', 'watch_object_id', 'watch_user_id', 'watch_type'),
+			)),
+		)
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
