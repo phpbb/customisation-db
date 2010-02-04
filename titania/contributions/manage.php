@@ -28,7 +28,9 @@ if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !
 // Set some main vars up
 $submit = (isset($_POST['submit']) || isset($_POST['new_revision'])) ? true : false;
 $change_owner = request_var('change_owner', '', true); // Blame Nathan, he said this was okay
-$contrib_categories = array();
+$contrib_categories = request_var('contrib_category', array(0));
+$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
+$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 
 /**
 * ---------------------------- Create a new revision ----------------------------
@@ -144,10 +146,15 @@ $message->set_settings(array(
 	'subject_name'		=> 'name',
 ));
 
-if ($submit)
+if (isset($_POST['preview']))
 {
 	titania::$contrib->post_data($message);
-	$contrib_categories = request_var('contrib_category', array(0));
+
+	$message->preview();
+}
+else if ($submit)
+{
+	titania::$contrib->post_data($message);
 
 	// Begin Error checking
 	$error = titania::$contrib->validate($contrib_categories);
@@ -158,8 +165,6 @@ if ($submit)
 	}
 
 	$missing_active = $missing_nonactive = array();
-	$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
-	$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 	get_author_ids_from_list($active_coauthors_list, $missing_active);
 	get_author_ids_from_list($nonactive_coauthors_list, $missing_nonactive);
 	if (sizeof($missing_active) || sizeof($missing_nonactive))

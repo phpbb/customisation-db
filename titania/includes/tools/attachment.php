@@ -77,11 +77,12 @@ class titania_attachment extends titania_database_object
 	public $error = array();
 
 	/**
-	* Did we upload a file?
+	* Did we upload/delete a file?
 	*
 	* @param bool True if we did False if not
 	*/
 	public $uploaded = false;
+	public $deleted = false;
 
 	/**
 	 * Constructor for attachment/download class
@@ -276,6 +277,8 @@ class titania_attachment extends titania_database_object
 		foreach ($delete as $attach_id => $null)
 		{
 			$this->delete($attach_id);
+
+			$this->deleted = true;
 
 			// Sometime I'll look into this again; having it setup to only delete attachments after the form is submitted
 			/*if (isset($this->attachments[$attach_id]))

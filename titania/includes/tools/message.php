@@ -69,6 +69,7 @@ class titania_message
 		'form_name'				=> 'postform',
 		'text_name'				=> 'message',
 		'subject_name'			=> 'subject',
+		'display_preview'		=> true, // If set to false you will need to handle the preview output yourself (otherwise calls $this->preview if isset($_POST['preview']))
 		'display_error'			=> true, // If set to false make sure you output the error in the template yourself (turns the S_DISPLAY_ERROR on/off)
 		'display_subject'		=> true, // Display the subject field or not
 		'display_edit_reason'	=> false, // Display the edit reason field or not
@@ -120,6 +121,36 @@ class titania_message
 	public function set_settings($settings)
 	{
 		$this->settings = array_merge($this->settings, $settings);
+	}
+
+	/**
+	* Submit check
+	* Runs $this->post_object->post_data if required (and exists)
+	* Displays the preview automatically if requested
+	*
+	* @return bool True if the form was submitted, False if not
+	*/
+	public function submit_check()
+	{
+		// Setup the attachments!
+		$this->setup_attachments();
+
+		$submit = isset($_POST['submit']) ? true : false;
+		$preview = isset($_POST['preview']) ? true : false;
+
+		// Submit the data to the post object
+		if (method_exists($this->post_object, 'post_data') && $submit || $preview || ($this->attachments && ($this->attachments->uploaded || $this->attachments->deleted)))
+		{
+			$this->post_object->post_data($this);
+		}
+
+		// Display the preview
+		if ($preview && $this->settings['display_preview'])
+		{
+			$this->preview();
+		}
+
+		return $submit;
 	}
 
 	/**

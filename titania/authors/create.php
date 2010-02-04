@@ -48,13 +48,19 @@ $message->set_settings(array(
 
 $submit = (isset($_POST['submit'])) ? true : false;
 
-$contrib_categories = array();
-$active_coauthors = $nonactive_coauthors = '';
+$contrib_categories = request_var('contrib_category', array(0));
+$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
+$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 
-if ($submit)
+if (isset($_POST['preview']))
 {
 	titania::$contrib->post_data($message);
-	$contrib_categories = request_var('contrib_category', array(0));
+
+	$message->preview();
+}
+else if ($submit)
+{
+	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
 		'contrib_type'			=> request_var('contrib_type', 0),
 		'contrib_name_clean'	=> request_var('permalink', '', true),
@@ -69,8 +75,6 @@ if ($submit)
 	}
 
 	$missing_active = $missing_nonactive = array();
-	$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
-	$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 	get_author_ids_from_list($active_coauthors_list, $missing_active);
 	get_author_ids_from_list($nonactive_coauthors_list, $missing_nonactive);
 	if (sizeof($missing_active) || sizeof($missing_nonactive))

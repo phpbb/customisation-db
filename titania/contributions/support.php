@@ -68,8 +68,6 @@ else
 // Output the simple info on the contrib
 titania::$contrib->assign_details(true);
 
-$submit = (isset($_POST['submit'])) ? true : false;
-$preview = (isset($_POST['preview'])) ? true : false;
 $action = request_var('action', '');
 
 switch ($action)
@@ -120,13 +118,10 @@ switch ($action)
 			'attachments_group'			=> TITANIA_ATTACH_EXT_SUPPORT,
 		));
 
-		$post->post_data($message);
+		// Submit check...handles running $post->post_data() if required
+		$submit = $message->submit_check();
 
-		if ($preview)
-		{
-			$message->preview();
-		}
-		else if ($submit)
+		if ($submit)
 		{
 			$error = $post->validate();
 

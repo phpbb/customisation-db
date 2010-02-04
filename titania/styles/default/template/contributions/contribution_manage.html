@@ -33,6 +33,9 @@
 	<!-- ELSE -->
 		<div class="container">
 			<div class="inner"><span class="corners-top main-corners"><span></span></span>
+
+				<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
+
 				<fieldset>
 					<dl>
 						<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
@@ -104,6 +107,7 @@
 			<div class="inner"><span class="corners-top main-corners"><span></span></span>
 				<fieldset class="submit-buttons">
 					<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
+					<input type="submit" name="preview" value="{L_PREVIEW}" class="button1" />&nbsp;
 					<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
 					<!-- IF S_SUBMIT_NEW_REVISION --><input type="submit" name="new_revision" value="{L_SUBMIT_NEW_REVISION}" class="button1" /><!-- ENDIF -->
 					{S_FORM_TOKEN}

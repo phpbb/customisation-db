@@ -20,8 +20,6 @@ titania::add_lang('faq');
 
 $faq_id		= request_var('f', 0);
 $action 	= request_var('action', '');
-$submit		= isset($_POST['submit']) ? true : false;
-$preview	= isset($_POST['preview']) ? true : false;
 
 // Setup faq object
 $faq = new titania_faq($faq_id);
@@ -64,16 +62,11 @@ switch ($action)
 			'attachments_group'		=> TITANIA_ATTACH_EXT_FAQ,
 		));
 
-		if ($preview)
-		{
-			$faq->post_data($message);
+		// Submit check...handles running $faq->post_data() if required
+		$submit = $message->submit_check();
 
-			$message->preview();
-		}
-		else if ($submit)
+		if ($submit)
 		{
-			$faq->post_data($message);
-
 			$error = $faq->validate();
 			$error = array_merge($error, $message->error);
 
