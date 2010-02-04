@@ -50,7 +50,7 @@ $nav_ary = array(
 		'url'		=> titania::$author->get_url(),
 	),
 	'contributions' => array(
-		'title'		=> 'AUTHOR_CONTRIBUTIONS',
+		'title'		=> 'AUTHOR_CONTRIBS',
 		'url'		=> titania::$author->get_url('contributions'),
 	),
 	'support' => array(

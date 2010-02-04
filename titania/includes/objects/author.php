@@ -377,17 +377,19 @@ class titania_author extends titania_database_object
 		}
 
 		// Output the count for different types
-		if (!$return)
+		$type_list = array();
+		foreach (titania_types::$types as $type)
 		{
-			phpbb::$template->destroy_block_vars('type_counts');
-			foreach (titania_types::$types as $type)
+			if ($this->{$type->author_count} == 1)
 			{
-				phpbb::$template->assign_block_vars('type_counts', array(
-					'NAME'	=> (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? phpbb::$user->lang[strtoupper($type->author_count)] : strtoupper($type->author_count),
-					'VALUE'	=> $this->{$type->author_count}
-				));
+				$type_list[] = (isset(phpbb::$user->lang[strtoupper($type->author_count) . '_ONE'])) ? phpbb::$user->lang[strtoupper($type->author_count) . '_ONE'] : '{' . strtoupper($type->author_count) . '_ONE}';
+			}
+			else
+			{
+				$type_list[] = (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? sprintf(phpbb::$user->lang[strtoupper($type->author_count)], $this->{$type->author_count}) : '{' . strtoupper($type->author_count) . '}';
 			}
 		}
+		$vars['AUTHOR_CONTRIB_LIST'] = implode($type_list, ', ');
 
 		/* @todo: automatically display the common author data too...
 		if (isset($this->sql_data))

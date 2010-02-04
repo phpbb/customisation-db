@@ -20,5 +20,5 @@ titania::_include('functions_display', 'titania_display_contribs');
 
 titania_display_contribs('author', titania::$author->user_id);
 
-titania::page_header('AUTHOR_CONTRIBUTIONS');
+titania::page_header('AUTHOR_CONTRIBS');
 titania::page_footer(true, 'authors/author_contributions.html');
