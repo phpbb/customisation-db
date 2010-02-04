@@ -145,7 +145,8 @@ class titania_attachment extends titania_database_object
 	*/
 	public function load_attachments($attachment_ids = false)
 	{
-		if (!sizeof($attachment_ids) && $attachment_ids !== false)
+		// Do not load if we do not have an object_id or an empty array of attachment_ids
+		if (!$this->object_id || (!sizeof($attachment_ids) && $attachment_ids !== false))
 		{
 			return;
 		}
