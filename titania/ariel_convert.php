@@ -275,10 +275,10 @@ switch ($step)
 				//echo 'Revision phpBB version is ' . $row['revision_phpbb_version'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_id'] . '<br />';
 			}
 
-			$ignore = array(-2, -3, -4, -5, -6);
+			$ignore = array(-3, -4, -5, -6);
 			if (in_array($row['queue_status'], $ignore))
 			{
-				// Skip revisions that were denied, canned, etc
+				// Skip revisions that were canned, etc
 				continue;
 			}
 
@@ -302,7 +302,7 @@ switch ($step)
 				break;
 
 				default :
-					//echo $row['revision_filename'] . ' ' . $mime_type . ' ' . $filename . '<br />';
+					echo $row['revision_filename'] . ' ' . $mime_type . ' ' . $filename . '<br />';
 					continue;
 				break;
 			}
@@ -374,9 +374,69 @@ switch ($step)
 		$display_message = 'Revisions table';
 	break;
 
-	// @todo Queue
-
 	case 4 :
+		$sql = 'SELECT COUNT(queue_id) AS cnt FROM ' . $ariel_prefix . 'queue';
+		phpbb::$db->sql_query($sql);
+		$total = phpbb::$db->sql_fetchfield('cnt');
+		phpbb::$db->sql_freeresult();
+
+		$queue_swap = array(
+			1	=> TITANIA_QUEUE_NEW, // QUEUE_NEW
+			2	=> 17, // QUEUE_SPECIAL -> QUEUE_VALIDATING
+			3	=> 19, // QUEUE_APPROVE
+			4	=> 20, // QUEUE_DENY
+			-1	=> TITANIA_QUEUE_APPROVED, // QUEUE_CLOSED
+			-2	=> TITANIA_QUEUE_DENIED, // QUEUE_DENIED
+		);
+
+		$sql = 'SELECT q.*, ct.topic_id, c.contrib_name_clean
+			FROM ' . $ariel_prefix . 'queue q, ' . $ariel_prefix . 'contrib_topics ct, ' . TITANIA_CONTRIBS_TABLE . ' c
+			WHERE ct.contrib_id = q.contrib_id
+				AND ct.topic_type = 4
+				AND c.contrib_id = q.contrib_id
+			ORDER BY queue_id ASC';
+		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$ignore = array(-3, -4, -5, -6);
+			if (in_array($row['queue_status'], $ignore))
+			{
+				// Skip revisions that were canned, etc
+				continue;
+			}
+
+			$sql_ary = array(
+				'queue_id'				=> $row['queue_id'],
+				'revision_id'			=> $row['revision_id'],
+				'contrib_id'			=> $row['contrib_id'],
+				'contrib_name_clean'	=> $row['contrib_name_clean'],
+				'submitter_user_id'		=> $row['user_id'],
+				'queue_topic_id'		=> $row['topic_id'],
+
+				'queue_type'			=> $row['contrib_type'],
+				'queue_status'			=> $queue_swap[$row['queue_status']],
+				'queue_submit_time'		=> $row['queue_opened'],
+				'queue_close_time'		=> $row['queue_closed'],
+
+				'queue_notes'			=> '',
+				'queue_notes_bitfield'	=> '',
+				'queue_notes_uid'		=> '',
+				'queue_notes_options'	=> 7,
+
+				'mpv_results'			=> '',
+				'mpv_results_bitfield'	=> '',
+				'mpv_results_uid'		=> '',
+				'automod_results'		=> '',
+			);
+
+			titania_insert(TITANIA_QUEUE_TABLE, $sql_ary);
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		$display_message = 'Queue';
+	break;
+
+	case 5 :
 		$sync = new titania_sync;
 
 		$sync->authors('count');
@@ -384,7 +444,7 @@ switch ($step)
 		$display_message = 'Authors';
 	break;
 
-	case 5 :
+	case 6 :
 		$sync = new titania_sync;
 
 		$sync->contribs('validated');
@@ -394,18 +454,18 @@ switch ($step)
 		$display_message = 'Syncing';
 	break;
 
-	case 6 :
+	case 7 :
 		$sync = new titania_sync;
 
 		// Truncate index first
-		titania_search::truncate();
+		//titania_search::truncate();
 
-		$sync->contribs('index');
+		//$sync->contribs('index');
 
 		$display_message = 'Indexing';
 	break;
 
-	case 7 :
+	case 8 :
 		phpbb::$cache->purge();
 
 		trigger_error('Ariel Conversion Finished!');

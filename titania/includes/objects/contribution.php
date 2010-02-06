@@ -826,14 +826,13 @@ class titania_contribution extends titania_message_object
 			return false;
 		}
 
-		$sql = 'SELECT revision_id FROM ' . TITANIA_REVISIONS_TABLE . '
+		$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
 			WHERE contrib_id = ' . (int) $this->contrib_id . '
-				AND revision_validated = 0
-				AND revision_submitted = 1';
-		$result = phpbb::$db->sql_query($sql);
-		$row = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);
+				AND queue_status > 1';
+		phpbb::$db->sql_query($sql);
+		$cnt = phpbb::$db->sql_fetchfield('cnt');
+		phpbb::$db->sql_freeresult();
 
-		return (!$row) ? false : true;
+		return ($cnt) ? true : false;
 	}
 }

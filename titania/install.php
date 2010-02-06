@@ -517,6 +517,23 @@ $versions = array(
 		)
 	),
 
+	'0.1.33' => array(
+		'table_column_remove' => array(
+			array(TITANIA_QUEUE_TABLE, 'queue_progress'),
+		),
+
+		'table_column_add' => array(
+			array(TITANIA_QUEUE_TABLE, 'contrib_name_clean', array('VCHAR_CI', '')),
+			array(TITANIA_QUEUE_TABLE, 'queue_topic_id', array('UINT', 0)),
+			array(TITANIA_QUEUE_TABLE, 'mpv_results', array('MTEXT_UNI', '')),
+			array(TITANIA_QUEUE_TABLE, 'mpv_results_bitfield', array('VCHAR:255', '')),
+			array(TITANIA_QUEUE_TABLE, 'mpv_results_uid', array('VCHAR:8', '')),
+			array(TITANIA_QUEUE_TABLE, 'automod_results', array('MTEXT_UNI', '')),
+		),
+
+		'custom' => 'titania_tags',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

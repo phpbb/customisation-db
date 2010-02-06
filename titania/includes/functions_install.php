@@ -52,7 +52,7 @@ function titania_tags()
 	$tag_types = array(
 		array(
 			'tag_type_id'	=> 1,
-			'tag_type_name'	=> 'Validation Queue',
+			'tag_type_name'	=> 'QUEUE_TAGS',
 		)
 	);
 
@@ -93,6 +93,20 @@ function titania_tags()
 			'tag_type_id'		=> 1,
 			'tag_field_name'	=> 'QUEUE_TESTING',
 			'tag_clean_name'	=> 'testing',
+			'no_delete'			=> false,
+		),
+		array(
+			'tag_id'			=> 19,
+			'tag_type_id'		=> 1,
+			'tag_field_name'	=> 'QUEUE_APPROVE',
+			'tag_clean_name'	=> 'approve',
+			'no_delete'			=> false,
+		),
+		array(
+			'tag_id'			=> 20,
+			'tag_type_id'		=> 1,
+			'tag_field_name'	=> 'QUEUE_DENY',
+			'tag_clean_name'	=> 'deny',
 			'no_delete'			=> false,
 		),
 	);

@@ -37,6 +37,19 @@ abstract class titania_message_object extends titania_database_object
 	protected $message_parsed_for_storage = false;
 
 	/**
+	* Catch submits and make sure we parse messages for storage
+	*/
+	public function submit()
+	{
+		if (!$this->message_parsed_for_storage)
+		{
+			$this->generate_text_for_storage();
+		}
+
+		parent::submit();
+	}
+
+	/**
 	 * Submit data in the post_data format (from includes/tools/message.php)
 	 *
 	 * @param object $message The message object
