@@ -151,6 +151,10 @@ class titania_search
 
 		if ($object_type !== false)
 		{
+			// Disable for now, see
+			//http://issues.ez.no/IssueView.php?Id=16127&
+			return;
+
 			$query->where(
 				$query->eq('type', $object_type)
 			);
@@ -168,7 +172,7 @@ class titania_search
 	*
 	* @return The documents of the result
 	*/
-	public static function search($search_query, $pagination = false, $fields = array('text', 'title'))
+	public static function search($search_query, &$pagination, $fields = array('text', 'title'))
 	{
 		self::initialize();
 
@@ -180,14 +184,12 @@ class titania_search
 		return self::custom_search($query, $pagination);
 	}
 
-	public static function author_search($user_id, $pagination = false)
+	public static function author_search($user_id, &$pagination)
 	{
 		self::initialize();
 
 		$query = self::$index->createFindQuery('titania_article');
-		$qb = new ezcSearchQueryBuilder();
-		$qb->parseSearchQuery($query, $user_id, array('author'));
-		unset($qb);
+		$query->where($query->eq('author', $user_id));
 
 		return self::custom_search($query, $pagination);
 	}
@@ -200,24 +202,29 @@ class titania_search
 	*
 	* @return The documents of the result
 	*/
-	public static function custom_search($query, $pagination = false)
+	public static function custom_search($query, &$pagination)
 	{
 		self::initialize();
-
-		if ($pagination === false)
-		{
-			// Setup the pagination tool
-			$pagination = new titania_pagination();
-			$pagination->default_limit = phpbb::$config['posts_per_page'];
-			$pagination->request();
-		}
 
 		$query->offset = $pagination->start;
 		$query->limit = $pagination->limit;
 
-		$results = self::$index->find($query);
+		$search_results = self::$index->find($query);
 
-		return $results->documents;
+		$pagination->total = $search_results->resultCount;
+
+		$results = array(
+			'user_ids'		=> array(),
+			'documents'		=> array(),
+		);
+
+		foreach ($search_results->documents as $result)
+		{
+			$results['user_ids'][] = $result->document->author;
+			$results['documents'][] = $result->document;
+		}
+
+		return $results;
 	}
 }
 
@@ -245,7 +252,7 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 			'author'		=> (int) $this->author,
 			'date'			=> (int) $this->date,
 			'url'			=> $this->url,
-			'type'			=> $this->type,
+			'type'			=> (int) $this->type,
 			'access_level'	=> (int) $this->access_level,
 			'approved'		=> (int) $this->approved,
 			'reported'		=> (int) $this->reported,
@@ -268,7 +275,7 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 		$doc->idProperty = 'id';
 
 		$doc->fields['id']				= new ezcSearchDefinitionDocumentField('id', ezcSearchDocumentDefinition::TEXT);
-		$doc->fields['type']			= new ezcSearchDefinitionDocumentField('type', ezcSearchDocumentDefinition::STRING, 0, true, false, false);
+		$doc->fields['type']			= new ezcSearchDefinitionDocumentField('type', ezcSearchDocumentDefinition::INT);
 
 		$doc->fields['title']			= new ezcSearchDefinitionDocumentField('title', ezcSearchDocumentDefinition::TEXT, 2, true, false, true);
 		$doc->fields['text']			= new ezcSearchDefinitionDocumentField('text', ezcSearchDocumentDefinition::TEXT, 1, true, false, true);

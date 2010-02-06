@@ -138,11 +138,15 @@ class titania_sync
 			break;
 
 			case 'index' :
+				foreach (titania_types::$types as $type_id => $class)
+				{
+					titania_search::truncate($type_id);
+				}
+
 				$data = array();
 				$contrib = new titania_contribution;
 
-				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE .
-					(($contrib_id) ? ' WHERE contrib_id = ' . (int) $contrib_id : '');
+				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE;
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
@@ -195,6 +199,48 @@ class titania_sync
 					}
 				}
 				phpbb::$db->sql_freeresult($result);
+			break;
+		}
+	}
+
+	public function posts($mode)
+	{
+		switch ($mode)
+		{
+			case 'index' :
+				titania_search::truncate(TITANIA_SUPPORT);
+
+				$data = array();
+				$post = new titania_post;
+
+				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean, c.contrib_name_clean, c.contrib_type
+					FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t, ' . TITANIA_CONTRIBS_TABLE . ' c
+					WHERE t.topic_id = p.topic_id
+						AND c.contrib_id = t.contrib_id';
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$post->__set_array($row);
+					$post->topic->__set_array($row);
+					$post->topic->contrib = array('contrib_name_clean' => $row['contrib_name_clean'], 'contrib_type' => $row['contrib_type']);
+
+					$for_edit = $post->generate_text_for_edit();
+
+					$data[] = array(
+						'object_type'	=> $post->post_type,
+						'object_id'		=> $post->post_id,
+
+						'title'			=> $post->post_subject,
+						'text'			=> $for_edit['text'],
+						'author'		=> $post->post_user_id,
+						'date'			=> $post->post_time,
+						'url'			=> titania_url::unbuild_url($post->get_url()),
+						'approved'		=> $post->post_approved,
+					);
+				}
+				phpbb::$db->sql_freeresult($result);
+
+				titania_search::mass_index($data);
 			break;
 		}
 	}

@@ -120,15 +120,16 @@ class titania_pagination extends titania_object
 	 * Build pagination and send to template
 	 *
 	 * @param string $page path/page to be used in pagination url
+	 * @param array $params to be used in pagination url
 	 * @param string $tpl_prefix The tpl_prefix if you need to use one (in the generate_pagination function)
 	 */
-	public function build_pagination($page, $tpl_prefix = '')
+	public function build_pagination($page, $params = array(), $tpl_prefix = '')
 	{
-		$params = array();
 		if ($this->limit != $this->default_limit)
 		{
 			$params[$this->limit_name] = $this->limit;
 		}
+		unset($params[$this->start_name]);
 
 		$pagination_url = titania_url::build_url($page, $params);
 

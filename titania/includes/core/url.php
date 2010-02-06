@@ -66,6 +66,11 @@ class titania_url
 			return self::append_url($base, $params);
 		}
 
+		if (!is_array($params))
+		{
+			$params = self::split_params($params);
+		}
+
 		$final_url = self::$root_url . $base;
 
 		// Append a / at the end if required
@@ -116,6 +121,11 @@ class titania_url
 	*/
 	public static function append_url($url, $params = array())
 	{
+		if (!is_array($params))
+		{
+			$params = self::split_params($params);
+		}
+
 		// Extract the anchor from the end of the base if there is one
 		$anchor = '';
 		if (strpos($url, '#') !== false)
@@ -171,6 +181,33 @@ class titania_url
 		$url = preg_replace('#style' . self::$separator . '[0-9]+#', '', $url);
 
 		return $url;
+	}
+
+	/**
+	* Split up the parameters (from a string to an array, used for the search page from the indexer)
+	*
+	* @param string $params
+	*/
+	public function split_params($params)
+	{
+		$new_params = array();
+
+		if (strpos($params, '#') !== false)
+		{
+			$new_params['#'] = substr($params, (strpos($params, '#') + 1));
+			$params = substr($params, 0, strpos($params, '#'));
+		}
+
+		foreach (explode(self::$separator, $params) as $section)
+		{
+			$parts = explode('_', $section, 2);
+			if (sizeof($parts) == 2)
+			{
+				$new_params[$parts[0]] = $parts[1];
+			}
+		}
+
+		return $new_params;
 	}
 
 	/**
