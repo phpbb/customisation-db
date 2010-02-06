@@ -168,7 +168,7 @@ class users_overlord
 				case '_colour' :
 				case '_full' :
 				case '_no_profile' :
-					return get_username_string(substr($field, 1), $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour'], phpbb::append_sid('memberlist', 'mode=viewprofile'));
+					return get_username_string(substr($field, 1), $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour'], false, phpbb::append_sid('memberlist', 'mode=viewprofile'));
 				break;
 			}
 		}
