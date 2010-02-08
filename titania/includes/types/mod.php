@@ -61,17 +61,17 @@ class titania_type_mod extends titania_type_base
 		{
 			// Can view the mod queue
 			case 'view' :
-				return phpbb::$auth->acl_get('u_titania_mod_queue');
+				return phpbb::$auth->acl_get('m_titania_mod_queue');
 			break;
 
 			// Can validate mods in the queue
 			case 'validate' :
-				return phpbb::$auth->acl_get('u_titania_mod_validate');
+				return phpbb::$auth->acl_get('m_titania_mod_validate');
 			break;
 
 			// Can moderate mods
 			case 'moderate' :
-				return phpbb::$auth->acl_get('u_titania_mod_moderate');
+				return phpbb::$auth->acl_gets(array('m_titania_mod_moderate', 'm_titania_contrib_mod'));
 			break;
 		}
 

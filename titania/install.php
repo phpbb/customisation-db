@@ -431,6 +431,12 @@ $versions = array(
 				'm_titania_rate_reset',			// Can reset the rating on items
 				'm_titania_faq_mod',			// Can moderate FAQ entries
 				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_mod_queue',			// Can see the modifications queue
+				'm_titania_mod_validate',		// Can validate modifications
+				'm_titania_mod_moderate',		// Can moderate modifications
+				'm_titania_style_queue',		// Can see the styles queue
+				'm_titania_style_validate',		// Can validate styles
+				'm_titania_style_moderate',		// Can moderate styles
 			)),
 			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
 				'm_titania_author_mod',			// Can moderate author profiles
@@ -438,6 +444,12 @@ $versions = array(
 				'm_titania_rate_reset',			// Can reset the rating on items
 				'm_titania_faq_mod',			// Can moderate FAQ entries
 				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_mod_queue',			// Can see the modifications queue
+				'm_titania_mod_validate',		// Can validate modifications
+				'm_titania_mod_moderate',		// Can moderate modifications
+				'm_titania_style_queue',		// Can see the styles queue
+				'm_titania_style_validate',		// Can validate styles
+				'm_titania_style_moderate',		// Can moderate styles
 			)),
 			array('ROLE_TITANIA_MODIFICATION_TEAM', array(
 				'm_titania_author_mod',			// Can moderate author profiles

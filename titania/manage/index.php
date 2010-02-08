@@ -39,6 +39,9 @@ $nav_ary = array(
 	),
 );
 
+
+$page = (isset($nav_ary[$page])) ? $page : 'queue';
+
 // Display nav menu
 titania::generate_nav($nav_ary, $page);
 
