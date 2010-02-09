@@ -103,6 +103,7 @@ $lang = array_merge($lang, array(
 	'MANAGE_CONTRIBUTION'				=> 'Manage Contribution',
 
 	'NEW_CONTRIBUTION'					=> 'New Contribution',
+	'NEW_REVISION'						=> 'New Revision',
 	'NEW_TOPIC'							=> 'New Topic',
 	'NOT_VALIDATED'						=> 'Not Validated',
 	'NO_CATEGORY'						=> 'The selected category does not exist',

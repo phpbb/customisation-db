@@ -159,6 +159,22 @@ ul.general-info li strong {
 	float: left;
 }
 
+a.new-revision {
+	background-color: #7FA3B9;
+	padding: 3px;
+	float: right;
+	text-transform: uppercase;
+	border: 1px solid #6C889A;
+	margin-top: 5px;
+	color: #FFFFFF;
+}
+
+a.new-revision:hover {
+	text-decoration: none;
+	background-color: #5E869F;
+	border-color: #46667A;
+}
+
 /* Author Profile
 --------------------------------------------- */
 .no-avatar {
@@ -173,8 +189,7 @@ ul.general-info li strong {
 /* Listings
 --------------------------------------------- */
 #faqlist .topiclist dt {
-	width: 85%;	
-	padding: 4px 5px;
+	width: 80%;	
 }
 
 dd.faq-tools {
