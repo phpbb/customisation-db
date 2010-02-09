@@ -125,7 +125,7 @@ class phpbb
 		}
 
 		// Generate logged in/logged out status
-		$l_login_redirect = titania_url::build_url(titania_url::$current_page, titania_url::$params);
+		$l_login_redirect = titania_url::$current_page_url;
 		if (self::$user->data['user_id'] != ANONYMOUS)
 		{
 			$u_login_logout = self::append_sid('ucp', 'mode=logout', true, self::$user->session_id);

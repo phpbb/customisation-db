@@ -170,20 +170,29 @@ class titania
 	public static function autoload($class_name)
 	{
 		// Remove titania/overlord from the class name
-		$class_name = str_replace(array('titania_', '_overlord'), '', $class_name);
+		$file_name = str_replace(array('titania_', '_overlord'), '', $class_name);
+
+		// Overlords always have _overlord in and the file name can conflict with objects
+		if (strpos($class_name, '_overlord') !== false)
+		{
+			if (file_exists(TITANIA_ROOT . 'includes/overlords/' . $file_name . '.' . PHP_EXT))
+			{
+				include(TITANIA_ROOT . 'includes/overlords/' . $file_name . '.' . PHP_EXT);
+				return;
+			}
+		}
 
 		$directories = array(
 			'objects',
 			'tools',
-			'overlords',
 			'core',
 		);
 
 		foreach ($directories as $dir)
 		{
-			if (file_exists(TITANIA_ROOT . 'includes/' . $dir . '/' . $class_name . '.' . PHP_EXT))
+			if (file_exists(TITANIA_ROOT . 'includes/' . $dir . '/' . $file_name . '.' . PHP_EXT))
 			{
-				include(TITANIA_ROOT . 'includes/' . $dir . '/' . $class_name . '.' . PHP_EXT);
+				include(TITANIA_ROOT . 'includes/' . $dir . '/' . $file_name . '.' . PHP_EXT);
 				return;
 			}
 		}

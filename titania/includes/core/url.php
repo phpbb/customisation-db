@@ -50,6 +50,13 @@ class titania_url
 	public static $current_page;
 
 	/**
+	* Current page we are on (built with self::$current_page and self::$params)
+	*
+	* @var string
+	*/
+	public static $current_page_url;
+
+	/**
 	* Build URL by appending the needed parameters to a base URL
 	*
 	* @param string $base The base URL, Ex: customisation/mod/
@@ -278,5 +285,8 @@ class titania_url
 			self::$params[$arg[0]] = $arg[1];
 			$_GET[$arg[0]] = $_REQUEST[$arg[0]] = $arg[1];
 		}
+
+		// Build the full current page url
+		self::$current_page_url = self::build_url(self::$current_page, self::$params);
 	}
 }

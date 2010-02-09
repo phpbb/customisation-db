@@ -103,7 +103,7 @@ class titania_tracking
 			return self::$store[$type][$id];
 		}
 
-		if (!phpbb::$user->data['is_registered']) // @todo support the option to use cookies for all
+		if ($no_query || !phpbb::$user->data['is_registered']) // @todo support the option to use cookies for all
 		{
 			return 0;
 		}

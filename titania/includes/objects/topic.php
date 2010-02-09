@@ -359,13 +359,12 @@ class titania_topic extends titania_database_object
 
 			'U_NEWEST_POST'					=> ($this->unread) ? titania_url::append_url($this->get_url(), array('view' => 'unread', '#' => 'unread')) : '',
 			'U_VIEW_TOPIC'					=> $this->get_url(),
-			'U_VIEW_LAST_POST'				=> titania_url::append_url($this->get_url(), array('p' => $this->topic_last_post_id, '#' => $this->topic_last_post_id)),
+			'U_VIEW_LAST_POST'				=> titania_url::append_url($this->get_url(), array('p' => $this->topic_last_post_id, '#p' => $this->topic_last_post_id)),
 
 			'S_UNREAD_TOPIC'				=> ($this->unread) ? true : false,
 
 			'TOPIC_FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
 			'TOPIC_FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
-			'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
 			'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
 			'TOPIC_FOLDER_IMG_WIDTH'		=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 			'TOPIC_FOLDER_IMG_HEIGHT'		=> phpbb::$user->img($folder_img, '', false, '', 'height'),

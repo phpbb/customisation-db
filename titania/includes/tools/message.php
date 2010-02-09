@@ -74,7 +74,7 @@ class titania_message
 		'display_subject'		=> true, // Display the subject field or not
 		'display_edit_reason'	=> false, // Display the edit reason field or not
 		'display_captcha'		=> false, // Display the captcha or not
-		'attachments_group'		=> 0, // The attachment extensions group to allow
+		'attachments_group'		=> false, // The attachment extensions group to allow
 		'attachment_tpl'		=> 'posting/attachments/default.html', // Attachments template to use for output
 
 		'subject_default_override'	=> false, // Force over-ride the subject with one you specify, false to use the one gotten from the post object

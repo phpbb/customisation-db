@@ -487,6 +487,8 @@ class titania_post extends titania_message_object
 
 	/**
 	* Soft delete a post
+	*
+	* @todo Soft delete topics...
 	*/
 	public function soft_delete($reason = '')
 	{
@@ -509,6 +511,8 @@ class titania_post extends titania_message_object
 
 	/**
 	* Undelete a post
+	* 
+	* @todo Unsoft delete topics...
 	*/
 	public function undelete()
 	{

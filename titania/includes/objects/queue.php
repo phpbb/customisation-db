@@ -94,41 +94,4 @@ class titania_queue extends titania_message_object
 		$this->contrib_name_clean = $row['contrib_name_clean'];
 		$this->queue_type = $row['contrib_type'];
 	}
-
-	public function assign_details($return = false)
-	{
-		$folder_img = $folder_alt = '';
-		$this->folder_img($folder_img, $folder_alt);
-
-		$output = array(
-			'U_VIEW_TOPIC'				=> phpbb::append_sid('viewtopic', 't=' . $this->queue_topic_id),
-			'U_VIEW_CONTRIB'			=> titania_url::build_url(titania_types::$types[$this->queue_type]->url . '/' . $this->contrib_name_clean . '/'),
-
-			'S_UNREAD'					=> ($this->unread) ? true : false,
-
-			'FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
-			'FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
-			'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
-			'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
-			'FOLDER_IMG_WIDTH'			=> phpbb::$user->img($folder_img, '', false, '', 'width'),
-			'FOLDER_IMG_HEIGHT'			=> phpbb::$user->img($folder_img, '', false, '', 'height'),
-		);
-
-		if ($return)
-		{
-			return $output;
-		}
-
-		phpbb::$template->assign_vars($output);
-	}
-
-	/**
-	* Generate topic status
-	*/
-	public function folder_img(&$folder_img, &$folder_alt)
-	{
-		titania::_include('functions_display', 'titania_topic_folder_img');
-
-		titania_topic_folder_img($folder_img, $folder_alt, 0, $this->unread);
-	}
 }

@@ -114,7 +114,7 @@ phpbb::$template->assign_vars(array(
 	'S_IN_SEARCH'		=> true,
 	'S_SHOW_TOPICS'		=> ($display == 'topics') ? true : false,
 
-	'S_SEARCH_ACTION'	=> titania_url::build_url(titania_url::$current_page, titania_url::$params),
+	'S_SEARCH_ACTION'	=> titania_url::$current_page_url,
 ));
 
 titania::page_header('SEARCH');

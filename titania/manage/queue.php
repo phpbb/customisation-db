@@ -16,8 +16,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-$post_id = request_var('p', 0);
-$topic_id = request_var('t', 0);
 $queue_type = request_var('queue', '');
 $queue_type = titania_types::type_from_url($queue_type);
 
@@ -59,202 +57,26 @@ if ($queue_type === false)
 // Add the queue type to the base url
 $base_url = titania_url::append_url($base_url, array('queue' => titania_types::$types[$queue_type]->url));
 
-// Load the topic and contrib items
-if ($post_id)
+// Handle replying/editing/etc
+$posting_helper = new titania_posting(TITANIA_ATTACH_EXT_SUPPORT);
+$posting_helper->act('manage/queue_post.html');
+
+$topic_id = request_var('t', 0);
+if ($topic_id)
 {
-	$topic_id = topics_overlord::load_topic_from_post($post_id);
+	phpbb::$user->add_lang('viewforum');
 
-	// Load the topic into a topic object
-	$topic = topics_overlord::get_topic_object($topic_id);
-	if ($topic === false)
-	{
-		trigger_error('NO_TOPIC');
-	}
+	posts_overlord::display_topic_complete($topic);
 
-	// Load the contribution
-	titania::$contrib = new titania_contribution();
-	if (!titania::$contrib->load($topic->contrib_id))
-	{
-		trigger_error('CONTRIB_NOT_FOUND');
-	}
-	$topic->contrib = titania::$contrib;
+	titania::page_header(phpbb::$user->lang['VALIDATION_QUEUE'] . ' - ' . censor_text($topic->topic_subject));
+
+	phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(false), array('action' => 'reply')));
 }
-else if ($topic_id)
+else
 {
-	topics_overlord::load_topic($topic_id);
+	queue_overlord::display_queue($queue_type);
 
-	// Load the topic into a topic object
-	$topic = topics_overlord::get_topic_object($topic_id);
-	if ($topic === false)
-	{
-		trigger_error('NO_TOPIC');
-	}
-
-	// Load the contribution
-	titania::$contrib = new titania_contribution();
-	if (!titania::$contrib->load($topic->contrib_id))
-	{
-		trigger_error('CONTRIB_NOT_FOUND');
-	}
-	$topic->contrib = titania::$contrib;
+	titania::page_header('VALIDATION_QUEUE');
 }
 
-$submit = (isset($_POST['submit'])) ? true : false;
-$preview = (isset($_POST['preview'])) ? true : false;
-$action = request_var('action', '');
-
-switch ($action)
-{
-	case 'reply' :
-	case 'edit' :
-		titania::add_lang('posting');
-		phpbb::$user->add_lang('posting');
-
-		if ($action == 'reply')
-		{
-			$post = new titania_post(TITANIA_QUEUE, $topic);
-		}
-		else
-		{
-			$post = new titania_post(TITANIA_QUEUE, $topic, $post_id);
-			if ($post->load() === false)
-			{
-				trigger_error('NO_POST');
-			}
-		}
-
-		// Load the message object
-		$message = new titania_message($post);
-		$message->set_auth(array(
-			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
-			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
-			'lock_topic'	=> (phpbb::$auth->acl_get('m_titania_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
-			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
-		));
-		$message->set_settings(array(
-			'subject_default_override'	=> ($action == 'reply') ? 'Re: ' . $topic->topic_subject : false,
-			'attachments_group'			=> TITANIA_ATTACH_EXT_SUPPORT,
-		));
-
-		if ($preview)
-		{
-			$post->post_data($message);
-
-			$message->preview();
-		}
-		else if ($submit)
-		{
-			$post->post_data($message);
-
-			$error = $post->validate();
-
-			if (($validate_form_key = $message->validate_form_key()) !== false)
-			{
-				$error[] = $validate_form_key;
-			}
-
-			// @todo use permissions for captcha
-			if (!phpbb::$user->data['is_registered'] && ($validate_captcha = $message->validate_captcha()) !== false)
-			{
-				$error[] = $validate_captcha;
-			}
-
-			if (sizeof($error))
-			{
-				phpbb::$template->assign_var('ERROR', implode('<br />', $error));
-			}
-			else
-			{
-				$post->submit();
-
-				$message->submit($post->post_access);
-
-				redirect($post->get_url());
-			}
-		}
-
-		$message->display();
-
-		switch ($action)
-		{
-			case 'reply' :
-				phpbb::$template->assign_vars(array(
-					'S_POST_ACTION'		=> $topic->get_url($action, $base_url),
-					'L_POST_A'			=> phpbb::$user->lang['POST_REPLY'],
-				));
-				titania::page_header('POST_REPLY');
-			break;
-			case 'edit' :
-				phpbb::$template->assign_vars(array(
-					'S_POST_ACTION'		=> $post->get_url($action, false, $base_url),
-					'L_POST_A'			=> phpbb::$user->lang['EDIT_POST'],
-				));
-				titania::page_header('EDIT_POST');
-			break;
-		}
-
-		titania::page_footer(true, 'manage/queue_post.html');
-	break;
-
-	case 'delete' :
-	case 'undelete' :
-		phpbb::$user->add_lang('posting');
-
-		$post = new titania_post(TITANIA_QUEUE, $topic, $post_id);
-		if ($post->load() === false)
-		{
-			trigger_error('NO_POST');
-		}
-
-		if (titania::confirm_box(true))
-		{
-			if ($action == 'delete')
-			{
-				$redirect_post_id = posts_overlord::next_prev_post_id($post->topic_id, $posts->post_id);
-
-				// Delete the post (let's not allow hard deleting for now)
-				$post->soft_delete();
-
-				// try a nice redirect, back to the position where the post was deleted from
-				if ($redirect_post_id)
-				{
-					redirect(titania_url::append_url($topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
-				}
-
-				redirect($topic->get_url(false));
-			}
-			else
-			{
-				$post->undelete();
-
-				redirect($post->get_url(false, true));
-			}
-		}
-		else
-		{
-			titania::confirm_box(false, (($action == 'delete') ? 'DELETE_POST' : 'UNDELETE_POST'), $post->get_url($action));
-		}
-		redirect($post->get_url(false, true));
-	break;
-
-	default :
-		phpbb::$user->add_lang('viewforum');
-
-		if ($topic_id)
-		{
-			posts_overlord::display_topic_complete($topic);
-
-			titania::page_header(phpbb::$user->lang['VALIDATION_QUEUE'] . ' - ' . censor_text($topic->topic_subject));
-
-			phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(false), array('action' => 'reply')));
-		}
-		else
-		{
-			topics_overlord::display_forums_complete('queue');
-
-			titania::page_header('VALIDATION_QUEUE');
-		}
-
-		titania::page_footer(true, 'manage/queue.html');
-	break;
-}
+titania::page_footer(true, 'manage/queue.html');

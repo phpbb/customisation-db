@@ -81,7 +81,7 @@ class queue_overlord
 	* @param object|boolean $sort The sort object (includes/tools/sort.php)
 	* @param object|boolean $pagination The pagination object (includes/tools/pagination.php)
 	*/
-	public static function display_forums($type, $sort = false, $pagination = false)
+	public static function display_queue($type, $queue_status = TITANIA_QUEUE_NEW, $sort = false, $pagination = false)
 	{
 		if ($sort === false)
 		{
@@ -98,20 +98,23 @@ class queue_overlord
 			$pagination->default_limit = phpbb::$config['topics_per_page'];
 			$pagination->request();
 		}
-		//$pagination->result_lang = 'TOTAL_TOPICS';
 
 		$queue_ids = array();
 
 		$sql_ary = array(
-			'SELECT' => 'q.*',
+			'SELECT' => '*',
 
 			'FROM'		=> array(
 				TITANIA_QUEUE_TABLE	=> 'q',
 				TITANIA_CONTRIBS_TABLE	=> 'c',
+				TITANIA_REVISIONS_TABLE	=> 'r',
+				TITANIA_TOPICS_TABLE	=> 't',
 			),
 
 			'WHERE' => 'q.queue_type = ' . (int) $type . '
-				AND c.contrib_id = q.contrib_id',
+				AND c.contrib_id = q.contrib_id
+				AND r.revision_id = q.revision_id
+				AND q.queue_status = ' . (int) $queue_status,
 
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
@@ -125,7 +128,6 @@ class queue_overlord
 		$pagination->sql_count($sql_ary, 'q.queue_id');
 		$pagination->build_pagination(titania_url::$current_page, titania_url::$params);
 
-		$queue = new titania_queue();
 		$queue_ids = $user_ids = array();
 
 		// Get the data
@@ -150,15 +152,55 @@ class queue_overlord
 
 		foreach ($queue_ids as $queue_id)
 		{
-			$queue->__set_array(self::$queue[$queue_id]);
-			$queue->unread = titania_tracking::is_unread(TITANIA_QUEUE, $queue_id, $queue->queue_submit_time);
-
-			phpbb::$template->assign_block_vars('queue_list', array_merge(
-				$queue->assign_details(true),
-				users_overlord::assign_details($queue->submitter_user_id)
+			phpbb::$template->assign_block_vars('topics', array_merge(
+				self::assign_details($queue_id, true),
+				users_overlord::assign_details(self::$queue[$queue_id]['submitter_user_id'])
 			));
 		}
 
-		unset($queue);
+		phpbb::$template->assign_vars(array(
+			'S_TOPIC_LIST'		=> true,
+		));
+	}
+
+	/**
+	* assign details
+	*
+	* @param array $db_data Data from the database for this queue item (containing the contrib and revision data)
+	*/
+	public static function assign_details($queue_id)
+	{
+		$row = self::$queue[$queue_id];
+
+		$is_unread = titania_tracking::is_unread(TITANIA_QUEUE, $row['queue_id'], $row['queue_submit_time']);
+		$folder_img = $folder_alt = '';
+		self::folder_img($is_unread, $folder_img, $folder_alt);
+
+		$output = array(
+			'TOPIC_SUBJECT'				=> $row['contrib_name'] . ' - ' . $row['revision_version'],
+
+			'U_VIEW_TOPIC'				=> phpbb::append_sid('viewtopic', 't=' . $row['queue_topic_id']),
+			'U_VIEW_CONTRIB'			=> titania_url::build_url(titania_types::$types[$row['queue_type']]->url . '/' . $row['contrib_name_clean'] . '/'),
+
+			'S_UNREAD'					=> ($is_unread) ? true : false,
+
+			'TOPIC_FOLDER_IMG'			=> phpbb::$user->img($folder_img, $folder_alt),
+			'TOPIC_FOLDER_IMG_SRC'		=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
+			'TOPIC_FOLDER_IMG_ALT'		=> phpbb::$user->lang[$folder_alt],
+			'TOPIC_FOLDER_IMG_WIDTH'	=> phpbb::$user->img($folder_img, '', false, '', 'width'),
+			'TOPIC_FOLDER_IMG_HEIGHT'	=> phpbb::$user->img($folder_img, '', false, '', 'height'),
+		);
+
+		return $output;
+	}
+
+	/**
+	* Generate topic status
+	*/
+	public static function folder_img($is_unread, &$folder_img, &$folder_alt)
+	{
+		titania::_include('functions_display', 'titania_topic_folder_img');
+
+		titania_topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
 	}
 }
