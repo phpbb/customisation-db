@@ -27,7 +27,7 @@ class titania_subscriptions
 		// We are just going to force one or the other on them.
 		$subscription_type = ($subscription_type == SUBSCRIPTION_EMAIL) ? SUBSCRIPTION_EMAIL : SUBSCRIPTION_WATCH;
 
-		$sql = 'SELECT watch_object_id ' . TITANIA_WATCH_TABLE . ' WHERE ' . phpbb::$db->sql_build_array('SELECT', array(
+		$sql = 'SELECT watch_object_id FROM ' . TITANIA_WATCH_TABLE . ' WHERE ' . phpbb::$db->sql_build_array('SELECT', array(
 			'watch_object_type'		=> (int) $object_type,
 			'watch_type'			=> (int) $subscription_type,
 			'watch_object_id'		=> (int) $object_id,
@@ -69,7 +69,7 @@ class titania_subscriptions
 		// We are just going to force one or the other on them.
 		$subscription_type = ($subscription_type == SUBSCRIPTION_EMAIL) ? SUBSCRIPTION_EMAIL : SUBSCRIPTION_WATCH;
 		
-		$sql = 'SELECT watch_object_id ' . TITANIA_WATCH_TABLE . ' WHERE ' . phpbb::$db->sql_build_array('SELECT', array(
+		$sql = 'SELECT watch_object_id FROM ' . TITANIA_WATCH_TABLE . ' WHERE ' . phpbb::$db->sql_build_array('SELECT', array(
 			'watch_object_type'		=> (int) $object_type,
 			'watch_type'			=> (int) $subscription_type,
 			'watch_object_id'		=> (int) $object_id,
@@ -132,10 +132,7 @@ class titania_subscriptions
 			return;
 		}
 		
-		if(!class_exists('titania_notifications'))
-		{
-			include('./notifications.php'); //@todo fix teh path and phpEx
-		}
+
 		
 		//@todo finish sending out the notification
 	}
