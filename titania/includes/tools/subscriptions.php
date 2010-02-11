@@ -92,7 +92,7 @@ class titania_subscriptions
 				AND watch_object_id = " . (int) $object_id . '
 				AND watch_user_id = ' .(int) $user_id . '
 				AND watch_object_type = ' . (int) $object_type;
-				
+		
 		// Query and we're done
 		phpbb::$db->sql_query($sql);
 		
@@ -120,7 +120,6 @@ class titania_subscriptions
 		while($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$user_data[] = array(
-				'user_id'	=> $row['user_id'],
 				'username'	=> $row['username'],
 				'user_email'=> $row['user_email'],
 			);
@@ -132,9 +131,32 @@ class titania_subscriptions
 			return;
 		}
 		
-
+		// Titania include the messenger class...
 		
-		//@todo finish sending out the notification
+		$messenger = new messenger();
+		
+		// @todo: titania from info, titania sig, links, send types
+		foreach($user_data as $data)
+		{
+			$messenger->template('subscribe_notify', 'en'); // Forcing English
+			// $messenger->from('','');
+			$messenger->to($data['user_email'], $data['username']);
+			
+			$messenger->assign_vars(array(
+				'TYPE'   			=> '',
+				'CONTRIBNAME'		=> '', 
+				'USERNAME'			=> $data['username'],
+				'EMAIL_SIG'			=> '',
+				
+				'U_CONTRIB_OVERVIEW'	=> '',
+				'U_CONTRIB_TOPIC'		=> '',
+				'U_CONTRIB_UNSUBSCRIBE'	=> '',
+			));
+			
+			$messenger->send();
+		}
+		
+		return;
 	}
 }
 
