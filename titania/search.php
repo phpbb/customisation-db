@@ -21,6 +21,7 @@ phpbb::$user->add_lang('search');
 //$search_fields =
 $keywords = utf8_normalize_nfc(request_var('keywords', '', true));
 $author = utf8_normalize_nfc(request_var('author', '', true));
+$search_fields = request_var('sf', '');
 //$display = request_var('display', '');
 
 // Display the advanced search page
@@ -41,6 +42,10 @@ if (isset($_POST['submit']))
 	{
 		titania_url::$params['author'] = $author;
 	}
+	if ($search_fields)
+	{
+		titania_url::$params['sf'] = $search_fields;
+	}
 	/*if ($display)
 	{
 		titania_url::$params['display'] = $display;
@@ -55,11 +60,29 @@ $pagination->request();
 // Initialize the query
 $query = titania_search::create_find_query();
 
+// Query fields
+$query_fields = array();
+switch ($search_fields)
+{
+	case 'titleonly' :
+		$query_fields[] = 'title';
+	break;
+
+	case 'msgonly' :
+		$query_fields[] = 'text';
+	break;
+
+	default:
+		$query_fields[] = 'title';
+		$query_fields[] = 'text';
+	break;
+}
+
 // Keywords specified?
 if ($keywords)
 {
 	$qb = new ezcSearchQueryBuilder();
-	$qb->parseSearchQuery($query, $keywords, array('title', 'text'));
+	$qb->parseSearchQuery($query, $keywords, $query_fields);
 	unset($qb);
 }
 
