@@ -56,6 +56,7 @@ class ezcSearchXmlManager implements ezcSearchDefinitionManager
         'text' => ezcSearchDocumentDefinition::TEXT,
         'html' => ezcSearchDocumentDefinition::HTML,
         'date' => ezcSearchDocumentDefinition::DATE,
+        'int' => ezcSearchDocumentDefinition::INT,
     );
 
     /**

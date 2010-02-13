@@ -66,6 +66,9 @@ class ezcSearchZendLuceneHandler implements ezcSearchHandler, ezcSearchIndexHand
 
         // Set proper default encoding for query parser
         Zend_Search_Lucene_Search_QueryParser::setDefaultEncoding( 'UTF-8' );
+        Zend_Search_Lucene_Analysis_Analyzer::setDefault( 
+            new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num()
+        );
     }
 
     /**
