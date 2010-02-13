@@ -58,9 +58,8 @@ class titania_search
 	* @param mixed $object_type The object_type (what this is set to is not entirely important, but must be the same for all items of that type)
 	* @param int $object_id The object_id of an item (there can only be one of each id per object_type)
 	* @param array $data Array of data (see titania_article)
-	* @param bool $update True to update an existing item, false to index
 	*/
-	public static function index($object_type, $object_id, $data, $update = false)
+	public static function index($object_type, $object_id, $data)
 	{
 		self::initialize();
 
@@ -78,14 +77,8 @@ class titania_search
 
 		$article->setState($data);
 
-		if ($update)
-		{
-			self::$index->update($article);
-		}
-		else
-		{
-			self::$index->index($article);
-		}
+		// Run the update routine instead of the index, this way we should not ever run into issues with duplication
+		self::$index->update($article);
 
 		unset($article);
 	}
@@ -114,18 +107,6 @@ class titania_search
 	}
 
 	/**
-	* Update an item (shortcut for self::index($object_type, $object_id, $data, true))
-	*
-	* @param mixed $object_type The object_type (what this is set to is not entirely important, but must be the same for all items of that type)
-	* @param int $object_id The object_id of an item (there can only be one of each id per object_type)
-	* @param array $data Array of data (see titania_article)
-	*/
-	public static function update($object_type, $object_id, $data)
-	{
-		self::index($object_type, $object_id, $data, true);
-	}
-
-	/**
 	* Delete an item
 	*
 	* @param mixed $object_type The object_type (what this is set to is not entirely important, but must be the same for all items of that type)
@@ -151,10 +132,6 @@ class titania_search
 
 		if ($object_type !== false)
 		{
-			// Disable for now, see
-			//http://issues.ez.no/IssueView.php?Id=16127&
-			return;
-
 			$query->where(
 				$query->eq('type', $object_type)
 			);
@@ -184,6 +161,12 @@ class titania_search
 		return self::custom_search($query, $pagination);
 	}
 
+	/**
+	* Search by the author
+	*
+	* @param mixed $user_id
+	* @param mixed $pagination
+	*/
 	public static function author_search($user_id, &$pagination)
 	{
 		self::initialize();
@@ -192,6 +175,16 @@ class titania_search
 		$query->where($query->eq('author', $user_id));
 
 		return self::custom_search($query, $pagination);
+	}
+
+	/**
+	* Create a find query and return (to create our own custom searches)
+	*/
+	public static function create_find_query()
+	{
+		self::initialize();
+
+		return self::$index->createFindQuery('titania_article');
 	}
 
 	/**
@@ -233,6 +226,9 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 	public $id;
 	public $title;
 	public $text;
+	public $text_uid;
+	public $text_bitfield;
+	public $text_options;
 	public $date;
 	public $author;
 	public $url;
@@ -249,13 +245,16 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 			'id'			=> $this->id,
 			'title'			=> $this->title,
 			'text'			=> $this->text,
+			'text_uid'		=> $this->text_uid,
+			'text_bitfield'	=> $this->text_bitfield,
+			'text_options'	=> (int) $this->text_options,
 			'author'		=> (int) $this->author,
 			'date'			=> (int) $this->date,
 			'url'			=> $this->url,
 			'type'			=> (int) $this->type,
 			'access_level'	=> (int) $this->access_level,
-			'approved'		=> (int) $this->approved,
-			'reported'		=> (int) $this->reported,
+			'approved'		=> ($this->approved) ? 1 : 0,
+			'reported'		=> ($this->reported) ? 1 : 0,
 		);
 		return $state;
 	}
@@ -279,9 +278,13 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 
 		$doc->fields['title']			= new ezcSearchDefinitionDocumentField('title', ezcSearchDocumentDefinition::TEXT, 2, true, false, true);
 		$doc->fields['text']			= new ezcSearchDefinitionDocumentField('text', ezcSearchDocumentDefinition::TEXT, 1, true, false, true);
+		$doc->fields['text_uid']		= new ezcSearchDefinitionDocumentField('text_uid', ezcSearchDocumentDefinition::STRING, 0);
+		$doc->fields['text_bitfield']	= new ezcSearchDefinitionDocumentField('text_bitfield', ezcSearchDocumentDefinition::STRING, 0);
+		$doc->fields['text_options']	= new ezcSearchDefinitionDocumentField('text_options', ezcSearchDocumentDefinition::INT, 0);
+
 		$doc->fields['author']			= new ezcSearchDefinitionDocumentField('author', ezcSearchDocumentDefinition::INT);
 		$doc->fields['date']			= new ezcSearchDefinitionDocumentField('date', ezcSearchDocumentDefinition::INT);
-		$doc->fields['url']				= new ezcSearchDefinitionDocumentField('url', ezcSearchDocumentDefinition::STRING);
+		$doc->fields['url']				= new ezcSearchDefinitionDocumentField('url', ezcSearchDocumentDefinition::STRING, 0);
 
 		$doc->fields['access_level']	= new ezcSearchDefinitionDocumentField('access_level', ezcSearchDocumentDefinition::INT);
 		$doc->fields['approved']		= new ezcSearchDefinitionDocumentField('approved', ezcSearchDocumentDefinition::INT);

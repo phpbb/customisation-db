@@ -152,14 +152,15 @@ class titania_sync
 				{
 					$contrib->__set_array($row);
 
-					$for_edit = $contrib->generate_text_for_edit();
-
 					$data[] = array(
 						'object_type'	=> $contrib->contrib_type,
 						'object_id'		=> $contrib->contrib_id,
 
 						'title'			=> $contrib->contrib_name,
-						'text'			=> $for_edit['text'],
+						'text'			=> $contrib->contrib_desc,
+						'text_uid'		=> $contrib->contrib_desc_uid,
+						'text_bitfield'	=> $contrib->contrib_desc_bitfield,
+						'text_options'	=> $contrib->contrib_desc_options,
 						'author'		=> $contrib->contrib_user_id,
 						'date'			=> $contrib->contrib_last_update,
 						'url'			=> titania_url::unbuild_url($contrib->get_url()),
@@ -224,18 +225,56 @@ class titania_sync
 					$post->topic->__set_array($row);
 					$post->topic->contrib = array('contrib_name_clean' => $row['contrib_name_clean'], 'contrib_type' => $row['contrib_type']);
 
-					$for_edit = $post->generate_text_for_edit();
-
 					$data[] = array(
 						'object_type'	=> $post->post_type,
 						'object_id'		=> $post->post_id,
 
 						'title'			=> $post->post_subject,
-						'text'			=> $for_edit['text'],
+						'text'			=> $post->post_text,
+						'text_uid'		=> $post->post_text_uid,
+						'text_bitfield'	=> $post->post_text_bitfield,
+						'text_options'	=> $post->post_text_options,
 						'author'		=> $post->post_user_id,
 						'date'			=> $post->post_time,
 						'url'			=> titania_url::unbuild_url($post->get_url()),
 						'approved'		=> $post->post_approved,
+					);
+				}
+				phpbb::$db->sql_freeresult($result);
+
+				titania_search::mass_index($data);
+			break;
+		}
+	}
+
+	public function faqs($mode)
+	{
+		switch ($mode)
+		{
+			case 'index' :
+				titania_search::truncate(TITANIA_FAQ);
+
+				$data = array();
+
+				$sql = 'SELECT f.*, c.contrib_name_clean, c.contrib_type
+					FROM ' . TITANIA_CONTRIB_FAQ_TABLE . ' f, ' . TITANIA_CONTRIBS_TABLE . ' c
+					WHERE c.contrib_id = f.contrib_id';
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$data[] = array(
+						'object_type'	=> TITANIA_FAQ,
+						'object_id'		=> $row['faq_id'],
+
+						'title'			=> $row['faq_subject'],
+						'text'			=> $row['faq_text'],
+						'text_uid'		=> $row['faq_text_uid'],
+						'text_bitfield'	=> $row['faq_text_bitfield'],
+						'text_options'	=> $row['faq_text_options'],
+						'author'		=> 0,
+						'date'			=> 0,
+						'url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/faq/f_' . $row['faq_id'],
+						'access_level'	=> $row['faq_access'],
 					);
 				}
 				phpbb::$db->sql_freeresult($result);

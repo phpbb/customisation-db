@@ -71,9 +71,17 @@ if (isset($_GET['sync']) && phpbb::$auth->acl_get('a_'))
 	$sync = new titania_sync;
 	$method = explode('_', request_var('sync', ''), 2);
 
-	if ($method[1] && method_exists($sync, $method[0]))
+	if (method_exists($sync, $method[0]))
 	{
-		$sync->$method[0]($method[1]);
+		if (isset($method[1]))
+		{
+			$sync->$method[0]($method[1]);
+		}
+		else
+		{
+			$sync->$method[0]();
+		}
+
 		titania::error_box('SUCCESS', 'Sync Success');
 	}
 }

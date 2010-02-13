@@ -132,22 +132,22 @@ class titania_contribution extends titania_message_object
 			$this->change_author_contrib_count($this->contrib_user_id);
 		}
 
-		// Update index or insert (must do before submitting)?
-		$update = ($this->contrib_id) ? false : true;
-
 		parent::submit();
 
 		// Index!
 		$data = array(
 			'title'			=> $this->contrib_name,
 			'text'			=> $this->contrib_desc,
+			'text_uid'		=> $this->contrib_desc_uid,
+			'text_bitfield'	=> $this->contrib_desc_bitfield,
+			'text_options'	=> $this->contrib_desc_options,
 			'author'		=> $this->contrib_user_id,
 			'date'			=> $this->contrib_last_update,
 			'url'			=> titania_url::unbuild_url($this->get_url()),
 			'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
 		);
 
-		titania_search::index($this->contrib_type, $this->contrib_id, $data, $update);
+		titania_search::index($this->contrib_type, $this->contrib_id, $data);
 	}
 
 	/**
@@ -194,6 +194,21 @@ class titania_contribution extends titania_message_object
 			SET contrib_status = ' . $this->contrib_status . '
 			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
+
+		// Index!
+		$data = array(
+			'title'			=> $this->contrib_name,
+			'text'			=> $this->contrib_desc,
+			'text_uid'		=> $this->contrib_desc_uid,
+			'text_bitfield'	=> $this->contrib_desc_bitfield,
+			'text_options'	=> $this->contrib_desc_options,
+			'author'		=> $this->contrib_user_id,
+			'date'			=> $this->contrib_last_update,
+			'url'			=> titania_url::unbuild_url($this->get_url()),
+			'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
+		);
+
+		titania_search::index($this->contrib_type, $this->contrib_id, $data);
 	}
 
 	public function validate($contrib_categories = array())

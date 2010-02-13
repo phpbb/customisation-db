@@ -336,12 +336,14 @@ class titania_post extends titania_message_object
 
 		if (!$this->post_id)
 		{
-			return $this->post();
+			$this->post();
 		}
 		else
 		{
-			return $this->edit();
+			$this->edit();
 		}
+
+		return true;
 	}
 
 	/**
@@ -416,17 +418,7 @@ class titania_post extends titania_message_object
 		$this->topic->update_postcount($this->post_access, false, false);
 		$this->topic->submit();
 
-		// Index!
-		titania_search::index($this->post_type, $this->post_id, array(
-			'title'			=> $this->post_subject,
-			'text'			=> $this->post_text,
-			'author'		=> $this->post_user_id,
-			'date'			=> $this->post_time,
-			'url'			=> titania_url::unbuild_url($this->get_url()),
-			'access_level'	=> $this->post_access,
-			'approved'		=> $this->post_approved,
-			'reported'		=> $this->post_reported,
-		));
+		$this->index();
 	}
 
 	/**
@@ -470,19 +462,9 @@ class titania_post extends titania_message_object
 			$this->generate_text_for_storage();
 		}
 
-		parent::submit();
+		$this->index();
 
-		// Index!
-		titania_search::update($this->post_type, $this->post_id, array(
-			'title'			=> $this->post_subject,
-			'text'			=> $this->post_text,
-			'author'		=> $this->post_user_id,
-			'date'			=> $this->post_time,
-			'url'			=> titania_url::unbuild_url($this->get_url()),
-			'access_level'	=> $this->post_access,
-			'approved'		=> $this->post_approved,
-			'reported'		=> $this->post_reported,
-		));
+		parent::submit();
 	}
 
 	/**
@@ -511,7 +493,7 @@ class titania_post extends titania_message_object
 
 	/**
 	* Undelete a post
-	* 
+	*
 	* @todo Unsoft delete topics...
 	*/
 	public function undelete()
@@ -559,11 +541,15 @@ class titania_post extends titania_message_object
 			}
 		}
 
+		// Remove from the search index
+		titania_search::delete($this->post_type, $this->post_id);
+
 		parent::delete();
 	}
 
 	/**
 	* Reparse the post text without editing (or with editing, just not recieving the raw code from the user and doing an internal edit)
+	* May not fully work correctly
 	*/
 	public function reparse()
 	{
@@ -575,6 +561,26 @@ class titania_post extends titania_message_object
 		set_var($this->post_text, $this->post_text, 'string', true);
 
 		$this->generate_text_for_storage($for_edit['allow_bbcode'], $for_edit['allow_urls'], $for_edit['allow_smilies']);
+	}
+
+	/**
+	* Index this post
+	*/
+	public function index()
+	{
+		titania_search::index($this->post_type, $this->post_id, array(
+			'title'			=> $this->post_subject,
+			'text'			=> $this->post_text,
+			'text_uid'		=> $post->post_text_uid,
+			'text_bitfield'	=> $post->post_text_bitfield,
+			'text_options'	=> $post->post_text_options,
+			'author'		=> $this->post_user_id,
+			'date'			=> $this->post_time,
+			'url'			=> titania_url::unbuild_url($this->get_url()),
+			'access_level'	=> $this->post_access,
+			'approved'		=> $this->post_approved,
+			'reported'		=> $this->post_reported,
+		));
 	}
 
 	/**

@@ -57,3 +57,5 @@ RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$				./index.php?c=$3 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^([^/]+)-([0-9]+)/?([^/]+)?$						./index.php?c=$2 [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^([^/]+)?$											./index.php [NC]

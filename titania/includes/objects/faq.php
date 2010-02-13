@@ -155,6 +155,18 @@ class titania_faq extends titania_message_object
 			$this->generate_text_for_storage();
 		}
 
+		titania_search::index(TITANIA_FAQ, $this->faq_id, array(
+			'title'			=> $this->faq_subject,
+			'text'			=> $this->faq_text,
+			'text_uid'		=> $post->faq_text_uid,
+			'text_bitfield'	=> $post->faq_text_bitfield,
+			'text_options'	=> $post->faq_text_options,
+			'author'		=> 0,
+			'date'			=> 0,
+			'url'			=> titania_url::unbuild_url($this->get_url()),
+			'access_level'	=> $this->faq_access,
+		));
+
 		parent::submit();
 	}
 
