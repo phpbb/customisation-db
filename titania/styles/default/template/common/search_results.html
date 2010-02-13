@@ -99,8 +99,8 @@
 		</div>
 
 		<dl class="postprofile">
-			<dt class="author">{L_POST_BY_AUTHOR} {searchresults.POST_AUTHOR_FULL}</dt>
-			<dd>{searchresults.POST_DATE}</dd>
+			<!-- IF searchresults.POST_AUTHOR_FULL --><dt class="author">{L_POST_BY_AUTHOR} {searchresults.POST_AUTHOR_FULL}</dt><!-- ENDIF -->
+			<!-- IF searchresults.POST_DATE --><dd>{searchresults.POST_DATE}</dd><!-- ENDIF -->
 		</dl>
 	<!-- ENDIF -->
 

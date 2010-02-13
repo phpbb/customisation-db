@@ -128,8 +128,8 @@ users_overlord::load_users($results['user_ids']);
 				'POST_SUBJECT'		=> censor_text($document->title),
 				'MESSAGE'			=> generate_text_for_display($document->text, $document->text_uid, $document->text_bitfield, $document->text_options),
 
-				'POST_AUTHOR_FULL'	=> users_overlord::get_user($document->author, '_full'),
-				'POST_DATE'			=> phpbb::$user->format_date($document->date),
+				'POST_AUTHOR_FULL'	=> ($document->author) ? users_overlord::get_user($document->author, '_full') : false,
+				'POST_DATE'			=> ($document->date) ? phpbb::$user->format_date($document->date) : false,
 
 				'U_VIEW_POST'		=> titania_url::build_url($url_base, $url_params),
 
