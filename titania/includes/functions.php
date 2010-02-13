@@ -17,6 +17,24 @@ if (!defined('IN_TITANIA'))
 }
 
 /**
+* Exception handler
+*
+* @param mixed $exception
+*/
+function titania_exception_handler($exception)
+{
+	$message = $exception->getMessage();
+
+	// display the trace for administrators
+	if (phpbb::$auth->acl_get('a_'))
+	{
+		$message .= '<br /><br /><pre>' . var_export($exception->getTrace(), true) . '</pre>';
+	}
+
+	trigger_error($message);
+}
+
+/**
  * Error and message handler, call with trigger_error
  */
 function titania_msg_handler($errno, $msg_text, $errfile, $errline)
