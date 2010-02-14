@@ -56,7 +56,7 @@ define('TITANIA_QUEUE_NEW', 1); // Same as QUEUE_NEW in the Tag Fields table
 // Contrib status
 define('TITANIA_CONTRIB_NEW', 1); // Does not have any validated revisions
 define('TITANIA_CONTRIB_APPROVED', 2); // Has at least one validated revision
-define('TITANIA_CONTRIB_CLEANED', 3); // From Ariel Conversion - Cleaned up old mods
+define('TITANIA_CONTRIB_CLEANED', 3); // Cleaned up old items
 
 // Main TYPE constants (use whenever possible)
 define('TITANIA_CONTRIB', 1);

@@ -37,7 +37,21 @@ $thumbnail = request_var('thumb', false);
 
 if (!$download_id)
 {
-	trigger_error('NO_ATTACHMENT_SELECTED');
+	// Mostly to make moving from Ariel easier
+	$revision_id = request_var('rid', 0);
+	if ($revision_id)
+	{
+		$sql = 'SELECT attachment_id FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE revision_id = ' . $revision_id;
+		phpbb::$db->sql_query($sql);
+		$download_id = phpbb::$db->sql_fetchfield('attachment_id');
+		phpbb::$db->sql_freeresult();
+	}
+
+	if (!$download_id)
+	{
+		trigger_error('NO_ATTACHMENT_SELECTED');
+	}
 }
 
 $sql = 'SELECT *

@@ -130,9 +130,9 @@ switch ($step)
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$ignore = array(-1, 3);
-			if ($row['contrib_phpbb_version'][0] != '3' || in_array($row['contrib_status'], $ignore) || !in_array($row['contrib_type'], array_keys(titania_types::$types)))
+			if (in_array($row['contrib_status'], $ignore) || !in_array($row['contrib_type'], array_keys(titania_types::$types)))
 			{
-				// Skip 2.0 mods, contribs that were denied or pulled and weird ones
+				// Skip contribs that were denied or pulled and weird ones
 				continue;
 			}
 
@@ -186,6 +186,12 @@ switch ($step)
 				break;
 			}
 
+			// Set 2.0 mods to cleaned
+			if ($row['contrib_phpbb_version'][0] != '3')
+			{
+				$contrib_status = TITANIA_CONTRIB_CLEANED;
+			}
+
 			$sql_ary = array(
 				'contrib_id'					=> $row['contrib_id'],
 				'contrib_user_id'				=> $row['user_id'],
@@ -210,23 +216,27 @@ switch ($step)
 			// Insert
 			titania_insert(TITANIA_CONTRIBS_TABLE, $sql_ary);
 
-			$sql = 'SELECT tag_id FROM ' . $ariel_prefix . 'contrib_tags
-				WHERE contrib_id = ' . (int) $row['contrib_id'];
-			$result1 = phpbb::$db->sql_query($sql);
-			while ($tag_row = phpbb::$db->sql_fetchrow($result1))
+			// Convert 2.0 mods, but do not put them in any categories
+			if ($row['contrib_phpbb_version'][0] == '3')
 			{
-				$sql_ary = array(
-					'contrib_id'	=> $row['contrib_id'],
-				);
-
-				if (isset($tags_to_cats[$tag_row['tag_id']]))
+				$sql = 'SELECT tag_id FROM ' . $ariel_prefix . 'contrib_tags
+					WHERE contrib_id = ' . (int) $row['contrib_id'];
+				$result1 = phpbb::$db->sql_query($sql);
+				while ($tag_row = phpbb::$db->sql_fetchrow($result1))
 				{
-					$sql_ary['category_id'] = $tags_to_cats[$tag_row['tag_id']];
+					$sql_ary = array(
+						'contrib_id'	=> $row['contrib_id'],
+					);
 
-					titania_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
+					if (isset($tags_to_cats[$tag_row['tag_id']]))
+					{
+						$sql_ary['category_id'] = $tags_to_cats[$tag_row['tag_id']];
+
+						titania_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
+					}
 				}
+				phpbb::$db->sql_freeresult($result1);
 			}
-			phpbb::$db->sql_freeresult($result1);
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -264,9 +274,9 @@ switch ($step)
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$ignore = array(-1, 3);
-			if ($row['contrib_phpbb_version'][0] != '3' || in_array($row['contrib_status'], $ignore) || !in_array($row['contrib_type'], array_keys(titania_types::$types)))
+			if (in_array($row['contrib_status'], $ignore) || !in_array($row['contrib_type'], array_keys(titania_types::$types)))
 			{
-				// Skip 2.0 mods, contribs that were denied or pulled and weird ones
+				// Skip contribs that were denied or pulled and weird ones
 				continue;
 			}
 
@@ -298,6 +308,18 @@ switch ($step)
 					if (!strpos($row['revision_filename'], '.zip'))
 					{
 						$row['revision_filename'] .= '.zip';
+					}
+				break;
+
+				case 'text/plain' :
+				case 'text/x-c' :
+				case 'text/x-c++' :
+				case 'text/x-pascal' :
+				case 'text/x-lisp' :
+				case 'application/xml' :
+					if (!strpos($row['revision_filename'], '.mod'))
+					{
+						$row['revision_filename'] .= '.mod';
 					}
 				break;
 
@@ -455,12 +477,12 @@ switch ($step)
 	break;
 
 	case 7 :
+		// Truncate index first
+		titania_search::truncate();
+
 		$sync = new titania_sync;
 
-		// Truncate index first
-		//titania_search::truncate();
-
-		//$sync->contribs('index');
+		$sync->contribs('index');
 
 		$display_message = 'Indexing';
 	break;
