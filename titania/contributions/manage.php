@@ -30,6 +30,30 @@ else if (titania::$contrib->contrib_status == TITANIA_CONTRIB_CLEANED && !(phpbb
 	trigger_error('NO_AUTH');
 }
 
+// Catch the U_NEW_REVISION link and start creating the new revision...
+if (request_var('revision', '') == 'create')
+{
+	if (titania::$contrib->in_queue())
+	{
+		trigger_error('REVISION_IN_QUEUE');
+	}
+
+	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
+	phpbb::$template->assign_vars(array(
+		'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
+		'STEP'					=> 0,
+		'NEXT_STEP'				=> 1,
+
+		'S_NEW_REVISION'		=> true,
+		'S_POST_ACTION'			=> titania::$contrib->get_url('manage'),
+	));
+
+	add_form_key('postform');
+
+	titania::page_header('NEW_REVISION');
+	titania::page_footer(true, 'contributions/contribution_manage.html');
+}
+
 // Set some main vars up
 $submit = (isset($_POST['submit']) || isset($_POST['new_revision'])) ? true : false;
 $change_owner = request_var('change_owner', '', true); // Blame Nathan, he said this was okay

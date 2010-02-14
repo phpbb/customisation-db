@@ -409,6 +409,11 @@ class titania_attachment extends titania_database_object
 	{
 		$attachment_id = ($attachment_id === false) ? $this->attachment_id : (int) $attachment_id;
 
+		if (!$attachment_id)
+		{
+			return;
+		}
+
 		if ($attachment_id == $this->attachment_id)
 		{
 			@unlink(titania::$config->upload_path . $this->attachment_directory . '/' . utf8_basename($this->attachment_directory) . '/' . utf8_basename($this->physical_filename));
