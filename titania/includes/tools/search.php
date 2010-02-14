@@ -153,6 +153,8 @@ class titania_search
 	{
 		self::initialize();
 
+		self::clean_keywords($search_query);
+
 		$query = self::$index->createFindQuery('titania_article');
 		$qb = new ezcSearchQueryBuilder();
 		$qb->parseSearchQuery($query, $search_query, $fields);
@@ -218,6 +220,17 @@ class titania_search
 		}
 
 		return $results;
+	}
+
+	/**
+	* Clean some keywords up
+	*
+	* @param string $keywords
+	*/
+	public static function clean_keywords(&$keywords)
+	{
+		// Replace | with or
+		$keywords = str_replace('|', ' or ', $keywords);
 	}
 }
 

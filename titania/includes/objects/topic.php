@@ -165,15 +165,8 @@ class titania_topic extends titania_database_object
 	*/
 	public function update_postcount($new_access_level, $old_access_level = false, $auto_submit = true)
 	{
-		// Get the current postcount (may be empty string, so merge with 0, 0, 0)
-		if (!$this->topic_posts)
-		{
-			$postcount = array(0, 0, 0);
-		}
-		else
-		{
-			$postcount = array_pad(explode(':', $this->topic_posts), 3, 0);
-		}
+		// Get the current count
+		$to_db = titania_count::from_db($this->topic_posts, false);
 
 		// If we are updating a post we need to clear the postcount from the old post
 		if ($old_access_level !== false)
@@ -187,11 +180,16 @@ class titania_topic extends titania_database_object
 			switch ($old_access_level)
 			{
 				case TITANIA_ACCESS_PUBLIC :
-					$postcount[2]--;
+					$to_db['public']--;
+				break;
+
 				case TITANIA_ACCESS_AUTHORS :
-					$postcount[1]--;
+					$to_db['authors']--;
+				break;
+
 				case TITANIA_ACCESS_TEAMS :
-					$postcount[0]--;
+					$to_db['teams']--;
+				break;
 			}
 		}
 
@@ -201,15 +199,20 @@ class titania_topic extends titania_database_object
 			switch ($new_access_level)
 			{
 				case TITANIA_ACCESS_PUBLIC :
-					$postcount[2]++;
+					$to_db['public']++;
+				break;
+
 				case TITANIA_ACCESS_AUTHORS :
-					$postcount[1]++;
+					$to_db['authors']++;
+				break;
+
 				case TITANIA_ACCESS_TEAMS :
-					$postcount[0]++;
+					$to_db['teams']++;
+				break;
 			}
 		}
 
-		$this->topic_posts = implode(':', $postcount);
+		$this->topic_posts = titania_count::to_db($to_db);
 
 		// Autosubmit if wanted
 		if ($auto_submit && $this->topic_id)
@@ -232,14 +235,8 @@ class titania_topic extends titania_database_object
 			$access_level = titania::$access_level;
 		}
 
-		$postcount = explode(':', $this->topic_posts);
-
-		if (!isset($postcount[$access_level]))
-		{
-			return 0;
-		}
-
-		return $postcount[$access_level];
+		$flags = titania_count::get_flags($access_level);
+		return titania_count::from_db($this->topic_posts, $flags);
 	}
 
 	/**

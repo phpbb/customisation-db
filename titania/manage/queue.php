@@ -61,14 +61,15 @@ $base_url = titania_url::append_url($base_url, array('queue' => titania_types::$
 $posting_helper = new titania_posting(TITANIA_ATTACH_EXT_SUPPORT);
 $posting_helper->act('manage/queue_post.html');
 
-$topic_id = request_var('t', 0);
-if ($topic_id)
+// Main output
+$queue_id = request_var('q', 0);
+if ($queue_id)
 {
 	phpbb::$user->add_lang('viewforum');
 
-	posts_overlord::display_topic_complete($topic);
+	queue_overlord::display_queue_item($queue_id);
 
-	titania::page_header(phpbb::$user->lang['VALIDATION_QUEUE'] . ' - ' . censor_text($topic->topic_subject));
+	titania::page_header('VALIDATION_QUEUE');
 
 	phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(false), array('action' => 'reply')));
 }

@@ -108,13 +108,19 @@ class queue_overlord
 				TITANIA_QUEUE_TABLE	=> 'q',
 				TITANIA_CONTRIBS_TABLE	=> 'c',
 				TITANIA_REVISIONS_TABLE	=> 'r',
-				TITANIA_TOPICS_TABLE	=> 't',
+			),
+
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(TITANIA_TOPICS_TABLE => 't'),
+					'ON'	=> 't.topic_id = q.queue_topic_id',
+				),
 			),
 
 			'WHERE' => 'q.queue_type = ' . (int) $type . '
+				AND q.queue_status = ' . (int) $queue_status . '
 				AND c.contrib_id = q.contrib_id
-				AND r.revision_id = q.revision_id
-				AND q.queue_status = ' . (int) $queue_status,
+				AND r.revision_id = q.revision_id',
 
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
@@ -152,15 +158,15 @@ class queue_overlord
 
 		foreach ($queue_ids as $queue_id)
 		{
-			phpbb::$template->assign_block_vars('topics', array_merge(
-				self::assign_details($queue_id, true),
-				users_overlord::assign_details(self::$queue[$queue_id]['submitter_user_id'])
-			));
+			phpbb::$template->assign_block_vars('topics', self::assign_details($queue_id, true));
 		}
 
 		phpbb::$template->assign_vars(array(
 			'S_TOPIC_LIST'		=> true,
 		));
+
+		// Assign common stuff for topics list
+		topics_overlord::assign_common();
 	}
 
 	/**
@@ -172,15 +178,30 @@ class queue_overlord
 	{
 		$row = self::$queue[$queue_id];
 
+		$replies = 1;
+		if (isset($row['topic_posts']))
+		{
+			$flags = titania_count::get_flags(titania::$access_level);
+			$replies = titania_count::from_db($row['topic_posts'], $flags);
+		}
+
 		$is_unread = titania_tracking::is_unread(TITANIA_QUEUE, $row['queue_id'], $row['queue_submit_time']);
 		$folder_img = $folder_alt = '';
-		self::folder_img($is_unread, $folder_img, $folder_alt);
+		self::folder_img($is_unread, $folder_img, $folder_alt, $replies);
 
 		$output = array(
 			'TOPIC_SUBJECT'				=> $row['contrib_name'] . ' - ' . $row['revision_version'],
+			'TOPIC_REPLIES'				=> ($replies - 1),
+			'TOPIC_VIEWS'				=> isset($row['topic_views']) ? $row['topic_views'] : 0,
 
-			'U_VIEW_TOPIC'				=> phpbb::append_sid('viewtopic', 't=' . $row['queue_topic_id']),
+			'TOPIC_FIRST_POST_USER_FULL'	=> users_overlord::get_user($row['submitter_user_id'], '_full'),
+			'TOPIC_FIRST_POST_TIME'			=> phpbb::$user->format_date($row['queue_submit_time']),
+			'TOPIC_LAST_POST_USER_FULL'		=> (isset($row['topic_last_post_user_id'] )) ? users_overlord::get_user($row['topic_last_post_user_id'], '_full') : '',
+			'TOPIC_LAST_POST_TIME'			=> (isset($row['topic_last_post_time'])) ? phpbb::$user->format_date($row['topic_last_post_time']) : '',
+
+			'U_VIEW_TOPIC'				=> titania_url::append_url(titania_url::$current_page_url, array('q' => $row['queue_id'])),
 			'U_VIEW_CONTRIB'			=> titania_url::build_url(titania_types::$types[$row['queue_type']]->url . '/' . $row['contrib_name_clean'] . '/'),
+			'U_VIEW_LAST_POST'			=> (isset($row['topic_last_post_id'])) ? titania_url::append_url(titania_url::$current_page_url, array('p' => $row['topic_last_post_id'], '#p' => $row['topic_last_post_id'])) : '',
 
 			'S_UNREAD'					=> ($is_unread) ? true : false,
 
@@ -197,10 +218,10 @@ class queue_overlord
 	/**
 	* Generate topic status
 	*/
-	public static function folder_img($is_unread, &$folder_img, &$folder_alt)
+	public static function folder_img($is_unread, &$folder_img, &$folder_alt, $replies = 0)
 	{
 		titania::_include('functions_display', 'titania_topic_folder_img');
 
-		titania_topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
+		titania_topic_folder_img($folder_img, $folder_alt, $replies, $is_unread);
 	}
 }

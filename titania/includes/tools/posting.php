@@ -129,6 +129,8 @@ class titania_posting
 
 		$post_object = new titania_post($topic->topic_type, $topic);
 
+		// @todo check permissions/auth level/etc
+
 		// Load the message object
 		$message_object = new titania_message($post_object);
 		$message_object->set_auth(array(
@@ -180,6 +182,8 @@ class titania_posting
 
 		$post_object->topic->contrib = new titania_contribution;
 		$post_object->topic->contrib->load($post_object->topic->contrib_id);
+
+		// @todo check permissions/auth level/etc
 
 		// Load the message object
 		$message_object = new titania_message($post_object);

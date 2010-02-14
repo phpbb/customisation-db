@@ -36,7 +36,6 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'VALIDATION_POST'	=> '[url=%1$s]View Contribution[/url]
-[url=%2$s]Download Revision[/url]',
 	'VALIDATION_QUEUE'	=> 'Validation Queue',
+	'VALIDATION'	=> 'Validation',
 ));

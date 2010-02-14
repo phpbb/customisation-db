@@ -195,7 +195,7 @@ class titania_sync
 					$post_count = $this->_get_post_count($row['topic_id']);
 					if ($row['topic_posts'] != $post_count)
 					{
-						$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . ' SET topic_posts = ' . (int) $post_count . ' WHERE topic_id = ' . $row['topic_id'];
+						$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . ' SET topic_posts = \'' . $post_count . '\' WHERE topic_id = ' . $row['topic_id'];
 						phpbb::$db->sql_query($sql);
 					}
 				}
@@ -356,7 +356,11 @@ class titania_sync
 		$public = phpbb::$db->sql_fetchfield('cnt', $result);
 		phpbb::$db->sql_freeresult($result);
 
-		return ($teams + $authors + $public) . ':' . ($authors + $public) . ':' . $public;
+		return titania_count::to_db(array(
+			'teams'		=> $teams,
+			'authors'	=> $authors,
+			'public'	=> $public,
+		));
 	}
 
 	public function _get_author_count($user_id)

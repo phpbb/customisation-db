@@ -81,6 +81,8 @@ switch ($search_fields)
 // Keywords specified?
 if ($keywords)
 {
+	titania_search::clean_keywords($keywords);
+
 	$qb = new ezcSearchQueryBuilder();
 	$qb->parseSearchQuery($query, $keywords, $query_fields);
 	unset($qb);

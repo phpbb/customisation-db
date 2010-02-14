@@ -25,6 +25,15 @@ function titania_custom($action, $version)
 			titania_categories();
 		break;
 
+		case 'update' :
+			switch ($version)
+			{
+				case '0.1.34' :
+					titania_sync::topics('post_count');
+				break;
+			}
+		break;
+
 		case 'uninstall' :
 			// Uninstall the types (prevent errors)
 			foreach (titania_types::$types as $class)
@@ -306,7 +315,6 @@ function titania_ext_groups($action)
 	switch ($action)
 	{
 		case 'install':
-		case 'update':
 			// Add Titania ext groups.
 			foreach ($ext_groups as $group_name => $extra)
 			{

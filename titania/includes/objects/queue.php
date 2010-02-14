@@ -48,13 +48,6 @@ class titania_queue extends titania_message_object
 	 */
 	protected $object_type = TITANIA_QUEUE;
 
-	/**
-	* Unread
-	*
-	* @var bool
-	*/
-	public $unread = true;
-
 	public function __construct()
 	{
 		// Configure object properties
@@ -85,13 +78,68 @@ class titania_queue extends titania_message_object
 
 	public function submit()
 	{
-		$sql = 'SELECT contrib_name_clean, contrib_type FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE contrib_id = ' . (int) $this->contrib_id;
-		$result = phpbb::$db->sql_query($sql);
-		$row = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);
+		if (!$this->queue_id)
+		{
+			$sql = 'SELECT c.contrib_name_clean, c.contrib_type, r.revision_version
+				FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
+				WHERE r.revision_id = ' . (int) $this->revision_id . '
+					AND c.contrib_id = r.contrib_id';
+			$result = phpbb::$db->sql_query($sql);
+			$row = phpbb::$db->sql_fetchrow($result);
+			phpbb::$db->sql_freeresult($result);
 
-		$this->contrib_name_clean = $row['contrib_name_clean'];
-		$this->queue_type = $row['contrib_type'];
+			$this->contrib_name_clean = $row['contrib_name_clean'];
+			$this->queue_type = $row['contrib_type'];
+
+			titania::add_lang('manage');
+			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $this->contrib_name_clean . ' - ' . $row['revision_version']);
+		}
+
+		parent::submit();
+	}
+
+	/**
+	* Rebuild (or create) the first post in the queue topic
+	*/
+	public function update_first_queue_post($post_subject)
+	{
+		if (!$this->queue_topic_id)
+		{
+			// Create the topic
+			$post = new titania_post(TITANIA_QUEUE);
+		}
+		else
+		{
+			$topic = new titania_topic;
+			$topic->topic_id = $this->queue_topic_id;
+			$topic->load;
+
+			$post = new titania_post($topic->topic_type, $topic, $topic->topic_first_post_id);
+		}
+
+		if ($post_subject)
+		{
+			$post->post_subject = $post_subject;
+		}
+
+		$post->post_user_id = $this->submitter_user_id;
+		$post->post_time = $this->queue_submit_time;
+
+		// Add the queue notes
+		$queue_notes = $this->queue_notes;
+		decode_message($queue_notes, $this->queue_notes_uid);
+		$post->post_text = $queue_notes . "\n\n";
+
+		// Add the MPV results
+		$mpv_results = $this->mpv_results;
+		decode_message($mpv_results, $this->mpv_results_uid);
+		$post->post_text = $mpv_results;
+
+		// Add the Automod results (later)
+
+		// Store the post
+		$post->submit();
+
+		$this->queue_topic_id = $post->topic_id;
 	}
 }
