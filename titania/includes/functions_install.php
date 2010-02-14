@@ -29,7 +29,8 @@ function titania_custom($action, $version)
 			switch ($version)
 			{
 				case '0.1.34' :
-					titania_sync::topics('post_count');
+					$sync = new titania_sync;
+					$sync->topics('post_count');
 				break;
 			}
 		break;
