@@ -56,7 +56,20 @@ class titania_subscriptions
 		// Query and we're done
 		phpbb::$db->sql_query($sql);
 		
-		//@todo send out the subscription confirmation
+		$sql = 'SELECT contrib_name 
+			FROM ' . TITANIA_CONTRIBS_TABLE . '
+			WHERE contrib_id = ' . (int) $object_id;
+		phpbb::$db->sql_query($sql);
+		
+		$messenger->template('subscribe_conf', 'en'); // Forcing English
+		$messenger->to(phpbb::$user->data['user_email'], phpbb::$user->data['username']);
+		
+		$messenger->assign_vars(array(
+			'SUBJECT'   	=> $row['contrib_name'],
+			'USERNAME'		=> phpbb::$user->data['username'],
+		));
+		
+		$messenger->send();		
 		
 		return true;
 	}
@@ -96,19 +109,33 @@ class titania_subscriptions
 		// Query and we're done
 		phpbb::$db->sql_query($sql);
 		
-		//@todo send out the subscription removal email 
+		$sql = 'SELECT contrib_name 
+			FROM ' . TITANIA_CONTRIBS_TABLE . '
+			WHERE contrib_id = ' . (int) $object_id;
+		phpbb::$db->sql_query($sql);
 		
-		return true;	
+		$messenger->template('subscribe_remove', 'en'); // Forcing English
+		$messenger->to(phpbb::$user->data['user_email'], phpbb::$user->data['username']);
+		
+		$messenger->assign_vars(array(
+			'SUBJECT'   	=> $row['contrib_name'],
+			'USERNAME'		=> phpbb::$user->data['username'],
+		));
+		
+		$messenger->send();
+		
+		return true;
 	}
 	
 	/*
 	* Send Notifications
 	*/	
-	public static function send_notifications($object_type, $object_id)
+	public static function send_notifications($object_type, $object_id, $url)
 	{
-		$sql = 'SELECT w.watch_user_id, u.user_id, u.username, u.user_email
-				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u 
+		$sql = 'SELECT w.watch_user_id, u.user_id, u.username, u.user_email, c.contrib_name
+				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u, ' . TITANIA_CONTRIBS_TABLE . ' c
 				WHERE w.watch_user_id = u.user_id
+				AND w.watch_object_id = c.contrib_id
 				AND w.watch_object_type = ' . (int) $object_type . '
 				AND w.watch_object_id = ' . (int) $object_id . '
 				AND w.watch_type = ' . SUBSCRIPTION_EMAIL;
@@ -131,11 +158,9 @@ class titania_subscriptions
 			return;
 		}
 		
-		// Titania include the messenger class...
-		
 		$messenger = new messenger();
 		
-		// @todo: titania from info, titania sig, links, send types
+		// Send to each user
 		foreach($user_data as $data)
 		{
 			$messenger->template('subscribe_notify', 'en'); // Forcing English
@@ -143,14 +168,12 @@ class titania_subscriptions
 			$messenger->to($data['user_email'], $data['username']);
 			
 			$messenger->assign_vars(array(
-				'TYPE'   			=> '',
-				'CONTRIBNAME'		=> '', 
+				'TYPE'   			=> titania_types::$types[$data['contrib_type']]->lang,
+				'CONTRIBNAME'		=> $data['contrib_name'], 
 				'USERNAME'			=> $data['username'],
-				'EMAIL_SIG'			=> '',
+			//	'EMAIL_SIG'			=> '',
 				
-				'U_CONTRIB_OVERVIEW'	=> '',
-				'U_CONTRIB_TOPIC'		=> '',
-				'U_CONTRIB_UNSUBSCRIBE'	=> '',
+				'U_CONTRIB_OVERVIEW'	=> $url,
 			));
 			
 			$messenger->send();

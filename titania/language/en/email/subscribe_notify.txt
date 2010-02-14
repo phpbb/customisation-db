@@ -4,11 +4,3 @@ Hello {USERNAME},
 
 You are receiving this notification because you are watching the {TYPE} "{CONTRIBNAME}" in the phpBB Customization Database. You may view the update at the link below:
 {U_CONTRIB_OVERVIEW}
-
-The release topic is located at the link below:
-{U_CONTRIB_TOPIC}
-
-If you no longer wish to receive updates on this {TYPE}, you may unsubscribe by following the link below
-{U_CONTRIB_UNSUBSCRIBE}
-
-{EMAIL_SIG}
