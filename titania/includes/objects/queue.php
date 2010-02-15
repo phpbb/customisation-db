@@ -80,7 +80,7 @@ class titania_queue extends titania_message_object
 	{
 		if (!$this->queue_id)
 		{
-			$sql = 'SELECT c.contrib_name_clean, c.contrib_type, r.revision_version
+			$sql = 'SELECT c.contrib_name, c.contrib_name_clean, c.contrib_type, r.revision_version
 				FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
 				WHERE r.revision_id = ' . (int) $this->revision_id . '
 					AND c.contrib_id = r.contrib_id';
@@ -92,7 +92,7 @@ class titania_queue extends titania_message_object
 			$this->queue_type = $row['contrib_type'];
 
 			titania::add_lang('manage');
-			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $this->contrib_name_clean . ' - ' . $row['revision_version']);
+			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version']);
 		}
 
 		parent::submit();
@@ -125,15 +125,17 @@ class titania_queue extends titania_message_object
 		$post->post_user_id = $this->submitter_user_id;
 		$post->post_time = $this->queue_submit_time;
 
+		$post->post_text = '';
+
 		// Add the queue notes
 		$queue_notes = $this->queue_notes;
 		decode_message($queue_notes, $this->queue_notes_uid);
-		$post->post_text = $queue_notes . "\n\n";
+		$post->post_text .= $queue_notes . "\n\n";
 
 		// Add the MPV results
 		$mpv_results = $this->mpv_results;
 		decode_message($mpv_results, $this->mpv_results_uid);
-		$post->post_text = $mpv_results;
+		$post->post_text .= $mpv_results;
 
 		// Add the Automod results (later)
 

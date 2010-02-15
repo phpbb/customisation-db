@@ -71,10 +71,12 @@ class titania_count
 	*/
 	public static function from_db($from_db, $flags)
 	{
+		self::reset_fields();
+
 		$count = 0;
 		$from_db = explode(':', $from_db);
 
-		for ($i = 0; $i < sizeof($from_db); $i += 2)
+		for ($i = 0; $i < sizeof($from_db) - 1; $i += 2)
 		{
 			$field_name = $from_db[$i];
 			$field_value = $from_db[($i + 1)];
@@ -95,6 +97,8 @@ class titania_count
 	*/
 	public static function to_db($data)
 	{
+		self::reset_fields();
+
 		self::$fields = array_merge(self::$fields, $data);
 
 		$to_db = array();
@@ -105,5 +109,14 @@ class titania_count
 		}
 
 		return implode(':', $to_db);
+	}
+
+	public static function reset_fields()
+	{
+		// Reset the fields
+		foreach (self::$fields as $field => $value)
+		{
+			self::$fields[$field] = 0;
+		}
 	}
 }

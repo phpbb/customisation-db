@@ -25,6 +25,7 @@ define('IN_TITANIA', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
+titania::add_lang('manage');
 
 if (!phpbb::$user->data['user_type'] == USER_FOUNDER)
 {
@@ -47,6 +48,10 @@ $start = request_var('start', 0);
 // Populated later
 $total = 0;
 $display_message = '';
+
+// We index later...
+titania_search::initialize();
+titania_search::$do_not_index = true;
 
 $tags_to_cats = array(
 	9 => 13, // Board Styles
@@ -296,7 +301,7 @@ switch ($step)
 			$filename = realpath(PHPBB_ROOT_PATH . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
 			if (!file_exists($filename))
 			{
-				echo 'Could Not Find File - ' . $filename . '<br />';
+				echo 'Could Not Find File - ' . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
 				continue;
 			}
 			$mime_type = mime_content_type($filename);
@@ -321,6 +326,10 @@ switch ($step)
 					{
 						$row['revision_filename'] .= '.mod';
 					}
+				break;
+
+				case 'application/x-rar' :
+					continue; // Silently ignore...
 				break;
 
 				default :
@@ -397,6 +406,8 @@ switch ($step)
 	break;
 
 	case 4 :
+		$limit = $limit / 2;
+
 		$sql = 'SELECT COUNT(queue_id) AS cnt FROM ' . $ariel_prefix . 'queue';
 		phpbb::$db->sql_query($sql);
 		$total = phpbb::$db->sql_fetchfield('cnt');
@@ -411,11 +422,12 @@ switch ($step)
 			-2	=> TITANIA_QUEUE_DENIED, // QUEUE_DENIED
 		);
 
-		$sql = 'SELECT q.*, ct.topic_id, c.contrib_name_clean
-			FROM ' . $ariel_prefix . 'queue q, ' . $ariel_prefix . 'contrib_topics ct, ' . TITANIA_CONTRIBS_TABLE . ' c
+		$sql = 'SELECT q.*, ct.topic_id, c.contrib_name, c.contrib_name_clean, c.contrib_type, r.revision_version
+			FROM ' . $ariel_prefix . 'queue q, ' . $ariel_prefix . 'contrib_topics ct, ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
 			WHERE ct.contrib_id = q.contrib_id
 				AND ct.topic_type = 4
 				AND c.contrib_id = q.contrib_id
+				AND r.revision_id = q.revision_id
 			ORDER BY queue_id ASC';
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
@@ -427,13 +439,58 @@ switch ($step)
 				continue;
 			}
 
+			$topic = new titania_topic(TITANIA_QUEUE);
+			$topic->contrib_id = $row['contrib_id'];
+			$topic->contrib = array(
+				'contrib_type'			=> $row['contrib_type'],
+				'contrib_name_clean'	=> $row['contrib_name_clean'],
+			);
+			$post = false;
+
+			// Convert the topics over from the phpBB forums
+			$sql = 'SELECT * FROM ' . POSTS_TABLE . '
+				WHERE topic_id = ' . (int) $row['topic_id'] . '
+				ORDER BY post_id ASC';
+			$post_result = phpbb::$db->sql_query($sql);
+			while ($post_row = phpbb::$db->sql_fetchrow($post_result))
+			{
+				$post = new titania_post(TITANIA_QUEUE, $topic);
+				$post->__set_array(array(
+					'post_access'			=> TITANIA_ACCESS_TEAMS,
+					'post_user_id'			=> $post_row['poster_id'],
+					'post_ip'				=> $post_row['poster_ip'],
+					'post_time'				=> $post_row['post_time'],
+					'post_subject'			=> $post_row['post_subject'],
+					'post_text'				=> $post_row['post_text'],
+					'post_text_bitfield'	=> $post_row['bbcode_bitfield'],
+					'post_text_uid'			=> $post_row['bbcode_uid'],
+					'post_text_options'		=> (($post_row['enable_bbcode']) ? OPTION_FLAG_BBCODE : 0) + (($post_row['enable_smilies']) ? OPTION_FLAG_SMILIES : 0) + (($post_row['enable_magic_url']) ? OPTION_FLAG_LINKS : 0),
+				));
+				$post->message_parsed_for_storage = true;
+				$post->submit();
+			}
+			phpbb::$db->sql_freeresult($post_result);
+
+			// We didn't convert any posts?  (Local install perhaps?)
+			if ($post === false)
+			{
+				$post = new titania_post(TITANIA_QUEUE, $topic);
+				$post->__set_array(array(
+					'post_access'			=> TITANIA_ACCESS_TEAMS,
+					'post_subject'			=> phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version'],
+					'post_text'				=> 'Converted from Ariel',
+				));
+				$post->submit();
+			}
+
+			// Now insert to the queue table
 			$sql_ary = array(
 				'queue_id'				=> $row['queue_id'],
 				'revision_id'			=> $row['revision_id'],
 				'contrib_id'			=> $row['contrib_id'],
 				'contrib_name_clean'	=> $row['contrib_name_clean'],
 				'submitter_user_id'		=> $row['user_id'],
-				'queue_topic_id'		=> $row['topic_id'],
+				'queue_topic_id'		=> $topic->topic_id,
 
 				'queue_type'			=> $row['contrib_type'],
 				'queue_status'			=> $queue_swap[$row['queue_status']],
@@ -477,6 +534,8 @@ switch ($step)
 	break;
 
 	case 7 :
+		titania_search::$do_not_index = false;
+
 		// Truncate index first
 		titania_search::truncate();
 

@@ -216,7 +216,8 @@ class titania_sync
 
 				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean, c.contrib_name_clean, c.contrib_type
 					FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t, ' . TITANIA_CONTRIBS_TABLE . ' c
-					WHERE t.topic_id = p.topic_id
+					WHERE t.topic_type = ' . TITANIA_SUPPORT . '
+						AND t.topic_id = p.topic_id
 						AND c.contrib_id = t.contrib_id';
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))

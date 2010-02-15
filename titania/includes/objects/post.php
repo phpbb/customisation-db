@@ -266,7 +266,7 @@ class titania_post extends titania_message_object
 		}
 
 		$is_poster = ($this->post_user_id == phpbb::$user->data['user_id']) ? true : false; // Poster
-		$is_author = ($contrib->is_author || $contrib->is_active_coauthor) ? true : false; // Contribution author
+		$is_author = ($contrib && ($contrib->is_author || $contrib->is_active_coauthor)) ? true : false; // Contribution author
 		$is_deleter = ($this->post_delete_user == phpbb::$user->data['user_id']) ? true : false;
 
 		switch ($option)
@@ -379,11 +379,6 @@ class titania_post extends titania_message_object
 
 		$this->topic_id = $this->topic->topic_id;
 
-		if (!$this->message_parsed_for_storage)
-		{
-			$this->generate_text_for_storage();
-		}
-
 		parent::submit();
 
 		// If no topic_id it means we are creating a new topic, so we need to set the first_post_ data.
@@ -456,11 +451,6 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		$this->topic_id = $this->topic->topic_id;
-
-		if (!$this->message_parsed_for_storage)
-		{
-			$this->generate_text_for_storage();
-		}
 
 		$this->index();
 
@@ -571,9 +561,9 @@ class titania_post extends titania_message_object
 		titania_search::index($this->post_type, $this->post_id, array(
 			'title'			=> $this->post_subject,
 			'text'			=> $this->post_text,
-			'text_uid'		=> $post->post_text_uid,
-			'text_bitfield'	=> $post->post_text_bitfield,
-			'text_options'	=> $post->post_text_options,
+			'text_uid'		=> $this->post_text_uid,
+			'text_bitfield'	=> $this->post_text_bitfield,
+			'text_options'	=> $this->post_text_options,
 			'author'		=> $this->post_user_id,
 			'date'			=> $this->post_time,
 			'url'			=> titania_url::unbuild_url($this->get_url()),

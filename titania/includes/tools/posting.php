@@ -125,7 +125,10 @@ class titania_posting
 		}
 
 		$topic->contrib = new titania_contribution;
-		$topic->contrib->load($topic->contrib_id);
+		if (!$post_object->topic->contrib->load($topic->contrib_id))
+		{
+			trigger_error('NO_CONTRIB');
+		}
 
 		$post_object = new titania_post($topic->topic_type, $topic);
 
@@ -150,7 +153,7 @@ class titania_posting
 
 		// Common stuff
 		phpbb::$template->assign_vars(array(
-			'S_POST_ACTION'		=> $post_object->topic->get_url($action, $base_url),
+			'S_POST_ACTION'		=> $post_object->topic->get_url('reply', titania_url::$current_page_url),
 			'L_POST_A'			=> phpbb::$user->lang['POST_REPLY'],
 		));
 		titania::page_header('POST_REPLY');
@@ -173,7 +176,7 @@ class titania_posting
 		}
 
 		$post_object->topic = new titania_topic();
-		$post_object->topic->topic_id = (int) $topic_id;
+		$post_object->topic->topic_id = $post_object->topic_id;
 
 		if ($post_object->topic->load() === false)
 		{
@@ -181,7 +184,10 @@ class titania_posting
 		}
 
 		$post_object->topic->contrib = new titania_contribution;
-		$post_object->topic->contrib->load($post_object->topic->contrib_id);
+		if (!$post_object->topic->contrib->load($post_object->topic->contrib_id))
+		{
+			trigger_error('NO_CONTRIB');
+		}
 
 		// @todo check permissions/auth level/etc
 
@@ -204,7 +210,7 @@ class titania_posting
 
 		// Common stuff
 		phpbb::$template->assign_vars(array(
-			'S_POST_ACTION'		=> $post_object->get_url($action, false, $base_url),
+			'S_POST_ACTION'		=> $post_object->get_url('edit', false, titania_url::$current_page_url),
 			'L_POST_A'			=> phpbb::$user->lang['EDIT_POST'],
 		));
 		titania::page_header('EDIT_POST');

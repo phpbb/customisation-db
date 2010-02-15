@@ -98,6 +98,7 @@ $lang = array_merge($lang, array(
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
 	'NO_AUTH'					=> 'You are not authorized to see this page.',
+	'NO_CONTRIB'				=> 'The requested contribution does not exist.',
 	'NO_CONTRIBS'				=> 'No contributions could be found',
 	'NO_DESC'					=> 'You have to enter the description.',
 	'NO_POST'					=> 'The requested post does not exist.',

@@ -34,7 +34,7 @@ abstract class titania_message_object extends titania_database_object
 	 *
 	 * @var bool
 	 */
-	protected $message_parsed_for_storage = false;
+	public $message_parsed_for_storage = false;
 
 	/**
 	* Catch submits and make sure we parse messages for storage

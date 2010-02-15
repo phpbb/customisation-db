@@ -71,7 +71,7 @@ if ($queue_id)
 
 	titania::page_header('VALIDATION_QUEUE');
 
-	phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(false), array('action' => 'reply')));
+	//phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(false), array('action' => 'reply')));
 }
 else
 {

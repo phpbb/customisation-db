@@ -550,6 +550,12 @@ $versions = array(
 		'custom' => 'titania_custom',
 	),
 
+	'0.1.35' => array(
+		'table_column_remove' => array(
+			array(TITANIA_REVISIONS_TABLE, 'queue_topic_id'),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

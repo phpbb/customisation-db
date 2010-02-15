@@ -39,6 +39,13 @@ class titania_search
 	private static $index = false;
 
 	/**
+	* Forcefully set the indexer to not index anything
+	*
+	* @var bool
+	*/
+	public static $do_not_index = false;
+
+	/**
 	* Initialize the Search
 	*/
 	public static function initialize()
@@ -62,6 +69,11 @@ class titania_search
 	public static function index($object_type, $object_id, $data)
 	{
 		self::initialize();
+
+		if (self::$do_not_index)
+		{
+			return;
+		}
 
 		$data['id'] = $object_type . '_' . $object_id;
 		$data['type'] = $object_type;

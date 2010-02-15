@@ -383,6 +383,12 @@ class titania_contribution extends titania_message_object
 			}
 		}
 
+		if ($this->contrib_status == TITANIA_CONTRIB_CLEANED && !($this->is_author ||$this->is_active_coauthor || phpbb::$auth->acl_get('m_titania_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')))
+		{
+			// Hide cleaned contribs for non-(authors/moderators)
+			return false;
+		}
+
 		return true;
 	}
 
