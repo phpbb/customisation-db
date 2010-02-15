@@ -17,8 +17,11 @@ if (!defined('IN_TITANIA'))
 }
 
 // Include library in include path (for Zend)
-set_include_path(get_include_path() . PATH_SEPARATOR . realpath(TITANIA_ROOT . 'includes/library/'));
-titania::_include('library/Zend/Search/Lucene', false, 'Zend_Search_Lucene');
+if (titania::$config->search_backend == 'zend')
+{
+	set_include_path(get_include_path() . PATH_SEPARATOR . realpath(TITANIA_ROOT . 'includes/library/'));
+	titania::_include('library/Zend/Search/Lucene', false, 'Zend_Search_Lucene');
+}
 
 // Using the phpBB ezcomponents loader
 titania::_include('library/ezcomponents/loader', 'phpbb_ezcomponents_loader');
@@ -53,7 +56,18 @@ class titania_search
 		if (self::$index === false)
 		{
 			// Initialize the ezc/Zend Search class
-			$handler = new ezcSearchZendLuceneHandler(TITANIA_ROOT . self::store_path);
+			if (titania::$config->search_backend == 'zend')
+			{
+				$handler = new ezcSearchZendLuceneHandler(TITANIA_ROOT . self::store_path);
+			}
+			else if (titania::$config->search_backend == 'solr')
+			{
+				$handler = new ezcSearchSolrHandler(titania::$config->search_backend_ip, titania::$config->search_backend_port);
+			}
+			else
+			{
+				throw new exception('We need a proper search backend selected');
+			}
 			$manager = new ezcSearchEmbeddedManager;
 			self::$index = new ezcSearchSession($handler, $manager);
 		}

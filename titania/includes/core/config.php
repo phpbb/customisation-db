@@ -52,6 +52,11 @@ class titania_config extends titania_object
 
 			'max_rating'				=> array('default' => 5),
 
+			// Search backend (zend or solr (if solr, set the correct ip/port))
+			'search_backend'			=> array('default' => 'zend'),
+			'search_backend_ip'			=> array('default' => 'localhost'),
+			'search_backend_port'		=> array('default' => 8983),
+
 			// Validation/queue related
 			'require_validation'		=> array('default' => true),
 			'use_queue'					=> array('default' => true),

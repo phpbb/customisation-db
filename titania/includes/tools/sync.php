@@ -144,28 +144,25 @@ class titania_sync
 				}
 
 				$data = array();
-				$contrib = new titania_contribution;
 
 				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE . '
 					WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED;
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
-					$contrib->__set_array($row);
-
 					$data[] = array(
-						'object_type'	=> $contrib->contrib_type,
-						'object_id'		=> $contrib->contrib_id,
+						'object_type'	=> $row['contrib_type'],
+						'object_id'		=> $row['contrib_id'],
 
-						'title'			=> $contrib->contrib_name,
-						'text'			=> $contrib->contrib_desc,
-						'text_uid'		=> $contrib->contrib_desc_uid,
-						'text_bitfield'	=> $contrib->contrib_desc_bitfield,
-						'text_options'	=> $contrib->contrib_desc_options,
-						'author'		=> $contrib->contrib_user_id,
-						'date'			=> $contrib->contrib_last_update,
-						'url'			=> titania_url::unbuild_url($contrib->get_url()),
-						'approved'		=> (!titania::$config->require_validation || $contrib->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
+						'title'			=> $row['contrib_name'],
+						'text'			=> $row['contrib_desc'],
+						'text_uid'		=> $row['contrib_desc_uid'],
+						'text_bitfield'	=> $row['contrib_desc_bitfield'],
+						'text_options'	=> $row['contrib_desc_options'],
+						'author'		=> $row['contrib_user_id'],
+						'date'			=> $row['contrib_last_update'],
+						'url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'],
+						'approved'		=> (!titania::$config->require_validation || $row['contrib_status'] == TITANIA_CONTRIB_APPROVED) ? true : false,
 					);
 				}
 				phpbb::$db->sql_freeresult($result);
