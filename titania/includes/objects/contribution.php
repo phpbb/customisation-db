@@ -447,8 +447,10 @@ class titania_contribution extends titania_message_object
 	/**
 	 * Get the latest revision (to download)
 	 * Stored in $this->download; only gets the latest validated (if validation is required)
+	 *
+	 * @param bool|int $revision_id False to get the latest validated, integer to get a specific revision_id (used in some places such as the queue)
 	 */
-	public function get_download()
+	public function get_download($revision_id = false)
 	{
 		if ($this->download)
 		{
@@ -458,7 +460,8 @@ class titania_contribution extends titania_message_object
 		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_ATTACHMENTS_TABLE . ' a
 			WHERE r.contrib_id = ' . $this->contrib_id . '
 				AND a.attachment_id = r.attachment_id ' .
-				((titania::$config->require_validation) ? ' AND r.revision_validated = 1 ' : '') . '
+				((titania::$config->require_validation && $revision_id === false) ? ' AND r.revision_validated = 1 ' : '') .
+				(($revision_id !== false) ? ' AND r.revision_id = ' . (int) $revision_id : '') . '
 				AND revision_submitted = 1
 			ORDER BY r.revision_id DESC';
 		$result = phpbb::$db->sql_query_limit($sql, 1);

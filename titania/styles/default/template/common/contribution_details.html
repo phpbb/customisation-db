@@ -1,0 +1,100 @@
+<div class="left-column">
+	<div class="container demo">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<img src="{T_TITANIA_THEME_PATH}/images/demo.gif" alt="" />
+			<!-- IF U_VIEW_DEMO --><br /><a href="{U_VIEW_DEMO}">{L_VIEW_DEMO}</a><!-- ENDIF -->
+
+			<!-- IF U_DOWNLOAD -->
+			<hr class="dashed" />
+			<div class="download-button">
+				<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE} {L_BYTES}</a>
+			</div>
+			<!-- ENDIF -->
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+
+</div>
+
+<div class="right-column">
+	<!-- IF CONTRIB_DESC -->
+	<div class="container" id="contrib-description">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<dl>
+				<dt><strong>{L_DESCRIPTION}</strong></dt>
+				<dd>{CONTRIB_DESC}</dd>
+			</dl>
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+	<!-- ENDIF -->
+
+	<div class="container">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<ul class="general-info">
+				<li>
+					<strong>{L_AUTHOR}</strong> {AUTHOR_NAME_FULL}
+				</li>
+				<!-- IF .coauthors -->
+				<li>
+					<strong>{L_CO_AUTHORS}</strong> <!-- BEGIN coauthors -->{coauthors.AUTHOR_NAME_FULL}<!-- IF not coauthors.S_LAST_ROW -->, <!-- ENDIF --><!-- END coauthors -->
+				</li>
+				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_VERSION -->
+				<li>
+					<strong>{L_VERSION}</strong> {DOWNLOAD_VERSION}
+				</li>
+				<!-- ENDIF -->
+				<li>
+					<strong>{L_CONTRIB_UPDATE_DATE}</strong> {CONTRIB_UPDATE_DATE}
+				</li>
+				<!-- IF DOWNLOAD_CHECKSUM -->
+				<li>
+					<strong>{L_DOWNLOAD_CHECKSUM}</strong> {DOWNLOAD_CHECKSUM}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_NAME -->
+				<li>
+					<strong>{L_REVISION_NAME}</strong> {DOWNLOAD_NAME}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF CONTRIB_DOWNLOADS -->
+				<li>
+					<strong>{L_DOWNLOADS_TOTAL}</strong> {CONTRIB_DOWNLOADS}
+				</li>
+				<!-- ENDIF -->
+				<li style="border-bottom: 0;">
+					<strong>{L_RATING}</strong> {CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})
+				</li>
+			</ul>
+
+		<!-- IF .revisions -->
+			<br />
+			<br />
+			<hr />
+			<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
+			<div class="clear"></div>
+
+			<ul class="topiclist">
+				<li class="header">
+					<dl>
+						<dt>{L_REVISIONS}</dt>
+						<dd></dd>
+					</dl>
+				</li>
+			</ul>
+			<ul class="topiclist cplist">
+			<!-- BEGIN revisions -->
+				<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+					<dl>
+						<dt><strong><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></strong></dt>
+						<dd class="general">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --></dd>
+					</dl>
+				</li>
+			<!-- END revisions -->
+			</ul>
+		<!-- ENDIF -->
+
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+</div>
+
+<div class="clear"></div>

@@ -125,7 +125,7 @@ class titania_posting
 		}
 
 		$topic->contrib = new titania_contribution;
-		if (!$post_object->topic->contrib->load($topic->contrib_id))
+		if (!$topic->contrib->load($topic->contrib_id))
 		{
 			trigger_error('NO_CONTRIB');
 		}

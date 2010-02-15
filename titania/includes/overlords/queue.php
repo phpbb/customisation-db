@@ -166,6 +166,8 @@ class queue_overlord
 
 	public static function display_queue_item($queue_id)
 	{
+		titania::add_lang('contributions');
+
 		$sql_ary = array(
 			'SELECT' => '*',
 
@@ -187,6 +189,9 @@ class queue_overlord
 		// Load the contribution
 		$contrib = new titania_contribution();
 		$contrib->load((int) $row['contrib_id']);
+		$contrib->get_download($row['revision_id']);
+		$contrib->get_revisions();
+		$contrib->assign_details();
 
 		// Load the topic
 		$topic = new titania_topic();
@@ -196,6 +201,12 @@ class queue_overlord
 
 		// Display the posts
 		posts_overlord::display_topic_complete($topic);
+
+		phpbb::$template->assign_vars(array(
+			'S_DISPLAY_CONTRIBUTION'	=> true,
+
+			'U_POST_REPLY'				=> titania_url::append_url($topic->get_url(false), array('action' => 'reply')),
+		));
 	}
 
 	/**
