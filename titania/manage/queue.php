@@ -29,7 +29,7 @@ if ($queue_type === false)
 
 	if (empty($authed))
 	{
-		trigger_error('NO_AUTH');
+		titania::needs_auth();
 	}
 	else if (sizeof($authed) == 1)
 	{
@@ -57,7 +57,7 @@ else
 {
 	if (!titania_types::$types[$queue_type]->acl_get('view'))
 	{
-		trigger_error('NO_AUTH');
+		titania::needs_auth();
 	}
 }
 

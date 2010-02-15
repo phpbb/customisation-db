@@ -361,7 +361,7 @@ class titania_post extends titania_message_object
 	{
 		if (!$this->acl_get('post'))
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 
 		// Create the topic if required
@@ -433,7 +433,7 @@ class titania_post extends titania_message_object
 
 		if (!$this->acl_get('edit'))
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 
 		if ($this->post_id == $this->topic->topic_first_post_id)
@@ -466,7 +466,7 @@ class titania_post extends titania_message_object
 	{
 		if (!$this->acl_get('soft_delete'))
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 
 		$this->post_deleted = titania::$time;
@@ -490,7 +490,7 @@ class titania_post extends titania_message_object
 	{
 		if (!$this->acl_get('undelete'))
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 
 		// Reverse the hack for soft delete
@@ -511,7 +511,7 @@ class titania_post extends titania_message_object
 	{
 		if (!$this->acl_get('hard_delete'))
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 
 		$this->topic->update_postcount(false, $this->post_access, false);

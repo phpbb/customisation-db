@@ -80,7 +80,7 @@ switch ($action)
 
 		if ($action != 'edit' && (($action == 'post' && !phpbb::$auth->acl_get('u_titania_topic')) || ($action == 'reply' && (!$topic_id || !phpbb::$auth->acl_get('u_titania_post')))))
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 
 		if ($action == 'post')

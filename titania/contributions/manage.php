@@ -22,12 +22,12 @@ load_contrib();
 
 if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('m_titania_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 {
-	trigger_error('NO_AUTH');
+	titania::needs_auth();
 }
 else if (titania::$contrib->contrib_status == TITANIA_CONTRIB_CLEANED && !(phpbb::$auth->acl_get('m_titania_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
 {
 	// Editing cleaned contribs requires moderation permissions
-	trigger_error('NO_AUTH');
+	titania::needs_auth();
 }
 
 // Catch the U_NEW_REVISION link and start creating the new revision...
@@ -144,7 +144,7 @@ if (titania::confirm_box(true))
 {
 	if (!titania::$contrib->is_author && !phpbb::$auth->acl_get('m_titania_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 	{
-		trigger_error('NO_AUTH');
+		titania::needs_auth();
 	}
 
 	$change_owner_id = request_var('change_owner_id', 0);

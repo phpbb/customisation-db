@@ -59,6 +59,12 @@ if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version'])
 // Initialise Titania
 titania::initialise();
 
+// Allow login attempts from any page (mini login box)
+if (isset($_POST['login']))
+{
+	phpbb::login_box();
+}
+
 // admin requested the cache to be purged, ensure they have permission and purge the cache.
 if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get('a_'))
 {

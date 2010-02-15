@@ -23,7 +23,7 @@ if (!function_exists('generate_type_select') || !function_exists('generate_categ
 
 if (!phpbb::$auth->acl_get('u_titania_contrib_submit'))
 {
-	trigger_error('NO_AUTH');
+	titania::needs_auth();
 }
 
 titania::add_lang('contributions');

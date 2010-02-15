@@ -52,4 +52,9 @@ $config = array(
 	* Style Path (titania/style/ *path* /)
 	*/
 	'style' => 'default',
+
+	/**
+	* Team groups (members will get TITANIA_TEAMS_ACCESS)
+	*/
+	'team_groups' => array(5),
 );

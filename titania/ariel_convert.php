@@ -29,7 +29,7 @@ titania::add_lang('manage');
 
 if (!phpbb::$user->data['user_type'] == USER_FOUNDER)
 {
-	trigger_error('NO_AUTH');
+	titania::needs_auth();
 }
 
 // Hopefully this helps

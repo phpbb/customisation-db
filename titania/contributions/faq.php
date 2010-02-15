@@ -48,7 +48,7 @@ switch ($action)
 	case 'edit':
 		if (!phpbb::$auth->acl_get('m_titania_faq_mod') && !phpbb::$auth->acl_get('u_titania_faq_' . $action) && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 
 		// Load the message object
@@ -103,7 +103,7 @@ switch ($action)
 	case 'delete':
 		if (!phpbb::$auth->acl_get('m_titania_faq_mod') && !phpbb::$auth->acl_get('u_titania_faq_delete') && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 
 		if (titania::confirm_box(true))
@@ -128,7 +128,7 @@ switch ($action)
 	case 'move_down':
 		if (!phpbb::$auth->acl_get('m_titania_faq_mod') && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 
 		$faq->move($action);

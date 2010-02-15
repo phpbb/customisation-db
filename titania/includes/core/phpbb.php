@@ -146,7 +146,7 @@ class phpbb
 			'SITE_LOGO_IMG'			=> self::$user->img('site_logo'),
 
 			'U_REGISTER'			=> self::append_sid('ucp', 'mode=register'),
-			'S_LOGIN_ACTION'		=> self::append_sid('ucp', 'mode=login'),
+			'S_LOGIN_ACTION'		=> titania_url::$current_page_url,
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
 			'L_LOGIN_LOGOUT'		=> $l_login_logout,
 			'LOGIN_REDIRECT'		=> $l_login_redirect,
@@ -229,5 +229,183 @@ class phpbb
 
 		garbage_collection();
 		exit_handler();
+	}
+
+
+	/**
+	* Generate login box or verify password
+	*/
+	function login_box($l_explain = '', $l_success = '', $admin = false, $s_display = true)
+	{
+		self::_include('captcha/captcha_factory', 'phpbb_captcha_factory');
+		self::$user->add_lang('ucp');
+
+		$err = '';
+
+		// Make sure user->setup() has been called
+		if (empty(self::$user->lang))
+		{
+			self::$user->setup();
+		}
+
+		// Print out error if user tries to authenticate as an administrator without having the privileges...
+		if ($admin && !self::$auth->acl_get('a_'))
+		{
+			// Not authd
+			// anonymous/inactive users are never able to go to the ACP even if they have the relevant permissions
+			if (self::$user->data['is_registered'])
+			{
+				add_log('admin', 'LOG_ADMIN_AUTH_FAIL');
+			}
+			trigger_error('NO_AUTH_ADMIN');
+		}
+
+		if (isset($_POST['login']))
+		{
+			// Get credential
+			if ($admin)
+			{
+				$credential = request_var('credential', '');
+
+				if (strspn($credential, 'abcdef0123456789') !== strlen($credential) || strlen($credential) != 32)
+				{
+					if (self::$user->data['is_registered'])
+					{
+						add_log('admin', 'LOG_ADMIN_AUTH_FAIL');
+					}
+					trigger_error('NO_AUTH_ADMIN');
+				}
+
+				$password	= request_var('password_' . $credential, '', true);
+			}
+			else
+			{
+				$password	= request_var('password', '', true);
+			}
+
+			$username	= request_var('username', '', true);
+			$autologin	= (!empty($_POST['autologin'])) ? true : false;
+			$viewonline = (!empty($_POST['viewonline'])) ? 0 : 1;
+			$admin 		= ($admin) ? 1 : 0;
+			$viewonline = ($admin) ? self::$user->data['session_viewonline'] : $viewonline;
+
+			// Check if the supplied username is equal to the one stored within the database if re-authenticating
+			if ($admin && utf8_clean_string(self::$username) != utf8_clean_string(self::$user->data['username']))
+			{
+				// We log the attempt to use a different username...
+				add_log('admin', 'LOG_ADMIN_AUTH_FAIL');
+				trigger_error('NO_AUTH_ADMIN_USER_DIFFER');
+			}
+
+			// If authentication is successful we redirect user to previous page
+			$result = self::$auth->login($username, $password, $autologin, $viewonline, $admin);
+
+			// If admin authentication and login, we will log if it was a success or not...
+			// We also break the operation on the first non-success login - it could be argued that the user already knows
+			if ($admin)
+			{
+				if ($result['status'] == LOGIN_SUCCESS)
+				{
+					add_log('admin', 'LOG_ADMIN_AUTH_SUCCESS');
+				}
+				else
+				{
+					// Only log the failed attempt if a real user tried to.
+					// anonymous/inactive users are never able to go to the ACP even if they have the relevant permissions
+					if (self::$user->data['is_registered'])
+					{
+						add_log('admin', 'LOG_ADMIN_AUTH_FAIL');
+					}
+				}
+			}
+
+			// The result parameter is always an array, holding the relevant information...
+			if ($result['status'] == LOGIN_SUCCESS)
+			{
+				redirect(titania_url::$current_page_url);
+			}
+
+			// Something failed, determine what...
+			if ($result['status'] == LOGIN_BREAK)
+			{
+				trigger_error($result['error_msg']);
+			}
+
+			// Special cases... determine
+			switch ($result['status'])
+			{
+				case LOGIN_ERROR_ATTEMPTS:
+
+					$captcha = phpbb_captcha_factory::get_instance(self::$config['captcha_plugin']);
+					$captcha->init(CONFIRM_LOGIN);
+					// $captcha->reset();
+
+					self::$template->assign_vars(array(
+						'CAPTCHA_TEMPLATE'			=> $captcha->get_template(),
+					));
+
+					$err = self::$user->lang[$result['error_msg']];
+				break;
+
+				case LOGIN_ERROR_PASSWORD_CONVERT:
+					$err = sprintf(
+						self::$user->lang[$result['error_msg']],
+						(self::$config['email_enable']) ? '<a href="' . self::append_sid('ucp', 'mode=sendpassword') . '">' : '',
+						(self::$config['email_enable']) ? '</a>' : '',
+						(self::$config['board_contact']) ? '<a href="mailto:' . htmlspecialchars(self::$config['board_contact']) . '">' : '',
+						(self::$config['board_contact']) ? '</a>' : ''
+					);
+				break;
+
+				// Username, password, etc...
+				default:
+					$err = self::$user->lang[$result['error_msg']];
+
+					// Assign admin contact to some error messages
+					if ($result['error_msg'] == 'LOGIN_ERROR_USERNAME' || $result['error_msg'] == 'LOGIN_ERROR_PASSWORD')
+					{
+						$err = (!self::$config['board_contact']) ? sprintf(self::$user->lang[$result['error_msg']], '', '') : sprintf(self::$user->lang[$result['error_msg']], '<a href="mailto:' . htmlspecialchars(self::$config['board_contact']) . '">', '</a>');
+					}
+
+				break;
+			}
+		}
+
+		// Assign credential for username/password pair
+		$credential = ($admin) ? md5(unique_id()) : false;
+
+		$s_hidden_fields = array(
+			'sid'		=> self::$user->session_id,
+		);
+
+		if ($admin)
+		{
+			$s_hidden_fields['credential'] = $credential;
+		}
+
+		$s_hidden_fields = build_hidden_fields($s_hidden_fields);
+
+		titania::page_header('LOGIN');
+
+		self::$template->assign_vars(array(
+			'LOGIN_ERROR'		=> $err,
+			'LOGIN_EXPLAIN'		=> $l_explain,
+
+			'U_SEND_PASSWORD' 		=> (self::$config['email_enable']) ? self::append_sid('ucp', 'mode=sendpassword') : '',
+			'U_RESEND_ACTIVATION'	=> (self::$config['require_activation'] == USER_ACTIVATION_SELF && self::$config['email_enable']) ? self::append_sid('ucp', 'mode=resend_act') : '',
+			'U_TERMS_USE'			=> self::append_sid('ucp', 'mode=terms'),
+			'U_PRIVACY'				=> self::append_sid('ucp', 'mode=privacy'),
+
+			'S_DISPLAY_FULL_LOGIN'	=> ($s_display) ? true : false,
+			'S_HIDDEN_FIELDS' 		=> $s_hidden_fields,
+
+			'S_ADMIN_AUTH'			=> $admin,
+			'USERNAME'				=> ($admin) ? self::$user->data['username'] : '',
+
+			'USERNAME_CREDENTIAL'	=> 'username',
+			'PASSWORD_CREDENTIAL'	=> ($admin) ? 'password_' . $credential : 'password',
+		));
+
+		titania::page_footer(true, 'login_body.html');
 	}
 }

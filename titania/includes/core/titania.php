@@ -221,6 +221,16 @@ class titania
 		phpbb::$user->set_custom_lang_path($old_path);
 	}
 
+	public static function needs_auth()
+	{
+		if (!phpbb::$user->data['is_registered'])
+		{
+			phpbb::login_box();
+		}
+
+		trigger_error('NO_AUTH');
+	}
+
 	/**
 	 * Titania page_header
 	 *

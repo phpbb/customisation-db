@@ -92,7 +92,7 @@ switch ($action)
 		$revision->contrib = $contrib;
 		if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 		{
-			trigger_error('NO_AUTH');
+			titania::needs_auth();
 		}
 		$revision_attachment = new titania_attachment(TITANIA_CONTRIB);
 		$revision_attachment->attachment_id = $revision->attachment_id;
