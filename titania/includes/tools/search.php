@@ -227,6 +227,18 @@ class titania_search
 	{
 		self::initialize();
 
+		// For those without moderator permissions do not display unapproved stuff
+		if (!phpbb::$auth->acl_get('m_'))
+		{
+			$query->where($query->eq('approved', 1));
+		}
+
+		// Don't worry about authors level access...no search page that can search where a person would have authors access
+		if (titania::$access_level != TITANIA_ACCESS_TEAMS)
+		{
+			$query->where($query->eq('access_level', TITANIA_ACCESS_PUBLIC));
+		}
+
 		$query->offset = $pagination->start;
 		$query->limit = $pagination->limit;
 
