@@ -51,6 +51,7 @@ define('TITANIA_WATCH_TABLE',					$table_prefix . 'watch');
 // Contribution revision/queue status
 define('TITANIA_QUEUE_DENIED', -2); // Special case to hide denied revisions from the queue
 define('TITANIA_QUEUE_APPROVED', -1); // Special case to hide approved revisions from the queue
+define('TITANIA_QUEUE_HIDE', 0); // Special case to hide an unfinished submission
 define('TITANIA_QUEUE_NEW', 1); // Same as QUEUE_NEW in the Tag Fields table
 
 // Contrib status

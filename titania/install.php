@@ -556,6 +556,13 @@ $versions = array(
 		),
 	),
 
+	'0.1.36' => array(
+		'config_add' => array(
+			array('titania_num_contribs', 0, true),
+		),
+		'custom' => 'titania_ext_groups',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

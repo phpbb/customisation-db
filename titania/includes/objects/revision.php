@@ -66,7 +66,6 @@ class titania_revision extends titania_database_object
 			'install_time'			=> array('default' => 0),
 			'install_level'			=> array('default' => 0),
 			'revision_submitted'	=> array('default' => false), // False if it is still in the process of being submitted/verified; True if submission has finished
-			'queue_topic_id'		=> array('default' => 0),
 		));
 
 		if ($contrib)
@@ -98,11 +97,6 @@ class titania_revision extends titania_database_object
 	 */
 	public function submit()
 	{
-		if ($this->revision_id && empty($this->sql_data))
-		{
-			throw new exception('Submitting an edit to a contribution item requires you load it through the $revision->load() method');
-		}
-
 		if (!$this->revision_id)
 		{
 			// Set to the correct phpBB version (only support 3.0.x for now)
@@ -118,39 +112,60 @@ class titania_revision extends titania_database_object
 			}
 		}
 
-		$create_queue = (!$this->revision_id && $this->revision_submitted || ($this->revision_id && !$this->sql_data['revision_submitted'] && $this->revision_submitted)) ? true : false;
-
 		parent::submit();
 
-		// Create queue entry
-		if (titania::$config->use_queue && $create_queue)
+		// Create the queue entry if required, else update it
+		if (titania::$config->use_queue)
 		{
-			$queue = new titania_queue;
+			$queue = $this->get_queue();
+
 			$queue->__set_array(array(
 				'revision_id'			=> $this->revision_id,
 				'contrib_id'			=> $this->contrib_id,
 				'contrib_name_clean'	=> $this->contrib->contrib_name_clean,
-				'queue_status'			=> TITANIA_QUEUE_NEW,
+				'queue_status'			=> ($this->revision_submitted) ? TITANIA_QUEUE_NEW : TITANIA_QUEUE_HIDE,
 			));
+			$queue->submit();
 		}
-
-		parent::submit();
 	}
 
 	public function delete()
 	{
-		if ($this->queue_topic_id)
-		{
-			$topic = new titania_topic(TITANIA_QUEUE, $this->contrib, $this->queue_topic_id);
-			$topic->delete();
-		}
+		// Delete the queue item
+		$sql = 'DELETE FROM ' . TITANIA_QUEUE_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id . '
+				AND revision_id = ' . $this->revision_id;
+		phpbb::$db->sql_query($sql);
 
+		// Delete the attachment
 		$attachment = new titania_attachment(TITANIA_CONTRIB);
 		$attachment->attachment_id = $this->attachment_id;
 		$attachment->load();
 		$attachment->delete();
 
+		// Self-destruct
 		parent::delete();
+	}
+
+	/**
+	* Get the queue object for this revision
+	*/
+	public function get_queue()
+	{
+		$sql = 'SELECT * FROM ' . TITANIA_QUEUE_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id . '
+				AND revision_id = ' . $this->revision_id;
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		$queue = new titania_queue;
+		if ($row)
+		{
+			$queue->__set_array($row);
+		}
+
+		return $queue;
 	}
 
 	/**

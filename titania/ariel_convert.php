@@ -76,6 +76,15 @@ $tags_to_cats = array(
 	235 => 17, // Tools -> Miscellaneous
 );
 
+$queue_swap = array(
+	1	=> TITANIA_QUEUE_NEW, // QUEUE_NEW
+	2	=> 17, // QUEUE_SPECIAL -> QUEUE_VALIDATING
+	3	=> 19, // QUEUE_APPROVE
+	4	=> 20, // QUEUE_DENY
+	-1	=> TITANIA_QUEUE_APPROVED, // QUEUE_CLOSED
+	-2	=> TITANIA_QUEUE_DENIED, // QUEUE_DENIED
+);
+
 switch ($step)
 {
 	case 0 :
@@ -83,7 +92,7 @@ switch ($step)
 	break;
 
 	case 1 :
-		$truncate = array(TITANIA_ATTACHMENTS_TABLE, TITANIA_AUTHORS_TABLE, TITANIA_CONTRIBS_TABLE, TITANIA_CONTRIB_COAUTHORS_TABLE, TITANIA_CONTRIB_FAQ_TABLE, TITANIA_CONTRIB_IN_CATEGORIES_TABLE, TITANIA_POSTS_TABLE, TITANIA_RATINGS_TABLE, TITANIA_REVISIONS_TABLE, TITANIA_TOPICS_TABLE, TITANIA_TRACK_TABLE, TITANIA_WATCH_TABLE);
+		$truncate = array(TITANIA_QUEUE_TABLE, TITANIA_ATTACHMENTS_TABLE, TITANIA_AUTHORS_TABLE, TITANIA_CONTRIBS_TABLE, TITANIA_CONTRIB_COAUTHORS_TABLE, TITANIA_CONTRIB_FAQ_TABLE, TITANIA_CONTRIB_IN_CATEGORIES_TABLE, TITANIA_POSTS_TABLE, TITANIA_RATINGS_TABLE, TITANIA_REVISIONS_TABLE, TITANIA_TOPICS_TABLE, TITANIA_TRACK_TABLE, TITANIA_WATCH_TABLE);
 
 		foreach ($truncate as $table)
 		{
@@ -412,15 +421,6 @@ switch ($step)
 		phpbb::$db->sql_query($sql);
 		$total = phpbb::$db->sql_fetchfield('cnt');
 		phpbb::$db->sql_freeresult();
-
-		$queue_swap = array(
-			1	=> TITANIA_QUEUE_NEW, // QUEUE_NEW
-			2	=> 17, // QUEUE_SPECIAL -> QUEUE_VALIDATING
-			3	=> 19, // QUEUE_APPROVE
-			4	=> 20, // QUEUE_DENY
-			-1	=> TITANIA_QUEUE_APPROVED, // QUEUE_CLOSED
-			-2	=> TITANIA_QUEUE_DENIED, // QUEUE_DENIED
-		);
 
 		$sql = 'SELECT q.*, ct.topic_id, c.contrib_name, c.contrib_name_clean, c.contrib_type, r.revision_version
 			FROM ' . $ariel_prefix . 'queue q, ' . $ariel_prefix . 'contrib_topics ct, ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r

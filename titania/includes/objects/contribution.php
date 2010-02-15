@@ -126,31 +126,19 @@ class titania_contribution extends titania_message_object
 			$this->generate_text_for_storage();
 		}
 
-		if (!$this->contrib_id)
+		if (!$this->contrib_id && (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED))
 		{
 			// Increment the contrib counter
 			$this->change_author_contrib_count($this->contrib_user_id);
+
+			// Increment the count for this type
+			titania_types::increment_count($this->contrib_type);
 		}
 
 		parent::submit();
 
 		// Index!
-		if ($this->contrib_status != TITANIA_CONTRIB_CLEANED)
-		{
-			$data = array(
-				'title'			=> $this->contrib_name,
-				'text'			=> $this->contrib_desc,
-				'text_uid'		=> $this->contrib_desc_uid,
-				'text_bitfield'	=> $this->contrib_desc_bitfield,
-				'text_options'	=> $this->contrib_desc_options,
-				'author'		=> $this->contrib_user_id,
-				'date'			=> $this->contrib_last_update,
-				'url'			=> titania_url::unbuild_url($this->get_url()),
-				'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
-			);
-
-			titania_search::index($this->contrib_type, $this->contrib_id, $data);
-		}
+		$this->index();
 	}
 
 	/**
@@ -162,11 +150,14 @@ class titania_contribution extends titania_message_object
 	public function change_status($new_status)
 	{
 		$new_status = (int) $new_status;
+		$old_status = $this->contrib_status;
 
-		if ($this->contrib_status == $new_status)
+		if ($old_status == $new_status)
 		{
 			return;
 		}
+
+		$this->contrib_status = $new_status;
 
 		// Grab the current authors
 		$author_list = array($this->contrib_user_id);
@@ -180,18 +171,38 @@ class titania_contribution extends titania_message_object
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		if ($this->contrib_status != TITANIA_CONTRIB_APPROVED)
+		switch ($old_status)
 		{
-			// Approving this contribution item...
-			$this->change_author_contrib_count($author_list);
-		}
-		else
-		{
-			// Disapproving this contribution item...
-			$this->change_author_contrib_count($author_list, '-', true);
-		}
+			case TITANIA_CONTRIB_NEW :
+				if ($new_status == TITANIA_CONTRIB_APPROVED)
+				{
+					// Increment the count for the authors
+					$this->change_author_contrib_count($author_list);
 
-		$this->contrib_status = $new_status;
+					// Increment the count for this type
+					titania_types::increment_count($this->contrib_type);
+				}
+			break;
+
+			case TITANIA_CONTRIB_CLEANED :
+				if ($new_status == TITANIA_CONTRIB_APPROVED)
+				{
+					// Increment the count for the authors
+					$this->change_author_contrib_count($author_list);
+
+					// Increment the count for this type
+					titania_types::increment_count($this->contrib_type);
+				}
+			break;
+
+			case TITANIA_CONTRIB_APPROVED :
+				// Decrement the count for the authors
+				$this->change_author_contrib_count($author_list, '-', true);
+
+				// Decrement the count for this type
+				titania_types::decrement_count($this->contrib_type);
+			break;
+		}
 
 		$sql = 'UPDATE ' . $this->sql_table . '
 			SET contrib_status = ' . $this->contrib_status . '
@@ -199,26 +210,7 @@ class titania_contribution extends titania_message_object
 		phpbb::$db->sql_query($sql);
 
 		// Index!
-		if ($this->contrib_status != TITANIA_CONTRIB_CLEANED)
-		{
-			$data = array(
-				'title'			=> $this->contrib_name,
-				'text'			=> $this->contrib_desc,
-				'text_uid'		=> $this->contrib_desc_uid,
-				'text_bitfield'	=> $this->contrib_desc_bitfield,
-				'text_options'	=> $this->contrib_desc_options,
-				'author'		=> $this->contrib_user_id,
-				'date'			=> $this->contrib_last_update,
-				'url'			=> titania_url::unbuild_url($this->get_url()),
-				'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
-			);
-
-			titania_search::index($this->contrib_type, $this->contrib_id, $data);
-		}
-		else
-		{
-			titania_search::delete($this->contrib_type, $this->contrib_id);
-		}
+		$this->index();
 	}
 
 	public function validate($contrib_categories = array())
@@ -868,5 +860,29 @@ class titania_contribution extends titania_message_object
 		phpbb::$db->sql_freeresult();
 
 		return ($cnt) ? true : false;
+	}
+
+	public function index()
+	{
+		if ($this->contrib_status != TITANIA_CONTRIB_CLEANED)
+		{
+			$data = array(
+				'title'			=> $this->contrib_name,
+				'text'			=> $this->contrib_desc,
+				'text_uid'		=> $this->contrib_desc_uid,
+				'text_bitfield'	=> $this->contrib_desc_bitfield,
+				'text_options'	=> $this->contrib_desc_options,
+				'author'		=> $this->contrib_user_id,
+				'date'			=> $this->contrib_last_update,
+				'url'			=> titania_url::unbuild_url($this->get_url()),
+				'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
+			);
+
+			titania_search::index($this->contrib_type, $this->contrib_id, $data);
+		}
+		else
+		{
+			titania_search::delete($this->contrib_type, $this->contrib_id);
+		}
 	}
 }

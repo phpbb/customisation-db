@@ -95,6 +95,30 @@ class titania_types
 
 		return $authed;
 	}
+
+	public static function increment_count($type)
+	{
+		self::$types[$type]->increment_count();
+
+		set_config('titania_num_mods', ++phpbb::$config['titania_num_contribs'], true);
+	}
+
+	public static function decrement_count($type)
+	{
+		self::$types[$type]->decrement_count();
+
+		set_config('titania_num_mods', --phpbb::$config['titania_num_contribs'], true);
+	}
+
+	public static function get_count($type = false)
+	{
+		if ($type)
+		{
+			return self::$types[$type]->get_count();
+		}
+
+		return phpbb::$config['titania_num_mods'];
+	}
 }
 
 /**
@@ -115,4 +139,11 @@ class titania_type_base
 	 * @var string Language key
 	 */
 	public $lang = '';
+
+	/**
+	* Run MPV/Automod Test for this type?
+	*/
+	public $mpv_test = false;
+	public $automod_test = false;
+	public $clean_and_restore_root = false;
 }

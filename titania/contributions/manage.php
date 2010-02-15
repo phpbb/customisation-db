@@ -30,112 +30,12 @@ else if (titania::$contrib->contrib_status == TITANIA_CONTRIB_CLEANED && !(phpbb
 	titania::needs_auth();
 }
 
-// Catch the U_NEW_REVISION link and start creating the new revision...
-if (request_var('revision', '') == 'create')
-{
-	if (titania::$contrib->in_queue())
-	{
-		trigger_error('REVISION_IN_QUEUE');
-	}
-
-	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
-	phpbb::$template->assign_vars(array(
-		'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
-		'STEP'					=> 0,
-		'NEXT_STEP'				=> 1,
-
-		'S_NEW_REVISION'		=> true,
-		'S_POST_ACTION'			=> titania::$contrib->get_url('manage'),
-	));
-
-	add_form_key('postform');
-
-	titania::page_header('NEW_REVISION');
-	titania::page_footer(true, 'contributions/contribution_manage.html');
-}
-
 // Set some main vars up
-$submit = (isset($_POST['submit']) || isset($_POST['new_revision'])) ? true : false;
+$submit = (isset($_POST['submit'])) ? true : false;
 $change_owner = request_var('change_owner', '', true); // Blame Nathan, he said this was okay
 $contrib_categories = request_var('contrib_category', array(0));
 $active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
 $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
-
-/**
-* ---------------------------- Create a new revision ----------------------------
-*/
-if (request_var('new_revision_step', 0) > 0)
-{
-	if (titania::$contrib->in_queue())
-	{
-		trigger_error('REVISION_IN_QUEUE');
-	}
-
-	// Each different type requires different handling of revisions
-	if (method_exists(titania_types::$types[titania::$contrib->contrib_type], 'create_revision'))
-	{
-		titania_types::$types[titania::$contrib->contrib_type]->create_revision(titania::$contrib);
-	}
-	else
-	{
-		// Basic creation, needs nothing more
-		$error = array();
-		if (!check_form_key('postform'))
-		{
-			$error[] = phpbb::$user->lang['FORM_INVALID'];
-		}
-
-		// Upload the revision
-		$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
-		$revision_attachment->is_orphan = false;
-		$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
-		$revision_version = utf8_normalize_nfc(request_var('revision_version', '', true));
-
-		// Check for errors
-		$error = array_merge($error, $revision_attachment->error);
-		if (!$revision_attachment->uploaded)
-		{
-			$error[] = phpbb::$user->lang['NO_REVISION_ATTACHMENT'];
-		}
-		if (!$revision_version)
-		{
-			$error[] = phpbb::$user->lang['NO_REVISION_VERSION'];
-		}
-
-		if (sizeof($error))
-		{
-			// Start over...
-			phpbb::$template->assign_vars(array(
-				'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
-				'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : '',
-				'STEP'					=> (sizeof($error)) ? ($new_revision_step - 1) : $new_revision_step,
-				'NEXT_STEP'				=> (sizeof($error)) ? $new_revision_step : ($new_revision_step + 1),
-
-				'S_NEW_REVISION'		=> true,
-			));
-
-			add_form_key('postform');
-
-			titania::page_header('NEW_REVISION');
-			titania::page_footer(true, 'contributions/contribution_manage.html');
-		}
-		else
-		{
-			// Success, create a new revision
-			$revision = new titania_revision(titania::$contrib);
-			$revision->__set_array(array(
-				'attachment_id'			=> $revision_attachment->attachment_id,
-				'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', '', true)),
-				'revision_version'		=> $revision_version,
-				'revision_submitted'	=> true,
-			));
-			$revision->submit();
-		}
-	}
-
-	$submit = false; // Set submit as false to keep the main stuff from being resubmitted again
-	titania::error_box('SUCCESS', 'REVISION_SUBMITTED', TITANIA_SUCCESS);
-}
 
 /**
 * ---------------------------- Confirm main author change ----------------------------
@@ -229,11 +129,11 @@ else if ($submit)
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
 
-		if ($change_owner == '' && !isset($_POST['new_revision']))
+		if ($change_owner == '')
 		{
 			titania::error_box('SUCCESS', 'CONTRIB_UPDATED', TITANIA_SUCCESS);
 		}
-		else if ($change_owner)
+		else
 		{
 			$s_hidden_fields = array(
 				'submit'			=> true,
@@ -242,24 +142,6 @@ else if ($submit)
 			);
 
 			titania::confirm_box(false, sprintf(phpbb::$user->lang['CONTRIB_CONFIRM_OWNER_CHANGE'], '<a href="' .  phpbb::append_sid('memberlist', 'mode=viewprofile&amp;u=' . $change_owner_id) . '">' . $change_owner . '</a>'), titania_url::append_url(titania_url::$current_page), $s_hidden_fields);
-		}
-
-		// Begin the stuff for uploading a new revision (this is continued above on the next page submission)
-		if (isset($_POST['new_revision']))
-		{
-			if (titania::$contrib->in_queue())
-			{
-				trigger_error('REVISION_IN_QUEUE');
-			}
-
-			$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
-			phpbb::$template->assign_vars(array(
-				'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
-				'STEP'					=> 0,
-				'NEXT_STEP'				=> 1,
-
-				'S_NEW_REVISION'		=> true,
-			));
 		}
 	}
 }
@@ -299,7 +181,6 @@ $message->display();
 
 phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
-	'S_SUBMIT_NEW_REVISION'		=> true,//(!titania::$contrib->in_queue()),  Do we show them the link even if they can not upload?  I say yes so that they receive the error and know why they can not submit a new revision
 
 	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,

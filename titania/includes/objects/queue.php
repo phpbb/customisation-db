@@ -60,7 +60,7 @@ class titania_queue extends titania_message_object
 			'queue_topic_id'		=> array('default' => 0),
 
 			'queue_type'			=> array('default' => 0),
-			'queue_status'			=> array('default' => TITANIA_QUEUE_NEW), // Uses either TITANIA_QUEUE_NEW or one of the tags for the queue status from the DB
+			'queue_status'			=> array('default' => TITANIA_QUEUE_HIDE), // Uses either TITANIA_QUEUE_NEW or one of the tags for the queue status from the DB
 			'queue_submit_time'		=> array('default' => titania::$time),
 			'queue_close_time'		=> array('default' => 0),
 

@@ -186,6 +186,11 @@ class queue_overlord
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 
+		if (!$row)
+		{
+			trigger_error('NO_QUEUE_ITEM');
+		}
+
 		// Load the contribution
 		$contrib = new titania_contribution();
 		$contrib->load((int) $row['contrib_id']);

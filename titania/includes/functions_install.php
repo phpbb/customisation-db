@@ -315,7 +315,12 @@ function titania_ext_groups($action)
 
 	switch ($action)
 	{
-		case 'install':
+		case 'update' :
+			titania_ext_groups('uninstall');
+			titania_ext_groups('install');
+		break;
+
+		case 'install' :
 			// Add Titania ext groups.
 			foreach ($ext_groups as $group_name => $extra)
 			{
@@ -393,4 +398,6 @@ function titania_ext_groups($action)
 			phpbb::$db->sql_query($sql);
 		break;
 	}
+
+	phpbb::$cache->destroy('_titania_extensions');
 }
