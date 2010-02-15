@@ -135,19 +135,22 @@ class titania_contribution extends titania_message_object
 		parent::submit();
 
 		// Index!
-		$data = array(
-			'title'			=> $this->contrib_name,
-			'text'			=> $this->contrib_desc,
-			'text_uid'		=> $this->contrib_desc_uid,
-			'text_bitfield'	=> $this->contrib_desc_bitfield,
-			'text_options'	=> $this->contrib_desc_options,
-			'author'		=> $this->contrib_user_id,
-			'date'			=> $this->contrib_last_update,
-			'url'			=> titania_url::unbuild_url($this->get_url()),
-			'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
-		);
+		if ($this->contrib_status != TITANIA_CONTRIB_CLEANED)
+		{
+			$data = array(
+				'title'			=> $this->contrib_name,
+				'text'			=> $this->contrib_desc,
+				'text_uid'		=> $this->contrib_desc_uid,
+				'text_bitfield'	=> $this->contrib_desc_bitfield,
+				'text_options'	=> $this->contrib_desc_options,
+				'author'		=> $this->contrib_user_id,
+				'date'			=> $this->contrib_last_update,
+				'url'			=> titania_url::unbuild_url($this->get_url()),
+				'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
+			);
 
-		titania_search::index($this->contrib_type, $this->contrib_id, $data);
+			titania_search::index($this->contrib_type, $this->contrib_id, $data);
+		}
 	}
 
 	/**
@@ -196,19 +199,26 @@ class titania_contribution extends titania_message_object
 		phpbb::$db->sql_query($sql);
 
 		// Index!
-		$data = array(
-			'title'			=> $this->contrib_name,
-			'text'			=> $this->contrib_desc,
-			'text_uid'		=> $this->contrib_desc_uid,
-			'text_bitfield'	=> $this->contrib_desc_bitfield,
-			'text_options'	=> $this->contrib_desc_options,
-			'author'		=> $this->contrib_user_id,
-			'date'			=> $this->contrib_last_update,
-			'url'			=> titania_url::unbuild_url($this->get_url()),
-			'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
-		);
+		if ($this->contrib_status != TITANIA_CONTRIB_CLEANED)
+		{
+			$data = array(
+				'title'			=> $this->contrib_name,
+				'text'			=> $this->contrib_desc,
+				'text_uid'		=> $this->contrib_desc_uid,
+				'text_bitfield'	=> $this->contrib_desc_bitfield,
+				'text_options'	=> $this->contrib_desc_options,
+				'author'		=> $this->contrib_user_id,
+				'date'			=> $this->contrib_last_update,
+				'url'			=> titania_url::unbuild_url($this->get_url()),
+				'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
+			);
 
-		titania_search::index($this->contrib_type, $this->contrib_id, $data);
+			titania_search::index($this->contrib_type, $this->contrib_id, $data);
+		}
+		else
+		{
+			titania_search::delete($this->contrib_type, $this->contrib_id);
+		}
 	}
 
 	public function validate($contrib_categories = array())

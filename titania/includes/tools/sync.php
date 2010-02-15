@@ -146,7 +146,8 @@ class titania_sync
 				$data = array();
 				$contrib = new titania_contribution;
 
-				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE;
+				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE . '
+					WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED;
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
