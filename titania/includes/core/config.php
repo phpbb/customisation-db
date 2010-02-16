@@ -52,7 +52,7 @@ class titania_config extends titania_object
 
 			'max_rating'				=> array('default' => 5),
 
-			'display_backtrace'			=> array('default' => 0), // Display backtrace? 0 = never, 1 = for administrators, 2 = for all
+			'display_backtrace'			=> array('default' => 2), // Display backtrace? 0 = never, 1 = for administrators, 2 = for TITANIA_ACCESS_TEAMS, 3 = for all
 
 			// Search backend (zend or solr (if solr, set the correct ip/port))
 			'search_backend'			=> array('default' => 'zend'),

@@ -234,7 +234,7 @@ function titania_msg_handler($errno, $msg_text, $errfile, $errline)
 
 function titania_backtrace($exception = false)
 {
-	if (titania::$config->display_backtrace == 2 || (titania::$config->display_backtrace == 1 && phpbb::$auth->acl_get('a_')))
+	if (titania::$config->display_backtrace == 3 || (titania::$config->display_backtrace == 2 && titania::$access_level == TITANIA_ACCESS_TEAMS) || (titania::$config->display_backtrace == 1 && phpbb::$auth->acl_get('a_')))
 	{
 		if ($exception !== false)
 		{
