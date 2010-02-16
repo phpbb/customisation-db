@@ -134,6 +134,8 @@ class titania_contribution extends titania_message_object
 			// Increment the count for this type
 			titania_types::increment_count($this->contrib_type);
 		}
+		// Clear the author contribs cache
+		titania::$cache->reset_author_contribs($this->contrib_user_id);
 
 		parent::submit();
 

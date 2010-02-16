@@ -84,6 +84,17 @@ do{
 
 				if (!titania_types::$types[titania::$contrib->contrib_type]->clean_and_restore_root)
 				{
+					// Skip the whole thing if we have nothing else to do
+					if (!titania_types::$types[titania::$contrib->contrib_type]->mpv_test && !titania_types::$types[titania::$contrib->contrib_type]->automod_test)
+					{
+						$revision->revision_submitted = true;
+						$revision->submit();
+
+						redirect(titania::$contrib->get_url());
+					}
+
+					phpbb::$template->assign_var('S_NEW_REVISION_SUBMITTED', true);
+
 					break;
 				}
 
@@ -104,6 +115,8 @@ do{
 
 				if (!sizeof($error))
 				{
+					phpbb::$template->assign_var('S_NEW_REVISION_SUBMITTED', true);
+
 					// Replace the uploaded zip package with the new one
 					$contrib_tools->replace_zip();
 

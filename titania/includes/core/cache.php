@@ -119,47 +119,54 @@ class titania_cache extends acm
 
 		$author_block = $this->get($author_block_name);
 
-		if ($author_block !== false)
+		if ($author_block === false)
 		{
-			if (isset($author_block[$user_id]))
-			{
-				return $author_block[$user_id];
-			}
-		}
-		else
-		{
-			// Else the cache file did not exist and we need to start over
 			$author_block = array();
 		}
 
-		$author_block[$user_id] = array();
-
-		// Need to get the contribs for the selected author
-		$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE contrib_user_id = ' . $user_id;
-		$result = phpbb::$db->sql_query($sql);
-
-		while ($row = phpbb::$db->sql_fetchrow($result))
+		if (!isset($author_block[$user_id]))
 		{
-			$author_block[$user_id][] = $row['contrib_id'];
+			$author_block[$user_id] = array();
+
+			// Need to get the contribs for the selected author
+			$sql = 'SELECT contrib_id, contrib_status FROM ' . TITANIA_CONTRIBS_TABLE . '
+				WHERE contrib_user_id = ' . $user_id;
+			$result = phpbb::$db->sql_query($sql);
+
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$author_block[$user_id][$row['contrib_id']] = $row['contrib_status'];
+			}
+
+			phpbb::$db->sql_freeresult($result);
+
+			// Now get the lists where the user is a co-author
+			$sql = 'SELECT cc.contrib_id, c.contrib_status FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' cc, ' . TITANIA_CONTRIBS_TABLE . ' c
+				WHERE cc.user_id = ' . $user_id . '
+					AND c.contrib_id = cc.contrib_id';
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$author_block[$user_id][$row['contrib_id']] = $row['contrib_status'];
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			// Store the updated cache data
+			$this->put($author_block_name, $author_block);
 		}
 
-		phpbb::$db->sql_freeresult($result);
+		$contribs = array();
 
-		// Now get the lists where the user is a co-author
-		$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
-			WHERE user_id = ' . $user_id;
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
+		foreach ($author_block[$user_id] as $contrib_id => $status)
 		{
-			$author_block[$user_id][] = $row['contrib_id'];
+			// If approved, or new and doesn't require approval, or the user is viewing their own, or TITANIA_ACCESS_TEAMS, add them to the list
+			if (phpbb::$user->data['user_id'] == $user_id || (!titania::$config->require_validation && $status == TITANIA_CONTRIB_NEW) || $status == TITANIA_CONTRIB_APPROVED || titania::$access_level == TITANIA_ACCESS_TEAMS)
+			{
+				$contribs[] = $contrib_id;
+			}
 		}
-		phpbb::$db->sql_freeresult($result);
 
-		// Store the updated cache data
-		$this->put($author_block_name, $author_block);
-
-		return $author_block[$user_id];
+		return $contribs;
 	}
 
 	/**

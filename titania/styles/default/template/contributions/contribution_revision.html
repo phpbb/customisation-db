@@ -9,8 +9,11 @@
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			{REVISION_UPLOADER}
+			<!-- IF S_NEW_REVISION_SUBMITTED -->
+				{L_NEW_REVISION_SUBMITTED}
+			<!-- ENDIF -->
 			<!-- IF MPV_TEST_WARNING -->
-				{L_MPV_TEST}
+				<br /><br />{L_MPV_TEST}
 			<!-- ENDIF -->
 			<!-- IF MPV_RESULTS -->
 				<p class="error">{L_MPV_RESULTS}</p>
