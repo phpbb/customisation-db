@@ -25,11 +25,7 @@ function titania_exception_handler($exception)
 {
 	$message = $exception->getMessage();
 
-	// display the trace for administrators
-	if (phpbb::$auth->acl_get('a_'))
-	{
-		$message .= '<br /><br /><pre>' . var_export($exception->getTrace(), true) . '</pre>';
-	}
+	$message .= titania_backtrace($exception);
 
 	trigger_error($message);
 }
@@ -210,7 +206,7 @@ function titania_msg_handler($errno, $msg_text, $errfile, $errline)
 
 			phpbb::$template->assign_vars(array(
 				'MESSAGE_TITLE'		=> $msg_title,
-				'MESSAGE_TEXT'		=> $msg_text,
+				'MESSAGE_TEXT'		=> $msg_text . titania_backtrace(),
 				'S_USER_WARNING'	=> ($errno == E_USER_WARNING) ? true : false,
 				'S_USER_NOTICE'		=> ($errno == E_USER_NOTICE) ? true : false)
 			);
@@ -234,4 +230,17 @@ function titania_msg_handler($errno, $msg_text, $errfile, $errline)
 	// If we notice an error not handled here we pass this back to PHP by returning false
 	// This may not work for all php versions
 	return false;
+}
+
+function titania_backtrace($exception = false)
+{
+	if (titania::$config->display_backtrace == 2 || (titania::$config->display_backtrace == 1 && phpbb::$auth->acl_get('a_')))
+	{
+		if ($exception !== false)
+		{
+			return '<br /><br /><pre>' . var_export($exception->getTrace(), true) . '</pre>';
+		}
+
+		return '<br /><br /><pre>' . get_backtrace() . '</pre>';
+	}
 }

@@ -140,6 +140,15 @@ class titania_topic extends titania_database_object
 	{
 		$this->topic_subject_clean = titania_url::url_slug($this->topic_subject);
 
+		if (!$this->contrib_id && $this->contrib !== false)
+		{
+			$this->contrib_id = $this->contrib->contrib_id;
+		}
+		else if (!$this->contrib_id && $this->contrib === false)
+		{
+			throw new exception('Need a contrib_id to submit a topic');
+		}
+
 		return parent::submit();
 	}
 

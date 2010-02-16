@@ -80,7 +80,7 @@ class titania_queue extends titania_message_object
 	{
 		if (!$this->queue_id)
 		{
-			$sql = 'SELECT c.contrib_name, c.contrib_name_clean, c.contrib_type, r.revision_version
+			$sql = 'SELECT c.*, r.revision_version
 				FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
 				WHERE r.revision_id = ' . (int) $this->revision_id . '
 					AND c.contrib_id = r.contrib_id';
@@ -88,11 +88,19 @@ class titania_queue extends titania_message_object
 			$row = phpbb::$db->sql_fetchrow($result);
 			phpbb::$db->sql_freeresult($result);
 
+			if (!$row)
+			{
+				trigger_error('NO_CONTRIB');
+			}
+
+			$contrib = new titania_contribution;
+			$contrib->__set_array($row);
+
 			$this->contrib_name_clean = $row['contrib_name_clean'];
 			$this->queue_type = $row['contrib_type'];
 
 			titania::add_lang('manage');
-			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version']);
+			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version'], $contrib);
 		}
 
 		parent::submit();
@@ -101,17 +109,21 @@ class titania_queue extends titania_message_object
 	/**
 	* Rebuild (or create) the first post in the queue topic
 	*/
-	public function update_first_queue_post($post_subject)
+	public function update_first_queue_post($post_subject, $contrib)
 	{
 		if (!$this->queue_topic_id)
 		{
 			// Create the topic
 			$post = new titania_post(TITANIA_QUEUE);
+			$post->topic->contrib = $contrib;
+			$post->topic->contrib_id = $contrib->contrib_id;
 		}
 		else
 		{
 			$topic = new titania_topic;
 			$topic->topic_id = $this->queue_topic_id;
+			$topic->contrib = $contrib;
+			$topic->contrib_id = $contrib->contrib_id;
 			$topic->load;
 
 			$post = new titania_post($topic->topic_type, $topic, $topic->topic_first_post_id);

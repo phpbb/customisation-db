@@ -27,7 +27,7 @@ class queue_overlord
 	public static $queue = array();
 
 	public static $sort_by = array(
-		't' => array('POST_TIME', 'q.queue_submit_time', true),
+		't' => array('SUBMIT_TIME', 'q.queue_submit_time', true),
 	);
 
 	/**
@@ -88,7 +88,7 @@ class queue_overlord
 			// Setup the sort tool
 			$sort = new titania_sort();
 			$sort->set_sort_keys(self::$sort_by);
-			$sort->default_dir = phpbb::$user->data['user_topic_sortby_dir'];
+			$sort->default_dir = 'a';
 		}
 
 		if ($pagination === false)
@@ -143,6 +143,8 @@ class queue_overlord
 			}
 
 			$queue_ids[] = $row['queue_id'];
+			$user_ids[] = $row['topic_first_post_user_id'];
+			$user_ids[] = $row['topic_last_post_user_id'];
 			$user_ids[] = $row['submitter_user_id'];
 
 			self::$queue[$row['queue_id']] = $row;
@@ -210,7 +212,7 @@ class queue_overlord
 		phpbb::$template->assign_vars(array(
 			'S_DISPLAY_CONTRIBUTION'	=> true,
 
-			'U_POST_REPLY'				=> titania_url::append_url($topic->get_url(false), array('action' => 'reply')),
+			'U_POST_REPLY'				=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'reply', 't' => $topic->topic_id)),
 		));
 	}
 

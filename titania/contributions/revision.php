@@ -209,7 +209,7 @@ do{
 			$revision->revision_submitted = true;
 			$revision->submit();
 
-			return;
+			redirect(titania::$contrib->get_url());
 		break;
 	}
 } while($try_again);
