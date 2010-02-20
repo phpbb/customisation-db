@@ -142,7 +142,7 @@ class titania_search
 	{
 		self::initialize();
 
-		self::$index->deleteById($object_type . '_' . $object_id, $object_type);
+		self::$index->deleteById($object_type . '_' . $object_id, 'titania_article');
 	}
 
 	/**

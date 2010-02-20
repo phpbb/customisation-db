@@ -215,6 +215,11 @@ class queue_overlord
 		{
 			$quick_actions['RETEST_MPV'] = titania_url::build_url('', array('action' => 'mpv', 'revision' => $row['revision_id']));
 		}
+		if (!$row['automod_results'] && titania_types::$types[$contrib->contrib_type]->automod_test)
+		{
+			//$quick_actions['RETEST_AUTOMOD'] = titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id']));
+		}
+		$quick_actions['REPACK'] = titania_url::append_url($contrib->get_url('revision'), array('repack' => $row['revision_id']));
 
 		phpbb::$template->assign_vars(array(
 			'QUICK_ACTIONS'				=> titania::build_quick_actions($quick_actions),

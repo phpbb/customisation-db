@@ -141,6 +141,44 @@ class titania_revision extends titania_database_object
 		}
 	}
 
+	/**
+	* Repack a contribution
+	*
+	* @param object $old_revision
+	*/
+	public function repack($old_revision)
+	{
+		if (!$this->revision_id)
+		{
+			throw new exception('Submit the revision before repacking');
+		}
+
+		$old_queue = $old_revision->get_queue();
+		$queue = $this->get_queue();
+
+		// Update the old queue and delete the new one
+		$old_queue->revision_id = $queue->revision_id;
+		$old_queue->submitter_user_id = $queue->submitter_user_id;
+		$old_queue->mpv_results = $queue->mpv_results;
+		$old_queue->mpv_results_bitfield = $queue->mpv_results_bitfield;
+		$old_queue->mpv_results_uid = $queue->mpv_results_uid;
+		$old_queue->automod_results = $queue->automod_results;
+		$old_queue->submit();
+
+		// Delete the new queue we made for this revision
+		$queue->delete();
+
+		// Unlink the old queue_id from the old revision manually (don't resubmit and make another queue topic...)
+		$sql = 'UPDATE ' . $this->sql_table . ' SET revision_queue_id = 0
+			WHERE revision_id = ' . (int) $old_revision->revision_id;
+		phpbb::$db->sql_query($sql);
+		$old_revision->revision_queue_id = 0;
+
+		// Update the queue_id here
+		$this->revision_queue_id = $old_queue->queue_id;
+		$this->submit();
+	}
+
 	public function delete()
 	{
 		// Delete the queue item

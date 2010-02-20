@@ -38,6 +38,23 @@ if (titania::$contrib->in_queue())
 $step = request_var('step', 0);
 $revision_id = request_var('revision_id', 0);
 
+// Repack a revision (for those with moderator permissions)
+$repack = (phpbb::$auth->acl_get('m_titania_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? request_var('repack', 0) : 0;
+if ($repack)
+{
+	$old_revision = new titania_revision(titania::$contrib, $repack);
+	if (!$old_revision->load())
+	{
+		trigger_error('NO_REVISION');
+	}
+
+	// Assign some defaults
+	phpbb::$template->assign_vars(array(
+		'REVISION_NAME'		=> $old_revision->revision_name,
+		'REVISION_VERSION'	=> $old_revision->revision_version,
+	));
+}
+
 do{
 	$revision_attachment = $revision = false;
 	$display_main = false; // Display the main upload page?
@@ -81,6 +98,12 @@ do{
 				));
 				$revision->submit();
 				$revision_id = $revision->revision_id;
+
+				// Repack if that's what we want
+				if ($repack)
+				{
+					$revision->repack($old_revision);
+				}
 
 				if (!titania_types::$types[titania::$contrib->contrib_type]->clean_and_restore_root)
 				{
@@ -232,7 +255,7 @@ phpbb::$template->assign_vars(array(
 	'NEXT_STEP'			=> $next_step,
 	'REVISION_ID'		=> $revision_id,
 
-	'S_POST_ACTION'		=> titania::$contrib->get_url('revision'),
+	'S_POST_ACTION'		=> ($repack) ? titania_url::append_url(titania::$contrib->get_url('revision'), array('repack' => $repack)) : titania::$contrib->get_url('revision'),
 ));
 
 if ($display_main || sizeof($error))

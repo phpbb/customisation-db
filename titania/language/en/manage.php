@@ -41,4 +41,6 @@ $lang = array_merge($lang, array(
 	'VALIDATION'	=> 'Validation',
 	'VALIDATION_SUBMISSION' => 'Validation Submission',
 	'RETEST_MPV'	=> 'Re-test MPV',
+	'RETEST_AUTOMOD'	=> 'Re-test Automod',
+	'REPACK' => 'Repack',
 ));
