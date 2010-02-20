@@ -25,7 +25,7 @@
 			<!-- ENDIF -->
 
 			<fieldset class="submit-buttons">
-				<input type="submit" id="new_revision" name="new_revision" value="{L_CONTINUE}" class="button1" onclick="this.disabled = true; this.className = 'button1 disabled';"/>
+				<input type="submit" id="new_revision" name="new_revision" value="{L_CONTINUE}" class="button1" onclick="$('#new_revision').addClass('disabled');"/>
 				<input type="hidden" name="step" value="{NEXT_STEP}" />
 				<input type="hidden" name="revision_id" value="{REVISION_ID}" />
 				{S_FORM_TOKEN}

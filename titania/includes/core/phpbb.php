@@ -340,9 +340,16 @@ class phpbb
 					$captcha->init(CONFIRM_LOGIN);
 					// $captcha->reset();
 
+					// HAX
+					global $phpbb_root_path;
+					$phpbb_root_path = titania::$absolute_board;
+
 					self::$template->assign_vars(array(
 						'CAPTCHA_TEMPLATE'			=> $captcha->get_template(),
 					));
+
+					// DE-HAX
+					$phpbb_root_path = PHPBB_ROOT_PATH;
 
 					$err = self::$user->lang[$result['error_msg']];
 				break;
