@@ -124,6 +124,8 @@ class titania_post extends titania_message_object
 		if (is_object($topic))
 		{
 			$this->topic = $topic;
+			$this->post_type = $topic->topic_type;
+			$this->post_access = $topic->topic_access;
 		}
 		else if (is_int($topic))
 		{

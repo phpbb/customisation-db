@@ -197,7 +197,7 @@ class titania_posting
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
 			'lock'			=> ($post_object->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('m_titania_post_mod')) ? true : false,
-			'sticky_topic'	=> ($post_object->post_id == $post_object->topic->topic_first_post_id || $this->contrib->is_author || $this->contrib->is_active_coauthor) ? true : false,
+			'sticky_topic'	=> ($post_object->post_id == $post_object->topic->topic_first_post_id || $post_object->topic->contrib->is_author || $post_object->topic->contrib->is_active_coauthor) ? true : false,
 			'lock_topic'	=> (phpbb::$auth->acl_get('m_titania_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
