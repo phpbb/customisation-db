@@ -32,6 +32,11 @@ function titania_custom($action, $version)
 					$sync = new titania_sync;
 					$sync->topics('post_count');
 				break;
+
+				case '0.1.37' :
+					$sync = new titania_sync;
+					$sync->queue('revision_queue_id');
+				break;
 			}
 		break;
 

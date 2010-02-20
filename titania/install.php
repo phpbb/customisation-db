@@ -563,6 +563,13 @@ $versions = array(
 		'custom' => 'titania_ext_groups',
 	),
 
+	'0.1.37' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_queue_id', array('UINT', 0)),
+		),
+		'custom' => 'titania_custom',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

@@ -159,9 +159,9 @@ class titania_post extends titania_message_object
 		{
 			$error[] = sprintf(phpbb::$user->lang['TOO_FEW_CHARS_LIMIT'], $message_length, (int) phpbb::$config['min_post_chars']);
 		}
-		else if ($message_length > (int) phpbb::$config['max_post_chars'])
+		else if (phpbb::$config['max_post_chars'] != 0 && $message_length > (int) phpbb::$config['max_post_chars'])
 		{
-			$error[] = sprintf($user->lang['TOO_MANY_CHARS_POST'], $message_length, (int) phpbb::$config['max_post_chars']);
+			$error[] = sprintf(phpbb::$user->lang['TOO_MANY_CHARS_POST'], $message_length, (int) phpbb::$config['max_post_chars']);
 		}
 
 		return $error;

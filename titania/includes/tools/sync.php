@@ -306,6 +306,18 @@ class titania_sync
 
 				unset($queue);
 			break;
+
+			case 'revision_queue_id' :
+				$sql = 'SELECT queue_id, revision_id FROM ' . TITANIA_QUEUE_TABLE;
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . ' SET revision_queue_id = ' . (int) $row['queue_id'] . '
+						WHERE revision_id = ' . (int) $row['revision_id'];
+					phpbb::$db->sql_query($sql);
+				}
+				phpbb::$db->sql_freeresult($result);
+			break;
 		}
 	}
 

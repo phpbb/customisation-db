@@ -170,6 +170,7 @@ class titania_queue extends titania_message_object
 
 		// Prevent errors from different configurations
 		phpbb::$config['min_post_chars'] = 1;
+		phpbb::$config['max_post_chars'] = 0;
 
 		// Store the post
 		$post->generate_text_for_storage(true, true, true);

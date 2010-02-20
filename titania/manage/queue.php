@@ -16,8 +16,21 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+$queue_id = request_var('q', 0);
 $queue_type = request_var('queue', '');
-$queue_type = titania_types::type_from_url($queue_type);
+
+// Force the queue_type if we have a queue_id
+if ($queue_id)
+{
+	$sql = 'SELECT queue_type FROM ' . TITANIA_QUEUE_TABLE . '
+		WHERE queue_id = ' . $queue_id;
+	phpbb::$db->sql_query($sql);
+	$queue_type = phpbb::$db->sql_fetchfield('queue_type');
+}
+else
+{
+	$queue_type = titania_types::type_from_url($queue_type);
+}
 
 // Setup the base url we will use
 $base_url = titania_url::build_url('manage/queue');
@@ -69,7 +82,6 @@ $posting_helper = new titania_posting(TITANIA_ATTACH_EXT_SUPPORT);
 $posting_helper->act('manage/queue_post.html');
 
 // Main output
-$queue_id = request_var('q', 0);
 if ($queue_id)
 {
 	phpbb::$user->add_lang('viewforum');

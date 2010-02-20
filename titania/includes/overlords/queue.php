@@ -220,6 +220,7 @@ class queue_overlord
 			'QUICK_ACTIONS'				=> titania::build_quick_actions($quick_actions),
 
 			'S_DISPLAY_CONTRIBUTION'	=> true,
+			'S_IN_QUEUE'				=> true,
 
 			'U_POST_REPLY'				=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'reply', 't' => $topic->topic_id)),
 		));
