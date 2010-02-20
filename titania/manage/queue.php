@@ -109,6 +109,35 @@ if ($queue_id)
 
 		case 'notes' :
 			$queue = queue_overlord::get_queue_object($queue_id, true);
+
+			// Load the message object
+			$message_object = new titania_message($queue);
+			$message_object->set_auth(array(
+				'bbcode'		=> true,
+				'smilies'		=> true,
+			));
+			$message_object->set_settings(array(
+				'display_subject'	=> false,
+			));
+
+			// Submit check...handles running $post->post_data() if required
+			$submit = $message_object->submit_check();
+
+			if ($submit)
+			{
+				$queue->submit();
+				redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
+			}
+
+			$message_object->display();
+
+			// Common stuff
+			phpbb::$template->assign_vars(array(
+				'S_POST_ACTION'		=> titania_url::$current_page_url,
+				'L_POST_A'			=> phpbb::$user->lang['EDIT_VALIDATION_NOTES'],
+			));
+			titania::page_header('EDIT_VALIDATION_NOTES');
+			titania::page_footer(true, 'manage/queue_post.html');
 		break;
 
 		case 'move' :

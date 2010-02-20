@@ -159,12 +159,12 @@ class titania_queue extends titania_message_object
 		// Add the queue notes
 		$queue_notes = $this->queue_notes;
 		decode_message($queue_notes, $this->queue_notes_uid);
-		$post->post_text .= $queue_notes . "\n\n";
+		$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_NOTES'] . '&quot;]' . $queue_notes . "[/quote]\n\n";
 
 		// Add the MPV results
 		$mpv_results = $this->mpv_results;
 		decode_message($mpv_results, $this->mpv_results_uid);
-		$post->post_text .= $mpv_results;
+		$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_MPV'] . '&quot;]' . $mpv_results . '[/quote]';
 
 		// @todo Add the Automod results
 

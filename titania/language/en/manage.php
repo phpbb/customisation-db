@@ -38,6 +38,8 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 'SUBMIT_TIME' => 'Submission Time',
 	'VALIDATION_QUEUE'	=> 'Validation Queue',
+	'VALIDATION_NOTES'	=> 'Validation Notes',
+	'VALIDATION_MPV' => 'MPV Notes',
 	'VALIDATION'	=> 'Validation',
 	'VALIDATION_SUBMISSION' => 'Validation Submission',
 	'RETEST_MPV'	=> 'Re-test MPV',
@@ -56,4 +58,5 @@ $lang = array_merge($lang, array(
 	'ALTER_NOTES' => 'Alter Validation Notes',
 	'MOVE_QUEUE' => 'Move Queue',
 	'MOVE_QUEUE_CONFIRM' => 'Select the new queue location and confirm.',
+	'EDIT_VALIDATION_NOTES' => 'Edit Validation Notes',
 ));
