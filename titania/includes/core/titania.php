@@ -483,7 +483,7 @@ class titania
 	* @param string $post Hidden POST variables
 	* @param string $html_body Template used for confirm box
 	*/
-	public static function confirm_box($check, $title = '', $u_action = '', $post = array(), $html_body = 'confirm_body.html')
+	public static function confirm_box($check, $title = '', $u_action = '', $post = array(), $html_body = 'common/confirm_body.html')
 	{
 		$hidden = build_hidden_fields($post);
 
@@ -552,8 +552,7 @@ class titania
 		}
 		else
 		{
-			$u_action = reapply_sid(PHPBB_ROOT_PATH . str_replace('&', '&amp;', phpbb::$user->page['page']));
-			$u_action .= ((strpos($u_action, '?') === false) ? '?' : '&amp;') . 'confirm_key=' . $confirm_key;
+			$u_action = titania_url::$current_page_url;
 		}
 
 		phpbb::$template->assign_vars(array(

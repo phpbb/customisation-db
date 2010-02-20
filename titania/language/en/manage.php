@@ -54,4 +54,6 @@ $lang = array_merge($lang, array(
 	'APPROVE' => 'Approve',
 	'DENY' => 'Deny',
 	'ALTER_NOTES' => 'Alter Validation Notes',
+	'MOVE_QUEUE' => 'Move Queue',
+	'MOVE_QUEUE_CONFIRM' => 'Select the new queue location and confirm.',
 ));

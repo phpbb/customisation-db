@@ -76,7 +76,7 @@ class titania_queue extends titania_message_object
 		));
 	}
 
-	public function submit()
+	public function submit($update_first_post = true)
 	{
 		if (!$this->queue_id)
 		{
@@ -102,7 +102,7 @@ class titania_queue extends titania_message_object
 			titania::add_lang('manage');
 			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version'], $contrib);
 		}
-		else
+		else if ($update_first_post)
 		{
 			$this->update_first_queue_post();
 		}

@@ -87,11 +87,12 @@ if ($queue_id)
 	phpbb::$user->add_lang('viewforum');
 
 	$action = request_var('action', '');
+	$submit = (isset($_POST['submit'])) ? true : false;
 
 	switch ($action)
 	{
 		case 'approve' :
-			$queue = get_queue_object($queue_id, true);
+			$queue = queue_overlord::get_queue_object($queue_id, true);
 			if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
 				titania::needs_auth();
@@ -99,7 +100,7 @@ if ($queue_id)
 		break;
 
 		case 'deny' :
-			$queue = get_queue_object($queue_id, true);
+			$queue = queue_overlord::get_queue_object($queue_id, true);
 			if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
 				titania::needs_auth();
@@ -107,11 +108,37 @@ if ($queue_id)
 		break;
 
 		case 'notes' :
-			$queue = get_queue_object($queue_id, true);
+			$queue = queue_overlord::get_queue_object($queue_id, true);
 		break;
 
 		case 'move' :
-			$queue = get_queue_object($queue_id, true);
+			$queue = queue_overlord::get_queue_object($queue_id, true);
+
+			$tags = titania::$cache->get_tags(TITANIA_QUEUE);
+
+			if (titania::confirm_box(true))
+			{
+				$new_tag = request_var('move_to', 0);
+				if (!isset($tags[$new_tag]))
+				{
+					trigger_error('NO_TAG');
+				}
+
+				$queue->queue_status = $new_tag;
+				$queue->submit(false);
+			}
+			else
+			{
+				$extra = '<select name="move_to">';
+				foreach ($tags as $tag_id => $row)
+				{
+					$extra .= '<option value="' . $tag_id . '">' . ((isset(phpbb::$user->lang[$row['tag_field_name']])) ? phpbb::$user->lang[$row['tag_field_name']] : $row['tag_field_name']) . '</option>';
+				}
+				$extra .= '</select>';
+				phpbb::$template->assign_var('CONFIRM_EXTRA', $extra);
+
+				titania::confirm_box(false, 'MOVE_QUEUE');
+			}
 		break;
 	}
 
