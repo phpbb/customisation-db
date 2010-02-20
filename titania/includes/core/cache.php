@@ -28,6 +28,43 @@ class titania_cache extends acm
 	}
 
 	/**
+	* Get some tags
+	*
+	* @param mixed $tag_type
+	*/
+	public function get_tags($tag_type = false)
+	{
+		$tags = $this->get('_titania_tags');
+
+		if ($tags === false)
+		{
+			$tags = array();
+
+			$sql = 'SELECT * FROM ' . TITANIA_TAG_FIELDS_TABLE . '
+				ORDER BY tag_id ASC';
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$tags[$row['tag_type_id']][$row['tag_id']] = $row;
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			$this->put('_titania_tags', $tags);
+		}
+
+		if ($tag_type && isset($tags[$tag_type]))
+		{
+			return $tags[$tag_type];
+		}
+		else if (!$tag_type)
+		{
+			return $tags;
+		}
+
+		return array();
+	}
+
+	/**
 	 * Get categories by tag type
 	 *
 	 * @return array of categories
@@ -40,8 +77,7 @@ class titania_cache extends acm
 		{
 			$categories = array();
 
-			$sql = 'SELECT *
-				FROM ' . TITANIA_CATEGORIES_TABLE . '
+			$sql = 'SELECT * FROM ' . TITANIA_CATEGORIES_TABLE . '
 				ORDER BY left_id ASC';
 			$result = phpbb::$db->sql_query($sql);
 

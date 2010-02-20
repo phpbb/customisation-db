@@ -546,7 +546,7 @@ class titania_post extends titania_message_object
 			'author'		=> $this->post_user_id,
 			'date'			=> $this->post_time,
 			'url'			=> titania_url::unbuild_url($this->get_url()),
-			'access_level'	=> $this->post_access,
+			'access_level'	=> min($this->post_access, $this->topic->topic_access), // If the topic access level is lower than the post access level we still can not see it without access to the topic
 			'approved'		=> $this->post_approved,
 			'reported'		=> $this->post_reported,
 		));

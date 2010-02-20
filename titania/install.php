@@ -570,6 +570,13 @@ $versions = array(
 		'custom' => 'titania_custom',
 	),
 
+	'0.1.38' => array(
+		'table_index_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_queue_id'),
+		),
+		'custom'	=> 'titania_tags',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

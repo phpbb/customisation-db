@@ -86,13 +86,44 @@ if ($queue_id)
 {
 	phpbb::$user->add_lang('viewforum');
 
+	$action = request_var('action', '');
+
+	switch ($action)
+	{
+		case 'approve' :
+			$queue = get_queue_object($queue_id, true);
+			if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
+			{
+				titania::needs_auth();
+			}
+		break;
+
+		case 'deny' :
+			$queue = get_queue_object($queue_id, true);
+			if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
+			{
+				titania::needs_auth();
+			}
+		break;
+
+		case 'notes' :
+			$queue = get_queue_object($queue_id, true);
+		break;
+
+		case 'move' :
+			$queue = get_queue_object($queue_id, true);
+		break;
+	}
+
 	queue_overlord::display_queue_item($queue_id);
 
 	titania::page_header('VALIDATION_QUEUE');
 }
 else
 {
-	queue_overlord::display_queue($queue_type);
+	$tag = request_var('tag', TITANIA_QUEUE_NEW);
+	queue_overlord::display_queue($queue_type, $tag);
+	queue_overlord::display_categories($queue_type);
 
 	titania::page_header('VALIDATION_QUEUE');
 }

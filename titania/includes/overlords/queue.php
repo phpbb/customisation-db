@@ -74,6 +74,24 @@ class queue_overlord
 		phpbb::$db->sql_freeresult($result);
 	}
 
+	public static function get_queue_object($queue_id, $query = false)
+	{
+		if (!isset(self::$queue[$queue_id]) && $query)
+		{
+			self::load_queue($queue_id);
+		}
+
+		if (!isset(self::$queue[$queue_id]))
+		{
+			return false;
+		}
+
+		$queue = new titania_queue;
+		$queue->__set_array(self::$queue[$queue_id]);
+
+		return $queue;
+	}
+
 	/**
 	* Display forum-like list for queue
 	*
@@ -222,6 +240,16 @@ class queue_overlord
 		if ($row['queue_status'] > 0)
 		{
 			$quick_actions['REPACK'] = titania_url::append_url($contrib->get_url('revision'), array('repack' => $row['revision_id']));
+
+			$quick_actions['ALTER_NOTES'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes'));
+
+			$quick_actions['MOVE'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'move'));
+
+			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
+			{
+				$quick_actions['APPROVE'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve'));
+				$quick_actions['DENY'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny'));
+			}
 		}
 
 		phpbb::$template->assign_vars(array(
@@ -275,6 +303,36 @@ class queue_overlord
 		);
 
 		return $output;
+	}
+
+	public static function display_categories($type)
+	{
+		$tags = titania::$cache->get_tags(TITANIA_QUEUE);
+
+		$sql = 'SELECT queue_status, COUNT(queue_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
+			WHERE queue_type = ' . (int) $type . '
+			GROUP BY queue_status';
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$tag_count[$row['queue_status']] = $row['cnt'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		foreach ($tags as $tag_id => $row)
+		{
+			if (!isset($tag_count[$tag_id]))
+			{
+				// Hide empty ones
+				continue;
+			}
+
+			phpbb::$template->assign_block_vars('queue_tags', array(
+				'TAG_NAME'		=> (isset(phpbb::$user->lang[$row['tag_field_name']])) ? phpbb::$user->lang[$row['tag_field_name']] : $row['tag_field_name'],
+				'TAG_COUNT'		=> $tag_count[$tag_id],
+				'U_VIEW_TAG'	=> titania_url::append_url(titania_url::$current_page_url, array('tag' => $tag_id))
+			));
+		}
 	}
 
 	/**

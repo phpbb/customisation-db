@@ -138,6 +138,8 @@ class titania_topic extends titania_database_object
 
 	public function submit()
 	{
+		// @todo search indexer on posts (reindex all in case the topic_access level has changed))
+
 		$this->topic_subject_clean = titania_url::url_slug($this->topic_subject);
 
 		if (!$this->contrib_id && $this->contrib !== false)

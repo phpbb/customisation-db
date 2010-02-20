@@ -1,5 +1,34 @@
 <!-- INCLUDE manage/manage_header.html -->
 
+<!-- IF .queue_tags -->
+<div class="forabg" id="categories">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<ul class="topiclist">
+		<li class="header">
+			<dl>
+				<dt>{L_CATEGORY}</dt>
+				<dd class="general">{L_CONTRIBUTIONS}</dd>
+			</dl>
+		</li>
+	</ul>
+	<ul class="topiclist forums">
+
+	<!-- BEGIN queue_tags -->
+		<li class="row">
+			<dl>
+				<dt>
+					<a href="{queue_tags.U_VIEW_TAG}" class="forumtitle">{queue_tags.TAG_NAME}</a>
+				</dt>
+				<dd class="general">{queue_tags.TAG_COUNT} <dfn>{L_CONTRIBUTIONS}</dfn></dd>
+			</dl>
+		</li>
+		<!-- END queue_tags -->
+
+		</ul>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
+
 <!-- IF S_QUEUE_LIST -->
 	<!-- INCLUDE common/category_list.html -->
 <!-- ELSEIF S_TOPIC_LIST -->
