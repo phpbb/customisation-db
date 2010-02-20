@@ -89,7 +89,7 @@
 					<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 						<dl>
 							<dt><strong><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></strong></dt>
-							<dd class="general">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --><!-- IF revisions.REVISION_QUEUE and S_IN_QUEUE --> - <a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF --></dd>
+							<dd class="general">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --><!-- IF revisions.REVISION_QUEUE --> - <a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF --></dd>
 						</dl>
 					</li>
 				<!-- END revisions -->

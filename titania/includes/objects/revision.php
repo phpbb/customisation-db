@@ -78,7 +78,7 @@ class titania_revision extends titania_database_object
 		$this->revision_id = $revision_id;
 	}
 
-	public function display($tpl_block = 'revisions')
+	public function display($tpl_block = 'revisions', $show_queue = false)
 	{
 		phpbb::$template->assign_block_vars($tpl_block, array(
 			'REVISION_ID'		=> $this->revision_id,
@@ -86,7 +86,7 @@ class titania_revision extends titania_database_object
 			'NAME'				=> censor_text($this->revision_name),
 			'VERSION'			=> $this->revision_version,
 			'VALIDATED_DATE'	=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
-			'REVISION_QUEUE'	=> ($this->revision_queue_id) ? titania_url::build_url('manage/queue', array('q' => $this->revision_queue_id)) : '',
+			'REVISION_QUEUE'	=> ($show_queue && $this->revision_queue_id) ? titania_url::build_url('manage/queue', array('q' => $this->revision_queue_id)) : '',
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 

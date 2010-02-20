@@ -113,6 +113,11 @@ do{
 						$revision->revision_submitted = true;
 						$revision->submit();
 
+						if ($repack)
+						{
+							redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
+						}
+
 						redirect(titania::$contrib->get_url());
 					}
 
@@ -244,6 +249,11 @@ do{
 			// Update the revision to be submitted, which unhides the queue topic and updates the contrib_last_update time
 			$revision->revision_submitted = true;
 			$revision->submit();
+
+			if ($repack)
+			{
+				redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
+			}
 
 			redirect(titania::$contrib->get_url());
 		break;
