@@ -244,21 +244,11 @@ class titania_post extends titania_message_object
 	* Check if the current user has permission to do something
 	*
 	* @param string $option The auth option to check ('post', 'edit', 'soft_delete', 'hard_delete')
-	* @param object $contrib The contrib object this is for (false to use titania::$contrib)
 	*
 	* @return bool True if they have permission False if not
 	*/
-	public function acl_get($option, $contrib = false)
+	public function acl_get($option)
 	{
-		if ($contrib === false && isset($this->topic->contrib) && is_object($this->topic->contrib))
-		{
-			$contrib = $this->topic->contrib;
-		}
-		else if ($contrib === false)
-		{
-			$contrib = titania::$contrib;
-		}
-
 		// First check anonymous/bots for things they can *never* do
 		$no_anon = array('edit', 'soft_delete', 'undelete', 'hard_delete');
 		$no_bot = array('post', 'edit', 'soft_delete', 'undelete', 'hard_delete');
@@ -267,13 +257,20 @@ class titania_post extends titania_message_object
 			return false;
 		}
 
+		// Can never do anything if the topic access level is greater than current access level
+		if (is_object($this->topic) && $this->topic->topic_access < titania::$access_level)
+		{
+			return false;
+		}
+
 		$is_poster = ($this->post_user_id == phpbb::$user->data['user_id']) ? true : false; // Poster
-		$is_author = ($contrib && ($contrib->is_author || $contrib->is_active_coauthor)) ? true : false; // Contribution author
+		$is_author = (is_object($this->topic) && is_object($this->topic->contrib) && ($this->topic->contrib->is_author || $this->topic->contrib->is_active_coauthor)) ? true : false; // Contribution author
 		$is_deleter = ($this->post_delete_user == phpbb::$user->data['user_id']) ? true : false;
 
 		switch ($option)
 		{
 			case 'post' :
+			case 'reply' :
 				if (phpbb::$auth->acl_get('u_titania_post') || // Can post
 					($is_author && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
 					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
@@ -283,8 +280,8 @@ class titania_post extends titania_message_object
 			break;
 
 			case 'edit' :
-				if (($is_poster && phpbb::$auth->acl_get('u_titania_post_edit_own')) || // Is poster and can edit own
-					($is_author && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
+				if (($is_poster && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_edit_own')) || // Is poster and can edit own
+					($is_author && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
 					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
 				{
 					return true;
@@ -292,12 +289,12 @@ class titania_post extends titania_message_object
 			break;
 
 			case 'delete' :
-				return ($this->post_deleted) ? $this->acl_get('hard_delete', $contrib) : $this->acl_get('soft_delete', $contrib);
+				return ($this->post_deleted) ? $this->acl_get('hard_delete') : $this->acl_get('soft_delete');
 			break;
 
 			case 'soft_delete' :
-				if (($is_poster && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own
-					($is_author && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
+				if (($is_poster && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own
+					($is_author && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
 					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
 				{
 					return true;
@@ -305,8 +302,8 @@ class titania_post extends titania_message_object
 			break;
 
 			case 'undelete' :
-				if (($is_poster && $is_deleter && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own and did delete their own
-					($is_author && $is_deleter && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own and did delete the message
+				if (($is_poster && $is_deleter && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own and did delete their own
+					($is_author && $is_deleter && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own and did delete the message
 					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
 				{
 					return true;

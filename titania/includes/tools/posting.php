@@ -78,6 +78,11 @@ class titania_posting
 	*/
 	public function post($contrib, $post_type, $s_post_action)
 	{
+		if (!phpbb::$auth->acl_get('u_titania_topic'))
+		{
+			titania::needs_auth();
+		}
+
 		// Setup the post object we'll use
 		$post_object = new titania_post($post_type);
 		$post_object->topic->contrib = $contrib;
@@ -115,24 +120,21 @@ class titania_posting
 	*/
 	public function reply($topic_id)
 	{
+		if (!phpbb::$auth->acl_get('u_titania_post'))
+		{
+			titania::needs_auth();
+		}
+
 		// Load the stuff we need
-		$topic = new titania_topic();
-		$topic->topic_id = (int) $topic_id;
-
-		if ($topic->load() === false)
-		{
-			trigger_error('NO_TOPIC');
-		}
-
-		$topic->contrib = new titania_contribution;
-		if (!$topic->contrib->load($topic->contrib_id))
-		{
-			trigger_error('NO_CONTRIB');
-		}
+		$topic = $this->load_topic($topic_id);
 
 		$post_object = new titania_post($topic->topic_type, $topic);
 
-		// @todo check permissions/auth level/etc
+		// Check permissions
+		if (!$post_object->acl_get('reply'))
+		{
+			titania::needs_auth();
+		}
 
 		// Load the message object
 		$message_object = new titania_message($post_object);
@@ -166,30 +168,19 @@ class titania_posting
 	*/
 	public function edit($post_id)
 	{
+		if (!phpbb::$auth->acl_get('u_titania_post'))
+		{
+			titania::needs_auth();
+		}
+
 		// Load the stuff we need
-		$post_object = new titania_post();
-		$post_object->post_id = (int) $post_id;
+		$post_object = $this->load_post($post_id);
 
-		if ($post_object->load() === false)
+		// Check permissions
+		if (!$post_object->acl_get('edit'))
 		{
-			trigger_error('NO_POST');
+			titania::needs_auth();
 		}
-
-		$post_object->topic = new titania_topic();
-		$post_object->topic->topic_id = $post_object->topic_id;
-
-		if ($post_object->topic->load() === false)
-		{
-			trigger_error('NO_TOPIC');
-		}
-
-		$post_object->topic->contrib = new titania_contribution;
-		if (!$post_object->topic->contrib->load($post_object->topic->contrib_id))
-		{
-			trigger_error('NO_CONTRIB');
-		}
-
-		// @todo check permissions/auth level/etc
 
 		// Load the message object
 		$message_object = new titania_message($post_object);
@@ -288,24 +279,13 @@ class titania_posting
 		phpbb::$user->add_lang('posting');
 
 		// Load the stuff we need
-		$post_object = new titania_post();
-		$post_object->post_id = (int) $post_id;
+		$post_object = $this->load_post($post_id);
 
-		if ($post_object->load() === false)
+		// Check permissions
+		if ((!$undelete && !$post_object->acl_get('delete')) || ($undelete && !$post_object->acl_get('undelete')))
 		{
-			trigger_error('NO_POST');
+			titania::needs_auth();
 		}
-
-		$post_object->topic = new titania_topic();
-		$post_object->topic->topic_id = (int) $topic_id;
-
-		if ($post_object->topic->load() === false)
-		{
-			trigger_error('NO_TOPIC');
-		}
-
-		$post_object->topic->contrib = new titania_contribution;
-		$post_object->topic->contrib->load($post_object->topic->contrib_id);
 
 		if (titania::confirm_box(true))
 		{
@@ -335,6 +315,70 @@ class titania_posting
 		{
 			titania::confirm_box(false, ((!$undelete) ? 'DELETE_POST' : 'UNDELETE_POST'), $post_object->get_url($action));
 		}
+
 		redirect($post_object->get_url(false, true));
+	}
+
+	/**
+	* Quick load a post
+	*
+	* @param mixed $post_id
+	* @return object
+	*/
+	public function load_post($post_id)
+	{
+		$post = new titania_post();
+		$post->post_id = $post_id;
+
+		if ($post->load() === false)
+		{
+			trigger_error('NO_POST');
+		}
+
+		$post->topic = $this->load_topic($post->topic_id);
+
+		return $post;
+	}
+
+	/**
+	* Quick load a topic
+	*
+	* @param mixed $topic_id
+	* @return object
+	*/
+	public function load_topic($topic_id)
+	{
+		topics_overlord::load_topic($topic_id);
+		$topic = topics_overlord::get_topic_object($topic_id);
+
+		if ($topic === false)
+		{
+			trigger_error('NO_TOPIC');
+		}
+
+		if (!is_object($topic->contrib))
+		{
+			$topic->contrib = $this->load_contrib($topic->contrib_id);
+		}
+
+		return $topic;
+	}
+
+	/**
+	* Quick load a contrib
+	*
+	* @param mixed $contrib_id
+	* @return object
+	*/
+	public function load_contrib($contrib_id)
+	{
+		$contrib = new titania_contribution;
+
+		if ($contrib->load($contrib_id) === false)
+		{
+			trigger_error('NO_CONTRIB');
+		}
+
+		return $contrib;
 	}
 }

@@ -45,7 +45,7 @@ class posts_overlord
 
 		$sql .= " ({$prefix}post_access >= " . titania::$access_level . " OR {$prefix}post_user_id = " . phpbb::$user->data['user_id'] . ')';
 
-		if (phpbb::$auth->acl_get('m_titania_post_mod'))
+		if (!phpbb::$auth->acl_get('m_titania_post_mod'))
 		{
 			$sql .= " AND {$prefix}post_approved = 1";
 			$sql .= " AND ({$prefix}post_deleted = 0 OR {$prefix}post_deleted = " . phpbb::$user->data['user_id'] . ')';
