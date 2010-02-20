@@ -142,7 +142,7 @@ class titania_revision extends titania_database_object
 	}
 
 	/**
-	* Repack a contribution
+	* Repack a revision
 	*
 	* @param object $old_revision
 	*/
