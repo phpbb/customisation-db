@@ -209,7 +209,16 @@ class queue_overlord
 		// Display the posts
 		posts_overlord::display_topic_complete($topic);
 
+		// Some quick-actions
+		$quick_actions = array();
+		if (!$row['mpv_results'] && titania_types::$types[$contrib->contrib_type]->mpv_test)
+		{
+			$quick_actions['RETEST_MPV'] = titania_url::build_url('', array('action' => 'mpv', 'revision' => $row['revision_id']));
+		}
+
 		phpbb::$template->assign_vars(array(
+			'QUICK_ACTIONS'				=> titania::build_quick_actions($quick_actions),
+
 			'S_DISPLAY_CONTRIBUTION'	=> true,
 
 			'U_POST_REPLY'				=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'reply', 't' => $topic->topic_id)),

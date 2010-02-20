@@ -79,6 +79,7 @@ switch ($action)
 		$revision_id = request_var('revision', 0);
 		titania::add_lang('contributions');
 
+		// Get the revision, contribution, attachment, and queue
 		$revision = new titania_revision(false, $revision_id);
 		if (!$revision->load())
 		{
@@ -100,6 +101,7 @@ switch ($action)
 		{
 			trigger_error('ERROR_NO_ATTACHMENT');
 		}
+		$queue = $revision->get_queue();
 
 		$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
 		$download_package = titania_url::build_url('download', array('id' => $revision_attachment->attachment_id));
@@ -119,15 +121,19 @@ switch ($action)
 			}
 			else
 			{
-				// Add the MPV Results to the queue topic
-				$pattern = '#' . str_replace(array('[', ']', '%s'), array('\[', '\]', '([^"]+)'), phpbb::$user->lang['MPV_TEST_FAILED_QUEUE_MSG']) . '#';
-				$redirect = $revision->queue_topic(false, $mpv_results, $pattern);
+				$uid = $bitfield = $flags = false;
+				generate_text_for_storage($mpv_results, $uid, $bitfield, $flags, true, true, true);
 
-				redirect($redirect);
+				// Add the MPV Results to the queue
+				$queue->mpv_results = $mpv_results;
+				$queue->mpv_results_bitfield = $bitfield;
+				$queue->mpv_results_uid = $uid;
+				$queue->submit();
 			}
 		}
 		else if ($action == 'automod')
 		{
+			/* This is not done yet...
 			exit;
 			$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
 
@@ -147,8 +153,10 @@ switch ($action)
 			//echo '<br /><br /><br />';
 			echo $results;
 			exit;
-
+			*/
 		}
+
+		redirect(titania_url::build_url('manage/queue', array('queue' => titania_types::$types[$queue->queue_type]->url, 'q' => $queue->queue_id)));
 	break;
 
 	/**

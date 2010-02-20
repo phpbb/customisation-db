@@ -102,6 +102,10 @@ class titania_queue extends titania_message_object
 			titania::add_lang('manage');
 			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version'], $contrib);
 		}
+		else
+		{
+			$this->update_first_queue_post();
+		}
 
 		parent::submit();
 	}
@@ -111,6 +115,8 @@ class titania_queue extends titania_message_object
 	*/
 	public function update_first_queue_post($post_subject = false, $contrib = false)
 	{
+		titania::add_lang('manage');
+
 		if (!$this->queue_topic_id)
 		{
 			// Create the topic
@@ -147,7 +153,8 @@ class titania_queue extends titania_message_object
 		$post->post_user_id = $this->submitter_user_id;
 		$post->post_time = $this->queue_submit_time;
 
-		$post->post_text = '';
+		// Need at least some text in the post body...
+		$post->post_text = phpbb::$user->lang['VALIDATION_SUBMISSION'] . "\n\n";
 
 		// Add the queue notes
 		$queue_notes = $this->queue_notes;
@@ -160,6 +167,9 @@ class titania_queue extends titania_message_object
 		$post->post_text .= $mpv_results;
 
 		// @todo Add the Automod results
+
+		// Prevent errors from different configurations
+		phpbb::$config['min_post_chars'] = 1;
 
 		// Store the post
 		$post->generate_text_for_storage(true, true, true);

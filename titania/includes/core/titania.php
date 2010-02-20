@@ -232,6 +232,31 @@ class titania
 	}
 
 	/**
+	* Build the quick actions
+	*
+	* @param array $quick_actions
+	* @return string
+	*/
+	public static function build_quick_actions($quick_actions)
+	{
+		phpbb::$template->destroy_block_vars('quick_actions');
+
+		foreach ($quick_actions as $lang => $url)
+		{
+			phpbb::$template->assign_block_vars('quick_actions', array(
+				'URL'		=> $url,
+				'NAME'		=> (isset(phpbb::$user->lang[$lang])) ? phpbb::$user->lang[$lang] : $lang,
+			));
+		}
+
+		phpbb::$template->set_filenames(array(
+			'quick_actions'		=> 'common/quick_actions.html',
+		));
+
+		return phpbb::$template->assign_display('quick_actions');
+	}
+
+	/**
 	 * Titania page_header
 	 *
 	 * @param string $page_title

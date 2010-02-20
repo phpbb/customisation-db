@@ -5,10 +5,15 @@
 			<!-- IF U_VIEW_DEMO --><br /><a href="{U_VIEW_DEMO}">{L_VIEW_DEMO}</a><!-- ENDIF -->
 
 			<!-- IF U_DOWNLOAD -->
-			<hr class="dashed" />
-			<div class="download-button">
-				<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE} {L_BYTES}</a>
-			</div>
+				<hr class="dashed" />
+				<div class="download-button">
+					<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE} {L_BYTES}</a>
+				</div>
+			<!-- ENDIF -->
+
+			<!-- IF QUICK_ACTIONS -->
+				<hr class="dashed" />
+				{QUICK_ACTIONS}
 			<!-- ENDIF -->
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
@@ -68,28 +73,28 @@
 
 
 			<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
-		<!-- IF .revisions -->
-			<div class="clear"></div>
+			<!-- IF .revisions -->
+				<div class="clear"></div>
 
-			<ul class="topiclist">
-				<li class="header">
-					<dl>
-						<dt>{L_REVISIONS}</dt>
-						<dd></dd>
-					</dl>
-				</li>
-			</ul>
-			<ul class="topiclist cplist">
-			<!-- BEGIN revisions -->
-				<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
-					<dl>
-						<dt><strong><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></strong></dt>
-						<dd class="general">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --></dd>
-					</dl>
-				</li>
-			<!-- END revisions -->
-			</ul>
-		<!-- ENDIF -->
+				<ul class="topiclist">
+					<li class="header">
+						<dl>
+							<dt>{L_REVISIONS}</dt>
+							<dd></dd>
+						</dl>
+					</li>
+				</ul>
+				<ul class="topiclist cplist">
+				<!-- BEGIN revisions -->
+					<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+						<dl>
+							<dt><strong><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></strong></dt>
+							<dd class="general">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --></dd>
+						</dl>
+					</li>
+				<!-- END revisions -->
+				</ul>
+			<!-- ENDIF -->
 
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>

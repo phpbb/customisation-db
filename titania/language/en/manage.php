@@ -39,4 +39,6 @@ $lang = array_merge($lang, array(
 'SUBMIT_TIME' => 'Submission Time',
 	'VALIDATION_QUEUE'	=> 'Validation Queue',
 	'VALIDATION'	=> 'Validation',
+	'VALIDATION_SUBMISSION' => 'Validation Submission',
+	'RETEST_MPV'	=> 'Re-test MPV',
 ));
