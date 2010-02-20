@@ -142,10 +142,8 @@ class titania_revision extends titania_database_object
 	public function delete()
 	{
 		// Delete the queue item
-		$sql = 'DELETE FROM ' . TITANIA_QUEUE_TABLE . '
-			WHERE contrib_id = ' . $this->contrib_id . '
-				AND revision_id = ' . $this->revision_id;
-		phpbb::$db->sql_query($sql);
+		$queue = $this->get_queue();
+		$queue->delete();
 
 		// Delete the attachment
 		$attachment = new titania_attachment(TITANIA_CONTRIB);

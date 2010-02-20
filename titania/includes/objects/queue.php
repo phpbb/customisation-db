@@ -109,7 +109,7 @@ class titania_queue extends titania_message_object
 	/**
 	* Rebuild (or create) the first post in the queue topic
 	*/
-	public function update_first_queue_post($post_subject, $contrib)
+	public function update_first_queue_post($post_subject = false, $contrib = false)
 	{
 		if (!$this->queue_topic_id)
 		{
@@ -122,11 +122,21 @@ class titania_queue extends titania_message_object
 		{
 			$topic = new titania_topic;
 			$topic->topic_id = $this->queue_topic_id;
-			$topic->contrib = $contrib;
-			$topic->contrib_id = $contrib->contrib_id;
-			$topic->load;
+			$topic->load();
+
+			if ($contrib === false)
+			{
+				$topic->contrib = new titania_contribution;
+				$topic->contrib->load($topic->contrib_id);
+			}
+			else
+			{
+				$topic->contrib = $contrib;
+				$topic->contrib_id = $contrib->contrib_id;
+			}
 
 			$post = new titania_post($topic->topic_type, $topic, $topic->topic_first_post_id);
+			$post->load();
 		}
 
 		if ($post_subject)
@@ -149,11 +159,31 @@ class titania_queue extends titania_message_object
 		decode_message($mpv_results, $this->mpv_results_uid);
 		$post->post_text .= $mpv_results;
 
-		// Add the Automod results (later)
+		// @todo Add the Automod results
 
 		// Store the post
+		$post->generate_text_for_storage(true, true, true);
 		$post->submit();
 
 		$this->queue_topic_id = $post->topic_id;
+	}
+
+	public function delete()
+	{
+		$post = new titania_post;
+
+		// Remove posts and topic
+		$sql = 'SELECT post_id FROM ' . TITANIA_POSTS_TABLE . '
+			WHERE topic_id = ' . (int) $this->queue_topic_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$post->post_id = $row['post_id'];
+			$post->hard_delete();
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Assplode
+		parent::delete();
 	}
 }

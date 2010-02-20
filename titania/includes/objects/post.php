@@ -145,6 +145,8 @@ class titania_post extends titania_message_object
 	*/
 	public function validate()
 	{
+		phpbb::$user->add_lang('posting');
+
 		$error = array();
 
 		if (utf8_clean_string($this->post_subject) === '')
@@ -358,11 +360,6 @@ class titania_post extends titania_message_object
 	*/
 	public function post()
 	{
-		if (!$this->acl_get('post'))
-		{
-			titania::needs_auth();
-		}
-
 		// Create the topic if required
 		if (!$this->topic->topic_id)
 		{
@@ -430,11 +427,6 @@ class titania_post extends titania_message_object
 			return false;
 		}
 
-		if (!$this->acl_get('edit'))
-		{
-			titania::needs_auth();
-		}
-
 		if ($this->post_id == $this->topic->topic_first_post_id)
 		{
 			$this->topic->__set_array(array(
@@ -463,11 +455,6 @@ class titania_post extends titania_message_object
 	*/
 	public function soft_delete($reason = '')
 	{
-		if (!$this->acl_get('soft_delete'))
-		{
-			titania::needs_auth();
-		}
-
 		$this->post_deleted = titania::$time;
 		$this->post_delete_user = phpbb::$user->data['user_id'];
 		$this->post_edit_reason = $reason;
@@ -487,11 +474,6 @@ class titania_post extends titania_message_object
 	*/
 	public function undelete()
 	{
-		if (!$this->acl_get('undelete'))
-		{
-			titania::needs_auth();
-		}
-
 		// Reverse the hack for soft delete
 		$this->topic->update_postcount($this->post_access, TITANIA_ACCESS_TEAMS, false);
 
@@ -508,12 +490,7 @@ class titania_post extends titania_message_object
 	*/
 	public function hard_delete()
 	{
-		if (!$this->acl_get('hard_delete'))
-		{
-			titania::needs_auth();
-		}
-
-		$this->topic->update_postcount(false, $this->post_access, false);
+		$this->topic->update_postcount(false, $this->post_access);
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
 		if ($this->topic->get_postcount(TITANIA_ACCESS_PUBLIC) == 0)
@@ -533,6 +510,9 @@ class titania_post extends titania_message_object
 		// Remove from the search index
 		titania_search::delete($this->post_type, $this->post_id);
 
+		// @todo remove attachments and other things
+
+		// Initiate self-destruct mode
 		parent::delete();
 	}
 

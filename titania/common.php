@@ -83,7 +83,8 @@ if (isset($_GET['sync']) && phpbb::$auth->acl_get('a_'))
 	{
 		if (isset($method[1]))
 		{
-			$sync->$method[0]($method[1]);
+			$id = request_var('id', 0);
+			$sync->$method[0]($method[1], $id);
 		}
 		else
 		{

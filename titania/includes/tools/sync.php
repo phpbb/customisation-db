@@ -283,6 +283,32 @@ class titania_sync
 		}
 	}
 
+	public function queue($mode, $queue_id = false)
+	{
+		switch ($mode)
+		{
+			case 'update_first_queue_post' :
+				$queue = new titania_queue;
+				$contrib = new titania_contribution;
+
+				$sql = 'SELECT * FROM ' . TITANIA_QUEUE_TABLE . ' q, ' . TITANIA_CONTRIBS_TABLE . ' c
+					WHERE c.contrib_id = q.contrib_id' .
+						(($queue_id) ? ' AND queue_id = ' . (int) $queue_id : '');
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$contrib->__set_array($row);
+					$queue->__set_array($row);
+
+					$queue->update_first_queue_post(false, $contrib);
+				}
+				phpbb::$db->sql_freeresult($result);
+
+				unset($queue);
+			break;
+		}
+	}
+
 	public function _get_contrib_count($category_id)
 	{
 		// Bundle up the children in a nice array
