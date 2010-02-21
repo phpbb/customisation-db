@@ -32,8 +32,7 @@ if ($post_id)
 	}
 
 	// Load the contrib item
-	load_contrib($topic->contrib_id);
-	$topic->contrib = titania::$contrib;
+	load_contrib($topic->parent_id);
 
 	titania::generate_breadcrumbs(array(
 		censor_text($topic->topic_subject)	=> $topic->get_url(),
@@ -51,9 +50,7 @@ else if ($topic_id)
 	}
 
 	// Load the contrib item
-	load_contrib($topic->contrib_id);
-
-	$topic->contrib = titania::$contrib;
+	load_contrib($topic->parent_id);
 
 	titania::generate_breadcrumbs(array(
 		censor_text($topic->topic_subject)	=> $topic->get_url(),
@@ -70,7 +67,7 @@ titania::$contrib->assign_details(true);
 
 // Handle replying/editing/etc
 $posting_helper = new titania_posting(TITANIA_ATTACH_EXT_SUPPORT);
-$posting_helper->act('contributions/contribution_support_post.html', titania::$contrib, TITANIA_SUPPORT);
+$posting_helper->act('contributions/contribution_support_post.html', titania::$contrib->contrib_id, titania::$contrib->get_url('support'), TITANIA_SUPPORT);
 
 phpbb::$user->add_lang('viewforum');
 

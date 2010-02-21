@@ -41,9 +41,9 @@ class topics_overlord
 	 * @param <bool> $where true to use WHERE, false if you already did use WHERE
 	 * @return <string>
 	 */
-	public static function sql_permissions($prefix = 't.', $where = false)
+	public static function sql_permissions($prefix = 't.', $where = false, $no_where = false)
 	{
-		$sql = ($where) ? ' WHERE' : ' AND';
+		$sql = ($no_where) ? '' : (($where) ? ' WHERE' : ' AND');
 		$sql .= " ({$prefix}topic_access >= " . titania::$access_level . " OR {$prefix}topic_first_post_user_id = " . phpbb::$user->data['user_id'] . ")
 			AND ({$prefix}topic_deleted = 0 OR {$prefix}topic_deleted = " . phpbb::$user->data['user_id'] . ')';
 
@@ -64,17 +64,15 @@ class topics_overlord
 	public static function load_topic_from_post($post_id)
 	{
 		$sql_ary = array(
-			'SELECT' => 't.*, c.contrib_type, c.contrib_name_clean',
+			'SELECT' => 't.*',
 
 			'FROM'		=> array(
 				TITANIA_POSTS_TABLE		=> 'p',
 				TITANIA_TOPICS_TABLE	=> 't',
-				TITANIA_CONTRIBS_TABLE	=> 'c',
 			),
 
 			'WHERE' => 'p.post_id = ' . (int) $post_id . '
-				AND t.topic_id = p.topic_id
-				AND c.contrib_id = t.contrib_id' .
+				AND t.topic_id = p.topic_id' .
 				self::sql_permissions('t.'),
 		);
 
@@ -113,15 +111,13 @@ class topics_overlord
 		}
 
 		$sql_ary = array(
-			'SELECT' => 't.*, c.contrib_type, c.contrib_name_clean',
+			'SELECT' => '*',
 
 			'FROM'		=> array(
 				TITANIA_TOPICS_TABLE	=> 't',
-				TITANIA_CONTRIBS_TABLE	=> 'c',
 			),
 
-			'WHERE' => phpbb::$db->sql_in_set('t.topic_id', array_map('intval', $topic_id)) . '
-				AND c.contrib_id = t.contrib_id' .
+			'WHERE' => phpbb::$db->sql_in_set('t.topic_id', array_map('intval', $topic_id)) .
 				self::sql_permissions('t.'),
 		);
 
@@ -152,17 +148,6 @@ class topics_overlord
 
 		$topic = new titania_topic();
 		$topic->__set_array(self::$topics[$topic_id]);
-		if (is_object(titania::$contrib) && titania::$contrib->contrib_id == self::$topics[$topic_id]['contrib_id'])
-		{
-			$topic->contrib = titania::$contrib;
-		}
-		else if (isset(self::$topics[$topic_id]['contrib_type']))
-		{
-			$topic->contrib = array(
-				'contrib_type'			=> self::$topics[$topic_id]['contrib_type'],
-				'contrib_name_clean'	=> self::$topics[$topic_id]['contrib_name_clean'],
-			);
-		}
 
 		return $topic;
 	}
@@ -223,15 +208,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$topic_ids = array();
 
 		$sql_ary = array(
-			'SELECT' => 't.*, c.contrib_type, c.contrib_name_clean',
+			'SELECT' => '*',
 
 			'FROM'		=> array(
 				TITANIA_TOPICS_TABLE	=> 't',
-				TITANIA_CONTRIBS_TABLE	=> 'c',
 			),
 
-			'WHERE' => 'c.contrib_id = t.contrib_id' .
-				self::sql_permissions('t.'),
+			'WHERE' => self::sql_permissions('t.', false, true),
 
 			'ORDER_BY'	=> 't.topic_sticky DESC, ' . $sort->get_order_by(),
 		);
@@ -243,7 +226,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		{
 			case 'tracker' :
 				$page_url = $object->get_url('tracker');
-				$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
+				$sql_ary['WHERE'] .= ' AND t.parent_id = ' . (int) $object->contrib_id;
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_TRACKER;
 
 				if (isset($options['category']))
@@ -260,25 +243,25 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			case 'author_support' :
 				$page_url = $object->get_url('support');
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', array_map('intval', $contrib_ids));
+				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.parent_id', array_map('intval', $contrib_ids));
 
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', array_map('intval', titania::$cache->get_author_contribs($object->user_id)));
+				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.parent_id', array_map('intval', titania::$cache->get_author_contribs($object->user_id)));
 			break;
 
 			case 'author_tracker' :
 				$page_url = $object->get_url('tracker');
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', array_map('intval', $contrib_ids));
+				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.parent_id', array_map('intval', $contrib_ids));
 
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_TRACKER;
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.contrib_id', array_map('intval', titania::$cache->get_author_contribs($object->user_id)));
+				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.parent_id', array_map('intval', titania::$cache->get_author_contribs($object->user_id)));
 			break;
 
 			case 'support' :
 			default :
 				$page_url = $object->get_url('support');
-				$sql_ary['WHERE'] .= ' AND t.contrib_id = ' . (int) $object->contrib_id;
+				$sql_ary['WHERE'] .= ' AND t.parent_id = ' . (int) $object->contrib_id;
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
 			break;
 		}
@@ -307,11 +290,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			self::$topics[$row['topic_id']] = $row;
 
 			$topic->__set_array($row);
-
-			$topic->contrib = array(
-				'contrib_type'			=> $row['contrib_type'],
-				'contrib_name_clean'	=> $row['contrib_name_clean'],
-			);
 
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'S_TOPIC_TYPE_SWITCH'		=> ($last_was_sticky && !$topic->topic_sticky) ? true : false,

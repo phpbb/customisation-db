@@ -83,7 +83,7 @@ function titania_msg_handler($errno, $msg_text, $errfile, $errline)
 				$msg_text = str_replace(array(phpbb_realpath(PHPBB_ROOT_PATH), '\\'), array('', '/'), $msg_text);
 
 				echo '<b>[phpBB Debug] PHP Notice</b>: in file <b>' . $errfile . '</b> on line <b>' . $errline . '</b>: <b>' . $msg_text . '</b><br />' . "\n";
-				// echo '<br /><br />BACKTRACE<br />' . get_backtrace() . '<br />' . "\n";
+				echo '<br /><br />BACKTRACE<br />' . get_backtrace() . '<br />' . "\n";
 			}
 
 			return;

@@ -77,6 +77,7 @@ class titania_post extends titania_message_object
 			'topic_id'				=> array('default' => 0),
 			'post_type'				=> array('default' => 0), // Post Type, Main TITANIA_ constants
 			'post_access'			=> array('default' => TITANIA_ACCESS_PUBLIC,	'message_field' => 'access'), // Access level, TITANIA_ACCESS_ constants
+			'post_url'				=> array('default' => ''), // URL for the post (simple unbuilt URL)
 
 			'post_locked'			=> array('default' => false,	'message_field' => 'lock'),
 			'post_approved'			=> array('default' => true),
@@ -130,7 +131,12 @@ class titania_post extends titania_message_object
 		else if (is_int($topic))
 		{
 			$this->topic = new titania_topic($this->post_type, $topic);
-			$this->topic->load();
+			if (!$this->topic->load())
+			{
+				trigger_error('NO_TOPIC');
+			}
+			$this->post_type = $topic->topic_type;
+			$this->post_access = $topic->topic_access;
 		}
 		else
 		{
@@ -192,9 +198,10 @@ class titania_post extends titania_message_object
 	 */
 	public function get_url($action = false, $use_anchor = true)
 	{
-		$append = array(
-			'p' => $this->post_id,
-		);
+		$base = $append = false;
+		titania_url::split_base_params($base, $append, $this->post_url);
+
+		$append['p'] = $this->post_id;
 
 		if ($action)
 		{
@@ -205,28 +212,7 @@ class titania_post extends titania_message_object
 			$append['#p'] = $this->post_id;
 		}
 
-		if (is_object($this->topic))
-		{
-			return titania_url::append_url($this->topic->get_url(), $append);
-		}
-
-		switch ($this->post_type)
-		{
-			case TITANIA_TRACKER :
-				$page = 'tracker';
-			break;
-
-			case TITANIA_QUEUE :
-				// We use a different URL completely
-				return titania_url::build_url('manage/queue', $append);
-			break;
-
-			default :
-				$page = 'support';
-			break;
-		}
-
-		return titania_url::build_url($page, $append);
+		return titania_url::build_url($base, $append);
 	}
 
 	/**
@@ -266,7 +252,8 @@ class titania_post extends titania_message_object
 		}
 
 		$is_poster = ($this->post_user_id == phpbb::$user->data['user_id']) ? true : false; // Poster
-		$is_author = (is_object($this->topic) && is_object($this->topic->contrib) && ($this->topic->contrib->is_author || $this->topic->contrib->is_active_coauthor)) ? true : false; // Contribution author
+		// @todo think over these permissions again as we've unlinked the contribution item from the topic
+		$is_author = false;//(is_object($this->topic) && is_object($this->topic->contrib) && ($this->topic->contrib->is_author || $this->topic->contrib->is_active_coauthor)) ? true : false; // Contribution author
 		$is_deleter = ($this->post_delete_user == phpbb::$user->data['user_id']) ? true : false;
 
 		switch ($option)
@@ -374,6 +361,7 @@ class titania_post extends titania_message_object
 		}
 
 		$this->topic_id = $this->topic->topic_id;
+		$this->post_url = titania_url::unbuild_url($this->topic->get_url());
 
 		parent::submit();
 
@@ -442,6 +430,7 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		$this->topic_id = $this->topic->topic_id;
+		$this->post_url = titania_url::unbuild_url($this->topic->get_url());
 
 		$this->index();
 
@@ -545,7 +534,7 @@ class titania_post extends titania_message_object
 			'text_options'	=> $this->post_text_options,
 			'author'		=> $this->post_user_id,
 			'date'			=> $this->post_time,
-			'url'			=> titania_url::unbuild_url($this->get_url()),
+			'url'			=> $this->post_url,
 			'access_level'	=> min($this->post_access, $this->topic->topic_access), // If the topic access level is lower than the post access level we still can not see it without access to the topic
 			'approved'		=> $this->post_approved,
 			'reported'		=> $this->post_reported,

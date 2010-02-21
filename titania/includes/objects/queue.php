@@ -55,7 +55,6 @@ class titania_queue extends titania_message_object
 			'queue_id'				=> array('default' => 0),
 			'revision_id'			=> array('default' => 0),
 			'contrib_id'			=> array('default' => 0),
-			'contrib_name_clean'	=> array('default' => ''),
 			'submitter_user_id'		=> array('default' => (int) phpbb::$user->data['user_id']),
 			'queue_topic_id'		=> array('default' => 0),
 
@@ -83,7 +82,7 @@ class titania_queue extends titania_message_object
 	{
 		if (!$this->queue_id)
 		{
-			$sql = 'SELECT c.*, r.revision_version
+			$sql = 'SELECT c.contrib_name_clean, c.contrib_type, r.revision_version
 				FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
 				WHERE r.revision_id = ' . (int) $this->revision_id . '
 					AND c.contrib_id = r.contrib_id';
@@ -96,14 +95,10 @@ class titania_queue extends titania_message_object
 				trigger_error('NO_CONTRIB');
 			}
 
-			$contrib = new titania_contribution;
-			$contrib->__set_array($row);
-
-			$this->contrib_name_clean = $row['contrib_name_clean'];
 			$this->queue_type = $row['contrib_type'];
 
 			titania::add_lang('manage');
-			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version'], $contrib);
+			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version']);
 		}
 		else if ($update_first_post)
 		{
@@ -116,7 +111,7 @@ class titania_queue extends titania_message_object
 	/**
 	* Rebuild (or create) the first post in the queue topic
 	*/
-	public function update_first_queue_post($post_subject = false, $contrib = false)
+	public function update_first_queue_post($post_subject = false)
 	{
 		titania::add_lang('manage');
 
@@ -124,25 +119,15 @@ class titania_queue extends titania_message_object
 		{
 			// Create the topic
 			$post = new titania_post(TITANIA_QUEUE);
-			$post->topic->contrib = $contrib;
-			$post->topic->contrib_id = $contrib->contrib_id;
+			$post->topic->parent_id = $this->queue_id;
+			$post->topic->topic_url = 'manage/queue/q_' . $this->queue_id;
 		}
 		else
 		{
+			// Load the first post
 			$topic = new titania_topic;
 			$topic->topic_id = $this->queue_topic_id;
 			$topic->load();
-
-			if ($contrib === false)
-			{
-				$topic->contrib = new titania_contribution;
-				$topic->contrib->load($topic->contrib_id);
-			}
-			else
-			{
-				$topic->contrib = $contrib;
-				$topic->contrib_id = $contrib->contrib_id;
-			}
 
 			$post = new titania_post($topic->topic_type, $topic, $topic->topic_first_post_id);
 			$post->load();

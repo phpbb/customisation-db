@@ -197,6 +197,26 @@ class titania_url
 	}
 
 	/**
+	* Unbuild a url (used from the indexer)
+	*
+	* @param string $base The base (send $url param here and we'll just update it properly)
+	* @param string $params The params
+	* @param string|bool $url The url to unbuild from storage (can send it through $base optionally and leave as false)
+	*/
+	public static function split_base_params(&$base, &$params, $url = false)
+	{
+		$base = ($url !== false) ? $url : $base;
+		$params = array();
+
+		if (substr($base, -1) != '/')
+		{
+			$params = substr($base, (strrpos($base, '/') + 1));
+			$base = substr($base, 0, (strrpos($base, '/') + 1));
+			$params = self::split_params($params);
+		}
+	}
+
+	/**
 	* Split up the parameters (from a string to an array, used for the search page from the indexer)
 	*
 	* @param string $params
@@ -274,22 +294,10 @@ class titania_url
 		self::$current_page = str_replace($script_path, '', self::$root_url) . self::$current_page;
 
 		// Split up the arguments
-		$args = explode(self::$separator, $args);
-
-		foreach ($args as $arg)
+		foreach (self::split_params($args) as $name => $value)
 		{
-			$arg = explode('_', $arg, 2);
-
-			if (sizeof($arg) == 1)
-			{
-				self::$params[] = $arg[0];
-				$_GET[$arg[0]] = $_REQUEST[$arg[0]] = $arg[0];
-
-				continue;
-			}
-
-			self::$params[$arg[0]] = $arg[1];
-			$_GET[$arg[0]] = $_REQUEST[$arg[0]] = $arg[1];
+			self::$params[$name] = $value;
+			$_GET[$name] = $_REQUEST[$name] = $value;
 		}
 
 		// Build the full current page url

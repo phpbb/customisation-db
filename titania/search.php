@@ -141,13 +141,8 @@ users_overlord::load_users($results['user_ids']);
 	default : */
 		foreach ($results['documents'] as $document)
 		{
-			$url_base = $document->url;
-			$url_params = '';
-			if (substr($url_base, -1) != '/')
-			{
-				$url_params = substr($url_base, (strrpos($url_base, '/') + 1));
-				$url_base = substr($url_base, 0, (strrpos($url_base, '/') + 1));
-			}
+			$url_base = $url_params = '';
+			titania_url::split_base_params($url_base, $url_params, $document->url);
 
 			phpbb::$template->assign_block_vars('searchresults', array(
 				'POST_SUBJECT'		=> censor_text($document->title),

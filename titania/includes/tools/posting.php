@@ -30,19 +30,19 @@ class titania_posting
 		$this->attachments_group = $attachments_group;
 	}
 
-	public function act($template_body, $contrib = false, $post_type = false, $s_post_action = false)
+	public function act($template_body, $parent_id = false, $parent_url = false, $post_type = false, $s_post_action = false)
 	{
 		$action = request_var('action', '');
 
 		switch ($action)
 		{
 			case 'post' :
-				if ($contrib === false || $post_type === false)
+				if ($parent_id === false || $parent_url == false || $post_type === false)
 				{
-					throw new exception('Must send contrib object and new post type');
+					throw new exception('Must send parent_id, parent_url, and new post type to allow posting new topics');
 				}
 
-				$this->post($contrib, $post_type, (($s_post_action === false) ? titania_url::$current_page_url : $s_post_action));
+				$this->post($parent_id, $parent_url, $post_type, (($s_post_action === false) ? titania_url::$current_page_url : $s_post_action));
 
 				titania::page_footer(true, $template_body);
 			break;
@@ -72,11 +72,12 @@ class titania_posting
 	/**
 	* Post a new topic
 	*
-	* @param object $contrib Contrib object
+	* @param $parent_id The parent_id
+	* @param $parent_url The url of the parent
 	* @param int $post_type Post Type
 	* @param string $s_post_action URL to the current page to submit to
 	*/
-	public function post($contrib, $post_type, $s_post_action)
+	public function post($parent_id, $parent_url, $post_type, $s_post_action)
 	{
 		if (!phpbb::$auth->acl_get('u_titania_topic'))
 		{
@@ -85,14 +86,34 @@ class titania_posting
 
 		// Setup the post object we'll use
 		$post_object = new titania_post($post_type);
-		$post_object->topic->contrib = $contrib;
+		$post_object->topic->parent_id = $parent_id;
+		$post_object->topic->topic_url = titania_url::unbuild_url($parent_url);
+
+		// Some more complicated permissions for stickes in support
+		$can_sticky = phpbb::$auth->acl_get('m_titania_post_mod');
+		if ($post_type == TITANIA_SUPPORT)
+		{
+			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			{
+				$can_sticky = true;
+			}
+			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $parent_id)
+			{
+				$contrib = new titania_contribution();
+				$contrib->load((int) $parent_id);
+				if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+				{
+					$can_sticky = true;
+				}
+			}
+		}
 
 		// Load the message object
 		$message_object = new titania_message($post_object);
 		$message_object->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
-			'sticky_topic'	=> ($post_object->post_id == $post_object->topic->topic_first_post_id || $post_object->contrib->is_author || $post_object->contrib->is_active_coauthor) ? true : false,
+			'sticky_topic'	=> $can_sticky,
 			'lock_topic'	=> (phpbb::$auth->acl_get('m_titania_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
@@ -182,13 +203,32 @@ class titania_posting
 			titania::needs_auth();
 		}
 
+		// Some more complicated permissions for stickes in support
+		$can_sticky = phpbb::$auth->acl_get('m_titania_post_mod');
+		if ($post_object->post_type == TITANIA_SUPPORT)
+		{
+			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			{
+				$can_sticky = true;
+			}
+			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $post_object->topic->parent_id)
+			{
+				$contrib = new titania_contribution();
+				$contrib->load((int) $post_object->topic->parent_id);
+				if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+				{
+					$can_sticky = true;
+				}
+			}
+		}
+
 		// Load the message object
 		$message_object = new titania_message($post_object);
 		$message_object->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
 			'lock'			=> ($post_object->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('m_titania_post_mod')) ? true : false,
-			'sticky_topic'	=> ($post_object->post_id == $post_object->topic->topic_first_post_id || $post_object->topic->contrib->is_author || $post_object->topic->contrib->is_active_coauthor) ? true : false,
+			'sticky_topic'	=> ($post_object->post_id == $post_object->topic->topic_first_post_id && $can_sticky) ? true : false,
 			'lock_topic'	=> (phpbb::$auth->acl_get('m_titania_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
@@ -302,21 +342,21 @@ class titania_posting
 					redirect(titania_url::append_url($post_object->topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
 				}
 
-				redirect($post_object->topic->get_url(false));
+				redirect($post_object->topic->get_url());
 			}
 			else
 			{
 				$post_object->undelete();
 
-				redirect($post_object->get_url(false, true));
+				redirect($post_object->get_url());
 			}
 		}
 		else
 		{
-			titania::confirm_box(false, ((!$undelete) ? 'DELETE_POST' : 'UNDELETE_POST'), $post_object->get_url($action));
+			titania::confirm_box(false, ((!$undelete) ? 'DELETE_POST' : 'UNDELETE_POST'));
 		}
 
-		redirect($post_object->get_url(false, true));
+		redirect($post_object->get_url());
 	}
 
 	/**
@@ -356,29 +396,6 @@ class titania_posting
 			trigger_error('NO_TOPIC');
 		}
 
-		if (!is_object($topic->contrib))
-		{
-			$topic->contrib = $this->load_contrib($topic->contrib_id);
-		}
-
 		return $topic;
-	}
-
-	/**
-	* Quick load a contrib
-	*
-	* @param mixed $contrib_id
-	* @return object
-	*/
-	public function load_contrib($contrib_id)
-	{
-		$contrib = new titania_contribution;
-
-		if ($contrib->load($contrib_id) === false)
-		{
-			trigger_error('NO_CONTRIB');
-		}
-
-		return $contrib;
 	}
 }

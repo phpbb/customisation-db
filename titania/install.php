@@ -585,6 +585,24 @@ $versions = array(
 		),
 	),
 
+	'0.1.40' => array(
+		'table_column_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'parent_id', array('UINT', 0)),
+			array(TITANIA_TOPICS_TABLE, 'topic_url', array('VCHAR_CI', '')),
+			array(TITANIA_POSTS_TABLE, 'post_url', array('VCHAR_CI', '')),
+		),
+		'table_index_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'parent_id'),
+		),
+
+		'custom' => 'titania_custom',
+
+		'table_column_remove' => array(
+			array(TITANIA_TOPICS_TABLE, 'contrib_id'),
+			array(TITANIA_QUEUE_TABLE, 'contrib_name_clean'),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

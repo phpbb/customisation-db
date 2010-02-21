@@ -212,17 +212,15 @@ class titania_sync
 				$data = array();
 				$post = new titania_post;
 
-				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean, c.contrib_name_clean, c.contrib_type
-					FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t, ' . TITANIA_CONTRIBS_TABLE . ' c
+				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean
+					FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t
 					WHERE t.topic_type = ' . TITANIA_SUPPORT . '
-						AND t.topic_id = p.topic_id
-						AND c.contrib_id = t.contrib_id';
+						AND t.topic_id = p.topic_id';
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
 					$post->__set_array($row);
 					$post->topic->__set_array($row);
-					$post->topic->contrib = array('contrib_name_clean' => $row['contrib_name_clean'], 'contrib_type' => $row['contrib_type']);
 
 					$data[] = array(
 						'object_type'	=> $post->post_type,

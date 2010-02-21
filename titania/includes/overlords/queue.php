@@ -228,7 +228,6 @@ class queue_overlord
 
 		// Load the topic
 		$topic = new titania_topic();
-		$topic->contrib = $contrib;
 		$topic->topic_id = $row['queue_topic_id'];
 		$topic->load();
 

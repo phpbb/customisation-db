@@ -42,14 +42,6 @@ class titania_topic extends titania_database_object
 	protected $sql_id_field = 'topic_id';
 
 	/**
-	 * Contrib object or array of data
-	 * If you can not give an object you must at least have an array containing the contrib_type and contrib_name_clean
-	 *
-	 * @var object|array
-	 */
-	public $contrib;
-
-	/**
 	* True if the currently visiting user has posted in this topic
 	*
 	* @var bool
@@ -67,18 +59,18 @@ class titania_topic extends titania_database_object
 	 * Constructor class for titania topics
 	 *
 	 * @param int|string $type The type of topic ('tracker', 'queue', 'normal').  Normal/default meaning support/discussion.  Constants for the type can be sent instead of a string
-	 * @param object|array $contrib The contrib object or an array meeting the requirements (see comments for $contrib var above)
 	 * @param int $topic_id The topic_id, 0 for making a new topic
 	 */
-	public function __construct($type = TITANIA_SUPPORT, $contrib = array(), $topic_id = 0)
+	public function __construct($type = TITANIA_SUPPORT, $topic_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
 			'topic_id'						=> array('default' => 0),
-			'contrib_id'					=> array('default' => 0),
+			'parent_id'						=> array('default' => 0), // contrib_id most of the time
 			'topic_type'					=> array('default' => 0), // Post Type, Main TITANIA_ constants
 			'topic_access'					=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
 			'topic_category'				=> array('default' => 0), // Category for the topic. For the Tracker
+			'topic_url'						=> array('default' => ''), // URL for the topic (simple unbuilt URL)
 
 			'topic_status'					=> array('default' => 0), // Topic Status, use tags from the DB
 			'topic_assigned'				=> array('default' => ''), // Topic assigned status; u- for user, g- for group (followed by the id).  For the tracker
@@ -110,12 +102,6 @@ class titania_topic extends titania_database_object
 			'topic_last_post_subject'		=> array('default' => ''),
 		));
 
-		// Handle the contrib
-		if (is_object($contrib) || is_array($contrib))
-		{
-			$this->contrib = $contrib;
-		}
-
 		switch ($type)
 		{
 			case 'tracker' :
@@ -141,15 +127,6 @@ class titania_topic extends titania_database_object
 		// @todo search indexer on posts (reindex all in case the topic_access level has changed))
 
 		$this->topic_subject_clean = titania_url::url_slug($this->topic_subject);
-
-		if (!$this->contrib_id && $this->contrib !== false)
-		{
-			$this->contrib_id = $this->contrib->contrib_id;
-		}
-		else if (!$this->contrib_id && $this->contrib === false)
-		{
-			throw new exception('Need a contrib_id to submit a topic');
-		}
 
 		return parent::submit();
 	}
@@ -257,58 +234,20 @@ class titania_topic extends titania_database_object
 	 */
 	public function get_url($action = false)
 	{
-		$append = array(
+		$base = $append = false;
+		titania_url::split_base_params($base, $append, $this->topic_url);
+
+		$append = array_merge($append, array(
 			$this->topic_subject_clean,
 			't' => $this->topic_id,
-		);
+		));
 
 		if ($action)
 		{
 			$append['action'] = $action;
 		}
 
-		switch ($this->topic_type)
-		{
-			case TITANIA_TRACKER :
-				$page = 'tracker';
-			break;
-
-			case TITANIA_QUEUE :
-				// We use a different URL completely
-				if (is_object($this->contrib))
-				{
-					$append['queue'] = titania_types::$types[$this->contrib->contrib_type]->url;
-				}
-				else if (isset($this->contrib['contrib_type']))
-				{
-					$append['queue'] = titania_types::$types[$this->contrib['contrib_type']]->url;
-				}
-				else
-				{
-					throw new Exception('Missing contribution data');
-				}
-				return titania_url::build_url('manage/queue', $append);
-			break;
-
-			default :
-				$page = 'support';
-			break;
-		}
-
-		if (is_object($this->contrib))
-		{
-			$url = $this->contrib->get_url($page);
-		}
-		else if (isset($this->contrib['contrib_type']))
-		{
-			$url = titania_url::build_url(titania_types::$types[$this->contrib['contrib_type']]->url . '/' . $this->contrib['contrib_name_clean'] . '/' . $page);
-		}
-		else
-		{
-			throw new Exception('Missing contribution data');
-		}
-
-		$url = titania_url::append_url($url, $append);
+		$url = titania_url::build_url($base, $append);
 
 		return $url;
 	}

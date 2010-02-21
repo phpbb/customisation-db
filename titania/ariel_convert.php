@@ -440,11 +440,8 @@ switch ($step)
 			}
 
 			$topic = new titania_topic(TITANIA_QUEUE);
-			$topic->contrib_id = $row['contrib_id'];
-			$topic->contrib = array(
-				'contrib_type'			=> $row['contrib_type'],
-				'contrib_name_clean'	=> $row['contrib_name_clean'],
-			);
+			$topic->parent_id = $row['queue_id'];
+			$topic->topic_url = 'manage/queue/q_' . $row['queue_id'];
 			$post = false;
 
 			// Convert the topics over from the phpBB forums
