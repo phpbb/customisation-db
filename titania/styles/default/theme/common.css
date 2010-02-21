@@ -120,8 +120,8 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 .no-screenshot {
 	background: url("{T_THEME_PATH}/images/no_screenshot.gif") no-repeat 0 0;
 	width: 175px;
-	height: 20px;
-	padding-top: 100px;
+	height: 19px;
+	padding-top: 101px;
 	margin: auto;
 	color: #D8D8D7;
 }
