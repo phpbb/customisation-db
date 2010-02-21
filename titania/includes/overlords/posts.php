@@ -141,6 +141,8 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 	*/
 	public static function display_topic_complete($topic)
 	{
+		phpbb::$user->add_lang('viewtopic');
+
 		// Setup the sort tool
 		$sort = new titania_sort();
 		$sort->set_sort_keys(self::$sort_by);
@@ -199,6 +201,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 		self::display_topic($topic, $sort, $pagination);
 		self::assign_common();
+
+		// Display the Quick Reply
+		$message = new titania_message($topic);
+		$message->display_quick_reply();
 
 		phpbb::$template->assign_vars(array(
 			'S_IS_LOCKED'		=> (bool) $topic->topic_locked,

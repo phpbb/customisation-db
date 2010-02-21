@@ -137,9 +137,10 @@ class titania_message
 
 		$submit = isset($_POST['submit']) ? true : false;
 		$preview = isset($_POST['preview']) ? true : false;
+		$full_editor = isset($_POST['full_editor']) ? true : false;
 
 		// Submit the data to the post object
-		if (method_exists($this->post_object, 'post_data') && $submit || $preview || ($this->attachments && ($this->attachments->uploaded || $this->attachments->deleted)))
+		if (method_exists($this->post_object, 'post_data') && $submit || $preview || $full_editor || ($this->attachments && ($this->attachments->uploaded || $this->attachments->deleted)))
 		{
 			$this->post_object->post_data($this);
 		}
@@ -253,6 +254,22 @@ class titania_message
 		}
 
 		$this->display_panels();
+	}
+
+	/**
+	* Display Quick Reply
+	* This function expects the $post_object sent to be titania_topic object
+	*/
+	public function display_quick_reply()
+	{
+		// Add the forum key
+		add_form_key($this->settings['form_name']);
+
+		phpbb::$template->assign_vars(array(
+			'S_QUICK_REPLY'		=> true,
+			'U_QR_ACTION'		=> $this->post_object->get_url('reply'),
+			'SUBJECT'			=> 'Re: ' . $this->post_object->topic_subject,
+		));
 	}
 
 	/**
