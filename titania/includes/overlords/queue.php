@@ -211,6 +211,8 @@ class queue_overlord
 			trigger_error('NO_QUEUE_ITEM');
 		}
 
+		titania_tracking::track(TITANIA_QUEUE, $queue_id);
+
 		// Load the contribution
 		$contrib = new titania_contribution();
 		$contrib->load((int) $row['contrib_id']);
@@ -275,7 +277,7 @@ class queue_overlord
 		$flags = titania_count::get_flags(titania::$access_level);
 		$replies = titania_count::from_db($row['topic_posts'], $flags);
 
-		$is_unread = titania_tracking::is_unread(TITANIA_QUEUE, $row['queue_id'], $row['queue_submit_time']);
+		$is_unread = titania_tracking::is_unread(TITANIA_QUEUE, $row['queue_id'], max($row['queue_submit_time'], $row['topic_last_post_time']));
 		$folder_img = $folder_alt = '';
 		self::folder_img($is_unread, $folder_img, $folder_alt, $replies);
 

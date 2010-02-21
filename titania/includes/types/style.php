@@ -45,6 +45,11 @@ class titania_type_style extends titania_type_base
 	 */
 	public $author_count = 'author_styles';
 
+	// Validation messages (for the PM)
+	public $validation_subject = 'STYLE_VALIDATION';
+	public $validation_message_approve = 'STYLE__VALIDATION_MESSAGE_APPROVE';
+	public $validation_message_deny = 'STYLE__VALIDATION_MESSAGE_DENY';
+
 	public function __construct()
 	{
 		$this->lang = phpbb::$user->lang['STYLE'];

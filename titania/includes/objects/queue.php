@@ -197,4 +197,107 @@ class titania_queue extends titania_message_object
 		// Assplode
 		parent::delete();
 	}
+
+	public function approve()
+	{
+		// Send notification message
+		$this->send_approve_deny_notification();
+
+		// Update the revisions table
+		$sql_ary = array(
+			'revision_validated'	=> true,
+			'validation_date'		=> titania::$time,
+		);
+		$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+			WHERE revision_id = ' . (int) $this->revision_id;
+		phpbb::$db->sql_query($sql);
+
+		// Update the contribs table
+		$sql_ary = array(
+			'contrib_status'		=> TITANIA_CONTRIB_APPROVED,
+			'contrib_last_update'	=> titania::$time,
+		);
+		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+			WHERE contrib_id = ' . (int) $this->contrib_id;
+		phpbb::$db->sql_query($sql);
+
+		// Self-updating
+		$this->queue_status = TITANIA_QUEUE_APPROVED;
+		$this->submit(false);
+	}
+
+	public function deny()
+	{
+		// Send notification message
+		$this->send_approve_deny_notification(false);
+
+		// Self-updating
+		$this->queue_status = TITANIA_QUEUE_DENIED;
+		$this->submit(false);
+	}
+
+	/**
+	* Send the approve/deny notification
+	*/
+	private function send_approve_deny_notification($approve = true)
+	{
+		titania::add_lang('manage');
+		phpbb::_include('functions_privmsgs', 'submit_pm');
+
+		// Generate the authors list to send it to
+		$authors = array($this->submitter_user_id => 'to');
+		$sql = 'SELECT user_id FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+			WHERE contrib_id = ' . (int) $this->contrib_id . '
+				AND active = 1';
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$authors[$row['user_id']] = 'to';
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Need some stuff
+		$contrib = new titania_contribution();
+		$contrib->load((int) $this->contrib_id);
+		$revision = new titania_revision($contrib, $this->revision_id);
+		$revision->load();
+
+		// Subject
+		$subject = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->validation_subject], $contrib->contrib_name, $revision->revision_version);
+
+		// Message
+		$notes = $this->queue_notes;
+		decode_message($notes, $this->queue_notes_uid);
+		if ($approve)
+		{
+			$message = titania_types::$types[$contrib->contrib_type]->validation_message_approve;
+		}
+		else
+		{
+			$message = titania_types::$types[$contrib->contrib_type]->validation_message_deny;
+		}
+		$message = sprintf(phpbb::$user->lang[$message], $notes);
+
+		// Parse the message
+		$message_uid = $message_bitfield = $message_options = false;
+		generate_text_for_storage($message, $message_uid, $message_bitfield, $message_options, true, true, true);
+
+		$data = array(
+			'address_list'		=> array('u' => $authors),
+			'from_user_id'		=> phpbb::$user->data['user_id'],
+			'from_username'		=> phpbb::$user->data['username'],
+			'icon_id'			=> 0,
+			'from_user_ip'		=> phpbb::$user->ip,
+			'enable_bbcode'		=> true,
+			'enable_smilies'	=> true,
+			'enable_urls'		=> true,
+			'enable_sig'		=> true,
+			'message'			=> $message,
+			'bbcode_bitfield'	=> $message_bitfield,
+			'bbcode_uid'		=> $message_uid,
+		);
+
+		// Submit Plz
+		submit_pm('post', $subject, $data, false);
+	}
 }

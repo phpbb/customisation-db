@@ -158,7 +158,6 @@ class titania_revision extends titania_database_object
 
 		// Update the old queue and delete the new one
 		$old_queue->revision_id = $queue->revision_id;
-		$old_queue->submitter_user_id = $queue->submitter_user_id;
 		$old_queue->mpv_results = $queue->mpv_results;
 		$old_queue->mpv_results_bitfield = $queue->mpv_results_bitfield;
 		$old_queue->mpv_results_uid = $queue->mpv_results_uid;

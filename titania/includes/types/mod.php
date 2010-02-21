@@ -44,6 +44,11 @@ class titania_type_mod extends titania_type_base
 	 */
 	public $author_count = 'author_mods';
 
+	// Validation messages (for the PM)
+	public $validation_subject = 'MOD_VALIDATION';
+	public $validation_message_approve = 'MOD_VALIDATION_MESSAGE_APPROVE';
+	public $validation_message_deny = 'MOD_VALIDATION_MESSAGE_DENY';
+
 	/**
 	* Run MPV/Automod Test for this type?
 	*/

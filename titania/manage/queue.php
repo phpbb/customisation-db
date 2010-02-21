@@ -87,24 +87,39 @@ if ($queue_id)
 	phpbb::$user->add_lang('viewforum');
 
 	$action = request_var('action', '');
-	$submit = (isset($_POST['submit'])) ? true : false;
 
 	switch ($action)
 	{
 		case 'approve' :
-			$queue = queue_overlord::get_queue_object($queue_id, true);
-			if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
-			{
-				titania::needs_auth();
-			}
-		break;
-
 		case 'deny' :
 			$queue = queue_overlord::get_queue_object($queue_id, true);
+
+			// Load the contribution
+			$contrib = new titania_contribution();
+			$contrib->load((int) $queue->contrib_id);
+
 			if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
 				titania::needs_auth();
 			}
+
+			if (titania::confirm_box(true))
+			{
+				if ($action == 'approve')
+				{
+					$queue->approve();
+				}
+				else
+				{
+					$queue->deny();
+				}
+			}
+			else
+			{
+				phpbb::$template->assign_var('CONFIRM_EXTRA', $queue->generate_text_for_display());
+				titania::confirm_box(false, (($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE'));
+			}
+			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
 		break;
 
 		case 'notes' :
@@ -158,6 +173,7 @@ if ($queue_id)
 			}
 			else
 			{
+				// Generate the list of tags we can move it to
 				$extra = '<select name="move_to">';
 				foreach ($tags as $tag_id => $row)
 				{
@@ -168,6 +184,7 @@ if ($queue_id)
 
 				titania::confirm_box(false, 'MOVE_QUEUE');
 			}
+			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
 		break;
 	}
 
