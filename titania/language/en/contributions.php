@@ -108,6 +108,7 @@ $lang = array_merge($lang, array(
 	'NEW_TOPIC'							=> 'New Topic',
 	'NOT_VALIDATED'						=> 'Not Validated',
 	'NO_CATEGORY'						=> 'The selected category does not exist',
+	'NO_SCREENSHOT'						=> 'No screenshot',
 
 	'REVISION'							=> 'Revision',
 	'REVISIONS'							=> 'Revisions',

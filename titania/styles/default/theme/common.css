@@ -99,6 +99,15 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 
 /* Contribution Details
 --------------------------------------------- */
+.right-column {
+	margin-left: 210px;
+}
+
+.left-column {
+	width: 200px;
+	float: left;
+}
+
 .container.demo {
 	text-align: center;
 }
@@ -108,13 +117,13 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 	color: #333333;
 }
 
-.right-column {
-	margin-left: 210px;
-}
-
-.left-column {
-	width: 200px;
-	float: left;
+.no-screenshot {
+	background: url("{T_THEME_PATH}/images/no_screenshot.gif") no-repeat 0 0;
+	width: 175px;
+	height: 20px;
+	padding-top: 100px;
+	margin: auto;
+	color: #D8D8D7;
 }
 
 .download-button {
