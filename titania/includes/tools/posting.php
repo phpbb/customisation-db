@@ -47,6 +47,12 @@ class titania_posting
 				titania::page_footer(true, $template_body);
 			break;
 
+			case 'quote' :
+				$this->reply(request_var('t', 0), request_var('p', 0));
+
+				titania::page_footer(true, $template_body);
+			break;
+
 			case 'reply' :
 				$this->reply(request_var('t', 0));
 
@@ -136,10 +142,9 @@ class titania_posting
 	/**
 	* Reply to an existing topic
 	*
-	* @param mixed $post_type
 	* @param mixed $topic_id
 	*/
-	public function reply($topic_id)
+	public function reply($topic_id, $quote_post_id = false)
 	{
 		if (!phpbb::$auth->acl_get('u_titania_post'))
 		{
@@ -155,6 +160,20 @@ class titania_posting
 		if (!$post_object->acl_get('reply'))
 		{
 			titania::needs_auth();
+		}
+
+		// Quoting?
+		if ($quote_post_id !== false && $post_object->post_text == '')
+		{
+			$quote = $this->load_post($quote_post_id);
+
+			// Permission check
+			if (titania::$access_level <= min($quote->post_access, $quote->topic->topic_access) && (phpbb::$auth->acl_get('m_titania_post_mod') || ($quote->post_approved && (!$quote->post_deleted || $quote->post_deleted == phpbb::$user->data['user_id']))))
+			{
+				$for_edit = $quote->generate_text_for_edit();
+
+				$post_object->post_text = '[quote="' . users_overlord::get_user($quote->post_user_id, '_username', true) . '"]' . $for_edit['text'] . '[/quote]';
+			}
 		}
 
 		// Load the message object

@@ -124,6 +124,7 @@ abstract class titania_message_object extends titania_database_object
 		//'allow_urls'
 		//'text'
 		$for_edit = array_merge($for_edit, generate_text_for_edit($message, $message_uid, $message_options));
+		$for_edit['message'] = $for_edit['text']; // Prevent nubness
 
 		// Add any of the marked fields to the array
 		foreach ($this->object_config as $field => $options)
