@@ -27,7 +27,8 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 titania::add_lang('manage');
 
-if (!phpbb::$user->data['user_type'] == USER_FOUNDER)
+// Give founders and myself access to run this on .com
+if (!phpbb::$user->data['user_type'] == USER_FOUNDER && phpbb::$user->data['user_id'] != 202401)
 {
 	titania::needs_auth();
 }
