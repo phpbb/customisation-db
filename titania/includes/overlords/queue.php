@@ -184,6 +184,11 @@ class queue_overlord
 		topics_overlord::assign_common();
 	}
 
+	/**
+	* Display a single queue item
+	*
+	* @param int $queue_id
+	*/
 	public static function display_queue_item($queue_id)
 	{
 		titania::add_lang('contributions');
@@ -281,6 +286,7 @@ class queue_overlord
 		$folder_img = $folder_alt = '';
 		self::folder_img($is_unread, $folder_img, $folder_alt, $replies);
 
+		$base_url = titania_url::build_url('manage/queue', array('queue' => titania_types::$types[$row['queue_type']]->url));
 		$output = array(
 			'TOPIC_SUBJECT'				=> $row['contrib_name'] . ' - ' . $row['revision_version'],
 			'TOPIC_REPLIES'				=> ($replies - 1),
@@ -291,9 +297,9 @@ class queue_overlord
 			'TOPIC_LAST_POST_USER_FULL'		=> users_overlord::get_user($row['topic_last_post_user_id'], '_full'),
 			'TOPIC_LAST_POST_TIME'			=> phpbb::$user->format_date($row['topic_last_post_time']),
 
-			'U_VIEW_TOPIC'				=> titania_url::append_url(titania_url::$current_page_url, array('q' => $row['queue_id'])),
+			'U_VIEW_TOPIC'				=> titania_url::append_url($base_url, array('q' => $row['queue_id'])),
 			'U_VIEW_CONTRIB'			=> titania_url::build_url(titania_types::$types[$row['queue_type']]->url . '/' . $row['contrib_name_clean'] . '/'),
-			'U_VIEW_LAST_POST'			=> titania_url::append_url(titania_url::$current_page_url, array('p' => $row['topic_last_post_id'], '#p' => $row['topic_last_post_id'])),
+			'U_VIEW_LAST_POST'			=> titania_url::append_url($base_url, array('p' => $row['topic_last_post_id'], '#p' => $row['topic_last_post_id'])),
 
 			'S_UNREAD'					=> ($is_unread) ? true : false,
 
@@ -307,6 +313,11 @@ class queue_overlord
 		return $output;
 	}
 
+	/**
+	* Display the categories (tags)
+	*
+	* @param int $type
+	*/
 	public static function display_categories($type)
 	{
 		$tags = titania::$cache->get_tags(TITANIA_QUEUE);

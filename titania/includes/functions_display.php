@@ -195,7 +195,7 @@ function titania_display_contribs($mode, $id, $sort = false, $pagination = false
 
 	// Handle pagination
 	$pagination->sql_count($sql_ary, 'c.contrib_id');
-	$pagination->build_pagination(titania_url::$current_page_url);
+	$pagination->build_pagination(titania_url::$current_page, titania_url::$params);
 
 	// Setup some objects we'll use for temps
 	$contrib = new titania_contribution();
