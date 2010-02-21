@@ -577,6 +577,14 @@ $versions = array(
 		'custom'	=> 'titania_tags',
 	),
 
+	'0.1.39' => array(
+		'table_column_add' => array(
+			array(TITANIA_QUEUE_TABLE, 'queue_close_user', array('UINT', 0)),
+			array(TITANIA_QUEUE_TABLE, 'queue_progress', array('UINT', 0)), // user_id
+			array(TITANIA_QUEUE_TABLE, 'queue_progress_time', array('UINT:11', 0)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

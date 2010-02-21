@@ -90,6 +90,18 @@ if ($queue_id)
 
 	switch ($action)
 	{
+		case 'in_progress' :
+			$queue = queue_overlord::get_queue_object($queue_id, true);
+			$queue->in_progress();
+			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
+		break;
+
+		case 'no_progress' :
+			$queue = queue_overlord::get_queue_object($queue_id, true);
+			$queue->no_progress();
+			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
+		break;
+
 		case 'approve' :
 		case 'deny' :
 			$queue = queue_overlord::get_queue_object($queue_id, true);
@@ -168,8 +180,7 @@ if ($queue_id)
 					trigger_error('NO_TAG');
 				}
 
-				$queue->queue_status = $new_tag;
-				$queue->submit(false);
+				$queue->move($new_tag);
 			}
 			else
 			{

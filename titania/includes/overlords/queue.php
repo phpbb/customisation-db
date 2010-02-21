@@ -216,6 +216,7 @@ class queue_overlord
 			trigger_error('NO_QUEUE_ITEM');
 		}
 
+		// Store tracking time
 		titania_tracking::track(TITANIA_QUEUE, $queue_id);
 
 		// Load the contribution
@@ -256,6 +257,15 @@ class queue_overlord
 			{
 				$quick_actions['APPROVE'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve'));
 				$quick_actions['DENY'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny'));
+			}
+
+			if ($row['queue_progress'] == phpbb::$user->data['user_id'])
+			{
+				$quick_actions['MARK_NO_PROGRESS'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'no_progress'));
+			}
+			else if (!$row['queue_progress'])
+			{
+				$quick_actions['MARK_IN_PROGRESS'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'in_progress'));
 			}
 		}
 
@@ -302,6 +312,7 @@ class queue_overlord
 			'U_VIEW_LAST_POST'			=> titania_url::append_url($base_url, array('p' => $row['topic_last_post_id'], '#p' => $row['topic_last_post_id'])),
 
 			'S_UNREAD'					=> ($is_unread) ? true : false,
+			'S_TOPIC_PROGRESS'			=> ($row['queue_progress']) ? true : false,
 
 			'TOPIC_FOLDER_IMG'			=> phpbb::$user->img($folder_img, $folder_alt),
 			'TOPIC_FOLDER_IMG_SRC'		=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),

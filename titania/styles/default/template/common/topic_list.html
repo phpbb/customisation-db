@@ -35,7 +35,7 @@
 		<ul class="topiclist cplist">
 	<!-- ENDIF -->
 
-		<li class="row<!-- IF topics.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topics.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topics.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">
+		<li class="row<!-- IF topics.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topics.S_TOPIC_PROGRESS --> bg3<!-- ENDIF --><!-- IF topics.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topics.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">
 			<dl class="icon" style="background-image: url({topics.TOPIC_FOLDER_IMG_SRC}); background-repeat: no-repeat;">
 				<dt title="{topics.TOPIC_FOLDER_IMG_ALT}"><!-- IF topics.S_UNREAD_TOPIC --><a href="{topics.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF --><a href="{topics.U_VIEW_TOPIC}" class="topictitle">{topics.TOPIC_SUBJECT}</a>
 					<!-- IF not topics.TOPIC_APPROVED or topics.S_POSTS_UNAPPROVED --><a href="{topics.U_MCP_QUEUE}">{topics.UNAPPROVED_IMG}</a> <!-- ENDIF -->

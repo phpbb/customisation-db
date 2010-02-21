@@ -63,6 +63,9 @@ class titania_queue extends titania_message_object
 			'queue_status'			=> array('default' => TITANIA_QUEUE_HIDE), // Uses either TITANIA_QUEUE_NEW or one of the tags for the queue status from the DB
 			'queue_submit_time'		=> array('default' => titania::$time),
 			'queue_close_time'		=> array('default' => 0),
+			'queue_close_user'		=> array('default' => 0),
+			'queue_progress'		=> array('default' => 0), // User_id of whoever marked this as in progress
+			'queue_progress_time'	=> array('default' => 0),
 
 			'queue_notes'			=> array('default' => '',	'message_field' => 'message'),
 			'queue_notes_bitfield'	=> array('default' => '',	'message_field' => 'message_bitfield'),
@@ -198,6 +201,28 @@ class titania_queue extends titania_message_object
 		parent::delete();
 	}
 
+	public function move($new_status)
+	{
+		$this->queue_status = (int) $new_status;
+		$this->queue_progress = 0;
+		$this->queue_progress_time = 0;
+		$this->submit(false);
+	}
+
+	public function in_progress()
+	{
+		$this->queue_progress = phpbb::$user->data['user_id'];
+		$this->queue_progress_time = titania::$time;
+		$this->submit(false);
+	}
+
+	public function no_progress()
+	{
+		$this->queue_progress = 0;
+		$this->queue_progress_time = 0;
+		$this->submit(false);
+	}
+
 	public function approve()
 	{
 		// Send notification message
@@ -224,6 +249,7 @@ class titania_queue extends titania_message_object
 		// Self-updating
 		$this->queue_status = TITANIA_QUEUE_APPROVED;
 		$this->queue_close_time = titania::$time;
+		$this->queue_close_user = phpbb::$user->data['user_id'];
 		$this->submit(false);
 	}
 
@@ -235,6 +261,7 @@ class titania_queue extends titania_message_object
 		// Self-updating
 		$this->queue_status = TITANIA_QUEUE_DENIED;
 		$this->queue_close_time = titania::$time;
+		$this->queue_close_user = phpbb::$user->data['user_id'];
 		$this->submit(false);
 	}
 
