@@ -59,7 +59,7 @@ class titania_queue extends titania_message_object
 			'submitter_user_id'		=> array('default' => (int) phpbb::$user->data['user_id']),
 			'queue_topic_id'		=> array('default' => 0),
 
-			'queue_type'			=> array('default' => 0),
+			'queue_type'			=> array('default' => 0), // contrib type
 			'queue_status'			=> array('default' => TITANIA_QUEUE_HIDE), // Uses either TITANIA_QUEUE_NEW or one of the tags for the queue status from the DB
 			'queue_submit_time'		=> array('default' => titania::$time),
 			'queue_close_time'		=> array('default' => 0),
@@ -223,6 +223,7 @@ class titania_queue extends titania_message_object
 
 		// Self-updating
 		$this->queue_status = TITANIA_QUEUE_APPROVED;
+		$this->queue_close_time = titania::$time;
 		$this->submit(false);
 	}
 
@@ -233,6 +234,7 @@ class titania_queue extends titania_message_object
 
 		// Self-updating
 		$this->queue_status = TITANIA_QUEUE_DENIED;
+		$this->queue_close_time = titania::$time;
 		$this->submit(false);
 	}
 
