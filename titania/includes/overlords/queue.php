@@ -157,7 +157,7 @@ class queue_overlord
 			// Store the tracking info we grabbed in the tool
 			if (isset($row['track_time']))
 			{
-				titania_tracking::store_track(TITANIA_QUEUE, $row['queue_id'], $row['track_time']);
+				titania_tracking::store_track(TITANIA_TOPIC, $row['topic_id'], $row['track_time']);
 			}
 
 			$queue_ids[] = $row['queue_id'];
@@ -178,7 +178,6 @@ class queue_overlord
 			$row = self::$queue[$queue_id];
 
 			$topic->__set_array($row);
-			$topic->unread = titania_tracking::is_unread(TITANIA_QUEUE, $row['queue_id'], max($row['queue_submit_time'], $row['topic_last_post_time']));
 
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'TOPIC_SUBJECT'				=> $row['contrib_name'] . ' - ' . $row['revision_version'],
@@ -227,9 +226,6 @@ class queue_overlord
 		{
 			trigger_error('NO_QUEUE_ITEM');
 		}
-
-		// Store tracking time
-		titania_tracking::track(TITANIA_QUEUE, $queue_id);
 
 		// Load the contribution
 		$contrib = new titania_contribution();

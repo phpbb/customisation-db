@@ -320,7 +320,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$post->assign_details(),
 				users_overlord::assign_details($post->post_user_id),
 				array(
-					'S_FIRST_UNREAD'		=> ($post->post_time >= $last_mark_time && $prev_post_time < $last_mark_time) ? true : false,
+					'S_FIRST_UNREAD'		=> ($post->post_time >= $last_mark_time && $prev_post_time <= $last_mark_time) ? true : false,
 				)
 			));
 	//S_IGNORE_POST

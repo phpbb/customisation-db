@@ -205,6 +205,8 @@ class titania_topic extends titania_database_object
 	*/
 	public function assign_details()
 	{
+		$this->unread = titania_tracking::is_unread(TITANIA_TOPIC, $this->topic_id, $this->topic_last_post_time);
+
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);
 
