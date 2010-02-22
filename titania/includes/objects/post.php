@@ -394,7 +394,7 @@ class titania_post extends titania_message_object
 		}
 
 		// Gotta update the topic again with the first/last post data and update teh post count
-		$this->topic->update_postcount($this->post_access, false, false);
+		$this->update_topic_postcount();
 		$this->topic->submit();
 
 		$this->index();
@@ -425,8 +425,8 @@ class titania_post extends titania_message_object
 			));
 		}
 
-		// Update the postcount for the topic and submit the topic
-		$this->topic->update_postcount($this->post_access, $this->sql_data['post_access'], false);
+		// Update the postcount for the topic and submit it
+		$this->update_topic_postcount();
 		$this->topic->submit();
 
 		$this->topic_id = $this->topic->topic_id;
@@ -448,9 +448,8 @@ class titania_post extends titania_message_object
 		$this->post_delete_user = phpbb::$user->data['user_id'];
 		$this->post_edit_reason = $reason;
 
-		// A bit of a hack here - assuming team access can view soft deleted posts (and that even if it is wrong, perfect accuracy isn't a big deal for teams)
-		$this->topic->update_postcount(TITANIA_ACCESS_TEAMS, $this->post_access, false);
-
+		// Update the postcount for the topic and submit it
+		$this->update_topic_postcount();
 		$this->topic->submit();
 
 		parent::submit();
@@ -463,12 +462,11 @@ class titania_post extends titania_message_object
 	*/
 	public function undelete()
 	{
-		// Reverse the hack for soft delete
-		$this->topic->update_postcount($this->post_access, TITANIA_ACCESS_TEAMS, false);
-
 		$this->post_deleted = 0;
 		$this->post_delete_user = 0;
 
+		// Update the postcount for the topic and submit it
+		$this->update_topic_postcount();
 		$this->topic->submit();
 
 		parent::submit();
@@ -479,7 +477,8 @@ class titania_post extends titania_message_object
 	*/
 	public function hard_delete()
 	{
-		$this->topic->update_postcount(false, $this->post_access);
+		// Update the postcount for the topic and submit it
+		$this->update_topic_postcount(true);
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
 		if ($this->topic->get_postcount(TITANIA_ACCESS_PUBLIC) == 0)
@@ -539,6 +538,83 @@ class titania_post extends titania_message_object
 			'approved'		=> $this->post_approved,
 			'reported'		=> $this->post_reported,
 		));
+	}
+
+	/**
+	* Update postcount on the parent topic
+	*/
+	public function update_topic_postcount($hard_delete = false)
+	{
+		if ($this->post_id && empty($this->sql_data))
+		{
+			throw new exception('Modifying a post requires you load it through the load() function (we require the original information).');
+		}
+
+		// Get the current count
+		$to_db = titania_count::from_db($this->topic->topic_posts, false);
+
+		// Revert the old count from this post
+		if ($this->post_id)
+		{
+			if ($this->sql_data['post_deleted'] != 0)
+			{
+				$to_db['deleted']--;
+			}
+			else if (!$this->sql_data['post_approved'])
+			{
+				$to_db['unapproved']--;
+			}
+			else
+			{
+				switch ($this->sql_data['post_access'])
+				{
+					case TITANIA_ACCESS_PUBLIC :
+						$to_db['public']--;
+					break;
+
+					case TITANIA_ACCESS_AUTHORS :
+						$to_db['authors']--;
+					break;
+
+					case TITANIA_ACCESS_TEAMS :
+						$to_db['teams']--;
+					break;
+				}
+			}
+		}
+
+		// Then recount those options for this post if we are not hard deleting it.
+		if (!$hard_delete)
+		{
+			if ($this->post_deleted != 0)
+			{
+				$to_db['deleted']++;
+			}
+			else if (!$this->post_approved)
+			{
+				$to_db['unapproved']++;
+			}
+			else
+			{
+				switch ($this->post_access)
+				{
+					case TITANIA_ACCESS_PUBLIC :
+						$to_db['public']++;
+					break;
+
+					case TITANIA_ACCESS_AUTHORS :
+						$to_db['authors']++;
+					break;
+
+					case TITANIA_ACCESS_TEAMS :
+						$to_db['teams']++;
+					break;
+				}
+			}
+		}
+
+		// Update the field on the topic
+		$this->topic->topic_posts = titania_count::to_db($to_db);
 	}
 
 	/**

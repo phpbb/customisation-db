@@ -145,71 +145,6 @@ class titania_topic extends titania_database_object
 	}
 
 	/**
-	* Update postcount (for adding/updating/deleting a post
-	*
-	* @param int|bool $new_access_level The new access level (false for hard deleting a post)
-	* @param int|bool $old_access_level The old access level (false for adding a new post)
-	* @param bool $auto_submit True to automatically update the topic in the database (only applies if $this->topic_id)
-	*/
-	public function update_postcount($new_access_level, $old_access_level = false, $auto_submit = true)
-	{
-		// Get the current count
-		$to_db = titania_count::from_db($this->topic_posts, false);
-
-		// If we are updating a post we need to clear the postcount from the old post
-		if ($old_access_level !== false)
-		{
-			// If the two are the same just skip everything
-			if ($old_access_level == $new_access_level)
-			{
-				return;
-			}
-
-			switch ($old_access_level)
-			{
-				case TITANIA_ACCESS_PUBLIC :
-					$to_db['public']--;
-				break;
-
-				case TITANIA_ACCESS_AUTHORS :
-					$to_db['authors']--;
-				break;
-
-				case TITANIA_ACCESS_TEAMS :
-					$to_db['teams']--;
-				break;
-			}
-		}
-
-		// If we are deleting a post new access level should be false
-		if ($new_access_level !== false)
-		{
-			switch ($new_access_level)
-			{
-				case TITANIA_ACCESS_PUBLIC :
-					$to_db['public']++;
-				break;
-
-				case TITANIA_ACCESS_AUTHORS :
-					$to_db['authors']++;
-				break;
-
-				case TITANIA_ACCESS_TEAMS :
-					$to_db['teams']++;
-				break;
-			}
-		}
-
-		$this->topic_posts = titania_count::to_db($to_db);
-
-		// Autosubmit if wanted
-		if ($auto_submit && $this->topic_id)
-		{
-			parent::submit();
-		}
-	}
-
-	/**
 	* Get the postcount for displaying
 	*
 	* @param int|bool $access_level Bool False to get the post count for the current user, access level id for finding from a specific level
@@ -223,7 +158,8 @@ class titania_topic extends titania_database_object
 			$access_level = titania::$access_level;
 		}
 
-		$flags = titania_count::get_flags($access_level);
+		$is_mod = phpbb::$auth->acl_get('m_titania_post_mod');
+		$flags = titania_count::get_flags($access_level, $is_mod, $is_mod);
 		return titania_count::from_db($this->topic_posts, $flags);
 	}
 
@@ -269,9 +205,6 @@ class titania_topic extends titania_database_object
 	*/
 	public function assign_details()
 	{
-		// Check read status
-		$this->unread = titania_tracking::is_unread(TITANIA_TOPIC, $this->topic_id, $this->topic_last_post_time);
-
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);
 

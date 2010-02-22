@@ -370,7 +370,9 @@ class titania_sync
 	{
 		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
 			WHERE topic_id = ' . (int) $topic_id . '
-				AND (post_access = ' . TITANIA_ACCESS_TEAMS . ' OR post_deleted <> 0)'; // Account for our hacking (post_deleted)
+				AND post_access = ' . TITANIA_ACCESS_TEAMS . '
+				AND post_deleted = 0
+				AND post_approved = 1';
 		$result = phpbb::$db->sql_query($sql);
 		$teams = phpbb::$db->sql_fetchfield('cnt', $result);
 		phpbb::$db->sql_freeresult($result);
@@ -378,7 +380,8 @@ class titania_sync
 		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
 			WHERE topic_id = ' . (int) $topic_id . '
 				AND post_access = ' . TITANIA_ACCESS_AUTHORS . '
-				AND post_deleted = 0'; // Account for our hacking (post_deleted)
+				AND post_deleted = 0
+				AND post_approved = 1';
 		$result = phpbb::$db->sql_query($sql);
 		$authors = phpbb::$db->sql_fetchfield('cnt', $result);
 		phpbb::$db->sql_freeresult($result);
@@ -386,15 +389,33 @@ class titania_sync
 		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
 			WHERE topic_id = ' . (int) $topic_id . '
 				AND post_access = ' . TITANIA_ACCESS_PUBLIC . '
-				AND post_deleted = 0'; // Account for our hacking (post_deleted)
+				AND post_deleted = 0
+				AND post_approved = 1';
 		$result = phpbb::$db->sql_query($sql);
 		$public = phpbb::$db->sql_fetchfield('cnt', $result);
 		phpbb::$db->sql_freeresult($result);
 
+		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
+			WHERE topic_id = ' . (int) $topic_id . '
+				AND post_deleted <> 0';
+		$result = phpbb::$db->sql_query($sql);
+		$deleted = phpbb::$db->sql_fetchfield('cnt', $result);
+		phpbb::$db->sql_freeresult($result);
+
+		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
+			WHERE topic_id = ' . (int) $topic_id . '
+				AND post_deleted = 0
+				AND post_approved = 0';
+		$result = phpbb::$db->sql_query($sql);
+		$unapproved = phpbb::$db->sql_fetchfield('cnt', $result);
+		phpbb::$db->sql_freeresult($result);
+
 		return titania_count::to_db(array(
-			'teams'		=> $teams,
-			'authors'	=> $authors,
-			'public'	=> $public,
+			'teams'			=> $teams,
+			'authors'		=> $authors,
+			'public'		=> $public,
+			'deleted'		=> $deleted,
+			'unapproved'	=> $unapproved,
 		));
 	}
 
