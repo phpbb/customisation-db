@@ -12,10 +12,12 @@
 			<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
 
 			<fieldset>
+				<!-- IF S_EDIT_SUBJECT or S_CREATE -->
 				<dl>
 					<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
 					<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
 				</dl>
+				<!-- ENDIF -->
 				<!-- IF S_CREATE -->
 				<dl>
 					<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label><br /><span>{L_CONTRIB_PERMALINK_EXPLAIN}</span></dt>
@@ -32,13 +34,17 @@
 					</dd>
 				</dl>
 				<!-- ENDIF -->
+				<!-- IF S_EDIT_MESSAGE or S_CREATE -->
 				<dl>
 					<dt><label for="{POSTING_TEXT_NAME}">{L_CONTRIB_DESCRIPTION}:</label></dt>
 					<dd></dd>
 				</dl>
+				<!-- ENDIF -->
 			</fieldset>
 
-	<!-- INCLUDE posting/posting_basic_editor.html -->
+			<!-- IF S_EDIT_MESSAGE or S_CREATE -->
+				<!-- INCLUDE posting/posting_basic_editor.html -->
+			<!-- ENDIF -->
 
 			<h3>{L_OPTIONS}</h3>
 			<fieldset>
@@ -82,7 +88,9 @@
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<fieldset class="submit-buttons">
 				<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
-				<input type="submit" name="preview" value="{L_PREVIEW}" class="button1" />&nbsp;
+				<!-- IF S_EDIT_MESSAGE or S_CREATE -->
+					<input type="submit" name="preview" value="{L_PREVIEW}" class="button1" />&nbsp;
+				<!-- ENDIF -->
 				<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
 				{S_FORM_TOKEN}
 			</fieldset>

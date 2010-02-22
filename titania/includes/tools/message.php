@@ -60,6 +60,8 @@ class titania_message
 		'lock'			=> false,
 		'sticky_topic'	=> false,
 		'lock_topic'	=> false,
+		'edit_subject'	=> true,
+		'edit_message'	=> false,
 	);
 
 	/**
@@ -312,10 +314,7 @@ class titania_message
 		$smilies_disabled = (isset($_POST['disable_smilies']) || !$post_options->get_status('smilies')) ? true : false;
 		$magic_url_disabled = (isset($_POST['disable_magic_url'])) ? true : false;
 
-		return array(
-			'subject'			=> utf8_normalize_nfc(request_var($this->settings['subject_name'], ((isset($for_edit['subject'])) ? $for_edit['subject'] : ''), true)),
-			'message'			=> utf8_normalize_nfc(request_var($this->settings['text_name'], ((isset($for_edit['text'])) ? $for_edit['text'] : ''), true)),
-			'options'			=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
+		$data = array(
 			'access'			=> request_var('message_access', (int) ((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC)),
 			'lock'				=> ($this->auth['lock'] && isset($_POST['lock'])) ? true : false,
 			'has_attachments'	=> ($this->attachments !== false && sizeof($this->attachments->get_attachments())) ? true : false,
@@ -327,6 +326,21 @@ class titania_message
 			'sticky_topic'		=> ($this->auth['sticky_topic'] && isset($_POST['sticky_topic'])) ? true : false,
 			'lock_topic'		=> ($this->auth['lock_topic'] && isset($_POST['lock_topic'])) ? true : false,
 		);
+
+		if ($this->auth['edit_subject'])
+		{
+			$data['subject'] = utf8_normalize_nfc(request_var($this->settings['subject_name'], ((isset($for_edit['subject'])) ? $for_edit['subject'] : ''), true));
+		}
+
+		if ($this->auth['edit_message'])
+		{
+			$data = array_merge($data, array(
+				'message'	=> utf8_normalize_nfc(request_var($this->settings['text_name'], ((isset($for_edit['text'])) ? $for_edit['text'] : ''), true)),
+				'options'	=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
+			));
+		}
+
+		return $data;
 	}
 
 	/**

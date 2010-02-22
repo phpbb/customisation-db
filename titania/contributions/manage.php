@@ -66,8 +66,10 @@ if (titania::confirm_box(true))
 // Load the message object
 $message = new titania_message(titania::$contrib);
 $message->set_auth(array(
-	'bbcode'	=> phpbb::$auth->acl_get('u_titania_bbcode'),
-	'smilies'	=> phpbb::$auth->acl_get('u_titania_smilies'),
+	'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
+	'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
+	'edit_subject'	=> (phpbb::$auth->acl_get('m_titania_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')),
+	'edit_message'	=> (phpbb::$auth->acl_get('m_titania_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')),
 ));
 $message->set_settings(array(
 	'display_error'		=> false,
@@ -181,6 +183,8 @@ $message->display();
 
 phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
+	'S_EDIT_SUBJECT'			=> (phpbb::$auth->acl_get('m_titania_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
+	'S_EDIT_MESSAGE'			=> (phpbb::$auth->acl_get('m_titania_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 
 	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,
