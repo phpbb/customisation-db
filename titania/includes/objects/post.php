@@ -481,17 +481,17 @@ class titania_post extends titania_message_object
 		$this->update_topic_postcount(true);
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
-		if ($this->topic->get_postcount(TITANIA_ACCESS_PUBLIC) == 0)
+		$flags = titania_count::get_flags(TITANIA_ACCESS_PUBLIC);
+		if (titania_count::from_db($this->topic->topic_posts, $flags) == 0)
 		{
+			// There are no posts visible to the public, change it to authors level access
 			$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
-			if ($this->topic->get_postcount(TITANIA_ACCESS_AUTHORS) == 0)
+
+			$flags = titania_count::get_flags(TITANIA_ACCESS_AUTHORS);
+			if (titania_count::from_db($this->topic->topic_posts, $flags) == 0)
 			{
+				// There are no posts visible to authors, change it to teams level access
 				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
-				if ($this->topic->get_postcount(TITANIA_ACCESS_TEAMS) == 0)
-				{
-					// Hard delete the topic
-					$this->topic->delete();
-				}
 			}
 		}
 
@@ -502,6 +502,13 @@ class titania_post extends titania_message_object
 
 		// Initiate self-destruct mode
 		parent::delete();
+
+		$flags = titania_count::get_flags(TITANIA_ACCESS_TEAMS, true, true);
+		if (titania_count::from_db($this->topic->topic_posts, $flags) == 0)
+		{
+			// There are no posts left...
+			$this->topic->delete();
+		}
 	}
 
 	/**

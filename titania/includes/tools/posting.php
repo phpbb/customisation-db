@@ -335,6 +335,7 @@ class titania_posting
 	// Common delete/undelete code
 	private function common_delete($post_id, $undelete = false)
 	{
+		titania::add_lang('posting');
 		phpbb::$user->add_lang('posting');
 
 		// Load the stuff we need

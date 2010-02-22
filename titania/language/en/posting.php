@@ -38,6 +38,8 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 'UNDELETE_FILE' => 'Cancel Delete',
 'FILE_DELETED' => 'This file will be deleted when you submit',
+'UNDELETE_POST' => 'Undelete Post',
+'UNDELETE_POST_CONFIRM' => 'Are you sure you want to undelete this post?',
 	'ACCESS'			=> 'Access Level',
 	'ACCESS_AUTHORS'	=> 'Authors Access',
 	'ACCESS_PUBLIC'		=> 'Public Access',
