@@ -639,7 +639,7 @@ class titania_post extends titania_message_object
 			'POST_LOCKED'					=> $this->post_locked,
 			'POST_ATTACHMENT'				=> $this->post_attachment,
 			'POST_USER_ID'					=> $this->post_user_id,
-			'POST_IP'						=> $this->post_ip,
+			'POST_IP'						=> (phpbb::$auth->acl_get('m_titania_post_mod')) ? $this->post_ip : false,
 			'POST_TIME'						=> phpbb::$user->format_date($this->post_time),
 			'POST_EDIT_REASON'				=> censor_text($this->post_edit_reason),
 			'POST_SUBJECT'					=> censor_text($this->post_subject),
@@ -650,9 +650,9 @@ class titania_post extends titania_message_object
 			'U_VIEW'						=> $this->get_url(),
 			'U_EDIT'						=> $this->acl_get('edit') ? $this->get_url('edit') : '',
 			'U_DELETE'						=> $this->acl_get('delete') ? $this->get_url('delete') : '',
-			'U_REPORT'						=> $this->get_url('report'),
-			'U_WARN'						=> $this->get_url('warn'),
-			'U_INFO'						=> $this->get_url('info'),
+			'U_REPORT'						=> false,//$this->get_url('report'),
+			'U_WARN'						=> false,//$this->get_url('warn'),
+			'U_INFO'						=> false,//$this->get_url('info'),
 			'U_QUOTE'						=> $this->acl_get('post') ? $this->get_url('quote') : '',
 			//U_MCP_APPROVE
 			//U_MCP_REPORT
