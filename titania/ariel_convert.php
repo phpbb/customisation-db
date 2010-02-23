@@ -308,13 +308,25 @@ switch ($step)
 			}
 
 			// mime_content_type bitches on me without using realpath
-			$filename = realpath(PHPBB_ROOT_PATH . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
+			$filename = realpath('../' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
 			if (!file_exists($filename))
 			{
-				echo 'Could Not Find File - ' . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
+				echo 'Could Not Find File - ../' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
 				continue;
 			}
-			$mime_type = mime_content_type($filename);
+			
+			if (function_exists('mime_content_type'))
+			{
+				$mime_type = mime_content_type($filename);
+			}
+			else
+			{
+				ob_start();
+				system('/usr/bin/file -i -b ' . $filename);
+				$type = ob_get_clean();
+				$parts = explode(';', $type);
+				$mime_type = trim($parts[0]);
+			}
 
 			switch ($mime_type)
 			{
