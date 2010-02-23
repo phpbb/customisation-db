@@ -23,7 +23,7 @@ function titania_custom($action, $version)
 		case 'install' :
 			switch ($version)
 			{
-				case '0.1.31' :
+				case '0.1.40' :
 					titania_tags();
 					titania_categories();
 				break;

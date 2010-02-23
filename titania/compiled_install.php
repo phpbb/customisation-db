@@ -44,7 +44,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.31'	=> array(
+	'0.1.40'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -157,6 +157,7 @@ $versions = array(
 					'contrib_downloads'		=> array('INDEX', 'contrib_downloads'),
 					'contrib_rating'		=> array('INDEX', 'contrib_rating'),
 					'contrib_visible'		=> array('INDEX', 'contrib_visible'),
+					'contrib_last_update'	=> array('INDEX', 'contrib_last_update'),
 				),
 			)),
 			array(TITANIA_CONTRIB_COAUTHORS_TABLE, array(
@@ -201,6 +202,7 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'post_id'				=> array('UINT', NULL, 'auto_increment'),
 					'topic_id'				=> array('UINT', 0),
+					'post_url'				=> array('VCHAR_CI', ''),
 					'post_type'				=> array('TINT:1', 0), // Post Type, Main TITANIA_ constants
 					'post_access'			=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
 					'post_locked'			=> array('BOOL', 0),
@@ -244,9 +246,16 @@ $versions = array(
 					'queue_notes_bitfield'	=> array('VCHAR:255', ''),
 					'queue_notes_uid'		=> array('VCHAR:8', ''),
 					'queue_notes_options'	=> array('UINT:11', 7),
-					'queue_progress'		=> array('TINT:3', 0),
 					'queue_submit_time'		=> array('UINT:11', 0),
+					'queue_progress'		=> array('UINT', 0), // user_id
+					'queue_progress_time'	=> array('UINT:11', 0),
 					'queue_close_time'		=> array('UINT:11', 0),
+					'queue_close_user'		=> array('UINT', 0),
+					'queue_topic_id'		=> array('UINT', 0),
+					'mpv_results'			=> array('MTEXT_UNI', ''),
+					'mpv_results_bitfield'	=> array('VCHAR:255', ''),
+					'mpv_results_uid'		=> array('VCHAR:8', ''),
+					'automod_results'		=> array('MTEXT_UNI', ''),
 				),
 				'PRIMARY_KEY'	=> 'queue_id',
 				'KEYS'			=> array(
@@ -287,7 +296,7 @@ $versions = array(
 					'install_time'				=> array('USINT', 0),
 					'install_level'				=> array('TINT:1', 0),
 					'revision_submitted'		=> array('BOOL', 0), // So we can hide the revision while we are creating it, false means someone is working on creating it (or did not finish creating it)
-					'queue_topic_id'			=> array('UINT:11', 0), // Store the queue topic id so we can track it
+					'revision_queue_id'			=> array('UINT', 0),
 				),
 				'PRIMARY_KEY'	=> 'revision_id',
 				'KEYS'			=> array(
@@ -296,6 +305,7 @@ $versions = array(
 					'revision_time'			=> array('INDEX', 'revision_time'),
 					'validation_date'		=> array('INDEX', 'validation_date'),
 					'revision_submitted'	=> array('INDEX', 'revision_submitted'),
+					'revision_queue_id'		=> array('INDEX', 'revision_queue_id'),
 				),
 			)),
 			array(TITANIA_TAG_APPLIED_TABLE, array(
@@ -331,7 +341,8 @@ $versions = array(
 			array(TITANIA_TOPICS_TABLE, array(
 				'COLUMNS'		=> array(
 					'topic_id'						=> array('UINT', NULL, 'auto_increment'),
-					'contrib_id'					=> array('UINT', 0),
+					'parent_id'						=> array('UINT', 0),
+					'topic_url'						=> array('VCHAR_CI', ''),
 					'topic_type'					=> array('TINT:1', 0), // Post Type, Main TITANIA_ constants
 					'topic_access'					=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
 					'topic_category'				=> array('UINT', 0), // Category for the topic. For the Tracker
@@ -361,7 +372,7 @@ $versions = array(
 				),
 				'PRIMARY_KEY'	=> 'topic_id',
 				'KEYS'			=> array(
-					'contrib_id'			=> array('INDEX', 'contrib_id'),
+					'parent_id'				=> array('INDEX', 'parent_id'),
 					'topic_type'			=> array('INDEX', 'topic_type'),
 					'topic_access'			=> array('INDEX', 'topic_access'),
 					'topic_category'		=> array('INDEX', 'topic_category'),
@@ -387,11 +398,12 @@ $versions = array(
 			array(TITANIA_WATCH_TABLE, array(
 				'COLUMNS'		=> array(
 					'watch_type'			=> array('TINT:1', 0),
+					'watch_object_type'		=> array('UINT', 0),
 					'watch_object_id'		=> array('UINT', 0),
 					'watch_user_id'			=> array('UINT', 0),
 					'watch_mark_time'		=> array('UINT:11', 0),
 				),
-				'PRIMARY_KEY'	=> array('watch_type', 'watch_object_id', 'watch_user_id'),
+				'PRIMARY_KEY'	=> array('watch_object_type', 'watch_object_id', 'watch_user_id', 'watch_type'),
 			)),
 		),
 
@@ -419,11 +431,58 @@ $versions = array(
 			'u_titania_post_attach',		// Can attach files to posts
 		),
 
+		'permission_role_add' => array(
+			array('ROLE_TITANIA_MODIFICATION_TEAM', 'm_'),
+			array('ROLE_TITANIA_STYLE_TEAM', 'm_'),
+			array('ROLE_TITANIA_MODERATOR_TEAM', 'm_'),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'm_'),
+		),
+
 		'permission_set' => array(
 			array('ROLE_ADMIN_FULL', array(
 				'm_titania_author_mod',			// Can moderate author profiles
 				'm_titania_contrib_mod',		// Can moderate all contrib items
 				'm_titania_rate_reset',			// Can reset the rating on items
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_mod_queue',			// Can see the modifications queue
+				'm_titania_mod_validate',		// Can validate modifications
+				'm_titania_mod_moderate',		// Can moderate modifications
+				'm_titania_style_queue',		// Can see the styles queue
+				'm_titania_style_validate',		// Can validate styles
+				'm_titania_style_moderate',		// Can moderate styles
+			)),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
+				'm_titania_author_mod',			// Can moderate author profiles
+				'm_titania_contrib_mod',		// Can moderate all contrib items
+				'm_titania_rate_reset',			// Can reset the rating on items
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_mod_queue',			// Can see the modifications queue
+				'm_titania_mod_validate',		// Can validate modifications
+				'm_titania_mod_moderate',		// Can moderate modifications
+				'm_titania_style_queue',		// Can see the styles queue
+				'm_titania_style_validate',		// Can validate styles
+				'm_titania_style_moderate',		// Can moderate styles
+			)),
+			array('ROLE_TITANIA_MODIFICATION_TEAM', array(
+				'm_titania_author_mod',			// Can moderate author profiles
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_mod_queue',			// Can see the modifications queue
+				'm_titania_mod_validate',		// Can validate modifications
+				'm_titania_mod_moderate',		// Can moderate modifications
+			)),
+			array('ROLE_TITANIA_STYLE_TEAM', array(
+				'm_titania_author_mod',			// Can moderate author profiles
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_style_queue',		// Can see the styles queue
+				'm_titania_style_validate',		// Can validate styles
+				'm_titania_style_moderate',		// Can moderate styles
+			)),
+			array('ROLE_TITANIA_MODERATOR_TEAM', array(
+				'm_titania_author_mod',			// Can moderate author profiles
 				'm_titania_faq_mod',			// Can moderate FAQ entries
 				'm_titania_post_mod',			// Can moderate topics
 			)),
@@ -457,6 +516,9 @@ $versions = array(
 			)),
 		),
 
+		'config_add' => array(
+			array('titania_num_contribs', 0, true),
+		),
 
 		'custom' => 'titania_custom',
 
