@@ -603,6 +603,16 @@ $versions = array(
 		),
 	),
 
+	'0.1.41' => array(
+		// topic_deleted is now regulated automatically by the topic access level
+		'table_index_remove' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_deleted'),
+		),
+		'table_column_remove' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_deleted'),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

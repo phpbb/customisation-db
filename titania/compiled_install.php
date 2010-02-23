@@ -44,7 +44,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.40'	=> array(
+	'0.1.41'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -353,7 +353,6 @@ $versions = array(
 					'topic_locked'					=> array('BOOL', 0),
 					'topic_approved'				=> array('BOOL', 1),
 					'topic_reported'				=> array('BOOL', 0), // True if any posts in the topic are reported
-					'topic_deleted'					=> array('BOOL', 0), // True if the topic is soft deleted
 					'topic_views'					=> array('UINT', 0),
 					'topic_posts'					=> array('VCHAR', ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
 					'topic_subject'					=> array('STEXT_UNI', ''),
@@ -381,7 +380,6 @@ $versions = array(
 					'topic_sticky'			=> array('INDEX', 'topic_sticky'),
 					'topic_approved'		=> array('INDEX', 'topic_approved'),
 					'topic_reported'		=> array('INDEX', 'topic_reported'),
-					'topic_deleted'			=> array('INDEX', 'topic_deleted'),
 					'topic_time'			=> array('INDEX', 'topic_time'),
 					'topic_last_post_time'	=> array('INDEX', 'topic_last_post_time'),
 				),

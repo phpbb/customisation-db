@@ -44,8 +44,7 @@ class topics_overlord
 	public static function sql_permissions($prefix = 't.', $where = false, $no_where = false)
 	{
 		$sql = ($no_where) ? '' : (($where) ? ' WHERE' : ' AND');
-		$sql .= " ({$prefix}topic_access >= " . titania::$access_level . " OR {$prefix}topic_first_post_user_id = " . phpbb::$user->data['user_id'] . ")
-			AND ({$prefix}topic_deleted = 0 OR {$prefix}topic_deleted = " . phpbb::$user->data['user_id'] . ')';
+		$sql .= " ({$prefix}topic_access >= " . titania::$access_level . " OR {$prefix}topic_first_post_user_id = " . phpbb::$user->data['user_id'] . ')';
 
 		if (phpbb::$auth->acl_get('m_titania_post_mod'))
 		{

@@ -78,7 +78,6 @@ class titania_topic extends titania_database_object
 			'topic_locked'					=> array('default' => false),
 			'topic_approved'				=> array('default' => true),
 			'topic_reported'				=> array('default' => false), // True if any posts in the topic are reported
-			'topic_deleted'					=> array('default' => false), // True if the topic is soft deleted
 
 			'topic_time'					=> array('default' => (int) titania::$time),
 
@@ -133,15 +132,21 @@ class titania_topic extends titania_database_object
 
 	/**
 	* Delete the stuff for this topic
-	* @todo remove more stuff...make sure we update the search system too later
 	*/
 	public function delete()
 	{
-		$sql = 'DELETE FROM ' . TITANIA_POSTS_TABLE . '
+		$post = new titania_post;
+		$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . '
 			WHERE topic_id = ' . (int) $this->topic_id;
-		phpbb::$db->sql_query($sql);
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$post->__set_array($row);
+			$post->delete();
+		}
+		phpbb::$db->sql_freeresult($result);
 
-		parent::delete();
+		// Deleting all the posts results in the last post calling this topic to delete itself
 	}
 
 	/**
@@ -220,7 +225,6 @@ class titania_topic extends titania_database_object
 			'TOPIC_LOCKED'					=> $this->topic_locked,
 			'TOPIC_APPROVED'				=> $this->topic_approved,
 			'TOPIC_REPORTED'				=> $this->topic_reported,
-			'TOPIC_DELETED'					=> $this->topic_deleted, // @todo output this to be something useful
 			'TOPIC_ASSIGNED'				=> $this->topic_assigned, // @todo output this to be something useful
 			'TOPIC_REPLIES'					=> ($this->get_postcount() - 1), // Number of replies (posts minus the OP)
 			'TOPIC_VIEWS'					=> $this->topic_views,
