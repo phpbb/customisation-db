@@ -138,7 +138,7 @@ class queue_overlord
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
 
-		titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE, 'q.queue_id');
+		titania_tracking::get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
 
 		// Main SQL Query
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);

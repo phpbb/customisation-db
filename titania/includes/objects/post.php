@@ -360,6 +360,9 @@ class titania_post extends titania_message_object
 			$this->topic->submit();
 		}
 
+		// Update the post count for the topic (before calling parent::submit())
+		$this->update_topic_postcount();
+
 		$this->topic_id = $this->topic->topic_id;
 		$this->post_url = titania_url::unbuild_url($this->topic->get_url());
 
@@ -393,8 +396,7 @@ class titania_post extends titania_message_object
 			));
 		}
 
-		// Gotta update the topic again with the first/last post data and update teh post count
-		$this->update_topic_postcount();
+		// Gotta update the topic again with the first/last post data
 		$this->topic->submit();
 
 		$this->index();

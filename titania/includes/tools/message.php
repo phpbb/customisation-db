@@ -61,7 +61,7 @@ class titania_message
 		'sticky_topic'	=> false,
 		'lock_topic'	=> false,
 		'edit_subject'	=> true,
-		'edit_message'	=> false,
+		'edit_message'	=> true,
 	);
 
 	/**
