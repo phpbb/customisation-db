@@ -100,17 +100,20 @@ class titania
 		self::$absolute_board = generate_board_url(true) . '/' . self::$config->phpbb_script_path;
 
 		// Set the style path, template path, and template name
-		self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
-		self::$template_path = self::$style_path . 'template';
-		self::$theme_path = self::$style_path . 'theme';
+		if (!defined('IN_TITANIA_INSTALL'))
+		{
+			self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
+			self::$template_path = self::$style_path . 'template';
+			self::$theme_path = self::$style_path . 'theme';
 
-		// Set the paths for phpBB
-		phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
-		phpbb::$user->theme['template_storedb'] = false;
+			// Set the paths for phpBB
+			phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
+			phpbb::$user->theme['template_storedb'] = false;
 
-		// Inherit from the boards prosilver (currently required for the Captcha)
-		phpbb::$user->theme['template_inherits_id'] = 1; // Doesn't seem to matter what number I put in here...
-		phpbb::$template->inherit_root = PHPBB_ROOT_PATH . 'styles/prosilver/template';
+			// Inherit from the boards prosilver (currently required for the Captcha)
+			phpbb::$user->theme['template_inherits_id'] = 1; // Doesn't seem to matter what number I put in here...
+			phpbb::$template->inherit_root = PHPBB_ROOT_PATH . 'styles/prosilver/template';
+		}
 
 		// Setup the Access Level
 		self::$access_level = TITANIA_ACCESS_PUBLIC;
