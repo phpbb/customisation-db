@@ -132,11 +132,19 @@ class titania_revision extends titania_database_object
 			if ($this->revision_submitted)
 			{
 				// Delete any old revisions that were in the queue and marked as New
-				$sql = 'DELETE FROM ' . TITANIA_QUEUE_TABLE . '
+				$sql = 'SELECT * FROM ' . TITANIA_QUEUE_TABLE . '
 					WHERE contrib_id = ' . (int) $this->contrib_id . '
 						AND revision_id <> ' . $this->revision_id . '
 						AND queue_status = ' . TITANIA_QUEUE_NEW;
-				phpbb::$db->sql_query($sql);
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$queue = new titania_queue;
+					$queue->__set_array($row);
+					$queue->delete();
+					unset($queue);
+				}
+				phpbb::$db->sql_freeresult($result);
 			}
 		}
 	}
