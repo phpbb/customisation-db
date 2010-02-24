@@ -314,7 +314,7 @@ switch ($step)
 				echo 'Could Not Find File - ' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
 				continue;
 			}
-			
+
 			if (function_exists('mime_content_type'))
 			{
 				$mime_type = mime_content_type($filename);
@@ -498,7 +498,6 @@ switch ($step)
 				'queue_id'				=> $row['queue_id'],
 				'revision_id'			=> $row['revision_id'],
 				'contrib_id'			=> $row['contrib_id'],
-				'contrib_name_clean'	=> $row['contrib_name_clean'],
 				'submitter_user_id'		=> $row['user_id'],
 				'queue_topic_id'		=> $topic->topic_id,
 
