@@ -37,7 +37,7 @@ if (phpbb::$user->data['user_type'] != USER_FOUNDER && phpbb::$user->data['user_
 @set_time_limit(0);
 
 // Hack for local
-phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? 'ariel_files' : phpbb::$config['site_upload_dir'];
+phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? 'ariel_files' : '../' . phpbb::$config['site_upload_dir'];
 
 // Table prefix
 $ariel_prefix = 'community_site_';
@@ -308,10 +308,10 @@ switch ($step)
 			}
 
 			// mime_content_type bitches on me without using realpath
-			$filename = realpath('../' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
+			$filename = realpath(TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
 			if (!file_exists($filename))
 			{
-				echo 'Could Not Find File - ../' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
+				echo 'Could Not Find File - ' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
 				continue;
 			}
 			
