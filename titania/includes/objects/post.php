@@ -591,6 +591,12 @@ class titania_post extends titania_message_object
 			throw new exception('Modifying a post requires you load it through the load() function (we require the original information).');
 		}
 
+		// shouldn't need to load through load() to delete it...
+		if ($hard_delete && empty($this->sql_data))
+		{
+			$this->sql_data = $this->__get_array();
+		}
+
 		// Get the current count
 		$to_db = titania_count::from_db($this->topic->topic_posts, false);
 
