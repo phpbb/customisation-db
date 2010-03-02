@@ -58,11 +58,11 @@ class titania_search
 			// Initialize the ezc/Zend Search class
 			if (titania::$config->search_backend == 'zend')
 			{
-				if (!is_writable(self::store_path))
+				if (!is_writable(TITANIA_ROOT . self::store_path))
 				{
 					throw new exception(self::store_path . ' must be writable to use the Zend Lucene Search');
 				}
-				
+
 				$handler = new ezcSearchZendLuceneHandler(TITANIA_ROOT . self::store_path);
 			}
 			else if (titania::$config->search_backend == 'solr')
