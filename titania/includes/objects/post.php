@@ -586,7 +586,7 @@ class titania_post extends titania_message_object
 	*/
 	public function update_topic_postcount($hard_delete = false)
 	{
-		if ($this->post_id && empty($this->sql_data))
+		if (!$hard_delete && $this->post_id && empty($this->sql_data))
 		{
 			throw new exception('Modifying a post requires you load it through the load() function (we require the original information).');
 		}
