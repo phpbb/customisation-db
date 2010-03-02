@@ -82,7 +82,7 @@ class titania_queue extends titania_message_object
 	{
 		if (!$this->queue_id)
 		{
-			$sql = 'SELECT c.contrib_name_clean, c.contrib_type, r.revision_version
+			$sql = 'SELECT c.contrib_name, c.contrib_type, r.revision_version
 				FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
 				WHERE r.revision_id = ' . (int) $this->revision_id . '
 					AND c.contrib_id = r.contrib_id';
