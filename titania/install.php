@@ -673,7 +673,6 @@ $versions = array(
 			)),
 			array('ROLE_TITANIA_MODIFICATION_TEAM', array(
 				'u_titania_mod_author_mod',
-				'u_titania_mod_contrib_mod',
 				'u_titania_mod_rate_reset',
 				'u_titania_mod_faq_mod',
 				'u_titania_mod_post_mod',
@@ -683,7 +682,6 @@ $versions = array(
 			)),
 			array('ROLE_TITANIA_STYLE_TEAM', array(
 				'u_titania_mod_author_mod',
-				'u_titania_mod_contrib_mod',
 				'u_titania_mod_rate_reset',
 				'u_titania_mod_faq_mod',
 				'u_titania_mod_post_mod',
@@ -693,7 +691,6 @@ $versions = array(
 			)),
 			array('ROLE_TITANIA_MODERATOR_TEAM', array(
 				'u_titania_mod_author_mod',
-				'u_titania_mod_contrib_mod',
 				'u_titania_mod_rate_reset',
 				'u_titania_mod_faq_mod',
 				'u_titania_mod_post_mod',
