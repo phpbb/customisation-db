@@ -614,6 +614,19 @@ $versions = array(
 	),
 
 	'0.1.42' => array(
+		'permission_role_remove' => array(
+			array('ROLE_TITANIA_MODIFICATION_TEAM'),
+			array('ROLE_TITANIA_STYLE_TEAM'),
+			array('ROLE_TITANIA_MODERATOR_TEAM'),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM'),
+		),
+		'permission_role_add' => array(
+			array('ROLE_TITANIA_MODIFICATION_TEAM', 'u_'),
+			array('ROLE_TITANIA_STYLE_TEAM', 'u_'),
+			array('ROLE_TITANIA_MODERATOR_TEAM', 'u_'),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_'),
+		),
+
 		'permission_remove' => array(
 			'u_titania_',
 
