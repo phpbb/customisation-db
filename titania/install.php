@@ -636,6 +636,12 @@ $versions = array(
 			'u_titania_mod_rate_reset',
 			'u_titania_mod_faq_mod',
 			'u_titania_mod_post_mod',
+			'u_titania_mod_modification_queue',
+			'u_titania_mod_modification_validate',
+			'u_titania_mod_modification_moderate',
+			'u_titania_mod_style_queue',
+			'u_titania_mod_style_validate',
+			'u_titania_mod_style_moderate',
 		),
 
 		'permission_set' => array(
