@@ -104,17 +104,17 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_smilies'				=> array('lang' => 'Can post smilies', 'cat' => 'titania'),
 
 	// Moderation
-	'acl_m_titania_author_mod'			=> array('lang' => 'Can moderate author profiles', 'cat' => 'titania_moderate'),
-	'acl_m_titania_contrib_mod'			=> array('lang' => 'Can moderate (all) contributions', 'cat' => 'titania_moderate'),
-	'acl_m_titania_faq_mod'				=> array('lang' => 'Can moderate FAQ entries', 'cat' => 'titania_moderate'),
-	'acl_m_titania_rate_reset'			=> array('lang' => 'Can reset ratings', 'cat' => 'titania_moderate'),
-	'acl_m_titania_post_mod'			=> array('lang' => 'Can moderate topics', 'cat' => 'titania_moderate'),
-	'acl_m_titania_mod_queue'			=> array('lang' => 'Can see Modifications Queue', 'cat' => 'titania_moderate'),
-	'acl_m_titania_mod_validate'		=> array('lang' => 'Can validate Modifications', 'cat' => 'titania_moderate'),
-	'acl_m_titania_mod_moderate'		=> array('lang' => 'Can moderate Modifications', 'cat' => 'titania_moderate'),
-	'acl_m_titania_style_queue'			=> array('lang' => 'Can see Styles Queue', 'cat' => 'titania_moderate'),
-	'acl_m_titania_style_validate'		=> array('lang' => 'Can validate Styles', 'cat' => 'titania_moderate'),
-	'acl_m_titania_style_moderate'		=> array('lang' => 'Can moderate Styles', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_author_mod'			=> array('lang' => 'Can moderate author profiles', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_contrib_mod'			=> array('lang' => 'Can moderate (all) contributions', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_faq_mod'				=> array('lang' => 'Can moderate FAQ entries', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_rate_reset'			=> array('lang' => 'Can reset ratings', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_post_mod'			=> array('lang' => 'Can moderate topics', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_modification_queue'			=> array('lang' => 'Can see Modifications Queue', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_modification_validate'		=> array('lang' => 'Can validate Modifications', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_modification_moderate'		=> array('lang' => 'Can moderate Modifications', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_queue'			=> array('lang' => 'Can see Styles Queue', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_validate'		=> array('lang' => 'Can validate Styles', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_moderate'		=> array('lang' => 'Can moderate Styles', 'cat' => 'titania_moderate'),
 ));
 
 ?>
