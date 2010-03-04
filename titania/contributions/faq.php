@@ -46,7 +46,7 @@ switch ($action)
 {
 	case 'create':
 	case 'edit':
-		if (!phpbb::$auth->acl_get('m_titania_faq_mod') && !phpbb::$auth->acl_get('u_titania_faq_' . $action) && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
+		if (!phpbb::$auth->acl_get('u_titania_mod_faq_mod') && !phpbb::$auth->acl_get('u_titania_faq_' . $action) && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
 		{
 			titania::needs_auth();
 		}
@@ -101,7 +101,7 @@ switch ($action)
 	break;
 
 	case 'delete':
-		if (!phpbb::$auth->acl_get('m_titania_faq_mod') && !phpbb::$auth->acl_get('u_titania_faq_delete') && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
+		if (!phpbb::$auth->acl_get('u_titania_mod_faq_mod') && !phpbb::$auth->acl_get('u_titania_faq_delete') && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
 		{
 			titania::needs_auth();
 		}
@@ -126,7 +126,7 @@ switch ($action)
 
 	case 'move_up':
 	case 'move_down':
-		if (!phpbb::$auth->acl_get('m_titania_faq_mod') && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
+		if (!phpbb::$auth->acl_get('u_titania_mod_faq_mod') && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
 		{
 			titania::needs_auth();
 		}
@@ -237,10 +237,10 @@ switch ($action)
 					'TOPIC_FOLDER_IMG_WIDTH'		=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 					'TOPIC_FOLDER_IMG_HEIGHT'		=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 
-					'U_MOVE_UP'		=> (phpbb::$auth->acl_get('m_titania_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_up', $row['faq_id']) : false,
-					'U_MOVE_DOWN'	=> (phpbb::$auth->acl_get('m_titania_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_down', $row['faq_id']) : false,
-					'U_EDIT'		=> (phpbb::$auth->acl_get('m_titania_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_edit') || titania::$contrib->is_author) ? $faq->get_url('edit', $row['faq_id']) : false,
-					'U_DELETE'		=> (phpbb::$auth->acl_get('m_titania_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_delete') || titania::$contrib->is_author) ? $faq->get_url('delete', $row['faq_id']) : false,
+					'U_MOVE_UP'		=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_up', $row['faq_id']) : false,
+					'U_MOVE_DOWN'	=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_down', $row['faq_id']) : false,
+					'U_EDIT'		=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_edit') || titania::$contrib->is_author) ? $faq->get_url('edit', $row['faq_id']) : false,
+					'U_DELETE'		=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_delete') || titania::$contrib->is_author) ? $faq->get_url('delete', $row['faq_id']) : false,
 				));
 			}
 
@@ -256,7 +256,7 @@ switch ($action)
 
 				'S_LIST'					=> true,
 
-				'U_CREATE_FAQ'				=> (phpbb::$auth->acl_get('m_titania_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_create') || titania::$contrib->is_author) ? $faq->get_url('create') : false,
+				'U_CREATE_FAQ'				=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_create') || titania::$contrib->is_author) ? $faq->get_url('create') : false,
 			));
 		}
 	break;

@@ -29,7 +29,7 @@ titania::$contrib->assign_details();
 // Set tracking
 titania_tracking::track(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 
-if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor || phpbb::$auth->acl_get('m_titania_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 {
 	phpbb::$template->assign_var('U_NEW_REVISION', titania::$contrib->get_url('revision'));
 }

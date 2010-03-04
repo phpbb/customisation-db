@@ -613,6 +613,88 @@ $versions = array(
 		),
 	),
 
+	'0.1.42' => array(
+		'permission_remove' => array(
+			'u_titania_',
+
+			'm_titania_author_mod',
+			'm_titania_contrib_mod',
+			'm_titania_rate_reset',
+			'm_titania_faq_mod',
+			'm_titania_post_mod',
+			'm_titania_mod_queue',
+			'm_titania_mod_validate',
+			'm_titania_mod_moderate',
+			'm_titania_style_queue',
+			'm_titania_style_validate',
+			'm_titania_style_moderate',
+		),
+
+		'permission_add' => array(
+			'u_titania_mod_author_mod',
+			'u_titania_mod_contrib_mod',
+			'u_titania_mod_rate_reset',
+			'u_titania_mod_faq_mod',
+			'u_titania_mod_post_mod',
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_contrib_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+				'u_titania_mod_modification_queue',
+				'u_titania_mod_modification_validate',
+				'u_titania_mod_modification_moderate',
+				'u_titania_mod_style_queue',
+				'u_titania_mod_style_validate',
+				'u_titania_mod_style_moderate',
+			)),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_contrib_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+				'u_titania_mod_modification_queue',
+				'u_titania_mod_modification_validate',
+				'u_titania_mod_modification_moderate',
+				'u_titania_mod_style_queue',
+				'u_titania_mod_style_validate',
+				'u_titania_mod_style_moderate',
+			)),
+			array('ROLE_TITANIA_MODIFICATION_TEAM', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_contrib_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+				'u_titania_mod_modification_queue',
+				'u_titania_mod_modification_validate',
+				'u_titania_mod_modification_moderate',
+			)),
+			array('ROLE_TITANIA_STYLE_TEAM', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_contrib_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+				'u_titania_mod_style_queue',
+				'u_titania_mod_style_validate',
+				'u_titania_mod_style_moderate',
+			)),
+			array('ROLE_TITANIA_MODERATOR_TEAM', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_contrib_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+			)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

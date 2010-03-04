@@ -96,7 +96,7 @@ class titania_posting
 		$post_object->topic->topic_url = titania_url::unbuild_url($parent_url);
 
 		// Some more complicated permissions for stickes in support
-		$can_sticky = phpbb::$auth->acl_get('m_titania_post_mod');
+		$can_sticky = phpbb::$auth->acl_get('u_titania_mod_post_mod');
 		if ($post_type == TITANIA_SUPPORT)
 		{
 			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
@@ -120,7 +120,7 @@ class titania_posting
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
 			'sticky_topic'	=> $can_sticky,
-			'lock_topic'	=> (phpbb::$auth->acl_get('m_titania_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message_object->set_settings(array(
@@ -168,7 +168,7 @@ class titania_posting
 			$quote = $this->load_post($quote_post_id);
 
 			// Permission check
-			if (titania::$access_level <= min($quote->post_access, $quote->topic->topic_access) && (phpbb::$auth->acl_get('m_titania_post_mod') || ($quote->post_approved && (!$quote->post_deleted || $quote->post_deleted == phpbb::$user->data['user_id']))))
+			if (titania::$access_level <= min($quote->post_access, $quote->topic->topic_access) && (phpbb::$auth->acl_get('u_titania_mod_post_mod') || ($quote->post_approved && (!$quote->post_deleted || $quote->post_deleted == phpbb::$user->data['user_id']))))
 			{
 				$for_edit = $quote->generate_text_for_edit();
 
@@ -181,7 +181,7 @@ class titania_posting
 		$message_object->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
-			'lock_topic'	=> (phpbb::$auth->acl_gets(array('m_titania_post_mod', 'u_titania_post_mod_own'))) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_gets(array('u_titania_mod_post_mod', 'u_titania_post_mod_own'))) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message_object->set_settings(array(
@@ -223,7 +223,7 @@ class titania_posting
 		}
 
 		// Some more complicated permissions for stickes in support
-		$can_sticky = phpbb::$auth->acl_get('m_titania_post_mod');
+		$can_sticky = phpbb::$auth->acl_get('u_titania_mod_post_mod');
 		if ($post_object->post_type == TITANIA_SUPPORT)
 		{
 			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
@@ -246,9 +246,9 @@ class titania_posting
 		$message_object->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
-			'lock'			=> ($post_object->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('m_titania_post_mod')) ? true : false,
+			'lock'			=> ($post_object->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? true : false,
 			'sticky_topic'	=> ($post_object->post_id == $post_object->topic->topic_first_post_id && $can_sticky) ? true : false,
-			'lock_topic'	=> (phpbb::$auth->acl_get('m_titania_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message_object->set_settings(array(

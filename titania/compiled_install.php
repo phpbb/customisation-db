@@ -408,11 +408,11 @@ $versions = array(
 		'permission_add' => array(
 			'u_titania_',
 
-			'm_titania_author_mod',			// Can moderate author profiles
-			'm_titania_contrib_mod',		// Can moderate all contrib items
-			'm_titania_rate_reset',			// Can reset the rating on items
-			'm_titania_faq_mod',			// Can moderate FAQ entries
-			'm_titania_post_mod',			// Can moderate topics
+			'u_titania_mod_author_mod',			// Can moderate author profiles
+			'u_titania_mod_contrib_mod',		// Can moderate all contrib items
+			'u_titania_mod_rate_reset',			// Can reset the rating on items
+			'u_titania_mod_faq_mod',			// Can moderate FAQ entries
+			'u_titania_mod_post_mod',			// Can moderate topics
 
 			'u_titania_contrib_submit',		// Can submit contrib items
 			'u_titania_rate',				// Can rate items
@@ -438,51 +438,51 @@ $versions = array(
 
 		'permission_set' => array(
 			array('ROLE_ADMIN_FULL', array(
-				'm_titania_author_mod',			// Can moderate author profiles
-				'm_titania_contrib_mod',		// Can moderate all contrib items
-				'm_titania_rate_reset',			// Can reset the rating on items
-				'm_titania_faq_mod',			// Can moderate FAQ entries
-				'm_titania_post_mod',			// Can moderate topics
-				'm_titania_mod_queue',			// Can see the modifications queue
-				'm_titania_mod_validate',		// Can validate modifications
-				'm_titania_mod_moderate',		// Can moderate modifications
-				'm_titania_style_queue',		// Can see the styles queue
-				'm_titania_style_validate',		// Can validate styles
-				'm_titania_style_moderate',		// Can moderate styles
+				'u_titania_mod_author_mod',			// Can moderate author profiles
+				'u_titania_mod_contrib_mod',		// Can moderate all contrib items
+				'u_titania_mod_rate_reset',			// Can reset the rating on items
+				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
+				'u_titania_mod_post_mod',			// Can moderate topics
+				'u_titania_mod_modification_queue',			// Can see the modifications queue
+				'u_titania_mod_modification_validate',		// Can validate modifications
+				'u_titania_mod_modification_moderate',		// Can moderate modifications
+				'u_titania_mod_style_queue',		// Can see the styles queue
+				'u_titania_mod_style_validate',		// Can validate styles
+				'u_titania_mod_style_moderate',		// Can moderate styles
 			)),
 			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
-				'm_titania_author_mod',			// Can moderate author profiles
-				'm_titania_contrib_mod',		// Can moderate all contrib items
-				'm_titania_rate_reset',			// Can reset the rating on items
-				'm_titania_faq_mod',			// Can moderate FAQ entries
-				'm_titania_post_mod',			// Can moderate topics
-				'm_titania_mod_queue',			// Can see the modifications queue
-				'm_titania_mod_validate',		// Can validate modifications
-				'm_titania_mod_moderate',		// Can moderate modifications
-				'm_titania_style_queue',		// Can see the styles queue
-				'm_titania_style_validate',		// Can validate styles
-				'm_titania_style_moderate',		// Can moderate styles
+				'u_titania_mod_author_mod',			// Can moderate author profiles
+				'u_titania_mod_contrib_mod',		// Can moderate all contrib items
+				'u_titania_mod_rate_reset',			// Can reset the rating on items
+				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
+				'u_titania_mod_post_mod',			// Can moderate topics
+				'u_titania_mod_modification_queue',			// Can see the modifications queue
+				'u_titania_mod_modification_validate',		// Can validate modifications
+				'u_titania_mod_modification_moderate',		// Can moderate modifications
+				'u_titania_mod_style_queue',		// Can see the styles queue
+				'u_titania_mod_style_validate',		// Can validate styles
+				'u_titania_mod_style_moderate',		// Can moderate styles
 			)),
 			array('ROLE_TITANIA_MODIFICATION_TEAM', array(
-				'm_titania_author_mod',			// Can moderate author profiles
-				'm_titania_faq_mod',			// Can moderate FAQ entries
-				'm_titania_post_mod',			// Can moderate topics
-				'm_titania_mod_queue',			// Can see the modifications queue
-				'm_titania_mod_validate',		// Can validate modifications
-				'm_titania_mod_moderate',		// Can moderate modifications
+				'u_titania_mod_author_mod',			// Can moderate author profiles
+				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
+				'u_titania_mod_post_mod',			// Can moderate topics
+				'u_titania_mod_modification_queue',			// Can see the modifications queue
+				'u_titania_mod_modification_validate',		// Can validate modifications
+				'u_titania_mod_modification_moderate',		// Can moderate modifications
 			)),
 			array('ROLE_TITANIA_STYLE_TEAM', array(
-				'm_titania_author_mod',			// Can moderate author profiles
-				'm_titania_faq_mod',			// Can moderate FAQ entries
-				'm_titania_post_mod',			// Can moderate topics
-				'm_titania_style_queue',		// Can see the styles queue
-				'm_titania_style_validate',		// Can validate styles
-				'm_titania_style_moderate',		// Can moderate styles
+				'u_titania_mod_author_mod',			// Can moderate author profiles
+				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
+				'u_titania_mod_post_mod',			// Can moderate topics
+				'u_titania_mod_style_queue',		// Can see the styles queue
+				'u_titania_mod_style_validate',		// Can validate styles
+				'u_titania_mod_style_moderate',		// Can moderate styles
 			)),
 			array('ROLE_TITANIA_MODERATOR_TEAM', array(
-				'm_titania_author_mod',			// Can moderate author profiles
-				'm_titania_faq_mod',			// Can moderate FAQ entries
-				'm_titania_post_mod',			// Can moderate topics
+				'u_titania_mod_author_mod',			// Can moderate author profiles
+				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
+				'u_titania_mod_post_mod',			// Can moderate topics
 			)),
 			array('ROLE_USER_STANDARD', array(
 				'u_titania_contrib_submit',		// Can submit contrib items

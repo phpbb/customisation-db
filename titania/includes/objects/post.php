@@ -262,7 +262,7 @@ class titania_post extends titania_message_object
 			case 'reply' :
 				if (phpbb::$auth->acl_get('u_titania_post') || // Can post
 					($is_author && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
-					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
+					phpbb::$auth->acl_get('u_titania_mod_post_mod')) // Can moderate posts
 				{
 					return true;
 				}
@@ -271,7 +271,7 @@ class titania_post extends titania_message_object
 			case 'edit' :
 				if (($is_poster && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_edit_own')) || // Is poster and can edit own
 					($is_author && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
-					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
+					phpbb::$auth->acl_get('u_titania_mod_post_mod')) // Can moderate posts
 				{
 					return true;
 				}
@@ -284,7 +284,7 @@ class titania_post extends titania_message_object
 			case 'soft_delete' :
 				if (($is_poster && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own
 					($is_author && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
-					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
+					phpbb::$auth->acl_get('u_titania_mod_post_mod')) // Can moderate posts
 				{
 					return true;
 				}
@@ -293,14 +293,14 @@ class titania_post extends titania_message_object
 			case 'undelete' :
 				if (($is_poster && $is_deleter && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own and did delete their own
 					($is_author && $is_deleter && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own and did delete the message
-					phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
+					phpbb::$auth->acl_get('u_titania_mod_post_mod')) // Can moderate posts
 				{
 					return true;
 				}
 			break;
 
 			case 'hard_delete' :
-				if (phpbb::$auth->acl_get('m_titania_post_mod')) // Can moderate posts
+				if (phpbb::$auth->acl_get('u_titania_mod_post_mod')) // Can moderate posts
 				{
 					return true;
 				}
@@ -701,7 +701,7 @@ class titania_post extends titania_message_object
 			'POST_LOCKED'					=> $this->post_locked,
 			'POST_ATTACHMENT'				=> $this->post_attachment,
 			'POST_USER_ID'					=> $this->post_user_id,
-			'POST_IP'						=> (phpbb::$auth->acl_get('m_titania_post_mod')) ? $this->post_ip : false,
+			'POST_IP'						=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->post_ip : false,
 			'POST_TIME'						=> phpbb::$user->format_date($this->post_time),
 			'POST_EDIT_REASON'				=> censor_text($this->post_edit_reason),
 			'POST_SUBJECT'					=> censor_text($this->post_subject),

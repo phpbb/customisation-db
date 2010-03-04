@@ -163,7 +163,7 @@ class titania_topic extends titania_database_object
 			$access_level = titania::$access_level;
 		}
 
-		$is_mod = phpbb::$auth->acl_get('m_titania_post_mod');
+		$is_mod = phpbb::$auth->acl_get('u_titania_mod_post_mod');
 		$flags = titania_count::get_flags($access_level, $is_mod, $is_mod);
 		return titania_count::from_db($this->topic_posts, $flags);
 	}

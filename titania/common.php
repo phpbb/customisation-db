@@ -17,7 +17,7 @@ if (!defined('IN_TITANIA'))
 }
 
 // Version number (only used for the installer)
-define('TITANIA_VERSION', '0.1.41');
+define('TITANIA_VERSION', '0.1.42');
 
 define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 define('PHPBB_USE_BOARD_URL_PATH', true);

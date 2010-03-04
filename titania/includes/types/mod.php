@@ -73,17 +73,17 @@ class titania_type_mod extends titania_type_base
 		{
 			// Can view the mod queue
 			case 'view' :
-				return phpbb::$auth->acl_get('m_titania_mod_queue');
+				return phpbb::$auth->acl_get('u_titania_mod_modification_queue');
 			break;
 
 			// Can validate mods in the queue
 			case 'validate' :
-				return phpbb::$auth->acl_get('m_titania_mod_validate');
+				return phpbb::$auth->acl_get('u_titania_mod_modification_validate');
 			break;
 
 			// Can moderate mods
 			case 'moderate' :
-				return phpbb::$auth->acl_gets(array('m_titania_mod_moderate', 'm_titania_contrib_mod'));
+				return phpbb::$auth->acl_gets(array('u_titania_mod_modification_moderate', 'u_titania_mod_contrib_mod'));
 			break;
 		}
 
@@ -110,9 +110,9 @@ class titania_type_mod extends titania_type_base
 
 			// Permissions
 			$umil->permission_add(array(
-				'm_titania_mod_queue',
-				'm_titania_mod_validate',
-				'm_titania_mod_moderate',
+				'u_titania_mod_modification_queue',
+				'u_titania_mod_modification_validate',
+				'u_titania_mod_modification_moderate',
 			));
 
 			// Mod count holder
@@ -151,9 +151,9 @@ class titania_type_mod extends titania_type_base
 
 			// Permissions
 			$umil->permission_remove(array(
-				'm_titania_mod_queue',
-				'm_titania_mod_validate',
-				'm_titania_mod_moderate',
+				'u_titania_mod_modification_queue',
+				'u_titania_mod_modification_validate',
+				'u_titania_mod_modification_moderate',
 			));
 
 			// Mod count holder
