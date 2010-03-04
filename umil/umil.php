@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 196 2010-02-03 04:04:36Z exreaction $
+ * @version $Id: umil.php 199 2010-03-04 23:48:31Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -1679,8 +1679,6 @@ class umil
 	*/
 	function permission_role_add($role_name, $role_type = '', $role_description = '')
 	{
-		global $db;
-
 		// Multicall
 		if ($this->multicall(__FUNCTION__, $role_name))
 		{
@@ -1688,9 +1686,9 @@ class umil
 		}
 
 		$sql = 'SELECT role_id FROM ' . ACL_ROLES_TABLE . '
-			WHERE role_name = \'' . $db->sql_escape($role_name) . '\'';
-		$db->sql_query($sql);
-		$role_id = $db->sql_fetchfield('role_id');
+			WHERE role_name = \'' . $this->db->sql_escape($role_name) . '\'';
+		$this->db->sql_query($sql);
+		$role_id = $this->db->sql_fetchfield('role_id');
 
 		if ($role_id)
 		{
@@ -1698,9 +1696,9 @@ class umil
 		}
 
 		$sql = 'SELECT MAX(role_order) AS max FROM ' . ACL_ROLES_TABLE . '
-			WHERE role_type = \'' . $db->sql_escape($role_type) . '\'';
-		$db->sql_query($sql);
-		$role_order = $db->sql_fetchfield('max');
+			WHERE role_type = \'' . $this->db->sql_escape($role_type) . '\'';
+		$this->db->sql_query($sql);
+		$role_order = $this->db->sql_fetchfield('max');
 		$role_order = (!$role_order) ? 1 : $role_order + 1;
 
 		$sql_ary = array(
@@ -1710,8 +1708,8 @@ class umil
 			'role_order'		=> $role_order,
 		);
 
-		$sql = 'INSERT INTO ' . ACL_ROLES_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
-		$db->sql_query($sql);
+		$sql = 'INSERT INTO ' . ACL_ROLES_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
 	}
 
 	/**
@@ -1722,8 +1720,6 @@ class umil
 	*/
 	function permission_role_update($old_role_name, $new_role_name = '')
 	{
-		global $db;
-
 		// Multicall
 		if ($this->multicall(__FUNCTION__, $role_name))
 		{
@@ -1731,9 +1727,9 @@ class umil
 		}
 
 		$sql = 'UPDATE ' . ACL_ROLES_TABLE . '
-			SET role_name = \'' . $db->sql_escape($new_role_name) . '\'
-			WHERE role_name = \'' . $db->sql_escape($old_role_name) . '\'';
-		$db->sql_query($sql);
+			SET role_name = \'' . $this->db->sql_escape($new_role_name) . '\'
+			WHERE role_name = \'' . $this->db->sql_escape($old_role_name) . '\'';
+		$this->db->sql_query($sql);
 	}
 
 	/**
@@ -1743,7 +1739,7 @@ class umil
 	*/
 	function permission_role_remove($role_name)
 	{
-		global $db;
+		global $auth;
 
 		// Multicall
 		if ($this->multicall(__FUNCTION__, $role_name))
@@ -1752,9 +1748,9 @@ class umil
 		}
 
 		$sql = 'SELECT role_id FROM ' . ACL_ROLES_TABLE . '
-			WHERE role_name = \'' . $db->sql_escape($role_name) . '\'';
-		$db->sql_query($sql);
-		$role_id = $db->sql_fetchfield('role_id');
+			WHERE role_name = \'' . $this->db->sql_escape($role_name) . '\'';
+		$this->db->sql_query($sql);
+		$role_id = $this->db->sql_fetchfield('role_id');
 
 		if (!$role_id)
 		{
@@ -1763,11 +1759,11 @@ class umil
 
 		$sql = 'DELETE FROM ' . ACL_ROLES_DATA_TABLE . '
 			WHERE role_id = ' . $role_id;
-		$db->sql_query($sql);
+		$this->db->sql_query($sql);
 
 		$sql = 'DELETE FROM ' . ACL_ROLES_TABLE . '
 			WHERE role_id = ' . $role_id;
-		$db->sql_query($sql);
+		$this->db->sql_query($sql);
 
 		$auth->acl_clear_prefetch();
 	}
