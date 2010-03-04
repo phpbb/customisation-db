@@ -137,7 +137,8 @@ do{
 				$contrib_tools->clean_package();
 
 				// Restore the root package directory
-				$contrib_tools->restore_root();
+				$package_root = $this->find_root();
+				$contrib_tools->restore_root($package_root);
 
 				$error = array_merge($error, $contrib_tools->error);
 

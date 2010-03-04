@@ -140,7 +140,8 @@ switch ($action)
 			// Start up the machine
 			$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
 
-			//$contrib_tools->restore_root();
+			//$package_root = $this->find_root();
+			//$contrib_tools->restore_root($package_root);
 			//$contrib_tools->replace_zip();
 
 			// Prepare the phpbb files for automod

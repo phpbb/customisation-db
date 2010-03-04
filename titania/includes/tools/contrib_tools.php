@@ -125,16 +125,12 @@ class titania_contrib_tools
 	}
 
 	/**
-	* Find the root directory of the mod package and place it appropriately so we have package.zip/mod_name_1_0_0/(install files)
-	* After finding the root, moves it to be in the correct path we need
+	* Place the root directory appropriately so we have package.zip/mod_name_1_0_0/(install files)
 	*
-	* @todo This only handles mod packages (containing an install xml file)
+	* @param string $package_root the root path ($this->find_root())
 	*/
-	public function restore_root()
+	public function restore_root($package_root)
 	{
-		// Find the root directory
-		$package_root = $this->find_root();
-
 		if ($package_root === false)
 		{
 			$this->remove_temp_files();
