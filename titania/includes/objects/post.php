@@ -372,11 +372,22 @@ class titania_post extends titania_message_object
 		// Respect the post_time!  If for some reason we want to insert a post before the first one...
 		if (!$this->topic->topic_first_post_id || $this->topic->topic_first_post_time > $this->post_time)
 		{
+			if ($this->post_user_id == phpbb::$user->data['user_id'])
+			{
+				$post_username = phpbb::$user->data['username'];
+				$post_user_colour = phpbb::$user->data['user_colour'];
+			}
+			else
+			{
+				$post_username = users_overlord::get_user($this->post_user_id, 'username', true);
+				$post_user_colour = users_overlord::get_user($this->post_user_id, 'user_colour', true);
+			}
+
 			$this->topic->__set_array(array(
 				'topic_first_post_id'			=> $this->post_id,
 				'topic_first_post_user_id'		=> $this->post_user_id,
-				'topic_first_post_username'		=> phpbb::$user->data['username'],
-				'topic_first_post_user_colour'	=> phpbb::$user->data['user_colour'],
+				'topic_first_post_username'		=> $post_username,
+				'topic_first_post_user_colour'	=> $post_user_colour,
 				'topic_first_post_time'			=> $this->post_time,
 
 				'topic_time'					=> $this->post_time,
@@ -386,11 +397,22 @@ class titania_post extends titania_message_object
 		// Respect the post_time!  If for some reason we want to insert a post before the last one...
 		if (!$this->topic->topic_last_post_id || $this->topic->topic_last_post_time < $this->post_time)
 		{
+			if ($this->post_user_id == phpbb::$user->data['user_id'])
+			{
+				$post_username = phpbb::$user->data['username'];
+				$post_user_colour = phpbb::$user->data['user_colour'];
+			}
+			else
+			{
+				$post_username = users_overlord::get_user($this->post_user_id, 'username', true);
+				$post_user_colour = users_overlord::get_user($this->post_user_id, 'user_colour', true);
+			}
+
 			$this->topic->__set_array(array(
 				'topic_last_post_id'			=> $this->post_id,
 				'topic_last_post_user_id'		=> $this->post_user_id,
-				'topic_last_post_username'		=> phpbb::$user->data['username'],
-				'topic_last_post_user_colour'	=> phpbb::$user->data['user_colour'],
+				'topic_last_post_username'		=> $post_username,
+				'topic_last_post_user_colour'	=> $post_user_colour,
 				'topic_last_post_time'			=> $this->post_time,
 				'topic_last_post_subject'		=> $this->post_subject,
 			));
