@@ -453,45 +453,36 @@ switch ($step)
 				continue;
 			}
 
+			// Move the queue topics to our own side
+			$sql = 'SELECT topic_id FROM ' . $ariel_prefix . 'contrib_topics
+				WHERE contrib_id = ' . $row['contrib_id'] . '
+					AND topic_type = 4';
+			phpbb::$db->sql_query($sql);
+			$topic_id = phpbb::$db->sql_fetchfield('topic_id');
+			phpbb::$db->sql_freeresult();
+
 			$topic = new titania_topic;
 			$topic->parent_id = $row['queue_id'];
 			$topic->topic_url = 'manage/queue/q_' . $row['queue_id'];
-			$post = false;
+			titania_move_topic($topic_id, $topic, $row['contrib_name'], $row['revision_version']);
+			$queue_topic_id = $topic->topic_id;
+			unset($topic);
 
-			// Convert the topics over from the phpBB forums
-			$sql = 'SELECT * FROM ' . POSTS_TABLE . '
-				WHERE topic_id = ' . (int) $row['topic_id'] . '
-				ORDER BY post_id ASC';
-			$post_result = phpbb::$db->sql_query($sql);
-			while ($post_row = phpbb::$db->sql_fetchrow($post_result))
-			{
-				$post = new titania_post(TITANIA_QUEUE, $topic);
-				$post->__set_array(array(
-					'post_access'			=> TITANIA_ACCESS_TEAMS,
-					'post_user_id'			=> $post_row['poster_id'],
-					'post_ip'				=> $post_row['poster_ip'],
-					'post_time'				=> $post_row['post_time'],
-					'post_subject'			=> $post_row['post_subject'],
-					'post_text'				=> $post_row['post_text'],
-					'post_text_bitfield'	=> $post_row['bbcode_bitfield'],
-					'post_text_uid'			=> $post_row['bbcode_uid'],
-					'post_text_options'		=> (($post_row['enable_bbcode']) ? OPTION_FLAG_BBCODE : 0) + (($post_row['enable_smilies']) ? OPTION_FLAG_SMILIES : 0) + (($post_row['enable_magic_url']) ? OPTION_FLAG_LINKS : 0),
-				));
-				$post->message_parsed_for_storage = true;
-				$post->submit();
-			}
-			phpbb::$db->sql_freeresult($post_result);
+			// Move the queue discussion topics to our own side
+			$sql = 'SELECT topic_id FROM ' . $ariel_prefix . 'contrib_topics
+				WHERE contrib_id = ' . $row['contrib_id'] . '
+					AND topic_type = 5';
+			phpbb::$db->sql_query($sql);
+			$topic_id = phpbb::$db->sql_fetchfield('topic_id');
+			phpbb::$db->sql_freeresult();
 
-			// We didn't convert any posts?  (Local install perhaps?)
-			if ($post === false)
+			if ($topic_id)
 			{
-				$post = new titania_post(TITANIA_QUEUE, $topic);
-				$post->__set_array(array(
-					'post_access'			=> TITANIA_ACCESS_TEAMS,
-					'post_subject'			=> phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version'],
-					'post_text'				=> 'Converted from Ariel',
-				));
-				$post->submit();
+				$topic = new titania_topic;
+				$topic->parent_id = $row['queue_id'];
+				$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
+				titania_move_topic($topic_id, $topic);
+				unset($topic);
 			}
 
 			// Now insert to the queue table
@@ -500,7 +491,7 @@ switch ($step)
 				'revision_id'			=> $row['revision_id'],
 				'contrib_id'			=> $row['contrib_id'],
 				'submitter_user_id'		=> $row['user_id'],
-				'queue_topic_id'		=> $topic->topic_id,
+				'queue_topic_id'		=> $queue_topic_id,
 
 				'queue_type'			=> $row['contrib_type'],
 				'queue_status'			=> $queue_swap[$row['queue_status']],
@@ -585,6 +576,48 @@ if (!headers_sent())
 }
 
 trigger_error($display_message);
+
+// Move a topic from phpBB ($topic_id) to Titania ($topic; object)
+function titania_move_topic($topic_id, $topic, $contrib_name = '', $revision_version = '')
+{
+	$post = false;
+
+	// Convert the topics over from the phpBB forums
+	$sql = 'SELECT * FROM ' . POSTS_TABLE . '
+		WHERE topic_id = ' . (int) $topic_id . '
+		ORDER BY post_id ASC';
+	$post_result = phpbb::$db->sql_query($sql);
+	while ($post_row = phpbb::$db->sql_fetchrow($post_result))
+	{
+		$post = new titania_post(TITANIA_QUEUE, $topic);
+		$post->__set_array(array(
+			'post_access'			=> TITANIA_ACCESS_TEAMS,
+			'post_user_id'			=> $post_row['poster_id'],
+			'post_ip'				=> $post_row['poster_ip'],
+			'post_time'				=> $post_row['post_time'],
+			'post_subject'			=> $post_row['post_subject'],
+			'post_text'				=> $post_row['post_text'],
+			'post_text_bitfield'	=> $post_row['bbcode_bitfield'],
+			'post_text_uid'			=> $post_row['bbcode_uid'],
+			'post_text_options'		=> (($post_row['enable_bbcode']) ? OPTION_FLAG_BBCODE : 0) + (($post_row['enable_smilies']) ? OPTION_FLAG_SMILIES : 0) + (($post_row['enable_magic_url']) ? OPTION_FLAG_LINKS : 0),
+		));
+		$post->message_parsed_for_storage = true;
+		$post->submit();
+	}
+	phpbb::$db->sql_freeresult($post_result);
+
+	// We didn't convert any posts?  (Local install perhaps?)
+	if ($post === false)
+	{
+		$post = new titania_post(TITANIA_QUEUE, $topic);
+		$post->__set_array(array(
+			'post_access'			=> TITANIA_ACCESS_TEAMS,
+			'post_subject'			=> phpbb::$user->lang['VALIDATION'] . ' - ' . $contrib_name . ' - ' . $revision_version,
+			'post_text'				=> 'Converted from Ariel',
+		));
+		$post->submit();
+	}
+}
 
 function titania_insert($table, $sql_ary)
 {
