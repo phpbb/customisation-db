@@ -481,7 +481,7 @@ switch ($step)
 				$topic = new titania_topic;
 				$topic->parent_id = $row['contrib_id'];
 				$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
-				titania_move_topic($discussion_topic_id, $topic, TITANIA_SUPPORT);
+				titania_move_topic($discussion_topic_id, $topic, TITANIA_QUEUE_DISCUSSION);
 				unset($topic);
 			}
 
