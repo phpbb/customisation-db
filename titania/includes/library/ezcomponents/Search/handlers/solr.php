@@ -269,7 +269,7 @@ class ezcSearchSolrHandler implements ezcSearchHandler, ezcSearchIndexHandler
             $queryPart = '/?'. http_build_query( $queryString );
         }
         $length = strlen( $data );
-        $cmd =  "Post {$this->location}/{$type}{$queryPart} HTTP/1.1\n";
+        $cmd =  "POST {$this->location}/{$type}{$queryPart} HTTP/1.1\n";
         $cmd .= "Host: {$this->host}:{$this->port}\n";
         $cmd .= "User-Agent: eZ Components Search\n";
         $cmd .= "Content-Type: text/xml; charset=utf-8\n";
