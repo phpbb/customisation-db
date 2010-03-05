@@ -39,6 +39,7 @@ $lang = array_merge($lang, array(
 'MARK_NO_PROGRESS' => 'Mark no Progress',
 'MARK_IN_PROGRESS' => 'Mark in Progress',
 'QUEUE_DISCUSSION' => 'Queue Discussion',
+'QUEUE_DISCUSSION_TOPIC' => 'Queue Discussion Topic',
 'SUBMIT_TIME' => 'Submission Time',
 	'VALIDATION_QUEUE'	=> 'Validation Queue',
 	'VALIDATION_NOTES'	=> 'Validation Notes',

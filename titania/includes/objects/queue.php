@@ -100,9 +100,6 @@ class titania_queue extends titania_message_object
 			// Submit here first to make sure we have a queue_id for the topic url
 			parent::submit();
 
-			titania::add_lang('manage');
-			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version']);
-
 			// Is there a queue discussion topic?  If not we should create one
 			$sql = 'SELECT topic_id FROM ' . TITANIA_TOPICS_TABLE . '
 				WHERE parent_id = ' . $this->contrib_id . '
@@ -127,6 +124,8 @@ class titania_queue extends titania_message_object
 				$post->submit();
 			}
 			phpbb::$db->sql_freeresult($result);
+
+			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version']);
 		}
 		else if ($update_first_post)
 		{
@@ -171,6 +170,22 @@ class titania_queue extends titania_message_object
 
 		// Need at least some text in the post body...
 		$post->post_text = phpbb::$user->lang['VALIDATION_SUBMISSION'] . "\n\n";
+
+		// Put the queue discussion link in the post
+		$sql = 'SELECT topic_id, topic_url, topic_subject_clean FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE parent_id = ' . $this->contrib_id . '
+				AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+		$result = phpbb::$db->sql_query($sql);
+		$queue_topic_row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		if ($queue_topic_row)
+		{
+			$queue_topic = new titania_topic;
+			$queue_topic->__set_array($queue_topic_row);
+
+			$post->post_text .= '<a href="' . $queue_topic->get_url() . '">' . phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC'] . "</a>\n\n";
+		}
 
 		// Add the queue notes
 		$queue_notes = $this->queue_notes;
