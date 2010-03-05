@@ -458,13 +458,13 @@ switch ($step)
 				WHERE contrib_id = ' . $row['contrib_id'] . '
 					AND topic_type = 4';
 			phpbb::$db->sql_query($sql);
-			$topic_id = phpbb::$db->sql_fetchfield('topic_id');
+			$queue_topic_id = phpbb::$db->sql_fetchfield('topic_id');
 			phpbb::$db->sql_freeresult();
 
 			$topic = new titania_topic;
 			$topic->parent_id = $row['queue_id'];
 			$topic->topic_url = 'manage/queue/q_' . $row['queue_id'];
-			titania_move_topic($topic_id, $topic, $row['contrib_name'], $row['revision_version']);
+			titania_move_topic($queue_topic_id, $topic, TITANIA_QUEUE, $row['contrib_name'], $row['revision_version']);
 			$queue_topic_id = $topic->topic_id;
 			unset($topic);
 
@@ -473,15 +473,15 @@ switch ($step)
 				WHERE contrib_id = ' . $row['contrib_id'] . '
 					AND topic_type = 5';
 			phpbb::$db->sql_query($sql);
-			$topic_id = phpbb::$db->sql_fetchfield('topic_id');
+			$discussion_topic_id = phpbb::$db->sql_fetchfield('topic_id');
 			phpbb::$db->sql_freeresult();
 
-			if ($topic_id)
+			if ($discussion_topic_id)
 			{
 				$topic = new titania_topic;
-				$topic->parent_id = $row['queue_id'];
+				$topic->parent_id = $row['contrib_id'];
 				$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
-				titania_move_topic($topic_id, $topic);
+				titania_move_topic($discussion_topic_id, $topic, TITANIA_SUPPORT);
 				unset($topic);
 			}
 
@@ -578,7 +578,7 @@ if (!headers_sent())
 trigger_error($display_message);
 
 // Move a topic from phpBB ($topic_id) to Titania ($topic; object)
-function titania_move_topic($topic_id, $topic, $contrib_name = '', $revision_version = '')
+function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', $revision_version = '')
 {
 	$post = false;
 
@@ -589,7 +589,7 @@ function titania_move_topic($topic_id, $topic, $contrib_name = '', $revision_ver
 	$post_result = phpbb::$db->sql_query($sql);
 	while ($post_row = phpbb::$db->sql_fetchrow($post_result))
 	{
-		$post = new titania_post(TITANIA_QUEUE, $topic);
+		$post = new titania_post($topic_type, $topic);
 		$post->__set_array(array(
 			'post_access'			=> TITANIA_ACCESS_TEAMS,
 			'post_user_id'			=> $post_row['poster_id'],
@@ -607,9 +607,9 @@ function titania_move_topic($topic_id, $topic, $contrib_name = '', $revision_ver
 	phpbb::$db->sql_freeresult($post_result);
 
 	// We didn't convert any posts?  (Local install perhaps?)
-	if ($post === false)
+	if ($post === false && $contrib_name)
 	{
-		$post = new titania_post(TITANIA_QUEUE, $topic);
+		$post = new titania_post($topic_type, $topic);
 		$post->__set_array(array(
 			'post_access'			=> TITANIA_ACCESS_TEAMS,
 			'post_subject'			=> phpbb::$user->lang['VALIDATION'] . ' - ' . $contrib_name . ' - ' . $revision_version,
