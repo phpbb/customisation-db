@@ -182,6 +182,26 @@ switch ($action)
 
 		if ($category_id != 0)
 		{
+			// Breadcrumbs
+			$category_object = new titania_category;
+			$categories_ary = titania::$cache->get_categories();
+
+			// Parents
+			foreach (array_reverse(titania::$cache->get_category_parents($category_id)) as $row)
+			{
+				$category_object->__set_array($categories_ary[$row['category_id']]);
+				titania::generate_breadcrumbs(array(
+					((isset(phpbb::$user->lang[$categories_ary[$row['category_id']]['category_name']])) ? phpbb::$user->lang[$categories_ary[$row['category_id']]['category_name']] : $categories_ary[$row['category_id']]['category_name'])	=> titania_url::build_url($category_object->get_url()),
+				));
+			}
+
+			// Self
+			$category_object->__set_array($categories_ary[$category_id]);
+			titania::generate_breadcrumbs(array(
+				((isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'])	=> titania_url::build_url($category_object->get_url()),
+			));
+			unset($categories_ary, $category_object);
+
 			contribs_overlord::display_contribs('category', $category_id);
 		}
 
