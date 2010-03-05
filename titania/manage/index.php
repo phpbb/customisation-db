@@ -34,7 +34,12 @@ titania::add_lang('manage');
 $nav_ary = array(
 	'queue' => array(
 		'title'		=> 'VALIDATION_QUEUE',
-		'url'		=> titania_url::build_url('manage/queue/'),
+		'url'		=> titania_url::build_url('manage/queue'),
+		'auth'		=> (sizeof(titania_types::find_authed('view'))) ? true : false,
+	),
+	'queue_discussion' => array(
+		'title'		=> 'QUEUE_DISCUSSION',
+		'url'		=> titania_url::build_url('manage/queue_discussion'),
 		'auth'		=> (sizeof(titania_types::find_authed('view'))) ? true : false,
 	),
 );
@@ -49,6 +54,7 @@ titania::generate_nav($nav_ary, $page);
 switch ($page)
 {
 	case 'queue' :
+	case 'queue_discussion' :
 		include(TITANIA_ROOT . 'manage/' . $page . '.' . PHP_EXT);
 	break;
 

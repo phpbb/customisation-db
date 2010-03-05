@@ -239,6 +239,11 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_QUEUE;
 			break;
 
+			case 'queue_discussion' :
+				$page_url = titania_url::build_url('manage/queue_discussion');
+				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+			break;
+
 			case 'author_support' :
 				$page_url = $object->get_url('support');
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
