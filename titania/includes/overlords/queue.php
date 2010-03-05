@@ -210,10 +210,12 @@ class queue_overlord
 			'FROM'		=> array(
 				TITANIA_QUEUE_TABLE		=> 'q',
 				TITANIA_REVISIONS_TABLE	=> 'r',
+				TITANIA_TOPICS_TABLE	=> 't',
 			),
 
 			'WHERE' => 'q.queue_id = ' . (int) $queue_id . '
-				AND r.revision_id = q.revision_id',
+				AND r.revision_id = q.revision_id
+				AND t.topic_id = q.queue_topic_id',
 		);
 
 		// Main SQL Query
@@ -236,8 +238,7 @@ class queue_overlord
 
 		// Load the topic
 		$topic = new titania_topic;
-		$topic->topic_id = $row['queue_topic_id'];
-		$topic->load();
+		$topic->__set_array($row);
 
 		// Display the posts
 		posts_overlord::display_topic_complete($topic);

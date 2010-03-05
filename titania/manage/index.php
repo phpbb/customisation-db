@@ -50,6 +50,17 @@ $page = (isset($nav_ary[$page])) ? $page : 'queue';
 // Display nav menu
 titania::generate_nav($nav_ary, $page);
 
+// Generate the main breadcrumbs
+titania::generate_breadcrumbs(array(
+	phpbb::$user->lang['MANAGE']	=> titania_url::build_url('manage'),
+));
+if ($page)
+{
+	titania::generate_breadcrumbs(array(
+		$nav_ary[$page]['title']	=> $nav_ary[$page]['url'],
+	));
+}
+
 // And now to load the appropriate page...
 switch ($page)
 {

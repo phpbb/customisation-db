@@ -41,6 +41,7 @@ $lang = array_merge($lang, array(
 'QUEUE_DISCUSSION' => 'Queue Discussion',
 'QUEUE_DISCUSSION_TOPIC' => 'Queue Discussion Topic',
 'SUBMIT_TIME' => 'Submission Time',
+'NO_QUEUE_ITEM' => 'Queue item does not exist.',
 	'VALIDATION_QUEUE'	=> 'Validation Queue',
 	'VALIDATION_NOTES'	=> 'Validation Notes',
 	'VALIDATION_MPV' => 'MPV Notes',

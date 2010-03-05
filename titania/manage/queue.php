@@ -77,6 +77,11 @@ else
 // Add the queue type to the base url
 $base_url = titania_url::append_url($base_url, array('queue' => titania_types::$types[$queue_type]->url));
 
+// Add to Breadcrumbs
+titania::generate_breadcrumbs(array(
+	titania_types::$types[$queue_type]->lang	=> $base_url,
+));
+
 // Handle replying/editing/etc
 $posting_helper = new titania_posting(TITANIA_ATTACH_EXT_SUPPORT);
 $posting_helper->act('manage/queue_post.html');
