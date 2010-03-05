@@ -729,6 +729,8 @@ class titania_post extends titania_message_object
 			'S_POST_APPROVED'				=> $this->post_approved,
 			'S_POST_REPORTED'				=> $this->post_reported,
 			'S_POST_DELETED'				=> ($this->post_deleted != 0) ? true : false,
+			'S_ACCESS_TEAMS'				=> ($this->post_access == TITANIA_ACCESS_TEAMS) ? true : false,
+			'S_ACCESS_AUTHORS'				=> ($this->post_access == TITANIA_ACCESS_AUTHORS) ? true : false,
 		);
 
 		return $details;

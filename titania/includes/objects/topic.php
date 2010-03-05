@@ -230,6 +230,8 @@ class titania_topic extends titania_database_object
 			'U_VIEW_LAST_POST'				=> titania_url::append_url($this->get_url(), array('p' => $this->topic_last_post_id, '#p' => $this->topic_last_post_id)),
 
 			'S_UNREAD_TOPIC'				=> ($this->unread) ? true : false,
+			'S_ACCESS_TEAMS'				=> ($this->topic_access == TITANIA_ACCESS_TEAMS) ? true : false,
+			'S_ACCESS_AUTHORS'				=> ($this->topic_access == TITANIA_ACCESS_AUTHORS) ? true : false,
 
 			'TOPIC_FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
 			'TOPIC_FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
