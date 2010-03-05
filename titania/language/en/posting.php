@@ -48,4 +48,13 @@ $lang = array_merge($lang, array(
 
 	'STICKIES'			=> 'Stickies',
 	'STICKY_TOPIC'		=> 'Sticky Topic',
+
+	'QUEUE_DISCUSSION_TOPIC_TITLE'	=> 'Validation Discussion - %s',
+	'QUEUE_DISCUSSION_TOPIC_MESSAGE'	=> 'This topic is for validation discussion between the contribution authors and validators.
+
+Anything posted in this topic will be noticed by those validating your contribution, so please post here instead of using private messages to validators.
+
+Validation staff may also post questions to the authors here, so please reply with helpful information for them as it may be required to proceed with the validation procedure.
+
+Note that by default this topic is private between authors and validators and cannot be seen by the public.',
 ));

@@ -20,7 +20,7 @@ class posts_overlord
 {
 	/**
 	* Posts array
-	* Stores [id] => post object
+	* Stores [id] => post row
 	*
 	* @var array
 	*/

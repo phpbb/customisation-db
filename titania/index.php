@@ -140,7 +140,7 @@ switch ($action)
 			// Start up the machine
 			$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
 
-			//$package_root = $this->find_root();
+			//$package_root = $contrib_tools->find_root();
 			//$contrib_tools->restore_root($package_root);
 			//$contrib_tools->replace_zip();
 
@@ -182,7 +182,7 @@ switch ($action)
 
 		if ($category_id != 0)
 		{
-			titania_display_contribs('category', $category_id);
+			contribs_overlord::display_contribs('category', $category_id);
 		}
 
 		phpbb::$template->assign_vars(array(

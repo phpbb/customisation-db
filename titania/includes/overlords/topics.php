@@ -20,7 +20,7 @@ class topics_overlord
 {
 	/**
 	* Topics array
-	* Stores [id] => topic object
+	* Stores [id] => topic row
 	*
 	* @var array
 	*/
@@ -244,8 +244,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
 				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.parent_id', array_map('intval', $contrib_ids));
 
-				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.parent_id', array_map('intval', titania::$cache->get_author_contribs($object->user_id)));
+				// We also display the queue discussion topic between validators and authors in the support area
+				$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
 			break;
 
 			case 'author_tracker' :
@@ -254,13 +254,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.parent_id', array_map('intval', $contrib_ids));
 
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_TRACKER;
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.parent_id', array_map('intval', titania::$cache->get_author_contribs($object->user_id)));
 			break;
 
 			case 'support' :
 			default :
 				$page_url = $object->get_url('support');
 				$sql_ary['WHERE'] .= ' AND t.parent_id = ' . (int) $object->contrib_id;
+
 				// We also display the queue discussion topic between validators and authors in the support area
 				$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
 			break;

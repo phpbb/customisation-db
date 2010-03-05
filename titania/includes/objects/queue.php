@@ -82,7 +82,7 @@ class titania_queue extends titania_message_object
 	{
 		if (!$this->queue_id)
 		{
-			$sql = 'SELECT c.contrib_name, c.contrib_type, r.revision_version
+			$sql = 'SELECT c.contrib_id, c.contrib_name_clean, c.contrib_name, c.contrib_type, r.revision_version
 				FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
 				WHERE r.revision_id = ' . (int) $this->revision_id . '
 					AND c.contrib_id = r.contrib_id';
@@ -102,6 +102,31 @@ class titania_queue extends titania_message_object
 
 			titania::add_lang('manage');
 			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version']);
+
+			// Is there a queue discussion topic?  If not we should create one
+			$sql = 'SELECT topic_id FROM ' . TITANIA_TOPICS_TABLE . '
+				WHERE parent_id = ' . $this->contrib_id . '
+					AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+			$result = phpbb::$db->sql_query($sql);
+			if (!phpbb::$db->sql_fetchrow($result))
+			{
+				titania::add_lang('posting');
+
+				$post = new titania_post(TITANIA_QUEUE_DISCUSSION);
+				$post->topic->__set_array(array(
+					'parent_id'			=> $row['contrib_id'],
+					'topic_url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/',
+					'topic_sticky'		=> true,
+				));
+				$post->__set_array(array(
+					'post_access'		=> TITANIA_ACCESS_TEAMS,
+					'post_subject'		=> sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_TITLE'], $row['contrib_name']),
+					'post_text'			=> phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_MESSAGE'],
+				));
+				$post->generate_text_for_storage(true, true, true);
+				$post->submit();
+			}
+			phpbb::$db->sql_freeresult($result);
 		}
 		else if ($update_first_post)
 		{
