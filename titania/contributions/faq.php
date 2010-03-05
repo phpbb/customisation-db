@@ -159,11 +159,13 @@ switch ($action)
 			$parsed_attachments = $attachments->parse_attachments($faq->faq_text);
 
 			phpbb::$template->assign_vars(array(
-				'FAQ_SUBJECT'		=> $faq->faq_subject,
-				'FAQ_TEXT'			=> $faq->generate_text_for_display(),
-				'FAQ_VIEWS'			=> $faq->faq_views,
+				'FAQ_SUBJECT'			=> $faq->faq_subject,
+				'FAQ_TEXT'				=> $faq->generate_text_for_display(),
+				'FAQ_VIEWS'				=> $faq->faq_views,
 
-				'S_DETAILS'			=> true,
+				'S_DETAILS'				=> true,
+				'S_ACCESS_TEAMS'		=> ($faq->faq_access == TITANIA_ACCESS_TEAMS) ? true : false,
+				'S_ACCESS_AUTHORS'		=> ($faq->faq_access == TITANIA_ACCESS_AUTHORS) ? true : false,
 
 				'U_EDIT_FAQ'		=> (titania::$contrib->is_author || phpbb::$auth->acl_get('u_titania_faq_edit')) ? $faq->get_url('edit') : false,
 			));
@@ -225,10 +227,10 @@ switch ($action)
 				titania_topic_folder_img($folder_img, $folder_alt, 0, $unread);
 
 				phpbb::$template->assign_block_vars('faqlist', array(
-					'U_FAQ'			=> $faq->get_url('', $row['faq_id']),
+					'U_FAQ'							=> $faq->get_url('', $row['faq_id']),
 
-					'SUBJECT'		=> $row['faq_subject'],
-					'VIEWS'			=> $row['faq_views'],
+					'SUBJECT'						=> $row['faq_subject'],
+					'VIEWS'							=> $row['faq_views'],
 
 					'TOPIC_FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
 					'TOPIC_FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
@@ -237,10 +239,14 @@ switch ($action)
 					'TOPIC_FOLDER_IMG_WIDTH'		=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 					'TOPIC_FOLDER_IMG_HEIGHT'		=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 
-					'U_MOVE_UP'		=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_up', $row['faq_id']) : false,
-					'U_MOVE_DOWN'	=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_down', $row['faq_id']) : false,
-					'U_EDIT'		=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_edit') || titania::$contrib->is_author) ? $faq->get_url('edit', $row['faq_id']) : false,
-					'U_DELETE'		=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_delete') || titania::$contrib->is_author) ? $faq->get_url('delete', $row['faq_id']) : false,
+					'U_MOVE_UP'						=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_up', $row['faq_id']) : false,
+					'U_MOVE_DOWN'					=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || titania::$contrib->is_author) ? $faq->get_url('move_down', $row['faq_id']) : false,
+					'U_EDIT'						=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_edit') || titania::$contrib->is_author) ? $faq->get_url('edit', $row['faq_id']) : false,
+					'U_DELETE'						=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || phpbb::$auth->acl_get('u_titania_faq_delete') || titania::$contrib->is_author) ? $faq->get_url('delete', $row['faq_id']) : false,
+
+
+					'S_ACCESS_TEAMS'				=> ($row['faq_access'] == TITANIA_ACCESS_TEAMS) ? true : false,
+					'S_ACCESS_AUTHORS'				=> ($row['faq_access'] == TITANIA_ACCESS_AUTHORS) ? true : false,
 				));
 			}
 
