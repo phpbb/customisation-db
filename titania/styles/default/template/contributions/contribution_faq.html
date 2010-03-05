@@ -36,7 +36,10 @@
 			<!-- ENDIF -->
 				<li class="row<!-- IF faqlist.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 					<dl class="icon" style="background-image: url({faqlist.TOPIC_FOLDER_IMG_SRC}); background-repeat: no-repeat;">
-						<dt><a href="{faqlist.U_FAQ}">{faqlist.SUBJECT}</a></dt>
+						<dt>
+							<!-- IF faqlist.S_ACCESS_TEAMS or faqlist.S_ACCESS_AUTHORS --><img src="{T_TITANIA_THEME_PATH}/icon_access_<!-- IF faqlist.S_ACCESS_TEAMS -->teams<!-- ELSE -->author<!-- ENDIF -->.png" class="access-icon" alt="" /><!-- ENDIF -->
+							<a href="{faqlist.U_FAQ}">{faqlist.SUBJECT}</a>
+						</dt>
 						<dd class="faq-tools">
 							<!-- IF faqlist.U_MOVE_UP and HIDE_FOR_NOW -->
 								<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->
@@ -80,7 +83,7 @@
 	<div id="p{posts.POST_ID}" class="post container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<div class="postbody">
-				<h3>{FAQ_SUBJECT}</h3>
+				<h3>{FAQ_SUBJECT} <!-- IF S_ACCESS_TEAMS or S_ACCESS_AUTHORS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_<!-- IF S_ACCESS_TEAMS -->teams<!-- ELSE -->author<!-- ENDIF -->.png" alt="" /><!-- ENDIF --></h3>
 
 				<div class="content">{FAQ_TEXT}</div>
 

@@ -82,6 +82,10 @@ h3.section-name {
 	margin: 0 -10px;
 }
 
+.main-panel .forabg span.corners-top, .main-panel .forabg span.corners-bottom {
+	margin: 0 -5px;
+}
+
 .container {
 	background-color: #FFFFFF;
 	padding: 0 10px;
@@ -248,6 +252,24 @@ dd.author {
 
 .container .cplist dd.type, .container .cplist dd.contrib-author {
 	font-size: 1.1em;
+}
+
+.container .forabg {
+	background-color: #53A8D2;
+	background-image: none;
+}
+
+.container .forabg li.header dt, .container .forabg li.header dd {
+	color: #FFF;
+}
+
+.container .forabg li.row {
+	background-color: #FFF;
+	border-bottom-color: #4B9AC2;
+}
+
+img.access-icon {
+	float: right;
 }
 
 /* Rating Code */
