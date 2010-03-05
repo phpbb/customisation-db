@@ -58,10 +58,9 @@ class titania_topic extends titania_database_object
 	/**
 	 * Constructor class for titania topics
 	 *
-	 * @param int|string $type The type of topic ('tracker', 'queue', 'normal').  Normal/default meaning support/discussion.  Constants for the type can be sent instead of a string
 	 * @param int $topic_id The topic_id, 0 for making a new topic
 	 */
-	public function __construct($type = TITANIA_SUPPORT, $topic_id = 0)
+	public function __construct($topic_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -100,23 +99,6 @@ class titania_topic extends titania_database_object
 			'topic_last_post_time'			=> array('default' => (int) titania::$time),
 			'topic_last_post_subject'		=> array('default' => ''),
 		));
-
-		switch ($type)
-		{
-			case 'tracker' :
-			case TITANIA_TRACKER :
-				$this->topic_type = TITANIA_TRACKER;
-			break;
-
-			case 'queue' :
-			case TITANIA_QUEUE :
-				$this->topic_type = TITANIA_QUEUE;
-			break;
-
-			default :
-				$this->topic_type = TITANIA_SUPPORT;
-			break;
-		}
 
 		$this->topic_id = $topic_id;
 	}

@@ -68,6 +68,7 @@ define('TITANIA_TRACKER', 5);
 define('TITANIA_TOPIC', 6);
 define('TITANIA_AUTHOR', 7);
 define('TITANIA_CATEGORY', 8);
+define('TITANIA_QUEUE_DISCUSSION', 9);
 
 // Errorbox types
 define('TITANIA_ERROR', 1);

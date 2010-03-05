@@ -261,7 +261,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			default :
 				$page_url = $object->get_url('support');
 				$sql_ary['WHERE'] .= ' AND t.parent_id = ' . (int) $object->contrib_id;
-				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
+				// We also display the queue discussion topic between validators and authors in the support area
+				$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
 			break;
 		}
 

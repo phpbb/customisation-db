@@ -104,6 +104,11 @@ class titania_post extends titania_message_object
 
 		switch ($type)
 		{
+			case 'queue_discussion' :
+			case TITANIA_QUEUE_DISCUSSION :
+				$this->post_type = TITANIA_QUEUE_DISCUSSION;
+			break;
+
 			case 'tracker' :
 			case TITANIA_TRACKER :
 				$this->post_type = TITANIA_TRACKER;
@@ -130,7 +135,7 @@ class titania_post extends titania_message_object
 		}
 		else if (is_int($topic))
 		{
-			$this->topic = new titania_topic($this->post_type, $topic);
+			$this->topic = new titania_topic($topic);
 			if (!$this->topic->load())
 			{
 				trigger_error('NO_TOPIC');
@@ -140,7 +145,7 @@ class titania_post extends titania_message_object
 		}
 		else
 		{
-			$this->topic = new titania_topic($this->post_type);
+			$this->topic = new titania_topic;
 		}
 	}
 
@@ -351,6 +356,7 @@ class titania_post extends titania_message_object
 		if (!$this->topic->topic_id)
 		{
 			$this->topic->__set_array(array(
+				'topic_type'		=> $this->post_type,
 				'topic_access'		=> $this->post_access,
 				'topic_approved'	=> $this->post_approved,
 				'topic_user_id'		=> $this->post_user_id,

@@ -216,9 +216,6 @@ class titania_queue extends titania_message_object
 
 	public function approve()
 	{
-		// Send notification message
-		$this->send_approve_deny_notification();
-
 		// Update the revisions table
 		$sql_ary = array(
 			'revision_validated'	=> true,
@@ -242,6 +239,9 @@ class titania_queue extends titania_message_object
 		$this->queue_close_time = titania::$time;
 		$this->queue_close_user = phpbb::$user->data['user_id'];
 		$this->submit(false);
+
+		// Send notification message
+		$this->send_approve_deny_notification();
 	}
 
 	public function deny()

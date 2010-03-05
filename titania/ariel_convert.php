@@ -453,7 +453,7 @@ switch ($step)
 				continue;
 			}
 
-			$topic = new titania_topic(TITANIA_QUEUE);
+			$topic = new titania_topic;
 			$topic->parent_id = $row['queue_id'];
 			$topic->topic_url = 'manage/queue/q_' . $row['queue_id'];
 			$post = false;
