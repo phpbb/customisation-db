@@ -20,8 +20,8 @@ define('SUBSCRIPTION_WATCH', 2);
 class titania_subscriptions
 {
 	/*
-	* Subscribe
-	*/
+	 * Subscribe
+	 */
 	public static function subscribe($object_type, $object_id, $user_id, $subscription_type = SUBSCRIPTION_EMAIL)
 	{
 		// We are just going to force one or the other on them.
@@ -75,8 +75,8 @@ class titania_subscriptions
 	}
 	
 	/*
-	* Unsubscribe
-	*/
+	 * Unsubscribe
+	 */
 	public static function unsubscribe($object_type, $object_id, $user_id, $subscription_type = SUBSCRIPTION_EMAIL)
 	{
 		// We are just going to force one or the other on them.
@@ -127,10 +127,33 @@ class titania_subscriptions
 		return true;
 	}
 	
-	/*
-	* Send Notifications
-	*/	
-	public static function send_notifications($object_type, $object_id, $url)
+	/**
+	 * Send Notifications
+	 *
+	 * Using this function:
+	 * Call this function when you know the Object type, object id, and the email
+	 * template name. 
+	 * Sample usage:
+	 *
+	 * <code>
+	 *
+	 * $object_type = SOME_OBJECT_CONSTANT_TYPE;
+	 * $obhect)id = 242974;
+	 *
+	 * titania_subscriptions::send_notifications($object_type, $object_id, 'mod_subscribe', array(
+	 * 		'OBJECT_NAME'	=> 'Some MOD',
+	 * ));
+	 *
+	 * </code>
+	 *
+	 * The vars parameter will be used in the messanger assign vars, which will act
+	 * as the common vars when sending out the notifications. Data such as the MOD's
+	 * or Style's name should go here, what action was taken, etc. The usernaeme and 
+	 * emails of the recepiants will be personalised by the function. Ensure the
+	 * email template has the {USERNAME} var present.
+	 *
+	 */	
+	public static function send_notifications($object_type, $object_id, $email_tpl, $vars)
 	{
 		$sql = 'SELECT w.watch_user_id, u.user_id, u.username, u.user_email, c.contrib_name
 				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u, ' . TITANIA_CONTRIBS_TABLE . ' c
@@ -163,18 +186,13 @@ class titania_subscriptions
 		// Send to each user
 		foreach($user_data as $data)
 		{
-			$messenger->template('subscribe_notify', 'en'); // Forcing English
+			$messenger->template($email_tpl, 'en'); // Forcing English
 			// $messenger->from('','');
 			$messenger->to($data['user_email'], $data['username']);
 			
-			$messenger->assign_vars(array(
-				'TYPE'   			=> titania_types::$types[$data['contrib_type']]->lang,
-				'CONTRIBNAME'		=> $data['contrib_name'], 
+			$messenger->assign_vars(array_merge($vars, array(
 				'USERNAME'			=> $data['username'],
-			//	'EMAIL_SIG'			=> '',
-				
-				'U_CONTRIB_OVERVIEW'	=> $url,
-			));
+			)));
 			
 			$messenger->send();
 		}
