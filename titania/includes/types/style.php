@@ -47,8 +47,8 @@ class titania_type_style extends titania_type_base
 
 	// Validation messages (for the PM)
 	public $validation_subject = 'STYLE_VALIDATION';
-	public $validation_message_approve = 'STYLE__VALIDATION_MESSAGE_APPROVE';
-	public $validation_message_deny = 'STYLE__VALIDATION_MESSAGE_DENY';
+	public $validation_message_approve = 'STYLE_VALIDATION_MESSAGE_APPROVE';
+	public $validation_message_deny = 'STYLE_VALIDATION_MESSAGE_DENY';
 
 	public function __construct()
 	{
