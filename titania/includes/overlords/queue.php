@@ -259,7 +259,7 @@ class queue_overlord
 
 			$quick_actions['ALTER_NOTES'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes'));
 
-			$quick_actions['MOVE'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'move'));
+			$quick_actions['CHANGE_STATUS'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'move'));
 
 			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
