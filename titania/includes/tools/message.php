@@ -289,7 +289,7 @@ class titania_message
 		//$this->post_object->generate_text_for_storage($request_data['bbcode_enabled'], $request_data['magic_url_enabled'], $request_data['smilies_enabled']);
 
 		phpbb::$template->assign_vars(array(
-			'PREVIEW_SUBJECT'		=> censor_text($for_edit['subject']),
+			'PREVIEW_SUBJECT'		=> (isset($for_edit['subject'])) ? censor_text($for_edit['subject']) : '',
 			'PREVIEW_MESSAGE'		=> $this->post_object->generate_text_for_display(),
 
 			'S_DISPLAY_PREVIEW'		=> true,
