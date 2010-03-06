@@ -717,6 +717,16 @@ $versions = array(
 		),
 	),
 
+	'0.1.44' => array(
+		'table_column_remove' => array(
+			array(TITANIA_QUEUE_TABLE, 'revision_repack'),
+		),
+		
+		'table_column_add' => array(
+			array(TITANIA_QUEUE_TABLE, 'queue_allow_repack', array('TINT:1', 1)),
+		),
+	),
+	
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

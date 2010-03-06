@@ -52,7 +52,7 @@ if ($repack)
 	phpbb::$template->assign_vars(array(
 		'REVISION_NAME'		=> $old_revision->revision_name,
 		'REVISION_VERSION'	=> $old_revision->revision_version,
-		'REPACK'			=> true,
+		'S_REPACK'			=> true,
 	));
 }
 
@@ -76,7 +76,7 @@ do{
 			$revision_attachment->is_orphan = false;
 			$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
 			$revision_version = utf8_normalize_nfc(request_var('revision_version', '', true));
-			$revision_repack = request_var('revision_repack', 0);
+			$queue_allow_repack = request_var('queue_allow_repack', 0);
 
 			// Check for errors
 			$error = array_merge($error, $revision_attachment->error);
@@ -97,7 +97,7 @@ do{
 					'attachment_id'		=> $revision_attachment->attachment_id,
 					'revision_name'		=> utf8_normalize_nfc(request_var('revision_name', '', true)),
 					'revision_version'	=> $revision_version,
-					'revision_repack'	=> $revision_repack,
+					'queue_allow_repack'	=> $queue_allow_repack,
 				));
 				$revision->submit();
 				$revision_id = $revision->revision_id;

@@ -57,7 +57,7 @@ class titania_queue extends titania_message_object
 			'contrib_id'			=> array('default' => 0),
 			'submitter_user_id'		=> array('default' => (int) phpbb::$user->data['user_id']),
 			'queue_topic_id'		=> array('default' => 0),
-			'revision_repack'		=> array('default' => 0),
+			'queue_allow_repack'		=> array('default' => 1),
 
 			'queue_type'			=> array('default' => 0), // contrib type
 			'queue_status'			=> array('default' => TITANIA_QUEUE_HIDE), // Uses either TITANIA_QUEUE_NEW or one of the tags for the queue status from the DB
