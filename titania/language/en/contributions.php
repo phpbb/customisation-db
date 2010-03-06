@@ -114,6 +114,8 @@ $lang = array_merge($lang, array(
 	'REVISIONS'							=> 'Revisions',
 	'REVISION_NAME'						=> 'Revision Name',
 	'REVISION_VERSION'					=> 'Revision Version',
+	'REVISION_REPACK'					=> 'Allow Repacking',
+	'REVISION_REPACK_EXPLAIN'			=> 'Allow this contribution to be repacked for small errors?',
 
 	'SELECT_CONTRIB_TYPE'				=> '-- Select contribution type --',
 

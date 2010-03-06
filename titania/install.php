@@ -237,6 +237,7 @@ $versions = array(
 					'contrib_id'			=> array('UINT', 0),
 					'queue_type'			=> array('TINT:1', 0),
 					'queue_status'			=> array('TINT:1', 0),
+					'revision_repack'		=> array('TINT:1', 0),
 					'submitter_user_id'		=> array('UINT', 0),
 					'queue_notes'			=> array('MTEXT_UNI', ''),
 					'queue_notes_bitfield'	=> array('VCHAR:255', ''),
