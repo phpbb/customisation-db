@@ -155,14 +155,13 @@ class titania_subscriptions
 	 */	
 	public static function send_notifications($object_type, $object_id, $email_tpl, $vars)
 	{
-		$sql = 'SELECT w.watch_user_id, u.user_id, u.username, u.user_email, c.contrib_name
+		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email, c.contrib_name
 				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u, ' . TITANIA_CONTRIBS_TABLE . ' c
 				WHERE w.watch_user_id = u.user_id
 				AND w.watch_object_id = c.contrib_id
 				AND w.watch_object_type = ' . (int) $object_type . '
-				AND w.watch_object_id = ' . (int) $object_id . '
-				AND w.watch_type = ' . SUBSCRIPTION_EMAIL;
-		
+				AND w.watch_object_id = ' . (int) $object_id;
+
 		$result = phpbb::$db->sql_query($sql);
 		
 		// Throw everything here
@@ -170,8 +169,9 @@ class titania_subscriptions
 		while($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$user_data[] = array(
-				'username'	=> $row['username'],
-				'user_email'=> $row['user_email'],
+				'username'		=> $row['username'],
+				'user_email'	=> $row['user_email'],
+				'watch_type'	=> $row['watch_type'],
 			);
 		}
 		
@@ -181,20 +181,32 @@ class titania_subscriptions
 			return;
 		}
 		
-		$messenger = new messenger();
-		
 		// Send to each user
+		// Add a new case statment for each subscription type
 		foreach($user_data as $data)
 		{
-			$messenger->template($email_tpl, 'en'); // Forcing English
-			// $messenger->from('','');
-			$messenger->to($data['user_email'], $data['username']);
-			
-			$messenger->assign_vars(array_merge($vars, array(
-				'USERNAME'			=> $data['username'],
-			)));
-			
-			$messenger->send();
+			switch($data['watch_type'])
+			{
+				case SUBSCRIPTION_EMAIL:
+					
+					// Only make the object if we need it
+					if(!isset($messenger))
+					{
+						$messenger = new messenger();
+					}
+					
+					$messenger->template($email_tpl, 'en'); // Forcing English
+					// $messenger->from('','');
+					$messenger->to($data['user_email'], $data['username']);
+					
+					$messenger->assign_vars(array_merge($vars, array(
+						'USERNAME'			=> $data['username'],
+					)));
+					
+					$messenger->send();					
+						
+				break;
+			}
 		}
 		
 		return;
