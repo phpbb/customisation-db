@@ -214,13 +214,14 @@ class titania_revision extends titania_database_object
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 
-		$queue = new titania_queue;
 		if ($row)
 		{
+			$queue = new titania_queue;
 			$queue->__set_array($row);
+			return $queue;
 		}
 
-		return $queue;
+		return false;
 	}
 
 	/**
