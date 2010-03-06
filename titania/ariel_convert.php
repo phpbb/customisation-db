@@ -468,23 +468,6 @@ switch ($step)
 			$queue_topic_id = $topic->topic_id;
 			unset($topic);
 
-			// Move the queue discussion topics to our own side
-			$sql = 'SELECT topic_id FROM ' . $ariel_prefix . 'contrib_topics
-				WHERE contrib_id = ' . $row['contrib_id'] . '
-					AND topic_type = 5';
-			phpbb::$db->sql_query($sql);
-			$discussion_topic_id = phpbb::$db->sql_fetchfield('topic_id');
-			phpbb::$db->sql_freeresult();
-
-			if ($discussion_topic_id)
-			{
-				$topic = new titania_topic;
-				$topic->parent_id = $row['contrib_id'];
-				$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
-				titania_move_topic($discussion_topic_id, $topic, TITANIA_QUEUE_DISCUSSION);
-				unset($topic);
-			}
-
 			// Now insert to the queue table
 			$sql_ary = array(
 				'queue_id'				=> $row['queue_id'],
@@ -517,6 +500,35 @@ switch ($step)
 	break;
 
 	case 5 :
+		$limit = $limit / 2;
+
+		$sql = 'SELECT COUNT(topic_id) AS cnt FROM ' . $ariel_prefix . 'contrib_topics t, ' . TITANIA_CONTRIBS_TABLE . ' c
+			WHERE t.topic_type = 5
+				AND c.contrib_id = t.contrib_id';
+		phpbb::$db->sql_query($sql);
+		$total = phpbb::$db->sql_fetchfield('cnt');
+		phpbb::$db->sql_freeresult();
+
+		// Move the queue discussion topics to our own side
+		$sql = 'SELECT * FROM ' . $ariel_prefix . 'contrib_topics t, ' . TITANIA_CONTRIBS_TABLE . ' c
+			WHERE t.topic_type = 5
+				AND c.contrib_id = t.contrib_id
+			ORDER BY t.topic_id ASC';
+		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$topic = new titania_topic;
+			$topic->parent_id = $row['contrib_id'];
+			$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
+			titania_move_topic($row['topic_id'], $topic, TITANIA_QUEUE_DISCUSSION);
+			unset($topic);
+		}
+		phpbb::$db->sql_freeresult();
+
+		$display_message = 'Queue Discussion';
+	break;
+
+	case 6 :
 		$sync = new titania_sync;
 
 		$sync->authors('count');
@@ -524,7 +536,7 @@ switch ($step)
 		$display_message = 'Authors';
 	break;
 
-	case 6 :
+	case 7 :
 		$sync = new titania_sync;
 
 		$sync->contribs('validated');
@@ -534,7 +546,7 @@ switch ($step)
 		$display_message = 'Syncing';
 	break;
 
-	case 7 :
+	case 8 :
 		titania_search::$do_not_index = false;
 
 		// Truncate index first
@@ -547,7 +559,7 @@ switch ($step)
 		$display_message = 'Indexing';
 	break;
 
-	case 8 :
+	case 9 :
 		phpbb::$cache->purge();
 
 		trigger_error('Ariel Conversion Finished!');
