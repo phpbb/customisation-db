@@ -591,7 +591,7 @@ function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', 
 	{
 		$post = new titania_post($topic_type, $topic);
 		$post->__set_array(array(
-			'post_access'			=> TITANIA_ACCESS_TEAMS,
+			'post_access'			=> ($topic_type == TITANIA_QUEUE) ? TITANIA_ACCESS_TEAMS : TITANIA_ACCESS_AUTHORS,
 			'post_user_id'			=> $post_row['poster_id'],
 			'post_ip'				=> $post_row['poster_ip'],
 			'post_time'				=> $post_row['post_time'],
