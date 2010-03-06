@@ -52,7 +52,7 @@ if ($repack)
 	phpbb::$template->assign_vars(array(
 		'REVISION_NAME'		=> $old_revision->revision_name,
 		'REVISION_VERSION'	=> $old_revision->revision_version,
-		'REVISION_REPACK'	=> $old_revision->revision_repack,
+		'REPACK'			=> true,
 	));
 }
 
@@ -97,7 +97,7 @@ do{
 					'attachment_id'		=> $revision_attachment->attachment_id,
 					'revision_name'		=> utf8_normalize_nfc(request_var('revision_name', '', true)),
 					'revision_version'	=> $revision_version,
-					'revision_repack'	=> (isset($revision_repack)) ? 1 : 0,
+					'revision_repack'	=> $revision_repack,
 				));
 				$revision->submit();
 				$revision_id = $revision->revision_id;
