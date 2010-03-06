@@ -266,11 +266,14 @@ class titania_queue extends titania_message_object
 		phpbb::$db->sql_query($sql);
 
 		// Update the contribs table
-		$sql_ary = array(
-			'contrib_status'		=> TITANIA_CONTRIB_APPROVED,
-			'contrib_last_update'	=> titania::$time,
-		);
-		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+		$contrib = new titania_contribution;
+		$contrib->load((int) $this->contrib_id);
+		$contrib->change_status(TITANIA_CONTRIB_APPROVED);
+		unset($contrib);
+
+		// Update contrib last update time
+		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+			SET contrib_last_update = ' . titania::$time . '
 			WHERE contrib_id = ' . (int) $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
