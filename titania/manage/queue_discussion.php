@@ -16,6 +16,12 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+$authed = titania_types::find_authed('view');
+if (empty($authed))
+{
+	titania::needs_auth();
+}
+
 topics_overlord::display_forums_complete('queue_discussion');
 
 titania::page_header('QUEUE_DISCUSSION');

@@ -431,6 +431,35 @@ switch ($step)
 	case 4 :
 		$limit = $limit / 2;
 
+		$sql = 'SELECT COUNT(topic_id) AS cnt FROM ' . $ariel_prefix . 'contrib_topics t, ' . TITANIA_CONTRIBS_TABLE . ' c
+			WHERE t.topic_type = 5
+				AND c.contrib_id = t.contrib_id';
+		phpbb::$db->sql_query($sql);
+		$total = phpbb::$db->sql_fetchfield('cnt');
+		phpbb::$db->sql_freeresult();
+
+		// Move the queue discussion topics to our own side
+		$sql = 'SELECT * FROM ' . $ariel_prefix . 'contrib_topics t, ' . TITANIA_CONTRIBS_TABLE . ' c
+			WHERE t.topic_type = 5
+				AND c.contrib_id = t.contrib_id
+			ORDER BY t.topic_id ASC';
+		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$topic = new titania_topic;
+			$topic->parent_id = $row['contrib_id'];
+			$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
+			titania_move_topic($row['topic_id'], $topic, TITANIA_QUEUE_DISCUSSION);
+			unset($topic);
+		}
+		phpbb::$db->sql_freeresult();
+
+		$display_message = 'Queue Discussion';
+	break;
+
+	case 5 :
+		$limit = $limit / 2;
+
 		$sql = 'SELECT COUNT(queue_id) AS cnt FROM ' . $ariel_prefix . 'queue';
 		phpbb::$db->sql_query($sql);
 		$total = phpbb::$db->sql_fetchfield('cnt');
@@ -497,35 +526,6 @@ switch ($step)
 		phpbb::$db->sql_freeresult($result);
 
 		$display_message = 'Queue';
-	break;
-
-	case 5 :
-		$limit = $limit / 2;
-
-		$sql = 'SELECT COUNT(topic_id) AS cnt FROM ' . $ariel_prefix . 'contrib_topics t, ' . TITANIA_CONTRIBS_TABLE . ' c
-			WHERE t.topic_type = 5
-				AND c.contrib_id = t.contrib_id';
-		phpbb::$db->sql_query($sql);
-		$total = phpbb::$db->sql_fetchfield('cnt');
-		phpbb::$db->sql_freeresult();
-
-		// Move the queue discussion topics to our own side
-		$sql = 'SELECT * FROM ' . $ariel_prefix . 'contrib_topics t, ' . TITANIA_CONTRIBS_TABLE . ' c
-			WHERE t.topic_type = 5
-				AND c.contrib_id = t.contrib_id
-			ORDER BY t.topic_id ASC';
-		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$topic = new titania_topic;
-			$topic->parent_id = $row['contrib_id'];
-			$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
-			titania_move_topic($row['topic_id'], $topic, TITANIA_QUEUE_DISCUSSION);
-			unset($topic);
-		}
-		phpbb::$db->sql_freeresult();
-
-		$display_message = 'Queue Discussion';
 	break;
 
 	case 6 :
