@@ -185,12 +185,12 @@ class titania_subscriptions
 		$template = file_get_contents(TITANIA_ROOT . 'language/en/email/' . $emial_tpl);
 		foreach($vars as $var => $replace)
 		{
-			if($var == 'SUBJECT')
+			if(strtoupper($var) == 'SUBJECT')
 			{
 				continue;
 			}
 			
-			str_replace('{' . $var . '}', $replace, $template);
+			str_replace('{' . strtoupper($var) . '}', $replace, $template);
 		}
 		
 		// Send to each user
