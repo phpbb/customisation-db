@@ -52,24 +52,9 @@ class titania_subscriptions
 			'watch_user_id'			=> (int) $user_id,
 			'watch_mark_time'		=> time(),
 		));
-		
+				
 		// Query and we're done
 		phpbb::$db->sql_query($sql);
-		
-		$sql = 'SELECT contrib_name 
-			FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE contrib_id = ' . (int) $object_id;
-		phpbb::$db->sql_query($sql);
-		
-		$messenger->template('subscribe_conf', 'en'); // Forcing English
-		$messenger->to(phpbb::$user->data['user_email'], phpbb::$user->data['username']);
-		
-		$messenger->assign_vars(array(
-			'SUBJECT'   	=> $row['contrib_name'],
-			'USERNAME'		=> phpbb::$user->data['username'],
-		));
-		
-		$messenger->send();		
 		
 		return true;
 	}
@@ -113,16 +98,6 @@ class titania_subscriptions
 			FROM ' . TITANIA_CONTRIBS_TABLE . '
 			WHERE contrib_id = ' . (int) $object_id;
 		phpbb::$db->sql_query($sql);
-		
-		$messenger->template('subscribe_remove', 'en'); // Forcing English
-		$messenger->to(phpbb::$user->data['user_email'], phpbb::$user->data['username']);
-		
-		$messenger->assign_vars(array(
-			'SUBJECT'   	=> $row['contrib_name'],
-			'USERNAME'		=> phpbb::$user->data['username'],
-		));
-		
-		$messenger->send();
 		
 		return true;
 	}
@@ -218,13 +193,13 @@ class titania_subscriptions
 					}
 					
 					$messenger->template('subscribe_generic', 'en');
-					$messenger->from('nobody@phpbb.com', 'Titania Mailer');
+					$messenger->from('nobody@phpbb.com', 'Titania Mailer'); // @TODO - Make this not hardcoded.
 					$messenger->to($data['user_email'], $data['username']);
 					
 					$messenger->assign_vars(array_merge($vars, array(
 						'SUBJECT'			=> $vars['SUBJECT'],
 						'MESSAGE'			=> $message,
-				//		'EMAIL_SIG'			=> '',
+				//		'EMAIL_SIG'			=> '', // @TODO - Email Sig
 					)));
 					
 					$messenger->send();					
