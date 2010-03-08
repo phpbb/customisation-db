@@ -181,10 +181,32 @@ class titania_subscriptions
 			return;
 		}
 		
+		// You wanted the email template parsed? Well here you go.
+		$template = file_get_contents(TITANIA_ROOT . 'language/en/email/' . $emial_tpl);
+		foreach($vars as $var => $replace)
+		{
+			if($var == 'SUBJECT')
+			{
+				continue;
+			}
+			
+			str_replace('{' . $var . '}', $replace, $template);
+		}
+		
 		// Send to each user
 		// Add a new case statment for each subscription type
 		foreach($user_data as $data)
 		{
+			// Generic messages that will be sent to each module individually 
+			$message = str_replace('{USERNAME}', $data['username'], $template);
+			
+			/* 
+			* Switch between the types.
+			* ------------------------------------------
+			* When adding a type, the final message will
+			* be stored in $message, and the subject is
+			* stored in $vars['SUBJECT']. 
+			*/
 			switch($data['watch_type'])
 			{
 				case SUBSCRIPTION_EMAIL:
@@ -195,12 +217,14 @@ class titania_subscriptions
 						$messenger = new messenger();
 					}
 					
-					$messenger->template($email_tpl, 'en'); // Forcing English
-					// $messenger->from('','');
+					$messenger->template('subscribe_generic', 'en');
+					$messenger->from('nobody@phpbb.com', 'Titania Mailer');
 					$messenger->to($data['user_email'], $data['username']);
 					
 					$messenger->assign_vars(array_merge($vars, array(
-						'USERNAME'			=> $data['username'],
+						'SUBJECT'			=> $vars['SUBJECT'],
+						'MESSAGE'			=> $message,
+				//		'EMAIL_SIG'			=> '',
 					)));
 					
 					$messenger->send();					

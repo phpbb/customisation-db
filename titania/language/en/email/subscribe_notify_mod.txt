@@ -1,0 +1,5 @@
+Hello {USERNAME},
+
+You are recviing this message becuase you are subscribed to the MOD "{CONTRIB_NAME}", and a new version has been released.
+Please visit the link below to view the item.
+{U_CONTRIB}
