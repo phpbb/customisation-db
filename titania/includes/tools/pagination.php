@@ -30,6 +30,15 @@ class titania_pagination extends titania_object
 	const OFFSET_LIMIT_MAX = 100;
 
 	/**
+	* URL Location/Parameters
+	* Setting these will over-ride the settings sent in build_pagination
+	*
+	* @var mixed
+	*/
+	public $url_location = false;
+	public $url_parameters = false;
+
+	/**
 	 * Set some default variables, set template_vars default values
 	 */
 	public function __construct()
@@ -118,6 +127,8 @@ class titania_pagination extends titania_object
 
 	/**
 	 * Build pagination and send to template
+	 * $this->url_location and $this->url_parameters will over-ride the settings given here for $page, $params.
+	 * The reason is that the place that calls build_pagination is typically in a completely different area, in an area that can't say for certain the correct URL (other than the current page)
 	 *
 	 * @param string $page path/page to be used in pagination url
 	 * @param array $params to be used in pagination url
@@ -125,6 +136,15 @@ class titania_pagination extends titania_object
 	 */
 	public function build_pagination($page, $params = array(), $tpl_prefix = '')
 	{
+		if ($this->url_location)
+		{
+			$page = $this->url_location;
+		}
+		if ($this->url_parameters)
+		{
+			$params = $this->url_parameters;
+		}
+
 		if ($this->limit != $this->default_limit)
 		{
 			$params[$this->limit_name] = $this->limit;
