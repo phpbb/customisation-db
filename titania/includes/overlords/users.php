@@ -209,10 +209,12 @@ class users_overlord
 					$phpbb_root_path = titania::$absolute_board;
 
 					// Get avatar (need hacks for this)
-					return (phpbb::$user->optionget('viewavatars')) ? get_user_avatar(self::$users[$user_id]['user_avatar'], self::$users[$user_id]['user_avatar_type'], self::$users[$user_id]['user_avatar_width'], self::$users[$user_id]['user_avatar_height']) : '';
+					$avatar = (phpbb::$user->optionget('viewavatars')) ? get_user_avatar(self::$users[$user_id]['user_avatar'], self::$users[$user_id]['user_avatar_type'], self::$users[$user_id]['user_avatar_width'], self::$users[$user_id]['user_avatar_height']) : '';
 
 					// Undo
 					$phpbb_root_path = PHPBB_ROOT_PATH;
+
+					return $avatar;
 				break;
 
 				case '_signature' :
