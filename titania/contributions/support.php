@@ -33,10 +33,6 @@ if ($post_id)
 
 	// Load the contrib item
 	load_contrib($topic->parent_id);
-
-	titania::generate_breadcrumbs(array(
-		censor_text($topic->topic_subject)	=> $topic->get_url(),
-	));
 }
 else if ($topic_id)
 {
@@ -51,10 +47,6 @@ else if ($topic_id)
 
 	// Load the contrib item
 	load_contrib($topic->parent_id);
-
-	titania::generate_breadcrumbs(array(
-		censor_text($topic->topic_subject)	=> $topic->get_url(),
-	));
 }
 else
 {
