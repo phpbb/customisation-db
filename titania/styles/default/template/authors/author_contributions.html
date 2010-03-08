@@ -1,7 +1,7 @@
 <!-- INCLUDE authors/author_header.html -->
 
 
-<h3 class="section-name">{PAGE_TITLE} :: {L_LIST}</h3>
+<h3 class="section-name">{PAGE_TITLE}</h3>
 
 <div class="container">
 	<div class="inner"><span class="corners-top main-corners"><span></span></span>
@@ -10,7 +10,6 @@
 				<dl>
 					<dt>{L_CONTRIBUTIONS}</dt>
 					<dd class="type">{L_TYPE}</dd>
-					<dd class="contrib-author">{L_AUTHOR}</dd>
 				</dl>
 			</li>
 		</ul>
@@ -20,7 +19,11 @@
 				<dl>
 					<dt><a class="topictitle" href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a></dt>
 					<dd class="type">{contribs.CONTRIB_TYPE}</dd>
-					<dd class="contrib-author">{contribs.AUTHOR_NAME_FULL}</dd>
+					<dd class="general">
+						<a href="" title="{L_CONTRIB_MANAGE}"><img src="{T_TITANIA_THEME_PATH}/images/icon_settings.gif" alt="{L_CONTRIB_MANAGE}" /></a>
+						<a href="" title="{L_NEW_REVISION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_new_revision.gif" alt="{L_NEW_REVISION}" /></a>
+						<a href="" title="{L_QUEUE_DISCUSSION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_discuss.gif" alt="{L_QUEUE_DISCUSSION}" /></a>
+					</dd>
 				</dl>
 			</li>
 		<!-- END contribs -->

@@ -101,6 +101,7 @@ $lang = array_merge($lang, array(
 	'MULTI_SELECT_EXPLAIN'		=> 'Hold down CTRL and click to select multiple.',
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
+	'NEW_REVISION'				=> 'New Revision',
 	'NO_AUTH'					=> 'You are not authorized to see this page.',
 	'NO_CONTRIB'				=> 'The requested contribution does not exist.',
 	'NO_CONTRIBS'				=> 'No contributions could be found',
@@ -112,6 +113,8 @@ $lang = array_merge($lang, array(
 	'ORDER'						=> 'Order',
 
 	'PURGE_CACHE'				=> 'Purge Cache',
+	
+	'QUEUE_DISCUSSION' 			=> 'Queue Discussion',
 
 	'RATING'					=> 'Rating',
 	'REMOVE_RATING'				=> 'Remove Rating',

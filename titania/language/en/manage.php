@@ -38,7 +38,6 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 'MARK_NO_PROGRESS' => 'Mark no Progress',
 'MARK_IN_PROGRESS' => 'Mark in Progress',
-'QUEUE_DISCUSSION' => 'Queue Discussion',
 'QUEUE_DISCUSSION_TOPIC' => 'Queue Discussion Topic',
 'SUBMIT_TIME' => 'Submission Time',
 'NO_QUEUE_ITEM' => 'Queue item does not exist.',
