@@ -76,12 +76,7 @@ class titania_subscriptions
 		
 		// Query and we're done
 		phpbb::$db->sql_query($sql);
-		
-		$sql = 'SELECT contrib_name 
-			FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE contrib_id = ' . (int) $object_id;
-		phpbb::$db->sql_query($sql);
-		
+
 		return true;
 	}
 	
@@ -113,10 +108,9 @@ class titania_subscriptions
 	 */	
 	public static function send_notifications($object_type, $object_id, $email_tpl, $vars)
 	{
-		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email, c.contrib_name
-				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u, ' . TITANIA_CONTRIBS_TABLE . ' c
+		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email
+				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u,
 				WHERE w.watch_user_id = u.user_id
-				AND w.watch_object_id = c.contrib_id
 				AND w.watch_object_type = ' . (int) $object_type . '
 				AND w.watch_object_id = ' . (int) $object_id;
 
