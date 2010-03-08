@@ -67,23 +67,6 @@ class titania_subscriptions
 		// We are just going to force one or the other on them.
 		$subscription_type = ($subscription_type == SUBSCRIPTION_EMAIL) ? SUBSCRIPTION_EMAIL : SUBSCRIPTION_WATCH;
 		
-		$sql = 'SELECT watch_object_id FROM ' . TITANIA_WATCH_TABLE . ' WHERE ' . phpbb::$db->sql_build_array('SELECT', array(
-			'watch_object_type'		=> (int) $object_type,
-			'watch_type'			=> (int) $subscription_type,
-			'watch_object_id'		=> (int) $object_id,
-			'watch_user_id'			=> (int) $user_id,
-		));
-		
-		$result = phpbb::$db->sql_query($sql);
-		$row = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);
-		
-		// If they are NOT already subscribed, send them out.
-		if(!$row)
-		{
-			return false;
-		}
-		
 		// Get our delete query
 		$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . "
 				WHERE watch_type = $subscription_type 
