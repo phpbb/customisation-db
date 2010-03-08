@@ -498,11 +498,7 @@ class titania
 		$confirm = false;
 		if (isset($_POST['confirm']))
 		{
-			// language frontier
-			if ($_POST['confirm'] === phpbb::$user->lang['YES'])
-			{
-				$confirm = true;
-			}
+			$confirm = true;
 		}
 
 		if ($check && $confirm)
