@@ -253,6 +253,10 @@ class titania_url
 		// Replace any number of spaces with a single underscore
 		$string = preg_replace('#[\s]+#', '_', $string);
 
+		// Replace a few ugly things
+		$match = array('[', ']');
+		$url = str_replace($match, '', $url);
+
 		return utf8_clean_string(utf8_strtolower($string));
 	}
 
@@ -267,7 +271,7 @@ class titania_url
 	*/
 	public static function url_replace($url, $urlencode = true)
 	{
-		$match = array('[', ']', '+', '#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', self::$separator);
+		$match = array('+', '#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', self::$separator);
 		$url = str_replace($match, '', $url);
 
 		return ($urlencode) ? urlencode($url) : $url;
