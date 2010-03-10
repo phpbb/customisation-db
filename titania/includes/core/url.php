@@ -267,7 +267,7 @@ class titania_url
 	*/
 	public static function url_replace($url, $urlencode = true)
 	{
-		$match = array('+', '#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', self::$separator);
+		$match = array('[', ']', '+', '#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', self::$separator);
 		$url = str_replace($match, '', $url);
 
 		return ($urlencode) ? urlencode($url) : $url;
