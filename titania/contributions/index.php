@@ -22,6 +22,29 @@ $page = basename(request_var('page', ''));
 // Add common lang
 titania::add_lang('contributions');
 
+// Go to the queue discussion for this contribution item (saves us from having to figure out the URL to the topic every time we generate it)
+if ($page == 'queue_discussion')
+{
+	load_contrib();
+
+	$sql = 'SELECT * FROM ' . TITANIA_TOPICS_TABLE . '
+		WHERE topic_type = ' . TITANIA_QUEUE_DISCUSSION . '
+			AND parent_id = ' . titania::$contrib->contrib_id;
+	$result = phpbb::$db->sql_query($sql);
+	$row = phpbb::$db->sql_fetchrow($result);
+	phpbb::$db->sql_freeresult($result);
+
+	if ($row)
+	{
+		$topic = new titania_topic;
+		$topic->__set_array($row);
+
+		redirect($topic->get_url());
+	}
+
+	trigger_error('NO_QUEUE_DISCUSSION_TOPIC');
+}
+
 // And now to load the appropriate page...
 switch ($page)
 {

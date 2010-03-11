@@ -116,6 +116,7 @@ class contribs_overlord
 	 */
 	function display_contribs($mode, $id, $sort = false, $pagination = false, $blockname = 'contribs')
 	{
+		titania::add_lang('contributions');
 		titania::_include('functions_display', 'titania_topic_folder_img');
 
 		if ($sort === false)
