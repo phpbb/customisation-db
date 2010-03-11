@@ -379,6 +379,21 @@ class titania_post extends titania_message_object
 
 		parent::submit();
 
+		// Post approved?
+		if (!$this->post_approved)
+		{
+			// Setup the attention object and submit it
+			$attention = new titania_attention;
+			$attention->__set_array(array(
+				'attention_type'		=> TITANIA_ATTENTION_UNAPPROVED,
+				'attention_object_type'	=> TITANIA_POST,
+				'attention_object_id'	=> $this->post_id,
+				'attention_url'			=> $this->get_url(),
+				'attention_title'		=> $this->post_subject,
+			));
+			$attention->submit();
+		}
+
 		// If no topic_id it means we are creating a new topic, so we need to set the first_post_ data.
 		// Respect the post_time!  If for some reason we want to insert a post before the first one...
 		if (!$this->topic->topic_first_post_id || $this->topic->topic_first_post_time > $this->post_time)
