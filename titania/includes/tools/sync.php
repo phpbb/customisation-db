@@ -50,20 +50,28 @@ class titania_sync
 				phpbb::$db->sql_query($sql);
 
 				$sql = 'SELECT DISTINCT(contrib_user_id) AS user_id FROM ' . TITANIA_CONTRIBS_TABLE .
-					(($user_id !== false) ? ' WHERE contrib_user_id = ' . (int) $user_id : '');
+					(($user_id) ? ' WHERE contrib_user_id = ' . (int) $user_id : '');
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
 					$sql_ary = $this->_get_author_count($row['user_id']);
 
-					// Increment/Decrement the contrib counter for the new owner
-					$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
-						SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-							WHERE user_id = ' . $row['user_id'];
+					// sql_affectedrows does not work if the count is 0 across the board
+					$sql = 'SELECT author_id FROM ' . TITANIA_AUTHORS_TABLE . '
+						WHERE user_id = ' . (int) $row['user_id'];
 					phpbb::$db->sql_query($sql);
+					$author_id = phpbb::$db->sql_fetchfield('author_id');
+					phpbb::$db->sql_freeresult();
 
-					// If the author profile does not exist set it up
-					if (!phpbb::$db->sql_affectedrows())
+					if ($author_id)
+					{
+						// Increment/Decrement the contrib counter for the new owner
+						$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
+							SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+								WHERE user_id = ' . $row['user_id'];
+						phpbb::$db->sql_query($sql);
+					}
+					else
 					{
 						$author = new titania_author($row['user_id']);
 						$author->__set_array($sql_ary);
@@ -435,7 +443,8 @@ class titania_sync
 			// Main authors
 			$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
 				WHERE contrib_type = ' . (int) $type_id . '
-					AND contrib_user_id = ' . (int) $user_id;
+					AND contrib_user_id = ' . (int) $user_id .
+					((titania::$config->require_validation) ? ' AND contrib_status = ' . TITANIA_CONTRIB_APPROVED : '');
 			phpbb::$db->sql_query($sql);
 			$cnt = phpbb::$db->sql_fetchfield('cnt');
 
@@ -446,7 +455,8 @@ class titania_sync
 			$sql = 'SELECT COUNT(c.contrib_id) AS cnt FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' cc, ' . TITANIA_CONTRIBS_TABLE . ' c
 				WHERE c.contrib_type = ' . (int) $type_id . '
 					AND cc.user_id = ' . (int) $user_id . '
-					AND c.contrib_id = cc.contrib_id';
+					AND c.contrib_id = cc.contrib_id' .
+					((titania::$config->require_validation) ? ' AND c.contrib_status = ' . TITANIA_CONTRIB_APPROVED : '');
 			phpbb::$db->sql_query($sql);
 			$cnt = phpbb::$db->sql_fetchfield('cnt');
 
