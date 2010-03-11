@@ -546,6 +546,7 @@ class titania_post extends titania_message_object
 	{
 		// Update the postcount for the topic and submit it
 		$this->update_topic_postcount(true);
+		$this->topic->submit();
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
 		$flags = titania_count::get_flags(TITANIA_ACCESS_PUBLIC);
@@ -576,6 +577,32 @@ class titania_post extends titania_message_object
 			// There are no posts left...
 			$this->topic->delete();
 		}
+	}
+
+	public function report($reason = '')
+	{
+		// Mark the post as reported
+		$this->post_reported = true;
+
+		// Setup the attention object and submit it
+		$attention = new titania_attention;
+		$attention->__set_array(array(
+			'attention_type'		=> TITANIA_ATTENTION_REPORTED,
+			'attention_object_type'	=> TITANIA_POST,
+			'attention_object_id'	=> $this->post_id,
+			'attention_url'			=> $this->get_url(),
+			'attention_title'		=> $this->post_subject,
+			'attention_description'	=> $reason,
+		));
+		$attention->submit();
+
+		// Update the postcount and mark as reported for the topic and submit it
+		$this->update_topic_postcount();
+		$this->topic->topic_reported = true;
+		$this->topic->submit();
+
+		// Self submission
+		parent::submit();
 	}
 
 	/**
@@ -723,12 +750,12 @@ class titania_post extends titania_message_object
 			'U_VIEW'						=> $this->get_url(),
 			'U_EDIT'						=> $this->acl_get('edit') ? $this->get_url('edit') : '',
 			'U_DELETE'						=> $this->acl_get('delete') ? $this->get_url('delete') : '',
-			'U_REPORT'						=> false,//$this->get_url('report'),
+			'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
 			'U_WARN'						=> false,//$this->get_url('warn'),
 			'U_INFO'						=> false,//$this->get_url('info'),
 			'U_QUOTE'						=> $this->acl_get('post') ? $this->get_url('quote') : '',
 			//U_MCP_APPROVE
-			//U_MCP_REPORT
+			'U_MCP_REPORT'					=> titania_url::build_url('manage/attention', array('type' => $this->post_type, 'id' => $this->post_id)),
 
 			'S_UNREAD_POST'					=> ($this->unread) ? true : false, // remember that you must set this up extra...
 			'S_POST_APPROVED'				=> $this->post_approved,

@@ -42,6 +42,11 @@ $nav_ary = array(
 		'url'		=> titania_url::build_url('manage/queue_discussion'),
 		'auth'		=> (sizeof(titania_types::find_authed('view'))) ? true : false,
 	),
+	'attention' => array(
+		'title'		=> 'ATTENTION',
+		'url'		=> titania_url::build_url('manage/attention'),
+		'auth'		=> (!phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_mod', 'u_titania_mod_faq_mod', 'u_titania_mod_post_mod') && !sizeof(titania_types::find_authed('moderate'))) ? false : true,
+	),
 );
 
 
@@ -66,6 +71,7 @@ switch ($page)
 {
 	case 'queue' :
 	case 'queue_discussion' :
+	case 'attention' :
 		include(TITANIA_ROOT . 'manage/' . $page . '.' . PHP_EXT);
 	break;
 

@@ -72,6 +72,10 @@ class titania_posting
 			case 'undelete' :
 				$this->undelete(request_var('p', 0));
 			break;
+
+			case 'report' :
+				$this->report(request_var('p', 0));
+			break;
 		}
 	}
 
@@ -284,6 +288,44 @@ class titania_posting
 	public function undelete($post_id)
 	{
 		$this->common_delete($post_id, true);
+	}
+
+	/**
+	* Report a post
+	*
+	* @param int $post_id
+	*/
+	public function report($post_id)
+	{
+		titania::add_lang('posting');
+		phpbb::$user->add_lang('mcp');
+
+		// Check permissions
+		if (!phpbb::$user->data['is_registered'])
+		{
+			titania::needs_auth();
+		}
+
+		// Load the stuff we need
+		$post_object = $this->load_post($post_id);
+
+		if (titania::confirm_box(true))
+		{
+			$message = utf8_normalize_nfc(request_var('report_text', '', true));
+			$post_object->report($message);
+
+			// Notifications
+
+			redirect($post_object->get_url());
+		}
+		else
+		{
+			//phpbb::$template->assign_var('S_CAN_NOTIFY', true);
+
+			titania::confirm_box(false, 'REPORT_POST', '', array(), 'posting/report_body.html');
+		}
+
+		redirect($post_object->get_url());
 	}
 
 	/**

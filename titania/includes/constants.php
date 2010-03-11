@@ -30,15 +30,15 @@ $phpEx = PHP_EXT;
 // Table names
 $table_prefix = titania::$config->table_prefix;
 define('TITANIA_ATTACHMENTS_TABLE',				$table_prefix . 'attachments');
+define('TITANIA_ATTENTION_TABLE',				$table_prefix . 'attention');
 define('TITANIA_AUTHORS_TABLE',					$table_prefix . 'authors');
 define('TITANIA_CATEGORIES_TABLE',				$table_prefix . 'categories');
 define('TITANIA_CONTRIBS_TABLE',				$table_prefix . 'contribs');
 define('TITANIA_CONTRIB_COAUTHORS_TABLE',		$table_prefix . 'contrib_coauthors');
 define('TITANIA_CONTRIB_FAQ_TABLE',				$table_prefix . 'contrib_faq');
 define('TITANIA_CONTRIB_IN_CATEGORIES_TABLE',	$table_prefix . 'contrib_in_categories');
-define('TITANIA_CONTRIB_TAGS_TABLE',			$table_prefix . 'contrib_tags');  // todo remove
 define('TITANIA_POSTS_TABLE',					$table_prefix . 'posts');
-define('TITANIA_QUEUE_TABLE',					$table_prefix . 'queue');  // todo remove
+define('TITANIA_QUEUE_TABLE',					$table_prefix . 'queue');
 define('TITANIA_RATINGS_TABLE',					$table_prefix . 'ratings');
 define('TITANIA_REVISIONS_TABLE',				$table_prefix . 'revisions');
 define('TITANIA_TAG_APPLIED_TABLE',				$table_prefix . 'tag_applied');
@@ -69,6 +69,7 @@ define('TITANIA_TOPIC', 6);
 define('TITANIA_AUTHOR', 7);
 define('TITANIA_CATEGORY', 8);
 define('TITANIA_QUEUE_DISCUSSION', 9);
+define('TITANIA_POST', 10);
 
 // Errorbox types
 define('TITANIA_ERROR', 1);
@@ -88,6 +89,10 @@ define('TITANIA_ATTACH_EXT_SUPPORT', 'Titania Posts: Support');
 define('TITANIA_ACCESS_TEAMS', 0);
 define('TITANIA_ACCESS_AUTHORS', 1);
 define('TITANIA_ACCESS_PUBLIC', 2);
+
+// Attention stuff
+define('TITANIA_ATTENTION_REPORTED', 1);
+define('TITANIA_ATTENTION_UNAPPROVED', 2);
 
 // Header status codes
 define('HEADER_OK',						200);

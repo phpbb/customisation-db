@@ -710,7 +710,7 @@ $versions = array(
 			)),
 		),
 	),
-	
+
 	'0.1.43' => array(
 		'table_column_add' => array(
 			array(TITANIA_QUEUE_TABLE, 'revision_repack', array('TINT:1', 1)),
@@ -721,12 +721,41 @@ $versions = array(
 		'table_column_remove' => array(
 			array(TITANIA_QUEUE_TABLE, 'revision_repack'),
 		),
-		
+
 		'table_column_add' => array(
 			array(TITANIA_QUEUE_TABLE, 'queue_allow_repack', array('TINT:1', 1)),
 		),
 	),
-	
+
+	'0.1.45' => array(
+		'table_add' => array(
+			array(TITANIA_ATTENTION_TABLE, array(
+				'COLUMNS'		=> array(
+					'attention_id'					=> array('UINT', NULL, 'auto_increment'),
+					'attention_type'				=> array('UINT', 0), // attention type constants (reported, needs approval, etc)
+					'attention_object_type'			=> array('UINT', 0),
+					'attention_object_id'			=> array('UINT', 0),
+					'attention_url'					=> array('VCHAR_CI', ''),
+					'attention_requester'			=> array('UINT', 0),
+					'attention_time'				=> array('TIMESTAMP', 0),
+					'attention_close_time'			=> array('TIMESTAMP', 0),
+					'attention_close_user'			=> array('UINT', 0),
+					'attention_title'				=> array('STEXT_UNI', ''),
+					'attention_description'			=> array('MTEXT_UNI', ''),
+				),
+				'PRIMARY_KEY'	=> 'attention_id',
+				'KEYS'			=> array(
+					'attention_type'				=> array('INDEX', 'attention_type'),
+					'attention_object_type'			=> array('INDEX', 'attention_object_type'),
+					'attention_object_id'			=> array('INDEX', 'attention_object_id'),
+					'attention_time'				=> array('INDEX', 'attention_time'),
+					'attention_close_time'			=> array('INDEX', 'attention_close_time'),
+					'attention_close_user'			=> array('INDEX', 'attention_close_user'),
+				),
+			)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

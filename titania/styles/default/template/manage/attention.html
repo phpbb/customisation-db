@@ -1,0 +1,60 @@
+<!-- INCLUDE manage/manage_header.html -->
+
+<h3 class="section-name">{PAGE_TITLE}</h3>
+
+<!-- IF PAGINATION or TOTAL_RESULTS -->
+<div class="topic-actions">
+	<div class="pagination">
+		<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_RESULTS}
+		<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+	</div>
+</div>
+<!-- ENDIF -->
+<div class="clear"></div>
+
+<!-- BEGIN attention -->
+	<!-- IF attention.S_TOPIC_TYPE_SWITCH and not attention.S_FIRST_ROW -->
+		</ul>
+	<!-- ENDIF -->
+
+	<!-- IF attention.S_FIRST_ROW or attention.S_TOPIC_TYPE_SWITCH -->
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="icon">
+					<dt>{L_ATTENTION}</dt>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist cplist">
+	<!-- ENDIF -->
+
+		<li class="row<!-- IF attention.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+			<dl class="icon">
+				<dt>
+					<a href="{attention.U_VIEW_ATTENTION}" class="topictitle">{attention.ATTENTION_TITLE}</a>
+				</dt>
+			</dl>
+		</li>
+
+	<!-- IF attention.S_LAST_ROW -->
+				</ul>
+	<!-- ENDIF -->
+
+<!-- BEGINELSE -->
+	<div class="panel">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<strong>{L_NO_ATTENTION}</strong>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+<!-- END attention -->
+
+<!-- IF PAGINATION or TOTAL_RESULTS -->
+<div class="topic-actions">
+	<div class="pagination">
+		<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_RESULTS}
+		<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+	</div>
+</div>
+<!-- ENDIF -->
+
+<!-- INCLUDE manage/manage_footer.html -->
