@@ -136,6 +136,8 @@ class contribs_overlord
 		}
 		$pagination->result_lang = 'TOTAL_CONTRIBS';
 
+		$select = 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update,
+						u.username, u.user_colour, u.username_clean';
 		switch ($mode)
 		{
 			case 'author' :
@@ -148,7 +150,7 @@ class contribs_overlord
 				}
 
 				$sql_ary = array(
-					'SELECT'	=> '*',
+					'SELECT'	=> $select,
 
 					'FROM'		=> array(
 						TITANIA_CONTRIBS_TABLE	=> 'c',
@@ -167,9 +169,7 @@ class contribs_overlord
 
 			case 'category' :
 				$sql_ary = array(
-					// DO NOT change to *, we do not need all rows from ANY table with the query!
-					'SELECT'	=> 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update,
-						u.username, u.user_colour, u.username_clean',
+					'SELECT'	=> $select,
 
 					'FROM'		=> array(
 						TITANIA_CONTRIB_IN_CATEGORIES_TABLE => 'cic',
