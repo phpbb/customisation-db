@@ -289,7 +289,11 @@ ul.rating li, ul.rated li {
 	border: 1px solid #BC2A4D;
 }
 
-
+/* Queue
+--------------------------------------------- */
+.queue-progress {
+	background-image: url("{T_THEME_PATH}/images/icon_queue_progress.png");
+}
 
 /* Old CSS...
 ***********************************************************************************/
