@@ -255,7 +255,7 @@ class titania_url
 
 		// Replace a few ugly things
 		$match = array('[', ']');
-		$url = str_replace($match, '', $url);
+		$string = str_replace($match, '', $string);
 
 		return utf8_clean_string(utf8_strtolower($string));
 	}

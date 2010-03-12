@@ -62,6 +62,13 @@ class titania_attention extends titania_database_object
 		));
 	}
 
+	public function submit()
+	{
+		$this->attention_url = titania_url::unbuild_url($this->attention_url);
+
+		parent::submit();
+	}
+
 	/**
 	* Close the attention
 	*/
