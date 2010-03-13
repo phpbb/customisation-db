@@ -49,11 +49,10 @@ class titania_topic extends titania_database_object
 	public $topic_posted = false;
 
 	/**
-	* Unread
-	*
-	* @var bool
+	* Unread, additional unread fields to check array(unread_type => unread_id)
 	*/
 	public $unread = true;
+	public $additional_unread_fields = array();
 
 	/**
 	 * Constructor class for titania topics
@@ -192,7 +191,10 @@ class titania_topic extends titania_database_object
 	*/
 	public function assign_details()
 	{
-		$this->unread = titania_tracking::is_unread(TITANIA_TOPIC, $this->topic_id, $this->topic_last_post_time);
+		// Tracking check
+		$last_read_mark = titania_tracking::get_track(TITANIA_TOPIC, $this->topic_id, true);
+		$last_read_mark = max($last_read_mark, titania_tracking::adv_is_unread($this->additional_unread_fields, $this->topic_type, $this->parent_id));
+		$this->unread = ($this->topic_last_post_time > $last_read_mark) ? true : false;
 
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);

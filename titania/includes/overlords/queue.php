@@ -154,11 +154,8 @@ class queue_overlord
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			// Store the tracking info we grabbed in the tool
-			if (isset($row['track_time']))
-			{
-				titania_tracking::store_track(TITANIA_TOPIC, $row['topic_id'], $row['track_time']);
-			}
+			// Store the tracking info we grabbed from the DB
+			titania_tracking::store_from_db($row);
 
 			$queue_ids[] = $row['queue_id'];
 			$user_ids[] = $row['topic_first_post_user_id'];

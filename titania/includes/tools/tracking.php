@@ -93,6 +93,43 @@ class titania_tracking
 		return ($last_update > self::get_track($type, $id, $no_query)) ? true : false;
 	}
 
+	/**
+	* Figure out the last read mark for an object
+	*
+	* @param mixed $unread_fields
+	* 	array(
+	* 		'type' => 0, (the object type to use when getting the tracking data)
+	* 		'id' => 0, (the object id to use when getting the tracking data)
+	* 		'parent_match' => false, (if isset and true, the 'id' field we search for is the $parent_id sent)
+	* 		'type_match' => false, (if isset and true we will only count when the $object_type that is sent matches the type we are requesting from the tracking data)
+	*	)
+	* @param mixed $object_type
+	* @param mixed $parent_id
+	*
+	* @return int last mark time
+	*/
+	public static function adv_is_unread($unread_fields, $object_type, $parent_id)
+	{
+		$last_read_mark = 0;
+
+		foreach ($unread_fields as $field_ary)
+		{
+			if (isset($field_ary['type_match']) && $field_ary['type'] != $object_type)
+			{
+				continue;
+			}
+
+			if (isset($field_ary['parent_match']))
+			{
+				$field_ary['id'] = $parent_id;
+			}
+
+			$last_read_mark = max($last_read_mark, titania_tracking::get_track($field_ary['type'], $field_ary['id'], true));
+		}
+
+		return $last_read_mark;
+	}
+
 	public static function get_track($type, $id, $no_query = false)
 	{
 		// Ignore
@@ -111,7 +148,7 @@ class titania_tracking
 		$sql = 'SELECT track_time FROM ' . self::$sql_table . '
 			WHERE track_type = ' . (int) $type . '
 			AND track_id = ' . (int) $id . '
-			AND track_user_id = ' . phpbb::$user->data['user_id'];
+			AND track_user_id = ' . (int) phpbb::$user->data['user_id'];
 		phpbb::$db->sql_query($sql);
 
 		self::$store[$type][$id] = (int) phpbb::$db->sql_fetchfield('track_time');
@@ -131,15 +168,15 @@ class titania_tracking
 			return;
 		}
 
-		$sql = 'SELECT track_id, track_time FROM ' . self::$sql_table . '
-			WHERE track_type = ' . (int) $type . '
+		$sql = 'SELECT track_type, track_id, track_time FROM ' . self::$sql_table . '
+			WHERE ' . ((!is_array($type)) ? 'track_type = ' . (int) $type : phpbb::$db->sql_in_set('track_type', array_map('intval', $type))) . '
 			AND ' . phpbb::$db->sql_in_set('track_id', array_map('intval', $ids)) . '
-			AND track_user_id = ' . phpbb::$user->data['user_id'];
+			AND track_user_id = ' . (int) phpbb::$user->data['user_id'];
 		$result = phpbb::$db->sql_query($sql);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			self::$store[$type][$row['track_id']] = $row['track_time'];
+			self::$store[$row['track_type']][$row['track_id']] = $row['track_time'];
 		}
 		phpbb::$db->sql_freeresult($result);
 	}
@@ -151,16 +188,41 @@ class titania_tracking
 			return;
 		}
 
+		$type = (int) $type;
+		$id_field = phpbb::$db->sql_escape($id_field);
+		$prefix = phpbb::$db->sql_escape($prefix);
+
 		$sql_ary['LEFT_JOIN'] = (!isset($sql_ary['LEFT_JOIN'])) ? array() : $sql_ary['LEFT_JOIN'];
 
 		$sql_ary['LEFT_JOIN'][] = array(
 			'FROM'	=> array(TITANIA_TRACK_TABLE => $prefix),
 			'ON'	=> "{$prefix}.track_type = $type
 				AND {$prefix}.track_id = $id_field
-				AND {$prefix}.track_user_id = " . phpbb::$user->data['user_id'],
+				AND {$prefix}.track_user_id = " . (int) phpbb::$user->data['user_id'],
 		);
 
-		$sql_ary['SELECT'] .= ", {$prefix}.track_time";
+		$sql_ary['SELECT'] .= ", {$prefix}.track_time as track_time_{$type}";
+		$sql_ary['SELECT'] .= ", {$id_field} as track_time_{$type}_id";
+	}
+
+	public static function store_from_db($row)
+	{
+		foreach ($row as $name => $value)
+		{
+			if (strpos($name, 'track_time_') === 0 && strpos($name, '_id') === false)
+			{
+				$type = (int) substr($name, 11, 1);
+
+				if (!isset($row['track_time_' . $type . '_id']))
+				{
+					continue;
+				}
+
+				$id = (int) $row['track_time_' . $type . '_id'];
+
+				self::store_track($type, $id, $value);
+			}
+		}
 	}
 
 	/**
@@ -183,7 +245,7 @@ class titania_tracking
 		$sql = 'DELETE FROM ' . self::$sql_table . '
 			WHERE track_type = ' . (int) $type . '
 			AND track_id = ' . (int) $id . '
-			AND track_user_id = ' . phpbb::$user->data['user_id'];
+			AND track_user_id = ' . (int) phpbb::$user->data['user_id'];
 		phpbb::$db->sql_query($sql);
 
 		self::$store[$type][$id] = 0;
@@ -202,7 +264,7 @@ class titania_tracking
 	public static function clear_user()
 	{
 		$sql = 'DELETE FROM ' . self::$sql_table . '
-			WHERE track_user_id = ' . phpbb::$user->data['user_id'];
+			WHERE track_user_id = ' . (int) phpbb::$user->data['user_id'];
 		phpbb::$db->sql_query($sql);
 
 		self::$store = array();

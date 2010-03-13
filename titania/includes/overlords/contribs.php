@@ -227,11 +227,8 @@ class contribs_overlord
 
 			$contrib->author->__set_array($row);
 
-			// Store the tracking info we grabbed in the tool
-			if (isset($row['track_time']))
-			{
-				titania_tracking::store_track(TITANIA_CONTRIB, $contrib->contrib_id, $row['track_time']);
-			}
+			// Store the tracking info we grabbed from the DB
+			titania_tracking::store_from_db($row);
 
 			// Get the folder image
 			$folder_img = $folder_alt = '';

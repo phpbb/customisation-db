@@ -76,6 +76,12 @@ if ($topic_id)
 }
 else
 {
+	// Mark all topics read
+	if (request_var('mark', '') == 'topics')
+	{
+		titania_tracking::track(TITANIA_SUPPORT, titania::$contrib->contrib_id);
+	}
+
 	topics_overlord::display_forums_complete('support', titania::$contrib);
 
 	titania::page_header('CONTRIB_SUPPORT');
@@ -84,6 +90,9 @@ else
 	{
 		phpbb::$template->assign_var('U_POST_TOPIC', titania_url::append_url(titania::$contrib->get_url('support'), array('action' => 'post')));
 	}
+
+	// Mark all topics read
+	phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania::$contrib->get_url('support'), array('mark' => 'topics')));
 }
 
 titania::page_footer(true, 'contributions/contribution_support.html');

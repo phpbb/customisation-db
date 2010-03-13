@@ -164,6 +164,7 @@ user_topic_show_days
 
 $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DAY'], 7 => $user->lang['7_DAYS'], 14 => $user->lang['2_WEEKS'], 30 => $user->lang['1_MONTH'], 90 => $user->lang['3_MONTHS'], 180 => $user->lang['6_MONTHS'], 365 => $user->lang['1_YEAR']);
 */
+		phpbb::$user->add_lang('viewforum');
 
 		self::display_forums($type, $object);
 		self::assign_common();
@@ -220,6 +221,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 		titania_tracking::get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
 
+		// Setup the topic we will use for parsing the output (before the switch so we are able to do type specific things for it)
+		$topic = new titania_topic();
+
 		// type specific things
 		switch ($type)
 		{
@@ -242,6 +246,12 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			case 'queue_discussion' :
 				$page_url = titania_url::build_url('manage/queue_discussion');
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+
+				// Additional tracking fields
+				titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
+				$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
+				titania_tracking::get_track_sql($sql_ary, TITANIA_SUPPORT, 't.parent_id', 'tst');
+				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
 			break;
 
 			case 'author_support' :
@@ -251,6 +261,14 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 				// We also display the queue discussion topic between validators and authors in the support area
 				$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
+
+				// Additional tracking fields
+				titania_tracking::get_tracks(array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION), array_merge(array(0), $contrib_ids));
+				foreach ($contrib_ids as $contrib_id)
+				{
+					$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
+					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
+				}
 			break;
 
 			case 'author_tracker' :
@@ -268,6 +286,17 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 				// We also display the queue discussion topic between validators and authors in the support area
 				$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
+
+				// Additional tracking field (to allow marking all support/discussion as read)
+				titania_tracking::get_track_sql($sql_ary, TITANIA_SUPPORT, $object->contrib_id, 'tst');
+				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
+
+				// Track the queue stuff too if applicable
+				if (titania_types::$types[$object->contrib_type]->acl_get('view'))
+				{
+					titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
+					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
+				}
 			break;
 		}
 
@@ -278,7 +307,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$pagination->sql_count($sql_ary, 't.topic_id');
 		$pagination->build_pagination($page_url);
 
-		$topic = new titania_topic();
 		$last_was_sticky = false;
 
 		// Get the data
@@ -286,11 +314,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			// Store the tracking info we grabbed in the tool
-			if (isset($row['track_time']))
-			{
-				titania_tracking::store_track(TITANIA_TOPIC, $row['topic_id'], $row['track_time']);
-			}
+			// Store the tracking info we grabbed from the DB
+			titania_tracking::store_from_db($row);
 
 			self::$topics[$row['topic_id']] = $row;
 

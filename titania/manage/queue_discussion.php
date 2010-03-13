@@ -16,6 +16,12 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+// Mark all topics read
+if (request_var('mark', '') == 'topics')
+{
+	titania_tracking::track(TITANIA_QUEUE_DISCUSSION, 0);
+}
+
 $authed = titania_types::find_authed('view');
 if (empty($authed))
 {
@@ -23,6 +29,9 @@ if (empty($authed))
 }
 
 topics_overlord::display_forums_complete('queue_discussion');
+
+// Mark all topics read
+phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::build_url('manage/queue_discussion/', array('mark' => 'topics')));
 
 titania::page_header('QUEUE_DISCUSSION');
 

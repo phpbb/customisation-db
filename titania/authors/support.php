@@ -16,7 +16,19 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+// Mark all topics read
+if (request_var('mark', '') == 'topics')
+{
+	foreach (titania::$cache->get_author_contribs(titania::$author->user_id) as $contrib_id)
+	{
+		titania_tracking::track(TITANIA_SUPPORT, $contrib_id);
+	}
+}
+
 topics_overlord::display_forums_complete('author_support', titania::$author);
+
+// Mark all topics read
+phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::build_url(titania::$author->get_url('support'), array('mark' => 'topics')));
 
 titania::page_header('AUTHOR_SUPPORT');
 
