@@ -263,10 +263,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
 
 				// Additional tracking fields
-				titania_tracking::get_tracks(array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION), array_merge(array(0), $contrib_ids));
-				foreach ($contrib_ids as $contrib_id)
+				titania_tracking::get_tracks(TITANIA_SUPPORT, $contrib_ids);
+				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
+
+				// Track the queue stuff too if applicable
+				if (titania_types::find_authed('view'))
 				{
-					$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
+					titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
 				}
 			break;
