@@ -64,7 +64,7 @@ class titania_tracking
 				AND track_user_id = ' . (int) phpbb::$user->data['user_id'];
 		phpbb::$db->sql_query($sql);
 
-		if (!phpbb::$db->sql_affectedrows() && self::get_track($type, $id) == 0)
+		if (!phpbb::$db->sql_affectedrows())
 		{
 			$sql_ary = array(
 				'track_type'		=> (int) $type,
@@ -73,7 +73,12 @@ class titania_tracking
 				'track_time'		=> ($time === false) ? titania::$time : (int) $time,
 			);
 
+			$temp = phpbb::$db->return_on_error;
+			phpbb::$db->return_on_error = true;
+
 			phpbb::$db->sql_query('INSERT INTO ' . self::$sql_table . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+
+			phpbb::$db->return_on_error = $temp;
 		}
 
 		self::$store[$type][$id] = ($time === false) ? titania::$time : (int) $time;
@@ -285,7 +290,7 @@ class titania_tracking
 
 	private static function get_track_cookie()
 	{
-		if (self::$grabbed_cookies == true)
+		if (self::$grabbed_cookies == true || phpbb::$user->data['is_registered'])
 		{
 			return;
 		}
