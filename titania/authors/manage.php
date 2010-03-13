@@ -55,7 +55,7 @@ if ($submit)
 	{
 		titania::$author->submit();
 
-		titania::error_box('SUCCESS', 'AUTHOR_DATA_UPDATED', TITANIA_SUCCESS);
+		redirect(titania::$author->get_url());
 	}
 }
 

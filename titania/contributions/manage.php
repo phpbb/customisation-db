@@ -55,7 +55,8 @@ if (titania::confirm_box(true))
 
 		titania::$contrib->load(utf8_normalize_nfc(request_var('c', '', true))); // Reload the contrib (to make sure the authors list is updated)
 		$submit = false; // Set submit as false to keep the main stuff from being resubmitted again
-		titania::error_box('SUCCESS', 'CONTRIB_OWNER_UPDATED', TITANIA_SUCCESS);
+
+		redirect(titania::$contrib->get_url());
 	}
 }
 
@@ -133,7 +134,7 @@ else if ($submit)
 
 		if ($change_owner == '')
 		{
-			titania::error_box('SUCCESS', 'CONTRIB_UPDATED', TITANIA_SUCCESS);
+			redirect(titania::$contrib->get_url());
 		}
 		else
 		{
