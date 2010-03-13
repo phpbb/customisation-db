@@ -203,8 +203,11 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		self::assign_common();
 
 		// Display the Quick Reply
-		$message = new titania_message($topic);
-		$message->display_quick_reply();
+		if (phpbb::$auth->acl_get('u_titania_post') || (titania::$access_level == TITANIA_ACCESS_TEAMS && phpbb::$auth->acl_get('u_titania_post_mod_own')) || phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		{
+			$message = new titania_message($topic);
+			$message->display_quick_reply();
+		}
 
 		phpbb::$template->assign_vars(array(
 			'S_IS_LOCKED'		=> (bool) $topic->topic_locked,

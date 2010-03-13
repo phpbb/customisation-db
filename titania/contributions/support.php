@@ -22,7 +22,7 @@ $topic_id = request_var('t', 0);
 // Load the topic and contrib items
 if ($post_id)
 {
-	$topic_id = topics_overlord::load_topic_from_post($post_id);
+	$topic_id = topics_overlord::load_topic_from_post($post_id, true);
 
 	// Load the topic into a topic object
 	$topic = topics_overlord::get_topic_object($topic_id);
@@ -36,7 +36,7 @@ if ($post_id)
 }
 else if ($topic_id)
 {
-	topics_overlord::load_topic($topic_id);
+	topics_overlord::load_topic($topic_id, true);
 
 	// Load the topic into a topic object
 	$topic = topics_overlord::get_topic_object($topic_id);
@@ -65,6 +65,12 @@ phpbb::$user->add_lang('viewforum');
 
 if ($topic_id)
 {
+	// Check access level
+	if ($topic->topic_access < titania::$access_level)
+	{
+		titania::needs_auth();
+	}
+
 	posts_overlord::display_topic_complete($topic);
 
 	titania::page_header(phpbb::$user->lang['CONTRIB_SUPPORT'] . ' - ' . censor_text($topic->topic_subject));

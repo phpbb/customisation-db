@@ -59,8 +59,9 @@ class topics_overlord
 	*
 	* @param int $post_id
 	* @return mixed false if post does not exist, topic_id if it does
+	* @param bool $no_auth_check True to not check for authorization, false to check
 	*/
-	public static function load_topic_from_post($post_id)
+	public static function load_topic_from_post($post_id, $no_auth_check = false)
 	{
 		$sql_ary = array(
 			'SELECT' => 't.*',
@@ -71,9 +72,14 @@ class topics_overlord
 			),
 
 			'WHERE' => 'p.post_id = ' . (int) $post_id . '
-				AND t.topic_id = p.topic_id' .
-				self::sql_permissions('t.'),
+				AND t.topic_id = p.topic_id',
 		);
+
+		// Sometimes we must check the auth later on
+		if (!$no_auth_check)
+		{
+			$sql_ary['WHERE'] .= self::sql_permissions('t.');
+		}
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		$result = phpbb::$db->sql_query($sql);
@@ -93,8 +99,9 @@ class topics_overlord
 	* Load topic(s) from topic id(s)
 	*
 	* @param int|array $topic_id topic_id or an array of topic_ids
+	* @param bool $no_auth_check True to not check for authorization, false to check
 	*/
-	public static function load_topic($topic_id)
+	public static function load_topic($topic_id, $no_auth_check = false)
 	{
 		if (!is_array($topic_id))
 		{
@@ -116,9 +123,14 @@ class topics_overlord
 				TITANIA_TOPICS_TABLE	=> 't',
 			),
 
-			'WHERE' => phpbb::$db->sql_in_set('t.topic_id', array_map('intval', $topic_id)) .
-				self::sql_permissions('t.'),
+			'WHERE' => phpbb::$db->sql_in_set('t.topic_id', array_map('intval', $topic_id)),
 		);
+
+		// Sometimes we must check the auth later on
+		if (!$no_auth_check)
+		{
+			$sql_ary['WHERE'] .= self::sql_permissions('t.');
+		}
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
