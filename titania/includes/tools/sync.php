@@ -207,6 +207,23 @@ class titania_sync
 				}
 				phpbb::$db->sql_freeresult($result);
 			break;
+
+			case 'queue_discussion_category' :
+				$sql = 'SELECT t.topic_id, c.contrib_type FROM ' . TITANIA_TOPICS_TABLE . ' t, ' . TITANIA_CONTRIBS_TABLE . ' c
+					WHERE c.contrib_id = t.parent_id
+						AND t.topic_type = ' . TITANIA_QUEUE_DISCUSSION .
+						(($topic_id) ? ' AND topic_id = ' . (int) $topic_id : '') . '
+					ORDER BY topic_id ASC';
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+						SET topic_category = ' . $row['contrib_type'] . '
+						WHERE topic_id = ' . $row['topic_id'];
+					phpbb::$db->sql_query($sql);
+				}
+				phpbb::$db->sql_freeresult($result);
+			break;
 		}
 	}
 

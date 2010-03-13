@@ -780,6 +780,10 @@ $versions = array(
 		),
 	),
 
+	'0.1.47' => array(
+		'custom' => 'titania_custom',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

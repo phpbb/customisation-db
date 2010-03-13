@@ -117,6 +117,22 @@ class titania_posting
 				}
 			}
 		}
+		else if ($post_type == TITANIA_QUEUE_DISCUSSION)
+		{
+			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			{
+				$post_object->topic->topic_category = titania::$contrib->contrib_type;
+			}
+			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $parent_id)
+			{
+				$contrib = new titania_contribution();
+				$contrib->load((int) $parent_id);
+				if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+				{
+					$post_object->topic->topic_category = titania::$contrib->contrib_type;
+				}
+			}
+		}
 
 		// Load the message object
 		$message_object = new titania_message($post_object);

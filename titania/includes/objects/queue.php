@@ -113,6 +113,7 @@ class titania_queue extends titania_message_object
 				$post = new titania_post(TITANIA_QUEUE_DISCUSSION);
 				$post->topic->__set_array(array(
 					'parent_id'			=> $row['contrib_id'],
+					'topic_category'	=> $row['contrib_type'],
 					'topic_url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/',
 					'topic_sticky'		=> true,
 				));

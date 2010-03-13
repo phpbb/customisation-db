@@ -259,6 +259,14 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$page_url = titania_url::build_url('manage/queue_discussion');
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_QUEUE_DISCUSSION;
 
+				// Only display those in which the users are authed
+				$authed = titania_types::find_authed('queue_discussion');
+				if (!sizeof($authed))
+				{
+					return;
+				}
+				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.topic_category', $authed);
+
 				// Additional tracking fields
 				titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 				$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);

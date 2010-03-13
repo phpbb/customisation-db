@@ -67,7 +67,7 @@ class titania_topic extends titania_database_object
 			'parent_id'						=> array('default' => 0), // contrib_id most of the time
 			'topic_type'					=> array('default' => 0), // Post Type, Main TITANIA_ constants
 			'topic_access'					=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
-			'topic_category'				=> array('default' => 0), // Category for the topic. For the Tracker
+			'topic_category'				=> array('default' => 0), // Category for the topic. For the Tracker and stores the contrib_type for queue_discussion topics
 			'topic_url'						=> array('default' => ''), // URL for the topic (simple unbuilt URL)
 
 			'topic_status'					=> array('default' => 0), // Topic Status, use tags from the DB
