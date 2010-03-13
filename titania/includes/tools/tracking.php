@@ -108,7 +108,7 @@ class titania_tracking
 	*
 	* @return int last mark time
 	*/
-	public static function adv_is_unread($unread_fields, $object_type, $parent_id)
+	public static function find_last_read_mark($unread_fields, $object_type, $parent_id)
 	{
 		$last_read_mark = 0;
 
@@ -158,6 +158,12 @@ class titania_tracking
 		return self::$store[$type][$id];
 	}
 
+	/**
+	* Get tracking on multiple types/items at the same time from the database
+	*
+	* @param mixed $type array of types or the type
+	* @param mixed $ids array of ids or an id
+	*/
 	public static function get_tracks($type, $ids)
 	{
 		// Ignore

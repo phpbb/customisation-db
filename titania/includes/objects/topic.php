@@ -193,7 +193,7 @@ class titania_topic extends titania_database_object
 	{
 		// Tracking check
 		$last_read_mark = titania_tracking::get_track(TITANIA_TOPIC, $this->topic_id, true);
-		$last_read_mark = max($last_read_mark, titania_tracking::adv_is_unread($this->additional_unread_fields, $this->topic_type, $this->parent_id));
+		$last_read_mark = max($last_read_mark, titania_tracking::find_last_read_mark($this->additional_unread_fields, $this->topic_type, $this->parent_id));
 		$this->unread = ($this->topic_last_post_time > $last_read_mark) ? true : false;
 
 		$folder_img = $folder_alt = '';
