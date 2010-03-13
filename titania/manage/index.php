@@ -40,7 +40,7 @@ $nav_ary = array(
 	'queue_discussion' => array(
 		'title'		=> 'QUEUE_DISCUSSION',
 		'url'		=> titania_url::build_url('manage/queue_discussion'),
-		'auth'		=> (sizeof(titania_types::find_authed('view'))) ? true : false,
+		'auth'		=> (sizeof(titania_types::find_authed('queue_discussion'))) ? true : false,
 	),
 	'attention' => array(
 		'title'		=> 'ATTENTION',

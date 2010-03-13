@@ -65,6 +65,11 @@ class titania_type_style extends titania_type_base
 	{
 		switch ($auth)
 		{
+			// Can view the style queue discussion
+			case 'queue_discussion' :
+				return phpbb::$auth->acl_get('u_titania_mod_style_queue_discussion');
+			break;
+
 			// Can view the style queue
 			case 'view' :
 				return phpbb::$auth->acl_get('u_titania_mod_style_queue');
@@ -104,6 +109,7 @@ class titania_type_style extends titania_type_base
 
 			// Permissions
 			$umil->permission_add(array(
+				'u_titania_mod_style_queue_discussion',
 				'u_titania_mod_style_queue',
 				'u_titania_mod_style_validate',
 				'u_titania_mod_style_moderate',
@@ -145,6 +151,7 @@ class titania_type_style extends titania_type_base
 
 			// Permissions
 			$umil->permission_remove(array(
+				'u_titania_mod_style_queue_discussion',
 				'u_titania_mod_style_queue',
 				'u_titania_mod_style_validate',
 				'u_titania_mod_style_moderate',

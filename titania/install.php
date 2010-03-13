@@ -756,6 +756,30 @@ $versions = array(
 		),
 	),
 
+	'0.1.46' => array(
+		'permission_add' => array(
+			'u_titania_mod_style_queue_discussion',
+			'u_titania_mod_modification_queue_discussion',
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array(
+				'u_titania_mod_style_queue_discussion',
+				'u_titania_mod_modification_queue_discussion',
+			)),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
+				'u_titania_mod_style_queue_discussion',
+				'u_titania_mod_modification_queue_discussion',
+			)),
+			array('ROLE_TITANIA_MODIFICATION_TEAM', array(
+				'u_titania_mod_modification_queue_discussion',
+			)),
+			array('ROLE_TITANIA_STYLE_TEAM', array(
+				'u_titania_mod_style_queue_discussion',
+			)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

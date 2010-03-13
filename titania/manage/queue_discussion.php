@@ -22,7 +22,7 @@ if (request_var('mark', '') == 'topics')
 	titania_tracking::track(TITANIA_QUEUE_DISCUSSION, 0);
 }
 
-$authed = titania_types::find_authed('view');
+$authed = titania_types::find_authed('queue_discussion');
 if (empty($authed))
 {
 	titania::needs_auth();

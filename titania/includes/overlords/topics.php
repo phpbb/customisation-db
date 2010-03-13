@@ -267,7 +267,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
 
 				// Track the queue stuff too if applicable
-				if (titania_types::find_authed('view'))
+				if (titania_types::find_authed('queue_discussion'))
 				{
 					titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
@@ -288,14 +288,21 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sql_ary['WHERE'] .= ' AND t.parent_id = ' . (int) $object->contrib_id;
 
 				// We also display the queue discussion topic between validators and authors in the support area
-				$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
+				if ($object->is_author ||$object->is_active_coauthor || titania_types::$types[$object->contrib_type]->acl_get('queue_discussion'))
+				{
+					$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
+				}
+				else
+				{
+					$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
+				}
 
 				// Additional tracking field (to allow marking all support/discussion as read)
 				titania_tracking::get_track_sql($sql_ary, TITANIA_SUPPORT, $object->contrib_id, 'tst');
 				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
 
 				// Track the queue stuff too if applicable
-				if (titania_types::$types[$object->contrib_type]->acl_get('view'))
+				if (titania_types::$types[$object->contrib_type]->acl_get('queue_discussion'))
 				{
 					titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
