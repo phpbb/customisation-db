@@ -341,6 +341,12 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		}
 
 		unset($post, $attachments);
+
+		// Increment the topic view count
+		$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+			SET topic_views = topic_views + 1
+			WHERE topic_id = ' . (int) $topic->topic_id;
+		phpbb::$db->sql_query($sql);
 	}
 
 	public static function assign_common()

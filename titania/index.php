@@ -91,7 +91,7 @@ switch ($action)
 			trigger_error('CONTRIB_NOT_FOUND');
 		}
 		$revision->contrib = $contrib;
-		if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
+		if (!titania_types::$types[$contrib->contrib_type]->acl_get('view'))
 		{
 			titania::needs_auth();
 		}
