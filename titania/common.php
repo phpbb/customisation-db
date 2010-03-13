@@ -19,8 +19,11 @@ if (!defined('IN_TITANIA'))
 // Version number (only used for the installer)
 define('TITANIA_VERSION', '0.1.45');
 
-define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 define('PHPBB_USE_BOARD_URL_PATH', true);
+if (!defined('IN_TITANIA_INSTALL'))
+{
+	define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
+}
 
 // Include core classes
 require(TITANIA_ROOT . 'includes/core/phpbb.' . PHP_EXT);
