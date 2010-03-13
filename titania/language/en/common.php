@@ -55,6 +55,7 @@ $lang = array_merge($lang, array(
 'TOTAL_CONTRIBS' => '%d Contributions',
 'TOTAL_CONTRIBS_ONE' => '1 Contribution',
 'UPDATE_TIME' => 'Updated',
+'UNKNOWN' => 'Unknown',
 	'AUTHOR_BY'					=> 'By %s',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
@@ -113,7 +114,7 @@ $lang = array_merge($lang, array(
 	'ORDER'						=> 'Order',
 
 	'PURGE_CACHE'				=> 'Purge Cache',
-	
+
 	'QUEUE_DISCUSSION' 			=> 'Queue Discussion',
 
 	'RATING'					=> 'Rating',

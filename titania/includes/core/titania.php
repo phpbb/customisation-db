@@ -212,6 +212,14 @@ class titania
 	 */
 	public static function add_lang($lang_set, $use_db = false, $use_help = false)
 	{
+		static $included = array();
+
+		// Don't include the language file a bunch of times
+		if (in_array($lang_set, $included))
+		{
+			return;
+		}
+
 		// Store so we can reset it back
 		$old_path = phpbb::$user->lang_path;
 
@@ -222,6 +230,9 @@ class titania
 
 		// Reset the custom language path to the original directory
 		phpbb::$user->set_custom_lang_path($old_path);
+
+		// Store
+		$included[] = $lang_set;
 	}
 
 	public static function needs_auth()

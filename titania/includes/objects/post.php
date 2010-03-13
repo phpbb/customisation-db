@@ -145,8 +145,8 @@ class titania_post extends titania_message_object
 				trigger_error('NO_TOPIC');
 			}
 
-			$this->post_type = $topic->topic_type;
-			$this->post_access = $topic->topic_access;
+			$this->post_type = $this->topic->topic_type;
+			$this->post_access = $this->topic->topic_access;
 		}
 		else
 		{

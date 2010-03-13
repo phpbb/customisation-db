@@ -57,7 +57,7 @@ class titania_queue extends titania_message_object
 			'contrib_id'			=> array('default' => 0),
 			'submitter_user_id'		=> array('default' => (int) phpbb::$user->data['user_id']),
 			'queue_topic_id'		=> array('default' => 0),
-			'queue_allow_repack'		=> array('default' => 1),
+			'queue_allow_repack'	=> array('default' => 1),
 
 			'queue_type'			=> array('default' => 0), // contrib type
 			'queue_status'			=> array('default' => TITANIA_QUEUE_HIDE), // Uses either TITANIA_QUEUE_NEW or one of the tags for the queue status from the DB
@@ -215,6 +215,32 @@ class titania_queue extends titania_message_object
 		$this->queue_topic_id = $post->topic_id;
 	}
 
+	/**
+	* Reply to the queue topic with a message
+	*
+	* @param string $message
+	*/
+	public function topic_reply($message, $teams_only = true)
+	{
+		titania::add_lang('manage');
+
+		$message = (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message;
+
+		$post = new titania_post(TITANIA_QUEUE, $this->queue_topic_id);
+		$post->__set_array(array(
+			'post_subject'		=> 'Re: ' . $post->topic->topic_subject,
+			'post_text'			=> $message,
+		));
+
+		if ($teams_only)
+		{
+			$post_access = TITANIA_ACCESS_TEAMS;
+		}
+
+		$post->generate_text_for_storage(true, true, true);
+		$post->submit();
+	}
+
 	public function delete()
 	{
 		$post = new titania_post;
@@ -236,6 +262,14 @@ class titania_queue extends titania_message_object
 
 	public function move($new_status)
 	{
+		titania::add_lang('manage');
+
+		titania_tags::load_tag(array($this->queue_status, $new_status));
+		$from = titania_tags::get_tag_name($this->queue_status);
+		$to = titania_tags::get_tag_name($new_status);
+
+		$this->topic_reply(sprintf(phpbb::$user->lang['QUEUE_REPLY_MOVE'], $from, $to));
+
 		$this->queue_status = (int) $new_status;
 		$this->queue_progress = 0;
 		$this->queue_progress_time = 0;
@@ -244,6 +278,8 @@ class titania_queue extends titania_message_object
 
 	public function in_progress()
 	{
+		$this->topic_reply('QUEUE_REPLY_IN_PROGRESS');
+
 		$this->queue_progress = phpbb::$user->data['user_id'];
 		$this->queue_progress_time = titania::$time;
 		$this->submit(false);
@@ -251,6 +287,8 @@ class titania_queue extends titania_message_object
 
 	public function no_progress()
 	{
+		$this->topic_reply('QUEUE_REPLY_NO_PROGRESS');
+
 		$this->queue_progress = 0;
 		$this->queue_progress_time = 0;
 		$this->submit(false);
@@ -258,6 +296,8 @@ class titania_queue extends titania_message_object
 
 	public function approve()
 	{
+		$this->topic_reply('QUEUE_REPLY_APPROVED', false);
+
 		// Update the revisions table
 		$sql_ary = array(
 			'revision_validated'	=> true,
@@ -291,6 +331,8 @@ class titania_queue extends titania_message_object
 
 	public function deny()
 	{
+		$this->topic_reply('QUEUE_REPLY_DENIED', false);
+
 		// Send notification message
 		$this->send_approve_deny_notification(false);
 
