@@ -264,7 +264,6 @@ class titania_queue extends titania_message_object
 	{
 		titania::add_lang('manage');
 
-		titania_tags::load_tag(array($this->queue_status, $new_status));
 		$from = titania_tags::get_tag_name($this->queue_status);
 		$to = titania_tags::get_tag_name($new_status);
 

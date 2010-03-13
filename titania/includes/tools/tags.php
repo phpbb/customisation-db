@@ -25,26 +25,20 @@ class titania_tags
 {
 	public static $tags = array();
 
-	/**
-	* Load tags
-	*
-	* @param mixed $tag_ids
-	*/
-	public static function load_tag($tag_ids)
+	private static function load_tags()
 	{
-		if (!is_array($tag_ids))
+		if (sizeof(self::$tags))
 		{
-			$tag_ids = array($tag_ids);
+			return;
 		}
 
-		$sql = 'SELECT * FROM ' . TITANIA_TAG_FIELDS_TABLE . '
-			WHERE ' . phpbb::$db->sql_in_set('tag_id', array_map('intval', $tag_ids));
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
+		foreach (titania::$cache->get_tags() as $type => $children)
 		{
-			self::$tags[$row['tag_id']] = $row;
+			foreach ($children as $id => $row)
+			{
+				self::$tags[$id] = $row;
+			}
 		}
-		phpbb::$db->sql_freeresult($result);
 	}
 
 	/**
@@ -55,6 +49,8 @@ class titania_tags
 	*/
 	public static function get_tag($tag_id)
 	{
+		self::load_tags();
+
 		if (!isset(self::$tags[$tag_id]))
 		{
 			return false;
