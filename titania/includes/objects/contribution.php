@@ -498,7 +498,6 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_VIEWS'					=> $this->contrib_views,
 			'CONTRIB_UPDATE_DATE'			=> phpbb::$user->format_date($this->contrib_last_update),
 			'CONTRIB_STATUS'				=> $this->contrib_status,
-			'CONTRIB_TYPE'					=> ($this->contrib_type) ? titania_types::$types[$this->contrib_type]->lang : '', // Don't cause an error while we create a contrib item
 
 			'CONTRIB_RATING'				=> $this->contrib_rating,
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
@@ -511,15 +510,23 @@ class titania_contribution extends titania_message_object
 			'DOWNLOAD_NAME'					=> (isset($this->download['revision_name'])) ? censor_text($this->download['revision_name']) : '',
 			'DOWNLOAD_VERSION'				=> (isset($this->download['revision_version'])) ? censor_text($this->download['revision_version']) : '',
 
-			'U_CONTRIB_MANAGE'				=> ($this->is_author || $this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('manage') : '',
-			'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
-			'U_NEW_REVISION'				=> ($this->is_author || $this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('revision') : '',
-			'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && ($this->is_author || $this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('view'))) ? $this->get_url('queue_discussion') : '',
-			'U_VIEW_CONTRIB'				=> ($this->contrib_type) ? $this->get_url() : '', // Don't cause an error while we create a contrib item
-			'U_VIEW_DEMO'					=> $this->contrib_demo,
-
 			'S_CONTRIB_VALIDATED'			=> ($this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
 		);
+
+		// Ignore some stuff before it is submitted else we can cause an error
+		if ($this->contrib_id)
+		{
+			$vars = array_merge($vars, array(
+				'CONTRIB_TYPE'					=> titania_types::$types[$this->contrib_type]->lang,
+
+				'U_CONTRIB_MANAGE'				=> ($this->is_author || $this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('manage') : '',
+				'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
+				'U_NEW_REVISION'				=> ($this->is_author || $this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('revision') : '',
+				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && ($this->is_author || $this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('view'))) ? $this->get_url('queue_discussion') : '',
+				'U_VIEW_CONTRIB'				=> $this->get_url(),
+				'U_VIEW_DEMO'					=> $this->contrib_demo,
+			));
+		}
 
 		// Display real author
 		if ($return)
