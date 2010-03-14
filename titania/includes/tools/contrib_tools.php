@@ -517,6 +517,51 @@ class titania_contrib_tools
 	}
 
 	/**
+	* Install a style on the demo board.
+	*
+	* NOT DONE, DO NOT USE
+	*
+	* @param string $demo_root
+	* @param array $db_params
+	*/
+	function install_demo_style($demo_root, $db_params)
+	{
+		return false; // @todo: Delete when done.
+
+		if ($demo_root[strlen($demo_root) - 1] != '/')
+		{
+			$demo_root .= '/';
+		}
+
+		if (!is_dir($demo_root))
+		{
+			return false;
+		}
+
+		if (empty($this->unzip_dir))
+		{
+			// Extract zip.
+			$this->unzip_dir = titania::$config->contrib_temp_path . basename($this->original_zip, 'zip') . '/';
+
+			// Clear out old stuff if there is anything here...
+			$this->rmdir_recursive($this->unzip_dir);
+
+			phpbb::_include('functions_compress', false, 'compress_zip');
+
+			// Unzip to our temp directory
+			$zip = new compress_zip('r', $this->original_zip);
+			$zip->extract($this->unzip_dir);
+			$zip->close();
+		}
+
+		$package_root = $this->find_root(false, 'style.cfg');
+
+		$this->mvdir_recursive($this->unzip_dir . $package_root . '/', $demo_root . 'styles/');
+
+		return $style_id;
+	}
+
+	/**
 	* Move a directory and children
 	*
 	* @param mixed $source
