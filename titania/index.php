@@ -35,7 +35,7 @@ switch ($action)
 				$object->load($id);
 				$redirect = $object->get_url();
 
-				if (!$object)
+				if (!$object || !$object->author_id)
 				{
 					trigger_error('AUTHOR_NOT_FOUND');
 				}
