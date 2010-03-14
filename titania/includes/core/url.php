@@ -86,12 +86,6 @@ class titania_url
 			$final_url .= '/';
 		}
 
-		// Add style= to the url data if it is in there
-		if (isset($_REQUEST['style']) && request_var('style', 0))
-		{
-			$params['style'] = request_var('style', 0);
-		}
-
 		// Add the Session ID if required.
 		if ($_SID)
 		{
@@ -186,9 +180,6 @@ class titania_url
 
 		// Replace SID
 		$url = preg_replace('#sid' . self::$separator . '[a-z0-9]+#', '', $url);
-
-		// Replace style
-		$url = preg_replace('#style' . self::$separator . '[0-9]+#', '', $url);
 
 		return $url;
 	}
