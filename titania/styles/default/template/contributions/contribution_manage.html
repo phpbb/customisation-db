@@ -44,6 +44,17 @@
 
 			<!-- IF S_EDIT_MESSAGE or S_CREATE -->
 				<!-- INCLUDE posting/posting_basic_editor.html -->
+				<fieldset class="fields1">
+					<!-- IF S_BBCODE_ALLOWED -->
+						<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{S_BBCODE_CHECKED} /> {L_DISABLE_BBCODE}</label></div>
+					<!-- ENDIF -->
+					<!-- IF S_SMILIES_ALLOWED -->
+						<div><label for="disable_smilies"><input type="checkbox" name="disable_smilies" id="disable_smilies"{S_SMILIES_CHECKED} /> {L_DISABLE_SMILIES}</label></div>
+					<!-- ENDIF -->
+					<!-- IF S_LINKS_ALLOWED -->
+						<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{S_MAGIC_URL_CHECKED} /> {L_DISABLE_MAGIC_URL}</label></div>
+					<!-- ENDIF -->
+				</fieldset>
 			<!-- ENDIF -->
 
 			<h3>{L_OPTIONS}</h3>

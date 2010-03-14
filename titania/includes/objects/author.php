@@ -16,16 +16,16 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!class_exists('titania_database_object'))
+if (!class_exists('titania_message_object'))
 {
-	require TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT;
+	require TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT;
 }
 
 /**
 * Class to abstract titania authors.
 * @package Titania
 */
-class titania_author extends titania_database_object
+class titania_author extends titania_message_object
 {
 	/**
 	 * SQL Table
@@ -42,11 +42,11 @@ class titania_author extends titania_database_object
 	protected $sql_id_field = 'author_id';
 
 	/**
-	 * Description parsed for storage
+	 * Object type (for message tool)
 	 *
-	 * @var bool
+	 * @var string
 	 */
-	private $description_parsed_for_storage = false;
+	protected $object_type = TITANIA_AUTHOR;
 
 	/**
 	 * Rating of this author
@@ -76,10 +76,10 @@ class titania_author extends titania_database_object
 			'author_contribs'		=> array('default' => 0),
 			'author_visible'		=> array('default' => TITANIA_AUTHOR_VISIBLE),
 
-			'author_desc'			=> array('default' => ''),
-			'author_desc_bitfield'	=> array('default' => ''),
-			'author_desc_uid'		=> array('default' => ''),
-			'author_desc_options'	=> array('default' => 7),
+			'author_desc'			=> array('default' => '',	'message_field' => 'message'),
+			'author_desc_bitfield'	=> array('default' => '',	'message_field' => 'message_bitfield'),
+			'author_desc_uid'		=> array('default' => '',	'message_field' => 'message_uid'),
+			'author_desc_options'	=> array('default' => 7,	'message_field' => 'message_options'),
 		));
 
 		// Load the count for different types
@@ -160,12 +160,6 @@ class titania_author extends titania_database_object
 			throw new exception('No user_id!');
 		}
 
-		// Nobody parsed the text for storage before. Parse text with lowest settings.
-		if (!$this->description_parsed_for_storage)
-		{
-			$this->generate_text_for_storage(false, false, false);
-		}
-
 		return parent::submit();
 	}
 
@@ -179,61 +173,6 @@ class titania_author extends titania_database_object
 		}
 
 		return $error;
-	}
-
-	/**
-	* Submit data in the post_data format (from includes/tools/message.php)
-	*
-	* @param object $message The message object
-	*/
-	public function post_data($message)
-	{
-		$post_data = $message->request_data();
-
-		$this->__set_array(array(
-			'author_desc'		=> $post_data['message'],
-		));
-
-		$this->generate_text_for_storage($post_data['bbcode_enabled'], $post_data['magic_url_enabled'], $post_data['smilies_enabled']);
-	}
-
-	/**
-	 * Generate text for storing description into the database
-	 *
-	 * @param bool $allow_bbcode
-	 * @param bool $allow_urls
-	 * @param bool $allow_smilies
-	 *
-	 * @return void
-	 */
-	public function generate_text_for_storage($allow_bbcode, $allow_urls, $allow_smilies)
-	{
-		generate_text_for_storage($this->author_desc, $this->author_desc_uid, $this->author_desc_bitfield, $this->author_desc_options, $allow_bbcode, $allow_urls, $allow_smilies);
-
-		$this->description_parsed_for_storage = true;
-	}
-
-	/**
-	 * Parse description for display
-	 *
-	 * @return string
-	 */
-	public function generate_text_for_display()
-	{
-		return generate_text_for_display($this->author_desc, $this->author_desc_uid, $this->author_desc_bitfield, $this->author_desc_options);
-	}
-
-	/**
-	 * Parse description for edit
-	 *
-	 * @return string
-	 */
-	public function generate_text_for_edit()
-	{
-		return array_merge(generate_text_for_edit($this->author_desc, $this->author_desc_uid, $this->author_desc_options), array(
-			'object_type'	=> TITANIA_AUTHOR,
-			'object_id'		=> $this->user_id,
-		));
 	}
 
 	/**
