@@ -524,6 +524,16 @@ class titania_contrib_tools
 	*/
 	public function mvdir_recursive($source, $destination)
 	{
+		if ($source[strlen($source) - 1] != '/')
+		{
+			$source .= '/';
+		}
+
+		if ($destination[strlen($destination) - 1] != '/')
+		{
+			$destination .= '/';
+		}
+
 		if (!is_dir($source))
 		{
 			return false;
