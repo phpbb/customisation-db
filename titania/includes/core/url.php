@@ -87,9 +87,9 @@ class titania_url
 		}
 
 		// Add style= to the url data if it is in there
-		if (isset($_REQUEST['style']))
+		if (isset($_REQUEST['style']) && request_var('style', 0))
 		{
-			$params['style'] = request_var('style', '');
+			$params['style'] = request_var('style', 0);
 		}
 
 		// Add the Session ID if required.
