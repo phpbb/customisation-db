@@ -66,7 +66,7 @@ phpbb::$user->add_lang('viewforum');
 if ($topic_id)
 {
 	// Check access level
-	if ($topic->topic_access < titania::$access_level)
+	if ($topic->topic_access < titania::$access_level || ($topic->topic_type == TITANIA_QUEUE_DISCUSSION && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[$object->contrib_type]->acl_get('queue_discussion')))
 	{
 		titania::needs_auth();
 	}
