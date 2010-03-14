@@ -120,6 +120,10 @@ class titania_revision extends titania_database_object
 		if (titania::$config->use_queue)
 		{
 			$queue = $this->get_queue();
+			if ($queue === false)
+			{
+				$queue = new titania_queue;
+			}
 
 			$queue->__set_array(array(
 				'revision_id'			=> $this->revision_id,
@@ -128,6 +132,10 @@ class titania_revision extends titania_database_object
 				'queue_status'			=> ($this->revision_submitted) ? TITANIA_QUEUE_NEW : TITANIA_QUEUE_HIDE,
 			));
 			$queue->submit();
+
+			// Set the revision queue id
+			$this->revision_queue_id = $queue->queue_id;
+			parent::submit();
 
 			if ($this->revision_submitted)
 			{

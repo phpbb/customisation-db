@@ -101,7 +101,7 @@ do{
 				));
 				$revision->submit();
 				$revision_id = $revision->revision_id;
-				
+
 				// Add queue_allow_repack value to the queue table
 				$queue = $revision->get_queue();
 				if ($queue)

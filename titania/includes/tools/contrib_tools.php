@@ -188,7 +188,17 @@ class titania_contrib_tools
 	*	array( // Search for an install .xml file
 	*		'install',
 	* 		'.xml',
-	* 	)
+	* 	),
+	* 	array( // Search for a directory with template in it
+	* 		'template',
+	* 		'is_directory',
+	* 	),
+	* 	array( // Search for a directory exactly named template (this also works for non-directories if you don't specify 'is_directory')
+	* 		'template',
+	* 		'is_directory',
+	* 		'is_exactly',
+	* 	),
+	* 	'style.cfg', // Search for style.cfg file
 	* )
 	*/
 	public function find_root($directory = false, $find = array(array('install', '.xml')), $sub_dir = '', $cnt = 0)
@@ -216,26 +226,68 @@ class titania_contrib_tools
 			}
 
 			// Search for the files
-			foreach ($find as $file_search)
+			if (!is_array($find))
 			{
-				$match = 0;
-
-				// Search each subset to make sure they all exist
-				foreach ($file_search as $check)
+				if (strpos($item, $find) !== false)
 				{
-					if (strpos($item, $check) !== false)
+					return $sub_dir;
+				}
+			}
+			else
+			{
+				foreach ($find as $file_search)
+				{
+					if (!is_array($file_search))
 					{
-						$match++;
+						if (strpos($item, $file_search) !== false)
+						{
+							return $sub_dir;
+						}
 					}
 					else
 					{
-						break;
-					}
-				}
+						$match = 0;
 
-				if ($match == sizeof($file_search))
-				{
-					return $sub_dir;
+						// Directory check
+						if (in_array('is_directory', $file_search))
+						{
+							if (!is_dir($directory . $sub_dir . '/' . $item))
+							{
+								continue;
+							}
+						}
+
+						// Search each subset to make sure they all exist
+						foreach ($file_search as $check)
+						{
+							// Ignore the special attributes that can be sent
+							if (in_array($check, array('is_directory', 'is_exactly')))
+							{
+								continue;
+							}
+
+							if (in_array('is_exactly', $check) && $item == $check)
+							{
+								$match++;
+							}
+							else if (!in_array('is_exactly', $check) && strpos($item, $check) !== false)
+							{
+								$match++;
+							}
+							else
+							{
+								break;
+							}
+						}
+
+						// Do not include in the count for matches
+						unset($file_search['is_directory'], $file_search['is_exactly']);
+
+						if ($match == sizeof($file_search))
+						{
+							return $sub_dir;
+						}
+					}
 				}
 			}
         }

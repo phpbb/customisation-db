@@ -83,6 +83,8 @@ class titania_queue extends titania_message_object
 	{
 		if (!$this->queue_id)
 		{
+			titania::add_lang('manage');
+
 			$sql = 'SELECT c.contrib_id, c.contrib_name_clean, c.contrib_name, c.contrib_type, r.revision_version
 				FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
 				WHERE r.revision_id = ' . (int) $this->revision_id . '
