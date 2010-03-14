@@ -470,7 +470,7 @@ class titania_contrib_tools
 	* @param mixed $source
 	* @param mixed $destination
 	*/
-	function mvdir_recursive($source, $destination)
+	public function mvdir_recursive($source, $destination)
 	{
 		if (!is_dir($source))
 		{
@@ -574,7 +574,7 @@ class titania_contrib_tools
 	* Retrieve contents from remotely stored file (mostly copied from functions_admin.php)
 	* Modified to ignore errors
 	*/
-	function get_remote_file($host, $directory, $filename, $port = 80, $timeout = 10)
+	public function get_remote_file($host, $directory, $filename, $port = 80, $timeout = 10)
 	{
 		$errstr = '';
 		if ($fsock = @fsockopen($host, $port, $errno, $errstr, $timeout))
