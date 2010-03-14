@@ -356,9 +356,9 @@ class titania_author extends titania_database_object
 			'AUTHOR_WEBSITE'				=> $this->get_website_url(),
 			'AUTHOR_WEBSITE_LINK'			=> '<a href="' . $this->get_website_url() . '">' . $this->get_website_url() . '</a>',
 
-			'AUTHOR_RATING'					=> $this->author_rating,
-			'AUTHOR_RATING_STRING'			=> (isset($this->rating)) ? $this->rating->get_rating_string() : '',
-			'AUTHOR_RATING_COUNT'			=> $this->author_rating_count,
+			'AUTHOR_RATING'					=> ($this->author_id) ? $this->author_rating : '',
+			'AUTHOR_RATING_STRING'			=> ($this->author_id && isset($this->rating)) ? $this->rating->get_rating_string() : '',
+			'AUTHOR_RATING_COUNT'			=> ($this->author_id) ? $this->author_rating_count : '',
 
 			'AUTHOR_CONTRIBS'				=> $this->author_contribs,
 
