@@ -68,7 +68,19 @@ class attention_overlord
 		return $row;
 	}
 
-	public static function display_attention_list($type = false, $display_closed = false, $sort = false, $pagination = false)
+	/**
+	* Display the list of attention items
+	*
+	* @param array $options
+	* 	attention_type
+	* 	attention_object_id
+	* 	only_closed bool only display closed items
+	* 	display_closed bool display closed and open items
+	* 	template_block string the name of the template block to output to (attention if not sent)
+	* @param titania_sort $sort
+	* @param titania_pagination $pagination
+	*/
+	public static function display_attention_list($options = array(), $sort = false, $pagination = false)
 	{
 		if ($sort === false)
 		{
@@ -96,29 +108,34 @@ class attention_overlord
 				TITANIA_ATTENTION_TABLE	=> 'a',
 			),
 
+			'WHERE'		=> array(),
+
 			'ORDER_BY'	=> $sort->get_order_by(),
 		);
 
 		// Limit to certain types if requested
-		if ($type)
+		if (isset($options['attention_type']))
 		{
-			$sql_ary['WHERE'] .= 'a.attention_type = ' . (int) $type;
+			$sql_ary['WHERE'][] = 'a.attention_type = ' . (int) $options['attention_type'];
+		}
+
+		// Limit to certain item if requested
+		if (isset($options['attention_object_id']))
+		{
+			$sql_ary['WHERE'][] = 'a.attention_object_id = ' . (int) $options['attention_object_id'];
 		}
 
 		// Do we want the closed ones?
-		if (!$display_closed)
+		if (isset($options['only_closed']) && $options['only_closed'])
 		{
-			if (!isset($sql_ary['WHERE']))
-			{
-				$sql_ary['WHERE'] = '';
-			}
-			else
-			{
-				$sql_ary['WHERE'] .= ' AND ';
-			}
-
-			$sql_ary['WHERE'] .= 'a.attention_close_time = 0';
+			$sql_ary['WHERE'][] = 'a.attention_close_time <> 0';
 		}
+		else if (!isset($options['display_closed']) || $options['display_closed'] == false)
+		{
+			$sql_ary['WHERE'][] = 'a.attention_close_time = 0';
+		}
+
+		$sql_ary['WHERE'] = implode(' AND ', $sql_ary['WHERE']);
 
 		// Main SQL Query
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
@@ -135,6 +152,7 @@ class attention_overlord
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$attention_ids[] = $row['attention_id'];
+			$user_ids[] = $row['attention_poster_id'];
 			$user_ids[] = $row['attention_requester'];
 
 			if ($row['attention_close_user'])
@@ -159,7 +177,8 @@ class attention_overlord
 
 			$output = array_merge(
 				$attention->assign_details(true),
-				users_overlord::assign_details($row['attention_requester'])
+				users_overlord::assign_details($row['attention_poster_id']),
+				users_overlord::assign_details($row['attention_requester'], 'REPORTER_')
 			);
 
 			// Do we have to?
@@ -171,7 +190,8 @@ class attention_overlord
 				);
 			}
 
-			phpbb::$template->assign_block_vars('attention', $output);
+			$template_block = (isset($options['template_block'])) ? $options['template_block'] : 'attention';
+			phpbb::$template->assign_block_vars($template_block, $output);
 		}
 		unset($attention);
 	}

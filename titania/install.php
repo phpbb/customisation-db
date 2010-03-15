@@ -784,6 +784,18 @@ $versions = array(
 		'custom' => 'titania_custom',
 	),
 
+	'0.1.48' => array(
+		'table_column_add' => array(
+			array(TITANIA_ATTENTION_TABLE, 'attention_poster_id', array('UINT', 0)),
+			array(TITANIA_ATTENTION_TABLE, 'attention_post_time', array('TIMESTAMP', 0)),
+		),
+
+		'table_index_add' => array(
+			array(TITANIA_ATTENTION_TABLE, 'attention_poster_id'),
+			array(TITANIA_ATTENTION_TABLE, 'attention_post_time'),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

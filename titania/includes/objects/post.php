@@ -465,6 +465,13 @@ class titania_post extends titania_message_object
 			return false;
 		}
 
+		// Make sure we have a topic here
+		if (!$this->topic->topic_id)
+		{
+			$this->topic->topic_id = $this->topic_id;
+			$this->topic->load();
+		}
+
 		if ($this->post_id == $this->topic->topic_first_post_id)
 		{
 			$this->topic->__set_array(array(
@@ -582,6 +589,12 @@ class titania_post extends titania_message_object
 		titania_search::delete($this->post_type, $this->post_id);
 
 		// @todo remove attachments and other things
+
+		// Remove any attention items
+		$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
+			WHERE attention_object_type = ' . TITANIA_POST . '
+				AND attention_object_id = ' . $this->post_id;
+		phpbb::$db->sql_query($sql);
 
 		// Initiate self-destruct mode
 		parent::delete();
@@ -770,7 +783,7 @@ class titania_post extends titania_message_object
 			'U_INFO'						=> false,//$this->get_url('info'),
 			'U_QUOTE'						=> $this->acl_get('post') ? $this->get_url('quote') : '',
 			//U_MCP_APPROVE
-			'U_MCP_REPORT'					=> titania_url::build_url('manage/attention', array('type' => $this->post_type, 'id' => $this->post_id)),
+			'U_MCP_REPORT'					=> titania_url::build_url('manage/attention', array('type' => TITANIA_POST, 'id' => $this->post_id)),
 
 			'S_UNREAD_POST'					=> ($this->unread) ? true : false, // remember that you must set this up extra...
 			'S_POST_APPROVED'				=> $this->post_approved,

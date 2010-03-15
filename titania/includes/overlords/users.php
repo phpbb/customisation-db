@@ -235,7 +235,7 @@ class users_overlord
 		return self::$users[$user_id];
 	}
 
-	public static function assign_details($user_id, $prefix = '')
+	public static function assign_details($user_id, $prefix = '', $output = false)
 	{
 		$row = self::get_user($user_id);
 		$user_id = $row['user_id']; // Re-assign properly...in case it gives us the anonymous user
@@ -252,7 +252,7 @@ class users_overlord
 		// Undo
 		$phpbb_root_path = PHPBB_ROOT_PATH;
 
-		return array(
+		$output = array(
 			$prefix . 'USER_FULL'			=> self::get_user($user_id, '_full'),
 			$prefix . 'USER_COLOUR'			=> self::get_user($user_id, '_colour'),
 			$prefix . 'USERNAME'			=> self::get_user($user_id, '_username'),
@@ -287,5 +287,12 @@ class users_overlord
 			$prefix . 'U_YIM'				=> self::get_user($user_id, '_yim'),
 			$prefix . 'U_JABBER'			=> self::get_user($user_id, '_jabber'),
 		);
+
+		if ($output)
+		{
+			phpbb::$template->assign_vars($output);
+		}
+
+		return $output;
 	}
 }

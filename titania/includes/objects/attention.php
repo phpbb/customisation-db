@@ -52,6 +52,8 @@ class titania_attention extends titania_database_object
 			'attention_type'				=> array('default' => 0), // attention type constants (reported, needs approval, etc)
 			'attention_object_type'			=> array('default' => 0),
 			'attention_object_id'			=> array('default' => 0),
+			'attention_poster_id'			=> array('default' => 0),
+			'attention_post_time'			=> array('default' => 0),
 			'attention_url'					=> array('default' => ''),
 			'attention_requester'			=> array('default' => (int) phpbb::$user->data['user_id']),
 			'attention_time'				=> array('default' => titania::$time),
@@ -101,12 +103,21 @@ class titania_attention extends titania_database_object
 	public function assign_details($return = false)
 	{
 		$output = array(
+			'ATTENTION_ID'			=> $this->attention_id,
 			'ATTENTION_TYPE'		=> $this->attention_type,
 			'ATTENTION_TIME'		=> phpbb::$user->format_date($this->attention_time),
+			'ATTENTION_POST_TIME'	=> phpbb::$user->format_date($this->attention_post_time),
 			'ATTENTION_CLOSE_TIME'	=> ($this->attention_close_time) ? phpbb::$user->format_date($this->attention_close_time) : '',
 			'ATTENTION_TITLE'		=> $this->attention_title,
+			'ATTENTION_REASON'		=> $this->get_reason_string(),
+			'ATTENTION_DESCRIPTION'	=> $this->attention_description,
 
 			'U_VIEW_ATTENTION'		=> $this->get_url(),
+			'U_VIEW_DETAILS'		=> titania_url::append_url(titania_url::$current_page_url, array('a' => $this->attention_id)),
+
+			'S_CLOSED'				=> ($this->attention_close_time) ? true : false,
+			'S_UNAPPROVED'			=> ($this->attention_type == TITANIA_ATTENTION_UNAPPROVED) ? true : false,
+			'S_REPORTED'			=> ($this->attention_type == TITANIA_ATTENTION_REPORTED) ? true : false,
 		);
 
 		if ($return)
@@ -115,5 +126,19 @@ class titania_attention extends titania_database_object
 		}
 
 		phpbb::$template->assign_vars($output);
+	}
+
+	public function get_reason_string()
+	{
+		switch ((int) $this->attention_type)
+		{
+			case TITANIA_ATTENTION_REPORTED :
+				return phpbb::$user->lang['REPORTED'];
+			break;
+
+			case TITANIA_ATTENTION_UNAPPROVED :
+				return phpbb::$user->lang['UNAPPROVED'];
+			break;
+		}
 	}
 }
