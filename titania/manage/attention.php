@@ -27,54 +27,30 @@ $attention_id = request_var('a', 0);
 $object_type = request_var('type', 0);
 $object_id = request_var('id', 0);
 
+$close = (isset($_POST['close'])) ? true : false;
+$approve = (isset($_POST['approve'])) ? true : false;
+$disapprove = (isset($_POST['disapprove'])) ? true : false;
+
 if ($attention_id || ($object_type && $object_id))
 {
 	if ($attention_id)
 	{
 		$row = attention_overlord::load_attention($attention_id);
-	}
-	else
-	{
-		$row = attention_overlord::load_attention(false, $object_type, $object_id);
-	}
-
-	if (!$row)
-	{
-		trigger_error('NO_ATTENTION_ITEM');
-	}
-
-	// Setup
-	$attention_object = new titania_attention;
-	$attention_object->__set_array($row);
-
-	$close = (isset($_POST['close'])) ? true : false;
-	$approve = (isset($_POST['approve'])) ? true : false;
-	$disapprove = (isset($_POST['disapprove'])) ? true : false;
-
-	// Close, approve, or disapprove the items
-	if ($close || $approve || $disapprove)
-	{
-		if (!check_form_key('attention'))
+		if (!$row)
 		{
-			trigger_error('FORM_INVALID');
+			trigger_error('NO_ATTENTION_ITEM');
 		}
 
-		$sql_ary = array(
-			'attention_close_time'	=> titania::$time,
-			'attention_close_user'	=> phpbb::$user->data['user_id'],
-		);
-
-		$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-			WHERE attention_object_id = ' . (int) $attention_object->attention_object_id . '
-				AND attention_object_type = ' . (int) $attention_object->attention_object_type . '
-				AND attention_type = ' . (($close || $delete) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
-		phpbb::$db->sql_query($sql);
+		// Setup
+		$attention_object = new titania_attention;
+		$attention_object->__set_array($row);
+		$object_type = (int) $attention_object->attention_object_type;
+		$object_id = (int) $attention_object->attention_object_id;
 	}
-	add_form_key('attention');
 
 	// Display the current attention items
 	$options = array(
-		'attention_object_id'	=> $attention_object->attention_object_id,
+		'attention_object_id'	=> $object_id,
 	);
 	attention_overlord::display_attention_list($options);
 
@@ -83,11 +59,11 @@ if ($attention_id || ($object_type && $object_id))
 	$options['template_block'] = 'attention_closed';
 	attention_overlord::display_attention_list($options);
 
-	switch ((int) $attention_object->attention_object_type)
+	switch ($object_type)
 	{
 		case TITANIA_POST :
 			$post = new titania_post;
-			$post->post_id = $attention_object->attention_object_id;
+			$post->post_id = $object_id;
 			if (!$post->load())
 			{
 				$attention_object->delete();
@@ -121,7 +97,32 @@ if ($attention_id || ($object_type && $object_id))
 				'U_EDIT'			=> $post->get_url('edit'),
 			));
 		break;
+
+		default :
+			trigger_error('NO_ATTENTION_TYPE');
+		break;
 	}
+
+	// Close, approve, or disapprove the items
+	if ($close || $approve || $disapprove)
+	{
+		if (!check_form_key('attention'))
+		{
+			trigger_error('FORM_INVALID');
+		}
+
+		$sql_ary = array(
+			'attention_close_time'	=> titania::$time,
+			'attention_close_user'	=> phpbb::$user->data['user_id'],
+		);
+
+		$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+			WHERE attention_object_id = ' . (int) $object_id . '
+				AND attention_object_type = ' . (int) $object_type . '
+				AND attention_type = ' . (($close || $delete) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
+		phpbb::$db->sql_query($sql);
+	}
+	add_form_key('attention');
 
 	titania::page_header('ATTENTION');
 

@@ -780,10 +780,8 @@ class titania_post extends titania_message_object
 			'U_DELETE'						=> $this->acl_get('delete') ? $this->get_url('delete') : '',
 			'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
 			'U_WARN'						=> false,//$this->get_url('warn'),
-			'U_INFO'						=> false,//$this->get_url('info'),
+			'U_INFO'						=> titania_url::build_url('manage/attention', array('type' => TITANIA_POST, 'id' => $this->post_id)),
 			'U_QUOTE'						=> $this->acl_get('post') ? $this->get_url('quote') : '',
-			//U_MCP_APPROVE
-			'U_MCP_REPORT'					=> titania_url::build_url('manage/attention', array('type' => TITANIA_POST, 'id' => $this->post_id)),
 
 			'S_UNREAD_POST'					=> ($this->unread) ? true : false, // remember that you must set this up extra...
 			'S_POST_APPROVED'				=> $this->post_approved,
