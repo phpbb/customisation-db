@@ -1,5 +1,6 @@
 Hello {USERNAME},
 
-You are recviing this message becuase you are subscribed to the Style "{CONTRIB_NAME}", and a new version has been released.
-Please visit the link below to view the item.
+You are receiving this message because you are subscribed to the phpBB style "{CONTRIB_NAME}", and a new version has been released.
+
+If you like, you can visit the link below to view the new release of the style.
 {U_CONTRIB}
