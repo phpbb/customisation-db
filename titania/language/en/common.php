@@ -34,29 +34,33 @@ if (empty($lang) || !is_array($lang))
 // You do not need this where single placeholders are used, e.g. 'Message %d' is fine
 // equally where a string contains only two placeholders which are used to wrap text
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
+//
+// Some characters you may want to copy&paste:
+// ’ » “ ” …
+//
 
 $lang = array_merge($lang, array(
-'QUICK_ACTIONS' => 'Quick Actions',
-'QUEUE' => 'Queue',
-'POST_IP' => 'Post IP',
-'STICKIES' => 'Stickies',
-'CONTINUE' => 'Continue',
-'CAT_MISC' => 'Miscellaneous',
-'CAT_BOARD_STYLES' => 'Board Styles',
-'CAT_SMILIES' => 'Smilies',
-'CAT_AVATARS' => 'Avatars',
-'CAT_RANKS' => 'Ranks',
-'TOTAL_RESULTS' => '%d Results',
-'TOTAL_RESULTS_ONE' => '1 Result',
-'TOTAL_TOPICS' => '%d Topics',
-'TOTAL_TOPICS_ONE' => '1 Topic',
-'TOTAL_POSTS' => '%d Posts',
-'TOTAL_POSTS_ONE' => '1 Post',
-'TOTAL_CONTRIBS' => '%d Contributions',
-'TOTAL_CONTRIBS_ONE' => '1 Contribution',
-'UPDATE_TIME' => 'Updated',
-'UNKNOWN' => 'Unknown',
-	'AUTHOR_BY'					=> 'By %s',
+	'QUICK_ACTIONS'		=> 'Quick Actions',
+	'QUEUE'				=> 'Queue',
+	'POST_IP' 			=> 'Post IP',
+	'STICKIES' 			=> 'Stickies',
+	'CONTINUE' 			=> 'Continue',
+	'CAT_MISC' 			=> 'Miscellaneous',
+	'CAT_BOARD_STYLES' 	=> 'Board Styles',
+	'CAT_SMILIES' 		=> 'Smilies',
+	'CAT_AVATARS' 		=> 'Avatars',
+	'CAT_RANKS' 		=> 'Ranks',
+	'TOTAL_RESULTS' 	=> '%d Results',
+	'TOTAL_RESULTS_ONE' => '1 Result',
+	'TOTAL_TOPICS' 		=> '%d Topics',
+	'TOTAL_TOPICS_ONE' 	=> '1 Topic',
+	'TOTAL_POSTS' 		=> '%d Posts',
+	'TOTAL_POSTS_ONE' 	=> '1 Post',
+	'TOTAL_CONTRIBS' 	=> '%d Contributions',
+	'TOTAL_CONTRIBS_ONE' => '1 Contribution',
+	'UPDATE_TIME' 		=> 'Updated',
+	'UNKNOWN' 			=> 'Unknown',
+	'AUTHOR_BY'			=> 'By %s',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
 
@@ -99,7 +103,7 @@ $lang = array_merge($lang, array(
 	'MODIFICATION'				=> 'Modification',
 	'MOVE_DOWN'					=> 'Move down',
 	'MOVE_UP'					=> 'Move up',
-	'MULTI_SELECT_EXPLAIN'		=> 'Hold down CTRL and click to select multiple.',
+	'MULTI_SELECT_EXPLAIN'		=> 'Hold down CTRL and click to select multiple items.',
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
 	'NEW_REVISION'				=> 'New Revision',

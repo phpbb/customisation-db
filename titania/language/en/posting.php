@@ -36,12 +36,12 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'UNDELETE_FILE' => 'Cancel Delete',
-'FILE_DELETED' => 'This file will be deleted when you submit',
-'UNDELETE_POST' => 'Undelete Post',
-'UNDELETE_POST_CONFIRM' => 'Are you sure you want to undelete this post?',
-'REPORT_POST' => 'Report Post',
-'REPORT_POST_CONFIRM' => 'Are you sure you want to report this post?',
+	'UNDELETE_FILE'		=> 'Cancel Delete',
+	'FILE_DELETED'		=> 'This file will be deleted when you submit',
+	'UNDELETE_POST'		=> 'Undelete Post',
+	'UNDELETE_POST_CONFIRM'	=> 'Are you sure you want to undelete this post?',
+	'REPORT_POST'		=> 'Report Post',
+	'REPORT_POST_CONFIRM'	=> 'Are you sure you want to report this post?',
 	'ACCESS'			=> 'Access Level',
 	'ACCESS_AUTHORS'	=> 'Authors Access',
 	'ACCESS_PUBLIC'		=> 'Public Access',
@@ -51,12 +51,12 @@ $lang = array_merge($lang, array(
 	'STICKIES'			=> 'Stickies',
 	'STICKY_TOPIC'		=> 'Sticky Topic',
 
-	'QUEUE_DISCUSSION_TOPIC_TITLE'	=> 'Validation Discussion - %s',
+	'QUEUE_DISCUSSION_TOPIC_TITLE'		=> 'Validation Discussion - %s',
 	'QUEUE_DISCUSSION_TOPIC_MESSAGE'	=> 'This topic is for validation discussion between the contribution authors and validators.
 
-Anything posted in this topic will be noticed by those validating your contribution, so please post here instead of using private messages to validators.
+Anything posted in this topic will be read by those validating your contribution so please post here instead of using private messages to validators.
 
-Validation staff may also post questions to the authors here, so please reply with helpful information for them as it may be required to proceed with the validation procedure.
+Validation staff may also post questions to the authors here so please reply with helpful information for them as it may be required to proceed with the validation procedure.
 
 Note that by default this topic is private between authors and validators and cannot be seen by the public.',
 ));

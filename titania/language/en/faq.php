@@ -43,10 +43,10 @@ $lang = array_merge($lang, array(
 
 	'EDIT_FAQ'				=> 'Edit FAQ',
 
-	'FAQ_CREATED'			=> 'This FAQ has been created successfully.',
+	'FAQ_CREATED'			=> 'The FAQ has been created successfully.',
 	'FAQ_DELETED'			=> 'The FAQ entry has been deleted.',
 	'FAQ_DETAILS'			=> 'FAQ Details Page',
-	'FAQ_EDITED'			=> 'This FAQ has been edited successfully.',
+	'FAQ_EDITED'			=> 'The FAQ has been edited successfully.',
 	'FAQ_EXPANDED'			=> 'Frequently Asked Questions',
 	'FAQ_LIST'				=> 'FAQ List',
 	'FAQ_NOT_FOUND'			=> 'The specified FAQ could not be found.',
