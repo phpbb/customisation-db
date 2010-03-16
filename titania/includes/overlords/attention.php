@@ -114,7 +114,7 @@ class attention_overlord
 		);
 
 		// Limit to certain types if requested
-		if (isset($options['attention_type']))
+		if (isset($options['attention_type']) && $options['attention_type'])
 		{
 			$sql_ary['WHERE'][] = 'a.attention_type = ' . (int) $options['attention_type'];
 		}
