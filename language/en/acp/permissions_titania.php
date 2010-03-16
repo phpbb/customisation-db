@@ -96,6 +96,7 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_rate'				=> array('lang' => 'Can rate items', 'cat' => 'titania'),
 	'acl_u_titania_topic'				=> array('lang' => 'Can create new topics', 'cat' => 'titania'),
 	'acl_u_titania_post'				=> array('lang' => 'Can create new posts', 'cat' => 'titania'),
+	'acl_u_titania_post_approved'		=> array('lang' => 'Can post <strong>without</strong> approval', 'cat' => 'titania'),
 	'acl_u_titania_post_edit_own'		=> array('lang' => 'Can edit own posts', 'cat' => 'titania'),
 	'acl_u_titania_post_delete_own'		=> array('lang' => 'Can delete own posts', 'cat' => 'titania'),
 	'acl_u_titania_post_mod_own'		=> array('lang' => 'Can moderate own topics', 'cat' => 'titania'),
