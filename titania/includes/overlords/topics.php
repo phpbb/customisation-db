@@ -46,7 +46,7 @@ class topics_overlord
 		$sql = ($no_where) ? '' : (($where) ? ' WHERE' : ' AND');
 		$sql .= " ({$prefix}topic_access >= " . titania::$access_level . " OR {$prefix}topic_first_post_user_id = " . phpbb::$user->data['user_id'] . ')';
 
-		if (phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
 		{
 			$sql .= " AND {$prefix}topic_approved = 1";
 		}

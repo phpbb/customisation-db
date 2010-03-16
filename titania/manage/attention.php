@@ -64,7 +64,7 @@ if ($attention_id || ($object_type && $object_id))
 		$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 			WHERE attention_object_id = ' . (int) $object_id . '
 				AND attention_object_type = ' . (int) $object_type . '
-				AND attention_type = ' . (($close || $delete) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
+				AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
 		phpbb::$db->sql_query($sql);
 	}
 	add_form_key('attention');

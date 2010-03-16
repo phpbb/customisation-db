@@ -384,10 +384,30 @@ class titania_posting
 				{
 					$post_object->topic->topic_sticky = true;
 				}
+				else
+				{
+					if (!phpbb::$auth->acl_get('u_titania_post_approved'))
+					{
+						$post_object->post_approved = false;
+					}
+				}
 
 				$post_object->submit();
 
 				$message_object->submit($post_object->post_access);
+
+				// Unapproved posts will get a notice
+				if (!$post_object->topic->topic_approved)
+				{
+					phpbb::$user->add_lang('posting');
+
+					trigger_error(phpbb::$user->lang['POST_STORED_MOD'] . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . $post_object->topic->get_parent_url() . '">', '</a>'));
+				}
+				else if (!$post_object->post_approved)
+				{
+					phpbb::$user->add_lang('posting');
+					trigger_error(phpbb::$user->lang['POST_STORED_MOD'] . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_TOPIC'], '<a href="' . $post_object->topic->get_url() . '">', '</a>'));
+				}
 
 				redirect($post_object->get_url());
 			}

@@ -50,7 +50,7 @@ $nav_ary = array(
 );
 
 
-$page = (isset($nav_ary[$page])) ? $page : 'queue';
+$page = (isset($nav_ary[$page])) ? $page : 'attention';
 
 // Display nav menu
 titania::generate_nav($nav_ary, $page);

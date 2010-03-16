@@ -169,9 +169,18 @@ class titania_topic extends titania_database_object
 			$append['action'] = $action;
 		}
 
-		$url = titania_url::build_url($base, $append);
+		return titania_url::build_url($base, $append);
+	}
 
-		return $url;
+	/**
+	 * Get the parent URL for this topic
+	 */
+	public function get_parent_url()
+	{
+		$base = $append = false;
+		titania_url::split_base_params($base, $append, $this->topic_url);
+
+		return titania_url::build_url($base, $append);
 	}
 
 	/**

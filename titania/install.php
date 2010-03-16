@@ -800,6 +800,12 @@ $versions = array(
 		'custom' => 'titania_custom',
 	),
 
+	'0.1.50' => array(
+		'permission_add' => array(
+			'u_titania_post_approved',
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
