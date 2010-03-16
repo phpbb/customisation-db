@@ -37,6 +37,8 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 'NO_ATTENTION_TYPE' => 'Inappropriate attention type.',
+'OPEN_ITEMS' => 'Open Items',
+'CLOSED_ITEMS' => 'Closed Items',
 'MARK_NO_PROGRESS' => 'Mark no Progress',
 'MARK_IN_PROGRESS' => 'Mark in Progress',
 'QUEUE_DISCUSSION_TOPIC' => 'Queue Discussion Topic',

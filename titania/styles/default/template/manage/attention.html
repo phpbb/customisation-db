@@ -26,7 +26,7 @@
 		<ul class="topiclist cplist">
 
 		<!-- BEGIN attention -->
-			<li class="row<!-- IF attention.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+			<li class="row<!-- IF attention.S_CLOSED --> bg3<!-- ELSEIF attention.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 				<dl>
 					<dt>
 						<a href="{attention.U_VIEW_DETAILS}" class="topictitle">{attention.ATTENTION_TITLE}</a><br />
@@ -47,8 +47,10 @@
 			<!-- IF S_SELECT_SORT_DAYS -->
 				<label>{L_DISPLAY_POSTS}: {S_SELECT_SORT_DAYS}</label>
 				<label>{L_SORT_BY} {S_SELECT_SORT_KEY}</label><label>{S_SELECT_SORT_DIR}</label>
-				<input type="submit" name="sort" value="{L_GO}" class="button2" />
 			<!-- ENDIF -->
+			<input type="checkbox" name="open"<!-- IF S_OPEN_CHECKED --> checked="checked"<!-- ENDIF -->> {L_OPEN_ITEMS} &nbsp;
+			<input type="checkbox" name="closed"<!-- IF S_CLOSED_CHECKED --> checked="checked"<!-- ENDIF -->> {L_CLOSED_ITEMS}
+			<input type="submit" name="sort" value="{L_GO}" class="button2" />
 		</fieldset>
 		<hr />
 		<ul class="linklist">

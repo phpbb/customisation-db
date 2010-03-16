@@ -132,7 +132,17 @@ if ($attention_id || ($object_type && $object_id))
 else
 {
 	$type = request_var('type', '');
-	$display_all = request_var('display_all', false);
+	if (isset($_POST['sort']))
+	{
+		$closed = (isset($_POST['closed'])) ? true : false;
+		$open = (isset($_POST['open']) || !$closed) ? true : false;
+	}
+	else
+	{
+		$closed = request_var('closed', false);
+		$open = (request_var('open', false) || !$closed) ? true : false;
+	}
+
 	/*$close = (isset($_POST['close'])) ? true : false;
 	$id_list = request_var('id_list', array(0));
 
@@ -164,12 +174,25 @@ else
 
 	$options = array(
 		'attention_type'	=> $type,
-		'display_all'		=> $display_all,
+		'display_closed'	=> $closed,
+		'only_closed'		=> (!$open && $closed) ? true : false,
 	);
 	attention_overlord::display_attention_list($options);
 
+	$additional = array();
+	if (!$open)
+	{
+		$additional['open'] = 0;
+	}
+	if ($closed)
+	{
+		$additional['closed'] = 1;
+	}
+
 	phpbb::$template->assign_vars(array(
-		'S_ACTION'		=> titania_url::build_url('manage/attention'),
+		'S_ACTION'			=> titania_url::build_url('manage/attention', $additional),
+		'S_OPEN_CHECKED'	=> $open,
+		'S_CLOSED_CHECKED'	=> $closed,
 	));
 
 	titania::page_header('ATTENTION');
