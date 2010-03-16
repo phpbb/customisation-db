@@ -379,6 +379,12 @@ class titania_posting
 			}
 			else
 			{
+				// Force Queue Discussion topics to always be stickies
+				if ($post_object->post_type == TITANIA_QUEUE_DISCUSSION)
+				{
+					$post_object->topic->topic_sticky = true;
+				}
+
 				$post_object->submit();
 
 				$message_object->submit($post_object->post_access);

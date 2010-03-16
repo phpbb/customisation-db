@@ -613,6 +613,10 @@ function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', 
 			'post_text_uid'			=> $post_row['bbcode_uid'],
 			'post_text_options'		=> (($post_row['enable_bbcode']) ? OPTION_FLAG_BBCODE : 0) + (($post_row['enable_smilies']) ? OPTION_FLAG_SMILIES : 0) + (($post_row['enable_magic_url']) ? OPTION_FLAG_LINKS : 0),
 		));
+		if ($topic_type == TITANIA_QUEUE_DISCUSSION)
+		{
+			$post->topic->topic_sticky = true;
+		}
 		$post->message_parsed_for_storage = true;
 		$post->submit();
 	}

@@ -120,7 +120,7 @@ class titania_queue extends titania_message_object
 					'topic_sticky'		=> true,
 				));
 				$post->__set_array(array(
-					'post_access'		=> TITANIA_ACCESS_TEAMS,
+					'post_access'		=> TITANIA_ACCESS_AUTHORS,
 					'post_subject'		=> sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_TITLE'], $row['contrib_name']),
 					'post_text'			=> phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_MESSAGE'],
 				));

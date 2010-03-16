@@ -47,6 +47,12 @@ function titania_custom($action, $version)
 					$sync = new titania_sync;
 					$sync->topics('queue_discussion_category');
 				break;
+
+				case '0.1.49' :
+					$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . ' SET topic_sticky = 1
+						WHERE topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+					phpbb::$db->sql_query($sql);
+				break;
 			}
 		break;
 
