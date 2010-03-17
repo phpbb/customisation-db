@@ -38,7 +38,15 @@ set_exception_handler('titania_exception_handler');
 spl_autoload_register(array('titania', 'autoload'));
 
 // Read config.php file
-titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);
+// 2 separate locations possible: within Titania directory and just outside of it.
+if (file_exists(TITANIA_ROOT . 'config.' . PHP_EXT))
+{
+	titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);
+}
+else
+{
+	titania::read_config_file('../' . TITANIA_ROOT . 'config.' . PHP_EXT);
+}
 
 // Include the constants (after reading the Titania config file, but before loading the phpBB common file)
 titania::_include('constants');
