@@ -37,7 +37,7 @@ if (phpbb::$user->data['user_type'] != USER_FOUNDER && phpbb::$user->data['user_
 @set_time_limit(0);
 
 // Hack for local
-phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? '../phpBB3_titania/ariel_files' : '../' . phpbb::$config['site_upload_dir'];
+phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? '../../phpBB3_titania/ariel_files' : '../../' . phpbb::$config['site_upload_dir'];
 
 // Table prefix
 $ariel_prefix = 'community_site_';
