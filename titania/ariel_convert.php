@@ -37,7 +37,7 @@ if (phpbb::$user->data['user_type'] != USER_FOUNDER && phpbb::$user->data['user_
 @set_time_limit(0);
 
 // Hack for local
-phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? '../../phpBB3_titania/ariel_files' : '../../' . phpbb::$config['site_upload_dir'];
+phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? '../phpBB3_titania/ariel_files' : '../../' . phpbb::$config['site_upload_dir'];
 
 // Table prefix
 $ariel_prefix = 'community_site_';
@@ -99,6 +99,9 @@ switch ($step)
 		{
 			phpbb::$db->sql_query('TRUNCATE TABLE ' . $table);
 		}
+
+		// Truncate search index
+		titania_search::truncate();
 
 		// Clean up the files directory
 		foreach (scandir(titania::$config->upload_path) as $item)
@@ -448,6 +451,7 @@ switch ($step)
 		{
 			$topic = new titania_topic;
 			$topic->parent_id = $row['contrib_id'];
+			$topic->topic_category = $row['contrib_type'];
 			$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
 			titania_move_topic($row['topic_id'], $topic, TITANIA_QUEUE_DISCUSSION);
 			unset($topic);
@@ -482,18 +486,20 @@ switch ($step)
 				continue;
 			}
 
-			// Move the queue topics to our own side
-			$sql = 'SELECT topic_id FROM ' . $ariel_prefix . 'contrib_topics
-				WHERE contrib_id = ' . $row['contrib_id'] . '
-					AND topic_type = 4';
+			// Ariel only stores the latest, don't copy topics unless the queue entry is the latest
+			$sql = 'SELECT MAX(queue_id) AS max FROM ' . $ariel_prefix . 'queue
+				WHERE contrib_id = ' . (int) $row['contrib_id'];
 			phpbb::$db->sql_query($sql);
-			$queue_topic_id = phpbb::$db->sql_fetchfield('topic_id');
-			phpbb::$db->sql_freeresult();
+			$max = phpbb::$db->sql_fetchfield('max');
+			if ($max != $row['queue_id'])
+			{
+				$row['topic_id'] = false;
+			}
 
 			$topic = new titania_topic;
 			$topic->parent_id = $row['queue_id'];
 			$topic->topic_url = 'manage/queue/q_' . $row['queue_id'];
-			titania_move_topic($queue_topic_id, $topic, TITANIA_QUEUE, $row['contrib_name'], $row['revision_version']);
+			titania_move_topic($row['topic_id'], $topic, TITANIA_QUEUE, $row['contrib_name'], $row['revision_version']);
 			$queue_topic_id = $topic->topic_id;
 			unset($topic);
 
@@ -547,19 +553,41 @@ switch ($step)
 	break;
 
 	case 8 :
-		titania_search::$do_not_index = false;
+		$limit = $limit / 10;
 
-		// Truncate index first
-		titania_search::truncate();
+		$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
+			WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED;
+		phpbb::$db->sql_query($sql);
+		$total = phpbb::$db->sql_fetchfield('cnt');
+		phpbb::$db->sql_freeresult();
+
+		titania_search::$do_not_index = false;
 
 		$sync = new titania_sync;
 
-		$sync->contribs('index');
+		$sync->contribs('index', false, $start, $limit);
 
-		$display_message = 'Indexing';
+		$display_message = 'Indexing Contributions';
 	break;
 
 	case 9 :
+		$limit = $limit / 10;
+
+		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE;
+		phpbb::$db->sql_query($sql);
+		$total = phpbb::$db->sql_fetchfield('cnt');
+		phpbb::$db->sql_freeresult();
+
+		titania_search::$do_not_index = false;
+
+		$sync = new titania_sync;
+
+		$sync->posts('index', $start, $limit);
+
+		$display_message = 'Indexing Posts';
+	break;
+
+	case 10 :
 		phpbb::$cache->purge();
 
 		trigger_error('Ariel Conversion Finished!');
@@ -595,32 +623,35 @@ function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', 
 	$post = false;
 
 	// Convert the topics over from the phpBB forums
-	$sql = 'SELECT * FROM ' . POSTS_TABLE . '
-		WHERE topic_id = ' . (int) $topic_id . '
-		ORDER BY post_id ASC';
-	$post_result = phpbb::$db->sql_query($sql);
-	while ($post_row = phpbb::$db->sql_fetchrow($post_result))
+	if ($topic_id !== false)
 	{
-		$post = new titania_post($topic_type, $topic);
-		$post->__set_array(array(
-			'post_access'			=> ($topic_type == TITANIA_QUEUE) ? TITANIA_ACCESS_TEAMS : TITANIA_ACCESS_AUTHORS,
-			'post_user_id'			=> $post_row['poster_id'],
-			'post_ip'				=> $post_row['poster_ip'],
-			'post_time'				=> $post_row['post_time'],
-			'post_subject'			=> $post_row['post_subject'],
-			'post_text'				=> $post_row['post_text'],
-			'post_text_bitfield'	=> $post_row['bbcode_bitfield'],
-			'post_text_uid'			=> $post_row['bbcode_uid'],
-			'post_text_options'		=> (($post_row['enable_bbcode']) ? OPTION_FLAG_BBCODE : 0) + (($post_row['enable_smilies']) ? OPTION_FLAG_SMILIES : 0) + (($post_row['enable_magic_url']) ? OPTION_FLAG_LINKS : 0),
-		));
-		if ($topic_type == TITANIA_QUEUE_DISCUSSION)
+		$sql = 'SELECT * FROM ' . POSTS_TABLE . '
+			WHERE topic_id = ' . (int) $topic_id . '
+			ORDER BY post_id ASC';
+		$post_result = phpbb::$db->sql_query($sql);
+		while ($post_row = phpbb::$db->sql_fetchrow($post_result))
 		{
-			$post->topic->topic_sticky = true;
+			$post = new titania_post($topic_type, $topic);
+			$post->__set_array(array(
+				'post_access'			=> ($topic_type == TITANIA_QUEUE) ? TITANIA_ACCESS_TEAMS : TITANIA_ACCESS_AUTHORS,
+				'post_user_id'			=> $post_row['poster_id'],
+				'post_ip'				=> $post_row['poster_ip'],
+				'post_time'				=> $post_row['post_time'],
+				'post_subject'			=> $post_row['post_subject'],
+				'post_text'				=> $post_row['post_text'],
+				'post_text_bitfield'	=> $post_row['bbcode_bitfield'],
+				'post_text_uid'			=> $post_row['bbcode_uid'],
+				'post_text_options'		=> (($post_row['enable_bbcode']) ? OPTION_FLAG_BBCODE : 0) + (($post_row['enable_smilies']) ? OPTION_FLAG_SMILIES : 0) + (($post_row['enable_magic_url']) ? OPTION_FLAG_LINKS : 0),
+			));
+			if ($topic_type == TITANIA_QUEUE_DISCUSSION)
+			{
+				$post->topic->topic_sticky = true;
+			}
+			$post->message_parsed_for_storage = true;
+			$post->submit();
 		}
-		$post->message_parsed_for_storage = true;
-		$post->submit();
+		phpbb::$db->sql_freeresult($post_result);
 	}
-	phpbb::$db->sql_freeresult($post_result);
 
 	// We didn't convert any posts?  (Local install perhaps?)
 	if ($post === false && $contrib_name)

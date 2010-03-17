@@ -116,8 +116,9 @@ class titania_sync
 	*
 	* @param string $mode The mode (validated)
 	* @param int $contrib_id Contrib id to limit to
+	* @param int|bool $start & $limit start and limit for indexing (only indexing!)
 	*/
-	public function contribs($mode, $contrib_id = false)
+	public function contribs($mode, $contrib_id = false, $start = false, $limit = false)
 	{
 		switch ($mode)
 		{
@@ -146,16 +147,18 @@ class titania_sync
 			break;
 
 			case 'index' :
-				foreach (titania_types::$types as $type_id => $class)
-				{
-					titania_search::truncate($type_id);
-				}
-
 				$data = array();
 
 				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE . '
 					WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED;
-				$result = phpbb::$db->sql_query($sql);
+				if ($start === false || $limit === false)
+				{
+					$result = phpbb::$db->sql_query($sql);
+				}
+				else
+				{
+					$result = phpbb::$db->sql_query_limit($sql, (int) $limit, (int) $start);
+				}
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
 					$data[] = array(
@@ -227,21 +230,26 @@ class titania_sync
 		}
 	}
 
-	public function posts($mode)
+	public function posts($mode, $start = false, $limit = false)
 	{
 		switch ($mode)
 		{
 			case 'index' :
-				titania_search::truncate(TITANIA_SUPPORT);
-
 				$data = array();
 				$post = new titania_post;
 
 				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean
 					FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t
-					WHERE t.topic_type = ' . TITANIA_SUPPORT . '
-						AND t.topic_id = p.topic_id';
-				$result = phpbb::$db->sql_query($sql);
+					WHERE t.topic_id = p.topic_id';
+				if ($start === false || $limit === false)
+				{
+					$result = phpbb::$db->sql_query($sql);
+				}
+				else
+				{
+					$result = phpbb::$db->sql_query_limit($sql, (int) $limit, (int) $start);
+				}
+
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
 					$post->__set_array($row);
