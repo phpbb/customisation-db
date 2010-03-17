@@ -522,9 +522,8 @@ class titania_contrib_tools
 	* NOT DONE, DO NOT USE
 	*
 	* @param string $demo_root
-	* @param array $db_params
 	*/
-	function install_demo_style($demo_root, $db_params)
+	function install_demo_style($demo_root)
 	{
 		return false; // @todo: Delete when done.
 
@@ -533,10 +532,29 @@ class titania_contrib_tools
 			$demo_root .= '/';
 		}
 
-		if (!is_dir($demo_root))
+		if (!is_dir($demo_root) || !file_exists($demo_root . 'config.' . PHP_EXT))
 		{
 			return false;
 		}
+
+		include ($demo_root . 'config.' . PHP_EXT);
+
+		$sql_db = (!empty($dbms)) ? 'dbal_' . basename($dbms) : 'dbal';
+
+		// Is this DBAL loaded?
+		if (!class_exists($sql_db))
+		{
+			include (PHPBB_ROOT_PATH . 'includes/db/' . $dbms . '.' . PHP_EXT);
+		}
+
+		// Instantiate DBAL class
+		$db = new $sql_db();
+
+		// Connect to demo board DB
+		$db->sql_connect($dbhost, $dbuser, $dbpasswd, $dbname, $dbport);
+
+		// We do not need this any longer, unset for safety purposes
+		unset($dbpasswd);
 
 		if (empty($this->unzip_dir))
 		{
