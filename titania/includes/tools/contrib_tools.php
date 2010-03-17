@@ -542,10 +542,7 @@ class titania_contrib_tools
 		$sql_db = (!empty($dbms)) ? 'dbal_' . basename($dbms) : 'dbal';
 
 		// Is this DBAL loaded?
-		if (!class_exists($sql_db))
-		{
-			include (PHPBB_ROOT_PATH . 'includes/db/' . $dbms . '.' . PHP_EXT);
-		}
+		phpbb::_include('db/' . $dbms, false, $sql_db);
 
 		// Instantiate DBAL class
 		$db = new $sql_db();
