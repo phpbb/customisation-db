@@ -150,7 +150,8 @@ class titania_sync
 				$data = array();
 
 				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE . '
-					WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED;
+					WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED . '
+						ORDER BY contrib_id ASC';
 				if ($start === false || $limit === false)
 				{
 					$result = phpbb::$db->sql_query($sql);
@@ -240,7 +241,8 @@ class titania_sync
 
 				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean
 					FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t
-					WHERE t.topic_id = p.topic_id';
+					WHERE t.topic_id = p.topic_id
+					ORDER BY p.post_id ASC';
 				if ($start === false || $limit === false)
 				{
 					$result = phpbb::$db->sql_query($sql);
