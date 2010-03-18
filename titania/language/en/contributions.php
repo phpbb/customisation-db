@@ -53,7 +53,6 @@ $lang = array_merge($lang, array(
 	'AUTOMOD_TEST'				=> 'The Mod will be tested against AutoMod and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 	'CANNOT_ADD_SELF_COAUTHOR'	=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'NO_QUEUE_DISCUSSION_TOPIC'	=> 'No Queue Discussion topic could be found.  Have you submitted any revision for this contribution yet (it will be created when you do so)?',
-	'CLEANED_CONTRIB'					=> 'Cleaned contribution',
 	'CO_AUTHORS'						=> 'Co-Authors',
 	'CONTRIB'							=> 'Contribution',
 	'CONTRIBUTIONS'						=> 'Contributions',
