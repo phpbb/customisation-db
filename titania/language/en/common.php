@@ -61,6 +61,9 @@ $lang = array_merge($lang, array(
 	'UPDATE_TIME' 		=> 'Updated',
 	'UNKNOWN' 			=> 'Unknown',
 	'AUTHOR_BY'			=> 'By %s',
+	
+	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
+	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
 
