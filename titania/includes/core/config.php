@@ -70,7 +70,7 @@ class titania_config extends titania_object
 
 			'mpv_server_list'			=> array('default' => array(
 				array(
-					'host'		=> 'mpv.davidiq.net',
+					'host'		=> 'mpv.phpbb.com',
 					'directory'	=> '',
 					'file'		=> 'index.php',
 				),
