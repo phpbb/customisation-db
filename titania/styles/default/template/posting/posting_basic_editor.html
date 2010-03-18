@@ -4,7 +4,7 @@
 	<!-- IF S_DISPLAY_SUBJECT -->
 	<dl style="clear: left;">
 		<dt><label for="subject">{L_SUBJECT}:</label></dt>
-		<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{SUBJECT}" class="inputbox autowidth" /></dd>
+		<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" tabindex="1" value="{SUBJECT}" class="inputbox autowidth" /></dd>
 	</dl>
 	<!-- ENDIF -->
 
@@ -42,6 +42,6 @@
 	</div>
 
 	<div id="message-box">
-		<textarea name="{POSTING_TEXT_NAME}" id="{POSTING_TEXT_NAME}" rows="15" cols="76" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" class="inputbox">{POSTING_TEXT}</textarea>
+		<textarea name="{POSTING_TEXT_NAME}" id="{POSTING_TEXT_NAME}" rows="15" cols="76" tabindex="2" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" class="inputbox">{POSTING_TEXT}</textarea>
 	</div>
 </fieldset>

@@ -37,7 +37,11 @@
 				<li class="row<!-- IF faqlist.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 					<dl class="icon" style="background-image: url({faqlist.TOPIC_FOLDER_IMG_SRC}); background-repeat: no-repeat;">
 						<dt>
-							<!-- IF faqlist.S_ACCESS_TEAMS or faqlist.S_ACCESS_AUTHORS --><img src="{T_TITANIA_THEME_PATH}/images/icon_access_<!-- IF faqlist.S_ACCESS_TEAMS -->teams<!-- ELSE -->author<!-- ENDIF -->.png" class="access-icon" alt="" /><!-- ENDIF -->
+							<!-- IF faqlist.S_ACCESS_TEAMS -->
+							<img src="{T_TITANIA_THEME_PATH}/images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
+							<!-- ELSEIF faqlist.S_ACCESS_AUTHORS -->
+							<img src="{T_TITANIA_THEME_PATH}/images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
+							<!-- ENDIF -->
 							<a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a>
 						</dt>
 						<dd class="faq-tools">
@@ -83,7 +87,9 @@
 	<div id="p{posts.POST_ID}" class="post container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<div class="postbody">
-				<h3>{FAQ_SUBJECT} <!-- IF S_ACCESS_TEAMS or S_ACCESS_AUTHORS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_<!-- IF S_ACCESS_TEAMS -->teams<!-- ELSE -->author<!-- ENDIF -->.png" alt="" /><!-- ENDIF --></h3>
+				<h3>{FAQ_SUBJECT} 
+				<!-- IF S_ACCESS_TEAMS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_teams.png" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
+				<!-- ELSEIF S_ACCESS_AUTHORS--><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_authors.png" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" /><!-- ENDIF --></h3>
 
 				<div class="content">{FAQ_TEXT}</div>
 

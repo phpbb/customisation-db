@@ -38,7 +38,11 @@
 		<li class="row<!-- IF topics.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topics.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topics.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">
 			<dl class="icon" style="background-image: url({topics.TOPIC_FOLDER_IMG_SRC}); background-repeat: no-repeat;">
 				<dt title="{topics.TOPIC_FOLDER_IMG_ALT}"<!-- IF topics.S_TOPIC_PROGRESS --> class="queue-progress"<!-- ENDIF -->>
-					<!-- IF topics.S_ACCESS_TEAMS or topics.S_ACCESS_AUTHORS --><img src="{T_TITANIA_THEME_PATH}/images/icon_access_<!-- IF topics.S_ACCESS_TEAMS -->teams<!-- ELSE -->author<!-- ENDIF -->.png" class="access-icon" alt="" /><!-- ENDIF -->
+					<!-- IF topics.S_ACCESS_TEAMS -->
+					<img src="{T_TITANIA_THEME_PATH}/images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
+					<!-- ELSEIF topics.S_ACCESS_AUTHORS -->
+					<img src="{T_TITANIA_THEME_PATH}/images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
+					<!-- ENDIF -->
 					<!-- IF topics.S_UNREAD_TOPIC --><a href="{topics.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF --><a href="{topics.U_VIEW_TOPIC}" class="topictitle">{topics.TOPIC_SUBJECT}</a>
 					<!-- IF not topics.TOPIC_APPROVED or topics.S_POSTS_UNAPPROVED --><a href="{topics.U_MCP_QUEUE}">{topics.UNAPPROVED_IMG}</a> <!-- ENDIF -->
 					<!-- IF topics.TOPIC_REPORTED --><a href="{topics.U_MCP_REPORT}">{REPORTED_IMG}</a><!-- ENDIF --><br />
