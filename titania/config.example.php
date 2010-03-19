@@ -58,5 +58,3 @@ $config = array(
 	*/
 	'team_groups' => array(5),
 );
-
-?>
