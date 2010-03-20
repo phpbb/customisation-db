@@ -422,6 +422,11 @@ class titania_contribution extends titania_message_object
 		$this->rating = new titania_rating('contrib', $this);
 		$this->rating->load();
 
+		if ($this->is_author || $this->is_active_coauthor || $this->is_coauthor)
+		{
+			$this->rating->cannot_rate = true;
+		}
+
 		return $this->rating;
 	}
 

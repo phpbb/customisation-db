@@ -33,6 +33,7 @@ switch ($action)
 			case 'author' :
 				$object = new titania_author();
 				$object->load($id);
+				$object->get_rating();
 				$redirect = $object->get_url();
 
 				if (!$object || !$object->author_id)
@@ -44,6 +45,7 @@ switch ($action)
 			case 'contrib' :
 				$object = new titania_contribution();
 				$object->load($id);
+				$object->get_rating();
 				$redirect = $object->get_url();
 
 				if (!$object)
@@ -57,10 +59,7 @@ switch ($action)
 			break;
 		}
 
-		$rating = new titania_rating($type, $object);
-		$rating->load();
-
-		$result = ($value == -1) ? $rating->delete_rating() : $rating->add_rating($value);
+		$result = ($value == -1) ? $object->rating->delete_rating() : $object->rating->add_rating($value);
 		if ($result)
 		{
 			redirect($redirect);
