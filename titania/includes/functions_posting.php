@@ -189,13 +189,13 @@ function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
 		$username = utf8_clean_string($username);
 	}
 
-	$sql = 'SELECT username, user_id FROM ' . USERS_TABLE . '
+	$sql = 'SELECT username, username_clean, user_id FROM ' . USERS_TABLE . '
 		WHERE ' . phpbb::$db->sql_in_set('username_clean', $usernames) . '
 		AND user_type != ' . USER_IGNORE;
 	$result = phpbb::$db->sql_query($sql);
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
-		unset($missing[$row['username']]);
+		unset($missing[$row['username']], $missing[$row['username_clean']]);
 
 		$list[$row['username']] = $row['user_id'];
 	}

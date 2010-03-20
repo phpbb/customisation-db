@@ -94,6 +94,8 @@ else if ($submit)
 	$missing_active = $missing_nonactive = array();
 	get_author_ids_from_list($active_coauthors_list, $missing_active);
 	get_author_ids_from_list($nonactive_coauthors_list, $missing_nonactive);
+	$author_username = users_overlord::get_user(titania::$contrib->contrib_user_id, 'username', true);
+	$author_username_clean = users_overlord::get_user(titania::$contrib->contrib_user_id, 'username_clean', true);
 	if (sizeof($missing_active) || sizeof($missing_nonactive))
 	{
 		$error[] = sprintf(phpbb::$user->lang['COULD_NOT_FIND_USERS'], implode(', ', array_merge($missing_active, $missing_nonactive)));
@@ -102,6 +104,11 @@ else if ($submit)
 	{
 		$error[] = sprintf(phpbb::$user->lang['DUPLICATE_AUTHORS'], implode(', ', array_keys(array_intersect($active_coauthors_list, $nonactive_coauthors_list))));
 	}
+	if (isset($active_coauthors_list[$author_username]) || isset($active_coauthors_list[$author_username_clean]) || isset($nonactive_coauthors_list[$author_username]) || isset($nonactive_coauthors_list[$author_username_clean]))
+	{
+		$error[] = phpbb::$user->lang['CANNOT_ADD_SELF_COAUTHOR'];
+	}
+
 	if ($change_owner != '')
 	{
 		$sql = 'SELECT user_id
