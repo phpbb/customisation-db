@@ -806,6 +806,15 @@ $versions = array(
 		),
 	),
 
+	'0.1.51' => array(
+		'table_column_add' => array(
+			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes', array('MTEXT_UNI', '')),
+			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes_bitfield', array('VCHAR:255', '')),
+			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes_uid', array('VCHAR:8', '')),
+			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes_options', array('UINT:11', 7)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

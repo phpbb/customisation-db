@@ -120,8 +120,21 @@ if ($queue_id)
 				titania::needs_auth();
 			}
 
+			// Load the message object for the validation reason
+			$queue->message_fields_prefix = 'message_validation';
+			$message_object = new titania_message($queue);
+			$message_object->set_auth(array(
+				'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
+				'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
+			));
+			$message_object->set_settings(array(
+				'display_subject'	=> false,
+			));
+
 			if (titania::confirm_box(true))
 			{
+				$queue->post_data($message_object);
+
 				if ($action == 'approve')
 				{
 					$queue->approve();
@@ -133,8 +146,9 @@ if ($queue_id)
 			}
 			else
 			{
+				$message_object->display();
 				phpbb::$template->assign_var('CONFIRM_EXTRA', $queue->generate_text_for_display());
-				titania::confirm_box(false, (($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE'));
+				titania::confirm_box(false, (($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE'), '', array(), 'manage/queue_validate.html');
 			}
 			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
 		break;

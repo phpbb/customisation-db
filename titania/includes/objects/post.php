@@ -137,9 +137,9 @@ class titania_post extends titania_message_object
 				$this->post_access = $topic->topic_access;
 			}
 		}
-		else if (is_int($topic))
+		else if (is_numeric($topic))
 		{
-			$this->topic = new titania_topic($topic);
+			$this->topic = new titania_topic((int) $topic);
 			if (!$this->topic->load())
 			{
 				trigger_error('NO_TOPIC');

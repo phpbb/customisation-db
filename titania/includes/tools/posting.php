@@ -384,12 +384,10 @@ class titania_posting
 				{
 					$post_object->topic->topic_sticky = true;
 				}
-				else
+
+				if (!phpbb::$auth->acl_get('u_titania_post_approved'))
 				{
-					if (!phpbb::$auth->acl_get('u_titania_post_approved'))
-					{
-						$post_object->post_approved = false;
-					}
+					$post_object->post_approved = false;
 				}
 
 				$post_object->submit();

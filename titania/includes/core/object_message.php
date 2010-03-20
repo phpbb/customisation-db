@@ -37,6 +37,13 @@ abstract class titania_message_object extends titania_database_object
 	public $message_parsed_for_storage = false;
 
 	/**
+	* This allows us to have multiple message items for a single object
+	*
+	* @var string
+	*/
+	public $message_fields_prefix = 'message';
+
+	/**
 	* Catch submits and make sure we parse messages for storage
 	*/
 	public function submit()
@@ -57,6 +64,13 @@ abstract class titania_message_object extends titania_database_object
 	public function post_data($message)
 	{
 		$post_data = $message->request_data();
+
+		// Handle different field usage
+		if ($this->message_fields_prefix != 'message')
+		{
+			$post_data[$this->message_fields_prefix] = $post_data['message'];
+			unset($post_data['message']);
+		}
 
 		foreach ($this->object_config as $field => $options)
 		{
@@ -146,19 +160,19 @@ abstract class titania_message_object extends titania_database_object
 			{
 				switch ($options['message_field'])
 				{
-					case 'message' :
+					case $this->message_fields_prefix :
 						$message = $this->$field;
 					break;
 
-					case 'message_uid' :
+					case $this->message_fields_prefix . '_uid' :
 						$message_uid = $this->$field;
 					break;
 
-					case 'message_bitfield' :
+					case $this->message_fields_prefix . '_bitfield' :
 						$message_bitfield = $this->$field;
 					break;
 
-					case 'message_options' :
+					case $this->message_fields_prefix . '_options' :
 						$message_options = $this->$field;
 					break;
 				}
@@ -174,19 +188,19 @@ abstract class titania_message_object extends titania_database_object
 			{
 				switch ($options['message_field'])
 				{
-					case 'message' :
+					case $this->message_fields_prefix :
 						$this->$field = $message;
 					break;
 
-					case 'message_uid' :
+					case $this->message_fields_prefix . '_uid' :
 						$this->$field = $message_uid;
 					break;
 
-					case 'message_bitfield' :
+					case $this->message_fields_prefix . '_bitfield' :
 						$this->$field = $message_bitfield;
 					break;
 
-					case 'message_options' :
+					case $this->message_fields_prefix . '_options' :
 						$this->$field = $message_options;
 					break;
 				}

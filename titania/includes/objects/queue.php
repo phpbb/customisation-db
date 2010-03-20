@@ -72,6 +72,11 @@ class titania_queue extends titania_message_object
 			'queue_notes_uid'		=> array('default' => '',	'message_field' => 'message_uid'),
 			'queue_notes_options'	=> array('default' => 7,	'message_field' => 'message_options'),
 
+			'queue_validation_notes'			=> array('default' => '',	'message_field' => 'message_validation'),
+			'queue_validation_notes_bitfield'	=> array('default' => '',	'message_field' => 'message_validation_bitfield'),
+			'queue_validation_notes_uid'		=> array('default' => '',	'message_field' => 'message_validation_uid'),
+			'queue_validation_notes_options'	=> array('default' => 7,	'message_field' => 'message_validation_options'),
+
 			'mpv_results'			=> array('default' => ''),
 			'mpv_results_bitfield'	=> array('default' => ''),
 			'mpv_results_uid'		=> array('default' => ''),
@@ -236,7 +241,45 @@ class titania_queue extends titania_message_object
 
 		if ($teams_only)
 		{
-			$post_access = TITANIA_ACCESS_TEAMS;
+			$post->post_access = TITANIA_ACCESS_TEAMS;
+		}
+
+		$post->generate_text_for_storage(true, true, true);
+		$post->submit();
+	}
+
+	/**
+	* Reply to the discussion topic with a message
+	*
+	* @param string $message
+	*/
+	public function discussion_reply($message, $teams_only = false)
+	{
+		titania::add_lang('manage');
+
+		$message = (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message;
+
+		$sql = 'SELECT topic_id FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE parent_id = ' . $this->contrib_id . '
+				AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+		phpbb::$db->sql_query($sql);
+		$topic_id = phpbb::$db->sql_fetchfield('topic_id');
+		phpbb::$db->sql_freeresult();
+
+		if (!$topic_id)
+		{
+			return;
+		}
+
+		$post = new titania_post(TITANIA_QUEUE_DISCUSSION, $topic_id);
+		$post->__set_array(array(
+			'post_subject'		=> 'Re: ' . $post->topic->topic_subject,
+			'post_text'			=> $message,
+		));
+
+		if ($teams_only)
+		{
+			$post->post_access = TITANIA_ACCESS_TEAMS;
 		}
 
 		$post->generate_text_for_storage(true, true, true);
@@ -297,7 +340,14 @@ class titania_queue extends titania_message_object
 
 	public function approve()
 	{
-		$this->topic_reply('QUEUE_REPLY_APPROVED', false);
+		// Reply to the queue topic and discussion with the message
+		titania::add_lang('manage');
+		$revision = $this->get_revision();
+		$notes = $this->queue_validation_notes;
+		decode_message($notes, $this->queue_validation_notes_uid);
+		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_APPROVED'], $revision->revision_version, $notes);
+		$this->topic_reply($message, false);
+		$this->discussion_reply($message);
 
 		// Update the revisions table
 		$sql_ary = array(
@@ -327,21 +377,28 @@ class titania_queue extends titania_message_object
 		$this->submit(false);
 
 		// Send notification message
-		$this->send_approve_deny_notification();
+		$this->send_approve_deny_notification(false);
 	}
 
 	public function deny()
 	{
-		$this->topic_reply('QUEUE_REPLY_DENIED', false);
-
-		// Send notification message
-		$this->send_approve_deny_notification(false);
+		// Reply to the queue topic and discussion with the message
+		titania::add_lang('manage');
+		$revision = $this->get_revision();
+		$notes = $this->queue_validation_notes;
+		decode_message($notes, $this->queue_validation_notes_uid);
+		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_DENIED'], $revision->revision_version, $notes);
+		$this->topic_reply($message, false);
+		$this->discussion_reply($message);
 
 		// Self-updating
 		$this->queue_status = TITANIA_QUEUE_DENIED;
 		$this->queue_close_time = titania::$time;
 		$this->queue_close_user = phpbb::$user->data['user_id'];
 		$this->submit(false);
+
+		// Send notification message
+		$this->send_approve_deny_notification(false);
 	}
 
 	/**
@@ -374,8 +431,8 @@ class titania_queue extends titania_message_object
 		$subject = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->validation_subject], $contrib->contrib_name, $revision->revision_version);
 
 		// Message
-		$notes = $this->queue_notes;
-		decode_message($notes, $this->queue_notes_uid);
+		$notes = $this->queue_validation_notes;
+		decode_message($notes, $this->queue_validation_notes_uid);
 		if ($approve)
 		{
 			$message = titania_types::$types[$contrib->contrib_type]->validation_message_approve;
@@ -407,5 +464,27 @@ class titania_queue extends titania_message_object
 
 		// Submit Plz
 		submit_pm('post', $subject, $data, false);
+	}
+
+	/**
+	* Get the revision object for this queue
+	*/
+	public function get_revision()
+	{
+		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id . '
+				AND revision_id = ' . $this->revision_id;
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		if ($row)
+		{
+			$revision = new titania_revision(contribs_overlord::get_contrib_object($this->contrib_id, true), $this->revision_id);
+			$revision->__set_array($row);
+			return $revision;
+		}
+
+		return false;
 	}
 }

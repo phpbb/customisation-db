@@ -1,0 +1,27 @@
+<!-- INCLUDE common/overall_header.html -->
+
+<form id="{POSTING_FORM_NAME}" method="post" action="{S_CONFIRM_ACTION}" {S_FORM_ENCTYPE}>
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<h2>{MESSAGE_TITLE}</h2>
+	<p>{MESSAGE_TEXT}</p>
+
+	<fieldset>
+		<dl>
+			<dt><label for="{POSTING_TEXT_NAME}">{L_VALIDATION_MESSAGE}:</label></dt>
+		</dl>
+	</fieldset>
+	<!-- INCLUDE posting/posting_basic_editor.html -->
+
+	<fieldset class="submit-buttons">
+		{S_HIDDEN_FIELDS}
+		<input type="submit" name="confirm" value="{L_YES}" class="button2" />&nbsp;
+		<input type="submit" name="cancel" value="{L_NO}" class="button2" />
+	</fieldset>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+</form>
+
+<!-- INCLUDE common/overall_footer.html -->
