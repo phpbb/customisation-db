@@ -266,11 +266,11 @@ class titania_contrib_tools
 								continue;
 							}
 
-							if (in_array('is_exactly', $check) && $item == $check)
+							if (in_array('is_exactly', $file_search) && $item == $check)
 							{
 								$match++;
 							}
-							else if (!in_array('is_exactly', $check) && strpos($item, $check) !== false)
+							else if (!in_array('is_exactly', $file_search) && strpos($item, $check) !== false)
 							{
 								$match++;
 							}
