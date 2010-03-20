@@ -109,7 +109,7 @@ function load_contrib($contrib_id = false)
 	* ),
 	*/
 	$nav_ary = array(
-		''				=> array(
+		'details' => array(
 			'title'		=> 'CONTRIB_DETAILS',
 			'url'		=> titania::$contrib->get_url(),
 		),
@@ -130,8 +130,7 @@ function load_contrib($contrib_id = false)
 
 	// Display nav menu
 	$page = request_var('page', '');
-	$page = (isset($nav_ary[$page])) ? $page : '';
-	titania::generate_nav($nav_ary, $page);
+	titania::generate_nav($nav_ary, $page, 'details');
 
 	// Generate the main breadcrumbs
 	titania::generate_breadcrumbs(array(

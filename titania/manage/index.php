@@ -32,6 +32,11 @@ titania::add_lang('manage');
 * ),
 */
 $nav_ary = array(
+	'attention' => array(
+		'title'		=> 'ATTENTION',
+		'url'		=> titania_url::build_url('manage/attention'),
+		'auth'		=> (!phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_mod', 'u_titania_mod_faq_mod', 'u_titania_mod_post_mod') && !sizeof(titania_types::find_authed('moderate'))) ? false : true,
+	),
 	'queue' => array(
 		'title'		=> 'VALIDATION_QUEUE',
 		'url'		=> titania_url::build_url('manage/queue'),
@@ -42,18 +47,10 @@ $nav_ary = array(
 		'url'		=> titania_url::build_url('manage/queue_discussion'),
 		'auth'		=> (sizeof(titania_types::find_authed('queue_discussion'))) ? true : false,
 	),
-	'attention' => array(
-		'title'		=> 'ATTENTION',
-		'url'		=> titania_url::build_url('manage/attention'),
-		'auth'		=> (!phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_mod', 'u_titania_mod_faq_mod', 'u_titania_mod_post_mod') && !sizeof(titania_types::find_authed('moderate'))) ? false : true,
-	),
 );
 
-
-$page = (isset($nav_ary[$page])) ? $page : 'attention';
-
 // Display nav menu
-titania::generate_nav($nav_ary, $page);
+titania::generate_nav($nav_ary, $page, 'attention');
 
 // Generate the main breadcrumbs
 titania::generate_breadcrumbs(array(

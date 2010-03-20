@@ -372,15 +372,36 @@ class titania
 	*
 	* @param array $nav_ary The array of data to output
 	* @param string $current_page The current page
+	* @param string $default page The default page to show
 	* @param string $block Optionally specify a custom template block loop name
 	*/
-	public static function generate_nav($nav_ary, $current_page, $block = 'nav_menu')
+	public static function generate_nav($nav_ary, &$current_page, $default, $block = 'nav_menu')
 	{
+		$current_page = (isset($nav_ary[$current_page])) ? $current_page : $default;
+
+		if (!isset($nav_ary[$current_page]) || (isset($nav_ary[$current_page]['auth']) && !$nav_ary[$current_page]['auth']))
+		{
+			// Default page is not accessable, try the first page in the list
+			$pages = array_keys($nav_ary);
+			$current_page = $pages[0];
+		}
+
+		$retry_current_page = false;
 		foreach ($nav_ary as $page => $data)
 		{
+			if ($retry_current_page)
+			{
+				$current_page = $page;
+			}
+
 			// If they do not have authorization, skip.
 			if (isset($data['auth']) && !$data['auth'])
 			{
+				if ($page == $current_page)
+				{
+					$retry_current_page = true;
+				}
+
 				continue;
 			}
 
@@ -389,6 +410,8 @@ class titania
 				'U_TITLE'		=> $data['url'],
 				'S_SELECTED'	=> ($page == $current_page) ? true : false,
 			));
+
+			$retry_current_page = false;
 		}
 	}
 

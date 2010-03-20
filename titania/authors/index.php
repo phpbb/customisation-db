@@ -45,7 +45,7 @@ if (titania::$access_level == TITANIA_ACCESS_PUBLIC && phpbb::$user->data['user_
 * ),
 */
 $nav_ary = array(
-	'' 				=> array(
+	'details' => array(
 		'title'		=> 'AUTHOR_DETAILS',
 		'url'		=> titania::$author->get_url(),
 	),
@@ -72,8 +72,7 @@ $nav_ary = array(
 
 // Display nav menu
 $page = request_var('page', '');
-$page = (isset($nav_ary[$page])) ? $page : '';
-titania::generate_nav($nav_ary, $page);
+titania::generate_nav($nav_ary, $page, 'details');
 
 // Generate the main breadcrumbs
 titania::generate_breadcrumbs(array(
