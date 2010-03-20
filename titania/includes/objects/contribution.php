@@ -176,16 +176,6 @@ class titania_contribution extends titania_message_object
 		switch ($old_status)
 		{
 			case TITANIA_CONTRIB_NEW :
-				if ($new_status == TITANIA_CONTRIB_APPROVED)
-				{
-					// Increment the count for the authors
-					$this->change_author_contrib_count($author_list);
-
-					// Increment the count for this type
-					titania_types::increment_count($this->contrib_type);
-				}
-			break;
-
 			case TITANIA_CONTRIB_CLEANED :
 				if ($new_status == TITANIA_CONTRIB_APPROVED)
 				{
@@ -194,6 +184,9 @@ class titania_contribution extends titania_message_object
 
 					// Increment the count for this type
 					titania_types::increment_count($this->contrib_type);
+
+					// Increment the category count
+					$this->update_category_count();
 				}
 			break;
 
@@ -203,6 +196,9 @@ class titania_contribution extends titania_message_object
 
 				// Decrement the count for this type
 				titania_types::decrement_count($this->contrib_type);
+
+				// Decrement the category count
+				$this->update_category_count('-');
 			break;
 		}
 
@@ -801,33 +797,8 @@ class titania_contribution extends titania_message_object
 			return;
 		}
 
-		// Get all of the categories that we are in and their parents to resync the count
-		$categories_to_update = array();
-		$sql = 'SELECT category_id FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
-			WHERE contrib_id = ' . $this->contrib_id;
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$categories_to_update[] = $row['category_id'];
-
-			$parents = titania::$cache->get_category_parents($row['category_id']);
-			foreach ($parents as $parent)
-			{
-				$categories_to_update[] = $parent['category_id'];
-			}
-		}
-		phpbb::$db->sql_freeresult($result);
-
 		// Resync the count
-		if (sizeof($categories_to_update))
-		{
-			$categories_to_update = array_unique($categories_to_update);
-
-			$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . '
-				SET category_contribs = category_contribs - 1
-				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories_to_update));
-			phpbb::$db->sql_query($sql);
-		}
+		$this->update_category_count('-');
 
 		// Remove them from the old categories
 		$sql = 'DELETE
@@ -858,13 +829,44 @@ class titania_contribution extends titania_message_object
 		phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
 
 		// Resync the count
-		if (sizeof($categories_to_update))
+		$this->update_category_count();
+	}
+
+	/**
+	* Resync the category counts
+	*
+	* @param string $dir + or -
+	*/
+	public function update_category_count($dir = '+')
+	{
+		if (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED)
 		{
-			$categories_to_update = array_unique($categories_to_update);
+			return;
+		}
+
+		$categories = array();
+		$sql = 'SELECT category_id FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$categories[] = $row['category_id'];
+
+			$parents = titania::$cache->get_category_parents($row['category_id']);
+			foreach ($parents as $parent)
+			{
+				$categories[] = $parent['category_id'];
+			}
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		if (sizeof($categories))
+		{
+			$categories = array_unique($categories);
 
 			$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . '
-				SET category_contribs = category_contribs + 1
-				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories_to_update));
+				SET category_contribs = category_contribs ' . (($dir == '+') ? '+' : '-') . ' 1
+				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories));
 			phpbb::$db->sql_query($sql);
 		}
 	}
