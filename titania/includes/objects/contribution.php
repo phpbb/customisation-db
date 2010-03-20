@@ -516,7 +516,7 @@ class titania_contribution extends titania_message_object
 
 			// Download data
 			'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
-			'DOWNLOAD_SIZE'					=> (isset($this->download['filesize'])) ? $this->download['filesize'] : '',
+			'DOWNLOAD_SIZE'					=> (isset($this->download['filesize'])) ? get_formatted_filesize($this->download['filesize']) : '',
 			'DOWNLOAD_CHECKSUM'				=> (isset($this->download['hash'])) ? $this->download['hash'] : '',
 			'DOWNLOAD_NAME'					=> (isset($this->download['revision_name'])) ? censor_text($this->download['revision_name']) : '',
 			'DOWNLOAD_VERSION'				=> (isset($this->download['revision_version'])) ? censor_text($this->download['revision_version']) : '',
