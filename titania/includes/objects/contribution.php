@@ -261,7 +261,18 @@ class titania_contribution extends titania_message_object
 		{
 			if (!$this->contrib_name_clean)
 			{
-				$error[] = phpbb::$user->lang['EMPTY_CONTRIB_PERMALINK'];
+				// If they leave it blank automatically create it
+				$this->contrib_name_clean = titania_url::url_slug($this->contrib_name);
+
+				$append = '';
+				$i = 2;
+				while ($this->validate_permalink($this->contrib_name_clean . $append) == false)
+				{
+					$append = '_' . $i;
+					$i++;
+				}
+
+				$this->contrib_name_clean = $this->contrib_name_clean . $append;
 			}
 			elseif (titania_url::url_slug($this->contrib_name_clean) !== $this->contrib_name_clean)
 			{

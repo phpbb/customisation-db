@@ -55,6 +55,11 @@ $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_va
 if (isset($_POST['preview']))
 {
 	titania::$contrib->post_data($message);
+	titania::$contrib->__set_array(array(
+		'contrib_type'			=> request_var('contrib_type', 0),
+		'contrib_name_clean'	=> utf8_normalize_nfc(request_var('permalink', '', true)),
+		'contrib_visible'		=> 1,
+	));
 
 	$message->preview();
 }
@@ -63,7 +68,7 @@ else if ($submit)
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
 		'contrib_type'			=> request_var('contrib_type', 0),
-		'contrib_name_clean'	=> request_var('permalink', '', true),
+		'contrib_name_clean'	=> utf8_normalize_nfc(request_var('permalink', '', true)),
 		'contrib_visible'		=> 1,
 	));
 
@@ -113,7 +118,7 @@ $template->assign_vars(array(
 	'S_POST_ACTION'			=> titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/create'),
 	'S_CREATE'				=> true,
 
-	'CONTRIB_PERMALINK'		=> titania::$contrib->contrib_name_clean,
+	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(request_var('permalink', '', true)),
 	'ERROR_MSG'				=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'		=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'	=> $nonactive_coauthors,
