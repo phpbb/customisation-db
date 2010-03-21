@@ -13,16 +13,4 @@
 	<dt><label for="revision_version">{L_REVISION_VERSION}:</label></dt>
 	<dd><input type="text" name="revision_version" id="revision_version" class="inputbox autowidth" value="{REVISION_VERSION}" /></dd>
 </dl>
-<!-- IF not S_REPACK -->
-<dl>
-	<dt><label for="queue_allow_repack">{L_QUEUE_ALLOW_REPACK}:</label><br /><span>{L_QUEUE_ALLOW_REPACK_EXPLAIN}</span></dt>
-	<dd><input type="checkbox" id="queue_allow_repack" name="queue_allow_repack" value="1" checked="checked" /></dd>
-</dl>
-<dl>
-	<dt><br /><label for="message">{L_QUEUE_NOTES}:</label><br /><span>{L_QUEUE_NOTES_EXPLAIN}</span></dt>
-</dl>
-<!-- ENDIF -->
 </fieldset>
-<!-- IF not S_REPACK -->
-<!-- INCLUDE posting/posting_basic_editor.html -->
-<!-- ENDIF -->

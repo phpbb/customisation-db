@@ -55,14 +55,8 @@ if ($repack)
 		'S_REPACK'			=> true,
 	));
 }
-
-do{
-	$revision_attachment = $revision = false;
-	$display_main = false; // Display the main upload page?
-	$next_step = $step + 1; // Default to the next step...
-	$try_again = false; // Try again?  Used when skip steps
-	$error = array();
-
+else
+{
 	$queue = new titania_queue();
 	// Load the message object
 	$message_object = new titania_message($queue);
@@ -75,7 +69,15 @@ do{
 		'display_subject'	=> false,
 	));
 	$message_object->display();
-	
+}
+
+do{
+	$revision_attachment = $revision = false;
+	$display_main = false; // Display the main upload page?
+	$next_step = $step + 1; // Default to the next step...
+	$try_again = false; // Try again?  Used when skip steps
+	$error = array();
+
 	switch ($step)
 	{
 		case 0 :
@@ -107,32 +109,32 @@ do{
 				// Success, create a new revision to start
 				$revision = new titania_revision(titania::$contrib);
 				$revision->__set_array(array(
-					'attachment_id'		=> $revision_attachment->attachment_id,
-					'revision_name'		=> utf8_normalize_nfc(request_var('revision_name', '', true)),
-					'revision_version'	=> $revision_version,
+					'attachment_id'			=> $revision_attachment->attachment_id,
+					'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', '', true)),
+					'revision_version'		=> $revision_version,
 					'queue_allow_repack'	=> $queue_allow_repack,
 				));
 				$revision->submit();
 				$revision_id = $revision->revision_id;
 
-				// Load the message object
-				$message_object = new titania_message($queue);
-				$message_object->set_auth(array(
-					'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
-					'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
-				));
-				$message_object->set_settings(array(
-					'display_error'		=> false,
-					'display_subject'	=> false,
-				));
-
 				$queue = $revision->get_queue();
-				
+
 				// Add queue values to the queue table
 				if ($queue)
 				{
-					$queue->queue_allow_repack = $queue_allow_repack;
+					// Load the message object
+					$message_object = new titania_message($queue);
+					$message_object->set_auth(array(
+						'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
+						'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
+					));
+					$message_object->set_settings(array(
+						'display_error'		=> false,
+						'display_subject'	=> false,
+					));
 					$queue->post_data($message_object);
+
+					$queue->queue_allow_repack = $queue_allow_repack;
 					$queue->submit();
 				}
 

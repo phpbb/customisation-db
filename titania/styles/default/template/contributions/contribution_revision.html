@@ -8,7 +8,25 @@
 <form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
-			{REVISION_UPLOADER}
+			<!-- IF REVISION_UPLOADER -->
+				{REVISION_UPLOADER}
+
+				<!-- IF not S_REPACK -->
+				<fieldset class="fields2">
+				<dl>
+					<dt><label for="queue_allow_repack">{L_QUEUE_ALLOW_REPACK}:</label><br /><span>{L_QUEUE_ALLOW_REPACK_EXPLAIN}</span></dt>
+					<dd><input type="checkbox" id="queue_allow_repack" name="queue_allow_repack" value="1" checked="checked" /></dd>
+				</dl>
+				<dl>
+					<dt><br /><label for="message">{L_QUEUE_NOTES}:</label><br /><span>{L_QUEUE_NOTES_EXPLAIN}</span></dt>
+				</dl>
+				</fieldset>
+				<!-- ENDIF -->
+
+				<!-- IF not S_REPACK -->
+					<!-- INCLUDE posting/posting_basic_editor.html -->
+				<!-- ENDIF -->
+			<!-- ENDIF -->
 			<!-- IF S_NEW_REVISION_SUBMITTED -->
 				{L_NEW_REVISION_SUBMITTED}
 			<!-- ENDIF -->
