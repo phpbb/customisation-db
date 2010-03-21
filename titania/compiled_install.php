@@ -44,7 +44,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.41'	=> array(
+	'0.1.52'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -71,6 +71,34 @@ $versions = array(
 					'object_id'				=> array('INDEX', 'object_id'),
 					'attachment_access'		=> array('INDEX', 'attachment_access'),
 					'is_orphan'				=> array('INDEX', 'is_orphan'),
+				),
+			)),
+			array(TITANIA_ATTENTION_TABLE, array(
+				'COLUMNS'		=> array(
+					'attention_id'					=> array('UINT', NULL, 'auto_increment'),
+					'attention_type'				=> array('UINT', 0), // attention type constants (reported, needs approval, etc)
+					'attention_object_type'			=> array('UINT', 0),
+					'attention_object_id'			=> array('UINT', 0),
+					'attention_url'					=> array('VCHAR_CI', ''),
+					'attention_requester'			=> array('UINT', 0),
+					'attention_time'				=> array('TIMESTAMP', 0),
+					'attention_close_time'			=> array('TIMESTAMP', 0),
+					'attention_close_user'			=> array('UINT', 0),
+					'attention_title'				=> array('STEXT_UNI', ''),
+					'attention_description'			=> array('MTEXT_UNI', ''),
+					'attention_poster_id'			=> array('UINT', 0),
+					'attention_post_time'			=> array('TIMESTAMP', 0),
+				),
+				'PRIMARY_KEY'	=> 'attention_id',
+				'KEYS'			=> array(
+					'attention_type'				=> array('INDEX', 'attention_type'),
+					'attention_object_type'			=> array('INDEX', 'attention_object_type'),
+					'attention_object_id'			=> array('INDEX', 'attention_object_id'),
+					'attention_time'				=> array('INDEX', 'attention_time'),
+					'attention_close_time'			=> array('INDEX', 'attention_close_time'),
+					'attention_close_user'			=> array('INDEX', 'attention_close_user'),
+					'attention_poster_id'			=> array('INDEX', 'attention_poster_id'),
+					'attention_post_time'			=> array('INDEX', 'attention_post_time'),
 				),
 			)),
 			array(TITANIA_AUTHORS_TABLE, array(
@@ -146,7 +174,7 @@ $versions = array(
 					'contrib_visible'				=> array('BOOL', 1),
 					'contrib_last_update'			=> array('TIMESTAMP', 0),
 					'contrib_demo'					=> array('VCHAR_UNI:200', ''),
-					'contrib_topic'					=> array('UINT', 0), // Store the old topic_id from ariel for the forums
+					'contrib_release_topic_id'		=> array('UINT', 0),
 				),
 				'PRIMARY_KEY'	=> 'contrib_id',
 				'KEYS'			=> array(
@@ -242,10 +270,15 @@ $versions = array(
 					'queue_type'			=> array('TINT:1', 0),
 					'queue_status'			=> array('TINT:1', 0),
 					'submitter_user_id'		=> array('UINT', 0),
+					'queue_allow_repack'	=> array('BOOL', 1),
 					'queue_notes'			=> array('MTEXT_UNI', ''),
 					'queue_notes_bitfield'	=> array('VCHAR:255', ''),
 					'queue_notes_uid'		=> array('VCHAR:8', ''),
 					'queue_notes_options'	=> array('UINT:11', 7),
+					'queue_validation_notes'			=> array('MTEXT_UNI', ''),
+					'queue_validation_notes_bitfield'	=> array('VCHAR:255', ''),
+					'queue_validation_notes_uid'		=> array('VCHAR:8', ''),
+					'queue_validation_notes_options'	=> array('UINT:11', 7),
 					'queue_submit_time'		=> array('UINT:11', 0),
 					'queue_progress'		=> array('UINT', 0), // user_id
 					'queue_progress_time'	=> array('UINT:11', 0),
@@ -406,13 +439,11 @@ $versions = array(
 		),
 
 		'permission_add' => array(
-			'u_titania_',
-
-			'u_titania_mod_author_mod',			// Can moderate author profiles
-			'u_titania_mod_contrib_mod',		// Can moderate all contrib items
-			'u_titania_mod_rate_reset',			// Can reset the rating on items
-			'u_titania_mod_faq_mod',			// Can moderate FAQ entries
-			'u_titania_mod_post_mod',			// Can moderate topics
+			'u_titania_mod_author_mod',		// Can moderate author profiles
+			'u_titania_mod_contrib_mod',	// Can moderate all contrib items
+			'u_titania_mod_rate_reset',		// Can reset the rating on items
+			'u_titania_mod_faq_mod',		// Can moderate FAQ entries
+			'u_titania_mod_post_mod',		// Can moderate topics
 
 			'u_titania_contrib_submit',		// Can submit contrib items
 			'u_titania_rate',				// Can rate items
@@ -423,6 +454,7 @@ $versions = array(
 			'u_titania_bbcode',				// Can post bbcode
 			'u_titania_smilies',			// Can post smilies
 			'u_titania_post',				// Can create new posts
+			'u_titania_post_approved',		// Posts are approved?
 			'u_titania_post_edit_own',		// Can edit own posts
 			'u_titania_post_delete_own',	// Can delete own posts
 			'u_titania_post_mod_own',		// Can moderate own topics
@@ -430,10 +462,10 @@ $versions = array(
 		),
 
 		'permission_role_add' => array(
-			array('ROLE_TITANIA_MODIFICATION_TEAM', 'm_'),
-			array('ROLE_TITANIA_STYLE_TEAM', 'm_'),
-			array('ROLE_TITANIA_MODERATOR_TEAM', 'm_'),
-			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'm_'),
+			array('ROLE_TITANIA_MODIFICATION_TEAM', 'u_'),
+			array('ROLE_TITANIA_STYLE_TEAM', 'u_'),
+			array('ROLE_TITANIA_MODERATOR_TEAM', 'u_'),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_'),
 		),
 
 		'permission_set' => array(
@@ -494,6 +526,7 @@ $versions = array(
 				'u_titania_bbcode',				// Can post bbcode
 				'u_titania_smilies',			// Can post smilies
 				'u_titania_post',				// Can create new posts
+				'u_titania_post_approved',		// Posts are approved?
 				'u_titania_post_edit_own',		// Can edit own posts
 				'u_titania_post_delete_own',	// Can delete own posts
 				'u_titania_post_attach',		// Can attach files to posts
@@ -508,6 +541,7 @@ $versions = array(
 				'u_titania_bbcode',				// Can post bbcode
 				'u_titania_smilies',			// Can post smilies
 				'u_titania_post',				// Can create new posts
+				'u_titania_post_approved',		// Posts are approved?
 				'u_titania_post_edit_own',		// Can edit own posts
 				'u_titania_post_delete_own',	// Can delete own posts
 				'u_titania_post_attach',		// Can attach files to posts

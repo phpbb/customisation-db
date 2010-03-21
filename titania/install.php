@@ -144,7 +144,6 @@ $versions = array(
 					'contrib_visible'				=> array('BOOL', 1),
 					'contrib_last_update'			=> array('TIMESTAMP', 0),
 					'contrib_demo'					=> array('VCHAR_UNI:200', ''),
-					'contrib_topic'					=> array('UINT', 0), // Store the old topic_id from ariel for the forums
 				),
 				'PRIMARY_KEY'	=> 'contrib_id',
 				'KEYS'			=> array(
@@ -723,7 +722,7 @@ $versions = array(
 		),
 
 		'table_column_add' => array(
-			array(TITANIA_QUEUE_TABLE, 'queue_allow_repack', array('TINT:1', 1)),
+			array(TITANIA_QUEUE_TABLE, 'queue_allow_repack', array('BOOL', 1)),
 		),
 	),
 
@@ -814,7 +813,7 @@ $versions = array(
 			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes_options', array('UINT:11', 7)),
 		),
 	),
-	
+
 	'0.1.52' => array(
 		'table_column_add' => array(
 			array(TITANIA_CONTRIBS_TABLE, 'contrib_release_topic_id', array('UINT', 0)),

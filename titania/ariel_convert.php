@@ -42,6 +42,8 @@ phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) 
 // Table prefix
 $ariel_prefix = 'community_site_';
 $limit = 1000;
+$mod_validation_trash_forum = 28;
+$style_validation_trash_forum = 83;
 
 $step = request_var('step', 0);
 $start = request_var('start', 0);
@@ -228,7 +230,7 @@ switch ($step)
 				'contrib_visible'				=> 1,
 				'contrib_last_update'			=> 0, // Update with ariel revisions table
 				'contrib_demo'					=> ($row['contrib_style_demo']) ? 'http://www.phpbb.com/styles/demo/3.0/index.php?style_id=' . $row['contrib_style_demo'] : '',
-				'contrib_topic'					=> ($row['topic_id']) ? $row['topic_id'] : 0,
+				'contrib_release_topic_id'		=> ($row['topic_id']) ? $row['topic_id'] : 0,
 			);
 
 			// Insert
@@ -486,14 +488,23 @@ switch ($step)
 				continue;
 			}
 
-			// Ariel only stores the latest, don't copy topics unless the queue entry is the latest
+			// Ariel only stores the latest
 			$sql = 'SELECT MAX(queue_id) AS max FROM ' . $ariel_prefix . 'queue
 				WHERE contrib_id = ' . (int) $row['contrib_id'];
 			phpbb::$db->sql_query($sql);
 			$max = phpbb::$db->sql_fetchfield('max');
+			phpbb::$db->sql_freeresult();
 			if ($max != $row['queue_id'])
 			{
-				$row['topic_id'] = false;
+				// So we attempt to find older ones in the trash can forums
+				$sql = 'SELECT topic_id FROM ' . TOPICS_TABLE . '
+					WHERE forum_id = ' . (($row['contrib_type'] == 1) ? $mod_validation_trash_forum : $style_validation_trash_forum) . '
+						AND topic_title = \'' . phpbb::$db->sql_escape($row['contrib_name']) . '\'
+						AND topic_time > ' . ($row['queue_opened'] - 10) . '
+						AND topic_time < ' . ($row['queue_opened'] + 10);
+				phpbb::$db->sql_query($sql);
+				$row['topic_id'] = phpbb::$db->sql_fetchfield('topic_id');
+				phpbb::$db->sql_freeresult();
 			}
 
 			$topic = new titania_topic;
@@ -520,6 +531,11 @@ switch ($step)
 				'queue_notes_bitfield'	=> '',
 				'queue_notes_uid'		=> '',
 				'queue_notes_options'	=> 7,
+
+				'queue_validation_notes'			=> '',
+				'queue_validation_notes_bitfield'	=> '',
+				'queue_validation_notes_uid'		=> '',
+				'queue_validation_notes_options'	=> 7,
 
 				'mpv_results'			=> '',
 				'mpv_results_bitfield'	=> '',
@@ -623,7 +639,7 @@ function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', 
 	$post = false;
 
 	// Convert the topics over from the phpBB forums
-	if ($topic_id !== false)
+	if ($topic_id)
 	{
 		$sql = 'SELECT * FROM ' . POSTS_TABLE . '
 			WHERE topic_id = ' . (int) $topic_id . '
