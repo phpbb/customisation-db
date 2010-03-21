@@ -125,4 +125,34 @@ $lang = array_merge($lang, array(
 	'VIEW_DEMO'							=> 'View Demo',
 
 	'WRONG_CATEGORY'					=> 'You can only put this contribution in the same category type as the contribution type.',
+	'MOD_CREATE_PUBLIC'				=> '[b]Modification name[/b]: %1$s
+[b]Author:[/b] [url=%2$s]%3$s[/url]
+[b]Modification description[/b]: %4$s
+[b]Modification version[/b]: %5$s
+[b]Tested on phpBB version[/b]: See below
+
+[b]Download file[/b]: [url=%6$s]%7$s[/url]
+[b]File size:[/b] %8$s Bytes
+
+[b]Modification overview page:[/b] [url=%9$s]View[/url]
+
+[color=blue][b]Support for this modification needs to be asked within this topic. The phpBB Team is not responsible or required to give anyone support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB MODifications Team may not be able to provide support.[/b][/color]',
+
+	'MOD_UPDATE_PUBLIC' => '[color=darkred][b]MOD Updated to version %s
+See first post for Download Link[/b][/color]',
+	'STYLE_CREATE_PUBLIC'				=> '[b]Style name[/b]: %1$s
+[b]Author:[/b] [url=%2$s]%3$s[/url]
+[b]Style description[/b]: %4$s
+[b]Style version[/b]: %5$s
+[b]Tested on phpBB version[/b]: See below
+
+[b]Download file[/b]: [url=%6$s]%7$s[/url]
+[b]File size:[/b] %8$s Bytes
+
+[b]Style overview page:[/b] [url=%9$s]View[/url]
+
+[color=blue][b]Support for this Style needs to be asked within this topic. The phpBB Team is not responsible or required to give anyone support for this Style. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]',
+
+	'STYLE_UPDATE_PUBLIC' => '[color=darkred][b]Style Updated to version %s
+See first post for Download Link[/b][/color]',
 ));

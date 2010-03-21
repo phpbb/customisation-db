@@ -341,7 +341,7 @@ class titania_queue extends titania_message_object
 	public function approve()
 	{
 		// Reply to the queue topic and discussion with the message
-		titania::add_lang('manage', 'posting');
+		titania::add_lang(array('manage', 'contributions'));
 		$revision = $this->get_revision();
 		$notes = $this->queue_validation_notes;
 		decode_message($notes, $this->queue_validation_notes_uid);
@@ -369,43 +369,45 @@ class titania_queue extends titania_message_object
 		$forum_id	= 2;
 		
 		$contrib->get_download($this->revision_id);
-		$author = new titania_author();
-		$author->load((int) $contrib->contrib_user_id);
+		
+		$options = array(
+			'poster_id'				=> $poster,
+			'forum_id' 				=> $forum_id,
+			'enable_bbcode'			=> 1,
+			'enable_urls'			=> 1,
+			'enable_smilies'		=> 1,
+			'enable_sig'			=> 1,
+			'topic_time_limit'		=> 0,
+			'icon_id'				=> 0,
+			'post_time'				=> time(),
+			'poster_ip'				=> phpbb::$user->ip,
+			'post_edit_locked'		=> 0,
+			'topic_status'			=> POST_NORMAL,
+			'topic_type'			=> POST_NORMAL,
+			'post_approved'			=> true,
+		);
 		
 		if ($contrib->contrib_release_topic_id)
 		{
-			$body = sprintf(phpbb::$user->lang['UPDATE_PUBLIC_TOPIC'], 
-				$revision->revision_versio
+			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
+				$revision->revision_version
 			);
 			
-			$options = array(
-				'poster_id'				=> $poster,
-				'forum_id' 				=> $forum_id,
-				'topic_title'			=> '',
-				'post_text'				=> $body,
+			$options_details = array(
 				'topic_id'				=> $contrib->contrib_release_topic_id,
-				'enable_bbcode'			=> 1,
-				'enable_urls'			=> 1,
-				'enable_smilies'		=> 1,
-				'enable_sig'			=> 1,
-				'topic_time_limit'		=> 0,
-				'icon_id'				=> 0,
-				'post_time'				=> time(),
-				'poster_ip'				=> $user->ip,
-				'post_edit_locked'		=> 0,
-				'topic_status'			=> POST_NORMAL,
-				'topic_type'			=> POST_NORMAL,
-				'post_approved'			=> true,
+				'topic_title'			=> 'Re: ' . $contrib->contrib_name,
+				'post_text'				=> $body
 			);
 			
-			post_add($options);
+			$options = array_merge($options, $options_details);
+			phpbb_post_add($options);
 		}
 		else
 		{
-			$body = sprintf(phpbb::$user->lang['CREATE_PUBLIC_TOPIC'],
+			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->create_public],
 				$contrib->contrib_name,
-				$author->get_url(),
-				$contrib->username,
+				$contrib->author->get_url(),
+				$contrib->author->username,
 				$contrib->contrib_desc,
 				$revision->revision_version,
 				titania_url::build_url('download', array('id' => $revision->attachment_id)),
@@ -414,26 +416,13 @@ class titania_queue extends titania_message_object
 				$contrib->get_url()
 			);
 			
-			$options = array(
-				'poster_id'				=> $poster,
-				'forum_id' 				=> $forum_id,
+			$options_details = array(
 				'topic_title'			=> $contrib->contrib_name,
-				'post_text'				=> $body,
-				'enable_bbcode'			=> 1,
-				'enable_urls'			=> 1,
-				'enable_smilies'		=> 1,
-				'enable_sig'			=> 1,
-				'topic_time_limit'		=> 0,
-				'icon_id'				=> 0,
-				'post_time'				=> time(),
-				'poster_ip'				=> $user->ip,
-				'post_edit_locked'		=> 0,
-				'topic_type'			=> POST_NORMAL,
-				'topic_status'			=> POST_NORMAL,
-				'post_approved'			=> true,
+				'post_text'				=> $body
 			);
 			
-			$topic_id = topic_add($options);
+			$options = array_merge($options, $options_details);
+			$topic_id = phpbb_topic_add($options);
 		}
 		
 		$sql_ary = array(

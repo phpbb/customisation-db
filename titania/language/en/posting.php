@@ -59,22 +59,4 @@ Anything posted in this topic will be read by those validating your contribution
 Validation staff may also post questions to the authors here so please reply with helpful information for them as it may be required to proceed with the validation procedure.
 
 Note that by default this topic is private between authors and validators and cannot be seen by the public.',
-
-	'CREATE_PUBLIC_TOPIC'				=> '[b]Modification name[/b]: %1$s
-[b]Author:[/b] [url=%2$s]%3$s[/url]
-[b]Modification description[/b]: %4$s
-[b]Modification version[/b]: %5$s
-[b]Tested on phpBB version[/b]: See below
-
-[b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes
-
-[b]Modification overview page:[/b] [url=%9$s]View[/url]
-
-[color=blue][b]Support for this modification needs to be asked within this topic. The phpBB Team is not responsible or required to give anyone support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB MODifications Team may not be able to provide support.
-
-This MOD has only been tested by the phpBB MOD Team with the phpBB version listed in the topic.  It may not work in any other versions of phpBB.[/b][/color]',
-
-	'UPDATE_PUBLIC_TOPIC' => '[color=darkred][b]MOD Updated to version %s
-See first post for Download Link[/b][/color]',
 ));

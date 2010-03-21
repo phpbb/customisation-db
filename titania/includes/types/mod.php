@@ -48,6 +48,8 @@ class titania_type_mod extends titania_type_base
 	public $validation_subject = 'MOD_VALIDATION';
 	public $validation_message_approve = 'MOD_VALIDATION_MESSAGE_APPROVE';
 	public $validation_message_deny = 'MOD_VALIDATION_MESSAGE_DENY';
+	public $create_public = 'MOD_CREATE_PUBLIC';
+	public $update_public = 'MOD_UPDATE_PUBLIC';
 
 	/**
 	* Run MPV/Automod Test for this type?
