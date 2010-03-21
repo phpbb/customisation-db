@@ -815,6 +815,12 @@ $versions = array(
 			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes_options', array('UINT:11', 7)),
 		),
 	),
+	
+	'0.1.52' => array(
+		'table_column_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_release_topic_id', array('UINT', 0)),
+		),
+	),
 
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
