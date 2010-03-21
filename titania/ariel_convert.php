@@ -663,7 +663,6 @@ function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', 
 			{
 				$post->topic->topic_sticky = true;
 			}
-			$post->message_parsed_for_storage = true;
 			$post->submit();
 		}
 		phpbb::$db->sql_freeresult($post_result);

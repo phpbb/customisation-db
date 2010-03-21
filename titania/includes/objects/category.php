@@ -81,12 +81,6 @@ class titania_category extends titania_message_object
 	 */
 	public function submit()
 	{
-		// Nobody parsed the text for storage before. Parse text with lowest settings.
-		if (!$this->message_parsed_for_storage)
-		{
-			$this->generate_text_for_storage();
-		}
-
 		$this->contrib_name_clean = utf8_clean_string($this->contrib_name);
 
 		// Destroy category parents cache

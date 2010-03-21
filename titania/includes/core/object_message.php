@@ -30,31 +30,11 @@ if (!class_exists('titania_database_object'))
 abstract class titania_message_object extends titania_database_object
 {
 	/**
-	 * Description parsed for storage
-	 *
-	 * @var bool
-	 */
-	public $message_parsed_for_storage = false;
-
-	/**
 	* This allows us to have multiple message items for a single object
 	*
 	* @var string
 	*/
 	public $message_fields_prefix = 'message';
-
-	/**
-	* Catch submits and make sure we parse messages for storage
-	*/
-	public function submit()
-	{
-		if (!$this->message_parsed_for_storage)
-		{
-			$this->generate_text_for_storage();
-		}
-
-		parent::submit();
-	}
 
 	/**
 	 * Submit data in the post_data format (from includes/tools/message.php)
@@ -98,8 +78,6 @@ abstract class titania_message_object extends titania_database_object
 		generate_text_for_storage($message, $message_uid, $message_bitfield, $message_options, $allow_bbcode, $allow_urls, $allow_smilies);
 
 		$this->set_message_fields($message, $message_uid, $message_bitfield, $message_options);
-
-		$this->message_parsed_for_storage = true;
 	}
 
 	/**

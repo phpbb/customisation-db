@@ -111,7 +111,7 @@ class titania_contribution extends titania_message_object
 
 			// Last time the contrib item was updated (created or added a new revision, etc).  Used for tracking
 			'contrib_last_update'			=> array('default' => titania::$time),
-			
+
 			'contrib_release_topic_id'		=> array('default' => 0),
 		));
 	}
@@ -122,12 +122,6 @@ class titania_contribution extends titania_message_object
 	 */
 	public function submit()
 	{
-		// Nobody parsed the text for storage before. Parse text with lowest settings.
-		if (!$this->message_parsed_for_storage)
-		{
-			$this->generate_text_for_storage();
-		}
-
 		if (!$this->contrib_id && (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED))
 		{
 			// Increment the contrib counter

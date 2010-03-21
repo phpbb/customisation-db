@@ -90,7 +90,6 @@ if ($attention_id || ($object_type && $object_id))
 				$attention_object->delete();
 				trigger_error('NO_POST');
 			}
-			$post->message_parsed_for_storage = true;
 
 			// Close or approve the report
 			if ($close)

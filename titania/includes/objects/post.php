@@ -614,9 +614,6 @@ class titania_post extends titania_message_object
 		// Mark the post as reported
 		$this->post_reported = true;
 
-		// Do not parse again
-		$this->message_parsed_for_storage = true;
-
 		// Setup the attention object and submit it
 		$attention = new titania_attention;
 		$attention->__set_array(array(

@@ -55,11 +55,9 @@ class queue_overlord
 
 			'FROM'		=> array(
 				TITANIA_QUEUE_TABLE	=> 'q',
-				TITANIA_CONTRIBS_TABLE	=> 'c',
 			),
 
-			'WHERE' => phpbb::$db->sql_in_set('q.queue_id', array_map('intval', $queue_id)) . '
-				AND c.contrib_id = q.contrib_id'
+			'WHERE' => phpbb::$db->sql_in_set('q.queue_id', array_map('intval', $queue_id))
 		);
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
