@@ -328,7 +328,7 @@ function titania_categories()
 function titania_ext_groups($action)
 {
 	$ext_groups = array(
-		TITANIA_ATTACH_EXT_CONTRIB		=> array('default' => 'Archives', 'sql' => array('upload_icon' => 'zip.png')),
+		TITANIA_ATTACH_EXT_CONTRIB		=> array('default_set' => array('zip'), 'sql' => array('upload_icon' => 'zip.png')),
 		TITANIA_ATTACH_EXT_SCREENSHOTS	=> array('default' => 'Images'),
 		TITANIA_ATTACH_EXT_SUPPORT		=> array('default' => array('Archives', 'Images')),
 		TITANIA_ATTACH_EXT_FAQ			=> array('default' => array('Archives', 'Images')),
@@ -394,6 +394,18 @@ function titania_ext_groups($action)
 
 					phpbb::$db->sql_freeresult($result);
 
+					phpbb::$db->sql_multi_insert(EXTENSIONS_TABLE, $sql_ary);
+				}
+				else if (isset($extra['default_set']))
+				{
+					$sql_ary = array();
+					foreach ($extra['default_set'] as $extension)
+					{
+						$sql_ary[] = array(
+							'group_id'		=> $group_id,
+							'extension'		=> $extension,
+						);
+					}
 					phpbb::$db->sql_multi_insert(EXTENSIONS_TABLE, $sql_ary);
 				}
 			}
