@@ -117,6 +117,8 @@ $lang = array_merge($lang, array(
 	'REVISION_VERSION'					=> 'Revision Version',
 	'QUEUE_ALLOW_REPACK'				=> 'Allow Repacking',
 	'QUEUE_ALLOW_REPACK_EXPLAIN'		=> 'Allow this contribution to be repacked for small errors?',
+	'QUEUE_NOTES'						=> 'Validation Notes',
+	'QUEUE_NOTES_EXPLAIN'				=> 'Message to the team.',
 
 	'SELECT_CONTRIB_TYPE'				=> '-- Select contribution type --',
 

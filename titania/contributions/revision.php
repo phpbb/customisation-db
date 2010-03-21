@@ -63,6 +63,19 @@ do{
 	$try_again = false; // Try again?  Used when skip steps
 	$error = array();
 
+	$queue = new titania_queue();
+	// Load the message object
+	$message_object = new titania_message($queue);
+	$message_object->set_auth(array(
+		'bbcode'      => phpbb::$auth->acl_get('u_titania_bbcode'),
+		'smilies'      => phpbb::$auth->acl_get('u_titania_smilies'),
+	));
+	$message_object->set_settings(array(
+		'display_error'		=> false,
+		'display_subject'	=> false,
+	));
+	$message_object->display();
+	
 	switch ($step)
 	{
 		case 0 :
@@ -102,11 +115,24 @@ do{
 				$revision->submit();
 				$revision_id = $revision->revision_id;
 
-				// Add queue_allow_repack value to the queue table
+				// Load the message object
+				$message_object = new titania_message($queue);
+				$message_object->set_auth(array(
+					'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
+					'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
+				));
+				$message_object->set_settings(array(
+					'display_error'		=> false,
+					'display_subject'	=> false,
+				));
+
 				$queue = $revision->get_queue();
+				
+				// Add queue values to the queue table
 				if ($queue)
 				{
 					$queue->queue_allow_repack = $queue_allow_repack;
+					$queue->post_data($message_object);
 					$queue->submit();
 				}
 
