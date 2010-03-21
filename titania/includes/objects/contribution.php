@@ -111,6 +111,8 @@ class titania_contribution extends titania_message_object
 
 			// Last time the contrib item was updated (created or added a new revision, etc).  Used for tracking
 			'contrib_last_update'			=> array('default' => titania::$time),
+			
+			'contrib_release_topic_id'		=> array('default' => 0),
 		));
 	}
 
