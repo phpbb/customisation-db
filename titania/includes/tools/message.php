@@ -288,12 +288,29 @@ class titania_message
 		//$request_data = $this->request_data();
 		//$this->post_object->generate_text_for_storage($request_data['bbcode_enabled'], $request_data['magic_url_enabled'], $request_data['smilies_enabled']);
 
+		$message = $this->post_object->generate_text_for_display();
+
+		if ($this->attachments)
+		{
+			$parsed_attachments = $this->attachments->parse_attachments($message);
+		}
+
 		phpbb::$template->assign_vars(array(
 			'PREVIEW_SUBJECT'		=> (isset($for_edit['subject'])) ? censor_text($for_edit['subject']) : '',
 			'PREVIEW_MESSAGE'		=> $this->post_object->generate_text_for_display(),
 
 			'S_DISPLAY_PREVIEW'		=> true,
 		));
+
+		if ($this->attachments)
+		{
+			foreach ($parsed_attachments as $attachment)
+			{
+				phpbb::$template->assign_block_vars('preview_attachment', array(
+					'DISPLAY_ATTACHMENT'	=> $attachment,
+				));
+			}
+		}
 	}
 
 	/**

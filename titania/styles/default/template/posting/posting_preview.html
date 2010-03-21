@@ -5,6 +5,15 @@
 
 		<div class="content">{PREVIEW_MESSAGE}</div>
 
+		<!-- IF .preview_attachment -->
+			<dl class="attachbox">
+				<dt>{L_ATTACHMENTS}</dt>
+				<!-- BEGIN preview_attachment -->
+					<dd>{preview_attachment.DISPLAY_ATTACHMENT}</dd>
+				<!-- END preview_attachment -->
+			</dl>
+		<!-- ENDIF -->
+
 		<!-- IF PREVIEW_SIGNATURE --><div class="signature">{PREVIEW_SIGNATURE}</div><!-- ENDIF -->
 	</div>
 
