@@ -114,6 +114,7 @@ class titania_uploader extends fileupload
 		$this->filedata['filesize'] = $file->get('filesize');
 		$this->filedata['mimetype'] = $file->get('mimetype');
 		$this->filedata['extension'] = $file->get('extension');
+		$this->filedata['is_image'] = $file->is_image();
 		$this->filedata['physical_filename'] = $file->get('realname');
 		$this->filedata['attachment_directory'] = $move_dir;
 		$this->filedata['real_filename'] = $file->get('uploadname');

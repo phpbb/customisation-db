@@ -66,7 +66,14 @@ if (!$attachment)
 	trigger_error('ERROR_NO_ATTACHMENT');
 }
 
-$attachment['physical_filename'] = utf8_basename($attachment['attachment_directory']) . '/' . utf8_basename($attachment['physical_filename']);
+if ($thumbnail)
+{
+	$attachment['physical_filename'] = utf8_basename($attachment['attachment_directory']) . '/thumb_' . utf8_basename($attachment['physical_filename']);
+}
+else
+{
+	$attachment['physical_filename'] = utf8_basename($attachment['attachment_directory']) . '/' . utf8_basename($attachment['physical_filename']);
+}
 
 if ($attachment['is_orphan'] && !phpbb::$auth->acl_get('a_attach'))
 {
@@ -99,11 +106,7 @@ if ($display_cat == ATTACHMENT_CATEGORY_FLASH && !$user->optionget('viewflash'))
 }
 */
 
-if ($thumbnail)
-{
-	$attachment['physical_filename'] = 'thumb_' . $attachment['physical_filename'];
-}
-else
+if (!$thumbnail)
 {
 	// Update download count
 	$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '

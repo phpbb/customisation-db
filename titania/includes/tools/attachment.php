@@ -313,6 +313,16 @@ class titania_attachment extends titania_database_object
 			// If we had no problems we can submit the data to the database.
 			if (!sizeof($this->error))
 			{
+				// Create thumbnail
+				$has_thumbnail = false;
+				if ($this->uploader->filedata['is_image'])
+				{
+					phpbb::_include('functions_posting', 'create_thumbnail');
+					$src = titania::$config->upload_path . utf8_basename($this->uploader->filedata['attachment_directory']) . '/' . utf8_basename($this->uploader->filedata['physical_filename']);
+					$dst = titania::$config->upload_path . utf8_basename($this->uploader->filedata['attachment_directory']) . '/thumb_' . utf8_basename($this->uploader->filedata['physical_filename']);
+					$has_thumbnail = create_thumbnail($src, $dst, $this->uploader->filedata['mimetype']);
+				}
+
 				$this->__set_array(array(
 					'physical_filename'		=> $this->uploader->filedata['physical_filename'],
 					'attachment_directory'	=> $this->uploader->filedata['attachment_directory'],
@@ -322,7 +332,7 @@ class titania_attachment extends titania_database_object
 					'filesize'				=> $this->uploader->filedata['filesize'],
 					'filetime'				=> $this->uploader->filedata['filetime'],
 					'hash'					=> $this->uploader->filedata['md5_checksum'],
-					'thumbnail'				=> 0, // @todo Create thumbnail if required
+					'thumbnail'				=> $has_thumbnail,
 
 					'attachment_comment'	=> utf8_normalize_nfc(request_var('filecomment', '', true)),
 				));
@@ -563,7 +573,7 @@ class titania_attachment extends titania_database_object
 
 					$block_array += array(
 						'S_THUMBNAIL'		=> true,
-						'THUMB_IMAGE'		=> titania_url::append_url($download_link, array('mode' => 'view', 'thumb')),
+						'THUMB_IMAGE'		=> titania_url::append_url($download_link, array('mode' => 'view', 'thumb' => 1)),
 					);
 				break;
 
