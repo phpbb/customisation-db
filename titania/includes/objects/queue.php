@@ -341,7 +341,7 @@ class titania_queue extends titania_message_object
 	public function approve()
 	{
 		// Reply to the queue topic and discussion with the message
-		titania::add_lang('manage');
+		titania::add_lang('manage', 'posting');
 		$revision = $this->get_revision();
 		$notes = $this->queue_validation_notes;
 		decode_message($notes, $this->queue_validation_notes_uid);
@@ -362,12 +362,91 @@ class titania_queue extends titania_message_object
 		$contrib = new titania_contribution;
 		$contrib->load((int) $this->contrib_id);
 		$contrib->change_status(TITANIA_CONTRIB_APPROVED);
-		unset($contrib);
 
-		// Update contrib last update time
+		// Start process to post on forum topic/post release
+		//For now, we fix, poster_id and forum to post
+		$poster 	= 2;
+		$forum_id	= 2;
+		
+		$contrib->get_download($this->revision_id);
+		$author = new titania_author();
+		$author->load((int) $contrib->contrib_user_id);
+		
+		if ($contrib->contrib_release_topic_id)
+		{
+			$body = sprintf(phpbb::$user->lang['UPDATE_PUBLIC_TOPIC'], 
+				$revision->revision_versio
+			);
+			
+			$options = array(
+				'poster_id'				=> $poster,
+				'forum_id' 				=> $forum_id,
+				'topic_title'			=> '',
+				'post_text'				=> $body,
+				'topic_id'				=> $contrib->contrib_release_topic_id,
+				'enable_bbcode'			=> 1,
+				'enable_urls'			=> 1,
+				'enable_smilies'		=> 1,
+				'enable_sig'			=> 1,
+				'topic_time_limit'		=> 0,
+				'icon_id'				=> 0,
+				'post_time'				=> time(),
+				'poster_ip'				=> $user->ip,
+				'post_edit_locked'		=> 0,
+				'topic_status'			=> POST_NORMAL,
+				'topic_type'			=> POST_NORMAL,
+				'post_approved'			=> true,
+			);
+			
+			post_add($options);
+		}
+		else
+		{
+			$body = sprintf(phpbb::$user->lang['CREATE_PUBLIC_TOPIC'],
+				$contrib->contrib_name,
+				$author->get_url(),
+				$contrib->username,
+				$contrib->contrib_desc,
+				$revision->revision_version,
+				titania_url::build_url('download', array('id' => $revision->attachment_id)),
+				$contrib->download['real_filename'],
+				$contrib->download['filesize'],
+				$contrib->get_url()
+			);
+			
+			$options = array(
+				'poster_id'				=> $poster,
+				'forum_id' 				=> $forum_id,
+				'topic_title'			=> $contrib->contrib_name,
+				'post_text'				=> $body,
+				'enable_bbcode'			=> 1,
+				'enable_urls'			=> 1,
+				'enable_smilies'		=> 1,
+				'enable_sig'			=> 1,
+				'topic_time_limit'		=> 0,
+				'icon_id'				=> 0,
+				'post_time'				=> time(),
+				'poster_ip'				=> $user->ip,
+				'post_edit_locked'		=> 0,
+				'topic_type'			=> POST_NORMAL,
+				'topic_status'			=> POST_NORMAL,
+				'post_approved'			=> true,
+			);
+			
+			$topic_id = topic_add($options);
+		}
+		
+		$sql_ary = array(
+			'contrib_last_update' 		=> titania::$time,
+			'contrib_release_topic_id' 	=> ($contrib->contrib_release_topic_id) ? $contrib->contrib_release_topic_id : $topic_id,
+		);
+		
+		unset($contrib);
+		
+		// Update contrib last update time and release topic ic
 		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-			SET contrib_last_update = ' . titania::$time . '
-			WHERE contrib_id = ' . (int) $this->contrib_id;
+			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
 		// Self-updating
