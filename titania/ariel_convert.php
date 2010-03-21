@@ -500,8 +500,8 @@ switch ($step)
 				$sql = 'SELECT topic_id FROM ' . TOPICS_TABLE . '
 					WHERE forum_id = ' . (($row['contrib_type'] == 1) ? $mod_validation_trash_forum : $style_validation_trash_forum) . '
 						AND topic_title = \'' . phpbb::$db->sql_escape($row['contrib_name']) . '\'
-						AND topic_time BETWEEN (' . ($row['queue_opened'] - 10) . '
-							AND ' . ($row['queue_opened'] + 10) . ')';
+						AND topic_time BETWEEN ' . ($row['queue_opened'] - 10) . '
+							AND ' . ($row['queue_opened'] + 10);
 				phpbb::$db->sql_query($sql);
 				$row['topic_id'] = phpbb::$db->sql_fetchfield('topic_id');
 				phpbb::$db->sql_freeresult();

@@ -85,6 +85,7 @@ class titania_revision extends titania_database_object
 			'CREATED'			=> phpbb::$user->format_date($this->revision_time),
 			'NAME'				=> censor_text($this->revision_name),
 			'VERSION'			=> $this->revision_version,
+			'PHPBB_VERSION'		=> $this->phpbb_version,
 			'VALIDATED_DATE'	=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
 			'REVISION_QUEUE'	=> ($show_queue && $this->revision_queue_id) ? titania_url::build_url('manage/queue', array('q' => $this->revision_queue_id)) : '',
 

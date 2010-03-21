@@ -504,7 +504,7 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_NAME'					=> $this->contrib_name,
 			'CONTRIB_DESC'					=> $this->generate_text_for_display(),
 			'CONTRIB_VIEWS'					=> $this->contrib_views,
-			'CONTRIB_UPDATE_DATE'			=> phpbb::$user->format_date($this->contrib_last_update),
+			'CONTRIB_UPDATE_DATE'			=> ($this->contrib_last_update) ? phpbb::$user->format_date($this->contrib_last_update) : '',
 			'CONTRIB_STATUS'				=> $this->contrib_status,
 
 			'CONTRIB_RATING'				=> $this->contrib_rating,
