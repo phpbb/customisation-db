@@ -395,7 +395,7 @@ class titania_posting
 				$message_object->submit($post_object->post_access);
 
 				// Unapproved posts will get a notice
-				if (!$post_object->topic->topic_approved)
+				if (!$post_object->topic->get_postcount())
 				{
 					phpbb::$user->add_lang('posting');
 

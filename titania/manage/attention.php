@@ -97,11 +97,41 @@ if ($attention_id || ($object_type && $object_id))
 			{
 				$post->post_reported = false;
 				$post->submit();
+
+				$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
+					WHERE topic_id = ' . $post->topic_id . '
+						AND post_reported = 1';
+				phpbb::$db->sql_query($sql);
+				$cnt = phpbb::$db->sql_fetchfield('cnt');
+				phpbb::$db->sql_freeresult($result);
+
+				if (!$cnt)
+				{
+					$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+						SET topic_reported = 1
+						WHERE topic_id = ' . $post->topic_id;
+					phpbb::$db->sql_query($sql);
+				}
 			}
 			if ($approve)
 			{
 				$post->post_approved = 1;
 				$post->submit();
+
+				$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
+					WHERE topic_id = ' . $post->topic_id . '
+						AND post_approved = 0';
+				phpbb::$db->sql_query($sql);
+				$cnt = phpbb::$db->sql_fetchfield('cnt');
+				phpbb::$db->sql_freeresult($result);
+
+				if (!$cnt)
+				{
+					$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+						SET topic_approved = 1
+						WHERE topic_id = ' . $post->topic_id;
+					phpbb::$db->sql_query($sql);
+				}
 			}
 
 			users_overlord::load_users(array($post->post_user_id, $post->post_edit_user, $post->post_delete_user));
