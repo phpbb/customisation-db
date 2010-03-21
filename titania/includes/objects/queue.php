@@ -377,7 +377,7 @@ class titania_queue extends titania_message_object
 		$this->submit(false);
 
 		// Send notification message
-		$this->send_approve_deny_notification(false);
+		$this->send_approve_deny_notification(true);
 	}
 
 	public function deny()
