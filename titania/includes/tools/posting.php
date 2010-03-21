@@ -25,7 +25,7 @@ class titania_posting
 	*/
 	public $attachments_group;
 
-	public function _construct($attachments_group = false)
+	public function __construct($attachments_group = false)
 	{
 		$this->attachments_group = $attachments_group;
 	}
