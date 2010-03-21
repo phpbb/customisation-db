@@ -147,7 +147,6 @@ $versions = array(
 					'contrib_last_update'			=> array('TIMESTAMP', 0),
 					'contrib_demo'					=> array('VCHAR_UNI:200', ''),
 					'contrib_topic'					=> array('UINT', 0), // Store the old topic_id from ariel for the forums
-					'contrib_release_topic_id'		=> array('UINT', 0),
 				),
 				'PRIMARY_KEY'	=> 'contrib_id',
 				'KEYS'			=> array(
