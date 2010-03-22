@@ -301,12 +301,6 @@ class titania_queue extends titania_message_object
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		// Clear the revision queue id from the revisions table
-		$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . '
-			SET revision_queue_id = 0
-			WHERE revision_id = ' . $this->revision_id;
-		phpbb::$db->sql_query($sql);
-
 		// Assplode
 		parent::delete();
 	}
@@ -369,44 +363,27 @@ class titania_queue extends titania_message_object
 		$contrib->load((int) $this->contrib_id);
 		$contrib->change_status(TITANIA_CONTRIB_APPROVED);
 
-		// Start process to post on forum topic/post release
-		//For now, we fix, poster_id and forum to post
-		$poster 	= 2;
-		$forum_id	= 2;
-
+		// Start process to post on forum topic/post release		
 		$contrib->get_download($this->revision_id);
-
-		$options = array(
-			'poster_id'				=> $poster,
-			'forum_id' 				=> $forum_id,
-			'enable_bbcode'			=> 1,
-			'enable_urls'			=> 1,
-			'enable_smilies'		=> 1,
-			'enable_sig'			=> 1,
-			'topic_time_limit'		=> 0,
-			'icon_id'				=> 0,
-			'post_time'				=> time(),
-			'poster_ip'				=> phpbb::$user->ip,
-			'post_edit_locked'		=> 0,
-			'topic_status'			=> POST_NORMAL,
-			'topic_type'			=> POST_NORMAL,
-			'post_approved'			=> true,
-		);
-
+		
 		if ($contrib->contrib_release_topic_id)
 		{
 			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
 				$revision->revision_version
 			);
-
-			$options_details = array(
+			
+			$options = array(
+				'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
+				'forum_id' 				=> titania_types::$types[$contrib->contrib_type]->forum_database,
 				'topic_id'				=> $contrib->contrib_release_topic_id,
 				'topic_title'			=> 'Re: ' . $contrib->contrib_name,
 				'post_text'				=> $body
 			);
-
-			$options = array_merge($options, $options_details);
-			phpbb_post_add($options);
+			
+			if ($options['forum_id'] && $options['poster_id'])
+			{
+				phpbb_post_add($options);
+			}
 		}
 		else
 		{
@@ -421,23 +398,27 @@ class titania_queue extends titania_message_object
 				$contrib->download['filesize'],
 				$contrib->get_url()
 			);
-
-			$options_details = array(
+			
+			$options = array(
+				'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
+				'forum_id' 				=> titania_types::$types[$contrib->contrib_type]->forum_database,
 				'topic_title'			=> $contrib->contrib_name,
 				'post_text'				=> $body
 			);
-
-			$options = array_merge($options, $options_details);
-			$topic_id = phpbb_topic_add($options);
+			
+			if ($options['forum_id'] && $options['poster_id'])
+			{
+				$topic_id = phpbb_topic_add($options);
+			}
 		}
-
+		
 		$sql_ary = array(
 			'contrib_last_update' 		=> titania::$time,
 			'contrib_release_topic_id' 	=> ($contrib->contrib_release_topic_id) ? $contrib->contrib_release_topic_id : $topic_id,
 		);
-
+		
 		unset($contrib);
-
+		
 		// Update contrib last update time and release topic ic
 		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
 			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '

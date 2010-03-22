@@ -214,7 +214,7 @@ function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
  * @param $poll array Array with poll options.
  * @return mixed false if there was an error, topic_id when the new topic was created.
  */
-function topic_add(&$options, $poll = array())
+function phpbb_topic_add(&$options, $poll = array())
 {	
 	if (!class_exists('parse_message'))
 	{
@@ -225,6 +225,23 @@ function topic_add(&$options, $poll = array())
 	{
 		include(PHPBB_ROOT_PATH . 'includes/functions_posting.' . PHP_EXT);
 	}
+	
+	$options_global = array(
+		'enable_bbcode'			=> 1,
+		'enable_urls'			=> 1,
+		'enable_smilies'		=> 1,
+		'enable_sig'			=> 1,
+		'topic_time_limit'		=> 0,
+		'icon_id'				=> 0,
+		'post_time'				=> time(),
+		'poster_ip'				=> phpbb::$user->ip,
+		'post_edit_locked'		=> 0,
+		'topic_status'			=> POST_NORMAL,
+		'topic_type'			=> POST_NORMAL,
+		'post_approved'			=> true,
+	);
+	
+	$options = array_merge($options, $options_global);
 	
 	// Get correct data from forums table to be sure all data is there.
 	$sql = 'SELECT forum_parents, forum_name, enable_indexing
@@ -326,7 +343,7 @@ function topic_add(&$options, $poll = array())
  * @param $options array list with options, see for items/values our documentation
  * @return mixed false if there was an error, post_id when the post was added to the topic.
  */
-function post_add(&$options)
+function phpbb_post_add(&$options)
 {
 	if (!class_exists('parse_message'))
 	{
@@ -337,6 +354,23 @@ function post_add(&$options)
 	{
 		include(PHPBB_ROOT_PATH . 'includes/functions_posting.' . PHP_EXT);
 	}
+	
+	$options_global = array(
+		'enable_bbcode'			=> 1,
+		'enable_urls'			=> 1,
+		'enable_smilies'		=> 1,
+		'enable_sig'			=> 1,
+		'topic_time_limit'		=> 0,
+		'icon_id'				=> 0,
+		'post_time'				=> time(),
+		'poster_ip'				=> phpbb::$user->ip,
+		'post_edit_locked'		=> 0,
+		'topic_status'			=> POST_NORMAL,
+		'topic_type'			=> POST_NORMAL,
+		'post_approved'			=> true,
+	);
+	
+	$options = array_merge($options, $options_global);
 	
 	// Check forum data, and if forum_id is the same.
 	// Also get topic data.

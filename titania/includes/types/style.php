@@ -55,6 +55,8 @@ class titania_type_style extends titania_type_base
 	public function __construct()
 	{
 		$this->lang = phpbb::$user->lang['STYLE'];
+		$this->forum_database = titania::$config->forum_style_database;
+		$this->forum_robot = titania::$config->forum_style_robot;
 	}
 
 	/**

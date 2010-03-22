@@ -146,4 +146,12 @@ class titania_type_base
 	public $mpv_test = false;
 	public $automod_test = false;
 	public $clean_and_restore_root = false;
+	
+	/**
+	 * The forum_database and forum_robot, initialize in constructor
+	 *
+	 * @var int
+	 */
+	public $forum_database = 0;
+	public $forum_robot = 0;
 }

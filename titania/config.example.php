@@ -57,4 +57,16 @@ $config = array(
 	* Team groups (members will get TITANIA_TEAMS_ACCESS)
 	*/
 	'team_groups' => array(5),
+	
+	/**
+	* IDs of database forum
+	*/
+	'forum_mod_database' => 0,
+	'forum_style_database' => 0,
+	
+	/**
+	* IDs of account used for topic/post release in database forum
+	*/
+	'forum_mod_robot' => 0,
+	'forum_style_robot' => 0,
 );
