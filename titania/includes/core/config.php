@@ -65,7 +65,7 @@ class titania_config extends titania_object
 
 			// Latest versions array
 			'phpbb_versions'			=> array('default' => array(
-				'30'	=> '3.0.6',  // We only support 3.0.x right now, will be changed in the future
+				'30'	=> '3.0.7-pl1',  // We only support 3.0.x right now, will be changed in the future
 			)),
 
 			'mpv_server_list'			=> array('default' => array(
@@ -75,7 +75,7 @@ class titania_config extends titania_object
 					'file'		=> 'index.php',
 				),
 			)),
-			
+
 			'forum_mod_database'		=> array('default' => 0),
 			'forum_style_database'		=> array('default' => 0),
 			'forum_mod_robot'			=> array('default' => 0),
