@@ -102,7 +102,7 @@ if ($attention_id || ($object_type && $object_id))
 						AND post_reported = 1';
 				phpbb::$db->sql_query($sql);
 				$cnt = phpbb::$db->sql_fetchfield('cnt');
-				phpbb::$db->sql_freeresult($result);
+				phpbb::$db->sql_freeresult();
 
 				if (!$cnt)
 				{
@@ -122,7 +122,6 @@ if ($attention_id || ($object_type && $object_id))
 						AND post_approved = 0';
 				phpbb::$db->sql_query($sql);
 				$cnt = phpbb::$db->sql_fetchfield('cnt');
-				phpbb::$db->sql_freeresult($result);
 
 				if (!$cnt)
 				{
