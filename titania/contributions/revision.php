@@ -91,7 +91,7 @@ do{
 			$revision_attachment->is_orphan = false;
 			$revision_attachment->upload(TITANIA_ATTACH_EXT_CONTRIB);
 			$revision_version = utf8_normalize_nfc(request_var('revision_version', '', true));
-			$queue_allow_repack = request_var('queue_allow_repack', 1);
+			$queue_allow_repack = request_var('queue_allow_repack', 0);
 
 			// Check for errors
 			$error = array_merge($error, $revision_attachment->error);
