@@ -454,7 +454,7 @@ class titania_contribution extends titania_message_object
 
 		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
 			WHERE contrib_id = ' . $this->contrib_id .
-				((titania::$config->require_validation && !titania::$access_level == TITANIA_ACCESS_TEAMS) ? ' AND revision_validated = 1 ' : '') . '
+				((titania::$config->require_validation && titania::$access_level == TITANIA_ACCESS_PUBLIC) ? ' AND revision_validated = 1 ' : '') . '
 				AND revision_submitted = 1
 			ORDER BY revision_id DESC';
 		$result = phpbb::$db->sql_query($sql);
