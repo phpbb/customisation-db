@@ -154,6 +154,7 @@ class attention_overlord
 			$attention_ids[] = $row['attention_id'];
 			$user_ids[] = $row['attention_poster_id'];
 			$user_ids[] = $row['attention_requester'];
+			$user_ids[] = $row['attention_close_user'];
 
 			if ($row['attention_close_user'])
 			{
@@ -178,7 +179,8 @@ class attention_overlord
 			$output = array_merge(
 				$attention->assign_details(true),
 				users_overlord::assign_details($row['attention_poster_id']),
-				users_overlord::assign_details($row['attention_requester'], 'REPORTER_')
+				users_overlord::assign_details($row['attention_requester'], 'REPORTER_'),
+				users_overlord::assign_details($row['attention_close_user'], 'CLOSER_')
 			);
 
 			// Do we have to?

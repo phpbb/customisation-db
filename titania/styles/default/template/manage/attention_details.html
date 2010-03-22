@@ -72,19 +72,26 @@
 	<span class="corners-bottom"><span></span></span></div>
 </div>
 
+<h3>{L_CLOSED_ITEMS}</h3>
 <!-- BEGIN attention_closed -->
-<div id="report" class="panel">
-	<div class="inner"><span class="corners-top"><span></span></span>
-
-	<div class="postbody">
-		<h3>{attention_closed.ATTENTION_REASON}</h3>
-		<p class="author">{L_POST_BY_AUTHOR} {attention_closed.REPORTER_USER_FULL} &laquo; {attention_closed.ATTENTION_TIME}</p>
-		<div class="content">
-			{attention_closed.ATTENTION_DESCRIPTION}
-		</div>
+<div id="attention">
+	<h4>{attention_closed.ATTENTION_REASON}</h4>
+	<p class="author">{L_POST_BY_AUTHOR} {attention_closed.REPORTER_USER_FULL} &laquo; {attention_closed.ATTENTION_TIME}</p>
+	<table>
+		<tbody>
+		<tr>
+			<td class="bg2"><strong>{L_CLOSED_BY}:</strong></td>
+			<td class="bg1">{attention_closed.CLOSER_USER_FULL}</td>
+		</tr>
+		<tr>
+			<td class="bg2"><strong>{L_DATE_CLOSED}:</strong></td>
+			<td class="bg1">{attention_closed.ATTENTION_CLOSE_TIME}</td>
+		</tr>
+		</tbody>
+	</table>
+	<div class="content">
+		<blockquote><div><cite>{attention_closed.CLOSER_USER_FULL} {L_WROTE}:</cite>{attention_closed.ATTENTION_DESCRIPTION}</div></blockquote>
 	</div>
-
-	<span class="corners-bottom"><span></span></span></div>
 </div>
 <!-- END attention_closed -->
 

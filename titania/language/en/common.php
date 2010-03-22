@@ -87,6 +87,8 @@ $lang = array_merge($lang, array(
 	'CONTRIB_MANAGE'			=> 'Manage Contribution',
 	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
+	'CLOSED_ITEMS'				=> 'Closed Items',
+	'CLOSED_BY'					=> 'Closed by',
 
 	'DELETED_MESSAGE'			=> 'Last deleted by %1$s on %2$s - <a href="%3$s">Click here to undelete this message</a>',
 	'DESCRIPTION'				=> 'Description',
@@ -95,6 +97,7 @@ $lang = array_merge($lang, array(
 	'DOWNLOADS'					=> 'Downloads',
 	'DOWNLOAD_ACCESS_DENIED'	=> 'You are not allowed to download the requested file.',
 	'DOWNLOAD_NOT_FOUND'		=> 'The requested file could not be found.',
+	'DATE_CLOSED'				=> 'Date closed',
 
 	'EDIT'						=> 'Edit',
 	'EDITED_MESSAGE'			=> 'Last edited by %1$s on %2$s',

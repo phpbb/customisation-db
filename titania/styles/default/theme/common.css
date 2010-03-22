@@ -399,6 +399,23 @@ fieldset dl:hover dt label.error {
 	color: #BC2A4D;
 }
 
+/* Attention Details Page
+--------------------------------------------- */
+#attention {
+	border-bottom-style: dashed;
+	border-bottom-width: 1px;
+	padding-top: 5px;
+}
+
+#attention td {
+	padding: 3px;
+}
+
+#attention .content {
+	font-size: 13px;
+	padding-bottom: 10px;
+}
+
 
 #wrap {
 	width: 900px;
