@@ -216,15 +216,9 @@ function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
  */
 function phpbb_topic_add(&$options, $poll = array())
 {	
-	if (!class_exists('parse_message'))
-	{
-		include(PHPBB_ROOT_PATH . 'includes/message_parser.' . PHP_EXT);
-	}
-
-	if (!function_exists('submit_post'))
-	{
-		include(PHPBB_ROOT_PATH . 'includes/functions_posting.' . PHP_EXT);
-	}
+	phpbb::_include('bbcode', false, 'bbcode');
+	phpbb::_include('message_parser', false, 'parse_message');
+	phpbb::_include('functions_posting', 'submit_post', false);
 	
 	$options_global = array(
 		'enable_bbcode'			=> 1,
@@ -345,16 +339,10 @@ function phpbb_topic_add(&$options, $poll = array())
  */
 function phpbb_post_add(&$options)
 {
-	if (!class_exists('parse_message'))
-	{
-		include(PHPBB_ROOT_PATH . 'includes/message_parser.' . PHP_EXT);
-	}
-
-	if (!function_exists('submit_post'))
-	{
-		include(PHPBB_ROOT_PATH . 'includes/functions_posting.' . PHP_EXT);
-	}
-	
+	phpbb::_include('bbcode', false, 'bbcode');
+	phpbb::_include('message_parser', false, 'parse_message');
+	phpbb::_include('functions_posting', 'submit_post', false);
+		
 	$options_global = array(
 		'enable_bbcode'			=> 1,
 		'enable_urls'			=> 1,

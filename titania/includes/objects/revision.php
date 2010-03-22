@@ -108,8 +108,61 @@ class titania_revision extends titania_database_object
 			// Update the contrib_last_update if required here
 			if (!titania::$config->require_validation)
 			{
+				// Start process to post on forum topic/post release
+				$this->contrib->get_download();
+				if ($this->contrib->contrib_release_topic_id)
+				{
+					$body = sprintf(phpbb::$user->lang[titania_types::$types[$this->contrib->contrib_type]->update_public],
+						$this->revision_version
+					);
+
+					$options = array(
+						'poster_id'				=> titania_types::$types[$this->contrib->contrib_type]->forum_robot,
+						'forum_id' 				=> titania_types::$types[$this->contrib->contrib_type]->forum_database,
+						'topic_id'				=> $this->contrib->contrib_release_topic_id,
+						'topic_title'			=> 'Re: ' . $this->contrib->contrib_name,
+						'post_text'				=> $body
+					);
+
+					if ($options['forum_id'] && $options['poster_id'])
+					{
+						phpbb_post_add($options);
+					}
+				}
+				else
+				{
+					$body = sprintf(phpbb::$user->lang[titania_types::$types[$this->contrib->contrib_type]->create_public],
+						$this->contrib->contrib_name,
+						$this->contrib->author->get_url(),
+						$this->contrib->author->username,
+						$this->contrib->contrib_desc,
+						$this->revision_version,
+						titania_url::build_url('download', array('id' => $this->attachment_id)),
+						$this->contrib->download['real_filename'],
+						$this->contrib->download['filesize'],
+						$this->contrib->get_url()
+					);
+					
+					$options = array(
+						'poster_id'				=> titania_types::$types[$this->contrib->contrib_type]->forum_robot,
+						'forum_id' 				=> titania_types::$types[$this->contrib->contrib_type]->forum_database,
+						'topic_title'			=> $this->contrib->contrib_name,
+						'post_text'				=> $body
+					);
+
+					if ($options['forum_id'] && $options['poster_id'])
+					{
+						$topic_id = phpbb_topic_add($options);
+					}
+				}
+
+				$sql_ary = array(
+					'contrib_last_update' 		=> titania::$time,
+					'contrib_release_topic_id' 	=> ($this->contrib->contrib_release_topic_id) ? $this->contrib->contrib_release_topic_id : $topic_id,
+				);
+				
 				$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-					SET contrib_last_update = ' . titania::$time . '
+					SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 					WHERE contrib_id = ' . $this->contrib_id;
 				phpbb::$db->sql_query($sql);
 			}
