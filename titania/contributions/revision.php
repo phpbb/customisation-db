@@ -55,7 +55,7 @@ if ($repack)
 		'S_REPACK'			=> true,
 	));
 }
-else
+else if (titania::$config->use_queue)
 {
 	$queue = new titania_queue();
 	// Load the message object
@@ -152,7 +152,7 @@ do{
 						$revision->revision_submitted = true;
 						$revision->submit();
 
-						if ($repack)
+						if ($repack && titania::$config->use_queue)
 						{
 							redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
 						}
@@ -200,7 +200,7 @@ do{
 		break;
 
 		case 2 :
-			if (!titania_types::$types[titania::$contrib->contrib_type]->mpv_test)
+			if (!titania_types::$types[titania::$contrib->contrib_type]->mpv_test || !titania::$config->use_queue)
 			{
 				$step = 3;
 				$try_again = true;
@@ -250,6 +250,12 @@ do{
 		break;
 	/* No Automod test for now, have to figure out how to best handle phpBB versions and some other issues
 		case 3 :
+			if (!titania_types::$types[titania::$contrib->contrib_type]->automod_test || !titania::$config->use_queue)
+			{
+				$step = 4;
+				$try_again = true;
+			}
+
 			$revision = new titania_revision(titania::$contrib, $revision_id);
 			if (!$revision->load())
 			{
@@ -290,7 +296,7 @@ do{
 			$revision->revision_submitted = true;
 			$revision->submit();
 
-			if ($repack)
+			if ($repack && titania::$config->use_queue)
 			{
 				redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
 			}
