@@ -63,11 +63,12 @@ class titania_contribution extends titania_message_object
 	public $download = array();
 
 	/**
-	 * Rating of this contribution
+	 * Rating/Screenshots of this contribution
 	 *
-	 * @var titania_rating
+	 * @var titania_rating/titania_attachment
 	 */
 	public $rating;
+	public $screenshots;
 
 	/**
 	 * is_author (true when visiting user is the author)
@@ -404,6 +405,24 @@ class titania_contribution extends titania_message_object
 	 *
 	 * @return titania_rating
 	 */
+	public function get_screenshots()
+	{
+		if ($this->screenshots)
+		{
+			return $this->screenshots;
+		}
+
+		$this->screenshots = new titania_attachment(TITANIA_SCREENSHOT, $this->contrib_id);
+		$this->screenshots->load_attachments();
+
+		return $this->screenshots;
+	}
+
+	/**
+	 * Get the rating as an object
+	 *
+	 * @return titania_rating
+	 */
 	public function get_rating()
 	{
 		if ($this->rating)
@@ -570,6 +589,12 @@ class titania_contribution extends titania_message_object
 						$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'));
 					}
 					unset($revision);
+				}
+
+				// Display Screenshots
+				if ($this->screenshots)
+				{
+					$this->screenshots->output_attachments('screenshots');
 				}
 			}
 

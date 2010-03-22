@@ -36,6 +36,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+'SCREENSHOTS' => 'Screenshots',
 	'NO_REVISION_ATTACHMENT'	=> 'Please select a file to upload',
 	'NO_REVISION_VERSION'		=> 'Please enter a version for the revision',
 	'NEW_REVISION'				=> 'New Revision',

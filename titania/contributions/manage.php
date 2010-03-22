@@ -31,6 +31,7 @@ $change_owner = request_var('change_owner', '', true); // Blame Nathan, he said 
 $contrib_categories = request_var('contrib_category', array(0));
 $active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
 $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
+$error = array();
 
 /**
 * ---------------------------- Confirm main author change ----------------------------
@@ -73,6 +74,16 @@ $message->set_settings(array(
 	'subject_name'		=> 'name',
 ));
 
+// Screenshots
+$screenshot = new titania_attachment(TITANIA_SCREENSHOT, titania::$contrib->contrib_id);
+$screenshot->load_attachments();
+$screenshot->upload(TITANIA_ATTACH_EXT_SCREENSHOTS);
+$error = array_merge($error, $screenshot->error);
+if ($screenshot->uploaded)
+{
+	titania::$contrib->post_data($message);
+}
+
 if (isset($_POST['preview']))
 {
 	titania::$contrib->post_data($message);
@@ -84,7 +95,7 @@ else if ($submit)
 	titania::$contrib->post_data($message);
 
 	// Begin Error checking
-	$error = titania::$contrib->validate($contrib_categories);
+	$error = array_merge($error, titania::$contrib->validate($contrib_categories));
 
 	if (($validate_form_key = $message->validate_form_key()) !== false)
 	{
@@ -127,6 +138,9 @@ else if ($submit)
 	// Did we succeed or have an error?
 	if (!sizeof($error))
 	{
+		// Submit screenshots
+		$screenshot->submit();
+
 		titania::$contrib->submit();
 
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
@@ -189,7 +203,8 @@ phpbb::$template->assign_vars(array(
 	'S_EDIT_SUBJECT'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 	'S_EDIT_MESSAGE'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 
-	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
+	'SCREENSHOT_UPLOADER'		=> $screenshot->parse_uploader('posting/attachments/simple.html'),
+	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
 ));

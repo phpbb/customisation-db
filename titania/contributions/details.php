@@ -23,6 +23,7 @@ load_contrib();
 
 titania::$contrib->get_download();
 titania::$contrib->get_revisions();
+titania::$contrib->get_screenshots();
 
 titania::$contrib->assign_details();
 

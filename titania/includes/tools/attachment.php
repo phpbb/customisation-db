@@ -363,7 +363,7 @@ class titania_attachment extends titania_database_object
 	*
 	* @param int $attachment_access Access level of the parent (to handle download permissions for the attachments)
 	*/
-	public function submit($attachment_access)
+	public function submit($attachment_access = TITANIA_ACCESS_PUBLIC)
 	{
 		if (!sizeof($this->attachments))
 		{
@@ -450,7 +450,7 @@ class titania_attachment extends titania_database_object
 	* @param string &$message The message
 	* @return array the parsed attachments
 	*/
-	function parse_attachments(&$message)
+	public function parse_attachments(&$message, $tpl = 'common/attachment.html')
 	{
 		if (!sizeof($this->attachments))
 		{
@@ -462,8 +462,8 @@ class titania_attachment extends titania_database_object
 		if (!isset(phpbb::$template->filename['titania_attachment_tpl']))
 		{
 			phpbb::$template->set_filenames(array(
-				'titania_attachment_tpl'	=> 'common/attachment.html')
-			);
+				'titania_attachment_tpl'	=> $tpl,
+			));
 		}
 
 		// Sort correctly
@@ -642,33 +642,209 @@ class titania_attachment extends titania_database_object
 
 		$unset_tpl = array();
 
-		preg_match_all('#<!\-\- ia([0-9]+) \-\->(.*?)<!\-\- ia\1 \-\->#', $message, $matches, PREG_PATTERN_ORDER);
-
-		$replace = array();
-		foreach ($matches[0] as $num => $capture)
+		// For inline attachments
+		if ($message)
 		{
-			// Flip index if we are displaying the reverse way
-			$index = (phpbb::$config['display_order']) ? ($tpl_size-($matches[1][$num] + 1)) : $matches[1][$num];
+			preg_match_all('#<!\-\- ia([0-9]+) \-\->(.*?)<!\-\- ia\1 \-\->#', $message, $matches, PREG_PATTERN_ORDER);
 
-			$replace['from'][] = $matches[0][$num];
-			$replace['to'][] = (isset($compiled_attachments[$index])) ? $compiled_attachments[$index] : sprintf(phpbb::$user->lang['MISSING_INLINE_ATTACHMENT'], $matches[2][array_search($index, $matches[1])]);
+			$replace = array();
+			foreach ($matches[0] as $num => $capture)
+			{
+				// Flip index if we are displaying the reverse way
+				$index = (phpbb::$config['display_order']) ? ($tpl_size-($matches[1][$num] + 1)) : $matches[1][$num];
 
-			$unset_tpl[] = $index;
-		}
+				$replace['from'][] = $matches[0][$num];
+				$replace['to'][] = (isset($compiled_attachments[$index])) ? $compiled_attachments[$index] : sprintf(phpbb::$user->lang['MISSING_INLINE_ATTACHMENT'], $matches[2][array_search($index, $matches[1])]);
 
-		if (isset($replace['from']))
-		{
-			$message = str_replace($replace['from'], $replace['to'], $message);
-		}
+				$unset_tpl[] = $index;
+			}
 
-		$unset_tpl = array_unique($unset_tpl);
+			if (isset($replace['from']))
+			{
+				$message = str_replace($replace['from'], $replace['to'], $message);
+			}
 
-		// Needed to let not display the inlined attachments at the end of the post again
-		foreach ($unset_tpl as $index)
-		{
-			unset($compiled_attachments[$index]);
+			$unset_tpl = array_unique($unset_tpl);
+
+			// Needed to let not display the inlined attachments at the end of the post again
+			foreach ($unset_tpl as $index)
+			{
+				unset($compiled_attachments[$index]);
+			}
 		}
 
 		return $compiled_attachments;
+	}
+
+	/**
+	* Simple Attachments Output
+	*/
+	public function output_attachments($template_block)
+	{
+		if (!sizeof($this->attachments))
+		{
+			return;
+		}
+
+		// Sort correctly
+		if (phpbb::$config['display_order'])
+		{
+			// Ascending sort
+			krsort($this->attachments);
+		}
+		else
+		{
+			// Descending sort
+			ksort($this->attachments);
+		}
+
+		foreach ($this->attachments as $attachment)
+		{
+			// Some basics...
+			$attachment['extension'] = strtolower(trim($attachment['extension']));
+			$filename = titania::$config->upload_path . $attachment['attachment_directory'] . '/' . utf8_basename($attachment['attachment_directory']) . '/' . utf8_basename($attachment['physical_filename']);
+			$thumbnail_filename = titania::$config->upload_path . $attachment['attachment_directory'] . '/' . utf8_basename($attachment['attachment_directory']) . '/thumb_' . utf8_basename($attachment['physical_filename']);
+
+			$filesize = get_formatted_filesize($attachment['filesize'], false);
+
+			$comment = bbcode_nl2br(censor_text($attachment['attachment_comment']));
+
+			$block_array = array(
+				'FILESIZE'			=> $filesize['value'],
+				'SIZE_LANG'			=> $filesize['unit'],
+				'DOWNLOAD_NAME'		=> utf8_basename($attachment['real_filename']),
+				'COMMENT'			=> $comment,
+			);
+
+
+			$l_downloaded_viewed = $download_link = '';
+			$display_cat = (strpos($attachment['mimetype'], 'image') === 0) ? ATTACHMENT_CATEGORY_IMAGE : ATTACHMENT_CATEGORY_NONE; // @todo Probably should add support for more types...
+
+			if ($display_cat == ATTACHMENT_CATEGORY_IMAGE)
+			{
+				if ($attachment['thumbnail'])
+				{
+					$display_cat = ATTACHMENT_CATEGORY_THUMB;
+				}
+				else
+				{
+					if (phpbb::$config['img_display_inlined'])
+					{
+						if (phpbb::$config['img_link_width'] || phpbb::$config['img_link_height'])
+						{
+							$dimension = @getimagesize($filename);
+
+							// If the dimensions could not be determined or the image being 0x0 we display it as a link for safety purposes
+							if ($dimension === false || empty($dimension[0]) || empty($dimension[1]))
+							{
+								$display_cat = ATTACHMENT_CATEGORY_NONE;
+							}
+							else
+							{
+								$display_cat = ($dimension[0] <= phpbb::$config['img_link_width'] && $dimension[1] <= phpbb::$config['img_link_height']) ? ATTACHMENT_CATEGORY_IMAGE : ATTACHMENT_CATEGORY_NONE;
+							}
+						}
+					}
+					else
+					{
+						$display_cat = ATTACHMENT_CATEGORY_NONE;
+					}
+				}
+			}
+
+			// Make some descisions based on user options being set.
+			if (($display_cat == ATTACHMENT_CATEGORY_IMAGE || $display_cat == ATTACHMENT_CATEGORY_THUMB) && !phpbb::$user->optionget('viewimg'))
+			{
+				$display_cat = ATTACHMENT_CATEGORY_NONE;
+			}
+
+			if ($display_cat == ATTACHMENT_CATEGORY_FLASH && !phpbb::$user->optionget('viewflash'))
+			{
+				$display_cat = ATTACHMENT_CATEGORY_NONE;
+			}
+
+			$download_link = titania_url::build_url('download', array('id' => $attachment['attachment_id']));
+
+			switch ($display_cat)
+			{
+				// Images
+				case ATTACHMENT_CATEGORY_IMAGE:
+					$l_downloaded_viewed = 'VIEWED_COUNT';
+
+					$block_array += array(
+						'S_IMAGE'			=> true,
+						'U_INLINE_LINK'		=> titania_url::append_url($download_link, array('mode' => 'view')),
+					);
+				break;
+
+				// Images, but display Thumbnail
+				case ATTACHMENT_CATEGORY_THUMB:
+					$l_downloaded_viewed = 'VIEWED_COUNT';
+
+					$block_array += array(
+						'S_THUMBNAIL'		=> true,
+						'THUMB_IMAGE'		=> titania_url::append_url($download_link, array('mode' => 'view', 'thumb' => 1)),
+					);
+				break;
+
+				// Windows Media Streams
+				case ATTACHMENT_CATEGORY_WM:
+					$l_downloaded_viewed = 'VIEWED_COUNT';
+
+					// Giving the filename directly because within the wm object all variables are in local context making it impossible
+					// to validate against a valid session (all params can differ)
+					// $download_link = $filename;
+
+					$block_array += array(
+						'ATTACH_ID'		=> $attachment['attachment_id'],
+						'S_WM_FILE'		=> true,
+					);
+				break;
+
+				// Real Media Streams
+				case ATTACHMENT_CATEGORY_RM:
+				case ATTACHMENT_CATEGORY_QUICKTIME:
+					$l_downloaded_viewed = 'VIEWED_COUNT';
+
+					$block_array += array(
+						'S_RM_FILE'			=> ($display_cat == ATTACHMENT_CATEGORY_RM) ? true : false,
+						'S_QUICKTIME_FILE'	=> ($display_cat == ATTACHMENT_CATEGORY_QUICKTIME) ? true : false,
+						'ATTACH_ID'			=> $attachment['attachment_id'],
+					);
+				break;
+
+				// Macromedia Flash Files
+				case ATTACHMENT_CATEGORY_FLASH:
+					list($width, $height) = @getimagesize($filename);
+
+					$l_downloaded_viewed = 'VIEWED_COUNT';
+
+					$block_array += array(
+						'S_FLASH_FILE'	=> true,
+						'WIDTH'			=> $width,
+						'HEIGHT'		=> $height,
+						'U_VIEW_LINK'	=> titania_url::append_url($download_link, array('view' => 1)),
+					);
+				break;
+
+				default:
+					$l_downloaded_viewed = 'DOWNLOAD_COUNT';
+
+					$block_array += array(
+						'S_FILE'		=> true,
+					);
+				break;
+			}
+
+			$l_download_count = (!isset($attachment['download_count']) || $attachment['download_count'] == 0) ? phpbb::$user->lang[$l_downloaded_viewed . '_NONE'] : (($attachment['download_count'] == 1) ? sprintf(phpbb::$user->lang[$l_downloaded_viewed], $attachment['download_count']) : sprintf(phpbb::$user->lang[$l_downloaded_viewed . 'S'], $attachment['download_count']));
+
+			$block_array += array(
+				'U_DOWNLOAD_LINK'		=> $download_link,
+				'L_DOWNLOAD_COUNT'		=> $l_download_count
+			);
+
+			// Output time
+			phpbb::$template->assign_block_vars($template_block, $block_array);
+		}
 	}
 }

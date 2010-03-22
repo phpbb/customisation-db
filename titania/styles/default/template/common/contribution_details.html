@@ -102,6 +102,20 @@
 				</ul>
 			<!-- ENDIF -->
 
+			<!-- IF .screenshots -->
+				<h3>{L_SCREENSHOTS}</h3>
+				<!-- BEGIN screenshots -->
+					<!-- IF screenshots.S_THUMBNAIL -->
+						<a href="{screenshots.U_DOWNLOAD_LINK}"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
+					<!-- ENDIF -->
+
+
+					<!-- IF screenshots.S_IMAGE -->
+						<img src="{screenshots.U_INLINE_LINK}" alt="{screenshots.DOWNLOAD_NAME}" onclick="viewableArea(this);" />
+					<!-- ENDIF -->
+				<!-- END screenshots -->
+			<!-- ENDIF -->
+
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
 </div>
