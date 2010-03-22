@@ -11,7 +11,7 @@
 			<!-- IF REVISION_UPLOADER -->
 				{REVISION_UPLOADER}
 
-				<!-- IF not S_REPACK -->
+				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
 				<fieldset class="fields2">
 				<dl>
 					<dt><label for="queue_allow_repack">{L_QUEUE_ALLOW_REPACK}:</label><br /><span>{L_QUEUE_ALLOW_REPACK_EXPLAIN}</span></dt>
@@ -23,7 +23,7 @@
 				</fieldset>
 				<!-- ENDIF -->
 
-				<!-- IF not S_REPACK -->
+				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
 					<!-- INCLUDE posting/posting_basic_editor.html -->
 				<!-- ENDIF -->
 			<!-- ENDIF -->

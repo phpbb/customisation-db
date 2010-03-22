@@ -204,6 +204,7 @@ do{
 			{
 				$step = 3;
 				$try_again = true;
+				continue;
 			}
 
 			$revision = new titania_revision(titania::$contrib, $revision_id);
