@@ -269,17 +269,17 @@ function phpbb_topic_add(&$options, $poll = array())
 
 	// Ugly fix, to be sure it is posted for the right user ;)
 	$old_data = phpbb::$user->data;
-	$user->data['user_id'] = $options['poster_id'];
-	$user->data['username'] = $user_data['username'];
-	$user->data['user_colour'] = $user_data['user_colour'];
-	$user->data['user_permissions'] = $user_data['user_permissions'];
-	$user->data['user_type'] = $user_data['user_type'];
+	phpbb::$user->data['user_id'] = $options['poster_id'];
+	phpbb::$user->data['username'] = $user_data['username'];
+	phpbb::$user->data['user_colour'] = $user_data['user_colour'];
+	phpbb::$user->data['user_permissions'] = $user_data['user_permissions'];
+	phpbb::$user->data['user_type'] = $user_data['user_type'];
 	
 	// Same for auth, be sure its posted with correct permissions :)
 	$old_auth = phpbb::$auth;
 	
 	phpbb::$auth = new auth();
-	phpbb::$auth->acl($user->data);		
+	phpbb::$auth->acl(phpbb::$user->data);		
 	
 	if ($options['enable_bbcode'])
 	{
@@ -412,17 +412,17 @@ function phpbb_post_add(&$options)
 
 	// Ugly fix, to be sure it is posted for the right user ;)
 	$old_data = phpbb::$user->data;
-	$user->data['user_id'] = $options['poster_id'];
-	$user->data['username'] = $user_data['username'];
-	$user->data['user_colour'] = $user_data['user_colour'];
-	$user->data['user_permissions'] = $user_data['user_permissions'];
-	$user->data['user_type'] = $user_data['user_type'];
+	phpbb::$user->data['user_id'] = $options['poster_id'];
+	phpbb::$user->data['username'] = $user_data['username'];
+	phpbb::$user->data['user_colour'] = $user_data['user_colour'];
+	phpbb::$user->data['user_permissions'] = $user_data['user_permissions'];
+	phpbb::$user->data['user_type'] = $user_data['user_type'];
 	
 	// And the permissions
 	$old_auth = phpbb::$auth;
 	
 	phpbb::$auth = new auth();
-	phpbb::$auth->acl($user->data);
+	phpbb::$auth->acl(phpbb::$user->data);
 	
 	if ($options['enable_bbcode'])
 	{	
