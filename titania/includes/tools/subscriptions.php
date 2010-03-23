@@ -20,13 +20,10 @@ define('SUBSCRIPTION_WATCH', 2);
 class titania_subscriptions
 {
 	/*
-	 * Subscribe
+	 * Is Subscribed
 	 */
-	public static function subscribe($object_type, $object_id, $user_id, $subscription_type = SUBSCRIPTION_EMAIL)
+	public static function is_subscribed($object_type, $object_id, $user_id, $subscription_type = SUBSCRIPTION_EMAIL)
 	{
-		// We are just going to force one or the other on them.
-		$subscription_type = ($subscription_type == SUBSCRIPTION_EMAIL) ? SUBSCRIPTION_EMAIL : SUBSCRIPTION_WATCH;
-
 		$sql = 'SELECT watch_object_id FROM ' . TITANIA_WATCH_TABLE . ' WHERE ' . phpbb::$db->sql_build_array('SELECT', array(
 			'watch_object_type'		=> (int) $object_type,
 			'watch_type'			=> (int) $subscription_type,
@@ -38,8 +35,18 @@ class titania_subscriptions
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 		
-		// If they are already subscribed, send them out.
-		if($row)
+		return ($row) ? true : false;
+	}
+	
+	/*
+	 * Subscribe
+	 */
+	public static function subscribe($object_type, $object_id, $user_id, $subscription_type = SUBSCRIPTION_EMAIL)
+	{
+		// We are just going to force one or the other on them.
+		$subscription_type = ($subscription_type == SUBSCRIPTION_EMAIL) ? SUBSCRIPTION_EMAIL : SUBSCRIPTION_WATCH;
+		
+		if(self::is_subscribed($object_type, $object_id, $user_id, $subscription_type))
 		{
 			return false;
 		}

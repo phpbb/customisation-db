@@ -30,5 +30,10 @@ titania::$contrib->assign_details();
 // Set tracking
 titania_tracking::track(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 
+// Are they Subscribed?
+// Waiting on Nathan for which parameters to pass along.
+// titania::_include('tools/subscriptions');
+// phpbb::$template->assign_var('IS_SUBSCRIBED', (titania_subscriptions::is_subscribed()) ? true : false);
+
 titania::page_header('CONTRIB_DETAILS');
 titania::page_footer(true, 'contributions/contribution_details.html');
