@@ -34,6 +34,13 @@ titania::$contrib->contrib_user_id = phpbb::$user->data['user_id'];
 titania::$contrib->author = new titania_author(phpbb::$user->data['user_id']);
 titania::$contrib->author->load();
 
+// Set some main vars up
+$submit = (isset($_POST['submit'])) ? true : false;
+$contrib_categories = request_var('contrib_category', array(0));
+$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
+$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
+$error = array();
+
 // Load the message object
 $message = new titania_message(titania::$contrib);
 $message->set_auth(array(
@@ -46,13 +53,13 @@ $message->set_settings(array(
 	'subject_name'		=> 'name',
 ));
 
-$submit = (isset($_POST['submit'])) ? true : false;
+// Screenshots
+$screenshot = new titania_attachment(TITANIA_SCREENSHOT, titania::$contrib->contrib_id);
+$screenshot->load_attachments();
+$screenshot->upload(TITANIA_ATTACH_EXT_SCREENSHOTS, 175);
+$error = array_merge($error, $screenshot->error);
 
-$contrib_categories = request_var('contrib_category', array(0));
-$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
-$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
-
-if (isset($_POST['preview']))
+if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 {
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
@@ -60,19 +67,15 @@ if (isset($_POST['preview']))
 		'contrib_name_clean'	=> utf8_normalize_nfc(request_var('permalink', '', true)),
 		'contrib_visible'		=> 1,
 	));
+}
 
+if (isset($_POST['preview']))
+{
 	$message->preview();
 }
 else if ($submit)
 {
-	titania::$contrib->post_data($message);
-	titania::$contrib->__set_array(array(
-		'contrib_type'			=> request_var('contrib_type', 0),
-		'contrib_name_clean'	=> utf8_normalize_nfc(request_var('permalink', '', true)),
-		'contrib_visible'		=> 1,
-	));
-
-	$error = titania::$contrib->validate($contrib_categories);
+	$error = array_merge($error, titania::$contrib->validate($contrib_categories));
 
 	if (($validate_form_key = $message->validate_form_key()) !== false)
 	{
@@ -99,6 +102,10 @@ else if ($submit)
 	{
 		titania::$contrib->submit();
 
+		// Submit screenshots
+		$screenshot->object_id = titania::$contrib->contrib_id;
+		$screenshot->submit();
+
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
 
 		// Create relations
@@ -118,6 +125,7 @@ $template->assign_vars(array(
 	'S_POST_ACTION'			=> titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/create'),
 	'S_CREATE'				=> true,
 
+	'SCREENSHOT_UPLOADER'	=> $screenshot->parse_uploader('posting/attachments/simple.html'),
 	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(request_var('permalink', '', true)),
 	'ERROR_MSG'				=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'		=> $active_coauthors,
