@@ -251,8 +251,9 @@ class titania_attachment extends titania_database_object
 	* Upload any files we attempted to attach
 	*
 	* @param string $ext_group The name of the extension group to allow (see TITANIA_ATTACH_EXT_ constants)
+	* @param bool|int $max_thumbnail_width The maximum thumbnail width (if we create one)
 	*/
-	public function upload($ext_group)
+	public function upload($ext_group, $max_thumbnail_width = false)
 	{
 		// First, we shall handle the items already attached
 		$attached_ids = request_var($this->form_name . '_attachments', array(0));
@@ -320,7 +321,7 @@ class titania_attachment extends titania_database_object
 					phpbb::_include('functions_posting', 'create_thumbnail');
 					$src = titania::$config->upload_path . utf8_basename($this->uploader->filedata['attachment_directory']) . '/' . utf8_basename($this->uploader->filedata['physical_filename']);
 					$dst = titania::$config->upload_path . utf8_basename($this->uploader->filedata['attachment_directory']) . '/thumb_' . utf8_basename($this->uploader->filedata['physical_filename']);
-					$has_thumbnail = create_thumbnail($src, $dst, $this->uploader->filedata['mimetype']);
+					$has_thumbnail = $this->create_thumbnail($src, $dst, $this->uploader->filedata['mimetype'], $max_thumbnail_width, (($max_thumbnail_width === false) ? false : 0));
 				}
 
 				$this->__set_array(array(
@@ -845,6 +846,198 @@ class titania_attachment extends titania_database_object
 
 			// Output time
 			phpbb::$template->assign_block_vars($template_block, $block_array);
+		}
+	}
+
+	/**
+	* Create a thumbnail
+	* From functions_posting (modified to include option to specify max_width/min_width)
+	*
+	* @param string $source
+	* @param string $destination
+	* @param string $mimetype
+	* @param bool|string max_width specify the max_width
+	* @param bool|string min_filesize specify the min_filesize
+	*/
+	public function create_thumbnail($source, $destination, $mimetype, $max_width = false, $min_filesize = false)
+	{
+		$min_filesize = ($min_filesize !== false) ? $min_filesize : (int) phpbb::$config['img_min_thumb_filesize'];
+		$img_filesize = (file_exists($source)) ? @filesize($source) : false;
+
+		if (!$img_filesize || $img_filesize <= $min_filesize)
+		{
+			return false;
+		}
+
+		$dimension = @getimagesize($source);
+
+		if ($dimension === false)
+		{
+			return false;
+		}
+
+		list($width, $height, $type, ) = $dimension;
+
+		if (empty($width) || empty($height))
+		{
+			return false;
+		}
+
+		list($new_width, $new_height) = $this->get_img_size_format($width, $height, $max_width);
+
+		// Do not create a thumbnail if the resulting width/height is bigger than the original one
+		if ($new_width >= $width && $new_height >= $height)
+		{
+			return false;
+		}
+
+		$used_imagick = false;
+
+		// Only use imagemagick if defined and the passthru function not disabled
+		if (phpbb::$config['img_imagick'] && function_exists('passthru'))
+		{
+			if (substr(phpbb::$config['img_imagick'], -1) !== '/')
+			{
+				phpbb::$config['img_imagick'] .= '/';
+			}
+
+			@passthru(escapeshellcmd(phpbb::$config['img_imagick']) . 'convert' . ((defined('PHP_OS') && preg_match('#^win#i', PHP_OS)) ? '.exe' : '') . ' -quality 85 -geometry ' . $new_width . 'x' . $new_height . ' "' . str_replace('\\', '/', $source) . '" "' . str_replace('\\', '/', $destination) . '"');
+
+			if (file_exists($destination))
+			{
+				$used_imagick = true;
+			}
+		}
+
+		if (!$used_imagick)
+		{
+			$type = get_supported_image_types($type);
+
+			if ($type['gd'])
+			{
+				// If the type is not supported, we are not able to create a thumbnail
+				if ($type['format'] === false)
+				{
+					return false;
+				}
+
+				switch ($type['format'])
+				{
+					case IMG_GIF:
+						$image = @imagecreatefromgif($source);
+					break;
+
+					case IMG_JPG:
+						@ini_set('gd.jpeg_ignore_warning', 1);
+						$image = @imagecreatefromjpeg($source);
+					break;
+
+					case IMG_PNG:
+						$image = @imagecreatefrompng($source);
+					break;
+
+					case IMG_WBMP:
+						$image = @imagecreatefromwbmp($source);
+					break;
+				}
+
+				if (empty($image))
+				{
+					return false;
+				}
+
+				if ($type['version'] == 1)
+				{
+					$new_image = imagecreate($new_width, $new_height);
+
+					if ($new_image === false)
+					{
+						return false;
+					}
+
+					imagecopyresized($new_image, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+				}
+				else
+				{
+					$new_image = imagecreatetruecolor($new_width, $new_height);
+
+					if ($new_image === false)
+					{
+						return false;
+					}
+
+					// Preserve alpha transparency (png for example)
+					@imagealphablending($new_image, false);
+					@imagesavealpha($new_image, true);
+
+					imagecopyresampled($new_image, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+				}
+
+				// If we are in safe mode create the destination file prior to using the gd functions to circumvent a PHP bug
+				if (@ini_get('safe_mode') || @strtolower(ini_get('safe_mode')) == 'on')
+				{
+					@touch($destination);
+				}
+
+				switch ($type['format'])
+				{
+					case IMG_GIF:
+						imagegif($new_image, $destination);
+					break;
+
+					case IMG_JPG:
+						imagejpeg($new_image, $destination, 90);
+					break;
+
+					case IMG_PNG:
+						imagepng($new_image, $destination);
+					break;
+
+					case IMG_WBMP:
+						imagewbmp($new_image, $destination);
+					break;
+				}
+
+				imagedestroy($new_image);
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		if (!file_exists($destination))
+		{
+			return false;
+		}
+
+		phpbb_chmod($destination, CHMOD_READ | CHMOD_WRITE);
+
+		return true;
+	}
+
+	/**
+	* Calculate the needed size for Thumbnail
+	* From functions_posting (modified to include option to specify max_width)
+	*/
+	function get_img_size_format($width, $height, $max_width = false)
+	{
+		// Maximum Width the Image can take
+		$max_width = ($max_width !== false) ? $max_width : ((phpbb::$config['img_max_thumb_width']) ? phpbb::$config['img_max_thumb_width'] : 400);
+
+		if ($width > $height)
+		{
+			return array(
+				round($width * ($max_width / $width)),
+				round($height * ($max_width / $width))
+			);
+		}
+		else
+		{
+			return array(
+				round($width * ($max_width / $height)),
+				round($height * ($max_width / $height))
+			);
 		}
 	}
 }

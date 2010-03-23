@@ -9,16 +9,9 @@
 <!-- BEGIN attach_row -->
 	<hr class="dashed" />
 	<dl>
-		<dd><a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a></dd>
-		<dd style="margin-top: 5px;">
-			<!-- IF not attach_row.S_DELETED -->
-				<!-- IF S_INLINE_ATTACHMENT_OPTIONS --><input type="button" value="{L_PLACE_INLINE}" onclick="attach_inline({attach_row.ATTACH_ID}, '{attach_row.A_FILENAME}');" class="button2" />&nbsp; <!-- ENDIF -->
-				<input type="submit" name="delete_file[{attach_row.ATTACH_ID}]" value="{L_DELETE_FILE}" class="button2" />
-			<!-- ELSE -->
-				<p class="error">{L_FILE_DELETED}</p>
-				<input type="submit" name="undelete_file[{attach_row.ATTACH_ID}]" value="{L_UNDELETE_FILE}" class="button2" />
-				<input type="hidden" name="delete_file[{attach_row.ATTACH_ID}]" value="1" />
-			<!-- ENDIF -->
+		<dd>
+			<a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a> &nbsp;
+			<input type="submit" name="delete_file[{attach_row.ATTACH_ID}]" value="{L_DELETE_FILE}" class="button2" />
 			<input type="hidden" name="{FORM_NAME}_attachments[]" value="{attach_row.ATTACH_ID}" />
 		</dd>
 	</dl>

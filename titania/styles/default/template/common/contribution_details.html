@@ -1,7 +1,15 @@
 <div class="left-column">
 	<div class="container demo">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
-			<div class="no-screenshot">{L_NO_SCREENSHOT}</div>
+			<!-- IF .screenshots -->
+				<!-- BEGIN screenshots(0,0) -->
+					<!-- IF screenshots.S_THUMBNAIL -->
+						<a href="{screenshots.U_DOWNLOAD_LINK}"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
+					<!-- ENDIF -->
+				<!-- END screenshots -->
+			<!-- ELSE -->
+				<div class="no-screenshot">{L_NO_SCREENSHOT}</div>
+			<!-- ENDIF -->
 			<!-- IF U_VIEW_DEMO --><a href="{U_VIEW_DEMO}">{L_VIEW_DEMO}</a><!-- ENDIF -->
 
 			<!-- IF U_DOWNLOAD -->
