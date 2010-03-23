@@ -61,7 +61,7 @@ class reindex
 			break;
 
 			case 3 :
-				trigger_error('Done!');
+				trigger_back('Done!');
 			break;
 		}
 
@@ -76,6 +76,6 @@ class reindex
 			meta_refresh(0, titania_url::build_url('manage/administration', array('t' => 'reindex', 'section' => $section, 'start' => ($start + $limit), 'submit' => 1, 'hash' => generate_link_hash('manage'))));
 		}
 
-		trigger_error($display_message . ' - section ' . $section . ' of 2' . ((($start + $limit) < $total) ? ' - part ' . ($start + $limit) . ' of ' . $total : ''));
+		trigger_error($display_message . ' - section ' . $section . ' of 2 - ' . ((($start + $limit) < $total) ? 'part ' . ($start + $limit) . ' of ' . $total : 'Done'));
 	}
 }

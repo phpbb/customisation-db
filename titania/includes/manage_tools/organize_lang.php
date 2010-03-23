@@ -68,7 +68,7 @@ class organize_lang
 
 		organize_lang($file);
 
-		trigger_error('ORGANIZE_LANG_SUCCESS');
+		trigger_back('ORGANIZE_LANG_SUCCESS');
 	}
 }
 
@@ -216,7 +216,7 @@ function organize_lang($file, $skip_errors = false)
 			return;
 		}
 
-		trigger_error('Bad Language File. language/' . $file);
+		trigger_back('Bad Language File. language/' . $file);
 	}
 
 	// setup the $output var
@@ -251,7 +251,7 @@ function organize_lang($file, $skip_errors = false)
 				return;
 			}
 
-			trigger_error('Please make sure you are using UNIX line endings.');
+			trigger_back('Please make sure you are using UNIX line endings.');
 		}
 	}
 

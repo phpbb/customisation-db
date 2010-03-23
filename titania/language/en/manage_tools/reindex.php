@@ -38,6 +38,6 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'REINDEX'					=> 'Reindex Search',
-	'REINDEX_CONFIRM'			=> 'Are you sure you\'d like to begin reindexing the search system?  This can take a significantly long period of time.',
+	'REINDEX'			=> 'Reindex Search',
+	'REINDEX_CONFIRM'	=> 'Are you sure you\'d like to begin reindexing the search system?  This can take a significantly long period of time.',
 ));

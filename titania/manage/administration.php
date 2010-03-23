@@ -169,3 +169,12 @@ else
 	titania::page_header('ADMINISTRATION');
 	titania::page_footer(true, 'manage/administration.html');
 }
+
+function trigger_back($message)
+{
+	$message = (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message;
+
+	$message .= '<br /><br /><a href="' . titania_url::build_url('manage/administration') . '">' . phpbb::$user->lang['BACK'] . '</a>';
+
+	trigger_error($message);
+}
