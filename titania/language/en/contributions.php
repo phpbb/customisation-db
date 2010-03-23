@@ -36,31 +36,11 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'SCREENSHOTS' => 'Screenshots',
-'SELECT_PHPBB_BRANCH' => 'Select phpBB branch',
-'PHPBB_BRANCH' => 'phpBB Branch',
-'PHPBB_VERSION' => 'phpBB Version',
-'PHPBB_BRANCH_EXPLAIN' => 'Select the phpBB branch that this revision supports.',
-'NO_PHPBB_BRANCH' => 'You must select a phpBB branch.',
-	'NO_REVISION_ATTACHMENT'	=> 'Please select a file to upload',
-	'NO_REVISION_VERSION'		=> 'Please enter a version for the revision',
-	'NEW_REVISION'				=> 'New Revision',
-	'REVISION_IN_QUEUE'			=> 'You already have a revision in the validation queue.  You must wait until the previous revision is approved or denied to submit a new one.',
-	'SUBDIRECTORY_LIMIT'		=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
-	'COULD_NOT_FIND_ROOT'		=> 'Could not find the main directory.  Please ensure there is an xml file with the name install in it somewhere in the zip package.',
-	'REVISION_SUBMITTED'		=> 'The revision has been submitted successfully.',
-	'SUBMIT_NEW_REVISION'		=> 'Submit and add new revision',
-	'MPV_TEST_FAILED'			=> 'Sorry, the automatic MPV test failed and your MPV test results are not available.  Please continue.',
-	'MPV_TEST_FAILED_QUEUE_MSG'	=> 'Automated MPV test failed.  [url=%s]Click here to attempt running MPV automatically again[/url]',
-	'NEW_REVISION_SUBMITTED'	=> 'New revision has been submitted successfully!',
-	'MPV_TEST'					=> 'The Mod will be tested against MPV and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
-	'MPV_RESULTS'				=> '<strong>Please check over the MPV results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
-	'AUTOMOD_RESULTS'			=> '<strong>Please check over the AutoMod install results and make sure that nothing needs to be fixed.<br /><br />If an error comes up and you are certain that the error is incorrect, just hit continue below.</strong>',
-	'AUTOMOD_TEST'				=> 'The Mod will be tested against AutoMod and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
-	'CANNOT_ADD_SELF_COAUTHOR'	=> 'You are the main author, you can not add yourself to the list of co-authors.',
-	'NO_QUEUE_DISCUSSION_TOPIC'	=> 'No Queue Discussion topic could be found.  Have you submitted any revision for this contribution yet (it will be created when you do so)?',
+	'AUTOMOD_RESULTS'					=> '<strong>Please check over the AutoMod install results and make sure that nothing needs to be fixed.<br /><br />If an error comes up and you are certain that the error is incorrect, just hit continue below.</strong>',
+	'AUTOMOD_TEST'						=> 'The Mod will be tested against AutoMod and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
+
+	'CANNOT_ADD_SELF_COAUTHOR'			=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CLEANED_CONTRIB'					=> 'Cleaned contribution',
-	'CO_AUTHORS'						=> 'Co-Authors',
 	'CONTRIB'							=> 'Contribution',
 	'CONTRIBUTIONS'						=> 'Contributions',
 	'CONTRIB_ACTIVE_AUTHORS'			=> 'Active Co-Authors',
@@ -90,7 +70,9 @@ $lang = array_merge($lang, array(
 	'CONTRIB_TYPE'						=> 'Contribution Type',
 	'CONTRIB_UPDATED'					=> 'The contribution has been successfully updated.',
 	'CONTRIB_UPDATE_DATE'				=> 'Last updated',
+	'COULD_NOT_FIND_ROOT'				=> 'Could not find the main directory.  Please ensure there is an xml file with the name install in it somewhere in the zip package.',
 	'COULD_NOT_FIND_USERS'				=> 'Could not find the following users: %s',
+	'CO_AUTHORS'						=> 'Co-Authors',
 
 	'DOWNLOADS_PER_DAY'					=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'					=> 'Total Downloads',
@@ -110,28 +92,7 @@ $lang = array_merge($lang, array(
 	'LOGIN_EXPLAIN_CONTRIB'				=> 'In order to create a new contribution you need to be registered',
 
 	'MANAGE_CONTRIBUTION'				=> 'Manage Contribution',
-
-	'NEW_CONTRIBUTION'					=> 'New Contribution',
-	'NEW_TOPIC'							=> 'New Topic',
-	'NOT_VALIDATED'						=> 'Not Validated',
-	'NO_CATEGORY'						=> 'The selected category does not exist',
-	'NO_SCREENSHOT'						=> 'No screenshot',
-
-	'REVISION'							=> 'Revision',
-	'REVISIONS'							=> 'Revisions',
-	'REVISION_NAME'						=> 'Revision Name',
-	'REVISION_VERSION'					=> 'Revision Version',
-	'QUEUE_ALLOW_REPACK'				=> 'Allow Repacking',
-	'QUEUE_ALLOW_REPACK_EXPLAIN'		=> 'Allow this contribution to be repacked for small errors?',
-	'QUEUE_NOTES'						=> 'Validation Notes',
-	'QUEUE_NOTES_EXPLAIN'				=> 'Message to the team.',
-
-	'SELECT_CONTRIB_TYPE'				=> '-- Select contribution type --',
-
-	'VIEW_DEMO'							=> 'View Demo',
-
-	'WRONG_CATEGORY'					=> 'You can only put this contribution in the same category type as the contribution type.',
-	'MOD_CREATE_PUBLIC'				=> '[b]Modification name[/b]: %1$s
+	'MOD_CREATE_PUBLIC'					=> '[b]Modification name[/b]: %1$s
 [b]Author:[/b] [url=%2$s]%3$s[/url]
 [b]Modification description[/b]: %4$s
 [b]Modification version[/b]: %5$s
@@ -143,9 +104,44 @@ $lang = array_merge($lang, array(
 [b]Modification overview page:[/b] [url=%9$s]View[/url]
 
 [color=blue][b]Support for this modification needs to be asked within this topic. The phpBB Team is not responsible or required to give anyone support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB MODifications Team may not be able to provide support.[/b][/color]',
-
-	'MOD_UPDATE_PUBLIC' => '[color=darkred][b]MOD Updated to version %s
+	'MOD_UPDATE_PUBLIC'					=> '[color=darkred][b]MOD Updated to version %s
 See first post for Download Link[/b][/color]',
+	'MPV_RESULTS'						=> '<strong>Please check over the MPV results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
+	'MPV_TEST'							=> 'The Mod will be tested against MPV and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
+	'MPV_TEST_FAILED'					=> 'Sorry, the automatic MPV test failed and your MPV test results are not available.  Please continue.',
+	'MPV_TEST_FAILED_QUEUE_MSG'			=> 'Automated MPV test failed.  [url=%s]Click here to attempt running MPV automatically again[/url]',
+
+	'NEW_CONTRIBUTION'					=> 'New Contribution',
+	'NEW_REVISION'						=> 'New Revision',
+	'NEW_REVISION_SUBMITTED'			=> 'New revision has been submitted successfully!',
+	'NEW_TOPIC'							=> 'New Topic',
+	'NOT_VALIDATED'						=> 'Not Validated',
+	'NO_CATEGORY'						=> 'The selected category does not exist',
+	'NO_PHPBB_BRANCH'					=> 'You must select a phpBB branch.',
+	'NO_QUEUE_DISCUSSION_TOPIC'			=> 'No Queue Discussion topic could be found.  Have you submitted any revision for this contribution yet (it will be created when you do so)?',
+	'NO_REVISION_ATTACHMENT'			=> 'Please select a file to upload',
+	'NO_REVISION_VERSION'				=> 'Please enter a version for the revision',
+	'NO_SCREENSHOT'						=> 'No screenshot',
+
+	'PHPBB_BRANCH'						=> 'phpBB Branch',
+	'PHPBB_BRANCH_EXPLAIN'				=> 'Select the phpBB branch that this revision supports.',
+	'PHPBB_VERSION'						=> 'phpBB Version',
+
+	'QUEUE_ALLOW_REPACK'				=> 'Allow Repacking',
+	'QUEUE_ALLOW_REPACK_EXPLAIN'		=> 'Allow this contribution to be repacked for small errors?',
+	'QUEUE_NOTES'						=> 'Validation Notes',
+	'QUEUE_NOTES_EXPLAIN'				=> 'Message to the team.',
+
+	'REVISION'							=> 'Revision',
+	'REVISIONS'							=> 'Revisions',
+	'REVISION_IN_QUEUE'					=> 'You already have a revision in the validation queue.  You must wait until the previous revision is approved or denied to submit a new one.',
+	'REVISION_NAME'						=> 'Revision Name',
+	'REVISION_SUBMITTED'				=> 'The revision has been submitted successfully.',
+	'REVISION_VERSION'					=> 'Revision Version',
+
+	'SCREENSHOTS'						=> 'Screenshots',
+	'SELECT_CONTRIB_TYPE'				=> '-- Select contribution type --',
+	'SELECT_PHPBB_BRANCH'				=> 'Select phpBB branch',
 	'STYLE_CREATE_PUBLIC'				=> '[b]Style name[/b]: %1$s
 [b]Author:[/b] [url=%2$s]%3$s[/url]
 [b]Style description[/b]: %4$s
@@ -158,7 +154,12 @@ See first post for Download Link[/b][/color]',
 [b]Style overview page:[/b] [url=%9$s]View[/url]
 
 [color=blue][b]Support for this Style needs to be asked within this topic. The phpBB Team is not responsible or required to give anyone support for this Style. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]',
-
-	'STYLE_UPDATE_PUBLIC' => '[color=darkred][b]Style Updated to version %s
+	'STYLE_UPDATE_PUBLIC'				=> '[color=darkred][b]Style Updated to version %s
 See first post for Download Link[/b][/color]',
+	'SUBDIRECTORY_LIMIT'				=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
+	'SUBMIT_NEW_REVISION'				=> 'Submit and add new revision',
+
+	'VIEW_DEMO'							=> 'View Demo',
+
+	'WRONG_CATEGORY'					=> 'You can only put this contribution in the same category type as the contribution type.',
 ));

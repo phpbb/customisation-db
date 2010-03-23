@@ -1,0 +1,26 @@
+<!-- INCLUDE manage/manage_header.html -->
+
+<h3 class="section-name">{PAGE_TITLE}</h3>
+
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<!-- IF .tools -->
+	<fieldset>
+		<legend>{L_ADMINISTRATION}</legend>
+		<!-- BEGIN tools -->
+			<form action="{S_ACTION}" method="post">
+			<dl>
+				<dt><label for="action_{tools.TOOL}">{tools.L_TITLE}</label></dt>
+				<dd><input type="hidden" name="t" value="{tools.TOOL}" /><input class="button2" type="submit" id="action_{tools.TOOL}" name="action_{tools.TOOL}" value="{L_RUN}" /></dd>
+			</dl>
+			</form>
+		<!-- END tools -->
+	</fieldset>
+	<!-- ENDIF -->
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+
+<!-- INCLUDE manage/manage_footer.html -->

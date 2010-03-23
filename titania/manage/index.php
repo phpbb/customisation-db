@@ -47,6 +47,11 @@ $nav_ary = array(
 		'url'		=> titania_url::build_url('manage/queue_discussion'),
 		'auth'		=> (sizeof(titania_types::find_authed('queue_discussion')) && titania::$config->use_queue) ? true : false,
 	),
+	'administration' => array(
+		'title'		=> 'ADMINISTRATION',
+		'url'		=> titania_url::build_url('manage/administration'),
+		'auth'		=> (phpbb::$auth->acl_get('u_titania_admin')) ? true : false,
+	),
 );
 
 // Display nav menu
@@ -69,6 +74,7 @@ switch ($page)
 	case 'queue' :
 	case 'queue_discussion' :
 	case 'attention' :
+	case 'administration' :
 		include(TITANIA_ROOT . 'manage/' . $page . '.' . PHP_EXT);
 	break;
 

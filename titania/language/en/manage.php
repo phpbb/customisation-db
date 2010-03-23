@@ -36,53 +36,25 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'NO_ATTENTION_TYPE'		=> 'Inappropriate attention type.',
-	'OPEN_ITEMS'			=> 'Open Items',
-	'CLOSED_ITEMS'			=> 'Closed Items',
-	'MARK_NO_PROGRESS'		=> 'Mark no Progress',
-	'MARK_IN_PROGRESS'		=> 'Mark in Progress',
-	'QUEUE_DISCUSSION_TOPIC'	=> 'Queue Discussion Topic',
-	'SUBMIT_TIME'			=> 'Submission Time',
-	'NO_QUEUE_ITEM'			=> 'Queue item does not exist.',
-	'NO_ATTENTION'			=> 'No items need attention.',
-	'ATTENTION'				=> 'Attention',
-	'QUEUE_REPLY_MOVE'		=> 'Moved from %1$s to %2$s',
-	'REPORTED'				=> 'Reported',
-	'UNAPPROVED'			=> 'Unapproved',
-	'UNKNOWN'				=> 'Unknown',
-	'QUEUE_REPLY_IN_PROGRESS'	=> 'Marked as in-progress',
-	'QUEUE_REPLY_NO_PROGRESS'	=> 'Marked as not in-progress',
-	'QUEUE_REPLY_APPROVED'	=> 'Revision %1$s <strong>approved</strong for reason:<br /><br />[quote]%2$s[/quote]',
-	'QUEUE_REPLY_DENIED'	=> 'Revision %1$s <strong>denied</strong> for reason:<br /><br />[quote]%2$s[/quote]',
-	'VALIDATION_QUEUE'		=> 'Validation Queue',
-	'VALIDATION_NOTES'		=> 'Validation Notes',
-	'VALIDATION_MPV'		=> 'MPV Notes',
-	'VALIDATION'			=> 'Validation',
-	'VALIDATION_SUBMISSION'	=> 'Validation Submission',
-	'RETEST_MPV'			=> 'Re-test MPV',
-	'RETEST_AUTOMOD'		=> 'Re-test Automod',
-	'REPACK'				=> 'Repack',
-	'QUEUE_NEW'				=> 'New',
-	'QUEUE_ATTENTION'		=> 'Attention',
-	'QUEUE_REPACK'			=> 'Repack',
-	'QUEUE_VALIDATING'		=> 'Validating',
-	'QUEUE_TESTING'			=> 'Testing',
-	'QUEUE_APPROVE'			=> 'Awaiting Approval',
-	'QUEUE_DENY'			=> 'Awaiting Denial',
-	'CHANGE_STATUS'			=> 'Change Status/Move',
-	'APPROVE'				=> 'Approve',
-	'DENY'					=> 'Deny',
-	'ALTER_NOTES'			=> 'Alter Validation Notes',
-	'MOVE_QUEUE'			=> 'Move Queue',
-	'MOVE_QUEUE_CONFIRM'	=> 'Select the new queue location and confirm.',
-	'EDIT_VALIDATION_NOTES'	=> 'Edit Validation Notes',
-	'APPROVE_QUEUE'			=> 'Approve',
-	'APPROVE_QUEUE_CONFIRM'	=> 'Are you sure you want to <strong>approve</strong> this item?',
-	'DENY_QUEUE' 			=> 'Deny',
-	'DENY_QUEUE_CONFIRM'	=> 'Are you sure you want to <strong>deny</strong> this item?',
-	'VALIDATION_MESSAGE' => 'Validation Message/Reason',
-	'MOD_VALIDATION'		=> '[phpBB MOD-Validation] %1$s %2$s',
-	'STYLE_VALIDATION'		=> '[phpBB Style-Validation] %1$s %2$s',
+	'ADMINISTRATION'					=> 'Administration',
+	'ALTER_NOTES'						=> 'Alter Validation Notes',
+	'APPROVE'							=> 'Approve',
+	'APPROVE_QUEUE'						=> 'Approve',
+	'APPROVE_QUEUE_CONFIRM'				=> 'Are you sure you want to <strong>approve</strong> this item?',
+	'ATTENTION'							=> 'Attention',
+
+	'CHANGE_STATUS'						=> 'Change Status/Move',
+	'CLOSED_ITEMS'						=> 'Closed Items',
+
+	'DENY'								=> 'Deny',
+	'DENY_QUEUE'						=> 'Deny',
+	'DENY_QUEUE_CONFIRM'				=> 'Are you sure you want to <strong>deny</strong> this item?',
+
+	'EDIT_VALIDATION_NOTES'				=> 'Edit Validation Notes',
+
+	'MARK_IN_PROGRESS'					=> 'Mark in Progress',
+	'MARK_NO_PROGRESS'					=> 'Mark no Progress',
+	'MOD_VALIDATION'					=> '[phpBB MOD-Validation] %1$s %2$s',
 	'MOD_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your modication to the phpBB.com modifications database. After careful inspection by the MOD Team your MOD has been approved and released into our modifications database.
 
 It is our hope that you will provide a basic level of support for this modification and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
@@ -92,7 +64,7 @@ It is our hope that you will provide a basic level of support for this modificat
 
 Sincerely,
 phpBB MOD Team',
-	'MOD_VALIDATION_MESSAGE_DENY'	=> 'Hello,
+	'MOD_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
 As you may know all modifications submitted to the phpBB modification database must be validated and approved by members of the phpBB Team.
 
@@ -130,16 +102,43 @@ For help with writing phpBB MODs, the following resources exist:
 
 Thank you,
 phpBB MOD Team',
+	'MOVE_QUEUE'						=> 'Move Queue',
+	'MOVE_QUEUE_CONFIRM'				=> 'Select the new queue location and confirm.',
 
+	'NO_ATTENTION'						=> 'No items need attention.',
+	'NO_ATTENTION_TYPE'					=> 'Inappropriate attention type.',
+	'NO_QUEUE_ITEM'						=> 'Queue item does not exist.',
 
-	'STYLE_VALIDATION_MESSAGE_APPROVE' => 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Styles Team your style has been approved and released into our styles database.
+	'OPEN_ITEMS'						=> 'Open Items',
+
+	'QUEUE_APPROVE'						=> 'Awaiting Approval',
+	'QUEUE_ATTENTION'					=> 'Attention',
+	'QUEUE_DENY'						=> 'Awaiting Denial',
+	'QUEUE_DISCUSSION_TOPIC'			=> 'Queue Discussion Topic',
+	'QUEUE_NEW'							=> 'New',
+	'QUEUE_REPACK'						=> 'Repack',
+	'QUEUE_REPLY_APPROVED'				=> 'Revision %1$s <strong>approved</strong for reason:<br /><br />[quote]%2$s[/quote]',
+	'QUEUE_REPLY_DENIED'				=> 'Revision %1$s <strong>denied</strong> for reason:<br /><br />[quote]%2$s[/quote]',
+	'QUEUE_REPLY_IN_PROGRESS'			=> 'Marked as in-progress',
+	'QUEUE_REPLY_MOVE'					=> 'Moved from %1$s to %2$s',
+	'QUEUE_REPLY_NO_PROGRESS'			=> 'Marked as not in-progress',
+	'QUEUE_TESTING'						=> 'Testing',
+	'QUEUE_VALIDATING'					=> 'Validating',
+
+	'REPACK'							=> 'Repack',
+	'REPORTED'							=> 'Reported',
+	'RETEST_AUTOMOD'					=> 'Re-test Automod',
+	'RETEST_MPV'						=> 'Re-test MPV',
+
+	'STYLE_VALIDATION'					=> '[phpBB Style-Validation] %1$s %2$s',
+	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Styles Team your style has been approved and released into our styles database.
 
 It is our hope that you will provide a basic level of support for this style and keep it updated as required for future releases of phpBB. We appreciate your work and contribution to the community.
 [b]Notes from the Styles Team about your style:[/b]
 [quote]%s[/quote]
 
 Sincerely,',
-	'STYLE_VALIDATION_MESSAGE_DENY' => 'Hello,
+	'STYLE_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
 As you may know all styles submitted to the phpBB styles database must be validated and approved by members of the phpBB Team.
 
@@ -152,4 +151,15 @@ If you feel this denial is not warranted please contact the Styles Team Leader.
 
 Sincerely,
 The Styles Team',
+	'SUBMIT_TIME'						=> 'Submission Time',
+
+	'UNAPPROVED'						=> 'Unapproved',
+	'UNKNOWN'							=> 'Unknown',
+
+	'VALIDATION'						=> 'Validation',
+	'VALIDATION_MESSAGE'				=> 'Validation Message/Reason',
+	'VALIDATION_MPV'					=> 'MPV Notes',
+	'VALIDATION_NOTES'					=> 'Validation Notes',
+	'VALIDATION_QUEUE'					=> 'Validation Queue',
+	'VALIDATION_SUBMISSION'				=> 'Validation Submission',
 ));

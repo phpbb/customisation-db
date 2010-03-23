@@ -843,6 +843,23 @@ $versions = array(
 		),
 	),
 
+	'0.1.54' => array(
+		'permission_add' => array(
+			'u_titania_admin',
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array(
+				'u_titania_admin',
+				'u_titania_admin',
+			)),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
+				'u_titania_admin',
+				'u_titania_admin',
+			)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
