@@ -89,32 +89,32 @@
 
 <!-- IF .screenshots or .revisions -->
 <div class="container">
-	<div class="inner"><span class="corners-top main-corners"><span></span></span>	
+	<div class="inner"><span class="corners-top main-corners"><span></span></span>
 		<div id="extratabs">
 		    <ul>
 		        <!-- IF .screenshots --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
-		        <!-- IF .revisions --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
+		        <!-- IF .revisions or U_NEW_REVISION --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
 		    </ul>
-		    
+
 		    <!-- IF .screenshots -->
 		    <div id="screenshots-panel">
 				<!-- BEGIN screenshots -->
 					<!-- IF screenshots.S_THUMBNAIL -->
 						<a href="{screenshots.U_DOWNLOAD_LINK}"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
 					<!-- ENDIF -->
-		
+
 					<!-- IF screenshots.S_IMAGE -->
 						<img src="{screenshots.U_INLINE_LINK}" alt="{screenshots.DOWNLOAD_NAME}" onclick="viewableArea(this);" />
 					<!-- ENDIF -->
 				<!-- END screenshots -->
 		    </div>
 		    <!-- ENDIF -->
-		    
-		    <!-- IF .revisions -->
+
+		    <!-- IF .revisions or U_NEW_REVISION -->
 		    <div id="revisions-panel">
 				<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
 				<div class="clear"></div>
-		
+
 				<ul class="topiclist">
 					<li class="header">
 						<dl>
