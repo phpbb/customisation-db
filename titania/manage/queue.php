@@ -52,9 +52,17 @@ if ($queue_type === false)
 	{
 		foreach ($authed as $type_id)
 		{
+			$sql = 'SELECT COUNT(queue_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
+				WHERE queue_type = ' . (int) $type_id . '
+					AND queue_status = 1';
+			phpbb::$db->sql_query($sql);
+			$cnt = phpbb::$db->sql_fetchfield('cnt');
+			phpbb::$db->sql_freeresult();
+			
 			phpbb::$template->assign_block_vars('categories', array(
 				'U_VIEW_CATEGORY'	=> titania_url::append_url($base_url, array('queue' => titania_types::$types[$type_id]->url)),
 				'CATEGORY_NAME'		=> titania_types::$types[$type_id]->lang,
+				'CATEGORY_CONTRIBS' => $cnt,
 			));
 		}
 
