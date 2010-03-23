@@ -260,15 +260,18 @@ class contribs_overlord
 			titania_topic_folder_img($folder_img, $folder_alt, 0, titania_tracking::is_unread(TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update));
 
 			// Only get unique phpBB versions supported
-			$contrib_versions = array();
-			foreach ($row['phpbb_versions'] as $version_row)
+			if (isset($row['phpbb_versions']))
 			{
-				if (!isset($contrib_versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']]))
+				$contrib_versions = array();
+				foreach ($row['phpbb_versions'] as $version_row)
 				{
-					$contrib_versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']] = $version_row;
+					if (!isset($contrib_versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']]))
+					{
+						$contrib_versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']] = $version_row;
+					}
 				}
+				$row['phpbb_versions'] = array_values($contrib_versions);
 			}
-			$row['phpbb_versions'] = array_values($contrib_versions);
 
 			phpbb::$template->assign_block_vars($blockname, array_merge($contrib->assign_details(true, true), array(
 				'FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
@@ -277,14 +280,17 @@ class contribs_overlord
 				'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
 				'FOLDER_IMG_WIDTH'			=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 				'FOLDER_IMG_HEIGHT'			=> phpbb::$user->img($folder_img, '', false, '', 'height'),
-				'PHPBB_VERSION'				=> (sizeof($row['phpbb_versions']) == 1) ? $versions[$row['phpbb_versions'][0]['phpbb_version_branch'] . $row['phpbb_versions'][0]['phpbb_version_revision']] : '',
+				'PHPBB_VERSION'				=> (isset($row['phpbb_versions']) && sizeof($row['phpbb_versions']) == 1) ? $versions[$row['phpbb_versions'][0]['phpbb_version_branch'] . $row['phpbb_versions'][0]['phpbb_version_revision']] : '',
 			)));
 
-			foreach ($row['phpbb_versions'] as $version_row)
+			if (isset($row['phpbb_versions']))
 			{
-				phpbb::$template->assign_block_vars($blockname . '.phpbb_versions', array(
-					'NAME'		=> $versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']],
-				));
+				foreach ($row['phpbb_versions'] as $version_row)
+				{
+					phpbb::$template->assign_block_vars($blockname . '.phpbb_versions', array(
+						'NAME'		=> $versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']],
+					));
+				}
 			}
 
 			$contrib_type = $row['contrib_type'];
