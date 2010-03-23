@@ -145,13 +145,13 @@ if ($plugin->tool_id)
 		}
 		else if (is_string($options))
 		{
-			if (titania::confirm_box(true))
+			if (titania::confirm_box(true) || (isset($_GET['submit']) && check_link_hash(request_var('hash', ''), 'manage')))
 			{
 				$tool->run_tool();
 			}
 			else
 			{
-				titania::confirm_box(false, $options);
+				titania::confirm_box(false, $options, titania_url::build_url('manage/administration', array('t' => $plugin->tool_id)));
 			}
 		}
 		else

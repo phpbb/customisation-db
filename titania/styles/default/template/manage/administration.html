@@ -7,7 +7,6 @@
 
 	<!-- IF .tools -->
 	<fieldset>
-		<legend>{L_ADMINISTRATION}</legend>
 		<!-- BEGIN tools -->
 			<form action="{S_ACTION}" method="post">
 			<dl>
@@ -15,6 +14,7 @@
 				<dd><input type="hidden" name="t" value="{tools.TOOL}" /><input class="button2" type="submit" id="action_{tools.TOOL}" name="action_{tools.TOOL}" value="{L_RUN}" /></dd>
 			</dl>
 			</form>
+			<!-- IF not tools.S_LAST_ROW --><hr /><!-- ENDIF -->
 		<!-- END tools -->
 	</fieldset>
 	<!-- ENDIF -->

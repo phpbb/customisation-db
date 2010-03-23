@@ -625,42 +625,7 @@ switch ($step)
 		$display_message = 'Syncing';
 	break;
 
-	case 8 :
-		$limit = $limit / 2;
-
-		$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED;
-		phpbb::$db->sql_query($sql);
-		$total = phpbb::$db->sql_fetchfield('cnt');
-		phpbb::$db->sql_freeresult();
-
-		titania_search::$do_not_index = false;
-
-		$sync = new titania_sync;
-
-		$sync->contribs('index', false, $start, $limit);
-
-		$display_message = 'Indexing Contributions';
-	break;
-
-	case 10 :
-		$limit = $limit / 2;
-
-		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE;
-		phpbb::$db->sql_query($sql);
-		$total = phpbb::$db->sql_fetchfield('cnt');
-		phpbb::$db->sql_freeresult();
-
-		titania_search::$do_not_index = false;
-
-		$sync = new titania_sync;
-
-		$sync->posts('index', $start, $limit);
-
-		$display_message = 'Indexing Posts';
-	break;
-
-	case 11 :
+	case 9 :
 		phpbb::$cache->purge();
 
 		trigger_error('Ariel Conversion Finished!');
