@@ -57,26 +57,26 @@ titania_search::initialize();
 titania_search::$do_not_index = true;
 
 $tags_to_cats = array(
-	9 => 13, // Board Styles
-	10 => 14, // Smilies
-	11 => 16, // Ranks
-	12 => 15, // Avatars
-	30 => 9, // Add-ons
-	31 => 4, // Cosmetic
-	32 => 5, // Admin Tools -> Tools
-	33 => 7, // Syndication -> Communication
-	34 => 7, // BBCode -> Communication
-	35 => 6, // Security
-	36 => 7, // Communication
-	37 => 8, // Profile
-	106 => 10, // Anti-Spam
-	107 => 5, // Moderator Tools -> Tools
-	108 => 11, // Entertainment
-	155 => 13, // Imageset -> Board Styles
-	165 => 13, // Theme -> Board Styles
-	175 => 13, // Template -> Board Styles
-	195 => 17, // Topic Icons -> Miscellaneous
-	235 => 17, // Tools -> Miscellaneous
+	9 => 12, // Board Styles
+	10 => 13, // Smilies
+	11 => 15, // Ranks
+	12 => 14, // Avatars
+	30 => 8, // Add-ons
+	31 => 3, // Cosmetic
+	32 => 4, // Admin Tools -> Tools
+	33 => 6, // Syndication -> Communication
+	34 => 6, // BBCode -> Communication
+	35 => 5, // Security
+	36 => 6, // Communication
+	37 => 7, // Profile
+	106 => 9, // Anti-Spam
+	107 => 4, // Moderator Tools -> Tools
+	108 => 10, // Entertainment
+	155 => 12, // Imageset -> Board Styles
+	165 => 12, // Theme -> Board Styles
+	175 => 12, // Template -> Board Styles
+	195 => 16, // Topic Icons -> Miscellaneous
+	235 => 16, // Tools -> Miscellaneous
 );
 
 $queue_swap = array(
@@ -558,6 +558,56 @@ switch ($step)
 	break;
 
 	case 6 :
+		$sql_ary = $contrib_ids = array();
+		$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+			WHERE ' . phpbb::$db->sql_in_set('category_id', array(13, 14, 15, 16));
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$contrib_ids[] = $row['contrib_id'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		$sql = 'DELETE FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+			WHERE ' . phpbb::$db->sql_in_set('contrib_id', $contrib_ids);
+		phpbb::$db->sql_query($sql);
+
+		$versions = array(
+			array(20, '23'),
+			array(30, '0'),
+			array(30, '1'),
+			array(30, '2'),
+			array(30, '3'),
+			array(30, '4'),
+			array(30, '5'),
+			array(30, '6'),
+			array(30, '7'),
+			array(30, '7-pl1'),
+		);
+
+		$sql = 'SELECT contrib_id, revision_id FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE ' . phpbb::$db->sql_in_set('contrib_id', $contrib_ids);
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			foreach ($versions as $data)
+			{
+				$sql_ary[] = array(
+					'contrib_id'				=> $row['contrib_id'],
+					'revision_id'				=> $row['revision_id'],
+					'phpbb_version_branch'		=> $data[0],
+					'phpbb_version_revision'	=> $data[1],
+				);
+			}
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		phpbb::$db->sql_multi_insert(TITANIA_REVISIONS_PHPBB_TABLE, $sql_ary);
+
+		$display_message = 'Smilies, Avatars, Ranks, Styles Misc support the latest phpBB';
+	break;
+
+	case 7 :
 		$sync = new titania_sync;
 
 		$sync->authors('count');
@@ -565,7 +615,7 @@ switch ($step)
 		$display_message = 'Authors';
 	break;
 
-	case 7 :
+	case 8 :
 		$sync = new titania_sync;
 
 		$sync->contribs('validated');
@@ -576,7 +626,7 @@ switch ($step)
 	break;
 
 	case 8 :
-		$limit = $limit / 10;
+		$limit = $limit / 2;
 
 		$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
 			WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED;
@@ -593,8 +643,8 @@ switch ($step)
 		$display_message = 'Indexing Contributions';
 	break;
 
-	case 9 :
-		$limit = $limit / 10;
+	case 10 :
+		$limit = $limit / 2;
 
 		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE;
 		phpbb::$db->sql_query($sql);
@@ -610,7 +660,7 @@ switch ($step)
 		$display_message = 'Indexing Posts';
 	break;
 
-	case 10 :
+	case 11 :
 		phpbb::$cache->purge();
 
 		trigger_error('Ariel Conversion Finished!');

@@ -44,7 +44,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.52'	=> array(
+	'0.1.53'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -323,7 +323,6 @@ $versions = array(
 					'revision_time'				=> array('UINT:11', 0),
 					'revision_validated'		=> array('UINT:11', 0),
 					'validation_date'			=> array('UINT:11', 0),
-					'phpbb_version'				=> array('STEXT', 0),
 					'install_time'				=> array('USINT', 0),
 					'install_level'				=> array('TINT:1', 0),
 					'revision_submitted'		=> array('BOOL', 0), // So we can hide the revision while we are creating it, false means someone is working on creating it (or did not finish creating it)
@@ -337,6 +336,22 @@ $versions = array(
 					'validation_date'		=> array('INDEX', 'validation_date'),
 					'revision_submitted'	=> array('INDEX', 'revision_submitted'),
 					'revision_queue_id'		=> array('INDEX', 'revision_queue_id'),
+				),
+			)),
+			array(TITANIA_REVISIONS_PHPBB_TABLE, array(
+				'COLUMNS'		=> array(
+					'row_id'					=> array('UINT', NULL, 'auto_increment'),
+					'revision_id'				=> array('UINT', 0),
+					'contrib_id'				=> array('UINT', 0),
+					'phpbb_version_branch'		=> array('TINT:1', 0),
+					'phpbb_version_revision'	=> array('VCHAR', ''),
+				),
+				'PRIMARY_KEY'	=> 'row_id',
+				'KEYS'			=> array(
+					'revision_id'				=> array('INDEX', 'revision_id'),
+					'contrib_id'				=> array('INDEX', 'contrib_id'),
+					'phpbb_version_branch'		=> array('INDEX', 'phpbb_version_branch'),
+					'phpbb_version_revision'	=> array('INDEX', 'phpbb_version_revision'),
 				),
 			)),
 			array(TITANIA_TAG_APPLIED_TABLE, array(
