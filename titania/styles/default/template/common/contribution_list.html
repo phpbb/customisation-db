@@ -4,7 +4,7 @@
 	<li class="header">
 		<dl class="icon">
 			<dt>{L_CONTRIBUTIONS}</dt>
-			<dd class="author" style="width: 125px;">{L_PHPBB_VERSION}</dd>
+			<dd class="author" style="width: 100px;">{L_PHPBB_VERSION}</dd>
 			<dd class="author">{L_AUTHOR}</dd>
 			<dd class="general">{L_INFORMATION}</dd>
 		</dl>
@@ -22,12 +22,12 @@
 				<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_NOT_VALIDATED}" title="{L_NOT_VALIDATED}" />
 			<!-- ENDIF -->
 			</dt>
-			<dd class="author" style="width: 125px;">
+			<dd class="author" style="width: 100px;">
 				<!-- IF contribs.PHPBB_VERSION -->
 					{contribs.PHPBB_VERSION}
 				<!-- ELSE -->
 					<!-- IF .contribs.phpbb_versions -->
-					<select id="phpbb_versions" style="width: 100px;">
+					<select id="phpbb_versions" style="width: 75px;">
 						<!-- BEGIN phpbb_versions -->
 							<option>{contribs.phpbb_versions.NAME}</option>
 						<!-- END phpbb_versions -->
