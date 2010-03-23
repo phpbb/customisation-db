@@ -111,7 +111,7 @@ else if ($submit)
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
 
-		redirect(titania::$contrib->get_url());
+		redirect(titania::$contrib->get_url('revision'));
 	}
 }
 
