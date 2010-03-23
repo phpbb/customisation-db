@@ -185,7 +185,7 @@ class titania_cache extends acm
 	*
 	* @return array Array of contrib_id's
 	*/
-	public function get_author_contribs($user_id)
+	public function get_author_contribs($user_id, $active = false)
 	{
 		$user_id = (int) $user_id;
 
@@ -210,19 +210,19 @@ class titania_cache extends acm
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$author_block[$user_id][$row['contrib_id']] = $row['contrib_status'];
+				$author_block[$user_id][$row['contrib_id']] = array('status' => $row['contrib_status'], 'active' => true);
 			}
 
 			phpbb::$db->sql_freeresult($result);
 
 			// Now get the lists where the user is a co-author
-			$sql = 'SELECT cc.contrib_id, c.contrib_status FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' cc, ' . TITANIA_CONTRIBS_TABLE . ' c
+			$sql = 'SELECT cc.contrib_id, c.contrib_status, cc.active FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' cc, ' . TITANIA_CONTRIBS_TABLE . ' c
 				WHERE cc.user_id = ' . $user_id . '
 					AND c.contrib_id = cc.contrib_id';
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$author_block[$user_id][$row['contrib_id']] = $row['contrib_status'];
+				$author_block[$user_id][$row['contrib_id']] = array('status' => $row['contrib_status'], 'active' => $row['active']);
 			}
 			phpbb::$db->sql_freeresult($result);
 
@@ -232,12 +232,15 @@ class titania_cache extends acm
 
 		$contribs = array();
 
-		foreach ($author_block[$user_id] as $contrib_id => $status)
+		foreach ($author_block[$user_id] as $contrib_id => $data)
 		{
 			// If approved, or new and doesn't require approval, or the user is viewing their own, or TITANIA_ACCESS_TEAMS, add them to the list
-			if (phpbb::$user->data['user_id'] == $user_id || (!titania::$config->require_validation && $status == TITANIA_CONTRIB_NEW) || $status == TITANIA_CONTRIB_APPROVED || titania::$access_level == TITANIA_ACCESS_TEAMS)
+			if (phpbb::$user->data['user_id'] == $user_id || (!titania::$config->require_validation && $data['status'] == TITANIA_CONTRIB_NEW) || $data['status'] == TITANIA_CONTRIB_APPROVED || titania::$access_level == TITANIA_ACCESS_TEAMS)
 			{
-				$contribs[] = $contrib_id;
+				if (!$active || $data['active'])
+				{
+					$contribs[] = $contrib_id;
+				}
 			}
 		}
 

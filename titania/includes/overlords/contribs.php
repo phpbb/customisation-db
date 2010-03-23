@@ -136,7 +136,7 @@ class contribs_overlord
 		}
 		$pagination->result_lang = 'TOTAL_CONTRIBS';
 
-		$select = 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update,
+		$select = 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
 						u.username, u.user_colour, u.username_clean';
 		switch ($mode)
 		{
@@ -243,6 +243,7 @@ class contribs_overlord
 		$contrib = new titania_contribution();
 		$contrib->author = new titania_author();
 		$versions = titania::$cache->get_phpbb_versions();
+		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], true);
 
 		foreach ($contrib_ids as $contrib_id)
 		{
@@ -251,6 +252,10 @@ class contribs_overlord
 			$contrib->__set_array($row);
 
 			$contrib->author->__set_array($row);
+
+			// Author contrib variables
+			$contrib->is_author = ($contrib->contrib_user_id == phpbb::$user->data['user_id']) ? true : false;
+			$contrib->is_active_coauthor = (in_array($contrib->contrib_id, $author_contribs)) ? true : false;
 
 			// Store the tracking info we grabbed from the DB
 			titania_tracking::store_from_db($row);
