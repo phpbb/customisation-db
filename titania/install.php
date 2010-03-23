@@ -818,6 +818,31 @@ $versions = array(
 		),
 	),
 
+	'0.1.53' => array(
+		'table_add' => array(
+			array(TITANIA_REVISIONS_PHPBB_TABLE, array(
+				'COLUMNS'		=> array(
+					'row_id'					=> array('UINT', NULL, 'auto_increment'),
+					'revision_id'				=> array('UINT', 0),
+					'contrib_id'				=> array('UINT', 0),
+					'phpbb_version_branch'		=> array('TINT:1', 0),
+					'phpbb_version_revision'	=> array('VCHAR', ''),
+				),
+				'PRIMARY_KEY'	=> 'row_id',
+				'KEYS'			=> array(
+					'revision_id'				=> array('INDEX', 'revision_id'),
+					'contrib_id'				=> array('INDEX', 'contrib_id'),
+					'phpbb_version_branch'		=> array('INDEX', 'phpbb_version_branch'),
+					'phpbb_version_revision'	=> array('INDEX', 'phpbb_version_revision'),
+				),
+			)),
+		),
+		'custom' => 'titania_custom',
+		'table_column_remove' => array(
+			array(TITANIA_REVISIONS_TABLE, 'phpbb_version'),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

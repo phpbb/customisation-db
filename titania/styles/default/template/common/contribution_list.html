@@ -4,6 +4,7 @@
 	<li class="header">
 		<dl class="icon">
 			<dt>{L_CONTRIBUTIONS}</dt>
+			<dd class="author" style="width: 125px;">{L_PHPBB_VERSION}</dd>
 			<dd class="author">{L_AUTHOR}</dd>
 			<dd class="general">{L_INFORMATION}</dd>
 		</dl>
@@ -14,13 +15,24 @@
 <!-- BEGIN contribs -->
 	<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 		<dl class="icon" style="background-image: url({contribs.FOLDER_IMG_SRC}); background-repeat: no-repeat;">
-			<dt><a class="topictitle" href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a> 
+			<dt><a class="topictitle" href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a>
 			<!-- IF contribs.S_CONTRIB_CLEANED -->
 				<img src="{T_TITANIA_THEME_PATH}/images/icon_cleaned_contrib.gif" title="{L_CLEANED_CONTRIB}" alt="{L_CLEANED_CONTRIB}" />
 			<!-- ELSEIF not contribs.S_CONTRIB_VALIDATED -->
 				<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_NOT_VALIDATED}" title="{L_NOT_VALIDATED}" />
 			<!-- ENDIF -->
 			</dt>
+			<dd class="author" style="width: 125px;">
+				<!-- IF contribs.PHPBB_VERSION -->
+					{contribs.PHPBB_VERSION}
+				<!-- ELSE -->
+					<select id="phpbb_versions" style="width: 100px;">
+						<!-- BEGIN phpbb_versions -->
+							<option>{contribs.phpbb_versions.NAME}</option>
+						<!-- END phpbb_versions -->
+					</select>
+				<!-- ENDIF -->
+			</dd>
 			<dd class="author">
 				{contribs.AUTHOR_NAME_FULL}
 			</dd>

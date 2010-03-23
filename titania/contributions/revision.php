@@ -47,6 +47,8 @@ if ($repack)
 	{
 		trigger_error('NO_REVISION');
 	}
+	$old_revision->load_phpbb_versions();
+	generate_phpbb_version_select($old_revision->get_selected_branches());
 
 	// Assign some defaults
 	phpbb::$template->assign_vars(array(
@@ -55,20 +57,25 @@ if ($repack)
 		'S_REPACK'			=> true,
 	));
 }
-else if (titania::$config->use_queue)
+else
 {
-	$queue = new titania_queue();
-	// Load the message object
-	$message_object = new titania_message($queue);
-	$message_object->set_auth(array(
-		'bbcode'      => phpbb::$auth->acl_get('u_titania_bbcode'),
-		'smilies'      => phpbb::$auth->acl_get('u_titania_smilies'),
-	));
-	$message_object->set_settings(array(
-		'display_error'		=> false,
-		'display_subject'	=> false,
-	));
-	$message_object->display();
+	generate_phpbb_version_select();
+
+	if (titania::$config->use_queue)
+	{
+		$queue = new titania_queue();
+		// Load the message object
+		$message_object = new titania_message($queue);
+		$message_object->set_auth(array(
+			'bbcode'      => phpbb::$auth->acl_get('u_titania_bbcode'),
+			'smilies'      => phpbb::$auth->acl_get('u_titania_smilies'),
+		));
+		$message_object->set_settings(array(
+			'display_error'		=> false,
+			'display_subject'	=> false,
+		));
+		$message_object->display();
+	}
 }
 
 do{
@@ -104,6 +111,23 @@ do{
 				$error[] = phpbb::$user->lang['NO_REVISION_VERSION'];
 			}
 
+			// phpBB branches
+			$allowed_branches = array_keys(get_allowed_phpbb_branches());
+			if (sizeof($allowed_branches) == 1)
+			{
+				$selected_branches = $allowed_branches;
+			}
+			else
+			{
+				$selected_branches = request_var('phpbb_branch', array(0));
+				$selected_branches = array_intersect($selected_branches, $allowed_branches);
+
+				if (!sizeof($selected_branches))
+				{
+					$error[] = phpbb::$user->lang['NO_PHPBB_BRANCH'];
+				}
+			}
+
 			if (!sizeof($error))
 			{
 				// Success, create a new revision to start
@@ -114,6 +138,7 @@ do{
 					'revision_version'		=> $revision_version,
 					'queue_allow_repack'	=> $queue_allow_repack,
 				));
+				$revision->phpbb_versions = $selected_branches;
 				$revision->submit();
 				$revision_id = $revision->revision_id;
 

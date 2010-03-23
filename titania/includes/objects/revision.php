@@ -50,6 +50,13 @@ class titania_revision extends titania_database_object
 	*/
 	public $contrib = false;
 
+	/**
+	* phpBB versions
+	*
+	* @var mixed
+	*/
+	public $phpbb_versions = array();
+
 	public function __construct($contrib, $revision_id = false)
 	{
 		// Configure object properties
@@ -62,7 +69,6 @@ class titania_revision extends titania_database_object
 			'revision_time'			=> array('default' => (int) titania::$time),
 			'validation_date'		=> array('default' => 0),
 			'revision_version'		=> array('default' => ''),
-			'phpbb_version'			=> array('default' => ''),
 			'install_time'			=> array('default' => 0),
 			'install_level'			=> array('default' => 0),
 			'revision_submitted'	=> array('default' => false), // False if it is still in the process of being submitted/verified; True if submission has finished
@@ -78,21 +84,60 @@ class titania_revision extends titania_database_object
 		$this->revision_id = $revision_id;
 	}
 
+	/**
+	* Load the phpBB branches we've selected for this revision
+	* Stored in $this->phpbb_versions
+	*/
+	public function load_phpbb_versions()
+	{
+		$sql = 'SELECT phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+			WHERE revision_id = ' . (int) $this->revision_id;
+		 $result = phpbb::$db->sql_query($sql);
+		 while ($row = phpbb::$db->sql_fetchrow($result))
+		 {
+		 	$this->phpbb_versions[] = $row;
+		 }
+		 phpbb::$db->sql_freeresult($result);
+	}
+
+	/**
+	* Get the branches we've selected for this revision (load them first!)
+	*/
+	public function get_selected_branches()
+	{
+		$branches = array();
+		foreach ($this->phpbb_versions as $row)
+		{
+			$branches[] = $row['phpbb_version_branch'];
+		}
+
+		return array_unique($branches);
+	}
+
 	public function display($tpl_block = 'revisions', $show_queue = false)
 	{
+		$versions = titania::$cache->get_phpbb_versions();
+
 		phpbb::$template->assign_block_vars($tpl_block, array(
 			'REVISION_ID'		=> $this->revision_id,
 			'CREATED'			=> phpbb::$user->format_date($this->revision_time),
 			'NAME'				=> censor_text($this->revision_name),
 			'VERSION'			=> $this->revision_version,
-			'PHPBB_VERSION'		=> $this->phpbb_version,
 			'VALIDATED_DATE'	=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
 			'REVISION_QUEUE'	=> ($show_queue && $this->revision_queue_id) ? titania_url::build_url('manage/queue', array('q' => $this->revision_queue_id)) : '',
+			'PHPBB_VERSION'		=> (sizeof($this->phpbb_versions) == 1) ? $versions[$this->phpbb_versions[0]['phpbb_version_branch'] . $this->phpbb_versions[0]['phpbb_version_revision']] : '',
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 
 			'S_VALIDATED'		=> (!$this->revision_validated && titania::$config->use_queue) ? false : true,
 		));
+
+		foreach ($this->phpbb_versions as $row)
+		{
+			phpbb::$template->assign_block_vars($tpl_block . '.phpbb_versions', array(
+				'VERSION'		=> $versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']],
+			));
+		}
 	}
 
 	/**
@@ -102,9 +147,6 @@ class titania_revision extends titania_database_object
 	{
 		if (!$this->revision_id)
 		{
-			// Set to the correct phpBB version (only support 3.0.x for now)
-			$this->phpbb_version = titania::$config->phpbb_versions['30'];
-
 			// Update the contrib_last_update if required here
 			if (!titania::$config->require_validation)
 			{
@@ -142,7 +184,7 @@ class titania_revision extends titania_database_object
 						$this->contrib->download['filesize'],
 						$this->contrib->get_url()
 					);
-					
+
 					$options = array(
 						'poster_id'				=> titania_types::$types[$this->contrib->contrib_type]->forum_robot,
 						'forum_id' 				=> titania_types::$types[$this->contrib->contrib_type]->forum_database,
@@ -160,15 +202,59 @@ class titania_revision extends titania_database_object
 					'contrib_last_update' 		=> titania::$time,
 					'contrib_release_topic_id' 	=> ($this->contrib->contrib_release_topic_id) ? $this->contrib->contrib_release_topic_id : $topic_id,
 				);
-				
+
 				$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
 					SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 					WHERE contrib_id = ' . $this->contrib_id;
 				phpbb::$db->sql_query($sql);
 			}
 		}
+		else if (sizeof($this->phpbb_versions))
+		{
+			$sql = 'DELETE FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				WHERE revision_id = ' . (int) $this->revision_id;
+			phpbb::$db->sql_query($sql);
+		}
 
 		parent::submit();
+
+		// Add phpBB versions supported
+		if (sizeof($this->phpbb_versions))
+		{
+			$versions = titania::$cache->get_phpbb_versions();
+
+			$sql_ary = array();
+			foreach ($this->phpbb_versions as $row)
+			{
+				if (!is_array($row)) // Accept from user input
+				{
+					$row = array('phpbb_version_branch' => (int) $row);
+				}
+
+				if (!isset($row['phpbb_version_branch']) || !isset(titania::$config->phpbb_versions[$row['phpbb_version_branch']]))
+				{
+					continue;
+				}
+
+				// OMG, it's not in our cache!
+				if (!isset($versions[$row['phpbb_version_branch'] . titania::$config->phpbb_versions[$row['phpbb_version_branch']]]))
+				{
+					titania::$cache->destroy('_titania_phpbb_versions');
+				}
+
+				$sql_ary[] = array(
+					'revision_id'				=> $this->revision_id,
+					'contrib_id'				=> $this->contrib_id,
+					'phpbb_version_branch'		=> $row['phpbb_version_branch'],
+					'phpbb_version_revision'	=> (isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'],
+				);
+			}
+
+			if (sizeof($sql_ary))
+			{
+				phpbb::$db->sql_multi_insert(TITANIA_REVISIONS_PHPBB_TABLE, $sql_ary);
+			}
+		}
 
 		// Create the queue entry if required, else update it
 		if (titania::$config->use_queue)

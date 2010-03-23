@@ -65,6 +65,45 @@ class titania_cache extends acm
 	}
 
 	/**
+	* Get all phpBB versions from the DB
+	*
+	* array(
+	* 	'2023'		=> '2.0.23',
+	* 	'307-pl1'	=> '3.0.7-pl1',
+	* ),
+	*
+	*/
+	public function get_phpbb_versions()
+	{
+		// This may be called quite often, so be static
+		static $versions = false;
+		if ($versions !== false)
+		{
+			return $versions;
+		}
+
+		$versions = $this->get('_titania_phpbb_versions');
+
+		if ($versions === false)
+		{
+			$versions = array();
+
+			$sql = 'SELECT DISTINCT(phpbb_version_revision), phpbb_version_branch FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				ORDER BY phpbb_version_branch ASC';
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']] = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' . $row['phpbb_version_revision'];
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			$this->put('_titania_phpbb_versions', $versions);
+		}
+
+		return $versions;
+	}
+
+	/**
 	 * Get categories by tag type
 	 *
 	 * @return array of categories

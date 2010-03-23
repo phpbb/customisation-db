@@ -20,6 +20,21 @@ if (!defined('IN_TITANIA'))
 
 $config = array(
 	/**
+	* phpBB versions array
+	*
+	* @param array(
+	*	(release branch) => array(
+	*		'latest_revision' => (revision number)
+	* 		'allow_uploads' => (allow submission of revisions for this version of phpBB?),
+	*	),
+	* ),
+	*/
+	'phpbb_versions' => array(
+		'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
+		'30'	=> array('latest_revision' => '7-pl1', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
+	),
+
+	/**
 	* Relative path to the phpBB installation.
 	*
 	* @param	string	$phpbb_root_path	Path relative from the titania root path.
@@ -57,13 +72,13 @@ $config = array(
 	* Team groups (members will get TITANIA_TEAMS_ACCESS)
 	*/
 	'team_groups' => array(5),
-	
+
 	/**
 	* IDs of database forum
 	*/
 	'forum_mod_database' => 0,
 	'forum_style_database' => 0,
-	
+
 	/**
 	* IDs of account used for topic/post release in database forum
 	*/

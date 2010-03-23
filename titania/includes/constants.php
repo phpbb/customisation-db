@@ -41,6 +41,7 @@ define('TITANIA_POSTS_TABLE',					$table_prefix . 'posts');
 define('TITANIA_QUEUE_TABLE',					$table_prefix . 'queue');
 define('TITANIA_RATINGS_TABLE',					$table_prefix . 'ratings');
 define('TITANIA_REVISIONS_TABLE',				$table_prefix . 'revisions');
+define('TITANIA_REVISIONS_PHPBB_TABLE',			$table_prefix . 'revisions_phpbb');
 define('TITANIA_TAG_APPLIED_TABLE',				$table_prefix . 'tag_applied');
 define('TITANIA_TAG_FIELDS_TABLE',				$table_prefix . 'tag_fields');
 define('TITANIA_TAG_TYPES_TABLE',				$table_prefix . 'tag_types');

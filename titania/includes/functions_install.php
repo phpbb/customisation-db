@@ -53,6 +53,24 @@ function titania_custom($action, $version)
 						WHERE topic_type = ' . TITANIA_QUEUE_DISCUSSION;
 					phpbb::$db->sql_query($sql);
 				break;
+
+				case '0.1.53' :
+					$sql_ary = array();
+					$sql = 'SELECT contrib_id, revision_id, phpbb_version FROM ' . TITANIA_REVISIONS_TABLE;
+					$result = phpbb::$db->sql_query($sql);
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$sql_ary[] = array(
+							'revision_id'				=> $row['revision_id'],
+							'contrib_id'				=> $row['contrib_id'],
+							'phpbb_version_branch'		=> $row['phpbb_version'][0] . $row['phpbb_version'][2],
+							'phpbb_version_revision'	=> substr($row['phpbb_version'], 4),
+						);
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					phpbb::$db->sql_multi_insert(TITANIA_REVISIONS_PHPBB_TABLE, $sql_ary);
+				break;
 			}
 		break;
 

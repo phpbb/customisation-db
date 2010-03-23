@@ -96,6 +96,53 @@ function generate_type_select($selected = false)
 	}
 }
 
+/*
+ * Create a select with the phpBB versions
+ *
+ * @param array $selected
+ * @return void
+ */
+function generate_phpbb_version_select($selected = false)
+{
+	$branches = get_allowed_phpbb_branches();
+
+	// Only display if more than one branch is allowed
+	if (sizeof($branches) == 1)
+	{
+		return;
+	}
+
+	foreach ($branches as $branch => $row)
+	{
+		phpbb::$template->assign_block_vars('phpbb_branches', array(
+			'S_IS_SELECTED'		=> (is_array($selected) && in_array($branch, $selected)) ? true : false,
+
+			'VALUE'				=> $branch,
+			'NAME'				=> $row['name'],
+		));
+	}
+}
+
+/**
+* Get the branches we are allowed to upload to
+*/
+function get_allowed_phpbb_branches()
+{
+	$versions = array();
+
+	foreach (titania::$config->phpbb_versions as $branch => $row)
+	{
+		if (!$row['allow_uploads'])
+		{
+			continue;
+		}
+
+		$versions[$branch] = $row;
+	}
+
+	return $versions;
+}
+
 /**
 * Generate the _options flag from the given settings
 *
@@ -215,11 +262,11 @@ function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
  * @return mixed false if there was an error, topic_id when the new topic was created.
  */
 function phpbb_topic_add(&$options, $poll = array())
-{	
+{
 	phpbb::_include('bbcode', false, 'bbcode');
 	phpbb::_include('message_parser', false, 'parse_message');
 	phpbb::_include('functions_posting', 'submit_post', false);
-	
+
 	$options_global = array(
 		'enable_bbcode'			=> 1,
 		'enable_urls'			=> 1,
@@ -234,9 +281,9 @@ function phpbb_topic_add(&$options, $poll = array())
 		'topic_type'			=> POST_NORMAL,
 		'post_approved'			=> true,
 	);
-	
+
 	$options = array_merge($options, $options_global);
-	
+
 	// Get correct data from forums table to be sure all data is there.
 	$sql = 'SELECT forum_parents, forum_name, enable_indexing
 		FROM ' . FORUMS_TABLE . '
@@ -244,7 +291,7 @@ function phpbb_topic_add(&$options, $poll = array())
 	$result = phpbb::$db->sql_query($sql);
 	$forum_data = phpbb::$db->sql_fetchrow($result);
 	phpbb::$db->sql_freeresult($result);
-	
+
 	if (!$forum_data)
 	{
 		return false;
@@ -253,7 +300,7 @@ function phpbb_topic_add(&$options, $poll = array())
 	$message_parser = new parse_message();
 	$message_parser->message = &$options['post_text'];
 	unset($options['post_text']);
-	
+
 	// Some data for the ugly fix below :P
 	$sql = 'SELECT username, user_colour, user_permissions, user_type
 		FROM ' . USERS_TABLE . '
@@ -261,7 +308,7 @@ function phpbb_topic_add(&$options, $poll = array())
 	$result = phpbb::$db->sql_query($sql);
 	$user_data = phpbb::$db->sql_fetchrow($result);
 	phpbb::$db->sql_freeresult($result);
-	
+
 	if (!$user_data)
 	{
 		return false;
@@ -274,13 +321,13 @@ function phpbb_topic_add(&$options, $poll = array())
 	phpbb::$user->data['user_colour'] = $user_data['user_colour'];
 	phpbb::$user->data['user_permissions'] = $user_data['user_permissions'];
 	phpbb::$user->data['user_type'] = $user_data['user_type'];
-	
+
 	// Same for auth, be sure its posted with correct permissions :)
 	$old_auth = phpbb::$auth;
-	
+
 	phpbb::$auth = new auth();
-	phpbb::$auth->acl(phpbb::$user->data);		
-	
+	phpbb::$auth->acl(phpbb::$user->data);
+
 	if ($options['enable_bbcode'])
 	{
 		$message_parser->parse($options['enable_bbcode'], $options['enable_urls'], $options['enable_smilies'], (bool) phpbb::$auth->acl_get('f_img', $options['forum_id']), (bool) phpbb::$auth->acl_get('f_flash', $options['forum_id']),  (bool) phpbb::$auth->acl_get('f_reply', $options['forum_id']), phpbb::$config['allow_post_links']);
@@ -321,14 +368,14 @@ function phpbb_topic_add(&$options, $poll = array())
 		'filename_data'			=> array(),
 		'post_approved'			=> 1,
 	);
-	
+
 	// Aaaand, submit it.
 	submit_post('post', $options['topic_title'], $user_data['username'], $options['topic_type'], $poll, $data, true);
-	
+
 	// And restore it
 	phpbb::$user->data = $old_data;
 	$auth = $old_auth;
-	
+
 	return $data['topic_id'];
 }
 
@@ -342,7 +389,7 @@ function phpbb_post_add(&$options)
 	phpbb::_include('bbcode', false, 'bbcode');
 	phpbb::_include('message_parser', false, 'parse_message');
 	phpbb::_include('functions_posting', 'submit_post', false);
-		
+
 	$options_global = array(
 		'enable_bbcode'			=> 1,
 		'enable_urls'			=> 1,
@@ -357,9 +404,9 @@ function phpbb_post_add(&$options)
 		'topic_type'			=> POST_NORMAL,
 		'post_approved'			=> true,
 	);
-	
+
 	$options = array_merge($options, $options_global);
-	
+
 	// Check forum data, and if forum_id is the same.
 	// Also get topic data.
 	$sql = 'SELECT f.*, t.*
@@ -370,12 +417,12 @@ function phpbb_post_add(&$options)
 	$result = phpbb::$db->sql_query($sql);
 	$post_data = phpbb::$db->sql_fetchrow($result);
 	phpbb::$db->sql_freeresult($result);
-	
+
 	if (!$post_data)
 	{
 		return false;
 	}
-	
+
 	if ($options['forum_id'] != $post_data['forum_id'])
 	{
 		$options['forum_id'] = (int)$post_data['forum_id'];
@@ -387,7 +434,7 @@ function phpbb_post_add(&$options)
 	$result = phpbb::$db->sql_query($sql);
 	$forum_data = phpbb::$db->sql_fetchrow($result);
 	phpbb::$db->sql_freeresult($result);
-	
+
 	if (!$forum_data)
 	{
 		return false;
@@ -404,7 +451,7 @@ function phpbb_post_add(&$options)
 	$result = phpbb::$db->sql_query($sql);
 	$user_data = phpbb::$db->sql_fetchrow($result);
 	phpbb::$db->sql_freeresult($result);
-	
+
 	if (!$user_data)
 	{
 		return false;
@@ -417,15 +464,15 @@ function phpbb_post_add(&$options)
 	phpbb::$user->data['user_colour'] = $user_data['user_colour'];
 	phpbb::$user->data['user_permissions'] = $user_data['user_permissions'];
 	phpbb::$user->data['user_type'] = $user_data['user_type'];
-	
+
 	// And the permissions
 	$old_auth = phpbb::$auth;
-	
+
 	phpbb::$auth = new auth();
 	phpbb::$auth->acl(phpbb::$user->data);
-	
+
 	if ($options['enable_bbcode'])
-	{	
+	{
 		$message_parser->parse($options['enable_bbcode'], $options['enable_urls'], $options['enable_smilies'], (bool) phpbb::$auth->acl_get('f_img', $options['forum_id']), (bool) phpbb::$auth->acl_get('f_flash', $options['forum_id']),  (bool) phpbb::$auth->acl_get('f_reply', $options['forum_id']), phpbb::$config['allow_post_links']);
 	}
 
@@ -467,12 +514,12 @@ function phpbb_post_add(&$options)
 	);
 
 	$poll = array();
-	
+
 	submit_post('reply', $options['topic_title'], $user_data['username'], $options['topic_type'], $poll, $data, true);
-			
+
 	// And restore the permissions.
 	phpbb::$user->data = $old_data;
 	$auth = $old_auth;
-	
+
 	return $data['post_id'];
 }

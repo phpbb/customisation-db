@@ -215,14 +215,39 @@ class contribs_overlord
 		$pagination->sql_count($sql_ary, 'c.contrib_id');
 		$pagination->build_pagination(titania_url::$current_page, titania_url::$params);
 
+		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
+
+		$contrib_ids = array();
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$contrib_ids[] = $row['contrib_id'];
+			self::$contribs[$row['contrib_id']] = $row;
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Get phpBB versions
+		if (sizeof($contrib_ids))
+		{
+			$sql = 'SELECT contrib_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				WHERE ' . phpbb::$db->sql_in_set('contrib_id', array_map('intval', $contrib_ids)) . '
+				ORDER BY row_id DESC';
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				self::$contribs[$row['contrib_id']]['phpbb_versions'][] = $row;
+			}
+			phpbb::$db->sql_freeresult($result);
+		}
+
 		// Setup some objects we'll use for temps
 		$contrib = new titania_contribution();
 		$contrib->author = new titania_author();
+		$versions = titania::$cache->get_phpbb_versions();
 
-		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
-
-		while ($row = phpbb::$db->sql_fetchrow($result))
+		foreach ($contrib_ids as $contrib_id)
 		{
+			$row = self::$contribs[$contrib_id];
+
 			$contrib->__set_array($row);
 
 			$contrib->author->__set_array($row);
@@ -234,6 +259,17 @@ class contribs_overlord
 			$folder_img = $folder_alt = '';
 			titania_topic_folder_img($folder_img, $folder_alt, 0, titania_tracking::is_unread(TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update));
 
+			// Only get unique phpBB versions supported
+			$contrib_versions = array();
+			foreach ($row['phpbb_versions'] as $version_row)
+			{
+				if (!isset($contrib_versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']]))
+				{
+					$contrib_versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']] = $version_row;
+				}
+			}
+			$row['phpbb_versions'] = array_values($contrib_versions);
+
 			phpbb::$template->assign_block_vars($blockname, array_merge($contrib->assign_details(true, true), array(
 				'FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
 				'FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
@@ -241,11 +277,18 @@ class contribs_overlord
 				'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
 				'FOLDER_IMG_WIDTH'			=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 				'FOLDER_IMG_HEIGHT'			=> phpbb::$user->img($folder_img, '', false, '', 'height'),
+				'PHPBB_VERSION'				=> (sizeof($row['phpbb_versions']) == 1) ? $versions[$row['phpbb_versions'][0]['phpbb_version_branch'] . $row['phpbb_versions'][0]['phpbb_version_revision']] : '',
 			)));
+
+			foreach ($row['phpbb_versions'] as $version_row)
+			{
+				phpbb::$template->assign_block_vars($blockname . '.phpbb_versions', array(
+					'NAME'		=> $versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']],
+				));
+			}
 
 			$contrib_type = $row['contrib_type'];
 		}
-		phpbb::$db->sql_freeresult($result);
 		unset($contrib);
 
 		phpbb::$template->assign_vars(array(

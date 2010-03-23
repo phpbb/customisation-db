@@ -11,6 +11,21 @@
 			<!-- IF REVISION_UPLOADER -->
 				{REVISION_UPLOADER}
 
+				<!-- IF .phpbb_branches -->
+				<fieldset class="fields2">
+				<dl>
+					<dt><label for="phpbb_branch">{L_PHPBB_BRANCH}:</label><br /><span>{L_PHPBB_BRANCH_EXPLAIN}</span></dt>
+					<dd>
+						<select id="phpbb_branch" name="phpbb_branch[]" multiple="multiple" size="3">
+							<!-- BEGIN phpbb_branches -->
+								<option value="{phpbb_branches.VALUE}">{phpbb_branches.NAME}</option>
+							<!-- END phpbb_branches -->
+						</select>
+					</dd>
+				</dl>
+				</fieldset>
+				<!-- ENDIF -->
+
 				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
 				<fieldset class="fields2">
 				<dl>

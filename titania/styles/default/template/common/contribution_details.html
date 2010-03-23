@@ -94,7 +94,18 @@
 				<!-- BEGIN revisions -->
 					<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 						<dl>
-							<dt><strong><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></strong></dt>
+							<dt>
+								<strong><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></strong>
+								<!-- IF revisions.PHPBB_VERSION -->
+									{revisions.PHPBB_VERSION}
+								<!-- ELSE -->
+									<select id="phpbb_versions">
+										<!-- BEGIN phpbb_versions -->
+											<option>{revisions.phpbb_versions.VERSION}</option>
+										<!-- END phpbb_versions -->
+									</select>
+								<!-- ENDIF -->
+							</dt>
 							<dd class="general">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --><!-- IF revisions.REVISION_QUEUE --> - <a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF --></dd>
 						</dl>
 					</li>

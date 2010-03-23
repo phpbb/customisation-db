@@ -463,6 +463,20 @@ class titania_contribution extends titania_message_object
 			$this->revisions[$row['revision_id']] = $row;
 		}
 		phpbb::$db->sql_freeresult($result);
+
+		// Get phpBB versions supported
+		if (sizeof($this->revisions))
+		{
+			$sql = 'SELECT revision_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				WHERE ' . phpbb::$db->sql_in_set('revision_id', array_map('intval', array_keys($this->revisions))) . '
+				ORDER BY row_id DESC';
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$this->revisions[$row['revision_id']]['phpbb_versions'][] = $row;
+			}
+			phpbb::$db->sql_freeresult($result);
+		}
 	}
 
 	/**
@@ -586,6 +600,7 @@ class titania_contribution extends titania_message_object
 					foreach ($this->revisions as $revision_id => $row)
 					{
 						$revision->__set_array($row);
+						$revision->phpbb_versions = $row['phpbb_versions'];
 						$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'));
 					}
 					unset($revision);

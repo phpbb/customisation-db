@@ -63,9 +63,10 @@ class titania_config extends titania_object
 			'require_validation'		=> array('default' => true),
 			'use_queue'					=> array('default' => true),
 
-			// Latest versions array
+			// phpBB versions array
 			'phpbb_versions'			=> array('default' => array(
-				'30'	=> '3.0.7-pl1',  // We only support 3.0.x right now, will be changed in the future
+				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
+				'30'	=> array('latest_revision' => '7-pl1', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
 			)),
 
 			'mpv_server_list'			=> array('default' => array(

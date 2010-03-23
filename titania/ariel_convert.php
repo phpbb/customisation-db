@@ -95,7 +95,7 @@ switch ($step)
 	break;
 
 	case 1 :
-		$truncate = array(TITANIA_ATTENTION_TABLE, TITANIA_QUEUE_TABLE, TITANIA_ATTACHMENTS_TABLE, TITANIA_AUTHORS_TABLE, TITANIA_CONTRIBS_TABLE, TITANIA_CONTRIB_COAUTHORS_TABLE, TITANIA_CONTRIB_FAQ_TABLE, TITANIA_CONTRIB_IN_CATEGORIES_TABLE, TITANIA_POSTS_TABLE, TITANIA_RATINGS_TABLE, TITANIA_REVISIONS_TABLE, TITANIA_TOPICS_TABLE, TITANIA_TRACK_TABLE, TITANIA_WATCH_TABLE);
+		$truncate = array(TITANIA_REVISIONS_PHPBB_TABLE, TITANIA_ATTENTION_TABLE, TITANIA_QUEUE_TABLE, TITANIA_ATTACHMENTS_TABLE, TITANIA_AUTHORS_TABLE, TITANIA_CONTRIBS_TABLE, TITANIA_CONTRIB_COAUTHORS_TABLE, TITANIA_CONTRIB_FAQ_TABLE, TITANIA_CONTRIB_IN_CATEGORIES_TABLE, TITANIA_POSTS_TABLE, TITANIA_RATINGS_TABLE, TITANIA_REVISIONS_TABLE, TITANIA_TOPICS_TABLE, TITANIA_TRACK_TABLE, TITANIA_WATCH_TABLE);
 
 		foreach ($truncate as $table)
 		{
@@ -408,7 +408,6 @@ switch ($step)
 				'revision_time'				=> $row['revision_date'],
 				'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
 				'validation_date'			=> ($row['queue_status'] == -1) ? $row['revision_date'] : 0,
-				'phpbb_version'				=> $row['revision_phpbb_version'],
 				'install_time'				=> 0,
 				'install_level'				=> 0,
 				'revision_submitted'		=> 1,
@@ -416,7 +415,15 @@ switch ($step)
 			);
 
 			// Insert
-			titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
+			$revision_id = titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
+
+			$sql_ary = array(
+				'revision_id'				=> $revision_id,
+				'contrib_id'				=> $row['contrib_id'],
+				'phpbb_version_branch'		=> ($row['revision_phpbb_version'][0] == '3') ? 30 : 20,
+				'phpbb_version_revision'	=> substr($row['revision_phpbb_version'], 4),
+			);
+			titania_insert(TITANIA_REVISIONS_PHPBB_TABLE, $sql_ary);
 
 			// Update the contrib_last_update
 			if ($row['queue_status'] == -1 || !titania::$config->require_validation)

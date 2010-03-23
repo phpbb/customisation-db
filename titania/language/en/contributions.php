@@ -37,6 +37,11 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 'SCREENSHOTS' => 'Screenshots',
+'SELECT_PHPBB_BRANCH' => 'Select phpBB branch',
+'PHPBB_BRANCH' => 'phpBB Branch',
+'PHPBB_VERSION' => 'phpBB Version',
+'PHPBB_BRANCH_EXPLAIN' => 'Select the phpBB branch that this revision supports.',
+'NO_PHPBB_BRANCH' => 'You must select a phpBB branch.',
 	'NO_REVISION_ATTACHMENT'	=> 'Please select a file to upload',
 	'NO_REVISION_VERSION'		=> 'Please enter a version for the revision',
 	'NEW_REVISION'				=> 'New Revision',
