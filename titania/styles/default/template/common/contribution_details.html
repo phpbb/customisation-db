@@ -4,7 +4,7 @@
 			<!-- IF .screenshots -->
 				<!-- BEGIN screenshots(0,0) -->
 					<!-- IF screenshots.S_THUMBNAIL -->
-						<a href="{screenshots.U_DOWNLOAD_LINK}"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
+						<a href="{screenshots.U_DOWNLOAD_LINK}" id="main-screenshot"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
 					<!-- ENDIF -->
 				<!-- END screenshots -->
 			<!-- ELSE -->
@@ -81,20 +81,44 @@
 				</li>
 			</ul>
 
-			<!-- IF U_NEW_REVISION or .revisions -->
-			<br />
-			<hr />
-			<br />
-			<!-- ENDIF -->
-			<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
-			<!-- IF .revisions -->
-				<div class="clear"></div>
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+</div>
 
+<div class="clear"></div>
+
+<!-- IF .screenshots or .revisions -->
+<div class="container">
+	<div class="inner"><span class="corners-top main-corners"><span></span></span>	
+		<div id="extratabs">
+		    <ul>
+		        <!-- IF .screenshots --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
+		        <!-- IF .revisions --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
+		    </ul>
+		    
+		    <!-- IF .screenshots -->
+		    <div id="screenshots-panel">
+				<!-- BEGIN screenshots -->
+					<!-- IF screenshots.S_THUMBNAIL -->
+						<a href="{screenshots.U_DOWNLOAD_LINK}"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
+					<!-- ENDIF -->
+		
+					<!-- IF screenshots.S_IMAGE -->
+						<img src="{screenshots.U_INLINE_LINK}" alt="{screenshots.DOWNLOAD_NAME}" onclick="viewableArea(this);" />
+					<!-- ENDIF -->
+				<!-- END screenshots -->
+		    </div>
+		    <!-- ENDIF -->
+		    
+		    <!-- IF .revisions -->
+		    <div id="revisions-panel">
+				<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
+				<div class="clear"></div>
+		
 				<ul class="topiclist">
 					<li class="header">
 						<dl>
 							<dt>{L_REVISIONS}</dt>
-							<dd></dd>
 						</dl>
 					</li>
 				</ul>
@@ -108,9 +132,9 @@
 									{revisions.PHPBB_VERSION}
 								<!-- ELSE -->
 									<select id="phpbb_versions">
-										<!-- BEGIN phpbb_versions -->
-											<option>{revisions.phpbb_versions.VERSION}</option>
-										<!-- END phpbb_versions -->
+									<!-- BEGIN phpbb_versions -->
+										<option>{revisions.phpbb_versions.VERSION}</option>
+									<!-- END phpbb_versions -->
 									</select>
 								<!-- ENDIF -->
 							</dt>
@@ -119,24 +143,10 @@
 					</li>
 				<!-- END revisions -->
 				</ul>
-			<!-- ENDIF -->
+		    </div>
+		    <!-- ENDIF -->
+		</div>
 
-			<!-- IF .screenshots -->
-				<h3>{L_SCREENSHOTS}</h3>
-				<!-- BEGIN screenshots -->
-					<!-- IF screenshots.S_THUMBNAIL -->
-						<a href="{screenshots.U_DOWNLOAD_LINK}"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
-					<!-- ENDIF -->
-
-
-					<!-- IF screenshots.S_IMAGE -->
-						<img src="{screenshots.U_INLINE_LINK}" alt="{screenshots.DOWNLOAD_NAME}" onclick="viewableArea(this);" />
-					<!-- ENDIF -->
-				<!-- END screenshots -->
-			<!-- ENDIF -->
-
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
+	<span class="corners-bottom main-corners"><span></span></span></div>
 </div>
-
-<div class="clear"></div>
+<!-- ENDIF -->

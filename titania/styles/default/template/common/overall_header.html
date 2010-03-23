@@ -19,7 +19,7 @@
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/common.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/forum_fn.js"></script>
 
-<!-- IF S_LIGHTBOX -->
+<!-- IF .screenshots -->
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.lightbox-0.5.js"></script>
 <!-- ENDIF -->
 
@@ -44,14 +44,25 @@
 	var orange_star= new Image(16,16);
 	orange_star.src = "{UA_ORANGE_STAR_SRC}";
 	var max_rating = "{UA_MAX_RATING}";
-
-	<!-- IF S_HIDE_ERROR_BOX -->
+	
 	$(document).ready(function() {
+	<!-- IF S_HIDE_ERROR_BOX -->
 		setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
-	});
 	<!-- ENDIF -->
+	
+		$("#extratabs").tabs();
+		$('#extratabs li').removeClass('ui-corner-top');
+		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
+    
+    <!-- IF .screenshots -->
+		$('#screenshots-panel a, #main-screenshot').lightBox({fixedNavigation:true});
+	<!-- ENDIF -->
+  });
+	
 // ]]>
 </script>
+
+
 
 <link href="{T_TITANIA_THEME_PATH}/print.css" rel="stylesheet" type="text/css" media="print" title="printonly" />
 <link href="{T_STYLESHEET_LINK}" rel="stylesheet" type="text/css" media="screen, projection" />

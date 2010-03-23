@@ -172,6 +172,51 @@ ul.general-info li strong {
 	float: left;
 }
 
+#extratabs ul.ui-tabs-nav {
+	padding-left: 20px;
+}
+
+#extratabs .ui-tabs-nav li {
+	list-style: none;
+	float: left;
+	font-weight: normal;
+	margin-right: 2px;
+	margin-bottom: 1px;
+	background: none transparent;
+	border: 0;
+}
+
+#extratabs .ui-tabs-nav li a {
+	background-color: #EDEDEE;
+	background-image: none;
+	border: 1px solid #EDEDEE;
+	text-transform: uppercase;
+	padding: 5px 10px;
+	color: #2D556F;
+	display: block;
+}
+
+#extratabs .ui-tabs-nav li.ui-state-active a, #extratabs .ui-tabs-nav li.ui-state-active a:hover {
+	background-color: #FFF !important;
+	border-color: #E5E5E6 !important;
+	color: #333 !important;
+	padding-bottom: 7px;
+	margin-bottom: -7px;
+	position: relative;
+	border-bottom-color: #FFFFFF !important;
+}
+
+#extratabs .ui-tabs-nav li.ui-state-default a:hover {
+	background-color: #627179;
+	border-color: #627179;
+	color: #FFFFFF;
+}
+
+#extratabs div.ui-tabs-panel {
+	border-top: 1px solid #E5E5E6;
+	clear: both;
+}
+
 a.new-revision {
 	background-color: #7FA3B9;
 	padding: 3px;
