@@ -30,11 +30,15 @@
 						<!-- IF contribs.PHPBB_VERSION -->
 							{contribs.PHPBB_VERSION}
 						<!-- ELSE -->
+							<!-- IF .phpbb_versions -->
 							<select id="phpbb_versions" style="width: 100px;">
 								<!-- BEGIN phpbb_versions -->
 									<option>{contribs.phpbb_versions.NAME}</option>
 								<!-- END phpbb_versions -->
 							</select>
+							<!-- ELSE -->
+							{L_NO_REVISIONS}
+							<!-- ENDIF -->
 						<!-- ENDIF -->
 					</dd>
 					<!-- IF contribs.U_CONTRIB_MANAGE or contribs.U_NEW_REVISION or contribs.U_QUEUE_DISCUSSION -->
