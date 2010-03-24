@@ -122,8 +122,6 @@ class titania_category extends titania_message_object
 			$this->$key = $value;
 		}
 
-		$this->description_parsed_for_storage = true;
-
 		return true;
 	}
 
