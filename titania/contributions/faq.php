@@ -88,13 +88,13 @@ switch ($action)
 				$result = phpbb::$db->sql_query($sql);
 				$right_id = (string) phpbb::$db->sql_fetchfield('right_id');
 				phpbb::$db->sql_freeresult($result);
-				
+
 				// Update the faqs table
 				$sql_ary = array(
 					'left_id'	=> $right_id + 1,
 					'right_id'	=> $right_id + 2,
 				);
-				
+
 				$sql = 'UPDATE ' . TITANIA_CONTRIB_FAQ_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 					WHERE faq_id = ' . (int) $faq->faq_id;
 				phpbb::$db->sql_query($sql);
@@ -142,7 +142,7 @@ switch ($action)
 		{
 			titania::needs_auth();
 		}
-		
+
 		if (!$faq_id)
 		{
 			trigger_error('FAQ_NOT_FOUND');
@@ -160,7 +160,7 @@ switch ($action)
 
 		$faq->move($row, $action, 1);
 		redirect(titania::$contrib->get_url('faq'));
-		
+
 	break;
 
 	default:
@@ -222,7 +222,7 @@ switch ($action)
 				),
 				'WHERE' => 'f.contrib_id = ' . titania::$contrib->contrib_id . '
 						AND f.faq_access >= ' . titania::$access_level,
-				'ORDER_BY'	=> 'f.left_id DESC',
+				'ORDER_BY'	=> 'f.left_id ASC',
 			);
 
 			// Main SQL Query
