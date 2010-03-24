@@ -121,6 +121,7 @@
 							<dt>{L_REVISIONS}</dt>
 							<dd class="general version">{L_VERSION}</dd>
 							<dd class="general phpbb-version">{L_PHPBB_VERSION}</dd>
+							<dd class="general time-created">{L_TIME}</dd>
 						</dl>
 					</li>
 				</ul>
@@ -143,6 +144,7 @@
 									</select>
 								<!-- ENDIF -->
 							</dd>
+							<dd class="general time-created">{revisions.CREATED}</dd>
 							<!-- IF not revisions.S_VALIDATED or revisions.REVISION_QUEUE -->
 							<dd class="general"><!-- IF not revisions.S_VALIDATED --><strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --><!-- IF revisions.REVISION_QUEUE --> - <a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF --></dd>
 							<!-- ENDIF -->

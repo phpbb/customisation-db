@@ -339,6 +339,10 @@ dd.phpbb-version select {
 	width: 100px;
 }
 
+dd.time-created {
+	width: 20%;
+}
+
 img.icon {
 	float: right;
 }
