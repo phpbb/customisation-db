@@ -84,7 +84,9 @@ switch ($action)
 				$faq->submit();
 				$message->submit($faq->faq_id);
 
-				$sql = 'SELECT right_id FROM ' . TITANIA_CONTRIB_FAQ_TABLE . ' ORDER BY right_id DESC LIMIT 1';
+				$sql = 'SELECT right_id FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
+					WHERE contrib_id = ' . titania::$contrib->contrib_id . '
+					ORDER BY right_id DESC LIMIT 1';
 				$result = phpbb::$db->sql_query($sql);
 				$right_id = (string) phpbb::$db->sql_fetchfield('right_id');
 				phpbb::$db->sql_freeresult($result);

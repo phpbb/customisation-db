@@ -149,7 +149,7 @@ class titania_faq extends titania_message_object
 	 * @return void
 	 */
 	public function submit()
-	{		
+	{
 		titania_search::index(TITANIA_FAQ, $this->faq_id, array(
 			'title'			=> $this->faq_subject,
 			'text'			=> $this->faq_text,
@@ -186,9 +186,10 @@ class titania_faq extends titania_message_object
 		* faq will move as far as possible
 		*/
 		$sql = 'SELECT faq_id, left_id, right_id
-			FROM ' . $this->sql_table . "
-			WHERE " . (($action == 'move_down') ? "right_id < {$faq_row['right_id']} ORDER BY right_id DESC" : "left_id > {$faq_row['left_id']} ORDER BY left_id ASC");
-		
+			FROM ' . $this->sql_table . '
+			WHERE contrib_id = ' . $this->contrib_id . '
+				AND ' . (($action == 'move_up') ? "right_id < {$faq_row['right_id']} ORDER BY right_id DESC" : "left_id > {$faq_row['left_id']} ORDER BY left_id ASC");
+
 		$result = phpbb::$db->sql_query_limit($sql, $steps);
 
 		$target = array();
@@ -211,7 +212,7 @@ class titania_faq extends titania_message_object
 		* $move_up_left and $move_up_right define the scope of the nodes that are moving
 		* up. Other nodes in the scope of ($left_id, $right_id) are considered to move down.
 		*/
-		if ($action == 'move_down')
+		if ($action == 'move_up')
 		{
 			$left_id = $target['left_id'];
 			$right_id = $faq_row['right_id'];
@@ -244,7 +245,8 @@ class titania_faq extends titania_message_object
 				WHEN right_id BETWEEN {$move_up_left} AND {$move_up_right} THEN -{$diff_up}
 				ELSE {$diff_down}
 			END
-			WHERE left_id BETWEEN {$left_id} AND {$right_id}
+			WHERE contrib_id = " . $this->contrib_id . "
+				AND left_id BETWEEN {$left_id} AND {$right_id}
 				AND right_id BETWEEN {$left_id} AND {$right_id}";
 		phpbb::$db->sql_query($sql);
 
@@ -268,5 +270,5 @@ class titania_faq extends titania_message_object
 			WHERE faq_id = ' . (int) $this->faq_id;
 		phpbb::$db->sql_query($sql);
 	}
-	
+
 }
