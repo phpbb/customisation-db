@@ -172,49 +172,63 @@ ul.general-info li strong {
 	float: left;
 }
 
-#extratabs ul.ui-tabs-nav {
-	padding-left: 20px;
+#extratabs #extratabs-head {
+	width: 98%;
+	border-bottom: 1px solid #E5E5E6;
+	display: block;
+	float: left;
+	margin-bottom: 5px;
+	padding-left: 2%;
+	padding-bottom: 1px;
+	position: relative;
 }
 
-#extratabs .ui-tabs-nav li {
+#extratabs #extratabs-head li {
 	list-style: none;
 	float: left;
 	font-weight: normal;
 	margin-right: 2px;
-	margin-bottom: 1px;
 	background: none transparent;
 	border: 0;
 }
 
-#extratabs .ui-tabs-nav li a {
+#extratabs #extratabs-head li a {
 	background-color: #EDEDEE;
 	background-image: none;
 	border: 1px solid #EDEDEE;
 	text-transform: uppercase;
 	padding: 5px 10px;
 	color: #2D556F;
+	position: relative;
+	margin-top: 2px;
 	display: block;
 }
 
-#extratabs .ui-tabs-nav li.ui-state-active a, #extratabs .ui-tabs-nav li.ui-state-active a:hover {
+#extratabs #extratabs-head li.ui-state-active a, #extratabs #extratabs-head li.ui-state-active a:hover {
 	background-color: #FFF !important;
 	border-color: #E5E5E6 !important;
 	color: #333 !important;
-	padding-bottom: 7px;
-	margin-bottom: -7px;
-	position: relative;
 	border-bottom-color: #FFFFFF !important;
+	padding-bottom: 7px;
+	bottom: -2px;
+	margin-top: 0;
 }
 
-#extratabs .ui-tabs-nav li.ui-state-default a:hover {
+#extratabs #extratabs-head a:hover {
 	background-color: #627179;
 	border-color: #627179;
 	color: #FFFFFF;
 }
 
-#extratabs div.ui-tabs-panel {
-	border-top: 1px solid #E5E5E6;
-	clear: both;
+#screenshots-panel a.screenshot img, #screenshots-panel img.screenshot  {
+	padding: 3px;
+	border: 1px solid #A1A1A1;
+	vertical-align: top;
+	margin: 5px;
+}
+
+#screenshots-panel a.screenshot:hover img {
+	border-color: #757575;
 }
 
 a.new-revision {
@@ -258,6 +272,7 @@ dd.faq-tools {
 
 dd.general {
 	padding-left: 5px !important;
+	padding-right: 5px !important;
 	font-size: 1.1em;
 }
 
@@ -311,6 +326,24 @@ dd.author {
 .container .forabg li.row {
 	background-color: #FFF;
 	border-bottom-color: #4B9AC2;
+}
+
+.revisions dt, .contributions-list dt {
+	width: 30% !important;
+}
+
+dd.version {
+	width: 12%;
+	text-align: center;
+}
+
+dd.phpbb-version {
+	text-align: center;
+	width: 14%;
+}
+
+dd.phpbb-version select {
+	width: 100px;
 }
 
 img.icon {

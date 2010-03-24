@@ -91,7 +91,7 @@
 <div class="container">
 	<div class="inner"><span class="corners-top main-corners"><span></span></span>
 		<div id="extratabs">
-		    <ul>
+		    <ul id="extratabs-head">
 		        <!-- IF .screenshots --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
 		        <!-- IF .revisions or U_NEW_REVISION --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
 		    </ul>
@@ -100,11 +100,11 @@
 		    <div id="screenshots-panel">
 				<!-- BEGIN screenshots -->
 					<!-- IF screenshots.S_THUMBNAIL -->
-						<a href="{screenshots.U_DOWNLOAD_LINK}"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
+						<a href="{screenshots.U_DOWNLOAD_LINK}" class="screenshot"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
 					<!-- ENDIF -->
 
 					<!-- IF screenshots.S_IMAGE -->
-						<img src="{screenshots.U_INLINE_LINK}" alt="{screenshots.DOWNLOAD_NAME}" onclick="viewableArea(this);" />
+						<img src="{screenshots.U_INLINE_LINK}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" onclick="viewableArea(this);" />
 					<!-- ENDIF -->
 				<!-- END screenshots -->
 		    </div>
@@ -115,19 +115,24 @@
 				<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
 				<div class="clear"></div>
 
-				<ul class="topiclist">
+				<ul class="topiclist revisions">
 					<li class="header">
 						<dl>
 							<dt>{L_REVISIONS}</dt>
+							<dd class="general version">{L_VERSION}</dd>
+							<dd class="general phpbb-version">{L_PHPBB_VERSION}</dd>
 						</dl>
 					</li>
 				</ul>
-				<ul class="topiclist cplist">
+				<ul class="topiclist cplist revisions">
 				<!-- BEGIN revisions -->
 					<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 						<dl>
 							<dt>
-								<strong><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></strong>
+								<a href="{revisions.U_DOWNLOAD}" title="{L_DOWNLOAD}"><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></a>
+							</dt>
+							<dd class="general version">{revisions.VERSION}</dd>
+							<dd class="general phpbb-version">
 								<!-- IF revisions.PHPBB_VERSION -->
 									{revisions.PHPBB_VERSION}
 								<!-- ELSE -->
@@ -137,8 +142,10 @@
 									<!-- END phpbb_versions -->
 									</select>
 								<!-- ENDIF -->
-							</dt>
-							<dd class="general">{revisions.VERSION} - <a href="{revisions.U_DOWNLOAD}">{L_DOWNLOAD}</a><!-- IF not revisions.S_VALIDATED --> - <strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --><!-- IF revisions.REVISION_QUEUE --> - <a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF --></dd>
+							</dd>
+							<!-- IF not revisions.S_VALIDATED or revisions.REVISION_QUEUE -->
+							<dd class="general"><!-- IF not revisions.S_VALIDATED --><strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --><!-- IF revisions.REVISION_QUEUE --> - <a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF --></dd>
+							<!-- ENDIF -->
 						</dl>
 					</li>
 				<!-- END revisions -->

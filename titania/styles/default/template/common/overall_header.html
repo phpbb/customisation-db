@@ -55,7 +55,14 @@
 		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
     
     <!-- IF .screenshots -->
-		$('#screenshots-panel a, #main-screenshot').lightBox({fixedNavigation:true});
+		$('a.screenshot, #main-screenshot').lightBox(
+			{
+				imageLoading: '{T_TITANIA_THEME_PATH}/images/lightbox-ico-loading.gif',
+				imageBtnClose: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-close.gif',
+				imageBtnPrev: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-prev.gif',
+				imageBtnNext: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-next.gif',
+			}
+		);
 	<!-- ENDIF -->
   });
 	

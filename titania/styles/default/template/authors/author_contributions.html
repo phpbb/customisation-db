@@ -10,7 +10,7 @@
 				<dl class="icon">
 					<dt>{L_CONTRIBUTIONS}</dt>
 					<dd class="type">{L_TYPE}</dd>
-					<dd class="type">{L_PHPBB_VERSION}</dd>
+					<dd class="general phpbb-version">{L_PHPBB_VERSION}</dd>
 				</dl>
 			</li>
 		</ul>
@@ -26,12 +26,12 @@
 					<!-- ENDIF -->
 					</dt>
 					<dd class="type">{contribs.CONTRIB_TYPE}</dd>
-					<dd class="type" style="width: 125px;">
+					<dd class="general phpbb-version">
 						<!-- IF contribs.PHPBB_VERSION -->
 							{contribs.PHPBB_VERSION}
 						<!-- ELSE -->
 							<!-- IF .contribs.phpbb_versions -->
-							<select id="phpbb_versions" style="width: 100px;">
+							<select id="phpbb_versions">
 								<!-- BEGIN phpbb_versions -->
 									<option>{contribs.phpbb_versions.NAME}</option>
 								<!-- END phpbb_versions -->
