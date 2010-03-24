@@ -181,14 +181,16 @@ switch ($action)
 			// tracking
 			titania_tracking::track(TITANIA_FAQ, $faq_id);
 
+			$message = $faq->generate_text_for_display();
+
 			// Grab attachments
 			$attachments = new titania_attachment(TITANIA_FAQ, $faq->faq_id);
 			$attachments->load_attachments();
-			$parsed_attachments = $attachments->parse_attachments($faq->faq_text);
+			$parsed_attachments = $attachments->parse_attachments($message);
 
 			phpbb::$template->assign_vars(array(
 				'FAQ_SUBJECT'			=> $faq->faq_subject,
-				'FAQ_TEXT'				=> $faq->generate_text_for_display(),
+				'FAQ_TEXT'				=> $message,
 				'FAQ_VIEWS'				=> $faq->faq_views,
 
 				'S_DETAILS'				=> true,
