@@ -81,6 +81,8 @@ class titania_config extends titania_object
 			'forum_style_database'		=> array('default' => 0),
 			'forum_mod_robot'			=> array('default' => 0),
 			'forum_style_robot'			=> array('default' => 0),
+			
+			'support_in_titania'		=> array('default' => 1),
 		));
 	}
 }

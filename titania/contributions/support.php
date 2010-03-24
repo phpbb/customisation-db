@@ -16,6 +16,11 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+if (!titania::$config->support_in_titania && titania::$access_level == TITANIA_ACCESS_PUBLIC)
+{
+	titania::needs_auth();
+}
+
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
 
@@ -92,7 +97,7 @@ else
 
 	titania::page_header('CONTRIB_SUPPORT');
 
-	if (phpbb::$auth->acl_get('u_titania_topic'))
+	if (phpbb::$auth->acl_get('u_titania_topic') && titania::$config->support_in_titania)
 	{
 		phpbb::$template->assign_var('U_POST_TOPIC', titania_url::append_url(titania::$contrib->get_url('support'), array('action' => 'post')));
 	}

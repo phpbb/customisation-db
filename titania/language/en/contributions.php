@@ -37,6 +37,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ANNOUNCEMENT_TOPIC' 				=> 'Announcement topic',
+	'ANNOUNCEMENT_TOPIC_SUPPORT'		=> 'Support topic',
 	'ANNOUNCEMENT_TOPIC_VIEW'			=> '%sView%s',
 	
 	'NO_REVISIONS' => 'No Revisions',
@@ -107,7 +108,7 @@ $lang = array_merge($lang, array(
 
 [b]Modification overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]Support for this modification needs to be asked within this topic. The phpBB Team is not responsible or required to give anyone support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB MODifications Team may not be able to provide support.[/b][/color]',
+[color=blue][b]The phpBB Team is not responsible or required to give anyone support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB MODifications Team may not be able to provide support.[/b][/color]',
 	'MOD_UPDATE_PUBLIC'					=> '[color=darkred][b]MOD Updated to version %s
 See first post for Download Link[/b][/color]',
 	'MPV_RESULTS'						=> '<strong>Please check over the MPV results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
@@ -157,7 +158,7 @@ See first post for Download Link[/b][/color]',
 
 [b]Style overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]Support for this Style needs to be asked within this topic. The phpBB Team is not responsible or required to give anyone support for this Style. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]',
+[color=blue][b]The phpBB Team is not responsible or required to give anyone support for this Style. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]',
 	'STYLE_UPDATE_PUBLIC'				=> '[color=darkred][b]Style Updated to version %s
 See first post for Download Link[/b][/color]',
 	'SUBDIRECTORY_LIMIT'				=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',

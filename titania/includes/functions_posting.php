@@ -277,7 +277,6 @@ function phpbb_topic_add(&$options, $poll = array())
 		'post_time'				=> time(),
 		'poster_ip'				=> phpbb::$user->ip,
 		'post_edit_locked'		=> 0,
-		'topic_status'			=> POST_NORMAL,
 		'topic_type'			=> POST_NORMAL,
 		'post_approved'			=> true,
 	);
@@ -360,7 +359,6 @@ function phpbb_topic_add(&$options, $poll = array())
 		'notify_set'			=> 0,
 		'poster_ip'				=> $options['poster_ip'],
 		'post_edit_locked'		=> (int) $options['post_edit_locked'],
-		'topic_status'			=> $options['topic_status'],
 		'bbcode_bitfield'		=> $message_parser->bbcode_bitfield,
 		'bbcode_uid'			=> $message_parser->bbcode_uid,
 		'message'				=> $message_parser->message,
@@ -371,6 +369,16 @@ function phpbb_topic_add(&$options, $poll = array())
 
 	// Aaaand, submit it.
 	submit_post('post', $options['topic_title'], $user_data['username'], $options['topic_type'], $poll, $data, true);
+	
+	// If we provide support in titania, we lock the topic
+	if (titania::$config->support_in_titania)
+	{
+		$sql = 'UPDATE ' . TOPICS_TABLE . '
+			SET topic_status = ' . ITEM_LOCKED . '
+			WHERE topic_id = ' . $data['topic_id'] . '
+				AND topic_moved_id = 0';
+		phpbb::$db->sql_query($sql);
+	}
 
 	// And restore it
 	phpbb::$user->data = $old_data;
@@ -400,7 +408,6 @@ function phpbb_post_add(&$options)
 		'post_time'				=> time(),
 		'poster_ip'				=> phpbb::$user->ip,
 		'post_edit_locked'		=> 0,
-		'topic_status'			=> POST_NORMAL,
 		'topic_type'			=> POST_NORMAL,
 		'post_approved'			=> true,
 	);
@@ -503,7 +510,6 @@ function phpbb_post_add(&$options)
 		'notify_set'			=> 0,
 		'poster_ip'				=> $options['poster_ip'],
 		'post_edit_locked'		=> (int) $options['post_edit_locked'],
-		'topic_status'			=> $options['topic_status'],
 		'bbcode_bitfield'		=> $message_parser->bbcode_bitfield,
 		'bbcode_uid'			=> $message_parser->bbcode_uid,
 		'message'				=> $message_parser->message,
