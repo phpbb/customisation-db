@@ -31,9 +31,8 @@ titania::$contrib->assign_details();
 titania_tracking::track(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 
 // Are they Subscribed?
-// Waiting on Nathan for which parameters to pass along.
-// titania::_include('tools/subscriptions');
-// phpbb::$template->assign_var('IS_SUBSCRIBED', (titania_subscriptions::is_subscribed()) ? true : false);
+titania::_include('tools/subscriptions');
+phpbb::$template->assign_var('IS_SUBSCRIBED', (titania_subscriptions::is_subscribed(TITANIA_CONTRIB, titania::$contrib->contrib_id, phpbb::$user->data['user_id'])) ? true : false);
 
 titania::page_header('CONTRIB_DETAILS');
 titania::page_footer(true, 'contributions/contribution_details.html');
