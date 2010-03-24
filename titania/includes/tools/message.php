@@ -297,7 +297,7 @@ class titania_message
 
 		phpbb::$template->assign_vars(array(
 			'PREVIEW_SUBJECT'		=> (isset($for_edit['subject'])) ? censor_text($for_edit['subject']) : '',
-			'PREVIEW_MESSAGE'		=> $this->post_object->generate_text_for_display(),
+			'PREVIEW_MESSAGE'		=> $message,
 
 			'S_DISPLAY_PREVIEW'		=> true,
 		));

@@ -194,7 +194,7 @@ class titania_attachment extends titania_database_object
 			// Make sure the form type is correct...doing it here just in case someone leaves {S_FORM_ENCTYPE} and forgets about it
 			'S_FORM_ENCTYPE'	=> ' enctype="multipart/form-data"',
 
-			//'S_INLINE_ATTACHMENT_OPTIONS'	=>
+			'S_INLINE_ATTACHMENT_OPTIONS'	=> true,
 		));
 
 		// Sort correctly
@@ -458,6 +458,8 @@ class titania_attachment extends titania_database_object
 			return array();
 		}
 
+		phpbb::$user->add_lang('viewtopic');
+
 		$compiled_attachments = array();
 
 		if (!isset(phpbb::$template->filename['titania_attachment_tpl']))
@@ -686,6 +688,8 @@ class titania_attachment extends titania_database_object
 		{
 			return;
 		}
+
+		phpbb::$user->add_lang('viewtopic');
 
 		// Sort correctly
 		if (phpbb::$config['display_order'])
