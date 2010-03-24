@@ -229,7 +229,8 @@ class contribs_overlord
 		if (sizeof($contrib_ids))
 		{
 			$sql = 'SELECT contrib_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
-				WHERE ' . phpbb::$db->sql_in_set('contrib_id', array_map('intval', $contrib_ids)) . '
+				WHERE ' . phpbb::$db->sql_in_set('contrib_id', array_map('intval', $contrib_ids)) .
+				((titania::$config->require_validation) ? ' AND revision_validated = 1' : '') . '
 				ORDER BY row_id DESC';
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))

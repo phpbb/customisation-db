@@ -90,7 +90,7 @@ class titania_revision extends titania_database_object
 	*/
 	public function load_phpbb_versions()
 	{
-		$sql = 'SELECT phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
 			WHERE revision_id = ' . (int) $this->revision_id;
 		 $result = phpbb::$db->sql_query($sql);
 		 while ($row = phpbb::$db->sql_fetchrow($result))
@@ -245,6 +245,7 @@ class titania_revision extends titania_database_object
 				$sql_ary[] = array(
 					'revision_id'				=> $this->revision_id,
 					'contrib_id'				=> $this->contrib_id,
+					'revision_validated'		=> $this->revision_validated,
 					'phpbb_version_branch'		=> $row['phpbb_version_branch'],
 					'phpbb_version_revision'	=> (isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'],
 				);

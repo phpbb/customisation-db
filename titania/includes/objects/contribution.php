@@ -600,7 +600,7 @@ class titania_contribution extends titania_message_object
 					foreach ($this->revisions as $revision_id => $row)
 					{
 						$revision->__set_array($row);
-						$revision->phpbb_versions = $row['phpbb_versions'];
+						$revision->phpbb_versions = (isset($row['phpbb_versions'])) ? $row['phpbb_versions'] : array();
 						$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'));
 					}
 					unset($revision);

@@ -364,6 +364,12 @@ class titania_queue extends titania_message_object
 			WHERE revision_id = ' . (int) $this->revision_id;
 		phpbb::$db->sql_query($sql);
 
+		// Update the revisions phpbb version table
+		$sql = 'UPDATE ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+			SET revision_validated = 1
+			WHERE revision_id = ' . (int) $this->revision_id;
+		phpbb::$db->sql_query($sql);
+
 		// Update the contribs table
 		$contrib = new titania_contribution;
 		$contrib->load((int) $this->contrib_id);

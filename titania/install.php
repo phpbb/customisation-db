@@ -860,6 +860,18 @@ $versions = array(
 		),
 	),
 
+	'0.1.55' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_PHPBB_TABLE, 'revision_validated', array('BOOL', 0)),
+		),
+
+		'table_index_add' => array(
+			array(TITANIA_REVISIONS_PHPBB_TABLE, 'revision_validated'),
+		),
+
+		'custom' => 'titania_custom',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

@@ -71,6 +71,26 @@ function titania_custom($action, $version)
 
 					phpbb::$db->sql_multi_insert(TITANIA_REVISIONS_PHPBB_TABLE, $sql_ary);
 				break;
+
+				case '0.1.55' :
+					$validated = array();
+					$sql = 'SELECT revision_id FROM ' . TITANIA_REVISIONS_TABLE . '
+						WHERE revision_validated = 1';
+					$result = phpbb::$db->sql_query($sql);
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$validated[] = $row['revision_id'];
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					if (sizeof($validated))
+					{
+						$sql = 'UPDATE ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+							SET revision_validated = 1
+							WHERE ' . phpbb::$db->sql_in_set('revision_id', $validated);
+						phpbb::$db->sql_query($sql);
+					}
+				break;
 			}
 		break;
 
