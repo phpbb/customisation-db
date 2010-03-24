@@ -143,7 +143,7 @@ class titania_attachment extends titania_database_object
 	*
 	* @param array $attachment_ids
 	*/
-	public function load_attachments($attachment_ids = false)
+	public function load_attachments($attachment_ids = false, $include_orphans = false)
 	{
 		// Do not load if we do not have an object_id or an empty array of attachment_ids
 		if (!$this->object_id || (!sizeof($attachment_ids) && $attachment_ids !== false))
@@ -154,7 +154,8 @@ class titania_attachment extends titania_database_object
 		$sql = 'SELECT * FROM ' . $this->sql_table . '
 			WHERE object_type = ' . (int) $this->object_type . '
 				AND object_id = ' . (int) $this->object_id .
-				(($attachment_ids !== false) ? ' AND ' . phpbb::$db->sql_in_set('attachment_id', array_map('intval', $attachment_ids)) : '');
+				(($attachment_ids !== false) ? ' AND ' . phpbb::$db->sql_in_set('attachment_id', array_map('intval', $attachment_ids)) : '') .
+				((!$include_orphans) ? ' AND is_orphan = 0' : '');
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
