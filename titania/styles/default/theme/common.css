@@ -276,13 +276,6 @@ dd.general {
 	font-size: 1.1em;
 }
 
-dd.author {
-	width: 22%;
-	text-align: center;
-	font-size: 1.1em;
-	padding: 0 5px;
-}
-
 #categories .forums dd.general {
 	font-size: 1.2em;
 }
@@ -328,7 +321,7 @@ dd.author {
 	border-bottom-color: #4B9AC2;
 }
 
-.revisions dt, .contributions-list dt {
+.revisions dt {
 	width: 30% !important;
 }
 

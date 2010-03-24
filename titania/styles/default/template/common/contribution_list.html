@@ -5,7 +5,6 @@
 		<dl class="icon">
 			<dt>{L_CONTRIBUTIONS}</dt>
 			<dd class="general phpbb-version">{L_PHPBB_VERSION}</dd>
-			<dd class="author">{L_AUTHOR}</dd>
 			<dd class="general">{L_INFORMATION}</dd>
 		</dl>
 	</li>
@@ -20,7 +19,8 @@
 				<img src="{T_TITANIA_THEME_PATH}/images/icon_cleaned_contrib.gif" title="{L_CLEANED_CONTRIB}" alt="{L_CLEANED_CONTRIB}" />
 			<!-- ELSEIF not contribs.S_CONTRIB_VALIDATED -->
 				<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_NOT_VALIDATED}" title="{L_NOT_VALIDATED}" />
-			<!-- ENDIF -->
+			<!-- ENDIF --> <br />
+			{L_BY} {contribs.AUTHOR_NAME_FULL}
 			</dt>
 			<dd class="general phpbb-version">
 				<!-- IF contribs.PHPBB_VERSION -->
@@ -36,9 +36,6 @@
 					{L_NO_REVISIONS}
 					<!-- ENDIF -->
 				<!-- ENDIF -->
-			</dd>
-			<dd class="author">
-				{contribs.AUTHOR_NAME_FULL}
 			</dd>
 			<dd class="general">
 				<!-- IF contribs.CONTRIB_DOWNLOADS -->{L_DOWNLOADS}: {contribs.CONTRIB_DOWNLOADS}<br /><!-- ENDIF -->
