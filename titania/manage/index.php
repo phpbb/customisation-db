@@ -52,6 +52,11 @@ $nav_ary = array(
 		'url'		=> titania_url::build_url('manage/administration'),
 		'auth'		=> (phpbb::$auth->acl_get('u_titania_admin')) ? true : false,
 	),
+	'categories' => array(
+		'title'		=> 'MANAGE_CATEGORIES',
+		'url'		=> titania_url::build_url('manage/categories'),
+		'auth'		=> (phpbb::$auth->acl_get('u_titania_admin')) ? true : false,
+	),
 );
 
 // Display nav menu
@@ -75,6 +80,7 @@ switch ($page)
 	case 'queue_discussion' :
 	case 'attention' :
 	case 'administration' :
+	case 'categories' :
 		include(TITANIA_ROOT . 'manage/' . $page . '.' . PHP_EXT);
 	break;
 

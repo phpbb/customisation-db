@@ -52,6 +52,7 @@ $lang = array_merge($lang, array(
 
 	'EDIT_VALIDATION_NOTES'				=> 'Edit Validation Notes',
 
+	'MANAGE_CATEGORIES'					=> 'Manage Categories',
 	'MARK_IN_PROGRESS'					=> 'Mark in Progress',
 	'MARK_NO_PROGRESS'					=> 'Mark no Progress',
 	'MOD_VALIDATION'					=> '[phpBB MOD-Validation] %1$s %2$s',
