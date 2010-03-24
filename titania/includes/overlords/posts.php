@@ -317,12 +317,14 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$attachments->store_attachments(self::$posts[$post_id]['attachments']);
 
 			// Parse attachments before outputting the message
-			$parsed_attachments = $attachments->parse_attachments($post->post_text);
+			$message = $post->generate_text_for_display();
+			$parsed_attachments = $attachments->parse_attachments($message);
 
 			phpbb::$template->assign_block_vars('posts', array_merge(
-				$post->assign_details(),
+				$post->assign_details(false),
 				users_overlord::assign_details($post->post_user_id),
 				array(
+					'POST_TEXT'				=> $message,
 					'S_FIRST_UNREAD'		=> ($post->post_time >= $last_mark_time && $prev_post_time <= $last_mark_time) ? true : false,
 				)
 			));

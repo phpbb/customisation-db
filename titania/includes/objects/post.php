@@ -761,7 +761,7 @@ class titania_post extends titania_message_object
 	*
 	* A little different from those in other classes, this one only returns the info ready for output
 	*/
-	public function assign_details()
+	public function assign_details($output_text = true)
 	{
 		$details = array(
 			'POST_ID'						=> $this->post_id,
@@ -775,7 +775,7 @@ class titania_post extends titania_message_object
 			'POST_TIME'						=> phpbb::$user->format_date($this->post_time),
 			'POST_EDIT_REASON'				=> censor_text($this->post_edit_reason),
 			'POST_SUBJECT'					=> censor_text($this->post_subject),
-			'POST_TEXT'						=> $this->generate_text_for_display(),
+			'POST_TEXT'						=> ($output_text) ? $this->generate_text_for_display() : '',
 			'EDITED_MESSAGE'				=> ($this->post_edited) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], users_overlord::get_user($this->post_edit_user, '_full'), phpbb::$user->format_date($this->post_edited)) : '',
 			'DELETED_MESSAGE'				=> ($this->post_deleted != 0) ? sprintf(phpbb::$user->lang['DELETED_MESSAGE'], users_overlord::get_user($this->post_delete_user, '_full'), phpbb::$user->format_date($this->post_deleted), $this->get_url('undelete')) : '',
 
