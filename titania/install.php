@@ -871,6 +871,21 @@ $versions = array(
 
 		'custom' => 'titania_custom',
 	),
+	
+	'0.1.56' => array(
+		'table_column_remove' => array(
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'faq_order_id'),
+		),
+
+		'table_column_add' => array(
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'left_id', array('UINT', 0)),
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'right_id', array('UINT', 0)),
+		),
+		
+		'table_index_add' => array(
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'left_right_id', array('left_id', 'right_id')),
+		),
+	),
 
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );

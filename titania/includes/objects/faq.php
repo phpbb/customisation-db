@@ -59,7 +59,6 @@ class titania_faq extends titania_message_object
 		$this->object_config = array_merge($this->object_config, array(
 			'faq_id'			=> array('default' => 0),
 			'contrib_id' 		=> array('default' => 0),
-			'faq_order_id' 		=> array('default' => 0),
 			'faq_subject' 		=> array('default' => '',	'message_field' => 'subject', 'max' => 255),
 			'faq_text' 			=> array('default' => '',	'message_field' => 'message'),
 			'faq_text_bitfield'	=> array('default' => '',	'message_field' => 'message_bitfield'),
@@ -67,6 +66,8 @@ class titania_faq extends titania_message_object
 			'faq_text_options'	=> array('default' => 7,	'message_field' => 'message_options'),
 			'faq_views'			=> array('default' => 0),
 			'faq_access'		=> array('default' => 2,	'message_field'	=> 'access'),
+			'left_id'			=> array('default' => 0),
+			'right_id'			=> array('default' => 0),
 		));
 
 		if ($faq_id !== false)
@@ -148,7 +149,7 @@ class titania_faq extends titania_message_object
 	 * @return void
 	 */
 	public function submit()
-	{
+	{		
 		titania_search::index(TITANIA_FAQ, $this->faq_id, array(
 			'title'			=> $this->faq_subject,
 			'text'			=> $this->faq_text,
@@ -176,36 +177,78 @@ class titania_faq extends titania_message_object
 	*
 	* @param string $direction (up|down)
 	*/
-	public function move($direction)
+	public function move($faq_row, $action = 'move_up', $steps = 1)
 	{
-		$sql = 'SELECT faq_order_id
-			FROM ' . $this->sql_table . '
-			WHERE faq_order_id ' . (($direction == 'move_up') ? '<' : '>') . $this->faq_order_id . '
-				AND contrib_id = ' . $this->contrib_id . '
-			ORDER BY faq_order_id ' . (($direction == 'move_up') ? 'DESC' : 'ASC');
-		phpbb::$db->sql_query_limit($sql, 1);
-		$new_order_id = phpbb::$db->sql_fetchfield('faq_order_id');
-		phpbb::$db->sql_freeresult();
+		/**
+		* Fetch all the siblings between the faq's current spot
+		* and where we want to move it to. If there are less than $steps
+		* siblings between the current spot and the target then the
+		* faq will move as far as possible
+		*/
+		$sql = 'SELECT faq_id, left_id, right_id
+			FROM ' . $this->sql_table . "
+			WHERE " . (($action == 'move_down') ? "right_id < {$faq_row['right_id']} ORDER BY right_id DESC" : "left_id > {$faq_row['left_id']} ORDER BY left_id ASC");
+		
+		$result = phpbb::$db->sql_query_limit($sql, $steps);
 
-		if ($new_order_id === false)
+		$target = array();
+		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			$target = $row;
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		if (!sizeof($target))
+		{
+			// The faq is already on top or bottom
 			return false;
 		}
 
-		// Update the item in the position where want to move it to have the current position
-		 $sql = 'UPDATE ' . $this->sql_table . '
-			SET faq_order_id = ' . $this->faq_order_id . '
-		 	WHERE faq_order_id = ' . $new_order_id . '
-				AND contrib_id = ' . $this->contrib_id;
-		 phpbb::$db->sql_query($sql);
+		/**
+		* $left_id and $right_id define the scope of the nodes that are affected by the move.
+		* $diff_up and $diff_down are the values to substract or add to each node's left_id
+		* and right_id in order to move them up or down.
+		* $move_up_left and $move_up_right define the scope of the nodes that are moving
+		* up. Other nodes in the scope of ($left_id, $right_id) are considered to move down.
+		*/
+		if ($action == 'move_down')
+		{
+			$left_id = $target['left_id'];
+			$right_id = $faq_row['right_id'];
 
-		// Update the current faq item to have the new position
-		 $sql = 'UPDATE ' . $this->sql_table . '
-			SET faq_order_id = ' . $new_order_id . '
-		 	WHERE faq_id = ' . $this->faq_id;
-		 phpbb::$db->sql_query($sql);
+			$diff_up = $faq_row['left_id'] - $target['left_id'];
+			$diff_down = $faq_row['right_id'] + 1 - $faq_row['left_id'];
 
-		 return true;
+			$move_up_left = $faq_row['left_id'];
+			$move_up_right = $faq_row['right_id'];
+		}
+		else
+		{
+			$left_id = $faq_row['left_id'];
+			$right_id = $target['right_id'];
+
+			$diff_up = $faq_row['right_id'] + 1 - $faq_row['left_id'];
+			$diff_down = $target['right_id'] - $faq_row['right_id'];
+
+			$move_up_left = $faq_row['right_id'] + 1;
+			$move_up_right = $target['right_id'];
+		}
+
+		// Now do the dirty job
+		$sql = 'UPDATE ' . $this->sql_table . "
+			SET left_id = left_id + CASE
+				WHEN left_id BETWEEN {$move_up_left} AND {$move_up_right} THEN -{$diff_up}
+				ELSE {$diff_down}
+			END,
+			right_id = right_id + CASE
+				WHEN right_id BETWEEN {$move_up_left} AND {$move_up_right} THEN -{$diff_up}
+				ELSE {$diff_down}
+			END
+			WHERE left_id BETWEEN {$left_id} AND {$right_id}
+				AND right_id BETWEEN {$left_id} AND {$right_id}";
+		phpbb::$db->sql_query($sql);
+
+		return true;
 	}
 
 	/*
@@ -225,54 +268,5 @@ class titania_faq extends titania_message_object
 			WHERE faq_id = ' . (int) $this->faq_id;
 		phpbb::$db->sql_query($sql);
 	}
-
-	/*
-	 * Cleanup an entries order
-	 *
-	 * @return void
-	 */
-	public function cleanup_order()
-	{
-		$sql = 'SELECT faq_id, faq_order_id
-			FROM ' . $this->sql_table . '
-			WHERE contrib_id = ' . titania::$contrib->contrib_id . '
-			ORDER BY faq_order_id ASC';
-		$result = phpbb::$db->sql_query($sql);
-
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$order = 0;
-
-			do
-			{
-				++$order;
-
-				if ($row['faq_order_id'] != $order)
-				{
-					phpbb::$db->sql_query('UPDATE ' . $this->sql_table . "
-						SET faq_order_id = $order
-						WHERE faq_id = {$row['faq_id']}");
-				}
-			}
-			while ($row = phpbb::$db->sql_fetchrow($result));
-		}
-		phpbb::$db->sql_freeresult($result);
-	}
-
-	/*
-	 * Obtain the next order id for a specified contrib
-	 *
- 	 * @return int
-	 */
-	public function get_next_order_id()
-	{
-		$sql = 'SELECT MAX(faq_order_id) as max_order_id
-			FROM ' . $this->sql_table . '
-			WHERE contrib_id = ' . titania::$contrib->contrib_id;
-		$result = phpbb::$db->sql_query_limit($sql, 1);
-		$max_order_id = phpbb::$db->sql_fetchfield('max_order_id');
-		phpbb::$db->sql_freeresult($result);
-
-		return $max_order_id + 1;
-	}
+	
 }
