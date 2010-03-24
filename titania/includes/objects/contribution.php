@@ -544,7 +544,7 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
 			'CONTRIB_RATING_STRING'			=> (!$simple) ? $this->rating->get_rating_string() : '',
 			
-			'CONTRIB_ANNOUNCEMENT_TOPIC'	=> sprintf(phpbb::$user->lang['ANNOUNCEMENT_TOPIC_VIEW'], '<a href="' . phpbb::append_sid('viewtopic', 't='.$this->contrib_release_topic_id) . '">', '</a>'),
+			'CONTRIB_ANNOUNCEMENT_TOPIC'	=> ($this->contrib_release_topic_id) ? sprintf(phpbb::$user->lang['ANNOUNCEMENT_TOPIC_VIEW'], '<a href="' . phpbb::append_sid('viewtopic', 't='.$this->contrib_release_topic_id) . '">', '</a>') : false,
 
 			// Download data
 			'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
