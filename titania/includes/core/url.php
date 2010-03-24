@@ -152,7 +152,14 @@ class titania_url
 			}
 
 			// Does this field already exist in the url?  If so replace it
-			$url = preg_replace('#[' . self::$separator . ']?' . $name . '_[^' . self::$separator . ']+' . self::$separator . '?#', '', $url);
+			if (strpos($url, self::$separator . $name . '_') !== false)
+			{
+				$url = preg_replace('#' . self::$separator . $name . '_[^' . self::$separator . ']+' . self::$separator . '?#', '', $url);
+			}
+			else if (strpos($url, '/' . $name . '_') !== false)
+			{
+				$url = preg_replace('#/' . $name . '_[^' . self::$separator . ']+' . self::$separator . '?#', '/', $url);
+			}
 
 			if (substr($url, -1) != '/')
 			{
