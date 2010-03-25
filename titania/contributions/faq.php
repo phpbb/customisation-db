@@ -67,6 +67,7 @@ switch ($action)
 
 		if ($submit)
 		{
+
 			$error = $faq->validate();
 			$error = array_merge($error, $message->error);
 
@@ -75,11 +76,7 @@ switch ($action)
 				$error[] = $validate_form_key;
 			}
 
-			if (sizeof($error))
-			{
-				phpbb::$template->assign_var('ERROR', implode('<br />', $error));
-			}
-			else
+			if (!sizeof($error))
 			{
 				$faq->submit();
 				$message->submit($faq->faq_id);
