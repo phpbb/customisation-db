@@ -73,7 +73,6 @@ $lang = array_merge($lang, array(
 	'CONTINUE'					=> 'Continue',
 	'CONTRIBUTION'				=> 'Contribution',
 	'CONTRIBUTIONS'				=> 'Contributions',
-	'CONTRIBUTIONS_RECENT'		=> 'Recently validated',
 	'CONTRIB_MANAGE'			=> 'Manage Contribution',
 	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',

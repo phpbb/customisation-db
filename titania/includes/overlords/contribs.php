@@ -163,6 +163,8 @@ class contribs_overlord
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
+
+				titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 			break;
 
 			case 'category' :
@@ -189,38 +191,13 @@ class contribs_overlord
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
-			break;
-			
-			case 'recent' :
-				$sql_ary = array(
-					'SELECT'	=> $select,
 
-					'FROM'		=> array(
-						TITANIA_CONTRIBS_TABLE => 'c',
-					),
-
-					'LEFT_JOIN'	=> array(
-						array(
-							'FROM'	=> array(TITANIA_REVISIONS_TABLE => 'r'),
-							'ON'	=> 'c.contrib_id = r.contrib_id',
-						),
-						array(
-							'FROM'	=> array(USERS_TABLE => 'u'),
-							'ON'	=> 'u.user_id = c.contrib_user_id',
-						),
-					),
-
-					'WHERE'		=> 'r.revision_validated = 1 '. (($id) ? 'AND c.contrib_type = ' . (int) $id : ''),
-
-					'ORDER_BY'	=> 'r.validation_date DESC',
-				);
+				titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 			break;
 		}
 
-		titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
-		
 		// Permissions
-		if (titania::$config->require_validation && !titania::$access_level == TITANIA_ACCESS_TEAMS && $mode != 'recent')
+		if (titania::$config->require_validation && !titania::$access_level == TITANIA_ACCESS_TEAMS)
 		{
 			$sql_ary['LEFT_JOIN'][] = array(
 				'FROM'	=> array(TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc'),
