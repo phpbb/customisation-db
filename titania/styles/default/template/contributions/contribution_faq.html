@@ -3,7 +3,6 @@
 <h3 class="section-name">{L_FAQ_EXPANDED}</h3>
 
 <!-- IF S_LIST -->
-
 	<div class="container" id="faqlist">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
@@ -87,7 +86,7 @@
 	<div id="p{posts.POST_ID}" class="post container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<div class="postbody">
-				<h3>{FAQ_SUBJECT} 
+				<h3>{FAQ_SUBJECT}
 				<!-- IF S_ACCESS_TEAMS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_teams.png" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
 				<!-- ELSEIF S_ACCESS_AUTHORS--><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_author.png" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" /><!-- ENDIF --></h3>
 
@@ -107,6 +106,8 @@
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
 <!-- ELSEIF S_EDIT -->
+	<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" onsubmit="titania_post_submit();" {S_FORM_ENCTYPE}>

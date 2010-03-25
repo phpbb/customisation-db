@@ -109,6 +109,7 @@ switch ($action)
 
 		phpbb::$template->assign_vars(array(
 			'L_POST_A'			=> phpbb::$user->lang[(($action == 'edit') ? 'EDIT_FAQ' : 'CREATE_FAQ')],
+			'ERROR_MSG'			=> (sizeof($error)) ? implode('<br />', $error) : '',
 
 			'S_EDIT'			=> true,
 			'S_POST_ACTION'		=> $faq->get_url($action, $faq->faq_id),
