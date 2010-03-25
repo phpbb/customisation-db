@@ -16,11 +16,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!titania::$config->support_in_titania && titania::$access_level == TITANIA_ACCESS_PUBLIC)
-{
-	titania::needs_auth();
-}
-
 $post_id = request_var('p', 0);
 $topic_id = request_var('t', 0);
 
@@ -61,6 +56,11 @@ else
 
 // Output the simple info on the contrib
 titania::$contrib->assign_details(true);
+
+if (!titania::$config->support_in_titania && titania::$access_level != TITANIA_ACCESS_TEAMS && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
+{
+	titania::needs_auth();
+}
 
 // Handle replying/editing/etc
 $posting_helper = new titania_posting(TITANIA_ATTACH_EXT_SUPPORT);

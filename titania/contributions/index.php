@@ -117,24 +117,17 @@ function load_contrib($contrib_id = false)
 			'title'		=> 'CONTRIB_FAQ',
 			'url'		=> titania::$contrib->get_url('faq'),
 		),
+		'support' => array(
+			'title'		=> 'CONTRIB_SUPPORT',
+			'url'		=> titania::$contrib->get_url('support'),
+			'auth'		=> (titania::$config->support_in_titania || (!titania::$config->support_in_titania && (titania::$access_level == TITANIA_ACCESS_TEAMS || titania::$contrib->is_author || titania::$contrib->is_active_coauthor))) ? true : false,
+		),
 		'manage' => array(
 			'title'		=> 'CONTRIB_MANAGE',
 			'url'		=> titania::$contrib->get_url('manage'),
 			'auth'		=> (((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) && titania::$contrib->contrib_status != TITANIA_CONTRIB_CLEANED) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 		),
 	);
-	
-	$nav_ary_support = array(
-		'support' => array(
-			'title'		=> 'CONTRIB_SUPPORT',
-			'url'		=> titania::$contrib->get_url('support'),
-		),
-	);
-	
-	if (titania::$config->support_in_titania || (!titania::$config->support_in_titania && (titania::$access_level == TITANIA_ACCESS_TEAMS || titania::$contrib->is_author || titania::$contrib->is_active_coauthor)))
-	{
-		$nav_ary = array_merge($nav_ary, $nav_ary_support);
-	}
 
 	// Display nav menu
 	$page = request_var('page', '');
