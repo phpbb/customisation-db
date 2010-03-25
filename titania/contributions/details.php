@@ -30,8 +30,15 @@ titania::$contrib->assign_details();
 // Set tracking
 titania_tracking::track(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 
-// Are they Subscribed?
 titania::_include('tools/subscriptions');
+
+// Did they hit "Subscribe"?
+if(isset($_POST['subscribe']))
+{
+	titania_subscriptions::subscribe(TITANIA_CONTRIB, titania::$contrib->contrib_id, phpbb::$user->data['user_id']);
+}
+
+// Are they Subscribed?
 phpbb::$template->assign_var('IS_SUBSCRIBED', (titania_subscriptions::is_subscribed(TITANIA_CONTRIB, titania::$contrib->contrib_id, phpbb::$user->data['user_id'])) ? true : false);
 
 titania::page_header('CONTRIB_DETAILS');
