@@ -79,6 +79,7 @@ switch ($action)
 
 		phpbb::$template->assign_vars(array(
 			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/create') : '',
+			'S_MANAGE' 					=> true,
 		));
 	break;
 }
