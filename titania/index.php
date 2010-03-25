@@ -203,6 +203,11 @@ switch ($action)
 
 			contribs_overlord::display_contribs('category', $category_id);
 		}
+		
+		if ($category_id < 3)
+		{
+			contribs_overlord::display_contribs('recent', $category_id, false, false, 'recent');
+		}
 
 		phpbb::$template->assign_vars(array(
 			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/create') : '',
