@@ -120,7 +120,7 @@ function load_contrib($contrib_id = false)
 		'support' => array(
 			'title'		=> 'CONTRIB_SUPPORT',
 			'url'		=> titania::$contrib->get_url('support'),
-			'auth'		=> (titania::$config->support_in_titania || (!titania::$config->support_in_titania && (titania::$access_level == TITANIA_ACCESS_TEAMS || titania::$contrib->is_author || titania::$contrib->is_active_coauthor))) ? true : false,
+			'auth'		=> (titania::$config->support_in_titania || titania::$access_level < TITANIA_ACCESS_PUBLIC) ? true : false,
 		),
 		'manage' => array(
 			'title'		=> 'CONTRIB_MANAGE',
