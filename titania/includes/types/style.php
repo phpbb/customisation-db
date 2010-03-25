@@ -21,6 +21,7 @@ if (!class_exists('titania_type_base'))
 	include(TITANIA_ROOT . 'includes/types/base.' . PHP_EXT);
 }
 
+define('TITANIA_TYPE_STYLE', 2);
 
 class titania_type_style extends titania_type_base
 {

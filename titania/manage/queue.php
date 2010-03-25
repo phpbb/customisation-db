@@ -58,7 +58,7 @@ if ($queue_type === false)
 			phpbb::$db->sql_query($sql);
 			$cnt = phpbb::$db->sql_fetchfield('cnt');
 			phpbb::$db->sql_freeresult();
-			
+
 			phpbb::$template->assign_block_vars('categories', array(
 				'U_VIEW_CATEGORY'	=> titania_url::append_url($base_url, array('queue' => titania_types::$types[$type_id]->url)),
 				'CATEGORY_NAME'		=> titania_types::$types[$type_id]->lang,
@@ -146,6 +146,34 @@ if ($queue_id)
 				if ($action == 'approve')
 				{
 					$queue->approve();
+
+					// Install the style on the demo board?
+					if ($contrib->contrib_type == TITANIA_TYPE_STYLE && isset($_POST['style_demo_install']) && titania::$config->demo_style_path)
+					{
+						$revision = $queue->get_revision();
+
+						$sql = 'SELECT attachment_directory, physical_filename FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+							WHERE attachment_id = ' . (int) $revision->attachment_id;
+						$result = phpbb::$db->sql_query($sql);
+						$row = phpbb::$db->sql_fetchrow($result);
+						phpbb::$db->sql_freeresult($result);
+
+						$contrib_tools = new titania_contrib_tools(titania::$config->upload_path . utf8_basename($attachment['attachment_directory']) . '/' . utf8_basename($attachment['physical_filename']));
+						if (!($style_id = $contrib_tools->install_demo_style(titania::$config->demo_style_path)))
+						{
+							// Oh noez, we habz error
+							trigger_error(implode('<br />', $contrib_tools->error));
+						}
+						else
+						{
+							// Link the style demo as the contrib demo if not already provided
+							if (!$contrib->contrib_demo && titania::$config->demo_style_url)
+							{
+								$contrib->contrib_demo = sprintf(titania::$config->demo_style_url, $style_id);
+								$contrib->submit();
+							}
+						}
+					}
 				}
 				else
 				{
@@ -154,8 +182,12 @@ if ($queue_id)
 			}
 			else
 			{
+				if ($action == 'approve' && $contrib->contrib_type == TITANIA_TYPE_STYLE && titania::$config->demo_style_path)
+				{
+					phpbb::$template->assign_var('S_STYLE_DEMO_INSTALL', true);
+				}
+
 				$message_object->display();
-				phpbb::$template->assign_var('CONFIRM_EXTRA', $queue->generate_text_for_display());
 				titania::confirm_box(false, (($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE'), '', array(), 'manage/queue_validate.html');
 			}
 			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));

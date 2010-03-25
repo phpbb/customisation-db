@@ -41,6 +41,10 @@ class titania_config extends titania_object
 			'contrib_temp_path'			=> array('default' => TITANIA_ROOT . 'files/contrib_temp/'),
 			'language_path'				=> array('default' => TITANIA_ROOT . 'language/'),
 
+			// Path to demo board we will install styles on
+			'demo_style_path'			=> array('default' => false),
+			'demo_style_url'			=> array('default' => false),
+
 			'phpbbcom_profile'			=> array('default' => true),
 			'phpbbcom_viewprofile_url'	=> array('default' => 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
 
@@ -81,7 +85,7 @@ class titania_config extends titania_object
 			'forum_style_database'		=> array('default' => 0),
 			'forum_mod_robot'			=> array('default' => 0),
 			'forum_style_robot'			=> array('default' => 0),
-			
+
 			'support_in_titania'		=> array('default' => 1), // Show the support/discussion panel to the public?
 		));
 	}

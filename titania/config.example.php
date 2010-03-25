@@ -64,6 +64,22 @@ $config = array(
 	'table_prefix' => 'customisation_',
 
 	/**
+	* Path to the style demo board you would like styles to be installed on upon validation
+	* (there is a checkbox option for styles to be installed on the demo board when approving)
+	*
+	* @param bool|string false to not use a style demo board, path to the board root
+	*/
+	'demo_style_path' => false,
+
+	/**
+	* Full URL to the demo style.  We will perform sprintf(demo_style_full, $style_id), so please write the url properly
+	* Example (from phpbb.com) http://www.phpbb.com/styles/demo/3.0/?style_id=%s
+	*
+	* @param bool|string false to not use a style demo board
+	*/
+	'demo_style_url' => false,
+
+	/**
 	* Style Path (titania/style/ *path* /)
 	*/
 	'style' => 'default',
@@ -84,7 +100,7 @@ $config = array(
 	*/
 	'forum_mod_robot' => 0,
 	'forum_style_robot' => 0,
-	
+
 	/**
 	* Show the support/discussion panel to the public?
 	*/
