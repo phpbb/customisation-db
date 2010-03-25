@@ -126,7 +126,7 @@ function build_cfg_template($tpl_type, $name, $vars)
 			}
 			else if ($tpl_type[0] == 'select_multiple')
 			{
-				$tpl['tpl'] = '<select id="' . $name . '" name="' . $name . '[]" multiple="multiple">' . $return . '</select>';
+				$tpl['tpl'] = '<select id="' . $name . '" name="' . $name . '[]" multiple="multiple" size="7">' . $return . '</select>';
 			}
 			else
 			{

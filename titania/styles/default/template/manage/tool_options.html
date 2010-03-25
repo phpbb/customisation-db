@@ -1,10 +1,6 @@
 <!-- INCLUDE manage/manage_header.html -->
 
-<a name="maincontent"></a>
-
-<h1>{L_TITLE}</h1>
-
-<p>{L_TITLE_EXPLAIN}</p>
+<h3 class="section-name">{PAGE_TITLE}</h3>
 
 <!-- IF S_ERROR -->
 	<div class="errorbox">
@@ -16,14 +12,15 @@
 <form id="stk" method="post" action="{S_ACTION}" name="support_tool_kit" autocomplete="off">
 
 	<!-- BEGIN options -->
-		<!-- IF options.S_LEGEND -->
+		<!-- IF options.S_LEGEND or options.S_FIRST_ROW -->
 			<!-- IF not options.S_FIRST_ROW -->
 				</fieldset>
 			<!-- ENDIF -->
 			<fieldset>
 				<legend>{options.LEGEND}</legend>
+		<!-- ENDIF -->
 
-		<!-- ELSE -->
+		<!-- IF not options.S_LEGEND-->
 			<dl>
 				<dt><label for="{options.KEY}">{options.TITLE}:</label><!-- IF options.S_EXPLAIN --><br /><span>{options.TITLE_EXPLAIN}</span><!-- ENDIF --></dt>
 				<dd>{options.CONTENT}</dd>

@@ -1,9 +1,9 @@
 <?php
 /**
 *
-* @package Support Tool Kit - Organize Language Files
+* @package Titania
 * @version $Id$
-* @copyright (c) 2009 phpBB Group
+* @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */

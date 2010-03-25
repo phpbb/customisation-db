@@ -74,7 +74,7 @@ if ($plugin->tool_id)
 
 		if (is_array($options) && isset($options['vars']))
 		{
-			titania::page_header(phpbb::$user->lang[$options['title']]);
+			titania::page_header($options['title']);
 
 			titania::_include('functions_manage', 'use_lang');
 
