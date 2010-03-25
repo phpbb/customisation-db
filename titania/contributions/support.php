@@ -57,7 +57,7 @@ else
 // Output the simple info on the contrib
 titania::$contrib->assign_details(true);
 
-if (!titania::$config->support_in_titania && titania::$access_level != TITANIA_ACCESS_TEAMS && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor)
+if (!titania::$config->support_in_titania && titania::$access_level == TITANIA_ACCESS_PUBLIC)
 {
 	titania::needs_auth();
 }
