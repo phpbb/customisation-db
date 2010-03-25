@@ -86,7 +86,7 @@ $config = array(
 	'forum_style_robot' => 0,
 	
 	/**
-	* Do we support contributions in titania ?
+	* Show the support/discussion panel to the public?
 	*/
-	'support_in_titania' => 1,
+	'support_in_titania' => true,
 );

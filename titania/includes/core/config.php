@@ -82,7 +82,7 @@ class titania_config extends titania_object
 			'forum_mod_robot'			=> array('default' => 0),
 			'forum_style_robot'			=> array('default' => 0),
 			
-			'support_in_titania'		=> array('default' => 1),
+			'support_in_titania'		=> array('default' => 1), // Show the support/discussion panel to the public?
 		));
 	}
 }
