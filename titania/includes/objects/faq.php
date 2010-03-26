@@ -98,7 +98,7 @@ class titania_faq extends titania_message_object
 		}
 		else if (phpbb::$config['max_post_chars'] > 0 && $message_length > (int) phpbb::$config['max_post_chars'])
 		{
-			$error[] = sprintf($user->lang['TOO_MANY_CHARS_POST'], $message_length, (int) phpbb::$config['max_post_chars']);
+			$error[] = sprintf(phpbb::$user->lang['TOO_MANY_CHARS_POST'], $message_length, (int) phpbb::$config['max_post_chars']);
 		}
 
 		return $error;
