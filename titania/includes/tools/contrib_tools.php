@@ -519,25 +519,23 @@ class titania_contrib_tools
 	/**
 	* Install a style on the demo board.
 	*
-	* NOT DONE, DO NOT USE
-	*
-	* @param string $demo_root
+	* @param string $phpbb_root_path
 	*/
-	function install_demo_style($demo_root)
+	function install_demo_style($phpbb_root_path)
 	{
-		return false; // @todo: Delete when done.
-
-		if ($demo_root[strlen($demo_root) - 1] != '/')
+		if ($phpbb_root_path[strlen($phpbb_root_path) - 1] != '/')
 		{
-			$demo_root .= '/';
+			$phpbb_root_path .= '/';
 		}
 
-		if (!is_dir($demo_root) || !file_exists($demo_root . 'config.' . PHP_EXT))
+		if (!is_dir($phpbb_root_path) || !file_exists($phpbb_root_path . 'config.' . PHP_EXT))
 		{
+			$this->error[] = 'PATH_INVALID';
+
 			return false;
 		}
 
-		include ($demo_root . 'config.' . PHP_EXT);
+		include ($phpbb_root_path . 'config.' . PHP_EXT);
 
 		$sql_db = (!empty($dbms)) ? 'dbal_' . basename($dbms) : 'dbal';
 
@@ -571,7 +569,41 @@ class titania_contrib_tools
 
 		$package_root = $this->find_root(false, 'style.cfg');
 
-		$this->mvdir_recursive($this->unzip_dir . $package_root . '/', $demo_root . 'styles/');
+		if (($package_name = basename($package_root)) == '')
+		{
+			$package_name = basename($this->original_zip, 'zip');
+		}
+
+		$this->mvdir_recursive($this->unzip_dir . $package_root . '/', $style_root = $phpbb_root_path . 'styles/' . $package_name . '/');
+
+		$variables = array('db', 'phpbb_root_path');
+
+		// Let's get lazy.
+		foreach ($variables as $variable)
+		{
+			${'_' . $variable} = $GLOBALS[$variable];
+			$GLOBALS[$variable] = ${$variable};
+		}
+
+		// Get the acp_styles class.
+		phpbb::_include('acp/acp_styles', false, 'acp_styles');
+
+		$styles = new acp_styles();
+
+		// Define references.
+		$error = array();
+		$id = 0;
+		$style_row = array();
+
+		$stylecfg = parse_cfg_file($phpbb_root_path . 'config.' . PHP_EXT);
+
+		// Install the style.
+		$styles->install_style($error, 'install', $style_root, $id, $stylecfg['name'], $package_name, $stylecfg['copyright'], true, false, $style_row);
+
+		foreach ($variables as $variable)
+		{
+			$GLOBALS[$variable] = ${'_' . $variable};
+		}
 
 		return $style_id;
 	}
