@@ -44,18 +44,18 @@
 	var orange_star= new Image(16,16);
 	orange_star.src = "{UA_ORANGE_STAR_SRC}";
 	var max_rating = "{UA_MAX_RATING}";
-	
+
 	$(document).ready(function() {
 	<!-- IF S_HIDE_ERROR_BOX -->
 		setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
 	<!-- ENDIF -->
-	
+
 		$("#extratabs").tabs();
 		$('#extratabs li').removeClass('ui-corner-top');
 		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
-    
+
     <!-- IF .screenshots -->
-		$('a.screenshot, #main-screenshot').lightBox(
+		$('a.screenshot').lightBox(
 			{
 				imageLoading: '{T_TITANIA_THEME_PATH}/images/lightbox-ico-loading.gif',
 				imageBtnClose: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-close.gif',
@@ -65,7 +65,7 @@
 		);
 	<!-- ENDIF -->
   });
-	
+
 // ]]>
 </script>
 
