@@ -247,6 +247,9 @@ else
 		'S_CLOSED_CHECKED'	=> $closed,
 	));
 
+	// Subscriptions
+	titania_subscriptions::handle_subscriptions(TITANIA_ATTENTION, 0, titania_url::build_url('manage/attention', $additional));
+
 	titania::page_header('ATTENTION');
 
 	titania::page_footer(true, 'manage/attention.html');

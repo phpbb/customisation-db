@@ -72,6 +72,7 @@ define('TITANIA_CATEGORY', 8);
 define('TITANIA_QUEUE_DISCUSSION', 9);
 define('TITANIA_POST', 10);
 define('TITANIA_SCREENSHOT', 11);
+define('TITANIA_ATTENTION', 12);
 
 // Errorbox types
 define('TITANIA_ERROR', 1);

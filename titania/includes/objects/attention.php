@@ -68,6 +68,16 @@ class titania_attention extends titania_database_object
 	{
 		$this->attention_url = titania_url::unbuild_url($this->attention_url);
 
+		// Subscriptions
+		if (!$this->attention_id)
+		{
+			$email_vars = array(
+				'NAME'		=> $this->attention_title,
+				'U_VIEW'	=> titania_url::build_url('manage/attention', array('type' => $this->attention_type, 'id' => $this->attention_object_id)),
+			);
+			titania_subscriptions::send_notifications(TITANIA_ATTENTION, 0, 'subscribe_notify.txt', $email_vars, $this->attention_poster_id);
+		}
+
 		parent::submit();
 	}
 
