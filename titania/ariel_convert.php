@@ -706,6 +706,22 @@ function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', 
 		while ($post_row = phpbb::$db->sql_fetchrow($post_result))
 		{
 			$post = new titania_post($topic_type, $topic);
+
+			// Rewrite some URLs
+			$contrib_view = titania_url::build_url('contribution/$1');
+			$contrib_view_full = '<a class="postlink" href="' . $contrib_view . '">' . $contrib_view . '</a>';
+			$replace = array(
+				'#<a class="postlink" href="http://www.phpbb.com/mods/db/index.php\?i=queue&amp;mode=overview&amp;contrib_id=([0-9]+)">http://www.phpbb.com/mods/db/index.php\? ... b_id=[0-9]+</a>#',
+				'#<a class="postlink" href="http://www.phpbb.com/mods/db/index.php\?i=misc&amp;mode=display&amp;contrib_id=([0-9]+)">http://www.phpbb.com/mods/db/index.php\? ... b_id=[0-9]+</a>#',
+			);
+			$post_row['post_text'] = preg_replace($replace, $contrib_view_full, $post_row['post_text']);
+			$replace = array(
+				'#http://www.phpbb.com/mods/db/index.php\?i=queue&amp;mode=overview&amp;contrib_id=([0-9]+)#',
+				'#http://www.phpbb.com/mods/db/index.php\?i=misc&amp;mode=display&amp;contrib_id=([0-9]+)#',
+			);
+			$post_row['post_text'] = preg_replace($replace, $contrib_view, $post_row['post_text']);
+			$post_row['post_text'] = str_replace("===INT===", '', $post_row['post_text']);
+
 			$post->__set_array(array(
 				'post_access'			=> ($topic_type == TITANIA_QUEUE) ? TITANIA_ACCESS_TEAMS : TITANIA_ACCESS_AUTHORS,
 				'post_user_id'			=> $post_row['poster_id'],
@@ -717,10 +733,12 @@ function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', 
 				'post_text_uid'			=> $post_row['bbcode_uid'],
 				'post_text_options'		=> (($post_row['enable_bbcode']) ? OPTION_FLAG_BBCODE : 0) + (($post_row['enable_smilies']) ? OPTION_FLAG_SMILIES : 0) + (($post_row['enable_magic_url']) ? OPTION_FLAG_LINKS : 0),
 			));
+
 			if ($topic_type == TITANIA_QUEUE_DISCUSSION)
 			{
 				$post->topic->topic_sticky = true;
 			}
+
 			$post->submit();
 		}
 		phpbb::$db->sql_freeresult($post_result);
