@@ -1,5 +1,0 @@
-Subject: {SUBJECT} - Contribution Unsubscribed
-
-Hello {USERNAME},
-
-You have been successfully unsubscribed from {SUBJECT}

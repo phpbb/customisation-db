@@ -445,6 +445,13 @@ class titania_queue extends titania_message_object
 
 		// Send notification message
 		$this->send_approve_deny_notification(true);
+
+		// Subscriptions
+		$email_vars = array(
+			'NAME'		=> $this->contrib->contrib_name,
+			'U_VIEW'	=> $this->contrib->get_url(),
+		);
+		titania_subscriptions::send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
 	}
 
 	public function deny()

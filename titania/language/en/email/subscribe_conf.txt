@@ -1,5 +1,0 @@
-Subject: {SUBJECT} - Contribution Notification Confirmation
-
-Hello {USERNAME},
-
-You have been successfully subscribed to {SUBJECT}

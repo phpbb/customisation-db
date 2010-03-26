@@ -207,6 +207,13 @@ class titania_revision extends titania_database_object
 					SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 					WHERE contrib_id = ' . $this->contrib_id;
 				phpbb::$db->sql_query($sql);
+
+				// Subscriptions
+				$email_vars = array(
+					'NAME'		=> $this->contrib->contrib_name,
+					'U_VIEW'	=> $this->contrib->get_url(),
+				);
+				titania_subscriptions::send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
 			}
 		}
 		else if (sizeof($this->phpbb_versions))

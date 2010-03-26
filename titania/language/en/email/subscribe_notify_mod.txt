@@ -1,6 +1,0 @@
-Hello {USERNAME},
-
-You are receiving this message because you are subscribed to the phpBB modification "{CONTRIB_NAME}", and a new version has been released.
-
-If you like, you can visit the link below to view the new release of the modification.
-{U_CONTRIB}

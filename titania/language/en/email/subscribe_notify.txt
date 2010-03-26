@@ -1,8 +1,8 @@
-Subject: {TYPE} Update Notification - "{CONTRIBNAME}"
+Subject: Update Notification - {NAME}
 
 Hello {USERNAME},
 
-You are receiving this notification because you are watching the {TYPE} "{CONTRIBNAME}" in the phpBB Customization Database. 
+You are receiving this notification because you are watching the {NAME} in the phpBB Customization Database. 
 
 You may view the update at the link below:
-{U_CONTRIB_OVERVIEW}
+{U_VIEW}

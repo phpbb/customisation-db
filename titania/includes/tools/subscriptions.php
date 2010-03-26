@@ -149,10 +149,10 @@ class titania_subscriptions
 	public static function send_notifications($object_type, $object_id, $email_tpl, $vars)
 	{
 		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email
-				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u,
+				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u
 				WHERE w.watch_user_id = u.user_id
-				AND w.watch_object_type = ' . (int) $object_type . '
-				AND w.watch_object_id = ' . (int) $object_id;
+					AND w.watch_object_type = ' . (int) $object_type . '
+					AND w.watch_object_id = ' . (int) $object_id;
 
 		$result = phpbb::$db->sql_query($sql);
 
@@ -174,7 +174,7 @@ class titania_subscriptions
 		}
 
 		// You wanted the email template parsed? Well here you go.
-		$template = file_get_contents(TITANIA_ROOT . 'language/en/email/' . $emial_tpl);
+		$template = file_get_contents(TITANIA_ROOT . 'language/en/email/' . $email_tpl);
 		foreach($vars as $var => $replace)
 		{
 			if(strtoupper($var) == 'SUBJECT')
@@ -182,8 +182,19 @@ class titania_subscriptions
 				continue;
 			}
 
-			str_replace('{' . strtoupper($var) . '}', $replace, $template);
+			$template = str_replace('{' . strtoupper($var) . '}', $replace, $template);
 		}
+
+		// Steal the subject if it exists
+		$subject = '';
+		if (($subject_start = strpos($template, 'Subject:')) !== false)
+		{
+			$subject_length = strpos($template, "\n", $subject_start) - $subject_start;
+			$subject = substr($template, $subject_start, $subject_length);
+			$template = substr($template, 0, $subject_start) . substr($template, ($subject_start + $subject_length));
+		}
+		$subject = (isset($vars['SUBJECT'])) ? $vars['SUBJECT'] : $subject;
+		$subject = ($subject) ? $subject : phpbb::$user->lang['SUBSCRIPTION_NOTIFICATION'];
 
 		// Send to each user
 		// Add a new case statment for each subscription type
@@ -204,23 +215,31 @@ class titania_subscriptions
 				case SUBSCRIPTION_EMAIL:
 
 					// Only make the object if we need it
-					if(!isset($messenger))
-					{
-						$messenger = new messenger();
-					}
+					phpbb::_include('functions_messenger', false, 'messenger');
+					$messenger = new messenger();
 
-					$messenger->template('subscribe_generic', 'en');
-					$messenger->from('nobody@phpbb.com', 'Titania Mailer'); // @TODO - Make this not hardcoded.
+					$messenger->headers('X-AntiAbuse: Board servername - ' . phpbb::$config['server_name']);
+					$messenger->headers('X-AntiAbuse: User_id - ' . phpbb::$user->data['user_id']);
+					$messenger->headers('X-AntiAbuse: Username - ' . phpbb::$user->data['username']);
+
+					// HAX
+					$user_lang_path = phpbb::$user->lang_path;
+					phpbb::$user->lang_path = TITANIA_ROOT . 'language/';
+
+					$messenger->template('subscribe_generic');
+
+					// Reverse HAX
+					phpbb::$user->lang_path = $user_lang_path;
+
 					$messenger->to($data['user_email'], $data['username']);
 
 					$messenger->assign_vars(array_merge($vars, array(
-						'SUBJECT'			=> $vars['SUBJECT'],
+						'SUBJECT'			=> $subject,
 						'MESSAGE'			=> $message,
 				//		'EMAIL_SIG'			=> '', // @TODO - Email Sig
 					)));
 
 					$messenger->send();
-
 				break;
 			}
 		}
