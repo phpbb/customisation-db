@@ -145,14 +145,17 @@ class titania_subscriptions
 	 * emails of the recepiants will be personalised by the function. Ensure the
 	 * email template has the {USERNAME} var present.
 	 *
+	 * @param $exclude_user User_id of the one who posted the item to exclude them from the sending
+	 *
 	 */
-	public static function send_notifications($object_type, $object_id, $email_tpl, $vars)
+	public static function send_notifications($object_type, $object_id, $email_tpl, $vars, $exclude_user = false)
 	{
 		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email
 				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u
 				WHERE w.watch_user_id = u.user_id
 					AND w.watch_object_type = ' . (int) $object_type . '
-					AND w.watch_object_id = ' . (int) $object_id;
+					AND w.watch_object_id = ' . (int) $object_id .
+					(($exclude_user) ? ' AND w.watch_user_id <> ' . (int) $exclude_user : '');
 
 		$result = phpbb::$db->sql_query($sql);
 

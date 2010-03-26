@@ -1,0 +1,8 @@
+Subject: Update Notification - {NAME}
+
+Hello {USERNAME},
+
+You are receiving this notification because you are watching the area in which {NAME} has been posted in the phpBB Customisation Database. 
+
+You may view the update at the link below:
+{U_VIEW}

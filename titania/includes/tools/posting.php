@@ -149,7 +149,7 @@ class titania_posting
 		));
 
 		// Call our common posting handler
-		$this->common_post($post_object, $message_object);
+		$this->common_post('post', $post_object, $message_object);
 
 		// Common stuff
 		phpbb::$template->assign_vars(array(
@@ -211,7 +211,7 @@ class titania_posting
 		));
 
 		// Call our common posting handler
-		$this->common_post($post_object, $message_object);
+		$this->common_post('reply', $post_object, $message_object);
 
 		// Common stuff
 		phpbb::$template->assign_vars(array(
@@ -276,7 +276,7 @@ class titania_posting
 		));
 
 		// Call our common posting handler
-		$this->common_post($post_object, $message_object);
+		$this->common_post('edit', $post_object, $message_object);
 
 		// Common stuff
 		phpbb::$template->assign_vars(array(
@@ -350,7 +350,7 @@ class titania_posting
 	* @param mixed $post_object
 	* @param mixed $message_object
 	*/
-	private function common_post($post_object, $message_object)
+	private function common_post($mode, $post_object, $message_object)
 	{
 		titania::add_lang('posting');
 		phpbb::$user->add_lang('posting');
@@ -394,6 +394,12 @@ class titania_posting
 
 				$message_object->submit($post_object->post_access);
 
+				// Did they want to subscribe?
+				if (isset($_POST['notify']) && phpbb::$user->data['is_registered'])
+				{
+					titania_subscriptions::subscribe(TITANIA_TOPIC, $post_object->topic->topic_id);
+				}
+
 				// Unapproved posts will get a notice
 				if (!$post_object->topic->get_postcount())
 				{
@@ -406,10 +412,33 @@ class titania_posting
 					phpbb::$user->add_lang('posting');
 					trigger_error(phpbb::$user->lang['POST_STORED_MOD'] . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_TOPIC'], '<a href="' . $post_object->topic->get_url() . '">', '</a>'));
 				}
+				else
+				{
+					// Subscriptions
+					if ($mode == 'reply' && $post_object->post_access == TITANIA_ACCESS_PUBLIC)
+					{
+						$email_vars = array(
+							'NAME'		=> $post_object->topic->topic_subject,
+							'U_VIEW'	=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
+						);
+						titania_subscriptions::send_notifications(TITANIA_TOPIC, $post_object->topic_id, 'subscribe_notify.txt', $email_vars, $post_object->post_user_id);
+					}
+					else if ($mode == 'post' && $post_object->topic->topic_access == TITANIA_ACCESS_PUBLIC)
+					{
+						$email_vars = array(
+							'NAME'		=> $post_object->topic->topic_subject,
+							'U_VIEW'	=> $post_object->topic->get_url(),
+						);
+						titania_subscriptions::send_notifications($post_object->post_type, $post_object->topic->parent_id, 'subscribe_notify_forum.txt', $email_vars, $post_object->post_user_id);
+					}
+				}
 
 				redirect($post_object->get_url());
 			}
 		}
+
+		$is_subscribed = (($mode == 'edit' || $mode == 'reply') && titania_subscriptions::is_subscribed(TITANIA_TOPIC, $post_object->topic->topic_id)) ? true : false;
+		phpbb::$template->assign_var('S_NOTIFY_ALLOWED', ((phpbb::$user->data['is_registered'] && !$is_subscribed) ? true : false));
 
 		$message_object->display();
 	}

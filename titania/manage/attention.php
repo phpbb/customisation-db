@@ -117,6 +117,20 @@ if ($attention_id || ($object_type && $object_id))
 				$post->post_approved = 1;
 				$post->submit();
 
+				// Load z topic
+				$post->topic->topic_id = $post->topic_id;
+				$post->topic->load();
+
+				// Subscriptions?
+				if ($post->topic->topic_last_post_id == $post->post_id && $post->post_access == TITANIA_ACCESS_PUBLIC)
+				{
+					$email_vars = array(
+						'NAME'		=> $post->topic->topic_subject,
+						'U_VIEW'	=> titania_url::append_url($post->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
+					);
+					titania_subscriptions::send_notifications(TITANIA_TOPIC, $post->topic_id, 'subscribe_notify.txt', $email_vars, $post->post_user_id);
+				}
+
 				$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
 					WHERE topic_id = ' . $post->topic_id . '
 						AND post_approved = 0';
@@ -129,6 +143,16 @@ if ($attention_id || ($object_type && $object_id))
 						SET topic_approved = 1
 						WHERE topic_id = ' . $post->topic_id;
 					phpbb::$db->sql_query($sql);
+
+					// Subscriptions
+					if ($post->topic->topic_last_post_id == $post->post_id && $post->topic->topic_access == TITANIA_ACCESS_PUBLIC)
+					{
+						$email_vars = array(
+							'NAME'		=> $post->topic->topic_subject,
+							'U_VIEW'	=> $post->topic->get_url(),
+						);
+						titania_subscriptions::send_notifications($post->post_type, $post->topic->parent_id, 'subscribe_notify_forum.txt', $email_vars, $post->post_user_id);
+					}
 				}
 			}
 

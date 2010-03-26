@@ -70,6 +70,9 @@ phpbb::$user->add_lang('viewforum');
 
 if ($topic_id)
 {
+	// Subscriptions
+	titania_subscriptions::handle_subscriptions(TITANIA_TOPIC, $topic_id, $topic->get_url());
+
 	// Check access level
 	if ($topic->topic_access < titania::$access_level || ($topic->topic_type == TITANIA_QUEUE_DISCUSSION && !titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('queue_discussion')))
 	{
@@ -87,6 +90,9 @@ if ($topic_id)
 }
 else
 {
+	// Subscriptions
+	titania_subscriptions::handle_subscriptions(TITANIA_SUPPORT, titania::$contrib->contrib_id, titania::$contrib->get_url('support'));
+
 	// Mark all topics read
 	if (request_var('mark', '') == 'topics')
 	{
