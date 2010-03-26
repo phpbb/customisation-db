@@ -592,13 +592,13 @@ class titania_contrib_tools
 
 		// Define references.
 		$error = array();
-		$id = 0;
+		$style_id = 0;
 		$style_row = array();
 
 		$stylecfg = parse_cfg_file($phpbb_root_path . 'config.' . PHP_EXT);
 
 		// Install the style.
-		$styles->install_style($error, 'install', $style_root, $id, $stylecfg['name'], $package_name, $stylecfg['copyright'], true, false, $style_row);
+		$styles->install_style($error, 'install', $style_root, $style_id, $stylecfg['name'], $package_name, $stylecfg['copyright'], true, false, $style_row);
 
 		foreach ($variables as $variable)
 		{
