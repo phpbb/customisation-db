@@ -161,7 +161,7 @@ if ($attention_id || ($object_type && $object_id))
 
 			phpbb::$template->assign_vars(array(
 				'POST_SUBJECT'		=> censor_text($post->post_subject),
-				'POST_DATE'			=> $user->format_date($post->post_time),
+				'POST_DATE'			=> phpbb::$user->format_date($post->post_time),
 				'POST_TEXT'			=> $post->generate_text_for_display(),
 				'EDITED_MESSAGE'	=> ($post->post_edited) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], users_overlord::get_user($post->post_edit_user, '_full'), phpbb::$user->format_date($post->post_edited)) : '',
 				'DELETED_MESSAGE'	=> ($post->post_deleted != 0) ? sprintf(phpbb::$user->lang['DELETED_MESSAGE'], users_overlord::get_user($post->post_delete_user, '_full'), phpbb::$user->format_date($post->post_deleted), $post->get_url('undelete')) : '',
@@ -169,6 +169,27 @@ if ($attention_id || ($object_type && $object_id))
 
 				'U_VIEW'			=> $post->get_url(),
 				'U_EDIT'			=> $post->get_url('edit'),
+			));
+		break;
+
+		case TITANIA_CONTRIB :
+			$contrib = new titania_contribution;
+			if (!$contrib->load($object_id))
+			{
+				$attention_object->delete();
+				trigger_error('NO_CONTRIB');
+			}
+
+			users_overlord::load_users(array($contrib->contrib_user_id));
+			users_overlord::assign_details($contrib->contrib_user_id, 'POSTER_', true);
+
+			phpbb::$template->assign_vars(array(
+				'POST_SUBJECT'		=> censor_text($contrib->contrib_name),
+				'POST_DATE'			=> phpbb::$user->format_date($contrib->contrib_last_update),
+				'POST_TEXT'			=> $contrib->generate_text_for_display(),
+
+				'U_VIEW'			=> $contrib->get_url(),
+				'U_EDIT'			=> $contrib->get_url('manage'),
 			));
 		break;
 

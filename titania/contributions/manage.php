@@ -20,6 +20,9 @@ titania::_include('functions_posting', 'generate_type_select');
 
 load_contrib();
 
+// Used later when submitting
+$contrib_clone = clone titania::$contrib;
+
 if (!(((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) && titania::$contrib->contrib_status != TITANIA_CONTRIB_CLEANED) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
 {
 	titania::needs_auth();
@@ -66,7 +69,6 @@ $message->set_auth(array(
 	'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 	'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
 	'edit_subject'	=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')),
-	'edit_message'	=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')),
 ));
 $message->set_settings(array(
 	'display_error'		=> false,
@@ -138,6 +140,69 @@ else if ($submit)
 	// Did we succeed or have an error?
 	if (!sizeof($error))
 	{
+		// Check for changes in the description or categories to file a report
+		if (!phpbb::$auth->acl_get('u_titania_mod_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+		{
+			$attention_message = array();
+
+			// Changed description?
+			$old_description = $contrib_clone->generate_text_for_edit();
+			$old_description = $old_description['text'];
+
+			$description = titania::$contrib->generate_text_for_edit();
+			$description = $description['text'];
+
+			if ($old_description != $description)
+			{
+				$attention_message[] = sprintf(phpbb::$user->lang['ATTENTION_CONTRIB_DESC_CHANGED'], $old_description, $description);
+			}
+
+			// Changed categories?
+			$old_contrib_categories = array();
+			$sql = 'SELECT category_id
+				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+				WHERE contrib_id = ' . titania::$contrib->contrib_id;
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$old_contrib_categories[] = $row['category_id'];
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			if (sizeof(array_diff($old_contrib_categories, $contrib_categories)) || sizeof(array_diff($contrib_categories, $old_contrib_categories)))
+			{
+				$categories_ary = titania::$cache->get_categories();
+
+				$old_category_names = $category_names = array();
+				foreach ($old_contrib_categories as $category_id)
+				{
+					$old_category_names[] = (isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'];
+				}
+				foreach ($contrib_categories as $category_id)
+				{
+					$category_names[] = (isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'];
+				}
+				$attention_message[] = sprintf(phpbb::$user->lang['ATTENTION_CONTRIB_CATEGORIES_CHANGED'], implode("\n", $old_category_names), implode("\n", $category_names));
+			}
+
+			if (sizeof($attention_message))
+			{
+				// Setup the attention object and submit it
+				$attention = new titania_attention;
+				$attention->__set_array(array(
+					'attention_type'		=> TITANIA_ATTENTION_REPORTED,
+					'attention_object_type'	=> TITANIA_CONTRIB,
+					'attention_object_id'	=> titania::$contrib->contrib_id,
+					'attention_poster_id'	=> phpbb::$user->data['user_id'],
+					'attention_post_time'	=> titania::$time,
+					'attention_url'			=> titania::$contrib->get_url(),
+					'attention_title'		=> titania::$contrib->contrib_name,
+					'attention_description'	=> nl2br(implode("\n\n", $attention_message)),
+				));
+				$attention->submit();
+			}
+		}
+
 		// Submit screenshots
 		$screenshot->submit();
 
@@ -201,7 +266,6 @@ $message->display();
 phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
 	'S_EDIT_SUBJECT'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
-	'S_EDIT_MESSAGE'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 
 	'SCREENSHOT_UPLOADER'		=> $screenshot->parse_uploader('posting/attachments/simple.html'),
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,

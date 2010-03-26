@@ -344,8 +344,6 @@ class titania_contribution extends titania_message_object
 		// Set object data.
 		$this->__set_array($sql_data);
 
-		$this->description_parsed_for_storage = true;
-
 		// Set author object and set the data for the author object.
 		$this->author = new titania_author($this->contrib_user_id);
 		$this->author->__set_array($sql_data);
