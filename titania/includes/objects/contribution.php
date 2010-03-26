@@ -543,7 +543,7 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_RATING'				=> $this->contrib_rating,
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
 			'CONTRIB_RATING_STRING'			=> (!$simple) ? $this->rating->get_rating_string() : '',
-			
+
 			'CONTRIB_ANNOUNCEMENT_TOPIC'	=> ($this->contrib_release_topic_id) ? sprintf(phpbb::$user->lang['ANNOUNCEMENT_TOPIC_VIEW'], '<a href="' . phpbb::append_sid('viewtopic', 't='.$this->contrib_release_topic_id) . '">', '</a>') : false,
 			'L_ANNOUNCEMENT_TOPIC'			=> (titania::$config->support_in_titania) ? phpbb::$user->lang['ANNOUNCEMENT_TOPIC'] : phpbb::$user->lang['ANNOUNCEMENT_TOPIC_SUPPORT'],
 
@@ -600,6 +600,7 @@ class titania_contribution extends titania_message_object
 				if (sizeof($this->revisions))
 				{
 					$revision = new titania_revision($this);
+					$revision->contrib = $this;
 					foreach ($this->revisions as $revision_id => $row)
 					{
 						$revision->__set_array($row);

@@ -121,7 +121,7 @@ class titania_revision extends titania_database_object
 		phpbb::$template->assign_block_vars($tpl_block, array(
 			'REVISION_ID'		=> $this->revision_id,
 			'CREATED'			=> phpbb::$user->format_date($this->revision_time),
-			'NAME'				=> censor_text($this->revision_name),
+			'NAME'				=> ($this->revision_name) ? censor_text($this->revision_name) : (($this->contrib) ? $this->contrib->contrib_name . ' ' . $this->revision_version : ''),
 			'VERSION'			=> $this->revision_version,
 			'VALIDATED_DATE'	=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
 			'REVISION_QUEUE'	=> ($show_queue && $this->revision_queue_id) ? titania_url::build_url('manage/queue', array('q' => $this->revision_queue_id)) : '',
