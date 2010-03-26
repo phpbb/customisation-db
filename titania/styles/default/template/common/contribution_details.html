@@ -153,7 +153,7 @@
 							</dd>
 							<dd class="general time-created">{revisions.CREATED}</dd>
 							<!-- IF not revisions.S_VALIDATED or revisions.REVISION_QUEUE -->
-							<dd class="general"><!-- IF not revisions.S_VALIDATED --><strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --><!-- IF revisions.REVISION_QUEUE --> - <a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF --></dd>
+							<dd class="general"><!-- IF not revisions.S_VALIDATED --><strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --><!-- IF revisions.REVISION_QUEUE --><!-- IF not revisions.S_VALIDATED --> - <!-- ENDIF --><a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF --></dd>
 							<!-- ENDIF -->
 						</dl>
 					</li>
