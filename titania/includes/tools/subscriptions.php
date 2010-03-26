@@ -111,8 +111,8 @@ class titania_subscriptions
 		// Get our delete query
 		$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . "
 				WHERE watch_object_id = " . (int) $object_id . '
-				AND watch_user_id = ' .(int) $user_id . '
-				AND watch_object_type = ' . (int) $object_type;
+					AND watch_user_id = ' .(int) $user_id . '
+					AND watch_object_type = ' . (int) $object_type;
 
 		// Query and we're done
 		phpbb::$db->sql_query($sql);

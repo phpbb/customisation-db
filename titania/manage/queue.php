@@ -264,6 +264,9 @@ if ($queue_id)
 }
 else
 {
+	// Subscriptions
+	titania_subscriptions::handle_subscriptions(TITANIA_QUEUE, $queue_type, titania_url::$current_page_url);
+
 	$tag = request_var('tag', TITANIA_QUEUE_NEW);
 	queue_overlord::display_queue($queue_type, $tag);
 	queue_overlord::display_categories($queue_type);

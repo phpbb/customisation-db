@@ -182,6 +182,17 @@ do{
 							redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
 						}
 
+						// Subscriptions
+						$queue = $revision->get_queue();
+						if ($queue)
+						{
+							$email_vars = array(
+								'NAME'		=> phpbb::$user->lang['VALIDATION'] . ' - ' . titania::$contrib->contrib_name . ' - ' . $revision->revision_version,
+								'U_VIEW'	=> titania_url::build_url('manage/queue', array('q' => $queue->queue_id)),
+							);
+							titania_subscriptions::send_notifications(TITANIA_QUEUE, titania::$contrib->contrib_type, 'subscribe_notify_forum.txt', $email_vars, phpbb::$user->data['user_id']);
+						}
+
 						redirect(titania::$contrib->get_url());
 					}
 
@@ -325,6 +336,17 @@ do{
 			if ($repack && titania::$config->use_queue)
 			{
 				redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
+			}
+
+			// Subscriptions
+			$queue = $revision->get_queue();
+			if ($queue)
+			{
+				$email_vars = array(
+					'NAME'		=> phpbb::$user->lang['VALIDATION'] . ' - ' . titania::$contrib->contrib_name . ' - ' . $revision->revision_version,
+					'U_VIEW'	=> titania_url::build_url('manage/queue', array('q' => $queue->queue_id)),
+				);
+				titania_subscriptions::send_notifications(TITANIA_QUEUE, titania::$contrib->contrib_type, 'subscribe_notify_forum.txt', $email_vars, phpbb::$user->data['user_id']);
 			}
 
 			redirect(titania::$contrib->get_url());

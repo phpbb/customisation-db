@@ -415,7 +415,7 @@ class titania_posting
 				else
 				{
 					// Subscriptions
-					if ($mode == 'reply' && $post_object->post_access == TITANIA_ACCESS_PUBLIC)
+					if ($mode == 'reply')
 					{
 						$email_vars = array(
 							'NAME'		=> $post_object->topic->topic_subject,
@@ -423,7 +423,7 @@ class titania_posting
 						);
 						titania_subscriptions::send_notifications(TITANIA_TOPIC, $post_object->topic_id, 'subscribe_notify.txt', $email_vars, $post_object->post_user_id);
 					}
-					else if ($mode == 'post' && $post_object->topic->topic_access == TITANIA_ACCESS_PUBLIC)
+					else if ($mode == 'post')
 					{
 						$email_vars = array(
 							'NAME'		=> $post_object->topic->topic_subject,

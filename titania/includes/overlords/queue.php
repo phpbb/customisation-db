@@ -281,6 +281,9 @@ class queue_overlord
 			'U_POST_REPLY'				=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'reply', 't' => $topic->topic_id)),
 			'U_NEW_REVISION'			=> false, // Prevent nubs from trying to submit a new revision when they want to actually repack
 		));
+
+		// Subscriptions
+		titania_subscriptions::handle_subscriptions(TITANIA_TOPIC, $topic->topic_id, titania_url::$current_page_url);
 	}
 
 	/**

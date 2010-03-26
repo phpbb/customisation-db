@@ -122,7 +122,7 @@ if ($attention_id || ($object_type && $object_id))
 				$post->topic->load();
 
 				// Subscriptions?
-				if ($post->topic->topic_last_post_id == $post->post_id && $post->post_access == TITANIA_ACCESS_PUBLIC)
+				if ($post->topic->topic_last_post_id == $post->post_id)
 				{
 					$email_vars = array(
 						'NAME'		=> $post->topic->topic_subject,
@@ -145,7 +145,7 @@ if ($attention_id || ($object_type && $object_id))
 					phpbb::$db->sql_query($sql);
 
 					// Subscriptions
-					if ($post->topic->topic_last_post_id == $post->post_id && $post->topic->topic_access == TITANIA_ACCESS_PUBLIC)
+					if ($post->topic->topic_last_post_id == $post->post_id)
 					{
 						$email_vars = array(
 							'NAME'		=> $post->topic->topic_subject,
