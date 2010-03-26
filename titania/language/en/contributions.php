@@ -36,11 +36,9 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'ANNOUNCEMENT_TOPIC' 				=> 'Announcement topic',
+	'ANNOUNCEMENT_TOPIC'				=> 'Announcement topic',
 	'ANNOUNCEMENT_TOPIC_SUPPORT'		=> 'Support topic',
 	'ANNOUNCEMENT_TOPIC_VIEW'			=> '%sView%s',
-	
-	'NO_REVISIONS' => 'No Revisions',
 	'AUTOMOD_RESULTS'					=> '<strong>Please check over the AutoMod install results and make sure that nothing needs to be fixed.<br /><br />If an error comes up and you are certain that the error is incorrect, just hit continue below.</strong>',
 	'AUTOMOD_TEST'						=> 'The Mod will be tested against AutoMod and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 
@@ -124,6 +122,7 @@ See first post for Download Link[/b][/color]',
 	'NO_CATEGORY'						=> 'The selected category does not exist',
 	'NO_PHPBB_BRANCH'					=> 'You must select a phpBB branch.',
 	'NO_QUEUE_DISCUSSION_TOPIC'			=> 'No Queue Discussion topic could be found.  Have you submitted any revision for this contribution yet (it will be created when you do so)?',
+	'NO_REVISIONS'						=> 'No Revisions',
 	'NO_REVISION_ATTACHMENT'			=> 'Please select a file to upload',
 	'NO_REVISION_VERSION'				=> 'Please enter a version for the revision',
 	'NO_SCREENSHOT'						=> 'No screenshot',

@@ -36,7 +36,6 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'STYLE_DEMO_INSTALL' => 'Install on style demo board',
 	'ADMINISTRATION'					=> 'Administration',
 	'ALTER_NOTES'						=> 'Alter Validation Notes',
 	'APPROVE'							=> 'Approve',
@@ -132,6 +131,7 @@ phpBB MOD Team',
 	'RETEST_AUTOMOD'					=> 'Re-test Automod',
 	'RETEST_MPV'						=> 'Re-test MPV',
 
+	'STYLE_DEMO_INSTALL'				=> 'Install on style demo board',
 	'STYLE_VALIDATION'					=> '[phpBB Style-Validation] %1$s %2$s',
 	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Styles Team your style has been approved and released into our styles database.
 

@@ -40,9 +40,6 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-'SUBSCRIBE' => 'Subscribe',
-'UNSUBSCRIBE' => 'Unsubscribe',
-'SUBSCRIPTION_NOTIFICATION' => 'Subscription Notification',
 	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
 	'AUTHOR_BY'					=> 'By %s',
@@ -130,6 +127,8 @@ $lang = array_merge($lang, array(
 	'SORT_CONTRIB_NAME'			=> 'Contribution Name',
 	'STICKIES'					=> 'Stickies',
 	'STYLE'						=> 'Style',
+	'SUBSCRIBE'					=> 'Subscribe',
+	'SUBSCRIPTION_NOTIFICATION'	=> 'Subscription Notification',
 
 	'TITANIA_INDEX'				=> 'Customisation Database',
 	'TOTAL_CONTRIBS'			=> '%d Contributions',
@@ -143,6 +142,7 @@ $lang = array_merge($lang, array(
 	'TYPE'						=> 'Type',
 
 	'UNKNOWN'					=> 'Unknown',
+	'UNSUBSCRIBE'				=> 'Unsubscribe',
 	'UPDATE_TIME'				=> 'Updated',
 
 	'VERSION'					=> 'Version',

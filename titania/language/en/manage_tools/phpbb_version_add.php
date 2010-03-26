@@ -38,13 +38,17 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'PHPBB_VERSION_ADD'			=> 'Add phpBB Version support to revisions',
-	'VERSION_RESTRICTION' => 'Version Restriction',
-	'VERSION_RESTRICTION_EXPLAIN' => 'Limit the new version support to only the selected versions.',
-	'NEW_PHPBB_VERSION' => 'New phpBB Version',
-	'NEW_PHPBB_VERSION_EXPLAIN' => 'New phpBB version to list support on the revision for.',
-	'CATEGORY_EXPLAIN' => 'Limit the new version support to only the selected categories.',
-	'NO_VERSION_SELECTED' => 'You must give a proper phpBB version.  Ex: 3.0.7 or 3.0.7-pl1.',
-	'NO_REVISIONS_UPDATED' => 'No revisions were updated from the given limitations.',
-	'REVISIONS_UPDATED' => '%s revisions have been updated.',
+	'CATEGORY_EXPLAIN'				=> 'Limit the new version support to only the selected categories.',
+
+	'NEW_PHPBB_VERSION'				=> 'New phpBB Version',
+	'NEW_PHPBB_VERSION_EXPLAIN'		=> 'New phpBB version to list support on the revision for.',
+	'NO_REVISIONS_UPDATED'			=> 'No revisions were updated from the given limitations.',
+	'NO_VERSION_SELECTED'			=> 'You must give a proper phpBB version.  Ex: 3.0.7 or 3.0.7-pl1.',
+
+	'PHPBB_VERSION_ADD'				=> 'Add phpBB Version support to revisions',
+
+	'REVISIONS_UPDATED'				=> '%s revisions have been updated.',
+
+	'VERSION_RESTRICTION'			=> 'Version Restriction',
+	'VERSION_RESTRICTION_EXPLAIN'	=> 'Limit the new version support to only the selected versions.',
 ));
