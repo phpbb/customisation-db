@@ -595,7 +595,7 @@ class titania_contrib_tools
 		$style_id = 0;
 		$style_row = array();
 
-		$stylecfg = parse_cfg_file($phpbb_root_path . 'config.' . PHP_EXT);
+		$stylecfg = parse_cfg_file($package_root . '/style.cfg');
 
 		// Install the style.
 		$styles->install_style($error, 'install', $style_root, $style_id, $stylecfg['name'], $package_name, $stylecfg['copyright'], true, false, $style_row);
