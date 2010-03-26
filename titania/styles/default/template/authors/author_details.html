@@ -9,16 +9,6 @@
 	</div>
 </div>
 <div class="right-column">
-	<!-- IF AUTHOR_DESC -->
-	<div class="container" id="contrib-description">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
-			<dl>
-				<dt><strong>{L_AUTHOR_DESC}</strong></dt>
-				<dd>{AUTHOR_DESC}</dd>
-			</dl>
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
-	<!-- ENDIF -->
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<ul class="general-info">
@@ -51,5 +41,27 @@
 			</ul>
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
+
+	<!-- IF AUTHOR_DESC -->
+	<div class="container" id="contrib-description">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<dl>
+				<dt><strong>{L_DESCRIPTION}</strong></dt>
+				<dd>{AUTHOR_DESC}</dd>
+			</dl>
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+	<!-- ENDIF -->
+
+	<!-- IF USER_SIG -->
+	<div class="container" id="contrib-description">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<dl>
+				<dt><strong>{L_SIGNATURE}</strong></dt>
+				<dd>{USER_SIG}</dd>
+			</dl>
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+	<!-- ENDIF -->
 </div>
 <!-- INCLUDE authors/author_footer.html -->
