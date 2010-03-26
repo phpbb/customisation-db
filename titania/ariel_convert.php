@@ -457,6 +457,7 @@ switch ($step)
 				'contrib_id'				=> $row['contrib_id'],
 				'phpbb_version_branch'		=> ($row['revision_phpbb_version'][0] == '3') ? 30 : 20,
 				'phpbb_version_revision'	=> substr($row['revision_phpbb_version'], 4),
+				'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
 			);
 			titania_insert(TITANIA_REVISIONS_PHPBB_TABLE, $sql_ary);
 
