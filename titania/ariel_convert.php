@@ -38,6 +38,7 @@ if (phpbb::$user->data['user_type'] != USER_FOUNDER && phpbb::$user->data['user_
 
 // Hack for local
 phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? '../phpBB3_titania/ariel_files' : '../../' . phpbb::$config['site_upload_dir'];
+$screenshots_dir = phpbb::$config['site_upload_dir'] . '/contribdb/demo/';
 
 // Table prefix
 $ariel_prefix = 'community_site_';
@@ -118,6 +119,8 @@ switch ($step)
 				titania_rmdir_recursive(titania::$config->upload_path . $item . '/');
 			}
 		}
+
+		titania_mkdir_recursive(titania::$config->upload_path . 'titania_screenshots');
 
 		$display_message = 'Truncating Tables, Cleaning File Storage';
 	break;
@@ -256,6 +259,38 @@ switch ($step)
 					}
 				}
 				phpbb::$db->sql_freeresult($result1);
+			}
+
+			// Screenshots
+			if (file_exists(TITANIA_ROOT . $screenshots_dir . (int) $row['contrib_id'] . '.gif'))
+			{
+				$new_filename = md5($row['contrib_id'] . rand(0, 100));
+				if (!copy(TITANIA_ROOT . $screenshots_dir . (int) $row['contrib_id'] . '.gif', titania::$config->upload_path . 'titania_screenshots/' . $new_filename))
+				{
+					echo 'Could Not Copy File - ' . TITANIA_ROOT . $screenshots_dir . (int) $row['contrib_id'] . '.gif<br />';
+					continue;
+				}
+
+				$sql_ary = array(
+					'object_type'			=> TITANIA_SCREENSHOT,
+					'object_id'				=> $row['contrib_id'],
+					'attachment_access'		=> TITANIA_ACCESS_PUBLIC,
+					'attachment_comment'	=> '',
+					'attachment_directory'	=> 'titania_screenshots',
+					'physical_filename'		=> $new_filename,
+					'real_filename'			=> 'Screenshot',
+					'download_count'		=> 0,
+					'filesize'				=> filesize(titania::$config->upload_path . 'titania_screenshots/' . $new_filename),
+					'filetime'				=> 0,
+					'extension'				=> 'gif',
+					'mimetype'				=> 'image/gif',
+					'hash'					=> md5_file(titania::$config->upload_path . 'titania_screenshots/' . $new_filename),
+					'thumbnail'				=> false,
+					'is_orphan'				=> 0,
+				);
+
+				// Insert
+				titania_insert(TITANIA_ATTACHMENTS_TABLE, $sql_ary);
 			}
 		}
 		phpbb::$db->sql_freeresult($result);
@@ -747,4 +782,35 @@ function titania_rmdir_recursive($target_filename)
     }
 
 	return @rmdir($target_filename);
+}
+
+/**
+* Make a directory recursively (from functions_compress)
+*
+* @param string $target_filename The target directory we wish to have
+*/
+function titania_mkdir_recursive($target_filename)
+{
+	if (!is_dir($target_filename))
+	{
+		$str = '';
+		$folders = explode('/', $target_filename);
+
+		// Create and folders and subfolders if they do not exist
+		foreach ($folders as $folder)
+		{
+			$folder = trim($folder);
+			if (!$folder)
+			{
+				continue;
+			}
+
+			$str = (!empty($str)) ? $str . '/' . $folder : $folder;
+			if (!is_dir($str))
+			{
+				@mkdir($str, 0777);
+				phpbb_chmod($str, CHMOD_READ | CHMOD_WRITE);
+			}
+		}
+	}
 }
