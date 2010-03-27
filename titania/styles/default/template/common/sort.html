@@ -1,0 +1,17 @@
+<!-- IF S_SELECT_SORT_DAYS or S_SELECT_SORT_KEY -->
+	<form method="post" action="{S_SORT_ACTION}">
+		<fieldset class="display-options">
+			<!-- IF PREVIOUS_PAGE --><a href="{PREVIOUS_PAGE}" class="left-box {S_CONTENT_FLOW_BEGIN}">{L_PREVIOUS}</a><!-- ENDIF -->
+			<!-- IF NEXT_PAGE --><a href="{NEXT_PAGE}" class="right-box {S_CONTENT_FLOW_END}">{L_NEXT}</a><!-- ENDIF -->
+	<!-- IF not S_IS_BOT -->
+			<!-- IF S_SELECT_SORT_DAYS --><label>{L_DISPLAY_TOPICS}: <select name="{SORT_DAYS_NAME}">{S_SELECT_SORT_DAYS}</select></label><!-- ENDIF -->
+			<!-- IF S_SELECT_SORT_KEY --><label>{L_SORT_BY} <select name="{SORT_KEYS_NAME}">{S_SELECT_SORT_KEY}</select></label><!-- ENDIF -->
+			<label>
+				<!-- IF S_SELECT_SORT_DIR --><select name="{SORT_DIR_NAME}">{S_SELECT_SORT_DIR}</select><!-- ENDIF -->
+				<input type="submit" name="sort" value="{L_GO}" class="button2" />
+			</label>
+	<!-- ENDIF -->
+		</fieldset>
+	</form>
+	<hr />
+<!-- ENDIF -->

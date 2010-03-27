@@ -27,7 +27,6 @@ class posts_overlord
 	public static $posts = array();
 
 	public static $sort_by = array(
-		'a' => array('AUTHOR', 'u.username_clean'),
 		't' => array('POST_TIME', 'p.post_time', true),
 		's' => array('SUBJECT', 'p.post_subject'),
 	);
@@ -148,14 +147,11 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		$sort->set_sort_keys(self::$sort_by);
 		if (isset(self::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
 		{
-			$sort->default_key = phpbb::$user->data['user_post_sortby_type'];
+			$sort->default_sort_key = phpbb::$user->data['user_post_sortby_type'];
 		}
-		$sort->default_dir = phpbb::$user->data['user_post_sortby_dir'];
-
-		// Setup the pagination tool
-		$pagination = new titania_pagination();
-		$pagination->default_limit = phpbb::$config['posts_per_page'];
-		$pagination->request();
+		$sort->default_sort_dir = phpbb::$user->data['user_post_sortby_dir'];
+		$sort->default_limit = phpbb::$config['posts_per_page'];
+		$sort->request();
 
 		// if a post_id was given we must start from the appropriate page
 		$post_id = request_var('p', 0);
@@ -170,7 +166,7 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 			$start = phpbb::$db->sql_fetchfield('start');
 			phpbb::$db->sql_freeresult();
 
-			$pagination->start = ($start > 0) ? (floor($start / $pagination->limit) * $pagination->limit) : 0;
+			$sort->start = ($start > 0) ? (floor($start / $sort->limit) * $sort->limit) : 0;
 		}
 
 		// check to see if they want to view the latest unread post
@@ -189,7 +185,7 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 				$start = phpbb::$db->sql_fetchfield('start');
 				phpbb::$db->sql_freeresult();
 
-				$pagination->start = ($start > 0) ? (floor($start / $pagination->limit) * $pagination->limit) : 0;
+				$sort->start = ($start > 0) ? (floor($start / $sort->limit) * $sort->limit) : 0;
 			}
 		}
 
@@ -199,7 +195,7 @@ user_topic_show_days
 $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DAY'], 7 => $user->lang['7_DAYS'], 14 => $user->lang['2_WEEKS'], 30 => $user->lang['1_MONTH'], 90 => $user->lang['3_MONTHS'], 180 => $user->lang['6_MONTHS'], 365 => $user->lang['1_YEAR']);
 */
 
-		self::display_topic($topic, $sort, $pagination);
+		self::display_topic($topic, $sort);
 		self::assign_common();
 
 		// Display the Quick Reply
@@ -219,9 +215,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	*
 	* @param object $topic The topic object
 	* @param object|boolean $sort The sort object (includes/tools/sort.php)
-	* @param object|boolean $pagination The pagination object (includes/tools/pagination.php)
 	*/
-	public static function display_topic($topic, $sort = false, $pagination = false)
+	public static function display_topic($topic, $sort = false)
 	{
 		if ($sort === false)
 		{
@@ -230,19 +225,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$sort->set_sort_keys(self::$sort_by);
 			if (isset(self::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
 			{
-				$sort->default_key = phpbb::$user->data['user_post_sortby_type'];
+				$sort->default_sort_key = phpbb::$user->data['user_post_sortby_type'];
 			}
-			$sort->default_dir = phpbb::$user->data['user_post_sortby_dir'];
+			$sort->default_sort_dir = phpbb::$user->data['user_post_sortby_dir'];
+			$sort->default_limit = phpbb::$config['posts_per_page'];
+			$sort->request();
 		}
-
-		if ($pagination === false)
-		{
-			// Setup the pagination tool
-			$pagination = new titania_pagination();
-			$pagination->default_limit = phpbb::$config['posts_per_page'];
-			$pagination->request();
-		}
-		$pagination->result_lang = 'TOTAL_POSTS';
+		$sort->result_lang = 'TOTAL_POSTS';
 
 		$sql_ary = array(
 			'SELECT'	=> 'p.*',
@@ -261,13 +250,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$pagination->sql_count($sql_ary, 'p.post_id');
-		$pagination->build_pagination($topic->get_url());
+		$sort->sql_count($sql_ary, 'p.post_id');
+		$sort->build_pagination($topic->get_url());
 
 		// Get the data
 		$post_ids = $user_ids = array();
 		$last_post_time = 0;  // tracking
-		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
+		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			self::$posts[$row['post_id']] = $row;

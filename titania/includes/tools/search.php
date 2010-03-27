@@ -175,12 +175,12 @@ class titania_search
 	* Perform a normal search
 	*
 	* @param string $search_query The user input for a search query
-	* @param object|bool $pagination The pagination class
+	* @param object|bool $sort The sort class
 	* @param array $fields The fields to search
 	*
 	* @return The documents of the result
 	*/
-	public static function search($search_query, &$pagination, $fields = array('text', 'title'))
+	public static function search($search_query, &$sort, $fields = array('text', 'title'))
 	{
 		self::initialize();
 
@@ -191,23 +191,23 @@ class titania_search
 		$qb->parseSearchQuery($query, $search_query, $fields);
 		unset($qb);
 
-		return self::custom_search($query, $pagination);
+		return self::custom_search($query, $sort);
 	}
 
 	/**
 	* Search by the author
 	*
 	* @param mixed $user_id
-	* @param mixed $pagination
+	* @param mixed $sort
 	*/
-	public static function author_search($user_id, &$pagination)
+	public static function author_search($user_id, &$sort)
 	{
 		self::initialize();
 
 		$query = self::$index->createFindQuery('titania_article');
 		$query->where($query->eq('author', $user_id));
 
-		return self::custom_search($query, $pagination);
+		return self::custom_search($query, $sort);
 	}
 
 	/**
@@ -224,11 +224,11 @@ class titania_search
 	* Perform a custom search (must build a createFindQuery for the query)
 	*
 	* @param object $query self::$index->createFindQuery
-	* @param object|bool $pagination The pagination class
+	* @param object|bool $sort The sort class
 	*
 	* @return The documents of the result
 	*/
-	public static function custom_search($query, &$pagination)
+	public static function custom_search($query, &$sort)
 	{
 		self::initialize();
 
@@ -244,12 +244,12 @@ class titania_search
 			$query->where($query->eq('access_level', TITANIA_ACCESS_PUBLIC));
 		}
 
-		$query->offset = $pagination->start;
-		$query->limit = $pagination->limit;
+		$query->offset = $sort->start;
+		$query->limit = $sort->limit;
 
 		$search_results = self::$index->find($query);
 
-		$pagination->total = $search_results->resultCount;
+		$sort->total = $search_results->resultCount;
 
 		$results = array(
 			'user_ids'		=> array(),

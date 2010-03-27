@@ -17,82 +17,163 @@ if (!defined('IN_TITANIA'))
 }
 
 /**
- * Class to generate sort and order by parameters
+ * Class to generate pagination
  *
  * @package Titania
  */
-class titania_sort
+class titania_sort extends titania_object
 {
+	/**
+	 * Constants
+	 */
+	const OFFSET_LIMIT_DEFAULT = 25;
+	const OFFSET_LIMIT_MAX = 100;
 
 	/**
-	 * Sort key text shown to user, used for select box
-	 *
-	 * @var array
-	 */
-	protected $sort_key_text = array();
+	* URL Location/Parameters
+	* Setting these will over-ride the settings sent in build_pagination
+	*
+	* @var mixed
+	*/
+	public $url_location = false;
+	public $url_parameters = false;
 
 	/**
-	 * Array of Sort keys for SQL, used in relation to sort_key_text
-	 *
-	 * @var array
+	 * Set some default variables, set template_vars default values
 	 */
-	protected $sort_key_sql = array();
-
-	/**
-	 * User selected sort key
-	 *
-	 * @var string
-	 */
-	public $sort_key = '';
-
-	/**
-	 * User selected sort direction
-	 *
-	 * @var string
-	 */
-	public $sort_dir = '';
-
-	/**
-	 * Default sort key for the page
-	 *
-	 * @var string
-	 */
-	public $default_key = '';
-
-	/**
-	 * Default Sort direction for the page
-	 *
-	 * @var string
-	 */
-	public $default_dir = 'a';
-
-	/**
-	 * Sort direction text shown to user, used for select box
-	 *
-	 * @var unknown_type
-	 */
-	public $sort_dir_text = array(
-		'a' => 'ASCENDING',
-		'd' => 'DESCENDING',
-	);
-
-	/**
-	 * Setup the sort key and direction -- calls request_var for sort key and sort dir.
-	 *
-	 * @param string $default_key set the default sort key (a, b, c, etc...)
-	 * @param string $sk name of sort key _REQUEST field
-	 * @param string $sd name of sort dir _REQUEST field
-	 */
-	public function sort_request($default_key = false, $sk = 'sk', $sd = 'sd')
+	public function __construct()
 	{
-		// default_key may already be set, check to ensure we want to set it.
-		if ($default_key !== false)
+		// Configure object properties
+		$this->object_config = array_merge($this->object_config, array(
+			'start'			=> array('default' => 0),
+			'start_name'	=> array('default' => 'start'),
+			'limit'			=> array('default' => self::OFFSET_LIMIT_DEFAULT),
+			'limit_name'	=> array('default' => 'limit'),
+			'default_limit'	=> array('default' => self::OFFSET_LIMIT_DEFAULT),
+			'max_limit'		=> array('default' => self::OFFSET_LIMIT_MAX),
+
+			'sort_key_ary'		=> array('default' => array()),
+			'sort_key'			=> array('default' => ''),
+			'default_sort_key'	=> array('default' => ''),
+			'sort_key_name'		=> array('default' => 'sk'),
+			'sort_dir'			=> array('default' => 'a'),
+			'default_sort_dir'	=> array('default' => 'a'),
+			'sort_dir_name'		=> array('default' => 'sd'),
+
+			'total'			=> array('default' => 0),
+			'result_lang'	=> array('default' => 'TOTAL_RESULTS'), // sprintf'd into 'TOTAL_RESULTS' output;  Should have TOTAL_RESULTS and TOTAL_RESULTS_ONE strings
+			'template_vars'	=> array(
+				'default' => array(
+					'PAGINATION'			=> 'PAGINATION',
+					'PAGE_NUMBER'			=> 'PAGE_NUMBER',
+					'S_PAGINATION_ACTION'	=> 'S_PAGINATION_ACTION',
+					'S_SORT_ACTION'			=> 'S_SORT_ACTION',
+					'S_NUM_POSTS'			=> 'S_NUM_POSTS',
+					'S_SELECT_SORT_KEY'		=> 'S_SELECT_SORT_KEY',
+					'S_SELECT_SORT_DIR'		=> 'S_SELECT_SORT_DIR',
+					'SORT_KEYS_NAME'		=> 'SORT_KEYS_NAME',
+					'SORT_DIR_NAME'			=> 'SORT_DIR_NAME',
+
+					'PER_PAGE'				=> 'PER_PAGE',
+					'ON_PAGE'				=> 'ON_PAGE',
+					'PREVIOUS_PAGE'			=> 'PREVIOUS_PAGE',
+					'NEXT_PAGE'				=> 'NEXT_PAGE',
+					'TOTAL_PAGES'			=> 'TOTAL_PAGES',
+					'TOTAL_ITEMS'			=> 'TOTAL_ITEMS',
+					'TOTAL_RESULTS'			=> 'TOTAL_RESULTS',
+				),
+			),
+		));
+	}
+
+	/**
+	 * Request function to run the start and limit grabbing functions
+	 */
+	public function request()
+	{
+		$this->get_start();
+		$this->get_limit();
+
+		$this->get_sort_key();
+		$this->get_sort_dir();
+	}
+
+	/**
+	 * Set start variable for pagination
+	 *
+	 * @param int $default custom start param
+	 *
+	 * @return int	start
+	 */
+	public function get_start($default = 0)
+	{
+		$this->start = request_var($this->start_name, (int) $default);
+
+		return $this->start;
+	}
+
+	/**
+	 * Set limit variable for pagination
+	 *
+	 * @param int $default default Offset/Limit -- uses the constant if unset.
+	 *
+	 * @return int	$limit
+	 */
+	public function get_limit($default = false)
+	{
+		if ($default !== false)
 		{
-			$this->default_key = $default_key;
+			$this->default_limit = $default;
 		}
 
-		$this->sort_key = request_var($sk, $this->default_key);
-		$this->sort_dir = request_var($sd, $this->default_dir);
+		$limit = request_var($this->limit_name, (int) $this->default_limit);
+
+		// Don't allow limits of 0 which is unlimited results. Instead use the max limit.
+		$limit = ($limit == 0) ? $this->max_limit : $limit;
+
+		// We don't allow the user to specify a limit higher than the maximum.
+		$this->limit = ($limit > $this->max_limit) ? $this->max_limit : $limit;
+
+		return $this->limit;
+	}
+
+	/**
+	 * Set sort key
+	 */
+	public function get_sort_key()
+	{
+		$this->sort_key = request_var($this->sort_key_name, (string) $this->default_sort_key);
+
+		return $this->sort_key;
+	}
+
+	/**
+	 * Set sort direction
+	 */
+	public function get_sort_dir()
+	{
+		$this->sort_dir = (request_var($this->sort_dir_name, (string) $this->default_sort_dir) == 'a') ? 'a' : 'd';
+
+		return $this->sort_dir;
+	}
+
+	/**
+	* Count the number of results
+	*
+	* @param mixed $sql_ary
+	* @param mixed $field
+	*/
+	public function sql_count($sql_ary, $field)
+	{
+		$sql_ary['SELECT'] = "COUNT($field) AS cnt";
+		unset($sql_ary['ORDER_BY']);
+
+		$count_sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		phpbb::$db->sql_query($count_sql);
+		$this->total = phpbb::$db->sql_fetchfield('cnt');
+		phpbb::$db->sql_freeresult();
+
+		return $this->total;
 	}
 
 	/**
@@ -111,44 +192,22 @@ class titania_sort
 	 */
 	public function set_sort_keys($sort_keys)
 	{
-		foreach ($sort_keys as $key => $option)
+		foreach ($sort_keys as $key => $options)
 		{
-			// text lang sort key
-			$this->sort_key_text[$key] = $option[0];
-
-			// sql sort key
-			$this->sort_key_sql[$key] = $option[1];
+			if (!isset($options[0]) || !isset($options[1]))
+			{
+				unset($sort_keys[$key]);
+				continue;
+			}
 
 			// if the third array increment is set to true, this key is set to default
-			if ((isset($option[2]) && $option[2]))
+			if ((isset($options[2]) && $options[2]))
 			{
-				$this->default_key = $key;
+				$this->default_sort_key = $key;
 			}
 		}
 
-		return true;
-	}
-
-	/**
-	 * Get order string for ORDER BY sql statement
-	 *
-	 * @return string SQL ORDER BY
-	 */
-	public function get_order_by()
-	{
-		// If the sort_request function was not run yet we shall run it
-		if (!$this->sort_key || !$this->sort_dir)
-		{
-			$this->sort_request();
-		}
-
-		// Sorting and order
-		if (!isset($this->sort_key_sql[$this->sort_key]))
-		{
-			$this->sort_key = $this->default_key;
-		}
-
-		return $this->sort_key_sql[$this->sort_key] . ' ' . (($this->sort_dir == 'a') ? 'ASC' : 'DESC');
+		$this->sort_key_ary = $sort_keys;
 	}
 
 	/**
@@ -159,9 +218,11 @@ class titania_sort
 	public function get_sort_key_list()
 	{
 		$s_sort_key = '';
-		foreach ($this->sort_key_text as $key => $value)
+		foreach ($this->sort_key_ary as $key => $options)
 		{
 			$selected = ($this->sort_key == $key) ? ' selected="selected"' : '';
+			$value = $options[0];
+
 			$s_sort_key .= '<option value="' . $key . '"' . $selected . '>' . ((isset(phpbb::$user->lang[$value])) ? phpbb::$user->lang[$value] : $value) . '</option>';
 		}
 
@@ -175,8 +236,13 @@ class titania_sort
 	 */
 	public function get_sort_dir_list()
 	{
+		$sort_dir = array(
+			'a'		=> 'ASCENDING',
+			'd'		=> 'DESCENDING',
+		);
+
 		$s_sort_dir = '';
-		foreach ($this->sort_dir_text as $key => $value)
+		foreach ($sort_dir as $key => $value)
 		{
 			$selected = ($this->sort_dir == $key) ? ' selected="selected"' : '';
 			$s_sort_dir .= '<option value="' . $key . '"' . $selected . '>' . ((isset(phpbb::$user->lang[$value])) ? phpbb::$user->lang[$value] : $value) . '</option>';
@@ -184,5 +250,187 @@ class titania_sort
 
 		return $s_sort_dir;
 	}
-}
 
+	/**
+	 * Get order string for ORDER BY sql statement
+	 *
+	 * @return string SQL ORDER BY
+	 */
+	public function get_order_by()
+	{
+		// If the sort_request function was not run yet we shall run it
+		if (!$this->sort_key || !$this->sort_dir)
+		{
+			$this->request();
+		}
+
+		return $this->sort_key_ary[$this->sort_key][1] . ' ' . (($this->sort_dir == 'a') ? 'ASC' : 'DESC');
+	}
+
+	/**
+	 * Build pagination and send to template
+	 * $this->url_location and $this->url_parameters will over-ride the settings given here for $page, $params.
+	 * The reason is that the place that calls build_pagination is typically in a completely different area, in an area that can't say for certain the correct URL (other than the current page)
+	 *
+	 * @param string $page path/page to be used in pagination url
+	 * @param array $params to be used in pagination url
+	 */
+	public function build_pagination($page, $params = array())
+	{
+		if ($this->url_location)
+		{
+			$page = $this->url_location;
+		}
+		if ($this->url_parameters)
+		{
+			$params = $this->url_parameters;
+		}
+
+		// Spring cleaning
+		unset($params[$this->start_name], $params[$this->limit_name], $params[$this->sort_key_name], $params[$this->sort_dir_name]);
+
+		// Add the limit to the URL if required
+		if ($this->limit != $this->default_limit)
+		{
+			$params[$this->limit_name] = $this->limit;
+		}
+
+		// Don't include the sort key/dir in the sort action url
+		$sort_url = titania_url::build_url($page, $params);
+
+		// Add the sort key to the URL if required
+		if ($this->sort_key != $this->default_sort_key)
+		{
+			$params[$this->sort_key_name] = $this->sort_key;
+		}
+
+		// Add the sort dir to the URL if required
+		if ($this->sort_dir != $this->default_sort_dir)
+		{
+			$params[$this->sort_dir_name] = $this->sort_dir;
+		}
+
+		$pagination_url = titania_url::build_url($page, $params);
+
+		phpbb::$template->assign_vars(array(
+			$this->template_vars['PAGINATION']			=> $this->generate_pagination($pagination_url, false, false, false, true),
+			$this->template_vars['PAGE_NUMBER']			=> on_page($this->total, $this->limit, $this->start),
+
+			$this->template_vars['S_SORT_ACTION']		=> $sort_url,
+			$this->template_vars['S_PAGINATION_ACTION']	=> $pagination_url,
+			$this->template_vars['S_NUM_POSTS']			=> $this->total,
+
+			$this->template_vars['S_SELECT_SORT_KEY']	=> $this->get_sort_key_list(),
+			$this->template_vars['S_SELECT_SORT_DIR']	=> $this->get_sort_dir_list(),
+			$this->template_vars['SORT_KEYS_NAME']		=> $this->sort_key_name,
+			$this->template_vars['SORT_DIR_NAME']		=> $this->sort_dir_name,
+		));
+
+		return true;
+	}
+
+	/**
+	 * Generate pagination (similar to phpBB's generate_pagination function, only with some minor tweaks to work in this class better and use proper URLs)
+	 *
+	 * @param <string> $base_url
+	 * @param <int|bool> $num_items Bool false to use $this->total
+	 * @param <int|bool> $per_page Bool false to use $this->limit
+	 * @param <int|bool> $start_item Bool false to use $this->start
+	 * @param <bool> $add_prevnext_text
+	 * @return <string>
+	 */
+	public function generate_pagination($base_url, $num_items = false, $per_page = false, $start_item = false, $add_prevnext_text = true)
+	{
+		$num_items = ($num_items === false) ? $this->total : $num_items;
+		$per_page = ($per_page === false) ? $this->limit : $per_page;
+		$start_item = ($start_item === false) ? $this->start : $start_item;
+
+		$seperator = '<span class="page-sep">' . phpbb::$user->lang['COMMA_SEPARATOR'] . '</span>';
+		$total_pages = ceil($num_items / $per_page);
+		$on_page = floor($start_item / $per_page) + 1;
+		$page_string = '';
+
+		if (!$num_items)
+		{
+			return false;
+		}
+
+		if ($total_pages > 1)
+		{
+			$page_string = ($on_page == 1) ? '<strong>1</strong>' : '<a href="' . $base_url . '">1</a>';
+
+			if ($total_pages > 5)
+			{
+				$start_cnt = min(max(1, $on_page - 4), $total_pages - 5);
+				$end_cnt = max(min($total_pages, $on_page + 4), 6);
+
+				$page_string .= ($start_cnt > 1) ? ' ... ' : $seperator;
+
+				for ($i = $start_cnt + 1; $i < $end_cnt; $i++)
+				{
+					$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
+					if ($i < $end_cnt - 1)
+					{
+						$page_string .= $seperator;
+					}
+				}
+
+				$page_string .= ($end_cnt < $total_pages) ? ' ... ' : $seperator;
+			}
+			else
+			{
+				$page_string .= $seperator;
+
+				for ($i = 2; $i < $total_pages; $i++)
+				{
+					$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
+					if ($i < $total_pages)
+					{
+						$page_string .= $seperator;
+					}
+				}
+			}
+
+			$page_string .= ($on_page == $total_pages) ? '<strong>' . $total_pages . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($total_pages - 1) * $per_page))) . '">' . $total_pages . '</a>';
+
+			if ($add_prevnext_text)
+			{
+				if ($on_page == 2)
+				{
+					$page_string = '<a href="' . $base_url . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
+				}
+				else if ($on_page != 1)
+				{
+					$page_string = '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page))) . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
+				}
+
+				if ($on_page != $total_pages)
+				{
+					$page_string .= '&nbsp;&nbsp;<a href="' . titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))) . '">' . phpbb::$user->lang['NEXT'] . '</a>';
+				}
+			}
+		}
+
+		if ($num_items == 1)
+		{
+			$total_results = (isset(phpbb::$user->lang[$this->result_lang . '_ONE'])) ? phpbb::$user->lang[$this->result_lang . '_ONE'] : phpbb::$user->lang['TOTAL_RESULTS_ONE'];
+		}
+		else
+		{
+			$total_results = (isset(phpbb::$user->lang[$this->result_lang])) ? sprintf(phpbb::$user->lang[$this->result_lang], $num_items) : sprintf(phpbb::$user->lang['TOTAL_RESULTS'], $num_items);
+		}
+
+		phpbb::$template->assign_vars(array(
+			$this->template_vars['PER_PAGE']		=> $per_page,
+			$this->template_vars['ON_PAGE']			=> $on_page,
+
+			$this->template_vars['PREVIOUS_PAGE']	=> ($on_page == 2) ? $base_url : (($on_page == 1) ? '' : titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page)))),
+			$this->template_vars['NEXT_PAGE']		=> ($on_page == $total_pages) ? '' : titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))),
+			$this->template_vars['TOTAL_PAGES']		=> $total_pages,
+			$this->template_vars['TOTAL_ITEMS']		=> $num_items,
+			$this->template_vars['TOTAL_RESULTS']	=> $total_results,
+		));
+
+		return $page_string;
+	}
+}

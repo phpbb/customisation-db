@@ -95,24 +95,16 @@ class queue_overlord
 	*
 	* @param string $type The type of queue (the contrib type)
 	* @param object|boolean $sort The sort object (includes/tools/sort.php)
-	* @param object|boolean $pagination The pagination object (includes/tools/pagination.php)
 	*/
-	public static function display_queue($type, $queue_status = TITANIA_QUEUE_NEW, $sort = false, $pagination = false)
+	public static function display_queue($type, $queue_status = TITANIA_QUEUE_NEW, $sort = false)
 	{
 		if ($sort === false)
 		{
 			// Setup the sort tool
 			$sort = new titania_sort();
 			$sort->set_sort_keys(self::$sort_by);
-			$sort->default_dir = 'a';
-		}
-
-		if ($pagination === false)
-		{
-			// Setup the pagination tool
-			$pagination = new titania_pagination();
-			$pagination->default_limit = phpbb::$config['topics_per_page'];
-			$pagination->request();
+			$sort->default_limit = phpbb::$config['topics_per_page'];
+			$sort->request();
 		}
 
 		$queue_ids = array();
@@ -142,13 +134,13 @@ class queue_overlord
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$pagination->sql_count($sql_ary, 'q.queue_id');
-		$pagination->build_pagination(titania_url::$current_page, titania_url::$params);
+		$sort->sql_count($sql_ary, 'q.queue_id');
+		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 		$queue_ids = $user_ids = array();
 
 		// Get the data
-		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
+		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{

@@ -52,10 +52,10 @@ if (isset($_POST['submit']))
 	}*/
 }
 
-// Setup the pagination tool
-$pagination = new titania_pagination();
-$pagination->default_limit = phpbb::$config['posts_per_page'];
-$pagination->request();
+// Setup the sort tool
+$sort = new titania_sort();
+$sort->default_limit = phpbb::$config['posts_per_page'];
+$sort->request();
 
 // Initialize the query
 $query = titania_search::create_find_query();
@@ -106,7 +106,7 @@ if ($author)
 }
 
 // Do the search
-$results = titania_search::custom_search($query, $pagination);
+$results = titania_search::custom_search($query, $sort);
 
 // Grab the users
 users_overlord::load_users($results['user_ids']);
@@ -159,7 +159,7 @@ users_overlord::load_users($results['user_ids']);
 /*	break;
 }*/
 
-$pagination->build_pagination(titania_url::$current_page, titania_url::$params);
+$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 phpbb::$template->assign_vars(array(
 	'S_IN_SEARCH'		=> true,

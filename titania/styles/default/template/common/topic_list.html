@@ -6,12 +6,7 @@
 	<!-- ENDIF -->
 	</div>
 
-	<!-- IF PAGINATION or TOTAL_RESULTS -->
-		<div class="pagination">
-			<!-- IF not S_IS_BOT and U_MARK_TOPICS --><a href="{U_MARK_TOPICS}" accesskey="m">{L_MARK_TOPICS_READ}</a> &bull; <!-- ENDIF -->{TOTAL_RESULTS}
-			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-		</div>
-	<!-- ENDIF -->
+	<!-- INCLUDE common/pagination.html -->
 </div>
 <!-- ENDIF -->
 <div class="clear"></div>
@@ -69,6 +64,8 @@
 	</div>
 <!-- END topics -->
 
+<!-- INCLUDE common/sort.html -->
+
 <!-- IF U_POST_TOPIC or PAGINATION or TOTAL_RESULTS -->
 <div class="topic-actions">
 	<div class="buttons">
@@ -77,11 +74,6 @@
 	<!-- ENDIF -->
 	</div>
 
-	<!-- IF PAGINATION or TOTAL_RESULTS -->
-		<div class="pagination">
-			<!-- IF not S_IS_BOT and U_MARK_TOPICS --><a href="{U_MARK_TOPICS}" accesskey="m">{L_MARK_TOPICS_READ}</a> &bull; <!-- ENDIF -->{TOTAL_RESULTS}
-			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-		</div>
-	<!-- ENDIF -->
+	<!-- INCLUDE common/pagination.html -->
 </div>
 <!-- ENDIF -->

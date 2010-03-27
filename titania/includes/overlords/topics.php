@@ -192,9 +192,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	* @param string $type The type (support, review, queue, tracker, author_support, author_tracker) author_ for displaying posts from the areas the given author is involved in (either an author/co-author)
 	* @param object|boolean $object The object (for contrib related (support, review, queue, tracker) and author_ modes)
 	* @param object|boolean $sort The sort object (includes/tools/sort.php)
-	* @param object|boolean $pagination The pagination object (includes/tools/pagination.php)
 	*/
-	public static function display_forums($type, $object = false, $sort = false, $pagination = false)
+	public static function display_forums($type, $object = false, $sort = false)
 	{
 		if ($sort === false)
 		{
@@ -206,16 +205,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
 			}
 			$sort->default_dir = phpbb::$user->data['user_topic_sortby_dir'];
+			$sort->default_limit = phpbb::$config['topics_per_page'];
+			$sort->request();
 		}
-
-		if ($pagination === false)
-		{
-			// Setup the pagination tool
-			$pagination = new titania_pagination();
-			$pagination->default_limit = phpbb::$config['topics_per_page'];
-			$pagination->request();
-		}
-		$pagination->result_lang = 'TOTAL_TOPICS';
+		$sort->result_lang = 'TOTAL_TOPICS';
 
 		$topic_ids = array();
 
@@ -334,13 +327,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$pagination->sql_count($sql_ary, 't.topic_id');
-		$pagination->build_pagination($page_url);
+		$sort->sql_count($sql_ary, 't.topic_id');
+		$sort->build_pagination($page_url);
 
 		$last_was_sticky = false;
 
 		// Get the data
-		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
+		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{

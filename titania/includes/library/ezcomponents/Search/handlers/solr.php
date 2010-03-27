@@ -176,7 +176,7 @@ class ezcSearchSolrHandler implements ezcSearchHandler, ezcSearchIndexHandler
         $queryPart = '';
         if ( count( $queryString ) )
         {
-            $queryPart = '/?'. http_build_query( $queryString );
+            $queryPart = '/?'. str_replace('&amp;', '&', http_build_query( $queryString ));
         }
         $cmd =  "GET {$this->location}/{$type}{$queryPart} HTTP/1.1\n";
         $cmd .= "Host: {$this->host}:{$this->port}\n";

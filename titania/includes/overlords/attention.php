@@ -78,9 +78,8 @@ class attention_overlord
 	* 	display_closed bool display closed and open items
 	* 	template_block string the name of the template block to output to (attention if not sent)
 	* @param titania_sort $sort
-	* @param titania_pagination $pagination
 	*/
-	public static function display_attention_list($options = array(), $sort = false, $pagination = false)
+	public static function display_attention_list($options = array(), $sort = false)
 	{
 		if ($sort === false)
 		{
@@ -91,14 +90,8 @@ class attention_overlord
 			{
 				$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
 			}
-		}
-
-		if ($pagination === false)
-		{
-			// Setup the pagination tool
-			$pagination = new titania_pagination();
-			$pagination->default_limit = phpbb::$config['topics_per_page'];
-			$pagination->request();
+			$sort->default_limit = phpbb::$config['topics_per_page'];
+			$sort->request();
 		}
 
 		$sql_ary = array(
@@ -141,11 +134,11 @@ class attention_overlord
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$pagination->sql_count($sql_ary, 'a.attention_id');
-		$pagination->build_pagination(titania_url::$current_page, titania_url::$params);
+		$sort->sql_count($sql_ary, 'a.attention_id');
+		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 		// Get the data
-		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
+		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
 		$attention_ids = $user_ids = array();
 

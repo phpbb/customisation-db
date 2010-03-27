@@ -211,10 +211,10 @@ switch ($action)
 
 			titania::_include('functions_display', 'titania_topic_folder_img');
 
-			// Setup the pagination tool
-			$pagination = new titania_pagination();
-			$pagination->default_limit = phpbb::$config['topics_per_page'];
-			$pagination->request();
+			// Setup the sort tool
+			$sort = new titania_sort();
+			$sort->default_limit = phpbb::$config['topics_per_page'];
+			$sort->request();
 			$faqs = array();
 
 			$sql_ary = array(
@@ -231,11 +231,11 @@ switch ($action)
 			$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 			// Handle pagination
-			$pagination->sql_count($sql_ary, 'faq_id');
-			$pagination->build_pagination($faq->get_url());
+			$sort->sql_count($sql_ary, 'faq_id');
+			$sort->build_pagination($faq->get_url());
 
 			// Get the data
-			$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
+			$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{

@@ -6,13 +6,7 @@
 	<!-- ENDIF -->
 	</div>
 
-	<!-- IF PAGINATION or TOTAL_RESULTS -->
-		<div class="pagination">
-			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_RESULTS}
-			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-		</div>
-	<!-- ENDIF -->
-
+	<!-- INCLUDE common/pagination.html -->
 </div>
 <div class="clear"></div>
 <!-- ENDIF -->
@@ -40,7 +34,7 @@
 			<!-- ENDIF -->
 		<!-- ENDIF -->
 
-			<h3 <!-- IF posts.S_FIRST_ROW -->class="first"<!-- ENDIF -->><!-- IF posts.POST_ICON_IMG --><img src="{T_ICONS_PATH}{posts.POST_ICON_IMG}" width="{posts.POST_ICON_IMG_WIDTH}" height="{posts.POST_ICON_IMG_HEIGHT}" alt="" /> <!-- ENDIF --><a href="{posts.U_VIEW}">{posts.POST_SUBJECT}</a> 
+			<h3 <!-- IF posts.S_FIRST_ROW -->class="first"<!-- ENDIF -->><!-- IF posts.POST_ICON_IMG --><img src="{T_ICONS_PATH}{posts.POST_ICON_IMG}" width="{posts.POST_ICON_IMG_WIDTH}" height="{posts.POST_ICON_IMG_HEIGHT}" alt="" /> <!-- ENDIF --><a href="{posts.U_VIEW}">{posts.POST_SUBJECT}</a>
 			<!-- IF posts.S_ACCESS_TEAMS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_teams.png" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
 			<!-- ELSEIF posts.S_ACCESS_AUTHORS--><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_author.png" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" /><!-- ENDIF --></h3>
 			<p class="author"><!-- IF S_IS_BOT -->{posts.MINI_POST_IMG}<!-- ELSE --><a href="{posts.U_MINI_POST}">{posts.MINI_POST_IMG}</a><!-- ENDIF -->{L_POST_BY_AUTHOR} <strong>{posts.USER_FULL}</strong> &raquo; {posts.POST_TIME} </p>
@@ -125,6 +119,8 @@
 	<hr class="divider" />
 <!-- END posts -->
 
+<!-- INCLUDE common/sort.html -->
+
 <!-- IF S_QUICK_REPLY -->
 	<!-- INCLUDE posting/quickreply_editor.html -->
 <!-- ENDIF -->
@@ -137,11 +133,6 @@
 	<!-- ENDIF -->
 	</div>
 
-	<!-- IF PAGINATION or TOTAL_RESULTS -->
-		<div class="pagination">
-			<!-- IF U_VIEW_UNREAD_POST and not S_IS_BOT --><a href="{U_VIEW_UNREAD_POST}">{L_VIEW_UNREAD_POST}</a> &bull; <!-- ENDIF -->{TOTAL_RESULTS}
-			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-		</div>
-	<!-- ENDIF -->
+	<!-- INCLUDE common/pagination.html -->
 </div>
 <!-- ENDIF -->

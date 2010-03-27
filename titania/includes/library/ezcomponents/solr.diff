@@ -1,0 +1,13 @@
+Index: Search/handlers/solr.php
+===================================================================
+--- Search/handlers/solr.php	(revision 907)
++++ Search/handlers/solr.php	(working copy)
+@@ -176,7 +176,7 @@
+         $queryPart = '';
+         if ( count( $queryString ) )
+         {
+-            $queryPart = '/?'. http_build_query( $queryString );
++            $queryPart = '/?'. str_replace('&amp;', '&', http_build_query( $queryString ));
+         }
+         $cmd =  "GET {$this->location}/{$type}{$queryPart} HTTP/1.1\n";
+         $cmd .= "Host: {$this->host}:{$this->port}\n";

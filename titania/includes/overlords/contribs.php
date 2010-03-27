@@ -29,7 +29,7 @@ class contribs_overlord
 	public static $sort_by = array(
 		'a' => array('AUTHOR', 'u.username_clean'),
 		't' => array('UPDATE_TIME', 'c.contrib_last_update'),
-		'c' => array('SORT_CONTRIB_NAME', 'c.contrib_name'),
+		'c' => array('SORT_CONTRIB_NAME', 'c.contrib_name', true),
 	);
 
 	/**
@@ -111,10 +111,9 @@ class contribs_overlord
 	 *
 	 * @param string $mode The mode (category, author)
 	 * @param int $id The parent id (only show contributions under this category, author, etc)
-	 * @param string $pagination_url The url to display for pagination.
 	 * @param string $blockname The name of the template block to use (contribs by default)
 	 */
-	function display_contribs($mode, $id, $sort = false, $pagination = false, $blockname = 'contribs')
+	function display_contribs($mode, $id, $sort = false, $blockname = 'contribs')
 	{
 		titania::add_lang('contributions');
 		titania::_include('functions_display', 'titania_topic_folder_img');
@@ -124,17 +123,10 @@ class contribs_overlord
 			// Setup the sort tool
 			$sort = new titania_sort();
 			$sort->set_sort_keys(self::$sort_by);
-			$sort->default_key = 'c';
+			$sort->default_limit = phpbb::$config['topics_per_page'];
+			$sort->request();
 		}
-
-		if ($pagination === false)
-		{
-			// Setup the pagination tool
-			$pagination = new titania_pagination();
-			$pagination->default_limit = phpbb::$config['topics_per_page'];
-			$pagination->request();
-		}
-		$pagination->result_lang = 'TOTAL_CONTRIBS';
+		$sort->result_lang = 'TOTAL_CONTRIBS';
 
 		$select = 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
 						u.username, u.user_colour, u.username_clean';
@@ -226,10 +218,10 @@ class contribs_overlord
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$pagination->sql_count($sql_ary, 'c.contrib_id');
-		$pagination->build_pagination(titania_url::$current_page, titania_url::$params);
+		$sort->sql_count($sql_ary, 'c.contrib_id');
+		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
-		$result = phpbb::$db->sql_query_limit($sql, $pagination->limit, $pagination->start);
+		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
 		$contrib_ids = array();
 		while ($row = phpbb::$db->sql_fetchrow($result))
@@ -316,11 +308,5 @@ class contribs_overlord
 			$contrib_type = $row['contrib_type'];
 		}
 		unset($contrib);
-
-		phpbb::$template->assign_vars(array(
-			'U_ACTION'			=> titania_url::$current_page,
-			'S_MODE_SELECT'		=> $sort->get_sort_key_list(),
-			'S_ORDER_SELECT'	=> $sort->get_sort_dir_list(),
-		));
 	}
 }
