@@ -42,6 +42,10 @@ Rewriterule ^(tracker|support)/([^/]+)?$						./contributions/index.php?page=$1 
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^rate/?([^/]+)?$									./index.php?action=rate [NC]
 
+#display all contribs
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^all/?([^/]+)?$										./index.php?action=all [NC]
+
 #search
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^search/([^/]+)?$									./search.php [NC]
