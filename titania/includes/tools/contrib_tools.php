@@ -394,25 +394,26 @@ class titania_contrib_tools
 	/**
 	* Prepare the files to test automod with
 	*
-	* @param string $version Version string of the revision (30 for 3.0.x, 32 for 3.2.x, etc)
+	* @param string $version the full phpBB version number.  Ex: 2.0.23, 3.0.1, 3.0.7-pl1
 	*/
 	public function automod_phpbb_files($version)
 	{
-		$version = titania::$config->phpbb_versions[$version];
-		$phpbb_root = titania::$config->contrib_temp_path . 'phpbb/' . $version . '/';
+		$version = preg_replace('#[^a-zA-Z0-9\.\-]+#', '', $version);
 
-		if (!file_exists($phpbb_root))
+		$phpbb_root = TITANIA_ROOT . 'store/phpbb_packages/extracted/' . $version . '/';
+
+		if (!file_exists($phpbb_root . 'common.php'))
 		{
 			// Need to unzip
 			phpbb::_include('functions_compress', false, 'compress_zip');
 
 			// Unzip to our temp directory
-			$zip = new compress_zip('r', TITANIA_ROOT . 'includes/tools/automod/phpbb/phpBB-' . $version . '.zip');
+			$zip = new compress_zip('r', TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip');
 			$zip->extract($phpbb_root);
 			$zip->close();
 
 			// Find the phpBB root
-			$package_root = $this->find_root($phpbb_root, array(array('common.php')));
+			$package_root = $this->find_root($phpbb_root, 'common.php');
 
 			// Move it to the correct location
 			if ($package_root != '')
@@ -466,10 +467,10 @@ class titania_contrib_tools
 	{
 		phpbb::_include('functions_transfer', false, 'transfer');
 		phpbb::_include('functions_admin', 'recalc_nested_sets');
-		titania::_include('tools/automod/acp_mods', false, 'acp_mods');
-		titania::_include('tools/automod/editor', false, 'editor');
-		titania::_include('tools/automod/mod_parser', false, 'parser');
-		titania::_include('tools/automod/functions_mods', 'test_ftp_connection');
+		titania::_include('library/automod/acp_mods', false, 'acp_mods');
+		titania::_include('library/automod/editor', false, 'editor');
+		titania::_include('library/automod/mod_parser', false, 'parser');
+		titania::_include('library/automod/functions_mods', 'test_ftp_connection');
 
 		titania::add_lang('automod');
 
@@ -484,7 +485,7 @@ class titania_contrib_tools
 			// Find the first item with install in the name
 			foreach (scandir($modx_file) as $item)
 			{
-		       if (strpos($item, 'install') !== false && strpos($item, '.xml') !== false)
+		       if (strpos($item, 'install') !== false && strpos($item, '.xml'))
 		       {
 				   $modx_file .= $item;
 				   break;
