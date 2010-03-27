@@ -35,6 +35,16 @@ $contrib_categories = request_var('contrib_category', array(0));
 $active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
 $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 $error = array();
+$contrib_status = request_var('contrib_status', 1);
+$status_list = array(1 => 'CONTRIB_NEW', 2 => 'CONTRIB_APPROVED', 3 => 'CONTRIB_CLEANED');
+foreach ($status_list as $status => $row)
+{
+	phpbb::$template->assign_block_vars('status_select', array(
+		'S_SELECTED'		=> ($status == titania::$contrib->contrib_status) ? true : false,
+		'VALUE'				=> $status,
+		'NAME'				=> phpbb::$user->lang[$row],
+	));
+}
 
 /**
 * ---------------------------- Confirm main author change ----------------------------
@@ -209,6 +219,9 @@ else if ($submit)
 		titania::$contrib->submit();
 
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
+		
+		// Update contrib status if need
+		titania::$contrib->change_status($contrib_status);
 
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
