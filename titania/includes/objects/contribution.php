@@ -195,7 +195,7 @@ class titania_contribution extends titania_message_object
 				titania_types::decrement_count($this->contrib_type);
 
 				// Decrement the category count
-				$this->update_category_count('-');
+				//$this->update_category_count('-');
 			break;
 		}
 
@@ -877,7 +877,7 @@ class titania_contribution extends titania_message_object
 	*/
 	public function update_category_count($dir = '+')
 	{
-		if (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED)
+		if (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED && $dir == '+')
 		{
 			return;
 		}
