@@ -43,6 +43,7 @@ $lang = array_merge($lang, array(
 'FILE_NOT_EXIST' => 'File does not exist: %s',
 	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
+	'ALL_CONTRIBUTIONS'			=> 'All contributions',
 	'AUTHOR_BY'					=> 'By %s',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',

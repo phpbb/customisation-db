@@ -163,8 +163,6 @@ class contribs_overlord
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
-
-				titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 			break;
 
 			case 'category' :
@@ -191,11 +189,27 @@ class contribs_overlord
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
+			break;
+			
+			case 'all' :
+				$sql_ary = array(
+					'SELECT'	=> $select,
 
-				titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
+					'FROM'		=> array(
+						TITANIA_CONTRIBS_TABLE	=> 'c',
+						USERS_TABLE				=> 'u',
+					),
+
+					'WHERE'		=> 'u.user_id = c.contrib_user_id
+						AND c.contrib_visible = 1',
+
+					'ORDER_BY'	=> $sort->get_order_by(),
+				);
 			break;
 		}
 
+		titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
+		
 		// Permissions
 		if (titania::$config->require_validation && !titania::$access_level == TITANIA_ACCESS_TEAMS)
 		{
