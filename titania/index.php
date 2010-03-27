@@ -132,28 +132,45 @@ switch ($action)
 		}
 		else if ($action == 'automod')
 		{
-			/* This is not done yet...
-			exit;
 			$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
 
 			// Start up the machine
 			$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
 
-			//$package_root = $contrib_tools->find_root();
-			//$contrib_tools->restore_root($package_root);
-			//$contrib_tools->replace_zip();
+			// Automod testing time
+			$details = '';
+			$automod_results = array();
+			$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				WHERE revision_id = ' . $revision->revision_id;
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
+				$phpbb_path = $contrib_tools->automod_phpbb_files($version_string);
 
-			// Prepare the phpbb files for automod
-			$phpbb_path = $contrib_tools->automod_phpbb_files($revision->phpbb_version);
+				if ($phpbb_path === false)
+				{
+					$error = array_merge($error, $contrib_tools->error);
+					continue;
+				}
 
-			// Automod test
-			$details = $results = '';
-			$contrib_tools->automod($phpbb_path, $details, $results);
-			//var_dump($details);
-			//echo '<br /><br /><br />';
-			echo $results;
-			exit;
-			*/
+				phpbb::$template->assign_vars(array(
+					'PHPBB_VERSION'		=> $version_string,
+					'TEST_ID'			=> $row['row_id'],
+				));
+
+				$test_results = '';
+				$contrib_tools->automod($phpbb_path, $details, $test_results);
+
+				$automod_results[] = $test_results;
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			$automod_results = implode('', $automod_results);
+
+			// Update the queue with the results
+			$queue->automod_results = $automod_results;
+			$queue->submit();
 		}
 
 		redirect(titania_url::build_url('manage/queue', array('queue' => titania_types::$types[$queue->queue_type]->url, 'q' => $queue->queue_id)));

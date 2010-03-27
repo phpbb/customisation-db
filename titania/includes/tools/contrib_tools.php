@@ -407,6 +407,12 @@ class titania_contrib_tools
 			// Need to unzip
 			phpbb::_include('functions_compress', false, 'compress_zip');
 
+			if (!file_exists(TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip'))
+			{
+				$this->error[] = sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], 'store/phpbb_packages/phpBB-' . $version . '.zip');
+				return false;
+			}
+
 			// Unzip to our temp directory
 			$zip = new compress_zip('r', TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip');
 			$zip->extract($phpbb_root);

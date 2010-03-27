@@ -210,6 +210,10 @@ class titania_queue extends titania_message_object
 		}
 
 		// @todo Add the Automod results
+		if ($this->automod_results)
+		{
+			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_AUTOMOD'] . '&quot;]' . $this->automod_results . '[/quote]';
+		}
 
 		// Prevent errors from different configurations
 		phpbb::$config['min_post_chars'] = 1;

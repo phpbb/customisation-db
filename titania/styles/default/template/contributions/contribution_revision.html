@@ -51,10 +51,17 @@
 			<!-- IF MPV_RESULTS -->
 				<p class="error">{L_MPV_RESULTS}</p>
 				<hr class="dashed" />
-				{MPV_RESULTS}<!--<br />
-				<br />
+				{MPV_RESULTS}
+				<!-- IF S_AUTOMOD_TEST -->
+					<br /><br />
+					<hr class="dashed" />
+					<strong>{L_AUTOMOD_TEST}</strong>
+				<!-- ENDIF -->
+			<!-- ENDIF -->
+			<!-- IF AUTOMOD_RESULTS -->
+				<p class="error">{L_AUTOMOD_RESULTS}</p>
 				<hr class="dashed" />
-				<strong>{L_AUTOMOD_TEST}</strong>-->
+				{AUTOMOD_RESULTS}
 			<!-- ENDIF -->
 
 			<fieldset class="submit-buttons">

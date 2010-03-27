@@ -159,6 +159,7 @@ The Styles Team',
 	'UNKNOWN'							=> 'Unknown',
 
 	'VALIDATION'						=> 'Validation',
+	'VALIDATION_AUTOMOD'				=> 'Automod Test',
 	'VALIDATION_MESSAGE'				=> 'Validation Message/Reason',
 	'VALIDATION_MPV'					=> 'MPV Notes',
 	'VALIDATION_NOTES'					=> 'Validation Notes',

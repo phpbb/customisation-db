@@ -283,9 +283,11 @@ do{
 
 				$mpv_results = generate_text_for_display($mpv_results, $uid, $bitfield, $flags);
 				phpbb::$template->assign_var('MPV_RESULTS', $mpv_results);
+
+				phpbb::$template->assign_var('S_AUTOMOD_TEST', titania_types::$types[titania::$contrib->contrib_type]->automod_test);
 			}
 		break;
-	/* No Automod test for now, have to figure out how to best handle phpBB versions and some other issues
+
 		case 3 :
 			if (!titania_types::$types[titania::$contrib->contrib_type]->automod_test || !titania::$config->use_queue)
 			{
@@ -312,17 +314,46 @@ do{
 			// Start up the machine
 			$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
 
-			// Prepare the phpbb files for automod
-			$phpbb_path = $contrib_tools->automod_phpbb_files($revision->phpbb_version);
+			// Automod testing time
+			$details = '';
+			$automod_results = array();
+			$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				WHERE revision_id = ' . $revision->revision_id;
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
+				$phpbb_path = $contrib_tools->automod_phpbb_files($version_string);
 
-			// Automod test
-			$details = $results = '';
-			$contrib_tools->automod($phpbb_path, $details, $results);
+				if ($phpbb_path === false)
+				{
+					$error = array_merge($error, $contrib_tools->error);
+					continue;
+				}
 
-			phpbb::$template->assign_var('AUTOMOD_RESULTS', $results);
+				phpbb::$template->assign_vars(array(
+					'PHPBB_VERSION'		=> $version_string,
+					'TEST_ID'			=> $row['row_id'],
+				));
+
+				$test_results = '';
+				$contrib_tools->automod($phpbb_path, $details, $test_results);
+
+				$automod_results[] = $test_results;
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			$automod_results = implode('', $automod_results);
+
+			// Update the queue with the results
+			$queue = $revision->get_queue();
+			$queue->automod_results = $automod_results;
+			$queue->submit();
+
+			phpbb::$template->assign_var('AUTOMOD_RESULTS', $automod_results);
 		break;
-	*/
-		case 3 :
+
+		case 4 :
 			$revision = new titania_revision(titania::$contrib, $revision_id);
 			if (!$revision->load())
 			{

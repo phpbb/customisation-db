@@ -1,36 +1,47 @@
+<h3>{PHPBB_VERSION}</h3>
+<div id="automod_{TEST_ID}">
 <!-- IF S_EDITS -->
+
 <h2>{L_FILE_EDITS}</h2>
 <!-- BEGIN edit_files -->
-<fieldset>
-	<legend>{edit_files.FILENAME}</legend>
-	<!-- IF edit_files.S_MISSING_FILE -->
-	<strong><font color="red">{L_FILE_MISSING}</font></strong>
-	<!-- ELSEIF edit_files.INHERIT_MSG -->
-	<strong>{edit_files.INHERIT_MSG}</strong>
-	<!-- ENDIF -->
-	<!-- BEGIN finds -->
-	<fieldset>
-		<h4 style="margin: 0; padding:0;">{L_FIND}</h4>
-		<pre style="overflow-x: scroll;">{edit_files.finds.FIND_STRING}</pre>
-		<!-- IF edit_files.finds.S_MISSING_FIND -->
-		<strong><font color="red">{L_FIND_MISSING}</font></strong>
-		<!-- ENDIF -->
-		<!-- BEGIN actions -->
-			<div>
-				<hr style="padding-top: 10px; margin-top: 10px;" />
-				<h4 style="margin: 0; padding:0;">{edit_files.finds.actions.NAME}</h4>
-				<pre style="overflow-x: scroll;">{edit_files.finds.actions.COMMAND}</pre>
-				<!-- BEGIN inline -->
-					<hr style="padding-top: 10px; margin-top: 10px;" />
-					<h4 style="margin: 0; padding:0;">{edit_files.finds.actions.inline.NAME}</h4>
-					<pre style="overflow-x: scroll;">{edit_files.finds.actions.inline.COMMAND}</pre>
-					<!-- IF not edit_files.finds.actions.inline.S_SUCCESS --><span><font color="red">{L_INLINE_FIND_MISSING}</font></span><!-- ENDIF -->
-				<!-- END inline -->
-				<!-- IF edit_files.finds.actions.S_SUCCESS --><font color="green">{L_SUCCESS}</font><!-- ELSE --><font color="red">{L_FIND_MISSING}</font><!-- ENDIF -->
-			</div>
-		<!-- END actions -->
+	<!-- IF not edit_files.S_SUCCESS -->
+		<fieldset>
+			<legend>{edit_files.FILENAME}</legend>
+
+			<!-- IF edit_files.S_MISSING_FILE -->
+			<strong><font color="red">{L_FILE_MISSING}</font></strong>
+			<!-- ELSEIF edit_files.INHERIT_MSG -->
+			<strong>{edit_files.INHERIT_MSG}</strong>
+			<!-- ENDIF -->
+
+			<!-- BEGIN finds -->
+				<!-- IF not finds.S_SUCCESS -->
+					<fieldset>
+						<h4 style="margin: 0; padding:0;">{L_FIND}</h4>
+						<pre style="overflow-x: scroll;">{edit_files.finds.FIND_STRING}</pre>
+						<!-- IF edit_files.finds.S_MISSING_FIND -->
+						<strong><font color="red">{L_FIND_MISSING}</font></strong>
+						<!-- ENDIF -->
+						<!-- BEGIN actions -->
+							<div>
+								<hr style="padding-top: 10px; margin-top: 10px;" />
+								<h4 style="margin: 0; padding:0;">{edit_files.finds.actions.NAME}</h4>
+								<pre style="overflow-x: scroll;">{edit_files.finds.actions.COMMAND}</pre>
+								<!-- BEGIN inline -->
+									<hr style="padding-top: 10px; margin-top: 10px;" />
+									<h4 style="margin: 0; padding:0;">{edit_files.finds.actions.inline.NAME}</h4>
+									<pre style="overflow-x: scroll;">{edit_files.finds.actions.inline.COMMAND}</pre>
+									<!-- IF not edit_files.finds.actions.inline.S_SUCCESS --><span><font color="red">{L_INLINE_FIND_MISSING}</font></span><!-- ENDIF -->
+								<!-- END inline -->
+								<!-- IF edit_files.finds.actions.S_SUCCESS --><font color="green">{L_SUCCESS}</font><!-- ELSE --><font color="red">{L_FIND_MISSING}</font><!-- ENDIF -->
+							</div>
+						<!-- END actions -->
+					</fieldset>
+				<!-- ENDIF -->
+			<!-- END finds -->
 		</fieldset>
-	<!-- END finds -->
-	</fieldset>
-	<!-- END edit_files -->
+	<!-- ENDIF -->
+<!-- END edit_files -->
+
 <!-- ENDIF -->
+</div>
