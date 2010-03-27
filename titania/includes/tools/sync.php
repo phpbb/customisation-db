@@ -270,6 +270,7 @@ class titania_sync
 						'date'			=> $post->post_time,
 						'url'			=> titania_url::unbuild_url($post->get_url()),
 						'approved'		=> $post->post_approved,
+						'access_level'	=> $post->post_access,
 					);
 				}
 				phpbb::$db->sql_freeresult($result);
