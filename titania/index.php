@@ -175,15 +175,18 @@ switch ($action)
 
 		redirect(titania_url::build_url('manage/queue', array('queue' => titania_types::$types[$queue->queue_type]->url, 'q' => $queue->queue_id)));
 	break;
-	
+
 	case 'all' :
 		// Setup the sort tool
 		$sort = new titania_sort();
 		$sort->set_sort_keys(contribs_overlord::$sort_by);
 		$sort->default_key = 't';
 		$sort->default_dir = 'd';
-		
+
 		contribs_overlord::display_contribs('all', false, $sort);
+
+		titania::page_header('CUSTOMISATION_DATABASE');
+		titania::page_footer(true, 'all_contributions.html');
 	break;
 
 	/**
@@ -238,12 +241,4 @@ switch ($action)
 }
 
 titania::page_header('CUSTOMISATION_DATABASE');
-
-if ($action == 'all')
-{
-	titania::page_footer(true, 'all_contributions.html');
-}
-else
-{
-	titania::page_footer(true, 'index_body.html');
-}
+titania::page_footer(true, 'index_body.html');
