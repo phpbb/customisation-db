@@ -36,6 +36,7 @@ $active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('act
 $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 $error = array();
 $contrib_status = request_var('contrib_status', (int) titania::$contrib->contrib_status);
+$status_list = array(TITANIA_CONTRIB_NEW => 'CONTRIB_NEW', TITANIA_CONTRIB_APPROVED => 'CONTRIB_APPROVED', TITANIA_CONTRIB_CLEANED => 'CONTRIB_CLEANED');
 
 /**
 * ---------------------------- Confirm main author change ----------------------------
@@ -214,8 +215,11 @@ else if ($submit)
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
 		
-		// Update contrib status if need
-		titania::$contrib->change_status($contrib_status);
+		// Update contrib status if we can moderate and contrib_status is valid
+		if ((phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) && array_key_exists($contrib_status, $status_list))
+		{
+			titania::$contrib->change_status($contrib_status);
+		}
 
 		if ($change_owner == '')
 		{
@@ -267,7 +271,6 @@ generate_category_select($contrib_categories);
 titania::$contrib->assign_details();
 $message->display();
 
-$status_list = array(TITANIA_CONTRIB_NEW => 'CONTRIB_NEW', TITANIA_CONTRIB_APPROVED => 'CONTRIB_APPROVED', TITANIA_CONTRIB_CLEANED => 'CONTRIB_CLEANED');
 foreach ($status_list as $status => $row)
 {
 	phpbb::$template->assign_block_vars('status_select', array(
