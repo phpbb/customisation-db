@@ -550,19 +550,6 @@ class acp_mods
 					$processed_templates = array('prosilver');
 					$processed_templates += explode(',', $row['mod_template']);
 
-					// now grab the templates that have not already been processed
-					$sql = 'SELECT template_id, template_path FROM ' . STYLES_TEMPLATE_TABLE . '
-						WHERE ' . $db->sql_in_set('template_name', $processed_templates, true);
-					$result = $db->sql_query($sql);
-
-					while ($row = $db->sql_fetchrow($result))
-					{
-						$template->assign_block_vars('board_templates', array(
-							'TEMPLATE_ID'		=> $row['template_id'],
-							'TEMPLATE_NAME'		=> $row['template_path'],
-						));
-					}
-
 					$s_hidden_fields = build_hidden_fields(array(
 						'action'	=> 'install',
 						'parent'	=> $parent_id,
@@ -1908,32 +1895,7 @@ class acp_mods
 
 	function handle_template_prompt(&$children, &$elements, $action)
 	{
-		global $db, $template, $phpbb_root_path, $parent_id;
-
-		if (isset($children['template']) && sizeof($children['template']))
-		{
-			// additional styles are available for this MOD
-			$sql = 'SELECT template_id, template_name FROM ' . STYLES_TEMPLATE_TABLE;
-			$result = $db->sql_query($sql);
-
-			$installed_templates = array();
-			while ($row = $db->sql_fetchrow($result))
-			{
-				$installed_templates[$row['template_id']] = $row['template_name'];
-			}
-			$db->sql_freeresult($result);
-
-			foreach ($children['template'] as $key => $tag)
-			{
-				// remove useless title from MODX 1.2.0 tags
-				$children['template'][$tag['realname']] = is_array($tag) ? $tag['href'] : $tag;
-			}
-
-			$available_templates = array_keys($children['template']);
-
-			// $process_templates are those that are installed on the board and provided for by the MOD
-			$process_templates = $elements['template'] = array_intersect($available_templates, $installed_templates);
-		}
+		return;
 	}
 
 	function upload_mod()

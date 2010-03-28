@@ -1,0 +1,305 @@
+Index: acp_mods.php
+===================================================================
+--- acp_mods.php	(revision 924)
++++ acp_mods.php	(working copy)
+@@ -550,19 +550,6 @@
+ 					$processed_templates = array('prosilver');
+ 					$processed_templates += explode(',', $row['mod_template']);
+ 
+-					// now grab the templates that have not already been processed
+-					$sql = 'SELECT template_id, template_path FROM ' . STYLES_TEMPLATE_TABLE . '
+-						WHERE ' . $db->sql_in_set('template_name', $processed_templates, true);
+-					$result = $db->sql_query($sql);
+-
+-					while ($row = $db->sql_fetchrow($result))
+-					{
+-						$template->assign_block_vars('board_templates', array(
+-							'TEMPLATE_ID'		=> $row['template_id'],
+-							'TEMPLATE_NAME'		=> $row['template_path'],
+-						));
+-					}
+-
+ 					$s_hidden_fields = build_hidden_fields(array(
+ 						'action'	=> 'install',
+ 						'parent'	=> $parent_id,
+@@ -1908,32 +1895,7 @@
+ 
+ 	function handle_template_prompt(&$children, &$elements, $action)
+ 	{
+-		global $db, $template, $phpbb_root_path, $parent_id;
+-
+-		if (isset($children['template']) && sizeof($children['template']))
+-		{
+-			// additional styles are available for this MOD
+-			$sql = 'SELECT template_id, template_name FROM ' . STYLES_TEMPLATE_TABLE;
+-			$result = $db->sql_query($sql);
+-
+-			$installed_templates = array();
+-			while ($row = $db->sql_fetchrow($result))
+-			{
+-				$installed_templates[$row['template_id']] = $row['template_name'];
+-			}
+-			$db->sql_freeresult($result);
+-
+-			foreach ($children['template'] as $key => $tag)
+-			{
+-				// remove useless title from MODX 1.2.0 tags
+-				$children['template'][$tag['realname']] = is_array($tag) ? $tag['href'] : $tag;
+-			}
+-
+-			$available_templates = array_keys($children['template']);
+-
+-			// $process_templates are those that are installed on the board and provided for by the MOD
+-			$process_templates = $elements['template'] = array_intersect($available_templates, $installed_templates);
+-		}
++		return;
+ 	}
+ 
+ 	function upload_mod()
+Index: editor.php
+===================================================================
+--- editor.php	(revision 924)
++++ editor.php	(working copy)
+@@ -70,7 +70,7 @@
+ 
+ 	/**
+ 	* Only used when board has templates stored in the database
+-	*/ 
++	*/
+ 	var $template_id = 0;
+ 
+ 	/**
+@@ -107,6 +107,11 @@
+ 	{
+ 		global $phpbb_root_path, $db, $user;
+ 
++		if (strpos($filename, '..') !== false)
++		{
++			return $user->lang['FILE_EMPTY'];
++		}
++
+ 		$this->file_contents = @file($phpbb_root_path . $filename);
+ 
+ 		if ($this->file_contents === false)
+@@ -116,41 +121,7 @@
+ 
+ 		$this->file_contents = $this->normalize($this->file_contents);
+ 
+-		// Check for file contents in the database if this is a template file
+-		// this will overwrite the @file call if it exists in the DB. 
+-		if (strpos($filename, 'template/') !== false)
+-		{
+-			// grab template name and filename
+-			preg_match('#styles/([a-z0-9_]+)/template/([a-z0-9_]+.[a-z]+)#i', $filename, $match);
+-
+-			$sql = 'SELECT d.template_data, d.template_id 
+-				FROM ' . STYLES_TEMPLATE_DATA_TABLE . ' d, ' . STYLES_TEMPLATE_TABLE . " t
+-				WHERE d.template_filename = '" . $db->sql_escape($match[2]) . "'
+-					AND t.template_id = d.template_id
+-					AND t.template_storedb = 1
+-					AND t.template_name = '" . $db->sql_escape($match[1]) . "'";
+-			$result = $db->sql_query($sql);
+-
+-			if ($row = $db->sql_fetchrow($result))
+-			{
+-				$this->file_contents = explode("\n", $this->normalize($row['template_data']));
+-
+-				// emulate the behavior of file()
+-				$lines = sizeof($this->file_contents);
+-				for ($i = 0; $i < $lines; $i++)
+-				{
+-					$this->file_contents[$i] .= "\n";
+-				}
+-
+-				$this->template_id = $row['template_id'];
+-			}
+-			else
+-			{
+-				$this->template_id = 0;
+-			}
+-		}
+-
+-		/* 
++		/*
+ 		* If the file does not exist, or is empty, die.
+ 		* Non existant files cannot be edited, and empty files will have no
+ 		* finds
+@@ -198,13 +169,13 @@
+ 					{
+ 						$find_ary[$j] = $function($find_ary[$j]);
+ 					}
+-	
++
+ 					// if we've reached the EOF, the find failed.
+ 					if (!isset($this->file_contents[$i + $j]))
+ 					{
+ 						return false;
+ 					}
+-	
++
+ 					if (!trim($find_ary[$j]))
+ 					{
+ 						// line is blank.  Assume we can find a blank line, and continue on
+@@ -223,7 +194,7 @@
+ 					else if (strpos($find_ary[$j], '{%:') !== false)
+ 					{
+ 						$regex = preg_replace('#{%:(\d+)}#', '(\d+)', $find_ary[$j]);
+-	
++
+ 						if (preg_match('#' . $regex . '#is', $this->file_contents[$i + $j]))
+ 						{
+ 							$find_success += 1;
+@@ -237,23 +208,23 @@
+ 					{
+ 						// the find failed.  Reset $find_success
+ 						$find_success = 0;
+-	
++
+ 						// skip to next iteration of outer loop, that is, skip to the next line
+ 						break;
+ 					}
+-	
++
+ 					if ($find_success == $find_lines)
+ 					{
+ 						// we found the proper number of lines
+ 						$this->start_index = $i;
+-	
++
+ 						// return our array offsets
+ 						return array(
+ 							'start' => $i,
+ 							'end' => $i + $j,
+ 						);
+ 					}
+-	
++
+ 				}
+ 			}
+ 		}
+@@ -263,7 +234,7 @@
+ 	}
+ 
+ 	/**
+-	* This function is used to determine when an edit has ended, so we know that 
++	* This function is used to determine when an edit has ended, so we know that
+ 	* the current line will not be looked at again.  This fixes some former bugs.
+ 	*/
+ 	function close_edit()
+@@ -655,7 +626,7 @@
+ 
+ 	/**
+ 	* Function to build full edits such that uninstall will work more often
+-	* 
++	*
+ 	* @param $find - The largest find we can put together -- sometimes this
+ 	* 		comes from the file itself, other times from the MODX file
+ 	* @param $inline_find - Subset of $find or NULL
+@@ -670,13 +641,13 @@
+ 		$action = trim($action);
+ 
+ 		/*
+-		* This if statement finds out if we are in the special case where 
++		* This if statement finds out if we are in the special case where
+ 		* a MOD specifies a before action and an after action on the same
+ 		* find.  If this is the case, the uninstaller must see a replace
+ 		* rather than an add
+ 		*/
+ 		if (!empty($this->last_action) && $this->last_action[0] == $this->curr_action[0] &&
+-			(($this->last_action[2] == 'AFTER' && $this->curr_action[2] == 'BEFORE') 
++			(($this->last_action[2] == 'AFTER' && $this->curr_action[2] == 'BEFORE')
+ 			|| ($this->last_action[2] == 'BEFORE' && $this->curr_action[2] == 'AFTER')))
+ 		{
+ 			$last_action_index = sizeof($this->mod_actions[$this->open_filename]) - 1;
+@@ -741,7 +712,7 @@
+ 
+ /**
+ * @package automod
+-* class editor_direct will alter files by using the local file access functions 
++* class editor_direct will alter files by using the local file access functions
+ * such as fopen and fwrite.  This is typically only useful in Windows environments
+ * due to permissions settings.
+ */
+@@ -760,9 +731,9 @@
+ 	* @param $to string Where to move the file(s) to. If not specified then will get moved to the root folder
+ 	* @param $strip Used for FTP only
+ 	* @return mixed: Bool true on success, error string on failure, NULL if no action was taken
+-	* 
+-	* NOTE: function should preferably not return in case of failure on only one file.  
+-	* 	The current method makes error handling difficult 
++	*
++	* NOTE: function should preferably not return in case of failure on only one file.
++	* 	The current method makes error handling difficult
+ 	*/
+ 	function copy_content($from, $to = '', $strip = '')
+ 	{
+@@ -875,7 +846,7 @@
+ 		$length_written = @fwrite($fr, $file_contents);
+ 		@chmod($new_filename, octdec($config['am_file_perms']));
+ 
+-		// This appears to be correct even with multibyte encodings.  strlen and 
++		// This appears to be correct even with multibyte encodings.  strlen and
+ 		// fwrite both return the number of bytes written, not the number of chars
+ 		if ($length_written < strlen($file_contents))
+ 		{
+@@ -884,7 +855,7 @@
+ 
+ 		if (!@fclose($fr))
+ 		{
+-			return sprintf($user->lang['WRITE_DIRECT_FAIL'], $new_filename);			
++			return sprintf($user->lang['WRITE_DIRECT_FAIL'], $new_filename);
+ 		}
+ 
+ 		return true;
+@@ -993,9 +964,9 @@
+ 	* @param $to string Where to move the file(s) to. If not specified then will get moved to the root folder
+ 	* @param $strip Used for FTP only
+ 	* @return mixed: Bool true on success, error string on failure, NULL if no action was taken
+-	* 
+-	* NOTE: function should preferably not return in case of failure on only one file.  
+-	* 	The current method makes error handling difficult 
++	*
++	* NOTE: function should preferably not return in case of failure on only one file.
++	* 	The current method makes error handling difficult
+ 	*/
+ 	function copy_content($from, $to = '', $strip = '')
+ 	{
+@@ -1273,6 +1244,6 @@
+ 	{
+ 		return NULL;
+ 	}
+-} 
++}
+ 
+ ?>
+\ No newline at end of file
+Index: functions_mods.php
+===================================================================
+--- functions_mods.php	(revision 924)
++++ functions_mods.php	(working copy)
+@@ -206,24 +206,7 @@
+ */
+ function update_database_template($filename, $template_id, $file_contents, $install_time)
+ {
+-	global $db;
+-
+-	// grab filename
+-	preg_match('#styles/[a-z0-9_]+/template/([a-z0-9_]+.html)#i', $filename, $match);
+-
+-	if (empty($match[1]))
+-	{
+-		return false;
+-	}
+-
+-	$sql = 'UPDATE ' . STYLES_TEMPLATE_DATA_TABLE . "
+-		SET template_data = '" . $db->sql_escape($file_contents) . "', template_mtime = " . (int) $install_time . '
+-		WHERE template_id = ' . (int) $template_id . "
+-		AND template_filename = '" . $db->sql_escape($match[1]) . "'";
+-	$db->sql_query($sql);
+-
+-	// if something failed, sql_query will error out
+-	return true;
++	return;
+ }
+ 
+ function determine_write_method($pre_install = false)

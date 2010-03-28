@@ -206,24 +206,7 @@ function find_files($directory, $pattern, $max_levels = 20, $_current_level = 1)
 */
 function update_database_template($filename, $template_id, $file_contents, $install_time)
 {
-	global $db;
-
-	// grab filename
-	preg_match('#styles/[a-z0-9_]+/template/([a-z0-9_]+.html)#i', $filename, $match);
-
-	if (empty($match[1]))
-	{
-		return false;
-	}
-
-	$sql = 'UPDATE ' . STYLES_TEMPLATE_DATA_TABLE . "
-		SET template_data = '" . $db->sql_escape($file_contents) . "', template_mtime = " . (int) $install_time . '
-		WHERE template_id = ' . (int) $template_id . "
-		AND template_filename = '" . $db->sql_escape($match[1]) . "'";
-	$db->sql_query($sql);
-
-	// if something failed, sql_query will error out
-	return true;
+	return;
 }
 
 function determine_write_method($pre_install = false)
