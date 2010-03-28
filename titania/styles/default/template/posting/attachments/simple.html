@@ -1,6 +1,6 @@
 <fieldset class="fields2">
 <dl>
-	<dt><label for="fileupload">{L_FILENAME}:</label></dt>
+	<dt><label for="{FORM_NAME}"<!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF -->>{L_FILENAME}:</label></dt>
 	<dd>
 		<input type="file" name="{FORM_NAME}" id="{FORM_NAME}"<!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
 		<input type="submit" name="add_file" value="{L_ADD_FILE}" class="button2" onclick="upload = true;" />

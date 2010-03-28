@@ -9,7 +9,7 @@
 			<legend>{edit_files.FILENAME}</legend>
 
 			<!-- IF edit_files.S_MISSING_FILE -->
-			<strong><font color="red">{L_FILE_MISSING}</font></strong>
+			<strong style="color: red;">{L_FILE_MISSING}</strong>
 			<!-- ELSEIF edit_files.INHERIT_MSG -->
 			<strong>{edit_files.INHERIT_MSG}</strong>
 			<!-- ENDIF -->
@@ -20,7 +20,7 @@
 						<h4 style="margin: 0; padding:0;">{L_FIND}</h4>
 						<pre style="overflow-x: scroll;">{edit_files.finds.FIND_STRING}</pre>
 						<!-- IF edit_files.finds.S_MISSING_FIND -->
-						<strong><font color="red">{L_FIND_MISSING}</font></strong>
+						<strong style="color: red;">{L_FIND_MISSING}</strong>
 						<!-- ENDIF -->
 						<!-- BEGIN actions -->
 							<div>
@@ -31,9 +31,9 @@
 									<hr style="padding-top: 10px; margin-top: 10px;" />
 									<h4 style="margin: 0; padding:0;">{edit_files.finds.actions.inline.NAME}</h4>
 									<pre style="overflow-x: scroll;">{edit_files.finds.actions.inline.COMMAND}</pre>
-									<!-- IF not edit_files.finds.actions.inline.S_SUCCESS --><span><font color="red">{L_INLINE_FIND_MISSING}</font></span><!-- ENDIF -->
+									<!-- IF not edit_files.finds.actions.inline.S_SUCCESS --><span style="color: red;">{L_INLINE_FIND_MISSING}</span><!-- ENDIF -->
 								<!-- END inline -->
-								<!-- IF edit_files.finds.actions.S_SUCCESS --><font color="green">{L_SUCCESS}</font><!-- ELSE --><font color="red">{L_FIND_MISSING}</font><!-- ENDIF -->
+								<!-- IF edit_files.finds.actions.S_SUCCESS --><span style="color: green;">{L_SUCCESS}</span><!-- ELSE --><span style="color: red;">{L_FIND_MISSING}</span><!-- ENDIF -->
 							</div>
 						<!-- END actions -->
 					</fieldset>
