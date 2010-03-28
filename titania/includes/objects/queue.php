@@ -433,8 +433,6 @@ class titania_queue extends titania_message_object
 			'contrib_release_topic_id' 	=> ($contrib->contrib_release_topic_id) ? $contrib->contrib_release_topic_id : $topic_id,
 		);
 
-		unset($contrib);
-
 		// Update contrib last update time and release topic ic
 		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
 			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
@@ -452,8 +450,8 @@ class titania_queue extends titania_message_object
 
 		// Subscriptions
 		$email_vars = array(
-			'NAME'		=> $this->contrib->contrib_name,
-			'U_VIEW'	=> $this->contrib->get_url(),
+			'NAME'		=> $contrib->contrib_name,
+			'U_VIEW'	=> $contrib->get_url(),
 		);
 		titania_subscriptions::send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
 	}
