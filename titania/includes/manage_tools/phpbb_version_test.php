@@ -108,6 +108,23 @@ class phpbb_version_test
 			trigger_back('NO_REVISIONS_UPDATED');
 		}
 
+		// Don't include those which already are marked for this phpBB version
+		$sql = 'SELECT revision_id FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+			WHERE ' . phpbb::$db->sql_in_set('revision_id', array_map('intval', array_keys($revisions))) . '
+				AND phpbb_version_branch = ' . $phpbb_version_branch . '
+				AND phpbb_version_revision = \'' . phpbb::$db->sql_escape($phpbb_version_revision) . '\'';
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			unset($revisions[$row['revision_id']);
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		if (!sizeof($revisions))
+		{
+			trigger_back('NO_REVISIONS_UPDATED');
+		}
+
 		$sql_ary = array();
 		foreach ($revisions as $revision_id => $contrib_id)
 		{

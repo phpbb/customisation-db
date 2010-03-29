@@ -244,3 +244,15 @@ function titania_backtrace($exception = false)
 		return '<br /><br /><pre>' . get_backtrace() . '</pre>';
 	}
 }
+
+/**
+* Used in titania::$cache->get_phpbb_versions()
+*
+* @param mixed $version1
+* @param mixed $version2
+* @return mixed
+*/
+function reverse_version_compare($version1, $version2)
+{
+	return version_compare($version2, $version1);
+}

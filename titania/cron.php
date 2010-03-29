@@ -35,7 +35,7 @@ header('Cache-Control: no-cache');
 /**
 * Run cron-like action
 */
-if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 60 > phpbb::$config['titania_last_automod_run'])
+if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 30 > phpbb::$config['titania_last_automod_run'])
 {
 	set_config('titania_last_automod_run', titania::$time, true);
 
@@ -93,10 +93,6 @@ if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 60 > 
 		unset($contrib_tools);
 	}
 	phpbb::$db->sql_freeresult($result);
-
-	$sql = 'DELETE FROM ' . TITANIA_AUTOMOD_QUEUE_TABLE . '
-		WHERE ' . phpbb::$db->sql_in_set('row_id', $ids);
-	phpbb::$db->sql_query($sql);
 }
 
 

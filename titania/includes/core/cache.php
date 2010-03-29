@@ -88,8 +88,7 @@ class titania_cache extends acm
 		{
 			$versions = array();
 
-			$sql = 'SELECT DISTINCT(phpbb_version_revision), phpbb_version_branch FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
-				ORDER BY phpbb_version_branch ASC';
+			$sql = 'SELECT phpbb_version_revision, phpbb_version_branch FROM ' . TITANIA_REVISIONS_PHPBB_TABLE;
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
@@ -99,6 +98,8 @@ class titania_cache extends acm
 
 			$this->put('_titania_phpbb_versions', $versions);
 		}
+
+		uasort($versions, 'reverse_version_compare');
 
 		return $versions;
 	}
