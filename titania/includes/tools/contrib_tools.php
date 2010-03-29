@@ -468,9 +468,10 @@ class titania_contrib_tools
 	* @param string $phpbb_path Path to phpBB files we run the test on
 	* @param string $details Will hold the details of the mod
 	* @param string $results Will hold the results for output
+	* @param string $bbcode_results Will hold the results for storage
 	* @return bool true on success, false on failure
 	*/
-	public function automod($phpbb_path, &$details, &$results)
+	public function automod($phpbb_path, &$details, &$results, &$bbcode_results)
 	{
 		phpbb::_include('functions_transfer', false, 'transfer');
 		phpbb::_include('functions_admin', 'recalc_nested_sets');
@@ -516,10 +517,14 @@ class titania_contrib_tools
 		$phpbb_root_path = PHPBB_ROOT_PATH;
 
 		phpbb::$template->set_filenames(array(
-			'automod'	=> 'contributions/automod.html',
+			'automod'			=> 'contributions/automod.html',
+			'automod_bbcode'	=> 'contributions/automod_bbcode.html',
 		));
 
+		phpbb::$template->assign_var('S_AUTOMOD_SUCCESS', $installed);
+
 		$results = phpbb::$template->assign_display('automod');
+		$bbcode_results = phpbb::$template->assign_display('automod_bbcode');
 
 		return $installed;
 	}

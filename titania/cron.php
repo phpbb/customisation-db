@@ -46,7 +46,7 @@ if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 30 > 
 		WHERE r.revision_id = aq.revision_id
 			AND a.attachment_id = r.attachment_id
 			AND c.contrib_id = r.contrib_id';
-	$result = phpbb::$db->sql_query_limit($sql, 3);
+	$result = phpbb::$db->sql_query_limit($sql, 2);
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
 		// Delete here in case any errors come up from the test so that it does't get stuck.
@@ -58,7 +58,7 @@ if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 30 > 
 		$version = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' . $row['phpbb_version_revision'];
 		$zip = titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . utf8_basename($row['physical_filename']);
 
-		$details = $results = '';
+		$details = $results = $bbcode_results = '';
 		$contrib_tools = new titania_contrib_tools($zip, $new_dir_name);
 
 		$package_root = $contrib_tools->find_root();
@@ -76,7 +76,7 @@ if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 30 > 
 			continue;
 		}
 
-		if ($contrib_tools->automod($phpbb_path, $details, $results))
+		if ($contrib_tools->automod($phpbb_path, $details, $results, $bbcode_results))
 		{
 			$sql_ary = array(
 				'revision_id'				=> $row['revision_id'],

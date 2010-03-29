@@ -139,7 +139,7 @@ switch ($action)
 
 			// Automod testing time
 			$details = '';
-			$automod_results = array();
+			$html_results = $bbcode_results = array();
 			$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
 				WHERE revision_id = ' . $revision->revision_id;
 			$result = phpbb::$db->sql_query($sql);
@@ -159,17 +159,18 @@ switch ($action)
 					'TEST_ID'			=> $row['row_id'],
 				));
 
-				$test_results = '';
-				$contrib_tools->automod($phpbb_path, $details, $test_results);
+				$html_result = $bbcode_result = '';
+				$contrib_tools->automod($phpbb_path, $details, $html_result, $bbcode_result);
 
-				$automod_results[] = $test_results;
+				$bbcode_results[] = $bbcode_result;
 			}
 			phpbb::$db->sql_freeresult($result);
 
-			$automod_results = implode('', $automod_results);
+			$bbcode_results = implode("\n\n", $bbcode_results);
 
 			// Update the queue with the results
-			$queue->automod_results = $automod_results;
+			$queue = $revision->get_queue();
+			$queue->automod_results = $bbcode_results;
 			$queue->submit();
 		}
 

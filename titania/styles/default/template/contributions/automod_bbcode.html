@@ -1,33 +1,37 @@
 [size=160][color=#115098]{PHPBB_VERSION}[/color][/size]
-<!-- IF S_EDITS -->
-    [size=150][color=#115098]{L_FILE_EDITS}[/color][/size]
-    <!-- BEGIN edit_files -->
-	    <!-- IF not edit_files.S_SUCCESS -->
-	        {edit_files.FILENAME}
-		    <!-- IF edit_files.S_MISSING_FILE -->
-			    [color=#115098][b]{L_FILE_MISSING}[/b][/color]
-		    <!-- ELSEIF edit_files.INHERIT_MSG -->
-			    [b]{edit_files.INHERIT_MSG}[/b]
+<!-- IF S_AUTOMOD_SUCCESS -->
+	[size=150][color=#00BF40]{L_SUCCESS}[/color][/size]
+<!-- ELSE -->
+	<!-- IF S_EDITS -->
+	    [size=150][color=#115098]{L_FILE_EDITS}[/color][/size]
+	    <!-- BEGIN edit_files -->
+		    <!-- IF not edit_files.S_SUCCESS -->
+		        {edit_files.FILENAME}
+			    <!-- IF edit_files.S_MISSING_FILE -->
+				    [color=#115098][b]{L_FILE_MISSING}[/b][/color]
+			    <!-- ELSEIF edit_files.INHERIT_MSG -->
+				    [b]{edit_files.INHERIT_MSG}[/b]
+			    <!-- ENDIF -->
+			    <!-- BEGIN finds -->
+				    <!-- IF not finds.S_SUCCESS -->
+					    [size=160]{L_FIND}[/size]
+					    {edit_files.finds.FIND_STRING}
+					    <!-- IF edit_files.finds.S_MISSING_FIND -->
+						    [color=#115098]{L_FIND_MISSING}[/color]
+					    <!-- ENDIF -->
+						<!-- BEGIN actions -->
+							[size=160]{edit_files.finds.actions.NAME}[/size]
+							[code]{edit_files.finds.actions.COMMAND}[/code]
+							<!-- BEGIN inline -->
+								[size=160]{edit_files.finds.actions.inline.NAME}[/size]
+								[code]{edit_files.finds.actions.inline.COMMAND}[/code]
+							<!-- IF not edit_files.finds.actions.inline.S_SUCCESS -->[color=#115098]{L_INLINE_FIND_MISSING}[/color]<!-- ENDIF -->
+							<!-- END inline -->
+							<!-- IF edit_files.finds.actions.S_SUCCESS -->[color=#00BF40]{L_SUCCESS}[/color]<!-- ELSE -->[color=#115098]{L_FIND_MISSING}[/color]<!-- ENDIF -->
+						<!-- END actions -->
+					<!-- ENDIF -->
+				<!-- END finds -->
 		    <!-- ENDIF -->
-		    <!-- BEGIN finds -->
-			    <!-- IF not finds.S_SUCCESS -->
-				    [size=160]{L_FIND}[/size]
-				    {edit_files.finds.FIND_STRING}
-				    <!-- IF edit_files.finds.S_MISSING_FIND -->
-					    [color=#115098]{L_FIND_MISSING}[/color]
-				    <!-- ENDIF -->
-					<!-- BEGIN actions -->
-						[size=160]{edit_files.finds.actions.NAME}[/size]
-						[code]{edit_files.finds.actions.COMMAND}[/code]
-						<!-- BEGIN inline -->
-							[size=160]{edit_files.finds.actions.inline.NAME}[/size]
-							[code]{edit_files.finds.actions.inline.COMMAND}[/code]
-						<!-- IF not edit_files.finds.actions.inline.S_SUCCESS -->[color=#115098]{L_INLINE_FIND_MISSING}[/color]<!-- ENDIF -->
-						<!-- END inline -->
-						<!-- IF edit_files.finds.actions.S_SUCCESS -->[color=#00BF40]{L_SUCCESS}[/color]<!-- ELSE -->[color=#115098]{L_FIND_MISSING}[/color]<!-- ENDIF -->
-					<!-- END actions -->
-				<!-- ENDIF -->
-			<!-- END finds -->
-	    <!-- ENDIF -->
-    <!-- END edit_files -->
+	    <!-- END edit_files -->
+	<!-- ENDIF -->
 <!-- ENDIF -->

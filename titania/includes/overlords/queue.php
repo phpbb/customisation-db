@@ -238,7 +238,7 @@ class queue_overlord
 		}
 		if (!$row['automod_results'] && titania_types::$types[$contrib->contrib_type]->automod_test)
 		{
-			//$quick_actions['RETEST_AUTOMOD'] = titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id']));
+			$quick_actions['RETEST_AUTOMOD'] = titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id']));
 		}
 		if ($row['queue_status'] > 0)
 		{
