@@ -1,0 +1,5 @@
+Some basic information/things to keep in mind about Titania:
+
+After each new release of phpBB you need to perform a few actions:
+	1. Upload the properly named package (ex: phpBB-3.0.7-PL1.zip for 3.0.7-pl1) to store/phpbb_packages
+	2. Update the phpbb_versions information in the config.php file to contain the latest version for the updated phpBB branch
