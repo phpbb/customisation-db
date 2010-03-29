@@ -182,43 +182,8 @@ class phpbb
 	 */
 	public static function page_footer($run_cron = true)
 	{
-		// Call cron-type script
-		$cron_type = '';
-		$time = time();
-		if (!defined('IN_CRON') && $run_cron && !self::$config['board_disable'])
-		{
-			if ($time - self::$config['queue_interval'] > self::$config['last_queue_run'] && !defined('IN_ADMIN') && file_exists(PHPBB_ROOT_PATH . 'cache/queue.' . PHP_EXT))
-			{
-				// Process email queue
-				$cron_type = 'queue';
-			}
-			else if (method_exists(self::$cache, 'tidy') && $time - self::$config['cache_gc'] > self::$config['cache_last_gc'])
-			{
-				// Tidy the cache
-				$cron_type = 'tidy_cache';
-			}
-			else if ($time - self::$config['warnings_gc'] > self::$config['warnings_last_gc'])
-			{
-				$cron_type = 'tidy_warnings';
-			}
-			else if ($time - self::$config['database_gc'] > self::$config['database_last_gc'])
-			{
-				// Tidy the database
-				$cron_type = 'tidy_database';
-			}
-			else if ($time - self::$config['search_gc'] > self::$config['search_last_gc'])
-			{
-				// Tidy the search
-				$cron_type = 'tidy_search';
-			}
-			else if ($time - self::$config['session_gc'] > self::$config['session_last_gc'])
-			{
-				$cron_type = 'tidy_sessions';
-			}
-		}
-
 		self::$template->assign_vars(array(
-			'RUN_CRON_TASK'			=> ($cron_type) ? '<img src="' . self::append_sid('cron', 'cron_type=' . $cron_type) . '" width="1" height="1" alt="cron" />' : '',
+			'RUN_CRON_TASK'			=> (!defined('IN_CRON') && $run_cron && !self::$config['board_disable']) ? '<img src="' . titania_url::build_url('cron') . '" width="1" height="1" alt="cron" />' : '',
 
 			'TRANSLATION_INFO'		=> (!empty(self::$user->lang['TRANSLATION_INFO'])) ? self::$user->lang['TRANSLATION_INFO'] : '',
 

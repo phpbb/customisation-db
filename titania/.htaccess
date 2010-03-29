@@ -46,6 +46,10 @@ Rewriterule ^rate/?([^/]+)?$									./index.php?action=rate [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^all/?([^/]+)?$										./index.php?action=all [NC]
 
+#cron
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^cron/?([^/]+)?$									./cron.php [NC]
+
 #search
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^search/([^/]+)?$									./search.php [NC]

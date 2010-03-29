@@ -28,21 +28,21 @@ class titania_contrib_tools
 	*
 	* @var mixed
 	*/
-	private $unzip_dir;
+	public $unzip_dir;
 
 	/**
 	* The original file
 	*
 	* @var mixed
 	*/
-	private $original_zip;
+	public $original_zip;
 
 	/**
 	* Directory name we want to use when rezipping
 	*
 	* @var mixed
 	*/
-	private $new_dir_name;
+	public $new_dir_name;
 
 	/**
 	* Error array (if any)
@@ -135,6 +135,7 @@ class titania_contrib_tools
 		{
 			$this->remove_temp_files();
 
+			titania::add_lang('contributions');
 			$this->error[] = phpbb::$user->lang['COULD_NOT_FIND_ROOT'];
 			return false;
 		}

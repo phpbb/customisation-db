@@ -871,7 +871,7 @@ $versions = array(
 
 		'custom' => 'titania_custom',
 	),
-	
+
 	'0.1.56' => array(
 		'table_column_remove' => array(
 			array(TITANIA_CONTRIB_FAQ_TABLE, 'faq_order_id'),
@@ -881,9 +881,26 @@ $versions = array(
 			array(TITANIA_CONTRIB_FAQ_TABLE, 'left_id', array('UINT', 0)),
 			array(TITANIA_CONTRIB_FAQ_TABLE, 'right_id', array('UINT', 0)),
 		),
-		
+
 		'table_index_add' => array(
 			array(TITANIA_CONTRIB_FAQ_TABLE, 'left_right_id', array('left_id', 'right_id')),
+		),
+	),
+
+	'0.1.57' => array(
+		'table_add' => array(
+			array(TITANIA_AUTOMOD_QUEUE_TABLE, array(
+				'COLUMNS'		=> array(
+					'row_id'					=> array('UINT', NULL, 'auto_increment'),
+					'revision_id'				=> array('UINT', 0),
+					'phpbb_version_branch'		=> array('TINT:1', 0),
+					'phpbb_version_revision'	=> array('VCHAR', ''),
+				),
+				'PRIMARY_KEY'	=> 'row_id',
+				'KEYS'			=> array(
+					'revision_id'				=> array('INDEX', 'revision_id'),
+				),
+			)),
 		),
 	),
 

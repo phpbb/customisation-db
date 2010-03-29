@@ -13,16 +13,15 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_version_add
+class phpbb_version_test
 {
 	function display_options()
 	{
 		return array(
-			'title'	=> 'PHPBB_VERSION_ADD',
+			'title'	=> 'PHPBB_VERSION_TEST',
 			'vars'	=> array(
 				'new_phpbb_version'		=> array('lang' => 'NEW_PHPBB_VERSION', 'type' => 'text:40:255', 'explain' => true),
 				'limit_phpbb_version'	=> array('lang' => 'VERSION_RESTRICTION', 'type' => 'select_multiple', 'function' => 'pva_generate_phpbb_version_select', 'explain' => true, 'default' => ''),
-				'category'				=> array('lang' => 'CATEGORY', 'type' => 'select_multiple', 'function' => 'pva_generate_category_select', 'explain' => true),
 			)
 		);
 	}
@@ -31,11 +30,17 @@ class phpbb_version_add
 	{
 		$new_phpbb_version = request_var('new_phpbb_version', '');
 		$limit_phpbb_versions = request_var('limit_phpbb_version', array(''));
-		$categories = request_var('category', array(0));
 
 		if (!$new_phpbb_version || strlen($new_phpbb_version) < 5 || $new_phpbb_version[1] != '.' || $new_phpbb_version[3] != '.')
 		{
 			trigger_back('NO_VERSION_SELECTED');
+		}
+
+		// Does the zip for this exist?
+		$version = preg_replace('#[^a-zA-Z0-9\.\-]+#', '', $new_phpbb_version);
+		if (!file_exists(TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip'))
+		{
+			trigger_back(sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], 'store/phpbb_packages/phpBB-' . $version . '.zip'));
 		}
 
 		$phpbb_version_branch = (int) $new_phpbb_version[0] . (int) $new_phpbb_version[2];
@@ -48,34 +53,33 @@ class phpbb_version_add
 			titania::$cache->destroy('_titania_phpbb_versions');
 		}
 
-		// Categories limiter
-		$contribs = $revisions = array();
-		if (sizeof($categories) > 1 || (sizeof($categories) && $categories[0] != 0))
+		$testable_types = array();
+		foreach (titania_types::$types as $type_id => $type)
 		{
-			$sql = 'SELECT contrib_id FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
-				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories));
-			$result = phpbb::$db->sql_query($sql);
-			while ($row = phpbb::$db->sql_fetchrow($result))
+			if ($type->automod_test)
 			{
-				$contribs[] = $row['contrib_id'];
-			}
-			phpbb::$db->sql_freeresult($result);
-
-			if (!sizeof($contribs))
-			{
-				trigger_back('NO_REVISIONS_UPDATED');
+				$testable_types[] = $type_id;
 			}
 		}
+		if (!sizeof($testable_types))
+		{
+			trigger_back('NO_REVISIONS_UPDATED');
+		}
 
+		$revisions = array();
 		if (sizeof($limit_phpbb_versions) > 1 || (sizeof($limit_phpbb_versions) && $limit_phpbb_versions[0] != 0))
 		{
 			// phpBB versions limiter
 			foreach ($limit_phpbb_versions as $limit_phpbb_version)
 			{
-				$sql = 'SELECT contrib_id, revision_id FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
-					WHERE phpbb_version_branch = ' . (int) substr($limit_phpbb_version, 0, 2) . '
-						AND phpbb_version_revision = \'' . phpbb::$db->sql_escape(substr($limit_phpbb_version, 2)) . '\'' .
-						((sizeof($contribs)) ? ' AND ' . phpbb::$db->sql_in_set('contrib_id', array_map('intval', $contribs)) : '');
+				$sql = 'SELECT DISTINCT(rp.contrib_id), rp.revision_id
+					FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . ' rp, ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
+					WHERE rp.phpbb_version_branch = ' . (int) substr($limit_phpbb_version, 0, 2) . '
+						AND rp.phpbb_version_revision = \'' . phpbb::$db->sql_escape(substr($limit_phpbb_version, 2)) . '\'
+						AND c.contrib_id = rp.contrib_id
+						AND ' . phpbb::$db->sql_in_set('c.contrib_type', $testable_types) . '
+						AND r.revision_id = rp.revision_id
+					ORDER BY r.revision_validated DESC, r.revision_time DESC';
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
@@ -84,22 +88,13 @@ class phpbb_version_add
 				phpbb::$db->sql_freeresult($result);
 			}
 		}
-		else if (sizeof($categories) > 1 || (sizeof($categories) && $categories[0] != 0))
-		{
-			// Only category limited
-			$sql = 'SELECT contrib_id, revision_id FROM ' . TITANIA_REVISIONS_TABLE . '
-				WHERE ' . phpbb::$db->sql_in_set('contrib_id', array_map('intval', $contribs));
-			$result = phpbb::$db->sql_query($sql);
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$revisions[$row['revision_id']] = $row['contrib_id'];
-			}
-			phpbb::$db->sql_freeresult($result);
-		}
 		else
 		{
 			// All
-			$sql = 'SELECT contrib_id, revision_id FROM ' . TITANIA_REVISIONS_TABLE;
+			$sql = 'SELECT DISTINCT(r.contrib_id), r.revision_id FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_CONTRIBS_TABLE . ' c
+				WHERE c.contrib_id = r.contrib_id
+					AND ' . phpbb::$db->sql_in_set('c.contrib_type', $testable_types) . '
+				ORDER BY r.revision_validated DESC, r.revision_time DESC';
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
@@ -117,16 +112,15 @@ class phpbb_version_add
 		foreach ($revisions as $revision_id => $contrib_id)
 		{
 			$sql_ary[] = array(
-				'contrib_id'				=> (int) $contrib_id,
 				'revision_id'				=> (int) $revision_id,
 				'phpbb_version_branch'		=> $phpbb_version_branch,
 				'phpbb_version_revision'	=> $phpbb_version_revision,
 			);
 		}
 
-		phpbb::$db->sql_multi_insert(TITANIA_REVISIONS_PHPBB_TABLE, $sql_ary);
+		phpbb::$db->sql_multi_insert(TITANIA_AUTOMOD_QUEUE_TABLE, $sql_ary);
 
-		trigger_back(sprintf(phpbb::$user->lang['REVISIONS_UPDATED'], sizeof($revisions)));
+		trigger_back(sprintf(phpbb::$user->lang['REVISIONS_ADDED_TO_QUEUE'], sizeof($revisions)));
 	}
 }
 
@@ -142,25 +136,6 @@ if (!function_exists('pva_generate_phpbb_version_select'))
 		{
 			$select .= '<option value="' . $version . '">' . $name . '</option>';
 		}
-
-		return $select;
-	}
-}
-
-if (!function_exists('pva_generate_category_select'))
-{
-	function pva_generate_category_select()
-	{
-		titania::_include('functions_posting', 'generate_category_select');
-
-		phpbb::$template->destroy_block_vars('category_select');
-		generate_category_select();
-
-		phpbb::$template->set_filenames(array(
-			'generate_category_select'		=> 'manage/generate_category_select.html',
-		));
-
-		$select = phpbb::$template->assign_display('generate_category_select');
 
 		return $select;
 	}
