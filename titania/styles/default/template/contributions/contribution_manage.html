@@ -18,11 +18,13 @@
 					<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
 				</dl>
 				<!-- ENDIF -->
-				<!-- IF S_CREATE -->
+				<!-- IF S_CREATE or (not S_CREATE and S_EDIT_SUBJECT) -->
 				<dl>
 					<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label><br /><span>{L_CONTRIB_PERMALINK_EXPLAIN}</span></dt>
 					<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
 				</dl>
+				<!-- ENDIF -->
+				<!-- IF S_CREATE -->
 				<dl>
 					<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
 					<dd>

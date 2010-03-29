@@ -37,6 +37,7 @@ $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_va
 $error = array();
 $contrib_status = request_var('contrib_status', (int) titania::$contrib->contrib_status);
 $status_list = array(TITANIA_CONTRIB_NEW => 'CONTRIB_NEW', TITANIA_CONTRIB_APPROVED => 'CONTRIB_APPROVED', TITANIA_CONTRIB_CLEANED => 'CONTRIB_CLEANED');
+$permalink = utf8_normalize_nfc(request_var('permalink', titania::$contrib->contrib_name_clean, true));
 
 /**
 * ---------------------------- Confirm main author change ----------------------------
@@ -138,6 +139,36 @@ else if ($submit)
 			$error[] = sprintf(phpbb::$user->lang['CONTRIB_CHANGE_OWNER_NOT_FOUND'], $change_owner);
 		}
 	}
+	
+	// Changed permalink?
+	$old_permalink = titania::$contrib->contrib_name_clean;
+	if ($old_permalink != $permalink)
+	{
+		// We check permalink
+		if (!$permalink)
+		{
+			// If they leave it blank automatically create it
+			$permalink = titania_url::url_slug(titania::$contrib->contrib_name);
+
+			$append = '';
+			$i = 2;
+			while (titania::$contrib->validate_permalink($permalink . $append) == false)
+			{
+				$append = '_' . $i;
+				$i++;
+			}
+
+			$permalink = $permalink . $append;
+		}
+		elseif (titania_url::url_slug($permalink) !== $permalink)
+		{
+			$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania_url::url_slug($permalink));
+		}
+		elseif (!titania::$contrib->validate_permalink($permalink))
+		{
+			$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
+		}
+	}
 
 	// Did we succeed or have an error?
 	if (!sizeof($error))
@@ -207,6 +238,19 @@ else if ($submit)
 
 		// Submit screenshots
 		$screenshot->submit();
+		
+		// Update contrib_status/permalink if we can moderate. only if contrib_status is valid and permalink altered
+		if (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+		{
+			if (array_key_exists($contrib_status, $status_list))
+			{
+				titania::$contrib->change_status($contrib_status);
+			}
+			if ($old_permalink != $permalink)
+			{
+				titania::$contrib->contrib_name_clean = $permalink;
+			}
+		}
 
 		titania::$contrib->submit();
 
@@ -214,12 +258,6 @@ else if ($submit)
 
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
-		
-		// Update contrib status if we can moderate and contrib_status is valid
-		if ((phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) && array_key_exists($contrib_status, $status_list))
-		{
-			titania::$contrib->change_status($contrib_status);
-		}
 
 		if ($change_owner == '')
 		{
@@ -284,6 +322,7 @@ phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
 	'S_EDIT_SUBJECT'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 
+	'CONTRIB_PERMALINK'			=> $permalink,
 	'SCREENSHOT_UPLOADER'		=> $screenshot->parse_uploader('posting/attachments/simple.html'),
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,
