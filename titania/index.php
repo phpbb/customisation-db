@@ -137,6 +137,9 @@ switch ($action)
 			// Start up the machine
 			$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
 
+			$package_root = $contrib_tools->find_root();
+			$contrib_tools->restore_root($package_root);
+
 			// Automod testing time
 			$details = '';
 			$html_results = $bbcode_results = array();
@@ -150,8 +153,8 @@ switch ($action)
 
 				if ($phpbb_path === false)
 				{
-					$error = array_merge($error, $contrib_tools->error);
-					continue;
+					$contrib_tools->remove_temp_files();
+					trigger_error(implode('<br />', $contrib_tools->error));
 				}
 
 				phpbb::$template->assign_vars(array(
