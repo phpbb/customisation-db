@@ -140,6 +140,8 @@ switch ($action)
 			$package_root = $contrib_tools->find_root();
 			$contrib_tools->restore_root($package_root);
 
+			$contrib_tools->mvdir_recursive($contrib_tools->unzip_dir, $contrib_tools->unzip_dir . '/' . $new_dir_name);
+
 			// Automod testing time
 			$details = '';
 			$html_results = $bbcode_results = array();
@@ -153,8 +155,7 @@ switch ($action)
 
 				if ($phpbb_path === false)
 				{
-					$contrib_tools->remove_temp_files();
-					trigger_error(implode('<br />', $contrib_tools->error));
+					continue;
 				}
 
 				phpbb::$template->assign_vars(array(
@@ -175,6 +176,10 @@ switch ($action)
 			$queue = $revision->get_queue();
 			$queue->automod_results = $bbcode_results;
 			$queue->submit();
+
+			$contrib_tools->remove_temp_files();
+
+			unset($contrib_tools);
 		}
 
 		redirect(titania_url::build_url('manage/queue', array('queue' => titania_types::$types[$queue->queue_type]->url, 'q' => $queue->queue_id)));
