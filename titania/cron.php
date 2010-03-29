@@ -24,10 +24,10 @@ $use_shutdown_function = (@function_exists('register_shutdown_function')) ? true
 
 // Output transparent gif
 header('Cache-Control: no-cache');
-//header('Content-type: image/gif');
-//header('Content-length: 43');
+header('Content-type: image/gif');
+header('Content-length: 43');
 
-//echo base64_decode('R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==');
+echo base64_decode('R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==');
 
 // test without flush ;)
 // flush();
