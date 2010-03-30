@@ -8,7 +8,7 @@
 *
 */
 
-@set_time_limit(0);
+@set_time_limit(1200);
 
 /**
 * @ignore

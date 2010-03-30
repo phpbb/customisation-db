@@ -17,7 +17,7 @@ if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 
-@set_time_limit(0);
+@set_time_limit(1200);
 
 $cron_type = request_var('cron_type', '');
 $use_shutdown_function = (@function_exists('register_shutdown_function')) ? true : false;

@@ -17,7 +17,7 @@ if (!defined('IN_TITANIA'))
 }
 
 // Hopefully this helps
-@set_time_limit(0);
+@set_time_limit(1200);
 
 /**
  * Sync handler for Titania
