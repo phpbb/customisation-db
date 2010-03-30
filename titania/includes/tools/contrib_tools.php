@@ -456,7 +456,7 @@ class titania_contrib_tools
 				$this->mvdir_recursive($phpbb_root . $package_root, $phpbb_root);
 
 				// Now remove the old directory
-				$this->rmdir_recursive($phpbb_root . $sub_dir . '/');
+				$this->rmdir_recursive($phpbb_root . $sub_dir);
 			}
 		}
 
@@ -631,15 +631,8 @@ class titania_contrib_tools
 	*/
 	public function mvdir_recursive($source, $destination)
 	{
-		if ($source[strlen($source) - 1] != '/')
-		{
-			$source .= '/';
-		}
-
-		if ($destination[strlen($destination) - 1] != '/')
-		{
-			$destination .= '/';
-		}
+		$source = (substr($source, -1) == '/') ? $source : $source . '/';
+		$destination = (substr($destination, -1) == '/') ? $destination : $destination . '/';
 
 		if (!is_dir($source))
 		{
@@ -677,6 +670,8 @@ class titania_contrib_tools
 	*/
 	public function mkdir_recursive($target_filename)
 	{
+		$target_filename = (substr($target_filename, -1) == '/') ? $target_filename : $target_filename . '/';
+
 		if (!is_dir($target_filename))
 		{
 			$str = '';
@@ -708,11 +703,7 @@ class titania_contrib_tools
 	*/
 	public function rmdir_recursive($target_filename)
 	{
-		// Prevent getting out of our temp directory
-		if (strpos($target_filename, titania::$config->contrib_temp_path) !== 0 || strpos(str_replace(titania::$config->contrib_temp_path, '', $target_filename), '..') !== false)
-		{
-			return false;
-		}
+		$target_filename = (substr($target_filename, -1) == '/') ? $target_filename : $target_filename . '/';
 
 		if (!is_dir($target_filename))
 		{
@@ -735,7 +726,6 @@ class titania_contrib_tools
 				@unlink($target_filename . $item);
 			}
         }
-
 		return @rmdir($target_filename);
 	}
 

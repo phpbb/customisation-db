@@ -178,8 +178,11 @@ switch ($action)
 			$queue->submit();
 
 			$contrib_tools->remove_temp_files();
+		}
 
-			unset($contrib_tools);
+		if (sizeof($contrib_tools->error))
+		{
+			trigger_error(implode('<br />', $contrib_tools->error));
 		}
 
 		redirect(titania_url::build_url('manage/queue', array('queue' => titania_types::$types[$queue->queue_type]->url, 'q' => $queue->queue_id)));

@@ -199,7 +199,10 @@ class titania_queue extends titania_message_object
 		// Add the queue notes
 		$queue_notes = $this->queue_notes;
 		decode_message($queue_notes, $this->queue_notes_uid);
-		$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_NOTES'] . '&quot;]' . $queue_notes . "[/quote]\n\n";
+		if ($queue_notes)
+		{
+			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_NOTES'] . '&quot;]' . $queue_notes . "[/quote]\n\n";
+		}
 
 		// Add the MPV results
 		if ($this->mpv_results)
