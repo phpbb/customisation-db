@@ -1,12 +1,12 @@
 <?php
 /**
- *
- * @package titania
- * @version $Id: categories.php 937 2010-03-30 01:21:50Z Tom $
- * @copyright (c) 2008 phpBB Customisation Database Team
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- *
- */
+*
+* @package Titania
+* @version $Id: categories.php 937 2010-03-30 01:21:50Z Tom $
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+*
+*/
 
 /**
 * @ignore
