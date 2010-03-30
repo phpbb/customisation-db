@@ -233,6 +233,10 @@ class titania_url
 			{
 				$new_params[$parts[0]] = $parts[1];
 			}
+			else if (sizeof($parts) == 1)
+			{
+				$new_params[] = $parts[0];
+			}
 		}
 
 		return $new_params;
