@@ -657,6 +657,8 @@ class titania_contrib_tools
 
 			// Remove temp directory
 			$this->rmdir_recursive($temp_destination);
+
+			return;
 		}
 
 		if (!is_dir($source))
