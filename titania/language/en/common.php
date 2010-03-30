@@ -43,6 +43,7 @@ $lang = array_merge($lang, array(
 'FILE_NOT_EXIST' => 'File does not exist: %s',
 	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
+	'ADD_CATEGORY'				=> 'Add Category',
 	'ALL_CONTRIBUTIONS'			=> 'All contributions',
 	'AUTHOR_BY'					=> 'By %s',
 
@@ -80,6 +81,7 @@ $lang = array_merge($lang, array(
 
 	'DATE_CLOSED'				=> 'Date closed',
 	'DELETED_MESSAGE'			=> 'Last deleted by %1$s on %2$s - <a href="%3$s">Click here to undelete this message</a>',
+	'DELETE_CATEGORY'			=> 'Delete Category',
 	'DESCRIPTION'				=> 'Description',
 	'DETAILS'					=> 'Details',
 	'DOWNLOAD'					=> 'Download',
@@ -88,6 +90,7 @@ $lang = array_merge($lang, array(
 	'DOWNLOAD_NOT_FOUND'		=> 'The requested file could not be found.',
 
 	'EDIT'						=> 'Edit',
+	'EDIT_CATEGORY'				=> 'Edit Category',
 	'EDITED_MESSAGE'			=> 'Last edited by %1$s on %2$s',
 
 	'LANGUAGE_PACK'				=> 'Language Pack',
@@ -102,6 +105,7 @@ $lang = array_merge($lang, array(
 
 	'NEW_REVISION'				=> 'New Revision',
 	'NO_AUTH'					=> 'You are not authorized to see this page.',
+	'NO_CATEGORY'				=> 'The requested category does not exist.',
 	'NO_CONTRIB'				=> 'The requested contribution does not exist.',
 	'NO_CONTRIBS'				=> 'No contributions could be found',
 	'NO_DESC'					=> 'You have to enter the description.',

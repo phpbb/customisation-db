@@ -31,30 +31,58 @@ switch ($action)
 {
 	case 'add' :
 	case 'edit' :
-		$test = "Testing";
 		phpbb::$template->assign_vars(array(
-			'U_TEST'		=> $test,
-			'S_CATEGORY' 		=> $category_id,
+			'CATEGORY' 		=> $category_id,
+			'SECTION_NAME'		=> ($action == 'add') ? phpbb::$user->lang['ADD_CATEGORY'] : phpbb::$user->lang['EDIT_CATEGORY'] . ' - ' . $category_name,
+
+			'S_EDIT' 		=> ($action == 'edit') ? true : false,
+			'S_ADD' 		=> ($action == 'add') ? true : false,
+
 		));
 	break;
 	case 'move_up' :
 	case 'move_down' :
-		$test = "Testing";
+		$category_object = new titania_category;
+
+		if (!$category_id)
+		{
+			trigger_error($user->lang['NO_CATEGORY'], E_USER_WARNING);
+		}
+
+		$sql = 'SELECT *
+			FROM ' . TITANIA_CATEGORIES_TABLE . "
+			WHERE category_id = $category_id";
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		if (!$row)
+		{
+			trigger_error($user->lang['NO_CATEGORY'], E_USER_WARNING);
+		}
+
+		$move_category_name = $category_object->move_category_by($row, $action, 1);
+
+		if ($move_category_name !== false)
+		{
+			// add_log('admin', 'LOG_FORUM_' . strtoupper($action), $row['category_name'], $move_category_name);
+			$cache->destroy('sql', TITANIA_CATEGORIES_TABLE);
+		}
 		phpbb::$template->assign_vars(array(
-			'U_TEST'		=> $test,
-			'S_CATEGORY' 		=> $category_id,
+			'CATEGORY' 		=> $category_id,
+
+			'S_MOVE' 		=> true,
 		));
 	break;
 	case 'delete' :
-		$test = "Testing";
 		phpbb::$template->assign_vars(array(
-			'U_TEST'		=> $test,
-			'S_CATEGORY' 		=> $category_id,
+			'CATEGORY' 		=> $category_id,
+			'SECTION_NAME'		=> phpbb::$user->lang['DELETE_CATEGORY'],
+
+			'S_DELETE' 		=> true,
 		));
 	break;
 	default :
-		$phpbb_admin_path = titania::$config->phpbb_script_path . 'adm/';
-
 		titania::_include('functions_display', 'titania_display_categories');
 
 		titania_display_categories($category_id);
@@ -83,14 +111,14 @@ switch ($action)
 		}
 
 		phpbb::$template->assign_vars(array(
-			'ICON_MOVE_UP'				=> '<img src="' . $phpbb_admin_path . 'images/icon_up.gif" alt="' . $user->lang['MOVE_UP'] . '" title="' . $user->lang['MOVE_UP'] . '" />',
-			'ICON_MOVE_UP_DISABLED'		=> '<img src="' . $phpbb_admin_path . 'images/icon_up_disabled.gif" alt="' . $user->lang['MOVE_UP'] . '" title="' . $user->lang['MOVE_UP'] . '" />',
-			'ICON_MOVE_DOWN'			=> '<img src="' . $phpbb_admin_path . 'images/icon_down.gif" alt="' . $user->lang['MOVE_DOWN'] . '" title="' . $user->lang['MOVE_DOWN'] . '" />',
-			'ICON_MOVE_DOWN_DISABLED'	=> '<img src="' . $phpbb_admin_path . 'images/icon_down_disabled.gif" alt="' . $user->lang['MOVE_DOWN'] . '" title="' . $user->lang['MOVE_DOWN'] . '" />',
-			'ICON_EDIT'					=> '<img src="' . $phpbb_admin_path . 'images/icon_edit.gif" alt="' . $user->lang['EDIT'] . '" title="' . $user->lang['EDIT'] . '" />',
-			'ICON_EDIT_DISABLED'		=> '<img src="' . $phpbb_admin_path . 'images/icon_edit_disabled.gif" alt="' . $user->lang['EDIT'] . '" title="' . $user->lang['EDIT'] . '" />',
-			'ICON_DELETE'				=> '<img src="' . $phpbb_admin_path . 'images/icon_delete.gif" alt="' . $user->lang['DELETE'] . '" title="' . $user->lang['DELETE'] . '" />',
-			'ICON_DELETE_DISABLED'		=> '<img src="' . $phpbb_admin_path . 'images/icon_delete_disabled.gif" alt="' . $user->lang['DELETE'] . '" title="' . $user->lang['DELETE'] . '" />',
+			'ICON_MOVE_UP'				=> '<img src="' . titania::$absolute_board . 'adm/images/icon_up.gif" alt="' . phpbb::$user->lang['MOVE_UP'] . '" title="' . phpbb::$user->lang['MOVE_UP'] . '" />',
+			'ICON_MOVE_UP_DISABLED'		=> '<img src="' . titania::$absolute_board . 'adm/images/icon_up_disabled.gif" alt="' . phpbb::$user->lang['MOVE_UP'] . '" title="' . phpbb::$user->lang['MOVE_UP'] . '" />',
+			'ICON_MOVE_DOWN'			=> '<img src="' . titania::$absolute_board . 'adm/images/icon_down.gif" alt="' . phpbb::$user->lang['MOVE_DOWN'] . '" title="' . phpbb::$user->lang['MOVE_DOWN'] . '" />',
+			'ICON_MOVE_DOWN_DISABLED'	=> '<img src="' . titania::$absolute_board . 'adm/images/icon_down_disabled.gif" alt="' . phpbb::$user->lang['MOVE_DOWN'] . '" title="' . phpbb::$user->lang['MOVE_DOWN'] . '" />',
+			'ICON_EDIT'					=> '<img src="' . titania::$absolute_board . 'adm/images/icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
+			'ICON_EDIT_DISABLED'		=> '<img src="' . titania::$absolute_board . 'adm/images/icon_edit_disabled.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
+			'ICON_DELETE'				=> '<img src="' . titania::$absolute_board . 'adm/images/icon_delete.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
+			'ICON_DELETE_DISABLED'		=> '<img src="' . titania::$absolute_board . 'adm/images/icon_delete_disabled.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
 
 			'S_MANAGE' 			=> true,
 		));

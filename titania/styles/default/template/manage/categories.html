@@ -1,10 +1,13 @@
 <!-- INCLUDE manage/manage_header.html -->
 
-<!-- IF U_TEST -->
-	{U_TEST}
+<!-- IF S_ADD or S_EDIT -->
+	<h3 class="section-name">{SECTION_NAME}</h3>
+	Add or Edit
+<!-- ELSEIF S_DELETE -->
+	<h3 class="section-name">{SECTION_NAME}</h3>
+	Delete
 <!-- ELSE -->
 	<!-- INCLUDE common/category_list.html -->
 <!-- ENDIF -->
-
 
 <!-- INCLUDE manage/manage_footer.html -->

@@ -19,8 +19,12 @@
 			<dl>
 				<dt title="{categories.FORUM_FOLDER_IMG_ALT}">
 					<!-- IF categories.FORUM_IMAGE --><span class="forum-image">{categories.FORUM_IMAGE}</span><!-- ENDIF -->
-					<!-- IF S_MANAGE and not categories.HAS_CHILDREN -->
+					<!-- IF S_MANAGE -->
+						<!-- IF categories.HAS_CHILDREN -->
+						<a href="{categories.U_VIEW_MANAGE_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a>
+						<!-- ELSE -->
 						<span class="content">{categories.CATEGORY_NAME}</span>
+						<!-- ENDIF -->
 					<!-- ELSE -->
 						<a href="{categories.U_VIEW_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a>
 					<!-- ENDIF --><br />
