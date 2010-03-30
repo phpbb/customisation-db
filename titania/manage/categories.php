@@ -2,7 +2,7 @@
 /**
  *
  * @package titania
- * @version $Id: 
+ * @version $Id: categories.php 937 2010-03-30 01:21:50Z Tom $
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -23,7 +23,7 @@ if (!phpbb::$auth->acl_gets('u_titania_admin'))
 
 phpbb::$user->add_lang('acp/common');
 
-$category_id = request_var('c', '0');
+$category_id = request_var('c', 0);
 $submit = (isset($_POST['submit'])) ? true : false;
 $action = request_var('action', '');
 
