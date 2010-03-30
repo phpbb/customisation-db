@@ -621,7 +621,7 @@ switch ($step)
 			array(30, '7-pl1'),
 		);
 
-		$sql = 'SELECT contrib_id, revision_id FROM ' . TITANIA_REVISIONS_TABLE . '
+		$sql = 'SELECT contrib_id, revision_id, revision_validated FROM ' . TITANIA_REVISIONS_TABLE . '
 			WHERE ' . phpbb::$db->sql_in_set('contrib_id', $contrib_ids);
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
@@ -633,6 +633,7 @@ switch ($step)
 					'revision_id'				=> $row['revision_id'],
 					'phpbb_version_branch'		=> $data[0],
 					'phpbb_version_revision'	=> $data[1],
+					'revision_validated'		=> $row['revision_validated'],
 				);
 			}
 		}
