@@ -121,7 +121,7 @@ class phpbb_version_add
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			unset($revisions[$row['revision_id']);
+			unset($revisions[$row['revision_id']]);
 		}
 		phpbb::$db->sql_freeresult($result);
 
