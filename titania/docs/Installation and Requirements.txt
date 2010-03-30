@@ -2,6 +2,7 @@ Requirements:
 	phpBB 3.0.6+
 	PHP 5.2+
 	Mod Rewrite
+	MultiViews must be disabled!
 
 How to install:
 	1. Get and install the latest version of phpBB
