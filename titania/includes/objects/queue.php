@@ -385,6 +385,7 @@ class titania_queue extends titania_message_object
 		// Start process to post on forum topic/post release
 		$contrib->get_download($this->revision_id);
 
+		$release_topic_id = $contrib->contrib_release_topic_id;
 		if ($contrib->contrib_release_topic_id)
 		{
 			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
@@ -427,13 +428,13 @@ class titania_queue extends titania_message_object
 
 			if ($options['forum_id'] && $options['poster_id'])
 			{
-				$topic_id = phpbb_topic_add($options);
+				$release_topic_id = phpbb_topic_add($options);
 			}
 		}
 
 		$sql_ary = array(
 			'contrib_last_update' 		=> titania::$time,
-			'contrib_release_topic_id' 	=> ($contrib->contrib_release_topic_id) ? (int) $contrib->contrib_release_topic_id : (int) $topic_id,
+			'contrib_release_topic_id' 	=> (int) $release_topic_id,
 		);
 
 		// Update contrib last update time and release topic ic
