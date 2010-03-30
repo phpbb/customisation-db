@@ -139,7 +139,7 @@ else if ($submit)
 			$error[] = sprintf(phpbb::$user->lang['CONTRIB_CHANGE_OWNER_NOT_FOUND'], $change_owner);
 		}
 	}
-	
+
 	// Changed permalink?
 	$old_permalink = titania::$contrib->contrib_name_clean;
 	if ($old_permalink != $permalink)
@@ -238,7 +238,7 @@ else if ($submit)
 
 		// Submit screenshots
 		$screenshot->submit();
-		
+
 		// Update contrib_status/permalink if we can moderate. only if contrib_status is valid and permalink altered
 		if (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 		{
@@ -248,7 +248,8 @@ else if ($submit)
 			}
 			if ($old_permalink != $permalink)
 			{
-				titania::$contrib->contrib_name_clean = $permalink;
+				// Also need to update some other tables that cache the name, so skip for now
+				//titania::$contrib->contrib_name_clean = $permalink;
 			}
 		}
 
