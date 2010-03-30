@@ -433,7 +433,7 @@ class titania_queue extends titania_message_object
 
 		$sql_ary = array(
 			'contrib_last_update' 		=> titania::$time,
-			'contrib_release_topic_id' 	=> ($contrib->contrib_release_topic_id) ? $contrib->contrib_release_topic_id : $topic_id,
+			'contrib_release_topic_id' 	=> ($contrib->contrib_release_topic_id) ? (int) $contrib->contrib_release_topic_id : (int) $topic_id,
 		);
 
 		// Update contrib last update time and release topic ic
