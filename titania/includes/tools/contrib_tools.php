@@ -634,6 +634,31 @@ class titania_contrib_tools
 		$source = (substr($source, -1) == '/') ? $source : $source . '/';
 		$destination = (substr($destination, -1) == '/') ? $destination : $destination . '/';
 
+		if (strpos($destination, $source) !== false)
+		{
+			// Woh nelly, this will loop infinitely without some special care!
+
+			$temp_destination = substr($source, 0, strrpos($source, '/', -2)) . '/temp/';
+			$i = 1;
+			while (file_exists($temp_destination . $i))
+			{
+				$i++;
+			}
+			$temp_destination .= $i;
+
+			// Move to temp directory
+			$this->mvdir_recursive($source, $temp_destination);
+
+			// Remove source directory
+			$this->rmdir_recursive($source);
+
+			// Move from temp directory to the final directory
+			$this->mvdir_recursive($temp_destination, $destination);
+
+			// Remove temp directory
+			$this->rmdir_recursive($temp_destination);
+		}
+
 		if (!is_dir($source))
 		{
 			return false;
