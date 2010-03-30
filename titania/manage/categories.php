@@ -2,7 +2,7 @@
 /**
  *
  * @package titania
- * @version $Id: administration.php 839 2010-03-23 03:45:39Z exreaction $
+ * @version $Id: 
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -23,32 +23,39 @@ if (!phpbb::$auth->acl_gets('u_titania_admin'))
 
 phpbb::$user->add_lang('acp/common');
 
-$category_id = request_var('c', 0);
+$category_id = request_var('c', '0');
 $submit = (isset($_POST['submit'])) ? true : false;
 $action = request_var('action', '');
 
 switch ($action)
 {
-	case 'test' :
-		$test = 'Testing';
+	case 'add' :
+	case 'edit' :
+		$test = "Testing";
 		phpbb::$template->assign_vars(array(
 			'U_TEST'		=> $test,
+			'S_CATEGORY' 		=> $category_id,
+		));
+	break;
+	case 'move_up' :
+	case 'move_down' :
+		$test = "Testing";
+		phpbb::$template->assign_vars(array(
+			'U_TEST'		=> $test,
+			'S_CATEGORY' 		=> $category_id,
+		));
+	break;
+	case 'delete' :
+		$test = "Testing";
+		phpbb::$template->assign_vars(array(
+			'U_TEST'		=> $test,
+			'S_CATEGORY' 		=> $category_id,
 		));
 	break;
 	default :
-		titania::_include('functions_display', 'titania_display_categories');
+		$phpbb_admin_path = titania::$config->phpbb_script_path . 'adm/';
 
-		// Get the category_id
-		$category = request_var('c', '');
-		$category_ary = explode('-', $category);
-		if ($category_ary)
-		{
-			$category_id = array_pop($category_ary);
-		}
-		else
-		{
-			$category_id = (int) $category;
-		}
+		titania::_include('functions_display', 'titania_display_categories');
 
 		titania_display_categories($category_id);
 
@@ -63,23 +70,29 @@ switch ($action)
 			{
 				$category_object->__set_array($categories_ary[$row['category_id']]);
 				titania::generate_breadcrumbs(array(
-					((isset(phpbb::$user->lang[$categories_ary[$row['category_id']]['category_name']])) ? phpbb::$user->lang[$categories_ary[$row['category_id']]['category_name']] : $categories_ary[$row['category_id']]['category_name'])	=> titania_url::build_url($category_object->get_manage_url()),
+					((isset(phpbb::$user->lang[$categories_ary[$row['category_id']]['category_name']])) ? phpbb::$user->lang[$categories_ary[$row['category_id']]['category_name']] : $categories_ary[$row['category_id']]['category_name'])	=> titania_url::$root_url . $category_object->get_manage_url(),
 				));
 			}
 
 			// Self
 			$category_object->__set_array($categories_ary[$category_id]);
 			titania::generate_breadcrumbs(array(
-				((isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'])	=> titania_url::build_url($category_object->get_manage_url()),
+				((isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'])	=> titania_url::$root_url . $category_object->get_manage_url(),
 			));
 			unset($categories_ary, $category_object);
-
-			contribs_overlord::display_contribs('category', $category_id);
 		}
 
 		phpbb::$template->assign_vars(array(
-			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/create') : '',
-			'S_MANAGE' 					=> true,
+			'ICON_MOVE_UP'				=> '<img src="' . $phpbb_admin_path . 'images/icon_up.gif" alt="' . $user->lang['MOVE_UP'] . '" title="' . $user->lang['MOVE_UP'] . '" />',
+			'ICON_MOVE_UP_DISABLED'		=> '<img src="' . $phpbb_admin_path . 'images/icon_up_disabled.gif" alt="' . $user->lang['MOVE_UP'] . '" title="' . $user->lang['MOVE_UP'] . '" />',
+			'ICON_MOVE_DOWN'			=> '<img src="' . $phpbb_admin_path . 'images/icon_down.gif" alt="' . $user->lang['MOVE_DOWN'] . '" title="' . $user->lang['MOVE_DOWN'] . '" />',
+			'ICON_MOVE_DOWN_DISABLED'	=> '<img src="' . $phpbb_admin_path . 'images/icon_down_disabled.gif" alt="' . $user->lang['MOVE_DOWN'] . '" title="' . $user->lang['MOVE_DOWN'] . '" />',
+			'ICON_EDIT'					=> '<img src="' . $phpbb_admin_path . 'images/icon_edit.gif" alt="' . $user->lang['EDIT'] . '" title="' . $user->lang['EDIT'] . '" />',
+			'ICON_EDIT_DISABLED'		=> '<img src="' . $phpbb_admin_path . 'images/icon_edit_disabled.gif" alt="' . $user->lang['EDIT'] . '" title="' . $user->lang['EDIT'] . '" />',
+			'ICON_DELETE'				=> '<img src="' . $phpbb_admin_path . 'images/icon_delete.gif" alt="' . $user->lang['DELETE'] . '" title="' . $user->lang['DELETE'] . '" />',
+			'ICON_DELETE_DISABLED'		=> '<img src="' . $phpbb_admin_path . 'images/icon_delete_disabled.gif" alt="' . $user->lang['DELETE'] . '" title="' . $user->lang['DELETE'] . '" />',
+
+			'S_MANAGE' 			=> true,
 		));
 	break;
 }

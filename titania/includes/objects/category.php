@@ -126,6 +126,29 @@ class titania_category extends titania_message_object
 	}
 
 	/**
+	* Check if a category has child categories
+	*
+	* @param int $category_id The category id (category_id)
+	*
+	* @return bool True if the category has child categories, false if not
+	*/
+	public function get_children($category_id)
+	{
+		$sql = 'SELECT * FROM ' . $this->sql_table . ' WHERE parent_id = ' . (int) $category_id;
+
+		$result = phpbb::$db->sql_query($sql);
+		$this->sql_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		if (empty($this->sql_data))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	* Build view URL for a category
 	*/
 	public function get_url()
@@ -156,6 +179,16 @@ class titania_category extends titania_message_object
 	}
 
 	/**
+	* Build view URL for a category in the Category Management panel
+	*/
+	public function get_manage_url()
+	{
+		$url = 'manage/categories/c_' . $this->category_id;
+
+		return $url;
+	}
+
+	/**
 	* Assign the common items to the template
 	*
 	* @param bool $return True to return the array of stuff to display and output yourself, false to output to the template automatically
@@ -167,7 +200,13 @@ class titania_category extends titania_message_object
 			'CATEGORY_CONTRIBS'	=> $this->category_contribs,
 			'CATEGORY_TYPE'		=> $this->category_type,
 
-			'U_VIEW_CATEGORY'	=> titania_url::build_url($this->get_url()),
+			'U_MOVE_UP'		=> titania_url::$root_url . $this->get_manage_url() . '-action_move_up',
+			'U_MOVE_DOWN'		=> titania_url::$root_url . $this->get_manage_url() . '-action_move_down',
+			'U_EDIT'		=> titania_url::$root_url . $this->get_manage_url() . '-action_edit',
+			'U_DELETE'		=> titania_url::$root_url . $this->get_manage_url() . '-action_delete',
+			'U_VIEW_CATEGORY'	=> titania_url::$root_url . $this->get_manage_url(),
+
+			'HAS_CHILDREN'		=> $this->get_children($this->category_id),
 		);
 
 		if ($return)

@@ -280,6 +280,10 @@ dd.general {
 	font-size: 1.2em;
 }
 
+#categories .content {
+	font-size: 1.2em;
+}
+
 .container li.header dt, .container li.header dd {
 	color: #000000;
 	margin-bottom: 2px;
@@ -487,7 +491,7 @@ fieldset dl:hover dt label.error {
 }
 
 #attention .content {
-	font-size: 13px;
+	font-size: 1.3em;
 	padding-bottom: 10px;
 }
 
