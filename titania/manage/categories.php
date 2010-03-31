@@ -32,8 +32,8 @@ switch ($action)
 	case 'add' :
 	case 'edit' :
 		phpbb::$template->assign_vars(array(
-			'CATEGORY' 		=> $category_id,
-			'SECTION_NAME'		=> ($action == 'add') ? phpbb::$user->lang['ADD_CATEGORY'] : phpbb::$user->lang['EDIT_CATEGORY'] . ' - ' . $category_name,
+			'CATEGORY' 				=> $category_id,
+			'SECTION_NAME'			=> ($action == 'add') ? phpbb::$user->lang['CREATE_CATEGORY'] : phpbb::$user->lang['EDIT_CATEGORY'] . ' - ' . $category_name,
 
 			'S_EDIT_CATEGORY' 		=> ($action == 'edit') ? true : false,
 			'S_ADD_CATEGORY' 		=> ($action == 'add') ? true : false,
@@ -70,7 +70,7 @@ switch ($action)
 		}
 
 		phpbb::$template->assign_vars(array(
-			'CATEGORY' 		=> $category_id,
+			'CATEGORY' 				=> $category_id,
 
 			'S_MOVE_CATEGORY' 		=> true,
 		));
@@ -115,9 +115,9 @@ switch ($action)
 
 		if($submit)
 		{
-			$action_subcats		= request_var('action_subcats', '');
-			$subcats_to_id		= request_var('subcats_to_id', 0);
-			$action_contribs	= request_var('action_contribs', '');
+			$action_subcats	= request_var('action_subcats', '');
+			$subcats_to_id	= request_var('subcats_to_id', 0);
+			$action_contribs		= request_var('action_contribs', '');
 			$contribs_to_id		= request_var('contribs_to_id', 0);
 
 			$errors = $category_object->delete_category($category_id, $action_contribs, $action_subcats, $contribs_to_id, $subcats_to_id);
@@ -129,7 +129,7 @@ switch ($action)
 
 			$cache->destroy('sql', TITANIA_CATEGORIES_TABLE);
 
-			trigger_error($user->lang['CATEGORY_DELETED']);
+			trigger_error($user->lang['FORUM_DELETED']);
 		}
 
 		phpbb::$template->assign_vars(array(
@@ -145,6 +145,7 @@ switch ($action)
 			'S_ERROR'				=> (sizeof($errors)) ? true : false,
 			'ERROR_MSG'				=> (sizeof($errors)) ? implode('<br />', $errors) : '')
 		);
+
 	break;
 	default :
 		titania::_include('functions_display', 'titania_display_categories');
@@ -182,9 +183,11 @@ switch ($action)
 			'ICON_EDIT'					=> '<img src="' . titania::$absolute_board . 'adm/images/icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
 			'ICON_EDIT_DISABLED'		=> '<img src="' . titania::$absolute_board . 'adm/images/icon_edit_disabled.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
 			'ICON_DELETE'				=> '<img src="' . titania::$absolute_board . 'adm/images/icon_delete.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
-			'ICON_DELETE_DISABLED'		=> '<img src="' . titania::$absolute_board . 'adm/images/icon_delete_disabled.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
+			'ICON_DELETE_DISABLED'		=> '<img src="' . titania::$absolute_board . 'adm/images/icon_delete_disabled.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />'
+,
+			'U_CREATE_CATEGORY'			=> ($category_id) ? titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'add')) : titania_url::build_url('manage/categories', array('action' => 'add')),
 
-			'S_MANAGE' 			=> true,
+			'S_MANAGE' 					=> true,
 		));
 	break;
 }

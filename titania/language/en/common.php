@@ -42,7 +42,6 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
-	'ADD_CATEGORY'				=> 'Add Category',
 	'ALL_CONTRIBUTIONS'			=> 'All contributions',
 	'AUTHOR_BY'					=> 'By %s',
 
@@ -78,6 +77,7 @@ $lang = array_merge($lang, array(
 	'CONTRIBUTIONS'				=> 'Contributions',
 	'CONTRIB_MANAGE'			=> 'Manage Contribution',
 	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
+	'CREATE_CATEGORY'			=> 'Create Category',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
 
 	'DATE_CLOSED'				=> 'Date closed',
