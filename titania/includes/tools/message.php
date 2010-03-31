@@ -205,10 +205,18 @@ class titania_message
 
 			if ($captcha->validate($this->request_data()) !== false)
 			{
-				phpbb::$template->assign_vars(array(
-					'CAPTCHA_TEMPLATE'		=> $captcha->get_template(),
-					'CONFIRM_IMAGE_LINK'	=> phpbb::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type),// Use proper captcha link
+				// Parse the captcha template
+				phpbb::$template->set_template();
+				phpbb::$template->set_filenames(array(
+					'captcha'	=> $captcha->get_template(),
 				));
+
+				// Correct confirm image link
+				phpbb::$template->assign_var('CONFIRM_IMAGE_LINK', phpbb::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type));
+
+				phpbb::$template->assign_display('captcha', 'CAPTCHA', false);
+
+				titania::set_custom_template();
 			}
 
 			$this->s_hidden_fields = array_merge($this->s_hidden_fields, $captcha->get_hidden_fields());

@@ -107,12 +107,7 @@ class titania
 			self::$theme_path = self::$style_path . 'theme';
 
 			// Set the paths for phpBB
-			phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
-			phpbb::$user->theme['template_storedb'] = false;
-
-			// Inherit from the boards prosilver (currently required for the Captcha)
-			phpbb::$user->theme['template_inherits_id'] = 1; // Doesn't seem to matter what number I put in here...
-			phpbb::$template->inherit_root = PHPBB_ROOT_PATH . 'styles/prosilver/template';
+			self::set_custom_template();
 		}
 
 		// Setup the Access Level
@@ -137,6 +132,22 @@ class titania
 		self::generate_breadcrumbs(array(
 			'CUSTOMISATION_DATABASE'	=> titania_url::build_url(''),
 		));
+	}
+
+	/**
+	* Set the custom template path for titania
+	*/
+	public static function set_custom_template()
+	{
+		phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
+		phpbb::$user->theme['template_storedb'] = false;
+
+		// Inherit from the boards prosilver (currently required for the Captcha)
+		if (self::$config->style !== 'default')
+		{
+			phpbb::$user->theme['template_inherits_id'] = 1; // Doesn't seem to matter what number I put in here...
+			phpbb::$template->inherit_root = TITANIA_ROOT . 'styles/default/template';
+		}
 	}
 
 	/**

@@ -305,16 +305,18 @@ class phpbb
 					$captcha->init(CONFIRM_LOGIN);
 					// $captcha->reset();
 
-					// HAX
-					global $phpbb_root_path;
-					$phpbb_root_path = titania::$absolute_board;
-
-					self::$template->assign_vars(array(
-						'CAPTCHA_TEMPLATE'			=> $captcha->get_template(),
+					// Parse the captcha template
+					phpbb::$template->set_template();
+					phpbb::$template->set_filenames(array(
+						'captcha'	=> $captcha->get_template(),
 					));
 
-					// DE-HAX
-					$phpbb_root_path = PHPBB_ROOT_PATH;
+					// Correct confirm image link
+					phpbb::$template->assign_var('CONFIRM_IMAGE_LINK', phpbb::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type));
+
+					phpbb::$template->assign_display('captcha', 'CAPTCHA', false);
+
+					titania::set_custom_template();
 
 					$err = self::$user->lang[$result['error_msg']];
 				break;
