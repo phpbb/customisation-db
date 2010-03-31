@@ -129,7 +129,7 @@ switch ($action)
 
 			$cache->destroy('sql', TITANIA_CATEGORIES_TABLE);
 
-			trigger_error($user->lang['FORUM_DELETED']);
+			trigger_error($user->lang['CATEGORY_DELETED']);
 		}
 
 		phpbb::$template->assign_vars(array(
@@ -183,8 +183,8 @@ switch ($action)
 			'ICON_EDIT'					=> '<img src="' . titania::$absolute_board . 'adm/images/icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
 			'ICON_EDIT_DISABLED'		=> '<img src="' . titania::$absolute_board . 'adm/images/icon_edit_disabled.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
 			'ICON_DELETE'				=> '<img src="' . titania::$absolute_board . 'adm/images/icon_delete.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
-			'ICON_DELETE_DISABLED'		=> '<img src="' . titania::$absolute_board . 'adm/images/icon_delete_disabled.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />'
-,
+			'ICON_DELETE_DISABLED'		=> '<img src="' . titania::$absolute_board . 'adm/images/icon_delete_disabled.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
+
 			'U_CREATE_CATEGORY'			=> ($category_id) ? titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'add')) : titania_url::build_url('manage/categories', array('action' => 'add')),
 
 			'S_MANAGE' 					=> true,
