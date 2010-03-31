@@ -23,7 +23,7 @@ if (!isset($_GET['style']))
 	die('No Style');
 }
 
-$style = preg_replace('#[^a-z]#', '', $_GET['style']);
+$style = preg_replace('#[^A-Za-z0-9_]#', '', $_GET['style']);
 
 if (file_exists(TITANIA_ROOT . 'styles/' . $style . '/theme/stylesheet.css'))
 {
