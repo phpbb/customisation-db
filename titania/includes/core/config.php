@@ -42,8 +42,8 @@ class titania_config extends titania_object
 			'language_path'				=> array('default' => TITANIA_ROOT . 'language/'),
 
 			// Path to demo board we will install styles on
-			'demo_style_path'			=> array('default' => false),
-			'demo_style_url'			=> array('default' => false),
+			'demo_style_path'			=> array('default' => ''),
+			'demo_style_url'			=> array('default' => ''),
 
 			'phpbbcom_profile'			=> array('default' => true),
 			'phpbbcom_viewprofile_url'	=> array('default' => 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
