@@ -90,7 +90,7 @@ abstract class titania_message_object extends titania_database_object
 		$message = $message_uid = $message_bitfield = $message_options = false;
 		$this->get_message_fields($message, $message_uid, $message_bitfield, $message_options);
 
-		return generate_text_for_display($message, $message_uid, $message_bitfield, $message_options);
+		return titania_generate_text_for_display($message, $message_uid, $message_bitfield, $message_options);
 	}
 
 	/**

@@ -139,6 +139,7 @@ class titania
 	*/
 	public static function set_custom_template()
 	{
+		phpbb::$user->theme['template_path'] = self::$config->style;
 		phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
 		phpbb::$user->theme['template_storedb'] = false;
 
@@ -146,6 +147,7 @@ class titania
 		if (self::$config->style !== 'default')
 		{
 			phpbb::$user->theme['template_inherits_id'] = 1; // Doesn't seem to matter what number I put in here...
+			phpbb::$user->theme['template_inherit_path'] = 'default';
 			phpbb::$template->inherit_root = TITANIA_ROOT . 'styles/default/template';
 		}
 	}

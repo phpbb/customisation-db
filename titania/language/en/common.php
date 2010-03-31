@@ -40,10 +40,9 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-'FILE_NOT_EXIST' => 'File does not exist: %s',
 	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
-	'ADD_CATEGORY'			=> 'Add Category',
+	'ADD_CATEGORY'				=> 'Add Category',
 	'ALL_CONTRIBUTIONS'			=> 'All contributions',
 	'AUTHOR_BY'					=> 'By %s',
 
@@ -52,8 +51,8 @@ $lang = array_merge($lang, array(
 
 	'CACHE_PURGED'				=> 'Cache has been successfully purged',
 	'CATEGORY'					=> 'Category',
-	'CATEGORY_DELETED'				=> 'Category Deleted',
-	'CATEGORY_NAME'					=> 'Category Name',
+	'CATEGORY_DELETED'			=> 'Category Deleted',
+	'CATEGORY_NAME'				=> 'Category Name',
 	'CAT_ADDONS'				=> 'Add-ons',
 	'CAT_ANTI_SPAM'				=> 'Anti-Spam',
 	'CAT_AVATARS'				=> 'Avatars',
@@ -82,10 +81,10 @@ $lang = array_merge($lang, array(
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
 
 	'DATE_CLOSED'				=> 'Date closed',
-	'DELETE_ALL_CONTRIBS'			=> 'Delete all Contributions',
-	'DELETE_SUBCATS'			=> 'Delete Subcategories',
-	'DELETE_CATEGORY'			=> 'Delete Category',
 	'DELETED_MESSAGE'			=> 'Last deleted by %1$s on %2$s - <a href="%3$s">Click here to undelete this message</a>',
+	'DELETE_ALL_CONTRIBS'		=> 'Delete all Contributions',
+	'DELETE_CATEGORY'			=> 'Delete Category',
+	'DELETE_SUBCATS'			=> 'Delete Subcategories',
 	'DESCRIPTION'				=> 'Description',
 	'DETAILS'					=> 'Details',
 	'DOWNLOAD'					=> 'Download',
@@ -94,17 +93,19 @@ $lang = array_merge($lang, array(
 	'DOWNLOAD_NOT_FOUND'		=> 'The requested file could not be found.',
 
 	'EDIT'						=> 'Edit',
-	'EDIT_CATEGORY'					=> 'Edit Category',
 	'EDITED_MESSAGE'			=> 'Last edited by %1$s on %2$s',
+	'EDIT_CATEGORY'				=> 'Edit Category',
+
+	'FILE_NOT_EXIST'			=> 'File does not exist: %s',
 
 	'LANGUAGE_PACK'				=> 'Language Pack',
 	'LIST'						=> 'List',
 
 	'MANAGE'					=> 'Manage',
 	'MODIFICATION'				=> 'Modification',
-	'MOVE_CONTRIBS_TO'					=> 'Move Contributions to',
-	'MOVE_SUBCATS_TO'					=> 'Move Subcategories to',
+	'MOVE_CONTRIBS_TO'			=> 'Move Contributions to',
 	'MOVE_DOWN'					=> 'Move down',
+	'MOVE_SUBCATS_TO'			=> 'Move Subcategories to',
 	'MOVE_UP'					=> 'Move up',
 	'MULTI_SELECT_EXPLAIN'		=> 'Hold down CTRL and click to select multiple items.',
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
@@ -114,8 +115,8 @@ $lang = array_merge($lang, array(
 	'NO_CATEGORY'				=> 'The requested category does not exist.',
 	'NO_CONTRIB'				=> 'The requested contribution does not exist.',
 	'NO_CONTRIBS'				=> 'No contributions could be found',
-	'NO_DESTINATION_CATEGORY'			=> 'No destination category could be found.',
 	'NO_DESC'					=> 'You have to enter the description.',
+	'NO_DESTINATION_CATEGORY'	=> 'No destination category could be found.',
 	'NO_POST'					=> 'The requested post does not exist.',
 	'NO_REVISION_NAME'			=> 'No revision name provided',
 	'NO_TOPIC'					=> 'The requested topic does not exist.',

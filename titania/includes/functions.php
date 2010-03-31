@@ -17,6 +17,33 @@ if (!defined('IN_TITANIA'))
 }
 
 /**
+* Generate text for display
+* Returns the result of generate_text_for_display() from phpBB's functions_content.php file, but has hacks in place to let us use our own bbcode.html file
+*
+* @param mixed $text
+* @param mixed $uid
+* @param mixed $bitfield
+* @param mixed $flags
+* @return mixed
+*/
+function titania_generate_text_for_display($text, $uid, $bitfield, $flags)
+{
+	global $phpbb_root_path;
+
+	phpbb::_include('bbcode', false, 'bbcode');
+
+	// HAX
+	$phpbb_root_path = TITANIA_ROOT;
+
+	$return = generate_text_for_display($text, $uid, $bitfield, $flags);
+
+	// UnHAX
+	$phpbb_root_path = PHPBB_ROOT_PATH;
+
+	return $return;
+}
+
+/**
 * Exception handler
 *
 * @param mixed $exception
