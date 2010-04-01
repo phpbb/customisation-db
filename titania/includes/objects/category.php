@@ -212,9 +212,8 @@ class titania_category extends titania_message_object
 
 		$right = 0;
 		$padding_store = array('0' => '');
-		$selected = '';
-		$disabled = '';
-		$padding = '';
+		$selected = $padding = '';
+		$disabled = false;
 		$category_list = ($return_array) ? array() : '';
 
 		if(!$select_id)
