@@ -316,7 +316,7 @@ class titania
 
 			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
-			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . '/style.' . PHP_EXT . '?style=' . self::$config->style,
+			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . 'style.' . PHP_EXT . '?style=' . self::$config->style,
 			'T_STYLESHEET_LINK'			=> (!phpbb::$user->theme['theme_storedb']) ? self::$absolute_board . '/styles/' . phpbb::$user->theme['theme_path'] . '/theme/stylesheet.css' : self::$absolute_board . 'style.' . PHP_EXT . '?sid=' . phpbb::$user->session_id . '&amp;id=' . phpbb::$user->theme['style_id'] . '&amp;lang=' . phpbb::$user->data['user_lang'],
 			'T_STYLESHEET_NAME'			=> phpbb::$user->theme['theme_name'],
 		));
