@@ -192,6 +192,7 @@ switch ($action)
 					{
 						return $errors_extra;
 					}
+					$error = '';
 				}
 
 				// Now we submit the category information...
@@ -206,10 +207,10 @@ switch ($action)
 		generate_type_select($category_object->category_type);
 
 		phpbb::$template->assign_vars(array(
-			'ERROR_MSG'			=> (sizeof($error)) ? implode('<br />', $error) : '',
+			'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : '',
 			'CATEGORY' 				=> $category_id,
-			'CATEGORY_NAME'				=> (isset(phpbb::$user->lang[$category_object->category_name])) ? phpbb::$user->lang[$category_object->category_name] : $category_object->category_name,
-			'CATEGORY_VISIBLE' 			=> $category_object->category_visible,
+			'CATEGORY_NAME'			=> (isset(phpbb::$user->lang[$category_object->category_name])) ? phpbb::$user->lang[$category_object->category_name] : $category_object->category_name,
+			'CATEGORY_VISIBLE' 		=> $category_object->category_visible,
 			'SECTION_NAME'			=> ($action == 'add') ? phpbb::$user->lang['CREATE_CATEGORY'] : phpbb::$user->lang['EDIT_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$old_category_name])) ? phpbb::$user->lang[$old_category_name] : $old_category_name),
 
 			'U_ACTION'				=> ($action == 'add') ? titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'add')) : titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'edit')),
@@ -332,11 +333,11 @@ switch ($action)
 			'U_ACTION'				=> titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'delete')),
 			'U_BACK'				=> 'c_' . $category_object->parent_id,
 
-			'CATEGORY' 		=> $category_id,
-			'CATEGORY_NAME'		=> (isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name'],
-			'SECTION_NAME'		=> phpbb::$user->lang['DELETE_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name']),
-			'S_HAS_SUBCATS'		=> ($category_data['right_id'] - $category_data['left_id'] > 1) ? true : false,
-			'S_CATEGORIES_LIST'			=> $categories_list,
+			'CATEGORY' 				=> $category_id,
+			'CATEGORY_NAME'			=> (isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name'],
+			'SECTION_NAME'			=> phpbb::$user->lang['DELETE_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name']),
+			'S_HAS_SUBCATS'			=> ($category_data['right_id'] - $category_data['left_id'] > 1) ? true : false,
+			'S_CATEGORIES_LIST'		=> $categories_list,
 			'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : '')
 		);
 
