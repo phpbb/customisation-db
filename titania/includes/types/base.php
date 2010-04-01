@@ -134,11 +134,12 @@ class titania_type_base
 	public $url = 'contribution';
 
 	/**
-	 * The language key, initialize in constructor
+	 * The language key, initialize in constructor ($langs is for the plural forms of the language variables, used in category management)
 	 *
 	 * @var string Language key
 	 */
 	public $lang = '';
+	public $langs = '';
 
 	/**
 	* Run MPV/Automod Test for this type?

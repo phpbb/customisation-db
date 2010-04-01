@@ -63,6 +63,7 @@ class titania_type_mod extends titania_type_base
 	public function __construct()
 	{
 		$this->lang = phpbb::$user->lang['MODIFICATION'];
+		$this->langs = phpbb::$user->lang['MODIFICATIONS'];
 		$this->forum_database = titania::$config->forum_mod_database;
 		$this->forum_robot = titania::$config->forum_mod_robot;
 	}
