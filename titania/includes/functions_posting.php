@@ -82,7 +82,7 @@ function generate_type_select($selected = false)
 		'S_IS_SELECTED'		=> ($selected === false) ? true : false,
 
 		'VALUE'				=> 0,
-		'NAME'				=> phpbb::$user->lang['SELECT_CONTRIB_TYPE'],
+		'NAME'				=> (isset(phpbb::$user->lang['SELECT_CONTRIB_TYPE'])) ? phpbb::$user->lang['SELECT_CONTRIB_TYPE'] : '--',
 	));
 
 	foreach (titania_types::$types as $key => $type)
@@ -91,7 +91,7 @@ function generate_type_select($selected = false)
 			'S_IS_SELECTED'		=> ($key == $selected) ? true : false,
 
 			'VALUE'				=> $key,
-			'NAME'				=> $type->lang,
+			'NAME'				=> (isset(phpbb::$user->lang['SELECT_CONTRIB_TYPE'])) ? $type->lang : $type->langs,
 		));
 	}
 }

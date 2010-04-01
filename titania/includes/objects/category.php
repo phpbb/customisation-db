@@ -75,17 +75,24 @@ class titania_category extends titania_message_object
 	}
 
 	/**
+	* Submit data in the post_data format (from includes/tools/message.php)
+	*
+	* @param object $message The message object
+	*/
+	public function post_data($message)
+	{
+		$post_data = $message->request_data();
+
+		parent::post_data($message);
+	}
+
+	/**
 	 * Submit data for storing into the database
 	 *
 	 * @return bool
 	 */
 	public function submit()
 	{
-		$this->contrib_name_clean = utf8_clean_string($this->contrib_name);
-
-		// Destroy category parents cache
-		titania::$cache->destroy('_titania_category_parents');
-
 		return parent::submit();
 	}
 
@@ -205,6 +212,11 @@ class titania_category extends titania_message_object
 		$padding = '';
 		$category_list = ($return_array) ? array() : '';
 
+		if(!$select_id)
+		{
+			$selected = (is_array($select_id)) ? ((in_array(0, $select_id)) ? ' selected="selected"' : '') : ((0 == $select_id) ? ' selected="selected"' : '');
+		}
+		$category_list .= '<option value="0"' . (($disabled) ? ' disabled="disabled" class="disabled-option"' : $selected) . '>' . $padding . '- ' . phpbb::$user->lang['ROOT'] . ' -' . '</option>';
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$category_name = (isset(phpbb::$user->lang[$row['category_name']])) ? phpbb::$user->lang[$row['category_name']] : $row['category_name'];
@@ -569,18 +581,18 @@ class titania_category extends titania_message_object
 	public function assign_display($return = false)
 	{
 		$display = array(
-			'CATEGORY_NAME'		=> (isset(phpbb::$user->lang[$this->category_name])) ? phpbb::$user->lang[$this->category_name] : $this->category_name,
-			'CATEGORY_CONTRIBS'	=> $this->category_contribs,
-			'CATEGORY_TYPE'		=> $this->category_type,
+			'CATEGORY_NAME'				=> (isset(phpbb::$user->lang[$this->category_name])) ? phpbb::$user->lang[$this->category_name] : $this->category_name,
+			'CATEGORY_CONTRIBS'			=> $this->category_contribs,
+			'CATEGORY_TYPE'				=> $this->category_type,
 
-			'U_MOVE_UP'		=> titania_url::$root_url . $this->get_manage_url() . '-action_move_up',
-			'U_MOVE_DOWN'		=> titania_url::$root_url . $this->get_manage_url() . '-action_move_down',
-			'U_EDIT'		=> titania_url::$root_url . $this->get_manage_url() . '-action_edit',
-			'U_DELETE'		=> titania_url::$root_url . $this->get_manage_url() . '-action_delete',
-			'U_VIEW_CATEGORY'	=> titania_url::$root_url . $this->get_url(),
+			'U_MOVE_UP'					=> titania_url::$root_url . $this->get_manage_url() . '-action_move_up',
+			'U_MOVE_DOWN'				=> titania_url::$root_url . $this->get_manage_url() . '-action_move_down',
+			'U_EDIT'					=> titania_url::$root_url . $this->get_manage_url() . '-action_edit',
+			'U_DELETE'					=> titania_url::$root_url . $this->get_manage_url() . '-action_delete',
+			'U_VIEW_CATEGORY'			=> titania_url::$root_url . $this->get_url(),
 			'U_VIEW_MANAGE_CATEGORY'	=> titania_url::$root_url . $this->get_manage_url(),
 
-			'HAS_CHILDREN'		=> $this->get_children($this->category_id),
+			'HAS_CHILDREN'				=> $this->get_children($this->category_id),
 		);
 
 		if ($return)

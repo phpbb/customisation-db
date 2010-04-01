@@ -478,6 +478,10 @@ fieldset dl:hover dt label.error {
 	color: #BC2A4D;
 }
 
+#addcategory textarea {
+	height: 185px;
+}
+
 /* Attention Details Page
 --------------------------------------------- */
 #attention {

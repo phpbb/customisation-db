@@ -60,12 +60,14 @@ function titania_topic_folder_img(&$folder_img, &$folder_alt, $post_count = 0, $
 * @param int $parent_id The parent id/name (only show categories under this category)
 * @param string $blockname The name of the template block to use (categories by default)
 */
-function titania_display_categories($parent_id = 0, $blockname = 'categories')
+function titania_display_categories($parent_id = 0, $blockname = 'categories', $is_manage = false)
 {
+	$only_visible = (!$is_manage) ? 'AND category_visible = 1' : '';
+
 	$sql = 'SELECT * FROM ' . TITANIA_CATEGORIES_TABLE . '
-		WHERE parent_id = ' . (int) $parent_id . '
-			AND category_visible = 1
-		ORDER BY left_id ASC';
+		WHERE parent_id = ' . (int) $parent_id . "
+			$only_visible
+		ORDER BY left_id ASC";
 	$result = phpbb::$db->sql_query($sql);
 
 	$category = new titania_category();

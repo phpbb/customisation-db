@@ -1,22 +1,64 @@
 <!-- INCLUDE manage/manage_header.html -->
 
+<!-- IF SECTION_NAME --><h3 class="section-name">{SECTION_NAME}</h3><!-- ENDIF -->
 <!-- IF S_ADD_CATEGORY or S_EDIT_CATEGORY -->
-	<h3 class="section-name">{SECTION_NAME}</h3>
-	Add or Edit
+<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+<form name="postform" method="post" action="{U_ACTION}">
+<div class="panel" id="addcategory">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<h3>{L_CATEGORY_INFORMATION}</h3>
+
+	<fieldset>
+	<dl>
+		<dt><label for="category_name">{L_CATEGORY_NAME}:</label></dt>
+		<dd><input type="text" name="category_name" id="category_name" size="45" maxlength="60" value="{CATEGORY_NAME}" class="inputbox autowidth" /></dd>
+	</dl>
+	<dl>
+		<dt><label for="category_parent">{L_PARENT_CATEGORY}:</label></dt>
+		<!-- IF S_MOVE_CATEGORY_OPTIONS -->
+			<dd><label><select name="category_parent" id="category_parent">{S_MOVE_CATEGORY_OPTIONS}</select></dd>
+		<!-- ENDIF -->
+	</dl>
+	<dl>
+		<dt><label for="category_visible">{L_MAKE_CATEGORY_VISIBLE}:</label></dt>
+		<dd><label><input type="radio" class="radio" id="category_visible" name="category_visible" value="1"<!-- IF CATEGORY_VISIBLE --> checked<!-- ENDIF --> />{L_YES}</label>&nbsp;<label><input type="radio" class="radio" name="category_visible" value="0"<!-- IF not CATEGORY_VISIBLE --> checked<!-- ENDIF --> />{L_NO}</label></dd>
+	</dl>
+	<dl>
+		<dt><label for="category_type">{L_CATEGORY_TYPE}:</label><br /><span>{L_CATEGORY_TYPE_EXPLAIN}</span></dt>
+		<dd>
+			<select name="category_type" id="category_type">
+				<!-- BEGIN type_select -->
+				<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{type_select.NAME}</option>
+				<!-- END type_select -->
+			</select>
+		</dd>
+	</dl>
+	<dl>
+		<dt><label for="message">{L_CATEGORY_DESC}:</label></dt>
+	</dl>
+	</fieldset>
+	<!-- INCLUDE posting/posting_basic_editor.html -->
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<div class="panel bg2">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<fieldset class="submit-buttons">
+			<input type="reset" name="reset" value="{L_RESET}" class="button2" />&nbsp;
+			<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
+			{S_FORM_TOKEN}
+		</fieldset>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+</form>
+
 <!-- ELSEIF S_DELETE_CATEGORY -->
-	<h3 class="section-name">{SECTION_NAME}</h3>
+<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 <div class="panel">
 	<div class="inner"><span class="corners-top"><span></span></span>
 
-	<!-- IF S_ERROR -->
-		<div class="errorbox">
-			<h3>{L_WARNING}</h3>
-			<p>{ERROR_MSG}</p>
-		</div>
-	<!-- ENDIF -->
-
 	<form method="post" action="{U_ACTION}">
-
 	<fieldset>
 	<dl>
 		<dt><label>{L_CATEGORY_NAME}:</label></dt>

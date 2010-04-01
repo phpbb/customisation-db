@@ -51,7 +51,11 @@ $lang = array_merge($lang, array(
 	'CACHE_PURGED'				=> 'Cache has been successfully purged',
 	'CATEGORY'					=> 'Category',
 	'CATEGORY_DELETED'			=> 'Category Deleted',
+	'CATEGORY_DESC'				=> 'Category Description',
+	'CATEGORY_INFORMATION'		=> 'Category Information',
 	'CATEGORY_NAME'				=> 'Category Name',
+	'CATEGORY_TYPE'				=> 'Category Type',
+	'CATEGORY_TYPE_EXPLAIN'		=> 'The type of contributions this category will hold. Leave unset to not accept contributions.',
 	'CAT_ADDONS'				=> 'Add-ons',
 	'CAT_ANTI_SPAM'				=> 'Anti-Spam',
 	'CAT_AVATARS'				=> 'Avatars',
@@ -102,7 +106,9 @@ $lang = array_merge($lang, array(
 	'LIST'						=> 'List',
 
 	'MANAGE'					=> 'Manage',
+	'MAKE_CATEGORY_VISIBLE'		=> 'Make Category Visible',
 	'MODIFICATION'				=> 'Modification',
+	'MODIFICATIONS'				=> 'Modifications',
 	'MOVE_CONTRIBS_TO'			=> 'Move Contributions to',
 	'MOVE_DOWN'					=> 'Move down',
 	'MOVE_SUBCATS_TO'			=> 'Move Subcategories to',
@@ -113,6 +119,7 @@ $lang = array_merge($lang, array(
 	'NEW_REVISION'				=> 'New Revision',
 	'NO_AUTH'					=> 'You are not authorized to see this page.',
 	'NO_CATEGORY'				=> 'The requested category does not exist.',
+	'NO_CATEGORY_NAME'				=> 'Enter the category name',
 	'NO_CONTRIB'				=> 'The requested contribution does not exist.',
 	'NO_CONTRIBS'				=> 'No contributions could be found',
 	'NO_DESC'					=> 'You have to enter the description.',
@@ -123,6 +130,7 @@ $lang = array_merge($lang, array(
 
 	'ORDER'						=> 'Order',
 
+	'PARENT_CATEGORY'			=> 'Parent Category',
 	'POST_IP'					=> 'Post IP',
 	'PURGE_CACHE'				=> 'Purge Cache',
 
@@ -133,14 +141,17 @@ $lang = array_merge($lang, array(
 	'RATING'					=> 'Rating',
 	'REMOVE_RATING'				=> 'Remove Rating',
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
+	'ROOT'						=> 'Root',
 
 	'SELECT_CATEGORY'			=> '-- Select category --',
+	'SELECT_CATEGORY_TYPE'					=> '-- Select category type --',
 	'SELECT_SORT_METHOD'		=> 'Sort By',
 	'SITE_INDEX'				=> 'Site Index',
 	'SNIPPET'					=> 'Snippet',
 	'SORT_CONTRIB_NAME'			=> 'Contribution Name',
 	'STICKIES'					=> 'Stickies',
 	'STYLE'						=> 'Style',
+	'STYLES'					=> 'Styles',
 	'SUBSCRIBE'					=> 'Subscribe',
 	'SUBSCRIPTION_NOTIFICATION'	=> 'Subscription Notification',
 
