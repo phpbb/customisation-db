@@ -270,6 +270,10 @@ dd.faq-tools {
 	border: 0 !important;
 }
 
+dt.simple {
+	padding: 5px;
+}
+
 dd.general {
 	padding-left: 5px !important;
 	padding-right: 5px !important;
@@ -368,14 +372,37 @@ ul.rating li, ul.rated li {
 	border: 1px solid #BC2A4D;
 }
 
-/* Queue
+/* Manage sections
 --------------------------------------------- */
+
+/* Queue */
 .queue-progress {
 	background-image: url("{T_THEME_PATH}/images/icon_queue_progress.png");
 }
 
-/* Old CSS...
-***********************************************************************************/
+/* Attention */
+#attention {
+	border-bottom-style: dashed;
+	border-bottom-width: 1px;
+	padding-top: 5px;
+}
+
+#attention td {
+	padding: 3px;
+}
+
+#attention .content {
+	font-size: 1.3em;
+	padding-bottom: 10px;
+}
+
+/* Categories */
+#addcategory textarea {
+	height: 185px;
+}
+
+/* General
+--------------------------------------------- */
 
 .hidden {
 	display: none !important;
@@ -477,28 +504,6 @@ ul.rating li, ul.rated li {
 fieldset dl:hover dt label.error {
 	color: #BC2A4D;
 }
-
-#addcategory textarea {
-	height: 185px;
-}
-
-/* Attention Details Page
---------------------------------------------- */
-#attention {
-	border-bottom-style: dashed;
-	border-bottom-width: 1px;
-	padding-top: 5px;
-}
-
-#attention td {
-	padding: 3px;
-}
-
-#attention .content {
-	font-size: 1.3em;
-	padding-bottom: 10px;
-}
-
 
 #wrap {
 	width: 900px;

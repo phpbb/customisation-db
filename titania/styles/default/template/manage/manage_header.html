@@ -1,6 +1,6 @@
 <!-- INCLUDE common/overall_header.html -->
 
-<h2 class="panel-name">{PAGE_TITLE}<!-- IF CONTRIB_NAME --> - <a href="{U_VIEW_CONTRIB}">{CONTRIB_NAME}</a><!-- ENDIF --></h2>
+<h2 class="panel-name">{L_MANAGE}</h2>
 <div class="tabs">
 	<ul>
 	<!-- BEGIN nav_menu -->
@@ -11,6 +11,7 @@
 
 <div class="main-panel">
 	<div class="inner"><span class="corners-top"><span></span></span>
+		<!-- IF PAGE_TITLE --><h3 class="section-name">{PAGE_TITLE}</h3><!-- ENDIF -->
 		<!-- IF S_DISPLAY_CONTRIBUTION -->
 			<!-- INCLUDE common/contribution_details.html -->
 			<br />
