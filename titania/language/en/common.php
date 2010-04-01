@@ -52,6 +52,8 @@ $lang = array_merge($lang, array(
 	'CATEGORY'					=> 'Category',
 	'CATEGORY_DELETED'			=> 'Category Deleted',
 	'CATEGORY_DESC'				=> 'Category Description',
+	'CATEGORY_DUPLICATE_PARENT'	=> 'Category cannot be its own parent',
+	'CATEGORY_HAS_CHILDREN'		=> 'This category cannot be deleted because it contains children categories.',
 	'CATEGORY_INFORMATION'		=> 'Category Information',
 	'CATEGORY_NAME'				=> 'Category Name',
 	'CATEGORY_TYPE'				=> 'Category Type',
@@ -131,6 +133,7 @@ $lang = array_merge($lang, array(
 	'ORDER'						=> 'Order',
 
 	'PARENT_CATEGORY'			=> 'Parent Category',
+	'PARENT_NOT_EXIST'			=> 'Parent does not exist.',
 	'POST_IP'					=> 'Post IP',
 	'PURGE_CACHE'				=> 'Purge Cache',
 
@@ -144,7 +147,7 @@ $lang = array_merge($lang, array(
 	'ROOT'						=> 'Root',
 
 	'SELECT_CATEGORY'			=> '-- Select category --',
-	'SELECT_CATEGORY_TYPE'					=> '-- Select category type --',
+	'SELECT_CATEGORY_TYPE'		=> '-- Select category type --',
 	'SELECT_SORT_METHOD'		=> 'Sort By',
 	'SITE_INDEX'				=> 'Site Index',
 	'SNIPPET'					=> 'Snippet',

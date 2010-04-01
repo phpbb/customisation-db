@@ -64,21 +64,12 @@
 					<dd><strong>{CATEGORY_NAME}</strong></dd>
 				</dl>
 				<dl>
-					<dt><label for="delete_action">{L_ACTION}:</label></dt>
+					<dt><label for="delete_action">{L_CONTRIBUTIONS}:</label></dt>
 					<dd><label><input type="radio" class="radio" id="delete_action" name="action_contribs" value="delete" checked="checked" /> {L_DELETE_ALL_CONTRIBS}</label></dd>
 					<!-- IF S_MOVE_CATEGORY_OPTIONS -->
 						<dd><label><input type="radio" class="radio" name="action_contribs" value="move" /> {L_MOVE_CONTRIBS_TO}</label> <select name="contribs_to_id">{S_MOVE_CATEGORY_OPTIONS}</select></dd>
 					<!-- ENDIF -->
 				</dl>
-				<!-- IF S_HAS_SUBCATS -->
-					<dl>
-						<dt><label for="sub_delete_action">{L_ACTION}:</label></dt>
-						<dd><label><input type="radio" class="radio" id="sub_delete_action" name="action_subcats" value="delete" checked="checked" /> {L_DELETE_SUBCATS}</label></dd>
-						<!-- IF S_CATEGORIES_LIST -->
-							<dd><label><input type="radio" class="radio" name="action_subcats" value="move" /> {L_MOVE_SUBCATS_TO}</label> <select name="subcats_to_id">{S_CATEGORIES_LIST}</select></dd>
-						<!-- ENDIF -->
-					</dl>
-				<!-- ENDIF -->
 			
 				<p class="quick">
 					<input class="button1" type="submit" name="submit" value="{L_SUBMIT}" />
