@@ -141,8 +141,7 @@ else if ($submit)
 	}
 
 	// Changed permalink?
-	$old_permalink = titania::$contrib->contrib_name_clean;
-	if ($old_permalink != $permalink)
+	if ($permalink != titania::$contrib->contrib_name_clean)
 	{
 		// We check permalink
 		if (!$permalink)
@@ -246,10 +245,10 @@ else if ($submit)
 			{
 				titania::$contrib->change_status($contrib_status);
 			}
-			if ($old_permalink != $permalink)
+
+			if ($permalink != titania::$contrib->contrib_name_clean)
 			{
-				// Also need to update some other tables that cache the name, so skip for now
-				//titania::$contrib->contrib_name_clean = $permalink;
+				titania::$contrib->change_permalink($permalink);
 			}
 		}
 
@@ -322,6 +321,7 @@ foreach ($status_list as $status => $row)
 phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
 	'S_EDIT_SUBJECT'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
+	'S_IS_MODERATOR'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 
 	'CONTRIB_PERMALINK'			=> $permalink,
 	'SCREENSHOT_UPLOADER'		=> $screenshot->parse_uploader('posting/attachments/simple.html'),

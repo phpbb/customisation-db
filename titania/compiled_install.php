@@ -44,7 +44,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.1.53'	=> array(
+	'0.1.57'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -99,6 +99,18 @@ $versions = array(
 					'attention_close_user'			=> array('INDEX', 'attention_close_user'),
 					'attention_poster_id'			=> array('INDEX', 'attention_poster_id'),
 					'attention_post_time'			=> array('INDEX', 'attention_post_time'),
+				),
+			)),
+			array(TITANIA_AUTOMOD_QUEUE_TABLE, array(
+				'COLUMNS'		=> array(
+					'row_id'					=> array('UINT', NULL, 'auto_increment'),
+					'revision_id'				=> array('UINT', 0),
+					'phpbb_version_branch'		=> array('TINT:1', 0),
+					'phpbb_version_revision'	=> array('VCHAR', ''),
+				),
+				'PRIMARY_KEY'	=> 'row_id',
+				'KEYS'			=> array(
+					'revision_id'				=> array('INDEX', 'revision_id'),
 				),
 			)),
 			array(TITANIA_AUTHORS_TABLE, array(
@@ -203,7 +215,8 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'faq_id'				=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'			=> array('UINT', 0),
-					'faq_order_id'			=> array('UINT', 0),
+					'left_id'				=> array('UINT', 0),
+					'right_id'				=> array('UINT', 0),
 					'faq_subject'			=> array('STEXT_UNI', '', 'true_sort'),
 					'faq_text'				=> array('MTEXT_UNI', ''),
 					'faq_text_bitfield'		=> array('VCHAR:255', ''),
@@ -215,8 +228,8 @@ $versions = array(
 				'PRIMARY_KEY'	=> 'faq_id',
 				'KEYS'			=> array(
 					'contrib_id'		=> array('INDEX', 'contrib_id'),
-					'faq_order_id'		=> array('INDEX', 'faq_order_id'),
 					'faq_access'		=> array('INDEX', 'faq_access'),
+					'left_right_id'		=> array('INDEX', array('left_id', 'right_id')),
 				),
 			)),
 			array(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, array(
@@ -345,6 +358,7 @@ $versions = array(
 					'contrib_id'				=> array('UINT', 0),
 					'phpbb_version_branch'		=> array('TINT:1', 0),
 					'phpbb_version_revision'	=> array('VCHAR', ''),
+					'revision_validated'		=> array('BOOL', 0),
 				),
 				'PRIMARY_KEY'	=> 'row_id',
 				'KEYS'			=> array(
@@ -352,6 +366,7 @@ $versions = array(
 					'contrib_id'				=> array('INDEX', 'contrib_id'),
 					'phpbb_version_branch'		=> array('INDEX', 'phpbb_version_branch'),
 					'phpbb_version_revision'	=> array('INDEX', 'phpbb_version_revision'),
+					'revision_validated'		=> array('INDEX', 'revision_validated'),
 				),
 			)),
 			array(TITANIA_TAG_APPLIED_TABLE, array(
@@ -452,6 +467,8 @@ $versions = array(
 		),
 
 		'permission_add' => array(
+			'u_titania_admin',				// Can administrate titania
+
 			'u_titania_mod_author_mod',		// Can moderate author profiles
 			'u_titania_mod_contrib_mod',	// Can moderate all contrib items
 			'u_titania_mod_rate_reset',		// Can reset the rating on items
@@ -483,6 +500,7 @@ $versions = array(
 
 		'permission_set' => array(
 			array('ROLE_ADMIN_FULL', array(
+				'u_titania_admin',					// Can administrate titania
 				'u_titania_mod_author_mod',			// Can moderate author profiles
 				'u_titania_mod_contrib_mod',		// Can moderate all contrib items
 				'u_titania_mod_rate_reset',			// Can reset the rating on items
@@ -496,6 +514,7 @@ $versions = array(
 				'u_titania_mod_style_moderate',		// Can moderate styles
 			)),
 			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
+				'u_titania_admin',					// Can administrate titania
 				'u_titania_mod_author_mod',			// Can moderate author profiles
 				'u_titania_mod_contrib_mod',		// Can moderate all contrib items
 				'u_titania_mod_rate_reset',			// Can reset the rating on items

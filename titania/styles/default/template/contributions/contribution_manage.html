@@ -18,11 +18,11 @@
 					<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
 				</dl>
 				<!-- ENDIF -->
-				<!-- IF S_CREATE or S_EDIT_SUBJECT -->
-				<!--<dl>
+				<!-- IF S_CREATE or S_IS_MODERATOR -->
+				<dl>
 					<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label><br /><span>{L_CONTRIB_PERMALINK_EXPLAIN}</span></dt>
 					<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
-				</dl>-->
+				</dl>
 				<!-- ENDIF -->
 				<!-- IF S_CREATE -->
 				<dl>
@@ -70,7 +70,7 @@
 						</select>
 					</dd>
 				</dl>
-				<!-- IF not S_CREATE and S_EDIT_SUBJECT -->
+				<!-- IF not S_CREATE and S_IS_MODERATOR -->
 				<dl>
 					<dt><label for="contrib_status">{L_CONTRIB_STATUS}:</label><br /><span>{L_CONTRIB_STATUS_EXPLAIN}</span></dt>
 					<dd>

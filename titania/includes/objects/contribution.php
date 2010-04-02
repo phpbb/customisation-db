@@ -118,187 +118,6 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
-	 * Submit data for storing into the database
-	 * DO NOT USE THIS FUNCTION TO CHANGE THE STATUS ELSE THE AUTHORS CONTRIB COUNT WILL BE INCORRECT (use change_status function)!
-	 */
-	public function submit()
-	{
-		if (!$this->contrib_id && (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED))
-		{
-			// Increment the contrib counter
-			$this->change_author_contrib_count($this->contrib_user_id);
-
-			// Increment the count for this type
-			titania_types::increment_count($this->contrib_type);
-		}
-		// Clear the author contribs cache
-		titania::$cache->reset_author_contribs($this->contrib_user_id);
-
-		parent::submit();
-
-		// Index!
-		$this->index();
-	}
-
-	/**
-	 * Change the status of this contrib item.
-	 * YOU MUST USE THIS FUNCTION TO CHANGE THE STATUS ELSE THE AUTHORS CONTRIB COUNT WILL BE INCORRECT!
-	 *
-	 * @param int $new_status
-	 */
-	public function change_status($new_status)
-	{
-		$new_status = (int) $new_status;
-		$old_status = $this->contrib_status;
-
-		if ($old_status == $new_status)
-		{
-			return;
-		}
-
-		$this->contrib_status = $new_status;
-
-		// Grab the current authors
-		$author_list = array($this->contrib_user_id);
-		$sql = 'SELECT user_id
-			FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
-			WHERE contrib_id = ' . (int) $this->contrib_id;
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$author_list[] = $row['user_id'];
-		}
-		phpbb::$db->sql_freeresult($result);
-
-		switch ($old_status)
-		{
-			case TITANIA_CONTRIB_NEW :
-			case TITANIA_CONTRIB_CLEANED :
-				if ($new_status == TITANIA_CONTRIB_APPROVED)
-				{
-					// Increment the count for the authors
-					$this->change_author_contrib_count($author_list);
-
-					// Increment the count for this type
-					titania_types::increment_count($this->contrib_type);
-
-					// Increment the category count
-					$this->update_category_count();
-				}
-			break;
-
-			case TITANIA_CONTRIB_APPROVED :
-				// Decrement the count for the authors
-				$this->change_author_contrib_count($author_list, '-', true);
-
-				// Decrement the count for this type
-				titania_types::decrement_count($this->contrib_type);
-
-				// Decrement the category count
-				$this->update_category_count('-', true);
-			break;
-		}
-
-		$sql = 'UPDATE ' . $this->sql_table . '
-			SET contrib_status = ' . $this->contrib_status . '
-			WHERE contrib_id = ' . $this->contrib_id;
-		phpbb::$db->sql_query($sql);
-
-		// Index!
-		$this->index();
-	}
-
-	public function validate($contrib_categories = array())
-	{
-		$error = array();
-
-		if (utf8_clean_string($this->contrib_name) == '')
-		{
-			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_NAME'];
-		}
-
-		if (!$this->contrib_type)
-		{
-			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_TYPE'];
-		}
-		else
-		{
-			if (!$contrib_categories)
-			{
-				$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
-			}
-			else
-			{
-				$categories	= titania::$cache->get_categories();
-
-				foreach ($contrib_categories as $category)
-				{
-					if (!isset($categories[$category]))
-					{
-						$error[] = phpbb::$user->lang['NO_CATEGORY'];
-					}
-					else if ($categories[$category]['category_type'] != $this->contrib_type)
-					{
-						$error[] = phpbb::$user->lang['WRONG_CATEGORY'];
-					}
-				}
-			}
-		}
-
-		if (!$this->contrib_desc)
-		{
-			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_DESC'];
-		}
-
-		if (!$this->contrib_id)
-		{
-			if (!$this->contrib_name_clean)
-			{
-				// If they leave it blank automatically create it
-				$this->contrib_name_clean = titania_url::url_slug($this->contrib_name);
-
-				$append = '';
-				$i = 2;
-				while ($this->validate_permalink($this->contrib_name_clean . $append) == false)
-				{
-					$append = '_' . $i;
-					$i++;
-				}
-
-				$this->contrib_name_clean = $this->contrib_name_clean . $append;
-			}
-			elseif (titania_url::url_slug($this->contrib_name_clean) !== $this->contrib_name_clean)
-			{
-				$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania_url::url_slug($this->contrib_name_clean));
-			}
-			elseif (!$this->validate_permalink($this->contrib_name_clean))
-			{
-				$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
-			}
-		}
-
-		return $error;
-	}
-
-	/*
-	 * Validate a contrib permalink
-	 *
-	 * @param string $permalink
-	 * @return bool
-	 */
-	public function validate_permalink($permalink)
-	{
-		$sql = 'SELECT contrib_id
-			FROM ' . $this->sql_table . "
-			WHERE contrib_name_clean = '" . phpbb::$db->sql_escape($permalink) . "'";
-		$result = phpbb::$db->sql_query($sql);
-		$found = phpbb::$db->sql_fetchfield('contrib_id');
-		phpbb::$db->sql_freeresult($result);
-
-		return ($found) ? false : true;
-	}
-
-	/**
 	 * Load the contrib
 	 *
 	 * @param int|string $contrib The contrib item (contrib_name_clean, contrib_id)
@@ -642,6 +461,285 @@ class titania_contribution extends titania_message_object
 		}
 
 		return titania_url::build_url(titania_types::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean);
+	}
+
+	/**
+	 * Submit data for storing into the database
+	 * DO NOT USE THIS FUNCTION TO CHANGE THE STATUS ELSE THE AUTHORS CONTRIB COUNT WILL BE INCORRECT (use change_status function)!
+	 */
+	public function submit()
+	{
+		if (!$this->contrib_id && (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED))
+		{
+			// Increment the contrib counter
+			$this->change_author_contrib_count($this->contrib_user_id);
+
+			// Increment the count for this type
+			titania_types::increment_count($this->contrib_type);
+		}
+		// Clear the author contribs cache
+		titania::$cache->reset_author_contribs($this->contrib_user_id);
+
+		parent::submit();
+
+		// Index!
+		$this->index();
+	}
+
+	/**
+	 * Change the status of this contrib item.
+	 * YOU MUST USE THIS FUNCTION TO CHANGE THE STATUS ELSE THE AUTHORS CONTRIB COUNT WILL BE INCORRECT!
+	 *
+	 * @param int $new_status
+	 */
+	public function change_status($new_status)
+	{
+		$new_status = (int) $new_status;
+		$old_status = $this->contrib_status;
+
+		if ($old_status == $new_status)
+		{
+			return;
+		}
+
+		$this->contrib_status = $new_status;
+
+		// Grab the current authors
+		$author_list = array($this->contrib_user_id);
+		$sql = 'SELECT user_id
+			FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+			WHERE contrib_id = ' . (int) $this->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$author_list[] = $row['user_id'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		switch ($old_status)
+		{
+			case TITANIA_CONTRIB_NEW :
+			case TITANIA_CONTRIB_CLEANED :
+				if ($new_status == TITANIA_CONTRIB_APPROVED)
+				{
+					// Increment the count for the authors
+					$this->change_author_contrib_count($author_list);
+
+					// Increment the count for this type
+					titania_types::increment_count($this->contrib_type);
+
+					// Increment the category count
+					$this->update_category_count();
+				}
+			break;
+
+			case TITANIA_CONTRIB_APPROVED :
+				// Decrement the count for the authors
+				$this->change_author_contrib_count($author_list, '-', true);
+
+				// Decrement the count for this type
+				titania_types::decrement_count($this->contrib_type);
+
+				// Decrement the category count
+				$this->update_category_count('-', true);
+			break;
+		}
+
+		$sql = 'UPDATE ' . $this->sql_table . '
+			SET contrib_status = ' . $this->contrib_status . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
+
+		// Index!
+		$this->index();
+	}
+
+	/**
+	* Change the permalink to the contribution
+	* Do not change it yourself, always use this function to do so
+	*
+	* @param string $new_permalink
+	*/
+	public function change_permalink($new_permalink)
+	{
+		$old_permalink = $this->contrib_name_clean;
+		$new_permalink = titania_url::url_slug($new_permalink);
+
+		if (!$this->validate_permalink($new_permalink))
+		{
+			return false;
+		}
+
+		$this->contrib_name_clean = $new_permalink;
+
+		// Attention items
+		$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . '
+			SET attention_url = \'' . phpbb::$db->sql_escape($this->get_url()) . '\'
+			WHERE attention_object_type = ' . TITANIA_CONTRIB . '
+				AND attention_object_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
+
+		// Update the topics/posts under this
+		$topic_ids = $post_ids = array();
+		$topic = new titania_topic;
+		$topic->topic_url = $this->get_url('support');
+		$sql = 'SELECT topic_id, topic_subject_clean FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE ' . phpbb::$db->sql_in_set('topic_type', array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION)) . '
+				AND parent_id = ' . $this->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$topic_ids[$row['topic_id']] = $row;
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		if (sizeof($topic_ids))
+		{
+			$post = new titania_post;
+			$post->topic = $topic;
+			$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . '
+				WHERE ' . phpbb::$db->sql_in_set('topic_id', array_map('intval', array_keys($topic_ids)));
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$topic->__set_array($topic_ids[$row['topic_id']]);
+				$post->__set_array($row);
+
+				$post->post_url = $topic->get_url();
+				$post_ids[$row['post_id']] = $post->post_url;
+
+				// Need to reindex as well...
+				$post->index();
+
+				// Update the posts table
+				$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
+					SET post_url = \'' . phpbb::$db->sql_escape($post->post_url) . '\'
+					WHERE post_id = ' . $row['post_id'];
+				phpbb::$db->sql_query($sql);
+			}
+			phpbb::$db->sql_freeresult($result);
+			unset($topic, $post);
+
+			// Update the topics table
+			$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+				SET topic_url = \'' . phpbb::$db->sql_escape($this->get_url('support')) . '\'
+				WHERE ' . phpbb::$db->sql_in_set('topic_type', array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION)) . '
+					AND parent_id = ' . $this->contrib_id;
+			phpbb::$db->sql_query($sql);
+
+			if (sizeof($post_ids))
+			{
+				// On to attention items for posts
+				$sql = 'SELECT attention_id, attention_object_id FROM ' . TITANIA_ATTENTION_TABLE . '
+					WHERE attention_object_type = ' . TITANIA_POST . '
+						AND ' . phpbb::$db->sql_in_set('attention_object_id', array_map('intval', array_keys($post_ids)));
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . '
+						SET attention_url = \'' . phpbb::$db->sql_escape($post_ids[$row['attention_object_id']]) . '\'
+						WHERE attention_id = ' . $row['attention_id'];
+					phpbb::$db->sql_query($sql);
+				}
+				phpbb::$db->sql_freeresult($result);
+			}
+		}
+
+		// Finally update the contrib_name_clean
+		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+			SET contrib_name_clean = \'' . phpbb::$db->sql_escape($this->contrib_name_clean) . '\'
+			WHERE contrib_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
+	}
+
+	public function validate($contrib_categories = array())
+	{
+		$error = array();
+
+		if (utf8_clean_string($this->contrib_name) == '')
+		{
+			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_NAME'];
+		}
+
+		if (!$this->contrib_type)
+		{
+			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_TYPE'];
+		}
+		else
+		{
+			if (!$contrib_categories)
+			{
+				$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
+			}
+			else
+			{
+				$categories	= titania::$cache->get_categories();
+
+				foreach ($contrib_categories as $category)
+				{
+					if (!isset($categories[$category]))
+					{
+						$error[] = phpbb::$user->lang['NO_CATEGORY'];
+					}
+					else if ($categories[$category]['category_type'] != $this->contrib_type)
+					{
+						$error[] = phpbb::$user->lang['WRONG_CATEGORY'];
+					}
+				}
+			}
+		}
+
+		if (!$this->contrib_desc)
+		{
+			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_DESC'];
+		}
+
+		if (!$this->contrib_id)
+		{
+			if (!$this->contrib_name_clean)
+			{
+				// If they leave it blank automatically create it
+				$this->contrib_name_clean = titania_url::url_slug($this->contrib_name);
+
+				$append = '';
+				$i = 2;
+				while ($this->validate_permalink($this->contrib_name_clean . $append) == false)
+				{
+					$append = '_' . $i;
+					$i++;
+				}
+
+				$this->contrib_name_clean = $this->contrib_name_clean . $append;
+			}
+			elseif (titania_url::url_slug($this->contrib_name_clean) !== $this->contrib_name_clean)
+			{
+				$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania_url::url_slug($this->contrib_name_clean));
+			}
+			elseif (!$this->validate_permalink($this->contrib_name_clean))
+			{
+				$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
+			}
+		}
+
+		return $error;
+	}
+
+	/*
+	 * Validate a contrib permalink
+	 *
+	 * @param string $permalink
+	 * @return bool
+	 */
+	public function validate_permalink($permalink)
+	{
+		$sql = 'SELECT contrib_id
+			FROM ' . $this->sql_table . "
+			WHERE contrib_name_clean = '" . phpbb::$db->sql_escape($permalink) . "'";
+		$result = phpbb::$db->sql_query($sql);
+		$found = phpbb::$db->sql_fetchfield('contrib_id');
+		phpbb::$db->sql_freeresult($result);
+
+		return ($found) ? false : true;
 	}
 
 	/**

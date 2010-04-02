@@ -247,7 +247,7 @@ function titania_msg_handler($errno, $msg_text, $errfile, $errline)
 			}
 			else
 			{
-				titania::page_footer();
+				titania::page_footer(false);
 			}
 
 			exit_handler();

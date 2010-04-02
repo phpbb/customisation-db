@@ -851,10 +851,8 @@ $versions = array(
 		'permission_set' => array(
 			array('ROLE_ADMIN_FULL', array(
 				'u_titania_admin',
-				'u_titania_admin',
 			)),
 			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
-				'u_titania_admin',
 				'u_titania_admin',
 			)),
 		),
