@@ -167,7 +167,7 @@ if ($queue_id)
 						else
 						{
 							// Link the style demo as the contrib demo if not already provided
-							if (!$contrib->contrib_demo && titania::$config->demo_style_url)
+							if ((!$contrib->contrib_demo && titania::$config->demo_style_url) || (titania::$config->demo_style_url && !preg_match('$' . str_replace('%s', '[0-9]+', titania::$config->demo_style_url) . '$', $contrib->contrib_demo)))
 							{
 								$contrib->contrib_demo = sprintf(titania::$config->demo_style_url, $style_id);
 								$contrib->submit();

@@ -670,6 +670,13 @@ parse_css_file = {PARSE_CSS_FILE}
 			}
 		}
 
+		// Have UMIL refresh the template, theme, imageset
+		phpbb::_include('../umil/umil', false, 'umil');
+		$umil = new umil(true, $db);
+		$umil->cache_purge('template', $style_id);
+		$umil->cache_purge('theme', $style_id);
+		$umil->cache_purge('imageset', $style_id);
+
 		foreach ($variables as $variable)
 		{
 			$GLOBALS[$variable] = ${'_' . $variable};
