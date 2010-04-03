@@ -494,6 +494,8 @@ class titania_contrib_tools
 	*/
 	function install_demo_style($phpbb_root_path)
 	{
+		phpbb::$user->add_lang('acp/styles');
+
 		if ($phpbb_root_path[strlen($phpbb_root_path) - 1] != '/')
 		{
 			$phpbb_root_path .= '/';
@@ -535,13 +537,11 @@ class titania_contrib_tools
 		}
 
 		$package_root = $this->find_root(false, 'style.cfg');
+		$stylecfg = parse_cfg_file($this->unzip_dir . $package_root . '/style.cfg');
+		$style_root = $phpbb_root_path . 'styles/' . basename($stylecfg['name']) . '/';
 
-		if (($package_name = basename($package_root)) == '')
-		{
-			$package_name = basename($this->original_zip, 'zip');
-		}
-
-		$this->mvdir_recursive($this->unzip_dir . $package_root . '/', $style_root = $phpbb_root_path . 'styles/' . $package_name . '/');
+		$this->mvdir_recursive($this->unzip_dir . $package_root, $style_root, false);
+		$this->rmdir_recursive($this->unzip_dir . $package_root);
 
 		$variables = array('db', 'phpbb_root_path');
 
@@ -554,18 +554,121 @@ class titania_contrib_tools
 
 		// Get the acp_styles class.
 		phpbb::_include('acp/acp_styles', false, 'acp_styles');
-
 		$styles = new acp_styles();
+
+		// Fill the configuration variables
+		$styles->style_cfg = $styles->template_cfg = $styles->theme_cfg = $styles->imageset_cfg = '
+#
+# phpBB {MODE} configuration file
+#
+# @package phpBB3
+# @copyright (c) 2005 phpBB Group
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+#
+#
+# At the left is the name, please do not change this
+# At the right the value is entered
+# For on/off options the valid values are on, off, 1, 0, true and false
+#
+# Values get trimmed, if you want to add a space in front or at the end of
+# the value, then enclose the value with single or double quotes.
+# Single and double quotes do not need to be escaped.
+#
+#
+
+# General Information about this {MODE}
+name = {NAME}
+copyright = {COPYRIGHT}
+version = {VERSION}
+';
+
+		$styles->theme_cfg .= '
+# Some configuration options
+
+#
+# You have to turn this option on if you want to use the
+# path template variables ({T_IMAGESET_PATH} for example) within
+# your css file.
+# This is mostly the case if you want to use language specific
+# images within your css file.
+#
+parse_css_file = {PARSE_CSS_FILE}
+';
+
+		$styles->template_cfg .= '
+# Some configuration options
+
+#
+# You can use this function to inherit templates from another template.
+# The template of the given name has to be installed.
+# Templates cannot inherit from inheriting templates.
+#';
+
+		$styles->imageset_keys = array(
+			'logos' => array(
+				'site_logo',
+			),
+			'buttons'	=> array(
+				'icon_back_top', 'icon_contact_aim', 'icon_contact_email', 'icon_contact_icq', 'icon_contact_jabber', 'icon_contact_msnm', 'icon_contact_pm', 'icon_contact_yahoo', 'icon_contact_www', 'icon_post_delete', 'icon_post_edit', 'icon_post_info', 'icon_post_quote', 'icon_post_report', 'icon_user_online', 'icon_user_offline', 'icon_user_profile', 'icon_user_search', 'icon_user_warn', 'button_pm_forward', 'button_pm_new', 'button_pm_reply', 'button_topic_locked', 'button_topic_new', 'button_topic_reply',
+			),
+			'icons'		=> array(
+				'icon_post_target', 'icon_post_target_unread', 'icon_topic_attach', 'icon_topic_latest', 'icon_topic_newest', 'icon_topic_reported', 'icon_topic_unapproved', 'icon_friend', 'icon_foe',
+			),
+			'forums'	=> array(
+				'forum_link', 'forum_read', 'forum_read_locked', 'forum_read_subforum', 'forum_unread', 'forum_unread_locked', 'forum_unread_subforum', 'subforum_read', 'subforum_unread'
+			),
+			'folders'	=> array(
+				'topic_moved', 'topic_read', 'topic_read_mine', 'topic_read_hot', 'topic_read_hot_mine', 'topic_read_locked', 'topic_read_locked_mine', 'topic_unread', 'topic_unread_mine', 'topic_unread_hot', 'topic_unread_hot_mine', 'topic_unread_locked', 'topic_unread_locked_mine', 'sticky_read', 'sticky_read_mine', 'sticky_read_locked', 'sticky_read_locked_mine', 'sticky_unread', 'sticky_unread_mine', 'sticky_unread_locked', 'sticky_unread_locked_mine', 'announce_read', 'announce_read_mine', 'announce_read_locked', 'announce_read_locked_mine', 'announce_unread', 'announce_unread_mine', 'announce_unread_locked', 'announce_unread_locked_mine', 'global_read', 'global_read_mine', 'global_read_locked', 'global_read_locked_mine', 'global_unread', 'global_unread_mine', 'global_unread_locked', 'global_unread_locked_mine', 'pm_read', 'pm_unread',
+			),
+			'polls'		=> array(
+				'poll_left', 'poll_center', 'poll_right',
+			),
+			'ui'		=> array(
+				'upload_bar',
+			),
+			'user'		=> array(
+				'user_icon1', 'user_icon2', 'user_icon3', 'user_icon4', 'user_icon5', 'user_icon6', 'user_icon7', 'user_icon8', 'user_icon9', 'user_icon10',
+			),
+		);
 
 		// Define references.
 		$error = array();
 		$style_id = 0;
-		$style_row = array();
-
-		$stylecfg = parse_cfg_file($package_root . '/style.cfg');
+		$style_row = array(
+			'install_name'			=> $stylecfg['name'],
+			'install_copyright'		=> $stylecfg['copyright'],
+			'template_id'			=> 0,
+			'template_name'			=> $stylecfg['name'],
+			'template_copyright'	=> $stylecfg['copyright'],
+			'theme_id'				=> 0,
+			'theme_name'			=> $stylecfg['name'],
+			'theme_copyright'		=> $stylecfg['copyright'],
+			'imageset_id'			=> 0,
+			'imageset_name'			=> $stylecfg['name'],
+			'imageset_copyright'	=> $stylecfg['copyright'],
+			'store_db'				=> 0,
+			'style_active'			=> 1,
+			'style_default'			=> 0,
+		);
 
 		// Install the style.
-		$styles->install_style($error, 'install', $style_root, $style_id, $stylecfg['name'], $package_name, $stylecfg['copyright'], true, false, $style_row);
+								// (&$error, $action, $root_path, &$id, $name, $path, $copyright, $active, $default, &$style_row, $template_root_path = false, $template_path = false, $theme_root_path = false, $theme_path = false, $imageset_root_path = false, $imageset_path = false)
+		if (!$styles->install_style($error, 'install', $style_root, $style_id, $stylecfg['name'], basename($stylecfg['name']), $stylecfg['copyright'], true, false, $style_row))
+		{
+			if ($error != array(phpbb::$user->lang['STYLE_ERR_NAME_EXIST']))
+			{
+				$this->error = array_merge($this->error, $error);
+			}
+			else
+			{
+				$sql = 'SELECT style_id
+					FROM ' . STYLES_TABLE . "
+					WHERE style_name = '" . $db->sql_escape(basename($stylecfg['name'])) . "'";
+				$db->sql_query($sql);
+				$style_id = $db->sql_fetchfield('style_id');
+				$db->sql_freeresult();
+			}
+		}
 
 		foreach ($variables as $variable)
 		{
@@ -575,7 +678,7 @@ class titania_contrib_tools
 		return $style_id;
 	}
 
-	public function extract($archive, $target)
+	public function extract($archive, $target, $check_minimum_directory = true)
 	{
 		if (!file_exists($archive))
 		{
@@ -583,13 +686,16 @@ class titania_contrib_tools
 		}
 
 		// Some simple file protection to prevent getting out of the titania root
-		if (!$this->check_filesystem_path($archive))
+		if ($check_minimum_directory)
 		{
-			return false;
-		}
-		if (!$this->check_filesystem_path($target))
-		{
-			return false;
+			if (!$this->check_filesystem_path($archive))
+			{
+				return false;
+			}
+			if (!$this->check_filesystem_path($target))
+			{
+				return false;
+			}
 		}
 
 		// Clear out old stuff if there is anything here...
@@ -611,16 +717,19 @@ class titania_contrib_tools
 	* @param string $target The source to archive
 	* @param string $archive The archive name (including the path to it)
 	*/
-	public function archive($target, $archive)
+	public function archive($target, $archive, $check_minimum_directory = true)
 	{
 		// Some simple file protection to prevent getting out of the titania root
-		if (!$this->check_filesystem_path($target))
+		if ($check_minimum_directory)
 		{
-			return false;
-		}
-		if (!$this->check_filesystem_path($archive))
-		{
-			return false;
+			if (!$this->check_filesystem_path($target))
+			{
+				return false;
+			}
+			if (!$this->check_filesystem_path($archive))
+			{
+				return false;
+			}
 		}
 
 		// Clear out old stuff if there is anything here...
@@ -679,19 +788,22 @@ class titania_contrib_tools
 	* @param mixed $source
 	* @param mixed $destination
 	*/
-	public function mvdir_recursive($source, $destination)
+	public function mvdir_recursive($source, $destination, $check_minimum_directory = true)
 	{
 		$source = (substr($source, -1) == '/') ? $source : $source . '/';
 		$destination = (substr($destination, -1) == '/') ? $destination : $destination . '/';
 
 		// Some simple file protection to prevent getting out of the titania root
-		if (!$this->check_filesystem_path($source))
+		if ($check_minimum_directory)
 		{
-			return false;
-		}
-		if (!$this->check_filesystem_path($destination))
-		{
-			return false;
+			if (!$this->check_filesystem_path($source))
+			{
+				return false;
+			}
+			if (!$this->check_filesystem_path($destination))
+			{
+				return false;
+			}
 		}
 
 		if (strpos($destination, $source) !== false)
@@ -707,16 +819,16 @@ class titania_contrib_tools
 			$temp_destination .= $i;
 
 			// Move to temp directory
-			$this->mvdir_recursive($source, $temp_destination);
+			$this->mvdir_recursive($source, $temp_destination, $check_minimum_directory);
 
 			// Remove source directory
-			$this->rmdir_recursive($source);
+			$this->rmdir_recursive($source, $check_minimum_directory);
 
 			// Move from temp directory to the final directory
-			$this->mvdir_recursive($temp_destination, $destination);
+			$this->mvdir_recursive($temp_destination, $destination, $check_minimum_directory);
 
 			// Remove temp directory
-			$this->rmdir_recursive($temp_destination);
+			$this->rmdir_recursive($temp_destination, $check_minimum_directory);
 
 			return;
 		}
@@ -728,7 +840,7 @@ class titania_contrib_tools
 
 		if (!is_dir($destination))
 		{
-			$this->mkdir_recursive($destination);
+			$this->mkdir_recursive($destination, $check_minimum_directory);
 		}
 
 		foreach (scandir($source) as $item)
@@ -740,7 +852,7 @@ class titania_contrib_tools
 
 			if (is_dir($source . $item))
 			{
-				$this->mvdir_recursive($source . $item . '/', $destination . $item . '/');
+				$this->mvdir_recursive($source . $item . '/', $destination . $item . '/', $check_minimum_directory);
 			}
 			else if (is_file($source . $item))
 			{
@@ -748,6 +860,8 @@ class titania_contrib_tools
 				phpbb_chmod($destination . $item, CHMOD_READ | CHMOD_WRITE);
 			}
 		}
+
+		return true;
 	}
 
 	/**
@@ -755,14 +869,17 @@ class titania_contrib_tools
 	*
 	* @param string $target_filename The target directory we wish to have
 	*/
-	public function mkdir_recursive($target_filename)
+	public function mkdir_recursive($target_filename, $check_minimum_directory = true)
 	{
 		$target_filename = (substr($target_filename, -1) == '/') ? $target_filename : $target_filename . '/';
 
 		// Some simple file protection to prevent getting out of the titania root
-		if (!$this->check_filesystem_path($target_filename))
+		if ($check_minimum_directory)
 		{
-			return false;
+			if (!$this->check_filesystem_path($target_filename))
+			{
+				return false;
+			}
 		}
 
 		if (!is_dir($target_filename))
@@ -787,6 +904,8 @@ class titania_contrib_tools
 				}
 			}
 		}
+
+		return true;
 	}
 
 	/**
@@ -794,14 +913,17 @@ class titania_contrib_tools
 	*
 	* @param string $target_filename The target directory we wish to remove
 	*/
-	public function rmdir_recursive($target_filename)
+	public function rmdir_recursive($target_filename, $check_minimum_directory = true)
 	{
 		$target_filename = (substr($target_filename, -1) == '/') ? $target_filename : $target_filename . '/';
 
 		// Some simple file protection to prevent getting out of the titania root
-		if (!$this->check_filesystem_path($target_filename))
+		if ($check_minimum_directory)
 		{
-			return false;
+			if (!$this->check_filesystem_path($target_filename))
+			{
+				return false;
+			}
 		}
 
 		if (!is_dir($target_filename))
