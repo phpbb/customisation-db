@@ -23,7 +23,7 @@ if (!defined('IN_PHPBB'))
 */
 class phpbb_ezcomponents_loader
 {
-	private $loaded = array();
+	private static $loaded = array();
 
 	/**
 	* Loads all classes of a particular component.
@@ -31,18 +31,19 @@ class phpbb_ezcomponents_loader
 	*
 	* @param	$component	string	Lower case component name
 	*/
-	public function load_component($component)
+	public static function load_component($component)
 	{
 		// don't allow loading the same component twice
-		if (isset($this->loaded[$component]) && $this->loaded[$component])
+		if (isset(self::$loaded[$component]) && self::$loaded[$component])
 		{
 			return;
 		}
+		self::$loaded[$component] = true;
 
 		// make sure base is always loaded first
-		if ($component != 'base' && !isset($this->loaded['base']))
+		if ($component != 'base' && !isset(self::$loaded['base']))
 		{
-			$this->load_component('base');
+			self::load_component('base');
 		}
 
 		$ezc_path = TITANIA_ROOT . 'includes/library/ezcomponents/';

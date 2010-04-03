@@ -24,10 +24,8 @@ if (titania::$config->search_backend == 'zend')
 }
 
 // Using the phpBB ezcomponents loader
-titania::_include('library/ezcomponents/loader', 'phpbb_ezcomponents_loader');
-$loader = new phpbb_ezcomponents_loader();
-$loader->load_component('search');
-unset($loader);
+titania::_include('library/ezcomponents/loader', false, 'phpbb_ezcomponents_loader');
+phpbb_ezcomponents_loader::load_component('search');
 
 class titania_search
 {

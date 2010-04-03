@@ -66,15 +66,8 @@ class titania_contrib_tools
 			$this->new_dir_name = utf8_basename($new_dir_name);
 			$this->unzip_dir = titania::$config->contrib_temp_path . $this->new_dir_name . '/';
 
-			// Clear out old stuff if there is anything here...
-			$this->rmdir_recursive($this->unzip_dir);
-
-			phpbb::_include('functions_compress', false, 'compress_zip');
-
-			// Unzip to our temp directory
-			$zip = new compress_zip('r', $this->original_zip);
-			$zip->extract($this->unzip_dir);
-			$zip->close();
+			// Unzippage
+			$this->extract($this->original_zip, $this->unzip_dir);
 		}
 	}
 
@@ -322,39 +315,7 @@ class titania_contrib_tools
     {
     	@unlink($this->original_zip);
 
-		$zip = new compress_zip('w', $this->original_zip);
-
-		$this->_replace_zip($zip);
-
-		$zip->close();
-    }
-
-    /**
-    * Helper to add the files in the new zip package
-    */
-    private function _replace_zip(&$zip, $sub_dir = '')
-    {
-    	if (!is_dir($this->unzip_dir . $sub_dir))
-    	{
-			return;
-		}
-
-		foreach (scandir($this->unzip_dir . $sub_dir) as $item)
-		{
-            if ($item == '.' || $item == '..')
-			{
-				continue;
-			}
-
-			if (is_dir($this->unzip_dir . $sub_dir . $item))
-			{
-				$this->_replace_zip($zip, $sub_dir . $item . '/');
-			}
-			else
-			{
-				$zip->add_custom_file($this->unzip_dir . $sub_dir . $item, $this->new_dir_name . '/' . $sub_dir . $item);
-			}
-		}
+    	$this->archive($this->unzip_dir, $this->original_zip);
     }
 
 
@@ -407,9 +368,6 @@ class titania_contrib_tools
 
 		if (!file_exists($phpbb_root . 'common.php'))
 		{
-			// Need to unzip
-			phpbb::_include('functions_compress', false, 'compress_zip');
-
 			if (!file_exists(TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip'))
 			{
 				$this->error[] = sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], 'store/phpbb_packages/phpBB-' . $version . '.zip');
@@ -417,9 +375,7 @@ class titania_contrib_tools
 			}
 
 			// Unzip to our temp directory
-			$zip = new compress_zip('r', TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip');
-			$zip->extract($phpbb_root);
-			$zip->close();
+			$this->extract(TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip', $phpbb_root);
 
 			// Find the phpBB root
 			$package_root = $this->find_root($phpbb_root, 'common.php');
@@ -574,12 +530,8 @@ class titania_contrib_tools
 			// Clear out old stuff if there is anything here...
 			$this->rmdir_recursive($this->unzip_dir);
 
-			phpbb::_include('functions_compress', false, 'compress_zip');
-
 			// Unzip to our temp directory
-			$zip = new compress_zip('r', $this->original_zip);
-			$zip->extract($this->unzip_dir);
-			$zip->close();
+			$this->extract($this->original_zip, $this->unzip_dir);
 		}
 
 		$package_root = $this->find_root(false, 'style.cfg');
@@ -623,6 +575,104 @@ class titania_contrib_tools
 		return $style_id;
 	}
 
+	public function extract($archive, $target)
+	{
+		if (!file_exists($archive))
+		{
+			trigger_error(sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], basename($archive)));
+		}
+
+		// Some simple file protection to prevent getting out of the titania root
+		if (!$this->check_filesystem_path($archive))
+		{
+			return false;
+		}
+		if (!$this->check_filesystem_path($target))
+		{
+			return false;
+		}
+
+		// Clear out old stuff if there is anything here...
+		$this->rmdir_recursive($target);
+
+		// Using the phpBB ezcomponents loader
+		titania::_include('library/ezcomponents/loader', false, 'phpbb_ezcomponents_loader');
+		phpbb_ezcomponents_loader::load_component('archive');
+
+		// ezcomponents archive handler
+		$ezcarchive = ezcArchive::open($archive, ezcArchive::ZIP);
+		$ezcarchive->extract($target);
+		$ezcarchive->close();
+	}
+
+	/**
+	* Create an archive
+	*
+	* @param string $target The source to archive
+	* @param string $archive The archive name (including the path to it)
+	*/
+	public function archive($target, $archive)
+	{
+		// Some simple file protection to prevent getting out of the titania root
+		if (!$this->check_filesystem_path($target))
+		{
+			return false;
+		}
+		if (!$this->check_filesystem_path($archive))
+		{
+			return false;
+		}
+
+		// Clear out old stuff if there is anything here...
+		if (file_exists($archive))
+		{
+			@unlink($archive);
+		}
+
+		// If the parent directory doesn't exist, create it
+		if (!file_exists(substr($archive, 0, strrpos($archive, '/'))))
+		{
+			$this->mkdir_recursive(substr($archive, 0, strrpos($archive, '/')));
+		}
+
+		// Using the phpBB ezcomponents loader
+		titania::_include('library/ezcomponents/loader', false, 'phpbb_ezcomponents_loader');
+		phpbb_ezcomponents_loader::load_component('archive');
+
+		// ezcomponents archive handler
+		$ezcarchive = ezcArchive::open($archive, ezcArchive::ZIP);
+		$ezcarchive->truncate();
+
+		$this->_archive($target, $ezcarchive);
+
+		$ezcarchive->close();
+	}
+
+	/**
+	* Add all the files under a directory to the archive (helper)
+	*/
+	private function _archive($target, &$ezcarchive, $origin = false)
+	{
+		$origin = ($origin === false) ? $target : $origin;
+
+		foreach (scandir($target) as $item)
+		{
+            if ($item == '.' || $item == '..')
+			{
+				continue;
+			}
+
+			if (is_dir($target . $item))
+			{
+				$this->_archive($target . $item . '/', $ezcarchive, $origin);
+			}
+			else if (is_file($target . $item))
+			{
+				$ezcarchive->appendToCurrent($target . $item, $origin);
+			}
+		}
+	}
+
 	/**
 	* Move a directory and children
 	*
@@ -633,6 +683,16 @@ class titania_contrib_tools
 	{
 		$source = (substr($source, -1) == '/') ? $source : $source . '/';
 		$destination = (substr($destination, -1) == '/') ? $destination : $destination . '/';
+
+		// Some simple file protection to prevent getting out of the titania root
+		if (!$this->check_filesystem_path($source))
+		{
+			return false;
+		}
+		if (!$this->check_filesystem_path($destination))
+		{
+			return false;
+		}
 
 		if (strpos($destination, $source) !== false)
 		{
@@ -699,6 +759,12 @@ class titania_contrib_tools
 	{
 		$target_filename = (substr($target_filename, -1) == '/') ? $target_filename : $target_filename . '/';
 
+		// Some simple file protection to prevent getting out of the titania root
+		if (!$this->check_filesystem_path($target_filename))
+		{
+			return false;
+		}
+
 		if (!is_dir($target_filename))
 		{
 			$str = '';
@@ -731,6 +797,12 @@ class titania_contrib_tools
 	public function rmdir_recursive($target_filename)
 	{
 		$target_filename = (substr($target_filename, -1) == '/') ? $target_filename : $target_filename . '/';
+
+		// Some simple file protection to prevent getting out of the titania root
+		if (!$this->check_filesystem_path($target_filename))
+		{
+			return false;
+		}
 
 		if (!is_dir($target_filename))
 		{
@@ -801,5 +873,38 @@ class titania_contrib_tools
 		}
 
 		return $file_info;
+	}
+
+	/**
+	* Check a filesystem path to make sure it is within a minimum directory
+	*
+	* @param string $directory
+	* @param mixed $minimum_directory if false, we check the store, upload path, and temp path
+	*/
+	public function check_filesystem_path($directory, $minimum_directory = false)
+	{
+		// If minimum directory is false, we check the store, upload path, and temp path
+		if ($minimum_directory === false)
+		{
+			return ($this->check_filesystem_path($directory, TITANIA_ROOT . 'store/') || $this->check_filesystem_path($directory, titania::$config->upload_path) || $this->check_filesystem_path($directory, titania::$config->contrib_temp_path)) ? true : false;
+		}
+
+		// Find the directory (ignore files and roll back through non-existant directories)
+		$directory = substr($directory, 0, strrpos($directory, '/'));
+		while (!file_exists($directory))
+		{
+			$directory = substr($directory, 0, strrpos($directory, '/', -1));
+		}
+
+		$minimum_directory = phpbb_realpath($minimum_directory);
+		$directory = phpbb_realpath($directory);
+
+		// If the path of the directory doesn't start the same as the minimum directory then it's not within the directory
+		if (strpos($directory, $minimum_directory) !== 0)
+		{
+			return false;
+		}
+
+		return true;
 	}
 }
