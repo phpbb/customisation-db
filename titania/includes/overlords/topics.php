@@ -165,11 +165,8 @@ class topics_overlord
 
 	/**
 	* Do everything we need to display the forum like page
-	*
-	* @param string $type
-	* @param mixed $object
 	*/
-	public static function display_forums_complete($type, $object = false)
+	public static function display_forums_complete($type, $object = false, $options = array())
 	{
 /*
 user_topic_show_days
@@ -178,7 +175,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 */
 		phpbb::$user->add_lang('viewforum');
 
-		self::display_forums($type, $object);
+		self::display_forums($type, $object, false, $options);
 		self::assign_common();
 
 		phpbb::$template->assign_vars(array(
@@ -192,8 +189,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	* @param string $type The type (support, review, queue, tracker, author_support, author_tracker) author_ for displaying posts from the areas the given author is involved in (either an author/co-author)
 	* @param object|boolean $object The object (for contrib related (support, review, queue, tracker) and author_ modes)
 	* @param object|boolean $sort The sort object (includes/tools/sort.php)
+	* @param array $options Some special options
 	*/
-	public static function display_forums($type, $object = false, $sort = false)
+	public static function display_forums($type, $object = false, $sort = false, $options = array())
 	{
 		if ($sort === false)
 		{
@@ -258,7 +256,19 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				{
 					return;
 				}
-				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.topic_category', $authed);
+				if (isset($options['topic_category']))
+				{
+					if (!in_array((int) $options['topic_category'], $authed))
+					{
+						return;
+					}
+
+					$sql_ary['WHERE'] .= ' AND t.topic_category = ' . (int) $options['topic_category'];
+				}
+				else
+				{
+					$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.topic_category', $authed);
+				}
 
 				// Additional tracking fields
 				titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
