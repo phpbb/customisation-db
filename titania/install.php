@@ -801,6 +801,15 @@ $versions = array(
 		'permission_add' => array(
 			'u_titania_post_approved',
 		),
+
+		'permission_set' => array(
+			array('ROLE_USER_STANDARD', array(
+				'u_titania_post_approved',
+			)),
+			array('ROLE_USER_FULL', array(
+				'u_titania_post_approved',
+			)),
+		),
 	),
 
 	'0.1.51' => array(
