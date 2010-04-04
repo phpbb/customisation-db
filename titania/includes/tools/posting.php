@@ -373,6 +373,8 @@ class titania_posting
 				$error[] = $validate_captcha;
 			}
 
+			$error = array_merge($error, $message_object->error);
+
 			if (sizeof($error))
 			{
 				phpbb::$template->assign_var('ERROR', implode('<br />', $error));
@@ -435,6 +437,10 @@ class titania_posting
 
 				redirect($post_object->get_url());
 			}
+		}
+		else if (sizeof($message_object->error))
+		{
+			phpbb::$template->assign_var('ERROR', implode('<br />', $message_object->error));
 		}
 
 		$is_subscribed = (($mode == 'edit' || $mode == 'reply') && titania_subscriptions::is_subscribed(TITANIA_TOPIC, $post_object->topic->topic_id)) ? true : false;
