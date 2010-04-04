@@ -21,6 +21,10 @@ titania::$hook->register('titania_page_footer', 'phpbb_com_footer');
 
 function phpbb_com_header($page_title)
 {
+	phpbb::$template->assign_vars(array(
+		'S_BODY_CLASS'		=> 'customise customisation-database',
+	));
+
 	// Setup the phpBB.com header
 	include(TITANIA_ROOT . '../../vars.' . PHP_EXT);
 	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/');
