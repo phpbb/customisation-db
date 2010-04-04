@@ -119,8 +119,8 @@ class queue_overlord
 				TITANIA_TOPICS_TABLE	=> 't',
 			),
 
-			'WHERE' => 'q.queue_type = ' . (int) $type . '
-				AND q.queue_status = ' . (int) $queue_status . '
+			'WHERE' => 'q.queue_type = ' . (int) $type .
+				(($queue_status) ? ' AND q.queue_status = ' . (int) $queue_status : ' AND q.queue_status > 0 ') . '
 				AND c.contrib_id = q.contrib_id
 				AND r.revision_id = q.revision_id
 				AND t.topic_id = q.queue_topic_id',
@@ -283,9 +283,11 @@ class queue_overlord
 	*
 	* @param int $type
 	*/
-	public static function display_categories($type)
+	public static function display_categories($type, $selected = false)
 	{
 		$tags = titania::$cache->get_tags(TITANIA_QUEUE);
+		$tag_count = array();
+		$total = 0;
 
 		$sql = 'SELECT queue_status, COUNT(queue_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
 			WHERE queue_type = ' . (int) $type . '
@@ -293,9 +295,17 @@ class queue_overlord
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			$total += ($row['queue_status'] > 0) ? $row['cnt'] : 0;
 			$tag_count[$row['queue_status']] = $row['cnt'];
 		}
 		phpbb::$db->sql_freeresult($result);
+
+		phpbb::$template->assign_block_vars('queue_tags', array(
+			'TAG_NAME'		=> phpbb::$user->lang['ALL'],
+			'TAG_COUNT'		=> $total,
+			'U_VIEW_TAG'	=> titania_url::append_url(titania_url::$current_page_url, array('tag' => 'all')),
+			'S_SELECTED'	=> ($selected == 0) ? true : false,
+		));
 
 		foreach ($tags as $tag_id => $row)
 		{
@@ -308,7 +318,8 @@ class queue_overlord
 			phpbb::$template->assign_block_vars('queue_tags', array(
 				'TAG_NAME'		=> (isset(phpbb::$user->lang[$row['tag_field_name']])) ? phpbb::$user->lang[$row['tag_field_name']] : $row['tag_field_name'],
 				'TAG_COUNT'		=> $tag_count[$tag_id],
-				'U_VIEW_TAG'	=> titania_url::append_url(titania_url::$current_page_url, array('tag' => $tag_id))
+				'U_VIEW_TAG'	=> titania_url::append_url(titania_url::$current_page_url, array('tag' => $tag_id)),
+				'S_SELECTED'	=> ($selected == $tag_id) ? true : false,
 			));
 		}
 	}

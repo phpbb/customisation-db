@@ -269,7 +269,7 @@ else
 
 	$tag = request_var('tag', TITANIA_QUEUE_NEW);
 	queue_overlord::display_queue($queue_type, $tag);
-	queue_overlord::display_categories($queue_type);
+	queue_overlord::display_categories($queue_type, $tag);
 
 	titania::page_header('VALIDATION_QUEUE');
 }
