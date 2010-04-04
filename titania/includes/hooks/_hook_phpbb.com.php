@@ -30,10 +30,8 @@ function phpbb_com_header($page_title)
 	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/');
 	phpbb::$template->set_filenames(array(
 		'phpbb_com_header'		=> 'overall_header.html',
-		'phpbb_com_footer'		=> 'overall_footer.html',
 	));
 	phpbb::$template->assign_display('phpbb_com_header', 'PHPBB_COM_HEADER', false);
-	phpbb::$template->assign_display('phpbb_com_footer', 'PHPBB_COM_FOOTER', false);
 
 	titania::set_custom_template();
 }
