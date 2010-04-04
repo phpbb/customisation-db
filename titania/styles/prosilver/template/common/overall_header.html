@@ -1,0 +1,387 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="{S_CONTENT_DIRECTION}" lang="{S_USER_LANG}" xml:lang="{S_USER_LANG}">
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset={S_CONTENT_ENCODING}" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="content-language" content="{S_USER_LANG}" />
+<meta http-equiv="imagetoolbar" content="no" />
+<meta name="resource-type" content="document" />
+<meta name="distribution" content="global" />
+<meta name="copyright" content="2000, 2002, 2005, 2007, 2010 phpBB Group" />
+<meta name="keywords" content="" />
+<meta name="description" content="{META_DESCRIPTION}" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+{META}
+<title>phpBB &bull; {PAGE_TITLE}</title>
+
+
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/common.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/forum_fn.js"></script>
+<script type="text/javascript" src="/js/jquery.hoverIntent.minified.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+
+<!-- IF .screenshots -->
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.lightbox-0.5.js"></script>
+<!-- ENDIF -->
+
+<script type="text/javascript">
+// <![CDATA[
+	var spacer_img = '{TITANIA_ROOT_PATH}/images/spacer.gif';
+	var jump_page = '{LA_JUMP_PAGE}:';
+	var on_page = '{ON_PAGE}';
+	var per_page = '{PER_PAGE}';
+	var pagination_url = '{S_PAGINATION_ACTION}';
+	var style_cookie = 'phpBBstyle';
+	var onload_functions = new Array();
+	var onunload_functions = new Array();
+
+	// Rating Stuff
+	var grey_star = new Image(16,16);
+	grey_star.src = "{UA_GREY_STAR_SRC}";
+	var green_star= new Image(16,16);
+	green_star.src = "{UA_GREEN_STAR_SRC}";
+	var red_star= new Image(16,16);
+	red_star.src = "{UA_RED_STAR_SRC}";
+	var orange_star= new Image(16,16);
+	orange_star.src = "{UA_ORANGE_STAR_SRC}";
+	var max_rating = "{UA_MAX_RATING}";
+
+	$(document).ready(function() {
+	<!-- IF S_HIDE_ERROR_BOX -->
+		setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
+	<!-- ENDIF -->
+
+		$("#extratabs").tabs();
+		$('#extratabs li').removeClass('ui-corner-top');
+		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
+
+    <!-- IF .screenshots -->
+		$('a.screenshot').lightBox(
+			{
+				imageLoading: '{T_TITANIA_THEME_PATH}/images/lightbox-ico-loading.gif',
+				imageBtnClose: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-close.gif',
+				imageBtnPrev: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-prev.gif',
+				imageBtnNext: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-next.gif',
+			}
+		);
+	<!-- ENDIF -->
+  });
+
+// ]]>
+</script>
+
+<link href="{T_STYLESHEET_LINK}" rel="stylesheet" type="text/css" media="screen, projection" />
+<link href="/theme/index.css" rel="stylesheet" type="text/css" media="screen, projection" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+<link href="{T_TITANIA_THEME_PATH}/print.css" rel="stylesheet" type="text/css" media="print" title="printonly" />
+<link href="{T_TITANIA_STYLESHEET}" rel="stylesheet" type="text/css" media="screen, projection" />
+<link href="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/buttons.css" rel="stylesheet" type="text/css" media="screen, projection" />
+
+<!-- IF S_CONTENT_DIRECTION eq 'rtl' -->
+	<link href="{T_TITANIA_THEME_PATH}/bidi.css" rel="stylesheet" type="text/css" media="screen, projection" />
+<!-- ENDIF -->
+
+<!--[if IE 6]>
+	<link href="{S_ROOT_PATH}theme/ie6.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+
+</head>
+
+<body id="phpbb" class="customise customisation-database {S_CONTENT_DIRECTION}">
+
+<div id="wrap">
+	<a id="top" name="top" accesskey="t"></a>
+	<div id="page-header">
+		<span class="side-left"></span>
+		<div class="header" style="position: relative;">
+			<h1 id="logo-banner"><a href="{U_HOME}">phpBB &bull; Creating Communities Worldwide</a></h1>
+		</div>
+		<span class="side-right"></span>
+	</div>
+	<div id="navbar">
+		<ul>
+			<li class="but-about">
+				<a href="{U_ABOUT}"><span></span>About</a>
+				<!-- IF not S_IS_BOT -->
+				<div class="sub-menu sub-menu-extra">
+					<ul>
+						<li>
+							<h4><a href="{U_ABOUT_FEATURES_SUB}">Features</a></h4>
+							<p><a href="{U_ABOUT_FEATURES_SUB}">Learn about the features that phpBB has to offer.</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_ABOUT_HISTORY_SUB}">History</a></h4>
+							<p><a href="{U_ABOUT_HISTORY_SUB}">The history of phpBB. Find out how it all began.</a></p>
+						</li>
+						<li class="last">
+							<h4><a href="{U_PRESS_PAGE_SUB}">Press</a></h4>
+							<p><a href="{U_PRESS_PAGE_SUB}">Read official press releases and spread the word.</a></p>
+						</li>
+					</ul>
+					<ul>
+						<li>
+							<h4><a href="{U_ABOUT_TEAM_SUB}">The Team</a></h4>
+							<p><a href="{U_ABOUT_TEAM_SUB}">Find out who is responsible for all the mayhem.</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_ABOUT_CONTACT_SUB}">Contact Us</a></h4>
+							<p><a href="{U_ABOUT_CONTACT_SUB}">Have a question the forums don't answer? Come here.</a></p>
+						</li>
+						<li class="last">
+							<h4><a href="{U_ABOUT_ADVERTISE_SUB}">Advertising</a></h4>
+							<p><a href="{U_ABOUT_ADVERTISE_SUB}">Information if you want to advertise on phpBB.com.</a></p>
+						</li>
+					</ul>
+					<div class="sub-menu-bottom"><a href="{U_ABOUT_INDEX_SUB}">Find out more about the project &raquo;</a></div>
+
+				</div>
+				<!-- ENDIF -->
+			</li>
+			<li class="but-downloads"><a href="{U_DOWNLOADS}"><span></span>Downloads</a>
+				<!-- IF not S_IS_BOT -->
+				<div class="sub-menu">
+					<ul>
+						<li>
+							<h4><a href="{U_DOWNLOADS_OLYMPUS_SUB}">Latest Version</a></h4>
+							<p><a href="{U_DOWNLOADS_OLYMPUS_SUB}">Download the latest stable release of phpBB</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_DOWNLOADS_OLYMPUS_UPDATE_SUB}">Upgrade Packages</a></h4>
+							<p><a href="{U_DOWNLOADS_OLYMPUS_UPDATE_SUB}">Automatic Update packages for your phpBB release</a></p>
+						</li>
+						<li class="last">
+							<h4><a href="{U_LANGUAGES_SUB}">Language Packs</a></h4>
+							<p><a href="{U_LANGUAGES_SUB}">Translate phpBB in (almost) any language you like.</a></p>
+						</li>
+					</ul>
+					<ul>
+						<li>
+							<h4><a href="{U_MODS_DB_SUB}">Modifications</a></h4>
+							<p><a href="{U_MODS_DB_SUB}">Download validated MODs to extend phpBB&rsquo;s functionality.</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_STYLES_DB_SUB}">Styles</a></h4>
+							<p><a href="{U_STYLES_DB_SUB}">Your forums need a new look? Browse our Styles DB.</a></p>
+						</li>
+
+					</ul>
+					<div class="sub-menu-bottom"></div>
+				</div>
+				<!-- ENDIF -->
+			</li>
+			<li class="but-customise"><a href="{U_CUSTOMISE}"><span></span>Customise</a>
+				<!-- IF not S_IS_BOT -->
+				<div class="sub-menu">
+					<ul>
+						<li>
+							<h4><a href="{U_MODS_SUB}">Modifications</a></h4>
+							<p><a href="{U_MODS_SUB}">Guides on how to use them and how to create your own.</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_MODS_DB_SUB}">Modification database</a></h4>
+							<p><a href="{U_MODS_DB_SUB}">Download and submit your work to the MOD database.</a></p>
+						</li>
+						<li class="external last" title="Opens an external link.">
+							<h4><a href="{U_DEV_WIKI_SUB}">Development Wiki</a></h4>
+							<p><a href="{U_DEV_WIKI_SUB}">Share experience and learn more about the codebase.</a></p>
+						</li>
+
+					</ul>
+
+					<ul>
+						<li>
+							<h4><a href="{U_STYLES_SUB}">Styles</a></h4>
+							<p><a href="{U_STYLES_SUB}">Guides on how to use them and to create your own Styles.</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_STYLES_DB_SUB}">Styles database</a></h4>
+							<p><a href="{U_STYLES_DB_SUB}">Download and submit your Styles to our Styles database.</a></p>
+						</li>
+						<li class="last">
+							<h4><a href="{U_STYLES_DEMO_SUB}">Styles Demo</a></h4>
+							<p><a href="{U_STYLES_DEMO_SUB}">Test drive all the Styles from our database.</a></p>
+						</li>
+
+					</ul>
+					<div class="sub-menu-bottom"></div>
+				</div>
+				<!-- ENDIF -->
+			</li>
+			<li class="but-support"><a href="{U_SUPPORT}"><span></span>Support</a>
+				<!-- IF not S_IS_BOT -->
+				<div class="sub-menu sub-menu-extra">
+					<ul>
+						<li>
+							<h4><a href="{U_DOCUMENTATION_SUB}">Documentation</a></h4>
+							<p><a href="{U_DOCUMENTATION_SUB}">Installation guide and the complete documentation.</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_KB_SUB}">Knowledge Base</a></h4>
+							<p><a href="{U_KB_SUB}">Team and user submitted ar&shy;ticles covering support areas.</a></p>
+						</li>
+						<li class="last">
+							<h4><a href="{U_SUPPORT_TUTORIALS_SUB}">Flash Tutorials</a></h4>
+							<p><a href="{U_SUPPORT_TUTORIALS_SUB}">View Flash Tutorials that help you with the use of phpBB.</a></p>
+						</li>
+					</ul>
+					<ul>
+						<li>
+							<h4><a href="{U_SUPPORT_FORUMS_SUB}">Support Forums</a></h4>
+							<p><a href="{U_SUPPORT_FORUMS_SUB}">Please use the search facility before posting a question.</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_SUPPORT_IRC_SUB}">IRC Support</a></h4>
+							<p><a href="{U_SUPPORT_IRC_SUB}">Old school? Visit the IRC support channel on freenode.</a></p>
+						</li>
+						<li class="last">
+							<h4><a href="{U_SUPPORT_INTL_SUB}">International Support</a></h4>
+							<p><a href="{U_SUPPORT_INTL_SUB}">Find a 3rd party support site in your first language.</a></p>
+						</li>
+					</ul>
+					<div class="sub-menu-bottom"><a href="{U_SUPPORT_INDEX_SUB}">More information on support &raquo;</a></div>
+				</div>
+				<!-- ENDIF -->
+			</li>
+			<li class="but-development"><a href="{U_DEVELOPMENT}"><span></span>Development</a>
+				<!-- IF not S_IS_BOT -->
+				<div class="sub-menu sub-menu-extra">
+					<ul>
+						<li>
+							<h4><a href="{U_DEV_GI_SUB}">Get involved</a></h4>
+							<p><a href="{U_DEV_GI_SUB}">Learn how you can contribute to the development of phpBB.</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_BUGS_SUB}">Bug Tracker</a></h4>
+							<p><a href="{U_BUGS_SUB}">Bug Tracker for phpBB software and related projects.</a></p>
+						</li>
+						<li class="last">
+							<h4><a href="{U_SECURITY_SUB}">Security Tracker</a></h4>
+							<p><a href="{U_SECURITY_SUB}">The tracker for security issues in phpBB or validated MODs.</a></p>
+						</li>
+					</ul>
+					<ul>
+						<li class="external" title="Opens an external link.">
+							<h4><a href="{U_CODE_FORGE_SUB}">phpBB Code Forge</a></h4>
+							<p><a href="{U_CODE_FORGE_SUB}">phpBB project development and SVN repository.</a></p>
+						</li>
+						<li class="external" title="Opens an external link.">
+							<h4><a href="{U_DEV_WIKI_SUB}">Development Wiki</a></h4>
+							<p><a href="{U_DEV_WIKI_SUB}">Share experience and learn more about the codebase.</a></p>
+						</li>
+						<li class="external last" title="Opens an external link.">
+							<h4><a href="{U_DEV_HOME_SUB}">Area51</a></h4>
+							<p><a href="{U_DEV_HOME_SUB}">Bleeding edge testing and development discussion.</a></p>
+						</li>
+
+					</ul>
+					<div class="sub-menu-bottom"><a href="{U_DEV_INDEX_SUB}">Find out how to get even more involved &raquo;</a></div>
+				</div>
+				<!-- ENDIF -->
+			</li>
+			<li class="but-blog"><a href="{U_BLOG}"><span></span>Blog</a></li>
+			<li class="but-community"><a href="{U_COMMUNITY}"><span></span>Community</a>
+				<!-- IF not S_IS_BOT -->
+				<div class="sub-menu sub-menu-extra">
+					<ul>
+						<li>
+							<h4><a href="{U_FORUM_SUPPORT_SUB}">Support Forums</a></h4>
+							<p><a href="{U_FORUM_SUPPORT_SUB}">Help with installation &amp; running phpBB &ndash; search first!</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_FORUM_MODS_SUB}">Modification Forums</a></h4>
+							<p><a href="{U_FORUM_MODS_SUB}">Discuss and view MODs that are available for download.</a></p>
+						</li>
+						<li class="last">
+							<h4><a href="{U_FORUM_STYLES_SUB}">Styles Forums</a></h4>
+							<p><a href="{U_FORUM_STYLES_SUB}">Discuss and view Styles that are available for download.</a></p>
+						</li>
+					</ul>
+					<ul>
+						<li>
+							<h4><a href="{U_FORUM_PHPBBDISC_SUB}">phpBB Discussion</a></h4>
+							<p><a href="{U_FORUM_PHPBBDISC_SUB}">Discussions on all things phpBB: features, future, etc.</a></p>
+						</li>
+						<li>
+							<h4><a href="{U_FORUM_EVENTS_SUB}">Events</a></h4>
+							<p><a href="{U_FORUM_EVENTS_SUB}">phpBB related events, local communities and meetings.</a></p>
+						</li>
+						<li class="last">
+							<h4><a href="{U_FORUM_GENDISC_SUB}">General Discussion</a></h4>
+							<p><a href="{U_FORUM_GENDISC_SUB}">General discussion and intelligent conversations.</a></p>
+						</li>
+					</ul>
+					<div class="sub-menu-bottom"><a href="{U_FORUM_INDEX_SUB}">&#0133; and many more forums &raquo;</a></div>
+				</div>
+				<!-- ENDIF -->
+			</li>
+			<li class="but-hosting"><a href="{U_HOSTING}"><span></span>Hosting</a></li>
+			<li id="searchbox">
+				<fieldset>
+					<!-- Google CSE Search Box Begins -->
+					<form method="get" action="{U_GOOGLECSE}">
+					  <p><input name="q" id="q" type="text" size="40" value="{S_GOOGLECSE_STRING}" /></p>
+					 </form>
+				</fieldset>
+			</li>
+		</ul>
+	</div>
+
+	<div id="page-body">
+		<!-- IF S_BOARD_DISABLED and S_USER_LOGGED_IN and (U_MCP or U_ACP) -->
+		<div id="message" class="rules">
+			<div class="inner"><span class="corners-top"><span></span></span>
+				<strong>{L_INFORMATION}:</strong> {L_BOARD_DISABLED}
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
+		<!-- ENDIF -->
+		
+		<ul class="linklist">
+			<li><a href="{U_HOME}" accesskey="h">{L_HOME}</a> <!-- BEGIN nav_header --> <strong>&#8249;</strong> <a href="{nav_header.U_TITLE}">{nav_header.L_TITLE}</a><!-- END nav_header --></li>
+		</ul>
+
+		<h2 class="imgrep customisation-database">{L_CUSTOMISATION_DATABASE}</h2>
+		
+		<!-- IF not S_IS_BOT -->
+		<div class="panel navigation bg1">
+			<div class="inner"><span class="corners-top"><span></span></span>
+				<ul class="linklist">
+					<!-- IF U_MY_CONTRIBUTIONS or U_CREATE_CONTRIBUTION or U_MANAGE or S_DISPLAY_SEARCH -->
+					<li class="leftside">
+						<!-- IF U_MY_CONTRIBUTIONS --><a href="{U_MY_CONTRIBUTIONS}" title="{L_MY_CONTRIBUTIONS}">{L_MY_CONTRIBUTIONS}</a> &bull; <!-- ENDIF --> 
+						<!-- IF U_CREATE_CONTRIBUTION --><a href="{U_CREATE_CONTRIBUTION}">{L_CREATE_CONTRIBUTION}</a> &bull; <!-- ENDIF -->
+						<!-- IF U_MANAGE --><a href="{U_MANAGE}" title="{L_MANAGE}">{L_MANAGE}</a> &bull;<!-- ENDIF --> 
+						<!-- IF S_DISPLAY_SEARCH --><a href="{U_SEARCH}">{L_SEARCH}</a><!-- ENDIF -->
+					</li>
+					<!-- ENDIF -->
+					<li class="rightside">
+						<a href="{U_LOGIN_LOGOUT}" title="{L_LOGIN_LOGOUT}" accesskey="l">{L_LOGIN_LOGOUT}</a>
+					</li>
+				</ul>
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
+		<!-- ENDIF -->
+		
+		<!-- IF .errorbox -->
+		<div id="errorbox" class="errorbox">
+			<div class="inner"><span class="corners-top"><span></span></span>
+			<!-- IF ERRORBOX_TITLE --><h3>{ERRORBOX_TITLE}</h3><!-- ENDIF -->
+			<!-- BEGIN errorbox -->
+				<p>{errorbox.MESSAGE}</p>
+			<!-- END errorbox -->
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
+		<!-- ENDIF -->
+		<!-- IF .successbox -->
+		<div id="successbox" class="successbox">
+			<div class="inner"><span class="corners-top"><span></span></span>
+			<!-- IF SUCCESSBOX_TITLE --><h3>{SUCCESSBOX_TITLE}</h3><!-- ENDIF -->
+			<!-- BEGIN successbox -->
+				<p>{successbox.MESSAGE}</p>
+			<!-- END successbox -->
+			<span class="corners-bottom"><span></span></span></div>
+		</div>
+		<!-- ENDIF -->

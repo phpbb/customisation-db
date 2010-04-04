@@ -1,0 +1,166 @@
+<div class="container">
+	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+	
+		<div class="right-column demo">
+			<!-- IF .screenshots -->
+				<!-- BEGIN screenshots(0,0) -->
+					<!-- IF screenshots.S_THUMBNAIL -->
+						<img src="{screenshots.THUMB_IMAGE}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" />
+					<!-- ELSE -->
+						<img src="{screenshots.U_INLINE_LINK}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" />
+					<!-- ENDIF -->
+				<!-- END screenshots -->
+			<!-- ELSE -->
+				<div class="no-screenshot">{L_NO_SCREENSHOT}</div>
+			<!-- ENDIF -->
+			<!-- IF U_VIEW_DEMO --><a href="{U_VIEW_DEMO}">{L_VIEW_DEMO}</a><!-- ENDIF -->
+
+			<!-- IF U_DOWNLOAD -->
+				
+				<div class="download-button">
+					<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE}</a>
+				</div>
+			<!-- ENDIF -->
+
+			<!-- IF QUICK_ACTIONS -->
+				<hr class="dashed" />
+				{QUICK_ACTIONS}
+			<!-- ENDIF -->
+
+		</div>
+
+		<div class="left-column">
+			<dl class="contrib-description">
+				<dt>
+					<strong>{L_DESCRIPTION}</strong>
+					<ul class="profile-icons">
+						<!-- IF U_SUBSCRIBE --><li <!-- IF IS_SUBSCRIBED -->class="icon-unsubscribe"<!-- ELSE -->class="icon-subscribe"<!-- ENDIF -->><a href="{U_SUBSCRIBE}" title="{L_SUBSCRIBE}"><!-- IF IS_SUBSCRIBED -->{L_UNSUBSCRIBE}<!-- ELSE -->{L_SUBSCRIBE}<!-- ENDIF --></a></li><!-- ENDIF -->
+						<li class="report-icon"><a href="" title="{L_REPORT}"><span>{L_REPORT}</span></a></li>
+						<li class="info-icon"><a href="" title="{L_INFORMATION}"><span>{L_INFORMATION}</span></a></li>
+					</ul>
+				</dt>
+				<dd>{CONTRIB_DESC}</dd>
+			</dl>
+
+			<ul class="general-info">
+				<li>
+					<strong>{L_AUTHOR}</strong> {AUTHOR_NAME_FULL}
+				</li>
+				<!-- IF .coauthors -->
+				<li>
+					<strong>{L_CO_AUTHORS}</strong> <!-- BEGIN coauthors -->{coauthors.AUTHOR_NAME_FULL}<!-- IF not coauthors.S_LAST_ROW -->, <!-- ENDIF --><!-- END coauthors -->
+				</li>
+				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_VERSION -->
+				<li>
+					<strong>{L_VERSION}</strong> {DOWNLOAD_VERSION}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF CONTRIB_UPDATE_DATE -->
+				<li>
+					<strong>{L_CONTRIB_UPDATE_DATE}</strong> {CONTRIB_UPDATE_DATE}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_CHECKSUM -->
+				<li>
+					<strong>{L_DOWNLOAD_CHECKSUM}</strong> {DOWNLOAD_CHECKSUM}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_NAME -->
+				<li>
+					<strong>{L_REVISION_NAME}</strong> {DOWNLOAD_NAME}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF CONTRIB_DOWNLOADS -->
+				<li>
+					<strong>{L_DOWNLOADS_TOTAL}</strong> {CONTRIB_DOWNLOADS}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF CONTRIB_ANNOUNCEMENT_TOPIC -->
+				<li>
+					<strong>{L_ANNOUNCEMENT_TOPIC}</strong> {CONTRIB_ANNOUNCEMENT_TOPIC}
+				</li>
+				<!-- ENDIF -->
+				<li style="border-bottom: 0;">
+					<strong>{L_RATING}</strong> {CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})
+				</li>
+			</ul>
+		</div>
+	<span class="corners-bottom main-corners"><span></span></span></div>
+</div>
+
+
+<div class="clear"></div>
+
+<!-- IF .screenshots or .revisions or U_NEW_REVISION -->
+<div class="container">
+	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div id="extratabs">
+		    <ul id="extratabs-head">
+		        <!-- IF .screenshots --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
+		        <!-- IF .revisions or U_NEW_REVISION --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
+		    </ul>
+
+		    <!-- IF .screenshots -->
+		    <div id="screenshots-panel">
+				<!-- BEGIN screenshots -->
+					<!-- IF screenshots.S_THUMBNAIL -->
+						<a href="{screenshots.U_DOWNLOAD_LINK}" class="screenshot"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
+					<!-- ENDIF -->
+
+					<!-- IF screenshots.S_IMAGE -->
+						<img src="{screenshots.U_INLINE_LINK}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" onclick="viewableArea(this);" />
+					<!-- ENDIF -->
+				<!-- END screenshots -->
+		    </div>
+		    <!-- ENDIF -->
+
+		    <!-- IF .revisions or U_NEW_REVISION -->
+		    <div id="revisions-panel">
+				<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
+				<div class="clear"></div>
+
+				<ul class="topiclist revisions">
+					<li class="header">
+						<dl>
+							<dt>{L_REVISIONS}</dt>
+							<dd class="general version">{L_VERSION}</dd>
+							<dd class="general phpbb-version">{L_PHPBB_VERSION}</dd>
+							<dd class="general time-created">{L_TIME}</dd>
+						</dl>
+					</li>
+				</ul>
+				<ul class="topiclist cplist revisions">
+				<!-- BEGIN revisions -->
+					<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+						<dl>
+							<dt>
+								<a href="{revisions.U_DOWNLOAD}" title="{L_DOWNLOAD}"><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></a>
+							</dt>
+							<dd class="general version">{revisions.VERSION}</dd>
+							<dd class="general phpbb-version">
+								<!-- IF revisions.PHPBB_VERSION -->
+									{revisions.PHPBB_VERSION}
+								<!-- ELSE -->
+									<select id="phpbb_versions">
+									<!-- BEGIN phpbb_versions -->
+										<option>{revisions.phpbb_versions.VERSION}</option>
+									<!-- END phpbb_versions -->
+									</select>
+								<!-- ENDIF -->
+							</dd>
+							<dd class="general time-created">{revisions.CREATED}</dd>
+							<!-- IF not revisions.S_VALIDATED or revisions.REVISION_QUEUE -->
+							<dd class="general"><!-- IF not revisions.S_VALIDATED --><strong>{L_NOT_VALIDATED}</strong><!-- ENDIF --><!-- IF revisions.REVISION_QUEUE --><!-- IF not revisions.S_VALIDATED --> - <!-- ENDIF --><a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF --></dd>
+							<!-- ENDIF -->
+						</dl>
+					</li>
+				<!-- END revisions -->
+				</ul>
+		    </div>
+		    <!-- ENDIF -->
+		</div>
+
+	<span class="corners-bottom main-corners"><span></span></span></div>
+</div>
+<!-- ENDIF -->
