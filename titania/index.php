@@ -192,8 +192,8 @@ switch ($action)
 		// Setup the sort tool
 		$sort = new titania_sort();
 		$sort->set_sort_keys(contribs_overlord::$sort_by);
-		$sort->default_key = 't';
-		$sort->default_dir = 'd';
+		$sort->default_sort_key = 't';
+		$sort->default_sort_dir = 'd';
 
 		contribs_overlord::display_contribs('all', false, $sort);
 

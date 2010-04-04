@@ -200,9 +200,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$sort->set_sort_keys(self::$sort_by);
 			if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
 			{
-				$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
+				$sort->default_sort_key = phpbb::$user->data['user_topic_sortby_type'];
 			}
-			$sort->default_dir = phpbb::$user->data['user_topic_sortby_dir'];
+			$sort->default_sort_dir = phpbb::$user->data['user_topic_sortby_dir'];
 			$sort->default_limit = phpbb::$config['topics_per_page'];
 			$sort->request();
 		}
