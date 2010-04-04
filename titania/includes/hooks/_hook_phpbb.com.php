@@ -43,7 +43,6 @@ function phpbb_com_header($page_title)
 function phpbb_com_footer($run_cron, $template_body)
 {
 	// Setup the phpBB.com footer
-	include(TITANIA_ROOT . '../../vars.' . PHP_EXT);
 	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/');
 	phpbb::$template->set_filenames(array(
 		'phpbb_com_footer'		=> 'overall_footer.html',

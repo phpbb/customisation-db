@@ -687,8 +687,7 @@ class titania
 		}
 
 		// Add own hook handler
-		phpbb::_include('hooks/index', false, 'phpbb_hook');
-		self::$hook = new phpbb_hook(array('titania_page_header'));
+		self::$hook = new titania_hook();
 
 		// Now search for hooks...
 		$dh = @opendir(TITANIA_ROOT . 'includes/hooks/');
