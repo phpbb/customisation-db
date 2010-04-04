@@ -25,7 +25,8 @@ function phpbb_com_header($page_title)
 		'S_BODY_CLASS'		=> 'customise customisation-database',
 	));
 
-	$base_path = $root_path = TITANIA_ROOT . '../../';
+	$root_path = TITANIA_ROOT . '../../';
+	$base_path = generate_board_url(true);
 	include($root_path . 'vars.' . PHP_EXT);
 
 	// Setup the phpBB.com header
