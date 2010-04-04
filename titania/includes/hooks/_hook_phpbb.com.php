@@ -25,8 +25,10 @@ function phpbb_com_header($page_title)
 		'S_BODY_CLASS'		=> 'customise customisation-database',
 	));
 
+	$base_path = $root_path = TITANIA_ROOT . '../../';
+	include($root_path . 'vars.' . PHP_EXT);
+
 	// Setup the phpBB.com header
-	include(TITANIA_ROOT . '../../vars.' . PHP_EXT);
 	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/');
 	phpbb::$template->set_filenames(array(
 		'phpbb_com_header'		=> 'overall_header.html',
