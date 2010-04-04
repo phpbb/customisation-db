@@ -23,11 +23,12 @@ function phpbb_com_header($page_title)
 {
 	phpbb::$template->assign_vars(array(
 		'S_BODY_CLASS'		=> 'customise customisation-database',
+		'S_IS_WEBSITE'		=> true,
 	));
 
 	global $auth, $phpEx, $template, $user;
 	$root_path = TITANIA_ROOT . '../../';
-	$base_path = generate_board_url(true);
+	$base_path = generate_board_url(true) . '/';
 	include($root_path . 'vars.' . PHP_EXT);
 
 	// Setup the phpBB.com header
