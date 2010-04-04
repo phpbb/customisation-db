@@ -37,7 +37,7 @@ if (phpbb::$user->data['user_type'] != USER_FOUNDER && phpbb::$user->data['user_
 @set_time_limit(0);
 
 // Hack for local
-phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? '../phpBB3_titania/ariel_files' : '../../' . phpbb::$config['site_upload_dir'];
+phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? '../phpBB3_titania/files/contribdb' : '../../' . phpbb::$config['site_upload_dir'];
 $screenshots_dir = phpbb::$config['site_upload_dir'] . '/demo/';
 
 // Table prefix
@@ -82,9 +82,9 @@ $tags_to_cats = array(
 
 $queue_swap = array(
 	1	=> TITANIA_QUEUE_NEW, // QUEUE_NEW
-	2	=> 17, // QUEUE_SPECIAL
-	3	=> TITANIA_QUEUE_APPROVED, //19, // QUEUE_APPROVE
-	4	=> TITANIA_QUEUE_DENIED, //20, // QUEUE_DENY
+	2	=> TITANIA_QUEUE_NEW, //17, // QUEUE_SPECIAL
+	3	=> 19, // QUEUE_APPROVE
+	4	=> 20, // QUEUE_DENY
 	-1	=> TITANIA_QUEUE_APPROVED, // QUEUE_CLOSED
 	-2	=> TITANIA_QUEUE_DENIED, // QUEUE_DENIED
 );
@@ -132,7 +132,7 @@ switch ($step)
 		phpbb::$db->sql_freeresult();
 
 		$sql_ary = array(
-			'SELECT'	=> 't.*, c.*',
+			'SELECT'	=> 't.topic_id, c.*',
 
 			'FROM'		=> array(
 				$ariel_prefix . 'contribs' => 'c',
@@ -305,7 +305,7 @@ switch ($step)
 		phpbb::$db->sql_freeresult();
 
 		$sql_ary = array(
-			'SELECT'	=> 'q.*, r.*, c.contrib_name, c.contrib_phpbb_version, c.contrib_status, c.contrib_type',
+			'SELECT'	=> 'q.queue_id, q.queue_status, r.*, c.contrib_name, c.contrib_phpbb_version, c.contrib_status, c.contrib_type',
 
 			'FROM'		=> array(
 				$ariel_prefix . 'contrib_revisions' => 'r',
@@ -321,7 +321,7 @@ switch ($step)
 
 			'WHERE'		=> 'c.contrib_id = r.contrib_id',
 
-			'ORDER_BY'	=> 'r.revision_id ASC',
+			'ORDER_BY'	=> 'r.revision_id DESC, q.queue_id DESC',
 		);
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
@@ -333,11 +333,6 @@ switch ($step)
 			{
 				// Skip contribs that were denied or pulled and weird ones
 				continue;
-			}
-
-			if ($row['revision_phpbb_version'][0] != '3')
-			{
-				//echo 'Revision phpBB version is ' . $row['revision_phpbb_version'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_id'] . '<br />';
 			}
 
 			$ignore = array(-3, -4, -5, -6);
@@ -490,7 +485,7 @@ switch ($step)
 		$sql = 'SELECT * FROM ' . $ariel_prefix . 'contrib_topics t, ' . TITANIA_CONTRIBS_TABLE . ' c
 			WHERE t.topic_type = 5
 				AND c.contrib_id = t.contrib_id
-			ORDER BY t.topic_id ASC';
+			ORDER BY t.topic_id DESC';
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -514,13 +509,24 @@ switch ($step)
 		$total = phpbb::$db->sql_fetchfield('cnt');
 		phpbb::$db->sql_freeresult();
 
-		$sql = 'SELECT q.*, ct.topic_id, c.contrib_name, c.contrib_name_clean, c.contrib_type, r.revision_version
-			FROM ' . $ariel_prefix . 'queue q, ' . $ariel_prefix . 'contrib_topics ct, ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
-			WHERE ct.contrib_id = q.contrib_id
-				AND ct.topic_type = 4
-				AND c.contrib_id = q.contrib_id
-				AND r.revision_id = q.revision_id
-			ORDER BY queue_id ASC';
+		$sql_ary = array(
+			'SELECT' => 'q.*, ct.topic_id, c.contrib_name, c.contrib_name_clean, c.contrib_type, r.revision_version',
+			'FROM'		=> array(
+				$ariel_prefix . 'queue'		=> 'q',
+				TITANIA_CONTRIBS_TABLE		=> 'c',
+				TITANIA_REVISIONS_TABLE		=> 'r',
+			),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array($ariel_prefix . 'contrib_topics' => 'ct'),
+					'ON'	=> 'ct.topic_type = 4 AND ct.contrib_id = q.contrib_id'
+				)
+			),
+			'WHERE' => 'c.contrib_id = q.contrib_id
+				AND r.revision_id = q.revision_id',
+			'ORDER_BY' => 'queue_id DESC',
+		);
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -557,6 +563,12 @@ switch ($step)
 			$queue_topic_id = $topic->topic_id;
 			unset($topic);
 
+			// Ariel = shit.  Closing queue items but leaving them as not approved or denied.  Going to have to assume they were denied.
+			if ($row['queue_closed'] && $row['queue_status'] != -1)
+			{
+				$row['queue_status'] = -2;
+			}
+
 			// Now insert to the queue table
 			$sql_ary = array(
 				'queue_id'				=> $row['queue_id'],
@@ -566,7 +578,7 @@ switch ($step)
 				'queue_topic_id'		=> $queue_topic_id,
 
 				'queue_type'			=> $row['contrib_type'],
-				'queue_status'			=> $queue_swap[$row['queue_status']],
+				'queue_status'			=> (isset($queue_swap[$row['queue_status']])) ? $queue_swap[$row['queue_status']] : TITANIA_QUEUE_NEW,
 				'queue_submit_time'		=> $row['queue_opened'],
 				'queue_close_time'		=> $row['queue_closed'],
 
