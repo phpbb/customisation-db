@@ -152,7 +152,7 @@ class titania_sort extends titania_object
 	 */
 	public function get_sort_dir()
 	{
-		$this->sort_dir = (request_var($this->sort_dir_name, (string) $this->default_sort_dir) == 'a') ? 'a' : 'd';
+		$this->sort_dir = (request_var($this->sort_dir_name, (string) $this->default_sort_dir) == $this->default_sort_dir) ? $this->default_sort_dir : (($this->default_sort_dir == 'a') ? 'd' : 'a');
 
 		return $this->sort_dir;
 	}
