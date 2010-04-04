@@ -43,6 +43,13 @@ class titania
 	public static $cache;
 
 	/**
+	* Hooks instance
+	*
+	* @var phpbb_hook
+	*/
+	public static $hook;
+
+	/**
 	 * Request time (unix timestamp)
 	 *
 	 * @var int
@@ -132,6 +139,9 @@ class titania
 		self::generate_breadcrumbs(array(
 			'CUSTOMISATION_DATABASE'	=> titania_url::build_url(''),
 		));
+
+		// Load hooks
+		self::load_hooks();
 	}
 
 	/**
@@ -320,6 +330,9 @@ class titania
 			'T_STYLESHEET_LINK'			=> (!phpbb::$user->theme['theme_storedb']) ? self::$absolute_board . '/styles/' . phpbb::$user->theme['theme_path'] . '/theme/stylesheet.css' : self::$absolute_board . 'style.' . PHP_EXT . '?sid=' . phpbb::$user->session_id . '&amp;id=' . phpbb::$user->theme['style_id'] . '&amp;lang=' . phpbb::$user->data['user_lang'],
 			'T_STYLESHEET_NAME'			=> phpbb::$user->theme['theme_name'],
 		));
+
+		// Header hook
+		self::$hook->call_hook('titania_page_header', $page_title);
 	}
 
 	/**
@@ -376,6 +389,9 @@ class titania
 			'DEBUG_OUTPUT'			=> (defined('DEBUG')) ? $debug_output : '',
 			'U_PURGE_CACHE'			=> (phpbb::$auth->acl_get('a_')) ? titania_url::append_url(titania_url::$current_page, array_merge(titania_url::$params, array('cache' => 'purge'))) : '',
 		));
+
+		// Footer hook
+		self::$hook->call_hook('titania_page_footer', $run_cron, $template_body);
 
 		// Call the phpBB footer function
 		phpbb::page_footer($run_cron);
@@ -656,6 +672,36 @@ class titania
 			$header = $status_code . ' ' . $status[$status_code];
 			header('HTTP/1.1 ' . $header, false, $status_code);
 			header('Status: ' . $header, false, $status_code);
+		}
+	}
+
+	/**
+	* Load the hooks
+	* Using something very similar to the phpBB hook system
+	*/
+	public static function load_hooks()
+	{
+		if (self::$hook)
+		{
+			return;
+		}
+
+		// Add own hook handler
+		phpbb::_include('hooks/index', false, 'phpbb_hook');
+		self::$hook = new phpbb_hook(array('titania_page_header'));
+
+		// Now search for hooks...
+		$dh = @opendir(TITANIA_ROOT . 'includes/hooks/');
+		if ($dh)
+		{
+			while (($file = readdir($dh)) !== false)
+			{
+				if (strpos($file, 'hook_') === 0 && substr($file, -(strlen(PHP_EXT) + 1)) === '.' . PHP_EXT)
+				{
+					include(TITANIA_ROOT . 'includes/hooks/' . $file);
+				}
+			}
+			closedir($dh);
 		}
 	}
 
