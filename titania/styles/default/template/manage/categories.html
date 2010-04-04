@@ -54,10 +54,9 @@
 
 <!-- ELSEIF S_DELETE_CATEGORY -->
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
-<div class="panel">
-	<div class="inner"><span class="corners-top"><span></span></span>
-
-		<form method="post" action="{U_ACTION}">
+<form method="post" action="{U_ACTION}">
+	<div class="panel">
+		<div class="inner"><span class="corners-top"><span></span></span>
 			<fieldset>
 				<dl>
 					<dt><label>{L_CATEGORY_NAME}:</label></dt>
@@ -67,19 +66,18 @@
 					<dt><label for="delete_action">{L_CONTRIBUTIONS}:</label></dt>
 					<dd><label><input type="radio" class="radio" id="delete_action" name="action_contribs" value="delete" checked="checked" /> {L_DELETE_ALL_CONTRIBS}</label></dd>
 					<!-- IF S_MOVE_CATEGORY_OPTIONS -->
-						<dd><label><input type="radio" class="radio" name="action_contribs" value="move" /> {L_MOVE_CONTRIBS_TO}</label> <select name="contribs_to_id">{S_MOVE_CATEGORY_OPTIONS}</select></dd>
+						<dd><label><input type="radio" class="radio" name="action_contribs" id="action_contribs" value="move" /> {L_MOVE_CONTRIBS_TO}</label> <select name="contribs_to_id" onclick="document.getElementById('action_contribs').checked=true;">{S_MOVE_CATEGORY_OPTIONS}</select></dd>
 					<!-- ENDIF -->
 				</dl>
-			
-				<p class="quick">
-					<input class="button1" type="submit" name="submit" value="{L_SUBMIT}" />
-				</p>
+			</fieldset>
+			<fieldset class="submit-buttons">
+				<input type="submit" name="submit" value="{L_DELETE}" class="button1" />
 				{S_FORM_TOKEN}
 			</fieldset>
-		</form>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+</form>
 
-	<span class="corners-bottom"><span></span></span></div>
-</div>
 <!-- ELSE -->
 	<!-- INCLUDE common/category_list.html -->
 <!-- ENDIF -->

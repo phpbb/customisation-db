@@ -92,6 +92,7 @@ $lang = array_merge($lang, array(
 	'DELETE_CATEGORY'			=> 'Delete Category',
 	'DELETE_SUBCATS'			=> 'Delete Subcategories',
 	'DESCRIPTION'				=> 'Description',
+	'DESTINATION_CAT_INVALID'	=> 'The destination category is not able to accept contributions.',
 	'DETAILS'					=> 'Details',
 	'DOWNLOAD'					=> 'Download',
 	'DOWNLOADS'					=> 'Downloads',

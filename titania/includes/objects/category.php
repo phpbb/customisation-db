@@ -203,7 +203,6 @@ class titania_category extends titania_message_object
 	*/
 	public function make_category_select($select_id = false, $ignore_id = false, $ignore_acl = true, $ignore_nonpost = true, $ignore_emptycat = true, $only_acl_post = false, $return_array = false)
 	{
-
 		// This query is identical to the jumpbox one
 		$sql = 'SELECT category_id, category_name, parent_id, left_id, right_id
 			FROM ' . $this->sql_table . '
@@ -347,35 +346,85 @@ class titania_category extends titania_message_object
 	/**
 	* Move category content from one to another category
 	*/
-	public function move_category_content($from_id, $to_id, $sync = true)
+	public function move_category_content($from_id, $to_id = 0, $sync = true)
 	{
-		$table_ary = array(TITANIA_CONTRIB_IN_CATEGORIES_TABLE);
+		$table = TITANIA_CONTRIB_IN_CATEGORIES_TABLE;
 
-		foreach ($table_ary as $table)
+		$sql = 'SELECT category_type
+			FROM ' . $this->sql_table . '
+			WHERE category_id = ' . $to_id;
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+
+		if ($to_id == $from_id)
+		{
+			$errors = phpbb::$user->lang['DESTINATION_CAT_INVALID'];
+		}
+		else if (!$row['category_type'])
+		{
+			$errors = phpbb::$user->lang['DESTINATION_CAT_INVALID'];
+		}
+
+		phpbb::$db->sql_freeresult($result);
+
+		if(!sizeof($errors))
 		{
 			$sql = "UPDATE $table
 				SET category_id = $to_id
 				WHERE category_id = $from_id";
 			phpbb::$db->sql_query($sql);
-		}
-		unset($table_ary);
 
-		$table_ary = array(TITANIA_CATEGORIES_TABLE);
+			if ($sync)
+			{
+				// Resync counters
+				$sync = new titania_sync;
+				$sync->categories(count, $to_id);
+				$sync->categories(count, $from_id);
+			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	* Delete category content
+	*/
+	function delete_category_content($category_id)
+	{
+		$sql = 'SELECT category_id
+			FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+			WHERE category_id = ' . $category_id;
+		$result = phpbb::$db->sql_query($sql);
+
+		$contrib_counts = array();
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$contrib_counts[$row['category_id']] = (!empty($contrib_counts[$row['category_id']])) ? $contrib_counts[$row['category_id']] + 1 : 1;
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		$table_ary = array(TITANIA_CONTRIB_IN_CATEGORIES_TABLE);
 
 		foreach ($table_ary as $table)
 		{
-			$sql = "UPDATE $table
-				SET parent_id = $to_id
-				WHERE parent_id = $from_id";
-			phpbb::$db->sql_query($sql);
+			phpbb::$db->sql_query("DELETE FROM $table WHERE category_id = $category_id");
 		}
 
-		if ($sync)
+		// Adjust users post counts
+		if (sizeof($contrib_counts))
 		{
-			// Resync counters
-			$sync = new titania_sync;
-			$sync->categories(count, $to_id);
+			foreach ($contrib_counts as $category_id => $substract)
+			{
+				$sql = 'UPDATE ' . $this->sql_table . '
+					SET category_contribs = category_contribs - ' . $substract . '
+					WHERE category_id = ' . $category_id;
+				phpbb::$db->sql_query($sql);
+			}
 		}
+
+		// Resync counters
+		$sync = new titania_sync;
+		$sync->categories(count, $category_id);
 
 		return array();
 	}
@@ -396,29 +445,15 @@ class titania_category extends titania_message_object
 		}
 		else if ($action_contribs == 'move')
 		{
-			if (!$contribs_to_id)
-			{
-				$errors[] = phpbb::$user->lang['NO_DESTINATION_CATEGORY'];
-			}
-			else
-			{
-				$sql = 'SELECT category_name
-					FROM ' . $this->sql_table . '
-					WHERE category_id = ' . $contribs_to_id;
-				$result = phpbb::$db->sql_query($sql);
-				$row = phpbb::$db->sql_fetchrow($result);
-				phpbb::$db->sql_freeresult($result);
+			$sql = 'SELECT category_name
+				FROM ' . $this->sql_table . '
+				WHERE category_id = ' . $contribs_to_id;
+			$result = phpbb::$db->sql_query($sql);
+			$row = phpbb::$db->sql_fetchrow($result);
+			phpbb::$db->sql_freeresult($result);
 
-				if (!$row)
-				{
-					$errors[] = $user->lang['NO_CATEGORY'];
-				}
-				else
-				{
-					$contribs_to_name = $row['category_name'];
-					$errors = array_merge($errors, $this->move_category_content($category_id, $contribs_to_id));
-				}
-			}
+			$contribs_to_name = $row['category_name'];
+			$errors = $this->move_category_content($category_id, $contribs_to_id);
 		}
 
 		if (sizeof($errors))
@@ -433,7 +468,7 @@ class titania_category extends titania_message_object
 			foreach ($rows as $row)
 			{
 				$category_ids[] = $row['category_id'];
-				$errors = array_merge($errors, $this->delete_category_content($row['category_id']));
+				$errors[] = array_merge($errors, $this->delete_category_content($row['category_id']));
 			}
 
 			if (sizeof($errors))
@@ -609,7 +644,7 @@ class titania_category extends titania_message_object
 		}
 
 		// Now do the dirty job
-		$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . "
+		$sql = 'UPDATE ' . $this->sql_table . "
 			SET left_id = left_id + CASE
 				WHEN left_id BETWEEN {$move_up_left} AND {$move_up_right} THEN -{$diff_up}
 				ELSE {$diff_down}

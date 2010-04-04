@@ -25,9 +25,9 @@ phpbb::$user->add_lang('acp/common');
 
 titania::_include('functions_posting', 'generate_type_select');
 
-$category_id = request_var('c', 0);
-$submit = (isset($_POST['submit'])) ? true : false;
-$action = request_var('action', '');
+$category_id 	= request_var('c', 0);
+$submit 	= (isset($_POST['submit'])) ? true : false;
+$action		= request_var('action', '');
 
 switch ($action)
 {
@@ -293,14 +293,14 @@ switch ($action)
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		$parent_id = ($category_object->parent_id == $category_id) ? 0 : $category_object->parent_id;
+		$parent_id = ($category_data['parent_id'] == $category_id) ? 0 : $category_data['parent_id'];
 
 		if($submit)
 		{
 			$error = array();
-			$action_subcats	= request_var('action_subcats', '');
-			$subcats_to_id	= request_var('subcats_to_id', 0);
-			$action_contribs		= request_var('action_contribs', '');
+			$action_subcats		= request_var('action_subcats', '');
+			$subcats_to_id		= request_var('subcats_to_id', 0);
+			$action_contribs	= request_var('action_contribs', '');
 			$contribs_to_id		= request_var('contribs_to_id', 0);
 
 			// Check for errors
@@ -311,21 +311,28 @@ switch ($action)
 			$children_row = phpbb::$db->sql_fetchrow($result);
 			phpbb::$db->sql_freeresult($result);
 
+			// Check if category contains subcategories. If yes, then return an error.
 			if ($children_row)
 			{
 				$error[] = phpbb::$user->lang['CATEGORY_HAS_CHILDREN'];
 			}
-
-			// $error[] = $category_object->delete_category($category_id, $action_contribs, $action_subcats, $contribs_to_id, $subcats_to_id);
-
-			if (sizeof($error))
+			else
 			{
-				break;
+				$errors_delete = $category_object->delete_category($category_id, $action_contribs, $action_subcats, $contribs_to_id, $subcats_to_id);
+
+				if ($errors_delete)
+				{
+					$error[] = $errors_delete;
+				}
 			}
 
-			titania::$cache->destroy('sql', TITANIA_CATEGORIES_TABLE);
+			if (!sizeof($error))
+			{
+				titania::$cache->destroy('sql', TITANIA_CATEGORIES_TABLE);
 
-			trigger_error(phpbb::$user->lang['CATEGORY_DELETED']);
+				// Redirect back to the previous category
+				redirect(titania_url::build_url('manage/categories', array('c' => $parent_id)));
+			}
 		}
 
 		phpbb::$template->assign_vars(array(
