@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 199 2010-03-04 23:48:31Z exreaction $
+ * @version $Id: umil.php 213 2010-04-01 20:15:31Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -1685,6 +1685,8 @@ class umil
 			return;
 		}
 
+		$this->umil_start('PERMISSION_ROLE_ADD', $role_name);
+
 		$sql = 'SELECT role_id FROM ' . ACL_ROLES_TABLE . '
 			WHERE role_name = \'' . $this->db->sql_escape($role_name) . '\'';
 		$this->db->sql_query($sql);
@@ -1692,7 +1694,7 @@ class umil
 
 		if ($role_id)
 		{
-			return;
+			return $this->umil_end('ROLE_ALREADY_EXISTS', $old_role_name);
 		}
 
 		$sql = 'SELECT MAX(role_order) AS max FROM ' . ACL_ROLES_TABLE . '
@@ -1710,6 +1712,8 @@ class umil
 
 		$sql = 'INSERT INTO ' . ACL_ROLES_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
+
+		return $this->umil_end();
 	}
 
 	/**
@@ -1726,10 +1730,24 @@ class umil
 			return;
 		}
 
+		$this->umil_start('PERMISSION_ROLE_UPDATE', $old_role_name);
+
+		$sql = 'SELECT role_id FROM ' . ACL_ROLES_TABLE . '
+			WHERE role_name = \'' . $this->db->sql_escape($old_role_name) . '\'';
+		$this->db->sql_query($sql);
+		$role_id = $this->db->sql_fetchfield('role_id');
+
+		if (!$role_id)
+		{
+			return $this->umil_end('ROLE_NOT_EXIST', $old_role_name);
+		}
+
 		$sql = 'UPDATE ' . ACL_ROLES_TABLE . '
 			SET role_name = \'' . $this->db->sql_escape($new_role_name) . '\'
 			WHERE role_name = \'' . $this->db->sql_escape($old_role_name) . '\'';
 		$this->db->sql_query($sql);
+
+		return $this->umil_end();
 	}
 
 	/**
@@ -1747,6 +1765,8 @@ class umil
 			return;
 		}
 
+		$this->umil_start('PERMISSION_ROLE_REMOVE', $role_name);
+
 		$sql = 'SELECT role_id FROM ' . ACL_ROLES_TABLE . '
 			WHERE role_name = \'' . $this->db->sql_escape($role_name) . '\'';
 		$this->db->sql_query($sql);
@@ -1754,7 +1774,7 @@ class umil
 
 		if (!$role_id)
 		{
-			return;
+			return $this->umil_end('ROLE_NOT_EXIST', $role_name);
 		}
 
 		$sql = 'DELETE FROM ' . ACL_ROLES_DATA_TABLE . '
@@ -1766,6 +1786,8 @@ class umil
 		$this->db->sql_query($sql);
 
 		$auth->acl_clear_prefetch();
+
+		return $this->umil_end();
 	}
 
 	/**
@@ -2969,8 +2991,7 @@ class umil
 	{
 		global $table_prefix;
 
-		// Replacing phpbb_ with the $table_prefix, but, just in case we have a different table prefix with phpbb_ in it (say, like phpbb_3), we are replacing the table prefix with phpbb_ first to make sure we do not have issues.
-		$table_name = str_replace('phpbb_', $table_prefix, str_replace($table_prefix, 'phpbb_', $table_name));
+		$table_name = preg_replace('#phpbb_#i', $table_prefix, $table_name);
 	}
 }
 
