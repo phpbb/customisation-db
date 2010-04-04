@@ -724,8 +724,8 @@ function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', 
 			$contrib_view = titania_url::build_url('contribution/$1');
 			$contrib_view_full = '<a class="postlink" href="' . $contrib_view . '">' . $contrib_view . '</a>';
 			$replace = array(
-				'#<a class="postlink" href="http://www.phpbb.com/mods/db/index.php\?i=queue&amp;mode=overview&amp;contrib_id=([0-9]+)">http://www.phpbb.com/mods/db/index.php\? ... b_id=[0-9]+</a>#',
-				'#<a class="postlink" href="http://www.phpbb.com/mods/db/index.php\?i=misc&amp;mode=display&amp;contrib_id=([0-9]+)">http://www.phpbb.com/mods/db/index.php\? ... b_id=[0-9]+</a>#',
+				'#<a class="postlink" href="http://www.phpbb.com/mods/db/index.php\?i=queue&amp;mode=overview&amp;contrib_id=([0-9]+)">http://www.phpbb.com/mods/db/index.php\? ... [^=]+=[0-9]+</a>#',
+				'#<a class="postlink" href="http://www.phpbb.com/mods/db/index.php\?i=misc&amp;mode=display&amp;contrib_id=([0-9]+)">http://www.phpbb.com/mods/db/index.php\? ... [^=]+=[0-9]+</a>#',
 			);
 			$post_row['post_text'] = preg_replace($replace, $contrib_view_full, $post_row['post_text']);
 			$replace = array(
