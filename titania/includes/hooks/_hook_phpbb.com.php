@@ -25,7 +25,7 @@ function phpbb_com_header($page_title)
 		'S_BODY_CLASS'		=> 'customise customisation-database',
 	));
 
-	global $phpEx, $template, $user;
+	global $auth, $phpEx, $template, $user;
 	$root_path = TITANIA_ROOT . '../../';
 	$base_path = generate_board_url(true);
 	include($root_path . 'vars.' . PHP_EXT);
