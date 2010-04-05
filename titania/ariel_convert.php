@@ -305,7 +305,7 @@ switch ($step)
 		phpbb::$db->sql_freeresult();
 
 		$sql_ary = array(
-			'SELECT'	=> 'q.queue_id, q.queue_status, r.*, c.contrib_name, c.contrib_phpbb_version, c.contrib_status, c.contrib_type',
+			'SELECT'	=> 'q.queue_id, q.queue_status, r.*, c.contrib_name, c.contrib_phpbb_version, c.contrib_status, c.contrib_type, c.contrib_filename_internal, c.contrib_phpbb_version',
 
 			'FROM'		=> array(
 				$ariel_prefix . 'contrib_revisions' => 'r',
@@ -447,13 +447,27 @@ switch ($step)
 			// Insert
 			$revision_id = titania_insert(TITANIA_REVISIONS_TABLE, $sql_ary);
 
-			$sql_ary = array(
-				'revision_id'				=> $revision_id,
-				'contrib_id'				=> $row['contrib_id'],
-				'phpbb_version_branch'		=> ($row['revision_phpbb_version'][0] == '3') ? 30 : 20,
-				'phpbb_version_revision'	=> substr($row['revision_phpbb_version'], 4),
-				'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
-			);
+			if ($row['contrib_filename_internal'] == $row['revision_filename_internal'])
+			{
+				// More Ariel nubish.
+				$sql_ary = array(
+					'revision_id'				=> $revision_id,
+					'contrib_id'				=> $row['contrib_id'],
+					'phpbb_version_branch'		=> ($row['contrib_phpbb_version'][0] == '3') ? 30 : 20,
+					'phpbb_version_revision'	=> substr($row['contrib_phpbb_version'], 4),
+					'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
+				);
+			}
+			else
+			{
+				$sql_ary = array(
+					'revision_id'				=> $revision_id,
+					'contrib_id'				=> $row['contrib_id'],
+					'phpbb_version_branch'		=> ($row['revision_phpbb_version'][0] == '3') ? 30 : 20,
+					'phpbb_version_revision'	=> substr($row['revision_phpbb_version'], 4),
+					'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
+				);
+			}
 			titania_insert(TITANIA_REVISIONS_PHPBB_TABLE, $sql_ary);
 
 			// Update the contrib_last_update
