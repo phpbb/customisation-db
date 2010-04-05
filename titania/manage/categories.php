@@ -26,8 +26,8 @@ phpbb::$user->add_lang('acp/common');
 titania::_include('functions_posting', 'generate_type_select');
 
 $category_id 	= request_var('c', 0);
-$submit 	= (isset($_POST['submit'])) ? true : false;
-$action		= request_var('action', '');
+$submit 		= (isset($_POST['submit'])) ? true : false;
+$action			= request_var('action', '');
 
 switch ($action)
 {
@@ -179,8 +179,7 @@ switch ($action)
 					{
 						if ($row['category_id'] != $category_object->parent_id)
 						{
-							// $errors_extra = $category_object->move_category($category_object->category_id, $category_object->parent_id);
-							$errors_extra = $category_object->move_category($row['parent_id'], $category_object->parent_id);
+							$errors_extra = $category_object->move_category($category_object->category_id, $category_object->parent_id);
 						}
 						else
 						{

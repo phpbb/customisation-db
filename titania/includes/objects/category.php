@@ -336,8 +336,7 @@ class titania_category extends titania_message_object
 		{
 			// Resync counters
 			$sync = new titania_sync;
-			$sync->categories(count, $from_id);
-			$sync->categories(count, $to_id);
+			$sync->categories(count);
 		}
 
 		return $errors;
@@ -378,8 +377,7 @@ class titania_category extends titania_message_object
 			{
 				// Resync counters
 				$sync = new titania_sync;
-				$sync->categories(count, $to_id);
-				$sync->categories(count, $from_id);
+				$sync->categories(count);
 			}
 		}
 
@@ -424,7 +422,7 @@ class titania_category extends titania_message_object
 
 		// Resync counters
 		$sync = new titania_sync;
-		$sync->categories(count, $category_id);
+		$sync->categories(count);
 
 		return array();
 	}
@@ -709,18 +707,18 @@ class titania_category extends titania_message_object
 	public function assign_display($return = false)
 	{
 		$display = array(
-			'CATEGORY_NAME'		=> (isset(phpbb::$user->lang[$this->category_name])) ? phpbb::$user->lang[$this->category_name] : $this->category_name,
-			'CATEGORY_CONTRIBS'	=> $this->category_contribs,
-			'CATEGORY_TYPE'		=> $this->category_type,
+			'CATEGORY_NAME'				=> (isset(phpbb::$user->lang[$this->category_name])) ? phpbb::$user->lang[$this->category_name] : $this->category_name,
+			'CATEGORY_CONTRIBS'			=> $this->category_contribs,
+			'CATEGORY_TYPE'				=> $this->category_type,
 
-			'U_MOVE_UP'		=> titania_url::$root_url . $this->get_manage_url() . '-action_move_up',
-			'U_MOVE_DOWN'		=> titania_url::$root_url . $this->get_manage_url() . '-action_move_down',
-			'U_EDIT'		=> titania_url::$root_url . $this->get_manage_url() . '-action_edit',
-			'U_DELETE'		=> titania_url::$root_url . $this->get_manage_url() . '-action_delete',
-			'U_VIEW_CATEGORY'	=> titania_url::$root_url . $this->get_url(),
+			'U_MOVE_UP'					=> titania_url::$root_url . $this->get_manage_url() . '-action_move_up',
+			'U_MOVE_DOWN'				=> titania_url::$root_url . $this->get_manage_url() . '-action_move_down',
+			'U_EDIT'					=> titania_url::$root_url . $this->get_manage_url() . '-action_edit',
+			'U_DELETE'					=> titania_url::$root_url . $this->get_manage_url() . '-action_delete',
+			'U_VIEW_CATEGORY'			=> titania_url::$root_url . $this->get_url(),
 			'U_VIEW_MANAGE_CATEGORY'	=> titania_url::$root_url . $this->get_manage_url(),
 
-			'HAS_CHILDREN'		=> $this->get_children($this->category_id),
+			'HAS_CHILDREN'				=> $this->get_children($this->category_id),
 		);
 
 		if ($return)
