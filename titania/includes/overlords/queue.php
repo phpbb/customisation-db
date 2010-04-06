@@ -221,6 +221,7 @@ class queue_overlord
 		$contrib->load((int) $row['contrib_id']);
 		$contrib->get_download($row['revision_id']);
 		$contrib->get_revisions();
+		$contrib->get_screenshots();
 		$contrib->assign_details();
 
 		// Load the topic
