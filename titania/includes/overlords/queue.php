@@ -232,26 +232,15 @@ class queue_overlord
 
 		// Some quick-actions
 		$quick_actions = array();
-		if (!$row['mpv_results'] && titania_types::$types[$contrib->contrib_type]->mpv_test)
-		{
-			$quick_actions['RETEST_MPV'] = titania_url::build_url('', array('action' => 'mpv', 'revision' => $row['revision_id']));
-		}
-		if (!$row['automod_results'] && titania_types::$types[$contrib->contrib_type]->automod_test)
-		{
-			$quick_actions['RETEST_AUTOMOD'] = titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id']));
-		}
 		if ($row['queue_status'] > 0)
 		{
-			$quick_actions['REPACK'] = titania_url::append_url($contrib->get_url('revision'), array('repack' => $row['revision_id']));
-
-			$quick_actions['ALTER_NOTES'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes'));
-
-			$quick_actions['CHANGE_STATUS'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'move'));
-
-			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
+			if (!$row['mpv_results'] && titania_types::$types[$contrib->contrib_type]->mpv_test)
 			{
-				$quick_actions['APPROVE'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve'));
-				$quick_actions['DENY'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny'));
+				$quick_actions['RETEST_MPV'] = titania_url::build_url('', array('action' => 'mpv', 'revision' => $row['revision_id']));
+			}
+			if (!$row['automod_results'] && titania_types::$types[$contrib->contrib_type]->automod_test)
+			{
+				$quick_actions['RETEST_AUTOMOD'] = titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id']));
 			}
 
 			if ($row['queue_progress'] == phpbb::$user->data['user_id'])
@@ -261,6 +250,18 @@ class queue_overlord
 			else if (!$row['queue_progress'])
 			{
 				$quick_actions['MARK_IN_PROGRESS'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'in_progress'));
+			}
+
+			$quick_actions['CHANGE_STATUS'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'move'));
+
+			$quick_actions['REPACK'] = titania_url::append_url($contrib->get_url('revision'), array('repack' => $row['revision_id']));
+
+			$quick_actions['ALTER_NOTES'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes'));
+
+			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
+			{
+				$quick_actions['APPROVE'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve'));
+				$quick_actions['DENY'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny'));
 			}
 		}
 
