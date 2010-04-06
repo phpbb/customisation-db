@@ -221,12 +221,12 @@ switch ($action)
 
 		titania_display_categories($category_id);
 
+		$categories_ary = false;
 		if ($category_id != 0)
 		{
 			// Breadcrumbs
 			$category_object = new titania_category;
 			$categories_ary = titania::$cache->get_categories();
-			$category_data = $category_object->get_category_info($category_id);
 
 			// Parents
 			foreach (array_reverse(titania::$cache->get_category_parents($category_id)) as $row)
@@ -249,7 +249,7 @@ switch ($action)
 
 		phpbb::$template->assign_vars(array(
 			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/create') : '',
-			'S_HAS_CONTRIBS'		=> ($category_data['category_type']) ? true : false,
+			'S_HAS_CONTRIBS'			=> ($categories_ary && $categories_ary[$category_id]['category_type']) ? true : false,
 		));
 	break;
 }
