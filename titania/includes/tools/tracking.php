@@ -52,7 +52,7 @@ class titania_tracking
 			return;
 		}
 
-		if (self::get_track($type, $id) >= (($time === false) ? titania::$time : (int) $time))
+		if (self::get_track($type, $id, true) >= (($time === false) ? titania::$time : (int) $time))
 		{
 			return;
 		}
@@ -90,7 +90,7 @@ class titania_tracking
 	 * @param <int> $type The type id of the item
 	 * @param <int> $id The id of the item
 	 * @param <int> $last_update The last time the item was updated
-	 * @param <bool> $no_query True if we
+	 * @param <bool> $no_query True if we do not want to query the database
 	 * @return <bool> True if the item is unread, false if it is read
 	 */
 	public static function is_unread($type, $id, $last_update, $no_query = true)

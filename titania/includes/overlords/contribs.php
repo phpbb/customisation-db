@@ -128,8 +128,7 @@ class contribs_overlord
 		}
 		$sort->result_lang = 'TOTAL_CONTRIBS';
 
-		$select = 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
-						u.username, u.user_colour, u.username_clean';
+		$select = 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id';
 		switch ($mode)
 		{
 			case 'author' :
@@ -146,11 +145,9 @@ class contribs_overlord
 
 					'FROM'		=> array(
 						TITANIA_CONTRIBS_TABLE	=> 'c',
-						USERS_TABLE				=> 'u',
 					),
 
 					'WHERE'		=> phpbb::$db->sql_in_set('c.contrib_id', $contrib_ids) . '
-						AND u.user_id = c.contrib_user_id
 						AND c.contrib_visible = 1',
 
 					'ORDER_BY'	=> $sort->get_order_by(),
@@ -170,10 +167,6 @@ class contribs_overlord
 							'FROM'	=> array(TITANIA_CONTRIBS_TABLE => 'c'),
 							'ON'	=> 'cic.contrib_id = c.contrib_id',
 						),
-						array(
-							'FROM'	=> array(USERS_TABLE => 'u'),
-							'ON'	=> 'u.user_id = c.contrib_user_id',
-						),
 					),
 
 					'WHERE'		=> 'cic.category_id = ' . (int) $id . '
@@ -192,8 +185,7 @@ class contribs_overlord
 						USERS_TABLE				=> 'u',
 					),
 
-					'WHERE'		=> 'u.user_id = c.contrib_user_id
-						AND c.contrib_visible = 1',
+					'WHERE'		=> 'c.contrib_visible = 1',
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
@@ -203,13 +195,14 @@ class contribs_overlord
 		titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 
 		// Permissions
-		if (titania::$config->require_validation && titania::$access_level != TITANIA_ACCESS_TEAMS)
+		if (titania::$config->require_validation && !phpbb::$auth->acl_get('u_titania_mod_contrib_mod'))
 		{
 			$sql_ary['LEFT_JOIN'][] = array(
 				'FROM'	=> array(TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc'),
 				'ON'	=> 'cc.contrib_id = c.contrib_id AND cc.user_id = ' . phpbb::$user->data['user_id'],
 			);
-			$sql_ary['WHERE'] .= ' AND (c.contrib_status = ' . TITANIA_CONTRIB_APPROVED . '
+			$sql_ary['WHERE'] .= ' AND (c.contrib_status = ' . TITANIA_CONTRIB_APPROVED .
+				((sizeof(titania_types::find_authed('moderate'))) ? ' OR ' . phpbb::$db->sql_in_set('c.contrib_type', titania_types::find_authed('moderate')) : '') . '
 				OR c.contrib_user_id = ' . phpbb::$user->data['user_id'] . '
 				OR cc.active = 1)';
 		}
@@ -223,13 +216,17 @@ class contribs_overlord
 
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
-		$contrib_ids = array();
+		$contrib_ids = $user_ids = array();
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			$user_ids[] = $row['contrib_user_id'];
 			$contrib_ids[] = $row['contrib_id'];
 			self::$contribs[$row['contrib_id']] = $row;
 		}
 		phpbb::$db->sql_freeresult($result);
+
+		// Get user data
+		users_overlord::load_users($user_ids);
 
 		// Get phpBB versions
 		if (sizeof($contrib_ids))
@@ -258,6 +255,7 @@ class contribs_overlord
 
 			$contrib->__set_array($row);
 
+			$contrib->author->user_id = $contrib->contrib_user_id;
 			$contrib->author->__set_array($row);
 
 			// Author contrib variables

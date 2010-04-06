@@ -207,12 +207,7 @@ class titania_author extends titania_message_object
 	*/
 	public function get_username_string($mode = 'titania')
 	{
-		if ($mode == 'titania')
-		{
-			return '<a href="' . $this->get_url() . '">' . get_username_string('no_profile', $this->user_id, $this->username, $this->user_colour) . '</a>';
-		}
-
-		return get_username_string($mode, $this->user_id, $this->username, $this->user_colour, phpbb::append_sid('memberlist', 'mode=viewprofile'));
+		return users_overlord::get_user($this->user_id, '_' . $mode);
 	}
 
 	/**
@@ -226,10 +221,10 @@ class titania_author extends titania_message_object
 	{
 		if ($page)
 		{
-			return titania_url::build_url('author/' . $this->username_clean . '/' . $page);
+			return titania_url::build_url(users_overlord::get_user($this->user_id, '_titania_profile') . '/' . $page);
 		}
 
-		return titania_url::build_url('author/' . $this->username_clean);
+		return titania_url::build_url(users_overlord::get_user($this->user_id, '_titania_profile'));
 	}
 
 	/**

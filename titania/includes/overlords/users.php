@@ -30,6 +30,9 @@ class users_overlord
 
 	public static function load($user_ids)
 	{
+		// Only get the rows for those we have not gotten already
+		$user_ids = array_diff($user_ids, array_keys(self::$users), array(0));
+
 		self::load_users($user_ids);
 		self::load_cp_fields($user_ids);
 		self::load_status($user_ids);
@@ -41,7 +44,7 @@ class users_overlord
 		$user_ids[] = ANONYMOUS;
 
 		// Only get the rows for those we have not gotten already
-		$user_ids = array_diff($user_ids, array_keys(self::$users));
+		$user_ids = array_diff($user_ids, array_keys(self::$users), array(0));
 
 		if (!sizeof($user_ids))
 		{
@@ -169,6 +172,14 @@ class users_overlord
 				case '_full' :
 				case '_no_profile' :
 					return get_username_string(substr($field, 1), $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour'], false, phpbb::append_sid('memberlist', 'mode=viewprofile'));
+				break;
+
+				case '_titania_profile' :
+					return 'author/' . self::$users[$user_id]['username_clean'];
+				break;
+
+				case '_titania' :
+					return '<a href="' . titania_url::build_url(self::get_user($user_id, '_titania_profile')) . '">' . get_username_string('no_profile', $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour']) . '</a>';
 				break;
 
 				case '_u_pm' :

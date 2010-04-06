@@ -127,18 +127,14 @@ class titania_contribution extends titania_message_object
 	public function load($contrib)
 	{
 		$sql_ary = array(
-			'SELECT'	=> 'c.*, a.*, u.*',
+			'SELECT'	=> 'c.*, a.*',
 			'FROM' 		=> array($this->sql_table => 'c'),
 			'LEFT_JOIN'	=> array(
 				array(
-					'FROM'	=> array(USERS_TABLE => 'u'),
-					'ON'	=> 'u.user_id = c.contrib_user_id'
-				),
-				array(
 					'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
-					'ON'	=> 'a.user_id = u.user_id'
+					'ON'	=> 'a.user_id = c.contrib_user_id'
 				),
-			)
+			),
 		);
 
 		if (is_numeric($contrib))
@@ -170,18 +166,17 @@ class titania_contribution extends titania_message_object
 		// Load co-authors list
 		$this->coauthors = array();
 		$sql_ary = array(
-			'SELECT' => 'cc.*, a.*, u.*',
+			'SELECT' => 'cc.*, a.*',
 			'FROM'		=> array(
 				TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc',
-				USERS_TABLE => 'u',
 			),
 			'LEFT_JOIN'	=> array(
 				array(
 					'FROM'	=> array(TITANIA_AUTHORS_TABLE => 'a'),
-					'ON'	=> 'a.user_id = u.user_id'
+					'ON'	=> 'a.user_id = cc.user_id'
 				),
 			),
-			'WHERE'		=> 'cc.contrib_id = ' . $this->contrib_id . ' AND u.user_id = cc.user_id'
+			'WHERE'		=> 'cc.contrib_id = ' . $this->contrib_id,
 		);
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
@@ -189,9 +184,11 @@ class titania_contribution extends titania_message_object
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$this->coauthors[$row['user_id']] = $row;
-			users_overlord::$users[$row['user_id']] = $row;
 		}
 		phpbb::$db->sql_freeresult($result);
+
+		// Load the users table information
+		users_overlord::load_users(array_merge(array($this->contrib_user_id), array_keys($this->coauthors)));
 
 		// Check author/co-author status
 		if ($this->contrib_user_id == phpbb::$user->data['user_id'])
