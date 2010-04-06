@@ -27,7 +27,6 @@ class contribs_overlord
 	public static $contribs = array();
 
 	public static $sort_by = array(
-		'a' => array('AUTHOR', 'u.username_clean'),
 		't' => array('UPDATE_TIME', 'c.contrib_last_update'),
 		'c' => array('SORT_CONTRIB_NAME', 'c.contrib_name', true),
 	);
