@@ -347,11 +347,9 @@ class titania_category extends titania_message_object
 	*/
 	public function move_category_content($from_id, $to_id = 0, $sync = true)
 	{
-		$table = TITANIA_CONTRIB_IN_CATEGORIES_TABLE;
-
 		$sql = 'SELECT category_type
 			FROM ' . $this->sql_table . '
-			WHERE category_id = ' . $to_id;
+			WHERE category_id = ' . (int) $to_id;
 		$result = phpbb::$db->sql_query($sql);
 		$row = phpbb::$db->sql_fetchrow($result);
 
@@ -368,8 +366,8 @@ class titania_category extends titania_message_object
 
 		if(!sizeof($errors))
 		{
-			$sql = "UPDATE $table
-				SET category_id = $to_id
+			$sql = "UPDATE " . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . "
+				SET category_id = (int) $to_id
 				WHERE category_id = $from_id";
 			phpbb::$db->sql_query($sql);
 
@@ -401,11 +399,9 @@ class titania_category extends titania_message_object
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		$table_ary = array(TITANIA_CONTRIB_IN_CATEGORIES_TABLE);
-
 		foreach ($table_ary as $table)
 		{
-			phpbb::$db->sql_query("DELETE FROM $table WHERE category_id = $category_id");
+			phpbb::$db->sql_query("DELETE FROM " . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . " WHERE category_id = $category_id");
 		}
 
 		// Adjust users post counts
@@ -565,9 +561,9 @@ class titania_category extends titania_message_object
 	*
 	* @return bool True if the category has child categories, false if not
 	*/
-	public function get_children($category_id)
+	public function has_children($category_id)
 	{
-		$sql = 'SELECT * FROM ' . $this->sql_table . ' WHERE parent_id = ' . (int) $category_id;
+		$sql = 'SELECT category_id FROM ' . $this->sql_table . ' WHERE parent_id = ' . (int) $category_id . ' LIMIT 1';
 
 		$result = phpbb::$db->sql_query($sql);
 		$this->sql_data = phpbb::$db->sql_fetchrow($result);
@@ -694,7 +690,7 @@ class titania_category extends titania_message_object
 	*/
 	public function get_manage_url()
 	{
-		$url = 'manage/categories/c_' . $this->category_id;
+		$url = 'manage/categories';
 
 		return $url;
 	}
@@ -711,14 +707,14 @@ class titania_category extends titania_message_object
 			'CATEGORY_CONTRIBS'			=> $this->category_contribs,
 			'CATEGORY_TYPE'				=> $this->category_type,
 
-			'U_MOVE_UP'					=> titania_url::$root_url . $this->get_manage_url() . '-action_move_up',
-			'U_MOVE_DOWN'				=> titania_url::$root_url . $this->get_manage_url() . '-action_move_down',
-			'U_EDIT'					=> titania_url::$root_url . $this->get_manage_url() . '-action_edit',
-			'U_DELETE'					=> titania_url::$root_url . $this->get_manage_url() . '-action_delete',
-			'U_VIEW_CATEGORY'			=> titania_url::$root_url . $this->get_url(),
-			'U_VIEW_MANAGE_CATEGORY'	=> titania_url::$root_url . $this->get_manage_url(),
+			'U_MOVE_UP'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'move_up')),
+			'U_MOVE_DOWN'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'move_down')),
+			'U_EDIT'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'edit')),
+			'U_DELETE'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'delete')),
+			'U_VIEW_CATEGORY'			=> titania_url::build_url($this->get_url()),
+			'U_VIEW_MANAGE_CATEGORY'		=> titania_url::build_url($this->get_manage_url()),
 
-			//'HAS_CHILDREN'				=> $this->get_children($this->category_id),
+			'HAS_CHILDREN'				=> $this->has_children($this->category_id),
 		);
 
 		if ($return)
