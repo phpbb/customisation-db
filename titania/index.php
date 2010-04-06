@@ -242,7 +242,7 @@ switch ($action)
 			titania::generate_breadcrumbs(array(
 				((isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'])	=> titania_url::build_url($category_object->get_url()),
 			));
-			unset($categories_ary, $category_object);
+			unset($category_object);
 
 			contribs_overlord::display_contribs('category', $category_id);
 		}
