@@ -718,7 +718,7 @@ class titania_category extends titania_message_object
 			'U_VIEW_CATEGORY'			=> titania_url::$root_url . $this->get_url(),
 			'U_VIEW_MANAGE_CATEGORY'	=> titania_url::$root_url . $this->get_manage_url(),
 
-			'HAS_CHILDREN'				=> $this->get_children($this->category_id),
+			//'HAS_CHILDREN'				=> $this->get_children($this->category_id),
 		);
 
 		if ($return)
