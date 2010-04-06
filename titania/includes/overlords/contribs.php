@@ -182,7 +182,7 @@ class contribs_overlord
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
 			break;
-			
+
 			case 'all' :
 				$sql_ary = array(
 					'SELECT'	=> $select,
@@ -201,9 +201,9 @@ class contribs_overlord
 		}
 
 		titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
-		
+
 		// Permissions
-		if (titania::$config->require_validation && !titania::$access_level == TITANIA_ACCESS_TEAMS)
+		if (titania::$config->require_validation && titania::$access_level != TITANIA_ACCESS_TEAMS)
 		{
 			$sql_ary['LEFT_JOIN'][] = array(
 				'FROM'	=> array(TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc'),
