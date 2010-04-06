@@ -81,8 +81,6 @@ class titania_category extends titania_message_object
 	*/
 	public function post_data($message)
 	{
-		$post_data = $message->request_data();
-
 		parent::post_data($message);
 	}
 
@@ -149,7 +147,7 @@ class titania_category extends titania_message_object
 
 		if (!$row)
 		{
-			trigger_error("Category #$category does not exist", E_USER_ERROR);
+			trigger_error("Category #$category does not exist");
 		}
 
 		return $row;
@@ -196,62 +194,6 @@ class titania_category extends titania_message_object
 		phpbb::$db->sql_freeresult($result);
 
 		return $rows;
-	}
-
-	/**
-	* Simple version of jumpbox, just lists available categories
-	*/
-	public function make_category_select($select_id = false, $ignore_id = false, $ignore_acl = true, $ignore_nonpost = true, $ignore_emptycat = true, $only_acl_post = false, $return_array = false)
-	{
-		// This query is identical to the jumpbox one
-		$sql = 'SELECT category_id, category_name, parent_id, left_id, right_id
-			FROM ' . $this->sql_table . '
-			ORDER BY left_id ASC';
-		$result = phpbb::$db->sql_query($sql, 600);
-
-		$right = 0;
-		$padding_store = array('0' => '');
-		$selected = $padding = '';
-		$disabled = false;
-		$category_list = ($return_array) ? array() : '';
-
-		if(!$select_id)
-		{
-			$selected = (is_array($select_id)) ? ((in_array(0, $select_id)) ? ' selected="selected"' : '') : ((0 == $select_id) ? ' selected="selected"' : '');
-		}
-		$category_list .= '<option value="0"' . (($disabled) ? ' disabled="disabled" class="disabled-option"' : $selected) . '>' . $padding . '- ' . phpbb::$user->lang['ROOT'] . ' -' . '</option>';
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$category_name = (isset(phpbb::$user->lang[$row['category_name']])) ? phpbb::$user->lang[$row['category_name']] : $row['category_name'];
-			if ($row['left_id'] < $right)
-			{
-				$padding .= '&nbsp; &nbsp;';
-				$padding_store[$row['parent_id']] = $padding;
-			}
-			else if ($row['left_id'] > $right + 1)
-			{
-				$padding = (isset($padding_store[$row['parent_id']])) ? $padding_store[$row['parent_id']] : '';
-			}
-
-			$right = $row['right_id'];
-			$disabled = false;
-
-			if ($return_array)
-			{
-				// Include some more information...
-				$selected = (is_array($select_id)) ? ((in_array($row['category_id'], $select_id)) ? true : false) : (($row['category_id'] == $select_id) ? true : false);
-				$category_list[$row['category_id']] = array_merge(array('padding' => $padding, 'selected' => ($selected && !$disabled), 'disabled' => $disabled), $row);
-			}
-			else
-			{
-				$selected = (is_array($select_id)) ? ((in_array($row['category_id'], $select_id)) ? ' selected="selected"' : '') : (($row['category_id'] == $select_id) ? ' selected="selected"' : '');
-				$category_list .= '<option value="' . $row['category_id'] . '"' . (($disabled) ? ' disabled="disabled" class="disabled-option"' : $selected) . '>' . $padding . $category_name . '</option>';
-			}
-		}
-		phpbb::$db->sql_freeresult($result);
-		unset($padding_store);
-
-		return $category_list;
 	}
 
 	/**
@@ -367,7 +309,7 @@ class titania_category extends titania_message_object
 		if(!sizeof($errors))
 		{
 			$sql = "UPDATE " . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . "
-				SET category_id = (int) $to_id
+				SET category_id = " . (int) $to_id . "
 				WHERE category_id = $from_id";
 			phpbb::$db->sql_query($sql);
 
@@ -712,7 +654,7 @@ class titania_category extends titania_message_object
 			'U_EDIT'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'edit')),
 			'U_DELETE'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'delete')),
 			'U_VIEW_CATEGORY'			=> titania_url::build_url($this->get_url()),
-			'U_VIEW_MANAGE_CATEGORY'		=> titania_url::build_url($this->get_manage_url()),
+			'U_VIEW_MANAGE_CATEGORY'		=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id)),
 
 			'HAS_CHILDREN'				=> $this->has_children($this->category_id),
 		);

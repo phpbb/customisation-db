@@ -22,7 +22,7 @@ if (!defined('IN_TITANIA'))
  * @param array $selected
  * @return void
  */
-function generate_category_select($selected = false)
+function generate_category_select($selected = false, $is_manage = false)
 {
 	if (!is_array($selected))
 	{
@@ -48,7 +48,7 @@ function generate_category_select($selected = false)
 
 		$right = $row['right_id'];
 
-		if ($row['category_type'] == 0 && ($row['left_id'] + 1 == $row['right_id']))
+		if ($row['category_type'] == 0 && ($row['left_id'] + 1 == $row['right_id']) && !$is_manage)
 		{
 			// Non-postable forum with no subforums, don't display
 			continue;

@@ -26,8 +26,8 @@ phpbb::$user->add_lang('acp/common');
 titania::_include('functions_posting', 'generate_type_select');
 
 $category_id 	= request_var('c', 0);
-$submit 		= (isset($_POST['submit'])) ? true : false;
-$action			= request_var('action', '');
+$submit 	= (isset($_POST['submit'])) ? true : false;
+$action		= request_var('action', '');
 
 switch ($action)
 {
@@ -35,51 +35,15 @@ switch ($action)
 	case 'edit' :
 		$category_object = new titania_category;
 
-		if ($action == 'edit' && !$category_id)
-		{
-			trigger_error(phpbb::$user->lang['NO_CATEGORY'], E_USER_WARNING);
-		}
-
-		if ($action == 'add' && $category_id)
-		{
-			$category_data = $category_object->get_category_info($category_id);
-		}
-
-		$subcats_id = array();
-		$subcats = $category_object->get_category_branch($category_id, 'children');
-
-		foreach ($subcats as $row)
-		{
-			$subcats_id[] = $row['category_id'];
-		}
-
-		if ($action == 'add' && !$category_id)
-		{
-			$categories_list = $category_object->make_category_select(0, $subcats_id);
-		}
-		else
-		{
-			$categories_list = $category_object->make_category_select($category_data['parent_id'], $subcats_id);
-		}
-
 		if ($action == 'edit')
 		{
+			if (!$category_id)
+			{
+				trigger_error(phpbb::$user->lang['NO_CATEGORY']);
+			}
+
 			$category_object->load($category_id);
 		}
-
-		$sql = 'SELECT category_id
-			FROM ' . TITANIA_CATEGORIES_TABLE . "
-			WHERE category_id <> $category_id";
-		$result = phpbb::$db->sql_query_limit($sql, 1);
-
-		// Setup the display for the parent category dropdown box
-		if (phpbb::$db->sql_fetchrow($result))
-		{
-			phpbb::$template->assign_vars(array(
-				'S_MOVE_CATEGORY_OPTIONS'		=> ($submit) ? $category_object->make_category_select(request_var('category_parent', 0), $subcats_id, false, true) : (($action == 'add') ? $category_object->make_category_select($category_id, $subcats_id, false, true) : $category_object->make_category_select($category_object->parent_id, $subcats_id, false, true)) // , false, true, false???
-			));
-		}
-		phpbb::$db->sql_freeresult($result);
 
 		// Load the message object
 		$message_object = new titania_message($category_object);
@@ -103,7 +67,7 @@ switch ($action)
 
 		if($submit)
 		{
-			// Goodbye to the old category data...
+			// Goodbye to some of the old category data...
 			unset($category_object->category_name);
 
 			$error = array();
@@ -143,7 +107,7 @@ switch ($action)
 
 						if (!$row)
 						{
-							trigger_error(phpbb::$user->lang['PARENT_NOT_EXIST'], E_USER_WARNING);
+							trigger_error(phpbb::$user->lang['PARENT_NOT_EXIST']);
 						}
 
 						$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . '
@@ -206,17 +170,18 @@ switch ($action)
 		generate_type_select($category_object->category_type);
 
 		phpbb::$template->assign_vars(array(
-			'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : '',
-			'CATEGORY' 				=> $category_id,
-			'CATEGORY_NAME'			=> (isset(phpbb::$user->lang[$category_object->category_name])) ? phpbb::$user->lang[$category_object->category_name] : $category_object->category_name,
-			'CATEGORY_VISIBLE' 		=> $category_object->category_visible,
-			'SECTION_NAME'			=> ($action == 'add') ? phpbb::$user->lang['CREATE_CATEGORY'] : phpbb::$user->lang['EDIT_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$old_category_name])) ? phpbb::$user->lang[$old_category_name] : $old_category_name),
+			'ERROR_MSG'						=> (sizeof($error)) ? implode('<br />', $error) : '',
+			'CATEGORY' 						=> $category_id,
+			'CATEGORY_NAME'					=> (isset(phpbb::$user->lang[$category_object->category_name])) ? phpbb::$user->lang[$category_object->category_name] : $category_object->category_name,
+			'CATEGORY_VISIBLE' 				=> $category_object->category_visible,
+			'SECTION_NAME'					=> ($action == 'add') ? phpbb::$user->lang['CREATE_CATEGORY'] : phpbb::$user->lang['EDIT_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$old_category_name])) ? phpbb::$user->lang[$old_category_name] : $old_category_name),
 
-			'U_ACTION'				=> ($action == 'add') ? titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'add')) : titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'edit')),
-			'U_BACK'				=> ($action == 'add') ? titania_url::build_url('manage/categories', array('c' => $category_id)) : titania_url::build_url('manage/categories', array('c' => $category_object->parent_id)),
+			'U_ACTION'						=> ($action == 'add') ? titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'add')) : titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'edit')),
+			'U_BACK'						=> ($action == 'add') ? titania_url::build_url('manage/categories', array('c' => $category_id)) : titania_url::build_url('manage/categories', array('c' => $category_object->parent_id)),
 
-			'S_ADD_CATEGORY' 		=> ($action == 'add') ? true : false,
-			'S_EDIT_CATEGORY' 		=> ($action == 'edit') ? true : false,
+			'S_ADD_CATEGORY' 				=> ($action == 'add') ? true : false,
+			'S_EDIT_CATEGORY' 				=> ($action == 'edit') ? true : false,
+			'S_MOVE_CATEGORY_OPTIONS'		=> (isset($category_object->parent_id)) ? generate_category_select($category_object->parent_id, true) : generate_category_select($category_id, true),
 		));
 	break;
 	case 'move_up' :
@@ -225,7 +190,7 @@ switch ($action)
 
 		if (!$category_id)
 		{
-			trigger_error(phpbb::$user->lang['NO_CATEGORY'], E_USER_WARNING);
+			trigger_error(phpbb::$user->lang['NO_CATEGORY']);
 		}
 
 		$sql = 'SELECT *
@@ -237,22 +202,16 @@ switch ($action)
 
 		if (!$row)
 		{
-			trigger_error(phpbb::$user->lang['NO_CATEGORY'], E_USER_WARNING);
+			trigger_error(phpbb::$user->lang['NO_CATEGORY']);
 		}
 
 		$move_category_name = $category_object->move_category_by($row, $action, 1);
-
-		if ($move_category_name !== false)
-		{
-			titania::$cache->destroy('sql', TITANIA_CATEGORIES_TABLE);
-		}
 
 		phpbb::$template->assign_vars(array(
 			'ERROR_MSG'				=> (sizeof($errors)) ? implode('<br />', $errors) : '',
 			'CATEGORY' 				=> $category_id,
 
 			'S_MOVE_CATEGORY' 		=> true,
-			'S_CATEGORIES_LIST'			=> $categories_list,
 			'S_ERROR'				=> (sizeof($errors)) ? true : false,
 		));
 
@@ -264,33 +223,10 @@ switch ($action)
 
 		if (!$category_id)
 		{
-			trigger_error(phpbb::$user->lang['NO_CATEGORY'], E_USER_WARNING);
+			trigger_error(phpbb::$user->lang['NO_CATEGORY']);
 		}
 
 		$category_data = $category_object->get_category_info($category_id);
-
-		$subcats_id = array();
-		$subcats = $category_object->get_category_branch($category_id, 'children');
-
-		foreach ($subcats as $row)
-		{
-			$subcats_id[] = $row['category_id'];
-		}
-
-		$categories_list = $category_object->make_category_select($category_data['parent_id'], $subcats_id);
-
-		$sql = 'SELECT category_id
-			FROM ' . TITANIA_CATEGORIES_TABLE . "
-			WHERE category_id <> $category_id";
-		$result = phpbb::$db->sql_query_limit($sql, 1);
-
-		if (phpbb::$db->sql_fetchrow($result))
-		{
-			phpbb::$template->assign_vars(array(
-				'S_MOVE_CATEGORY_OPTIONS'		=> $category_object->make_category_select($category_data['parent_id'], $subcats_id, false, true)) // , false, true, false???
-			);
-		}
-		phpbb::$db->sql_freeresult($result);
 
 		$parent_id = ($category_data['parent_id'] == $category_id) ? 0 : $category_data['parent_id'];
 
@@ -327,24 +263,22 @@ switch ($action)
 
 			if (!sizeof($error))
 			{
-				titania::$cache->destroy('sql', TITANIA_CATEGORIES_TABLE);
-
 				// Redirect back to the previous category
 				redirect(titania_url::build_url('manage/categories', array('c' => $parent_id)));
 			}
 		}
 
 		phpbb::$template->assign_vars(array(
-			'S_DELETE_CATEGORY'		=> true,
-			'U_ACTION'				=> titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'delete')),
-			'U_BACK'				=> 'c_' . $category_object->parent_id,
+			'S_DELETE_CATEGORY'				=> true,
+			'U_ACTION'						=> titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'delete')),
+			'U_BACK'						=> 'c_' . $category_object->parent_id,
 
-			'CATEGORY' 				=> $category_id,
-			'CATEGORY_NAME'			=> (isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name'],
-			'SECTION_NAME'			=> phpbb::$user->lang['DELETE_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name']),
-			'S_HAS_SUBCATS'			=> ($category_data['right_id'] - $category_data['left_id'] > 1) ? true : false,
-			'S_CATEGORIES_LIST'		=> $categories_list,
-			'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : '')
+			'CATEGORY' 						=> $category_id,
+			'CATEGORY_NAME'					=> (isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name'],
+			'SECTION_NAME'					=> phpbb::$user->lang['DELETE_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name']),
+			'S_HAS_SUBCATS'					=> ($category_data['right_id'] - $category_data['left_id'] > 1) ? true : false,
+			'S_MOVE_CATEGORY_OPTIONS'		=> generate_category_select($category_data['parent_id'], true),
+			'ERROR_MSG'						=> (sizeof($error)) ? implode('<br />', $error) : '')
 		);
 
 	break;
