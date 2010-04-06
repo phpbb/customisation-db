@@ -288,6 +288,7 @@ a.new-revision:hover {
 #author-profile .left-column {
 	float: left;
 	width: 200px;
+	margin-right: 0;
 }
 
 #author-profile .right-column {
