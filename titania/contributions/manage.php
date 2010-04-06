@@ -290,13 +290,19 @@ else
 	$active_coauthors = $nonactive_coauthors = array();
 	foreach (titania::$contrib->coauthors as $row)
 	{
+		// User does not exist anymore...
+		if (users_overlord::get_user($row['user_id'], 'user_id') != $row['user_id'])
+		{
+			continue;
+		}
+
 		if ($row['active'])
 		{
-			$active_coauthors[] = $row['username'];
+			$active_coauthors[] = users_overlord::get_user($row['user_id'], 'username');
 		}
 		else
 		{
-			$nonactive_coauthors[] = $row['username'];
+			$nonactive_coauthors[] = users_overlord::get_user($row['user_id'], 'username');
 		}
 	}
 	$active_coauthors = implode("\n", $active_coauthors);
