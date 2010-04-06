@@ -32,7 +32,7 @@ function phpbb_com_header($page_title)
 	include($root_path . 'vars.' . PHP_EXT);
 
 	// Setup the phpBB.com header
-	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/');
+	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/', 'website');
 	phpbb::$template->set_filenames(array(
 		'phpbb_com_header'		=> 'overall_header.html',
 	));
@@ -44,7 +44,7 @@ function phpbb_com_header($page_title)
 function phpbb_com_footer($run_cron, $template_body)
 {
 	// Setup the phpBB.com footer
-	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/');
+	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/', 'website');
 	phpbb::$template->set_filenames(array(
 		'phpbb_com_footer'		=> 'overall_footer.html',
 	));
