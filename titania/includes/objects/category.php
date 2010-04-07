@@ -235,14 +235,14 @@ class titania_category extends titania_message_object
 			$sql = 'UPDATE ' . $this->sql_table . "
 				SET right_id = right_id + $diff
 				WHERE " . $to_data['right_id'] . ' BETWEEN left_id AND right_id
-					AND ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
+					AND ' . phpbb::$db->sql_in_set(array_walk('category_id', $moved_ids), true);
 			phpbb::$db->sql_query($sql);
 
 			// Resync the righthand side of the tree
 			$sql = 'UPDATE ' . $this->sql_table . "
 				SET left_id = left_id + $diff, right_id = right_id + $diff
 				WHERE left_id > " . $to_data['right_id'] . '
-					AND ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
+					AND ' . phpbb::$db->sql_in_set(array_walk('category_id', $moved_ids), true);
 			phpbb::$db->sql_query($sql);
 
 			// Resync moved branch
@@ -261,7 +261,7 @@ class titania_category extends titania_message_object
 		{
 			$sql = 'SELECT MAX(right_id) AS right_id
 				FROM ' . $this->sql_table . '
-				WHERE ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
+				WHERE ' . phpbb::$db->sql_in_set(array_walk('category_id', $moved_ids), true);
 			$result = phpbb::$db->sql_query($sql);
 			$row = phpbb::$db->sql_fetchrow($result);
 			phpbb::$db->sql_freeresult($result);
@@ -271,7 +271,7 @@ class titania_category extends titania_message_object
 
 		$sql = 'UPDATE ' . $this->sql_table . "
 			SET left_id = left_id $diff, right_id = right_id $diff
-			WHERE " . phpbb::$db->sql_in_set('category_id', $moved_ids);
+			WHERE " . phpbb::$db->sql_in_set(array_walk('category_id', $moved_ids));
 		phpbb::$db->sql_query($sql);
 
 		if ($sync)
@@ -343,7 +343,9 @@ class titania_category extends titania_message_object
 
 		foreach ($table_ary as $table)
 		{
-			phpbb::$db->sql_query("DELETE FROM " . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . " WHERE category_id = $category_id");
+			$sql = 'DELETE FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+				WHERE category_id = ' . (int) $category_id;
+			phpbb::$db->sql_query($sql);
 		}
 
 		// Adjust users post counts
@@ -415,7 +417,7 @@ class titania_category extends titania_message_object
 			$diff = sizeof($category_ids) * 2;
 
 			$sql = 'DELETE FROM ' . $this->sql_table . '
-				WHERE ' . phpbb::$db->sql_in_set('category_id', $category_ids);
+				WHERE ' . phpbb::$db->sql_in_set(array_walk('category_id', $category_ids));
 			phpbb::$db->sql_query($sql);
 		}
 		else if ($action_subcats == 'move')
@@ -626,12 +628,12 @@ class titania_category extends titania_message_object
 			'CATEGORY_CONTRIBS'			=> $this->category_contribs,
 			'CATEGORY_TYPE'				=> $this->category_type,
 
-			'U_MOVE_UP'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'move_up')),
+			'U_MOVE_UP'					=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'move_up')),
 			'U_MOVE_DOWN'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'move_down')),
-			'U_EDIT'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'edit')),
-			'U_DELETE'				=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'delete')),
+			'U_EDIT'					=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'edit')),
+			'U_DELETE'					=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id, 'action' => 'delete')),
 			'U_VIEW_CATEGORY'			=> titania_url::build_url($this->get_url()),
-			'U_VIEW_MANAGE_CATEGORY'		=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id)),
+			'U_VIEW_MANAGE_CATEGORY'	=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id)),
 
 			'HAS_CHILDREN'				=> ($this->right_id - $this->left_id > 1) ? true : false,
 		);
