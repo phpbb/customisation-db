@@ -235,14 +235,14 @@ class titania_category extends titania_message_object
 			$sql = 'UPDATE ' . $this->sql_table . "
 				SET right_id = right_id + $diff
 				WHERE " . $to_data['right_id'] . ' BETWEEN left_id AND right_id
-					AND ' . phpbb::$db->sql_in_set(array_walk('category_id', $moved_ids), true);
+					AND ' . phpbb::$db->sql_in_set('category_id', array_walk('intval', $moved_ids), true);
 			phpbb::$db->sql_query($sql);
 
 			// Resync the righthand side of the tree
 			$sql = 'UPDATE ' . $this->sql_table . "
 				SET left_id = left_id + $diff, right_id = right_id + $diff
 				WHERE left_id > " . $to_data['right_id'] . '
-					AND ' . phpbb::$db->sql_in_set(array_walk('category_id', $moved_ids), true);
+					AND ' . phpbb::$db->sql_in_set('category_id', array_walk('intval', $moved_ids), true);
 			phpbb::$db->sql_query($sql);
 
 			// Resync moved branch
@@ -261,7 +261,7 @@ class titania_category extends titania_message_object
 		{
 			$sql = 'SELECT MAX(right_id) AS right_id
 				FROM ' . $this->sql_table . '
-				WHERE ' . phpbb::$db->sql_in_set(array_walk('category_id', $moved_ids), true);
+				WHERE ' . phpbb::$db->sql_in_set('category_id', array_walk('intval', $moved_ids), true);
 			$result = phpbb::$db->sql_query($sql);
 			$row = phpbb::$db->sql_fetchrow($result);
 			phpbb::$db->sql_freeresult($result);
@@ -271,7 +271,7 @@ class titania_category extends titania_message_object
 
 		$sql = 'UPDATE ' . $this->sql_table . "
 			SET left_id = left_id $diff, right_id = right_id $diff
-			WHERE " . phpbb::$db->sql_in_set(array_walk('category_id', $moved_ids));
+			WHERE " . phpbb::$db->sql_in_set('category_id', array_walk('intval', $moved_ids));
 		phpbb::$db->sql_query($sql);
 
 		if ($sync)
@@ -417,7 +417,7 @@ class titania_category extends titania_message_object
 			$diff = sizeof($category_ids) * 2;
 
 			$sql = 'DELETE FROM ' . $this->sql_table . '
-				WHERE ' . phpbb::$db->sql_in_set(array_walk('category_id', $category_ids));
+				WHERE ' . phpbb::$db->sql_in_set('category_id', array_walk('intval', $category_ids));
 			phpbb::$db->sql_query($sql);
 		}
 		else if ($action_subcats == 'move')
