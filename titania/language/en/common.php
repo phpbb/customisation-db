@@ -121,7 +121,7 @@ $lang = array_merge($lang, array(
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
 	'NEW_REVISION'				=> 'New Revision',
-	'NO_AUTH'					=> 'You are not authorized to see this page.',
+	'NO_AUTH'					=> 'You are not authorised to see this page.',
 	'NO_CATEGORY'				=> 'The requested category does not exist.',
 	'NO_CATEGORY_NAME'				=> 'Enter the category name',
 	'NO_CONTRIB'				=> 'The requested contribution does not exist.',
