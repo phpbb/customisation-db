@@ -486,6 +486,23 @@ class titania_contribution extends titania_message_object
 		$this->index();
 	}
 
+	public function report($reason = '')
+	{
+		// Setup the attention object and submit it
+		$attention = new titania_attention;
+		$attention->__set_array(array(
+			'attention_type'		=> TITANIA_ATTENTION_REPORTED,
+			'attention_object_type'	=> TITANIA_CONTRIB,
+			'attention_object_id'	=> $this->contrib_id,
+			'attention_poster_id'	=> $this->contrib_user_id,
+			'attention_post_time'	=> $this->contrib_last_update,
+			'attention_url'			=> $this->get_url(),
+			'attention_title'		=> $this->contrib_name,
+			'attention_description'	=> $reason,
+		));
+		$attention->submit();
+	}
+
 	/**
 	 * Change the status of this contrib item.
 	 * YOU MUST USE THIS FUNCTION TO CHANGE THE STATUS ELSE THE AUTHORS CONTRIB COUNT WILL BE INCORRECT!

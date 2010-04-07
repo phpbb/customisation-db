@@ -219,19 +219,7 @@ else if ($submit)
 
 			if (sizeof($attention_message))
 			{
-				// Setup the attention object and submit it
-				$attention = new titania_attention;
-				$attention->__set_array(array(
-					'attention_type'		=> TITANIA_ATTENTION_REPORTED,
-					'attention_object_type'	=> TITANIA_CONTRIB,
-					'attention_object_id'	=> titania::$contrib->contrib_id,
-					'attention_poster_id'	=> phpbb::$user->data['user_id'],
-					'attention_post_time'	=> titania::$time,
-					'attention_url'			=> titania::$contrib->get_url(),
-					'attention_title'		=> titania::$contrib->contrib_name,
-					'attention_description'	=> nl2br(implode("\n\n", $attention_message)),
-				));
-				$attention->submit();
+				titania::$contrib->report(nl2br(implode("\n\n", $attention_message)));
 			}
 		}
 

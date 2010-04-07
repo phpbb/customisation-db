@@ -21,6 +21,36 @@ titania::add_lang('authors');
 // Load the Contrib item
 load_contrib();
 
+if ($page == 'report')
+{
+	// Check permissions
+	if (!phpbb::$user->data['is_registered'])
+	{
+		titania::needs_auth();
+	}
+
+	titania::add_lang('posting');
+	phpbb::$user->add_lang('mcp');
+
+	if (titania::confirm_box(true))
+	{
+		$message = utf8_normalize_nfc(request_var('report_text', '', true));
+		titania::$contrib->report($message);
+
+		// Notifications
+
+		redirect(titania::$contrib->get_url());
+	}
+	else
+	{
+		//phpbb::$template->assign_var('S_CAN_NOTIFY', ((phpbb::$user->data['is_registered']) ? true : false));
+
+		titania::confirm_box(false, 'REPORT_POST', '', array(), 'posting/report_body.html');
+	}
+
+	redirect(titania::$contrib->get_url());
+}
+
 titania::$contrib->get_download();
 titania::$contrib->get_revisions();
 titania::$contrib->get_screenshots();

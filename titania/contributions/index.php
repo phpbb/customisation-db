@@ -55,6 +55,10 @@ switch ($page)
 		include(TITANIA_ROOT . 'contributions/' . $page . '.' . PHP_EXT);
 	break;
 
+	case 'report' :
+		include(TITANIA_ROOT . 'contributions/details.' . PHP_EXT);
+	break;
+
 	default :
 		include(TITANIA_ROOT . 'contributions/details.' . PHP_EXT);
 	break;
