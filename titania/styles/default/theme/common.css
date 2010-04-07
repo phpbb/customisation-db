@@ -154,7 +154,17 @@ a.download-main {
 	margin-bottom: 3px;
 	padding-bottom: 3px;
 	border-bottom: 1px dotted #DEDEDE;
-	
+
+}
+
+.contrib-description ul.profile-icons {
+	padding: 0;
+	float: right;
+	margin-top: -5px;
+}
+
+.contrib-description .icon-subscribe, .contrib-description .icon-unsubscribe {
+	padding-top: 4px;
 }
 
 ul.general-info li {
@@ -261,7 +271,7 @@ a.new-revision:hover {
 /* Listings
 --------------------------------------------- */
 #faqlist .topiclist dt {
-	width: 80%;	
+	width: 80%;
 }
 
 dd.faq-tools {
@@ -297,13 +307,13 @@ dd.general {
 .container dd.type {
 	width: 15%;
 	text-align: center;
-	padding-left: 5px;	
-	padding-right: 5px;	
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 .container dd.contrib-author {
 	width: 20%;
-	padding-left: 5px;	
+	padding-left: 5px;
 	padding-right: 5px;
 }
 

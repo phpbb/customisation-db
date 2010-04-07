@@ -28,6 +28,12 @@ class titania_subscriptions
 	*/
 	public static function handle_subscriptions($object_type, $object_id, $url)
 	{
+		if (!phpbb::$user->data['is_registered'])
+		{
+			// Cannot currently handle non-registered users
+			return;
+		}
+
 		$subscribe = request_var('subscribe', '');
 		if ($subscribe == 'subscribe' && check_link_hash(request_var('hash', ''), 'subscribe'))
 		{

@@ -384,6 +384,9 @@ class titania_contribution extends titania_message_object
 				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && ($this->is_author || $this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('view'))) ? $this->get_url('queue_discussion') : '',
 				'U_VIEW_CONTRIB'				=> $this->get_url(),
 				'U_VIEW_DEMO'					=> $this->contrib_demo,
+
+				'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
+				'U_INFO'						=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? titania_url::build_url('manage/attention', array('type' => TITANIA_CONTRIB, 'id' => $this->contrib_id)) : '',
 			));
 		}
 
