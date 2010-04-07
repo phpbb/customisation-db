@@ -278,7 +278,7 @@ class titania_category extends titania_message_object
 		{
 			// Resync counters
 			$sync = new titania_sync;
-			$sync->categories(count);
+			$sync->categories('count');
 		}
 
 		return $errors;
@@ -317,7 +317,7 @@ class titania_category extends titania_message_object
 			{
 				// Resync counters
 				$sync = new titania_sync;
-				$sync->categories(count);
+				$sync->categories('count');
 			}
 		}
 
@@ -360,7 +360,7 @@ class titania_category extends titania_message_object
 
 		// Resync counters
 		$sync = new titania_sync;
-		$sync->categories(count);
+		$sync->categories('count');
 
 		return array();
 	}
