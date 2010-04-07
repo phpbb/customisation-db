@@ -124,7 +124,7 @@ if (!$thumbnail)
 	}
 }
 
-if ($mode === 'view' && (strpos($attachment['mimetype'], 'image') === 0) && ((strpos(strtolower(phpbb::$user->browser), 'msie') !== false) && (strpos(strtolower(phpbb::$user->browser), 'msie 8.0') === false)))
+if (!$thumbnail && $mode === 'view' && (strpos($attachment['mimetype'], 'image') === 0) && ((strpos(strtolower(phpbb::$user->browser), 'msie') !== false) && (strpos(strtolower(phpbb::$user->browser), 'msie 8.0') === false)))
 {
 	wrap_img_in_html(titania_url::build_url('download', array('id' => $attachment['attachment_id'])), $attachment['real_filename']);
 	file_gc();
