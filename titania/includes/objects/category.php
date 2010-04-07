@@ -91,8 +91,8 @@ class titania_category extends titania_message_object
 	 */
 	public function submit()
 	{
-		// Destroy category parents cache
-		titania::$cache->destroy('_titania_category_parents');
+		// Destroy category cache
+		titania::$cache->destroy('_titania_categories');
 
 		return parent::submit();
 	}
@@ -495,6 +495,9 @@ class titania_category extends titania_message_object
 
 		phpbb::$db->sql_freeresult($result);
 
+		// Destroy category cache
+		titania::$cache->destroy('_titania_categories');
+
 		return $errors;
 	}
 
@@ -572,6 +575,9 @@ class titania_category extends titania_message_object
 				left_id BETWEEN {$left_id} AND {$right_id}
 				AND right_id BETWEEN {$left_id} AND {$right_id}";
 		phpbb::$db->sql_query($sql);
+
+		// Destroy category cache
+		titania::$cache->destroy('_titania_categories');
 
 		return $target['category_name'];
 	}
