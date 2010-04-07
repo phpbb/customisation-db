@@ -139,8 +139,8 @@ class titania_category extends titania_message_object
 	public function get_category_info($category_id)
 	{
 		$sql = 'SELECT *
-			FROM ' . $this->sql_table . "
-			WHERE category_id = $category_id";
+			FROM ' . $this->sql_table . '
+			WHERE category_id =  ' . (int) $category_id;
 		$result = phpbb::$db->sql_query($sql);
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
@@ -178,8 +178,8 @@ class titania_category extends titania_message_object
 		$sql = 'SELECT c2.*
 			FROM ' . $this->sql_table . ' c1
 			LEFT JOIN ' . $this->sql_table . " c2 ON ($condition)
-			WHERE c1.category_id = $category_id
-			ORDER BY c2.left_id " . (($order == 'descending') ? 'ASC' : 'DESC');
+			WHERE c1.category_id = " . (int) $category_id . '
+			ORDER BY c2.left_id ' . (($order == 'descending') ? 'ASC' : 'DESC');
 		$result = phpbb::$db->sql_query($sql);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
@@ -308,9 +308,9 @@ class titania_category extends titania_message_object
 
 		if(!sizeof($errors))
 		{
-			$sql = "UPDATE " . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . "
-				SET category_id = " . (int) $to_id . "
-				WHERE category_id = $from_id";
+			$sql = 'UPDATE ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+				SET category_id = ' . (int) $to_id . '
+				WHERE category_id = ' . (int) $from_id;
 			phpbb::$db->sql_query($sql);
 
 			if ($sync)
@@ -331,7 +331,7 @@ class titania_category extends titania_message_object
 	{
 		$sql = 'SELECT category_id
 			FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
-			WHERE category_id = ' . $category_id;
+			WHERE category_id = ' . (int) $category_id;
 		$result = phpbb::$db->sql_query($sql);
 
 		$contrib_counts = array();
@@ -353,7 +353,7 @@ class titania_category extends titania_message_object
 			{
 				$sql = 'UPDATE ' . $this->sql_table . '
 					SET category_contribs = category_contribs - ' . $substract . '
-					WHERE category_id = ' . $category_id;
+					WHERE category_id = ' . (int) $category_id;
 				phpbb::$db->sql_query($sql);
 			}
 		}
@@ -383,7 +383,7 @@ class titania_category extends titania_message_object
 		{
 			$sql = 'SELECT category_name
 				FROM ' . $this->sql_table . '
-				WHERE category_id = ' . $contribs_to_id;
+				WHERE category_id = ' . (int) $contribs_to_id;
 			$result = phpbb::$db->sql_query($sql);
 			$row = phpbb::$db->sql_fetchrow($result);
 			phpbb::$db->sql_freeresult($result);
@@ -428,7 +428,7 @@ class titania_category extends titania_message_object
 			{
 				$sql = 'SELECT category_name
 					FROM ' . $this->sql_table . '
-					WHERE category_id = ' . $subcats_to_id;
+					WHERE category_id = ' . (int) $subcats_to_id;
 				$result = phpbb::$db->sql_query($sql);
 				$row = phpbb::$db->sql_fetchrow($result);
 				phpbb::$db->sql_freeresult($result);
@@ -442,8 +442,8 @@ class titania_category extends titania_message_object
 					$subcats_to_name = $row['category_name'];
 
 					$sql = 'SELECT category_id
-						FROM ' . $this->sql_table . "
-						WHERE parent_id = $category_id";
+						FROM ' . $this->sql_table . '
+						WHERE parent_id = ' . (int) $category_id;
 					$result = phpbb::$db->sql_query($sql);
 
 					while ($row = phpbb::$db->sql_fetchrow($result))
@@ -455,14 +455,14 @@ class titania_category extends titania_message_object
 					// Grab new category data for correct tree updating later
 					$category_data = $this->get_category_info($category_id);
 
-					$sql = 'UPDATE ' . $this->sql_table . "
-						SET parent_id = $subcats_to_id
-						WHERE parent_id = $category_id";
+					$sql = 'UPDATE ' . $this->sql_table . '
+						SET parent_id = ' . (int) $subcats_to_id . '
+						WHERE parent_id = ' . (int) $category_id;
 					phpbb::$db->sql_query($sql);
 
 					$diff = 2;
-					$sql = 'DELETE FROM ' . $this->sql_table . "
-						WHERE category_id = $category_id";
+					$sql = 'DELETE FROM ' . $this->sql_table . '
+						WHERE category_id = ' . (int) $category_id;
 					phpbb::$db->sql_query($sql);
 				}
 			}
@@ -475,8 +475,8 @@ class titania_category extends titania_message_object
 		else
 		{
 			$diff = 2;
-			$sql = 'DELETE FROM ' . $this->sql_table . "
-				WHERE category_id = $category_id";
+			$sql = 'DELETE FROM ' . $this->sql_table . '
+				WHERE category_id = ' . (int) $category_id;
 			phpbb::$db->sql_query($sql);
 		}
 
@@ -497,29 +497,6 @@ class titania_category extends titania_message_object
 	}
 
 	/**
-	* Check if a category has child categories
-	*
-	* @param int $category_id The category id (category_id)
-	*
-	* @return bool True if the category has child categories, false if not
-	*/
-	public function has_children($category_id)
-	{
-		$sql = 'SELECT category_id FROM ' . $this->sql_table . ' WHERE parent_id = ' . (int) $category_id . ' LIMIT 1';
-
-		$result = phpbb::$db->sql_query($sql);
-		$this->sql_data = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);
-
-		if (empty($this->sql_data))
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
 	* Move category position by $steps up/down
 	*/
 	public function move_category_by($category_row, $action = 'move_up', $steps = 1)
@@ -531,8 +508,8 @@ class titania_category extends titania_message_object
 		* module will move as far as possible
 		*/
 		$sql = 'SELECT category_id, category_name, left_id, right_id
-			FROM ' . $this->sql_table . "
-			WHERE parent_id = {$category_row['parent_id']}
+			FROM ' . $this->sql_table . '
+			WHERE parent_id = ' . (int) $category_row['parent_id'] . "
 				AND " . (($action == 'move_up') ? "right_id < {$category_row['right_id']} ORDER BY right_id DESC" : "left_id > {$category_row['left_id']} ORDER BY left_id ASC");
 		$result = phpbb::$db->sql_query_limit($sql, $steps);
 
@@ -656,7 +633,7 @@ class titania_category extends titania_message_object
 			'U_VIEW_CATEGORY'			=> titania_url::build_url($this->get_url()),
 			'U_VIEW_MANAGE_CATEGORY'		=> titania_url::build_url($this->get_manage_url(), array('c' => $this->category_id)),
 
-			'HAS_CHILDREN'				=> $this->has_children($this->category_id),
+			'HAS_CHILDREN'				=> ($this->right_id - $this->left_id > 1) ? true : false,
 		);
 
 		if ($return)
