@@ -65,12 +65,13 @@ switch ($action)
 		$old_category_name_clean = $category_object->category_name_clean;
 		$old_category_name_lang = (isset(phpbb::$user->lang[$old_category_name])) ? phpbb::$user->lang[$old_category_name] : $old_category_name;
 
+		$error = array();
+		
 		if($submit)
 		{
 			// Goodbye to some of the old category data...
 			unset($category_object->category_name);
 
-			$error = array();
 			$category_object->category_id = ($action == 'edit') ? $category_id : '';
 			$category_name = request_var('category_name', '');
 			$category_object->category_name = ($category_name == $old_category_name_lang) ? $old_category_name : $category_name;
@@ -155,7 +156,6 @@ switch ($action)
 					{
 						return $errors_extra;
 					}
-					$error = '';
 				}
 
 				// Now we submit the category information...
@@ -230,9 +230,10 @@ switch ($action)
 
 		$parent_id = ($category_data['parent_id'] == $category_id) ? 0 : $category_data['parent_id'];
 
+		$error = array();
+		
 		if($submit)
 		{
-			$error = array();
 			$action_subcats		= request_var('action_subcats', '');
 			$subcats_to_id		= request_var('subcats_to_id', 0);
 			$action_contribs	= request_var('action_contribs', '');
