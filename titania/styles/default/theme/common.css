@@ -388,8 +388,6 @@ ul.rating li, ul.rated li {
 
 /* Attention */
 #attention {
-	border-bottom-style: dashed;
-	border-bottom-width: 1px;
 	padding-top: 5px;
 }
 
