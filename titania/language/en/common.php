@@ -40,7 +40,6 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-'REPORT' => 'Report',
 	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
 	'ALL'						=> 'All',
@@ -146,6 +145,7 @@ $lang = array_merge($lang, array(
 
 	'RATING'					=> 'Rating',
 	'REMOVE_RATING'				=> 'Remove Rating',
+	'REPORT'					=> 'Report',	
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
 	'ROOT'						=> 'Root',
 

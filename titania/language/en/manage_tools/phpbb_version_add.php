@@ -43,7 +43,7 @@ $lang = array_merge($lang, array(
 	'NEW_PHPBB_VERSION'				=> 'New phpBB Version',
 	'NEW_PHPBB_VERSION_EXPLAIN'		=> 'New phpBB version to list support on the revision for.',
 	'NO_REVISIONS_UPDATED'			=> 'No revisions were updated from the given limitations.',
-	'NO_VERSION_SELECTED'			=> 'You must give a proper phpBB version.  Ex: 3.0.7 or 3.0.7-pl1.',
+	'NO_VERSION_SELECTED'			=> 'You must give a proper phpBB version.  Ex: 3.0.7 or 3.0.7-PL1.',
 
 	'PHPBB_VERSION_ADD'				=> 'Add phpBB Version support to revisions',
 
