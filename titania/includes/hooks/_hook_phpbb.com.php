@@ -64,7 +64,7 @@ function phpbb_com_titania_page_header($hook, $page_title)
 	titania::set_custom_template();
 }
 
-function phpbb_com_page_footer($hook, $run_cron, $template_body)
+function phpbb_com_titania_page_footer($hook, $run_cron, $template_body)
 {
 	// Setup the phpBB.com footer
 	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/', 'website');
