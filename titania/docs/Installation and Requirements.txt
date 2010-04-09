@@ -3,6 +3,9 @@ Requirements:
 	PHP 5.2+
 	Mod Rewrite
 	MultiViews must be disabled!
+	For the Styles Demo board:
+		If not installing on the main board, it must be on the same server, on a different database, and with the same database prefix
+			as the main board uses (limitation of current code using table constants).
 
 How to install:
 	1. Get and install the latest version of phpBB
