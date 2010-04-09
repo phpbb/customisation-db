@@ -132,6 +132,8 @@ class titania_revision extends titania_database_object
 			'S_VALIDATED'		=> (!$this->revision_validated && titania::$config->use_queue) ? false : true,
 		));
 
+		uksort($this->phpbb_versions, 'reverse_version_compare');
+
 		foreach ($this->phpbb_versions as $row)
 		{
 			phpbb::$template->assign_block_vars($tpl_block . '.phpbb_versions', array(

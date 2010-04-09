@@ -279,6 +279,9 @@ class contribs_overlord
 						$contrib_versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']] = $version_row;
 					}
 				}
+
+				uksort($contrib_versions, 'reverse_version_compare');
+
 				$row['phpbb_versions'] = array_values($contrib_versions);
 			}
 
