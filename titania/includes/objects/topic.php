@@ -100,6 +100,9 @@ class titania_topic extends titania_database_object
 		));
 
 		$this->topic_id = $topic_id;
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function submit()
@@ -108,7 +111,10 @@ class titania_topic extends titania_database_object
 
 		$this->topic_subject_clean = titania_url::url_slug($this->topic_subject);
 
-		return parent::submit();
+		parent::submit();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -250,6 +256,9 @@ class titania_topic extends titania_database_object
 			'TOPIC_FOLDER_IMG_WIDTH'		=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 			'TOPIC_FOLDER_IMG_HEIGHT'		=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 		);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $details, $this);
 
 		return $details;
 	}

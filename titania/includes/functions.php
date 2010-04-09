@@ -17,6 +17,17 @@ if (!defined('IN_TITANIA'))
 }
 
 /**
+* phpBB is nub like that
+*
+* @param string $revision
+* @return string
+*/
+function get_real_revision_version($revision)
+{
+	return str_replace('rc', 'RC', strtolower($revision));
+}
+
+/**
 * Generate text for display
 * Returns the result of generate_text_for_display() from phpBB's functions_content.php file, but has hacks in place to let us use our own bbcode.html file
 *

@@ -441,19 +441,18 @@ class titania_contrib_tools
 		titania::add_lang('automod');
 
 		// Find the main modx file
-		$modx_file = $this->unzip_dir . $this->new_dir_name . '/';
-		if (file_exists($modx_file . 'install.xml'))
+		if (file_exists($this->unzip_dir . 'install.xml'))
 		{
-			$modx_file .= 'install.xml';
+			$modx_file = $this->unzip_dir . 'install.xml';
 		}
 		else
 		{
 			// Find the first item with install in the name
-			foreach (scandir($modx_file) as $item)
+			foreach (scandir($this->unzip_dir) as $item)
 			{
 		       if (strpos($item, 'install') !== false && strpos($item, '.xml'))
 		       {
-				   $modx_file .= $item;
+				   $modx_file = $this->unzip_dir . $item;
 				   break;
 		       }
 			}

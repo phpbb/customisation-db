@@ -69,8 +69,6 @@ if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 30 > 
 			continue;
 		}
 
-		$contrib_tools->mvdir_recursive($contrib_tools->unzip_dir, $contrib_tools->unzip_dir . '/' . $new_dir_name);
-
 		if (!($phpbb_path = $contrib_tools->automod_phpbb_files($version)))
 		{
 			continue;
@@ -82,7 +80,7 @@ if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 30 > 
 				'revision_id'				=> $row['revision_id'],
 				'contrib_id'				=> $row['contrib_id'],
 				'phpbb_version_branch'		=> $row['phpbb_version_branch'],
-				'phpbb_version_revision'	=> $row['phpbb_version_revision'],
+				'phpbb_version_revision'	=> get_real_revision_version($row['phpbb_version_revision']),
 				'revision_validated'		=> $row['revision_validated'],
 			);
 			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_REVISIONS_PHPBB_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));

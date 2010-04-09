@@ -140,8 +140,6 @@ switch ($action)
 			$package_root = $contrib_tools->find_root();
 			$contrib_tools->restore_root($package_root);
 
-			$contrib_tools->mvdir_recursive($contrib_tools->unzip_dir, $contrib_tools->unzip_dir . '/' . $new_dir_name);
-
 			// Automod testing time
 			$details = '';
 			$html_results = $bbcode_results = array();

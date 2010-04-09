@@ -44,7 +44,7 @@ class phpbb_version_test
 		}
 
 		$phpbb_version_branch = (int) $new_phpbb_version[0] . (int) $new_phpbb_version[2];
-		$phpbb_version_revision = substr($new_phpbb_version, 4);
+		$phpbb_version_revision = get_real_revision_version(substr($new_phpbb_version, 4));
 
 		// Is it in our version cache?
 		$versions = titania::$cache->get_phpbb_versions();

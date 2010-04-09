@@ -423,7 +423,8 @@ class titania_queue extends titania_message_object
 				'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
 				'forum_id' 				=> titania_types::$types[$contrib->contrib_type]->forum_database,
 				'topic_title'			=> $contrib->contrib_name,
-				'post_text'				=> $body
+				'post_text'				=> $body,
+				'topic_status'			=> (titania::$config->support_in_titania) ? ITEM_LOCKED : ITEM_UNLOCKED,
 			);
 
 			if ($options['forum_id'] && $options['poster_id'])

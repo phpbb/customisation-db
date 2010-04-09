@@ -115,6 +115,9 @@ class titania_contribution extends titania_message_object
 
 			'contrib_release_topic_id'		=> array('default' => 0),
 		));
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -390,6 +393,9 @@ class titania_contribution extends titania_message_object
 			));
 		}
 
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $vars, $this);
+
 		// Display real author
 		if ($return)
 		{
@@ -484,6 +490,9 @@ class titania_contribution extends titania_message_object
 
 		// Index!
 		$this->index();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function report($reason = '')
@@ -569,6 +578,9 @@ class titania_contribution extends titania_message_object
 
 		// Index!
 		$this->index();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -737,6 +749,9 @@ class titania_contribution extends titania_message_object
 				$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
 			}
 		}
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $error, $this);
 
 		return $error;
 	}

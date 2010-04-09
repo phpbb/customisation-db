@@ -152,6 +152,9 @@ class titania_post extends titania_message_object
 		{
 			$this->topic = new titania_topic;
 		}
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -450,6 +453,9 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		$this->index();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -494,6 +500,9 @@ class titania_post extends titania_message_object
 		$this->index();
 
 		parent::submit();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -528,6 +537,9 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		parent::submit();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -561,6 +573,9 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		parent::submit();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -597,6 +612,9 @@ class titania_post extends titania_message_object
 			WHERE attention_object_type = ' . TITANIA_POST . '
 				AND attention_object_id = ' . $this->post_id;
 		phpbb::$db->sql_query($sql);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 
 		// Initiate self-destruct mode
 		parent::delete();
@@ -635,6 +653,9 @@ class titania_post extends titania_message_object
 
 		// Self submission
 		parent::submit();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -794,6 +815,9 @@ class titania_post extends titania_message_object
 			'S_ACCESS_TEAMS'				=> ($this->post_access == TITANIA_ACCESS_TEAMS) ? true : false,
 			'S_ACCESS_AUTHORS'				=> ($this->post_access == TITANIA_ACCESS_AUTHORS) ? true : false,
 		);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $details, $this);
 
 		return $details;
 	}

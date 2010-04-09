@@ -70,7 +70,7 @@ abstract class titania_object
 	* 	);
 	* </code>
 	*/
-	protected $object_config = array();
+	public $object_config = array();
 
 	/**
 	* Catches calles to non-existing methods.

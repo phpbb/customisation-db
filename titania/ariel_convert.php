@@ -22,6 +22,7 @@
  * @ignore
  */
 define('IN_TITANIA', true);
+define('IN_TITANIA_CONVERT', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
@@ -35,6 +36,24 @@ if (phpbb::$user->data['user_type'] != USER_FOUNDER && phpbb::$user->data['user_
 
 // Hopefully this helps
 @set_time_limit(0);
+
+if (!isset(phpbb::$config['titania_hook_phpbb_com']))
+{
+	phpbb::_include('../umil/umil', false, 'umil');
+
+	$umil = new umil(true, phpbb::$db);
+
+	$umil->run_actions('update', array(
+		'1.0.0' => array(
+			'table_column_add' => array(
+				array(TITANIA_TOPICS_TABLE, 'phpbb_topic_id', array('UINT', 0)),
+			),
+		),
+	),
+	'titania_hook_phpbb_com');
+
+	unset($umil);
+}
 
 // Hack for local
 phpbb::$config['site_upload_dir'] = (!isset(phpbb::$config['site_upload_dir'])) ? '../phpBB3_titania/files/contribdb' : '../../' . phpbb::$config['site_upload_dir'];
@@ -454,7 +473,7 @@ switch ($step)
 					'revision_id'				=> $revision_id,
 					'contrib_id'				=> $row['contrib_id'],
 					'phpbb_version_branch'		=> ($row['contrib_phpbb_version'][0] == '3') ? 30 : 20,
-					'phpbb_version_revision'	=> substr($row['contrib_phpbb_version'], 4),
+					'phpbb_version_revision'	=> get_real_revision_version(substr($row['contrib_phpbb_version'], 4)),
 					'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
 				);
 			}
@@ -464,7 +483,7 @@ switch ($step)
 					'revision_id'				=> $revision_id,
 					'contrib_id'				=> $row['contrib_id'],
 					'phpbb_version_branch'		=> ($row['revision_phpbb_version'][0] == '3') ? 30 : 20,
-					'phpbb_version_revision'	=> substr($row['revision_phpbb_version'], 4),
+					'phpbb_version_revision'	=> get_real_revision_version(substr($row['revision_phpbb_version'], 4)),
 					'revision_validated'		=> ($row['queue_status'] == -1) ? true : false,
 				);
 			}
@@ -506,6 +525,7 @@ switch ($step)
 			$topic = new titania_topic;
 			$topic->parent_id = $row['contrib_id'];
 			$topic->topic_category = $row['contrib_type'];
+			$topic->phpbb_topic_id = $row['topic_id'];
 			$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
 			titania_move_topic($row['topic_id'], $topic, TITANIA_QUEUE_DISCUSSION);
 			unset($topic);
@@ -573,6 +593,7 @@ switch ($step)
 			$topic = new titania_topic;
 			$topic->parent_id = $row['queue_id'];
 			$topic->topic_url = 'manage/queue/q_' . $row['queue_id'];
+			$topic->phpbb_topic_id = $row['topic_id'];
 			titania_move_topic($row['topic_id'], $topic, TITANIA_QUEUE, $row['contrib_name'], $row['revision_version']);
 			$queue_topic_id = $topic->topic_id;
 			unset($topic);
@@ -658,7 +679,7 @@ switch ($step)
 					'contrib_id'				=> $row['contrib_id'],
 					'revision_id'				=> $row['revision_id'],
 					'phpbb_version_branch'		=> $data[0],
-					'phpbb_version_revision'	=> $data[1],
+					'phpbb_version_revision'	=> get_real_revision_version($data[1]),
 					'revision_validated'		=> $row['revision_validated'],
 				);
 			}

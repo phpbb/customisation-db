@@ -369,12 +369,12 @@ function phpbb_topic_add(&$options, $poll = array())
 
 	// Aaaand, submit it.
 	submit_post('post', $options['topic_title'], $user_data['username'], $options['topic_type'], $poll, $data, true);
-	
-	// If we provide support in titania, we lock the topic
-	if (titania::$config->support_in_titania)
+
+	// Change the status?
+	if (isset($options['topic_status']))
 	{
 		$sql = 'UPDATE ' . TOPICS_TABLE . '
-			SET topic_status = ' . ITEM_LOCKED . '
+			SET topic_status = ' . (int) $options['topic_status'] . '
 			WHERE topic_id = ' . $data['topic_id'] . '
 				AND topic_moved_id = 0';
 		phpbb::$db->sql_query($sql);

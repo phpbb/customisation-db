@@ -189,7 +189,8 @@ class titania_revision extends titania_database_object
 						'poster_id'				=> titania_types::$types[$this->contrib->contrib_type]->forum_robot,
 						'forum_id' 				=> titania_types::$types[$this->contrib->contrib_type]->forum_database,
 						'topic_title'			=> $this->contrib->contrib_name,
-						'post_text'				=> $body
+						'post_text'				=> $body,
+						'topic_status'			=> (titania::$config->support_in_titania) ? ITEM_LOCKED : ITEM_UNLOCKED,
 					);
 
 					if ($options['forum_id'] && $options['poster_id'])
@@ -254,7 +255,7 @@ class titania_revision extends titania_database_object
 					'contrib_id'				=> $this->contrib_id,
 					'revision_validated'		=> $this->revision_validated,
 					'phpbb_version_branch'		=> $row['phpbb_version_branch'],
-					'phpbb_version_revision'	=> (isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'],
+					'phpbb_version_revision'	=> get_real_revision_version(((isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'])),
 				);
 			}
 

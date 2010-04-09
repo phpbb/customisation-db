@@ -64,7 +64,7 @@ function titania_custom($action, $version)
 							'revision_id'				=> $row['revision_id'],
 							'contrib_id'				=> $row['contrib_id'],
 							'phpbb_version_branch'		=> $row['phpbb_version'][0] . $row['phpbb_version'][2],
-							'phpbb_version_revision'	=> substr($row['phpbb_version'], 4),
+							'phpbb_version_revision'	=> get_real_revision_version(substr($row['phpbb_version'], 4)),
 						);
 					}
 					phpbb::$db->sql_freeresult($result);
