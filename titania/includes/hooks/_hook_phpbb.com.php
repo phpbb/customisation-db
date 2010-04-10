@@ -89,22 +89,12 @@ function phpbb_com_titania_page_footer($hook, $run_cron, $template_body)
 
 function phpbb_com_titania_topic_submit($hook, &$topic_object)
 {
-	if (defined('IN_TITANIA_CONVERT') || $topic_object->topic_category != TITANIA_TYPE_MOD || $topic_object->phpbb_topic_id)
+	if (defined('IN_TITANIA_CONVERT') || $topic_object->phpbb_topic_id)
 	{
 		return;
 	}
 
-	$forum_id = false;
-	switch ($topic_object->topic_type)
-	{
-		case TITANIA_QUEUE_DISCUSSION :
-			$forum_id = 61;
-		break;
-
-		case TITANIA_QUEUE :
-			$forum_id = 38;
-		break;
-	}
+	$forum_id = phpbb_com_forum_id($topic_object->topic_category, $topic_object->topic_type);
 
 	if (!$forum_id)
 	{
@@ -144,22 +134,12 @@ function phpbb_com_titania_topic_submit($hook, &$topic_object)
 
 function phpbb_com_titania_post_post($hook, &$post_object)
 {
-	if (defined('IN_TITANIA_CONVERT') || $post_object->topic->topic_category != TITANIA_TYPE_MOD || !$post_object->topic->phpbb_topic_id)
+	if (defined('IN_TITANIA_CONVERT') || !$post_object->topic->phpbb_topic_id)
 	{
 		return;
 	}
 
-	$forum_id = false;
-	switch ($post_object->post_type)
-	{
-		case TITANIA_QUEUE_DISCUSSION :
-			$forum_id = 61;
-		break;
-
-		case TITANIA_QUEUE :
-			$forum_id = 38;
-		break;
-	}
+	$forum_id = phpbb_com_forum_id($post_object->topic->topic_category, $post_object->post_type);
 
 	if (!$forum_id)
 	{
@@ -232,5 +212,47 @@ function phpbb_com_move_queue_topic($queue_object)
 
 	phpbb::_include('functions_admin', 'move_topics');
 
-	move_topics($row['phpbb_topic_id'], 28);
+	move_topics($row['phpbb_topic_id'], phpbb_com_forum_id($row['topic_category'], 'trash'));
+}
+
+function phpbb_com_forum_id($type, $mode)
+{
+	switch ($type)
+	{
+		case TITANIA_TYPE_MOD :
+			switch ($mode)
+			{
+				case TITANIA_QUEUE_DISCUSSION :
+					return 61;
+				break;
+
+				case TITANIA_QUEUE :
+					return 38;
+				break;
+
+				case 'trash' :
+					return 28;
+				break;
+			}
+		break;
+
+		case TITANIA_TYPE_STYLE :
+			switch ($mode)
+			{
+				case TITANIA_QUEUE_DISCUSSION :
+					return 87;
+				break;
+
+				case TITANIA_QUEUE :
+					return 40;
+				break;
+
+				case 'trash' :
+					return 83;
+				break;
+			}
+		break;
+	}
+
+	return false;
 }
