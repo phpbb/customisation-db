@@ -365,7 +365,7 @@ switch ($step)
 			$filename = realpath(TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
 			if (!file_exists($filename))
 			{
-				//echo 'Could Not Find File - ' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
+				echo 'Could Not Find File - ' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
 				continue;
 			}
 

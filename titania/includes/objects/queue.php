@@ -159,9 +159,16 @@ class titania_queue extends titania_message_object
 
 		if (!$this->queue_topic_id)
 		{
+			$sql = 'SELECT contrib_type FROM ' . TITANIA_CONTRIBS_TABLE . '
+				WHERE contrib_id = ' . $this->contrib_id;
+			phpbb::$db->sql_query($sql);
+			$contrib_type = phpbb::$db->sql_fetchfield('contrib_type');
+			phpbb::$db->sql_freeresult();
+
 			// Create the topic
 			$post = new titania_post(TITANIA_QUEUE);
 			$post->topic->parent_id = $this->queue_id;
+			$post->topic->topic_category = $contrib_type;
 			$post->topic->topic_url = 'manage/queue/q_' . $this->queue_id;
 		}
 		else
