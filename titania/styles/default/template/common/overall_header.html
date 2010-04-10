@@ -35,15 +35,17 @@
 	var onunload_functions = new Array();
 
 	// Rating Stuff
-	var grey_star = new Image(16,16);
-	grey_star.src = "{UA_GREY_STAR_SRC}";
-	var green_star= new Image(16,16);
-	green_star.src = "{UA_GREEN_STAR_SRC}";
-	var red_star= new Image(16,16);
-	red_star.src = "{UA_RED_STAR_SRC}";
-	var orange_star= new Image(16,16);
-	orange_star.src = "{UA_ORANGE_STAR_SRC}";
-	var max_rating = "{UA_MAX_RATING}";
+	<!-- IF UA_GREY_STAR_SRC -->
+		var grey_star = new Image(16,16);
+		grey_star.src = "{UA_GREY_STAR_SRC}";
+		var green_star= new Image(16,16);
+		green_star.src = "{UA_GREEN_STAR_SRC}";
+		var red_star= new Image(16,16);
+		red_star.src = "{UA_RED_STAR_SRC}";
+		var orange_star= new Image(16,16);
+		orange_star.src = "{UA_ORANGE_STAR_SRC}";
+		var max_rating = "{UA_MAX_RATING}";
+	<!-- ENDIF -->
 
 	$(document).ready(function() {
 	<!-- IF S_HIDE_ERROR_BOX -->
