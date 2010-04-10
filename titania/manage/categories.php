@@ -66,7 +66,7 @@ switch ($action)
 		$old_category_name_lang = (isset(phpbb::$user->lang[$old_category_name])) ? phpbb::$user->lang[$old_category_name] : $old_category_name;
 
 		$error = array();
-		
+
 		if($submit)
 		{
 			// Goodbye to some of the old category data...
@@ -140,6 +140,7 @@ switch ($action)
 				{
 					$row = $category_object->get_category_info($category_object->category_id);
 
+					$errors_extra = array();
 					if ($row['parent_id'] != $category_object->parent_id)
 					{
 						if ($row['category_id'] != $category_object->parent_id)
@@ -208,11 +209,9 @@ switch ($action)
 		$move_category_name = $category_object->move_category_by($row, $action, 1);
 
 		phpbb::$template->assign_vars(array(
-			'ERROR_MSG'				=> (sizeof($errors)) ? implode('<br />', $errors) : '',
 			'CATEGORY' 				=> $category_id,
 
 			'S_MOVE_CATEGORY' 		=> true,
-			'S_ERROR'				=> (sizeof($errors)) ? true : false,
 		));
 
 		// Redirect back to previous category to avoid problems
@@ -231,7 +230,7 @@ switch ($action)
 		$parent_id = ($category_data['parent_id'] == $category_id) ? 0 : $category_data['parent_id'];
 
 		$error = array();
-		
+
 		if($submit)
 		{
 			$action_subcats		= request_var('action_subcats', '');
@@ -254,12 +253,7 @@ switch ($action)
 			}
 			else
 			{
-				$errors_delete = $category_object->delete_category($category_id, $action_contribs, $action_subcats, $contribs_to_id, $subcats_to_id);
-
-				if ($errors_delete)
-				{
-					$error[] = $errors_delete;
-				}
+				$error = array_merge($error, $category_object->delete_category($category_id, $action_contribs, $action_subcats, $contribs_to_id, $subcats_to_id));
 			}
 
 			if (!sizeof($error))

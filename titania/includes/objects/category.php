@@ -295,13 +295,14 @@ class titania_category extends titania_message_object
 		$result = phpbb::$db->sql_query($sql);
 		$row = phpbb::$db->sql_fetchrow($result);
 
+		$errors = array();
 		if ($to_id == $from_id)
 		{
-			$errors = phpbb::$user->lang['DESTINATION_CAT_INVALID'];
+			$errors[] = phpbb::$user->lang['DESTINATION_CAT_INVALID'];
 		}
 		else if (!$row['category_type'])
 		{
-			$errors = phpbb::$user->lang['DESTINATION_CAT_INVALID'];
+			$errors[] = phpbb::$user->lang['DESTINATION_CAT_INVALID'];
 		}
 
 		phpbb::$db->sql_freeresult($result);
@@ -406,7 +407,7 @@ class titania_category extends titania_message_object
 			foreach ($rows as $row)
 			{
 				$category_ids[] = (int) $row['category_id'];
-				$errors[] = array_merge($errors, $this->delete_category_content($row['category_id']));
+				$errors = array_merge($errors, $this->delete_category_content($row['category_id']));
 			}
 
 			if (sizeof($errors))
