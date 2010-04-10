@@ -21,6 +21,9 @@ titania::$hook->register_ary('phpbb_com_', array(
 	'titania_page_footer',
 	array('titania_topic', '__construct'),
 	array('titania_post', 'post'),
+	array('titania_queue', 'approve'),
+	array('titania_queue', 'deny'),
+	array('titania_queue', 'delete'),
 ));
 
 // Do we need to install the DB stuff?
@@ -41,6 +44,10 @@ if (!isset(phpbb::$config['titania_hook_phpbb_com']))
 
 	unset($umil);
 }
+
+/**
+* .com custom header and footer
+*/
 
 function phpbb_com_titania_page_header($hook, $page_title)
 {
@@ -75,6 +82,10 @@ function phpbb_com_titania_page_footer($hook, $run_cron, $template_body)
 
 	titania::set_custom_template();
 }
+
+/**
+* Copy new posts for queue discussion, queue to the forum
+*/
 
 function phpbb_com_titania_topic_submit($hook, &$topic_object)
 {
@@ -185,4 +196,41 @@ function phpbb_com_titania_topic___construct($hook, &$topic_object)
 	$topic_object->object_config = array_merge($topic_object->object_config, array(
 		'phpbb_topic_id'	=> array('default' => 0),
 	));
+}
+
+/**
+* Move queue topics to the trash can
+*/
+
+function phpbb_com_titania_queue_approve($hook, &$queue_object)
+{
+	phpbb_com_move_queue_topic($queue_object);
+}
+
+function phpbb_com_titania_queue_deny($hook, &$queue_object)
+{
+	phpbb_com_move_queue_topic($queue_object);
+}
+
+function phpbb_com_titania_queue_delete($hook, &$queue_object)
+{
+	phpbb_com_move_queue_topic($queue_object);
+}
+
+function phpbb_com_move_queue_topic($queue_object)
+{
+	$sql = 'SELECT phpbb_topic_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
+		WHERE topic_id = ' . (int) $queue_object->queue_topic_id;
+	$result = phpbb::$db->sql_query($sql);
+	$row = phpbb::$db->sql_fetchrow($result);
+	phpbb::$db->sql_freeresult($result);
+
+	if (!$row['phpbb_topic_id'] || $row['topic_category'] != TITANIA_TYPE_MOD)
+	{
+		return;
+	}
+
+	phpbb::_include('functions_admin', 'move_topics');
+
+	move_topics($row['phpbb_topic_id'], 28);
 }

@@ -304,6 +304,9 @@ class titania_queue extends titania_message_object
 
 	public function delete()
 	{
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+
 		$post = new titania_post;
 
 		// Remove posts and topic
@@ -322,9 +325,6 @@ class titania_queue extends titania_message_object
 			SET revision_queue_id = 0
 			WHERE revision_id = ' . $this->revision_id;
 		phpbb::$db->sql_query($sql);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 
 		// Assplode
 		parent::delete();

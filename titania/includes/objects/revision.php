@@ -359,6 +359,9 @@ class titania_revision extends titania_database_object
 
 	public function delete()
 	{
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+
 		// Delete the queue item
 		$queue = $this->get_queue();
 		$queue->delete();
@@ -368,9 +371,6 @@ class titania_revision extends titania_database_object
 		$attachment->attachment_id = $this->attachment_id;
 		$attachment->load();
 		$attachment->delete();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 
 		// Self-destruct
 		parent::delete();
