@@ -224,14 +224,14 @@ do{
 					// Replace the uploaded zip package with the new one
 					$contrib_tools->replace_zip();
 
-					// Remove our temp files
-					$contrib_tools->remove_temp_files();
-
 					if (titania_types::$types[titania::$contrib->contrib_type]->mpv_test)
 					{
 						phpbb::$template->assign_var('MPV_TEST_WARNING', true);
 					}
 				}
+
+				// Remove our temp files
+				$contrib_tools->remove_temp_files();
 			}
 		break;
 
@@ -353,6 +353,9 @@ do{
 			$queue->submit();
 
 			phpbb::$template->assign_var('AUTOMOD_RESULTS', $html_results);
+
+			// Remove our temp files
+			$contrib_tools->remove_temp_files();
 		break;
 
 		case 4 :

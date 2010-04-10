@@ -315,7 +315,41 @@ class titania_contrib_tools
     {
     	@unlink($this->original_zip);
 
-    	$this->archive($this->unzip_dir, $this->original_zip);
+    	phpbb::_include('functions_compress', false, 'compress_zip');
+
+		$zip = new compress_zip('w', $this->original_zip);
+
+		$this->_replace_zip($zip);
+
+		$zip->close();
+    }
+
+    /**
+    * Helper to add the files in the new zip package
+    */
+    private function _replace_zip(&$zip, $sub_dir = '')
+    {
+    	if (!is_dir($this->unzip_dir . $sub_dir))
+    	{
+			return;
+		}
+
+		foreach (scandir($this->unzip_dir . $sub_dir) as $item)
+		{
+            if ($item == '.' || $item == '..')
+			{
+				continue;
+			}
+
+			if (is_dir($this->unzip_dir . $sub_dir . $item))
+			{
+				$this->_replace_zip($zip, $sub_dir . $item . '/');
+			}
+			else
+			{
+				$zip->add_custom_file($this->unzip_dir . $sub_dir . $item, $this->new_dir_name . '/' . $sub_dir . $item);
+			}
+		}
     }
 
 
@@ -441,21 +475,35 @@ class titania_contrib_tools
 		titania::add_lang('automod');
 
 		// Find the main modx file
-		if (file_exists($this->unzip_dir . 'install.xml'))
+		$modx_file = false;
+		$modx_root = $this->find_root();
+
+		if (!$modx_root)
 		{
-			$modx_file = $this->unzip_dir . 'install.xml';
+			return false;
+		}
+		$modx_root = $this->unzip_dir . $modx_root;
+
+		if (file_exists($modx_root . 'install.xml'))
+		{
+			$modx_file = $modx_root . 'install.xml';
 		}
 		else
 		{
 			// Find the first item with install in the name
-			foreach (scandir($this->unzip_dir) as $item)
+			foreach (scandir($modx_root) as $item)
 			{
 		       if (strpos($item, 'install') !== false && strpos($item, '.xml'))
 		       {
-				   $modx_file = $this->unzip_dir . $item;
+				   $modx_file = $modx_root . $item;
 				   break;
 		       }
 			}
+		}
+
+		if (!$modx_file)
+		{
+			return false;
 		}
 
 		// HAX
@@ -715,77 +763,6 @@ parse_css_file = {PARSE_CSS_FILE}
 		$ezcarchive = ezcArchive::open($archive, ezcArchive::ZIP);
 		$ezcarchive->extract($target);
 		$ezcarchive->close();
-	}
-
-	/**
-	* Create an archive
-	*
-	* @param string $target The source to archive
-	* @param string $archive The archive name (including the path to it)
-	*/
-	public function archive($target, $archive, $check_minimum_directory = true)
-	{
-		// Some simple file protection to prevent getting out of the titania root
-		if ($check_minimum_directory)
-		{
-			if (!$this->check_filesystem_path($target))
-			{
-				return false;
-			}
-			if (!$this->check_filesystem_path($archive))
-			{
-				return false;
-			}
-		}
-
-		// Clear out old stuff if there is anything here...
-		if (file_exists($archive))
-		{
-			@unlink($archive);
-		}
-
-		// If the parent directory doesn't exist, create it
-		if (!file_exists(substr($archive, 0, strrpos($archive, '/'))))
-		{
-			$this->mkdir_recursive(substr($archive, 0, strrpos($archive, '/')));
-		}
-
-		// Using the phpBB ezcomponents loader
-		titania::_include('library/ezcomponents/loader', false, 'phpbb_ezcomponents_loader');
-		phpbb_ezcomponents_loader::load_component('archive');
-
-		// ezcomponents archive handler
-		$ezcarchive = ezcArchive::open($archive, ezcArchive::ZIP);
-		$ezcarchive->truncate();
-
-		$this->_archive($target, $ezcarchive);
-
-		$ezcarchive->close();
-	}
-
-	/**
-	* Add all the files under a directory to the archive (helper)
-	*/
-	private function _archive($target, &$ezcarchive, $origin = false)
-	{
-		$origin = ($origin === false) ? $target : $origin;
-
-		foreach (scandir($target) as $item)
-		{
-            if ($item == '.' || $item == '..')
-			{
-				continue;
-			}
-
-			if (is_dir($target . $item))
-			{
-				$this->_archive($target . $item . '/', $ezcarchive, $origin);
-			}
-			else if (is_file($target . $item))
-			{
-				$ezcarchive->appendToCurrent($target . $item, $origin);
-			}
-		}
 	}
 
 	/**

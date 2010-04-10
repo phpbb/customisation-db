@@ -19,6 +19,7 @@ if (!defined('IN_TITANIA'))
 titania::$hook->register_ary('phpbb_com_', array(
 	'titania_page_header',
 	'titania_page_footer',
+	array('titania_queue', 'update_first_queue_post'),
 	array('titania_topic', '__construct'),
 	array('titania_post', 'post'),
 	array('titania_queue', 'approve'),
@@ -87,47 +88,43 @@ function phpbb_com_titania_page_footer($hook, $run_cron, $template_body)
 * Copy new posts for queue discussion, queue to the forum
 */
 
-function phpbb_com_titania_topic_submit($hook, &$topic_object)
+function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $queue_object)
 {
-	if (defined('IN_TITANIA_CONVERT') || $topic_object->phpbb_topic_id)
+	if ($queue_object->queue_status == TITANIA_QUEUE_HIDE || !$queue_object->queue_topic_id)
 	{
 		return;
 	}
 
-	$forum_id = phpbb_com_forum_id($topic_object->topic_category, $topic_object->topic_type);
+	$forum_id = phpbb_com_forum_id($post_object->topic->topic_category, $post_object->topic->topic_type);
 
 	if (!$forum_id)
 	{
 		return;
 	}
 
+	$post_object->submit();
+
 	titania::_include('functions_posting', 'phpbb_post_add');
 
-	$sql = 'SELECT post_text, post_text_uid FROM ' . TITANIA_POSTS_TABLE . '
-		WHERE post_id = ' . $topic_object->topic_first_post_id;
-	$result = phpbb::$db->sql_query($sql);
-	$row = phpbb::$db->sql_fetchrow($result);
-	phpbb::$db->sql_freeresult($result);
+	decode_message($post_object->post_text, $post_object->post_text_uid);
 
-	decode_message($row['post_text'], $row['post_text_uid']);
-
-	$post_text .= "\n\n" . $topic_object->get_url();
+	$post_object->post_text .= "\n\n" . $post_object->get_url();
 
 	$options = array(
-		'poster_id'				=> $topic_object->topic_first_post_user_id,
+		'poster_id'				=> $post_object->topic->topic_first_post_user_id,
 		'forum_id' 				=> $forum_id,
-		'topic_title'			=> $topic_object->topic_subject,
-		'post_text'				=> $row['post_text'],
+		'topic_title'			=> $post_object->topic->topic_subject,
+		'post_text'				=> $post_object->post_text,
 		'topic_status'			=> ITEM_LOCKED,
 	);
 
 	$topic_id = phpbb_topic_add($options);
 
-	$topic_object->phpbb_topic_id = $topic_id;
+	$post_object->topic->phpbb_topic_id = $topic_id;
 
 	$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
 		SET phpbb_topic_id = ' . (int) $topic_id . '
-		WHERE topic_id = ' . $topic_object->topic_id;
+		WHERE topic_id = ' . $post_object->topic->topic_id;
 	phpbb::$db->sql_query($sql);
 }
 
