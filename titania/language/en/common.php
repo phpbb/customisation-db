@@ -83,8 +83,8 @@ $lang = array_merge($lang, array(
 	'CONTRIBUTION'				=> 'Contribution',
 	'CONTRIBUTIONS'				=> 'Contributions',
 	'CONTRIB_MANAGE'			=> 'Manage Contribution',
-	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CREATE_CATEGORY'			=> 'Create Category',
+	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
 
 	'DATE_CLOSED'				=> 'Date closed',
@@ -109,8 +109,8 @@ $lang = array_merge($lang, array(
 	'LANGUAGE_PACK'				=> 'Language Pack',
 	'LIST'						=> 'List',
 
-	'MANAGE'					=> 'Manage',
 	'MAKE_CATEGORY_VISIBLE'		=> 'Make Category Visible',
+	'MANAGE'					=> 'Manage',
 	'MODIFICATION'				=> 'Modification',
 	'MODIFICATIONS'				=> 'Modifications',
 	'MOVE_CONTRIBS_TO'			=> 'Move Contributions to',
@@ -123,7 +123,7 @@ $lang = array_merge($lang, array(
 	'NEW_REVISION'				=> 'New Revision',
 	'NO_AUTH'					=> 'You are not authorised to see this page.',
 	'NO_CATEGORY'				=> 'The requested category does not exist.',
-	'NO_CATEGORY_NAME'				=> 'Enter the category name',
+	'NO_CATEGORY_NAME'			=> 'Enter the category name',
 	'NO_CONTRIB'				=> 'The requested contribution does not exist.',
 	'NO_CONTRIBS'				=> 'No contributions could be found',
 	'NO_DESC'					=> 'You have to enter the description.',
@@ -145,7 +145,7 @@ $lang = array_merge($lang, array(
 
 	'RATING'					=> 'Rating',
 	'REMOVE_RATING'				=> 'Remove Rating',
-	'REPORT'					=> 'Report',	
+	'REPORT'					=> 'Report',
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
 	'ROOT'						=> 'Root',
 
