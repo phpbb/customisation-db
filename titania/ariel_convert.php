@@ -365,7 +365,7 @@ switch ($step)
 			$filename = realpath(TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal']);
 			if (!file_exists($filename))
 			{
-				echo 'Could Not Find File - ' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
+				//echo 'Could Not Find File - ' . TITANIA_ROOT . phpbb::$config['site_upload_dir'] . '/' . $row['revision_filename_internal'] . '<br />';
 				continue;
 			}
 
@@ -526,6 +526,7 @@ switch ($step)
 			$topic->parent_id = $row['contrib_id'];
 			$topic->topic_category = $row['contrib_type'];
 			$topic->phpbb_topic_id = $row['topic_id'];
+			$topic->topic_category = $row['contrib_type'];
 			$topic->topic_url = titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/';
 			titania_move_topic($row['topic_id'], $topic, TITANIA_QUEUE_DISCUSSION);
 			unset($topic);
@@ -594,6 +595,7 @@ switch ($step)
 			$topic->parent_id = $row['queue_id'];
 			$topic->topic_url = 'manage/queue/q_' . $row['queue_id'];
 			$topic->phpbb_topic_id = $row['topic_id'];
+			$topic->topic_category = $row['contrib_type'];
 			titania_move_topic($row['topic_id'], $topic, TITANIA_QUEUE, $row['contrib_name'], $row['revision_version']);
 			$queue_topic_id = $topic->topic_id;
 			unset($topic);
@@ -801,6 +803,17 @@ function titania_move_topic($topic_id, $topic, $topic_type, $contrib_name = '', 
 			'post_subject'			=> phpbb::$user->lang['VALIDATION'] . ' - ' . $contrib_name . ' - ' . $revision_version,
 			'post_text'				=> 'Converted from Ariel',
 		));
+		switch ($post->topic->topic_category)
+		{
+			case TITANIA_TYPE_MOD :
+				$post->post_user_id = titania::$config->forum_mod_robot;
+			break;
+
+			case TITANIA_TYPE_STYLE :
+				$post->post_user_id = titania::$config->forum_style_robot;
+			break;
+		}
+
 		$post->submit();
 	}
 }
