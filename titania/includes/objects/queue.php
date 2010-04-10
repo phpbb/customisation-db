@@ -82,6 +82,9 @@ class titania_queue extends titania_message_object
 			'mpv_results_uid'		=> array('default' => ''),
 			'automod_results'		=> array('default' => ''),
 		));
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function submit($update_first_post = true)
@@ -142,6 +145,9 @@ class titania_queue extends titania_message_object
 		}
 
 		parent::submit();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -221,6 +227,9 @@ class titania_queue extends titania_message_object
 		// Prevent errors from different configurations
 		phpbb::$config['min_post_chars'] = 1;
 		phpbb::$config['max_post_chars'] = 0;
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $post, $this);
 
 		// Store the post
 		$post->generate_text_for_storage(true, true, true);
@@ -314,6 +323,9 @@ class titania_queue extends titania_message_object
 			WHERE revision_id = ' . $this->revision_id;
 		phpbb::$db->sql_query($sql);
 
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+
 		// Assplode
 		parent::delete();
 	}
@@ -331,6 +343,9 @@ class titania_queue extends titania_message_object
 		$this->queue_progress = 0;
 		$this->queue_progress_time = 0;
 		$this->submit(false);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function in_progress()
@@ -340,6 +355,9 @@ class titania_queue extends titania_message_object
 		$this->queue_progress = phpbb::$user->data['user_id'];
 		$this->queue_progress_time = titania::$time;
 		$this->submit(false);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function no_progress()
@@ -349,6 +367,9 @@ class titania_queue extends titania_message_object
 		$this->queue_progress = 0;
 		$this->queue_progress_time = 0;
 		$this->submit(false);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function approve()
@@ -459,6 +480,9 @@ class titania_queue extends titania_message_object
 			'U_VIEW'	=> $contrib->get_url(),
 		);
 		titania_subscriptions::send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function deny()
@@ -480,6 +504,9 @@ class titania_queue extends titania_message_object
 
 		// Send notification message
 		$this->send_approve_deny_notification(false);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -542,6 +569,9 @@ class titania_queue extends titania_message_object
 			'bbcode_bitfield'	=> $message_bitfield,
 			'bbcode_uid'		=> $message_uid,
 		);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $data, $this);
 
 		// Submit Plz
 		submit_pm('post', $subject, $data, false);

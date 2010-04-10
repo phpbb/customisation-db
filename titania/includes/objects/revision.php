@@ -82,6 +82,9 @@ class titania_revision extends titania_database_object
 		}
 
 		$this->revision_id = $revision_id;
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -140,6 +143,9 @@ class titania_revision extends titania_database_object
 				'VERSION'		=> $versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']],
 			));
 		}
+
+		// Hooks
+		titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $this, $tpl_block);
 	}
 
 	/**
@@ -306,6 +312,9 @@ class titania_revision extends titania_database_object
 				phpbb::$db->sql_freeresult($result);
 			}
 		}
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -343,6 +352,9 @@ class titania_revision extends titania_database_object
 		// Update the queue_id here
 		$this->revision_queue_id = $old_queue->queue_id;
 		$this->submit();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function delete()
@@ -356,6 +368,9 @@ class titania_revision extends titania_database_object
 		$attachment->attachment_id = $this->attachment_id;
 		$attachment->load();
 		$attachment->delete();
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 
 		// Self-destruct
 		parent::delete();
