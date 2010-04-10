@@ -66,6 +66,13 @@ class titania_search
 			else if (titania::$config->search_backend == 'solr')
 			{
 				$handler = new ezcSearchSolrHandler(titania::$config->search_backend_ip, titania::$config->search_backend_port);
+
+				// In case Solr would happen to go down..
+				if (!$handler->connection)
+				{
+					self::$do_not_index = true;
+					return;
+				}
 			}
 			else
 			{

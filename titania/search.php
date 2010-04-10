@@ -57,6 +57,14 @@ $sort = new titania_sort();
 $sort->default_limit = phpbb::$config['posts_per_page'];
 $sort->request();
 
+// Setup the search tool and make sure it is working
+titania_search::initialize();
+if (titania_search::$do_not_index)
+{
+	// Solr service is down
+	trigger_error('SEARCH_UNAVAILABLE');
+}
+
 // Initialize the query
 $query = titania_search::create_find_query();
 

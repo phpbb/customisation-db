@@ -149,6 +149,7 @@ $lang = array_merge($lang, array(
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
 	'ROOT'						=> 'Root',
 
+	'SEARCH_UNAVAILABLE'		=> 'The search system is currently unavailable.  Please try again in a few minutes.',
 	'SELECT_CATEGORY'			=> '-- Select category --',
 	'SELECT_CATEGORY_TYPE'		=> '-- Select category type --',
 	'SELECT_SORT_METHOD'		=> 'Sort By',

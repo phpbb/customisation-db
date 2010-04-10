@@ -74,9 +74,11 @@ class ezcSearchSolrHandler implements ezcSearchHandler, ezcSearchIndexHandler
      */
     protected function connect()
     {
-        $this->connection = @stream_socket_client( "tcp://{$this->host}:{$this->port}" );
+    	$errno = $errstr = false;
+        $this->connection = @stream_socket_client( "tcp://{$this->host}:{$this->port}", $errno, $errstr, 5 );
         if ( !$this->connection )
         {
+        	return false;
             throw new ezcSearchCanNotConnectException( 'solr', "http://{$this->host}:{$this->port}{$this->location}" );
         }
     }
