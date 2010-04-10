@@ -174,7 +174,7 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 
 	// Make sure the topic is locked
 	$sql = 'UPDATE ' . TOPICS_TABLE . '
-		SET topic_status = ' . (int) $options['topic_status'] . '
+		SET topic_status = ' . ITEM_LOCKED . '
 		WHERE topic_id = ' . $post_object->topic->phpbb_topic_id . '
 			AND topic_moved_id = 0';
 	phpbb::$db->sql_query($sql);
