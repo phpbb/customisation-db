@@ -210,7 +210,12 @@ class contribs_overlord
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$sort->sql_count($sql_ary, 'c.contrib_id');
+		if (!$sort->sql_count($sql_ary, 'c.contrib_id'))
+		{
+			// No results...no need to query more...
+			return;
+		}
+
 		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);

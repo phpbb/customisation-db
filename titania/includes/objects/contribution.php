@@ -326,7 +326,7 @@ class titania_contribution extends titania_message_object
 	*
 	* @return void
 	*/
-	private function increase_view_counter()
+	public function increase_view_counter()
 	{
 		$sql = 'UPDATE ' . $this->sql_table . '
 			SET contrib_views = contrib_views + 1
@@ -438,11 +438,6 @@ class titania_contribution extends titania_message_object
 				{
 					$this->screenshots->output_attachments('screenshots');
 				}
-			}
-
-			if (!phpbb::$user->data['is_bot'])
-			{
-				$this->increase_view_counter();
 			}
 		}
 

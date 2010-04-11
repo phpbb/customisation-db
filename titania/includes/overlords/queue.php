@@ -134,7 +134,12 @@ class queue_overlord
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$sort->sql_count($sql_ary, 'q.queue_id');
+		if (!$sort->sql_count($sql_ary, 'q.queue_id'))
+		{
+			// No results...no need to query more...
+			return;
+		}
+
 		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 		$queue_ids = $user_ids = array();

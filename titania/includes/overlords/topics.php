@@ -337,7 +337,12 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		$sort->sql_count($sql_ary, 't.topic_id');
+		if (!$sort->sql_count($sql_ary, 't.topic_id'))
+		{
+			// No results...no need to query more...
+			return;
+		}
+
 		$sort->build_pagination($page_url);
 
 		$last_was_sticky = false;

@@ -57,6 +57,11 @@ titania::$contrib->get_screenshots();
 
 titania::$contrib->assign_details();
 
+if (!phpbb::$user->data['is_bot'])
+{
+	titania::$contrib->increase_view_counter();
+}
+
 // Set tracking
 titania_tracking::track(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 

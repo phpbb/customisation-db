@@ -231,20 +231,22 @@ switch ($action)
 			$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 			// Handle pagination
-			$sort->sql_count($sql_ary, 'faq_id');
-			$sort->build_pagination($faq->get_url());
-
-			// Get the data
-			$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
-
-			while ($row = phpbb::$db->sql_fetchrow($result))
+			if ($sort->sql_count($sql_ary, 'faq_id'))
 			{
-				$faqs[$row['faq_id']] = $row;
-			}
-			phpbb::$db->sql_freeresult($result);
+				$sort->build_pagination($faq->get_url());
 
-			// Grab the tracking info
-			titania_tracking::get_tracks(TITANIA_FAQ, array_keys($faqs));
+				// Get the data
+				$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
+
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$faqs[$row['faq_id']] = $row;
+				}
+				phpbb::$db->sql_freeresult($result);
+
+				// Grab the tracking info
+				titania_tracking::get_tracks(TITANIA_FAQ, array_keys($faqs));
+			}
 
 			// Output
 			foreach ($faqs as $id => $row)
