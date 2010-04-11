@@ -38,12 +38,23 @@ $thumbnail = request_var('thumb', false);
 if (!$download_id)
 {
 	// Mostly to make moving from Ariel easier
-	$revision_id = request_var('rid', 0);
+	$revision_id = request_var('revision', 0);
+	$contrib_id = request_var('contrib', 0);
 	if ($revision_id)
 	{
 		$sql = 'SELECT attachment_id FROM ' . TITANIA_REVISIONS_TABLE . '
 			WHERE revision_id = ' . $revision_id;
 		phpbb::$db->sql_query($sql);
+		$download_id = phpbb::$db->sql_fetchfield('attachment_id');
+		phpbb::$db->sql_freeresult();
+	}
+	else if ($contrib_id)
+	{
+		$sql = 'SELECT attachment_id FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE contrib_id = ' . $contrib_id . '
+				AND revision_validated = 1
+			ORDER BY revision_id DESC';
+		phpbb::$db->sql_query_limit($sql, 1);
 		$download_id = phpbb::$db->sql_fetchfield('attachment_id');
 		phpbb::$db->sql_freeresult();
 	}
