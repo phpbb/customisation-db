@@ -911,6 +911,8 @@ $versions = array(
 		),
 	),
 
+	'0.3.0' => array(),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
