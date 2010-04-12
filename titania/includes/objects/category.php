@@ -309,9 +309,16 @@ class titania_category extends titania_message_object
 
 		if(!sizeof($errors))
 		{
+			$sql = 'SELECT contrib_id
+				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+				WHERE category_id = ' . (int) $to_id;
+			$result = phpbb::$db->sql_query($sql);
+			$row = phpbb::$db->sql_fetchrow($result);
+
 			$sql = 'UPDATE ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
 				SET category_id = ' . (int) $to_id . '
-				WHERE category_id = ' . (int) $from_id;
+				WHERE category_id = ' . (int) $from_id . '
+					AND contrib_id <> ' . (int) $row['contrib_id'];
 			phpbb::$db->sql_query($sql);
 
 			if ($sync)
@@ -425,7 +432,7 @@ class titania_category extends titania_message_object
 		{
 			if (!$subcats_to_id)
 			{
-				$errors[] = $user->lang['NO_DESTINATION_CATEGORY'];
+				$errors[] = phpbb::$user->lang['NO_DESTINATION_CATEGORY'];
 			}
 			else
 			{
@@ -438,7 +445,7 @@ class titania_category extends titania_message_object
 
 				if (!$row)
 				{
-					$errors[] = $user->lang['NO_CATEGORY'];
+					$errors[] = phpbb::$user->lang['NO_CATEGORY'];
 				}
 				else
 				{
