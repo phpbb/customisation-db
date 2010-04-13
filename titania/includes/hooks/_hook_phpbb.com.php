@@ -95,6 +95,17 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 		return;
 	}
 
+	// Does a topic already exist?  If so, don't repost.
+	$sql = 'SELECT phpbb_topic_id FROM ' . TITANIA_TOPICS_TABLE . '
+		WHERE topic_id = ' . $queue_object->queue_topic_id;
+	phpbb::$db->sql_query($sql);
+	$phpbb_topic_id = phpbb::$db->sql_fetchfield('phpbb_topic_id');
+	phpbb::$db->sql_freeresult();
+	if ($phpbb_topic_id)
+	{
+		return;
+	}
+
 	$forum_id = phpbb_com_forum_id($post_object->topic->topic_category, $post_object->topic->topic_type);
 
 	if (!$forum_id)
