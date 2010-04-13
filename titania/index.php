@@ -129,11 +129,6 @@ switch ($action)
 				$queue->mpv_results_uid = $uid;
 				$queue->submit();
 			}
-
-			if (sizeof($contrib_tools->error))
-			{
-				trigger_error(implode('<br />', $contrib_tools->error));
-			}
 		}
 		else if ($action == 'automod')
 		{
@@ -142,12 +137,9 @@ switch ($action)
 			// Start up the machine
 			$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
 
-			$package_root = $contrib_tools->find_root();
-			$contrib_tools->restore_root($package_root);
-
 			// Automod testing time
 			$details = '';
-			$html_results = $bbcode_results = $error = array();
+			$html_results = $bbcode_results = array();
 			$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
 				WHERE revision_id = ' . $revision->revision_id;
 			$result = phpbb::$db->sql_query($sql);
@@ -155,11 +147,6 @@ switch ($action)
 			{
 				$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
 				$phpbb_path = $contrib_tools->automod_phpbb_files($version_string);
-
-				if (sizeof($contrib_tools->error))
-				{
-					$error = array_merge($error, $contrib_tools->error);
-				}
 
 				if ($phpbb_path === false)
 				{
@@ -186,11 +173,11 @@ switch ($action)
 			$queue->submit();
 
 			$contrib_tools->remove_temp_files();
+		}
 
-			if (sizeof($error))
-			{
-				trigger_error(implode('<br />', $error));
-			}
+		if (sizeof($contrib_tools->error))
+		{
+			trigger_error(implode('<br />', $contrib_tools->error));
 		}
 
 		redirect(titania_url::build_url('manage/queue', array('queue' => titania_types::$types[$queue->queue_type]->url, 'q' => $queue->queue_id)));

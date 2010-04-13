@@ -480,6 +480,9 @@ class titania_contrib_tools
 
 		if (!$modx_root)
 		{
+			titania::add_lang('contributions');
+
+			$this->error[] = phpbb::$user->lang['COULD_NOT_FIND_ROOT'];
 			return false;
 		}
 		$modx_root = $this->unzip_dir . $modx_root;
@@ -503,6 +506,9 @@ class titania_contrib_tools
 
 		if (!$modx_file)
 		{
+			titania::add_lang('contributions');
+
+			$this->error[] = phpbb::$user->lang['COULD_NOT_FIND_ROOT'];
 			return false;
 		}
 

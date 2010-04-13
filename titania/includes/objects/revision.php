@@ -135,12 +135,18 @@ class titania_revision extends titania_database_object
 			'S_VALIDATED'		=> (!$this->revision_validated && titania::$config->use_queue) ? false : true,
 		));
 
-		uksort($this->phpbb_versions, 'reverse_version_compare');
-
+		$ordered_phpbb_versions = array();
 		foreach ($this->phpbb_versions as $row)
 		{
+			$ordered_phpbb_versions[$versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']]] = true;
+		}
+
+		uksort($ordered_phpbb_versions, 'reverse_version_compare');
+
+		foreach ($ordered_phpbb_versions as $version => $null)
+		{
 			phpbb::$template->assign_block_vars($tpl_block . '.phpbb_versions', array(
-				'VERSION'		=> $versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']],
+				'VERSION'		=> $version,
 			));
 		}
 
