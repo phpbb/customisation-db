@@ -309,16 +309,29 @@ class titania_category extends titania_message_object
 
 		if(!sizeof($errors))
 		{
+			// Select duplicate contribs and prevent them from being moved to the selected category
 			$sql = 'SELECT contrib_id
 				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
 				WHERE category_id = ' . (int) $to_id;
 			$result = phpbb::$db->sql_query($sql);
-			$row = phpbb::$db->sql_fetchrow($result);
+
+			$contrib_ids = array();
+
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$contrib_ids[] = (int) $row['contrib_id'];
+			}
+			phpbb::$db->sql_freeresult($result);
 
 			$sql = 'UPDATE ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
 				SET category_id = ' . (int) $to_id . '
 				WHERE category_id = ' . (int) $from_id . '
-					AND contrib_id <> ' . (int) $row['contrib_id'];
+					AND ' . phpbb::$db->sql_in_set('contrib_id', $contrib_ids, true);
+			phpbb::$db->sql_query($sql);
+
+			// Now delete the contrib records from the previous parent category
+			$sql = 'DELETE FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+				WHERE category_id = ' . (int) $from_id;
 			phpbb::$db->sql_query($sql);
 
 			if ($sync)
