@@ -322,7 +322,12 @@ class titania_category extends titania_message_object
 				$contrib_ids[] = (int) $row['contrib_id'];
 			}
 			phpbb::$db->sql_freeresult($result);
-
+			
+			if (!$contrib_ids)
+			{
+				$contrib_ids[] = 0;
+			}
+			
 			$sql = 'UPDATE ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
 				SET category_id = ' . (int) $to_id . '
 				WHERE category_id = ' . (int) $from_id . '
