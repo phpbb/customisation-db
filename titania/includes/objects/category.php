@@ -323,15 +323,10 @@ class titania_category extends titania_message_object
 			}
 			phpbb::$db->sql_freeresult($result);
 			
-			if (!$contrib_ids)
-			{
-				$contrib_ids[] = 0;
-			}
-			
 			$sql = 'UPDATE ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
 				SET category_id = ' . (int) $to_id . '
-				WHERE category_id = ' . (int) $from_id . '
-					AND ' . phpbb::$db->sql_in_set('contrib_id', $contrib_ids, true);
+				WHERE category_id = ' . (int) $from_id .
+					((sizeof($contrib_ids)) ? ' AND ' . phpbb::$db->sql_in_set('contrib_id', $contrib_ids, true) : '');
 			phpbb::$db->sql_query($sql);
 
 			// Now delete the contrib records from the previous parent category
