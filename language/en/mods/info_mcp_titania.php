@@ -1,6 +1,6 @@
 <?php
 /**
-* titania acp language [English]
+* titania mcp language [English]
 *
 * @package language
 * @version $Id$
@@ -24,10 +24,8 @@ if (empty($lang) || !is_array($lang))
 
 // Merge the following language entries into the lang array
 $lang = array_merge($lang, array(
-	'ROLE_TITANIA_MODIFICATION_TEAM'	=> 'Titania Modifications Team Role',
-	'ROLE_TITANIA_STYLE_TEAM'			=> 'Titania Style Team Role',
-	'ROLE_TITANIA_MODERATOR_TEAM'		=> 'Titania Moderation Team Role',
-	'ROLE_TITANIA_ADMINISTRATOR_TEAM'	=> 'Titania Administration Team Role',
+	'MCP_TITANIA'				=> 'Titania',
+	'MCP_TITANIA_ATTENTION'		=> 'Titania Attention',
 ));
 
 ?>

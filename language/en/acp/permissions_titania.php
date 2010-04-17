@@ -1,10 +1,10 @@
 <?php
 /**
-* acp_permissions_phpbb (phpBB Permission Set) [English]
+* acp_permissions_titania (Titania Permission Set) [English]
 *
 * @package language
 * @version $Id$
-* @copyright (c) 2005 phpBB Group
+* @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 */
 
