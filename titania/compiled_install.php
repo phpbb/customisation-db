@@ -24,9 +24,9 @@ titania::add_lang('install');
 include(TITANIA_ROOT . 'includes/functions_install.' . PHP_EXT);
 
 // Just to be on the safe side, add a php version check.
-if (version_compare(PHP_VERSION, '5.3.0') < 0)
+if (version_compare(PHP_VERSION, '5.2.0') < 0)
 {
-	die('You are running an unsupported PHP version. Please upgrade to PHP 5.3.0 or higher before trying to install Titania');
+	die('You are running an unsupported PHP version. Please upgrade to PHP 5.2.0 or higher before trying to install Titania');
 }
 
 if (!file_exists(PHPBB_ROOT_PATH . 'umil/umil_auto.' . PHP_EXT))
