@@ -67,6 +67,12 @@ class titania_config extends titania_object
 			'require_validation'		=> array('default' => true),
 			'use_queue'					=> array('default' => true),
 
+			'upload_max_filesize'		=> array('default' => array(
+				// Cannot use constants because they are included later
+				'Titania Contributions'		=> 10485760, // 10 MiB
+				'Titania Screenshots'		=> 524288, // 512 Kib
+			)),
+
 			// phpBB versions array
 			'phpbb_versions'			=> array('default' => array(
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),

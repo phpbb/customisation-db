@@ -86,7 +86,14 @@ class titania_uploader extends fileupload
 		// Set max file size for anyone but team members.
 		if (titania::$access_level != TITANIA_ACCESS_TEAMS)
 		{
-			$this->set_max_filesize(phpbb::$config['max_filesize']);
+			if (isset(titania::$config->upload_max_filesize[$this->ext_group]))
+			{
+				$this->set_max_filesize(titania::$config->upload_max_filesize[$this->ext_group]);
+			}
+			else
+			{
+				$this->set_max_filesize(phpbb::$config['max_filesize']);
+			}
 		}
 
 		$file->clean_filename('unique', phpbb::$user->data['user_id'] . '_');
