@@ -86,6 +86,7 @@ class attention_overlord
 			// Setup the sort tool
 			$sort = new titania_sort();
 			$sort->set_sort_keys(self::$sort_by);
+			$sort->default_sort_dir = 'd';
 			if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
 			{
 				$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
