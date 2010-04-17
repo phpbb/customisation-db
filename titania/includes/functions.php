@@ -39,6 +39,14 @@ function get_real_revision_version($revision)
 */
 function titania_generate_text_for_display($text, $uid, $bitfield, $flags)
 {
+	if (titania::$hook->call_hook(__FUNCTION__, $text, $uid, $bitfield, $flags))
+	{
+		if (titania::$hook->hook_return(__FUNCTION__))
+		{
+			return titania::$hook->hook_return_result(__FUNCTION__);
+		}
+	}
+
 	global $phpbb_root_path;
 
 	phpbb::_include('bbcode', false, 'bbcode');

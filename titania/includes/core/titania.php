@@ -107,7 +107,7 @@ class titania
 		self::$absolute_board = generate_board_url(true) . '/' . self::$config->phpbb_script_path;
 
 		// Set the style path, template path, and template name
-		if (!defined('IN_TITANIA_INSTALL'))
+		if (!defined('IN_TITANIA_INSTALL') && !defined('USE_PHPBB_TEMPLATE'))
 		{
 			self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
 			self::$template_path = self::$style_path . 'template';
@@ -301,6 +301,14 @@ class titania
 	 */
 	public static function page_header($page_title = '')
 	{
+		if (!empty(titania::$hook) && titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $page_title))
+		{
+			if (titania::$hook->hook_return(array(__CLASS__, __FUNCTION__)))
+			{
+				return titania::$hook->hook_return_result(array(__CLASS__, __FUNCTION__));
+			}
+		}
+
 		if (defined('HEADER_INC'))
 		{
 			return;
@@ -349,6 +357,14 @@ class titania
 			phpbb::$template->set_filenames(array(
 				'body' => $template_body,
 			));
+		}
+
+		if (!empty(titania::$hook) && titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $run_cron))
+		{
+			if (titania::$hook->hook_return(array(__CLASS__, __FUNCTION__)))
+			{
+				return titania::$hook->hook_return_result(array(__CLASS__, __FUNCTION__));
+			}
 		}
 
 		// Output page creation time (can not move phpBB side because of a hack we do in here)

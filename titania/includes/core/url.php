@@ -65,6 +65,14 @@ class titania_url
 	*/
 	public static function build_url($base, $params = array())
 	{
+		if (!empty(titania::$hook) && titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $base, $params))
+		{
+			if (titania::$hook->hook_return(array(__CLASS__, __FUNCTION__)))
+			{
+				return titania::$hook->hook_return_result(array(__CLASS__, __FUNCTION__));
+			}
+		}
+
 		global $_SID;
 
 		// Prevent rebuilding...
@@ -125,6 +133,14 @@ class titania_url
 		if (!is_array($params))
 		{
 			$params = self::split_params($params);
+		}
+
+		if (!empty(titania::$hook) && titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $url, $params))
+		{
+			if (titania::$hook->hook_return(array(__CLASS__, __FUNCTION__)))
+			{
+				return titania::$hook->hook_return_result(array(__CLASS__, __FUNCTION__));
+			}
 		}
 
 		// Extract the anchor from the end of the base if there is one

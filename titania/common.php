@@ -56,7 +56,10 @@ if (!file_exists(PHPBB_ROOT_PATH . 'common.' . PHP_EXT))
 {
 	die('<p>No phpBB installation found. Check the Titania configuration file.</p>');
 }
-require(PHPBB_ROOT_PATH . 'common.' . PHP_EXT);
+if (!defined('PHPBB_INCLUDED'))
+{
+	require(PHPBB_ROOT_PATH . 'common.' . PHP_EXT);
+}
 
 // Initialise phpBB
 phpbb::initialise();

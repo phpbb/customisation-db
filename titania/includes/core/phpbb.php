@@ -43,9 +43,12 @@ class phpbb
 		self::$cache	= &$cache;
 
 		// Start session management
-		self::$user->session_begin();
-		self::$auth->acl(self::$user->data);
-		self::$user->setup();
+		if (!defined('PHPBB_INCLUDED'))
+		{
+			self::$user->session_begin();
+			self::$auth->acl(self::$user->data);
+			self::$user->setup();
+		}
 	}
 
 	/**

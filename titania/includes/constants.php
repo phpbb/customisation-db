@@ -17,7 +17,10 @@ if (!defined('IN_TITANIA'))
 }
 
 // Without this we cannot include phpBB 3.0.x scripts.
-define('IN_PHPBB', true);
+if (!defined('IN_PHPBB'))
+{
+	define('IN_PHPBB', true);
+}
 
 // Some often used path constants
 define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
