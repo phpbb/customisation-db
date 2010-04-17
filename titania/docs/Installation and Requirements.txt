@@ -1,6 +1,6 @@
 Requirements:
 	phpBB 3.0.6+
-	PHP 5.2+
+	PHP 5.3+
 	Mod Rewrite
 	MultiViews must be disabled!
 	For the Styles Demo board:
