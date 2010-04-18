@@ -432,12 +432,14 @@ class titania_attachment extends titania_database_object
 
 		if ($attachment_id == $this->attachment_id)
 		{
-			@unlink(titania::$config->upload_path . $this->attachment_directory . '/' . utf8_basename($this->attachment_directory) . '/' . utf8_basename($this->physical_filename));
+			@unlink(titania::$config->upload_path . utf8_basename($this->attachment_directory) . '/' . utf8_basename($this->physical_filename));
+			@unlink(titania::$config->upload_path . utf8_basename($this->attachment_directory) . '/thumb_' . utf8_basename($this->physical_filename));
 			parent::delete();
 		}
 		else if (isset($this->attachments[$attachment_id]))
 		{
-			@unlink(titania::$config->upload_path . $this->attachments[$attachment_id]['attachment_directory'] . '/' . utf8_basename($this->attachments[$attachment_id]['attachment_directory']) . '/' . utf8_basename($this->attachments[$attachment_id]['physical_filename']));
+			@unlink(titania::$config->upload_path . utf8_basename($this->attachments[$attachment_id]['attachment_directory']) . '/' . utf8_basename($this->attachments[$attachment_id]['physical_filename']));
+			@unlink(titania::$config->upload_path . utf8_basename($this->attachments[$attachment_id]['attachment_directory']) . '/thumb_' . utf8_basename($this->attachments[$attachment_id]['physical_filename']));
 
 			$sql = 'DELETE FROM ' . $this->sql_table . ' WHERE attachment_id = ' . $attachment_id;
 			phpbb::$db->sql_query($sql);
