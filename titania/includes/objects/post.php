@@ -151,6 +151,7 @@ class titania_post extends titania_message_object
 		else
 		{
 			$this->topic = new titania_topic;
+			$this->topic->topic_type = $this->post_type;
 		}
 
 		// Hooks

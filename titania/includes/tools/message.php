@@ -76,7 +76,6 @@ class titania_message
 		'display_subject'		=> true, // Display the subject field or not
 		'display_edit_reason'	=> false, // Display the edit reason field or not
 		'display_captcha'		=> false, // Display the captcha or not
-		'attachments_group'		=> false, // The attachment extensions group to allow
 		'attachment_tpl'		=> 'posting/attachments/default.html', // Attachments template to use for output
 
 		'subject_default_override'	=> false, // Force over-ride the subject with one you specify, false to use the one gotten from the post object
@@ -448,13 +447,13 @@ class titania_message
 		}
 
 		$for_edit = $this->post_object->generate_text_for_edit();
-		if ($this->auth['attachments'] && isset($for_edit['object_type']) && $this->settings['attachments_group'])
+		if ($this->auth['attachments'] && isset($for_edit['object_type']))
 		{
 			$this->posting_panels['attach-panel'] = 'ATTACH';
 
 			$this->attachments = new titania_attachment($for_edit['object_type'], $for_edit['object_id']);
 			$this->attachments->load_attachments();
-			$this->attachments->upload($this->settings['attachments_group']);
+			$this->attachments->upload();
 			$this->error = array_merge($this->error, $this->attachments->error);
 			$this->attachments->error = array(); // Empty the error array to prevent showing duplicates
 		}

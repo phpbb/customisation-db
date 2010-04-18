@@ -18,8 +18,9 @@ if (!defined('IN_TITANIA'))
 
 titania::add_lang('faq');
 
-$faq_id		= request_var('f', 0);
-$action 	= request_var('action', '');
+$faq_id = request_var('f', 0);
+$action = request_var('action', '');
+$error = array();
 
 // Setup faq object
 $faq = new titania_faq($faq_id);
@@ -57,9 +58,6 @@ switch ($action)
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
 			'attachments'	=> true,
-		));
-		$message->set_settings(array(
-			'attachments_group'		=> TITANIA_FAQ,
 		));
 
 		// Submit check...handles running $faq->post_data() if required

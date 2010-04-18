@@ -133,7 +133,6 @@ class titania_posting
 		));
 		$message_object->set_settings(array(
 			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
-			'attachments_group'			=> $post_object->topic->topic_type,
 		));
 
 		// Call our common posting handler
@@ -195,7 +194,6 @@ class titania_posting
 		$message_object->set_settings(array(
 			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
 			'subject_default_override'	=> 'Re: ' . $post_object->topic->topic_subject,
-			'attachments_group'			=> $post_object->topic->topic_type,
 		));
 
 		// Call our common posting handler
@@ -258,9 +256,6 @@ class titania_posting
 			'sticky_topic'	=> ($post_object->post_id == $post_object->topic->topic_first_post_id && $can_sticky) ? true : false,
 			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
-		));
-		$message_object->set_settings(array(
-			'attachments_group'			=> $post_object->topic->topic_type,
 		));
 
 		// Call our common posting handler
