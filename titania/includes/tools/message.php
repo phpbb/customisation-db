@@ -299,7 +299,7 @@ class titania_message
 
 		if ($this->attachments)
 		{
-			$parsed_attachments = $this->attachments->parse_attachments($message);
+			$parsed_attachments = $this->attachments->parse_attachments($message, 'common/attachment.html', true);
 		}
 
 		phpbb::$template->assign_vars(array(

@@ -13,8 +13,8 @@
 <!-- BEGIN attach_row -->
 	<hr class="dashed" />
 	<dl>
-		<dt><label for="comment_list_{attach_row.ATTACH_ID}">{L_FILE_COMMENT}:</label></dt>
-		<dd><textarea name="comment_list[{attach_row.ATTACH_ID}]" id="comment_list_{attach_row.ATTACH_ID}" rows="1" cols="35" class="inputbox">{attach_row.FILE_COMMENT}</textarea></dd>
+		<dt><label for="attachment_comment_{attach_row.ATTACH_ID}">{L_FILE_COMMENT}:</label></dt>
+		<dd><textarea name="attachment_comment_{attach_row.ATTACH_ID}" id="attachment_comment_{attach_row.ATTACH_ID}" rows="1" cols="35" class="inputbox">{attach_row.FILE_COMMENT}</textarea></dd>
 		<dd><a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a></dd>
 		<dd style="margin-top: 5px;">
 			<!-- IF not attach_row.S_DELETED -->

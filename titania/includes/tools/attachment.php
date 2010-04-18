@@ -215,11 +215,11 @@ class titania_attachment extends titania_database_object
 			ksort($this->attachments);
 		}
 
-		foreach ($this->attachments as $row)
+		foreach ($this->attachments as $attachment_id => $row)
 		{
 			$output = array(
 				'FILENAME'			=> basename($row['real_filename']),
-				'FILE_COMMENT'		=> $row['attachment_comment'],
+				'FILE_COMMENT'		=> utf8_normalize_nfc(request_var('attachment_comment_' . $attachment_id, (string) $row['attachment_comment'], true)),
 				'ATTACH_ID'			=> $row['attachment_id'],
 
 				'U_VIEW_ATTACHMENT'	=> titania_url::build_url('download', array('id' => $row['attachment_id'])),
@@ -456,9 +456,10 @@ class titania_attachment extends titania_database_object
 	* From phpBB (includes/functions_content.php)
 	*
 	* @param string &$message The message
+	* @param bool $preview true if previewing from the posting page
 	* @return array the parsed attachments
 	*/
-	public function parse_attachments(&$message, $tpl = 'common/attachment.html')
+	public function parse_attachments(&$message, $tpl = 'common/attachment.html', $preview = false)
 	{
 		if (!sizeof($this->attachments))
 		{
@@ -488,7 +489,7 @@ class titania_attachment extends titania_database_object
 			ksort($this->attachments);
 		}
 
-		foreach ($this->attachments as $attachment)
+		foreach ($this->attachments as $attachment_id => $attachment)
 		{
 			if (!sizeof($attachment))
 			{
@@ -507,7 +508,14 @@ class titania_attachment extends titania_database_object
 
 			$filesize = get_formatted_filesize($attachment['filesize'], false);
 
-			$comment = bbcode_nl2br(censor_text($attachment['attachment_comment']));
+			if ($preview)
+			{
+				$comment = bbcode_nl2br(censor_text(utf8_normalize_nfc(request_var('attachment_comment_' . $attachment_id, (string) $attachment['attachment_comment'], true))));
+			}
+			else
+			{
+				$comment = bbcode_nl2br(censor_text($attachment['attachment_comment']));
+			}
 
 			$block_array += array(
 				'FILESIZE'			=> $filesize['value'],
