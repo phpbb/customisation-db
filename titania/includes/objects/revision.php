@@ -121,6 +121,10 @@ class titania_revision extends titania_database_object
 	{
 		$versions = titania::$cache->get_phpbb_versions();
 
+		// Get rid of the day of the week if it exists in the dateformat
+		$old_date_format = phpbb::$user->date_format;
+		phpbb::$user->date_format = str_replace('D ', '', phpbb::$user->date_format);
+
 		phpbb::$template->assign_block_vars($tpl_block, array(
 			'REVISION_ID'		=> $this->revision_id,
 			'CREATED'			=> phpbb::$user->format_date($this->revision_time),
@@ -134,6 +138,8 @@ class titania_revision extends titania_database_object
 
 			'S_VALIDATED'		=> (!$this->revision_validated && titania::$config->use_queue) ? false : true,
 		));
+
+		phpbb::$user->date_format = $old_date_format;
 
 		$ordered_phpbb_versions = array();
 		foreach ($this->phpbb_versions as $row)
