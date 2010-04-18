@@ -82,7 +82,7 @@ class titania_category extends titania_message_object
 	public function submit()
 	{
 		// Destroy category cache
-		titania::$cache->destroy('_titania_categories');
+		$this->destroy_cache();
 
 		return parent::submit();
 	}
@@ -198,32 +198,33 @@ class titania_category extends titania_message_object
 		if ($to_id > 0)
 		{
 			// Retrieve $to_data again, it may have been changed...
-			$to_data = $this->get_category_info($to_id);
+			$to_data = new titania_category;
+			$to_data->load($to_id);
 
 			// Resync new parents
 			$sql = 'UPDATE ' . $this->sql_table . "
 				SET right_id = right_id + $diff
-				WHERE " . $to_data['right_id'] . ' BETWEEN left_id AND right_id
+				WHERE " . $to_data->right_id . ' BETWEEN left_id AND right_id
 					AND ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
 			phpbb::$db->sql_query($sql);
 
 			// Resync the righthand side of the tree
 			$sql = 'UPDATE ' . $this->sql_table . "
 				SET left_id = left_id + $diff, right_id = right_id + $diff
-				WHERE left_id > " . $to_data['right_id'] . '
+				WHERE left_id > " . $to_data->right_id . '
 					AND ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
 			phpbb::$db->sql_query($sql);
 
 			// Resync moved branch
-			$to_data['right_id'] += $diff;
+			$to_data->right_id += $diff;
 
-			if ($to_data['right_id'] > $this->right_id)
+			if ($to_data->right_id > $this->right_id)
 			{
-				$diff = '+ ' . ($to_data['right_id'] - $this->right_id - 1);
+				$diff = '+ ' . ($to_data->right_id - $this->right_id - 1);
 			}
 			else
 			{
-				$diff = '- ' . abs($to_data['right_id'] - $this->right_id - 1);
+				$diff = '- ' . abs($to_data->right_id - $this->right_id - 1);
 			}
 		}
 		else
@@ -295,7 +296,7 @@ class titania_category extends titania_message_object
 			$sql = 'UPDATE ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
 				SET category_id = ' . (int) $to_id . '
 				WHERE category_id = ' . $this->category_id .
-					((sizeof($contrib_ids)) ? ' AND ' . phpbb::$db->sql_in_set('contrib_id', $contrib_ids, true) : '');
+					((!empty($contrib_ids)) ? ' AND ' . phpbb::$db->sql_in_set('contrib_id', $contrib_ids, true) : '');
 			phpbb::$db->sql_query($sql);
 
 			// Now delete the contrib records from the previous parent category
@@ -320,15 +321,18 @@ class titania_category extends titania_message_object
 	public function delete($sync = true)
 	{
 		// Delete any children
-		$children = $this->get_category_branch();
+		// NOTE: just commenting this out until we can work out the bugs.
+		// $children = $this->get_category_branch();
 
-		foreach ($children as $row)
-		{
-			$child_category = new titania_category;
-			$child_category->category_id = $row['category_id'];
+		// foreach ($children as $row)
+		// {
+		//	 $child_category = new titania_category;
+		//	 $child_category->category_id = $row['category_id'];
 
-			$child_category->delete(false);
-		}
+		//	 $child_category->delete(false);
+		// }
+
+		$diff = 2;
 
 		// @todo resync tree ($diff)
 
@@ -402,6 +406,7 @@ class titania_category extends titania_message_object
 		if ($action == 'move_up')
 		{
 			$left_id = $target['left_id'];
+			$right_id = $this->right_id;
 
 			$diff_up = $this->left_id - $target['left_id'];
 			$diff_down = $this->right_id + 1 - $this->left_id;

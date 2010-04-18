@@ -138,18 +138,19 @@ switch ($action)
 				}
 				else
 				{
-					$row = $category_object->get_category_info($category_object->category_id);
+					$category_check = new titania_category;
+					$category_check->load($category_id);
 
 					$errors_extra = array();
-					if ($row['parent_id'] != $category_object->parent_id)
+					if ($category_check->parent_id != $category_object->parent_id)
 					{
-						if ($row['category_id'] != $category_object->parent_id)
+						if ($category_check->category_id != $category_object->parent_id)
 						{
 							$errors_extra = $category_object->move_category($category_object->category_id, $category_object->parent_id);
 						}
 						else
 						{
-							$category_object->parent_id = $row['parent_id'];
+							$category_object->parent_id = $category_check->parent_id;
 						}
 					}
 
@@ -194,28 +195,18 @@ switch ($action)
 			trigger_error(phpbb::$user->lang['NO_CATEGORY']);
 		}
 
-		$sql = 'SELECT *
-			FROM ' . TITANIA_CATEGORIES_TABLE . "
-			WHERE category_id = $category_id";
-		$result = phpbb::$db->sql_query($sql);
-		$row = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);
+		$category_object->load($category_id);
 
-		if (!$row)
-		{
-			trigger_error(phpbb::$user->lang['NO_CATEGORY']);
-		}
-
-		$move_category_name = $category_object->move_category_by($row, $action, 1);
+		$category_object->move_category_by($action, 1);
 
 		phpbb::$template->assign_vars(array(
-			'CATEGORY' 				=> $category_id,
+			'CATEGORY' 				=> $category_object->category_id,
 
 			'S_MOVE_CATEGORY' 		=> true,
 		));
 
 		// Redirect back to previous category to avoid problems
-		redirect(titania_url::build_url('manage/categories', array('c' => $row['parent_id'])));
+		redirect(titania_url::build_url('manage/categories', array('c' => $category_object->parent_id)));
 	break;
 	case 'delete' :
 		$category_object = new titania_category;
@@ -225,23 +216,21 @@ switch ($action)
 			trigger_error(phpbb::$user->lang['NO_CATEGORY']);
 		}
 
-		$category_data = $category_object->get_category_info($category_id);
+		$category_object->load($category_id);
 
-		$parent_id = ($category_data['parent_id'] == $category_id) ? 0 : $category_data['parent_id'];
+		$parent_id = ($category_object->parent_id == $category_object->category_id) ? 0 : $category_object->parent_id;
 
 		$error = array();
 
 		if($submit)
 		{
-			$action_subcats		= request_var('action_subcats', '');
-			$subcats_to_id		= request_var('subcats_to_id', 0);
 			$action_contribs	= request_var('action_contribs', '');
 			$contribs_to_id		= request_var('contribs_to_id', 0);
 
 			// Check for errors
 			$sql = 'SELECT category_id
 				FROM ' . TITANIA_CATEGORIES_TABLE . "
-				WHERE parent_id = $category_id";
+				WHERE parent_id = $category_object->category_id";
 			$result = phpbb::$db->sql_query($sql);
 			$children_row = phpbb::$db->sql_fetchrow($result);
 			phpbb::$db->sql_freeresult($result);
@@ -253,7 +242,13 @@ switch ($action)
 			}
 			else
 			{
-				$error = array_merge($error, $category_object->delete_category($category_id, $action_contribs, $action_subcats, $contribs_to_id, $subcats_to_id));
+				if ($action_contribs == 'move' && !empty($contribs_to_id))
+				{
+					$error = array_merge($error, $category_object->move_category_content($contribs_to_id));
+				}
+
+				// Delete category
+				$category_object->delete();
 			}
 
 			if (!sizeof($error))
@@ -269,10 +264,10 @@ switch ($action)
 			'U_BACK'						=> 'c_' . $category_object->parent_id,
 
 			'CATEGORY' 						=> $category_id,
-			'CATEGORY_NAME'					=> (isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name'],
-			'SECTION_NAME'					=> phpbb::$user->lang['DELETE_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$category_data['category_name']])) ? phpbb::$user->lang[$category_data['category_name']] : $category_data['category_name']),
-			'S_HAS_SUBCATS'					=> ($category_data['right_id'] - $category_data['left_id'] > 1) ? true : false,
-			'S_MOVE_CATEGORY_OPTIONS'		=> generate_category_select($category_data['parent_id'], true),
+			'CATEGORY_NAME'					=> (isset(phpbb::$user->lang[$category_object->category_name])) ? phpbb::$user->lang[$category_object->category_name] : $category_object->category_name,
+			'SECTION_NAME'					=> phpbb::$user->lang['DELETE_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$category_object->category_name])) ? phpbb::$user->lang[$category_object->category_name] : $category_object->category_name),
+			'S_HAS_SUBCATS'					=> ($category_object->right_id - $category_object->left_id > 1) ? true : false,
+			'S_MOVE_CATEGORY_OPTIONS'		=> generate_category_select($category_object->parent_id, true),
 			'ERROR_MSG'						=> (sizeof($error)) ? implode('<br />', $error) : '')
 		);
 
