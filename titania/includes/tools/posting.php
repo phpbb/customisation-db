@@ -18,18 +18,6 @@ if (!defined('IN_TITANIA'))
 
 class titania_posting
 {
-	/**
-	* Attachments Extension Group
-	*
-	* @var string|bool Constant for the extension group or bool false to not allow attachments
-	*/
-	public $attachments_group;
-
-	public function __construct($attachments_group = false)
-	{
-		$this->attachments_group = $attachments_group;
-	}
-
 	public function act($template_body, $parent_id = false, $parent_url = false, $post_type = false, $s_post_action = false)
 	{
 		$action = request_var('action', '');
@@ -145,7 +133,7 @@ class titania_posting
 		));
 		$message_object->set_settings(array(
 			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
-			'attachments_group'			=> $this->attachments_group,
+			'attachments_group'			=> $post_object->topic->topic_type,
 		));
 
 		// Call our common posting handler
@@ -207,7 +195,7 @@ class titania_posting
 		$message_object->set_settings(array(
 			'display_captcha'			=> (!phpbb::$user->data['is_registered']) ? true : false,
 			'subject_default_override'	=> 'Re: ' . $post_object->topic->topic_subject,
-			'attachments_group'			=> $this->attachments_group,
+			'attachments_group'			=> $post_object->topic->topic_type,
 		));
 
 		// Call our common posting handler
@@ -272,7 +260,7 @@ class titania_posting
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message_object->set_settings(array(
-			'attachments_group'			=> $this->attachments_group,
+			'attachments_group'			=> $post_object->topic->topic_type,
 		));
 
 		// Call our common posting handler

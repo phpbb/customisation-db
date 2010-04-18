@@ -256,10 +256,9 @@ class titania_attachment extends titania_database_object
 	/**
 	* Upload any files we attempted to attach
 	*
-	* @param string $ext_group The name of the extension group to allow (see TITANIA_ATTACH_EXT_ constants)
 	* @param bool|int $max_thumbnail_width The maximum thumbnail width (if we create one)
 	*/
-	public function upload($ext_group, $max_thumbnail_width = false)
+	public function upload($max_thumbnail_width = false)
 	{
 		// First, we shall handle the items already attached
 		$attached_ids = request_var($this->form_name . '_attachments', array(0));
@@ -309,7 +308,7 @@ class titania_attachment extends titania_database_object
 		if ((isset($_FILES[$this->form_name]) && $_FILES[$this->form_name]['name'] != 'none' && trim($_FILES[$this->form_name]['name'])))
 		{
 			// Setup uploader tool.
-			$this->uploader = new titania_uploader($this->form_name, $ext_group);
+			$this->uploader = new titania_uploader($this->form_name, $this->object_type);
 
 			// Try uploading the file.
 			$this->uploader->upload_file();

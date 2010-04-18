@@ -91,7 +91,7 @@ titania::generate_breadcrumbs(array(
 ));
 
 // Handle replying/editing/etc
-$posting_helper = new titania_posting(TITANIA_ATTACH_EXT_SUPPORT);
+$posting_helper = new titania_posting();
 $posting_helper->act('manage/queue_post.html');
 
 // Main output

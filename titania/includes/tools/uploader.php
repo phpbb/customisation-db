@@ -43,7 +43,7 @@ class titania_uploader extends fileupload
 	 * Class constructor
 	 *
 	 * @param string $form_name Form name from where we can find the file.
-	 * @param string $ext_group The name of the extension group (TITANIA_ATTACH_EXT_ constants)
+	 * @param string $ext_group The extension type (use the same as what is in titania::$config->upload_allowed_extensions)
 	 */
 	public function __construct($form_name, $ext_group)
 	{
@@ -71,8 +71,14 @@ class titania_uploader extends fileupload
 			return false;
 		}
 
-		$extensions = titania::$cache->obtain_attach_extensions();
-		$this->set_allowed_extensions(array_keys($extensions[$this->ext_group]));
+		if (!isset(titania::$config->upload_allowed_extensions[$this->ext_group]))
+		{
+			$this->filedata['error'][] = phpbb::$user->lang['NO_UPLOAD_FORM_FOUND'];
+
+			return false;
+		}
+
+		$this->set_allowed_extensions(titania::$config->upload_allowed_extensions[$this->ext_group]);
 
 		$file = $this->form_upload($this->form_name);
 
@@ -99,7 +105,13 @@ class titania_uploader extends fileupload
 		$file->clean_filename('unique', phpbb::$user->data['user_id'] . '_');
 
 		// Move files into their own directory depending on the extension group assigned.  Should keep at least some of it organized.
-		$move_dir = preg_replace('#[^a-z0-9_/]#', '', str_replace(' ', '_', utf8_strtolower($this->ext_group)));
+		if (!isset(titania::$config->upload_directory[$this->ext_group]))
+		{
+			$this->filedata['error'][] = phpbb::$user->lang['NO_UPLOAD_FORM_FOUND'];
+
+			return false;
+		}
+		$move_dir = titania::$config->upload_directory[$this->ext_group];
 
 		if (!file_exists(titania::$config->upload_path . $move_dir))
 		{

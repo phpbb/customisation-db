@@ -25,6 +25,9 @@ if (!defined('IN_TITANIA_INSTALL'))
 	define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 }
 
+// Include the non-dynamic constants
+require(TITANIA_ROOT . 'includes/constants.' . PHP_EXT);
+
 // Include core classes
 require(TITANIA_ROOT . 'includes/core/phpbb.' . PHP_EXT);
 require(TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT);
@@ -48,8 +51,8 @@ else
 	titania::read_config_file('../' . TITANIA_ROOT . 'config.' . PHP_EXT);
 }
 
-// Include the constants (after reading the Titania config file, but before loading the phpBB common file)
-titania::_include('constants');
+// Include the dynamic constants (after reading the Titania config file, but before loading the phpBB common file)
+titania::_include('dynamic_constants');
 
 // Include common phpBB files and functions.
 if (!file_exists(PHPBB_ROOT_PATH . 'common.' . PHP_EXT))

@@ -63,7 +63,7 @@ if (!titania::$config->support_in_titania && titania::$access_level == TITANIA_A
 }
 
 // Handle replying/editing/etc
-$posting_helper = new titania_posting(TITANIA_ATTACH_EXT_SUPPORT);
+$posting_helper = new titania_posting();
 $posting_helper->act('contributions/contribution_support_post.html', titania::$contrib->contrib_id, titania::$contrib->get_url('support'), TITANIA_SUPPORT);
 
 phpbb::$user->add_lang('viewforum');

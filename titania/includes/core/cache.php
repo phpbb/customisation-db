@@ -272,39 +272,4 @@ class titania_cache extends acm
 		// Store the updated cache data
 		$this->put($author_block_name, $author_block);
 	}
-
-	/**
-	* Obtain allowed extensions
-	*
-	* @return array allowed extensions array.
-	*/
-	public function obtain_attach_extensions()
-	{
-		if (($extensions = $this->get('_titania_extensions')) === false)
-		{
-			$extensions = array();
-
-			$sql = 'SELECT e.extension, g.*
-				FROM ' . EXTENSIONS_TABLE . ' e, ' . EXTENSION_GROUPS_TABLE . ' g
-				WHERE e.group_id = g.group_id';
-			$result = phpbb::$db->sql_query($sql);
-
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$extension = strtolower(trim($row['extension']));
-
-				$extensions[$row['group_name']][$extension] = array(
-					'display_cat'	=> (int) $row['cat_id'],
-					'download_mode'	=> (int) $row['download_mode'],
-					'upload_icon'	=> trim($row['upload_icon']),
-					'max_filesize'	=> (int) $row['max_filesize'],
-				);
-			}
-			 phpbb::$db->sql_freeresult($result);
-
-			$this->put('_titania_extensions', $extensions);
-		}
-
-		return $extensions;
-	}
 }

@@ -59,7 +59,7 @@ switch ($action)
 			'attachments'	=> true,
 		));
 		$message->set_settings(array(
-			'attachments_group'		=> TITANIA_ATTACH_EXT_FAQ,
+			'attachments_group'		=> TITANIA_FAQ,
 		));
 
 		// Submit check...handles running $faq->post_data() if required

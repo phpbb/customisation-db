@@ -22,37 +22,6 @@ if (!defined('IN_PHPBB'))
 	define('IN_PHPBB', true);
 }
 
-// Some often used path constants
-define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
-
-// phpBB 3.x compatibility
-global $phpbb_root_path, $phpEx;
-$phpbb_root_path = PHPBB_ROOT_PATH;
-$phpEx = PHP_EXT;
-
-// Table names
-$table_prefix = titania::$config->table_prefix;
-define('TITANIA_ATTACHMENTS_TABLE',				$table_prefix . 'attachments');
-define('TITANIA_ATTENTION_TABLE',				$table_prefix . 'attention');
-define('TITANIA_AUTOMOD_QUEUE_TABLE',			$table_prefix . 'automod_queue');
-define('TITANIA_AUTHORS_TABLE',					$table_prefix . 'authors');
-define('TITANIA_CATEGORIES_TABLE',				$table_prefix . 'categories');
-define('TITANIA_CONTRIBS_TABLE',				$table_prefix . 'contribs');
-define('TITANIA_CONTRIB_COAUTHORS_TABLE',		$table_prefix . 'contrib_coauthors');
-define('TITANIA_CONTRIB_FAQ_TABLE',				$table_prefix . 'contrib_faq');
-define('TITANIA_CONTRIB_IN_CATEGORIES_TABLE',	$table_prefix . 'contrib_in_categories');
-define('TITANIA_POSTS_TABLE',					$table_prefix . 'posts');
-define('TITANIA_QUEUE_TABLE',					$table_prefix . 'queue');
-define('TITANIA_RATINGS_TABLE',					$table_prefix . 'ratings');
-define('TITANIA_REVISIONS_TABLE',				$table_prefix . 'revisions');
-define('TITANIA_REVISIONS_PHPBB_TABLE',			$table_prefix . 'revisions_phpbb');
-define('TITANIA_TAG_APPLIED_TABLE',				$table_prefix . 'tag_applied');
-define('TITANIA_TAG_FIELDS_TABLE',				$table_prefix . 'tag_fields');
-define('TITANIA_TAG_TYPES_TABLE',				$table_prefix . 'tag_types');
-define('TITANIA_TOPICS_TABLE',					$table_prefix . 'topics');
-define('TITANIA_TRACK_TABLE',					$table_prefix . 'track');
-define('TITANIA_WATCH_TABLE',					$table_prefix . 'watch');
-
 // Contribution revision/queue status
 define('TITANIA_QUEUE_DENIED', -2); // Special case to hide denied revisions from the queue
 define('TITANIA_QUEUE_APPROVED', -1); // Special case to hide approved revisions from the queue
@@ -85,12 +54,6 @@ define('TITANIA_SUCCESS', 2);
 // Author constants
 define('TITANIA_AUTHOR_HIDDEN', 0);
 define('TITANIA_AUTHOR_VISIBLE', 1);
-
-// Attachment extension groups; use the group_name stored in the phpbb extension groups table
-define('TITANIA_ATTACH_EXT_CONTRIB', 'Titania Contributions');
-define('TITANIA_ATTACH_EXT_SCREENSHOTS', 'Titania Screenshots');
-define('TITANIA_ATTACH_EXT_FAQ', 'Titania Posts: FAQ');
-define('TITANIA_ATTACH_EXT_SUPPORT', 'Titania Posts: Support');
 
 // Access Levels
 define('TITANIA_ACCESS_TEAMS', 0);

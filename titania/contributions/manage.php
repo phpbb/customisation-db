@@ -82,7 +82,7 @@ $message->set_settings(array(
 // Screenshots
 $screenshot = new titania_attachment(TITANIA_SCREENSHOT, titania::$contrib->contrib_id);
 $screenshot->load_attachments();
-$screenshot->upload(TITANIA_ATTACH_EXT_SCREENSHOTS, 175);
+$screenshot->upload(175);
 $error = array_merge($error, $screenshot->error);
 if ($screenshot->uploaded)
 {
