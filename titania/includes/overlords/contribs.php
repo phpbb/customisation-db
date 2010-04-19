@@ -181,7 +181,6 @@ class contribs_overlord
 
 					'FROM'		=> array(
 						TITANIA_CONTRIBS_TABLE	=> 'c',
-						USERS_TABLE				=> 'u',
 					),
 
 					'WHERE'		=> 'c.contrib_visible = 1',
