@@ -314,14 +314,32 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$message = $post->generate_text_for_display();
 			$parsed_attachments = $attachments->parse_attachments($message);
 
+			// Build CP Fields
+			$cp_row = array();
+			if (isset(users_overlord::$cp_fields[$post->post_user_id]))
+			{
+				$cp_row = $cp->generate_profile_fields_template('show', false, users_overlord::$cp_fields[$post->post_user_id]);
+			}
+			$cp_row['row'] = (isset($cp_row['row']) && sizeof($cp_row['row'])) ? $cp_row['row'] : array();
+
 			phpbb::$template->assign_block_vars('posts', array_merge(
 				$post->assign_details(false),
 				users_overlord::assign_details($post->post_user_id),
+				$cp_row['row'],
 				array(
 					'POST_TEXT'				=> $message,
 					'S_FIRST_UNREAD'		=> ($post->post_time >= $last_mark_time && $prev_post_time <= $last_mark_time) ? true : false,
 				)
 			));
+
+			// Output CP Fields
+			if (!empty($cp_row['blockrow']))
+			{
+				foreach ($cp_row['blockrow'] as $field_data)
+				{
+					$template->assign_block_vars('posts.custom_fields', $field_data);
+				}
+			}
 	//S_IGNORE_POST
 	//POST_ICON_IMG
 	//MINI_POST_IMG
