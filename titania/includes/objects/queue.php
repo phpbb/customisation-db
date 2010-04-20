@@ -438,7 +438,7 @@ class titania_queue extends titania_message_object
 			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->create_public],
 				$contrib->contrib_name,
 				$contrib->author->get_url(),
-				$contrib->author->username,
+				users_overlord::get_user($contrib->author->user_id, '_username'),
 				$contrib->contrib_desc,
 				$revision->revision_version,
 				titania_url::build_url('download', array('id' => $revision->attachment_id)),
