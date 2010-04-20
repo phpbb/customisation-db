@@ -298,6 +298,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		// load the user data
 		users_overlord::load($user_ids);
 
+		phpbb::_include('functions_profile_fields', false, 'custom_profile');
+		$cp = new custom_profile();
 		$post = new titania_post($topic->topic_type, $topic);
 		$attachments = new titania_attachment(false, false);
 
@@ -337,7 +339,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			{
 				foreach ($cp_row['blockrow'] as $field_data)
 				{
-					$template->assign_block_vars('posts.custom_fields', $field_data);
+					phpbb::$template->assign_block_vars('posts.custom_fields', $field_data);
 				}
 			}
 	//S_IGNORE_POST

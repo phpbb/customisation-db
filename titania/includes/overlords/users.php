@@ -30,9 +30,6 @@ class users_overlord
 
 	public static function load($user_ids)
 	{
-		// Only get the rows for those we have not gotten already
-		$user_ids = array_diff($user_ids, array_keys(self::$users), array(0));
-
 		self::load_users($user_ids);
 		self::load_cp_fields($user_ids);
 		self::load_status($user_ids);
