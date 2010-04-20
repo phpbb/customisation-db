@@ -107,7 +107,7 @@ if ($attention_id || ($object_type && $object_id))
 				if (!$cnt)
 				{
 					$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
-						SET topic_reported = 1
+						SET topic_reported = 0
 						WHERE topic_id = ' . $post->topic_id;
 					phpbb::$db->sql_query($sql);
 				}
