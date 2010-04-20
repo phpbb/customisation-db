@@ -294,7 +294,7 @@ dd.general {
 	font-size: 1.2em;
 }
 
-.container li.header dt, .container li.header dd {
+ul.simple li.header dt, ul.simple li.header dd {
 	color: #000000;
 	margin-bottom: 2px;
 }
