@@ -326,7 +326,8 @@ class titania
 			'U_BASE_URL'				=> self::$absolute_path,
 			'U_SITE_ROOT'				=> self::$absolute_board,
 			'U_MANAGE'					=> (sizeof(titania_types::find_authed()) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? titania_url::build_url('manage') : '',
-			'U_ALL_CONTRIBUTIONS'		=> titania_url::build_url('all'),
+			'U_ALL_CONTRIBUTIONS'		=> titania_url::build_url('contributions/all'),
+			'U_ALL_SUPPORT'				=> titania_url::build_url('support/all'),
 			'U_MY_CONTRIBUTIONS'		=> (phpbb::$user->data['is_registered'] && !phpbb::$user->data['is_bot']) ? titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/contributions/') : '',
 			'U_SEARCH'					=> titania_url::build_url('search'),
 

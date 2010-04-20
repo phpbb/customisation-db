@@ -305,6 +305,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_TRACKER;
 			break;
 
+			case 'all_support' :
+				$page_url = titania_url::build_url('support/all');
+
+				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
+				$sql_ary['ORDER_BY'] = $sort->get_order_by();
+			break;
+
 			case 'support' :
 			default :
 				$page_url = $object->get_url('support');

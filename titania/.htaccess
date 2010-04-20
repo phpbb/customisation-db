@@ -28,23 +28,23 @@ Rewriterule ^manage?/([^/]+)?/?([^/]+)?$						./manage/index.php?page=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^authors?/([^/]+)/?([^/]+)?/?([^/]+)?$				./authors/index.php?u=$1&page=$2 [NC]
 
+#display all contribs
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^contributions/all/?([^/]+)?$						./index.php?action=contributions [NC]
+
+#display all support topics
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^support/all/?([^/]+)?$								./index.php?action=support [NC]
+
 #contributions
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^(mod|style|snippet|translation|contributions?)/(create)/?([^/]+)?$						./contributions/index.php?page=$2&type=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			./contributions/index.php?c=$2&page=$3&type=$1 [NC]
 
-#topics/posts (when missing contrib name)
-RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(tracker|support)/([^/]+)?$						./contributions/index.php?page=$1 [NC]
-
 #rating
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^rate/?([^/]+)?$									./index.php?action=rate [NC]
-
-#display all contribs
-RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^all/?([^/]+)?$										./index.php?action=all [NC]
 
 #cron
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -44,6 +44,7 @@ $lang = array_merge($lang, array(
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
 	'ALL'						=> 'All',
 	'ALL_CONTRIBUTIONS'			=> 'All contributions',
+	'ALL_SUPPORT'				=> 'All support topics',
 	'AUTHOR_BY'					=> 'By %s',
 
 	'BAD_RATING'				=> 'Rating attempt failed.',
