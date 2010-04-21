@@ -64,12 +64,13 @@ class titania
 	public static $access_level = 2;
 
 	/**
-	 * Absolute Titania, Board, Style, Template, and Theme Path
+	 * Absolute Titania, Board, Images, Style, Template, and Theme Path
 	 *
 	 * @var string
 	 */
 	public static $absolute_path;
 	public static $absolute_board;
+	public static $images_path;
 	public static $style_path;
 	public static $template_path;
 	public static $theme_path;
@@ -109,6 +110,7 @@ class titania
 		// Set the style path, template path, and template name
 		if (!defined('IN_TITANIA_INSTALL') && !defined('USE_PHPBB_TEMPLATE'))
 		{
+			self::$images_path = self::$absolute_path . 'images/';
 			self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
 			self::$template_path = self::$style_path . 'template';
 			self::$theme_path = self::$style_path . 'theme';
@@ -335,6 +337,7 @@ class titania
 
 			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
+			'T_TITANIA_IMAGES_PATH'		=> self::$images_path,
 			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . 'style.' . PHP_EXT . '?style=' . self::$config->style,
 			'T_STYLESHEET_LINK'			=> (!phpbb::$user->theme['theme_storedb']) ? self::$absolute_board . '/styles/' . phpbb::$user->theme['theme_path'] . '/theme/stylesheet.css' : self::$absolute_board . 'style.' . PHP_EXT . '?sid=' . phpbb::$user->session_id . '&amp;id=' . phpbb::$user->theme['style_id'] . '&amp;lang=' . phpbb::$user->data['user_lang'],
 			'T_STYLESHEET_NAME'			=> phpbb::$user->theme['theme_name'],
