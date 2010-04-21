@@ -103,6 +103,8 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 
 .navigation {
 	margin-bottom: 10px;
+	background-color: #ECF3F7;
+	background-image: none;
 }
 
 .navigation .linklist li {
