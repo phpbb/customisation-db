@@ -73,33 +73,33 @@ class titania_url
 			}
 		}
 
-		global $_SID;
-
 		// Prevent rebuilding...
 		if (self::is_built($base))
 		{
 			return self::append_url($base, $params);
 		}
 
-		if (!is_array($params))
-		{
-			$params = self::split_params($params);
-		}
+		// URL Encode the base
+		$base = explode('/', $base);
+		$base = array_map('urlencode', $base);
+		$base = implode('/', $base) . '/';
 
+		// Start building the final URL
 		$final_url = self::$root_url . $base;
 
-		// Append a / at the end if required
-		if (substr($final_url, -1) != '/')
-		{
-			$final_url .= '/';
-		}
-
 		// Add the Session ID if required.
+		global $_SID;
 		if ($_SID)
 		{
+			if (!is_array($params))
+			{
+				$params = self::split_params($params);
+			}
+
 			$params['sid'] = $_SID;
 		}
 
+		// Use the append_url function to add the parameters and return
 		return self::append_url($final_url, $params);
 	}
 
