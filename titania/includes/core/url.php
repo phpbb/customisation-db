@@ -82,7 +82,13 @@ class titania_url
 		// URL Encode the base
 		$base = explode('/', $base);
 		$base = array_map('urlencode', $base);
-		$base = implode('/', $base) . '/';
+		$base = implode('/', $base);
+
+		// Add a slash to the end if we do not have one
+		if (substr($base, -1) != '/')
+		{
+			$base .= '/';
+		}
 
 		// Start building the final URL
 		$final_url = self::$root_url . $base;
