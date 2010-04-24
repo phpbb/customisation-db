@@ -84,14 +84,14 @@ class titania_url
 		$base = array_map('urlencode', $base);
 		$base = implode('/', $base);
 
-		// Add a slash to the end if we do not have one
-		if (substr($base, -1) != '/')
-		{
-			$base .= '/';
-		}
-
 		// Start building the final URL
 		$final_url = self::$root_url . $base;
+
+		// Add a slash to the end if we do not have one
+		if (substr($final_url, -1) != '/')
+		{
+			$final_url .= '/';
+		}
 
 		// Add the Session ID if required.
 		global $_SID;
