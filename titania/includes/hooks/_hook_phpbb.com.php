@@ -117,15 +117,16 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 
 	titania::_include('functions_posting', 'phpbb_post_add');
 
-	decode_message($post_object->post_text, $post_object->post_text_uid);
+	$post_text = $post_object->post_text;
+	decode_message($post_text, $post_object->post_text_uid);
 
-	$post_object->post_text .= "\n\n" . $post_object->get_url();
+	$post_text .= "\n\n" . $post_object->get_url();
 
 	$options = array(
 		'poster_id'				=> $post_object->topic->topic_first_post_user_id,
 		'forum_id' 				=> $forum_id,
 		'topic_title'			=> $post_object->topic->topic_subject,
-		'post_text'				=> $post_object->post_text,
+		'post_text'				=> $post_text,
 		'topic_status'			=> ITEM_LOCKED,
 	);
 
