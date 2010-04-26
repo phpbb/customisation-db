@@ -25,8 +25,7 @@
 	<!-- BEGIN categories -->
 		<li class="row">
 			<dl>
-				<dt title="{categories.FORUM_FOLDER_IMG_ALT}">
-					<!-- IF categories.FORUM_IMAGE --><span class="forum-image">{categories.FORUM_IMAGE}</span><!-- ENDIF -->
+				<dt>
 					<!-- IF S_MANAGE -->
 						<!-- IF categories.HAS_CHILDREN -->
 						<a href="{categories.U_VIEW_MANAGE_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a>
@@ -36,7 +35,7 @@
 					<!-- ELSE -->
 						<a href="{categories.U_VIEW_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a>
 					<!-- ENDIF --><br />
-					{categories.FORUM_DESC}
+					<!-- IF categories.CATEGORY_DESC -->{categories.CATEGORY_DESC}<!-- ENDIF -->
 					<!-- IF categories.SUBFORUMS and categories.S_LIST_SUBFORUMS --><br /><strong>{categories.L_SUBFORUM_STR}</strong> {categories.SUBFORUMS}<!-- ENDIF -->
 				</dt>
 				<dd class="general">{categories.CATEGORY_CONTRIBS} <dfn>{L_CONTRIBUTIONS}</dfn></dd>

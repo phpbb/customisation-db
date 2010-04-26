@@ -492,6 +492,7 @@ class titania_category extends titania_message_object
 			'CATEGORY_NAME'				=> (isset(phpbb::$user->lang[$this->category_name])) ? phpbb::$user->lang[$this->category_name] : $this->category_name,
 			'CATEGORY_CONTRIBS'			=> $this->category_contribs,
 			'CATEGORY_TYPE'				=> $this->category_type,
+			'CATEGORY_DESC'				=> $this->generate_text_for_display(),
 
 			'U_MOVE_UP'					=> titania_url::append_url($this->get_manage_url(), array('action' => 'move_up')),
 			'U_MOVE_DOWN'				=> titania_url::append_url($this->get_manage_url(), array('action' => 'move_down')),
