@@ -206,7 +206,7 @@ class titania_queue extends titania_message_object
 			$queue_topic = new titania_topic;
 			$queue_topic->__set_array($queue_topic_row);
 
-			$post->post_text .= '<a href="' . $queue_topic->get_url() . '">' . phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC'] . "</a>\n\n";
+			$post->post_text .= '[url=' . $queue_topic->get_url() . ']' . phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC'] . "[/url]\n\n";
 		}
 
 		// Add the queue notes
@@ -214,7 +214,7 @@ class titania_queue extends titania_message_object
 		decode_message($queue_notes, $this->queue_notes_uid);
 		if ($queue_notes)
 		{
-			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_NOTES'] . '&quot;]' . $queue_notes . "[/quote]\n\n";
+			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_NOTES'] . '&quot;]' . $queue_notes . "[/quote]\n";
 		}
 
 		// Add the MPV results
@@ -222,13 +222,13 @@ class titania_queue extends titania_message_object
 		{
 			$mpv_results = $this->mpv_results;
 			decode_message($mpv_results, $this->mpv_results_uid);
-			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_MPV'] . '&quot;]' . $mpv_results . '[/quote]';
+			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_MPV'] . '&quot;]' . $mpv_results . "[/quote]\n";
 		}
 
 		// @todo Add the Automod results
 		if ($this->automod_results)
 		{
-			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_AUTOMOD'] . '&quot;]' . $this->automod_results . '[/quote]';
+			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_AUTOMOD'] . '&quot;]' . $this->automod_results . "[/quote]\n";
 		}
 
 		// Prevent errors from different configurations
