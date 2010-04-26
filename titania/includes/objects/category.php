@@ -126,7 +126,7 @@ class titania_category extends titania_message_object
 	/**
 	* Get category branch
 	*/
-	public function get_category_branch($type = 'all', $order = 'descending', $include_category = false)
+	public function get_category_branch($type = 'all', $order = 'descending', $include_category = true)
 	{
 		switch ($type)
 		{
@@ -320,21 +320,8 @@ class titania_category extends titania_message_object
 	*/
 	public function delete($sync = true)
 	{
-		// Delete any children
-		// NOTE: just commenting this out until we can work out the bugs.
-		// $children = $this->get_category_branch();
-
-		// foreach ($children as $row)
-		// {
-		//	 $child_category = new titania_category;
-		//	 $child_category->category_id = $row['category_id'];
-
-		//	 $child_category->delete(false);
-		// }
-
+		// This should be the correct diff value each time
 		$diff = 2;
-
-		// @todo resync tree ($diff)
 
 		// Resync tree
 		$sql = 'UPDATE ' . $this->sql_table . "

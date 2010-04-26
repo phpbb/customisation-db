@@ -146,7 +146,7 @@ switch ($action)
 					{
 						if ($category_check->category_id != $category_object->parent_id)
 						{
-							$errors_extra = $category_object->move_category($category_object->category_id, $category_object->parent_id);
+							$errors_extra = $category_object->move_category($category_object->parent_id);
 						}
 						else
 						{
@@ -246,13 +246,13 @@ switch ($action)
 				{
 					$error = array_merge($error, $category_object->move_category_content($contribs_to_id));
 				}
-
-				// Delete category
-				$category_object->delete();
 			}
 
 			if (!sizeof($error))
 			{
+				// Delete category
+				$category_object->delete();
+
 				// Redirect back to the previous category
 				redirect(titania_url::build_url('manage/categories', array('c' => $parent_id)));
 			}
