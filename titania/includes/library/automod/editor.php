@@ -70,7 +70,7 @@ class editor
 
 	/**
 	* Only used when board has templates stored in the database
-	*/
+	*/ 
 	var $template_id = 0;
 
 	/**
@@ -169,13 +169,13 @@ class editor
 					{
 						$find_ary[$j] = $function($find_ary[$j]);
 					}
-
+	
 					// if we've reached the EOF, the find failed.
 					if (!isset($this->file_contents[$i + $j]))
 					{
 						return false;
 					}
-
+	
 					if (!trim($find_ary[$j]))
 					{
 						// line is blank.  Assume we can find a blank line, and continue on
@@ -194,7 +194,7 @@ class editor
 					else if (strpos($find_ary[$j], '{%:') !== false)
 					{
 						$regex = preg_replace('#{%:(\d+)}#', '(\d+)', $find_ary[$j]);
-
+	
 						if (preg_match('#' . $regex . '#is', $this->file_contents[$i + $j]))
 						{
 							$find_success += 1;
@@ -208,23 +208,23 @@ class editor
 					{
 						// the find failed.  Reset $find_success
 						$find_success = 0;
-
+	
 						// skip to next iteration of outer loop, that is, skip to the next line
 						break;
 					}
-
+	
 					if ($find_success == $find_lines)
 					{
 						// we found the proper number of lines
 						$this->start_index = $i;
-
+	
 						// return our array offsets
 						return array(
 							'start' => $i,
 							'end' => $i + $j,
 						);
 					}
-
+	
 				}
 			}
 		}
@@ -234,7 +234,7 @@ class editor
 	}
 
 	/**
-	* This function is used to determine when an edit has ended, so we know that
+	* This function is used to determine when an edit has ended, so we know that 
 	* the current line will not be looked at again.  This fixes some former bugs.
 	*/
 	function close_edit()
@@ -614,7 +614,7 @@ class editor
 		else if ($pos == 'BEFORE')
 		{
 			$this->file_contents[$array_offset] = substr_replace($this->file_contents[$array_offset], $inline_add, $string_offset, 0);
-			$this->last_string_offset += $length;
+			$this->last_string_offset += (strlen($inline_add) - 1);
 		}
 
 		$this->curr_action = func_get_args();
@@ -626,7 +626,7 @@ class editor
 
 	/**
 	* Function to build full edits such that uninstall will work more often
-	*
+	* 
 	* @param $find - The largest find we can put together -- sometimes this
 	* 		comes from the file itself, other times from the MODX file
 	* @param $inline_find - Subset of $find or NULL
@@ -636,18 +636,18 @@ class editor
 	*/
 	function build_uninstall($find, $inline_find, $action_type, $action)
 	{
-		$find = trim($find);
-		$inline_find = trim($inline_find);
-		$action = trim($action);
+		$find = trim($find, "\n");
+		$inline_find = trim($inline_find, "\n");
+		$action = trim($action, "\n");
 
 		/*
-		* This if statement finds out if we are in the special case where
+		* This if statement finds out if we are in the special case where 
 		* a MOD specifies a before action and an after action on the same
 		* find.  If this is the case, the uninstaller must see a replace
 		* rather than an add
 		*/
 		if (!empty($this->last_action) && $this->last_action[0] == $this->curr_action[0] &&
-			(($this->last_action[2] == 'AFTER' && $this->curr_action[2] == 'BEFORE')
+			(($this->last_action[2] == 'AFTER' && $this->curr_action[2] == 'BEFORE') 
 			|| ($this->last_action[2] == 'BEFORE' && $this->curr_action[2] == 'AFTER')))
 		{
 			$last_action_index = sizeof($this->mod_actions[$this->open_filename]) - 1;
@@ -712,7 +712,7 @@ class editor
 
 /**
 * @package automod
-* class editor_direct will alter files by using the local file access functions
+* class editor_direct will alter files by using the local file access functions 
 * such as fopen and fwrite.  This is typically only useful in Windows environments
 * due to permissions settings.
 */
@@ -731,9 +731,9 @@ class editor_direct extends editor
 	* @param $to string Where to move the file(s) to. If not specified then will get moved to the root folder
 	* @param $strip Used for FTP only
 	* @return mixed: Bool true on success, error string on failure, NULL if no action was taken
-	*
-	* NOTE: function should preferably not return in case of failure on only one file.
-	* 	The current method makes error handling difficult
+	* 
+	* NOTE: function should preferably not return in case of failure on only one file.  
+	* 	The current method makes error handling difficult 
 	*/
 	function copy_content($from, $to = '', $strip = '')
 	{
@@ -846,7 +846,7 @@ class editor_direct extends editor
 		$length_written = @fwrite($fr, $file_contents);
 		@chmod($new_filename, octdec($config['am_file_perms']));
 
-		// This appears to be correct even with multibyte encodings.  strlen and
+		// This appears to be correct even with multibyte encodings.  strlen and 
 		// fwrite both return the number of bytes written, not the number of chars
 		if ($length_written < strlen($file_contents))
 		{
@@ -855,7 +855,7 @@ class editor_direct extends editor
 
 		if (!@fclose($fr))
 		{
-			return sprintf($user->lang['WRITE_DIRECT_FAIL'], $new_filename);
+			return sprintf($user->lang['WRITE_DIRECT_FAIL'], $new_filename);			
 		}
 
 		return true;
@@ -964,9 +964,9 @@ class editor_ftp extends editor
 	* @param $to string Where to move the file(s) to. If not specified then will get moved to the root folder
 	* @param $strip Used for FTP only
 	* @return mixed: Bool true on success, error string on failure, NULL if no action was taken
-	*
-	* NOTE: function should preferably not return in case of failure on only one file.
-	* 	The current method makes error handling difficult
+	* 
+	* NOTE: function should preferably not return in case of failure on only one file.  
+	* 	The current method makes error handling difficult 
 	*/
 	function copy_content($from, $to = '', $strip = '')
 	{
@@ -1008,14 +1008,7 @@ class editor_ftp extends editor
 		// ftp
 		foreach ($files as $file)
 		{
-			if (is_dir($to))
-			{
-				$to_file = str_replace(array($phpbb_root_path, $strip), '', $file);
-			}
-			else
-			{
-				$to_file = str_replace($phpbb_root_path, '', $to);
-			}
+			$to_file = str_replace($strip, '', $file);
 
 			$this->recursive_mkdir(dirname($to_file));
 
@@ -1154,18 +1147,21 @@ class editor_manual extends editor
 		{
 			if (is_dir($to))
 			{
-				$to_file = str_replace(array($phpbb_root_path, $strip), '', $file);
+				// this would find the directory part specified in MODX
+				$to_file = str_replace(array($phpbb_root_path, $strip), '', $to);
+				// and this fetches any subdirectories and the filename of the destination file
+				$to_file .= substr($file, strpos($file, $to_file) + strlen($to_file));
 			}
 			else
 			{
 				$to_file = str_replace($phpbb_root_path, '', $to);
 			}
 
-			// filename calculation is involved here: be sure to remove "store/mods/foo"
+			// filename calculation is involved here:
 			// and prepend the "files" directory
-			if (!$this->compress->add_file($to_file, substr($to_file, 0, strpos($to_file, 'root/') + 5), 'files'))
+			if (!$this->compress->add_custom_file($file, 'files/' . $to_file))
 			{
-				return sprintf($user->lang['WRITE_MANUAL_FAIL'], $new_filename);
+				return sprintf($user->lang['WRITE_MANUAL_FAIL'], $to_file);
 			}
 		}
 
@@ -1190,7 +1186,7 @@ class editor_manual extends editor
 
 		// don't include extra dirs in zip file
 		$strip_position = strpos($new_filename, '_edited') + 8; // want the end of the string
-		if (!$strip_position)
+		if ($strip_position == 8)
 		{
 			$strip_position = strpos($new_filename, '_uninst') + 7;
 		}
@@ -1244,6 +1240,6 @@ class editor_manual extends editor
 	{
 		return NULL;
 	}
-}
+} 
 
 ?>

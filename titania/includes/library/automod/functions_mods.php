@@ -273,6 +273,40 @@ function handle_ftp_details($method, $test_ftp_connection, $test_connection)
 }
 
 /**
+ * Recursively delete a directory
+ *
+ * @param string $file File name
+ * @author A_Jelly_Doughnut
+ */
+function recursive_unlink($file)
+{
+	if (!($dh = opendir($file)))
+	{
+		return false;
+	}
+
+	while (($subfile = readdir($dh)) !== false)
+	{
+		if ($subfile[0] == '.')
+		{
+		    continue;
+		}
+
+		if (!unlink($file. '/' . $subfile))
+		{
+			recursive_unlink($file . '/' . $subfile);
+		}
+	}
+
+	closedir($dh);
+
+	rmdir($file);
+
+	return true;
+}
+
+
+/**
 * PHP 5 Wrapper - simulate scandir, but only those features that we actually need
 * NB: The third parameter of PHP5 native scandir is _not_ present in this wrapper
 */

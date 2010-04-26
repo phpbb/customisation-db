@@ -1,10 +1,10 @@
 <?php
-/**
+/** 
 *
 * @package automod
 * @version $Id$
 * @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License 
 *
 */
 /**
@@ -151,6 +151,7 @@ class parser
 							break;
 
 							case 'IN-LINE-EDIT':
+								$action_id = 0;
 								// build the reverse just like the normal action
 								foreach ($command as $inline_find => $inline_action_ary)
 								{
@@ -163,24 +164,22 @@ class parser
 											case 'IN-LINE-AFTER-ADD':
 											case 'IN-LINE-BEFORE-ADD':
 												// Replace with a blank string
-												$reverse_edits['EDITS'][$file][$edit_id][$find]['in-line-edit'][$inline_command]['in-line-replace'][] = '';
+												$reverse_edits['EDITS'][$file][$edit_id][$find]['in-line-edit'][$action_id][$inline_command]['in-line-replace'][] = '';
 											break;
-
+	
 											case 'IN-LINE-REPLACE':
 												// replace with the inline find
-												$reverse_edits['EDITS'][$file][$edit_id][$find]['in-line-edit'][$inline_command][$inline_action][] = $inline_find;
+												$reverse_edits['EDITS'][$file][$edit_id][$find]['in-line-edit'][$action_id][$inline_command][$inline_action][] = $inline_find;
 											break;
-
+	
 											default:
 												// For the moment, we do nothing.  What about increment?
 											break;
 										}
+
+										$action_id++;
 									}
 								}
-							break;
-
-							case 'SQL':
-								$reverse_edits['SQL'][] = $this->reverse_query($command);
 							break;
 
 							default:
@@ -190,6 +189,21 @@ class parser
 					}
 				}
 			}
+		}
+
+		if (empty($actions['SQL']))
+		{
+			return $reverse_edits;
+		}
+
+		if (sizeof($actions['SQL']) == 1)
+		{
+			$actions['SQL'] = explode("\n", $actions['SQL'][0]);
+		}
+
+		foreach ($actions['SQL'] as $query)
+		{
+			$reverse_edits['SQL'][] = parser::reverse_query($query);
 		}
 
 		return $reverse_edits;
@@ -268,7 +282,7 @@ class parser_xml
 		{
 			$this->modx_version = 1.2;
 
-			$version = trim($header['MOD-VERSION'][0]['data']);
+			$version = trim($header['MOD-VERSION'][0]['data']); 
 		}
 
 		// get phpBB version recommendation
@@ -320,7 +334,7 @@ class parser_xml
 
 			for ($j = 0; $j < $changelog_size; $j++)
 			{
-				// Ignore changelogs in foreign languages except in the case that there is no
+				// Ignore changelogs in foreign languages except in the case that there is no 
 				// match for the current user's language
 				// TODO: Look at modifying localise_tags() for use here.
 				if (match_language($user->data['user_lang'], $changelog[$j]['attrs']['LANG']))
@@ -371,11 +385,16 @@ class parser_xml
 				for ($i = 0, $size = sizeof($link_group['LINK']); $i <= $size; $i++)
 				{
 					// do some stuff with attrs
-					// commented out due to a possible PHP bug.  When using this,
+					// commented out due to a possible PHP bug.  When using this, 
 					// sizeof($link_group) changed each time ...
 					// $attrs = &$link_group[$i]['attrs'];
-
+	
 					if (!isset($link_group['LINK'][$i]))
+					{
+						continue;
+					}
+
+                    if ($link_group['LINK'][$i]['attrs']['TYPE'] == 'text')
 					{
 						continue;
 					}
@@ -439,7 +458,7 @@ class parser_xml
 			break;
 
 			// and now for the MySQL fun
-			// This will generate an array of things we can probably use, but
+			// This will generate an array of things we can probably use, but	
 			// will not have any priority
 			case 'mysqli':
 				$match_dbms = array('mysql_41', 'mysqli', 'mysql');
@@ -502,6 +521,17 @@ class parser_xml
 			}
 		}
 
+		$delete_files_info = (!empty($xml_actions['DELETE'])) ? $xml_actions['DELETE'] : array();
+		for ($i = 0; $i < sizeof($delete_files_info); $i++)
+		{
+			$delete_files = $delete_files_info[$i]['children']['FILE'];
+			for ($j = 0; $j < sizeof($delete_files); $j++)
+			{
+				$name = str_replace('\\', '/', $delete_files[$j]['attrs']['NAME']);
+				$actions['DELETE_FILES'][] = $name;
+			}
+		}
+
 		// open
 		$open_info = (!empty($xml_actions['OPEN'])) ? $xml_actions['OPEN'] : array();
 		for ($i = 0; $i < sizeof($open_info); $i++)
@@ -516,7 +546,7 @@ class parser_xml
 				$action_info = (!empty($edit_info[$j]['children'])) ? $edit_info[$j]['children'] : array();
 
 				// store some array information to help decide what kind of operation we're doing
-				$action_count = $total_action_count = 0;
+				$action_count = $total_action_count = $remove_count = $find_count = 0;
 				if (isset($action_info['ACTION']))
 				{
 					$action_count += sizeof($action_info['ACTION']);
@@ -527,7 +557,45 @@ class parser_xml
 					$total_action_count += sizeof($action_info['INLINE-EDIT']);
 				}
 
-				$find_count = sizeof($action_info['FIND']);
+				if (isset($action_info['REMOVE']))
+				{
+					$remove_count = sizeof($action_info['REMOVE']); // should be an integer bounded between zero and one
+				}
+
+				if (isset($action_info['FIND']))
+				{
+					$find_count = sizeof($action_info['FIND']);
+				}
+
+				// the basic idea is to transform a "remove" tag into a replace-with action
+				if ($remove_count && !$find_count)
+				{
+					// but we still support it if $remove_count is > 1
+					for ($k = 0; $k < $remove_count; $k++)
+					{
+						// if there is no find tag associated, handle it directly
+						$actions['EDITS'][$current_file][$j][trim($action_info['REMOVE'][$k]['data'], "\n\r")]['replace with'] = '';
+					}
+				}
+				else if ($remove_count && $find_count)
+				{
+					// if there is a find and a remove, transform into a replace-with
+					// action, and let the logic below sort out the relationships.
+                    for ($k = 0; $k < $remove_count; $k++)
+					{
+						$insert_index = (isset($action_info['ACTION'])) ? sizeof($action_info['ACTION']) : 0;
+
+						$action_info['ACTION'][$insert_index] = array(
+							'data' => '',
+							'attrs' => array('TYPE'	=> 'replace with'),
+						);
+					}
+				}
+				else if (!$find_count)
+				{
+					trigger_error(sprintf($user->lang['INVALID_MOD_NO_FIND'], htmlspecialchars($action_info['ACTION'][0]['data'])), E_USER_WARNING);
+				}
+
 				// first we try all the possibilities for a FIND/ACTION combo, then look at inline possibilities.
 
 				if (isset($action_info['ACTION']))
@@ -537,19 +605,26 @@ class parser_xml
 						// is this anything but the last iteration of the loop?
 						if ($k < ($find_count - 1))
 						{
-							// NULL has special meaning for an action ... no action to be taken; advance pointer
+							// NULL has special meaning for an action ... no action to be taken; advance pointer 
 							$actions['EDITS'][$current_file][$j][$action_info['FIND'][$k]['data']] = NULL;
 						}
 						else
 						{
-							// this is the last iteration, assign the action tags
-
+							// this is the last iteration, assign the action tags 
+			
 							for ($l = 0; $l < $action_count; $l++)
 							{
 								$type = str_replace('-', ' ', $action_info['ACTION'][$l]['attrs']['TYPE']);
 								$actions['EDITS'][$current_file][$j][trim($action_info['FIND'][$k]['data'], "\n\r")][$type] = (isset($action_info['ACTION'][$l]['data'])) ? preg_replace("#^(\s)+\n#", '', rtrim(trim($action_info['ACTION'][$l]['data'], "\n"))) : '';
 							}
 						}
+					}
+				}
+				else
+				{
+					if (!$remove_count && !$total_action_count)
+					{
+						trigger_error(sprintf($user->lang['INVALID_MOD_NO_ACTION'], htmlspecialchars($action_info['FIND'][0]['data'])), E_USER_WARNING);
 					}
 				}
 
@@ -561,6 +636,19 @@ class parser_xml
 				{
 					$inline_info = (!empty($action_info['INLINE-EDIT'])) ? $action_info['INLINE-EDIT'] : array();
 
+					if (isset($inline_info[0]['children']['INLINE-REMOVE']) && sizeof($inline_info[0]['children']['INLINE-REMOVE']))
+					{
+						// overwrite the existing array with the new one
+						$inline_info[0]['children'] = array(
+							'INLINE-FIND'   => $inline_info[0]['children']['INLINE-REMOVE'],
+							'INLINE-ACTION' => array(
+								0 => array(
+									'attrs'	=> array('TYPE'	=> 'replace-with'),
+									'data'	=> '',
+								),
+							),
+						);
+					}
 					if ($find_count > $total_action_count)
 					{
 						// Yeah, $k is used more than once for different information
@@ -569,7 +657,7 @@ class parser_xml
 							// is this anything but the last iteration of the loop?
 							if ($k < ($find_count - 1))
 							{
-								// NULL has special meaning for an action ... no action to be taken; advance pointer
+								// NULL has special meaning for an action ... no action to be taken; advance pointer 
 								$actions['EDITS'][$current_file][$j][trim($action_info['FIND'][$k]['data'], "\r\n")] = NULL;
 							}
 						}
@@ -584,12 +672,22 @@ class parser_xml
 					{
 						$inline_data = (!empty($inline_info[$k]['children'])) ? $inline_info[$k]['children'] : array();
 
-						$inline_find_count = sizeof($inline_data['INLINE-FIND']);
+						$inline_find_count = (isset($inline_data['INLINE-FIND'])) ? sizeof($inline_data['INLINE-FIND']) : 0;
 
 						$inline_comment = localise_tags($inline_data, 'INLINE-COMMENT');
 						$actions['EDITS'][$current_file][$j][trim($action_info['FIND'][$find_count - 1]['data'], "\r\n")]['in-line-edit']['inline-comment'] = $inline_comment;
 
 						$inline_actions = (!empty($inline_data['INLINE-ACTION'])) ? $inline_data['INLINE-ACTION'] : array();
+
+						if (empty($inline_actions))
+						{
+							trigger_error(sprintf($user->lang['INVALID_MOD_NO_ACTION'], htmlspecialchars($inline_data['INLINE-FIND'][0]['data'])), E_USER_WARNING);
+						}
+						if (empty($inline_find_count))
+						{
+							trigger_error(sprintf($user->lang['INVALID_MOD_NO_FIND'], htmlspecialchars($inline_actions[0]['data'])), E_USER_WARNING);
+						}
+
 						for ($l = 0; $l < $inline_find_count; $l++)
 						{
 							$inline_find = $inline_data['INLINE-FIND'][$l]['data'];
@@ -624,6 +722,11 @@ class parser_xml
 			}
 		}
 
+		if (!empty($xml_actions['PHP-INSTALLER']))
+		{
+			$actions['PHP_INSTALLER'] = $xml_actions['PHP-INSTALLER'][0]['data'];
+		}
+
 		if (!empty($xml_actions['DIY-INSTRUCTIONS']))
 		{
 			$actions['DIY_INSTRUCTIONS'] = localise_tags($xml_actions, 'DIY-INSTRUCTIONS');
@@ -653,7 +756,7 @@ class xml_array
 		$this->XML = xml_parse($this->parser, $XML);
 		if (!$this->XML)
 		{
-			die(sprintf("<strong>XML error</strong>: %s at line %d.  View the file %s in a web browser for a more detailed error message.",
+			die(sprintf("<strong>XML error</strong>: %s at line %d.  View the file %s in a web browser for a more detailed error message.", 
 				xml_error_string(xml_get_error_code($this->parser)), xml_get_current_line_number($this->parser), $file));
 		}
 
