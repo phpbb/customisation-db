@@ -47,9 +47,9 @@ if ($queue_type === false)
 	{
 		foreach ($authed as $type_id)
 		{
-			$sql = 'SELECT COUNT(queue_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
-				WHERE queue_type = ' . (int) $type_id . '
-					AND queue_status = 1';
+			$sql = 'SELECT COUNT(topic_id) AS cnt FROM ' . TITANIA_TOPICS_TABLE . '
+				WHERE topic_type = ' . TITANIA_QUEUE_DISCUSSION . '
+					AND topic_category = ' . (int) $type_id;
 			phpbb::$db->sql_query($sql);
 			$cnt = phpbb::$db->sql_fetchfield('cnt');
 			phpbb::$db->sql_freeresult();
