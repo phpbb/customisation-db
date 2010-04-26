@@ -150,6 +150,9 @@ if ($queue_id)
 					// Install the style on the demo board?
 					if ($contrib->contrib_type == TITANIA_TYPE_STYLE && isset($_POST['style_demo_install']) && titania::$config->demo_style_path)
 					{
+						// Reload the contrib, it hath changed
+						$contrib->load((int) $queue->contrib_id);
+
 						$revision = $queue->get_revision();
 
 						$sql = 'SELECT attachment_directory, physical_filename FROM ' . TITANIA_ATTACHMENTS_TABLE . '
