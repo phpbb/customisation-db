@@ -364,7 +364,7 @@ function phpbb_topic_add(&$options, $poll = array())
 		'message'				=> $message_parser->message,
 		'attachment_data'		=> array(),
 		'filename_data'			=> array(),
-		'post_approved'			=> 1,
+		'force_approved_state'	=> true,
 	);
 
 	// Aaaand, submit it.
@@ -515,8 +515,8 @@ function phpbb_post_add(&$options)
 		'message'				=> $message_parser->message,
 		'attachment_data'		=> array(),
 		'filename_data'			=> array(),
-		'post_approved'			=> 1,
 		'topic_replies'			=> false,
+		'force_approved_state'	=> true,
 	);
 
 	$poll = array();
