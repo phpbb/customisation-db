@@ -62,6 +62,7 @@ if ($attention_id || ($object_type && $object_id))
 			$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
 					WHERE attention_object_id = ' . (int) $object_id . '
 						AND attention_object_type = ' . (int) $object_type . '
+						AND attention_close_time = 0
 						AND attention_type = ' . TITANIA_ATTENTION_REPORTED;
 		}
 		else
