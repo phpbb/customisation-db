@@ -127,7 +127,6 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 		'forum_id' 				=> $forum_id,
 		'topic_title'			=> $post_object->topic->topic_subject,
 		'post_text'				=> $post_text,
-		'topic_status'			=> ITEM_LOCKED,
 	);
 
 	$topic_id = phpbb_topic_add($options);
@@ -171,13 +170,6 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 	);
 
 	phpbb_post_add($options);
-
-	// Make sure the topic is locked
-	$sql = 'UPDATE ' . TOPICS_TABLE . '
-		SET topic_status = ' . ITEM_LOCKED . '
-		WHERE topic_id = ' . $post_object->topic->phpbb_topic_id . '
-			AND topic_moved_id = 0';
-	phpbb::$db->sql_query($sql);
 }
 
 function phpbb_com_titania_topic___construct($hook, &$topic_object)
