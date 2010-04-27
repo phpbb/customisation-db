@@ -54,7 +54,7 @@ if ($queue_type === false)
 		{
 			$sql = 'SELECT COUNT(queue_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
 				WHERE queue_type = ' . (int) $type_id . '
-					AND queue_status = 1';
+					AND queue_status >= 0';
 			phpbb::$db->sql_query($sql);
 			$cnt = phpbb::$db->sql_fetchfield('cnt');
 			phpbb::$db->sql_freeresult();
