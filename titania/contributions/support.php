@@ -81,7 +81,7 @@ if ($topic_id)
 
 	posts_overlord::display_topic_complete($topic);
 
-	titania::page_header(phpbb::$user->lang['CONTRIB_SUPPORT'] . ' - ' . censor_text($topic->topic_subject));
+	titania::page_header(censor_text($topic->topic_subject) . ' - ' . titania::$contrib->contrib_name);
 
 	if (phpbb::$auth->acl_get('u_titania_post'))
 	{
@@ -101,7 +101,7 @@ else
 
 	topics_overlord::display_forums_complete('support', titania::$contrib);
 
-	titania::page_header('CONTRIB_SUPPORT');
+	titania::page_header(titania::$contrib->contrib_name . ' - ' . phpbb::$user->lang['CONTRIB_SUPPORT']);
 
 	if (phpbb::$auth->acl_get('u_titania_topic') && titania::$config->support_in_titania)
 	{

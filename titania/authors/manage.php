@@ -70,5 +70,5 @@ $template->assign_vars(array(
 titania::$author->assign_details();
 $message->display();
 
-titania::page_header('MANAGE_AUTHOR');
+titania::page_header(titania::$author->get_username_string('username') . ' - ' . phpbb::$user->lang['MANAGE_AUTHOR']);
 titania::page_footer(true, 'authors/author_manage.html');

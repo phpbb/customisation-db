@@ -18,5 +18,5 @@ if (!defined('IN_TITANIA'))
 
 contribs_overlord::display_contribs('author', titania::$author->user_id);
 
-titania::page_header('AUTHOR_CONTRIBS');
+titania::page_header(titania::$author->get_username_string('username') . ' - ' . phpbb::$user->lang['AUTHOR_CONTRIBS']);
 titania::page_footer(true, 'authors/author_contributions.html');

@@ -164,7 +164,7 @@ switch ($action)
 	default:
 		if ($faq_id)
 		{
-			titania::page_header('FAQ_DETAILS');
+			titania::page_header($faq->faq_subject . ' - ' . titania::$contrib->contrib_name);
 
 			if ($faq->faq_access < titania::$access_level)
 			{
@@ -205,7 +205,7 @@ switch ($action)
 		}
 		else
 		{
-			titania::page_header('FAQ_LIST');
+			titania::page_header(titania::$contrib->contrib_name . ' - ' . phpbb::$user->lang['FAQ_LIST']);
 
 			titania::_include('functions_display', 'titania_topic_folder_img');
 

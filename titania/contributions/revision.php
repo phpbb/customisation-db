@@ -420,5 +420,5 @@ if ($display_main || sizeof($error))
 
 add_form_key('postform');
 
-titania::page_header('NEW_REVISION');
+titania::page_header(titania::$contrib->contrib_name . ' - ' . phpbb::$user->lang['NEW_REVISION']);
 titania::page_footer(true, 'contributions/contribution_revision.html');

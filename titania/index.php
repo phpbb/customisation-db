@@ -247,7 +247,6 @@ switch ($action)
 			titania::generate_breadcrumbs(array(
 				((isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'])	=> titania_url::build_url($category_object->get_url()),
 			));
-			unset($category_object);
 
 			contribs_overlord::display_contribs('category', $category_id);
 		}
@@ -256,6 +255,13 @@ switch ($action)
 			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/create') : '',
 			'S_HAS_CONTRIBS'			=> ($categories_ary && $categories_ary[$category_id]['category_type']) ? true : false,
 		));
+
+		if ($category_id != 0)
+		{
+			$category_name = (isset(phpbb::$user->lang[$category_object->category_name])) ? phpbb::$user->lang[$category_object->category_name] : $category_object->category_name;
+			titania::page_header($category_name . ' - ' . phpbb::$user->lang['CUSTOMISATION_DATABASE']);
+			titania::page_footer(true, 'index_body.html');
+		}
 	break;
 }
 

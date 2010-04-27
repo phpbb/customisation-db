@@ -19,5 +19,5 @@ if (!defined('IN_TITANIA'))
 titania::$author->get_rating();
 titania::$author->assign_details();
 
-titania::page_header('AUTHOR_DETAILS');
+titania::page_header(titania::$author->get_username_string('username') . ' - ' . phpbb::$user->lang['AUTHOR_DETAILS']);
 titania::page_footer(true, 'authors/author_details.html');

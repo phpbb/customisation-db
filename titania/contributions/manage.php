@@ -324,5 +324,5 @@ phpbb::$template->assign_vars(array(
 	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
 ));
 
-titania::page_header('MANAGE_CONTRIBUTION');
+titania::page_header(titania::$contrib->contrib_name . ' - ' . phpbb::$user->lang['MANAGE_CONTRIBUTION']);
 titania::page_footer(true, 'contributions/contribution_manage.html');

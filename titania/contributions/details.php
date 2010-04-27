@@ -68,5 +68,5 @@ titania_tracking::track(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 // Subscriptions
 titania_subscriptions::handle_subscriptions(TITANIA_CONTRIB, titania::$contrib->contrib_id, titania::$contrib->get_url());
 
-titania::page_header('CONTRIB_DETAILS');
+titania::page_header(titania::$contrib->contrib_name . ' - ' . phpbb::$user->lang['CONTRIB_DETAILS']);
 titania::page_footer(true, 'contributions/contribution_details.html');
