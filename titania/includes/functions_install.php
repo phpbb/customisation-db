@@ -185,6 +185,10 @@ function titania_categories()
 {
 	global $umil;
 
+	// Empty the categories table first
+	$sql = 'DELETE FROM ' . TITANIA_CATEGORIES_TABLE;
+	phpbb::$db->sql_query($sql);
+
 	$categories = array(
 		array(
 			'category_id'	=> 1,

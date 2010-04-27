@@ -584,7 +584,7 @@ $versions = array(
 			array('titania_num_contribs', 0, true),
 		),
 
-		'custom' => 'titania_custom',
+		'custom' => array('titania_tags', 'titania_categories'),
 
 		'cache_purge' => '',
 	),
