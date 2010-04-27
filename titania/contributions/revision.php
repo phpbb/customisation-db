@@ -30,11 +30,6 @@ else if (titania::$contrib->contrib_status == TITANIA_CONTRIB_CLEANED && !(phpbb
 	titania::needs_auth();
 }
 
-if (titania::$contrib->in_queue())
-{
-	trigger_error('REVISION_IN_QUEUE');
-}
-
 $step = request_var('step', 0);
 $revision_id = request_var('revision_id', 0);
 
@@ -59,6 +54,11 @@ if ($repack)
 }
 else
 {
+	if (titania::$contrib->in_queue())
+	{
+		trigger_error('REVISION_IN_QUEUE');
+	}
+
 	generate_phpbb_version_select();
 
 	if (titania::$config->use_queue)
