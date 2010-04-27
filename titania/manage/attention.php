@@ -30,6 +30,7 @@ $object_id = request_var('id', 0);
 $close = (isset($_POST['close'])) ? true : false;
 $approve = (isset($_POST['approve'])) ? true : false;
 $disapprove = (isset($_POST['disapprove'])) ? true : false;
+$delete = (isset($_POST['delete'])) ? true : false;
 
 if ($attention_id || ($object_type && $object_id))
 {
@@ -49,22 +50,32 @@ if ($attention_id || ($object_type && $object_id))
 	}
 
 	// Close, approve, or disapprove the items
-	if ($close || $approve || $disapprove)
+	if ($close || $approve || $disapprove || $delete)
 	{
 		if (!check_form_key('attention'))
 		{
 			trigger_error('FORM_INVALID');
 		}
 
-		$sql_ary = array(
-			'attention_close_time'	=> titania::$time,
-			'attention_close_user'	=> phpbb::$user->data['user_id'],
-		);
+		if ($delete)
+		{
+			$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
+					WHERE attention_object_id = ' . (int) $object_id . '
+						AND attention_object_type = ' . (int) $object_type . '
+						AND attention_type = ' . TITANIA_ATTENTION_REPORTED;
+		}
+		else
+		{
+			$sql_ary = array(
+				'attention_close_time'	=> titania::$time,
+				'attention_close_user'	=> phpbb::$user->data['user_id'],
+			);
 
-		$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-			WHERE attention_object_id = ' . (int) $object_id . '
-				AND attention_object_type = ' . (int) $object_type . '
-				AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
+			$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+				WHERE attention_object_id = ' . (int) $object_id . '
+					AND attention_object_type = ' . (int) $object_type . '
+					AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
+		}
 		phpbb::$db->sql_query($sql);
 	}
 	add_form_key('attention');
