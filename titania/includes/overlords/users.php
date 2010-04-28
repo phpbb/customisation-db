@@ -172,7 +172,7 @@ class users_overlord
 				break;
 
 				case '_titania_profile' :
-					return 'author/' . self::$users[$user_id]['username_clean'];
+					return 'author/' . htmlspecialchars_decode(self::$users[$user_id]['username_clean']);
 				break;
 
 				case '_titania' :

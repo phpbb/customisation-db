@@ -122,7 +122,7 @@ titania::$contrib->assign_details();
 $message->display();
 
 $template->assign_vars(array(
-	'S_POST_ACTION'			=> titania_url::build_url('author/' . phpbb::$user->data['username_clean'] . '/create'),
+	'S_POST_ACTION'			=> titania_url::build_url('author/' . htmlspecialchars_decode(phpbb::$user->data['username_clean']) . '/create'),
 	'S_CREATE'				=> true,
 
 	'SCREENSHOT_UPLOADER'	=> $screenshot->parse_uploader('posting/attachments/simple.html'),
