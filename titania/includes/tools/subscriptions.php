@@ -249,6 +249,7 @@ class titania_subscriptions
 					)));
 
 					$messenger->send();
+					$messenger->save_queue();
 				break;
 			}
 		}
@@ -256,5 +257,3 @@ class titania_subscriptions
 		return;
 	}
 }
-
-?>
