@@ -204,8 +204,9 @@ class titania_message
 
 			if ($captcha->validate($this->request_data()) !== false)
 			{
+				phpbb::reset_template();
+
 				// Parse the captcha template
-				phpbb::$template->set_template();
 				phpbb::$template->set_filenames(array(
 					'captcha'	=> $captcha->get_template(),
 				));

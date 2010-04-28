@@ -26,6 +26,7 @@ class phpbb
 	public static $config;
 	public static $db;
 	public static $template;
+	public static $theme_data; //self::$theme_data
 	public static $user;
 
 	/**
@@ -49,6 +50,8 @@ class phpbb
 			self::$auth->acl(self::$user->data);
 			self::$user->setup();
 		}
+
+		self::$theme_data = self::$user->theme;
 	}
 
 	/**
@@ -96,6 +99,15 @@ class phpbb
 		}
 
 		include(PHPBB_ROOT_PATH . 'includes/' . $file . '.' . PHP_EXT);
+	}
+
+	/**
+	* Reset the template/theme data to the phpBB information
+	*/
+	public static function reset_template()
+	{
+		self::$user->theme = self::$theme_data;
+		self::$template->set_template();
 	}
 
 	/**
