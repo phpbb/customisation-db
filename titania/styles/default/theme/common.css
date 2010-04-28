@@ -146,15 +146,14 @@ a.download-main {
 	text-decoration: none;
 }
 
-#contrib-description {
+.contrib-description {
 	font-size: 1.1em;
 }
 
-#contrib-description dt {
+.contrib-description dt {
 	margin-bottom: 3px;
 	padding-bottom: 3px;
 	border-bottom: 1px dotted #DEDEDE;
-
 }
 
 .contrib-description ul.profile-icons {
@@ -165,6 +164,10 @@ a.download-main {
 
 .contrib-description .icon-subscribe, .contrib-description .icon-unsubscribe {
 	padding-top: 4px;
+}
+
+.contrib-description dd ul, .contrib-description dd ol {
+	margin-left: 3em;
 }
 
 ul.general-info li {

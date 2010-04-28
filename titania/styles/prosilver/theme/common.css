@@ -184,6 +184,10 @@ a.download-main {
 	padding-top: 4px;
 }
 
+.contrib-description dd ul, .contrib-description dd ol {
+	margin-left: 3em;
+}
+
 ul.general-info {
 	border: 1px solid #EAF3F7;
 }
