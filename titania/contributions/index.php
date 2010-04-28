@@ -103,6 +103,16 @@ function load_contrib($contrib_id = false)
 		}
 	}
 
+	// Hide the FAQ tab if no FAQ entries for public
+	if (titania::$access_level == TITANIA_ACCESS_PUBLIC)
+	{
+		$sql = 'SELECT COUNT(faq_id) AS cnt FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
+			WHERE contrib_id = ' . titania::$contrib->contrib_id;
+		phpbb::$db->sql_query($sql);
+		$faq_count = phpbb::$db->sql_fetchfield('cnt');
+		phpbb::$db->sql_freeresult();
+	}
+
 	/**
 	* Menu Array
 	*
@@ -120,6 +130,7 @@ function load_contrib($contrib_id = false)
 		'faq' => array(
 			'title'		=> 'CONTRIB_FAQ',
 			'url'		=> titania::$contrib->get_url('faq'),
+			'auth'		=> (titania::$access_level != TITANIA_ACCESS_PUBLIC || $faq_count) ? true : false,
 		),
 		'support' => array(
 			'title'		=> 'CONTRIB_SUPPORT',
