@@ -26,6 +26,7 @@
 				<input type="hidden" name="delete_file[{attach_row.ATTACH_ID}]" value="1" />
 			<!-- ENDIF -->
 			<input type="hidden" name="{FORM_NAME}_attachments[]" value="{attach_row.ATTACH_ID}" />
+			<input type="hidden" name="index_{attach_row.ATTACH_ID}" value="{attach_row.S_ROW_COUNT}" />
 		</dd>
 	</dl>
 <!-- END attach_row -->
