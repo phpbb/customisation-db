@@ -143,16 +143,17 @@ class titania_message
 		// Submit the data to the post object
 		if (method_exists($this->post_object, 'post_data') && $submit || $preview || $full_editor || ($this->attachments && ($this->attachments->uploaded || $this->attachments->deleted)))
 		{
-			if ($this->attachments->deleted)
+			// Resync inline attachments if any were deleted
+			if ($this->attachments && $this->attachments->deleted)
 			{
 				$delete = request_var('delete_file', array(0));
 				foreach ($delete as $attach_id => $null)
 				{
-					continue;
+					$index = request_var('index_'.$attach_id, 0);
+					$_REQUEST[$this->settings['text_name']] = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "(\\1 == \$index) ? '' : ((\\1 > \$index) ? '[attachment=' . (\\1 - 1) . ']\\2[/attachment]' : '\\0')", $_REQUEST[$this->settings['text_name']]);
 				}
-				$index = request_var('index_'.$attach_id, 0);
-				$_REQUEST[$this->settings['text_name']] = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "(\\1 == \$index) ? '' : ((\\1 > \$index) ? '[attachment=' . (\\1 - 1) . ']\\2[/attachment]' : '\\0')", $_REQUEST[$this->settings['text_name']]);
 			}
+
 			$this->post_object->post_data($this);
 		}
 
