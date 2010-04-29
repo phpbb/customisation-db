@@ -1,0 +1,36 @@
+<!-- INCLUDE contributions/contribution_header.html -->
+
+<h3 class="section-name">{PAGE_TITLE}</h3>
+
+<!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
+<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+
+<form id="revision_edit" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+	<div class="container">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<fieldset>
+				<legend>{PAGE_TITLE}</legend>
+				<dl>
+					<dt><label for="revision_name">{L_REVISION_NAME}:</label></dt>
+					<dd><input type="text" name="revision_name" size="45" maxlength="60" value="{REVISION_NAME}" class="inputbox autowidth" /></dd>
+				</dl>
+				<dl>
+					<dt><label for="revision_phpbb_versions">{L_PHPBB_VERSION}:</label></dt>
+					<dd><select name="revision_phpbb_versions[]" multiple="multiple" size="10">
+						<!-- BEGIN phpbb_versions -->
+							<option value="{phpbb_versions.VERSION}"<!-- IF phpbb_versions.S_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_versions.VERSION}</option>
+						<!-- END phpbb_versions -->
+					</select></dd>
+				</dl>
+			</fieldset>
+
+			<fieldset class="submit-buttons">
+				<input type="submit" id="submit" name="submit" value="{L_SUBMIT}" class="button1"/>
+				{S_FORM_TOKEN}
+			</fieldset>
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+</form>
+
+
+<!-- INCLUDE contributions/contribution_footer.html -->

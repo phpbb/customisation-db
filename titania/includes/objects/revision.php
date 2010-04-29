@@ -135,6 +135,7 @@ class titania_revision extends titania_database_object
 			'PHPBB_VERSION'		=> (sizeof($this->phpbb_versions) == 1) ? $versions[$this->phpbb_versions[0]['phpbb_version_branch'] . $this->phpbb_versions[0]['phpbb_version_revision']] : '',
 
 			'U_DOWNLOAD'		=> $this->get_url(),
+			'U_EDIT'			=> ($this->contrib && (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',
 
 			'S_VALIDATED'		=> (!$this->revision_validated && titania::$config->use_queue) ? false : true,
 		));
@@ -156,12 +157,14 @@ class titania_revision extends titania_database_object
 			));
 		}
 
+		phpbb::$template->assign_var('ICON_EDIT', '<img src="' . titania::$images_path . 'icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />');
+
 		// Hooks
 		titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $this, $tpl_block);
 	}
 
 	/**
-	 * Handle some stuff we need when submitting an attachment
+	 * Handle some stuff we need when submitting a revision
 	 */
 	public function submit()
 	{

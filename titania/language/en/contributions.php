@@ -44,6 +44,8 @@ $lang = array_merge($lang, array(
 	'AUTOMOD_RESULTS'						=> '<strong>Please check over the AutoMod install results and make sure that nothing needs to be fixed.<br /><br />If an error comes up and you are certain that the error is incorrect, just hit continue below.</strong>',
 	'AUTOMOD_TEST'							=> 'The Mod will be tested against AutoMod and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 
+	'BAD_VERSION_SELECTED'					=> '%s is not a proper phpBB versions.',
+
 	'CANNOT_ADD_SELF_COAUTHOR'				=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CLEANED_CONTRIB'						=> 'Cleaned contribution',
 	'CONTRIB'								=> 'Contribution',
@@ -90,6 +92,7 @@ $lang = array_merge($lang, array(
 	'DOWNLOAD_CHECKSUM'						=> 'MD5 checksum',
 	'DUPLICATE_AUTHORS'						=> 'You have the following authors listed as both active and non-active (they can not be both): %s',
 
+	'EDIT_REVISION'							=> 'Edit Revision',
 	'EMPTY_CATEGORY'						=> 'Select one category at least',
 	'EMPTY_CONTRIB_DESC'					=> 'Enter the contrib description',
 	'EMPTY_CONTRIB_NAME'					=> 'Enter the contrib name',
@@ -120,6 +123,7 @@ See first post for Download Link[/b][/color]',
 	'MPV_TEST'								=> 'The Mod will be tested against MPV and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 	'MPV_TEST_FAILED'						=> 'Sorry, the automatic MPV test failed and your MPV test results are not available.  Please continue.',
 	'MPV_TEST_FAILED_QUEUE_MSG'				=> 'Automated MPV test failed.  [url=%s]Click here to attempt running MPV automatically again[/url]',
+	'MUST_SELECT_ONE_VERSION'				=> 'You must select at least one phpBB version.',
 
 	'NEW_CONTRIBUTION'						=> 'New Contribution',
 	'NEW_REVISION'							=> 'New Revision',

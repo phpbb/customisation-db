@@ -453,15 +453,16 @@ class titania_contribution extends titania_message_object
 	* Build view URL for a contribution
 	*
 	* @param string $page The page we are on (Ex: faq/support/details)
+	* @param array $parameters The parameters for the page
 	*/
-	public function get_url($page = '')
+	public function get_url($page = '', $parameters = array())
 	{
 		if ($page)
 		{
-			return titania_url::build_url(titania_types::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page);
+			return titania_url::build_url(titania_types::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page, $parameters);
 		}
 
-		return titania_url::build_url(titania_types::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean);
+		return titania_url::build_url(titania_types::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean, $parameters);
 	}
 
 	/**
