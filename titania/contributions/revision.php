@@ -163,17 +163,17 @@ do{
 					$queue->submit();
 				}
 
-				// Repack if that's what we want
-				if ($repack)
-				{
-					$revision->repack($old_revision);
-				}
-
 				if (!titania_types::$types[titania::$contrib->contrib_type]->clean_and_restore_root)
 				{
 					// Skip the whole thing if we have nothing else to do
 					if (!titania_types::$types[titania::$contrib->contrib_type]->mpv_test && !titania_types::$types[titania::$contrib->contrib_type]->automod_test)
 					{
+						// Repack if that's what we want
+						if ($repack)
+						{
+							$revision->repack($old_revision);
+						}
+
 						$revision->revision_submitted = true;
 						$revision->submit();
 
@@ -363,6 +363,12 @@ do{
 			if (!$revision->load())
 			{
 				trigger_error('NO_REVISION');
+			}
+
+			// Repack if that's what we want
+			if ($repack)
+			{
+				$revision->repack($old_revision);
 			}
 
 			// Update the revision to be submitted, which unhides the queue topic and updates the contrib_last_update time
