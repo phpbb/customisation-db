@@ -121,7 +121,18 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	decode_message($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . $post_object->get_url();
+	
+	switch ($post_object->topic->topic_category)
+	{
+		case TITANIA_TYPE_MOD :
+			$post_object->topic->topic_first_post_user_id = titania::$config->forum_mod_robot;
+		break;
 
+		case TITANIA_TYPE_STYLE :
+			$post_object->topic->topic_first_post_user_id = titania::$config->forum_style_robot;
+		break;
+	}	
+	
 	$options = array(
 		'poster_id'				=> $post_object->topic->topic_first_post_user_id,
 		'forum_id' 				=> $forum_id,
