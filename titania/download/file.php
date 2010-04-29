@@ -72,6 +72,28 @@ $result = phpbb::$db->sql_query_limit($sql, 1);
 $attachment = phpbb::$db->sql_fetchrow($result);
 phpbb::$db->sql_freeresult($result);
 
+// Don't allow downloads of revisions for cleaned items unless on the team or an author.
+if ($attachment['object_type'] == TITANIA_CONTRIB)
+{
+	$sql = 'SELECT contrib_id FROM ' . TITANIA_REVISIONS_TABLE . '
+		WHERE  attachment_id = ' . $attachment['attachment_id'];
+	phpbb::$db->sql_query($sql);
+	$contrib_id = phpbb::$db->sql_fetchfield('contrib_id');
+	phpbb::$db->sql_freeresult();
+
+	$contrib = new titania_contribution;
+	if (!$contrib->load($contrib_id))
+	{
+		trigger_error('NO_ATTACHMENT_SELECTED');
+	}
+
+	if ($contrib->contrib_status == TITANIA_CONTRIB_CLEANED && titania::$access_level != TITANIA_ACCESS_TEAMS && !$contrib->is_author && !$contrib->is_active_coauthor)
+	{
+		trigger_error('NO_ATTACHMENT_SELECTED');
+	}
+	unset($contrib);
+}
+
 if (!$attachment)
 {
 	trigger_error('ERROR_NO_ATTACHMENT');
