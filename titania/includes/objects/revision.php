@@ -301,8 +301,14 @@ class titania_revision extends titania_database_object
 				'revision_id'			=> $this->revision_id,
 				'contrib_id'			=> $this->contrib_id,
 				'contrib_name_clean'	=> $this->contrib->contrib_name_clean,
-				'queue_status'			=> ($this->revision_submitted) ? TITANIA_QUEUE_NEW : TITANIA_QUEUE_HIDE,
 			));
+
+			// Set the queue status to new if it's submitted and the queue status is set to hide it
+			if ($this->revision_submitted && $queue->queue_status == TITANIA_QUEUE_HIDE)
+			{
+				$queue->queue_status = TITANIA_QUEUE_NEW;
+			}
+
 			$queue->submit();
 
 			// Set the revision queue id
