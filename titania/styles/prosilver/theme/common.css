@@ -334,6 +334,10 @@ dd.general {
 	font-size: 1.1em;
 }
 
+dd.general img {
+	vertical-align: middle;
+}
+
 #categories .forums dd.general {
 	font-size: 1.2em;
 }
