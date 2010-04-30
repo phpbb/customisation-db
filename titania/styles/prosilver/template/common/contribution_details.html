@@ -102,7 +102,7 @@
 		    </ul>
 
 		    <!-- IF .screenshots -->
-		    <div id="screenshots-panel">
+		    <div id="screenshots-panel" class="tab-panel">
 				<!-- BEGIN screenshots -->
 					<!-- IF screenshots.S_THUMBNAIL -->
 						<a href="{screenshots.U_DOWNLOAD_LINK}" class="screenshot"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
@@ -116,7 +116,7 @@
 		    <!-- ENDIF -->
 
 		    <!-- IF .revisions or U_NEW_REVISION -->
-		    <div id="revisions-panel">
+		    <div id="revisions-panel" class="tab-panel">
 				<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
 				<div class="clear"></div>
 
