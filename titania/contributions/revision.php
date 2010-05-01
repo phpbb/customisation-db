@@ -74,6 +74,7 @@ else
 			'display_error'		=> false,
 			'display_subject'	=> false,
 		));
+
 		$message_object->display();
 	}
 }
