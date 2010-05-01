@@ -221,6 +221,8 @@ class queue_overlord
 			trigger_error('NO_QUEUE_ITEM');
 		}
 
+		self::$queue[$queue_id] = $row;
+
 		// Load the contribution
 		$contrib = new titania_contribution();
 		$contrib->load((int) $row['contrib_id']);

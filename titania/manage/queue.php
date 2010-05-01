@@ -263,7 +263,7 @@ if ($queue_id)
 
 	queue_overlord::display_queue_item($queue_id);
 
-	titania::page_header('VALIDATION_QUEUE');
+	titania::page_header(queue_overlord::$queue[$queue_id]['topic_subject']);
 }
 else
 {

@@ -182,6 +182,8 @@ if ($attention_id || ($object_type && $object_id))
 				'U_VIEW'			=> $post->get_url(),
 				'U_EDIT'			=> $post->get_url('edit'),
 			));
+
+			$title = censor_text($post->post_subject);
 		break;
 
 		case TITANIA_CONTRIB :
@@ -203,6 +205,8 @@ if ($attention_id || ($object_type && $object_id))
 				'U_VIEW'			=> $contrib->get_url(),
 				'U_EDIT'			=> $contrib->get_url('manage'),
 			));
+
+			$title = censor_text($contrib->contrib_name);
 		break;
 
 		default :
@@ -210,7 +214,7 @@ if ($attention_id || ($object_type && $object_id))
 		break;
 	}
 
-	titania::page_header('ATTENTION');
+	titania::page_header($title . ' - ' . phpbb::$user->lang['ATTENTION']);
 
 	titania::page_footer(true, 'manage/attention_details.html');
 }
