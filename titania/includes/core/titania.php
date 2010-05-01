@@ -455,8 +455,9 @@ class titania
 				continue;
 			}
 
+
 			phpbb::$template->assign_block_vars($block, array(
-				'L_TITLE'		=> (isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title'],
+				'L_TITLE'		=> ((isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title']) . ((isset($data['count'])) ? ' (' . (int) $data['count'] . ')' : ''),
 				'U_TITLE'		=> $data['url'],
 				'S_SELECTED'	=> ($page == $current_page) ? true : false,
 			));

@@ -22,6 +22,13 @@ $page = basename(request_var('page', ''));
 // Add common lang
 titania::add_lang('manage');
 
+// Count the number of open attention items
+$sql = 'SELECT COUNT(attention_id) AS cnt FROM ' . TITANIA_ATTENTION_TABLE . '
+	WHERE attention_close_time = 0';
+phpbb::$db->sql_query($sql);
+$attention_count = phpbb::$db->sql_fetchfield('cnt');
+phpbb::$db->sql_freeresult();
+
 /**
 * Menu Array
 *
@@ -36,6 +43,7 @@ $nav_ary = array(
 		'title'		=> 'ATTENTION',
 		'url'		=> titania_url::build_url('manage/attention'),
 		'auth'		=> (!phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_mod', 'u_titania_mod_faq_mod', 'u_titania_mod_post_mod') && !sizeof(titania_types::find_authed('moderate'))) ? false : true,
+		'count'		=> $attention_count,
 	),
 	'queue' => array(
 		'title'		=> 'VALIDATION_QUEUE',
