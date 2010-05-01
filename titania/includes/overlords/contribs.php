@@ -275,18 +275,9 @@ class contribs_overlord
 			// Only get unique phpBB versions supported
 			if (isset($row['phpbb_versions']))
 			{
-				$contrib_versions = array();
-				foreach ($row['phpbb_versions'] as $version_row)
-				{
-					if (!isset($contrib_versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']]))
-					{
-						$contrib_versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']] = $version_row;
-					}
-				}
+				titania::_include('functions_display', 'order_phpbb_version_list_from_db');
 
-				uksort($contrib_versions, 'reverse_version_compare');
-
-				$row['phpbb_versions'] = array_values($contrib_versions);
+				$ordered_phpbb_versions = order_phpbb_version_list_from_db($row['phpbb_versions']);
 			}
 
 			phpbb::$template->assign_block_vars($blockname, array_merge($contrib->assign_details(true, true), array(
@@ -296,15 +287,15 @@ class contribs_overlord
 				'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
 				'FOLDER_IMG_WIDTH'			=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 				'FOLDER_IMG_HEIGHT'			=> phpbb::$user->img($folder_img, '', false, '', 'height'),
-				'PHPBB_VERSION'				=> (isset($row['phpbb_versions']) && sizeof($row['phpbb_versions']) == 1) ? $versions[$row['phpbb_versions'][0]['phpbb_version_branch'] . $row['phpbb_versions'][0]['phpbb_version_revision']] : '',
+				'PHPBB_VERSION'				=> (isset($row['phpbb_versions']) && sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
 			)));
 
 			if (isset($row['phpbb_versions']))
 			{
-				foreach ($row['phpbb_versions'] as $version_row)
+				foreach ($ordered_phpbb_versions as $version_row)
 				{
 					phpbb::$template->assign_block_vars($blockname . '.phpbb_versions', array(
-						'NAME'		=> $versions[$version_row['phpbb_version_branch'] . $version_row['phpbb_version_revision']],
+						'NAME'		=> $version_row,
 					));
 				}
 			}

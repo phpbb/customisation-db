@@ -119,7 +119,9 @@ class titania_revision extends titania_database_object
 
 	public function display($tpl_block = 'revisions', $show_queue = false)
 	{
-		$versions = titania::$cache->get_phpbb_versions();
+		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
+
+		$ordered_phpbb_versions = order_phpbb_version_list_from_db($this->phpbb_versions);
 
 		// Get rid of the day of the week if it exists in the dateformat
 		$old_date_format = phpbb::$user->date_format;
@@ -132,7 +134,7 @@ class titania_revision extends titania_database_object
 			'VERSION'			=> $this->revision_version,
 			'VALIDATED_DATE'	=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
 			'REVISION_QUEUE'	=> ($show_queue && $this->revision_queue_id) ? titania_url::build_url('manage/queue', array('q' => $this->revision_queue_id)) : '',
-			'PHPBB_VERSION'		=> (sizeof($this->phpbb_versions) == 1) ? $versions[$this->phpbb_versions[0]['phpbb_version_branch'] . $this->phpbb_versions[0]['phpbb_version_revision']] : '',
+			'PHPBB_VERSION'		=> (sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_EDIT'			=> ($this->contrib && (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',
@@ -142,15 +144,7 @@ class titania_revision extends titania_database_object
 
 		phpbb::$user->date_format = $old_date_format;
 
-		$ordered_phpbb_versions = array();
-		foreach ($this->phpbb_versions as $row)
-		{
-			$ordered_phpbb_versions[$versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']]] = true;
-		}
-
-		uksort($ordered_phpbb_versions, 'reverse_version_compare');
-
-		foreach ($ordered_phpbb_versions as $version => $null)
+		foreach ($ordered_phpbb_versions as $version)
 		{
 			phpbb::$template->assign_block_vars($tpl_block . '.phpbb_versions', array(
 				'VERSION'		=> $version,

@@ -16,6 +16,22 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+// Order an array of phpBB versions from the database (phpbb_version_branch, phpbb_version_revision)
+function order_phpbb_version_list_from_db($version_array)
+{
+	$versions = titania::$cache->get_phpbb_versions();
+
+	$ordered_phpbb_versions = array();
+	foreach ($version_array as $row)
+	{
+		$ordered_phpbb_versions[$versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']]] = true;
+	}
+
+	uksort($ordered_phpbb_versions, 'reverse_version_compare');
+
+	return array_keys($ordered_phpbb_versions);
+}
+
 function titania_topic_folder_img(&$folder_img, &$folder_alt, $post_count = 0, $unread = false, $posted = false, $sticky = false, $locked = false)
 {
 	$folder = $folder_new = '';
