@@ -173,82 +173,98 @@ class titania_category extends titania_message_object
 	{
 		$to_data = $moved_ids = $errors = array();
 
-		$moved_categories = $this->get_category_branch('children');
-		$diff = sizeof($moved_categories) * 2 + 1;
-
-		$moved_ids = array();
-		for ($i = 0; $i < sizeof($moved_categories); ++$i)
-		{
-			$moved_ids[] = (int) $moved_categories[$i]['category_id'];
-		}
-
-		// Resync parents
-		$sql = 'UPDATE ' . $this->sql_table . "
-			SET right_id = right_id - $diff
-			WHERE left_id < " . $this->right_id . "
-				AND right_id > " . $this->right_id;
-		phpbb::$db->sql_query($sql);
-
-		// Resync righthand side of tree
-		$sql = 'UPDATE ' . $this->sql_table . "
-			SET left_id = left_id - $diff, right_id = right_id - $diff
-			WHERE left_id > " . $this->right_id;
-		phpbb::$db->sql_query($sql);
-
 		if ($to_id > 0)
 		{
-			// Retrieve $to_data again, it may have been changed...
+			// Retrieve $to_data
 			$to_data = new titania_category;
 			$to_data->load($to_id);
+		}
 
-			// Resync new parents
-			$sql = 'UPDATE ' . $this->sql_table . "
-				SET right_id = right_id + $diff
-				WHERE " . $to_data->right_id . ' BETWEEN left_id AND right_id
-					AND ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
-			phpbb::$db->sql_query($sql);
-
-			// Resync the righthand side of the tree
-			$sql = 'UPDATE ' . $this->sql_table . "
-				SET left_id = left_id + $diff, right_id = right_id + $diff
-				WHERE left_id > " . $to_data->right_id . '
-					AND ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
-			phpbb::$db->sql_query($sql);
-
-			// Resync moved branch
-			$to_data->right_id += $diff;
-
-			if ($to_data->right_id > $this->right_id)
-			{
-				$diff = '+ ' . ($to_data->right_id - $this->right_id - 1);
-			}
-			else
-			{
-				$diff = '- ' . abs($to_data->right_id - $this->right_id - 1);
-			}
+		// Make sure we're not moving this category under one if its own children
+		if ($to_id > 0 && $to_data->left_id > $this->left_id && $to_data->right_id < $this->right_id)
+		{
+			$errors[] = phpbb::$user->lang['CATEGORY_CHILD_AS_PARENT'];
 		}
 		else
 		{
-			$sql = 'SELECT MAX(right_id) AS right_id
-				FROM ' . $this->sql_table . '
-				WHERE ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
-			$result = phpbb::$db->sql_query($sql);
-			$row = phpbb::$db->sql_fetchrow($result);
-			phpbb::$db->sql_freeresult($result);
+			$moved_categories = $this->get_category_branch('children');
+			$diff = sizeof($moved_categories) * 2;
 
-			$diff = '+ ' . ($row['right_id'] - $this->left_id + 1);
-		}
+			$moved_ids = array();
+			for ($i = 0; $i < sizeof($moved_categories); ++$i)
+			{
+				$moved_ids[] = (int) $moved_categories[$i]['category_id'];
+			}
 
-		$sql = 'UPDATE ' . $this->sql_table . "
-			SET left_id = left_id $diff, right_id = right_id $diff
-			WHERE " . phpbb::$db->sql_in_set('category_id', $moved_ids);
-		phpbb::$db->sql_query($sql);
+			// Resync parents
+			$sql = 'UPDATE ' . $this->sql_table . "
+				SET right_id = right_id - $diff
+				WHERE left_id < " . $this->right_id . "
+					AND right_id > " . $this->right_id;
+			phpbb::$db->sql_query($sql);
 
-		if ($sync)
-		{
-			// Resync counters
-			$sync = new titania_sync;
-			$sync->categories('count');
+			// Resync righthand side of tree
+			$sql = 'UPDATE ' . $this->sql_table . "
+				SET left_id = left_id - $diff, right_id = right_id - $diff
+				WHERE left_id > " . $this->right_id;
+			phpbb::$db->sql_query($sql);
+
+			if ($to_id > 0)
+			{
+				// Retrieve $to_data again, it may have been changed...
+				unset($to_data);
+				$to_data = new titania_category;
+				$to_data->load($to_id);
+
+				// Resync new parents
+				$sql = 'UPDATE ' . $this->sql_table . "
+					SET right_id = right_id + $diff
+					WHERE " . $to_data->right_id . ' BETWEEN left_id AND right_id
+						AND ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
+				phpbb::$db->sql_query($sql);
+
+				// Resync the righthand side of the tree
+				$sql = 'UPDATE ' . $this->sql_table . "
+					SET left_id = left_id + $diff, right_id = right_id + $diff
+					WHERE left_id > " . $to_data->right_id . '
+						AND ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
+				phpbb::$db->sql_query($sql);
+
+				// Resync moved branch
+				$to_data->right_id += $diff;
+
+				if ($to_data->right_id > $this->right_id)
+				{
+					$diff = '+ ' . ($to_data->right_id - $this->right_id - 1);
+				}
+				else
+				{
+					$diff = '- ' . abs($to_data->right_id - $this->right_id - 1);
+				}
+			}
+			else
+			{
+				$sql = 'SELECT MAX(right_id) AS right_id
+					FROM ' . $this->sql_table . '
+					WHERE ' . phpbb::$db->sql_in_set('category_id', $moved_ids, true);
+				$result = phpbb::$db->sql_query($sql);
+				$row = phpbb::$db->sql_fetchrow($result);
+				phpbb::$db->sql_freeresult($result);
+
+				$diff = '+ ' . ($row['right_id'] - $this->left_id + 1);
+			}
+
+			$sql = 'UPDATE ' . $this->sql_table . "
+				SET left_id = left_id $diff, right_id = right_id $diff
+				WHERE " . phpbb::$db->sql_in_set('category_id', $moved_ids);
+			phpbb::$db->sql_query($sql);
+
+			if ($sync)
+			{
+				// Resync counters
+				$sync = new titania_sync;
+				$sync->categories('count');
+			}
 		}
 
 		return $errors;

@@ -141,7 +141,6 @@ switch ($action)
 					$category_check = new titania_category;
 					$category_check->load($category_id);
 
-					$errors_extra = array();
 					if ($category_check->parent_id != $category_object->parent_id)
 					{
 						if ($category_check->category_id != $category_object->parent_id)
@@ -154,17 +153,22 @@ switch ($action)
 						}
 					}
 
+					// Check for errors from moving the category
 					if (sizeof($errors_extra))
 					{
-						return $errors_extra;
+						$error = array_merge($error, $errors_extra);
 					}
 				}
 
-				// Now we submit the category information...
-				$category_object->submit();
+				// Only update category if no errors occurred from moving it
+				if (!sizeof($errors_extra))
+				{
+					// Now we submit the category information...
+					$category_object->submit();
 
-				// Redirect back to the previous category
-				redirect(titania_url::build_url('manage/categories', array('c' => $category_object->parent_id)));
+					// Redirect back to the previous category
+					redirect(titania_url::build_url('manage/categories', array('c' => $category_object->parent_id)));
+				}
 			}
 		}
 

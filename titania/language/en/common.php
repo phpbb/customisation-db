@@ -52,9 +52,10 @@ $lang = array_merge($lang, array(
 
 	'CACHE_PURGED'				=> 'Cache has been successfully purged',
 	'CATEGORY'					=> 'Category',
+	'CATEGORY_CHILD_AS_PARENT'	=> 'The chosen parent category cannot be selected because it is a child of this category.',
 	'CATEGORY_DELETED'			=> 'Category Deleted',
 	'CATEGORY_DESC'				=> 'Category Description',
-	'CATEGORY_DUPLICATE_PARENT'	=> 'Category cannot be its own parent',
+	'CATEGORY_DUPLICATE_PARENT'	=> 'Category cannot be its own parent.',
 	'CATEGORY_HAS_CHILDREN'		=> 'This category cannot be deleted because it contains children categories.',
 	'CATEGORY_INFORMATION'		=> 'Category Information',
 	'CATEGORY_NAME'				=> 'Category Name',
