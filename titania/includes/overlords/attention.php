@@ -140,20 +140,10 @@ class attention_overlord
 			// No results...no need to query more...
 			return;
 		}
-
-		if ($options['only_closed'])
-		{
-			$additional = array('open' => 0, 'closed' => 1);
-		}
-		else if ($options['display_closed'])
-		{
-			$additional = array('open' => 1, 'closed' => 1);
-		}
-		else
-		{
-			$additional = array('open' => 1, 'closed' => 0);
-		}
-		$sort->build_pagination(titania_url::$current_page, $additional);
+		
+		$additional = ($options['only_closed']) ? array('open' => 0, 'closed' => 1) : array('open' => 1, 'closed' => 1);
+		titania_url::$params = array_merge(titania_url::$params, $additionnal);
+		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 		// Get the data
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
