@@ -118,11 +118,53 @@ class titania_topic extends titania_database_object
 	}
 
 	/**
-	* Delete the stuff for this topic
+	* Undelete this topic
+	*/
+	public function undelete()
+	{
+		$post = new titania_post;
+		$post->topic = $this;
+
+		$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . '
+			WHERE topic_id = ' . (int) $this->topic_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$post->__set_array($row);
+			$post->set_sql_data($row);
+			$post->undelete();
+		}
+		phpbb::$db->sql_freeresult($result);
+	}
+
+	/**
+	* Soft delete this topic
+	*/
+	public function soft_delete()
+	{
+		$post = new titania_post;
+		$post->topic = $this;
+
+		$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . '
+			WHERE topic_id = ' . (int) $this->topic_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$post->__set_array($row);
+			$post->set_sql_data($row);
+			$post->soft_delete();
+		}
+		phpbb::$db->sql_freeresult($result);
+	}
+
+	/**
+	* Hard delete the stuff for this topic
 	*/
 	public function delete()
 	{
 		$post = new titania_post;
+		$post->topic = $this;
+
 		$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . '
 			WHERE topic_id = ' . (int) $this->topic_id;
 		$result = phpbb::$db->sql_query($sql);

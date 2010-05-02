@@ -282,6 +282,11 @@ class titania
 
 		foreach ($quick_actions as $lang => $url)
 		{
+			if (!$url)
+			{
+				continue;
+			}
+
 			phpbb::$template->assign_block_vars('quick_actions', array(
 				'URL'		=> $url,
 				'NAME'		=> (isset(phpbb::$user->lang[$lang])) ? phpbb::$user->lang[$lang] : $lang,

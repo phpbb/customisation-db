@@ -190,6 +190,17 @@ abstract class titania_database_object extends titania_object
 	}
 
 	/**
+	* Set the SQL data
+	* This should only be used when you are loading just this item from the database (do not modify anything before sending it to this)!
+	*
+	* @param mixed $sql_data
+	*/
+	public function set_sql_data($sql_data)
+	{
+		$this->sql_data = $sql_data;
+	}
+
+	/**
 	* Function data has to pass before entering the database.
 	*
 	* @param	mixed				$value		Value to validate

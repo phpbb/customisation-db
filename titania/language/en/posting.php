@@ -44,6 +44,8 @@ $lang = array_merge($lang, array(
 
 	'FILE_DELETED'						=> 'This file will be deleted when you submit',
 
+	'HARD_DELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to <strong>hard</strong> delete this topic?<br /><br />This topic will be gone forever!',
+
 	'QUEUE_DISCUSSION_TOPIC_MESSAGE'	=> 'This topic is for validation discussion between the contribution authors and validators.
 
 Anything posted in this topic will be read by those validating your contribution so please post here instead of using private messages to validators.
@@ -56,10 +58,12 @@ Note that by default this topic is private between authors and validators and ca
 	'REPORT_POST'						=> 'Report Post',
 	'REPORT_POST_CONFIRM'				=> 'Are you sure you want to report this post?',
 
+	'SOFT_DELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to <strong>soft</strong> delete this topic?',
 	'STICKIES'							=> 'Stickies',
 	'STICKY_TOPIC'						=> 'Sticky Topic',
 
 	'UNDELETE_FILE'						=> 'Cancel Delete',
 	'UNDELETE_POST'						=> 'Undelete Post',
 	'UNDELETE_POST_CONFIRM'				=> 'Are you sure you want to undelete this post?',
+	'UNDELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to undelete this topic?',
 ));

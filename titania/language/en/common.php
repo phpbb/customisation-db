@@ -108,6 +108,8 @@ $lang = array_merge($lang, array(
 
 	'FILE_NOT_EXIST'			=> 'File does not exist: %s',
 
+	'HARD_DELETE_TOPIC'			=> 'Hard Delete Topic',
+
 	'LANGUAGE_PACK'				=> 'Language Pack',
 	'LIST'						=> 'List',
 
@@ -157,6 +159,7 @@ $lang = array_merge($lang, array(
 	'SELECT_SORT_METHOD'		=> 'Sort By',
 	'SITE_INDEX'				=> 'Site Index',
 	'SNIPPET'					=> 'Snippet',
+	'SOFT_DELETE_TOPIC'			=> 'Soft Delete Topic',
 	'SORT_CONTRIB_NAME'			=> 'Contribution Name',
 	'STICKIES'					=> 'Stickies',
 	'STYLE'						=> 'Style',
@@ -175,6 +178,7 @@ $lang = array_merge($lang, array(
 	'TOTAL_TOPICS_ONE'			=> '1 Topic',
 	'TYPE'						=> 'Type',
 
+	'UNDELETE_TOPIC'			=> 'Undelete Topic',
 	'UNKNOWN'					=> 'Unknown',
 	'UNSUBSCRIBE'				=> 'Unsubscribe',
 	'UPDATE_TIME'				=> 'Updated',

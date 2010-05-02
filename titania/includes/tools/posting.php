@@ -64,6 +64,26 @@ class titania_posting
 			case 'report' :
 				$this->report(request_var('p', 0));
 			break;
+
+			case 'lock_topic' :
+				$this->lock_topic(request_var('t', 0));
+			break;
+
+			case 'unlock_topic' :
+				$this->unlock_topic(request_var('t', 0));
+			break;
+
+			case 'delete_topic' :
+				$this->delete_topic(request_var('t', 0));
+			break;
+
+			case 'undelete_topic' :
+				$this->undelete_topic(request_var('t', 0));
+			break;
+
+			case 'hard_delete_topic' :
+				$this->delete_topic(request_var('t', 0), true);
+			break;
 		}
 	}
 
@@ -325,6 +345,160 @@ class titania_posting
 		}
 
 		redirect($post_object->get_url());
+	}
+
+	/**
+	* Lock a topic
+	*
+	* @param int $topic_id
+	*/
+	public function lock_topic($topic_id)
+	{
+		titania::add_lang('posting');
+		phpbb::$user->add_lang('mcp');
+
+		// Load the stuff we need
+		$topic_object = $this->load_topic($topic_id);
+
+		// Check permissions
+		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod') && !(phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id']))
+		{
+			titania::needs_auth();
+		}
+
+		if (titania::confirm_box(true))
+		{
+			$topic_object->topic_locked = true;
+			$topic_object->submit();
+
+			redirect($topic_object->get_url());
+		}
+		else
+		{
+			titania::confirm_box(false, 'LOCK_TOPIC');
+		}
+
+		redirect($topic_object->get_url());
+	}
+
+	/**
+	* Unlock a topic
+	*
+	* @param int $topic_id
+	*/
+	public function unlock_topic($topic_id)
+	{
+		titania::add_lang('posting');
+		phpbb::$user->add_lang('mcp');
+
+		// Load the stuff we need
+		$topic_object = $this->load_topic($topic_id);
+
+		// Check permissions
+		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod') && !(phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id']))
+		{
+			titania::needs_auth();
+		}
+
+		if (titania::confirm_box(true))
+		{
+			$topic_object->topic_locked = false;
+			$topic_object->submit();
+
+			redirect($topic_object->get_url());
+		}
+		else
+		{
+			titania::confirm_box(false, 'UNLOCK_TOPIC');
+		}
+
+		redirect($topic_object->get_url());
+	}
+
+	/**
+	* Delete a topic
+	*
+	* @param int $topic_id
+	* @param bool $hard_delete Hard delete or just soft delete?
+	*/
+	public function delete_topic($topic_id, $hard_delete = false)
+	{
+		titania::add_lang('posting');
+		phpbb::$user->add_lang('mcp');
+
+		// Load the stuff we need
+		$topic_object = $this->load_topic($topic_id);
+
+		// Check permissions
+		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		{
+			titania::needs_auth();
+		}
+
+		if (titania::confirm_box(true))
+		{
+			if ($hard_delete)
+			{
+				$base = $append = false;
+				titania_url::split_base_params($base, $append, $topic_object->topic_url);
+
+				$topic_object->delete();
+
+				redirect(titania_url::build_url($base, $append));
+			}
+			else
+			{
+				$topic_object->soft_delete();
+
+				redirect($topic_object->get_url());
+			}
+		}
+		else
+		{
+			if ($hard_delete)
+			{
+				titania::confirm_box(false, 'HARD_DELETE_TOPIC');
+			}
+			else
+			{
+				titania::confirm_box(false, 'SOFT_DELETE_TOPIC');
+			}
+		}
+
+		redirect($topic_object->get_url());
+	}
+
+	/**
+	* Undelete a topic
+	*
+	* @param int $topic_id
+	*/
+	public function undelete_topic($topic_id)
+	{
+		titania::add_lang('posting');
+		phpbb::$user->add_lang('mcp');
+
+		// Load the stuff we need
+		$topic_object = $this->load_topic($topic_id);
+
+		// Check permissions
+		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		{
+			titania::needs_auth();
+		}
+
+		if (titania::confirm_box(true))
+		{
+			$topic_object->undelete();
+
+			redirect($topic_object->get_url());
+		}
+		else
+		{
+			titania::confirm_box(false, 'UNDELETE_TOPIC');
+		}
+
+		redirect($topic_object->get_url());
 	}
 
 	/**

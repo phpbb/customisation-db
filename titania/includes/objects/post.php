@@ -621,7 +621,7 @@ class titania_post extends titania_message_object
 		parent::delete();
 
 		$flags = titania_count::get_flags(TITANIA_ACCESS_TEAMS, true, true);
-		if (titania_count::from_db($this->topic->topic_posts, $flags) == -1) // -1 because public shows -1
+		if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
 		{
 			// Delete the now empty topic
 			$sql = 'DELETE FROM ' . TITANIA_TOPICS_TABLE . '
