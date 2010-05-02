@@ -141,8 +141,19 @@ class attention_overlord
 			return;
 		}
 		
-		$additional = ($options['only_closed']) ? array('open' => 0, 'closed' => 1) : array('open' => 1, 'closed' => 1);
-		titania_url::$params = array_merge(titania_url::$params, $additionnal);
+		$additionnal = array();
+		if ($options['only_closed'])
+		{
+			$additionnal = array('open' => 0, 'closed' => 1);
+		}
+		else if ($options['display_closed']) 
+		{
+			$additionnal = array('open' => 1, 'closed' => 1);
+		}
+		if (sizeof($additionnal))
+		{
+			titania_url::$params = array_merge(titania_url::$params, $additionnal);
+		}
 		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 		// Get the data
