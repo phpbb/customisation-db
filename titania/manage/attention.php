@@ -268,7 +268,7 @@ else
 	);
 	attention_overlord::display_attention_list($options);
 
-	$additional = array();
+	$additional = array('open' => 1);
 	if (!$open)
 	{
 		$additional['open'] = 0;

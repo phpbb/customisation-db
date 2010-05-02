@@ -81,6 +81,8 @@ class attention_overlord
 	*/
 	public static function display_attention_list($options = array(), $sort = false)
 	{
+		global $open, $closed;
+		
 		if ($sort === false)
 		{
 			// Setup the sort tool
@@ -141,7 +143,8 @@ class attention_overlord
 			return;
 		}
 
-		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
+		$additional = array('open' => $open, 'closed' => $closed);
+		$sort->build_pagination(titania_url::$current_page, $additional);
 
 		// Get the data
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
