@@ -81,8 +81,6 @@ class attention_overlord
 	*/
 	public static function display_attention_list($options = array(), $sort = false)
 	{
-		global $open, $closed;
-		
 		if ($sort === false)
 		{
 			// Setup the sort tool
@@ -143,7 +141,18 @@ class attention_overlord
 			return;
 		}
 
-		$additional = array('open' => $open, 'closed' => $closed);
+		if ($options['only_closed'])
+		{
+			$additional = array('open' => 0, 'closed' => 1);
+		}
+		else if ($options['display_closed'])
+		{
+			$additional = array('open' => 1, 'closed' => 1);
+		}
+		else
+		{
+			$additional = array('open' => 1, 'closed' => 0);
+		}
 		$sort->build_pagination(titania_url::$current_page, $additional);
 
 		// Get the data
