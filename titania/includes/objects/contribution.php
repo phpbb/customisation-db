@@ -471,6 +471,18 @@ class titania_contribution extends titania_message_object
 	 */
 	public function submit()
 	{
+		// Make sure the author exists, if not we create one (do this before returning if not approved...else we need to duplicate this code in a bunch of places)
+		$user_id = $this->contrib_user_id;
+		$sql = 'SELECT user_id FROM ' . TITANIA_AUTHORS_TABLE . '
+			WHERE user_id = ' . (int) $user_id;
+		phpbb::$db->sql_query($sql);
+		if (!phpbb::$db->sql_fetchfield('user_id'))
+		{
+			$author = new titania_author($user_id);
+			$author->submit();
+		}
+		phpbb::$db->sql_freeresult();
+
 		if (!$this->contrib_id && (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED))
 		{
 			// Increment the contrib counter
@@ -918,18 +930,7 @@ class titania_contribution extends titania_message_object
 			}
 			return;
 		}
-
-		// Make sure the author exists, if not we create one (do this before returning if not approved...else we need to duplicate this code in a bunch of places)
-		$sql = 'SELECT user_id FROM ' . TITANIA_AUTHORS_TABLE . '
-			WHERE user_id = ' . (int) $user_id;
-		phpbb::$db->sql_query($sql);
-		if (!phpbb::$db->sql_fetchfield('user_id'))
-		{
-			$author = new titania_author($user_id);
-			$author->submit();
-		}
-		phpbb::$db->sql_freeresult();
-
+		
 		// Don't change if it's not approved
 		if ($force == false && (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED))
 		{
