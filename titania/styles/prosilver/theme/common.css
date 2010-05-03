@@ -6,7 +6,6 @@
 /* Common styles
 --------------------------------------------- */
 h2.panel-name {
-	float: left;
 	width: auto;
 	display: inline;
 }
@@ -22,14 +21,14 @@ h3.section-name {
 
 .tabs {
 	float: right;
-	display: inline;
+	display: block;
 	margin-right: 15px;
-	margin-top: 23px;
+	margin-top: 10px;
 }
 
 .tabs li {
 	list-style: none;
-	float: right;
+	float: left;
 	display: block;
 	margin-right: 2px;
 }
@@ -38,7 +37,7 @@ h3.section-name {
 	background: transparent url("{T_THEME_PATH}/images/tab_bg.gif") no-repeat 0 -29px;
 	border-bottom: 1px solid #FFFFFF;
 	position: relative;
-	float: left;
+	display: block;
 }
 
 .tabs a span {
@@ -159,6 +158,7 @@ a.download-main {
 .contrib-description {
 	font-size: 1.1em;
 	margin-bottom: 15px;
+	position: relative;
 }
 
 .contrib-description dt {
@@ -190,6 +190,7 @@ a.download-main {
 
 ul.general-info {
 	border: 1px solid #EAF3F7;
+	clear: left;
 }
 
 ul.general-info li {
@@ -374,17 +375,7 @@ ul.simple li.header dt, ul.simple li.header dd {
 }
 
 .container .forabg {
-	background-color: #53A8D2;
 	background-image: none;
-}
-
-.container .forabg li.header dt, .container .forabg li.header dd {
-	color: #FFF;
-}
-
-.container .forabg li.row {
-	background-color: #FFF;
-	border-bottom-color: #4B9AC2;
 }
 
 .revisions dt {
