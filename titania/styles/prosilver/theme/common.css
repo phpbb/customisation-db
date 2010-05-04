@@ -193,6 +193,10 @@ ul.general-info {
 	clear: left;
 }
 
+.right-column ul.general-info {
+	clear: right;
+}
+
 ul.general-info li {
 	list-style: none;
 	display: block;
