@@ -445,7 +445,8 @@ class titania_queue extends titania_message_object
 				titania_url::build_url('download', array('id' => $revision->attachment_id)),
 				$contrib->download['real_filename'],
 				$contrib->download['filesize'],
-				$contrib->get_url()
+				$contrib->get_url(),
+				$contrib->get_url() . 'support/'
 			);
 
 			$options = array(
