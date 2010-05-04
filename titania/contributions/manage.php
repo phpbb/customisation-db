@@ -169,6 +169,18 @@ else if ($submit)
 		}
 	}
 
+	if (titania::$contrib->contrib_type == TITANIA_TYPE_STYLE)	
+	{
+	    $changed_demo = utf8_normalize_nfc(request_var('demo_url', '', true));
+	    titania::$contrib->contrib_demo = $changed_demo;
+		
+		// URL correct?
+		if ($changed_demo && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]+\.[a-z]{2,4}#i', $changed_demo))
+		{
+			$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania_url::url_slug(titania::$contrib->contrib_demo));
+		}
+	}		
+
 	// Did we succeed or have an error?
 	if (!sizeof($error))
 	{
@@ -238,7 +250,7 @@ else if ($submit)
 			{
 				titania::$contrib->change_permalink($permalink);
 			}
-		}
+		}	
 
 		titania::$contrib->submit();
 
@@ -318,6 +330,8 @@ phpbb::$template->assign_vars(array(
 	'S_IS_MODERATOR'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 
 	'CONTRIB_PERMALINK'			=> $permalink,
+	'DEMO_URL'				    => titania::$contrib->contrib_demo,
+	'S_CONTRIB_TYPE'            => titania::$contrib->contrib_type,
 	'SCREENSHOT_UPLOADER'		=> $screenshot->parse_uploader('posting/attachments/simple.html'),
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,

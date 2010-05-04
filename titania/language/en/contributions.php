@@ -86,6 +86,8 @@ $lang = array_merge($lang, array(
 	'COULD_NOT_FIND_USERS'					=> 'Could not find the following users: %s',
 	'CO_AUTHORS'							=> 'Co-Authors',
 
+	'DEMO_URL'                              => 'Demo URL',
+	'DEMO_URL_EXPLAIN'                      => 'Change the Demo URL.',	
 	'DOWNLOADS_PER_DAY'						=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'						=> 'Total Downloads',
 	'DOWNLOADS_VERSION'						=> 'Version Downloads',

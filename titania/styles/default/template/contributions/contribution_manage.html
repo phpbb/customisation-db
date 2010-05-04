@@ -102,6 +102,14 @@
 						<textarea class="inputbox" name="nonactive_coauthors" id="nonactive_coauthors" rows="2" cols="20">{NONACTIVE_COAUTHORS}</textarea>
 					</dd>
 				</dl>
+				<!-- IF S_CONTRIB_TYPE eq 2 -->
+				<dl>
+					<dt><label for="demo_url">{L_DEMO_URL}:</label><br /><span>{L_DEMO_URL_EXPLAIN}</span></dt>
+					<dd>
+						<input class="inputbox" type="text" name="demo_url" id="demo_url" value="{DEMO_URL}" />
+					</dd>
+				</dl>
+				<!-- ENDIF -->				
 			</fieldset>
 
 			<h3>{L_SCREENSHOTS}</h3>
