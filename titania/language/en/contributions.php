@@ -116,7 +116,7 @@ $lang = array_merge($lang, array(
 
 [b]Modification overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]The phpBB Team is not responsible or required to give anyone support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB MODifications Team may not be able to provide support.[/b][/color]
+[color=blue][b]The phpBB Team is not responsible nor required to provide support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Modifications Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]-->[b]Modification support[/b]<--[/url][/size]',
 	'MOD_UPDATE_PUBLIC'						=> '[color=darkred][b]MOD Updated to version %s
@@ -172,7 +172,7 @@ See first post for Download Link[/b][/color]',
 
 [b]Style overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]The phpBB Team is not responsible or required to give anyone support for this Style. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]
+[color=blue][b]The phpBB Team is not responsible nor required to provide support for this Style. By installing this style, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]-->[b]Style support[/b]<--[/url][/size]',
 	'STYLE_UPDATE_PUBLIC'					=> '[color=darkred][b]Style Updated to version %s
