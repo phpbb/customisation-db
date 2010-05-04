@@ -217,7 +217,7 @@ function phpbb_com_move_queue_topic($queue_object)
 	$row = phpbb::$db->sql_fetchrow($result);
 	phpbb::$db->sql_freeresult($result);
 
-	if (!$row['phpbb_topic_id'] || $row['topic_category'] != TITANIA_TYPE_MOD)
+	if (!$row['phpbb_topic_id'])
 	{
 		return;
 	}
