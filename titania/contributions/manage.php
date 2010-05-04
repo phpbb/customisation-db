@@ -332,6 +332,7 @@ phpbb::$template->assign_vars(array(
 	'CONTRIB_PERMALINK'			=> $permalink,
 	'DEMO_URL'				    => titania::$contrib->contrib_demo,
 	'S_CONTRIB_TYPE'            => titania::$contrib->contrib_type,
+	'S_TEAM'                    => titania::$access_level == TITANIA_ACCESS_TEAMS,
 	'SCREENSHOT_UPLOADER'		=> $screenshot->parse_uploader('posting/attachments/simple.html'),
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,
