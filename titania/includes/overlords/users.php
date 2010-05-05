@@ -180,7 +180,7 @@ class users_overlord
 				break;
 
 				case '_u_pm' :
-					return ($user_id != ANONYMOUS && phpbb::$config['allow_privmsg'] && phpbb::$auth->acl_get('u_sendpm') && (self::$users[$user_id]['user_allow_pm'] || phpbb::$auth->acl_gets('a_', 'm_') || phpbb::$auth->acl_getf_global('m_'))) ? phpbb::append_sid('ucp', 'i=pm&amp;mode=compose') : '';
+					return ($user_id != ANONYMOUS && phpbb::$config['allow_privmsg'] && phpbb::$auth->acl_get('u_sendpm') && (self::$users[$user_id]['user_allow_pm'] || phpbb::$auth->acl_gets('a_', 'm_') || phpbb::$auth->acl_getf_global('m_'))) ? phpbb::append_sid('ucp', "i=pm&amp;mode=compose&amp;u=$user_id") : '';
 				break;
 
 				case '_u_email' :
