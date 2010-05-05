@@ -142,11 +142,11 @@ class attention_overlord
 		}
 		
 		$additionnal = array();
-		if ($options['only_closed'])
+		if (isset($options['only_closed']))
 		{
 			$additionnal = array('open' => 0, 'closed' => 1);
 		}
-		else if ($options['display_closed']) 
+		else if (isset($options['display_closed'])) 
 		{
 			$additionnal = array('open' => 1, 'closed' => 1);
 		}
