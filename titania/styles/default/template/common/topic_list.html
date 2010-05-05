@@ -38,7 +38,7 @@
 					<!-- ELSEIF topics.S_ACCESS_AUTHORS -->
 					<img src="{T_TITANIA_THEME_PATH}/images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
 					<!-- ENDIF -->
-					<!-- IF topics.S_UNREAD_TOPIC --><a href="{topics.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF --><a href="{topics.U_VIEW_TOPIC}" class="topictitle">{topics.TOPIC_SUBJECT}</a>
+					<!-- IF topics.S_UNREAD_TOPIC --><a href="{topics.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF --><a href="{topics.U_VIEW_TOPIC}" class="topictitle">{topics.TOPIC_SUBJECT}</a><!-- IF topics.TOPIC_CONTRIB_NAME --><br /><em><!-- IF topics.TOPIC_CATEGORY -->{topics.TOPIC_CATEGORY} &raquo; <!-- ENDIF -->{topics.TOPIC_CONTRIB_NAME}</em><!-- ENDIF -->
 					<!-- IF not topics.TOPIC_APPROVED or topics.S_POSTS_UNAPPROVED --><a href="{topics.U_MCP_QUEUE}">{topics.UNAPPROVED_IMG}</a> <!-- ENDIF -->
 					<!-- IF topics.TOPIC_REPORTED -->{REPORTED_IMG}<!-- ENDIF --><br />
 					<!-- IF topics.PAGINATION --><strong class="pagination"><span>{topics.PAGINATION}</span></strong><!-- ENDIF -->

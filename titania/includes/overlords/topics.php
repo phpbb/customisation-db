@@ -211,7 +211,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$topic_ids = array();
 
 		$sql_ary = array(
-			'SELECT' => '*',
+			'SELECT' => 't.*',
 
 			'FROM'		=> array(
 				TITANIA_TOPICS_TABLE	=> 't',
@@ -306,8 +306,23 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			break;
 
 			case 'all_support' :
+				$topic->object_config = array_merge($topic->object_config, array(
+					'category_name'					=> array('default' => ''),
+					'contrib_name'					=> array('default' => ''),
+				));
 				$page_url = titania_url::build_url('support/all');
 
+				$sql_ary['SELECT'] .= ', cat.category_name, contrib.contrib_name';
+				$sql_ary['LEFT_JOIN'] = array_merge($sql_ary['LEFT_JOIN'], array(
+					array(
+						'FROM'	=> array(TITANIA_CONTRIBS_TABLE	=> 'contrib'),
+						'ON'	=> 'contrib.contrib_id = t.parent_id',
+					),
+					array(
+						'FROM'	=> array(TITANIA_CATEGORIES_TABLE	=> 'cat'),
+						'ON'	=> 'cat.category_id = contrib.contrib_type',
+					),
+				));
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
 				$sql_ary['ORDER_BY'] = $sort->get_order_by();
 			break;

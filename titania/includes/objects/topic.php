@@ -270,6 +270,8 @@ class titania_topic extends titania_database_object
 			'TOPIC_REPLIES'					=> ($this->get_postcount() - 1), // Number of replies (posts minus the OP)
 			'TOPIC_VIEWS'					=> $this->topic_views,
 			'TOPIC_SUBJECT'					=> censor_text($this->topic_subject),
+			'TOPIC_CATEGORY'				=> (isset($this->category_name) && $this->category_name ? phpbb::$user->lang[$this->category_name] : ''),
+			'TOPIC_CONTRIB_NAME'			=> (isset($this->contrib_name) && $this->contrib_name ? $this->contrib_name : ''),
 
 			'TOPIC_FIRST_POST_ID'			=> $this->topic_first_post_id,
 			'TOPIC_FIRST_POST_USER_ID'		=> $this->topic_first_post_user_id,

@@ -147,8 +147,13 @@ function load_contrib($contrib_id = false)
 	$page = request_var('page', '');
 	titania::generate_nav($nav_ary, $page, 'details');
 
+	$category_object = new titania_category;
+	$categories_ary = titania::$cache->get_categories();
+	$category_object->__set_array($categories_ary[titania::$contrib->contrib_type]);
+
 	// Generate the main breadcrumbs
 	titania::generate_breadcrumbs(array(
+		$categories_ary[titania::$contrib->contrib_type]['category_name'] => titania_url::build_url($category_object->get_url()),
 		titania::$contrib->contrib_name	=> titania::$contrib->get_url(),
 	));
 	if ($page)

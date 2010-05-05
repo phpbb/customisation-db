@@ -187,6 +187,11 @@ switch ($action)
 	* Display all support topics
 	*/
 	case 'support' :
+		// Generate the main breadcrumbs
+		titania::generate_breadcrumbs(array(
+			'ALL_SUPPORT'	=> titania_url::build_url('') . 'support/all/',
+		));
+
 		topics_overlord::display_forums_complete('all_support');
 
 		titania::page_header('CUSTOMISATION_DATABASE');
