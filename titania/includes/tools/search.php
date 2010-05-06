@@ -70,16 +70,21 @@ class titania_search
 				// In case Solr would happen to go down..
 				if (!$handler->connection)
 				{
+					// @todo - Log this as an error
+
 					self::$do_not_index = true;
-					return;
+					return false;
 				}
 			}
 			else
 			{
 				throw new exception('We need a proper search backend selected');
 			}
+
 			$manager = new ezcSearchEmbeddedManager;
 			self::$index = new ezcSearchSession($handler, $manager);
+
+			return true;
 		}
 	}
 
@@ -92,11 +97,9 @@ class titania_search
 	*/
 	public static function index($object_type, $object_id, $data)
 	{
-		self::initialize();
-
-		if (self::$do_not_index)
+		if (self::initialize() === false)
 		{
-			return;
+			return false;
 		}
 
 		$data['id'] = $object_type . '_' . $object_id;
@@ -126,7 +129,10 @@ class titania_search
 	*/
 	public static function mass_index($data)
 	{
-		self::initialize();
+		if (self::initialize() === false)
+		{
+			return false;
+		}
 
 		self::$index->beginTransaction();
 
@@ -150,7 +156,10 @@ class titania_search
 	*/
 	public static function delete($object_type, $object_id)
 	{
-		self::initialize();
+		if (self::initialize() === false)
+		{
+			return false;
+		}
 
 		self::$index->deleteById($object_type . '_' . $object_id, 'titania_article');
 	}
@@ -162,7 +171,10 @@ class titania_search
 	*/
 	public static function truncate($object_type = false)
 	{
-		self::initialize();
+		if (self::initialize() === false)
+		{
+			return false;
+		}
 
 		$query = self::$index->createDeleteQuery('titania_article');
 
@@ -187,7 +199,10 @@ class titania_search
 	*/
 	public static function search($search_query, &$sort, $fields = array('text', 'title'))
 	{
-		self::initialize();
+		if (self::initialize() === false)
+		{
+			return false;
+		}
 
 		self::clean_keywords($search_query);
 
@@ -207,7 +222,10 @@ class titania_search
 	*/
 	public static function author_search($user_id, &$sort)
 	{
-		self::initialize();
+		if (self::initialize() === false)
+		{
+			return false;
+		}
 
 		$query = self::$index->createFindQuery('titania_article');
 		$query->where($query->eq('author', $user_id));
@@ -220,7 +238,10 @@ class titania_search
 	*/
 	public static function create_find_query()
 	{
-		self::initialize();
+		if (self::initialize() === false)
+		{
+			return false;
+		}
 
 		return self::$index->createFindQuery('titania_article');
 	}
@@ -235,7 +256,10 @@ class titania_search
 	*/
 	public static function custom_search($query, &$sort)
 	{
-		self::initialize();
+		if (self::initialize() === false)
+		{
+			return false;
+		}
 
 		// For those without moderator permissions do not display unapproved stuff
 		if (!phpbb::$auth->acl_get('m_'))
