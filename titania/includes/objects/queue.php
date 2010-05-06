@@ -428,10 +428,32 @@ class titania_queue extends titania_message_object
 				'topic_title'			=> 'Re: ' . $contrib->contrib_name,
 				'post_text'				=> $body
 			);
+			
+			$body_edit = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->create_public],
+				$contrib->contrib_name,
+				$contrib->author->get_url(),
+				users_overlord::get_user($contrib->author->user_id, '_username'),
+				$contrib->contrib_desc,
+				$revision->revision_version,
+				titania_url::build_url('download', array('id' => $revision->attachment_id)),
+				$contrib->download['real_filename'],
+				$contrib->download['filesize'],
+				$contrib->get_url(),
+				$contrib->get_url() . 'support/'
+			);
+			
+			$options_edit = array(
+				'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
+				'forum_id' 				=> titania_types::$types[$contrib->contrib_type]->forum_database,
+				'topic_id'				=> $contrib->contrib_release_topic_id,
+				'topic_title'			=> $contrib->contrib_name,
+				'post_text'				=> $body_edit
+			);
 
 			if ($options['forum_id'] && $options['poster_id'])
 			{
 				phpbb_post_add($options);
+				phpbb_post_edit($options_edit);
 			}
 		}
 		else
