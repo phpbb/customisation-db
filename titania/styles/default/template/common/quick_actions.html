@@ -1,5 +1,5 @@
 <!-- IF .quick_actions -->
-<select name="quick_actions" onchange="if(this.options[this.selectedIndex].value != -1){ window.location = this.options[this.selectedIndex].value }">
+<select name="quick_actions" id="quick-mod-select" onchange="if(this.options[this.selectedIndex].value != -1){ window.location = this.options[this.selectedIndex].value }">
 	<option value="-1">{L_QUICK_ACTIONS}</option>
 	<!-- BEGIN quick_actions -->
 		<option value="{quick_actions.URL}">{quick_actions.NAME}</option>
