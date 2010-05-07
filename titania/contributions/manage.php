@@ -32,6 +32,7 @@ if (!(((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) &
 $submit = (isset($_POST['submit'])) ? true : false;
 $change_owner = request_var('change_owner', '', true); // Blame Nathan, he said this was okay
 $contrib_categories = request_var('contrib_category', array(0));
+$contrib_demo = utf8_normalize_nfc(request_var('demo_url', '', true));
 $active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
 $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 $error = array();
@@ -84,15 +85,17 @@ $screenshot = new titania_attachment(TITANIA_SCREENSHOT, titania::$contrib->cont
 $screenshot->load_attachments();
 $screenshot->upload(175);
 $error = array_merge($error, $screenshot->error);
-if ($screenshot->uploaded)
+
+if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 {
 	titania::$contrib->post_data($message);
+	titania::$contrib->__set_array(array(
+		'contrib_demo'			=> $contrib_demo,
+	));
 }
 
 if (isset($_POST['preview']))
 {
-	titania::$contrib->post_data($message);
-
 	$message->preview();
 }
 else if ($submit)
@@ -123,6 +126,10 @@ else if ($submit)
 	if (isset($active_coauthors_list[$author_username]) || isset($active_coauthors_list[$author_username_clean]) || isset($nonactive_coauthors_list[$author_username]) || isset($nonactive_coauthors_list[$author_username_clean]))
 	{
 		$error[] = phpbb::$user->lang['CANNOT_ADD_SELF_COAUTHOR'];
+	}
+	if ($contrib_demo && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]+\.[a-z]{2,4}#i', $contrib_demo))
+	{
+		$error[] = phpbb::$user->lang['WRONG_DATA_WEBSITE'];
 	}
 
 	if ($change_owner != '')
@@ -168,18 +175,6 @@ else if ($submit)
 			$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
 		}
 	}
-
-	if (titania::$contrib->contrib_type == TITANIA_TYPE_STYLE)	
-	{
-	    $changed_demo = utf8_normalize_nfc(request_var('demo_url', '', true));
-	    titania::$contrib->contrib_demo = $changed_demo;
-		
-		// URL correct?
-		if ($changed_demo && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]+\.[a-z]{2,4}#i', $changed_demo))
-		{
-			$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania_url::url_slug(titania::$contrib->contrib_demo));
-		}
-	}		
 
 	// Did we succeed or have an error?
 	if (!sizeof($error))
@@ -250,7 +245,7 @@ else if ($submit)
 			{
 				titania::$contrib->change_permalink($permalink);
 			}
-		}	
+		}
 
 		titania::$contrib->submit();
 
@@ -330,9 +325,7 @@ phpbb::$template->assign_vars(array(
 	'S_IS_MODERATOR'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 
 	'CONTRIB_PERMALINK'			=> $permalink,
-	'DEMO_URL'				    => titania::$contrib->contrib_demo,
 	'S_CONTRIB_TYPE'            => titania::$contrib->contrib_type,
-	'S_TEAM'                    => titania::$access_level == TITANIA_ACCESS_TEAMS,
 	'SCREENSHOT_UPLOADER'		=> $screenshot->parse_uploader('posting/attachments/simple.html'),
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,

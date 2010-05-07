@@ -37,6 +37,7 @@ titania::$contrib->author->load();
 // Set some main vars up
 $submit = (isset($_POST['submit'])) ? true : false;
 $contrib_categories = request_var('contrib_category', array(0));
+$contrib_demo = utf8_normalize_nfc(request_var('demo_url', '', true));
 $active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
 $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 $error = array();
@@ -66,6 +67,7 @@ if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 		'contrib_type'			=> request_var('contrib_type', 0),
 		'contrib_name_clean'	=> utf8_normalize_nfc(request_var('permalink', '', true)),
 		'contrib_visible'		=> 1,
+		'contrib_demo'			=> $contrib_demo,
 	));
 }
 
@@ -96,6 +98,10 @@ else if ($submit)
 	if (isset($active_coauthors_list[phpbb::$user->data['username']]) || isset($nonactive_coauthors_list[phpbb::$user->data['username']]))
 	{
 		$error[] = phpbb::$user->lang['CANNOT_ADD_SELF_COAUTHOR'];
+	}
+	if ($contrib_demo && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]+\.[a-z]{2,4}#i', $contrib_demo))
+	{
+		$error[] = phpbb::$user->lang['WRONG_DATA_WEBSITE'];
 	}
 
 	if (!sizeof($error))

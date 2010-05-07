@@ -373,6 +373,8 @@ class titania_contribution extends titania_message_object
 
 			'S_CONTRIB_CLEANED'				=> ($this->contrib_status == TITANIA_CONTRIB_CLEANED) ? true : false,
 			'S_CONTRIB_VALIDATED'			=> ($this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
+
+			'U_VIEW_DEMO'					=> $this->contrib_demo,
 		);
 
 		// Ignore some stuff before it is submitted else we can cause an error
@@ -386,7 +388,6 @@ class titania_contribution extends titania_message_object
 				'U_NEW_REVISION'				=> ((($this->is_author || $this->is_active_coauthor) && $this->contrib_status != TITANIA_CONTRIB_CLEANED) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('revision') : '',
 				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && ((($this->is_author || $this->is_active_coauthor) && $this->contrib_status != TITANIA_CONTRIB_CLEANED) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('view'))) ? $this->get_url('queue_discussion') : '',
 				'U_VIEW_CONTRIB'				=> $this->get_url(),
-				'U_VIEW_DEMO'					=> $this->contrib_demo,
 
 				'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
 				'U_INFO'						=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? titania_url::build_url('manage/attention', array('type' => TITANIA_CONTRIB, 'id' => $this->contrib_id)) : '',
@@ -933,7 +934,7 @@ class titania_contribution extends titania_message_object
 			}
 			return;
 		}
-		
+
 		// Don't change if it's not approved
 		if ($force == false && (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED))
 		{
