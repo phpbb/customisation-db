@@ -87,7 +87,7 @@ $lang = array_merge($lang, array(
 	'CO_AUTHORS'							=> 'Co-Authors',
 
 	'DEMO_URL'                              => 'Demo URL',
-	'DEMO_URL_EXPLAIN'                      => 'Change the Demo URL.',	
+	'DEMO_URL_EXPLAIN'                      => 'Location of the demonstration',
 	'DOWNLOADS_PER_DAY'						=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'						=> 'Total Downloads',
 	'DOWNLOADS_VERSION'						=> 'Version Downloads',
