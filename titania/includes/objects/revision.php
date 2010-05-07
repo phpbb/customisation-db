@@ -200,7 +200,7 @@ class titania_revision extends titania_database_object
 						$this->contrib->download['real_filename'],
 						$this->contrib->download['filesize'],
 						$this->contrib->get_url(),
-						$this->contrib->get_url() . 'support/'
+						$this->contrib->get_url('support')
 					);
 
 					$options = array(
