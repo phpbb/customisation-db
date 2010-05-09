@@ -415,49 +415,10 @@ class titania_queue extends titania_message_object
 		$contrib->get_download($this->revision_id);
 
 		$release_topic_id = $contrib->contrib_release_topic_id;
-		if ($contrib->contrib_release_topic_id)
+		
+		if (titania_types::$types[$contrib->contrib_type]->forum_robot && titania_types::$types[$contrib->contrib_type]->forum_database)
 		{
-			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
-				$revision->revision_version
-			);
-
-			$options = array(
-				'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
-				'forum_id' 				=> titania_types::$types[$contrib->contrib_type]->forum_database,
-				'topic_id'				=> $contrib->contrib_release_topic_id,
-				'topic_title'			=> 'Re: ' . $contrib->contrib_name,
-				'post_text'				=> $body
-			);
-
-			$body_edit = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->create_public],
-				$contrib->contrib_name,
-				$contrib->author->get_url(),
-				users_overlord::get_user($contrib->author->user_id, '_username'),
-				$contrib->contrib_desc,
-				$revision->revision_version,
-				titania_url::build_url('download', array('id' => $revision->attachment_id)),
-				$contrib->download['real_filename'],
-				$contrib->download['filesize'],
-				$contrib->get_url(),
-				$contrib->get_url('support')
-			);
-
-			$options_edit = array(
-				'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
-				'forum_id' 				=> titania_types::$types[$contrib->contrib_type]->forum_database,
-				'topic_id'				=> $contrib->contrib_release_topic_id,
-				'topic_title'			=> $contrib->contrib_name,
-				'post_text'				=> $body_edit,
-			);
-
-			if ($options['forum_id'] && $options['poster_id'])
-			{
-				phpbb_post_add($options);
-				phpbb_post_edit($options_edit);
-			}
-		}
-		else
-		{
+			// Global body and options
 			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->create_public],
 				$contrib->contrib_name,
 				$contrib->author->get_url(),
@@ -470,18 +431,44 @@ class titania_queue extends titania_message_object
 				$contrib->get_url(),
 				$contrib->get_url('support')
 			);
-
+			
 			$options = array(
 				'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
 				'forum_id' 				=> titania_types::$types[$contrib->contrib_type]->forum_database,
-				'topic_title'			=> $contrib->contrib_name,
-				'post_text'				=> $body,
-				'topic_status'			=> (titania::$config->support_in_titania) ? ITEM_LOCKED : ITEM_UNLOCKED,
+				'topic_id'				=> $contrib->contrib_release_topic_id,
 			);
-
-			if ($options['forum_id'] && $options['poster_id'])
+			
+			if ($contrib->contrib_release_topic_id)
 			{
-				$release_topic_id = phpbb_topic_add($options);
+				// We edit the first post of contrib release topic
+				$options_edit = array(
+					'topic_title'			=> $contrib->contrib_name,
+					'post_text'				=> $body,
+				);
+				$options_edit = array_merge($options_edit, $options);
+				phpbb_posting('edit', $options_edit);
+				
+				// We reply to the contrib release topic
+				$body_reply = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
+					$revision->revision_version
+				);
+				$options_reply = array(
+					'topic_title'			=> 'Re: ' . $contrib->contrib_name,
+					'post_text'				=> $body_reply
+				);
+				$options_reply = array_merge($options_reply, $options);
+				phpbb_posting('reply', $options_reply);
+			}
+			else
+			{
+				// We create a new topic in database
+				$options_post = array(
+					'topic_title'			=> $contrib->contrib_name,
+					'post_text'				=> $body,
+					'topic_status'			=> (titania::$config->support_in_titania) ? ITEM_LOCKED : ITEM_UNLOCKED,
+				);
+				$options_post = array_merge($options_post, $options);
+				$release_topic_id = phpbb_posting('post', $options_post);
 			}
 		}
 

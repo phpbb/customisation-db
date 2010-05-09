@@ -115,7 +115,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 
 	$post_object->submit();
 
-	titania::_include('functions_posting', 'phpbb_post_add');
+	titania::_include('functions_posting', 'phpbb_posting');
 
 	$post_text = $post_object->post_text;
 	decode_message($post_text, $post_object->post_text_uid);
@@ -140,7 +140,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 		'post_text'				=> $post_text,
 	);
 
-	$topic_id = phpbb_topic_add($options);
+	$topic_id = phpbb_posting('post', $options);
 
 	$post_object->topic->phpbb_topic_id = $topic_id;
 
@@ -165,7 +165,7 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 		return;
 	}
 
-	titania::_include('functions_posting', 'phpbb_post_add');
+	titania::_include('functions_posting', 'phpbb_posting');
 
 	$post_text = $post_object->post_text;
 	decode_message($post_text, $post_object->post_text_uid);
@@ -180,7 +180,7 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 		'post_text'				=> $post_text,
 	);
 
-	phpbb_post_add($options);
+	phpbb_posting('reply', $options);
 }
 
 function phpbb_com_titania_topic___construct($hook, &$topic_object)
