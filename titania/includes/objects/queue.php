@@ -445,7 +445,7 @@ class titania_queue extends titania_message_object
 					'topic_title'			=> $contrib->contrib_name,
 					'post_text'				=> $body,
 				);
-				$options_edit = array_merge($options_edit, $options);
+				$options_edit = array_merge($options, $options_edit);
 				phpbb_posting('edit', $options_edit);
 				
 				// We reply to the contrib release topic
@@ -454,10 +454,10 @@ class titania_queue extends titania_message_object
 				);
 				$options_reply = array(
 					'topic_title'			=> 'Re: ' . $contrib->contrib_name,
-					'post_text'				=> $body_reply
+					'post_text'				=> $body_reply,
 				);
-				$options_reply = array_merge($options_reply, $options);
-				phpbb_posting('reply', $options_reply);
+				$options_reply = array_merge($options, $options_reply);
+				phpbb_posting('reply', $options_reply, true);
 			}
 			else
 			{
@@ -467,8 +467,20 @@ class titania_queue extends titania_message_object
 					'post_text'				=> $body,
 					'topic_status'			=> (titania::$config->support_in_titania) ? ITEM_LOCKED : ITEM_UNLOCKED,
 				);
-				$options_post = array_merge($options_post, $options);
+				$options_post = array_merge($options, $options_post);
 				$release_topic_id = phpbb_posting('post', $options_post);
+				
+				// We reply to the contrib release topic
+				$body_reply = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public],
+					$notes
+				);
+				$options_reply = array(
+					'topic_title'			=> 'Re: ' . $contrib->contrib_name,
+					'post_text'				=> $body_reply,
+					'topic_id'				=> $release_topic_id,
+				);
+				$options_reply = array_merge($options, $options_reply);
+				phpbb_posting('reply', $options_reply, true);
 			}
 		}
 

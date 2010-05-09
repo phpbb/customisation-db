@@ -257,11 +257,13 @@ function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
 
 /**
  * Allow to create a new topic, to reply to a topic, to edit a post or the first_post of a topic in database
+ * @param $mode post/reply/edit
  * @param $options array Array with post data, see our documentation for exact required items
+ * @param $real_poster, if true the poster will be user browsing the script
  * @param $poll array Array with poll options.
  * @return mixed false if there was an error, topic_id when the new topic was created and true when reply/edit is done
  */
-function phpbb_posting($mode, &$options, $poll = array())
+function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 {
 	if (empty($mode))
 	{
@@ -304,19 +306,6 @@ function phpbb_posting($mode, &$options, $poll = array())
 	$message_parser = new parse_message();
 	$message_parser->message = &$options['post_text'];
 	unset($options['post_text']);
-
-	// Some data for the ugly fix below :P
-	$sql = 'SELECT username, user_colour, user_permissions, user_type
-		FROM ' . USERS_TABLE . '
-		WHERE user_id = ' . (int) $options['poster_id'];
-	$result = phpbb::$db->sql_query($sql);
-	$user_data = phpbb::$db->sql_fetchrow($result);
-	phpbb::$db->sql_freeresult($result);
-
-	if (!$user_data)
-	{
-		return false;
-	}
 	
 	if ($mode == 'reply' || $mode == 'edit')
 	{
@@ -337,19 +326,35 @@ function phpbb_posting($mode, &$options, $poll = array())
 		}
 	}
 
-	// Ugly fix, to be sure it is posted for the right user ;)
-	$old_data = phpbb::$user->data;
-	phpbb::$user->data['user_id'] = $options['poster_id'];
-	phpbb::$user->data['username'] = $user_data['username'];
-	phpbb::$user->data['user_colour'] = $user_data['user_colour'];
-	phpbb::$user->data['user_permissions'] = $user_data['user_permissions'];
-	phpbb::$user->data['user_type'] = $user_data['user_type'];
+	if (!$real_poster)
+	{
+		// Some data for the ugly fix below :P
+		$sql = 'SELECT username, user_colour, user_permissions, user_type
+			FROM ' . USERS_TABLE . '
+			WHERE user_id = ' . (int) $options['poster_id'];
+		$result = phpbb::$db->sql_query($sql);
+		$user_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
 
-	// Same for auth, be sure its posted with correct permissions :)
-	$old_auth = phpbb::$auth;
+		if (!$user_data)
+		{
+			return false;
+		}
+		
+		// Ugly fix, to be sure it is posted for the right user ;)
+		$old_data = phpbb::$user->data;
+		phpbb::$user->data['user_id'] = $options['poster_id'];
+		phpbb::$user->data['username'] = $user_data['username'];
+		phpbb::$user->data['user_colour'] = $user_data['user_colour'];
+		phpbb::$user->data['user_permissions'] = $user_data['user_permissions'];
+		phpbb::$user->data['user_type'] = $user_data['user_type'];
 
-	phpbb::$auth = new auth();
-	phpbb::$auth->acl(phpbb::$user->data);
+		// Same for auth, be sure its posted with correct permissions :)
+		$old_auth = phpbb::$auth;
+
+		phpbb::$auth = new auth();
+		phpbb::$auth->acl(phpbb::$user->data);
+	}
 
 	if ($options['enable_bbcode'])
 	{
@@ -363,6 +368,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 			$topic_last_post_id = 0;
 			$post_id = 0;
 			$topic_id = 0;
+			$topic_replies = 0;
 			$topic_replies_real = 0;
 		break;
 		case 'reply':
@@ -370,13 +376,15 @@ function phpbb_posting($mode, &$options, $poll = array())
 			$topic_last_post_id = $post_data['topic_last_post_id'];
 			$post_id = 0;
 			$topic_id = $options['topic_id'];
-			$topic_replies_real = 0;
+			$topic_replies = $post_data['topic_replies'];
+			$topic_replies_real = $post_data['topic_replies_real'];
 		break;
 		case 'edit':
 			$topic_first_post_id = $post_data['topic_first_post_id'];
 			$topic_last_post_id = $post_data['topic_last_post_id'];
 			$post_id = (isset($option['post_id']) && !$option['post_id']) ? $option['post_id'] : $post_data['topic_first_post_id'];
 			$topic_id = $options['topic_id'];
+			$topic_replies = $post_data['topic_replies'];
 			$topic_replies_real = $post_data['topic_replies_real'];
 		break;
 	}
@@ -387,12 +395,13 @@ function phpbb_posting($mode, &$options, $poll = array())
 		'topic_last_post_id'	=> $topic_last_post_id,
 		'topic_time_limit'		=> $options['topic_time_limit'],
 		'topic_attachment'		=> 0,
+		'topic_replies'			=> $topic_replies,
 		'topic_replies_real'	=> $topic_replies_real,
 		'post_id'				=> $post_id,
 		'topic_id'				=> $topic_id,
 		'forum_id'				=> $options['forum_id'],
 		'icon_id'				=> (int) $options['icon_id'],
-		'poster_id'				=> (int) $options['poster_id'],
+		'poster_id'				=> (!$real_poster) ? (int) $options['poster_id'] : phpbb::$user->data['user_id'],
 		'enable_sig'			=> (bool) $options['enable_sig'],
 		'enable_bbcode'			=> (bool) $options['enable_bbcode'],
 		'enable_smilies'		=> (bool) $options['enable_smilies'],
@@ -418,7 +427,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 	);
 
 	// Aaaand, submit it.
-	submit_post($mode, $options['topic_title'], $user_data['username'], $options['topic_type'], $poll, $data, true);
+	submit_post($mode, $options['topic_title'], (!$real_poster) ? $user_data['username'] : phpbb::$user->data['username'], $options['topic_type'], $poll, $data, true);
 	
 	$return = true;
 	if ($mode == 'post')
@@ -436,9 +445,12 @@ function phpbb_posting($mode, &$options, $poll = array())
 		phpbb::$db->sql_query($sql);
 	}
 
-	// And restore it
-	phpbb::$user->data = $old_data;
-	$auth = $old_auth;
+	if (!$real_poster)
+	{
+		// And restore it
+		phpbb::$user->data = $old_data;
+		$auth = $old_auth;
+	}
 
 	return $return;
 }

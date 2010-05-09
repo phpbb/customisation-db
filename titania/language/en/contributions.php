@@ -121,6 +121,9 @@ $lang = array_merge($lang, array(
 [color=blue][b]The phpBB Team is not responsible nor required to provide support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Modifications Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]-->[b]Modification support[/b]<--[/url][/size]',
+	'MOD_REPLY_PUBLIC'						=> '[b][color=darkred]Modification validated/released[/color]
+
+Notes:[/b] %s',
 	'MOD_UPDATE_PUBLIC'						=> '[color=darkred][b]MOD Updated to version %s
 See first post for Download Link[/b][/color]',
 	'MPV_RESULTS'							=> '<strong>Please check over the MPV results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
@@ -177,6 +180,9 @@ See first post for Download Link[/b][/color]',
 [color=blue][b]The phpBB Team is not responsible nor required to provide support for this Style. By installing this Style, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]-->[b]Style support[/b]<--[/url][/size]',
+	'STYLE_REPLY_PUBLIC'					=> '[b][color=darkred]Style validated/released[/color]
+
+Notes: %s[/b]',
 	'STYLE_UPDATE_PUBLIC'					=> '[color=darkred][b]Style Updated to version %s
 See first post for Download Link[/b][/color]',
 	'SUBDIRECTORY_LIMIT'					=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
