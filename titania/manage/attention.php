@@ -103,7 +103,7 @@ if ($attention_id || ($object_type && $object_id))
 				trigger_error('NO_POST');
 			}
 
-			// Close or approve the report
+			// Close the report
 			if ($close)
 			{
 				$post->post_reported = false;
@@ -124,6 +124,15 @@ if ($attention_id || ($object_type && $object_id))
 					phpbb::$db->sql_query($sql);
 				}
 			}
+
+			// Disapprove the post
+			if ($disapprove)
+			{
+				// Delete the post
+				$post->delete();
+			}
+
+			// Approve the post
 			if ($approve)
 			{
 				$post->post_approved = 1;
