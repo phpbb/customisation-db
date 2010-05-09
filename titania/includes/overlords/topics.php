@@ -209,6 +209,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sort->result_lang = 'TOTAL_TOPICS';
 
 		$topic_ids = array();
+		$switch_on_sticky = true; // Display the extra block after stickies end?  Not used when not sorting with stickies first
 
 		$sql_ary = array(
 			'SELECT' => 't.*',
@@ -295,6 +296,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 					titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
 				}
+
+				// Do not order stickies first
+				$sql_ary['ORDER_BY'] = $sort->get_order_by();
+				$switch_on_sticky = false;
 			break;
 
 			case 'author_tracker' :
@@ -324,7 +329,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 					),
 				));
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
+
+				// Do not order stickies first
 				$sql_ary['ORDER_BY'] = $sort->get_order_by();
+				$switch_on_sticky = false;
 			break;
 
 			case 'support' :
@@ -382,7 +390,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$topic->__set_array($row);
 
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
-				'S_TOPIC_TYPE_SWITCH'		=> ($last_was_sticky && !$topic->topic_sticky) ? true : false,
+				'S_TOPIC_TYPE_SWITCH'		=> ($switch_on_sticky && $last_was_sticky && !$topic->topic_sticky) ? true : false,
 			)));
 
 			$last_was_sticky = $topic->topic_sticky;
