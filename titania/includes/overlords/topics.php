@@ -248,7 +248,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			break;
 
 			case 'queue_discussion' :
-				$page_url = titania_url::build_url('manage/queue_discussion');
+				$base_url = titania_url::build_url('manage/queue_discussion');
+				$page_url = titania_url::append_url($base_url, array('queue' => titania_types::$types[$options['topic_category']]->url));
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_QUEUE_DISCUSSION;
 
 				// Only display those in which the users are authed
