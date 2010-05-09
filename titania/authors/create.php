@@ -67,7 +67,7 @@ if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 		'contrib_type'			=> request_var('contrib_type', 0),
 		'contrib_name_clean'	=> utf8_normalize_nfc(request_var('permalink', '', true)),
 		'contrib_visible'		=> 1,
-		'contrib_demo'			=> $contrib_demo,
+		'contrib_demo'			=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate') || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE) ? $contrib_demo : titania::$contrib->contrib_demo,
 	));
 }
 
@@ -130,6 +130,8 @@ $message->display();
 $template->assign_vars(array(
 	'S_POST_ACTION'			=> titania_url::build_url('author/' . htmlspecialchars_decode(phpbb::$user->data['username_clean']) . '/create'),
 	'S_CREATE'				=> true,
+	'S_STYLE'				=> TITANIA_TYPE_STYLE,
+	'S_CAN_EDIT_STYLE_DEMO'	=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate')) ? true : false,
 
 	'SCREENSHOT_UPLOADER'	=> $screenshot->parse_uploader('posting/attachments/simple.html'),
 	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(request_var('permalink', '', true)),

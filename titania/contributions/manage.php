@@ -90,7 +90,7 @@ if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 {
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
-		'contrib_demo'			=> $contrib_demo,
+		'contrib_demo'			=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate') || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE) ? $contrib_demo : titania::$contrib->contrib_demo,
 	));
 }
 
@@ -323,6 +323,7 @@ phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
 	'S_EDIT_SUBJECT'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 	'S_IS_MODERATOR'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
+	'S_CAN_EDIT_STYLE_DEMO'		=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate') || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE) ? true : false,
 
 	'CONTRIB_PERMALINK'			=> $permalink,
 	'S_CONTRIB_TYPE'            => titania::$contrib->contrib_type,

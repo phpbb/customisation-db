@@ -28,7 +28,7 @@
 				<dl>
 					<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
 					<dd>
-						<select name="contrib_type" id="contrib_type">
+						<select name="contrib_type" id="contrib_type"<!-- IF not S_CAN_EDIT_STYLE_DEMO --> onchange="if (this.value == {S_STYLE}) { $('#demo_url_container').hide(); } else  { $('#demo_url_container').show(); }"<!-- ENDIF -->>
 							<!-- BEGIN type_select -->
 							<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{type_select.NAME}</option>
 							<!-- END type_select -->
@@ -102,12 +102,14 @@
 						<textarea class="inputbox" name="nonactive_coauthors" id="nonactive_coauthors" rows="2" cols="20">{NONACTIVE_COAUTHORS}</textarea>
 					</dd>
 				</dl>
-				<dl>
+				<!-- IF S_CAN_EDIT_STYLE_DEMO or S_CREATE-->
+				<dl id="demo_url_container">
 					<dt><label for="demo_url">{L_DEMO_URL}:</label><br /><span>{L_DEMO_URL_EXPLAIN}</span></dt>
 					<dd>
 						<input class="inputbox" type="text" name="demo_url" id="demo_url" value="{U_VIEW_DEMO}" />
 					</dd>
 				</dl>
+				<!-- ENDIF -->
 			</fieldset>
 
 			<h3>{L_SCREENSHOTS}</h3>

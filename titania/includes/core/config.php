@@ -46,6 +46,9 @@ class titania_config extends titania_object
 			'demo_style_path'			=> array('default' => ''),
 			'demo_style_url'			=> array('default' => ''),
 
+			// Allow non-team members to modify the style demo URL?
+			'can_modify_style_demo_url'	=> array('default' => true),
+
 			// Style to display
 			'style'						=> array('default' => 'default'),
 
