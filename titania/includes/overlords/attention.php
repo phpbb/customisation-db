@@ -141,19 +141,6 @@ class attention_overlord
 			return;
 		}
 		
-		$additionnal = array();
-		if (isset($options['only_closed']))
-		{
-			$additionnal = array('open' => 0, 'closed' => 1);
-		}
-		else if (isset($options['display_closed'])) 
-		{
-			$additionnal = array('open' => 1, 'closed' => 1);
-		}
-		if (sizeof($additionnal))
-		{
-			titania_url::$params = array_merge(titania_url::$params, $additionnal);
-		}
 		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 		// Get the data
