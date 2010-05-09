@@ -211,7 +211,7 @@ class titania_revision extends titania_database_object
 							'post_text'				=> $body_reply
 						);
 						$options_reply = array_merge($options_reply, $options);
-						phpbb_posting('reply', $options_reply);
+						phpbb_posting('reply', $options_reply, true);
 					}
 					else
 					{
@@ -223,6 +223,18 @@ class titania_revision extends titania_database_object
 						);
 						$options_post = array_merge($options_post, $options);
 						$topic_id = phpbb_posting('post', $options_post);
+						
+						// We reply to the contrib release topic
+						$body_reply = sprintf(phpbb::$user->lang[titania_types::$types[$this->contrib->contrib_type]->reply_public],
+							''
+						);
+						$options_reply = array(
+							'topic_title'			=> 'Re: ' . $this->contrib->contrib_name,
+							'post_text'				=> $body_reply,
+							'topic_id'				=> $topic_id,
+						);
+						$options_reply = array_merge($options, $options_reply);
+						phpbb_posting('reply', $options_reply, true);
 					}
 				}
 
