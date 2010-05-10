@@ -1,8 +1,10 @@
-Subject: Update Notification - {NAME}
+Subject: Notification - {NAME}
 
 Hello {USERNAME},
 
-You are receiving this notification because you are watching the area in which {NAME} has been posted in the phpBB Customisation Database. 
+You are receiving this notification because you are subscribed to be notified of posts within a customisation located in the phpBB Customisation Database.
 
-You may view the update at the link below:
+The topic "{NAME}" is newly started or has received a response.
+
+You may view the post by visiting the link below:
 {U_VIEW}

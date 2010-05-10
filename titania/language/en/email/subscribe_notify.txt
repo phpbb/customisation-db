@@ -2,7 +2,7 @@ Subject: Update Notification - {NAME}
 
 Hello {USERNAME},
 
-You are receiving this notification because you are watching {NAME} in the phpBB Customisation Database. 
+You are receiving this notification because you are subscribed to the "{NAME}" customisation in the phpBB Customisation Database.
 
-You may view the update at the link below:
+If you would like to view the update, please click on the link below:
 {U_VIEW}
