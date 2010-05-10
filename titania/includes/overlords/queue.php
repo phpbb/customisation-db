@@ -264,7 +264,8 @@ class queue_overlord
 
 			$quick_actions['REPACK'] = titania_url::append_url($contrib->get_url('revision'), array('repack' => $row['revision_id']));
 
-			$quick_actions['ALTER_NOTES'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes'));
+			// This allows you to alter the author submitted notes to the validation team, not really useful as the field's purpose was changed, so commenting out
+			//$quick_actions['ALTER_NOTES'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes'));
 
 			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
