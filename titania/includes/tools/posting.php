@@ -514,6 +514,11 @@ class titania_posting
 
 		// Submit check...handles running $post->post_data() if required
 		$submit = $message_object->submit_check();
+		
+		// Do we subscribe to actual topic?
+		$is_subscribed = (($mode == 'edit' || $mode == 'reply') && titania_subscriptions::is_subscribed(TITANIA_TOPIC, $post_object->topic->topic_id)) ? true : false;
+		// Do we use quick_reply?
+		$quick_reply = request_var('quick_reply', 0);
 
 		if ($submit)
 		{
@@ -552,9 +557,10 @@ class titania_posting
 				$post_object->submit();
 
 				$message_object->submit($post_object->post_access);
-
+				
 				// Did they want to subscribe?
-				if (isset($_POST['notify']) && phpbb::$user->data['is_registered'])
+				$notify_set = (!isset($_POST['notify']) && !$quick_reply && phpbb::$user->data['user_notify'] && !$is_subscribed) ? false : true;
+				if ((isset($_POST['notify']) || (phpbb::$user->data['user_notify'] && !$is_subscribed && $notify_set && $post_object->post_type == TITANIA_SUPPORT)) && phpbb::$user->data['is_registered'])
 				{
 					titania_subscriptions::subscribe(TITANIA_TOPIC, $post_object->topic->topic_id);
 				}
@@ -600,8 +606,10 @@ class titania_posting
 			phpbb::$template->assign_var('ERROR', implode('<br />', $message_object->error));
 		}
 
-		$is_subscribed = (($mode == 'edit' || $mode == 'reply') && titania_subscriptions::is_subscribed(TITANIA_TOPIC, $post_object->topic->topic_id)) ? true : false;
-		phpbb::$template->assign_var('S_NOTIFY_ALLOWED', ((phpbb::$user->data['is_registered'] && !$is_subscribed) ? true : false));
+		phpbb::$template->assign_vars(array(
+			'S_NOTIFY_ALLOWED'	=> (phpbb::$user->data['is_registered'] && !$is_subscribed) ? true : false,
+			'S_NOTIFY_CHECKED'	=> (phpbb::$user->data['is_registered'] && !$is_subscribed && phpbb::$user->data['user_notify']) ? ' checked=checked' : '',
+		));
 
 		$message_object->display();
 	}
