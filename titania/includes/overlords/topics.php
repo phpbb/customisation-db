@@ -319,13 +319,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 				$sql_ary['SELECT'] .= ', cat.category_name, contrib.contrib_name';
 
-				// No tracking data if guest user so we initialise left_join to empty array
-				if (!phpbb::$user->data['is_registered'])
-				{
-					$sql_ary['LEFT_JOIN'] = array();
-				}
-
-				$sql_ary['LEFT_JOIN'] = array_merge($sql_ary['LEFT_JOIN'], array(
+				$sql_ary['LEFT_JOIN'] = array_merge(((isset($sql_ary['LEFT_JOIN'])) ? $sql_ary['LEFT_JOIN'] : array()), array(
 					array(
 						'FROM'	=> array(TITANIA_CONTRIBS_TABLE	=> 'contrib'),
 						'ON'	=> 'contrib.contrib_id = t.parent_id',
