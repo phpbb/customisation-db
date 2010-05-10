@@ -544,11 +544,17 @@ class titania_contrib_tools
 	* Install a style on the demo board.
 	*
 	* @param string $phpbb_root_path
+	* @param int queue_id of style to install 
 	*/
-	function install_demo_style($phpbb_root_path)
+	function install_demo_style($phpbb_root_path, $queue_id = false)
 	{
 		phpbb::$user->add_lang('acp/styles');
 
+		if (!$queue_id)
+		{			
+			return false;
+		}
+		
 		if ($phpbb_root_path[strlen($phpbb_root_path) - 1] != '/')
 		{
 			$phpbb_root_path .= '/';
@@ -589,7 +595,6 @@ class titania_contrib_tools
 			$this->extract($this->original_zip, $this->unzip_dir);
 		}
 		
-		$queue_id = request_var('q', 0);
 	    $sql = 'SELECT contrib_id FROM ' . TITANIA_QUEUE_TABLE . '
 		    WHERE queue_id = ' . $queue_id;
 		$result = phpbb::$db->sql_query($sql);
