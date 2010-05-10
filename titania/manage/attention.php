@@ -190,6 +190,8 @@ if ($attention_id || ($object_type && $object_id))
 
 				'U_VIEW'			=> $post->get_url(),
 				'U_EDIT'			=> $post->get_url('edit'),
+
+				'SECTION_NAME'		=> '<a href="' . $post->get_url() . '">' . censor_text($post->post_subject) . '</a> - ' . phpbb::$user->lang['ATTENTION'],
 			));
 
 			$title = censor_text($post->post_subject);
@@ -213,6 +215,8 @@ if ($attention_id || ($object_type && $object_id))
 
 				'U_VIEW'			=> $contrib->get_url(),
 				'U_EDIT'			=> $contrib->get_url('manage'),
+
+				'SECTION_NAME'		=> '<a href="' . $contrib->get_url() . '">' . censor_text($contrib->contrib_name) . '</a>  - ' . phpbb::$user->lang['ATTENTION'],
 			));
 
 			$title = censor_text($contrib->contrib_name);
