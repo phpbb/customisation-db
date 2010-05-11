@@ -236,7 +236,7 @@ class titania_cache extends acm
 		foreach ($author_block[$user_id] as $contrib_id => $data)
 		{
 			// If approved, or new and doesn't require approval, or the user is viewing their own, or TITANIA_ACCESS_TEAMS, add them to the list
-			if (phpbb::$user->data['user_id'] == $user_id || (!titania::$config->require_validation && $data['status'] == TITANIA_CONTRIB_NEW) || $data['status'] == TITANIA_CONTRIB_APPROVED || titania::$access_level == TITANIA_ACCESS_TEAMS)
+			if (phpbb::$user->data['user_id'] == $user_id || (!titania::$config->require_validation && $data['status'] == TITANIA_CONTRIB_NEW) || in_array($data['status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) || titania::$access_level == TITANIA_ACCESS_TEAMS)
 			{
 				if (!$active || $data['active'])
 				{

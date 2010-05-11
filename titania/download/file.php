@@ -77,8 +77,8 @@ if (!$attachment)
 	trigger_error('ERROR_NO_ATTACHMENT');
 }
 
-// Don't allow downloads of revisions for cleaned items unless on the team or an author.
-/*if ($attachment['object_type'] == TITANIA_CONTRIB)
+// Don't allow downloads of revisions for TITANIA_CONTRIB_DOWNLOAD_DISABLED items unless on the team or an author.
+if ($attachment['object_type'] == TITANIA_CONTRIB)
 {
 	$sql = 'SELECT contrib_id FROM ' . TITANIA_REVISIONS_TABLE . '
 		WHERE  attachment_id = ' . $attachment['attachment_id'];
@@ -92,12 +92,12 @@ if (!$attachment)
 		trigger_error('NO_ATTACHMENT_SELECTED');
 	}
 
-	if ($contrib->contrib_status == TITANIA_CONTRIB_CLEANED && titania::$access_level != TITANIA_ACCESS_TEAMS && !$contrib->is_author && !$contrib->is_active_coauthor)
+	if ($contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && titania::$access_level != TITANIA_ACCESS_TEAMS && !$contrib->is_author && !$contrib->is_active_coauthor)
 	{
 		trigger_error('NO_ATTACHMENT_SELECTED');
 	}
 	unset($contrib);
-}*/
+}
 
 if ($thumbnail)
 {

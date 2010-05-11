@@ -208,9 +208,9 @@ class titania_contribution extends titania_message_object
 			}
 		}
 
-		if ($this->contrib_status == TITANIA_CONTRIB_CLEANED && !($this->is_author ||$this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')))
+		if (in_array($this->contrib_status, array(TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED)) && !($this->is_author ||$this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')))
 		{
-			// Hide cleaned contribs for non-(authors/moderators)
+			// Hide hidden and disabled contribs for non-(authors/moderators)
 			return false;
 		}
 
@@ -264,7 +264,7 @@ class titania_contribution extends titania_message_object
 	 */
 	public function get_revisions()
 	{
-		if (sizeof($this->revisions))
+		if (sizeof($this->revisions) || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !titania_types::$types[$this->contrib_type]->acl_get('moderate')))
 		{
 			return;
 		}
@@ -304,7 +304,7 @@ class titania_contribution extends titania_message_object
 	 */
 	public function get_download($revision_id = false)
 	{
-		if ($this->download)
+		if ($this->download || $this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED)
 		{
 			return;
 		}
@@ -371,8 +371,13 @@ class titania_contribution extends titania_message_object
 			'DOWNLOAD_NAME'					=> (isset($this->download['revision_name'])) ? censor_text($this->download['revision_name']) : '',
 			'DOWNLOAD_VERSION'				=> (isset($this->download['revision_version'])) ? censor_text($this->download['revision_version']) : '',
 
-			'S_CONTRIB_CLEANED'				=> ($this->contrib_status == TITANIA_CONTRIB_CLEANED) ? true : false,
+			// Contribution Status
+			'S_CONTRIB_NEW'					=> ($this->contrib_status == TITANIA_CONTRIB_NEW) ? true : false,
 			'S_CONTRIB_VALIDATED'			=> ($this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
+			'S_CONTRIB_CLEANED'				=> ($this->contrib_status == TITANIA_CONTRIB_CLEANED) ? true : false,
+			'S_CONTRIB_DOWNLOAD_DISABLED'	=> ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) ? true : false,
+			'S_CONTRIB_HIDDEN'				=> ($this->contrib_status == TITANIA_CONTRIB_HIDDEN) ? true : false,
+			'S_CONTRIB_DISABLED'			=> ($this->contrib_status == TITANIA_CONTRIB_DISABLED) ? true : false,
 
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
 		);
@@ -383,10 +388,10 @@ class titania_contribution extends titania_message_object
 			$vars = array_merge($vars, array(
 				'CONTRIB_TYPE'					=> titania_types::$types[$this->contrib_type]->lang,
 
-				'U_CONTRIB_MANAGE'				=> ((($this->is_author || $this->is_active_coauthor) && $this->contrib_status != TITANIA_CONTRIB_CLEANED) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('manage') : '',
+				'U_CONTRIB_MANAGE'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('manage') : '',
 				'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
-				'U_NEW_REVISION'				=> ((($this->is_author || $this->is_active_coauthor) && $this->contrib_status != TITANIA_CONTRIB_CLEANED) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('revision') : '',
-				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && ((($this->is_author || $this->is_active_coauthor) && $this->contrib_status != TITANIA_CONTRIB_CLEANED) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('view'))) ? $this->get_url('queue_discussion') : '',
+				'U_NEW_REVISION'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('revision') : '',
+				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('view'))) ? $this->get_url('queue_discussion') : '',
 				'U_VIEW_CONTRIB'				=> $this->get_url(),
 
 				'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
@@ -487,7 +492,7 @@ class titania_contribution extends titania_message_object
 			phpbb::$db->sql_freeresult();
 		}
 
-		if (!$this->contrib_id && (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED))
+		if (!$this->contrib_id && (!titania::$config->require_validation || in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))))
 		{
 			// Increment the contrib counter
 			$this->change_author_contrib_count($this->contrib_user_id);
@@ -495,6 +500,7 @@ class titania_contribution extends titania_message_object
 			// Increment the count for this type
 			titania_types::increment_count($this->contrib_type);
 		}
+
 		// Clear the author contribs cache
 		titania::$cache->reset_author_contribs($this->contrib_user_id);
 
@@ -554,24 +560,11 @@ class titania_contribution extends titania_message_object
 		}
 		phpbb::$db->sql_freeresult($result);
 
+		// First we are essentially resetting the contrib and category counts back to "New"
 		switch ($old_status)
 		{
-			case TITANIA_CONTRIB_NEW :
-			case TITANIA_CONTRIB_CLEANED :
-				if ($new_status == TITANIA_CONTRIB_APPROVED)
-				{
-					// Increment the count for the authors
-					$this->change_author_contrib_count($author_list);
-
-					// Increment the count for this type
-					titania_types::increment_count($this->contrib_type);
-
-					// Increment the category count
-					$this->update_category_count();
-				}
-			break;
-
 			case TITANIA_CONTRIB_APPROVED :
+			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
 				// Decrement the count for the authors
 				$this->change_author_contrib_count($author_list, '-', true);
 
@@ -580,6 +573,22 @@ class titania_contribution extends titania_message_object
 
 				// Decrement the category count
 				$this->update_category_count('-', true);
+			break;
+		}
+
+		// Now, for the new status, if approved, we increment the contrib and category counts
+		switch ($this->contrib_status)
+		{
+			case TITANIA_CONTRIB_APPROVED :
+			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
+				// Increment the count for the authors
+				$this->change_author_contrib_count($author_list);
+
+				// Increment the count for this type
+				titania_types::increment_count($this->contrib_type);
+
+				// Increment the category count
+				$this->update_category_count();
 			break;
 		}
 
@@ -936,7 +945,7 @@ class titania_contribution extends titania_message_object
 		}
 
 		// Don't change if it's not approved
-		if ($force == false && (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED))
+		if ($force == false && (titania::$config->require_validation && !in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))))
 		{
 			return;
 		}
@@ -1008,7 +1017,7 @@ class titania_contribution extends titania_message_object
 	*/
 	public function update_category_count($dir = '+', $force = false)
 	{
-		if (titania::$config->require_validation && $this->contrib_status != TITANIA_CONTRIB_APPROVED && !$force)
+		if (titania::$config->require_validation && !in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) && !$force)
 		{
 			return;
 		}
@@ -1064,25 +1073,18 @@ class titania_contribution extends titania_message_object
 
 	public function index()
 	{
-		if ($this->contrib_status != TITANIA_CONTRIB_CLEANED)
-		{
-			$data = array(
-				'title'			=> $this->contrib_name,
-				'text'			=> $this->contrib_desc,
-				'text_uid'		=> $this->contrib_desc_uid,
-				'text_bitfield'	=> $this->contrib_desc_bitfield,
-				'text_options'	=> $this->contrib_desc_options,
-				'author'		=> $this->contrib_user_id,
-				'date'			=> $this->contrib_last_update,
-				'url'			=> titania_url::unbuild_url($this->get_url()),
-				'approved'		=> (!titania::$config->require_validation || $this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
-			);
+		$data = array(
+			'title'			=> $this->contrib_name,
+			'text'			=> $this->contrib_desc,
+			'text_uid'		=> $this->contrib_desc_uid,
+			'text_bitfield'	=> $this->contrib_desc_bitfield,
+			'text_options'	=> $this->contrib_desc_options,
+			'author'		=> $this->contrib_user_id,
+			'date'			=> $this->contrib_last_update,
+			'url'			=> titania_url::unbuild_url($this->get_url()),
+			'approved'		=> ((!titania::$config->require_validation && $this->contrib_status == TITANIA_CONTRIB_NEW) || in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
+		);
 
-			titania_search::index($this->contrib_type, $this->contrib_id, $data);
-		}
-		else
-		{
-			titania_search::delete($this->contrib_type, $this->contrib_id);
-		}
+		titania_search::index($this->contrib_type, $this->contrib_id, $data);
 	}
 }

@@ -123,8 +123,7 @@ class titania_sync
 		switch ($mode)
 		{
 			case 'validated' :
-				$sql = 'SELECT contrib_id, contrib_status FROM ' . TITANIA_CONTRIBS_TABLE . '
-					WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED .
+				$sql = 'SELECT contrib_id, contrib_status FROM ' . TITANIA_CONTRIBS_TABLE .
 					(($contrib_id) ? ' AND contrib_id = ' . (int) $contrib_id : '');
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
@@ -150,7 +149,6 @@ class titania_sync
 				$data = array();
 
 				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE . '
-					WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED . '
 						ORDER BY contrib_id ASC';
 				if ($start === false || $limit === false)
 				{
@@ -174,7 +172,7 @@ class titania_sync
 						'author'		=> $row['contrib_user_id'],
 						'date'			=> $row['contrib_last_update'],
 						'url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'],
-						'approved'		=> (!titania::$config->require_validation || $row['contrib_status'] == TITANIA_CONTRIB_APPROVED) ? true : false,
+						'approved'		=> ((!titania::$config->require_validation && $row['contrib_status'] == TITANIA_CONTRIB_NEW) || in_array($row['contrib_status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
 					);
 				}
 				phpbb::$db->sql_freeresult($result);
@@ -392,7 +390,7 @@ class titania_sync
 			'WHERE'		=> 'cic.contrib_id = c.contrib_id
 				AND ' . phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $child_list)) . '
 				AND c.contrib_visible = 1' .
-				((titania::$config->require_validation) ? ' AND c.contrib_status = ' . TITANIA_CONTRIB_APPROVED : ''),
+				((titania::$config->require_validation) ? ' AND ' . phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) : ''),
 		);
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		phpbb::$db->sql_query($sql);
@@ -472,7 +470,7 @@ class titania_sync
 			$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
 				WHERE contrib_type = ' . (int) $type_id . '
 					AND contrib_user_id = ' . (int) $user_id .
-					((titania::$config->require_validation) ? ' AND contrib_status = ' . TITANIA_CONTRIB_APPROVED : '');
+					((titania::$config->require_validation) ? ' AND ' . phpbb::$db->sql_in_set('contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) : '');
 			phpbb::$db->sql_query($sql);
 			$cnt = phpbb::$db->sql_fetchfield('cnt');
 
@@ -484,7 +482,7 @@ class titania_sync
 				WHERE c.contrib_type = ' . (int) $type_id . '
 					AND cc.user_id = ' . (int) $user_id . '
 					AND c.contrib_id = cc.contrib_id' .
-					((titania::$config->require_validation) ? ' AND c.contrib_status = ' . TITANIA_CONTRIB_APPROVED : '');
+					((titania::$config->require_validation) ? ' AND ' . phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) : '');
 			phpbb::$db->sql_query($sql);
 			$cnt = phpbb::$db->sql_fetchfield('cnt');
 

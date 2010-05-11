@@ -21,55 +21,14 @@
 			</li>
 		</ul>
 		<ul class="topiclist cplist" id="modlist">
-		<!-- BEGIN contribs -->
-			<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
-				<dl class="icon" style="background-image: url({contribs.FOLDER_IMG_SRC}); background-repeat: no-repeat;">
-					<dt><a class="topictitle" href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a>
-					<!-- IF contribs.S_CONTRIB_CLEANED -->
-						<img src="{T_TITANIA_THEME_PATH}/images/icon_cleaned_contrib.gif" title="{L_CLEANED_CONTRIB}" alt="{L_CLEANED_CONTRIB}" />
-					<!-- ELSEIF not contribs.S_CONTRIB_VALIDATED -->
-						<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_NOT_VALIDATED}" title="{L_NOT_VALIDATED}" />
-					<!-- ENDIF -->
-					</dt>
-					<dd class="type">{contribs.CONTRIB_TYPE}</dd>
-					<dd class="general phpbb-version">
-						<!-- IF contribs.PHPBB_VERSION -->
-							{contribs.PHPBB_VERSION}
-						<!-- ELSE -->
-							<!-- IF .contribs.phpbb_versions -->
-							<select id="phpbb_versions">
-								<!-- BEGIN phpbb_versions -->
-									<option>{contribs.phpbb_versions.NAME}</option>
-								<!-- END phpbb_versions -->
-							</select>
-							<!-- ELSE -->
-							{L_NO_REVISIONS}
-							<!-- ENDIF -->
-						<!-- ENDIF -->
-					</dd>
-					<!-- IF contribs.U_CONTRIB_MANAGE or contribs.U_NEW_REVISION or contribs.U_QUEUE_DISCUSSION -->
-					<dd class="general">
-						<!-- IF contribs.U_QUEUE_DISCUSSION -->&nbsp;<a href="{contribs.U_QUEUE_DISCUSSION}" title="{L_QUEUE_DISCUSSION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_discuss.gif" alt="{L_QUEUE_DISCUSSION}" /></a><!-- ENDIF -->
-						<!-- IF contribs.U_CONTRIB_MANAGE -->&nbsp;<a href="{contribs.U_CONTRIB_MANAGE}" title="{L_CONTRIB_MANAGE}"><img src="{T_TITANIA_THEME_PATH}/images/icon_settings.gif" alt="{L_CONTRIB_MANAGE}" /></a><!-- ENDIF -->
-						<!-- IF contribs.U_NEW_REVISION -->&nbsp;<a href="{contribs.U_NEW_REVISION}" title="{L_NEW_REVISION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_new_revision.gif" alt="{L_NEW_REVISION}" /></a><!-- ENDIF -->		
-					</dd>
-					<!-- ENDIF -->
-				</dl>
-			</li>
-		<!-- BEGINELSE -->
-		<li class="row bg1">
-		     <dl>
-			    <dt class="simple">{L_NO_CONTRIBS}</dt>
-			</dl>
-		</li>
-		<!-- END contribs -->
-		</ul>	
+			<!-- INCLUDE common/contribution_list.html -->
+		</ul>
 		<ul class="linklist">
 			<li class="rightside pagination">
 				<!-- IF TOTAL_RESULTS -->{TOTAL_RESULTS}<!-- ENDIF -->
 				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
 			</li>
-		</ul>		
+		</ul>
 	<span class="corners-bottom main-corners"><span></span></span></div>
 </div>
 

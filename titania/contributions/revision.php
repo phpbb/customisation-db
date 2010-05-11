@@ -24,9 +24,9 @@ if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !
 {
 	titania::needs_auth();
 }
-else if (titania::$contrib->contrib_status == TITANIA_CONTRIB_CLEANED && !(phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
+else if (in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED)) && !(phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
 {
-	// Editing cleaned contribs requires moderation permissions
+	// Editing cleaned/disabled contribs requires moderation permissions
 	titania::needs_auth();
 }
 

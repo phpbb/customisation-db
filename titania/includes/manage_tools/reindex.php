@@ -39,7 +39,7 @@ class reindex
 
 			case 1 :
 				$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
-					WHERE contrib_status <> ' . TITANIA_CONTRIB_CLEANED;
+					WHERE ' . phpbb::$db->sql_in_set('contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED));
 				phpbb::$db->sql_query($sql);
 				$total = phpbb::$db->sql_fetchfield('cnt');
 				phpbb::$db->sql_freeresult();

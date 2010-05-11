@@ -23,7 +23,7 @@ load_contrib();
 // Used later when submitting
 $contrib_clone = clone titania::$contrib;
 
-if (!(((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) && titania::$contrib->contrib_status != TITANIA_CONTRIB_CLEANED) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
+if (!(((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) && !in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
 {
 	titania::needs_auth();
 }
@@ -37,7 +37,14 @@ $active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('act
 $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
 $error = array();
 $contrib_status = request_var('contrib_status', (int) titania::$contrib->contrib_status);
-$status_list = array(TITANIA_CONTRIB_NEW => 'CONTRIB_NEW', TITANIA_CONTRIB_APPROVED => 'CONTRIB_APPROVED', TITANIA_CONTRIB_CLEANED => 'CONTRIB_CLEANED');
+$status_list = array(
+	TITANIA_CONTRIB_NEW					=> 'CONTRIB_NEW',
+	TITANIA_CONTRIB_APPROVED			=> 'CONTRIB_APPROVED',
+	TITANIA_CONTRIB_DOWNLOAD_DISABLED	=> 'CONTRIB_DOWNLOAD_DISABLED',
+	TITANIA_CONTRIB_CLEANED				=> 'CONTRIB_CLEANED',
+	TITANIA_CONTRIB_HIDDEN				=> 'CONTRIB_HIDDEN',
+	TITANIA_CONTRIB_DISABLED			=> 'CONTRIB_DISABLED',
+);
 $permalink = utf8_normalize_nfc(request_var('permalink', titania::$contrib->contrib_name_clean, true));
 
 /**
