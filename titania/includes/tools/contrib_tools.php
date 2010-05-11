@@ -544,16 +544,11 @@ class titania_contrib_tools
 	* Install a style on the demo board.
 	*
 	* @param string $phpbb_root_path
-	* @param int queue_id of style to install 
+	* @param mixed contrib object
 	*/
-	function install_demo_style($phpbb_root_path, $queue_id = false)
+	function install_demo_style($phpbb_root_path, $contrib)
 	{
 		phpbb::$user->add_lang('acp/styles');
-
-		if (!$queue_id)
-		{			
-			return false;
-		}
 		
 		if ($phpbb_root_path[strlen($phpbb_root_path) - 1] != '/')
 		{
@@ -593,17 +588,11 @@ class titania_contrib_tools
 
 			// Unzip to our temp directory
 			$this->extract($this->original_zip, $this->unzip_dir);
-		}
-		
-	    $sql = 'SELECT contrib_id FROM ' . TITANIA_QUEUE_TABLE . '
-		    WHERE queue_id = ' . $queue_id;
-		$result = phpbb::$db->sql_query($sql);
-		$object_row = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);		
+		}	
 
 		$package_root = $this->find_root(false, 'style.cfg');
 		$stylecfg = parse_cfg_file($this->unzip_dir . $package_root . '/style.cfg');
-		$style_root = $phpbb_root_path . 'styles/' . $object_row['contrib_id'] . '/';
+		$style_root = $phpbb_root_path . 'styles/' . $contrib->contrib_id . '/';
 
 		$this->mvdir_recursive($this->unzip_dir . $package_root, $style_root, false);
 		$this->rmdir_recursive($this->unzip_dir . $package_root);
@@ -734,7 +723,7 @@ parse_css_file = {PARSE_CSS_FILE}
 
 		// Install the style.
 								// (&$error, $action, $root_path, &$id, $name, $path, $copyright, $active, $default, &$style_row, $template_root_path = false, $template_path = false, $theme_root_path = false, $theme_path = false, $imageset_root_path = false, $imageset_path = false)
-		if (!$styles->install_style($error, 'install', $style_root, $style_id, $stylecfg['name'], $object_row['contrib_id'], $stylecfg['copyright'], true, false, $style_row))
+		if (!$styles->install_style($error, 'install', $style_root, $style_id, $stylecfg['name'], $contrib->contrib_id, $stylecfg['copyright'], true, false, $style_row))
 		{
 			if ($error != array(phpbb::$user->lang['STYLE_ERR_NAME_EXIST']))
 			{
