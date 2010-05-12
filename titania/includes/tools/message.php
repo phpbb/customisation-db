@@ -285,8 +285,13 @@ class titania_message
 	{
 		// Add the forum key
 		add_form_key($this->settings['form_name']);
+		
+		$qr_hidden_fields = array(
+			'notify'	=> (phpbb::$user->data['user_notify'] && $this->post_object->post_type == TITANIA_SUPPORT) ? true : false,
+		);
 
 		phpbb::$template->assign_vars(array(
+			'QR_HIDDEN_FIELDS'	=> build_hidden_fields($qr_hidden_fields),
 			'S_QUICK_REPLY'		=> true,
 			'U_QR_ACTION'		=> $this->post_object->get_url('reply'),
 			'SUBJECT'			=> 'Re: ' . $this->post_object->topic_subject,
