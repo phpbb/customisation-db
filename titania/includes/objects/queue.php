@@ -385,9 +385,17 @@ class titania_queue extends titania_message_object
 		// Reply to the queue topic and discussion with the message
 		titania::add_lang(array('manage', 'contributions'));
 		$revision = $this->get_revision();
+
 		$notes = $this->queue_validation_notes;
 		decode_message($notes, $this->queue_validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_APPROVED'], $revision->revision_version, $notes);
+
+		// Replace empty quotes if there are no notes
+		if (!$notes)
+		{
+			$message = str_replace('[quote][/quote]', '', $message);
+		}
+
 		$this->topic_reply($message, false);
 		$this->discussion_reply($message);
 
@@ -415,7 +423,7 @@ class titania_queue extends titania_message_object
 		$contrib->get_download($this->revision_id);
 
 		$release_topic_id = $contrib->contrib_release_topic_id;
-		
+
 		if (titania_types::$types[$contrib->contrib_type]->forum_robot && titania_types::$types[$contrib->contrib_type]->forum_database)
 		{
 			// Global body and options
@@ -431,13 +439,13 @@ class titania_queue extends titania_message_object
 				$contrib->get_url(),
 				$contrib->get_url('support')
 			);
-			
+
 			$options = array(
 				'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
 				'forum_id' 				=> titania_types::$types[$contrib->contrib_type]->forum_database,
 				'topic_id'				=> $contrib->contrib_release_topic_id,
 			);
-			
+
 			if ($contrib->contrib_release_topic_id)
 			{
 				// We edit the first post of contrib release topic
@@ -447,7 +455,7 @@ class titania_queue extends titania_message_object
 				);
 				$options_edit = array_merge($options, $options_edit);
 				phpbb_posting('edit', $options_edit);
-				
+
 				// We reply to the contrib release topic
 				$body_reply = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
 					$revision->revision_version
@@ -469,7 +477,7 @@ class titania_queue extends titania_message_object
 				);
 				$options_post = array_merge($options, $options_post);
 				$release_topic_id = phpbb_posting('post', $options_post);
-				
+
 				// We reply to the contrib release topic
 				$body_reply = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public],
 					$notes
@@ -520,9 +528,17 @@ class titania_queue extends titania_message_object
 		// Reply to the queue topic and discussion with the message
 		titania::add_lang('manage');
 		$revision = $this->get_revision();
+
 		$notes = $this->queue_validation_notes;
 		decode_message($notes, $this->queue_validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_DENIED'], $revision->revision_version, $notes);
+
+		// Replace empty quotes if there are no notes
+		if (!$notes)
+		{
+			$message = str_replace('[quote][/quote]', '', $message);
+		}
+
 		$this->topic_reply($message, false);
 		$this->discussion_reply($message);
 
@@ -580,6 +596,12 @@ class titania_queue extends titania_message_object
 			$message = titania_types::$types[$contrib->contrib_type]->validation_message_deny;
 		}
 		$message = sprintf(phpbb::$user->lang[$message], $notes);
+
+		// Replace empty quotes if there are no notes
+		if (!$notes)
+		{
+			$message = str_replace('[quote][/quote]', phpbb::$user->lang['NO_NOTES'], $message);
+		}
 
 		// Parse the message
 		$message_uid = $message_bitfield = $message_options = false;
