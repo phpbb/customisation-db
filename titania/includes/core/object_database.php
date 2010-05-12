@@ -150,11 +150,21 @@ abstract class titania_database_object extends titania_object
 	*
 	* @return	bool		true when object found, else false
 	*/
-	public function load()
+	public function load($sql_id = false)
 	{
+		if ($sql_id !== false)
+		{
+			$this->{$this->sql_id_field} = (int) $sql_id;
+		}
+
+		if (!$this->{$this->sql_id_field})
+		{
+			return false;
+		}
+
 		$sql = 'SELECT ' . implode(', ', array_keys($this->object_config)) . '
 			FROM ' . $this->sql_table . '
-			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
+			WHERE ' . $this->sql_id_field . ' = ' . (int) $this->{$this->sql_id_field};
 		$result = phpbb::$db->sql_query($sql);
 		$this->sql_data = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);

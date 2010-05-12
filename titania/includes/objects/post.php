@@ -584,8 +584,17 @@ class titania_post extends titania_message_object
 	*/
 	public function hard_delete()
 	{
+		if (!$this->topic->topic_posts)
+		{
+			if (!$this->topic->load($this->topic_id))
+			{
+				return false;
+			}
+		}
+
 		// Update the postcount for the topic and submit it
 		$this->update_topic_postcount(true);
+
 		$this->topic->submit();
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors

@@ -130,6 +130,8 @@ if ($attention_id || ($object_type && $object_id))
 			{
 				// Delete the post
 				$post->delete();
+
+				redirect(titania_url::build_url(titania_url::$current_page));
 			}
 
 			// Approve the post
@@ -238,7 +240,7 @@ else
 	{
 		$closed = (isset($_POST['closed'])) ? true : false;
 		$open = (isset($_POST['open']) || !$closed) ? true : false;
-		
+
 		if ($open && $closed)
 		{
 			titania_url::$params['open'] = 1;
