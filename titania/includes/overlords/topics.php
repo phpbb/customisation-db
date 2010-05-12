@@ -297,6 +297,19 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
 				}
 
+				// Try to grab the category/contrib name
+				$sql_ary['SELECT'] .= ', cat.category_name, contrib.contrib_name';
+				$sql_ary['LEFT_JOIN'] = array_merge(((isset($sql_ary['LEFT_JOIN'])) ? $sql_ary['LEFT_JOIN'] : array()), array(
+					array(
+						'FROM'	=> array(TITANIA_CONTRIBS_TABLE	=> 'contrib'),
+						'ON'	=> 'contrib.contrib_id = t.parent_id',
+					),
+					array(
+						'FROM'	=> array(TITANIA_CATEGORIES_TABLE	=> 'cat'),
+						'ON'	=> 'cat.category_id = contrib.contrib_type',
+					),
+				));
+
 				// Do not order stickies first
 				$sql_ary['ORDER_BY'] = $sort->get_order_by();
 				$switch_on_sticky = false;
@@ -311,14 +324,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			break;
 
 			case 'all_support' :
-				$topic->object_config = array_merge($topic->object_config, array(
-					'category_name'					=> array('default' => ''),
-					'contrib_name'					=> array('default' => ''),
-				));
 				$page_url = titania_url::build_url('support/all');
 
+				// Try to grab the category/contrib name
 				$sql_ary['SELECT'] .= ', cat.category_name, contrib.contrib_name';
-
 				$sql_ary['LEFT_JOIN'] = array_merge(((isset($sql_ary['LEFT_JOIN'])) ? $sql_ary['LEFT_JOIN'] : array()), array(
 					array(
 						'FROM'	=> array(TITANIA_CONTRIBS_TABLE	=> 'contrib'),
@@ -329,6 +338,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 						'ON'	=> 'cat.category_id = contrib.contrib_type',
 					),
 				));
+
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
 
 				// Do not order stickies first
@@ -392,6 +402,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'S_TOPIC_TYPE_SWITCH'		=> ($switch_on_sticky && $last_was_sticky && !$topic->topic_sticky) ? true : false,
+
+				'TOPIC_CATEGORY'			=> (isset($row['category_name']) && $row['category_name']) ? ((isset(phpbb::$user->lang[$row['category_name']])) ? phpbb::$user->lang[$row['category_name']] : $row['category_name']) : '',
+				'TOPIC_CONTRIB_NAME'		=> (isset($row['contrib_name']) && $row['contrib_name']) ? censor_text($row['contrib_name']) : '',
 			)));
 
 			$last_was_sticky = $topic->topic_sticky;
