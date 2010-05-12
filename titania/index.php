@@ -187,10 +187,19 @@ switch ($action)
 	* Display all support topics
 	*/
 	case 'support' :
+		// Mark all topics read
+		if (request_var('mark', '') == 'topics')
+		{
+			titania_tracking::track(TITANIA_SUPPORT, 0);
+		}
+
 		// Generate the main breadcrumbs
 		titania::generate_breadcrumbs(array(
-			'ALL_SUPPORT'	=> titania_url::build_url('') . 'support/all/',
+			'ALL_SUPPORT'	=> titania_url::build_url('support/all/'),
 		));
+
+		// Mark all topics read
+		phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania_url::build_url('support/all/'), array('mark' => 'topics')));
 
 		topics_overlord::display_forums_complete('all_support');
 
@@ -198,6 +207,9 @@ switch ($action)
 		titania::page_footer(true, 'all_support.html');
 	break;
 
+	/**
+	* Display all contributions
+	*/
 	case 'contributions' :
 		// Setup the sort tool
 		$sort = new titania_sort();
