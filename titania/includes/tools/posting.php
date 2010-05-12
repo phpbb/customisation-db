@@ -514,7 +514,7 @@ class titania_posting
 
 		// Submit check...handles running $post->post_data() if required
 		$submit = $message_object->submit_check();
-		
+
 		// Do we subscribe to actual topic?
 		$is_subscribed = (($mode == 'edit' || $mode == 'reply') && titania_subscriptions::is_subscribed(TITANIA_TOPIC, $post_object->topic->topic_id)) ? true : false;
 		// Do we use quick_reply?
@@ -549,7 +549,8 @@ class titania_posting
 					$post_object->topic->topic_sticky = true;
 				}
 
-				if (!phpbb::$auth->acl_get('u_titania_post_approved'))
+				// Does the post need approval?  Never for the Queue Discussion or Queue
+				if (!phpbb::$auth->acl_get('u_titania_post_approved') && $post_object->post_type != TITANIA_QUEUE_DISCUSSION && $post_object->post_type != TITANIA_QUEUE)
 				{
 					$post_object->post_approved = false;
 				}
@@ -557,7 +558,7 @@ class titania_posting
 				$post_object->submit();
 
 				$message_object->submit($post_object->post_access);
-				
+
 				// Did they want to subscribe?
 				$notify_set = (!isset($_POST['notify']) && !$quick_reply && phpbb::$user->data['user_notify'] && !$is_subscribed) ? false : true;
 				if ((isset($_POST['notify']) || (phpbb::$user->data['user_notify'] && !$is_subscribed && $notify_set && $post_object->post_type == TITANIA_SUPPORT)) && phpbb::$user->data['is_registered'])
