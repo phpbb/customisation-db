@@ -322,8 +322,11 @@ class titania_url
 		foreach (self::split_params($args) as $name => $value)
 		{
 			self::$params[$name] = $value;
-			$_GET[$name] = $_REQUEST[$name] = $value;
 		}
+
+		// Merge the parameters into the get/request superglobals.  Merge them to prevent a parameter in the parameters part of the URL from over-writting one that is already in here
+		$_GET = array_merge(self::$params, $_GET);
+		$_REQUEST = array_merge(self::$params, $_REQUEST);
 
 		// Build the full current page url
 		self::$current_page_url = self::build_url(self::$current_page, self::$params);
