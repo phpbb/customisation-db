@@ -138,6 +138,13 @@ if ($attention_id || ($object_type && $object_id))
 			if ($approve)
 			{
 				$post->post_approved = 1;
+
+				// Increment the user's postcount if we must
+				if (!$post->post_deleted && in_array($post->post_type, titania::$config->increment_postcount))
+				{
+					phpbb::update_user_postcount($post->post_user_id);
+				}
+
 				$post->submit();
 
 				// Load z topic

@@ -455,6 +455,12 @@ class titania_post extends titania_message_object
 
 		$this->index();
 
+		// Increment the user's postcount if we must
+		if ($this->post_approved && in_array($this->post_type, titania::$config->increment_postcount))
+		{
+			phpbb::update_user_postcount($this->post_user_id);
+		}
+
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
@@ -513,6 +519,11 @@ class titania_post extends titania_message_object
 	*/
 	public function soft_delete($reason = '')
 	{
+		if ($this->post_deleted)
+		{
+			return;
+		}
+
 		$this->post_deleted = titania::$time;
 		$this->post_delete_user = phpbb::$user->data['user_id'];
 		$this->post_edit_reason = $reason;
@@ -539,6 +550,12 @@ class titania_post extends titania_message_object
 
 		parent::submit();
 
+		// Decrement the user's postcount if we must
+		if ($this->post_approved && in_array($this->post_type, titania::$config->increment_postcount))
+		{
+			phpbb::update_user_postcount($this->post_user_id, '-');
+		}
+
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
@@ -550,6 +567,11 @@ class titania_post extends titania_message_object
 	*/
 	public function undelete()
 	{
+		if (!$this->post_deleted)
+		{
+			return;
+		}
+
 		$this->post_deleted = 0;
 		$this->post_delete_user = 0;
 
@@ -574,6 +596,12 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		parent::submit();
+
+		// Increment the user's postcount if we must
+		if ($this->post_approved && in_array($this->post_type, titania::$config->increment_postcount))
+		{
+			phpbb::update_user_postcount($this->post_user_id);
+		}
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -622,6 +650,12 @@ class titania_post extends titania_message_object
 			WHERE attention_object_type = ' . TITANIA_POST . '
 				AND attention_object_id = ' . $this->post_id;
 		phpbb::$db->sql_query($sql);
+
+		// Decrement the user's postcount if we must
+		if (!$this->post_deleted && $this->post_approved && in_array($this->post_type, titania::$config->increment_postcount))
+		{
+			phpbb::update_user_postcount($this->post_user_id, '-');
+		}
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);

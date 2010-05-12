@@ -397,4 +397,20 @@ class phpbb
 
 		titania::page_footer(true, 'login_body.html');
 	}
+
+	/**
+	* Update a user's postcount
+	*
+	* @param int $user_id The user_id
+	* @param string $direction (+, -)
+	* @param int $amount The amount to add or subtract
+	*/
+	public static function update_user_postcount($user_id, $direction = '+', $amount = 1)
+	{
+		$sql = 'UPDATE ' . USERS_TABLE . '
+			SET user_posts = user_posts ' . (($direction == '+') ? '+' : '-') . ' ' . (int) $amount .
+				(($direction == '+') ? ', user_lastpost_time = ' . time() : '') . '
+			WHERE user_id = ' . (int) $user_id;
+		phpbb::$db->sql_query($sql);
+	}
 }

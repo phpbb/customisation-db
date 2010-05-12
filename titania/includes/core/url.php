@@ -176,11 +176,11 @@ class titania_url
 			// Does this field already exist in the url?  If so replace it
 			if (strpos(substr($url, strrpos($url, '/')), self::$separator . $name . '_') !== false)
 			{
-				$url = substr($url, 0, strrpos($url, '/')) . preg_replace('#' . self::$separator . $name . '_[^' . self::$separator . ']+' . self::$separator . '?#', '', substr($url, strrpos($url, '/')));
+				$url = substr($url, 0, strrpos($url, '/')) . preg_replace('#' . self::$separator . $name . '_[^' . self::$separator . ']+#', '', substr($url, strrpos($url, '/')));
 			}
 			else if (strpos(substr($url, strrpos($url, '/')), '/' . $name . '_') !== false)
 			{
-				$url = substr($url, 0, strrpos($url, '/')) . preg_replace('#/' . $name . '_[^' . self::$separator . ']+' . self::$separator . '?#', '/', substr($url, strrpos($url, '/')));
+				$url = substr($url, 0, strrpos($url, '/')) . preg_replace('#/' . $name . '_[^' . self::$separator . ']+#', '/', substr($url, strrpos($url, '/')));
 			}
 
 			if (substr($url, -1) != '/')
