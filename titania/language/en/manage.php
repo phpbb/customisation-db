@@ -113,6 +113,8 @@ phpBB MOD Team',
 	'NO_QUEUE_ITEM'						=> 'Queue item does not exist.',
 
 	'OPEN_ITEMS'						=> 'Open Items',
+	
+	'PUBLIC_NOTES'						=> 'Public release notes',
 
 	'QUEUE_APPROVE'						=> 'Awaiting Approval',
 	'QUEUE_ATTENTION'					=> 'Attention',

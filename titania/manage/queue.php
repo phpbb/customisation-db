@@ -18,6 +18,7 @@ if (!defined('IN_TITANIA'))
 
 $queue_id = request_var('q', 0);
 $queue_type = request_var('queue', '');
+$public_notes = utf8_normalize_nfc(request_var('public_notes', '', true));
 
 // Force the queue_type if we have a queue_id
 if ($queue_id)
@@ -145,7 +146,7 @@ if ($queue_id)
 
 				if ($action == 'approve')
 				{
-					$queue->approve();
+					$queue->approve($public_notes);
 
 					// Install the style on the demo board?
 					if ($contrib->contrib_type == TITANIA_TYPE_STYLE && isset($_POST['style_demo_install']) && titania::$config->demo_style_path)

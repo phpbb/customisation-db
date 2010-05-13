@@ -19,6 +19,15 @@
 		</dl>
 	</fieldset>
 	<!-- INCLUDE posting/posting_basic_editor.html -->
+	
+	<fieldset>
+		<dl>
+			<dt><label for="public_notes">{L_PUBLIC_NOTES}:</label></dt>
+		</dl>
+		<div id="message-box">
+			<textarea name="public_notes" id="public_notes" rows="10" cols="76" tabindex="2" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" class="inputbox"></textarea>
+		</div>
+	</fieldset>
 
 	<fieldset class="submit-buttons">
 		{S_HIDDEN_FIELDS}
