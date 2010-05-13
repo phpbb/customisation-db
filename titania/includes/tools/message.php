@@ -287,7 +287,7 @@ class titania_message
 		add_form_key($this->settings['form_name']);
 		
 		$qr_hidden_fields = array(
-			'notify'	=> (phpbb::$user->data['user_notify'] && $this->post_object->post_type == TITANIA_SUPPORT) ? true : false,
+			'notify'	=> (phpbb::$user->data['user_notify'] && $this->post_object->topic_type == TITANIA_SUPPORT) ? true : false,
 		);
 
 		phpbb::$template->assign_vars(array(

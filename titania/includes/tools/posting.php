@@ -515,11 +515,6 @@ class titania_posting
 		// Submit check...handles running $post->post_data() if required
 		$submit = $message_object->submit_check();
 
-		// Do we subscribe to actual topic?
-		$is_subscribed 	= (($mode == 'edit' || $mode == 'reply') && titania_subscriptions::is_subscribed(TITANIA_TOPIC, $post_object->topic->topic_id)) ? true : false;
-		$notify 		= request_var('notify', 0);
-		$s_notify		= ((isset($_POST['notify']) || $notify || $is_subscribed) && phpbb::$user->data['is_registered']) ? true : false;
-
 		if ($submit)
 		{
 			$error = $post_object->validate();
@@ -560,7 +555,7 @@ class titania_posting
 				$message_object->submit($post_object->post_access);
 
 				// Did they want to subscribe?
-				if ($s_notify)
+				if (isset($_POST['notify']) && phpbb::$user->data['is_registered'])
 				{
 					titania_subscriptions::subscribe(TITANIA_TOPIC, $post_object->topic->topic_id);
 				}
@@ -605,6 +600,9 @@ class titania_posting
 		{
 			phpbb::$template->assign_var('ERROR', implode('<br />', $message_object->error));
 		}
+		
+		// Do we subscribe to actual topic?
+		$is_subscribed 	= (($mode == 'edit' || $mode == 'reply') && titania_subscriptions::is_subscribed(TITANIA_TOPIC, $post_object->topic->topic_id)) ? true : false;
 		
 		phpbb::$template->assign_vars(array(
 			'S_NOTIFY_ALLOWED'	=> (phpbb::$user->data['is_registered'] && !$is_subscribed) ? true : false,
