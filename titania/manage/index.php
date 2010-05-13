@@ -59,11 +59,13 @@ $nav_ary = array(
 		'title'		=> 'ADMINISTRATION',
 		'url'		=> titania_url::build_url('manage/administration'),
 		'auth'		=> (phpbb::$auth->acl_get('u_titania_admin')) ? true : false,
+		'match'		=> array('categories'),
 	),
 	'categories' => array(
 		'title'		=> 'MANAGE_CATEGORIES',
 		'url'		=> titania_url::build_url('manage/categories'),
 		'auth'		=> (phpbb::$auth->acl_get('u_titania_admin')) ? true : false,
+		'display'	=> false,
 	),
 );
 

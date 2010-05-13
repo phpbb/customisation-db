@@ -460,12 +460,14 @@ class titania
 				continue;
 			}
 
-
-			phpbb::$template->assign_block_vars($block, array(
-				'L_TITLE'		=> ((isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title']) . ((isset($data['count'])) ? ' (' . (int) $data['count'] . ')' : ''),
-				'U_TITLE'		=> $data['url'],
-				'S_SELECTED'	=> ($page == $current_page) ? true : false,
-			));
+			if (!isset($data['display']) || $data['display'])
+			{
+				phpbb::$template->assign_block_vars($block, array(
+					'L_TITLE'		=> ((isset(phpbb::$user->lang[$data['title']])) ? phpbb::$user->lang[$data['title']] : $data['title']) . ((isset($data['count'])) ? ' (' . (int) $data['count'] . ')' : ''),
+					'U_TITLE'		=> $data['url'],
+					'S_SELECTED'	=> ($page == $current_page || ((isset($data['match']) && in_array($current_page, $data['match'])))) ? true : false,
+				));
+			}
 
 			$retry_current_page = false;
 		}
