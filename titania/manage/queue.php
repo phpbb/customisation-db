@@ -18,7 +18,6 @@ if (!defined('IN_TITANIA'))
 
 $queue_id = request_var('q', 0);
 $queue_type = request_var('queue', '');
-$public_notes = utf8_normalize_nfc(request_var('public_notes', '', true));
 
 // Force the queue_type if we have a queue_id
 if ($queue_id)
@@ -146,6 +145,7 @@ if ($queue_id)
 
 				if ($action == 'approve')
 				{
+					$public_notes = utf8_normalize_nfc(request_var('public_notes', '', true));
 					$queue->approve($public_notes);
 
 					// Install the style on the demo board?
