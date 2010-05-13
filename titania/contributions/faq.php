@@ -260,12 +260,12 @@ switch ($action)
 					'SUBJECT'						=> $row['faq_subject'],
 					'VIEWS'							=> $row['faq_views'],
 
-					'TOPIC_FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
-					'TOPIC_FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
-					'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
-					'TOPIC_FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],
-					'TOPIC_FOLDER_IMG_WIDTH'		=> phpbb::$user->img($folder_img, '', false, '', 'width'),
-					'TOPIC_FOLDER_IMG_HEIGHT'		=> phpbb::$user->img($folder_img, '', false, '', 'height'),
+					'FOLDER_IMG'					=> phpbb::$user->img($folder_img, $folder_alt),
+					'FOLDER_IMG_SRC'				=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
+					'FOLDER_IMG_ALT'				=> phpbb::$user->lang[$folder_alt],
+					'FOLDER_IMG_ALT'				=> phpbb::$user->lang[$folder_alt],
+					'FOLDER_IMG_WIDTH'				=> phpbb::$user->img($folder_img, '', false, '', 'width'),
+					'FOLDER_IMG_HEIGHT'				=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 
 					'U_MOVE_UP'						=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || titania::$contrib->is_author || titania::$contrib->is_active_coauthor) ? $faq->get_url('move_up', $row['faq_id']) : false,
 					'U_MOVE_DOWN'					=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || titania::$contrib->is_author || titania::$contrib->is_active_coauthor) ? $faq->get_url('move_down', $row['faq_id']) : false,
