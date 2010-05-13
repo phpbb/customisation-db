@@ -158,6 +158,7 @@ class phpbb
 			'PAGE_TITLE'			=> $page_title,
 			'SCRIPT_NAME'			=> str_replace('.' . PHP_EXT, '', self::$user->page['page_name']),
 			'CURRENT_TIME'			=> sprintf(self::$user->lang['CURRENT_TIME'], self::$user->format_date(time(), false, true)),
+			'LAST_VISIT_DATE'		=> sprintf(self::$user->lang['YOU_LAST_VISIT'], ((self::$user->data['user_id'] != ANONYMOUS) ? self::$user->format_date(self::$user->data['session_last_visit']) : '')),
 			'SITE_LOGO_IMG'			=> self::$user->img('site_logo'),
 
 			'U_REGISTER'			=> self::append_sid('ucp', 'mode=register'),
