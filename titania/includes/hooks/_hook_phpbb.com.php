@@ -87,7 +87,6 @@ function phpbb_com_titania_page_footer($hook, $run_cron, $template_body)
 /**
 * Copy new posts for queue discussion, queue to the forum
 */
-
 function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $queue_object)
 {
 	if ($queue_object->queue_status == TITANIA_QUEUE_HIDE || !$queue_object->queue_topic_id)
@@ -95,7 +94,56 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 		return;
 	}
 
-	// Does a topic already exist?  If so, don't repost.
+	// First we copy over the queue discussion topic if required
+	$sql = 'SELECT topic_id, phpbb_topic_id FROM ' . TITANIA_TOPICS_TABLE . '
+		WHERE parent_id = ' . $queue_object->contrib_id . '
+			AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+	$result = phpbb::$db->sql_query($sql);
+	$topic_row = phpbb::$db->sql_fetchrow($result);
+	phpbb::$db->sql_freeresult($result);
+
+	// Do we need to create the queue discussion topic or not?
+	if ($topic_row['topic_id'] && !$topic_row['phpbb_topic_id'])
+	{
+		$forum_id = phpbb_com_forum_id($post_object->topic->topic_category, TITANIA_QUEUE_DISCUSSION);
+
+		// Go through any posts in the queue discussion topic and copy them
+		$topic_id = false;
+		$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . ' WHERE topic_id = ' . $topic_row['topic_id'];
+		$result = phpbb::$db->sql_query($sql);
+		while($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$post_text = $row['post_text'];
+			decode_message($post_text, $row['post_text_uid']);
+
+			$options = array(
+				'poster_id'				=> $row['post_user_id'],
+				'forum_id' 				=> $forum_id,
+				'topic_title'			=> $row['post_subject'],
+				'post_text'				=> $post_text,
+			);
+
+			if ($topic_id)
+			{
+				phpbb_posting('reply', $options);
+			}
+			else
+			{
+				$topic_id = phpbb_posting('post', $options);
+			}
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		if ($topic_id)
+		{
+			$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+				SET phpbb_topic_id = ' . $topic_id . '
+				WHERE topic_id = ' . $topic_row['topic_id'];
+			phpbb::$db->sql_query($sql);
+		}
+	}
+
+	// Does a queue topic already exist?  If so, don't repost.
 	$sql = 'SELECT phpbb_topic_id FROM ' . TITANIA_TOPICS_TABLE . '
 		WHERE topic_id = ' . $queue_object->queue_topic_id;
 	phpbb::$db->sql_query($sql);
@@ -121,7 +169,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	decode_message($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . $post_object->get_url();
-	
+
 	switch ($post_object->topic->topic_category)
 	{
 		case TITANIA_TYPE_MOD :
@@ -131,8 +179,8 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 		case TITANIA_TYPE_STYLE :
 			$post_object->topic->topic_first_post_user_id = titania::$config->forum_style_robot;
 		break;
-	}	
-	
+	}
+
 	$options = array(
 		'poster_id'				=> $post_object->topic->topic_first_post_user_id,
 		'forum_id' 				=> $forum_id,

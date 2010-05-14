@@ -211,10 +211,10 @@ class titania_queue extends titania_message_object
 		}
 
 		// Add the queue notes
-		$queue_notes = $this->queue_notes;
-		decode_message($queue_notes, $this->queue_notes_uid);
-		if ($queue_notes)
+		if ($this->queue_notes)
 		{
+			$queue_notes = $this->queue_notes;
+			decode_message($queue_notes, $this->queue_notes_uid);
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_NOTES'] . '&quot;]' . $queue_notes . "[/quote]\n";
 		}
 
@@ -226,7 +226,7 @@ class titania_queue extends titania_message_object
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_MPV'] . '&quot;]' . $mpv_results . "[/quote]\n";
 		}
 
-		// @todo Add the Automod results
+		// Add the Automod results
 		if ($this->automod_results)
 		{
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_AUTOMOD'] . '&quot;]' . $this->automod_results . "[/quote]\n";
