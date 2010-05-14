@@ -28,7 +28,7 @@ $search_fields = request_var('sf', '');
 if (!$keywords && !$author)
 {
 	titania::page_header('SEARCH');
-	titania::page_footer(true, 'common/search_body.html');
+	titania::page_footer(true, 'search_body.html');
 }
 
 // Add some POST stuff to the url
@@ -170,11 +170,17 @@ users_overlord::load_users($results['user_ids']);
 $sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 phpbb::$template->assign_vars(array(
+	'SEARCH_WORDS'		=> $keywords,
+	'SEARCH_MATCHES'	=> ($sort->total == 1) ? sprintf(phpbb::$user->lang['FOUND_SEARCH_MATCH'], $sort->total) : sprintf(phpbb::$user->lang['FOUND_SEARCH_MATCHES'], $sort->total),
+
+	'U_SEARCH_WORDS'	=> titania_url::build_url(titania_url::$current_page, titania_url::$params),
+
 	'S_IN_SEARCH'		=> true,
+
 //	'S_SHOW_TOPICS'		=> ($display == 'topics') ? true : false,
 
 	'S_SEARCH_ACTION'	=> titania_url::$current_page_url,
 ));
 
 titania::page_header('SEARCH');
-titania::page_footer(true, 'common/search_results.html');
+titania::page_footer(true, 'search_results.html');
