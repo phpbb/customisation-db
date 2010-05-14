@@ -70,6 +70,14 @@ phpbb::initialise();
 // If the database is not installed or outdated redirect to the installer
 if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version']) || version_compare(phpbb::$config['titania_version'], TITANIA_VERSION, '<')))
 {
+	if (phpbb::$user->data['user_type'] != USER_FOUNDER)
+	{
+		phpbb::$user->set_custom_lang_path(TITANIA_ROOT . 'language/');
+		phpbb::$user->add_lang('common');
+
+		msg_handler(E_USER_ERROR, phpbb::$user->lang['TITANIA_DISABLED'], '', '');
+	}
+
 	redirect(phpbb::append_sid(TITANIA_ROOT . 'install.' . PHP_EXT));
 }
 
