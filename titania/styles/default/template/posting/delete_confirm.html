@@ -1,0 +1,55 @@
+<!-- INCLUDE common/overall_header.html -->
+<style type="text/css">
+.admin {
+	margin: 15px 0;
+	padding: 10px;
+	border-top: 1px solid #D7D7D7;
+	border-right: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+	border-left: 1px solid #D7D7D7;
+	background-color: #FFFFFF;
+	position: relative;
+}
+
+legend {
+	padding: 1px 0;
+	font-family: Tahoma,arial,Verdana,Sans-serif;
+	font-weight: bold;
+	color: #115098;
+	margin-top: -.4em;
+	position: relative;
+	text-transform: none;
+	line-height: 1.2em;
+	top: 0;
+	vertical-align: middle;
+}
+</style>
+
+<form id="confirm" action="{S_CONFIRM_ACTION}" method="post">
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<h2>{MESSAGE_TITLE}</h2>
+	<p>{MESSAGE_TEXT}</p>
+
+	<!-- IF S_HARD_DELETE -->
+		<fieldset class="admin">
+			<legend>{L_HARD_DELETE}</legend>
+			<dl>
+				<dt><label for="hard_delete">{L_HARD_DELETE}:</label><br /><span>{L_HARD_DELETE_EXPLAIN}</span></dt>
+				<dd><input type="checkbox" name="hard_delete" id="hard_delete" /></dd>
+			</dl>
+		</fieldset>
+	<!-- ENDIF -->
+
+	<fieldset class="submit-buttons">
+		{S_HIDDEN_FIELDS}
+		<input type="submit" name="confirm" value="{L_YES}" class="button2" />&nbsp;
+		<input type="submit" name="cancel" value="{L_NO}" class="button2" />
+	</fieldset>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+</form>
+
+<!-- INCLUDE common/overall_footer.html -->

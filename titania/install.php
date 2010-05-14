@@ -913,6 +913,12 @@ $versions = array(
 
 	'0.3.0' => array(),
 
+	'0.3.1' => array(
+		'permission_add' => array(
+			'u_titania_post_hard_delete',
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

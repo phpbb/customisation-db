@@ -870,7 +870,7 @@ class titania_post extends titania_message_object
 
 			'U_VIEW'						=> $this->get_url(),
 			'U_EDIT'						=> $this->acl_get('edit') ? $this->get_url('edit') : '',
-			'U_DELETE'						=> ($this->acl_get('delete') && !$this->post_deleted) ? $this->get_url('delete') : '',
+			'U_DELETE'						=> ($this->acl_get('delete') && (!$this->post_deleted || phpbb::$auth->acl_get('u_titania_post_hard_delete'))) ? $this->get_url('delete') : '',
 			'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
 			'U_WARN'						=> false,//$this->get_url('warn'),
 			'U_INFO'						=> (phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_mod', 'u_titania_mod_faq_mod', 'u_titania_mod_post_mod') || sizeof(titania_types::find_authed('moderate'))) ? titania_url::build_url('manage/attention', array('type' => TITANIA_POST, 'id' => $this->post_id)) : '',

@@ -390,8 +390,14 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'UNLOCK_TOPIC'		=> ($topic->topic_locked) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'unlock_topic')) : false,
 			'SOFT_DELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'delete_topic')),
 			'UNDELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'undelete_topic')),
-			'HARD_DELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'hard_delete_topic')),
 		);
+
+		if (phpbb::$auth->acl_get('u_titania_post_hard_delete'))
+		{
+			$actions = array_merge($actions, array(
+				'HARD_DELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'hard_delete_topic')),
+			));
+		}
 
 		phpbb::$template->assign_var('TOPIC_QUICK_ACTIONS', titania::build_quick_actions($actions));
 	}

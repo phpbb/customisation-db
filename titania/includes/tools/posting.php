@@ -430,7 +430,7 @@ class titania_posting
 		$topic_object = $this->load_topic($topic_id);
 
 		// Check permissions
-		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod') || ($hard_delete && !phpbb::$auth->acl_get('u_titania_post_hard_delete')))
 		{
 			titania::needs_auth();
 		}
@@ -600,10 +600,10 @@ class titania_posting
 		{
 			phpbb::$template->assign_var('ERROR', implode('<br />', $message_object->error));
 		}
-		
+
 		// Do we subscribe to actual topic?
 		$is_subscribed 	= (($mode == 'edit' || $mode == 'reply') && titania_subscriptions::is_subscribed(TITANIA_TOPIC, $post_object->topic->topic_id)) ? true : false;
-		
+
 		phpbb::$template->assign_vars(array(
 			'S_NOTIFY_ALLOWED'	=> (phpbb::$user->data['is_registered'] && !$is_subscribed) ? true : false,
 			'S_NOTIFY_CHECKED'	=> (phpbb::$user->data['is_registered'] && !$is_subscribed && phpbb::$user->data['user_notify'] && $post_object->post_type == TITANIA_SUPPORT) ? ' checked=checked' : '',
@@ -631,15 +631,43 @@ class titania_posting
 		{
 			if (!$undelete)
 			{
-				$redirect_post_id = posts_overlord::next_prev_post_id($post_object->topic_id, $post_object->post_id);
+				$redirect_post_id = false;
 
-				// Delete the post (let's not allow hard deleting for now)
-				$post_object->soft_delete();
-
-				// try a nice redirect, back to the position where the post was deleted from
-				if ($redirect_post_id)
+				// Delete the post
+				if (isset($_POST['hard_delete']) || $post_object->post_deleted)
 				{
-					redirect(titania_url::append_url($post_object->topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
+					if (!phpbb::$auth->acl_get('u_titania_post_hard_delete'))
+					{
+						titania::needs_auth();
+					}
+
+					$post_object->hard_delete();
+
+					// Try to redirect to the next or previous post
+					$redirect_post_id = posts_overlord::next_prev_post_id($post_object->topic_id, $post_object->post_id);
+					if ($redirect_post_id)
+					{
+						redirect(titania_url::append_url($post_object->topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
+					}
+				}
+				else
+				{
+					$post_object->soft_delete();
+
+					if (phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+					{
+						// They can see the post, redirect back to it
+						redirect($post_object->get_url());
+					}
+					else
+					{
+						// They cannot see the post, try to redirect to the next or previous post
+						$redirect_post_id = posts_overlord::next_prev_post_id($post_object->topic_id, $post_object->post_id);
+						if ($redirect_post_id)
+						{
+							redirect(titania_url::append_url($post_object->topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
+						}
+					}
 				}
 
 				redirect($post_object->topic->get_url());
@@ -653,7 +681,9 @@ class titania_posting
 		}
 		else
 		{
-			titania::confirm_box(false, ((!$undelete) ? 'DELETE_POST' : 'UNDELETE_POST'));
+			phpbb::$template->assign_var('S_HARD_DELETE', ((!$undelete && !$post_object->post_deleted && phpbb::$auth->acl_get('u_titania_post_hard_delete')) ? true : false));
+
+			titania::confirm_box(false, ((!$undelete) ? 'DELETE_POST' : 'UNDELETE_POST'), '', array(), 'posting/delete_confirm.html');
 		}
 
 		redirect($post_object->get_url());

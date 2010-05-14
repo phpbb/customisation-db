@@ -108,6 +108,8 @@ $lang = array_merge($lang, array(
 
 	'FILE_NOT_EXIST'			=> 'File does not exist: %s',
 
+	'HARD_DELETE'				=> 'Hard Delete',
+	'HARD_DELETE_EXPLAIN'		=> 'Select to permanently delete this item.',
 	'HARD_DELETE_TOPIC'			=> 'Hard Delete Topic',
 
 	'LANGUAGE_PACK'				=> 'Language Pack',
