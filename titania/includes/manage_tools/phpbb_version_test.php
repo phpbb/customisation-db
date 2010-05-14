@@ -79,7 +79,7 @@ class phpbb_version_test
 						AND c.contrib_id = rp.contrib_id
 						AND ' . phpbb::$db->sql_in_set('c.contrib_type', $testable_types) . '
 						AND r.revision_id = rp.revision_id
-					ORDER BY r.revision_validated DESC, r.revision_time DESC';
+					ORDER BY r.revision_time DESC';
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
@@ -94,7 +94,7 @@ class phpbb_version_test
 			$sql = 'SELECT DISTINCT(r.contrib_id), r.revision_id FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_CONTRIBS_TABLE . ' c
 				WHERE c.contrib_id = r.contrib_id
 					AND ' . phpbb::$db->sql_in_set('c.contrib_type', $testable_types) . '
-				ORDER BY r.revision_validated DESC, r.revision_time DESC';
+				ORDER BY r.revision_time DESC';
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{

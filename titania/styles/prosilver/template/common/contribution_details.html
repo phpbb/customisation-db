@@ -120,47 +120,7 @@
 				<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
 				<div class="clear"></div>
 
-				<ul class="topiclist revisions simple">
-					<li class="header">
-						<dl>
-							<dt>{L_REVISIONS}</dt>
-							<dd class="general version">{L_VERSION}</dd>
-							<dd class="general phpbb-version">{L_PHPBB_VERSION}</dd>
-							<dd class="general time-created">{L_TIME}</dd>
-						</dl>
-					</li>
-				</ul>
-				<ul class="topiclist cplist revisions">
-				<!-- BEGIN revisions -->
-					<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
-						<dl>
-							<dt>
-								<a href="{revisions.U_DOWNLOAD}" title="{L_DOWNLOAD}"><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></a>
-							</dt>
-							<dd class="general version">{revisions.VERSION}</dd>
-							<dd class="general phpbb-version">
-								<!-- IF revisions.PHPBB_VERSION -->
-									{revisions.PHPBB_VERSION}
-								<!-- ELSE -->
-									<select id="phpbb_versions">
-									<!-- BEGIN phpbb_versions -->
-										<option>{revisions.phpbb_versions.VERSION}</option>
-									<!-- END phpbb_versions -->
-									</select>
-								<!-- ENDIF -->
-							</dd>
-							<dd class="general time-created">{revisions.CREATED}</dd>
-							<!-- IF not revisions.S_VALIDATED or revisions.REVISION_QUEUE or revisions.U_EDIT -->
-							<dd class="general">
-								<!-- IF not revisions.S_VALIDATED --><strong>{L_NOT_VALIDATED}</strong><!-- ENDIF -->
-								<!-- IF revisions.REVISION_QUEUE --><!-- IF not revisions.S_VALIDATED --> - <!-- ENDIF --><a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF -->
-								<!-- IF revisions.U_EDIT --> <a href="{revisions.U_EDIT}">{ICON_EDIT}</a><!-- ENDIF -->
-							</dd>
-							<!-- ENDIF -->
-						</dl>
-					</li>
-				<!-- END revisions -->
-				</ul>
+				<!-- INCLUDE common/revision_list.html -->
 		    </div>
 		    <!-- ENDIF -->
 		</div>

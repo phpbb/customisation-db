@@ -36,9 +36,6 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'CONTRIB_DOWNLOAD_DISABLED' => 'Downloads Disabled',
-'CONTRIB_HIDDEN' => 'Hidden',
-'CONTRIB_DISABLED' => 'Hidden + Disabled',
 	'ANNOUNCEMENT_TOPIC'					=> 'Announcement topic',
 	'ANNOUNCEMENT_TOPIC_SUPPORT'			=> 'Support topic',
 	'ANNOUNCEMENT_TOPIC_VIEW'				=> '%sView%s',
@@ -67,8 +64,11 @@ $lang = array_merge($lang, array(
 	'CONTRIB_CREATED'						=> 'The contribution has been created successfully',
 	'CONTRIB_DESCRIPTION'					=> 'Contribution Description',
 	'CONTRIB_DETAILS'						=> 'Contribution Details',
+	'CONTRIB_DISABLED'						=> 'Hidden + Disabled',
+	'CONTRIB_DOWNLOAD_DISABLED'				=> 'Downloads Disabled',
 	'CONTRIB_EDITED'						=> 'The contribution has been successfully edited.',
 	'CONTRIB_FAQ'							=> 'FAQ',
+	'CONTRIB_HIDDEN'						=> 'Hidden',
 	'CONTRIB_NAME'							=> 'Contribution Name',
 	'CONTRIB_NAME_EXISTS'					=> 'The unique name has already been reserved.',
 	'CONTRIB_NEW'							=> 'New',
@@ -89,8 +89,9 @@ $lang = array_merge($lang, array(
 	'COULD_NOT_FIND_USERS'					=> 'Could not find the following users: %s',
 	'CO_AUTHORS'							=> 'Co-Authors',
 
-	'DEMO_URL'                              => 'Demo URL',
-	'DEMO_URL_EXPLAIN'                      => 'Location of the demonstration',
+	'DEMO_URL'								=> 'Demo URL',
+	'DEMO_URL_EXPLAIN'						=> 'Location of the demonstration',
+	'DENIED'								=> 'Denied',
 	'DOWNLOADS_PER_DAY'						=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'						=> 'Total Downloads',
 	'DOWNLOADS_VERSION'						=> 'Version Downloads',
@@ -153,6 +154,8 @@ Notes:[/b] %2$s',
 	'PHPBB_BRANCH'							=> 'phpBB Branch',
 	'PHPBB_BRANCH_EXPLAIN'					=> 'Select the phpBB branch that this revision supports.',
 	'PHPBB_VERSION'							=> 'phpBB Version',
+	'PULLED_FOR_OTHER'						=> 'Pulled',
+	'PULLED_FOR_SECURITY'					=> 'Pulled - Security',
 
 	'QUEUE_ALLOW_REPACK'					=> 'Allow Repacking',
 	'QUEUE_ALLOW_REPACK_EXPLAIN'			=> 'Allow this contribution to be repacked for small errors?',

@@ -41,7 +41,7 @@ if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 30 > 
 
 	$use_shutdown_function = false;
 
-	$sql = 'SELECT aq.*, a.attachment_directory, a.physical_filename, c.contrib_id, c.contrib_name_clean, r.revision_version, r.revision_validated
+	$sql = 'SELECT aq.*, a.attachment_directory, a.physical_filename, c.contrib_id, c.contrib_name_clean, r.revision_version, r.revision_status
 		FROM ' . TITANIA_AUTOMOD_QUEUE_TABLE . ' aq, ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_ATTACHMENTS_TABLE . ' a, ' . TITANIA_CONTRIBS_TABLE . ' c
 		WHERE r.revision_id = aq.revision_id
 			AND a.attachment_id = r.attachment_id
@@ -81,7 +81,7 @@ if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 30 > 
 				'contrib_id'				=> $row['contrib_id'],
 				'phpbb_version_branch'		=> $row['phpbb_version_branch'],
 				'phpbb_version_revision'	=> get_real_revision_version($row['phpbb_version_revision']),
-				'revision_validated'		=> $row['revision_validated'],
+				'revision_validated'		=> ($row['revision_status'] == TITANIA_REVISION_APPROVED) ? true : false,
 			);
 			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_REVISIONS_PHPBB_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
 		}

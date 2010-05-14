@@ -19,6 +19,9 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 titania::add_lang('install');
 
+// Hopefully this helps
+@set_time_limit(0);
+
 include(TITANIA_ROOT . 'includes/functions_install.' . PHP_EXT);
 
 // Just to be on the safe side, add a php version check.
@@ -916,6 +919,25 @@ $versions = array(
 	'0.3.1' => array(
 		'permission_add' => array(
 			'u_titania_post_hard_delete',
+		),
+	),
+
+	'0.3.2' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_status', array('TINT:2', 0)),
+		),
+		'table_index_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_status'),
+		),
+
+		'custom' => 'titania_custom',
+
+		'table_index_remove' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_validated'),
+		),
+
+		'table_column_remove' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_validated'),
 		),
 	),
 

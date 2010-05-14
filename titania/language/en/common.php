@@ -40,7 +40,6 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-'TITANIA_DISABLED' => 'The Customisation Database is temporarily disabled, please try again in a few minutes.',
 	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
 	'ALL'						=> 'All',
@@ -170,6 +169,7 @@ $lang = array_merge($lang, array(
 	'SUBSCRIBE'					=> 'Subscribe',
 	'SUBSCRIPTION_NOTIFICATION'	=> 'Subscription Notification',
 
+	'TITANIA_DISABLED'			=> 'The Customisation Database is temporarily disabled, please try again in a few minutes.',
 	'TITANIA_INDEX'				=> 'Customisation Database',
 	'TOTAL_CONTRIBS'			=> '%d Contributions',
 	'TOTAL_CONTRIBS_ONE'		=> '1 Contribution',

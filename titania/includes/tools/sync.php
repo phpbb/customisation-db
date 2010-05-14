@@ -130,7 +130,7 @@ class titania_sync
 				{
 					$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . TITANIA_REVISIONS_TABLE . '
 						WHERE contrib_id = ' . $row['contrib_id'] . '
-							AND revision_validated = 1';
+							AND revision_status = ' . TITANIA_REVISION_APPROVED;
 					$result1 = phpbb::$db->sql_query($sql);
 					$cnt = phpbb::$db->sql_fetchfield('cnt', $result1);
 					phpbb::$db->sql_freeresult($result1);

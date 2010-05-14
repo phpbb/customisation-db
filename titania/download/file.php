@@ -52,7 +52,7 @@ if (!$download_id)
 	{
 		$sql = 'SELECT attachment_id FROM ' . TITANIA_REVISIONS_TABLE . '
 			WHERE contrib_id = ' . $contrib_id . '
-				AND revision_validated = 1
+				AND revision_status = ' . TITANIA_REVISION_APPROVED . '
 			ORDER BY revision_id DESC';
 		phpbb::$db->sql_query_limit($sql, 1);
 		$download_id = phpbb::$db->sql_fetchfield('attachment_id');

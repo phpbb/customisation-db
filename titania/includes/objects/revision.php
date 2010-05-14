@@ -63,7 +63,7 @@ class titania_revision extends titania_database_object
 		$this->object_config = array_merge($this->object_config, array(
 			'revision_id'			=> array('default' => 0),
 			'contrib_id' 			=> array('default' => 0),
-			'revision_validated'	=> array('default' => false),
+			'revision_status'		=> array('default' => TITANIA_REVISION_NEW),
 			'attachment_id' 		=> array('default' => 0),
 			'revision_name' 		=> array('default' => '', 'max' => 255),
 			'revision_time'			=> array('default' => (int) titania::$time),
@@ -139,7 +139,11 @@ class titania_revision extends titania_database_object
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_EDIT'			=> ($this->contrib && (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',
 
-			'S_VALIDATED'		=> (!$this->revision_validated && titania::$config->use_queue) ? false : true,
+			'S_NEW'					=> ($this->revision_status == TITANIA_REVISION_NEW) ? true : false,
+			'S_APPROVED'			=> ($this->revision_status == TITANIA_REVISION_APPROVED) ? true : false,
+			'S_DENIED'				=> ($this->revision_status == TITANIA_REVISION_DENIED) ? true : false,
+			'S_PULLED_SECURITY'		=> ($this->revision_status == TITANIA_REVISION_PULLED_SECURITY) ? true : false,
+			'S_PULLED_OTHER'		=> ($this->revision_status == TITANIA_REVISION_PULLED_OTHER) ? true : false,
 		));
 
 		phpbb::$user->date_format = $old_date_format;
@@ -169,7 +173,7 @@ class titania_revision extends titania_database_object
 			{
 				// Start process to post on forum topic/post release
 				$this->contrib->get_download();
-				
+
 				if (titania_types::$types[$this->contrib->contrib_type]->forum_robot && titania_types::$types[$this->contrib->contrib_type]->forum_database)
 				{
 					// Global body and options
@@ -185,13 +189,13 @@ class titania_revision extends titania_database_object
 						$this->contrib->get_url(),
 						$this->contrib->get_url('support')
 					);
-					
+
 					$options = array(
 						'poster_id'				=> titania_types::$types[$this->contrib->contrib_type]->forum_robot,
 						'forum_id' 				=> titania_types::$types[$this->contrib->contrib_type]->forum_database,
 						'topic_id'				=> $this->contrib->contrib_release_topic_id,
 					);
-					
+
 					if ($this->contrib->contrib_release_topic_id)
 					{
 						// We edit the first post of contrib release topic
@@ -201,7 +205,7 @@ class titania_revision extends titania_database_object
 						);
 						$options_edit = array_merge($options_edit, $options);
 						phpbb_posting('edit', $options_edit);
-						
+
 						// We reply to the contrib release topic
 						$body_reply = sprintf(phpbb::$user->lang[titania_types::$types[$this->contrib->contrib_type]->update_public],
 							$revision->revision_version,
@@ -281,7 +285,7 @@ class titania_revision extends titania_database_object
 				$sql_ary[] = array(
 					'revision_id'				=> $this->revision_id,
 					'contrib_id'				=> $this->contrib_id,
-					'revision_validated'		=> $this->revision_validated,
+					'revision_validated'		=> ($this->revision_status == TITANIA_REVISION_APPROVED) ? true : false,
 					'phpbb_version_branch'		=> $row['phpbb_version_branch'],
 					'phpbb_version_revision'	=> get_real_revision_version(((isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'])),
 				);

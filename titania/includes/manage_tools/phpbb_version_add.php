@@ -72,7 +72,7 @@ class phpbb_version_add
 			// phpBB versions limiter
 			foreach ($limit_phpbb_versions as $limit_phpbb_version)
 			{
-				$sql = 'SELECT rp.contrib_id, rp.revision_id, r.revision_validated FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . ' rp, ' . TITANIA_REVISIONS_TABLE . ' r
+				$sql = 'SELECT rp.contrib_id, rp.revision_id, r.revision_status FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . ' rp, ' . TITANIA_REVISIONS_TABLE . ' r
 					WHERE rp.phpbb_version_branch = ' . (int) substr($limit_phpbb_version, 0, 2) . '
 						AND rp.phpbb_version_revision = \'' . phpbb::$db->sql_escape(substr($limit_phpbb_version, 2)) . '\'' .
 						((sizeof($contribs)) ? ' AND ' . phpbb::$db->sql_in_set('rp.contrib_id', array_map('intval', $contribs)) : '') . '
@@ -88,7 +88,7 @@ class phpbb_version_add
 		else if (sizeof($categories) > 1 || (sizeof($categories) && $categories[0] != 0))
 		{
 			// Only category limited
-			$sql = 'SELECT contrib_id, revision_id, revision_validated FROM ' . TITANIA_REVISIONS_TABLE . '
+			$sql = 'SELECT contrib_id, revision_id, revision_status FROM ' . TITANIA_REVISIONS_TABLE . '
 				WHERE ' . phpbb::$db->sql_in_set('contrib_id', array_map('intval', $contribs));
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
@@ -100,7 +100,7 @@ class phpbb_version_add
 		else
 		{
 			// All
-			$sql = 'SELECT contrib_id, revision_id, revision_validated FROM ' . TITANIA_REVISIONS_TABLE;
+			$sql = 'SELECT contrib_id, revision_id, revision_status FROM ' . TITANIA_REVISIONS_TABLE;
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
@@ -139,7 +139,7 @@ class phpbb_version_add
 				'revision_id'				=> (int) $revision_id,
 				'phpbb_version_branch'		=> $phpbb_version_branch,
 				'phpbb_version_revision'	=> $phpbb_version_revision,
-				'revision_validated'		=> $row['revision_validated'],
+				'revision_validated'		=> ($row['revision_status'] == TITANIA_REVISION_APPROVED) ? true : false,
 			);
 		}
 

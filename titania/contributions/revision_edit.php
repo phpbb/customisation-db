@@ -71,8 +71,8 @@ if (isset($_POST['submit']))
 	{
 		$revision->phpbb_versions = array();
 		$revision->__set_array(array(
-			// @todo option to change the revision_validated later on (need to check more stuff on the contribution if it's changed too)
-			//'revision_validated'		=> ((isset($_POST['validated'])) ? true : false) : $revision->revision_validated,
+			// @todo option to change the revision_status later on (need to check more stuff on the contribution if it's changed too)
+			//'revision_status'		=>
 			'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', $revision->revision_name, true)),
 		));
 

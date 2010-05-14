@@ -36,8 +36,6 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'NO_NOTES' => 'No Notes',
-'NO_ATTENTION_ITEM' => 'Attention item does not exist.',
 	'ADMINISTRATION'					=> 'Administration',
 	'ALTER_NOTES'						=> 'Alter Validation Notes',
 	'APPROVE'							=> 'Approve',
@@ -109,11 +107,13 @@ phpBB MOD Team',
 	'MOVE_QUEUE_CONFIRM'				=> 'Select the new queue location and confirm.',
 
 	'NO_ATTENTION'						=> 'No items need attention.',
+	'NO_ATTENTION_ITEM'					=> 'Attention item does not exist.',
 	'NO_ATTENTION_TYPE'					=> 'Inappropriate attention type.',
+	'NO_NOTES'							=> 'No Notes',
 	'NO_QUEUE_ITEM'						=> 'Queue item does not exist.',
 
 	'OPEN_ITEMS'						=> 'Open Items',
-	
+
 	'PUBLIC_NOTES'						=> 'Public release notes',
 
 	'QUEUE_APPROVE'						=> 'Awaiting Approval',

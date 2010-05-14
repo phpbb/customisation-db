@@ -401,7 +401,7 @@ class titania_queue extends titania_message_object
 
 		// Update the revisions table
 		$sql_ary = array(
-			'revision_validated'	=> true,
+			'revision_status'		=> TITANIA_REVISION_APPROVED,
 			'validation_date'		=> titania::$time,
 		);
 		$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
@@ -542,6 +542,14 @@ class titania_queue extends titania_message_object
 
 		$this->topic_reply($message, false);
 		$this->discussion_reply($message);
+
+		// Update the revisions table
+		$sql_ary = array(
+			'revision_status'		=> TITANIA_REVISION_DENIED,
+		);
+		$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+			WHERE revision_id = ' . (int) $this->revision_id;
+		phpbb::$db->sql_query($sql);
 
 		// Self-updating
 		$this->queue_status = TITANIA_QUEUE_DENIED;

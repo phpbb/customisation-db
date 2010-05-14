@@ -91,6 +91,40 @@ function titania_custom($action, $version)
 						phpbb::$db->sql_query($sql);
 					}
 				break;
+
+				case '0.3.2' :
+					$update = array();
+
+					$sql = 'SELECT r.revision_id, q.queue_status FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_QUEUE_TABLE . ' q
+						WHERE q.revision_id = r.revision_id';
+					$result = phpbb::$db->sql_query($sql);
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						switch ($row['queue_status'])
+						{
+							case TITANIA_QUEUE_DENIED :
+								$update[TITANIA_REVISION_DENIED][] = $row['revision_id'];
+							break;
+
+							case TITANIA_QUEUE_APPROVED :
+								$update[TITANIA_REVISION_APPROVED][] = $row['revision_id'];
+							break;
+
+							case TITANIA_QUEUE_NEW :
+								$update[TITANIA_REVISION_NEW][] = $row['revision_id'];
+							break;
+						}
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					foreach ($update as $status => $revision_ids)
+					{
+						$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . '
+							SET revision_status = ' . (int) $status . '
+							WHERE ' . phpbb::$db->sql_in_set('revision_id', $revision_ids);
+						phpbb::$db->sql_query($sql);
+					}
+				break;
 			}
 		break;
 

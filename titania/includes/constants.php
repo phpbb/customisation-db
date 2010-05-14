@@ -22,12 +22,6 @@ if (!defined('IN_PHPBB'))
 	define('IN_PHPBB', true);
 }
 
-// Contribution revision/queue status
-define('TITANIA_QUEUE_DENIED', -2); // Special case to hide denied revisions from the queue
-define('TITANIA_QUEUE_APPROVED', -1); // Special case to hide approved revisions from the queue
-define('TITANIA_QUEUE_HIDE', 0); // Special case to hide an unfinished submission
-define('TITANIA_QUEUE_NEW', 1); // Same as QUEUE_NEW in the Tag Fields table
-
 // Contrib status
 define('TITANIA_CONTRIB_NEW', 1); // Does not have any validated revisions; Hidden from category listing, shown if directly linked to
 define('TITANIA_CONTRIB_APPROVED', 2); // Has at least one validated revision
@@ -42,6 +36,12 @@ define('TITANIA_REVISION_APPROVED', 2); // Is approved (this is the only status 
 define('TITANIA_REVISION_DENIED', 3); // Is denied
 define('TITANIA_REVISION_PULLED_SECURITY', 4); // Has been pulled for a security vulnerability
 define('TITANIA_REVISION_PULLED_OTHER', 5); // Has been pulled for an other non-security reason
+
+// Queue status
+define('TITANIA_QUEUE_DENIED', -2); // Special case to hide denied revisions from the queue
+define('TITANIA_QUEUE_APPROVED', -1); // Special case to hide approved revisions from the queue
+define('TITANIA_QUEUE_HIDE', 0); // Special case to hide an unfinished submission
+define('TITANIA_QUEUE_NEW', 1); // Same as QUEUE_NEW in the Tag Fields table
 
 // Main TYPE constants (use whenever possible)
 define('TITANIA_CONTRIB', 1);
