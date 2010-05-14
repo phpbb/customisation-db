@@ -95,7 +95,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	}
 
 	// First we copy over the queue discussion topic if required
-	$sql = 'SELECT topic_id, phpbb_topic_id FROM ' . TITANIA_TOPICS_TABLE . '
+	$sql = 'SELECT topic_id, phpbb_topic_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
 		WHERE parent_id = ' . $queue_object->contrib_id . '
 			AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
 	$result = phpbb::$db->sql_query($sql);
@@ -107,14 +107,20 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	{
 		$forum_id = phpbb_com_forum_id($post_object->topic->topic_category, TITANIA_QUEUE_DISCUSSION);
 
+		$temp_post = new titania_post;
+
 		// Go through any posts in the queue discussion topic and copy them
 		$topic_id = false;
 		$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . ' WHERE topic_id = ' . $topic_row['topic_id'];
 		$result = phpbb::$db->sql_query($sql);
 		while($row = phpbb::$db->sql_fetchrow($result))
 		{
+			$temp_post->__set_array($row);
+
 			$post_text = $row['post_text'];
 			decode_message($post_text, $row['post_text_uid']);
+
+			$post_text .= "\n\n" . $temp_post->get_url();
 
 			$options = array(
 				'poster_id'				=> $row['post_user_id'],
@@ -129,6 +135,17 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			}
 			else
 			{
+				switch ($topic_row['topic_category'])
+				{
+					case TITANIA_TYPE_MOD :
+						$options['poster_id'] = titania::$config->forum_mod_robot;
+					break;
+
+					case TITANIA_TYPE_STYLE :
+						$options['poster_id'] = titania::$config->forum_style_robot;
+					break;
+				}
+
 				$topic_id = phpbb_posting('post', $options);
 			}
 		}
@@ -141,6 +158,8 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 				WHERE topic_id = ' . $topic_row['topic_id'];
 			phpbb::$db->sql_query($sql);
 		}
+
+		unset($temp_post);
 	}
 
 	// Does a queue topic already exist?  If so, don't repost.
