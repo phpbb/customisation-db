@@ -59,16 +59,15 @@ if ($submit)
 	}
 }
 
-$message_default = titania::$author->generate_text_for_edit();
+titania::$author->assign_details();
+$message->display();
 
 $template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$author->get_url('manage'),
+	'AUTHOR_WEBSITE'			=> (titania::$author->get_website_url() || phpbb::$user->data['user_id'] != titania::$author->user_id) ? titania::$author->get_website_url() : phpbb::$user->data['user_website'],
 
 	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,
 ));
-
-titania::$author->assign_details();
-$message->display();
 
 titania::page_header(titania::$author->get_username_string('username') . ' - ' . phpbb::$user->lang['MANAGE_AUTHOR']);
 titania::page_footer(true, 'authors/author_manage.html');
