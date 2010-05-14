@@ -264,7 +264,7 @@ class titania_contribution extends titania_message_object
 	 */
 	public function get_revisions()
 	{
-		if (sizeof($this->revisions) || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !titania_types::$types[$this->contrib_type]->acl_get('moderate')))
+		if (sizeof($this->revisions) || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !titania_types::$types[$this->contrib_type]->acl_get('moderate') && !titania_types::$types[$this->contrib_type]->acl_get('view')))
 		{
 			return;
 		}
@@ -304,7 +304,7 @@ class titania_contribution extends titania_message_object
 	 */
 	public function get_download($revision_id = false)
 	{
-		if ($this->download || $this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED)
+		if ($this->download || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !titania_types::$types[$this->contrib_type]->acl_get('moderate') && !titania_types::$types[$this->contrib_type]->acl_get('view')))
 		{
 			return;
 		}
