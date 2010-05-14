@@ -348,6 +348,93 @@ class titania_revision extends titania_database_object
 	}
 
 	/**
+	 * Change the status of this revision
+	 *
+	 * @param int $new_status
+	 */
+	public function change_status($new_status)
+	{
+		$new_status = (int) $new_status;
+		$old_status = $this->revision_status;
+
+		if ($old_status == $new_status)
+		{
+			return;
+		}
+
+		$this->revision_status = $new_status;
+
+		$sql_ary = array(
+			'revision_status'	=> $this->revision_status,
+		);
+
+		switch ($old_status)
+		{
+			case TITANIA_REVISION_APPROVED :
+				// If there are no approved revisions left we will need to reset the contribution status
+				$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . TITANIA_REVISIONS_TABLE . '
+					WHERE revision_status = ' . TITANIA_REVISION_APPROVED . '
+						AND contrib_id = ' . $this->contrib_id . '
+						AND revision_id <> ' . $this->revision_id;
+				phpbb::$db->sql_query($sql);
+				$cnt = phpbb::$db->sql_fetchfield('cnt');
+
+				if (!$cnt)
+				{
+					if (!$this->contrib)
+					{
+						$this->contrib = contribs_overlord::get_contrib_object($this->contrib_id, true);
+					}
+
+					if (in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)))
+					{
+						$this->contrib->change_status(TITANIA_CONTRIB_NEW);
+					}
+				}
+			break;
+		}
+
+		switch ($new_status)
+		{
+			case TITANIA_REVISION_APPROVED :
+				// If approving this revision and the contribution is set to new, approve the contribution
+				if (!$this->contrib)
+				{
+					$this->contrib = contribs_overlord::get_contrib_object($this->contrib_id, true);
+				}
+
+				if (in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_NEW)))
+				{
+					$this->contrib->change_status(TITANIA_CONTRIB_APPROVED);
+				}
+
+				// Update the revisions phpbb version table
+				$sql = 'UPDATE ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+					SET revision_validated = 1
+					WHERE revision_id = ' . (int) $this->revision_id;
+				phpbb::$db->sql_query($sql);
+
+				$sql_ary['validation_date'] = titania::$time;
+			break;
+
+			default :
+				// Update the revisions phpbb version table
+				$sql = 'UPDATE ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+					SET revision_validated = 0
+					WHERE revision_id = ' . (int) $this->revision_id;
+				phpbb::$db->sql_query($sql);
+
+				$sql_ary['validation_date'] = 0;
+			break;
+		}
+
+		$sql = 'UPDATE ' . $this->sql_table . '
+			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+			WHERE revision_id = ' . $this->revision_id;
+		phpbb::$db->sql_query($sql);
+	}
+
+	/**
 	* Repack a revision
 	*
 	* @param object $old_revision

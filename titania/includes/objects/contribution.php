@@ -548,6 +548,10 @@ class titania_contribution extends titania_message_object
 
 		$this->contrib_status = $new_status;
 
+		$sql_ary = array(
+			'contrib_status'	=> $this->contrib_status,
+		);
+
 		// Grab the current authors
 		$author_list = array($this->contrib_user_id);
 		$sql = 'SELECT user_id
@@ -589,11 +593,13 @@ class titania_contribution extends titania_message_object
 
 				// Increment the category count
 				$this->update_category_count();
+
+				$sql_ary['contrib_last_update'] = titania::$time;
 			break;
 		}
 
 		$sql = 'UPDATE ' . $this->sql_table . '
-			SET contrib_status = ' . $this->contrib_status . '
+			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 

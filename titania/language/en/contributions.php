@@ -36,6 +36,11 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
+'REVISION_APPROVED' => 'Approved',
+'REVISION_DENIED' => 'Denied',
+'REVISION_STATUS' => 'Revision Status',
+'REVISION_STATUS_EXPLAIN' => 'Change the revision status',
+'REVISION_NEW' => 'New',
 	'ANNOUNCEMENT_TOPIC'					=> 'Announcement topic',
 	'ANNOUNCEMENT_TOPIC_SUPPORT'			=> 'Support topic',
 	'ANNOUNCEMENT_TOPIC_VIEW'				=> '%sView%s',
@@ -80,7 +85,7 @@ $lang = array_merge($lang, array(
 	'CONTRIB_PERMALINK_EXPLAIN'				=> 'Cleaned version of the contribution name, used to build the url for the contribution.<br /><strong>Leave blank to have one automatically created based on the contribution name.</strong>',
 	'CONTRIB_RELEASE_DATE'					=> 'Release date',
 	'CONTRIB_STATUS'						=> 'Contribution status',
-	'CONTRIB_STATUS_EXPLAIN'				=> 'Change the contribution status.',
+	'CONTRIB_STATUS_EXPLAIN'				=> 'Change the contribution status',
 	'CONTRIB_SUPPORT'						=> 'Discussion/Support',
 	'CONTRIB_TYPE'							=> 'Contribution Type',
 	'CONTRIB_UPDATED'						=> 'The contribution has been successfully updated.',
@@ -91,7 +96,6 @@ $lang = array_merge($lang, array(
 
 	'DEMO_URL'								=> 'Demo URL',
 	'DEMO_URL_EXPLAIN'						=> 'Location of the demonstration',
-	'DENIED'								=> 'Denied',
 	'DOWNLOADS_PER_DAY'						=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'						=> 'Total Downloads',
 	'DOWNLOADS_VERSION'						=> 'Version Downloads',
@@ -154,8 +158,8 @@ Notes:[/b] %2$s',
 	'PHPBB_BRANCH'							=> 'phpBB Branch',
 	'PHPBB_BRANCH_EXPLAIN'					=> 'Select the phpBB branch that this revision supports.',
 	'PHPBB_VERSION'							=> 'phpBB Version',
-	'PULLED_FOR_OTHER'						=> 'Pulled',
-	'PULLED_FOR_SECURITY'					=> 'Pulled - Security',
+	'REVISION_PULLED_FOR_OTHER'						=> 'Pulled',
+	'REVISION_PULLED_FOR_SECURITY'					=> 'Pulled - Security',
 
 	'QUEUE_ALLOW_REPACK'					=> 'Allow Repacking',
 	'QUEUE_ALLOW_REPACK_EXPLAIN'			=> 'Allow this contribution to be repacked for small errors?',

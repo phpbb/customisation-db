@@ -385,6 +385,12 @@ class titania_queue extends titania_message_object
 		// Reply to the queue topic and discussion with the message
 		titania::add_lang(array('manage', 'contributions'));
 		$revision = $this->get_revision();
+		$contrib = new titania_contribution;
+		if (!$contrib->load($this->contrib_id))
+		{
+			return false;
+		}
+		$revision->contrib = $contrib;
 
 		$notes = $this->queue_validation_notes;
 		decode_message($notes, $this->queue_validation_notes_uid);
@@ -399,25 +405,8 @@ class titania_queue extends titania_message_object
 		$this->topic_reply($message, false);
 		$this->discussion_reply($message);
 
-		// Update the revisions table
-		$sql_ary = array(
-			'revision_status'		=> TITANIA_REVISION_APPROVED,
-			'validation_date'		=> titania::$time,
-		);
-		$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-			WHERE revision_id = ' . (int) $this->revision_id;
-		phpbb::$db->sql_query($sql);
-
-		// Update the revisions phpbb version table
-		$sql = 'UPDATE ' . TITANIA_REVISIONS_PHPBB_TABLE . '
-			SET revision_validated = 1
-			WHERE revision_id = ' . (int) $this->revision_id;
-		phpbb::$db->sql_query($sql);
-
-		// Update the contribs table
-		$contrib = new titania_contribution;
-		$contrib->load((int) $this->contrib_id);
-		$contrib->change_status(TITANIA_CONTRIB_APPROVED);
+		// Update the revisions
+		$revision->change_status(TITANIA_REVISION_APPROVED);
 
 		// Start process to post on forum topic/post release
 		$contrib->get_download($this->revision_id);
@@ -494,11 +483,10 @@ class titania_queue extends titania_message_object
 		}
 
 		$sql_ary = array(
-			'contrib_last_update' 		=> titania::$time,
 			'contrib_release_topic_id' 	=> (int) $release_topic_id,
 		);
 
-		// Update contrib last update time and release topic ic
+		// Update contrib the release topic id
 		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
 			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 			WHERE contrib_id = ' . $this->contrib_id;
@@ -543,13 +531,8 @@ class titania_queue extends titania_message_object
 		$this->topic_reply($message, false);
 		$this->discussion_reply($message);
 
-		// Update the revisions table
-		$sql_ary = array(
-			'revision_status'		=> TITANIA_REVISION_DENIED,
-		);
-		$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-			WHERE revision_id = ' . (int) $this->revision_id;
-		phpbb::$db->sql_query($sql);
+		// Update the revision
+		$revision->change_status(TITANIA_REVISION_DENIED);
 
 		// Self-updating
 		$this->queue_status = TITANIA_QUEUE_DENIED;

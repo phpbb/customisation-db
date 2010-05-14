@@ -23,7 +23,7 @@ load_contrib();
 // Used later when submitting
 $contrib_clone = clone titania::$contrib;
 
-if (!(((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) && !in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
+if (!(((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) && !in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
 {
 	titania::needs_auth();
 }
@@ -52,7 +52,7 @@ $permalink = utf8_normalize_nfc(request_var('permalink', titania::$contrib->cont
 */
 if (titania::confirm_box(true))
 {
-	if (!titania::$contrib->is_author && !phpbb::$auth->acl_get('u_titania_mod_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+	if (!titania::$contrib->is_author && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 	{
 		titania::needs_auth();
 	}
@@ -79,7 +79,7 @@ $message = new titania_message(titania::$contrib);
 $message->set_auth(array(
 	'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 	'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
-	'edit_subject'	=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')),
+	'edit_subject'	=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')),
 ));
 $message->set_settings(array(
 	'display_error'		=> false,
@@ -187,7 +187,7 @@ else if ($submit)
 	if (!sizeof($error))
 	{
 		// Check for changes in the description or categories to file a report
-		if (!phpbb::$auth->acl_get('u_titania_mod_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+		if (!titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 		{
 			$attention_message = array();
 
@@ -241,7 +241,7 @@ else if ($submit)
 		$screenshot->submit();
 
 		// Update contrib_status/permalink if we can moderate. only if contrib_status is valid and permalink altered
-		if (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+		if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 		{
 			if (array_key_exists($contrib_status, $status_list))
 			{
@@ -328,8 +328,8 @@ foreach ($status_list as $status => $row)
 
 phpbb::$template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
-	'S_EDIT_SUBJECT'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
-	'S_IS_MODERATOR'			=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
+	'S_EDIT_SUBJECT'			=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
+	'S_IS_MODERATOR'			=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 	'S_CAN_EDIT_STYLE_DEMO'		=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate') || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE) ? true : false,
 
 	'CONTRIB_PERMALINK'			=> $permalink,

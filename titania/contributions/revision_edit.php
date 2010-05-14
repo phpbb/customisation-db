@@ -41,6 +41,15 @@ foreach ($revision->phpbb_versions as $row)
 	$revision_phpbb_versions[] = $phpbb_versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']];
 }
 
+$revision_status = request_var('revision_status', (int) $revision->revision_status);
+$status_list = array(
+	TITANIA_REVISION_NEW				=> 'REVISION_NEW',
+	TITANIA_REVISION_APPROVED			=> 'REVISION_APPROVED',
+	TITANIA_REVISION_DENIED				=> 'REVISION_DENIED',
+	TITANIA_REVISION_PULLED_SECURITY	=> 'REVISION_PULLED_FOR_SECURITY',
+	TITANIA_REVISION_PULLED_OTHER		=> 'REVISION_PULLED_FOR_OTHER',
+);
+
 // Submit the revision
 if (isset($_POST['submit']))
 {
@@ -69,10 +78,13 @@ if (isset($_POST['submit']))
 	// If no errors, submit
 	if (!sizeof($error))
 	{
+		if ($revision_status != $revision->revision_status && titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+		{
+			$revision->change_status($revision_status);
+		}
+
 		$revision->phpbb_versions = array();
 		$revision->__set_array(array(
-			// @todo option to change the revision_status later on (need to check more stuff on the contribution if it's changed too)
-			//'revision_status'		=>
 			'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', $revision->revision_name, true)),
 		));
 
@@ -106,11 +118,21 @@ foreach ($phpbb_versions as $version => $name)
 	));
 }
 
+foreach ($status_list as $status => $row)
+{
+	phpbb::$template->assign_block_vars('status_select', array(
+		'S_SELECTED'		=> ($status == $revision_status) ? true : false,
+		'VALUE'				=> $status,
+		'NAME'				=> phpbb::$user->lang[$row],
+	));
+}
+
 // Display the rest of the page
 phpbb::$template->assign_vars(array(
 	'ERROR_MSG'			=> (sizeof($error)) ? implode('<br />', $error) : '',
 	'REVISION_NAME'		=> $revision->revision_name,
 
+	'S_IS_MODERATOR'	=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 	'S_POST_ACTION'		=> titania::$contrib->get_url('revision_edit', array('revision' => $revision_id)),
 ));
 

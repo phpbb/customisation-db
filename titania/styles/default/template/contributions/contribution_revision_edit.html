@@ -22,6 +22,18 @@
 						<!-- END phpbb_versions -->
 					</select></dd>
 				</dl>
+				<!-- IF S_IS_MODERATOR -->
+				<dl>
+					<dt><label for="revision_status">{L_REVISION_STATUS}:</label><br /><span>{L_REVISION_STATUS_EXPLAIN}</span></dt>
+					<dd>
+						<select name="revision_status" id="revision_status">
+							<!-- BEGIN status_select -->
+								<option value="{status_select.VALUE}"<!-- IF status_select.S_SELECTED --> selected="selected"<!-- ENDIF -->>{status_select.NAME}</option>
+							<!-- END status_select -->
+						</select>
+					</dd>
+				</dl>
+				<!-- ENDIF -->
 			</fieldset>
 
 			<fieldset class="submit-buttons">
