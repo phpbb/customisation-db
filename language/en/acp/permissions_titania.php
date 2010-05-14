@@ -104,6 +104,8 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_bbcode'				=> array('lang' => 'Can post BBCode', 'cat' => 'titania'),
 	'acl_u_titania_smilies'				=> array('lang' => 'Can post smilies', 'cat' => 'titania'),
 
+	'acl_u_titania_post_hard_delete'	=> array('lang' => 'Can <strong>hard</strong> delete posts and topics (posts and topics that the user is able to otherwise delete).', 'cat' => 'titania'),
+
 	// Moderation
 	'acl_u_titania_mod_author_mod'			=> array('lang' => 'Can moderate author profiles', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_contrib_mod'			=> array('lang' => 'Can moderate (all) contributions', 'cat' => 'titania_moderate'),
