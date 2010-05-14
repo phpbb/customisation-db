@@ -276,6 +276,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$post_ids[] = $row['post_id'];
 			$user_ids[] = $row['post_user_id'];
 			$user_ids[] = $row['post_edit_user'];
+			$user_ids[] = $row['post_delete_user'];
 
 			$last_post_time = $row['post_time']; // to set tracking
 		}
