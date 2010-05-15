@@ -35,7 +35,7 @@ class queue_overlord
 	*
 	* @param int|array $queue_id queue_id or an array of queue_ids
 	*/
-	public static function load_queue($queue_id)
+	public static function load_queue($queue_id, $sort = false)
 	{
 		if (!is_array($queue_id))
 		{
@@ -50,6 +50,15 @@ class queue_overlord
 			return;
 		}
 
+		if ($sort === false)
+		{
+			// Setup the sort tool
+			$sort = new titania_sort();
+			$sort->set_sort_keys(self::$sort_by);
+			$sort->default_limit = phpbb::$config['topics_per_page'];
+			$sort->request();
+		}
+
 		$sql_ary = array(
 			'SELECT' => 'q.*',
 
@@ -57,7 +66,9 @@ class queue_overlord
 				TITANIA_QUEUE_TABLE	=> 'q',
 			),
 
-			'WHERE' => phpbb::$db->sql_in_set('q.queue_id', array_map('intval', $queue_id))
+			'WHERE' => phpbb::$db->sql_in_set('q.queue_id', array_map('intval', $queue_id)),
+
+			'ORDER_BY'	=> $sort->get_order_by(),
 		);
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
