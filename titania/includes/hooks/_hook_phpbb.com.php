@@ -118,7 +118,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			$temp_post->__set_array($row);
 
 			$post_text = $row['post_text'];
-			decode_message($post_text, $row['post_text_uid']);
+			titania_decode_message($post_text, $row['post_text_uid']);
 
 			$post_text .= "\n\n" . $temp_post->get_url();
 
@@ -185,7 +185,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	titania::_include('functions_posting', 'phpbb_posting');
 
 	$post_text = $post_object->post_text;
-	decode_message($post_text, $post_object->post_text_uid);
+	titania_decode_message($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . $post_object->get_url();
 
@@ -235,7 +235,7 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 	titania::_include('functions_posting', 'phpbb_posting');
 
 	$post_text = $post_object->post_text;
-	decode_message($post_text, $post_object->post_text_uid);
+	titania_decode_message($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . $post_object->get_url();
 

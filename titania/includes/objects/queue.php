@@ -112,30 +112,7 @@ class titania_queue extends titania_message_object
 			parent::submit();
 
 			// Is there a queue discussion topic?  If not we should create one
-			$sql = 'SELECT topic_id FROM ' . TITANIA_TOPICS_TABLE . '
-				WHERE parent_id = ' . $this->contrib_id . '
-					AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
-			$result = phpbb::$db->sql_query($sql);
-			if (!phpbb::$db->sql_fetchrow($result))
-			{
-				titania::add_lang('posting');
-
-				$post = new titania_post(TITANIA_QUEUE_DISCUSSION);
-				$post->topic->__set_array(array(
-					'parent_id'			=> $row['contrib_id'],
-					'topic_category'	=> $row['contrib_type'],
-					'topic_url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/',
-					'topic_sticky'		=> true,
-				));
-				$post->__set_array(array(
-					'post_access'		=> TITANIA_ACCESS_AUTHORS,
-					'post_subject'		=> sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_TITLE'], $row['contrib_name']),
-					'post_text'			=> phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_MESSAGE'],
-				));
-				$post->generate_text_for_storage(true, true, true);
-				$post->submit();
-			}
-			phpbb::$db->sql_freeresult($result);
+			$this->get_queue_discussion_topic_id();
 
 			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version']);
 		}
@@ -195,26 +172,15 @@ class titania_queue extends titania_message_object
 		$post->post_text = phpbb::$user->lang['VALIDATION_SUBMISSION'] . "\n\n";
 
 		// Put the queue discussion link in the post
-		$sql = 'SELECT topic_id, topic_url, topic_subject_clean FROM ' . TITANIA_TOPICS_TABLE . '
-			WHERE parent_id = ' . $this->contrib_id . '
-				AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
-		$result = phpbb::$db->sql_query($sql);
-		$queue_topic_row = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);
+		$queue_topic = $this->get_queue_discussion_topic();
 
-		if ($queue_topic_row)
-		{
-			$queue_topic = new titania_topic;
-			$queue_topic->__set_array($queue_topic_row);
-
-			$post->post_text .= '[url=' . $queue_topic->get_url() . ']' . phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC'] . "[/url]\n\n";
-		}
+		$post->post_text .= '[url=' . $queue_topic->get_url() . ']' . phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC'] . "[/url]\n\n";
 
 		// Add the queue notes
 		if ($this->queue_notes)
 		{
 			$queue_notes = $this->queue_notes;
-			decode_message($queue_notes, $this->queue_notes_uid);
+			titania_decode_message($queue_notes, $this->queue_notes_uid);
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_NOTES'] . '&quot;]' . $queue_notes . "[/quote]\n";
 		}
 
@@ -222,7 +188,7 @@ class titania_queue extends titania_message_object
 		if ($this->mpv_results)
 		{
 			$mpv_results = $this->mpv_results;
-			decode_message($mpv_results, $this->mpv_results_uid);
+			titania_decode_message($mpv_results, $this->mpv_results_uid);
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_MPV'] . '&quot;]' . $mpv_results . "[/quote]\n";
 		}
 
@@ -283,19 +249,9 @@ class titania_queue extends titania_message_object
 
 		$message = (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message;
 
-		$sql = 'SELECT topic_id FROM ' . TITANIA_TOPICS_TABLE . '
-			WHERE parent_id = ' . $this->contrib_id . '
-				AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
-		phpbb::$db->sql_query($sql);
-		$topic_id = phpbb::$db->sql_fetchfield('topic_id');
-		phpbb::$db->sql_freeresult();
+		$topic = $this->get_queue_discussion_topic();
 
-		if (!$topic_id)
-		{
-			return;
-		}
-
-		$post = new titania_post(TITANIA_QUEUE_DISCUSSION, $topic_id);
+		$post = new titania_post(TITANIA_QUEUE_DISCUSSION, $topic);
 		$post->__set_array(array(
 			'post_subject'		=> 'Re: ' . $post->topic->topic_subject,
 			'post_text'			=> $message,
@@ -393,7 +349,7 @@ class titania_queue extends titania_message_object
 		$revision->contrib = $contrib;
 
 		$notes = $this->queue_validation_notes;
-		decode_message($notes, $this->queue_validation_notes_uid);
+		titania_decode_message($notes, $this->queue_validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_APPROVED'], $revision->revision_version, $notes);
 
 		// Replace empty quotes if there are no notes
@@ -519,7 +475,7 @@ class titania_queue extends titania_message_object
 		$revision = $this->get_revision();
 
 		$notes = $this->queue_validation_notes;
-		decode_message($notes, $this->queue_validation_notes_uid);
+		titania_decode_message($notes, $this->queue_validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_DENIED'], $revision->revision_version, $notes);
 
 		// Replace empty quotes if there are no notes
@@ -578,7 +534,7 @@ class titania_queue extends titania_message_object
 
 		// Message
 		$notes = $this->queue_validation_notes;
-		decode_message($notes, $this->queue_validation_notes_uid);
+		titania_decode_message($notes, $this->queue_validation_notes_uid);
 		if ($approve)
 		{
 			$message = titania_types::$types[$contrib->contrib_type]->validation_message_approve;
@@ -641,5 +597,50 @@ class titania_queue extends titania_message_object
 		}
 
 		return false;
+	}
+
+	/**
+	* Get the queue discussion topic or create one if needed
+	*
+	* @return titania_topic object
+	*/
+	public function get_queue_discussion_topic()
+	{
+		$sql = 'SELECT * FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE parent_id = ' . $this->contrib_id . '
+				AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		if ($row)
+		{
+			$topic = new titania_topic;
+			$topic->__set_array($row);
+
+			return $topic;
+		}
+
+		// No queue discussion topic...so we must create one
+		titania::add_lang('posting');
+
+		$contrib = contribs_overlord::get_contrib_object($this->contrib_id, true);
+
+		$post = new titania_post(TITANIA_QUEUE_DISCUSSION);
+		$post->topic->__set_array(array(
+			'parent_id'			=> $this->contrib_id,
+			'topic_category'	=> $contrib->contrib_type,
+			'topic_url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/',
+			'topic_sticky'		=> true,
+		));
+		$post->__set_array(array(
+			'post_access'		=> TITANIA_ACCESS_AUTHORS,
+			'post_subject'		=> sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_TITLE'], $row['contrib_name']),
+			'post_text'			=> phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_MESSAGE'],
+		));
+		$post->generate_text_for_storage(true, true, true);
+		$post->submit();
+
+		return $post->topic;
 	}
 }

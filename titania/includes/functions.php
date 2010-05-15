@@ -62,6 +62,13 @@ function titania_generate_text_for_display($text, $uid, $bitfield, $flags)
 	return $return;
 }
 
+function titania_decode_message(&$message, $bbcode_uid = '')
+{
+	$message = str_replace('&nbsp;', ' ', $message);
+
+	decode_message($message, $bbcode_uid);
+}
+
 /**
 * Exception handler
 *

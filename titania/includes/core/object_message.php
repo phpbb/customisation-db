@@ -110,13 +110,15 @@ abstract class titania_message_object extends titania_database_object
 		$message = $message_uid = $message_bitfield = $message_options = false;
 		$this->get_message_fields($message, $message_uid, $message_bitfield, $message_options);
 
-		// Outputted via call to generate_text_for_edit()
-		//'allow_bbcode'
-		//'allow_smilies'
-		//'allow_urls'
-		//'text'
-		$for_edit = array_merge($for_edit, generate_text_for_edit($message, $message_uid, $message_options));
-		$for_edit['message'] = $for_edit['text']; // Prevent nubness
+		titania_decode_message($message, $message_uid);
+
+		$for_edit = array_merge($for_edit, array(
+			'allow_bbcode'	=> ($message_options & OPTION_FLAG_BBCODE) ? 1 : 0,
+			'allow_smilies'	=> ($message_options & OPTION_FLAG_SMILIES) ? 1 : 0,
+			'allow_urls'	=> ($message_options & OPTION_FLAG_LINKS) ? 1 : 0,
+			'text'			=> $message, // text is expected by some (it's the default for generate_text_for_edit)
+			'message'		=> $message,
+		));
 
 		// Add any of the marked fields to the array
 		foreach ($this->object_config as $field => $options)
