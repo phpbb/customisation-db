@@ -630,12 +630,12 @@ class titania_queue extends titania_message_object
 		$post->topic->__set_array(array(
 			'parent_id'			=> $this->contrib_id,
 			'topic_category'	=> $contrib->contrib_type,
-			'topic_url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/support/',
+			'topic_url'			=> titania_types::$types[$contrib->contrib_type]->url . '/' . $contrib->contrib_name_clean . '/support/',
 			'topic_sticky'		=> true,
 		));
 		$post->__set_array(array(
 			'post_access'		=> TITANIA_ACCESS_AUTHORS,
-			'post_subject'		=> sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_TITLE'], $row['contrib_name']),
+			'post_subject'		=> sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_TITLE'], $contrib->contrib_name),
 			'post_text'			=> phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_MESSAGE'],
 		));
 		$post->generate_text_for_storage(true, true, true);

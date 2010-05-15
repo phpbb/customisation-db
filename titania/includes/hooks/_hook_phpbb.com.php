@@ -129,6 +129,8 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 				'post_text'				=> $post_text,
 			);
 
+			titania::_include('functions_posting', 'phpbb_posting');
+
 			if ($topic_id)
 			{
 				phpbb_posting('reply', $options);
