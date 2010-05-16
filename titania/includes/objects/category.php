@@ -473,7 +473,7 @@ class titania_category extends titania_message_object
 			$url .= $row['category_name_clean'] . '/';
 		}
 
-		return titania_url::build_url($url) . $this->category_name_clean . '-' . $this->category_id;
+		return titania_url::build_url($url) . titania_url::url_replace($this->category_name_clean) . '-' . $this->category_id;
 	}
 
 	/**
