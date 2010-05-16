@@ -161,7 +161,7 @@ switch ($action)
 				}
 
 				// Only update category if no errors occurred from moving it
-				if (!sizeof($errors_extra))
+				if (!sizeof($error))
 				{
 					// Now we submit the category information...
 					$category_object->submit();
