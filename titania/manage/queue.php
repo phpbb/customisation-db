@@ -139,59 +139,87 @@ if ($queue_id)
 				'display_subject'	=> false,
 			));
 
-			if (titania::confirm_box(true))
+			$error = array();
+			$public_notes = utf8_normalize_nfc(request_var('public_notes', '', true));
+
+			if ($message_object->submit_check())
 			{
-				$queue->post_data($message_object);
-
-				if ($action == 'approve')
+				// Check form key
+				if (($form_error = $message_object->validate_form_key()) !== false)
 				{
-					$public_notes = utf8_normalize_nfc(request_var('public_notes', '', true));
-					$queue->approve($public_notes);
+					$error[] = $form_error;
+				}
 
-					// Install the style on the demo board?
-					if ($contrib->contrib_type == TITANIA_TYPE_STYLE && isset($_POST['style_demo_install']) && titania::$config->demo_style_path)
+				if (!sizeof($error))
+				{
+
+					if ($action == 'approve')
 					{
-						// Reload the contrib, it hath changed
-						$contrib->load((int) $queue->contrib_id);
+						$queue->approve($public_notes);
 
-						$revision = $queue->get_revision();
-
-						$sql = 'SELECT attachment_directory, physical_filename FROM ' . TITANIA_ATTACHMENTS_TABLE . '
-							WHERE attachment_id = ' . (int) $revision->attachment_id;
-						$result = phpbb::$db->sql_query($sql);
-						$row = phpbb::$db->sql_fetchrow($result);
-						phpbb::$db->sql_freeresult($result);
-
-						$contrib_tools = new titania_contrib_tools(titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . utf8_basename($row['physical_filename']));
-						if (!($style_id = $contrib_tools->install_demo_style(TITANIA_ROOT . titania::$config->demo_style_path, $contrib)))
+						// Install the style on the demo board?
+						if ($contrib->contrib_type == TITANIA_TYPE_STYLE && isset($_POST['style_demo_install']) && titania::$config->demo_style_path)
 						{
-							// Oh noez, we habz error
-							trigger_error(implode('<br />', $contrib_tools->error));
-						}
-						else
-						{
-							// Update the demo link
-							$contrib->contrib_demo = sprintf(titania::$config->demo_style_url, $style_id);
-							$contrib->submit();
+							// Reload the contrib, it hath changed
+							$contrib->load((int) $queue->contrib_id);
+
+							$revision = $queue->get_revision();
+
+							$sql = 'SELECT attachment_directory, physical_filename FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+								WHERE attachment_id = ' . (int) $revision->attachment_id;
+							$result = phpbb::$db->sql_query($sql);
+							$row = phpbb::$db->sql_fetchrow($result);
+							phpbb::$db->sql_freeresult($result);
+
+							$contrib_tools = new titania_contrib_tools(titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . utf8_basename($row['physical_filename']));
+							if (!($style_id = $contrib_tools->install_demo_style(TITANIA_ROOT . titania::$config->demo_style_path, $contrib)))
+							{
+								// Oh noez, we habz error
+								trigger_error(implode('<br />', $contrib_tools->error));
+							}
+							else
+							{
+								// Update the demo link
+								$contrib->contrib_demo = sprintf(titania::$config->demo_style_url, $style_id);
+								$contrib->submit();
+							}
 						}
 					}
-				}
-				else
-				{
-					$queue->deny();
-				}
-			}
-			else
-			{
-				if ($action == 'approve' && $contrib->contrib_type == TITANIA_TYPE_STYLE && titania::$config->demo_style_path)
-				{
-					phpbb::$template->assign_var('S_STYLE_DEMO_INSTALL', true);
-				}
+					else
+					{
+						$queue->deny();
+					}
 
-				$message_object->display();
-				titania::confirm_box(false, (($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE'), '', array(), 'manage/queue_validate.html');
+					redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
+				}
 			}
-			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
+
+			$message_object->display();
+
+			// Build the preview message
+			titania::add_lang('contributions');
+			$revision = $queue->get_revision();
+			$public_notes_preview = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
+				$revision->revision_version,
+				$public_notes
+			);
+			$uid = $bitfield = $options = false;
+			generate_text_for_storage($public_notes_preview, $uid, $bitfield, $options, true, true, true);
+			$public_notes_preview = titania_generate_text_for_display($public_notes_preview, $uid, $bitfield, $options);
+
+			phpbb::$template->assign_vars(array(
+				'ERROR'						=> implode('<br />', $error),
+				'PAGE_TITLE_EXPLAIN'		=> phpbb::$user->lang[(($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE') . '_CONFIRM'],
+
+				'PUBLIC_MESSAGE'			=> $public_notes,
+				'PUBLIC_PREVIEW_SUBJECT'	=> (isset($_POST['preview'])) ? 'Re: ' . $contrib->contrib_name : false,
+				'PUBLIC_PREVIEW_MESSAGE'	=> (isset($_POST['preview'])) ? $public_notes_preview : false,
+
+				'S_STYLE_DEMO_INSTALL'		=> ($action == 'approve' && $contrib->contrib_type == TITANIA_TYPE_STYLE && titania::$config->demo_style_path) ? true : false,
+			));
+
+			titania::page_header((($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE'));
+			titania::page_footer(false, 'manage/queue_validate.html');
 		break;
 
 		case 'notes' :

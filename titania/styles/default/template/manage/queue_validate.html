@@ -1,11 +1,30 @@
 <!-- INCLUDE common/overall_header.html -->
 
 <form id="{POSTING_FORM_NAME}" method="post" action="{S_CONFIRM_ACTION}" {S_FORM_ENCTYPE}>
+
+<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
+
+<!-- IF PUBLIC_PREVIEW_MESSAGE -->
+<div class="post bg2" id="preview">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<div class="postbody">
+		<h3>{L_PREVIEW}: {PUBLIC_PREVIEW_SUBJECT}</h3>
+
+		<div class="content">{PUBLIC_PREVIEW_MESSAGE}</div>
+	</div>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<hr />
+<!-- ENDIF -->
+
+
 <div class="panel">
 	<div class="inner"><span class="corners-top"><span></span></span>
 
-	<h2>{MESSAGE_TITLE}</h2>
-	<p>{MESSAGE_TEXT}</p>
+	<h2>{PAGE_TITLE}</h2>
+	<p>{PAGE_TITLE_EXPLAIN}</p>
 
 	<fieldset>
 		<!-- IF S_STYLE_DEMO_INSTALL -->
@@ -25,14 +44,16 @@
 			<dt><label for="public_notes">{L_PUBLIC_NOTES}:</label></dt>
 		</dl>
 		<div id="message-box">
-			<textarea name="public_notes" id="public_notes" rows="10" cols="76" class="inputbox"></textarea>
+			<textarea name="public_notes" id="public_notes" rows="10" cols="76" class="inputbox">{PUBLIC_MESSAGE}</textarea>
 		</div>
 	</fieldset>
 
 	<fieldset class="submit-buttons">
 		{S_HIDDEN_FIELDS}
-		<input type="submit" name="confirm" value="{L_YES}" class="button2" />&nbsp;
-		<input type="submit" name="cancel" value="{L_NO}" class="button2" />
+		{S_FORM_TOKEN}
+		<input type="hidden" id="open_panel" name="open_panel" value="{POSTING_PANELS_DEFAULT}" />
+		<input type="submit" tabindex="3" name="preview" value="{L_PREVIEW}" class="button1" />&nbsp;
+		<input type="submit" tabindex="4" accesskey="s" name="submit" value="{L_SUBMIT}" class="button1" />&nbsp;
 	</fieldset>
 
 	<span class="corners-bottom"><span></span></span></div>
