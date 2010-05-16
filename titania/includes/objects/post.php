@@ -877,8 +877,8 @@ class titania_post extends titania_message_object
 			'U_QUOTE'						=> $this->acl_get('post') ? $this->get_url('quote') : '',
 
 			'S_UNREAD_POST'					=> ($this->unread) ? true : false, // remember that you must set this up extra...
-			'S_POST_APPROVED'				=> $this->post_approved,
-			'S_POST_REPORTED'				=> $this->post_reported,
+			'S_POST_APPROVED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->post_approved : false,
+			'S_POST_REPORTED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->post_reported : false,
 			'S_POST_DELETED'				=> ($this->post_deleted != 0) ? true : false,
 			'S_ACCESS_TEAMS'				=> ($this->post_access == TITANIA_ACCESS_TEAMS) ? true : false,
 			'S_ACCESS_AUTHORS'				=> ($this->post_access == TITANIA_ACCESS_AUTHORS) ? true : false,
