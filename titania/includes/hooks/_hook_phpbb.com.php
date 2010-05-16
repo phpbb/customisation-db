@@ -186,21 +186,40 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 
 	titania::_include('functions_posting', 'phpbb_posting');
 
-	$post_text = $post_object->post_text;
-	titania_decode_message($post_text, $post_object->post_text_uid);
-
-	$post_text .= "\n\n" . $post_object->get_url();
-
+	// Need some stuff
+	titania::add_lang('contributions');
+	$contrib->load((int) $queue_object->contrib_id);
+	$revision = $queue_object->get_revision();
+	$contrib->get_download($revision->revision_id);
+	
 	switch ($post_object->topic->topic_category)
 	{
 		case TITANIA_TYPE_MOD :
 			$post_object->topic->topic_first_post_user_id = titania::$config->forum_mod_robot;
+			$lang_var = 'MOD_QUEUE_TOPIC';
 		break;
 
 		case TITANIA_TYPE_STYLE :
 			$post_object->topic->topic_first_post_user_id = titania::$config->forum_style_robot;
+			$lang_var = 'STYLE_QUEUE_TOPIC';
 		break;
 	}
+	
+	$post_text = sprintf(phpbb::$user->lang[$lang_var],
+		$contrib->contrib_name,
+		$contrib->author->get_url(),
+		users_overlord::get_user($contrib->author->user_id, '_username'),
+		$contrib->contrib_desc,
+		$revision->revision_version,
+		titania_url::build_url('download', array('id' => $revision->attachment_id)),
+		$contrib->download['real_filename'],
+		$contrib->download['filesize']
+	);
+	
+	$post_text .= "\n\n" . $post_object->post_text;
+	titania_decode_message($post_text, $post_object->post_text_uid);
+
+	$post_text .= "\n\n" . $post_object->get_url();
 
 	$options = array(
 		'poster_id'				=> $post_object->topic->topic_first_post_user_id,

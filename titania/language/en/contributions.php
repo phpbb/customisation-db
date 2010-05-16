@@ -124,6 +124,13 @@ $lang = array_merge($lang, array(
 [color=blue][b]The phpBB Team is not responsible nor required to provide support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Modifications Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]-->[b]Modification support[/b]<--[/url][/size]',
+	'MOD_QUEUE_TOPIC'						=> '[b]Modification name[/b]: %1$s
+[b]Author:[/b] [url=%2$s]%3$s[/url]
+[b]Modification description[/b]: %4$s
+[b]Modification version[/b]: %5$s
+
+[b]Download file[/b]: [url=%6$s]%7$s[/url]
+[b]File size:[/b] %8$s Bytes',
 	'MOD_REPLY_PUBLIC'						=> '[b][color=darkred]Modification validated/released[/color]
 
 Notes:[/b] %s',
@@ -193,6 +200,13 @@ Notes:[/b] %2$s',
 [color=blue][b]The phpBB Team is not responsible nor required to provide support for this Style. By installing this Style, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]-->[b]Style support[/b]<--[/url][/size]',
+	'STYLE_QUEUE_TOPIC'						=> '[b]Style name[/b]: %1$s
+[b]Author:[/b] [url=%2$s]%3$s[/url]
+[b]Style description[/b]: %4$s
+[b]Style version[/b]: %5$s
+
+[b]Download file[/b]: [url=%6$s]%7$s[/url]
+[b]File size:[/b] %8$s Bytes',
 	'STYLE_REPLY_PUBLIC'					=> '[b][color=darkred]Style validated/released[/color]
 
 Notes: %s[/b]',
