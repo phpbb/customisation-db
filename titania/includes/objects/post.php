@@ -790,13 +790,7 @@ class titania_post extends titania_message_object
 						//I'm guessing it's here because this is the only place it gets decreased.
 						if ($to_db['public'] < 0)
 						{
-							//Open text file and write to it
-							$file_handle = @fopen(TITANIA_ROOT . 'store/debug.txt', 'a');
-							if ($file_handle !== false)
-							{
-								@fwrite($file_handle, 'referer:' . $_SERVER['HTTP_REFERER'] . '|uri:' . $_SERVER['REQUEST_URI'] . "\r\n");
-								@fclose($fh);
-							}
+							titania::log('Public access less than 0.');
 						}
 					break;
 

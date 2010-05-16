@@ -759,4 +759,52 @@ class titania
 
 		include(TITANIA_ROOT . 'includes/' . $file . '.' . PHP_EXT);
 	}
+
+	/**
+	* Creates a log file with information that can help with identifying a problem
+	*
+	* @param string $text The description to add with the log entry
+	* @param string $filename The name of the file to write to (without the extension)
+	*/
+	public static function log($text = false, $filename = 'titania_log')
+	{
+		//Append the current server date and time
+		$text = date('d-m-Y @ H:i:s') . (($text !== false) ? $text . ' :: ' : '');
+		//Let's gather the $_SERVER array contents
+		if ($_SERVER)
+		{
+			$text .= "\r\n-------------------------------------------------\r\n_SERVER: ";
+			foreach ($_SERVER as $key => $value)
+			{
+				$text .= sprintf('%1s = %2s, ', $key, $value);
+			}
+			$text = rtrim($text, ', ');
+		}
+
+		//Let's gather the $_POST array contents
+		if ($_POST)
+		{
+			$text .= "\r\n-------------------------------------------------\r\n_POST: ";
+			foreach ($_POST as $key => $value)
+			{
+				$text .= sprintf('%1s = %2s, ', $key, $value);
+			}
+			$text = rtrim($text, ', ');
+		}
+
+		//Let's gather the $_REQUEST array contents
+		if ($_REQUEST)
+		{
+			$text .= "\r\n-------------------------------------------------\r\n_REQUEST: ";
+			foreach ($_REQUEST as $key => $value)
+			{
+				$text .= sprintf('%1s = %2s, ', $key, $value);
+			}
+			$text = rtrim($text, ', ');
+		}
+
+		//Use PHP's error_log function to write to file
+		error_log($text . "\r\n=================================================\r\n", 3, TITANIA_ROOT . "store/$filename.log");
+	}
+
 }
