@@ -112,7 +112,7 @@ class titania_queue extends titania_message_object
 			parent::submit();
 
 			// Is there a queue discussion topic?  If not we should create one
-			$this->get_queue_discussion_topic_id();
+			$this->get_queue_discussion_topic();
 
 			$this->update_first_queue_post(phpbb::$user->lang['VALIDATION'] . ' - ' . $row['contrib_name'] . ' - ' . $row['revision_version']);
 		}
