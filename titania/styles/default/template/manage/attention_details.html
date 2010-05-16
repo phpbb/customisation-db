@@ -91,9 +91,13 @@
 		</tr>
 		</tbody>
 	</table>
+	<!-- IF attention_closed.ATTENTION_DESCRIPTION -->
 	<div class="content">
 		<blockquote><div><cite>{attention_closed.CLOSER_USER_FULL} {L_WROTE}:</cite>{attention_closed.ATTENTION_DESCRIPTION}</div></blockquote>
 	</div>
+	<!-- ELSE -->
+	<br />
+	<!-- ENDIF -->
 	<!-- IF not attention_closed.S_LAST_ROW --><hr class="dashed" /><!-- ENDIF -->
 </div>
 <!-- END attention_closed -->
