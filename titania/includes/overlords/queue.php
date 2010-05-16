@@ -192,7 +192,7 @@ class queue_overlord
 	*
 	* @param int $queue_id
 	*/
-	public static function display_queue_item($queue_id)
+	public static function display_queue_item($queue_id, $review = false)
 	{
 		titania::add_lang('contributions');
 
@@ -236,7 +236,7 @@ class queue_overlord
 		$topic->__set_array($row);
 
 		// Display the posts
-		posts_overlord::display_topic_complete($topic);
+		posts_overlord::display_topic_complete($topic, $review);
 
 		// Some quick-actions
 		$quick_actions = array();

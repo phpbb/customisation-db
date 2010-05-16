@@ -220,7 +220,7 @@ if ($queue_id)
 				'L_TOPIC_REVIEW'			=> phpbb::$user->lang['QUEUE_REVIEW'],
 			));
 
-			queue_overlord::display_queue_item($queue_id);
+			queue_overlord::display_queue_item($queue_id, true);
 
 			titania::page_header(phpbb::$user->lang[(($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE')] . ': ' . $contrib->contrib_name);
 			titania::page_footer(false, 'manage/queue_validate.html');
