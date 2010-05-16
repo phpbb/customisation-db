@@ -127,6 +127,7 @@ phpBB MOD Team',
 	'QUEUE_REPLY_IN_PROGRESS'			=> 'Marked as in-progress',
 	'QUEUE_REPLY_MOVE'					=> 'Moved from %1$s to %2$s',
 	'QUEUE_REPLY_NO_PROGRESS'			=> 'Marked as not in-progress',
+	'QUEUE_REVIEW'						=> 'Queue review',
 	'QUEUE_TESTING'						=> 'Testing',
 	'QUEUE_VALIDATING'					=> 'Validating',
 

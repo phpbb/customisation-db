@@ -216,9 +216,13 @@ if ($queue_id)
 				'PUBLIC_PREVIEW_MESSAGE'	=> (isset($_POST['preview'])) ? $public_notes_preview : false,
 
 				'S_STYLE_DEMO_INSTALL'		=> ($action == 'approve' && $contrib->contrib_type == TITANIA_TYPE_STYLE && titania::$config->demo_style_path) ? true : false,
+				'TOPIC_TITLE'				=> $contrib->contrib_name,
+				'L_TOPIC_REVIEW'			=> phpbb::$user->lang['QUEUE_REVIEW'],
 			));
 
-			titania::page_header((($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE'));
+			queue_overlord::display_queue_item($queue_id);
+
+			titania::page_header(phpbb::$user->lang[(($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE')] . ': ' . $contrib->contrib_name);
 			titania::page_footer(false, 'manage/queue_validate.html');
 		break;
 

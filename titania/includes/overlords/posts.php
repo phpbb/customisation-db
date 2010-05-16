@@ -322,6 +322,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			// Parse attachments before outputting the message
 			$message = $post->generate_text_for_display();
 			$parsed_attachments = $attachments->parse_attachments($message);
+			$message_decoded = censor_text($post->post_text);
+			decode_message($message_decoded, $post->post_text_uid);
+			$message_decoded = bbcode_nl2br($message_decoded);
 
 			// Build CP Fields
 			$cp_row = array();
@@ -337,6 +340,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$cp_row['row'],
 				array(
 					'POST_TEXT'				=> $message,
+					'POST_TEXT_DECODED'		=> $message_decoded,
 					'MINI_POST_IMG'			=> ($post->post_time > $last_mark_time) ? phpbb::$user->img('icon_post_target_unread', 'NEW_POST') : phpbb::$user->img('icon_post_target', 'POST'),
 					'S_FIRST_UNREAD'		=> ($post->post_time > $last_mark_time && $prev_post_time <= $last_mark_time) ? true : false,
 				)
