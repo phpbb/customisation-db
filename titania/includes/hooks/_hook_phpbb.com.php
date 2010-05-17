@@ -136,7 +136,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 				$options = array_merge($options, array(
 					'topic_id'	=> $topic_id,
 				));
-				
+
 				phpbb_posting('reply', $options);
 			}
 			else
@@ -192,10 +192,11 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 
 	// Need some stuff
 	titania::add_lang('contributions');
+	$contrib = new titania_contribution;
 	$contrib->load((int) $queue_object->contrib_id);
 	$revision = $queue_object->get_revision();
 	$contrib->get_download($revision->revision_id);
-	
+
 	switch ($post_object->topic->topic_category)
 	{
 		case TITANIA_TYPE_MOD :
@@ -208,7 +209,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			$lang_var = 'STYLE_QUEUE_TOPIC';
 		break;
 	}
-	
+
 	$post_text = sprintf(phpbb::$user->lang[$lang_var],
 		$contrib->contrib_name,
 		$contrib->author->get_url(),
@@ -219,7 +220,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 		$contrib->download['real_filename'],
 		$contrib->download['filesize']
 	);
-	
+
 	$post_text .= "\n\n" . $post_object->post_text;
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
