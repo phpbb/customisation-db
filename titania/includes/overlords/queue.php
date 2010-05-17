@@ -275,6 +275,7 @@ class queue_overlord
 		}
 
 		phpbb::$template->assign_vars(array(
+			'CURRENT_STATUS'			=> titania_tags::get_tag_name($row['queue_status']),
 			'QUICK_ACTIONS'				=> titania::build_quick_actions($quick_actions),
 
 			'S_DISPLAY_CONTRIBUTION'	=> true,
