@@ -133,6 +133,10 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 
 			if ($topic_id)
 			{
+				$options = array_merge($options, array(
+					'topic_id'	=> $topic_id,
+				));
+				
 				phpbb_posting('reply', $options);
 			}
 			else
