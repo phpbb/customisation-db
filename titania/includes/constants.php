@@ -60,6 +60,7 @@ define('TITANIA_ATTENTION', 12);
 // Errorbox types
 define('TITANIA_ERROR', 1);
 define('TITANIA_SUCCESS', 2);
+define('TITANIA_DEBUG', 3);
 
 // Author constants
 define('TITANIA_AUTHOR_HIDDEN', 0);

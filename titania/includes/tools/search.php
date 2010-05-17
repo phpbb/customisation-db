@@ -70,7 +70,8 @@ class titania_search
 				// In case Solr would happen to go down..
 				if (!$handler->connection)
 				{
-					// @todo - Log this as an error
+					// Log this as an error
+					titania::log(TITANIA_ERROR, 'Solr Server not responding');
 
 					self::$do_not_index = true;
 					return false;

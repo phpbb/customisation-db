@@ -16,7 +16,6 @@
 			<!-- IF U_VIEW_DEMO --><a href="{U_VIEW_DEMO}">{L_VIEW_DEMO}</a><!-- ENDIF -->
 
 			<!-- IF U_DOWNLOAD -->
-
 				<div class="download-button">
 					<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE}</a>
 				</div>
@@ -24,7 +23,7 @@
 
 			<!-- IF QUICK_ACTIONS -->
 				<hr class="dashed" />
-				<!-- IF S_IN_QUEUE and CURRENT_STATUS --><div class="small"><strong><em>{CURRENT_STATUS}</em></strong></div><br /><!-- ENDIF -->
+				<!-- IF S_IN_QUEUE and CURRENT_STATUS --><div class="small">{L_QUEUE_STATUS}: <strong><em>{CURRENT_STATUS}</em></strong></div><br /><!-- ENDIF -->
 				{QUICK_ACTIONS}
 			<!-- ENDIF -->
 

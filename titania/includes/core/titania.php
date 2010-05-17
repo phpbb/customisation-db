@@ -766,22 +766,27 @@ class titania
 	* @param int $log_type The log type to record. To be expanded for different types as needed
 	* @param string $text The description to add with the log entry
 	*/
-	public static function log($log_type, $text)
+	public static function log($log_type, $message = false)
 	{
 		switch ($log_type)
 		{
 			case TITANIA_ERROR:
-				//Append the current server date and time
-				$text = date('d-m-Y @ H:i:s') . (($text !== false) ? $text . ' :: ' : '');
+				//Append the current server date/time, user information, and URL
+				$text = date('d-m-Y @ H:i:s') . ' USER: ' . phpbb::$user->data['username'] . ' - ' . phpbb::$user->data['user_id'] . "\r\n";
+				$text .= titania_url::$current_page_url;
+
+				// Append the sent message if any
+				$text .= (($message !== false) ? "\r\n" . $message : '');
+
 				//Let's gather the $_SERVER array contents
 				if ($_SERVER)
 				{
 					$text .= "\r\n-------------------------------------------------\r\n_SERVER: ";
 					foreach ($_SERVER as $key => $value)
 					{
-						$text .= sprintf('%1s = %2s, ', $key, $value);
+						$text .= sprintf('%1s = %2s; ', $key, $value);
 					}
-					$text = rtrim($text, ', ');
+					$text = rtrim($text, '; ');
 				}
 
 				//Let's gather the $_REQUEST array contents
@@ -790,18 +795,32 @@ class titania
 					$text .= "\r\n-------------------------------------------------\r\n_REQUEST: ";
 					foreach ($_REQUEST as $key => $value)
 					{
-						$text .= sprintf('%1s = %2s, ', $key, $value);
+						$text .= sprintf('%1s = %2s; ', $key, $value);
 					}
-					$text = rtrim($text, ', ');
+					$text = rtrim($text, '; ');
 				}
 
 				//Use PHP's error_log function to write to file
 				error_log($text . "\r\n=================================================\r\n", 3, TITANIA_ROOT . "store/titania_log.log");
-				break;
+			break;
+
+			case TITANIA_DEBUG :
+				//Append the current server date/time, user information, and URL
+				$text = date('d-m-Y @ H:i:s') . ' USER: ' . phpbb::$user->data['username'] . ' - ' . phpbb::$user->data['user_id'] . "\r\n";
+				$text .= titania_url::$current_page_url;
+
+				// Append the sent message if any
+				$text .= (($message !== false) ? "\r\n" . $message : '');
+
+				//Use PHP's error_log function to write to file
+				error_log($text . "\r\n=================================================\r\n", 3, TITANIA_ROOT . "store/titania_debug.log");
+			break;
 
 			default:
-				add_log($log_type, $text);
-				break;
+				// phpBB Log System
+				$args = func_get_args();
+				call_user_func_array('add_log', $args);
+			break;
 
 		}
 	}
