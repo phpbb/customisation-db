@@ -131,13 +131,15 @@ $lang = array_merge($lang, array(
 
 [b]Download file[/b]: [url=%6$s]%7$s[/url]
 [b]File size:[/b] %8$s Bytes',
-	'MOD_REPLY_PUBLIC'						=> '[b][color=darkred]Modification validated/released[/color]
+	'MOD_REPLY_PUBLIC'						=> '[b][color=darkred]Modification validated/released[/color][/b]',
+	'MOD_REPLY_PUBLIC_NOTES'				=> '
 
-Notes:[/b] %s',
+[b]Notes:[/b] %s',
 	'MOD_UPDATE_PUBLIC'						=> '[b][color=darkred]MOD Updated to version %1$s
-See first post for Download Link[/color]
+See first post for Download Link[/color][/b]',
+	'MOD_UPDATE_PUBLIC_NOTES'				=> '
 
-Notes:[/b] %2$s',
+[b]Notes:[/b] %1$s',
 	'MPV_RESULTS'							=> '<strong>Please check over the MPV results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
 	'MPV_TEST'								=> 'The Mod will be tested against MPV and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 	'MPV_TEST_FAILED'						=> 'Sorry, the automatic MPV test failed and your MPV test results are not available.  Please continue.',
@@ -207,13 +209,15 @@ Notes:[/b] %2$s',
 
 [b]Download file[/b]: [url=%6$s]%7$s[/url]
 [b]File size:[/b] %8$s Bytes',
-	'STYLE_REPLY_PUBLIC'					=> '[b][color=darkred]Style validated/released[/color]
+	'STYLE_REPLY_PUBLIC'					=> '[b][color=darkred]Style validated/released[/color][/b]',
+	'STYLE_REPLY_PUBLIC_NOTES'				=> '
 
-Notes: %s[/b]',
+[b]Notes: %s[/b]',
 	'STYLE_UPDATE_PUBLIC'					=> '[b][color=darkred]Style Updated to version %1$s
-See first post for Download Link[/color]
+See first post for Download Link[/color][/b]',
+	'STYLE_UPDATE_PUBLIC_NOTES'				=> '
 
-Notes:[/b] %2$s',
+[b]Notes:[/b] %1$s',
 	'SUBDIRECTORY_LIMIT'					=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
 	'SUBMIT_NEW_REVISION'					=> 'Submit and add new revision',
 

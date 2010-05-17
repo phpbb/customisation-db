@@ -425,9 +425,7 @@ class titania_queue extends titania_message_object
 				$release_topic_id = phpbb_posting('post', $options_post);
 
 				// We reply to the contrib release topic
-				$body_reply = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public],
-					$public_notes
-				);
+				$body_reply = phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public . '_NOTES'], $public_notes) : '');
 				$options_reply = array(
 					'topic_title'			=> 'Re: ' . $contrib->contrib_name,
 					'post_text'				=> $body_reply,

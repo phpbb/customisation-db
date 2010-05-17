@@ -200,9 +200,8 @@ if ($queue_id)
 			titania::add_lang('contributions');
 			$revision = $queue->get_revision();
 			$public_notes_preview = ($action == 'deny') ? false : sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
-				$revision->revision_version,
-				$public_notes
-			);
+				$revision->revision_version
+			) . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public . '_NOTES'], $public_notes) : '');
 			$uid = $bitfield = $options = false;
 			generate_text_for_storage($public_notes_preview, $uid, $bitfield, $options, true, true, true);
 			$public_notes_preview = titania_generate_text_for_display($public_notes_preview, $uid, $bitfield, $options);
