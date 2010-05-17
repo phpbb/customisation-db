@@ -5,7 +5,7 @@
 			<!-- IF .screenshots -->
 				<!-- BEGIN screenshots(0,0) -->
 					<!-- IF screenshots.S_THUMBNAIL -->
-						<img src="{screenshots.THUMB_IMAGE}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" />
+						<img src="{screenshots.THUMB_IMAGE}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" />
 					<!-- ELSE -->
 						<img src="{screenshots.U_INLINE_LINK}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" />
 					<!-- ENDIF -->
@@ -24,12 +24,14 @@
 
 			<!-- IF QUICK_ACTIONS -->
 				<hr class="dashed" />
+				<!-- IF S_IN_QUEUE and CURRENT_STATUS --><div class="small"><strong><em>{CURRENT_STATUS}</em></strong></div><br /><!-- ENDIF -->
 				{QUICK_ACTIONS}
 			<!-- ENDIF -->
 
 		</div>
 
 		<div class="left-column">
+		<!-- IF CONTRIB_DESC -->
 			<dl class="contrib-description">
 				<dt>
 					<strong>{L_DESCRIPTION}</strong>
@@ -41,6 +43,7 @@
 				</dt>
 				<dd>{CONTRIB_DESC}</dd>
 			</dl>
+		<!-- ENDIF -->
 
 			<ul class="general-info">
 				<li>
