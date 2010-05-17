@@ -39,6 +39,7 @@
 	</fieldset>
 	<!-- INCLUDE posting/posting_basic_editor.html -->
 
+	<!-- IF S_CONTRIB_APPROVE -->
 	<fieldset>
 		<dl>
 			<dt><label for="public_notes">{L_PUBLIC_NOTES}:</label></dt>
@@ -47,6 +48,7 @@
 			<textarea name="public_notes" id="public_notes" rows="10" cols="76" class="inputbox">{PUBLIC_MESSAGE}</textarea>
 		</div>
 	</fieldset>
+	<!-- ENDIF -->
 
 	<fieldset class="submit-buttons">
 		{S_HIDDEN_FIELDS}

@@ -199,7 +199,7 @@ if ($queue_id)
 			// Build the preview message
 			titania::add_lang('contributions');
 			$revision = $queue->get_revision();
-			$public_notes_preview = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
+			$public_notes_preview = ($action == 'deny') ? false : sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
 				$revision->revision_version,
 				$public_notes
 			);
@@ -209,15 +209,16 @@ if ($queue_id)
 
 			phpbb::$template->assign_vars(array(
 				'ERROR'						=> implode('<br />', $error),
+				'L_TOPIC_REVIEW'			=> phpbb::$user->lang['QUEUE_REVIEW'],
 				'PAGE_TITLE_EXPLAIN'		=> phpbb::$user->lang[(($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE') . '_CONFIRM'],
 
 				'PUBLIC_MESSAGE'			=> $public_notes,
 				'PUBLIC_PREVIEW_SUBJECT'	=> (isset($_POST['preview'])) ? 'Re: ' . $contrib->contrib_name : false,
 				'PUBLIC_PREVIEW_MESSAGE'	=> (isset($_POST['preview'])) ? $public_notes_preview : false,
 
+				'S_CONTRIB_APPROVE'			=> ($action == 'approve') ? true : false,
 				'S_STYLE_DEMO_INSTALL'		=> ($action == 'approve' && $contrib->contrib_type == TITANIA_TYPE_STYLE && titania::$config->demo_style_path) ? true : false,
 				'TOPIC_TITLE'				=> $contrib->contrib_name,
-				'L_TOPIC_REVIEW'			=> phpbb::$user->lang['QUEUE_REVIEW'],
 			));
 
 			queue_overlord::display_queue_item($queue_id, true);
