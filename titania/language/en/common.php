@@ -126,6 +126,7 @@ $lang = array_merge($lang, array(
 	'MULTI_SELECT_EXPLAIN'		=> 'Hold down CTRL and click to select multiple items.',
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
+	'NAME'						=> 'Name',
 	'NEW_REVISION'				=> 'New Revision',
 	'NO_AUTH'					=> 'You are not authorised to see this page.',
 	'NO_CATEGORY'				=> 'The requested category does not exist.',

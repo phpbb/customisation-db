@@ -88,8 +88,12 @@
 		<!-- IF posts.POST_IP --><dd><strong>{L_POST_IP}:</strong> {posts.POST_IP}</dd><!-- ENDIF -->
 
 		<!-- BEGIN custom_fields -->
+			<!-- IF not posts.custom_fields.S_PROFILE_FIRST_NAME and not posts.custom_fields.S_PROFILE_LAST_NAME -->
 			<dd><strong>{posts.custom_fields.PROFILE_FIELD_NAME}:</strong> {posts.custom_fields.PROFILE_FIELD_VALUE}</dd>
+			<!-- ENDIF -->
 		<!-- END custom_fields -->
+
+		<!-- IF posts.S_PROFILE_FIRST_NAME or posts.S_PROFILE_LAST_NAME --><dd><strong>{L_NAME}:</strong> {posts.PROFILE_FIRST_NAME_VALUE} {posts.PROFILE_LAST_NAME_VALUE}</dd><!-- ENDIF -->
 
 		<!-- IF not S_IS_BOT -->
 		<!-- IF posts.U_PM or posts.U_EMAIL or posts.U_WWW or posts.U_MSN or posts.U_ICQ or posts.U_YIM or posts.U_AIM or posts.U_JABBER -->
