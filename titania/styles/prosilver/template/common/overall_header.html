@@ -1,30 +1,39 @@
 {PHPBB_COM_HEADER}
 
-		<ul class="linklist">
-			<li><a href="{U_HOME}" accesskey="h">{L_HOME}</a> <!-- BEGIN nav_header --> <strong>&#8249;</strong> <a href="{nav_header.U_TITLE}">{nav_header.L_TITLE}</a><!-- END nav_header --></li>
-		</ul>
-
-		<h2 class="imgrep customisation-database">{L_CUSTOMISATION_DATABASE}</h2>
-
-		<!-- IF not S_IS_BOT -->
 		<div class="navbar navigation">
 			<div class="inner"><span class="corners-top"><span></span></span>
-				<ul class="linklist">
-					<!-- IF U_MY_CONTRIBUTIONS or U_CREATE_CONTRIBUTION or U_MANAGE or S_DISPLAY_SEARCH -->
-					<li class="leftside">
-						<!-- IF U_MY_CONTRIBUTIONS --><a href="{U_MY_CONTRIBUTIONS}" title="{L_MY_CONTRIBUTIONS}">{L_MY_CONTRIBUTIONS}</a> &bull; <!-- ENDIF -->
-						<!-- IF U_CREATE_CONTRIBUTION --><a href="{U_CREATE_CONTRIBUTION}">{L_CREATE_CONTRIBUTION}</a> &bull; <!-- ENDIF -->
-						<!-- IF U_MANAGE --><a href="{U_MANAGE}" title="{L_MANAGE}">{L_MANAGE}</a> &bull; <!-- ENDIF -->
-						<!-- IF S_DISPLAY_SEARCH --><a href="{U_SEARCH}">{L_SEARCH}</a><!-- ENDIF -->
-					</li>
-					<!-- ENDIF -->
-					<li class="rightside">
-						<a href="{U_LOGIN_LOGOUT}" title="{L_LOGIN_LOGOUT}" accesskey="l">{L_LOGIN_LOGOUT}</a>
-					</li>
-				</ul>
+
+			<ul class="linklist navlinks">
+				<li class="icon-home"><a href="{U_SITE_ROOT}" accesskey="h">{L_SITE_INDEX}</a> <!-- BEGIN nav_header --> <strong>&#8249;</strong> <a href="{nav_header.U_TITLE}">{nav_header.L_TITLE}</a><!-- END nav_header --></li>
+
+				<li class="rightside"><a href="#" onclick="fontsizeup(); return false;" onkeypress="return fontsizeup(event);" class="fontsize" title="{L_CHANGE_FONT_SIZE}">{L_CHANGE_FONT_SIZE}</a></li>
+			</ul>
+
+			<!-- IF not S_IS_BOT and S_USER_LOGGED_IN -->
+			<ul class="linklist leftside">
+				<li class="icon-ucp">
+					<a href="{U_PROFILE}" title="{L_PROFILE}" accesskey="e">{L_PROFILE}</a>
+					<!-- IF S_DISPLAY_PM --> (<a href="{U_PRIVATEMSGS}">{PRIVATE_MESSAGE_INFO}</a>)<!-- ENDIF -->
+					&bull; <a href="{U_MY_CONTRIBUTIONS}" title="{L_MY_CONTRIBUTIONS}">{L_MY_CONTRIBUTIONS}</a>
+					<!-- IF U_MANAGE --> &bull; <a href="{U_MANAGE}" title="{L_MANAGE}">{L_MANAGE}</a><!-- ENDIF -->
+					<!-- IF U_RESTORE_PERMISSIONS --> &bull; <a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a><!-- ENDIF -->
+				</li>
+			</ul>
+			<!-- ENDIF -->
+
+			<ul class="linklist rightside">
+				<!-- <li class="icon-faq"><a href="{U_FAQ}" title="{L_FAQ_EXPLAIN}">{L_FAQ}</a></li>-->
+				<li class="icon-search"><a href="{U_SEARCH}" title="{L_SEARCH}">{L_SEARCH}</a></li>
+				<!-- IF not S_IS_BOT -->
+					<!-- IF not S_USER_LOGGED_IN and S_REGISTER_ENABLED and not (S_SHOW_COPPA or S_REGISTRATION) --><li class="icon-register"><a href="{U_REGISTER}">{L_REGISTER}</a></li><!-- ENDIF -->
+					<li class="icon-logout"><a href="{U_LOGIN_LOGOUT}" title="{L_LOGIN_LOGOUT}" accesskey="x">{L_LOGIN_LOGOUT}</a></li>
+				<!-- ENDIF -->
+			</ul>
+
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
-		<!-- ENDIF -->
+
+		<h2 class="imgrep customisation-database">{L_CUSTOMISATION_DATABASE}</h2>
 
 		<!-- IF .errorbox -->
 		<div id="errorbox" class="errorbox">

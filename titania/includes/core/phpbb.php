@@ -152,6 +152,46 @@ class phpbb
 			$l_login_logout = self::$user->lang['LOGIN'];
 		}
 
+		$l_privmsgs_text = $l_privmsgs_text_unread = '';
+		$s_privmsg_new = false;
+
+		// Obtain number of new private messages if user is logged in
+		if (!empty(self::$user->data['is_registered']))
+		{
+			if (self::$user->data['user_new_privmsg'])
+			{
+				$l_message_new = (self::$user->data['user_new_privmsg'] == 1) ? self::$user->lang['NEW_PM'] : self::$user->lang['NEW_PMS'];
+				$l_privmsgs_text = sprintf($l_message_new, self::$user->data['user_new_privmsg']);
+
+				if (!self::$user->data['user_last_privmsg'] || self::$user->data['user_last_privmsg'] > self::$user->data['session_last_visit'])
+				{
+					$sql = 'UPDATE ' . USERS_TABLE . '
+						SET user_last_privmsg = ' . self::$user->data['session_last_visit'] . '
+						WHERE user_id = ' . self::$user->data['user_id'];
+					self::$db->sql_query($sql);
+
+					$s_privmsg_new = true;
+				}
+				else
+				{
+					$s_privmsg_new = false;
+				}
+			}
+			else
+			{
+				$l_privmsgs_text = self::$user->lang['NO_NEW_PM'];
+				$s_privmsg_new = false;
+			}
+
+			$l_privmsgs_text_unread = '';
+
+			if (self::$user->data['user_unread_privmsg'] && self::$user->data['user_unread_privmsg'] != self::$user->data['user_new_privmsg'])
+			{
+				$l_message_unread = (self::$user->data['user_unread_privmsg'] == 1) ? self::$user->lang['UNREAD_PM'] : self::$user->lang['UNREAD_PMS'];
+				$l_privmsgs_text_unread = sprintf($l_message_unread, self::$user->data['user_unread_privmsg']);
+			}
+		}
+
 		self::$template->assign_vars(array(
 			'SITENAME'				=> self::$config['sitename'],
 			'SITE_DESCRIPTION'		=> self::$config['site_desc'],
@@ -160,6 +200,8 @@ class phpbb
 			'CURRENT_TIME'			=> sprintf(self::$user->lang['CURRENT_TIME'], self::$user->format_date(time(), false, true)),
 			'LAST_VISIT_DATE'		=> sprintf(self::$user->lang['YOU_LAST_VISIT'], ((self::$user->data['user_id'] != ANONYMOUS) ? self::$user->format_date(self::$user->data['session_last_visit']) : '')),
 			'SITE_LOGO_IMG'			=> self::$user->img('site_logo'),
+			'PRIVATE_MESSAGE_INFO'			=> $l_privmsgs_text,
+			'PRIVATE_MESSAGE_INFO_UNREAD'	=> $l_privmsgs_text_unread,
 
 			'U_REGISTER'			=> self::append_sid('ucp', 'mode=register'),
 			'S_LOGIN_ACTION'		=> titania_url::$current_page_url,
@@ -169,7 +211,12 @@ class phpbb
 
 			'SESSION_ID'			=> self::$user->session_id,
 
+			'U_PRIVATEMSGS'			=> self::append_sid('ucp', 'i=pm&amp;folder=inbox'),
+			'U_PROFILE'				=> self::append_sid('ucp'),
+			'U_RESTORE_PERMISSIONS'	=> (self::$user->data['user_perm_from'] && self::$auth->acl_get('a_switchperm')) ? self::append_sid('ucp', 'mode=restore_perm') : '',
 			'U_DELETE_COOKIES'		=> self::append_sid('ucp', 'mode=delete_cookies'),
+
+			'S_DISPLAY_PM'			=> (self::$config['allow_privmsg'] && !empty(self::$user->data['is_registered']) && (self::$auth->acl_get('u_readpm') || self::$auth->acl_get('u_sendpm'))) ? true : false,
 			'S_USER_LOGGED_IN'		=> (self::$user->data['user_id'] != ANONYMOUS) ? true : false,
 			'S_AUTOLOGIN_ENABLED'	=> (self::$config['allow_autologin']) ? true : false,
 			'S_BOARD_DISABLED'		=> (self::$config['board_disable']) ? true : false,

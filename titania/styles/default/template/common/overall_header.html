@@ -18,6 +18,7 @@
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.7.2.custom.min.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/common.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/forum_fn.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/styleswitcher.js"></script>
 
 <!-- IF .screenshots -->
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.lightbox-0.5.js"></script>
@@ -78,6 +79,10 @@
 <link href="{T_TITANIA_STYLESHEET}" rel="stylesheet" type="text/css" media="screen, projection" />
 <link href="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/buttons.css" rel="stylesheet" type="text/css" media="screen, projection" />
 
+<link href="{T_TITANIA_THEME_PATH}/normal.css" rel="stylesheet" type="text/css" title="A" />
+<link href="{T_TITANIA_THEME_PATH}/medium.css" rel="alternate stylesheet" type="text/css" title="A+" />
+<link href="{T_TITANIA_THEME_PATH}/large.css" rel="alternate stylesheet" type="text/css" title="A++" />
+
 <!-- IF S_CONTENT_DIRECTION eq 'rtl' -->
 	<link href="{T_TITANIA_THEME_PATH}/bidi.css" rel="stylesheet" type="text/css" media="screen, projection" />
 <!-- ENDIF -->
@@ -119,21 +124,30 @@
 
 			<ul class="linklist navlinks">
 				<li class="icon-home"><a href="{U_SITE_ROOT}" accesskey="h">{L_SITE_INDEX}</a> <!-- BEGIN nav_header --> <strong>&#8249;</strong> <a href="{nav_header.U_TITLE}">{nav_header.L_TITLE}</a><!-- END nav_header --></li>
+
+				<li class="rightside"><a href="#" onclick="fontsizeup(); return false;" onkeypress="return fontsizeup(event);" class="fontsize" title="{L_CHANGE_FONT_SIZE}">{L_CHANGE_FONT_SIZE}</a></li>
 			</ul>
 
 			<!-- IF not S_IS_BOT and S_USER_LOGGED_IN -->
 			<ul class="linklist leftside">
-				<!-- IF U_MY_CONTRIBUTIONS --><li class="icon-ucp"><a href="{U_MY_CONTRIBUTIONS}" title="{L_MY_CONTRIBUTIONS}">{L_MY_CONTRIBUTIONS}</a></li><!-- ENDIF -->
-				<!-- IF U_MANAGE --><li class="icon-ucp"><a href="{U_MANAGE}" title="{L_MANAGE}">{L_MANAGE}</a></li><!-- ENDIF -->
+				<li class="icon-ucp">
+					<a href="{U_PROFILE}" title="{L_PROFILE}" accesskey="e">{L_PROFILE}</a>
+					<!-- IF S_DISPLAY_PM --> (<a href="{U_PRIVATEMSGS}">{PRIVATE_MESSAGE_INFO}</a>)<!-- ENDIF -->
+					&bull; <a href="{U_MY_CONTRIBUTIONS}" title="{L_MY_CONTRIBUTIONS}">{L_MY_CONTRIBUTIONS}</a>
+					<!-- IF U_MANAGE --> &bull; <a href="{U_MANAGE}" title="{L_MANAGE}">{L_MANAGE}</a><!-- ENDIF -->
+					<!-- IF U_RESTORE_PERMISSIONS --> &bull; <a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a><!-- ENDIF -->
+				</li>
 			</ul>
 			<!-- ENDIF -->
 
-			<!-- IF not S_IS_BOT -->
 			<ul class="linklist rightside">
-					<!-- IF not S_USER_LOGGED_IN and S_REGISTER_ENABLED --><li class="icon-register"><a href="{U_REGISTER}">{L_REGISTER}</a></li><!-- ENDIF -->
-					<li class="icon-logout"><a href="{U_LOGIN_LOGOUT}" title="{L_LOGIN_LOGOUT}" accesskey="l">{L_LOGIN_LOGOUT}</a></li>
+				<!-- <li class="icon-faq"><a href="{U_FAQ}" title="{L_FAQ_EXPLAIN}">{L_FAQ}</a></li>-->
+				<li class="icon-search"><a href="{U_SEARCH}" title="{L_SEARCH}">{L_SEARCH}</a></li>
+				<!-- IF not S_IS_BOT -->
+					<!-- IF not S_USER_LOGGED_IN and S_REGISTER_ENABLED and not (S_SHOW_COPPA or S_REGISTRATION) --><li class="icon-register"><a href="{U_REGISTER}">{L_REGISTER}</a></li><!-- ENDIF -->
+					<li class="icon-logout"><a href="{U_LOGIN_LOGOUT}" title="{L_LOGIN_LOGOUT}" accesskey="x">{L_LOGIN_LOGOUT}</a></li>
+				<!-- ENDIF -->
 			</ul>
-			<!-- ENDIF -->
 
 			<span class="corners-bottom"><span></span></span></div>
 		</div>
