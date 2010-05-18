@@ -1,55 +1,53 @@
 {PHPBB_COM_HEADER}
 
-		<div class="navbar">
-			<div class="inner"><span class="corners-top"><span></span></span>
+<div class="navbar">
+	<div class="inner"><span class="corners-top"><span></span></span>
 
-			<ul class="linklist navlinks">
-				<li class="icon-home"><a href="{U_SITE_ROOT}" accesskey="h">{L_SITE_INDEX}</a> <!-- BEGIN nav_header --> <strong>&#8249;</strong> <a href="{nav_header.U_TITLE}">{nav_header.L_TITLE}</a><!-- END nav_header --></li>
+	<ul class="linklist navlinks">
+		<li class="icon-home"><a href="{U_SITE_ROOT}" accesskey="h">{L_SITE_INDEX}</a> <!-- BEGIN nav_header --> <strong>&#8249;</strong> <a href="{nav_header.U_TITLE}">{nav_header.L_TITLE}</a><!-- END nav_header --></li>
+	</ul>
 
-				<li class="rightside"><a href="#" onclick="fontsizeup(); return false;" onkeypress="return fontsizeup(event);" class="fontsize" title="{L_CHANGE_FONT_SIZE}">{L_CHANGE_FONT_SIZE}</a></li>
-			</ul>
+	<!-- IF not S_IS_BOT and S_USER_LOGGED_IN -->
+	<ul class="linklist leftside">
+		<li class="icon-ucp">
+			<a href="{U_PROFILE}" title="{L_PROFILE}" accesskey="e">{L_PROFILE}</a>
+			<!-- IF S_DISPLAY_PM --> (<a href="{U_PRIVATEMSGS}">{PRIVATE_MESSAGE_INFO}</a>)<!-- ENDIF -->
+			&bull; <a href="{U_MY_CONTRIBUTIONS}" title="{L_MY_CONTRIBUTIONS}">{L_MY_CONTRIBUTIONS}</a>
+			<!-- IF U_MANAGE --> &bull; <a href="{U_MANAGE}" title="{L_MANAGE}">{L_MANAGE}</a><!-- ENDIF -->
+			<!-- IF U_RESTORE_PERMISSIONS --> &bull; <a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a><!-- ENDIF -->
+		</li>
+	</ul>
+	<!-- ENDIF -->
 
-			<!-- IF not S_IS_BOT and S_USER_LOGGED_IN -->
-			<ul class="linklist leftside">
-				<li class="icon-ucp">
-					<a href="{U_PROFILE}" title="{L_PROFILE}" accesskey="e">{L_PROFILE}</a>
-					<!-- IF S_DISPLAY_PM --> (<a href="{U_PRIVATEMSGS}">{PRIVATE_MESSAGE_INFO}</a>)<!-- ENDIF -->
-					&bull; <a href="{U_MY_CONTRIBUTIONS}" title="{L_MY_CONTRIBUTIONS}">{L_MY_CONTRIBUTIONS}</a>
-					<!-- IF U_MANAGE --> &bull; <a href="{U_MANAGE}" title="{L_MANAGE}">{L_MANAGE}</a><!-- ENDIF -->
-					<!-- IF U_RESTORE_PERMISSIONS --> &bull; <a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a><!-- ENDIF -->
-				</li>
-			</ul>
-			<!-- ENDIF -->
-
-			<ul class="linklist rightside">
-				<!-- <li class="icon-faq"><a href="{U_FAQ}" title="{L_FAQ_EXPLAIN}">{L_FAQ}</a></li>-->
-				<li class="icon-search"><a href="{U_SEARCH}" title="{L_SEARCH}">{L_SEARCH}</a></li>
-				<!-- IF not S_IS_BOT -->
-					<!-- IF not S_USER_LOGGED_IN and S_REGISTER_ENABLED and not (S_SHOW_COPPA or S_REGISTRATION) --><li class="icon-register"><a href="{U_REGISTER}">{L_REGISTER}</a></li><!-- ENDIF -->
-					<li class="icon-logout"><a href="{U_LOGIN_LOGOUT}" title="{L_LOGIN_LOGOUT}" accesskey="x">{L_LOGIN_LOGOUT}</a></li>
-				<!-- ENDIF -->
-			</ul>
-
-			<span class="corners-bottom"><span></span></span></div>
-		</div>
-
-		<!-- IF .errorbox -->
-		<div id="errorbox" class="errorbox">
-			<div class="inner"><span class="corners-top"><span></span></span>
-			<!-- IF ERRORBOX_TITLE --><h3>{ERRORBOX_TITLE}</h3><!-- ENDIF -->
-			<!-- BEGIN errorbox -->
-				<p>{errorbox.MESSAGE}</p>
-			<!-- END errorbox -->
-			<span class="corners-bottom"><span></span></span></div>
-		</div>
+	<ul class="linklist rightside">
+		<!-- <li class="icon-faq"><a href="{U_FAQ}" title="{L_FAQ_EXPLAIN}">{L_FAQ}</a></li>-->
+		<li class="icon-search"><a href="{U_SEARCH}" title="{L_SEARCH}">{L_SEARCH}</a></li>
+		<!-- IF not S_IS_BOT -->
+			<!-- IF not S_USER_LOGGED_IN and S_REGISTER_ENABLED and not (S_SHOW_COPPA or S_REGISTRATION) --><li class="icon-register"><a href="{U_REGISTER}">{L_REGISTER}</a></li><!-- ENDIF -->
+			<li class="icon-logout"><a href="{U_LOGIN_LOGOUT}" title="{L_LOGIN_LOGOUT}" accesskey="x">{L_LOGIN_LOGOUT}</a></li>
 		<!-- ENDIF -->
-		<!-- IF .successbox -->
-		<div id="successbox" class="successbox">
-			<div class="inner"><span class="corners-top"><span></span></span>
-			<!-- IF SUCCESSBOX_TITLE --><h3>{SUCCESSBOX_TITLE}</h3><!-- ENDIF -->
-			<!-- BEGIN successbox -->
-				<p>{successbox.MESSAGE}</p>
-			<!-- END successbox -->
-			<span class="corners-bottom"><span></span></span></div>
-		</div>
-		<!-- ENDIF -->
+	</ul>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- IF .errorbox -->
+<div id="errorbox" class="errorbox">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<!-- IF ERRORBOX_TITLE --><h3>{ERRORBOX_TITLE}</h3><!-- ENDIF -->
+	<!-- BEGIN errorbox -->
+		<p>{errorbox.MESSAGE}</p>
+	<!-- END errorbox -->
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
+<!-- IF .successbox -->
+<div id="successbox" class="successbox">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<!-- IF SUCCESSBOX_TITLE --><h3>{SUCCESSBOX_TITLE}</h3><!-- ENDIF -->
+	<!-- BEGIN successbox -->
+		<p>{successbox.MESSAGE}</p>
+	<!-- END successbox -->
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->

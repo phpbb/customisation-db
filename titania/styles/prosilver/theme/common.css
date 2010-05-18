@@ -3,6 +3,10 @@
  * common.css
  */
 
+#page-body .navbar {
+	margin: 5px 0 7px 0;
+}
+
 /* Common styles
 --------------------------------------------- */
 h2.panel-name {
