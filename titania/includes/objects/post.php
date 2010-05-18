@@ -790,7 +790,7 @@ class titania_post extends titania_message_object
 						//I'm guessing it's here because this is the only place it gets decreased.
 						if ($to_db['public'] < 0)
 						{
-							titania::log(TITANIA_ERROR, 'Public access less than 0.');
+							titania::log(TITANIA_DEBUG, 'Public access less than 0.');
 						}
 					break;
 
