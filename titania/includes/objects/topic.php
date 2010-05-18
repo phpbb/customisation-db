@@ -256,16 +256,20 @@ class titania_topic extends titania_database_object
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);
 
+		// To find out if we have any posts that need approval
+		$approved = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
+		$total = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, true));
+
 		$details = array(
-		//@todo - go through vars in output and make sure we output all needed and used ones
 			'TOPIC_ID'						=> $this->topic_id,
 			'TOPIC_TYPE'					=> $this->topic_type,
 			'TOPIC_ACCESS'					=> $this->topic_access,
 			'TOPIC_STATUS'					=> $this->topic_status, // @todo build a function for outputting this
 			'TOPIC_STICKY'					=> $this->topic_sticky,
 			'TOPIC_LOCKED'					=> $this->topic_locked,
-			'TOPIC_APPROVED'				=> $this->topic_approved,
-			'TOPIC_REPORTED'				=> $this->topic_reported,
+			'POSTS_APPROVED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') && $total > $approved) ? false : true,
+			'TOPIC_APPROVED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->topic_approved : true,
+			'TOPIC_REPORTED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->topic_reported : false,
 			'TOPIC_ASSIGNED'				=> $this->topic_assigned, // @todo output this to be something useful
 			'TOPIC_REPLIES'					=> ($this->get_postcount() - 1), // Number of replies (posts minus the OP)
 			'TOPIC_VIEWS'					=> $this->topic_views,
