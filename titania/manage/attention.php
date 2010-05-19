@@ -59,27 +59,27 @@ if ($attention_id || ($object_type && $object_id))
 			trigger_error('FORM_INVALID');
 		}
 
-		// if ($delete)
-		// {
-			// $sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
-					// WHERE attention_object_id = ' . (int) $object_id . '
-						// AND attention_object_type = ' . (int) $object_type . '
-						// AND attention_close_time = 0
-						// AND attention_type = ' . TITANIA_ATTENTION_REPORTED;
-		// }
-		// else
-		// {
-			// $sql_ary = array(
-				// 'attention_close_time'	=> titania::$time,
-				// 'attention_close_user'	=> phpbb::$user->data['user_id'],
-			// );
+		if ($delete)
+		{
+			$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
+					WHERE attention_object_id = ' . (int) $object_id . '
+						AND attention_object_type = ' . (int) $object_type . '
+						AND attention_close_time = 0
+						AND attention_type = ' . TITANIA_ATTENTION_REPORTED;
+		}
+		else
+		{
+			$sql_ary = array(
+				'attention_close_time'	=> titania::$time,
+				'attention_close_user'	=> phpbb::$user->data['user_id'],
+			);
 
-			// $sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-				// WHERE attention_object_id = ' . (int) $object_id . '
-					// AND attention_object_type = ' . (int) $object_type . '
-					// AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
-		// }
-		// phpbb::$db->sql_query($sql);
+			$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+				WHERE attention_object_id = ' . (int) $object_id . '
+					AND attention_object_type = ' . (int) $object_type . '
+					AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
+		}
+		phpbb::$db->sql_query($sql);
 	}
 	add_form_key('attention');
 
@@ -239,24 +239,24 @@ if ($attention_id || ($object_type && $object_id))
 				}
 			}
 
-			// users_overlord::load_users(array($post->post_user_id, $post->post_edit_user, $post->post_delete_user));
-			// users_overlord::assign_details($post->post_user_id, 'POSTER_', true);
+			users_overlord::load_users(array($post->post_user_id, $post->post_edit_user, $post->post_delete_user));
+			users_overlord::assign_details($post->post_user_id, 'POSTER_', true);
 
-			// phpbb::$template->assign_vars(array(
-				// 'POST_SUBJECT'		=> censor_text($post->post_subject),
-				// 'POST_DATE'			=> phpbb::$user->format_date($post->post_time),
-				// 'POST_TEXT'			=> $post->generate_text_for_display(),
-				// 'EDITED_MESSAGE'	=> ($post->post_edited) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], users_overlord::get_user($post->post_edit_user, '_full'), phpbb::$user->format_date($post->post_edited)) : '',
-				// 'DELETED_MESSAGE'	=> ($post->post_deleted != 0) ? sprintf(phpbb::$user->lang['DELETED_MESSAGE'], users_overlord::get_user($post->post_delete_user, '_full'), phpbb::$user->format_date($post->post_deleted), $post->get_url('undelete')) : '',
-				// 'POST_EDIT_REASON'	=> censor_text($post->post_edit_reason),
+			phpbb::$template->assign_vars(array(
+				'POST_SUBJECT'		=> censor_text($post->post_subject),
+				'POST_DATE'			=> phpbb::$user->format_date($post->post_time),
+				'POST_TEXT'			=> $post->generate_text_for_display(),
+				'EDITED_MESSAGE'	=> ($post->post_edited) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], users_overlord::get_user($post->post_edit_user, '_full'), phpbb::$user->format_date($post->post_edited)) : '',
+				'DELETED_MESSAGE'	=> ($post->post_deleted != 0) ? sprintf(phpbb::$user->lang['DELETED_MESSAGE'], users_overlord::get_user($post->post_delete_user, '_full'), phpbb::$user->format_date($post->post_deleted), $post->get_url('undelete')) : '',
+				'POST_EDIT_REASON'	=> censor_text($post->post_edit_reason),
 
-				// 'U_VIEW'			=> $post->get_url(),
-				// 'U_EDIT'			=> $post->get_url('edit'),
+				'U_VIEW'			=> $post->get_url(),
+				'U_EDIT'			=> $post->get_url('edit'),
 
-				// 'SECTION_NAME'		=> '<a href="' . $post->get_url() . '">' . censor_text($post->post_subject) . '</a> - ' . phpbb::$user->lang['ATTENTION'],
-			// ));
+				'SECTION_NAME'		=> '<a href="' . $post->get_url() . '">' . censor_text($post->post_subject) . '</a> - ' . phpbb::$user->lang['ATTENTION'],
+			));
 
-			// $title = censor_text($post->post_subject);
+			$title = censor_text($post->post_subject);
 		break;
 
 		case TITANIA_CONTRIB :
