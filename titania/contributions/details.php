@@ -45,7 +45,7 @@ if ($page == 'report')
 	{
 		//phpbb::$template->assign_var('S_CAN_NOTIFY', ((phpbb::$user->data['is_registered']) ? true : false));
 
-		titania::confirm_box(false, 'REPORT_POST', '', array(), 'posting/report_body.html');
+		titania::confirm_box(false, 'REPORT_CONTRIBUTION', '', array(), 'posting/report_body.html');
 	}
 
 	redirect(titania::$contrib->get_url());

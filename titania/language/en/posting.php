@@ -55,8 +55,7 @@ Validation staff may also post questions to the authors here so please reply wit
 Note that by default this topic is private between authors and validators and cannot be seen by the public.',
 	'QUEUE_DISCUSSION_TOPIC_TITLE'		=> 'Validation Discussion - %s',
 
-	'REPORT_POST'						=> 'Report Post',
-	'REPORT_POST_CONFIRM'				=> 'Are you sure you want to report this post?',
+	'REPORT_POST_CONFIRM'				=> 'Use this form to report the selected post to the forum moderators and board administrators. Reporting should generally be used only if the post breaks forum rules.',
 
 	'SOFT_DELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to <strong>soft</strong> delete this topic?',
 	'STICKIES'							=> 'Stickies',

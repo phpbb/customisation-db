@@ -168,6 +168,8 @@ See first post for Download Link[/color][/b]',
 	'QUEUE_NOTES'							=> 'Validation Notes',
 	'QUEUE_NOTES_EXPLAIN'					=> 'Message to the team.',
 
+	'REPORT_CONTRIBUTION'					=> 'Report Contribution',
+	'REPORT_CONTRIBUTION_CONFIRM'			=> 'Use this form to report the selected contribution to the moderators and administrators. Reporting should generally be used only if the contribution breaks forum rules.',
 	'REVISION'								=> 'Revision',
 	'REVISIONS'								=> 'Revisions',
 	'REVISION_APPROVED'						=> 'Approved',
