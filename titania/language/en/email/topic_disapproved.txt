@@ -1,0 +1,8 @@
+Subject: Topic disapproved - "{TOPIC_TITLE}"
+
+Hello {USERNAME},
+
+You are receiving this notification because your topic "{TOPIC_TITLE}" at "{SITENAME}" was disapproved by a moderator or administrator.
+
+
+{EMAIL_SIG}

@@ -21,6 +21,8 @@ if (!phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_m
 	titania::needs_auth();
 }
 
+require PHPBB_ROOT_PATH . 'includes/functions_messenger.php';
+
 phpbb::$user->add_lang('mcp');
 
 $attention_id = request_var('a', 0);
@@ -57,27 +59,27 @@ if ($attention_id || ($object_type && $object_id))
 			trigger_error('FORM_INVALID');
 		}
 
-		if ($delete)
-		{
-			$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
-					WHERE attention_object_id = ' . (int) $object_id . '
-						AND attention_object_type = ' . (int) $object_type . '
-						AND attention_close_time = 0
-						AND attention_type = ' . TITANIA_ATTENTION_REPORTED;
-		}
-		else
-		{
-			$sql_ary = array(
-				'attention_close_time'	=> titania::$time,
-				'attention_close_user'	=> phpbb::$user->data['user_id'],
-			);
+		// if ($delete)
+		// {
+			// $sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
+					// WHERE attention_object_id = ' . (int) $object_id . '
+						// AND attention_object_type = ' . (int) $object_type . '
+						// AND attention_close_time = 0
+						// AND attention_type = ' . TITANIA_ATTENTION_REPORTED;
+		// }
+		// else
+		// {
+			// $sql_ary = array(
+				// 'attention_close_time'	=> titania::$time,
+				// 'attention_close_user'	=> phpbb::$user->data['user_id'],
+			// );
 
-			$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-				WHERE attention_object_id = ' . (int) $object_id . '
-					AND attention_object_type = ' . (int) $object_type . '
-					AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
-		}
-		phpbb::$db->sql_query($sql);
+			// $sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+				// WHERE attention_object_id = ' . (int) $object_id . '
+					// AND attention_object_type = ' . (int) $object_type . '
+					// AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
+		// }
+		// phpbb::$db->sql_query($sql);
 	}
 	add_form_key('attention');
 
@@ -128,6 +130,32 @@ if ($attention_id || ($object_type && $object_id))
 			// Disapprove the post
 			if ($disapprove)
 			{
+				// Load z topic
+				$post->topic->topic_id = $post->topic_id;
+				$post->topic->load();
+				
+				// Notify poster about disapproval
+				if ($post->post_user_id != ANONYMOUS)
+				{
+					$messenger = new messenger();
+					
+					users_overlord::load_users(array($post->post_user_id));
+
+					$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_disapproved' : 'post_disapproved';
+
+					$messenger->template($email_template, $users[$post->post_user_id]['user_lang']);
+
+					$messenger->to($users[$post->post_user_id]['user_email'], $users[$post->post_user_id]['username']);
+
+					$messenger->assign_vars(array(
+						'USERNAME'		=> htmlspecialchars_decode($users[$post->post_user_id]['username']),
+						'POST_SUBJECT'	=> htmlspecialchars_decode(censor_text($post->post_subject)),
+						'TOPIC_TITLE'	=> htmlspecialchars_decode(censor_text($post->topic->topic_subject)))
+					);
+
+					$messenger->send();
+				}
+				
 				// Delete the post
 				$post->delete();
 
@@ -184,26 +212,51 @@ if ($attention_id || ($object_type && $object_id))
 						titania_subscriptions::send_notifications($post->post_type, $post->topic->parent_id, 'subscribe_notify_forum.txt', $email_vars, $post->post_user_id);
 					}
 				}
+				
+				// Notify poster about approval
+				if ($post->post_user_id != ANONYMOUS)
+				{
+					$messenger = new messenger();
+					
+					users_overlord::load_users(array($post->post_user_id));
+
+					$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_approved' : 'post_approved';
+
+					$messenger->template($email_template, $users[$post->post_user_id]['user_lang']);
+
+					$messenger->to($users[$post->post_user_id]['user_email'], $users[$post->post_user_id]['username']);
+
+					$messenger->assign_vars(array(
+						'USERNAME'		=> htmlspecialchars_decode($users[$post->post_user_id]['username']),
+						'POST_SUBJECT'	=> htmlspecialchars_decode(censor_text($post->post_subject)),
+						'TOPIC_TITLE'	=> htmlspecialchars_decode(censor_text($post->topic->topic_subject)),
+
+						'U_VIEW_TOPIC'	=> titania_url::append_url($post->topic->get_url()),
+						'U_VIEW_POST'	=> titania_url::append_url($post->get_url()))
+					);
+
+					$messenger->send();
+				}
 			}
 
-			users_overlord::load_users(array($post->post_user_id, $post->post_edit_user, $post->post_delete_user));
-			users_overlord::assign_details($post->post_user_id, 'POSTER_', true);
+			// users_overlord::load_users(array($post->post_user_id, $post->post_edit_user, $post->post_delete_user));
+			// users_overlord::assign_details($post->post_user_id, 'POSTER_', true);
 
-			phpbb::$template->assign_vars(array(
-				'POST_SUBJECT'		=> censor_text($post->post_subject),
-				'POST_DATE'			=> phpbb::$user->format_date($post->post_time),
-				'POST_TEXT'			=> $post->generate_text_for_display(),
-				'EDITED_MESSAGE'	=> ($post->post_edited) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], users_overlord::get_user($post->post_edit_user, '_full'), phpbb::$user->format_date($post->post_edited)) : '',
-				'DELETED_MESSAGE'	=> ($post->post_deleted != 0) ? sprintf(phpbb::$user->lang['DELETED_MESSAGE'], users_overlord::get_user($post->post_delete_user, '_full'), phpbb::$user->format_date($post->post_deleted), $post->get_url('undelete')) : '',
-				'POST_EDIT_REASON'	=> censor_text($post->post_edit_reason),
+			// phpbb::$template->assign_vars(array(
+				// 'POST_SUBJECT'		=> censor_text($post->post_subject),
+				// 'POST_DATE'			=> phpbb::$user->format_date($post->post_time),
+				// 'POST_TEXT'			=> $post->generate_text_for_display(),
+				// 'EDITED_MESSAGE'	=> ($post->post_edited) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], users_overlord::get_user($post->post_edit_user, '_full'), phpbb::$user->format_date($post->post_edited)) : '',
+				// 'DELETED_MESSAGE'	=> ($post->post_deleted != 0) ? sprintf(phpbb::$user->lang['DELETED_MESSAGE'], users_overlord::get_user($post->post_delete_user, '_full'), phpbb::$user->format_date($post->post_deleted), $post->get_url('undelete')) : '',
+				// 'POST_EDIT_REASON'	=> censor_text($post->post_edit_reason),
 
-				'U_VIEW'			=> $post->get_url(),
-				'U_EDIT'			=> $post->get_url('edit'),
+				// 'U_VIEW'			=> $post->get_url(),
+				// 'U_EDIT'			=> $post->get_url('edit'),
 
-				'SECTION_NAME'		=> '<a href="' . $post->get_url() . '">' . censor_text($post->post_subject) . '</a> - ' . phpbb::$user->lang['ATTENTION'],
-			));
+				// 'SECTION_NAME'		=> '<a href="' . $post->get_url() . '">' . censor_text($post->post_subject) . '</a> - ' . phpbb::$user->lang['ATTENTION'],
+			// ));
 
-			$title = censor_text($post->post_subject);
+			// $title = censor_text($post->post_subject);
 		break;
 
 		case TITANIA_CONTRIB :
