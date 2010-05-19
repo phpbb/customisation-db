@@ -301,6 +301,24 @@ switch ($action)
 			titania::generate_breadcrumbs(array(
 				((isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'])	=> titania_url::build_url('manage/categories', array('c' => $category_id)),
 			));
+			
+			// Second set of breadcrumbs for category navigation
+
+			// Parents
+			foreach (array_reverse(titania::$cache->get_category_parents($category_id)) as $row)
+			{
+				$category_object->__set_array($categories_ary[$row['category_id']]);
+				titania::generate_breadcrumbs(array(
+					((isset(phpbb::$user->lang[$categories_ary[$row['category_id']]['category_name']])) ? phpbb::$user->lang[$categories_ary[$row['category_id']]['category_name']] : $categories_ary[$row['category_id']]['category_name'])	=> titania_url::build_url('manage/categories', array('c' => $row['category_id'])),
+				), $block = 'nav_categories');
+			}
+
+			// Self
+			$category_object->__set_array($categories_ary[$category_id]);
+			titania::generate_breadcrumbs(array(
+				((isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'])	=> titania_url::build_url('manage/categories', array('c' => $category_id)),
+			), $block = 'nav_categories');
+
 			unset($categories_ary, $category_object);
 		}
 
@@ -315,6 +333,7 @@ switch ($action)
 			'ICON_DELETE_DISABLED'		=> '<img src="' . titania::$images_path . 'icon_delete_disabled.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
 
 			'U_CREATE_CATEGORY'			=> titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'add')),
+			'U_MANAGE_CATEGORIES'			=> titania_url::build_url('manage/categories'),
 
 			'S_MANAGE' 					=> true,
 		));
