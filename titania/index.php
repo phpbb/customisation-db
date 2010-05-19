@@ -219,6 +219,16 @@ switch ($action)
 
 		contribs_overlord::display_contribs('all', false, $sort);
 
+		// Mark all contribs read
+		if (request_var('mark', '') == 'contribs')
+		{
+			titania_tracking::track(TITANIA_CONTRIB, 0);
+		}
+		phpbb::$template->assign_vars(array(
+			'U_MARK_TOPICS'			=> titania_url::append_url(titania_url::$current_page_url, array('mark' => 'contribs')),
+			'L_MARK_TOPICS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
+		));
+
 		titania::page_header('CUSTOMISATION_DATABASE');
 		titania::page_footer(true, 'all_contributions.html');
 	break;
@@ -302,6 +312,16 @@ switch ($action)
 			$sort->request();
 
 			contribs_overlord::display_contribs('all', 0, $sort);
+
+			// Mark all contribs read
+			if (request_var('mark', '') == 'contribs')
+			{
+				titania_tracking::track(TITANIA_CONTRIB, 0);
+			}
+			phpbb::$template->assign_vars(array(
+				'U_MARK_TOPICS'			=> titania_url::append_url(titania_url::$current_page_url, array('mark' => 'contribs')),
+				'L_MARK_TOPICS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
+			));
 		}
 
 		phpbb::$template->assign_vars(array(

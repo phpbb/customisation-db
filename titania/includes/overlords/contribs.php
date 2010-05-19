@@ -253,6 +253,9 @@ class contribs_overlord
 		$versions = titania::$cache->get_phpbb_versions();
 		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], true);
 
+		// Get the mark all tracking
+		titania_tracking::get_track(TITANIA_CONTRIB, 0);
+
 		foreach ($contrib_ids as $contrib_id)
 		{
 			$row = self::$contribs[$contrib_id];
@@ -271,7 +274,10 @@ class contribs_overlord
 
 			// Get the folder image
 			$folder_img = $folder_alt = '';
-			titania_topic_folder_img($folder_img, $folder_alt, 0, titania_tracking::is_unread(TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update));
+			$last_read_mark = titania_tracking::get_track(TITANIA_CONTRIB, $contrib->contrib_id, true);
+			$last_complete_mark = titania_tracking::get_track(TITANIA_CONTRIB, 0, true);
+			$is_unread = ($contrib->contrib_last_update > $last_read_mark && $contrib->contrib_last_update > $last_complete_mark) ? true : false;
+			titania_topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
 
 			// Only get unique phpBB versions supported
 			if (isset($row['phpbb_versions']))

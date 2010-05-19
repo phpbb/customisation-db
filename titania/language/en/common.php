@@ -117,6 +117,7 @@ $lang = array_merge($lang, array(
 
 	'MAKE_CATEGORY_VISIBLE'		=> 'Make Category Visible',
 	'MANAGE'					=> 'Manage',
+	'MARK_CONTRIBS_READ'		=> 'Mark contributions read',
 	'MODIFICATION'				=> 'Modification',
 	'MODIFICATIONS'				=> 'Modifications',
 	'MOVE_CONTRIBS_TO'			=> 'Move Contributions to',
