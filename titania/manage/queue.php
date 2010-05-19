@@ -220,7 +220,23 @@ if ($queue_id)
 				'TOPIC_TITLE'				=> $contrib->contrib_name,
 			));
 
-			queue_overlord::display_queue_item($queue_id, true);
+			// Setup the sort tool
+			$topic_sort = new titania_sort();
+			$topic_sort->set_sort_keys(posts_overlord::$sort_by);
+			if (isset(posts_overlord::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
+			{
+				$topic_sort->default_sort_key = phpbb::$user->data['user_post_sortby_type'];
+			}
+			$topic_sort->default_sort_dir = 'd';
+			$topic_sort->default_limit = phpbb::$config['posts_per_page'];
+			$topic_sort->request();
+
+			// Load the topic
+			$topic = new titania_topic;
+			$topic->load($queue->queue_topic_id);
+
+			// Display the posts for review
+			posts_overlord::display_topic($topic, $topic_sort);
 
 			titania::page_header(phpbb::$user->lang[(($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE')] . ': ' . $contrib->contrib_name);
 			titania::page_footer(false, 'manage/queue_validate.html');

@@ -219,10 +219,27 @@ class titania_posting
 		// Call our common posting handler
 		$this->common_post('reply', $post_object, $message_object);
 
+
+		// Setup the sort tool
+		$topic_sort = new titania_sort();
+		$topic_sort->set_sort_keys(posts_overlord::$sort_by);
+		if (isset(posts_overlord::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
+		{
+			$topic_sort->default_sort_key = phpbb::$user->data['user_post_sortby_type'];
+		}
+		$topic_sort->default_sort_dir = 'd';
+		$topic_sort->default_limit = phpbb::$config['posts_per_page'];
+		$topic_sort->request();
+
+		// Display the posts for review
+		posts_overlord::display_topic($post_object->topic, $topic_sort);
+
 		// Common stuff
 		phpbb::$template->assign_vars(array(
 			'S_POST_ACTION'		=> $post_object->topic->get_url('reply', titania_url::$current_page_url),
 			'L_POST_A'			=> phpbb::$user->lang['POST_REPLY'],
+
+			'S_DISPLAY_REVIEW'	=> true,
 		));
 		titania::page_header('POST_REPLY');
 	}

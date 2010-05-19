@@ -138,7 +138,7 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 	*
 	* @param object $topic the topic object
 	*/
-	public static function display_topic_complete($topic, $review = false)
+	public static function display_topic_complete($topic)
 	{
 		phpbb::$user->add_lang('viewtopic');
 
@@ -149,7 +149,7 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		{
 			$sort->default_sort_key = phpbb::$user->data['user_post_sortby_type'];
 		}
-		$sort->default_sort_dir = ($review) ? 'DESC' : phpbb::$user->data['user_post_sortby_dir'];
+		$sort->default_sort_dir = phpbb::$user->data['user_post_sortby_dir'];
 		$sort->default_limit = phpbb::$config['posts_per_page'];
 		$sort->request();
 
