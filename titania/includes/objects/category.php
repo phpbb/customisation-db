@@ -522,5 +522,6 @@ class titania_category extends titania_message_object
 	{
 		titania::$cache->destroy('_titania_categories');
 		titania::$cache->destroy('_titania_category_parents');
+		titania::$cache->destroy('_titania_category_children');
 	}
 }

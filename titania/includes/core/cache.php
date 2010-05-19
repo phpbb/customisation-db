@@ -139,8 +139,8 @@ class titania_cache extends acm
 	* @param int $category_id The category id to get the parents for.
 	* @return returns an array of the categories parents, ex:
 	* array(
-	* 	array('category_id' => 2, 'parent_id' =>  1, 'category_name_clean' => 'Modifications'),
-	* 	array('category_id' => 1, 'parent_id' =>  0, 'category_name_clean' => 'phpBB3'),
+	* 	2 => array('category_id' => 2, 'parent_id' =>  1, 'category_name_clean' => 'Modifications'),
+	* 	1 => array('category_id' => 1, 'parent_id' =>  0, 'category_name_clean' => 'phpBB3'),
 	* ),
 	*/
 	public function get_category_parents($category_id)
@@ -165,7 +165,7 @@ class titania_cache extends acm
 				// Go through and grab all of the parents
 				while (isset($list[$parent_id]))
 				{
-					$parent_list[$row['category_id']][] = $list[$parent_id];
+					$parent_list[$row['category_id']][$parent_id] = $list[$parent_id];
 
 					$parent_id = $list[$parent_id]['parent_id'];
 				}
@@ -178,15 +178,15 @@ class titania_cache extends acm
 
 		return (isset($parent_list[$category_id])) ? $parent_list[$category_id] : array();
 	}
-	
+
 	/**
 	* Get the list of children for a category
 	*
 	* @param int $category_id The category id to get the parents for.
 	* @return returns an array of the categories children, ex:
 	* array(
-	* 	array('category_id' => 2, 'parent_id' =>  1, 'category_name_clean' => 'Modifications'),
-	* 	array('category_id' => 1, 'parent_id' =>  0, 'category_name_clean' => 'phpBB3'),
+	* 	2 => array('category_id' => 2, 'parent_id' =>  1, 'category_name_clean' => 'Modifications'),
+	* 	1 => array('category_id' => 1, 'parent_id' =>  0, 'category_name_clean' => 'phpBB3'),
 	* ),
 	*/
 	public function get_category_children($category_id)
@@ -197,7 +197,7 @@ class titania_cache extends acm
 		{
 			$child_list = $list = array();
 
-			$sql = 'SELECT category_id, child_id, category_name_clean, left_id, right_id FROM ' . TITANIA_CATEGORIES_TABLE . '
+			$sql = 'SELECT category_id, category_name_clean, left_id, right_id FROM ' . TITANIA_CATEGORIES_TABLE . '
 				ORDER BY left_id ASC';
 			$result = phpbb::$db->sql_query($sql);
 
@@ -206,14 +206,13 @@ class titania_cache extends acm
 				// need later
 				$list[$row['category_id']] = $row;
 
-				$child_id = $row['child_id'];
-
-				// Go through and grab all of the children
-				while (isset($list[$child_id]))
+				foreach ($list as $cat_id => $cat_row)
 				{
-					$child_list[$row['category_id']][] = $list[$child_id];
-
-					$child_id = $list[$child_id]['child_id'];
+					// Is this category a child of this one?
+					if ($row['left_id'] > $cat_row['left_id'] && $row['right_id'] < $cat_row['right_id'])
+					{
+						$child_list[$cat_id][$row['category_id']] = $row;
+					}
 				}
 			}
 

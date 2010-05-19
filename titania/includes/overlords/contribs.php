@@ -168,7 +168,7 @@ class contribs_overlord
 						),
 					),
 
-					'WHERE'		=> 'cic.category_id = ' . (int) $id . '
+					'WHERE'		=> ((is_array($id) && sizeof($id)) ? phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $id)) : 'cic.category_id = ' . (int) $id) . '
 						AND c.contrib_visible = 1',
 
 					'ORDER_BY'	=> $sort->get_order_by(),

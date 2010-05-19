@@ -265,7 +265,43 @@ switch ($action)
 				((isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'])	=> titania_url::build_url($category_object->get_url()),
 			));
 
-			contribs_overlord::display_contribs('category', $category_id);
+			// Get the child categories we want to select the contributions from
+			$child_categories = array_keys(titania::$cache->get_category_children($category_id));
+
+			// Setup the sort tool to sort by update time descending by default
+			$sort = new titania_sort();
+			$sort->set_sort_keys(contribs_overlord::$sort_by);
+			$sort->default_sort_key = 't';
+			$sort->default_sort_dir = 'd';
+
+			// If there are categories we are listing as well, only show 10 by default
+			if (sizeof($child_categories))
+			{
+				$sort->default_limit = 10;
+			}
+			else
+			{
+				$sort->default_limit = phpbb::$config['topics_per_page'];
+			}
+
+			$sort->request();
+
+			// Include the current category in the ones selected
+			$child_categories[] = $category_id;
+
+			contribs_overlord::display_contribs('category', $child_categories, $sort);
+		}
+		else
+		{
+			// Setup the sort tool to sort by update time descending by default
+			$sort = new titania_sort();
+			$sort->set_sort_keys(contribs_overlord::$sort_by);
+			$sort->default_sort_key = 't';
+			$sort->default_sort_dir = 'd';
+			$sort->default_limit = 10;
+			$sort->request();
+
+			contribs_overlord::display_contribs('all', 0, $sort);
 		}
 
 		phpbb::$template->assign_vars(array(
