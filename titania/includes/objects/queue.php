@@ -418,7 +418,6 @@ class titania_queue extends titania_message_object
 				$options_post = array(
 					'topic_title'			=> $contrib->contrib_name,
 					'post_text'				=> $body,
-					'topic_status'			=> (titania::$config->support_in_titania) ? ITEM_LOCKED : ITEM_UNLOCKED,
 				);
 				$options_post = array_merge($options, $options_post);
 				$release_topic_id = phpbb_posting('post', $options_post);
