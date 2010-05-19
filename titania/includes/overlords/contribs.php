@@ -29,6 +29,7 @@ class contribs_overlord
 	public static $sort_by = array(
 		't' => array('UPDATE_TIME', 'c.contrib_last_update'),
 		'c' => array('SORT_CONTRIB_NAME', 'c.contrib_name', true),
+		'r' => array('RATING', 'c.contrib_rating'),
 	);
 
 	/**
@@ -127,7 +128,7 @@ class contribs_overlord
 		}
 		$sort->result_lang = 'TOTAL_CONTRIBS';
 
-		$select = 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id';
+		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id';
 		switch ($mode)
 		{
 			case 'author' :
