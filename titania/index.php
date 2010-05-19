@@ -211,14 +211,6 @@ switch ($action)
 	* Display all contributions
 	*/
 	case 'contributions' :
-		// Setup the sort tool
-		$sort = new titania_sort();
-		$sort->set_sort_keys(contribs_overlord::$sort_by);
-		$sort->default_sort_key = 't';
-		$sort->default_sort_dir = 'd';
-
-		contribs_overlord::display_contribs('all', false, $sort);
-
 		// Mark all contribs read
 		if (request_var('mark', '') == 'contribs')
 		{
@@ -228,6 +220,14 @@ switch ($action)
 			'U_MARK_TOPICS'			=> titania_url::append_url(titania_url::$current_page_url, array('mark' => 'contribs')),
 			'L_MARK_TOPICS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
 		));
+
+		// Setup the sort tool
+		$sort = new titania_sort();
+		$sort->set_sort_keys(contribs_overlord::$sort_by);
+		$sort->default_sort_key = 't';
+		$sort->default_sort_dir = 'd';
+
+		contribs_overlord::display_contribs('all', false, $sort);
 
 		titania::page_header('CUSTOMISATION_DATABASE');
 		titania::page_footer(true, 'all_contributions.html');
@@ -303,16 +303,6 @@ switch ($action)
 		}
 		else
 		{
-			// Setup the sort tool to sort by update time descending by default
-			$sort = new titania_sort();
-			$sort->set_sort_keys(contribs_overlord::$sort_by);
-			$sort->default_sort_key = 't';
-			$sort->default_sort_dir = 'd';
-			$sort->default_limit = 10;
-			$sort->request();
-
-			contribs_overlord::display_contribs('all', 0, $sort);
-
 			// Mark all contribs read
 			if (request_var('mark', '') == 'contribs')
 			{
@@ -322,6 +312,16 @@ switch ($action)
 				'U_MARK_TOPICS'			=> titania_url::append_url(titania_url::$current_page_url, array('mark' => 'contribs')),
 				'L_MARK_TOPICS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
 			));
+
+			// Setup the sort tool to sort by update time descending by default
+			$sort = new titania_sort();
+			$sort->set_sort_keys(contribs_overlord::$sort_by);
+			$sort->default_sort_key = 't';
+			$sort->default_sort_dir = 'd';
+			$sort->default_limit = 10;
+			$sort->request();
+
+			contribs_overlord::display_contribs('all', 0, $sort);
 		}
 
 		phpbb::$template->assign_vars(array(
