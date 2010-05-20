@@ -323,19 +323,20 @@ switch ($action)
 		}
 
 		phpbb::$template->assign_vars(array(
-			'ICON_MOVE_UP'				=> '<img src="' . titania::$images_path . 'icon_up.gif" alt="' . phpbb::$user->lang['MOVE_UP'] . '" title="' . phpbb::$user->lang['MOVE_UP'] . '" />',
+			'ICON_MOVE_UP'			=> '<img src="' . titania::$images_path . 'icon_up.gif" alt="' . phpbb::$user->lang['MOVE_UP'] . '" title="' . phpbb::$user->lang['MOVE_UP'] . '" />',
 			'ICON_MOVE_UP_DISABLED'		=> '<img src="' . titania::$images_path . 'icon_up_disabled.gif" alt="' . phpbb::$user->lang['MOVE_UP'] . '" title="' . phpbb::$user->lang['MOVE_UP'] . '" />',
-			'ICON_MOVE_DOWN'			=> '<img src="' . titania::$images_path . 'icon_down.gif" alt="' . phpbb::$user->lang['MOVE_DOWN'] . '" title="' . phpbb::$user->lang['MOVE_DOWN'] . '" />',
+			'ICON_MOVE_DOWN'		=> '<img src="' . titania::$images_path . 'icon_down.gif" alt="' . phpbb::$user->lang['MOVE_DOWN'] . '" title="' . phpbb::$user->lang['MOVE_DOWN'] . '" />',
 			'ICON_MOVE_DOWN_DISABLED'	=> '<img src="' . titania::$images_path . 'icon_down_disabled.gif" alt="' . phpbb::$user->lang['MOVE_DOWN'] . '" title="' . phpbb::$user->lang['MOVE_DOWN'] . '" />',
-			'ICON_EDIT'					=> '<img src="' . titania::$images_path . 'icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
-			'ICON_EDIT_DISABLED'		=> '<img src="' . titania::$images_path . 'icon_edit_disabled.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
-			'ICON_DELETE'				=> '<img src="' . titania::$images_path . 'icon_delete.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
+			'ICON_EDIT'			=> '<img src="' . titania::$images_path . 'icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
+			'ICON_EDIT_DISABLED'				=> '<img src="' . titania::$images_path . 'icon_edit_disabled.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />',
+			'ICON_DELETE'			=> '<img src="' . titania::$images_path . 'icon_delete.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
 			'ICON_DELETE_DISABLED'		=> '<img src="' . titania::$images_path . 'icon_delete_disabled.gif" alt="' . phpbb::$user->lang['DELETE'] . '" title="' . phpbb::$user->lang['DELETE'] . '" />',
+			'SECTION_NAME'			=> '<a href="' . titania_url::build_url('manage/categories') . '">' . phpbb::$user->lang['MANAGE_CATEGORIES'] . '</a>',
 
-			'U_CREATE_CATEGORY'			=> titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'add')),
-			'U_MANAGE_CATEGORIES'			=> titania_url::build_url('manage/categories'),
+			'U_CREATE_CATEGORY'		=> titania_url::build_url('manage/categories', array('c' => $category_id, 'action' => 'add')),
+			'U_MANAGE_CATEGORIES'		=> titania_url::build_url('manage/categories'),
 
-			'S_MANAGE' 					=> true,
+			'S_MANAGE'			=> true,
 		));
 	break;
 }
