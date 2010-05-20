@@ -183,12 +183,16 @@ class titania_url
 				$url = substr($url, 0, strrpos($url, '/')) . preg_replace('#/' . $name . '_[^' . self::$separator . ']+#', '/', substr($url, strrpos($url, '/')));
 			}
 
-			if (substr($url, -1) != '/')
+			// Specify the value as *destroy* to make sure the value isn't kept in the URL (old values are unset and new is not appended)
+			if ($value != '*destroy*')
 			{
-				$url .= self::$separator;
-			}
+				if (substr($url, -1) != '/')
+				{
+					$url .= self::$separator;
+				}
 
-			$url .= self::url_replace($name) . '_' . self::url_replace($value);
+				$url .= self::url_replace($name) . '_' . self::url_replace($value);
+			}
 		}
 
 		// Now append the anchor again
