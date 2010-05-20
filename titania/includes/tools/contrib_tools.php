@@ -601,7 +601,7 @@ class titania_contrib_tools
 		$style_root = $phpbb_root_path . 'styles/' . $contrib->contrib_id . '/';
 
 		$this->mvdir_recursive($this->unzip_dir . $package_root, $style_root, false);
-		$this->rmdir_recursive($this->unzip_dir . $package_root);
+		$this->rmdir_recursive($this->unzip_dir);
 
 		$variables = array('db', 'phpbb_root_path');
 
