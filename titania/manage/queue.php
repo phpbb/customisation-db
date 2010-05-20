@@ -218,9 +218,10 @@ if ($queue_id)
 				'PUBLIC_PREVIEW_SUBJECT'	=> (isset($_POST['preview'])) ? 'Re: ' . $contrib->contrib_name : false,
 				'PUBLIC_PREVIEW_MESSAGE'	=> (isset($_POST['preview'])) ? $public_notes_preview : false,
 
-				'S_CONTRIB_APPROVE'			=> ($action == 'approve') ? true : false,
-				'S_STYLE_DEMO_INSTALL'		=> ($action == 'approve' && $contrib->contrib_type == TITANIA_TYPE_STYLE && titania::$config->demo_style_path) ? true : false,
-				'TOPIC_TITLE'				=> $contrib->contrib_name,
+				'S_CONTRIB_APPROVE'				=> ($action == 'approve') ? true : false,
+				'S_STYLE_DEMO_INSTALL'			=> ($action == 'approve' && $contrib->contrib_type == TITANIA_TYPE_STYLE && titania::$config->demo_style_path) ? true : false,
+				'S_STYLE_DEMO_INSTALL_CHECKED'	=> (isset($_POST['style_demo_install'])) ? true : false,
+				'TOPIC_TITLE'					=> $contrib->contrib_name,
 			));
 
 			// Setup the sort tool
