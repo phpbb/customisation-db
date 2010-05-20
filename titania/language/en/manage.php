@@ -53,8 +53,8 @@ $lang = array_merge($lang, array(
 	'EDIT_VALIDATION_NOTES'				=> 'Edit Validation Notes',
 
 	'MANAGE_CATEGORIES'					=> 'Manage Categories',
-	'MARK_IN_PROGRESS'					=> 'Mark in Progress',
-	'MARK_NO_PROGRESS'					=> 'Remove in Progress',
+	'MARK_IN_PROGRESS'					=> 'Mark "In Progress"',
+	'MARK_NO_PROGRESS'					=> 'Unmark "In Progress"',
 	'MOD_VALIDATION'					=> '[phpBB MOD-Validation] %1$s %2$s',
 	'MOD_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your modication to the phpBB.com modifications database. After careful inspection by the MOD Team your MOD has been approved and released into our modifications database.
 
