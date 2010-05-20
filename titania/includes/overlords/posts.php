@@ -143,14 +143,7 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		phpbb::$user->add_lang('viewtopic');
 
 		// Setup the sort tool
-		$sort = new titania_sort();
-		$sort->set_sort_keys(self::$sort_by);
-		if (isset(self::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
-		{
-			$sort->default_sort_key = phpbb::$user->data['user_post_sortby_type'];
-		}
-		$sort->default_sort_dir = phpbb::$user->data['user_post_sortby_dir'];
-		$sort->default_limit = phpbb::$config['posts_per_page'];
+		$sort = self::build_sort();
 		$sort->request();
 
 		// if a post_id was given we must start from the appropriate page
@@ -227,17 +220,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		if ($sort === false)
 		{
 			// Setup the sort tool
-			$sort = new titania_sort();
-			$sort->set_sort_keys(self::$sort_by);
-			if (isset(self::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
-			{
-				$sort->default_sort_key = phpbb::$user->data['user_post_sortby_type'];
-			}
-			$sort->default_sort_dir = phpbb::$user->data['user_post_sortby_dir'];
-			$sort->default_limit = phpbb::$config['posts_per_page'];
-			$sort->request();
+			$sort = self::build_sort();
 		}
-		$sort->result_lang = 'TOTAL_POSTS';
+		$sort->request();
 
 		$sql_ary = array(
 			'SELECT'	=> 'p.*',
@@ -470,5 +455,28 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		}
 
 		return $post_id;
+	}
+
+	/**
+	* Setup the sort tool and return it for posts display
+	*
+	* @return titania_sort
+	*/
+	public static function build_sort()
+	{
+		// Setup the sort and set the sort keys
+		$sort = new titania_sort();
+		$sort->set_sort_keys(self::$sort_by);
+
+		if (isset(self::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
+		{
+			$sort->default_sort_key = phpbb::$user->data['user_post_sortby_type'];
+		}
+		$sort->default_sort_dir = phpbb::$user->data['user_post_sortby_dir'];
+		$sort->default_limit = phpbb::$config['posts_per_page'];
+
+		$sort->result_lang = 'TOTAL_POSTS';
+
+		return $sort;
 	}
 }

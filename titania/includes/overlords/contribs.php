@@ -28,7 +28,7 @@ class contribs_overlord
 
 	public static $sort_by = array(
 		't' => array('UPDATE_TIME', 'c.contrib_last_update'),
-		'c' => array('SORT_CONTRIB_NAME', 'c.contrib_name', true),
+		'c' => array('SORT_CONTRIB_NAME', 'c.contrib_name'),
 		'r' => array('RATING', 'c.contrib_rating'),
 	);
 
@@ -118,15 +118,12 @@ class contribs_overlord
 		titania::add_lang('contributions');
 		titania::_include('functions_display', 'titania_topic_folder_img');
 
+		// Setup the sort tool if not sent, then request
 		if ($sort === false)
 		{
-			// Setup the sort tool
-			$sort = new titania_sort();
-			$sort->set_sort_keys(self::$sort_by);
-			$sort->default_limit = phpbb::$config['topics_per_page'];
-			$sort->request();
+			$sort = self::build_sort();
 		}
-		$sort->result_lang = 'TOTAL_CONTRIBS';
+		$sort->request();
 
 		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id';
 		switch ($mode)
@@ -310,5 +307,24 @@ class contribs_overlord
 			$contrib_type = $row['contrib_type'];
 		}
 		unset($contrib);
+	}
+
+	/**
+	* Setup the sort tool and return it for contributions display
+	*
+	* @return titania_sort
+	*/
+	public static function build_sort()
+	{
+		// Setup the sort and set the sort keys
+		$sort = new titania_sort();
+		$sort->set_sort_keys(self::$sort_by);
+
+		// Show update time descending and limit to the topics per page by default
+		$sort->set_defaults(phpbb::$config['topics_per_page'], 't', 'd');
+
+		$sort->result_lang = 'TOTAL_CONTRIBS';
+
+		return $sort;
 	}
 }

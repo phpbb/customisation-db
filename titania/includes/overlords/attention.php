@@ -84,16 +84,10 @@ class attention_overlord
 		if ($sort === false)
 		{
 			// Setup the sort tool
-			$sort = new titania_sort();
-			$sort->set_sort_keys(self::$sort_by);
-			$sort->default_sort_dir = 'd';
-			if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
-			{
-				$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
-			}
-			$sort->default_limit = phpbb::$config['topics_per_page'];
-			$sort->request();
+			$sort = self::build_sort();
 		}
+		$sort->request();
+
 
 		$sql_ary = array(
 			'SELECT'	=> '*',
@@ -140,7 +134,7 @@ class attention_overlord
 			// No results...no need to query more...
 			return;
 		}
-		
+
 		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
 		// Get the data
@@ -195,5 +189,26 @@ class attention_overlord
 			phpbb::$template->assign_block_vars($template_block, $output);
 		}
 		unset($attention);
+	}
+
+	/**
+	* Setup the sort tool and return it for posts display
+	*
+	* @return titania_sort
+	*/
+	public static function build_sort()
+	{
+		// Setup the sort and set the sort keys
+		$sort = new titania_sort();
+		$sort->set_sort_keys(self::$sort_by);
+
+		$sort->default_sort_dir = 'd';
+		if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
+		{
+			$sort->default_key = phpbb::$user->data['user_topic_sortby_type'];
+		}
+		$sort->default_limit = phpbb::$config['topics_per_page'];
+
+		return $sort;
 	}
 }

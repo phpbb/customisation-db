@@ -54,7 +54,7 @@ if (isset($_POST['submit']))
 
 // Setup the sort tool
 $sort = new titania_sort();
-$sort->default_limit = phpbb::$config['posts_per_page'];
+$sort->set_defaults(phpbb::$config['posts_per_page']);
 $sort->request();
 
 // Setup the search tool and make sure it is working

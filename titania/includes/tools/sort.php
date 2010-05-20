@@ -87,6 +87,31 @@ class titania_sort extends titania_object
 	}
 
 	/**
+	* Set some defaults
+	*
+	* @param int $limit Default limit, false to not change
+	* @param string $sort_key Default sort key, false to not change
+	* @param string $sort_dir (a|d) for ascending/descending, false to not change
+	*/
+	public function set_defaults($limit, $sort_key = false, $sort_dir = false)
+	{
+		if ($limit !== false)
+		{
+			$this->default_limit = (int) $limit;
+		}
+
+		if ($sort_key !== false)
+		{
+			$this->default_sort_key = $sort_key;
+		}
+
+		if ($sort_dir !== false)
+		{
+			$this->default_sort_dir = ($sort_dir == 'a') ? 'a' : 'd';
+		}
+	}
+
+	/**
 	 * Request function to run the start and limit grabbing functions
 	 */
 	public function request()

@@ -221,13 +221,7 @@ switch ($action)
 			'L_MARK_TOPICS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
 		));
 
-		// Setup the sort tool
-		$sort = new titania_sort();
-		$sort->set_sort_keys(contribs_overlord::$sort_by);
-		$sort->default_sort_key = 't';
-		$sort->default_sort_dir = 'd';
-
-		contribs_overlord::display_contribs('all', false, $sort);
+		contribs_overlord::display_contribs('all', false);
 
 		titania::page_header('CUSTOMISATION_DATABASE');
 		titania::page_footer(true, 'all_contributions.html');
@@ -278,23 +272,15 @@ switch ($action)
 			// Get the child categories we want to select the contributions from
 			$child_categories = array_keys(titania::$cache->get_category_children($category_id));
 
-			// Setup the sort tool to sort by update time descending by default
-			$sort = new titania_sort();
-			$sort->set_sort_keys(contribs_overlord::$sort_by);
-			$sort->default_sort_key = 't';
-			$sort->default_sort_dir = 'd';
+			$sort = false;
 
 			// If there are categories we are listing as well, only show 10 by default
 			if (sizeof($child_categories))
 			{
-				$sort->default_limit = 10;
+				// Setup the sort tool to only display the 10 most recent
+				$sort = contribs_overlord::build_sort();
+				$sort->set_defaults(10);
 			}
-			else
-			{
-				$sort->default_limit = phpbb::$config['topics_per_page'];
-			}
-
-			$sort->request();
 
 			// Include the current category in the ones selected
 			$child_categories[] = $category_id;
@@ -313,13 +299,9 @@ switch ($action)
 				'L_MARK_TOPICS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
 			));
 
-			// Setup the sort tool to sort by update time descending by default
-			$sort = new titania_sort();
-			$sort->set_sort_keys(contribs_overlord::$sort_by);
-			$sort->default_sort_key = 't';
-			$sort->default_sort_dir = 'd';
-			$sort->default_limit = 10;
-			$sort->request();
+			// Setup the sort tool to only display the 10 most recent
+			$sort = contribs_overlord::build_sort();
+			$sort->set_defaults(10);
 
 			contribs_overlord::display_contribs('all', 0, $sort);
 		}

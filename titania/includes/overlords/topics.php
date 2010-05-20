@@ -196,17 +196,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		if ($sort === false)
 		{
 			// Setup the sort tool
-			$sort = new titania_sort();
-			$sort->set_sort_keys(self::$sort_by);
-			if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
-			{
-				$sort->default_sort_key = phpbb::$user->data['user_topic_sortby_type'];
-			}
-			$sort->default_sort_dir = phpbb::$user->data['user_topic_sortby_dir'];
-			$sort->default_limit = phpbb::$config['topics_per_page'];
-			$sort->request();
+			$sort = self::build_sort();
 		}
-		$sort->result_lang = 'TOTAL_TOPICS';
+		$sort->request();
 
 		$topic_ids = array();
 		$switch_on_sticky = true; // Display the extra block after stickies end?  Not used when not sorting with stickies first
@@ -437,5 +429,28 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'NEWEST_POST_IMG'	=> phpbb::$user->img('icon_topic_newest', 'VIEW_NEWEST_POST'),
 			'LAST_POST_IMG'		=> phpbb::$user->img('icon_topic_latest', 'VIEW_LATEST_POST'),
 		));
+	}
+
+	/**
+	* Setup the sort tool and return it for topics display
+	*
+	* @return titania_sort
+	*/
+	public static function build_sort()
+	{
+		// Setup the sort and set the sort keys
+		$sort = new titania_sort();
+		$sort->set_sort_keys(self::$sort_by);
+
+		if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))
+		{
+			$sort->default_sort_key = phpbb::$user->data['user_topic_sortby_type'];
+		}
+		$sort->default_sort_dir = phpbb::$user->data['user_topic_sortby_dir'];
+		$sort->default_limit = phpbb::$config['topics_per_page'];
+
+		$sort->result_lang = 'TOTAL_TOPICS';
+
+		return $sort;
 	}
 }

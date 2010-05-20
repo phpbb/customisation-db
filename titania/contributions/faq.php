@@ -211,7 +211,7 @@ switch ($action)
 
 			// Setup the sort tool
 			$sort = new titania_sort();
-			$sort->default_limit = phpbb::$config['topics_per_page'];
+			$sort->set_defaults(phpbb::$config['topics_per_page']);
 			$sort->request();
 			$faqs = array();
 

@@ -221,15 +221,8 @@ class titania_posting
 
 
 		// Setup the sort tool
-		$topic_sort = new titania_sort();
-		$topic_sort->set_sort_keys(posts_overlord::$sort_by);
-		if (isset(posts_overlord::$sort_by[phpbb::$user->data['user_post_sortby_type']]))
-		{
-			$topic_sort->default_sort_key = phpbb::$user->data['user_post_sortby_type'];
-		}
-		$topic_sort->default_sort_dir = 'd';
-		$topic_sort->default_limit = phpbb::$config['posts_per_page'];
-		$topic_sort->request();
+		$topic_sort = posts_overlord::build_sort();
+		$topic_sort->set_defaults(false, false, 'd');
 
 		// Display the posts for review
 		posts_overlord::display_topic($post_object->topic, $topic_sort);

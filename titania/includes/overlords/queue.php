@@ -101,11 +101,9 @@ class queue_overlord
 		if ($sort === false)
 		{
 			// Setup the sort tool
-			$sort = new titania_sort();
-			$sort->set_sort_keys(self::$sort_by);
-			$sort->default_limit = phpbb::$config['topics_per_page'];
-			$sort->request();
+			$sort = self::build_sort();
 		}
+		$sort->request();
 
 		$queue_ids = array();
 
@@ -343,5 +341,21 @@ class queue_overlord
 		titania::_include('functions_display', 'titania_topic_folder_img');
 
 		titania_topic_folder_img($folder_img, $folder_alt, $replies, $is_unread);
+	}
+
+	/**
+	* Setup the sort tool and return it for posts display
+	*
+	* @return titania_sort
+	*/
+	public static function build_sort()
+	{
+		// Setup the sort and set the sort keys
+		$sort = new titania_sort();
+		$sort->set_sort_keys(self::$sort_by);
+
+		$sort->set_defaults(phpbb::$config['topics_per_page']);
+
+		return $sort;
 	}
 }

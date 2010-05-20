@@ -16,7 +16,11 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-contribs_overlord::display_contribs('author', titania::$author->user_id);
+// Setup the sort tool to sort by contribution name ascending
+$sort = contribs_overlord::build_sort();
+$sort->set_defaults(false, 'c', 'a');
+
+contribs_overlord::display_contribs('author', titania::$author->user_id, $sort);
 
 phpbb::$template->assign_var('S_AUTHOR_LIST', true);
 
