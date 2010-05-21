@@ -415,6 +415,23 @@ class titania_revision extends titania_database_object
 				phpbb::$db->sql_query($sql);
 
 				$sql_ary['validation_date'] = titania::$time;
+
+				// Update the contributions table if this is the newest validated revision
+				$sql = 'SELECT revision_id FROM ' . $this->sql_table . '
+					WHERE revision_status = ' . TITANIA_REVISION_APPROVED . '
+					AND contrib_id = ' . $this->contrib_id . '
+					ORDER BY revision_id DESC';
+				phpbb::$db->sql_query_limit($sql, 1);
+				$newest_revision_id = phpbb::$db->sql_fetchfield('revision_id');
+				phpbb::$db->sql_freeresult();
+
+				if ($newest_revision_id && (int) $newest_revision_id < $this->revision_id)
+				{
+					$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+						SET contrib_last_update = ' . titania::$time . '
+						WHERE contrib_id = ' . (int) $this->contrib_id;
+					phpbb::$db->sql_query($sql);
+				}
 			break;
 
 			default :
