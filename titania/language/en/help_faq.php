@@ -5,7 +5,7 @@
 *
 * @package Titania language
 * @version $Id: help_faq.php
-* Author: RMcGirr83
+* @author: RMcGirr83
 * @copyright (c) 2010 phpBB Group
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -41,12 +41,15 @@ $help = array(
 	array(
 		0 => 'What is Titania?',
 		1 => 'Titania (aka The Customisation Database) is a method for users to be able to download modifications and styles for a phpBB forum.  You also are ensured that the modification or style that you have downloaded has been validated and has passed the phpBB validation requirements.'
+	),
 	array(
 		0 => 'Validation? What’s that?',
 		1 => 'Each and every modification or style that is downloaded by you within Titania has undergone validation.  Validation means that a modification, or style, has undergone scrutiny as to the security of the code involved as well as testing to ensure the modification or style installs and works properly within a particular version of a phpBB forum.  Validation provides to you a level of comfort in knowing that you are not downloading/installing a modification or style that may subject your forum to being hacked.'
+	),
 	array(
 		0 => '--',
 		1 => 'How to use Titania',
+	),
 	array(
 		0 => 'Finding a contribution',
 		1 => 'There are several ways to find a contribution.  On <a href="http://www.phpbb.com/customise/db/">this</a> page you can see the categories that are currently available as well as recent modifications/styles that have been approved within the database.'
