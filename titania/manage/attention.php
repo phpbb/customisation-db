@@ -137,23 +137,28 @@ if ($attention_id || ($object_type && $object_id))
 				// Notify poster about disapproval
 				if ($post->post_user_id != ANONYMOUS)
 				{
-					$messenger = new messenger();
+					$lang_path = phpbb::$user->lang_path;
+					phpbb::$user->set_custom_lang_path(titania::$config->language_path);
+
+					$messenger = new messenger(false);
 					
 					users_overlord::load_users(array($post->post_user_id));
 
 					$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_disapproved' : 'post_disapproved';
 
-					$messenger->template($email_template, $users[$post->post_user_id]['user_lang']);
+					$messenger->template($email_template, users_overlord::get_user($post->post_user_id, 'user_lang'));
 
-					$messenger->to($users[$post->post_user_id]['user_email'], $users[$post->post_user_id]['username']);
+					$messenger->to(users_overlord::get_user($post->post_user_id, 'user_email'), users_overlord::get_user($post->post_user_id, '_username'));
 
 					$messenger->assign_vars(array(
-						'USERNAME'		=> htmlspecialchars_decode($users[$post->post_user_id]['username']),
+						'USERNAME'		=> htmlspecialchars_decode(users_overlord::get_user($post->post_user_id, '_username')),
 						'POST_SUBJECT'	=> htmlspecialchars_decode(censor_text($post->post_subject)),
 						'TOPIC_TITLE'	=> htmlspecialchars_decode(censor_text($post->topic->topic_subject)))
 					);
 
 					$messenger->send();
+					
+					phpbb::$user->set_custom_lang_path($lang_path);
 				}
 				
 				// Delete the post
@@ -216,18 +221,21 @@ if ($attention_id || ($object_type && $object_id))
 				// Notify poster about approval
 				if ($post->post_user_id != ANONYMOUS)
 				{
-					$messenger = new messenger();
+					$lang_path = phpbb::$user->lang_path;
+					phpbb::$user->set_custom_lang_path(titania::$config->language_path);
+					
+					$messenger = new messenger(false);
 					
 					users_overlord::load_users(array($post->post_user_id));
 
 					$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_approved' : 'post_approved';
 
-					$messenger->template($email_template, $users[$post->post_user_id]['user_lang']);
+					$messenger->template($email_template, users_overlord::get_user($post->post_user_id, 'user_lang'));
 
-					$messenger->to($users[$post->post_user_id]['user_email'], $users[$post->post_user_id]['username']);
+					$messenger->to(users_overlord::get_user($post->post_user_id, 'user_email'), users_overlord::get_user($post->post_user_id, '_username'));
 
 					$messenger->assign_vars(array(
-						'USERNAME'		=> htmlspecialchars_decode($users[$post->post_user_id]['username']),
+						'USERNAME'		=> htmlspecialchars_decode(users_overlord::get_user($post->post_user_id, '_username')),
 						'POST_SUBJECT'	=> htmlspecialchars_decode(censor_text($post->post_subject)),
 						'TOPIC_TITLE'	=> htmlspecialchars_decode(censor_text($post->topic->topic_subject)),
 
@@ -236,6 +244,8 @@ if ($attention_id || ($object_type && $object_id))
 					);
 
 					$messenger->send();
+					
+					phpbb::$user->set_custom_lang_path($lang_path);
 				}
 			}
 
