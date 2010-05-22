@@ -125,6 +125,10 @@ function titania_custom($action, $version)
 						phpbb::$db->sql_query($sql);
 					}
 				break;
+
+				case '0.3.3' :
+					titania_sync::contribs('faq_count');
+				break;
 			}
 		break;
 

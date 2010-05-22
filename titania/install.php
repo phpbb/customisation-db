@@ -941,6 +941,14 @@ $versions = array(
 		),
 	),
 
+	'0.3.3' => array(
+		'table_column_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_faq_count', array('VCHAR', '')),
+		),
+
+		'custom' => 'titania_custom',
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 

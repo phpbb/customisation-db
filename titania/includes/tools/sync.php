@@ -145,6 +145,26 @@ class titania_sync
 				phpbb::$db->sql_freeresult($result);
 			break;
 
+			case 'faq_count' :
+				$contribs = array();
+				$sql = 'SELECT faq_access, contrib_id FROM ' . TITANIA_CONTRIB_FAQ_TABLE;
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$flags = titania_count::update_flags($row['faq_access']);
+					$contribs[$row['contrib_id']] = titania_count::increment(((isset($contribs[$row['contrib_id']])) ? $contribs[$row['contrib_id']] : ''), $flags);
+				}
+				phpbb::$db->sql_freeresult($result);
+
+				foreach ($contribs as $contrib_id => $count)
+				{
+					$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+						SET contrib_faq_count = \'' . phpbb::$db->sql_escape($count) . '\'
+						WHERE contrib_id = ' . $contrib_id;
+					phpbb::$db->sql_query($sql);
+				}
+			break;
+
 			case 'index' :
 				$data = array();
 

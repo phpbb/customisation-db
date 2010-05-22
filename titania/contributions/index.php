@@ -104,12 +104,9 @@ function load_contrib($contrib_id = false)
 		}
 	}
 
-	// Count the number of FAQ items to display @todo probably put this as a field on the contribs table
-	$sql = 'SELECT COUNT(faq_id) AS cnt FROM ' . TITANIA_CONTRIB_FAQ_TABLE . '
-		WHERE contrib_id = ' . titania::$contrib->contrib_id;
-	phpbb::$db->sql_query($sql);
-	$faq_count = phpbb::$db->sql_fetchfield('cnt');
-	phpbb::$db->sql_freeresult();
+	// Count the number of FAQ items to display
+	$flags = titania_count::get_flags(titania::$access_level);
+	$faq_count = titania_count::from_db(titania::$contrib->contrib_faq_count, $flags);
 
 	/**
 	* Menu Array

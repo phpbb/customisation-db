@@ -114,6 +114,9 @@ class titania_contribution extends titania_message_object
 			'contrib_last_update'			=> array('default' => titania::$time),
 
 			'contrib_release_topic_id'		=> array('default' => 0),
+
+			// Number of FAQ items (titania_count format)
+			'contrib_faq_count'				=> array('default' => ''),
 		));
 
 		// Hooks

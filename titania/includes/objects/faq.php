@@ -150,6 +150,38 @@ class titania_faq extends titania_message_object
 	 */
 	public function submit()
 	{
+		// Get the FAQ count to update it
+		$sql = 'SELECT contrib_faq_count FROM ' . TITANIA_CONTRIBS_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
+		$contrib_faq_count = phpbb::$db->sql_fetchfield('contrib_faq_count');
+		phpbb::$db->sql_freeresult();
+
+		// If already submitted we need to decrement first
+		if ($this->faq_id)
+		{
+			if (empty($this->sql_data))
+			{
+				throw new exception('Modifying a FAQ entry requires you load it through the load() function (we require the original information).');
+			}
+
+			$original_flags = titania_count::update_flags($this->sql_data['faq_access']);
+
+			$contrib_faq_count = titania_count::decrement($contrib_faq_count, $original_flags);
+		}
+
+		// Update the FAQ count
+		$flags = titania_count::update_flags($this->faq_access);
+
+		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+			SET contrib_faq_count = \'' . phpbb::$db->sql_escape(titania_count::increment($contrib_faq_count, $flags)) . '\'
+			WHERE contrib_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
+
+		// Submit this FAQ item
+		parent::submit();
+
+		// Index
 		titania_search::index(TITANIA_FAQ, $this->faq_id, array(
 			'title'			=> $this->faq_subject,
 			'text'			=> $this->faq_text,
@@ -161,13 +193,25 @@ class titania_faq extends titania_message_object
 			'url'			=> titania_url::unbuild_url($this->get_url()),
 			'access_level'	=> $this->faq_access,
 		));
-
-		parent::submit();
 	}
 
 	public function delete()
 	{
 		titania_search::delete(TITANIA_FAQ, $this->faq_id);
+
+		// Update the FAQ count
+		$sql = 'SELECT contrib_faq_count FROM ' . TITANIA_CONTRIBS_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
+		$contrib_faq_count = phpbb::$db->sql_fetchfield('contrib_faq_count');
+		phpbb::$db->sql_freeresult();
+
+		$flags = titania_count::update_flags($this->faq_access);
+
+		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+			SET contrib_faq_count = \'' . phpbb::$db->sql_escape(titania_count::decrement($contrib_faq_count, $flags)) . '\'
+			WHERE contrib_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
 
 		parent::delete();
 	}
@@ -175,7 +219,7 @@ class titania_faq extends titania_message_object
 	/**
 	* Move a FAQ item
 	*
-	* @param string $direction (up|down)
+	* @param string $direction (move_up|move_down)
 	*/
 	public function move($faq_row, $action = 'move_up', $steps = 1)
 	{
