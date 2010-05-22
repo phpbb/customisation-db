@@ -270,6 +270,8 @@ class queue_overlord
 				$quick_actions['APPROVE'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve'));
 				$quick_actions['DENY'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny'));
 			}
+
+			//$quick_actions['REBUILD_FIRST_POST'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'rebuild'));
 		}
 
 		phpbb::$template->assign_vars(array(

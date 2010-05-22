@@ -168,13 +168,15 @@ class titania_queue extends titania_message_object
 		$post->post_user_id = $this->submitter_user_id;
 		$post->post_time = $this->queue_submit_time;
 
-		// Need at least some text in the post body...
-		$post->post_text = phpbb::$user->lang['VALIDATION_SUBMISSION'] . "\n\n";
+		// Reset the post text
+		$post->post_text = '';
 
-		// Put the queue discussion link in the post
+		// Queue Discussion Link
 		$queue_topic = $this->get_queue_discussion_topic();
-
 		$post->post_text .= '[url=' . $queue_topic->get_url() . ']' . phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC'] . "[/url]\n\n";
+
+		// Put text saying whether repacking is allowed or not
+		$post->post_text .= phpbb::$user->lang[(($this->queue_allow_repack) ? 'QUEUE_REPACK_ALLOWED' : 'QUEUE_REPACK_NOT_ALLOWED')] . "\n\n";
 
 		// Add the queue notes
 		if ($this->queue_notes)

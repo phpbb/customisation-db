@@ -41,7 +41,7 @@ class organize_lang
 			'title'	=> 'ORGANIZE_LANG',
 			'vars'	=> array(
 				'legend1'			=> 'ORGANIZE_LANG',
-				'file'				=> array('lang' => 'ORGANIZE_LANG_FILE', 'type' => 'text:40:255', 'explain' => true),
+				'file'				=> array('lang' => 'ORGANIZE_LANG_FILE', 'default' => 'en/', 'type' => 'text:40:255', 'explain' => true),
 			)
 		);
 	}

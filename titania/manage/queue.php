@@ -272,6 +272,14 @@ if ($queue_id)
 			titania::page_footer(true, 'manage/queue_post.html');
 		break;
 
+		case 'rebuild' :
+			$queue = queue_overlord::get_queue_object($queue_id, true);
+
+			$queue->update_first_queue_post();
+
+			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
+		break;
+
 		case 'move' :
 			$queue = queue_overlord::get_queue_object($queue_id, true);
 
