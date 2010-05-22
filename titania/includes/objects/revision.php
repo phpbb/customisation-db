@@ -454,7 +454,7 @@ class titania_revision extends titania_database_object
 	/**
 	* Repack a revision
 	*
-	* @param object $old_revision
+	* @param object $old_revision titania_revision object
 	*/
 	public function repack($old_revision)
 	{
@@ -463,10 +463,33 @@ class titania_revision extends titania_database_object
 			throw new exception('Submit the revision before repacking');
 		}
 
+		titania::add_lang('manage');
+
+		// Get the old and new queue objects
 		$old_queue = $old_revision->get_queue();
 		$queue = $this->get_queue();
 
-		// Update the old queue and delete the new one
+		// Reply to the queue topic to say that it's been repacked and have the old mpv/automod results listed in it as well
+		$repack_message = phpbb::$user->lang['REVISION_REPACKED'] . "\n\n";
+
+		// Add the MPV results
+		if ($old_queue->mpv_results)
+		{
+			$mpv_results = $old_queue->mpv_results;
+			titania_decode_message($mpv_results, $old_queue->mpv_results_uid);
+			$repack_message .= '[quote=&quot;' . phpbb::$user->lang['OLD_VALIDATION_MPV'] . '&quot;]' . $mpv_results . "[/quote]\n";
+		}
+
+		// Add the Automod results
+		if ($old_queue->automod_results)
+		{
+			$repack_message .= '[quote=&quot;' . phpbb::$user->lang['OLD_VALIDATION_AUTOMOD'] . '&quot;]' . $old_queue->automod_results . "[/quote]\n";
+		}
+
+		// Reply
+		$old_queue->topic_reply($repack_message);
+
+		// Update the old queue with the new results
 		$old_queue->revision_id = $queue->revision_id;
 		$old_queue->mpv_results = $queue->mpv_results;
 		$old_queue->mpv_results_bitfield = $queue->mpv_results_bitfield;
@@ -483,7 +506,7 @@ class titania_revision extends titania_database_object
 		phpbb::$db->sql_query($sql);
 		$old_revision->revision_queue_id = 0;
 
-		// Update the queue_id here
+		// Update the queue_id for this revision to point to the old queue_id
 		$this->revision_queue_id = $old_queue->queue_id;
 		$this->submit();
 

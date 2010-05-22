@@ -112,6 +112,8 @@ phpBB MOD Team',
 	'NO_NOTES'							=> 'No Notes',
 	'NO_QUEUE_ITEM'						=> 'Queue item does not exist.',
 
+	'OLD_VALIDATION_AUTOMOD'			=> 'Automod Test from pre-repack',
+	'OLD_VALIDATION_MPV'				=> 'MPV Notes from pre-repack',
 	'OPEN_ITEMS'						=> 'Open Items',
 
 	'PUBLIC_NOTES'						=> 'Public release notes',
@@ -139,6 +141,7 @@ phpBB MOD Team',
 	'REPORTED'							=> 'Reported',
 	'RETEST_AUTOMOD'					=> 'Re-test Automod',
 	'RETEST_MPV'						=> 'Re-test MPV',
+	'REVISION_REPACKED'					=> 'This revision has been repacked.',
 
 	'STYLE_DEMO_INSTALL'				=> 'Install on style demo board',
 	'STYLE_VALIDATION'					=> '[phpBB Style-Validation] %1$s %2$s',
