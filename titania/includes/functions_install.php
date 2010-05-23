@@ -95,6 +95,11 @@ function titania_custom($action, $version)
 				case '0.3.2' :
 					$update = array();
 
+					// Reset the status
+					$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . '
+						SET revision_status = 0';
+					phpbb::$db->sql_query($sql);
+
 					$sql = 'SELECT r.revision_id, q.queue_status FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_QUEUE_TABLE . ' q
 						WHERE q.revision_id = r.revision_id';
 					$result = phpbb::$db->sql_query($sql);
@@ -124,6 +129,12 @@ function titania_custom($action, $version)
 							WHERE ' . phpbb::$db->sql_in_set('revision_id', $revision_ids);
 						phpbb::$db->sql_query($sql);
 					}
+
+					// Any that are left should be repacked
+					$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . '
+						SET revision_status = ' . TITANIA_REVISION_REPACKED . '
+						WHERE revision_status = 0';
+					phpbb::$db->sql_query($sql);
 				break;
 
 				case '0.3.3' :

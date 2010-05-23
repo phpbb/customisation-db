@@ -30,12 +30,13 @@ define('TITANIA_CONTRIB_DOWNLOAD_DISABLED', 4); // Downloads disabled (while und
 define('TITANIA_CONTRIB_HIDDEN', 5); // Hidden from category listing, shown to author/teams if directly linked to
 define('TITANIA_CONTRIB_DISABLED', 6); // Hidden from category listing, shown to author/teams if directly linked to, not editable by authors
 
-// Revision status - not yet implimented
+// Revision status
 define('TITANIA_REVISION_NEW', 1); // Is not approved yet
 define('TITANIA_REVISION_APPROVED', 2); // Is approved (this is the only status shown to the public unless approval is not required)
 define('TITANIA_REVISION_DENIED', 3); // Is denied
 define('TITANIA_REVISION_PULLED_SECURITY', 4); // Has been pulled for a security vulnerability
 define('TITANIA_REVISION_PULLED_OTHER', 5); // Has been pulled for an other non-security reason
+define('TITANIA_REVISION_REPACKED', 6); // Has been repacked
 
 // Queue status
 define('TITANIA_QUEUE_DENIED', -2); // Special case to hide denied revisions from the queue

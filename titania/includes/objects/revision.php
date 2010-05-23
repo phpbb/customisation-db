@@ -144,6 +144,7 @@ class titania_revision extends titania_database_object
 			'S_DENIED'				=> ($this->revision_status == TITANIA_REVISION_DENIED) ? true : false,
 			'S_PULLED_SECURITY'		=> ($this->revision_status == TITANIA_REVISION_PULLED_SECURITY) ? true : false,
 			'S_PULLED_OTHER'		=> ($this->revision_status == TITANIA_REVISION_PULLED_OTHER) ? true : false,
+			'S_REPACKED'			=> ($this->revision_status == TITANIA_REVISION_REPACKED) ? true : false,
 		));
 
 		phpbb::$user->date_format = $old_date_format;

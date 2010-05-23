@@ -34,7 +34,8 @@
 					<!-- IF revisions.S_DENIED --><strong>{L_REVISION_DENIED}</strong><!-- ENDIF -->
 					<!-- IF revisions.S_PULLED_SECURITY --><strong>{L_REVISION_PULLED_FOR_SECURITY}</strong><!-- ENDIF -->
 					<!-- IF revisions.S_PULLED_OTHER --><strong>{L_REVISION_PULLED_FOR_OTHER}</strong><!-- ENDIF -->
-					<!-- IF revisions.REVISION_QUEUE --><!-- IF not revisions.S_APPROVED --><!-- IF not revisions.S_NEW and not revisions.S_DENIED and not revisions.S_PULLED_SECURITY and not revisions.S_PULLED_OTHER -->{L_REVISION_PENDING}<!-- ENDIF --> - <!-- ENDIF --><a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF -->
+					<!-- IF revisions.S_REPACKED --><strong>{L_REVISION_REPACKED}</strong><!-- ENDIF -->
+					<!-- IF revisions.REVISION_QUEUE --><!-- IF not revisions.S_APPROVED --> - <!-- ENDIF --><a href="{revisions.REVISION_QUEUE}">{L_QUEUE}</a><!-- ENDIF -->
 					<!-- IF revisions.U_EDIT --> <a href="{revisions.U_EDIT}">{ICON_EDIT}</a><!-- ENDIF -->
 				</dd>
 				<!-- ENDIF -->
