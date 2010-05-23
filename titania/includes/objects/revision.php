@@ -502,7 +502,8 @@ class titania_revision extends titania_database_object
 		$queue->delete();
 
 		// Unlink the old queue_id from the old revision manually (don't resubmit and make another queue topic...)
-		$sql = 'UPDATE ' . $this->sql_table . ' SET revision_queue_id = 0
+		$sql = 'UPDATE ' . $this->sql_table . '
+			SET revision_queue_id = 0, revision_status = ' . TITANIA_REVISION_REPACKED . '
 			WHERE revision_id = ' . (int) $old_revision->revision_id;
 		phpbb::$db->sql_query($sql);
 		$old_revision->revision_queue_id = 0;
