@@ -210,11 +210,14 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 		break;
 	}
 
+	$description = $contrib->contrib_desc;
+	titania_decode_message($description, $contrib->contrib_desc_uid);
+
 	$post_text = sprintf(phpbb::$user->lang[$lang_var],
 		$contrib->contrib_name,
 		$contrib->author->get_url(),
 		users_overlord::get_user($contrib->author->user_id, '_username'),
-		$contrib->contrib_desc,
+		$description,
 		$revision->revision_version,
 		titania_url::build_url('download', array('id' => $revision->attachment_id)),
 		$contrib->download['real_filename'],
