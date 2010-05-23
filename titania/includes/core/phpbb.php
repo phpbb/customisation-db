@@ -369,15 +369,15 @@ class phpbb
 					// $captcha->reset();
 
 					// Parse the captcha template
-					phpbb::$template->set_template();
-					phpbb::$template->set_filenames(array(
+					self::reset_template();
+					self::$template->set_filenames(array(
 						'captcha'	=> $captcha->get_template(),
 					));
 
 					// Correct confirm image link
-					phpbb::$template->assign_var('CONFIRM_IMAGE_LINK', phpbb::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type));
+					self::$template->assign_var('CONFIRM_IMAGE_LINK', self::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type));
 
-					phpbb::$template->assign_display('captcha', 'CAPTCHA', false);
+					self::$template->assign_display('captcha', 'CAPTCHA', false);
 
 					titania::set_custom_template();
 
@@ -459,6 +459,6 @@ class phpbb
 			SET user_posts = user_posts ' . (($direction == '+') ? '+' : '-') . ' ' . (int) $amount .
 				(($direction == '+') ? ', user_lastpost_time = ' . time() : '') . '
 			WHERE user_id = ' . (int) $user_id;
-		phpbb::$db->sql_query($sql);
+		self::$db->sql_query($sql);
 	}
 }
