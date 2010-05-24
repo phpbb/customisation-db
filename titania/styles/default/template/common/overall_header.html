@@ -48,26 +48,34 @@
 		var max_rating = "{UA_MAX_RATING}";
 	<!-- ENDIF -->
 
-	$(document).ready(function() {
-	<!-- IF S_HIDE_ERROR_BOX -->
-		setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
-	<!-- ENDIF -->
+	$(document).ready(function()
+	{
+		<!-- IF S_HIDE_ERROR_BOX -->
+			setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
+		<!-- ENDIF -->
 
 		$("#extratabs").tabs();
 		$('#extratabs li').removeClass('ui-corner-top');
 		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
 
-    <!-- IF .screenshots -->
-		$('a.screenshot').lightBox(
+		<!-- IF .screenshots -->
+			$('a.screenshot').lightBox(
 			{
 				imageLoading: '{T_TITANIA_THEME_PATH}/images/lightbox-ico-loading.gif',
 				imageBtnClose: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-close.gif',
 				imageBtnPrev: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-prev.gif',
 				imageBtnNext: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-next.gif'
-			}
-		);
+			});
+		<!-- ENDIF -->
+	});
+
+	<!-- IF S_USER_PM_POPUP -->
+		if ({S_NEW_PM})
+		{
+			var url = '{UA_POPUP_PM}';
+			window.open(url.replace(/&amp;/g, '&'), '_phpbbprivmsg', 'height=225,resizable=yes,scrollbars=yes, width=400');
+		}
 	<!-- ENDIF -->
-  });
 
 // ]]>
 </script>
