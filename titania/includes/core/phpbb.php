@@ -218,7 +218,7 @@ class phpbb
 			'U_DELETE_COOKIES'		=> self::append_sid('ucp', 'mode=delete_cookies'),
 
 			'S_DISPLAY_PM'			=> (self::$config['allow_privmsg'] && !empty(self::$user->data['is_registered']) && (self::$auth->acl_get('u_readpm') || self::$auth->acl_get('u_sendpm'))) ? true : false,
-			'S_USER_PM_POPUP'		=> $user->optionget('popuppm'),
+			'S_USER_PM_POPUP'		=> self::$user->optionget('popuppm'),
 			'S_NEW_PM'				=> ($s_privmsg_new) ? 1 : 0,
 			'S_USER_LOGGED_IN'		=> (self::$user->data['user_id'] != ANONYMOUS) ? true : false,
 			'S_AUTOLOGIN_ENABLED'	=> (self::$config['allow_autologin']) ? true : false,
