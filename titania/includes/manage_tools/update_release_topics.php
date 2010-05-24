@@ -38,7 +38,7 @@ class update_release_topics
 		// Define some vars that we'll need
 		$start	= request_var('start', 0);
 		$total = 0;
-		$limit = 1;
+		$limit = 100;
 
 		titania::_include('functions_posting', 'phpbb_posting');
 		titania::add_lang('contributions');
