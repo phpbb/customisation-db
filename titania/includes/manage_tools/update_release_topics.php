@@ -117,7 +117,7 @@ class update_release_topics
 		}
 		else
 		{
-			meta_refresh(1, titania_url::build_url('manage/administration', array('t' => 'update_release_topics', 'start' => ++$start, 'submit' => 1, 'hash' => generate_link_hash('manage'))));
+			meta_refresh(1, titania_url::build_url('manage/administration', array('t' => 'update_release_topics', 'start' => ($start + $limit), 'submit' => 1, 'hash' => generate_link_hash('manage'))));
 			trigger_error(phpbb::$user->lang('UPDATE_RELEASE_TOPICS_PROGRESS', $start));
 		}
 	}
