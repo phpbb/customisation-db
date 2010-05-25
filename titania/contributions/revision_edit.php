@@ -59,6 +59,14 @@ if (isset($_POST['submit']))
 		$error[] = phpbb::$user->lang['FORM_INVALID'];
 	}
 
+	// Delete the revision if that is what we want
+	if (isset($_POST['delete']) && !sizeof($error) && titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+	{
+		$revision->delete();
+
+		redirect(titania::$contrib->get_url());
+	}
+
 	// Grab the phpbb versions and do some simple error checking
 	$revision_phpbb_versions = request_var('revision_phpbb_versions', array(''));
 	if (empty($revision_phpbb_versions))
