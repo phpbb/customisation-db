@@ -90,10 +90,6 @@ titania::generate_breadcrumbs(array(
 	titania_types::$types[$queue_type]->lang	=> $base_url,
 ));
 
-// Handle replying/editing/etc
-$posting_helper = new titania_posting();
-$posting_helper->act('manage/queue_post.html');
-
 // Main output
 if ($queue_id)
 {
@@ -113,6 +109,36 @@ if ($queue_id)
 			$queue = queue_overlord::get_queue_object($queue_id, true);
 			$queue->no_progress();
 			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
+		break;
+
+		case 'delete' :
+			if (phpbb::$user->data['user_type'] != USER_FOUNDER)
+			{
+				titania::needs_auth();
+			}
+
+			if (titania::confirm_box(true))
+			{
+				$queue = queue_overlord::get_queue_object($queue_id, true);
+
+				// Update the revision queue id to 0
+				$revision = $queue->get_revision();
+				if ($revision->revision_status == TITANIA_REVISION_NEW)
+				{
+					$revision->change_status(TITANIA_REVISION_PULLED_OTHER);
+				}
+				$revision->revision_queue_id = 0;
+				$revision->submit();
+
+				// Delete the queue
+				$queue->delete();
+
+				redirect(titania_url::append_url($base_url));
+			}
+			else
+			{
+				titania::confirm_box(false, 'DELETE_QUEUE');
+			}
 		break;
 
 		case 'approve' :
@@ -313,6 +339,10 @@ if ($queue_id)
 	}
 
 	queue_overlord::display_queue_item($queue_id);
+
+	// Handle replying/editing/etc
+	$posting_helper = new titania_posting();
+	$posting_helper->act('manage/queue_post.html');
 
 	titania::page_header(queue_overlord::$queue[$queue_id]['topic_subject']);
 }

@@ -46,6 +46,8 @@ $lang = array_merge($lang, array(
 	'CHANGE_STATUS'						=> 'Change Status/Move',
 	'CLOSED_ITEMS'						=> 'Closed Items',
 
+	'DELETE_QUEUE'						=> 'Delete Queue Entry',
+	'DELETE_QUEUE_CONFIRM'				=> 'Are you sure you want to delete this queue entry?  All posts for the queue will be lost and the revision will be set to pulled if it is new.',
 	'DENY'								=> 'Deny',
 	'DENY_QUEUE'						=> 'Deny',
 	'DENY_QUEUE_CONFIRM'				=> 'Are you sure you want to <strong>deny</strong> this item?',

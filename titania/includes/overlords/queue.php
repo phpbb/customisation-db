@@ -233,6 +233,9 @@ class queue_overlord
 		$topic = new titania_topic;
 		$topic->__set_array($row);
 
+		// Bit of a hack for the posting
+		$_REQUEST['t'] = $topic->topic_id;
+
 		// Display the posts
 		posts_overlord::display_topic_complete($topic);
 

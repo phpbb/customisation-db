@@ -302,45 +302,50 @@ class titania_revision extends titania_database_object
 		if (titania::$config->use_queue)
 		{
 			$queue = $this->get_queue();
-			if ($queue === false)
+
+			// Only create the queue for revisions set as new
+			if ($queue === false && $this->revision_status == TITANIA_REVISION_NEW)
 			{
 				$queue = new titania_queue;
 			}
 
-			$queue->__set_array(array(
-				'revision_id'			=> $this->revision_id,
-				'contrib_id'			=> $this->contrib_id,
-				'contrib_name_clean'	=> $this->contrib->contrib_name_clean,
-			));
-
-			// Set the queue status to new if it's submitted and the queue status is set to hide it
-			if ($this->revision_submitted && $queue->queue_status == TITANIA_QUEUE_HIDE)
+			if ($queue !== false)
 			{
-				$queue->queue_status = TITANIA_QUEUE_NEW;
-			}
+				$queue->__set_array(array(
+					'revision_id'			=> $this->revision_id,
+					'contrib_id'			=> $this->contrib_id,
+					'contrib_name_clean'	=> $this->contrib->contrib_name_clean,
+				));
 
-			$queue->submit();
-
-			// Set the revision queue id
-			$this->revision_queue_id = $queue->queue_id;
-			parent::submit();
-
-			if ($this->revision_submitted)
-			{
-				// Delete any old revisions that were in the queue and marked as New
-				$sql = 'SELECT * FROM ' . TITANIA_QUEUE_TABLE . '
-					WHERE contrib_id = ' . (int) $this->contrib_id . '
-						AND revision_id <> ' . $this->revision_id . '
-						AND queue_status = ' . TITANIA_QUEUE_NEW;
-				$result = phpbb::$db->sql_query($sql);
-				while ($row = phpbb::$db->sql_fetchrow($result))
+				// Set the queue status to new if it's submitted and the queue status is set to hide it
+				if ($this->revision_submitted && $queue->queue_status == TITANIA_QUEUE_HIDE)
 				{
-					$queue = new titania_queue;
-					$queue->__set_array($row);
-					$queue->delete();
-					unset($queue);
+					$queue->queue_status = TITANIA_QUEUE_NEW;
 				}
-				phpbb::$db->sql_freeresult($result);
+
+				$queue->submit();
+
+				// Set the revision queue id
+				$this->revision_queue_id = $queue->queue_id;
+				parent::submit();
+
+				if ($this->revision_submitted)
+				{
+					// Delete any old revisions that were in the queue and marked as New
+					$sql = 'SELECT * FROM ' . TITANIA_QUEUE_TABLE . '
+						WHERE contrib_id = ' . (int) $this->contrib_id . '
+							AND revision_id <> ' . $this->revision_id . '
+							AND queue_status = ' . TITANIA_QUEUE_NEW;
+					$result = phpbb::$db->sql_query($sql);
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$queue = new titania_queue;
+						$queue->__set_array($row);
+						$queue->delete();
+						unset($queue);
+					}
+					phpbb::$db->sql_freeresult($result);
+				}
 			}
 		}
 
@@ -501,12 +506,10 @@ class titania_revision extends titania_database_object
 		// Delete the new queue we made for this revision
 		$queue->delete();
 
-		// Unlink the old queue_id from the old revision manually (don't resubmit and make another queue topic...)
-		$sql = 'UPDATE ' . $this->sql_table . '
-			SET revision_queue_id = 0, revision_status = ' . TITANIA_REVISION_REPACKED . '
-			WHERE revision_id = ' . (int) $old_revision->revision_id;
-		phpbb::$db->sql_query($sql);
+		// Unlink the old queue_id from the old revision and set it to repacked
+		$old_revision->change_status(TITANIA_REVISION_REPACKED);
 		$old_revision->revision_queue_id = 0;
+		$old_revision->submit();
 
 		// Update the queue_id for this revision to point to the old queue_id
 		$this->revision_queue_id = $old_queue->queue_id;
