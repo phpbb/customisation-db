@@ -590,16 +590,18 @@ class titania_posting
 						$email_vars = array(
 							'NAME'		=> $post_object->topic->topic_subject,
 							'U_VIEW'	=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
+							'CONTRIB_NAME' => (is_object(titania::$contrib) && titania::$contrib->contrib_name ? titania::$contrib->contrib_name : ''),
 						);
-						titania_subscriptions::send_notifications(TITANIA_TOPIC, $post_object->topic_id, 'subscribe_notify.txt', $email_vars, $post_object->post_user_id);
+						titania_subscriptions::send_notifications(TITANIA_TOPIC, $post_object->topic_id, (is_object(titania::$contrib) && titania::$contrib->contrib_name ? 'subscribe_notify_contrib.txt' : 'subscribe_notify.txt'), $email_vars, $post_object->post_user_id);
 					}
 					else if ($mode == 'post')
 					{
 						$email_vars = array(
 							'NAME'		=> $post_object->topic->topic_subject,
 							'U_VIEW'	=> $post_object->topic->get_url(),
+							'CONTRIB_NAME' => (is_object(titania::$contrib) && titania::$contrib->contrib_name ? titania::$contrib->contrib_name : ''),
 						);
-						titania_subscriptions::send_notifications($post_object->post_type, $post_object->topic->parent_id, 'subscribe_notify_forum.txt', $email_vars, $post_object->post_user_id);
+						titania_subscriptions::send_notifications($post_object->post_type, $post_object->topic->parent_id, (is_object(titania::$contrib) && titania::$contrib->contrib_name ? 'subscribe_notify_forum_contrib.txt' : 'subscribe_notify_forum.txt'), $email_vars, $post_object->post_user_id);
 					}
 				}
 
