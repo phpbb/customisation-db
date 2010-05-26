@@ -433,6 +433,50 @@ ul.rating li, ul.rated li {
 --------------------------------------------- */
 
 /* Queue */
+.queue-actions {
+	background-color: #F1F4F5;
+	width: 100%;
+	list-style: none;
+	display: block;
+	float: left;
+	clear: both;
+	border-bottom: 1px solid #D4D6D7;
+	font-size: 1.1em;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	margin-top: 10px;
+}
+
+.queue-actions li {
+	display: block;
+	float: left;
+	padding: 0 3px;
+	border-right: 1px solid #FFF;
+	border-left: 1px solid #D4D6D7;
+	line-height: 2em;
+}
+
+.queue-actions li.first { border-left: 0; }
+.queue-actions li.last { border-right: 0; }
+
+.queue-actions li.info {
+	float: right;
+	border: 0;
+}
+
+.queue-actions li a {
+	color: #585858;
+}
+
+.queue-actions li a:hover {
+	text-decoration: none;
+	color: #1A2124;
+}
+
+.queue-actions img {
+	vertical-align: middle;
+	padding-bottom: 2px;
+}
+
 .queue-progress {
 	background-image: url("{T_THEME_PATH}/images/icon_queue_progress.png");
 }
@@ -460,7 +504,6 @@ ul.rating li, ul.rated li {
 
 /* General
 --------------------------------------------- */
-
 .hidden {
 	display: none !important;
 }
@@ -483,7 +526,6 @@ ul.rating li, ul.rated li {
 .success {
 	color: #228822;
 }
-
 
 .error {
 	color: #BC2A4D;
