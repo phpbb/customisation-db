@@ -579,6 +579,8 @@ class titania_attachment extends titania_database_object
 				case ATTACHMENT_CATEGORY_IMAGE:
 					$l_downloaded_viewed = 'VIEWED_COUNT';
 
+					$download_link = titania_url::append_url($download_link, array('mode' => 'view'));
+
 					$block_array += array(
 						'S_IMAGE'			=> true,
 						'U_INLINE_LINK'		=> titania_url::append_url($download_link, array('mode' => 'view')),
@@ -588,6 +590,8 @@ class titania_attachment extends titania_database_object
 				// Images, but display Thumbnail
 				case ATTACHMENT_CATEGORY_THUMB:
 					$l_downloaded_viewed = 'VIEWED_COUNT';
+
+					$download_link = titania_url::append_url($download_link, array('mode' => 'view'));
 
 					$block_array += array(
 						'S_THUMBNAIL'		=> true,
