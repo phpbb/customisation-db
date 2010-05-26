@@ -445,7 +445,7 @@ class titania_contribution extends titania_message_object
 				// Display Screenshots
 				if ($this->screenshots)
 				{
-					$this->screenshots->output_attachments('screenshots');
+					$this->screenshots->parse_attachments($message = false, false, false, 'screenshots');
 				}
 			}
 		}
