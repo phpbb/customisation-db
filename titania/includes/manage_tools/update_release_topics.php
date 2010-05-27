@@ -35,7 +35,7 @@ class update_release_topics
 		$limit = 100;
 
 		// Create topic if it does not exist?
-		$create_topic = false;
+		$create_topic = true;
 
 		titania::_include('functions_posting', 'phpbb_posting');
 		titania::add_lang('contributions');
@@ -49,16 +49,12 @@ class update_release_topics
 		// Grab our batch
 		$sql_ary = array(
 			'SELECT'	=> 'c.contrib_id, c.contrib_user_id, c.contrib_type, c.contrib_name, c.contrib_name_clean, c.contrib_desc, c.contrib_desc_uid, c.contrib_release_topic_id,
-				MAX(r.revision_id), r.attachment_id, r.revision_version,
 				t.topic_first_post_id,
-				u.user_id, u.username, u.username_clean, u.user_colour,
-				a.real_filename, a.filesize',
+				u.user_id, u.username, u.username_clean, u.user_colour',
 
 			'FROM'		=> array(
 				TITANIA_CONTRIBS_TABLE	=> 'c',
-				TITANIA_REVISIONS_TABLE => 'r',
 				USERS_TABLE				=> 'u',
-				TITANIA_ATTACHMENTS_TABLE => 'a',
 			),
 
 			'LEFT_JOIN'	=> array(
@@ -71,9 +67,6 @@ class update_release_topics
 			'GROUP_BY'	=> 'c.contrib_id',
 
 			'WHERE'		=> phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) . '
-				AND r.contrib_id = c.contrib_id
-				AND r.revision_status = ' . TITANIA_REVISION_APPROVED . '
-				AND a.attachment_id = r.attachment_id
 				AND u.user_id = c.contrib_user_id',
 
 			'ORDER_BY'	=> 'c.contrib_id DESC',
@@ -84,6 +77,30 @@ class update_release_topics
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			// Grab the revisions
+			$revisions = array();
+			$sql = 'SELECT r.revision_id, r.attachment_id, r.revision_version, a.real_filename, a.filesize
+				FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_ATTACHMENTS_TABLE . ' a
+				WHERE r.contrib_id = ' . $row['contrib_id'] . '
+					AND r.revision_status = ' . TITANIA_REVISION_APPROVED . '
+					AND a.attachment_id = r.attachment_id';
+			$rev_result = phpbb::$db->sql_query($sql);
+			while ($rev_row = phpbb::$db->sql_fetchrow($rev_result))
+			{
+				$revisions[$rev_row['revision_version']] = $rev_row;
+			}
+			phpbb::$db->sql_freeresult($rev_result);
+
+			// Sort the revisions by their version, put the newest one in $revision
+			uksort($revisions, 'reverse_version_compare');
+
+			if (!sizeof($revisions))
+			{
+				continue;
+			}
+
+			$revision = array_shift($revisions);
+
 			users_overlord::$users[$row['user_id']] = $row;
 
 			$contrib = new titania_contribution();
@@ -97,10 +114,10 @@ class update_release_topics
 				users_overlord::get_user($row['user_id'], '_titania_profile'),
 				users_overlord::get_user($row['user_id'], '_username'),
 				$contrib_desc,
-				$row['revision_version'],
-				titania_url::build_url('download', array('id' => $row['attachment_id'])),
-				$row['real_filename'],
-				$row['filesize'],
+				$revision['revision_version'],
+				titania_url::build_url('download', array('id' => $revision['attachment_id'])),
+				$revision['real_filename'],
+				$revision['filesize'],
 				$contrib->get_url(),
 				$contrib->get_url('support')
 			);
