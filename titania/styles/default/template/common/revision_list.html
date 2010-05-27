@@ -14,6 +14,13 @@
 			<dl>
 				<dt>
 					<a href="{revisions.U_DOWNLOAD}" title="{L_DOWNLOAD}"><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></a>
+					<!-- IF .revisions.translations -->
+						<div>
+						<!-- BEGIN translations -->
+							{revisions.translations.DISPLAY_ATTACHMENT}
+						<!-- END translations -->
+						</div>
+					<!-- ENDIF -->
 				</dt>
 				<dd class="general version">{revisions.VERSION}</dd>
 				<dd class="general phpbb-version">

@@ -51,11 +51,12 @@ class titania_revision extends titania_database_object
 	public $contrib = false;
 
 	/**
-	* phpBB versions
+	* phpBB versions, translations
 	*
 	* @var mixed
 	*/
 	public $phpbb_versions = array();
+	public $translations = array();
 
 	public function __construct($contrib, $revision_id = false)
 	{
@@ -104,6 +105,23 @@ class titania_revision extends titania_database_object
 	}
 
 	/**
+	* Load the Translations for this revision
+	* Stored in $this->translations
+	*/
+	public function load_translations()
+	{
+		$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+			WHERE object_type = ' . TITANIA_TRANSLATION . '
+				AND object_id = ' . $this->revision_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$this->translations[] = $row;
+		}
+		phpbb::$db->sql_freeresult($result);
+	}
+
+	/**
 	* Get the branches we've selected for this revision (load them first!)
 	*/
 	public function get_selected_branches()
@@ -149,11 +167,26 @@ class titania_revision extends titania_database_object
 
 		phpbb::$user->date_format = $old_date_format;
 
+		// Output phpBB versions
 		foreach ($ordered_phpbb_versions as $version)
 		{
 			phpbb::$template->assign_block_vars($tpl_block . '.phpbb_versions', array(
 				'VERSION'		=> $version,
 			));
+		}
+
+		// Output translations
+		if (sizeof($this->translations))
+		{
+			$translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
+			$translations->store_attachments($this->translations);
+
+			foreach ($translations->parse_attachments($message = false) as $attachment)
+			{
+				phpbb::$template->assign_block_vars($tpl_block . '.translations', array(
+					'DISPLAY_ATTACHMENT'	=> $attachment,
+				));
+			}
 		}
 
 		phpbb::$template->assign_var('ICON_EDIT', '<img src="' . titania::$images_path . 'icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />');
