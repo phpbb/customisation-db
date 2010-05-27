@@ -344,7 +344,7 @@ class titania_attachment extends titania_database_object
 					$this->uploader->upload_file();
 
 					// Store for easier access
-					$this->error = $this->uploader->filedata['error'];
+					$this->error = array_merge($this->error, $this->uploader->filedata['error']);
 
 					// If we had no problems we can submit the data to the database.
 					if (!sizeof($this->error))

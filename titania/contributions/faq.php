@@ -63,11 +63,12 @@ switch ($action)
 		// Submit check...handles running $faq->post_data() if required
 		$submit = $message->submit_check();
 
+		$error = array_merge($error, $message->error);
+
 		if ($submit)
 		{
 
-			$error = $faq->validate();
-			$error = array_merge($error, $message->error);
+			$error = array_merge($error, $faq->validate());
 
 			if (($validate_form_key = $message->validate_form_key()) !== false)
 			{
