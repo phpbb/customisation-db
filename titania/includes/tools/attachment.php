@@ -304,61 +304,94 @@ class titania_attachment extends titania_database_object
 			}
 		}*/
 
-		// Finally upload new items if required
-		if ((isset($_FILES[$this->form_name]) && $_FILES[$this->form_name]['name'] != 'none' && trim($_FILES[$this->form_name]['name'])))
+		if (isset($_FILES[$this->form_name]))
 		{
-			// Setup uploader tool.
-			$this->uploader = new titania_uploader($this->form_name, $this->object_type);
+			// In order to save ourselves from rewriting the phpBB uploader to support multi-uploads, we have to do some hacking
+			$uploaded_files = array();
 
-			// Try uploading the file.
-			$this->uploader->upload_file();
-
-			// Store for easier access
-			$this->error = $this->uploader->filedata['error'];
-
-			// If we had no problems we can submit the data to the database.
-			if (!sizeof($this->error))
+			if (is_array($_FILES[$this->form_name]['name']))
 			{
-				// Create thumbnail
-				$has_thumbnail = false;
-				if ($this->uploader->filedata['is_image'])
+				// Store the files in our own data array
+				foreach ($_FILES[$this->form_name]['name'] as $id => $name)
 				{
-					phpbb::_include('functions_posting', 'create_thumbnail');
-					$src = titania::$config->upload_path . utf8_basename($this->uploader->filedata['attachment_directory']) . '/' . utf8_basename($this->uploader->filedata['physical_filename']);
-					$dst = titania::$config->upload_path . utf8_basename($this->uploader->filedata['attachment_directory']) . '/thumb_' . utf8_basename($this->uploader->filedata['physical_filename']);
-					$has_thumbnail = $this->create_thumbnail($src, $dst, $this->uploader->filedata['mimetype'], $max_thumbnail_width, (($max_thumbnail_width === false) ? false : 0));
+					$uploaded_files[] = array(
+						'name'		=> $name,
+						'type'		=> $_FILES[$this->form_name]['type'][$id],
+						'tmp_name'	=> $_FILES[$this->form_name]['tmp_name'][$id],
+						'error'		=> $_FILES[$this->form_name]['error'][$id],
+						'size'		=> $_FILES[$this->form_name]['size'][$id],
+					);
 				}
+			}
+			else
+			{
+				// Compatibility with non-multi-upload forms
+				$uploaded_files[] = $_FILES[$this->form_name];
+			}
 
-				$this->__set_array(array(
-					'physical_filename'		=> $this->uploader->filedata['physical_filename'],
-					'attachment_directory'	=> $this->uploader->filedata['attachment_directory'],
-					'real_filename'			=> $this->uploader->filedata['real_filename'],
-					'extension'				=> $this->uploader->filedata['extension'],
-					'mimetype'				=> $this->uploader->filedata['mimetype'],
-					'filesize'				=> $this->uploader->filedata['filesize'],
-					'filetime'				=> $this->uploader->filedata['filetime'],
-					'hash'					=> $this->uploader->filedata['md5_checksum'],
-					'thumbnail'				=> $has_thumbnail,
+			// Finally upload new items if required
+			foreach ($uploaded_files as $uploaded_file)
+			{
+				// Hack time
+				$_FILES[$this->form_name] = $uploaded_file;
 
-					'attachment_comment'	=> utf8_normalize_nfc(request_var('filecomment', '', true)),
-				));
-
-				parent::submit();
-
-				// Store in $this->attachments[]
-				$this->attachments[$this->attachment_id] = $this->__get_array();
-
-				// Additional fields
-				foreach ($this->additional_fields as $output_key => $row_key)
+				if ($_FILES[$this->form_name]['name'] != 'none' && trim($_FILES[$this->form_name]['name']))
 				{
-					$this->attachments[$this->attachment_id][$row_key] = utf8_normalize_nfc(request_var($row_key, '', true));
+					// Setup uploader tool.
+					$this->uploader = new titania_uploader($this->form_name, $this->object_type);
+
+					// Try uploading the file.
+					$this->uploader->upload_file();
+
+					// Store for easier access
+					$this->error = $this->uploader->filedata['error'];
+
+					// If we had no problems we can submit the data to the database.
+					if (!sizeof($this->error))
+					{
+						// Create thumbnail
+						$has_thumbnail = false;
+						if ($this->uploader->filedata['is_image'])
+						{
+							phpbb::_include('functions_posting', 'create_thumbnail');
+							$src = titania::$config->upload_path . utf8_basename($this->uploader->filedata['attachment_directory']) . '/' . utf8_basename($this->uploader->filedata['physical_filename']);
+							$dst = titania::$config->upload_path . utf8_basename($this->uploader->filedata['attachment_directory']) . '/thumb_' . utf8_basename($this->uploader->filedata['physical_filename']);
+							$has_thumbnail = $this->create_thumbnail($src, $dst, $this->uploader->filedata['mimetype'], $max_thumbnail_width, (($max_thumbnail_width === false) ? false : 0));
+						}
+
+						$this->__set_array(array(
+							'physical_filename'		=> $this->uploader->filedata['physical_filename'],
+							'attachment_directory'	=> $this->uploader->filedata['attachment_directory'],
+							'real_filename'			=> $this->uploader->filedata['real_filename'],
+							'extension'				=> $this->uploader->filedata['extension'],
+							'mimetype'				=> $this->uploader->filedata['mimetype'],
+							'filesize'				=> $this->uploader->filedata['filesize'],
+							'filetime'				=> $this->uploader->filedata['filetime'],
+							'hash'					=> $this->uploader->filedata['md5_checksum'],
+							'thumbnail'				=> $has_thumbnail,
+
+							'attachment_comment'	=> utf8_normalize_nfc(request_var('filecomment', '', true)),
+						));
+
+						parent::submit();
+
+						// Store in $this->attachments[]
+						$this->attachments[$this->attachment_id] = $this->__get_array();
+
+						// Additional fields
+						foreach ($this->additional_fields as $output_key => $row_key)
+						{
+							$this->attachments[$this->attachment_id][$row_key] = utf8_normalize_nfc(request_var($row_key, '', true));
+						}
+					}
+
+					$this->uploaded = true;
 				}
 			}
 
+
 			// We do not want to upload it again if this function is called again.
 			unset($_FILES[$this->form_name]);
-
-			$this->uploaded = true;
 		}
 	}
 
