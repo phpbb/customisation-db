@@ -19,7 +19,7 @@ if (!defined('IN_TITANIA'))
 load_contrib();
 
 // Editing a revision can only be done by moderators
-if (!(phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
+if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 {
 	titania::needs_auth();
 }
@@ -35,12 +35,21 @@ if (!$revision->load())
 {
 	trigger_error('NO_REVISION');
 }
+
+// Translations
+$translation = new titania_attachment(TITANIA_TRANSLATION, $revision_id);
+$translation->load_attachments();
+$translation->upload();
+$error = array_merge($error, $translation->error);
+
+// Revision phpBB versions
 $revision->load_phpbb_versions();
 foreach ($revision->phpbb_versions as $row)
 {
 	$revision_phpbb_versions[] = $phpbb_versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']];
 }
 
+// Revision Status
 $revision_status = request_var('revision_status', (int) $revision->revision_status);
 $status_list = array(
 	TITANIA_REVISION_NEW				=> 'REVISION_NEW',
@@ -51,6 +60,19 @@ $status_list = array(
 	TITANIA_REVISION_REPACKED			=> 'REVISION_REPACKED',
 );
 
+if ($translation->uploaded || isset($_POST['submit']))
+{
+	$revision->__set_array(array(
+		'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', $revision->revision_name, true)),
+	));
+
+	// Stuff that can be done by moderators only
+	if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+	{
+		$revision_phpbb_versions = request_var('revision_phpbb_versions', array(''));
+	}
+}
+
 // Submit the revision
 if (isset($_POST['submit']))
 {
@@ -59,27 +81,29 @@ if (isset($_POST['submit']))
 		$error[] = phpbb::$user->lang['FORM_INVALID'];
 	}
 
-	// Delete the revision if that is what we want
-	if (isset($_POST['delete']) && !sizeof($error) && titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+	if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 	{
-		$revision->delete();
-
-		redirect(titania::$contrib->get_url());
-	}
-
-	// Grab the phpbb versions and do some simple error checking
-	$revision_phpbb_versions = request_var('revision_phpbb_versions', array(''));
-	if (empty($revision_phpbb_versions))
-	{
-		$error[] = phpbb::$user->lang['MUST_SELECT_ONE_VERSION'];
-	}
-	else
-	{
-		foreach ($revision_phpbb_versions as $revision_phpbb_version)
+		// Delete the revision if that is what we want
+		if (isset($_POST['delete']) && !sizeof($error))
 		{
-			if (!$revision_phpbb_version || strlen($revision_phpbb_version) < 5 || $revision_phpbb_version[1] != '.' || $revision_phpbb_version[3] != '.')
+			$revision->delete();
+
+			redirect(titania::$contrib->get_url());
+		}
+
+		// Do some simple error checking on the versions
+		if (empty($revision_phpbb_versions))
+		{
+			$error[] = phpbb::$user->lang['MUST_SELECT_ONE_VERSION'];
+		}
+		else
+		{
+			foreach ($revision_phpbb_versions as $revision_phpbb_version)
 			{
-				$error[] = sprintf(phpbb::$user->lang['BAD_VERSION_SELECTED'], $revision_phpbb_version);
+				if (!$revision_phpbb_version || strlen($revision_phpbb_version) < 5 || $revision_phpbb_version[1] != '.' || $revision_phpbb_version[3] != '.')
+				{
+					$error[] = sprintf(phpbb::$user->lang['BAD_VERSION_SELECTED'], $revision_phpbb_version);
+				}
 			}
 		}
 	}
@@ -87,16 +111,14 @@ if (isset($_POST['submit']))
 	// If no errors, submit
 	if (!sizeof($error))
 	{
+		// Update the status
 		if ($revision_status != $revision->revision_status && titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 		{
 			$revision->change_status($revision_status);
 		}
 
+		// Update the phpBB versions
 		$revision->phpbb_versions = array();
-		$revision->__set_array(array(
-			'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', $revision->revision_name, true)),
-		));
-
 		foreach ($revision_phpbb_versions as $revision_phpbb_version)
 		{
 			if (!isset($versions[(int) $revision_phpbb_version[0] . (int) $revision_phpbb_version[2] . substr($revision_phpbb_version, 4)]))
@@ -111,6 +133,9 @@ if (isset($_POST['submit']))
 				'phpbb_version_revision'	=> substr($revision_phpbb_version, 4),
 			);
 		}
+
+		// Submit the translations
+		$translation->submit();
 
 		$revision->submit();
 
@@ -127,6 +152,7 @@ foreach ($phpbb_versions as $version => $name)
 	));
 }
 
+// Display the status list
 foreach ($status_list as $status => $row)
 {
 	phpbb::$template->assign_block_vars('status_select', array(
@@ -138,11 +164,14 @@ foreach ($status_list as $status => $row)
 
 // Display the rest of the page
 phpbb::$template->assign_vars(array(
-	'ERROR_MSG'			=> (sizeof($error)) ? implode('<br />', $error) : '',
-	'REVISION_NAME'		=> $revision->revision_name,
+	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : '',
+	'REVISION_NAME'				=> $revision->revision_name,
 
-	'S_IS_MODERATOR'	=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
-	'S_POST_ACTION'		=> titania::$contrib->get_url('revision_edit', array('revision' => $revision_id)),
+	'TRANSLATION_UPLOADER'		=> $translation->parse_uploader('posting/attachments/simple.html'),
+
+	'S_IS_MODERATOR'			=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
+	'S_POST_ACTION'				=> titania::$contrib->get_url('revision_edit', array('revision' => $revision_id)),
+	'S_FORM_ENCTYPE'			=> ' enctype="multipart/form-data"',
 ));
 
 add_form_key('postform');

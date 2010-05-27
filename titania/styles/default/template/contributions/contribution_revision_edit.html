@@ -14,6 +14,7 @@
 					<dt><label for="revision_name">{L_REVISION_NAME}:</label></dt>
 					<dd><input type="text" name="revision_name" size="45" maxlength="60" value="{REVISION_NAME}" class="inputbox autowidth" /></dd>
 				</dl>
+				<!-- IF S_IS_MODERATOR -->
 				<dl>
 					<dt><label for="revision_phpbb_versions">{L_PHPBB_VERSION}:</label></dt>
 					<dd><select name="revision_phpbb_versions[]" multiple="multiple" size="10">
@@ -22,7 +23,6 @@
 						<!-- END phpbb_versions -->
 					</select></dd>
 				</dl>
-				<!-- IF S_IS_MODERATOR -->
 				<dl>
 					<dt><label for="revision_status">{L_REVISION_STATUS}:</label><br /><span>{L_REVISION_STATUS_EXPLAIN}</span></dt>
 					<dd>
@@ -40,6 +40,10 @@
 					</dd>
 				</dl>
 				<!-- ENDIF -->
+
+
+				<h3>{L_TRANSLATIONS}</h3>
+				{TRANSLATION_UPLOADER}
 			</fieldset>
 
 			<fieldset class="submit-buttons">

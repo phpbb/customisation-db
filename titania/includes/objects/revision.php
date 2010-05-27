@@ -137,7 +137,7 @@ class titania_revision extends titania_database_object
 			'PHPBB_VERSION'		=> (sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
 
 			'U_DOWNLOAD'		=> $this->get_url(),
-			'U_EDIT'			=> ($this->contrib && (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',
+			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',
 
 			'S_NEW'					=> ($this->revision_status == TITANIA_REVISION_NEW) ? true : false,
 			'S_APPROVED'			=> ($this->revision_status == TITANIA_REVISION_APPROVED) ? true : false,
@@ -533,6 +533,10 @@ class titania_revision extends titania_database_object
 		$attachment->attachment_id = $this->attachment_id;
 		$attachment->load();
 		$attachment->delete();
+
+		// Delete translations
+		$translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
+		$attachment->delete_all();
 
 		// Self-destruct
 		parent::delete();

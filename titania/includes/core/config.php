@@ -108,12 +108,14 @@ class titania_config extends titania_object
 			'upload_max_filesize'		=> array('default' => array(
 				TITANIA_CONTRIB		=> 10485760, // 10 MiB
 				TITANIA_SCREENSHOT	=> 524288, // 512 Kib
+				TITANIA_TRANSLATION	=> 1048576, // 1 Mib
 			)),
 
 			// Extensions allowed
 			'upload_allowed_extensions'	=> array('default' => array(
 				TITANIA_CONTRIB				=> array('zip'),
 				TITANIA_SCREENSHOT			=> array('jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'),
+				TITANIA_TRANSLATION			=> array('zip'),
 				TITANIA_SUPPORT				=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
 					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
@@ -136,6 +138,7 @@ class titania_config extends titania_object
 			'upload_directory'	=> array('default' => array(
 				TITANIA_CONTRIB				=> 'revisions',
 				TITANIA_SCREENSHOT			=> 'screenshots',
+				TITANIA_TRANSLATION			=> 'translations',
 				TITANIA_SUPPORT				=> 'support',
 				TITANIA_QUEUE				=> 'queue',
 				TITANIA_QUEUE_DISCUSSION	=> 'queue_discussion',
