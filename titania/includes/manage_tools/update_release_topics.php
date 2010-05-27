@@ -94,7 +94,7 @@ class update_release_topics
 
 			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->create_public],
 				$contrib->contrib_name,
-				titania_url::build_url(users_overlord::get_user($row['user_id'], '_titania_profile')),
+				users_overlord::get_user($row['user_id'], '_titania_profile'),
 				users_overlord::get_user($row['user_id'], '_username'),
 				$contrib_desc,
 				$row['revision_version'],

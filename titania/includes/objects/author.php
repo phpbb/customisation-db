@@ -221,10 +221,10 @@ class titania_author extends titania_message_object
 	{
 		if ($page)
 		{
-			return titania_url::build_url(users_overlord::get_user($this->user_id, '_titania_profile') . '/' . $page);
+			return titania_url::build_url(users_overlord::get_user($this->user_id, '_unbuilt_titania_profile') . '/' . $page);
 		}
 
-		return titania_url::build_url(users_overlord::get_user($this->user_id, '_titania_profile'));
+		return users_overlord::get_user($this->user_id, '_titania_profile');
 	}
 
 	/**

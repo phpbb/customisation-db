@@ -171,12 +171,16 @@ class users_overlord
 					return get_username_string(substr($field, 1), $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour'], false, phpbb::append_sid('memberlist', 'mode=viewprofile'));
 				break;
 
-				case '_titania_profile' :
+				case '_unbuilt_titania_profile' :
 					return 'author/' . htmlspecialchars_decode(self::$users[$user_id]['username_clean']);
 				break;
 
+				case '_titania_profile' :
+					return titania_url::build_url(self::get_user($user_id, '_unbuilt_titania_profile'));
+				break;
+
 				case '_titania' :
-					return '<a href="' . titania_url::build_url(self::get_user($user_id, '_titania_profile')) . ((self::$users[$user_id]['user_colour']) ? '" style="color: #' . self::$users[$user_id]['user_colour'] . ';" class="username-coloured">' : '">') . get_username_string('no_profile', $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour']) . '</a>';
+					return '<a href="' . self::get_user($user_id, '_titania_profile') . ((self::$users[$user_id]['user_colour']) ? '" style="color: #' . self::$users[$user_id]['user_colour'] . ';" class="username-coloured">' : '">') . get_username_string('no_profile', $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour']) . '</a>';
 				break;
 
 				case '_u_pm' :
