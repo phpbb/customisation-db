@@ -528,7 +528,7 @@ class titania_post extends titania_message_object
 		$this->post_delete_user = phpbb::$user->data['user_id'];
 		$this->post_edit_reason = $reason;
 
-		// Update the postcount for the topic and submit it
+		// Update the postcount for the topic
 		$this->update_topic_postcount();
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
@@ -546,6 +546,19 @@ class titania_post extends titania_message_object
 			}
 		}
 
+		// Sync the first topic post if required
+		if ($this->post_id == $this->topic->topic_first_post_id)
+		{
+			$this->topic->sync_first_post($this->post_id);
+		}
+
+		// Sync the last topic post if required
+		if ($this->post_id == $this->topic->topic_last_post_id)
+		{
+			$this->topic->sync_last_post($this->post_id);
+		}
+
+		// Submit the topic to store the updated information
 		$this->topic->submit();
 
 		parent::submit();
@@ -575,7 +588,7 @@ class titania_post extends titania_message_object
 		$this->post_deleted = 0;
 		$this->post_delete_user = 0;
 
-		// Update the postcount for the topic and submit it
+		// Update the postcount for the topic
 		$this->update_topic_postcount();
 
 		// Set the visibility appropriately
@@ -593,6 +606,32 @@ class titania_post extends titania_message_object
 			}
 		}
 
+		// Sync the first topic post if required
+		if ($this->post_time < $this->topic->topic_first_post_time)
+		{
+			$this->topic->__set_array(array(
+				'topic_first_post_id'			=> $this->post_id,
+				'topic_first_post_user_id'		=> $this->post_user_id,
+				'topic_first_post_username'		=> users_overlord::get_user($this->post_user_id, 'username'),
+				'topic_first_post_user_colour'	=> users_overlord::get_user($this->post_user_id, 'user_colour'),
+				'topic_first_post_time'			=> $this->post_time,
+			));
+		}
+
+		// Sync the last topic post if required
+		if ($this->post_time > $this->topic->topic_last_post_time)
+		{
+			$this->topic->__set_array(array(
+				'topic_last_post_id'			=> $this->post_id,
+				'topic_last_post_user_id'		=> $this->post_user_id,
+				'topic_last_post_username'		=> users_overlord::get_user($this->post_user_id, 'username'),
+				'topic_last_post_user_colour'	=> users_overlord::get_user($this->post_user_id, 'user_colour'),
+				'topic_last_post_time'			=> $this->post_time,
+				'topic_last_post_subject'		=> $this->post_subject,
+			));
+		}
+
+		// Submit the topic to store the updated information
 		$this->topic->submit();
 
 		parent::submit();
@@ -620,10 +659,8 @@ class titania_post extends titania_message_object
 			}
 		}
 
-		// Update the postcount for the topic and submit it
+		// Update the postcount for the topic
 		$this->update_topic_postcount(true);
-
-		$this->topic->submit();
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
 		$flags = titania_count::get_flags(TITANIA_ACCESS_PUBLIC);
@@ -639,6 +676,21 @@ class titania_post extends titania_message_object
 				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
 			}
 		}
+
+		// Sync the first topic post if required
+		if ($this->post_id == $this->topic->topic_first_post_id)
+		{
+			$this->topic->sync_first_post($this->post_id);
+		}
+
+		// Sync the last topic post if required
+		if ($this->post_id == $this->topic->topic_last_post_id)
+		{
+			$this->topic->sync_last_post($this->post_id);
+		}
+
+		// Submit the topic to store the updated information
+		$this->topic->submit();
 
 		// Remove from the search index
 		titania_search::delete($this->post_type, $this->post_id);

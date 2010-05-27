@@ -308,4 +308,68 @@ class titania_topic extends titania_database_object
 
 		return $details;
 	}
+
+	/**
+	* Sync the first post data
+	*
+	* @param mixed $ignore_post_id false to ignore, int post_id to ignore the specified post_id (for when we are going to be deleting that post)
+	*/
+	public function sync_first_post($ignore_post_id = false)
+	{
+		$sql = 'SELECT p.post_id, p.post_time, p.post_subject, u.user_id, u.username, u.user_colour
+			FROM ' . TITANIA_POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
+			WHERE p.topic_id = ' . $this->topic_id . '
+				AND p.post_access >= ' . $this->topic_access . '
+				AND p.post_approved = 1
+				AND p.post_deleted = 0
+				AND u.user_id = p.post_user_id ' .
+				(($ignore_post_id !== false) ? ' AND p.post_id <> ' . (int) $ignore_post_id : '') . '
+			ORDER BY post_time ASC';
+		$result = phpbb::$db->sql_query_limit($sql, 1);
+		$update_row = phpbb::$db->sql_fetchrow($result);
+
+		if ($update_row)
+		{
+			$this->__set_array(array(
+				'topic_first_post_id'			=> $update_row['post_id'],
+				'topic_first_post_user_id'		=> $update_row['user_id'],
+				'topic_first_post_username'		=> $update_row['username'],
+				'topic_first_post_user_colour'	=> $update_row['user_colour'],
+				'topic_first_post_time'			=> $update_row['post_time'],
+				'topic_first_post_subject'		=> $update_row['post_subject'],
+			));
+		}
+	}
+
+	/**
+	* Sync the last post data
+	*
+	* @param mixed $ignore_post_id false to ignore, int post_id to ignore the specified post_id (for when we are going to be deleting that post)
+	*/
+	public function sync_last_post($ignore_post_id = false)
+	{
+		$sql = 'SELECT p.post_id, p.post_time, p.post_subject, u.user_id, u.username, u.user_colour
+			FROM ' . TITANIA_POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
+			WHERE p.topic_id = ' . $this->topic_id . '
+				AND p.post_access >= ' . $this->topic_access . '
+				AND p.post_approved = 1
+				AND p.post_deleted = 0
+				AND u.user_id = p.post_user_id ' .
+				(($ignore_post_id !== false) ? ' AND p.post_id <> ' . (int) $ignore_post_id : '') . '
+			ORDER BY post_time DESC';
+		$result = phpbb::$db->sql_query_limit($sql, 1);
+		$update_row = phpbb::$db->sql_fetchrow($result);
+
+		if ($update_row)
+		{
+			$this->__set_array(array(
+				'topic_last_post_id'			=> $update_row['post_id'],
+				'topic_last_post_user_id'		=> $update_row['user_id'],
+				'topic_last_post_username'		=> $update_row['username'],
+				'topic_last_post_user_colour'	=> $update_row['user_colour'],
+				'topic_last_post_time'			=> $update_row['post_time'],
+				'topic_last_post_subject'		=> $update_row['post_subject'],
+			));
+		}
+	}
 }
