@@ -21,12 +21,6 @@
 					<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE}</a>
 				</div>
 			<!-- ENDIF -->
-
-			<!-- IF QUICK_ACTIONS -->
-				<hr class="dashed" />
-				<!-- IF S_IN_QUEUE and CURRENT_STATUS --><div class="small">{L_QUEUE_STATUS}: <strong><em>{CURRENT_STATUS}</em></strong></div><br /><!-- ENDIF -->
-				{QUICK_ACTIONS}
-			<!-- ENDIF -->
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
 
@@ -49,6 +43,7 @@
 			</dl>
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
+	
 	<!-- ENDIF -->
 
 	<div class="container">
@@ -96,6 +91,19 @@
 					<strong>{L_RATING}</strong> {CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})
 				</li>
 			</ul>
+			
+	<!-- IF S_IN_QUEUE -->
+		<ul class="queue-actions">
+			<li class="first"><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_repack.gif" alt="" /> &nbsp;{L_REPACK}</a></li>
+			<li><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_change_status.gif" alt="" /> &nbsp;{L_CHANGE_STATUS}</a></li>
+			<li><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_approve.gif" alt="" /> &nbsp;{L_APPROVE}</a></li>
+			<li><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_deny.gif" alt="" /> &nbsp;{L_DENY}</a></li>
+			<li class="last"><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_queue_progress.png" alt="" /> &nbsp;{L_MARK_IN_PROGRESS}</a></li>
+		<!-- IF CURRENT_STATUS -->
+			<li class="info"><img src="{T_TITANIA_THEME_PATH}/images/icon_info.gif" alt="" /> &nbsp;{L_QUEUE_STATUS}: {CURRENT_STATUS}</li>
+		<!-- ENDIF -->
+		</ul>
+	<!-- ENDIF -->
 
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
