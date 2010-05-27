@@ -176,7 +176,7 @@ class users_overlord
 				break;
 
 				case '_titania' :
-					return '<a href="' . titania_url::build_url(self::get_user($user_id, '_titania_profile')) . '" style="color: #' . self::$users[$user_id]['user_colour'] . ';" class="username-coloured">' . get_username_string('no_profile', $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour']) . '</a>';
+					return '<a href="' . titania_url::build_url(self::get_user($user_id, '_titania_profile')) . ((self::$users[$user_id]['user_colour']) ? '" style="color: #' . self::$users[$user_id]['user_colour'] . ';" class="username-coloured">' : '">') . get_username_string('no_profile', $user_id, self::$users[$user_id]['username'], self::$users[$user_id]['user_colour']) . '</a>';
 				break;
 
 				case '_u_pm' :
