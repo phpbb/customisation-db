@@ -347,7 +347,7 @@ class titania_attachment extends titania_database_object
 					$this->error = array_merge($this->error, $this->uploader->filedata['error']);
 
 					// If we had no problems we can submit the data to the database.
-					if (!sizeof($this->error))
+					if (!sizeof($this->uploader->filedata['error']))
 					{
 						// Create thumbnail
 						$has_thumbnail = false;
@@ -360,6 +360,7 @@ class titania_attachment extends titania_database_object
 						}
 
 						$this->__set_array(array(
+							'attachment_id'			=> 0,
 							'physical_filename'		=> $this->uploader->filedata['physical_filename'],
 							'attachment_directory'	=> $this->uploader->filedata['attachment_directory'],
 							'real_filename'			=> $this->uploader->filedata['real_filename'],
@@ -372,7 +373,6 @@ class titania_attachment extends titania_database_object
 
 							'attachment_comment'	=> utf8_normalize_nfc(request_var('filecomment', '', true)),
 						));
-
 						parent::submit();
 
 						// Store in $this->attachments[]
@@ -447,6 +447,24 @@ class titania_attachment extends titania_database_object
 			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 			WHERE ' . phpbb::$db->sql_in_set('attachment_id', array_map('intval', array_keys($this->attachments)));
 		phpbb::$db->sql_query($sql);
+	}
+
+	/**
+	* Delete all attachments for the current object type/id
+	*/
+	public function delete_all()
+	{
+		$sql = 'SELECT * FROM ' . $this->sql_table . '
+			WHERE object_type = ' . (int) $this->object_type . '
+				AND object_id = ' . (int) $this->object_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$this->attachments[$row['attachment_id']] = $row;
+
+			$this->delete($row['attachment_id']);
+		}
+		phpbb::$db->sql_freeresult($result);
 	}
 
 	/**
