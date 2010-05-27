@@ -40,11 +40,11 @@ $help = array(
 	),
 	array(
 		0 => 'What is Titania?',
-		1 => 'Titania (aka The Customisation Database) is a database where users are be able to download modifications and styles for a phpBB forum.  You also are ensured that the modification or style that you have downloaded has been validated and has passed the phpBB validation requirements.'
+		1 => 'Titania (aka The Customisation Database) is a database where users are be able to download modifications and styles for a phpBB forum.  You also are ensured that the modification or style that you have downloaded has passed the phpBB validation requirements.'
 	),
 	array(
 		0 => 'Validation? What’s that?',
-		1 => 'Each and every modification or style that is downloaded by you within Titania has undergone validation.  Validation means that a modification, or style, has undergone scrutiny as to the security of the code involved as well as testing to ensure the modification or style installs and works properly within a particular version of a phpBB forum.  Validation provides to you a level of comfort in knowing that you are not downloading/installing a modification or style that may subject your forum to being hacked.'
+		1 => 'Each and every modification, or style, that is downloaded by you within Titania has undergone validation.  Validation means that a modification, or style, has undergone scrutiny as to the security of the code involved as well as testing to ensure the modification or style installs and works properly within a particular version of a phpBB forum.  Validation provides to you a level of comfort in knowing that you are not downloading/installing a modification or style that may subject your forum to being hacked.'
 	),
 	array(
 		0 => '--',
@@ -68,7 +68,7 @@ $help = array(
 	),
 	array(
 		0 => 'Rules',
-		1 => 'With the introduction of Titania, the rules involved to use it are very simple.  As in the past, the saying “You should seek support within the modification/style topic where you got the customisation” pertains.  While the support Team of phpBB.com does their best to assist you in running and using your forum they can not, and are not expected to, provide support for any customisation/contribution.  It is the hope of phpBB that the author of the contribution provide you, the end user, with support in using their customisation.  Please remember that all authors are volunteers who have spent their time in providing an enhancement to the phpBB software.  The saying “You get more flies with honey than you do with vinegar” applies, so please keep this in mind when requesting support for a customisation (eg, be nice in the way you ask)'
+		1 => 'With the introduction of Titania, the rules involved to use it are very simple.  As in the past, the saying “You should seek support within the modification/style topic where you got the customisation” pertains.  While the support Team of phpBB.com does their best to assist you in running and using your forum they can not, and are not expected to, provide support for any customisation/contribution.  It is the hope of phpBB that the author of the contribution provide you, the end user, with support in using their customisation.  Please remember that all authors are volunteers who have spent their time in providing an enhancement to the phpBB software.  The saying “You get more flies with honey than you do with vinegar” applies, so please keep this in mind when requesting support for a customisation (eg, be nice in the way you ask).'
 	),
 	array(
 		0 => 'How to get support',
@@ -86,19 +86,19 @@ $help = array(
 	),
 	array(
 		0 => 'Creating a Customisation',
-		1 => 'As with any customisation, authors are requested to follow certain guidelines when submitting their contribution.  The <a href="http://area51.phpbb.com/docs/coding-guidelines.html">Coding Guidelines</a>, though seemingly daunting at first, are actually your friend.  They should be followed as closely as possible to assist you in getting your contribution to the community published.  The <a href="http://www.phpbb.com/mods/mpv/">phpBB MOD pre-validator</a> (aka “MPV”) will be first run against the revision upon submission of a Modification and will check for things such as correct licensing, current phpBB version and current <a href="http://www.phpbb.com/mods/modx/">MODX</a> version.'
+		1 => 'As with any customisation, authors are requested to follow certain guidelines when submitting their contribution.  The <a href="http://area51.phpbb.com/docs/coding-guidelines.html">Coding Guidelines</a>, though seemingly daunting at first, are actually your friend.  They should be followed as closely as possible to assist you in getting your contribution to the community published.  The <a href="http://www.phpbb.com/mods/mpv/">phpBB MOD pre-validator</a> (aka “MPV”) will be run against the customisation upon submission and will check for things such as correct licensing, current phpBB version and current <a href="http://www.phpbb.com/mods/modx/">MODX</a> version.'
 	),
 	array(
 		0 => 'Submitting a Customisation',
-		1 => 'So you’ve made a customisation.  Let’s get that puppy published!!  To submit a customisation, go to the Customisation Database and within that page you will find an image link that states “New Contribution”.  Once clicked on you will be able to enter in the customisation name, select the customisation type, add some wording to describe the customisation (smilies and bbcode is allowed), select the category(ies) that the customisation fits into, add co-authors (if any) and screenshots as well.  Please keep in mind that as you are submitting the customisation, it is your name the customisation will be aligned with.'
+		1 => 'So you’ve made a customisation.  Let’s get that puppy published!!<br /><br />To submit a customisation, go to the Customisation Database and within that page you will find an image link that states “New Contribution”.  Once clicked on you will be able to enter in the customisation name, select the customisation type, add some wording to describe the customisation (smilies and bbcode is allowed), select the category(ies) that the customisation fits into, add co-authors (if any) and screenshots as well.  Please keep in mind that as you are submitting the customisation, it is your name the customisation will be aligned with.'
 	),
 	array(
 		0 => 'Managing Customisations',
-		1 => 'Once your customisation is uploaded successfully into Titania, you are able to manage the customisation.  After selecting your contribution by clicking on "My Contributions" at the top of the page, you may add additional information to the customisation via the "Manage Contribution" tab.  You are able to amend the description of the contribution, upload screen shots, change ownership of the contribution (please note this is irreversible so ensure you really want to give another user ownership of your contribution), change the categories the contribution fits under as well as input a demo url so users can see first hand what and how the contribution works.'
+		1 => 'Once your customisation is uploaded successfully into Titania, you are able to manage the customisation.  After selecting your contribution by clicking on "My Contributions" at the top of the page, you may add additional information to the customisation via the "Manage Contribution" tab.  You are able to amend the description of the contribution, upload screen shots, change ownership of the contribution (please note this is irreversible so ensure you really want to give another user ownership of your contribution), change the categories the contribution fits under as well as input a demo url so users can see first hand what the customisation looks like and how it works.'
 	),
 	array(
 		0 => 'Submitting a new Revision',
-		1 => ''
+		1 => 'You can upload new revisions on the main page, the “Contribution Details” section, of your customisation.  Once you click on the “New Revision” link, you are presented a page where in you upload the revision, assign it a version and input notes to the validation team (bbcode and smilies are allowed).  You can also choose to have the validation team “repack” the modification.  Repacking involves making minor fixes to the customisation.  This may involve corrections to the MODX install file or even minor code changes.  Repacking is <strong>not</strong> having the validation team re-write major snippets of the code you supplied, that would be your “job”.<br /><br />The rules, as they apply concerning creation of a customisation, still apply when submitting revisions to your customisation.  That is, the <a href="http://www.phpbb.com/mods/mpv/">phpBB MOD pre-validator</a> (aka “MPV”) will be run against the revision of the customisation and will check for things such as correct licensing, current phpBB version and current <a href="http://www.phpbb.com/mods/modx/">MODX</a> version.    '
 	),
 	array(
 		0 => '--',
@@ -106,7 +106,7 @@ $help = array(
 	),
 	array(
 		0 => 'FAQ',
-		1 => ''
+		1 => 'Each customisation provides to the author the ability to submit FAQ type of topics.  These topics that you create should be written in a way that a user can understand and apply the topic to the customisation, whether the topic be concerning how to get the customisation installed, accessing features of the customisation, etc.  It should be noted that this area is just for you.  Users can not edit or reply to FAQ entries.'
 	),
 	array(
 		0 => 'Support Forum',
