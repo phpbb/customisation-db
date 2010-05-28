@@ -245,41 +245,76 @@ class queue_overlord
 		{
 			if (!$row['mpv_results'] && titania_types::$types[$contrib->contrib_type]->mpv_test)
 			{
-				$quick_actions['RETEST_MPV'] = titania_url::build_url('', array('action' => 'mpv', 'revision' => $row['revision_id']));
+				$quick_actions['RETEST_MPV'] = array(
+					'url'		=> titania_url::build_url('', array('action' => 'mpv', 'revision' => $row['revision_id'])),
+				);
 			}
 			if (!$row['automod_results'] && titania_types::$types[$contrib->contrib_type]->automod_test)
 			{
-				$quick_actions['RETEST_AUTOMOD'] = titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id']));
+				$quick_actions['RETEST_AUTOMOD'] = array(
+					'url'		=> titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id'])),
+				);
 			}
 
 			if ($row['queue_progress'] == phpbb::$user->data['user_id'])
 			{
-				$quick_actions['MARK_NO_PROGRESS'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'no_progress'));
+				$quick_actions['MARK_NO_PROGRESS'] = array(
+					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'no_progress')),
+					'class'		=> 'queue_progress',
+				);
 			}
 			else if (!$row['queue_progress'])
 			{
-				$quick_actions['MARK_IN_PROGRESS'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'in_progress'));
+				$quick_actions['MARK_IN_PROGRESS'] = array(
+					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'in_progress')),
+					'class'		=> 'queue_progress',
+				);
 			}
 
-			$quick_actions['CHANGE_STATUS'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'move'));
+			$quick_actions['CHANGE_STATUS'] = array(
+				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'move')),
+				'class'		=> 'change_status',
+			);
 
-			$quick_actions['REPACK'] = titania_url::append_url($contrib->get_url('revision'), array('repack' => $row['revision_id']));
+			$quick_actions['REPACK'] = array(
+				'url'		=> titania_url::append_url($contrib->get_url('revision'), array('repack' => $row['revision_id'])),
+				'class'		=> 'repack',
+			);
 
 			// This allows you to alter the author submitted notes to the validation team, not really useful as the field's purpose was changed, so commenting out
-			//$quick_actions['ALTER_NOTES'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes'));
+			/*$quick_actions['ALTER_NOTES'] = array(
+				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes')),
+			);*/
 
 			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
-				$quick_actions['APPROVE'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve'));
-				$quick_actions['DENY'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny'));
+				$quick_actions['APPROVE'] = array(
+					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve')),
+					'class'		=> 'approve',
+				);
+				$quick_actions['DENY'] = array(
+					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny')),
+					'class'		=> 'deny',
+				);
 			}
 
-			//$quick_actions['REBUILD_FIRST_POST'] = titania_url::append_url(titania_url::$current_page_url, array('action' => 'rebuild'));
+			/*$quick_actions['REBUILD_FIRST_POST'] = array(
+				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'rebuild')),
+			);*/
+		}
+
+		foreach ($quick_actions as $lang_key => $data)
+		{
+			phpbb::$template->assign_block_vars('queue_actions', array(
+				'NAME'		=> (isset(phpbb::$user->lang[$lang_key])) ? phpbb::$user->lang[$lang_key] : $lang_key,
+				'CLASS'		=> (isset($data['class'])) ? $data['class'] : '',
+
+				'U_VIEW'	=> $data['url'],
+			));
 		}
 
 		phpbb::$template->assign_vars(array(
 			'CURRENT_STATUS'			=> titania_tags::get_tag_name($row['queue_status']),
-			'QUICK_ACTIONS'				=> titania::build_quick_actions($quick_actions),
 
 			'S_DISPLAY_CONTRIBUTION'	=> true,
 			'S_IN_QUEUE'				=> true,
