@@ -321,7 +321,7 @@ class queue_overlord
 						'ID'		=> $tag_id,
 						'NAME'		=> ((isset(phpbb::$user->lang[$tag_row['tag_field_name']])) ? phpbb::$user->lang[$tag_row['tag_field_name']] : $tag_row['tag_field_name']),
 
-						'U_ACTION'	=> titania_url::append_url($data['url'], array('tag_id' => $tag_id, 'hash' => generate_link_hash('quick_actions'))),
+						'U_ACTION'	=> titania_url::append_url($data['url'], array('id' => $tag_id, 'hash' => generate_link_hash('quick_actions'))),
 					));
 				}
 			}

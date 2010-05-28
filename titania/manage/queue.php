@@ -313,7 +313,7 @@ if ($queue_id)
 
 			if (check_link_hash(request_var('hash', ''), 'quick_actions') || titania::confirm_box(true))
 			{
-				$new_tag = request_var('tag_id', 0);
+				$new_tag = request_var('id', 0);
 
 				if (!isset($tags[$new_tag]))
 				{
@@ -325,7 +325,7 @@ if ($queue_id)
 			else
 			{
 				// Generate the list of tags we can move it to
-				$extra = '<select name="tag_id">';
+				$extra = '<select name="id">';
 				foreach ($tags as $tag_id => $row)
 				{
 					$extra .= '<option value="' . $tag_id . '">' . ((isset(phpbb::$user->lang[$row['tag_field_name']])) ? phpbb::$user->lang[$row['tag_field_name']] : $row['tag_field_name']) . '</option>';
