@@ -125,7 +125,7 @@ $lang = array_merge($lang, array(
 
 [color=blue][b]The phpBB Team is not responsible nor required to provide support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Modifications Team may not be able to provide support.[/b][/color]
 
-[size=150][url=%10$s]-->[b]Modification support[/b]<--[/url][/size]',
+[size=150][url=%10$s]--&gt;[b]Modification support[/b]&lt;--[/url][/size]',
 	'MOD_QUEUE_TOPIC'						=> '[b]Modification name[/b]: %1$s
 [b]Author:[/b] [url=%2$s]%3$s[/url]
 [b]Modification description[/b]: %4$s
@@ -206,7 +206,7 @@ See first post for Download Link[/color][/b]',
 
 [color=blue][b]The phpBB Team is not responsible nor required to provide support for this Style. By installing this Style, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]
 
-[size=150][url=%10$s]-->[b]Style support[/b]<--[/url][/size]',
+[size=150][url=%10$s]--&gt;[b]Style support[/b]&lt;--[/url][/size]',
 	'STYLE_QUEUE_TOPIC'						=> '[b]Style name[/b]: %1$s
 [b]Author:[/b] [url=%2$s]%3$s[/url]
 [b]Style description[/b]: %4$s

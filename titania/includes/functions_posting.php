@@ -269,7 +269,7 @@ function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 	{
 		return false;
 	}
-	
+
 	phpbb::_include('bbcode', false, 'bbcode');
 	phpbb::_include('message_parser', false, 'parse_message');
 	phpbb::_include('functions_posting', 'submit_post', false);
@@ -303,10 +303,8 @@ function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 		return false;
 	}
 
-	$message_parser = new parse_message();
-	$message_parser->message = &$options['post_text'];
-	unset($options['post_text']);
-	
+	$message_parser = new parse_message($options['post_text']);
+
 	if ($mode == 'reply' || $mode == 'edit')
 	{
 		// Check forum data, and if forum_id is the same.
@@ -340,7 +338,7 @@ function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 		{
 			return false;
 		}
-		
+
 		// Ugly fix, to be sure it is posted for the right user ;)
 		$old_data = phpbb::$user->data;
 		phpbb::$user->data['user_id'] = $options['poster_id'];
@@ -356,11 +354,13 @@ function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 		phpbb::$auth->acl(phpbb::$user->data);
 	}
 
+
 	if ($options['enable_bbcode'])
 	{
 		$message_parser->parse($options['enable_bbcode'], $options['enable_urls'], $options['enable_smilies'], (bool) phpbb::$auth->acl_get('f_img', $options['forum_id']), (bool) phpbb::$auth->acl_get('f_flash', $options['forum_id']),  (bool) phpbb::$auth->acl_get('f_reply', $options['forum_id']), phpbb::$config['allow_post_links']);
 	}
-	
+
+
 	switch($mode)
 	{
 		case 'post':
@@ -428,7 +428,7 @@ function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 
 	// Aaaand, submit it.
 	submit_post($mode, $options['topic_title'], (!$real_poster) ? $user_data['username'] : phpbb::$user->data['username'], $options['topic_type'], $poll, $data, true);
-	
+
 	$return = true;
 	if ($mode == 'post')
 	{
