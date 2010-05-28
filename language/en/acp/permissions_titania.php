@@ -113,15 +113,20 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_rate_reset'			=> array('lang' => 'Can reset ratings', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_post_mod'			=> array('lang' => 'Can moderate topics', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_mod_style_queue_discussion'		=> array('lang' => 'Can see Styles Queue Discussion', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_style_queue'					=> array('lang' => 'Can see Styles Queue', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_style_validate'				=> array('lang' => 'Can validate Styles', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_style_moderate'				=> array('lang' => 'Can moderate Styles', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_queue_discussion'			=> array('lang' => 'Can see Styles Queue Discussion', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_queue'						=> array('lang' => 'Can see Styles Queue', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_validate'					=> array('lang' => 'Can validate Styles', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_moderate'					=> array('lang' => 'Can moderate Styles', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_modification_queue_discussion'	=> array('lang' => 'Can see Modifications Queue Discussion', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_queue'				=> array('lang' => 'Can see Modifications Queue', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_validate'			=> array('lang' => 'Can validate Modifications', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_moderate'			=> array('lang' => 'Can moderate Modifications', 'cat' => 'titania_moderate'),
+
+	'acl_u_titania_mod_converter_queue_discussion'		=> array('lang' => 'Can see Converter Queue Discussion', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_queue'					=> array('lang' => 'Can see Converter Queue', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Can validate Converters', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_moderate'				=> array('lang' => 'Can moderate Converters', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_admin'			=> array('lang' => 'Can <strong>administrate</strong> Titania', 'cat' => 'titania_moderate'),
 ));
