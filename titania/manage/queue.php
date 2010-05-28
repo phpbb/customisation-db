@@ -311,7 +311,7 @@ if ($queue_id)
 
 			$tags = titania::$cache->get_tags(TITANIA_QUEUE);
 
-			if (check_link_hash('quick_actions') || titania::confirm_box(true))
+			if (check_link_hash(request_var('hash', ''), 'quick_actions') || titania::confirm_box(true))
 			{
 				$new_tag = request_var('tag_id', 0);
 
