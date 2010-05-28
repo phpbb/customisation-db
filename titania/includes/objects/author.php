@@ -85,7 +85,10 @@ class titania_author extends titania_message_object
 		// Load the count for different types
 		foreach (titania_types::$types as $type)
 		{
-			$this->object_config[$type->author_count] = array('default' => 0);
+			if (isset($type->author_count))
+			{
+				$this->object_config[$type->author_count] = array('default' => 0);
+			}
 		}
 
 		if ($user_id !== false)
@@ -319,6 +322,11 @@ class titania_author extends titania_message_object
 		$type_list = array();
 		foreach (titania_types::$types as $type)
 		{
+			if (!isset($type->author_count))
+			{
+				continue;
+			}
+
 			if ($this->{$type->author_count} == 1)
 			{
 				$type_list[] = (isset(phpbb::$user->lang[strtoupper($type->author_count) . '_ONE'])) ? phpbb::$user->lang[strtoupper($type->author_count) . '_ONE'] : '{' . strtoupper($type->author_count) . '_ONE}';

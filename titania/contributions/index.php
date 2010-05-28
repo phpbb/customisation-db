@@ -144,15 +144,30 @@ function load_contrib($contrib_id = false)
 	$page = request_var('page', '');
 	titania::generate_nav($nav_ary, $page, 'details');
 
-	$category_object = new titania_category;
+	// Search for a category with the same name as the contrib type.  This is a bit ugly, but there really isn't any better option
 	$categories_ary = titania::$cache->get_categories();
-	$category_object->__set_array($categories_ary[titania::$contrib->contrib_type]);
+	foreach ($categories_ary as $category_id => $category_row)
+	{
+		$category_row['category_name'] = (isset(phpbb::$user->lang[$category_row['category_name']])) ? phpbb::$user->lang[$category_row['category_name']] : $category_row['category_name'];
 
-	// Generate the main breadcrumbs
+		if ($category_row['category_name'] == titania_types::$types[titania::$contrib->contrib_type]->lang || $category_row['category_name'] == titania_types::$types[titania::$contrib->contrib_type]->langs)
+		{
+			$category_object = new titania_category;
+			$category_object->__set_array($categories_ary[$category_id]);
+
+			// Generate the main breadcrumbs
+			titania::generate_breadcrumbs(array(
+				$category_object->category_name => titania_url::build_url($category_object->get_url()),
+			));
+
+			break;
+		}
+	}
+
 	titania::generate_breadcrumbs(array(
-		$categories_ary[titania::$contrib->contrib_type]['category_name'] => titania_url::build_url($category_object->get_url()),
 		titania::$contrib->contrib_name	=> titania::$contrib->get_url(),
 	));
+
 	if ($page)
 	{
 		titania::generate_breadcrumbs(array(

@@ -45,6 +45,8 @@ class titania_types
 
 				$class_name = 'titania_type_' . substr($fname, 0, strpos($fname, '.' . PHP_EXT));
 
+				titania::add_lang('types/' . substr($fname, 0, strpos($fname, '.' . PHP_EXT)));
+
 				$class = new $class_name;
 
 				$class->auto_install();
@@ -147,7 +149,7 @@ class titania_type_base
 	public $mpv_test = false;
 	public $automod_test = false;
 	public $clean_and_restore_root = false;
-	
+
 	/**
 	 * The forum_database and forum_robot, initialize in constructor
 	 *

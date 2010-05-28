@@ -38,9 +38,9 @@ Rewriterule ^support/all/?([^/]+)?$								./index.php?action=support [NC]
 
 #contributions
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|snippet|translation|contributions?)/(create)/?([^/]+)?$						./contributions/index.php?page=$2&type=$1 [NC]
+Rewriterule ^(mod|style|converter|contributions?)/(create)/?([^/]+)?$						./contributions/index.php?page=$2&type=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|snippet|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			./contributions/index.php?c=$2&page=$3&type=$1 [NC]
+Rewriterule ^(mod|style|converter|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			./contributions/index.php?c=$2&page=$3&type=$1 [NC]
 
 #rating
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -112,36 +112,6 @@ $lang = array_merge($lang, array(
 	'LOGIN_EXPLAIN_CONTRIB'					=> 'In order to create a new contribution you need to be registered',
 
 	'MANAGE_CONTRIBUTION'					=> 'Manage Contribution',
-	'MOD_CREATE_PUBLIC'						=> '[b]Modification name[/b]: %1$s
-[b]Author:[/b] [url=%2$s]%3$s[/url]
-[b]Modification description[/b]: %4$s
-[b]Modification version[/b]: %5$s
-[b]Tested on phpBB version[/b]: See below
-
-[b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes
-
-[b]Modification overview page:[/b] [url=%9$s]View[/url]
-
-[color=blue][b]The phpBB Team is not responsible nor required to provide support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Modifications Team may not be able to provide support.[/b][/color]
-
-[size=150][url=%10$s]--&gt;[b]Modification support[/b]&lt;--[/url][/size]',
-	'MOD_QUEUE_TOPIC'						=> '[b]Modification name[/b]: %1$s
-[b]Author:[/b] [url=%2$s]%3$s[/url]
-[b]Modification description[/b]: %4$s
-[b]Modification version[/b]: %5$s
-
-[b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes',
-	'MOD_REPLY_PUBLIC'						=> '[b][color=darkred]Modification validated/released[/color][/b]',
-	'MOD_REPLY_PUBLIC_NOTES'				=> '
-
-[b]Notes:[/b] %s',
-	'MOD_UPDATE_PUBLIC'						=> '[b][color=darkred]MOD Updated to version %1$s
-See first post for Download Link[/color][/b]',
-	'MOD_UPDATE_PUBLIC_NOTES'				=> '
-
-[b]Notes:[/b] %1$s',
 	'MPV_RESULTS'							=> '<strong>Please check over the MPV results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
 	'MPV_TEST'								=> 'The Mod will be tested against MPV and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 	'MPV_TEST_FAILED'						=> 'Sorry, the automatic MPV test failed and your MPV test results are not available.  Please continue.',
@@ -193,36 +163,6 @@ See first post for Download Link[/color][/b]',
 	'SCREENSHOTS'							=> 'Screenshots',
 	'SELECT_CONTRIB_TYPE'					=> '-- Select contribution type --',
 	'SELECT_PHPBB_BRANCH'					=> 'Select phpBB branch',
-	'STYLE_CREATE_PUBLIC'					=> '[b]Style name[/b]: %1$s
-[b]Author:[/b] [url=%2$s]%3$s[/url]
-[b]Style description[/b]: %4$s
-[b]Style version[/b]: %5$s
-[b]Tested on phpBB version[/b]: See below
-
-[b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes
-
-[b]Style overview page:[/b] [url=%9$s]View[/url]
-
-[color=blue][b]The phpBB Team is not responsible nor required to provide support for this Style. By installing this Style, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]
-
-[size=150][url=%10$s]--&gt;[b]Style support[/b]&lt;--[/url][/size]',
-	'STYLE_QUEUE_TOPIC'						=> '[b]Style name[/b]: %1$s
-[b]Author:[/b] [url=%2$s]%3$s[/url]
-[b]Style description[/b]: %4$s
-[b]Style version[/b]: %5$s
-
-[b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes',
-	'STYLE_REPLY_PUBLIC'					=> '[b][color=darkred]Style validated/released[/color][/b]',
-	'STYLE_REPLY_PUBLIC_NOTES'				=> '
-
-[b]Notes: %s[/b]',
-	'STYLE_UPDATE_PUBLIC'					=> '[b][color=darkred]Style Updated to version %1$s
-See first post for Download Link[/color][/b]',
-	'STYLE_UPDATE_PUBLIC_NOTES'				=> '
-
-[b]Notes:[/b] %1$s',
 	'SUBDIRECTORY_LIMIT'					=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
 	'SUBMIT_NEW_REVISION'					=> 'Submit and add new revision',
 

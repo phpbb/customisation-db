@@ -1,8 +1,6 @@
 <?php
 /**
 *
-* mods [English]
-*
 * @package Titania
 * @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
@@ -119,8 +117,6 @@ $lang = array_merge($lang, array(
 	'MAKE_CATEGORY_VISIBLE'		=> 'Make Category Visible',
 	'MANAGE'					=> 'Manage',
 	'MARK_CONTRIBS_READ'		=> 'Mark contributions read',
-	'MODIFICATION'				=> 'Modification',
-	'MODIFICATIONS'				=> 'Modifications',
 	'MOVE_CONTRIBS_TO'			=> 'Move Contributions to',
 	'MOVE_DOWN'					=> 'Move down',
 	'MOVE_SUBCATS_TO'			=> 'Move Subcategories to',
@@ -168,8 +164,6 @@ $lang = array_merge($lang, array(
 	'SOFT_DELETE_TOPIC'			=> 'Soft Delete Topic',
 	'SORT_CONTRIB_NAME'			=> 'Contribution Name',
 	'STICKIES'					=> 'Stickies',
-	'STYLE'						=> 'Style',
-	'STYLES'					=> 'Styles',
 	'SUBSCRIBE'					=> 'Subscribe',
 	'SUBSCRIPTION_NOTIFICATION'	=> 'Subscription Notification',
 
