@@ -111,7 +111,7 @@ if ($queue_id)
 			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
 		break;
 
-		case 'delete' :
+		case 'delete_queue' :
 			if (phpbb::$user->data['user_type'] != USER_FOUNDER)
 			{
 				titania::needs_auth();
