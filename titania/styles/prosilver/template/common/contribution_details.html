@@ -82,17 +82,37 @@
 				</li>
 			</ul>
 		</div>
-	<!-- IF S_IN_QUEUE -->
+	<!-- IF .queue_actions or CURRENT_STATUS -->
 		<ul class="queue-actions">
-			<li class="first"><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_repack.gif" alt="" /> &nbsp;{L_REPACK}</a></li>
-			<li><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_change_status.gif" alt="" /> &nbsp;{L_CHANGE_STATUS}</a></li>
-			<li><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_approve.gif" alt="" /> &nbsp;{L_APPROVE}</a></li>
-			<li><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_deny.gif" alt="" /> &nbsp;{L_DENY}</a></li>
-			<li class="last"><a href=""><img src="{T_TITANIA_THEME_PATH}/images/icon_queue_progress.png" alt="" /> &nbsp;{L_MARK_IN_PROGRESS}</a></li>
+		<!-- BEGIN queue_actions -->
+			<li <!-- IF queue_actions.S_FIRST_ROW -->class="first"<!-- ELSEIF queue_actions.S_LAST_ROW -->class="last"<!-- ENDIF --><!-- IF queue_actions.CLASS eq 'change_status'--> id="queue-status-options"<!-- ENDIF -->>
+				<a href="{queue_actions.U_VIEW}" class="{queue_actions.CLASS}">{queue_actions.NAME}</a>
+				
+			<!-- IF queue_actions.CLASS eq 'change_status' -->
+				<div><!-- BEGIN !tags --><a href="{tags.U_ACTION}">{tags.NAME}</a><!-- END tags --></div>
+			<!-- ENDIF -->
+			</li>
+		<!-- END queue_actions -->
+		
 		<!-- IF CURRENT_STATUS -->
 			<li class="info"><img src="{T_TITANIA_THEME_PATH}/images/icon_info.gif" alt="" /> &nbsp;{L_QUEUE_STATUS}: {CURRENT_STATUS}</li>
 		<!-- ENDIF -->
 		</ul>
+		
+		<!-- IF tags -->
+		<script type="text/javascript">
+		// <![CDATA[
+			$("#queue-status-options").hover(
+			  function () {
+			    $("#queue-status-options div").show();
+			  }, 
+			  function () {
+			    $("#queue-status-options div").hide();
+			  }
+			);
+		// ]]>
+		</script>
+		<!-- ENDIF -->
 	<!-- ENDIF -->
 	<span class="corners-bottom main-corners"><span></span></span></div>
 </div>
