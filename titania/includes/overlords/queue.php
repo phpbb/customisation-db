@@ -271,10 +271,13 @@ class queue_overlord
 				);
 			}
 
+			$tags = titania::$cache->get_tags(TITANIA_QUEUE);
+			unset($tags[$row['queue_status']]);
+
 			$quick_actions['CHANGE_STATUS'] = array(
 				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'move')),
 				'class'		=> 'change_status',
-				'tags'		=> titania::$cache->get_tags(TITANIA_QUEUE),
+				'tags'		=> $tags,
 			);
 
 			$quick_actions['REPACK'] = array(
