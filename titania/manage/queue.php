@@ -311,9 +311,10 @@ if ($queue_id)
 
 			$tags = titania::$cache->get_tags(TITANIA_QUEUE);
 
-			if (titania::confirm_box(true))
+			if (check_link_hash('quick_actions') || titania::confirm_box(true))
 			{
-				$new_tag = request_var('move_to', 0);
+				$new_tag = request_var('tag_id', 0);
+
 				if (!isset($tags[$new_tag]))
 				{
 					trigger_error('NO_TAG');
@@ -324,7 +325,7 @@ if ($queue_id)
 			else
 			{
 				// Generate the list of tags we can move it to
-				$extra = '<select name="move_to">';
+				$extra = '<select name="tag_id">';
 				foreach ($tags as $tag_id => $row)
 				{
 					$extra .= '<option value="' . $tag_id . '">' . ((isset(phpbb::$user->lang[$row['tag_field_name']])) ? phpbb::$user->lang[$row['tag_field_name']] : $row['tag_field_name']) . '</option>';

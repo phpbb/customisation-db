@@ -274,6 +274,7 @@ class queue_overlord
 			$quick_actions['CHANGE_STATUS'] = array(
 				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'move')),
 				'class'		=> 'change_status',
+				'tags'		=> titania::$cache->get_tags(TITANIA_QUEUE),
 			);
 
 			$quick_actions['REPACK'] = array(
@@ -311,6 +312,19 @@ class queue_overlord
 
 				'U_VIEW'	=> $data['url'],
 			));
+
+			if (isset($data['tags']))
+			{
+				foreach ($data['tags'] as $tag_id => $tag_row)
+				{
+					phpbb::$template->assign_block_vars('tags', array(
+						'ID'		=> $tag_id,
+						'NAME'		=> ((isset(phpbb::$user->lang[$tag_row['tag_field_name']])) ? phpbb::$user->lang[$tag_row['tag_field_name']] : $tag_row['tag_field_name']),
+
+						'U_ACTION'	=> titania_url::append_url($data['url'], array('tag_id' => $tag_id, 'hash' => generate_link_hash('quick_actions'))),
+					));
+				}
+			}
 		}
 
 		phpbb::$template->assign_vars(array(
