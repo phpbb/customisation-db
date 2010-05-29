@@ -1,5 +1,40 @@
 <!-- INCLUDE contributions/contribution_header.html -->
 
+<script type="text/javascript">
+// <![CDATA[
+	$(document).ready(function()
+	{
+		change_contrib_type('{S_CONTRIB_TYPE}');
+	});
+
+	function change_contrib_type(new_type)
+	{
+		<!-- IF not S_CAN_EDIT_STYLE_DEMO -->
+			if (this.value == {S_STYLE})
+			{
+				$('#demo_url_container').hide();
+			}
+			else
+			{
+				$('#demo_url_container').show();
+			}
+		<!-- ENDIF -->
+
+		$('#contrib_category option').each(function() {
+			if (new_type == 0 || $(this).hasClass('type_' + new_type))
+			{
+				$(this).show();
+			}
+			else if (!$(this).hasClass('type_0'))
+			{
+				$(this).hide();
+				$(this).attr('selected', '');
+			}
+		});
+	}
+// ]]>
+</script>
+
 <h3 class="section-name">{PAGE_TITLE}</h3>
 
 <!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
@@ -28,7 +63,7 @@
 				<dl>
 					<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
 					<dd>
-						<select name="contrib_type" id="contrib_type"<!-- IF not S_CAN_EDIT_STYLE_DEMO --> onchange="if (this.value == {S_STYLE}) { $('#demo_url_container').hide(); } else  { $('#demo_url_container').show(); }"<!-- ENDIF -->>
+						<select name="contrib_type" id="contrib_type" onchange="change_contrib_type(this.value);">
 							<!-- BEGIN type_select -->
 							<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{type_select.NAME}</option>
 							<!-- END type_select -->
@@ -63,7 +98,7 @@
 					<dd>
 						<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="5">
 							<!-- BEGIN category_select -->
-							<option value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
+							<option class="type_{category_select.TYPE}" value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
 								<!-- BEGIN level -->&nbsp; &nbsp;<!-- END level -->{category_select.NAME}
 							</option>
 							<!-- END category_select -->
