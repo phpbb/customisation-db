@@ -135,7 +135,6 @@ $lang = array_merge($lang, array(
 	'NO_DESTINATION_CATEGORY'	=> 'No destination category could be found.',
 	'NO_POST'					=> 'The requested post does not exist.',
 	'NO_REVISION_NAME'			=> 'No revision name provided',
-	'NO_SUBCATEGORIES'			=> 'This category contains no subcategories.',
 	'NO_TOPIC'					=> 'The requested topic does not exist.',
 
 	'ORDER'						=> 'Order',
