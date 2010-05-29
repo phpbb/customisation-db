@@ -21,8 +21,6 @@ if (!phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_m
 	titania::needs_auth();
 }
 
-require PHPBB_ROOT_PATH . 'includes/functions_messenger.php';
-
 phpbb::$user->add_lang('mcp');
 
 $attention_id = request_var('a', 0);
@@ -133,15 +131,17 @@ if ($attention_id || ($object_type && $object_id))
 				// Load z topic
 				$post->topic->topic_id = $post->topic_id;
 				$post->topic->load();
-				
+
 				// Notify poster about disapproval
 				if ($post->post_user_id != ANONYMOUS)
 				{
+					phpbb::_include('functions_messenger', false, 'messenger');
+
 					$lang_path = phpbb::$user->lang_path;
 					phpbb::$user->set_custom_lang_path(titania::$config->language_path);
 
 					$messenger = new messenger(false);
-					
+
 					users_overlord::load_users(array($post->post_user_id));
 
 					$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_disapproved' : 'post_disapproved';
@@ -157,10 +157,10 @@ if ($attention_id || ($object_type && $object_id))
 					);
 
 					$messenger->send();
-					
+
 					phpbb::$user->set_custom_lang_path($lang_path);
 				}
-				
+
 				// Delete the post
 				$post->delete();
 
@@ -187,6 +187,8 @@ if ($attention_id || ($object_type && $object_id))
 				// Subscriptions?
 				if ($post->topic->topic_last_post_id == $post->post_id)
 				{
+					phpbb::_include('functions_messenger', false, 'messenger');
+
 					$email_vars = array(
 						'NAME'		=> $post->topic->topic_subject,
 						'U_VIEW'	=> titania_url::append_url($post->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
@@ -217,15 +219,15 @@ if ($attention_id || ($object_type && $object_id))
 						titania_subscriptions::send_notifications($post->post_type, $post->topic->parent_id, 'subscribe_notify_forum.txt', $email_vars, $post->post_user_id);
 					}
 				}
-				
+
 				// Notify poster about approval
 				if ($post->post_user_id != ANONYMOUS)
 				{
 					$lang_path = phpbb::$user->lang_path;
 					phpbb::$user->set_custom_lang_path(titania::$config->language_path);
-					
+
 					$messenger = new messenger(false);
-					
+
 					users_overlord::load_users(array($post->post_user_id));
 
 					$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_approved' : 'post_approved';
@@ -244,7 +246,7 @@ if ($attention_id || ($object_type && $object_id))
 					);
 
 					$messenger->send();
-					
+
 					phpbb::$user->set_custom_lang_path($lang_path);
 				}
 			}
