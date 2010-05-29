@@ -1,8 +1,6 @@
 <?php
 /**
 *
-* posting [English]
-*
 * @package Titania
 * @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
