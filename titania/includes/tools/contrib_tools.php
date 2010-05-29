@@ -549,14 +549,11 @@ class titania_contrib_tools
 	function install_demo_style($phpbb_root_path, $contrib)
 	{
 		phpbb::$user->add_lang('acp/styles');
-
+		
 		if ($phpbb_root_path[strlen($phpbb_root_path) - 1] != '/')
 		{
 			$phpbb_root_path .= '/';
 		}
-
-		// Debug
-		titania::log(TITANIA_DEBUG, 'Style Demo Install 2: ' . $phpbb_root_path);
 
 		if (!is_dir($phpbb_root_path) || !file_exists($phpbb_root_path . 'config.' . PHP_EXT))
 		{
@@ -591,10 +588,7 @@ class titania_contrib_tools
 
 			// Unzip to our temp directory
 			$this->extract($this->original_zip, $this->unzip_dir);
-		}
-
-		// Debug
-		titania::log(TITANIA_DEBUG, 'Style Demo Install 3: ' . $this->unzip_dir);
+		}	
 
 		$package_root = $this->find_root(false, 'style.cfg');
 		$stylecfg = parse_cfg_file($this->unzip_dir . $package_root . '/style.cfg');
@@ -604,9 +598,6 @@ class titania_contrib_tools
 		$this->rmdir_recursive($this->unzip_dir);
 
 		$variables = array('db', 'phpbb_root_path');
-
-		// Debug
-		titania::log(TITANIA_DEBUG, 'Style Demo Install 4: ' . $package_root . "\n" . $style_root);
 
 		// Let's get lazy.
 		foreach ($variables as $variable)
@@ -632,7 +623,7 @@ class titania_contrib_tools
 		    $bitfield->set(12);
 		    define('TEMPLATE_BITFIELD', $bitfield->get_base64());
 		    unset($bitfield);
-	    }
+	    }		
 		$styles = new acp_styles();
 
 		// Fill the configuration variables
