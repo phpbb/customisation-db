@@ -17,16 +17,34 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 
 phpbb::$user->add_lang('search');
+titania::add_lang('search');
+
+// Available Search Types
+$search_types = array(
+	TITANIA_CONTRIB		=> 'CONTRIBUTION',
+	TITANIA_FAQ			=> 'CONTRIB_FAQ',
+	TITANIA_SUPPORT		=> 'CONTRIB_SUPPORT',
+);
 
 //$search_fields =
 $keywords = utf8_normalize_nfc(request_var('keywords', '', true));
 $author = utf8_normalize_nfc(request_var('author', '', true));
 $search_fields = request_var('sf', '');
+$search_type = request_var('type', 0);
 //$display = request_var('display', '');
 
 // Display the advanced search page
 if (!$keywords && !$author)
 {
+	// Output search types
+	foreach ($search_types as $value => $name)
+	{
+		phpbb::$template->assign_block_vars('types', array(
+			'NAME'		=> (isset(phpbb::$user->lang[$name])) ? phpbb::$user->lang[$name] : $name,
+			'VALUE'		=> $value,
+		));
+	}
+
 	titania::page_header('SEARCH');
 	titania::page_footer(true, 'search_body.html');
 }
@@ -45,6 +63,10 @@ if (isset($_POST['submit']))
 	if ($search_fields)
 	{
 		titania_url::$params['sf'] = $search_fields;
+	}
+	if ($search_type)
+	{
+		titania_url::$params['type'] = $search_type;
 	}
 	/*if ($display)
 	{
@@ -111,6 +133,12 @@ if ($author)
 	}
 
 	$query->where($query->eq('author', $user_id));
+}
+
+// Search type
+if ($search_type)
+{
+	$query->where($query->eq('type', $search_type));
 }
 
 // Do the search

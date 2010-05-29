@@ -181,7 +181,7 @@ class titania_sync
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
 					$data[] = array(
-						'object_type'	=> $row['contrib_type'],
+						'object_type'	=> TITANIA_CONTRIB,
 						'object_id'		=> $row['contrib_id'],
 
 						'title'			=> $row['contrib_name'],

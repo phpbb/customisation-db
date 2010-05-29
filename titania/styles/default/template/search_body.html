@@ -38,6 +38,16 @@
 		<!--<dd><label for="sf4"><input type="radio" name="sf" id="sf4" value="firstpost" /> {L_SEARCH_FIRST_POST}</label></dd>-->
 	</dl>
 
+	<hr class="dashed" />
+
+	<dl>
+		<dt><label for="type">{L_SEARCH_WITHIN_TYPES}:</label></dt>
+		<dd><label for="type"><input type="radio" name="type" id="type" value="0" checked="checked" /> {L_ALL}</label></dd>
+		<!-- BEGIN types -->
+			<dd><label for="type_{types.S_ROW_COUNT}"><input type="radio" name="type" id="type_{types.S_ROW_COUNT}" value="{types.VALUE}" /> {types.NAME}</label></dd>
+		<!-- END types -->
+	</dl>
+
 	<!--<hr class="dashed" />
 
 	<dl>

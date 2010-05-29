@@ -1106,6 +1106,6 @@ class titania_contribution extends titania_message_object
 			'approved'		=> ((!titania::$config->require_validation && $this->contrib_status == TITANIA_CONTRIB_NEW) || in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
 		);
 
-		titania_search::index($this->contrib_type, $this->contrib_id, $data);
+		titania_search::index(TITANIA_CONTRIB, $this->contrib_id, $data);
 	}
 }
