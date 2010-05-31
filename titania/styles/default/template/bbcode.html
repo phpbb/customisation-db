@@ -8,8 +8,8 @@
 <!-- BEGIN listitem --><li><!-- END listitem -->
 <!-- BEGIN listitem_close --></li><!-- END listitem_close -->
 
-<!-- BEGIN quote_username_open --><blockquote><div><cite>{USERNAME} {L_WROTE}:</cite><!-- END quote_username_open -->
-<!-- BEGIN quote_open --><blockquote class="uncited"><div><!-- END quote_open -->
+<!-- BEGIN quote_username_open --><blockquote><span class="hide_quote" style="cursor: pointer; float: right;" onclick="hide_quotebox(this);">{L_HIDE}</span><span class="show_quote" style="cursor: pointer; display: none; float: right;" onclick="show_quotebox(this);">{L_SHOW}</span><div><cite>{USERNAME} {L_WROTE}:</cite><!-- END quote_username_open -->
+<!-- BEGIN quote_open --><blockquote class="uncited"><span class="hide_quote" style="cursor: pointer; float: right; margin-top: -20px;" onclick="hide_quotebox(this);">{L_HIDE}</span><span class="show_quote" style="cursor: pointer; display: none; float: right; margin-top: -20px;" onclick="show_quotebox(this);">{L_SHOW}</span><div><!-- END quote_open -->
 <!-- BEGIN quote_close --></div></blockquote><!-- END quote_close -->
 
 <!-- BEGIN code_open --><dl class="codebox"><dt>{L_CODE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code><!-- END code_open -->

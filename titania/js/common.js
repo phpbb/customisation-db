@@ -85,3 +85,19 @@ $(document).ready(function(){
 		}
 	);
 });
+
+function hide_quotebox(box)
+{
+	$(box).parent().children('div').hide();
+	$(box).parent().children('.hide_quote').hide();
+
+	$(box).parent().children('.show_quote').show();
+}
+
+function show_quotebox(box)
+{
+	$(box).parent().children('div').show();
+	$(box).parent().children('.show_quote').hide();
+
+	$(box).parent().children('.hide_quote').show();
+}
