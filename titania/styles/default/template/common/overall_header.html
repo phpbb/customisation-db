@@ -67,6 +67,14 @@
 				imageBtnNext: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-next.gif'
 			});
 		<!-- ENDIF -->
+
+		/* Hide MPV/Automod Validation reports automatically */
+		$('blockquote > div > cite').each(function() {
+			if ($(this).text() == '{L_VALIDATION_MPV} {L_WROTE}:' || $(this).text() == '{L_VALIDATION_AUTOMOD} {L_WROTE}:')
+			{
+				hide_quotebox($(this).parent());
+			}
+		});
 	});
 
 	<!-- IF S_USER_PM_POPUP -->

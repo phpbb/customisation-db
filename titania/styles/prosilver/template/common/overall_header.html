@@ -1,5 +1,20 @@
 {PHPBB_COM_HEADER}
 
+<script type="text/javascript">
+// <![CDATA[
+	$(document).ready(function()
+	{
+		/* Hide MPV/Automod Validation reports automatically */
+		$('blockquote > div > cite').each(function() {
+			if ($(this).text() == '{L_VALIDATION_MPV} {L_WROTE}:' || $(this).text() == '{L_VALIDATION_AUTOMOD} {L_WROTE}:')
+			{
+				hide_quotebox($(this).parent());
+			}
+		});
+	});
+// ]]>
+</script>
+
 <div class="navbar">
 	<div class="inner"><span class="corners-top"><span></span></span>
 
