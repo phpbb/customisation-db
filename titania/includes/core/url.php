@@ -73,6 +73,18 @@ class titania_url
 			}
 		}
 
+		// Add the Session ID if required.
+		global $_SID;
+		if ($_SID)
+		{
+			if (!is_array($params))
+			{
+				$params = self::split_params($params);
+			}
+
+			$params['sid'] = $_SID;
+		}
+
 		// Prevent rebuilding...
 		if (self::is_built($base))
 		{
@@ -91,18 +103,6 @@ class titania_url
 		if (substr($final_url, -1) != '/')
 		{
 			$final_url .= '/';
-		}
-
-		// Add the Session ID if required.
-		global $_SID;
-		if ($_SID)
-		{
-			if (!is_array($params))
-			{
-				$params = self::split_params($params);
-			}
-
-			$params['sid'] = $_SID;
 		}
 
 		// Use the append_url function to add the parameters and return
@@ -212,9 +212,20 @@ class titania_url
 		$url = str_replace(self::$root_url, '', $url);
 
 		// Replace SID
-		$url = preg_replace('#sid' . self::$separator . '[a-z0-9]+#', '', $url);
+		$url = self::remove_sid($url);
 
 		return $url;
+	}
+
+	/**
+	* Remove the SID from the url
+	*
+	* @param mixed $url
+	* @return mixed
+	*/
+	public function remove_sid($url)
+	{
+		return preg_replace('#sid_[a-z0-9]+#', '', $url);
 	}
 
 	/**

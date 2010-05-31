@@ -353,7 +353,7 @@ class phpbb
 			// The result parameter is always an array, holding the relevant information...
 			if ($result['status'] == LOGIN_SUCCESS)
 			{
-				redirect(titania_url::$current_page_url);
+				redirect(titania_url::build_url(titania_url::$current_page, titania_url::$params));
 			}
 
 			// Something failed, determine what...
