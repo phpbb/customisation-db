@@ -72,6 +72,9 @@ if (isset($_POST['submit']))
 	{
 		titania_url::$params['display'] = $display;
 	}*/
+
+	// Redirect if sent through POST so the parameters are in the URL (for easy copying/pasting to other users)
+	redirect(titania_url::build_url('search', titania_url::$params));
 }
 
 // Setup the sort tool
