@@ -73,16 +73,22 @@ class titania_url
 			}
 		}
 
-		// Add the Session ID if required.
+		// Parameters must be an array to modify them
+		if (!is_array($params))
+		{
+			$params = self::split_params($params);
+		}
+
+		// Handle the session id
 		global $_SID;
 		if ($_SID)
 		{
-			if (!is_array($params))
-			{
-				$params = self::split_params($params);
-			}
-
 			$params['sid'] = $_SID;
+		}
+		else
+		{
+			// Don't include the sid in the URL if not required
+			unset($params['sid']);
 		}
 
 		// Prevent rebuilding...
