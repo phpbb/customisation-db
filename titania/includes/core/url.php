@@ -319,21 +319,16 @@ class titania_url
 	}
 
 	/**
-	* Decode the url we are currently on and put the things in $_REQUEST/$_GET
+	* Decode the url request we are currently on and put the data in $_REQUEST/$_GET
 	*
 	* This function should be called before phpBB is initialized
 	*/
-	public static function decode_url($script_path)
+	public static function decode_request()
 	{
 		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
 
 		// Grab the arguments
 		$args = substr($url, (strrpos($url, '/') + 1));
-
-		// Store the current page
-		self::$current_page = substr($url, 0, (strrpos($url, '/') + 1));
-		self::$current_page = (self::$current_page[0] == '/') ? substr(self::$current_page, 1) : self::$current_page;
-		self::$current_page = str_replace($script_path, '', self::$root_url) . self::$current_page;
 
 		// Split up the arguments
 		foreach (self::split_params($args) as $name => $value)
@@ -344,6 +339,19 @@ class titania_url
 		// Merge the parameters into the get/request superglobals.  Merge them to prevent a parameter in the parameters part of the URL from over-writting one that is already in here
 		$_GET = array_merge(self::$params, $_GET);
 		$_REQUEST = array_merge(self::$params, $_REQUEST);
+	}
+
+	/**
+	* Decode the url to build the current page/current page url
+	*/
+	public static function decode_url($script_path)
+	{
+		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
+
+		// Store the current page
+		self::$current_page = substr($url, 0, (strrpos($url, '/') + 1));
+		self::$current_page = (self::$current_page[0] == '/') ? substr(self::$current_page, 1) : self::$current_page;
+		self::$current_page = str_replace($script_path, '', self::$root_url) . self::$current_page;
 
 		// Build the full current page url
 		self::$current_page_url = self::build_url(self::$current_page, self::$params);

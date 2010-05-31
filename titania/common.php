@@ -54,6 +54,9 @@ else
 // Include the dynamic constants (after reading the Titania config file, but before loading the phpBB common file)
 titania::_include('dynamic_constants');
 
+// Decode the request
+titania_url::decode_request();
+
 // Include common phpBB files and functions.
 if (!file_exists(PHPBB_ROOT_PATH . 'common.' . PHP_EXT))
 {
