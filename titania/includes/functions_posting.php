@@ -259,13 +259,12 @@ function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
  * Allow to create a new topic, to reply to a topic, to edit a post or the first_post of a topic in database
  * @param $mode post/reply/edit
  * @param $options array Array with post data, see our documentation for exact required items
- * @param $real_poster, if true the poster will be user browsing the script
  * @param $poll array Array with poll options.
  * @return mixed false if there was an error, topic_id when the new topic was created and true when reply/edit is done
  */
-function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
+function phpbb_posting($mode, &$options, $poll = array())
 {
-	if (empty($mode))
+	if (!in_array($mode, array('post', 'reply', 'edit')))
 	{
 		return false;
 	}
@@ -274,57 +273,54 @@ function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 	phpbb::_include('message_parser', false, 'parse_message');
 	phpbb::_include('functions_posting', 'submit_post', false);
 
-	$options_global = array(
+	// Set some defaults
+	$options = array_merge($options, array(
 		'enable_bbcode'			=> 1,
 		'enable_urls'			=> 1,
 		'enable_smilies'		=> 1,
-		'enable_sig'			=> 1,
-		'topic_time_limit'		=> 0,
-		'icon_id'				=> 0,
-		'post_time'				=> time(),
-		'poster_ip'				=> phpbb::$user->ip,
-		'post_edit_locked'		=> 0,
 		'topic_type'			=> POST_NORMAL,
-		'post_approved'			=> true,
-	);
+	));
 
-	$options = array_merge($options, $options_global);
+	$message_parser = new parse_message($options['post_text']);
 
-	// Get correct data from forums table to be sure all data is there.
-	$sql = 'SELECT forum_parents, forum_name, enable_indexing
-		FROM ' . FORUMS_TABLE . '
-		WHERE forum_id = ' . $options['forum_id'];
-	$result = phpbb::$db->sql_query($sql);
-	$forum_data = phpbb::$db->sql_fetchrow($result);
-	phpbb::$db->sql_freeresult($result);
+	// Get the data we need
+	if ($mode == 'reply')
+	{
+		$sql = 'SELECT f.*, t.*
+			FROM ' . FORUMS_TABLE . ' f, ' . TOPICS_TABLE . ' t
+			WHERE t.topic_id = ' . (int) $options['topic_id'] . '
+				AND f.forum_id = t.forum_id';
+		$result = phpbb::$db->sql_query($sql);
+		$post_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+	}
+	else if ($mode == 'edit')
+	{
+		$sql = 'SELECT f.*, t.*, p.*
+			FROM ' . FORUMS_TABLE . ' f, ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
+			WHERE p.post_id = ' . (int) $options['post_id'] . '
+				AND t.topic_id = p.topic_id
+				AND f.forum_id = t.forum_id';
+		$result = phpbb::$db->sql_query($sql);
+		$post_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+	}
+	else // post
+	{
+		$sql = 'SELECT *
+			FROM ' . FORUMS_TABLE . '
+			WHERE forum_id = ' . (int) $options['forum_id'];
+		$result = phpbb::$db->sql_query($sql);
+		$post_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+	}
 
-	if (!$forum_data)
+	if (!$post_data)
 	{
 		return false;
 	}
 
-	$message_parser = new parse_message($options['post_text']);
-
-	if ($mode == 'reply' || $mode == 'edit')
-	{
-		// Check forum data, and if forum_id is the same.
-		// Also get topic data.
-		$sql = 'SELECT f.*, t.*
-			FROM ' . TOPICS_TABLE . ' t, ' . FORUMS_TABLE . ' f
-			WHERE t.topic_id = ' . $options['topic_id'] . '
-				AND (f.forum_id = t.forum_id
-					OR f.forum_id = ' . $options['forum_id'] . ')';
-		$result = phpbb::$db->sql_query($sql);
-		$post_data = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);
-
-		if (!$post_data)
-		{
-			return false;
-		}
-	}
-
-	if (!$real_poster)
+	if ($mode != 'edit' && isset($options['poster_id']) && $options['poster_id'])
 	{
 		// Some data for the ugly fix below :P
 		$sql = 'SELECT username, user_colour, user_permissions, user_type
@@ -340,7 +336,7 @@ function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 		}
 
 		// Ugly fix, to be sure it is posted for the right user ;)
-		$old_data = phpbb::$user->data;
+		$old_user_data = phpbb::$user->data;
 		phpbb::$user->data['user_id'] = $options['poster_id'];
 		phpbb::$user->data['username'] = $user_data['username'];
 		phpbb::$user->data['user_colour'] = $user_data['user_colour'];
@@ -357,85 +353,58 @@ function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 
 	if ($options['enable_bbcode'])
 	{
-		$message_parser->parse($options['enable_bbcode'], $options['enable_urls'], $options['enable_smilies'], (bool) phpbb::$auth->acl_get('f_img', $options['forum_id']), (bool) phpbb::$auth->acl_get('f_flash', $options['forum_id']),  (bool) phpbb::$auth->acl_get('f_reply', $options['forum_id']), phpbb::$config['allow_post_links']);
+		$message_parser->parse($options['enable_bbcode'], $options['enable_urls'], $options['enable_smilies'], (bool) phpbb::$auth->acl_get('f_img', $post_data['forum_id']), (bool) phpbb::$auth->acl_get('f_flash', $post_data['forum_id']),  (bool) phpbb::$auth->acl_get('f_reply', $post_data['forum_id']), phpbb::$config['allow_post_links']);
 	}
 
+
+	$data = array(
+		'topic_title'			=> $options['topic_title'],
+
+		'enable_bbcode'			=> (bool) $options['enable_bbcode'],
+		'enable_smilies'		=> (bool) $options['enable_smilies'],
+		'enable_urls'			=> (bool) $options['enable_urls'],
+		'message_md5'			=> (string) md5($message_parser->message),
+		'bbcode_bitfield'		=> $message_parser->bbcode_bitfield,
+		'bbcode_uid'			=> $message_parser->bbcode_uid,
+		'message'				=> $message_parser->message,
+
+		'force_approved_state'	=> true,
+
+		// phpBB is nub http://tracker.phpbb.com/browse/PHPBB3-9635
+		'post_time'				=> time(),
+
+		// False for both will not add nor remove notifications
+		'notify_set'			=> false,
+		'notify'				=> false,
+	);
 
 	switch($mode)
 	{
 		case 'post':
-			$topic_first_post_id = 0;
-			$topic_last_post_id = 0;
-			$post_id = 0;
-			$topic_id = 0;
-			$topic_replies = 0;
-			$topic_replies_real = 0;
+			$data = array_merge(array(
+				'icon_id'				=> (isset($options['icon_id'])) ? $options['icon_id'] : 0,
+				'poster_id'				=> ($mode != 'edit' && isset($options['poster_id']) && $options['poster_id']) ? (int) $options['poster_id'] : phpbb::$user->data['user_id'],
+				'enable_sig'			=> (isset($options['enable_sig'])) ? (bool) $options['enable_sig'] : true,
+				'post_edit_locked'		=> (isset($options['post_edit_locked'])) ? $options['post_edit_locked'] : false,
+			), $data);
 		break;
+
 		case 'reply':
-			$topic_first_post_id = $post_data['topic_first_post_id'];
-			$topic_last_post_id = $post_data['topic_last_post_id'];
-			$post_id = 0;
-			$topic_id = $options['topic_id'];
-			$topic_replies = $post_data['topic_replies'];
-			$topic_replies_real = $post_data['topic_replies_real'];
-		break;
-		case 'edit':
-			$topic_first_post_id = $post_data['topic_first_post_id'];
-			$topic_last_post_id = $post_data['topic_last_post_id'];
-			$post_id = (isset($option['post_id']) && !$option['post_id']) ? $option['post_id'] : $post_data['topic_first_post_id'];
-			$topic_id = $options['topic_id'];
-			$topic_replies = $post_data['topic_replies'];
-			$topic_replies_real = $post_data['topic_replies_real'];
+			$data = array_merge(array(
+				'poster_id'				=> ($mode != 'edit' && isset($options['poster_id']) && $options['poster_id']) ? (int) $options['poster_id'] : phpbb::$user->data['user_id'],
+				'enable_sig'			=> (isset($options['enable_sig'])) ? (bool) $options['enable_sig'] : true,
+				'post_edit_locked'		=> (isset($options['post_edit_locked'])) ? $options['post_edit_locked'] : false,
+			), $data);
 		break;
 	}
 
-	$data = array(
-		'topic_title'			=> $options['topic_title'],
-		'topic_first_post_id'	=> $topic_first_post_id,
-		'topic_last_post_id'	=> $topic_last_post_id,
-		'topic_time_limit'		=> $options['topic_time_limit'],
-		'topic_attachment'		=> 0,
-		'topic_replies'			=> $topic_replies,
-		'topic_replies_real'	=> $topic_replies_real,
-		'post_id'				=> $post_id,
-		'topic_id'				=> $topic_id,
-		'forum_id'				=> $options['forum_id'],
-		'icon_id'				=> (int) $options['icon_id'],
-		'poster_id'				=> (!$real_poster) ? (int) $options['poster_id'] : phpbb::$user->data['user_id'],
-		'enable_sig'			=> (bool) $options['enable_sig'],
-		'enable_bbcode'			=> (bool) $options['enable_bbcode'],
-		'enable_smilies'		=> (bool) $options['enable_smilies'],
-		'enable_urls'			=> (bool) $options['enable_urls'],
-		'enable_indexing'		=> (bool) $forum_data['enable_indexing'],
-		'message_md5'			=> (string) md5($message_parser->message),
-		'post_time'				=> $options['post_time'],
-		'post_checksum'			=> '',
-		'post_edit_reason'		=> '',
-		'post_edit_user'		=> 0,
-		'forum_parents'			=> $forum_data['forum_parents'],
-		'forum_name'			=> $forum_data['forum_name'],
-		'notify'				=> false,
-		'notify_set'			=> 0,
-		'poster_ip'				=> $options['poster_ip'],
-		'post_edit_locked'		=> (int) $options['post_edit_locked'],
-		'bbcode_bitfield'		=> $message_parser->bbcode_bitfield,
-		'bbcode_uid'			=> $message_parser->bbcode_uid,
-		'message'				=> $message_parser->message,
-		'attachment_data'		=> array(),
-		'filename_data'			=> array(),
-		'force_approved_state'	=> true,
-	);
+	// Merge the data we grabbed from the forums/topics/posts tables
+	$data = array_merge($data, $post_data);
 
 	// Aaaand, submit it.
-	submit_post($mode, $options['topic_title'], (!$real_poster) ? $user_data['username'] : phpbb::$user->data['username'], $options['topic_type'], $poll, $data, true);
+	submit_post($mode, $options['topic_title'], (($mode != 'edit' && isset($options['poster_id']) && $options['poster_id']) ? $user_data['username'] : phpbb::$user->data['username']), $options['topic_type'], $poll, $data);
 
-	$return = true;
-	if ($mode == 'post')
-	{
-		$return = $data['topic_id'];
-	}
-
-	// Change the status?
+	// Change the status?  submit_post does not support setting this
 	if (isset($options['topic_status']))
 	{
 		$sql = 'UPDATE ' . TOPICS_TABLE . '
@@ -445,12 +414,24 @@ function phpbb_posting($mode, &$options, $real_poster = false, $poll = array())
 		phpbb::$db->sql_query($sql);
 	}
 
-	if (!$real_poster)
+	// Restore the user data
+	if ($mode != 'edit' && isset($options['poster_id']) && $options['poster_id'])
 	{
-		// And restore it
-		phpbb::$user->data = $old_data;
+		phpbb::$user->data = $old_user_data;
 		$auth = $old_auth;
 	}
 
-	return $return;
+	// Add the new data to the options (to grab post/topic id/etc if we want it later)
+	$options = array_merge($data, $options);
+
+	if ($mode == 'post')
+	{
+		return $data['topic_id'];
+	}
+	else if ($mode == 'reply')
+	{
+		return $data['post_id'];
+	}
+
+	return true;
 }

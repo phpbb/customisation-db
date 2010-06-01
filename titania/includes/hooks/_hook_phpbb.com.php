@@ -21,14 +21,16 @@ titania::$hook->register_ary('phpbb_com_', array(
 	'titania_page_footer',
 	array('titania_queue', 'update_first_queue_post'),
 	array('titania_topic', '__construct'),
+	array('titania_post', '__construct'),
 	array('titania_post', 'post'),
+	array('titania_post', 'edit'),
 	array('titania_queue', 'approve'),
 	array('titania_queue', 'deny'),
 	array('titania_queue', 'delete'),
 ));
 
 // Do we need to install the DB stuff?
-if (!isset(phpbb::$config['titania_hook_phpbb_com']))
+if (!isset(phpbb::$config['titania_hook_phpbb_com']) || version_compare(phpbb::$config['titania_hook_phpbb_com'], '1.0.1', '<'))
 {
 	phpbb::_include('../umil/umil', false, 'umil');
 
@@ -38,6 +40,11 @@ if (!isset(phpbb::$config['titania_hook_phpbb_com']))
 		'1.0.0' => array(
 			'table_column_add' => array(
 				array(TITANIA_TOPICS_TABLE, 'phpbb_topic_id', array('UINT', 0)),
+			),
+		),
+		'1.0.1' => array(
+			'table_column_add' => array(
+				array(TITANIA_POSTS_TABLE, 'phpbb_post_id', array('UINT', 0)),
 			),
 		),
 	),
@@ -208,6 +215,10 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			$post_object->topic->topic_first_post_user_id = titania::$config->forum_style_robot;
 			$lang_var = 'STYLE_QUEUE_TOPIC';
 		break;
+
+		default :
+			return;
+		break;
 	}
 
 	$description = $contrib->contrib_desc;
@@ -270,19 +281,60 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 
 	$options = array(
 		'poster_id'				=> $post_object->post_user_id,
-		'forum_id' 				=> $forum_id,
 		'topic_id'				=> $post_object->topic->phpbb_topic_id,
 		'topic_title'			=> $post_object->post_subject,
 		'post_text'				=> $post_text,
 	);
 
-	phpbb_posting('reply', $options);
+	$post_object->phpbb_post_id = phpbb_posting('reply', $options);
+
+	$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
+		SET phpbb_post_id = ' . $post_object->phpbb_post_id . '
+		WHERE post_id = ' . $post_object->post_id;
+	phpbb::$db->sql_query($sql);
+}
+
+function phpbb_com_titania_post_edit($hook, &$post_object)
+{
+	if (defined('IN_TITANIA_CONVERT') || !$post_object->phpbb_post_id)
+	{
+		return;
+	}
+
+	$forum_id = phpbb_com_forum_id($post_object->topic->topic_category, $post_object->post_type);
+
+	if (!$forum_id)
+	{
+		return;
+	}
+
+	titania::_include('functions_posting', 'phpbb_posting');
+
+	$post_text = $post_object->post_text;
+	titania_decode_message($post_text, $post_object->post_text_uid);
+
+	$post_text .= "\n\n" . $post_object->get_url();
+
+	$options = array(
+		'post_id'				=> $post_object->phpbb_post_id,
+		'topic_title'			=> $post_object->post_subject,
+		'post_text'				=> $post_text,
+	);
+
+	phpbb_posting('edit', $options);
 }
 
 function phpbb_com_titania_topic___construct($hook, &$topic_object)
 {
 	$topic_object->object_config = array_merge($topic_object->object_config, array(
 		'phpbb_topic_id'	=> array('default' => 0),
+	));
+}
+
+function phpbb_com_titania_post___construct($hook, &$post_object)
+{
+	$post_object->object_config = array_merge($post_object->object_config, array(
+		'phpbb_post_id'	=> array('default' => 0),
 	));
 }
 

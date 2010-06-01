@@ -250,7 +250,7 @@ class titania_revision extends titania_database_object
 							'post_text'				=> $body_reply
 						);
 						$options_reply = array_merge($options_reply, $options);
-						phpbb_posting('reply', $options_reply, true);
+						phpbb_posting('reply', $options_reply);
 					}
 					else
 					{
@@ -559,7 +559,11 @@ class titania_revision extends titania_database_object
 
 		// Delete the queue item
 		$queue = $this->get_queue();
-		$queue->delete();
+
+		if ($queue !== false)
+		{
+			$queue->delete();
+		}
 
 		// Delete the attachment
 		$attachment = new titania_attachment(TITANIA_CONTRIB);

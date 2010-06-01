@@ -412,7 +412,7 @@ class titania_queue extends titania_message_object
 					'post_text'				=> $body_reply,
 				);
 				$options_reply = array_merge($options, $options_reply);
-				phpbb_posting('reply', $options_reply, true);
+				phpbb_posting('reply', $options_reply);
 			}
 			else
 			{
@@ -432,7 +432,7 @@ class titania_queue extends titania_message_object
 					'topic_id'				=> $release_topic_id,
 				);
 				$options_reply = array_merge($options, $options_reply);
-				phpbb_posting('reply', $options_reply, true);
+				phpbb_posting('reply', $options_reply);
 			}
 		}
 
