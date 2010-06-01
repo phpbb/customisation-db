@@ -838,12 +838,6 @@ class titania_post extends titania_message_object
 				{
 					case TITANIA_ACCESS_PUBLIC :
 						$to_db['public']--;
-						//Temporary while we try to figure out what's causing this.
-						//I'm guessing it's here because this is the only place it gets decreased.
-						if ($to_db['public'] < 0)
-						{
-							titania::log(TITANIA_DEBUG, 'Public access less than 0.');
-						}
 					break;
 
 					case TITANIA_ACCESS_AUTHORS :
