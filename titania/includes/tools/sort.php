@@ -39,6 +39,13 @@ class titania_sort extends titania_object
 	public $url_parameters = false;
 
 	/**
+	* Have we requested the sort data already?
+	*
+	* @var bool
+	*/
+	public $request_completed = false;
+
+	/**
 	 * Set some default variables, set template_vars default values
 	 */
 	public function __construct()
@@ -116,11 +123,18 @@ class titania_sort extends titania_object
 	 */
 	public function request()
 	{
+		if ($this->request_completed)
+		{
+			return;
+		}
+
 		$this->get_start();
 		$this->get_limit();
 
 		$this->get_sort_key();
 		$this->get_sort_dir();
+
+		$this->request_completed = true;
 	}
 
 	/**

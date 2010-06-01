@@ -221,8 +221,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		{
 			// Setup the sort tool
 			$sort = self::build_sort();
-			$sort->request();
 		}
+		$sort->request();
 
 		$sql_ary = array(
 			'SELECT'	=> 'p.*',
