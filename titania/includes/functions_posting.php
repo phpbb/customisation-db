@@ -260,7 +260,8 @@ function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
  * @param $mode post/reply/edit
  * @param $options array Array with post data, see our documentation for exact required items
  * @param $poll array Array with poll options.
- * @return mixed false if there was an error, topic_id when the new topic was created and true when reply/edit is done
+ *
+ * @return mixed false if there was an error, else topic_id when $mode is post, post_id when $mode is reply, true when mode is edit
  */
 function phpbb_posting($mode, &$options, $poll = array())
 {
