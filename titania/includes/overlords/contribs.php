@@ -30,6 +30,7 @@ class contribs_overlord
 		't' => array('UPDATE_TIME', 'c.contrib_last_update'),
 		'c' => array('SORT_CONTRIB_NAME', 'c.contrib_name'),
 		'r' => array('RATING', 'c.contrib_rating'),
+		'd' => array('DOWNLOADS', 'c.contrib_downloads'),
 	);
 
 	/**
