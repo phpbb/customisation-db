@@ -140,15 +140,14 @@ class phpbb
 		}
 
 		// Generate logged in/logged out status
-		$l_login_redirect = titania_url::$current_page_url;
 		if (self::$user->data['user_id'] != ANONYMOUS)
 		{
-			$u_login_logout = self::append_sid('ucp', 'mode=logout', true, self::$user->session_id);
+			$u_login_logout = titania_url::build_url('logout');
 			$l_login_logout = sprintf(self::$user->lang['LOGOUT_USER'], self::$user->data['username']);
 		}
 		else
 		{
-			$u_login_logout = self::append_sid('ucp', 'mode=login&amp;redirect=' . $l_login_redirect);
+			$u_login_logout = titania_url::build_url('login');
 			$l_login_logout = self::$user->lang['LOGIN'];
 		}
 
@@ -207,7 +206,7 @@ class phpbb
 			'S_LOGIN_ACTION'		=> titania_url::$current_page_url,
 			'U_LOGIN_LOGOUT'		=> $u_login_logout,
 			'L_LOGIN_LOGOUT'		=> $l_login_logout,
-			'LOGIN_REDIRECT'		=> $l_login_redirect,
+			'LOGIN_REDIRECT'		=> titania_url::$current_page_url,
 
 			'SESSION_ID'			=> self::$user->session_id,
 
@@ -266,7 +265,7 @@ class phpbb
 	/**
 	* Generate login box or verify password
 	*/
-	function login_box($l_explain = '', $l_success = '', $admin = false, $s_display = true)
+	function login_box($redirect = '', $l_explain = '', $l_success = '', $admin = false, $s_display = true)
 	{
 		self::_include('captcha/captcha_factory', 'phpbb_captcha_factory');
 		self::$user->add_lang('ucp');
@@ -353,7 +352,21 @@ class phpbb
 			// The result parameter is always an array, holding the relevant information...
 			if ($result['status'] == LOGIN_SUCCESS)
 			{
-				redirect(titania_url::build_url(titania_url::$current_page, titania_url::$params));
+				$redirect = request_var('redirect', '');
+
+				if ($redirect)
+				{
+					$redirect = titania_url::unbuild_url($redirect);
+
+					$base = $append = false;
+					titania_url::split_base_params($base, $append, $redirect);
+
+					redirect(titania_url::build_url($base, $append));
+				}
+				else
+				{
+					redirect(titania_url::build_url(titania_url::$current_page, titania_url::$params));
+				}
 			}
 
 			// Something failed, determine what...
@@ -417,6 +430,11 @@ class phpbb
 		$s_hidden_fields = array(
 			'sid'		=> self::$user->session_id,
 		);
+
+		if ($redirect)
+		{
+			$s_hidden_fields['redirect'] = $redirect;
+		}
 
 		if ($admin)
 		{

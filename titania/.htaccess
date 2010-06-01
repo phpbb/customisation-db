@@ -42,13 +42,13 @@ Rewriterule ^(mod|style|converter|contributions?)/(create)/?([^/]+)?$						./con
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^(mod|style|converter|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			./contributions/index.php?c=$2&page=$3&type=$1 [NC]
 
-#rating
-RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^rate/?([^/]+)?$									./index.php?action=rate [NC]
-
 #search/faq/cron
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^(search|faq|cron)/?([^/]+)?$						./$1.php [NC]
+
+#rating/login/logout
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^(rate|login|logout)/?([^/]+)?$						./index.php?action=$1 [NC]
 
 #misc index stuff
 RewriteCond %{REQUEST_FILENAME} !-f

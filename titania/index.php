@@ -20,6 +20,20 @@ $action = request_var('action', '');
 
 switch ($action)
 {
+	case 'login':
+		phpbb::login_box(titania_url::build_url(''));
+	break;
+
+	case 'logout':
+		if (phpbb::$user->data['user_id'] != ANONYMOUS)
+		{
+			phpbb::$user->session_kill();
+			phpbb::$user->session_begin();
+		}
+
+		redirect(titania_url::build_url(''));
+	break;
+
 	/**
 	* Rate something & remove a rating from something
 	*/
