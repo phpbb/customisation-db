@@ -910,6 +910,7 @@ class titania_post extends titania_message_object
 
 			'U_VIEW'						=> $this->get_url(),
 			'U_EDIT'						=> $this->acl_get('edit') ? $this->get_url('edit') : '',
+			'U_QUICKEDIT'					=> $this->acl_get('edit') ? titania_url::build_url('ajax', array('action' => 'quick_edit', 'p' => $this->post_id)) : '',
 			'U_DELETE'						=> ($this->acl_get('delete') && (!$this->post_deleted || phpbb::$auth->acl_get('u_titania_post_hard_delete'))) ? $this->get_url('delete') : '',
 			'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
 			'U_WARN'						=> false,//$this->get_url('warn'),

@@ -84,6 +84,27 @@ $(document).ready(function(){
 			});
 		}
 	);
+
+	$('.postbody > .profile-icons > .edit-icon').click(function() {
+		var postbody = $(this).parent().parent();
+		var post = $(postbody).children('.content');
+
+		// Ajax time
+		$.ajax({
+			type: "POST",
+			url: $(post).parent().children('.quick_edit').val(),
+			success: function(html){
+				$(post).replaceWith(html);
+
+				var quickeditor = $(postbody).children('form').children('textarea');
+
+				$(quickeditor).elastic();
+			}
+		});
+
+		// Do not follow the link
+		return false;
+	});
 });
 
 function hide_quotebox(box)

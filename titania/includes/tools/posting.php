@@ -53,6 +53,10 @@ class titania_posting
 				titania::page_footer(true, $template_body);
 			break;
 
+			case 'quick_edit' :
+				$this->quick_edit(request_var('p', 0));
+			break;
+
 			case 'delete' :
 				$this->delete(request_var('p', 0));
 			break;
@@ -235,6 +239,46 @@ class titania_posting
 			'S_DISPLAY_REVIEW'	=> true,
 		));
 		titania::page_header('POST_REPLY');
+	}
+
+	/**
+	* Quick Edit a post
+	*
+	* @param mixed $post_id
+	*/
+	public function quick_edit($post_id)
+	{
+		$submit = isset($_POST['submit']) ? true : false;
+
+		if (!$submit || !check_form_key('postform'))
+		{
+			$this->edit($post_id);
+
+			return;
+		}
+
+		// Load the stuff we need
+		$post_object = $this->load_post($post_id);
+
+		// Check permissions
+		if (!$post_object->acl_get('edit'))
+		{
+			titania::needs_auth();
+		}
+
+		// Grab some data
+		$for_edit = $post_object->generate_text_for_edit();
+
+		// Set the post text
+		$post_object->post_text = utf8_normalize_nfc(request_var('message', '', true));
+
+		// Generate for storage based on previous options
+		$post_object->generate_text_for_storage($for_edit['allow_bbcode'], $for_edit['allow_urls'], $for_edit['allow_smilies']);
+
+		// Submit
+		$post_object->submit();
+
+		redirect($post_object->get_url());
 	}
 
 	/**

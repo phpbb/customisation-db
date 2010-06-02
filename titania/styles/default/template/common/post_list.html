@@ -1,3 +1,5 @@
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.elastic.js"></script>
+
 <!-- IF U_POST_REPLY or PAGINATION or TOTAL_RESULTS -->
 <div class="topic-actions">
 	<div class="buttons">
@@ -20,6 +22,8 @@
 			<!-- IF posts.S_IGNORE_POST -->
 				<div class="ignore">{posts.L_IGNORE_POST}</div>
 			<!-- ELSE -->
+
+			<!-- IF posts.U_QUICKEDIT --><input type="hidden" class="quick_edit" value="{posts.U_QUICKEDIT}" /><!-- ENDIF -->
 
 		<!-- IF not S_IS_BOT -->
 			<!-- IF posts.U_EDIT or posts.U_DELETE or posts.U_REPORT or posts.U_WARN or posts.U_INFO or posts.U_QUOTE -->

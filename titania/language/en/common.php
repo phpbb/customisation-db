@@ -106,6 +106,7 @@ $lang = array_merge($lang, array(
 	'EDIT'						=> 'Edit',
 	'EDITED_MESSAGE'			=> 'Last edited by %1$s on %2$s',
 	'EDIT_CATEGORY'				=> 'Edit Category',
+	'ERROR'						=> 'Error',
 
 	'FILE_NOT_EXIST'			=> 'File does not exist: %s',
 

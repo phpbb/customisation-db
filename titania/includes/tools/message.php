@@ -154,6 +154,12 @@ class titania_message
 				}
 			}
 
+			// We have to reset some request data if we are going to a full editor (checkboxes will be set according to their settings)
+			if ($full_editor)
+			{
+				$this->reset_request_data();
+			}
+
 			$this->post_object->post_data($this);
 		}
 
@@ -385,6 +391,42 @@ class titania_message
 		}
 
 		return $data;
+	}
+
+	/**
+	* Reset the request data to the post object's options (used for some stuff like the full editor link)
+	*/
+	public function reset_request_data()
+	{
+		$for_edit = $this->post_object->generate_text_for_edit();
+
+		// ! in the first position means we will do a false check
+		$check_boxes = array(
+			'!allow_bbcode'		=> 'disable_bbcode',
+			'!allow_url'		=> 'disable_magic_url',
+			'!allow_smilies'	=> 'disable_smilies',
+			'topic_sticky'		=> 'sticky_topic',
+			'topic_locked'		=> 'lock_topic',
+			'lock'				=> 'lock',
+		);
+
+		// Handle checkboxes (isset($_POST[]))
+		foreach ($check_boxes as $edit_name => $post_name)
+		{
+			if ($edit_name[0] == '!')
+			{
+				$edit_name = substr($edit_name, 1);
+
+				if (isset($for_edit[$edit_name]) && !$for_edit[$edit_name])
+				{
+					$_POST[$post_name] = true;
+				}
+			}
+			else if (isset($for_edit[$edit_name]) && $for_edit[$edit_name])
+			{
+				$_POST[$post_name] = true;
+			}
+		}
 	}
 
 	/**

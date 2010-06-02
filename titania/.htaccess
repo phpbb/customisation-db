@@ -54,6 +54,10 @@ Rewriterule ^(rate|login|logout)/?([^/]+)?$						./index.php?action=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^index/([^/]+)/([^/]+)?$							./index.php?action=$1 [NC]
 
+#ajax
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^ajax/([^/]+)?$										./ajax.php [NC]
+
 #categories
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$		./index.php?c=$4 [NC]
