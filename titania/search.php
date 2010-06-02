@@ -21,7 +21,7 @@ titania::add_lang('search');
 
 // Available Search Types
 $search_types = array(
-	TITANIA_CONTRIB		=> 'CONTRIBUTION',
+	TITANIA_CONTRIB		=> 'CONTRIBUTION_NAME_DESCRIPTION',
 	TITANIA_FAQ			=> 'CONTRIB_FAQ',
 	TITANIA_SUPPORT		=> 'CONTRIB_SUPPORT',
 );
