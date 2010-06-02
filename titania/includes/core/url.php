@@ -342,6 +342,9 @@ class titania_url
 			self::$params[$name] = $value;
 		}
 
+		// Style cannot ever be allowed as a URL parameter because it is used by phpBB to request a custom board style
+		unset(self::$params['style']);
+
 		// Merge the parameters into the get/request superglobals.  Merge them to prevent a parameter in the parameters part of the URL from over-writting one that is already in here
 		$_GET = array_merge(self::$params, $_GET);
 		$_REQUEST = array_merge(self::$params, $_REQUEST);
