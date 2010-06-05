@@ -30,7 +30,7 @@ switch ($action)
 	/**
 	* Quick Edit
 	*/
-	case 'quick_edit':
+	case 'quick_edit' :
 		phpbb::$user->add_lang('viewtopic');
 
 		$post_id = request_var('p', 0);

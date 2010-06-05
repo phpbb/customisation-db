@@ -280,7 +280,10 @@ class titania_posting
 		// Submit
 		$post_object->submit();
 
-		redirect($post_object->get_url());
+		echo $post_object->generate_text_for_display();
+
+		garbage_collection();
+		exit_handler();
 	}
 
 	/**

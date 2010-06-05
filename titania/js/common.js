@@ -98,7 +98,25 @@ $(document).ready(function(){
 
 				var quickeditor = $(postbody).children('form').children('textarea');
 
+				// Make elastic
 				$(quickeditor).elastic();
+
+				$(quickeditor).parent().children('.submit-buttons').children('[name=submit]').click(function() {
+					$(this).parent().hide();
+
+					// Ajax time
+					$.ajax({
+						type: "POST",
+						url: $(quickeditor).parent().attr('action'),
+						data: $(quickeditor).parent().serialize() + '&submit=1',
+						success: function(html){
+							$(quickeditor).parent().replaceWith('<div class="content">' + html + '</div>');
+						}
+					});
+
+					// Do not redirect
+					return false;
+				});
 			}
 		});
 
@@ -106,6 +124,7 @@ $(document).ready(function(){
 		return false;
 	});
 
+	// Make elastic textareas elastic
 	$('.elastic').elastic();
 });
 
