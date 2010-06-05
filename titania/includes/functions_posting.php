@@ -351,12 +351,16 @@ function phpbb_posting($mode, &$options, $poll = array())
 		phpbb::$auth->acl(phpbb::$user->data);
 	}
 
+	// When editing a post, submit post does not update the bbcode uid, we have to specify the old one.
+	if ($mode == 'edit')
+	{
+		$message_parser->bbcode_uid = $post_data['bbcode_uid'];
+	}
 
 	if ($options['enable_bbcode'])
 	{
 		$message_parser->parse($options['enable_bbcode'], $options['enable_urls'], $options['enable_smilies'], (bool) phpbb::$auth->acl_get('f_img', $post_data['forum_id']), (bool) phpbb::$auth->acl_get('f_flash', $post_data['forum_id']),  (bool) phpbb::$auth->acl_get('f_reply', $post_data['forum_id']), phpbb::$config['allow_post_links']);
 	}
-
 
 	$data = array(
 		'topic_title'			=> $options['topic_title'],
