@@ -3,6 +3,11 @@
  * common.css
  */
 
+textarea.elastic {
+	min-height: 100px;
+	max-height: 400px;
+}
+
 /* Common styles
 --------------------------------------------- */
 h2.panel-name {

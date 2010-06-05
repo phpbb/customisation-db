@@ -6,17 +6,17 @@
 				<fieldset class="fields1">
 					<dl style="clear: left;">
 						<dt><label for="subject-ns">{L_SUBJECT}:</label></dt>
-						<dd><input type="text" name="subject" id="subject-ns" size="45" maxlength="64" tabindex="2" value="{SUBJECT}" class="inputbox autowidth" /></dd>
+						<dd><input type="text" name="subject" id="subject-ns" size="45" maxlength="64" value="{SUBJECT}" class="inputbox autowidth" /></dd>
 					</dl>
-				<div id="message-box-ns">
-					<textarea style="height: 9em;" name="message" rows="7" cols="76" tabindex="3" class="inputbox"></textarea>
+				<div>
+					<textarea style="height: 9em;" name="message" class="inputbox elastic"></textarea>
 				</div>
 				</fieldset>
 				<fieldset class="submit-buttons">
 					{S_FORM_TOKEN}
 					{QR_HIDDEN_FIELDS}
-					<input type="submit" accesskey="s" tabindex="6" name="submit" value="{L_SUBMIT}" class="button1" />&nbsp;
-					<input type="submit" accesskey="f" tabindex="7" name="full_editor" value="{L_FULL_EDITOR}" class="button2" />&nbsp;
+					<input type="submit" accesskey="s" name="submit" value="{L_SUBMIT}" class="button1" />&nbsp;
+					<input type="submit" accesskey="f" name="full_editor" value="{L_FULL_EDITOR}" class="button2" />&nbsp;
 				</fieldset>
 			</div>
 		<span class="corners-bottom"><span></span></span></div>

@@ -55,6 +55,8 @@ class titania_posting
 
 			case 'quick_edit' :
 				$this->quick_edit(request_var('p', 0));
+
+				titania::page_footer(true, $template_body);
 			break;
 
 			case 'delete' :

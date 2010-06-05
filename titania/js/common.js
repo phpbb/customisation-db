@@ -105,6 +105,8 @@ $(document).ready(function(){
 		// Do not follow the link
 		return false;
 	});
+
+	$('.elastic').elastic();
 });
 
 function hide_quotebox(box)
