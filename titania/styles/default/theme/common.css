@@ -3,11 +3,6 @@
  * common.css
  */
 
-textarea.elastic {
-	min-height: 100px;
-	max-height: 400px;
-}
-
 /* Common styles
 --------------------------------------------- */
 h2.panel-name {
@@ -597,4 +592,9 @@ fieldset dl:hover dt label.error {
 #wrap {
 	width: 900px;
 	margin: 0 auto;
+}
+
+textarea.elastic {
+	min-height: 100px;
+	max-height: 400px;
 }

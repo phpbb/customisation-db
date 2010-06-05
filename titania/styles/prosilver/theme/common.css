@@ -629,3 +629,8 @@ ul.rating li, ul.rated li {
 fieldset dl:hover dt label.error {
 	color: #BC2A4D;
 }
+
+textarea.elastic {
+	min-height: 100px;
+	max-height: 400px;
+}
