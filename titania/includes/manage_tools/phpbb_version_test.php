@@ -81,10 +81,11 @@ class phpbb_version_test
 
 		if (sizeof($limit_phpbb_versions) > 1 || (sizeof($limit_phpbb_versions) && $limit_phpbb_versions[0] != 0))
 		{
+			$revisions_selected = array();
+
 			// phpBB versions limiter
 			foreach ($limit_phpbb_versions as $limit_phpbb_version)
 			{
-				$revisions_selected = array();
 				$sql = 'SELECT revision_id
 					FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
 					WHERE phpbb_version_branch = ' . (int) substr($limit_phpbb_version, 0, 2) . '
@@ -113,6 +114,17 @@ class phpbb_version_test
 		$sql = 'SELECT revision_id FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
 			WHERE ' . phpbb::$db->sql_in_set('revision_id', array_map('intval', array_keys($revisions))) . '
 				AND phpbb_version_branch = ' . $phpbb_version_branch . '
+				AND phpbb_version_revision = \'' . phpbb::$db->sql_escape($phpbb_version_revision) . '\'';
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			unset($revisions[$row['revision_id']]);
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Don't include those which already are in the automod queue
+		$sql = 'SELECT revision_id FROM ' . TITANIA_AUTOMOD_QUEUE_TABLE . '
+			WHERE phpbb_version_branch = ' . $phpbb_version_branch . '
 				AND phpbb_version_revision = \'' . phpbb::$db->sql_escape($phpbb_version_revision) . '\'';
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
