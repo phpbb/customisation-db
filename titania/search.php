@@ -28,13 +28,13 @@ $search_types = array(
 
 //$search_fields =
 $keywords = utf8_normalize_nfc(request_var('keywords', '', true));
-$author = utf8_normalize_nfc(request_var('author', '', true));
+$user_id = request_var('u', 0);
 $search_fields = request_var('sf', '');
 $search_type = request_var('type', 0);
 //$display = request_var('display', '');
 
 // Display the advanced search page
-if (!$keywords && !$author)
+if (!$keywords && !$user_id)
 {
 	// Output search types
 	foreach ($search_types as $value => $name)
@@ -52,13 +52,26 @@ if (!$keywords && !$author)
 // Add some POST stuff to the url
 if (isset($_POST['submit']))
 {
+	$author = utf8_normalize_nfc(request_var('author', '', true));
+
 	if ($keywords)
 	{
 		titania_url::$params['keywords'] = $keywords;
 	}
 	if ($author)
 	{
-		titania_url::$params['author'] = $author;
+		$sql = 'SELECT user_id FROM ' . USERS_TABLE . '
+			WHERE username_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($author)) . '\'';
+		phpbb::$db->sql_query($sql);
+		$user_id = phpbb::$db->sql_fetchfield('user_id');
+		phpbb::$db->sql_freeresult();
+
+		if (!$user_id)
+		{
+			trigger_error('NO_USER');
+		}
+
+		titania_url::$params['u'] = $user_id;
 	}
 	if ($search_fields)
 	{
@@ -122,19 +135,8 @@ if ($keywords)
 }
 
 // Author specified?
-if ($author)
+if ($user_id)
 {
-	$sql = 'SELECT user_id FROM ' . USERS_TABLE . '
-		WHERE username_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($author)) . '\'';
-	phpbb::$db->sql_query($sql);
-	$user_id = phpbb::$db->sql_fetchfield('user_id');
-	phpbb::$db->sql_freeresult();
-
-	if (!$user_id)
-	{
-		trigger_error('NO_USER');
-	}
-
 	$query->where($query->eq('author', $user_id));
 }
 
