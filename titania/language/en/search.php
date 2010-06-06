@@ -34,11 +34,12 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-'CONTRIBUTION_NAME_DESCRIPTION' => 'Contribution Name/Description',
-'CONTRIB_SUPPORT' => 'Contribution Discussion/Support',
-'CONTRIB_FAQ' => 'Contribution FAQ',
-	'SEARCH_MSG_ONLY'		=> 'Text/Description only',
-	'SEARCH_TITLE_MSG'		=> 'Titles and Text/Description',
-	'SEARCH_TITLE_ONLY'		=> 'Titles only',
-	'SEARCH_WITHIN_TYPES'	=> 'Search within types',
+	'CONTRIBUTION_NAME_DESCRIPTION'	=> 'Contribution Name/Description',
+	'CONTRIB_FAQ'					=> 'Contribution FAQ',
+	'CONTRIB_SUPPORT'				=> 'Contribution Discussion/Support',
+
+	'SEARCH_MSG_ONLY'				=> 'Text/Description only',
+	'SEARCH_TITLE_MSG'				=> 'Titles and Text/Description',
+	'SEARCH_TITLE_ONLY'				=> 'Titles only',
+	'SEARCH_WITHIN_TYPES'			=> 'Search within types',
 ));
