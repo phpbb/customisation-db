@@ -478,7 +478,7 @@ class titania_contrib_tools
 		$modx_file = false;
 		$modx_root = $this->find_root();
 
-		if (!$modx_root)
+		if ($modx_root === false)
 		{
 			titania::add_lang('contributions');
 
@@ -549,7 +549,7 @@ class titania_contrib_tools
 	function install_demo_style($phpbb_root_path, $contrib)
 	{
 		phpbb::$user->add_lang('acp/styles');
-		
+
 		if ($phpbb_root_path[strlen($phpbb_root_path) - 1] != '/')
 		{
 			$phpbb_root_path .= '/';
@@ -588,7 +588,7 @@ class titania_contrib_tools
 
 			// Unzip to our temp directory
 			$this->extract($this->original_zip, $this->unzip_dir);
-		}	
+		}
 
 		$package_root = $this->find_root(false, 'style.cfg');
 		$stylecfg = parse_cfg_file($this->unzip_dir . $package_root . '/style.cfg');
@@ -623,7 +623,7 @@ class titania_contrib_tools
 		    $bitfield->set(12);
 		    define('TEMPLATE_BITFIELD', $bitfield->get_base64());
 		    unset($bitfield);
-	    }		
+	    }
 		$styles = new acp_styles();
 
 		// Fill the configuration variables

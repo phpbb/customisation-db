@@ -67,40 +67,41 @@ class phpbb_version_test
 		}
 
 		$revisions = array();
+		$sql = 'SELECT DISTINCT(c.contrib_id), r.revision_id FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_CONTRIBS_TABLE . ' c
+			WHERE c.contrib_id = r.contrib_id
+				AND ' . phpbb::$db->sql_in_set('c.contrib_type', $testable_types) . '
+			GROUP BY c.contrib_id
+			ORDER BY r.revision_time DESC';
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$revisions[$row['revision_id']] = $row['contrib_id'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
 		if (sizeof($limit_phpbb_versions) > 1 || (sizeof($limit_phpbb_versions) && $limit_phpbb_versions[0] != 0))
 		{
 			// phpBB versions limiter
 			foreach ($limit_phpbb_versions as $limit_phpbb_version)
 			{
-				$sql = 'SELECT DISTINCT(rp.contrib_id), rp.revision_id
-					FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . ' rp, ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
-					WHERE rp.phpbb_version_branch = ' . (int) substr($limit_phpbb_version, 0, 2) . '
-						AND rp.phpbb_version_revision = \'' . phpbb::$db->sql_escape(substr($limit_phpbb_version, 2)) . '\'
-						AND c.contrib_id = rp.contrib_id
-						AND ' . phpbb::$db->sql_in_set('c.contrib_type', $testable_types) . '
-						AND r.revision_id = rp.revision_id
-					ORDER BY r.revision_time DESC';
+				$revisions_selected = array();
+				$sql = 'SELECT revision_id
+					FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+					WHERE phpbb_version_branch = ' . (int) substr($limit_phpbb_version, 0, 2) . '
+						AND phpbb_version_revision = \'' . phpbb::$db->sql_escape(substr($limit_phpbb_version, 2)) . '\'';
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
-					$revisions[$row['revision_id']] = $row['contrib_id'];
+					if (isset($revisions[$row['revision_id']]))
+					{
+						$revisions_selected[$row['revision_id']] = $revisions[$row['revision_id']];
+					}
 				}
 				phpbb::$db->sql_freeresult($result);
 			}
-		}
-		else
-		{
-			// All
-			$sql = 'SELECT DISTINCT(r.contrib_id), r.revision_id FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_CONTRIBS_TABLE . ' c
-				WHERE c.contrib_id = r.contrib_id
-					AND ' . phpbb::$db->sql_in_set('c.contrib_type', $testable_types) . '
-				ORDER BY r.revision_time DESC';
-			$result = phpbb::$db->sql_query($sql);
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$revisions[$row['revision_id']] = $row['contrib_id'];
-			}
-			phpbb::$db->sql_freeresult($result);
+
+			// swap
+			$revisions = $revisions_selected;
 		}
 
 		if (!sizeof($revisions))
