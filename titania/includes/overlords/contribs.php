@@ -208,7 +208,7 @@ class contribs_overlord
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		if (!$sort->sql_count($sql_ary, 'c.contrib_id'))
+		if (!$sort->sql_count($sql_ary, 'DISTINCT(c.contrib_id)'))
 		{
 			// No results...no need to query more...
 			return;
