@@ -85,16 +85,16 @@ $help = array(
 		1 => 'Creating and Managing Contributions'
 	),
 	array(
-		0 => 'Creating a Customisation',
-		1 => 'As with any customisation, authors are requested to follow certain guidelines when submitting their contribution.  The <a href="http://area51.phpbb.com/docs/coding-guidelines.html">Coding Guidelines</a>, though seemingly daunting at first, are actually your friend.  They should be followed as closely as possible to assist you in getting your contribution to the community published.  The <a href="http://www.phpbb.com/mods/mpv/">phpBB MOD pre-validator</a> (aka “MPV”) will be run against the customisation upon submission and will check for things such as correct licensing, current phpBB version and current <a href="http://www.phpbb.com/mods/modx/">MODX</a> version.'
+		0 => 'Creating a Contribution',
+		1 => 'As with any contribution, authors are requested to follow certain guidelines when submitting their own contribution.  The <a href="http://area51.phpbb.com/docs/coding-guidelines.html">Coding Guidelines</a>, though seemingly daunting at first, are actually your friend.  They should be followed as closely as possible to assist you in getting your contribution to the community published.  In the case of a MOD, the <a href="http://www.phpbb.com/mods/mpv/">phpBB MOD pre-validator</a> (aka “MPV”) will be run against the submitted revision and will check for things such as correct licensing, current phpBB version and current <a href="http://www.phpbb.com/mods/modx/">MODX</a> version.'
 	),
 	array(
-		0 => 'Submitting a Customisation',
-		1 => 'So you’ve made a customisation.  Let’s get that puppy published!!<br /><br />To submit a customisation, go to the Customisation Database and within that page you will find an image link that states “New Contribution”.  Once clicked on you will be able to enter in the customisation name, select the customisation type, add some wording to describe the customisation (smilies and bbcode is allowed), select the category(ies) that the customisation fits into, add co-authors (if any) and screenshots as well.  Please keep in mind that as you are submitting the customisation, it is your name the customisation will be aligned with.'
+		0 => 'Submitting a Contribution',
+		1 => 'So you’ve made a contribution.  Let’s get that puppy published!!<br /><br />To submit a contribution, go to the Customisation Database and within that page you will find an image link that states “New Contribution”.  Once clicked on you will be able to enter in the contribution name, select the contribution type, add some wording to describe the contribution (smilies and bbcode is allowed), select the category(ies) that the contribution fits into, add co-authors (if any) and screenshots as well.  Please keep in mind that as you are submitting the contribution, it is your name the contribution will be aligned with.'
 	),
 	array(
-		0 => 'Managing Customisations',
-		1 => 'Once your customisation is uploaded successfully into Titania, you are able to manage the customisation.  After selecting your contribution by clicking on "My Contributions" at the top of the page, you may add additional information to the customisation via the "Manage Contribution" tab.  You are able to amend the description of the contribution, upload screen shots, change ownership of the contribution (please note this is irreversible so ensure you really want to give another user ownership of your contribution), change the categories the contribution fits under as well as input a demo url so users can see first hand what the customisation looks like and how it works.'
+		0 => 'Managing Contributions',
+		1 => 'Once your contribution is uploaded successfully into Titania, you are able to manage it.  After selecting your contribution by clicking on "My Contributions" at the top of the page, you may add additional information to it via the "Manage Contribution" tab.  You are able to amend the description of the contribution, upload screen shots, change ownership of the contribution (please note this is irreversible so ensure you really want to give another user ownership of your contribution), change the categories the contribution fits under as well as input a demo url so users can see firsthand what the contribution looks like and how it works.'
 	),
 	array(
 		0 => 'Submitting a new Revision',
