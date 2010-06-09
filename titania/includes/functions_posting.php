@@ -257,7 +257,7 @@ function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
 
 /**
  * Allow to create a new topic, to reply to a topic, to edit a post or the first_post of a topic in database
- * @param $mode post/reply/edit
+ * @param $mode post/reply/edit/edit_first_post/edit_last_post
  * @param $options array Array with post data, see our documentation for exact required items
  * @param $poll array Array with poll options.
  *
@@ -265,7 +265,7 @@ function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
  */
 function phpbb_posting($mode, &$options, $poll = array())
 {
-	if (!in_array($mode, array('post', 'reply', 'edit')))
+	if (!in_array($mode, array('post', 'reply', 'edit', 'edit_first_post', 'edit_last_post')))
 	{
 		return false;
 	}
@@ -306,6 +306,34 @@ function phpbb_posting($mode, &$options, $poll = array())
 		$post_data = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 	}
+	else if ($mode == 'edit_first_post')
+	{
+		$sql = 'SELECT f.*, t.*, p.*
+			FROM ' . FORUMS_TABLE . ' f, ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
+			WHERE t.topic_id = ' . (int) $options['topic_id'] . '
+				AND p.post_id = t.topic_first_post_id
+				AND f.forum_id = t.forum_id';
+		$result = phpbb::$db->sql_query($sql);
+		$post_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		//http://tracker.phpbb.com/browse/PHPBB3-9644
+		$mode = 'edit';
+	}
+	else if ($mode == 'edit_last_post')
+	{
+		$sql = 'SELECT f.*, t.*, p.*
+			FROM ' . FORUMS_TABLE . ' f, ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
+			WHERE t.topic_id = ' . (int) $options['topic_id'] . '
+				AND p.post_id = t.topic_last_post_id
+				AND f.forum_id = t.forum_id';
+		$result = phpbb::$db->sql_query($sql);
+		$post_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		//http://tracker.phpbb.com/browse/PHPBB3-9644
+		$mode = 'edit';
+	}
 	else // post
 	{
 		$sql = 'SELECT *
@@ -321,7 +349,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 		return false;
 	}
 
-	if ($mode != 'edit' && isset($options['poster_id']) && $options['poster_id'])
+	if (isset($options['poster_id']) && $options['poster_id'])
 	{
 		// Some data for the ugly fix below :P
 		$sql = 'SELECT username, user_colour, user_permissions, user_type
@@ -352,7 +380,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 	}
 
 	// When editing a post, submit post does not update the bbcode uid, we have to specify the old one.
-	if ($mode == 'edit')
+	if (in_array($mode, array('edit', 'edit_first_post', 'edit_last_post')))
 	{
 		$message_parser->bbcode_uid = $post_data['bbcode_uid'];
 	}
@@ -420,7 +448,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 	}
 
 	// Restore the user data
-	if ($mode != 'edit' && isset($options['poster_id']) && $options['poster_id'])
+	if (isset($options['poster_id']) && $options['poster_id'])
 	{
 		phpbb::$user->data = $old_user_data;
 		$auth = $old_auth;
