@@ -289,6 +289,7 @@ class titania_contribution extends titania_message_object
 			// Get translations
 			$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . '
 				WHERE object_type = ' . TITANIA_TRANSLATION . '
+					AND is_orphan = 0
 					AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', array_keys($this->revisions)));
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
@@ -357,12 +358,6 @@ class titania_contribution extends titania_message_object
 	 */
 	public function assign_details($simple = false, $return = false)
 	{
-		if (!$simple)
-		{
-			// Get the rating object
-			$this->get_rating();
-		}
-
 		$vars = array(
 			// Contribution data
 			'CONTRIB_NAME'					=> $this->contrib_name,
@@ -373,7 +368,7 @@ class titania_contribution extends titania_message_object
 
 			'CONTRIB_RATING'				=> $this->contrib_rating,
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
-			'CONTRIB_RATING_STRING'			=> (!$simple) ? $this->rating->get_rating_string() : '',
+			'CONTRIB_RATING_STRING'			=> ($this->rating) ? $this->rating->get_rating_string() : '',
 
 			'CONTRIB_ANNOUNCEMENT_TOPIC'	=> ($this->contrib_release_topic_id) ? sprintf(phpbb::$user->lang['ANNOUNCEMENT_TOPIC_VIEW'], '<a href="' . phpbb::append_sid('viewtopic', 't='.$this->contrib_release_topic_id) . '">', '</a>') : false,
 			'L_ANNOUNCEMENT_TOPIC'			=> (titania::$config->support_in_titania) ? phpbb::$user->lang['ANNOUNCEMENT_TOPIC'] : phpbb::$user->lang['ANNOUNCEMENT_TOPIC_SUPPORT'],

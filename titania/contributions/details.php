@@ -54,6 +54,7 @@ if ($page == 'report')
 titania::$contrib->get_download();
 titania::$contrib->get_revisions();
 titania::$contrib->get_screenshots();
+titania::$contrib->get_rating();
 
 titania::$contrib->assign_details();
 
