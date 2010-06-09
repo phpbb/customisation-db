@@ -374,11 +374,14 @@ class titania_queue extends titania_message_object
 		if (titania_types::$types[$contrib->contrib_type]->forum_robot && titania_types::$types[$contrib->contrib_type]->forum_database)
 		{
 			// Global body and options
+			$contrib_description = $contrib->contrib_desc;
+			titania_decode_message($contrib_description, $contrib->contrib_desc_uid);
+
 			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->create_public],
 				$contrib->contrib_name,
 				$contrib->author->get_url(),
 				users_overlord::get_user($contrib->author->user_id, '_username'),
-				titania_decode_message($contrib->contrib_desc, $contrib->contrib_desc_uid),
+				$contrib_description,
 				$revision->revision_version,
 				titania_url::build_url('download', array('id' => $revision->attachment_id)),
 				$contrib->download['real_filename'],
