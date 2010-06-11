@@ -16,6 +16,8 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+//define('TEST_INSTALLATION', true);
+
 titania::$hook->register_ary('phpbb_com_', array(
 	'titania_page_header',
 	'titania_page_footer',
@@ -59,6 +61,11 @@ if (!isset(phpbb::$config['titania_hook_phpbb_com']) || version_compare(phpbb::$
 
 function phpbb_com_titania_page_header($hook, $page_title)
 {
+	if (defined('TEST_INSTALLATION'))
+	{
+		return;
+	}
+
 	phpbb::$template->assign_vars(array(
 		'S_BODY_CLASS'		=> 'customise customisation-database',
 		'S_IS_WEBSITE'		=> true,
@@ -81,6 +88,11 @@ function phpbb_com_titania_page_header($hook, $page_title)
 
 function phpbb_com_titania_page_footer($hook, $run_cron, $template_body)
 {
+	if (defined('TEST_INSTALLATION'))
+	{
+		return;
+	}
+
 	// Setup the phpBB.com footer
 	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/', 'website');
 	phpbb::$template->set_filenames(array(
@@ -377,6 +389,11 @@ function phpbb_com_move_queue_topic($queue_object)
 
 function phpbb_com_forum_id($type, $mode)
 {
+	if (defined('TEST_INSTALLATION'))
+	{
+		return 2;
+	}
+
 	switch ($type)
 	{
 		case TITANIA_TYPE_MOD :
