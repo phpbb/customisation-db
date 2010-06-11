@@ -108,7 +108,7 @@ else
 	$attachment['physical_filename'] = utf8_basename($attachment['attachment_directory']) . '/' . utf8_basename($attachment['physical_filename']);
 }
 
-if ($attachment['is_orphan'] && !phpbb::$auth->acl_get('a_attach'))
+if ($attachment['is_orphan'] && phpbb::$user->data['user_id'] != $attachment['attachment_user_id'] && !phpbb::$auth->acl_get('a_attach'))
 {
 	trigger_error('ERROR_NO_ATTACHMENT');
 }

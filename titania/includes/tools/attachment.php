@@ -101,6 +101,7 @@ class titania_attachment extends titania_database_object
 		$this->object_config = array_merge($this->object_config, array(
 			'attachment_id'			=> array('default' => 0),
 			'attachment_access'		=> array('default' => TITANIA_ACCESS_PUBLIC),
+			'attachment_user_id'	=> array('default' => (int) phpbb::$user->data['user_id']),
 			'object_type'			=> array('default' => 0),
 			'object_id'				=> array('default' => 0),
 

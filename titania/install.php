@@ -949,6 +949,12 @@ $versions = array(
 		'custom' => 'titania_custom',
 	),
 
+	'0.3.4' => array(
+		'table_column_add' => array(
+			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_user_id', array('UINT', 0)),
+		),
+	),
+
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
 
