@@ -251,8 +251,54 @@ class titania_posting
 	public function quick_edit($post_id)
 	{
 		$submit = isset($_POST['submit']) ? true : false;
+		$full_editor = isset($_POST['full_editor']) ? true : false;
 
-		if (!$submit || !check_form_key('postform'))
+		// AJAX output
+		if (!$submit && !$full_editor)
+		{
+			phpbb::$user->add_lang('viewtopic');
+
+			// Load the stuff we need
+			$post_object = $this->load_post($post_id);
+
+			// Check permissions
+			if (!$post_object->acl_get('edit'))
+			{
+				echo phpbb::$user->lang['NO_AUTH'];
+
+				garbage_collection();
+				exit_handler();
+			}
+
+			$post_message = $post_object->post_text;
+			titania_decode_message($post_message, $post_object->post_text_uid);
+
+			add_form_key('postform');
+
+			phpbb::$template->assign_vars(array(
+				'MESSAGE'		=> $post_message,
+
+				'U_QR_ACTION'	=> $post_object->get_url('quick_edit'),
+			));
+
+			phpbb::$template->set_filenames(array(
+				'quick_edit'	=> 'posting/quickedit_editor.html'
+			));
+
+			// application/xhtml+xml not used because of IE
+			header('Content-type: text/html; charset=UTF-8');
+
+			header('Cache-Control: private, no-cache="set-cookie"');
+			header('Expires: 0');
+			header('Pragma: no-cache');
+
+			phpbb::$template->display('quick_edit');
+
+			garbage_collection();
+			exit_handler();
+		}
+
+		if ($full_editor || !check_form_key('postform'))
 		{
 			$this->edit($post_id);
 

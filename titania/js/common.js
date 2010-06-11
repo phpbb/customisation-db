@@ -111,7 +111,7 @@ $(document).ready(function(){
 						url: $(quickeditor).parent().attr('action'),
 						data: $(quickeditor).parent().serialize() + '&submit=1',
 						success: function(html){
-							$(quickeditor).parent().replaceWith('<div class="content">' + html + '</div>');
+							$(quickeditor).parent().replaceWith('<div class="content text-content">' + html + '</div>');
 						}
 					});
 
