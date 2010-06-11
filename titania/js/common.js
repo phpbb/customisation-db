@@ -98,8 +98,9 @@ $(document).ready(function(){
 
 				var quickeditor = $(postbody).children('form').children('textarea');
 
-				// Make elastic
+				// Make elastic and tabby
 				$(quickeditor).elastic();
+				$(quickeditor).tabby();
 
 				$(quickeditor).parent().children('.submit-buttons').children('[name=submit]').click(function() {
 					$(this).parent().hide();
@@ -126,6 +127,9 @@ $(document).ready(function(){
 
 	// Make elastic textareas elastic
 	$('.elastic').elastic();
+
+	// Make textareas tabby
+	$('textarea').tabby();
 });
 
 function hide_quotebox(box)

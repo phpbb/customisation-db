@@ -598,3 +598,7 @@ textarea.elastic {
 	min-height: 100px;
 	max-height: 400px;
 }
+
+.content {
+	white-space: pre-wrap;
+}
