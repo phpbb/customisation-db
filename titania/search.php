@@ -26,16 +26,41 @@ $search_types = array(
 	TITANIA_SUPPORT		=> 'CONTRIB_SUPPORT',
 );
 
-//$search_fields =
+$mode = request_var('mode', '');
 $keywords = utf8_normalize_nfc(request_var('keywords', '', true));
 $user_id = request_var('u', 0);
 $search_fields = request_var('sf', '');
 $search_type = request_var('type', 0);
-//$display = request_var('display', '');
+$categories = request_var('c', array(0));
+$phpbb_versions = request_var('versions', array(''));
 
 // Display the advanced search page
-if (!$keywords && !$user_id)
+if (!$keywords && !$user_id && !isset($_POST['submit']))
 {
+	if ($mode == 'find-contribution')
+	{
+		titania::_include('functions_posting', 'generate_category_select');
+
+		titania::add_lang('contributions');
+
+		phpbb::$template->assign_vars(array(
+			'S_SEARCH_ACTION'	=> titania_url::build_url('find-contribution'),
+		));
+
+		// Display the list of phpBB versions available
+		foreach (titania::$cache->get_phpbb_versions() as $version => $name)
+		{
+			$template->assign_block_vars('phpbb_versions', array(
+				'VERSION'		=> $name,
+			));
+		}
+
+		generate_category_select($categories);
+
+		titania::page_header('SEARCH');
+		titania::page_footer(true, 'find_contribution.html');
+	}
+
 	// Output search types
 	foreach ($search_types as $value => $name)
 	{
@@ -44,6 +69,10 @@ if (!$keywords && !$user_id)
 			'VALUE'		=> $value,
 		));
 	}
+
+	phpbb::$template->assign_vars(array(
+		'S_SEARCH_ACTION'	=> titania_url::build_url('search'),
+	));
 
 	titania::page_header('SEARCH');
 	titania::page_footer(true, 'search_body.html');
@@ -54,10 +83,6 @@ if (isset($_POST['submit']))
 {
 	$author = utf8_normalize_nfc(request_var('author', '', true));
 
-	if ($keywords)
-	{
-		titania_url::$params['keywords'] = $keywords;
-	}
 	if ($author)
 	{
 		$sql = 'SELECT user_id FROM ' . USERS_TABLE . '
@@ -73,21 +98,25 @@ if (isset($_POST['submit']))
 
 		titania_url::$params['u'] = $user_id;
 	}
-	if ($search_fields)
+
+	$url_params = array(
+		'keywords'		=> $keywords,
+		'sf'			=> $search_fields,
+		'type'			=> $search_type,
+		'c'				=> $categories,
+		'versions'		=> $phpbb_versions,
+	);
+
+	foreach ($url_params as $name => $value)
 	{
-		titania_url::$params['sf'] = $search_fields;
+		if ($value)
+		{
+			titania_url::$params[$name] = $value;
+		}
 	}
-	if ($search_type)
-	{
-		titania_url::$params['type'] = $search_type;
-	}
-	/*if ($display)
-	{
-		titania_url::$params['display'] = $display;
-	}*/
 
 	// Redirect if sent through POST so the parameters are in the URL (for easy copying/pasting to other users)
-	redirect(titania_url::build_url('search', titania_url::$params));
+	redirect(titania_url::build_url(titania_url::$current_page, titania_url::$params));
 }
 
 // Setup the sort tool
@@ -140,10 +169,65 @@ if ($user_id)
 	$query->where($query->eq('author', $user_id));
 }
 
-// Search type
-if ($search_type)
+// Find contribution
+if ($mode == 'find-contribution')
 {
-	$query->where($query->eq('type', $search_type));
+	if (sizeof($categories) || sizeof($phpbb_versions))
+	{
+		// Prevent an error
+		$contribs = array($query->eq('id', 0));
+
+		// Build-a-query
+		$sql = 'SELECT DISTINCT(v.contrib_id) FROM
+			' .((sizeof($categories)) ? TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' c' : '') . '
+			' .((sizeof($categories) && (sizeof($phpbb_versions))) ? ', ' : '') . '
+			' .((sizeof($phpbb_versions)) ? TITANIA_REVISIONS_PHPBB_TABLE . ' v' : '') . '
+			WHERE
+				' . ((sizeof($categories)) ? phpbb::$db->sql_in_set('c.category_id', $categories) : ''). '
+				' . ((sizeof($categories) && sizeof($phpbb_versions)) ? ' AND c.contrib_id = v.contrib_id AND ' : '');
+
+		if (sizeof($phpbb_versions))
+		{
+			$or_sql = '';
+
+			foreach ($phpbb_versions as $version)
+			{
+				// Skip invalid versions
+				if (strlen($version) < 5 || $version[1] != '.' || $version[3] != '.')
+				{
+					continue;
+				}
+
+				// Add OR if not empty
+				$or_sql .= (($or_sql) ? ' OR ' : '');
+
+				$or_sql .= '(v.phpbb_version_branch = ' . (int) $version[0] . (int) $version[2] . ' AND v.phpbb_version_revision = \'' . phpbb::$db->sql_escape(substr($version, 4)) . '\')';
+			}
+
+			$sql .= ' (' . $or_sql . ') ';
+		}
+
+		$sql .= 'GROUP BY v.contrib_id';
+
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$contribs[] = $query->eq('id', $row['contrib_id']);
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		$query->where($query->lOr($contribs));
+	}
+
+	$query->where($query->eq('type', TITANIA_CONTRIB));
+}
+else
+{
+	// Search type
+	if ($search_type)
+	{
+		$query->where($query->eq('type', $search_type));
+	}
 }
 
 // Do the search

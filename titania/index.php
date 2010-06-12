@@ -286,6 +286,13 @@ switch ($action)
 			// Get the child categories we want to select the contributions from
 			$child_categories = array_keys(titania::$cache->get_category_children($category_id));
 
+			phpbb::$template->assign_vars(array(
+				'CATEGORY_ID'			=> $category_id,
+
+				'S_DISPLAY_SEARCHBOX'	=> true,
+				'S_SEARCHBOX_ACTION'	=> titania_url::build_url('find-contribution'),
+			));
+
 			$sort = false;
 
 			// If there are categories we are listing as well, only show 10 by default
@@ -308,9 +315,15 @@ switch ($action)
 			{
 				titania_tracking::track(TITANIA_CONTRIB, 0);
 			}
+
 			phpbb::$template->assign_vars(array(
+				'CATEGORY_ID'			=> 0,
+
 				'U_MARK_FORUMS'			=> titania_url::append_url(titania_url::$current_page_url, array('mark' => 'contribs')),
 				'L_MARK_FORUMS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
+
+				'S_DISPLAY_SEARCHBOX'	=> true,
+				'S_SEARCHBOX_ACTION'	=> titania_url::build_url('find-contribution'),
 			));
 
 			// Setup the sort tool to only display the 10 most recent

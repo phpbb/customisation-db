@@ -7,6 +7,7 @@
 	<li>
 		<a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a>
 		&bull; <a href="{U_ALL_CONTRIBUTIONS}">{L_ALL_CONTRIBUTIONS}</a>
+		<!-- IF U_FIND_CONTRIBUTION -->&bull; <a href="{U_FIND_CONTRIBUTION}">{L_FIND_CONTRIBUTION}</a><!-- ENDIF -->
 	</li>
 	<!-- IF not S_IS_BOT and U_MARK_FORUMS --><li class="rightside"><a href="{U_MARK_FORUMS}" accesskey="m">{L_MARK_FORUMS_READ}</a></li><!-- ENDIF -->
 </ul>
@@ -22,6 +23,18 @@
 			<div class="contrib-icon"><a href="{U_CREATE_CONTRIBUTION}" title="{L_CREATE_CONTRIBUTION}"><span></span>{L_CREATE_CONTRIBUTION}</a></div>
 		<!-- ENDIF -->
 		</div>
+
+		<!-- IF S_DISPLAY_SEARCHBOX -->
+			<div class="search-box">
+				<form method="post" id="category-search" action="{S_SEARCHBOX_ACTION}">
+				<fieldset>
+					<input class="inputbox search tiny" type="text" name="keywords" id="search_keywords" size="20" value="{LA_SEARCH_MINI}" onclick="if (this.value == '{LA_SEARCH_MINI}') this.value = '';" onblur="if (this.value == '') this.value = '{LA_SEARCH_MINI}';" />
+					<input class="button2" type="submit" name="submit" value="{L_SEARCH}" />
+					<input type="hidden" value="{CATEGORY_ID}" name="c[]" />
+				</fieldset>
+				</form>
+			</div>
+		<!-- ENDIF -->
 
 		<!-- INCLUDE common/pagination.html -->
 	</div>

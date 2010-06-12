@@ -36,8 +36,10 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'CONTRIBUTION_NAME_DESCRIPTION'	=> 'Contribution Name/Description',
 	'CONTRIB_FAQ'					=> 'Contribution FAQ',
+	'CONTRIB_NAME_DESCRIPTION'		=> 'Contribution Name and Description',
 	'CONTRIB_SUPPORT'				=> 'Contribution Discussion/Support',
 
+	'SEARCH_KEYWORDS_EXPLAIN'		=> 'Put a list of words separated by <strong>|</strong> into brackets if only one of the words must be found. Use * as a wildcard for partial matches.',
 	'SEARCH_MSG_ONLY'				=> 'Text/Description only',
 	'SEARCH_TITLE_MSG'				=> 'Titles and Text/Description',
 	'SEARCH_TITLE_ONLY'				=> 'Titles only',

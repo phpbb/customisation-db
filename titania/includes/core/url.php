@@ -27,6 +27,7 @@ class titania_url
 	* @var string
 	*/
 	private static $separator = '-';
+	private static $separator_replacement = '%96';
 
 	/**
 	* Root URL, the Root URL to the base
@@ -94,6 +95,12 @@ class titania_url
 		// Prevent rebuilding...
 		if (self::is_built($base))
 		{
+			// Add a slash to the end if we do not have one
+			if (substr($base, -1) != '/')
+			{
+				$base .= '/';
+			}
+
 			return self::append_url($base, $params);
 		}
 
@@ -166,6 +173,11 @@ class titania_url
 		// Now clean and append the items
 		foreach ($params as $name => $value)
 		{
+			if (!is_array($value) && !trim($value))
+			{
+				continue;
+			}
+
 			// Special case when we just want to add one thing to the URL (ex, the topic title)
 			if (is_int($name))
 			{
@@ -192,12 +204,27 @@ class titania_url
 			// Specify the value as *destroy* to make sure the value isn't kept in the URL (old values are unset and new is not appended)
 			if ($value != '*destroy*')
 			{
-				if (substr($url, -1) != '/')
+				if (is_array($value))
 				{
-					$url .= self::$separator;
-				}
+					foreach ($value as $val)
+					{
+						if (substr($url, -1) != '/')
+						{
+							$url .= self::$separator;
+						}
 
-				$url .= self::url_replace($name) . '_' . self::url_replace($value);
+						$url .= self::url_replace($name) . '[]_' . self::url_replace($val);
+					}
+				}
+				else
+				{
+					if (substr($url, -1) != '/')
+					{
+						$url .= self::$separator;
+					}
+
+					$url .= self::url_replace($name) . '_' . self::url_replace($value);
+				}
 			}
 		}
 
@@ -274,7 +301,21 @@ class titania_url
 			$parts = explode('_', $section, 2);
 			if (sizeof($parts) == 2)
 			{
-				$new_params[$parts[0]] = $parts[1];
+				if (strpos(urldecode($parts[0]), '[]'))
+				{
+					$parts[0] = str_replace('[]', '', urldecode($parts[0]));
+
+					if (!isset($new_params[$parts[0]]))
+					{
+						$new_params[$parts[0]] = array();
+					}
+
+					$new_params[$parts[0]][] = urldecode(str_replace(self::$separator_replacement, self::$separator, $parts[1]));
+				}
+				else
+				{
+					$new_params[$parts[0]] = $parts[1];
+				}
 			}
 			else if (sizeof($parts) == 1)
 			{
@@ -316,12 +357,23 @@ class titania_url
 	*/
 	public static function url_replace($url, $urlencode = true)
 	{
-		$match = array('+', '#', '?', '/', '\\', '\'', '&amp;', '&lt;', '&gt;', '&quot;', ':', self::$separator);
+
+		$match = array('&amp;', '&lt;', '&gt;', '&quot;');
 		$url = str_replace($match, ' ', $url);
 
 		$url = trim($url);
 
-		return ($urlencode) ? urlencode($url) : $url;
+		// Our separator replacement is probably a url encoded value, so make sure that it doesn't get re-encoded twice (%25 would replace the % every time it is run)
+		$url = str_replace(self::$separator_replacement, self::$separator, $url);
+
+		if ($urlencode)
+		{
+			$url = urlencode($url);
+		}
+
+		$url = str_replace(self::$separator, self::$separator_replacement, $url);
+
+		return $url;
 	}
 
 	/**
@@ -339,9 +391,10 @@ class titania_url
 		// Split up the arguments
 		foreach (self::split_params($args) as $name => $value)
 		{
-			self::$params[$name] = $value;
-		}
+			$name = urldecode($name);
 
+			self::$params[$name] = (!is_array($value)) ? urldecode(str_replace(self::$separator_replacement, self::$separator, $value)) : $value;
+		}
 		// Style cannot ever be allowed as a URL parameter because it is used by phpBB to request a custom board style
 		unset(self::$params['style']);
 

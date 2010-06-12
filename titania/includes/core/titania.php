@@ -337,6 +337,7 @@ class titania
 			'U_ALL_SUPPORT'				=> titania_url::build_url('support/all'),
 			'U_MY_CONTRIBUTIONS'		=> (phpbb::$user->data['is_registered'] && !phpbb::$user->data['is_bot']) ? titania_url::build_url('author/' . htmlspecialchars_decode(phpbb::$user->data['username_clean']) . '/contributions/') : '',
 			'U_SEARCH'					=> titania_url::build_url('search'),
+			'U_FIND_CONTRIBUTION'		=> titania_url::build_url('find-contribution'),
 			'U_FAQ'						=> titania_url::build_url('faq'),
 
 			'S_DISPLAY_SEARCH'			=> true,

@@ -46,6 +46,10 @@ Rewriterule ^(mod|style|converter|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$		
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^(search|faq|cron)/?([^/]+)?$						./$1.php [NC]
 
+#find-contribution
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^(find\-contribution)/?([^/]+)?$					./search.php?mode=find-contribution [NC]
+
 #rating/login/logout
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^(rate|login|logout)/?([^/]+)?$						./index.php?action=$1 [NC]

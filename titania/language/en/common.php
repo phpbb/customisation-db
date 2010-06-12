@@ -109,6 +109,7 @@ $lang = array_merge($lang, array(
 	'ERROR'						=> 'Error',
 
 	'FILE_NOT_EXIST'			=> 'File does not exist: %s',
+	'FIND_CONTRIBUTION'			=> 'Find Contribution',
 
 	'HARD_DELETE'				=> 'Hard Delete',
 	'HARD_DELETE_EXPLAIN'		=> 'Select to permanently delete this item.',
