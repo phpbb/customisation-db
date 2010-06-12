@@ -309,8 +309,8 @@ switch ($action)
 				titania_tracking::track(TITANIA_CONTRIB, 0);
 			}
 			phpbb::$template->assign_vars(array(
-				'U_MARK_TOPICS'			=> titania_url::append_url(titania_url::$current_page_url, array('mark' => 'contribs')),
-				'L_MARK_TOPICS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
+				'U_MARK_FORUMS'			=> titania_url::append_url(titania_url::$current_page_url, array('mark' => 'contribs')),
+				'L_MARK_FORUMS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
 			));
 
 			// Setup the sort tool to only display the 10 most recent
