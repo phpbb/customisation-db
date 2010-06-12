@@ -41,6 +41,7 @@ $lang = array_merge($lang, array(
 
 	'SEARCH_KEYWORDS_EXPLAIN'		=> 'Put a list of words separated by <strong>|</strong> into brackets if only one of the words must be found. Use * as a wildcard for partial matches.',
 	'SEARCH_MSG_ONLY'				=> 'Text/Description only',
+	'SEARCH_SUBCATEGORIES'			=> 'Search Subcategories',
 	'SEARCH_TITLE_MSG'				=> 'Titles and Text/Description',
 	'SEARCH_TITLE_ONLY'				=> 'Titles only',
 	'SEARCH_WITHIN_TYPES'			=> 'Search within types',

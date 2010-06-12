@@ -32,6 +32,7 @@ $user_id = request_var('u', 0);
 $search_fields = request_var('sf', '');
 $search_type = request_var('type', 0);
 $categories = request_var('c', array(0));
+$search_subcategories = request_var('sc', 0);
 $phpbb_versions = request_var('versions', array(''));
 
 // Display the advanced search page
@@ -55,7 +56,7 @@ if (!$keywords && !$user_id && !isset($_POST['submit']))
 			));
 		}
 
-		generate_category_select($categories);
+		generate_category_select($categories, false, false);
 
 		titania::page_header('SEARCH');
 		titania::page_footer(true, 'find_contribution.html');
@@ -104,6 +105,7 @@ if (isset($_POST['submit']))
 		'sf'			=> $search_fields,
 		'type'			=> $search_type,
 		'c'				=> $categories,
+		'sc'			=> $search_subcategories,
 		'versions'		=> $phpbb_versions,
 	);
 
@@ -172,10 +174,25 @@ if ($user_id)
 // Find contribution
 if ($mode == 'find-contribution')
 {
+	if (sizeof($categories) == 1 && $categories[0] == 0)
+	{
+		// All
+		$categories = array();
+	}
+
 	if (sizeof($categories) || sizeof($phpbb_versions))
 	{
 		// Prevent an error
 		$contribs = array($query->eq('id', 0));
+
+		// Grab the children
+		if ($search_subcategories)
+		{
+			foreach ($categories as $category_id)
+			{
+				$categories = array_merge($categories, array_keys(titania::$cache->get_category_children($category_id)));
+			}
+		}
 
 		// Build-a-query
 		$prefix = ((sizeof($categories)) ? 'c' : 'v');
@@ -184,7 +201,7 @@ if ($mode == 'find-contribution')
 			' .((sizeof($categories) && (sizeof($phpbb_versions))) ? ', ' : '') . '
 			' .((sizeof($phpbb_versions)) ? TITANIA_REVISIONS_PHPBB_TABLE . ' v' : '') . '
 			WHERE
-				' . ((sizeof($categories)) ? phpbb::$db->sql_in_set('c.category_id', $categories) : ''). '
+				' . ((sizeof($categories)) ? phpbb::$db->sql_in_set('c.category_id', array_unique(array_map('intval', $categories))) : ''). '
 				' . ((sizeof($categories) && sizeof($phpbb_versions)) ? ' AND c.contrib_id = v.contrib_id AND ' : '');
 
 		if (sizeof($phpbb_versions))

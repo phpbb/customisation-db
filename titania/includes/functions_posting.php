@@ -22,7 +22,7 @@ if (!defined('IN_TITANIA'))
  * @param array $selected
  * @return void
  */
-function generate_category_select($selected = false, $is_manage = false)
+function generate_category_select($selected = false, $is_manage = false, $disable_parents = true)
 {
 	if (!is_array($selected))
 	{
@@ -56,7 +56,7 @@ function generate_category_select($selected = false, $is_manage = false)
 
 		phpbb::$template->assign_block_vars('category_select', array(
 			'S_SELECTED'		=> (in_array($row['category_id'], $selected)) ? true : false,
-			'S_DISABLED'		=> ($row['category_type'] == 0) ? true : false,
+			'S_DISABLED'		=> ($row['category_type'] == 0 && $disable_parents) ? true : false,
 
 			'VALUE'				=> $row['category_id'],
 			'TYPE'				=> $row['category_type'],
