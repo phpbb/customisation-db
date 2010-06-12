@@ -178,7 +178,8 @@ if ($mode == 'find-contribution')
 		$contribs = array($query->eq('id', 0));
 
 		// Build-a-query
-		$sql = 'SELECT DISTINCT(v.contrib_id) FROM
+		$prefix = ((sizeof($categories)) ? 'c' : 'v');
+		$sql = 'SELECT DISTINCT(' . $prefix . '.contrib_id) FROM
 			' .((sizeof($categories)) ? TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' c' : '') . '
 			' .((sizeof($categories) && (sizeof($phpbb_versions))) ? ', ' : '') . '
 			' .((sizeof($phpbb_versions)) ? TITANIA_REVISIONS_PHPBB_TABLE . ' v' : '') . '
@@ -207,7 +208,7 @@ if ($mode == 'find-contribution')
 			$sql .= ' (' . $or_sql . ') ';
 		}
 
-		$sql .= 'GROUP BY v.contrib_id';
+		$sql .= 'GROUP BY ' . $prefix . '.contrib_id';
 
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
