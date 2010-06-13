@@ -370,6 +370,12 @@ class titania_url
 		{
 			$url = urlencode($url);
 		}
+		else
+		{
+			// We need to replace some stuff
+			$match = array('+', '#', '?', '/', '\\', '\'');
+			$url = str_replace($match, ' ', $url);
+		}
 
 		$url = str_replace(self::$separator, self::$separator_replacement, $url);
 
