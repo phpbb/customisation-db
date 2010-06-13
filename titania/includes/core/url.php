@@ -95,12 +95,6 @@ class titania_url
 		// Prevent rebuilding...
 		if (self::is_built($base))
 		{
-			// Add a slash to the end if we do not have one
-			if (substr($base, -1) != '/')
-			{
-				$base .= '/';
-			}
-
 			return self::append_url($base, $params);
 		}
 
