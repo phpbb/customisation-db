@@ -367,7 +367,7 @@ class titania_url
 		else
 		{
 			// We need to replace some stuff
-			$match = array('+', '#', '?', '/', '\\', '\'');
+			$match = array('+', '#', '?', '/', '\\', '\'', '%', '&', self::$separator);
 			$url = str_replace($match, ' ', $url);
 		}
 
