@@ -92,17 +92,32 @@ $config = array(
 	/**
 	* IDs of database forum
 	*/
-	'forum_mod_database' => 0,
-	'forum_style_database' => 0,
+	'forum_mod_database'		=> 0,
+	'forum_style_database'		=> 0,
+	'forum_converter_database'	=> 0,
 
 	/**
 	* IDs of account used for topic/post release in database forum
 	*/
-	'forum_mod_robot' => 0,
-	'forum_style_robot' => 0,
+	'forum_mod_robot'		=> 0,
+	'forum_style_robot'		=> 0,
+	'forum_converter_robot' => 0,
 
 	/**
-	* Show the support/discussion panel to the public?
+	* Show the support/discussion panel in each contribution to the public?
 	*/
 	'support_in_titania' => true,
+
+	/**
+	* If the type of post made is in this array we will increment their postcount as posts are made within titania
+	*/
+	'increment_postcount'	=> array(TITANIA_SUPPORT),
+
+	/**
+	* Note: There are still more configuration settings!
+	*
+	* This example file does not contain all the configuration settings because there are quite a few more trivial settings most probably will not worry about.
+	*
+	* To see the additiona settings available, please see includes/core/config.php
+	*/
 );

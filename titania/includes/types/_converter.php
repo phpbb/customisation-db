@@ -48,6 +48,8 @@ class titania_type_converter extends titania_type_base
 	{
 		$this->lang = phpbb::$user->lang['CONVERTER'];
 		$this->langs = phpbb::$user->lang['CONVERTERS'];
+		$this->forum_database = titania::$config->forum_converter_database;
+		$this->forum_robot = titania::$config->forum_converter_robot;
 	}
 
 	/**
