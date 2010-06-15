@@ -40,8 +40,23 @@ class update_release_topics
 		titania::_include('functions_posting', 'phpbb_posting');
 		titania::add_lang('contributions');
 
+		$types = array();
+		foreach (titania_types::$types as $id => $class)
+		{
+			if ($class->forum_robot && $class->forum_database)
+			{
+				$types[] = $id;
+			}
+		}
+
+		if (!sizeof($types))
+		{
+			trigger_back('UPDATE_RELEASE_TOPICS_COMPLETE');
+		}
+
 		$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
-			WHERE ' . phpbb::$db->sql_in_set('contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED));
+			WHERE ' . phpbb::$db->sql_in_set('contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) . '
+				AND ' . phpbb::$db->sql_in_set('contrib_type', $types);
 		phpbb::$db->sql_query($sql);
 		$total = phpbb::$db->sql_fetchfield('cnt');
 		phpbb::$db->sql_freeresult();
@@ -67,7 +82,8 @@ class update_release_topics
 			'GROUP_BY'	=> 'c.contrib_id',
 
 			'WHERE'		=> phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) . '
-				AND u.user_id = c.contrib_user_id',
+				AND u.user_id = c.contrib_user_id
+				AND ' . phpbb::$db->sql_in_set('contrib_type', $types),
 
 			'ORDER_BY'	=> 'c.contrib_id DESC',
 		);
