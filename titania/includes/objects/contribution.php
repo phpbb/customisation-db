@@ -523,6 +523,83 @@ class titania_contribution extends titania_message_object
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
+	/**
+	* Update the release topic for this contribution
+	*
+	* @param bool|string $reply Bool False to not reply to the topic (just update the first post), any string to reply to the topic with the given string as the approval reason
+	*/
+	public function update_release_topic($reply = false)
+	{
+		if (titania_types::$types[$this->contrib_type]->forum_robot && titania_types::$types[$this->contrib_type]->forum_database && titania_types::$types[$this->contrib_type]->create_public)
+		{
+			// Get the latest download
+			$this->get_download();
+
+			$contrib_description = $this->contrib_desc;
+			titania_decode_message($contrib_description, $this->contrib_desc_uid);
+
+			// Global body and options
+			$body = sprintf(phpbb::$user->lang[titania_types::$types[$this->contrib_type]->create_public],
+				$this->contrib_name,
+				titania_url::remove_sid($this->author->get_url()),
+				users_overlord::get_user($this->author->user_id, '_username'),
+				$contrib_description,
+				$this->download['revision_version'],
+				titania_url::build_clean_url('download', array('id' => $this->download['attachment_id'])),
+				$this->download['real_filename'],
+				$this->download['filesize'],
+				titania_url::remove_sid($this->get_url()),
+				titania_url::remove_sid($this->get_url('support'))
+			);
+
+			$options = array(
+				'poster_id'		=> titania_types::$types[$this->contrib_type]->forum_robot,
+				'forum_id' 		=> titania_types::$types[$this->contrib_type]->forum_database,
+			);
+
+			if ($this->contrib_release_topic_id)
+			{
+				// We edit the first post of contrib release topic
+				$options_edit = array(
+					'topic_id'				=> $this->contrib_release_topic_id,
+					'topic_title'			=> $this->contrib_name,
+					'post_text'				=> $body,
+				);
+				$options_edit = array_merge($options_edit, $options);
+				phpbb_posting('edit_first_post', $options_edit);
+			}
+			else
+			{
+				// We create a new topic in database
+				$options_post = array(
+					'topic_title'			=> $this->contrib_name,
+					'post_text'				=> $body,
+					'topic_status'			=> (titania::$config->support_in_titania) ? ITEM_LOCKED : ITEM_UNLOCKED,
+				);
+				$options_post = array_merge($options_post, $options);
+				$this->contrib_release_topic_id = phpbb_posting('post', $options_post);
+
+				$sql = 'UPDATE ' . $this->sql_table . '
+					SET contrib_release_topic_id = ' . $this->contrib_release_topic_id . '
+					WHERE contrib_id = ' . $this->contrib_id;
+				phpbb::$db->sql_query($sql);
+			}
+
+			// We reply to the contrib release topic
+			if ($reply !== false && titania_types::$types[$this->contrib_type]->reply_public)
+			{
+				$body_reply = phpbb::$user->lang[titania_types::$types[$this->contrib_type]->reply_public] . (($reply) ? sprintf(phpbb::$user->lang[titania_types::$types[$this->contrib_type]->reply_public . '_NOTES'], $reply) : '');
+
+				$options_reply = array(
+					'topic_id'				=> $this->contrib_release_topic_id,
+					'topic_title'			=> 'Re: ' . $this->contrib_name,
+					'post_text'				=> $body_reply,
+				);
+				phpbb_posting('reply', $options_reply);
+			}
+		}
+	}
+
 	public function report($reason = '')
 	{
 		// Setup the attention object and submit it

@@ -254,12 +254,17 @@ else if ($submit)
 			}
 		}
 
+		// Submit the changes
 		titania::$contrib->submit();
 
+		// Set the coauthors
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
 
 		// Create relations
 		titania::$contrib->put_contrib_in_categories($contrib_categories);
+
+		// Update the release topic
+		titania::$contrib->update_release_topic();
 
 		if ($change_owner == '')
 		{

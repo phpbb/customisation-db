@@ -139,7 +139,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			$post_text = $row['post_text'];
 			titania_decode_message($post_text, $row['post_text_uid']);
 
-			$post_text .= "\n\n" . $temp_post->get_url();
+			$post_text .= "\n\n" . titania_url::remove_sid($temp_post->get_url());
 
 			$options = array(
 				'poster_id'				=> $row['post_user_id'],
@@ -250,7 +250,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	$post_text .= "\n\n" . $post_object->post_text;
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
-	$post_text .= "\n\n" . $post_object->get_url();
+	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
 
 	$options = array(
 		'poster_id'				=> $post_object->topic->topic_first_post_user_id,
@@ -289,7 +289,7 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 	$post_text = $post_object->post_text;
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
-	$post_text .= "\n\n" . $post_object->get_url();
+	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
 
 	$options = array(
 		'poster_id'				=> $post_object->post_user_id,
@@ -325,7 +325,7 @@ function phpbb_com_titania_post_edit($hook, &$post_object)
 	$post_text = $post_object->post_text;
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
-	$post_text .= "\n\n" . $post_object->get_url();
+	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
 
 	$options = array(
 		'post_id'				=> $post_object->phpbb_post_id,

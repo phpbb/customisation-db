@@ -229,6 +229,19 @@ class titania_url
 	}
 
 	/**
+	* Build a "clean" url (gets the built URL and then removes the SID)
+	*/
+	public static function build_clean_url($base, $params = array())
+	{
+		$url = self::build_url($base, $params);
+
+		// Replace SID
+		$url = self::remove_sid($url);
+
+		return $url;
+	}
+
+	/**
 	* Unbuild a url (used for the indexer)
 	*
 	* @param mixed $url

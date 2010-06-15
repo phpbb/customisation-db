@@ -225,7 +225,7 @@ do{
 					// Replace the uploaded zip package with the new one
 					$contrib_tools->replace_zip();
 
-					if (titania_types::$types[titania::$contrib->contrib_type]->mpv_test)
+					if (titania_types::$types[titania::$contrib->contrib_type]->mpv_test && titania::$config->use_queue)
 					{
 						phpbb::$template->assign_var('MPV_TEST_WARNING', true);
 					}
@@ -294,6 +294,7 @@ do{
 			{
 				$step = 4;
 				$try_again = true;
+				continue;
 			}
 
 			$revision = new titania_revision(titania::$contrib, $revision_id);

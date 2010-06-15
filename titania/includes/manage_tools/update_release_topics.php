@@ -121,48 +121,10 @@ class update_release_topics
 
 			$contrib = new titania_contribution();
 			$contrib->__set_array($row);
+			$contrib->download = $row;
 
-			$contrib_desc = $contrib->contrib_desc;
-			titania_decode_message($contrib_desc, $contrib->contrib_desc_uid);
-
-			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->create_public],
-				$contrib->contrib_name,
-				users_overlord::get_user($row['user_id'], '_titania_profile'),
-				users_overlord::get_user($row['user_id'], '_username'),
-				$contrib_desc,
-				$revision['revision_version'],
-				titania_url::build_url('download', array('id' => $revision['attachment_id'])),
-				$revision['real_filename'],
-				$revision['filesize'],
-				$contrib->get_url(),
-				$contrib->get_url('support')
-			);
-
-			$options = array(
-				'poster_id'		=> titania_types::$types[$contrib->contrib_type]->forum_robot,
-				'forum_id' 		=> titania_types::$types[$contrib->contrib_type]->forum_database,
-				'topic_title'	=> $contrib->contrib_name,
-				'post_text'		=> $body,
-			);
-
-			if ($row['topic_first_post_id'])
-			{
-				$options = array_merge($options, array(
-					'topic_id'		=> $contrib->contrib_release_topic_id,
-					'post_id'		=> $row['topic_first_post_id'],
-				));
-
-				phpbb_posting('edit', $options);
-			}
-			else if ($create_topic)
-			{
-				$topic_id = phpbb_posting('post', $options);
-
-				$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-					SET contrib_release_topic_id = ' . (int) $topic_id . '
-					WHERE contrib_id = ' . $contrib->contrib_id;
-				phpbb::$db->sql_query($sql);
-			}
+			// Update the release topic
+			$contrib->update_release_topic();
 		}
 
 		phpbb::$db->sql_freeresult($result);

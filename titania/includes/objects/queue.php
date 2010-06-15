@@ -366,72 +366,8 @@ class titania_queue extends titania_message_object
 		// Update the revisions
 		$revision->change_status(TITANIA_REVISION_APPROVED);
 
-		// Start process to post on forum topic/post release
-		$contrib->get_download($this->revision_id);
-
-		$release_topic_id = $contrib->contrib_release_topic_id;
-
-		if (titania_types::$types[$contrib->contrib_type]->forum_robot && titania_types::$types[$contrib->contrib_type]->forum_database)
-		{
-			// Global body and options
-			$contrib_description = $contrib->contrib_desc;
-			titania_decode_message($contrib_description, $contrib->contrib_desc_uid);
-
-			$body = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->create_public],
-				$contrib->contrib_name,
-				$contrib->author->get_url(),
-				users_overlord::get_user($contrib->author->user_id, '_username'),
-				$contrib_description,
-				$revision->revision_version,
-				titania_url::build_url('download', array('id' => $revision->attachment_id)),
-				$contrib->download['real_filename'],
-				$contrib->download['filesize'],
-				$contrib->get_url(),
-				$contrib->get_url('support')
-			);
-
-			if ($contrib->contrib_release_topic_id)
-			{
-				// We edit the first post of contrib release topic
-				$options_edit = array(
-					'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
-					'topic_id'				=> $contrib->contrib_release_topic_id,
-					'topic_title'			=> $contrib->contrib_name,
-					'post_text'				=> $body,
-				);
-				phpbb_posting('edit_first_post', $options_edit);
-			}
-			else
-			{
-				// We create a new topic in database
-				$options_post = array(
-					'forum_id' 				=> titania_types::$types[$contrib->contrib_type]->forum_database,
-					'poster_id'				=> titania_types::$types[$contrib->contrib_type]->forum_robot,
-					'topic_title'			=> $contrib->contrib_name,
-					'post_text'				=> $body,
-				);
-				$release_topic_id = phpbb_posting('post', $options_post);
-
-				$sql_ary = array(
-					'contrib_release_topic_id' 	=> (int) $release_topic_id,
-				);
-
-				// Update contrib the release topic id
-				$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-					SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-					WHERE contrib_id = ' . $this->contrib_id;
-				phpbb::$db->sql_query($sql);
-			}
-
-			// We reply to the contrib release topic
-			$body_reply = phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public . '_NOTES'], $public_notes) : '');
-			$options_reply = array(
-				'topic_id'				=> $release_topic_id,
-				'topic_title'			=> 'Re: ' . $contrib->contrib_name,
-				'post_text'				=> $body_reply,
-			);
-			phpbb_posting('reply', $options_reply);
-		}
+		// Update the release topic
+		$contrib->update_release_topic($public_notes);
 
 		// Self-updating
 		$this->queue_status = TITANIA_QUEUE_APPROVED;
