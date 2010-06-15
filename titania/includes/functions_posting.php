@@ -276,9 +276,9 @@ function phpbb_posting($mode, &$options, $poll = array())
 
 	// Set some defaults
 	$options = array_merge($options, array(
-		'enable_bbcode'			=> 1,
-		'enable_urls'			=> 1,
-		'enable_smilies'		=> 1,
+		'enable_bbcode'			=> true,
+		'enable_urls'			=> true,
+		'enable_smilies'		=> true,
 		'topic_type'			=> POST_NORMAL,
 	));
 
@@ -349,6 +349,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 		return false;
 	}
 
+	// If we need to post the message as a different user other than the one logged in
 	if (isset($options['poster_id']) && $options['poster_id'])
 	{
 		// Some data for the ugly fix below :P
@@ -385,11 +386,13 @@ function phpbb_posting($mode, &$options, $poll = array())
 		$message_parser->bbcode_uid = $post_data['bbcode_uid'];
 	}
 
+	// Parse the BBCode
 	if ($options['enable_bbcode'])
 	{
-		$message_parser->parse($options['enable_bbcode'], $options['enable_urls'], $options['enable_smilies'], (bool) phpbb::$auth->acl_get('f_img', $post_data['forum_id']), (bool) phpbb::$auth->acl_get('f_flash', $post_data['forum_id']),  (bool) phpbb::$auth->acl_get('f_reply', $post_data['forum_id']), phpbb::$config['allow_post_links']);
+		$message_parser->parse($options['enable_bbcode'], $options['enable_urls'], $options['enable_smilies'], (bool) phpbb::$auth->acl_get('f_img', $post_data['forum_id']), (bool) phpbb::$auth->acl_get('f_flash', $post_data['forum_id']),  true, phpbb::$config['allow_post_links']);
 	}
 
+	// Setup the settings we need to send to submit_post
 	$data = array(
 		'topic_title'			=> $options['topic_title'],
 
@@ -403,7 +406,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 
 		'force_approved_state'	=> true,
 
-		// phpBB is nub http://tracker.phpbb.com/browse/PHPBB3-9635
+		// http://tracker.phpbb.com/browse/PHPBB3-9635
 		'post_time'				=> time(),
 
 		// False for both will not add nor remove notifications
@@ -411,12 +414,12 @@ function phpbb_posting($mode, &$options, $poll = array())
 		'notify'				=> false,
 	);
 
-	switch($mode)
+	switch ($mode)
 	{
 		case 'post':
 			$data = array_merge(array(
 				'icon_id'				=> (isset($options['icon_id'])) ? $options['icon_id'] : 0,
-				'poster_id'				=> ($mode != 'edit' && isset($options['poster_id']) && $options['poster_id']) ? (int) $options['poster_id'] : phpbb::$user->data['user_id'],
+				'poster_id'				=> (isset($options['poster_id']) && $options['poster_id']) ? (int) $options['poster_id'] : phpbb::$user->data['user_id'],
 				'enable_sig'			=> (isset($options['enable_sig'])) ? (bool) $options['enable_sig'] : true,
 				'post_edit_locked'		=> (isset($options['post_edit_locked'])) ? $options['post_edit_locked'] : false,
 			), $data);
@@ -424,7 +427,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 
 		case 'reply':
 			$data = array_merge(array(
-				'poster_id'				=> ($mode != 'edit' && isset($options['poster_id']) && $options['poster_id']) ? (int) $options['poster_id'] : phpbb::$user->data['user_id'],
+				'poster_id'				=> (isset($options['poster_id']) && $options['poster_id']) ? (int) $options['poster_id'] : phpbb::$user->data['user_id'],
 				'enable_sig'			=> (isset($options['enable_sig'])) ? (bool) $options['enable_sig'] : true,
 				'post_edit_locked'		=> (isset($options['post_edit_locked'])) ? $options['post_edit_locked'] : false,
 			), $data);
@@ -435,7 +438,17 @@ function phpbb_posting($mode, &$options, $poll = array())
 	$data = array_merge($data, $post_data);
 
 	// Aaaand, submit it.
-	submit_post($mode, $options['topic_title'], (($mode != 'edit' && isset($options['poster_id']) && $options['poster_id']) ? $user_data['username'] : phpbb::$user->data['username']), $options['topic_type'], $poll, $data);
+	switch ($mode)
+	{
+		case 'post' :
+		case 'reply' :
+			submit_post($mode, $options['topic_title'], ((isset($options['poster_id']) && $options['poster_id']) ? $user_data['username'] : phpbb::$user->data['username']), $options['topic_type'], $poll, $data);
+		break;
+
+		default :
+			submit_post($mode, $options['topic_title'], phpbb::$user->data['username'], $options['topic_type'], $poll, $data);
+		break;
+	}
 
 	// Change the status?  submit_post does not support setting this
 	if (isset($options['topic_status']))
