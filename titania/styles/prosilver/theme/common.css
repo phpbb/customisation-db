@@ -167,21 +167,20 @@ a.download-main {
 
 .contrib-description dt {
 	margin-bottom: 3px;
-	padding-bottom: 3px;
+	padding-bottom: 4px;
 	border-bottom: 1px solid #E1E1E1;
-	display: block;
-	float: left;
-	width: 100%;
+	margin-top: 6px;
 }
 
 .contrib-description dt strong {
-	float: left;
 	margin-top: 6px;
+	padding-bottom: 12px;
 }
 
 .contrib-description ul.profile-icons {
 	padding: 0;
 	float: right;
+	margin-top: -6px;
 }
 
 .contrib-description .icon-subscribe, .contrib-description .icon-unsubscribe {
@@ -191,6 +190,8 @@ a.download-main {
 .contrib-description dd ul, .contrib-description dd ol {
 	margin-left: 3em;
 }
+
+.contrib-description dd dl.codebox dt {margin-top: 1px;}
 
 ul.general-info {
 	border: 1px solid #EAF3F7;
