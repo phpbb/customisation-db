@@ -57,7 +57,16 @@
 			setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
 		<!-- ENDIF -->
 
-		$("#extratabs").tabs();
+		$('#extratabs').tabs({
+		    select: function(event, ui) {
+		        var url = $.data(ui.tab, 'load.tabs');
+		        if( url ) {
+		            location.href = url;
+		            return false;
+		        }
+		        return true;
+		    }
+		});
 		$('#extratabs li').removeClass('ui-corner-top');
 		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
 
