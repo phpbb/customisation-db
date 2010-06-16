@@ -137,6 +137,14 @@ $(document).ready(function(){
 		}
 	});
 
+	// Hide all of the revision details
+	$('.revision-details').hide();
+
+	// Show revision details on click
+	$('.revisions > li').click(function() {
+		$(this).children('.revision-details').toggle('fast');
+	});
+
 	// Make elastic textareas elastic
 	$('.elastic').elastic();
 

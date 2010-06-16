@@ -346,25 +346,38 @@ ul.simple li.header dt, ul.simple li.header dd {
 }
 
 .revisions dt {
-	width: 30% !important;
+	width: 35% !important;
 }
 
-dd.version {
-	width: 12%;
+dd.contribution-phpbb-version {
+	text-align: center;
+	width: 15%;
+}
+
+ dd.revision-version {
+	width: 20%;
 	text-align: center;
 }
 
-dd.phpbb-version {
+dd.revision-phpbb-version {
 	text-align: center;
-	width: 14%;
+	width: 20%;
+}
+
+ul.topiclist dd.revision-actions {
+	text-align: right;
+	width: 7%;
+	border-left: 0;
+}
+
+ul.topiclist dd.revision-status {
+	text-align: center;
+	width: 10%;
+	border-left: 0;
 }
 
 dd.phpbb-version select {
 	width: 100px;
-}
-
-dd.time-created {
-	width: 19%;
 }
 
 img.icon {
@@ -605,4 +618,31 @@ textarea.elastic {
 
 .inline-attachment {
 	white-space: normal;
+}
+
+ul.topiclist dd.revision-translations {
+	width: 45%;
+	padding: 0 10px;
+	border-left: 0;
+}
+
+ul.topiclist dd.revision-translations h3 {
+	margin-top: 0;
+}
+
+ul.topiclist dd.revision-translations .file {
+	margin: 5px;
+}
+
+ul.topiclist dd.revision-translations .file dt {
+	width: 45% !important;
+}
+
+ul.topiclist dd.revision-translations .file dd {
+	padding: 0 5px;
+	border-left: 0;
+}
+
+.revisions dt.revision-information {
+	width: 50% !important;
 }
