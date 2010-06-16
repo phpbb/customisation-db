@@ -601,6 +601,11 @@ class titania_contribution extends titania_message_object
 	*/
 	public function reply_release_topic($reply, $options = array())
 	{
+		if (!$this->contrib_release_topic_id)
+		{
+			return;
+		}
+
 		titania::_include('functions_posting', 'phpbb_posting');
 
 		$options_reply = array_merge($options, array(
@@ -1059,8 +1064,8 @@ class titania_contribution extends titania_message_object
 
 		// Increment/Decrement the contrib counter for the new owner
 		$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . "
-			SET author_contribs = author_contribs $action 1, " .
-				titania_types::$types[$this->contrib_type]->author_count . ' = ' . titania_types::$types[$this->contrib_type]->author_count . " $action 1
+			SET author_contribs = author_contribs $action 1" .
+				((isset(titania_types::$types[$this->contrib_type]->author_count)) ? ', ' . titania_types::$types[$this->contrib_type]->author_count . ' = ' . titania_types::$types[$this->contrib_type]->author_count . " $action 1" : '') . "
 			WHERE user_id = $user_id " .
 				(($action == '-') ? 'AND author_contribs > 0' : '');
 		phpbb::$db->sql_query($sql);

@@ -225,12 +225,17 @@ if ($queue_id)
 			// Build the preview message
 			titania::add_lang('contributions');
 			$revision = $queue->get_revision();
-			$public_notes_preview = ($action == 'deny') ? false : sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
-				$revision->revision_version
-			) . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public . '_NOTES'], $public_notes) : '');
-			$uid = $bitfield = $options = false;
-			generate_text_for_storage($public_notes_preview, $uid, $bitfield, $options, true, true, true);
-			$public_notes_preview = titania_generate_text_for_display($public_notes_preview, $uid, $bitfield, $options);
+
+			$public_notes_preview = false;
+			if (isset(titania_types::$types[$contrib->contrib_type]->update_public))
+			{
+				$public_notes_preview = ($action == 'deny') ? false : sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public],
+					$revision->revision_version
+				) . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public . '_NOTES'], $public_notes) : '');
+				$uid = $bitfield = $options = false;
+				generate_text_for_storage($public_notes_preview, $uid, $bitfield, $options, true, true, true);
+				$public_notes_preview = titania_generate_text_for_display($public_notes_preview, $uid, $bitfield, $options);
+			}
 
 			phpbb::$template->assign_vars(array(
 				'ERROR'						=> implode('<br />', $error),
@@ -244,6 +249,7 @@ if ($queue_id)
 				'S_CONTRIB_APPROVE'				=> ($action == 'approve') ? true : false,
 				'S_STYLE_DEMO_INSTALL'			=> ($action == 'approve' && $contrib->contrib_type == TITANIA_TYPE_STYLE && titania::$config->demo_style_path) ? true : false,
 				'S_STYLE_DEMO_INSTALL_CHECKED'	=> (isset($_POST['style_demo_install'])) ? true : false,
+				'S_PUBLIC_NOTES'				=> ($action == 'approve' && isset(titania_types::$types[$contrib->contrib_type]->update_public)) ? true : false,
 				'TOPIC_TITLE'					=> $contrib->contrib_name,
 			));
 

@@ -43,6 +43,11 @@ class titania_sync
 				);
 				foreach (titania_types::$types as $type_id => $class)
 				{
+					if (!isset($class->author_count))
+					{
+						continue;
+					}
+
 					$sql_ary[$class->author_count] = 0;
 				}
 				$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . '
@@ -480,6 +485,11 @@ class titania_sync
 		);
 		foreach (titania_types::$types as $type_id => $class)
 		{
+			if (!isset($class->author_count))
+			{
+				continue;
+			}
+
 			$sql_ary[$class->author_count] = 0;
 		}
 
@@ -495,7 +505,10 @@ class titania_sync
 			$cnt = phpbb::$db->sql_fetchfield('cnt');
 
 			$sql_ary['author_contribs'] += $cnt;
-			$sql_ary[$class->author_count] += $cnt;
+			if (isset($class->author_count))
+			{
+				$sql_ary[$class->author_count] += $cnt;
+			}
 
 			// Co-authors
 			$sql = 'SELECT COUNT(c.contrib_id) AS cnt FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' cc, ' . TITANIA_CONTRIBS_TABLE . ' c
@@ -507,7 +520,10 @@ class titania_sync
 			$cnt = phpbb::$db->sql_fetchfield('cnt');
 
 			$sql_ary['author_contribs'] += $cnt;
-			$sql_ary[$class->author_count] += $cnt;
+			if (isset($class->author_count))
+			{
+				$sql_ary[$class->author_count] += $cnt;
+			}
 		}
 
 		return $sql_ary;
