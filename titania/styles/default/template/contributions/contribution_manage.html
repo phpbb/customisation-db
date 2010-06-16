@@ -117,6 +117,14 @@
 					</dd>
 				</dl>
 				<!-- ENDIF -->
+				<!-- IF S_DELETE_CONTRIBUTION -->
+				<dl>
+					<dt><label for="delete">{L_DELETE_CONTRIBUTION}:</label><br /><span>{L_DELETE_CONTRIBUTION_EXPLAIN}</span></dt>
+					<dd>
+						<input type="checkbox" name="delete" id="delete" />
+					</dd>
+				</dl>
+				<!-- ENDIF -->
 				<!-- IF not S_CREATE -->
 				<dl>
 					<dt><label for="change_owner">{L_CONTRIB_CHANGE_OWNER}:</label><br /><span>{L_CONTRIB_CHANGE_OWNER_EXPLAIN}</span></dt>

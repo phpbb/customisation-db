@@ -85,6 +85,8 @@ $lang = array_merge($lang, array(
 	'COULD_NOT_FIND_USERS'					=> 'Could not find the following users: %s',
 	'CO_AUTHORS'							=> 'Co-Authors',
 
+	'DELETE_CONTRIBUTION'					=> 'Delete Contribution',
+	'DELETE_CONTRIBUTION_EXPLAIN'			=> 'Permanently remove this contribution (use the contribution status field if you need to hide it).',
 	'DELETE_REVISION'						=> 'Delete Revision',
 	'DELETE_REVISION_EXPLAIN'				=> 'Permanently remove this revision (use the revision status field if you need to hide it).',
 	'DEMO_URL'								=> 'Demo URL',

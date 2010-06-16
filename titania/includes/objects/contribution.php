@@ -1159,6 +1159,53 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
+	* Delete this contribution
+	*/
+	public function delete()
+	{
+		// Delete Revisions
+		$revision = new titania_revision($this);
+		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$revision->__set_array($row);
+
+			$revision->delete();
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Delete Support/Discussion/Queue Discussion Topics
+		$topic = new titania_topic;
+		$sql = 'SELECT * FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE ' . phpbb::$db->sql_in_set('topic_type', array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION)) . '
+				AND parent_id = ' . $this->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$topic->__set_array($row);
+
+			$topic->delete();
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Change the status to new (handles resetting counts)
+		$this->change_status(TITANIA_CONTRIB_NEW);
+
+		// Delete the release topic
+		if ($this->contrib_release_topic_id)
+		{
+			phpbb::_include('functions_admin', 'delete_topics');
+
+			delete_topics('topic_id', $this->contrib_release_topic_id);
+		}
+
+		// Self delete
+		parent::delete();
+	}
+
+	/**
 	 * Check if there is a revision in the queue
 	 *
 	 * @return true if there is, false if not
