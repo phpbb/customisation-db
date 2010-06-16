@@ -162,6 +162,7 @@ $lang = array_merge($lang, array(
 	'SELECT_CATEGORY'			=> '-- Select category --',
 	'SELECT_CATEGORY_TYPE'		=> '-- Select category type --',
 	'SELECT_SORT_METHOD'		=> 'Sort By',
+	'SHOW_ALL_REVISIONS'		=> 'Show all revisions',
 	'SITE_INDEX'				=> 'Site Index',
 	'SNIPPET'					=> 'Snippet',
 	'SOFT_DELETE_TOPIC'			=> 'Soft Delete Topic',

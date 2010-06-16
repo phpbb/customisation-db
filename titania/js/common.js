@@ -85,6 +85,7 @@ $(document).ready(function(){
 		}
 	);
 
+	// Ajax Quick Edit
 	$('.postbody > .profile-icons > .edit-icon').click(function() {
 		var postbody = $(this).parent().parent();
 		var post = $(postbody).children('.content');
@@ -125,6 +126,17 @@ $(document).ready(function(){
 		return false;
 	});
 
+	// Show only the first five revisions
+	$('.revisions > li').each(function(cnt) {
+		if (cnt > 5)
+		{
+			// Hide the revision from the list
+			$(this).hide();
+
+			$(this).parent().parent().children('.show-all').show();
+		}
+	});
+
 	// Make elastic textareas elastic
 	$('.elastic').elastic();
 
@@ -146,4 +158,13 @@ function show_quotebox(box)
 	$(box).parent().children('.show_quote').hide();
 
 	$(box).parent().children('.hide_quote').show();
+}
+
+function show_all_revisions(box)
+{
+	$(box).parent().children('.revisions').children('li').each(function(cnt) {
+		$(this).show();
+
+		$(this).parent().parent().children('.show-all').hide();
+	});
 }
