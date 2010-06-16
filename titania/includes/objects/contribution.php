@@ -525,15 +525,21 @@ class titania_contribution extends titania_message_object
 
 	/**
 	* Update the release topic for this contribution
-	*
-	* @param bool|string $reply Bool False to not reply to the topic (just update the first post), any string to reply to the topic with the given string as the approval reason
 	*/
-	public function update_release_topic($reply = false)
+	public function update_release_topic()
 	{
 		if (titania_types::$types[$this->contrib_type]->forum_robot && titania_types::$types[$this->contrib_type]->forum_database && titania_types::$types[$this->contrib_type]->create_public)
 		{
+			titania::_include('functions_posting', 'phpbb_posting');
+
 			// Get the latest download
 			$this->get_download();
+
+			// If there is not a download do not update.
+			if (!$this->download)
+			{
+				return;
+			}
 
 			$contrib_description = $this->contrib_desc;
 			titania_decode_message($contrib_description, $this->contrib_desc_uid);
@@ -584,20 +590,25 @@ class titania_contribution extends titania_message_object
 					WHERE contrib_id = ' . $this->contrib_id;
 				phpbb::$db->sql_query($sql);
 			}
-
-			// We reply to the contrib release topic
-			if ($reply !== false && titania_types::$types[$this->contrib_type]->reply_public)
-			{
-				$body_reply = phpbb::$user->lang[titania_types::$types[$this->contrib_type]->reply_public] . (($reply) ? sprintf(phpbb::$user->lang[titania_types::$types[$this->contrib_type]->reply_public . '_NOTES'], $reply) : '');
-
-				$options_reply = array(
-					'topic_id'				=> $this->contrib_release_topic_id,
-					'topic_title'			=> 'Re: ' . $this->contrib_name,
-					'post_text'				=> $body_reply,
-				);
-				phpbb_posting('reply', $options_reply);
-			}
 		}
+	}
+
+	/**
+	* Reply to the release topic
+	*
+	* @param string $reply Message to reply to the topic with
+	* @param array $options Any additional options for the reply
+	*/
+	public function reply_release_topic($reply, $options = array())
+	{
+		titania::_include('functions_posting', 'phpbb_posting');
+
+		$options_reply = array_merge($options, array(
+			'topic_id'				=> $this->contrib_release_topic_id,
+			'topic_title'			=> 'Re: ' . $this->contrib_name,
+			'post_text'				=> $reply,
+		));
+		phpbb_posting('reply', $options_reply);
 	}
 
 	public function report($reason = '')

@@ -323,7 +323,10 @@ class titania_revision extends titania_database_object
 		}
 
 		// Update the release topic
-		$this->contrib->update_release_topic();
+		if ($this->revision_status == TITANIA_REVISION_APPROVED)
+		{
+			$this->contrib->update_release_topic();
+		}
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -431,6 +434,12 @@ class titania_revision extends titania_database_object
 			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 			WHERE revision_id = ' . $this->revision_id;
 		phpbb::$db->sql_query($sql);
+		
+		// Update the release topic
+		if ($this->revision_status == TITANIA_REVISION_APPROVED)
+		{
+			$this->contrib->update_release_topic();
+		}
 	}
 
 	/**

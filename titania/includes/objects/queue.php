@@ -366,8 +366,12 @@ class titania_queue extends titania_message_object
 		// Update the revisions
 		$revision->change_status(TITANIA_REVISION_APPROVED);
 
-		// Update the release topic
-		$contrib->update_release_topic($public_notes);
+		// Reply to the release topic
+		if (titania_types::$types[$contrib->contrib_type]->reply_public)
+		{
+			$public_notes = phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public . '_NOTES'], $public_notes) : '');
+			$contrib->reply_release_topic($public_notes);
+		}
 
 		// Self-updating
 		$this->queue_status = TITANIA_QUEUE_APPROVED;
