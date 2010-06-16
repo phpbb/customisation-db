@@ -143,6 +143,9 @@ do{
 				$revision->submit();
 				$revision_id = $revision->revision_id;
 
+				// Create the queue
+				$revision->update_queue();
+
 				$queue = $revision->get_queue();
 
 				// Add queue values to the queue table
@@ -177,6 +180,9 @@ do{
 
 						$revision->revision_submitted = true;
 						$revision->submit();
+
+						// After revision is set to submitted we must update the queue
+						$revision->update_queue();
 
 						if ($repack && titania::$config->use_queue)
 						{
@@ -376,6 +382,9 @@ do{
 			// Update the revision to be submitted, which unhides the queue topic and updates the contrib_last_update time
 			$revision->revision_submitted = true;
 			$revision->submit();
+
+			// Update the queue (make visible)
+			$revision->update_queue();
 
 			if ($repack && titania::$config->use_queue)
 			{

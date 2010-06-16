@@ -271,57 +271,6 @@ class titania_revision extends titania_database_object
 			}
 		}
 
-		// Create the queue entry if required, else update it
-		if (titania::$config->use_queue)
-		{
-			$queue = $this->get_queue();
-
-			// Only create the queue for revisions set as new
-			if ($queue === false && $this->revision_status == TITANIA_REVISION_NEW)
-			{
-				$queue = new titania_queue;
-			}
-
-			if ($queue !== false)
-			{
-				$queue->__set_array(array(
-					'revision_id'			=> $this->revision_id,
-					'contrib_id'			=> $this->contrib_id,
-					'contrib_name_clean'	=> $this->contrib->contrib_name_clean,
-				));
-
-				// Set the queue status to new if it's submitted and the queue status is set to hide it
-				if ($this->revision_submitted && $queue->queue_status == TITANIA_QUEUE_HIDE)
-				{
-					$queue->queue_status = TITANIA_QUEUE_NEW;
-				}
-
-				$queue->submit();
-
-				// Set the revision queue id
-				$this->revision_queue_id = $queue->queue_id;
-				parent::submit();
-
-				if ($this->revision_submitted)
-				{
-					// Delete any old revisions that were in the queue and marked as New
-					$sql = 'SELECT * FROM ' . TITANIA_QUEUE_TABLE . '
-						WHERE contrib_id = ' . (int) $this->contrib_id . '
-							AND revision_id <> ' . $this->revision_id . '
-							AND queue_status = ' . TITANIA_QUEUE_NEW;
-					$result = phpbb::$db->sql_query($sql);
-					while ($row = phpbb::$db->sql_fetchrow($result))
-					{
-						$queue = new titania_queue;
-						$queue->__set_array($row);
-						$queue->delete();
-						unset($queue);
-					}
-					phpbb::$db->sql_freeresult($result);
-				}
-			}
-		}
-
 		// Update the release topic
 		if ($this->revision_status == TITANIA_REVISION_APPROVED)
 		{
@@ -434,7 +383,7 @@ class titania_revision extends titania_database_object
 			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 			WHERE revision_id = ' . $this->revision_id;
 		phpbb::$db->sql_query($sql);
-		
+
 		// Update the release topic
 		if ($this->revision_status == TITANIA_REVISION_APPROVED)
 		{
@@ -529,6 +478,72 @@ class titania_revision extends titania_database_object
 
 		// Self-destruct
 		parent::delete();
+	}
+
+	/**
+	* Update/create the queue entry for this revision
+	*/
+	public function update_queue()
+	{
+		// Create the queue entry if required, else update it
+		if (titania::$config->use_queue)
+		{
+			$queue = $this->get_queue();
+
+			// Only create the queue for revisions set as new
+			if ($queue === false && $this->revision_status == TITANIA_REVISION_NEW)
+			{
+				$queue = new titania_queue;
+			}
+
+			// If we have to create or update one...
+			if ($queue !== false)
+			{
+				$queue->__set_array(array(
+					'revision_id'			=> $this->revision_id,
+					'contrib_id'			=> $this->contrib_id,
+					'contrib_name_clean'	=> $this->contrib->contrib_name_clean,
+				));
+
+				// Set the queue status to new if it's submitted and the queue status is set to hide it
+				if ($this->revision_submitted && $queue->queue_status == TITANIA_QUEUE_HIDE)
+				{
+					// Only set the queue as new if there are not any newer revisions in the queue
+					$sql = 'SELECT queue_id FROM ' . TITANIA_QUEUE_TABLE . '
+						WHERE contrib_id = ' . (int) $this->contrib_id . '
+							AND revision_id > ' . $this->revision_id;
+					$result = phpbb::$db->sql_query($sql);
+					if(!($row = phpbb::$db->sql_fetchrow($result)))
+					{
+						$queue->queue_status = TITANIA_QUEUE_NEW;
+					}
+				}
+
+				$queue->submit();
+
+				// Set the revision queue id
+				$this->revision_queue_id = $queue->queue_id;
+				parent::submit();
+
+				if ($this->revision_submitted)
+				{
+					// Delete any old revisions that were in the queue and marked as New
+					$sql = 'SELECT * FROM ' . TITANIA_QUEUE_TABLE . '
+						WHERE contrib_id = ' . (int) $this->contrib_id . '
+							AND revision_id < ' . $this->revision_id . '
+							AND queue_status = ' . TITANIA_QUEUE_NEW;
+					$result = phpbb::$db->sql_query($sql);
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$queue = new titania_queue;
+						$queue->__set_array($row);
+						$queue->delete();
+						unset($queue);
+					}
+					phpbb::$db->sql_freeresult($result);
+				}
+			}
+		}
 	}
 
 	/**
