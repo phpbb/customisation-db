@@ -449,6 +449,13 @@ class titania_revision extends titania_database_object
 		$this->revision_queue_id = $old_queue->queue_id;
 		$this->submit();
 
+		// Move any translations
+		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+			SET object_id = ' . $this->revision_id . '
+			WHERE object_type = ' . TITANIA_TRANSLATION . '
+				AND object_id = ' . $old_revision->revision_id;
+		phpbb::$db->sql_query($sql);
+
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
