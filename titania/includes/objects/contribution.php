@@ -1193,6 +1193,12 @@ class titania_contribution extends titania_message_object
 		// Change the status to new (handles resetting counts)
 		$this->change_status(TITANIA_CONTRIB_NEW);
 
+		// Remove any attention items
+		$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
+			WHERE attention_object_type = ' . TITANIA_CONTRIB . '
+				AND attention_object_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
+
 		// Delete the release topic
 		if ($this->contrib_release_topic_id)
 		{
