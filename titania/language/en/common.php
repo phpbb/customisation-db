@@ -41,6 +41,8 @@ $lang = array_merge($lang, array(
 	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
 	'ADD_FIELD'					=> 'Add Field',
+	'AGREE'						=> 'I agree',
+	'AGREEMENT'					=> 'Agreement',
 	'ALL'						=> 'All',
 	'ALL_CONTRIBUTIONS'			=> 'All contributions',
 	'ALL_SUPPORT'				=> 'All support topics',
@@ -130,6 +132,7 @@ $lang = array_merge($lang, array(
 
 	'NAME'						=> 'Name',
 	'NEW_REVISION'				=> 'New Revision',
+	'NOT_AGREE'					=> 'I do not agree',
 	'NO_AUTH'					=> 'You are not authorised to see this page.',
 	'NO_CATEGORY'				=> 'The requested category does not exist.',
 	'NO_CATEGORY_NAME'			=> 'Enter the category name',

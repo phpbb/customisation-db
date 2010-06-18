@@ -411,6 +411,7 @@ phpbb::$template->assign_vars(array(
 	'ERROR_MSG'			=> (sizeof($error)) ? implode('<br />', $error) : '',
 	'NEXT_STEP'			=> $next_step,
 	'REVISION_ID'		=> $revision_id,
+	'AGREEMENT_NOTICE'	=> (isset(titania_types::$types[titania::$contrib->contrib_type]->upload_agreement)) ? ((isset(phpbb::$user->lang[titania_types::$types[titania::$contrib->contrib_type]->upload_agreement])) ? nl2br(phpbb::$user->lang[titania_types::$types[titania::$contrib->contrib_type]->upload_agreement]): nl2br(titania_types::$types[titania::$contrib->contrib_type]->upload_agreement)) : false,
 
 	'S_POST_ACTION'		=> ($repack) ? titania_url::append_url(titania::$contrib->get_url('revision'), array('repack' => $repack)) : titania::$contrib->get_url('revision'),
 ));

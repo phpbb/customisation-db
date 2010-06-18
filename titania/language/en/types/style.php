@@ -66,6 +66,13 @@ $lang = array_merge($lang, array(
 	'STYLE_REPLY_PUBLIC_NOTES'			=> '
 
 [b]Notes: %s[/b]',
+	'STYLE_UPLOAD_AGREEMENT'			=> '// DEVELOPERS PLEASE NOTE
+//
+// All language files should use UTF-8 as their encoding and the files must not contain a BOM.
+//
+// Placeholders can now contain order information, e.g. instead of
+// \'Page %s of %s\' you can (and should) write \'Page %1$s of %2$s\', this allows
+// translators to re-order the output of data while ensuring it remains correct',
 	'STYLE_VALIDATION'					=> '[phpBB Style-Validation] %1$s %2$s',
 	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Styles Team your style has been approved and released into our styles database.
 

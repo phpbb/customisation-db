@@ -52,6 +52,7 @@ class titania_type_mod extends titania_type_base
 	public $validation_message_deny = 'MOD_VALIDATION_MESSAGE_DENY';
 	public $create_public = 'MOD_CREATE_PUBLIC';
 	public $update_public = 'MOD_UPDATE_PUBLIC';
+	public $upload_agreement = 'MOD_UPLOAD_AGREEMENT';
 
 	/**
 	* Run MPV/Automod Test for this type?
