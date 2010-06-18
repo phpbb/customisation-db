@@ -123,6 +123,8 @@ if ($attention_id || ($object_type && $object_id))
 						WHERE topic_id = ' . $post->topic_id;
 					phpbb::$db->sql_query($sql);
 				}
+
+				redirect(titania_url::build_url(titania_url::$current_page));
 			}
 
 			// Disapprove the post
@@ -249,6 +251,8 @@ if ($attention_id || ($object_type && $object_id))
 
 					phpbb::$user->set_custom_lang_path($lang_path);
 				}
+
+				redirect(titania_url::build_url(titania_url::$current_page));
 			}
 
 			users_overlord::load_users(array($post->post_user_id, $post->post_edit_user, $post->post_delete_user));
