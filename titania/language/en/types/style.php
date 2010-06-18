@@ -66,11 +66,6 @@ $lang = array_merge($lang, array(
 	'STYLE_REPLY_PUBLIC_NOTES'			=> '
 
 [b]Notes: %s[/b]',
-	'STYLE_UPDATE_PUBLIC'				=> '[b][color=darkred]Style Updated to version %1$s
-See first post for Download Link[/color][/b]',
-	'STYLE_UPDATE_PUBLIC_NOTES'			=> '
-
-[b]Notes:[/b] %1$s',
 	'STYLE_VALIDATION'					=> '[phpBB Style-Validation] %1$s %2$s',
 	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Styles Team your style has been approved and released into our styles database.
 

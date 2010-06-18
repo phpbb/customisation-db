@@ -61,10 +61,6 @@ $lang = array_merge($lang, array(
 
 [b]Download file[/b]: [url=%6$s]%7$s[/url]
 [b]File size:[/b] %8$s Bytes',
-	'MOD_REPLY_PUBLIC'					=> '[b][color=darkred]Modification validated/released[/color][/b]',
-	'MOD_REPLY_PUBLIC_NOTES'			=> '
-
-[b]Notes:[/b] %s',
 	'MOD_UPDATE_PUBLIC'					=> '[b][color=darkred]MOD Updated to version %1$s
 See first post for Download Link[/color][/b]',
 	'MOD_UPDATE_PUBLIC_NOTES'			=> '
