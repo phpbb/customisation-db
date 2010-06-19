@@ -283,6 +283,12 @@ if ($attention_id || ($object_type && $object_id))
 				trigger_error('NO_CONTRIB');
 			}
 
+			// Close the report
+			if ($close)
+			{
+				redirect(titania_url::build_url(titania_url::$current_page));
+			}
+
 			users_overlord::load_users(array($contrib->contrib_user_id));
 			users_overlord::assign_details($contrib->contrib_user_id, 'POSTER_', true);
 
