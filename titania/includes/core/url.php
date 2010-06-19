@@ -384,7 +384,7 @@ class titania_url
 			$url = str_replace($match, ' ', $url);
 		}
 
-		$url = str_replace(self::$separator, self::$separator_replacement, $url);
+		$url = str_replace(array('%5B', '%5D', self::$separator), array('[', ']', self::$separator_replacement), $url);
 
 		return $url;
 	}

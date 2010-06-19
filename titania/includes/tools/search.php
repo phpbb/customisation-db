@@ -296,6 +296,29 @@ class titania_search
 	}
 
 	/**
+	* Search in a set (similar to sql_in_set)
+	*
+	* @param object $query Search query
+	* @param string $field The field name
+	* @param array $array Array of values to search in
+	*/
+	public static function in_set($query, $field, $array)
+	{
+		if (!sizeof($array))
+		{
+			throw new exception('No values specified for search in set');
+		}
+
+		$set = array();
+		foreach ($array as $item)
+		{
+			$set[] = $query->eq($field, $item);
+		}
+
+		$query->where($query->lOr($set));
+	}
+
+	/**
 	* Clean some keywords up
 	*
 	* @param string $keywords

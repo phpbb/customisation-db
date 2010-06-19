@@ -183,7 +183,7 @@ if ($mode == 'find-contribution')
 	if (sizeof($categories) || sizeof($phpbb_versions))
 	{
 		// Prevent an error
-		$contribs = array($query->eq('id', 0));
+		$contribs = array(0);
 
 		// Grab the children
 		if ($search_subcategories)
@@ -230,11 +230,12 @@ if ($mode == 'find-contribution')
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$contribs[] = $query->eq('id', $row['contrib_id']);
+			$contribs[] = $row['contrib_id'];
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		$query->where($query->lOr($contribs));
+		// Search in the set
+		titania_search::in_set($query, 'id', $contribs);
 	}
 
 	$query->where($query->eq('type', TITANIA_CONTRIB));
@@ -304,11 +305,14 @@ users_overlord::load_users($results['user_ids']);
 
 $sort->build_pagination(titania_url::$current_page, titania_url::$params);
 
+titania::page_header('SEARCH');
+
 phpbb::$template->assign_vars(array(
 	'SEARCH_WORDS'		=> $keywords,
 	'SEARCH_MATCHES'	=> ($sort->total == 1) ? sprintf(phpbb::$user->lang['FOUND_SEARCH_MATCH'], $sort->total) : sprintf(phpbb::$user->lang['FOUND_SEARCH_MATCHES'], $sort->total),
 
 	'U_SEARCH_WORDS'	=> titania_url::build_url(titania_url::$current_page, titania_url::$params),
+	'U_SEARCH'			=> titania_url::build_url((($mode == 'find-contribution') ? 'find-contribution' : 'search')),
 
 	'S_IN_SEARCH'		=> true,
 
@@ -317,5 +321,4 @@ phpbb::$template->assign_vars(array(
 	'S_SEARCH_ACTION'	=> titania_url::$current_page_url,
 ));
 
-titania::page_header('SEARCH');
 titania::page_footer(true, 'search_results.html');
