@@ -51,7 +51,7 @@ $path = get_path() . '/';
 // adjust paths
 $stylesheet = str_replace('./', $path . 'styles/' . $style . '/theme/', $stylesheet);
 
-$expire_time = 7*86400;
+$expire_time = 86400;
 header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + $expire_time));
 header('Content-type: text/css; charset=UTF-8');
 
