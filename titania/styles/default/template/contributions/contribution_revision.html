@@ -41,11 +41,12 @@
 				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
 					<!-- INCLUDE posting/posting_basic_editor.html -->
 				<!-- ENDIF -->
-			<!-- ENDIF -->
-			<!-- IF AGREEMENT_NOTICE -->
-				<h3>{L_AGREEMENT}</h3>
-				{AGREEMENT_NOTICE}
-				<br /><br />
+
+				<!-- IF AGREEMENT_NOTICE -->
+					<h3>{L_AGREEMENT}</h3>
+					{AGREEMENT_NOTICE}
+					<br /><br />
+				<!-- ENDIF -->
 			<!-- ENDIF -->
 			<!-- IF S_NEW_REVISION_SUBMITTED -->
 				{L_NEW_REVISION_SUBMITTED}
@@ -70,7 +71,7 @@
 			<!-- ENDIF -->
 
 			<fieldset class="submit-buttons">
-				<!-- IF AGREEMENT_NOTICE -->
+				<!-- IF AGREEMENT_NOTICE and REVISION_UPLOADER -->
 					<input type="submit" id="new_revision" name="new_revision" value="{L_AGREE}" class="button1" />&nbsp;
 					<input type="submit" id="disagree" name="disagree" value="{L_NOT_AGREE}" class="button1" />
 				<!-- ELSE -->
