@@ -19,6 +19,10 @@ RewriteEngine on
 #download
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^download/([^/]+)$									./download/file.php [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^view-install/modx/([^/]+)$							./download/modx/$1 [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^view-install/([^/]+)$								./download/view_install.php [NC]
 
 #manage
 RewriteCond %{REQUEST_FILENAME} !-f

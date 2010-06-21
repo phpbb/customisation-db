@@ -39,6 +39,7 @@ class titania_config extends titania_object
 			'titania_script_path'		=> array('default' => 'customisation/'),
 			'upload_path'				=> array('default' => TITANIA_ROOT . 'files/'),
 			'contrib_temp_path'			=> array('default' => TITANIA_ROOT . 'files/contrib_temp/'),
+			'modx_storage_path'			=> array('default' => TITANIA_ROOT . 'files/modx_files/'),
 			'language_path'				=> array('default' => TITANIA_ROOT . 'language/'),
 			'table_prefix'				=> array('default' => 'customisation_'),
 

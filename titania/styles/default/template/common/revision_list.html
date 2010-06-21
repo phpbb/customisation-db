@@ -43,6 +43,7 @@
 				<dl class="revision-details<!-- IF revisions.S_FIRST_ROW --> first<!-- ENDIF -->">
 					<dt class="revision-information">
 						{L_VALIDATION_TIME}: {revisions.VALIDATED_DATE}<br />
+						<!-- IF revisions.U_VIEW_INSTALL -->{L_VIEW_INSTALL_FILE}: <a href="{revisions.U_VIEW_INSTALL}">{L_VIEW_INSTALL_FILE}</a><br /><!-- ENDIF -->
 					</dt>
 					<!-- IF .revisions.translations -->
 					<dd class="revision-translations">

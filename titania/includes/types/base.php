@@ -157,6 +157,8 @@ class titania_type_base
 
 	/**
 	* Run MPV/Automod Test for this type?
+	*
+	* @var bool
 	*/
 	public $mpv_test = false;
 	public $automod_test = false;
@@ -168,6 +170,14 @@ class titania_type_base
 	*/
 	public $clean_and_restore_root = false;
 	public $root_search = false;
+
+	/**
+	* Display the install file to the users?
+	* Note that this only works with ModX files
+	*
+	* @var bool
+	*/
+	public $display_install_file = false;
 
 	/**
 	 * The forum_database and forum_robot, initialize in constructor

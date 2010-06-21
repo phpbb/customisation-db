@@ -42,7 +42,7 @@ $lang = array_merge($lang, array(
 	'AUTOMOD_RESULTS'						=> '<strong>Please check over the AutoMod install results and make sure that nothing needs to be fixed.<br /><br />If an error comes up and you are certain that the error is incorrect, just hit continue below.</strong>',
 	'AUTOMOD_TEST'							=> 'The Mod will be tested against AutoMod and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 
-	'BAD_VERSION_SELECTED'					=> '%s is not a proper phpBB versions.',
+	'BAD_VERSION_SELECTED'					=> '%s is not a proper phpBB version.',
 
 	'CANNOT_ADD_SELF_COAUTHOR'				=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CLEANED_CONTRIB'						=> 'Cleaned contribution',
@@ -83,6 +83,7 @@ $lang = array_merge($lang, array(
 	'CONTRIB_UPDATE_DATE'					=> 'Last updated',
 	'COULD_NOT_FIND_ROOT'					=> 'Could not find the main directory.  Please ensure there is an xml file with the name install in it somewhere in the zip package.',
 	'COULD_NOT_FIND_USERS'					=> 'Could not find the following users: %s',
+	'COULD_NOT_OPEN_MODX'					=> 'Could not open ModX file.',
 	'CO_AUTHORS'							=> 'Co-Authors',
 
 	'DELETE_CONTRIBUTION'					=> 'Delete Contribution',
@@ -166,6 +167,7 @@ $lang = array_merge($lang, array(
 
 	'VALIDATION_TIME'						=> 'Validation time',
 	'VIEW_DEMO'								=> 'View Demo',
+	'VIEW_INSTALL_FILE'						=> 'View install file',
 
 	'WRONG_CATEGORY'						=> 'You can only put this contribution in the same category type as the contribution type.',
 ));
