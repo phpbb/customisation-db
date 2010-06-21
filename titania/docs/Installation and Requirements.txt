@@ -21,15 +21,8 @@ How to install the modules for phpBB:
 	3. Change define('TITANIA_ROOT', $phpbb_root_path . '../customisation/'); in each of the includes/(module type)/ files to point correctly to the titania root.
 	4. Add the modules through the ACP Module Management
 
-Solr Search:
-	For the longer search queries used in Find Contribution you may need to raise the limit on Jetty
-	(using the Solr example path)
-	
-	Open:
-	etc/jetty.xml
-	
-	In each set of:
-	<Call name="addConnector">
-	
-	Add with the other <set> calls (may need to adjust this depending upon just how large you expect it to be, 8096 works for sorting up to about 500 contributions):
-	<Set name='headerBufferSize'>8096</Set>
+
+-------------------------------------------------
+Read the Read Me.txt file!
+It contains information about Titania that is important to know/remember!
+-------------------------------------------------
