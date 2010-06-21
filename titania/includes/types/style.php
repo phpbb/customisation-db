@@ -51,6 +51,7 @@ class titania_type_style extends titania_type_base
 	public $validation_message_approve = 'STYLE_VALIDATION_MESSAGE_APPROVE';
 	public $validation_message_deny = 'STYLE_VALIDATION_MESSAGE_DENY';
 	public $create_public = 'STYLE_CREATE_PUBLIC';
+	public $reply_public = 'STYLE_REPLY_PUBLIC';
 	public $update_public = 'STYLE_UPDATE_PUBLIC';
 	public $upload_agreement = 'STYLE_UPLOAD_AGREEMENT';
 

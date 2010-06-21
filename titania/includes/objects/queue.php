@@ -338,9 +338,13 @@ class titania_queue extends titania_message_object
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
+	/**
+	* Approve this revision
+	*
+	* @param mixed $public_notes
+	*/
 	public function approve($public_notes)
 	{
-		// Reply to the queue topic and discussion with the message
 		titania::add_lang(array('manage', 'contributions'));
 		$revision = $this->get_revision();
 		$contrib = new titania_contribution;
@@ -349,6 +353,7 @@ class titania_queue extends titania_message_object
 			return false;
 		}
 		$revision->contrib = $contrib;
+		$contrib_release_topic_id = $contrib->contrib_release_topic_id;
 
 		$notes = $this->queue_validation_notes;
 		titania_decode_message($notes, $this->queue_validation_notes_uid);
@@ -367,9 +372,16 @@ class titania_queue extends titania_message_object
 		$revision->change_status(TITANIA_REVISION_APPROVED);
 
 		// Reply to the release topic
-		if (titania_types::$types[$contrib->contrib_type]->update_public)
+		if ($contrib_release_topic_id && titania_types::$types[$contrib->contrib_type]->update_public)
 		{
-			$public_notes = phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public] . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public . '_NOTES'], $public_notes) : '');
+			// Replying to an already existing topic, use the update message
+			$public_notes = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public], $revision->revision_version) . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public . '_NOTES'], $public_notes) : '');
+			$contrib->reply_release_topic($public_notes);
+		}
+		elseif (!$contrib_release_topic_id && phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public])
+		{
+			// Replying to a topic that was just made, use the reply message
+			$public_notes = phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public . '_NOTES'], $public_notes) : '');
 			$contrib->reply_release_topic($public_notes);
 		}
 

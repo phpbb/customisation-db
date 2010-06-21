@@ -66,6 +66,11 @@ $lang = array_merge($lang, array(
 	'STYLE_REPLY_PUBLIC_NOTES'			=> '
 
 [b]Notes: %s[/b]',
+	'STYLE_UPDATE_PUBLIC'				=> '[b][color=darkred]Style Updated to version %1$s
+See first post for Download Link[/color][/b]',
+	'STYLE_UPDATE_PUBLIC_NOTES'			=> '
+
+[b]Notes:[/b] %1$s',
 	'STYLE_UPLOAD_AGREEMENT'			=> '// DEVELOPERS PLEASE NOTE
 //
 // All language files should use UTF-8 as their encoding and the files must not contain a BOM.

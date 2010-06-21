@@ -152,6 +152,7 @@ class titania_type_base
 	public $validation_message_approve = '';
 	public $validation_message_deny = '';
 	public $create_public = '';
+	public $reply_public = '';
 	public $update_public = '';
 	public $upload_agreement = '';
 
