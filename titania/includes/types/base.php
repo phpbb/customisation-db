@@ -160,7 +160,14 @@ class titania_type_base
 	*/
 	public $mpv_test = false;
 	public $automod_test = false;
+
+	/**
+	* Find the root of the install package for this type?  If so, what to search for (see contrib_tools::find_root())?
+	*
+	* @var mixed
+	*/
 	public $clean_and_restore_root = false;
+	public $root_search = false;
 
 	/**
 	 * The forum_database and forum_robot, initialize in constructor

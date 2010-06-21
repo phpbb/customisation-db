@@ -219,7 +219,14 @@ do{
 				$contrib_tools->clean_package();
 
 				// Restore the root package directory
-				$package_root = $contrib_tools->find_root();
+				if (is_array(titania_types::$types[titania::$contrib->contrib_type]->root_search))
+				{
+					$package_root = $contrib_tools->find_root(false, titania_types::$types[titania::$contrib->contrib_type]->root_search);
+				}
+				else
+				{
+					$package_root = $contrib_tools->find_root();
+				}
 				$contrib_tools->restore_root($package_root);
 
 				$error = array_merge($error, $contrib_tools->error);

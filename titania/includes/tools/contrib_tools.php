@@ -178,7 +178,7 @@ class titania_contrib_tools
 	*
 	* Ignore the variables other than $directory and $find, this is a recursive function
 	*
-	* @param string $directory The directory to search for (false to use $this->unzip_dir)
+	* @param string $directory The directory to search in (false to use $this->unzip_dir)
 	* @param array $find An array of items to search for.  Root array is to search for any one of the files, child arrays hold the things we will check for in each
 	* array(
 	*	array( // Search for an install .xml file
