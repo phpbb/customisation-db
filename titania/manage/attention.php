@@ -186,6 +186,16 @@ if ($attention_id || ($object_type && $object_id))
 				$post->topic->topic_id = $post->topic_id;
 				$post->topic->load();
 
+				// Update first/last post?
+				if ($post->topic->topic_first_post_time > $post->post_time)
+				{
+					$post->topic->sync_first_post();
+				}
+				if ($post->topic->topic_last_post_time < $post->post_time)
+				{
+					$post->topic->sync_last_post();
+				}
+
 				// Subscriptions?
 				if ($post->topic->topic_last_post_id == $post->post_id)
 				{

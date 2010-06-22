@@ -402,7 +402,7 @@ class titania_post extends titania_message_object
 
 		// If no topic_id it means we are creating a new topic, so we need to set the first_post_ data.
 		// Respect the post_time!  If for some reason we want to insert a post before the first one...
-		if (!$this->topic->topic_first_post_id || $this->topic->topic_first_post_time > $this->post_time)
+		if (!$this->topic->topic_first_post_id || ($this->post_approved && $this->topic->topic_first_post_time > $this->post_time))
 		{
 			if ($this->post_user_id == phpbb::$user->data['user_id'])
 			{
@@ -427,7 +427,7 @@ class titania_post extends titania_message_object
 		}
 
 		// Respect the post_time!  If for some reason we want to insert a post before the last one...
-		if (!$this->topic->topic_last_post_id || $this->topic->topic_last_post_time < $this->post_time)
+		if (!$this->topic->topic_last_post_id || ($this->post_approved && $this->topic->topic_last_post_time < $this->post_time))
 		{
 			if ($this->post_user_id == phpbb::$user->data['user_id'])
 			{
