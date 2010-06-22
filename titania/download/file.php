@@ -78,21 +78,21 @@ if (!$attachment)
 }
 
 // Don't allow downloads of revisions for TITANIA_CONTRIB_DOWNLOAD_DISABLED items unless on the team or an author.
-if ($attachment['object_type'] == TITANIA_CONTRIB)
+if ($attachment['object_type'] == TITANIA_CONTRIB && titania::$access_level != TITANIA_ACCESS_TEAMS)
 {
-	$sql = 'SELECT contrib_id FROM ' . TITANIA_REVISIONS_TABLE . '
+	$sql = 'SELECT contrib_id, revision_status FROM ' . TITANIA_REVISIONS_TABLE . '
 		WHERE  attachment_id = ' . $attachment['attachment_id'];
-	phpbb::$db->sql_query($sql);
-	$contrib_id = phpbb::$db->sql_fetchfield('contrib_id');
-	phpbb::$db->sql_freeresult();
+	$result = phpbb::$db->sql_query($sql);
+	$revision = phpbb::$db->sql_fetchrow($result);
+	phpbb::$db->sql_freeresult($result);
 
 	$contrib = new titania_contribution;
-	if (!$contrib->load($contrib_id))
+	if (!$contrib->load($revision['contrib_id']))
 	{
 		trigger_error('NO_ATTACHMENT_SELECTED');
 	}
 
-	if ($contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && titania::$access_level != TITANIA_ACCESS_TEAMS && !$contrib->is_author && !$contrib->is_active_coauthor)
+	if ((($revision['revision_status'] != TITANIA_REVISION_APPROVED && titania::$config->require_validation) || $contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) && !$contrib->is_author && !$contrib->is_active_coauthor)
 	{
 		trigger_error('NO_ATTACHMENT_SELECTED');
 	}
