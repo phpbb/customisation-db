@@ -145,6 +145,14 @@ $(document).ready(function(){
 		$(this).children('.revision-details').toggle('fast');
 	});
 
+	// Queue Subactions
+	$('.queue-actions > li > .subactions').hide();
+	$('.queue-actions > li').hover(function() {
+		$(this).children('.subactions').toggle();
+	}, function() {
+		$(this).children('.subactions').toggle();
+	});
+
 	// Make elastic textareas elastic
 	$('.elastic').elastic();
 

@@ -243,19 +243,6 @@ class queue_overlord
 		$quick_actions = array();
 		if ($row['queue_status'] > 0)
 		{
-			if (!$row['mpv_results'] && titania_types::$types[$contrib->contrib_type]->mpv_test)
-			{
-				$quick_actions['RETEST_MPV'] = array(
-					'url'		=> titania_url::build_url('', array('action' => 'mpv', 'revision' => $row['revision_id'])),
-				);
-			}
-			if (!$row['automod_results'] && titania_types::$types[$contrib->contrib_type]->automod_test)
-			{
-				$quick_actions['RETEST_AUTOMOD'] = array(
-					'url'		=> titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id'])),
-				);
-			}
-
 			if ($row['queue_progress'] == phpbb::$user->data['user_id'])
 			{
 				$quick_actions['MARK_NO_PROGRESS'] = array(
@@ -290,6 +277,32 @@ class queue_overlord
 				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes')),
 			);*/
 
+			// Misc actions
+			$subactions = array();
+			if (/*!$row['mpv_results'] && */titania_types::$types[$contrib->contrib_type]->mpv_test)
+			{
+				$subactions['RETEST_MPV'] = array(
+					'url'		=> titania_url::build_url('', array('action' => 'mpv', 'revision' => $row['revision_id'])),
+				);
+			}
+
+			if (/*!$row['automod_results'] && */titania_types::$types[$contrib->contrib_type]->automod_test)
+			{
+				$subactions['RETEST_AUTOMOD'] = array(
+					'url'		=> titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id'])),
+				);
+			}
+
+			$subactions['REBUILD_FIRST_POST'] = array(
+				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'rebuild')),
+			);
+
+			$quick_actions['CAT_MISC'] = array(
+				'subactions'	=> $subactions,
+				'class'			=> 'misc',
+			);
+
+			// Validation
 			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
 				$quick_actions['APPROVE'] = array(
@@ -301,10 +314,6 @@ class queue_overlord
 					'class'		=> 'deny',
 				);
 			}
-
-			/*$quick_actions['REBUILD_FIRST_POST'] = array(
-				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'rebuild')),
-			);*/
 		}
 
 		foreach ($quick_actions as $lang_key => $data)
@@ -313,14 +322,14 @@ class queue_overlord
 				'NAME'		=> (isset(phpbb::$user->lang[$lang_key])) ? phpbb::$user->lang[$lang_key] : $lang_key,
 				'CLASS'		=> (isset($data['class'])) ? $data['class'] : '',
 
-				'U_VIEW'	=> $data['url'],
+				'U_VIEW'	=> (isset($data['url'])) ? $data['url'] : '',
 			));
 
 			if (isset($data['tags']))
 			{
 				foreach ($data['tags'] as $tag_id => $tag_row)
 				{
-					phpbb::$template->assign_block_vars('tags', array(
+					phpbb::$template->assign_block_vars('queue_actions.subactions', array(
 						'ID'		=> $tag_id,
 						'NAME'		=> ((isset(phpbb::$user->lang[$tag_row['tag_field_name']])) ? phpbb::$user->lang[$tag_row['tag_field_name']] : $tag_row['tag_field_name']),
 
@@ -328,10 +337,34 @@ class queue_overlord
 					));
 				}
 			}
+
+			if (isset($data['subactions']))
+			{
+				foreach ($data['subactions'] as $sublang_key => $subdata)
+				{
+					phpbb::$template->assign_block_vars('queue_actions.subactions', array(
+						'NAME'		=> ((isset(phpbb::$user->lang[$sublang_key])) ? phpbb::$user->lang[$sublang_key] : $sublang_key),
+
+						'U_ACTION'	=> $subdata['url'],
+					));
+				}
+			}
 		}
 
+		if ($row['queue_status'] == -2)
+		{
+			$current_status = phpbb::$user->lang['REVISION_DENIED'];
+		}
+		else if ($row['queue_status'] == -1)
+		{
+			$current_status = phpbb::$user->lang['REVISION_APPROVED'];
+		}
+		else
+		{
+			$current_status = titania_tags::get_tag_name($row['queue_status']);
+		}
 		phpbb::$template->assign_vars(array(
-			'CURRENT_STATUS'			=> titania_tags::get_tag_name($row['queue_status']),
+			'CURRENT_STATUS'			=> $current_status,
 
 			'S_DISPLAY_CONTRIBUTION'	=> true,
 			'S_IN_QUEUE'				=> true,

@@ -460,7 +460,7 @@ ul.rating li, ul.rated li {
 .change_status		{ padding-left: 15px !important; background-image: url("{T_THEME_PATH}/images/icon_change_status.gif"); }
 .repack 			{ padding-left: 17px !important; background-image: url("{T_THEME_PATH}/images/icon_repack.gif"); }
 
-#queue-status-options div {
+.queue-actions div.subactions {
 	position: absolute;
 	z-index: 999;
 	background-color: #F1F4F5;
@@ -471,11 +471,11 @@ ul.rating li, ul.rated li {
 	display: none;
 }
 
-#queue-status-options div a {
+.queue-actions div.subactions div a {
 	padding: 0 10px;
 }
 
-#queue-status-options div a:hover {
+.queue-actions div.subactions div a:hover {
 	background-color: #FFF;
 }
 
