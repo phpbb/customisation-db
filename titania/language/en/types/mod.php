@@ -70,13 +70,9 @@ See first post for Download Link[/color][/b]',
 	'MOD_UPDATE_PUBLIC_NOTES'			=> '
 
 [b]Notes:[/b] %1$s',
-	'MOD_UPLOAD_AGREEMENT'				=> '// DEVELOPERS PLEASE NOTE
-//
-// All language files should use UTF-8 as their encoding and the files must not contain a BOM.
-//
-// Placeholders can now contain order information, e.g. instead of
-// \'Page %s of %s\' you can (and should) write \'Page %1$s of %2$s\', this allows
-// translators to re-order the output of data while ensuring it remains correct',
+	'MOD_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide by the <a href="http://www.phpbb.com/mods/policies/">MODifications database policies</a> and that your MOD conforms to and follows the <a href="http://code.phpbb.com/svn/phpbb/branches/phpBB-3_0_0/phpBB/docs/coding-guidelines.html">phpBB3 Coding Guidelines</a>.
+
+You also agree and accept that this MODification\'s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your MODification through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
 	'MOD_VALIDATION'					=> '[phpBB MOD-Validation] %1$s %2$s',
 	'MOD_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your modication to the phpBB.com modifications database. After careful inspection by the MOD Team your MOD has been approved and released into our modifications database.
 
