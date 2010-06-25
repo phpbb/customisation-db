@@ -94,7 +94,24 @@ if ($attachment['object_type'] == TITANIA_CONTRIB && titania::$access_level != T
 
 	if ((($revision['revision_status'] != TITANIA_REVISION_APPROVED && titania::$config->require_validation) || $contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) && !$contrib->is_author && !$contrib->is_active_coauthor)
 	{
-		trigger_error('NO_ATTACHMENT_SELECTED');
+		// Is it the MPV server requesting the file?  If so we allow non-approved file downloads
+		$is_mpv_server = false;
+		foreach (titania::$config->mpv_server_list as $data)
+		{
+			$dns_ipv4 = dns_get_record($data['host'], DNS_A);
+			$dns_ipv6 = dns_get_record($data['host'], DNS_AAAA);
+
+			if ((isset($dns_ipv4[0]) && isset($dns_ipv4[0]['ip']) && phpbb::$user->ip == $dns_ipv4[0]['ip']) || (isset($dns_ipv6[0]) && isset($dns_ipv6[0]['ip']) && phpbb::$user->ip == $dns_ipv6[0]['ip']))
+			{
+				$is_mpv_server = true;
+				break;
+			}
+		}
+
+		if (!$is_mpv_server)
+		{
+			trigger_error('NO_ATTACHMENT_SELECTED');
+		}
 	}
 	unset($contrib);
 }
