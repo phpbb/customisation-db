@@ -198,8 +198,18 @@ class contribs_overlord
 				'FROM'	=> array(TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc'),
 				'ON'	=> 'cc.contrib_id = c.contrib_id AND cc.user_id = ' . phpbb::$user->data['user_id'],
 			);
+			$view_unapproved = array();
+			if (sizeof(titania_types::find_authed('moderate')))
+			{
+				$view_unapproved = array_merge($view_unapproved, titania_types::find_authed('moderate'));
+			}
+			if (sizeof(titania_types::find_authed('view')))
+			{
+				$view_unapproved = array_merge($view_unapproved, titania_types::find_authed('view'));
+			}
+			$view_unapproved = array_unique($view_unapproved);
 			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
-				((sizeof(titania_types::find_authed('moderate'))) ? ' OR ' . phpbb::$db->sql_in_set('c.contrib_type', titania_types::find_authed('moderate')) : '') . '
+				((sizeof($view_unapproved)) ? ' OR ' . phpbb::$db->sql_in_set('c.contrib_type', array_map('intval', $view_unapproved)) : '') . '
 				OR c.contrib_user_id = ' . phpbb::$user->data['user_id'] . '
 				OR cc.active = 1)';
 		}

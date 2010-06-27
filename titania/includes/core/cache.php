@@ -250,25 +250,25 @@ class titania_cache extends acm
 			$author_block[$user_id] = array();
 
 			// Need to get the contribs for the selected author
-			$sql = 'SELECT contrib_id, contrib_status FROM ' . TITANIA_CONTRIBS_TABLE . '
+			$sql = 'SELECT contrib_id, contrib_type, contrib_status FROM ' . TITANIA_CONTRIBS_TABLE . '
 				WHERE contrib_user_id = ' . $user_id;
 			$result = phpbb::$db->sql_query($sql);
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$author_block[$user_id][$row['contrib_id']] = array('status' => $row['contrib_status'], 'active' => true);
+				$author_block[$user_id][$row['contrib_id']] = array('status' => $row['contrib_status'], 'active' => true, 'type' => $row['contrib_type']);
 			}
 
 			phpbb::$db->sql_freeresult($result);
 
 			// Now get the lists where the user is a co-author
-			$sql = 'SELECT cc.contrib_id, c.contrib_status, cc.active FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' cc, ' . TITANIA_CONTRIBS_TABLE . ' c
+			$sql = 'SELECT cc.contrib_id, c.contrib_status, c.contrib_type, cc.active FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' cc, ' . TITANIA_CONTRIBS_TABLE . ' c
 				WHERE cc.user_id = ' . $user_id . '
 					AND c.contrib_id = cc.contrib_id';
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$author_block[$user_id][$row['contrib_id']] = array('status' => $row['contrib_status'], 'active' => $row['active']);
+				$author_block[$user_id][$row['contrib_id']] = array('status' => $row['contrib_status'], 'active' => $row['active'], 'type' => $row['contrib_type']);
 			}
 			phpbb::$db->sql_freeresult($result);
 
@@ -280,8 +280,12 @@ class titania_cache extends acm
 
 		foreach ($author_block[$user_id] as $contrib_id => $data)
 		{
-			// If approved, or new and doesn't require approval, or the user is viewing their own, or TITANIA_ACCESS_TEAMS, add them to the list
-			if (phpbb::$user->data['user_id'] == $user_id || (!titania::$config->require_validation && $data['status'] == TITANIA_CONTRIB_NEW) || in_array($data['status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) || titania::$access_level == TITANIA_ACCESS_TEAMS)
+			// If approved, or new and doesn't require approval, or the user is viewing their own, or permission to view non-validated, add them to the list
+			if (phpbb::$user->data['user_id'] == $user_id ||
+				(!titania::$config->require_validation && $data['status'] == TITANIA_CONTRIB_NEW) ||
+				in_array($data['status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) ||
+				titania_types::$types[$data['type']]->acl_get('view') ||
+				titania_types::$types[$data['type']]->acl_get('moderate'))
 			{
 				if (!$active || $data['active'])
 				{

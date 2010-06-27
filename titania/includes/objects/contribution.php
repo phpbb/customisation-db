@@ -272,9 +272,14 @@ class titania_contribution extends titania_message_object
 			return;
 		}
 
+		// Can they view unapproved revisions?  Yes if validation not required, is author, is active coauthor, can view validation queue or can moderate this contribution
+		$can_view_unapproved = (!titania::$config->require_validation || $this->is_author || $this->is_active_coauthor) ? true : false;
+		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('view')) ? true : false;
+		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? true : false;
+
 		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
 			WHERE contrib_id = ' . $this->contrib_id .
-				((titania::$config->require_validation && titania::$access_level == TITANIA_ACCESS_PUBLIC) ? ' AND revision_status = ' . TITANIA_REVISION_APPROVED : '') . '
+				((!$can_view_unapproved) ? ' AND revision_status = ' . TITANIA_REVISION_APPROVED : '') . '
 				AND revision_submitted = 1
 			ORDER BY revision_id DESC';
 		$result = phpbb::$db->sql_query($sql);

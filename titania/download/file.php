@@ -78,7 +78,7 @@ if (!$attachment)
 }
 
 // Don't allow downloads of revisions for TITANIA_CONTRIB_DOWNLOAD_DISABLED items unless on the team or an author.
-if ($attachment['object_type'] == TITANIA_CONTRIB && titania::$access_level != TITANIA_ACCESS_TEAMS)
+if ($attachment['object_type'] == TITANIA_CONTRIB)
 {
 	$sql = 'SELECT contrib_id, revision_status FROM ' . TITANIA_REVISIONS_TABLE . '
 		WHERE  attachment_id = ' . $attachment['attachment_id'];
@@ -92,7 +92,7 @@ if ($attachment['object_type'] == TITANIA_CONTRIB && titania::$access_level != T
 		trigger_error('NO_ATTACHMENT_SELECTED');
 	}
 
-	if ((($revision['revision_status'] != TITANIA_REVISION_APPROVED && titania::$config->require_validation) || $contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) && !$contrib->is_author && !$contrib->is_active_coauthor)
+	if ((($revision['revision_status'] != TITANIA_REVISION_APPROVED && titania::$config->require_validation) || $contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) && !$contrib->is_author && !$contrib->is_active_coauthor && !titania_types::$types[$contrib->contrib_type]->acl_get('view') && !titania_types::$types[$contrib->contrib_type]->acl_get('moderate'))
 	{
 		// Is it the MPV server requesting the file?  If so we allow non-approved file downloads
 		$is_mpv_server = false;
