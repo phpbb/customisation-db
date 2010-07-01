@@ -17,7 +17,10 @@ if (!defined('IN_TITANIA'))
 }
 
 // Some often used path constants
-define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
+if (!defined('PHPBB_ROOT_PATH'))
+{
+	define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
+}
 
 // phpBB 3.x compatibility
 global $phpbb_root_path, $phpEx;
