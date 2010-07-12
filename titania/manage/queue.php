@@ -342,11 +342,15 @@ if ($queue_id)
 		break;
 	}
 
-	queue_overlord::display_queue_item($queue_id);
+	// Display the main queue item
+	$data = queue_overlord::display_queue_item($queue_id);
 
 	// Handle replying/editing/etc
 	$posting_helper = new titania_posting();
 	$posting_helper->act('manage/queue_post.html');
+
+	// Display the posts in the queue (after the posting helper acts)
+	posts_overlord::display_topic_complete($data['topic']);
 
 	titania::page_header(queue_overlord::$queue[$queue_id]['topic_subject']);
 }

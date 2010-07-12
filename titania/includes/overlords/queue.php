@@ -186,9 +186,26 @@ class queue_overlord
 	}
 
 	/**
+	* Display the complete queue item (includes the topic)
+	*
+	* @param int $queue_id
+	* @return array data from display_queue_item
+	*/
+	public static function display_queue_item_complete($queue_id)
+	{
+		$data = self::display_queue_item($queue_id);
+
+		// Display the posts
+		posts_overlord::display_topic_complete($data['topic']);
+
+		return $data;
+	}
+
+	/**
 	* Display a single queue item
 	*
 	* @param int $queue_id
+	* @return array('row' => (sql selection), 'contrib' => $contrib, 'topic' => $topic)
 	*/
 	public static function display_queue_item($queue_id)
 	{
@@ -229,15 +246,12 @@ class queue_overlord
 		$contrib->get_screenshots();
 		$contrib->assign_details();
 
-		// Load the topic
+		// Load the topic (with the already selected data)
 		$topic = new titania_topic;
 		$topic->__set_array($row);
 
 		// Bit of a hack for the posting
 		$_REQUEST['t'] = $topic->topic_id;
-
-		// Display the posts
-		posts_overlord::display_topic_complete($topic);
 
 		// Some quick-actions
 		$quick_actions = array();
@@ -375,6 +389,8 @@ class queue_overlord
 
 		// Subscriptions
 		titania_subscriptions::handle_subscriptions(TITANIA_TOPIC, $topic->topic_id, titania_url::$current_page_url);
+
+		return compact('row', 'contrib', 'topic');
 	}
 
 	/**

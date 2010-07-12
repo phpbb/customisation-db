@@ -23,7 +23,7 @@
 			</ul>
 			<!-- ENDIF -->
 			<!-- IF posts.U_MCP_DETAILS --><div class="right-box"><a href="{posts.U_MCP_DETAILS}">{L_POST_DETAILS}</a></div><!-- ENDIF -->
-			<h3><a href="#pr{posts.POST_ID}">{posts.POST_SUBJECT}</a></h3>
+			<h3><a href="{posts.U_VIEW}">{posts.POST_SUBJECT}</a></h3>
 			<p class="author"><!-- IF S_IS_BOT -->{posts.MINI_POST_IMG}<!-- ELSE --><a href="{posts.U_MINI_POST}">{posts.MINI_POST_IMG}</a><!-- ENDIF --> {L_POST_BY_AUTHOR} <strong>{posts.USER_FULL}</strong> &raquo; {posts.POST_TIME}  </p>
 			<div class="content">{posts.POST_TEXT}</div>
 
