@@ -194,6 +194,15 @@ class titania_attachment extends titania_database_object
 	 */
 	public function parse_uploader($tpl_file = 'posting/attachments/default.html')
 	{
+		// If the upload max filesize is less than 0, do not show the uploader (0 = unlimited)
+		if (titania::$access_level != TITANIA_ACCESS_TEAMS)
+		{
+			if (isset(titania::$config->upload_max_filesize[$this->object_type]) && titania::$config->upload_max_filesize[$this->object_type] < 0)
+			{
+				return '';
+			}
+		}
+
 		phpbb::$template->assign_vars(array(
 			'FORM_NAME'			=> $this->form_name,
 			'MAX_LENGTH'		=> (titania::$access_level != TITANIA_ACCESS_TEAMS) ? phpbb::$config['max_filesize'] : false,
