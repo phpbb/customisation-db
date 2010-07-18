@@ -254,6 +254,9 @@ class titania_url
 		// Replace SID
 		$url = self::remove_sid($url);
 
+		// Decode the URL (it'll be recoded again later)
+		$url = urldecode($url);
+
 		return $url;
 	}
 
