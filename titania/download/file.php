@@ -80,40 +80,47 @@ if (!$attachment)
 // Don't allow downloads of revisions for TITANIA_CONTRIB_DOWNLOAD_DISABLED items unless on the team or an author.
 if ($attachment['object_type'] == TITANIA_CONTRIB)
 {
-	$sql = 'SELECT contrib_id, revision_status FROM ' . TITANIA_REVISIONS_TABLE . '
-		WHERE  attachment_id = ' . $attachment['attachment_id'];
-	$result = phpbb::$db->sql_query($sql);
-	$revision = phpbb::$db->sql_fetchrow($result);
-	phpbb::$db->sql_freeresult($result);
+		$sql = 'SELECT contrib_id, revision_status FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE  attachment_id = ' . $attachment['attachment_id'];
+		$result = phpbb::$db->sql_query($sql);
+		$revision = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
 
-	$contrib = new titania_contribution;
-	if (!$contrib->load($revision['contrib_id']))
-	{
-		trigger_error('NO_ATTACHMENT_SELECTED');
-	}
-
-	if ((($revision['revision_status'] != TITANIA_REVISION_APPROVED && titania::$config->require_validation) || $contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) && !$contrib->is_author && !$contrib->is_active_coauthor && !titania_types::$types[$contrib->contrib_type]->acl_get('view') && !titania_types::$types[$contrib->contrib_type]->acl_get('moderate'))
-	{
-		// Is it the MPV server requesting the file?  If so we allow non-approved file downloads
-		$is_mpv_server = false;
-		foreach (titania::$config->mpv_server_list as $data)
-		{
-			$dns_ipv4 = dns_get_record($data['host'], DNS_A);
-			$dns_ipv6 = dns_get_record($data['host'], DNS_AAAA);
-
-			if ((isset($dns_ipv4[0]) && isset($dns_ipv4[0]['ip']) && phpbb::$user->ip == $dns_ipv4[0]['ip']) || (isset($dns_ipv6[0]) && isset($dns_ipv6[0]['ip']) && phpbb::$user->ip == $dns_ipv6[0]['ip']))
-			{
-				$is_mpv_server = true;
-				break;
-			}
-		}
-
-		if (!$is_mpv_server)
+		$contrib = new titania_contribution;
+		if (!$contrib->load($revision['contrib_id']))
 		{
 			trigger_error('NO_ATTACHMENT_SELECTED');
 		}
-	}
-	unset($contrib);
+
+		if ((($revision['revision_status'] != TITANIA_REVISION_APPROVED && titania::$config->require_validation) || $contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) && !$contrib->is_author && !$contrib->is_active_coauthor && !titania_types::$types[$contrib->contrib_type]->acl_get('view') && !titania_types::$types[$contrib->contrib_type]->acl_get('moderate'))
+		{
+			// Is it the MPV server requesting the file?  If so we allow non-approved file downloads
+			$is_mpv_server = false;
+			foreach (titania::$config->mpv_server_list as $data)
+			{
+				$dns_ipv4 = dns_get_record($data['host'], DNS_A);
+				$dns_ipv6 = dns_get_record($data['host'], DNS_AAAA);
+
+				if ((isset($dns_ipv4[0]) && isset($dns_ipv4[0]['ip']) && phpbb::$user->ip == $dns_ipv4[0]['ip']) || (isset($dns_ipv6[0]) && isset($dns_ipv6[0]['ip']) && phpbb::$user->ip == $dns_ipv6[0]['ip']))
+				{
+					$is_mpv_server = true;
+					break;
+				}
+			}
+
+			if (!$is_mpv_server)
+			{
+				trigger_error('NO_ATTACHMENT_SELECTED');
+			}
+		}
+
+		// Access Level
+		if ($contrib->is_author || $contrib->is_active_coauthor)
+		{
+			titania::$access_level = TITANIA_ACCESS_AUTHORS;
+		}
+
+		unset($contrib);
 }
 
 if ($thumbnail)
@@ -129,10 +136,74 @@ if ($attachment['is_orphan'] && phpbb::$user->data['user_id'] != $attachment['at
 {
 	trigger_error('ERROR_NO_ATTACHMENT');
 }
-else if ($attachment['attachment_access'] < titania::$access_level || !download_allowed())
+else if (!download_allowed())
 {
 	header('HTTP/1.0 403 Forbidden');
 	trigger_error('SORRY_AUTH_VIEW_ATTACH');
+}
+else if ($attachment['attachment_access'] < titania::$access_level && $attachment['attachment_access'] == TITANIA_ACCESS_TEAMS)
+{
+	header('HTTP/1.0 403 Forbidden');
+	trigger_error('SORRY_AUTH_VIEW_ATTACH');
+}
+else if ($attachment['attachment_access'] < titania::$access_level && $attachment['attachment_access'] == TITANIA_ACCESS_AUTHORS)
+{
+	// Author level check
+	$contrib = false;
+	switch ((int) $attachment['object_type'])
+	{
+		case TITANIA_FAQ :
+			$sql = 'SELECT c.contrib_id, c.contrib_user_id
+				FROM ' . TITANIA_CONTRIB_FAQ_TABLE . ' f, ' . TITANIA_CONTRIBS_TABLE . ' c
+				WHERE f.faq_id = ' . $attachment['object_id'] . '
+					AND c.contrib_id = f.contrib_id';
+			$result = phpbb::$db->sql_query($sql);
+			$contrib = phpbb::$db->sql_fetchrow($result);
+			phpbb::$db->sql_freeresult($result);
+		break;
+
+		case TITANIA_SUPPORT :
+		case TITANIA_QUEUE_DISCUSSION :
+			$sql = 'SELECT c.contrib_id, c.contrib_user_id
+				FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t, ' . TITANIA_CONTRIBS_TABLE . ' c
+				WHERE p.post_id = ' . $attachment['object_id'] . '
+					AND t.topic_id = p.topic_id
+					AND c.contrib_id = t.parent_id';
+			$result = phpbb::$db->sql_query($sql);
+			$contrib = phpbb::$db->sql_fetchrow($result);
+			phpbb::$db->sql_freeresult($result);
+		break;
+	}
+
+	if ($contrib !== false)
+	{
+		if ($contrib['contrib_user_id'] == phpbb::$user->data['user_id'])
+		{
+			// Main author
+			titania::$access_level = TITANIA_ACCESS_AUTHORS;
+		}
+		else
+		{
+			// Coauthor
+			$sql = 'SELECT user_id FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
+				WHERE contrib_id = ' . $contrib['contrib_id'] . '
+					AND user_id = ' . phpbb::$user->data['user_id'] . '
+					AND active = 1';
+			$result = phpbb::$db->sql_query($sql);
+			if (phpbb::$db->sql_fetchrow($result))
+			{
+				titania::$access_level = TITANIA_ACCESS_AUTHORS;
+			}
+			phpbb::$db->sql_freeresult($result);
+		}
+	}
+
+	// Still not authorised?
+	if ($attachment['attachment_access'] < titania::$access_level)
+	{
+		header('HTTP/1.0 403 Forbidden');
+		trigger_error('SORRY_AUTH_VIEW_ATTACH');
+	}
 }
 
 /*
