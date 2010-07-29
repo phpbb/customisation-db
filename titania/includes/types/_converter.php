@@ -119,12 +119,12 @@ class titania_type_converter extends titania_type_base
 
 	public function increment_count()
 	{
-		set_config('titania_num_converters', ++phpbb::$config['titania_num_mods'], true);
+		set_config('titania_num_converters', ++phpbb::$config['titania_num_converters'], true);
 	}
 
 	public function decrement_count()
 	{
-		set_config('titania_num_converters', --phpbb::$config['titania_num_mods'], true);
+		set_config('titania_num_converters', --phpbb::$config['titania_num_converters'], true);
 	}
 
 	public function get_count()
