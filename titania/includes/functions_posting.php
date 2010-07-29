@@ -36,6 +36,11 @@ function generate_category_select($selected = false, $is_manage = false, $disabl
 
 	foreach ($categories as $row)
 	{
+		if (isset(titania_types::$types[$row['category_type']]) && !titania_types::$types[$row['category_type']]->acl_get('submit'))
+		{
+			continue;
+		}
+
 		if ($row['left_id'] < $right)
 		{
 			$padding++;
@@ -87,6 +92,11 @@ function generate_type_select($selected = false)
 
 	foreach (titania_types::$types as $key => $type)
 	{
+		if (!$type->acl_get('submit'))
+		{
+			continue;
+		}
+
 		phpbb::$template->assign_block_vars('type_select', array(
 			'S_IS_SELECTED'		=> ($key == $selected) ? true : false,
 

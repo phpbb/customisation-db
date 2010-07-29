@@ -204,7 +204,7 @@ class titania_revision extends titania_database_object
 		if (!$this->revision_id)
 		{
 			// Update the contrib_last_update if required here
-			if (!titania::$config->require_validation)
+			if (!titania::$config->require_validation || !titania_types::$types[$this->contrib->contrib_type]->require_validation)
 			{
 				$this->contrib->contrib_last_update = titania::$time;
 				$sql_ary = array(
@@ -494,7 +494,7 @@ class titania_revision extends titania_database_object
 	public function update_queue()
 	{
 		// Create the queue entry if required, else update it
-		if (titania::$config->use_queue)
+		if (titania::$config->use_queue && titania_types::$types[$this->contrib->contrib_type]->use_queue)
 		{
 			$queue = $this->get_queue();
 

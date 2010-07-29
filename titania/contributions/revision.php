@@ -61,7 +61,7 @@ else
 
 	generate_phpbb_version_select();
 
-	if (titania::$config->use_queue)
+	if (titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
 	{
 		$queue = new titania_queue();
 		// Load the message object
@@ -184,7 +184,7 @@ do{
 						// After revision is set to submitted we must update the queue
 						$revision->update_queue();
 
-						if ($repack && titania::$config->use_queue)
+						if ($repack && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
 						{
 							redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
 						}
@@ -244,7 +244,7 @@ do{
 					// Replace the uploaded zip package with the new one
 					$contrib_tools->replace_zip();
 
-					if (titania_types::$types[titania::$contrib->contrib_type]->mpv_test && titania::$config->use_queue)
+					if (titania_types::$types[titania::$contrib->contrib_type]->mpv_test && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
 					{
 						phpbb::$template->assign_var('MPV_TEST_WARNING', true);
 					}
@@ -256,7 +256,7 @@ do{
 		break;
 
 		case 2 :
-			if (!titania_types::$types[titania::$contrib->contrib_type]->mpv_test || !titania::$config->use_queue)
+			if (!titania_types::$types[titania::$contrib->contrib_type]->mpv_test || !titania::$config->use_queue || !titania_types::$types[titania::$contrib->contrib_type]->use_queue)
 			{
 				$step = 3;
 				$try_again = true;
@@ -309,7 +309,7 @@ do{
 		break;
 
 		case 3 :
-			if (!titania_types::$types[titania::$contrib->contrib_type]->automod_test || !titania::$config->use_queue)
+			if (!titania_types::$types[titania::$contrib->contrib_type]->automod_test || !titania::$config->use_queue || !titania_types::$types[titania::$contrib->contrib_type]->use_queue)
 			{
 				$step = 4;
 				$try_again = true;
@@ -399,7 +399,7 @@ do{
 			// Update the queue (make visible)
 			$revision->update_queue();
 
-			if ($repack && titania::$config->use_queue)
+			if ($repack && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
 			{
 				redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
 			}

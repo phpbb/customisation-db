@@ -62,6 +62,11 @@ class titania_type_converter extends titania_type_base
 	{
 		switch ($auth)
 		{
+			// Can submit a converter
+			case 'submit' :
+				return true;
+			break;
+
 			// Can view the mod queue discussion
 			case 'queue_discussion' :
 				return phpbb::$auth->acl_get('u_titania_mod_converter_queue_discussion');

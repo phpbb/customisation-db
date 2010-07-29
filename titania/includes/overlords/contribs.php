@@ -207,6 +207,10 @@ class contribs_overlord
 			{
 				$view_unapproved = array_merge($view_unapproved, titania_types::find_authed('view'));
 			}
+
+			// Find the ones that do not require validation
+			$view_unapproved = array_merge($view_unapproved, titania_types::find_validation_free());
+
 			$view_unapproved = array_unique($view_unapproved);
 			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
 				((sizeof($view_unapproved)) ? ' OR ' . phpbb::$db->sql_in_set('c.contrib_type', array_map('intval', $view_unapproved)) : '') . '
@@ -243,10 +247,24 @@ class contribs_overlord
 		// Get phpBB versions
 		if (sizeof($contrib_ids))
 		{
-			$sql = 'SELECT contrib_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
-				WHERE ' . phpbb::$db->sql_in_set('contrib_id', array_map('intval', $contrib_ids)) .
-				((titania::$config->require_validation) ? ' AND revision_validated = 1' : '') . '
-				ORDER BY row_id DESC';
+			$validation_free = titania_types::find_validation_free();
+			if (sizeof($validation_free) && titania::$config->require_validation)
+			{
+				$sql = 'SELECT rp.contrib_id, rp.phpbb_version_branch, rp.phpbb_version_revision
+					FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . ' rp, ' . TITANIA_CONTRIBS_TABLE . ' c
+					WHERE ' . phpbb::$db->sql_in_set('rp.contrib_id', array_map('intval', $contrib_ids)) .'
+					AND c.contrib_id = rp.contrib_id
+					AND (rp.revision_validated = 1
+						OR ' . phpbb::$db->sql_in_set('c.contrib_type', $validation_free) . ')
+					ORDER BY rp.row_id DESC';
+			}
+			else
+			{
+				$sql = 'SELECT contrib_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+					WHERE ' . phpbb::$db->sql_in_set('contrib_id', array_map('intval', $contrib_ids)) .
+					((titania::$config->require_validation) ? ' AND revision_validated = 1' : '') . '
+					ORDER BY row_id DESC';
+			}
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{

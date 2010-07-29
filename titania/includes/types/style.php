@@ -73,6 +73,11 @@ class titania_type_style extends titania_type_base
 	{
 		switch ($auth)
 		{
+			// Can submit a style
+			case 'submit' :
+				return true;
+			break;
+
 			// Can view the style queue discussion
 			case 'queue_discussion' :
 				return phpbb::$auth->acl_get('u_titania_mod_style_queue_discussion');

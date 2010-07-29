@@ -98,6 +98,24 @@ class titania_types
 		return $authed;
 	}
 
+	/**
+	* Get the types that do not require validation
+	*/
+	public static function find_validation_free()
+	{
+		$free = array();
+
+		foreach (self::$types as $type_id => $class)
+		{
+			if (!$class->require_validation)
+			{
+				$free[] = $type_id;
+			}
+		}
+
+		return $free;
+	}
+
 	public static function increment_count($type)
 	{
 		self::$types[$type]->increment_count();
@@ -155,6 +173,15 @@ class titania_type_base
 	public $reply_public = '';
 	public $update_public = '';
 	public $upload_agreement = '';
+
+	/**
+	* Require validation/use queue for this type?
+	* FALSE on either this or the require_validation config setting means validation is not required for the type
+	*
+	* @var bool
+	*/
+	public $require_validation = true;
+	public $use_queue = true;
 
 	/**
 	* Run MPV/Automod Test for this type?

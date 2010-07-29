@@ -92,7 +92,7 @@ if ($attachment['object_type'] == TITANIA_CONTRIB)
 			trigger_error('NO_ATTACHMENT_SELECTED');
 		}
 
-		if ((($revision['revision_status'] != TITANIA_REVISION_APPROVED && titania::$config->require_validation) || $contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) && !$contrib->is_author && !$contrib->is_active_coauthor && !titania_types::$types[$contrib->contrib_type]->acl_get('view') && !titania_types::$types[$contrib->contrib_type]->acl_get('moderate'))
+		if ((($revision['revision_status'] != TITANIA_REVISION_APPROVED && titania::$config->require_validation && titania_types::$types[$contrib->contrib_type]->require_validation) || $contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) && !$contrib->is_author && !$contrib->is_active_coauthor && !titania_types::$types[$contrib->contrib_type]->acl_get('view') && !titania_types::$types[$contrib->contrib_type]->acl_get('moderate'))
 		{
 			// Is it the MPV server requesting the file?  If so we allow non-approved file downloads
 			$is_mpv_server = false;
