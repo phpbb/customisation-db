@@ -128,6 +128,8 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Can validate Converters', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_converter_moderate'				=> array('lang' => 'Can moderate Converters', 'cat' => 'titania_moderate'),
 
+	'acl_u_titania_mod_official_tool_moderate'			=> array('lang' => 'Can submit/moderate Official Tools', 'cat' => 'titania_moderate'),
+
 	'acl_u_titania_admin'			=> array('lang' => 'Can <strong>administrate</strong> Titania', 'cat' => 'titania_moderate'),
 ));
 
