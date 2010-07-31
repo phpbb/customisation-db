@@ -68,7 +68,7 @@ class titania_type_official_tools extends titania_type_base
 
 			case 'submit' :
 			case 'moderate' :
-				return phpbb::$auth->acl_gets(array('u_titania_mod_official_tool_moderate', 'u_titania_mod_contrib_mod'));
+				return phpbb::$auth->acl_gets(array('u_titania_mod_official_tool_moderate', 'u_titania_mod_contrib_mod', 'u_titania_admin'));
 			break;
 		}
 
