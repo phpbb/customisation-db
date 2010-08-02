@@ -146,17 +146,17 @@ switch ($action)
 						if ($category_check->category_id != $category_object->parent_id)
 						{
 							$errors_extra = $category_object->move_category($category_object->parent_id);
+
+							// Check for errors from moving the category
+							if (sizeof($errors_extra))
+							{
+								$error = array_merge($error, $errors_extra);
+							}
 						}
 						else
 						{
 							$category_object->parent_id = $category_check->parent_id;
 						}
-					}
-
-					// Check for errors from moving the category
-					if (sizeof($errors_extra))
-					{
-						$error = array_merge($error, $errors_extra);
 					}
 				}
 
@@ -301,7 +301,7 @@ switch ($action)
 			titania::generate_breadcrumbs(array(
 				((isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'])	=> titania_url::build_url('manage/categories', array('c' => $category_id)),
 			));
-			
+
 			// Second set of breadcrumbs for category navigation
 
 			// Parents
