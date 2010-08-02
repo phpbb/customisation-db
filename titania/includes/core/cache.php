@@ -228,6 +228,7 @@ class titania_cache extends acm
 	* Get the author contribs for the specified user id
 	*
 	* @param int $user_id The user ID
+	* @param bool $active True to request only active contributions, false for all
 	*
 	* @return array Array of contrib_id's
 	*/

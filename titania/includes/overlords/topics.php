@@ -275,7 +275,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			case 'author_support' :
 				$page_url = $object->get_url('support');
-				$contrib_ids = titania::$cache->get_author_contribs($object->user_id);
+				$contrib_ids = titania::$cache->get_author_contribs($object->user_id, true);
 				$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('t.parent_id', array_map('intval', $contrib_ids));
 
 				// We also display the queue discussion topic between validators and authors in the support area
