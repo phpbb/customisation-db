@@ -130,7 +130,7 @@ $lang = array_merge($lang, array(
 
 	'acl_u_titania_mod_bridge_queue_discussion'			=> array('lang' => 'Can see Bridge Queue Discussion', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_bridge_queue'					=> array('lang' => 'Can see Bridge Queue', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Can validate Briges', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Can validate Bridges', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_bridge_moderate'					=> array('lang' => 'Can moderate Bridges', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_official_tool_moderate'			=> array('lang' => 'Can submit/moderate Official Tools', 'cat' => 'titania_moderate'),
