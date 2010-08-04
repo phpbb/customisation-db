@@ -73,7 +73,7 @@ switch ($action)
 			unset($category_object->category_name);
 
 			$category_object->category_id = ($action == 'edit') ? $category_id : '';
-			$category_name = request_var('category_name', '');
+			$category_name = utf8_normalize_nfc(request_var('category_name', '', true));
 			$category_object->category_name = ($category_name == $old_category_name_lang) ? $old_category_name : $category_name;
 			$category_object->category_name_clean = (isset(phpbb::$user->lang[$category_object->category_name])) ? $old_category_name_clean : utf8_clean_string($category_object->category_name);
 			$category_object->parent_id = request_var('category_parent', 0);
