@@ -1099,6 +1099,20 @@ class titania_contribution extends titania_message_object
 			WHERE user_id = $user_id " .
 				(($action == '-') ? 'AND author_contribs > 0' : '');
 		phpbb::$db->sql_query($sql);
+
+
+		if (!phpbb::$db->sql_affectedrows() && $action == '+')
+		{
+			$author = new titania_author($user_id);
+			$author->author_contribs = 1;
+
+			if (isset(titania_types::$types[$this->contrib_type]->author_count))
+			{
+				$author->{titania_types::$types[$this->contrib_type]->author_count} = 1;
+			}
+
+			$author->submit();
+		}
 	}
 
 	/*
