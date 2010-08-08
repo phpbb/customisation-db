@@ -148,6 +148,7 @@ class titania_attachment extends titania_database_object
 	* Load the attachments from the database from the ids and store them in $this->attachments
 	*
 	* @param array $attachment_ids
+	* @param bool $include_orphans False (default) to not include orphans, true to include orphans
 	*/
 	public function load_attachments($attachment_ids = false, $include_orphans = false)
 	{
@@ -168,6 +169,32 @@ class titania_attachment extends titania_database_object
 			$this->attachments[$row['attachment_id']] = $row;
 		}
 		phpbb::$db->sql_freeresult($result);
+	}
+
+	/**
+	* Load the attachments from the database from the ids and store them in $this->attachments
+	*
+	* @param array $object_ids Array of object_ids to load
+	* @param bool $include_orphans False (default) to not include orphans, true to include orphans
+	*
+	* @return array of attachments in array(object_id => array(attachment rows))
+	*/
+	public function load_attachments_set($object_ids, $include_orphans = false)
+	{
+		$attachments_set = array();
+
+		$sql = 'SELECT * FROM ' . $this->sql_table . '
+			WHERE object_type = ' . (int) $this->object_type . '
+				AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', $object_ids)) .
+				((!$include_orphans) ? ' AND is_orphan = 0' : '');
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$attachments_set[$row['object_id']][] = $row;
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		return $attachments_set;
 	}
 
 	/**

@@ -267,20 +267,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		// Grab any attachments
-		if (sizeof($post_ids))
-		{
-			$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . '
-				WHERE object_type = ' . (int) $topic->topic_type . '
-					AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', $post_ids));
-			$result = phpbb::$db->sql_query($sql);
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				self::$posts[$row['object_id']]['attachments'][] = $row;
-			}
-			phpbb::$db->sql_freeresult($result);
-		}
-
 		// Grab the tracking data
 		$last_mark_time = titania_tracking::get_track(TITANIA_TOPIC, $topic->topic_id);
 
@@ -293,7 +279,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		phpbb::_include('functions_profile_fields', false, 'custom_profile');
 		$cp = new custom_profile();
 		$post = new titania_post($topic->topic_type, $topic);
-		$attachments = new titania_attachment(false, false);
+		$attachments = new titania_attachment($topic->topic_type, false);
+
+		// Grab all attachments
+		$attachments_set = $attachments->load_attachments_set($post_ids);
 
 		// Loop de loop
 		$prev_post_time = 0;
@@ -302,7 +291,11 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$post->__set_array(self::$posts[$post_id]);
 
 			$attachments->clear_attachments();
-			$attachments->store_attachments(self::$posts[$post_id]['attachments']);
+
+			if (isset($attachments_set[$post_id]))
+			{
+				$attachments->store_attachments($attachments_set[$post_id]);
+			}
 
 			// Parse attachments before outputting the message
 			$message = $post->generate_text_for_display();
