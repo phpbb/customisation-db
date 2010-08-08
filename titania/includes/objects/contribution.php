@@ -672,38 +672,42 @@ class titania_contribution extends titania_message_object
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		// First we are essentially resetting the contrib and category counts back to "New"
-		switch ($old_status)
+		// If validation is required we update the counts (otherwise updated when submitted)
+		if (titania::$config->require_validation && titania_types::$types[$this->contrib_type]->require_validation)
 		{
-			case TITANIA_CONTRIB_APPROVED :
-			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
-				// Decrement the count for the authors
-				$this->change_author_contrib_count($author_list, '-', true);
+			// First we are essentially resetting the contrib and category counts back to "New"
+			switch ($old_status)
+			{
+				case TITANIA_CONTRIB_APPROVED :
+				case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
+					// Decrement the count for the authors
+					$this->change_author_contrib_count($author_list, '-', true);
 
-				// Decrement the count for this type
-				titania_types::decrement_count($this->contrib_type);
+					// Decrement the count for this type
+					titania_types::decrement_count($this->contrib_type);
 
-				// Decrement the category count
-				$this->update_category_count('-', true);
-			break;
-		}
+					// Decrement the category count
+					$this->update_category_count('-', true);
+				break;
+			}
 
-		// Now, for the new status, if approved, we increment the contrib and category counts
-		switch ($this->contrib_status)
-		{
-			case TITANIA_CONTRIB_APPROVED :
-			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
-				// Increment the count for the authors
-				$this->change_author_contrib_count($author_list);
+			// Now, for the new status, if approved, we increment the contrib and category counts
+			switch ($this->contrib_status)
+			{
+				case TITANIA_CONTRIB_APPROVED :
+				case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
+					// Increment the count for the authors
+					$this->change_author_contrib_count($author_list);
 
-				// Increment the count for this type
-				titania_types::increment_count($this->contrib_type);
+					// Increment the count for this type
+					titania_types::increment_count($this->contrib_type);
 
-				// Increment the category count
-				$this->update_category_count();
+					// Increment the category count
+					$this->update_category_count();
 
-				$sql_ary['contrib_last_update'] = titania::$time;
-			break;
+					$sql_ary['contrib_last_update'] = titania::$time;
+				break;
+			}
 		}
 
 		$sql = 'UPDATE ' . $this->sql_table . '
@@ -1259,6 +1263,9 @@ class titania_contribution extends titania_message_object
 		return ($cnt) ? true : false;
 	}
 
+	/**
+	* Index the contribution
+	*/
 	public function index()
 	{
 		$data = array(
@@ -1270,7 +1277,7 @@ class titania_contribution extends titania_message_object
 			'author'		=> $this->contrib_user_id,
 			'date'			=> $this->contrib_last_update,
 			'url'			=> titania_url::unbuild_url($this->get_url()),
-			'approved'		=> ((!titania::$config->require_validation && titania_types::$types[$this->contrib_type]->require_validation && $this->contrib_status == TITANIA_CONTRIB_NEW) || in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
+			'approved'		=> ((!titania::$config->require_validation || !titania_types::$types[$this->contrib_type]->require_validation) || in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
 		);
 
 		titania_search::index(TITANIA_CONTRIB, $this->contrib_id, $data);
