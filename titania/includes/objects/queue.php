@@ -405,6 +405,19 @@ class titania_queue extends titania_message_object
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
+	public function close($revision_status)
+	{
+		// Update the revision
+		$revision = $this->get_revision();
+		$revision->change_status($revision_status);
+
+		// Self-updating
+		$this->queue_status = TITANIA_QUEUE_CLOSED;
+		$this->queue_close_time = titania::$time;
+		$this->queue_close_user = phpbb::$user->data['user_id'];
+		$this->submit(false);
+	}
+
 	public function deny()
 	{
 		// Reply to the queue topic and discussion with the message

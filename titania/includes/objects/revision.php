@@ -536,7 +536,7 @@ class titania_revision extends titania_database_object
 
 				if ($this->revision_submitted)
 				{
-					// Delete any old revisions that were in the queue and marked as New
+					// Change the status on any old revisions that were in the queue and marked as New to repacked
 					$sql = 'SELECT * FROM ' . TITANIA_QUEUE_TABLE . '
 						WHERE contrib_id = ' . (int) $this->contrib_id . '
 							AND revision_id < ' . $this->revision_id . '
@@ -546,7 +546,7 @@ class titania_revision extends titania_database_object
 					{
 						$queue = new titania_queue;
 						$queue->__set_array($row);
-						$queue->delete();
+						$queue->close(TITANIA_REVISION_REPACKED);
 						unset($queue);
 					}
 					phpbb::$db->sql_freeresult($result);

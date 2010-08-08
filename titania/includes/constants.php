@@ -39,6 +39,7 @@ define('TITANIA_REVISION_PULLED_OTHER', 5); // Has been pulled for an other non-
 define('TITANIA_REVISION_REPACKED', 6); // Has been repacked
 
 // Queue status
+define('TITANIA_QUEUE_CLOSED', -3); // Special case to hide closed revisions from the queue
 define('TITANIA_QUEUE_DENIED', -2); // Special case to hide denied revisions from the queue
 define('TITANIA_QUEUE_APPROVED', -1); // Special case to hide approved revisions from the queue
 define('TITANIA_QUEUE_HIDE', 0); // Special case to hide an unfinished submission
