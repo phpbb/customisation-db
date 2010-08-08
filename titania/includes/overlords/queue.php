@@ -320,11 +320,11 @@ class queue_overlord
 			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
 				$quick_actions['APPROVE'] = array(
-					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve')),
+					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve', 'start' => '*destroy*')),
 					'class'		=> 'approve',
 				);
 				$quick_actions['DENY'] = array(
-					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny')),
+					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny', 'start' => '*destroy*')),
 					'class'		=> 'deny',
 				);
 			}
