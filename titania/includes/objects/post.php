@@ -489,11 +489,25 @@ class titania_post extends titania_message_object
 
 		if ($this->post_id == $this->topic->topic_first_post_id)
 		{
+			if ($this->post_user_id == phpbb::$user->data['user_id'])
+			{
+				$post_username = phpbb::$user->data['username'];
+				$post_user_colour = phpbb::$user->data['user_colour'];
+			}
+			else
+			{
+				$post_username = users_overlord::get_user($this->post_user_id, 'username', true);
+				$post_user_colour = users_overlord::get_user($this->post_user_id, 'user_colour', true);
+			}
+
 			$this->topic->__set_array(array(
-				'topic_access'		=> $this->post_access,
-				'topic_user_id'		=> $this->post_user_id,
-				'topic_time'		=> $this->post_time,
-				'topic_subject'		=> $this->post_subject,
+				'topic_access'					=> $this->post_access,
+				'topic_subject'					=> $this->post_subject,
+
+				'topic_first_post_user_id'		=> $this->post_user_id,
+				'topic_first_post_username'		=> $post_username,
+				'topic_first_post_user_colour'	=> $post_user_colour,
+				'topic_first_post_time'			=> $this->post_time,
 			));
 		}
 
