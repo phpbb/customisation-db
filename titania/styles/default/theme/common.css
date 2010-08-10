@@ -92,6 +92,10 @@ h3.section-name {
 	overflow: hidden;
 }
 
+.rightside {
+	float: right;
+}
+
 span.corners-top.main-corners, span.corners-bottom.main-corners {
 	background-image: url("{T_THEME_PATH}/images/corners_left.png");
 }
@@ -276,6 +280,14 @@ a.new-revision:hover {
 
 /* Listings
 --------------------------------------------- */
+#phpbb_versions {
+	min-width: 80px;
+}
+
+.contribution-list-actions {
+	padding-top: 9px;
+}
+
 #faqlist .topiclist dt {
 	width: 80%;
 }

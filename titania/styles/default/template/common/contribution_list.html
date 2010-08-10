@@ -1,23 +1,26 @@
 <!-- BEGIN contribs -->
 	<li class="row<!-- IF contribs.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 		<dl class="icon" style="background-image: url({contribs.FOLDER_IMG_SRC}); background-repeat: no-repeat;">
-			<dt><a class="topictitle" href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a>
-			<!-- IF contribs.S_CONTRIB_CLEANED -->
-				<img src="{T_TITANIA_THEME_PATH}/images/icon_cleaned_contrib.gif" title="{L_CLEANED_CONTRIB}" alt="{L_CLEANED_CONTRIB}" />
-			<!-- ELSEIF contribs.S_CONTRIB_NEW -->
-				<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_NOT_VALIDATED}" title="{L_NOT_VALIDATED}" />
-			<!-- ELSEIF contribs.S_CONTRIB_HIDDEN -->
-				<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_CONTRIB_HIDDEN}" title="{L_CONTRIB_HIDDEN}" />
-			<!-- ELSEIF contribs.S_CONTRIB_DISABLED -->
-				<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_CONTRIB_DISABLED}" title="{L_CONTRIB_DISABLED}" />
-			<!-- ENDIF -->
-			<!-- IF not S_AUTHOR_LIST --><br />
-			{contribs.CONTRIB_TYPE} {L_BY} {contribs.AUTHOR_NAME_FULL}
-			<!-- ENDIF -->
+			<dt>
+				<span class="rightside contribution-list-actions">
+					<!-- IF contribs.U_QUEUE_DISCUSSION --><a href="{contribs.U_QUEUE_DISCUSSION}" title="{L_QUEUE_DISCUSSION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_discuss.gif" alt="{L_QUEUE_DISCUSSION}" /></a>&nbsp;<!-- ENDIF -->
+					<!-- IF contribs.U_CONTRIB_MANAGE --><a href="{contribs.U_CONTRIB_MANAGE}" title="{L_CONTRIB_MANAGE}"><img src="{T_TITANIA_THEME_PATH}/images/icon_settings.gif" alt="{L_CONTRIB_MANAGE}" /></a>&nbsp;<!-- ENDIF -->
+					<!-- IF contribs.U_NEW_REVISION --><a href="{contribs.U_NEW_REVISION}" title="{L_NEW_REVISION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_new_revision.gif" alt="{L_NEW_REVISION}" /></a>&nbsp;<!-- ENDIF -->
+				</span>
+
+				<a class="topictitle" href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a>
+				<!-- IF contribs.S_CONTRIB_CLEANED -->
+					<img src="{T_TITANIA_THEME_PATH}/images/icon_cleaned_contrib.gif" title="{L_CLEANED_CONTRIB}" alt="{L_CLEANED_CONTRIB}" />
+				<!-- ELSEIF contribs.S_CONTRIB_NEW -->
+					<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_NOT_VALIDATED}" title="{L_NOT_VALIDATED}" />
+				<!-- ELSEIF contribs.S_CONTRIB_HIDDEN -->
+					<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_CONTRIB_HIDDEN}" title="{L_CONTRIB_HIDDEN}" />
+				<!-- ELSEIF contribs.S_CONTRIB_DISABLED -->
+					<img src="{T_TITANIA_THEME_PATH}/images/icon_not_validated.gif" alt="{L_CONTRIB_DISABLED}" title="{L_CONTRIB_DISABLED}" />
+				<!-- ENDIF -->
+				<br />
+				{contribs.CONTRIB_TYPE}<!-- IF not S_AUTHOR_LIST --> {L_BY} {contribs.AUTHOR_NAME_FULL}<!-- ENDIF -->
 			</dt>
-			<!-- IF S_AUTHOR_LIST -->
-				<dd class="type">{contribs.CONTRIB_TYPE}</dd>
-			<!-- ENDIF -->
 			<dd class="general contribution-phpbb-version">
 				<!-- IF contribs.PHPBB_VERSION -->
 					{contribs.PHPBB_VERSION}
@@ -33,18 +36,10 @@
 					<!-- ENDIF -->
 				<!-- ENDIF -->
 			</dd>
-			<!-- IF not S_AUTHOR_LIST or contribs.U_CONTRIB_MANAGE or contribs.U_NEW_REVISION or contribs.U_QUEUE_DISCUSSION -->
-				<dd class="general">
-					<!-- IF not S_AUTHOR_LIST -->
-						<!-- IF contribs.CONTRIB_DOWNLOADS -->{L_DOWNLOADS}: {contribs.CONTRIB_DOWNLOADS}<br /><!-- ENDIF -->
-						<!-- IF contribs.CONTRIB_RATING -->{L_RATING}: {contribs.CONTRIB_RATING} / 5<br /><!-- ENDIF -->
-					<!-- ELSE -->
-						<!-- IF contribs.U_QUEUE_DISCUSSION -->&nbsp;<a href="{contribs.U_QUEUE_DISCUSSION}" title="{L_QUEUE_DISCUSSION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_discuss.gif" alt="{L_QUEUE_DISCUSSION}" /></a><!-- ENDIF -->
-						<!-- IF contribs.U_CONTRIB_MANAGE -->&nbsp;<a href="{contribs.U_CONTRIB_MANAGE}" title="{L_CONTRIB_MANAGE}"><img src="{T_TITANIA_THEME_PATH}/images/icon_settings.gif" alt="{L_CONTRIB_MANAGE}" /></a><!-- ENDIF -->
-						<!-- IF contribs.U_NEW_REVISION -->&nbsp;<a href="{contribs.U_NEW_REVISION}" title="{L_NEW_REVISION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_new_revision.gif" alt="{L_NEW_REVISION}" /></a><!-- ENDIF -->
-					<!-- ENDIF -->
-				</dd>
-			<!-- ENDIF -->
+			<dd class="general">
+				<!-- IF contribs.CONTRIB_DOWNLOADS -->{L_DOWNLOADS}: {contribs.CONTRIB_DOWNLOADS}<br /><!-- ENDIF -->
+				<!-- IF contribs.CONTRIB_RATING -->{L_RATING}: {contribs.CONTRIB_RATING} / 5<br /><!-- ENDIF -->
+			</dd>
 		</dl>
 	</li>
 <!-- BEGINELSE -->

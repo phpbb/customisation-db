@@ -2,7 +2,7 @@
 ---------------------------------------- */
 
 /**
-* common.css 
+* common.css
 */
 .rtl h1 {
 	margin-right: 0;
@@ -16,6 +16,10 @@
 .rtl div.rules ul {
 	margin-left: 0;
 	margin-right: 20px;
+}
+
+.rightside {
+	float: left;
 }
 
 /* Main blocks
@@ -126,7 +130,7 @@
 
 /* Misc layout styles
 ---------------------------------------- */
-/* column[1-2] styles are containers for two column layouts 
+/* column[1-2] styles are containers for two column layouts
    Also see tweaks.css */
 .rtl .column1 {
 	float: right;
