@@ -316,7 +316,16 @@ class titania_posting
 		// Submit
 		$post_object->submit();
 
-		echo $post_object->generate_text_for_display();
+		// Load attachments
+		$attachments = new titania_attachment($post_object->post_type, $post_object->post_id);
+		$attachments->load_attachments();
+
+		// Parse the mesage
+		$message = $post_object->generate_text_for_display();
+		$parsed_attachments = $attachments->parse_attachments($message);
+
+		// echo the message (returned to the JS to display in the place of the old message)
+		echo $message;
 
 		garbage_collection();
 		exit_handler();
