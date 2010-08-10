@@ -416,6 +416,9 @@ class titania_queue extends titania_message_object
 		$this->queue_close_time = titania::$time;
 		$this->queue_close_user = phpbb::$user->data['user_id'];
 		$this->submit(false);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this, $revision_status);
 	}
 
 	public function deny()

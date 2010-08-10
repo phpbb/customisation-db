@@ -165,6 +165,7 @@ class titania_revision extends titania_database_object
 			'S_PULLED_SECURITY'		=> ($this->revision_status == TITANIA_REVISION_PULLED_SECURITY) ? true : false,
 			'S_PULLED_OTHER'		=> ($this->revision_status == TITANIA_REVISION_PULLED_OTHER) ? true : false,
 			'S_REPACKED'			=> ($this->revision_status == TITANIA_REVISION_REPACKED) ? true : false,
+			'S_RESUBMITTED'			=> ($this->revision_status == TITANIA_REVISION_RESUBMITTED) ? true : false,
 		));
 
 		phpbb::$user->date_format = $old_date_format;
@@ -546,7 +547,7 @@ class titania_revision extends titania_database_object
 					{
 						$queue = new titania_queue;
 						$queue->__set_array($row);
-						$queue->close(TITANIA_REVISION_REPACKED);
+						$queue->close(TITANIA_REVISION_RESUBMITTED);
 						unset($queue);
 					}
 					phpbb::$db->sql_freeresult($result);

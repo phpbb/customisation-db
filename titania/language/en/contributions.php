@@ -153,6 +153,7 @@ $lang = array_merge($lang, array(
 	'REVISION_PULLED_FOR_OTHER'				=> 'Pulled',
 	'REVISION_PULLED_FOR_SECURITY'			=> 'Pulled - Security',
 	'REVISION_REPACKED'						=> 'Repacked',
+	'REVISION_RESUBMITTED'					=> 'Resubmitted',
 	'REVISION_STATUS'						=> 'Revision Status',
 	'REVISION_STATUS_EXPLAIN'				=> 'Change the revision status',
 	'REVISION_SUBMITTED'					=> 'The revision has been submitted successfully.',

@@ -28,6 +28,7 @@ titania::$hook->register_ary('phpbb_com_', array(
 	array('titania_post', 'edit'),
 	array('titania_queue', 'approve'),
 	array('titania_queue', 'deny'),
+	array('titania_queue', 'close'),
 	array('titania_queue', 'delete'),
 ));
 
@@ -360,6 +361,11 @@ function phpbb_com_titania_queue_approve($hook, &$queue_object)
 }
 
 function phpbb_com_titania_queue_deny($hook, &$queue_object)
+{
+	phpbb_com_move_queue_topic($queue_object);
+}
+
+function phpbb_com_titania_queue_close($hook, &$queue_object)
 {
 	phpbb_com_move_queue_topic($queue_object);
 }
