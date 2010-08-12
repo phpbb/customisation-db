@@ -1,0 +1,31 @@
+Creating a new hook file allows you to quite easily extend and modify Titania without
+	having to perform file edits.
+
+Hook files are located in includes/hooks/
+
+The hooks system is almost identical to the phpBB hooks system, but includes some additional
+	features to make using them easier.
+
+You can register hooks by a call like this:
+	titania::$hook->register_ary('my_hook_', array(
+		'titania_page_header',
+	));
+
+Upon calling of the titania_page_header hook in code, the hooks system would then attempt
+	to call the my_hook_titania_page_header function with the my_hook_ being the prefix declared
+	when setting it up.
+
+Beyond this you will need to look at examples, look at the design/info documentation for the
+	phpBB3 hooks system, or look into the hooks system itself.  The biggest difference is in
+	that a new call type is used primarily, call_hook_ref, which uses the first item as a
+	referenced variable allowing you to make modifications to the data within it.
+
+NOTES:
+	Files in the includes/hooks/ directory that begin with _ are not loaded automatically,
+		either you must rename them (not recommended in case of issues when updating), or
+		create a file with the same name minus the beginning underscore that includes it,
+		or create a symlink without the underscore to the file.
+
+	As with the phpBB3 hooks system, the first variable sent to the called function is always
+		the hook object itself.  Additional variables sent to the function will come in order
+		after that.
