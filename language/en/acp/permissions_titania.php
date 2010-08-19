@@ -123,6 +123,11 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_modification_validate'			=> array('lang' => 'Can validate Modifications', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_moderate'			=> array('lang' => 'Can moderate Modifications', 'cat' => 'titania_moderate'),
 
+	'acl_u_titania_mod_translation_queue_discussion'		=> array('lang' => 'Can see Translation Queue Discussion', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_translation_queue'					=> array('lang' => 'Can see Translation Queue', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_translation_validate'				=> array('lang' => 'Can validate Translations', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_translation_moderate'				=> array('lang' => 'Can moderate Translations', 'cat' => 'titania_moderate'),
+
 	'acl_u_titania_mod_converter_queue_discussion'		=> array('lang' => 'Can see Converter Queue Discussion', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_converter_queue'					=> array('lang' => 'Can see Converter Queue', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Can validate Converters', 'cat' => 'titania_moderate'),
