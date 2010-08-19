@@ -38,32 +38,32 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'CONVERTER'								=> 'Convertor',
-	'CONVERTERS'							=> 'Convertors',
-	'CONVERTER_VALIDATION'					=> '[phpBB Convertor-Validation] %1$s %2$s',
-	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Convertor to the phpBB.com Customisation Database. After careful inspection your Convertor has been approved and released into our Customisation Database.
+	'CONVERTER'								=> 'Translation',
+	'CONVERTERS'							=> 'Translations',
+	'CONVERTER_VALIDATION'					=> '[phpBB Translation-Validation] %1$s %2$s',
+	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Translation to the phpBB.com Customisation Database. After careful inspection your translation has been approved and released into our Customisation Database.
 
-It is our hope that you will provide a basic level of support for this convertor and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
+It is our hope that you will provide a basic level of support for this translation and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
-[b]Notes from the Team about your convertor:[/b]
+[b]Notes from the Team about your translation:[/b]
 [quote]%s[/quote]
 
 Sincerely,
 phpBB Teams',
 	'CONVERTER_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
-As you may know all convertors submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
+As you may know all translations submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
 
-Upon validating your convertor the phpBB Team regrets to inform you that we have had to deny it.
+Upon validating your translation the phpBB Team regrets to inform you that we have had to deny it.
 
-To correct the problem(s) with your convertor, please following the below instructions:
-[list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your convertor being denied.
-[*]Re-upload your convertor to our Customisation Database.[/list]
-Please ensure you tested your convertor on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your convertor.
+To correct the problem(s) with your translation, please following the below instructions:
+[list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your translation being denied.
+[*]Re-upload your translation to our Customisation Database.[/list]
+Please ensure you tested your translation on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your translation.
 
-If you feel this denial was not warranted please contact the Development Leader.
+If you feel this denial was not warranted please contact the Translations Manager.
 
-Here is a report on why your convertor was denied:
+Here is a report on why your translation was denied:
 [quote]%s[/quote]
 
 Thank you,
