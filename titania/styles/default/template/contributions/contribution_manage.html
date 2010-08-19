@@ -125,6 +125,20 @@
 					</dd>
 				</dl>
 				<!-- ENDIF -->
+				<!-- IF S_IS_TRANSLATION -->
+				<dl>
+					<dt><label for="contrib_local_name">{L_CONTRIBUTION_LOCAL_NAME}:</label><br /><span>{L_CONTRIBUTION_LOCAL_NAME_EXPLAIN}</span></dt>
+					<dd>
+						<input class="inputbox autowidth" type="text" name="contrib_local_name" id="contrib_local_name" value="{CONTRIB_LOCAL_NAME}" />
+					</dd>
+				</dl>
+				<dl>
+					<dt><label for="contrib_iso_code">{L_CONTRIBUTION_ISO_CODE}:</label><br /><span>{L_CONTRIBUTION_ISO_CODE_EXPLAIN}</span></dt>
+					<dd>
+						<input class="inputbox autowidth" readonly="readonly" type="text" name="contrib_iso_code" id="contrib_iso_code" value="{CONTRIB_ISO_CODE}" />
+					</dd>
+				</dl>
+				<!-- ENDIF -->
 				<!-- IF not S_CREATE and (S_IS_OWNER or S_IS_MODERATOR) -->
 				<dl>
 					<dt><label for="change_owner">{L_CONTRIB_CHANGE_OWNER}:</label><br /><span>{L_CONTRIB_CHANGE_OWNER_EXPLAIN}</span></dt>

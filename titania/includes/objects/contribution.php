@@ -117,6 +117,10 @@ class titania_contribution extends titania_message_object
 
 			// Number of FAQ items (titania_count format)
 			'contrib_faq_count'				=> array('default' => ''),
+			
+			// Translation items
+			'contrib_iso_code'				=> array('default' => ''),
+			'contrib_local_name'			=> array('default' => ''),
 		));
 
 		// Hooks
@@ -370,6 +374,9 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_VIEWS'					=> $this->contrib_views,
 			'CONTRIB_UPDATE_DATE'			=> ($this->contrib_last_update) ? phpbb::$user->format_date($this->contrib_last_update) : '',
 			'CONTRIB_STATUS'				=> $this->contrib_status,
+			
+			'CONTRIB_LOCAL_NAME'			=> $this->contrib_local_name,
+			'CONTRIB_ISO_CODE'				=> $this->contrib_iso_code,
 
 			'CONTRIB_RATING'				=> $this->contrib_rating,
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
@@ -881,6 +888,16 @@ class titania_contribution extends titania_message_object
 		if (!$this->contrib_desc)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_DESC'];
+		}
+		
+		if ($this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_iso_code)
+		{
+			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_ISO_CODE'];
+		}
+		
+		if ($this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_local_name)
+		{
+			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_LOCAL_NAME'];
 		}
 
 		if (!$this->contrib_id)

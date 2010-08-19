@@ -22,7 +22,7 @@ load_contrib();
 
 // Used later when submitting
 $contrib_clone = clone titania::$contrib;
-
+titania::
 if (!(((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) && !in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
 {
 	titania::needs_auth();
@@ -98,6 +98,8 @@ if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
 		'contrib_demo'			=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate') || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE) ? $contrib_demo : titania::$contrib->contrib_demo,
+		'contrib_local_name' => utf8_normalize_nfc(request_var('contrib_local_name', '', true)),
+		'contrib_iso_code' => request_var('contrib_iso_code', ''),
 	));
 }
 
@@ -346,7 +348,8 @@ phpbb::$template->assign_vars(array(
 	'S_IS_OWNER'				=> (titania::$contrib->is_author) ? true : false,
 	'S_IS_MODERATOR'			=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 	'S_CAN_EDIT_STYLE_DEMO'		=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate') || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE) ? true : false,
-
+	'S_IS_TRANSLATION'			=> (titania::$contrib->contrib_type == TITANIA_TYPE_TRANSLATION),
+	
 	'CONTRIB_PERMALINK'			=> $permalink,
 	'S_CONTRIB_TYPE'            => titania::$contrib->contrib_type,
 	'SCREENSHOT_UPLOADER'		=> $screenshot->parse_uploader('posting/attachments/simple.html'),
