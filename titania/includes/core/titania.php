@@ -31,7 +31,7 @@ class titania
 	/**
 	 * Titania configuration member
 	 *
-	 * @var object titania_config
+	 * @var titania_config
 	 */
 	public static $config;
 
@@ -76,14 +76,20 @@ class titania
 	public static $theme_path;
 
 	/**
-	* Hold our main contribution/author object for the currently loaded author/contribution
+	* Hold our main contribution object for the currently loaded contribution
 	*
-	* @var object
+	* @var titania_contribution
 	*/
 	public static $contrib;
+
+	/**
+	* Hold our main author object for the currently loaded author
+	*
+	* @var titania_author
+	*/
 	public static $author;
 
-	/*
+	/**
 	 * Initialise titania:
 	 *	Session management, Cache, Language ...
 	 *

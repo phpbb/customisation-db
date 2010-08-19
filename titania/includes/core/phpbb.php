@@ -21,13 +21,26 @@ if (!defined('IN_TITANIA'))
  */
 class phpbb
 {
+	/** @var auth phpBB Auth class */
 	public static $auth;
+
+	/** @var cache phpBB Cache class */
 	public static $cache;
+	
+	/** @var config phpBB Config class */
 	public static $config;
+	
+	/** @var db phpBB DBAL class */
 	public static $db;
+	
+	/** @var template phpBB Template class */
 	public static $template;
-	public static $theme_data; //self::$theme_data
+	
+	/** @var user phpBB User class */
 	public static $user;
+	
+	/** @var array $user->theme */
+	public static $theme_data;
 
 	/**
 	 * Static Constructor.
