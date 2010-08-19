@@ -22,7 +22,7 @@ load_contrib();
 
 // Used later when submitting
 $contrib_clone = clone titania::$contrib;
-titania::
+
 if (!(((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) && !in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
 {
 	titania::needs_auth();
