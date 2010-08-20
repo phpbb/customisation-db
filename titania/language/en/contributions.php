@@ -117,6 +117,7 @@ $lang = array_merge($lang, array(
 	'LOGIN_EXPLAIN_CONTRIB'					=> 'In order to create a new contribution you need to be registered',
 
 	'MANAGE_CONTRIBUTION'					=> 'Manage Contribution',
+	'MISSING_KEYS'							=> 'Missing entries in %1$s are listed below:<br /><br />%2$s',
 	'MPV_RESULTS'							=> '<strong>Please check over the MPV results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
 	'MPV_TEST'								=> 'The Mod will be tested against MPV and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 	'MPV_TEST_FAILED'						=> 'Sorry, the automatic MPV test failed and your MPV test results are not available.  Please continue.',
@@ -135,7 +136,8 @@ $lang = array_merge($lang, array(
 	'NO_REVISION_ATTACHMENT'				=> 'Please select a file to upload',
 	'NO_REVISION_VERSION'					=> 'Please enter a version for the revision',
 	'NO_SCREENSHOT'							=> 'No screenshot',
-
+	'NO_TRANSLATION'						=> 'The archive does not appear to be a valid language package. Please ensure it contains all the files found in the English language directory',
+  
 	'PHPBB_BRANCH'							=> 'phpBB Branch',
 	'PHPBB_BRANCH_EXPLAIN'					=> 'Select the phpBB branch that this revision supports.',
 	'PHPBB_VERSION'							=> 'phpBB Version',
@@ -171,6 +173,8 @@ $lang = array_merge($lang, array(
 	'SELECT_PHPBB_BRANCH'					=> 'Select phpBB branch',
 	'SUBDIRECTORY_LIMIT'					=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
 	'SUBMIT_NEW_REVISION'					=> 'Submit and add new revision',
+
+	'TOO_MANY_TRANSLATOR_LINKS'				=> 'You are currently using %d external links within the TRANSLATION/TRANSLATION_INFO line. Please only include <strong>one link</strong>. Including two links is allowed on a case-by-case basis - please post within the translations forum noting your reasoning behind putting more external links within the line.',
 
 	'VALIDATION_TIME'						=> 'Validation time',
 	'VIEW_DEMO'								=> 'View Demo',

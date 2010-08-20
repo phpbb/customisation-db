@@ -192,6 +192,13 @@ class titania_type_base
 	public $automod_test = false;
 
 	/**
+	 * Should the package be validated as a translation?
+	 *
+	 * @var bool
+	 */
+	public $validate_translation = false;
+
+	/**
 	* Find the root of the install package for this type?  If so, what to search for (see contrib_tools::find_root())?
 	*
 	* @var mixed

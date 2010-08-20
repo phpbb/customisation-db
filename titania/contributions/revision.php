@@ -379,7 +379,27 @@ do{
 			$contrib_tools->remove_temp_files();
 		break;
 
+		// Translation validation
 		case 4 :
+
+		  if (!titania_types::$types[titania::$contrib->contrib_type]->validate_translation)
+		  {
+			$step = 5;
+			$try_again = true;
+			continue;
+		  }
+
+		  $validation_tools = new translation_validation($zip_file, $new_dir_name);
+
+		  $missing_keys = $validation_tools->check_language_keys();
+
+		  phpbb::$template->assign_var('MISSING_KEYS', $missing_keys);
+
+		  $contrib_tools->remove_temp_files();
+
+		break;
+
+		case 5 :
 			$revision = new titania_revision(titania::$contrib, $revision_id);
 			if (!$revision->load())
 			{

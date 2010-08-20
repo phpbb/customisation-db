@@ -417,6 +417,8 @@ class titania_contribution extends titania_message_object
 				'S_CONTRIB_DOWNLOAD_DISABLED'	=> ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) ? true : false,
 				'S_CONTRIB_HIDDEN'				=> ($this->contrib_status == TITANIA_CONTRIB_HIDDEN) ? true : false,
 				'S_CONTRIB_DISABLED'			=> ($this->contrib_status == TITANIA_CONTRIB_DISABLED) ? true : false,
+
+				'S_CONTRIB_TRANSLATION'			=> ($this->contrib_type == TITANIA_TYPE_TRANSLATION),
 			));
 		}
 

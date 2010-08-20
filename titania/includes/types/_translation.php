@@ -44,6 +44,10 @@ class titania_type_translation extends titania_type_base
 	public $validation_message_approve = 'TRANSLATION_VALIDATION_MESSAGE_APPROVE';
 	public $validation_message_deny = 'TRANSLATION_VALIDATION_MESSAGE_DENY';
 
+	public $root_search = array(array('language', 'is_directory'));
+
+	public $validate_translation = true;
+
 	public function __construct()
 	{
 		$this->lang = phpbb::$user->lang['TRANSLATION'];
