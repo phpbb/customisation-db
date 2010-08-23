@@ -170,7 +170,7 @@ do{
 				if (!titania_types::$types[titania::$contrib->contrib_type]->clean_and_restore_root)
 				{
 					// Skip the whole thing if we have nothing else to do
-					if (!titania_types::$types[titania::$contrib->contrib_type]->mpv_test && !titania_types::$types[titania::$contrib->contrib_type]->automod_test)
+					if (!titania_types::$types[titania::$contrib->contrib_type]->mpv_test && !titania_types::$types[titania::$contrib->contrib_type]->automod_test && !titania_types::$types[titania::$contrib->contrib_type]->validate_translation)
 					{
 						// Repack if that's what we want
 						if ($repack)
@@ -382,20 +382,47 @@ do{
 		// Translation validation
 		case 4 :
 
-		  if (!titania_types::$types[titania::$contrib->contrib_type]->validate_translation)
-		  {
-			$step = 5;
-			$try_again = true;
-			continue;
-		  }
+			if (!titania_types::$types[titania::$contrib->contrib_type]->validate_translation)
+			{
+				$step = 5;
+				$try_again = true;
+				continue;
+			}
+			
+			$revision = new titania_revision(titania::$contrib, $revision_id);
+			if (!$revision->load())
+			{
+				trigger_error('NO_REVISION');
+			}
+			
+			$revision_attachment = new titania_attachment(TITANIA_CONTRIB);
+			$revision_attachment->attachment_id = $revision->attachment_id;
+			if (!$revision_attachment->load())
+			{
+				trigger_error('ERROR_NO_ATTACHMENT');
+			}
 
-		  $validation_tools = new translation_validation($zip_file, $new_dir_name);
+			titania::_include('library/translations/translation_validation');
+			$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
+			$new_dir_name = titania::$contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
+			$validation_tools = new translation_validation($zip_file, $new_dir_name);
+			
+			$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				WHERE revision_id = ' . $revision->revision_id;
+			$result = phpbb::$db->sql_query($sql);
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
+				$reference_filepath = $validation_tools->automod_phpbb_files($version_string); // path to files against which we will validate the package
+			}
+			
+			$missing_keys = $validation_tools->check_package($reference_filepath);
+	
+			var_dump($errors);exit;
 
-		  $missing_keys = $validation_tools->check_language_keys();
+			phpbb::$template->assign_var('MISSING_KEYS', $missing_keys);
 
-		  phpbb::$template->assign_var('MISSING_KEYS', $missing_keys);
-
-		  $contrib_tools->remove_temp_files();
+			$contrib_tools->remove_temp_files();
 
 		break;
 

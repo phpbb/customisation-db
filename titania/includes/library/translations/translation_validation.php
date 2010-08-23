@@ -38,8 +38,10 @@ class translation_validation extends titania_contrib_tools
   /**
    * Checks the file for the array contents
    * Make sure it has all the keys present in the newest version
+   * 
+   * @param string $reference_filepath The path to the files against I want to validate the uploaded package
    */
-  public function check_package()
+  public function check_package($reference_filepath)
   {
 	// Basically the individual parts of the translation, we check them separately, because they have colliding filenames
 	$types = array(
@@ -52,19 +54,18 @@ class translation_validation extends titania_contrib_tools
 	foreach ($types as $type => $path)
 	{
 	  // Get all the files present in the uploaded package for the currently iterated type
-	  $filelist = $this->lang_filelist($this->unzip_dir, $path);
+	  $filelist = $this->lang_filelist($this->unzip_dir);
 	  ksort($filelist);
-	  $lang_root_path = key($filelist);
 
-	  // Strip the path from the filenames
-	  $filelist_tmp = array();
-	  foreach ($filelist as $path => $file_ary)
-	  {
-		  foreach ($file_ary as $file)
-		  {
-			  $filelist_tmp[] = str_replace($lang_root_path, '', $path) . $file;
-		  }
-	  }
+ 
+		// _____ ____ ____ ____ 
+		// /__ __Y  _ Y  _ Y  _ \
+		//  / \ | / \| | \| / \|
+		//  | | | \_/| |_/| \_/|
+		//  \_/ \____|____|____/
+ 
+
+
 	  
 	  $filelist = $filelist_tmp;
 	  unset($filelist_tmp);
@@ -72,7 +73,7 @@ class translation_validation extends titania_contrib_tools
 	  // Check if even one match is obtained...
 	  $match = false;
 	  $type_list = $this->get_file_list($type);
-	  $original_language_directory = realpath(dirname(__FILE__) . '/../languages/en') . '/';
+	  $original_language_directory = realpath($reference_filepath . '/languages/en') . '/';
 
 	  foreach ($type_list as $file => $status)
 	  {
@@ -248,7 +249,7 @@ class translation_validation extends titania_contrib_tools
    * Basically flattens the files from all subdirectories of $root_dir into an array
    * 
    * @param string $root_dir
-   * @param string $dir
+   * @param string $dir DO NOT USE, recursive!
    * @return array
    */
   private function lang_filelist($root_dir, $dir = '')
@@ -273,7 +274,7 @@ class translation_validation extends titania_contrib_tools
 		  }
 		  else if ($fname[0] != '.' && is_dir("$root_dir$dir$fname"))
 		  {
-			  $matches += lang_filelist($root_dir, "$dir$fname");
+			  $matches += $this->lang_filelist($root_dir, "$dir$fname");
 		  }
 	  }
 	  closedir($dp);

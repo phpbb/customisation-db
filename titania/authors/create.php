@@ -37,6 +37,8 @@ titania::$contrib->author->load();
 // Set some main vars up
 $submit = (isset($_POST['submit'])) ? true : false;
 $contrib_categories = request_var('contrib_category', array(0));
+$contrib_iso_code = request_var('contrib_iso_code', '');
+$contrib_local_name = utf8_normalize_nfc(request_var('contrib_local_name', '', true));
 $contrib_demo = utf8_normalize_nfc(request_var('demo_url', '', true));
 $active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
 $nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
@@ -68,6 +70,8 @@ if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 		'contrib_name_clean'	=> utf8_normalize_nfc(request_var('permalink', '', true)),
 		'contrib_visible'		=> 1,
 		'contrib_demo'			=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate') || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE) ? $contrib_demo : titania::$contrib->contrib_demo,
+		'contrib_iso_code'		=> $contrib_iso_code,
+		'contrib_local_name'	=> $contrib_local_name,
 	));
 }
 
@@ -131,6 +135,7 @@ $template->assign_vars(array(
 	'S_POST_ACTION'			=> titania_url::build_url('author/' . htmlspecialchars_decode(phpbb::$user->data['username_clean']) . '/create'),
 	'S_CREATE'				=> true,
 	'S_STYLE'				=> TITANIA_TYPE_STYLE,
+	'S_TRANSLATION'			=> TITANIA_TYPE_TRANSLATION,
 	'S_CAN_EDIT_STYLE_DEMO'	=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate')) ? true : false,
 
 	'SCREENSHOT_UPLOADER'	=> $screenshot->parse_uploader('posting/attachments/simple.html'),
