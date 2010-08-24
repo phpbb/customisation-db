@@ -44,7 +44,10 @@ class titania_type_translation extends titania_type_base
 	public $validation_message_approve = 'TRANSLATION_VALIDATION_MESSAGE_APPROVE';
 	public $validation_message_deny = 'TRANSLATION_VALIDATION_MESSAGE_DENY';
 
-	public $root_search = array(array('language', 'is_directory'));
+	public $root_search = array(array('language', 'is_directory', 'is_exactly'));
+	public $clean_and_restore_root = true;
+	
+	public $root_not_found_key = 'COULD_NOT_FIND_TRANSLATION_ROOT';
 
 	public $validate_translation = true;
 

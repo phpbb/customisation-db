@@ -38,10 +38,10 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'CONVERTER'								=> 'Translation',
-	'CONVERTERS'							=> 'Translations',
-	'CONVERTER_VALIDATION'					=> '[phpBB Translation-Validation] %1$s %2$s',
-	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Translation to the phpBB.com Customisation Database. After careful inspection your translation has been approved and released into our Customisation Database.
+	'TRANSLATION'								=> 'Translation',
+	'TRANSLATION'							=> 'Translations',
+	'TRANSLATION_VALIDATION'					=> '[phpBB Translation-Validation] %1$s %2$s',
+	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Translation to the phpBB.com Customisation Database. After careful inspection your translation has been approved and released into our Customisation Database.
 
 It is our hope that you will provide a basic level of support for this translation and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
@@ -50,7 +50,7 @@ It is our hope that you will provide a basic level of support for this translati
 
 Sincerely,
 phpBB Teams',
-	'CONVERTER_VALIDATION_MESSAGE_DENY'		=> 'Hello,
+	'TRANSLATION_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
 As you may know all translations submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
 
@@ -68,4 +68,11 @@ Here is a report on why your translation was denied:
 
 Thank you,
 phpBB Teams',
+
+	'COULD_NOT_FIND_TRANSLATION_ROOT'		=> 'We couldn\'t locate the root directory of your language pack. Make sure you have a directory containing <code>language/</code> and optionally <code>styles/</code> in the top level.',
+	
+	'MISSING_FILE'							=> 'The file <code>%s</code> is missing in your language pack',
+	'MISSING_KEYS'							=> 'You are missing the following language keys in <code>%1$s</code>:<br />%2$s',
+	
+	'PASSED_VALIDATION'						=> 'Your language pack has passed the validation process which checks for missing keys, license files and which repackages your translation, please continue.',
 ));

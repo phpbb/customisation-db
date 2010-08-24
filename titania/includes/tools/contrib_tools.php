@@ -216,6 +216,7 @@ class titania_contrib_tools
 
         foreach (scandir($directory . $sub_dir) as $item)
 		{
+
             if ($item == '.' || $item == '..')
 			{
 				continue;
@@ -276,8 +277,8 @@ class titania_contrib_tools
 							}
 						}
 
-						// Do not include in the count for matches
-						unset($file_search['is_directory'], $file_search['is_exactly']);
+						// Do not include special parameters in the count for matches
+						unset($file_search[array_search('is_directory', $file_search)], $file_search[array_search('is_exactly', $file_search)]);
 
 						if ($match == sizeof($file_search))
 						{

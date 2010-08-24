@@ -205,6 +205,7 @@ class titania_type_base
 	*/
 	public $clean_and_restore_root = false;
 	public $root_search = false;
+	public $root_not_found_key = 'COULD_NOT_FIND_ROOT';
 
 	/**
 	* Display the install file to the users?

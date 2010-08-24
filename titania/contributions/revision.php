@@ -227,7 +227,15 @@ do{
 				{
 					$package_root = $contrib_tools->find_root();
 				}
-				$contrib_tools->restore_root($package_root);
+
+				if ($package_root === false)
+				{
+					$error[] = phpbb::$user->lang(titania_types::$types[titania::$contrib->contrib_type]->root_not_found_key);
+				}
+				else
+				{
+					$contrib_tools->restore_root($package_root);
+				}
 
 				// Copy the modx install file
 				if (titania_types::$types[titania::$contrib->contrib_type]->display_install_file)
@@ -416,13 +424,16 @@ do{
 				$reference_filepath = $validation_tools->automod_phpbb_files($version_string); // path to files against which we will validate the package
 			}
 			
-			$missing_keys = $validation_tools->check_package($reference_filepath);
-	
-			var_dump($errors);exit;
+			$errors = $validation_tools->check_package($reference_filepath);
+			
+			if (!empty($errors))
+			{
+				trigger_error(implode('<br /><br />', $errors));
+			}
 
-			phpbb::$template->assign_var('MISSING_KEYS', $missing_keys);
-
-			$contrib_tools->remove_temp_files();
+			$validation_tools->remove_temp_files();
+			
+			phpbb::$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
 
 		break;
 
