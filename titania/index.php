@@ -223,7 +223,7 @@ switch ($action)
 		// Mark all topics read
 		phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania_url::build_url('support/' . $type . '/'), array('mark' => 'topics')));
 
-		topics_overlord::display_forums_complete('support', false, false, $type);
+		topics_overlord::display_forums_complete('all_support', false, false, $type);
 
 		titania::page_header('CUSTOMISATION_DATABASE');
 		titania::page_footer(true, 'all_support.html');

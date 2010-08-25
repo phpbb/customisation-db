@@ -319,7 +319,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_TRACKER;
 			break;
 
-			case 'support':
+			case 'all_support' :
 				$page_url = titania_url::build_url('support/' . $contrib_type);
 
 				// Try to grab the category/contrib name
