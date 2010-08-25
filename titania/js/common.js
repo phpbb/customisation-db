@@ -152,12 +152,6 @@ $(document).ready(function(){
 	}, function() {
 		$(this).children('.subactions').toggle();
 	});
-
-	// Make elastic textareas elastic
-	$('.elastic').elastic();
-
-	// Make textareas tabby
-	$('textarea').tabby();
 });
 
 function hide_quotebox(box)

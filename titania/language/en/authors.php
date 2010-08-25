@@ -34,31 +34,34 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'AUTHOR_CONTRIBS'		=> 'Contributions',
-	'AUTHOR_DATA_UPDATED'	=> 'The author’s information has been updated.',
-	'AUTHOR_DESC'			=> 'Author Description',
-	'AUTHOR_DETAILS'		=> 'Author Details',
-	'AUTHOR_MODS'			=> '%d Modifications',
-	'AUTHOR_MODS_ONE'		=> '1 Modification',
-	'AUTHOR_NOT_FOUND'		=> 'Author not found',
-	'AUTHOR_PROFILE'		=> 'Author Profile',
-	'AUTHOR_RATING'			=> 'Author Rating',
-	'AUTHOR_SNIPPETS'		=> '%d Snippets',
-	'AUTHOR_SNIPPETS_ONE'	=> '1 Snippet',
-	'AUTHOR_STATISTICS'		=> 'Author Statistics',
-	'AUTHOR_STYLES'			=> '%d Styles',
-	'AUTHOR_STYLES_ONE'		=> '1 Style',
-	'AUTHOR_SUPPORT'		=> 'Support',
+	'AUTHOR_CONTRIBS'			=> 'Contributions',
+	'AUTHOR_DATA_UPDATED'		=> 'The author’s information has been updated.',
+	'AUTHOR_DESC'				=> 'Author Description',
+	'AUTHOR_DETAILS'			=> 'Author Details',
+	'AUTHOR_MODS'				=> '%d Modifications',
+	'AUTHOR_MODS_ONE'			=> '1 Modification',
+	'AUTHOR_NOT_FOUND'			=> 'Author not found',
+	'AUTHOR_PROFILE'			=> 'Author Profile',
+	'AUTHOR_RATING'				=> 'Author Rating',
+	'AUTHOR_SNIPPETS'			=> '%d Snippets',
+	'AUTHOR_SNIPPETS_ONE'		=> '1 Snippet',
+	'AUTHOR_STATISTICS'			=> 'Author Statistics',
+	'AUTHOR_STYLES'				=> '%d Styles',
+	'AUTHOR_STYLES_ONE'			=> '1 Style',
+	'AUTHOR_SUPPORT'			=> 'Support',
 
-	'MANAGE_AUTHOR'			=> 'Manage Author',
+	'ENHANCED_EDITOR'			=> 'Enhanced Editor',
+	'ENHANCED_EDITOR_EXPLAIN'	=> 'Enable/disable the enhanced editor (captures tabs and automatically expands textareas).',
 
-	'NO_AVATAR'				=> 'No avatar',
+	'MANAGE_AUTHOR'				=> 'Manage Author',
 
-	'PHPBB_PROFILE'			=> 'phpBB.com profile',
+	'NO_AVATAR'					=> 'No avatar',
 
-	'REAL_NAME'				=> 'Real Name',
+	'PHPBB_PROFILE'				=> 'phpBB.com profile',
 
-	'USER_INFORMATION'		=> '’s user information',
+	'REAL_NAME'					=> 'Real Name',
 
-	'VIEW_USER_PROFILE'		=> 'View user profile',
+	'USER_INFORMATION'			=> '’s user information',
+
+	'VIEW_USER_PROFILE'			=> 'View user profile',
 ));

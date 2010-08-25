@@ -65,11 +65,11 @@ $lang = array_merge($lang, array(
 	'CONTRIB_DISABLED'						=> 'Hidden + Disabled',
 	'CONTRIB_DOWNLOAD_DISABLED'				=> 'Downloads Disabled',
 	'CONTRIB_EDITED'						=> 'The contribution has been successfully edited.',
+	'CONTRIB_HIDDEN'						=> 'Hidden',
 	'CONTRIB_ISO_CODE'						=> 'ISO Code',
 	'CONTRIB_ISO_CODE_EXPLAIN'				=> 'The ISO code according to the <a href="http://area51.phpbb.com/docs/coding-guidelines.html#translation">Translation Coding Guidelines</a>.',
 	'CONTRIB_LOCAL_NAME'					=> 'Local name',
 	'CONTRIB_LOCAL_NAME_EXPLAIN'			=> 'The localized name of the language, e.g. <em>Français</em>.',
-	'CONTRIB_HIDDEN'						=> 'Hidden',
 	'CONTRIB_NAME'							=> 'Contribution Name',
 	'CONTRIB_NAME_EXISTS'					=> 'The unique name has already been reserved.',
 	'CONTRIB_NEW'							=> 'New',
@@ -136,7 +136,7 @@ $lang = array_merge($lang, array(
 	'NO_REVISION_VERSION'					=> 'Please enter a version for the revision',
 	'NO_SCREENSHOT'							=> 'No screenshot',
 	'NO_TRANSLATION'						=> 'The archive does not appear to be a valid language package. Please ensure it contains all the files found in the English language directory',
-  
+
 	'PHPBB_BRANCH'							=> 'phpBB Branch',
 	'PHPBB_BRANCH_EXPLAIN'					=> 'Select the phpBB branch that this revision supports.',
 	'PHPBB_VERSION'							=> 'phpBB Version',

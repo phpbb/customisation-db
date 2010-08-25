@@ -929,11 +929,17 @@ $versions = array(
 			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_user_id', array('UINT', 0)),
 		),
 	),
-	
+
 	'0.3.5' => array(
 		'table_column_add' => array(
 			array(TITANIA_CONTRIBS_TABLE, 'contrib_iso_code', array('VCHAR', '')),
 			array(TITANIA_CONTRIBS_TABLE, 'contrib_local_name', array('VCHAR', '')),
+		),
+	),
+
+	'0.3.6' => array(
+		'table_column_add' => array(
+			array(USERS_TABLE, 'titania_enhanced_editor', array('BOOL', true)),
 		),
 	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!

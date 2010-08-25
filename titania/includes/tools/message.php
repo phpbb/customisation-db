@@ -260,6 +260,7 @@ class titania_message
 
 			'SUBJECT'					=> ($this->settings['subject_default_override'] !== false) ? $this->settings['subject_default_override'] : ((isset($for_edit['subject'])) ? $for_edit['subject'] : ''),
 
+			'S_ENHANCED_EDITOR'			=> phpbb::$user->data['titania_enhanced_editor'],
 			'S_DISPLAY_ERROR'			=> $this->settings['display_error'],
 			'S_DISPLAY_SUBJECT'			=> $this->settings['display_subject'],
 			'S_STICKY_TOPIC_ALLOWED'	=> $this->auth['sticky_topic'],

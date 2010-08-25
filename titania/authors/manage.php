@@ -53,6 +53,16 @@ if ($submit)
 
 	if (!sizeof($error))
 	{
+		// Enhanced editor data is stored in the users table
+		$titania_enhanced_editor = (isset($_POST['enhanced_editor'])) ? true : false;
+		if (titania::$author->user_id == phpbb::$user->data['user_id'] && $titania_enhanced_editor != phpbb::$user->data['titania_enhanced_editor'])
+		{
+			$sql = 'UPDATE ' . USERS_TABLE . '
+				SET titania_enhanced_editor = ' . (int) $titania_enhanced_editor . '
+				WHERE user_id = ' . phpbb::$user->data['user_id'];
+			phpbb::$db->sql_query($sql);
+		}
+
 		titania::$author->submit();
 
 		redirect(titania::$author->get_url());
@@ -64,6 +74,10 @@ $message->display();
 
 $template->assign_vars(array(
 	'S_POST_ACTION'				=> titania::$author->get_url('manage'),
+
+	'S_DISPLAY_ENHANCED_EDITOR'			=> (titania::$author->user_id == phpbb::$user->data['user_id']) ? true : false,
+	'S_ENHANCED_EDITOR'					=> phpbb::$user->data['titania_enhanced_editor'],
+
 	'AUTHOR_WEBSITE'			=> (titania::$author->get_website_url() || phpbb::$user->data['user_id'] != titania::$author->user_id) ? titania::$author->get_website_url() : phpbb::$user->data['user_website'],
 
 	'ERROR_MSG'					=> ($submit && sizeof($error)) ? implode('<br />', $error) : false,

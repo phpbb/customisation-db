@@ -38,8 +38,14 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'TRANSLATION'								=> 'Translation',
-	'TRANSLATION'							=> 'Translations',
+	'COULD_NOT_FIND_TRANSLATION_ROOT'			=> 'We couldn\'t locate the root directory of your language pack. Make sure you have a directory containing <code>language/</code> and optionally <code>styles/</code> in the top level.',
+
+	'MISSING_FILE'								=> 'The file <code>%s</code> is missing in your language pack',
+	'MISSING_KEYS'								=> 'You are missing the following language keys in <code>%1$s</code>:<br />%2$s',
+
+	'PASSED_VALIDATION'							=> 'Your language pack has passed the validation process which checks for missing keys, license files and which repackages your translation, please continue.',
+
+	'TRANSLATION'								=> 'Translations',
 	'TRANSLATION_VALIDATION'					=> '[phpBB Translation-Validation] %1$s %2$s',
 	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Translation to the phpBB.com Customisation Database. After careful inspection your translation has been approved and released into our Customisation Database.
 
@@ -68,11 +74,4 @@ Here is a report on why your translation was denied:
 
 Thank you,
 phpBB Teams',
-
-	'COULD_NOT_FIND_TRANSLATION_ROOT'		=> 'We couldn\'t locate the root directory of your language pack. Make sure you have a directory containing <code>language/</code> and optionally <code>styles/</code> in the top level.',
-	
-	'MISSING_FILE'							=> 'The file <code>%s</code> is missing in your language pack',
-	'MISSING_KEYS'							=> 'You are missing the following language keys in <code>%1$s</code>:<br />%2$s',
-	
-	'PASSED_VALIDATION'						=> 'Your language pack has passed the validation process which checks for missing keys, license files and which repackages your translation, please continue.',
 ));

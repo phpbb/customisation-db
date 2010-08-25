@@ -38,10 +38,10 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'BRIDGE'								=> 'Bridge',
-	'BRIDGES'								=> 'Bridges',
-	'BRIDGE_VALIDATION'						=> '[phpBB Bridge-Validation] %1$s %2$s',
-	'BRIDGE_VALIDATION_MESSAGE_APPROVE'		=> 'Thank you for submitting your bridge to the phpBB.com Customisation Database. After careful inspection your bridge has been approved and released into our Customisation Database.
+	'BRIDGE'							=> 'Bridge',
+	'BRIDGES'							=> 'Bridges',
+	'BRIDGE_VALIDATION'					=> '[phpBB Bridge-Validation] %1$s %2$s',
+	'BRIDGE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your bridge to the phpBB.com Customisation Database. After careful inspection your bridge has been approved and released into our Customisation Database.
 
 It is our hope that you will provide a basic level of support for this bridge and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
@@ -50,7 +50,7 @@ It is our hope that you will provide a basic level of support for this bridge an
 
 Sincerely,
 phpBB Teams',
-	'BRIDGE_VALIDATION_MESSAGE_DENY'		=> 'Hello,
+	'BRIDGE_VALIDATION_MESSAGE_DENY'	=> 'Hello,
 
 As you may know all bridges submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
 
