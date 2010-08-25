@@ -209,11 +209,8 @@ switch ($action)
 		
 		// The type of contribs (mod, style, converter, official_tool, etc.)
 		$type = request_var('type', 'all');
-	
-		if (!in_array($type, titania_types::get_type_names()))
-		{
-			$type = 'all';
-		}
+		$type_id = titania_types::type_from_url($type);
+		$type = (!$type_id) ? 'all' : $type;
 		
 		// Generate the main breadcrumbs
 		titania::generate_breadcrumbs(array(

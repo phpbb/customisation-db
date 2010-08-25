@@ -60,21 +60,6 @@ class titania_types
 		ksort(self::$types);
 	}
 	
-	/*
-	* Return a list with the type names
-	*/
-	public static function get_type_names()
-	{
-		$names = array();
-		
-		foreach (self::$types as $type_id => $class)
-		{
-			$names[] = $class->url;
-		}
-		
-		return $names;
-	}
-	
 	/**
 	* Get the type_id from the url string
 	*
