@@ -166,7 +166,7 @@ class topics_overlord
 	/**
 	* Do everything we need to display the forum like page
 	*/
-	public static function display_forums_complete($type, $object = false, $options = array())
+	public static function display_forums_complete($type, $object = false, $options = array(), $contrib_type = 'all')
 	{
 /*
 user_topic_show_days
@@ -175,7 +175,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 */
 		phpbb::$user->add_lang('viewforum');
 
-		self::display_forums($type, $object, false, $options);
+		self::display_forums($type, $object, false, $options, $contrib_type);
 		self::assign_common();
 
 		phpbb::$template->assign_vars(array(
@@ -190,8 +190,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	* @param object|boolean $object The object (for contrib related (support, review, queue, tracker) and author_ modes)
 	* @param object|boolean $sort The sort object (includes/tools/sort.php)
 	* @param array $options Some special options
+	* @param string $contrib_type The type of the support topic list
 	*/
-	public static function display_forums($type, $object = false, $sort = false, $options = array())
+	public static function display_forums($type, $object = false, $sort = false, $options = array(), $contrib_type = 'all')
 	{
 		if ($sort === false)
 		{
@@ -318,8 +319,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_TRACKER;
 			break;
 
-			case 'all_support' :
-				$page_url = titania_url::build_url('support/all');
+			case 'support':
+				$page_url = titania_url::build_url('support/' . $contrib_type);
 
 				// Try to grab the category/contrib name
 				$sql_ary['SELECT'] .= ', contrib.contrib_name, contrib.contrib_name_clean, contrib.contrib_id, contrib.contrib_type';
@@ -330,6 +331,11 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 					),
 				));
 
+				if ($contrib_type != 'all')
+				{
+					$sql_ary['WHERE'] .= ' AND contrib.contrib_type = ' . titania_types::type_from_url($contrib_type);
+				}
+				
 				// Additional tracking field (to allow marking all support/discussion as read)
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
 

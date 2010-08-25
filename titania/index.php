@@ -206,16 +206,24 @@ switch ($action)
 		{
 			titania_tracking::track(TITANIA_SUPPORT, 0);
 		}
-
+		
+		// The type of contribs (mod, style, converter, official_tool, etc.)
+		$type = request_var('type', 'all');
+	
+		if (!in_array($type, titania_types::get_type_names()))
+		{
+			$type = 'all';
+		}
+		
 		// Generate the main breadcrumbs
 		titania::generate_breadcrumbs(array(
-			'ALL_SUPPORT'	=> titania_url::build_url('support/all/'),
+			'ALL_SUPPORT'	=> titania_url::build_url('support/' . $type . '/'),
 		));
 
 		// Mark all topics read
-		phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania_url::build_url('support/all/'), array('mark' => 'topics')));
+		phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania_url::build_url('support/' . $type . '/'), array('mark' => 'topics')));
 
-		topics_overlord::display_forums_complete('all_support');
+		topics_overlord::display_forums_complete('support', false, false, $type);
 
 		titania::page_header('CUSTOMISATION_DATABASE');
 		titania::page_footer(true, 'all_support.html');
@@ -332,7 +340,17 @@ switch ($action)
 
 			contribs_overlord::display_contribs('all', 0, $sort);
 		}
-
+		
+		// Links to the support topic lists
+		foreach (titania_types::$types as $type_id => $class)
+		{
+			phpbb::$template->assign_block_vars('support_types', array(
+				'U_SUPPORT'		=> titania_url::build_url('support/' . $class->url . '/'),
+				
+				'TYPE_SUPPORT'	=> $class->langs,
+			));
+		}
+		
 		phpbb::$template->assign_vars(array(
 			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? titania_url::build_url('author/' . htmlspecialchars_decode(phpbb::$user->data['username_clean']) . '/create') : '',
 			'S_HAS_CONTRIBS'			=> ($categories_ary && $categories_ary[$category_id]['category_type']) ? true : false,

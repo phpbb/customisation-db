@@ -36,9 +36,9 @@ Rewriterule ^authors?/([^/]+)/?([^/]+)?/?([^/]+)?$				./authors/index.php?u=$1&p
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^contributions/all/?([^/]+)?$						./index.php?action=contributions [NC]
 
-#display all support topics
+#display support topics
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^support/all/?([^/]+)?$								./index.php?action=support [NC]
+Rewriterule ^support/(all|mod|style|converter|official_tool|bridge|translation|contributions?)/?([^/]+)?$								./index.php?action=support&type=$1 [NC]
 
 #contributions
 RewriteCond %{REQUEST_FILENAME} !-f

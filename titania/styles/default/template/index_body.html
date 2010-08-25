@@ -5,7 +5,7 @@
 <!-- IF .categories -->
 <ul class="linklist">
 	<li>
-		<a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a>
+		<a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a>: <!-- BEGIN support_types --><a href="{support_types.U_SUPPORT}">{support_types.TYPE_SUPPORT}</a><!-- IF not support_types.S_LAST_ROW -->, <!-- ENDIF --><!-- END support_types -->
 		&bull; <a href="{U_ALL_CONTRIBUTIONS}">{L_ALL_CONTRIBUTIONS}</a>
 		<!-- IF U_FIND_CONTRIBUTION -->&bull; <a href="{U_FIND_CONTRIBUTION}">{L_FIND_CONTRIBUTION}</a><!-- ENDIF -->
 	</li>
