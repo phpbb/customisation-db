@@ -80,6 +80,9 @@ function titania_decode_message(&$message, $bbcode_uid = '')
 	// Decode HTML entities, else bbcode reparsing will fail
 	$message = html_entity_decode($message);
 
+	// With magic_quotes_gpc on slashes are stripped too many times, so add them
+	$message = (STRIP) ? addslashes($message) : $message;
+
 	// Run set_var to re-encode the proper entities as if the user had submitted it themselves
 	set_var($message, $message, 'string', true);
 }
