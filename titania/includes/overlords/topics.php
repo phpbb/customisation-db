@@ -166,7 +166,7 @@ class topics_overlord
 	/**
 	* Do everything we need to display the forum like page
 	*/
-	public static function display_forums_complete($type, $object = false, $options = array(), $contrib_type = 'all')
+	public static function display_forums_complete($type, $object = false, $options = array())
 	{
 /*
 user_topic_show_days
@@ -175,7 +175,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 */
 		phpbb::$user->add_lang('viewforum');
 
-		self::display_forums($type, $object, false, $options, $contrib_type);
+		self::display_forums($type, $object, false, $options);
 		self::assign_common();
 
 		phpbb::$template->assign_vars(array(
@@ -192,7 +192,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	* @param array $options Some special options
 	* @param string $contrib_type The type of the support topic list
 	*/
-	public static function display_forums($type, $object = false, $sort = false, $options = array(), $contrib_type = 'all')
+	public static function display_forums($type, $object = false, $sort = false, $options = array())
 	{
 		if ($sort === false)
 		{
@@ -320,8 +320,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			break;
 
 			case 'all_support' :
-				$page_url = titania_url::build_url('support/' . $contrib_type);
-
 				// Try to grab the category/contrib name
 				$sql_ary['SELECT'] .= ', contrib.contrib_name, contrib.contrib_name_clean, contrib.contrib_id, contrib.contrib_type';
 				$sql_ary['LEFT_JOIN'] = array_merge(((isset($sql_ary['LEFT_JOIN'])) ? $sql_ary['LEFT_JOIN'] : array()), array(
@@ -331,9 +329,15 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 					),
 				));
 
-				if ($contrib_type != 'all')
+				if (isset(titania_types::$types[$options['contrib_type']]))
 				{
-					$sql_ary['WHERE'] .= ' AND contrib.contrib_type = ' . titania_types::type_from_url($contrib_type);
+					$page_url = titania_url::build_url('support/' . titania_types::$types[$options['contrib_type']]->url);
+					
+					$sql_ary['WHERE'] .= ' AND contrib.contrib_type = ' . $options['contrib_type'];
+				}
+				else
+				{
+					$page_url = titania_url::build_url('support/all');
 				}
 				
 				// Additional tracking field (to allow marking all support/discussion as read)

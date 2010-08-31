@@ -201,27 +201,43 @@ switch ($action)
 	* Display all support topics
 	*/
 	case 'support' :
-		// Mark all topics read
-		if (request_var('mark', '') == 'topics')
-		{
-			titania_tracking::track(TITANIA_SUPPORT, 0);
-		}
-		
 		// The type of contribs (mod, style, converter, official_tool, etc.)
 		$type = request_var('type', 'all');
 		$type_id = titania_types::type_from_url($type);
 		$type = (!$type_id) ? 'all' : $type;
 		
+		if ($type == 'all')
+		{
+			// Mark all topics read
+			if (request_var('mark', '') == 'topics')
+			{
+				titania_tracking::track(TITANIA_SUPPORT, 0);
+			}
+		
+			// Mark all topics read
+			phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania_url::build_url('support/all'), array('mark' => 'topics')));
+		}
+		
 		// Generate the main breadcrumbs
 		titania::generate_breadcrumbs(array(
 			'ALL_SUPPORT'	=> titania_url::build_url('support/' . $type . '/'),
 		));
+		
+		topics_overlord::display_forums_complete('all_support', false, array('contrib_type' => $type_id));
 
-		// Mark all topics read
-		phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania_url::build_url('support/' . $type . '/'), array('mark' => 'topics')));
-
-		topics_overlord::display_forums_complete('all_support', false, false, $type);
-
+		// The link to ALL support topics
+		phpbb::$template->assign_var('U_ALL_SUPPORT', titania_url::build_url('support/all'));
+		
+		// Links to the support topic lists
+		foreach (titania_types::$types as $id => $class)
+		{
+			phpbb::$template->assign_block_vars('support_types', array(
+				'U_SUPPORT'		=> titania_url::build_url('support/' . $class->url . '/'),
+				
+				'TYPE_SUPPORT'	=> $class->langs,
+			));
+		}
+		
 		titania::page_header('CUSTOMISATION_DATABASE');
 		titania::page_footer(true, 'all_support.html');
 	break;
@@ -336,16 +352,6 @@ switch ($action)
 			$sort->set_defaults(10);
 
 			contribs_overlord::display_contribs('all', 0, $sort);
-		}
-		
-		// Links to the support topic lists
-		foreach (titania_types::$types as $type_id => $class)
-		{
-			phpbb::$template->assign_block_vars('support_types', array(
-				'U_SUPPORT'		=> titania_url::build_url('support/' . $class->url . '/'),
-				
-				'TYPE_SUPPORT'	=> $class->langs,
-			));
 		}
 		
 		phpbb::$template->assign_vars(array(
