@@ -91,7 +91,6 @@ Upon validating your modification the phpBB MOD Team regrets to inform you that 
 
 To correct the problem(s) with your modification, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your modification being denied.
-[*]Increase your version number.
 [*]Test your MOD, the XML file and the installation of it.
 [*]Re-upload your MOD to our modifications database.[/list]
 Please ensure you tested your modification on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your modification.
