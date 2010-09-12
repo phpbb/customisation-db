@@ -247,7 +247,14 @@ class users_overlord
 		return self::$users[$user_id];
 	}
 
-	public static function assign_details($user_id, $prefix = '', $output = false)
+	/**
+	* Assign user details
+	*
+	* @param int $user_id
+	* @param string $prefix Prefix to assign to the user details
+	* @param bool $output_to_template True to output the data to the template
+	*/
+	public static function assign_details($user_id, $prefix = '', $output_to_template = false)
 	{
 		$row = self::get_user($user_id);
 		$user_id = $row['user_id']; // Re-assign properly...in case it gives us the anonymous user
@@ -300,7 +307,7 @@ class users_overlord
 			$prefix . 'U_JABBER'			=> self::get_user($user_id, '_jabber'),
 		);
 
-		if ($output)
+		if ($output_to_template)
 		{
 			phpbb::$template->assign_vars($output);
 		}
