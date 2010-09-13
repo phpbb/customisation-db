@@ -216,7 +216,6 @@ class titania_contrib_tools
 
         foreach (scandir($directory . $sub_dir) as $item)
 		{
-
             if ($item == '.' || $item == '..')
 			{
 				continue;
@@ -278,7 +277,14 @@ class titania_contrib_tools
 						}
 
 						// Do not include special parameters in the count for matches
-						unset($file_search[array_search('is_directory', $file_search)], $file_search[array_search('is_exactly', $file_search)]);
+						$specials = array('is_directory', 'is_exactly');
+						foreach ($specials as $special)
+						{
+							if (in_array($special, $file_search))
+							{
+								$match++;
+							}
+						}
 
 						if ($match == sizeof($file_search))
 						{
@@ -550,7 +556,7 @@ class titania_contrib_tools
 	{
 		// Find the main modx file
 		$modx_root = $this->find_root();
-
+echo $modx_root;
 		if ($modx_root === false)
 		{
 			titania::add_lang('contributions');

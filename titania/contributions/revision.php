@@ -235,12 +235,12 @@ do{
 				else
 				{
 					$contrib_tools->restore_root($package_root);
-				}
 
-				// Copy the modx install file
-				if (titania_types::$types[titania::$contrib->contrib_type]->display_install_file)
-				{
-					$contrib_tools->copy_modx_install(titania::$config->modx_storage_path . $revision->revision_id);
+					// Copy the modx install file
+					if (titania_types::$types[titania::$contrib->contrib_type]->display_install_file)
+					{
+						$contrib_tools->copy_modx_install(titania::$config->modx_storage_path . $revision->revision_id);
+					}
 				}
 
 				$error = array_merge($error, $contrib_tools->error);
