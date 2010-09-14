@@ -372,12 +372,4 @@ class titania_topic extends titania_database_object
 			));
 		}
 	}
-
-	/**
-	 * Return the original poster username for the notes quote in the first post.
-	 */
-	public function get_topic_poster()
-	{
-		return($this->sql_data['topic_first_post_username']);
-	}
 }
