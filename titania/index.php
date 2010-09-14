@@ -224,9 +224,6 @@ switch ($action)
 		));
 		
 		topics_overlord::display_forums_complete('all_support', false, array('contrib_type' => $type_id));
-
-		// The link to ALL support topics
-		phpbb::$template->assign_var('U_ALL_SUPPORT', titania_url::build_url('support/all'));
 		
 		// Links to the support topic lists
 		foreach (titania_types::$types as $id => $class)
