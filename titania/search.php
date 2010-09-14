@@ -23,8 +23,12 @@ titania::add_lang('search');
 $search_types = array(
 	TITANIA_CONTRIB		=> 'CONTRIBUTION_NAME_DESCRIPTION',
 	TITANIA_FAQ			=> 'CONTRIB_FAQ',
-	TITANIA_SUPPORT		=> 'CONTRIB_SUPPORT',
 );
+
+if (titania::$config->support_in_titania)
+{
+	array_merge($search_types, array(TITANIA_SUPPORT		=> 'CONTRIB_SUPPORT'));
+}
 
 $mode = request_var('mode', '');
 $keywords = utf8_normalize_nfc(request_var('keywords', '', true));
