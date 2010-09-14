@@ -340,7 +340,7 @@ class titania
 			'U_SITE_ROOT'				=> self::$absolute_board,
 			'U_MANAGE'					=> (sizeof(titania_types::find_authed()) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? titania_url::build_url('manage') : '',
 			'U_ALL_CONTRIBUTIONS'		=> titania_url::build_url('contributions/all'),
-			'U_ALL_SUPPORT'				=> titania_url::build_url('support/all'),
+			'U_ALL_SUPPORT'				=> (titania::$config->support_in_titania) ? titania_url::build_url('support/all') : false,
 			'U_MY_CONTRIBUTIONS'		=> (phpbb::$user->data['is_registered'] && !phpbb::$user->data['is_bot']) ? titania_url::build_url('author/' . htmlspecialchars_decode(phpbb::$user->data['username_clean']) . '/contributions/') : '',
 			'U_SEARCH'					=> titania_url::build_url('search'),
 			'U_FIND_CONTRIBUTION'		=> titania_url::build_url('find-contribution'),

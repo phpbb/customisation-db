@@ -3,8 +3,8 @@
 <!-- IF .categories -->
 <ul class="linklist">
 	<li>
-		<a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a>
-		&bull; <a href="{U_ALL_CONTRIBUTIONS}">{L_ALL_CONTRIBUTIONS}</a>
+		<!-- IF U_ALL_SUPPORT --><a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a>
+		&bull; <!-- ENDIF --><a href="{U_ALL_CONTRIBUTIONS}">{L_ALL_CONTRIBUTIONS}</a>
 		<!-- IF U_FIND_CONTRIBUTION -->&bull; <a href="{U_FIND_CONTRIBUTION}">{L_FIND_CONTRIBUTION}</a><!-- ENDIF -->
 	</li>
 	<!-- IF not S_IS_BOT and U_MARK_FORUMS --><li class="rightside"><a href="{U_MARK_FORUMS}" accesskey="m">{L_MARK_FORUMS_READ}</a></li><!-- ENDIF -->
