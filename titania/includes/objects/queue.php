@@ -183,7 +183,7 @@ class titania_queue extends titania_message_object
 		{
 			$queue_notes = $this->queue_notes;
 			titania_decode_message($queue_notes, $this->queue_notes_uid);
-			$post->post_text .= '[quote=&quot;' . users_overlord::get_user($this->submitter_user_id, 'username') . '&quot;]' . $queue_notes . "[/quote]\n";
+			$post->post_text .= '[quote=&quot;' . users_overlord::get_user($this->submitter_user_id, 'username', true) . '&quot;]' . $queue_notes . "[/quote]\n";
 		}
 
 		// Add the MPV results
