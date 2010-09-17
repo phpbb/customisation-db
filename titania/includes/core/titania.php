@@ -131,8 +131,9 @@ class titania
 		// The user might be in a group with team access even if it's not his default group.
 		$group_ids = implode(', ', self::$config->team_groups);
 
-		$sql = 'SELECT group_id, user_id FROM ' . USER_GROUP_TABLE . '
+		$sql = 'SELECT group_id, user_id, user_pending FROM ' . USER_GROUP_TABLE . '
 				WHERE user_id = ' . phpbb::$user->data['user_id'] . '
+				AND user_pending = 0
 				AND group_id IN (' . $group_ids . ')';
 		$result = phpbb::$db->sql_query_limit($sql, 1);
 
