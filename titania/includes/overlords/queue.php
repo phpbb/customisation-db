@@ -108,7 +108,7 @@ class queue_overlord
 		$queue_ids = array();
 
 		$sql_ary = array(
-			'SELECT' => '*',
+			'SELECT' => '*, u.username as topic_first_post_username, u.user_colour as topic_first_post_user_colour, ul.username as topic_last_post_username, ul.user_colour as topic_last_post_user_colour',
 
 			'FROM'		=> array(
 				TITANIA_QUEUE_TABLE		=> 'q',
@@ -124,6 +124,16 @@ class queue_overlord
 				AND t.topic_id = q.queue_topic_id',
 
 			'ORDER_BY'	=> $sort->get_order_by(),
+		);
+
+		$sql_ary['LEFT_JOIN'][] = array(
+			'FROM'	=> array(USERS_TABLE => 'u'),
+			'ON'	=> 't.topic_first_post_user_id = u.user_id',
+		);
+
+		$sql_ary['LEFT_JOIN'][] = array(
+			'FROM'	=> array(USERS_TABLE => 'ul'),
+			'ON'	=> 't.topic_last_post_user_id = ul.user_id',
 		);
 
 		titania_tracking::get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');

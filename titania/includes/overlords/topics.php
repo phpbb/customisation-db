@@ -205,7 +205,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$switch_on_sticky = true; // Display the extra block after stickies end?  Not used when not sorting with stickies first
 
 		$sql_ary = array(
-			'SELECT' => 't.*',
+			'SELECT' => 't.*, u.username as topic_first_post_username, u.user_colour as topic_first_post_user_colour, ul.username as topic_last_post_username, ul.user_colour as topic_last_post_user_colour',
 
 			'FROM'		=> array(
 				TITANIA_TOPICS_TABLE	=> 't',
@@ -214,6 +214,16 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'WHERE' => self::sql_permissions('t.', false, true),
 
 			'ORDER_BY'	=> 't.topic_sticky DESC, ' . $sort->get_order_by(),
+		);
+
+		$sql_ary['LEFT_JOIN'][] = array(
+			'FROM'	=> array(USERS_TABLE => 'u'),
+			'ON'	=> 't.topic_first_post_user_id = u.user_id',
+		);
+
+		$sql_ary['LEFT_JOIN'][] = array(
+			'FROM'	=> array(USERS_TABLE => 'ul'),
+			'ON'	=> 't.topic_last_post_user_id = ul.user_id',
 		);
 
 		titania_tracking::get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
@@ -332,14 +342,14 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				if (isset(titania_types::$types[$options['contrib_type']]))
 				{
 					$page_url = titania_url::build_url('support/' . titania_types::$types[$options['contrib_type']]->url);
-					
+
 					$sql_ary['WHERE'] .= ' AND contrib.contrib_type = ' . $options['contrib_type'];
 				}
 				else
 				{
 					$page_url = titania_url::build_url('support/all');
 				}
-				
+
 				// Additional tracking field (to allow marking all support/discussion as read)
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
 
