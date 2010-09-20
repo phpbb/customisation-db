@@ -33,6 +33,13 @@ else if (in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEAN
 $step = request_var('step', 0);
 $revision_id = request_var('revision_id', 0);
 
+$disagree = request_var('disagree', false);
+if ($disagree)
+{
+	// Did not agree to the agreement.
+	redirect(titania::$contrib->get_url());
+}
+
 // Repack a revision (for those with moderator permissions)
 $repack = (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? request_var('repack', 0) : 0;
 if ($repack)
