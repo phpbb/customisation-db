@@ -777,12 +777,13 @@ class titania_posting
 					{
 						if ($post_object->post_type == TITANIA_SUPPORT && is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->contrib_name)
 						{
+							// Support topic reply
 							$email_vars = array(
 								'NAME'			=> $post_object->topic->topic_subject,
 								'U_VIEW'		=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
 								'CONTRIB_NAME'	=> titania::$contrib->contrib_name,
 							);
-							titania_subscriptions::send_notifications(TITANIA_TOPIC, $post_object->topic_id, 'subscribe_notify_contrib.txt', $email_vars, $post_object->post_user_id);
+							titania_subscriptions::send_notifications(array(TITANIA_TOPIC, TITANIA_SUPPORT), array($post_object->topic_id, $post_object->topic->parent_id), 'subscribe_notify_contrib.txt', $email_vars, $post_object->post_user_id);
 						}
 						else
 						{
@@ -797,6 +798,7 @@ class titania_posting
 					{
 						if ($post_object->post_type == TITANIA_SUPPORT && is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->contrib_name)
 						{
+							// New support topic
 							$email_vars = array(
 								'NAME'			=> $post_object->topic->topic_subject,
 								'U_VIEW'		=> $post_object->topic->get_url(),

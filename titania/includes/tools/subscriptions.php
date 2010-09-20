@@ -158,10 +158,32 @@ class titania_subscriptions
 	{
 		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email
 				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u
-				WHERE w.watch_user_id = u.user_id
-					AND w.watch_object_type = ' . (int) $object_type . '
-					AND w.watch_object_id = ' . (int) $object_id .
-					(($exclude_user) ? ' AND w.watch_user_id <> ' . (int) $exclude_user : '');
+				WHERE w.watch_user_id = u.user_id ';
+
+		if (is_array($object_type) || is_array($object_id))
+		{
+			// Both needs to be arrays if one is and they need to have the same number of elements.
+			if (!is_array($object_type) || !is_array($object_id) || sizeof($object_type) != sizeof($object_id))
+			{
+				return;
+			}
+
+			$sql_objects = '';
+			foreach ($object_type as $key => $value)
+			{
+				$sql_objects .= (($sql_objects == '') ? '' : ' OR ') . '(w.watch_object_type = ' . (int) $value . '
+							AND w.watch_object_id = ' . (int) $object_id[$key] . ')';
+			}
+			$sql .= 'AND (' . $sql_objects . ')';
+
+			unset($sql_objects);
+		}
+		else
+		{
+			$sql .= 'AND w.watch_object_type = ' . (int) $object_type . '
+						AND w.watch_object_id = ' . (int) $object_id;
+		}
+		$sql .= ($exclude_user) ? ' AND w.watch_user_id <> ' . (int) $exclude_user : '';
 
 		$result = phpbb::$db->sql_query($sql);
 
@@ -169,7 +191,8 @@ class titania_subscriptions
 		$user_data = array();
 		while($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$user_data[] = array(
+			// Use user_id for the keys to not send duplicates.
+			$user_data[$row['user_id']] = array(
 				'username'		=> $row['username'],
 				'user_email'	=> $row['user_email'],
 				'watch_type'	=> $row['watch_type'],
