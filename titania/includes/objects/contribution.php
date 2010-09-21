@@ -145,24 +145,22 @@ class titania_contribution extends titania_message_object
 					'ON'	=> 'a.user_id = c.contrib_user_id'
 				),
 			),
-			'WHERE'		=> 'contrib_name_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($contrib)) . '\'',
 		);
+
+		if (is_int($contrib))
+		{
+			$sql_ary['WHERE'] = 'contrib_id = ' . (int) $contrib;
+		}
+		else
+		{
+			$sql_ary['WHERE'] = 'contrib_name_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($contrib)) . '\'';
+		}
 
 		$result = phpbb::$db->sql_query(phpbb::$db->sql_build_query('SELECT', $sql_ary));
 		$sql_data = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 
-		// Check using it as a contrib_id if that failed
-		if (empty($sql_data) && is_numeric($contrib))
-		{
-			$sql_ary['WHERE'] = 'contrib_id = ' . (int) $contrib;
-
-			$result = phpbb::$db->sql_query(phpbb::$db->sql_build_query('SELECT', $sql_ary));
-			$sql_data = phpbb::$db->sql_fetchrow($result);
-			phpbb::$db->sql_freeresult($result);
-		}
-
-		// Can't find it
+		// Make sure we have data.
 		if (empty($sql_data))
 		{
 			return false;
