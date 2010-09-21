@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 213 2010-04-01 20:15:31Z exreaction $
+ * @version $Id$
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -18,7 +18,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('UMIL_VERSION', '1.0.2');
+define('UMIL_VERSION', '1.0.3');
 
 /**
 * Multicall instructions
@@ -126,6 +126,11 @@ class umil
 	var $db_tools = false;
 
 	/**
+	* Do we want a custom prefix besides the phpBB table prefix?  You *probably* should not change this...
+	*/
+	var $table_prefix = false;
+
+	/**
 	* Constructor
 	*/
 	function umil($stand_alone = false, $db = false)
@@ -191,30 +196,29 @@ class umil
 			//}
 
 			$user->add_lang(array('acp/common', 'acp/permissions'));
-		}
 
-		// Check to see if a newer version is available.
-		$info = $this->version_check('www.phpbb.com', '/updatecheck', ((defined('PHPBB_QA')) ? 'umil_qa.txt' : 'umil.txt'));
-		if (is_array($info) && isset($info[0]) && isset($info[1]))
-		{
-			if (version_compare(UMIL_VERSION, $info[0], '<'))
+			// Check to see if a newer version is available.
+			$info = $this->version_check('www.phpbb.com', '/updatecheck', ((defined('PHPBB_QA')) ? 'umil_qa.txt' : 'umil.txt'));
+			if (is_array($info) && isset($info[0]) && isset($info[1]))
 			{
-				global $template, $user, $phpbb_root_path;
-
-				// Make sure user->setup() has been called
-				if (empty($user->lang))
+				if (version_compare(UMIL_VERSION, $info[0], '<'))
 				{
-					$user->setup();
+					global $template;
+
+					// Make sure user->setup() has been called
+					if (empty($user->lang))
+					{
+						$user->setup();
+					}
+
+					page_header('', false);
+
+					$user->lang['UPDATE_UMIL'] = (isset($user->lang['UPDATE_UMIL'])) ? $user->lang['UPDATE_UMIL'] : 'This version of UMIL is outdated.<br /><br />Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>';
+					$template->assign_vars(array(
+						'S_BOARD_DISABLED'		=> true,
+						'L_BOARD_DISABLED'		=> sprintf($user->lang['UPDATE_UMIL'], $info[1]),
+					));
 				}
-
-				page_header('', false);
-
-				$this_file = str_replace(array(phpbb_realpath($phpbb_root_path), '\\'), array('', '/'), __FILE__);
-				$user->lang['UPDATE_UMIL'] = (isset($user->lang['UPDATE_UMIL'])) ? $user->lang['UPDATE_UMIL'] : 'This version of UMIL is outdated.<br /><br />Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>';
-				$template->assign_vars(array(
-					'S_BOARD_DISABLED'		=> true,
-					'L_BOARD_DISABLED'		=> (!$stand_alone) ? sprintf($user->lang['UPDATE_UMIL'], $info[1]) : sprintf('This version of UMIL is outdated.<br /><br />Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>, then replace the file %2$s with the root/umil/umil.php file included in the downloaded package.', $info[1], $this_file),
-				));
 			}
 		}
 	}
@@ -2746,7 +2750,7 @@ class umil
 						$sql .= "DEFAULT nextval('{$table_name}_seq'),\n";
 
 						// Make sure the sequence will be created before creating the table
-						$sql .= "CREATE SEQUENCE {$table_name}_seq;\n\n" . $sql;
+						$sql = "CREATE SEQUENCE {$table_name}_seq;\n\n" . $sql;
 					}
 					else
 					{
@@ -2984,14 +2988,39 @@ class umil
 
 	/**
 	* Get the real table name
+	* By A_Jelly_Doughnut
 	*
-	* @param mixed $table_name
+	* @param string $table_name The table name to get the real table name from
 	*/
 	function get_table_name(&$table_name)
 	{
-		global $table_prefix;
+		// Use the global table prefix if a custom one is not specified
+		if ($this->table_prefix === false)
+		{
+			global $table_prefix;
+		}
+		else
+		{
+			$table_prefix = $this->table_prefix;
+		}
 
-		$table_name = preg_replace('#phpbb_#i', $table_prefix, $table_name);
+		static $constants = NULL;
+
+		if (is_null($constants))
+		{
+			$constants = get_defined_constants();
+		}
+
+		/**
+		* only do the replace if the table prefix is not already present
+		* this is required since UMIL supports specifying a table via phpbb_foo
+		* (where a replace would be needed)
+		* or by FOO_TABLE (where a replace is already done at constant-define time)
+		*/
+		if (!preg_match('#^' . preg_quote($table_prefix, '#') . '#', $table_name) || !in_array($table_name, $constants, true))
+		{
+			$table_name = preg_replace('#^phpbb_#i', $table_prefix, $table_name);
+		}
 	}
 }
 
