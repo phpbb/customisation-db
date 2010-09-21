@@ -26,6 +26,19 @@
 				</fieldset>
 				<!-- ENDIF -->
 
+				<!-- IF .phpbb_versions -->
+				<fieldset class="fields2">
+				<dl>
+					<dt><label for="revision_phpbb_versions">{L_PHPBB_VERSION}:</label></dt>
+					<dd><select name="revision_phpbb_versions[]" multiple="multiple" size="10">
+						<!-- BEGIN phpbb_versions -->
+							<option value="{phpbb_versions.VERSION}"<!-- IF phpbb_versions.S_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_versions.VERSION}</option>
+						<!-- END phpbb_versions -->
+					</select></dd>
+				</dl>
+				</fieldset>
+				<!-- ENDIF -->
+
 				<!-- IF not S_REPACK and .license_options -->
 				<fieldset class="fields2">
 				<dl>

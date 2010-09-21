@@ -32,6 +32,8 @@ else if (in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEAN
 
 $step = request_var('step', 0);
 $revision_id = request_var('revision_id', 0);
+//$phpbb_versions = titania::$cache->get_phpbb_versions();
+//$revision_phpbb_versions = request_var('revision_phpbb_versions', array(''));
 
 $disagree = request_var('disagree', false);
 if ($disagree)
@@ -127,6 +129,22 @@ do{
 				$error[] = phpbb::$user->lang['INVALID_LICENSE'];
 			}
 
+			// Do some simple error checking on the versions
+			/*if (empty($revision_phpbb_versions))
+			{
+				$error[] = phpbb::$user->lang['MUST_SELECT_ONE_VERSION'];
+			}
+			else
+			{
+				foreach ($revision_phpbb_versions as $revision_phpbb_version)
+				{
+					if (!$revision_phpbb_version || strlen($revision_phpbb_version) < 5 || $revision_phpbb_version[1] != '.' || $revision_phpbb_version[3] != '.')
+					{
+						$error[] = sprintf(phpbb::$user->lang['BAD_VERSION_SELECTED'], $revision_phpbb_version);
+					}
+				}
+			}*/
+
 			// phpBB branches
 			$allowed_branches = array_keys(get_allowed_phpbb_branches());
 			if (sizeof($allowed_branches) == 1)
@@ -156,6 +174,23 @@ do{
 					'revision_license'		=> $revision_license,
 				));
 				$revision->phpbb_versions = $selected_branches;
+
+				/*$revision->phpbb_versions = array();
+				foreach ($revision_phpbb_versions as $revision_phpbb_version)
+				{
+					if (!isset($versions[(int) $revision_phpbb_version[0] . (int) $revision_phpbb_version[2] . substr($revision_phpbb_version, 4)]))
+					{
+						// Have we added some new phpBB version that does not exist?  We need to purge the cache then
+						titania::$cache->destroy('_titania_phpbb_versions');
+					}
+
+					// Update the list of phpbb_versions for the revision to update
+					$revision->phpbb_versions[] = array(
+						'phpbb_version_branch'		=> (int) $revision_phpbb_version[0] . (int) $revision_phpbb_version[2],
+						'phpbb_version_revision'	=> substr($revision_phpbb_version, 4),
+					);
+				}*/
+
 				$revision->submit();
 				$revision_id = $revision->revision_id;
 
@@ -513,6 +548,21 @@ foreach (titania_types::$types[titania::$contrib->contrib_type]->license_options
 	));
 }
 
+// Display the list of phpBB versions available
+/*$allowed_branches = get_allowed_phpbb_branches();
+foreach ($phpbb_versions as $version => $name)
+{
+	if (!isset($allowed_branches[substr($version, 0, 2)]))
+	{
+		continue;
+	}
+
+	$template->assign_block_vars('phpbb_versions', array(
+		'VERSION'		=> $name,
+		'S_SELECTED'	=> (in_array($name, $revision_phpbb_versions)) ? true : false,
+	));
+}*/
+
 // Display the main page
 if ($display_main || sizeof($error))
 {
@@ -540,9 +590,6 @@ if ($display_main || sizeof($error))
 
 	// Assign separately so we can output some data first
 	phpbb::$template->assign_var('REVISION_UPLOADER', $revision_attachment->parse_uploader('posting/attachments/revisions.html'));
-
-//	$message_object->request_data();
-//	$message_object->display();
 }
 
 add_form_key('postform');
