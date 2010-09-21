@@ -287,7 +287,7 @@ if ($attention_id || ($object_type && $object_id))
 
 		case TITANIA_CONTRIB :
 			$contrib = new titania_contribution;
-			if (!$contrib->load($object_id))
+			if (!$contrib->load((int) $object_id))
 			{
 				$attention_object->delete();
 				trigger_error('NO_CONTRIB');

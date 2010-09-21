@@ -87,7 +87,7 @@ if ($attachment['object_type'] == TITANIA_CONTRIB)
 		phpbb::$db->sql_freeresult($result);
 
 		$contrib = new titania_contribution;
-		if (!$contrib->load($revision['contrib_id']))
+		if (!$contrib->load((int) $revision['contrib_id']))
 		{
 			trigger_error('NO_ATTACHMENT_SELECTED');
 		}
