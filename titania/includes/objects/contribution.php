@@ -117,7 +117,7 @@ class titania_contribution extends titania_message_object
 
 			// Number of FAQ items (titania_count format)
 			'contrib_faq_count'				=> array('default' => ''),
-			
+
 			// Translation items
 			'contrib_iso_code'				=> array('default' => ''),
 			'contrib_local_name'			=> array('default' => ''),
@@ -145,22 +145,24 @@ class titania_contribution extends titania_message_object
 					'ON'	=> 'a.user_id = c.contrib_user_id'
 				),
 			),
+			'WHERE'		=> 'contrib_name_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($contrib)) . '\'',
 		);
-
-		if (is_numeric($contrib))
-		{
-			$sql_ary['WHERE'] = 'contrib_id = ' . (int) $contrib;
-		}
-		else
-		{
-			$sql_ary['WHERE'] = 'contrib_name_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($contrib)) . '\'';
-		}
 
 		$result = phpbb::$db->sql_query(phpbb::$db->sql_build_query('SELECT', $sql_ary));
 		$sql_data = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 
-		// Make sure we have data.
+		// Check using it as a contrib_id if that failed
+		if (empty($sql_data) && is_numeric($contrib))
+		{
+			$sql_ary['WHERE'] = 'contrib_id = ' . (int) $contrib;
+
+			$result = phpbb::$db->sql_query(phpbb::$db->sql_build_query('SELECT', $sql_ary));
+			$sql_data = phpbb::$db->sql_fetchrow($result);
+			phpbb::$db->sql_freeresult($result);
+		}
+
+		// Can't find it
 		if (empty($sql_data))
 		{
 			return false;
@@ -374,7 +376,7 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_VIEWS'					=> $this->contrib_views,
 			'CONTRIB_UPDATE_DATE'			=> ($this->contrib_last_update) ? phpbb::$user->format_date($this->contrib_last_update) : '',
 			'CONTRIB_STATUS'				=> $this->contrib_status,
-			
+
 			'CONTRIB_LOCAL_NAME'			=> $this->contrib_local_name,
 			'CONTRIB_ISO_CODE'				=> $this->contrib_iso_code,
 
@@ -891,12 +893,12 @@ class titania_contribution extends titania_message_object
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_DESC'];
 		}
-		
+
 		if ($this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_iso_code)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_ISO_CODE'];
 		}
-		
+
 		if ($this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_local_name)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_LOCAL_NAME'];
