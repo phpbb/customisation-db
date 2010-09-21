@@ -55,6 +55,14 @@ class titania_type_style extends titania_type_base
 	public $update_public = 'STYLE_UPDATE_PUBLIC';
 	//public $upload_agreement = 'STYLE_UPLOAD_AGREEMENT';
 
+	// License options
+	public $license_options = array(
+		'GPL v2.0',
+		'GPL v3.0',
+		'LGPL v2.0',
+		'LGPL v3.0',
+	);
+
 	public function __construct()
 	{
 		$this->lang = phpbb::$user->lang['STYLE'];

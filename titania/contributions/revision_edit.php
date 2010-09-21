@@ -65,6 +65,7 @@ if ($translation->uploaded || isset($_POST['submit']))
 {
 	$revision->__set_array(array(
 		'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', $revision->revision_name, true)),
+		'revision_license'		=> utf8_normalize_nfc(request_var('revision_license', '', true)),
 	));
 
 	// Stuff that can be done by moderators only
@@ -108,6 +109,10 @@ if (isset($_POST['submit']))
 			}
 		}
 	}
+	if (sizeof(titania_types::$types[titania::$contrib->contrib_type]->license_options) && !in_array($revision->revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options))
+	{
+		$error[] = phpbb::$user->lang['INVALID_LICENSE'];
+	}
 
 	// If no errors, submit
 	if (!sizeof($error))
@@ -144,6 +149,15 @@ if (isset($_POST['submit']))
 	}
 }
 
+// Output the available license options
+foreach (titania_types::$types[titania::$contrib->contrib_type]->license_options as $option)
+{
+	phpbb::$template->assign_block_vars('license_options', array(
+		'NAME'		=> $option,
+		'VALUE'		=> $option,
+	));
+}
+
 // Display the list of phpBB versions available
 foreach ($phpbb_versions as $version => $name)
 {
@@ -167,6 +181,7 @@ foreach ($status_list as $status => $row)
 phpbb::$template->assign_vars(array(
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : '',
 	'REVISION_NAME'				=> $revision->revision_name,
+	'REVISION_LICENSE'			=> $revision->revision_license,
 
 	'TRANSLATION_UPLOADER'		=> $translation->parse_uploader('posting/attachments/simple.html'),
 

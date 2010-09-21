@@ -59,7 +59,7 @@ class titania_types
 
 		ksort(self::$types);
 	}
-	
+
 	/**
 	* Get the type_id from the url string
 	*
@@ -222,4 +222,9 @@ class titania_type_base
 	 */
 	public $forum_database = 0;
 	public $forum_robot = 0;
+
+	/**
+	* Array of available licenses for this type of contribution
+	*/
+	public $license_options = array();
 }

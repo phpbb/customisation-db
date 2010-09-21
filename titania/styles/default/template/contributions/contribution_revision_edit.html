@@ -41,6 +41,22 @@
 				</dl>
 				<!-- ENDIF -->
 
+				<!-- IF .license_options -->
+				<fieldset class="fields2">
+				<dl>
+					<dt><label for="revision_license">{L_LICENSE}:</label><br /><span>{L_LICENSE_EXPLAIN}</span></dt>
+					<dd>
+						<select id="revision_license" name="revision_license">
+							<option value="">{L_SELECT}</option>
+							<!-- BEGIN license_options -->
+								<option value="{license_options.VALUE}"<!-- IF license_options.VALUE == REVISION_LICENSE --> selected="selected"<!-- ENDIF -->>{license_options.NAME}</option>
+							<!-- END license_options -->
+						</select>
+					</dd>
+				</dl>
+				</fieldset>
+				<!-- ENDIF -->
+
 				<!-- IF TRANSLATION_UPLOADER -->
 					<h3>{L_TRANSLATIONS}</h3>
 					{TRANSLATION_UPLOADER}

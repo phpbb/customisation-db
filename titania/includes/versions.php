@@ -942,5 +942,11 @@ $versions = array(
 			array(USERS_TABLE, 'titania_enhanced_editor', array('BOOL', true)),
 		),
 	),
+
+	'0.3.7' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_license', array('VCHAR', '')),
+		),
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );

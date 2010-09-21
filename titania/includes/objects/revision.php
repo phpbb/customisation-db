@@ -74,6 +74,7 @@ class titania_revision extends titania_database_object
 			'install_level'			=> array('default' => 0),
 			'revision_submitted'	=> array('default' => false), // False if it is still in the process of being submitted/verified; True if submission has finished
 			'revision_queue_id'		=> array('default' => 0),
+			'revision_license'		=> array('default' => ''),
 		));
 
 		if ($contrib)
@@ -153,6 +154,7 @@ class titania_revision extends titania_database_object
 			'VALIDATED_DATE'	=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
 			'REVISION_QUEUE'	=> ($show_queue && $this->revision_queue_id) ? titania_url::build_url('manage/queue', array('q' => $this->revision_queue_id)) : '',
 			'PHPBB_VERSION'		=> (sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
+			'REVISION_LICENSE'	=> $this->revision_license,
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',

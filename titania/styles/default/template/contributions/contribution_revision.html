@@ -26,11 +26,29 @@
 				</fieldset>
 				<!-- ENDIF -->
 
+				<!-- IF not S_REPACK and .license_options -->
+				<fieldset class="fields2">
+				<dl>
+					<dt><label for="revision_license">{L_LICENSE}:</label><br /><span>{L_LICENSE_EXPLAIN}</span></dt>
+					<dd>
+						<select id="revision_license" name="revision_license">
+							<option value="">{L_SELECT}</option>
+							<!-- BEGIN license_options -->
+								<option value="{license_options.VALUE}"<!-- IF license_options.VALUE == REVISION_LICENSE --> selected="selected"<!-- ENDIF -->>{license_options.NAME}</option>
+							<!-- END license_options -->
+						</select>
+					</dd>
+				</dl>
+				</fieldset>
+				<!-- ELSEIF S_REPACK -->
+				<input type="hidden" name="revision_license" value="{REVISION_LICENSE}" />
+				<!-- ENDIF -->
+
 				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
 				<fieldset class="fields2">
 				<dl>
 					<dt><label for="queue_allow_repack">{L_QUEUE_ALLOW_REPACK}:</label><br /><span>{L_QUEUE_ALLOW_REPACK_EXPLAIN}</span></dt>
-					<dd><input type="checkbox" id="queue_allow_repack" name="queue_allow_repack" value="1" checked="checked" /></dd>
+					<dd><input type="checkbox" id="queue_allow_repack" name="queue_allow_repack" value="1"<!-- IF QUEUE_ALLOW_REPACK --> checked="checked"<!-- ENDIF --> /></dd>
 				</dl>
 				<dl>
 					<dt><br /><label for="message">{L_QUEUE_NOTES}:</label><br /><span>{L_QUEUE_NOTES_EXPLAIN}</span></dt>

@@ -56,6 +56,8 @@ if ($repack)
 	phpbb::$template->assign_vars(array(
 		'REVISION_NAME'		=> $old_revision->revision_name,
 		'REVISION_VERSION'	=> $old_revision->revision_version,
+		'REVISION_LICENSE'	=> $old_revision->revision_license,
+
 		'S_REPACK'			=> true,
 	));
 }
@@ -82,6 +84,7 @@ else
 			'display_subject'	=> false,
 		));
 
+		$queue->post_data($message_object);
 		$message_object->display();
 	}
 }
@@ -107,6 +110,7 @@ do{
 			$revision_attachment->upload();
 			$revision_version = utf8_normalize_nfc(request_var('revision_version', '', true));
 			$queue_allow_repack = request_var('queue_allow_repack', 0);
+			$revision_license = utf8_normalize_nfc(request_var('revision_license', '', true));
 
 			// Check for errors
 			$error = array_merge($error, $revision_attachment->error);
@@ -117,6 +121,10 @@ do{
 			if (!$revision_version)
 			{
 				$error[] = phpbb::$user->lang['NO_REVISION_VERSION'];
+			}
+			if (sizeof(titania_types::$types[titania::$contrib->contrib_type]->license_options) && !in_array($revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options))
+			{
+				$error[] = phpbb::$user->lang['INVALID_LICENSE'];
 			}
 
 			// phpBB branches
@@ -145,6 +153,7 @@ do{
 					'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', '', true)),
 					'revision_version'		=> $revision_version,
 					'queue_allow_repack'	=> $queue_allow_repack,
+					'revision_license'		=> $revision_license,
 				));
 				$revision->phpbb_versions = $selected_branches;
 				$revision->submit();
@@ -486,14 +495,25 @@ do{
 } while($try_again);
 
 phpbb::$template->assign_vars(array(
-	'ERROR_MSG'			=> (sizeof($error)) ? implode('<br />', $error) : '',
-	'NEXT_STEP'			=> $next_step,
-	'REVISION_ID'		=> $revision_id,
-	'AGREEMENT_NOTICE'	=> (titania_types::$types[titania::$contrib->contrib_type]->upload_agreement) ? ((isset(phpbb::$user->lang[titania_types::$types[titania::$contrib->contrib_type]->upload_agreement])) ? nl2br(phpbb::$user->lang[titania_types::$types[titania::$contrib->contrib_type]->upload_agreement]): nl2br(titania_types::$types[titania::$contrib->contrib_type]->upload_agreement)) : false,
+	'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : '',
+	'NEXT_STEP'				=> $next_step,
+	'REVISION_ID'			=> $revision_id,
+	'AGREEMENT_NOTICE'		=> (titania_types::$types[titania::$contrib->contrib_type]->upload_agreement) ? ((isset(phpbb::$user->lang[titania_types::$types[titania::$contrib->contrib_type]->upload_agreement])) ? nl2br(phpbb::$user->lang[titania_types::$types[titania::$contrib->contrib_type]->upload_agreement]): nl2br(titania_types::$types[titania::$contrib->contrib_type]->upload_agreement)) : false,
+	'QUEUE_ALLOW_REPACK'	=> true,
 
-	'S_POST_ACTION'		=> ($repack) ? titania_url::append_url(titania::$contrib->get_url('revision'), array('repack' => $repack)) : titania::$contrib->get_url('revision'),
+	'S_POST_ACTION'			=> ($repack) ? titania_url::append_url(titania::$contrib->get_url('revision'), array('repack' => $repack)) : titania::$contrib->get_url('revision'),
 ));
 
+// Output the available license options
+foreach (titania_types::$types[titania::$contrib->contrib_type]->license_options as $option)
+{
+	phpbb::$template->assign_block_vars('license_options', array(
+		'NAME'		=> $option,
+		'VALUE'		=> $option,
+	));
+}
+
+// Display the main page
 if ($display_main || sizeof($error))
 {
 	if (sizeof($error))
@@ -507,11 +527,22 @@ if ($display_main || sizeof($error))
 			$revision->delete();
 		}
 	}
+
 	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 	phpbb::$template->assign_vars(array(
-		'REVISION_UPLOADER'		=> $revision_attachment->parse_uploader('posting/attachments/revisions.html'),
+		'REVISION_NAME'			=> utf8_normalize_nfc(request_var('revision_name', '', true)),
+		'REVISION_VERSION'		=> utf8_normalize_nfc(request_var('revision_version', '', true)),
+		'REVISION_LICENSE'		=> utf8_normalize_nfc(request_var('revision_license', '', true)),
+		'QUEUE_ALLOW_REPACK'	=> request_var('queue_allow_repack', 0),
+
 		'NEXT_STEP'				=> 1,
 	));
+
+	// Assign separately so we can output some data first
+	phpbb::$template->assign_var('REVISION_UPLOADER', $revision_attachment->parse_uploader('posting/attachments/revisions.html'));
+
+//	$message_object->request_data();
+//	$message_object->display();
 }
 
 add_form_key('postform');

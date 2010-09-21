@@ -112,8 +112,11 @@ $lang = array_merge($lang, array(
 	'EMPTY_CONTRIB_TYPE'					=> 'Select at least one contribution type',
 	'ERROR_CONTRIB_EMAIL_FRIEND'			=> 'You are not permitted to recommend this contribution to someone else.',
 
+	'INVALID_LICENSE'						=> 'Invalid License',
 	'INVALID_PERMALINK'						=> 'You need to enter a valid permalink, for example: %s',
 
+	'LICENSE'								=> 'License',
+	'LICENSE_EXPLAIN'						=> 'License to release this work under.',
 	'LOGIN_EXPLAIN_CONTRIB'					=> 'In order to create a new contribution you need to be registered',
 
 	'MANAGE_CONTRIBUTION'					=> 'Manage Contribution',
