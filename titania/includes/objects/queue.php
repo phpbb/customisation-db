@@ -378,7 +378,7 @@ class titania_queue extends titania_message_object
 			$public_notes = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public], $revision->revision_version) . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public . '_NOTES'], $public_notes) : '');
 			$contrib->reply_release_topic($public_notes);
 		}
-		elseif (!$contrib_release_topic_id && phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public])
+		elseif (!$contrib_release_topic_id && titania_types::$types[$contrib->contrib_type]->reply_public)
 		{
 			// Replying to a topic that was just made, use the reply message
 			$public_notes = phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public . '_NOTES'], $public_notes) : '');
