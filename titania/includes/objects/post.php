@@ -274,7 +274,7 @@ class titania_post extends titania_message_object
 		{
 			case 'post' :
 			case 'reply' :
-				if (phpbb::$auth->acl_get('u_titania_post') || // Can post
+				if (((!is_object($this->topic) || !$this->topic->topic_locked) && phpbb::$auth->acl_get('u_titania_post')) || // Can post
 					($is_author && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
 					phpbb::$auth->acl_get('u_titania_mod_post_mod')) // Can moderate posts
 				{
