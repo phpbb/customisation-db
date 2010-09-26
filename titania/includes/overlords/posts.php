@@ -198,7 +198,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		}
 
 		// Display the Quick Reply
-		if ((!$topic->topic_locked && phpbb::$auth->acl_get('u_titania_post')) || (titania::$access_level == TITANIA_ACCESS_TEAMS && phpbb::$auth->acl_get('u_titania_post_mod_own')) || phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		$post_object = new titania_post($topic->topic_type, $topic);
+		if ($post_object->acl_get('reply'))
 		{
 			$message = new titania_message($topic);
 			$message->display_quick_reply();
