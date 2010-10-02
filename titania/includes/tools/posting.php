@@ -873,6 +873,8 @@ class titania_posting
 					{
 						redirect(titania_url::append_url($post_object->topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
 					}
+
+					redirect(titania_url::build_url($post_object->topic->topic_url));
 				}
 				else
 				{
