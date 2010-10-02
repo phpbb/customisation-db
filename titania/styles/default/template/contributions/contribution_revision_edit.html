@@ -51,10 +51,32 @@
 							<!-- BEGIN license_options -->
 								<option value="{license_options.VALUE}"<!-- IF license_options.VALUE == REVISION_LICENSE --> selected="selected"<!-- ENDIF -->>{license_options.NAME}</option>
 							<!-- END license_options -->
+							<!-- IF S_ALLOW_CUSTOM_LICENSE --><option value="{L_CUSTOM_LICENSE}"<!-- IF S_CUSTOM_LICENSE --> selected="selected"<!-- ENDIF -->>{L_CUSTOM_LICENSE}</option><!-- ENDIF -->
 						</select>
+						<!-- IF S_ALLOW_CUSTOM_LICENSE --><input type="text" id="revision_custom_license" name="revision_custom_license" size="25" maxlength="60" value="{REVISION_CUSTOM_LICENSE}" class="inputbox autowidth" /><!-- ENDIF -->
 					</dd>
 				</dl>
 				</fieldset>
+
+				<!-- IF S_ALLOW_CUSTOM_LICENSE -->
+				<script type="text/javascript">
+					if ($('#revision_license').val() != '{L_CUSTOM_LICENSE}')
+					{
+						$('#revision_custom_license').hide();
+					}
+
+					$('#revision_license').change(function() {
+						if ($(this).val() == '{L_CUSTOM_LICENSE}')
+						{
+							$('#revision_custom_license').show();
+						}
+						else
+						{
+							$('#revision_custom_license').hide();
+						}
+					});
+				</script>
+				<!-- ENDIF -->
 				<!-- ENDIF -->
 
 				<!-- IF TRANSLATION_UPLOADER -->

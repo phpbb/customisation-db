@@ -63,9 +63,10 @@ $status_list = array(
 
 if ($translation->uploaded || isset($_POST['submit']))
 {
+	$revision_license = utf8_normalize_nfc(request_var('revision_license', '', true));
 	$revision->__set_array(array(
 		'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', $revision->revision_name, true)),
-		'revision_license'		=> utf8_normalize_nfc(request_var('revision_license', '', true)),
+		'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE']) ? $revision_license : utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
 	));
 
 	// Stuff that can be done by moderators only
@@ -81,6 +82,10 @@ if (isset($_POST['submit']))
 	if (!check_form_key('postform'))
 	{
 		$error[] = phpbb::$user->lang['FORM_INVALID'];
+	}
+	if (sizeof(titania_types::$types[titania::$contrib->contrib_type]->license_options) && !titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom && !in_array($revision->revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options))
+	{
+		$error[] = phpbb::$user->lang['INVALID_LICENSE'];
 	}
 
 	if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
@@ -108,10 +113,6 @@ if (isset($_POST['submit']))
 				}
 			}
 		}
-	}
-	if (sizeof(titania_types::$types[titania::$contrib->contrib_type]->license_options) && !in_array($revision->revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options))
-	{
-		$error[] = phpbb::$user->lang['INVALID_LICENSE'];
 	}
 
 	// If no errors, submit
@@ -182,12 +183,15 @@ phpbb::$template->assign_vars(array(
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : '',
 	'REVISION_NAME'				=> $revision->revision_name,
 	'REVISION_LICENSE'			=> $revision->revision_license,
+	'REVISION_CUSTOM_LICENSE'	=> (!in_array($revision->revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options)) ? $revision->revision_license : '',
 
 	'TRANSLATION_UPLOADER'		=> $translation->parse_uploader('posting/attachments/simple.html'),
 
 	'S_IS_MODERATOR'			=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 	'S_POST_ACTION'				=> titania::$contrib->get_url('revision_edit', array('revision' => $revision_id)),
 	'S_FORM_ENCTYPE'			=> ' enctype="multipart/form-data"',
+	'S_CUSTOM_LICENSE'			=> (!in_array($revision->revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options)) ? true : false,
+	'S_ALLOW_CUSTOM_LICENSE'	=> (titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? true : false,
 ));
 
 add_form_key('postform');

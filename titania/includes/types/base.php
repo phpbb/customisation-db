@@ -227,4 +227,5 @@ class titania_type_base
 	* Array of available licenses for this type of contribution
 	*/
 	public $license_options = array();
+	public $license_allow_custom = false;
 }

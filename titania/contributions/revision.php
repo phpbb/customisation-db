@@ -124,7 +124,7 @@ do{
 			{
 				$error[] = phpbb::$user->lang['NO_REVISION_VERSION'];
 			}
-			if (sizeof(titania_types::$types[titania::$contrib->contrib_type]->license_options) && !in_array($revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options))
+			if (sizeof(titania_types::$types[titania::$contrib->contrib_type]->license_options) && !titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom && !in_array($revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options))
 			{
 				$error[] = phpbb::$user->lang['INVALID_LICENSE'];
 			}
@@ -171,7 +171,7 @@ do{
 					'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', '', true)),
 					'revision_version'		=> $revision_version,
 					'queue_allow_repack'	=> $queue_allow_repack,
-					'revision_license'		=> $revision_license,
+					'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE'] || !titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? $revision_license : utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
 				));
 				$revision->phpbb_versions = $selected_branches;
 
@@ -580,12 +580,16 @@ if ($display_main || sizeof($error))
 
 	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 	phpbb::$template->assign_vars(array(
-		'REVISION_NAME'			=> utf8_normalize_nfc(request_var('revision_name', '', true)),
-		'REVISION_VERSION'		=> utf8_normalize_nfc(request_var('revision_version', '', true)),
-		'REVISION_LICENSE'		=> utf8_normalize_nfc(request_var('revision_license', '', true)),
-		'QUEUE_ALLOW_REPACK'	=> request_var('queue_allow_repack', 0),
+		'REVISION_NAME'				=> utf8_normalize_nfc(request_var('revision_name', '', true)),
+		'REVISION_VERSION'			=> utf8_normalize_nfc(request_var('revision_version', '', true)),
+		'REVISION_LICENSE'			=> utf8_normalize_nfc(request_var('revision_license', '', true)),
+		'REVISION_CUSTOM_LICENSE'	=> utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
+		'QUEUE_ALLOW_REPACK'		=> request_var('queue_allow_repack', 0),
 
-		'NEXT_STEP'				=> 1,
+		'NEXT_STEP'					=> 1,
+
+		'S_CUSTOM_LICENSE'					=> (utf8_normalize_nfc(request_var('revision_license', '', true)) == phpbb::$user->lang['CUSTOM_LICENSE']) ? true : false,
+		'S_ALLOW_CUSTOM_LICENSE'			=> (titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? true : false,
 	));
 
 	// Assign separately so we can output some data first

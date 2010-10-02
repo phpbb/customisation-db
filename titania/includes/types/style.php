@@ -62,6 +62,7 @@ class titania_type_style extends titania_type_base
 		'LGPL v2.0',
 		'LGPL v3.0',
 	);
+	public $license_allow_custom = true;
 
 	public function __construct()
 	{
