@@ -333,6 +333,7 @@ class titania_search
 class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 {
 	public $id;
+	public $parent_id;
 	public $title;
 	public $text;
 	public $text_uid;
@@ -352,6 +353,7 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 	{
 		$state = array(
 			'id'			=> $this->id,
+			'parent_id'		=> (int) $this->parent_id,
 			'title'			=> $this->title,
 			'text'			=> $this->text,
 			'text_uid'		=> $this->text_uid,
@@ -383,6 +385,7 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 		$doc->idProperty = 'id';
 
 		$doc->fields['id']				= new ezcSearchDefinitionDocumentField('id', ezcSearchDocumentDefinition::TEXT);
+		$doc->fields['parent_id']		= new ezcSearchDefinitionDocumentField('parent_id', ezcSearchDocumentDefinition::INT);
 		$doc->fields['type']			= new ezcSearchDefinitionDocumentField('type', ezcSearchDocumentDefinition::INT);
 
 		$doc->fields['title']			= new ezcSearchDefinitionDocumentField('title', ezcSearchDocumentDefinition::TEXT, 2, true, false, true);

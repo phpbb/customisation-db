@@ -802,6 +802,7 @@ class titania_post extends titania_message_object
 	public function index()
 	{
 		titania_search::index($this->post_type, $this->post_id, array(
+			'parent_id'		=> $this->topic->parent_id,
 			'title'			=> $this->post_subject,
 			'text'			=> $this->post_text,
 			'text_uid'		=> $this->post_text_uid,

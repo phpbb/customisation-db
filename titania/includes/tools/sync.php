@@ -262,7 +262,7 @@ class titania_sync
 				$data = array();
 				$post = new titania_post;
 
-				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean
+				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean, t.parent_id
 					FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t
 					WHERE t.topic_id = p.topic_id
 					ORDER BY p.post_id ASC';
@@ -283,6 +283,8 @@ class titania_sync
 					$data[] = array(
 						'object_type'	=> $post->post_type,
 						'object_id'		=> $post->post_id,
+
+						'parent_id'		=> $post->topic->parent_id,
 
 						'title'			=> $post->post_subject,
 						'text'			=> $post->post_text,

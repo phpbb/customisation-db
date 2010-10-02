@@ -33,6 +33,7 @@ if (titania::$config->support_in_titania)
 $mode = request_var('mode', '');
 $keywords = utf8_normalize_nfc(request_var('keywords', '', true));
 $user_id = request_var('u', 0);
+$contrib_id = request_var('contrib', 0);
 $search_fields = request_var('sf', '');
 $search_type = request_var('type', 0);
 $categories = request_var('c', array(0));
@@ -40,7 +41,7 @@ $search_subcategories = request_var('sc', 0);
 $phpbb_versions = request_var('versions', array(''));
 
 // Display the advanced search page
-if (!$keywords && !$user_id && !isset($_POST['submit']))
+if (!$keywords && !$user_id && !$contrib_id && !isset($_POST['submit']))
 {
 	if ($mode == 'find-contribution')
 	{
@@ -173,6 +174,12 @@ if ($keywords)
 if ($user_id)
 {
 	$query->where($query->eq('author', $user_id));
+}
+
+// Contrib specified?
+if ($contrib_id)
+{
+	$query->where($query->eq('parent_id', $contrib_id));
 }
 
 // Find contribution

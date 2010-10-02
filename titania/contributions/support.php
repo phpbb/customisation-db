@@ -111,12 +111,17 @@ else
 		phpbb::$template->assign_var('U_POST_TOPIC', titania_url::append_url(titania::$contrib->get_url('support'), array('action' => 'post')));
 	}
 
-	// Mark all topics read
-	phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania::$contrib->get_url('support'), array('mark' => 'topics')));
-
-	// Canonical URL
 	$data['sort']->set_url(titania::$contrib->get_url('support'));
-	phpbb::$template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
+	phpbb::$template->assign_vars(array(
+		// Mark all topics read
+		'U_MARK_TOPICS'			=> titania_url::append_url(titania::$contrib->get_url('support'), array('mark' => 'topics')),
+
+		// Canonical URL
+		'U_CANONICAL'			=> $data['sort']->build_canonical(),
+
+		'S_DISPLAY_SEARCHBOX'	=> true,
+		'S_SEARCHBOX_ACTION'	=> titania_url::build_url('search', array('type' => TITANIA_SUPPORT, 'contrib' => titania::$contrib->contrib_id)),
+	));
 }
 
 titania::page_footer(true, 'contributions/contribution_support.html');
