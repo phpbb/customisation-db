@@ -205,7 +205,7 @@ switch ($action)
 		$type = request_var('type', 'all');
 		$type_id = titania_types::type_from_url($type);
 		$type = (!$type_id) ? 'all' : $type;
-		
+
 		if ($type == 'all')
 		{
 			// Mark all topics read
@@ -213,28 +213,32 @@ switch ($action)
 			{
 				titania_tracking::track(TITANIA_SUPPORT, 0);
 			}
-		
+
 			// Mark all topics read
 			phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania_url::build_url('support/all'), array('mark' => 'topics')));
 		}
-		
+
 		// Generate the main breadcrumbs
 		titania::generate_breadcrumbs(array(
 			'ALL_SUPPORT'	=> titania_url::build_url('support/' . $type . '/'),
 		));
-		
-		topics_overlord::display_forums_complete('all_support', false, array('contrib_type' => $type_id));
-		
+
+		$data = topics_overlord::display_forums_complete('all_support', false, array('contrib_type' => $type_id));
+
 		// Links to the support topic lists
 		foreach (titania_types::$types as $id => $class)
 		{
 			phpbb::$template->assign_block_vars('support_types', array(
 				'U_SUPPORT'		=> titania_url::build_url('support/' . $class->url . '/'),
-				
+
 				'TYPE_SUPPORT'	=> $class->langs,
 			));
 		}
-		
+
+		// Canonical URL
+		$data['sort']->set_url('support/' . $type . '/');
+		phpbb::$template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
+
 		titania::page_header('CUSTOMISATION_DATABASE');
 		titania::page_footer(true, 'all_support.html');
 	break;
@@ -253,7 +257,11 @@ switch ($action)
 			'L_MARK_TOPICS_READ'	=> phpbb::$user->lang['MARK_CONTRIBS_READ'],
 		));
 
-		contribs_overlord::display_contribs('all', false);
+		$data = contribs_overlord::display_contribs('all', false);
+
+		// Canonical URL
+		$data['sort']->set_url('contributions');
+		phpbb::$template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
 
 		titania::page_header('CUSTOMISATION_DATABASE');
 		titania::page_footer(true, 'all_contributions.html');
@@ -324,7 +332,11 @@ switch ($action)
 			// Include the current category in the ones selected
 			$child_categories[] = $category_id;
 
-			contribs_overlord::display_contribs('category', $child_categories, $sort);
+			$data = contribs_overlord::display_contribs('category', $child_categories, $sort);
+
+			// Canonical URL
+			$data['sort']->set_url($category_object->get_url());
+			phpbb::$template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
 		}
 		else
 		{
@@ -348,9 +360,13 @@ switch ($action)
 			$sort = contribs_overlord::build_sort();
 			$sort->set_defaults(10);
 
-			contribs_overlord::display_contribs('all', 0, $sort);
+			$data = contribs_overlord::display_contribs('all', 0, $sort);
+
+			// Canonical URL
+			$data['sort']->set_url('');
+			phpbb::$template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
 		}
-		
+
 		phpbb::$template->assign_vars(array(
 			'U_CREATE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? titania_url::build_url('author/' . htmlspecialchars_decode(phpbb::$user->data['username_clean']) . '/create') : '',
 			'S_HAS_CONTRIBS'			=> ($categories_ary && $categories_ary[$category_id]['category_type']) ? true : false,

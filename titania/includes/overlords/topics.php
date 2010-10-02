@@ -175,12 +175,14 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 */
 		phpbb::$user->add_lang('viewforum');
 
-		self::display_forums($type, $object, false, $options);
+		$return = self::display_forums($type, $object, false, $options);
 		self::assign_common();
 
 		phpbb::$template->assign_vars(array(
 			'S_TOPIC_LIST'			=> true,
 		));
+
+		return $return;
 	}
 
 	/**
@@ -436,6 +438,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		phpbb::$db->sql_freeresult($result);
 
 		unset($topic);
+
+		return compact('sort');
 	}
 
 	public static function assign_common()

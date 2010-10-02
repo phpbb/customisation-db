@@ -336,6 +336,8 @@ class contribs_overlord
 			$contrib_type = $row['contrib_type'];
 		}
 		unset($contrib);
+
+		return compact('sort');
 	}
 
 	/**

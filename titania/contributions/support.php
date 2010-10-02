@@ -87,6 +87,9 @@ if ($topic_id)
 	{
 		phpbb::$template->assign_var('U_POST_REPLY', titania_url::append_url($topic->get_url(), array('action' => 'reply')));
 	}
+
+	// Canonical URL
+	phpbb::$template->assign_var('U_CANONICAL', $topic->get_url());
 }
 else
 {
@@ -99,7 +102,7 @@ else
 		titania_tracking::track(TITANIA_SUPPORT, titania::$contrib->contrib_id);
 	}
 
-	topics_overlord::display_forums_complete('support', titania::$contrib);
+	$data = topics_overlord::display_forums_complete('support', titania::$contrib);
 
 	titania::page_header(titania::$contrib->contrib_name . ' - ' . phpbb::$user->lang['CONTRIB_SUPPORT']);
 
@@ -110,6 +113,10 @@ else
 
 	// Mark all topics read
 	phpbb::$template->assign_var('U_MARK_TOPICS', titania_url::append_url(titania::$contrib->get_url('support'), array('mark' => 'topics')));
+
+	// Canonical URL
+	$data['sort']->set_url(titania::$contrib->get_url('support'));
+	phpbb::$template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
 }
 
 titania::page_footer(true, 'contributions/contribution_support.html');

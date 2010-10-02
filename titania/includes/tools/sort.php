@@ -250,6 +250,29 @@ class titania_sort extends titania_object
 	}
 
 	/**
+	* Set the URL info
+	*
+	* @param string $location
+	* @param array $params
+	*/
+	public function set_url($location, $params = array())
+	{
+		if (titania_url::is_built($location))
+		{
+			$this->url_location = titania_url::unbuild_url($location);
+		}
+		else
+		{
+			$this->url_location = $location;
+		}
+
+		if (is_array($params))
+		{
+			$this->url_parameters = $params;
+		}
+	}
+
+	/**
 	 * Grab the sort key option list for usage within template
 	 *
 	 * @return string
@@ -304,6 +327,33 @@ class titania_sort extends titania_object
 		}
 
 		return $this->sort_key_ary[$this->sort_key][1] . ' ' . (($this->sort_dir == 'a') ? 'ASC' : 'DESC');
+	}
+
+	/**
+	* Build a canonical URL
+	*/
+	public function build_canonical()
+	{
+		$params = $this->url_parameters;
+
+		if ($this->start)
+		{
+			$params[$this->start_name] = $this->start;
+		}
+		if ($this->limit != $this->default_limit)
+		{
+			$params[$this->limit_name] = $this->limit;
+		}
+		if ($this->sort_key != $this->default_sort_key)
+		{
+			$params[$this->sort_key_name] = $this->sort_key;
+		}
+		if ($this->sort_dir != $this->default_sort_dir)
+		{
+			$params[$this->sort_dir_name] = $this->sort_dir;
+		}
+
+		return titania_url::build_url($this->url_location, $params);
 	}
 
 	/**

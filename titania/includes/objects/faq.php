@@ -137,7 +137,7 @@ class titania_faq extends titania_message_object
 		}
 		else if (!$action)
 		{
-			return titania_url::append_url($url, array('f' => $faq_id, '#' => 'details'));
+			return titania_url::append_url($url, array('f' => $faq_id));
 		}
 
 		return titania_url::append_url($url, array('action' => $action, 'f' => $faq_id));

@@ -195,6 +195,9 @@ switch ($action)
 				'S_ACCESS_AUTHORS'		=> ($faq->faq_access == TITANIA_ACCESS_AUTHORS) ? true : false,
 
 				'U_EDIT_FAQ'		=> (titania::$contrib->is_author || phpbb::$auth->acl_get('u_titania_faq_edit')) ? $faq->get_url('edit') : false,
+
+				// Canonical URL
+				'U_CANONICAL'		=> $faq->get_url(),
 			));
 
 			foreach ($parsed_attachments as $attachment)
@@ -212,6 +215,7 @@ switch ($action)
 
 			// Setup the sort tool
 			$sort = new titania_sort();
+			$sort->set_url(titania::$contrib->get_url('faq'));
 			$sort->set_defaults(phpbb::$config['topics_per_page']);
 			$sort->request();
 			$faqs = array();
@@ -292,6 +296,9 @@ switch ($action)
 				'S_LIST'					=> true,
 
 				'U_CREATE_FAQ'				=> (phpbb::$auth->acl_get('u_titania_mod_faq_mod') || (phpbb::$auth->acl_get('u_titania_faq_create') && (titania::$contrib->is_author || titania::$contrib->is_active_coauthor))) ? $faq->get_url('create') : false,
+
+				// Canonical URL
+				'U_CANONICAL'				=> $sort->build_canonical(),
 			));
 		}
 	break;
