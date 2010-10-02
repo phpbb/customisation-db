@@ -266,8 +266,7 @@ class titania_post extends titania_message_object
 		}
 
 		$is_poster = ($this->post_user_id == phpbb::$user->data['user_id']) ? true : false; // Poster
-		// @todo think over these permissions again as we've unlinked the contribution item from the topic
-		$is_author = false;//(is_object($this->topic) && is_object($this->topic->contrib) && ($this->topic->contrib->is_author || $this->topic->contrib->is_active_coauthor)) ? true : false; // Contribution author
+		$is_author = (is_object($this->topic) && is_object(titania::$contrib) && titania::$contrib->contrib_id == $this->topic->parent_id && (titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false; // Contribution author
 		$is_deleter = ($this->post_delete_user == phpbb::$user->data['user_id']) ? true : false;
 
 		switch ($option)

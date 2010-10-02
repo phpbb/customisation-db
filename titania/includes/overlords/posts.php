@@ -372,7 +372,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		{
 			$is_authed = true;
 		}
-		else if ($topic->topic_type == TITANIA_SUPPORT)
+		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
 			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
 			{
@@ -399,15 +399,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'MAKE_STICKY'		=> (!$topic->topic_sticky) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'sticky_topic')) : false,
 			'LOCK_TOPIC'		=> (!$topic->topic_locked) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'lock_topic')) : false,
 			'UNLOCK_TOPIC'		=> ($topic->topic_locked) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'unlock_topic')) : false,
+			'SOFT_DELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'delete_topic')),
+			'UNDELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'undelete_topic')),
 		);
-
-		if (phpbb::$auth->acl_get('u_titania_mod_post_mod'))
-		{
-			$actions = array_merge($actions, array(
-				'SOFT_DELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'delete_topic')),
-				'UNDELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'undelete_topic')),
-			));
-		}
 
 		if (phpbb::$auth->acl_get('u_titania_post_hard_delete'))
 		{

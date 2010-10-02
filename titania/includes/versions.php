@@ -388,7 +388,7 @@ $versions = array(
 			'u_titania_post',				// Can create new posts
 			'u_titania_post_edit_own',		// Can edit own posts
 			'u_titania_post_delete_own',	// Can delete own posts
-			'u_titania_post_mod_own',		// Can moderate own topics
+			'u_titania_post_mod_own',		// Can moderate own contrib topics
 			'u_titania_post_attach',		// Can attach files to posts
 		),
 

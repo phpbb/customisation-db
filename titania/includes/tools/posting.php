@@ -144,7 +144,7 @@ class titania_posting
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
 			'sticky_topic'	=> $can_sticky,
-			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && is_object(titania::$contrib) && titania::$contrib->contrib_id == $parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message_object->set_settings(array(
@@ -204,7 +204,7 @@ class titania_posting
 		$message_object->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
-			'lock_topic'	=> (phpbb::$auth->acl_gets(array('u_titania_mod_post_mod', 'u_titania_post_mod_own'))) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message_object->set_settings(array(
@@ -378,7 +378,7 @@ class titania_posting
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
 			'lock'			=> ($post_object->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? true : false,
 			'sticky_topic'	=> ($post_object->post_id == $post_object->topic->topic_first_post_id && $can_sticky) ? true : false,
-			'lock_topic'	=> ($can_lock || (phpbb::$auth->acl_get('u_titania_post_mod_own') && $post_object->topic->topic_first_post_user_id == phpbb::$user->data['user_id'])) ? true : false,
+			'lock_topic'	=> ($can_lock || (phpbb::$auth->acl_get('u_titania_post_mod_own') && (phpbb::$auth->acl_get('u_titania_post_mod_own') && is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor))) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 
@@ -470,7 +470,7 @@ class titania_posting
 		{
 			$is_authed = true;
 		}
-		else if ($topic_object->topic_type == TITANIA_SUPPORT)
+		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
 			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
 			{
@@ -518,7 +518,7 @@ class titania_posting
 		{
 			$is_authed = true;
 		}
-		else if ($topic_object->topic_type == TITANIA_SUPPORT)
+		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
 			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
 			{
@@ -536,7 +536,7 @@ class titania_posting
 		}
 
 		// Check permissions
-		if (!$is_authed && !(phpbb::$auth->acl_get('u_titania_post_mod_own') && $topic_object->topic_first_post_user_id == phpbb::$user->data['user_id']))
+		if (!$is_authed)
 		{
 			titania::needs_auth();
 		}
@@ -575,7 +575,7 @@ class titania_posting
 		{
 			$is_authed = true;
 		}
-		else if ($topic_object->topic_type == TITANIA_SUPPORT)
+		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
 			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
 			{
@@ -593,7 +593,7 @@ class titania_posting
 		}
 
 		// Check permissions
-		if (!$is_authed && !(phpbb::$auth->acl_get('u_titania_post_mod_own') && $topic_object->topic_first_post_user_id == phpbb::$user->data['user_id']))
+		if (!$is_authed)
 		{
 			titania::needs_auth();
 		}
@@ -627,8 +627,31 @@ class titania_posting
 		// Load the stuff we need
 		$topic_object = $this->load_topic($topic_id);
 
+		// Auth check
+		$is_authed = false;
+		if (phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		{
+			$is_authed = true;
+		}
+		else if (!$hard_delete && phpbb::$auth->acl_get('u_titania_post_mod_own'))
+		{
+			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			{
+				$is_authed = true;
+			}
+			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $topic_object->parent_id)
+			{
+				$contrib = new titania_contribution();
+				$contrib->load((int) $topic_object->parent_id);
+				if ($contrib->is_author || $contrib->is_active_coauthor)
+				{
+					$is_authed = true;
+				}
+			}
+		}
+
 		// Check permissions
-		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod') || ($hard_delete && !phpbb::$auth->acl_get('u_titania_post_hard_delete')))
+		if (!$is_authed)
 		{
 			titania::needs_auth();
 		}
@@ -679,8 +702,31 @@ class titania_posting
 		// Load the stuff we need
 		$topic_object = $this->load_topic($topic_id);
 
+		// Auth check
+		$is_authed = false;
+		if (phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		{
+			$is_authed = true;
+		}
+		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
+		{
+			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			{
+				$is_authed = true;
+			}
+			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $topic_object->parent_id)
+			{
+				$contrib = new titania_contribution();
+				$contrib->load((int) $topic_object->parent_id);
+				if ($contrib->is_author || $contrib->is_active_coauthor)
+				{
+					$is_authed = true;
+				}
+			}
+		}
+
 		// Check permissions
-		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		if (!$is_authed)
 		{
 			titania::needs_auth();
 		}
