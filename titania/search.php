@@ -27,7 +27,7 @@ $search_types = array(
 
 if (titania::$config->support_in_titania)
 {
-	array_merge($search_types, array(TITANIA_SUPPORT		=> 'CONTRIB_SUPPORT'));
+	$search_types = array_merge($search_types, array(TITANIA_SUPPORT		=> 'CONTRIB_SUPPORT'));
 }
 
 $mode = request_var('mode', '');
