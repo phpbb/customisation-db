@@ -356,6 +356,7 @@ class titania
 			'U_SEARCH'					=> titania_url::build_url('search'),
 			'U_FIND_CONTRIBUTION'		=> titania_url::build_url('find-contribution'),
 			'U_FAQ'						=> titania_url::build_url('faq'),
+			'U_TITANIA_SEARCH_SELF'		=> (titania::$config->support_in_titania && !phpbb::$user->data['is_bot'] && phpbb::$user->data['is_registered']) ? titania_url::build_url('search', array('u' => phpbb::$user->data['user_id'], 'type' => TITANIA_SUPPORT)) : '',
 
 			'S_DISPLAY_SEARCH'			=> true,
 
