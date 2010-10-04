@@ -135,7 +135,7 @@ class contribs_overlord
 
 				if (!sizeof($contrib_ids))
 				{
-					return;
+					return compact('sort');
 				}
 
 				$sql_ary = array(
@@ -225,7 +225,7 @@ class contribs_overlord
 		if (!$sort->sql_count($sql_ary, 'DISTINCT(c.contrib_id)'))
 		{
 			// No results...no need to query more...
-			return;
+			return compact('sort');
 		}
 
 		$sort->build_pagination(titania_url::$current_page, titania_url::$params);

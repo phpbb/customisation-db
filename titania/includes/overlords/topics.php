@@ -261,13 +261,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$authed = titania_types::find_authed('queue_discussion');
 				if (!sizeof($authed))
 				{
-					return;
+					return compact('sort');
 				}
 				if (isset($options['topic_category']))
 				{
 					if (!in_array((int) $options['topic_category'], $authed))
 					{
-						return;
+						return compact('sort');
 					}
 
 					$sql_ary['WHERE'] .= ' AND t.topic_category = ' . (int) $options['topic_category'];
@@ -403,7 +403,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		if (!$sort->sql_count($sql_ary, 't.topic_id'))
 		{
 			// No results...no need to query more...
-			return;
+			return compact('sort');
 		}
 
 		$sort->build_pagination($page_url);
