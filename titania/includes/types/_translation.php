@@ -2,7 +2,7 @@
 /**
 *
 * @package Titania
-* @version $Id: _translation.php 1623 2010-07-29 04:31:14Z exreaction $
+* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -72,22 +72,22 @@ class titania_type_translation extends titania_type_base
 				return true;
 			break;
 
-			// Can view the mod queue discussion
+			// Can view the translation queue discussion
 			case 'queue_discussion' :
 				return phpbb::$auth->acl_get('u_titania_mod_translation_queue_discussion');
 			break;
 
-			// Can view the mod queue
+			// Can view the translation queue
 			case 'view' :
 				return phpbb::$auth->acl_get('u_titania_mod_translation_queue');
 			break;
 
-			// Can validate mods in the queue
+			// Can validate tranlations in the queue
 			case 'validate' :
 				return phpbb::$auth->acl_get('u_titania_mod_translation_validate');
 			break;
 
-			// Can moderate mods
+			// Can moderate translations
 			case 'moderate' :
 				return phpbb::$auth->acl_gets(array('u_titania_mod_translation_moderate', 'u_titania_mod_contrib_mod'));
 			break;
@@ -122,7 +122,7 @@ class titania_type_translation extends titania_type_base
 				'u_titania_mod_translation_moderate',
 			));
 
-			// Converter count holder
+			// Translation count holder
 			$umil->config_add('titania_num_translations', 0, true);
 		}
 	}
@@ -164,7 +164,7 @@ class titania_type_translation extends titania_type_base
 				'u_titania_mod_translation_moderate',
 			));
 
-			// Converter count holder
+			// Translation count holder
 			$umil->config_remove('titania_num_translations');
 		}
 	}

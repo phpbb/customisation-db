@@ -67,22 +67,22 @@ class titania_type_converter extends titania_type_base
 				return true;
 			break;
 
-			// Can view the mod queue discussion
+			// Can view the convertor queue discussion
 			case 'queue_discussion' :
 				return phpbb::$auth->acl_get('u_titania_mod_converter_queue_discussion');
 			break;
 
-			// Can view the mod queue
+			// Can view the convertor queue
 			case 'view' :
 				return phpbb::$auth->acl_get('u_titania_mod_converter_queue');
 			break;
 
-			// Can validate mods in the queue
+			// Can validate convertors in the queue
 			case 'validate' :
 				return phpbb::$auth->acl_get('u_titania_mod_converter_validate');
 			break;
 
-			// Can moderate mods
+			// Can moderate convertors
 			case 'moderate' :
 				return phpbb::$auth->acl_gets(array('u_titania_mod_converter_moderate', 'u_titania_mod_contrib_mod'));
 			break;

@@ -2,7 +2,7 @@
 /**
 *
 * @package Titania
-* @version $Id: _converter.php 1558 2010-06-15 01:28:56Z exreaction $
+* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -98,7 +98,7 @@ class titania_type_official_tools extends titania_type_base
 				'u_titania_mod_official_tool_moderate',
 			));
 
-			// Converter count holder
+			// Offical Tool count holder
 			$umil->config_add('titania_num_official_tools', 0, true);
 		}
 	}
@@ -137,7 +137,7 @@ class titania_type_official_tools extends titania_type_base
 				'u_titania_mod_official_tool_moderate',
 			));
 
-			// Converter count holder
+			// Offical Tool count holder
 			$umil->config_remove('titania_num_official_tools');
 		}
 	}
