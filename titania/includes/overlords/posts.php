@@ -214,7 +214,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	* Display topic section for support/tracker/etc
 	*
 	* @param object $topic The topic object
-	* @param object|boolean $sort The sort object (includes/tools/sort.php)
+	* @param titania_sort $sort The sort object (includes/tools/sort.php)
 	*/
 	public static function display_topic($topic, $sort = false)
 	{

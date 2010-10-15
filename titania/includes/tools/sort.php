@@ -183,6 +183,11 @@ class titania_sort extends titania_object
 	{
 		$this->sort_key = request_var($this->sort_key_name, (string) $this->default_sort_key);
 
+		if (!isset($this->sort_key_ary[$this->sort_key]))
+		{
+			$this->sort_key = $this->default_sort_key;
+		}
+
 		return $this->sort_key;
 	}
 
