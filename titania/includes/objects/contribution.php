@@ -400,6 +400,7 @@ class titania_contribution extends titania_message_object
 		{
 			$vars = array_merge($vars, array(
 				'CONTRIB_TYPE'					=> titania_types::$types[$this->contrib_type]->lang,
+				'CONTRIB_TYPE_ID'				=> $this->contrib_type,
 
 				'U_CONTRIB_MANAGE'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('manage') : '',
 				'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',

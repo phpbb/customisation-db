@@ -2,14 +2,8 @@
 
 <script type="text/javascript">
 // <![CDATA[
-	$(document).ready(function()
-	{
-		change_contrib_type('{S_CONTRIB_TYPE}');
-
-		if (!{JS_CONTRIB_TRANSLATION})
-		{
-			$('.translation_item').hide();
-		}
+	$(document).ready(function() {
+		change_contrib_type('{CONTRIB_TYPE_ID}');
 	});
 
 	function change_contrib_type(new_type)
@@ -35,17 +29,16 @@
 				$(this).hide();
 				$(this).attr('selected', '');
 			}
-
-			if (new_type == {JS_CONTRIB_TRANSLATION})
-			{
-				$('.translation_item').show();
-			}
-			else
-			{
-				$('.translation_item').hide();
-			}
-
 		});
+
+		if (new_type == {S_TRANSLATION_TYPE_ID})
+		{
+			$('.translation_item').show();
+		}
+		else
+		{
+			$('.translation_item').hide();
+		}
 	}
 // ]]>
 </script>
