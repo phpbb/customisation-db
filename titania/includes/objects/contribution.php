@@ -893,12 +893,12 @@ class titania_contribution extends titania_message_object
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_DESC'];
 		}
 
-		if ($this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_iso_code)
+		if (defined('TITANIA_TYPE_TRANSLATION') && $this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_iso_code)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_ISO_CODE'];
 		}
 
-		if ($this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_local_name)
+		if (defined('TITANIA_TYPE_TRANSLATION') && $this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_local_name)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_LOCAL_NAME'];
 		}
