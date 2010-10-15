@@ -49,10 +49,12 @@
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<ul class="general-info">
-				<!-- IF S_CONTRIB_TRANSLATION -->
+				<!-- IF CONTRIB_LOCAL_NAME -->
 				<li>
 					<strong>{L_CONTRIB_LOCAL_NAME}</strong> {CONTRIB_LOCAL_NAME}
 				</li>
+				<!-- ENDIF -->
+				<!-- IF CONTRIB_ISO_CODE -->
 				<li>
 					<strong>{L_CONTRIB_ISO_CODE}</strong> {CONTRIB_ISO_CODE}
 				</li>
