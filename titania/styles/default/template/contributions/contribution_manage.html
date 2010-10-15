@@ -5,8 +5,8 @@
 	$(document).ready(function()
 	{
 		change_contrib_type('{S_CONTRIB_TYPE}');
-		
-		if (!{S_IS_TRANSLATION})
+
+		if (!{JS_CONTRIB_TRANSLATION})
 		{
 			$('.translation_item').hide();
 		}
@@ -35,8 +35,8 @@
 				$(this).hide();
 				$(this).attr('selected', '');
 			}
-			
-			if (new_type == {S_TRANSLATION})
+
+			if (new_type == {JS_CONTRIB_TRANSLATION})
 			{
 				$('.translation_item').show();
 			}
@@ -44,7 +44,7 @@
 			{
 				$('.translation_item').hide();
 			}
-			
+
 		});
 	}
 // ]]>

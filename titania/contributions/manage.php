@@ -327,7 +327,6 @@ else
 }
 
 // Generate some stuff
-generate_type_select(titania::$contrib->contrib_type);
 generate_category_select($contrib_categories);
 titania::$contrib->assign_details();
 $message->display();

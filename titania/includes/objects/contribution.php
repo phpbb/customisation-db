@@ -418,7 +418,7 @@ class titania_contribution extends titania_message_object
 				'S_CONTRIB_HIDDEN'				=> ($this->contrib_status == TITANIA_CONTRIB_HIDDEN) ? true : false,
 				'S_CONTRIB_DISABLED'			=> ($this->contrib_status == TITANIA_CONTRIB_DISABLED) ? true : false,
 
-				'S_CONTRIB_TRANSLATION'			=> !empty($this->contrib_iso_code), // contrib_iso_code is a mandatory field and must be included with all translation contributions
+				'JS_CONTRIB_TRANSLATION'		=> !empty($this->contrib_iso_code) ? 'true' : 'false', // contrib_iso_code is a mandatory field and must be included with all translation contributions
 			));
 		}
 
@@ -1269,6 +1269,12 @@ class titania_contribution extends titania_message_object
 
 			delete_topics('topic_id', $this->contrib_release_topic_id);
 		}
+
+		// Delete from categories
+		$this->update_category_count('-');
+		$sql = ' DELETE FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
+			WHERE contrib_id = ' . $this->contrib_id;
+		phpbb::$db->sql_query($sql);
 
 		// Self delete
 		parent::delete();
