@@ -423,7 +423,7 @@ class titania_sync
 		if (sizeof($validation_free) && titania::$config->require_validation)
 		{
 			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) . '
-				OR ' . phpbb::$db->sql_in_set('c.contrib_type', $validation_free);
+				OR ' . phpbb::$db->sql_in_set('c.contrib_type', $validation_free) . ')';
 		}
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
