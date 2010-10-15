@@ -142,6 +142,8 @@ $template->assign_vars(array(
 	'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'		=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'	=> $nonactive_coauthors,
+
+	'S_TRANSLATION_TYPE_ID'		=> (defined('TITANIA_TYPE_TRANSLATION')) ? TITANIA_TYPE_TRANSLATION : 0,
 ));
 
 titania::page_header('CREATE_CONTRIBUTION');

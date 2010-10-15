@@ -354,7 +354,7 @@ phpbb::$template->assign_vars(array(
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
 
-	'S_TRANSLATION_TYPE_ID'		=> (defined('TITANIA_TYPE_TRANSLATION')) ? TITANIA_TYPE_TRANSLATION : false,
+	'S_TRANSLATION_TYPE_ID'		=> (defined('TITANIA_TYPE_TRANSLATION')) ? TITANIA_TYPE_TRANSLATION : 0,
 ));
 
 titania::page_header(titania::$contrib->contrib_name . ' - ' . phpbb::$user->lang['MANAGE_CONTRIBUTION']);
