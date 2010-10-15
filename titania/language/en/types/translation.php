@@ -45,7 +45,7 @@ $lang = array_merge($lang, array(
 
 	'PASSED_VALIDATION'							=> 'Your language pack has passed the validation process which checks for missing keys, license files and which repackages your translation, please continue.',
 
-	'TRANSLATION'								=> 'Translations',
+	'TRANSLATION'								=> 'Translation',
 	'TRANSLATION_VALIDATION'					=> '[phpBB Translation-Validation] %1$s %2$s',
 	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Translation to the phpBB.com Customisation Database. After careful inspection your translation has been approved and released into our Customisation Database.
 
