@@ -41,6 +41,7 @@ $lang = array_merge($lang, array(
 	'APPROVE_QUEUE_CONFIRM'		=> 'Are you sure you want to <strong>approve</strong> this item?',
 	'ATTENTION'					=> 'Attention',
 
+	'CATEGORY_NAME_CLEAN'		=> 'Category URL',
 	'CHANGE_STATUS'				=> 'Change Status/Move',
 	'CLOSED_ITEMS'				=> 'Closed Items',
 

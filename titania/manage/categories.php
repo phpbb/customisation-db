@@ -75,13 +75,13 @@ switch ($action)
 			$category_object->category_id = ($action == 'edit') ? $category_id : '';
 			$category_name = utf8_normalize_nfc(request_var('category_name', '', true));
 			$category_object->category_name = ($category_name == $old_category_name_lang) ? $old_category_name : $category_name;
-			$category_object->category_name_clean = (isset(phpbb::$user->lang[$category_object->category_name])) ? $old_category_name_clean : utf8_clean_string($category_object->category_name);
+			$category_object->category_name_clean = utf8_normalize_nfc(request_var('category_name_clean', '', true));
 			$category_object->parent_id = request_var('category_parent', 0);
 			$category_object->category_visible = request_var('category_visible', 1);
 			$category_object->category_type = request_var('category_type', 0);
 
 			// Check for errors
-			if (!$category_object->category_name)
+			if (!$category_object->category_name || !$category_object->category_name_clean)
 			{
 				$error[] = phpbb::$user->lang['NO_CATEGORY_NAME'];
 			}
@@ -179,6 +179,7 @@ switch ($action)
 			'ERROR_MSG'						=> (sizeof($error)) ? implode('<br />', $error) : '',
 			'CATEGORY' 						=> $category_id,
 			'CATEGORY_NAME'					=> (isset(phpbb::$user->lang[$category_object->category_name])) ? phpbb::$user->lang[$category_object->category_name] : $category_object->category_name,
+			'CATEGORY_NAME_CLEAN'			=> $category_object->category_name_clean,
 			'CATEGORY_VISIBLE' 				=> $category_object->category_visible,
 			'SECTION_NAME'					=> ($action == 'add') ? phpbb::$user->lang['CREATE_CATEGORY'] : phpbb::$user->lang['EDIT_CATEGORY'] . ' - ' . ((isset(phpbb::$user->lang[$old_category_name])) ? phpbb::$user->lang[$old_category_name] : $old_category_name),
 

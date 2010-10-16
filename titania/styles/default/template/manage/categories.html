@@ -5,13 +5,17 @@
 <form name="postform" method="post" action="{U_ACTION}">
 	<div class="panel" id="addcategory">
 		<div class="inner"><span class="corners-top"><span></span></span>
-	
+
 			<h3>{L_CATEGORY_INFORMATION}</h3>
-		
+
 			<fieldset>
 			<dl>
 				<dt><label for="category_name">{L_CATEGORY_NAME}:</label></dt>
 				<dd><input type="text" name="category_name" id="category_name" size="45" maxlength="60" value="{CATEGORY_NAME}" class="inputbox autowidth" /></dd>
+			</dl>
+			<dl>
+				<dt><label for="category_name">{L_CATEGORY_NAME_CLEAN}:</label></dt>
+				<dd><input type="text" name="category_name_clean" id="category_name_clean" size="45" maxlength="60" value="{CATEGORY_NAME_CLEAN}" class="inputbox autowidth" /></dd>
 			</dl>
 			<dl>
 				<dt><label for="category_parent">{L_PARENT_CATEGORY}:</label></dt>
@@ -43,7 +47,7 @@
 			</dl>
 			</fieldset>
 			<!-- INCLUDE posting/posting_basic_editor.html -->
-	
+
 		<span class="corners-bottom"><span></span></span></div>
 	</div>
 	<div class="panel bg2">
