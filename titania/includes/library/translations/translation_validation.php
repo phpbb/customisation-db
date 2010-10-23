@@ -109,7 +109,7 @@ class translation_validation extends titania_contrib_tools
 									$missing_keys[$dir . $file] = $this->check_missing_keys($reference_filepath . '' .	$dir . $file, $uploaded_file_path);
 								}
 
-								if (!in_array($ext, array('php', 'txt')) && is_file($uploaded_file_path))
+								if (!in_array($file, array('README', 'AUTHORS')) && !in_array($ext, array('php', 'txt')) && is_file($uploaded_file_path))
 								{
 									// remove any files that aren't in the above stated extension list, this will delete index.htm files and LICENSE files
 									unlink($uploaded_file_path);

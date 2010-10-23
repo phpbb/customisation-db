@@ -50,6 +50,9 @@ class titania_type_translation extends titania_type_base
 	public $root_not_found_key = 'COULD_NOT_FIND_TRANSLATION_ROOT';
 
 	public $validate_translation = true;
+	
+	/* Translations will not be queued, it would only delay the delivery */
+	public $use_queue = false;
 
 	public function __construct()
 	{
