@@ -57,8 +57,8 @@ if (empty($lang) || !is_array($lang))
 *
 *	// Adding the permissions
 *	$lang = array_merge($lang, array(
-*		'acl_bug_view'		=> array('lang' => 'Can view bug reports', 'cat' => 'bugs'),
-*		'acl_bug_post'		=> array('lang' => 'Can post bugs', 'cat' => 'post'), // Using a phpBB category here
+*		'acl_bug_view'		=> array('lang' => 'Bisa melihat laporan bug', 'cat' => 'bugs'),
+*		'acl_bug_post'		=> array('lang' => 'Bisa mempost bug', 'cat' => 'post'), // Using a phpBB category here
 *	));
 *
 *	</code>
