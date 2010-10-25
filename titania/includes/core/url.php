@@ -266,7 +266,7 @@ class titania_url
 	* @param mixed $url
 	* @return mixed
 	*/
-	public function remove_sid($url)
+	public static function remove_sid($url)
 	{
 		return preg_replace('#sid_[a-z0-9]+#', '', $url);
 	}
@@ -296,7 +296,7 @@ class titania_url
 	*
 	* @param string $params
 	*/
-	public function split_params($params)
+	public static function split_params($params)
 	{
 		$new_params = array();
 
