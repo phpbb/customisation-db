@@ -53,6 +53,7 @@ class titania_type_translation extends titania_type_base
 	
 	/* Translations will not be queued, it would only delay the delivery */
 	public $use_queue = false;
+	public $require_validation = false;
 
 	public function __construct()
 	{
