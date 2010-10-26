@@ -399,7 +399,7 @@ class titania_revision extends titania_database_object
 	/**
 	* Repack a revision
 	*
-	* @param object $old_revision titania_revision object
+	* @param titania_revision $old_revision titania_revision object
 	*/
 	public function repack($old_revision)
 	{
@@ -413,6 +413,11 @@ class titania_revision extends titania_database_object
 		// Get the old and new queue objects
 		$old_queue = $old_revision->get_queue();
 		$queue = $this->get_queue();
+
+		if ($old_queue === false)
+		{
+			throw new exception('Old queue missing. Revision ID: ' . $old_revision->revision_id);
+		}
 
 		// Reply to the queue topic to say that it's been repacked and have the old mpv/automod results listed in it as well
 		$repack_message = phpbb::$user->lang['REVISION_REPACKED'] . "\n\n";

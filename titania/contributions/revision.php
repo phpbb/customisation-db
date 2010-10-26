@@ -51,6 +51,11 @@ if ($repack)
 	{
 		trigger_error('NO_REVISION');
 	}
+	if (!$old_revision->get_queue())
+	{
+		titania::add_lang('manage');
+		trigger_error('NO_QUEUE_ITEM');
+	}
 	$old_revision->load_phpbb_versions();
 	generate_phpbb_version_select($old_revision->get_selected_branches());
 
