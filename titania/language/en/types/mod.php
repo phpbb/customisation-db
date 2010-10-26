@@ -117,6 +117,7 @@ For help with writing phpBB MODs, the following resources exist:
 [b]If you wish to discuss anything in this PM please send a message using the discusion tab in the MOD database, My Modifications, manage for this MOD.[/b]
 
 If you feel this denial was not warranted please contact the MOD Validation Leader.
+If you have any queries and further discussion please use the Queue Discussion Topic.
 
 Thank you,
 phpBB MOD Team',
