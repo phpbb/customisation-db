@@ -1,0 +1,8 @@
+Subject: Update Notification - {NAME}
+
+Hello {USERNAME},
+
+You are receiving this notification because you are subscribed to the item "{NAME}" in the phpBB Customisation Database for the "{CONTRIB_NAME}" contribution.
+
+If you would like to view the update, please click on the link below:
+{U_VIEW}
