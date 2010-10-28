@@ -2,7 +2,7 @@ Subject: "{SITENAME}" - E-mail a friend
 
 Hello {TO_USERNAME},
 
-This e-mail was sent from "{SITENAME}" by {FROM_USERNAME} who thought you may be interested in the following phpBB Customization Database Modification:
+This e-mail was sent from "{SITENAME}" by {FROM_USERNAME} who thought you may be interested in the following phpBB Customization Database Contribution:
 
 {CONTRIB_NAME}
 
