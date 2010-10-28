@@ -10,7 +10,7 @@ You can find a download to the modification at the following link:
 
 {U_CONTRIB}
 
-Please note that this message has not been seen nor approved by by the board administrators of "(SITENAME}". 
+Please note that this message has not been seen nor approved by the board administrators of "(SITENAME}". 
 
 If you wish to complain about having received this e-mail please contact the board administrator at {BOARD_CONTACT}. Please quote the message headers when contacting this address.
 
