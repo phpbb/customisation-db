@@ -555,6 +555,17 @@ class titania_contribution extends titania_message_object
 			{
 				return;
 			}
+			
+			// Get the latest revision
+			$this->get_revisions();
+			
+			// If there is not a revision do not update.
+			if (!$this->revisions)
+			{
+				return;
+			}
+			
+			$phpbb_version = $this->revisions[$this->download['revision_id']]['phpbb_versions'][0];
 
 			$contrib_description = $this->contrib_desc;
 			titania_decode_message($contrib_description, $this->contrib_desc_uid);
@@ -566,6 +577,7 @@ class titania_contribution extends titania_message_object
 				users_overlord::get_user($this->author->user_id, '_username'),
 				$contrib_description,
 				$this->download['revision_version'],
+				$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision'],
 				titania_url::build_clean_url('download', array('id' => $this->download['attachment_id'])),
 				$this->download['real_filename'],
 				$this->download['filesize'],

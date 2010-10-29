@@ -44,16 +44,16 @@ $lang = array_merge($lang, array(
 [b]Author:[/b] [url=%2$s]%3$s[/url]
 [b]Style description[/b]: %4$s
 [b]Style version[/b]: %5$s
-[b]Tested on phpBB version[/b]: See below
+[b]Tested on phpBB version[/b]: %6$s
 
-[b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes
+[b]Download file[/b]: [url=%7$s]%8$s[/url]
+[b]File size:[/b] %9$s Bytes
 
-[b]Style overview page:[/b] [url=%9$s]View[/url]
+[b]Style overview page:[/b] [url=%10$s]View[/url]
 
 [color=blue][b]The phpBB Team is not responsible nor required to provide support for this Style. By installing this Style, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]
 
-[size=150][url=%10$s]--&gt;[b]Style support[/b]&lt;--[/url][/size]',
+[size=150][url=%11$s]--&gt;[b]Style support[/b]&lt;--[/url][/size]',
 	'STYLE_DEMO_INSTALL'				=> 'Install on style demo board',
 	'STYLE_QUEUE_TOPIC'					=> '[b]Style name[/b]: %1$s
 [b]Author:[/b] [url=%2$s]%3$s[/url]
