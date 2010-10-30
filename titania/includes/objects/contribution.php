@@ -555,6 +555,16 @@ class titania_contribution extends titania_message_object
 			{
 				return;
 			}
+			
+			// Get the latest revision
+			$this->get_revisions();
+
+			// If there is not a revision do not update.
+			if (!$this->revisions)
+			{
+				return;
+			}
+			$phpbb_version = $this->revisions[$this->download['revision_id']]['phpbb_versions'][0];
 
 			$contrib_description = $this->contrib_desc;
 			titania_decode_message($contrib_description, $this->contrib_desc_uid);
@@ -570,7 +580,8 @@ class titania_contribution extends titania_message_object
 				$this->download['real_filename'],
 				$this->download['filesize'],
 				titania_url::remove_sid($this->get_url()),
-				titania_url::remove_sid($this->get_url('support'))
+				titania_url::remove_sid($this->get_url('support')),
+				$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision']
 			);
 
 			$options = array(

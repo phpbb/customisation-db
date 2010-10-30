@@ -44,7 +44,7 @@ $lang = array_merge($lang, array(
 [b]Author:[/b] [url=%2$s]%3$s[/url]
 [b]Style description[/b]: %4$s
 [b]Style version[/b]: %5$s
-[b]Tested on phpBB version[/b]: See below
+[b]Tested on phpBB version[/b]: %11$s
 
 [b]Download file[/b]: [url=%6$s]%7$s[/url]
 [b]File size:[/b] %8$s Bytes
