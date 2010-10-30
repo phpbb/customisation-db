@@ -1,8 +1,6 @@
 # Titania
 
-Titania is the phpBB.com Customisations Database
-
-http://www.phpbb.com/customise/db
+Titania is the phpBB.com [Customisations Database](http://www.phpbb.com/customise/db)
 
 ## Patches
 
