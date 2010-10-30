@@ -11,7 +11,7 @@ Please read [Git Guidelines](http://wiki.phpbb.com/display/DEV/Git) before forki
 
 ## Translations
 
-Have a translation and want to be awesome? See the "Patches".
+If you have a translation just fork the repo, make a branch, add the translation and send a pull request.
 
 ## Get Involved
 
