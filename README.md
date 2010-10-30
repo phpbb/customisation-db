@@ -10,7 +10,7 @@ Do you have an improvement? Did you fix a bug? Fork our GitHub repo, make your c
 
 ## Translations
 
-Currently not accepted until fully stable
+Have a translation and want to be awesome? See the "Patches".
 
 ## Bug Tracker
 
