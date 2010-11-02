@@ -5,6 +5,7 @@
 * @version $Id$
 * @copyright (c) 2008 phpBB Group
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* Tradução feita e revisada pela Equipe phpBB Brasil <http://www.phpbbrasil.com.br>!
 *
 */
 /**
@@ -101,7 +102,7 @@ $lang = array_merge($lang, array(
 	'INLINE_FIND_MISSING'					=> 'A busca na linha especificada pela MOD não pôde ser encontrada.',
 	'INSTALLATION_SUCCESSFUL'				=> 'O AutoMOD foi instalado com sucesso. Agora você pode gerenciar MODificações do phpBB através da aba AutoMOD no Painel de Controle da Administração.',
 	'INSTALLED'								=> 'MOD instalada',
-	'INSTALLED_EXPLAIN'						=> 'Sua MOD foi instalada! Aqui você pode ver alguns resultados da instalação. Ao notar quaisquer erros, procure suporte no <a href="http://www.phpbbrasil.com.br">phpBBrasil.com.br</a>',
+	'INSTALLED_EXPLAIN'						=> 'Sua MOD foi instalada! Aqui você pode ver alguns resultados da instalação. Ao notar quaisquer erros, procure suporte no <a href="http://www.phpbbrasil.com.br">phpBBrasil</a>',
 	'INSTALLED_MODS'						=> 'MODs instaladas',
 	'INSTALL_AUTOMOD'						=> 'Instalação do AutoMOD',
 	'INSTALL_AUTOMOD_CONFIRM'				=> 'Você realmente deseja instalar o AutoMOD?',

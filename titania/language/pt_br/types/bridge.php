@@ -5,6 +5,7 @@
 * @version $Id: converter.php 1556 2010-06-15 00:25:31Z exreaction $
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* Tradução feita e revisada pela Equipe phpBB Brasil <http://www.phpbbrasil.com.br>!
 *
 */
 
@@ -41,18 +42,18 @@ $lang = array_merge($lang, array(
 	'integração'							=> 'Integração',
 	'integraçãoS'							=> 'Integrações',
 	'integração_VALIDATION'					=> '[Validação de integrações do phpBB] %1$s %2$s',
-	'integração_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar a sua integração para a Base de Customizações do phpBB. Após uma cuidadosa inspeção sua integração foi aprovada e lançada em nossa Base de Customizações.
+	'integração_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar a sua integração para a Base de Customizações do phpBBrasil. Após uma cuidadosa inspeção sua integração foi aprovada e lançada em nossa Base de Customizações.
 
-Temos esperança de que você fornecerá um nível básico de suporte para esta integração e irá mantê-la atualizada com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBB um melhor lugar para todos.
+Temos esperança de que você fornecerá um nível básico de suporte para esta integração e irá mantê-la atualizada com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBBrasil.com.br um melhor lugar para todos.
 
 [b]Notas da equipe sobre sua integração:[/b]
 [quote]%s[/quote]
 
 Atenciosamente,
-Equipe phpBB',
+Equipe phpBBrasil',
 	'integração_VALIDATION_MESSAGE_DENY'	=> 'Olá,
 
-Como você deve saber, todas as integrações enviadas para a Base de Customizações do phpBB devem ser validadas e aprovadas por membros da equipe do phpBB.
+Como você deve saber, todas as integrações enviadas para a Base de Customizações do phpBBrasil devem ser validadas e aprovadas por membros da equipe do site.
 
 Após a validação de sua integração, a equipe do phpBB lamenta em informar que tivemos de recusá-la.
 

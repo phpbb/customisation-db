@@ -5,6 +5,7 @@
 * @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* Tradução feita e revisada pela Equipe phpBB Brasil <http://www.phpbbrasil.com.br>!
 *
 */
 
@@ -41,9 +42,9 @@ $lang = array_merge($lang, array(
 	'CONVERTER'								=> 'Conversor',
 	'CONVERTERS'							=> 'Conversores',
 	'CONVERTER_VALIDATION'					=> '[Validação de conversores do phpBB] %1$s %2$s',
-	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar seu conversor para a Base de Customização do phpBB. Após uma cuidadosa inspeção seu conversor foi aprovado e lançado em nossa Base de Customização.
+	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar seu conversor para a Base de Customização do phpBBrasil. Após uma cuidadosa inspeção seu conversor foi aprovado e lançado em nossa Base de Customização.
 
-Temos esperança de que você fornecerá um nível básico de suporte para este conversor e irá mantê-lo atualizado com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBB um melhor lugar para todos.
+Temos esperança de que você fornecerá um nível básico de suporte para este conversor e irá mantê-lo atualizado com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBBrasil.com.br um melhor lugar para todos.
 
 [b]Notas da equipe sobre seu conversor:[/b]
 [quote]%s[/quote]
@@ -52,7 +53,7 @@ Atenciosamente,
 Equipe phpBB',
 	'CONVERTER_VALIDATION_MESSAGE_DENY'		=> 'Olá,
 
-Como você deve saber, todos os conversores enviados para a Base de Customização do phpBB devem ser validadas e aprovadas por membros da equipe do phpBB.
+Como você deve saber, todos os conversores enviados para a Base de Customização do phpBBrasil devem ser validadas e aprovadas por membros da equipe do site.
 
 Após a validação de seu conversor, a equipe do phpBB lamenta em informar que tivemos de recusá-la.
 

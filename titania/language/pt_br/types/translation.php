@@ -5,6 +5,7 @@
 * @version $Id: converter.php 1556 2010-06-15 00:25:31Z exreaction $
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* Tradução feita e revisada pela Equipe phpBB Brasil <http://www.phpbbrasil.com.br>!
 *
 */
 
@@ -47,9 +48,9 @@ $lang = array_merge($lang, array(
 
 	'TRANSLATION'								=> 'Tradução',
 	'TRANSLATION_VALIDATION'					=> '[Validação de tradução do phpBB] %1$s %2$s',
-	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar sua tradução para a Base de Customizações do phpBB. Após uma cuidadosa inspeção sua tradução foi aprovada e lançada em nossa Base de Customizações.
+	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar sua tradução para a Base de Customizações do phpBBrasil. Após uma cuidadosa inspeção sua tradução foi aprovada e lançada em nossa Base de Customizações.
 
-Temos esperança de que você fornecerá um nível básico de suporte para esta tradução e irá mantê-la atualizada com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBB um melhor lugar para todos.
+Temos esperança de que você fornecerá um nível básico de suporte para esta tradução e irá mantê-la atualizada com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBBrasil.com.br um melhor lugar para todos.
 
 [b]Notas da equipe sobre sua tradução:[/b]
 [quote]%s[/quote]
@@ -58,7 +59,7 @@ Atenciosamente,
 Equipe phpBB',
 	'TRANSLATION_VALIDATION_MESSAGE_DENY'		=> 'Olá,
 
-Como você deve saber, todas as traduções enviadas para a Base de Customizações do phpBB devem ser validadas e aprovadas por um membro da equipe do phpBB.
+Como você deve saber, todas as traduções enviadas para a Base de Customizações do phpBBrasil devem ser validadas e aprovadas por um membro da equipe do site.
 
 Após a validação de sua tradução, a equipe do phpBB lamenta informar que tivemos de recusá-la.
 

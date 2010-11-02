@@ -5,6 +5,7 @@
 * @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* Tradução feita e revisada pela Equipe phpBB Brasil <http://www.phpbbrasil.com.br>!
 *
 */
 
@@ -51,7 +52,7 @@ $lang = array_merge($lang, array(
 
 [b]Página de resumo da modificação:[/b] [url=%9$s]Ver[/url]
 
-[color=blue][b]A equipe do phpBB não é responsável nem obrigada a fornecer suporte para esta modificação. Ao instalar esta MOD, você reconhece que a equipe de suporte do phpBB ou a equipe de modificações do phpBB podem não ser capazes de fornecer ajuda.[/b][/color]
+[color=blue][b]A equipe do phpBBrasil não é responsável nem obrigada a fornecer suporte para esta modificação. Ao instalar esta MOD, você reconhece que a equipe de suporte do phpBBrasil ou a equipe de modificações do phpBBrasil podem não ser capazes de fornecer ajuda.[/b][/color]
 
 [size=150][url=%10$s]--&gt;[b]Suporte à modificação[/b]&lt;--[/url][/size]',
 	'MOD_QUEUE_TOPIC'					=> '[b]Nome da modificação[/b]: %1$s
@@ -74,9 +75,9 @@ Veja a primeira mensagem para encontrar o link de download[/color][/b]',
 
 Você também concorda e aceita que a licença desta MODificação e a licença de quaisquer componentes incluídos são compatíveis com a <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> e que você também permite a re-distribuição de sua MODificação através deste site indefinidamente. Para obter uma lista de licenças disponíveis e compatíveis com a GNU GPLv2, por favor, referencie-se pela <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">lista de licenças de softwares aprovadas pela FSF</a>.</span>',
 	'MOD_VALIDATION'					=> '[Validação de MOD do phpBB] %1$s %2$s',
-	'MOD_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar sua modificação para a Base de Customizações do phpBB. Após uma cuidadosa inspeção sua modificação foi aprovada e lançada em nossa Base de Customizações.
+	'MOD_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar sua modificação para a Base de Customizações do phpBBrasil. Após uma cuidadosa inspeção sua modificação foi aprovada e lançada em nossa Base de Customizações.
 
-Temos esperança de que você fornecerá um nível básico de suporte para esta modificação e irá mantê-la atualizada com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBB um melhor lugar para todos.
+Temos esperança de que você fornecerá um nível básico de suporte para esta modificação e irá mantê-la atualizada com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBBrasil.com.br um melhor lugar para todos.
 
 [b]Notas da equipe de modificações sobre sua modificação:[/b]
 [quote]%s[/quote]
@@ -85,9 +86,9 @@ Atenciosamente,
 Equipe de modificações do phpBB',
 	'MOD_VALIDATION_MESSAGE_DENY'		=> 'Olá,
 
-Como você deve saber, todas as modificações enviadas para a base de modificações do phpBB devem ser validadas e aprovadas por membros da equipe do phpBB.
+Como você deve saber, todas as modificações enviadas para a base de modificações do phpBBrasil devem ser validadas e aprovadas por membros da equipe do site.
 
-Após a validação de sua modificação, a equipe de modificações do phpBB lamenta informar que tivemos de recusá-la.
+Após a validação de sua modificação, a equipe de modificações do phpBBrasil lamenta informar que tivemos de recusá-la.
 
 Para corrigir o(s) problema(s) com sua modificação, por favor siga as instruções abaixo:
 [list=1][*]Faça as alterações necessárias para corrigir quaisquer problemas (listados abaixo) que resultaram na recusa de sua modificação.

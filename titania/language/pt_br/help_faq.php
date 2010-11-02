@@ -8,6 +8,7 @@
 * @author: RMcGirr83
 * @copyright (c) 2010 phpBB Group
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* Tradução feita e revisada pela Equipe phpBB Brasil <http://www.phpbbrasil.com.br>!
 *
 */
 
@@ -40,7 +41,7 @@ $help = array(
 	),
 	array(
 		0 => 'O que é a Titania?',
-		1 => 'Titania (aka The Customisation Database) é uma base de dados onde os usuários poderão baixar modificações e estilos para um fórum phpBB. Você também é assegurado de que a modificação ou o estilo que baixou passou nos requisitos de validação do phpBB.'
+		1 => 'Titania (aka The Customisation Database) é uma base de dados onde os usuários poderão baixar modificações e estilos para um fórum phpBB. Você também é assegurado de que a modificação ou o estilo que baixou passou nos requisitos de validação do phpBBrasil.'
 	),
 	array(
 		0 => 'Validação? O que é isso?',
@@ -68,7 +69,7 @@ $help = array(
 	),
 	array(
 		0 => 'Regras',
-		1 => 'Com a introdução da Titania, as regras envolvidas para utilizá-la são muito simples. Assim como no passado, o ditado “Você deve buscar suporte em relação a modificação/estilo no tópico onde você pegou a customização”. Enquanto a equipe de suporte phpBB faz o seu melhor para ajudá-lo em executar e usar seu fórum, eles não podem, e nem espera-se que forneçam suporte para nenhuma customização/contribuição. A esperança do phpBB é que o autor da contribuição forneça a você, usuário final, o suporte na utilização de sua customização. Lembre-se que todos os autores são voluntários que passaram seu tempo fornecendo um aprimoramento ao software phpBB. O ditado “Você pega mais moscas com mel do que com vinagre” aplica-se aqui, portanto, mantenha isso em mente quando requisitar suporte para uma customização (ex.: ser educado na maneira de perguntar).'
+		1 => 'Com a introdução da Titania, as regras envolvidas para utilizá-la são muito simples. Assim como no passado, o ditado “Você deve buscar suporte em relação a modificação/estilo no tópico onde você pegou a customização”. Enquanto a equipe de suporte phpBBrasil faz o seu melhor para ajudá-lo em executar e usar seu fórum, eles não podem, e nem espera-se que forneçam suporte para nenhuma customização/contribuição. A esperança do phpBBrasil é que o autor da contribuição forneça a você, usuário final, o suporte na utilização de sua customização. Lembre-se que todos os autores são voluntários que passaram seu tempo fornecendo um aprimoramento ao software phpBB. O ditado “Você pega mais moscas com mel do que com vinagre” aplica-se aqui, portanto, mantenha isso em mente quando requisitar suporte para uma customização (ex.: ser educado na maneira de perguntar).'
 	),
 	array(
 		0 => 'Como obter suporte',

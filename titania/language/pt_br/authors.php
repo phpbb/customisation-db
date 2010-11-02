@@ -5,6 +5,7 @@
 * @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* Tradução feita e revisada pela Equipe phpBB Brasil <http://www.phpbbrasil.com.br>!
 *
 */
 
@@ -57,7 +58,7 @@ $lang = array_merge($lang, array(
 
 	'NO_AVATAR'					=> 'Sem avatar',
 
-	'PHPBB_PROFILE'				=> 'Perfil no phpBB',
+	'PHPBB_PROFILE'				=> 'Perfil no phpBBrasil',
 
 	'REAL_NAME'					=> 'Nome real',
 
