@@ -38,8 +38,8 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'ACCESS_LIMIT_AUTHORS'		=> 'Limite de acesso ao nível de autor',
-	'ACCESS_LIMIT_TEAMS'		=> 'Limite de acesso ao nível de equipe',
+	'ACCESS_LIMIT_AUTHORS'		=> 'Restrições de acesso, nível de autor',
+	'ACCESS_LIMIT_TEAMS'		=> 'Restrições de acesso, nível de equipe',
 	'ADD_FIELD'					=> 'Adicionar campo',
 	'AGREE'						=> 'Concordo',
 	'AGREEMENT'					=> 'Acordo',
@@ -53,11 +53,11 @@ $lang = array_merge($lang, array(
 
 	'CACHE_PURGED'				=> 'O cache foi removido com sucesso',
 	'CATEGORY'					=> 'Categoria',
-	'CATEGORY_CHILD_AS_PARENT'	=> 'A categoria-mãe escolhida não pode ser selecionada porque ela é uma filha desta categoria.',
+	'CATEGORY_CHILD_AS_PARENT'	=> 'A categoria-mãe escolhida não pode ser selecionada por ser uma subcategoria desta.',
 	'CATEGORY_DELETED'			=> 'Categoria removida',
 	'CATEGORY_DESC'				=> 'Descrição da categoria',
 	'CATEGORY_DUPLICATE_PARENT'	=> 'A categoria não pode ser sua própria mãe.',
-	'CATEGORY_HAS_CHILDREN'		=> 'Esta categoria não pode ser removida porque possui categorias filhas.',
+	'CATEGORY_HAS_CHILDREN'		=> 'Esta categoria não pode ser removida porque possui subcategorias.',
 	'CATEGORY_INFORMATION'		=> 'Informação da categoria',
 	'CATEGORY_NAME'				=> 'Nome da categoria',
 	'CATEGORY_TYPE'				=> 'Tipo da categoria',
@@ -127,7 +127,7 @@ $lang = array_merge($lang, array(
 	'MOVE_DOWN'					=> 'Mover para baixo',
 	'MOVE_SUBCATS_TO'			=> 'Mover sub-categorias para',
 	'MOVE_UP'					=> 'Mover para cima',
-	'MULTI_SELECT_EXPLAIN'		=> 'Pressione CTRL e clique para selecione múltiplos itens.',
+	'MULTI_SELECT_EXPLAIN'		=> 'Pressione CTRL e clique para selecionar múltiplos Itens.',
 	'MY_CONTRIBUTIONS'			=> 'Minhas contribuições',
 
 	'NAME'						=> 'Nome',

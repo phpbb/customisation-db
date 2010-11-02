@@ -43,8 +43,8 @@ $lang = array_merge($lang, array(
 	'AUTHOR_NOT_FOUND'			=> 'Autor não encontrado',
 	'AUTHOR_PROFILE'			=> 'Perfil do autor',
 	'AUTHOR_RATING'				=> 'Avaliação do autor',
-	'AUTHOR_SNIPPETS'			=> '%d Snippets',
-	'AUTHOR_SNIPPETS_ONE'		=> '1 Snippet',
+	'AUTHOR_SNIPPETS'			=> '%d fragmentos',
+	'AUTHOR_SNIPPETS_ONE'		=> '1 fragmento',
 	'AUTHOR_STATISTICS'			=> 'Estatísticas do autor',
 	'AUTHOR_STYLES'				=> '%d Estilos',
 	'AUTHOR_STYLES_ONE'			=> '1 Estilo',
@@ -57,11 +57,11 @@ $lang = array_merge($lang, array(
 
 	'NO_AVATAR'					=> 'Sem avatar',
 
-	'PHPBB_PROFILE'				=> 'Perfil no phpBB.com',
+	'PHPBB_PROFILE'				=> 'Perfil no phpBB',
 
 	'REAL_NAME'					=> 'Nome real',
 
-	'USER_INFORMATION'			=> 'informações do usuário',
+	'USER_INFORMATION'			=> 'Informações do usuário',
 
 	'VIEW_USER_PROFILE'			=> 'Ver perfil do usuário',
 ));

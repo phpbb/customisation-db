@@ -43,13 +43,13 @@ $lang = array_merge($lang, array(
 	'MISSING_FILE'								=> 'O arquivo <code>%s</code> não foi encontrado em seu pacote de idioma',
 	'MISSING_KEYS'								=> 'As seguintes chaves de idioma estão faltando no <code>%1$s</code>:<br />%2$s',
 
-	'PASSED_VALIDATION'							=> 'Seu pacote de idioma passou no processo de validação que verifica a falta de chaves, arquivos de licença e que re-empacota sua tradução, por favor, continue.',
+	'PASSED_VALIDATION'							=> 'Seu pacote de idioma passou no processo de validação que verifica a falta de chaves, arquivos de licença e que re-empacota sua tradução. Por favor, continue.',
 
 	'TRANSLATION'								=> 'Tradução',
 	'TRANSLATION_VALIDATION'					=> '[Validação de tradução do phpBB] %1$s %2$s',
-	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar sua tradução para a phpBB.com Customisation Database. Após uma cuidadosa inspeção sua tradução foi aprovada e lançada em nossa Customisation Database.
+	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar sua tradução para a Base de Customizações do phpBB. Após uma cuidadosa inspeção sua tradução foi aprovada e lançada em nossa Base de Customizações.
 
-Temos esperança de que você fornecerá um nível básico de suporte para esta tradução e irá mantê-la atualizada com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem o phpBB.com um melhor lugar para todos.
+Temos esperança de que você fornecerá um nível básico de suporte para esta tradução e irá mantê-la atualizada com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBB um melhor lugar para todos.
 
 [b]Notas da equipe sobre sua tradução:[/b]
 [quote]%s[/quote]
@@ -58,16 +58,16 @@ Atenciosamente,
 Equipe phpBB',
 	'TRANSLATION_VALIDATION_MESSAGE_DENY'		=> 'Olá,
 
-Como você deve saber, todas as traduções enviadas para a phpBB Customisation Database devem ser validadas e aprovadas por um membro da equipe do phpBB.
+Como você deve saber, todas as traduções enviadas para a Base de Customizações do phpBB devem ser validadas e aprovadas por um membro da equipe do phpBB.
 
 Após a validação de sua tradução, a equipe do phpBB lamenta informar que tivemos de recusá-la.
 
 Para corrigir o(s) problema(s) com sua tradução, por favor siga as instruções abaixo:
 [list=1][*]Faça as alterações necessárias para corrigir quaisquer problemas (listados abaixo) que resultaram na recusa de sua tradução.
-[*]Envie novamente sua tradução para a nossa Customisation Database.[/list]
+[*]Envie novamente sua tradução para a nossa Base de Customizações.[/list]
 Por favor, certifique-se de que tenha testado sua tradução na versão mais recente do phpBB (veja a página de [url=http://www.phpbb.com/downloads/]Downloads[/url]) antes de enviar novamente sua tradução.
 
-Se você acha que esta recusa não possui justificativa, por favor contate o gerenciador de traduções.
+Se você acha que esta recusa não possui justificativa, por favor, contate o gerenciador de traduções.
 
 Aqui está um relatório sobre o porquê de sua tradução ter sido recusada:
 [quote]%s[/quote]

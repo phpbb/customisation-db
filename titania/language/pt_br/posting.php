@@ -60,7 +60,7 @@ Note que por padrão este tópico é privado entre autores e validadores, e não
 	'STICKY_TOPIC'						=> 'Tópicos fixos',
 
 	'UNDELETE_FILE'						=> 'Cancelar remoção',
-	'UNDELETE_POST'						=> 'restaurar mensagem',
+	'UNDELETE_POST'						=> 'Restaurar mensagem',
 	'UNDELETE_POST_CONFIRM'				=> 'Você realmente deseja restaurar esta mensagem?',
 	'UNDELETE_TOPIC_CONFIRM'			=> 'Você realmente deseja restaurar este tópico?',
 ));

@@ -2,9 +2,9 @@ Subject: Notificação - {NAME}
 
 Olá {USERNAME},
 
-Você está recebendo esta notificação porque se inscreveu para ser notificado sobre novos itens postados para a contribuição "{CONTRIB_NAME}" na phpBB Customisation Database.
+Você está recebendo esta notificação porque se inscreveu para ser notificado sobre novos Itens postados para a contribuição "{CONTRIB_NAME}" na Base de Customizações do phpBB.
 
-O item "{NAME}" foi criado recentemente.
+O Item "{NAME}" foi criado recentemente.
 
-Você pode ver este item visitando o link abaixo:
+Você pode ver este Item visitando o link abaixo:
 {U_VIEW}

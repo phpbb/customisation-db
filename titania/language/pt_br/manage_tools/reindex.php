@@ -39,5 +39,5 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'REINDEX'			=> 'Reindexar a busca',
-	'REINDEX_CONFIRM'	=> 'Você realmente deseja iniciar a reindexação do sistema de busca?  Isso pode demorar muito tempo.',
+	'REINDEX_CONFIRM'	=> 'Você realmente deseja iniciar a reindexação do sistema de busca? Isso pode demorar muito tempo.',
 ));

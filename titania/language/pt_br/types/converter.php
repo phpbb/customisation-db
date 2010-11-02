@@ -41,9 +41,9 @@ $lang = array_merge($lang, array(
 	'CONVERTER'								=> 'Conversor',
 	'CONVERTERS'							=> 'Conversores',
 	'CONVERTER_VALIDATION'					=> '[Validação de conversores do phpBB] %1$s %2$s',
-	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar seu conversor para a phpBB.com Customisation Database. Após uma cuidadosa inspeção seu conversor foi aprovado e lançado em nossa Customisation Database.
+	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar seu conversor para a Base de Customização do phpBB. Após uma cuidadosa inspeção seu conversor foi aprovado e lançado em nossa Base de Customização.
 
-Temos esperança de que você fornecerá um nível básico de suporte para este conversor e irá mantê-lo atualizado com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem o phpBB.com um melhor lugar para todos.
+Temos esperança de que você fornecerá um nível básico de suporte para este conversor e irá mantê-lo atualizado com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBB um melhor lugar para todos.
 
 [b]Notas da equipe sobre seu conversor:[/b]
 [quote]%s[/quote]
@@ -52,16 +52,16 @@ Atenciosamente,
 Equipe phpBB',
 	'CONVERTER_VALIDATION_MESSAGE_DENY'		=> 'Olá,
 
-Como você deve saber, todos os conversores enviados para a phpBB Customisation Database devem ser validadas e aprovadas por membros da equipe do phpBB.
+Como você deve saber, todos os conversores enviados para a Base de Customização do phpBB devem ser validadas e aprovadas por membros da equipe do phpBB.
 
 Após a validação de seu conversor, a equipe do phpBB lamenta em informar que tivemos de recusá-la.
 
 Para corrigir o(s) problema(s) com seu conversor, por favor siga as instruções abaixo:
 [list=1][*]Faça as alterações necessárias para corrigir quaisquer problemas (listados abaixo) que resultaram na recusa de seu conversor.
-[*]Envie novamente seu conversor para nossa Customisation Database.[/list]
+[*]Envie novamente seu conversor para nossa Base de Customização.[/list]
 Por favor, certifique-se de que tenha testado o conversor na versão mais recente do phpBB (veja a página de [url=http://www.phpbb.com/downloads/]Downloads[/url]) antes de enviar novamente o seu conversor.
 
-Se você acha que esta recusa não possui justificativa, por favor contate o líder de desenvolvimento.
+Se você acha que esta recusa não possui justificativa, por favor, contate o líder de desenvolvimento.
 
 Aqui está um relatório sobre o porquê de seu conversor ter sido recusado:
 [quote]%s[/quote]

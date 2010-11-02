@@ -38,9 +38,9 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'FIX_LEFT_RIGHT_IDS'			=> 'Corrigir ID’s direita e esquerda',
-	'FIX_LEFT_RIGHT_IDS_CONFIRM'	=> 'Você realmente deseja corrigir as ID’s de direita e esquerda?<br /><br /><strong>Faça um backup de sua base de dados antes de executar esta ferramenta!</strong>',
+	'FIX_LEFT_RIGHT_IDS'			=> 'Corrigir ID’s das colunas a direita e a esquerda',
+	'FIX_LEFT_RIGHT_IDS_CONFIRM'	=> 'Você realmente deseja corrigir as ID’s das colunas a direita e a esquerda?<br /><br /><strong>Faça um backup de sua base de dados antes de executar esta ferramenta!</strong>',
 
-	'LEFT_RIGHT_IDS_FIX_SUCCESS'	=> 'As ID’s de direita e esquerda foram corrigidas com sucesso.',
-	'LEFT_RIGHT_IDS_NO_CHANGE'		=> 'A ferramenta terminou de analisar todas as id’s de direita e esquerda e todas as linhas já estão corretas, portanto nenhuma alteração foi efetuada.',
+	'LEFT_RIGHT_IDS_FIX_SUCCESS'	=> 'As ID’s das colunas a direita e a esquerda foram corrigidas com sucesso.',
+	'LEFT_RIGHT_IDS_NO_CHANGE'		=> 'A ferramenta terminou de analisar todas as id’s das colunas a direita e a esquerda e todas as linhas já estão corretas, portanto nenhuma alteração foi efetuada.',
 ));

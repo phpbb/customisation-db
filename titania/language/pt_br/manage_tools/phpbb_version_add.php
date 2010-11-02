@@ -38,10 +38,10 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'CATEGORY_EXPLAIN'				=> 'Limitar o suporte a nova versão somente às categorias selecionadas.',
+	'CATEGORY_EXPLAIN'				=> 'Limitar o suporte à nova versão somente para as categorias selecionadas.',
 
 	'NEW_PHPBB_VERSION'				=> 'Nova versão do phpBB',
-	'NEW_PHPBB_VERSION_EXPLAIN'		=> 'Nova versão do phpBB a ser adiciona à lista de suporte nas revisões.',
+	'NEW_PHPBB_VERSION_EXPLAIN'		=> 'Nova versão do phpBB a ser adicionada à lista de suporte das revisões.',
 	'NO_REVISIONS_UPDATED'			=> 'Nenhuma revisão foi atualizada dadas as limitações.',
 	'NO_VERSION_SELECTED'			=> 'Você deve informar uma versão correta do phpBB. Ex.: 3.0.7 ou 3.0.7-PL1.',
 
@@ -50,5 +50,5 @@ $lang = array_merge($lang, array(
 	'REVISIONS_UPDATED'				=> '%s revisões foram atualizadas.',
 
 	'VERSION_RESTRICTION'			=> 'Restrição de versão',
-	'VERSION_RESTRICTION_EXPLAIN'	=> 'Restringe o suporte a nova versão somente para versões selecionadas.',
+	'VERSION_RESTRICTION_EXPLAIN'	=> 'Restringe o suporte à nova versão somente para versões selecionadas.',
 ));

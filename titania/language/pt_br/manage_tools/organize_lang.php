@@ -41,8 +41,8 @@ $lang = array_merge($lang, array(
 	'NO_FILE'						=> 'O arquivo requisitado não existe.',
 
 	'ORGANIZE_LANG'					=> 'Organizar arquivos de idioma',
-	'ORGANIZE_LANG_EXPLAIN'			=> 'Isto permite-lhe organizar um arquivo de idioma ou um diretório. Para mais informações <a href="http://www.lithiumstudios.org/forum/viewtopic.php?f=9&t=841">leia este tópico</a>.',
+	'ORGANIZE_LANG_EXPLAIN'			=> 'Isto lhe permite organizar um arquivo de idioma ou um diretório. Para mais informações <a href="http://www.lithiumstudios.org/forum/viewtopic.php?f=9&t=841">leia este tópico</a>.',
 	'ORGANIZE_LANG_FILE'			=> 'Arquivo',
 	'ORGANIZE_LANG_FILE_EXPLAIN'	=> 'Digite o nome do arquivo ou do diretório que você gostaria de organizar.<br />Exemplo: en/mods/ para language/en/mods/, ou en/common para language/en/common.php',
-	'ORGANIZE_LANG_SUCCESS'			=> 'O arquivo de idioma ou o diretório foram organizados com sucesso.',
+	'ORGANIZE_LANG_SUCCESS'			=> 'O arquivo de idioma ou o diretório foi organizado com sucesso.',
 ));

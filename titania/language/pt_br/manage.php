@@ -60,13 +60,13 @@ $lang = array_merge($lang, array(
 	'MOVE_QUEUE_CONFIRM'		=> 'Selecione o novo local da fila e confirme.',
 
 	'NO_ATTENTION'				=> 'Nenhum item necessita de atenção.',
-	'NO_ATTENTION_ITEM'			=> 'Attention item does not exist.',
+	'NO_ATTENTION_ITEM'			=> 'Não há itens que requeiram sua atenção.',
 	'NO_ATTENTION_TYPE'			=> 'Tipo de atenção inadequado.',
 	'NO_NOTES'					=> 'Sem notas',
 	'NO_QUEUE_ITEM'				=> 'Item da fila não existe.',
 
 	'OLD_VALIDATION_AUTOMOD'	=> 'Teste do AutoMOD de pré-reempacotamento',
-	'OLD_VALIDATION_MPV'		=> 'Notas do MPV de pré-reempacotamento',
+	'OLD_VALIDATION_MPV'		=> 'Notas do PVM de pré-reempacotamento',
 	'OPEN_ITEMS'				=> 'Abrir itens',
 
 	'PUBLIC_NOTES'				=> 'Notas de lançamento público',
@@ -93,7 +93,7 @@ $lang = array_merge($lang, array(
 	'REPACK'					=> 'Reempacotar',
 	'REPORTED'					=> 'Reportado',
 	'RETEST_AUTOMOD'			=> 'Re-testar com o AutoMOD',
-	'RETEST_MPV'				=> 'Re-testar com o MPV',
+	'RETEST_MPV'				=> 'Re-testar com o PVM',
 	'REVISION_REPACKED'			=> 'Esta revisão foi reempacotada.',
 
 	'SUBMIT_TIME'				=> 'Data de envio',
@@ -104,7 +104,7 @@ $lang = array_merge($lang, array(
 	'VALIDATION'				=> 'Validação',
 	'VALIDATION_AUTOMOD'		=> 'Teste com AutoMOD',
 	'VALIDATION_MESSAGE'		=> 'Mensagem/razão de validação',
-	'VALIDATION_MPV'			=> 'Notas do MPV',
+	'VALIDATION_MPV'			=> 'Notas do PVM',
 	'VALIDATION_NOTES'			=> 'Notas de validação',
 	'VALIDATION_QUEUE'			=> 'Fila de validação',
 	'VALIDATION_SUBMISSION'		=> 'Envio de validação',

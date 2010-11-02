@@ -85,7 +85,7 @@ if (empty($lang) || !is_array($lang))
 ));*/
 
 $lang['permission_cat']['titania'] = 'Titania';
-$lang['permission_cat']['titania_moderate'] = 'Moderar Titania Titania Moderate';
+$lang['permission_cat']['titania_moderate'] = 'Moderar Titania';
 
 $lang = array_merge($lang, array(
 	// Common
@@ -104,7 +104,7 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_bbcode'				=> array('lang' => 'Pode postar BBCode', 'cat' => 'titania'),
 	'acl_u_titania_smilies'				=> array('lang' => 'Pode postar smilies', 'cat' => 'titania'),
 
-	'acl_u_titania_post_hard_delete'	=> array('lang' => 'Pode excluir <strong>definitivamente</strong> mensagens e tópicos (mensagens e tópicos que o usuário, caso contrário, possa excluir).', 'cat' => 'titania'),
+	'acl_u_titania_post_hard_delete'	=> array('lang' => 'Pode excluir <strong>definitivamente</strong> mensagens e tópicos (mensagens e tópicos que o usuário já possua permissão para excluir).', 'cat' => 'titania'),
 
 	// Moderation
 	'acl_u_titania_mod_author_mod'			=> array('lang' => 'Pode moderar perfis de autores', 'cat' => 'titania_moderate'),
@@ -133,10 +133,10 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Pode validar conversores', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_converter_moderate'				=> array('lang' => 'Pode moderar conversores', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_mod_bridge_queue_discussion'			=> array('lang' => 'Pode ver a fila de discussões de bridges', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_bridge_queue'					=> array('lang' => 'Pode ver a fila de bridges', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Pode validar bridges', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_bridge_moderate'					=> array('lang' => 'Pode moderar bridges', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_queue_discussion'			=> array('lang' => 'Pode ver a fila de discussões de integradores', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_queue'					=> array('lang' => 'Pode ver a fila de integradores', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Pode validar integradores', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_moderate'					=> array('lang' => 'Pode moderar integradores', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_official_tool_moderate'			=> array('lang' => 'Pode enviar/moderar ferramentas oficiais', 'cat' => 'titania_moderate'),
 
