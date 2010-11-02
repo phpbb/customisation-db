@@ -1,0 +1,10 @@
+Subject: Notificação - {NAME}
+
+Olá {USERNAME},
+
+Você está recebendo esta notificação porque se inscreveu para ser notificado sobre novos itens postados para a contribuição "{CONTRIB_NAME}" na phpBB Customisation Database.
+
+O item "{NAME}" foi criado recentemente.
+
+Você pode ver este item visitando o link abaixo:
+{U_VIEW}

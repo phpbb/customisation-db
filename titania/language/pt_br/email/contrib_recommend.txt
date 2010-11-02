@@ -1,0 +1,19 @@
+Subject: "{SITENAME}" - E-mail para um amigo
+
+Olá {TO_USERNAME},
+
+Este e-mail foi enviado do "{SITENAME}" por {FROM_USERNAME} que imaginou que você estaria interessado na seguinte modificação da phpBB Customization Database:
+
+{CONTRIB_NAME}
+
+Você pode encontrá-la para ser baixada através do seguinte link:
+
+{U_CONTRIB}
+
+Por favor, tenha em mente que esta mensagem não foi vista nem aprovada pelos administrados do fórum "(SITENAME}". 
+
+Se você deseja reclamar sobre o recebimento deste e-mail entre em contato com o administrador do fórum pelo endereço {BOARD_CONTACT}. Por favor, cite os cabeçalhos da mensagem quando contatar este endereço.
+
+----------
+
+{MESSAGE}

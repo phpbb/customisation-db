@@ -1,0 +1,8 @@
+Subject: Notificação sobre atualização - {NAME}
+
+Olá {USERNAME},
+
+Você está recebendo esta notificação porque se inscreveu no item "{NAME}" na phpBB Customisation Database na contribuição "{CONTRIB_NAME}".
+
+Se você deseja ver esta atualização, por favor clique no seguinte link:
+{U_VIEW}
