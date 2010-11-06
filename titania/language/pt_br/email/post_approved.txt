@@ -1,0 +1,14 @@
+Subject: Mensagem aceita - "{POST_SUBJECT}"
+
+Olá {USERNAME},
+
+Você está recebendo esta notificação porque sua mensagem "{POST_SUBJECT}" no "{SITENAME}" foi aceita por um moderador ou administrador.
+
+Se você deseja visualizar a mensagem, clique no seguinte link:
+{U_VIEW_POST}
+
+Se você deseja visualizar o tópico, clique no seguinte link:
+{U_VIEW_TOPIC}
+
+
+{EMAIL_SIG}
