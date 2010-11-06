@@ -95,8 +95,6 @@ To correct the problem(s) with your modification, please following the below ins
 [*]Re-upload your MOD to our modifications database.[/list]
 Please ensure you tested your modification on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your modification.
 
-If you feel this denial was not warranted please contact the MOD Validation Leader.
-
 Here is a report on why your modification was denied:
 [quote]%s[/quote]
 
@@ -116,7 +114,10 @@ For help with writing phpBB MODs, the following resources exist:
 [list][*][url=http://www.phpbb.com/community/viewforum.php?f=71]Forum for MOD Authors\Help[/url]
 [*]IRC Support - [url=irc://irc.freenode.net/phpBB-coding]#phpBB-coding[/url] is registered on the FreeNode IRC network ([url=irc://irc.freenode.net/]irc.freenode.net[/url])[/list]
 
-[b]If you wish to discuss anything in this PM please send a message using the discusion tab in the MOD database, My Modifications, manage for this MOD.[/b] If you feel this denial was not warranted please contact the MOD Validation Leader.
+[b]If you wish to discuss anything in this PM please send a message using the discusion tab in the MOD database, My Modifications, manage for this MOD.[/b]
+
+If you feel this denial was not warranted please contact the MOD Validation Leader.
+If you have any queries and further discussion please use the Queue Discussion Topic.
 
 Thank you,
 phpBB MOD Team',
