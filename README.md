@@ -5,11 +5,11 @@ Titania is the phpBB.com [Customisations Database](http://www.phpbb.com/customis
 ## Patches
 
 Do you have an improvement? Did you fix a bug? Fork our GitHub repo, make your changes in a separate branch and send a pull request.
-Please read [Git Guidelines](http://wiki.phpbb.com/display/DEV/Git) before forking and fixing bugs.
+Please read the [Git Sub-Project Guidelines](http://wiki.phpbb.com/display/DEV/Sub-Project+Contribution+Guidelines) before forking and fixing bugs.
 
 ## Translations
 
-If you have a translation just fork the repo, make a branch, add the translation and send a pull request.
+If you have a translation please read the information on patches.
 
 ## Get Involved
 
