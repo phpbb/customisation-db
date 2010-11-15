@@ -30,6 +30,13 @@ class translation_validation extends titania_contrib_tools
 	const REQUIRED_EMPTY = 2;
 	const REQUIRED_DEFAULT = 3;
 
+	/**
+	* Array of files to ignore in language pack
+	*
+	* @var array
+	*/
+	protected $ignore_files = array('AUTHORS', 'README');
+
 	public function __construct($original_zip, $new_dir_name)
 	{
 		parent::__construct($original_zip, $new_dir_name);
@@ -109,7 +116,7 @@ class translation_validation extends titania_contrib_tools
 									$missing_keys[$dir . $file] = $this->check_missing_keys($reference_filepath . '' .	$dir . $file, $uploaded_file_path);
 								}
 
-								if (!in_array($file, array('README', 'AUTHORS')) && !in_array($ext, array('php', 'txt')) && is_file($uploaded_file_path))
+								if (!in_array(strtoupper($file), $this->ignore_files) && !in_array($ext, array('php', 'txt')) && is_file($uploaded_file_path))
 								{
 									// remove any files that aren't in the above stated extension list, this will delete index.htm files and LICENSE files
 									unlink($uploaded_file_path);
@@ -242,7 +249,7 @@ class translation_validation extends titania_contrib_tools
 		$dp = opendir($root_dir . $dir);
 		while (($fname = readdir($dp)))
 		{
-			if (is_file("$root_dir$dir$fname"))
+			if (is_file("$root_dir$dir$fname") && !in_array(strtoupper($fname), $this->ignore_files))
 			{
 				$matches[$dir][] = $fname;
 			}
