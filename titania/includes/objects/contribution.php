@@ -402,14 +402,14 @@ class titania_contribution extends titania_message_object
 				'CONTRIB_TYPE'					=> titania_types::$types[$this->contrib_type]->lang,
 				'CONTRIB_TYPE_ID'				=> $this->contrib_type,
 
-				'U_CONTRIB_MANAGE'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('manage') : '',
+				'U_CONTRIB_MANAGE'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('manage') : '',
 				'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
-				'U_NEW_REVISION'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('revision') : '',
+				'U_NEW_REVISION'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('revision') : '',
 				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && titania_types::$types[$this->contrib_type]->use_queue && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[$this->contrib_type]->acl_get('queue_discussion'))) ? $this->get_url('queue_discussion') : '',
 				'U_VIEW_CONTRIB'				=> $this->get_url(),
 
 				'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
-				'U_INFO'						=> (phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? titania_url::build_url('manage/attention', array('type' => TITANIA_CONTRIB, 'id' => $this->contrib_id)) : '',
+				'U_INFO'						=> (titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? titania_url::build_url('manage/attention', array('type' => TITANIA_CONTRIB, 'id' => $this->contrib_id)) : '',
 
 				// Contribution Status
 				'S_CONTRIB_NEW'					=> (titania_types::$types[$this->contrib_type]->use_queue && titania::$config->use_queue && $this->contrib_status == TITANIA_CONTRIB_NEW) ? true : false,

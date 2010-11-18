@@ -320,9 +320,16 @@ class queue_overlord
 				);
 			}
 
+			// misc subactions
 			$subactions['REBUILD_FIRST_POST'] = array(
 				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'rebuild')),
 			);
+			if (titania_types::$types[$contrib->contrib_type]->acl_get('moderate') && !$row['allow_author_repack'])
+			{
+				$subactions['ALLOW_AUTHOR_REPACK'] = array(
+					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'allow_author_repack')),
+				);
+			}
 
 			$quick_actions['CAT_MISC'] = array(
 				'subactions'	=> $subactions,

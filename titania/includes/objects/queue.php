@@ -81,6 +81,8 @@ class titania_queue extends titania_message_object
 			'mpv_results_bitfield'	=> array('default' => ''),
 			'mpv_results_uid'		=> array('default' => ''),
 			'automod_results'		=> array('default' => ''),
+			
+			'allow_author_repack'	=> array('default' => false),
 		));
 
 		// Hooks
@@ -218,6 +220,7 @@ class titania_queue extends titania_message_object
 	* Reply to the queue topic with a message
 	*
 	* @param string $message
+	* @param bool $teams_only true to set to access level of teams
 	*/
 	public function topic_reply($message, $teams_only = true)
 	{
@@ -244,6 +247,7 @@ class titania_queue extends titania_message_object
 	* Reply to the discussion topic with a message
 	*
 	* @param string $message
+	* @param bool $teams_only true to set to access level of teams
 	*/
 	public function discussion_reply($message, $teams_only = false)
 	{

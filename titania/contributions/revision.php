@@ -20,11 +20,11 @@ titania::_include('functions_posting', 'generate_type_select');
 
 load_contrib();
 
-if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !phpbb::$auth->acl_get('u_titania_mod_contrib_mod') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 {
 	titania::needs_auth();
 }
-else if (in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED)) && !(phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')))
+else if (in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED)) && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 {
 	// Editing cleaned/disabled contribs requires moderation permissions
 	titania::needs_auth();
@@ -42,8 +42,8 @@ if ($disagree)
 	redirect(titania::$contrib->get_url());
 }
 
-// Repack a revision (for those with moderator permissions)
-$repack = (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? request_var('repack', 0) : 0;
+// Repack a revision
+$repack = request_var('repack', 0);
 if ($repack)
 {
 	$old_revision = new titania_revision(titania::$contrib, $repack);
@@ -51,11 +51,18 @@ if ($repack)
 	{
 		trigger_error('NO_REVISION');
 	}
-	if (!$old_revision->get_queue())
+	if (!($old_queue = $old_revision->get_queue()))
 	{
 		titania::add_lang('manage');
 		trigger_error('NO_QUEUE_ITEM');
 	}
+
+	// Check auth
+	if (!titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate') && !$old_queue->allow_author_repack)
+	{
+		titania::needs_auth();
+	}
+	
 	$old_revision->load_phpbb_versions();
 	generate_phpbb_version_select($old_revision->get_selected_branches());
 
@@ -235,14 +242,23 @@ do{
 						}
 
 						$revision->revision_submitted = true;
+						$revision->allow_author_repack = false;
 						$revision->submit();
 
 						// After revision is set to submitted we must update the queue
 						$revision->update_queue();
 
-						if ($repack && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
+						if ($repack)
 						{
-							redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
+							if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate') && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
+							{
+								redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
+							}
+
+							$old_queue->allow_author_repack = false;
+							$old_queue->submit();
+
+							redirect(titania::$contrib->get_url());
 						}
 
 						// Subscriptions

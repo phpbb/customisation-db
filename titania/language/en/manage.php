@@ -35,11 +35,13 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ADMINISTRATION'			=> 'Administration',
+	'ALLOW_AUTHOR_REPACK'		=> 'Allow author to repack',
 	'ALTER_NOTES'				=> 'Alter Validation Notes',
 	'APPROVE'					=> 'Approve',
 	'APPROVE_QUEUE'				=> 'Approve',
 	'APPROVE_QUEUE_CONFIRM'		=> 'Are you sure you want to <strong>approve</strong> this item?',
 	'ATTENTION'					=> 'Attention',
+	'AUTHOR_REPACK_LINK'		=> 'Click here to repack the revision',
 
 	'CATEGORY_NAME_CLEAN'		=> 'Category URL',
 	'CHANGE_STATUS'				=> 'Change Status/Move',
@@ -50,6 +52,7 @@ $lang = array_merge($lang, array(
 	'DENY'						=> 'Deny',
 	'DENY_QUEUE'				=> 'Deny',
 	'DENY_QUEUE_CONFIRM'		=> 'Are you sure you want to <strong>deny</strong> this item?',
+	'DISCUSSION_REPLY_MESSAGE'	=> 'Queue discussion reply message',
 
 	'EDIT_VALIDATION_NOTES'		=> 'Edit Validation Notes',
 
@@ -79,6 +82,7 @@ $lang = array_merge($lang, array(
 	'QUEUE_REPACK'				=> 'Repack',
 	'QUEUE_REPACK_ALLOWED'		=> 'Repacking Allowed',
 	'QUEUE_REPACK_NOT_ALLOWED'	=> 'Repacking <strong>Not</strong> Allowed',
+	'QUEUE_REPLY_ALLOW_REPACK'	=> 'Set to allow the author to repack',
 	'QUEUE_REPLY_APPROVED'		=> 'Revision %1$s [b]approved[/b] for reason:<br /><br />[quote]%2$s[/quote]',
 	'QUEUE_REPLY_DENIED'		=> 'Revision %1$s [b]denied[/b] for reason:<br /><br />[quote]%2$s[/quote]',
 	'QUEUE_REPLY_IN_PROGRESS'	=> 'Marked as in-progress',

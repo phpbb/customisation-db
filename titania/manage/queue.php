@@ -309,6 +309,58 @@ if ($queue_id)
 			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
 		break;
 
+		case 'allow_author_repack' :
+			$queue = queue_overlord::get_queue_object($queue_id, true);
+			
+			$topic = $queue->get_queue_discussion_topic();
+			$post = new titania_post(TITANIA_QUEUE_DISCUSSION, $topic);
+			$post->__set_array(array(
+				'post_subject'		=> 'Re: ' . $post->topic->topic_subject,
+			));
+
+			// Load the message object
+			$message_object = new titania_message($post);
+			$message_object->set_auth(array(
+				'bbcode'		=> true,
+				'smilies'		=> true,
+			));
+			$message_object->set_settings(array(
+				'display_subject'	=> false,
+			));
+
+			// Submit check...handles running $post->post_data() if required
+			$submit = $message_object->submit_check();
+
+			if ($submit)
+			{
+				$queue->allow_author_repack = true;
+				
+				$contrib = contribs_overlord::get_contrib_object($queue->contrib_id, true);
+				
+				$for_edit = $post->generate_text_for_edit();
+				$post->post_text = $for_edit['message'] . "\n\n[url=" . titania_url::append_url($contrib->get_url('revision'), array('repack' => $queue->revision_id)) . ']' . phpbb::$user->lang['AUTHOR_REPACK_LINK'] . '[/url]';
+				$post->generate_text_for_storage($for_edit['allow_bbcode'], $for_edit['allow_smilies'], $for_edit['allow_urls']);
+				$post->submit();
+				
+				$queue->submit();
+				
+				$queue->topic_reply('QUEUE_REPLY_ALLOW_REPACK');	
+				$queue->submit();
+				
+				redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
+			}
+
+			$message_object->display();
+
+			// Common stuff
+			phpbb::$template->assign_vars(array(
+				'S_POST_ACTION'		=> titania_url::$current_page_url,
+				'L_POST_A'			=> phpbb::$user->lang['DISCUSSION_REPLY_MESSAGE'],
+			));
+			titania::page_header('DISCUSSION_REPLY_MESSAGE');
+			titania::page_footer(true, 'manage/queue_post.html');
+		break;
+
 		case 'move' :
 			$queue = queue_overlord::get_queue_object($queue_id, true);
 
