@@ -62,7 +62,7 @@ if ($repack)
 	{
 		titania::needs_auth();
 	}
-	
+
 	$old_revision->load_phpbb_versions();
 	generate_phpbb_version_select($old_revision->get_selected_branches());
 
@@ -173,6 +173,9 @@ do{
 					$error[] = phpbb::$user->lang['NO_PHPBB_BRANCH'];
 				}
 			}
+
+			// Send the file to the type class so it can do custom error checks
+			$error = array_merge($error, titania_types::$types[titania::$contrib->contrib_type]->upload_check($revision_attachment));
 
 			if (!sizeof($error))
 			{

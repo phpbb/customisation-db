@@ -183,4 +183,51 @@ class titania_type_style extends titania_type_base
 			$umil->config_remove('titania_num_styles');
 		}
 	}
+
+	/**
+	* Function that will be run when a revision of this type is uploaded
+	*
+	* @param $revision_attachment titania_attachment
+	* @return array (error array, empty for no errors)
+	*/
+	public function upload_check($revision_attachment)
+	{
+		$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
+		$new_dir_name = phpbb::$user->data['user_id'] . '_' . microtime();
+
+		$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
+
+        foreach (scandir($contrib_tools->unzip_dir) as $item)
+		{
+			if ($item == '.' || $item == '..')
+			{
+				continue;
+			}
+
+			// Allow the license to be either in the main directory or under one subdirectory
+			if (is_dir($contrib_tools->unzip_dir . '/' . $item))
+			{
+				foreach (scandir($contrib_tools->unzip_dir . '/' . $item) as $sub_item)
+				{
+		            if ($sub_item == 'license.txt')
+					{
+						// License file found
+						$contrib_tools->remove_temp_files();
+						return array();
+					}
+				}
+			}
+
+            if ($item == 'license.txt')
+			{
+				// License file found
+				$contrib_tools->remove_temp_files();
+				return array();
+			}
+        }
+
+		$contrib_tools->remove_temp_files();
+
+		return array(phpbb::$user->lang['LICENSE_FILE_MISSING']);
+	}
 }

@@ -228,4 +228,15 @@ class titania_type_base
 	*/
 	public $license_options = array();
 	public $license_allow_custom = false;
+
+	/**
+	* Function that will be run when a revision of this type is uploaded
+	*
+	* @param $revision_attachment titania_attachment
+	* @return array (error array, empty for no errors)
+	*/
+	public function upload_check($revision_attachment)
+	{
+		return array();
+	}
 }
