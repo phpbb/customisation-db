@@ -39,7 +39,12 @@
 						<!-- IF U_INFO --><li class="info-icon"><a href="{U_INFO}" title="{L_INFORMATION}"><span>{L_INFORMATION}</span></a></li><!-- ENDIF -->
 					</ul>
 				</dt>
-				<dd class="text-content">{CONTRIB_DESC}</dd>
+				<dd>
+					<!-- IF WARNING -->
+						<div class="rules"><strong>{WARNING}</strong></div>
+					<!-- ENDIF -->
+					{CONTRIB_DESC}
+				</dd>
 			</dl>
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
@@ -70,6 +75,11 @@
 				<!-- IF DOWNLOAD_VERSION -->
 				<li>
 					<strong>{L_VERSION}</strong> {DOWNLOAD_VERSION}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_LICENSE -->
+				<li>
+					<strong>{L_LICENSE}</strong> {DOWNLOAD_LICENSE}
 				</li>
 				<!-- ENDIF -->
 				<!-- IF CONTRIB_UPDATE_DATE -->

@@ -391,6 +391,7 @@ class titania_contribution extends titania_message_object
 			'DOWNLOAD_CHECKSUM'				=> (isset($this->download['hash'])) ? $this->download['hash'] : '',
 			'DOWNLOAD_NAME'					=> (isset($this->download['revision_name'])) ? censor_text($this->download['revision_name']) : '',
 			'DOWNLOAD_VERSION'				=> (isset($this->download['revision_version'])) ? censor_text($this->download['revision_version']) : '',
+			'DOWNLOAD_LICENSE'				=> (isset($this->download['revision_license'])) ? censor_text($this->download['revision_license']) : '',
 
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
 		);
@@ -555,7 +556,7 @@ class titania_contribution extends titania_message_object
 			{
 				return;
 			}
-			
+
 			// Get the latest revision
 			$this->get_revisions();
 

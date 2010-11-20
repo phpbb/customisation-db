@@ -30,6 +30,7 @@ titania::$hook->register_ary('phpbb_com_', array(
 	array('titania_queue', 'deny'),
 	array('titania_queue', 'close'),
 	array('titania_queue', 'delete'),
+	array('titania_contribution', 'assign_details'),
 ));
 
 // Do we need to install the DB stuff?
@@ -102,6 +103,29 @@ function phpbb_com_titania_page_footer($hook, $run_cron, $template_body)
 	phpbb::$template->assign_display('phpbb_com_footer', 'PHPBB_COM_FOOTER', false);
 
 	titania::set_custom_template();
+}
+
+// Display a warning for styles not meeting the licensing guidelines
+function phpbb_com_titania_contribution_assign_details($hook, &$vars, $contrib)
+{
+	if ($contrib->contrib_type != TITANIA_TYPE_STYLE)
+	{
+		return;
+	}
+
+	if (isset($contrib->download['revision_license']) && $contrib->download['revision_license'] == '')
+	{
+		if (isset($vars['WARNING']))
+		{
+			$vars['WARNING'] .= '<br />';
+		}
+		else
+		{
+			$vars['WARNING'] = '';
+		}
+
+		$vars['WARNING'] .= 'WARNING: This style currently does not meet our licensing guidelines.';
+	}
 }
 
 /**

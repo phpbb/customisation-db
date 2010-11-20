@@ -34,7 +34,12 @@
 					</ul>
 					<strong>{L_DESCRIPTION}</strong>
 				</dt>
-				<dd>{CONTRIB_DESC}</dd>
+				<dd>
+					<!-- IF WARNING -->
+						<div class="rules"><strong>{WARNING}</strong></div>
+					<!-- ENDIF -->
+					{CONTRIB_DESC}
+				</dd>
 			</dl>
 		<!-- ENDIF -->
 
