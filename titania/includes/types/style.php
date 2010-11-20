@@ -58,8 +58,10 @@ class titania_type_style extends titania_type_base
 	// License options
 	public $license_options = array(
 		'GPL v2.0',
+		'GPL v2.0 or later',
 		'GPL v3.0',
-		'LGPL v2.0',
+		'GPL v3.0 or later',
+		'LGPL v2.1',
 		'LGPL v3.0',
 	);
 	public $license_allow_custom = true;
