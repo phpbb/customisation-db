@@ -34,22 +34,22 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'CREATE_FAQ'			=> 'New FAQ',
+	'CREATE_FAQ'			=> 'FAQ Baru',
 
-	'DELETE_FAQ'			=> 'Delete FAQ',
-	'DELETE_FAQ_CONFIRM'	=> 'Are you sure that you want to delete this FAQ?',
+	'DELETE_FAQ'			=> 'Hapus FAQ',
+	'DELETE_FAQ_CONFIRM'	=> 'Apakah anda yakin ingin menghapus FAQ ini?',
 
-	'EDIT_FAQ'				=> 'Edit FAQ',
+	'EDIT_FAQ'				=> 'Ubah FAQ',
 
-	'FAQ_CREATED'			=> 'The FAQ has been created successfully.',
-	'FAQ_DELETED'			=> 'The FAQ entry has been deleted.',
-	'FAQ_DETAILS'			=> 'FAQ Details Page',
-	'FAQ_EDITED'			=> 'The FAQ has been edited successfully.',
-	'FAQ_EXPANDED'			=> 'Frequently Asked Questions',
-	'FAQ_LIST'				=> 'FAQ List',
-	'FAQ_NOT_FOUND'			=> 'The specified FAQ could not be found.',
+	'FAQ_CREATED'			=> 'FAQ berhasil dibuat.',
+	'FAQ_DELETED'			=> 'Entri FAQ sudah dihapus.',
+	'FAQ_DETAILS'			=> 'Halaman Keterangan FAQ',
+	'FAQ_EDITED'			=> 'FAQ berhasil diubah.',
+	'FAQ_EXPANDED'			=> 'Pertanyaan Yang Sering Diajukan (Frequently Asked Questions)',
+	'FAQ_LIST'				=> 'Daftar FAQ',
+	'FAQ_NOT_FOUND'			=> 'FAQ yang ditentukan tidak dapat ditemukan.',
 
-	'NO_FAQ'				=> 'There are no FAQ entries.',
+	'NO_FAQ'				=> 'Tidak ada entri FAQ.',
 
-	'QUESTIONS'				=> 'Questions',
+	'QUESTIONS'				=> 'Pertanyaan',
 ));

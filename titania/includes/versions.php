@@ -2,7 +2,7 @@
 /**
  *
  * @package Titania
- * @version $Id: versions.php 1758 2010-10-15 17:41:44Z exreaction $
+ * @version $Id$
  * @copyright (c) 2008 phpBB Customisation Database Team
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -20,7 +20,7 @@ $mod_name = 'CUSTOMISATION_DATABASE';
 $version_config_name = 'titania_version';
 
 $versions = array(
-	'0.3.0'	=> array(
+	'0.1.31'	=> array(
 		'table_add' => array(
 			array(TITANIA_ATTACHMENTS_TABLE, array(
 				'COLUMNS'		=> array(
@@ -47,46 +47,6 @@ $versions = array(
 					'object_id'				=> array('INDEX', 'object_id'),
 					'attachment_access'		=> array('INDEX', 'attachment_access'),
 					'is_orphan'				=> array('INDEX', 'is_orphan'),
-				),
-			)),
-			array(TITANIA_ATTENTION_TABLE, array(
-				'COLUMNS'		=> array(
-					'attention_id'					=> array('UINT', NULL, 'auto_increment'),
-					'attention_type'				=> array('UINT', 0), // attention type constants (reported, needs approval, etc)
-					'attention_object_type'			=> array('UINT', 0),
-					'attention_object_id'			=> array('UINT', 0),
-					'attention_url'					=> array('VCHAR_CI', ''),
-					'attention_requester'			=> array('UINT', 0),
-					'attention_time'				=> array('TIMESTAMP', 0),
-					'attention_close_time'			=> array('TIMESTAMP', 0),
-					'attention_close_user'			=> array('UINT', 0),
-					'attention_title'				=> array('STEXT_UNI', ''),
-					'attention_description'			=> array('MTEXT_UNI', ''),
-					'attention_poster_id'			=> array('UINT', 0),
-					'attention_post_time'			=> array('TIMESTAMP', 0),
-				),
-				'PRIMARY_KEY'	=> 'attention_id',
-				'KEYS'			=> array(
-					'attention_type'				=> array('INDEX', 'attention_type'),
-					'attention_object_type'			=> array('INDEX', 'attention_object_type'),
-					'attention_object_id'			=> array('INDEX', 'attention_object_id'),
-					'attention_time'				=> array('INDEX', 'attention_time'),
-					'attention_close_time'			=> array('INDEX', 'attention_close_time'),
-					'attention_close_user'			=> array('INDEX', 'attention_close_user'),
-					'attention_poster_id'			=> array('INDEX', 'attention_poster_id'),
-					'attention_post_time'			=> array('INDEX', 'attention_post_time'),
-				),
-			)),
-			array(TITANIA_AUTOMOD_QUEUE_TABLE, array(
-				'COLUMNS'		=> array(
-					'row_id'					=> array('UINT', NULL, 'auto_increment'),
-					'revision_id'				=> array('UINT', 0),
-					'phpbb_version_branch'		=> array('TINT:1', 0),
-					'phpbb_version_revision'	=> array('VCHAR', ''),
-				),
-				'PRIMARY_KEY'	=> 'row_id',
-				'KEYS'			=> array(
-					'revision_id'				=> array('INDEX', 'revision_id'),
 				),
 			)),
 			array(TITANIA_AUTHORS_TABLE, array(
@@ -162,7 +122,6 @@ $versions = array(
 					'contrib_visible'				=> array('BOOL', 1),
 					'contrib_last_update'			=> array('TIMESTAMP', 0),
 					'contrib_demo'					=> array('VCHAR_UNI:200', ''),
-					'contrib_release_topic_id'		=> array('UINT', 0),
 				),
 				'PRIMARY_KEY'	=> 'contrib_id',
 				'KEYS'			=> array(
@@ -173,7 +132,6 @@ $versions = array(
 					'contrib_downloads'		=> array('INDEX', 'contrib_downloads'),
 					'contrib_rating'		=> array('INDEX', 'contrib_rating'),
 					'contrib_visible'		=> array('INDEX', 'contrib_visible'),
-					'contrib_last_update'	=> array('INDEX', 'contrib_last_update'),
 				),
 			)),
 			array(TITANIA_CONTRIB_COAUTHORS_TABLE, array(
@@ -191,8 +149,7 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'faq_id'				=> array('UINT', NULL, 'auto_increment'),
 					'contrib_id'			=> array('UINT', 0),
-					'left_id'				=> array('UINT', 0),
-					'right_id'				=> array('UINT', 0),
+					'faq_order_id'			=> array('UINT', 0),
 					'faq_subject'			=> array('STEXT_UNI', '', 'true_sort'),
 					'faq_text'				=> array('MTEXT_UNI', ''),
 					'faq_text_bitfield'		=> array('VCHAR:255', ''),
@@ -204,8 +161,8 @@ $versions = array(
 				'PRIMARY_KEY'	=> 'faq_id',
 				'KEYS'			=> array(
 					'contrib_id'		=> array('INDEX', 'contrib_id'),
+					'faq_order_id'		=> array('INDEX', 'faq_order_id'),
 					'faq_access'		=> array('INDEX', 'faq_access'),
-					'left_right_id'		=> array('INDEX', array('left_id', 'right_id')),
 				),
 			)),
 			array(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, array(
@@ -219,7 +176,6 @@ $versions = array(
 				'COLUMNS'		=> array(
 					'post_id'				=> array('UINT', NULL, 'auto_increment'),
 					'topic_id'				=> array('UINT', 0),
-					'post_url'				=> array('VCHAR_CI', ''),
 					'post_type'				=> array('TINT:1', 0), // Post Type, Main TITANIA_ constants
 					'post_access'			=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
 					'post_locked'			=> array('BOOL', 0),
@@ -259,25 +215,13 @@ $versions = array(
 					'queue_type'			=> array('TINT:1', 0),
 					'queue_status'			=> array('TINT:1', 0),
 					'submitter_user_id'		=> array('UINT', 0),
-					'queue_allow_repack'	=> array('BOOL', 1),
 					'queue_notes'			=> array('MTEXT_UNI', ''),
 					'queue_notes_bitfield'	=> array('VCHAR:255', ''),
 					'queue_notes_uid'		=> array('VCHAR:8', ''),
 					'queue_notes_options'	=> array('UINT:11', 7),
-					'queue_validation_notes'			=> array('MTEXT_UNI', ''),
-					'queue_validation_notes_bitfield'	=> array('VCHAR:255', ''),
-					'queue_validation_notes_uid'		=> array('VCHAR:8', ''),
-					'queue_validation_notes_options'	=> array('UINT:11', 7),
+					'queue_progress'		=> array('TINT:3', 0),
 					'queue_submit_time'		=> array('UINT:11', 0),
-					'queue_progress'		=> array('UINT', 0), // user_id
-					'queue_progress_time'	=> array('UINT:11', 0),
 					'queue_close_time'		=> array('UINT:11', 0),
-					'queue_close_user'		=> array('UINT', 0),
-					'queue_topic_id'		=> array('UINT', 0),
-					'mpv_results'			=> array('MTEXT_UNI', ''),
-					'mpv_results_bitfield'	=> array('VCHAR:255', ''),
-					'mpv_results_uid'		=> array('VCHAR:8', ''),
-					'automod_results'		=> array('MTEXT_UNI', ''),
 				),
 				'PRIMARY_KEY'	=> 'queue_id',
 				'KEYS'			=> array(
@@ -312,10 +256,11 @@ $versions = array(
 					'revision_time'				=> array('UINT:11', 0),
 					'revision_validated'		=> array('UINT:11', 0),
 					'validation_date'			=> array('UINT:11', 0),
+					'phpbb_version'				=> array('STEXT', 0),
 					'install_time'				=> array('USINT', 0),
 					'install_level'				=> array('TINT:1', 0),
 					'revision_submitted'		=> array('BOOL', 0), // So we can hide the revision while we are creating it, false means someone is working on creating it (or did not finish creating it)
-					'revision_queue_id'			=> array('UINT', 0),
+					'queue_topic_id'			=> array('UINT:11', 0), // Store the queue topic id so we can track it
 				),
 				'PRIMARY_KEY'	=> 'revision_id',
 				'KEYS'			=> array(
@@ -324,25 +269,6 @@ $versions = array(
 					'revision_time'			=> array('INDEX', 'revision_time'),
 					'validation_date'		=> array('INDEX', 'validation_date'),
 					'revision_submitted'	=> array('INDEX', 'revision_submitted'),
-					'revision_queue_id'		=> array('INDEX', 'revision_queue_id'),
-				),
-			)),
-			array(TITANIA_REVISIONS_PHPBB_TABLE, array(
-				'COLUMNS'		=> array(
-					'row_id'					=> array('UINT', NULL, 'auto_increment'),
-					'revision_id'				=> array('UINT', 0),
-					'contrib_id'				=> array('UINT', 0),
-					'phpbb_version_branch'		=> array('TINT:1', 0),
-					'phpbb_version_revision'	=> array('VCHAR', ''),
-					'revision_validated'		=> array('BOOL', 0),
-				),
-				'PRIMARY_KEY'	=> 'row_id',
-				'KEYS'			=> array(
-					'revision_id'				=> array('INDEX', 'revision_id'),
-					'contrib_id'				=> array('INDEX', 'contrib_id'),
-					'phpbb_version_branch'		=> array('INDEX', 'phpbb_version_branch'),
-					'phpbb_version_revision'	=> array('INDEX', 'phpbb_version_revision'),
-					'revision_validated'		=> array('INDEX', 'revision_validated'),
 				),
 			)),
 			array(TITANIA_TAG_APPLIED_TABLE, array(
@@ -378,8 +304,7 @@ $versions = array(
 			array(TITANIA_TOPICS_TABLE, array(
 				'COLUMNS'		=> array(
 					'topic_id'						=> array('UINT', NULL, 'auto_increment'),
-					'parent_id'						=> array('UINT', 0),
-					'topic_url'						=> array('VCHAR_CI', ''),
+					'contrib_id'					=> array('UINT', 0),
 					'topic_type'					=> array('TINT:1', 0), // Post Type, Main TITANIA_ constants
 					'topic_access'					=> array('TINT:1', 0), // Access level, TITANIA_ACCESS_ constants
 					'topic_category'				=> array('UINT', 0), // Category for the topic. For the Tracker
@@ -390,6 +315,7 @@ $versions = array(
 					'topic_locked'					=> array('BOOL', 0),
 					'topic_approved'				=> array('BOOL', 1),
 					'topic_reported'				=> array('BOOL', 0), // True if any posts in the topic are reported
+					'topic_deleted'					=> array('BOOL', 0), // True if the topic is soft deleted
 					'topic_views'					=> array('UINT', 0),
 					'topic_posts'					=> array('VCHAR', ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
 					'topic_subject'					=> array('STEXT_UNI', ''),
@@ -408,7 +334,7 @@ $versions = array(
 				),
 				'PRIMARY_KEY'	=> 'topic_id',
 				'KEYS'			=> array(
-					'parent_id'				=> array('INDEX', 'parent_id'),
+					'contrib_id'			=> array('INDEX', 'contrib_id'),
 					'topic_type'			=> array('INDEX', 'topic_type'),
 					'topic_access'			=> array('INDEX', 'topic_access'),
 					'topic_category'		=> array('INDEX', 'topic_category'),
@@ -417,6 +343,7 @@ $versions = array(
 					'topic_sticky'			=> array('INDEX', 'topic_sticky'),
 					'topic_approved'		=> array('INDEX', 'topic_approved'),
 					'topic_reported'		=> array('INDEX', 'topic_reported'),
+					'topic_deleted'			=> array('INDEX', 'topic_deleted'),
 					'topic_time'			=> array('INDEX', 'topic_time'),
 					'topic_last_post_time'	=> array('INDEX', 'topic_last_post_time'),
 				),
@@ -433,23 +360,22 @@ $versions = array(
 			array(TITANIA_WATCH_TABLE, array(
 				'COLUMNS'		=> array(
 					'watch_type'			=> array('TINT:1', 0),
-					'watch_object_type'		=> array('UINT', 0),
 					'watch_object_id'		=> array('UINT', 0),
 					'watch_user_id'			=> array('UINT', 0),
 					'watch_mark_time'		=> array('UINT:11', 0),
 				),
-				'PRIMARY_KEY'	=> array('watch_object_type', 'watch_object_id', 'watch_user_id', 'watch_type'),
+				'PRIMARY_KEY'	=> array('watch_type', 'watch_object_id', 'watch_user_id'),
 			)),
 		),
 
 		'permission_add' => array(
-			'u_titania_admin',				// Can administrate titania
+			'u_titania_',
 
-			'u_titania_mod_author_mod',		// Can moderate author profiles
-			'u_titania_mod_contrib_mod',	// Can moderate all contrib items
-			'u_titania_mod_rate_reset',		// Can reset the rating on items
-			'u_titania_mod_faq_mod',		// Can moderate FAQ entries
-			'u_titania_mod_post_mod',		// Can moderate topics
+			'm_titania_author_mod',			// Can moderate author profiles
+			'm_titania_contrib_mod',		// Can moderate all contrib items
+			'm_titania_rate_reset',			// Can reset the rating on items
+			'm_titania_faq_mod',			// Can moderate FAQ entries
+			'm_titania_post_mod',			// Can moderate topics
 
 			'u_titania_contrib_submit',		// Can submit contrib items
 			'u_titania_rate',				// Can rate items
@@ -460,7 +386,6 @@ $versions = array(
 			'u_titania_bbcode',				// Can post bbcode
 			'u_titania_smilies',			// Can post smilies
 			'u_titania_post',				// Can create new posts
-			'u_titania_post_approved',		// Posts are approved?
 			'u_titania_post_edit_own',		// Can edit own posts
 			'u_titania_post_delete_own',	// Can delete own posts
 			'u_titania_post_mod_own',		// Can moderate own contrib topics
@@ -468,61 +393,59 @@ $versions = array(
 		),
 
 		'permission_role_add' => array(
-			array('ROLE_TITANIA_MODIFICATION_TEAM', 'u_'),
-			array('ROLE_TITANIA_STYLE_TEAM', 'u_'),
-			array('ROLE_TITANIA_MODERATOR_TEAM', 'u_'),
-			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_'),
+			array('ROLE_TITANIA_MODIFICATION_TEAM', 'm_'),
+			array('ROLE_TITANIA_STYLE_TEAM', 'm_'),
+			array('ROLE_TITANIA_MODERATOR_TEAM', 'm_'),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'm_'),
 		),
 
 		'permission_set' => array(
 			array('ROLE_ADMIN_FULL', array(
-				'u_titania_admin',					// Can administrate titania
-				'u_titania_mod_author_mod',			// Can moderate author profiles
-				'u_titania_mod_contrib_mod',		// Can moderate all contrib items
-				'u_titania_mod_rate_reset',			// Can reset the rating on items
-				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
-				'u_titania_mod_post_mod',			// Can moderate topics
-				'u_titania_mod_modification_queue',			// Can see the modifications queue
-				'u_titania_mod_modification_validate',		// Can validate modifications
-				'u_titania_mod_modification_moderate',		// Can moderate modifications
-				'u_titania_mod_style_queue',		// Can see the styles queue
-				'u_titania_mod_style_validate',		// Can validate styles
-				'u_titania_mod_style_moderate',		// Can moderate styles
+				'm_titania_author_mod',			// Can moderate author profiles
+				'm_titania_contrib_mod',		// Can moderate all contrib items
+				'm_titania_rate_reset',			// Can reset the rating on items
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_mod_queue',			// Can see the modifications queue
+				'm_titania_mod_validate',		// Can validate modifications
+				'm_titania_mod_moderate',		// Can moderate modifications
+				'm_titania_style_queue',		// Can see the styles queue
+				'm_titania_style_validate',		// Can validate styles
+				'm_titania_style_moderate',		// Can moderate styles
 			)),
 			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
-				'u_titania_admin',					// Can administrate titania
-				'u_titania_mod_author_mod',			// Can moderate author profiles
-				'u_titania_mod_contrib_mod',		// Can moderate all contrib items
-				'u_titania_mod_rate_reset',			// Can reset the rating on items
-				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
-				'u_titania_mod_post_mod',			// Can moderate topics
-				'u_titania_mod_modification_queue',			// Can see the modifications queue
-				'u_titania_mod_modification_validate',		// Can validate modifications
-				'u_titania_mod_modification_moderate',		// Can moderate modifications
-				'u_titania_mod_style_queue',		// Can see the styles queue
-				'u_titania_mod_style_validate',		// Can validate styles
-				'u_titania_mod_style_moderate',		// Can moderate styles
+				'm_titania_author_mod',			// Can moderate author profiles
+				'm_titania_contrib_mod',		// Can moderate all contrib items
+				'm_titania_rate_reset',			// Can reset the rating on items
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_mod_queue',			// Can see the modifications queue
+				'm_titania_mod_validate',		// Can validate modifications
+				'm_titania_mod_moderate',		// Can moderate modifications
+				'm_titania_style_queue',		// Can see the styles queue
+				'm_titania_style_validate',		// Can validate styles
+				'm_titania_style_moderate',		// Can moderate styles
 			)),
 			array('ROLE_TITANIA_MODIFICATION_TEAM', array(
-				'u_titania_mod_author_mod',			// Can moderate author profiles
-				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
-				'u_titania_mod_post_mod',			// Can moderate topics
-				'u_titania_mod_modification_queue',			// Can see the modifications queue
-				'u_titania_mod_modification_validate',		// Can validate modifications
-				'u_titania_mod_modification_moderate',		// Can moderate modifications
+				'm_titania_author_mod',			// Can moderate author profiles
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_mod_queue',			// Can see the modifications queue
+				'm_titania_mod_validate',		// Can validate modifications
+				'm_titania_mod_moderate',		// Can moderate modifications
 			)),
 			array('ROLE_TITANIA_STYLE_TEAM', array(
-				'u_titania_mod_author_mod',			// Can moderate author profiles
-				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
-				'u_titania_mod_post_mod',			// Can moderate topics
-				'u_titania_mod_style_queue',		// Can see the styles queue
-				'u_titania_mod_style_validate',		// Can validate styles
-				'u_titania_mod_style_moderate',		// Can moderate styles
+				'm_titania_author_mod',			// Can moderate author profiles
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
+				'm_titania_style_queue',		// Can see the styles queue
+				'm_titania_style_validate',		// Can validate styles
+				'm_titania_style_moderate',		// Can moderate styles
 			)),
 			array('ROLE_TITANIA_MODERATOR_TEAM', array(
-				'u_titania_mod_author_mod',			// Can moderate author profiles
-				'u_titania_mod_faq_mod',			// Can moderate FAQ entries
-				'u_titania_mod_post_mod',			// Can moderate topics
+				'm_titania_author_mod',			// Can moderate author profiles
+				'm_titania_faq_mod',			// Can moderate FAQ entries
+				'm_titania_post_mod',			// Can moderate topics
 			)),
 			array('ROLE_USER_STANDARD', array(
 				'u_titania_contrib_submit',		// Can submit contrib items
@@ -534,7 +457,6 @@ $versions = array(
 				'u_titania_bbcode',				// Can post bbcode
 				'u_titania_smilies',			// Can post smilies
 				'u_titania_post',				// Can create new posts
-				'u_titania_post_approved',		// Posts are approved?
 				'u_titania_post_edit_own',		// Can edit own posts
 				'u_titania_post_delete_own',	// Can delete own posts
 				'u_titania_post_attach',		// Can attach files to posts
@@ -549,21 +471,425 @@ $versions = array(
 				'u_titania_bbcode',				// Can post bbcode
 				'u_titania_smilies',			// Can post smilies
 				'u_titania_post',				// Can create new posts
-				'u_titania_post_approved',		// Posts are approved?
 				'u_titania_post_edit_own',		// Can edit own posts
 				'u_titania_post_delete_own',	// Can delete own posts
 				'u_titania_post_attach',		// Can attach files to posts
 			)),
 		),
 
+		'custom' => 'titania_custom',
+
+		'cache_purge' => array('', 'auth'),
+	),
+	// Merged in 0.1.31
+
+	'0.1.32' => array(
+		'table_index_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_last_update'),
+		),
+		'table_remove' => array(
+			TITANIA_WATCH_TABLE,
+		),
+		'table_add' => array(
+			array(TITANIA_WATCH_TABLE, array(
+				'COLUMNS'		=> array(
+					'watch_type'			=> array('TINT:1', 0),
+					'watch_object_type'		=> array('UINT', 0),
+					'watch_object_id'		=> array('UINT', 0),
+					'watch_user_id'			=> array('UINT', 0),
+					'watch_mark_time'		=> array('UINT:11', 0),
+				),
+				'PRIMARY_KEY'	=> array('watch_object_type', 'watch_object_id', 'watch_user_id', 'watch_type'),
+			)),
+		)
+	),
+
+	'0.1.33' => array(
+		'table_column_remove' => array(
+			array(TITANIA_QUEUE_TABLE, 'queue_progress'),
+		),
+
+		'table_column_add' => array(
+			array(TITANIA_QUEUE_TABLE, 'contrib_name_clean', array('VCHAR_CI', '')),
+			array(TITANIA_QUEUE_TABLE, 'queue_topic_id', array('UINT', 0)),
+			array(TITANIA_QUEUE_TABLE, 'mpv_results', array('MTEXT_UNI', '')),
+			array(TITANIA_QUEUE_TABLE, 'mpv_results_bitfield', array('VCHAR:255', '')),
+			array(TITANIA_QUEUE_TABLE, 'mpv_results_uid', array('VCHAR:8', '')),
+			array(TITANIA_QUEUE_TABLE, 'automod_results', array('MTEXT_UNI', '')),
+		),
+
+		'custom' => 'titania_tags',
+	),
+
+	'0.1.34' => array(
+		'custom' => 'titania_custom',
+	),
+
+	'0.1.35' => array(
+		'table_column_remove' => array(
+			array(TITANIA_REVISIONS_TABLE, 'queue_topic_id'),
+		),
+	),
+
+	'0.1.36' => array(
 		'config_add' => array(
 			array('titania_num_contribs', 0, true),
 		),
-
-		'custom' => array('titania_tags', 'titania_categories'),
-
-		'cache_purge' => '',
+		'custom' => 'titania_ext_groups',
 	),
+
+	'0.1.37' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_queue_id', array('UINT', 0)),
+		),
+		'custom' => 'titania_custom',
+	),
+
+	'0.1.38' => array(
+		'table_index_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_queue_id'),
+		),
+		'custom'	=> 'titania_tags',
+	),
+
+	'0.1.39' => array(
+		'table_column_add' => array(
+			array(TITANIA_QUEUE_TABLE, 'queue_close_user', array('UINT', 0)),
+			array(TITANIA_QUEUE_TABLE, 'queue_progress', array('UINT', 0)), // user_id
+			array(TITANIA_QUEUE_TABLE, 'queue_progress_time', array('UINT:11', 0)),
+		),
+	),
+
+	'0.1.40' => array(
+		'table_column_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'parent_id', array('UINT', 0)),
+			array(TITANIA_TOPICS_TABLE, 'topic_url', array('VCHAR_CI', '')),
+			array(TITANIA_POSTS_TABLE, 'post_url', array('VCHAR_CI', '')),
+		),
+		'table_index_add' => array(
+			array(TITANIA_TOPICS_TABLE, 'parent_id'),
+		),
+
+		'custom' => 'titania_custom',
+
+		'table_column_remove' => array(
+			array(TITANIA_TOPICS_TABLE, 'contrib_id'),
+			array(TITANIA_QUEUE_TABLE, 'contrib_name_clean'),
+		),
+	),
+
+	'0.1.41' => array(
+		// topic_deleted is now regulated automatically by the topic access level
+		'table_index_remove' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_deleted'),
+		),
+		'table_column_remove' => array(
+			array(TITANIA_TOPICS_TABLE, 'topic_deleted'),
+		),
+	),
+
+	'0.1.42' => array(
+		'permission_role_remove' => array(
+			array('ROLE_TITANIA_MODIFICATION_TEAM'),
+			array('ROLE_TITANIA_STYLE_TEAM'),
+			array('ROLE_TITANIA_MODERATOR_TEAM'),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM'),
+		),
+		'permission_role_add' => array(
+			array('ROLE_TITANIA_MODIFICATION_TEAM', 'u_'),
+			array('ROLE_TITANIA_STYLE_TEAM', 'u_'),
+			array('ROLE_TITANIA_MODERATOR_TEAM', 'u_'),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_'),
+		),
+
+		'permission_remove' => array(
+			'u_titania_',
+
+			'm_titania_author_mod',
+			'm_titania_contrib_mod',
+			'm_titania_rate_reset',
+			'm_titania_faq_mod',
+			'm_titania_post_mod',
+			'm_titania_mod_queue',
+			'm_titania_mod_validate',
+			'm_titania_mod_moderate',
+			'm_titania_style_queue',
+			'm_titania_style_validate',
+			'm_titania_style_moderate',
+		),
+
+		'permission_add' => array(
+			'u_titania_mod_author_mod',
+			'u_titania_mod_contrib_mod',
+			'u_titania_mod_rate_reset',
+			'u_titania_mod_faq_mod',
+			'u_titania_mod_post_mod',
+			'u_titania_mod_modification_queue',
+			'u_titania_mod_modification_validate',
+			'u_titania_mod_modification_moderate',
+			'u_titania_mod_style_queue',
+			'u_titania_mod_style_validate',
+			'u_titania_mod_style_moderate',
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_contrib_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+				'u_titania_mod_modification_queue',
+				'u_titania_mod_modification_validate',
+				'u_titania_mod_modification_moderate',
+				'u_titania_mod_style_queue',
+				'u_titania_mod_style_validate',
+				'u_titania_mod_style_moderate',
+			)),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_contrib_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+				'u_titania_mod_modification_queue',
+				'u_titania_mod_modification_validate',
+				'u_titania_mod_modification_moderate',
+				'u_titania_mod_style_queue',
+				'u_titania_mod_style_validate',
+				'u_titania_mod_style_moderate',
+			)),
+			array('ROLE_TITANIA_MODIFICATION_TEAM', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+				'u_titania_mod_modification_queue',
+				'u_titania_mod_modification_validate',
+				'u_titania_mod_modification_moderate',
+			)),
+			array('ROLE_TITANIA_STYLE_TEAM', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+				'u_titania_mod_style_queue',
+				'u_titania_mod_style_validate',
+				'u_titania_mod_style_moderate',
+			)),
+			array('ROLE_TITANIA_MODERATOR_TEAM', array(
+				'u_titania_mod_author_mod',
+				'u_titania_mod_rate_reset',
+				'u_titania_mod_faq_mod',
+				'u_titania_mod_post_mod',
+			)),
+		),
+	),
+
+	'0.1.43' => array(
+		'table_column_add' => array(
+			array(TITANIA_QUEUE_TABLE, 'revision_repack', array('TINT:1', 1)),
+		),
+	),
+
+	'0.1.44' => array(
+		'table_column_remove' => array(
+			array(TITANIA_QUEUE_TABLE, 'revision_repack'),
+		),
+
+		'table_column_add' => array(
+			array(TITANIA_QUEUE_TABLE, 'queue_allow_repack', array('BOOL', 1)),
+		),
+	),
+
+	'0.1.45' => array(
+		'table_add' => array(
+			array(TITANIA_ATTENTION_TABLE, array(
+				'COLUMNS'		=> array(
+					'attention_id'					=> array('UINT', NULL, 'auto_increment'),
+					'attention_type'				=> array('UINT', 0), // attention type constants (reported, needs approval, etc)
+					'attention_object_type'			=> array('UINT', 0),
+					'attention_object_id'			=> array('UINT', 0),
+					'attention_url'					=> array('VCHAR_CI', ''),
+					'attention_requester'			=> array('UINT', 0),
+					'attention_time'				=> array('TIMESTAMP', 0),
+					'attention_close_time'			=> array('TIMESTAMP', 0),
+					'attention_close_user'			=> array('UINT', 0),
+					'attention_title'				=> array('STEXT_UNI', ''),
+					'attention_description'			=> array('MTEXT_UNI', ''),
+				),
+				'PRIMARY_KEY'	=> 'attention_id',
+				'KEYS'			=> array(
+					'attention_type'				=> array('INDEX', 'attention_type'),
+					'attention_object_type'			=> array('INDEX', 'attention_object_type'),
+					'attention_object_id'			=> array('INDEX', 'attention_object_id'),
+					'attention_time'				=> array('INDEX', 'attention_time'),
+					'attention_close_time'			=> array('INDEX', 'attention_close_time'),
+					'attention_close_user'			=> array('INDEX', 'attention_close_user'),
+				),
+			)),
+		),
+	),
+
+	'0.1.46' => array(
+		'permission_add' => array(
+			'u_titania_mod_style_queue_discussion',
+			'u_titania_mod_modification_queue_discussion',
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array(
+				'u_titania_mod_style_queue_discussion',
+				'u_titania_mod_modification_queue_discussion',
+			)),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
+				'u_titania_mod_style_queue_discussion',
+				'u_titania_mod_modification_queue_discussion',
+			)),
+			array('ROLE_TITANIA_MODIFICATION_TEAM', array(
+				'u_titania_mod_modification_queue_discussion',
+			)),
+			array('ROLE_TITANIA_STYLE_TEAM', array(
+				'u_titania_mod_style_queue_discussion',
+			)),
+		),
+	),
+
+	'0.1.47' => array(
+		'custom' => 'titania_custom',
+	),
+
+	'0.1.48' => array(
+		'table_column_add' => array(
+			array(TITANIA_ATTENTION_TABLE, 'attention_poster_id', array('UINT', 0)),
+			array(TITANIA_ATTENTION_TABLE, 'attention_post_time', array('TIMESTAMP', 0)),
+		),
+
+		'table_index_add' => array(
+			array(TITANIA_ATTENTION_TABLE, 'attention_poster_id'),
+			array(TITANIA_ATTENTION_TABLE, 'attention_post_time'),
+		),
+	),
+
+	'0.1.49' => array(
+		'custom' => 'titania_custom',
+	),
+
+	'0.1.50' => array(
+		'permission_add' => array(
+			'u_titania_post_approved',
+		),
+
+		'permission_set' => array(
+			array('ROLE_USER_STANDARD', array(
+				'u_titania_post_approved',
+			)),
+			array('ROLE_USER_FULL', array(
+				'u_titania_post_approved',
+			)),
+		),
+	),
+
+	'0.1.51' => array(
+		'table_column_add' => array(
+			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes', array('MTEXT_UNI', '')),
+			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes_bitfield', array('VCHAR:255', '')),
+			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes_uid', array('VCHAR:8', '')),
+			array(TITANIA_QUEUE_TABLE, 'queue_validation_notes_options', array('UINT:11', 7)),
+		),
+	),
+
+	'0.1.52' => array(
+		'table_column_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_release_topic_id', array('UINT', 0)),
+		),
+	),
+
+	'0.1.53' => array(
+		'table_add' => array(
+			array(TITANIA_REVISIONS_PHPBB_TABLE, array(
+				'COLUMNS'		=> array(
+					'row_id'					=> array('UINT', NULL, 'auto_increment'),
+					'revision_id'				=> array('UINT', 0),
+					'contrib_id'				=> array('UINT', 0),
+					'phpbb_version_branch'		=> array('TINT:1', 0),
+					'phpbb_version_revision'	=> array('VCHAR', ''),
+				),
+				'PRIMARY_KEY'	=> 'row_id',
+				'KEYS'			=> array(
+					'revision_id'				=> array('INDEX', 'revision_id'),
+					'contrib_id'				=> array('INDEX', 'contrib_id'),
+					'phpbb_version_branch'		=> array('INDEX', 'phpbb_version_branch'),
+					'phpbb_version_revision'	=> array('INDEX', 'phpbb_version_revision'),
+				),
+			)),
+		),
+		'custom' => 'titania_custom',
+		'table_column_remove' => array(
+			array(TITANIA_REVISIONS_TABLE, 'phpbb_version'),
+		),
+	),
+
+	'0.1.54' => array(
+		'permission_add' => array(
+			'u_titania_admin',
+		),
+
+		'permission_set' => array(
+			array('ROLE_ADMIN_FULL', array(
+				'u_titania_admin',
+			)),
+			array('ROLE_TITANIA_ADMINISTRATOR_TEAM', array(
+				'u_titania_admin',
+			)),
+		),
+	),
+
+	'0.1.55' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_PHPBB_TABLE, 'revision_validated', array('BOOL', 0)),
+		),
+
+		'table_index_add' => array(
+			array(TITANIA_REVISIONS_PHPBB_TABLE, 'revision_validated'),
+		),
+
+		'custom' => 'titania_custom',
+	),
+
+	'0.1.56' => array(
+		'table_column_remove' => array(
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'faq_order_id'),
+		),
+
+		'table_column_add' => array(
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'left_id', array('UINT', 0)),
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'right_id', array('UINT', 0)),
+		),
+
+		'table_index_add' => array(
+			array(TITANIA_CONTRIB_FAQ_TABLE, 'left_right_id', array('left_id', 'right_id')),
+		),
+	),
+
+	'0.1.57' => array(
+		'table_add' => array(
+			array(TITANIA_AUTOMOD_QUEUE_TABLE, array(
+				'COLUMNS'		=> array(
+					'row_id'					=> array('UINT', NULL, 'auto_increment'),
+					'revision_id'				=> array('UINT', 0),
+					'phpbb_version_branch'		=> array('TINT:1', 0),
+					'phpbb_version_revision'	=> array('VCHAR', ''),
+				),
+				'PRIMARY_KEY'	=> 'row_id',
+				'KEYS'			=> array(
+					'revision_id'				=> array('INDEX', 'revision_id'),
+				),
+			)),
+		),
+	),
+
+	'0.3.0' => array(),
 
 	'0.3.1' => array(
 		'permission_add' => array(
@@ -603,13 +929,7 @@ $versions = array(
 			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_user_id', array('UINT', 0)),
 		),
 	),
-	
-	'0.3.5' => array(
-		'table_column_add' => array(
-			array(TITANIA_CONTRIBS_TABLE, 'contrib_iso_code', array('VCHAR', '')),
-			array(TITANIA_CONTRIBS_TABLE, 'contrib_local_name', array('VCHAR', '')),
-		),
-	),
+
 	'0.3.5' => array(
 		'table_column_add' => array(
 			array(TITANIA_CONTRIBS_TABLE, 'contrib_iso_code', array('VCHAR', '')),

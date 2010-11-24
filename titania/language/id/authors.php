@@ -34,34 +34,34 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'AUTHOR_CONTRIBS'			=> 'Contributions',
-	'AUTHOR_DATA_UPDATED'		=> 'The author’s information has been updated.',
-	'AUTHOR_DESC'				=> 'Author Description',
-	'AUTHOR_DETAILS'			=> 'Author Details',
-	'AUTHOR_MODS'				=> '%d Modifications',
-	'AUTHOR_MODS_ONE'			=> '1 Modification',
-	'AUTHOR_NOT_FOUND'			=> 'Author not found',
-	'AUTHOR_PROFILE'			=> 'Author Profile',
-	'AUTHOR_RATING'				=> 'Author Rating',
-	'AUTHOR_SNIPPETS'			=> '%d Snippets',
-	'AUTHOR_SNIPPETS_ONE'		=> '1 Snippet',
-	'AUTHOR_STATISTICS'			=> 'Author Statistics',
-	'AUTHOR_STYLES'				=> '%d Styles',
-	'AUTHOR_STYLES_ONE'			=> '1 Style',
-	'AUTHOR_SUPPORT'			=> 'Support',
+	'AUTHOR_CONTRIBS'			=> 'Kontribusi',
+	'AUTHOR_DATA_UPDATED'		=> 'Informasi pengarang sudah dibarui.',
+	'AUTHOR_DESC'				=> 'Deskripsi Pengarang',
+	'AUTHOR_DETAILS'			=> 'Keterangan Pengarang',
+	'AUTHOR_MODS'				=> '%d Modifikasi',
+	'AUTHOR_MODS_ONE'			=> '1 Modifikasi',
+	'AUTHOR_NOT_FOUND'			=> 'Pengarang tidak ditemukan',
+	'AUTHOR_PROFILE'			=> 'Profil Pengarang',
+	'AUTHOR_RATING'				=> 'Rating Pengarang',
+	'AUTHOR_SNIPPETS'			=> '%d Potongan',
+	'AUTHOR_SNIPPETS_ONE'		=> '1 Potongan',
+	'AUTHOR_STATISTICS'			=> 'Statistik Pengarang',
+	'AUTHOR_STYLES'				=> '%d Gaya',
+	'AUTHOR_STYLES_ONE'			=> '1 Gaya',
+	'AUTHOR_SUPPORT'			=> 'Bantuan',
 
 	'ENHANCED_EDITOR'			=> 'Enhanced Editor',
-	'ENHANCED_EDITOR_EXPLAIN'	=> 'Enable/disable the enhanced editor (captures tabs and automatically expands textareas).',
+	'ENHANCED_EDITOR_EXPLAIN'	=> 'Hidupkan/matikan enhanced editor (menangkap tab dan memperluas daerah teks secara otomatis).',
 
-	'MANAGE_AUTHOR'				=> 'Manage Author',
+	'MANAGE_AUTHOR'				=> 'Atur Pengarang',
 
-	'NO_AVATAR'					=> 'No avatar',
+	'NO_AVATAR'					=> 'Tidak ada avatar',
 
-	'PHPBB_PROFILE'				=> 'phpBB.com profile',
+	'PHPBB_PROFILE'				=> 'Profil phpBB.com',
 
-	'REAL_NAME'					=> 'Real Name',
+	'REAL_NAME'					=> 'Nama Asli',
 
-	'USER_INFORMATION'			=> '’s user information',
+	'USER_INFORMATION'			=> 'informasi pengguna',
 
-	'VIEW_USER_PROFILE'			=> 'View user profile',
+	'VIEW_USER_PROFILE'			=> 'Lihat profil pengguna',
 ));

@@ -36,43 +36,43 @@ if (!defined('IN_PHPBB'))
 $help = array(
 	array(
 		0 => '--',
-		1 => 'What is Titania (aka The Customisation Database)'
+		1 => 'Apa itu Titania (dikenal sebagai Database Kostumisasi)'
 	),
 	array(
-		0 => 'What is Titania?',
-		1 => 'Titania (aka The Customisation Database) is a database where users are be able to download modifications and styles for a phpBB forum.  You also are ensured that the modification or style that you have downloaded has passed the phpBB validation requirements.'
+		0 => 'Apa itu Titania?',
+		1 => 'Titania (dikenal sebagai Database Kostumisasi) adalah sebuah database dimana pengguna bisa mengunduh modifikasi dan gaya untuk forum phpBB.  Anda juga bisa memastikan bahwa modifikasi ataupun gaya yang anda unduh telah melewati persayaratan uji pengesahan phpBB.'
 	),
 	array(
-		0 => 'Validation? What’s that?',
-		1 => 'Each and every modification, or style, that is downloaded by you within Titania has undergone validation.  Validation means that a modification, or style, has undergone scrutiny as to the security of the code involved as well as testing to ensure the modification or style installs and works properly within a particular version of a phpBB forum.  Validation provides to you a level of comfort in knowing that you are not downloading/installing a modification or style that may subject your forum to being hacked.'
-	),
-	array(
-		0 => '--',
-		1 => 'How to use Titania',
-	),
-	array(
-		0 => 'Finding a contribution',
-		1 => 'There are several ways to find a contribution.  On the main Customisation Database page you can see the categories that are currently available as well as recent modifications/styles that have been approved within the database.'
-	),
-	array(
-		0 => 'Finding a modification',
-		1 => 'You can either go directly to the type of modification wanted based on what category the contribution is based on (Tools, Communication, Security, Entertainment, etc) or by using the search feature toward the top of the page.  If using the search feature you can use wildcards and search on either the contribution name (or part of the name) as well as the contribution’s author.  Once you find the customisation you are interested in you will be brought to the “Contribution Details” page where you can find a download of the current version of the customisation as well as past versions of the customisation within the “Revisions” section.'
-	),
-	array(
-		0 => 'Finding a style',
-		1 => 'Similar to finding a modification, Titania also allows you to locate styles, smilie packs, rank images and other items.  The search feature will also allow you to use wild cards and to search on just an authors name as well.  Once you find the item you are interested in you will be brought to the “Contribution Details” page where you can find a download of the current version of the item as well as past versions of the that item within the “Revisions” section.'
+		0 => 'Pengesahan? Apa itu?',
+		1 => 'Semua dan setiap modifikasi ataupun gaya yang anda unduh pada Titania telah menjalani proses pengesahan.  Pengesahan berarti bahwa modifikasi ataupun gaya telah menjalani beberapa penelitian cermat terhadap kode yang diikutsertakan bersamaan dengan uji cobanya untuk meyakinkan bahwa modifikasi ataupun gaya bisa diinstal dan bekerja dengan beberapa versi forum phpBB.  Pengesahan yang diberikan kepada anda dengan tingkat kenyamanan dalam mengetahui bahwa anda tidak mengunduh/menginstal sebuah modifikasi ataupun gaya yang bisa menyebabkan forum anda dihack.'
 	),
 	array(
 		0 => '--',
-		1 => 'Customisation Support'
+		1 => 'Bagaimana mengggunakan Titania',
 	),
 	array(
-		0 => 'Rules',
-		1 => 'With the introduction of Titania, the rules involved to use it are very simple.  As in the past, the saying “You should seek support within the modification/style topic where you got the customisation” pertains.  While the support Team of phpBB.com does their best to assist you in running and using your forum they can not, and are not expected to, provide support for any customisation/contribution.  It is the hope of phpBB that the author of the contribution provide you, the end user, with support in using their customisation.  Please remember that all authors are volunteers who have spent their time in providing an enhancement to the phpBB software.  The saying “You get more flies with honey than you do with vinegar” applies, so please keep this in mind when requesting support for a customisation (eg, be nice in the way you ask).'
+		0 => 'Mencari Kontribusi',
+		1 => 'Ada banyak kontribusi yang bisa dicari.  Pada halaman utama Database Kostumisasi anda bisa melihat kategori yang sudah tersedia beserta modifikasi ataupun gaya yang terakhir disetujui di dalam database.'
 	),
 	array(
-		0 => 'How to get support',
-		1 => 'Each customisation is provided a method to provide support to you.  Within each is the ability for the author to post FAQ(s) concerning the customisation as well as a discussion/support area for a type of one-on-one support.  This support can range anywhere from assisting you to getting the customisation installed and may even provide to you additional add-ons to enhance the customisation.  To access this area you simply click on the customisation and a tab will be displayed stating “Discussion/Support”.  Once you access this area you may post a question or comment to the author.  Please remember that authors are under no obligation to provide support just as they are under no obligation to provide to you the customisation.  If you run across a post or comment that you feel is not in the best interests of the community, please feel free to use the “Report this post” button and a moderator will take the appropriate action necessary.'
+		0 => 'Mencari Modifikasi',
+		1 => 'Anda juga bisa secara langsung menuju tipe modifikasi pada kategori dimana kontribusi tersebut ditempatkan yang dikelompokkan atas (Alat, Komunikasi, Keamanan, Hiburan, dsb) ataupun dengan menggunkan fitur pencarian pada bagian atas halaman.  Jika anda menggunakan fitur pencarian, anda bisa menggunakan wildcard bersamaan dengan nama kontribusinya (ataupun sebagian nama saja) dan juga nama pengarang kontribusi.  Setelah anda menemukan kostumisasi yang anda inginkan maka anda akan diarahkan pada halaman “Keterangan Kontribusi” dimanan anda dapat mencari unduhan dari berbagai versi kostumisasi pada bagian “Revisi”.'
+	),
+	array(
+		0 => 'Mencari Gaya',
+		1 => 'Sama halnya dengan pencarian modifikasi, Titania juga mengijinkan anda untuk mencari gaya, paket smiley, gambar ranking dan item-item lainnya.  Fitur pencarian juga bis anda gunakan dengan wildcard ataupun mencari nama pengarangnya.  Setelah anda menemukan item yang anda inginkan maka anda akan diarahkan pada halaman “Keterangan Kontribusi” dimanan anda dapat mencari unduhan dari berbagai versi kostumisasi pada bagian “Revisi”.'
+	),
+	array(
+		0 => '--',
+		1 => 'Bantuan Kostumisasi'
+	),
+	array(
+		0 => 'Peraturan',
+		1 => 'Dengan pengenalan terhadap Titania, peraturan yang dilibatkan untuk penggunaannya sangatlah sederhana.  Sebagaimana telah tercantum terdahulu, yang menyebutkan “Anda harus mencari bantuan di dalam topik modifikasi/gaya di tempat anda menemukan kostumisasinya” per item.  Sewaktu tim pembantu dari phpBB.com melakukan yang terbaik untuk membantu anda menjalankan dan tidak bisa menggunakan forum anda, dan tidak diharapkan untuk memberikan bantuan untuk banyak kostumisasi/kontribusi.  Adalah harapan phpBB bahwa pengarang dari kontribusi yang diberikan kepada anda, pengguna, dengan bantuan dalam penggunaan kostumisasi mereka.  Mohon dicatat bahwa semua pengarang adalah relawan yang menyempatkan waktu mereka untuk meningkatkan perangkat lunatk phpBB.  Ada pernyataan “Anda akan mendapatkan banyak lalat dengan menggunakan madu daripada menggunakan cuka” juga akan digunakan, jadi mohon diingat pada saat meminta bantuan untuk sebuah kostumisasi (seperti, sopanlah pada saat anda meminta).'
+	),
+	array(
+		0 => 'Bagaimana mendapatkan bantuan',
+		1 => 'Setiap kostumisasi menyajikan sebuah metode bantuan untuk anda.  Setiapnya adalah kemampuan dari pengarang untuk membuat post FAQ mengenai kostumisasi sebagaimana sebuah tempat diskusi/bantuan untuk tipe bantuan satu lawan satu.  Bantuan ini bisa dalam bentuka apa saja mulai dari bantuan mengenai instalasi dan bahkan memberikan addon tambahan bagi anda untuk meningkatkan kostumisasi.  Untuk mengakses tempat ini, klik bagian tab kostumisasi yang akan bertulisakan  “Diskusi/Bantuan”.  Setelah anda mengakses area ini, anda bisa membuat post pertanyaan ataupun komentar kepada pengarang.  Mohon diingat bahwa pengarang tidak memiliki kewajiban untuk memberikan bantuan sebagaimana mereka tidak memiliki kewajiban memberikan kostumisasi tersebut kepada anda.  Jika anda menemukan sebuah post ataupun komentar yang anda rasa tidak memiliki ketertarikan pada komunitas , silahkan menggunakan tombol “Laporkan post ini” dan moderator akan mengambil tindakan yang diperlukan.'
 	),
 	// This block will switch the FAQ-Questions to the second template column
 	// Authors corner!!
@@ -82,14 +82,14 @@ $help = array(
 	),
 	array(
 		0 => '--',
-		1 => 'Creating and Managing Contributions'
+		1 => 'Membuat dan Mengatur Kontribusi'
 	),
 	array(
-		0 => 'Creating a Contribution',
-		1 => 'As with any contribution, authors are requested to follow certain guidelines when submitting their own contribution.  The <a href="http://area51.phpbb.com/docs/coding-guidelines.html">Coding Guidelines</a>, though seemingly daunting at first, are actually your friend.  They should be followed as closely as possible to assist you in getting your contribution to the community published.  In the case of a MOD, the <a href="http://www.phpbb.com/mods/mpv/">phpBB MOD pre-validator</a> (aka “MPV”) will be run against the submitted revision and will check for things such as correct licensing, current phpBB version and current <a href="http://www.phpbb.com/mods/modx/">MODX</a> version.'
+		0 => 'Membuat Kontribusi',
+		1 => 'Seperti beberapa kontribusi, pengarang diminta untuk mengikuti beberapa panduan pada saat mengajukan kontribusinya.  Bagian <a href="http://area51.phpbb.com/docs/coding-guidelines.html">Panduan Pengkodean</a>, walaupun tampak agak menyeramkan, tapi itu adalah teman sesungguhnya buat anda.  Panduan tersebut harus diikuti sedekat mungkin yang mungkin akan membantu untuk mendapatkan kontribusi anda yang akan dipublikasikan ke komunitas.  Dalam hal MOD, bagian <a href="http://www.phpbb.com/mods/mpv/">phpBB MOD pre-validator</a> (dikenal dengan nama “MPV”) akan dijalankan terhadap revisi yang diajukan dan akan memeriksa banyak hal seperti kebenaran lisensi, versi phpBB yang digunakan dan versi <a href="http://www.phpbb.com/mods/modx/">MODX</a>.'
 	),
 	array(
-		0 => 'Submitting a Contribution',
+		0 => 'Mengajukan sebuah Kontribusi',
 		1 => 'So you’ve made a contribution.  Let’s get that puppy published!!<br /><br />To submit a contribution, go to the Customisation Database and within that page you will find an image link that states “New Contribution”.  Once clicked on you will be able to enter in the contribution name, select the contribution type, add some wording to describe the contribution (smilies and bbcode is allowed), select the category(ies) that the contribution fits into, add co-authors (if any) and screenshots as well.  Please keep in mind that as you are submitting the contribution, it is your name the contribution will be aligned with.'
 	),
 	array(

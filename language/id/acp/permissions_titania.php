@@ -1,6 +1,6 @@
 <?php
 /**
-* acp_permissions_titania (Titania Permission Set) [Indonesian]
+* acp_permissions_titania (Titania Permission Set) [Bahasa Indonesia]
 *
 * @package language
 * @version $Id$
@@ -89,58 +89,58 @@ $lang['permission_cat']['titania_moderate'] = 'Titania Moderate';
 
 $lang = array_merge($lang, array(
 	// Common
-	'acl_u_titania_contrib_submit'		=> array('lang' => 'Can submit contributions', 'cat' => 'titania'),
-	'acl_u_titania_faq_create'			=> array('lang' => 'Can create FAQ entries (for own Contributions)', 'cat' => 'titania'),
-	'acl_u_titania_faq_edit'			=> array('lang' => 'Can edit FAQ entries (for own Contributions)', 'cat' => 'titania'),
-	'acl_u_titania_faq_delete'			=> array('lang' => 'Can delete FAQ entries (for own Contributions)', 'cat' => 'titania'),
-	'acl_u_titania_rate'				=> array('lang' => 'Can rate items', 'cat' => 'titania'),
-	'acl_u_titania_topic'				=> array('lang' => 'Can create new topics', 'cat' => 'titania'),
-	'acl_u_titania_post'				=> array('lang' => 'Can create new posts', 'cat' => 'titania'),
-	'acl_u_titania_post_approved'		=> array('lang' => 'Can post <strong>without</strong> approval', 'cat' => 'titania'),
-	'acl_u_titania_post_edit_own'		=> array('lang' => 'Can edit own posts', 'cat' => 'titania'),
-	'acl_u_titania_post_delete_own'		=> array('lang' => 'Can delete own posts', 'cat' => 'titania'),
-	'acl_u_titania_post_mod_own'		=> array('lang' => 'Can moderate own contribution topics', 'cat' => 'titania'),
-	'acl_u_titania_post_attach'			=> array('lang' => 'Can attach files to posts', 'cat' => 'titania'),
-	'acl_u_titania_bbcode'				=> array('lang' => 'Can post BBCode', 'cat' => 'titania'),
-	'acl_u_titania_smilies'				=> array('lang' => 'Can post smilies', 'cat' => 'titania'),
+	'acl_u_titania_contrib_submit'		=> array('lang' => 'Bisa mengajukan kontribusi', 'cat' => 'titania'),
+	'acl_u_titania_faq_create'			=> array('lang' => 'Bisa membuat entri FAQ (untuk kontribusinya sendiri)', 'cat' => 'titania'),
+	'acl_u_titania_faq_edit'			=> array('lang' => 'Bisa mengubah entri FAQ (untuk kontribusinya sendiri)', 'cat' => 'titania'),
+	'acl_u_titania_faq_delete'			=> array('lang' => 'Bisa menghapus entri FAQ (untuk kontribusinya sendiri)', 'cat' => 'titania'),
+	'acl_u_titania_rate'				=> array('lang' => 'Bisa memberikan penilaian pada item-item', 'cat' => 'titania'),
+	'acl_u_titania_topic'				=> array('lang' => 'Bisa membuat topik baru', 'cat' => 'titania'),
+	'acl_u_titania_post'				=> array('lang' => 'Bisa membuat post baru', 'cat' => 'titania'),
+	'acl_u_titania_post_approved'		=> array('lang' => 'Bisa membuat post <strong>tanpa</strong> persetujuan', 'cat' => 'titania'),
+	'acl_u_titania_post_edit_own'		=> array('lang' => 'Bisa mengubah postnya sendiri', 'cat' => 'titania'),
+	'acl_u_titania_post_delete_own'		=> array('lang' => 'Bisa menghapus postnya sendiri', 'cat' => 'titania'),
+	'acl_u_titania_post_mod_own'		=> array('lang' => 'Bisa memoderasi topik kontribusinya sendiri', 'cat' => 'titania'),
+	'acl_u_titania_post_attach'			=> array('lang' => 'Bisa melampirkan file-file di post', 'cat' => 'titania'),
+	'acl_u_titania_bbcode'				=> array('lang' => 'Bisa mempost BBCode', 'cat' => 'titania'),
+	'acl_u_titania_smilies'				=> array('lang' => 'Bisa mempost smiley', 'cat' => 'titania'),
 
-	'acl_u_titania_post_hard_delete'	=> array('lang' => 'Can <strong>hard</strong> delete posts and topics (posts and topics that the user is able to otherwise delete).', 'cat' => 'titania'),
+	'acl_u_titania_post_hard_delete'	=> array('lang' => '<strong>Bisa</strong> menghapus post dan topik (post dan topik yang bisa dihapus pengguna).', 'cat' => 'titania'),
 
 	// Moderation
-	'acl_u_titania_mod_author_mod'			=> array('lang' => 'Can moderate author profiles', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_contrib_mod'			=> array('lang' => 'Can moderate (all) contributions', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_faq_mod'				=> array('lang' => 'Can moderate FAQ entries', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_rate_reset'			=> array('lang' => 'Can reset ratings', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_post_mod'			=> array('lang' => 'Can moderate topics', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_author_mod'			=> array('lang' => 'Bisa memoderasi profil pengarang', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_contrib_mod'			=> array('lang' => 'Bisa memoderasi (semua) kontribusi', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_faq_mod'				=> array('lang' => 'Bisa memoderasi entri FAQ', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_rate_reset'			=> array('lang' => 'Bisa mengatur ulang penilaian', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_post_mod'			=> array('lang' => 'Bisa memoderasi topik', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_mod_style_queue_discussion'			=> array('lang' => 'Can see Styles Queue Discussion', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_style_queue'						=> array('lang' => 'Can see Styles Queue', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_style_validate'					=> array('lang' => 'Can validate Styles', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_style_moderate'					=> array('lang' => 'Can moderate Styles', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_queue_discussion'			=> array('lang' => 'Bisa melihat Diskusi Antrian Gaya', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_queue'						=> array('lang' => 'Bisa melihat Antrian Gaya', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_validate'					=> array('lang' => 'Bisa mensahkan Gaya', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_moderate'					=> array('lang' => 'Bisa memoderasi Gaya', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_mod_modification_queue_discussion'	=> array('lang' => 'Can see Modifications Queue Discussion', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_modification_queue'				=> array('lang' => 'Can see Modifications Queue', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_modification_validate'			=> array('lang' => 'Can validate Modifications', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_modification_moderate'			=> array('lang' => 'Can moderate Modifications', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_modification_queue_discussion'	=> array('lang' => 'Bisa melihat Diskusi Antrian Modifikasi', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_modification_queue'				=> array('lang' => 'Bisa melihat Antrian Modifikasi', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_modification_validate'			=> array('lang' => 'Bisa mensahkan Modifikasi', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_modification_moderate'			=> array('lang' => 'Bisa memoderasi Modifikasi', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_mod_translation_queue_discussion'		=> array('lang' => 'Can see Translation Queue Discussion', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_translation_queue'					=> array('lang' => 'Can see Translation Queue', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_translation_validate'				=> array('lang' => 'Can validate Translations', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_translation_moderate'				=> array('lang' => 'Can moderate Translations', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_translation_queue_discussion'		=> array('lang' => 'Bisa melihat Diskusi Antrian Terjemahan', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_translation_queue'					=> array('lang' => 'Bisa melihat Antrian Terjemahan', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_translation_validate'				=> array('lang' => 'Bisa mensahkan Terjemahan', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_translation_moderate'				=> array('lang' => 'Bisa memoderasi Terjemahan', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_mod_converter_queue_discussion'		=> array('lang' => 'Can see Converter Queue Discussion', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_converter_queue'					=> array('lang' => 'Can see Converter Queue', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Can validate Converters', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_converter_moderate'				=> array('lang' => 'Can moderate Converters', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_queue_discussion'		=> array('lang' => 'Bisa melihat Diskusi Antrian Konvertor', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_queue'					=> array('lang' => 'Bisa melihat Antrian Konvertor', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Bisa mensahkan Konvertor', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_moderate'				=> array('lang' => 'Bisa memoderasi Konvertor', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_mod_bridge_queue_discussion'			=> array('lang' => 'Can see Bridge Queue Discussion', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_bridge_queue'					=> array('lang' => 'Can see Bridge Queue', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Can validate Bridges', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_bridge_moderate'					=> array('lang' => 'Can moderate Bridges', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_queue_discussion'			=> array('lang' => 'Bisa melihat Diskusi Antrian Bridge', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_queue'					=> array('lang' => 'Bisa melihat Antrian Bridge', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Bisa mensahkan Bridge', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_moderate'					=> array('lang' => 'Bisa memoderasi Bridges', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_mod_official_tool_moderate'			=> array('lang' => 'Can submit/moderate Official Tools', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_official_tool_moderate'			=> array('lang' => 'Bisa mengajukan/memoderasi Perkakas Resmi', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_admin'			=> array('lang' => 'Can <strong>administrate</strong> Titania', 'cat' => 'titania_moderate'),
+	'acl_u_titania_admin'			=> array('lang' => 'Bisa <strong>mengadministrasi</strong> Titania', 'cat' => 'titania_moderate'),
 ));
 
 ?>

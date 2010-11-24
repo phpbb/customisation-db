@@ -1,6 +1,6 @@
 <?php
 /**
-* titania acp language [Indonesian]
+* titania acp language [Bahasa Indonesia]
 *
 * @package language
 * @version $Id$
@@ -24,10 +24,10 @@ if (empty($lang) || !is_array($lang))
 
 // Merge the following language entries into the lang array
 $lang = array_merge($lang, array(
-	'ROLE_TITANIA_MODIFICATION_TEAM'	=> 'Titania Modifications Team Role',
-	'ROLE_TITANIA_STYLE_TEAM'			=> 'Titania Style Team Role',
-	'ROLE_TITANIA_MODERATOR_TEAM'		=> 'Titania Moderation Team Role',
-	'ROLE_TITANIA_ADMINISTRATOR_TEAM'	=> 'Titania Administration Team Role',
+	'ROLE_TITANIA_MODIFICATION_TEAM'	=> 'Peranan Tim Modifikasi Titania',
+	'ROLE_TITANIA_STYLE_TEAM'			=> 'Peranan Tim Gaya Titania',
+	'ROLE_TITANIA_MODERATOR_TEAM'		=> 'Peranan Tim Moderasi Titania',
+	'ROLE_TITANIA_ADMINISTRATOR_TEAM'	=> 'Peranan Tim Administrasi Titania',
 ));
 
 ?>
