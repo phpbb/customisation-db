@@ -38,40 +38,40 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'COULD_NOT_FIND_TRANSLATION_ROOT'			=> 'We couldn\'t locate the root directory of your language pack. Make sure you have a directory containing <code>language/</code> and optionally <code>styles/</code> in the top level.',
+	'COULD_NOT_FIND_TRANSLATION_ROOT'			=> 'Kami tidak bisa menemukan direktori induk dari paket bahasa anda. Pastikan anda memiliki direktori yang mengandung <code>language/</code> dan <code>styles/</code> pada tingkat utama.',
 
-	'MISSING_FILE'								=> 'The file <code>%s</code> is missing in your language pack',
-	'MISSING_KEYS'								=> 'You are missing the following language keys in <code>%1$s</code>:<br />%2$s',
+	'MISSING_FILE'								=> 'File <code>%s</code> hilang dalam paket bahasa anda',
+	'MISSING_KEYS'								=> 'Anda kehilangan kunci-kunci bahasa sebagai berikut <code>%1$s</code>:<br />%2$s',
 
-	'PASSED_VALIDATION'							=> 'Your language pack has passed the validation process which checks for missing keys, license files and which repackages your translation, please continue.',
+	'PASSED_VALIDATION'							=> 'Paket bahasa anda telah melewati uji pengesahan yang memeriksa bagian kunci yang hilang, lisensi dan pemaketan ulang terjemahan, silahkan lanjutkan.',
 
-	'TRANSLATION'								=> 'Translation',
-	'TRANSLATION_VALIDATION'					=> '[phpBB Translation-Validation] %1$s %2$s',
-	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Translation to the phpBB.com Customisation Database. After careful inspection your translation has been approved and released into our Customisation Database.
+	'TRANSLATION'								=> 'Terjemahan',
+	'TRANSLATION_VALIDATION'					=> '[Pengesahan-Terjemahan phpBB] %1$s %2$s',
+	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Terima kasih atas pengajuan Terjemahan anda ke Database Kostumisasi phpBB.com. Setelah melakukan pemeriksaan dengan teliti, terjemahan anda telah disetejui dan dirilis ke dalam Database Kostumisasi kami.
 
-It is our hope that you will provide a basic level of support for this translation and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
+Harapan kami semoga anda bisa memberikan bantuan yang paling mendasar atas terjemahan ini dan tetap membarui dengan rilis di masa yang akan datang dari phpBB. Kami menghargai semua usaha dan kontribusi anda kepada komunitas. Pengarang seperti anda bisa membuat phpBB.com menjadi sebuah tempat untuk semua orang.
 
-[b]Notes from the Team about your translation:[/b]
+[b]Catatan dari Tim tentang terjemahan anda:[/b]
 [quote]%s[/quote]
 
 Sincerely,
 phpBB Teams',
-	'TRANSLATION_VALIDATION_MESSAGE_DENY'		=> 'Hello,
+	'TRANSLATION_VALIDATION_MESSAGE_DENY'		=> 'Hallo,
 
-As you may know all translations submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
+Sebagaimana apa yang anda ketahui mengenai semua terjemahan yang diajukan di Database Kostumisasi phpBB harus disahkan dan disetujui oleh anggota dari Team phpBB.
 
-Upon validating your translation the phpBB Team regrets to inform you that we have had to deny it.
+Selama pengesahan terjemahan anda, Tim phpBB sangat menyesal memberitahukan kepada anda bahwa terjemahan anda kami tolak.
 
-To correct the problem(s) with your translation, please following the below instructions:
-[list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your translation being denied.
-[*]Re-upload your translation to our Customisation Database.[/list]
-Please ensure you tested your translation on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your translation.
+Untuk menyelesaikan permasalahan atas terjemahan anda, silahkan ikuti instruksi berikut ini:
+[list=1][*]Buat perubahan yang diperlukan untuk memperbaiki setiap permasalah (dilampirkan di bawah ini) yang bisa menjadikan terjemahan anda ditolak.
+[*]Unggah ulang terjemahan anda ke Database Kostumisasi kami.[/list]
+Mohon dipastikan bahwa anda sudah mencoba terjemahan pada versi terbaru phpBB (lihat halaman [url=http://www.phpbb.com/downloads/]Unduh[/url]) sebelum anda mengajukan ulang terjemahan.
 
-If you feel this denial was not warranted please contact the Translations Manager.
+Jika anda merasa penolakan ini tidak beralasan, silahkan menghubungi Translation Manager.
 
-Here is a report on why your translation was denied:
+Berikut adalah keterangan kenapa terjemahan anda ditolak:
 [quote]%s[/quote]
 
-Thank you,
-phpBB Teams',
+Terima kasih,
+Tim phpBB',
 ));
