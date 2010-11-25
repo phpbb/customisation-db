@@ -38,34 +38,34 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'CONVERTER'								=> 'Convertor',
-	'CONVERTERS'							=> 'Convertors',
-	'CONVERTER_VALIDATION'					=> '[phpBB Convertor-Validation] %1$s %2$s',
-	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Convertor to the phpBB.com Customisation Database. After careful inspection your Convertor has been approved and released into our Customisation Database.
+	'CONVERTER'								=> 'Konvertor',
+	'CONVERTERS'							=> 'Konvertor',
+	'CONVERTER_VALIDATION'					=> '[Pengesahan-Konvertor phpBB] %1$s %2$s',
+	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Terima kasih telah mengajukan konvertor anda ke Kostumisasi Database phpBB.com. Setalah pemeriksaan dengan teliti, konvertor yang anda ajukan telah disetujui dan dirilis di Kostumisasi Database kami.
 
-It is our hope that you will provide a basic level of support for this convertor and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
+Harapan kami semoga anda bisa memberikan bantuan yang paling mendasar atas konvertor ini dan tetap membarui dengan rilis di masa yang akan datang dari phpBB. Kami menghargai semua usaha dan kontribusi anda kepada komunitas. Pengarang seperti anda bisa membuat phpBB.com menjadi sebuah tempat untuk semua orang.
 
-[b]Notes from the Team about your convertor:[/b]
+[b]Catatan dari Tim tentang konvertor anda:[/b]
 [quote]%s[/quote]
 
-Sincerely,
-phpBB Teams',
-	'CONVERTER_VALIDATION_MESSAGE_DENY'		=> 'Hello,
+Hormat kami,
+Tim phpBB',
+	'CONVERTER_VALIDATION_MESSAGE_DENY'		=> 'Hallo,
 
-As you may know all convertors submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
+Sebagaimana apa yang anda ketahui mengenai semua konvertor yang diajukan di Database Kostumisasi phpBB harus disahkan dan disetujui oleh anggota dari Team phpBB.
 
-Upon validating your convertor the phpBB Team regrets to inform you that we have had to deny it.
+Selama pengesahan konvertor anda, Tim phpBB sangat menyesal memberitahukan kepada anda bahwa konvertor anda kami tolak.
 
-To correct the problem(s) with your convertor, please following the below instructions:
-[list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your convertor being denied.
-[*]Re-upload your convertor to our Customisation Database.[/list]
-Please ensure you tested your convertor on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your convertor.
+Untuk menyelesaikan permasalahan atas konvertor anda, silahkan ikuti instruksi berikut ini:
+[list=1][*]Buat perubahan yang diperlukan untuk memperbaiki setiap permasalah (dilampirkan di bawah ini) yang bisa menjadikan konvertor anda ditolak.
+[*]Unggah ulang konvertor anda ke Database Kostumisasi kami.[/list]
+Mohon dipastikan bahwa anda sudah mencoba konvertor pada versi terbaru phpBB (lihat halaman [url=http://www.phpbb.com/downloads/]Unduh[/url]) sebelum anda mengajukan ulang konvertor.
 
-If you feel this denial was not warranted please contact the Development Leader.
+Jika anda merasa penolakan ini tidak beralasan, silahkan menghubungi Development Leader.
 
-Here is a report on why your convertor was denied:
+Berikut adalah keterangan kenapa konvertor anda ditolak:
 [quote]%s[/quote]
 
-Thank you,
-phpBB Teams',
+Terima kasih,
+Tim phpBB',
 ));

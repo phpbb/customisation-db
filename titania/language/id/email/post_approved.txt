@@ -1,13 +1,13 @@
-Subject: Post approved - "{POST_SUBJECT}"
+Subjek: Post Disetujui - "{POST_SUBJECT}"
 
-Hello {USERNAME},
+Hallo {USERNAME},
 
-You are receiving this notification because your post "{POST_SUBJECT}" at "{SITENAME}" was approved by a moderator or administrator.
+Anda menerima notifikasi ini karena post anda "{POST_SUBJECT}" di "{SITENAME}" telah disetujui oleh moderator ataupun administrator.
 
-If you want to view the post, click the following link:
+Jika anda ingin melihat post tersebut, silahkan klik tautan berikut ini:
 {U_VIEW_POST}
 
-If you want to view the topic, click the following link:
+Jika anda ingin menggunakan topik tersebut, klik tautan berikut ini:
 {U_VIEW_TOPIC}
 
 

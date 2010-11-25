@@ -38,36 +38,36 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'STYLE'								=> 'Style',
-	'STYLES'							=> 'Styles',
-	'STYLE_CREATE_PUBLIC'				=> '[b]Style name[/b]: %1$s
-[b]Author:[/b] [url=%2$s]%3$s[/url]
-[b]Style description[/b]: %4$s
-[b]Style version[/b]: %5$s
-[b]Tested on phpBB version[/b]: See below
+	'STYLE'								=> 'Gaya',
+	'STYLES'							=> 'Gaya-Gaya',
+	'STYLE_CREATE_PUBLIC'				=> '[b]Nama gaya[/b]: %1$s
+[b]Pengarang:[/b] [url=%2$s]%3$s[/url]
+[b]Deskripsi gaya[/b]: %4$s
+[b]Versi gaya[/b]: %5$s
+[b]Dicoba pada versi phpBB[/b]: Lihat di bawah
 
-[b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes
+[b]Unduh file[/b]: [url=%6$s]%7$s[/url]
+[b]Ukuran file:[/b] %8$s Bita
 
 [b]Style overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]The phpBB Team is not responsible nor required to provide support for this Style. By installing this Style, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]
+[color=blue][b]Tim phpBB tidak bertanggung jawab ataupun berkewajiban untuk memberikan bantuan untuk gaya ini. Dengan menginstal gaya ini, anda setuju bahwa Tim Support phpBB tidak bertanggung jawab untuk memberikan bantuan atas gaya ini.[/b][/color]
 
 [size=150][url=%10$s]--&gt;[b]Style support[/b]&lt;--[/url][/size]',
-	'STYLE_DEMO_INSTALL'				=> 'Install on style demo board',
-	'STYLE_QUEUE_TOPIC'					=> '[b]Style name[/b]: %1$s
-[b]Author:[/b] [url=%2$s]%3$s[/url]
-[b]Style description[/b]: %4$s
-[b]Style version[/b]: %5$s
+	'STYLE_DEMO_INSTALL'				=> 'Iinstal di papan demo gaya',
+	'STYLE_QUEUE_TOPIC'					=> '[b]Nama gaya[/b]: %1$s
+[b]Pengarang:[/b] [url=%2$s]%3$s[/url]
+[b]Deskripsi gaya[/b]: %4$s
+[b]Versi gaya[/b]: %5$s
 
-[b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes',
-	'STYLE_REPLY_PUBLIC'				=> '[b][color=darkred]Style validated/released[/color][/b]',
+[b]Unduh file[/b]: [url=%6$s]%7$s[/url]
+[b]Ukuran file:[/b] %8$s Bita',
+	'STYLE_REPLY_PUBLIC'				=> '[b][color=darkred]Gaya Disahkan/dirilis[/color][/b]',
 	'STYLE_REPLY_PUBLIC_NOTES'			=> '
 
-[b]Notes: %s[/b]',
-	'STYLE_UPDATE_PUBLIC'				=> '[b][color=darkred]Style Updated to version %1$s
-See first post for Download Link[/color][/b]',
+[b]Catatan: %s[/b]',
+	'STYLE_UPDATE_PUBLIC'				=> '[b][color=darkred]Gaya Dibarui ke versi %1$s
+Lihat post untuk tautan Unduh[/color][/b]',
 	'STYLE_UPDATE_PUBLIC_NOTES'			=> '
 
 [b]Notes:[/b] %1$s',
@@ -78,25 +78,26 @@ See first post for Download Link[/color][/b]',
 // Placeholders can now contain order information, e.g. instead of
 // \'Page %s of %s\' you can (and should) write \'Page %1$s of %2$s\', this allows
 // translators to re-order the output of data while ensuring it remains correct',
-	'STYLE_VALIDATION'					=> '[phpBB Style-Validation] %1$s %2$s',
-	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Styles Team your style has been approved and released into our styles database.
+	'STYLE_VALIDATION'					=> '[Pengesahan-Gaya phpBB] %1$s %2$s',
+	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Terima kasih telah mengajukan gaya pada database gaya phpBB.com. Setelah pemeriksaan dengan cermat maka Tim Sytle telah menyetujui dan merilis gaya anda pada database gaya kami.
 
-It is our hope that you will provide a basic level of support for this style and keep it updated as required for future releases of phpBB. We appreciate your work and contribution to the community.
-[b]Notes from the Styles Team about your style:[/b]
+Harapan kami semoga anda bisa memberikan bantuan yang paling mendasar atas gaya ini dan tetap membarui dengan rilis di masa yang akan datang dari phpBB. Kami menghargai semua usaha dan kontribusi anda kepada komunitas. Pengarang seperti anda bisa membuat phpBB.com menjadi sebuah tempat untuk semua orang.
+
+[b]Catatan dari Tim tentang konvertor anda:[/b]
 [quote]%s[/quote]
 
-Sincerely,',
-	'STYLE_VALIDATION_MESSAGE_DENY'		=> 'Hello,
+Hormat kami,',
+	'STYLE_VALIDATION_MESSAGE_DENY'		=> 'Hallo,
 
-As you may know all styles submitted to the phpBB styles database must be validated and approved by members of the phpBB Team.
+Sebagaimana apa yang anda ketahui mengenai semua gaya yang diajukan di Database Kostumisasi phpBB harus disahkan dan disetujui oleh anggota dari Team phpBB..
 
-Upon validating your style the phpBB Styles Team regrets to inform you that we have had to deny your style. The reasons for this denial are outlined below:
+Selama pengesahan konvertor anda, Tim phpBB sangat menyesal memberitahukan kepada anda bahwa konvertor anda kami tolak. Untuk menyelesaikan permasalahan atas konvertor anda, silahkan ikuti instruksi berikut ini::
 [quote]%s[/quote]
 
-If you wish to resubmit this style to the styles database please ensure that you fix the issues identified and that it meets the [url=http://www.phpbb.com/community/viewtopic.php?t=988545]Styles Submission Policy[/url].
+Jika anda ingin mengajukan ulang gaya ini ke database gaya kami, mohon dipastikan bahwa anda telah memperbaiki masalah yang ditemukan dan cocok dengan [url=http://www.phpbb.com/community/viewtopic.php?t=988545]Kebijaksanaan Pengajuan Gaya[/url].
 
-If you feel this denial is not warranted please contact the Styles Team Leader.
+Jika anda merasa penolakan ini tidak beralasan, silahkan menghubungi Styles Team Leader.
 
-Sincerely,
-The Styles Team',
+Terima kasih,
+Tim Style phpBB',
 ));

@@ -1,8 +1,8 @@
-Subject: Topic disapproved - "{TOPIC_TITLE}"
+Subjek: Topik Ditolak - "{TOPIC_TITLE}"
 
-Hello {USERNAME},
+Hallo {USERNAME},
 
-You are receiving this notification because your topic "{TOPIC_TITLE}" at "{SITENAME}" was disapproved by a moderator or administrator.
+Anda menerima notifikasi ini karena topik anda "{TOPIC_TITLE}" di "{SITENAME}" ditolak oleh moderator ataupun administrator.
 
 
 {EMAIL_SIG}

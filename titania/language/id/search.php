@@ -34,15 +34,15 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'CONTRIBUTION_NAME_DESCRIPTION'	=> 'Contribution Name/Description',
-	'CONTRIB_FAQ'					=> 'Contribution FAQ',
-	'CONTRIB_NAME_DESCRIPTION'		=> 'Contribution Name and Description',
-	'CONTRIB_SUPPORT'				=> 'Contribution Discussion/Support',
+	'CONTRIBUTION_NAME_DESCRIPTION'	=> 'Nama/Deskripsi Kontribusi',
+	'CONTRIB_FAQ'					=> 'FAQ Kontribusi',
+	'CONTRIB_NAME_DESCRIPTION'		=> 'Nama dan Deskripsi Kontribusi',
+	'CONTRIB_SUPPORT'				=> 'Diskusi/Bantuan Kontribusi',
 
-	'SEARCH_KEYWORDS_EXPLAIN'		=> 'Put a list of words separated by <strong>|</strong> into brackets if only one of the words must be found. Use * as a wildcard for partial matches.',
-	'SEARCH_MSG_ONLY'				=> 'Text/Description only',
-	'SEARCH_SUBCATEGORIES'			=> 'Search Subcategories',
-	'SEARCH_TITLE_MSG'				=> 'Titles and Text/Description',
-	'SEARCH_TITLE_ONLY'				=> 'Titles only',
-	'SEARCH_WITHIN_TYPES'			=> 'Search within types',
+	'SEARCH_KEYWORDS_EXPLAIN'		=> 'Letakkan sebuah daftar kata yang dipisahkan dengan tanda <strong>|</strong> dalam kurung jika hanya satu kata yang harus ditemukan. Gunakan * sebagai wildcard untuk pencarian perbagian saja yang cocok.',
+	'SEARCH_MSG_ONLY'				=> 'Hanya Teks/Deskripsi',
+	'SEARCH_SUBCATEGORIES'			=> 'Cari Subkategori',
+	'SEARCH_TITLE_MSG'				=> 'Judul dan Teks/Deskripsi',
+	'SEARCH_TITLE_ONLY'				=> 'Hanya Judul',
+	'SEARCH_WITHIN_TYPES'			=> 'Car di dalam tipe',
 ));

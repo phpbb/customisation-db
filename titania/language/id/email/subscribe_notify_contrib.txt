@@ -1,8 +1,8 @@
-Subject: Update Notification - {NAME}
+Subjek: Notifikasi Pembaruan - {NAME}
 
-Hello {USERNAME},
+Hallo {USERNAME},
 
-You are receiving this notification because you are subscribed to the item "{NAME}" in the phpBB Customisation Database for the "{CONTRIB_NAME}" contribution.
+Anda menerima notifikasi ini karena anda berlangganan pada item "{NAME}" di Kostumisasi Database untuk kontribusi "{CONTRIB_NAME}".
 
-If you would like to view the update, please click on the link below:
+Jika anda ingin melihat pembaruan tersebut, silahkan klik tautan berikut ini:
 {U_VIEW}

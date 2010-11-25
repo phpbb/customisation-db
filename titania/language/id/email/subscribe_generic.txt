@@ -1,4 +1,4 @@
-Subject: {SUBJECT}
+Subjek: {SUBJECT}
 
 {MESSAGE}
 

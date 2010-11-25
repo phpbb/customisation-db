@@ -1,10 +1,10 @@
-Subject: Notification - {NAME}
+Subjek: Notifikasi - {NAME}
 
-Hello {USERNAME},
+Hallo {USERNAME},
 
-You are receiving this notification because you are subscribed to be notified of new items located in the phpBB Customisation Database.
+Anda menerima notifikasi ini karena anda berlangganan untuk diberitahukan tentang item baru yang ditempatkan di Kostumisasi Database phpBB.
 
-The item "{NAME}" is newly created.
+Item baru yang dibuat adalah "{NAME}".
 
-You may view the item by visiting the link below:
+Jika anda ingin melihat item tersebut, silahkan klik tautan berikut ini:
 {U_VIEW}

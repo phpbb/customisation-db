@@ -39,33 +39,33 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'BRIDGE'							=> 'Bridge',
-	'BRIDGES'							=> 'Bridges',
-	'BRIDGE_VALIDATION'					=> '[phpBB Bridge-Validation] %1$s %2$s',
-	'BRIDGE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your bridge to the phpBB.com Customisation Database. After careful inspection your bridge has been approved and released into our Customisation Database.
+	'BRIDGES'							=> 'Bridge',
+	'BRIDGE_VALIDATION'					=> '[Pengaesahan - Bridge phpBB ] %1$s %2$s',
+	'BRIDGE_VALIDATION_MESSAGE_APPROVE'	=> 'Terima kasih atas pengejuan bridge anda ke Database Kostumisasi phpBB.com. Setelah melakukan pemeriksaan dengan teliti, bridge anda telah disetejui dan dirilis ke dalam Database Kostumisasi kami.
 
-It is our hope that you will provide a basic level of support for this bridge and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
+Harapan kami semoga anda bisa memberikan bantuan yang paling mendasar atas bridge ini dan tetap membarui dengan rilis di masa yang akan datang dari phpBB. Kami menghargai semua usaha dan kontribusi anda kepada komunitas. Pengarang seperti anda bisa membuat phpBB.com menjadi sebuah tempat untuk semua orang.
 
-[b]Notes from the Team about your bridge:[/b]
+[b]Catatan dari Tim tentang bridge anda:[/b]
 [quote]%s[/quote]
 
-Sincerely,
-phpBB Teams',
-	'BRIDGE_VALIDATION_MESSAGE_DENY'	=> 'Hello,
+Hormat kami,
+Tim phpBB',
+	'BRIDGE_VALIDATION_MESSAGE_DENY'	=> 'Hallo,
 
-As you may know all bridges submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
+Sebagaimana apa yang anda ketahui mengenai semua bridge yang diajukan di Database Kostumisasi phpBB harus disahkan dan disetujui oleh anggota dari Team phpBB.
 
-Upon validating your bridge the phpBB Team regrets to inform you that we have had to deny it.
+Selama pengesahan bridge anda, Tim phpBB sangat menyesal memberitahukan kepada anda bahwa bridge anda kami tolak.
 
-To correct the problem(s) with your bridge, please following the below instructions:
-[list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your bridge being denied.
-[*]Re-upload your bridge to our Customisation Database.[/list]
-Please ensure you tested your bridge on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your bridge.
+Untuk menyelesaikan permasalahan atas bridge anda, silahkan ikuti instruksi berikut ini:
+[list=1][*]Buat perubahan yang diperlukan untuk memperbaiki setiap permasalah (dilampirkan di bawah ini) yang bisa menjadikan bridge anda ditolak.
+[*]Unggah ulang bridge anda ke Database Kostumisasi kami.[/list]
+Mohon dipastikan bahwa anda sudah mencoba bridge pada versi terbaru phpBB (lihat halaman [url=http://www.phpbb.com/downloads/]Unduh[/url]) sebelum anda mengajukan ulang bridge.
 
-If you feel this denial was not warranted please contact the Development Leader.
+Jika anda merasa penolakan ini tidak beralasan, silahkan menghubungi Development Leader.
 
-Here is a report on why your bridge was denied:
+Berikut adalah keterangan kenapa bridge anda ditolak:
 [quote]%s[/quote]
 
-Thank you,
-phpBB Teams',
+Terima kasih,
+Tim phpBB',
 ));

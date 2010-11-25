@@ -38,6 +38,6 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'OFFICIAL_TOOL'		=> 'Official Tool',
-	'OFFICIAL_TOOLS'	=> 'Official Tools',
+	'OFFICIAL_TOOL'		=> 'Alat Resmi',
+	'OFFICIAL_TOOLS'	=> 'Alat-Alat Resmi',
 ));

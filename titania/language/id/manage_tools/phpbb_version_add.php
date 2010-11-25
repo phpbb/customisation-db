@@ -38,17 +38,17 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'CATEGORY_EXPLAIN'				=> 'Limit the new version support to only the selected categories.',
+	'CATEGORY_EXPLAIN'				=> 'Batas yang didukung oleh versi terbaru hanyalah pada kategori yang terpilih.',
 
-	'NEW_PHPBB_VERSION'				=> 'New phpBB Version',
-	'NEW_PHPBB_VERSION_EXPLAIN'		=> 'New phpBB version to list support on the revision for.',
-	'NO_REVISIONS_UPDATED'			=> 'No revisions were updated from the given limitations.',
-	'NO_VERSION_SELECTED'			=> 'You must give a proper phpBB version.  Ex: 3.0.7 or 3.0.7-PL1.',
+	'NEW_PHPBB_VERSION'				=> 'Versi phpBB baru',
+	'NEW_PHPBB_VERSION_EXPLAIN'		=> 'Versi phpBB baru untuk daftar mendukung pada revisi untuk.',
+	'NO_REVISIONS_UPDATED'			=> 'Tidak ada revisi yang dibarui dari pembatasan yang diberikan.',
+	'NO_VERSION_SELECTED'			=> 'Anda harus memberikan versi phpBB yang tepat.  Contoh: 3.0.7 atau 3.0.7-PL1.',
 
-	'PHPBB_VERSION_ADD'				=> 'Add phpBB Version support to revisions',
+	'PHPBB_VERSION_ADD'				=> 'Tambahkan versi phpBB yang mendukung revisi',
 
-	'REVISIONS_UPDATED'				=> '%s revisions have been updated.',
+	'REVISIONS_UPDATED'				=> '%s revisi sudah dibarui.',
 
-	'VERSION_RESTRICTION'			=> 'Version Restriction',
-	'VERSION_RESTRICTION_EXPLAIN'	=> 'Limit the new version support to only the selected versions.',
+	'VERSION_RESTRICTION'			=> 'Batasan Revisi',
+	'VERSION_RESTRICTION_EXPLAIN'	=> 'Batas yang didukung hanya pada versi yang terpilih.',
 ));

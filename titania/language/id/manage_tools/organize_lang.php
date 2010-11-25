@@ -38,11 +38,11 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'NO_FILE'						=> 'The requested file does not exist.',
+	'NO_FILE'						=> 'File yang diminta tidak ada.',
 
-	'ORGANIZE_LANG'					=> 'Organize Language Files',
-	'ORGANIZE_LANG_EXPLAIN'			=> 'This allows you to organize a language file or directory.  For more info <a href="http://www.lithiumstudios.org/forum/viewtopic.php?f=9&t=841">read this topic</a>.',
+	'ORGANIZE_LANG'					=> 'Atur File Bahasa',
+	'ORGANIZE_LANG_EXPLAIN'			=> 'Dengan ini anda bisa mengatur sebuah file bahasa ataupun direktori.  Untuk informasi lebih lengkap <a href="http://www.lithiumstudios.org/forum/viewtopic.php?f=9&t=841">baca topik ini</a>.',
 	'ORGANIZE_LANG_FILE'			=> 'File',
-	'ORGANIZE_LANG_FILE_EXPLAIN'	=> 'Enter the file name or directory you would like to organize.<br />Example: en/mods/ for language/en/mods/, or en/common for language/en/common.php',
-	'ORGANIZE_LANG_SUCCESS'			=> 'The language file or directory has been successfully organized.',
+	'ORGANIZE_LANG_FILE_EXPLAIN'	=> 'Masukkan nama file ataupun direktori yang anda ingin atur.<br />Contoh: en/mods/ for language/en/mods/, atau en/common for language/en/common.php',
+	'ORGANIZE_LANG_SUCCESS'			=> 'File bahasa ataupun direktori berhasil di atur.',
 ));

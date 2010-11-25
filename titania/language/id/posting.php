@@ -34,33 +34,33 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'ACCESS'							=> 'Access Level',
-	'ACCESS_AUTHORS'					=> 'Authors Access',
-	'ACCESS_PUBLIC'						=> 'Public Access',
-	'ACCESS_TEAMS'						=> 'Teams Access',
-	'ATTACH'							=> 'Attach',
+	'ACCESS'							=> 'Tingkat Akses',
+	'ACCESS_AUTHORS'					=> 'Akses Pengarang',
+	'ACCESS_PUBLIC'						=> 'Akses Umum',
+	'ACCESS_TEAMS'						=> 'Akses Tim',
+	'ATTACH'							=> 'Lampirkan',
 
-	'FILE_DELETED'						=> 'This file will be deleted when you submit',
+	'FILE_DELETED'						=> 'File ini akan dihapus ketika anda mengajukannya',
 
-	'HARD_DELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to <strong>hard</strong> delete this topic?<br /><br />This topic will be gone forever!',
+	'HARD_DELETE_TOPIC_CONFIRM'			=> 'Apakan anda yakin ingin menghapus <strong>paksa</strong> topik ini?<br /><br />Topik ini akan hilang selamanya!',
 
-	'QUEUE_DISCUSSION_TOPIC_MESSAGE'	=> 'This topic is for validation discussion between the contribution authors and validators.
+	'QUEUE_DISCUSSION_TOPIC_MESSAGE'	=> 'Topik ini adalah untuk diskusi pengesahan antara pengarang kontribusi dan pengesah.
 
-Anything posted in this topic will be read by those validating your contribution so please post here instead of using private messages to validators.
+Semua yang dipost pada topik ini akan dibaca oleh yang mengesahkan kontribusi anda, jadi dimohon untuk mempost di sini daripada menggunakan pesan pribadi kepada pengesah.
 
-Validation staff may also post questions to the authors here so please reply with helpful information for them as it may be required to proceed with the validation procedure.
+Staf pengesah juga bisa memberikan post pada pengarang di sini, jadi dimohon untuk membalas dengan sesuatu yang cukup bermanfaat yang mungkin bisa diperlukan untuk memproses prosedur pengesahan.
 
-Note that by default this topic is private between authors and validators and cannot be seen by the public.',
-	'QUEUE_DISCUSSION_TOPIC_TITLE'		=> 'Validation Discussion - %s',
+Mohon diingat bahwa normalnya topik ini adalah bersifat pribadi antara pengarang dan pengesah dan tidak bisa dilihat oleh publik.',
+	'QUEUE_DISCUSSION_TOPIC_TITLE'		=> 'Diskusi Pengesahan - %s',
 
-	'REPORT_POST_CONFIRM'				=> 'Use this form to report the selected post to the forum moderators and board administrators. Reporting should generally be used only if the post breaks forum rules.',
+	'REPORT_POST_CONFIRM'				=> 'Gunakan isian ini untuk melaporkan post yang dipilih ke moderator forum dan administrator papan. Pelaporan seharusnya digunakan apabila ada post yang telah melanggar aturan yang berlaku.',
 
-	'SOFT_DELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to <strong>soft</strong> delete this topic?',
-	'STICKIES'							=> 'Stickies',
-	'STICKY_TOPIC'						=> 'Sticky Topic',
+	'SOFT_DELETE_TOPIC_CONFIRM'			=> 'Apakah anda yakin ingin menghapus <strong>perlahan</strong> topik ini?',
+	'STICKIES'							=> 'Sticky',
+	'STICKY_TOPIC'						=> 'Topik Sticky',
 
-	'UNDELETE_FILE'						=> 'Cancel Delete',
-	'UNDELETE_POST'						=> 'Undelete Post',
-	'UNDELETE_POST_CONFIRM'				=> 'Are you sure you want to undelete this post?',
-	'UNDELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to undelete this topic?',
+	'UNDELETE_FILE'						=> 'Batalkan Hapus',
+	'UNDELETE_POST'						=> 'Post Tak Terhapus',
+	'UNDELETE_POST_CONFIRM'				=> 'Apakah anda yakin ingin mengahapus post ini?',
+	'UNDELETE_TOPIC_CONFIRM'			=> 'Apakah anda yakin ingin mengahapus topik ini?',
 ));
