@@ -1,0 +1,14 @@
+Subjek: Post Disetujui - "{POST_SUBJECT}"
+
+Hallo {USERNAME},
+
+Anda menerima notifikasi ini karena post anda "{POST_SUBJECT}" di "{SITENAME}" telah disetujui oleh moderator ataupun administrator.
+
+Jika anda ingin melihat post tersebut, silahkan klik tautan berikut ini:
+{U_VIEW_POST}
+
+Jika anda ingin menggunakan topik tersebut, klik tautan berikut ini:
+{U_VIEW_TOPIC}
+
+
+{EMAIL_SIG}

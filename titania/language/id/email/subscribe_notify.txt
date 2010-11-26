@@ -1,0 +1,8 @@
+Subjek: Notifikasi Pembaruan - {NAME}
+
+Hallo {USERNAME},
+
+Anda menerima notifikasi ini karena anda berlangganan pada item "{NAME}" di phpBB Customisation Database.
+
+Jika anda ingin melihat pembaruan tersebut, silahkan klik tautan berikut ini:
+{U_VIEW}
