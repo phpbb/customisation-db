@@ -113,8 +113,7 @@ do{
 	switch ($step)
 	{
 		case 0 :
-			$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
-			phpbb::$template->assign_var('REVISION_UPLOADER', $revision_attachment->parse_uploader('posting/attachments/revisions.html'));
+			$display_main = true;
 		break;
 
 		case 1 :
@@ -175,7 +174,10 @@ do{
 			}
 
 			// Send the file to the type class so it can do custom error checks
-			$error = array_merge($error, titania_types::$types[titania::$contrib->contrib_type]->upload_check($revision_attachment));
+			if ($revision_attachment->uploaded)
+			{
+				$error = array_merge($error, titania_types::$types[titania::$contrib->contrib_type]->upload_check($revision_attachment));
+			}
 
 			if (!sizeof($error))
 			{
