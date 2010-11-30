@@ -46,7 +46,7 @@
 					return false;
 				}
 				
-			}).bind('keyup',function (e) {
+			}).bind('keypress',function (e) {
 				if (16 == $.fn.tabby.catch_kc(e)) pressed.shft = false;
 			}).bind('blur',function (e) { // workaround for Opera -- http://www.webdeveloper.com/forum/showthread.php?p=806588
 				if (9 == pressed.last) $(e.target).one('focus',function (e) {pressed.last = null;}).get(0).focus();
