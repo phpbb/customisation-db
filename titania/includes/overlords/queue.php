@@ -182,6 +182,7 @@ class queue_overlord
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'TOPIC_SUBJECT'				=> $row['contrib_name'] . ' - ' . $row['revision_version'],
 				'S_TOPIC_PROGRESS'			=> ($row['queue_progress']) ? true : false,
+				'U_VIEW_TOPIC'				=> titania_url::append_url($topic->get_url(), array('tag' => $queue_status)),
 			)));
 		}
 

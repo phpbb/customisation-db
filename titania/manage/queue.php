@@ -18,6 +18,7 @@ if (!defined('IN_TITANIA'))
 
 $queue_id = request_var('q', 0);
 $queue_type = request_var('queue', '');
+$tag = request_var('tag', TITANIA_QUEUE_NEW);
 
 // Force the queue_type if we have a queue_id
 if ($queue_id)
@@ -96,6 +97,11 @@ if ($queue_id)
 	phpbb::$user->add_lang('viewforum');
 
 	$action = request_var('action', '');
+	
+	// Add tag to Breadcrumbs
+	titania::generate_breadcrumbs(array(
+		titania_tags::get_tag_name($tag)	=> titania_url::append_url($base_url, array('tag' => $tag)),
+	));	
 
 	switch ($action)
 	{
@@ -411,7 +417,6 @@ else
 	// Subscriptions
 	titania_subscriptions::handle_subscriptions(TITANIA_QUEUE, $queue_type, titania_url::$current_page_url);
 
-	$tag = request_var('tag', TITANIA_QUEUE_NEW);
 	queue_overlord::display_queue($queue_type, $tag);
 	queue_overlord::display_categories($queue_type, $tag);
 
