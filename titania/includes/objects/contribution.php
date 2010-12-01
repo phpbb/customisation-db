@@ -147,7 +147,7 @@ class titania_contribution extends titania_message_object
 			),
 		);
 
-		if (is_numeric($contrib))
+		if (is_int($contrib))
 		{
 			$sql_ary['WHERE'] = 'contrib_id = ' . (int) $contrib;
 		}
