@@ -490,8 +490,8 @@ class titania_revision extends titania_database_object
 		$attachment->delete();
 
 		// Delete translations
-		$translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
-		$attachment->delete_all();
+		// $translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
+		// $attachment->delete_all();
 
 		// Self-destruct
 		parent::delete();
