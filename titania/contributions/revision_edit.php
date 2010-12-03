@@ -185,7 +185,7 @@ phpbb::$template->assign_vars(array(
 	'REVISION_LICENSE'			=> $revision->revision_license,
 	'REVISION_CUSTOM_LICENSE'	=> (!in_array($revision->revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options)) ? $revision->revision_license : '',
 
-	'TRANSLATION_UPLOADER'		=> $translation->parse_uploader('posting/attachments/simple.html'),
+	'TRANSLATION_UPLOADER'		=> (titania_types::$types[titania::$contrib->contrib_type]->extra_upload) ? $translation->parse_uploader('posting/attachments/simple.html') : '',
 
 	'S_IS_MODERATOR'			=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 	'S_POST_ACTION'				=> titania::$contrib->get_url('revision_edit', array('revision' => $revision_id)),
