@@ -450,7 +450,7 @@ class titania_contribution extends titania_message_object
 					}
 				}
 
-				// Display Revisions
+				// Display Revisions and phpBB versions
 				if (sizeof($this->revisions))
 				{
 					$revision = new titania_revision($this);
@@ -461,8 +461,26 @@ class titania_contribution extends titania_message_object
 						$revision->phpbb_versions = (isset($row['phpbb_versions'])) ? $row['phpbb_versions'] : array();
 						$revision->translations = (isset($row['translations'])) ? $row['translations'] : array();
 						$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'));
+						$phpbb_versions[] = $revision->phpbb_versions[0];
 					}
 					unset($revision);
+					
+					$ordered_phpbb_versions = order_phpbb_version_list_from_db($phpbb_versions);
+					if (sizeof($ordered_phpbb_versions) == 1)
+					{
+						phpbb::$template->assign_vars(array(
+							'PHPBB_VERSION'		=> $ordered_phpbb_versions[0],
+						));
+					}
+					else
+					{
+						foreach ($ordered_phpbb_versions as $version_row)
+						{
+							phpbb::$template->assign_block_vars('phpbb_versions', array(
+								'NAME'		=> $version_row,
+							));
+						}
+					}
 				}
 
 				// Display Screenshots

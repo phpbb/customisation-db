@@ -77,6 +77,20 @@
 					<strong>{L_VERSION}</strong> {DOWNLOAD_VERSION}
 				</li>
 				<!-- ENDIF -->
+				<li>
+					<strong>{L_PHPBB_VERSION}</strong>
+					<!-- IF PHPBB_VERSION -->
+						{PHPBB_VERSION}
+					<!-- ELSEIF .phpbb_versions -->
+					<select id="phpbb_versions">
+						<!-- BEGIN phpbb_versions -->
+							<option>{phpbb_versions.NAME}</option>
+						<!-- END phpbb_versions -->
+					</select>
+					<!-- ELSE -->
+					{L_NO_REVISIONS}
+					<!-- ENDIF -->
+				</li>
 				<!-- IF DOWNLOAD_LICENSE -->
 				<li>
 					<strong>{L_LICENSE}</strong> {DOWNLOAD_LICENSE}
