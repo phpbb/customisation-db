@@ -184,6 +184,13 @@ class titania_type_base
 	public $use_queue = true;
 
 	/**
+	* Can we upload extra files (on revisions) for this type?
+	*
+	* @var bool
+	*/
+	public $extra_upload = true;
+
+	/**
 	* Run MPV/Automod Test for this type?
 	*
 	* @var bool
