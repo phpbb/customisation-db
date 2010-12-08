@@ -79,7 +79,7 @@ if (empty($lang) || !is_array($lang))
 		'posting'		=> 'Scriere',
 		'profile'		=> 'Profil',
 		'settings'		=> 'Setări',
-		'topic_actions'	=> 'Acţiuni subiects',
+		'topic_actions'	=> 'Acţiuni subiecte',
 		'user_group'	=> 'Utilizatori &amp; Grupuri',
 	),
 ));*/
