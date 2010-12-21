@@ -112,7 +112,7 @@ class titania_author extends titania_message_object
 		{
 			if (!is_numeric($user))
 			{
-				$sql_where = 'u.username_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($user)) . '\'';
+				$sql_where = 'u.username_clean = \'' . phpbb::$db->sql_escape($user) . '\'';
 			}
 			else
 			{
