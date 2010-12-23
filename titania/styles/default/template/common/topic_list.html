@@ -29,7 +29,9 @@
 	<!-- ENDIF -->
 
 	<!-- IF topics.S_FIRST_ROW or topics.S_TOPIC_TYPE_SWITCH -->
-		<ul class="topiclist simple">
+		<div class="forumbg<!-- IF topicrow.S_TOPIC_TYPE_SWITCH --> announcement<!-- ENDIF -->">
+		<div class="inner"><span class="corners-top"><span></span></span>
+		<ul class="topiclist">
 			<li class="header">
 				<dl class="icon">
 					<dt><!-- IF topics.TOPIC_STICKY -->{L_STICKIES}<!-- ELSE -->{L_TOPICS}<!-- ENDIF --></dt>
@@ -65,7 +67,9 @@
 		</li>
 
 	<!-- IF topics.S_LAST_ROW -->
-				</ul>
+			</ul>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
 	<!-- ENDIF -->
 
 <!-- BEGINELSE -->
