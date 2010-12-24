@@ -1,10 +1,10 @@
 <!-- IF U_POST_TOPIC or PAGINATION or TOTAL_RESULTS -->
 <div class="topic-actions">
-	<div class="buttons">
 	<!-- IF U_POST_TOPIC -->
+	<div class="buttons">
 		<div class="post-icon"><a href="{U_POST_TOPIC}" title="{L_NEW_TOPIC}"><span></span>{L_NEW_TOPIC}</a></div>
-	<!-- ENDIF -->
 	</div>
+	<!-- ENDIF -->
 
 	<!-- IF S_DISPLAY_SEARCHBOX -->
 		<div class="search-box">
@@ -26,6 +26,9 @@
 <!-- BEGIN topics -->
 	<!-- IF topics.S_TOPIC_TYPE_SWITCH and not topics.S_FIRST_ROW -->
 		</ul>
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+	<br />
 	<!-- ENDIF -->
 
 	<!-- IF topics.S_FIRST_ROW or topics.S_TOPIC_TYPE_SWITCH -->
@@ -84,11 +87,11 @@
 
 <!-- IF U_POST_TOPIC or PAGINATION or TOTAL_RESULTS -->
 <div class="topic-actions">
-	<div class="buttons">
 	<!-- IF U_POST_TOPIC -->
+	<div class="buttons">
 		<div class="post-icon"><a href="{U_POST_TOPIC}" title="{L_NEW_TOPIC}"><span></span>{L_NEW_TOPIC}</a></div>
-	<!-- ENDIF -->
 	</div>
+	<!-- ENDIF -->
 
 	<!-- INCLUDE common/pagination.html -->
 </div>
