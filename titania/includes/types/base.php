@@ -162,6 +162,15 @@ class titania_type_base
 	public $langs = '';
 
 	/**
+	* Additional steps/functions to call when uploading
+	*
+	* @var array Ex: array('function_one', 'function_two')
+	*	can use special keywords such as: array(array('contrib_type', 'function_one'), array('contrib_tools', 'function_two'))
+	*	for calling the function in the contrib_type class or contrib_tools class respectively
+	*/
+	public $upload_steps = array();
+
+	/**
 	* Additional language keys (just the language key, not in the current user's language)
 	*
 	* @var string

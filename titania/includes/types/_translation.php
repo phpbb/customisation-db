@@ -46,15 +46,15 @@ class titania_type_translation extends titania_type_base
 
 	public $root_search = array(array('language', 'is_directory', 'is_exactly'));
 	public $clean_and_restore_root = true;
-	
+
 	public $root_not_found_key = 'COULD_NOT_FIND_TRANSLATION_ROOT';
 
 	public $validate_translation = true;
-	
+
 	/* Translations will not be queued, it would only delay the delivery */
 	public $use_queue = false;
 	public $require_validation = false;
-	
+
 	/* Extra upload files disabled on Translation revisions */
 	public $extra_upload = false;
 
@@ -62,6 +62,11 @@ class titania_type_translation extends titania_type_base
 	{
 		$this->lang = phpbb::$user->lang['TRANSLATION'];
 		$this->langs = phpbb::$user->lang['TRANSLATIONS'];
+
+		if ($this->validate_translation)
+		{
+			$this->upload_steps[] = array('contrib_type', 'translation_validate');
+		}
 	}
 
 	/**
@@ -174,5 +179,31 @@ class titania_type_translation extends titania_type_base
 			// Translation count holder
 			$umil->config_remove('titania_num_translations');
 		}
+	}
+
+	public function translation_validate($contrib, $revision, $revision_attachment, $contrib_tools, $download_package)
+	{
+		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
+		$validation_tools = new translation_validation($contrib_tools->original_zip, $new_dir_name);
+
+		$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+			WHERE revision_id = ' . $revision->revision_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
+			$reference_filepath = $validation_tools->automod_phpbb_files($version_string); // path to files against which we will validate the package
+		}
+
+		$errors = $validation_tools->check_package($reference_filepath);
+
+		if (!empty($errors))
+		{
+			trigger_error(implode('<br /><br />', $errors));
+		}
+
+		$validation_tools->remove_temp_files();
+
+		phpbb::$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
 	}
 }

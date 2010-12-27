@@ -365,7 +365,12 @@ class titania_contrib_tools
 	*/
 	public function remove_temp_files()
 	{
-		return $this->rmdir_recursive($this->unzip_dir);
+		if ($this->unzip_dir)
+		{
+			return $this->rmdir_recursive($this->unzip_dir);
+		}
+
+		return true;
 	}
 
 	/**
