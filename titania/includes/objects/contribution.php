@@ -367,6 +367,19 @@ class titania_contribution extends titania_message_object
 	 */
 	public function assign_details($simple = false, $return = false)
 	{
+		$install_time = false;
+		if (isset($this->download['install_time']) && $this->download['install_time'] > 0)
+		{
+			if ($this->download['install_time'] < 60)
+			{
+				$install_time = phpbb::$user->lang['INSTALL_LESS_THAN_1_MINUTE'];
+			}
+			else
+			{
+				$install_time = phpbb::$user->lang('INSTALL_MINUTES', (int) ($this->download['install_time'] / 60));
+			}
+		}
+
 		$vars = array(
 			// Contribution data
 			'CONTRIB_NAME'					=> $this->contrib_name,
@@ -392,6 +405,9 @@ class titania_contribution extends titania_message_object
 			'DOWNLOAD_NAME'					=> (isset($this->download['revision_name'])) ? censor_text($this->download['revision_name']) : '',
 			'DOWNLOAD_VERSION'				=> (isset($this->download['revision_version'])) ? censor_text($this->download['revision_version']) : '',
 			'DOWNLOAD_LICENSE'				=> (isset($this->download['revision_license'])) ? censor_text($this->download['revision_license']) : '',
+			'DOWNLOAD_LICENSE'				=> (isset($this->download['revision_license'])) ? censor_text($this->download['revision_license']) : '',
+			'DOWNLOAD_INSTALL_TIME'			=> $install_time,
+			'DOWNLOAD_INSTALL_LEVEL'		=> (isset($this->download['install_level']) && $this->download['install_level'] > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->download['install_level']] : '',
 
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
 		);
@@ -437,57 +453,54 @@ class titania_contribution extends titania_message_object
 			$this->author->assign_details();
 		}
 
-		if (!$simple)
+		if (!$simple && !$return)
 		{
-			if (!$return)
+			// Display Co-authors
+			foreach ($this->coauthors as $user_id => $row)
 			{
-				// Display Co-authors
-				foreach ($this->coauthors as $user_id => $row)
+				if ($row['author_visible'])
 				{
-					if ($row['author_visible'])
-					{
-						phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
-					}
+					phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
 				}
+			}
 
-				// Display Revisions and phpBB versions
-				if (sizeof($this->revisions))
+			// Display Revisions and phpBB versions
+			if (sizeof($this->revisions))
+			{
+				$revision = new titania_revision($this);
+				$revision->contrib = $this;
+				foreach ($this->revisions as $revision_id => $row)
 				{
-					$revision = new titania_revision($this);
-					$revision->contrib = $this;
-					foreach ($this->revisions as $revision_id => $row)
+					$revision->__set_array($row);
+					$revision->phpbb_versions = (isset($row['phpbb_versions'])) ? $row['phpbb_versions'] : array();
+					$revision->translations = (isset($row['translations'])) ? $row['translations'] : array();
+					$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'));
+					$phpbb_versions[] = $revision->phpbb_versions[0];
+				}
+				unset($revision);
+
+				$ordered_phpbb_versions = order_phpbb_version_list_from_db($phpbb_versions);
+				if (sizeof($ordered_phpbb_versions) == 1)
+				{
+					phpbb::$template->assign_vars(array(
+						'PHPBB_VERSION'		=> $ordered_phpbb_versions[0],
+					));
+				}
+				else
+				{
+					foreach ($ordered_phpbb_versions as $version_row)
 					{
-						$revision->__set_array($row);
-						$revision->phpbb_versions = (isset($row['phpbb_versions'])) ? $row['phpbb_versions'] : array();
-						$revision->translations = (isset($row['translations'])) ? $row['translations'] : array();
-						$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'));
-						$phpbb_versions[] = $revision->phpbb_versions[0];
-					}
-					unset($revision);
-					
-					$ordered_phpbb_versions = order_phpbb_version_list_from_db($phpbb_versions);
-					if (sizeof($ordered_phpbb_versions) == 1)
-					{
-						phpbb::$template->assign_vars(array(
-							'PHPBB_VERSION'		=> $ordered_phpbb_versions[0],
+						phpbb::$template->assign_block_vars('phpbb_versions', array(
+							'NAME'		=> $version_row,
 						));
 					}
-					else
-					{
-						foreach ($ordered_phpbb_versions as $version_row)
-						{
-							phpbb::$template->assign_block_vars('phpbb_versions', array(
-								'NAME'		=> $version_row,
-							));
-						}
-					}
 				}
+			}
 
-				// Display Screenshots
-				if ($this->screenshots)
-				{
-					$this->screenshots->parse_attachments($message = false, false, false, 'screenshots');
-				}
+			// Display Screenshots
+			if ($this->screenshots)
+			{
+				$this->screenshots->parse_attachments($message = false, false, false, 'screenshots');
 			}
 		}
 

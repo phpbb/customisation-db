@@ -113,6 +113,13 @@ $lang = array_merge($lang, array(
 	'EMPTY_CONTRIB_TYPE'					=> 'Select at least one contribution type',
 	'ERROR_CONTRIB_EMAIL_FRIEND'			=> 'You are not permitted to recommend this contribution to someone else.',
 
+	'INSTALL_LESS_THAN_1_MINUTE'			=> 'Less Than One Minute',
+	'INSTALL_LEVEL'							=> 'Install Level',
+	'INSTALL_LEVEL_1'						=> 'Easy',
+	'INSTALL_LEVEL_2'						=> 'Intermediate',
+	'INSTALL_LEVEL_3'						=> 'Advanced',
+	'INSTALL_MINUTES'						=> 'About %s Minute(s)',
+	'INSTALL_TIME'							=> 'Install Time',
 	'INVALID_LICENSE'						=> 'Invalid License',
 	'INVALID_PERMALINK'						=> 'You need to enter a valid permalink, for example: %s',
 

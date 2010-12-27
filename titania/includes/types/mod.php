@@ -194,7 +194,7 @@ class titania_type_mod extends titania_type_base
 		}
 	}
 
-	public function mpv_test($contrib, $revision, $revision_attachment, $contrib_tools, $download_package)
+	public function mpv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package)
 	{
 		// Run MPV
 		$mpv_results = $contrib_tools->mpv($download_package);
@@ -224,7 +224,7 @@ class titania_type_mod extends titania_type_base
 		}
 	}
 
-	public function automod_test($contrib, $revision, $revision_attachment, $contrib_tools, $download_package)
+	public function automod_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package)
 	{
 		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
 
@@ -260,6 +260,28 @@ class titania_type_mod extends titania_type_base
 			$bbcode_results[] = $bbcode_result;
 		}
 		phpbb::$db->sql_freeresult($result);
+
+		if (is_array($details))
+		{
+			$revision->install_time = $details['INSTALLATION_TIME'];
+
+			switch ($details['INSTALLATION_LEVEL'])
+			{
+				case 'easy' :
+					$revision->install_level = 1;
+				break;
+
+				case 'intermediate' :
+					$revision->install_level = 2;
+				break;
+
+				case 'advanced' :
+					$revision->install_level = 3;
+				break;
+			}
+
+			$revision->submit();
+		}
 
 		$html_results = implode('<br /><br />', $html_results);
 		$bbcode_results = implode("\n\n", $bbcode_results);

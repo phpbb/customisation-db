@@ -181,7 +181,7 @@ class titania_type_translation extends titania_type_base
 		}
 	}
 
-	public function translation_validate($contrib, $revision, $revision_attachment, $contrib_tools, $download_package)
+	public function translation_validate(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package)
 	{
 		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
 		$validation_tools = new translation_validation($contrib_tools->original_zip, $new_dir_name);
