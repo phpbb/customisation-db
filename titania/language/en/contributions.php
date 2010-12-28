@@ -151,7 +151,7 @@ $lang = array_merge($lang, array(
 
 	'PHPBB_BRANCH'							=> 'phpBB Branch',
 	'PHPBB_BRANCH_EXPLAIN'					=> 'Select the phpBB branch that this revision supports.',
-	'PHPBB_VERSION'							=> 'phpBB Version',
+	'PHPBB_VERSION'							=> 'phpBB Version(s)',
 
 	'QUEUE_ALLOW_REPACK'					=> 'Allow Repacking',
 	'QUEUE_ALLOW_REPACK_EXPLAIN'			=> 'Allow this contribution to be repacked for small errors?',
