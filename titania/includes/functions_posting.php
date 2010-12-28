@@ -399,7 +399,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 	// Parse the BBCode
 	if ($options['enable_bbcode'])
 	{
-		$message_parser->parse($options['enable_bbcode'], $options['enable_urls'], $options['enable_smilies'], (bool) phpbb::$auth->acl_get('f_img', $post_data['forum_id']), (bool) phpbb::$auth->acl_get('f_flash', $post_data['forum_id']),  true, phpbb::$config['allow_post_links']);
+		$message_parser->parse($options['enable_bbcode'], (phpbb::$config['allow_post_links']) ? $options['enable_urls'] : false, $options['enable_smilies'], true, (bool) phpbb::$config['allow_post_flash'],  true, phpbb::$config['allow_post_links']);
 	}
 
 	// Setup the settings we need to send to submit_post
@@ -446,6 +446,9 @@ function phpbb_posting($mode, &$options, $poll = array())
 
 	// Merge the data we grabbed from the forums/topics/posts tables
 	$data = array_merge($data, $post_data);
+
+	// In case bbcode_bitfield is not set when it should
+	$data['bbcode_bitfield'] = ($data['bbcode_bitfield'] != '') ? $data['bbcode_bitfield'] : $message_parser->bbcode_bitfield;
 
 	// Aaaand, submit it.
 	switch ($mode)
