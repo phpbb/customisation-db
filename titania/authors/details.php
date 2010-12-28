@@ -17,7 +17,7 @@ if (!defined('IN_TITANIA'))
 }
 
 titania::$author->get_rating();
-titania::$author->assign_details();
+//titania::$author->assign_details();
 
 // Canonical URL
 phpbb::$template->assign_var('U_CANONICAL', titania::$author->get_url());
