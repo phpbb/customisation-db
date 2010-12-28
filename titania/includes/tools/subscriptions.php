@@ -221,11 +221,12 @@ class titania_subscriptions
 		$subject = '';
 		if (($subject_start = strpos($template, 'Subject:')) !== false)
 		{
+			$subject_start = strlen('Subject:');
 			$subject_length = strpos($template, "\n", $subject_start) - $subject_start;
-			$subject = substr($template, $subject_start, $subject_length);
+			$subject = trim(substr($template, $subject_start, $subject_length));
 			$template = substr($template, 0, $subject_start) . substr($template, ($subject_start + $subject_length));
 		}
-		$subject = (isset($vars['SUBJECT'])) ? $vars['SUBJECT'] : $subject;
+		$subject = (isset($vars['SUBJECT']) && !$subject) ? $vars['SUBJECT'] : $subject;
 		$subject = ($subject) ? $subject : phpbb::$user->lang['SUBSCRIPTION_NOTIFICATION'];
 
 		// Send to each user
