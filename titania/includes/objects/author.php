@@ -324,16 +324,42 @@ class titania_author extends titania_message_object
 		{
 			if (!isset($type->author_count))
 			{
+				// Figure out the counts some other way
+				$sql = 'SELECT COUNT(*) AS contrib_cnt, cat.category_name, cat.category_name_clean
+						FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_CATEGORIES_TABLE . " cat
+						WHERE c.contrib_type = cat.category_type AND  c.contrib_type = {$type->id}
+						AND contrib_user_id = {$this->user_id} AND contrib_visible = 1";
+				$result = phpbb::$db->sql_query($sql);
+				$type_row = phpbb::$db->sql_fetchrow($result);
+				phpbb::$db->sql_freeresult($result);
+				$contrib_cnt = (int) $type_row['contrib_cnt'];
+				$cat_name = $type_row['category_name'];
+				$cat_name_clean = $type_row['category_name_clean'];
+
+				if ($contrib_cnt > 0)
+				{
+					if ($contrib_cnt == 1)
+					{
+						$type_list[] = (isset(phpbb::$user->langs['AUTHOR_' . strtoupper($cat_name_clean) . '_ONE'])) ? phpbb::$user->lang['AUTHOR_' . strtoupper($cat_name_clean) . '_ONE'] : '1 ' . $cat_name;
+					}
+					else
+					{
+						$type_list[] = (isset(phpbb::$user->lang['AUTHOR_' . strtoupper($cat_name_clean)])) ? sprintf(phpbb::$user->lang['AUTHOR_' . strtoupper($cat_name_clean)], $contrib_cnt) : $contrib_cnt . ' ' . $cat_name;
+					}
+				}
 				continue;
 			}
 
-			if ($this->{$type->author_count} == 1)
+			if ($this->{$type->author_count} > 0)
 			{
-				$type_list[] = (isset(phpbb::$user->lang[strtoupper($type->author_count) . '_ONE'])) ? phpbb::$user->lang[strtoupper($type->author_count) . '_ONE'] : '{' . strtoupper($type->author_count) . '_ONE}';
-			}
-			else
-			{
-				$type_list[] = (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? sprintf(phpbb::$user->lang[strtoupper($type->author_count)], $this->{$type->author_count}) : '{' . strtoupper($type->author_count) . '}';
+				if ($this->{$type->author_count} == 1)
+				{
+					$type_list[] = (isset(phpbb::$user->lang[strtoupper($type->author_count) . '_ONE'])) ? phpbb::$user->lang[strtoupper($type->author_count) . '_ONE'] : '{' . strtoupper($type->author_count) . '_ONE}';
+				}
+				else
+				{
+					$type_list[] = (isset(phpbb::$user->lang[strtoupper($type->author_count)])) ? sprintf(phpbb::$user->lang[strtoupper($type->author_count)], $this->{$type->author_count}) : '{' . strtoupper($type->author_count) . '}';
+				}
 			}
 		}
 		$vars['AUTHOR_CONTRIB_LIST'] = implode($type_list, ', ');
