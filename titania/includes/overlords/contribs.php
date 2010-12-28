@@ -209,7 +209,8 @@ class contribs_overlord
 			}
 
 			// Find the ones that do not require validation
-			$view_unapproved = array_merge($view_unapproved, titania_types::find_validation_free());
+			//$view_unapproved = array_merge($view_unapproved, titania_types::find_validation_free());
+			// Allow the above query decide if a contribution should be shown or not
 
 			$view_unapproved = array_unique($view_unapproved);
 			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .

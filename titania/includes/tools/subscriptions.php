@@ -221,7 +221,7 @@ class titania_subscriptions
 		$subject = '';
 		if (($subject_start = strpos($template, 'Subject:')) !== false)
 		{
-			$subject_start = strlen('Subject:');
+			$subject_start += strlen('Subject:');
 			$subject_length = strpos($template, "\n", $subject_start) - $subject_start;
 			$subject = trim(substr($template, $subject_start, $subject_length));
 			$template = substr($template, 0, $subject_start) . substr($template, ($subject_start + $subject_length));
