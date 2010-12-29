@@ -85,7 +85,7 @@ h3.section-name {
 	margin: 0 -10px;
 }
 
-.main-panel .forabg span.corners-top, .main-panel .forabg span.corners-bottom {
+.main-panel .forabg span.corners-top, .main-panel .forabg span.corners-bottom, .main-panel .forumbg span.corners-top, .main-panel .forumbg span.corners-bottom  {
 	margin: 0 -5px;
 }
 

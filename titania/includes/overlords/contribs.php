@@ -191,8 +191,11 @@ class contribs_overlord
 
 		titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 
+		$validation_free_types = array();
+		$mod_contrib_mod = (bool) phpbb::$auth->acl_get('u_titania_mod_contrib_mod');
+
 		// Permissions
-		if (titania::$config->require_validation && !phpbb::$auth->acl_get('u_titania_mod_contrib_mod'))
+		if (titania::$config->require_validation && !$mod_contrib_mod)
 		{
 			$sql_ary['LEFT_JOIN'][] = array(
 				'FROM'	=> array(TITANIA_CONTRIB_COAUTHORS_TABLE => 'cc'),
@@ -209,8 +212,8 @@ class contribs_overlord
 			}
 
 			// Find the ones that do not require validation
-			//$view_unapproved = array_merge($view_unapproved, titania_types::find_validation_free());
-			// Allow the above query decide if a contribution should be shown or not
+			$validation_free_types = titania_types::find_validation_free();
+			$view_unapproved = array_merge($view_unapproved, $validation_free_types);
 
 			$view_unapproved = array_unique($view_unapproved);
 			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
@@ -236,6 +239,15 @@ class contribs_overlord
 		$contrib_ids = $user_ids = array();
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			//Check to see if user has permission
+			if (sizeof($validation_free_types) && in_array($row['contrib_type'], $validation_free_types) && !$mod_contrib_mod && $row['contrib_user_id'] != phpbb::$user->data['user_id'] && titania::$access_level != TITANIA_ACCESS_TEAMS)
+			{
+				//If the contribution has a status that is not accessible by the current user let's not add it
+				if (in_array($row['contrib_status'], array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED)))
+				{
+					continue;
+				}
+			}
 			$user_ids[] = $row['contrib_user_id'];
 			$contrib_ids[] = $row['contrib_id'];
 			self::$contribs[$row['contrib_id']] = $row;
