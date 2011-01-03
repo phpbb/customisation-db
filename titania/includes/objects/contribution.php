@@ -469,13 +469,14 @@ class titania_contribution extends titania_message_object
 			{
 				$revision = new titania_revision($this);
 				$revision->contrib = $this;
+				$phpbb_versions = array();
 				foreach ($this->revisions as $revision_id => $row)
 				{
 					$revision->__set_array($row);
 					$revision->phpbb_versions = (isset($row['phpbb_versions'])) ? $row['phpbb_versions'] : array();
 					$revision->translations = (isset($row['translations'])) ? $row['translations'] : array();
 					$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'));
-					$phpbb_versions[] = $revision->phpbb_versions[0];
+					$phpbb_versions = array_merge($phpbb_versions, $revision->phpbb_versions);
 				}
 				unset($revision);
 
