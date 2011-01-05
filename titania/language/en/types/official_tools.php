@@ -39,7 +39,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'AUTHOR_OFFICIAL_TOOLS'				=> '%d Official Tools',
-	'AUTHOR_OFFICIAL_TOOLS_ONE'			=> '1 Official Tools',
+	'AUTHOR_OFFICIAL_TOOLS_ONE'			=> '1 Official Tool',
 	'OFFICIAL_TOOL'						=> 'Official Tool',
 	'OFFICIAL_TOOLS'					=> 'Official Tools',
 ));
