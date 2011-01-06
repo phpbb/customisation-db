@@ -280,7 +280,7 @@ a.new-revision:hover {
 
 /* Listings
 --------------------------------------------- */
-#phpbb_versions {
+.phpbb_versions {
 	min-width: 80px;
 }
 
