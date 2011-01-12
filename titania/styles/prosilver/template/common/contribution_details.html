@@ -26,14 +26,16 @@
 		<div class="left-column">
 		<!-- IF CONTRIB_DESC -->
 			<dl class="contrib-description">
-				<dt>
+				<!-- IF U_SUBSCRIBE or U_REPORT or U_INFO -->
+				<dd>
 					<ul class="profile-icons">
 						<!-- IF U_SUBSCRIBE --><li <!-- IF IS_SUBSCRIBED -->class="icon-unsubscribe"<!-- ELSE -->class="icon-subscribe"<!-- ENDIF -->><a href="{U_SUBSCRIBE}" title="{L_SUBSCRIBE}"><!-- IF IS_SUBSCRIBED -->{L_UNSUBSCRIBE}<!-- ELSE -->{L_SUBSCRIBE}<!-- ENDIF --></a></li><!-- ENDIF -->
 						<!-- IF U_REPORT --><li class="report-icon"><a href="{U_REPORT}" title="{L_REPORT}"><span>{L_REPORT}</span></a></li><!-- ENDIF -->
 						<!-- IF U_INFO --><li class="info-icon"><a href="{U_INFO}" title="{L_INFORMATION}"><span>{L_INFORMATION}</span></a></li><!-- ENDIF -->
 					</ul>
-					<strong>{L_DESCRIPTION}</strong>
-				</dt>
+				</dd>
+				<!-- ENDIF -->
+				<dt><strong>{L_DESCRIPTION}</strong></dt>
 				<dd>
 					<!-- IF WARNING -->
 						<div class="rules"><strong>{WARNING}</strong></div>
