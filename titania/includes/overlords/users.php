@@ -260,6 +260,7 @@ class users_overlord
 		$user_id = $row['user_id']; // Re-assign properly...in case it gives us the anonymous user
 
 		phpbb::_include('functions_display', 'get_user_rank');
+		phpbb::$user->add_lang('memberlist');
 
 		// IT'S A HACK!
 		global $phpbb_root_path;
@@ -305,6 +306,7 @@ class users_overlord
 			$prefix . 'U_MSN'				=> self::get_user($user_id, '_msnm'),
 			$prefix . 'U_YIM'				=> self::get_user($user_id, '_yim'),
 			$prefix . 'U_JABBER'			=> self::get_user($user_id, '_jabber'),
+			$prefix . 'S_JABBER_ENABLED'	=> (phpbb::$config['jab_enable']) ? true : false,
 		);
 
 		if ($output_to_template)

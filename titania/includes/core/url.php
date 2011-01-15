@@ -308,6 +308,12 @@ class titania_url
 
 		foreach (explode(self::$separator, $params) as $section)
 		{
+			// Overwrite the sid_ with the ?sid= so we can use the current session.
+			if ((strlen($section) == 37) && (strpos($section, '?sid=') === 0))
+			{
+				$section = 'sid_' . substr($section, 5);
+			}
+
 			$parts = explode('_', $section, 2);
 			if (sizeof($parts) == 2)
 			{

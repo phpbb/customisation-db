@@ -146,6 +146,19 @@ class titania_revision extends titania_database_object
 		$old_date_format = phpbb::$user->date_format;
 		phpbb::$user->date_format = str_replace('D ', '', phpbb::$user->date_format);
 
+		$install_time = false;
+		if ($this->install_time > 0)
+		{
+			if ($this->install_time < 60)
+			{
+				$install_time = phpbb::$user->lang['INSTALL_LESS_THAN_1_MINUTE'];
+			}
+			else
+			{
+				$install_time = phpbb::$user->lang('INSTALL_MINUTES', (int) ($this->install_time / 60));
+			}
+		}
+
 		phpbb::$template->assign_block_vars($tpl_block, array(
 			'REVISION_ID'		=> $this->revision_id,
 			'CREATED'			=> phpbb::$user->format_date($this->revision_time),
@@ -155,6 +168,8 @@ class titania_revision extends titania_database_object
 			'REVISION_QUEUE'	=> ($show_queue && $this->revision_queue_id) ? titania_url::build_url('manage/queue', array('q' => $this->revision_queue_id)) : '',
 			'PHPBB_VERSION'		=> (sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
 			'REVISION_LICENSE'	=> ($this->revision_license) ? censor_text($this->revision_license) : (($this->contrib && sizeof(titania_types::$types[$this->contrib->contrib_type]->license_options)) ? phpbb::$user->lang['UNKNOWN'] : ''),
+			'INSTALL_TIME'		=> $install_time,
+			'INSTALL_LEVEL'		=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',

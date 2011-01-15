@@ -18,7 +18,7 @@ if (!defined('IN_TITANIA'))
 
 $queue_id = request_var('q', 0);
 $queue_type = request_var('queue', '');
-$tag = request_var('tag', TITANIA_QUEUE_NEW);
+$tag = request_var('tag', 0);
 
 // Force the queue_type if we have a queue_id
 if ($queue_id)
@@ -98,10 +98,13 @@ if ($queue_id)
 
 	$action = request_var('action', '');
 	
-	// Add tag to Breadcrumbs
-	titania::generate_breadcrumbs(array(
-		titania_tags::get_tag_name($tag)	=> titania_url::append_url($base_url, array('tag' => $tag)),
-	));	
+	if ($tag)
+	{
+		// Add tag to Breadcrumbs
+		titania::generate_breadcrumbs(array(
+			titania_tags::get_tag_name($tag)	=> titania_url::append_url($base_url, array('tag' => $tag)),
+		));	
+	}
 
 	switch ($action)
 	{

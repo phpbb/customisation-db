@@ -67,9 +67,33 @@
 					<strong>{L_VERSION}</strong> {DOWNLOAD_VERSION}
 				</li>
 				<!-- ENDIF -->
+				<li>
+					<strong>{L_PHPBB_VERSION}</strong>
+					<!-- IF PHPBB_VERSION -->
+						{PHPBB_VERSION}
+					<!-- ELSEIF .phpbb_versions -->
+					<select id="phpbb_versions">
+						<!-- BEGIN phpbb_versions -->
+							<option>{phpbb_versions.NAME}</option>
+						<!-- END phpbb_versions -->
+					</select>
+					<!-- ELSE -->
+					{L_NO_REVISIONS}
+					<!-- ENDIF -->
+				</li>
 				<!-- IF DOWNLOAD_LICENSE -->
 				<li>
 					<strong>{L_LICENSE}</strong> {DOWNLOAD_LICENSE}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_INSTALL_TIME -->
+				<li>
+					<strong>{L_INSTALL_TIME}</strong> {DOWNLOAD_INSTALL_TIME}
+				</li>
+				<!-- ENDIF -->
+				<!-- IF DOWNLOAD_INSTALL_LEVEL -->
+				<li>
+					<strong>{L_INSTALL_LEVEL}</strong> {DOWNLOAD_INSTALL_LEVEL}
 				</li>
 				<!-- ENDIF -->
 				<!-- IF CONTRIB_UPDATE_DATE -->
@@ -135,6 +159,7 @@
 		        <!-- IF S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
 		        <!-- IF .screenshots --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
 		        <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
+		        <!-- IF U_NEW_REVISION --><li><a href="{U_NEW_REVISION}"><span>{L_NEW_REVISION}</span></a></li><!-- ENDIF -->
 		    </ul>
 
 		    <!-- IF .screenshots -->
@@ -153,7 +178,6 @@
 
 		    <!-- IF .revisions or U_NEW_REVISION -->
 		    <div id="revisions-panel" class="tab-panel">
-				<!-- IF U_NEW_REVISION --><a href="{U_NEW_REVISION}" class="new-revision">{L_NEW_REVISION}</a><!-- ENDIF -->
 				<div class="clear"></div>
 
 				<!-- INCLUDE common/revision_list.html -->

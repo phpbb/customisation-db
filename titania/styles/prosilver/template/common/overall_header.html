@@ -1,13 +1,68 @@
 {PHPBB_COM_HEADER}
 
-<!-- IF U_CANONICAL --><link rel="canonical" href="{U_CANONICAL}"><!-- ENDIF -->
-
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.7.2.custom.min.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.elastic.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.tabby.js"></script>
+
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/common.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/forum_fn.js"></script>
+
+<!-- IF .screenshots -->
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.lightbox-0.5.js"></script>
+<!-- ENDIF -->
+
 <script type="text/javascript">
 // <![CDATA[
-	$(document).ready(function()
-	{
+	var spacer_img = '{TITANIA_ROOT_PATH}/images/spacer.gif';
+	var jump_page = '{LA_JUMP_PAGE}:';
+	var on_page = '{ON_PAGE}';
+	var per_page = '{PER_PAGE}';
+	var pagination_url = '{S_PAGINATION_ACTION}';
+	var style_cookie = 'phpBBstyle';
+	var onload_functions = new Array();
+	var onunload_functions = new Array();
+
+<!-- IF UA_GREY_STAR_SRC -->
+	// Rating Stuff
+	var grey_star = new Image(16,16);
+	grey_star.src = "{UA_GREY_STAR_SRC}";
+	var green_star= new Image(16,16);
+	green_star.src = "{UA_GREEN_STAR_SRC}";
+	var red_star= new Image(16,16);
+	red_star.src = "{UA_RED_STAR_SRC}";
+	var orange_star= new Image(16,16);
+	orange_star.src = "{UA_ORANGE_STAR_SRC}";
+	var max_rating = "{UA_MAX_RATING}";
+<!-- ENDIF -->
+
+	$(document).ready(function() {
+	<!-- IF S_HIDE_ERROR_BOX -->
+		setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
+	<!-- ENDIF -->
+
+		$('#extratabs').tabs({
+		    select: function(event, ui) {
+		        var url = $.data(ui.tab, 'load.tabs');
+		        if( url ) {
+		            location.href = url;
+		            return false;
+		        }
+		        return true;
+		    }
+		});
+		$('#extratabs li').removeClass('ui-corner-top');
+		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
+
+	<!-- IF .screenshots -->
+		$('a.screenshot').lightBox(
+			{
+				imageLoading: '{T_TITANIA_THEME_PATH}/images/lightbox-ico-loading.gif',
+				imageBtnClose: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-close.gif',
+				imageBtnPrev: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-prev.gif',
+				imageBtnNext: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-next.gif'
+			}
+		);
+	<!-- ENDIF -->
 		/* Hide MPV/Automod Validation reports automatically */
 		$('blockquote > div > cite').each(function() {
 			if ($(this).text() == '{L_VALIDATION_MPV} {L_WROTE}:' || $(this).text() == '{L_VALIDATION_AUTOMOD} {L_WROTE}:')
@@ -15,9 +70,19 @@
 				hide_quotebox($(this).parent());
 			}
 		});
-	});
+  });
+
+	<!-- IF S_USER_PM_POPUP -->
+		if ({S_NEW_PM})
+		{
+			var url = '{UA_POPUP_PM}';
+			window.open(url.replace(/&amp;/g, '&'), '_phpbbprivmsg', 'height=225,resizable=yes,scrollbars=yes, width=400');
+		}
+	<!-- ENDIF -->
+
 // ]]>
 </script>
+
 
 <div class="navbar">
 	<div class="inner"><span class="corners-top"><span></span></span>

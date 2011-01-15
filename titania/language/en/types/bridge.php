@@ -38,6 +38,8 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	'AUTHOR_BRIDGES'					=> '%d Bridges',
+	'AUTHOR_BRIDGES_ONE'				=> '1 Bridge',
 	'BRIDGE'							=> 'Bridge',
 	'BRIDGES'							=> 'Bridges',
 	'BRIDGE_VALIDATION'					=> '[phpBB Bridge-Validation] %1$s %2$s',

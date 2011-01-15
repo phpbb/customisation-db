@@ -235,6 +235,8 @@ if ($attention_id || ($object_type && $object_id))
 				// Notify poster about approval
 				if ($post->post_user_id != ANONYMOUS)
 				{
+					phpbb::_include('functions_messenger', false, 'messenger');
+					
 					$lang_path = phpbb::$user->lang_path;
 					phpbb::$user->set_custom_lang_path(titania::$config->language_path);
 
