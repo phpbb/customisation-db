@@ -52,8 +52,8 @@ class titania_type_translation extends titania_type_base
 	public $validate_translation = true;
 
 	/* Translations will not be queued, it would only delay the delivery */
-	public $use_queue = false;
-	public $require_validation = false;
+	public $use_queue = true;
+	public $require_validation = true;
 
 	/* Extra upload files disabled on Translation revisions */
 	public $extra_upload = false;
