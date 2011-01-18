@@ -21,6 +21,11 @@ if (!class_exists('titania_type_base'))
 	include(TITANIA_ROOT . 'includes/types/base.' . PHP_EXT);
 }
 
+if (!class_exists('translation_validation'))
+{
+	include(TITANIA_ROOT . 'includes/library/translations/translation_validation.' . PHP_EXT);
+}
+
 define('TITANIA_TYPE_TRANSLATION', 6);
 
 class titania_type_translation extends titania_type_base
