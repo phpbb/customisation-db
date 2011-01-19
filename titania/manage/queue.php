@@ -207,7 +207,7 @@ if ($queue_id)
 							phpbb::$db->sql_freeresult($result);
 
 							$contrib_tools = new titania_contrib_tools(titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . utf8_basename($row['physical_filename']));
-							if (!($style_id = $contrib_tools->install_demo_style(TITANIA_ROOT . titania::$config->demo_style_path, $contrib)))
+							if (!($style_id = $contrib_tools->install_demo_style(TITANIA_ROOT . titania::$config->demo_style_path)))
 							{
 								// Oh noez, we habz error
 								trigger_error(implode('<br />', $contrib_tools->error));
