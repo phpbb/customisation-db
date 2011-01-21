@@ -629,8 +629,9 @@ echo $modx_root;
 	* Install a style on the demo board.
 	*
 	* @param string $phpbb_root_path
+	* @param mixed contrib object
 	*/
-	public function install_demo_style($phpbb_root_path)
+	public function install_demo_style($phpbb_root_path, $contrib)
 	{
 		phpbb::$user->add_lang('acp/styles');
 
@@ -676,7 +677,7 @@ echo $modx_root;
 
 		$package_root = $this->find_root(false, 'style.cfg');
 		$stylecfg = parse_cfg_file($this->unzip_dir . $package_root . '/style.cfg');
-		$style_root = $phpbb_root_path . 'styles/' . basename($stylecfg['name']) . '/';
+		$style_root = $phpbb_root_path . 'styles/' . basename($stylecfg['name']) . '_' . $contrib->contrib_id . '/';
 
 		$this->mvdir_recursive($this->unzip_dir . $package_root, $style_root, false);
 		$this->rmdir_recursive($this->unzip_dir);
@@ -807,7 +808,7 @@ parse_css_file = {PARSE_CSS_FILE}
 
 		// Install the style.
 								// (&$error, $action, $root_path, &$id, $name, $path, $copyright, $active, $default, &$style_row, $template_root_path = false, $template_path = false, $theme_root_path = false, $theme_path = false, $imageset_root_path = false, $imageset_path = false)
-		if (!$styles->install_style($error, 'install', $style_root, $style_id, $stylecfg['name'], basename($stylecfg['name']), $stylecfg['copyright'], true, false, $style_row))
+		if (!$styles->install_style($error, 'install', $style_root, $style_id, $stylecfg['name'], basename($stylecfg['name']) . '_' . $contrib->contrib_id, $stylecfg['copyright'], true, false, $style_row))
 		{
 			if ($error != array(phpbb::$user->lang['STYLE_ERR_NAME_EXIST']))
 			{
