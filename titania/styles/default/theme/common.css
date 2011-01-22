@@ -392,6 +392,15 @@ dd.phpbb-version select {
 	width: 100px;
 }
 
+dl.preview-select {
+	padding-top: 15px;
+	margin-bottom: -5px;
+}
+
+dt.set-preview {
+	margin-left: 40px;
+}
+
 img.icon {
 	float: right;
 }
@@ -657,4 +666,9 @@ ul.topiclist dd.revision-translations .file dd {
 
 .revisions dt.revision-information {
 	width: 50% !important;
+}
+
+hr.solid {
+	border-top: 1px solid #CCCCCC;
+	margin: 10px 0;
 }
