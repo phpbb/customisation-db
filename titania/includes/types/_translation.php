@@ -21,6 +21,11 @@ if (!class_exists('titania_type_base'))
 	include(TITANIA_ROOT . 'includes/types/base.' . PHP_EXT);
 }
 
+if (!class_exists('translation_validation'))
+{
+	include(TITANIA_ROOT . 'includes/library/translations/translation_validation.' . PHP_EXT);
+}
+
 define('TITANIA_TYPE_TRANSLATION', 6);
 
 class titania_type_translation extends titania_type_base
@@ -50,10 +55,6 @@ class titania_type_translation extends titania_type_base
 	public $root_not_found_key = 'COULD_NOT_FIND_TRANSLATION_ROOT';
 
 	public $validate_translation = true;
-
-	/* Translations will not be queued, it would only delay the delivery */
-	public $use_queue = true;
-	public $require_validation = true;
 
 	/* Extra upload files disabled on Translation revisions */
 	public $extra_upload = false;
