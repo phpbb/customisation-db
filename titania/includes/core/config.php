@@ -89,6 +89,7 @@ class titania_config extends titania_object
 			// Validation/queue related
 			'require_validation'		=> array('default' => true),
 			'use_queue'					=> array('default' => true),
+			'allow_self_validation'		=> array('default' => true),
 
 			// phpBB versions array
 			'phpbb_versions'			=> array('default' => array(

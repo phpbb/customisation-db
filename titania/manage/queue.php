@@ -158,6 +158,12 @@ if ($queue_id)
 			$contrib = new titania_contribution();
 			$contrib->load((int) $queue->contrib_id);
 
+			// Do not allow to approve your own contributions...
+			if (!titania::$config->allow_self_validation && ($action == 'approve') && ($contrib->is_author || $contrib->is_active_coauthor || $contrib->is_coauthor))
+			{
+				titania::needs_auth();
+			}
+
 			if (!titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
 				titania::needs_auth();
