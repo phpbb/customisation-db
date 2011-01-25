@@ -224,7 +224,7 @@ class titania_subscriptions
 			$subject_start += strlen('Subject:');
 			$subject_length = strpos($template, "\n", $subject_start) - $subject_start;
 			$subject = trim(substr($template, $subject_start, $subject_length));
-			$template = substr($template, 0, $subject_start) . substr($template, ($subject_start + $subject_length));
+			$template = trim(substr($template, ($subject_start + $subject_length)));
 		}
 		$subject = (isset($vars['SUBJECT']) && !$subject) ? $vars['SUBJECT'] : $subject;
 		$subject = ($subject) ? $subject : phpbb::$user->lang['SUBSCRIPTION_NOTIFICATION'];
