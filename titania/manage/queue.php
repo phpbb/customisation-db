@@ -158,8 +158,8 @@ if ($queue_id)
 			$contrib = new titania_contribution();
 			$contrib->load((int) $queue->contrib_id);
 
-			// Do not allow to approve your own contributions...
-			if (!titania::$config->allow_self_validation && ($action == 'approve') && ($contrib->is_author || $contrib->is_active_coauthor || $contrib->is_coauthor))
+			// Do not allow to approve your own contributions, except for founders...
+			if (!titania::$config->allow_self_validation && (phpbb::$user->data['user_type'] != USER_FOUNDER) && ($action == 'approve') && ($contrib->is_author || $contrib->is_active_coauthor || $contrib->is_coauthor))
 			{
 				titania::needs_auth();
 			}
