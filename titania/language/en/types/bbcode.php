@@ -41,6 +41,32 @@ $lang = array_merge($lang, array(
 	'LONG_BBCODE'						=> 'Custom BBcode',
 	'BBCODES'							=> 'BBcodes',
 	'LONG_BBCODES'						=> 'Custom BBcodes',
+	'BBCODE_UPDATE_PUBLIC'					=> '[b][color=darkred]Custom BBcode Updated to version %1$s
+See first post for Download Link[/color][/b]',
+	'BBCODE_UPDATE_PUBLIC_NOTES'			=> '
+
+[b]Notes:[/b] %1$s',
+	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide by the <a href="http://www.phpbb.com/bbcode/policies/">Custom BBcode database policies</a> and that your MOD conforms to and follows the W3 Web Standards.
+
+You also agree and accept that this Custom BBcode\'s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your Custom BBcode through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
+	'BBCODE_REPLY_PUBLIC'				=> '[b][color=darkred]Custom BBcode validated/released[/color][/b]',
+	'BBCODE_REPLY_PUBLIC_NOTES'			=> '
+
+[b]Notes:[/b] %s',
+	'BBCODE_CREATE_PUBLIC'				=> '[b]Custom BBcode name[/b]: %1$s
+[b]Author:[/b] [url=%2$s]%3$s[/url]
+[b]Custom BBcode description[/b]: %4$s
+[b]Custom BBcode version[/b]: %5$s
+[b]Tested on phpBB version[/b]: %11$s
+
+[b]Download file[/b]: [url=%6$s]%7$s[/url]
+[b]File size:[/b] %8$s Bytes
+
+[b]Custom BBcode overview page:[/b] [url=%9$s]View[/url]
+
+[color=blue][b]The phpBB Team is not responsible nor required to provide support for this Custom BBcode. By adding this Custom BBcode, you acknowledge that the phpBB Support Team or any other phpBB Team may not be able to provide support.[/b][/color]
+
+[size=150][url=%10$s]--&gt;[b]Modification support[/b]&lt;--[/url][/size]',
 	'BBCODE_VALIDATION'					=> '[phpBB Custom BBcode - Validation] %1$s %2$s',
 	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been approved and released into our Customisation Database.
 

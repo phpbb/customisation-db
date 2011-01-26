@@ -42,6 +42,10 @@ class titania_type_bbcode extends titania_type_base
 	public $validation_subject = 'BBCODE_VALIDATION';
 	public $validation_message_approve = 'BBCODE_VALIDATION_MESSAGE_APPROVE';
 	public $validation_message_deny = 'BBCODE_VALIDATION_MESSAGE_DENY';
+	public $create_public = 'BBCODE_CREATE_PUBLIC';
+	public $reply_public = 'BBCODE_REPLY_PUBLIC';
+	public $update_public = 'BBCODE_UPDATE_PUBLIC';
+//	public $upload_agreement = 'BBCODE_UPLOAD_AGREEMENT';
 
 	public function __construct()
 	{
