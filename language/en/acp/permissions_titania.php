@@ -133,6 +133,11 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Can validate Converters', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_converter_moderate'				=> array('lang' => 'Can moderate Converters', 'cat' => 'titania_moderate'),
 
+	'acl_u_titania_mod_bbcode_queue_discussion'			=> array('lang' => 'Can See Custom BBcode Queue Discussion', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bbcode_queue'					=> array('lang' => 'Can See Custom BBcode Queue', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bbcode_validate'					=> array('lang' => 'Can Validate Custom BBcodes', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bbcode_moderate'					=> array('lang' => 'Can Moderate Custom BBcodes', 'cat' => 'titania_moderate'),
+	
 	'acl_u_titania_mod_bridge_queue_discussion'			=> array('lang' => 'Can see Bridge Queue Discussion', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_bridge_queue'					=> array('lang' => 'Can see Bridge Queue', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Can validate Bridges', 'cat' => 'titania_moderate'),
