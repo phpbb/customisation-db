@@ -1,11 +1,21 @@
 <?php
 /**
+<<<<<<< HEAD
 *
 * @package Titania
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
+=======
+ *
+ * @package Titania
+ * @version $Id$
+ * @copyright (c) 2008 phpBB Customisation Database Team
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+ *
+ */
+>>>>>>> [feature/bbcode/62324] Adding the DB changes, untested, have increased to 0.4.0 because there may be other DB changes (hence new versions which would be 0.3.9) before this is merged.
 
 /**
  * @ignore
@@ -629,6 +639,7 @@ $versions = array(
 			array(TITANIA_QUEUE_TABLE, 'allow_author_repack', array('BOOL', 0)),
 		),
 	),
+<<<<<<< HEAD
 
 	'0.3.9' => array(
 		'custom' => 'titania_custom',
@@ -707,6 +718,12 @@ $versions = array(
 	),
 	'0.4.2' => array(
 		'custom'	=> 'titania_custom',
+	'0.5.0' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_bbcode_use', array('VCHAR', 255)),
+			array(TITANIA_REVISIONS_TABLE, 'revision_html_replace', array('VCHAR', 255)),
+			array(TITANIA_REVISIONS_TABLE, 'revision_help_line', array('VCHAR', 255)),
+		),
 	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
