@@ -119,9 +119,12 @@ if ($step == 1)
 	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 	$revision_attachment->is_orphan = false;
 	$revision_attachment->upload();
-	$revision_version = utf8_normalize_nfc(request_var('revision_version', '', true));
-	$queue_allow_repack = request_var('queue_allow_repack', 0);
-	$revision_license = utf8_normalize_nfc(request_var('revision_license', '', true));
+	$revision_version 		= utf8_normalize_nfc(request_var('revision_version', '', true));
+	$revision_html_replace 	= utf8_normalize_nfc(request_var('revision_html_replace', '', true));
+    $revision_bbcode_usage 	= utf8_normalize_nfc(request_var('revision_bbcode_usage', '', true));
+    $revision_help_line 	= utf8_normalize_nfc(request_var('revision_help_line', '', true));
+	$queue_allow_repack 	= request_var('queue_allow_repack', 0);
+	$revision_license 		= utf8_normalize_nfc(request_var('revision_license', '', true));
 
 	// Check for errors
 	$error = array_merge($error, $revision_attachment->error);
@@ -520,6 +523,9 @@ if ($step == 0 || sizeof($error))
 		'REVISION_NAME'				=> utf8_normalize_nfc(request_var('revision_name', '', true)),
 		'REVISION_VERSION'			=> utf8_normalize_nfc(request_var('revision_version', '', true)),
 		'REVISION_LICENSE'			=> utf8_normalize_nfc(request_var('revision_license', '', true)),
+		'REVISION_HTML_REPLACE'		=> utf8_normalize_nfc(request_var('revision_html_replace', '', true)),
+		'REVISION_BBCODE_USE'		=> utf8_normalize_nfc(request_var('revision_bbcode_usage', '', true)),
+		'REVISION_HELP_LINE'		=> utf8_normalize_nfc(request_var('revision_help_line', '', true)),
 		'REVISION_CUSTOM_LICENSE'	=> utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
 		'QUEUE_ALLOW_REPACK'		=> request_var('queue_allow_repack', false),
 
