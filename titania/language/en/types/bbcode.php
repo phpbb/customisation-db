@@ -41,7 +41,7 @@ $lang = array_merge($lang, array(
 	'LONG_BBCODE'						=> 'Custom BBcode',
 	'BBCODES'							=> 'BBcodes',
 	'LONG_BBCODES'						=> 'Custom BBcodes',
-	'BBCODE_VALIDATION'					=> '[phpBB Custom BBcode-Validation] %1$s %2$s',
+	'BBCODE_VALIDATION'					=> '[phpBB Custom BBcode - Validation] %1$s %2$s',
 	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been approved and released into our Customisation Database.
 
 It is our hope that you will provide a basic level of support for this BBcode and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
