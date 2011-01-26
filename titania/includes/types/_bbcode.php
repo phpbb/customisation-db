@@ -47,6 +47,22 @@ class titania_type_bbcode extends titania_type_base
 	public $update_public = 'BBCODE_UPDATE_PUBLIC';
 //	public $upload_agreement = 'BBCODE_UPLOAD_AGREEMENT';
 
+	/**
+	* Require an upload for this type?
+	* Assumed true unless this value is set, otherwise it it unrequired.
+	*
+	* @var bool
+	*/
+	public $require_upload = false;
+	
+	/**
+	 * The forum_database and forum_robot, initialize in constructor
+	 *
+	 * @var int
+	 */
+//	public $forum_database = 0;
+//	public $forum_robot = 0;
+
 	public function __construct()
 	{
 		$this->lang = phpbb::$user->lang['BBCODE'];
@@ -138,8 +154,8 @@ class titania_type_bbcode extends titania_type_base
 	public function get_count()
 	{
 		return phpbb::$config['titania_num_bbcodes'];
-	}
-
+	}	
+	
 	/**
 	* Uninstall the type
 	*/

@@ -121,6 +121,24 @@ class titania_types
 
 		return $free;
 	}
+	
+	/**
+	* Get the types that do not require an upload
+	*/
+	public static function find_upload_free()
+	{
+		$free = array();
+
+		foreach (self::$types as $type_id => $class)
+		{
+			if (!$class->require_upload)
+			{
+				$free[] = $type_id;
+			}
+		}
+		
+		return $free;
+	}
 
 	public static function increment_count($type)
 	{
@@ -197,6 +215,14 @@ class titania_type_base
 	*/
 	public $require_validation = true;
 	public $use_queue = true;
+	
+	/**
+	* Require an upload for this type?
+	* Assumed true unless this value is set, otherwise it it unrequired.
+	*
+	* @var bool
+	*/
+	public $require_upload = true;
 
 	/**
 	* Can we upload extra files (on revisions) for this type?
