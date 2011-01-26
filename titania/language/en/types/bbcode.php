@@ -46,7 +46,7 @@ $lang = array_merge($lang, array(
 
 It is our hope that you will provide a basic level of support for this BBcode and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
-[b]Notes from the Team about your convertor:[/b]
+[b]Notes from the Team about your Custom BBcode:[/b]
 [quote]%s[/quote]
 
 Sincerely,
