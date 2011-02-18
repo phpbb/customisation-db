@@ -389,6 +389,8 @@ else if ($step > 1)
 		$step_cnt++;
 	}
 }
+
+// Final step
 if ($step > sizeof(titania_types::$types[titania::$contrib->contrib_type]->upload_steps) + 1)
 {
 	// Repack if that's what we want
@@ -403,6 +405,12 @@ if ($step > sizeof(titania_types::$types[titania::$contrib->contrib_type]->uploa
 
 	// Update the queue (make visible)
 	$revision->update_queue();
+
+	// Update the attachment MD5, it may have changed
+	$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+		SET hash = \'' . phpbb::$db->sql_escape($contrib_tools->md5_hash) . '\'
+		WHERE attachment_id = ' . $revision_attachment->attachment_id;
+	phpbb::$db->sql_query($sql);
 
 	if ($repack && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
 	{

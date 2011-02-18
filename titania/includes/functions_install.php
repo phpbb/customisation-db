@@ -140,6 +140,10 @@ function titania_custom($action, $version)
 				case '0.3.3' :
 					titania_sync::contribs('faq_count');
 				break;
+
+				case '0.3.9' :
+					titania_sync::attachments('hash');
+				break;
 			}
 		break;
 

@@ -54,12 +54,22 @@ class titania_contrib_tools
 	public $error = array();
 
 	/**
+	* Contains the md5 hash of the zip package
+	*
+	* @var string
+	*/
+	public $md5_hash = '';
+
+	/**
 	* @param string $zip Full path to the zip package
 	* @param string $new_dir_name name of the directory you want to use in the zip package (leave blank if the initial steps have been run already)
 	*/
 	public function __construct($original_zip, $new_dir_name = '')
 	{
 		$this->original_zip = $original_zip;
+
+		// Calculate the md5
+		$this->md5_hash = md5_file($this->original_zip);
 
 		if ($new_dir_name)
 		{
@@ -329,6 +339,9 @@ class titania_contrib_tools
 		$this->_replace_zip($zip);
 
 		$zip->close();
+
+		// Calculate the md5
+		$this->md5_hash = md5_file($this->original_zip);
     }
 
     /**

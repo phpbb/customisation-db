@@ -603,7 +603,7 @@ $versions = array(
 			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_user_id', array('UINT', 0)),
 		),
 	),
-	
+
 	'0.3.5' => array(
 		'table_column_add' => array(
 			array(TITANIA_CONTRIBS_TABLE, 'contrib_iso_code', array('VCHAR', '')),
@@ -633,6 +633,10 @@ $versions = array(
 		'table_column_add' => array(
 			array(TITANIA_QUEUE_TABLE, 'allow_author_repack', array('BOOL', 0)),
 		),
+	),
+
+	'0.3.9' => array(
+		'custom' => 'titania_custom',
 	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );

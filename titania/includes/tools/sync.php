@@ -27,6 +27,34 @@ if (!defined('IN_TITANIA'))
 class titania_sync
 {
 	/**
+	* Sync attachments
+	*/
+	public function attachments($mode, $attachment_id = false)
+	{
+		switch ($mode)
+		{
+			case 'hash' :
+				$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE .
+					(($attachment_id !== false) ? ' WHERE attachment_id = ' . (int) $attachment_id : '');
+				$result = phpbb::$db->sql_query($sql);
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$file = utf8_basename($row['attachment_directory']) . '/' . utf8_basename($row['physical_filename']);
+					$md5 = md5_file($file);
+
+					if ($md5 != $row['hash'])
+					{
+						$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+							SET hash = \'' . phpbb::$db->sql_escape($md5) . '\'
+							WHERE attachment_id = ' . $row['attachment_id'];
+					}
+				}
+				phpbb::$db->sql_freeresult($result);
+			break;
+		}
+	}
+
+	/**
 	* Sync authors
 	*
 	* @param string $mode The mode (count)
