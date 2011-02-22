@@ -55,6 +55,7 @@ Note that by default this topic is private between authors and validators and ca
 
 	'REPORT_POST_CONFIRM'				=> 'Use this form to report the selected post to the forum moderators and board administrators. Reporting should generally be used only if the post breaks forum rules.',
 
+	'SET_PREVIEW_FILE'					=> 'Set as preview',
 	'SOFT_DELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to <strong>soft</strong> delete this topic?',
 	'STICKIES'							=> 'Stickies',
 	'STICKY_TOPIC'						=> 'Sticky Topic',
