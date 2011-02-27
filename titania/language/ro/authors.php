@@ -43,6 +43,7 @@ $lang = array_merge($lang, array(
 	'AUTHOR_NOT_FOUND'			=> 'Autorul nu a fost găsit',
 	'AUTHOR_PROFILE'			=> 'Profil autor',
 	'AUTHOR_RATING'				=> 'Evaluare autor',
+	'AUTHOR_REAL_NAME'			=> 'Nume real',
 	'AUTHOR_SNIPPETS'			=> '%d coduri reutilizabile',
 	'AUTHOR_SNIPPETS_ONE'		=> '1 cod reutilizabil',
 	'AUTHOR_STATISTICS'			=> 'Statistici autor',
@@ -58,8 +59,6 @@ $lang = array_merge($lang, array(
 	'NO_AVATAR'					=> 'Fără avatar',
 
 	'PHPBB_PROFILE'				=> 'Profil phpBB.com',
-
-	'REAL_NAME'					=> 'Nume real',
 
 	'USER_INFORMATION'			=> 'Informaţiile utilizatorului',
 
