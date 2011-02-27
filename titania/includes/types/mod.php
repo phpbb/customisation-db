@@ -73,7 +73,10 @@ class titania_type_mod extends titania_type_base
 
 		if (titania::$config->use_queue && $this->use_queue)
 		{
-			$this->upload_steps[] = array('contrib_type', 'mpv_test');
+			if ($this->mpv_test)
+			{
+				$this->upload_steps[] = array('contrib_type', 'mpv_test');
+			}
 
 			if ($this->automod_test)
 			{
