@@ -20,7 +20,11 @@ titania::_include('functions_posting', 'generate_type_select');
 
 load_contrib();
 
-if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+if (!phpbb::$auth->acl_get('u_titania_contrib_submit'))
+{
+	titania::needs_auth();
+}
+else if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 {
 	titania::needs_auth();
 }
