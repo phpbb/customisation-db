@@ -387,6 +387,7 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_VIEWS'					=> $this->contrib_views,
 			'CONTRIB_UPDATE_DATE'			=> ($this->contrib_last_update) ? phpbb::$user->format_date($this->contrib_last_update) : '',
 			'CONTRIB_STATUS'				=> $this->contrib_status,
+			'CONTRIB_SCREENSHOT'			=> ($this->screenshots) ? $this->screenshots->preview_image() : false,
 
 			'CONTRIB_LOCAL_NAME'			=> $this->contrib_local_name,
 			'CONTRIB_ISO_CODE'				=> $this->contrib_iso_code,

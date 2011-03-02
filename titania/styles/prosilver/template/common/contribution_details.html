@@ -2,15 +2,15 @@
 	<div class="inner"><span class="corners-top main-corners"><span></span></span>
 
 		<div class="right-column demo">
-			<!-- IF .screenshots -->
-				<!-- BEGIN screenshots(0,0) -->
-					<!-- IF screenshots.S_THUMBNAIL -->
-						<img src="{screenshots.THUMB_IMAGE}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" />
+			<!-- IF IF CONTRIB_SCREENSHOT -->
+				<!-- BEGIN preview(0,0) -->
+					<!-- IF preview.S_THUMBNAIL -->
+						<img src="{preview.THUMB_IMAGE}" class="screenshot" alt="{preview.DOWNLOAD_NAME}" title="{preview.DOWNLOAD_NAME} ({preview.FILESIZE} {preview.SIZE_LANG}) {preview.L_DOWNLOAD_COUNT}" />
 					<!-- ELSE -->
-						<img src="{screenshots.U_INLINE_LINK}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" />
+						<img src="{preview.U_INLINE_LINK}" class="screenshot" alt="{preview.DOWNLOAD_NAME}" />
 					<!-- ENDIF -->
 					<br />
-				<!-- END screenshots -->
+				<!-- END preview -->
 			<!-- ELSE -->
 				<div class="no-screenshot">{L_NO_SCREENSHOT}</div>
 			<!-- ENDIF -->
