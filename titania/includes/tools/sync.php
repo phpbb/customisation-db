@@ -39,7 +39,7 @@ class titania_sync
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
-					$file = utf8_basename($row['attachment_directory']) . '/' . utf8_basename($row['physical_filename']);
+					$file = titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . utf8_basename($row['physical_filename']);
 					$md5 = md5_file($file);
 
 					if ($md5 != $row['hash'])
@@ -47,6 +47,7 @@ class titania_sync
 						$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
 							SET hash = \'' . phpbb::$db->sql_escape($md5) . '\'
 							WHERE attachment_id = ' . $row['attachment_id'];
+						phpbb::$db->sql_query($sql);
 					}
 				}
 				phpbb::$db->sql_freeresult($result);
