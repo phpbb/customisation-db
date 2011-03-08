@@ -239,6 +239,7 @@ class titania_attachment extends titania_database_object
 			'S_FORM_ENCTYPE'	=> ' enctype="multipart/form-data"',
 
 			'S_INLINE_ATTACHMENT_OPTIONS'	=> true,
+			'SELECT_PREVIEW'	=> ($this->object_type == TITANIA_SCREENSHOT) ? true : false,
 		));
 
 		// Sort correctly

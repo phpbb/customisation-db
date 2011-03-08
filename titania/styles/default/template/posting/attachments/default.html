@@ -20,11 +20,9 @@
 			<!-- IF not attach_row.S_DELETED -->
 				<!-- IF S_INLINE_ATTACHMENT_OPTIONS --><input type="button" value="{L_PLACE_INLINE}" onclick="attach_inline({attach_row.S_ROW_COUNT}, '{attach_row.FILENAME}');" class="button2" />&nbsp; <!-- ENDIF -->
 				<input type="submit" name="delete_file[{attach_row.ATTACH_ID}]" value="{L_DELETE_FILE}" class="button2" />&nbsp;
-				<input type="radio" name="set_preview_file" value="{attach_row.ATTACH_ID}"<!-- IF attach_row.S_PREVIEW --> checked="checked"<!-- ENDIF --> />{L_SET_PREVIEW_FILE}
 			<!-- ELSE -->
 				<p class="error">{L_FILE_DELETED}</p>
 				<input type="submit" name="undelete_file[{attach_row.ATTACH_ID}]" value="{L_UNDELETE_FILE}" class="button2" />&nbsp;
-				<input type="checkbox" name="set_preview_file[{attach_row.ATTACH_ID}]" value="1" class="button2" />{L_SET_PREVIEW_FILE}&nbsp;
 				<input type="hidden" name="delete_file[{attach_row.ATTACH_ID}]" value="1" />
 			<!-- ENDIF -->
 			<input type="hidden" name="{FORM_NAME}_attachments[]" value="{attach_row.ATTACH_ID}" />
