@@ -644,5 +644,9 @@ $versions = array(
 			array(TITANIA_ATTACHMENTS_TABLE, 'is_preview', array('TINT:1', 0)),
 		),
 	),
+
+	'0.3.11' => array(
+		'custom' => 'titania_custom',
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );

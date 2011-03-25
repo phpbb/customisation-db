@@ -144,6 +144,38 @@ function titania_custom($action, $version)
 				case '0.3.9' :
 					titania_sync::attachments('hash');
 				break;
+
+				case '0.3.11' :
+					$with_preview = $needs_preview = array();
+
+					//Need a list of all objects with previews
+					$sql = 'SELECT object_id FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+						WHERE is_preview = 1 AND object_type = ' . TITANIA_SCREENSHOT;
+					$result = phpbb::$db->sql_query($sql);
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$with_preview[] = $row['object_id'];
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					//Now we get a list of attachments to update
+					$sql = 'SELECT MIN(attachment_id) AS attachment_id, object_id FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+						WHERE is_preview = 0 AND object_type = ' . TITANIA_SCREENSHOT . (sizeof($with_preview) ? ' AND ' . phpbb::$db->sql_in_set('object_id', $with_preview, true) : '') . '
+						GROUP BY object_id';
+					$result = phpbb::$db->sql_query($sql);
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$needs_preview[] = $row['attachment_id'];
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					//Finally let's update
+					if (sizeof($needs_preview))
+					{
+						$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . ' SET is_preview = 1 WHERE ' . phpbb::$db->sql_in_set('attachment_id', $needs_preview);
+						phpbb::$db->sql_query($sql);
+					}
+				break;
 			}
 		break;
 
