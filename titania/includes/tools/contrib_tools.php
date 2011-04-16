@@ -574,7 +574,7 @@ class titania_contrib_tools
 	{
 		// Find the main modx file
 		$modx_root = $this->find_root();
-echo $modx_root;
+
 		if ($modx_root === false)
 		{
 			titania::add_lang('contributions');
