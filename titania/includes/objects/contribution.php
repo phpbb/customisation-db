@@ -1039,6 +1039,9 @@ class titania_contribution extends titania_message_object
 
 		if (sizeof($active))
 		{
+			// First check that each author has a author row.
+			$this->validate_author_row($active);
+
 			$sql_ary = array();
 			foreach ($active as $user_id)
 			{
@@ -1060,6 +1063,9 @@ class titania_contribution extends titania_message_object
 
 		if (sizeof($nonactive))
 		{
+			// First check that each author has a author row.
+			$this->validate_author_row($nonactive);
+
 			$sql_ary = array();
 			foreach ($nonactive as $user_id)
 			{
@@ -1077,6 +1083,60 @@ class titania_contribution extends titania_message_object
 
 			// Increment the contrib counter
 			$this->change_author_contrib_count($nonactive);
+		}
+	}
+
+	/**
+	 * Check that each contributor has a author row.
+	 * If not create one.
+	 *
+	 * $author_arr[] = array(
+	 * 	'username' => 'user_id', // both are strings.
+	 * );
+	 *
+	 * @param array $author_arr, array with contributor data from set_coauthors()
+	 */
+	public function validate_author_row($author_arr)
+	{
+		// Always make sure that we actually got some data to work with...
+		if (empty($author_arr) || !is_array($author_arr))
+		{
+			return;
+		}
+
+		$sql = 'SELECT user_id FROM ' . TITANIA_AUTHORS_TABLE . '
+			WHERE ' . phpbb::$db->sql_in_set('user_id', $author_arr);
+		$result = phpbb::$db->sql_query($sql);
+
+		$existing = array();
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$existing[] = (int) $row['user_id'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		if (sizeof($existing) == sizeof($author_arr))
+		{
+			// All co-authors found, we are done.
+			return;
+		}
+
+		$sql_ary = array();
+		foreach ($author_arr as $username => $user_id)
+		{
+			if (!in_array($user_id, $existing))
+			{
+				// This author needs to be created.
+				$sql_ary[] = array(
+					'user_id'		=> $user_id,
+					'author_desc' => '',
+				);
+			}
+		}
+
+		if (!empty($sql_ary))
+		{
+			phpbb::$db->sql_multi_insert(TITANIA_AUTHORS_TABLE, $sql_ary);
 		}
 	}
 
