@@ -4,9 +4,9 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 207 2010-03-14 16:27:00Z exreaction $
+ * @version $Id$
  * @copyright (c) 2008 phpBB Group
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
  *
  */
 
@@ -122,7 +122,7 @@ $lang = array_merge($lang, array(
 	'UNKNOWN'						=> 'Unknown',
 	'UPDATE_MOD'					=> 'Update %s',
 	'UPDATE_MOD_CONFIRM'			=> 'Are you ready to update %s?',
-	'UPDATE_UMIL'					=> 'This version of UMIL is outdated.<br /><br />Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>',
+	'UPDATE_UMIL'					=> 'This version of UMIL is outdated.<br /><br />Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s" target="_blank">%1$s</a>',
 
 	'VERSIONS'						=> 'Mod Version: <strong>%1$s</strong><br />Currently Installed: <strong>%2$s</strong>',
 	'VERSION_SELECT'				=> 'Version Select',

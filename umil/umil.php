@@ -6,7 +6,7 @@
  * @package umil
  * @version $Id$
  * @copyright (c) 2008 phpBB Group
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
  *
  */
 
@@ -18,7 +18,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('UMIL_VERSION', '1.0.3');
+define('UMIL_VERSION', '1.0.4');
 
 /**
 * Multicall instructions
@@ -110,7 +110,7 @@ class umil
 	*/
 	var $stand_alone = false;
 
-    /**
+	/**
 	* Were any new permissions added (used in umil_frontend)?
 	*/
 	var $permissions_added = false;
@@ -198,7 +198,7 @@ class umil
 			$user->add_lang(array('acp/common', 'acp/permissions'));
 
 			// Check to see if a newer version is available.
-			$info = $this->version_check('www.phpbb.com', '/updatecheck', ((defined('PHPBB_QA')) ? 'umil_qa.txt' : 'umil.txt'));
+			$info = $this->version_check('version.phpbb.com', '/umil', ((defined('PHPBB_QA')) ? 'umil_qa.txt' : 'umil.txt'));
 			if (is_array($info) && isset($info[0]) && isset($info[1]))
 			{
 				if (version_compare(UMIL_VERSION, $info[0], '<'))
@@ -2322,6 +2322,8 @@ class umil
 	*/
 	function table_index_add($table_name, $index_name = '', $column = array())
 	{
+		global $config;
+
 		// Multicall
 		if ($this->multicall(__FUNCTION__, $table_name))
 		{
@@ -2346,6 +2348,14 @@ class umil
 		if (!is_array($column))
 		{
 			$column = array($column);
+		}
+
+		// remove index length if we are before 3.0.8
+		// the feature (required for some types when using MySQL4)
+		// was added in that release (ticket PHPBB3-8944)
+		if (version_compare($config['version'], '3.0.7-pl1', '<='))
+		{
+			$column = preg_replace('#:.*$#', '', $column);
 		}
 
 		$this->db_tools->sql_create_index($table_name, $index_name, $column);
