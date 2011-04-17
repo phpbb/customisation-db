@@ -1,0 +1,104 @@
+<!-- INCLUDE mcp_header.html -->
+
+<!-- BEGIN attention -->
+<div id="report" class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<div class="postbody">
+		<h3>{attention.ATTENTION_REASON}</h3>
+		<p class="author">{L_POST_BY_AUTHOR} {attention.REPORTER_USER_FULL} &laquo; {attention.ATTENTION_TIME}</p>
+		<div class="content">
+			{attention.ATTENTION_DESCRIPTION}
+		</div>
+
+		<!-- IF attention.S_UNAPPROVED -->
+			<form method="post" id="approve" action="{S_ACTION}">
+				<p class="rules">
+					<input class="button1" type="submit" value="{L_APPROVE}" name="approve" /> &nbsp;
+					<input class="button2" type="submit" value="{L_DISAPPROVE}" name="disapprove" />
+					{S_FORM_TOKEN}
+				</p>
+			</form>
+		<!-- ENDIF -->
+	</div>
+
+	<!-- IF attention.S_REPORTED -->
+	<br class="clear" />
+	<form method="post" id="reported" action="{S_ACTION}">
+		<fieldset class="submit-buttons">
+			<input class="button1" type="submit" value="{L_CLOSE_REPORT}" name="close" />
+			<input class="button1" type="submit" value="{L_DELETE_REPORT}" name="delete" />
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
+	<!-- ENDIF -->
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- END attention -->
+
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<div class="postbody">
+		<!-- IF U_EDIT -->
+		<ul class="profile-icons">
+			<li class="edit-icon"><a href="{U_EDIT}" title="{L_EDIT_POST}"><span>{L_EDIT_POST}</span></a></li>
+		</ul>
+		<!-- ENDIF -->
+
+		<h3><a href="{U_VIEW}">{POST_SUBJECT}</a></h3>
+		<p class="author">{MINI_POST_IMG} {L_POSTED} {L_POST_BY_AUTHOR} {POSTER_USER_FULL} &raquo; {POST_DATE}</p>
+
+		<div class="content">
+			{POST_TEXT}
+		</div>
+
+		<!-- IF .attachment -->
+			<dl class="attachbox">
+				<dt>{L_ATTACHMENTS}</dt>
+				<!-- BEGIN attachment -->
+					<dd>{attachment.DISPLAY_ATTACHMENT}</dd>
+				<!-- END attachment -->
+			</dl>
+		<!-- ENDIF -->
+
+		<!-- IF EDITED_MESSAGE or DELETED_MESSAGE -->
+			<div class="notice">
+				{EDITED_MESSAGE}<!-- IF EDITED_MESSAGE and DELETED_MESSAGE --><br /><!-- ENDIF -->{DELETED_MESSAGE}
+				<!-- IF POST_EDIT_REASON --><br /><strong>{L_REASON}:</strong> <em>{POST_EDIT_REASON}</em><!-- ENDIF -->
+			</div>
+		<!-- ENDIF -->
+	</div>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- IF attention_closed -->
+<h3>{L_CLOSED_ITEMS}</h3>
+<!-- ENDIF -->
+<!-- BEGIN attention_closed -->
+<div id="attention">
+	<h4>{attention_closed.ATTENTION_REASON}</h4>
+	<p class="author">{L_POST_BY_AUTHOR} {attention_closed.REPORTER_USER_FULL} &laquo; {attention_closed.ATTENTION_TIME}</p>
+	<table>
+		<tbody>
+		<tr>
+			<td class="bg2"><strong>{L_CLOSED_BY}:</strong></td>
+			<td class="bg1">{attention_closed.CLOSER_USER_FULL}</td>
+		</tr>
+		<tr>
+			<td class="bg2"><strong>{L_DATE_CLOSED}:</strong></td>
+			<td class="bg1">{attention_closed.ATTENTION_CLOSE_TIME}</td>
+		</tr>
+		</tbody>
+	</table>
+	<div class="content">
+		<blockquote><div><cite>{attention_closed.CLOSER_USER_FULL} {L_WROTE}:</cite>{attention_closed.ATTENTION_DESCRIPTION}</div></blockquote>
+	</div>
+	<!-- IF not attention_closed.S_LAST_ROW --><hr class="dashed" /><!-- ENDIF -->
+</div>
+<!-- END attention_closed -->
+
+
+<!-- INCLUDE mcp_footer.html -->

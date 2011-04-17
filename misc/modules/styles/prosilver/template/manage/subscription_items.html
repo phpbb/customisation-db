@@ -1,0 +1,72 @@
+<!-- INCLUDE ucp_header.html -->
+
+<form id="ucp" method="post" action="{S_ACTION}">
+
+<h2>{L_SUBSCRIPTION_ITEMS_MANAGE}</h2>
+
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<p>{L_SUBSCRIPTION_ITEMS_MANAGE_EXPLAIN}</p>
+
+	<!-- IF .items -->
+		<ul class="linklist">
+			<li class="rightside pagination">
+				<!-- IF TOTAL_RESULTS -->{TOTAL_RESULTS}<!-- ENDIF -->
+				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+			</li>
+		</ul>
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="icon">
+					<dt>{L_WATCHED_ITEMS}</dt>
+					<dd class="lastpost"><span>{L_INFORMATION}</span></dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist cplist">
+		<!-- BEGIN items -->
+			<li class="row<!-- IF items.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+				<dl class="icon" style="background-image: url({items.FOLDER_IMG_SRC}); background-repeat: no-repeat;">
+					<dt>
+						<a href="{items.U_VIEW_SUBSCRIPTION}" class="topictitle">{items.SUBSCRIPTION_TITLE}</a> ({items.SUBSCRIPTION_TARGET})
+						<!-- IF items.S_ACCESS_TEAMS -->
+						<img src="{TITANIA_THEME_PATH}images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
+						<!-- ELSEIF items.S_ACCESS_AUTHORS -->
+						<img src="{TITANIA_THEME_PATH}images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
+						<!-- ENDIF -->
+						<br />
+						{L_POST_BY_AUTHOR} {items.SUBSCRIPTION_AUTHOR_FULL} &raquo; {items.SUBSCRIPTION_TIME}
+					</dt>
+					<dd class="lastpost">
+						<!-- IF items.S_TOPIC --><span>{L_LAST_POST} {L_POST_BY_AUTHOR} {items.SUBSCRIPTION_LAST_AUTHOR_FULL} <a href="{items.U_VIEW_LAST_POST}">{items.LAST_POST_IMG}</a> <br /> &raquo; {items.SUBSCRIPTION_LAST_TIME}</span><!-- ENDIF -->
+						<!-- IF items.S_CONTRIB --><span>{L_TYPE}: {items.SUBSCRIPTION_CONTRIB_TYPE}<br />{L_VIEWS}: {items.SUBSCRIPTION_VIEWS} &bull; {L_DOWNLOAD}: {items.SUBSCRIPTION_DOWNLOADS}</span><!-- ENDIF -->
+					</dd>
+					<dd class="mark"><input type="checkbox" name="items[{items.SUBSCRIPTION_TYPE}][{items.SUBSCRIPTION_ID}]" id="{items.SUBSCRIPTION_ID}" /></dd>
+				</dl>
+			</li>
+		<!-- END items -->
+		</ul>
+		<ul class="linklist">
+			<li class="rightside pagination">
+				<!-- IF TOTAL_RESULTS -->{TOTAL_RESULTS}<!-- ENDIF -->
+				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+			</li>
+		</ul>
+	<!-- ELSE -->
+		<p><strong>{L_NO_ITEMS}</strong></p>
+	<!-- ENDIF -->
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- IF .items -->
+	<fieldset class="display-actions">
+		<input class="button2" type="submit" name="unsubscribe" value="{L_UNWATCH_SUBSCRIPTION_MARKED}" />
+		<div><a href="#" onclick="marklist('ucp', '', true); return false;">{L_MARK_ALL}</a> :: <a href="#" onclick="marklist('ucp', '', false); return false;">{L_UNMARK_ALL}</a></div>
+		{S_FORM_TOKEN}
+	</fieldset>
+<!-- ENDIF -->
+</form>
+
+<!-- INCLUDE ucp_footer.html -->
