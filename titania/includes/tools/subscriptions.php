@@ -206,7 +206,15 @@ class titania_subscriptions
 		}
 
 		// You wanted the email template parsed? Well here you go.
-		$template = file_get_contents(TITANIA_ROOT . 'language/en/email/' . $email_tpl);
+		if (file_exists(TITANIA_ROOT . 'language/' . phpbb::$config['default_lang'] . '/email/' . $email_tpl))
+		{
+			$template = file_get_contents(TITANIA_ROOT . 'language/' . phpbb::$config['default_lang'] . '/email/' . $email_tpl);
+		}
+		else
+		{
+			$template = file_get_contents(TITANIA_ROOT . 'language/en/email/' . $email_tpl);
+		}
+
 		foreach($vars as $var => $replace)
 		{
 			if(strtoupper($var) == 'SUBJECT')
