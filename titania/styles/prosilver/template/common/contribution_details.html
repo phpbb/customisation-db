@@ -164,6 +164,14 @@
 		        <!-- IF U_NEW_REVISION --><li><a href="{U_NEW_REVISION}"><span>{L_NEW_REVISION}</span></a></li><!-- ENDIF -->
 		    </ul>
 
+		    <!-- IF S_IN_QUEUE and (.revisions or U_NEW_REVISION) -->
+		    <div id="revisions-panel" class="tab-panel">
+				<div class="clear"></div>
+
+				<!-- INCLUDE common/revision_list.html -->
+		    </div>
+		    <!-- ENDIF -->
+
 		    <!-- IF .screenshots -->
 		    <div id="screenshots-panel" class="tab-panel">
 				<!-- BEGIN screenshots -->
@@ -178,7 +186,7 @@
 		    </div>
 		    <!-- ENDIF -->
 
-		    <!-- IF .revisions or U_NEW_REVISION -->
+		    <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) -->
 		    <div id="revisions-panel" class="tab-panel">
 				<div class="clear"></div>
 
