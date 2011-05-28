@@ -15,7 +15,7 @@ global $phpbb_root_path;
 *
 * Set the titania root path here
 */
-define('TITANIA_ROOT', $phpbb_root_path . '../titania/');
+define('TITANIA_ROOT', $phpbb_root_path . '../customise/db/');
 
 /**
 * @ignore
