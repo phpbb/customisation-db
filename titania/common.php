@@ -17,7 +17,10 @@ if (!defined('IN_TITANIA'))
 }
 
 // This gets checked in page_header() in functions.php to see whether we're in community
-define('NOT_IN_COMMUNITY', true);
+if (!defined('NOT_IN_COMMUNITY'))
+{
+	define('NOT_IN_COMMUNITY', true);
+}
 
 // Version number (only used for the installer)
 define('TITANIA_VERSION', '0.3.11');
