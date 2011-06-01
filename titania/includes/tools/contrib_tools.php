@@ -423,18 +423,19 @@ class titania_contrib_tools
 	{
 		$version = preg_replace('#[^a-zA-Z0-9\.\-]+#', '', $version);
 
-		$phpbb_root = TITANIA_ROOT . 'store/phpbb_packages/extracted/' . $version . '/';
+		$phpbb_root = TITANIA_ROOT . 'store/extracted/' . $version . '/';
+		$phpbb_package = TITANIA_ROOT . 'includes/phpbb_packages/phpBB-' . $version . '.zip';
 
 		if (!file_exists($phpbb_root . 'common.php'))
 		{
-			if (!file_exists(TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip'))
+			if (!file_exists($phpbb_package))
 			{
-				$this->error[] = sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], 'store/phpbb_packages/phpBB-' . $version . '.zip');
+				$this->error[] = sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], $phpbb_package);
 				return false;
 			}
 
 			// Unzip to our temp directory
-			$this->extract(TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip', $phpbb_root);
+			$this->extract($phpbb_package, $phpbb_root);
 
 			// Find the phpBB root
 			$package_root = $this->find_root($phpbb_root, 'common.php');
