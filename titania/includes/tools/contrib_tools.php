@@ -1113,7 +1113,7 @@ parse_css_file = {PARSE_CSS_FILE}
 		// If minimum directory is false, we check the store, upload path, and temp path
 		if ($minimum_directory === false)
 		{
-			return ($this->check_filesystem_path($directory, TITANIA_ROOT . 'store/') || $this->check_filesystem_path($directory, titania::$config->upload_path) || $this->check_filesystem_path($directory, titania::$config->contrib_temp_path)) ? true : false;
+			return ($this->check_filesystem_path($directory, TITANIA_ROOT . 'store/') || $this->check_filesystem_path($directory, titania::$config->upload_path) || $this->check_filesystem_path($directory, titania::$config->contrib_temp_path) || $this->check_filesystem_path($directory, TITANIA_ROOT . 'includes/')) ? true : false;
 		}
 
 		// Find the directory (ignore files and roll back through non-existant directories)
