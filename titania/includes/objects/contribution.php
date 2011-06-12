@@ -47,7 +47,7 @@ class titania_contribution extends titania_message_object
 	 * @var string
 	 */
 	protected $object_type = TITANIA_CONTRIB;
-
+	
 	/**
 	 * Author & co-authors of this contribution
 	 *
@@ -78,6 +78,13 @@ class titania_contribution extends titania_message_object
 	public $is_author = false;
 	public $is_active_coauthor = false;
 	public $is_coauthor = false;
+
+	/**
+	 * ColorizeIt sample row
+	 *
+	 * @var array
+     */
+    public $clr_sample = false;
 
 	/**
 	 * Constructor class for the contribution object
@@ -121,6 +128,9 @@ class titania_contribution extends titania_message_object
 			// Translation items
 			'contrib_iso_code'				=> array('default' => ''),
 			'contrib_local_name'			=> array('default' => ''),
+			
+			// ColorizeIt stuff
+			'contrib_clr_colors'            => array('default' => ''),
 		));
 
 		// Hooks
@@ -412,7 +422,7 @@ class titania_contribution extends titania_message_object
 
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
 		);
-
+		
 		// Ignore some stuff before it is submitted else we can cause an error
 		if ($this->contrib_id)
 		{
@@ -439,6 +449,12 @@ class titania_contribution extends titania_message_object
 
 				'JS_CONTRIB_TRANSLATION'		=> !empty($this->contrib_iso_code) ? 'true' : 'false', // contrib_iso_code is a mandatory field and must be included with all translation contributions
 			));
+			
+            // ColorizeIt stuff
+            if(strlen(titania::$config->colorizeit) && $this->has_colorizeit() && isset($this->download['attachment_id']))
+            {
+                $vars['U_COLORIZEIT'] = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->download['attachment_id']  . '&amp;sample=' . $this->clr_sample['attachment_id'];
+            }
 		}
 
 		// Hooks
@@ -1325,6 +1341,20 @@ class titania_contribution extends titania_message_object
 				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories));
 			phpbb::$db->sql_query($sql);
 		}
+	}
+	
+	/**
+	* Check if ColorizeIt is available
+	*/
+	public function has_colorizeit($force_update = false)
+	{
+	    if($force_update || $this->clr_sample === false)
+	    {
+	        // get sample id from database
+            $attachment = new titania_attachment(TITANIA_CLR_SCREENSHOT, $this->contrib_id);
+            $this->clr_sample = $attachment->get_preview();
+	    }
+	    return is_array($this->clr_sample) && strlen($this->contrib_clr_colors) > 0;
 	}
 
 	/**

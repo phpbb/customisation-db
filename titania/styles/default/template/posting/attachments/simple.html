@@ -39,7 +39,7 @@
 <!-- BEGIN attach_row -->
 	<!-- IF not attach_row.S_FIRST_ROW --><hr class="dashed" /><!-- ENDIF -->
 	<dl>
-		<!-- IF SELECT_PREVIEW --><dt class="set-preview"><input type="radio" name="set_preview_file" value="{attach_row.ATTACH_ID}"<!-- IF attach_row.S_PREVIEW --> checked="checked"<!-- ENDIF --> /></dt><!-- ENDIF -->
+		<!-- IF SELECT_PREVIEW --><dt class="set-preview"><input type="radio" name="{SELECT_REVIEW_VAR}" value="{attach_row.ATTACH_ID}"<!-- IF attach_row.S_PREVIEW --> checked="checked"<!-- ENDIF --> /></dt><!-- ENDIF -->
 		<dd>
 			<a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a>
 			<input type="submit" name="delete_file[{attach_row.ATTACH_ID}]" value="{L_DELETE_FILE}" class="button2" />

@@ -108,6 +108,11 @@ class titania_type_style extends titania_type_base
 			case 'moderate' :
 				return phpbb::$auth->acl_gets(array('u_titania_mod_style_moderate', 'u_titania_mod_contrib_mod'));
 			break;
+			
+			// Can edit ColorizeIt settings
+			case 'colorizeit' :
+			    return phpbb::$auth->acl_get('u_titania_mod_style_clr');
+            break;
 		}
 
 		return false;
@@ -137,6 +142,7 @@ class titania_type_style extends titania_type_base
 				'u_titania_mod_style_queue',
 				'u_titania_mod_style_validate',
 				'u_titania_mod_style_moderate',
+				'u_titania_mod_style_clr',
 			));
 
 			// Style count holder
@@ -179,6 +185,7 @@ class titania_type_style extends titania_type_base
 				'u_titania_mod_style_queue',
 				'u_titania_mod_style_validate',
 				'u_titania_mod_style_moderate',
+				'u_titania_mod_style_clr',
 			));
 
 			// Mod count holder

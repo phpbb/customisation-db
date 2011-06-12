@@ -137,8 +137,12 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 	background: transparent none no-repeat 0 0;
 	margin: 10px auto 0 auto;
 }
+.colorizeit-button {
+	background: transparent none no-repeat 0 0;
+	margin: 4px auto 0 auto;
+}
 
-a.download-main {
+a.download-main, a.colorizeit-main {
 	height: 21px;
 	padding-top: 30px;
 	padding-right: 41px;
