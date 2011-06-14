@@ -26,6 +26,7 @@
 						<!-- IF revisions.S_RESUBMITTED --><strong>{L_REVISION_RESUBMITTED}</strong><!-- ENDIF -->
 					</dd>
 					<dd class="general revision-actions">
+					    <!-- IF U_COLORIZEIT and revisions.U_COLORIZEIT --><a href="#colorizeit-editor" onclick="ColorizeIt('{revisions.U_COLORIZEIT}');" title="{L_COLORIZEIT_DOWNLOAD_STYLE} {CONTRIB_NAME}"><img src="{T_TITANIA_THEME_PATH}/images/icon_colorizeit.png" alt="{L_COLORIZEIT_DOWNLOAD}" /></a>&nbsp;<!-- ENDIF -->
 						<!-- IF revisions.REVISION_QUEUE --><a href="{revisions.REVISION_QUEUE}" title="{L_QUEUE}"><img src="{T_TITANIA_THEME_PATH}/images/icon_discuss.gif" alt="{L_QUEUE}" /></a>&nbsp;<!-- ENDIF -->
 						<!-- IF revisions.U_EDIT --><a href="{revisions.U_EDIT}">{ICON_EDIT}</a>&nbsp;<!-- ENDIF -->
 					</dd>

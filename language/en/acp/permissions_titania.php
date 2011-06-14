@@ -117,6 +117,7 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_style_queue'						=> array('lang' => 'Can see Styles Queue', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_style_validate'					=> array('lang' => 'Can validate Styles', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_style_moderate'					=> array('lang' => 'Can moderate Styles', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_style_clr'                       => array('lang' => 'Can edit ColorizeIt defaults', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_modification_queue_discussion'	=> array('lang' => 'Can see Modifications Queue Discussion', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_queue'				=> array('lang' => 'Can see Modifications Queue', 'cat' => 'titania_moderate'),

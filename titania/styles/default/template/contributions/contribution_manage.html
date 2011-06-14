@@ -40,6 +40,15 @@
 			$('.translation_item').hide();
 		}
 	}
+	
+	var clrEditing = false;
+	function edit_contrib_colors()
+	{
+	    var url = '{U_TESTSAMPLE}#{CLR_COLORS}';
+	    $('#test-sample2').show();
+	    $('#test-sample').replaceWith('<iframe id="clr-frame" src="' + url + '" style="width: 100%; height: 900px; border-width: 0;" />');
+	}
+
 // ]]>
 </script>
 
@@ -176,6 +185,30 @@
 				</dl>
 				<!-- ENDIF -->
 			</fieldset>
+
+            <!-- IF MANAGE_COLORIZEIT -->
+                <h3>{L_COLORIZEIT_MANAGE}</h3>
+                <p>{L_COLORIZEIT_MANAGE_EXPLAIN}</p>
+                {CLR_SCREENSHOTS}
+                <fieldset>
+                    <dl>
+                        <dt>{L_COLORIZEIT_COLORS}:</dt>
+                        <dd><input class="inputbox" type="text" id="change-colors" name="change_colors" value="{CLR_COLORS}" /></dd>
+                    </dl>
+                </fieldset>
+                <!-- IF U_TESTSAMPLE -->
+                <p id="test-sample2" style="display: none;">
+                    {L_COLORIZEIT_SAMPLE_EXPLAIN}
+                </p>
+                <fieldset id="test-sample">
+                    <dl>
+                        <dd>
+                            <input type="submit" value="{L_COLORIZEIT_SAMPLE}" class="button2" onclick="edit_contrib_colors(); return false;" />
+                        </dd>
+                    </dl>
+                </fieldset>
+                <!-- ENDIF -->
+            <!-- ENDIF -->
 
 			<!-- IF SCREENSHOT_UPLOADER -->
 				<h3>{L_SCREENSHOTS}</h3>

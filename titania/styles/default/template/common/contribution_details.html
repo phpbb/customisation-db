@@ -1,4 +1,19 @@
-  <div class="left-column">
+<!-- IF U_COLORIZEIT -->
+<!--[if lte IE 8]><script type="text/javascript">var clrOldIE = true;</script><![endif]-->
+<script type="text/javascript">
+// <![CDATA[
+	
+	function ColorizeIt(url)
+	{
+	    $('#colorizeit-container').show();
+	    $('#colorizeit-content').html('<iframe src="' + url + '" style="border-width: 0; width: 100%; height: ' + (typeof(clrOldIE) == 'boolean' ? 300 : 900) + 'px;"></iframe>');
+	}
+
+// ]]>
+</script>
+<!-- ENDIF -->
+
+<div class="left-column">
 	<div class="container demo">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<!-- IF CONTRIB_SCREENSHOT -->
@@ -20,6 +35,11 @@
 				<div class="download-button">
 					<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE}</a>
 				</div>
+				<!-- IF U_COLORIZEIT -->
+                    <div class="colorizeit-button">
+                        <a class="colorizeit-main" href="#colorizeit-editor" onclick="ColorizeIt('{U_COLORIZEIT}');" title="{L_COLORIZEIT_DOWNLOAD_STYLE} {CONTRIB_NAME}"></a>
+                    </div>
+				<!-- ENDIF -->
 			<!-- ENDIF -->
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
@@ -160,6 +180,17 @@
 		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
 </div>
+
+<!-- IF U_COLORIZEIT -->
+<div class="clear"></div>
+<div class="container" id="colorizeit-container" style="display: none;">
+	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+	    <a name="colorizeit-editor"></a>
+	    <div id="colorizeit-content">
+	    </div>
+    <span class="corners-bottom main-corners"><span></span></span></div>
+</div>
+<!-- ENDIF -->
 
 <div class="clear"></div>
 

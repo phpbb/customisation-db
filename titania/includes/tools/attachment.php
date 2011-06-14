@@ -239,7 +239,8 @@ class titania_attachment extends titania_database_object
 			'S_FORM_ENCTYPE'	=> ' enctype="multipart/form-data"',
 
 			'S_INLINE_ATTACHMENT_OPTIONS'	=> true,
-			'SELECT_PREVIEW'	=> ($this->object_type == TITANIA_SCREENSHOT) ? true : false,
+			'SELECT_PREVIEW'	=> ($this->object_type == TITANIA_SCREENSHOT || $this->object_type == TITANIA_CLR_SCREENSHOT) ? true : false,
+			'SELECT_REVIEW_VAR' => 'set_preview_file' . $this->object_type
 		));
 
 		// Sort correctly
@@ -253,6 +254,9 @@ class titania_attachment extends titania_database_object
 			// Descending sort
 			ksort($this->attachments);
 		}
+
+        // Delete previous attachments list
+        unset(phpbb::$template->_tpldata['attach_row']);
 
 		foreach ($this->attachments as $attachment_id => $row)
 		{
@@ -334,7 +338,7 @@ class titania_attachment extends titania_database_object
 		}
 
 		// set requested attachment as preview
-		$preview = request_var('set_preview_file', 0);
+		$preview = request_var('set_preview_file' . $this->object_type, 0);
 		if ($preview)
 		{
 			$this->set_preview($preview);
@@ -547,7 +551,7 @@ class titania_attachment extends titania_database_object
 			$sql = 'DELETE FROM ' . $this->sql_table . ' WHERE attachment_id = ' . $attachment_id;
 			phpbb::$db->sql_query($sql);
 			
-			if ($this->attachments[$attachment_id]['is_preview'] && $this->attachments[$attachment_id]['object_type'] == TITANIA_SCREENSHOT)
+			if ($this->attachments[$attachment_id]['is_preview'] && ($this->attachments[$attachment_id]['object_type'] == TITANIA_SCREENSHOT || $this->attachments[$attachment_id]['object_type'] == TITANIA_CLR_SCREENSHOT))
 			{
 				$set_new_preview = true;
 			}
@@ -593,7 +597,7 @@ class titania_attachment extends titania_database_object
 		}
 
 		// only set screenshots as preview
-		if (isset($this->attachments[$attachment_id]) && $this->attachments[$attachment_id]['object_type'] == TITANIA_SCREENSHOT)
+		if (isset($this->attachments[$attachment_id]) && ($this->attachments[$attachment_id]['object_type'] == TITANIA_SCREENSHOT || $this->attachments[$attachment_id]['object_type'] == TITANIA_CLR_SCREENSHOT))
 		{
 			foreach($this->attachments as $attach_id => $null)
 			{
@@ -618,6 +622,31 @@ class titania_attachment extends titania_database_object
 
 			$this->attachments[$attachment_id]['is_preview'] = 1;
 		}
+	}
+
+	/**
+	* Get id of preview image
+	*
+	* @return false/array
+	*/
+	public function get_preview()
+	{
+		// Do not load if we do not have an object_id
+		if (!$this->object_id)
+		{
+			return false;
+		}
+
+        // Find attachment with is_preview = 1
+		$sql = 'SELECT * FROM ' . $this->sql_table . '
+			WHERE object_type = ' . (int) $this->object_type . '
+				AND object_id = ' . (int) $this->object_id . '
+				AND is_orphan = 0
+				AND is_preview = 1';
+        $result = phpbb::$db->sql_query_limit($sql, 1);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+		return $row;
 	}
 
 	/**

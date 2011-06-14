@@ -30,3 +30,9 @@ div.category-icon span {
 	width: 175px;
 	height: 57px;
 }
+
+.colorizeit-button {
+	background-image: url("./button_colorizeit2.png");
+	width: 175px;
+	height: 49px;
+}

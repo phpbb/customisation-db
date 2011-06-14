@@ -103,6 +103,19 @@ if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 	));
 }
 
+// ColorizeIt sample
+if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contrib->contrib_type]->acl_get('colorizeit'))
+{
+    $clr_sample = new titania_attachment(TITANIA_CLR_SCREENSHOT, titania::$contrib->contrib_id);
+    $clr_sample->load_attachments();
+    $clr_sample->upload();
+    $error = array_merge($error, $clr_sample->error);
+    if ($clr_sample->uploaded || isset($_POST['preview']) || $submit)
+    {
+        titania::$contrib->post_data($message);
+    }
+}
+
 if (isset($_POST['preview']))
 {
 	$message->preview();
@@ -249,6 +262,14 @@ else if ($submit)
 
 		// Submit screenshots
 		$screenshot->submit();
+		
+		// ColorizeIt stuff
+        if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contrib->contrib_type]->acl_get('colorizeit'))
+        {
+            $clr_sample->submit();
+            $contrib_clr_colors = utf8_normalize_nfc(request_var('change_colors', titania::$contrib->contrib_clr_colors));
+            titania::$contrib->__set('contrib_clr_colors', $contrib_clr_colors);
+        }
 
 		// Update contrib_status/permalink if we can moderate. only if contrib_status is valid and permalink altered
 		if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
@@ -338,6 +359,22 @@ foreach ($status_list as $status => $row)
 		'VALUE'				=> $status,
 		'NAME'				=> phpbb::$user->lang[$row],
 	));
+}
+
+// ColorizeIt
+if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contrib->contrib_type]->acl_get('colorizeit'))
+{
+    $clr_testsample = '';
+    if(titania::$contrib->has_colorizeit(true) || is_array(titania::$contrib->clr_sample))
+    {
+        $clr_testsample = 'http://' . titania::$config->colorizeit_url . '/testsample.html?sub=' . titania::$config->colorizeit . '&amp;sample=' . urlencode(titania_url::build_url('download', array('id' => titania::$contrib->clr_sample['attachment_id'])));
+    }
+    phpbb::$template->assign_vars(array(
+        'MANAGE_COLORIZEIT'         => titania::$config->colorizeit,
+        'CLR_SCREENSHOTS'           => $clr_sample->parse_uploader('posting/attachments/simple.html'),
+        'CLR_COLORS'                => htmlspecialchars(titania::$contrib->contrib_clr_colors),
+        'U_TESTSAMPLE'              => $clr_testsample,
+    ));
 }
 
 phpbb::$template->assign_vars(array(

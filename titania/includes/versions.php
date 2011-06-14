@@ -648,5 +648,15 @@ $versions = array(
 	'0.3.11' => array(
 		'custom' => 'titania_custom',
 	),
+
+	'0.3.12' => array(
+	    'table_column_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_clr_colors', array('VCHAR:255', '')),
+			array(TITANIA_REVISIONS_TABLE, 'revision_clr_options', array('TEXT_UNI', 0)),
+	    ),
+		'permission_add' => array(
+			'u_titania_mod_style_clr',  // Can edit style colorizeit settings
+        )
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );

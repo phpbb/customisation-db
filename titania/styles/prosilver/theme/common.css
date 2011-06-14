@@ -151,8 +151,12 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 	background: transparent none no-repeat 0 0;
 	margin: 5px auto 0 auto;
 }
+.colorizeit-button {
+	background: transparent none no-repeat 0 0;
+	margin: -9px auto 10px auto;
+}
 
-a.download-main {
+a.download-main, a.colorizeit-main {
 	height: 29px;
 	padding-top: 28px;
 	padding-left: 63px;
@@ -408,8 +412,8 @@ dd.contribution-phpbb-version {
 	width: 15%;
 }
 
- dd.revision-version {
-	width: 20%;
+dd.revision-version {
+	width: 19%;
 	text-align: center;
 }
 
@@ -420,7 +424,7 @@ dd.revision-phpbb-version {
 
 ul.topiclist dd.revision-actions {
 	text-align: right;
-	width: 7%;
+	width: 8%;
 	border-left: 0;
 }
 

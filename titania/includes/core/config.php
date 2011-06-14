@@ -106,6 +106,13 @@ class titania_config extends titania_object
 				),
 			)),
 
+			// ColorizeIt
+            'colorizeit'                => array('default' => ''),
+            'colorizeit_url'            => array('default' => 'www.colorizeit.com'),
+            'colorizeit_auth'           => array('default' => 'HEADER'),
+            'colorizeit_var'            => array('default' => 'X-Colorizeit'),
+            'colorizeit_value'          => array('default' => '1'),
+
 			/**
 			* Attachments -------
 			*/
@@ -113,6 +120,7 @@ class titania_config extends titania_object
 				TITANIA_CONTRIB		=> 10485760, // 10 MiB
 				TITANIA_SCREENSHOT	=> 524288, // 512 Kib
 				TITANIA_TRANSLATION	=> 1048576, // 1 Mib
+				TITANIA_CLR_SCREENSHOT  => 131072, // 128 Kib
 			)),
 
 			// Extensions allowed
@@ -136,6 +144,8 @@ class titania_config extends titania_object
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
 					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
 				),
+				// ColorizeIt sample image
+				TITANIA_CLR_SCREENSHOT      => array('gif'),
 			)),
 
 			// Attachment directory names
@@ -147,7 +157,9 @@ class titania_config extends titania_object
 				TITANIA_QUEUE				=> 'queue',
 				TITANIA_QUEUE_DISCUSSION	=> 'queue_discussion',
 				TITANIA_FAQ					=> 'faq',
+				TITANIA_CLR_SCREENSHOT      => 'colorizeit',
 			)),
+			
 		));
 	}
 }
