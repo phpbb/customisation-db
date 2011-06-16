@@ -126,7 +126,7 @@ $help = array(
 	),
 	array(
 		0 => 'Who will be validating my contribution?',
-		1 => 'If it is a Modification it will be validated by the MOD Team and Junior MOD Validators or occassionally a Development Team Member. For a style it will be validated by the Styles Team and Junior Style Validators. For a convertor it will be validated by a Support or Development Team Member. For a bridge it will be validated by a MOD or Development Team Member. Translations are all checked by the Translations & IST Manager, ameeck. Offical Tools are tested and created by the phpBB.com Teams.'
+		1 => 'If it is a Modification it will be validated by the MOD Team and Junior MOD Validators or occassionally a Development Team Member. For a style it will be validated by the Styles Team and Junior Style Validators. For a convertor it will be validated by a Support or Development Team Member. For a bridge it will be validated by a MOD or Development Team Member. Translations are all checked by the Translations & IST Manager, Maël Soucaze. Offical Tools are tested and created by the phpBB.com Teams.'
 	),
 );
 
