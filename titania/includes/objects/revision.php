@@ -75,6 +75,7 @@ class titania_revision extends titania_database_object
 			'revision_submitted'	=> array('default' => false), // False if it is still in the process of being submitted/verified; True if submission has finished
 			'revision_queue_id'		=> array('default' => 0),
 			'revision_license'		=> array('default' => ''),
+			'revision_clr_options'  => array('default' => ''),
 		));
 
 		if ($contrib)
