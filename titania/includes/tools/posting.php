@@ -825,7 +825,7 @@ class titania_posting
 						{
 							// Support topic reply
 							$email_vars = array(
-								'NAME'			=> $post_object->topic->topic_subject,
+								'NAME'			=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'		=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
 								'CONTRIB_NAME'	=> titania::$contrib->contrib_name,
 							);
@@ -834,7 +834,7 @@ class titania_posting
 						else
 						{
 							$email_vars = array(
-								'NAME'		=> $post_object->topic->topic_subject,
+								'NAME'		=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'	=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
 							);
 							titania_subscriptions::send_notifications(TITANIA_TOPIC, $post_object->topic_id, 'subscribe_notify.txt', $email_vars, $post_object->post_user_id);
@@ -846,7 +846,7 @@ class titania_posting
 						{
 							// New support topic
 							$email_vars = array(
-								'NAME'			=> $post_object->topic->topic_subject,
+								'NAME'			=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'		=> $post_object->topic->get_url(),
 								'CONTRIB_NAME'	=> titania::$contrib->contrib_name,
 							);
@@ -855,7 +855,7 @@ class titania_posting
 						else
 						{
 							$email_vars = array(
-								'NAME'		=> $post_object->topic->topic_subject,
+								'NAME'		=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'	=> $post_object->topic->get_url(),
 							);
 							titania_subscriptions::send_notifications($post_object->post_type, $post_object->topic->parent_id, 'subscribe_notify_forum.txt', $email_vars, $post_object->post_user_id);
