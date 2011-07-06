@@ -26,6 +26,7 @@ titania::$hook->register_ary('phpbb_com_', array(
 	array('titania_post', '__construct'),
 	array('titania_post', 'post'),
 	array('titania_post', 'edit'),
+	array('titania_post', 'hard_delete'),
 	array('titania_queue', 'approve'),
 	array('titania_queue', 'deny'),
 	array('titania_queue', 'close'),
@@ -359,6 +360,39 @@ function phpbb_com_titania_post_edit($hook, &$post_object)
 	);
 
 	phpbb_posting('edit', $options);
+}
+
+function phpbb_com_titania_post_hard_delete($hook, &$post_object)
+{
+	if (defined('IN_TITANIA_CONVERT') || !$post_object->phpbb_post_id)
+	{
+		return;
+	}
+	
+	phpbb::_include('functions_posting', 'delete_post');
+	
+	$sql = 'SELECT t.*, p.*
+	FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
+		WHERE p.post_id = ' . $post_object->phpbb_post_id . '
+		AND t.topic_id = p.topic_id';
+	$result = phpbb::$db->sql_query($sql);
+	$post_data = phpbb::$db->sql_fetchrow($result);
+	phpbb::$db->sql_freeresult($result);
+		
+	$data = array(
+		'topic_first_post_id'	=> $post_data['topic_first_post_id'],
+		'topic_last_post_id'	=> $post_data['topic_last_post_id'],
+		'topic_replies_real'	=> $post_data['topic_replies_real'],
+		'topic_approved'		=> $post_data['topic_approved'],
+		'topic_type'			=> $post_data['topic_type'],
+		'post_approved'			=> $post_data['post_approved'],
+		'post_reported'			=> $post_data['post_reported'],
+		'post_time'				=> $post_data['post_time'],
+		'poster_id'				=> $post_data['poster_id'],
+		'post_postcount'		=> $post_data['post_postcount']
+	);
+	
+	delete_post($post_data['forum_id'], $post_data['topic_id'], $post_data['post_id'], $data);
 }
 
 function phpbb_com_titania_topic___construct($hook, &$topic_object)
