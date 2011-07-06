@@ -256,10 +256,7 @@ class titania_topic extends titania_database_object
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);
 		
-		if (!function_exists('topic_generate_pagination'))
-		{
-			phpbb::_include('functions_display');
-		}
+		phpbb::_include('functions_display', 'topic_generate_pagination');
 
 		// To find out if we have any posts that need approval
 		$approved = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
