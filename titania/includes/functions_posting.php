@@ -448,7 +448,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 	$data = array_merge($data, $post_data);
 
 	// In case bbcode_bitfield is not set when it should
-	//$data['bbcode_bitfield'] = ($data['bbcode_bitfield'] != '') ? $data['bbcode_bitfield'] : $message_parser->bbcode_bitfield;
+	$data['bbcode_bitfield'] = ($data['bbcode_bitfield'] != '') ? $data['bbcode_bitfield'] : $message_parser->bbcode_bitfield;
 
 	// Aaaand, submit it.
 	switch ($mode)
