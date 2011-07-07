@@ -3,7 +3,10 @@
 	[size=150][color=#00BF40]{L_SUCCESS}[/color][/size]
 <!-- ELSE -->
 	<!-- IF S_EDITS -->
-	    [size=150][color=#115098]{L_FILE_EDITS}[/color][/size]
+		[size=150][color=#115098]{L_FILE_EDITS}[/color][/size]
+		<!-- IF S_EDITS_ERROR_NO -->
+			{L_ERROR_NO}
+		<!-- ENDIF -->
 	    <!-- BEGIN edit_files -->
 		    <!-- IF not edit_files.S_SUCCESS -->
 		        {edit_files.FILENAME}
@@ -33,5 +36,11 @@
 				<!-- END finds -->
 		    <!-- ENDIF -->
 	    <!-- END edit_files -->
+	<!-- ENDIF -->
+	<!-- IF S_COPY_ERROR -->
+		[size=150][color=#115098]{L_MANUAL_COPY}[/color][/size]
+		<!-- BEGIN copy_files -->			
+			[color=red][b]{copy_files.FILENAME}[/b][/color]
+		<!-- END copy_files -->
 	<!-- ENDIF -->
 <!-- ENDIF -->
