@@ -549,6 +549,60 @@ class titania_contrib_tools
 		$details = $acp_mods->mod_details($modx_file, false);
 		$actions = $acp_mods->mod_actions($modx_file);
 		$installed = $acp_mods->process_edits($editor, $actions, $details, false, true, false);
+		
+		if($installed)
+		{
+			phpbb::$template->assign_var('S_EDITS_NO_ERROR', true);
+		}
+		
+		// Try to launch copy actions if they exist
+		if (isset($actions['NEW_FILES']) && !empty($actions['NEW_FILES']))
+		{
+			while (list($source, $target) = each($actions['NEW_FILES']))
+			{
+				if (is_array($target))
+				{
+					// If we've shifted off all targets, we're done w/ that element
+					if (empty($target))
+					{
+						continue;
+					}
+
+					// Shift off first target, then rewind array pointer to get next target
+					$target = array_shift($actions['NEW_FILES'][$source]);
+					prev($actions['NEW_FILES']);
+				}
+
+				$status = $editor->copy_content($modx_root . str_replace('*.*', '', $source), $phpbb_root_path . str_replace('*.*', '', $target));
+				$actions_copy[] = $phpbb_root_path . str_replace('*.*', '', $target);
+			
+				if (!$status)
+				{
+					$actions_copy_error[] = str_replace('*.*', '', $source);
+					phpbb::$template->assign_var('S_COPY_ERROR', true);
+					$installed = false;
+				}
+			}
+			
+			if (isset($actions_copy_error) && sizeof($actions_copy_error))
+			{
+				foreach ($actions_copy_error as $action_copy_error)
+				{
+					phpbb::$template->assign_block_vars('copy_files', array(
+						'FILENAME'		=> $action_copy_error,
+					));
+				}
+			}
+			
+			// Time to clean our phpBB installation (located in /store/ directory)
+			if (isset($actions_copy) && sizeof($actions_copy))
+			{
+				foreach ($actions_copy as $action_copy)
+				{
+					unlink($action_copy);
+				}
+			}
+		}
 
 		// Reverse HAX
 		$phpbb_root_path = PHPBB_ROOT_PATH;
