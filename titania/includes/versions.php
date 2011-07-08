@@ -658,5 +658,10 @@ $versions = array(
 			'u_titania_mod_style_clr',  // Can edit style colorizeit settings
         )
 	),
+	'0.3.13' => array(
+	    'table_column_add' => array(
+			array(TITANIA_POSTS_TABLE, 'post_edit_time', array('UINT:11', 0)),
+	    ),
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );

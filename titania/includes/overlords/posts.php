@@ -314,6 +314,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$cp_row = $cp->generate_profile_fields_template('show', false, users_overlord::$cp_fields[$post->post_user_id]);
 			}
 			$cp_row['row'] = (isset($cp_row['row']) && sizeof($cp_row['row'])) ? $cp_row['row'] : array();
+			
+			// Display edit info
+			$display_username = get_username_string('full', $post->post_user_id, users_overlord::get_user($post->post_user_id, 'username'), users_overlord::get_user($post->post_user_id, 'user_colour'), false, phpbb::append_sid('memberlist', 'mode=viewprofile'));
+			$l_edited_by = ($post->post_edit_time) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], $display_username, phpbb::$user->format_date($post->post_edit_time)) : '';
 
 			phpbb::$template->assign_block_vars('posts', array_merge(
 				$post->assign_details(false),
@@ -322,6 +326,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				array(
 					'POST_TEXT'				=> $message,
 					'POST_TEXT_DECODED'		=> $message_decoded,
+					'EDITED_MESSAGE'		=> $l_edited_by,
 					'U_MINI_POST'			=> titania_url::append_url($topic->get_url(), array('p' => $post_id, '#p' => $post_id)),
 					'MINI_POST_IMG'			=> ($post->post_time > $last_mark_time) ? phpbb::$user->img('icon_post_target_unread', 'NEW_POST') : phpbb::$user->img('icon_post_target', 'POST'),
 					'S_FIRST_UNREAD'		=> ($post->post_time > $last_mark_time && $prev_post_time <= $last_mark_time) ? true : false,

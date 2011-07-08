@@ -91,6 +91,7 @@ class titania_post extends titania_message_object
 			'post_edited'			=> array('default' => 0), // Post edited; 0 for not edited, timestamp if (when) last edited
 			'post_deleted'			=> array('default' => 0), // Post deleted; 0 for not edited, timestamp if (when) last edited
 
+			'post_edit_time'		=> array('default' => 0), // The last time that user edit the post
 			'post_edit_user'		=> array('default' => 0), // The last user to edit the post
 			'post_edit_reason'		=> array('default' => ''), // Reason for deleting/editing
 			'post_delete_user'		=> array('default' => 0), // The last user to delete the post

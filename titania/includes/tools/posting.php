@@ -312,7 +312,15 @@ class titania_posting
 
 		// Generate for storage based on previous options
 		$post_object->generate_text_for_storage($for_edit['allow_bbcode'], $for_edit['allow_urls'], $for_edit['allow_smilies']);
-
+		
+		// If u_titania_mod_post_mod permission then no edit info
+		// Update edit info if user is editing his post, which is not the last within the topic.
+		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod') && ($post_object->topic->topic_last_post_id != $post_object->post_id))
+		{
+			$post_object->post_edit_time = time();
+			$post_object->post_edit_user = phpbb::$user->data['user_id'];
+		}
+		
 		// Submit
 		$post_object->submit();
 
