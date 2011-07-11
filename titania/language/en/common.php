@@ -115,8 +115,8 @@ $lang = array_merge($lang, array(
 	'EDIT'						=> 'Edit',
 	'EDITED_MESSAGE'			=> 'Last edited by %1$s on %2$s',
 	'EDIT_CATEGORY'				=> 'Edit Category',
-	'ERROR'						=> 'Error',
-	'ERROR_NO'					=> 'No error',
+	'ERROR'						=> 'Error(s)',
+	'ERROR_NO'					=> 'No error(s)',
 
 	'FILE_NOT_EXIST'			=> 'File does not exist: %s',
 	'FIND_CONTRIBUTION'			=> 'Find Contribution',
