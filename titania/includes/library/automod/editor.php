@@ -739,10 +739,10 @@ class editor_direct extends editor
 	{
 		global $phpbb_root_path, $user, $config;
 
-		if (strpos($from, $phpbb_root_path) !== 0)
+		/*if (strpos($from, $phpbb_root_path) !== 0)
 		{
 			$from = $phpbb_root_path . $from;
-		}
+		}*/
 
 		// When installing a MODX 1.2.0 MOD, this happens once in a long while.
 		// Not sure why yet.
