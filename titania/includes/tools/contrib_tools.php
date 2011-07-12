@@ -593,6 +593,15 @@ class titania_contrib_tools
 					));
 				}
 			}
+			
+			// Time to clean our phpBB installation (located in /store/ directory)
+			if (isset($actions_copy) && sizeof($actions_copy))
+			{
+				foreach ($actions_copy as $action_copy)
+				{
+					unlink($action_copy);
+				}
+			}
 		}
 
 		// Reverse HAX
