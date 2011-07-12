@@ -810,7 +810,7 @@ class editor_direct extends editor
 			{
 				return sprintf($user->lang['MODS_COPY_FAILURE'], $dest);
 			}
-			@chmod($dest, octdec($config['am_file_perms']));
+			phpbb_chmod($dest, CHMOD_READ | CHMOD_WRITE);
 		}
 
 		return true;

@@ -243,6 +243,7 @@ class titania_type_mod extends titania_type_base
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
+			$contrib_tools->rmdir_recursive(TITANIA_ROOT . 'store/extracted/' . $version_string . '/');
 			$phpbb_path = $contrib_tools->automod_phpbb_files($version_string);
 
 			if ($phpbb_path === false)
