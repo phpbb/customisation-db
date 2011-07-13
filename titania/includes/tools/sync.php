@@ -40,14 +40,17 @@ class titania_sync
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
 					$file = titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . utf8_basename($row['physical_filename']);
-					$md5 = md5_file($file);
-
-					if ($md5 != $row['hash'])
+					if (file_exists($file))
 					{
-						$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
-							SET hash = \'' . phpbb::$db->sql_escape($md5) . '\'
-							WHERE attachment_id = ' . $row['attachment_id'];
-						phpbb::$db->sql_query($sql);
+						$md5 = md5_file($file);
+
+						if ($md5 != $row['hash'])
+						{
+							$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+								SET hash = \'' . phpbb::$db->sql_escape($md5) . '\'
+								WHERE attachment_id = ' . $row['attachment_id'];
+							phpbb::$db->sql_query($sql);
+						}
 					}
 				}
 				phpbb::$db->sql_freeresult($result);
