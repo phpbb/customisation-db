@@ -7,7 +7,7 @@
 * @version $Id: help_faq.php
 * @author: RMcGirr83
 * @copyright (c) 2010 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 

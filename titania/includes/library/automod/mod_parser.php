@@ -3,7 +3,7 @@
 *
 * @package automod
 * @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 /**
