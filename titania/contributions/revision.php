@@ -490,7 +490,7 @@ if ($step == 0 || sizeof($error))
 		'REVISION_VERSION'			=> utf8_normalize_nfc(request_var('revision_version', '', true)),
 		'REVISION_LICENSE'			=> utf8_normalize_nfc(request_var('revision_license', '', true)),
 		'REVISION_CUSTOM_LICENSE'	=> utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
-		'QUEUE_ALLOW_REPACK'		=> request_var('queue_allow_repack', 0),
+		'QUEUE_ALLOW_REPACK'		=> request_var('queue_allow_repack', 1),
 
 		'NEXT_STEP'					=> 1,
 
