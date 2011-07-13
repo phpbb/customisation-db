@@ -2,7 +2,6 @@
 /**
 *
 * @package Titania
-* @version $Id: ucp_titania.php 1071 2010-04-17 05:10:36Z exreaction $
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *

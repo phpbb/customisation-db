@@ -1,12 +1,11 @@
 <?php
 /**
- *
- * @package Titania
- * @version $Id: versions.php 1758 2010-10-15 17:41:44Z exreaction $
- * @copyright (c) 2008 phpBB Customisation Database Team
- * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- *
- */
+*
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+*
+*/
 
 /**
  * @ignore

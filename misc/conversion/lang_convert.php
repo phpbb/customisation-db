@@ -1,12 +1,11 @@
 <?php
 /**
- *
- * @package titania
- * @version $Id$
- * @copyright (c) 2010 phpBB Ltd.
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- *
- */
+*
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+*
+*/
 
 // Config
 define('TRANSLATION_CAT_ID', 22);

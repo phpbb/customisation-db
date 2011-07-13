@@ -1,4 +1,12 @@
 <?php
+/**
+*
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+*
+*/
+
 define('IN_TITANIA_CONVERT', true);
 define('IN_TITANIA', true);
 if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');

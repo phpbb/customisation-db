@@ -8,9 +8,6 @@
 <!-- IF S_EDITS -->
 
 <h2>{L_FILE_EDITS}</h2>
-<!-- IF S_EDITS_ERROR_NO -->
-{L_ERROR_NO}
-<!-- ENDIF -->
 <!-- BEGIN edit_files -->
 	<!-- IF not edit_files.S_SUCCESS -->
 		<fieldset>
@@ -51,15 +48,6 @@
 	<!-- ENDIF -->
 <!-- END edit_files -->
 
-<!-- ENDIF -->
-
-<!-- IF S_COPY_ERROR -->
-<h2>{L_MANUAL_COPY}</h2>
-<!-- BEGIN copy_files -->
-	<fieldset>
-		<legend><strong style="color: red;">{copy_files.FILENAME}</strong></legend>
-	</fieldset>
-<!-- END copy_files -->
 <!-- ENDIF -->
 </div>
 

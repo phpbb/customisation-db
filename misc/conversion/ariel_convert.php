@@ -1,12 +1,11 @@
 <?php
 /**
- *
- * @package titania
- * @version $Id: ariel_convert.php 1156 2010-04-28 02:04:14Z exreaction $
- * @copyright (c) 2008 phpBB Customisation Database Team
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- *
- */
+*
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+*
+*/
 
 /**
 * Instructions!

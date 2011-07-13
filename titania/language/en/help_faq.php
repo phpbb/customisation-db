@@ -1,12 +1,8 @@
 <?php
 /**
 *
-* help_faq [English]
-*
-* @package Titania language
-* @version $Id: help_faq.php
-* @author: RMcGirr83
-* @copyright (c) 2010 phpBB Group
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
 *
 */

@@ -1,9 +1,8 @@
 <?php
 /**
 *
-* @package phpBB3
-* @version $Id: class_pm.php 1477 2010-05-31 01:13:38Z exreaction $
-* @copyright (c) 2005 phpBB Group / no one
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */

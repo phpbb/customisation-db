@@ -1,9 +1,8 @@
 <?php
 /**
 *
-* @package Support Tool Kit - Organize Language Files
-* @version $Id: organize_lang.php 1056 2010-04-12 19:11:28Z exreaction $
-* @copyright (c) 2009 phpBB Group
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */

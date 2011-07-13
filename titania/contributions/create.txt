@@ -1,1 +1,1 @@
-The PHP file handling contribution creation (i.e. /author/{username}/create/ page) is located under authors/create.php.
+The PHP file handling contribution creation (i.e. /author/{username}/create/ page) is located under authors/create.php.

@@ -1,11 +1,10 @@
 <?php
 /**
-* titania mcp language [English]
 *
-* @package language
-* @version $Id: info_mcp_titania.php 1071 2010-04-17 05:10:36Z exreaction $
+* @package Titania
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+*
 */
 
 /**

@@ -2,7 +2,6 @@
 /**
 *
 * @package Support Tool Kit - Organize Language Files
-* @version $Id$
 * @copyright (c) 2009 phpBB Group
 * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
 *

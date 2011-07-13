@@ -1,10 +1,9 @@
 <?php
 /**
 *
-* @package titania
-* @version $Id$
+* @package Titania
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 
