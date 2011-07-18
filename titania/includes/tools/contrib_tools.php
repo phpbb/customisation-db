@@ -113,7 +113,7 @@ class titania_contrib_tools
 
 			if (in_array($item, $dirs_to_remove) && is_dir($this->unzip_dir . $sub_dir . $item))
 			{
-				$this->rmdir_recursive($this->unzip_dir . $sub_dir . $item . '/');
+				$this->rmdir_recursive($this->unzip_dir . $sub_dir . $item . '/', true);
 			}
 			else if (in_array($item, $files_to_remove) && is_file($this->unzip_dir . $sub_dir . $item))
 			{
@@ -164,7 +164,7 @@ class titania_contrib_tools
 
 				if (is_dir($this->unzip_dir . $item))
 				{
-					$this->rmdir_recursive($this->unzip_dir . $item . '/');
+					$this->rmdir_recursive($this->unzip_dir . $item . '/', true);
 				}
 				else
 				{
@@ -176,7 +176,7 @@ class titania_contrib_tools
 			$this->mvdir_recursive($this->unzip_dir . $package_root, $this->unzip_dir);
 
 			// Now remove the old directory
-			$this->rmdir_recursive($this->unzip_dir . $sub_dir . '/');
+			$this->rmdir_recursive($this->unzip_dir . $sub_dir . '/', true);
 		}
 
 		return true;
@@ -379,7 +379,7 @@ class titania_contrib_tools
 	{
 		if ($this->unzip_dir)
 		{
-			return $this->rmdir_recursive($this->unzip_dir);
+			return $this->rmdir_recursive($this->unzip_dir, true);
 		}
 
 		return true;
@@ -459,7 +459,7 @@ class titania_contrib_tools
 
 					if (is_dir($phpbb_root . $item))
 					{
-						$this->rmdir_recursive($phpbb_root . $item . '/');
+						$this->rmdir_recursive($phpbb_root . $item . '/', true);
 					}
 					else
 					{
@@ -471,7 +471,7 @@ class titania_contrib_tools
 				$this->mvdir_recursive($phpbb_root . $package_root, $phpbb_root);
 
 				// Now remove the old directory
-				$this->rmdir_recursive($phpbb_root . $sub_dir);
+				$this->rmdir_recursive($phpbb_root . $sub_dir, true);
 			}
 		}
 
@@ -682,7 +682,7 @@ class titania_contrib_tools
 			$this->unzip_dir = titania::$config->contrib_temp_path . basename($this->original_zip, 'zip') . '/';
 
 			// Clear out old stuff if there is anything here...
-			$this->rmdir_recursive($this->unzip_dir);
+			$this->rmdir_recursive($this->unzip_dir, true);
 
 			// Unzip to our temp directory
 			$this->extract($this->original_zip, $this->unzip_dir);
@@ -691,9 +691,12 @@ class titania_contrib_tools
 		$package_root = $this->find_root(false, 'style.cfg');
 		$stylecfg = parse_cfg_file($this->unzip_dir . $package_root . '/style.cfg');
 		$style_root = $phpbb_root_path . 'styles/' . basename(strtolower(str_replace(' ', '_', $stylecfg['name']))) . '_' . $contrib->contrib_id . '/';
+		
+		// Remove old Style files first, before we upload new Style files
+		$this->rmdir_recursive($style_root);
 
 		$this->mvdir_recursive($this->unzip_dir . $package_root, $style_root, false);
-		$this->rmdir_recursive($this->unzip_dir);
+		$this->rmdir_recursive($this->unzip_dir, true);
 
 		$variables = array('db', 'phpbb_root_path');
 
@@ -874,7 +877,7 @@ parse_css_file = {PARSE_CSS_FILE}
 		}
 
 		// Clear out old stuff if there is anything here...
-		$this->rmdir_recursive($target);
+		$this->rmdir_recursive($target, true);
 
 		// Using the phpBB ezcomponents loader
 		titania::_include('library/ezcomponents/loader', false, 'phpbb_ezcomponents_loader');
@@ -1013,11 +1016,12 @@ parse_css_file = {PARSE_CSS_FILE}
 	}
 
 	/**
-	* Remove a directory (and any children) from Automod
+	* Remove a directory (and any children)
 	*
 	* @param string $target_filename The target directory we wish to remove
+	* @param string $check_minimum_directory If the target directory is outside of the titania root path
 	*/
-	public function rmdir_recursive($target_filename, $check_minimum_directory = true)
+	public function rmdir_recursive($target_filename, $check_minimum_directory = false)
 	{
 		$target_filename = (substr($target_filename, -1) == '/') ? $target_filename : $target_filename . '/';
 
@@ -1044,7 +1048,7 @@ parse_css_file = {PARSE_CSS_FILE}
 
 			if (is_dir($target_filename . $item))
 			{
-				$this->rmdir_recursive($target_filename . $item . '/');
+				$this->rmdir_recursive($target_filename . $item . '/', true);
 			}
 			else
 			{
