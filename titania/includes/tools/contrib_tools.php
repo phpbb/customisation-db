@@ -366,7 +366,8 @@ class titania_contrib_tools
 			}
 			else
 			{
-				$zip->add_custom_file($this->unzip_dir . $sub_dir . $item, $this->new_dir_name . '/' . $sub_dir . $item);
+				$new_dir_name = (!preg_match('#'.$this->new_dir_name.'#', $sub_dir)) ? $this->new_dir_name . '/' : '';
+				$zip->add_custom_file($this->unzip_dir . $sub_dir . $item, $new_dir_name . $sub_dir . $item);
 			}
 		}
     }
