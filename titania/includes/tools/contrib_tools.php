@@ -691,6 +691,8 @@ class titania_contrib_tools
 		$package_root = $this->find_root(false, 'style.cfg');
 		$stylecfg = parse_cfg_file($this->unzip_dir . $package_root . '/style.cfg');
 		$style_root = $phpbb_root_path . 'styles/' . basename(strtolower(str_replace(' ', '_', $stylecfg['name']))) . '_' . $contrib->contrib_id . '/';
+		
+		$this->rmdir_recursive($style_root, false);
 
 		$this->mvdir_recursive($this->unzip_dir . $package_root, $style_root, false);
 		$this->rmdir_recursive($this->unzip_dir);
@@ -1044,7 +1046,7 @@ parse_css_file = {PARSE_CSS_FILE}
 
 			if (is_dir($target_filename . $item))
 			{
-				$this->rmdir_recursive($target_filename . $item . '/');
+				$this->rmdir_recursive($target_filename . $item . '/', false);
 			}
 			else
 			{
