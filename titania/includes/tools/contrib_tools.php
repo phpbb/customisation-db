@@ -1046,7 +1046,7 @@ parse_css_file = {PARSE_CSS_FILE}
 
 			if (is_dir($target_filename . $item))
 			{
-				$this->rmdir_recursive($target_filename . $item . '/', false);
+				$this->rmdir_recursive($target_filename . $item . '/', ($check_minimum_directory) ? true : false);
 			}
 			else
 			{
