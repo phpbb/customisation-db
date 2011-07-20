@@ -79,6 +79,12 @@ class translation_validation extends titania_contrib_tools
 
 					// This goes directly to the root of the uploaded language pack, like /upload_path/language/cs/
 					$uploaded_lang_root = $uploaded_files_prefix . '/language/' . $iso_code . '/';
+				
+					// Just perform a basic check if the common file is there
+					if (!is_file($uploaded_lang_root . 'common.php'))
+					{
+						return array(phpbb::$user->lang('NO_TRANSLATION'));
+					}
 		
 					// Loop through the reference files
 					foreach ($reference_files as $dir => $files)
