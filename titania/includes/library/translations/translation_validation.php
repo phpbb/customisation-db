@@ -34,7 +34,7 @@ class translation_validation extends titania_contrib_tools
 	*
 	* @var array
 	*/
-	protected $ignore_files = array('AUTHORS', 'README');
+	protected $ignore_files = array('language/en/AUTHORS', 'language/en/README', 'language/en/LICENSE', 'language/en/CHANGELOG');
 
 	public function __construct($original_zip, $new_dir_name)
 	{
@@ -55,8 +55,8 @@ class translation_validation extends titania_contrib_tools
 		// Basically the individual parts of the translation, we check them separately, because they have colliding filenames
 		$types = array(
 			'language' => 'language/',
-			'prosilver' => 'styles/prosilver/imageset/',
-			'subsilver2' => 'styles/subsilver2/imageset/',
+			'prosilver' => 'styles/prosilver/imageset/en',
+			'subsilver2' => 'styles/subsilver2/imageset/en',
 		);
 
 		// Do the check for all types
@@ -115,12 +115,6 @@ class translation_validation extends titania_contrib_tools
 									$missing_keys[$dir . $file] = $this->check_missing_keys($reference_filepath . '' .	$dir . $file, $uploaded_file_path);
 								}
 
-								if (!in_array(strtoupper($file), $this->ignore_files) && !in_array($ext, array('php', 'txt')) && is_file($uploaded_file_path))
-								{
-									// remove any files that aren't in the above stated extension list, this will delete index.htm files and LICENSE files
-									unlink($uploaded_file_path);
-								}			
-
 								// In the last step we have removed the license and index files if there were any. We'll just put a new one instead
 								$this->add_license_files($uploaded_lang_root . '/LICENSE', $reference_filepath);
 								$this->add_htm_files($uploaded_lang_root, $reference_filepath);
@@ -138,12 +132,6 @@ class translation_validation extends titania_contrib_tools
 							}
 						}
 					}
-		
-					if (sizeof($error))
-					{
-						return $error;
-					}
-				
 				break;
 			
 				case 'prosilver':
@@ -154,7 +142,55 @@ class translation_validation extends titania_contrib_tools
 		
 		}
 		
-		$this->replace_zip(); // we have made changes to the package, so replace the original zip file
+		// We are going to check if all files included in the language pack are allowed
+		// Before we need some stuff
+		// We construct a list of all reference files with complete structure
+		foreach ($reference_files as $dir => $files)
+		{
+			if (strpos($dir, $types['language']) === 0 || strpos($dir, $types['prosilver']) === 0 || strpos($dir, $types['subsilver2']) === 0)
+			{
+				foreach ($files as $file)
+				{
+					$list_reference_files[] = $dir . $file;
+				}
+			}
+		}
+		// We construct a list of all uploaded file with complete structure
+		foreach ($uploaded_files as $dir => $files)
+		{
+			// We need to clean our directory path according the type and replace iso_code package by en
+			if (strpos($dir, $types['language']) != 0)
+			{
+				$dir_prefix = explode($types['language'] ,$dir);
+			}
+			else if (strpos($dir, $types['prosilver']) != 0)
+			{
+				$dir_prefix = explode($types['prosilver'] ,$dir);
+			}
+			else if (strpos($dir, $types['subsilver2']) != 0)
+			{
+				$dir_prefix = explode($types['subsilver2'] ,$dir);
+			}
+			$dir_clean = str_replace('/'.$iso_code.'/', '/en/', str_replace($dir_prefix[0], '', $dir));
+			
+			foreach ($files as $file)
+			{
+				$list_uploaded_files[] = $dir_clean . $file;
+			}
+		}
+		// It's time to check if each file uploaded in the package is allowed
+		foreach ($list_uploaded_files as $file)
+		{
+			if (!in_array($file, $list_reference_files) && !in_array($file, $this->ignore_files))
+			{
+				$error[] = sprintf(phpbb::$user->lang['WRONG_FILE'], str_replace('/en/', '/'.$iso_code.'/', $file)); // report a wrong file
+			}
+		}
+		
+		if (!sizeof($error))
+		{	
+			$this->replace_zip(); // we have made changes to the package, so replace the original zip file
+		}
 		return $error;
 	}
 	

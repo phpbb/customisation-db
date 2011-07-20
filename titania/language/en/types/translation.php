@@ -75,4 +75,5 @@ Here is a report on why your translation was denied:
 
 Thank you,
 phpBB Teams',
+	'WRONG_FILE'								=> 'The file <code>%s</code> is not allowed.',
 ));
