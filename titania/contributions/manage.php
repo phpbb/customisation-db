@@ -377,6 +377,7 @@ if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contr
 }
 
 phpbb::$template->assign_vars(array(
+	'S_CONTRIB_APPROVED'		=> (titania::$contrib->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
 	'S_POST_ACTION'				=> titania::$contrib->get_url('manage'),
 	'S_EDIT_SUBJECT'			=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
 	'S_DELETE_CONTRIBUTION'		=> (phpbb::$auth->acl_get('u_titania_admin')) ? true : false,

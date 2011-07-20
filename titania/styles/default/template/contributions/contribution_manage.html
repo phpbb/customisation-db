@@ -70,7 +70,7 @@
 					<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
 				</dl>
 				<!-- ENDIF -->
-				<!-- IF S_CREATE or S_IS_MODERATOR -->
+				<!-- IF S_CREATE or (S_IS_MODERATOR and not S_CONTRIB_APPROVED) -->
 				<dl>
 					<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label><br /><span>{L_CONTRIB_PERMALINK_EXPLAIN}</span></dt>
 					<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
