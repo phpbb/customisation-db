@@ -526,4 +526,44 @@ class titania_sort extends titania_object
 
 		return $page_string;
 	}
+
+	/**
+	* Generate topic pagination
+	*/
+	public function topic_generate_pagination($replies, $base_url)
+	{
+		// Make sure $per_page is a valid value
+		$per_page = (phpbb::$config['posts_per_page'] <= 0) ? 1 : phpbb::$config['posts_per_page'];
+
+		if (($replies + 1) > $per_page)
+		{
+			$total_pages = ceil(($replies + 1) / $per_page);
+			$pagination = '';
+
+			$times = 1;
+			for ($j = 0; $j < $replies + 1; $j += $per_page)
+			{
+				$pagination .= '<a href="' . titania_url::append_url($base_url, array($this->start_name => $j)) . '">' . $times . '</a>';
+				if ($times == 1 && $total_pages > 5)
+				{
+					$pagination .= ' ... ';
+
+					// Display the last three pages
+					$times = $total_pages - 3;
+					$j += ($total_pages - 4) * $per_page;
+				}
+				else if ($times < $total_pages)
+				{
+					$pagination .= '<span class="page-sep">' . phpbb::$user->lang['COMMA_SEPARATOR'] . '</span>';
+				}
+				$times++;
+			}
+		}
+		else
+		{
+			$pagination = '';
+		}
+
+		return $pagination;
+	}
 }
