@@ -260,6 +260,7 @@ class titania_topic extends titania_database_object
 		// To find out if we have any posts that need approval
 		$approved = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
 		$total = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, true));
+		$sort = new titania_sort();
 
 		$details = array(
 			'TOPIC_ID'						=> $this->topic_id,
@@ -288,7 +289,7 @@ class titania_topic extends titania_database_object
 			'TOPIC_LAST_POST_USER_FULL'		=> get_username_string('full', $this->topic_last_post_user_id, $this->topic_last_post_username, $this->topic_last_post_user_colour, false, phpbb::append_sid('memberlist', 'mode=viewprofile')),
 			'TOPIC_LAST_POST_TIME'			=> phpbb::$user->format_date($this->topic_last_post_time),
 			'TOPIC_LAST_POST_SUBJECT'		=> censor_text($this->topic_last_post_subject),
-			'PAGINATION'					=> topic_generate_pagination(($this->get_postcount()-1), titania_url::append_url($this->get_url())),
+			'PAGINATION'					=> $sort->topic_generate_pagination(($this->get_postcount()-1), titania_url::append_url($this->get_url())),
 
 			'U_NEWEST_POST'					=> ($this->unread) ? titania_url::append_url($this->get_url(), array('view' => 'unread', '#' => 'unread')) : '',
 			'U_VIEW_TOPIC'					=> $this->get_url(),
