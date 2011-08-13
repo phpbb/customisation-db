@@ -138,5 +138,12 @@ function get_path()
 	$script_name = str_replace(array('\\', '//'), '/', $script_name);
 	$script_path = trim(str_replace('\\', '/', dirname($script_name)));
 
-	return 'http://' . $host . str_replace(' ', '%20', htmlspecialchars($script_path));
+	$path = 'http://' . $host . str_replace(' ', '%20', htmlspecialchars($script_path));
+
+	if (substr($path, -1) == '/')
+	{
+		$path = substr($path, 0, -1);
+	}
+
+	return $path;
 }
