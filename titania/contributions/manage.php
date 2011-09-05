@@ -261,7 +261,7 @@ else if ($submit)
 
 		// Submit screenshots
 		$screenshot->submit();
-		
+
 		// ColorizeIt stuff
         if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contrib->contrib_type]->acl_get('colorizeit'))
         {
@@ -387,6 +387,7 @@ phpbb::$template->assign_vars(array(
 	'S_CAN_EDIT_CONTRIB'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? true : false,
 
 	'CONTRIB_PERMALINK'			=> $permalink,
+	'CONTRIB_TYPE'			=> (int) titania::$contrib->contrib_type,
 	'SCREENSHOT_UPLOADER'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? $screenshot->parse_uploader('posting/attachments/simple.html') : false,
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,

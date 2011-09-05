@@ -40,7 +40,7 @@
 			$('.translation_item').hide();
 		}
 	}
-	
+
 	var clrEditing = false;
 	function edit_contrib_colors()
 	{
@@ -221,6 +221,9 @@
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<fieldset class="submit-buttons">
+				<!-- IF not S_CREATE -->
+					<input type="hidden" name="contrib_type" value="{CONTRIB_TYPE}" />
+				<!-- ENDIF -->
 				<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
 				<input type="submit" name="preview" value="{L_PREVIEW}" class="button1" />&nbsp;
 				<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
