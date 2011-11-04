@@ -190,8 +190,8 @@ $lang = array_merge($lang, array(
 	'TOTAL_RESULTS_ONE'			=> '1 Result',
 	'TOTAL_TOPICS'				=> '%d Topics',
 	'TOTAL_TOPICS_ONE'			=> '1 Topic',
-	'TRANSLATION'				=> 'Translation',
-	'TRANSLATIONS'				=> 'Translations',
+	'TRANSLATION'				=> 'Language Pack',
+	'TRANSLATIONS'				=> 'Language Packs',
 	'TYPE'						=> 'Type',
 
 	'UNDELETE_TOPIC'			=> 'Undelete Topic',
