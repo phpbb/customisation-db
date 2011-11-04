@@ -29,7 +29,7 @@ $config = array(
 	*/
 	'phpbb_versions' => array(
 		'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
-		'30'	=> array('latest_revision' => '8', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
+		'30'	=> array('latest_revision' => '9', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
 	),
 
 	/**
@@ -59,7 +59,7 @@ $config = array(
 	*
 	* @param	string	$titania_table_prefix	Table prefix
 	*/
-	'table_prefix' => 'customisation_',
+	'table_prefix' => 'cdb_',
 
 	/**
 	* Path to the style demo board you would like styles to be installed on upon validation
