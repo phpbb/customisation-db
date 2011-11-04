@@ -37,43 +37,47 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'AUTHOR_LANGUAGE_PACKS'						=> '%d Translation Packs',
-	'AUTHOR_LANGUAGE_PACKS_ONE'					=> '1 Translation Pack',
-	'COULD_NOT_FIND_TRANSLATION_ROOT'			=> 'We couldn\'t locate the root directory of your language pack. Make sure you have a directory containing <code>language/</code> and optionally <code>styles/</code> in the top level.',
+	'AUTHOR_LANGUAGE_PACKS'						=> '%d Language Packs',
+	'AUTHOR_LANGUAGE_PACKS_ONE'					=> '1 Language Pack',
+	'COULD_NOT_FIND_TRANSLATION_ROOT'			=> 'We couldn’t locate the root directory of your language pack.  Make sure you have a directory containing <code>language/</code> and <code>styles/</code> in the top level.',
 
-	'MISSING_FILE'								=> 'The file <code>%s</code> is missing in your language pack',
-	'MISSING_KEYS'								=> 'You are missing the following language keys in <code>%1$s</code>:<br />%2$s',
+	'MISSING_FILE'								=> 'The file <code>%s</code> is missing in your language pack.',
+	'MISSING_KEYS'								=> 'You are missing the following language key(s) in <code>%1$s</code>:<br />%2$s',
 
-	'PASSED_VALIDATION'							=> 'Your language pack has passed the validation process which checks for missing keys, license files and which repackages your translation, please continue.',
+	'PASSED_VALIDATION'							=> 'Your language pack has been repacked and has passed the validation process which checks for missing keys, structure, additionnal files and license.  Please continue.',
 
-	'TRANSLATION'								=> 'Translation',
-	'TRANSLATION_VALIDATION'					=> '[phpBB Translation-Validation] %1$s %2$s',
-	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Translation to the phpBB.com Customisation Database. After careful inspection your translation has been approved and released into our Customisation Database.
+	'TRANSLATION'								=> 'Language Pack',
+	'TRANSLATION_VALIDATION'					=> '[phpBB Language Pack-Validation] %1$s %2$s',
+	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your language pack to the phpBB.com Customisation Database. After careful inspection, your language pack has been approved and released into our Customisation Database.
 
-It is our hope that you will provide a basic level of support for this translation and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
+It is my hope that you will provide a basic level of support for this language pack and keep it updated with future releases of phpBB. I appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
-[b]Notes from the Team about your translation:[/b]
+[b]Notes from the International Manager about your language pack:[/b]
 [quote]%s[/quote]
 
-Sincerely,
-phpBB Teams',
+Best regards,
+
+The International Manager',
 	'TRANSLATION_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
-As you may know all translations submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
+As you may know, all translations submitted to the phpBB Customisation Database must be validated and approved by the International Manager.
 
-Upon validating your translation the phpBB Team regrets to inform you that we have had to deny it.
+Upon validating your language pack, I regrets to inform you that I have had to deny it.
 
-To correct the problem(s) with your translation, please following the below instructions:
-[list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your translation being denied.
-[*]Re-upload your translation to our Customisation Database.[/list]
-Please ensure you tested your translation on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your translation.
+To correct the problem(s) with your language pack, please following the below instructions:
+[list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your language pack being denied.
+[*]Please ensure your language pack is up-to-date with the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page).
+[*]Please ensure that you comply with our [url=http://www.phpbb.com/community/viewtopic.php?f=79&t=2117453]Important Read Me![/url] and our [url=http://www.phpbb.com/community/viewtopic.php?f=79&t=2125191]Language Packs Submission Policy[/url].
+[*]Fix and re-upload your language pack to our Customisation Database.[/list]
 
-If you feel this denial was not warranted please contact the Translations Manager.
-
-Here is a report on why your translation was denied:
+Here is a report on why your language pack was denied:
 [quote]%s[/quote]
 
-Thank you,
-phpBB Teams',
+If you feel this denial was not warranted please contact me.
+If you have any queries and further discussion please use the Queue Discussion Topic.
+
+Best regards,
+
+The International Manager',
 	'WRONG_FILE'								=> 'The file <code>%s</code> is not allowed.',
 ));
