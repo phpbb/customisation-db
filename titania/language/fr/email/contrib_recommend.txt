@@ -1,0 +1,19 @@
+Subject: « {SITENAME} » - Courriel à un ami
+
+Bonjour {TO_USERNAME},
+
+Ce courriel a été envoyé à partir de « {SITENAME} » par {FROM_USERNAME} qui a pensé que vous pourriez être intéressé par la contribution phpBB de la base de données suivante :
+
+{CONTRIB_NAME}
+
+Vous pouvez retrouver un lien de téléchargement de la contribution à l’adresse suivante :
+
+{U_CONTRIB}
+
+Notez que ce message n’a pas été lu ou approuvé par un administrateur de « {SITENAME} ».
+
+Si vous souhaitez vous plaindre de la réception de ce courriel, veuillez contacter un administrateur du forum sur {BOARD_CONTACT} en citant l’entête du message.
+
+----------
+
+{MESSAGE}

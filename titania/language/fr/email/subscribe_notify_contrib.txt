@@ -1,0 +1,8 @@
+Subject: Notification de mise à jour - {NAME}
+
+Bonjour {USERNAME},
+
+Vous recevez cette notification car vous êtes abonné à l’élément « {NAME} » de la base de données des contributions de phpBB concernant la contribution « {CONTRIB_NAME} ».
+
+Si vous souhaitez consulter cette mise à jour, veuillez cliquer sur le lien ci-dessous :
+{U_VIEW}

@@ -1,0 +1,14 @@
+Subject: Message approuvé - « {POST_SUBJECT} »
+
+Bonjour {USERNAME},
+
+Vous recevez cette notification car votre message « {POST_SUBJECT} » publié sur « {SITENAME} » a été approuvé par un modérateur ou un administrateur.
+
+Si vous souhaitez consulter le message, veuillez cliquer sur le lien suivant :
+{U_VIEW_POST}
+
+Si vous souhaitez consulter le sujet, veuillez cliquer sur le lien suivant :
+{U_VIEW_TOPIC}
+
+
+{EMAIL_SIG}
