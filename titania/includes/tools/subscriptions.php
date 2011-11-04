@@ -155,7 +155,7 @@ class titania_subscriptions
 	 */
 	public static function send_notifications($object_type, $object_id, $email_tpl, $vars, $exclude_user = false)
 	{
-		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email
+		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email, u.user_lang
 				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u
 				WHERE w.watch_user_id = u.user_id ';
 
@@ -194,6 +194,7 @@ class titania_subscriptions
 			$user_data[$row['user_id']] = array(
 				'username'		=> $row['username'],
 				'user_email'	=> $row['user_email'],
+				'user_lang'		=> $row['user_lang'],
 				'watch_type'	=> $row['watch_type'],
 			);
 		}
@@ -204,34 +205,48 @@ class titania_subscriptions
 			return;
 		}
 
-		// You wanted the email template parsed? Well here you go.
-		$template = file_get_contents(TITANIA_ROOT . 'language/en/email/' . $email_tpl);
-		foreach($vars as $var => $replace)
-		{
-			if(strtoupper($var) == 'SUBJECT')
-			{
-				continue;
-			}
-
-			$template = str_replace('{' . strtoupper($var) . '}', $replace, $template);
-		}
-
-		// Steal the subject if it exists
-		$subject = '';
-		if (($subject_start = strpos($template, 'Subject:')) !== false)
-		{
-			$subject_start += strlen('Subject:');
-			$subject_length = strpos($template, "\n", $subject_start) - $subject_start;
-			$subject = trim(substr($template, $subject_start, $subject_length));
-			$template = trim(substr($template, ($subject_start + $subject_length)));
-		}
-		$subject = (isset($vars['SUBJECT']) && !$subject) ? $vars['SUBJECT'] : $subject;
-		$subject = ($subject) ? $subject : phpbb::$user->lang['SUBSCRIPTION_NOTIFICATION'];
-
 		// Send to each user
 		// Add a new case statment for each subscription type
 		foreach($user_data as $data)
 		{
+			// You wanted the email template parsed? Well here you go.
+			if (file_exists(TITANIA_ROOT . 'language/' . $data['user_lang'] . '/email/' . $email_tpl))
+			{
+				$template = file_get_contents(TITANIA_ROOT . 'language/' . $data['user_lang'] . '/email/' . $email_tpl);
+			}
+			else if (file_exists(TITANIA_ROOT . 'language/' . phpbb::$config['default_lang'] . '/email/' . $email_tpl))
+			{
+				$template = file_get_contents(TITANIA_ROOT . 'language/' . phpbb::$config['default_lang'] . '/email/' . $email_tpl);
+			}
+			else
+			{
+				$template = file_get_contents(TITANIA_ROOT . 'language/en/email/' . $email_tpl);
+			}
+
+			foreach($vars as $var => $replace)
+			{
+				if(strtoupper($var) == 'SUBJECT')
+				{
+					continue;
+				}
+
+				$template = str_replace('{' . strtoupper($var) . '}', $replace, $template);
+			}
+
+			// Steal the subject if it exists
+			$subject = '';
+
+			if (($subject_start = strpos($template, 'Subject:')) !== false)
+			{
+				$subject_start += strlen('Subject:');
+				$subject_length = strpos($template, "\n", $subject_start) - $subject_start;
+				$subject = trim(substr($template, $subject_start, $subject_length));
+				$template = trim(substr($template, ($subject_start + $subject_length)));
+			}
+
+			$subject = (isset($vars['SUBJECT']) && !$subject) ? $vars['SUBJECT'] : $subject;
+			$subject = ($subject) ? $subject : phpbb::$user->lang['SUBSCRIPTION_NOTIFICATION'];
+
 			// Generic messages that will be sent to each module individually
 			$message = str_replace('{USERNAME}', $data['username'], $template);
 
