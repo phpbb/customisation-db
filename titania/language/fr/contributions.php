@@ -36,11 +36,11 @@ $lang = array_merge($lang, array(
 'CUSTOM_LICENSE' => 'Custom',
 	'ANNOUNCEMENT_TOPIC'					=> 'Sujet d’annonce',
 	'ANNOUNCEMENT_TOPIC_SUPPORT'			=> 'Sujet de support',
-	'ANNOUNCEMENT_TOPIC_VIEW'				=> '%Consulter%s',
+	'ANNOUNCEMENT_TOPIC_VIEW'				=> '%sConsulter%s',
 	'ATTENTION_CONTRIB_CATEGORIES_CHANGED'	=> '<strong>Les catégories de la contribution ont été modifiées de :</strong><br />%1$s<br /><br /><strong>à :</strong><br />%2$s',
 	'ATTENTION_CONTRIB_DESC_CHANGED'		=> '<strong>La description de la contribution a été modifiée de :</strong><br />%1$s<br /><br /><strong>à :</strong><br />%2$s',
 	'AUTOMOD_RESULTS'						=> '<strong>Veuillez vérifier les résultats de l’installation d’AutoMOD et vous assurer que rien ne doit être corrigé.<br /><br />Si une erreur survient mais que vous êtes certain que cette dernière peut être ignorée, appuyez sur le bouton « Continuer » ci-dessous.</strong>',
-	'AUTOMOD_TEST'							=> 'Le MOD sera testé au travers d’AutoMMOD et les résultats seront affichés (cela peut prendre un certain temps, soyez patient).<br /><br />Appuyez sur le bouton « Continuer » lorsque vous êtes prêt.',
+	'AUTOMOD_TEST'							=> 'Le MOD sera testé au travers d’AutoMOD et les résultats seront affichés (cela peut prendre un certain temps, soyez patient).<br /><br />Appuyez sur le bouton « Continuer » lorsque vous êtes prêt.',
 
 	'BAD_VERSION_SELECTED'					=> '%s n’est pas une version de phpBB reconnue.',
 
@@ -97,7 +97,7 @@ $lang = array_merge($lang, array(
 	'DEMO_URL'								=> 'Lien vers la démonstration',
 	'DEMO_URL_EXPLAIN'						=> 'Emplacement de la démonstration',
 	'DOWNLOADS_PER_DAY'						=> '%.2f téléchargement(s) par jour',
-	'DOWNLOADS_TOTAL'						=> 'Nombre de téléchargements au total',
+	'DOWNLOADS_TOTAL'						=> 'Téléchargements',
 	'DOWNLOADS_VERSION'						=> 'Nombre de téléchargements de la version actuelle',
 	'DOWNLOAD_CHECKSUM'						=> 'Empreinte MD5',
 	'DUPLICATE_AUTHORS'						=> 'Les auteurs suivants sont listés à la fois comme actifs et inactifs (cela doit être modifié) : %s',
