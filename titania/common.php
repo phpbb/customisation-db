@@ -103,7 +103,7 @@ if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get(
 {
 	titania::$cache->purge();
 
-	titania::error_box('SUCCESS', phpbb::$user->lang['CACHE_PURGED']);
+	titania::error_box(phpbb::$user->lang['SUCCESSBOX_TITLE'], phpbb::$user->lang['CACHE_PURGED']);
 }
 
 // admin requested a sync
@@ -124,6 +124,6 @@ if (isset($_GET['sync']) && phpbb::$auth->acl_get('a_'))
 			$sync->$method[0]();
 		}
 
-		titania::error_box('SUCCESS', 'Sync Success');
+		titania::error_box(phpbb::$user->lang['SUCCESSBOX_TITLE'], phpbb::$user->lang['SYNC_SUCCESS']);
 	}
 }
