@@ -179,7 +179,9 @@ $lang = array_merge($lang, array(
 	'STICKIES'					=> 'Stickies',
 	'SUBSCRIBE'					=> 'Subscribe',
 	'SUBSCRIPTION_NOTIFICATION'	=> 'Subscription Notification',
-
+	'SUCCESSBOX_TITLE'			=> 'Success',
+	'SYNC_SUCCESS'				=> 'Sync Success',
+	
 	'TITANIA_DISABLED'			=> 'The Customisation Database is temporarily disabled, please try again in a few minutes.',
 	'TITANIA_INDEX'				=> 'Customisation Database',
 	'TOTAL_CONTRIBS'			=> '%d Contributions',
