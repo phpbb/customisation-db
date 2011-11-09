@@ -44,8 +44,8 @@ $lang = array_merge($lang, array(
 
 	'PHPBB_VERSION_TEST'			=> 'Test phpBB Version support for Modification revisions',
 
-	'REVISIONS_ADDED_TO_QUEUE'		=> '%s revisions have been added to the Automod testing queue.',
+	'REVISIONS_ADDED_TO_QUEUE'		=> '%d revisions have been added to the AutoMOD testing queue.',
 
 	'VERSION_RESTRICTION'			=> 'Version Restriction',
-	'VERSION_RESTRICTION_EXPLAIN'	=> 'Limit the new version support to only the selected versions.',
+	'VERSION_RESTRICTION_EXPLAIN'	=> 'Limit the support of the new version to selected versions only.',
 ));
