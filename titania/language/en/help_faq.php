@@ -64,7 +64,7 @@ $help = array(
 	),
 	array(
 		0 => 'Rules',
-		1 => 'With the introduction of Titania, the rules involved to use it are very simple.  As in the past, the saying “You should seek support within the modification/style topic where you got the customisation” pertains.  While the support Team of phpBB.com does their best to assist you in running and using your forum they can not, and are not expected to, provide support for any customisation/contribution.  It is the hope of phpBB that the author of the contribution provide you, the end user, with support in using their customisation.  Please remember that all authors are volunteers who have spent their time in providing an enhancement to the phpBB software.  The saying “You get more flies with honey than you do with vinegar” applies, so please keep this in mind when requesting support for a customisation (eg, be nice in the way you ask).'
+		1 => 'With the introduction of Titania, the rules involved to use it are very simple.  As in the past, the saying “You should seek support within the modification/style topic where you got the customisation” pertains.  While the support Team of phpBB.com does their best to assist you in running and using your forum they can not, and are not expected to, provide support for any customisation/contribution.  It is our hope that the author of a contribution provides end user support.  Please remember that all authors are volunteers who have spent their time in providing an enhancement to the phpBB software.  The saying “You get more flies with honey than you do with vinegar” applies, so please keep this in mind when requesting support for a customisation (eg, be nice in the way you ask).'
 	),
 	array(
 		0 => 'How to get support',
