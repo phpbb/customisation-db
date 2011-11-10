@@ -34,7 +34,7 @@ class translation_validation extends titania_contrib_tools
 	*
 	* @var array
 	*/
-	protected $ignore_files = array('language/en/AUTHORS', 'language/en/README', 'language/en/LICENSE', 'language/en/CHANGELOG');
+	protected $ignore_files = array('language/en/AUTHORS', 'language/en/README', 'language/en/LICENSE', 'language/en/CHANGELOG', 'language/en/VERSION');
 
 	public function __construct($original_zip, $new_dir_name)
 	{
