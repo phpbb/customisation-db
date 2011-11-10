@@ -60,8 +60,12 @@ if ($repack)
 		trigger_error('NO_QUEUE_ITEM');
 	}
 
+	titania::$contrib->get_revisions();
+	$last_rev_id = (int) max(array_keys(titania::$contrib->revisions));
+	$last_rev_status = (int) titania::$contrib->revisions[$last_rev_id]['revision_status'];
+	
 	// Check auth
-	if (!titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate') && !$old_queue->allow_author_repack)
+	if ((!titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate') && !$old_queue->allow_author_repack) || $last_rev_status == TITANIA_REVISION_DENIED)
 	{
 		titania::needs_auth();
 	}
