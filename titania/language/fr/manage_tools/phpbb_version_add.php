@@ -46,7 +46,7 @@ $lang = array_merge($lang, array(
 
 	'PHPBB_VERSION_ADD'				=> 'Ajouter le support de la version de phpBB aux révisions',
 
-	'REVISIONS_UPDATED'				=> '%s révisions ont été mises à jour.',
+	'REVISIONS_UPDATED'				=> '%d révisions ont été mises à jour.',
 
 	'VERSION_RESTRICTION'			=> 'Restriction de version',
 	'VERSION_RESTRICTION_EXPLAIN'	=> 'Limiter le support de la nouvelle version aux versions sélectionnées.',

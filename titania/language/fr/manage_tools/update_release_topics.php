@@ -40,5 +40,5 @@ $lang = array_merge($lang, array(
 	'UPDATE_RELEASE_TOPICS'				=> 'Mettre à jour tous les sujets de sortie de la contribution dans la base de données du forum',
 	'UPDATE_RELEASE_TOPICS_COMPLETE'	=> 'Tous les sujets de sortie de la contribution ont été mis à jour !',
 	'UPDATE_RELEASE_TOPICS_CONFIRM'		=> 'Êtes-vous sûr de vouloir mettre à jour tous les sujets de sortie de la contribution dans la base de données du forum ?  Cela peut prendre un certain temps.',
-	'UPDATE_RELEASE_TOPICS_PROGRESS'	=> '%1$s sujets effectués sur %2$s.  Veuillez patienter…',
+	'UPDATE_RELEASE_TOPICS_PROGRESS'	=> '%1$d sujets effectués sur %2$d.  Veuillez patienter…',
 ));

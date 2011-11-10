@@ -179,6 +179,8 @@ $lang = array_merge($lang, array(
 	'STICKIES'					=> 'Notes',
 	'SUBSCRIBE'					=> 'S’abonner',
 	'SUBSCRIPTION_NOTIFICATION'	=> 'Notification d’abonnement',
+	'SUCCESSBOX_TITLE'     		=> 'Succès',
+	'SYNC_SUCCESS'      	  	=> 'Synchronisé avec succès',
 
 	'TITANIA_DISABLED'			=> 'La base de données des contributions est temporairement désactivée, veuillez réessayer dans quelques minutes.',
 	'TITANIA_INDEX'				=> 'Base de données des contributions',
@@ -190,8 +192,8 @@ $lang = array_merge($lang, array(
 	'TOTAL_RESULTS_ONE'			=> '1 résultat',
 	'TOTAL_TOPICS'				=> '%d sujets',
 	'TOTAL_TOPICS_ONE'			=> '1 sujet',
-	'TRANSLATION'				=> 'Traduction',
-	'TRANSLATIONS'				=> 'Traductions',
+	'TRANSLATION'				=> 'Archive de langue',
+	'TRANSLATIONS'				=> 'Archives de langue',
 	'TYPE'						=> 'Type',
 
 	'UNDELETE_TOPIC'			=> 'Restaurer le sujet',

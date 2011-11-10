@@ -122,7 +122,7 @@ $help = array(
 	),
 	array(
 		0 => 'Qui s’occupe de la validation de ma contribution ?',
-		1 => 'S’il s’agit d’une modification, elle sera validée par l’équipe des modifications, l’équipe des validateurs juniors des modifications et, occasionnellement, par un membre de l’équipe de développement.  S’il s’agit d’un style, il sera validé par l’équipe des styles et l’équipe des validateurs juniors des styles.  S’il s’agit d’un convertisseur, il sera validé par l’équipe de support et l’équipe de développement.  S’il s’agit d’un bridge, il sera validé par l’équipe des modifications et l’équipe de développement.  S’il s’agit d’une traduction, elle sera validée par le responsable des traductions et des communautés internationales de support.  S’il s’agit d’un outil officiel, il est créé puis validé par les différentes équipes de phpBB.com.'
+		1 => 'S’il s’agit d’une modification, elle sera validée par l’équipe des modifications, l’équipe des validateurs juniors des modifications et, occasionnellement, par un membre de l’équipe de développement.  S’il s’agit d’un style, il sera validé par l’équipe des styles et l’équipe des validateurs juniors des styles.  S’il s’agit d’un convertisseur, il sera validé par l’équipe de support et l’équipe de développement.  S’il s’agit d’un bridge, il sera validé par l’équipe des modifications et l’équipe de développement.  S’il s’agit d’une archive de langue, elle sera validée par le responsable international.  S’il s’agit d’un outil officiel, il est créé puis validé par les différentes équipes de phpBB.com.'
 	),
 );
 
