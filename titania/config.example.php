@@ -59,7 +59,7 @@ $config = array(
 	*
 	* @param	string	$titania_table_prefix	Table prefix
 	*/
-	'table_prefix' => 'cdb_',
+	'table_prefix' => 'customisation_',
 
 	/**
 	* Path to the style demo board you would like styles to be installed on upon validation
