@@ -169,7 +169,7 @@ class titania_type_style extends titania_type_base
 	*/
 	public function uninstall()
 	{
-		if (isset(phpbb::$config['titania_num_mods']))
+		if (isset(phpbb::$config['titania_num_styles']))
 		{
 			if (!class_exists('umil'))
 			{
