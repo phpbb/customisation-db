@@ -13,7 +13,7 @@ If you have a translation please read the information on patches.
 
 ## Get Involved
 
-You can get involved by reporting bugs in the bug tracker (See Below), provide patches/improvements (See Above) or send a Private Message to [EXreaction](http://www.phpbb.com/community/ucp.php?i=pm&mode=compose&u=202401) on how you can help.
+You can get involved by reporting bugs in the bug tracker (See Below), provide patches/improvements (See Above).
 
 ## Bug Tracker
 
