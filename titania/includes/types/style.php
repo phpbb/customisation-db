@@ -141,7 +141,6 @@ class titania_type_style extends titania_type_base
 				'u_titania_mod_style_queue',
 				'u_titania_mod_style_validate',
 				'u_titania_mod_style_moderate',
-				'u_titania_mod_style_clr',
 			));
 
 			// Style count holder
