@@ -468,6 +468,10 @@ ul.rating li, ul.rated li {
 	margin-top: 1px;
 }
 
+.queue-actions li div a {
+	padding: 0 5px;
+}
+
 .queue-actions li a:hover {
 	text-decoration: none;
 	color: #1A2124;
@@ -482,6 +486,7 @@ ul.rating li, ul.rated li {
 .approve 			{ padding-left: 21px !important; background-image: url("{T_THEME_PATH}/images/icon_approve.gif"); }
 .change_status		{ padding-left: 15px !important; background-image: url("{T_THEME_PATH}/images/icon_change_status.gif"); }
 .repack 			{ padding-left: 17px !important; background-image: url("{T_THEME_PATH}/images/icon_repack.gif"); }
+.misc				{ padding-left: 19px !important; background-image: url("{T_THEME_PATH}/images/icon_misc.gif"); }
 
 .queue-actions div.subactions {
 	position: absolute;
