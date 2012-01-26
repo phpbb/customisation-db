@@ -32,6 +32,13 @@ class titania_type_converter extends titania_type_base
 	public $id = 3;
 
 	/**
+	 * The type name
+	 *
+	 * @var string (any lang key that includes the type should match this value)
+	 */
+	public $name = 'converter';
+
+	/**
 	 * For the url slug
 	 *
 	 * @var string portion to be used in the URL slug

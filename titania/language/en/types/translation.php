@@ -37,8 +37,8 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'AUTHOR_LANGUAGE_PACKS'						=> '%d Language Packs',
-	'AUTHOR_LANGUAGE_PACKS_ONE'					=> '1 Language Pack',
+	'AUTHOR_TRANSLATIONS'						=> '%d Language Packs',
+	'AUTHOR_TRANSLATIONS_ONE'					=> '1 Language Pack',
 	'COULD_NOT_FIND_TRANSLATION_ROOT'			=> 'We couldn’t locate the root directory of your language pack.  Make sure you have a directory containing <code>language/</code> and <code>styles/</code> in the top level.',
 
 	'MISSING_FILE'								=> 'The file <code>%s</code> is missing in your language pack.',
