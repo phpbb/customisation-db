@@ -265,7 +265,7 @@ class titania_posting
 			add_form_key('postform');
 
 			phpbb::$template->assign_vars(array(
-				'MESSAGE'		=> htmlspecialchars_decode($post_message),
+				'MESSAGE'		=> $post_message,
 
 				'U_QR_ACTION'	=> $post_object->get_url('quick_edit'),
 			));
