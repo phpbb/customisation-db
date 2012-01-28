@@ -35,11 +35,11 @@
 				<div class="download-button">
 					<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE}</a>
 				</div>
-				<!-- IF U_COLORIZEIT -->
-                    <div class="colorizeit-button">
-                        <a class="colorizeit-main" href="#colorizeit-editor" onclick="ColorizeIt('{U_COLORIZEIT}');" title="{L_COLORIZEIT_DOWNLOAD_STYLE} {CONTRIB_NAME}"></a>
-                    </div>
-				<!-- ENDIF -->
+			<!-- ENDIF -->
+			<!-- IF U_COLORIZEIT -->
+				<div class="colorizeit-button">
+					<a class="colorizeit-main" href="#colorizeit-editor" onclick="ColorizeIt('{U_COLORIZEIT}');" title="{L_COLORIZEIT_DOWNLOAD_STYLE} {CONTRIB_NAME}"></a>
+				</div>
 			<!-- ENDIF -->
 		</div>
 
@@ -169,6 +169,17 @@
 			<!-- ENDIF -->
 			</ul>
 		<!-- ENDIF -->
+					<li>
+						<dl class="codebox"><dt>HTML Replacement: <a href="#" onclick="selectCode(this); return false;">Select all</a></dt><dd><code>SIMPLETEXT2 because I can't use HTML here as it will break the page for now. SIMPLETEXT1</code></dd></dl>
+					</li>
+					<br />
+					<li>
+						<dl class="codebox"><dt>BBcode Usage: <a href="#" onclick="selectCode(this); return false;">Select all</a></dt><dd><code>SIMPLETEXT2;SIMPLETEXT1</code></dd></dl>
+					</li>
+					<br />
+					<li>
+						<dl class="codebox"><dt>Helpline: <a href="#" onclick="selectCode(this); return false;">Select all</a></dt><dd><code>I can' show HTML as it breaks the page;I can't show the curly bracket used in bbcodes either</code></dd></dl>
+					</li>
 	<span class="corners-bottom main-corners"><span></span></span></div>
 </div>
 
