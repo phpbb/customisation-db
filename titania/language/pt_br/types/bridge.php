@@ -39,10 +39,10 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'integração'							=> 'Integração',
-	'integraçãoS'							=> 'Integrações',
-	'integração_VALIDATION'					=> '[Validação de integrações do phpBB] %1$s %2$s',
-	'integração_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar a sua integração para a Base de Customizações do phpBBrasil. Após uma cuidadosa inspeção sua integração foi aprovada e lançada em nossa Base de Customizações.
+	'BRIDGE'								=> 'Integração',
+	'BRIDGES'								=> 'Integrações',
+	'BRIDGES_VALIDATION'					=> '[Validação de integrações do phpBB] %1$s %2$s',
+	'BRIDGES_VALIDATION_MESSAGE_APPROVE'	=> 'Obrigado por enviar a sua integração para a Base de Customizações do phpBBrasil. Após uma cuidadosa inspeção sua integração foi aprovada e lançada em nossa Base de Customizações.
 
 Temos esperança de que você fornecerá um nível básico de suporte para esta integração e irá mantê-la atualizada com futuras versões do phpBB. Apreciamos seu trabalho e sua contribuição para a comunidade. Autores como você fazem do phpBBrasil.com.br um melhor lugar para todos.
 

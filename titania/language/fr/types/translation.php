@@ -37,8 +37,8 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'AUTHOR_LANGUAGE_PACKS'						=> '%d archives de langue',
-	'AUTHOR_LANGUAGE_PACKS_ONE'					=> '1 archive de langue',
+	'AUTHOR_TRANSLATIONS'						=> '%d archives de langue',
+	'AUTHOR_TRANSLATIONS_ONE'					=> '1 archive de langue',
 	'COULD_NOT_FIND_TRANSLATION_ROOT'			=> 'Impossible de localiser le répertoire racine de votre archive de langue.  Assurez-vous que le répertoire <code>language/</code> et le répertoire <code>styles/</code> soient présents à la racine.',
 
 	'MISSING_FILE'								=> 'Le fichier <code>%s</code> est manquant dans votre archive de langue.',
