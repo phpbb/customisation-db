@@ -152,6 +152,26 @@ $(document).ready(function(){
 	}, function() {
 		$(this).children('.subactions').toggle();
 	});
+	
+	$('.download-main').click(function() {
+		var cease = readCookie('cdb_ignore_subscription');
+		
+		if (!cease)
+		{
+			$('.dialog').dialog({modal: true});
+		}
+	});
+	
+	$('.dialog #cancel').click(function(event) {
+		event.preventDefault();
+		$(this).parent().parent().dialog('close');
+	});
+	
+	$('.dialog #cease').click(function(event) {
+		event.preventDefault();
+		createCookie('cdb_ignore_subscription', 'true', 365);
+		$(this).parent().parent().dialog('close');
+	});
 });
 
 function hide_quotebox(box)
