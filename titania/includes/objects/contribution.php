@@ -462,7 +462,7 @@ class titania_contribution extends titania_message_object
 		// Display real author
 		if ($return)
 		{
-			$vars = array_merge($vars, $this->author->assign_details(true));
+			$vars['AUTHOR_NAME_FULL'] = $this->author->get_username_string();
 		}
 		else
 		{
