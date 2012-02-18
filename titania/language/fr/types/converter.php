@@ -37,8 +37,8 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'AUTHOR_CONVERTORS'						=> '%d convertisseurs',
-	'AUTHOR_CONVERTORS_ONE'					=> '1 convertisseur',
+	'AUTHOR_CONVERTERS'						=> '%d convertisseurs',
+	'AUTHOR_CONVERTERS_ONE'					=> '1 convertisseur',
 	'CONVERTER'								=> 'Convertisseur',
 	'CONVERTERS'							=> 'Convertisseurs',
 	'CONVERTER_VALIDATION'					=> '[Validation de convertisseur pour phpBB] %1$s %2$s',

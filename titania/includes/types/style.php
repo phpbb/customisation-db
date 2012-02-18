@@ -30,6 +30,13 @@ class titania_type_style extends titania_type_base
 	 * @var int type id (for custom types not specified in titania to start, please start with 10 in case we add any extra later)
 	 */
 	public $id = 2;
+	
+	/**
+	 * The type name
+	 *
+	 * @var string (any lang key that includes the type should match this value)
+	 */
+	public $name = 'style';
 
 	/**
 	 * For the url slug
