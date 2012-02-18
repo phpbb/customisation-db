@@ -529,6 +529,20 @@ ul.rating li, ul.rated li {
 /* General
 --------------------------------------------- */
 
+.dialog {
+	background-color: #FFFFFF;
+	border-radius: 5px;
+	display: none;
+}
+
+.dialog h3 {
+	margin-top: 1em;
+}
+
+.dialog-options {
+	text-align: center;
+}
+
 .hidden {
 	display: none !important;
 }

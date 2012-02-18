@@ -45,6 +45,7 @@ $lang = array_merge($lang, array(
 	'BAD_VERSION_SELECTED'					=> '%s is not a proper phpBB version.',
 
 	'CANNOT_ADD_SELF_COAUTHOR'				=> 'You are the main author, you can not add yourself to the list of co-authors.',
+	'CEASE_REQUEST'							=> 'Do not ask me again',
 	'CLEANED_CONTRIB'						=> 'Cleaned contribution',
 	'CONTRIB'								=> 'Contribution',
 	'CONTRIBUTIONS'							=> 'Contributions',
@@ -183,6 +184,7 @@ $lang = array_merge($lang, array(
 	'SELECT_PHPBB_BRANCH'					=> 'Select phpBB branch',
 	'SUBDIRECTORY_LIMIT'					=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
 	'SUBMIT_NEW_REVISION'					=> 'Submit and add new revision',
+	'SUBSCRIPTION_REQUEST'					=> 'Would you like to subscribe to the contribution in order to receive e-mail notifications about new versions and security vulnerabilities?',
 
 	'TOO_MANY_TRANSLATOR_LINKS'				=> 'You are currently using %d external links within the TRANSLATION/TRANSLATION_INFO line. Please only include <strong>one link</strong>. Including two links is allowed on a case-by-case basis - please post within the translations forum noting your reasoning behind putting more external links within the line.',
 
