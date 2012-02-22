@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 }
 
 // This gets checked in page_header() in functions.php to see whether we're in community
-if (!defined('NOT_IN_COMMUNITY'))
+if (!defined('NOT_IN_COMMUNITY') && !defined('LOAD_CUSTOM_STYLE'))
 {
 	define('NOT_IN_COMMUNITY', true);
 }

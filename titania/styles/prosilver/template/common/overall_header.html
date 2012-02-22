@@ -1,0 +1,129 @@
+{PHPBB_COM_HEADER}
+
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.elastic.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.tabby.js"></script>
+
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/common.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/forum_fn.js"></script>
+
+<!-- IF .screenshots -->
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.lightbox-0.5.js"></script>
+<!-- ENDIF -->
+
+<script type="text/javascript">
+// <![CDATA[
+	var spacer_img = '{TITANIA_ROOT_PATH}images/spacer.gif';
+	var jump_page = '{LA_JUMP_PAGE}:';
+	var on_page = '{ON_PAGE}';
+	var per_page = '{PER_PAGE}';
+	var pagination_url = '{S_PAGINATION_ACTION}';
+	var style_cookie = 'phpBBstyle';
+	var onload_functions = new Array();
+	var onunload_functions = new Array();
+
+<!-- IF UA_GREY_STAR_SRC -->
+	// Rating Stuff
+	var grey_star = new Image(16,16);
+	grey_star.src = "{UA_GREY_STAR_SRC}";
+	var green_star= new Image(16,16);
+	green_star.src = "{UA_GREEN_STAR_SRC}";
+	var red_star= new Image(16,16);
+	red_star.src = "{UA_RED_STAR_SRC}";
+	var orange_star= new Image(16,16);
+	orange_star.src = "{UA_ORANGE_STAR_SRC}";
+	var max_rating = "{UA_MAX_RATING}";
+<!-- ENDIF -->
+
+	$(document).ready(function() {
+	<!-- IF S_HIDE_ERROR_BOX -->
+		setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
+	<!-- ENDIF -->
+
+		$('#extratabs').tabs({
+		    select: function(event, ui) {
+		        var url = $.data(ui.tab, 'load.tabs');
+		        if( url ) {
+		            location.href = url;
+		            return false;
+		        }
+		        return true;
+		    }
+		});
+		$('#extratabs li').removeClass('ui-corner-top');
+		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
+
+	<!-- IF .screenshots -->
+		$('a.screenshot').lightBox(
+			{
+				imageLoading: '{T_TITANIA_THEME_PATH}/images/lightbox-ico-loading.gif',
+				imageBtnClose: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-close.gif',
+				imageBtnPrev: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-prev.gif',
+				imageBtnNext: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-next.gif'
+			}
+		);
+	<!-- ENDIF -->
+		/* Hide MPV/Automod Validation reports automatically */
+		$('blockquote > div > cite').each(function() {
+			if ($(this).text() == '{L_VALIDATION_MPV} {L_WROTE}:' || $(this).text() == '{L_VALIDATION_AUTOMOD} {L_WROTE}:')
+			{
+				hide_quotebox($(this).parent());
+			}
+		});
+  });
+
+// ]]>
+</script>
+
+
+<div class="navbar">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<ul class="linklist navlinks">
+		<li class="icon-home"><a href="{U_HOME}" accesskey="h">{L_HOME}</a> <!-- BEGIN nav_header --> <strong>&#8249;</strong> <a href="{nav_header.U_TITLE}">{nav_header.L_TITLE}</a><!-- END nav_header --></li>
+	</ul>
+
+	<!-- IF not S_IS_BOT and S_USER_LOGGED_IN -->
+	<ul class="linklist leftside">
+		<li class="icon-ucp">
+			<a href="{U_PROFILE}" title="{L_PROFILE}" accesskey="e">{L_PROFILE}</a>
+			<!-- IF S_DISPLAY_PM --> (<a href="{U_PRIVATEMSGS}">{PRIVATE_MESSAGE_INFO}</a>)<!-- ENDIF -->
+			&bull; <a href="{U_MY_CONTRIBUTIONS}" title="{L_MY_CONTRIBUTIONS}">{L_MY_CONTRIBUTIONS}</a>
+			<!-- IF U_MANAGE --> &bull; <a href="{U_MANAGE}" title="{L_MANAGE}">{L_MANAGE}</a><!-- ENDIF -->
+			<!-- IF U_RESTORE_PERMISSIONS --> &bull; <a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a><!-- ENDIF -->
+		</li>
+	</ul>
+	<!-- ENDIF -->
+
+	<ul class="linklist rightside">
+		<li class="icon-faq"><a href="{U_FAQ}" title="{L_FAQ_EXPLAIN}">{L_FAQ}</a></li>
+		<li class="icon-search"><a href="{U_SEARCH}" title="{L_SEARCH}">{L_SEARCH}</a></li>
+		<!-- IF not S_IS_BOT -->
+			<!-- IF not S_USER_LOGGED_IN and S_REGISTER_ENABLED and not (S_SHOW_COPPA or S_REGISTRATION) --><li class="icon-register"><a href="{U_REGISTER}">{L_REGISTER}</a></li><!-- ENDIF -->
+			<li class="icon-logout"><a href="{U_LOGIN_LOGOUT}" title="{L_LOGIN_LOGOUT}" accesskey="x">{L_LOGIN_LOGOUT}</a></li>
+		<!-- ENDIF -->
+	</ul>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- IF .errorbox -->
+<div id="errorbox" class="errorbox">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<!-- IF ERRORBOX_TITLE --><h3>{ERRORBOX_TITLE}</h3><!-- ENDIF -->
+	<!-- BEGIN errorbox -->
+		<p>{errorbox.MESSAGE}</p>
+	<!-- END errorbox -->
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
+<!-- IF .successbox -->
+<div id="successbox" class="successbox">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<!-- IF SUCCESSBOX_TITLE --><h3>{SUCCESSBOX_TITLE}</h3><!-- ENDIF -->
+	<!-- BEGIN successbox -->
+		<p>{successbox.MESSAGE}</p>
+	<!-- END successbox -->
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
