@@ -171,6 +171,10 @@ $(document).ready(function(){
 		createCookie('cdb_ignore_subscription', 'true', 365);
 		$.colorbox.close();
 	});
+  
+	// Remove -mode_view from screenshot links as we'll be displaying the image inline, so file.php should not
+	// wrap the image in html in IE
+	$.each($('a.screenshot'), function() {this.href = this.href.replace('-mode_view', '');});
 });
 
 function hide_quotebox(box)
