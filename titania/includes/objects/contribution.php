@@ -1167,6 +1167,8 @@ class titania_contribution extends titania_message_object
 			return;
 		}
 
+		$this->validate_author_row(array($user_id));
+
 		// Delete them from the co-authors list if they are in it...
 		$sql = 'SELECT COUNT(contrib_id) FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
 			WHERE contrib_id = ' . $this->contrib_id . '
