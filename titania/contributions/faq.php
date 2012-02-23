@@ -88,7 +88,7 @@ switch ($action)
 					$result = phpbb::$db->sql_query($sql);
 					$right_id = (string) phpbb::$db->sql_fetchfield('right_id');
 					phpbb::$db->sql_freeresult($result);
-					
+
 					// Update the faqs table
 					$sql_ary = array(
 						'left_id'	=> $right_id + 1,

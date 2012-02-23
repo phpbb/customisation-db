@@ -17,7 +17,7 @@ global $phpbb_root_path;
 define('TITANIA_ROOT', $phpbb_root_path . '../customise/db/');
 
 /**
-Load the header/footer of the custom style
+* Load the header/footer of the custom style
 */
 define('LOAD_CUSTOM_STYLE', true);
 
