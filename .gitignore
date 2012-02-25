@@ -2,3 +2,4 @@ titania/config.php
 Thumbs.db
 .DS_Store
 titania/files/*
+*.bak
