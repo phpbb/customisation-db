@@ -6,5 +6,5 @@
 
 @import url("common.css");
 @import url("tweaks.css");
-@import url("jquery.lightbox-0.5.css");
-@import url("jquery-ui-1.7.2.css");
+@import url("colorbox.css");
+@import url("jquery-ui-1.8.17.custom.css");

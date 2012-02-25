@@ -574,15 +574,25 @@ ul.rating li, ul.rated li {
 
 /* General
 --------------------------------------------- */
-
-.dialog {
-	background-color: #FFFFFF;
-	border-radius: 5px;
-	display: none;
+/* ColorBox adjustments; primarily switching control buttons to top */
+#cboxLoadedContent {
+	margin-top: 28px;
+	margin-bottom: 0 !important;
+}
+	
+#cboxLoadedContent h3 {
+	top: 0;
+	width: 100%;
+	position: absolute;
+}
+	
+#cboxNext, #cboxPrevious, #cboxClose, #cboxTitle, #cboxCurrent {
+	top: 0;
+	bottom: auto !important;
 }
 
-.dialog h3 {
-	margin-top: 1em;
+#cboxCurrent {
+	top: 5px;
 }
 
 .dialog-options {

@@ -10,7 +10,7 @@
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/styleswitcher.js"></script>
 
 <!-- IF .screenshots -->
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.lightbox-0.5.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.lightbox-min.js"></script>
 <!-- ENDIF -->
 
 <script type="text/javascript">
@@ -56,14 +56,7 @@
 		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
 
 	<!-- IF .screenshots -->
-		$('a.screenshot').lightBox(
-			{
-				imageLoading: '{T_TITANIA_THEME_PATH}/images/lightbox-ico-loading.gif',
-				imageBtnClose: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-close.gif',
-				imageBtnPrev: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-prev.gif',
-				imageBtnNext: '{T_TITANIA_THEME_PATH}/images/lightbox-btn-next.gif'
-			}
-		);
+		$('a.screenshot').colorbox({photo: true, rel: 'group1'});
 	<!-- ENDIF -->
 		/* Hide MPV/Automod Validation reports automatically */
 		$('blockquote > div > cite').each(function() {
