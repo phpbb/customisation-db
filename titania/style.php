@@ -125,6 +125,7 @@ function get_path()
 {
 	// Get hostname
 	$host = (!empty($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : ((!empty($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : getenv('SERVER_NAME'));
+	$port = (!empty($_SERVER['SERVER_PORT'])) ? (int) $_SERVER['SERVER_PORT'] : (int) getenv('SERVER_PORT');
 
 	// Should be a string and lowered
 	$host = (string) strtolower($host);
@@ -138,7 +139,19 @@ function get_path()
 	$script_name = str_replace(array('\\', '//'), '/', $script_name);
 	$script_path = trim(str_replace('\\', '/', dirname($script_name)));
 
-	$path = 'http://' . $host . str_replace(' ', '%20', htmlspecialchars($script_path));
+	$secure = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 1 : 0;
+	$path = (($secure) ? 'https://' : 'http://') . $host;
+
+	if ($port && (($secure && $port != 443) || (!$secure && $port != 80)))
+	{
+		// HTTP HOST can carry a port number
+		if (strpos($host, ':') === false)
+		{
+			$path .= ':' . $port;
+		}
+	}
+
+	$path .= str_replace(' ', '%20', htmlspecialchars($script_path));
 
 	if (substr($path, -1) == '/')
 	{

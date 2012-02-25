@@ -156,22 +156,25 @@ $(document).ready(function(){
 	$('.download-main').click(function() {
 		var cease = readCookie('cdb_ignore_subscription');
 		
-		if (!cease)
-		{
-			$('.dialog').dialog({modal: true});
+		if (!cease && $('.dialog#subscription').length) {
+			$.colorbox({html: $('.dialog#subscription').html(), width: '400px'});
 		}
 	});
 	
-	$('.dialog #cancel').click(function(event) {
+	$('#cboxLoadedContent #cancel').live('click', function(event) {
 		event.preventDefault();
-		$(this).parent().parent().dialog('close');
+		$.colorbox.close();
 	});
 	
-	$('.dialog #cease').click(function(event) {
+	$('#cboxLoadedContent #cease').live('click', function(event) {
 		event.preventDefault();
 		createCookie('cdb_ignore_subscription', 'true', 365);
-		$(this).parent().parent().dialog('close');
+		$.colorbox.close();
 	});
+  
+	// Remove -mode_view from screenshot links as we'll be displaying the image inline, so file.php should not
+	// wrap the image in html in IE
+	$.each($('a.screenshot'), function() {this.href = this.href.replace('-mode_view', '');});
 });
 
 function hide_quotebox(box)
