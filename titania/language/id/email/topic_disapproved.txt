@@ -1,0 +1,8 @@
+Subjek: Topik Ditolak - "{TOPIC_TITLE}"
+
+Hallo {USERNAME},
+
+Anda menerima notifikasi ini karena topik anda "{TOPIC_TITLE}" di "{SITENAME}" ditolak oleh moderator ataupun administrator.
+
+
+{EMAIL_SIG}

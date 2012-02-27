@@ -1,0 +1,8 @@
+Subject: Tópico rejeitado - "{TOPIC_TITLE}"
+
+Olá {USERNAME},
+
+Você está recebendo esta notificação porque seu tópico "{TOPIC_TITLE}" no "{SITENAME}" foi rejeitado por um moderador ou administrador.
+
+
+{EMAIL_SIG}

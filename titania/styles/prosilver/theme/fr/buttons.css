@@ -1,0 +1,38 @@
+.buttons div.faq-icon { 
+	width: 142px; 
+	height: 25px; 
+}
+
+div.faq-icon span {
+	background-image: url("./button_faq_new.gif");
+}
+
+.buttons div.contrib-icon { 
+	width: 193px; 
+	height: 25px; 
+}
+
+div.contrib-icon span {
+	background-image: url("./button_contrib_new.gif");
+}
+
+.buttons div.category-icon { 
+	width: 170px; 
+	height: 25px; 
+}
+
+div.category-icon span {
+	background-image: url("./button_category_new.gif");
+}
+
+.download-button {
+	background-image: url("./button_download.gif");
+	width: 175px;
+	height: 57px;
+}
+
+.colorizeit-button {
+	background-image: url("./button_colorizeit2.png");
+	width: 175px;
+	height: 49px;
+}

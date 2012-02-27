@@ -1,0 +1,10 @@
+Subjek: Notifikasi - {NAME}
+
+Hallo {USERNAME},
+
+Anda menerima notifikasi ini karena anda berlangganan untuk diberitahukan mengenai item baru yang dipost di "{CONTRIB_NAME}" pada Kostumisasi Database phpBB.
+
+The item "{NAME}" has been newly created.
+
+Jika anda ingin melihat item tersebut, silahkan klik tautan berikut ini:
+{U_VIEW}

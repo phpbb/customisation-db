@@ -1,0 +1,10 @@
+Subject: Notification - {NAME}
+
+Bonjour {USERNAME},
+
+Vous recevez cette notification car vous avez demandé à être notifié lors de la publication de nouveaux éléments dans la base de données des contributions de phpBB.
+
+L’élément « {NAME} » vient d’être ajouté.
+
+Vous pouvez consulter l’élément en visitant le lien ci-dessous :
+{U_VIEW}

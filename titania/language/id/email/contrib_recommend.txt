@@ -1,0 +1,19 @@
+Subjek: "{SITENAME}" - E-mail teman
+
+Hallo {TO_USERNAME},
+
+E-mail ini dikirim dari "{SITENAME}" oleh {FROM_USERNAME} yang menganggap anda akan tertarik pada Modifikasi Database Kostumisasi phpBB sebagai berikut:
+
+{CONTRIB_NAME}
+
+Anda bisa mencari dan mengunggah modifikasi pada tautan berikut:
+
+{U_CONTRIB}
+
+Mohon diingat bahwa pesan ini belum dilihat ataupun disetujui oleh administrator papan dari "(SITENAME}". 
+
+Jika anda ingin memberikan keluhan mengenai penerimaan e-mail ini, silahkan menghubungi administrator halaman di {BOARD_CONTACT}. Dimohon untuk mengutip bagian judul pesan pada saat menghubungi alaman ini.
+
+----------
+
+{MESSAGE}

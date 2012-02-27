@@ -1,0 +1,5 @@
+Subjek: {SUBJECT}
+
+{MESSAGE}
+
+{EMAIL_SIG}
