@@ -2,7 +2,7 @@
 /**
 *
 * @package Titania
-* @copyright (c) 2011 phpBB Customisation Database Team
+* @copyright (c) 2012 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
 *
 */
@@ -30,6 +30,13 @@ class titania_type_bbcode extends titania_type_base
 	 * @var int type id (for custom types not specified in titania to start, please start with 10 in case we add any extra later)
 	 */
 	public $id = 7;
+	
+	/**
+	 * For the type name
+	 *
+	 * @var string (any lang key that includes the type should match this value)
+	 */
+	public $name = 'bbcode';
 
 	/**
 	 * Submit as BBcode?
@@ -42,32 +49,19 @@ class titania_type_bbcode extends titania_type_base
 	 * @var string portion to be used in the URL slug
 	 */
 	public $url = 'bbcode';
+	
+	public function __construct()
+	{
+		$this->lang = phpbb::$user->lang['BBCODE'];
+		$this->langs = phpbb::$user->lang['BBCODES'];
+	}
 
 	// Validation messages (for the PM)
 	public $validation_subject = 'BBCODE_VALIDATION';
 	public $validation_message_approve = 'BBCODE_VALIDATION_MESSAGE_APPROVE';
 	public $validation_message_deny = 'BBCODE_VALIDATION_MESSAGE_DENY';
-	public $create_public = 'BBCODE_CREATE_PUBLIC';
-	public $reply_public = 'BBCODE_REPLY_PUBLIC';
-	public $update_public = 'BBCODE_UPDATE_PUBLIC';
 	public $upload_agreement = 'BBCODE_UPLOAD_AGREEMENT';
 	
-	/**
-	 * The forum_database and forum_robot, initialize in constructor
-	 *
-	 * @var int
-	 */
-//	public $forum_database = 0;
-//	public $forum_robot = 0;
-
-	public function __construct()
-	{
-		$this->lang = phpbb::$user->lang['BBCODE'];
-		$this->langs = phpbb::$user->lang['BBCODES'];
-		$this->forum_database = titania::$config->forum_bbcode_database;
-		$this->forum_robot = titania::$config->forum_bbcode_robot;
-	}
-
 	/**
 	* Check auth level
 	*
