@@ -324,7 +324,12 @@ class titania_author extends titania_message_object
 			if (!isset($type->author_count))
 			{
 				// Figure out the counts some other way
-				$valid_statuses = array(((!$type->require_validation || !titania::$config->require_validation) ? TITANIA_CONTRIB_NEW : TITANIA_CONTRIB_APPROVED), TITANIA_CONTRIB_DOWNLOAD_DISABLED);
+				$valid_statuses = array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED);
+
+				if (!$type->require_validation || !titania::$config->require_validation)
+				{
+					$valid_statuses[] = TITANIA_CONTRIB_NEW;
+				}
 				
 				$sql_ary = array(
 					'SELECT'	=> 'COUNT(*) AS contrib_cnt',
