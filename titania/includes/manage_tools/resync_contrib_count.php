@@ -79,11 +79,13 @@ class resync_contrib_count
 				),
 			),
 
-			'WHERE'		=> 'c.contrib_visible = 1 AND ' .  phpbb::$db->sql_in_set('c.contrib_status', $valid_statuses) . ' AND ' . phpbb::$db->sql_in_set('c.contrib_type', $types)
+			'WHERE'		=> 'c.contrib_visible = 1 AND ' .  phpbb::$db->sql_in_set('c.contrib_status', $valid_statuses) . ' AND ' . phpbb::$db->sql_in_set('c.contrib_type', $types),
+			'ORDER_BY'	=> 'c.contrib_id',
 		);
 		
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
+		$prev_contrib = request_var('last', 0);
 					
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -93,24 +95,39 @@ class resync_contrib_count
 				continue;
 			}
 			
-			// Update category count	
-			$contrib = new titania_contribution();
-			$contrib->contrib_id = $row['contrib_id'];
-			$contrib->contrib_status = $row['contrib_status'];
-			$contrib->contrib_type = $row['contrib_type'];
-			$contrib->update_category_count();
-			
-			$row['user_id'] = (int) (isset($row['user_id'])) ? $row['user_id'] : $row['contrib_user_id'];		
+			if ($prev_contrib != $row['contrib_id'])
+			{
+				// Update category count
+				$contrib = new titania_contribution();
+				$contrib->contrib_id = $row['contrib_id'];
+				$contrib->contrib_status = $row['contrib_status'];
+				$contrib->contrib_type = $row['contrib_type'];
+				$contrib->update_category_count();
+			}
+				
 			$type_count = '';
 			
 			// Does the type have a field in the authors table for storing the type total?
 			if (isset(titania_types::$types[$row['contrib_type']]->author_count))
 			{
-				$type_count = ', ' . titania_types::$types[$row['contrib_type']]->author_count . ' = ' . titania_types::$types[$row['contrib_type']]->author_count . '+ 1';
+				$count_name = titania_types::$types[$row['contrib_type']]->author_count;
+				$type_count = ", {$count_name} = {$count_name} +1";
 			}
 			
-			// Update user's count
-			phpbb::$db->sql_query('UPDATE ' . TITANIA_AUTHORS_TABLE . ' SET author_contribs = author_contribs +1' . $type_count . ' WHERE user_id = ' . $row['user_id']);
+			$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . ' SET author_contribs = author_contribs +1' . $type_count . ' WHERE user_id = ';
+			
+			// Update owner's count
+			if ($prev_contrib != $row['contrib_id'])
+			{
+				phpbb::$db->sql_query($sql . $row['contrib_user_id']);
+			}
+			//Update coauthor's count
+			if (isset($row['user_id']))
+			{
+				phpbb::$db->sql_query($sql . $row['user_id']);
+			}
+			
+			$prev_contrib = $row['contrib_id'];
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -120,7 +137,7 @@ class resync_contrib_count
 		}
 		else
 		{
-			meta_refresh(0, titania_url::build_url('manage/administration', array('t' => 'resync_contrib_count', 'start' => ($start + $limit), 'mode' => 'authors', 'submit' => 1, 'hash' => generate_link_hash('manage'))));
+			meta_refresh(0, titania_url::build_url('manage/administration', array('t' => 'resync_contrib_count', 'start' => ($start + $limit), 'last' => $prev_contrib, 'submit' => 1, 'hash' => generate_link_hash('manage'))));
 			trigger_error(phpbb::$user->lang('RESYNC_CONTRIB_COUNT_PROGRESS', ($start + $limit), $total));
 		}
 	}
