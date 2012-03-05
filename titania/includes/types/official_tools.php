@@ -36,7 +36,7 @@ class titania_type_official_tools extends titania_type_base
 	 *
 	 * @var string (any lang key that includes the type should match this value)
 	 */
-	public $name = 'offical_tool';
+	public $name = 'official_tool';
 
 	/**
 	 * For the url slug
