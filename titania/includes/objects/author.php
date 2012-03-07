@@ -341,7 +341,7 @@ class titania_author extends titania_message_object
 					'LEFT_JOIN'	=> array(
 						array(
 							'FROM'	=> array(TITANIA_CONTRIB_COAUTHORS_TABLE => 'ca'),
-							'ON'	=> 'ca.contrib_id = c.contrib_id',
+							'ON'	=> 'ca.contrib_id = c.contrib_id AND ca.user_id = ' . $this->user_id,
 						),
 					),
 
