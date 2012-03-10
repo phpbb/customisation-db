@@ -61,6 +61,7 @@ $lang = array_merge($lang, array(
 	'CONTRIB_CLEANED'						=> 'Cleaned',
 	'CONTRIB_CONFIRM_OWNER_CHANGE'			=> 'Are you sure you want to assign ownership to %s? This will prevent you from managing the project and can not be undone.',
 	'CONTRIB_CREATED'						=> 'The contribution has been created successfully',
+	'CONTRIB_DEMO'							=> 'Demo',
 	'CONTRIB_DESCRIPTION'					=> 'Contribution Description',
 	'CONTRIB_DETAILS'						=> 'Contribution Details',
 	'CONTRIB_DISABLED'						=> 'Hidden + Disabled',

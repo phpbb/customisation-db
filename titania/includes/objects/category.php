@@ -70,6 +70,8 @@ class titania_category extends titania_message_object
 			'category_desc_bitfield'		=> array('default' => '',	'message_field' => 'message_bitfield'),
 			'category_desc_uid'				=> array('default' => '',	'message_field' => 'message_uid'),
 			'category_desc_options'			=> array('default' => 7,	'message_field' => 'message_options'),
+			
+			'category_options'				=> array('default' => 0),
 		));
 	}
 

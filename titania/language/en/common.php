@@ -59,6 +59,7 @@ $lang = array_merge($lang, array(
 	'CATEGORY_HAS_CHILDREN'		=> 'This category cannot be deleted because it contains children categories.',
 	'CATEGORY_INFORMATION'		=> 'Category Information',
 	'CATEGORY_NAME'				=> 'Category Name',
+	'CATEGORY_OPTIONS'			=> 'Category Options',
 	'CATEGORY_TYPE'				=> 'Category Type',
 	'CATEGORY_TYPE_EXPLAIN'		=> 'The type of contributions this category will hold. Leave unset to not accept contributions.',
 	'CAT_ADDONS'				=> 'Add-ons',
