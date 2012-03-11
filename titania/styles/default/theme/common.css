@@ -533,6 +533,7 @@ ul.rating li, ul.rated li {
 #cboxLoadedContent {
 	margin-top: 28px;
 	margin-bottom: 0 !important;
+	text-align: left;
 }
 
 #cboxLoadedContent h3 {
