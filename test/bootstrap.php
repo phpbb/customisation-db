@@ -46,9 +46,6 @@ require_once __DIR__ . '/test_framework/cdb_database_test_case.php';
 require_once __DIR__ . '/test_framework/cdb_database_test_connection_manager.php';
 require_once __DIR__ . '/test_framework/cdb_test_case.php';
 
-require_once '../titania/includes/core/titania.php';
+require_once CDBPATH . 'includes/core/titania.php';
 
-$cdb_class_loader = new phpbb_class_loader('cdb_', CDBPATH);
-$cdb_class_loader->register();
-$phpbb_class_loader = new phpbb_class_loader('phpbb_', PHPBB_FILES . 'includes/');
-$phpbb_class_loader->register();
+spl_autoload_register(array('titania', 'autoload'));
