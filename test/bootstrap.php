@@ -11,7 +11,7 @@
 
 // Define some initial constants
 define('CDBPATH', __DIR__ . '/../titania/');
-define('PHPBB_FILES', CDBPATH . 'phpBB/');
+define('PHPBB_FILES', __DIR__ . '/vendor/phpBB/phpBB/');
 define('IN_TEST', true);
 
 // Some to make phpBB files accessable in the first place
