@@ -11,7 +11,7 @@
 
 // Define some initial constants
 define('CDBPATH', __DIR__ . '/../titania/');
-define('PHPBB_FILES', CDBPATH . 'phpBB/');
+define('PHPBB_FILES', __DIR__ . '/vendor/phpBB/phpBB/');
 define('IN_TEST', true);
 
 // Some to make phpBB files accessable in the first place
@@ -32,7 +32,7 @@ if (!defined('dbms'))
 }
 $dbms = dbms;
 
-$phpbb_tests_path = CDBPATH . 'vendor/phpBB/tests/';
+$phpbb_tests_path = PHPBB_FILES . '../tests/';
 $phpEx = 'php';
 
 $table_prefix = (!defined('table_prefix')) ? 'phpbb_' : table_prefix;
