@@ -15,7 +15,7 @@ before_script:
   - git submodule update --init
 
 script:
-  - phpunit --configuration tests/travis/$DB.travis.xml
+  - phpunit --configuration test/travis/$DB.travis.xml
 
 notifications:
   email:
