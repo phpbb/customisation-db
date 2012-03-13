@@ -22,7 +22,7 @@ notifications:
       - m@michaelcullum.com
     on_success: always
     on_failure: always
-  
+
   irc:
     channels:
       - "irc.freenode.org#unknownbliss"
