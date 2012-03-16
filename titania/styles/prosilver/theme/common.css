@@ -287,7 +287,7 @@ ul.general-info li strong {
 #screenshots-panel a.screenshot img, img.screenshot  {
 	padding: 3px;
 	border: 1px solid #A1A1A1;
-	vertical-align: top;
+	vertical-align: text-top;
 	margin: 5px;
 }
 
