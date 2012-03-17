@@ -177,7 +177,6 @@ class titania_revision extends titania_database_object
 			'REVISION_LICENSE'	=> ($this->revision_license) ? censor_text($this->revision_license) : (($this->contrib && sizeof(titania_types::$types[$this->contrib->contrib_type]->license_options)) ? phpbb::$user->lang['UNKNOWN'] : ''),
 			'INSTALL_TIME'		=> $install_time,
 			'INSTALL_LEVEL'		=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
-			'DOWNLOADS'			=> $this->download_count,
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_COLORIZEIT'      => $url_colorizeit,
