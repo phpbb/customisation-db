@@ -33,7 +33,6 @@ if (!defined('dbms'))
 $dbms = dbms;
 
 $phpbb_tests_path = PHPBB_FILES . '../tests/';
-$phpEx = 'php';
 
 $table_prefix = (!defined('table_prefix')) ? 'phpbb_' : table_prefix;
 
