@@ -23,12 +23,6 @@ notifications:
     on_success: always
     on_failure: always
 
-  irc:
-    channels:
-      - "irc.freenode.org#unknownbliss"
-    on_success: always
-    on_failure: always
-
 branches:
   only:
     task/testsuite
