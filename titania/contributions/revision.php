@@ -190,6 +190,9 @@ if ($step == 1)
 		));
 		$revision->phpbb_versions = $selected_branches;
 
+		// Adjust package name to follow naming conventions
+		titania_types::$types[titania::$contrib->contrib_type]->fix_package_name(titania::$contrib, $revision, $revision_attachment);
+
 		/*$revision->phpbb_versions = array();
 		foreach ($revision_phpbb_versions as $revision_phpbb_version)
 		{

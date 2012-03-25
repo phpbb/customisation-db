@@ -1227,4 +1227,20 @@ class titania_attachment extends titania_database_object
 			);
 		}
 	}
+
+	/**
+	* Change the realname of an existing attachment
+	*
+	* @param string $real_filename New filename
+	*/	
+	public function change_real_filename($real_filename)
+	{
+		if (!$this->attachment_id)
+		{
+			return;
+		}
+
+		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . ' SET real_filename = "' . phpbb::$db->sql_escape($real_filename) . '" WHERE attachment_id = ' . $this->attachment_id;
+		phpbb::$db->sql_query($sql);
+	}
 }

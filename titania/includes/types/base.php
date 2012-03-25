@@ -261,4 +261,16 @@ class titania_type_base
 	{
 		return array();
 	}
+
+	/**
+	* Function to fix package name to ensure naming convention is followed
+	*
+	* @param $contrib Contribution object
+	* @param $revision Revision object
+	* @param $revision_attachment Attachment object
+	*/	
+	public function fix_package_name($contrib, $revision, $revision_attachment)
+	{
+		return;
+	}
 }
