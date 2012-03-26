@@ -10,7 +10,7 @@
 */
 
 // Define some initial constants
-define('CDBPATH', __DIR__ . '/../titania/');
+define('CDBPATH', __DIR__ . '/../titania/titania/');
 define('PHPBB_FILES', __DIR__ . '/vendor/phpBB/phpBB/');
 define('IN_TEST', true);
 
