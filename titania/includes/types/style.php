@@ -244,4 +244,18 @@ class titania_type_style extends titania_type_base
 
 		return array(phpbb::$user->lang['LICENSE_FILE_MISSING']);
 	}
+
+	/**
+	* Function to fix package name to ensure naming convention is followed
+	*
+	* @param $contrib Contribution object
+	* @param $revision Revision object
+	* @param $revision_attachment Attachment object
+	*/		
+	public function fix_package_name($contrib, $revision, $revision_attachment)
+	{
+		$new_real_filename = $contrib->contrib_name_clean . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
+
+		$revision_attachment->change_real_filename($new_real_filename);
+	}
 }
