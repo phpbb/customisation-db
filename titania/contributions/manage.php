@@ -156,7 +156,7 @@ else if ($submit)
 	{
 		$error[] = phpbb::$user->lang['CANNOT_ADD_SELF_COAUTHOR'];
 	}
-	if ($contrib_demo && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]+\.[a-z]{2,4}#i', $contrib_demo))
+	if ($contrib_demo && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]{2,4}#i', $contrib_demo))
 	{
 		$error[] = phpbb::$user->lang['WRONG_DATA_WEBSITE'];
 	}

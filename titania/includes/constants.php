@@ -21,6 +21,9 @@ if (!defined('IN_PHPBB'))
 	define('IN_PHPBB', true);
 }
 
+// Category option flags
+define('TITANIA_CAT_FLAG_DEMO', 1);
+
 // Contrib status
 define('TITANIA_CONTRIB_NEW', 1); // Does not have any validated revisions; Hidden from category listing, shown if directly linked to
 define('TITANIA_CONTRIB_APPROVED', 2); // Has at least one validated revision

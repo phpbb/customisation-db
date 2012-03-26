@@ -355,6 +355,29 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
+	 * Get all categories that a contribution resides in.
+	 */	
+	public function get_categories()
+	{
+		$sql = 'SELECT category_id 
+		FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' 
+		WHERE contrib_id =' . (int) $this->contrib_id;
+		
+		$result = phpbb::$db->sql_query($sql);
+		
+		$contrib_categories = array();
+		$categories = titania::$cache->get_categories();
+		
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$contrib_categories[$row['category_id']] = $categories[$row['category_id']];
+		}
+		phpbb::$db->sql_freeresult($result);
+		
+		return $contrib_categories;
+	}
+
+	/**
 	* Immediately increases the view counter for this contribution
 	*
 	* @return void

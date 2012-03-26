@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="{S_CONTENT_DIRECTION}" lang="{S_USER_LANG}" xml:lang="{S_USER_LANG}">
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset={S_CONTENT_ENCODING}" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="content-language" content="{S_USER_LANG}" />
+<meta http-equiv="imagetoolbar" content="no" />
+<meta name="resource-type" content="document" />
+<meta name="distribution" content="global" />
+<meta name="keywords" content="" />
+<meta name="description" content="{META_DESCRIPTION}" />
+{META}
+<title>{PAGE_TITLE} &bull; {SITENAME}</title>
+
+<link href="{T_TITANIA_THEME_PATH}/demo.css" rel="stylesheet" type="text/css" media="screen, projection" />
+<!--[if lte IE 7]>
+<style type="text/css">
+.style-info p, ul.style-details, .button { float: left; }
+#prev, #next { width: 16px; }
+.download, .details { width: 100px; }
+* html .button { background-image: none; }
+</style>
+<![endif]-->
+</head>
+<body id="demo">
+	<div class="demo-header">
+		<a href="{U_SITE_ROOT}" id="logo">{SITE_LOGO_IMG}</a>
+
+		<div class="demo-selection">
+			<div>
+				<a href="#" id="select-style" class="button"><span></span>{L_SELECT_STYLE}</a>
+				<div class="style-select simple">
+					<div class="viewport">
+						<div>
+							<!-- IF PREVIEW --><img src="{PREVIEW}" alt="{NAME}" /><!-- ENDIF -->
+							<ul class="style-details">
+								<li>{L_BY} {AUTHORS}</li>
+								<li>{L_PHPBB_VERSION}: {PHPBB_VERSION}</li>
+								<li>{L_LICENSE}: {LICENSE}</li>
+							</ul>						
+						</div>
+					</div>
+					<div class="demo-list">
+						<form action="" method="post" autocomplete="off">
+							<fieldset>
+								<input type="text" name="q" id="q" value="{L_SEARCH}..." />
+							</fieldset>
+						</form>
+						<ul>
+						<!-- BEGIN stylerow -->
+							<!-- IF stylerow.CATEGORY --><li class="category">{stylerow.CATEGORY}</li><!-- ENDIF -->
+							<li class="style{stylerow.ID}"><a href="{stylerow.U_DEMO}"<!-- IF stylerow.NAME eq NAME --> class="active"<!-- ENDIF -->><span></span>{stylerow.NAME}</a></li>
+						<!-- END -->
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="button" id="sibling-select"> 
+				<!-- IF U_PREV --><a href="{U_PREV}" id="prev" title="{L_PREVIOUS}"><span></span></a><!-- ELSE --><span id="prev"><span></span></span><!-- ENDIF -->
+				<!-- IF U_NEXT --><a href="{U_NEXT}" id="next" title="{L_NEXT}"><span></span></a><!-- ELSE --><span id="next"><span></span></span><!-- ENDIF -->
+			</div>
+		</div>
+			
+		<div class="style-info">
+			<p class="style-name">{NAME}</p>
+			<p class="demo-buttons"><a href="{U_VIEW}" class="button details"><span></span>{L_DETAILS}</a><a href="{U_DOWNLOAD}" class="button download"><span></span>{L_DOWNLOAD}</a></p> 
+			<ul class="style-details">
+				<li>{L_BY} {AUTHORS}</li>
+				<li>{L_PHPBB_VERSION}: {PHPBB_VERSION}</li>
+				<li>{L_LICENSE}: {LICENSE}</li>
+			</ul>
+		</div>
+		
+		<ul class="linklist">
+			<li><a href="{U_SITE_ROOT}" accesskey="h">{L_HOME}</a><!-- BEGIN nav_header --> <strong>&#8249;</strong> <a href="{nav_header.U_TITLE}">{nav_header.L_TITLE}</a><!-- END nav_header --></li>
+		</ul>
+	</div>
+	
+	<iframe src="{IFRAME}"></iframe>
+	<ul id="demo-data">
+<!-- BEGIN stylerow -->
+		<li class="style{stylerow.ID}">
+			<div class="preview"><!-- IF stylerow.PREVIEW --><img src="" alt="{stylerow.NAME}" /><!-- ENDIF -->
+				<ul class="style-details">
+					<li>{L_BY} {stylerow.AUTHORS}</li>
+					<li>{L_PHPBB_VERSION}: {stylerow.PHPBB_VERSION}</li>
+					<li>{L_LICENSE}: {stylerow.LICENSE}</li>
+				</ul>
+			</div>
+			<span class="source">{stylerow.PREVIEW}</span>
+		</li>
+<!-- END stylerow -->
+	</ul>
+	<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.livesearch.min.js"></script>
+	<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/demo.js"></script>
+</body>
+</html>
