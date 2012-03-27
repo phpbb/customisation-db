@@ -22,7 +22,7 @@ if (!titania::$contrib->contrib_demo || titania::$contrib->contrib_status != TIT
 	trigger_error('NO_DEMO');
 }
 
-titania::page_header('CONTRIB_DEMO');
+titania::page_header(titania::$contrib->contrib_name . ' - ' . 'STYLES_DEMO');
 
 $demo = new titania_styles_demo(titania::$contrib->contrib_id);
 $demo->load_styles();
