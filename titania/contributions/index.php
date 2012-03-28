@@ -141,7 +141,8 @@ function load_contrib($contrib_id = false)
 	);
 
 	// Search for a category with the same name as the contrib type.  This is a bit ugly, but there really isn't any better option
-	$categories_ary = titania::$contrib->get_categories();
+	$categories_ary = titania::$cache->get_categories();
+	titania::$contrib->get_categories();
 	titania::$contrib->integrate_demo = false;
 
 	foreach ($categories_ary as $category_id => $category_row)
@@ -159,7 +160,7 @@ function load_contrib($contrib_id = false)
 			));
 		}
 		
-		if ($category_row['category_options'] & TITANIA_CAT_FLAG_DEMO)
+		if (isset(titania::$contrib->categories[$category_id]) && $category_row['category_options'] & TITANIA_CAT_FLAG_DEMO)
 		{
 			titania::$contrib->integrate_demo = true;
 			phpbb::$template->assign_var('S_INTEGRATE_DEMO', true);
