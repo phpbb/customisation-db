@@ -70,6 +70,11 @@ class titania_contribution extends titania_message_object
 	public $screenshots;
 
 	/**
+	 * Categories in which the contrib resides in.
+	 */
+	 public $categories = array();
+	 
+	/**
 	 * is_author (true when visiting user is the author)
 	 * is_active_coauthor (true when visiting user is an active co-author)
 	 * is_coauthor (true when visiting user is a non-active co-author)
@@ -359,6 +364,11 @@ class titania_contribution extends titania_message_object
 	 */	
 	public function get_categories()
 	{
+		if (sizeof($this->categories))
+		{
+			return;
+		}
+		
 		$sql = 'SELECT category_id 
 		FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' 
 		WHERE contrib_id =' . (int) $this->contrib_id;
@@ -374,7 +384,7 @@ class titania_contribution extends titania_message_object
 		}
 		phpbb::$db->sql_freeresult($result);
 		
-		return $contrib_categories;
+		$this->categories = $contrib_categories;
 	}
 
 	/**
@@ -541,6 +551,17 @@ class titania_contribution extends titania_message_object
 			if ($this->screenshots)
 			{
 				$this->screenshots->parse_attachments($message = false, false, false, 'screenshots');
+			}
+
+			// Display categories
+			$this->get_categories();
+			$category = new titania_category();
+			
+			foreach ($this->categories as $category_row)
+			{
+				$category->__set_array($category_row);
+				
+				phpbb::$template->assign_block_vars('categories', $category->assign_display(true));
 			}
 		}
 
