@@ -78,7 +78,7 @@ class titania_styles_demo
 					'ON'	=> 'c.contrib_user_id = u.user_id',		
 				), array(
 					'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 's'),
-					'ON'	=> 'c.contrib_id = s.object_id AND s.is_preview = 1 AND object_type = ' . TITANIA_SCREENSHOT,
+					'ON'	=> 'c.contrib_id = s.object_id AND s.is_preview = 1 AND s.is_orphan = 0 AND object_type = ' . TITANIA_SCREENSHOT,
 				), array (
 					'FROM'	=> array(TITANIA_REVISIONS_TABLE => 'r'),
 					'ON'	=> 'c.contrib_id = r.contrib_id AND	r.revision_submitted = 1 AND c.contrib_last_update = r.validation_date AND r.revision_status = ' . TITANIA_REVISION_APPROVED,	
