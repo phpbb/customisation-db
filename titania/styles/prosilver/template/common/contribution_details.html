@@ -144,10 +144,13 @@
 				</li>
 				<!-- ENDIF -->
 				<!-- IF CONTRIB_RATING_STRING -->
-				<li style="border-bottom: 0;">
+				<li>
 					<strong>{L_RATING}</strong> {CONTRIB_RATING_STRING} ({CONTRIB_RATING_COUNT})
 				</li>
 				<!-- ENDIF -->
+				<li style="border-bottom: none;">
+					<strong>{L_CATEGORIES}</strong> <!-- BEGIN categories --><a href="{categories.U_VIEW_CATEGORY}">{categories.CATEGORY_NAME}</a><!-- IF not categories.S_LAST_ROW -->, <!-- ENDIF --><!-- END -->
+				</li>
 			</ul>
 		</div>
 		<!-- IF .queue_actions or CURRENT_STATUS -->
