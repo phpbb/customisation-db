@@ -175,6 +175,13 @@ $(document).ready(function(){
 	// Remove -mode_view from screenshot links as we'll be displaying the image inline, so file.php should not
 	// wrap the image in html in IE
 	$.each($('a.screenshot'), function() {this.href = this.href.replace('-mode_view', '');});
+
+	// Prevent the user from submitting a form more than once.
+	$('input[type="submit"]').click(function(event) {
+		// Since the submit value is no longer passed once the button is disabled, we must hide the original button and create a clone.
+		$(this).after($(this).clone()).addClass('hidden');
+		$(this).parent().children('input[type="submit"]:not(.hidden)').attr('disabled', 'disabled').addClass('disabled');
+	});
 });
 
 function hide_quotebox(box)
