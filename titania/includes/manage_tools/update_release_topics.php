@@ -121,7 +121,10 @@ class update_release_topics
 
 			$contrib = new titania_contribution();
 			$contrib->__set_array($row);
-			$contrib->download = $row;
+			$contrib->download = $revision;
+
+			$contrib->author = new titania_author();
+			$contrib->author->__set_array($row);
 
 			// Update the release topic
 			$contrib->update_release_topic();
