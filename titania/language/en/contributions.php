@@ -185,6 +185,7 @@ $lang = array_merge($lang, array(
 	'SELECT_PHPBB_BRANCH'					=> 'Select phpBB branch',
 	'SUBDIRECTORY_LIMIT'					=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
 	'SUBMIT_NEW_REVISION'					=> 'Submit and add new revision',
+	'SUBSCRIBE_QUEUE_DISCUSSION'			=> 'Subscribe to queue discussion topic',
 	'SUBSCRIPTION_REQUEST'					=> 'Would you like to subscribe to the contribution in order to receive e-mail notifications about new versions and security vulnerabilities?',
 
 	'TOO_MANY_TRANSLATOR_LINKS'				=> 'You are currently using %d external links within the TRANSLATION/TRANSLATION_INFO line. Please only include <strong>one link</strong>. Including two links is allowed on a case-by-case basis - please post within the translations forum noting your reasoning behind putting more external links within the line.',

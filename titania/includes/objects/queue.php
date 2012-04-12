@@ -558,9 +558,11 @@ class titania_queue extends titania_message_object
 	/**
 	* Get the queue discussion topic or create one if needed
 	*
+	* @param bool $check_only Return false if topic does not exist instead of creating it
+	*
 	* @return titania_topic object
 	*/
-	public function get_queue_discussion_topic()
+	public function get_queue_discussion_topic($check_only = false)
 	{
 		$sql = 'SELECT * FROM ' . TITANIA_TOPICS_TABLE . '
 			WHERE parent_id = ' . $this->contrib_id . '
@@ -573,8 +575,13 @@ class titania_queue extends titania_message_object
 		{
 			$topic = new titania_topic;
 			$topic->__set_array($row);
+			$this->queue_discussion_topic_id = $topic->topic_id;
 
 			return $topic;
+		}
+		else if ($check_only)
+		{
+			return false;
 		}
 
 		// No queue discussion topic...so we must create one
@@ -596,6 +603,7 @@ class titania_queue extends titania_message_object
 		));
 		$post->generate_text_for_storage(true, true, true);
 		$post->submit();
+		$this->queue_discussion_topic_id = $post->topic->topic_id;
 
 		return $post->topic;
 	}
