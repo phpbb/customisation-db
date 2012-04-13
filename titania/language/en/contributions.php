@@ -127,6 +127,9 @@ $lang = array_merge($lang, array(
 	'LICENSE'								=> 'License',
 	'LICENSE_EXPLAIN'						=> 'License to release this work under.',
 	'LICENSE_FILE_MISSING'					=> 'The package must contain a license.txt file containing the license terms either in the main directory or within one subdirectory level of the main directory.',
+	'LIMITED_SUPPORT'						=> 'No support provided',
+	'LIMITED_SUPPORT_EXPLAIN'				=> 'Display warning to users about no support being provided by author.',
+	'LIMITED_SUPPORT_WARN'					=> '<strong>Warning:</strong> The author of this contribution does not provide support for it anymore.',
 	'LOGIN_EXPLAIN_CONTRIB'					=> 'In order to create a new contribution you need to be registered',
 
 	'MANAGE_CONTRIBUTION'					=> 'Manage Contribution',

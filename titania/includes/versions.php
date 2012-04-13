@@ -663,5 +663,10 @@ $versions = array(
 			array(TITANIA_CATEGORIES_TABLE, 'category_options', array('TINT:4', 0)),
 		),
 	),
+	'0.3.15' => array(
+		'table_column_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_limited_support', array('TINT:1', 0)),
+		),
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
