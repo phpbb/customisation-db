@@ -265,6 +265,7 @@ class titania_posting
 			add_form_key('postform');
 
 			phpbb::$template->assign_vars(array(
+				'SUBJECT'		=> $post_object->post_subject,
 				'MESSAGE'		=> $post_message,
 
 				'U_QR_ACTION'	=> $post_object->get_url('quick_edit'),
@@ -307,6 +308,7 @@ class titania_posting
 		$for_edit = $post_object->generate_text_for_edit();
 
 		// Set the post text
+		$post_object->post_subject = utf8_normalize_nfc(request_var('subject', '', true));
 		$post_object->post_text = utf8_normalize_nfc(request_var('message', '', true));
 
 		// Generate for storage based on previous options
@@ -332,6 +334,7 @@ class titania_posting
 		$parsed_attachments = $attachments->parse_attachments($message);
 
 		// echo the message (returned to the JS to display in the place of the old message)
+		echo '<span>' . censor_text($post_object->post_subject) . '</span>';
 		echo $message;
 
 		garbage_collection();

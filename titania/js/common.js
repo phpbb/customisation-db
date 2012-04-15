@@ -113,6 +113,9 @@ $(document).ready(function(){
 						data: $(quickeditor).parent().serialize() + '&submit=1',
 						success: function(html){
 							$(quickeditor).parent().replaceWith('<div class="content text-content">' + html + '</div>');
+							var subject = $('.content:not(.original_post)', postbody).children('span:first-child');
+							$('h3 a', postbody).html($(subject).html());
+							$(subject).remove();
 						}
 					});
 
