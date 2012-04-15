@@ -667,6 +667,7 @@ $versions = array(
 		'table_column_add' => array(
 			array(TITANIA_CONTRIBS_TABLE, 'contrib_limited_support', array('TINT:1', 0)),
 		),
+	),
 	'0.3.16' => array(
 		'table_add' => array(
 			array(TITANIA_TOPICS_POSTED_TABLE, array(
