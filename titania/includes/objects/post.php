@@ -174,6 +174,8 @@ class titania_post extends titania_message_object
 			$error[] = phpbb::$user->lang['EMPTY_SUBJECT'];
 		}
 
+		$this->post_subject = truncate_string($this->post_subject);
+
 		$message_length = utf8_strlen($this->post_text);
 		if ($message_length < (int) phpbb::$config['min_post_chars'])
 		{
