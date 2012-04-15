@@ -667,6 +667,20 @@ $versions = array(
 		'table_column_add' => array(
 			array(TITANIA_CONTRIBS_TABLE, 'contrib_limited_support', array('TINT:1', 0)),
 		),
+	'0.3.16' => array(
+		'table_add' => array(
+			array(TITANIA_TOPICS_POSTED_TABLE, array(
+				'COLUMNS'		=> array(
+					'user_id'			=> array('UINT', 0),
+					'topic_id'			=> array('UINT', 0),
+					'topic_posted'		=> array('TINT:1', 0)),
+				'KEYS'			=> array(
+					'user_id'			=> array('INDEX', 'user_id'),
+					'topic_id'			=> array('INDEX', 'topic_id'),
+				),
+			)),
+		),
+		'custom'	=> 'titania_custom',
 	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
