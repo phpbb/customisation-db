@@ -86,9 +86,21 @@ $(document).ready(function(){
 	);
 
 	// Ajax Quick Edit
-	$('.postbody > .profile-icons > .edit-icon').click(function() {
+	$('.postbody > .profile-icons > .edit-icon').click(function(e) {
 		var postbody = $(this).parent().parent();
+
+		// Return false if the form is already open
+		if ($('form', postbody).length)
+		{
+			e.preventDefault();
+			return;
+		}
+
 		var post = $(postbody).children('.content');
+
+		// Store the original post in case the user cancels the edit
+		$(post).after($(post).clone());
+		$(post).next().addClass('hidden original_post');
 
 		// Ajax time
 		$.ajax({
@@ -103,7 +115,7 @@ $(document).ready(function(){
 				$(quickeditor).elastic();
 				$(quickeditor).tabby();
 
-				$(quickeditor).parent().children('.submit-buttons').children('[name=submit]').click(function() {
+				$(quickeditor).parent().children('.submit-buttons').children('[name=submit]').click(function(e) {
 					$(this).parent().hide();
 
 					// Ajax time
@@ -116,17 +128,28 @@ $(document).ready(function(){
 							var subject = $('.content:not(.original_post)', postbody).children('span:first-child');
 							$('h3 a', postbody).html($(subject).html());
 							$(subject).remove();
+							$('.original_post', postbody).remove();
 						}
 					});
 
 					// Do not redirect
-					return false;
+					e.preventDefault();
 				});
 			}
 		});
 
 		// Do not follow the link
-		return false;
+		e.preventDefault();
+	});
+
+	// Canceled quick edit, so display original post again
+	$(document).on('click', '.postbody #cancel', function(event) {
+		event.preventDefault();
+		
+		var postbody = $(this).parents('.postbody');
+		
+		$('form', postbody).remove();
+		$('.original_post', postbody).removeClass('hidden');
 	});
 
 	// Show only the first five revisions
