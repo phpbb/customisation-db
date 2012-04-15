@@ -293,6 +293,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				// We also display the queue discussion topic between validators and authors in the support area
 				$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
 
+				// Do not display abandoned contribs in the author's support section
+				$sql_ary['WHERE'] .= 'AND contrib.contrib_limited_support = 0';
+
 				// Additional tracking for marking items as read in each contribution
 				titania_tracking::get_tracks(TITANIA_SUPPORT, $contrib_ids);
 				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);

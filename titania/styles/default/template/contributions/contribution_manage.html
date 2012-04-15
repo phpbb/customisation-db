@@ -184,6 +184,14 @@
 					</dd>
 				</dl>
 				<!-- ENDIF -->
+				<!-- IF not S_CREATE -->
+				<dl>
+					<dt><label for="limited_support">{L_LIMITED_SUPPORT}:</label><br /><span>{L_LIMITED_SUPPORT_EXPLAIN}</span></dt>
+					<dd>
+						<input type="checkbox" id="limited_support" name="limited_support"<!-- IF S_LIMITED_SUPPORT -->checked="checked"<!-- ENDIF --> />
+					</dd>
+				</dl>
+				<!-- ENDIF -->
 			</fieldset>
 
             <!-- IF MANAGE_COLORIZEIT -->
