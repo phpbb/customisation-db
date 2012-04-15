@@ -107,7 +107,7 @@ class titania_styles_demo
 		}
 
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_array);
-		$result = phpbb::$db->sql_query($sql);
+		$result = phpbb::$db->sql_query($sql, 3600);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -160,7 +160,7 @@ class titania_styles_demo
 			FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' a 
 			LEFT JOIN ' . USERS_TABLE . ' u ON a.user_id = u.user_id 
 			WHERE a.active = 1 AND ' . phpbb::$db->sql_in_set('a.contrib_id', array_keys($this->styles));
-		$result = phpbb::$db->sql_query($sql);
+		$result = phpbb::$db->sql_query($sql, 3600);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
@@ -179,7 +179,7 @@ class titania_styles_demo
 			WHERE revision_validated = 1 AND ' . phpbb::$db->sql_in_set('revision_id', $this->revisions) . '
 			ORDER BY phpbb_version_revision ASC';
 	
-		$result = phpbb::$db->sql_query($sql);
+		$result = phpbb::$db->sql_query($sql, 3600);
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
