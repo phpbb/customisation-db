@@ -135,6 +135,9 @@ class titania_contribution extends titania_message_object
 			
 			// ColorizeIt stuff
 			'contrib_clr_colors'            => array('default' => ''),
+
+			// Author does not provide support
+			'contrib_limited_support'		=> array('default' => 0),
 		));
 
 		// Hooks
@@ -430,6 +433,7 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_UPDATE_DATE'			=> ($this->contrib_last_update) ? phpbb::$user->format_date($this->contrib_last_update) : '',
 			'CONTRIB_STATUS'				=> $this->contrib_status,
 			'CONTRIB_SCREENSHOT'			=> ($this->screenshots) ? $this->screenshots->preview_image() : false,
+			'CONTRIB_LIMITED_SUPPORT'		=> $this->contrib_limited_support,
 
 			'CONTRIB_LOCAL_NAME'			=> $this->contrib_local_name,
 			'CONTRIB_ISO_CODE'				=> $this->contrib_iso_code,
