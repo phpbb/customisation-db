@@ -400,6 +400,11 @@ class titania_post extends titania_message_object
 			));
 			$attention->submit();
 		}
+		else
+		{
+			// Update posted topics table
+			$this->topic->update_posted_status('add', $this->post_user_id);
+		}
 
 		// If no topic_id it means we are creating a new topic, so we need to set the first_post_ data.
 		// Respect the post_time!  If for some reason we want to insert a post before the first one...
@@ -578,6 +583,9 @@ class titania_post extends titania_message_object
 
 		parent::submit();
 
+		// Update topics posted table
+		$this->topic->update_posted_status('remove', $this->post_user_id);
+
 		// Decrement the user's postcount if we must
 		if ($this->post_approved && in_array($this->post_type, titania::$config->increment_postcount))
 		{
@@ -650,6 +658,9 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		parent::submit();
+
+		// Update topics posted table
+		$this->topic->update_posted_status('add', $this->post_user_id);
 
 		// Increment the user's postcount if we must
 		if ($this->post_approved && in_array($this->post_type, titania::$config->increment_postcount))
@@ -729,6 +740,9 @@ class titania_post extends titania_message_object
 
 		// Initiate self-destruct mode
 		parent::delete();
+
+		// Update topics posted table
+		$this->topic->update_posted_status('remove', $this->post_user_id);
 
 		// Check if the topic is empty
 		$flags = titania_count::get_flags(TITANIA_ACCESS_TEAMS, true, true);

@@ -107,13 +107,20 @@ class queue_overlord
 		$queue_ids = array();
 
 		$sql_ary = array(
-			'SELECT' => '*, u.username as topic_first_post_username, u.user_colour as topic_first_post_user_colour, ul.username as topic_last_post_username, ul.user_colour as topic_last_post_user_colour',
+			'SELECT' => '*, u.username as topic_first_post_username, u.user_colour as topic_first_post_user_colour, ul.username as topic_last_post_username, ul.user_colour as topic_last_post_user_colour, tp.topic_posted',
 
 			'FROM'		=> array(
 				TITANIA_QUEUE_TABLE		=> 'q',
 				TITANIA_CONTRIBS_TABLE	=> 'c',
 				TITANIA_REVISIONS_TABLE	=> 'r',
 				TITANIA_TOPICS_TABLE	=> 't',
+			),
+
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(TITANIA_TOPICS_POSTED_TABLE => 'tp'),
+					'ON'	=> 'tp.topic_id = t.topic_id AND tp.user_id = ' . (int) phpbb::$user->data['user_id'],
+				),
 			),
 
 			'WHERE' => 'q.queue_type = ' . (int) $type .
@@ -177,6 +184,7 @@ class queue_overlord
 			$row = self::$queue[$queue_id];
 
 			$topic->__set_array($row);
+			$topic->topic_posted = $row['topic_posted'];
 
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'TOPIC_SUBJECT'				=> $row['contrib_name'] . ' - ' . $row['revision_version'],

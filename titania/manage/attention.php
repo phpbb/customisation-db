@@ -185,6 +185,9 @@ if ($attention_id || ($object_type && $object_id))
 				$post->topic->topic_id = $post->topic_id;
 				$post->topic->load();
 
+				// Update topics posted table
+				$post->topic->update_posted_status('add', $post->post_user_id);
+
 				// Update first/last post?
 				if ($post->topic->topic_first_post_time > $post->post_time)
 				{
