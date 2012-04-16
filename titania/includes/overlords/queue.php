@@ -107,7 +107,7 @@ class queue_overlord
 		$queue_ids = array();
 
 		$sql_ary = array(
-			'SELECT' => '*, u.username as topic_first_post_username, u.user_colour as topic_first_post_user_colour, ul.username as topic_last_post_username, ul.user_colour as topic_last_post_user_colour, tp.topic_posted',
+			'SELECT' => 'q.*, c.*, r.*, t.*, u.username as topic_first_post_username, u.user_colour as topic_first_post_user_colour, ul.username as topic_last_post_username, ul.user_colour as topic_last_post_user_colour, tp.topic_posted',
 
 			'FROM'		=> array(
 				TITANIA_QUEUE_TABLE		=> 'q',
