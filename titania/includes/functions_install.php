@@ -177,6 +177,7 @@ function titania_custom($action, $version)
 				break;
 
 				case '0.3.16' :
+				case '0.3.17' :
 					$sql = 'SELECT DISTINCT topic_id, post_user_id
 						FROM ' . TITANIA_POSTS_TABLE . ' 
 						WHERE post_approved = 1 AND post_deleted = 0';
