@@ -22,7 +22,7 @@ if (!defined('NOT_IN_COMMUNITY'))
 }
 
 // Version number (only used for the installer)
-define('TITANIA_VERSION', '0.3.16');
+define('TITANIA_VERSION', '0.3.17');
 
 define('PHPBB_USE_BOARD_URL_PATH', true);
 if (!defined('IN_TITANIA_INSTALL'))
