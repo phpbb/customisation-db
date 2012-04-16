@@ -143,11 +143,11 @@ $(document).ready(function(){
 	});
 
 	// Canceled quick edit, so display original post again
-	$(document).on('click', '.postbody #cancel', function(event) {
+	$('.postbody #cancel').live('click', function(event) {
 		event.preventDefault();
-		
+
 		var postbody = $(this).parents('.postbody');
-		
+
 		$('form', postbody).remove();
 		$('.original_post', postbody).removeClass('hidden');
 	});
