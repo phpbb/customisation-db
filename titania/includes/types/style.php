@@ -254,7 +254,7 @@ class titania_type_style extends titania_type_base
 	*/		
 	public function fix_package_name($contrib, $revision, $revision_attachment)
 	{
-		$new_real_filename = $contrib->contrib_name_clean . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
+		$new_real_filename = titania_url::url_slug($contrib->contrib_name) . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
 
 		$revision_attachment->change_real_filename($new_real_filename);
 	}
