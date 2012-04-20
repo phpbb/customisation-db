@@ -238,7 +238,7 @@ if ($step == 1)
 			$subscribe_author = request_var('subscribe_author', false);
 
 			// Subscribe author to queue discussion topic
-			if ($subscribe_author)
+			if ($subscribe_author && !$repack)
 			{
 				titania_subscriptions::subscribe(TITANIA_TOPIC, $queue->queue_discussion_topic_id);
 			}
@@ -500,7 +500,7 @@ if ($step == 0 || sizeof($error))
 
 	$allow_subscription = $author_subscribed = false;
 
-	if (titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
+	if (titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue && !$repack)
 	{
 		$allow_subscription = true;
 		$queue->contrib_id = titania::$contrib->contrib_id;
