@@ -221,7 +221,7 @@ class titania_tracking
 		{
 			if (strpos($name, 'track_time_') === 0 && strpos($name, '_id') === false)
 			{
-				$type = (int) substr($name, 11, 1);
+				$type = (int) substr($name, 11, 2);
 
 				if (!isset($row['track_time_' . $type . '_id']))
 				{

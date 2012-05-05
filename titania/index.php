@@ -210,7 +210,7 @@ switch ($action)
 			// Mark all topics read
 			if (request_var('mark', '') == 'topics')
 			{
-				titania_tracking::track(TITANIA_SUPPORT, 0);
+				titania_tracking::track(TITANIA_ALL_SUPPORT, 0);
 			}
 
 			// Mark all topics read

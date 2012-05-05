@@ -63,6 +63,7 @@ define('TITANIA_SCREENSHOT', 11);
 define('TITANIA_ATTENTION', 12);
 define('TITANIA_TRANSLATION', 13);
 define('TITANIA_CLR_SCREENSHOT', 14); // ColorizeIt sample image
+define('TITANIA_ALL_SUPPORT', 15);
 
 // Errorbox types
 define('TITANIA_ERROR', 1);
