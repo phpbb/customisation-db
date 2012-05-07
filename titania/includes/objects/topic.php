@@ -340,6 +340,7 @@ class titania_topic extends titania_database_object
 			'S_ACCESS_TEAMS'				=> ($this->topic_access == TITANIA_ACCESS_TEAMS) ? true : false,
 			'S_ACCESS_AUTHORS'				=> ($this->topic_access == TITANIA_ACCESS_AUTHORS) ? true : false,
 
+			'FOLDER_STYLE'					=> $folder_img,
 			'FOLDER_IMG'					=> phpbb::$user->img($folder_img, $folder_alt),
 			'FOLDER_IMG_SRC'				=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
 			'FOLDER_IMG_ALT'				=> phpbb::$user->lang[$folder_alt],

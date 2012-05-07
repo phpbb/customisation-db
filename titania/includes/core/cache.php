@@ -15,7 +15,7 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-class titania_cache extends acm
+class titania_cache extends phpbb_cache_service
 {
 	/**
 	 * Constructor

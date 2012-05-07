@@ -18,14 +18,11 @@ require TITANIA_ROOT . 'common.' . PHP_EXT;
 phpbb::$user->add_lang('viewtopic');
 
 // Thank you sun.
-if (isset($_SERVER['CONTENT_TYPE']))
+if (phpbb::$request->server('CONTENT_TYPE') === 'application/x-java-archive')
 {
-	if ($_SERVER['CONTENT_TYPE'] === 'application/x-java-archive')
-	{
-		exit;
-	}
+	exit;
 }
-else if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Java') !== false)
+else if (strpos(phpbb::$request->server('HTTP_USER_AGENT'), 'Java') !== false)
 {
 	exit;
 }

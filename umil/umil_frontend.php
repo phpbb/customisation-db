@@ -57,7 +57,7 @@ class umil_frontend extends umil
 	*/
 	function umil_frontend($title = '', $auto_display_results = false, $force_display_results = false, $db = false)
 	{
-		global $phpbb_root_path, $phpEx, $template, $user;
+		global $phpbb_root_path, $phpEx, $template, $user, $phpbb_style;
 
 		$this->title = $title;
 
@@ -69,7 +69,7 @@ class umil_frontend extends umil
 		$user->add_lang('install');
 
 		// Setup the template
-		$template->set_custom_template($phpbb_root_path . 'umil/style', 'umil');
+		$phpbb_style->set_custom_style('umil', $phpbb_root_path . 'umil/style', '');
 
 		// The UMIL template is never stored in the database
 		$user->theme['template_storedb'] = false;

@@ -41,12 +41,20 @@ class phpbb
 	/** @var array $user->theme */
 	public static $theme_data;
 
+	/** @var request phpBB request class */
+	public static $request;
+
+	/** @var phpbb_style phpBB style class */
+	public static $phpbb_style;
+
+	/** @var cache_factory phpBB Cache Factory */
+	public static $cache_factory;
 	/**
 	 * Static Constructor.
 	 */
 	public static function initialise()
 	{
-		global $auth, $config, $db, $template, $user, $cache;
+		global $auth, $config, $db, $template, $user, $cache, $request, $phpbb_style, $cache_factory;
 
 		self::$auth		= &$auth;
 		self::$config	= &$config;
@@ -54,6 +62,9 @@ class phpbb
 		self::$template	= &$template;
 		self::$user		= &$user;
 		self::$cache	= &$cache;
+		self::$request	= &$request;
+		self::$phpbb_style		= &$phpbb_style;
+		self::$cache_factory	= &$cache_factory;
 
 		// Start session management
 		if (!defined('PHPBB_INCLUDED'))
@@ -171,8 +182,7 @@ class phpbb
 		{
 			if (self::$user->data['user_new_privmsg'])
 			{
-				$l_message_new = (self::$user->data['user_new_privmsg'] == 1) ? self::$user->lang['NEW_PM'] : self::$user->lang['NEW_PMS'];
-				$l_privmsgs_text = sprintf($l_message_new, self::$user->data['user_new_privmsg']);
+				$l_privmsgs_text = self::$user->lang('NEW_PMS', (int) self::$user->data['user_new_privmsg']);
 
 				if (!self::$user->data['user_last_privmsg'] || self::$user->data['user_last_privmsg'] > self::$user->data['session_last_visit'])
 				{
@@ -190,7 +200,7 @@ class phpbb
 			}
 			else
 			{
-				$l_privmsgs_text = self::$user->lang['NO_NEW_PM'];
+				$l_privmsgs_text = self::$user->lang('NEW_PMS', 0);
 				$s_privmsg_new = false;
 			}
 
@@ -198,8 +208,7 @@ class phpbb
 
 			if (self::$user->data['user_unread_privmsg'] && self::$user->data['user_unread_privmsg'] != self::$user->data['user_new_privmsg'])
 			{
-				$l_message_unread = (self::$user->data['user_unread_privmsg'] == 1) ? self::$user->lang['UNREAD_PM'] : self::$user->lang['UNREAD_PMS'];
-				$l_privmsgs_text_unread = sprintf($l_message_unread, self::$user->data['user_unread_privmsg']);
+				$l_privmsgs_text_unread = self::$user->lang('UNREAD_PMS', (int) self::$user->data['user_unread_privmsg']);
 			}
 		}
 

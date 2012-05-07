@@ -326,6 +326,7 @@ class contribs_overlord
 			}
 
 			phpbb::$template->assign_block_vars($blockname, array_merge($contrib->assign_details(true, true), array(
+				'FOLDER_STYLE'				=> $folder_img,
 				'FOLDER_IMG'				=> phpbb::$user->img($folder_img, $folder_alt),
 				'FOLDER_IMG_SRC'			=> phpbb::$user->img($folder_img, $folder_alt, false, '', 'src'),
 				'FOLDER_IMG_ALT'			=> phpbb::$user->lang[$folder_alt],

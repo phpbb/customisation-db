@@ -59,9 +59,6 @@ else
 // Include the dynamic constants (after reading the Titania config file, but before loading the phpBB common file)
 titania::_include('dynamic_constants');
 
-// Decode the request
-titania_url::decode_request();
-
 // Include common phpBB files and functions.
 if (!file_exists(PHPBB_ROOT_PATH . 'common.' . PHP_EXT))
 {
@@ -71,6 +68,9 @@ if (!defined('PHPBB_INCLUDED'))
 {
 	require(PHPBB_ROOT_PATH . 'common.' . PHP_EXT);
 }
+
+// Decode the request
+titania_url::decode_request();
 
 // Initialise phpBB
 phpbb::initialise();
@@ -99,7 +99,7 @@ if (isset($_POST['login']))
 }
 
 // admin requested the cache to be purged, ensure they have permission and purge the cache.
-if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get('a_'))
+if (phpbb::$request->variable('cache', '') == 'purge' && phpbb::$auth->acl_get('a_'))
 {
 	titania::$cache->purge();
 

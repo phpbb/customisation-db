@@ -68,8 +68,9 @@ h3.section-name {
 
 .main-panel {
 	background-color: #C6D8E5;
+	border-radius: 5px;
 	margin-bottom: 15px;
-	padding: 0 10px;
+	padding: 5px 10px;
 	clear: both;
 	position: relative;
 	overflow: hidden;
@@ -85,7 +86,8 @@ h3.section-name {
 
 .container {
 	background-color: #FFFFFF;
-	padding: 0 10px;
+	border-radius: 5px;
+	padding: 5px 10px;
 	margin: 5px 0;
 	overflow: hidden;
 }

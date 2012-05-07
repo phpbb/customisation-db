@@ -404,7 +404,9 @@ class titania_url
 	*/
 	public static function decode_request()
 	{
-		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
+		global $request;
+
+		$url = $request->server('REQUEST_URI');
 
 		// Grab the arguments
 		$args = substr($url, (strrpos($url, '/') + 1));
@@ -420,8 +422,20 @@ class titania_url
 		unset(self::$params['style']);
 
 		// Merge the parameters into the get/request superglobals.  Merge them to prevent a parameter in the parameters part of the URL from over-writting one that is already in here
-		$_GET = array_merge(self::$params, $_GET);
-		$_REQUEST = array_merge(self::$params, $_REQUEST);
+		$request->enable_super_globals();
+		$get_vars = array_merge(self::$params, $_GET);
+		$request_vars = array_merge(self::$params, $_REQUEST);
+		$request->disable_super_globals();
+
+		foreach ($get_vars as $key => $value)
+		{
+			$request->overwrite($key, $value, '_GET');
+		}
+
+		foreach ($request_vars as $key => $value)
+		{
+			$request->overwrite($key, $value);
+		}
 	}
 
 	/**
@@ -429,7 +443,9 @@ class titania_url
 	*/
 	public static function decode_url($script_path)
 	{
-		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
+		global $request;
+
+		$url = $request->server('REQUEST_URI');
 
 		// Store the current page
 		self::$current_page = substr($url, 0, (strrpos($url, '/') + 1));

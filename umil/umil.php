@@ -1052,10 +1052,8 @@ class umil
 			return $this->umil_end('CONFIG_NOT_EXIST', $config_name);
 		}
 
-		$sql = 'DELETE FROM ' . CONFIG_TABLE . " WHERE config_name = '" . $this->db->sql_escape($config_name) . "'";
-		$this->db->sql_query($sql);
+		$config->delete($config_name);
 
-		unset($config[$config_name]);
 		$cache->destroy('config');
 
 		return $this->umil_end();
@@ -1698,7 +1696,7 @@ class umil
 
 		if ($role_id)
 		{
-			return $this->umil_end('ROLE_ALREADY_EXISTS', $old_role_name);
+			return $this->umil_end('ROLE_ALREADY_EXISTS', $role_name);
 		}
 
 		$sql = 'SELECT MAX(role_order) AS max FROM ' . ACL_ROLES_TABLE . '

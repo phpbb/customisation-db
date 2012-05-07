@@ -106,7 +106,9 @@ class titania
 		{
 			include TITANIA_ROOT . 'includes/core/cache.' . PHP_EXT;
 		}
-		self::$cache = new titania_cache();
+
+		$acm_type = phpbb::$cache_factory->get_driver();
+		self::$cache = new titania_cache($acm_type);
 
 		// Set the absolute titania/board path
 		self::$absolute_path = generate_board_url(true) . '/' . self::$config->titania_script_path;
@@ -168,7 +170,7 @@ class titania
 	public static function set_custom_template()
 	{
 		phpbb::$user->theme['template_path'] = self::$config->style;
-		phpbb::$template->set_custom_template(TITANIA_ROOT . 'styles/' . self::$config->style . '/' . 'template', 'titania_' . self::$config->style);
+		phpbb::$phpbb_style->set_custom_style('titania_' . self::$config->style, TITANIA_ROOT . 'styles/' . self::$config->style . '/');
 		phpbb::$user->theme['template_storedb'] = phpbb::$template->orig_tpl_storedb = false;
 
 		// Inherit from the boards prosilver (currently required for the Captcha)
@@ -370,8 +372,8 @@ class titania
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
 			'T_TITANIA_IMAGES_PATH'		=> self::$images_path,
 			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . 'style.' . PHP_EXT . '?style=' . self::$config->style,
-			'T_STYLESHEET_LINK'			=> (!phpbb::$user->theme['theme_storedb']) ? self::$absolute_board . '/styles/' . phpbb::$user->theme['theme_path'] . '/theme/stylesheet.css' : self::$absolute_board . 'style.' . PHP_EXT . '?sid=' . phpbb::$user->session_id . '&amp;id=' . phpbb::$user->theme['style_id'] . '&amp;lang=' . phpbb::$user->data['user_lang'],
-			'T_STYLESHEET_NAME'			=> phpbb::$user->theme['theme_name'],
+			'T_STYLESHEET_LINK'			=> self::$absolute_board . '/styles/' . rawurlencode(phpbb::$user->theme['style_path']) . '/theme/stylesheet.css?assets_version=' . phpbb::$config['assets_version'],
+			'T_STYLESHEET_NAME'			=> phpbb::$user->theme['style_name'],
 		));
 
 		// Header hook
@@ -409,7 +411,7 @@ class titania
 			$mtime = explode(' ', microtime());
 			$totaltime = $mtime[0] + $mtime[1] - $starttime;
 
-			if (!empty($_REQUEST['explain']) && phpbb::$auth->acl_get('a_') && defined('DEBUG_EXTRA') && method_exists(phpbb::$db, 'sql_report'))
+			if (phpbb::$request->variable('explain', 0) && phpbb::$auth->acl_get('a_') && defined('DEBUG_EXTRA') && method_exists(phpbb::$db, 'sql_report'))
 			{
 				// gotta do a rather nasty hack here, but it works and the page is killed after the display output, so no harm to anything else
 				$GLOBALS['phpbb_root_path'] = self::$absolute_board;
@@ -804,24 +806,27 @@ class titania
 				// Append the sent message if any
 				$text .= (($message !== false) ? "\r\n" . $message : '');
 
+				$server_keys = phpbb::$request->variable_names('_SERVER');
+				$request_keys = phpbb::$request->variable_names('_REQUEST');
+
 				//Let's gather the $_SERVER array contents
-				if ($_SERVER)
+				if ($server_keys)
 				{
 					$text .= "\r\n-------------------------------------------------\r\n_SERVER: ";
-					foreach ($_SERVER as $key => $value)
+					foreach ($server_keys as $key => $var_name)
 					{
-						$text .= sprintf('%1s = %2s; ', $key, $value);
+						$text .= sprintf('%1s = %2s; ', $key, phpbb::$request->server($var_name));
 					}
 					$text = rtrim($text, '; ');
 				}
 
 				//Let's gather the $_REQUEST array contents
-				if ($_REQUEST)
+				if ($request_keys)
 				{
 					$text .= "\r\n-------------------------------------------------\r\n_REQUEST: ";
-					foreach ($_REQUEST as $key => $value)
+					foreach ($request_keys as $key => $var_name)
 					{
-						$text .= sprintf('%1s = %2s; ', $key, $value);
+						$text .= sprintf('%1s = %2s; ', $key, phpbb::$request->variable($var_name, '', true));
 					}
 					$text = rtrim($text, '; ');
 				}

@@ -848,11 +848,11 @@ class titania_attachment extends titania_database_object
 				break;
 			}
 
-			$l_download_count = (!isset($attachment['download_count']) || $attachment['download_count'] == 0) ? phpbb::$user->lang[$l_downloaded_viewed . '_NONE'] : (($attachment['download_count'] == 1) ? sprintf(phpbb::$user->lang[$l_downloaded_viewed], $attachment['download_count']) : sprintf(phpbb::$user->lang[$l_downloaded_viewed . 'S'], $attachment['download_count']));
+			$l_download_count = (int) (empty($attachment['download_count'])) ? 0 : $attachment['download_count'];
 
 			$block_array += array(
 				'U_DOWNLOAD_LINK'		=> $download_link,
-				'L_DOWNLOAD_COUNT'		=> $l_download_count
+				'L_DOWNLOAD_COUNT'		=> phpbb::$user->lang('VIEWED_COUNTS', $l_download_count)
 			);
 
 			// If a template block is specified, output to that also
@@ -1152,7 +1152,7 @@ class titania_attachment extends titania_database_object
 			{
 				// Images
 				case ATTACHMENT_CATEGORY_IMAGE:
-					$l_downloaded_viewed = 'VIEWED_COUNT';
+					$l_downloaded_viewed = 'VIEWED_COUNTS';
 
 					$download_link = ($attachment['thumbnail']) ? titania_url::append_url($download_link, array('mode' => 'view')) : $download_link;
 
@@ -1164,7 +1164,7 @@ class titania_attachment extends titania_database_object
 
 				// Images, but display Thumbnail
 				case ATTACHMENT_CATEGORY_THUMB:
-					$l_downloaded_viewed = 'VIEWED_COUNT';
+					$l_downloaded_viewed = 'VIEWED_COUNTS';
 
 					$download_link = titania_url::append_url($download_link, array('mode' => 'view'));
 
@@ -1175,7 +1175,7 @@ class titania_attachment extends titania_database_object
 				break;
 				
 				default:
-					$l_downloaded_viewed = 'DOWNLOAD_COUNT';
+					$l_downloaded_viewed = 'DOWNLOAD_COUNTS';
 
 					$block_array += array(
 						'S_FILE'		=> true,
@@ -1183,11 +1183,11 @@ class titania_attachment extends titania_database_object
 				break;
 			}
 
-			$l_download_count = (!isset($attachment['download_count']) || $attachment['download_count'] == 0) ? phpbb::$user->lang[$l_downloaded_viewed . '_NONE'] : (($attachment['download_count'] == 1) ? sprintf(phpbb::$user->lang[$l_downloaded_viewed], $attachment['download_count']) : sprintf(phpbb::$user->lang[$l_downloaded_viewed . 'S'], $attachment['download_count']));
+			$l_download_count = (int) (empty($attachment['download_count'])) ? 0 : $attachment['download_count'];
 
 			$block_array += array(
 				'U_DOWNLOAD_LINK'		=> $download_link,
-				'L_DOWNLOAD_COUNT'		=> $l_download_count
+				'L_DOWNLOAD_COUNT'		=> phpbb::$user->lang($l_downloaded_viewed, $l_download_count)
 			);
 		}
 		
