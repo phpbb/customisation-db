@@ -3,7 +3,7 @@
 *
 * @package Titania
 * @version $Id: mod.php 1599 2010-06-22 04:32:50Z davidiq $
-* @copyright (c) 2008 phpBB Customisation Database Team
+* @copyright (c) 2008 phpBB Group
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */

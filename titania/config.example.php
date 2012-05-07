@@ -2,7 +2,7 @@
 /**
 *
 * @package Titania
-* @copyright (c) 2008 phpBB Customisation Database Team
+* @copyright (c) 2008 phpBB Group
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 * Customisation Database (Titania) Configuration File.
