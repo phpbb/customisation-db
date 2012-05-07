@@ -1,0 +1,64 @@
+{
+    "name": "phpBB/customisation-db",
+    "type": "phpbb3-extension",
+    "description": "This adds a very powerful and large customisation database to your forum. It is codenamed titania.",
+    "homepage": "http://www.github.com/phpBB/customisation-db/",
+    "version": "0.5.0",
+    "time": "2012-02-15",
+    "licence": "GPLv2",
+    "authors": [
+        {
+            "name": "David Colón (DavidIQ)",
+            "email": "davidiq@phpbb.com",
+            "homepage": "http://www.davidiq.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Michael Cullum (Unknown Bliss)",
+            "email": "unknownbliss@phpbb.com",
+            "homepage": "http://www.michaelcullum.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Cesar Gallegos(prototech)",
+            "email": "prototech91@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Raimon Meuldijk (Raimon)",
+            "email": "raimon@phpbb.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Mickaël Salfati (Elglobo)",
+            "email": "elglobo@phpbb.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Nathan Guse (EXreaction)",
+            "role": "Previous Lead Developer"
+        },
+        {
+            "name": "mtotheikle",
+            "role": "Previous Developer"
+        },
+        {
+            "name": "Andreas Fischer (bantu)",
+            "role": "Previous Developer"
+        },
+        {
+            "name": "mtotheikle",
+            "role": "Previous Developer"
+        },
+        {
+            "name": "CDB & phpBB Team",
+            "role": "Developers, Translators etc."
+        },
+    ],
+    "require": {
+        "phpbb": "3.1.0"
+    },
+    "extra": {
+        "display-name": "phpBB Customisation Database (Titania)"
+    }
+}
