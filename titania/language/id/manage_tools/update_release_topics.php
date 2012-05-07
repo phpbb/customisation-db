@@ -3,7 +3,7 @@
 *
 * @package Titania
 * @version $Id: update_release_topics.php 1032 2010-04-09 00:03:25Z rmcgirr83 $
-* @copyright (c) 2008 phpBB Customisation Database Team
+* @copyright (c) 2008 phpBB Group
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */

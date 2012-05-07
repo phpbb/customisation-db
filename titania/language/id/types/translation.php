@@ -3,7 +3,7 @@
 *
 * @package Titania
 * @version $Id: converter.php 1556 2010-06-15 00:25:31Z exreaction $
-* @copyright (c) 2008 phpBB Customisation Database Team
+* @copyright (c) 2008 phpBB Group
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
