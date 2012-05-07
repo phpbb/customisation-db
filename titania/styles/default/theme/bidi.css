@@ -212,14 +212,6 @@
 	text-align: left;
 }
 
-.rtl .forabg {
-	width: 99%;	/* fix for IE6 */
-}
-
-.rtl .forumbg {
-	width: 99%;	/* fix for IE6 */
-}
-
 /**
 * links.css
 */
@@ -263,10 +255,6 @@
 
 .rtl ul.topiclist dt {
 	float: right;
-}
-
-.rtl ul.topiclist dl {
-	position: static;	/* fix for IE6 */
 }
 
 .rtl ul.topiclist dd {
@@ -739,10 +727,6 @@
 	padding-right: 17px;
 	padding-left: 0;
 }
-
-/**
-* tweaks.css
-*/
 
 /** Reference: Bug #27155 */
 .rtl #wrap, .rtl .headerbar, .rtl #site-description, .rtl .navbar {
