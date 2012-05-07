@@ -146,7 +146,7 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		$sort->request();
 
 		// if a post_id was given we must start from the appropriate page
-		$post_id = request_var('p', 0);
+		$post_id = phpbb::$request->variable('p', 0);
 		if ($post_id)
 		{
 			$sql = 'SELECT COUNT(p.post_id) as start FROM ' . TITANIA_POSTS_TABLE . ' p
@@ -162,7 +162,7 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		}
 
 		// check to see if they want to view the latest unread post
-		if (request_var('view', '') == 'unread')
+		if (phpbb::$request->variable('view', '') == 'unread')
 		{
 			$mark_time = titania_tracking::get_track(TITANIA_TOPIC, $topic->topic_id);
 

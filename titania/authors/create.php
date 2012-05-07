@@ -35,12 +35,12 @@ titania::$contrib->author->load();
 
 // Set some main vars up
 $submit = (isset($_POST['submit'])) ? true : false;
-$contrib_categories = request_var('contrib_category', array(0));
-$contrib_iso_code = request_var('contrib_iso_code', '');
-$contrib_local_name = utf8_normalize_nfc(request_var('contrib_local_name', '', true));
-$contrib_demo = utf8_normalize_nfc(request_var('demo_url', '', true));
-$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
-$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
+$contrib_categories = phpbb::$request->variable('contrib_category', array(0));
+$contrib_iso_code = phpbb::$request->variable('contrib_iso_code', '');
+$contrib_local_name = utf8_normalize_nfc(phpbb::$request->variable('contrib_local_name', '', true));
+$contrib_demo = utf8_normalize_nfc(phpbb::$request->variable('demo_url', '', true));
+$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(phpbb::$request->variable('active_coauthors', '', true));
+$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(phpbb::$request->variable('nonactive_coauthors', '', true));
 $error = array();
 
 // Load the message object
@@ -65,8 +65,8 @@ if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 {
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
-		'contrib_type'			=> request_var('contrib_type', 0),
-		'contrib_name_clean'	=> utf8_normalize_nfc(request_var('permalink', '', true)),
+		'contrib_type'			=> phpbb::$request->variable('contrib_type', 0),
+		'contrib_name_clean'	=> utf8_normalize_nfc(phpbb::$request->variable('permalink', '', true)),
 		'contrib_visible'		=> 1,
 		'contrib_demo'			=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate') || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE) ? $contrib_demo : titania::$contrib->contrib_demo,
 		'contrib_iso_code'		=> $contrib_iso_code,
@@ -138,7 +138,7 @@ $template->assign_vars(array(
 	'S_CAN_EDIT_CONTRIB'	=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? true : false,
 
 	'SCREENSHOT_UPLOADER'	=> $screenshot->parse_uploader('posting/attachments/simple.html'),
-	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(request_var('permalink', '', true)),
+	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(phpbb::$request->variable('permalink', '', true)),
 	'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'		=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'	=> $nonactive_coauthors,

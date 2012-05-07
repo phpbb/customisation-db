@@ -78,7 +78,7 @@ class manage_plugin
 		}
 
 		// Get the requested cat and tool
-		$this->tool_id = request_var('t', '');
+		$this->tool_id = phpbb::$request->variable('t', '');
 
 		// Check if they want to use a tool or not, make sure that the tool name is legal, and make sure the tool exists
 		if (!$this->tool_id || preg_match('#([^a-zA-Z0-9_])#', $this->tool_id) || !file_exists($this->tool_box_path . $this->tool_id . '.' . PHP_EXT))

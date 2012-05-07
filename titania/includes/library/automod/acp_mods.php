@@ -45,12 +45,12 @@ class acp_mods
 		$this->mods_dir = $phpbb_root_path . 'store/mods';
 
 		// get any url vars
-		$action = request_var('action', '');
-		$mod_id = request_var('mod_id', 0);
-		$mod_url = request_var('mod_url', '');
-		$parent = request_var('parent', 0);
+		$action = phpbb::$request->variable('action', '');
+		$mod_id = phpbb::$request->variable('mod_id', 0);
+		$mod_url = phpbb::$request->variable('mod_url', '');
+		$parent = phpbb::$request->variable('parent', 0);
 
-		$mod_path = request_var('mod_path', '');
+		$mod_path = phpbb::$request->variable('mod_path', '');
 
 		if ($mod_path)
 		{
@@ -64,7 +64,7 @@ class acp_mods
 		switch ($mode)
 		{
 			case 'config':
-				$ftp_method		= request_var('ftp_method', $config['ftp_method']);
+				$ftp_method		= phpbb::$request->variable('ftp_method', $config['ftp_method']);
 				if (!$ftp_method || !class_exists($ftp_method))
 				{
 					$ftp_method = 'ftp';
@@ -78,17 +78,17 @@ class acp_mods
 
 				if (isset($_POST['submit']) && check_form_key('acp_mods'))
 				{
-					$ftp_host		= request_var('host', '');
-					$ftp_username	= request_var('username', '');
-					$ftp_password	= request_var('password', ''); // not stored, used to test connection
-					$ftp_root_path	= request_var('root_path', '');
-					$ftp_port		= request_var('port', 21);
-					$ftp_timeout	= request_var('timeout', 10);
-					$write_method	= request_var('write_method', 0);
-					$file_perms		= request_var('file_perms', '0644');
-					$dir_perms		= request_var('dir_perms', '0755');
-					$compress_method	= request_var('compress_method', '');
-					$preview_changes	= request_var('preview_changes', 0);
+					$ftp_host		= phpbb::$request->variable('host', '');
+					$ftp_username	= phpbb::$request->variable('username', '');
+					$ftp_password	= phpbb::$request->variable('password', ''); // not stored, used to test connection
+					$ftp_root_path	= phpbb::$request->variable('root_path', '');
+					$ftp_port		= phpbb::$request->variable('port', 21);
+					$ftp_timeout	= phpbb::$request->variable('timeout', 10);
+					$write_method	= phpbb::$request->variable('write_method', 0);
+					$file_perms		= phpbb::$request->variable('file_perms', '0644');
+					$dir_perms		= phpbb::$request->variable('dir_perms', '0755');
+					$compress_method	= phpbb::$request->variable('compress_method', '');
+					$preview_changes	= phpbb::$request->variable('preview_changes', 0);
 
 
 					$error = '';
@@ -166,7 +166,7 @@ class acp_mods
 						'DATA'		=> $data,
 						'NAME'		=> $user->lang[strtoupper($ftp_method . '_' . $data)],
 						'EXPLAIN'	=> $user->lang[strtoupper($ftp_method . '_' . $data) . '_EXPLAIN'],
-						'DEFAULT'	=> (!empty($_REQUEST[$data])) ? request_var($data, '') : $default
+						'DEFAULT'	=> (!empty($_REQUEST[$data])) ? phpbb::$request->variable($data, '') : $default
 					));
 				}
 
@@ -197,7 +197,7 @@ class acp_mods
 			case 'frontend':
 				if ($config['write_method'] == WRITE_FTP)
 				{
-					$method = basename(request_var('method', $config['ftp_method']));
+					$method = basename(phpbb::$request->variable('method', $config['ftp_method']));
 					if (!$method || !class_exists($method))
 					{
 						$method = 'ftp';
@@ -210,7 +210,7 @@ class acp_mods
 					}
 
 					$test_connection = false;
-					$test_ftp_connection = request_var('test_connection', '');
+					$test_ftp_connection = phpbb::$request->variable('test_connection', '');
 					if (!empty($test_ftp_connection) || $action == 'install')
 					{
 						test_ftp_connection($method, $test_ftp_connection, $test_connection);
@@ -274,7 +274,7 @@ class acp_mods
 						include ($phpbb_root_path . "includes/functions_compress.$phpEx");
 						$editor = new editor_manual();
 
-						$time = request_var('time', 0);
+						$time = phpbb::$request->variable('time', 0);
 
 						// if for some reason the MOD isn't found in the DB...
 						$download_name = 'mod_' . $time;
@@ -585,7 +585,7 @@ class acp_mods
 		}
 		else
 		{
-			$parent = request_var('parent', 0);
+			$parent = phpbb::$request->variable('parent', 0);
 			if ($parent)
 			{
 				global $db;
@@ -760,8 +760,8 @@ class acp_mods
 				trigger_error($user->lang['FORM_INVALID'] . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 
-			$mod_path = urldecode(request_var('source', ''));
-			$dest_template = request_var('dest', '');
+			$mod_path = urldecode(phpbb::$request->variable('source', ''));
+			$dest_template = phpbb::$request->variable('dest', '');
 
 			if (preg_match('#.*install.*xml$#i', $mod_path))
 			{
@@ -782,15 +782,15 @@ class acp_mods
 			return false;
 		}
 
-		if (request_var('method', ''))
+		if (phpbb::$request->variable('method', ''))
 		{
-			set_config('ftp_method',	request_var('method', ''));
+			set_config('ftp_method',	phpbb::$request->variable('method', ''));
 		}
-		set_config('ftp_host',		request_var('host', ''));
-		set_config('ftp_username',	request_var('username', ''));
-		set_config('ftp_root_path', request_var('root_path', ''));
-		set_config('ftp_port',		request_var('port', 21));
-		set_config('ftp_timeout',	request_var('timeout', 10));
+		set_config('ftp_host',		phpbb::$request->variable('host', ''));
+		set_config('ftp_username',	phpbb::$request->variable('username', ''));
+		set_config('ftp_root_path', phpbb::$request->variable('root_path', ''));
+		set_config('ftp_port',		phpbb::$request->variable('port', 21));
+		set_config('ftp_timeout',	phpbb::$request->variable('timeout', 10));
 
 		$details = $this->mod_details($mod_path, false);
 
@@ -907,7 +907,7 @@ class acp_mods
 
 		$editor->create_edited_root($this->edited_root);
 
-		$force_install = request_var('force', false);
+		$force_install = phpbb::$request->variable('force', false);
 
 		// handle all edits here
 		$mod_installed = $this->process_edits($editor, $actions, $details, true, true, false);
@@ -1059,7 +1059,7 @@ class acp_mods
 				{
 					if ($data == 'password')
 					{
-						$config['ftp_password'] = request_var('password', '');
+						$config['ftp_password'] = phpbb::$request->variable('password', '');
 					}
 					$default = (!empty($config['ftp_' . $data])) ? $config['ftp_' . $data] : $default;
 
@@ -1152,7 +1152,7 @@ class acp_mods
 				{
 					if ($data == 'password')
 					{
-						$config['ftp_password'] = request_var('password', '');
+						$config['ftp_password'] = phpbb::$request->variable('password', '');
 					}
 					$default = (!empty($config['ftp_' . $data])) ? $config['ftp_' . $data] : $default;
 
@@ -1183,7 +1183,7 @@ class acp_mods
 		$details = $this->mod_details($mod_id, false, true);
 		$actions = $this->mod_actions($mod_id);
 
-		$force_install = request_var('force', false);
+		$force_install = phpbb::$request->variable('force', false);
 
 		// process the actions
 		$mod_uninstalled = $this->process_edits($editor, $actions, $details, $execute_edits, true, true);
@@ -1193,7 +1193,7 @@ class acp_mods
 			return;
 		}
 
-		$force_uninstall = request_var('force', false);
+		$force_uninstall = phpbb::$request->variable('force', false);
 
 		if ($mod_uninstalled || $force_uninstall)
 		{
@@ -2077,7 +2077,7 @@ class acp_mods
 		
 		if (confirm_box(true))
 		{
-			$mod_path = request_var('mod_delete', '');
+			$mod_path = phpbb::$request->variable('mod_delete', '');
 
 			if ($this->directory_delete($this->mods_dir . '/' .	$mod_path))
 			{

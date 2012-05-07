@@ -15,8 +15,8 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-$post_id = request_var('p', 0);
-$topic_id = request_var('t', 0);
+$post_id = phpbb::$request->variable('p', 0);
+$topic_id = phpbb::$request->variable('t', 0);
 
 // Load the topic and contrib items
 if ($post_id)
@@ -96,7 +96,7 @@ else
 	titania_subscriptions::handle_subscriptions(TITANIA_SUPPORT, titania::$contrib->contrib_id, titania::$contrib->get_url('support'));
 
 	// Mark all topics read
-	if (request_var('mark', '') == 'topics')
+	if (phpbb::$request->variable('mark', '') == 'topics')
 	{
 		titania_tracking::track(TITANIA_SUPPORT, titania::$contrib->contrib_id);
 	}

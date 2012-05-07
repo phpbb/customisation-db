@@ -623,9 +623,9 @@ class titania
 
 		if ($check && $confirm)
 		{
-			$user_id = request_var('confirm_uid', 0);
-			$session_id = request_var('sess', '');
-			$confirm_key = request_var('confirm_key', '');
+			$user_id = phpbb::$request->variable('confirm_uid', 0);
+			$session_id = phpbb::$request->variable('sess', '');
+			$confirm_key = phpbb::$request->variable('confirm_key', '');
 
 			if ($user_id != phpbb::$user->data['user_id'] || $session_id != phpbb::$user->session_id || !$confirm_key || !phpbb::$user->data['user_last_confirm_key'] || $confirm_key != phpbb::$user->data['user_last_confirm_key'])
 			{
@@ -657,7 +657,7 @@ class titania
 		self::page_header((!isset(phpbb::$user->lang[$title])) ? phpbb::$user->lang['CONFIRM'] : phpbb::$user->lang[$title]);
 
 		// If activation key already exist, we better do not re-use the key (something very strange is going on...)
-		if (request_var('confirm_key', ''))
+		if (phpbb::$request->variable('confirm_key', ''))
 		{
 			// This should not occur, therefore we cancel the operation to safe the user
 			return false;

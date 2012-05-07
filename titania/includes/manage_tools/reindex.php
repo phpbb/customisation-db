@@ -21,8 +21,8 @@ class reindex
 
 	function run_tool()
 	{
-		$section = request_var('section', 0);
-		$start = request_var('start', 0);
+		$section = phpbb::$request->variable('section', 0);
+		$start = phpbb::$request->variable('start', 0);
 		$limit = (titania::$config->search_backend == 'solr') ? 1000 : 100;
 		$total = 0;
 

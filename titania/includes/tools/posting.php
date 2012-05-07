@@ -19,7 +19,7 @@ class titania_posting
 {
 	public function act($template_body, $parent_id = false, $parent_url = false, $post_type = false, $s_post_action = false)
 	{
-		$action = request_var('action', '');
+		$action = phpbb::$request->variable('action', '');
 
 		switch ($action)
 		{
@@ -35,25 +35,25 @@ class titania_posting
 			break;
 
 			case 'quote' :
-				$this->reply(request_var('t', 0), request_var('p', 0));
+				$this->reply(phpbb::$request->variable('t', 0), phpbb::$request->variable('p', 0));
 
 				titania::page_footer(true, $template_body);
 			break;
 
 			case 'reply' :
-				$this->reply(request_var('t', 0));
+				$this->reply(phpbb::$request->variable('t', 0));
 
 				titania::page_footer(true, $template_body);
 			break;
 
 			case 'edit' :
-				$this->edit(request_var('p', 0));
+				$this->edit(phpbb::$request->variable('p', 0));
 
 				titania::page_footer(true, $template_body);
 			break;
 
 			case 'quick_edit' :
-				$this->quick_edit(request_var('p', 0));
+				$this->quick_edit(phpbb::$request->variable('p', 0));
 
 				titania::page_footer(true, $template_body);
 			break;
@@ -61,23 +61,23 @@ class titania_posting
 			case 'delete' :
 			case 'undelete' :
 			case 'report' :
-				$this->$action(request_var('p', 0));
+				$this->$action(phpbb::$request->variable('p', 0));
 			break;
 
 			case 'sticky_topic' :
 			case 'unsticky_topic' :
-				$this->toggle_sticky(request_var('t', 0));
+				$this->toggle_sticky(phpbb::$request->variable('t', 0));
 			break;
 
 			case 'lock_topic' :
 			case 'unlock_topic' :
 			case 'delete_topic' :
 			case 'undelete_topic' :
-				$this->$action(request_var('t', 0));
+				$this->$action(phpbb::$request->variable('t', 0));
 			break;
 
 			case 'hard_delete_topic' :
-				$this->delete_topic(request_var('t', 0), true);
+				$this->delete_topic(phpbb::$request->variable('t', 0), true);
 			break;
 		}
 	}
@@ -308,8 +308,8 @@ class titania_posting
 		$for_edit = $post_object->generate_text_for_edit();
 
 		// Set the post text
-		$post_object->post_subject = utf8_normalize_nfc(request_var('subject', '', true));
-		$post_object->post_text = utf8_normalize_nfc(request_var('message', '', true));
+		$post_object->post_subject = utf8_normalize_nfc(phpbb::$request->variable('subject', '', true));
+		$post_object->post_text = utf8_normalize_nfc(phpbb::$request->variable('message', '', true));
 
 		// Generate for storage based on previous options
 		$post_object->generate_text_for_storage($for_edit['allow_bbcode'], $for_edit['allow_urls'], $for_edit['allow_smilies']);
@@ -444,7 +444,7 @@ class titania_posting
 
 		if (titania::confirm_box(true))
 		{
-			$message = utf8_normalize_nfc(request_var('report_text', '', true));
+			$message = utf8_normalize_nfc(phpbb::$request->variable('report_text', '', true));
 			$post_object->report($message);
 
 			// Notifications

@@ -17,8 +17,8 @@ if (!defined('IN_TITANIA'))
 
 titania::add_lang('faq');
 
-$faq_id = request_var('f', 0);
-$action = request_var('action', '');
+$faq_id = phpbb::$request->variable('f', 0);
+$action = phpbb::$request->variable('action', '');
 $error = array();
 
 // Setup faq object

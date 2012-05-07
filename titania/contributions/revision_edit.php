@@ -24,7 +24,7 @@ if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !
 }
 
 // Setup some variables
-$revision_id = request_var('revision', 0);
+$revision_id = phpbb::$request->variable('revision', 0);
 $error = $revision_phpbb_versions = array();
 $phpbb_versions = titania::$cache->get_phpbb_versions();
 
@@ -49,7 +49,7 @@ foreach ($revision->phpbb_versions as $row)
 }
 
 // Revision Status
-$revision_status = request_var('revision_status', (int) $revision->revision_status);
+$revision_status = phpbb::$request->variable('revision_status', (int) $revision->revision_status);
 $status_list = array(
 	TITANIA_REVISION_NEW				=> 'REVISION_NEW',
 	TITANIA_REVISION_APPROVED			=> 'REVISION_APPROVED',
@@ -62,16 +62,16 @@ $status_list = array(
 
 if ($translation->uploaded || isset($_POST['submit']))
 {
-	$revision_license = utf8_normalize_nfc(request_var('revision_license', '', true));
+	$revision_license = utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true));
 	$revision->__set_array(array(
-		'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', $revision->revision_name, true)),
-		'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE']) ? $revision_license : utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
+		'revision_name'			=> utf8_normalize_nfc(phpbb::$request->variable('revision_name', $revision->revision_name, true)),
+		'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE']) ? $revision_license : utf8_normalize_nfc(phpbb::$request->variable('revision_custom_license', '', true)),
 	));
 
 	// Stuff that can be done by moderators only
 	if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 	{
-		$revision_phpbb_versions = request_var('revision_phpbb_versions', array(''));
+		$revision_phpbb_versions = phpbb::$request->variable('revision_phpbb_versions', array(''));
 	}
 }
 

@@ -64,8 +64,8 @@ $limit = 1000;
 $mod_validation_trash_forum = 28;
 $style_validation_trash_forum = 83;
 
-$step = request_var('step', 0);
-$start = request_var('start', 0);
+$step = phpbb::$request->variable('step', 0);
+$start = phpbb::$request->variable('start', 0);
 
 // Populated later
 $total = 0;

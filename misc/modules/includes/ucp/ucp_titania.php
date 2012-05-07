@@ -75,8 +75,8 @@ class ucp_titania
 		{
 			if (check_form_key('ucp_front_subscription'))
 			{
-				$sections	= request_var('sections', array(0 => array(0 => 0)));
-				$items		= request_var('items', array(0 => array(0 => 0)));
+				$sections	= phpbb::$request->variable('sections', array(0 => array(0 => 0)));
+				$items		= phpbb::$request->variable('items', array(0 => array(0 => 0)));
 				$subscriptions	= $sections + $items;
 
 				if (sizeof($subscriptions))

@@ -31,7 +31,7 @@ class update_release_topics
 	function run_tool()
 	{
 		// Define some vars that we'll need
-		$start = request_var('start', 0);
+		$start = phpbb::$request->variable('start', 0);
 		$limit = 100;
 
 		// Create topic if it does not exist?

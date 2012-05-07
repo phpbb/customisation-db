@@ -19,7 +19,7 @@ include(TITANIA_ROOT . 'common.' . PHP_EXT);
 titania::add_lang('authors');
 
 // Load the author
-$author = utf8_normalize_nfc(request_var('u', '', true));
+$author = utf8_normalize_nfc(phpbb::$request->variable('u', '', true));
 titania::$author = new titania_author();
 
 if (!titania::$author->load($author))
@@ -70,7 +70,7 @@ $nav_ary = array(
 );
 
 // Display nav menu
-$page = request_var('page', '');
+$page = phpbb::$request->variable('page', '');
 titania::generate_nav($nav_ary, $page, 'details');
 
 // Generate the main breadcrumbs

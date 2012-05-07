@@ -145,10 +145,10 @@ class titania_message
 			// Resync inline attachments if any were deleted
 			if ($this->attachments && $this->attachments->deleted)
 			{
-				$delete = request_var('delete_file', array(0));
+				$delete = phpbb::$request->variable('delete_file', array(0));
 				foreach ($delete as $attach_id => $null)
 				{
-					$index = request_var('index_' . $attach_id, 0);
+					$index = phpbb::$request->variable('index_' . $attach_id, 0);
 					$_REQUEST[$this->settings['text_name']] = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "(\\1 == \$index) ? '' : ((\\1 > \$index) ? '[attachment=' . (\\1 - 1) . ']\\2[/attachment]' : '\\0')", $_REQUEST[$this->settings['text_name']]);
 				}
 			}
@@ -241,7 +241,7 @@ class titania_message
 		$post_options->set_in_template();
 
 		// Save the opened panel to show again
-		$default_panel = request_var('open_panel', 'options-panel');
+		$default_panel = phpbb::$request->variable('open_panel', 'options-panel');
 		$default_panel = (isset($this->posting_panels[$default_panel])) ? $default_panel :  'options-panel';
 
 		phpbb::$template->assign_vars(array(
@@ -365,7 +365,7 @@ class titania_message
 		$magic_url_disabled = (isset($_POST['disable_magic_url'])) ? true : false;
 
 		$data = array(
-			'access'			=> request_var('message_access', (int) ((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC)),
+			'access'			=> phpbb::$request->variable('message_access', (int) ((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC)),
 			'lock'				=> ($this->auth['lock'] && isset($_POST['lock'])) ? true : false,
 			'has_attachments'	=> ($this->attachments !== false && sizeof($this->attachments->get_attachments())) ? true : false,
 
@@ -379,13 +379,13 @@ class titania_message
 
 		if ($this->auth['edit_subject'])
 		{
-			$data['subject'] = utf8_normalize_nfc(request_var($this->settings['subject_name'], ((isset($for_edit['subject'])) ? $for_edit['subject'] : ''), true));
+			$data['subject'] = utf8_normalize_nfc(phpbb::$request->variable($this->settings['subject_name'], ((isset($for_edit['subject'])) ? $for_edit['subject'] : ''), true));
 		}
 
 		if ($this->auth['edit_message'])
 		{
 			$data = array_merge($data, array(
-				'message'	=> utf8_normalize_nfc(request_var($this->settings['text_name'], ((isset($for_edit['text'])) ? $for_edit['text'] : ''), true)),
+				'message'	=> utf8_normalize_nfc(phpbb::$request->variable($this->settings['text_name'], ((isset($for_edit['text'])) ? $for_edit['text'] : ''), true)),
 				'options'	=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
 			));
 		}

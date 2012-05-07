@@ -105,7 +105,7 @@ Tolong ikuti tautan berikut ini sebelum anda mengunggah ulang modifikasi:
 [*][url=http://www.phpbb.com/mods/modx/]Standar MODX phpBB[/url]
 [*][b]Mengamanakan MODs:[/b]
 [url=http://blog.phpbb.com/2009/02/12/injection-vulnerabilities/]Pencegahan Kerentanan Injeksi[/url]
-[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-request_var/]Bagaimana untuk tidak menggunakan request_var[/url]
+[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-phpbb::$request->variable/]Bagaimana untuk tidak menggunakan phpbb::$request->variable[/url]
 [/list]
 
 Untuk informasi lebih lanjut, mungkin anda ingin melihat yang tertera berikut ini:

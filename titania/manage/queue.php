@@ -15,9 +15,9 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-$queue_id = request_var('q', 0);
-$queue_type = request_var('queue', '');
-$tag = request_var('tag', 0);
+$queue_id = phpbb::$request->variable('q', 0);
+$queue_type = phpbb::$request->variable('queue', '');
+$tag = phpbb::$request->variable('tag', 0);
 
 // Force the queue_type if we have a queue_id
 if ($queue_id)
@@ -95,7 +95,7 @@ if ($queue_id)
 {
 	phpbb::$user->add_lang('viewforum');
 
-	$action = request_var('action', '');
+	$action = phpbb::$request->variable('action', '');
 	
 	if ($tag)
 	{
@@ -180,7 +180,7 @@ if ($queue_id)
 			));
 
 			$error = array();
-			$public_notes = utf8_normalize_nfc(request_var('public_notes', '', true));
+			$public_notes = utf8_normalize_nfc(phpbb::$request->variable('public_notes', '', true));
 
 			if ($message_object->submit_check())
 			{
@@ -380,9 +380,9 @@ if ($queue_id)
 
 			$tags = titania::$cache->get_tags(TITANIA_QUEUE);
 
-			if (check_link_hash(request_var('hash', ''), 'quick_actions') || titania::confirm_box(true))
+			if (check_link_hash(phpbb::$request->variable('hash', ''), 'quick_actions') || titania::confirm_box(true))
 			{
-				$new_tag = request_var('id', 0);
+				$new_tag = phpbb::$request->variable('id', 0);
 
 				if (!isset($tags[$new_tag]))
 				{

@@ -15,7 +15,7 @@ if (!defined('TITANIA_ROOT')) define('TITANIA_ROOT', './');
 if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 require TITANIA_ROOT . 'common.' . PHP_EXT;
 
-$action = request_var('action', '');
+$action = phpbb::$request->variable('action', '');
 
 switch ($action)
 {
@@ -37,9 +37,9 @@ switch ($action)
 	* Rate something & remove a rating from something
 	*/
 	case 'rate' :
-		$type = request_var('type', '');
-		$id = request_var('id', 0);
-		$value = request_var('value', -1.0);
+		$type = phpbb::$request->variable('type', '');
+		$id = phpbb::$request->variable('id', 0);
+		$value = phpbb::$request->variable('value', -1.0);
 
 		switch ($type)
 		{
@@ -88,7 +88,7 @@ switch ($action)
 	*/
 	case 'mpv' :
 	case 'automod' :
-		$revision_id = request_var('revision', 0);
+		$revision_id = phpbb::$request->variable('revision', 0);
 		titania::add_lang('contributions');
 
 		// Get the revision, contribution, attachment, and queue
@@ -201,14 +201,14 @@ switch ($action)
 	*/
 	case 'support' :
 		// The type of contribs (mod, style, converter, official_tool, etc.)
-		$type = request_var('type', 'all');
+		$type = phpbb::$request->variable('type', 'all');
 		$type_id = titania_types::type_from_url($type);
 		$type = (!$type_id) ? 'all' : $type;
 
 		if ($type == 'all')
 		{
 			// Mark all topics read
-			if (request_var('mark', '') == 'topics')
+			if (phpbb::$request->variable('mark', '') == 'topics')
 			{
 				titania_tracking::track(TITANIA_ALL_SUPPORT, 0);
 			}
@@ -247,7 +247,7 @@ switch ($action)
 	*/
 	case 'contributions' :
 		// Mark all contribs read
-		if (request_var('mark', '') == 'contribs')
+		if (phpbb::$request->variable('mark', '') == 'contribs')
 		{
 			titania_tracking::track(TITANIA_CONTRIB, 0);
 		}
@@ -273,7 +273,7 @@ switch ($action)
 		titania::_include('functions_display', 'titania_display_categories');
 
 		// Get the category_id
-		$category = request_var('c', '');
+		$category = phpbb::$request->variable('c', '');
 		$category_ary = explode('-', $category);
 		if ($category_ary)
 		{
@@ -340,7 +340,7 @@ switch ($action)
 		else
 		{
 			// Mark all contribs read
-			if (request_var('mark', '') == 'contribs')
+			if (phpbb::$request->variable('mark', '') == 'contribs')
 			{
 				titania_tracking::track(TITANIA_CONTRIB, 0);
 			}

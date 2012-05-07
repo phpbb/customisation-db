@@ -39,7 +39,7 @@ $forum_ids = array(
 	225, // Automod
 );
 
-$start = request_var('start', 0);
+$start = phpbb::$request->variable('start', 0);
 
 // Rewritten URLs
 $contrib_view = 'http://www.phpbb.com/customise/db/contribution/$1/';

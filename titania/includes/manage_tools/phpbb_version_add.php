@@ -28,9 +28,9 @@ class phpbb_version_add
 
 	function run_tool()
 	{
-		$new_phpbb_version = request_var('new_phpbb_version', '');
-		$limit_phpbb_versions = request_var('limit_phpbb_version', array(''));
-		$categories = request_var('category', array(0));
+		$new_phpbb_version = phpbb::$request->variable('new_phpbb_version', '');
+		$limit_phpbb_versions = phpbb::$request->variable('limit_phpbb_version', array(''));
+		$categories = phpbb::$request->variable('category', array(0));
 
 		if (!$new_phpbb_version || strlen($new_phpbb_version) < 5 || $new_phpbb_version[1] != '.' || $new_phpbb_version[3] != '.')
 		{

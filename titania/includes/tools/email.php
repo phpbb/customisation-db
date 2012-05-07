@@ -50,10 +50,10 @@ class titania_email
 			trigger_error('FLOOD_EMAIL_LIMIT', E_USER_NOTICE);
 		}
 
-		$name		= utf8_normalize_nfc(request_var('name', '', true));
-		$email		= request_var('email', '');
-		$email_lang	= request_var('lang', phpbb::$config['default_lang']);
-		$message	= utf8_normalize_nfc(request_var('message', '', true));
+		$name		= utf8_normalize_nfc(phpbb::$request->variable('name', '', true));
+		$email		= phpbb::$request->variable('email', '');
+		$email_lang	= phpbb::$request->variable('lang', phpbb::$config['default_lang']);
+		$message	= utf8_normalize_nfc(phpbb::$request->variable('message', '', true));
 		$cc			= (isset($_POST['cc_email'])) ? true : false;
 		$submit		= (isset($_POST['submit'])) ? true : false;
 

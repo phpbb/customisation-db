@@ -294,7 +294,7 @@ class titania_tracking
 			return;
 		}
 
-		$cookie = request_var(phpbb::$config['cookie_name'] . '_titania_track', '', false, true);
+		$cookie = phpbb::$request->variable(phpbb::$config['cookie_name'] . '_titania_track', '', false, true);
 		if ($cookie)
 		{
 			self::$store = unserialize($cookie);

@@ -29,13 +29,13 @@ if (!((((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) 
 
 // Set some main vars up
 $submit = (isset($_POST['submit'])) ? true : false;
-$change_owner = request_var('change_owner', '', true); // Blame Nathan, he said this was okay
-$contrib_categories = request_var('contrib_category', array(0));
-$contrib_demo = utf8_normalize_nfc(request_var('demo_url', '', true));
-$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(request_var('active_coauthors', '', true));
-$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(request_var('nonactive_coauthors', '', true));
+$change_owner = phpbb::$request->variable('change_owner', '', true); // Blame Nathan, he said this was okay
+$contrib_categories = phpbb::$request->variable('contrib_category', array(0));
+$contrib_demo = utf8_normalize_nfc(phpbb::$request->variable('demo_url', '', true));
+$active_coauthors = $active_coauthors_list = utf8_normalize_nfc(phpbb::$request->variable('active_coauthors', '', true));
+$nonactive_coauthors = $nonactive_coauthors_list = utf8_normalize_nfc(phpbb::$request->variable('nonactive_coauthors', '', true));
 $error = array();
-$contrib_status = request_var('contrib_status', (int) titania::$contrib->contrib_status);
+$contrib_status = phpbb::$request->variable('contrib_status', (int) titania::$contrib->contrib_status);
 $status_list = array(
 	TITANIA_CONTRIB_NEW					=> 'CONTRIB_NEW',
 	TITANIA_CONTRIB_APPROVED			=> 'CONTRIB_APPROVED',
@@ -44,7 +44,7 @@ $status_list = array(
 	TITANIA_CONTRIB_HIDDEN				=> 'CONTRIB_HIDDEN',
 	TITANIA_CONTRIB_DISABLED			=> 'CONTRIB_DISABLED',
 );
-$permalink = utf8_normalize_nfc(request_var('permalink', titania::$contrib->contrib_name_clean, true));
+$permalink = utf8_normalize_nfc(phpbb::$request->variable('permalink', titania::$contrib->contrib_name_clean, true));
 
 /**
 * ---------------------------- Confirm main author change ----------------------------
@@ -56,13 +56,13 @@ if (titania::confirm_box(true))
 		titania::needs_auth();
 	}
 
-	$change_owner_id = request_var('change_owner_id', 0);
+	$change_owner_id = phpbb::$request->variable('change_owner_id', 0);
 
 	if ($change_owner_id !== ANONYMOUS && $change_owner_id)
 	{
 		titania::$contrib->set_contrib_user_id($change_owner_id);
 
-		titania::$contrib->load(utf8_normalize_nfc(request_var('c', '', true))); // Reload the contrib (to make sure the authors list is updated)
+		titania::$contrib->load(utf8_normalize_nfc(phpbb::$request->variable('c', '', true))); // Reload the contrib (to make sure the authors list is updated)
 		$submit = false; // Set submit as false to keep the main stuff from being resubmitted again
 
 		redirect(titania::$contrib->get_url());
@@ -97,9 +97,9 @@ if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
 		'contrib_demo'				=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate') || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE) ? $contrib_demo : titania::$contrib->contrib_demo,
-		'contrib_local_name'		=> utf8_normalize_nfc(request_var('contrib_local_name', '', true)),
-		'contrib_iso_code' 			=> request_var('contrib_iso_code', ''),
-		'contrib_limited_support'	=> request_var('limited_support', false), 
+		'contrib_local_name'		=> utf8_normalize_nfc(phpbb::$request->variable('contrib_local_name', '', true)),
+		'contrib_iso_code' 			=> phpbb::$request->variable('contrib_iso_code', ''),
+		'contrib_limited_support'	=> phpbb::$request->variable('limited_support', false), 
 	));
 }
 
@@ -267,7 +267,7 @@ else if ($submit)
         if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contrib->contrib_type]->acl_get('colorizeit'))
         {
             $clr_sample->submit();
-            $contrib_clr_colors = utf8_normalize_nfc(request_var('change_colors', titania::$contrib->contrib_clr_colors));
+            $contrib_clr_colors = utf8_normalize_nfc(phpbb::$request->variable('change_colors', titania::$contrib->contrib_clr_colors));
             titania::$contrib->__set('contrib_clr_colors', $contrib_clr_colors);
         }
 

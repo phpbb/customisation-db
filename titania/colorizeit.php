@@ -34,7 +34,7 @@ switch(titania::$config->colorizeit_auth)
 /**
 * Get attachment
 **/
-$download_id = request_var('id', 0);
+$download_id = phpbb::$request->variable('id', 0);
 if(!$download_id) clr_error('ERROR_NO_ATTACHMENT');
 
 $sql = 'SELECT *

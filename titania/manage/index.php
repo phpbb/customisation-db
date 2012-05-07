@@ -16,7 +16,7 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
 // Setup some vars
-$page = basename(request_var('page', ''));
+$page = basename(phpbb::$request->variable('page', ''));
 
 // Add common lang
 titania::add_lang('manage');
