@@ -239,8 +239,8 @@ class titania_posting
 	*/
 	public function quick_edit($post_id)
 	{
-		$submit = isset($_POST['submit']) ? true : false;
-		$full_editor = isset($_POST['full_editor']) ? true : false;
+		$submit = phpbb::$request->is_set_post('submit');
+		$full_editor = phpbb::$request->is_set_post('full_editor');
 
 		// AJAX output
 		if (!$submit && !$full_editor)
@@ -809,7 +809,7 @@ class titania_posting
 				$message_object->submit($post_object->post_access);
 
 				// Did they want to subscribe?
-				if (isset($_POST['notify']) && phpbb::$user->data['is_registered'])
+				if (phpbb::$request->is_set_post('notify') && phpbb::$user->data['is_registered'])
 				{
 					titania_subscriptions::subscribe(TITANIA_TOPIC, $post_object->topic->topic_id);
 				}
@@ -914,7 +914,7 @@ class titania_posting
 				$redirect_post_id = false;
 
 				// Delete the post
-				if (isset($_POST['hard_delete']) || $post_object->post_deleted)
+				if (phpbb::$request->is_set_post('hard_delete') || $post_object->post_deleted)
 				{
 					if (!phpbb::$auth->acl_get('u_titania_post_hard_delete'))
 					{

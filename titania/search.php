@@ -40,7 +40,7 @@ $search_subcategories = phpbb::$request->variable('sc', 0);
 $phpbb_versions = phpbb::$request->variable('versions', array(''));
 
 // Display the advanced search page
-if (!$keywords && !$user_id && !$contrib_id && !isset($_POST['submit']))
+if (!$keywords && !$user_id && !$contrib_id && !phpbb::$request->is_set_post('submit'))
 {
 	if ($mode == 'find-contribution')
 	{
@@ -84,7 +84,7 @@ if (!$keywords && !$user_id && !$contrib_id && !isset($_POST['submit']))
 }
 
 // Add some POST stuff to the url
-if (isset($_POST['submit']))
+if (phpbb::$request->is_set_post('submit'))
 {
 	$author = utf8_normalize_nfc(phpbb::$request->variable('author', '', true));
 

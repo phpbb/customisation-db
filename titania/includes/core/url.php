@@ -424,7 +424,7 @@ class titania_url
 		// Merge the parameters into the get/request superglobals.  Merge them to prevent a parameter in the parameters part of the URL from over-writting one that is already in here
 		$request->enable_super_globals();
 		$get_vars = array_merge(self::$params, $_GET);
-		$phpbb::$request->variables = array_merge(self::$params, $_REQUEST);
+		$request_vars = array_merge(self::$params, $_REQUEST);
 		$request->disable_super_globals();
 
 		foreach ($get_vars as $key => $value)
@@ -432,7 +432,7 @@ class titania_url
 			$request->overwrite($key, $value, '_GET');
 		}
 
-		foreach ($phpbb::$request->variables as $key => $value)
+		foreach ($request_vars as $key => $value)
 		{
 			$request->overwrite($key, $value);
 		}

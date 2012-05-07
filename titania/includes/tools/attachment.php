@@ -275,7 +275,7 @@ class titania_attachment extends titania_database_object
 			foreach ($this->additional_fields as $output_key => $row_key)
 			{
 				// Try to grab it from post first
-				if (isset($_POST[$row_key . '_' . $row['attachment_id']]))
+				if (phpbb::$request->is_set_post($row_key . '_' . $row['attachment_id']))
 				{
 					$output[$output_key] = utf8_normalize_nfc(phpbb::$request->variable($row_key . '_' . $row['attachment_id'], '', true));
 				}

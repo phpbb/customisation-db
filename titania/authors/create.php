@@ -34,7 +34,7 @@ titania::$contrib->author = new titania_author(phpbb::$user->data['user_id']);
 titania::$contrib->author->load();
 
 // Set some main vars up
-$submit = (isset($_POST['submit'])) ? true : false;
+$submit = phpbb::$request->is_set_post('submit');
 $contrib_categories = phpbb::$request->variable('contrib_category', array(0));
 $contrib_iso_code = phpbb::$request->variable('contrib_iso_code', '');
 $contrib_local_name = utf8_normalize_nfc(phpbb::$request->variable('contrib_local_name', '', true));
@@ -61,7 +61,7 @@ $screenshot->load_attachments();
 $screenshot->upload(175);
 $error = array_merge($error, $screenshot->error);
 
-if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
+if ($screenshot->uploaded || phpbb::$request->is_set_post('preview') || $submit)
 {
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
@@ -74,7 +74,7 @@ if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
 	));
 }
 
-if (isset($_POST['preview']))
+if (phpbb::$request->is_set_post('preview'))
 {
 	$message->preview();
 }

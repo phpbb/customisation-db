@@ -26,7 +26,7 @@ phpbb::$user->add_lang('acp/common');
 titania::_include('manage_tools/manage_plugin', false, 'manage_plugin');
 $plugin = new manage_plugin();
 
-$submit = (isset($_POST['submit'])) ? true : false;
+$submit = phpbb::$request->is_set_post('submit');
 
 phpbb::$template->assign_vars(array(
 	'S_ACTION'		=> titania_url::build_url('manage/administration', (($plugin->tool_id) ? array('t' => $plugin->tool_id) : array())),
@@ -144,7 +144,7 @@ if ($plugin->tool_id)
 		}
 		else if (is_string($options))
 		{
-			if (titania::confirm_box(true) || (isset($_GET['submit']) && check_link_hash(phpbb::$request->variable('hash', ''), 'manage')))
+			if (titania::confirm_box(true) || (phpbb::$request->is_set('submit', '_GET') && check_link_hash(phpbb::$request->variable('hash', ''), 'manage')))
 			{
 				$tool->run_tool();
 			}

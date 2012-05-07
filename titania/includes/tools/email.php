@@ -54,8 +54,8 @@ class titania_email
 		$email		= phpbb::$request->variable('email', '');
 		$email_lang	= phpbb::$request->variable('lang', phpbb::$config['default_lang']);
 		$message	= utf8_normalize_nfc(phpbb::$request->variable('message', '', true));
-		$cc			= (isset($_POST['cc_email'])) ? true : false;
-		$submit		= (isset($_POST['submit'])) ? true : false;
+		$cc			= phpbb::$request->is_set_post('cc_email');
+		$submit		= phpbb::$request->is_set_post('submit');
 
 		add_form_key('contrib_email');
 

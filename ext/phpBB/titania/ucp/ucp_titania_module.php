@@ -71,7 +71,7 @@ class ucp_titania
 		add_form_key('ucp_front_subscription');
 
 		// User wants to unsubscribe?
-		if (isset($_POST['unsubscribe']))
+		if (phpbb::$request->is_set_post('unsubscribe']))
 		{
 			if (check_form_key('ucp_front_subscription'))
 			{

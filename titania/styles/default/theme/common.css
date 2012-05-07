@@ -32,14 +32,14 @@ h3.section-name {
 }
 
 .tabs a {
-	background: transparent url("{T_THEME_PATH}/images/tab_bg.gif") no-repeat 0 -29px;
+	background: transparent url("./images/tab_bg.gif") no-repeat 0 -29px;
 	border-bottom: 1px solid #FFFFFF;
 	position: relative;
 	display: block;
 }
 
 .tabs a span {
-	background: transparent url("{T_THEME_PATH}/images/tab_bg2.gif") no-repeat 100% -29px;
+	background: transparent url("./images/tab_bg2.gif") no-repeat 100% -29px;
 	display: block;
 	padding: 5px 10px;
 	color: #FFFFFF;
@@ -97,11 +97,11 @@ h3.section-name {
 }
 
 span.corners-top.main-corners, span.corners-bottom.main-corners {
-	background-image: url("{T_THEME_PATH}/images/corners_left.png");
+	background-image: url("./images/corners_left.png");
 }
 
 span.corners-top.main-corners span, span.corners-bottom.main-corners span {
-	background-image: url("{T_THEME_PATH}/images/corners_right.png");
+	background-image: url("./images/corners_right.png");
 }
 
 /* Contribution Details
@@ -125,7 +125,7 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 }
 
 .no-screenshot {
-	background: url("{T_THEME_PATH}/images/no_screenshot.gif") no-repeat 0 0;
+	background: url("./images/no_screenshot.gif") no-repeat 0 0;
 	width: 175px;
 	height: 19px;
 	padding-top: 101px;
@@ -274,7 +274,7 @@ a.new-revision:hover {
 /* Author Profile
 --------------------------------------------- */
 .no-avatar {
-	background: url("{T_THEME_PATH}/images/no_avatar.gif") no-repeat 0 0;
+	background: url("./images/no_avatar.gif") no-repeat 0 0;
 	width: 118px;
 	height: 17px;
 	padding-top: 103px;
@@ -483,12 +483,12 @@ ul.rating li, ul.rated li {
 	vertical-align: middle;
 }
 
-.queue_progress 	{ background-image: url("{T_THEME_PATH}/images/icon_queue_progress.png"); }
-.deny 				{ padding-left: 19px !important; background-image: url("{T_THEME_PATH}/images/icon_deny.gif"); }
-.approve 			{ padding-left: 21px !important; background-image: url("{T_THEME_PATH}/images/icon_approve.gif"); }
-.change_status		{ padding-left: 15px !important; background-image: url("{T_THEME_PATH}/images/icon_change_status.gif"); }
-.repack 			{ padding-left: 17px !important; background-image: url("{T_THEME_PATH}/images/icon_repack.gif"); }
-.misc				{ padding-left: 19px !important; background-image: url("{T_THEME_PATH}/images/icon_misc.gif"); }
+.queue_progress 	{ background-image: url("./images/icon_queue_progress.png"); }
+.deny 				{ padding-left: 19px !important; background-image: url("./images/icon_deny.gif"); }
+.approve 			{ padding-left: 21px !important; background-image: url("./images/icon_approve.gif"); }
+.change_status		{ padding-left: 15px !important; background-image: url("./images/icon_change_status.gif"); }
+.repack 			{ padding-left: 17px !important; background-image: url("./images/icon_repack.gif"); }
+.misc				{ padding-left: 19px !important; background-image: url("./images/icon_misc.gif"); }
 
 .queue-actions div.subactions {
 	position: absolute;

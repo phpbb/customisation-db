@@ -23,11 +23,11 @@ switch(titania::$config->colorizeit_auth)
 {
     case 'HEADER':
         $var = strtoupper(str_replace('-', '_', titania::$config->colorizeit_var));
-        if(!isset($_SERVER['HTTP_' . $var]) || $_SERVER['HTTP_' . $var] != titania::$config->colorizeit_value) clr_error('ERROR_NO_ATTACHMENT');
+        if(phpbb::$request->server('HTTP_' . $var) != titania::$config->colorizeit_value) clr_error('ERROR_NO_ATTACHMENT');
         break;
     case 'POST':
         $var = titania::$config->colorizeit_var;
-        if(!isset($_POST[$var]) || $_POST[$var] != titania::$config->colorizeit_value) clr_error('ERROR_NO_ATTACHMENT');
+        if(phpbb::$request->variable($var, '', false, '_POST') != titania::$config->colorizeit_value) clr_error('ERROR_NO_ATTACHMENT');
 }
 
 
@@ -84,7 +84,7 @@ if (!strlen($revision['revision_clr_options']))
     {
         clr_error('ERROR_NO_ATTACHMENT');
     }
-    $new_dir_name = md5(serialize($_SERVER)) . '_' . microtime();
+    $new_dir_name = md5(gen_rand_string(64)) . '_' . microtime();
     $contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
     $phpbb_data = clr_phpbb_data($contrib_tools->unzip_dir);
     $contrib_tools->remove_temp_files();
