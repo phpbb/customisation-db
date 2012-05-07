@@ -31,7 +31,7 @@ class resync_contrib_count
 	function run_tool()
 	{
 		// Define some vars that we'll need
-		$start = request_var('start', 0);
+		$start = phpbb::$request->variable('start', 0);
 		$limit = 100;
 
 		$types = $defaults = array();
@@ -85,7 +85,7 @@ class resync_contrib_count
 		
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
 		$result = phpbb::$db->sql_query_limit($sql, $limit, $start);
-		$prev_contrib = request_var('last', 0);
+		$prev_contrib = phpbb::$request->variable('last', 0);
 					
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{

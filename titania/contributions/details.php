@@ -33,7 +33,7 @@ if ($page == 'report')
 
 	if (titania::confirm_box(true))
 	{
-		$message = utf8_normalize_nfc(request_var('report_text', '', true));
+		$message = utf8_normalize_nfc(phpbb::$request->variable('report_text', '', true));
 		titania::$contrib->report($message);
 
 		// Notifications

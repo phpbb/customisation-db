@@ -30,7 +30,7 @@ else if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'
 	exit;
 }
 
-$revision_id = request_var('id', 0);
+$revision_id = phpbb::$request->variable('id', 0);
 
 send_file_to_browser($revision_id, titania::$config->modx_storage_path);
 file_gc();

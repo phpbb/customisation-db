@@ -337,7 +337,7 @@ class umil_frontend extends umil
 
 		$tpl = array();
 
-		$default = (isset($vars['default'])) ? request_var($name, $vars['default']) : request_var($name, '');
+		$default = (isset($vars['default'])) ? phpbb::$request->variable($name, $vars['default']) : phpbb::$request->variable($name, '');
 
 		switch ($tpl_type[0])
 		{

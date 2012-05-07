@@ -261,7 +261,7 @@ class titania_attachment extends titania_database_object
 		{
 			$output = array(
 				'FILENAME'			=> basename($row['real_filename']),
-				'FILE_COMMENT'		=> utf8_normalize_nfc(request_var('attachment_comment_' . $attachment_id, (string) $row['attachment_comment'], true)),
+				'FILE_COMMENT'		=> utf8_normalize_nfc(phpbb::$request->variable('attachment_comment_' . $attachment_id, (string) $row['attachment_comment'], true)),
 				'ATTACH_ID'			=> $row['attachment_id'],
 
 				'U_VIEW_ATTACHMENT'	=> titania_url::build_url('download', array('id' => $row['attachment_id'])),
@@ -277,7 +277,7 @@ class titania_attachment extends titania_database_object
 				// Try to grab it from post first
 				if (isset($_POST[$row_key . '_' . $row['attachment_id']]))
 				{
-					$output[$output_key] = utf8_normalize_nfc(request_var($row_key . '_' . $row['attachment_id'], '', true));
+					$output[$output_key] = utf8_normalize_nfc(phpbb::$request->variable($row_key . '_' . $row['attachment_id'], '', true));
 				}
 				else if (isset($row[$row_key]))
 				{
@@ -303,7 +303,7 @@ class titania_attachment extends titania_database_object
 	public function upload($max_thumbnail_width = false)
 	{
 		// First, we shall handle the items already attached
-		$attached_ids = request_var($this->form_name . '_attachments', array(0));
+		$attached_ids = phpbb::$request->variable($this->form_name . '_attachments', array(0));
 
 		// Query the ones we must
 		$to_query = array_diff($attached_ids, array_keys($this->attachments));
@@ -322,7 +322,7 @@ class titania_attachment extends titania_database_object
 		}
 
 		// Next, delete those requested
-		$delete = request_var('delete_file', array(0));
+		$delete = phpbb::$request->variable('delete_file', array(0));
 		foreach ($delete as $attach_id => $null)
 		{
 			$this->delete($attach_id);
@@ -337,7 +337,7 @@ class titania_attachment extends titania_database_object
 		}
 
 		// set requested attachment as preview
-		$preview = request_var('set_preview_file' . $this->object_type, 0);
+		$preview = phpbb::$request->variable('set_preview_file' . $this->object_type, 0);
 		if ($preview)
 		{
 			$this->set_preview($preview);
@@ -345,7 +345,7 @@ class titania_attachment extends titania_database_object
 
 
 		// And undelete any
-		/*$undelete = request_var('undelete_file', array(0));
+		/*$undelete = phpbb::$request->variable('undelete_file', array(0));
 		foreach ($delete as $attach_id => $null)
 		{
 			if (isset($this->attachments[$attach_id]))
@@ -426,7 +426,7 @@ class titania_attachment extends titania_database_object
 							'thumbnail'				=> $has_thumbnail,
 							'is_preview'			=> $is_preview,
 
-							'attachment_comment'	=> utf8_normalize_nfc(request_var('filecomment', '', true)),
+							'attachment_comment'	=> utf8_normalize_nfc(phpbb::$request->variable('filecomment', '', true)),
 						));
 						parent::submit();
 
@@ -436,7 +436,7 @@ class titania_attachment extends titania_database_object
 						// Additional fields
 						foreach ($this->additional_fields as $output_key => $row_key)
 						{
-							$this->attachments[$this->attachment_id][$row_key] = utf8_normalize_nfc(request_var($row_key, '', true));
+							$this->attachments[$this->attachment_id][$row_key] = utf8_normalize_nfc(phpbb::$request->variable($row_key, '', true));
 						}
 					}
 
@@ -475,7 +475,7 @@ class titania_attachment extends titania_database_object
 				continue;
 			}*/
 
-			$attachment_comment = utf8_normalize_nfc(request_var('attachment_comment_' . $attachment_id, '', true));
+			$attachment_comment = utf8_normalize_nfc(phpbb::$request->variable('attachment_comment_' . $attachment_id, '', true));
 			if ($row['attachment_comment'] != $attachment_comment)
 			{
 				$sql = 'UPDATE ' . $this->sql_table . '
@@ -710,7 +710,7 @@ class titania_attachment extends titania_database_object
 
 			if ($preview)
 			{
-				$comment = bbcode_nl2br(censor_text(utf8_normalize_nfc(request_var('attachment_comment_' . $attachment_id, (string) $attachment['attachment_comment'], true))));
+				$comment = bbcode_nl2br(censor_text(utf8_normalize_nfc(phpbb::$request->variable('attachment_comment_' . $attachment_id, (string) $attachment['attachment_comment'], true))));
 			}
 			else
 			{

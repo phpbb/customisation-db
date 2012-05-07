@@ -110,13 +110,13 @@ if (phpbb::$request->variable('cache', '') == 'purge' && phpbb::$auth->acl_get('
 if (isset($_GET['sync']) && phpbb::$auth->acl_get('a_'))
 {
 	$sync = new titania_sync;
-	$method = explode('_', request_var('sync', ''), 2);
+	$method = explode('_', phpbb::$request->variable('sync', ''), 2);
 
 	if (method_exists($sync, $method[0]))
 	{
 		if (isset($method[1]))
 		{
-			$id = request_var('id', 0);
+			$id = phpbb::$request->variable('id', 0);
 			$sync->$method[0]($method[1], $id);
 		}
 		else

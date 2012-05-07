@@ -58,7 +58,7 @@ class organize_lang
 			return;
 		}
 
-		$file = request_var('file', '');
+		$file = phpbb::$request->variable('file', '');
 		if (!$file || (!file_exists(TITANIA_ROOT . 'language/' . $file) && !file_exists(TITANIA_ROOT . 'language/' . $file . '.' . PHP_EXT)))
 		{
 			$error[] = 'NO_FILE';
@@ -195,7 +195,7 @@ function organize_lang($file, $skip_errors = false)
 		}
 
 		// if we went to a subdirectory, return
-		if ($file != request_var('file', '') && $file . '/' != request_var('file', ''))
+		if ($file != phpbb::$request->variable('file', '') && $file . '/' != phpbb::$request->variable('file', ''))
 		{
 			return;
 		}

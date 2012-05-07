@@ -33,12 +33,12 @@ else if (in_array(titania::$contrib->contrib_status, array(TITANIA_CONTRIB_CLEAN
 	titania::needs_auth();
 }
 
-$step = request_var('step', 0);
-$revision_id = request_var('revision_id', 0);
+$step = phpbb::$request->variable('step', 0);
+$revision_id = phpbb::$request->variable('revision_id', 0);
 //$phpbb_versions = titania::$cache->get_phpbb_versions();
-//$revision_phpbb_versions = request_var('revision_phpbb_versions', array(''));
+//$revision_phpbb_versions = phpbb::$request->variable('revision_phpbb_versions', array(''));
 
-$disagree = request_var('disagree', false);
+$disagree = phpbb::$request->variable('disagree', false);
 if ($disagree)
 {
 	// Did not agree to the agreement.
@@ -46,7 +46,7 @@ if ($disagree)
 }
 
 // Repack a revision
-$repack = request_var('repack', 0);
+$repack = phpbb::$request->variable('repack', 0);
 if ($repack)
 {
 	$old_revision = new titania_revision(titania::$contrib, $repack);
@@ -119,9 +119,9 @@ if ($step == 1)
 	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 	$revision_attachment->is_orphan = false;
 	$revision_attachment->upload();
-	$revision_version = utf8_normalize_nfc(request_var('revision_version', '', true));
-	$queue_allow_repack = request_var('queue_allow_repack', 0);
-	$revision_license = utf8_normalize_nfc(request_var('revision_license', '', true));
+	$revision_version = utf8_normalize_nfc(phpbb::$request->variable('revision_version', '', true));
+	$queue_allow_repack = phpbb::$request->variable('queue_allow_repack', 0);
+	$revision_license = utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true));
 
 	// Check for errors
 	$error = array_merge($error, $revision_attachment->error);
@@ -162,7 +162,7 @@ if ($step == 1)
 	}
 	else
 	{
-		$selected_branches = request_var('phpbb_branch', array(0));
+		$selected_branches = phpbb::$request->variable('phpbb_branch', array(0));
 		$selected_branches = array_intersect($selected_branches, $allowed_branches);
 
 		if (!sizeof($selected_branches))
@@ -183,10 +183,10 @@ if ($step == 1)
 		$revision = new titania_revision(titania::$contrib);
 		$revision->__set_array(array(
 			'attachment_id'			=> $revision_attachment->attachment_id,
-			'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', '', true)),
+			'revision_name'			=> utf8_normalize_nfc(phpbb::$request->variable('revision_name', '', true)),
 			'revision_version'		=> $revision_version,
 			'queue_allow_repack'	=> $queue_allow_repack,
-			'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE'] || !titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? $revision_license : utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
+			'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE'] || !titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? $revision_license : utf8_normalize_nfc(phpbb::$request->variable('revision_custom_license', '', true)),
 		));
 		$revision->phpbb_versions = $selected_branches;
 
@@ -235,7 +235,7 @@ if ($step == 1)
 			$queue->queue_allow_repack = $queue_allow_repack;
 			$queue->submit();
 			
-			$subscribe_author = request_var('subscribe_author', false);
+			$subscribe_author = phpbb::$request->variable('subscribe_author', false);
 
 			// Subscribe author to queue discussion topic
 			if ($subscribe_author && !$repack)
@@ -517,18 +517,18 @@ if ($step == 0 || sizeof($error))
 
 	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 	phpbb::$template->assign_vars(array(
-		'REVISION_NAME'				=> utf8_normalize_nfc(request_var('revision_name', '', true)),
-		'REVISION_VERSION'			=> utf8_normalize_nfc(request_var('revision_version', '', true)),
-		'REVISION_LICENSE'			=> utf8_normalize_nfc(request_var('revision_license', '', true)),
-		'REVISION_CUSTOM_LICENSE'	=> utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
-		'QUEUE_ALLOW_REPACK'		=> request_var('queue_allow_repack', false),
+		'REVISION_NAME'				=> utf8_normalize_nfc(phpbb::$request->variable('revision_name', '', true)),
+		'REVISION_VERSION'			=> utf8_normalize_nfc(phpbb::$request->variable('revision_version', '', true)),
+		'REVISION_LICENSE'			=> utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true)),
+		'REVISION_CUSTOM_LICENSE'	=> utf8_normalize_nfc(phpbb::$request->variable('revision_custom_license', '', true)),
+		'QUEUE_ALLOW_REPACK'		=> phpbb::$request->variable('queue_allow_repack', false),
 
 		'NEXT_STEP'					=> 1,
 
 		'S_CAN_SUBSCRIBE'					=> ($author_subscribed || !$allow_subscription) ? false : true,
-		'S_CUSTOM_LICENSE'					=> (utf8_normalize_nfc(request_var('revision_license', '', true)) == phpbb::$user->lang['CUSTOM_LICENSE']) ? true : false,
+		'S_CUSTOM_LICENSE'					=> (utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true)) == phpbb::$user->lang['CUSTOM_LICENSE']) ? true : false,
 		'S_ALLOW_CUSTOM_LICENSE'			=> (titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? true : false,
-		'SUBSCRIBE_AUTHOR'					=> request_var('subscribe_author', false),
+		'SUBSCRIBE_AUTHOR'					=> phpbb::$request->variable('subscribe_author', false),
 	));
 
 	// Assign separately so we can output some data first

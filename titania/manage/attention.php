@@ -22,9 +22,9 @@ if (!phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_m
 
 phpbb::$user->add_lang('mcp');
 
-$attention_id = request_var('a', 0);
-$object_type = request_var('type', 0);
-$object_id = request_var('id', 0);
+$attention_id = phpbb::$request->variable('a', 0);
+$object_type = phpbb::$request->variable('type', 0);
+$object_id = phpbb::$request->variable('id', 0);
 
 $close = (isset($_POST['close'])) ? true : false;
 $approve = (isset($_POST['approve'])) ? true : false;
@@ -331,7 +331,7 @@ if ($attention_id || ($object_type && $object_id))
 }
 else
 {
-	$type = request_var('type', '');
+	$type = phpbb::$request->variable('type', '');
 	if (isset($_POST['sort']))
 	{
 		$closed = (isset($_POST['closed'])) ? true : false;
@@ -349,12 +349,12 @@ else
 	}
 	else
 	{
-		$closed = request_var('closed', false);
-		$open = (request_var('open', false) || !$closed) ? true : false;
+		$closed = phpbb::$request->variable('closed', false);
+		$open = (phpbb::$request->variable('open', false) || !$closed) ? true : false;
 	}
 
 	/*$close = (isset($_POST['close'])) ? true : false;
-	$id_list = request_var('id_list', array(0));
+	$id_list = phpbb::$request->variable('id_list', array(0));
 
 	if ($close && sizeof($id_list))
 	{

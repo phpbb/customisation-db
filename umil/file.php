@@ -23,7 +23,7 @@ $user->session_begin();
 $auth->acl($user->data);
 $user->setup('viewtopic');
 
-$file = request_var('file', '');
+$file = phpbb::$request->variable('file', '');
 $filename = $phpbb_root_path . 'umil/error_files/' . $file . '.txt';
 
 if ($user->data['user_type'] != USER_FOUNDER || // Only founders can access this.

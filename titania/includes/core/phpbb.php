@@ -316,7 +316,7 @@ class phpbb
 			// Get credential
 			if ($admin)
 			{
-				$credential = request_var('credential', '');
+				$credential = phpbb::$request->variable('credential', '');
 
 				if (strspn($credential, 'abcdef0123456789') !== strlen($credential) || strlen($credential) != 32)
 				{
@@ -327,14 +327,14 @@ class phpbb
 					trigger_error('NO_AUTH_ADMIN');
 				}
 
-				$password	= request_var('password_' . $credential, '', true);
+				$password	= phpbb::$request->variable('password_' . $credential, '', true);
 			}
 			else
 			{
-				$password	= request_var('password', '', true);
+				$password	= phpbb::$request->variable('password', '', true);
 			}
 
-			$username	= request_var('username', '', true);
+			$username	= phpbb::$request->variable('username', '', true);
 			$autologin	= (!empty($_POST['autologin'])) ? true : false;
 			$viewonline = (!empty($_POST['viewonline'])) ? 0 : 1;
 			$admin 		= ($admin) ? 1 : 0;
@@ -373,7 +373,7 @@ class phpbb
 			// The result parameter is always an array, holding the relevant information...
 			if ($result['status'] == LOGIN_SUCCESS)
 			{
-				$redirect = request_var('redirect', '');
+				$redirect = phpbb::$request->variable('redirect', '');
 
 				if ($redirect)
 				{

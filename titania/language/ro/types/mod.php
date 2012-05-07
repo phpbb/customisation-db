@@ -102,7 +102,7 @@ Vă rugăm să consultaţi următoarele legături ^inainte de a retrimite modifi
 [*][url=http://www.phpbb.com/mods/modx/]Standardul phpBB MODX[/url]
 [*][b]Securizare modificări:[/b]
 [url=http://blog.phpbb.com/2009/02/12/injection-vulnerabilities/]Prevenire vulnerabilitate injecţie[/url]
-[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-request_var/]Cum să (nu) folosim request_var[/url]
+[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-phpbb::$request->variable/]Cum să (nu) folosim phpbb::$request->variable[/url]
 [/list]
 
 Pentru mai multe informaţii puteţi consulta:

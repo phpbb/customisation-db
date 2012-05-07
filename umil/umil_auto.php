@@ -80,7 +80,7 @@ if (!class_exists('umil_frontend'))
 	include($phpbb_root_path . 'umil/umil_frontend.' . $phpEx);
 }
 
-$force_display_results = request_var('display_results', (defined('DEBUG') ? true : false));
+$force_display_results = phpbb::$request->variable('display_results', (defined('DEBUG') ? true : false));
 $umil = new umil_frontend($mod_name, true, $force_display_results);
 
 // Check after initiating UMIL.
@@ -102,8 +102,8 @@ foreach ($versions as $version => $actions)
 $template->assign_var('L_TITLE_EXPLAIN', ((isset($user->lang[$mod_name . '_EXPLAIN'])) ? $user->lang[$mod_name . '_EXPLAIN'] . '<br /><br />' : '') . sprintf($user->lang['VERSIONS'], $current_version, ((isset($config[$version_config_name])) ? $config[$version_config_name] : $user->lang['NONE'])));
 
 $submit = (isset($_POST['submit'])) ? true : false;
-$action = request_var('action', '');
-$version_select = request_var('version_select', '');
+$action = phpbb::$request->variable('action', '');
+$version_select = phpbb::$request->variable('version_select', '');
 
 $current_page = (strpos($user->page['page'], '?') !== false) ? substr($user->page['page'], 0, strpos($user->page['page'], '?')) : $user->page['page'];
 
@@ -139,7 +139,7 @@ else if (!$umil->confirm_box(true))
 	$hidden = array();
 	foreach ($options as $key => $data)
 	{
-		$hidden[$key] = request_var($key, '', true);
+		$hidden[$key] = phpbb::$request->variable($key, '', true);
 	}
 
 	switch ($action)

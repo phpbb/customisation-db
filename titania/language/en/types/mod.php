@@ -102,7 +102,7 @@ Please refer to the following links before you reupload your modification:
 [*][url=http://www.phpbb.com/mods/modx/]phpBB MODX standard[/url]
 [*][b]Securing MODs:[/b]
 [url=http://blog.phpbb.com/2009/02/12/injection-vulnerabilities/]Injection Vulnerability Prevention[/url]
-[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-request_var/]How (not) to use request_var[/url]
+[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-phpbb::$request->variable/]How (not) to use phpbb::$request->variable[/url]
 [/list]
 
 For further reading, you may want to review the following:

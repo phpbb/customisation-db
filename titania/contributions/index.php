@@ -16,7 +16,7 @@ if (!defined('PHP_EXT')) define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 include(TITANIA_ROOT . 'common.' . PHP_EXT);
 
 // Setup some vars
-$page = basename(request_var('page', ''));
+$page = basename(phpbb::$request->variable('page', ''));
 
 // Add common lang
 titania::add_lang('contributions');
@@ -74,8 +74,8 @@ switch ($page)
 */
 function load_contrib($contrib_id = false)
 {
-	$contrib = (request_var('id', 0)) ? request_var('id', 0) : utf8_normalize_nfc(request_var('c', '', true));
-	$type = request_var('type', '');
+	$contrib = (phpbb::$request->variable('id', 0)) ? phpbb::$request->variable('id', 0) : utf8_normalize_nfc(phpbb::$request->variable('c', '', true));
+	$type = phpbb::$request->variable('type', '');
 
 	// Load the contribution
 	titania::$contrib = new titania_contribution();
@@ -89,7 +89,7 @@ function load_contrib($contrib_id = false)
 	if (($contrib_id !== false && $contrib_id != titania::$contrib->contrib_id) || $type != titania_types::$types[titania::$contrib->contrib_type]->url)
 	{
 		// Mismatch, redirect
-		redirect(titania::$contrib->get_url(basename(request_var('page', 'details'))));
+		redirect(titania::$contrib->get_url(basename(phpbb::$request->variable('page', 'details'))));
 	}
 
 	// Put the author in titania::$author
@@ -174,7 +174,7 @@ function load_contrib($contrib_id = false)
 	);
 	
 	// Display nav menu
-	$page = request_var('page', '');
+	$page = phpbb::$request->variable('page', '');
 	titania::generate_nav($nav_ary, $page, 'details');
 
 	titania::generate_breadcrumbs(array(

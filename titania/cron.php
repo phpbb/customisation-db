@@ -18,7 +18,7 @@ require TITANIA_ROOT . 'common.' . PHP_EXT;
 
 @set_time_limit(1200);
 
-$cron_type = request_var('cron_type', '');
+$cron_type = phpbb::$request->variable('cron_type', '');
 $use_shutdown_function = (@function_exists('register_shutdown_function')) ? true : false;
 
 // Output transparent gif

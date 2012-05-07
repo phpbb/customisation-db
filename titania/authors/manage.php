@@ -39,8 +39,8 @@ if ($submit)
 	titania::$author->post_data($message);
 
 	titania::$author->__set_array(array(
-		'author_realname'	=> utf8_normalize_nfc(request_var('realname', '', true)),
-		'author_website'	=> request_var('website', ''),
+		'author_realname'	=> utf8_normalize_nfc(phpbb::$request->variable('realname', '', true)),
+		'author_website'	=> phpbb::$request->variable('website', ''),
 	));
 
 	$error = titania::$author->validate();

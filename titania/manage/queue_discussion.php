@@ -16,12 +16,12 @@ if (!defined('IN_TITANIA'))
 }
 
 // Mark all topics read
-if (request_var('mark', '') == 'topics')
+if (phpbb::$request->variable('mark', '') == 'topics')
 {
 	titania_tracking::track(TITANIA_QUEUE_DISCUSSION, 0);
 }
 
-$queue_type = request_var('queue', '');
+$queue_type = phpbb::$request->variable('queue', '');
 
 // Force the queue_type if we have a queue_id
 $queue_type = titania_types::type_from_url($queue_type);

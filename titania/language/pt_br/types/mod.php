@@ -106,7 +106,7 @@ Por favor, consulte os links a seguir antes de enviar novamente a sua modificaç
 [*][url=http://www.phpbb.com/mods/modx/]Padrões phpBB MODX[/url]
 [*][b]Protegendo modificações:[/b]
 [url=http://blog.phpbb.com/2009/02/12/injection-vulnerabilities/]Prevenindo vulnerabilidades[/url]
-[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-request_var/]Como (não) usar request_var[/url]
+[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-phpbb::$request->variable/]Como (não) usar phpbb::$request->variable[/url]
 [/list]
 
 Para leitura auxiliar, talvez você queira rever o seguinte (em inglês):

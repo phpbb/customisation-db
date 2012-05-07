@@ -27,15 +27,15 @@ else if (strpos(phpbb::$request->server('HTTP_USER_AGENT'), 'Java') !== false)
 	exit;
 }
 
-$download_id = request_var('id', 0);
-$mode = request_var('mode', '');
-$thumbnail = request_var('thumb', false);
+$download_id = phpbb::$request->variable('id', 0);
+$mode = phpbb::$request->variable('mode', '');
+$thumbnail = phpbb::$request->variable('thumb', false);
 
 if (!$download_id)
 {
 	// Mostly to make moving from Ariel easier
-	$revision_id = request_var('revision', 0);
-	$contrib_id = request_var('contrib', 0);
+	$revision_id = phpbb::$request->variable('revision', 0);
+	$contrib_id = phpbb::$request->variable('contrib', 0);
 	if ($revision_id)
 	{
 		$sql = 'SELECT attachment_id FROM ' . TITANIA_REVISIONS_TABLE . '

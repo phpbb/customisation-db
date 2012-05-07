@@ -24,9 +24,9 @@ phpbb::$user->add_lang('acp/common');
 
 titania::_include('functions_posting', 'generate_type_select');
 
-$category_id 	= request_var('c', 0);
+$category_id 	= phpbb::$request->variable('c', 0);
 $submit 	= (isset($_POST['submit'])) ? true : false;
-$action		= request_var('action', '');
+$action		= phpbb::$request->variable('action', '');
 
 switch ($action)
 {
@@ -72,12 +72,12 @@ switch ($action)
 			unset($category_object->category_name);
 
 			$category_object->category_id = ($action == 'edit') ? $category_id : '';
-			$category_name = utf8_normalize_nfc(request_var('category_name', '', true));
+			$category_name = utf8_normalize_nfc(phpbb::$request->variable('category_name', '', true));
 			$category_object->category_name = ($category_name == $old_category_name_lang) ? $old_category_name : $category_name;
-			$category_object->category_name_clean = utf8_normalize_nfc(request_var('category_name_clean', '', true));
-			$category_object->parent_id = request_var('category_parent', 0);
-			$category_object->category_visible = request_var('category_visible', 1);
-			$category_object->category_type = request_var('category_type', 0);
+			$category_object->category_name_clean = utf8_normalize_nfc(phpbb::$request->variable('category_name_clean', '', true));
+			$category_object->parent_id = phpbb::$request->variable('category_parent', 0);
+			$category_object->category_visible = phpbb::$request->variable('category_visible', 1);
+			$category_object->category_type = phpbb::$request->variable('category_type', 0);
 
 			// Check for errors
 			if (!$category_object->category_name || !$category_object->category_name_clean)
@@ -161,7 +161,7 @@ switch ($action)
 				
 				// Set category options
 				$category_object->category_options = 0;
-				$category_object->category_options += (request_var('integrate_demo', false)) ? TITANIA_CAT_FLAG_DEMO : 0; 
+				$category_object->category_options += (phpbb::$request->variable('integrate_demo', false)) ? TITANIA_CAT_FLAG_DEMO : 0; 
 
 				// Only update category if no errors occurred from moving it
 				if (!sizeof($error))
@@ -233,8 +233,8 @@ switch ($action)
 
 		if($submit)
 		{
-			$action_contribs	= request_var('action_contribs', '');
-			$contribs_to_id		= request_var('contribs_to_id', 0);
+			$action_contribs	= phpbb::$request->variable('action_contribs', '');
+			$contribs_to_id		= phpbb::$request->variable('contribs_to_id', 0);
 
 			// Check for errors
 			$sql = 'SELECT category_id

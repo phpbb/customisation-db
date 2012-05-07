@@ -26,10 +26,10 @@ function build_cfg_template($tpl_type, $name, $vars)
 
 	$tpl = array();
 
-	// Give the option to not do a request_var here and never do it for password fields.
-	if ((!isset($vars['no_request_var']) || !$vars['no_request_var']) && $tpl_type[0] != 'password')
+	// Give the option to not do a phpbb::$request->variable here and never do it for password fields.
+	if ((!isset($vars['no_phpbb::$request->variable']) || !$vars['no_phpbb::$request->variable']) && $tpl_type[0] != 'password')
 	{
-		$default = (isset($vars['default'])) ? request_var($name, $vars['default']) : request_var($name, '');
+		$default = (isset($vars['default'])) ? phpbb::$request->variable($name, $vars['default']) : phpbb::$request->variable($name, '');
 	}
 	else
 	{

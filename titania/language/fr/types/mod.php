@@ -102,7 +102,7 @@ Veuillez vous référer aux liens suivants avant de transférer à nouveau votre
 [*][url=http://www.phpbb.com/mods/modx/]Informations sur MODX[/url]
 [*][b]Sécurisation des MODs :[/b]
 [url=http://blog.phpbb.com/2009/02/12/injection-vulnerabilities/]Prévention des vulnérabilités d’injection[/url]
-[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-request_var/]Comment (ne pas) utiliser request_var[/url]
+[url=http://blog.phpbb.com/2009/09/10/how-not-to-use-phpbb::$request->variable/]Comment (ne pas) utiliser phpbb::$request->variable[/url]
 [/list]
 
 Pour plus de renseignements, vous pouvez être intéressé par les liens suivants :

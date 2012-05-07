@@ -145,7 +145,7 @@ class titania_sort extends titania_object
 	 */
 	public function get_start($default = 0)
 	{
-		$this->start = request_var($this->start_name, (int) $default);
+		$this->start = phpbb::$request->variable($this->start_name, (int) $default);
 
 		return $this->start;
 	}
@@ -164,7 +164,7 @@ class titania_sort extends titania_object
 			$this->default_limit = $default;
 		}
 
-		$limit = request_var($this->limit_name, (int) $this->default_limit);
+		$limit = phpbb::$request->variable($this->limit_name, (int) $this->default_limit);
 
 		// Don't allow limits of 0 which is unlimited results. Instead use the max limit.
 		$limit = ($limit == 0) ? $this->max_limit : $limit;
@@ -180,7 +180,7 @@ class titania_sort extends titania_object
 	 */
 	public function get_sort_key()
 	{
-		$this->sort_key = request_var($this->sort_key_name, (string) $this->default_sort_key);
+		$this->sort_key = phpbb::$request->variable($this->sort_key_name, (string) $this->default_sort_key);
 
 		if (!isset($this->sort_key_ary[$this->sort_key]))
 		{
@@ -195,7 +195,7 @@ class titania_sort extends titania_object
 	 */
 	public function get_sort_dir()
 	{
-		$this->sort_dir = (request_var($this->sort_dir_name, (string) $this->default_sort_dir) == $this->default_sort_dir) ? $this->default_sort_dir : (($this->default_sort_dir == 'a') ? 'd' : 'a');
+		$this->sort_dir = (phpbb::$request->variable($this->sort_dir_name, (string) $this->default_sort_dir) == $this->default_sort_dir) ? $this->default_sort_dir : (($this->default_sort_dir == 'a') ? 'd' : 'a');
 
 		return $this->sort_dir;
 	}

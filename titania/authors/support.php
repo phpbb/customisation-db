@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 }
 
 // Mark all topics read
-if (request_var('mark', '') == 'topics')
+if (phpbb::$request->variable('mark', '') == 'topics')
 {
 	foreach (titania::$cache->get_author_contribs(titania::$author->user_id) as $contrib_id)
 	{

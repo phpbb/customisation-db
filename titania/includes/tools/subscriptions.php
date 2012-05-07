@@ -33,12 +33,12 @@ class titania_subscriptions
 			return;
 		}
 
-		$subscribe = request_var('subscribe', '');
-		if ($subscribe == 'subscribe' && check_link_hash(request_var('hash', ''), 'subscribe'))
+		$subscribe = phpbb::$request->variable('subscribe', '');
+		if ($subscribe == 'subscribe' && check_link_hash(phpbb::$request->variable('hash', ''), 'subscribe'))
 		{
 			titania_subscriptions::subscribe($object_type, $object_id);
 		}
-		else if ($subscribe == 'unsubscribe' && check_link_hash(request_var('hash', ''), 'unsubscribe'))
+		else if ($subscribe == 'unsubscribe' && check_link_hash(phpbb::$request->variable('hash', ''), 'unsubscribe'))
 		{
 			titania_subscriptions::unsubscribe($object_type, $object_id);
 		}
