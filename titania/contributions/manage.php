@@ -28,7 +28,7 @@ if (!((((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) 
 }
 
 // Set some main vars up
-$submit = (isset($_POST['submit'])) ? true : false;
+$submit = phpbb::$request->is_set_post('submit');
 $change_owner = phpbb::$request->variable('change_owner', '', true); // Blame Nathan, he said this was okay
 $contrib_categories = phpbb::$request->variable('contrib_category', array(0));
 $contrib_demo = utf8_normalize_nfc(phpbb::$request->variable('demo_url', '', true));
@@ -92,7 +92,7 @@ $screenshot->load_attachments();
 $screenshot->upload(175);
 $error = array_merge($error, $screenshot->error);
 
-if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
+if ($screenshot->uploaded || phpbb::$request->is_set_post('preview') || $submit)
 {
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
@@ -110,20 +110,20 @@ if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contr
     $clr_sample->load_attachments();
     $clr_sample->upload();
     $error = array_merge($error, $clr_sample->error);
-    if ($clr_sample->uploaded || isset($_POST['preview']) || $submit)
+    if ($clr_sample->uploaded || phpbb::$request->is_set_post('preview') || $submit)
     {
         titania::$contrib->post_data($message);
     }
 }
 
-if (isset($_POST['preview']))
+if (phpbb::$request->is_set_post('preview'))
 {
 	$message->preview();
 }
 else if ($submit)
 {
 	// Handle the deletion routine
-	if (isset($_POST['delete']) && phpbb::$auth->acl_get('u_titania_admin'))
+	if (phpbb::$request->is_set_post('delete') && phpbb::$auth->acl_get('u_titania_admin'))
 	{
 		titania::$contrib->delete();
 

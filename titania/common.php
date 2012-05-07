@@ -93,7 +93,7 @@ if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version'])
 titania::initialise();
 
 // Allow login attempts from any page (mini login box)
-if (isset($_POST['login']))
+if (phpbb::$request->is_set_post('login'))
 {
 	phpbb::login_box();
 }
@@ -107,7 +107,7 @@ if (phpbb::$request->variable('cache', '') == 'purge' && phpbb::$auth->acl_get('
 }
 
 // admin requested a sync
-if (isset($_GET['sync']) && phpbb::$auth->acl_get('a_'))
+if (phpbb::$request->is_set('sync', '_GET') && phpbb::$auth->acl_get('a_'))
 {
 	$sync = new titania_sync;
 	$method = explode('_', phpbb::$request->variable('sync', ''), 2);

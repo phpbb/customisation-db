@@ -18,14 +18,11 @@ require TITANIA_ROOT . 'common.' . PHP_EXT;
 phpbb::$user->add_lang('viewtopic');
 
 // Thank you sun.
-if (isset($_SERVER['CONTENT_TYPE']))
+if (phpbb::$request->server('CONTENT_TYPE') === 'application/x-java-archive')
 {
-	if ($_SERVER['CONTENT_TYPE'] === 'application/x-java-archive')
-	{
-		exit;
-	}
+	exit;
 }
-else if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Java') !== false)
+else if (strpos(phpbb::$request->server('HTTP_USER_AGENT'), 'Java') !== false)
 {
 	exit;
 }
@@ -119,7 +116,7 @@ function send_file_to_browser($attachment, $upload_dir)
 */
 function header_filename($file)
 {
-	$user_agent = (!empty($_SERVER['HTTP_USER_AGENT'])) ? htmlspecialchars((string) $_SERVER['HTTP_USER_AGENT']) : '';
+	$user_agent = phpbb::$request->server('HTTP_USER_AGENT');
 
 	// There be dragons here.
 	// Not many follows the RFC...
@@ -142,7 +139,7 @@ function download_allowed()
 		return true;
 	}
 
-	$url = (!empty($_SERVER['HTTP_REFERER'])) ? trim($_SERVER['HTTP_REFERER']) : trim(getenv('HTTP_REFERER'));
+	$url = phpbb::$request->server('HTTP_REFERER');
 
 	if (!$url)
 	{
@@ -248,7 +245,7 @@ function download_allowed()
 function set_modified_headers($stamp, $browser)
 {
 	// let's see if we have to send the file at all
-	$last_load 	=  isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? strtotime(trim($_SERVER['HTTP_IF_MODIFIED_SINCE'])) : false;
+	$last_load 	=  (phpbb::$request->server('HTTP_IF_MODIFIED_SINCE')) ? strtotime(phpbb::$request->server('HTTP_IF_MODIFIED_SINCE') : false;
 	if ((strpos(strtolower($browser), 'msie 6.0') === false) && (strpos(strtolower($browser), 'msie 8.0') === false))
 	{
 		if ($last_load !== false && $last_load <= $stamp)

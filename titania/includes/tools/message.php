@@ -135,9 +135,9 @@ class titania_message
 		// Setup the attachments!
 		$this->setup_attachments();
 
-		$submit = isset($_POST['submit']) ? true : false;
-		$preview = isset($_POST['preview']) ? true : false;
-		$full_editor = isset($_POST['full_editor']) ? true : false;
+		$submit = phpbb::$request->is_set_post('submit');
+		$preview = phpbb::$request->is_set_post('preview');
+		$full_editor = phpbb::$request->is_set_post('full_editor');
 
 		// Submit the data to the post object
 		if (method_exists($this->post_object, 'post_data') && ($submit || $preview || $full_editor || ($this->attachments && ($this->attachments->uploaded || $this->attachments->deleted))))
@@ -149,7 +149,8 @@ class titania_message
 				foreach ($delete as $attach_id => $null)
 				{
 					$index = phpbb::$request->variable('index_' . $attach_id, 0);
-					$_REQUEST[$this->settings['text_name']] = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "(\\1 == \$index) ? '' : ((\\1 > \$index) ? '[attachment=' . (\\1 - 1) . ']\\2[/attachment]' : '\\0')", $_REQUEST[$this->settings['text_name']]);
+					$text_name_value = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "(\\1 == \$index) ? '' : ((\\1 > \$index) ? '[attachment=' . (\\1 - 1) . ']\\2[/attachment]' : '\\0')", phpbb::$request->variable($this->settings['text_name'], '', true));
+					phpbb::$request->overwrite($this->settings['text_name'], $text_name_value); 
 				}
 			}
 
@@ -360,21 +361,21 @@ class titania_message
 		$post_options = new post_options();
 		$post_options->set_auth($this->auth['bbcode'], $this->auth['smilies'], true, true, true);
 
-		$bbcode_disabled = (isset($_POST['disable_bbcode']) || !$post_options->get_status('bbcode')) ? true : false;
-		$smilies_disabled = (isset($_POST['disable_smilies']) || !$post_options->get_status('smilies')) ? true : false;
-		$magic_url_disabled = (isset($_POST['disable_magic_url'])) ? true : false;
+		$bbcode_disabled = (phpbb::$request->is_set_post('disable_bbcode') || !$post_options->get_status('bbcode')) ? true : false;
+		$smilies_disabled = (phpbb::$request->is_set_post('disable_smilies') || !$post_options->get_status('smilies')) ? true : false;
+		$magic_url_disabled = phpbb::$request->is_set_post('disable_magic_url');
 
 		$data = array(
 			'access'			=> phpbb::$request->variable('message_access', (int) ((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC)),
-			'lock'				=> ($this->auth['lock'] && isset($_POST['lock'])) ? true : false,
+			'lock'				=> ($this->auth['lock'] && phpbb::$request->is_set_post('lock')) ? true : false,
 			'has_attachments'	=> ($this->attachments !== false && sizeof($this->attachments->get_attachments())) ? true : false,
 
 			'bbcode_enabled'	=> !$bbcode_disabled,
 			'smilies_enabled'	=> !$smilies_disabled,
 			'magic_url_enabled'	=> !$magic_url_disabled,
 
-			'sticky_topic'		=> ($this->auth['sticky_topic'] && isset($_POST['sticky_topic'])) ? true : false,
-			'lock_topic'		=> ($this->auth['lock_topic'] && isset($_POST['lock_topic'])) ? true : false,
+			'sticky_topic'		=> ($this->auth['sticky_topic'] && phpbb::$request->is_set_post('sticky_topic')) ? true : false,
+			'lock_topic'		=> ($this->auth['lock_topic'] && phpbb::$request->is_set_post('lock_topic')) ? true : false,
 		);
 
 		if ($this->auth['edit_subject'])
@@ -419,12 +420,12 @@ class titania_message
 
 				if (isset($for_edit[$edit_name]) && !$for_edit[$edit_name])
 				{
-					$_POST[$post_name] = true;
+					phpbb::$request->overwrite($post_name, true, '_POST');
 				}
 			}
 			else if (isset($for_edit[$edit_name]) && $for_edit[$edit_name])
 			{
-				$_POST[$post_name] = true;
+				phpbb::$request->overwrite($post_name, true, '_POST');
 			}
 		}
 	}

@@ -311,7 +311,7 @@ class phpbb
 			trigger_error('NO_AUTH_ADMIN');
 		}
 
-		if (isset($_POST['login']))
+		if (phpbb::$request->is_set_post('login'))
 		{
 			// Get credential
 			if ($admin)
@@ -335,8 +335,8 @@ class phpbb
 			}
 
 			$username	= phpbb::$request->variable('username', '', true);
-			$autologin	= (!empty($_POST['autologin'])) ? true : false;
-			$viewonline = (!empty($_POST['viewonline'])) ? 0 : 1;
+			$autologin	= phpbb::$request->is_set_post('autologin');
+			$viewonline = (!phpbb::$request->is_set_post('viewonline'));
 			$admin 		= ($admin) ? 1 : 0;
 			$viewonline = ($admin) ? self::$user->data['session_viewonline'] : $viewonline;
 

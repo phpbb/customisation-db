@@ -26,10 +26,10 @@ $attention_id = phpbb::$request->variable('a', 0);
 $object_type = phpbb::$request->variable('type', 0);
 $object_id = phpbb::$request->variable('id', 0);
 
-$close = (isset($_POST['close'])) ? true : false;
-$approve = (isset($_POST['approve'])) ? true : false;
-$disapprove = (isset($_POST['disapprove'])) ? true : false;
-$delete = (isset($_POST['delete'])) ? true : false;
+$close = phpbb::$request->is_set_post('close');
+$approve = phpbb::$request->is_set_post('approve');
+$disapprove = phpbb::$request->is_set_post('disapprove');
+$delete = phpbb::$request->is_set_post('delete');
 
 if ($attention_id || ($object_type && $object_id))
 {
@@ -332,10 +332,10 @@ if ($attention_id || ($object_type && $object_id))
 else
 {
 	$type = phpbb::$request->variable('type', '');
-	if (isset($_POST['sort']))
+	if (phpbb::$request->is_set_post('sort'))
 	{
-		$closed = (isset($_POST['closed'])) ? true : false;
-		$open = (isset($_POST['open']) || !$closed) ? true : false;
+		$closed = phpbb::$request->is_set_post('closed');
+		$open = (phpbb::$request->is_set_post('open') || !$closed) ? true : false;
 
 		if ($open && $closed)
 		{

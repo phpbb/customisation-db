@@ -60,7 +60,7 @@ $status_list = array(
 	TITANIA_REVISION_RESUBMITTED		=> 'REVISION_RESUBMITTED',
 );
 
-if ($translation->uploaded || isset($_POST['submit']))
+if ($translation->uploaded || phpbb::$request->is_set_post('submit'))
 {
 	$revision_license = utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true));
 	$revision->__set_array(array(
@@ -76,7 +76,7 @@ if ($translation->uploaded || isset($_POST['submit']))
 }
 
 // Submit the revision
-if (isset($_POST['submit']))
+if (phpbb::$request->is_set_post('submit'))
 {
 	if (!check_form_key('postform'))
 	{
@@ -90,7 +90,7 @@ if (isset($_POST['submit']))
 	if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 	{
 		// Delete the revision if that is what we want
-		if (isset($_POST['delete']) && !sizeof($error))
+		if (phpbb::$request->is_set_post('delete') && !sizeof($error))
 		{
 			$revision->delete();
 

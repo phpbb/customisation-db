@@ -25,7 +25,7 @@ phpbb::$user->add_lang('acp/common');
 titania::_include('functions_posting', 'generate_type_select');
 
 $category_id 	= phpbb::$request->variable('c', 0);
-$submit 	= (isset($_POST['submit'])) ? true : false;
+$submit 	= phpbb::$request->is_set_post('submit');
 $action		= phpbb::$request->variable('action', '');
 
 switch ($action)

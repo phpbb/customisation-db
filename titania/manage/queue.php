@@ -198,7 +198,7 @@ if ($queue_id)
 						$queue->approve($public_notes);
 
 						// Install the style on the demo board?
-						if ($contrib->contrib_type == TITANIA_TYPE_STYLE && isset($_POST['style_demo_install']) && titania::$config->demo_style_path)
+						if ($contrib->contrib_type == TITANIA_TYPE_STYLE && phpbb::$request->is_set_post('style_demo_install') && titania::$config->demo_style_path)
 						{
 							// Reload the contrib, it hath changed
 							$contrib->load((int) $queue->contrib_id);
@@ -257,12 +257,12 @@ if ($queue_id)
 				'PAGE_TITLE_EXPLAIN'		=> phpbb::$user->lang[(($action == 'approve') ? 'APPROVE_QUEUE' : 'DENY_QUEUE') . '_CONFIRM'],
 
 				'PUBLIC_MESSAGE'			=> $public_notes,
-				'PUBLIC_PREVIEW_SUBJECT'	=> (isset($_POST['preview'])) ? 'Re: ' . $contrib->contrib_name : false,
-				'PUBLIC_PREVIEW_MESSAGE'	=> (isset($_POST['preview'])) ? $public_notes_preview : false,
+				'PUBLIC_PREVIEW_SUBJECT'	=> (phpbb::$request->is_set_post('preview')) ? 'Re: ' . $contrib->contrib_name : false,
+				'PUBLIC_PREVIEW_MESSAGE'	=> (phpbb::$request->is_set_post('preview')) ? $public_notes_preview : false,
 
 				'S_CONTRIB_APPROVE'				=> ($action == 'approve') ? true : false,
 				'S_STYLE_DEMO_INSTALL'			=> ($action == 'approve' && $contrib->contrib_type == TITANIA_TYPE_STYLE && titania::$config->demo_style_path) ? true : false,
-				'S_STYLE_DEMO_INSTALL_CHECKED'	=> (isset($_POST['style_demo_install'])) ? true : false,
+				'S_STYLE_DEMO_INSTALL_CHECKED'	=> phpbb::$request->is_set_post('style_demo_install'),
 				'S_PUBLIC_NOTES'				=> ($action == 'approve' && titania_types::$types[$contrib->contrib_type]->update_public) ? true : false,
 				'TOPIC_TITLE'					=> $contrib->contrib_name,
 			));

@@ -371,7 +371,7 @@ class titania
 			'T_TITANIA_TEMPLATE_PATH'	=> self::$template_path,
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
 			'T_TITANIA_IMAGES_PATH'		=> self::$images_path,
-			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . 'style.' . PHP_EXT . '?style=' . self::$config->style,
+			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . 'styles/' . rawurlencode(self::$config->style) . '/theme/stylesheet.css',
 			'T_STYLESHEET_LINK'			=> self::$absolute_board . '/styles/' . rawurlencode(phpbb::$user->theme['style_path']) . '/theme/stylesheet.css?assets_version=' . phpbb::$config['assets_version'],
 			'T_STYLESHEET_NAME'			=> phpbb::$user->theme['style_name'],
 		));
@@ -525,7 +525,7 @@ class titania
 	 */
 	public static function logout($return = false)
 	{
-		if (phpbb::$user->data['user_id'] != ANONYMOUS && isset($_GET['sid']) && !is_array($_GET['sid']) && $_GET['sid'] === phpbb::$user->session_id)
+		if (phpbb::$user->data['user_id'] != ANONYMOUS && phpbb::$request->is_set('sid', '_GET') && phpbb::$request->variable('sid', '', false, '_GET') === phpbb::$user->session_id)
 		{
 			phpbb::$user->session_kill();
 			phpbb::$user->session_begin();
@@ -610,13 +610,13 @@ class titania
 	{
 		$hidden = build_hidden_fields($post);
 
-		if (isset($_POST['cancel']))
+		if (phpbb::$request->is_set_post('cancel'))
 		{
 			return false;
 		}
 
 		$confirm = false;
-		if (isset($_POST['confirm']))
+		if (phpbb::$request->is_set_post('confirm'))
 		{
 			$confirm = true;
 		}

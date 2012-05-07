@@ -32,7 +32,7 @@ $message->set_settings(array(
 	'display_subject'	=> false,
 ));
 
-$submit = (isset($_POST['submit'])) ? true : false;
+$submit = phpbb::$request->is_set_post('submit');
 
 if ($submit)
 {
@@ -53,7 +53,7 @@ if ($submit)
 	if (!sizeof($error))
 	{
 		// Enhanced editor data is stored in the users table
-		$titania_enhanced_editor = (isset($_POST['enhanced_editor'])) ? true : false;
+		$titania_enhanced_editor = phpbb::$request->is_set_post('enhanced_editor');
 		if (titania::$author->user_id == phpbb::$user->data['user_id'] && $titania_enhanced_editor != phpbb::$user->data['titania_enhanced_editor'])
 		{
 			$sql = 'UPDATE ' . USERS_TABLE . '

@@ -269,7 +269,7 @@ class queue_overlord
 		$topic->__set_array($row);
 
 		// Bit of a hack for the posting
-		$_REQUEST['t'] = $topic->topic_id;
+		phpbb::$request->overwrite('t', $topic->topic_id);
 
 		// Some quick-actions
 		$quick_actions = array();
