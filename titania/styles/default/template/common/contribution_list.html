@@ -5,7 +5,7 @@
 				<span class="rightside contribution-list-actions">
 					<!-- IF contribs.U_QUEUE_DISCUSSION --><a href="{contribs.U_QUEUE_DISCUSSION}" title="{L_QUEUE_DISCUSSION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_discuss.gif" alt="{L_QUEUE_DISCUSSION}" /></a>&nbsp;<!-- ENDIF -->
 					<!-- IF contribs.U_CONTRIB_MANAGE --><a href="{contribs.U_CONTRIB_MANAGE}" title="{L_CONTRIB_MANAGE}"><img src="{T_TITANIA_THEME_PATH}/images/icon_settings.gif" alt="{L_CONTRIB_MANAGE}" /></a>&nbsp;<!-- ENDIF -->
-					<!-- IF contribs.U_NEW_REVISION --><a href="{contribs.U_NEW_REVISION}" title="{L_NEW_REVISION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_new_revision.gif" alt="{L_NEW_REVISION}" /></a>&nbsp;<!-- ENDIF -->
+					<!-- IF not contribs.CONTRIB_LIMITED_SUPPORT and contribs.U_NEW_REVISION --><a href="{contribs.U_NEW_REVISION}" title="{L_NEW_REVISION}"><img src="{T_TITANIA_THEME_PATH}/images/icon_new_revision.gif" alt="{L_NEW_REVISION}" /></a>&nbsp;<!-- ENDIF -->
 				</span>
 
 				<a class="topictitle" href="{contribs.U_VIEW_CONTRIB}">{contribs.CONTRIB_NAME}</a>
@@ -20,6 +20,7 @@
 				<!-- ENDIF -->
 				<br />
 				{contribs.CONTRIB_TYPE}<!-- IF not S_AUTHOR_LIST --> {L_BY} {contribs.AUTHOR_NAME_FULL}<!-- ENDIF -->
+				<!-- IF S_AUTHOR_LIST and contribs.CONTRIB_LIMITED_SUPPORT --><br />{L_LIMITED_SUPPORT}<!-- ENDIF -->
 			</dt>
 			<dd class="general contribution-phpbb-version">
 				<!-- IF contribs.PHPBB_VERSION -->
