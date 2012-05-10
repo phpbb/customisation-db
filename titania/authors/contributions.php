@@ -15,10 +15,13 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-// Setup the sort tool to sort by contribution name ascending
+// Setup the sort tool to sort by contribution support status and name ascending
 $sort = contribs_overlord::build_sort();
 $sort->set_url(titania::$author->get_url('contributions'));
-$sort->set_defaults(false, 'c', 'a');
+$sort->set_sort_keys(array(
+	'sc' => array('SORT_CONTRIB_NAME', 'c.contrib_limited_support, c.contrib_name', true),
+));
+$sort->set_defaults(false, 'sc', 'a');
 
 contribs_overlord::display_contribs('author', titania::$author->user_id, $sort);
 
