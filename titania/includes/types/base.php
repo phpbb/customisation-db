@@ -18,10 +18,10 @@ if (!defined('IN_TITANIA'))
 class titania_types
 {
 	/**
-	 * The type name
-	 *
-	 * @var string (any lang key that includes the type should match this value)
-	 */
+	* The type name
+	*
+	* @var string (any lang key that includes the type should match this value)
+	*/
 	public $name = '';
 	
 	/**

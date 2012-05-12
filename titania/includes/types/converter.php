@@ -32,7 +32,7 @@ class titania_type_converter extends titania_type_base
 	public $id = 3;
 
 	/**
-	 * The type name
+	 * For the type name
 	 *
 	 * @var string (any lang key that includes the type should match this value)
 	 */

@@ -389,7 +389,7 @@ phpbb::$template->assign_vars(array(
 	'S_LIMITED_SUPPORT'			=> titania::$contrib->contrib_limited_support,
 
 	'CONTRIB_PERMALINK'			=> $permalink,
-	'CONTRIB_TYPE'			=> (int) titania::$contrib->contrib_type,
+	'CONTRIB_TYPE'				=> (int) titania::$contrib->contrib_type,
 	'SCREENSHOT_UPLOADER'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? $screenshot->parse_uploader('posting/attachments/simple.html') : false,
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,

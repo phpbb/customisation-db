@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 }
 
 // This gets checked in page_header() in functions.php to see whether we're in community
-if (!defined('NOT_IN_COMMUNITY'))
+if (!defined('NOT_IN_COMMUNITY') && !defined('LOAD_CUSTOM_STYLE'))
 {
 	define('NOT_IN_COMMUNITY', true);
 }
@@ -47,13 +47,13 @@ spl_autoload_register(array('titania', 'autoload'));
 
 // Read config.php file
 // 2 separate locations possible: within Titania directory and just outside of it.
-if (file_exists(TITANIA_ROOT . 'config.' . PHP_EXT))
+if (file_exists(TITANIA_ROOT . '../config.' . PHP_EXT))
 {
-	titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);
+	titania::read_config_file(TITANIA_ROOT . '../config.' . PHP_EXT);
 }
 else
 {
-	titania::read_config_file(TITANIA_ROOT . '../config.' . PHP_EXT);
+	titania::read_config_file(TITANIA_ROOT . 'config.' . PHP_EXT);
 }
 
 // Include the dynamic constants (after reading the Titania config file, but before loading the phpBB common file)
