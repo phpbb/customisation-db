@@ -209,7 +209,7 @@ class titania_revision extends titania_database_object
 			$translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
 			$translations->store_attachments($this->translations);
 
-			foreach ($translations->parse_attachments($message = false, $contrib_translation = true) as $attachment)
+			foreach ($translations->parse_attachments($message = false) as $attachment)
 			{
 				phpbb::$template->assign_block_vars($tpl_block . '.translations', array(
 					'DISPLAY_ATTACHMENT'	=> $attachment,

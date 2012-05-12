@@ -656,11 +656,10 @@ class titania_attachment extends titania_database_object
 	* @param string $tpl The template file to use
 	* @param bool $preview true if previewing from the posting page
 	* @param string|bool $template_block If not false we will output the parsed attachments to this template block
-	* @param bool $contrib_translation If the display name should be the attachment comment, set to true
 	*
 	* @return array the parsed attachments
 	*/
-	public function parse_attachments(&$message, $tpl = 'common/attachment.html', $preview = false, $template_block = false, $contrib_translation = false)
+	public function parse_attachments(&$message, $tpl = 'common/attachment.html', $preview = false, $template_block = false)
 	{
 		if (!sizeof($this->attachments))
 		{
@@ -718,21 +717,13 @@ class titania_attachment extends titania_database_object
 				$comment = bbcode_nl2br(censor_text($attachment['attachment_comment']));
 			}
 
-			if ($contrib_translation && $attachment['attachment_comment'])
-			{
-				$download_name = $attachment['attachment_comment'];
-			}
-			else
-			{
-				$download_name = utf8_basename($attachment['real_filename']);
-			}
-
 			$block_array += array(
 				'FILESIZE'			=> $filesize['value'],
 				'SIZE_LANG'			=> $filesize['unit'],
-				'DOWNLOAD_NAME'		=> $download_name,
+				'DOWNLOAD_NAME'		=> utf8_basename($attachment['real_filename']),
 				'COMMENT'			=> $comment,
 			);
+
 
 			$l_downloaded_viewed = $download_link = '';
 			$display_cat = (strpos($attachment['mimetype'], 'image') === 0) ? ATTACHMENT_CATEGORY_IMAGE : ATTACHMENT_CATEGORY_NONE; // @todo Probably should add support for more types...
@@ -769,7 +760,7 @@ class titania_attachment extends titania_database_object
 				}
 			}
 
-			// Make some decisions based on user options being set.
+			// Make some descisions based on user options being set.
 			if (($display_cat == ATTACHMENT_CATEGORY_IMAGE || $display_cat == ATTACHMENT_CATEGORY_THUMB) && !phpbb::$user->optionget('viewimg'))
 			{
 				$display_cat = ATTACHMENT_CATEGORY_NONE;
