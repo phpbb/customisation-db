@@ -694,6 +694,7 @@ ul.topiclist dd.revision-translations .file dt {
 
 ul.topiclist dd.revision-translations .file dd {
 	padding: 0 5px;
+	padding-left: 0 10px;
 	border-left: 0;
 }
 
