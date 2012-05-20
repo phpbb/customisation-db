@@ -157,12 +157,12 @@ class titania_type_style extends titania_type_base
 
 	public function increment_count()
 	{
-		set_config('titania_num_styles', ++phpbb::$config['titania_num_styles'], true);
+		phpbb::$config->increment('titania_num_styles', 1);
 	}
 
 	public function decrement_count()
 	{
-		set_config('titania_num_styles', --phpbb::$config['titania_num_styles'], true);
+		phpbb::$config->increment('titania_num_styles', -1);
 	}
 
 	public function get_count()
