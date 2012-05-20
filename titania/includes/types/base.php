@@ -126,14 +126,14 @@ class titania_types
 	{
 		self::$types[$type]->increment_count();
 
-		set_config('titania_num_mods', ++phpbb::$config['titania_num_contribs'], true);
+		phpbb::$config->increment('titania_num_mods', 1);
 	}
 
 	public static function decrement_count($type)
 	{
 		self::$types[$type]->decrement_count();
 
-		set_config('titania_num_mods', --phpbb::$config['titania_num_contribs'], true);
+		phpbb::$config->increment('titania_num_mods', -1);
 	}
 
 	public static function get_count($type = false)

@@ -130,12 +130,12 @@ class titania_type_converter extends titania_type_base
 
 	public function increment_count()
 	{
-		set_config('titania_num_converters', ++phpbb::$config['titania_num_converters'], true);
+		phpbb::$config->increment('titania_num_converters', 1);
 	}
 
 	public function decrement_count()
 	{
-		set_config('titania_num_converters', --phpbb::$config['titania_num_converters'], true);
+		phpbb::$config->increment('titania_num_converters', -1);
 	}
 
 	public function get_count()
