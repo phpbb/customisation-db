@@ -46,17 +46,20 @@ function titania_generate_text_for_display($text, $uid, $bitfield, $flags)
 		}
 	}
 
-	global $phpbb_root_path;
+	global $phpbb_root_path, $user;
 
 	phpbb::_include('bbcode', false, 'bbcode');
 
 	// HAX
 	$phpbb_root_path = TITANIA_ROOT;
+	$style_path = $user->theme['style_path'];
+	$user->theme['style_path'] = titania::$config->style;
 
 	$return = generate_text_for_display($text, $uid, $bitfield, $flags);
 
 	// UnHAX
 	$phpbb_root_path = PHPBB_ROOT_PATH;
+	$user->theme['style_path'] = $style_path;
 
 	return $return;
 }

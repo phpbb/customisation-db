@@ -111,12 +111,12 @@ class titania_type_official_tools extends titania_type_base
 
 	public function increment_count()
 	{
-		set_config('titania_num_official_tools', ++phpbb::$config['titania_num_official_tools'], true);
+		phpbb::$config->increment('titania_num_official_tools', 1);
 	}
 
 	public function decrement_count()
 	{
-		set_config('titania_num_official_tools', --phpbb::$config['titania_num_official_tools'], true);
+		phpbb::$config->increment('titania_num_official_tools', -1);
 	}
 
 	public function get_count()
