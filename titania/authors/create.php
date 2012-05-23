@@ -55,13 +55,7 @@ $message->set_settings(array(
 	'subject_name'		=> 'name',
 ));
 
-// Screenshots
-$screenshot = new titania_attachment(TITANIA_SCREENSHOT, titania::$contrib->contrib_id);
-$screenshot->load_attachments();
-$screenshot->upload(175);
-$error = array_merge($error, $screenshot->error);
-
-if ($screenshot->uploaded || isset($_POST['preview']) || $submit)
+if (isset($_POST['preview']) || $submit)
 {
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
@@ -110,10 +104,6 @@ else if ($submit)
 	if (!sizeof($error))
 	{
 		titania::$contrib->submit();
-
-		// Submit screenshots
-		$screenshot->object_id = titania::$contrib->contrib_id;
-		$screenshot->submit();
 
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
 
