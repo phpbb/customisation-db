@@ -137,7 +137,7 @@ $template->assign_vars(array(
 	'S_CAN_EDIT_STYLE_DEMO'	=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate')) ? true : false,
 	'S_CAN_EDIT_CONTRIB'	=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? true : false,
 
-	'SCREENSHOT_UPLOADER'	=> $screenshot->parse_uploader('posting/attachments/simple.html'),
+	'SCREENSHOT_UPLOADER'	=> false,
 	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(request_var('permalink', '', true)),
 	'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'		=> $active_coauthors,
