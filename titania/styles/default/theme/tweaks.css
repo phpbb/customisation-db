@@ -16,3 +16,6 @@
 * html .container {
 	height: 1%;
 }
+* html .contrib-description dd {
+	float: left;
+}

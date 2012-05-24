@@ -55,6 +55,9 @@ class titania_config extends titania_object
 			// Style to display
 			'style'						=> array('default' => 'default'),
 
+			// Use theme from a different style
+			'theme'						=> array('default' => ''),
+
 			// Groups who receive TITANIA_ACCESS_TEAMS level auth
 			'team_groups'				=> array('default' => array(5)),
 
