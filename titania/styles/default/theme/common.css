@@ -272,7 +272,7 @@ ul.general-info li strong {
 	padding: 0 !important;
 }
 
-#screenshots-panel a.screenshot img, #screenshots-panel img.screenshot  {
+#screenshots-panel a.screenshot img, img.screenshot  {
 	padding: 3px;
 	border: 1px solid #A1A1A1;
 	vertical-align: text-top;
