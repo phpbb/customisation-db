@@ -198,6 +198,8 @@ if ($attention_id || ($object_type && $object_id))
 					$post->topic->sync_last_post();
 				}
 
+				$post->topic->submit();
+
 				// Subscriptions?
 				if ($post->topic->topic_last_post_id == $post->post_id)
 				{
