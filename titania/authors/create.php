@@ -61,7 +61,7 @@ $screenshot->load_attachments();
 $screenshot->upload(175);
 $error = array_merge($error, $screenshot->error);
 
-if ($screenshot->uploaded || phpbb::$request->is_set_post('preview') || $submit)
+if (phpbb::$request->is_set_post('preview') || $submit)
 {
 	titania::$contrib->post_data($message);
 	titania::$contrib->__set_array(array(
@@ -111,10 +111,6 @@ else if ($submit)
 	{
 		titania::$contrib->submit();
 
-		// Submit screenshots
-		$screenshot->object_id = titania::$contrib->contrib_id;
-		$screenshot->submit();
-
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
 
 		// Create relations
@@ -137,8 +133,13 @@ $template->assign_vars(array(
 	'S_CAN_EDIT_STYLE_DEMO'	=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate')) ? true : false,
 	'S_CAN_EDIT_CONTRIB'	=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? true : false,
 
+<<<<<<< HEAD
 	'SCREENSHOT_UPLOADER'	=> $screenshot->parse_uploader('posting/attachments/simple.html'),
 	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(phpbb::$request->variable('permalink', '', true)),
+=======
+	'SCREENSHOT_UPLOADER'	=> false,
+	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(request_var('permalink', '', true)),
+>>>>>>> master
 	'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'		=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'	=> $nonactive_coauthors,
