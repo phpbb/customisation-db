@@ -133,13 +133,8 @@ $template->assign_vars(array(
 	'S_CAN_EDIT_STYLE_DEMO'	=> (titania::$config->can_modify_style_demo_url || titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate')) ? true : false,
 	'S_CAN_EDIT_CONTRIB'	=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? true : false,
 
-<<<<<<< HEAD
-	'SCREENSHOT_UPLOADER'	=> $screenshot->parse_uploader('posting/attachments/simple.html'),
-	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(phpbb::$request->variable('permalink', '', true)),
-=======
 	'SCREENSHOT_UPLOADER'	=> false,
-	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(request_var('permalink', '', true)),
->>>>>>> master
+	'CONTRIB_PERMALINK'		=> utf8_normalize_nfc(phpbb::$request->variable('permalink', '', true)),
 	'ERROR_MSG'				=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'		=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'	=> $nonactive_coauthors,
