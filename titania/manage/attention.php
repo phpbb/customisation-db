@@ -181,6 +181,13 @@ if ($attention_id || ($object_type && $object_id))
 			// Approve the post
 			if ($approve)
 			{
+				// Check how many posts are approved to determine if we are approving a topic.
+				$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
+					WHERE topic_id = ' . $post->topic_id . '
+						AND post_approved = 1';
+				phpbb::$db->sql_query($sql);
+				$approved_posts = phpbb::$db->sql_fetchfield('cnt');
+
 				$post->post_approved = 1;
 
 				// Increment the user's postcount if we must
@@ -210,25 +217,24 @@ if ($attention_id || ($object_type && $object_id))
 
 				$post->topic->submit();
 
+				$contrib = new titania_contribution();
+				$contrib->load($post->topic->parent_id);
+
 				// Subscriptions?
-				if ($post->topic->topic_last_post_id == $post->post_id)
+				if ($approved_posts && $post->topic->topic_last_post_id == $post->post_id)
 				{
 					phpbb::_include('functions_messenger', false, 'messenger');
 
 					$email_vars = array(
-						'NAME'		=> $post->topic->topic_subject,
-						'U_VIEW'	=> titania_url::append_url($post->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
+						'NAME'			=> $post->topic->topic_subject,
+						'CONTRIB_NAME'	=> $contrib->contrib_name,
+						'U_VIEW'		=> titania_url::append_url($post->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
 					);
-					titania_subscriptions::send_notifications(TITANIA_TOPIC, $post->topic_id, 'subscribe_notify.txt', $email_vars, $post->post_user_id);
+					titania_subscriptions::send_notifications(array(TITANIA_TOPIC, TITANIA_SUPPORT), array($post->topic_id, $post->topic->parent_id), 'subscribe_notify_contrib.txt', $email_vars, $post->post_user_id);
 				}
 
-				$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
-					WHERE topic_id = ' . $post->topic_id . '
-						AND post_approved = 0';
-				phpbb::$db->sql_query($sql);
-				$cnt = phpbb::$db->sql_fetchfield('cnt');
-
-				if (!$cnt)
+				// We're approving a topic
+				if (!$approved_posts)
 				{
 					$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
 						SET topic_approved = 1
@@ -239,10 +245,11 @@ if ($attention_id || ($object_type && $object_id))
 					if ($post->topic->topic_last_post_id == $post->post_id)
 					{
 						$email_vars = array(
-							'NAME'		=> $post->topic->topic_subject,
-							'U_VIEW'	=> $post->topic->get_url(),
+							'NAME'			=> $post->topic->topic_subject,
+							'CONTRIB_NAME'	=> $contrib->contrib_name,
+							'U_VIEW'		=> $post->topic->get_url(),
 						);
-						titania_subscriptions::send_notifications($post->post_type, $post->topic->parent_id, 'subscribe_notify_forum.txt', $email_vars, $post->post_user_id);
+						titania_subscriptions::send_notifications($post->post_type, $post->topic->parent_id, 'subscribe_notify_forum_contrib.txt', $email_vars, $post->post_user_id);
 					}
 				}
 
