@@ -49,7 +49,7 @@ if ($attention_id || ($object_type && $object_id))
 	}
 
 	// Close, approve, or disapprove the items
-	if ($close || $approve || $disapprove || $delete)
+	if ($close || $approve || $delete)
 	{
 		if (!check_form_key('attention'))
 		{
@@ -129,43 +129,53 @@ if ($attention_id || ($object_type && $object_id))
 			// Disapprove the post
 			if ($disapprove)
 			{
-				// Load z topic
-				$post->topic->topic_id = $post->topic_id;
-				$post->topic->load();
-
-				// Notify poster about disapproval
-				if ($post->post_user_id != ANONYMOUS)
+				if (titania::confirm_box(true))
 				{
-					phpbb::_include('functions_messenger', false, 'messenger');
+					// Load z topic
+					$post->topic->topic_id = $post->topic_id;
+					$post->topic->load();
 
-					$lang_path = phpbb::$user->lang_path;
-					phpbb::$user->set_custom_lang_path(titania::$config->language_path);
+					// Notify poster about disapproval
+					if ($post->post_user_id != ANONYMOUS)
+					{
+						phpbb::_include('functions_messenger', false, 'messenger');
 
-					$messenger = new messenger(false);
+						$lang_path = phpbb::$user->lang_path;
+						phpbb::$user->set_custom_lang_path(titania::$config->language_path);
 
-					users_overlord::load_users(array($post->post_user_id));
+						$messenger = new messenger(false);
 
-					$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_disapproved' : 'post_disapproved';
+						users_overlord::load_users(array($post->post_user_id));
 
-					$messenger->template($email_template, users_overlord::get_user($post->post_user_id, 'user_lang'));
+						$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_disapproved' : 'post_disapproved';
 
-					$messenger->to(users_overlord::get_user($post->post_user_id, 'user_email'), users_overlord::get_user($post->post_user_id, '_username'));
+						$messenger->template($email_template, users_overlord::get_user($post->post_user_id, 'user_lang'));
 
-					$messenger->assign_vars(array(
-						'USERNAME'		=> htmlspecialchars_decode(users_overlord::get_user($post->post_user_id, '_username')),
-						'POST_SUBJECT'	=> htmlspecialchars_decode(censor_text($post->post_subject)),
-						'TOPIC_TITLE'	=> htmlspecialchars_decode(censor_text($post->topic->topic_subject)))
-					);
+						$messenger->to(users_overlord::get_user($post->post_user_id, 'user_email'), users_overlord::get_user($post->post_user_id, '_username'));
 
-					$messenger->send();
+						$messenger->assign_vars(array(
+							'USERNAME'		=> htmlspecialchars_decode(users_overlord::get_user($post->post_user_id, '_username')),
+							'POST_SUBJECT'	=> htmlspecialchars_decode(censor_text($post->post_subject)),
+							'TOPIC_TITLE'	=> htmlspecialchars_decode(censor_text($post->topic->topic_subject)))
+						);
 
-					phpbb::$user->set_custom_lang_path($lang_path);
+						$messenger->send();
+
+						phpbb::$user->set_custom_lang_path($lang_path);
+					}
+
+					// Delete the post
+					$post->delete();
+					
+					// Close attention item
+					$attention_object->close();
+
+					redirect(titania_url::build_url(titania_url::$current_page));
 				}
-
-				// Delete the post
-				$post->delete();
-
-				redirect(titania_url::build_url(titania_url::$current_page));
+				else
+				{
+					titania::confirm_box(false, 'DISAPPROVE_ITEM', '', array('disapprove' => true));
+				}
 			}
 
 			// Approve the post
