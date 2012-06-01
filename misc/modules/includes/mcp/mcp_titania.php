@@ -50,12 +50,12 @@ class mcp_titania
 		require TITANIA_ROOT . 'common.' . PHP_EXT;
 
 		// Need a few hacks to be used from within phpBB
-		titania_url::decode_url(titania::$config->phpbb_script_path);
 		titania::$hook->register(array('titania_url', 'build_url'), 'titania_outside_build_url', 'standalone');
 		titania::$hook->register(array('titania_url', 'append_url'), 'titania_outside_build_url', 'standalone');
 		titania::$hook->register(array('titania', 'page_header'), 'titania_outside_page_header', 'standalone');
 		titania::$hook->register(array('titania', 'page_footer'), 'titania_outside_page_footer', 'standalone');
 		titania::$hook->register('titania_generate_text_for_display', 'titania_outside_generate_text_for_display', 'standalone');
+		titania_url::decode_url(titania::$config->phpbb_script_path);
 
 		titania::add_lang('manage');
 
@@ -77,6 +77,12 @@ function titania_outside_generate_text_for_display(&$hook, $text, $uid, $bitfiel
 
 function titania_outside_build_url(&$hook, $base, $params = array())
 {
+	// Not pretty, but it avoids issues with $current_page_url since it already has the appropriate parameters for the page.
+	if (isset($params[0]) && strpos($params[0], 'mcp.php?i=titania&mode=attention&a=') === 0)
+	{
+		return titania::$absolute_board . $params[0];
+	}
+
 	if ($base == 'manage/attention' || $base == titania_url::$current_page || strpos($base, 'mcp.' . PHP_EXT))
 	{
 		return phpbb::append_sid('mcp', array_merge(array('i' => 'titania', 'mode' => 'attention'), $params));
