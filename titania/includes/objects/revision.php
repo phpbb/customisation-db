@@ -136,11 +136,11 @@ class titania_revision extends titania_database_object
 		return array_unique($branches);
 	}
 
-	public function display($tpl_block = 'revisions', $show_queue = false)
+	public function display($tpl_block = 'revisions', $show_queue = false, $all_versions = false)
 	{
 		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
 
-		$ordered_phpbb_versions = order_phpbb_version_list_from_db($this->phpbb_versions);
+		$ordered_phpbb_versions = order_phpbb_version_list_from_db($this->phpbb_versions, $all_versions);
 
 		// Get rid of the day of the week if it exists in the dateformat
 		$old_date_format = phpbb::$user->date_format;
