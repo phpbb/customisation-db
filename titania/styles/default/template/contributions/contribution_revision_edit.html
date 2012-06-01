@@ -9,7 +9,6 @@
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<fieldset>
-				<legend>{PAGE_TITLE}</legend>
 				<dl>
 					<dt><label for="revision_name">{L_REVISION_NAME}:</label></dt>
 					<dd><input type="text" name="revision_name" size="45" maxlength="60" value="{REVISION_NAME}" class="inputbox autowidth" /></dd>
@@ -42,7 +41,6 @@
 				<!-- ENDIF -->
 
 				<!-- IF .license_options -->
-				<fieldset class="fields2">
 				<dl>
 					<dt><label for="revision_license">{L_LICENSE}:</label><br /><span>{L_LICENSE_EXPLAIN}</span></dt>
 					<dd>
@@ -83,8 +81,10 @@
 					<h3>{L_TRANSLATIONS}</h3>
 					{TRANSLATION_UPLOADER}
 				<!-- ENDIF -->
-			</fieldset>
-
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+	<div class="container">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<fieldset class="submit-buttons">
 				<input type="submit" id="submit" name="submit" value="{L_SUBMIT}" class="button1"/>
 				{S_FORM_TOKEN}
