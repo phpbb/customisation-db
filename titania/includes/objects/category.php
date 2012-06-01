@@ -296,6 +296,9 @@ class titania_category extends titania_message_object
 
 		if(!sizeof($errors))
 		{
+			// Update contrib_categories
+			$this->update_contrib_categories($this->category_id, $to_id);
+
 			// Select duplicate contribs and prevent them from being moved to the selected category
 			$sql = 'SELECT contrib_id
 				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
@@ -330,6 +333,50 @@ class titania_category extends titania_message_object
 		}
 
 		return $errors;
+	}
+
+	public function update_contrib_categories($from_id, $to_id)
+	{
+		$all = true;
+		if ($from_id && $to_id)
+		{
+			$sql = 'SELECT ci.contrib_id, c.contrib_categories
+				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ci
+				LEFT JOIN ' . TITANIA_CONTRIBS_TABLE . ' c
+					ON (ci.contrib_id = c.contrib_id) 
+				WHERE ci.category_id = ' . (int) $from_id;
+			$all = false;
+		}
+		else
+		{
+			$sql = 'SELECT contrib_id, category_id
+				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE;
+		}
+		$result = phpbb::$db->sql_query($sql);
+
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$contribs[$row['contrib_id']][] = ($all) ? $row['category_id'] : $row['contrib_categories']; 
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		foreach ($contribs as $id => $categories)
+		{
+			if ($all)
+			{
+				$categories = implode(',', $categories);
+			}
+			else
+			{
+				$categories = array_flip(explode(',', $categories[0]));
+				unset($categories[$from_id]);
+				$categories[$to_id] = true;
+				$categories = implode(',', array_keys($categories));
+			}
+
+			phpbb::$db->sql_query('UPDATE ' . TITANIA_CONTRIBS_TABLE . ' SET contrib_categories = "' . phpbb::$db->sql_escape($categories) . '" WHERE contrib_id = ' . (int) $id);
+			unset($contribs[$id]); 
+		}		
 	}
 
 	/**

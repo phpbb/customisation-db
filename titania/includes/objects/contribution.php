@@ -72,8 +72,13 @@ class titania_contribution extends titania_message_object
 	/**
 	 * Categories in which the contrib resides in.
 	 */
-	 public $categories = array();
-	 
+	 public $category_data = array();
+
+	/**
+	 * Options inherited from categories.
+	 */
+	 public $options = array();
+
 	/**
 	 * is_author (true when visiting user is the author)
 	 * is_active_coauthor (true when visiting user is an active co-author)
@@ -106,6 +111,8 @@ class titania_contribution extends titania_message_object
 			'contrib_desc_bitfield'			=> array('default' => '',	'message_field' => 'message_bitfield'),
 			'contrib_desc_uid'				=> array('default' => '',	'message_field' => 'message_uid'),
 			'contrib_desc_options'			=> array('default' => 7,	'message_field' => 'message_options'),
+
+			'contrib_categories'			=> array('default' => ''),
 
 			'contrib_demo'					=> array('default' => ''),
 
@@ -185,6 +192,8 @@ class titania_contribution extends titania_message_object
 
 		// Set object data.
 		$this->__set_array($sql_data);
+		// Fill categories
+		$this->fill_categories();
 
 		// Set author object and set the data for the author object.
 		$this->author = new titania_author($this->contrib_user_id);
@@ -363,31 +372,62 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
-	 * Get all categories that a contribution resides in.
+	 * Fill categories with data from cache.
 	 */	
-	public function get_categories()
+	public function fill_categories()
 	{
-		if (sizeof($this->categories))
+		// Empty out category_data in case object is being reused via __set_array()
+		$this->category_data = array();
+
+		// Very unlikely to have no categories, but fill out default options just in case
+		if (!$this->contrib_categories)
+		{
+			$this->get_options();
+			return;
+		}
+
+		$contrib_categories = explode(',', $this->contrib_categories);
+
+		$categories = titania::$cache->get_categories();
+		foreach ($contrib_categories as $category_id)
+		{
+			$this->category_data[$category_id] = $categories[$category_id];
+		}
+
+		// Determine options inherited from categories.
+		$this->get_options();
+	}
+
+	/**
+	 * Get all options inherited from category options.
+	 */	
+	public function get_options()
+	{
+		$this->options = array(
+			'demo'			=> false,
+			'all_versions'	=> false,
+		);
+
+		if (!$this->contrib_categories)
 		{
 			return;
 		}
-		
-		$sql = 'SELECT category_id 
-		FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' 
-		WHERE contrib_id =' . (int) $this->contrib_id;
-		
-		$result = phpbb::$db->sql_query($sql);
-		
-		$contrib_categories = array();
-		$categories = titania::$cache->get_categories();
-		
-		while ($row = phpbb::$db->sql_fetchrow($result))
+
+		$map = array(
+			TITANIA_CAT_FLAG_DEMO 			=> 'demo', 
+			TITANIA_CAT_FLAG_ALL_VERSIONS	=> 'all_versions'
+		);
+
+		foreach ($this->category_data as $cat_id => $data)
 		{
-			$contrib_categories[$row['category_id']] = $categories[$row['category_id']];
+			foreach ($map as $flag => $option)
+			{
+				if ($this->category_data[$cat_id]['category_options'] & $flag)
+				{
+					$this->options[$option] = true;
+				}
+			}
 		}
-		phpbb::$db->sql_freeresult($result);
-		
-		$this->categories = $contrib_categories;
 	}
 
 	/**
@@ -457,6 +497,7 @@ class titania_contribution extends titania_message_object
 			'DOWNLOAD_INSTALL_LEVEL'		=> (isset($this->download['install_level']) && $this->download['install_level'] > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->download['install_level']] : '',
 
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
+			'S_INTEGRATE_DEMO'				=> $this->options['demo'],
 		);
 		
 		// Ignore some stuff before it is submitted else we can cause an error
@@ -528,12 +569,12 @@ class titania_contribution extends titania_message_object
 					$revision->__set_array($row);
 					$revision->phpbb_versions = (isset($row['phpbb_versions'])) ? $row['phpbb_versions'] : array();
 					$revision->translations = (isset($row['translations'])) ? $row['translations'] : array();
-					$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'));
+					$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'), $this->options['all_versions']);
 					$phpbb_versions = array_merge($phpbb_versions, $revision->phpbb_versions);
 				}
 				unset($revision);
 
-				$ordered_phpbb_versions = order_phpbb_version_list_from_db($phpbb_versions);
+				$ordered_phpbb_versions = order_phpbb_version_list_from_db($phpbb_versions, $this->options['all_versions']);
 				if (sizeof($ordered_phpbb_versions) == 1)
 				{
 					phpbb::$template->assign_vars(array(
@@ -558,10 +599,8 @@ class titania_contribution extends titania_message_object
 			}
 
 			// Display categories
-			$this->get_categories();
 			$category = new titania_category();
-			
-			foreach ($this->categories as $category_row)
+			foreach ($this->category_data as $category_row)
 			{
 				$category->__set_array($category_row);
 				
@@ -1349,6 +1388,8 @@ class titania_contribution extends titania_message_object
 		}
 		phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
 
+		$this->contrib_categories = implode(',', $contrib_categories);
+		$this->fill_categories();
 		// Resync the count
 		$this->update_category_count();
 	}
