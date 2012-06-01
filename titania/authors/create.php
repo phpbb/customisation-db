@@ -32,6 +32,7 @@ titania::$contrib = new titania_contribution();
 titania::$contrib->contrib_user_id = phpbb::$user->data['user_id'];
 titania::$contrib->author = new titania_author(phpbb::$user->data['user_id']);
 titania::$contrib->author->load();
+titania::$contrib->get_options();
 
 // Set some main vars up
 $submit = (isset($_POST['submit'])) ? true : false;
@@ -103,6 +104,7 @@ else if ($submit)
 
 	if (!sizeof($error))
 	{
+		titania::$contrib->contrib_categories = implode(',', $contrib_categories);
 		titania::$contrib->submit();
 
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
