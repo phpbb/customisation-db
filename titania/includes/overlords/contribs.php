@@ -125,7 +125,7 @@ class contribs_overlord
 		}
 		$sort->request();
 
-		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id, c.contrib_limited_support, c.contrib_categories';
+		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id, c.contrib_limited_support';
 		switch ($mode)
 		{
 			case 'author' :
@@ -303,8 +303,6 @@ class contribs_overlord
 			$contrib->author->user_id = $contrib->contrib_user_id;
 			$contrib->author->__set_array($row);
 
-			$contrib->fill_categories();
-
 			// Author contrib variables
 			$contrib->is_author = ($contrib->contrib_user_id == phpbb::$user->data['user_id']) ? true : false;
 			$contrib->is_active_coauthor = (in_array($contrib->contrib_id, $author_contribs)) ? true : false;
@@ -324,7 +322,7 @@ class contribs_overlord
 			{
 				titania::_include('functions_display', 'order_phpbb_version_list_from_db');
 
-				$ordered_phpbb_versions = order_phpbb_version_list_from_db($row['phpbb_versions'], $contrib->options['all_versions']);
+				$ordered_phpbb_versions = order_phpbb_version_list_from_db($row['phpbb_versions']);
 			}
 
 			phpbb::$template->assign_block_vars($blockname, array_merge($contrib->assign_details(true, true), array(

@@ -17,7 +17,7 @@ if (!defined('IN_TITANIA'))
 
 load_contrib();
 
-if (!titania::$contrib->contrib_demo || titania::$contrib->contrib_status != TITANIA_CONTRIB_APPROVED || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE || !titania::$contrib->options['demo'])
+if (!titania::$contrib->contrib_demo || titania::$contrib->contrib_status != TITANIA_CONTRIB_APPROVED || titania::$contrib->contrib_type != TITANIA_TYPE_STYLE || !titania::$contrib->integrate_demo)
 {
 	trigger_error('NO_DEMO');
 }

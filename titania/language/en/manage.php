@@ -102,7 +102,6 @@ $lang = array_merge($lang, array(
 	'REVISION_REPACKED'			=> 'This revision has been repacked.',
 
 	'SUBMIT_TIME'				=> 'Submission Time',
-	'SUPPORT_ALL_VERSIONS'		=> 'Support all phpBB versions.',
 
 	'UNAPPROVED'				=> 'Unapproved',
 	'UNKNOWN'					=> 'Unknown',

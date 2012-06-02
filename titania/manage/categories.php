@@ -162,7 +162,6 @@ switch ($action)
 				// Set category options
 				$category_object->category_options = 0;
 				$category_object->category_options += (request_var('integrate_demo', false)) ? TITANIA_CAT_FLAG_DEMO : 0; 
-				$category_object->category_options += (request_var('support_all_versions', false)) ? TITANIA_CAT_FLAG_ALL_VERSIONS : 0; 
 
 				// Only update category if no errors occurred from moving it
 				if (!sizeof($error))
@@ -194,7 +193,6 @@ switch ($action)
 			'S_EDIT_CATEGORY' 				=> ($action == 'edit') ? true : false,
 			'S_MOVE_CATEGORY_OPTIONS'		=> (isset($category_object->parent_id)) ? generate_category_select($category_object->parent_id, true) : generate_category_select($category_id, true),
 			'S_INTEGRATE_DEMO'				=> ($category_object->category_options & TITANIA_CAT_FLAG_DEMO) ? 'checked="checked"' : '',
-			'S_SUPPORT_ALL_VERSIONS'		=> ($category_object->category_options & TITANIA_CAT_FLAG_ALL_VERSIONS) ? 'checked="checked"' : '',
 		));
 	break;
 	case 'move_up' :

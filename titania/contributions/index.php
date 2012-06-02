@@ -142,6 +142,8 @@ function load_contrib($contrib_id = false)
 
 	// Search for a category with the same name as the contrib type.  This is a bit ugly, but there really isn't any better option
 	$categories_ary = titania::$cache->get_categories();
+	titania::$contrib->get_categories();
+	titania::$contrib->integrate_demo = false;
 
 	foreach ($categories_ary as $category_id => $category_row)
 	{
@@ -157,12 +159,18 @@ function load_contrib($contrib_id = false)
 				$category_object->category_name => titania_url::build_url($category_object->get_url()),
 			));
 		}
+		
+		if (isset(titania::$contrib->categories[$category_id]) && $category_row['category_options'] & TITANIA_CAT_FLAG_DEMO)
+		{
+			titania::$contrib->integrate_demo = true;
+			phpbb::$template->assign_var('S_INTEGRATE_DEMO', true);
+		}
 	}
 	
 	$nav_ary['demo'] = array(
 		'title'		=> 'CONTRIB_DEMO',
 		'url'		=> titania::$contrib->get_url('demo'),
-		'auth'		=> (titania::$contrib->contrib_demo && titania::$contrib->contrib_status == TITANIA_CONTRIB_APPROVED && titania::$contrib->options['demo']) ? true : false,
+		'auth'		=> (titania::$contrib->contrib_demo && titania::$contrib->contrib_status == TITANIA_CONTRIB_APPROVED && titania::$contrib->integrate_demo) ? true : false,
 	);
 	
 	// Display nav menu

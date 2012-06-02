@@ -219,12 +219,6 @@ function titania_custom($action, $version)
 							AND track_id = 0';
 					phpbb::$db->sql_query($sql);
 				break;
-
-				case '0.4.1' :
-					titania::_include('objects/category', false, 'titania_category');
-					$category = new titania_category();
-					$category->update_contrib_categories(false, false);
-				break;
 			}
 		break;
 

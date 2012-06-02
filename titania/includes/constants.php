@@ -22,8 +22,7 @@ if (!defined('IN_PHPBB'))
 }
 
 // Category option flags
-define('TITANIA_CAT_FLAG_DEMO', 1); // Integrated styles demo
-define('TITANIA_CAT_FLAG_ALL_VERSIONS', 2); // Contributions support all phpBB versions
+define('TITANIA_CAT_FLAG_DEMO', 1);
 
 // Contrib status
 define('TITANIA_CONTRIB_NEW', 1); // Does not have any validated revisions; Hidden from category listing, shown if directly linked to
