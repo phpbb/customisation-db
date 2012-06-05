@@ -307,11 +307,13 @@ class titania_contribution extends titania_message_object
 		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('view')) ? true : false;
 		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? true : false;
 
-		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . '
-			WHERE contrib_id = ' . $this->contrib_id .
-				((!$can_view_unapproved) ? ' AND revision_status = ' . TITANIA_REVISION_APPROVED : '') . '
-				AND revision_submitted = 1
-			ORDER BY revision_id DESC';
+		$sql = 'SELECT r.*, a.download_count FROM ' . TITANIA_REVISIONS_TABLE . ' r
+			LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
+				ON (r.attachment_id = a.attachment_id)
+			WHERE r.contrib_id = ' . $this->contrib_id .
+				((!$can_view_unapproved) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') . '
+				AND r.revision_submitted = 1
+			ORDER BY r.revision_id DESC';
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
