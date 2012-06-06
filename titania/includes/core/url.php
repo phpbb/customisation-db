@@ -358,7 +358,9 @@ class titania_url
 		$match = array('[', ']');
 		$string = str_replace($match, '', $string);
 
-		return utf8_clean_string(utf8_strtolower($string));
+		$clean_string = utf8_clean_string(utf8_strtolower($string));
+		// Temp fix until issue is fixed in phpBB (http://tracker.phpbb.com/browse/PHPBB3-10921)
+		return strtr($clean_string, array('!' => 'ǃ'));
 	}
 
 	/**
