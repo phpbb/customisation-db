@@ -143,7 +143,7 @@ $(document).ready(function(){
 	});
 
 	// Canceled quick edit, so display original post again
-	$('.postbody #cancel').live('click', function(event) {
+	$(document).on('click', '.postbody #cancel', function(event) {
 		event.preventDefault();
 
 		var postbody = $(this).parents('.postbody');
@@ -187,12 +187,12 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('#cboxLoadedContent #cancel').live('click', function(event) {
+	$(document).on('click', '#cboxLoadedContent #cancel', function(event) {
 		event.preventDefault();
 		$.colorbox.close();
 	});
 	
-	$('#cboxLoadedContent #cease').live('click', function(event) {
+	$(document).on('click', '#cboxLoadedContent #cease', function(event) {
 		event.preventDefault();
 		createCookie('cdb_ignore_subscription', 'true', 365);
 		$.colorbox.close();
