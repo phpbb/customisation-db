@@ -225,6 +225,14 @@ function titania_custom($action, $version)
 					$category = new titania_category();
 					$category->update_contrib_categories(false, false);
 				break;
+
+				case '0.4.2' :
+					// Delete contribs using disallowed exclamation point character
+					// As they were never accessible, there shouldn't be a risk of losing data
+					$sql = 'DELETE FROM ' . TITANIA_CONTRIBS_TABLE . ' 
+						WHERE contrib_name_clean LIKE "%!%"';
+					$result = phpbb::$db->sql_query($sql);
+				break;
 			}
 		break;
 
