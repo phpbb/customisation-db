@@ -89,7 +89,7 @@ switch ($action)
 	case 'mpv' :
 	case 'automod' :
 		$revision_id = request_var('revision', 0);
-		titania::add_lang('contributions');
+		titania::add_lang(array('contributions', 'manage'));
 
 		// Get the revision, contribution, attachment, and queue
 		$revision = new titania_revision(false, $revision_id);
@@ -133,14 +133,8 @@ switch ($action)
 			}
 			else
 			{
-				$uid = $bitfield = $flags = false;
-				generate_text_for_storage($mpv_results, $uid, $bitfield, $flags, true, true, true);
-
-				// Add the MPV Results to the queue
-				$queue->mpv_results = $mpv_results;
-				$queue->mpv_results_bitfield = $bitfield;
-				$queue->mpv_results_uid = $uid;
-				$queue->submit();
+				$mpv_results = phpbb::$user->lang['VALIDATION_MPV'] . "\n[quote=&quot;" . phpbb::$user->lang['VALIDATION_MPV'] . '&quot;]' . $mpv_results . "[/quote]\n";
+				$queue->topic_reply($mpv_results);
 			}
 		}
 		else if ($action == 'automod')
@@ -178,12 +172,11 @@ switch ($action)
 			}
 			phpbb::$db->sql_freeresult($result);
 
-			$bbcode_results = implode("\n\n", $bbcode_results);
+			$bbcode_results = phpbb::$user->lang['VALIDATION_AUTOMOD'] . "\n[quote=&quot;" . phpbb::$user->lang['VALIDATION_AUTOMOD'] . '&quot;]' . implode("\n\n", $bbcode_results) . "[/quote]\n";
 
 			// Update the queue with the results
 			$queue = $revision->get_queue();
-			$queue->automod_results = $bbcode_results;
-			$queue->submit();
+			$queue->topic_reply($bbcode_results);
 
 			$contrib_tools->remove_temp_files();
 		}
