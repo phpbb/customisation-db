@@ -177,7 +177,9 @@ class titania_contribution extends titania_message_object
 		}
 		else
 		{
-			$sql_ary['WHERE'] = 'contrib_name_clean = \'' . phpbb::$db->sql_escape(utf8_clean_string($contrib)) . '\'';
+			// Temp fix until issue is fixed in phpBB (http://tracker.phpbb.com/browse/PHPBB3-10921)
+			$contrib = strtr(utf8_clean_string($contrib), array('!' => 'ǃ'));
+			$sql_ary['WHERE'] = 'contrib_name_clean = \'' . phpbb::$db->sql_escape($contrib) . '\'';
 		}
 
 		$result = phpbb::$db->sql_query(phpbb::$db->sql_build_query('SELECT', $sql_ary));
