@@ -1,0 +1,10 @@
+Asunto: Notificación - {NAME}
+
+Hola {USERNAME},
+
+Usted está recibiendo esta notificación porque estás suscrito para que se le  notifique de los nuevos artículos publicados para "{CONTRIB_NAME}" en la base de mods phpBB
+
+El articulo "{NAME}" ha sido creado recientemente
+
+Usted puede ver el tema, visite el siguiente enlace:
+{U_VIEW}

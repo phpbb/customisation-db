@@ -1,0 +1,8 @@
+Asunto: Mensaje rechazado- "{TOPIC_TITLE}"
+
+Hola {USERNAME},
+
+Usted está recibiendo esta notificación debido a su tema"{TOPIC_TITLE}" en "{SITENAME}" ha sido rechazado por un moderador o administrador
+
+
+{EMAIL_SIG}
