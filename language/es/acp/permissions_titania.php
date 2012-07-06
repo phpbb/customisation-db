@@ -89,10 +89,10 @@ $lang['permission_cat']['titania_moderate'] = ' Moderación Titania';
 $lang = array_merge($lang, array(
 	// Common
 	'acl_u_titania_contrib_submit'		=> array('lang' => 'Puede enviar contribuciones', 'cat' => 'titania'),
-	'acl_u_titania_faq_create'			=> array('lang' => 'Puede crear  entradas de FAQ(para sus contribuciones)', 'cat' => 'titania'),
-	'acl_u_titania_faq_edit'			=> array('lang' => 'Puede editar entradas de FAQ (psra sus contribuciones)', 'cat' => 'titania'),
-	'acl_u_titania_faq_delete'			=> array('lang' => 'Puede eliminar entradas de FAQ  (para sus contribuciones)', 'cat' => 'titania'),
-	'acl_u_titania_rate'				=> array('lang' => 'Puede dar ratios', 'cat' => 'titania'),
+	'acl_u_titania_faq_create'			=> array('lang' => 'Puede crear  entradas en FAQ(para sus contribuciones)', 'cat' => 'titania'),
+	'acl_u_titania_faq_edit'			=> array('lang' => 'Puede editar entradas en FAQ (psra sus contribuciones)', 'cat' => 'titania'),
+	'acl_u_titania_faq_delete'			=> array('lang' => 'Puede eliminar entradas en FAQ  (para sus contribuciones)', 'cat' => 'titania'),
+	'acl_u_titania_rate'				=> array('lang' => 'Puede dar evaluaciones', 'cat' => 'titania'),
 	'acl_u_titania_topic'				=> array('lang' => 'Puede crear nuevos temas', 'cat' => 'titania'),
 	'acl_u_titania_post'				=> array('lang' => 'Puede crear nuevos mensajes', 'cat' => 'titania'),
 	'acl_u_titania_post_approved'		=> array('lang' => 'Puede crear mensajes<strong>sin</strong> aprobación', 'cat' => 'titania'),
@@ -103,13 +103,13 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_bbcode'				=> array('lang' => 'Puede usar BBCODE en los mensajes', 'cat' => 'titania'),
 	'acl_u_titania_smilies'				=> array('lang' => 'Puede usar smilies', 'cat' => 'titania'),
 
-	'acl_u_titania_post_hard_delete'	=> array('lang' => 'Puede eliminar<strong></strong> mensajes y temas (mensajes y temas que el usuario puede eliminar de otro modo).', 'cat' => 'titania'),
+	'acl_u_titania_post_hard_delete'	=> array('lang' => 'Puede <strong>eliminar</strong> mensajes y temas (mensajes y temas que el usuario puede eliminar de otro modo).', 'cat' => 'titania'),
 
 	// Moderation
-	'acl_u_titania_mod_author_mod'			=> array('lang' => 'Puede moderar los perfiles de los autores', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_author_mod'			=> array('lang' => 'Puede moderar los perfíles de los autores', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_contrib_mod'			=> array('lang' => 'Puede moderar las contribuciones', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_faq_mod'				=> array('lang' => 'Puede moderar las entradas de FAQ ', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_rate_reset'			=> array('lang' => 'Puede resetear ratios', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_rate_reset'			=> array('lang' => 'Puede resetear evaluaciones', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_post_mod'			=> array('lang' => 'Puede moderar temas', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_style_queue_discussion'			=> array('lang' => 'Puede ver la discusión de la cola de estilos', 'cat' => 'titania_moderate'),
@@ -124,18 +124,18 @@ $lang = array_merge($lang, array(
 
 	'acl_u_titania_mod_translation_queue_discussion'		=> array('lang' => 'Puede ver la discusión de la cola de traducciones', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_translation_queue'					=> array('lang' => 'Puede ver la cola de traducciones', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_translation_validate'				=> array('lang' => 'Puede validar modificaciones', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_translation_validate'				=> array('lang' => 'Puede validar traducciones', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_translation_moderate'				=> array('lang' => 'Puede moderar traducciones', 'cat' => 'titania_moderate'),
 
-	'acl_u_titania_mod_converter_queue_discussion'		=> array('lang' => 'Puede ver la discusión de la cola de convertidores', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_converter_queue'					=> array('lang' => 'Puede ver la cola de convertidores', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Puede validar convertidores', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_converter_moderate'				=> array('lang' => 'Puede moderar convertidores', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_queue_discussion'		=> array('lang' => 'Puede ver la discusión de la cola de conversores', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_queue'					=> array('lang' => 'Puede ver la cola de conversores', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Puede validar conversores', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_converter_moderate'				=> array('lang' => 'Puede moderar conversores', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_bridge_queue_discussion'			=> array('lang' => 'Puede ver la discusión de la cola de bridge', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_bridge_queue'					=> array('lang' => 'Puede ver la cola de puente', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Puede validar Bridges', 'cat' => 'titania_moderate'),
-	'acl_u_titania_mod_bridge_moderate'					=> array('lang' => 'Puede moderar Bridges', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Puede validar puentes', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bridge_moderate'					=> array('lang' => 'Puede moderar puentes', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_official_tool_moderate'			=> array('lang' => 'Puede enviar/moderar herramientas oficiales', 'cat' => 'titania_moderate'),
 
