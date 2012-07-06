@@ -35,34 +35,34 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'AUTHOR_CONTRIBS'			=> 'Contribuciones',
-	'AUTHOR_DATA_UPDATED'		=> 'La información del autor ha sido actualziada',
+	'AUTHOR_DATA_UPDATED'		=> 'La información del autor ha sido actualizada',
 	'AUTHOR_DESC'				=> 'Descripción del autor',
 	'AUTHOR_DETAILS'			=> 'Detalles del autor',
 	'AUTHOR_MODS'				=> '%d Modificaciones',
 	'AUTHOR_MODS_ONE'			=> '1 Modificación',
 	'AUTHOR_NOT_FOUND'			=> 'Autor no encontrado',
-	'AUTHOR_PROFILE'			=> 'Perfil del autor',
+	'AUTHOR_PROFILE'			=> 'Perfíl del autor',
 	'AUTHOR_RATING'				=> 'Evaluación de autor',
 	'AUTHOR_REAL_NAME'			=> 'Nombre real del autor',
 	'AUTHOR_SNIPPETS'			=> '%d Fragmentos',
 	'AUTHOR_SNIPPETS_ONE'		=> '1 Fragmento',
-	'AUTHOR_STATISTICS'			=> 'estadísticas del autor',
+	'AUTHOR_STATISTICS'			=> 'Estadísticas del autor',
 	'AUTHOR_STYLES'				=> '%d estilos',
 	'AUTHOR_STYLES_ONE'			=> '1 estilo',
 	'AUTHOR_SUPPORT'			=> 'Soporte',
 
-	'ENHANCED_EDITOR'			=> 'Editor mejorado',
-	'ENHANCED_EDITOR_EXPLAIN'	=> 'Habilitar / deshabilitar el editor mejorado .',
+	'ENHANCED_EDITOR'			=> 'Editor avanzado',
+	'ENHANCED_EDITOR_EXPLAIN'	=> 'Habilitar/Deshabilitar el editor avanzado.',
 
 	'MANAGE_AUTHOR'				=> 'Administrar autor',
 
 	'NO_AVATAR'					=> 'Sin avatar',
 
-	'PHPBB_PROFILE'				=> ' perfil en phpBB.com ',
+	'PHPBB_PROFILE'				=> 'Perfíl en phpbb.com ',
 
 	'USER_INFORMATION'			=> '’s información de usuario',
 
-	'VIEW_USER_PROFILE'			=> 'Ver perfil de usuario',
+	'VIEW_USER_PROFILE'			=> 'Ver perfíl de usuario',
 
 
 ));
