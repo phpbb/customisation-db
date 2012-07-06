@@ -24,10 +24,10 @@ if (empty($lang) || !is_array($lang))
 
 // Merge the following language entries into the lang array
 $lang = array_merge($lang, array(
-	'ROLE_TITANIA_MODIFICATION_TEAM'	=> 'Rol equipo de modificaciones titania',
-	'ROLE_TITANIA_STYLE_TEAM'			=> 'Rol equipo de estilos titania',
-	'ROLE_TITANIA_MODERATOR_TEAM'		=> 'Rol equipo de moderación titania',
-	'ROLE_TITANIA_ADMINISTRATOR_TEAM'	=> 'Rol administración titania',
+	'ROLE_TITANIA_MODIFICATION_TEAM'	=> 'Rol del Equipo de MODificaciones en Titania',
+	'ROLE_TITANIA_STYLE_TEAM'			=> 'Rol del Equipo de Estilos en Titania',
+	'ROLE_TITANIA_MODERATOR_TEAM'		=> 'Rol del Equipo de Moderación en Titania',
+	'ROLE_TITANIA_ADMINISTRATOR_TEAM'	=> 'Rol del Equipo de Administración en Titania',
 ));
 
 ?>
