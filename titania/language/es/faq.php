@@ -33,7 +33,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'CREATE_FAQ'			=> 'Nueva FAQ',
+	'CREATE_FAQ'			=> 'Crear FAQ',
 
 	'DELETE_FAQ'			=> 'Eliminar FAQ',
 	'DELETE_FAQ_CONFIRM'	=> 'Esta seguro de quiere eliminar esta FAQ?',

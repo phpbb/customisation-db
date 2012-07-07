@@ -38,11 +38,11 @@ $lang = array_merge($lang, array(
 	'ALTER_NOTES'				=> 'Alterar notas de validación',
 	'APPROVE'					=> 'Aprobar',
 	'APPROVE_QUEUE'				=> 'Aprobar',
-	'APPROVE_QUEUE_CONFIRM'		=> '¿Está seguro que desea aprobar <strong> </ strong> este artículo?',
+	'APPROVE_QUEUE_CONFIRM'		=> '¿Está seguro que desea <strong>aprobar</strong> este artículo?',
 	'ATTENTION'					=> 'Atención',
 	'AUTHOR_REPACK_LINK'		=> 'Haga clic aquí para Reempaquetar la revisión',
 
-	'CATEGORY_NAME_CLEAN'		=> 'URL de categoría',
+	'CATEGORY_NAME_CLEAN'		=> 'URL de la categoría',
 	'CHANGE_STATUS'				=> 'Cambia estado/mover',
 	'CLOSED_ITEMS'				=> 'Artículos cerrados',
 
@@ -61,7 +61,7 @@ $lang = array_merge($lang, array(
 	'MARK_IN_PROGRESS'			=> 'Marca "en curso"',
 	'MARK_NO_PROGRESS'			=> 'Desmarcar "en curso"',
 	'MOVE_QUEUE'				=> 'Mover la cola',
-	'MOVE_QUEUE_CONFIRM'		=> 'Seleccione la ubicación de la nueva cola y confirmar.',
+	'MOVE_QUEUE_CONFIRM'		=> 'Seleccione la ubicación de la nueva cola y confirme.',
 
 	'NO_ATTENTION'				=> 'No hay artículos que necesiten atención.',
 	'NO_ATTENTION_ITEM'			=> 'Atención el tema no existe.',
@@ -69,7 +69,7 @@ $lang = array_merge($lang, array(
 	'NO_NOTES'					=> 'No hay notas',
 	'NO_QUEUE_ITEM'				=> 'No existe elemento de cola',
 
-	'OLD_VALIDATION_AUTOMOD'	=> 'prueba de reempaquetado de AutoMOD',
+	'OLD_VALIDATION_AUTOMOD'	=> 'prueba de reempaquetado de Automod',
 	'OLD_VALIDATION_MPV'		=> 'MPV Notas de reempaquetado',
 	'OPEN_ITEMS'				=> 'Temas abiertos',
 
@@ -85,7 +85,7 @@ $lang = array_merge($lang, array(
 	'QUEUE_REPACK_NOT_ALLOWED'	=> 'Reempaquetado <strong>no</strong> permitido',
 	'QUEUE_REPLY_ALLOW_REPACK'	=> 'Permitir al autor Reempaquetar',
 	'QUEUE_REPLY_APPROVED'		=> 'Revisión %1$s [b]Aprobada[/b] por la razón:<br /><br />[quote]%2$s[/quote]',
-	'QUEUE_REPLY_DENIED'		=> 'Revisión %1$s [b]Denegado/b] por la razón:<br /><br />[quote]%2$s[/quote]',
+	'QUEUE_REPLY_DENIED'		=> 'Revisión %1$s [b]Denegada[/b] por la razón:<br /><br />[quote]%2$s[/quote]',
 	'QUEUE_REPLY_IN_PROGRESS'	=> 'Marcado como en curso',
 	'QUEUE_REPLY_MOVE'			=> 'Se movió %1$s a %2$s',
 	'QUEUE_REPLY_NO_PROGRESS'	=> 'Desmarcado como en curso',
@@ -97,21 +97,21 @@ $lang = array_merge($lang, array(
 	'REBUILD_FIRST_POST'		=> 'Reconstruir primer mensaje',
 	'REPACK'					=> 'Reempaquetar',
 	'REPORTED'					=> 'Reportar',
-	'RETEST_AUTOMOD'			=> 'Repetir prueba AutoMOD',
+	'RETEST_AUTOMOD'			=> 'Repetir prueba Automod',
 	'RETEST_MPV'				=> 'Repetir MPV',
 	'REVISION_REPACKED'			=> 'Esta revisión ha sido Reempaquetada de nuevo',
 
 	'SUBMIT_TIME'				=> 'Tiempo de presentación',
 	'SUPPORT_ALL_VERSIONS'		=> 'Soporte para todas las versiones de phpBB',
 
-	'UNAPPROVED'				=> 'No Aprobado',
+	'UNAPPROVED'				=> 'No aprobado',
 	'UNKNOWN'					=> 'Desconocido',
 
 	'VALIDATION'				=> 'Validación',
-	'VALIDATION_AUTOMOD'		=> 'Prueba de AutoMOD',
-	'VALIDATION_MESSAGE'		=> 'Validación Mensaje/razón',
+	'VALIDATION_AUTOMOD'		=> 'Prueba de Automod',
+	'VALIDATION_MESSAGE'		=> 'Validación Mensaje/Razón',
 	'VALIDATION_MPV'			=> 'Notas MPV',
 	'VALIDATION_NOTES'			=> 'Notas de validación',
 	'VALIDATION_QUEUE'			=> 'Cola de validación',
-	'VALIDATION_SUBMISSION'		=> 'Validación de presentación',
+	'VALIDATION_SUBMISSION'		=> 'Validación de la presentación',
 ));

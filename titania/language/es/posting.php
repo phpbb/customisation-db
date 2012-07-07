@@ -39,15 +39,15 @@ $lang = array_merge($lang, array(
 	'ACCESS_TEAMS'						=> 'Acceso de equipo',
 	'ATTACH'							=> 'Adjuntar',
 
-	'FILE_DELETED'						=> 'Este archivo se elimina cuando se envíe',
+	'FILE_DELETED'						=> 'Este archivo se eliminara cuando se confirme',
 
-	'HARD_DELETE_TOPIC_CONFIRM'			=> 'Estás seguro de que desea <strong>definitivamente</strong> Eliminar este tema? <br /> En este tema se ha ido para siempre!',
+	'HARD_DELETE_TOPIC_CONFIRM'			=> 'Esta seguro de que desea eliminar <strong>definitivamente</strong> este tema?<br />En este tema se ha ido para siempre!',
 
-	'QUEUE_DISCUSSION_TOPIC_MESSAGE'	=> 'Este tema será objeto de debate entre los autores de colaboraciones y validadores.
+	'QUEUE_DISCUSSION_TOPIC_MESSAGE'	=> 'Este tema será objeto de debate entre los autores de la contribución y validadores.
 
-Todo lo publicado en este tema será leído para valorar su colaboración, para por favor, puesto que aquí en lugar de utilizar mensajes privados a los validadores.
+Todo lo publicado en este tema será leído para valorar su contribución, así que por favor postee aquí en lugar de enviar mensajes privados a los validadores.
 
-Equipo de  validación también pueden enviar preguntas a los autores aquí, así que por favor, responda con información útil para ellos como lo puede ser requerida para proceder con el procedimiento de validación.
+El equipo de  validación también puede enviar preguntas a los autores aquí, así que por favor, responda con información útil para ellos como lo puede ser requerida para proceder con el procedimiento de validación.
 
 Tenga en cuenta que por defecto este tema es privado entre los autores y los validadores y no puede ser visto por el público.',
 	'QUEUE_DISCUSSION_TOPIC_TITLE'		=> 'Discusión de validación - %s',
@@ -56,12 +56,12 @@ Tenga en cuenta que por defecto este tema es privado entre los autores y los val
 	'REPORT_POST_CONFIRM'				=> 'Utilice este formulario para reportar el mensaje seleccionado a los moderadores del foro y los administradores del foro. Información general, deberían usarse sólo si el mensaje incumple las reglas del foro.',
 
 	'SET_PREVIEW_FILE'					=> 'Establecer como vista previa',
-	'SOFT_DELETE_TOPIC_CONFIRM'			=> 'Estás seguro de que desea <strong>provisoriamente</strong> Eliminar este tema?',
+	'SOFT_DELETE_TOPIC_CONFIRM'			=> 'Esta seguro de que desea  eliminar <strong>provisionalmente</strong> este tema?',
 	'STICKIES'							=> 'Fijos',
 	'STICKY_TOPIC'						=> 'Tema fijo',
 
 	'UNDELETE_FILE'						=> 'Cancelar eliminación',
 	'UNDELETE_POST'						=> 'Recuperar mensaje',
-	'UNDELETE_POST_CONFIRM'				=> 'Estás seguro de que desea recuperar este mensaje?',
-	'UNDELETE_TOPIC_CONFIRM'			=> 'Estás seguro de que desea recuperar este tema?',
+	'UNDELETE_POST_CONFIRM'				=> 'Esta seguro de que desea recuperar este mensaje?',
+	'UNDELETE_TOPIC_CONFIRM'			=> 'Esta seguro de que desea recuperar este tema?',
 ));

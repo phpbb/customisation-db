@@ -38,7 +38,7 @@ $lang = array_merge($lang, array(
 	'CONTRIB_NAME_DESCRIPTION'		=> 'Colaboración nombre y descripción',
 	'CONTRIB_SUPPORT'				=> 'Colaboración discusión/soporte',
 
-	'SEARCH_KEYWORDS_EXPLAIN'		=> 'Ponga una lista de palabras separadas por <strong> | </strong> en el recuadro, si sólo una de las palabras deben ser encontradas. Use * como un comodín para comparaciones parciales.',
+	'SEARCH_KEYWORDS_EXPLAIN'		=> 'Ponga una lista de palabras separadas por <strong>|</strong> en el recuadro, si sólo una de las palabras deben ser encontradas. Use * como un comodín para comparaciones parciales.',
 	'SEARCH_MSG_ONLY'				=> 'Solo texto descripción',
 	'SEARCH_SUBCATEGORIES'			=> 'Buscar las subcategorías',
 	'SEARCH_TITLE_MSG'				=> 'Títulos y textos descripción',
