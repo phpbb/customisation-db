@@ -1,7 +1,7 @@
 Asunto"{SITENAME}" - E-mail a un amigo
 Hola {TO_USERNAME},
 
-Este correo electrónico fue enviado desde"{SITENAME}" por {FROM_USERNAME} que pensaba que podría estar interesado en la base de descargas de phpBB:
+Este correo electrónico fue enviado desde "{SITENAME}" por {FROM_USERNAME} que pensaba que podría estar interesado en la base de descargas de phpBB:
 
 {CONTRIB_NAME}
 
