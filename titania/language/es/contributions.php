@@ -191,7 +191,7 @@ $lang = array_merge($lang, array(
     'SUBSCRIBE_QUEUE_DISCUSSION'			=> 'Subscribirse al tema en la cola de discusión',
 	'SUBSCRIPTION_REQUEST'					=> '¿Le gustaría suscribirse a la contribución a fin de recibir notificaciones por email sobre nuevas versiones y vulnerabilidades de seguridad?',
 
-	'TOO_MANY_TRANSLATOR_LINKS'				=> 'En este momento está usando % d los enlaces externos dentro de la línea Traducción/TRANSLATION_INFO. Por favor, sólo incluya <strong>un enlace</strong>. Incluya dos enlaces sólo se permiten tras caso-a-caso - por favor, vaya al foro de traducciones y ponga sus razones para poner más enlaces externos dentro de la línea.',
+	'TOO_MANY_TRANSLATOR_LINKS'				=> 'En este momento está usando %d los enlaces externos dentro de la línea Traducción/TRANSLATION_INFO. Por favor, sólo incluya <strong>un enlace</strong>. Incluya dos enlaces sólo se permiten tras caso-a-caso - por favor, vaya al foro de traducciones y ponga sus razones para poner más enlaces externos dentro de la línea.',
 
 	'VALIDATION_TIME'						=> 'Tiempo de validación',
 	'VIEW_DEMO'								=> 'Ver demo',
