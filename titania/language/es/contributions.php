@@ -37,10 +37,10 @@ $lang = array_merge($lang, array(
 	'ANNOUNCEMENT_TOPIC'					=> 'Tema de anuncio',
 	'ANNOUNCEMENT_TOPIC_SUPPORT'			=> 'Tema de soporte',
 	'ANNOUNCEMENT_TOPIC_VIEW'				=> '%sVer%s',
-	'ATTENTION_CONTRIB_CATEGORIES_CHANGED'	=> '<strong>Categoría de contribución cambiada</strong><br />%1$s<br /><br /><strong>a:</strong><br />%2$s',
+	'ATTENTION_CONTRIB_CATEGORIES_CHANGED'	=> '<strong>Categoría de la contribución cambiada</strong><br />%1$s<br /><br /><strong>a:</strong><br />%2$s',
 	'ATTENTION_CONTRIB_DESC_CHANGED'		=> '<strong>Cambiar descripción de la contribución:</strong><br />%1$s<br /><br /><strong>a:</strong><br />%2$s',
 	'AUTOMOD_RESULTS'						=> '<strong>Por favor, consulte los resultados de la instalación con Automod y asegurarse de que no hay nada que arreglar.<br /><br />Si aparece un error y está seguro de que el error no es correcto, simplemente pulse siguiente a continuación.</strong>',
-	'AUTOMOD_TEST'							=> 'El Mod se pondrá a prueba contra AutoMod y los resultados se mostraran (esto puede tardar unos minutos, así que por favor sea paciente).<br /><br />Por favor, pulse continuar cuando esté listo.',
+	'AUTOMOD_TEST'							=> 'El Mod se pondrá a prueba contra Automod y los resultados se mostraran (esto puede tardar unos minutos, así que por favor sea paciente).<br /><br />Por favor, pulse continuar cuando esté listo.',
 
 	'BAD_VERSION_SELECTED'					=> '%s su versión de phpBB no esta actualizada.',
 
@@ -59,7 +59,7 @@ $lang = array_merge($lang, array(
 	'CONTRIB_CHANGE_OWNER_EXPLAIN'			=> 'Introduzca un nombre de usuario aquí para ponerlo como autor. Al cambiar esto, se establece como un autor para no contribuir.',
 	'CONTRIB_CHANGE_OWNER_NOT_FOUND'		=> 'El usuario que ha intentado establecer como autor, %s, no se encontró.',
 	'CONTRIB_CLEANED'						=> 'Limpiar',
-	'CONTRIB_CONFIRM_OWNER_CHANGE'			=> '¿Está seguro que desea asignar como autor  a %s? Esto evitará que siga con la gestión del proyecto y no se puede revertir.',
+	'CONTRIB_CONFIRM_OWNER_CHANGE'			=> '¿Esta seguro que desea asignar como autor a %s? Esto evitara que siga con la gestión del proyecto y no se puede revertir.',
 	'CONTRIB_CREATED'						=> 'La contribución ha sido creada correctamnete',
 	'CONTRIB_DEMO'							=> 'Demo',
 	'CONTRIB_DESCRIPTION'					=> 'Descripción de la contribución',
