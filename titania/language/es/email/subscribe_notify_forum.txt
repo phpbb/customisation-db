@@ -2,7 +2,7 @@ Asunto: Notificación - {NAME}
 
 Hola {USERNAME},
 
-Usted está recibiendo esta notificación porque estás suscrito para que se le notifique sobre nuevos artículos en la base de datos de mods phpBB.
+Usted esta recibiendo esta notificación porque esta suscrito para que se le notifique sobre nuevos artículos en la base de descargas de phpBB.
 
 El articulo "{NAME}" ha sido creado
 Usted puede ver el tema, visite el siguiente enlace:

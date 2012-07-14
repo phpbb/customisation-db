@@ -2,7 +2,7 @@ Asunto: Tema aprobado - "{TOPIC_TITLE}"
 
 Hola {USERNAME},
 
-Usted está recibiendo esta notificación debido a su tema"{TOPIC_TITLE}" en "{SITENAME}"fue aprobado por un moderador o administrador.
+Usted esta recibiendo esta notificación debido a su tema "{TOPIC_TITLE}" en "{SITENAME}" fue aprobado por un moderador o administrador.
 
 Si desea ver el tema, haga clic en el siguiente enlace:
 {U_VIEW_TOPIC}
