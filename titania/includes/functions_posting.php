@@ -184,9 +184,10 @@ function reverse_posting_options($options, &$bbcode, &$smilies, &$url)
  * Create select with Titania's accesses
  *
  * @param integer $default
+ * @param integer $min_access Minimum access level to display
  * @return string
  */
-function titania_access_select($default = false)
+function titania_access_select($default = false, $min_access = TITANIA_ACCESS_PUBLIC)
 {
 	if (titania::$access_level == TITANIA_ACCESS_PUBLIC)
 	{
@@ -208,7 +209,7 @@ function titania_access_select($default = false)
 
 	foreach ($access_types as $type => $lang_key)
 	{
-		if (titania::$access_level > $type)
+		if (titania::$access_level > $type || $min_access < $type)
 		{
 			continue;
 		}
