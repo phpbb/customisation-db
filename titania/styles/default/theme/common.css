@@ -104,6 +104,16 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 	background-image: url("./images/corners_right.png");
 }
 
+/* Pagination tweaks
+--------------------------------------------- */
+.topic-actions .search-box { margin-right: 5px; }
+
+.topic-actions .pagination {
+	float: none;
+	line-height: 1.9em;
+	margin-top: 3px;
+}
+
 /* Contribution Details
 --------------------------------------------- */
 .right-column {
