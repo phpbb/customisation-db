@@ -889,7 +889,14 @@ class titania_posting
 			'S_NOTIFY_CHECKED'	=> (phpbb::$user->data['is_registered'] && !$is_subscribed && phpbb::$user->data['user_notify'] && $post_object->post_type == TITANIA_SUPPORT) ? ' checked=checked' : '',
 		));
 
-		$message_object->display();
+		$topic_access_level = TITANIA_ACCESS_PUBLIC;
+
+		if ($mode == 'edit' || $mode == 'reply')
+		{
+			// If this is the first post, we'll allow lowering the access level, otherwise the topic access level is the minimum that can be set
+			$topic_access_level = ($post_object->post_id == $post_object->topic->topic_first_post_id) ? TITANIA_ACCESS_PUBLIC : $post_object->topic->topic_access;
+		}
+		$message_object->display($topic_access_level);
 	}
 
 	// Common delete/undelete code

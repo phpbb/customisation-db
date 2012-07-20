@@ -174,7 +174,7 @@ class titania_message
 	/**
 	 * Display the message box
 	 */
-	public function display()
+	public function display($topic_access_level = TITANIA_ACCESS_PUBLIC)
 	{
 		$for_edit = $this->post_object->generate_text_for_edit();
 
@@ -245,7 +245,7 @@ class titania_message
 		$default_panel = (isset($this->posting_panels[$default_panel])) ? $default_panel :  'options-panel';
 
 		phpbb::$template->assign_vars(array(
-			'ACCESS_OPTIONS'			=> titania_access_select((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC),
+			'ACCESS_OPTIONS'			=> titania_access_select((isset($for_edit['access'])) ? $for_edit['access'] : TITANIA_ACCESS_PUBLIC, $topic_access_level),
 
 			'EDIT_REASON'				=> (isset($for_edit['edit_reason'])) ? $for_edit['edit_reason'] : '',
 
