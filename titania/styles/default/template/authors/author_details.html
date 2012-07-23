@@ -1,16 +1,13 @@
 <!-- INCLUDE authors/author_header.html -->
 
-<div class="left-column">
-	<div class="container demo">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
-			<!-- IF USER_AVATAR -->{USER_AVATAR}<br /><!-- ELSE --><div class="no-avatar">{L_NO_AVATAR}</div><!-- ENDIF -->
-			<!-- IF U_USER_PROFILE --><a href="{U_USER_PROFILE}">{L_VIEW_USER_PROFILE}</a><!-- ENDIF -->
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
-</div>
-<div class="right-column">
-	<div class="container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+<div class="container" id="author-profile">
+	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div class="left-column demo">
+				<!-- IF USER_AVATAR -->{USER_AVATAR}<br /><!-- ELSE --><div class="no-avatar">{L_NO_AVATAR}</div><!-- ENDIF -->
+				<!-- IF U_USER_PROFILE --><a href="{U_USER_PROFILE}">{L_VIEW_USER_PROFILE}</a><!-- ENDIF -->
+		</div>
+
+		<div class="right-column">
 			<ul class="general-info">
 				<li>
 					<strong>{L_AUTHOR}</strong> {USER_FULL}
@@ -44,24 +41,6 @@
 				<li style="border: 0;">
 					<strong>{L_AUTHOR_CONTRIBS}</strong>{AUTHOR_CONTRIBS} (<a href="{U_AUTHOR_CONTRIBUTIONS}">{AUTHOR_CONTRIB_LIST}</a>)
 				</li>
-			</ul>
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
-
-	<!-- IF AUTHOR_DESC -->
-	<div class="container" id="contrib-description">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
-			<dl>
-				<dt><strong>{L_DESCRIPTION}</strong></dt>
-				<dd class="text-content">{AUTHOR_DESC}</dd>
-			</dl>
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
-	<!-- ENDIF -->
-
-	<div class="container" id="contrib-description">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
-			<ul class="general-info">
 				<!-- IF U_EMAIL -->
 				<li>
 					<strong>{L_EMAIL_ADDRESS}</strong> <a href="{U_EMAIL}">{L_SEND_EMAIL_USER} {USERNAME}</a>
@@ -98,18 +77,23 @@
 				</li>
 				<!-- ENDIF -->
 			</ul>
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
+		
+			<!-- IF AUTHOR_DESC -->
+			<dl class="contrib-description">
+				<dt><strong>{L_DESCRIPTION}</strong></dt>
+				<dd>{AUTHOR_DESC}</dd>
+			</dl>
+			<!-- ENDIF -->
+		
+			<!-- IF USER_SIG -->
 
-	<!-- IF USER_SIG -->
-	<div class="container" id="contrib-description">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
-			<dl>
+			<dl class="contrib-description">
 				<dt><strong>{L_SIGNATURE}</strong></dt>
 				<dd>{USER_SIG}</dd>
 			</dl>
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
-	<!-- ENDIF -->
+			<!-- ENDIF -->
+			
+		</div>
+	<span class="corners-bottom main-corners"><span></span></span></div>
 </div>
 <!-- INCLUDE authors/author_footer.html -->
