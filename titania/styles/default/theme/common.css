@@ -115,19 +115,19 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 /* Contribution Details
 --------------------------------------------- */
 .right-column {
-	margin-left: 210px;
+	width: 200px;
+	float: right;
 }
 
 .left-column {
-	width: 200px;
-	float: left;
+	margin-right: 210px;
 }
 
-.container.demo {
+.demo {
 	text-align: center;
 }
 
-.container.demo a {
+.demo a {
 	font-weight: bold;
 	color: #333333;
 }
@@ -143,18 +143,18 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 
 .download-button {
 	background: transparent none no-repeat 0 0;
-	margin: 10px auto 0 auto;
+	margin: 5px auto 0 auto;
 }
 .colorizeit-button {
 	background: transparent none no-repeat 0 0;
-	margin: 4px auto 0 auto;
+	margin: -9px auto 10px auto;
 }
 
 a.download-main, a.colorizeit-main {
-	height: 21px;
-	padding-top: 30px;
-	padding-right: 41px;
-	text-align: right;
+	height: 29px;
+	padding-top: 28px;
+	padding-left: 63px;
+	text-align: left;
 	color: #FFFFFF !important;
 	font-weight: bold;
 	display: block;
@@ -163,18 +163,26 @@ a.download-main, a.colorizeit-main {
 
 .contrib-description {
 	font-size: 1.1em;
+	margin-bottom: 15px;
+	position: relative;
 }
 
 .contrib-description dt {
 	margin-bottom: 3px;
-	padding-bottom: 3px;
-	border-bottom: 1px dotted #DEDEDE;
+	padding-bottom: 4px;
+	border-bottom: 1px solid #E1E1E1;
+	margin-top: 6px;
+}
+
+.contrib-description dt strong {
+	margin-top: 6px;
+	padding-bottom: 12px;
 }
 
 .contrib-description ul.profile-icons {
 	padding: 0;
 	float: right;
-	margin-top: -5px;
+	margin-top: -6px;
 }
 
 .contrib-description .icon-subscribe, .contrib-description .icon-unsubscribe {
@@ -185,19 +193,37 @@ a.download-main, a.colorizeit-main {
 	margin-left: 3em;
 }
 
+.contrib-description dd dl.codebox dt {margin-top: 1px;}
+
+ul.general-info {
+	border: 1px solid #EAF3F7;
+	clear: left;
+}
+
+.right-column ul.general-info {
+	clear: right;
+}
+
 ul.general-info li {
 	list-style: none;
 	display: block;
-	border-bottom: 1px dotted #DEDEDE;
+	border-bottom: 1px solid #FFFFFF;
 	font-size: 1.1em;
 	vertical-align: middle;
 	line-height: 20px;
+}
+
+ul.general-info li li {
+	line-height: 1em !important;
 }
 
 ul.general-info li strong {
 	width: 25%;
 	display: block;
 	float: left;
+	background-color: #F6FAFC;
+	padding-left: 10px;
+	margin-right: 10px;
 }
 
 #extratabs #extratabs-head {
@@ -252,7 +278,7 @@ ul.general-info li strong {
 	padding: 0 !important;
 }
 
-#screenshots-panel a.screenshot img, #screenshots-panel img.screenshot  {
+#screenshots-panel a.screenshot img, img.screenshot  {
 	padding: 3px;
 	border: 1px solid #A1A1A1;
 	vertical-align: text-top;
@@ -281,6 +307,18 @@ a.new-revision:hover {
 
 /* Author Profile
 --------------------------------------------- */
+#author-profile .left-column {
+	float: left;
+	width: 200px;
+	margin-right: 0;
+}
+
+#author-profile .right-column {
+	float: none;
+	width: auto;
+	margin-left: 210px;
+}
+
 .no-avatar {
 	background: url("{T_THEME_PATH}/images/no_avatar.gif") no-repeat 0 0;
 	width: 118px;
@@ -356,17 +394,7 @@ ul.simple li.header dt, ul.simple li.header dd {
 }
 
 .container .forabg {
-	background-color: #53A8D2;
 	background-image: none;
-}
-
-.container .forabg li.header dt, .container .forabg li.header dd {
-	color: #FFF;
-}
-
-.container .forabg li.row {
-	background-color: #FFF;
-	border-bottom-color: #4B9AC2;
 }
 
 .revisions dt {
@@ -378,8 +406,8 @@ dd.contribution-phpbb-version {
 	width: 15%;
 }
 
- dd.revision-version {
-	width: 20%;
+dd.revision-version {
+	width: 19%;
 	text-align: center;
 }
 
@@ -390,7 +418,7 @@ dd.revision-phpbb-version {
 
 ul.topiclist dd.revision-actions {
 	text-align: right;
-	width: 7%;
+	width: 8%;
 	border-left: 0;
 }
 
@@ -448,7 +476,7 @@ ul.rating li, ul.rated li {
 	border-bottom: 1px solid #D4D6D7;
 	font-size: 1.1em;
 	font-family: Arial, Verdana, Helvetica, sans-serif;
-	margin-top: 20px;
+	margin-top: 10px;
 }
 
 .queue-actions li {
@@ -509,16 +537,18 @@ ul.rating li, ul.rated li {
 	display: none;
 }
 
-.queue-actions div.subactions div a {
+.queue-actions div.subactions a {
 	padding: 0 10px;
 }
 
-.queue-actions div.subactions div a:hover {
+.queue-actions div.subactions a:hover {
 	background-color: #FFF;
 }
 
 /* Attention */
 #attention {
+	border-bottom-style: dashed;
+	border-bottom-width: 1px;
 	padding-top: 5px;
 }
 
@@ -586,7 +616,6 @@ ul.rating li, ul.rated li {
 .success {
 	color: #228822;
 }
-
 
 .error {
 	color: #BC2A4D;
