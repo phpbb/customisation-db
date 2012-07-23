@@ -3,6 +3,10 @@
 
 /* Common styles
 --------------------------------------------- */
+#page-body .navbar {
+	margin: 5px 0 7px 0;
+}
+
 h2.panel-name {
 	width: auto;
 	display: inline;
@@ -573,6 +577,7 @@ ul.rating li, ul.rated li {
 #cboxLoadedContent {
 	margin-top: 28px;
 	margin-bottom: 0 !important;
+	text-align: left;
 }
 
 #cboxLoadedContent h3 {
@@ -692,11 +697,6 @@ ul.rating li, ul.rated li {
 
 fieldset dl:hover dt label.error {
 	color: #BC2A4D;
-}
-
-#wrap {
-	width: 900px;
-	margin: 0 auto;
 }
 
 textarea.elastic {
