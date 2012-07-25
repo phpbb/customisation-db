@@ -15,7 +15,7 @@
 			<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 				<dl>
 					<dt>
-						<a href="{revisions.U_DOWNLOAD}" title="{L_DOWNLOAD}"><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --></a>
+						<!-- IF revisions.U_DOWNLOAD --><a href="{revisions.U_DOWNLOAD}" title="{L_DOWNLOAD}"><!-- ENDIF --><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --><!-- IF revisions.U_DOWNLOAD --></a><!-- ENDIF -->
 					</dt>
 					<dd class="general revision-status">
 						<!-- IF revisions.S_NEW and revisions.S_USE_QUEUE --><strong>{L_NOT_VALIDATED}</strong><!-- ENDIF -->
@@ -43,24 +43,38 @@
 						<!-- ENDIF -->
 					</dd>
 				</dl>
-				<dl class="revision-details<!-- IF revisions.S_FIRST_ROW --> first<!-- ENDIF -->">
-					<dt class="revision-information">
-						<!-- IF revisions.REVISION_LICENSE -->{L_LICENSE}: {revisions.REVISION_LICENSE}<br /><!-- ENDIF -->
-						<!-- IF revisions.S_USE_QUEUE -->{L_VALIDATION_TIME}: {revisions.VALIDATED_DATE}<br /><!-- ENDIF -->
-						<!-- IF revisions.INSTALL_TIME -->{L_INSTALL_TIME}: {revisions.INSTALL_TIME}<br /><!-- ENDIF -->
-						<!-- IF revisions.INSTALL_LEVEL -->{L_INSTALL_LEVEL}: {revisions.INSTALL_LEVEL}<br /><!-- ENDIF -->
-						<!-- IF revisions.U_VIEW_INSTALL -->{L_VIEW_INSTALL_FILE}: <a href="{revisions.U_VIEW_INSTALL}">{L_VIEW_INSTALL_FILE}</a><br /><!-- ENDIF -->
-						<!-- IF revisions.DOWNLOADS -->{L_DOWNLOADS}: {revisions.DOWNLOADS}<br /><!-- ENDIF -->
-					</dt>
-					<!-- IF .revisions.translations -->
-					<dd class="revision-translations">
-						<h3>{L_TRANSLATIONS}</h3>
-						<!-- BEGIN translations -->
-							{revisions.translations.DISPLAY_ATTACHMENT}
-						<!-- END translations -->
-					</dd>
+				<div class="revision-details">
+					<dl class="<!-- IF revisions.S_FIRST_ROW --> first<!-- ENDIF -->">
+						<dt class="revision-information">
+							<!-- IF revisions.REVISION_LICENSE -->{L_LICENSE}: {revisions.REVISION_LICENSE}<br /><!-- ENDIF -->
+							<!-- IF revisions.S_USE_QUEUE -->{L_VALIDATION_TIME}: {revisions.VALIDATED_DATE}<br /><!-- ENDIF -->
+							<!-- IF revisions.INSTALL_TIME -->{L_INSTALL_TIME}: {revisions.INSTALL_TIME}<br /><!-- ENDIF -->
+							<!-- IF revisions.INSTALL_LEVEL -->{L_INSTALL_LEVEL}: {revisions.INSTALL_LEVEL}<br /><!-- ENDIF -->
+							<!-- IF revisions.U_VIEW_INSTALL -->{L_VIEW_INSTALL_FILE}: <a href="{revisions.U_VIEW_INSTALL}">{L_VIEW_INSTALL_FILE}</a><br /><!-- ENDIF -->
+							<!-- IF revisions.DOWNLOADS -->{L_DOWNLOADS}: {revisions.DOWNLOADS}<br /><!-- ENDIF -->
+						</dt>
+						<!-- IF .revisions.translations -->
+						<dd class="revision-translations">
+							<h3>{L_TRANSLATIONS}</h3>
+							<!-- BEGIN translations -->
+								{revisions.translations.DISPLAY_ATTACHMENT}
+							<!-- END translations -->
+						</dd>
+						<!-- ENDIF -->
+					</dl>
+					<!-- IF revisions.BBC_HTML_REPLACEMENT -->
+					<hr class="dashed" />
+					<div class="content bbcode-container">
+						<dl class="codebox"><dt>{L_REVISION_BBCODE_USE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{revisions.BBC_BBCODE_USAGE}</code></dd></dl>
+						<br />
+						<dl class="codebox"><dt>{L_REVISION_HTML_REPLACE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{revisions.BBC_HTML_REPLACEMENT}</code></dd></dl>
+						<!-- IF revisions.BBC_HELPLINE -->
+						<br />
+						<dl class="codebox"><dt>{L_REVISION_HELP_LINE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{revisions.BBC_HELPLINE}</code></dd></dl>
+						<!-- ENDIF -->
+					</div>
 					<!-- ENDIF -->
-				</dl>
+				</div>
 			</li>
 		<!-- END revisions -->
 	</ul>

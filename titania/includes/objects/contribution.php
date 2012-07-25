@@ -309,10 +309,21 @@ class titania_contribution extends titania_message_object
 		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('view')) ? true : false;
 		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? true : false;
 
-		$sql = 'SELECT r.*, a.download_count FROM ' . TITANIA_REVISIONS_TABLE . ' r
-			LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
-				ON (r.attachment_id = a.attachment_id)
-			WHERE r.contrib_id = ' . $this->contrib_id .
+		$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
+
+		if ($require_upload)
+		{
+			$select = 'SELECT r.*, a.download_count FROM ' . TITANIA_REVISIONS_TABLE . ' r
+				LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
+					ON (r.attachment_id = a.attachment_id)';
+		}
+		else
+		{
+			$select = 'SELECT r.*  FROM ' . TITANIA_REVISIONS_TABLE . ' r ';	
+		}
+
+		$sql = $select .
+			'WHERE r.contrib_id = ' . $this->contrib_id .
 				((!$can_view_unapproved) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') . '
 				AND r.revision_submitted = 1
 			ORDER BY r.revision_id DESC';
@@ -363,9 +374,11 @@ class titania_contribution extends titania_message_object
 			return;
 		}
 
-		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_ATTACHMENTS_TABLE . ' a
-			WHERE r.contrib_id = ' . $this->contrib_id . '
-				AND a.attachment_id = r.attachment_id ' .
+		$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
+
+		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r' . (($require_upload) ? ', ' . TITANIA_ATTACHMENTS_TABLE . ' a ' : '') . '
+			WHERE r.contrib_id = ' . $this->contrib_id . 
+				(($require_upload) ? ' AND a.attachment_id = r.attachment_id ' : '') .
 				((titania::$config->require_validation && titania_types::$types[$this->contrib_type]->require_validation && $revision_id === false) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') .
 				(($revision_id !== false) ? ' AND r.revision_id = ' . (int) $revision_id : '') . '
 				AND revision_submitted = 1
@@ -456,6 +469,8 @@ class titania_contribution extends titania_message_object
 	 */
 	public function assign_details($simple = false, $return = false)
 	{
+		$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
+
 		$install_time = false;
 		if (isset($this->download['install_time']) && $this->download['install_time'] > 0)
 		{
@@ -490,20 +505,33 @@ class titania_contribution extends titania_message_object
 			'L_ANNOUNCEMENT_TOPIC'			=> (titania::$config->support_in_titania) ? phpbb::$user->lang['ANNOUNCEMENT_TOPIC'] : phpbb::$user->lang['ANNOUNCEMENT_TOPIC_SUPPORT'],
 
 			// Download data
-			'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
-			'DOWNLOAD_SIZE'					=> (isset($this->download['filesize'])) ? get_formatted_filesize($this->download['filesize']) : '',
-			'DOWNLOAD_CHECKSUM'				=> (isset($this->download['hash'])) ? $this->download['hash'] : '',
 			'DOWNLOAD_NAME'					=> (isset($this->download['revision_name'])) ? censor_text($this->download['revision_name']) : '',
 			'DOWNLOAD_VERSION'				=> (isset($this->download['revision_version'])) ? censor_text($this->download['revision_version']) : '',
 			'DOWNLOAD_LICENSE'				=> (isset($this->download['revision_license'])) ? censor_text($this->download['revision_license']) : '',
-			'DOWNLOAD_LICENSE'				=> (isset($this->download['revision_license'])) ? censor_text($this->download['revision_license']) : '',
-			'DOWNLOAD_INSTALL_TIME'			=> $install_time,
-			'DOWNLOAD_INSTALL_LEVEL'		=> (isset($this->download['install_level']) && $this->download['install_level'] > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->download['install_level']] : '',
 
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
 			'S_INTEGRATE_DEMO'				=> $this->options['demo'],
 		);
-		
+
+		if ($require_upload)
+		{
+			$vars = array_merge($vars, array(
+				//Download Data
+				'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
+				'DOWNLOAD_SIZE'					=> (isset($this->download['filesize'])) ? get_formatted_filesize($this->download['filesize']) : '',
+				'DOWNLOAD_CHECKSUM'				=> (isset($this->download['hash'])) ? $this->download['hash'] : '',
+				'DOWNLOAD_INSTALL_LEVEL'		=> (isset($this->download['install_level']) && $this->download['install_level'] > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->download['install_level']] : '',			
+			));
+		}
+		else if ($this->contrib_type == TITANIA_TYPE_BBCODE)
+		{
+			$vars = array_merge($vars, array(
+				'CONTRIB_BBC_HTML_REPLACEMENT'	=> (isset($this->download['revision_bbc_html_replace'])) ? $this->download['revision_bbc_html_replace']: '',
+				'CONTRIB_BBC_BBCODE_USAGE'		=> (isset($this->download['revision_bbc_bbcode_usage'])) ? $this->download['revision_bbc_bbcode_usage'] : '',
+				'CONTRIB_BBC_HELPLINE'			=> (isset($this->download['revision_bbc_help_line'])) ? $this->download['revision_bbc_help_line'] : '',			
+			));
+		}
+
 		// Ignore some stuff before it is submitted else we can cause an error
 		if ($this->contrib_id)
 		{
@@ -512,7 +540,6 @@ class titania_contribution extends titania_message_object
 				'CONTRIB_TYPE_ID'				=> $this->contrib_type,
 
 				'U_CONTRIB_MANAGE'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('manage') : '',
-				'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
 				'U_NEW_REVISION'				=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('revision') : '',
 				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && titania_types::$types[$this->contrib_type]->use_queue && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[$this->contrib_type]->acl_get('queue_discussion'))) ? $this->get_url('queue_discussion') : '',
 				'U_VIEW_CONTRIB'				=> $this->get_url(),
@@ -530,7 +557,12 @@ class titania_contribution extends titania_message_object
 
 				'JS_CONTRIB_TRANSLATION'		=> !empty($this->contrib_iso_code) ? 'true' : 'false', // contrib_iso_code is a mandatory field and must be included with all translation contributions
 			));
-			
+
+			if ($require_upload)
+			{
+				$vars['U_DOWNLOAD'] = (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '';
+			}
+
             // ColorizeIt stuff
             if(strlen(titania::$config->colorizeit) && $this->has_colorizeit() && isset($this->download['attachment_id']))
             {

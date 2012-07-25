@@ -71,11 +71,13 @@ class titania_config extends titania_object
 			'forum_mod_database'		=> array('default' => 0),
 			'forum_style_database'		=> array('default' => 0),
 			'forum_converter_database'	=> array('default' => 0),
+			'forum_bbcode_database'		=> array('default' => 0),
 
 			// Accounts to use for posting in the forum
 			'forum_mod_robot'			=> array('default' => 0),
 			'forum_style_robot'			=> array('default' => 0),
 			'forum_converter_robot'		=> array('default' => 0),
+			'forum_bbcode_robot'		=> array('default' => 0),
 
 			// Show the support/discussion panel to the public?
 			'support_in_titania'		=> array('default' => true),

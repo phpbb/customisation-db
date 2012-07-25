@@ -4,3 +4,5 @@ titania/files/*
 Thumbs.db
 .DS_Store
 *.bak
+titania/files/revisions/*
+titania/files/screenshots/*
