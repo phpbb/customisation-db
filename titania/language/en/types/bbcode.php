@@ -41,9 +41,7 @@ $lang = array_merge($lang, array(
 	'AUTHOR_BBCODES_ONE'				=> '1 Custom BBCode',
 	'BBCODE'							=> 'Custom BBCode',
 	'BBCODES'							=> 'Custom BBCodes',
-	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide by the <a href="http://www.phpbb.com/bbcode/policies/">Custom BBcode database policies</a> and that your MOD conforms to and follows the W3 Web Standards.
-
-You also agree and accept that this Custom BBcode\'s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your Custom BBcode through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
+	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide and accept that this Custom BBcode\'s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your Custom BBcode through this website indefinitely.</span>',
 
 	'BBCODE_VALIDATION'					=> '[phpBB Custom BBcode - Validation] %1$s %2$s',
 	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been approved and released into our Customisation Database.
