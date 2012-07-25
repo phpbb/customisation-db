@@ -121,6 +121,24 @@ class titania_types
 
 		return $free;
 	}
+	
+	/**
+	* Get the types that require an upload
+	*/
+	public static function require_upload()
+	{
+		$free = array();
+
+		foreach (self::$types as $type_id => $class)
+		{
+			if ($class->require_upload)
+			{
+				$strict[] = $type_id;
+			}
+		}
+		
+		return $strict;
+	}
 
 	public static function increment_count($type)
 	{
@@ -219,6 +237,13 @@ class titania_type_base
 	 * @var bool
 	 */
 	public $validate_translation = false;
+
+	/**
+	 * Should the type require a file upload?
+	 *
+	 * @var bool
+	 */
+	public $require_upload = true;
 
 	/**
 	* Find the root of the install package for this type?  If so, what to search for (see contrib_tools::find_root())?

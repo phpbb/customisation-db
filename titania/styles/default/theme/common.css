@@ -466,6 +466,29 @@ ul.rating li, ul.rated li {
 	border: 1px solid #BC2A4D;
 }
 
+/* Codebox adjustments for BBCode type */
+.bbcode-container {
+	font-size: 1.2em;
+}
+
+li.row .bbcode-container {
+	padding: 5px;
+}
+
+li.row dl.codebox {
+	padding: 3px !important;
+}
+
+li.row dl.codebox dt, li.row dl.codebox dd {
+	float: none;
+	width: auto !important;
+}
+
+li.row dl.codebox dd {
+	border: 0;
+	padding: 0;
+}
+
 /* Manage sections
 --------------------------------------------- */
 
