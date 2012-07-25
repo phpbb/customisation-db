@@ -38,15 +38,15 @@ Rewriterule ^contributions/all/?([^/]+)?$						./index.php?action=contributions 
 
 #display support topics
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^support/(all|mod|style|converter|official_tool|bridge|translation|contributions?)/?([^/]+)?$								./index.php?action=support&type=$1 [NC]
+Rewriterule ^support/(all|mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/?([^/]+)?$								./index.php?action=support&type=$1 [NC]
 
 #contributions
 RewriteCond %{REQUEST_FILENAME} !-f
 Rewriterule ^contribution/id/([0-9]+)/?$						./contributions/index.php?id=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|converter|official_tool|bridge|translation|contributions?)/(create)/?([^/]+)?$						./contributions/index.php?page=$2&type=$1 [NC]
+Rewriterule ^(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/(create)/?([^/]+)?$						./contributions/index.php?page=$2&type=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|converter|official_tool|bridge|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			./contributions/index.php?c=$2&page=$3&type=$1 [NC]
+Rewriterule ^(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			./contributions/index.php?c=$2&page=$3&type=$1 [NC]
 
 #search/faq/cron
 RewriteCond %{REQUEST_FILENAME} !-f
