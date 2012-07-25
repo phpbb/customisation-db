@@ -708,5 +708,12 @@ $versions = array(
 	'0.4.2' => array(
 		'custom'	=> 'titania_custom',
 	),
+	'0.5.0' => array(
+		'table_column_add' => array(
+			array(TITANIA_REVISIONS_TABLE, 'revision_bbc_bbcode_usage', array('MTEXT_UNI', '')),
+			array(TITANIA_REVISIONS_TABLE, 'revision_bbc_html_replace', array('MTEXT_UNI', '')),
+			array(TITANIA_REVISIONS_TABLE, 'revision_bbc_help_line', array('VCHAR:255', '')),
+		),
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
