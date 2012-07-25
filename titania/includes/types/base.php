@@ -123,21 +123,21 @@ class titania_types
 	}
 	
 	/**
-	* Get the types that do not require an upload
+	* Get the types that require an upload
 	*/
-	public static function find_bbcode()
+	public static function require_upload()
 	{
 		$free = array();
 
 		foreach (self::$types as $type_id => $class)
 		{
-			if (!$class->submit_bbcode)
+			if ($class->require_upload)
 			{
-				$free[] = $type_id;
+				$strict[] = $type_id;
 			}
 		}
 		
-		return $free;
+		return $strict;
 	}
 
 	public static function increment_count($type)
@@ -215,7 +215,6 @@ class titania_type_base
 	*/
 	public $require_validation = true;
 	public $use_queue = true;
-	
 
 	/**
 	* Can we upload extra files (on revisions) for this type?
@@ -233,12 +232,18 @@ class titania_type_base
 	public $automod_test = false;
 
 	/**
-	 * Should the package be treated as a translation or bbcode?
+	 * Should the package be validated as a translation?
 	 *
 	 * @var bool
 	 */
 	public $validate_translation = false;
-	public $submit_bbcode = false;
+
+	/**
+	 * Should the type require a file upload?
+	 *
+	 * @var bool
+	 */
+	public $require_upload = true;
 
 	/**
 	* Find the root of the install package for this type?  If so, what to search for (see contrib_tools::find_root())?
@@ -270,7 +275,7 @@ class titania_type_base
 	*/
 	public $license_options = array();
 	public $license_allow_custom = false;
-	
+
 	/**
 	* Function that will be run when a revision of this type is uploaded
 	*

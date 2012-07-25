@@ -629,7 +629,6 @@ $versions = array(
 			array(TITANIA_QUEUE_TABLE, 'allow_author_repack', array('BOOL', 0)),
 		),
 	),
-<<<<<<< HEAD
 
 	'0.3.9' => array(
 		'custom' => 'titania_custom',
@@ -659,7 +658,6 @@ $versions = array(
 			array(TITANIA_POSTS_TABLE, 'post_edit_time', array('UINT:11', 0)),
 	    ),
 	),
-<<<<<<< HEAD
 	'0.3.14' => array(
 		'table_column_add' => array(
 			array(TITANIA_CATEGORIES_TABLE, 'category_options', array('TINT:4', 0)),
@@ -712,9 +710,9 @@ $versions = array(
 	),
 	'0.5.0' => array(
 		'table_column_add' => array(
-			array(TITANIA_REVISIONS_TABLE, 'revision_bbcode_use', array('VCHAR', 255)),
-			array(TITANIA_REVISIONS_TABLE, 'revision_html_replace', array('VCHAR', 255)),
-			array(TITANIA_REVISIONS_TABLE, 'revision_help_line', array('VCHAR', 255)),
+			array(TITANIA_REVISIONS_TABLE, 'revision_bbc_bbcode_usage', array('MTEXT_UNI', '')),
+			array(TITANIA_REVISIONS_TABLE, 'revision_bbc_html_replace', array('MTEXT_UNI', '')),
+			array(TITANIA_REVISIONS_TABLE, 'revision_bbc_help_line', array('VCHAR:255', '')),
 		),
 	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!

@@ -37,8 +37,10 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'BBCODE'							=> 'Custom BBcode',
-	'BBCODES'							=> 'Custom BBcodes',
+	'AUTHOR_BBCODES'					=> '%d Custom BBCodes',
+	'AUTHOR_BBCODES_ONE'				=> '1 Custom BBCode',
+	'BBCODE'							=> 'Custom BBCode',
+	'BBCODES'							=> 'Custom BBCodes',
 	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide by the <a href="http://www.phpbb.com/bbcode/policies/">Custom BBcode database policies</a> and that your MOD conforms to and follows the W3 Web Standards.
 
 You also agree and accept that this Custom BBcode\'s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your Custom BBcode through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
@@ -72,4 +74,12 @@ Here is a report on why your Custom BBcode was denied:
 
 Thank you,
 phpBB Teams',
+	'NO_BBCODE_USAGE'					=> 'Please enter a BBCode usage',
+	'NO_HTML_REPLACE'					=> 'Please enter an HTML replacement',
+	'REVISION_HTML_REPLACE'				=> 'HTML Replacement',	
+	'REVISION_BBCODE_USE'				=> 'BBCode Usage',
+	'REVISION_HELP_LINE'				=> 'Help Line',
+	'REVISION_HTML_REPLACE_EXPLAIN'		=> 'Here you define the default HTML replacement.',
+	'REVISION_BBCODE_USE_EXPLAIN'		=> 'Here you define how to use the BBCode.',
+	'REVISION_HELP_LINE_EXPLAIN'		=> 'This field contains the bbcode help that shows when mouse over text of the BBCode',
 ));

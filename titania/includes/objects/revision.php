@@ -76,8 +76,8 @@ class titania_revision extends titania_database_object
 			'revision_license'			=> array('default' => ''),
 			'revision_clr_options'  	=> array('default' => ''),
 			'revision_bbc_html_replace' => array('default' => ''),
-			'revision_bbc_helpline' 	=> array('default' => ''),
-			'revision_bbc_bbcode_usgae' => array('default' => ''),
+			'revision_bbc_help_line' 	=> array('default' => ''),
+			'revision_bbc_bbcode_usage' => array('default' => ''),
 		));
 
 		if ($contrib)
@@ -179,10 +179,9 @@ class titania_revision extends titania_database_object
 			'PHPBB_VERSION'			=> (sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
 			'REVISION_LICENSE'		=> ($this->revision_license) ? censor_text($this->revision_license) : (($this->contrib && sizeof(titania_types::$types[$this->contrib->contrib_type]->license_options)) ? phpbb::$user->lang['UNKNOWN'] : ''),
 			'INSTALL_TIME'			=> $install_time,
-			'BBC_HTML_REPLACEMENT'	=> $this->bbc_html,
-			'BBC_BBCODE_USAGE'		=> $this->bbc_bbcode,
-			'BBC_HELPLINE'			=> $this->bbc_helpline,
-			'BBC'					=> $bbc_type_true
+			'BBC_HTML_REPLACEMENT'	=> $this->revision_bbc_html_replace,
+			'BBC_BBCODE_USAGE'		=> $this->revision_bbc_bbcode_usage,
+			'BBC_HELPLINE'			=> $this->revision_bbc_help_line,
 			'INSTALL_LEVEL'			=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
 			'DOWNLOADS'			=> isset($this->download_count) ? $this->download_count : 0,
 
@@ -230,7 +229,6 @@ class titania_revision extends titania_database_object
 		// Hooks
 		titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $this, $tpl_block);
 	}
-	
 
 	/**
 	 * Handle some stuff we need when submitting a revision
@@ -610,37 +608,17 @@ class titania_revision extends titania_database_object
 
 		return false;
 	}
-	
-	/**
-	 * BBcode Stuff
-	*/
-	
-	//Is this a bbcode?
-	$bbc_type_true == (titania::$config->validate_bbcode && titania_types::$types[$this->contrib->contrib_type]->validate_bbcode) ? true : false,
-	
-	// BBcode HTML Replacement Content
-	public function bbc_html()
-	{
-		return
-	}
-	
-	// BBcode Usage Content
-	public function bbc_bbcode()
-	{
-		return
-	}
-	
-	// BBcode Helpline Content
-	public function bbc_helpline()
-	{
-		return
-	}
-	
+
 	/**
 	 * Download URL
 	 */
 	public function get_url()
 	{
+		if (empty($this->attachment_id))
+		{
+			return '';
+		}
+
 		return titania_url::build_url('download', array('id' => $this->attachment_id));
 	}
 }
