@@ -39,9 +39,9 @@ class titania_type_bbcode extends titania_type_base
 	public $name = 'bbcode';
 
 	/**
-	 * Submit as BBcode?
+	 * Require upload?
 	*/
-	public $validate_bbcode = true;
+	public $require_upload = false;
 	
 	/**
 	 * For the url slug
@@ -55,6 +55,8 @@ class titania_type_bbcode extends titania_type_base
 		$this->lang = phpbb::$user->lang['BBCODE'];
 		$this->langs = phpbb::$user->lang['BBCODES'];
 	}
+
+	public $extra_upload = false;
 
 	// Validation messages (for the PM)
 	public $validation_subject = 'BBCODE_VALIDATION';

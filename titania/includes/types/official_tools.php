@@ -30,7 +30,7 @@ class titania_type_official_tools extends titania_type_base
 	 * @var int type id (for custom types not specified in titania to start, please start with 10 in case we add any extra later)
 	 */
 	public $id = 4;
-
+	
 	/**
 	 * The type name
 	 *

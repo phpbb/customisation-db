@@ -35,11 +35,11 @@
 				<div class="download-button">
 					<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE}</a>
 				</div>
-			<!-- ENDIF -->
-			<!-- IF U_COLORIZEIT -->
-				<div class="colorizeit-button">
-					<a class="colorizeit-main" href="#colorizeit-editor" onclick="ColorizeIt('{U_COLORIZEIT}');" title="{L_COLORIZEIT_DOWNLOAD_STYLE} {CONTRIB_NAME}"></a>
-				</div>
+				<!-- IF U_COLORIZEIT -->
+                    <div class="colorizeit-button">
+                        <a class="colorizeit-main" href="#colorizeit-editor" onclick="ColorizeIt('{U_COLORIZEIT}');" title="{L_COLORIZEIT_DOWNLOAD_STYLE} {CONTRIB_NAME}"></a>
+                    </div>
+				<!-- ENDIF -->
 			<!-- ENDIF -->
 		</div>
 
@@ -150,17 +150,6 @@
 				<li style="border-bottom: none;">
 					<strong>{L_CATEGORIES}</strong> <!-- BEGIN categories --><a href="{categories.U_VIEW_CATEGORY}">{categories.CATEGORY_NAME}</a><!-- IF not categories.S_LAST_ROW -->, <!-- ENDIF --><!-- END -->
 				</li>
-					<li>
-						<dl class="codebox"><dt>HTML Replacement: <a href="#" onclick="selectCode(this); return false;">Select all</a></dt><dd><code>SIMPLETEXT2 because I can't use HTML here as it will break the page for now. SIMPLETEXT1</code></dd></dl>
-					</li>
-					
-					<li>
-						<dl class="codebox"><dt>BBcode Usage: <a href="#" onclick="selectCode(this); return false;">Select all</a></dt><dd><code>SIMPLETEXT2;SIMPLETEXT1</code></dd></dl>
-					</li>
-					
-					<li>
-						<dl class="codebox"><dt>Helpline: <a href="#" onclick="selectCode(this); return false;">Select all</a></dt><dd><code>I can' show HTML as it breaks the page;I can't show the curly bracket used in bbcodes either</code></dd></dl>
-					</li>
 			</ul>
 		</div>
 		<!-- IF .queue_actions or CURRENT_STATUS -->
@@ -180,9 +169,7 @@
 			<!-- ENDIF -->
 			</ul>
 		<!-- ENDIF -->
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
-	
+	<span class="corners-bottom main-corners"><span></span></span></div>
 </div>
 
 <!-- IF U_COLORIZEIT -->
@@ -198,26 +185,21 @@
 
 <div class="clear"></div>
 
+<!-- IF CONTRIB_BBC_HTML_REPLACEMENT -->
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
-			<ul class="general-info">
-				<dd>
-					<li>
-						<dl class="codebox"><dt>{L_REVISION_HTML_REPLACE}: <a href="#" onclick="selectCode(this); return false;">Select all</a></dt><dd><code>{BBC_HTML_REPLACE}</code></dd></dl>
-					</li>
-					<br />
-					<li>
-						<dl class="codebox"><dt>{L_REVISION_BBCODE_USE}: <a href="#" onclick="selectCode(this); return false;">Select all</a></dt><dd><code>{BBC_BBCODE_USE}</code></dd></dl>
-					</li>
-					<br />
-					<li>
-						<dl class="codebox"><dt>{L_REVISION_HELP_LINE}: <a href="#" onclick="selectCode(this); return false;">Select all</a></dt><dd><code>{BBC_HELPLINE}</code></dd></dl>
-					</li>
-				</dd>
-			<span class="corners-bottom main-corners"><span></span></span>
-		</div>
+			<div class="content bbcode-container">
+				<dl class="codebox"><dt>{L_REVISION_BBCODE_USE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_BBCODE_USAGE}</code></dd></dl>
+				<br />
+				<dl class="codebox"><dt>{L_REVISION_HTML_REPLACE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_HTML_REPLACEMENT}</code></dd></dl>
+				<!-- IF CONTRIB_BBC_HELPLINE -->
+				<br />
+				<dl class="codebox"><dt>{L_REVISION_HELP_LINE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_HELPLINE}</code></dd></dl>
+				<!-- ENDIF -->
+			</div>
+		<span class="corners-bottom main-corners"><span></span></span></div>
 	</div>
-
+<!-- ENDIF -->
 
 <!-- IF .screenshots or .revisions or U_NEW_REVISION -->
 <div class="container">
