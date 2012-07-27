@@ -305,6 +305,19 @@ a.new-revision:hover {
 	border-color: #46667A;
 }
 
+a.expand, a.contract {
+	background: url("{T_THEME_PATH}/images/icon_contracted.gif") no-repeat 0 0;
+	display: block;
+	float: left;
+	height: 16px;
+	margin-right: 10px;
+	width: 16px;
+}
+
+a.contract {
+	background-image: url("{T_THEME_PATH}/images/icon_expanded.gif");
+}
+
 /* Author Profile
 --------------------------------------------- */
 #author-profile .left-column {
