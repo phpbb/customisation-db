@@ -708,6 +708,7 @@ $versions = array(
 	),
 	'0.4.2' => array(
 		'custom'	=> 'titania_custom',
+	),
 	'0.5.0' => array(
 		'table_column_add' => array(
 			array(TITANIA_REVISIONS_TABLE, 'revision_bbc_bbcode_usage', array('MTEXT_UNI', '')),
