@@ -469,8 +469,6 @@ class titania_contribution extends titania_message_object
 	 */
 	public function assign_details($simple = false, $return = false)
 	{
-		$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
-
 		$install_time = false;
 		if (isset($this->download['install_time']) && $this->download['install_time'] > 0)
 		{
@@ -513,28 +511,11 @@ class titania_contribution extends titania_message_object
 			'S_INTEGRATE_DEMO'				=> $this->options['demo'],
 		);
 
-		if ($require_upload)
-		{
-			$vars = array_merge($vars, array(
-				//Download Data
-				'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
-				'DOWNLOAD_SIZE'					=> (isset($this->download['filesize'])) ? get_formatted_filesize($this->download['filesize']) : '',
-				'DOWNLOAD_CHECKSUM'				=> (isset($this->download['hash'])) ? $this->download['hash'] : '',
-				'DOWNLOAD_INSTALL_LEVEL'		=> (isset($this->download['install_level']) && $this->download['install_level'] > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->download['install_level']] : '',			
-			));
-		}
-		else if ($this->contrib_type == TITANIA_TYPE_BBCODE)
-		{
-			$vars = array_merge($vars, array(
-				'CONTRIB_BBC_HTML_REPLACEMENT'	=> (isset($this->download['revision_bbc_html_replace'])) ? $this->download['revision_bbc_html_replace']: '',
-				'CONTRIB_BBC_BBCODE_USAGE'		=> (isset($this->download['revision_bbc_bbcode_usage'])) ? $this->download['revision_bbc_bbcode_usage'] : '',
-				'CONTRIB_BBC_HELPLINE'			=> (isset($this->download['revision_bbc_help_line'])) ? $this->download['revision_bbc_help_line'] : '',			
-			));
-		}
-
 		// Ignore some stuff before it is submitted else we can cause an error
 		if ($this->contrib_id)
 		{
+			$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
+
 			$vars = array_merge($vars, array(
 				'CONTRIB_TYPE'					=> titania_types::$types[$this->contrib_type]->lang,
 				'CONTRIB_TYPE_ID'				=> $this->contrib_type,
@@ -560,7 +541,22 @@ class titania_contribution extends titania_message_object
 
 			if ($require_upload)
 			{
-				$vars['U_DOWNLOAD'] = (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '';
+				$vars = array_merge($vars, array(
+					//Download Data
+					'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
+					'DOWNLOAD_SIZE'					=> (isset($this->download['filesize'])) ? get_formatted_filesize($this->download['filesize']) : '',
+					'DOWNLOAD_CHECKSUM'				=> (isset($this->download['hash'])) ? $this->download['hash'] : '',
+					'DOWNLOAD_INSTALL_LEVEL'		=> (isset($this->download['install_level']) && $this->download['install_level'] > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->download['install_level']] : '',			
+					'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
+				));
+			}
+			else if ($this->contrib_type == TITANIA_TYPE_BBCODE)
+			{
+				$vars = array_merge($vars, array(
+					'CONTRIB_BBC_HTML_REPLACEMENT'	=> (isset($this->download['revision_bbc_html_replace'])) ? $this->download['revision_bbc_html_replace']: '',
+					'CONTRIB_BBC_BBCODE_USAGE'		=> (isset($this->download['revision_bbc_bbcode_usage'])) ? $this->download['revision_bbc_bbcode_usage'] : '',
+					'CONTRIB_BBC_HELPLINE'			=> (isset($this->download['revision_bbc_help_line'])) ? $this->download['revision_bbc_help_line'] : '',			
+				));
 			}
 
             // ColorizeIt stuff
