@@ -165,10 +165,22 @@ $(document).ready(function(){
 
 	// Hide all of the revision details
 	$('.revision-details:not(.first)').hide();
+	// Add toggle button to each revision
+	$('.revisions li.row > dl > dt').prepend('<a href="" class="toggle expand"></a>');
 
 	// Show revision details on click
-	$('.revisions > li').click(function() {
-		$(this).children('.revision-details').toggle('fast');
+	$('.revisions > li a.toggle').click(function(e) {
+		e.preventDefault();
+
+		if ($(this).hasClass('expand'))
+		{
+			$(this).removeClass('expand').addClass('contract');
+		}
+		else
+		{
+			$(this).removeClass('contract').addClass('expand');
+		}
+		$(this).parents('li.row').children('.revision-details').toggle('fast');
 	});
 
 	// Queue Subactions
