@@ -78,6 +78,7 @@ class titania_revision extends titania_database_object
 			'revision_bbc_html_replace' => array('default' => ''),
 			'revision_bbc_help_line' 	=> array('default' => ''),
 			'revision_bbc_bbcode_usage' => array('default' => ''),
+			'revision_bbc_demo'			=> array('default' => ''),
 		));
 
 		if ($contrib)

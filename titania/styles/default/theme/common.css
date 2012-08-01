@@ -167,11 +167,19 @@ a.download-main, a.colorizeit-main {
 	position: relative;
 }
 
-.contrib-description dt {
+.contrib-description dt, h3.details-heading {
+	color: #536482;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
 	margin-bottom: 3px;
 	padding-bottom: 4px;
 	border-bottom: 1px solid #E1E1E1;
 	margin-top: 6px;
+	text-transform: none;
+}
+
+.content h3.details-heading {
+	font-size: .9em;
+	margin-bottom: 6px;
 }
 
 .contrib-description dt strong {
