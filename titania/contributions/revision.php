@@ -81,6 +81,7 @@ if ($repack)
 		'REVISION_BBCODE_USE'	=> $old_revision->revision_bbc_bbcode_usage,
 		'REVISION_HTML_REPLACE'	=> $old_revision->revision_bbc_html_replace,
 		'REVISION_HELP_LINE'	=> $old_revision->revision_bbc_help_line,
+		'REVISION_BBC_DEMO' 	=> $old_revision->revision_bbc_demo,
 
 		'S_REPACK'			=> true,
 	));
@@ -130,8 +131,9 @@ if ($step == 1)
 	}
 	$revision_version 		= utf8_normalize_nfc(request_var('revision_version', '', true));
 	$revision_html_replace 	= utf8_normalize_nfc(request_var('revision_html_replace', '', true));
-    $revision_bbcode_usage 	= utf8_normalize_nfc(request_var('revision_bbcode_usage', '', true));
-    $revision_help_line 	= utf8_normalize_nfc(request_var('revision_help_line', '', true));
+	$revision_bbcode_usage 	= utf8_normalize_nfc(request_var('revision_bbcode_usage', '', true));
+	$revision_help_line 	= utf8_normalize_nfc(request_var('revision_help_line', '', true));
+	$revision_bbc_demo		= utf8_normalize_nfc(request_var('revision_bbc_demo', '', true));
 	$queue_allow_repack 	= request_var('queue_allow_repack', 0);
 	$revision_license 		= utf8_normalize_nfc(request_var('revision_license', '', true));
 
@@ -210,6 +212,7 @@ if ($step == 1)
 			'revision_bbc_html_replace'		=> $revision_html_replace,
 			'revision_bbc_bbcode_usage'		=> $revision_bbcode_usage,
 			'revision_bbc_help_line'		=> $revision_help_line,
+			'revision_bbc_demo'				=> $revision_bbc_demo,
 		));
 		$revision->phpbb_versions = $selected_branches;
 
@@ -549,6 +552,7 @@ if ($step == 0 || sizeof($error))
 			'REVISION_HTML_REPLACE'		=> utf8_normalize_nfc(request_var('revision_html_replace', '', true)),
 			'REVISION_BBCODE_USE'		=> utf8_normalize_nfc(request_var('revision_bbcode_usage', '', true)),
 			'REVISION_HELP_LINE'		=> utf8_normalize_nfc(request_var('revision_help_line', '', true)),
+			'REVISION_BBC_DEMO' 		=> utf8_normalize_nfc(request_var('revision_bbc_demo', '', true)),
 			'REVISION_CUSTOM_LICENSE'	=> utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
 		));
 	}
