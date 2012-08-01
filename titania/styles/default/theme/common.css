@@ -171,11 +171,19 @@ a.download-main, a.colorizeit-main {
 	position: relative;
 }
 
-.contrib-description dt {
+.contrib-description dt, h3.details-heading {
+	color: #536482;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
 	margin-bottom: 3px;
 	padding-bottom: 4px;
 	border-bottom: 1px solid #E1E1E1;
 	margin-top: 6px;
+	text-transform: none;
+}
+
+.content h3.details-heading {
+	font-size: .9em;
+	margin-bottom: 6px;
 }
 
 .contrib-description dt strong {
@@ -307,19 +315,6 @@ a.new-revision:hover {
 	text-decoration: none;
 	background-color: #5E869F;
 	border-color: #46667A;
-}
-
-a.expand, a.contract {
-	background: url("{T_THEME_PATH}/images/icon_contracted.gif") no-repeat 0 0;
-	display: block;
-	float: left;
-	height: 16px;
-	margin-right: 10px;
-	width: 16px;
-}
-
-a.contract {
-	background-image: url("{T_THEME_PATH}/images/icon_expanded.gif");
 }
 
 /* Author Profile

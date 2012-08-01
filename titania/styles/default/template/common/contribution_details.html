@@ -189,6 +189,17 @@
 	<div class="container">
 		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<div class="content bbcode-container">
+				<!-- IF CONTRIB_BBC_DEMO -->
+				<h3 class="details-heading">{L_CONTRIB_DEMO}</h3>
+				<!-- IF S_CONTRIB_BBC_DEMO_RENDERED -->
+				{CONTRIB_BBC_DEMO}
+				<!-- ELSE -->
+				<dl class="codebox"><dt>{L_CONTRIB_DEMO}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_DEMO}</code></dd></dl>
+				<!-- ENDIF -->
+				<br />
+				<br />
+				<!-- ENDIF -->
+				<h3 class="details-heading">{L_SETTINGS}</h3>
 				<dl class="codebox"><dt>{L_REVISION_BBCODE_USE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_BBCODE_USAGE}</code></dd></dl>
 				<br />
 				<dl class="codebox"><dt>{L_REVISION_HTML_REPLACE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_HTML_REPLACEMENT}</code></dd></dl>
