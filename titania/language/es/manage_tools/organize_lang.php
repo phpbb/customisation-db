@@ -4,7 +4,8 @@
 * @package Support Tool Kit - Organize Language Files
 * @copyright (c) 2009 phpBB Group
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
-*
+* Traducción hecha y revisada por nextgen <http://www.melvingarcia.com>
+* Traductores anteriores angelismo y sof-teo
 */
 
 /**

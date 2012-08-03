@@ -5,7 +5,8 @@
 * @version $Id: phpbb_version_test.php 1031 2010-04-08 23:59:04Z rmcgirr83 $
 * @copyright (c) 2008 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
-*
+* Traducción hecha y revisada por nextgen <http://www.melvingarcia.com>
+* Traductores anteriores angelismo y sof-teo
 */
 
 /**

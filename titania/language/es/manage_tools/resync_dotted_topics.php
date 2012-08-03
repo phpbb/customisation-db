@@ -4,7 +4,8 @@
 * @package Titania
 * @copyright (c) 2012 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
-*
+* Traducción hecha y revisada por nextgen <http://www.melvingarcia.com>
+* Traductores anteriores angelismo y sof-teo
 */
 
 /**
@@ -37,7 +38,7 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'RESYNC_DOTTED_TOPICS'		=> 'Re sincronizar puntos de temas',
-	'RESYNC_DOTTED_TOPICS_COMPLETE'		=> 'Todos los puntos de los temas serán re sincronizados',
-	'RESYNC_DOTTED_TOPICS_CONFIRM'		=> '¿Esta seguro que desea re sincronizar todos los puntos de tema?',
+	'RESYNC_DOTTED_TOPICS'		=> 'Resincronizar puntos de temas',
+	'RESYNC_DOTTED_TOPICS_COMPLETE'		=> 'Todos los puntos de los temas serán resincronizados',
+	'RESYNC_DOTTED_TOPICS_CONFIRM'		=> '¿Esta seguro que desea resincronizar todos los puntos de tema?',
 ));

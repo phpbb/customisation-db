@@ -4,7 +4,8 @@
 * @package Titania
 * @copyright (c) 2012 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
-*
+* Traducción hecha y revisada por nextgen <http://www.melvingarcia.com>
+* Traductores anteriores angelismo y sof-teo
 */
 
 /**
@@ -37,7 +38,7 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'RESYNC_CONTRIB_COUNT'				=> 'Re sincronizar cuenta de contribuciones',
+	'RESYNC_CONTRIB_COUNT'				=> 'Resincronizar cuenta de contribuciones',
 	'RESYNC_CONTRIB_COUNT_COMPLETE'		=> 'Todas las cuentas de contribuciones se resincronizaran',
 	'RESYNC_CONTRIB_COUNT_CONFIRM'		=> '¿Esta seguro que desea re sincronizar todas las cuentas de contribuciones? Este proceso puede durar bastante tiempo',
 	'RESYNC_CONTRIB_COUNT_PROGRESS'		=> '%1$d contribuciones completadas de %2$d. Por favor espere…',
