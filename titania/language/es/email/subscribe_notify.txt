@@ -1,0 +1,8 @@
+Asunto: Notificación de actualización - {NAME}
+
+Hola {USERNAME},
+
+Usted esta recibiendo esta notificación porque esta suscrito al tema "{NAME}" en la base de descargas de phpbb.
+
+Si desea ver la actualización, por favor haga clic en el siguiente enlace:
+{U_VIEW}
