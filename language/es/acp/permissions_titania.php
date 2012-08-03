@@ -66,20 +66,20 @@ if (empty($lang) || !is_array($lang))
 // Define categories and permission types
 /*$lang = array_merge($lang, array(
 	'permission_cat'	=> array(
-		'actions'		=> 'Actions',
-		'content'		=> 'Content',
-		'forums'		=> 'Forums',
-		'misc'			=> 'Misc',
-		'permissions'	=> 'Permissions',
-		'pm'			=> 'Private messages',
-		'polls'			=> 'Polls',
-		'post'			=> 'Post',
-		'post_actions'	=> 'Post actions',
-		'posting'		=> 'Posting',
-		'profile'		=> 'Profile',
-		'settings'		=> 'Settings',
-		'topic_actions'	=> 'Topic actions',
-		'user_group'	=> 'Users &amp; Groups',
+		'actions'		=> 'Acciones',
+		'content'		=> 'Contenido',
+		'forums'		=> 'Foros',
+		'misc'			=> 'Miscelaneos',
+		'permissions'	=> 'Permisos',
+		'pm'			=> 'Mensajes privados',
+		'polls'			=> 'Encuentas',
+		'post'			=> 'Mensajes',
+		'post_actions'	=> 'Acciones de post',
+		'posting'		=> 'Postear',
+		'profile'		=> 'Perfíl',
+		'settings'		=> 'Configuración',
+		'topic_actions'	=> 'Acción de temas',
+		'user_group'	=> 'Usuarios &amp; Grupos',
 	),
 ));*/
 
@@ -116,6 +116,7 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_style_queue'						=> array('lang' => 'Puede ver la cola de estilos', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_style_validate'					=> array('lang' => 'Puede validar estilos', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_style_moderate'					=> array('lang' => 'Puede moderar estilos', 'cat' => 'titania_moderate'),
+    'acl_u_titania_mod_style_clr'                       => array('lang' => 'Can edit ColorizeIt defaults', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_modification_queue_discussion'	=> array('lang' => 'Puede ver la discusión de la cola de modificaciones', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_queue'				=> array('lang' => 'Puede ver la cola de modificaciones', 'cat' => 'titania_moderate'),
@@ -132,6 +133,11 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_converter_validate'				=> array('lang' => 'Puede validar conversores', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_converter_moderate'				=> array('lang' => 'Puede moderar conversores', 'cat' => 'titania_moderate'),
 
+	'acl_u_titania_mod_bbcode_queue_discussion'			=> array('lang' => 'Puede ver la discusión de la cola del BBcode personalizado', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bbcode_queue'					=> array('lang' => 'Puede ver la cola del BBcode personalizado', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bbcode_validate'					=> array('lang' => 'Puede validar BBcodes personalizados', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_bbcode_moderate'					=> array('lang' => 'Puede moderar BBcodes personalizados', 'cat' => 'titania_moderate'),
+	
 	'acl_u_titania_mod_bridge_queue_discussion'			=> array('lang' => 'Puede ver la discusión de la cola de bridge', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_bridge_queue'					=> array('lang' => 'Puede ver la cola de puente', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_bridge_validate'					=> array('lang' => 'Puede validar puentes', 'cat' => 'titania_moderate'),
