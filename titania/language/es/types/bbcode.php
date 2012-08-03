@@ -4,7 +4,8 @@
 * @package Titania
 * @copyright (c) 2012 phpBB Customisation Database Team
 * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
-*
+* Traducción hecha y revisada por nextgen <http://www.melvingarcia.com>
+* Traductores anteriores angelismo y sof-teo
 */
 
 /**
@@ -44,7 +45,7 @@ $lang = array_merge($lang, array(
 	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">Al presentar esta revisión se compromete a cumplir y aceptar esta licencia de los BBcode\'s Personalizados, y la licencia de los componentes incluidos son compatibles con la <a href ="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> y que también permiten la re-distributibución de su BBcode Personalizado a través de este sitio web de forma indefinida.</span>',
 
 	'BBCODE_VALIDATION'					=> '[phpBB BBcode Personalizado - Validación] %1$s %2$s',
-	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been approved and released into our Customisation Database.
+	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Gracias por enviar su BBCode Personalizado a la Base de descargas de phpBB.com. Después de una cuidadosa inspección de su BBCode Personalizado ha sido aprobado y enviado en nuestra Base de descargas.
 
 It is our hope that you will provide a basic level of support for this BBcode and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
@@ -74,7 +75,7 @@ Thank you,
 phpBB Teams',
 	'NO_BBCODE_USAGE'					=> 'Por favor escriba el uso del BBCode',
 	'NO_HTML_REPLACE'					=> 'Por favor escriba el reemplazo HTML',
-	'REVISION_HTML_REPLACE'				=> 'Remplazo HTML',	
+	'REVISION_HTML_REPLACE'				=> 'Reemplazo HTML',	
 	'REVISION_BBCODE_USE'				=> 'Uso del BBCode',
 	'REVISION_HELP_LINE'				=> 'Línea de ayuda',
 	'REVISION_HTML_REPLACE_EXPLAIN'		=> 'Aquí se define por defecto el reemplazo HTML.',
