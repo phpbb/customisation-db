@@ -2,7 +2,7 @@ Asunto: Notificación de actualización - {NAME}
 
 Hola {USERNAME},
 
-Usted esta recibiendo esta notificación porque esta suscrito al tema "{NAME}" en la base de descargas de phpbb.
+Usted está recibiendo esta notificación porque estás suscrito al tema "{NAME}" en la base de datos de mods phpBB.
 
 Si desea ver la actualización, por favor haga clic en el siguiente enlace:
 {U_VIEW}
