@@ -37,13 +37,13 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'AUTHOR_BBCODES'					=> '%d Custom BBCodes',
-	'AUTHOR_BBCODES_ONE'				=> '1 Custom BBCode',
-	'BBCODE'							=> 'Custom BBCode',
-	'BBCODES'							=> 'Custom BBCodes',
-	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide and accept that this Custom BBcode\'s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your Custom BBcode through this website indefinitely.</span>',
+	'AUTHOR_BBCODES'					=> '%d BBCodes Personalizados',
+	'AUTHOR_BBCODES_ONE'				=> '1 BBCode Personalizado',
+	'BBCODE'							=> 'BBCode Personalizado',
+	'BBCODES'							=> 'BBCodes Personalizados',
+	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">Al presentar esta revisión se compromete a cumplir y aceptar esta licencia de los BBcode\'s Personalizados, y la licencia de los componentes incluidos son compatibles con la <a href ="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> y que también permiten la re-distributibución de su BBcode Personalizado a través de este sitio web de forma indefinida.</span>',
 
-	'BBCODE_VALIDATION'					=> '[phpBB Custom BBcode - Validation] %1$s %2$s',
+	'BBCODE_VALIDATION'					=> '[phpBB BBcode Personalizado - Validación] %1$s %2$s',
 	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been approved and released into our Customisation Database.
 
 It is our hope that you will provide a basic level of support for this BBcode and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
@@ -53,7 +53,7 @@ It is our hope that you will provide a basic level of support for this BBcode an
 
 Sincerely,
 phpBB Teams',
-	'BBCODE_VALIDATION_MESSAGE_DENY'		=> 'Hello,
+	'BBCODE_VALIDATION_MESSAGE_DENY'		=> 'Hola,
 
 As you may know all Custom BBCodes submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
 
@@ -72,12 +72,12 @@ Here is a report on why your Custom BBcode was denied:
 
 Thank you,
 phpBB Teams',
-	'NO_BBCODE_USAGE'					=> 'Please enter a BBCode usage',
-	'NO_HTML_REPLACE'					=> 'Please enter an HTML replacement',
-	'REVISION_HTML_REPLACE'				=> 'HTML Replacement',	
-	'REVISION_BBCODE_USE'				=> 'BBCode Usage',
-	'REVISION_HELP_LINE'				=> 'Help Line',
-	'REVISION_HTML_REPLACE_EXPLAIN'		=> 'Here you define the default HTML replacement.',
-	'REVISION_BBCODE_USE_EXPLAIN'		=> 'Here you define how to use the BBCode.',
-	'REVISION_HELP_LINE_EXPLAIN'		=> 'This field contains the bbcode help that shows when mouse over text of the BBCode',
+	'NO_BBCODE_USAGE'					=> 'Por favor escriba el uso del BBCode',
+	'NO_HTML_REPLACE'					=> 'Por favor escriba el reemplazo HTML',
+	'REVISION_HTML_REPLACE'				=> 'Remplazo HTML',	
+	'REVISION_BBCODE_USE'				=> 'Uso del BBCode',
+	'REVISION_HELP_LINE'				=> 'Línea de ayuda',
+	'REVISION_HTML_REPLACE_EXPLAIN'		=> 'Aquí se define por defecto el reemplazo HTML.',
+	'REVISION_BBCODE_USE_EXPLAIN'		=> 'Aquí se define el uso del BBCode.',
+	'REVISION_HELP_LINE_EXPLAIN'		=> 'Este campo contiene la ayuda del BBCode que muestra al pasar el mouse sobre el texto deñ BBCode',
 ));
