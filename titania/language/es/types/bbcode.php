@@ -33,7 +33,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 //
 // Some characters you may want to copy&paste:
-// ’ » “ ” …
+// â€™ Â» â€œ â€ â€¦
 //
 
 $lang = array_merge($lang, array(
@@ -41,9 +41,9 @@ $lang = array_merge($lang, array(
 	'AUTHOR_BBCODES_ONE'				=> '1 BBCode Personalizado',
 	'BBCODE'							=> 'BBCode Personalizado',
 	'BBCODES'							=> 'BBCodes Personalizados',
-	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">Al presentar esta revisión se compromete a cumplir y aceptar esta licencia de los BBcode\'s Personalizados, y la licencia de los componentes incluidos son compatibles con la <a href ="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> y que también permiten la re-distributibución de su BBcode Personalizado a través de este sitio web de forma indefinida.</span>',
+	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">Al presentar esta revisiÃ³n se compromete a cumplir y aceptar esta licencia de los BBcode\'s Personalizados, y la licencia de los componentes incluidos son compatibles con la <a href ="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> y que tambiÃ©n permiten la re-distributibuciÃ³n de su BBcode Personalizado a travÃ©s de este sitio web de forma indefinida.</span>',
 
-	'BBCODE_VALIDATION'					=> '[phpBB BBcode Personalizado - Validación] %1$s %2$s',
+	'BBCODE_VALIDATION'					=> '[phpBB BBcode Personalizado - ValidaciÃ³n] %1$s %2$s',
 	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been approved and released into our Customisation Database.
 
 It is our hope that you will provide a basic level of support for this BBcode and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
@@ -76,8 +76,8 @@ phpBB Teams',
 	'NO_HTML_REPLACE'					=> 'Por favor escriba el reemplazo HTML',
 	'REVISION_HTML_REPLACE'				=> 'Remplazo HTML',	
 	'REVISION_BBCODE_USE'				=> 'Uso del BBCode',
-	'REVISION_HELP_LINE'				=> 'Línea de ayuda',
-	'REVISION_HTML_REPLACE_EXPLAIN'		=> 'Aquí se define por defecto el reemplazo HTML.',
-	'REVISION_BBCODE_USE_EXPLAIN'		=> 'Aquí se define el uso del BBCode.',
-	'REVISION_HELP_LINE_EXPLAIN'		=> 'Este campo contiene la ayuda del BBCode que muestra al pasar el mouse sobre el texto deñ BBCode',
+	'REVISION_HELP_LINE'				=> 'LÃ­nea de ayuda',
+	'REVISION_HTML_REPLACE_EXPLAIN'		=> 'AquÃ­ se define por defecto el reemplazo HTML.',
+	'REVISION_BBCODE_USE_EXPLAIN'		=> 'AquÃ­ se define el uso del BBCode.',
+	'REVISION_HELP_LINE_EXPLAIN'		=> 'Este campo contiene la ayuda del BBCode que muestra al pasar el mouse sobre el texto del BBCode',
 ));
