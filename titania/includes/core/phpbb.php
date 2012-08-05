@@ -244,6 +244,8 @@ class phpbb
 			'S_CONTENT_FLOW_END'	=> (self::$user->lang['DIRECTION'] == 'ltr') ? 'right' : 'left',
 			'S_CONTENT_ENCODING'	=> 'UTF-8',
 			'S_REGISTER_ENABLED'	=> (self::$config['require_activation'] != USER_ACTIVATION_DISABLE) ? true : false,
+
+			'A_COOKIE_SETTINGS'		=> addslashes('; path=' . self::$config['cookie_path'] . ((!self::$config['cookie_domain'] || self::$config['cookie_domain'] == 'localhost' || self::$config['cookie_domain'] == '127.0.0.1') ? '' : '; domain=' . self::$config['cookie_domain']) . ((!self::$config['cookie_secure']) ? '' : '; secure')),
 		));
 
 		// application/xhtml+xml not used because of IE
