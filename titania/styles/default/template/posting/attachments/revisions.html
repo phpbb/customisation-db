@@ -1,10 +1,12 @@
 <fieldset class="fields2">
+<!-- IF S_REQUIRE_UPLOAD -->
 <dl>
 	<dt><label for="fileupload">{L_FILENAME}:</label></dt>
 	<dd>
 		<input type="file" name="{FORM_NAME}" id="{FORM_NAME}"<!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
 	</dd>
 </dl>
+<!-- ENDIF -->
 <dl>
 	<dt><label for="revision_name">{L_REVISION_NAME}:</label><br /><span>{L_REVISION_NAME_EXPLAIN}</span></dt>
 	<dd><input type="text" name="revision_name" id="revision_name" class="inputbox autowidth" value="{REVISION_NAME}" /></dd>
@@ -13,4 +15,22 @@
 	<dt><label for="revision_version">{L_REVISION_VERSION}:</label><br /><span>{L_REVISION_VERSION_EXPLAIN}</span></dt>
 	<dd><input type="text" name="revision_version" id="revision_version" class="inputbox autowidth" value="{REVISION_VERSION}" /></dd>
 </dl>
+<!-- IF S_TYPE_BBCODE -->
+<dl>
+	<dt><label for="revision_bbc_demo">{L_CONTRIB_DEMO}:</label><br /><span></span></dt>
+	<dd><textarea cols="50" rows="5" name="revision_bbc_demo" id="revision_bcc_demo" class="inputbox autowidth">{REVISION_BBC_DEMO}</textarea></dd>
+</dl>
+<dl>
+	<dt><label for="revision_bbcode_usage">{L_REVISION_BBCODE_USE}:</label><br /><span>{L_REVISION_BBCODE_USE_EXPLAIN}</span></dt>
+	<dd><textarea cols="50" rows="5" name="revision_bbcode_usage" id="revision_bbcode_usage" class="inputbox autowidth">{REVISION_BBCODE_USE}</textarea></dd>
+</dl>
+<dl>
+	<dt><label for="revision_html_replace">{L_REVISION_HTML_REPLACE}:</label><br /><span>{L_REVISION_HTML_REPLACE_EXPLAIN}</span></dt>
+	<dd><textarea cols="50" rows="10" name="revision_html_replace" id="revision_html_replace" class="inputbox autowidth">{REVISION_HTML_REPLACE}</textarea></dd>
+</dl>
+<dl>
+	<dt><label for="revision_help_line">{L_REVISION_HELP_LINE}:</label><br /><span>{L_REVISION_HELP_LINE_EXPLAIN}</span></dt>
+	<dd><input type="text" name="revision_help_line" id="revision_help_line" class="inputbox medium" value="{REVISION_HELP_LINE}" maxlength="255" /></dd>
+</dl>
+<!-- ENDIF -->
 </fieldset>

@@ -13,15 +13,16 @@
 </script>
 <!-- ENDIF -->
 
-<div class="left-column">
-	<div class="container demo">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+<div class="container">
+	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+
+		<div class="right-column demo">
 			<!-- IF CONTRIB_SCREENSHOT -->
 				<!-- BEGIN preview(0,0) -->
 					<!-- IF preview.S_THUMBNAIL -->
-						<img src="{preview.THUMB_IMAGE}" alt="{preview.DOWNLOAD_NAME}" title="{preview.DOWNLOAD_NAME} ({preview.FILESIZE} {preview.SIZE_LANG}) {preview.L_DOWNLOAD_COUNT}" />
+						<img src="{preview.THUMB_IMAGE}" class="screenshot" alt="{preview.DOWNLOAD_NAME}" title="{preview.DOWNLOAD_NAME} ({preview.FILESIZE} {preview.SIZE_LANG}) {preview.L_DOWNLOAD_COUNT}" />
 					<!-- ELSE -->
-						<img src="{preview.U_INLINE_LINK}" alt="{preview.DOWNLOAD_NAME}" />
+						<img src="{preview.U_INLINE_LINK}" class="screenshot" alt="{preview.DOWNLOAD_NAME}" />
 					<!-- ENDIF -->
 					<br />
 				<!-- END preview -->
@@ -31,7 +32,6 @@
 			<!-- IF U_VIEW_DEMO and not S_INTEGRATE_DEMO --><a href="{U_VIEW_DEMO}">{L_VIEW_DEMO}</a><!-- ENDIF -->
 
 			<!-- IF U_DOWNLOAD -->
-				<hr class="dashed" />
 				<div class="download-button">
 					<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE}</a>
 				</div>
@@ -41,15 +41,10 @@
                     </div>
 				<!-- ENDIF -->
 			<!-- ENDIF -->
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
+		</div>
 
-</div>
-
-<div class="right-column">
-	<!-- IF CONTRIB_DESC -->
-	<div class="container" id="contrib-description">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div class="left-column">
+		<!-- IF CONTRIB_DESC -->
 			<dl class="contrib-description">
 				<!-- IF U_SUBSCRIBE or U_REPORT or U_INFO -->
 				<dd>
@@ -67,13 +62,8 @@
 					{CONTRIB_DESC}
 				</dd>
 			</dl>
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
+		<!-- ENDIF -->
 
-	<!-- ENDIF -->
-
-	<div class="container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
 			<ul class="general-info">
 				<!-- IF CONTRIB_LOCAL_NAME -->
 				<li>
@@ -161,7 +151,7 @@
 					<strong>{L_CATEGORIES}</strong> <!-- BEGIN categories --><a href="{categories.U_VIEW_CATEGORY}">{categories.CATEGORY_NAME}</a><!-- IF not categories.S_LAST_ROW -->, <!-- ENDIF --><!-- END -->
 				</li>
 			</ul>
-
+		</div>
 		<!-- IF .queue_actions or CURRENT_STATUS -->
 			<ul class="queue-actions">
 			<!-- BEGIN queue_actions -->
@@ -179,8 +169,7 @@
 			<!-- ENDIF -->
 			</ul>
 		<!-- ENDIF -->
-		<span class="corners-bottom main-corners"><span></span></span></div>
-	</div>
+	<span class="corners-bottom main-corners"><span></span></span></div>
 </div>
 
 <!-- IF U_COLORIZEIT -->
@@ -196,6 +185,33 @@
 
 <div class="clear"></div>
 
+<!-- IF CONTRIB_BBC_HTML_REPLACEMENT -->
+	<div class="container">
+		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+			<div class="content bbcode-container">
+				<!-- IF CONTRIB_BBC_DEMO -->
+				<h3 class="details-heading">{L_CONTRIB_DEMO}</h3>
+				<!-- IF S_CONTRIB_BBC_DEMO_RENDERED -->
+				{CONTRIB_BBC_DEMO}
+				<!-- ELSE -->
+				<dl class="codebox"><dt>{L_CONTRIB_DEMO}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_DEMO}</code></dd></dl>
+				<!-- ENDIF -->
+				<br />
+				<br />
+				<!-- ENDIF -->
+				<h3 class="details-heading">{L_SETTINGS}</h3>
+				<dl class="codebox"><dt>{L_REVISION_BBCODE_USE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_BBCODE_USAGE}</code></dd></dl>
+				<br />
+				<dl class="codebox"><dt>{L_REVISION_HTML_REPLACE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_HTML_REPLACEMENT}</code></dd></dl>
+				<!-- IF CONTRIB_BBC_HELPLINE -->
+				<br />
+				<dl class="codebox"><dt>{L_REVISION_HELP_LINE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_HELPLINE}</code></dd></dl>
+				<!-- ENDIF -->
+			</div>
+		<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
+<!-- ENDIF -->
+
 <!-- IF .screenshots or .revisions or U_NEW_REVISION -->
 <div class="container">
 	<div class="inner"><span class="corners-top main-corners"><span></span></span>
@@ -206,6 +222,14 @@
 		        <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
 		        <!-- IF U_NEW_REVISION --><li><a href="{U_NEW_REVISION}"><span>{L_NEW_REVISION}</span></a></li><!-- ENDIF -->
 		    </ul>
+
+		    <!-- IF S_IN_QUEUE and (.revisions or U_NEW_REVISION) -->
+		    <div id="revisions-panel" class="tab-panel">
+				<div class="clear"></div>
+
+				<!-- INCLUDE common/revision_list.html -->
+		    </div>
+		    <!-- ENDIF -->
 
 		    <!-- IF .screenshots -->
 		    <div id="screenshots-panel" class="tab-panel">
@@ -221,7 +245,7 @@
 		    </div>
 		    <!-- ENDIF -->
 
-		    <!-- IF .revisions or U_NEW_REVISION -->
+		    <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) -->
 		    <div id="revisions-panel" class="tab-panel">
 				<div class="clear"></div>
 

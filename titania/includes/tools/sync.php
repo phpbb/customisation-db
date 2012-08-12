@@ -202,7 +202,7 @@ class titania_sync
 			break;
 
 			case 'index' :
-				$data = array();
+				$data = $contribs = array();
 
 				$sql = 'SELECT * FROM ' . TITANIA_CONTRIBS_TABLE . '
 						ORDER BY contrib_id ASC';
@@ -216,7 +216,7 @@ class titania_sync
 				}
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
-					$data[] = array(
+					$data[$row['contrib_id']] = array(
 						'object_type'	=> TITANIA_CONTRIB,
 						'object_id'		=> $row['contrib_id'],
 
@@ -229,9 +229,34 @@ class titania_sync
 						'date'			=> $row['contrib_last_update'],
 						'url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'],
 						'approved'		=> (((!titania::$config->require_validation || !titania_types::$types[$row['contrib_type']]->require_validation) && $row['contrib_status'] == TITANIA_CONTRIB_NEW) || in_array($row['contrib_status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
+						'categories'	=> explode(',', $row['contrib_categories']),
 					);
+
+					$contribs[] = $row['contrib_id'];
 				}
 				phpbb::$db->sql_freeresult($result);
+
+				$sql = 'SELECT DISTINCT contrib_id, phpbb_version_branch, phpbb_version_revision
+					FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+					WHERE ' . phpbb::$db->sql_in_set('contrib_id', $contribs) . '
+						AND revision_validated = 1';
+				$result = phpbb::$db->sql_query($sql);
+
+				while ($row = phpbb::$db->sql_fetchrow($result))
+				{
+					$phpbb_versions[$row['contrib_id']][] = $row; 
+				}
+				phpbb::$db->sql_freeresult($result);
+
+				titania::_include('functions_display', 'order_phpbb_version_list_from_db');
+
+				foreach ($data as $contrib_id => $contrib_data)
+				{
+					if (isset($phpbb_versions[$contrib_id]))
+					{
+						$data[$contrib_id]['phpbb_versions'] = order_phpbb_version_list_from_db($phpbb_versions[$contrib_id]);
+					}
+				}
 
 				titania_search::mass_index($data);
 			break;

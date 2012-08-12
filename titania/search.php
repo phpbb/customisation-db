@@ -184,17 +184,8 @@ if ($contrib_id)
 // Find contribution
 if ($mode == 'find-contribution')
 {
-	if (sizeof($categories) == 1 && $categories[0] == 0)
+	if (sizeof($categories) && !(sizeof($categories) == 1 && $categories[0] == 0))
 	{
-		// All
-		$categories = array();
-	}
-
-	if (sizeof($categories) || sizeof($phpbb_versions))
-	{
-		// Prevent an error
-		$contribs = array(0);
-
 		// Grab the children
 		if ($search_subcategories)
 		{
@@ -204,48 +195,12 @@ if ($mode == 'find-contribution')
 			}
 		}
 
-		// Build-a-query
-		$prefix = ((sizeof($categories)) ? 'c' : 'v');
-		$sql = 'SELECT DISTINCT(' . $prefix . '.contrib_id) FROM
-			' .((sizeof($categories)) ? TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' c' : '') . '
-			' .((sizeof($categories) && (sizeof($phpbb_versions))) ? ', ' : '') . '
-			' .((sizeof($phpbb_versions)) ? TITANIA_REVISIONS_PHPBB_TABLE . ' v' : '') . '
-			WHERE
-				' . ((sizeof($categories)) ? phpbb::$db->sql_in_set('c.category_id', array_unique(array_map('intval', $categories))) : ''). '
-				' . ((sizeof($categories) && sizeof($phpbb_versions)) ? ' AND c.contrib_id = v.contrib_id AND ' : '');
+		titania_search::in_set($query, 'categories', $categories);
+	}
 
-		if (sizeof($phpbb_versions))
-		{
-			$or_sql = '';
-
-			foreach ($phpbb_versions as $version)
-			{
-				// Skip invalid versions
-				if (strlen($version) < 5 || $version[1] != '.' || $version[3] != '.')
-				{
-					continue;
-				}
-
-				// Add OR if not empty
-				$or_sql .= (($or_sql) ? ' OR ' : '');
-
-				$or_sql .= '(v.phpbb_version_branch = ' . (int) $version[0] . (int) $version[2] . ' AND v.phpbb_version_revision = \'' . phpbb::$db->sql_escape(substr($version, 4)) . '\')';
-			}
-
-			$sql .= ' (' . $or_sql . ') ';
-		}
-
-		$sql .= 'GROUP BY ' . $prefix . '.contrib_id';
-
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$contribs[] = $row['contrib_id'];
-		}
-		phpbb::$db->sql_freeresult($result);
-
-		// Search in the set
-		titania_search::in_set($query, 'id', $contribs);
+	if (sizeof($phpbb_versions))
+	{
+		titania_search::in_set($query, 'phpbb_versions', $phpbb_versions);
 	}
 
 	$query->where($query->eq('type', TITANIA_CONTRIB));

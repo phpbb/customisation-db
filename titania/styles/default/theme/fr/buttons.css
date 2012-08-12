@@ -26,14 +26,14 @@ div.category-icon span {
 }
 
 .download-button {
-	background-image: url("./download_bg.gif");
-	width: 176px;
-	height: 51px;
+	background-image: url("./button_download.gif");
+	width: 175px;
+	height: 57px;
 }
 
 .colorizeit-button {
-	background-image: url("./colorizeit_bg.png");
-	width: 176px;
-	height: 51px;
+	background-image: url("./button_colorizeit2.png");
+	width: 175px;
+	height: 49px;
 }
 

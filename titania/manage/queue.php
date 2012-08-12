@@ -224,6 +224,14 @@ if ($queue_id)
 								$contrib->submit();
 							}
 						}
+						else if ($contrib->contrib_type == TITANIA_TYPE_BBCODE)
+						{
+							// Clear bbcode demo cache for this contrib
+							titania::_include('tools/bbcode_demo', false, 'titania_bbcode_demo');
+							$demo = new titania_bbcode_demo($queue->contrib_id);
+							$demo->clear_cache();
+							unset($demo);
+						}
 					}
 					else
 					{

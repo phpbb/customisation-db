@@ -75,9 +75,13 @@ if ($repack)
 
 	// Assign some defaults
 	phpbb::$template->assign_vars(array(
-		'REVISION_NAME'		=> $old_revision->revision_name,
-		'REVISION_VERSION'	=> $old_revision->revision_version,
-		'REVISION_LICENSE'	=> $old_revision->revision_license,
+		'REVISION_NAME'			=> $old_revision->revision_name,
+		'REVISION_VERSION'		=> $old_revision->revision_version,
+		'REVISION_LICENSE'		=> $old_revision->revision_license,
+		'REVISION_BBCODE_USE'	=> $old_revision->revision_bbc_bbcode_usage,
+		'REVISION_HTML_REPLACE'	=> $old_revision->revision_bbc_html_replace,
+		'REVISION_HELP_LINE'	=> $old_revision->revision_bbc_help_line,
+		'REVISION_BBC_DEMO' 	=> $old_revision->revision_bbc_demo,
 
 		'S_REPACK'			=> true,
 	));
@@ -112,22 +116,41 @@ else
 
 $revision_attachment = $revision = false;
 $error = array();
+$require_upload = titania_types::$types[titania::$contrib->contrib_type]->require_upload;
+$is_bbcode = (titania::$contrib->contrib_type == TITANIA_TYPE_BBCODE);
 
 if ($step == 1)
 {
-	// Upload the revision
+	// Set up attachment object to get some default values
 	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 	$revision_attachment->is_orphan = false;
-	$revision_attachment->upload();
-	$revision_version = utf8_normalize_nfc(phpbb::$request->variable('revision_version', '', true));
-	$queue_allow_repack = phpbb::$request->variable('queue_allow_repack', 0);
-	$revision_license = utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true));
+
+	// Upload revision only if we require upload
+	if ($require_upload)
+	{
+		$revision_attachment->upload();
+	}
+	$revision_version 		= utf8_normalize_nfc(phpbb::$request->variable('revision_version', '', true));
+	$revision_html_replace 	= utf8_normalize_nfc(phpbb::$request->variable('revision_html_replace', '', true));
+	$revision_bbcode_usage 	= utf8_normalize_nfc(phpbb::$request->variable('revision_bbcode_usage', '', true));
+	$revision_help_line 	= utf8_normalize_nfc(phpbb::$request->variable('revision_help_line', '', true));
+	$revision_bbc_demo		= utf8_normalize_nfc(rphpbb::$request->variable('revision_bbc_demo', '', true));
+	$queue_allow_repack 	= phpbb::$request->variable('queue_allow_repack', 0);
+	$revision_license 		= utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true));
 
 	// Check for errors
 	$error = array_merge($error, $revision_attachment->error);
-	if (!$revision_attachment->uploaded)
+	if ($require_upload && !$revision_attachment->uploaded)
 	{
 		$error[] = phpbb::$user->lang['NO_REVISION_ATTACHMENT'];
+	}
+	if ($is_bbcode && !$revision_html_replace)
+	{
+		$error[] = phpbb::$user->lang['NO_HTML_REPLACE'];
+	}
+	if ($is_bbcode && !$revision_bbcode_usage)
+	{
+		$error[] = phpbb::$user->lang['NO_BBCODE_USAGE'];
 	}
 	if (!$revision_version)
 	{
@@ -172,7 +195,7 @@ if ($step == 1)
 	}
 
 	// Send the file to the type class so it can do custom error checks
-	if ($revision_attachment->uploaded)
+	if ($require_upload && $revision_attachment->uploaded)
 	{
 		$error = array_merge($error, titania_types::$types[titania::$contrib->contrib_type]->upload_check($revision_attachment));
 	}
@@ -186,7 +209,15 @@ if ($step == 1)
 			'revision_name'			=> utf8_normalize_nfc(phpbb::$request->variable('revision_name', '', true)),
 			'revision_version'		=> $revision_version,
 			'queue_allow_repack'	=> $queue_allow_repack,
+<<<<<<< HEAD
 			'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE'] || !titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? $revision_license : utf8_normalize_nfc(phpbb::$request->variable('revision_custom_license', '', true)),
+=======
+			'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE'] || !titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? $revision_license : utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
+			'revision_bbc_html_replace'		=> $revision_html_replace,
+			'revision_bbc_bbcode_usage'		=> $revision_bbcode_usage,
+			'revision_bbc_help_line'		=> $revision_help_line,
+			'revision_bbc_demo'				=> $revision_bbc_demo,
+>>>>>>> master
 		));
 		$revision->phpbb_versions = $selected_branches;
 
@@ -516,19 +547,44 @@ if ($step == 0 || sizeof($error))
 	}
 
 	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
+
+	if (!$repack)
+	{
+		phpbb::$template->assign_vars(array(
+			'REVISION_NAME'				=> utf8_normalize_nfc(request_var('revision_name', '', true)),
+			'REVISION_VERSION'			=> utf8_normalize_nfc(request_var('revision_version', '', true)),
+			'REVISION_LICENSE'			=> utf8_normalize_nfc(request_var('revision_license', '', true)),
+			'REVISION_HTML_REPLACE'		=> utf8_normalize_nfc(request_var('revision_html_replace', '', true)),
+			'REVISION_BBCODE_USE'		=> utf8_normalize_nfc(request_var('revision_bbcode_usage', '', true)),
+			'REVISION_HELP_LINE'		=> utf8_normalize_nfc(request_var('revision_help_line', '', true)),
+			'REVISION_BBC_DEMO' 		=> utf8_normalize_nfc(request_var('revision_bbc_demo', '', true)),
+			'REVISION_CUSTOM_LICENSE'	=> utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
+		));
+	}
+
 	phpbb::$template->assign_vars(array(
+<<<<<<< HEAD
 		'REVISION_NAME'				=> utf8_normalize_nfc(phpbb::$request->variable('revision_name', '', true)),
 		'REVISION_VERSION'			=> utf8_normalize_nfc(phpbb::$request->variable('revision_version', '', true)),
 		'REVISION_LICENSE'			=> utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true)),
 		'REVISION_CUSTOM_LICENSE'	=> utf8_normalize_nfc(phpbb::$request->variable('revision_custom_license', '', true)),
 		'QUEUE_ALLOW_REPACK'		=> phpbb::$request->variable('queue_allow_repack', false),
+=======
+		'QUEUE_ALLOW_REPACK'		=> request_var('queue_allow_repack', false),
+>>>>>>> master
 
 		'NEXT_STEP'					=> 1,
 
 		'S_CAN_SUBSCRIBE'					=> ($author_subscribed || !$allow_subscription) ? false : true,
 		'S_CUSTOM_LICENSE'					=> (utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true)) == phpbb::$user->lang['CUSTOM_LICENSE']) ? true : false,
 		'S_ALLOW_CUSTOM_LICENSE'			=> (titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? true : false,
+<<<<<<< HEAD
 		'SUBSCRIBE_AUTHOR'					=> phpbb::$request->variable('subscribe_author', false),
+=======
+		'S_REQUIRE_UPLOAD'					=> $require_upload,
+		'S_TYPE_BBCODE'						=> $is_bbcode,
+		'SUBSCRIBE_AUTHOR'					=> request_var('subscribe_author', false),
+>>>>>>> master
 	));
 
 	// Assign separately so we can output some data first

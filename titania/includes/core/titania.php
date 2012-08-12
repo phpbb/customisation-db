@@ -120,7 +120,7 @@ class titania
 			self::$images_path = self::$absolute_path . 'images/';
 			self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
 			self::$template_path = self::$style_path . 'template';
-			self::$theme_path = self::$style_path . 'theme';
+			self::$theme_path = (self::$config->theme) ?  self::$absolute_path . 'styles/' . self::$config->theme . '/theme' : self::$style_path . 'theme';
 
 			// Set the paths for phpBB
 			self::set_custom_template();
