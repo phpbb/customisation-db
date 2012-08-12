@@ -153,6 +153,12 @@ class titania_message
 				}
 			}
 
+			// Resync inline attachments if any were added
+			if ($this->attachments && $this->attachments->uploaded)
+			{
+				$_REQUEST[$this->settings['text_name']] = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "'[attachment='.(\\1 + 1).']\\2[/attachment]'", $_REQUEST[$this->settings['text_name']]);
+			}
+
 			// We have to reset some request data if we are going to a full editor (checkboxes will be set according to their settings)
 			if ($full_editor)
 			{
