@@ -1578,16 +1578,33 @@ class titania_contribution extends titania_message_object
 	*/
 	public function index()
 	{
+		if (!sizeof($this->revisions))
+		{
+			$this->get_revisions();
+		}
+
+		$phpbb_versions = array();
+		foreach ($this->revisions as $revision)
+		{
+			if ($revision['revision_status'] == TITANIA_REVISION_APPROVED)
+			{
+				$phpbb_versions = array_merge($phpbb_versions, $revision['phpbb_versions']);
+			}
+		}
+		$phpbb_versions = order_phpbb_version_list_from_db(array_unique($phpbb_versions));
+
 		$data = array(
-			'title'			=> $this->contrib_name,
-			'text'			=> $this->contrib_desc,
-			'text_uid'		=> $this->contrib_desc_uid,
-			'text_bitfield'	=> $this->contrib_desc_bitfield,
-			'text_options'	=> $this->contrib_desc_options,
-			'author'		=> $this->contrib_user_id,
-			'date'			=> $this->contrib_last_update,
-			'url'			=> titania_url::unbuild_url($this->get_url()),
-			'approved'		=> ((!titania::$config->require_validation || !titania_types::$types[$this->contrib_type]->require_validation) || in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
+			'title'				=> $this->contrib_name,
+			'text'				=> $this->contrib_desc,
+			'text_uid'			=> $this->contrib_desc_uid,
+			'text_bitfield'		=> $this->contrib_desc_bitfield,
+			'text_options'		=> $this->contrib_desc_options,
+			'author'			=> $this->contrib_user_id,
+			'date'				=> $this->contrib_last_update,
+			'url'				=> titania_url::unbuild_url($this->get_url()),
+			'approved'			=> ((!titania::$config->require_validation || !titania_types::$types[$this->contrib_type]->require_validation) || in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
+			'categories'		=> explode(',', $this->contrib_categories),
+			'phpbb_versions' 	=> $phpbb_versions,
 		);
 
 		titania_search::index(TITANIA_CONTRIB, $this->contrib_id, $data);

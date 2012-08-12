@@ -345,26 +345,30 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 	public $access_level;
 	public $approved;
 	public $reported;
+	public $categories;
+	public $phpbb_versions;
 
 	public function __construct() {}
 
 	public function getState()
 	{
 		$state = array(
-			'id'			=> $this->id,
-			'parent_id'		=> (int) $this->parent_id,
-			'title'			=> $this->title,
-			'text'			=> $this->text,
-			'text_uid'		=> $this->text_uid,
-			'text_bitfield'	=> $this->text_bitfield,
-			'text_options'	=> (int) $this->text_options,
-			'author'		=> (int) $this->author,
-			'date'			=> (int) $this->date,
-			'url'			=> $this->url,
-			'type'			=> (int) $this->type,
-			'access_level'	=> (int) $this->access_level,
-			'approved'		=> ($this->approved) ? 1 : 0,
-			'reported'		=> ($this->reported) ? 1 : 0,
+			'id'				=> $this->id,
+			'parent_id'			=> (int) $this->parent_id,
+			'title'				=> $this->title,
+			'text'				=> $this->text,
+			'text_uid'			=> $this->text_uid,
+			'text_bitfield'		=> $this->text_bitfield,
+			'text_options'		=> (int) $this->text_options,
+			'author'			=> (int) $this->author,
+			'date'				=> (int) $this->date,
+			'url'				=> $this->url,
+			'type'				=> (int) $this->type,
+			'access_level'		=> (int) $this->access_level,
+			'approved'			=> ($this->approved) ? 1 : 0,
+			'reported'			=> ($this->reported) ? 1 : 0,
+			'categories'		=> ($this->categories) ? $this->categories: array(),
+			'phpbb_versions' 	=> ($this->phpbb_versions) ? $this->phpbb_versions : array(),
 		);
 		return $state;
 	}
@@ -400,6 +404,9 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 		$doc->fields['access_level']	= new ezcSearchDefinitionDocumentField('access_level', ezcSearchDocumentDefinition::INT);
 		$doc->fields['approved']		= new ezcSearchDefinitionDocumentField('approved', ezcSearchDocumentDefinition::INT);
 		$doc->fields['reported']		= new ezcSearchDefinitionDocumentField('reported', ezcSearchDocumentDefinition::INT);
+
+		$doc->fields['categories']		= new ezcSearchDefinitionDocumentField('categories', ezcSearchDocumentDefinition::INT, 0, false, true);
+		$doc->fields['phpbb_versions']	= new ezcSearchDefinitionDocumentField('phpbb_versions', ezcSearchDocumentDefinition::STRING, 0, false, true);
 
 		return $doc;
 	}
