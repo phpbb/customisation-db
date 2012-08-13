@@ -248,6 +248,102 @@ function titania_custom($action, $version)
 	}
 }
 
+function fix_attachment_indices()
+{
+	// Get posts with inline attachments
+	$sql_ary = array(
+		'SELECT'	=> 'p.post_id, p.post_text, p.post_text_options, a.attachment_id, a.real_filename',
+
+		'FROM' 		=> array(
+			TITANIA_POSTS_TABLE => ' p',
+		),
+
+		'LEFT_JOIN'	=> array(
+			array(
+				'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
+				'ON'	=> 'a.object_id = p.post_id AND a.object_type = p.post_type',
+			)
+		),
+
+		'WHERE'		=> phpbb::$db->sql_in_set('p.post_type', array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION, TITANIA_QUEUE, TITANIA_FAQ)) . '
+							AND p.post_text LIKE "%[attachment=%"'
+	);
+
+	$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+	$result = phpbb::$db->sql_query($sql);
+	$posts = array();
+
+	while ($row = phpbb::$db->sql_fetchrow($result))
+	{
+		if (!isset($posts[$row['post_id']]))
+		{
+			$posts[$row['post_id']] = $row;
+			$posts[$row['post_id']]['attachments'] = array();
+		}
+
+		if (!empty($row['attachment_id']))
+		{
+			$posts[$row['post_id']]['attachments'][$row['attachment_id']] = $row['real_filename'];
+		}
+	}
+	phpbb::$db->sql_freeresult($result);
+
+	if (sizeof($posts))
+	{
+		foreach ($posts as $post_id => $data)
+		{
+			// Attachments missing or only has one attachment or BBCode is disabled, we can ignore it
+			if (sizeof($data['attachments']) < 2 || !($data['post_text_options'] & OPTION_FLAG_BBCODE))
+			{
+				unset($posts[$post_id]);
+				continue;
+			}
+
+			preg_match_all('#\[attachment=([0-9]+):(.*?)\]<!\-\- ia\1 \-\->(.*?)<!\-\- ia\1 \-\->\[\/attachment:\2\]#', $data['post_text'], $matches, PREG_PATTERN_ORDER);
+
+			$replace = array();
+			// Sort attachments by descending id
+			krsort($data['attachments']);
+			// Get indices
+			$indices = array_flip(array_keys($data['attachments']));
+
+			foreach ($matches[0] as $num => $original)
+			{
+				// Search the attachment list by the file name provided inside the bbcode tag
+				$result = array_keys($data['attachments'], $matches[3][$num]);
+
+				// If we don't have any results then we don't have a valid attachment
+				// If we have more than one result, then that means that there are multiple attachments with the same name, so we can't do anything as 
+				// we have no way of determining the proper order for them.
+				if (sizeof($result) !== 1)
+				{
+					continue;
+				}
+
+				$index = $indices[$result[0]];
+
+				// If the existing index doesn't match the index that we've just generated, then we'll need to replace it.
+				if ($index != $matches[1][$num])
+				{
+					$replace['from'][] = $original;
+					$replace['to'][] = "[attachment={$index}:{$matches[2][$num]}]<!-- ia{$index} -->{$matches[3][$num]}<!-- ia{$index} -->[/attachment:{$matches[2][$num]}]";
+				}
+			}
+
+			if (isset($replace['from']))
+			{
+				$data['post_text'] = str_replace($replace['from'], $replace['to'], $data['post_text']);
+
+				$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
+					SET post_text = "' . phpbb::$db->sql_escape($data['post_text']) . '"
+					WHERE post_id = ' . (int) $post_id;
+				phpbb::$db->sql_query($sql);
+			}
+			unset($posts[$post_id]);
+		}
+	}
+}
+
 function titania_tags()
 {
 	global $umil;

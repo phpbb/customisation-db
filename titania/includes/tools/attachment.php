@@ -246,12 +246,16 @@ class titania_attachment extends titania_database_object
 		if (phpbb::$config['display_order'])
 		{
 			// Ascending sort
-			krsort($this->attachments);
+			ksort($this->attachments);
+			$index_dir = '-';
+			$index = sizeof($this->attachments) - 1;
 		}
 		else
 		{
 			// Descending sort
-			ksort($this->attachments);
+			krsort($this->attachments);
+			$index_dir = '+';
+			$index = 0;
 		}
 
         // Delete previous attachments list
@@ -263,6 +267,7 @@ class titania_attachment extends titania_database_object
 				'FILENAME'			=> basename($row['real_filename']),
 				'FILE_COMMENT'		=> utf8_normalize_nfc(phpbb::$request->variable('attachment_comment_' . $attachment_id, (string) $row['attachment_comment'], true)),
 				'ATTACH_ID'			=> $row['attachment_id'],
+				'INDEX'				=> $index,
 
 				'U_VIEW_ATTACHMENT'	=> titania_url::build_url('download', array('id' => $row['attachment_id'])),
 
@@ -270,6 +275,7 @@ class titania_attachment extends titania_database_object
 				'S_PREVIEW'			=> (isset($row['is_preview']) && $row['is_preview']) ? true : false,
 				//'S_DELETED'			=> (isset($row['deleted']) && $row['deleted']) ? true : false,
 			);
+			$index += (($index_dir == '+') ? 1 : -1);
 
 			// Allow additional things to be outputted
 			foreach ($this->additional_fields as $output_key => $row_key)
@@ -681,12 +687,12 @@ class titania_attachment extends titania_database_object
 		if (phpbb::$config['display_order'])
 		{
 			// Ascending sort
-			krsort($this->attachments);
+			ksort($this->attachments);
 		}
 		else
 		{
 			// Descending sort
-			ksort($this->attachments);
+			krsort($this->attachments);
 		}
 
 		foreach ($this->attachments as $attachment_id => $attachment)
