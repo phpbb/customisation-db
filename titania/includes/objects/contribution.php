@@ -1591,6 +1591,8 @@ class titania_contribution extends titania_message_object
 				$phpbb_versions = array_merge($phpbb_versions, $revision['phpbb_versions']);
 			}
 		}
+
+		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
 		$phpbb_versions = order_phpbb_version_list_from_db(array_unique($phpbb_versions));
 
 		$data = array(
