@@ -597,9 +597,13 @@ class titania_contribution extends titania_message_object
 			// Display Co-authors
 			foreach ($this->coauthors as $user_id => $row)
 			{
-				if ($row['author_visible'])
+				if ($row['active'])
 				{
 					phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
+				}
+				else
+				{
+					phpbb::$template->assign_block_vars('past_coauthors', $this->author->assign_details(true, $row));
 				}
 			}
 
