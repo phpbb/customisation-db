@@ -721,5 +721,8 @@ $versions = array(
 			array(TITANIA_REVISIONS_TABLE, 'revision_bbc_demo', array('MTEXT_UNI', '')),
 		),
 	),
+	'0.5.2' => array(
+		'custom'	=> 'fix_attachment_indices',
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
