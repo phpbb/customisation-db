@@ -246,6 +246,8 @@ function titania_custom($action, $version)
 			titania_search::truncate();
 		break;
 	}
+
+	return 'CUSTOM_ACTION_PERFORMED';
 }
 
 function fix_attachment_indices()
@@ -342,6 +344,8 @@ function fix_attachment_indices()
 			unset($posts[$post_id]);
 		}
 	}
+
+	return 'CUSTOM_ACTION_PERFORMED';
 }
 
 function titania_tags()
