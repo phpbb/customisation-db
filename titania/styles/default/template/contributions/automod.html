@@ -5,7 +5,7 @@
 <!-- ELSE -->
 
 <div id="automod_{TEST_ID}">
-<!-- IF S_EDITS -->
+<!-- IF S_DISPLAY_FILE_EDITS -->
 
 <h2>{L_FILE_EDITS}</h2>
 <!-- BEGIN edit_files -->
@@ -48,6 +48,14 @@
 	<!-- ENDIF -->
 <!-- END edit_files -->
 
+<!-- ENDIF -->
+<!-- IF S_DISPLAY_NEW_FILES -->
+<h2>{L_NEW_FILES}</h2>
+<ul style="margin-left: 2.5em;">
+<!-- BEGIN new_files -->
+	<!-- IF not (new_files.S_SUCCESS or new_files.S_NO_COPY_ATTEMPT) --><li>{new_files.SOURCE} <br /><strong style="color: red;">{L_FILE_MISSING}</strong></li><!-- ENDIF -->
+<!-- END new_files -->
+</ul>
 <!-- ENDIF -->
 </div>
 

@@ -2,8 +2,8 @@
 <!-- IF S_AUTOMOD_SUCCESS -->
 	[size=150][color=#00BF40]{L_SUCCESS}[/color][/size]
 <!-- ELSE -->
-	<!-- IF S_EDITS -->
-	    [size=150][color=#115098]{L_FILE_EDITS}[/color][/size]
+	<!-- IF S_DISPLAY_FILE_EDITS -->
+		[size=150][color=#115098]{L_FILE_EDITS}[/color][/size]
 	    <!-- BEGIN edit_files -->
 		    <!-- IF not edit_files.S_SUCCESS -->
 		        {edit_files.FILENAME}
@@ -33,5 +33,14 @@
 				<!-- END finds -->
 		    <!-- ENDIF -->
 	    <!-- END edit_files -->
+	<!-- ENDIF -->
+	<!-- IF S_DISPLAY_NEW_FILES -->
+		[size=150][color=#115098]{L_NEW_FILES}[/color][/size]
+			<!-- BEGIN new_files -->
+				<!-- IF not (new_files.S_SUCCESS or new_files.S_NO_COPY_ATTEMPT) -->
+				{new_files.SOURCE}
+					[color=#115098][b]{L_FILE_MISSING}[/b][/color]
+				<!-- ENDIF -->
+			<!-- END new_files -->
 	<!-- ENDIF -->
 <!-- ENDIF -->

@@ -545,6 +545,7 @@ class titania_contrib_tools
 		// The real stuff
 		$acp_mods = new acp_mods;
 		$acp_mods->mods_dir = titania::$config->contrib_temp_path;
+		$acp_mods->mod_root = $modx_root;
 		$editor = new editor_direct;
 		$details = $acp_mods->mod_details($modx_file, false);
 		$actions = $acp_mods->mod_actions($modx_file);

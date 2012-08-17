@@ -1641,8 +1641,13 @@ class acp_mods
 			}
 		} // end foreach
 
+		if (!$mod_installed)
+		{
+			$template->assign_var('S_DISPLAY_FILE_EDITS', true);
+		}
+
 		// Move included files
-		if (isset($actions['NEW_FILES']) && !empty($actions['NEW_FILES']) && $change && ($mod_installed || $force_install))
+		if (isset($actions['NEW_FILES']) && !empty($actions['NEW_FILES']) && ($mod_installed || $force_install))
 		{
 			$template->assign_var('S_NEW_FILES', true);
 
@@ -1653,6 +1658,7 @@ class acp_mods
 				if ($status !== true && !is_null($status))
 				{
 					$mod_installed = false;
+					$template->assign_var('S_DISPLAY_NEW_FILES', true);
 				}
 
 				$template->assign_block_vars('new_files', array(
