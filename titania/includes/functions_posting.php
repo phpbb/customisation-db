@@ -390,12 +390,6 @@ function phpbb_posting($mode, &$options, $poll = array())
 		phpbb::$auth->acl(phpbb::$user->data);
 	}
 
-	// When editing a post, submit post does not update the bbcode uid, we have to specify the old one.
-	if (in_array($mode, array('edit', 'edit_first_post', 'edit_last_post')))
-	{
-		$message_parser->bbcode_uid = $post_data['bbcode_uid'];
-	}
-
 	// Parse the BBCode
 	if ($options['enable_bbcode'])
 	{
@@ -445,7 +439,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 	}
 
 	// Merge the data we grabbed from the forums/topics/posts tables
-	$data = array_merge($data, $post_data);
+	$data = array_merge($post_data, $data);
 
 	// In case bbcode_bitfield is not set when it should
 	$data['bbcode_bitfield'] = ($data['bbcode_bitfield'] != '') ? $data['bbcode_bitfield'] : $message_parser->bbcode_bitfield;
