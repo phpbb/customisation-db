@@ -164,9 +164,13 @@ $(document).ready(function(){
 	});
 
 	// Hide all of the revision details
-	$('.revision-details:not(.first)').hide();
+	$('.revisions li.row:not(.first) .revision-details').hide();
 	// Add toggle button to each revision
-	$('.revisions li.row > dl > dt').prepend('<a href="" class="toggle expand"></a>');
+	$('.revisions li.row').each(function() {
+		var toggle_class = ($(this).hasClass('first')) ? 'contract' : 'expand';
+
+		$(this).prepend('<a href="" class="toggle '+toggle_class+'"></a>');
+	});
 
 	// Show revision details on click
 	$('.revisions > li a.toggle').click(function(e) {
