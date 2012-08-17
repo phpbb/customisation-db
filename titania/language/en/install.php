@@ -34,4 +34,5 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
+	'CUSTOM_ACTION_PERFORMED'	=> 'Custom action performed', 
 ));
