@@ -740,7 +740,7 @@ class editor_direct extends editor
 
 		if (strpos($from, $phpbb_root_path) !== 0)
 		{
-			$from = $phpbb_root_path . $from;
+			//$from = $phpbb_root_path . $from;
 		}
 
 		// When installing a MODX 1.2.0 MOD, this happens once in a long while.
@@ -769,6 +769,16 @@ class editor_direct extends editor
 		if (empty($files))
 		{
 			return false;
+		}
+
+		// We're only interested in finding out whether the file/directory exists for titania's checks
+		if (!file_exists($from))
+		{
+			return false;
+		}
+		else
+		{
+			return true;
 		}
 
 		// Look at the last character of $to and compare it to '/'
