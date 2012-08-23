@@ -234,6 +234,11 @@ ul.general-info li strong {
 	margin-right: 10px;
 }
 
+.license-info {
+	line-height: 31px;
+	vertical-align: top;
+}
+
 #extratabs #extratabs-head {
 	width: 98%;
 	border-bottom: 1px solid #E5E5E6;
