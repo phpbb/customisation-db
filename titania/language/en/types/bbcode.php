@@ -41,7 +41,7 @@ $lang = array_merge($lang, array(
 	'AUTHOR_BBCODES_ONE'				=> '1 Custom BBCode',
 	'BBCODE'							=> 'Custom BBCode',
 	'BBCODES'							=> 'Custom BBCodes',
-	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide and accept that this Custom BBcode\'s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your Custom BBcode through this website indefinitely.</span>',
+	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree and accept that this Custom BBcode will be released under the <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a> license with attribution rights waived for public performance of the work. Attribution will still be required for distribution.</span>',
 
 	'BBCODE_VALIDATION'					=> '[phpBB Custom BBcode - Validation] %1$s %2$s',
 	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been approved and released into our Customisation Database.
@@ -74,6 +74,7 @@ Thank you,
 phpBB Teams',
 	'NO_BBCODE_USAGE'					=> 'Please enter a BBCode usage',
 	'NO_HTML_REPLACE'					=> 'Please enter an HTML replacement',
+	'PUBLIC_ATTR_WAIVED'				=> 'Public performance attribution has been waived.',
 	'REVISION_HTML_REPLACE'				=> 'HTML Replacement',	
 	'REVISION_BBCODE_USE'				=> 'BBCode Usage',
 	'REVISION_HELP_LINE'				=> 'Help Line',
