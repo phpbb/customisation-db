@@ -156,6 +156,10 @@
 					<strong>{L_CATEGORIES}</strong> <!-- BEGIN categories --><a href="{categories.U_VIEW_CATEGORY}">{categories.CATEGORY_NAME}</a><!-- IF not categories.S_LAST_ROW -->, <!-- ENDIF --><!-- END -->
 				</li>
 			</ul>
+			<!-- IF CONTRIB_BBC_HTML_REPLACEMENT -->
+			<br />
+			<img src="https://i.creativecommons.org/l/by/3.0/88x31.png" alt="" /> <span class="license-info">{L_PUBLIC_ATTR_WAIVED}</span>
+			<!-- ENDIF --> 
 		</div>
 		<!-- IF .queue_actions or CURRENT_STATUS -->
 			<ul class="queue-actions">
