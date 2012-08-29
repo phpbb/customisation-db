@@ -408,17 +408,22 @@ class phpbb
 					// $captcha->reset();
 
 					// Parse the captcha template
-					self::reset_template();
-					self::$template->set_filenames(array(
-						'captcha'	=> $captcha->get_template(),
-					));
+					$captcha_template = $captcha->get_template();
 
-					// Correct confirm image link
-					self::$template->assign_var('CONFIRM_IMAGE_LINK', self::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type));
+					if ($captcha_template)
+					{
+						self::reset_template();
+						self::$template->set_filenames(array(
+							'captcha'	=> $captcha_template,
+						));
 
-					self::$template->assign_display('captcha', 'CAPTCHA', false);
+						// Correct confirm image link
+						self::$template->assign_var('CONFIRM_IMAGE_LINK', self::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type));
 
-					titania::set_custom_template();
+						self::$template->assign_display('captcha', 'CAPTCHA', false);
+
+						titania::set_custom_template();
+					}
 
 					$err = self::$user->lang[$result['error_msg']];
 				break;
