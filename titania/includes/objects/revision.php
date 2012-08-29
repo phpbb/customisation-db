@@ -456,6 +456,7 @@ class titania_revision extends titania_database_object
 		// Add the MPV results
 		if ($queue->mpv_results)
 		{
+			titania_decode_message($queue->mpv_results, $queue->mpv_results_uid);
 			$repack_message .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_MPV'] . '&quot;]' . $queue->mpv_results . "[/quote]\n";
 		}
 
