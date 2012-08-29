@@ -6,6 +6,7 @@ env:
   - DB=mysql
 
 before_script:
+  - pyrus set auto_discover 1
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database IF NOT EXISTS cdb_tests;'; fi"
   - sh -c "if [ '$TRAVIS_PHP_VERSION' = '5.2' ]; then pear install --force phpunit/DbUnit; fi"
   - sh -c "if [ '$TRAVIS_PHP_VERSION' = '5.3' ]; then pyrus install --force phpunit/DbUnit; fi"
@@ -19,6 +20,6 @@ script:
 notifications:
   email:
     recipients:
-      - m@michaelcullum.com
-    on_success: always
+      - unknownbliss@phpbb.com
+    on_success: change
     on_failure: always
