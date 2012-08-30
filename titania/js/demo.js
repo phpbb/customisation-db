@@ -4,7 +4,9 @@ $(document).ready(function() {
 	
 	$('iframe').height(iframe_height);
 	$('.style-select').removeClass('simple');
-	
+});
+
+$(window).ready(function() {
 	preload_images();
 });
 
