@@ -20,6 +20,11 @@ $action = request_var('action', '');
 switch ($action)
 {
 	case 'login':
+		if (phpbb::$user->data['user_id'] != ANONYMOUS)
+		{
+			redirect(titania_url::build_url(''));
+		}
+
 		phpbb::login_box(titania_url::build_url(''));
 	break;
 
