@@ -798,8 +798,8 @@ class titania_posting
 					$post_object->topic->topic_sticky = true;
 				}
 
-				// Does the post need approval?  Never for the Queue Discussion or Queue
-				if (!phpbb::$auth->acl_get('u_titania_post_approved') && $post_object->post_type != TITANIA_QUEUE_DISCUSSION && $post_object->post_type != TITANIA_QUEUE)
+				// Does the post need approval?  Never for the Queue Discussion or Queue. Do not set again in edit mode, otherwise this causes problems when the post has been approved.
+				if (!phpbb::$auth->acl_get('u_titania_post_approved') && $post_object->post_type != TITANIA_QUEUE_DISCUSSION && $post_object->post_type != TITANIA_QUEUE && $mode != 'edit')
 				{
 					$post_object->post_approved = false;
 				}
