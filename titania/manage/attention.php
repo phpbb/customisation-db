@@ -22,6 +22,8 @@ if (!phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_m
 
 phpbb::$user->add_lang('mcp');
 
+$valid_confirm_box = titania::confirm_box(true);
+
 $attention_id = request_var('a', 0);
 $object_type = request_var('type', 0);
 $object_id = request_var('id', 0);
@@ -49,9 +51,9 @@ if ($attention_id || ($object_type && $object_id))
 	}
 
 	// Close, approve, or disapprove the items
-	if ($close || $approve || $delete)
+	if ($close || $approve || $delete || ($disapprove && $valid_confirm_box))
 	{
-		if (!check_form_key('attention'))
+		if (!check_form_key('attention') && !$disapprove)
 		{
 			trigger_error('FORM_INVALID');
 		}
@@ -129,7 +131,7 @@ if ($attention_id || ($object_type && $object_id))
 			// Disapprove the post
 			if ($disapprove)
 			{
-				if (titania::confirm_box(true))
+				if ($valid_confirm_box)
 				{
 					// Load z topic
 					$post->topic->topic_id = $post->topic_id;
@@ -166,9 +168,6 @@ if ($attention_id || ($object_type && $object_id))
 
 					// Delete the post
 					$post->delete();
-					
-					// Close attention item
-					$attention_object->close();
 
 					redirect(titania_url::build_url(titania_url::$current_page));
 				}
