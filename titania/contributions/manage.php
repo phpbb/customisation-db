@@ -63,6 +63,9 @@ if (titania::confirm_box(true))
 		titania::$contrib->set_contrib_user_id($change_owner_id);
 
 		titania::$contrib->load(utf8_normalize_nfc(request_var('c', '', true))); // Reload the contrib (to make sure the authors list is updated)
+		// Update the release topic and reindex the contrib
+		titania::$contrib->update_release_topic();
+		titania::$contrib->index();
 		$submit = false; // Set submit as false to keep the main stuff from being resubmitted again
 
 		redirect(titania::$contrib->get_url());
