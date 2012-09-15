@@ -226,6 +226,66 @@ $(document).ready(function(){
 	});
 });
 
+$(document).on('click', '#screenshot-manage a.item-control-button:not(.delete)', function(e) {
+	e.preventDefault();
+
+	var container = $(this).closest('dl');
+
+	if ($(this).hasClass('move-up'))
+	{	
+		$(container).insertBefore($(container).prev());
+
+		// Enable move-down button
+		$(this).prev('.move-down').removeClass('hidden');
+		$(this).siblings('.move-down-disabled').addClass('hidden');
+
+		// Disable move-up button if we're the first child now
+		if ($(container).is(':first-child'))
+		{
+			$(this).addClass('hidden');
+			$(this).next('.move-up-disabled').removeClass('hidden');
+		}
+
+		// Enable move-up button for sibling
+		$(container).next().find('dd div .move-up').removeClass('hidden');
+		$(container).next().find('dd div .move-up-disabled').addClass('hidden');
+
+		// Disable move-down button for sibling if it's the last child
+		if ($(container).next().is(':last-child'))
+		{
+			$(container).next().find('dd div .move-down').addClass('hidden');
+			$(container).next().find('dd div .move-down-disabled').removeClass('hidden');
+		}
+	}
+	else if ($(this).hasClass('move-down'))
+	{
+		$(container).insertAfter($(container).next());
+
+		// Enable disabled move-up button
+		$(this).next('.move-up').removeClass('hidden');
+		$(this).siblings('.move-up-disabled').addClass('hidden');
+
+		// Disable move-down button
+		if ($(container).is(':last-child'))
+		{
+			$(this).addClass('hidden');
+			$(this).prev('.move-down-disabled').removeClass('hidden');
+		}
+
+		// Enable move-down button for sibling
+		$(container).prev().find('dd div .move-down').removeClass('hidden');
+		$(container).prev().find('dd div .move-down-disabled').addClass('hidden');
+
+		// Disable move-up button for sibling
+		if ($(container).prev().is(':first-child'))
+		{
+			$(container).prev().find('dd div .move-up').addClass('hidden');
+			$(container).prev().find('dd div .move-up-disabled').removeClass('hidden');
+		}
+	}
+	
+});
+
 function hide_quotebox(box)
 {
 	$(box).parent().children('div').hide();

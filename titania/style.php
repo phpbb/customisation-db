@@ -58,6 +58,7 @@ $replace = array(
 	'{T_THEME_PATH}'			=> "$path/styles/$style/theme",
 	'{T_TEMPLATE_PATH}'			=> "$path/styles/$style/template",
 	'{T_IMAGESET_PATH}'			=> "$path/styles/$style/imageset",
+	'{T_IMAGES_PATH}'			=> "$path/images",
 );
 $stylesheet = str_replace(array_keys($replace), array_values($replace), $stylesheet);
 
