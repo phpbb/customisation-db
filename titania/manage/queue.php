@@ -200,6 +200,8 @@ if ($queue_id)
 						// Install the style on the demo board?
 						if ($contrib->contrib_type == TITANIA_TYPE_STYLE && phpbb::$request->is_set_post('style_demo_install') && titania::$config->demo_style_path)
 						{
+							// Make sure the demo gets updated immediately
+							titania::$cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
 							// Reload the contrib, it hath changed
 							$contrib->load((int) $queue->contrib_id);
 

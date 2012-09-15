@@ -68,6 +68,8 @@ if (titania::confirm_box(true))
 		// Update the release topic and reindex the contrib
 		titania::$contrib->update_release_topic();
 		titania::$contrib->index();
+		titania::$cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
+
 		$submit = false; // Set submit as false to keep the main stuff from being resubmitted again
 
 		redirect(titania::$contrib->get_url());
@@ -331,6 +333,12 @@ else if ($submit)
 
 		// Update the release topic
 		titania::$contrib->update_release_topic();
+
+		// Clear cache only when a style gets updated to make demo cache worthwhile...
+		if (titania::$contrib->contrib_type == TITANIA_TYPE_STYLE)
+		{
+			titania::$cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
+		}
 
 		if ($change_owner == '')
 		{
