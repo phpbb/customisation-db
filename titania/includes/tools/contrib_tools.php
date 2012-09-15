@@ -209,6 +209,7 @@ class titania_contrib_tools
 	public function find_root($directory = false, $find = array(array('install', '.xml')), $sub_dir = '', $cnt = 0)
 	{
 		$directory = ($directory === false) ? $this->unzip_dir : $directory;
+		$possible_match = false;
 
 		// Ok, have to draw the line somewhere; 50 sub directories is insane
 		if ($cnt > 50)
@@ -231,7 +232,20 @@ class titania_contrib_tools
 			}
 
 			// Search for the files
-			if (!is_array($find))
+			if ($find == '*')
+			{
+				// * is used to search for a single main parent directory -- if there's more than one, we return false
+				if ($possible_match !== false)
+				{
+					return false;
+				}
+
+				if (is_dir($directory . $sub_dir . '/' . $item))
+				{
+					$possible_match = $item;
+				}
+			}
+			else if (!is_array($find))
 			{
 				if (strpos($item, $find) !== false)
 				{
@@ -303,6 +317,12 @@ class titania_contrib_tools
 				}
 			}
         }
+
+		// We managed to find a single parent directory
+		if ($find == '*')
+		{
+			return $possible_match;
+		}
 
         // We failed the scan of this directory, let's try some children
         foreach (scandir($directory . $sub_dir) as $item)
