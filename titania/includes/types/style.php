@@ -262,14 +262,14 @@ class titania_type_style extends titania_type_base
 		$style_root = $contrib_tools->find_root(false, '*');
 		$contrib_tools->remove_temp_files();
 
-		// If we managed to find a single parent directory, then we use that in the zip name, otherwise we fall back to using a cleaned version of contrib_name
+		// If we managed to find a single parent directory, then we use that in the zip name, otherwise we fall back to using contrib_name_clean
 		if ($style_root !== false)
 		{
 			$new_real_filename = $style_root . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
 		}
 		else
 		{
-			$new_real_filename = titania_url::url_slug($contrib->contrib_name) . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
+			$new_real_filename = $contrib->contrib_name_clean . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
 		}
 
 		$revision_attachment->change_real_filename($new_real_filename);
