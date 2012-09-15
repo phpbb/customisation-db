@@ -934,7 +934,11 @@ class titania_attachment extends titania_database_object
 		}
 
 		$tpl_size = sizeof($compiled_attachments);
-		phpbb::$template->assign_var('ATTACHMENT_COUNT', $total_attachments);
+
+		if ($this->object_type == TITANIA_SCREENSHOT)
+		{
+			phpbb::$template->assign_var('SCREENSHOT_COUNT', $total_attachments);
+		}
 
 		$unset_tpl = array();
 
