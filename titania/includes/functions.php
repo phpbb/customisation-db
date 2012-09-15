@@ -329,3 +329,20 @@ function reverse_version_compare($version1, $version2)
 {
 	return version_compare($version2, $version1);
 }
+
+/**
+* Compare the order of two attachments. Used to sort attachments in conjuction with uasort()
+* @param array $attach1
+* @param array $attach2
+*/
+function titania_attach_order_compare($attach1, $attach2)
+{
+	if ($attach1['attachment_order'] == $attach2['attachment_order'])
+	{
+		return 0;
+	}
+	else
+	{
+		return ($attach1['attachment_order'] > $attach2['attachment_order']) ? 1 : -1;
+	}
+}

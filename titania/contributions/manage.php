@@ -27,6 +27,8 @@ if (!((((titania::$contrib->is_author || titania::$contrib->is_active_coauthor) 
 	titania::needs_auth();
 }
 
+titania::page_header(titania::$contrib->contrib_name . ' - ' . phpbb::$user->lang['MANAGE_CONTRIBUTION']);
+
 // Set some main vars up
 $submit = phpbb::$request->is_set_post('submit');
 $change_owner = phpbb::$request->variable('change_owner', '', true); // Blame Nathan, he said this was okay
@@ -90,10 +92,30 @@ $message->set_settings(array(
 ));
 
 // Screenshots
+$attach_id = request_var('a', 0);
+$attach_action = request_var('action', '');
+$link_hash = request_var('hash', '');
+
 $screenshot = new titania_attachment(TITANIA_SCREENSHOT, titania::$contrib->contrib_id);
-$screenshot->load_attachments();
-$screenshot->upload(175);
+$screenshot->load_attachments(false, false ,true);
+$screenshot->upload(175, true);
+$orig_screen_order = $screenshot->generate_order();
 $error = array_merge($error, $screenshot->error);
+
+if ($attach_id && $attach_action && check_link_hash($link_hash, 'attach_manage'))
+{
+	if ($attach_action == 'delete_attach')
+	{
+		// The delete() method will check if the attachment is part of the screenshot array
+		$screenshot->delete($attach_id);
+	}
+	else if ($attach_action == 'attach_up' || $attach_action == 'attach_down')
+	{
+		$move_attach = ($attach_action == 'attach_up') ? 'up' : 'down';
+		$screenshot->generate_order(false, $attach_id, $move_attach);
+		$screenshot->submit(TITANIA_ACCESS_PUBLIC, $orig_screen_order);
+	}
+} 
 
 if ($screenshot->uploaded || phpbb::$request->is_set_post('preview') || $submit)
 {
@@ -122,6 +144,13 @@ if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contr
 if (phpbb::$request->is_set_post('preview'))
 {
 	$message->preview();
+
+	$attach_order = request_var('attach_order', array(0));
+	// Preserve the attachment order when preview is hit just in case it has been modified
+	if (sizeof($attach_order))
+	{
+		$screenshot->generate_order(array_flip($attach_order));
+	}
 }
 else if ($submit)
 {
@@ -263,8 +292,11 @@ else if ($submit)
 			}
 		}
 
+		$screenshot_order = request_var('attach_order', array(0));
+		$screenshot->generate_order(array_flip($screenshot_order));
+
 		// Submit screenshots
-		$screenshot->submit();
+		$screenshot->submit(TITANIA_ACCESS_PUBLIC, $orig_screen_order);
 
 		// ColorizeIt stuff
         if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contrib->contrib_type]->acl_get('colorizeit'))
@@ -393,7 +425,7 @@ phpbb::$template->assign_vars(array(
 
 	'CONTRIB_PERMALINK'			=> $permalink,
 	'CONTRIB_TYPE'			=> (int) titania::$contrib->contrib_type,
-	'SCREENSHOT_UPLOADER'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? $screenshot->parse_uploader('posting/attachments/simple.html') : false,
+	'SCREENSHOT_UPLOADER'		=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) ? $screenshot->parse_uploader('posting/attachments/simple.html', true) : false,
 	'ERROR_MSG'					=> (sizeof($error)) ? implode('<br />', $error) : false,
 	'ACTIVE_COAUTHORS'			=> $active_coauthors,
 	'NONACTIVE_COAUTHORS'		=> $nonactive_coauthors,
@@ -401,5 +433,4 @@ phpbb::$template->assign_vars(array(
 	'S_TRANSLATION_TYPE_ID'		=> (defined('TITANIA_TYPE_TRANSLATION')) ? TITANIA_TYPE_TRANSLATION : 0,
 ));
 
-titania::page_header(titania::$contrib->contrib_name . ' - ' . phpbb::$user->lang['MANAGE_CONTRIBUTION']);
 titania::page_footer(true, 'contributions/contribution_manage.html');

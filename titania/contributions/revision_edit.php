@@ -27,6 +27,8 @@ if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !
 $revision_id = phpbb::$request->variable('revision', 0);
 $error = $revision_phpbb_versions = array();
 $phpbb_versions = titania::$cache->get_phpbb_versions();
+$attach_action = request_var('action', 0);
+$link_hash = request_var('hash', '');
 
 // Load the revision
 $revision = new titania_revision(titania::$contrib, $revision_id);
@@ -40,6 +42,11 @@ $translation = new titania_attachment(TITANIA_TRANSLATION, $revision_id);
 $translation->load_attachments();
 $translation->upload();
 $error = array_merge($error, $translation->error);
+
+if ($attach_action == 'delete_attach' && check_link_hash($link_hash, 'attach_manage'))
+{
+	$translation->delete($delete_attach);
+}
 
 // Revision phpBB versions
 $revision->load_phpbb_versions();

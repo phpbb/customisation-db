@@ -120,6 +120,7 @@ class titania_attachment extends titania_database_object
 			'thumbnail'				=> array('default' => 0),
 			'is_orphan'				=> array('default' => 1),
 			'is_preview'			=> array('default' => 0),
+			'attachment_order'		=> array('default' => 0),
 		));
 
 		$this->object_type = (int) $object_type;
@@ -217,9 +218,10 @@ class titania_attachment extends titania_database_object
 	 * Parse the uploader
 	 *
 	 * @param <string> $tpl_file The name of the template file to use to create the uploader
+	 * @param <bool> $custom_sort Sort using value from attachmen_order field
 	 * @return <string> The parsed HTML code ready for output
 	 */
-	public function parse_uploader($tpl_file = 'posting/attachments/default.html')
+	public function parse_uploader($tpl_file = 'posting/attachments/default.html', $custom_sort = false)
 	{
 		// If the upload max filesize is less than 0, do not show the uploader (0 = unlimited)
 		if (titania::$access_level != TITANIA_ACCESS_TEAMS)
@@ -242,20 +244,29 @@ class titania_attachment extends titania_database_object
 			'SELECT_REVIEW_VAR' => 'set_preview_file' . $this->object_type
 		));
 
-		// Sort correctly
-		if (phpbb::$config['display_order'])
+		$index_dir = '-';
+		$index = sizeof($this->attachments) - 1;
+
+		if ($custom_sort)
 		{
-			// Ascending sort
-			ksort($this->attachments);
-			$index_dir = '-';
-			$index = sizeof($this->attachments) - 1;
+			// Sort using attachmen_order field
+			uasort($this->attachments, 'titania_attach_order_compare');
 		}
 		else
 		{
-			// Descending sort
-			krsort($this->attachments);
-			$index_dir = '+';
-			$index = 0;
+			// Sort correctly
+			if (phpbb::$config['display_order'])
+			{
+				// Ascending sort
+				ksort($this->attachments);
+			}
+			else
+			{
+				// Descending sort
+				krsort($this->attachments);
+				$index_dir = '+';
+				$index = 0;
+			}
 		}
 
         // Delete previous attachments list
@@ -274,7 +285,16 @@ class titania_attachment extends titania_database_object
 				'S_DELETE'			=> (!isset($row['no_delete']) || !$row['no_delete']) ? true : false,
 				'S_PREVIEW'			=> (isset($row['is_preview']) && $row['is_preview']) ? true : false,
 				//'S_DELETED'			=> (isset($row['deleted']) && $row['deleted']) ? true : false,
+				'U_DELETE'			=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'delete_attach', 'a' => $row['attachment_id'], 'hash' => generate_link_hash('attach_manage'))),
 			);
+
+			if ($this->object_type == TITANIA_SCREENSHOT)
+			{
+				$output = array_merge($output, array(
+					'U_MOVE_UP'			=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'attach_up', 'a' => $row['attachment_id'], 'hash' => generate_link_hash('attach_manage'))),
+					'U_MOVE_DOWN'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'attach_down', 'a' => $row['attachment_id'], 'hash' => generate_link_hash('attach_manage'))),		
+				));
+			}
 			$index += (($index_dir == '+') ? 1 : -1);
 
 			// Allow additional things to be outputted
@@ -305,8 +325,9 @@ class titania_attachment extends titania_database_object
 	* Upload any files we attempted to attach
 	*
 	* @param bool|int $max_thumbnail_width The maximum thumbnail width (if we create one)
+	* @param bool $set_custom_order Set the value of the attachment_order field
 	*/
-	public function upload($max_thumbnail_width = false)
+	public function upload($max_thumbnail_width = false, $set_custom_order = false)
 	{
 		// First, we shall handle the items already attached
 		$attached_ids = phpbb::$request->variable($this->form_name . '_attachments', array(0));
@@ -359,6 +380,17 @@ class titania_attachment extends titania_database_object
 				$this->attachments[$attach_id]['deleted'] = false;
 			}
 		}*/
+
+		$max_index = 0;
+		if ($set_custom_order && sizeof($this->attachments))
+		{
+			// Get the max value of the attachment_order field in the array
+			$temp = $this->attachments;
+			uasort($temp, 'titania_attach_order_compare');
+			$last = array_pop($temp);
+			$max_index = (int) $last['attachment_order'];
+			unset($temp, $last);
+		}
 
 		if (isset($_FILES[$this->form_name]))
 		{
@@ -418,6 +450,7 @@ class titania_attachment extends titania_database_object
 							// set first screenshot as preview image when it is uploaded
 							$is_preview = (empty($this->attachments)) ? true : false;
 						}
+						$max_index++;
 
 						$this->__set_array(array(
 							'attachment_id'			=> 0,
@@ -431,6 +464,7 @@ class titania_attachment extends titania_database_object
 							'hash'					=> $this->uploader->filedata['md5_checksum'],
 							'thumbnail'				=> $has_thumbnail,
 							'is_preview'			=> $is_preview,
+							'attachment_order'		=> ($set_custom_order) ? $max_index : 0,
 
 							'attachment_comment'	=> utf8_normalize_nfc(phpbb::$request->variable('filecomment', '', true)),
 						));
@@ -462,8 +496,9 @@ class titania_attachment extends titania_database_object
 	* @todo Deleting
 	*
 	* @param int $attachment_access Access level of the parent (to handle download permissions for the attachments)
+	* @param array $original_order Original order of attachments -- used to determine if the db needs to be updated
 	*/
-	public function submit($attachment_access = TITANIA_ACCESS_PUBLIC)
+	public function submit($attachment_access = TITANIA_ACCESS_PUBLIC, $original_order = array())
 	{
 		if (!sizeof($this->attachments))
 		{
@@ -484,8 +519,13 @@ class titania_attachment extends titania_database_object
 			$attachment_comment = utf8_normalize_nfc(phpbb::$request->variable('attachment_comment_' . $attachment_id, '', true));
 			if ($row['attachment_comment'] != $attachment_comment)
 			{
+				$fields['attachment_comment'] = $attachment_comment;
+			}
+
+			if (sizeof($fields))
+			{
 				$sql = 'UPDATE ' . $this->sql_table . '
-					SET attachment_comment = \'' . phpbb::$db->sql_escape($attachment_comment) . '\'
+					SET ' . phpbb::$db->sql_build_array('UPDATE', $fields) . '
 					WHERE attachment_id = ' . $attachment_id;
 				phpbb::$db->sql_query($sql);
 			}
@@ -662,10 +702,11 @@ class titania_attachment extends titania_database_object
 	* @param string $tpl The template file to use
 	* @param bool $preview true if previewing from the posting page
 	* @param string|bool $template_block If not false we will output the parsed attachments to this template block
+	* @param bool $custom_sort Sort attachments by attachment_order.
 	*
 	* @return array the parsed attachments
 	*/
-	public function parse_attachments(&$message, $tpl = 'common/attachment.html', $preview = false, $template_block = false)
+	public function parse_attachments(&$message, $tpl = 'common/attachment.html', $preview = false, $template_block = false, $custom_sort = false)
 	{
 		if (!sizeof($this->attachments))
 		{
@@ -684,16 +725,25 @@ class titania_attachment extends titania_database_object
 		}
 
 		// Sort correctly
-		if (phpbb::$config['display_order'])
+		if ($custom_sort)
 		{
-			// Ascending sort
-			ksort($this->attachments);
+			uasort($this->attachments, 'titania_attach_order_compare');
 		}
 		else
 		{
-			// Descending sort
-			krsort($this->attachments);
+			if (phpbb::$config['display_order'])
+			{
+				// Ascending sort
+				ksort($this->attachments);
+			}
+			else
+			{
+				// Descending sort
+				krsort($this->attachments);
+			}
 		}
+
+		$total_attachments = 0;
 
 		foreach ($this->attachments as $attachment_id => $attachment)
 		{
@@ -790,6 +840,7 @@ class titania_attachment extends titania_database_object
 					$block_array += array(
 						'S_IMAGE'			=> true,
 						'U_INLINE_LINK'		=> $download_link,
+						'IS_PREVIEW'		=> $attachment['is_preview'],
 					);
 				break;
 
@@ -802,6 +853,7 @@ class titania_attachment extends titania_database_object
 					$block_array += array(
 						'S_THUMBNAIL'		=> true,
 						'THUMB_IMAGE'		=> titania_url::append_url($download_link, array('mode' => 'view', 'thumb' => 1)),
+						'IS_PREVIEW'		=> $attachment['is_preview'],
 					);
 				break;
 
@@ -867,15 +919,22 @@ class titania_attachment extends titania_database_object
 				phpbb::$template->assign_block_vars($template_block, $block_array);
 			}
 
+			if ($attachment['is_preview'] && $attachment['object_type'] == TITANIA_SCREENSHOT)
+			{
+				phpbb::$template->assign_block_vars('preview', $block_array);
+			}
+
 			if ($tpl !== false)
 			{
 				phpbb::$template->assign_block_vars('_file', $block_array);
 
 				$compiled_attachments[] = phpbb::$template->assign_display('titania_attachment_tpl');
 			}
+			$total_attachments++;
 		}
 
 		$tpl_size = sizeof($compiled_attachments);
+		phpbb::$template->assign_var('ATTACHMENT_COUNT', $total_attachments);
 
 		$unset_tpl = array();
 
@@ -1079,6 +1138,7 @@ class titania_attachment extends titania_database_object
 
 		return true;
 	}
+<<<<<<< HEAD
 	
 	/**
 	* Return if there is a preview image and assign block vars if necessary
@@ -1248,5 +1308,71 @@ class titania_attachment extends titania_database_object
 
 		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . ' SET real_filename = "' . phpbb::$db->sql_escape($real_filename) . '" WHERE attachment_id = ' . $this->attachment_id;
 		phpbb::$db->sql_query($sql);
+	}
+
+	/**
+	* Fill the attachment_order field
+	*
+	* @param array|bool $order Array in the form of (attachment_id => index) to order the attachments
+	* @param int $attachment_id Attachment to move up/down --- used in conjuction with $dir.
+	* @param string|bool $dir Direction to move a single attachment.
+	* @return array|bool Returns the original order of the attachments if no parameters or $sort are provided... or a boolean when moving a single attachment on success/failure.
+	*/
+	public function generate_order($order = false, $attachment_id = 0, $dir = false)
+	{
+		if (!sizeof($this->attachments))
+		{
+			return array();
+		}
+
+		// Sort by attachment_order first to make our lives a little easier
+		uasort($this->attachments, 'titania_attach_order_compare');
+		$indices = array_flip(array_keys($this->attachments));
+
+		// We're moving a single attachment up or down
+		if (isset($this->attachments[$attachment_id]) && $dir)
+		{
+			$current = $indices[$attachment_id];
+			$sibling_index = $current + (($dir == 'up') ? -1 : 1);
+			$sibling_id = array_search($sibling_index, $indices);
+
+			// Can we move from the current position? If so, set the new order for the attachment and its sibling
+			if (($dir == 'up' && $current !== 0) || ($dir == 'down' && $current !== (sizeof($this->attachments) - 1)))
+			{
+				$this->attachments[$attachment_id]['attachment_order'] = $current + (($dir == 'up') ? -1 : 1);			
+				$this->attachments[$sibling_id]['attachment_order'] = $current;
+
+				return true;
+			}
+			return false;
+		}
+
+		$original = array();
+		$i = 0;
+
+		// Sort using provided indices
+		if (is_array($order))
+		{
+			foreach ($order as $id => $index)
+			{
+				if (isset($this->attachments[$id]))
+				{
+					$original[$id] = $this->attachments[$id]['attachment_order'];
+					$this->attachments[$id]['attachment_order'] = $i;
+				}
+				unset($indices[$id]);
+				$i++;
+			}
+		}
+
+		// Do we have attachments that still haven't been sorted? If so, add them at the end
+		foreach ($indices as $id => $index)
+		{
+			$original[$id] = $this->attachments[$id]['attachment_order'];
+			$this->attachments[$id]['attachment_order'] = $i;
+			$i++;
+		}
+
+		return $original;
 	}
 }
