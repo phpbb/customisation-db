@@ -221,13 +221,13 @@
 	</div>
 <!-- ENDIF -->
 
-<!-- IF (ATTACHMENT_COUNT > 1) or .revisions or U_NEW_REVISION -->
+<!-- IF (SCREENSHOT_COUNT > 1) or .revisions or U_NEW_REVISION -->
 <div class="container">
 	<div class="inner"><span class="corners-top main-corners"><span></span></span>
 		<div id="extratabs">
 		    <ul id="extratabs-head">
 		        <!-- IF S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
-		        <!-- IF ATTACHMENT_COUNT > 1 --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
+		        <!-- IF SCREENSHOT_COUNT > 1 --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
 		        <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
 		        <!-- IF U_NEW_REVISION --><li><a href="{U_NEW_REVISION}"><span>{L_NEW_REVISION}</span></a></li><!-- ENDIF -->
 		    </ul>
@@ -240,7 +240,7 @@
 		    </div>
 		    <!-- ENDIF -->
 
-		    <!-- IF ATTACHMENT_COUNT > 1 -->
+		    <!-- IF SCREENSHOT_COUNT > 1 -->
 		    <div id="screenshots-panel" class="tab-panel">
 				<!-- BEGIN screenshots -->
 				<!-- IF not screenshots.IS_PREVIEW -->
