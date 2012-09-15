@@ -265,7 +265,7 @@ class titania_contribution extends titania_message_object
 		}
 
 		$this->screenshots = new titania_attachment(TITANIA_SCREENSHOT, $this->contrib_id);
-		$this->screenshots->load_attachments();
+		$this->screenshots->load_attachments(false, false, true);
 
 		return $this->screenshots;
 	}
@@ -489,7 +489,6 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_VIEWS'					=> $this->contrib_views,
 			'CONTRIB_UPDATE_DATE'			=> ($this->contrib_last_update) ? phpbb::$user->format_date($this->contrib_last_update) : '',
 			'CONTRIB_STATUS'				=> $this->contrib_status,
-			'CONTRIB_SCREENSHOT'			=> ($this->screenshots) ? $this->screenshots->preview_image() : false,
 			'CONTRIB_LIMITED_SUPPORT'		=> $this->contrib_limited_support,
 
 			'CONTRIB_LOCAL_NAME'			=> $this->contrib_local_name,
@@ -644,7 +643,18 @@ class titania_contribution extends titania_message_object
 			// Display Screenshots
 			if ($this->screenshots)
 			{
-				$this->screenshots->parse_attachments($message = false, false, false, 'screenshots');
+				$screenshots = $this->screenshots->get_attachments();
+				$indices = array_keys($screenshots);
+				$custom_sort = true;
+
+				if ((sizeof($indices) > 1))
+				{
+					// If attachment_order hasn't been filled, then we fall back to the default behavior of sorting by attachment_id. 
+					$sort = ($screenshots[$indices[1]]['attachment_order'] >= 1) ? true : false;
+				}
+
+				$this->screenshots->parse_attachments($message = false, false, false, 'screenshots', $custom_sort);
+				unset($screenshots);
 			}
 
 			// Display categories

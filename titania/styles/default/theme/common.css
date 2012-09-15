@@ -291,14 +291,14 @@ ul.general-info li strong {
 	padding: 0 !important;
 }
 
-#screenshots-panel a.screenshot img, img.screenshot  {
+.main-panel a.screenshot img, .main-panel img.screenshot {
 	padding: 3px;
 	border: 1px solid #A1A1A1;
 	vertical-align: text-top;
 	margin: 5px;
 }
 
-#screenshots-panel a.screenshot:hover img {
+.main-panel a.screenshot:hover img {
 	border-color: #757575;
 }
 
@@ -353,6 +353,30 @@ a.contract {
 	margin: auto;
 	color: #D8D8D7;
 }
+
+/* Contrib Manage
+--------------------------------------------- */
+#screenshot-manage dl {
+	border-bottom: 1px dashed #CCCCCC;
+	padding-top: 8px;
+}
+
+#screenshot-manage dl:last-child { border-bottom: none; }
+
+.item-control-button {
+	background-repeat: no-repeat;
+	display: block;
+	float: right;
+	height: 16px;
+	margin-left: 5px;
+	width: 16px;
+}
+
+.delete		{ background-image: url("{T_IMAGES_PATH}/icon_delete.gif"); }
+.move-up 	{ background-image: url("{T_IMAGES_PATH}/icon_up.gif"); }
+.move-down	{ background-image: url("{T_IMAGES_PATH}/icon_down.gif"); }
+.move-up-disabled	{ background-image: url("{T_IMAGES_PATH}/icon_up_disabled.gif"); }
+.move-down-disabled	{ background-image: url("{T_IMAGES_PATH}/icon_down_disabled.gif"); }
 
 /* Listings
 --------------------------------------------- */
