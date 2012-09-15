@@ -650,7 +650,7 @@ class titania_contribution extends titania_message_object
 				if ((sizeof($indices) > 1))
 				{
 					// If attachment_order hasn't been filled, then we fall back to the default behavior of sorting by attachment_id. 
-					$sort = ($screenshots[$indices[1]]['attachment_order'] >= 1) ? true : false;
+					$custom_sort = ($screenshots[$indices[1]]['attachment_order'] >= 1) ? true : false;
 				}
 
 				$this->screenshots->parse_attachments($message = false, false, false, 'screenshots', $custom_sort);
