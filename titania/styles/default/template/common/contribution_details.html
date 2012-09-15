@@ -17,10 +17,10 @@
 	<div class="inner"><span class="corners-top main-corners"><span></span></span>
 
 		<div class="right-column demo">
-			<!-- IF CONTRIB_SCREENSHOT -->
+			<!-- IF .preview -->
 				<!-- BEGIN preview(0,0) -->
 					<!-- IF preview.S_THUMBNAIL -->
-						<img src="{preview.THUMB_IMAGE}" class="screenshot" alt="{preview.DOWNLOAD_NAME}" title="{preview.DOWNLOAD_NAME} ({preview.FILESIZE} {preview.SIZE_LANG}) {preview.L_DOWNLOAD_COUNT}" />
+						<a href="{preview.U_DOWNLOAD_LINK}" class="screenshot"><img src="{preview.THUMB_IMAGE}" alt="{preview.DOWNLOAD_NAME}" title="{preview.DOWNLOAD_NAME} ({preview.FILESIZE} {preview.SIZE_LANG}) {preview.L_DOWNLOAD_COUNT}" /></a>
 					<!-- ELSE -->
 						<img src="{preview.U_INLINE_LINK}" class="screenshot" alt="{preview.DOWNLOAD_NAME}" />
 					<!-- ENDIF -->
@@ -221,13 +221,13 @@
 	</div>
 <!-- ENDIF -->
 
-<!-- IF .screenshots or .revisions or U_NEW_REVISION -->
+<!-- IF (ATTACHMENT_COUNT > 1) or .revisions or U_NEW_REVISION -->
 <div class="container">
 	<div class="inner"><span class="corners-top main-corners"><span></span></span>
 		<div id="extratabs">
 		    <ul id="extratabs-head">
 		        <!-- IF S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
-		        <!-- IF .screenshots --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
+		        <!-- IF ATTACHMENT_COUNT > 1 --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
 		        <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
 		        <!-- IF U_NEW_REVISION --><li><a href="{U_NEW_REVISION}"><span>{L_NEW_REVISION}</span></a></li><!-- ENDIF -->
 		    </ul>
@@ -240,9 +240,10 @@
 		    </div>
 		    <!-- ENDIF -->
 
-		    <!-- IF .screenshots -->
+		    <!-- IF ATTACHMENT_COUNT > 1 -->
 		    <div id="screenshots-panel" class="tab-panel">
 				<!-- BEGIN screenshots -->
+				<!-- IF not screenshots.IS_PREVIEW -->
 					<!-- IF screenshots.S_THUMBNAIL -->
 						<a href="{screenshots.U_DOWNLOAD_LINK}" class="screenshot"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
 					<!-- ENDIF -->
@@ -251,6 +252,7 @@
 						<img src="{screenshots.U_INLINE_LINK}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" />
 					<!-- ENDIF -->
 				<!-- END screenshots -->
+			<!-- ENDIF -->
 		    </div>
 		    <!-- ENDIF -->
 
