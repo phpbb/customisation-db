@@ -104,21 +104,6 @@ $screenshot->upload(175, true);
 $orig_screen_order = $screenshot->generate_order();
 $error = array_merge($error, $screenshot->error);
 
-if ($attach_id && $attach_action && check_link_hash($link_hash, 'attach_manage'))
-{
-	if ($attach_action == 'delete_attach')
-	{
-		// The delete() method will check if the attachment is part of the screenshot array
-		$screenshot->delete($attach_id);
-	}
-	else if ($attach_action == 'attach_up' || $attach_action == 'attach_down')
-	{
-		$move_attach = ($attach_action == 'attach_up') ? 'up' : 'down';
-		$screenshot->generate_order(false, $attach_id, $move_attach);
-		$screenshot->submit(TITANIA_ACCESS_PUBLIC, $orig_screen_order);
-	}
-} 
-
 if ($screenshot->uploaded || phpbb::$request->is_set_post('preview') || $submit)
 {
 	titania::$contrib->post_data($message);
@@ -142,6 +127,25 @@ if(strlen(titania::$config->colorizeit) && titania_types::$types[titania::$contr
         titania::$contrib->post_data($message);
     }
 }
+
+if ($attach_id && $attach_action && check_link_hash($link_hash, 'attach_manage'))
+{
+	if ($attach_action == 'delete_attach')
+	{
+		// The delete() method will check if the attachment is part of the screenshot/clr_sample array
+		$screenshot->delete($attach_id);
+		if (isset($clr_sample))
+		{
+			$clr_sample->delete($attach_id);
+		}
+	}
+	else if ($attach_action == 'attach_up' || $attach_action == 'attach_down')
+	{
+		$move_attach = ($attach_action == 'attach_up') ? 'up' : 'down';
+		$screenshot->generate_order(false, $attach_id, $move_attach);
+		$screenshot->submit(TITANIA_ACCESS_PUBLIC, $orig_screen_order);
+	}
+} 
 
 if (phpbb::$request->is_set_post('preview'))
 {
