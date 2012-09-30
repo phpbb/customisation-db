@@ -107,9 +107,15 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 .topic-actions .search-box { margin-right: 5px; }
 
 .topic-actions .pagination {
+<<<<<<< HEAD
 	float: none;
 	line-height: 1.9em;
 	margin-top: 3px;
+=======
+float: none;
+line-height: 1.9em;
+margin-top: 3px;
+>>>>>>> 9b4a41b086cec8b58bcad9a989b1f1512f9b5baf
 }
 
 /* Contribution Details

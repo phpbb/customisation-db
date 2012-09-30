@@ -1,0 +1,17 @@
+Asunto"{SITENAME}" - E-mail a un amigo
+Hola {TO_USERNAME},
+
+ Este correo electrónico fue enviado desde"{SITENAME}" por {FROM_USERNAME} que pensaba que podría estar interesado en los siguientes phpBB personalización de base de datos Modificación:
+
+{CONTRIB_NAME}
+
+Usted puede encontrar una descarga de la modificación introducida en el siguiente enlace:
+
+{U_CONTRIB}
+
+Tenga en cuenta que este mensaje no se ha visto ni aprobado por los administradores "(SITENAME}". 
+
+Si desea presentar una queja acerca de haber recibido este e-mail por favor contacte al administrador del foro en {BOARD_CONTACT}. Por favor, citan los encabezados del mensaje al entrar en contacto con esta dirección.
+----------
+
+{MESSAGE}
