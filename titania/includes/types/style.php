@@ -59,6 +59,8 @@ class titania_type_style extends titania_type_base
 	public $create_public = 'STYLE_CREATE_PUBLIC';
 	public $reply_public = 'STYLE_REPLY_PUBLIC';
 	public $update_public = 'STYLE_UPDATE_PUBLIC';
+	public $clean_and_restore_root = true;
+	public $root_search = '*';
 	//public $upload_agreement = 'STYLE_UPLOAD_AGREEMENT';
 
 	// License options
@@ -251,21 +253,16 @@ class titania_type_style extends titania_type_base
 	* @param $contrib Contribution object
 	* @param $revision Revision object
 	* @param $revision_attachment Attachment object
+	* @param $root_dir Package root directory
+	*
+	* @return New root dir name
 	*/		
-	public function fix_package_name($contrib, $revision, $revision_attachment)
+	public function fix_package_name($contrib, $revision, $revision_attachment, $root_dir = false)
 	{
-		$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
-		$new_dir_name = titania::$contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
-
-		$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
-		// Check if we have a single parent directory
-		$style_root = $contrib_tools->find_root(false, '*');
-		$contrib_tools->remove_temp_files();
-
 		// If we managed to find a single parent directory, then we use that in the zip name, otherwise we fall back to using contrib_name_clean
-		if ($style_root !== false)
+		if ($root_dir !== false)
 		{
-			$new_real_filename = $style_root . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
+			$new_real_filename = $root_dir . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
 		}
 		else
 		{
@@ -273,5 +270,6 @@ class titania_type_style extends titania_type_base
 		}
 
 		$revision_attachment->change_real_filename($new_real_filename);
+		return $root_dir;
 	}
 }

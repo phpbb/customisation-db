@@ -293,9 +293,12 @@ class titania_type_base
 	* @param $contrib Contribution object
 	* @param $revision Revision object
 	* @param $revision_attachment Attachment object
+	* @param $root_dir Package root directory
+	*
+	* @return New root dir name
 	*/	
-	public function fix_package_name($contrib, $revision, $revision_attachment)
+	public function fix_package_name($contrib, $revision, $revision_attachment, $root_dir = false)
 	{
-		return;
+		return false;
 	}
 }

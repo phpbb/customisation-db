@@ -220,11 +220,15 @@ class titania_type_translation extends titania_type_base
 	* @param $contrib Contribution object
 	* @param $revision Revision object
 	* @param $revision_attachment Attachment object
+	* @param $root_dir Package root directory
+	*
+	* @return New root dir name
 	*/		
-	public function fix_package_name($contrib, $revision, $revision_attachment)
+	public function fix_package_name($contrib, $revision, $revision_attachment, $root_dir = false)
 	{
 		$new_real_filename = titania_url::url_slug($contrib->contrib_name_clean) . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version)) . '.' . $revision_attachment->extension;
 
 		$revision_attachment->change_real_filename($new_real_filename);
+		return false;
 	}
 }
