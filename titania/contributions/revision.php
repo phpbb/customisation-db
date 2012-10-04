@@ -221,9 +221,6 @@ if ($step == 1)
 		));
 		$revision->phpbb_versions = $selected_branches;
 
-		// Adjust package name to follow naming conventions
-		titania_types::$types[titania::$contrib->contrib_type]->fix_package_name(titania::$contrib, $revision, $revision_attachment);
-
 		/*$revision->phpbb_versions = array();
 		foreach ($revision_phpbb_versions as $revision_phpbb_version)
 		{
@@ -277,6 +274,9 @@ if ($step == 1)
 
 		if (!titania_types::$types[titania::$contrib->contrib_type]->clean_and_restore_root)
 		{
+			// Adjust package name to follow naming conventions
+			titania_types::$types[titania::$contrib->contrib_type]->fix_package_name(titania::$contrib, $revision, $revision_attachment);
+
 			// Skip the whole thing if we have nothing else to do
 			if (!titania_types::$types[titania::$contrib->contrib_type]->mpv_test && !titania_types::$types[titania::$contrib->contrib_type]->automod_test && !titania_types::$types[titania::$contrib->contrib_type]->validate_translation)
 			{
@@ -336,7 +336,7 @@ if ($step == 1)
 		$contrib_tools->clean_package();
 
 		// Restore the root package directory
-		if (is_array(titania_types::$types[titania::$contrib->contrib_type]->root_search))
+		if (titania_types::$types[titania::$contrib->contrib_type]->root_search)
 		{
 			$package_root = $contrib_tools->find_root(false, titania_types::$types[titania::$contrib->contrib_type]->root_search);
 		}
@@ -365,6 +365,14 @@ if ($step == 1)
 		if (!sizeof($error))
 		{
 			phpbb::$template->assign_var('S_NEW_REVISION_SUBMITTED', true);
+
+			// Adjust package name to follow naming conventions
+			$new_root_name = titania_types::$types[titania::$contrib->contrib_type]->fix_package_name(titania::$contrib, $revision, $revision_attachment, $package_root);
+
+			if ($new_root_name)
+			{
+				$contrib_tools->new_dir_name = $new_root_name;
+			}
 
 			// Replace the uploaded zip package with the new one
 			$contrib_tools->replace_zip();
