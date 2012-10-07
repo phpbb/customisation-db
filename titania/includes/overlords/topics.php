@@ -421,6 +421,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sort->build_pagination($page_url);
 
 		$last_was_sticky = false;
+		phpbb::$template->assign_var('S_SPLIT_BY_TOPIC_TYPE', $switch_on_sticky);
 
 		// Get the data
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
