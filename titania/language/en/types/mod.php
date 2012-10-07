@@ -110,10 +110,10 @@ For further reading, you may want to review the following:
 [*][url=http://www.phpbb.com/kb/3.0/modifications/]phpBB3 MODifications Category in Knowledge Base[/url][/list]
 
 For help with writing phpBB MODs, the following resources exist:
-[list][*][url=http://www.phpbb.com/community/viewforum.php?f=71]Forum for MOD Authors\Help[/url]
+[list][*][url=http://www.phpbb.com/community/viewforum.php?f=71]MOD Writers Discussion forum[/url]
 [*]IRC Support - [url=irc://irc.freenode.net/phpBB-coding]#phpBB-coding[/url] is registered on the FreeNode IRC network ([url=irc://irc.freenode.net/]irc.freenode.net[/url])[/list]
 
-[b]If you wish to discuss anything in this PM please send a message using the discusion tab in the MOD database, My Modifications, manage for this MOD.[/b]
+[b]If you wish to discuss anything in this PM please use the “Validation Discussion“ sticky topic located in your MOD’s Discussion/Support tab.[/b]
 
 If you feel this denial was not warranted please contact the MOD Validation Leader.
 If you have any queries and further discussion please use the Queue Discussion Topic.
