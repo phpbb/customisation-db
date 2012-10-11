@@ -423,6 +423,7 @@ if ($queue_id)
 
 	// Handle replying/editing/etc
 	$posting_helper = new titania_posting();
+	$posting_helper->parent_type = $queue_type;
 	$posting_helper->act('manage/queue_post.html');
 
 	// Display the posts in the queue (after the posting helper acts)

@@ -238,6 +238,8 @@ class titania_queue extends titania_message_object
 			$post->post_access = TITANIA_ACCESS_TEAMS;
 		}
 
+		$post->parent_contrib_type = $this->queue_type;
+
 		$post->generate_text_for_storage(true, true, true);
 		$post->submit();
 	}
@@ -266,6 +268,8 @@ class titania_queue extends titania_message_object
 		{
 			$post->post_access = TITANIA_ACCESS_TEAMS;
 		}
+
+		$post->parent_contrib_type = $this->queue_type;
 
 		$post->generate_text_for_storage(true, true, true);
 		$post->submit();
