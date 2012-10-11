@@ -26,7 +26,7 @@ $search_types = array(
 
 if (titania::$config->support_in_titania)
 {
-	$search_types = array_merge($search_types, array(TITANIA_SUPPORT		=> 'CONTRIB_SUPPORT'));
+	$search_types[TITANIA_SUPPORT] = 'CONTRIB_SUPPORT';
 }
 
 $mode = phpbb::$request->variable('mode', '');
@@ -195,20 +195,45 @@ if ($mode == 'find-contribution')
 			}
 		}
 
-		titania_search::in_set($query, 'categories', $categories);
+		$query->where(titania_search::in_set($query, 'categories', $categories));
 	}
 
 	if (sizeof($phpbb_versions))
 	{
-		titania_search::in_set($query, 'phpbb_versions', $phpbb_versions);
+		$query->where(titania_search::in_set($query, 'phpbb_versions', $phpbb_versions));
 	}
 
 	$query->where($query->eq('type', TITANIA_CONTRIB));
 }
 else
 {
-	// Search type
-	if ($search_type)
+	// Fall back to search all if the search type doesn't exist
+	if (!isset($search_types[$search_type]))
+	{
+		$search_type = 0;
+	}
+
+	// Search all
+	if ($search_type == 0)
+	{
+		$query_or_clauses = array(titania_search::in_set($query, 'type', array(TITANIA_SUPPORT, TITANIA_CONTRIB, TITANIA_FAQ)));
+
+		// Enforce permissions on the results to ensure that we don't leak posts to users who don't have access to the originating queues.
+		$access_queue_discussion = titania_types::find_authed('queue_discussion');
+		$access_validation_queue = titania_types::find_authed('view');
+
+		if (sizeof($access_validation_queue))
+		{
+			$query_or_clauses[] = $query->lAnd($query->eq('type', TITANIA_QUEUE), titania_search::in_set($query, 'parent_contrib_type', $access_validation_queue));
+		}
+		if (sizeof($access_queue_discussion))
+		{
+			$query_or_clauses[] = $query->lAnd($query->eq('type', TITANIA_QUEUE_DISCUSSION), titania_search::in_set($query, 'parent_contrib_type', $access_queue_discussion));
+		}
+
+		$query->where($query->lOr($query_or_clauses));
+	}
+	else
 	{
 		$query->where($query->eq('type', $search_type));
 	}

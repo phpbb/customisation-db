@@ -314,7 +314,7 @@ class titania_search
 			$set[] = $query->eq($field, $item);
 		}
 
-		$query->where($query->lOr($set));
+		return $query->lOr($set);
 	}
 
 	/**
@@ -347,6 +347,7 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 	public $reported;
 	public $categories;
 	public $phpbb_versions;
+	public $parent_contrib_type;
 
 	public function __construct() {}
 
@@ -369,6 +370,7 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 			'reported'			=> ($this->reported) ? 1 : 0,
 			'categories'		=> ($this->categories) ? $this->categories: array(),
 			'phpbb_versions' 	=> ($this->phpbb_versions) ? $this->phpbb_versions : array(),
+			'parent_contrib_type' => ($this->parent_contrib_type) ? $this->parent_contrib_type : 0,
 		);
 		return $state;
 	}
@@ -407,6 +409,7 @@ class titania_article implements ezcBasePersistable, ezcSearchDefinitionProvider
 
 		$doc->fields['categories']		= new ezcSearchDefinitionDocumentField('categories', ezcSearchDocumentDefinition::INT, 0, false, true);
 		$doc->fields['phpbb_versions']	= new ezcSearchDefinitionDocumentField('phpbb_versions', ezcSearchDocumentDefinition::STRING, 0, false, true);
+		$doc->fields['parent_contrib_type'] = new ezcSearchDefinitionDocumentField('parent_contrib_type', ezcSearchDocumentDefinition::INT);
 
 		return $doc;
 	}

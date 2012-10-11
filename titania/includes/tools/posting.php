@@ -17,6 +17,13 @@ if (!defined('IN_TITANIA'))
 
 class titania_posting
 {
+	/**
+	* Contrib type of parent
+	*
+	* @var int
+	*/	
+	public $parent_type = 0;
+
 	public function act($template_body, $parent_id = false, $parent_url = false, $post_type = false, $s_post_action = false)
 	{
 		$action = phpbb::$request->variable('action', '');
@@ -804,6 +811,7 @@ class titania_posting
 					$post_object->post_approved = false;
 				}
 
+				$post_object->parent_contrib_type = $this->parent_type;
 				$post_object->submit();
 
 				$message_object->submit($post_object->post_access);

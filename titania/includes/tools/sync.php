@@ -318,8 +318,12 @@ class titania_sync
 				$data = array();
 				$post = new titania_post;
 
-				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean, t.parent_id
-					FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t
+				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean, t.parent_id, q.queue_type, c.contrib_type
+					FROM ' . TITANIA_POSTS_TABLE . ' p, ' . TITANIA_TOPICS_TABLE . ' t 
+					LEFT JOIN ' . TITANIA_QUEUE_TABLE . ' q
+						ON (t.parent_id = q.queue_id AND t.topic_type = ' . TITANIA_QUEUE . ')
+					LEFT JOIN ' . TITANIA_CONTRIBS_TABLE . ' c
+						ON (t.parent_id = c.contrib_id AND t.topic_type <> ' . TITANIA_QUEUE . ')
 					WHERE t.topic_id = p.topic_id
 					ORDER BY p.post_id ASC';
 				if ($start === false || $limit === false)
@@ -352,6 +356,7 @@ class titania_sync
 						'url'			=> titania_url::unbuild_url($post->get_url()),
 						'approved'		=> $post->post_approved,
 						'access_level'	=> $post->post_access,
+						'parent_contrib_type'	=> (int) ($post->post_type == TITANIA_QUEUE) ? $row['queue_type'] : $row['contrib_type'],
 					);
 				}
 				phpbb::$db->sql_freeresult($result);

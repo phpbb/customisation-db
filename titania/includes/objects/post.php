@@ -62,6 +62,13 @@ class titania_post extends titania_message_object
 	public $unread = false;
 
 	/**
+	* Contrib type of parent
+	*
+	* @var int
+	*/
+	public $parent_contrib_type = 0;
+
+	/**
 	 * Constructor class for titania posts
 	 *
 	 * @param int|string $type The type of post ('tracker', 'queue', 'normal').  Normal/default meaning support/discussion.  Constants for the type can be sent instead of a string
@@ -829,6 +836,7 @@ class titania_post extends titania_message_object
 			'access_level'	=> min($this->post_access, $this->topic->topic_access), // If the topic access level is lower than the post access level we still can not see it without access to the topic
 			'approved'		=> $this->post_approved,
 			'reported'		=> $this->post_reported,
+			'parent_contrib_type'	=> $this->parent_contrib_type,
 		));
 	}
 
