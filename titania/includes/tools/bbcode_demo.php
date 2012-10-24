@@ -42,7 +42,7 @@ class titania_bbcode_demo
 	{
 		$this->cache = titania::$cache->get('_titania_bbcode_demo');
 		$this->contrib_id = $contrib_id;
-		$this->usage = html_entity_decode($usage);
+		$this->usage = $usage;
 		$this->replacement = html_entity_decode($replacement);
 	}
 
