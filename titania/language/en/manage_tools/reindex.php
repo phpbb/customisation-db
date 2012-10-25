@@ -37,6 +37,12 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	'INDEXING_CONTRIBS'	=> 'Indexing Contributions',
+	'INDEXING_FAQ'		=> 'Indexing FAQ',
+	'INDEXING_POSTS'	=> 'Indexing Posts',
 	'REINDEX'			=> 'Reindex Search',
 	'REINDEX_CONFIRM'	=> 'Are you sure you want to begin reindexing the search system?  This can take a significantly long period of time.',
+	'REINDEX_STATUS'	=> '%s - section %d of 3 - %s',
+	'SECTION_STATUS'	=> 'part %d of %d',
+	'TRUNCATING_SEARCH'	=> 'Truncating Search',
 ));
