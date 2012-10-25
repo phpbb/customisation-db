@@ -108,6 +108,7 @@ $lang = array_merge($lang, array(
 	'DESCRIPTION'				=> 'Description',
 	'DESTINATION_CAT_INVALID'	=> 'The destination category is not able to accept contributions.',
 	'DETAILS'					=> 'Details',
+	'DONE'						=> 'Done!',
 	'DOWNLOAD'					=> 'Download',
 	'DOWNLOADS'					=> 'Downloads',
 	'DOWNLOAD_ACCESS_DENIED'	=> 'You are not allowed to download the requested file.',
