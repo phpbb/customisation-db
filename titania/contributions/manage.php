@@ -261,7 +261,7 @@ else if ($submit)
 
 			if ($old_description != $description)
 			{
-				$attention_message[] = sprintf(phpbb::$user->lang['ATTENTION_CONTRIB_DESC_CHANGED'], $old_description, $description);
+				$attention_message[] = $old_description .  '>>>>>>>>>>' . $description;
 			}
 
 			// Changed categories?
