@@ -119,7 +119,7 @@ class titania_attention extends titania_database_object
 			'ATTENTION_CLOSE_TIME'	=> ($this->attention_close_time) ? phpbb::$user->format_date($this->attention_close_time) : '',
 			'ATTENTION_TITLE'		=> $this->attention_title,
 			'ATTENTION_REASON'		=> $this->get_reason_string(),
-			'ATTENTION_DESCRIPTION'	=> $this->attention_description,
+			'ATTENTION_DESCRIPTION'	=> $this->get_description_diff(),
 
 			'U_VIEW_ATTENTION'		=> $this->get_url(),
 			'U_VIEW_DETAILS'		=> titania_url::append_url(titania_url::$current_page_url, array('a' => $this->attention_id)),
@@ -149,5 +149,38 @@ class titania_attention extends titania_database_object
 				return phpbb::$user->lang['UNAPPROVED'];
 			break;
 		}
+	}
+
+	/**
+	* Create inline diff of contribution description change
+	*
+	* @return string Returns diff or original description if the description is not a contrib description change
+	*/
+	public function get_description_diff()
+	{
+		$temp = str_replace("\n", '', $this->attention_description);
+		$split_pos = strpos($temp, '>>>>>>>>>>');
+
+		if ($split_pos !== false)
+		{
+			titania::add_lang('contributions');
+
+			if (!class_exists('diff_engine'))
+			{
+				include(PHPBB_ROOT_PATH . 'includes/diff/engine.' . PHP_EXT);
+				include(PHPBB_ROOT_PATH . 'includes/diff/diff.' . PHP_EXT);
+				include(PHPBB_ROOT_PATH . 'includes/diff/renderer.' . PHP_EXT);
+			}
+
+			$old = substr($temp, 0, $split_pos);
+			$new = substr($temp, $split_pos + 10);
+			
+			$diff = new diff($old, $new);
+			$renderer = new diff_renderer_inline();
+
+			return phpbb::$user->lang['ATTENTION_CONTRIB_DESC_CHANGED'] . '<br />' . html_entity_decode($renderer->get_diff_content($diff));		
+		}
+		
+		return $this->attention_description;	
 	}
 }

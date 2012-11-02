@@ -634,6 +634,21 @@ li.row dl.codebox dd {
 	padding-bottom: 10px;
 }
 
+/* Description diff */
+#report .content pre {
+	font-family: inherit;
+}
+
+.ins {
+	background-color: #dfd;
+	text-decoration: underline;
+}
+
+.del {
+	background-color: #fdd;
+	text-decoration: line-through;
+}
+
 /* Categories */
 #addcategory textarea {
 	height: 185px;
