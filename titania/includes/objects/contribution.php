@@ -128,6 +128,8 @@ class titania_contribution extends titania_message_object
 			'contrib_rating'				=> array('default' => 0.0),
 			'contrib_rating_count'			=> array('default' => 0),
 
+			'contrib_creation_time'			=> array('default' => 0),
+
 			// Last time the contrib item was updated (created or added a new revision, etc).  Used for tracking
 			'contrib_last_update'			=> array('default' => titania::$time),
 
