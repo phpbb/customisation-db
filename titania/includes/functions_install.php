@@ -233,6 +233,40 @@ function titania_custom($action, $version)
 						WHERE contrib_name_clean LIKE "%!%"';
 					$result = phpbb::$db->sql_query($sql);
 				break;
+
+				case '0.5.5' :
+					// Set the correct revision_status for revisions that were resubmitted before the TITANIA_REVISION_SUBMITTED status was added.
+
+					// Skip if the queue is not used at all
+					if (!titania::$config->use_queue)
+					{
+						break;
+					}
+					$nonvalidation_types = titania_types::find_validation_free();
+
+					$sql = 'SELECT r.revision_id
+						FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_CONTRIBS_TABLE . ' c
+						WHERE r.contrib_id = c.contrib_id AND r.validation_date = 0 AND r.revision_queue_id = 0
+							AND r.revision_submitted = 1 AND r.revision_status = ' . TITANIA_REVISION_NEW . '
+							AND ' . phpbb::$db->sql_in_set('contrib_type', $nonvalidation_types, true);
+					$result = phpbb::$db->sql_query($sql);
+
+					$affected_revisions = array();
+
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$affected_revisions[] = (int) $row['revision_id'];
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					if (sizeof($affected_revisions))
+					{
+						$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . ' 
+							SET revision_status = ' . TITANIA_REVISION_RESUBMITTED . '
+							WHERE ' . phpbb::$db->sql_in_set('revision_id', $affected_revisions);
+						phpbb::$db->sql_query($sql);
+					}
+				break;
 			}
 		break;
 
