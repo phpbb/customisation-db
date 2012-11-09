@@ -123,8 +123,8 @@ if (titania::$config->cleanup_titania && ((titania::$time - phpbb::$config['tita
 	// Select orphan attachments and unsubmitted revision attachments
 	$sql = 'SELECT attachment_id, attachment_directory, physical_filename, thumbnail 
 		FROM ' . TITANIA_ATTACHMENTS_TABLE . ' 
-		WHERE (object_type <> ' . TITANIA_CONTRIB . ' AND is_orphan = 1 AND filetime < ' . $time_limit . ')
-			OR (object_type = ' . TITANIA_CONTRIB . ' AND ' . phpbb::$db->sql_in_set('attachment_id', $attachments) . ')
+		WHERE (object_type <> ' . TITANIA_CONTRIB . ' AND is_orphan = 1 AND filetime < ' . $time_limit . ')' .
+			((sizeof($attachments)) ? 'OR (object_type = ' . TITANIA_CONTRIB . ' AND ' . phpbb::$db->sql_in_set('attachment_id', $attachments) . ')' : '') . '
 		ORDER BY object_type ASC'; // Ensure that the revision attachments are included first
 	$result = phpbb::$db->sql_query_limit($sql, 25);
 
