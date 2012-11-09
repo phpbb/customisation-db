@@ -734,5 +734,8 @@ $versions = array(
 			array(TITANIA_CONTRIBS_TABLE, 'contrib_creation_time', array('TIMESTAMP', 0)),
 		),
 	),
+	'0.5.5' => array(
+		'custom'	=> 'titania_custom',
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
