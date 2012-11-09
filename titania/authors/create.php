@@ -111,6 +111,7 @@ else if ($submit)
 	if (!sizeof($error))
 	{
 		titania::$contrib->contrib_categories = implode(',', $contrib_categories);
+		titania::$contrib->contrib_creation_time = titania::$time;
 		titania::$contrib->submit();
 
 		titania::$contrib->set_coauthors($active_coauthors_list, $nonactive_coauthors_list, true);
