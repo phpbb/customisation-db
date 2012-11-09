@@ -737,5 +737,10 @@ $versions = array(
 	'0.5.5' => array(
 		'custom'	=> 'titania_custom',
 	),
+	'0.5.6' => array(
+		'config_add' => array(
+			array('titania_last_cleanup', titania::$time, true),
+		),
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );

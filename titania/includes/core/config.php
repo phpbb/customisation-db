@@ -163,6 +163,9 @@ class titania_config extends titania_object
 				TITANIA_FAQ					=> 'faq',
 				TITANIA_CLR_SCREENSHOT      => 'colorizeit',
 			)),
+
+			// Remove unsubmitted revisions and attachments
+			'cleanup_titania'				=> array('default' => false),
 			
 		));
 	}
