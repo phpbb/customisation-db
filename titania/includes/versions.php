@@ -729,5 +729,10 @@ $versions = array(
 			array(TITANIA_ATTACHMENTS_TABLE, 'attachment_order', array('UINT:3', 0)),
 		),
 	),
+	'0.5.4' => array(
+		'table_column_add' => array(
+			array(TITANIA_CONTRIBS_TABLE, 'contrib_creation_time', array('TIMESTAMP', 0)),
+		),
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
