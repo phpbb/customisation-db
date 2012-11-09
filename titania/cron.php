@@ -92,6 +92,65 @@ if (!isset(phpbb::$config['titania_last_automod_run']) || titania::$time - 30 > 
 	phpbb::$db->sql_freeresult($result);
 }
 
+// Clean up titania
+// This removes revisions and attachments that were not fully submitted.
+if (titania::$config->cleanup_titania && ((titania::$time - phpbb::$config['titania_last_cleanup']) > (3600 * 12)))
+{
+	set_config('titania_last_cleanup', titania::$time, true);
+
+	$attachments = $revisions = array();
+	$time_limit = titania::$time - (3600 * 6);
+
+	// Select revisions that were stopped at one of the submission steps
+	$sql = 'SELECT revision_id, attachment_id 
+		FROM ' . TITANIA_REVISIONS_TABLE . ' 
+		WHERE revision_submitted = 0 AND revision_time < ' . $time_limit; // Unlikely to happen, but set a time limit to ensure that we don't remove revisions that may be in the process of being submitted.
+	$result = phpbb::$db->sql_query_limit($sql, 25);
+
+	while ($row = phpbb::$db->sql_fetchrow($result))
+	{
+		$revisions[] = (int) $row['revision_id'];
+		$attachments[] = (int) $row['attachment_id'];
+	}
+	phpbb::$db->sql_freeresult($result);
+
+	if (sizeof($revisions))
+	{
+		phpbb::$db->sql_query('DELETE FROM ' . TITANIA_REVISIONS_TABLE . ' WHERE ' . phpbb::$db->sql_in_set('revision_id', $revisions));
+		phpbb::$db->sql_query('DELETE FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . ' WHERE ' . phpbb::$db->sql_in_set('revision_id', $revisions));
+	} 
+
+	// Select orphan attachments and unsubmitted revision attachments
+	$sql = 'SELECT attachment_id, attachment_directory, physical_filename, thumbnail 
+		FROM ' . TITANIA_ATTACHMENTS_TABLE . ' 
+		WHERE (object_type <> ' . TITANIA_CONTRIB . ' AND is_orphan = 1 AND filetime < ' . $time_limit . ')
+			OR (object_type = ' . TITANIA_CONTRIB . ' AND ' . phpbb::$db->sql_in_set('attachment_id', $attachments) . ')
+		ORDER BY object_type ASC'; // Ensure that the revision attachments are included first
+	$result = phpbb::$db->sql_query_limit($sql, 25);
+
+	$attachments = array();
+	while ($row = phpbb::$db->sql_fetchrow($result))
+	{
+		$attachments[] = (int) $row['attachment_id'];
+		$file = titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . utf8_basename($row['physical_filename']);
+		$thumb = ($row['thumbnail']) ? titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . 'thumb_' . utf8_basename($row['physical_filename']) : false;
+
+		if (file_exists($file))
+		{
+			@unlink($file);
+		}
+		if ($thumb && file_exists($thumb))
+		{
+			@unlink($thumb);
+		}
+	}
+	phpbb::$db->sql_freeresult($result);
+
+	if (sizeof($attachments))
+	{
+		phpbb::$db->sql_query('DELETE FROM ' . TITANIA_ATTACHMENTS_TABLE . ' WHERE ' . phpbb::$db->sql_in_set('attachment_id', $attachments));
+	}
+}
 
 // Unloading cache and closing db after having done the dirty work.
 if ($use_shutdown_function)
