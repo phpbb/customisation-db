@@ -248,7 +248,7 @@ function titania_custom($action, $version)
 						FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_CONTRIBS_TABLE . ' c
 						WHERE r.contrib_id = c.contrib_id AND r.validation_date = 0 AND r.revision_queue_id = 0
 							AND r.revision_submitted = 1 AND r.revision_status = ' . TITANIA_REVISION_NEW . '
-							AND ' . phpbb::$db->sql_in_set('contrib_type', $nonvalidation_types, true);
+							AND ' . phpbb::$db->sql_in_set('c.contrib_type', $nonvalidation_types, true);
 					$result = phpbb::$db->sql_query($sql);
 
 					$affected_revisions = array();
