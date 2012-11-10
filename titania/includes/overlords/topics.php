@@ -350,6 +350,14 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 					),
 				));
 
+				if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+				{
+					$mod_in_types = titania_types::find_authed('moderate');
+
+					$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('contrib.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) . 
+											(sizeof($mod_in_types) ? ' OR ' . phpbb::$db->sql_in_set('contrib.contrib_type', $mod_in_types) : '') . ')';
+				}
+
 				if (isset(titania_types::$types[$options['contrib_type']]))
 				{
 					$page_url = titania_url::build_url('support/' . titania_types::$types[$options['contrib_type']]->url);
