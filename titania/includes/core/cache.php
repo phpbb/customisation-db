@@ -282,7 +282,6 @@ class titania_cache extends phpbb_cache_service
 		{
 			// If approved, or new and doesn't require approval, or the user is viewing their own, or permission to view non-validated, add them to the list
 			if (phpbb::$user->data['user_id'] == $user_id ||
-				(!titania::$config->require_validation && titania_types::$types[$data['contrib_type']]->require_validation && $data['status'] == TITANIA_CONTRIB_NEW) ||
 				in_array($data['status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) ||
 				titania_types::$types[$data['type']]->acl_get('view') ||
 				titania_types::$types[$data['type']]->acl_get('moderate'))

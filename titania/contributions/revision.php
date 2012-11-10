@@ -237,6 +237,18 @@ if ($step == 1)
 			);
 		}*/
 
+		// Automatically approve the revision  and contrib if the queue is not being used
+		if (!titania::$config->use_queue || !titania_types::$types[titania::$contrib->contrib_type]->use_queue)
+		{
+			$revision->validation_date = titania::$time;
+			$revision->revision_status = TITANIA_REVISION_APPROVED;
+
+			if (titania::$contrib->contrib_status != TITANIA_CONTRIB_APPROVED)
+			{
+				titania::$contrib->change_status(TITANIA_CONTRIB_APPROVED);
+			}
+		}
+
 		$revision->submit();
 		$revision_id = $revision->revision_id;
 

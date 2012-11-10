@@ -267,6 +267,41 @@ function titania_custom($action, $version)
 						phpbb::$db->sql_query($sql);
 					}
 				break;
+
+				case '0.5.7' :
+					$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . '
+						SET revision_status = ' . TITANIA_REVISION_APPROVED . ', validation_date = revision_time
+						WHERE validation_date = 0 AND revision_queue_id = 0
+							AND revision_submitted = 1 AND (revision_status = ' . TITANIA_REVISION_NEW . ' OR revision_status = ' . TITANIA_REVISION_APPROVED . ')';
+					phpbb::$db->sql_query($sql);
+
+					$nonvalidation_types = (titania::$config->use_queue) ? titania_types::find_validation_free() : array();
+					$affected_contribs = array();
+
+					$sql = 'SELECT DISTINCT c.contrib_id
+						FROM ' . TITANIA_CONTRIBS_TABLE . ' c 
+						LEFT JOIN ' . TITANIA_REVISIONS_TABLE . ' r
+							ON (r.contrib_id = c.contrib_id)
+						WHERE c.contrib_status = ' . TITANIA_REVISION_NEW . 
+							((sizeof($nonvalidation_types)) ? ' AND ' . phpbb::$db->sql_in_set('c.contrib_type', $nonvalidation_types) : '') . '
+							AND r.revision_status = ' . TITANIA_REVISION_APPROVED . '
+							AND r.revision_submitted = 1';
+					$result = phpbb::$db->sql_query($sql);
+
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$affected_contribs[] = (int) $row['contrib_id'];
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					if (sizeof($affected_contribs))
+					{
+						$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+							SET contrib_status = ' . TITANIA_CONTRIB_APPROVED . '
+							WHERE ' . phpbb::$db->sql_in_set('contrib_id', $affected_contribs);
+						phpbb::$db->sql_query($sql);
+					}
+				break;
 			}
 		break;
 

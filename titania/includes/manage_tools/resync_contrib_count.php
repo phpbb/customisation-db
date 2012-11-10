@@ -36,7 +36,7 @@ class resync_contrib_count
 
 		$types = $defaults = array();
 		$defaults['author_contribs'] = 0;
-		$valid_statuses = array(TITANIA_CONTRIB_NEW, TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED);
+		$valid_statuses = array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED);
 		
 		foreach (titania_types::$types as $id => $class)
 		{
@@ -89,12 +89,6 @@ class resync_contrib_count
 					
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			// Require validation and status is new? We skip
-			if (titania::$config->require_validation && titania_types::$types[$row['contrib_type']]->require_validation && $row['contrib_status'] == TITANIA_CONTRIB_NEW)
-			{
-				continue;
-			}
-			
 			if ($prev_contrib != $row['contrib_id'])
 			{
 				// Update category count
