@@ -183,7 +183,7 @@ class titania_styles_demo
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$this->styles[$row['contrib_id']]['phpbb_versions'] = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' . $row['phpbb_version_revision'];
+			$this->styles[$row['contrib_id']]['phpbb_versions'] = array('branch' => $row['phpbb_version_branch'], 'revision' => $row['phpbb_version_revision']);
 		}
 		phpbb::$db->sql_freeresult($result);
 	}
@@ -270,6 +270,8 @@ class titania_styles_demo
 			$authors .= $data['coauthors'];
 
 			$data['category_name'] = (isset(phpbb::$user->lang[$data['category_name']])) ? phpbb::$user->lang[$data['category_name']] : $data['category_name'];
+			$phpbb_version = $data['phpbb_versions']['branch'][0] . '.' . $data['phpbb_versions']['branch'][1] . '.' . $data['phpbb_versions']['revision'];
+			$current_phpbb_version = $data['phpbb_versions']['branch'][0] . '.' . $data['phpbb_versions']['branch'][1] . '.' . titania::$config->phpbb_versions[$data['phpbb_versions']['branch']]['latest_revision'];
 
 			$vars = array(
 				'AUTHORS'		=> $authors,
@@ -278,8 +280,9 @@ class titania_styles_demo
 				'IFRAME'		=> $data['contrib_demo'],
 				'LICENSE'		=> ($data['revision_license']) ? $data['revision_license'] : phpbb::$user->lang['UNKNOWN'],
 				'NAME'			=> $data['contrib_name'],
-				'PHPBB_VERSION'	=> $data['phpbb_versions'],
+				'PHPBB_VERSION'	=> $phpbb_version,
 				'PREVIEW'		=> $preview_img,
+				'S_OUTDATED'	=> phpbb_version_compare($phpbb_version, $current_phpbb_version, '<'),
 				'U_DEMO'		=> $style->get_url('demo'),
 				'U_DOWNLOAD'	=> titania_url::build_url('download', array('id' => $data['attachment_id'])),
 				'U_VIEW'		=> $style->get_url(),
