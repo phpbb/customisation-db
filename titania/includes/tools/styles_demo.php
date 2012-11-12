@@ -111,7 +111,7 @@ class titania_styles_demo
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$this->styles[$row['contrib_id']] = array_merge($row, array('coauthors' => '', 'phpbb_versions' => ''));
+			$this->styles[$row['contrib_id']] = array_merge($row, array('coauthors' => '', 'phpbb_versions' => array()));
 			$this->revisions[] = $row['revision_id']; 
 		}
 		phpbb::$db->sql_freeresult($result);
