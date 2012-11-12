@@ -157,10 +157,11 @@ class titania_contribution extends titania_message_object
 	 * Load the contrib
 	 *
 	 * @param int|string $contrib The contrib item (contrib_name_clean, contrib_id)
+	 * @param bool $allow_new Allow contrib to be loaded even if it's new
 	 *
 	 * @return bool True if the contrib exists, false if not
 	 */
-	public function load($contrib)
+	public function load($contrib, $allow_new = false)
 	{
 		$sql_ary = array(
 			'SELECT'	=> 'c.*, a.*',
@@ -247,6 +248,11 @@ class titania_contribution extends titania_message_object
 
 		if (in_array($this->contrib_status, array(TITANIA_CONTRIB_NEW, TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED)) && !($this->is_author ||$this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate') || titania_types::$types[$this->contrib_type]->acl_get('view')))
 		{
+			if ($this->contrib_status == TITANIA_CONTRIB_NEW && $allow_new)
+			{
+				return true;
+			}
+
 			// Hide hidden and disabled contribs for non-(authors/moderators)
 			return false;
 		}
