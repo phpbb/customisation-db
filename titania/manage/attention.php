@@ -80,7 +80,7 @@ if ($attention_id || ($object_type && $object_id))
 					AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
 
 			// Send notification to reporter
-			if ($close)
+			if ($close && $attention_object->notify_reporter)
 			{
 				phpbb::_include('functions_messenger', false, 'messenger');
 
