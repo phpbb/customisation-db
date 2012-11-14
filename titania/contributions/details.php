@@ -34,7 +34,8 @@ if ($page == 'report')
 	if (titania::confirm_box(true))
 	{
 		$message = utf8_normalize_nfc(request_var('report_text', '', true));
-		titania::$contrib->report($message);
+		$notify_reporter = request_var('notify', false);
+		titania::$contrib->report($message, $notify_reporter);
 
 		// Notifications
 
@@ -42,7 +43,7 @@ if ($page == 'report')
 	}
 	else
 	{
-		//phpbb::$template->assign_var('S_CAN_NOTIFY', ((phpbb::$user->data['is_registered']) ? true : false));
+		phpbb::$template->assign_var('S_CAN_NOTIFY', true);
 
 		titania::confirm_box(false, 'REPORT_CONTRIBUTION', '', array(), 'posting/report_body.html');
 	}

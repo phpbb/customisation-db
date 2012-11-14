@@ -452,7 +452,8 @@ class titania_posting
 		if (titania::confirm_box(true))
 		{
 			$message = utf8_normalize_nfc(request_var('report_text', '', true));
-			$post_object->report($message);
+			$notify_reporter = request_var('notify', false);
+			$post_object->report($message, $notify_reporter);
 
 			// Notifications
 
@@ -460,7 +461,7 @@ class titania_posting
 		}
 		else
 		{
-			//phpbb::$template->assign_var('S_CAN_NOTIFY', ((phpbb::$user->data['is_registered']) ? true : false));
+			phpbb::$template->assign_var('S_CAN_NOTIFY', true);
 
 			titania::confirm_box(false, 'REPORT_POST', '', array(), 'posting/report_body.html');
 		}
