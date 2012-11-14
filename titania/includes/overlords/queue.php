@@ -416,7 +416,7 @@ class queue_overlord
 		));
 
 		// Subscriptions
-		titania_subscriptions::handle_subscriptions(TITANIA_TOPIC, $topic->topic_id, titania_url::$current_page_url);
+		titania_subscriptions::handle_subscriptions(TITANIA_TOPIC, $topic->topic_id, titania_url::$current_page_url, 'SUBSCRIBE_TOPIC');
 
 		return compact('row', 'contrib', 'topic');
 	}

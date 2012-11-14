@@ -317,6 +317,18 @@ class titania_queue extends titania_message_object
 		$this->queue_progress_time = 0;
 		$this->submit(false);
 
+		// Send notifications
+		$contrib = contribs_overlord::get_contrib_object($this->contrib_id, true);
+		$topic = new titania_topic();
+		$topic->load($this->queue_topic_id);
+
+		$vars = array(
+			'CONTRIB_NAME'	=> $contrib->contrib_name,
+			'CATEGORY_NAME'	=> $to,
+			'U_VIEW_QUEUE'	=> titania_url::append_url($topic->get_url(), array('tag' => $new_status)),
+		);
+		titania_subscriptions::send_notifications(TITANIA_QUEUE_TAG, $new_status, 'new_contrib_queue_cat.txt', $vars, phpbb::$user->data['user_id']);
+
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}

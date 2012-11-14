@@ -24,8 +24,9 @@ class titania_subscriptions
 	* @param mixed $object_type
 	* @param mixed $object_id
 	* @param mixed $url
+	* @param string $lang_key Language key to use in link
 	*/
-	public static function handle_subscriptions($object_type, $object_id, $url)
+	public static function handle_subscriptions($object_type, $object_id, $url, $lang_key = 'SUBSCRIBE')
 	{
 		if (!phpbb::$user->data['is_registered'])
 		{
@@ -46,15 +47,17 @@ class titania_subscriptions
 		if (titania_subscriptions::is_subscribed($object_type, $object_id))
 		{
 			phpbb::$template->assign_vars(array(
-				'IS_SUBSCRIBED'		=> true,
+				'IS_SUBSCRIBED'			=> true,
 
-				'U_SUBSCRIBE'		=> titania_url::append_url($url, array('subscribe' => 'unsubscribe', 'hash' => generate_link_hash('unsubscribe'))),
+				'U_SUBSCRIBE'			=> titania_url::append_url($url, array('subscribe' => 'unsubscribe', 'hash' => generate_link_hash('unsubscribe'))),
+				'L_UNSUBSCRIBE_TYPE'	=> (isset(phpbb::$user->lang['UN' . $lang_key])) ? phpbb::$user->lang['UN' . $lang_key] : phpbb::$user->lang['UNSUBSCRIBE'],
 			));
 		}
 		else
 		{
 			phpbb::$template->assign_vars(array(
-				'U_SUBSCRIBE'		=> titania_url::append_url($url, array('subscribe' => 'subscribe', 'hash' => generate_link_hash('subscribe'))),
+				'U_SUBSCRIBE'			=> titania_url::append_url($url, array('subscribe' => 'subscribe', 'hash' => generate_link_hash('subscribe'))),
+				'L_SUBSCRIBE_TYPE'		=> (isset(phpbb::$user->lang[$lang_key])) ? phpbb::$user->lang[$lang_key] : phpbb::$user->lang['SUBSCRIBE'],
 			));
 		}
 	}
