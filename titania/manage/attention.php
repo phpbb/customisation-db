@@ -75,8 +75,35 @@ if ($attention_id || ($object_type && $object_id))
 
 			$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
 				WHERE attention_object_id = ' . (int) $object_id . '
+					AND attention_id = ' . (int) $attention_id. '
 					AND attention_object_type = ' . (int) $object_type . '
 					AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
+
+			// Send notification to reporter
+			if ($close)
+			{
+				phpbb::_include('functions_messenger', false, 'messenger');
+
+				$lang_path = phpbb::$user->lang_path;
+				phpbb::$user->set_custom_lang_path(titania::$config->language_path);
+
+				$messenger = new messenger(false);
+
+				users_overlord::load_users(array($attention_object->attention_poster_id));
+
+				$messenger->template('report_closed', users_overlord::get_user($attention_object->attention_poster_id, 'user_lang'));
+
+				$messenger->to(users_overlord::get_user($attention_object->attention_poster_id, 'user_email'), users_overlord::get_user($attention_object->attention_poster_id, '_username'));
+
+				$messenger->assign_vars(array(
+					'USERNAME'			=> htmlspecialchars_decode(users_overlord::get_user($attention_object->attention_poster_id, '_username')),
+					'ATTENTION_TITLE'	=> htmlspecialchars_decode(censor_text($attention_object->attention_title)),
+					'CLOSER_NAME'		=> htmlspecialchars_decode(phpbb::$user->data['username']),
+				));
+
+				$messenger->send();
+				phpbb::$user->set_custom_lang_path($lang_path);			
+			}
 		}
 		phpbb::$db->sql_query($sql);
 	}

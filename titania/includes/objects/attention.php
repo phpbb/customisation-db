@@ -60,6 +60,7 @@ class titania_attention extends titania_database_object
 			'attention_close_user'			=> array('default' => 0),
 			'attention_title'				=> array('default' => ''),
 			'attention_description'			=> array('default' => ''),
+			'notify_reporter'				=> array('default' => 0),
 		));
 	}
 

@@ -771,7 +771,7 @@ class titania_post extends titania_message_object
 		}
 	}
 
-	public function report($reason = '')
+	public function report($reason = '', $notify_reporter = false)
 	{
 		// Mark the post as reported
 		$this->post_reported = true;
@@ -787,6 +787,7 @@ class titania_post extends titania_message_object
 			'attention_url'			=> $this->get_url(),
 			'attention_title'		=> $this->post_subject,
 			'attention_description'	=> $reason,
+			'notify_reporter'		=> $notify_reporter,
 		));
 		$attention->submit();
 
