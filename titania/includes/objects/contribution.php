@@ -845,7 +845,7 @@ class titania_contribution extends titania_message_object
 		phpbb_posting('reply', $options_reply);
 	}
 
-	public function report($reason = '')
+	public function report($reason = '', $notify_reporter = false)
 	{
 		// Setup the attention object and submit it
 		$attention = new titania_attention;
@@ -858,6 +858,7 @@ class titania_contribution extends titania_message_object
 			'attention_url'			=> $this->get_url(),
 			'attention_title'		=> $this->contrib_name,
 			'attention_description'	=> $reason,
+			'notify_reporter'		=> $notify_reporter,
 		));
 		$attention->submit();
 	}
