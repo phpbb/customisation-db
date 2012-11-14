@@ -102,7 +102,9 @@ if ($attention_id || ($object_type && $object_id))
 				));
 
 				$messenger->send();
-				phpbb::$user->set_custom_lang_path($lang_path);			
+				phpbb::$user->set_custom_lang_path($lang_path);
+				// This gets reset when $template->_tpl_load() gets called 
+				phpbb::$user->theme['template_inherits_id'] = 1;	
 			}
 		}
 		phpbb::$db->sql_query($sql);
