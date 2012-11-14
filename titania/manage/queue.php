@@ -434,7 +434,14 @@ if ($queue_id)
 else
 {
 	// Subscriptions
-	titania_subscriptions::handle_subscriptions(TITANIA_QUEUE, $queue_type, titania_url::$current_page_url);
+	if (!$tag)
+	{
+		titania_subscriptions::handle_subscriptions(TITANIA_QUEUE, $queue_type, titania_url::$current_page_url, 'SUBSCRIBE_QUEUE');
+	}
+	else
+	{
+		titania_subscriptions::handle_subscriptions(TITANIA_QUEUE_TAG, $tag, titania_url::$current_page_url, 'SUBSCRIBE_CATEGORY');
+	}
 
 	queue_overlord::display_queue($queue_type, $tag);
 	queue_overlord::display_categories($queue_type, $tag);
