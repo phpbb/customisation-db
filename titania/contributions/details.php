@@ -66,7 +66,7 @@ if (!phpbb::$user->data['is_bot'])
 titania_tracking::track(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 
 // Subscriptions
-titania_subscriptions::handle_subscriptions(TITANIA_CONTRIB, titania::$contrib->contrib_id, titania::$contrib->get_url());
+titania_subscriptions::handle_subscriptions(TITANIA_CONTRIB, titania::$contrib->contrib_id, titania::$contrib->get_url(), 'SUBSCRIBE_CONTRIB');
 
 // Canonical URL
 phpbb::$template->assign_var('U_CANONICAL', titania::$contrib->get_url());
