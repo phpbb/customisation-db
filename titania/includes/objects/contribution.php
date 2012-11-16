@@ -319,16 +319,9 @@ class titania_contribution extends titania_message_object
 
 		$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
 
-		if ($require_upload)
-		{
-			$select = 'SELECT r.*, a.download_count FROM ' . TITANIA_REVISIONS_TABLE . ' r
-				LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
-					ON (r.attachment_id = a.attachment_id)';
-		}
-		else
-		{
-			$select = 'SELECT r.*  FROM ' . TITANIA_REVISIONS_TABLE . ' r ';	
-		}
+		$select = 'SELECT r.*, a.download_count FROM ' . TITANIA_REVISIONS_TABLE . ' r
+			LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
+				ON (r.attachment_id = a.attachment_id)';
 
 		$sql = $select .
 			'WHERE r.contrib_id = ' . $this->contrib_id .
@@ -384,9 +377,10 @@ class titania_contribution extends titania_message_object
 
 		$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
 
-		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r' . (($require_upload) ? ', ' . TITANIA_ATTACHMENTS_TABLE . ' a ' : '') . '
-			WHERE r.contrib_id = ' . $this->contrib_id . 
-				(($require_upload) ? ' AND a.attachment_id = r.attachment_id ' : '') .
+		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r
+			LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
+				ON (a.attachment_id = r.attachment_id)
+			WHERE r.contrib_id = ' . $this->contrib_id .
 				(($revision_id === false) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') .
 				(($revision_id !== false) ? ' AND r.revision_id = ' . (int) $revision_id : '') . '
 				AND revision_submitted = 1
@@ -521,9 +515,7 @@ class titania_contribution extends titania_message_object
 		// Ignore some stuff before it is submitted else we can cause an error
 		if ($this->contrib_id)
 		{
-			$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
-
-			if ($require_upload)
+			if (!empty($this->download['attachment_id']))
 			{
 				$vars = array_merge($vars, array(
 					//Download Data
@@ -534,7 +526,8 @@ class titania_contribution extends titania_message_object
 					'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
 				));
 			}
-			else if ($this->contrib_type == TITANIA_TYPE_BBCODE)
+
+			if ($this->contrib_type == TITANIA_TYPE_BBCODE)
 			{
 				$demo_rendered = false;
 				if (isset($this->download['revision_status']) && $this->download['revision_status'] == TITANIA_REVISION_APPROVED && !empty($this->download['revision_bbc_demo']))
