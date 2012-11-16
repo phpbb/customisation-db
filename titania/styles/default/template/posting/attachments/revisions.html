@@ -1,5 +1,5 @@
 <fieldset class="fields2">
-<!-- IF S_REQUIRE_UPLOAD -->
+<!-- IF not S_TYPE_BBCODE -->
 <dl>
 	<dt><label for="fileupload">{L_FILENAME}:</label></dt>
 	<dd>
@@ -31,6 +31,12 @@
 <dl>
 	<dt><label for="revision_help_line">{L_REVISION_HELP_LINE}:</label><br /><span>{L_REVISION_HELP_LINE_EXPLAIN}</span></dt>
 	<dd><input type="text" name="revision_help_line" id="revision_help_line" class="inputbox medium" value="{REVISION_HELP_LINE}" maxlength="255" /></dd>
+</dl>
+<dl>
+	<dt><label for="fileupload">{L_OPTIONAL_FILE}:</label><br /><span>{L_OPTIONAL_FILE_EXPLAIN}</span></dt>
+	<dd>
+		<input type="file" name="{FORM_NAME}" id="{FORM_NAME}"<!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
+	</dd>
 </dl>
 <!-- ENDIF -->
 </fieldset>

@@ -124,11 +124,8 @@ if ($step == 1)
 	// Set up attachment object to get some default values
 	$revision_attachment = new titania_attachment(TITANIA_CONTRIB, titania::$contrib->contrib_id);
 	$revision_attachment->is_orphan = false;
-	// Upload revision only if we require upload
-	if ($require_upload)
-	{
-		$revision_attachment->upload();
-	}
+	$revision_attachment->upload();
+
 	$revision_version 		= utf8_normalize_nfc(request_var('revision_version', '', true));
 	$revision_html_replace 	= utf8_normalize_nfc(request_var('revision_html_replace', '', true));
 	$revision_bbcode_usage 	= utf8_normalize_nfc(request_var('revision_bbcode_usage', '', true));
@@ -194,7 +191,7 @@ if ($step == 1)
 	}
 
 	// Send the file to the type class so it can do custom error checks
-	if ($require_upload && $revision_attachment->uploaded)
+	if ($revision_attachment->uploaded)
 	{
 		$error = array_merge($error, titania_types::$types[titania::$contrib->contrib_type]->upload_check($revision_attachment));
 	}

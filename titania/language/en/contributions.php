@@ -153,6 +153,9 @@ $lang = array_merge($lang, array(
 	'NO_SCREENSHOT'							=> 'No screenshot',
 	'NO_TRANSLATION'						=> 'The archive does not appear to be a valid language package. Please ensure it contains only all the files found in the default British English language pack.',
 
+	'OPTIONAL_FILE'							=> 'Optional file',
+	'OPTIONAL_FILE_EXPLAIN'					=> 'Additional file required for the contribution to function. This may be left empty.',
+
 	'PAST_CONTRIBUTORS'						=> 'Past Contributors',
 	'PHPBB_BRANCH'							=> 'phpBB Branch',
 	'PHPBB_BRANCH_EXPLAIN'					=> 'Select the phpBB branch that this revision supports.',
