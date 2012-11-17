@@ -159,7 +159,9 @@ class titania_attention extends titania_database_object
 	*/
 	public function get_description_diff()
 	{
-		$temp = str_replace("\n", '', $this->attention_description);
+		// Get rid of <br /> tags as they seem to interfere with the diff engine
+		// \n is sufficient to represent line breaks
+		$temp = str_replace('<br />', '', $this->attention_description);
 		$split_pos = strpos($temp, '>>>>>>>>>>');
 
 		if ($split_pos !== false)
@@ -178,8 +180,10 @@ class titania_attention extends titania_database_object
 			
 			$diff = new diff($old, $new);
 			$renderer = new diff_renderer_inline();
+			// <pre> is used to display the diff, so get rid of \n to get remove double line spacing 
+			$desc_diff = str_replace("\n", '', html_entity_decode($renderer->get_diff_content($diff)));
 
-			return phpbb::$user->lang['ATTENTION_CONTRIB_DESC_CHANGED'] . '<br />' . html_entity_decode($renderer->get_diff_content($diff));		
+			return phpbb::$user->lang['ATTENTION_CONTRIB_DESC_CHANGED'] . '<br />' . $desc_diff;		
 		}
 		
 		return $this->attention_description;	

@@ -635,7 +635,7 @@ li.row dl.codebox dd {
 }
 
 /* Description diff */
-#report .content pre {
+#report .content pre, #attention .content pre {
 	font-family: inherit;
 	white-space: normal;
 }
