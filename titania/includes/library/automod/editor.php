@@ -69,7 +69,7 @@ class editor
 
 	/**
 	* Only used when board has templates stored in the database
-	*/ 
+	*/
 	var $template_id = 0;
 
 	/**
@@ -102,7 +102,7 @@ class editor
 	* @param string $filename - relative path from phpBB Root to the file to open
 	* 		e.g. viewtopic.php, styles/prosilver/templates/index_body.html
 	*/
-	function open_file($filename, $backup_path)
+	function open_file($filename, $backup_path = '')
 	{
 		global $phpbb_root_path, $db, $user;
 
@@ -120,6 +120,42 @@ class editor
 
 		$this->file_contents = $this->normalize($this->file_contents);
 
+/*
+		// Check for file contents in the database if this is a template file
+		// this will overwrite the @file call if it exists in the DB.
+		if (strpos($filename, 'template/') !== false)
+		{
+			// grab template name and filename
+			preg_match('#styles/([a-z0-9_]+)/template/([a-z0-9_]+.[a-z]+)#i', $filename, $match);
+
+			$sql = 'SELECT d.template_data, d.template_id
+				FROM ' . STYLES_TEMPLATE_DATA_TABLE . ' d, ' . STYLES_TEMPLATE_TABLE . " t
+				WHERE d.template_filename = '" . $db->sql_escape($match[2]) . "'
+					AND t.template_id = d.template_id
+					AND t.template_storedb = 1
+					AND t.template_name = '" . $db->sql_escape($match[1]) . "'";
+			$result = $db->sql_query($sql);
+
+			if ($row = $db->sql_fetchrow($result))
+			{
+				$this->file_contents = explode("\n", $this->normalize($row['template_data']));
+
+				// emulate the behavior of file()
+				$lines = sizeof($this->file_contents);
+				for ($i = 0; $i < $lines; $i++)
+				{
+					$this->file_contents[$i] .= "\n";
+				}
+
+				$this->template_id = $row['template_id'];
+			}
+			else
+			{
+				$this->template_id = 0;
+			}
+		}
+*/
+
 		/*
 		* If the file does not exist, or is empty, die.
 		* Non existant files cannot be edited, and empty files will have no
@@ -134,8 +170,11 @@ class editor
 		$this->start_index = 0;
 		$this->open_filename = $filename;
 
-		// Make a backup of this file
-		$this->backup_file($backup_path);
+		// Should we backup this file?
+		if ($backup_path)
+		{
+			$this->backup_file($backup_path);
+		}
 	}
 
 	/**
@@ -147,10 +186,16 @@ class editor
 	*/
 	function find($find)
 	{
+		if ($find == '')
+		{
+			// Can't find a empty string,
+			return(false);
+		}
+
 		$find_success = 0;
 
 		$find = $this->normalize($find);
-		$find_ary = explode("\n", $find);
+		$find_ary = explode("\n", rtrim($find, "\n"));
 
 		$total_lines = sizeof($this->file_contents);
 		$find_lines = sizeof($find_ary);
@@ -168,13 +213,13 @@ class editor
 					{
 						$find_ary[$j] = $function($find_ary[$j]);
 					}
-	
+
 					// if we've reached the EOF, the find failed.
 					if (!isset($this->file_contents[$i + $j]))
 					{
 						return false;
 					}
-	
+
 					if (!trim($find_ary[$j]))
 					{
 						// line is blank.  Assume we can find a blank line, and continue on
@@ -193,7 +238,7 @@ class editor
 					else if (strpos($find_ary[$j], '{%:') !== false)
 					{
 						$regex = preg_replace('#{%:(\d+)}#', '(\d+)', $find_ary[$j]);
-	
+
 						if (preg_match('#' . $regex . '#is', $this->file_contents[$i + $j]))
 						{
 							$find_success += 1;
@@ -207,23 +252,23 @@ class editor
 					{
 						// the find failed.  Reset $find_success
 						$find_success = 0;
-	
+
 						// skip to next iteration of outer loop, that is, skip to the next line
 						break;
 					}
-	
+
 					if ($find_success == $find_lines)
 					{
 						// we found the proper number of lines
 						$this->start_index = $i;
-	
+
 						// return our array offsets
 						return array(
 							'start' => $i,
 							'end' => $i + $j,
 						);
 					}
-	
+
 				}
 			}
 		}
@@ -233,7 +278,7 @@ class editor
 	}
 
 	/**
-	* This function is used to determine when an edit has ended, so we know that 
+	* This function is used to determine when an edit has ended, so we know that
 	* the current line will not be looked at again.  This fixes some former bugs.
 	*/
 	function close_edit()
@@ -264,6 +309,12 @@ class editor
 	*/
 	function inline_find($find, $inline_find, $start_offset = false, $end_offset = false)
 	{
+		if ($inline_find == '')
+		{
+			// Can't find a empty string,
+			return(false);
+		}
+
 		$find = $this->normalize($find);
 
 		if ($start_offset === false || $end_offset === false)
@@ -625,7 +676,7 @@ class editor
 
 	/**
 	* Function to build full edits such that uninstall will work more often
-	* 
+	*
 	* @param $find - The largest find we can put together -- sometimes this
 	* 		comes from the file itself, other times from the MODX file
 	* @param $inline_find - Subset of $find or NULL
@@ -640,30 +691,23 @@ class editor
 		$action = trim($action, "\n");
 
 		/*
-		* This if statement finds out if we are in the special case where 
+		* This if statement finds out if we are in the special case where
 		* a MOD specifies a before action and an after action on the same
 		* find.  If this is the case, the uninstaller must see a replace
 		* rather than an add
 		*/
 		if (!empty($this->last_action) && $this->last_action[0] == $this->curr_action[0] &&
-			(($this->last_action[2] == 'AFTER' && $this->curr_action[2] == 'BEFORE') 
+			(($this->last_action[2] == 'AFTER' && $this->curr_action[2] == 'BEFORE')
 			|| ($this->last_action[2] == 'BEFORE' && $this->curr_action[2] == 'AFTER')))
 		{
-			$last_action_index = sizeof($this->mod_actions[$this->open_filename]) - 1;
-			unset($this->mod_actions[$this->open_filename][$last_action_index]);
-
-			// Re-index the array to start at zero and go sequentially
-			$this->mod_actions[$this->open_filename] = array_merge($this->mod_actions[$this->open_filename]);
+			array_pop($this->mod_actions[$this->open_filename]);
 
 			$action_type = 'REPLACE';
 
 			// Remove the add from the find -- this is an effect of the way the
 			// add method works, putting the new lines in the same array element
 			// as the find
-			if (!empty($this->last_action))
-			{
-				$find = str_replace(trim($this->last_action[1]), '', $find);
-			}
+			$find = str_replace(trim($this->last_action[1]), '', $find);
 
 			if ($this->last_action[2] == 'AFTER')
 			{
@@ -688,15 +732,38 @@ class editor
 		}
 		else
 		{
-			$this->mod_actions[$this->open_filename][] = array(
-				$find => array(
-					'in-line-edit'	=> array(
-						$inline_find	=> array(
-							$action_type	=> array($action),
+			// Do we have preceding in-line-edit(s) on the same complete find or line?
+			if (!empty($this->last_action) && $this->last_action[0] == $this->curr_action[0])
+			{
+				$prev_inline_edits = array_pop($this->mod_actions[$this->open_filename]);
+				$prev_find = key($prev_inline_edits);
+
+				// Add our current in-line-edit
+				$prev_inline_edits[$prev_find]['in-line-edit'][] = array(
+					$inline_find	=> array(
+						$action_type	=> array($action),
+					),
+				);
+
+				// Add the new set of in-line-edit's to our MOD Actions array, w/ the updated $find
+				$this->mod_actions[$this->open_filename][] = array(
+					$find => $prev_inline_edits[$prev_find]
+				);
+			}
+			else
+			{
+				$this->mod_actions[$this->open_filename][] = array(
+					$find => array(
+						'in-line-edit'	=> array(
+							array(
+								$inline_find	=> array(
+									$action_type	=> array($action),
+								),
+							),
 						),
 					),
-				),
-			);
+				);
+			}
 		}
 
 		$this->last_action = $this->curr_action;
@@ -711,7 +778,7 @@ class editor
 
 /**
 * @package automod
-* class editor_direct will alter files by using the local file access functions 
+* class editor_direct will alter files by using the local file access functions
 * such as fopen and fwrite.  This is typically only useful in Windows environments
 * due to permissions settings.
 */
@@ -724,30 +791,22 @@ class editor_direct extends editor
 	}
 
 	/**
-	* Moves files or complete directories
+	* Copies files or complete directories
 	*
-	* @param $from string Can be a file or a directory. Will move either the file or all files within the directory
-	* @param $to string Where to move the file(s) to. If not specified then will get moved to the root folder
-	* @param $strip Used for FTP only
+	* @param $from string Can be a file or a directory. Will copy either the file or all files within the directory
+	* @param $to string Where to copy the file(s) to. If not specified then will get copied to the phpbb root directory
 	* @return mixed: Bool true on success, error string on failure, NULL if no action was taken
-	* 
-	* NOTE: function should preferably not return in case of failure on only one file.  
-	* 	The current method makes error handling difficult 
+	*
+	* NOTE: function should preferably not return in case of failure on only one file.
+	* 	The current method makes error handling difficult
 	*/
-	function copy_content($from, $to = '', $strip = '')
+	function copy_content($from, $to = '')
 	{
 		global $phpbb_root_path, $user, $config;
 
 		if (strpos($from, $phpbb_root_path) !== 0)
 		{
 			//$from = $phpbb_root_path . $from;
-		}
-
-		// When installing a MODX 1.2.0 MOD, this happens once in a long while.
-		// Not sure why yet.
-		if (is_array($to))
-		{
-			return NULL;
 		}
 
 		if (strpos($to, $phpbb_root_path) !== 0)
@@ -758,18 +817,27 @@ class editor_direct extends editor
 		$files = array();
 		if (is_dir($from))
 		{
-			// get all of the files within the directory
 			$files = find_files($from, '.*');
+			$dirname_check = $to;
+			$to_is_dir = true;
 		}
 		else if (is_file($from))
 		{
 			$files = array($from);
+			$dirname_check = dirname($to);
+			$to_is_dir = false;
 		}
 
 		if (empty($files))
 		{
 			return false;
 		}
+/*
+		else if (!is_dir($dirname_check) && $this->recursive_mkdir($dirname_check) === false)
+		{
+			return sprintf($user->lang['MODS_MKDIR_FAILED'], $dirname_check);
+		}
+*/
 
 		// We're only interested in finding out whether the file/directory exists for titania's checks
 		if (!file_exists($from))
@@ -781,33 +849,16 @@ class editor_direct extends editor
 			return true;
 		}
 
-		// Look at the last character of $to and compare it to '/'
-		if ($to[strlen($to) - 1] == '/')
-		{
-			$dirname_check = $to;
-		}
-		else
-		{
-			$dirname_check = dirname($to);
-		}
-
-		if (!is_dir($dirname_check))
-		{
-			if ($this->recursive_mkdir($dirname_check) === false)
-			{
-				return sprintf($user->lang['MODS_MKDIR_FAILURE'], $dirname_check);
-			}
-		}
-
 		foreach ($files as $file)
 		{
-			if (is_dir($to))
+			if ($to_is_dir)
 			{
 				$dest = str_replace($from, $to, $file);
 
-				if (!file_exists($dest))
+				$dest_parent_dir = dirname($dest);
+				if (!file_exists($dest_parent_dir))
 				{
-					$this->recursive_mkdir(dirname($dest));
+					$this->recursive_mkdir($dest_parent_dir);
 				}
 			}
 			else
@@ -855,7 +906,7 @@ class editor_direct extends editor
 		$length_written = @fwrite($fr, $file_contents);
 		@chmod($new_filename, octdec($config['am_file_perms']));
 
-		// This appears to be correct even with multibyte encodings.  strlen and 
+		// This appears to be correct even with multibyte encodings.  strlen and
 		// fwrite both return the number of bytes written, not the number of chars
 		if ($length_written < strlen($file_contents))
 		{
@@ -864,7 +915,7 @@ class editor_direct extends editor
 
 		if (!@fclose($fr))
 		{
-			return sprintf($user->lang['WRITE_DIRECT_FAIL'], $new_filename);			
+			return sprintf($user->lang['WRITE_DIRECT_FAIL'], $new_filename);
 		}
 
 		return true;
@@ -875,11 +926,6 @@ class editor_direct extends editor
 	*/
 	function backup_file($backup_dir)
 	{
-		if (!$backup_dir)
-		{
-			return;
-		}
-
 		return $this->close_file($backup_dir . $this->open_filename);
 	}
 
@@ -921,7 +967,7 @@ class editor_direct extends editor
 
 	function commit_changes($source, $destination)
 	{
-		return $this->copy_content($source, $destination, $source);
+		return $this->copy_content($source, $destination);
 	}
 
 	function commit_changes_final($source, $destination)
@@ -932,6 +978,54 @@ class editor_direct extends editor
 	function create_edited_root($dir)
 	{
 		return $this->recursive_mkdir($dir);
+	}
+
+	/**
+	 * Removes a file or a directory (optionally recursively)
+	 *
+	 * @param	$path		string (required)	- Filename/Directory path to remove
+	 * @param	$recursive	bool (optional)		- Recursively delete directories
+	 * @author jasmineaura
+	 */
+	function remove($path, $recursive = false)
+	{
+		global $phpbb_root_path, $user;
+
+		if (strpos($path, $phpbb_root_path) !== 0)
+		{
+			$path = $phpbb_root_path . $path;
+		}
+
+		if (is_dir($path))
+		{
+			if ($recursive)
+			{
+				// recursively delete (in functions_mod.php)
+				return recursive_unlink($path);
+			}
+			else
+			{
+				if (check_empty_dir($path))
+				{
+					// No error message.
+					// If the directory is not empty it is probably not an error.
+
+					if (!rmdir($path))
+					{
+						return sprintf($user->lang['MODS_RMDIR_FAILURE'], $path);
+					}
+				}
+			}
+		}
+		else
+		{
+			if (!unlink($path))
+			{
+				return sprintf($user->lang['MODS_RMFILE_FAILURE'], $path);
+			}
+		}
+
+		return true;
 	}
 }
 
@@ -967,30 +1061,23 @@ class editor_ftp extends editor
 	}
 
 	/**
-	* Moves files or complete directories
+	* Copies files or complete directories
 	*
-	* @param $from string Can be a file or a directory. Will move either the file or all files within the directory
-	* @param $to string Where to move the file(s) to. If not specified then will get moved to the root folder
-	* @param $strip Used for FTP only
+	* @param $from string Can be a file or a directory. Will copy either the file or all files within the directory
+	* @param $to string Where to copy the file(s) to. If not specified then will get copied to the phpbb root directory
 	* @return mixed: Bool true on success, error string on failure, NULL if no action was taken
-	* 
-	* NOTE: function should preferably not return in case of failure on only one file.  
-	* 	The current method makes error handling difficult 
+	*
+	* NOTE: function should preferably not return in case of failure on only one file.
+	* 	The current method makes error handling difficult
 	*/
-	function copy_content($from, $to = '', $strip = '')
+	function copy_content($from, $to = '')
 	{
 		global $phpbb_root_path, $user;
 
+		// Prefix $from with $phpbb_root_path
 		if (strpos($from, $phpbb_root_path) !== 0)
 		{
 			$from = $phpbb_root_path . $from;
-		}
-
-		// When installing a MODX 1.2.0 MOD, this happens once in a long while.
-		// Not sure why yet.
-		if (is_array($to))
-		{
-			return NULL;
 		}
 
 		if (strpos($to, $phpbb_root_path) !== 0)
@@ -1001,31 +1088,52 @@ class editor_ftp extends editor
 		$files = array();
 		if (is_dir($from))
 		{
-			// get all of the files within the directory
 			$files = find_files($from, '.*');
+			$dirname_check = $to;
+			$to_is_dir = true;
 		}
 		else if (is_file($from))
 		{
 			$files = array($from);
+			$dirname_check = dirname($to);
+			$to_is_dir = false;
 		}
 
 		if (empty($files))
 		{
 			return false;
 		}
+		else if (!is_dir($dirname_check) && $this->recursive_mkdir($dirname_check) === false)
+		{
+			return sprintf($user->lang['MODS_MKDIR_FAILED'], $dirname_check);
+		}
 
-		// ftp
 		foreach ($files as $file)
 		{
-			$to_file = str_replace($strip, '', $file);
-
-			$this->recursive_mkdir(dirname($to_file));
-
-			if (!$this->transfer->overwrite_file($file, $to_file))
+			if ($to_is_dir)
 			{
-				// may as well return ... the MOD is likely dependent upon
-				// the file that is being copied
-				return sprintf($user->lang['MODS_FTP_FAILURE'], $to_file);
+				$dest = str_replace($from, $to, $file);
+
+				$dest_parent_dir = dirname($dest);
+				if (!file_exists($dest_parent_dir))
+				{
+					$this->recursive_mkdir($dest_parent_dir);
+				}
+			}
+			else
+			{
+				$dest = $to;
+			}
+
+			// Per functions_transfer.php, overwrite_file() (which we'll use here) is the only
+			// transfer method that doesn't strip out phpbb_root_path, because it is called
+			// by other methods (write_file, copy_file) that already do so before calling it.
+			// The ftp class prepends the real (ftp) $root_path !
+			$dest = str_replace($phpbb_root_path, '', $dest);
+
+			if (!$this->transfer->overwrite_file($file, $dest))
+			{
+				return sprintf($user->lang['MODS_FTP_FAILURE'], $dest);
 			}
 		}
 
@@ -1074,15 +1182,20 @@ class editor_ftp extends editor
 	/**
 	* @ignore
 	*/
-	function recursive_mkdir($path, $mode = 0777)
+	function recursive_mkdir($path, $mode = false)
 	{
+		if ($mode)
+		{
+			$this->transfer->dir_perms = $mode;
+		}
+
 		return $this->transfer->make_dir($path);
 	}
 
 	function commit_changes($source, $destination)
 	{
 		// Move edited files back
-		return $this->copy_content($source, $destination, $source);
+		return $this->copy_content($source, $destination);
 	}
 
 	function commit_changes_final($source, $destionation)
@@ -1093,6 +1206,81 @@ class editor_ftp extends editor
 	function create_edited_root($dir)
 	{
 		return $this->recursive_mkdir($dir);
+	}
+
+	/**
+	 * Removes a file or a directory (optionally recursively)
+	 *
+	 * @param	$path		string (required)	- Filename/Directory path to remove
+	 * @param	$recursive	bool (optional)		- Recursively delete directories
+	 * @author jasmineaura
+	 */
+	function remove($path, $recursive = false)
+	{
+		global $phpbb_root_path, $phpEx, $user;
+
+		// No need to strip phpbb_root_path afterwards, as the transfer class
+		// functions - remove_dir() and delete_file() - already do that for us
+		if (strpos($path, $phpbb_root_path) !== 0)
+		{
+			$path = $phpbb_root_path . $path;
+		}
+
+		if (is_dir($path))
+		{
+			// Recursive delete:
+			// remove_dir() in functions_transfer.php still says "todo remove child directories?"
+			// It's really easy to recursively delete in ftp, but unfortunately what exposes access to
+			// ftp_nlist() (or NLST); "_ls", is private to the transfer class, so we can't use it yet
+			if ($recursive)
+			{
+				// Insurance - this should never really happen
+				if ($path == $phpbb_root_path || is_file("$path/common.$phpEx"))
+				{
+					return false;
+				}
+
+				// Get all of the files in the source directory
+				$files = find_files($path, '.*');
+				// Get all of the sub-directories in the source directory
+				$subdirs = find_files($path, '.*', 20, true);
+
+				// Delete all the files
+				foreach ($files as $file)
+				{
+					if (!$this->transfer->delete_file($file))
+					{
+						return sprintf($user->lang['MODS_RMFILE_FAILURE'], $file);
+					}
+				}
+
+				// Delete all the sub-directories, in _reverse_ order (array_pop)
+				for ($i=0, $cnt = count($subdirs); $i < $cnt; $i++)
+				{
+					$subdir = array_pop($subdirs);
+					if (!$this->transfer->remove_dir($subdir))
+					{
+						return sprintf($user->lang['MODS_RMDIR_FAILURE'], $subdir);
+					}
+				}
+
+				// Finally, delete the directory itself
+				if (!$this->transfer->remove_dir($path))
+				{
+					return sprintf($user->lang['MODS_RMDIR_FAILURE'], $path);
+				}
+			}
+			else if (!$this->transfer->remove_dir($path))
+			{
+				return sprintf($user->lang['MODS_RMDIR_FAILURE'], $path);
+			}
+		}
+		else if (!$this->transfer->delete_file($path))
+		{
+			return sprintf($user->lang['MODS_RMFILE_FAILURE'], $path);
+		}
+
+		return true;
 	}
 }
 
@@ -1119,7 +1307,7 @@ class editor_manual extends editor
 		$this->compress = new $class('w', $phpbb_root_path . 'store/mod_' . $this->install_time . $config['compress_method'], $config['compress_method']);
 	}
 
-	function copy_content($from, $to = '', $strip = '')
+	function copy_content($from, $to = '')
 	{
 		global $phpbb_root_path, $user;
 
@@ -1139,12 +1327,13 @@ class editor_manual extends editor
 		$files = array();
 		if (is_dir($from))
 		{
-			// get all of the files within the directory
 			$files = find_files($from, '.*');
+			$to_is_dir = true;
 		}
 		else if (is_file($from))
 		{
 			$files = array($from);
+			$to_is_dir = false;
 		}
 
 		if (empty($files))
@@ -1154,23 +1343,21 @@ class editor_manual extends editor
 
 		foreach ($files as $file)
 		{
-			if (is_dir($to))
+			if ($to_is_dir)
 			{
-				// this would find the directory part specified in MODX
-				$to_file = str_replace(array($phpbb_root_path, $strip), '', $to);
-				// and this fetches any subdirectories and the filename of the destination file
-				$to_file .= substr($file, strpos($file, $to_file) + strlen($to_file));
+				$dest = str_replace($from, $to, $file);
 			}
 			else
 			{
-				$to_file = str_replace($phpbb_root_path, '', $to);
+				$dest = $to;
 			}
 
-			// filename calculation is involved here:
-			// and prepend the "files" directory
-			if (!$this->compress->add_custom_file($file, 'files/' . $to_file))
+			// Replace root path with the "files/" directory that goes in the zip
+			$dest = str_replace($phpbb_root_path, 'files/', $dest);
+
+			if (!$this->compress->add_custom_file($file, $dest))
 			{
-				return sprintf($user->lang['WRITE_MANUAL_FAIL'], $to_file);
+				return sprintf($user->lang['WRITE_MANUAL_FAIL'], $dest);
 			}
 		}
 
@@ -1195,10 +1382,6 @@ class editor_manual extends editor
 
 		// don't include extra dirs in zip file
 		$strip_position = strpos($new_filename, '_edited') + 8; // want the end of the string
-		if ($strip_position == 8)
-		{
-			$strip_position = strpos($new_filename, '_uninst') + 7;
-		}
 
 		$new_filename = 'files/' . substr($new_filename, $strip_position);
 
@@ -1249,6 +1432,11 @@ class editor_manual extends editor
 	{
 		return NULL;
 	}
-} 
+
+	function remove($file, $recursive = false)
+	{
+		return NULL;
+	}
+}
 
 ?>
