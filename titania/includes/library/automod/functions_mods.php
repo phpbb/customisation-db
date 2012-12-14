@@ -79,6 +79,75 @@ function match_language($user_language, $xml_language)
 }
 
 /**
+* Grab MOD titles
+*
+* @param $header - variable holding all relevant tag information
+* @return array(language iso => MOD name)
+*/
+function get_title($header)
+{
+	if (is_string($header['TITLE']))
+	{
+		return($header['TITLE']);
+	}
+
+	$return = array();
+	foreach ($header['TITLE'] as $row)
+	{
+		if (!is_array($row))
+		{
+			continue;
+		}
+
+		$return[$row['attrs']['LANG']] = trim($row['data']);
+	}
+
+	return($return);
+}
+
+/**
+ * Get localized MOD title or English title
+ *
+ * @param $titles, string or a serialized array containing the MOD name(s)
+ * @param $lang, string language ISO.
+ * @return string with MOD name in users selected language or English.
+ */
+function localize_title($title, $lang = 'en')
+{
+	$name_ary = array();
+
+	if (!is_array($title))
+	{
+		if (($name_ary = @unserialize($title)) === false)
+		{
+			// Before AutoMOD 1.0.1 the title was a string with only the MOD name.
+			return($title);
+		}
+	}
+	else
+	{
+		$name_ary = $title;
+	}
+
+	// If we get here the MOD is installed with AutoMOD 1.0.1+
+	// And the stored title is a serialized array.
+	if (!empty($name_ary[$lang]))
+	{
+		return($name_ary[$lang]);
+	}
+	else if (!empty($name_ary['en']))
+	{
+		// Default to English if the selected language is not found.
+		return($name_ary['en']);
+	}
+
+	// Something went wrong.
+	// We have a array that neither contain the selected language nor English.
+	// Return the first array element.
+	return(array_shift($name_ary));
+}
+
+/**
 * Easy method to grab localisable tags from the XML array
 * @param $header - variable holding all relevant tag information
 * @param $tagname - tag name to fetch
@@ -111,6 +180,10 @@ function localise_tags($header, $tagname, $index = false)
 			{
 				$output = isset($header[$tagname][$i]['data']) ? htmlspecialchars(trim($header[$tagname][$i]['data'])) : '';
 			}
+			else if (match_language('en', $header[$tagname][$i]['attrs']['LANG']))
+			{
+				$output = isset($header[$tagname][$i]['data']) ? htmlspecialchars(trim($header[$tagname][$i]['data'])) : '';
+			}
 		}
 
 		// If there was no language match, put something out there
@@ -138,10 +211,11 @@ function localise_tags($header, $tagname, $index = false)
 * @param string Relative or absolute path to the directory to be scanned.
 * @param string Search pattern (perl compatible regular expression).
 * @param integer Number of subdirectory levels to scan (set to 1 to scan only current).
+* @param boolean List sub-directories only instead of files
 * @param integer This one is used internally to control recursion level.
 * @return array List of all files found matching the specified pattern.
 */
-function find_files($directory, $pattern, $max_levels = 20, $_current_level = 1)
+function find_files($directory, $pattern, $max_levels = 20, $subdirs_only = false, $_current_level = 1)
 {
 	if ($_current_level <= 1)
 	{
@@ -177,12 +251,20 @@ function find_files($directory, $pattern, $max_levels = 20, $_current_level = 1)
 			{
 				if ($_current_level < $max_levels)
 				{
-					$subdir = array_merge($subdir, find_files($fullname . '/', $pattern, $max_levels, $_current_level + 1));
+					if ($subdirs_only)
+					{
+						$subdir[] = $fullname . '/';
+						$subdir = array_merge($subdir, find_files($fullname . '/', $pattern, $max_levels, true, $_current_level + 1));
+					}
+					else
+					{
+						$subdir = array_merge($subdir, find_files($fullname . '/', $pattern, $max_levels, false, $_current_level + 1));
+					}
 				}
 			}
 			else
 			{
-				if (preg_match('/^' . $pattern . '$/i', $file))
+				if (!$subdirs_only && preg_match('/^' . $pattern . '$/i', $file))
 				{
 					$files[] = $fullname;
 				}
@@ -206,14 +288,34 @@ function find_files($directory, $pattern, $max_levels = 20, $_current_level = 1)
 function update_database_template($filename, $template_id, $file_contents, $install_time)
 {
 	return;
+/*
+	global $db;
+
+	// grab filename
+	preg_match('#styles/[a-z0-9_]+/template/([a-z0-9_]+.html)#i', $filename, $match);
+
+	if (empty($match[1]))
+	{
+		return false;
+	}
+
+	$sql = 'UPDATE ' . STYLES_TEMPLATE_DATA_TABLE . "
+		SET template_data = '" . $db->sql_escape($file_contents) . "', template_mtime = " . (int) $install_time . '
+		WHERE template_id = ' . (int) $template_id . "
+		AND template_filename = '" . $db->sql_escape($match[1]) . "'";
+	$db->sql_query($sql);
+
+	// if something failed, sql_query will error out
+	return true;
+*/
 }
 
-function determine_write_method($pre_install = false)
+function determine_write_method($preview = false)
 {
 	global $phpbb_root_path, $config;
 
 	// to be truly correct, we should scan all files ...
-	if ((is_writable($phpbb_root_path) && $config['write_method'] == WRITE_DIRECT) || $pre_install)
+	if (($config['write_method'] == WRITE_DIRECT && is_writable($phpbb_root_path)) || $preview)
 	{
 		$write_method = 'direct';
 	}
@@ -272,38 +374,98 @@ function handle_ftp_details($method, $test_ftp_connection, $test_connection)
 }
 
 /**
+* Gets FTP information if we need it
+*
+* @param	$preview	bool	true if in pre_(install|uninstall), false otherwise
+* @return				array	and array of connection info (currently only ftp)
+*/
+function get_connection_info($preview = false)
+{
+	global $config, $ftp_method, $test_ftp_connection, $test_connection;
+
+	$conn_info_ary = array();
+
+	// using $config instead of $editor because write_method is forced to direct
+	// when in preview mode
+	if ($config['write_method'] == WRITE_FTP)
+	{
+		if (!$preview && isset($_POST['password']))
+		{
+			$conn_info_ary['method'] = $config['ftp_method'];
+
+			if (empty($config['ftp_method']))
+			{
+				trigger_error('FTP_METHOD_ERROR');
+			}
+
+			$requested_data = call_user_func(array($config['ftp_method'], 'data'));
+
+			foreach ($requested_data as $data => $default)
+			{
+				if ($data == 'password')
+				{
+					$config['ftp_password'] = request_var('password', '');
+				}
+				$default = (!empty($config['ftp_' . $data])) ? $config['ftp_' . $data] : $default;
+
+				$conn_info_ary[$data] = $default;
+			}
+		}
+
+		handle_ftp_details($ftp_method, $test_ftp_connection, $test_connection);
+	}
+
+	return $conn_info_ary;
+}
+
+/**
  * Recursively delete a directory
  *
- * @param string $file File name
- * @author A_Jelly_Doughnut
+ * @param	string	$path (required)	Directory path to recursively delete
+ * @author	jasmineaura
  */
-function recursive_unlink($file)
+function recursive_unlink($path)
 {
-	if (!($dh = opendir($file)))
+	global $phpbb_root_path, $phpEx, $user;
+
+	// Insurance - this should never really happen
+	if ($path == $phpbb_root_path || is_file("$path/common.$phpEx"))
 	{
 		return false;
 	}
 
-	while (($subfile = readdir($dh)) !== false)
-	{
-		if ($subfile[0] == '.')
-		{
-		    continue;
-		}
+	// Get all of the files in the source directory
+	$files = find_files($path, '.*');
+	// Get all of the sub-directories in the source directory
+	$subdirs = find_files($path, '.*', 20, true);
 
-		if (!unlink($file. '/' . $subfile))
+	// Delete all the files
+	foreach ($files as $file)
+	{
+		if (!unlink($file))
 		{
-			recursive_unlink($file . '/' . $subfile);
+			return sprintf($user->lang['MODS_RMFILE_FAILURE'], $file);
 		}
 	}
 
-	closedir($dh);
+	// Delete all the sub-directories, in _reverse_ order (array_pop)
+	for ($i=0, $cnt = count($subdirs); $i < $cnt; $i++)
+	{
+		$subdir = array_pop($subdirs);
+		if (!rmdir($subdir))
+		{
+			return sprintf($user->lang['MODS_RMDIR_FAILURE'], $subdir);
+		}
+	}
 
-	rmdir($file);
+	// Finally, delete the directory itself
+	if (!rmdir($path))
+	{
+		return sprintf($user->lang['MODS_RMDIR_FAILURE'], $path);
+	}
 
 	return true;
 }
-
 
 /**
 * PHP 5 Wrapper - simulate scandir, but only those features that we actually need
@@ -332,6 +494,87 @@ if (!function_exists('scandir'))
 
 		return $files;
 	}
+}
+
+/**
+* Return the number of files (optionally including sub-directories) in a directory, optionally recursively.
+*
+* @param	$dir		string (required)	- The directory you want to count files in
+* @param	$subdirs	boolean (optional)	- Count subdirectories instead of files
+* @param	$recurse	boolean (optional)	- Recursive count into sub-directories
+* @param	$count		int (optional)		- Initial value of file (or subdirs) count
+* @return				int					- Count of files (or count of subdirectories)
+* @author	jasmineaura
+*/
+function directory_num_files($dir, $subdirs = false, $recurse = false, $count = 0)
+{
+	if (is_dir($dir))
+	{
+		if($handle = opendir($dir))
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+				if ($file == '.' || $file == '..')
+				{
+					continue;
+				}
+				else if (is_dir($dir."/".$file))
+				{
+					if ($subdirs)
+					{
+						$count++;
+					}
+					else if ($recurse)
+					{
+						$count = directory_num_files($dir."/".$file, $subdirs, $recurse, $count);
+					}
+				}
+				else if (!$subdirs)
+				{
+					$count++;
+				}
+			}
+
+			closedir($handle);
+		}
+	}
+
+	return $count;
+}
+
+/**
+* Check if a directory is empty.
+*
+* @param $dir, string - directory to check
+* @return bool, true if directory is empty.
+*/
+function check_empty_dir($dir)
+{
+	if (!is_dir($dir) || !is_readable($dir))
+	{
+		return(false);
+	}
+
+	if(!$handle = opendir($dir))
+	{
+		return(false);
+	}
+
+	while (($file = readdir($handle)) !== false)
+	{
+		if ($file == '.' || $file == '..')
+		{
+			continue;
+		}
+
+		// If we get here the directory is not empty
+		closedir($handle);
+		return(false);
+	}
+
+	// The directory is empty
+	closedir($handle);
+	return(true);
 }
 
 ?>
