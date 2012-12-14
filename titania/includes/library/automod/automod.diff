@@ -1,59 +1,257 @@
-Index: acp_mods.php
-===================================================================
---- acp_mods.php	(revision 909)
-+++ acp_mods.php	(working copy)
-@@ -1349,6 +1349,7 @@
- 				{
- 					$template->assign_block_vars('edit_files', array(
- 						'FILENAME'	=> $filename,
-+						'S_SUCCESS'	=> false,
+--- automod-1.0.2/root/includes/acp/acp_mods.php
++++ customisation-db/titania/includes/library/automod/acp_mods.php
+@@ -669,6 +668,7 @@
+ 					$processed_templates = array('prosilver');
+ 					$processed_templates += explode(',', $row['mod_template']);
+ 
++/*
+ 					// now grab the templates that have not already been processed
+ 					$sql = 'SELECT template_id, template_path FROM ' . STYLES_TEMPLATE_TABLE . '
+ 						WHERE ' . $db->sql_in_set('template_name', $processed_templates, true);
+@@ -681,9 +681,10 @@
+ 							'TEMPLATE_NAME'		=> $row['template_path'],
+ 						));
+ 					}
++*/
+ 
+ 					$s_hidden_fields = build_hidden_fields(array(
+-						'action'	=> ($uninstall) ? 'uninstall' : 'pre_install',
++						'action'	=> 'install',
+ 						'parent'	=> $parent_id,
  					));
  
- 					$status = $editor->open_file($filename, $this->backup_root);
-@@ -1362,6 +1363,8 @@
- 						continue;
- 					}
+@@ -1521,6 +1522,7 @@
+ 				));
+ 			}
+ 		}
++/*
+ 		elseif (($mod_uninstalled || $force_uninstall) && $parent)
+ 		{
+ 			// Only update the database entries and don't move any files back
+@@ -1590,12 +1592,13 @@
+ 			$mod_name = localize_title($row['mod_name'], $user->data['user_lang']);
+ 			add_log('admin', 'LOG_MOD_CHANGE', htmlspecialchars_decode($mod_name));
+ 		}
+-
++*/
+ 		// if we forced uninstall of the MOD, we need to let the user know their board could be broken
+ 		if ($force_uninstall)
+ 		{
+ 			$template->assign_var('S_FORCE', true);
+ 		}
++/*
+ 		else if (!$mod_uninstalled)
+ 		{
+ 			add_form_key('acp_mods');
+@@ -1606,6 +1609,7 @@
+ 				'U_RETRY'			=> $this->u_action . '&amp;action=uninstall&amp;mod_id=' . $mod_id,
+ 			));
+ 		}
++*/
  
-+					$edit_success = true;
-+
- 					foreach ($edits as $finds)
+ 		if ($mod_uninstalled || $force_uninstall)
+ 		{
+@@ -1763,6 +1767,7 @@
+ 			'S_CHANGE_FILES'	=> (bool) $change,
+ 		));
+ 
++/*
+ 		if (!empty($details['PHPBB_VERSION']) && $details['PHPBB_VERSION'] != $config['version'])
+ 		{
+ 			$version_warnig = sprintf($user->lang['VERSION_WARNING'], $details['PHPBB_VERSION'], $config['version']);
+@@ -1772,6 +1777,7 @@
+ 				'S_PHPBB_VESION'	=> true,
+ 			));
+ 		}
++*/
+ 
+ 		if (!empty($details['AUTHOR_NOTES']) && $details['AUTHOR_NOTES'] != $user->lang['UNKNOWN_MOD_AUTHOR-NOTES'])
+ 		{
+@@ -1822,6 +1828,8 @@
  					{
- 						$comment = '';
-@@ -1378,10 +1381,10 @@
- 								continue;
- 							}
- 
--							$template->assign_block_vars('edit_files.finds', array(
-+							$find_tpl = array(
- 								'FIND_STRING'	=> htmlspecialchars($find),
- 								'COMMENT'		=> htmlspecialchars($comment),
--							));
-+							);
- 
- 							$offset_ary = $editor->find($find);
- 
-@@ -1529,8 +1532,13 @@
- 									break;
- 								}
- 
-+								$template->assign_block_vars('edit_files.finds', array_merge($find_tpl, array(
-+									'S_SUCCESS'		=> $status,
-+								)));
-+
- 								if (!$status)
- 								{
-+									$edit_success = false;
- 									$mod_installed = false;
- 								}
- 
-@@ -1561,6 +1569,10 @@
- 
- 						$editor->close_edit();
+ 						$status = $editor->open_file($filename);
  					}
 +
-+					$template->alter_block_array('edit_files', array(
-+						'S_SUCCESS'		=> $edit_success,
-+					), true, 'change');
++					$edit_success = true;
+ 
+ 					if (is_string($status))
+ 					{
+@@ -2062,6 +2070,11 @@
+ 			}
+ 		} // end foreach
+ 
++		if (!$mod_installed)
++		{
++			$template->assign_var('S_DISPLAY_FILE_EDITS', true);
++		}
++
+ 		// Move included files
+ 		if (isset($actions['NEW_FILES']) && !empty($actions['NEW_FILES']))
+ 		{
+@@ -2085,13 +2098,14 @@
+ 					prev($actions['NEW_FILES']);
  				}
  
- 				if ($change)
+-				if ($change && ($mod_installed || $force_install))
+-				{
+-					$status = $editor->copy_content($this->mod_root . str_replace('*.*', '', $source), str_replace('*.*', '', $target));
++/*				if ($change && ($mod_installed || $force_install))
++				{
++*/					$status = $editor->copy_content($this->mod_root . str_replace('*.*', '', $source), str_replace('*.*', '', $target));
+ 
+ 					if ($status !== true && !is_null($status))
+ 					{
+ 						$mod_installed = false;
++						$template->assign_var('S_DISPLAY_NEW_FILES', true);
+ 					}
+ 
+ 					$template->assign_block_vars('new_files', array(
+@@ -2100,7 +2114,7 @@
+ 						'SOURCE'			=> $source,
+ 						'TARGET'			=> $target,
+ 					));
+-				}
++/*				}
+ 				else if ($display && !$change)
+ 				{
+ 					$template->assign_block_vars('new_files', array(
+@@ -2116,7 +2130,7 @@
+ 						'FILENAME'			=> $target,
+ 					));
+ 				}
+-			}
++*/			}
+ 		}
+ 
+ 		// Delete (or reverse-delete) installed files
+@@ -2713,6 +2727,8 @@
+ 
+ 	function handle_template_prompt(&$children, &$elements, $action)
+ 	{
++		return;
++/*
+ 		global $db, $template, $phpbb_root_path, $parent_id;
+ 
+ 		if (isset($children['template']) && sizeof($children['template']))
+@@ -2739,6 +2755,7 @@
+ 			// $process_templates are those that are installed on the board and provided for by the MOD
+ 			$process_templates = $elements['template'] = array_intersect($available_templates, $installed_templates);
+ 		}
++*/
+ 	}
+ 
+ 	function upload_mod($action)
+
+
+--- automod-1.0.2/root/includes/editor.php
++++ customisation-db/titania/includes/library/automod/editor.php
+@@ -107,6 +106,11 @@
+ 	{
+ 		global $phpbb_root_path, $db, $user;
+ 
++		if (strpos($filename, '..') !== false)
++		{
++			return $user->lang['FILE_EMPTY'];
++		}
++
+ 		$this->file_contents = @file($phpbb_root_path . $filename);
+ 
+ 		if ($this->file_contents === false)
+@@ -116,6 +120,7 @@
+ 
+ 		$this->file_contents = $this->normalize($this->file_contents);
+ 
++/*
+ 		// Check for file contents in the database if this is a template file
+ 		// this will overwrite the @file call if it exists in the DB.
+ 		if (strpos($filename, 'template/') !== false)
+@@ -149,6 +154,7 @@
+ 				$this->template_id = 0;
+ 			}
+ 		}
++*/
+ 
+ 		/*
+ 		* If the file does not exist, or is empty, die.
+@@ -800,7 +806,7 @@
+ 
+ 		if (strpos($from, $phpbb_root_path) !== 0)
+ 		{
+-			$from = $phpbb_root_path . $from;
++			//$from = $phpbb_root_path . $from;
+ 		}
+ 
+ 		if (strpos($to, $phpbb_root_path) !== 0)
+@@ -826,9 +832,21 @@
+ 		{
+ 			return false;
+ 		}
++/*
+ 		else if (!is_dir($dirname_check) && $this->recursive_mkdir($dirname_check) === false)
+ 		{
+ 			return sprintf($user->lang['MODS_MKDIR_FAILED'], $dirname_check);
++		}
++*/
++
++		// We're only interested in finding out whether the file/directory exists for titania's checks
++		if (!file_exists($from))
++		{
++			return false;
++		}
++		else
++		{
++			return true;
+ 		}
+ 
+ 		foreach ($files as $file)
+
+--- automod-1.0.2/root/includes/functions_mods.php
++++ customisation-db/titania/includes/library/automod/functions_mods.php
+@@ -288,6 +287,8 @@
+ */
+ function update_database_template($filename, $template_id, $file_contents, $install_time)
+ {
++	return;
++/*
+ 	global $db;
+ 
+ 	// grab filename
+@@ -306,6 +307,7 @@
+ 
+ 	// if something failed, sql_query will error out
+ 	return true;
++*/
+ }
+ 
+ function determine_write_method($preview = false)
+ 
+--- automod-1.0.2/root/includes/mod_parser.php
++++ customisation-db/titania/includes/library/automod/mod_parser.php
+@@ -101,6 +100,7 @@
+ 	*/
+ 	function parse_sql(&$sql_query)
+ 	{
++/*
+ 		global $dbms, $table_prefix;
+ 
+ 		if (!function_exists('get_available_dbms'))
+@@ -138,6 +138,7 @@
+ 		}
+ 
+ 		//return $sql_query;
++*/
+ 	}
+ 
+ 	/**
+@@ -469,6 +470,9 @@
+ 			'MOD_DESCRIPTION'	=> nl2br(localise_tags($header, 'DESCRIPTION')),
+ 			'MOD_VERSION'		=> htmlspecialchars(trim($version)),
+ //			'MOD_DEPENDENCIES'	=> (isset($header['TITLE'][0]['data'])) ? htmlspecialchars(trim($header['TITLE'][0]['data'])) : '',
++
++			'INSTALLATION_LEVEL'	=> (isset($header['INSTALLATION'][0]['children']['LEVEL'][0]['data'])) ? $header['INSTALLATION'][0]['children']['LEVEL'][0]['data'] : 0,
++			'INSTALLATION_TIME'		=> (isset($header['INSTALLATION'][0]['children']['TIME'][0]['data'])) ? $header['INSTALLATION'][0]['children']['TIME'][0]['data'] : 0,
+ 
+ 			'AUTHOR_DETAILS'	=> $author_details,
+ 			'AUTHOR_NOTES'		=> nl2br(localise_tags($header, 'AUTHOR-NOTES')),
+
+

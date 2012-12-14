@@ -42,9 +42,11 @@ class parser
 		switch ($ext)
 		{
 			case 'xml':
-			default:
+				// fix ticket 62689 only enter parser if it is xml
+				//http://www.phpbb.com/bugs/modteamtools/62689
 				$this->parser = new parser_xml();
 			break;
+			default:
 		}
 	}
 
@@ -79,11 +81,11 @@ class parser
 	*/
 	function reverse_query($orig_query)
 	{
-		if (preg_match('#ALTER TABLE\s([a-z_]+)\sADD(COLUMN|)\s([a-z_]+)#i', $orig_query, $matches))
+		if (preg_match('#ALTER TABLE\s([a-z_]+)\sADD(?:\sCOLUMN)?\s([a-z_]+)#i', $orig_query, $matches))
 		{
-			return "ALTER TABLE {$matches[1]} DROP COLUMN {$matches[3]};";
+			return "ALTER TABLE {$matches[1]} DROP COLUMN {$matches[2]};";
 		}
-		else if (preg_match('#CREATE TABLE\s([a-z_])+#i', $orig_query, $matches))
+		else if (preg_match('#CREATE TABLE\s([a-z_]+)#i', $orig_query, $matches))
 		{
 			return "DROP TABLE {$matches[1]};";
 		}
@@ -98,6 +100,45 @@ class parser
 	*/
 	function parse_sql(&$sql_query)
 	{
+/*
+		global $dbms, $table_prefix;
+
+		if (!function_exists('get_available_dbms'))
+		{
+			global $phpbb_root_path, $phpEx;
+
+			include($phpbb_root_path . 'includes/functions_install.' . $phpEx);
+		}
+
+		static $available_dbms;
+
+		if (!isset($available_dbms))
+		{
+			$available_dbms = get_available_dbms($dbms);
+		}
+
+		$remove_remarks = $available_dbms[$dbms]['COMMENTS'];
+		$delimiter = $available_dbms[$dbms]['DELIM'];
+
+		if (sizeof($sql_query) == 1)
+		{
+			// do some splitting here
+			$sql_query = preg_replace('#phpbb_#i', $table_prefix, $sql_query);
+			$remove_remarks($sql_query[0]);
+			$sql_query = split_sql_file($sql_query[0], $delimiter);
+		}
+		else
+		{
+			$query_count = sizeof($sql_query);
+			for ($i = 0; $i < $query_count; $i++)
+			{
+				$sql_query[$i] = preg_replace('#phpbb_#i', $table_prefix, $sql_query[$i]);
+				$remove_remarks($sql_query[$i]);
+			}
+		}
+
+		//return $sql_query;
+*/
 	}
 
 	/**
@@ -108,85 +149,98 @@ class parser
 	{
 		$reverse_edits = array();
 
-		foreach ($actions['EDITS'] as $file => $edit_ary)
+		if (!empty($actions['EDITS']))
 		{
-			foreach ($edit_ary as $edit_id => $edit)
+			foreach ($actions['EDITS'] as $file => $edit_ary)
 			{
-				foreach ($edit as $find => $action_ary)
+				foreach ($edit_ary as $edit_id => $edit)
 				{
-					foreach ($action_ary as $type => $command)
+					foreach ($edit as $find => $action_ary)
 					{
-						// it is possible for a single edit in the install process
-						// to become more than one in the uninstall process
-						while (isset($reverse_edits['EDITS'][$file][$edit_id]))
+						foreach ($action_ary as $type => $command)
 						{
-							$edit_id++;
-						}
+							// it is possible for a single edit in the install process
+							// to become more than one in the uninstall process
+							while (isset($reverse_edits['EDITS'][$file][$edit_id]))
+							{
+								$edit_id++;
+							}
 
-						switch (strtoupper($type))
-						{
-							// for before and after adds, we use the find as a tool for more precise finds
-							// this isn't perfect, but it seems better than having
-							// finds of only a couple characters, like "/*"
-							case 'AFTER ADD':
-								$total_find = rtrim($find, "\n") . "\n" . trim($command, "\n");
+							switch (strtoupper($type))
+							{
+								// for before and after adds, we use the find as a tool for more precise finds
+								// this isn't perfect, but it seems better than having
+								// finds of only a couple characters, like "/*"
+								case 'AFTER ADD':
+									$total_find = rtrim($find, "\n") . "\n" . trim($command, "\n");
 
-								$reverse_edits['EDITS'][$file][$edit_id][$total_find]['replace with'] = $find;
-							break;
+									$reverse_edits['EDITS'][$file][$edit_id][$total_find]['replace with'] = $find;
+								break;
 
-							case 'BEFORE ADD':
-								$total_find = rtrim($command, "\n") . "\n" . trim($find, "\n");
+								case 'BEFORE ADD':
+									$total_find = rtrim($command, "\n") . "\n" . trim($find, "\n");
 
-								// replace with the find
-								$reverse_edits['EDITS'][$file][$edit_id][$total_find]['replace with'] = $find;
-							break;
+									// replace with the find
+									$reverse_edits['EDITS'][$file][$edit_id][$total_find]['replace with'] = $find;
+								break;
 
-							case 'REPLACE WITH':
-							case 'REPLACE, WITH':
-							case 'REPLACE-WITH':
-							case 'REPLACE':
-								// replace $command (new code) with $find (original code)
-								$reverse_edits['EDITS'][$file][$edit_id][$command]['replace with'] = $find;
-							break;
+								case 'REPLACE WITH':
+								case 'REPLACE, WITH':
+								case 'REPLACE-WITH':
+								case 'REPLACE':
+									// replace $command (new code) with $find (original code)
+									$reverse_edits['EDITS'][$file][$edit_id][$command]['replace with'] = $find;
+								break;
 
-							case 'IN-LINE-EDIT':
-								$action_id = 0;
-								// build the reverse just like the normal action
-								foreach ($command as $inline_find => $inline_action_ary)
-								{
-									foreach ($inline_action_ary as $inline_action => $inline_command)
+								case 'IN-LINE-EDIT':
+									// build the reverse just like the normal action
+									foreach ($command as $action_id => $inline_edit)
 									{
-										$inline_command = $inline_command[0];
-
-										switch (strtoupper($inline_action))
+										foreach ($inline_edit as $inline_find => $inline_action_ary)
 										{
-											case 'IN-LINE-AFTER-ADD':
-											case 'IN-LINE-BEFORE-ADD':
-												// Replace with a blank string
-												$reverse_edits['EDITS'][$file][$edit_id][$find]['in-line-edit'][$action_id][$inline_command]['in-line-replace'][] = '';
-											break;
+											foreach ($inline_action_ary as $inline_action => $inline_command)
+											{
+												$inline_command = $inline_command[0];
 
-											case 'IN-LINE-REPLACE':
-												// replace with the inline find
-												$reverse_edits['EDITS'][$file][$edit_id][$find]['in-line-edit'][$action_id][$inline_command][$inline_action][] = $inline_find;
-											break;
+												switch (strtoupper($inline_action))
+												{
+													case 'IN-LINE-AFTER-ADD':
+													case 'IN-LINE-BEFORE-ADD':
+														// Replace with a blank string
+														$reverse_edits['EDITS'][$file][$edit_id][$find]['in-line-edit'][$action_id][$inline_command]['in-line-replace'][] = '';
+													break;
 
-											default:
-												// For the moment, we do nothing.  What about increment?
-											break;
+													case 'IN-LINE-REPLACE':
+														// replace with the inline find
+														$reverse_edits['EDITS'][$file][$edit_id][$find]['in-line-edit'][$action_id][$inline_command][$inline_action][] = $inline_find;
+													break;
+
+													default:
+														// For the moment, we do nothing.  What about increment?
+													break;
+												}
+
+												$action_id++;
+											}
 										}
-
-										$action_id++;
 									}
-								}
-							break;
+								break;
 
-							default:
-								// again, increment
-							break;
+								default:
+									// again, increment
+								break;
+							}
 						}
 					}
 				}
+			}
+		}
+
+		if (!empty($actions['NEW_FILES']))
+		{
+			foreach ($actions['NEW_FILES'] as $source => $target)
+			{
+				$reverse_edits['DELETE_FILES'][$source] = $target;
 			}
 		}
 
@@ -255,7 +309,7 @@ class parser_xml
 
 		$header = array(
 			'MOD-VERSION'	=> array(0 => array('children' => array())),
-			'INSTALLATION'	=> array(0 => array('children' => array('TARGET-VERSION' => array(0 => array('data' => '')), ))),
+			'INSTALLATION'	=> array(0 => array('children' => array('TARGET-VERSION' => array(0 => array('data' => ''))))),
 			'AUTHOR-GROUP'	=> array(0 => array('children' => array('AUTHOR' => array()))),
 			'HISTORY'		=> array(0 => array('children' => array('ENTRY' => array()))),
 		);
@@ -402,6 +456,7 @@ class parser_xml
 						'href'		=> $link_group['LINK'][$i]['attrs']['HREF'],
 						'realname'	=> isset($link_group['LINK'][$i]['attrs']['REALNAME']) ? $link_group['LINK'][$i]['attrs']['REALNAME'] : core_basename($link_group['LINK'][$i]['attrs']['HREF']),
 						'title'		=> localise_tags($link_group, 'LINK', $i),
+						'lang'		=> $link_group['LINK'][$i]['attrs']['LANG'],
 					);
 				}
 			}
@@ -410,7 +465,8 @@ class parser_xml
 		// try not to hardcode schema?
 		$details = array(
 			'MOD_PATH' 		=> $this->file,
-			'MOD_NAME'		=> localise_tags($header, 'TITLE'),
+			'MOD_NAME'		=> get_title($header),
+//			'MOD_NAME'		=> localise_tags($header, 'TITLE'),
 			'MOD_DESCRIPTION'	=> nl2br(localise_tags($header, 'DESCRIPTION')),
 			'MOD_VERSION'		=> htmlspecialchars(trim($version)),
 //			'MOD_DEPENDENCIES'	=> (isset($header['TITLE'][0]['data'])) ? htmlspecialchars(trim($header['TITLE'][0]['data'])) : '',
@@ -775,7 +831,10 @@ class xml_array
 
 	function tag_data($parser, $tag_data)
 	{
-		if ($tag_data)
+		// Should be a string but' let's make sure.
+		$tag_data = (string) $tag_data;
+
+		if ($tag_data !== '')
 		{
 			if (isset($this->output[sizeof($this->output) - 1]['data']))
 			{
