@@ -222,7 +222,15 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			// Setup the sort tool
 			$sort = self::build_sort();
 		}
+
 		$sort->request();
+		$total_posts = $topic->get_postcount();
+
+		// Make sure the start parameter falls within the post count limit
+		if ($total_posts <= $sort->start)
+		{
+			$sort->start = (ceil($total_posts / $sort->limit) - 1) * $sort->limit;
+		}
 
 		$sql_ary = array(
 			'SELECT'	=> 'p.*',
