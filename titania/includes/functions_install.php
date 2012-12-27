@@ -302,6 +302,35 @@ function titania_custom($action, $version)
 						phpbb::$db->sql_query($sql);
 					}
 				break;
+
+				case '0.5.9' :
+					// Recalculate the filesize and hash for revisions that were cleaned on upload
+
+					$sql = 'SELECT attachment_id, attachment_directory, physical_filename, filesize
+						FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+						WHERE object_type = ' . TITANIA_CONTRIB . '
+							AND filetime > 1272334920'; // Only worry about revisions submitted after Titania was released
+					$result = phpbb::$db->sql_query($sql);
+
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$file_location = titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . $row['physical_filename'];
+						$filesize = (int) @filesize($file_location);
+						$row['filesize'] = (int) $row['filesize'];
+
+						// The zip file was cleaned...
+						if ($filesize != $row['filesize'])
+						{
+							$hash = md5_file($file_location);
+
+							$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+								SET filesize = ' . $filesize . ', hash = "' . phpbb::$db->sql_escape($hash) . '"
+								WHERE attachment_id = ' . (int) $row['attachment_id'];
+							phpbb::$db->sql_query($sql);
+						}
+					}
+					phpbb::$db->sql_freeresult($result);
+				break;
 			}
 		break;
 
