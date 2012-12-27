@@ -60,6 +60,13 @@ class titania_contrib_tools
 	public $md5_hash = '';
 
 	/**
+	* File size of the zip package
+	*
+	* @var int
+	*/
+	public $filesize = 0;
+
+	/**
 	* @param string $zip Full path to the zip package
 	* @param string $new_dir_name name of the directory you want to use in the zip package (leave blank if the initial steps have been run already)
 	*/
@@ -69,6 +76,8 @@ class titania_contrib_tools
 
 		// Calculate the md5
 		$this->md5_hash = md5_file($this->original_zip);
+
+		$this->filesize = @filesize($this->original_zip);
 
 		if ($new_dir_name)
 		{
@@ -361,6 +370,9 @@ class titania_contrib_tools
 
 		// Calculate the md5
 		$this->md5_hash = md5_file($this->original_zip);
+
+		// Get the new file size
+		$this->filesize = @filesize($this->original_zip);
     }
 
     /**
