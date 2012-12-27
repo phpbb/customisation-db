@@ -750,5 +750,8 @@ $versions = array(
 			array(TITANIA_ATTENTION_TABLE, 'notify_reporter', array('TINT:1', 0)),
 		),
 	),
+	'0.5.9'	=> array(
+		'custom'	=> 'titania_custom',
+	),
 	// IF YOU ADD A NEW VERSION DO NOT FORGET TO INCREMENT THE VERSION NUMBER IN common.php!
 );
