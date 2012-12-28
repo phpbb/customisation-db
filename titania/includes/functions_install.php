@@ -315,6 +315,11 @@ function titania_custom($action, $version)
 					while ($row = phpbb::$db->sql_fetchrow($result))
 					{
 						$file_location = titania::$config->upload_path . utf8_basename($row['attachment_directory']) . '/' . $row['physical_filename'];
+
+						if (!@file_exists($file_location))
+						{
+							continue;
+						}
 						$filesize = (int) @filesize($file_location);
 						$row['filesize'] = (int) $row['filesize'];
 
