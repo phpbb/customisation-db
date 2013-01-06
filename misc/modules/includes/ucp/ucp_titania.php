@@ -413,9 +413,10 @@ class ucp_titania
 			break;
 		}
 
+		$styles_path = titania::$absolute_path . 'styles/';
 		phpbb::$template->assign_vars(array(
 			'S_ACTION'				=> $url,
-			'TITANIA_THEME_PATH' 	=> titania::$absolute_path . 'styles/' . titania::$config->style . '/theme/'
+			'TITANIA_THEME_PATH' 	=> (titania::$config->theme) ? $styles_path . titania::$config->theme . '/theme/' : $styles_path . titania::$config->style . '/theme/'
 		));
 
 		titania::page_header(phpbb::$user->lang['SUBSCRIPTION_TITANIA']);
