@@ -97,6 +97,7 @@ $(document).ready(function(){
 		}
 
 		var post = $(postbody).children('.content');
+		var redirect = true;
 
 		// Store the original post in case the user cancels the edit
 		$(post).after($(post).clone());
@@ -108,6 +109,9 @@ $(document).ready(function(){
 			url: $(post).parent().children('.quick_edit').val(),
 			success: function(html){
 				$(post).replaceWith(html);
+
+				// The request succeeded, so do not follow the link
+				redirect = false;
 
 				var quickeditor = $(postbody).children('form').children('textarea');
 
@@ -139,7 +143,10 @@ $(document).ready(function(){
 		});
 
 		// Do not follow the link
-		e.preventDefault();
+		if (!redirect)
+		{
+			e.preventDefault();
+		}
 	});
 
 	// Canceled quick edit, so display original post again
