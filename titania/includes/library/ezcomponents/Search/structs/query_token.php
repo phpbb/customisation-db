@@ -26,6 +26,8 @@ class ezcSearchQueryToken
     const LOGICAL_AND = 8;
     const LOGICAL_OR  = 9;
     const COLON  = 10;
+    const BRACKET_OPEN = 11;
+    const BRACKET_CLOSE = 12;
 
     /**
      * Token type
