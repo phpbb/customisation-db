@@ -703,6 +703,8 @@ class ezcSearchSolrHandler implements ezcSearchHandler, ezcSearchIndexHandler
                 {
                     $value = '"' . str_replace( '"', '\"', $value ) . '"';
                 }
+                // Escape brackets inside the value: https://www.phpbb.com/bugs/titania/63330
+                $value = str_replace(array('[', ']'), array('\[', '\]'), $value);
                 break;
 
             case ezcSearchDocumentDefinition::INT:
