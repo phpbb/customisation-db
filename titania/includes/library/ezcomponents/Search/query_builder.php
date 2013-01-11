@@ -112,11 +112,9 @@ class ezcSearchQueryBuilder
             'and' => ezcSearchQueryToken::LOGICAL_AND,
             'or'  => ezcSearchQueryToken::LOGICAL_OR,
             ':'   => ezcSearchQueryToken::COLON,
-            '['		=> ezcSearchQueryToken::BRACKET_OPEN,
-            ']'		=> ezcSearchQueryToken::BRACKET_CLOSE,
         );
         $tokens = array();
-        $tokenArray = preg_split( '@(\s)|(["+():-\[\]])@', $searchQuery, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
+        $tokenArray = preg_split( '@(\s)|(["+():-])@', $searchQuery, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
         foreach ( $tokenArray as $token )
         {
             if ( isset( $map[strtolower( $token )] ) )
