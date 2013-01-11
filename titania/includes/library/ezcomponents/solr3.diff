@@ -1,0 +1,13 @@
+--- /Search/handlers/solr.php (Source)
++++ /Search/handlers/solr.php (Titania)
+@@ -702,7 +702,9 @@
+                 if ( strpbrk( $value, ' ":' ) !== false )
+                 {
+                     $value = '"' . str_replace( '"', '\"', $value ) . '"';
+-                }
++                }
++                // Escape brackets inside the value: https://www.phpbb.com/bugs/titania/63330
++                $value = str_replace(array('[', ']'), array('\[', '\]'), $value);
+                 break;
+ 
+             case ezcSearchDocumentDefinition::INT:
