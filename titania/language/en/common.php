@@ -125,13 +125,16 @@ $lang = array_merge($lang, array(
 	'HARD_DELETE'				=> 'Hard Delete',
 	'HARD_DELETE_EXPLAIN'		=> 'Select to permanently delete this item.',
 	'HARD_DELETE_TOPIC'			=> 'Hard Delete Topic',
+	'HOUR'						=> 'Hour',
 
 	'LANGUAGE_PACK'				=> 'Language Pack',
+	'LESS_THAN_A_MINUTE'		=> 'Less than a minute',
 	'LIST'						=> 'List',
 
 	'MAKE_CATEGORY_VISIBLE'		=> 'Make Category Visible',
 	'MANAGE'					=> 'Manage',
 	'MARK_CONTRIBS_READ'		=> 'Mark contributions read',
+	'MINUTE'					=> 'Minute',
 	'MOVE_CONTRIBS_TO'			=> 'Move Contributions to',
 	'MOVE_DOWN'					=> 'Move down',
 	'MOVE_SUBCATS_TO'			=> 'Move Subcategories to',
@@ -162,6 +165,7 @@ $lang = array_merge($lang, array(
 
 	'QUEUE'						=> 'Queue',
 	'QUEUE_DISCUSSION'			=> 'Queue Discussion',
+	'QUEUE_STATS'				=> 'Queue Statistics',
 	'QUICK_ACTIONS'				=> 'Quick Actions',
 
 	'RATING'					=> 'Rating',
