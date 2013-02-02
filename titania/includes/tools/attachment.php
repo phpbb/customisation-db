@@ -218,7 +218,7 @@ class titania_attachment extends titania_database_object
 	 * Parse the uploader
 	 *
 	 * @param <string> $tpl_file The name of the template file to use to create the uploader
-	 * @param <bool> $custom_sort Sort using value from attachmen_order field
+	 * @param <bool> $custom_sort Function used to sort the attachments
 	 * @return <string> The parsed HTML code ready for output
 	 */
 	public function parse_uploader($tpl_file = 'posting/attachments/default.html', $custom_sort = false)
@@ -250,9 +250,9 @@ class titania_attachment extends titania_database_object
 		if ($custom_sort)
 		{
 			// Sort using attachmen_order field
-			uasort($this->attachments, 'titania_attach_order_compare');
+			uasort($this->attachments, $custom_sort);
 		}
-		else
+		else if ($custom_sort === false)
 		{
 			// Sort correctly
 			if (phpbb::$config['display_order'])
@@ -702,7 +702,7 @@ class titania_attachment extends titania_database_object
 	* @param string $tpl The template file to use
 	* @param bool $preview true if previewing from the posting page
 	* @param string|bool $template_block If not false we will output the parsed attachments to this template block
-	* @param bool $custom_sort Sort attachments by attachment_order.
+	* @param bool $custom_sort Function used to sort the attachments.
 	*
 	* @return array the parsed attachments
 	*/
@@ -727,9 +727,9 @@ class titania_attachment extends titania_database_object
 		// Sort correctly
 		if ($custom_sort)
 		{
-			uasort($this->attachments, 'titania_attach_order_compare');
+			uasort($this->attachments, $custom_sort);
 		}
-		else
+		else if ($custom_sort === false)
 		{
 			if (phpbb::$config['display_order'])
 			{
