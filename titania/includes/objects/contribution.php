@@ -337,17 +337,25 @@ class titania_contribution extends titania_message_object
 
 		if (sizeof($this->revisions))
 		{
+			$has_translations = false;
 			// Get translations
 			$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . '
 				WHERE object_type = ' . TITANIA_TRANSLATION . '
 					AND is_orphan = 0
-					AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', array_keys($this->revisions)));
+					AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', array_keys($this->revisions))) . '
+				ORDER BY ' . phpbb::$db->sql_lower_text('real_filename') . ' ASC'; 
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
 				$this->revisions[$row['object_id']]['translations'][] = $row;
+				$has_translations = true;
 			}
 			phpbb::$db->sql_freeresult($result);
+
+			if ($has_translations)
+			{
+				phpbb::$template->assign_var('S_TRANSLATIONS', true);
+			}
 
 			// Get phpBB versions supported
 			$sql = 'SELECT revision_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
@@ -646,12 +654,12 @@ class titania_contribution extends titania_message_object
 			{
 				$screenshots = $this->screenshots->get_attachments();
 				$indices = array_keys($screenshots);
-				$custom_sort = true;
+				$custom_sort = 'titania_attach_order_compare';
 
 				if ((sizeof($indices) > 1))
 				{
 					// If attachment_order hasn't been filled, then we fall back to the default behavior of sorting by attachment_id. 
-					$custom_sort = ($screenshots[$indices[1]]['attachment_order'] >= 1) ? true : false;
+					$custom_sort = ($screenshots[$indices[1]]['attachment_order'] >= 1) ? $custom_sort : false;
 				}
 
 				$this->screenshots->parse_attachments($message = false, false, false, 'screenshots', $custom_sort);

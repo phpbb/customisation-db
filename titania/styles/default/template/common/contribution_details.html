@@ -226,13 +226,14 @@
 	<div class="inner"><span class="corners-top main-corners"><span></span></span>
 		<div id="extratabs">
 		    <ul id="extratabs-head">
-		        <!-- IF S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
+		        <!-- IF S_IN_QUEUE and .revisions --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
 		        <!-- IF SCREENSHOT_COUNT > 1 --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
+				<!-- IF S_TRANSLATIONS --><li><a href="#translations-panel"><span>{L_TRANSLATIONS}</span></a></li><!-- ENDIF -->
 		        <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
 		        <!-- IF U_NEW_REVISION --><li><a href="{U_NEW_REVISION}"><span>{L_NEW_REVISION}</span></a></li><!-- ENDIF -->
 		    </ul>
 
-		    <!-- IF S_IN_QUEUE and (.revisions or U_NEW_REVISION) -->
+		    <!-- IF S_IN_QUEUE and .revisions -->
 		    <div id="revisions-panel" class="tab-panel">
 				<div class="clear"></div>
 
@@ -255,8 +256,53 @@
 			<!-- ENDIF -->
 		    </div>
 		    <!-- ENDIF -->
+		    
+			<!-- IF S_TRANSLATIONS -->
+			<div id="translations-panel" class="tab-panel">
+				<span class="clear"></span>
+				<ul class="topiclist simple">
+					<li class="header">
+						<dl>
+							<dt>{L_TRANSLATIONS}</dt>
+							<dd class="revision-version">{L_VERSION}</dd>
+						</dl>
+					</li>
+				</ul>
+				<ul class="topiclist cplist">
+					<!-- BEGIN revisions -->
+						<!-- IF .revisions.translations -->
+						<li class="row bg1">
+							<dl>
+								<dt>
+							<!-- BEGIN translations -->
+								<!-- IF revisions.translations.S_FIRST_ROW -->
+								<div class="column1">
+									<ul>
+								<!-- ENDIF -->
+										<li><a class="left" href="{revisions.translations.U_DOWNLOAD_LINK}" title="{revisions.translations.FILESIZE} {revisions.translations.SIZE_LANG} &bull; {revisions.translations.L_DOWNLOAD_COUNT}">{revisions.translations.DOWNLOAD_NAME}</a></li>
+								<!-- IF not revisions.translations.S_FIRST_ROW and not revisions.translations.S_LAST_ROW and (revisions.TOTAL_TRANSLATIONS - (revisions.translations.S_ROW_COUNT * 2) <= 1) -->
+									</ul>
+								</div>
+								<div class="column2">
+									<ul>
+								<!-- ENDIF --> 
+								<!-- IF revisions.translations.S_LAST_ROW -->
+									</ul>
+								</div>
+								<!-- ENDIF -->
+							<!-- END translations -->		
+								</dt>
+								<dd class="revision-version">
+									{revisions.VERSION}
+								</dd>
+							</dl>
+						</li>
+						<!-- ENDIF -->
+				<!-- END revisions -->
+			</div>
+			<!-- ENDIF -->
 
-		    <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) -->
+		    <!-- IF not S_IN_QUEUE and .revisions -->
 		    <div id="revisions-panel" class="tab-panel">
 				<div class="clear"></div>
 
