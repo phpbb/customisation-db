@@ -466,6 +466,14 @@ dd.revision-phpbb-version {
 	width: 20%;
 }
 
+#translations-panel dl dt {
+	width: 75%;
+}
+
+#translations-panel dl dt ul li {
+	padding: 2px 0;
+}
+
 ul.topiclist dd.revision-actions {
 	text-align: right;
 	width: 8%;
