@@ -184,7 +184,8 @@ class titania_revision extends titania_database_object
 			'BBC_BBCODE_USAGE'		=> $this->revision_bbc_bbcode_usage,
 			'BBC_HELPLINE'			=> $this->revision_bbc_help_line,
 			'INSTALL_LEVEL'			=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
-			'DOWNLOADS'			=> isset($this->download_count) ? $this->download_count : 0,
+			'DOWNLOADS'				=> isset($this->download_count) ? $this->download_count : 0,
+			'TOTAL_TRANSLATIONS'	=> sizeof($this->translations),
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_COLORIZEIT'      => $url_colorizeit,
@@ -217,12 +218,7 @@ class titania_revision extends titania_database_object
 			$translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
 			$translations->store_attachments($this->translations);
 
-			foreach ($translations->parse_attachments($message = false) as $attachment)
-			{
-				phpbb::$template->assign_block_vars($tpl_block . '.translations', array(
-					'DISPLAY_ATTACHMENT'	=> $attachment,
-				));
-			}
+			$translations->parse_attachments($message = false, false, false, $tpl_block . '.translations', '');
 		}
 
 		phpbb::$template->assign_var('ICON_EDIT', '<img src="' . titania::$images_path . 'icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />');
