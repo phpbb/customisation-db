@@ -168,27 +168,34 @@ $(document).ready(function(){
 	});
 
 	// Hide all of the revision details
-	$('.revisions li.row:not(.first) .revision-details').hide();
-	// Add toggle button to each revision
-	$('.revisions li.row').each(function() {
-		var toggle_class = ($(this).hasClass('first')) ? 'contract' : 'expand';
+	$('.revisions li.row:not(":first") .revision-details').hide();
+	// Add toggle button to each revision and translation
+	$('.revisions li.row, .translations li.row').each(function() {
+		var toggle_class = ($(this).is(':first-child')) ? 'contract' : 'expand';
 
 		$(this).prepend('<a href="" class="toggle '+toggle_class+'"></a>');
+	});
+
+	// Only show the top 3 translations in each column
+	$('.translations li.row:not(":first") dt div ul').each(function() {
+		$('li:eq(1)', this).nextAll().hide();
 	});
 
 	// Show revision details on click
 	$('.revisions > li a.toggle').click(function(e) {
 		e.preventDefault();
-
-		if ($(this).hasClass('expand'))
-		{
-			$(this).removeClass('expand').addClass('contract');
-		}
-		else
-		{
-			$(this).removeClass('contract').addClass('expand');
-		}
+		toggle_icon(this);
 		$(this).parents('li.row').children('.revision-details').toggle('fast');
+	});
+
+	// Toggle extra translations
+	$('.translations > li a.toggle').click(function(e) {
+		e.preventDefault();
+
+		$(this).siblings('dl').find('dt div ul').each(function() {
+			$('li:eq(1)', this).nextAll().toggle();
+		});
+		toggle_icon(this);
 	});
 
 	// Queue Subactions
@@ -313,4 +320,16 @@ function show_all_revisions(box)
 
 		$(this).parent().parent().children('.show-all').hide();
 	});
+}
+
+function toggle_icon(e)
+{
+	if ($(e).hasClass('expand'))
+	{
+		$(e).removeClass('expand').addClass('contract');
+	}
+	else
+	{
+		$(e).removeClass('contract').addClass('expand');
+	}
 }
