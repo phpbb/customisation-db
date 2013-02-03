@@ -185,7 +185,7 @@ class titania_revision extends titania_database_object
 			'BBC_HELPLINE'			=> $this->revision_bbc_help_line,
 			'INSTALL_LEVEL'			=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
 			'DOWNLOADS'				=> isset($this->download_count) ? $this->download_count : 0,
-			'TOTAL_TRANSLATIONS'	=> sizeof($this->translations),
+			'HALF_TRANSLATIONS'		=> ceil(sizeof($this->translations) / 2),
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_COLORIZEIT'      => $url_colorizeit,
