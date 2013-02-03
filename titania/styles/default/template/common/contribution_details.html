@@ -268,7 +268,7 @@
 						</dl>
 					</li>
 				</ul>
-				<ul class="topiclist cplist">
+				<ul class="topiclist cplist translations">
 					<!-- BEGIN revisions -->
 						<!-- IF .revisions.translations -->
 						<li class="row bg1">
@@ -280,7 +280,7 @@
 									<ul>
 								<!-- ENDIF -->
 										<li><a class="left" href="{revisions.translations.U_DOWNLOAD_LINK}" title="{revisions.translations.FILESIZE} {revisions.translations.SIZE_LANG} &bull; {revisions.translations.L_DOWNLOAD_COUNT}">{revisions.translations.DOWNLOAD_NAME}</a></li>
-								<!-- IF not revisions.translations.S_FIRST_ROW and not revisions.translations.S_LAST_ROW and (revisions.TOTAL_TRANSLATIONS - (revisions.translations.S_ROW_COUNT * 2) <= 1) -->
+								<!-- IF not revisions.translations.S_FIRST_ROW and not revisions.translations.S_LAST_ROW and (revisions.HALF_TRANSLATIONS == (revisions.translations.S_ROW_COUNT + 1)) -->
 									</ul>
 								</div>
 								<div class="column2">
@@ -299,6 +299,7 @@
 						</li>
 						<!-- ENDIF -->
 				<!-- END revisions -->
+				</ul>
 			</div>
 			<!-- ENDIF -->
 
