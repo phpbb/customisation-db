@@ -383,20 +383,6 @@ if ($step == 1)
 			// Replace the uploaded zip package with the new one
 			$contrib_tools->replace_zip();
 
-			if ($old_hash != $contrib_tools->md5_hash)
-			{
-				$sql_ary = array(
-					'filesize'	=> $contrib_tools->filesize,
-					'hash'		=> $contrib_tools->md5_hash,
-				);
-
-				// Update the db with the new filesize and hash
-				$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
-					SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-					WHERE attachment_id = ' . (int) $revision_attachment->attachment_id;
-				phpbb::$db->sql_query($sql);
-			}
-
 			if (titania_types::$types[titania::$contrib->contrib_type]->mpv_test && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
 			{
 				phpbb::$template->assign_var('MPV_TEST_WARNING', true);
@@ -485,10 +471,15 @@ if ($step > sizeof(titania_types::$types[titania::$contrib->contrib_type]->uploa
 	// Update the queue (make visible)
 	$revision->update_queue();
 
-	// Update the attachment MD5, it may have changed
+	$sql_ary = array(
+		'filesize'	=> $contrib_tools->filesize,
+		'hash'		=> $contrib_tools->md5_hash,
+	);
+
+	// Update the attachment MD5 and filesize, it may have changed
 	$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
-		SET hash = \'' . phpbb::$db->sql_escape($contrib_tools->md5_hash) . '\'
-		WHERE attachment_id = ' . $revision_attachment->attachment_id;
+		SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+		WHERE attachment_id = ' . (int) $revision_attachment->attachment_id;
 	phpbb::$db->sql_query($sql);
 
 	if ($repack)
