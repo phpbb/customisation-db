@@ -299,7 +299,7 @@ if ($step == 1)
 
 				if ($repack)
 				{
-					if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate') && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
+					if (!titania::$contrib->is_active_coauthor && !titania::$contrib->is_author && titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate') && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
 					{
 						redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
 					}
@@ -480,6 +480,8 @@ if ($step > sizeof(titania_types::$types[titania::$contrib->contrib_type]->uploa
 	$revision->revision_submitted = true;
 	$revision->submit();
 
+	$queue = $revision->get_queue();
+
 	// Update the queue (make visible)
 	$revision->update_queue();
 
@@ -489,13 +491,21 @@ if ($step > sizeof(titania_types::$types[titania::$contrib->contrib_type]->uploa
 		WHERE attachment_id = ' . $revision_attachment->attachment_id;
 	phpbb::$db->sql_query($sql);
 
-	if ($repack && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
+	if ($repack)
 	{
-		redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
+		if (!titania::$contrib->is_active_coauthor && !titania::$contrib->is_author && titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate') && titania::$config->use_queue && titania_types::$types[titania::$contrib->contrib_type]->use_queue)
+		{
+			redirect(titania_url::build_url('manage/queue', array('q' => $revision->revision_queue_id)));
+		}
+
+		// Reset this now that the author has repacked it.
+		$queue->allow_author_repack = false;
+		$queue->submit();
+
+		redirect(titania::$contrib->get_url());
 	}
 
 	// Subscriptions
-	$queue = $revision->get_queue();
 	if ($queue)
 	{
 		$email_vars = array(
