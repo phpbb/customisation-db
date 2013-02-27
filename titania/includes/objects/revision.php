@@ -373,6 +373,11 @@ class titania_revision extends titania_database_object
 				{
 					$this->contrib->change_status(TITANIA_CONTRIB_APPROVED);
 				}
+				else
+				{
+					// Add the revision to the Composer package
+					$this->update_composer_package();
+				}
 
 				// Update the revisions phpbb version table
 				$sql = 'UPDATE ' . TITANIA_REVISIONS_PHPBB_TABLE . '
@@ -408,6 +413,8 @@ class titania_revision extends titania_database_object
 				phpbb::$db->sql_query($sql);
 
 				$sql_ary['validation_date'] = 0;
+				// Remove the revision from the Composer package
+				$this->update_composer_package('remove');
 			break;
 		}
 
@@ -510,6 +517,7 @@ class titania_revision extends titania_database_object
 		$attachment->attachment_id = $this->attachment_id;
 		$attachment->load();
 		$attachment->delete();
+		$this->update_composer_package('remove');
 
 		// Delete translations
 		// $translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
@@ -618,5 +626,30 @@ class titania_revision extends titania_database_object
 		}
 
 		return titania_url::build_url('download', array('id' => $this->attachment_id));
+	}
+
+	/**
+	 * Add/remove the revision from the Composer packages file.
+	 */
+	public function update_composer_package($mode = 'add')
+	{
+		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
+		$package_helper = new titania_composer_package_helper();
+
+		if (!titania::$config->composer_vendor_name || !titania_types::$types[$this->contrib->contrib_type]->create_composer_packages || !$package_helper->packages_dir_writable())
+		{
+			return;
+		}
+		$package_manager = new titania_composer_package_manager($this->contrib->contrib_id, $this->contrib->contrib_name_clean, $this->contrib->contrib_type, $package_helper);
+
+		if ($mode == 'add')
+		{
+			$package_manager->add_release($this->revision_version, $this->attachment_id, true);
+		}
+		else
+		{
+			$package_manager->remove_release($this->revision_version);
+		}
+		$package_manager->submit();
 	}
 }

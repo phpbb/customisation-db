@@ -902,6 +902,7 @@ class titania_contribution extends titania_message_object
 		switch ($old_status)
 		{
 			case TITANIA_CONTRIB_APPROVED :
+				$this->update_composer_package('remove');
 			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
 				// Decrement the count for the authors
 				$this->change_author_contrib_count($author_list, '-', true);
@@ -918,6 +919,7 @@ class titania_contribution extends titania_message_object
 		switch ($this->contrib_status)
 		{
 			case TITANIA_CONTRIB_APPROVED :
+				$this->update_composer_package();
 			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
 				// Increment the count for the authors
 				$this->change_author_contrib_count($author_list);
@@ -1567,6 +1569,8 @@ class titania_contribution extends titania_message_object
 			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
+		$this->update_composer_package('remove');
+
 		// Self delete
 		parent::delete();
 	}
@@ -1630,5 +1634,40 @@ class titania_contribution extends titania_message_object
 		);
 
 		titania_search::index(TITANIA_CONTRIB, $this->contrib_id, $data);
+	}
+
+	/**
+	 * Add/remove the contribution from the Composer packages file.
+	 */
+	public function update_composer_package($mode = 'add')
+	{
+		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
+		$package_helper = new titania_composer_package_helper();
+
+		if (!titania::$config->composer_vendor_name || !titania_types::$types[$this->contrib_type]->create_composer_packages || !$package_helper->packages_dir_writable())
+		{
+			return;
+		}
+		$package_manager = new titania_composer_package_manager($this->contrib_id, $this->contrib_name_clean, $this->contrib_type, $package_helper);
+
+		if ($mode == 'add')
+		{
+			$sql = 'SELECT revision_version, attachment_id
+				FROM ' . TITANIA_REVISIONS_TABLE . '
+				WHERE revision_status = ' . TITANIA_REVISION_APPROVED . '
+					AND contrib_id = ' . (int) $this->contrib_id;
+			$result = phpbb::$db->sql_query($sql);
+
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$package_manager->add_release($row['revision_version'], $row['attachment_id'], true);
+			}
+			phpbb::$db->sql_freeresult($result);
+		}
+		else if ($mode == 'remove')
+		{
+			$package_manager->remove_package();
+		}
+		$package_manager->submit();
 	}
 }

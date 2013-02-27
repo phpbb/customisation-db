@@ -42,6 +42,9 @@ class titania_config extends titania_object
 			'language_path'				=> array('default' => TITANIA_ROOT . 'language/'),
 			'table_prefix'				=> array('default' => 'customisation_'),
 
+			// Unique Composer vendor name. 
+			'composer_vendor_name'		=> array('default' => ''),
+
 			// Increment the user's post count?  Array of the post_types for which we will increment the post count
 			'increment_postcount'		=> array('default' => array(TITANIA_SUPPORT)),
 

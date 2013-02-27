@@ -239,6 +239,7 @@ if ($step == 1)
 			{
 				titania::$contrib->change_status(TITANIA_CONTRIB_APPROVED);
 			}
+			$revision->update_composer_package();
 		}
 
 		$revision->submit();
