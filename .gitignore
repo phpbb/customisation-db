@@ -6,3 +6,4 @@ Thumbs.db
 *.bak
 titania/files/revisions/*
 titania/files/screenshots/*
+titania/composer/*
