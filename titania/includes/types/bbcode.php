@@ -42,7 +42,12 @@ class titania_type_bbcode extends titania_type_base
 	 * Require upload?
 	*/
 	public $require_upload = false;
-	
+
+	/**
+	 * BBCodes are not downloadable, so don't create Composer packages
+	*/
+	public $create_composer_packages = false;
+
 	/**
 	 * For the url slug
 	 *
