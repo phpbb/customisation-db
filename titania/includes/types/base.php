@@ -140,6 +140,26 @@ class titania_types
 		return $strict;
 	}
 
+	/**
+	* Get the types that use Composer
+	*/
+	public static function use_composer($negate = false)
+	{
+		$types = array();
+
+		foreach (self::$types as $type_id => $class)
+		{
+			$include = ($negate) ? (!$class->create_composer_packages) : ($class->create_composer_packages);
+
+			if ($include)
+			{
+				$types[] = $type_id;
+			}
+		}
+		
+		return $types;
+	}
+
 	public static function increment_count($type)
 	{
 		self::$types[$type]->increment_count();
@@ -244,6 +264,13 @@ class titania_type_base
 	 * @var bool
 	 */
 	public $require_upload = true;
+
+	/**
+	 * Create Composer packages for the type
+	 *
+	 * @var bool
+	 */
+	public $create_composer_packages = true;
 
 	/**
 	* Find the root of the install package for this type?  If so, what to search for (see contrib_tools::find_root())?
