@@ -18,13 +18,6 @@ if (!defined('IN_TITANIA'))
 class titania_types
 {
 	/**
-	* The type name
-	*
-	* @var string (any lang key that includes the type should match this value)
-	*/
-	public $name = '';
-	
-	/**
 	* Store the types we've setup
 	*
 	* @var array(type_id => type_class)
@@ -198,6 +191,13 @@ class titania_type_base
 	public $url = 'contribution';
 
 	/**
+	 * The type name
+	 *
+	 * @var string (any lang key that includes the type should match this value)
+	 */
+	public $name = '';
+
+	/**
 	 * The language for this type, initialize in constructor ($langs is for the plural forms of the language variables, used in category management)
 	 *
 	 * @var string
@@ -271,6 +271,13 @@ class titania_type_base
 	 * @var bool
 	 */
 	public $create_composer_packages = true;
+
+	/**
+	 * Allow revisions for a future release to be submitted
+	 *
+	 * @var bool
+	 */
+	public $prerelease_submission_allowed = false;
 
 	/**
 	* Find the root of the install package for this type?  If so, what to search for (see contrib_tools::find_root())?

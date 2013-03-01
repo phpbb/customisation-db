@@ -60,6 +60,8 @@ class titania_type_translation extends titania_type_base
 
 	public $root_not_found_key = 'COULD_NOT_FIND_TRANSLATION_ROOT';
 
+	public $prerelease_submission_allowed = true;
+
 	public $validate_translation = true;
 
 	/* Extra upload files disabled on Translation revisions */
@@ -193,15 +195,20 @@ class titania_type_translation extends titania_type_base
 		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
 		$validation_tools = new translation_validation($contrib_tools->original_zip, $new_dir_name);
 
-		$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
-			WHERE revision_id = ' . $revision->revision_id;
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
+		if (empty($revision->phpbb_versions))
 		{
-			$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
-			$reference_filepath = $validation_tools->automod_phpbb_files($version_string); // path to files against which we will validate the package
+			$revision->load_phpbb_versions();
 		}
 
+		$version = $revision->phpbb_versions[0];
+		// If the revision is on hold, it's being submitted for a future version.
+		if ($revision->revision_status == TITANIA_REVISION_ON_HOLD)
+		{
+			$version['phpbb_version_revision'] = titania::$config->prerelease_phpbb_version[$version['phpbb_version_branch']];
+		}
+		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
+
+		$reference_filepath = $validation_tools->automod_phpbb_files($version_string); // path to files against which we will validate the package
 		$errors = $validation_tools->check_package($reference_filepath);
 
 		if (!empty($errors))
