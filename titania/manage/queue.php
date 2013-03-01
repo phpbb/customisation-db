@@ -168,6 +168,18 @@ if ($queue_id)
 				titania::needs_auth();
 			}
 
+			if ($action == 'approve')
+			{
+				$revision = $queue->get_revision();
+				$revision->load_phpbb_versions();
+				$branch = $revision->phpbb_versions[0]['phpbb_version_branch'];
+
+				if ($revision->revision_status == TITANIA_REVISION_ON_HOLD && prerelease_submission_allowed($branch, $contrib->contrib_type))
+				{
+					trigger_error('ERROR_REVISION_ON_HOLD');
+				}
+			}
+
 			// Load the message object for the validation reason
 			$queue->message_fields_prefix = 'message_validation';
 			$message_object = new titania_message($queue);
@@ -204,8 +216,6 @@ if ($queue_id)
 							titania::$cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
 							// Reload the contrib, it hath changed
 							$contrib->load((int) $queue->contrib_id);
-
-							$revision = $queue->get_revision();
 
 							$sql = 'SELECT attachment_directory, physical_filename FROM ' . TITANIA_ATTACHMENTS_TABLE . '
 								WHERE attachment_id = ' . (int) $revision->attachment_id;
