@@ -119,6 +119,9 @@ $error = array();
 $require_upload = titania_types::$types[titania::$contrib->contrib_type]->require_upload;
 $is_bbcode = (titania::$contrib->contrib_type == TITANIA_TYPE_BBCODE);
 
+// Hard-code the version for now... :-/
+$prerelease_submission_allowed = prerelease_submission_allowed('30', titania::$contrib->contrib_type);
+
 if ($step == 1)
 {
 	// Set up attachment object to get some default values
@@ -133,6 +136,7 @@ if ($step == 1)
 	$revision_bbc_demo		= utf8_normalize_nfc(request_var('revision_bbc_demo', '', true));
 	$queue_allow_repack 	= request_var('queue_allow_repack', 0);
 	$revision_license 		= utf8_normalize_nfc(request_var('revision_license', '', true));
+	$prerelease_submission	= request_var('prerelease_submission', false);
 
 	// Check for errors
 	$error = array_merge($error, $revision_attachment->error);
@@ -204,6 +208,7 @@ if ($step == 1)
 			'attachment_id'			=> $revision_attachment->attachment_id,
 			'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', '', true)),
 			'revision_version'		=> $revision_version,
+			'revision_status'		=> ($prerelease_submission_allowed && $prerelease_submission) ? TITANIA_REVISION_ON_HOLD : TITANIA_REVISION_NEW,
 			'queue_allow_repack'	=> $queue_allow_repack,
 			'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE'] || !titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? $revision_license : utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
 			'revision_bbc_html_replace'		=> $revision_html_replace,
@@ -597,11 +602,13 @@ if ($step == 0 || sizeof($error))
 
 		'NEXT_STEP'					=> 1,
 
+		'S_CAN_SUBMIT_PRERELEASE_VERSION'	=> $prerelease_submission_allowed,
 		'S_CAN_SUBSCRIBE'					=> ($author_subscribed || !$allow_subscription) ? false : true,
 		'S_CUSTOM_LICENSE'					=> (utf8_normalize_nfc(request_var('revision_license', '', true)) == phpbb::$user->lang['CUSTOM_LICENSE']) ? true : false,
 		'S_ALLOW_CUSTOM_LICENSE'			=> (titania_types::$types[titania::$contrib->contrib_type]->license_allow_custom) ? true : false,
 		'S_REQUIRE_UPLOAD'					=> $require_upload,
 		'S_TYPE_BBCODE'						=> $is_bbcode,
+		'SUBMIT_PRERELEASE_VERSION'			=> request_var('prerelease_submission', false),
 		'SUBSCRIBE_AUTHOR'					=> request_var('subscribe_author', false),
 	));
 
