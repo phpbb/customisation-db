@@ -447,3 +447,17 @@ function format_time_delta($start_time, $end_time = 0)
 
 	return $delta . ' ' . phpbb::$user->lang[$delta_label] ;
 }
+
+function prerelease_submission_allowed($branch, $contrib_type)
+{
+	if (empty(titania::$config->prerelease_phpbb_version[$branch]) || empty(titania::$config->phpbb_versions[$branch]) || !titania_types::$types[$contrib_type]->prerelease_submission_allowed)
+	{
+		return false;
+	}
+
+	$branch_string = $branch[0] . '.' . $branch[1] . '.';
+	$current_version = $branch_string . titania::$config->phpbb_versions[$branch]['latest_revision'];
+	$next_version = $branch_string . titania::$config->prerelease_phpbb_version[$branch];
+
+	return phpbb_version_compare($current_version, $next_version, '<');
+}

@@ -344,13 +344,19 @@ class queue_overlord
 				'class'			=> 'misc',
 			);
 
+			$phpbb_branch = $contrib->revisions[$row['revision_id']]['phpbb_versions'][0]['phpbb_version_branch'];
+
 			// Validation
 			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
 			{
-				$quick_actions['APPROVE'] = array(
-					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve', 'start' => '*destroy*')),
-					'class'		=> 'approve',
-				);
+				// If this is a prerelease submission, don't allow it to be approved unless the new phpBB version has been released.
+				if ($row['revision_status'] == TITANIA_REVISION_NEW || ($row['revision_status'] == TITANIA_REVISION_ON_HOLD && !prerelease_submission_allowed($phpbb_branch, $contrib->contrib_type)))
+				{
+					$quick_actions['APPROVE'] = array(
+						'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve', 'start' => '*destroy*')),
+						'class'		=> 'approve',
+					);
+				}
 				$quick_actions['DENY'] = array(
 					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny', 'start' => '*destroy*')),
 					'class'		=> 'deny',

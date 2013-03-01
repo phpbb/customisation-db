@@ -104,6 +104,12 @@ class titania_config extends titania_object
 				'30'	=> array('latest_revision' => '11', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
 			)),
 
+			// Next stable release (used to allowed contribs to be submitted for a future version)
+			'prerelease_phpbb_version'	=> array('default' => array(
+				'20'	=> '',
+				'30'	=> '',
+			)),
+
 			// MPV server(s)
 			'mpv_server_list'			=> array('default' => array(
 				array(

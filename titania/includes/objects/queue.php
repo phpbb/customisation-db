@@ -168,6 +168,7 @@ class titania_queue extends titania_message_object
 
 		$post->post_user_id = $this->submitter_user_id;
 		$post->post_time = $this->queue_submit_time;
+		$revision = $this->get_revision();
 
 		// Reset the post text
 		$post->post_text = '';
@@ -175,6 +176,11 @@ class titania_queue extends titania_message_object
 		// Queue Discussion Link
 		$queue_topic = $this->get_queue_discussion_topic();
 		$post->post_text .= '[url=' . $queue_topic->get_url() . ']' . phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC'] . "[/url]\n\n";
+
+		if ($revision->revision_status == TITANIA_REVISION_ON_HOLD)
+		{
+			$post->post_text .= '<strong>' . phpbb::$user->lang['REVISION_FOR_NEXT_PHPBB'] . "</strong>\n\n";
+		}
 
 		// Put text saying whether repacking is allowed or not
 		$post->post_text .= phpbb::$user->lang[(($this->queue_allow_repack) ? 'QUEUE_REPACK_ALLOWED' : 'QUEUE_REPACK_NOT_ALLOWED')] . "\n\n";
@@ -387,8 +393,18 @@ class titania_queue extends titania_message_object
 		$this->topic_reply($message, false);
 		$this->discussion_reply($message);
 
+		// Add support for version that has just been released
+		if ($revision->revision_status == TITANIA_REVISION_ON_HOLD)
+		{
+			$revision->load_phpbb_versions();
+			$branch = $revision->phpbb_versions[0]['phpbb_version_branch'];
+			$revision->phpbb_versions = array();
+			$revision->phpbb_versions[] = array('phpbb_version_branch' => $branch, 'phpbb_version_revision' => titania::$config->prerelease_phpbb_version[$branch]);
+		}
+
 		// Update the revisions
 		$revision->change_status(TITANIA_REVISION_APPROVED);
+		$revision->submit();
 
 		// Reply to the release topic
 		if ($contrib_release_topic_id && titania_types::$types[$contrib->contrib_type]->update_public)

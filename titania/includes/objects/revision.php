@@ -538,7 +538,7 @@ class titania_revision extends titania_database_object
 			$queue = $this->get_queue();
 
 			// Only create the queue for revisions set as new
-			if ($queue === false && $this->revision_status == TITANIA_REVISION_NEW)
+			if ($queue === false && ($this->revision_status == TITANIA_REVISION_NEW || $this->revision_status == TITANIA_REVISION_ON_HOLD))
 			{
 				$queue = new titania_queue;
 			}

@@ -172,6 +172,7 @@ $lang = array_merge($lang, array(
 	'REVISIONS'								=> 'Revisions',
 	'REVISION_APPROVED'						=> 'Approved',
 	'REVISION_DENIED'						=> 'Denied',
+	'REVISION_FOR_NEXT_PHPBB'				=> 'This revision has been submitted for the next phpBB release.',
 	'REVISION_IN_QUEUE'						=> 'You already have a revision in the validation queue.  You must wait until the previous revision is approved or denied to submit a new one.',
 	'REVISION_NAME'							=> 'Revision Name',
 	'REVISION_NAME_EXPLAIN'					=> 'Enter in an optional name for this version (ex: Furry Edition)',
@@ -192,6 +193,8 @@ $lang = array_merge($lang, array(
 	'SELECT_PHPBB_BRANCH'					=> 'Select phpBB branch',
 	'SUBDIRECTORY_LIMIT'					=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
 	'SUBMIT_NEW_REVISION'					=> 'Submit and add new revision',
+	'SUBMIT_PRERELEASE_VERSION'				=> 'Prerelease submission',
+	'SUBMIT_PRERELEASE_VERSION_EXPLAIN'		=> 'Submit revision for the next phpBB release',
 	'SUBSCRIBE_QUEUE_DISCUSSION'			=> 'Subscribe to queue discussion topic',
 	'SUBSCRIPTION_REQUEST'					=> 'Would you like to subscribe to the contribution in order to receive e-mail notifications about new versions and security vulnerabilities?',
 

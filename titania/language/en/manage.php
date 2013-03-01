@@ -56,6 +56,7 @@ $lang = array_merge($lang, array(
 	'DISCUSSION_REPLY_MESSAGE'	=> 'Queue discussion reply message',
 
 	'EDIT_VALIDATION_NOTES'		=> 'Edit Validation Notes',
+	'ERROR_REVISION_ON_HOLD'	=> 'You cannot approve this revision. The next phpBB version has not been released.',
 
 	'MANAGE_CATEGORIES'			=> 'Manage Categories',
 	'MARK_IN_PROGRESS'			=> 'Mark "In Progress"',
