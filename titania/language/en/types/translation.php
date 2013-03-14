@@ -48,7 +48,7 @@ $lang = array_merge($lang, array(
 
 	'TRANSLATION'								=> 'Language Pack',
 	'TRANSLATION_VALIDATION'					=> '[phpBB Language Pack-Validation] %1$s %2$s',
-	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your language pack to the phpBB.com Customisation Database. After careful inspection, your language pack has been approved and released into our Customisation Database.
+	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your language pack to the phpBB.com Customisation Database. After careful inspection, your language pack has been [b][color=#5c8503]approved[/color][/b] and released into our Customisation Database.
 
 It is my hope that you will provide a basic level of support for this language pack and keep it updated with future releases of phpBB. I appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
@@ -62,7 +62,7 @@ The International Manager',
 
 As you may know, all translations submitted to the phpBB Customisation Database must be validated and approved by the International Manager.
 
-Upon validating your language pack, I regrets to inform you that I have had to deny it.
+Upon validating your language pack, I regrets to inform you that I have had to [b][color=#A91F1F]deny[/color][/b] it.
 
 To correct the problem(s) with your language pack, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your language pack being denied.

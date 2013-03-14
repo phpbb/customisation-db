@@ -42,7 +42,7 @@ $lang = array_merge($lang, array(
 	'BRIDGE'							=> 'Bridge',
 	'BRIDGES'							=> 'Bridges',
 	'BRIDGE_VALIDATION'					=> '[phpBB Bridge-Validation] %1$s %2$s',
-	'BRIDGE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your bridge to the phpBB.com Customisation Database. After careful inspection your bridge has been approved and released into our Customisation Database.
+	'BRIDGE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your bridge to the phpBB.com Customisation Database. After careful inspection your bridge has been [b][color=#5c8503]approved[/color][/b] and released into our Customisation Database.
 
 It is our hope that you will provide a basic level of support for this bridge and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
@@ -55,7 +55,7 @@ phpBB Teams',
 
 As you may know all bridges submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
 
-Upon validating your bridge the phpBB Team regrets to inform you that we have had to deny it.
+Upon validating your bridge the phpBB Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] it.
 
 To correct the problem(s) with your bridge, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your bridge being denied.
