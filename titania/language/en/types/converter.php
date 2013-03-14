@@ -42,7 +42,7 @@ $lang = array_merge($lang, array(
 	'CONVERTER'								=> 'Convertor',
 	'CONVERTERS'							=> 'Convertors',
 	'CONVERTER_VALIDATION'					=> '[phpBB Convertor-Validation] %1$s %2$s',
-	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Convertor to the phpBB.com Customisation Database. After careful inspection your Convertor has been approved and released into our Customisation Database.
+	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Convertor to the phpBB.com Customisation Database. After careful inspection your Convertor has been [b][color=#5c8503]approved[/color][/b] and released into our Customisation Database.
 
 It is our hope that you will provide a basic level of support for this convertor and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
@@ -55,7 +55,7 @@ phpBB Teams',
 
 As you may know all convertors submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
 
-Upon validating your convertor the phpBB Team regrets to inform you that we have had to deny it.
+Upon validating your convertor the phpBB Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] it.
 
 To correct the problem(s) with your convertor, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your convertor being denied.

@@ -82,7 +82,7 @@ See first post for Download Link[/color][/b]',
 // \'Page %s of %s\' you can (and should) write \'Page %1$s of %2$s\', this allows
 // translators to re-order the output of data while ensuring it remains correct',
 	'STYLE_VALIDATION'					=> '[phpBB Style-Validation] %1$s %2$s',
-	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Styles Team your style has been approved and released into our styles database.
+	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Styles Team your style has been [b][color=#5c8503]approved[/color][/b] and released into our styles database.
 
 It is our hope that you will provide a basic level of support for this style and keep it updated as required for future releases of phpBB. We appreciate your work and contribution to the community.
 [b]Notes from the Styles Team about your style:[/b]
@@ -93,7 +93,7 @@ Sincerely,',
 
 As you may know all styles submitted to the phpBB styles database must be validated and approved by members of the phpBB Team.
 
-Upon validating your style the phpBB Styles Team regrets to inform you that we have had to deny your style. The reasons for this denial are outlined below:
+Upon validating your style the phpBB Styles Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] your style. The reasons for this denial are outlined below:
 [quote]%s[/quote]
 
 If you wish to resubmit this style to the styles database please ensure that you fix the issues identified and that it meets the [url=http://www.phpbb.com/community/viewtopic.php?t=988545]Styles Submission Policy[/url].

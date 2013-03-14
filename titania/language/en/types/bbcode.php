@@ -44,7 +44,7 @@ $lang = array_merge($lang, array(
 	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree and accept that this Custom BBcode will be released under the <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a> license with attribution rights waived for public performance of the work. Attribution will still be required for distribution.</span>',
 
 	'BBCODE_VALIDATION'					=> '[phpBB Custom BBcode - Validation] %1$s %2$s',
-	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been approved and released into our Customisation Database.
+	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been [b][color=#5c8503]approved[/color][/b] and released into our Customisation Database.
 
 It is our hope that you will provide a basic level of support for this BBcode and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
@@ -57,7 +57,7 @@ phpBB Teams',
 
 As you may know all Custom BBCodes submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
 
-Upon validating your Custom BBcode the phpBB Team regrets to inform you that we have had to deny it.
+Upon validating your Custom BBcode the phpBB Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] it.
 
 To correct the problem(s) with your BBcode, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your Custom BBcode being denied.
