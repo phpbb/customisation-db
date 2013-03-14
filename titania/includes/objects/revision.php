@@ -385,7 +385,7 @@ class titania_revision extends titania_database_object
 					WHERE revision_id = ' . (int) $this->revision_id;
 				phpbb::$db->sql_query($sql);
 
-				$sql_ary['validation_date'] = titania::$time;
+				$sql_ary['validation_date'] = $this->validation_date = titania::$time;
 
 				// Update the contributions table if this is the newest validated revision
 				$sql = 'SELECT revision_id FROM ' . $this->sql_table . '
@@ -412,7 +412,7 @@ class titania_revision extends titania_database_object
 					WHERE revision_id = ' . (int) $this->revision_id;
 				phpbb::$db->sql_query($sql);
 
-				$sql_ary['validation_date'] = 0;
+				$sql_ary['validation_date'] = $this->validation_date= 0;
 				// Remove the revision from the Composer package
 				$this->update_composer_package('remove');
 			break;
