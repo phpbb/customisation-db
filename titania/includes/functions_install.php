@@ -336,6 +336,27 @@ function titania_custom($action, $version)
 					}
 					phpbb::$db->sql_freeresult($result);
 				break;
+
+				case '0.5.10' :
+					// Add validation date for certain revisions that have it missing.
+
+					$sql = 'SELECT r.revision_id, q.queue_close_time
+						FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_QUEUE_TABLE . ' q
+						WHERE r.revision_status = ' . TITANIA_REVISION_APPROVED . '
+							AND r.validation_date = 0
+							AND r.revision_id = q.revision_id
+							AND q.queue_close_time <> 0';
+					$result = phpbb::$db->sql_query($sql);
+
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . '
+							SET validation_date = ' . (int) $row['queue_close_time'] . '
+							WHERE revision_id = ' . (int) $row['revision_id'];
+						phpbb::$db->sql_query($sql);
+					}
+					phpbb::$db->sql_freeresult($result);
+				break;
 			}
 		break;
 
