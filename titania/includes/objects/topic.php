@@ -398,7 +398,7 @@ class titania_topic extends titania_database_object
 	{
 		$include = $this->sync_hidden_post_inclusion();
 
-		$sql = 'SELECT p.post_id, p.post_time, p.post_subject, p.post_approved, p.post_deleted, u.user_id, u.username, u.user_colour
+		$sql = 'SELECT p.post_id, p.post_time, p.post_subject, u.user_id, u.username, u.user_colour
 			FROM ' . TITANIA_POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
 			WHERE p.topic_id = ' . $this->topic_id . '
 				AND p.post_access >= ' . $this->topic_access .
