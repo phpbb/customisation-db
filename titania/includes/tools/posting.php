@@ -83,6 +83,13 @@ class titania_posting
 				$this->$action(request_var('t', 0));
 			break;
 
+			case 'split_topic' :
+			case 'move_posts' :
+				$this->split_topic(request_var('t', 0), $action);
+
+				titania::page_footer(true, 'posting/split_merge_topic_body.html');
+			break;
+
 			case 'hard_delete_topic' :
 				$this->delete_topic(request_var('t', 0), true);
 			break;
@@ -572,6 +579,182 @@ class titania_posting
 		}
 
 		redirect($topic_object->get_url());
+	}
+
+	/**
+	* Split/merge
+	*
+	* @param int $topic_id
+	* @param string $mode Either split_topic or move_posts
+	*/
+	public function split_topic($topic_id, $mode)
+	{
+		// Auth check
+		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
+		{
+			titania::needs_auth();
+		}
+
+		titania::add_lang('posting');
+		phpbb::$user->add_lang('mcp');
+
+		$subject = utf8_normalize_nfc(request_var('subject', '', true));
+		$new_topic_id = request_var('new_topic_id', 0);
+		$post_ids = request_var('post_ids', array(0));
+		$submit = (isset($_POST['split'])) ? true : false;
+		$range = request_var('from', '');
+		$topic = $this->load_topic($topic_id);
+		$errors = array();
+				
+		if ($topic->topic_type != TITANIA_SUPPORT)
+		{
+			trigger_error('SPLIT_NOT_ALLOWED');
+		}
+
+		$page_title = ($mode == 'split_topic') ? 'SPLIT_TOPIC' : 'MERGE_POSTS';
+		titania::page_header(phpbb::$user->lang[$page_title] . ' - ' . $topic->topic_subject);
+
+		if ($submit)
+		{
+			// Check for errors
+			if (!check_form_key('split_topic'))
+			{
+				$errors[] = phpbb::$user->lang['FORM_INVALID'];
+			}
+
+			if ($mode == 'split_topic' && utf8_clean_string($subject) == '')
+			{
+				$errors[] = phpbb::$user->lang['NO_SUBJECT'];
+			}
+			else if ($mode == 'move_posts' && !$new_topic_id)
+			{
+				$errors[] = phpbb::$user->lang['NO_FINAL_TOPIC_SELECTED'];
+			}
+
+			if (empty($post_ids))
+			{
+				$errors[] = phpbb::$user->lang['NO_POST_SELECTED'];
+			}
+
+			if ($new_topic_id == $topic->topic_id)
+			{
+				$errors[] = phpbb::$user->lang['ERROR_MERGE_SAME_TOPIC'];
+			}
+
+			if (empty($errors))
+			{
+				if ($mode == 'move_posts')
+				{
+					// Load the topic
+					$new_topic = $this->load_topic($new_topic_id);
+
+					if (!$new_topic)
+					{
+						$errors[] = phpbb::$user->lang['NO_TOPIC'];
+					}
+
+					// Only allow support posts to be moved to the same contrib
+					if ($new_topic->parent_id != $topic->parent_id || $new_topic->topic_type != TITANIA_SUPPORT)
+					{
+						$errors[] = phpbb::$user->lang['ERROR_NOT_SAME_PARENT'];
+					}
+
+					// Ensure that we don't have a range
+					$range = false;
+				}
+				else
+				{
+					$sql_extra = 'post_id = ' . (int) $post_ids[0];
+
+					// Get info from first post
+					$sql = 'SELECT post_id, post_access, post_approved, post_time
+						FROM ' . TITANIA_POSTS_TABLE . '
+						WHERE post_type = ' . TITANIA_SUPPORT . ' 
+							AND topic_id = ' . (int) $topic->topic_id . '
+							AND ';
+					$result = phpbb::$db->sql_query_limit($sql . $sql_extra, 1);
+					$first_post = phpbb::$db->sql_fetchrow($result);
+					phpbb::$db->sql_freeresult($result);
+
+					if (!$first_post)
+					{
+						$errors[] = phpbb::$user->lang['NO_POST_SELECTED'];
+					}
+					else
+					{
+						if ($range == 'from')
+						{
+							// Get info from last post
+							$sql_extra = 'post_time >= ' . (int) $first_post['post_time'] . '
+								ORDER BY post_time DESC';
+
+							$result = phpbb::$db->sql_query_limit($sql . $sql_extra, 1);
+							$last_post = phpbb::$db->sql_fetchrow($result);
+							phpbb::$db->sql_freeresult($result);
+
+							$range = array('min' => $first_post['post_time'], 'max' => $last_post['post_time']);
+						}
+						else
+						{
+							$range = false;
+						}
+
+						// Create the new topic with some basic info.
+						$data = array(
+							'parent_id'						=> $topic->parent_id,
+							'topic_type'					=> $topic->topic_type,
+							'topic_access'					=> $first_post['post_access'],
+							'topic_approved'				=> 1, // This will be adjusted later on.
+							'topic_status'					=> ITEM_UNLOCKED,
+							'topic_time'					=> $first_post['post_time'],
+							'topic_subject'					=> $subject,
+							'topic_url'						=> $topic->topic_url,
+						);
+
+						$new_topic = new titania_topic();
+						$new_topic->__set_array($data);
+						$new_topic->submit();
+
+						// Use new subject as the first post's subject to avoid issues when it gets approved
+						if (!$first_post['post_approved'])
+						{
+							$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . ' SET post_subject = "' . phpbb::$db->sql_escape($subject) . '" WHERE post_id = ' . (int) $first_post['post_id'];
+							phpbb::$db->sql_query($sql);
+						}
+					}
+				}
+
+				// If there aren't any errors, go ahead and transfer the posts.
+				if (empty($errors))
+				{
+					$new_topic->acquire_posts($topic, $post_ids, $range);
+					redirect($new_topic->get_url());
+				}
+			}
+		}
+
+		if (!$submit || !empty($errors))
+		{
+			$errors = implode('<br />', $errors);
+
+			phpbb::$template->assign_vars(array(
+				'ERRORS'		=> $errors,
+				'TOPIC_SUBJECT'	=> $topic->topic_subject,
+				'S_SPLIT'		=> ($mode == 'split_topic') ? true : false,
+				'SUBJECT'		=> $subject,
+				'TO_ID'			=> $new_topic_id,
+			));
+
+			// Setup the sort tool
+			$topic_sort = posts_overlord::build_sort();
+			$topic_sort->request();
+			$topic_sort->url_parameters = array('action' => $mode);
+			// Display topic
+			posts_overlord::display_topic($topic, $topic_sort);
+			posts_overlord::assign_common();
+
+			add_form_key('split_topic');
+		}
 	}
 
 	/**
