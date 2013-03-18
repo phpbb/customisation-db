@@ -39,6 +39,9 @@ $lang = array_merge($lang, array(
 	'ACCESS_TEAMS'						=> 'Teams Access',
 	'ATTACH'							=> 'Attach',
 
+	'ERROR_MERGE_SAME_TOPIC'			=> 'The destination topic and source topic are the same.',
+	'ERROR_NOT_SAME_PARENT'				=> 'You may only move posts to a topic that resides in the same contribution.',
+
 	'FILE_DELETED'						=> 'This file will be deleted when you submit',
 
 	'HARD_DELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to <strong>hard</strong> delete this topic?<br /><br />This topic will be gone forever!',
@@ -57,6 +60,7 @@ Note that by default this topic is private between authors and validators and ca
 
 	'SET_PREVIEW_FILE'					=> 'Set as preview',
 	'SOFT_DELETE_TOPIC_CONFIRM'			=> 'Are you sure you want to <strong>soft</strong> delete this topic?',
+	'SPLIT_NOT_ALLOWED'					=> 'You are not allowed to split this topic.',
 	'STICKIES'							=> 'Stickies',
 	'STICKY_TOPIC'						=> 'Sticky Topic',
 

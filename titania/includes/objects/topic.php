@@ -174,7 +174,19 @@ class titania_topic extends titania_database_object
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		// Deleting all the posts results in the last post calling this topic to delete itself
+		// Remove any subscriptions to this topic
+		$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . '
+			WHERE watch_object_type = ' . TITANIA_TOPIC . '
+				AND watch_object_id = ' . $this->topic_id;
+		phpbb::$db->sql_query($sql);
+
+		// Remove any tracking for this topic
+		titania_tracking::clear_item(TITANIA_TOPIC, $this->topic_id);
+
+		// Delete the now empty topic
+		$sql = 'DELETE FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE topic_id = ' . $this->topic_id;
+		phpbb::$db->sql_query($sql);
 	}
 
 	/**
@@ -355,18 +367,43 @@ class titania_topic extends titania_database_object
 	}
 
 	/**
+	* Check if unapproved posts and deleted posts should be included in sync.
+	*/
+	public function sync_hidden_post_inclusion()
+	{
+		$include = array('unapproved' => false, 'deleted' => false);
+		$counts = titania_count::from_db($this->topic_posts, false);
+		$visible_posts = $counts['teams'] + $counts['authors'] + $counts['public'];
+
+		if (!$visible_posts)
+		{
+			if (!$counts['deleted'])
+			{
+				$include['unapproved'] = true;
+			}
+			else
+			{
+				$include['deleted'] = true;
+			}
+		}
+		return $include;
+	}
+
+	/**
 	* Sync the first post data
 	*
 	* @param mixed $ignore_post_id false to ignore, int post_id to ignore the specified post_id (for when we are going to be deleting that post)
 	*/
 	public function sync_first_post($ignore_post_id = false)
 	{
-		$sql = 'SELECT p.post_id, p.post_time, p.post_subject, u.user_id, u.username, u.user_colour
+		$include = $this->sync_hidden_post_inclusion();
+
+		$sql = 'SELECT p.post_id, p.post_time, p.post_subject, p.post_approved, p.post_deleted, u.user_id, u.username, u.user_colour
 			FROM ' . TITANIA_POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
 			WHERE p.topic_id = ' . $this->topic_id . '
-				AND p.post_access >= ' . $this->topic_access . '
-				AND p.post_approved = 1
-				AND p.post_deleted = 0
+				AND p.post_access >= ' . $this->topic_access .
+				((!$include['unapproved']) ? ' AND p.post_approved = 1' : '') .
+				((!$include['deleted']) ? ' AND p.post_deleted = 0' : '') . '
 				AND u.user_id = p.post_user_id ' .
 				(($ignore_post_id !== false) ? ' AND p.post_id <> ' . (int) $ignore_post_id : '') . '
 			ORDER BY post_time ASC';
@@ -393,12 +430,14 @@ class titania_topic extends titania_database_object
 	*/
 	public function sync_last_post($ignore_post_id = false)
 	{
+		$include = $this->sync_hidden_post_inclusion();
+
 		$sql = 'SELECT p.post_id, p.post_time, p.post_subject, u.user_id, u.username, u.user_colour
 			FROM ' . TITANIA_POSTS_TABLE . ' p, ' . USERS_TABLE . ' u
 			WHERE p.topic_id = ' . $this->topic_id . '
-				AND p.post_access >= ' . $this->topic_access . '
-				AND p.post_approved = 1
-				AND p.post_deleted = 0
+				AND p.post_access >= ' . $this->topic_access .
+				((!$include['unapproved']) ? ' AND p.post_approved = 1' : '') .
+				((!$include['deleted']) ? ' AND p.post_deleted = 0' : '') . '
 				AND u.user_id = p.post_user_id ' .
 				(($ignore_post_id !== false) ? ' AND p.post_id <> ' . (int) $ignore_post_id : '') . '
 			ORDER BY post_time DESC';
@@ -416,5 +455,175 @@ class titania_topic extends titania_database_object
 				'topic_last_post_subject'		=> $update_row['post_subject'],
 			));
 		}
+	}
+
+	/**
+	* Sync topic approved and access states.
+	*
+	* @param bool $delete_empty_topic Delete the topic if it does not contain any posts.
+	* @param array $first_post_data Array containing info about first post in the form of array(post_approved => (bool), post_deleted => (bool)). If not provided, db is queried.
+	*/
+	public function sync_topic_state($delete_empty_topic = false, $first_post_data = false)
+	{
+		if (!$this->topic_id)
+		{
+			return;
+		}
+
+		$counts = titania_count::from_db($this->topic_posts, false);
+		$visible_posts = $counts['teams'] + $counts['authors'] + $counts['public'];
+		$total_posts = array_sum($counts);
+
+		if (!$total_posts && $delete_empty_topic)
+		{
+			$this->delete();
+		}
+
+		if (!$first_post_data)
+		{
+			$sql = 'SELECT post_deleted, post_approved
+				FROM ' . TITANIA_POSTS_TABLE . '
+				WHERE topic_id = ' . (int) $this->topic_id . '
+				ORDER BY post_time ASC';
+			$result = phpbb::$db->sql_query_limit($sql, 1);
+			$first_post_data = phpbb::$db->sql_fetchrow($result);
+			phpbb::$db->sql_freeresult($result);
+
+			if (!$first_post_data)
+			{
+				$this->topic_access = TITANIA_ACCESS_TEAMS;
+				$this->topic_approved = 1;
+
+				return;
+			}
+		}
+
+		// Mark the topic as unapproved if there are no visible posts and the first one is unapproved.
+		$this->topic_approved = (!$visible_posts && !$first_post_data['post_approved']) ? 0 : 1;
+
+		// Adjust the topic access
+		if ($visible_posts && !in_array($this->topic_type, array(TITANIA_QUEUE_DISCUSSION, TITANIA_QUEUE)))
+		{
+			$this->topic_access = TITANIA_ACCESS_PUBLIC;
+
+			if (!$counts['public'])
+			{
+				$this->topic_access = TITANIA_ACCESS_AUTHORS;
+
+				if (!$counts['authors'])
+				{
+					$this->topic_access = TITANIA_ACCESS_TEAMS;
+				}
+			}
+		}
+		else
+		{
+			// If no posts are visible and first post is deleted, then only the teams have access.
+			$this->topic_access = (!$visible_posts && $first_post_data['post_deleted']) ? TITANIA_ACCESS_TEAMS : $this->topic_access;		
+		}
+	}
+
+	/**
+	* Acquire posts from another topic
+	*
+	* @param object $donor Object for topic where we'll be obtaining the posts from
+	* @param array $post_ids Array of post id's that we want to acquire.
+	* @param array $range Range of post times to transfer - array(min => (int), max => (int))
+	*/
+	public function acquire_posts($donor, $post_ids, $range = false)
+	{
+		if (!$this->topic_id || empty($post_ids))
+		{
+			return;
+		}
+
+		$sql_where = 'topic_id = ' . (int) $donor->topic_id . ' AND ';
+
+		if (!empty($range))
+		{
+			$sql_where .= 'post_time >= ' . (int) $range['min'] . ' AND post_time <= ' . (int) $range['max'];
+		}
+		else
+		{
+			$sql_where .= phpbb::$db->sql_in_set('post_id', $post_ids);
+		}
+
+		$sql = 'SELECT *
+			FROM ' . TITANIA_POSTS_TABLE . ' 
+			WHERE ' . $sql_where;
+		$result = phpbb::$db->sql_query($sql);
+		$posts = phpbb::$db->sql_fetchrowset($result);
+		phpbb::$db->sql_freeresult($result);
+
+		if (empty($posts))
+		{
+			trigger_error('NO_POSTS');
+		}
+
+		$post_url = titania_url::unbuild_url($this->get_url());
+
+		// Update posts before resynchronizing topic
+		$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . ' 
+			SET topic_id = ' . (int) $this->topic_id . ', 
+				post_url = "' . phpbb::$db->sql_escape($post_url) . '", 
+				post_type = ' . (int) $this->topic_type . ' 
+			WHERE ' . $sql_where;
+		phpbb::$db->sql_query($sql);
+
+		$new_post = new titania_post();
+		$old_post = new titania_post();
+		$new_post->topic = $this;
+		$old_post->topic = $donor;
+		$posters = array();
+
+		// Reindex posts and update topic post counts
+		foreach ($posts as $post_data)
+		{
+			if (!$post_data['post_deleted'] && $post_data['post_approved'])
+			{
+				$posters[] = $post_data['post_user_id'];
+			}
+
+			// Reindex the post
+			$new_post->__set_array($post_data);
+			$new_post->sql_data = $post_data;
+			$new_post->topic_id = $this->topic_id;
+			$new_post->post_url = $post_url;
+			$new_post->post_type = $this->topic_type;
+			$new_post->index();
+
+			// Set the post_id to 0 so it's counted as a new reply
+			$new_post->post_id = 0;
+			$new_post->update_topic_postcount();
+
+			// Decrease count for donor topic
+			$old_post->__set_array($post_data);
+			$old_post->sql_data = $post_data;
+			$old_post->update_topic_postcount(true);
+		}
+		$posters = array_unique($posters);
+
+		// Update posted status
+		foreach ($posters as $user_id)
+		{
+			$this->update_posted_status('add', $user_id);
+			$donor->update_posted_status('remove', $user_id);
+		}
+
+		$donor->topic_posts = $old_post->topic->topic_posts;
+		$this->topic_posts = $new_post->topic->topic_posts;
+		unset($old_post, $new_post, $posts);
+
+		// Resync topic
+		$this->sync_topic_state(true);
+		$this->sync_first_post();
+		$this->sync_last_post();
+		$this->submit();
+
+		// Resync donor topic
+		$donor->sync_topic_state(true);
+		$donor->sync_first_post();
+		$donor->sync_last_post();
+		$donor->submit();
 	}
 }

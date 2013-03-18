@@ -209,13 +209,6 @@ if ($attention_id || ($object_type && $object_id))
 			// Approve the post
 			if ($approve)
 			{
-				// Check how many posts are approved to determine if we are approving a topic.
-				$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
-					WHERE topic_id = ' . $post->topic_id . '
-						AND post_approved = 1';
-				phpbb::$db->sql_query($sql);
-				$approved_posts = phpbb::$db->sql_fetchfield('cnt');
-
 				$post->post_approved = 1;
 
 				// Increment the user's postcount if we must
@@ -249,7 +242,7 @@ if ($attention_id || ($object_type && $object_id))
 				$contrib->load($post->topic->parent_id);
 
 				// Subscriptions?
-				if ($approved_posts && $post->topic->topic_last_post_id == $post->post_id)
+				if ($post->topic->topic_first_post_id != $post->post_id && $post->topic->topic_last_post_id == $post->post_id)
 				{
 					phpbb::_include('functions_messenger', false, 'messenger');
 
@@ -262,7 +255,7 @@ if ($attention_id || ($object_type && $object_id))
 				}
 
 				// We're approving a topic
-				if (!$approved_posts)
+				if ($post->topic->topic_first_post_id == $post->post_id)
 				{
 					$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
 						SET topic_approved = 1
