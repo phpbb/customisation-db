@@ -762,6 +762,7 @@ li.row dl.codebox dd {
 
 /* General
 --------------------------------------------- */
+.postbody.full { width: 100%; }
 
 /* ColorBox adjustments; primarily switching control buttons to top */
 #cboxLoadedContent {
