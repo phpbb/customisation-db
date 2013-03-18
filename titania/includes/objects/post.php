@@ -755,19 +755,7 @@ class titania_post extends titania_message_object
 		$flags = titania_count::get_flags(TITANIA_ACCESS_TEAMS, true, true);
 		if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
 		{
-			// Remove any subscriptions to this topic
-			$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . '
-				WHERE watch_object_type = ' . TITANIA_TOPIC . '
-					AND watch_object_id = ' . $this->topic->topic_id;
-			phpbb::$db->sql_query($sql);
-
-			// Remove any tracking for this topic
-			titania_tracking::clear_item(TITANIA_TOPIC, $this->topic->topic_id);
-
-			// Delete the now empty topic
-			$sql = 'DELETE FROM ' . TITANIA_TOPICS_TABLE . '
-				WHERE topic_id = ' . $this->topic->topic_id;
-			phpbb::$db->sql_query($sql);
+			$this->topic->delete();
 		}
 	}
 
