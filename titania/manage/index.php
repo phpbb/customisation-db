@@ -22,8 +22,11 @@ $page = basename(phpbb::$request->variable('page', ''));
 titania::add_lang('manage');
 
 // Count the number of open attention items
-$sql = 'SELECT COUNT(attention_id) AS cnt FROM ' . TITANIA_ATTENTION_TABLE . '
-	WHERE attention_close_time = 0';
+$sql = 'SELECT COUNT(a.attention_id) AS cnt FROM ' . TITANIA_ATTENTION_TABLE . ' a
+	LEFT JOIN ' . TITANIA_CONTRIBS_TABLE . ' c
+		ON (a.attention_object_type = ' . TITANIA_CONTRIB . ' AND a.attention_object_id = c.contrib_id)
+	WHERE a.attention_close_time = 0
+		AND ' . attention_overlord::get_permission_sql();
 phpbb::$db->sql_query($sql);
 $attention_count = phpbb::$db->sql_fetchfield('cnt');
 phpbb::$db->sql_freeresult();
