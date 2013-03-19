@@ -36,7 +36,9 @@ class attention_overlord
 	*/
 	public static function load_attention($attention_id, $object_type = false, $object_id = false)
 	{
-		$sql = 'SELECT * FROM ' . TITANIA_ATTENTION_TABLE . '
+		$sql = 'SELECT a.* FROM ' . TITANIA_ATTENTION_TABLE . ' a
+			LEFT JOIN ' . TITANIA_CONTRIBS_TABLE . ' c
+				ON (a.attention_object_type = ' . TITANIA_CONTRIB . ' AND a.attention_object_id = c.contrib_id)
 			WHERE ';
 
 		if ($attention_id)
@@ -52,6 +54,9 @@ class attention_overlord
 		{
 			$sql .= 'attention_object_type = ' . (int) $object_type . ' AND attention_object_id = ' . (int) $object_id;
 		}
+
+		// Permissions
+		$sql .= ' AND ' . self::get_permission_sql();
 
 		$result = phpbb::$db->sql_query($sql);
 		$row = phpbb::$db->sql_fetchrow($result);
@@ -89,10 +94,17 @@ class attention_overlord
 
 
 		$sql_ary = array(
-			'SELECT'	=> '*',
+			'SELECT'	=> 'a.*',
 
 			'FROM'		=> array(
 				TITANIA_ATTENTION_TABLE	=> 'a',
+			),
+
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(TITANIA_CONTRIBS_TABLE => 'c'),
+					'ON'	=> 'a.attention_object_type = ' . TITANIA_CONTRIB . ' AND a.attention_object_id = c.contrib_id',
+				),
 			),
 
 			'WHERE'		=> array(),
@@ -121,6 +133,8 @@ class attention_overlord
 		{
 			$sql_ary['WHERE'][] = 'a.attention_close_time = 0';
 		}
+
+		$sql_ary['WHERE'][] = self::get_permission_sql();
 
 		$sql_ary['WHERE'] = implode(' AND ', $sql_ary['WHERE']);
 
@@ -209,5 +223,37 @@ class attention_overlord
 		$sort->default_limit = phpbb::$config['topics_per_page'];
 
 		return $sort;
+	}
+
+	/**
+	* Get permission check for WHERE clause
+	*/
+	public static function get_permission_sql()
+	{
+		$sql_where = '';
+		$types_managed = titania_types::find_authed('moderate');
+
+		if (phpbb::$auth->acl_get('u_titania_mod_contrib_mod'))
+		{
+			$sql_where .= '(a.attention_object_type = ' . TITANIA_POST . ')';
+			$negated = false;
+		}
+		else
+		{
+			$sql_where .= '(a.attention_object_type <> ' . TITANIA_POST . ')';
+			$negated = true;
+		}
+
+		if (!empty($types_managed))
+		{
+			$sql_where .= ($negated) ? ' AND ' : ' OR '; 
+			$sql_where .= '(a.attention_object_type = ' . TITANIA_CONTRIB . ' AND ' . phpbb::$db->sql_in_set('c.contrib_type', $types_managed) . ')';
+		}
+		else
+		{
+			$sql_where .= 'AND (a.attention_object_type <> ' . TITANIA_CONTRIB . ')';
+		}
+
+		return '(' . $sql_where . ')';
 	}
 }
