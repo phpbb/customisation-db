@@ -12,6 +12,10 @@ h2.panel-name {
 	display: inline;
 }
 
+h3.clear-top {
+	margin-top: 5px;
+}
+
 h3.section-name {
 	font-size: 1.4em;
 	font-weight: normal;
@@ -631,23 +635,29 @@ li.row dl.codebox dd {
 }
 
 /* Attention */
-#attention {
+.attention {
 	border-bottom-style: dashed;
 	border-bottom-width: 1px;
 	padding-top: 5px;
 }
 
-#attention td {
-	padding: 3px;
+.attention.last {
+	border-bottom: 0;
 }
 
-#attention .content {
+.attention .content {
 	font-size: 1.3em;
 	padding-bottom: 10px;
 }
 
+p.attention-closed {
+	background-color: #ECD5D8;
+	margin-right: 0;
+	padding: 3px;
+}
+
 /* Description diff */
-#report .content pre, #attention .content pre {
+#report .content pre, .attention .content pre {
 	font-family: inherit;
 	white-space: normal;
 }

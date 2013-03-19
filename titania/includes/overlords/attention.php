@@ -28,6 +28,42 @@ class attention_overlord
 	);
 
 	/**
+	* Get the appropriate attention object for the attention item
+	*
+	* @param mixed $attention_id
+	* @param mixed $object_type
+	* @param mixed $object_id
+	*/
+	public static function get_attention_object($attention_id, $object_type = false, $object_id = false)
+	{
+		$data = self::load_attention($attention_id, $object_type, $object_id);
+
+		if (!$data)
+		{
+			return false;
+		}
+
+		switch ($data['attention_object_type'])
+		{
+			case TITANIA_POST:
+				titania::_include('objects/attention_types/post', false, 'titania_attention_post');
+				$object = new titania_attention_post();
+			break;
+
+			case TITANIA_CONTRIB:
+				titania::_include('objects/attention_types/contribution', false, 'titania_attention_contribution');
+				$object = new titania_attention_contribution();
+			break;
+
+			default:
+				$object = new titania_attention();
+		}
+
+		$object->__set_array($data);
+		return $object;
+	}
+
+	/**
 	* Load an attention item by attention_id or the type/id
 	*
 	* @param mixed $attention_id
@@ -77,6 +113,7 @@ class attention_overlord
 	*
 	* @param array $options
 	* 	attention_type
+	*	exclude_attention_types
 	* 	attention_object_id
 	* 	only_closed bool only display closed items
 	* 	display_closed bool display closed and open items
@@ -116,6 +153,12 @@ class attention_overlord
 		if (isset($options['attention_type']) && $options['attention_type'])
 		{
 			$sql_ary['WHERE'][] = 'a.attention_type = ' . (int) $options['attention_type'];
+		}
+
+		// Exclude certain types
+		if (!empty($options['exclude_attention_types']))
+		{
+			$sql_ary['WHERE'][] = phpbb::$db->sql_in_set('a.attention_type', $options['exclude_attention_types'], true);
 		}
 
 		// Limit to certain item if requested
@@ -175,18 +218,15 @@ class attention_overlord
 		users_overlord::load_users($user_ids);
 
 		// Output time
-		$attention = new titania_attention;
 		foreach ($attention_ids as $attention_id)
 		{
-			$row = self::$attention_items[$attention_id];
-
-			$attention->__set_array($row);
+			$attention = self::get_attention_object($attention_id);
 
 			$output = array_merge(
 				$attention->assign_details(true),
-				users_overlord::assign_details($row['attention_poster_id']),
-				users_overlord::assign_details($row['attention_requester'], 'REPORTER_'),
-				users_overlord::assign_details($row['attention_close_user'], 'CLOSER_')
+				users_overlord::assign_details($attention->attention_poster_id),
+				users_overlord::assign_details($attention->attention_requester, 'REPORTER_'),
+				users_overlord::assign_details($attention->attention_close_user, 'CLOSER_')
 			);
 
 			// Do we have to?
@@ -194,7 +234,7 @@ class attention_overlord
 			{
 				$output = array_merge(
 					$output,
-					users_overlord::assign_details($row['attention_close_user'], 'CLOSE_')
+					users_overlord::assign_details($attention->attention_close_user, 'CLOSE_')
 				);
 			}
 
