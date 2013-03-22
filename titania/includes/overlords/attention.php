@@ -233,7 +233,7 @@ class attention_overlord
 		$sql_where = '';
 		$types_managed = titania_types::find_authed('moderate');
 
-		if (phpbb::$auth->acl_get('u_titania_mod_contrib_mod'))
+		if (phpbb::$auth->acl_get('u_titania_mod_post_mod'))
 		{
 			$sql_where .= '(a.attention_object_type = ' . TITANIA_POST . ')';
 			$negated = false;
