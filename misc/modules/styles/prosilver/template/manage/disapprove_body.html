@@ -1,0 +1,43 @@
+<!-- INCLUDE overall_header.html -->
+
+<form id="confirm" action="{S_CONFIRM_ACTION}" method="post">
+<div class="panel">
+	{S_FORM_TOKEN}
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<div class="content">
+
+		<h2>{MESSAGE_TITLE}</h2>
+		<!-- IF ADDITIONAL_MSG --><p class="error">{ADDITIONAL_MSG}</p><!-- ENDIF -->
+
+		<fieldset>
+			<dl class="fields2 nobg">
+				<dt><label>{L_DISAPPROVE_REASON}:</label></dt>
+				<dd><select name="disapprove_reason">
+					<!-- BEGIN reason --><option value="{reason.ID}"<!-- IF reason.S_SELECTED --> selected="selected"<!-- ENDIF -->>{reason.DESCRIPTION}</option><!-- END reason -->
+					</select>
+				</dd>
+			</dl>
+			<dl class="fields2 nobg">
+				<dt><label for="disapprove_explain">{L_MORE_INFO}:</label><br /><span>{L_CAN_LEAVE_BLANK}</span></dt>
+				<dd><textarea class="inputbox" name="disapprove_explain" id="disapprove_explain" rows="4" cols="40">{REASON}</textarea></dd>
+			</dl>
+
+		<dl class="fields2 nobg">
+			<dt>&nbsp;</dt>
+			<dd><strong>{MESSAGE_TEXT}</strong></dd>
+		</dl>
+		</fieldset>
+
+		<fieldset class="submit-buttons">
+			{S_HIDDEN_FIELDS}<input type="submit" name="confirm" value="{YES_VALUE}" class="button1" />&nbsp; 
+			<input type="submit" name="cancel" value="{L_NO}" class="button2" />
+		</fieldset>
+
+	</div>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+</form>
+
+<!-- INCLUDE overall_footer.html -->
