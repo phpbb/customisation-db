@@ -22,348 +22,141 @@ if (!phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_m
 
 phpbb::$user->add_lang('mcp');
 
+<<<<<<< HEAD
 $valid_confirm_box = titania::confirm_box(true);
 
 $attention_id = phpbb::$request->variable('a', 0);
 $object_type = phpbb::$request->variable('type', 0);
 $object_id = phpbb::$request->variable('id', 0);
+=======
+$attention_id = request_var('a', 0);
+$object_type = request_var('type', 0);
+$object_id = request_var('id', 0);
+$disapprove_reason = request_var('disapprove_reason', 0);
+$disapprove_explain = utf8_normalize_nfc(request_var('disapprove_explain', '', true));
+>>>>>>> master
 
 $close = phpbb::$request->is_set_post('close');
 $approve = phpbb::$request->is_set_post('approve');
 $disapprove = phpbb::$request->is_set_post('disapprove');
 $delete = phpbb::$request->is_set_post('delete');
 
+$submit = ($close || $approve || $delete || $disapprove) ? true : false;
+
 if ($attention_id || ($object_type && $object_id))
 {
-	if ($attention_id)
+	// Check the form token before doing anything
+	if ($submit && !check_form_key('attention'))
 	{
-		$row = attention_overlord::load_attention($attention_id);
-		if (!$row)
-		{
-			trigger_error('NO_ATTENTION_ITEM');
-		}
-
-		// Setup
-		$attention_object = new titania_attention;
-		$attention_object->__set_array($row);
-		$object_type = (int) $attention_object->attention_object_type;
-		$object_id = (int) $attention_object->attention_object_id;
+		trigger_error('FORM_INVALID');
 	}
 
-	// Close, approve, or disapprove the items
-	if ($close || $approve || $delete || ($disapprove && $valid_confirm_box))
+	$attention = attention_overlord::get_attention_object($attention_id, $object_type, $object_id);
+
+	if (!$attention)
 	{
-		if (!check_form_key('attention') && !$disapprove)
-		{
-			trigger_error('FORM_INVALID');
-		}
-
-		if ($delete)
-		{
-			$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
-					WHERE attention_object_id = ' . (int) $object_id . '
-						AND attention_object_type = ' . (int) $object_type . '
-						AND attention_close_time = 0
-						AND attention_type = ' . TITANIA_ATTENTION_REPORTED;
-		}
-		else
-		{
-			$sql_ary = array(
-				'attention_close_time'	=> titania::$time,
-				'attention_close_user'	=> phpbb::$user->data['user_id'],
-			);
-
-			$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . ' SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
-				WHERE attention_object_id = ' . (int) $object_id . 
-					(($attention_id) ? ' AND attention_id = ' . (int) $attention_id : '') . '
-					AND attention_object_type = ' . (int) $object_type . '
-					AND attention_type = ' . (($close) ? TITANIA_ATTENTION_REPORTED : TITANIA_ATTENTION_UNAPPROVED);
-			phpbb::$db->sql_query($sql);
-
-			// Send notification to reporter
-			if ($close && $attention_id && $attention_object->notify_reporter)
-			{
-				phpbb::_include('functions_messenger', false, 'messenger');
-
-				$lang_path = phpbb::$user->lang_path;
-				phpbb::$user->set_custom_lang_path(titania::$config->language_path);
-
-				$messenger = new messenger(false);
-
-				users_overlord::load_users(array($attention_object->attention_poster_id));
-
-				$messenger->template('report_closed', users_overlord::get_user($attention_object->attention_poster_id, 'user_lang'));
-
-				$messenger->to(users_overlord::get_user($attention_object->attention_poster_id, 'user_email'), users_overlord::get_user($attention_object->attention_poster_id, '_username'));
-
-				$messenger->assign_vars(array(
-					'USERNAME'			=> htmlspecialchars_decode(users_overlord::get_user($attention_object->attention_poster_id, '_username')),
-					'ATTENTION_TITLE'	=> htmlspecialchars_decode(censor_text($attention_object->attention_title)),
-					'CLOSER_NAME'		=> htmlspecialchars_decode(phpbb::$user->data['username']),
-				));
-
-				$messenger->send();
-				phpbb::$user->set_custom_lang_path($lang_path);
-				// This gets reset when $template->_tpl_load() gets called 
-				phpbb::$user->theme['template_inherits_id'] = 1;	
-			}
-		}
+		trigger_error('NO_ATTENTION_ITEM');
 	}
+
+	// Setup
+	$object_type = (int) $attention->attention_object_type;
+	$object_id = (int) $attention->attention_object_id;
 	add_form_key('attention');
 
-	// Display the current attention items
-	$options = array(
-		'attention_object_id'	=> $object_id,
-	);
-	attention_overlord::display_attention_list($options);
+	if (!$attention->load_source_object())
+	{
+		$attention->delete();
 
-	// Display the old (closed) attention items
-	$options['only_closed'] = true;
-	$options['template_block'] = 'attention_closed';
-	attention_overlord::display_attention_list($options);
+		$error = array(
+			TITANIA_POST	=> 'NO_POST',
+			TITANIA_CONTRIB	=> 'NO_CONTRIB',
+		);
+
+		trigger_error($error[$object_type]);
+	}
+
+	if ($delete)
+	{
+		$attention->delete();
+	}
+	else if ($close)
+	{
+		$attention->report_handled();
+	}
 
 	switch ($object_type)
 	{
 		case TITANIA_POST :
-			$post = new titania_post;
-			$post->post_id = $object_id;
-			if (!$post->load())
-			{
-				$attention_object->delete();
-				trigger_error('NO_POST');
-			}
-
-			// Close the report
-			if ($close)
-			{
-				$post->post_reported = false;
-				$post->submit();
-
-				$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
-					WHERE topic_id = ' . $post->topic_id . '
-						AND post_reported = 1';
-				phpbb::$db->sql_query($sql);
-				$cnt = phpbb::$db->sql_fetchfield('cnt');
-				phpbb::$db->sql_freeresult();
-
-				if (!$cnt)
-				{
-					$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
-						SET topic_reported = 0
-						WHERE topic_id = ' . $post->topic_id;
-					phpbb::$db->sql_query($sql);
-				}
-
-				redirect(titania_url::build_url(titania_url::$current_page));
-			}
-
-			// Disapprove the post
-			if ($disapprove)
-			{
-				if ($valid_confirm_box)
-				{
-					// Load z topic
-					$post->topic->topic_id = $post->topic_id;
-					$post->topic->load();
-
-					// Notify poster about disapproval
-					if ($post->post_user_id != ANONYMOUS)
-					{
-						phpbb::_include('functions_messenger', false, 'messenger');
-
-						$lang_path = phpbb::$user->lang_path;
-						phpbb::$user->set_custom_lang_path(titania::$config->language_path);
-
-						$messenger = new messenger(false);
-
-						users_overlord::load_users(array($post->post_user_id));
-
-						$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_disapproved' : 'post_disapproved';
-
-						$messenger->template($email_template, users_overlord::get_user($post->post_user_id, 'user_lang'));
-
-						$messenger->to(users_overlord::get_user($post->post_user_id, 'user_email'), users_overlord::get_user($post->post_user_id, '_username'));
-
-						$messenger->assign_vars(array(
-							'USERNAME'		=> htmlspecialchars_decode(users_overlord::get_user($post->post_user_id, '_username')),
-							'POST_SUBJECT'	=> htmlspecialchars_decode(censor_text($post->post_subject)),
-							'TOPIC_TITLE'	=> htmlspecialchars_decode(censor_text($post->topic->topic_subject)))
-						);
-
-						$messenger->send();
-
-						phpbb::$user->set_custom_lang_path($lang_path);
-					}
-
-					// Delete the post
-					$post->delete();
-
-					redirect(titania_url::build_url(titania_url::$current_page));
-				}
-				else
-				{
-					titania::confirm_box(false, 'DISAPPROVE_ITEM', '', array('disapprove' => true));
-				}
-			}
-
-			// Approve the post
+			// Approve/disapprove the post
 			if ($approve)
 			{
-				$post->post_approved = 1;
+				$attention->approve();
+			}
+			else if ($disapprove)
+			{
+				$result = false;
 
-				// Increment the user's postcount if we must
-				if (!$post->post_deleted && in_array($post->post_type, titania::$config->increment_postcount))
+				if (titania::confirm_box(true))
 				{
-					phpbb::update_user_postcount($post->post_user_id);
+					$result = $attention->disapprove($disapprove_reason, $disapprove_explain);
 				}
 
-				$post->submit();
-
-				// Load z topic
-				$post->topic->topic_id = $post->topic_id;
-				$post->topic->load();
-
-				// Update topics posted table
-				$post->topic->update_posted_status('add', $post->post_user_id);
-
-				// Update first/last post?
-				if ($post->topic->topic_first_post_time > $post->post_time)
+				if (!$result || $result === 'reason_empty')
 				{
-					$post->topic->sync_first_post();
-				}
-				if ($post->topic->topic_last_post_time < $post->post_time)
-				{
-					$post->topic->sync_last_post();
-				}
-
-				$post->topic->submit();
-
-				$contrib = new titania_contribution();
-				$contrib->load($post->topic->parent_id);
-
-				// Subscriptions?
-				if ($post->topic->topic_first_post_id != $post->post_id && $post->topic->topic_last_post_id == $post->post_id)
-				{
-					phpbb::_include('functions_messenger', false, 'messenger');
-
-					$email_vars = array(
-						'NAME'			=> $post->topic->topic_subject,
-						'CONTRIB_NAME'	=> $contrib->contrib_name,
-						'U_VIEW'		=> titania_url::append_url($post->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
-					);
-					titania_subscriptions::send_notifications(array(TITANIA_TOPIC, TITANIA_SUPPORT), array($post->topic_id, $post->topic->parent_id), 'subscribe_notify_contrib.txt', $email_vars, $post->post_user_id);
-				}
-
-				// We're approving a topic
-				if ($post->topic->topic_first_post_id == $post->post_id)
-				{
-					$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
-						SET topic_approved = 1
-						WHERE topic_id = ' . $post->topic_id;
-					phpbb::$db->sql_query($sql);
-
-					// Subscriptions
-					if ($post->topic->topic_last_post_id == $post->post_id)
+					if ($result)
 					{
-						$email_vars = array(
-							'NAME'			=> $post->topic->topic_subject,
-							'CONTRIB_NAME'	=> $contrib->contrib_name,
-							'U_VIEW'		=> $post->topic->get_url(),
-						);
-						titania_subscriptions::send_notifications($post->post_type, $post->topic->parent_id, 'subscribe_notify_forum_contrib.txt', $email_vars, $post->post_user_id);
+						phpbb::$template->assign_var('ADDITIONAL_MSG', phpbb::$user->lang['NO_REASON_DISAPPROVAL']);
+
+						// Make sure we can reuse the confirm box
+						unset($_REQUEST['confirm_key'], $_POST['confirm_key'], $_POST['confirm']);
 					}
+
+					phpbb::_include('functions_display', 'display_reasons');
+					display_reasons($disapprove_reason);
+
+					titania::confirm_box(false, 'DISAPPROVE_ITEM', '', array('disapprove' => true), 'manage/disapprove_body.html');
 				}
-
-				// Notify poster about approval
-				if ($post->post_user_id != ANONYMOUS)
-				{
-					phpbb::_include('functions_messenger', false, 'messenger');
-					
-					$lang_path = phpbb::$user->lang_path;
-					phpbb::$user->set_custom_lang_path(titania::$config->language_path);
-
-					$messenger = new messenger(false);
-
-					users_overlord::load_users(array($post->post_user_id));
-
-					$email_template = ($post->post_id == $post->topic->topic_first_post_id && $post->post_id == $post->topic->topic_last_post_id) ? 'topic_approved' : 'post_approved';
-
-					$messenger->template($email_template, users_overlord::get_user($post->post_user_id, 'user_lang'));
-
-					$messenger->to(users_overlord::get_user($post->post_user_id, 'user_email'), users_overlord::get_user($post->post_user_id, '_username'));
-
-					$messenger->assign_vars(array(
-						'USERNAME'		=> htmlspecialchars_decode(users_overlord::get_user($post->post_user_id, '_username')),
-						'POST_SUBJECT'	=> htmlspecialchars_decode(censor_text($post->post_subject)),
-						'TOPIC_TITLE'	=> htmlspecialchars_decode(censor_text($post->topic->topic_subject)),
-
-						'U_VIEW_TOPIC'	=> titania_url::append_url($post->topic->get_url()),
-						'U_VIEW_POST'	=> titania_url::append_url($post->get_url()))
-					);
-
-					$messenger->send();
-
-					phpbb::$user->set_custom_lang_path($lang_path);
-				}
-
-				redirect(titania_url::build_url(titania_url::$current_page));
 			}
 
-			users_overlord::load_users(array($post->post_user_id, $post->post_edit_user, $post->post_delete_user));
-			users_overlord::assign_details($post->post_user_id, 'POSTER_', true);
-
-			phpbb::$template->assign_vars(array(
-				'POST_SUBJECT'		=> censor_text($post->post_subject),
-				'POST_DATE'			=> phpbb::$user->format_date($post->post_time),
-				'POST_TEXT'			=> $post->generate_text_for_display(),
-				'EDITED_MESSAGE'	=> ($post->post_edited) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], users_overlord::get_user($post->post_edit_user, '_full'), phpbb::$user->format_date($post->post_edited)) : '',
-				'DELETED_MESSAGE'	=> ($post->post_deleted != 0) ? sprintf(phpbb::$user->lang['DELETED_MESSAGE'], users_overlord::get_user($post->post_delete_user, '_full'), phpbb::$user->format_date($post->post_deleted), $post->get_url('undelete')) : '',
-				'POST_EDIT_REASON'	=> censor_text($post->post_edit_reason),
-
-				'U_VIEW'			=> $post->get_url(),
-				'U_EDIT'			=> $post->get_url('edit'),
-
-				'SECTION_NAME'		=> '<a href="' . $post->get_url() . '">' . censor_text($post->post_subject) . '</a> - ' . phpbb::$user->lang['ATTENTION'],
-			));
-
-			$title = censor_text($post->post_subject);
+			$title = censor_text($attention->post->post_subject);
 		break;
 
 		case TITANIA_CONTRIB :
-			$contrib = new titania_contribution;
-			if (!$contrib->load((int) $object_id))
-			{
-				$attention_object->delete();
-				trigger_error('NO_CONTRIB');
-			}
-
-			// Close the report
-			if ($close)
-			{
-				redirect(titania_url::build_url(titania_url::$current_page));
-			}
-
-			users_overlord::load_users(array($contrib->contrib_user_id));
-			users_overlord::assign_details($contrib->contrib_user_id, 'POSTER_', true);
-
-			phpbb::$template->assign_vars(array(
-				'POST_SUBJECT'		=> censor_text($contrib->contrib_name),
-				'POST_DATE'			=> phpbb::$user->format_date($contrib->contrib_last_update),
-				'POST_TEXT'			=> $contrib->generate_text_for_display(),
-
-				'U_VIEW'			=> $contrib->get_url(),
-				'U_EDIT'			=> $contrib->get_url('manage'),
-
-				'SECTION_NAME'		=> '<a href="' . $contrib->get_url() . '">' . censor_text($contrib->contrib_name) . '</a>  - ' . phpbb::$user->lang['ATTENTION'],
-			));
-
-			$title = censor_text($contrib->contrib_name);
+			$title = censor_text($attention->contrib->contrib_name);
 		break;
 
 		default :
 			trigger_error('NO_ATTENTION_TYPE');
 		break;
 	}
+
+	if ($submit)
+	{
+		if ($disapprove || $delete)
+		{
+			redirect(titania_url::build_url(titania_url::$current_page));
+		}
+		else
+		{
+			redirect(titania_url::build_url(titania_url::$current_page_url));
+		}
+	}
+
+	// Display the current attention items
+	$options = array(
+		'attention_object_id'		=> $object_id,
+		'exclude_attention_types'	=> TITANIA_ATTENTION_UNAPPROVED,
+	);
+	attention_overlord::display_attention_list($options);
+
+	// Display the old (closed) attention items
+	$options['only_closed'] = true;
+	$options['template_block'] = 'attention_closed';
+	$options['exclude_attention_types'] = false;
+
+	attention_overlord::display_attention_list($options);
+
+	$attention->assign_source_object_details();
 
 	titania::page_header($title . ' - ' . phpbb::$user->lang['ATTENTION']);
 

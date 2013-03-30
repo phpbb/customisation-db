@@ -112,6 +112,8 @@ class titania_attention extends titania_database_object
 	*/
 	public function assign_details($return = false)
 	{
+		$is_reported = (in_array($this->attention_type, array(TITANIA_ATTENTION_REPORTED, TITANIA_ATTENTION_DESC_CHANGED, TITANIA_ATTENTION_CATS_CHANGED))) ? true : false;
+
 		$output = array(
 			'ATTENTION_ID'			=> $this->attention_id,
 			'ATTENTION_TYPE'		=> $this->attention_type,
@@ -119,16 +121,22 @@ class titania_attention extends titania_database_object
 			'ATTENTION_POST_TIME'	=> phpbb::$user->format_date($this->attention_post_time),
 			'ATTENTION_CLOSE_TIME'	=> ($this->attention_close_time) ? phpbb::$user->format_date($this->attention_close_time) : '',
 			'ATTENTION_TITLE'		=> $this->attention_title,
-			'ATTENTION_REASON'		=> $this->get_reason_string(),
-			'ATTENTION_DESCRIPTION'	=> $this->get_description_diff(),
+			'ATTENTION_REASON'		=> $this->get_lang_string('reason'),
+			'ATTENTION_DESCRIPTION'	=> $this->attention_description,
+
+			'CLOSED_LABEL'			=> $this->get_lang_string('closed'),
+			'CLOSED_BY_LABEL'		=> $this->get_lang_string('closed_by'),
+			'OBJECT_LABEL'			=> $this->get_lang_string('object'),
 
 			'U_VIEW_ATTENTION'		=> $this->get_url(),
 			'U_VIEW_DETAILS'		=> titania_url::append_url(titania_url::$current_page_url, array('a' => $this->attention_id)),
 
 			'S_CLOSED'				=> ($this->attention_close_time) ? true : false,
 			'S_UNAPPROVED'			=> ($this->attention_type == TITANIA_ATTENTION_UNAPPROVED) ? true : false,
-			'S_REPORTED'			=> ($this->attention_type == TITANIA_ATTENTION_REPORTED) ? true : false,
+			'S_REPORTED'			=> $is_reported,
 		);
+
+		$output = array_merge($output, $this->get_extra_details());
 
 		if ($return)
 		{
@@ -138,24 +146,84 @@ class titania_attention extends titania_database_object
 		phpbb::$template->assign_vars($output);
 	}
 
-	public function get_reason_string()
+	/**
+	* Get extra details to assign to the template
+	*/
+	public function get_extra_details()
 	{
-		switch ((int) $this->attention_type)
-		{
-			case TITANIA_ATTENTION_REPORTED :
-				return phpbb::$user->lang['REPORTED'];
-			break;
-
-			case TITANIA_ATTENTION_UNAPPROVED :
-				return phpbb::$user->lang['UNAPPROVED'];
-			break;
-		}
+		return array();
 	}
 
 	/**
-	* Create inline diff of contribution description change
+	* The report has been handled, so close it.
+	*/
+	public function report_handled()
+	{
+		$this->close();
+
+		// Send notification to reporter
+		if ($this->notify_reporter)
+		{
+			$this->notify_reporter_closed();
+		}	
+	}
+
+	/**
+	* Notify reporter of the report being closed
+	*/
+	public function notify_reporter_closed()
+	{
+		$message_vars = array(
+			'ATTENTION_TITLE'	=> htmlspecialchars_decode(censor_text($this->attention_title)),
+			'CLOSER_NAME'		=> htmlspecialchars_decode(phpbb::$user->data['username']),
+		);
+
+		$this->notify_user($this->attention_poster_id, 'report_closed', $message_vars);
+	}
+
+	/**
+	* Send an individual a notification.
+	* @todo This should probably be moved somewhere else so it can be reused.
 	*
-	* @return string Returns diff or original description if the description is not a contrib description change
+	* @param int $user_id
+	* @param string $email_template
+	* @param array $message_vars Additional variables for email message.
+	*/
+	public function notify_user($user_id, $email_template, $message_vars)
+	{
+		if ($user_id == ANONYMOUS)
+		{
+			return;
+		}
+
+		phpbb::_include('functions_messenger', false, 'messenger');
+					
+		$lang_path = phpbb::$user->lang_path;
+		phpbb::$user->set_custom_lang_path(titania::$config->language_path);
+
+		$messenger = new messenger(false);
+
+		users_overlord::load_users(array($user_id));
+
+		$messenger->template($email_template, users_overlord::get_user($user_id, 'user_lang'));
+
+		$messenger->to(users_overlord::get_user($user_id, 'user_email'), users_overlord::get_user($user_id, '_username'));
+
+		$messenger->assign_vars(array_merge($message_vars, array(
+			'USERNAME'		=> htmlspecialchars_decode(users_overlord::get_user($user_id, '_username')),
+		)));
+
+		$messenger->send();
+
+		phpbb::$user->set_custom_lang_path($lang_path);
+		// This gets reset when $template->_tpl_load() gets called 
+		phpbb::$user->theme['template_inherits_id'] = 1;
+	}
+
+	/**
+	* Create inline diff for two versions of a report description.
+	*
+	* @return string Returns diff or original description if the description if there aren't two versions to compare.
 	*/
 	public function get_description_diff()
 	{
@@ -166,8 +234,6 @@ class titania_attention extends titania_database_object
 
 		if ($split_pos !== false)
 		{
-			titania::add_lang('contributions');
-
 			if (!class_exists('diff_engine'))
 			{
 				include(PHPBB_ROOT_PATH . 'includes/diff/engine.' . PHP_EXT);
@@ -183,7 +249,7 @@ class titania_attention extends titania_database_object
 			// <pre> is used to display the diff, so get rid of \n to get remove double line spacing 
 			$desc_diff = str_replace("\n", '', html_entity_decode($renderer->get_diff_content($diff)));
 
-			return phpbb::$user->lang['ATTENTION_CONTRIB_DESC_CHANGED'] . '<br />' . $desc_diff;		
+			return $desc_diff;		
 		}
 		
 		return $this->attention_description;	

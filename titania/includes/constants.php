@@ -85,6 +85,8 @@ define('TITANIA_ACCESS_PUBLIC', 2);
 // Attention stuff
 define('TITANIA_ATTENTION_REPORTED', 1);
 define('TITANIA_ATTENTION_UNAPPROVED', 2);
+define('TITANIA_ATTENTION_CATS_CHANGED', 3);
+define('TITANIA_ATTENTION_DESC_CHANGED', 4);
 
 // Header status codes
 define('HEADER_OK',						200);

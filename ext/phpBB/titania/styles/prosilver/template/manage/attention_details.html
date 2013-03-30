@@ -1,3 +1,4 @@
+<<<<<<< HEAD:ext/phpBB/titania/styles/prosilver/template/manage/attention_details.html
 <!-- INCLUDE mcp_header.html -->
 
 <!-- BEGIN attention -->
@@ -101,4 +102,123 @@
 <!-- END attention_closed -->
 
 
+=======
+<!-- INCLUDE mcp_header.html -->
+
+<!-- IF .attention -->
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<h3 class="clear-top">{L_OPEN_ITEMS}</h3>
+		<!-- BEGIN attention -->
+		<div class="attention<!-- IF attention.S_LAST_ROW --> last<!-- ENDIF -->">
+			<h4>{L_REASON}: {attention.ATTENTION_REASON}</h4>
+			<p class="author">{L_POST_BY_AUTHOR} {attention.REPORTER_USER_FULL} &raquo; {attention.ATTENTION_TIME}</p>
+
+			<!-- IF attention.ATTENTION_DESCRIPTION -->
+			<div class="content">
+				{attention.ATTENTION_DESCRIPTION}
+			</div>
+			<!-- ELSE -->
+			<br />
+			<!-- ENDIF -->
+
+			<!-- IF attention.S_REPORTED -->
+			<form method="post" id="reported" action="{S_ACTION}">
+				<p class="rules">
+					<input type="hidden" value="{attention.ATTENTION_ID}" name="a" />
+					<input class="button1" type="submit" value="{L_CLOSE_REPORT}" name="close" />
+					<input class="button1" type="submit" value="{L_DELETE_REPORT}" name="delete" />
+					{S_FORM_TOKEN}
+				</p>
+			</form>
+			<!-- ENDIF -->
+		</div>
+	<!-- END attention -->
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
+
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<h3 class="clear-top">{OBJECT_TYPE}</h3>
+		<!-- IF PARENT -->
+		<p>
+			{L_PARENT_CONTRIBUTION}: <a href="{U_PARENT}">{PARENT}</a>
+		</p>
+		<!-- ENDIF -->
+		<div class="post bg2">
+			<div class="inner"><span class="corners-top"><span></span></span>
+
+			<div class="postbody full">
+				<!-- IF U_EDIT -->
+				<div class="break-ajax"><ul class="profile-icons">
+					<li class="edit-icon"><a href="{U_EDIT}" title="{L_EDIT_POST}"><span>{L_EDIT_POST}</span></a></li>
+				</ul></div>
+				<!-- ENDIF -->
+
+				<h3><a href="{U_VIEW}">{POST_SUBJECT}</a></h3>
+				<p class="author">{MINI_POST_IMG} {L_POSTED} {L_POST_BY_AUTHOR} {POSTER_USER_FULL} &raquo; {POST_DATE}</p>
+
+				<!-- IF S_UNAPPROVED -->
+					<form method="post" id="approve" action="{S_ACTION}">
+						<p class="rules">
+							<input class="button1" type="submit" value="{L_APPROVE}" name="approve" /> &nbsp;
+							<input class="button2" type="submit" value="{L_DISAPPROVE}" name="disapprove" />
+							{S_FORM_TOKEN}
+						</p>
+					</form>
+				<!-- ENDIF -->
+
+				<div class="content">
+					{POST_TEXT}
+				</div>
+
+				<!-- IF .attachment -->
+					<dl class="attachbox">
+						<dt>{L_ATTACHMENTS}</dt>
+						<!-- BEGIN attachment -->
+							<dd>{attachment.DISPLAY_ATTACHMENT}</dd>
+						<!-- END attachment -->
+					</dl>
+				<!-- ENDIF -->
+
+				<!-- IF EDITED_MESSAGE or DELETED_MESSAGE -->
+					<div class="notice">
+						{EDITED_MESSAGE}<!-- IF EDITED_MESSAGE and DELETED_MESSAGE --><br /><!-- ENDIF -->{DELETED_MESSAGE}
+						<!-- IF POST_EDIT_REASON --><br /><strong>{L_REASON}:</strong> <em>{POST_EDIT_REASON}</em><!-- ENDIF -->
+					</div>
+				<!-- ENDIF -->
+			</div>
+
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- IF .attention_closed -->
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+	<h3 class="clear-top">{L_CLOSED_ITEMS}</h3>
+
+	<!-- BEGIN attention_closed -->
+	<div class="attention<!-- IF attention_closed.S_LAST_ROW --> last<!-- ENDIF -->">
+		<h4>{L_REASON}: {attention_closed.ATTENTION_REASON}</h4>
+		<p class="author">{L_POST_BY_AUTHOR} {attention_closed.REPORTER_USER_FULL} &raquo; {attention_closed.ATTENTION_TIME}</p>
+		<p class="author attention-closed">{attention_closed.CLOSED_BY_LABEL} {attention_closed.CLOSER_USER_FULL} &raquo; {attention_closed.ATTENTION_CLOSE_TIME}</p>
+
+		<!-- IF attention_closed.ATTENTION_DESCRIPTION -->
+		<div class="content">
+			{attention_closed.ATTENTION_DESCRIPTION}
+		</div>
+		<!-- ELSE -->
+		<br />
+		<!-- ENDIF -->
+	</div>
+	<!-- END attention_closed -->
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
+
+
+>>>>>>> master:misc/modules/styles/prosilver/template/manage/attention_details.html
 <!-- INCLUDE mcp_footer.html -->

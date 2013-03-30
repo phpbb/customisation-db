@@ -261,7 +261,10 @@ else if ($submit)
 
 			if ($old_description != $description)
 			{
-				$attention_message[] = $old_description .  '>>>>>>>>>>' . $description;
+				$attention_message[] = array(
+					'message'	=> $old_description .  '>>>>>>>>>>' . $description,
+					'type'		=> TITANIA_ATTENTION_DESC_CHANGED,
+				);
 			}
 
 			// Changed categories?
@@ -289,12 +292,15 @@ else if ($submit)
 				{
 					$category_names[] = (isset(phpbb::$user->lang[$categories_ary[$category_id]['category_name']])) ? phpbb::$user->lang[$categories_ary[$category_id]['category_name']] : $categories_ary[$category_id]['category_name'];
 				}
-				$attention_message[] = sprintf(phpbb::$user->lang['ATTENTION_CONTRIB_CATEGORIES_CHANGED'], implode("\n", $old_category_names), implode("\n", $category_names));
+				$attention_message[] = array(
+					'message'	=> implode("\n", $old_category_names) . '>>>>>>>>>>' . implode("\n", $category_names),
+					'type'		=> TITANIA_ATTENTION_CATS_CHANGED,
+				);
 			}
 
-			if (sizeof($attention_message))
+			foreach ($attention_message as $message)
 			{
-				titania::$contrib->report(nl2br(implode("\n\n", $attention_message)));
+				titania::$contrib->report($message['message'], false, $message['type']);
 			}
 		}
 
