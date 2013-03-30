@@ -51,7 +51,7 @@ class mcp_titania
 
 		// Need a few hacks to be used from within phpBB
 		titania::$hook->register(array('titania_url', 'build_url'), 'titania_outside_build_url', 'standalone');
-		titania::$hook->register(array('titania_url', 'append_url'), 'titania_outside_build_url', 'standalone');
+		titania::$hook->register(array('titania_url', 'append_url'), 'titania_outside_append_url', 'standalone');
 		titania::$hook->register(array('titania', 'page_header'), 'titania_outside_page_header', 'standalone');
 		titania::$hook->register(array('titania', 'page_footer'), 'titania_outside_page_footer', 'standalone');
 		titania::$hook->register('titania_generate_text_for_display', 'titania_outside_generate_text_for_display', 'standalone');
@@ -75,18 +75,56 @@ function titania_outside_generate_text_for_display(&$hook, $text, $uid, $bitfiel
 	return generate_text_for_display($text, $uid, $bitfield, $flags);
 }
 
+function titania_outside_append_url($hook, $base, $params)
+{
+	$old_params = titania_split_parameters($base);
+	$params = array_merge($old_params, $params);
+
+	return phpbb::append_sid('mcp', array_merge(array('i' => 'titania', 'mode' => 'attention'), $params));
+}
+
 function titania_outside_build_url(&$hook, $base, $params = array())
 {
-	// Not pretty, but it avoids issues with $current_page_url since it already has the appropriate parameters for the page.
-	if (isset($params[0]) && strpos($params[0], 'mcp.php?i=titania&mode=attention&a=') === 0)
+	if (!empty($params[0]))
 	{
-		return titania::$absolute_board . $params[0];
+		$old_params = titania_split_parameters($params[0]);
+		$params = array_merge($old_params, $params);
+		unset($params[0], $params['start']);
 	}
 
 	if ($base == 'manage/attention' || $base == titania_url::$current_page || strpos($base, 'mcp.' . PHP_EXT))
 	{
 		return phpbb::append_sid('mcp', array_merge(array('i' => 'titania', 'mode' => 'attention'), $params));
 	}
+}
+
+function titania_split_parameters($base)
+{
+	if (strpos($base, 'mcp.' . PHP_EXT . '?') === false)
+	{
+		return array();
+	}
+	// Trim the base off leaving only the parameters
+	$param_string = substr($base, strpos($base, 'mcp.' . PHP_EXT . '?') + 8);
+
+	if (!empty($param_string) && strpos($param_string, '&') !== false)
+	{
+		$params = array();
+		$separator = (strpos($base, '&amp;')) ? '&amp;' : '&';
+		$parts = explode($separator, $param_string);
+
+		foreach ($parts as $part)
+		{
+			$param = explode('=', $part);
+			if ($param[0] == '' || $param[1] == '')
+			{
+				continue;
+			}
+			$params[$param[0]] = $param[1];
+		}
+		return $params;
+	}
+	return array();
 }
 
 function titania_outside_page_header(&$hook, $page_title)
