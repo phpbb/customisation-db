@@ -58,6 +58,7 @@
 		<input type="checkbox" name="closed" id="closed"<!-- IF S_CLOSED_CHECKED --> checked="checked"<!-- ENDIF --> /> <label for="closed">{L_CLOSED_ITEMS}</label>
 		<input type="submit" name="sort" value="{L_GO}" class="button2" />
 	</fieldset>
+	<!-- IF TOTAL_RESULTS -->
 	<hr />
 	<ul class="linklist">
 		<li class="rightside pagination">
@@ -65,6 +66,7 @@
 			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
 		</li>
 	</ul>
+	<!-- ENDIF -->
 
 <!--
 <!-- IF .attention -->
