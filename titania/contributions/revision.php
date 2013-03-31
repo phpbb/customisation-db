@@ -336,7 +336,7 @@ if ($step == 1)
 		}
 
 		$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
-		$new_dir_name = titania::$contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision_version));
+		$new_dir_name = titania_url::url_slug(titania::$contrib->contrib_name) . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision_version));
 		$download_package = titania_url::build_url('download', array('id' => $revision_attachment->attachment_id));
 
 		// Start up the machine
