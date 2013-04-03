@@ -80,12 +80,15 @@ function titania_outside_generate_text_for_display(&$hook, $text, $uid, $bitfiel
 	return generate_text_for_display($text, $uid, $bitfield, $flags);
 }
 
-function titania_outside_append_url($hook, $base, $params)
+function titania_outside_append_url(&$hook, $base, $params)
 {
-	$old_params = titania_split_parameters($base);
-	$params = array_merge($old_params, $params);
+	if ($base == 'manage/attention' || $base == titania_url::$current_page || strpos($base, 'mcp.' . PHP_EXT))
+	{
+		$old_params = titania_split_parameters($base);
+		$params = array_merge($old_params, $params);
 
-	return phpbb::append_sid('mcp', array_merge(array('i' => 'titania', 'mode' => 'attention'), $params));
+		return phpbb::append_sid('mcp', array_merge(array('i' => 'titania', 'mode' => 'attention'), $params));
+	}
 }
 
 function titania_outside_build_url(&$hook, $base, $params = array())
