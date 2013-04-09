@@ -140,7 +140,7 @@ function get_path()
 	$script_name = str_replace(array('\\', '//'), '/', $script_name);
 	$script_path = trim(str_replace('\\', '/', dirname($script_name)));
 
-	$secure = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 1 : 0;
+	$secure = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 1 : 0;
 	$path = (($secure) ? 'https://' : 'http://') . $host;
 
 	if ($port && (($secure && $port != 443) || (!$secure && $port != 80)))
