@@ -44,7 +44,7 @@ if (sizeof($matches))
 	}
 }
 
-$path = get_path() . '/';
+$path = TITANIA_ROOT;
 
 // adjust paths
 $stylesheet = str_replace('./', $path . 'styles/' . $style . '/theme/', $stylesheet);
@@ -55,10 +55,10 @@ header('Content-type: text/css; charset=UTF-8');
 
 // Parse Theme Data
 $replace = array(
-	'{T_THEME_PATH}'			=> "$path/styles/$style/theme",
-	'{T_TEMPLATE_PATH}'			=> "$path/styles/$style/template",
-	'{T_IMAGESET_PATH}'			=> "$path/styles/$style/imageset",
-	'{T_IMAGES_PATH}'			=> "$path/images",
+	'{T_THEME_PATH}'			=> $path . "styles/$style/theme",
+	'{T_TEMPLATE_PATH}'			=> $path . "styles/$style/template",
+	'{T_IMAGESET_PATH}'			=> $path . "styles/$style/imageset",
+	'{T_IMAGES_PATH}'			=> $path . "images",
 );
 $stylesheet = str_replace(array_keys($replace), array_values($replace), $stylesheet);
 
@@ -116,48 +116,3 @@ if (isset($matches[0]) && sizeof($matches[0]))
 }
 
 echo $stylesheet;
-
-/**
-* Get absolute path
-*
-* Mostly from phpBB3 session.php
-*/
-function get_path()
-{
-	// Get hostname
-	$host = (!empty($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : ((!empty($_SERVER['SERVER_NAME'])) ? $_SERVER['SERVER_NAME'] : getenv('SERVER_NAME'));
-	$port = (!empty($_SERVER['SERVER_PORT'])) ? (int) $_SERVER['SERVER_PORT'] : (int) getenv('SERVER_PORT');
-
-	// Should be a string and lowered
-	$host = (string) strtolower($host);
-
-	$script_name = (!empty($_SERVER['PHP_SELF'])) ? $_SERVER['PHP_SELF'] : getenv('PHP_SELF');
-	if (!$script_name)
-	{
-		$script_name = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
-		$script_name = (($pos = strpos($script_name, '?')) !== false) ? substr($script_name, 0, $pos) : $script_name;
-	}
-	$script_name = str_replace(array('\\', '//'), '/', $script_name);
-	$script_path = trim(str_replace('\\', '/', dirname($script_name)));
-
-	$secure = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 1 : 0;
-	$path = (($secure) ? 'https://' : 'http://') . $host;
-
-	if ($port && (($secure && $port != 443) || (!$secure && $port != 80)))
-	{
-		// HTTP HOST can carry a port number
-		if (strpos($host, ':') === false)
-		{
-			$path .= ':' . $port;
-		}
-	}
-
-	$path .= str_replace(' ', '%20', htmlspecialchars($script_path));
-
-	if (substr($path, -1) == '/')
-	{
-		$path = substr($path, 0, -1);
-	}
-
-	return $path;
-}
