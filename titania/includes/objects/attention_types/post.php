@@ -109,7 +109,7 @@ class titania_attention_post extends titania_attention
 		$this->post->submit();
 
 		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
-			WHERE topic_id = ' . $post->topic_id . '
+			WHERE topic_id = ' . $this->post->topic_id . '
 				AND post_reported = 1';
 		phpbb::$db->sql_query($sql);
 		$cnt = phpbb::$db->sql_fetchfield('cnt');
@@ -119,7 +119,7 @@ class titania_attention_post extends titania_attention
 		{
 			$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
 				SET topic_reported = 0
-				WHERE topic_id = ' . $post->topic_id;
+				WHERE topic_id = ' . $this->post->topic_id;
 			phpbb::$db->sql_query($sql);
 		}
 
