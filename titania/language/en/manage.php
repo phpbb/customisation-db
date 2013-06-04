@@ -61,6 +61,8 @@ $lang = array_merge($lang, array(
 	'MANAGE_CATEGORIES'			=> 'Manage Categories',
 	'MARK_IN_PROGRESS'			=> 'Mark "In Progress"',
 	'MARK_NO_PROGRESS'			=> 'Unmark "In Progress"',
+	'MARK_TESTED'				=> 'Mark as “Tested”',
+	'MARK_UNTESTED'				=> 'Unmark as “Tested”',
 	'MOVE_QUEUE'				=> 'Move Queue',
 	'MOVE_QUEUE_CONFIRM'		=> 'Select the new queue location and confirm.',
 
