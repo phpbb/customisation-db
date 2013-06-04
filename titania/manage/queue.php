@@ -119,6 +119,14 @@ if ($queue_id)
 			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
 		break;
 
+		case 'tested' :
+		case 'not_tested' :
+			$mark = ($action == 'tested') ? true : false;
+			$queue = queue_overlord::get_queue_object($queue_id, true);
+			$queue->change_tested_mark($mark);
+			redirect(titania_url::append_url($base_url, array('q' => $queue->queue_id)));
+		break;
+
 		case 'delete_queue' :
 			if (phpbb::$user->data['user_type'] != USER_FOUNDER)
 			{

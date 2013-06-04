@@ -49,7 +49,7 @@
 
 		<li class="row<!-- IF topics.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topics.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topics.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">
 			<dl class="icon {topics.FOLDER_STYLE}">
-				<dt title="{topics.FOLDER_IMG_ALT}"<!-- IF topics.S_TOPIC_PROGRESS --> class="queue_progress"<!-- ENDIF -->>
+				<dt title="{topics.FOLDER_IMG_ALT}"<!-- IF topics.S_TOPIC_PROGRESS --> class="queue_progress"<!-- ELSEIF topics.S_TESTED -->class="queue_tested"<!-- ENDIF -->>
 					<!-- IF topics.S_ACCESS_TEAMS -->
 					<img src="{T_TITANIA_THEME_PATH}/images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
 					<!-- ELSEIF topics.S_ACCESS_AUTHORS -->

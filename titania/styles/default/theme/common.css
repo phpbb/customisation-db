@@ -609,6 +609,7 @@ li.row dl.codebox dd {
 }
 
 .queue_progress 	{ background-image: url("./images/icon_queue_progress.png"); }
+.queue_tested		{ background-image: url("./images/icon_queue_tested.gif"); }
 .deny 				{ padding-left: 19px !important; background-image: url("./images/icon_deny.gif"); }
 .approve 			{ padding-left: 21px !important; background-image: url("./images/icon_approve.gif"); }
 .change_status		{ padding-left: 15px !important; background-image: url("./images/icon_change_status.gif"); }

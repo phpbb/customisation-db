@@ -82,6 +82,7 @@ class titania_queue extends titania_message_object
 			'automod_results'		=> array('default' => ''),
 			
 			'allow_author_repack'	=> array('default' => false),
+			'queue_tested'			=> array('default' => false),
 		));
 
 		// Hooks
@@ -361,6 +362,15 @@ class titania_queue extends titania_message_object
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+	}
+
+	public function change_tested_mark($mark)
+	{
+		$this->queue_tested = (bool) $mark;
+		$this->submit(false);
+
+		// Hooks
+		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this, $mark);
 	}
 
 	/**
