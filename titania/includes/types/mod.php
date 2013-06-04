@@ -64,7 +64,7 @@ class titania_type_mod extends titania_type_base
 	/**
 	* Run MPV/Automod Test for this type?
 	*/
-	public $mpv_test = true;
+	public $mpv_test = false;
 	public $automod_test = true;
 	public $clean_and_restore_root = true;
 	public $root_search = array(array('install', '.xml'));

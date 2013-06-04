@@ -298,7 +298,7 @@ class titania_contrib_tools
 							{
 								$match++;
 							}
-							else if (!in_array('is_exactly', $file_search) && strpos($item, $check) !== false)
+							else if (!in_array('is_exactly', $file_search) && stripos($item, $check) !== false)
 							{
 								$match++;
 							}
@@ -628,7 +628,7 @@ class titania_contrib_tools
 			// Find the first item with install in the name
 			foreach (scandir($modx_root) as $item)
 			{
-		       if (strpos($item, 'install') !== false && strpos($item, '.xml'))
+		       if (stripos($item, 'install') !== false && strpos($item, '.xml'))
 		       {
 				   $modx_file = $modx_root . $item;
 				   break;
