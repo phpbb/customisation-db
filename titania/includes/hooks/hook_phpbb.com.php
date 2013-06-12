@@ -532,7 +532,7 @@ function phpbb_com_handle_attachments($post, &$post_text)
 	}
 	phpbb::$db->sql_freeresult($result);
 
-	if (empty(!$attachments))
+	if (empty($attachments))
 	{
 		return;
 	}
