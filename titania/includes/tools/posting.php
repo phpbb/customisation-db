@@ -960,6 +960,15 @@ class titania_posting
 		// Submit check...handles running $post->post_data() if required
 		$submit = $message_object->submit_check();
 
+		$post_attachments = $message_object->attachments->get_attachments();
+
+		// Ensure that post_attachment remains valid when the user doesn't submit the post after deleting all attachments
+		if ($mode == 'edit' && $post_object->post_attachment && empty($post_attachments))
+		{
+			$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . ' SET post_attachment = 0 WHERE post_id = ' . (int) $post_object->post_id;
+			phpbb::$db->sql_query($sql);
+		}
+
 		if ($submit)
 		{
 			$error = $post_object->validate();
@@ -995,6 +1004,7 @@ class titania_posting
 					$post_object->post_approved = false;
 				}
 
+				$post_object->post_attachment = (!empty($post_attachments)) ? true : false;
 				$post_object->parent_contrib_type = $this->parent_type;
 				$post_object->submit();
 
