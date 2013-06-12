@@ -162,6 +162,8 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			$temp_post->__set_array($row);
 
 			$post_text = $row['post_text'];
+
+			phpbb_com_handle_attachments($temp_post, $post_text);
 			titania_decode_message($post_text, $row['post_text_uid']);
 
 			$post_text .= "\n\n" . titania_url::remove_sid($temp_post->get_url());
@@ -273,6 +275,8 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	);
 
 	$post_text .= "\n\n" . $post_object->post_text;
+
+	phpbb_com_handle_attachments($post_object, $post_text);
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
@@ -312,6 +316,8 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 	titania::_include('functions_posting', 'phpbb_posting');
 
 	$post_text = $post_object->post_text;
+
+	phpbb_com_handle_attachments($post_object, $post_text);
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
@@ -348,6 +354,8 @@ function phpbb_com_titania_post_edit($hook, &$post_object)
 	titania::_include('functions_posting', 'phpbb_posting');
 
 	$post_text = $post_object->post_text;
+
+	phpbb_com_handle_attachments($post_object, $post_text);
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
@@ -495,4 +503,61 @@ function phpbb_com_forum_id($type, $mode)
 	}
 
 	return false;
+}
+
+function phpbb_com_handle_attachments($post, &$post_text)
+{
+	if (!$post->post_attachment)
+	{
+		return;
+	}
+
+	$sort_order = (phpbb::$config['display_order']) ? 'ASC' : 'DESC';
+
+	$sql = 'SELECT attachment_id, real_filename
+		FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+		WHERE is_orphan = 0
+			AND object_type = ' . (int) $post->post_type . '
+			AND object_id = ' . (int) $post->post_id . '
+		ORDER BY attachment_id ' . $sort_order;
+	$result = phpbb::$db->sql_query($sql);
+	$attachments = array();
+
+	phpbb::$user->add_lang('viewtopic');
+
+	while ($row = phpbb::$db->sql_fetchrow($result))
+	{
+		$download_url = titania_url::build_clean_url('download', array('id' => $row['attachment_id']));
+		$attachments[] = '[' . phpbb::$user->lang['ATTACHMENT'] . "] [url=$download_url]{$row['real_filename']}[/url]";
+	}
+	phpbb::$db->sql_freeresult($result);
+
+	if (empty(!$attachments))
+	{
+		return;
+	}
+
+	preg_match_all('#<!\-\- ia([0-9]+) \-\->(.*?)<!\-\- ia\1 \-\->#', $post_text, $matches, PREG_PATTERN_ORDER);
+
+	$replace = array();
+	foreach ($matches[0] as $num => $capture)
+	{
+		// Flip index if we are displaying the reverse way
+		$index = (phpbb::$config['display_order']) ? ($tpl_size-($matches[1][$num] + 1)) : $matches[1][$num];
+
+		$replace['from'][] = $matches[0][$num];
+		$replace['to'][] = (isset($attachments[$index])) ? "\n$attachments[$index]\n" : '';
+
+		unset($attachments[$index]);
+	}
+
+	if (isset($replace['from']))
+	{
+		$post_text = str_replace($replace['from'], $replace['to'], $post_text);
+	}
+
+	if (!empty($attachments))
+	{
+		$post_text .= "\n\n" . implode("\n", $attachments);
+	}
 }
