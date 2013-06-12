@@ -357,6 +357,36 @@ function titania_custom($action, $version)
 					}
 					phpbb::$db->sql_freeresult($result);
 				break;
+
+				case '0.5.12' :
+					// Fill the post_attachment field in the posts table
+
+					$sql = 'SELECT DISTINCT(object_id)
+						FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+						WHERE is_orphan = 0
+							AND ' . phpbb::$db->sql_in_set('object_type', array(TITANIA_QUEUE_DISCUSSION, TITANIA_QUEUE, TITANIA_SUPPORT));
+					$result = phpbb::$db->sql_query($sql);
+					$post_ary = array();
+
+					$update_sql = 'UPDATE ' . TITANIA_POSTS_TABLE . ' SET post_attachment = 1 WHERE ';
+
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$post_ary[] = $row['object_id'];
+
+						if (sizeof($post_ary) >= 50)
+						{
+							phpbb::$db->sql_query($update_sql . phpbb::$db->sql_in_set('post_id', $post_ary));
+							$post_ary = array();
+						}
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					if (!empty($post_ary))
+					{
+						phpbb::$db->sql_query($update_sql . phpbb::$db->sql_in_set('post_id', $post_ary));
+					}
+				break;
 			}
 		break;
 
