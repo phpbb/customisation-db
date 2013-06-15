@@ -91,7 +91,7 @@ $(document).ready(function(){
 		var full_edit = $('a', this).attr('href');
 
 		// Return false if the form is already open
-		if ($('form', postbody).length)
+		if ($('form', postbody).length || $('.qe-error', postbody).length)
 		{
 			e.preventDefault();
 			return;
@@ -107,8 +107,23 @@ $(document).ready(function(){
 		$.ajax({
 			type: "POST",
 			url: $(post).parent().children('.quick_edit').val(),
-			success: function(html){
-				$(post).replaceWith(html);
+			success: function(response){
+
+				// If a full page was served, then an error occurred. Redirect to full edit.
+				if (response.indexOf('{') !== 0)
+				{
+					window.location.href = full_edit;
+				}
+
+				var response = eval('(' + response + ')');
+
+				if (response.result == 'error')
+				{
+					$(post).before('<div class="error qe-error">' + response.content + '</div>');
+					return;
+				}
+
+				$(post).replaceWith(response.content);
 
 				var quickeditor = $(postbody).children('form').children('textarea');
 
@@ -117,19 +132,46 @@ $(document).ready(function(){
 				$(quickeditor).tabby();
 
 				$(quickeditor).parent().children('.submit-buttons').children('[name=submit]').click(function(e) {
-					$(this).parent().hide();
 
 					// Ajax time
 					$.ajax({
 						type: "POST",
 						url: $(quickeditor).parent().attr('action'),
 						data: $(quickeditor).parent().serialize() + '&submit=1',
-						success: function(html){
-							$(quickeditor).parent().replaceWith('<div class="content text-content">' + html + '</div>');
-							var subject = $('.content:not(.original_post)', postbody).children('span:first-child');
-							$('h3 a', postbody).html($(subject).html());
-							$(subject).remove();
-							$('.original_post', postbody).remove();
+						success: function(response){
+							var qe_form = $(quickeditor).parent();
+	
+							// If a full page was served, then an error occurred.
+							if (response.indexOf('{') !== 0)
+							{
+								$(qe_form).before('<div class="error qe-error">' + form_error + '</div>');
+							}
+							else
+							{
+								var response = eval('(' + response + ')');
+
+								// If the form token is invalid, redirect to full edit.
+								if (response.result == 'invalid_token')
+								{
+									$('[name=full_editor]', qe_form).trigger('click');
+									
+								}
+								else if (response.result == 'error')
+								{
+									$(qe_form).before('<div class="error qe-error">' + response.content + '</div>');
+								}
+								else
+								{
+									// Hide the form only if the AJAX call succeeded
+									$(qe_form).hide();
+
+									$(qe_form).replaceWith('<div class="content text-content">' + response.content + '</div>');
+									var subject = $('.content:not(.original_post)', postbody).children('span:first-child');
+									$('h3 a', postbody).html($(subject).html());
+									$(subject).remove();
+									$('.original_post', postbody).remove();
+								}
+							}
 						}
 					});
 
@@ -153,6 +195,8 @@ $(document).ready(function(){
 		var postbody = $(this).parents('.postbody');
 
 		$('form', postbody).remove();
+		// Remove warnings
+		$('.qe-error', postbody).remove();
 		$('.original_post', postbody).removeClass('hidden');
 	});
 
