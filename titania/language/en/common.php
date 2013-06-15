@@ -122,6 +122,7 @@ $lang = array_merge($lang, array(
 	'EDIT_CATEGORY'				=> 'Edit Category',
 	'ERROR'						=> 'Error',
 
+	'FORM_ERROR'				=> 'An error occurred while submitting the form.',
 	'FILE_NOT_EXIST'			=> 'File does not exist: %s',
 	'FIND_CONTRIBUTION'			=> 'Find Contribution',
 
