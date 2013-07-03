@@ -23,7 +23,7 @@ class reindex
 	{
 		$section = request_var('section', 0);
 		$start = request_var('start', 0);
-		$limit = (titania::$config->search_backend == 'solr') ? 1000 : 100;
+		$limit = (titania::$config->search_backend == 'solr') ? 250 : 100;
 		$total = 0;
 
 		$sync = new titania_sync;
