@@ -18,66 +18,66 @@ RewriteEngine on
 
 #download
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^download/([^/]+)$									./download/file.php [NC]
+Rewriterule ^old/download/([^/]+)$									./download/file.php [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^view-install/modx/([^/]+)$							./download/modx/$1 [NC]
+Rewriterule ^old/view-install/modx/([^/]+)$							./download/modx/$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^view-install/([^/]+)$								./download/view_install.php [NC]
+Rewriterule ^old/view-install/([^/]+)$								./download/view_install.php [NC]
 
 #manage
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^manage?/([^/]+)?/?([^/]+)?$						./manage/index.php?page=$1 [NC]
+Rewriterule ^old/manage?/([^/]+)?/?([^/]+)?$						./manage/index.php?page=$1 [NC]
 
 #authors
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^authors?/([^/]+)/?([^/]+)?/?([^/]+)?$				./authors/index.php?u=$1&page=$2 [NC]
+Rewriterule ^old/authors?/([^/]+)/?([^/]+)?/?([^/]+)?$				./authors/index.php?u=$1&page=$2 [NC]
 
 #display all contribs
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^contributions/all/?([^/]+)?$						./index.php?action=contributions [NC]
+Rewriterule ^old/contributions/all/?([^/]+)?$						./index.php?action=contributions [NC]
 
 #display support topics
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^support/(all|mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/?([^/]+)?$								./index.php?action=support&type=$1 [NC]
+Rewriterule ^old/support/(all|mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/?([^/]+)?$								./index.php?action=support&type=$1 [NC]
 
 #contributions
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^contribution/id/([0-9]+)/?$						./contributions/index.php?id=$1 [NC]
+Rewriterule ^old/contribution/id/([0-9]+)/?$						./contributions/index.php?id=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/(create)/?([^/]+)?$						./contributions/index.php?page=$2&type=$1 [NC]
+Rewriterule ^old/(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/(create)/?([^/]+)?$						./contributions/index.php?page=$2&type=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			./contributions/index.php?c=$2&page=$3&type=$1 [NC]
+Rewriterule ^old/(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			./contributions/index.php?c=$2&page=$3&type=$1 [NC]
 
 #search/faq/cron
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(search|faq|cron)/?([^/]+)?$						./$1.php [NC]
+Rewriterule ^old/(search|faq|cron)/?([^/]+)?$						./$1.php [NC]
 
 #find-contribution
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(find\-contribution)/?([^/]+)?$					./search.php?mode=find-contribution [NC]
+Rewriterule ^old/(find\-contribution)/?([^/]+)?$					./search.php?mode=find-contribution [NC]
 
 #rating/login/logout
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^(rate|login|logout)/?([^/]+)?$						./index.php?action=$1 [NC]
+Rewriterule ^old/(rate|login|logout)/?([^/]+)?$						./index.php?action=$1 [NC]
 
 #misc index stuff
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^index/([^/]+)/([^/]+)?$							./index.php?action=$1 [NC]
+Rewriterule ^old/index/([^/]+)/([^/]+)?$							./index.php?action=$1 [NC]
 
 #ajax
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^ajax/([^/]+)?$										./ajax.php [NC]
+Rewriterule ^old/ajax/([^/]+)?$										./ajax.php [NC]
 
 #categories
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$		./index.php?c=$4 [NC]
+Rewriterule ^old/([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$		./index.php?c=$4 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$				./index.php?c=$3 [NC]
+Rewriterule ^old/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$				./index.php?c=$3 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)-([0-9]+)/?([^/]+)?$						./index.php?c=$2 [NC]
+Rewriterule ^old/([^/]+)-([0-9]+)/?([^/]+)?$						./index.php?c=$2 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^([^/]+)?$											./index.php [NC]
+Rewriterule ^old/([^/]+)?$											./index.php [NC]
 
 #queue stats
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^queue-stats/(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/?([^/]+)?$								./index.php?action=stats&type=$1 [NC]
+Rewriterule ^old/queue-stats/(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/?([^/]+)?$								./index.php?action=stats&type=$1 [NC]
