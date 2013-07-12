@@ -18,66 +18,66 @@ RewriteEngine on
 
 #download
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/download/([^/]+)$									/customise/db/download/file.php [NC]
+Rewriterule ^download/([^/]+)$									/customise/db/download/file.php [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/view-install/modx/([^/]+)$							/customise/db/download/modx/$1 [NC]
+Rewriterule ^view-install/modx/([^/]+)$							/customise/db/download/modx/$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/view-install/([^/]+)$								/customise/db/download/view_install.php [NC]
+Rewriterule ^view-install/([^/]+)$								/customise/db/download/view_install.php [NC]
 
 #manage
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/manage?/([^/]+)?/?([^/]+)?$						/customise/db/manage/index.php?page=$1 [NC]
+Rewriterule ^manage?/([^/]+)?/?([^/]+)?$						/customise/db/manage/index.php?page=$1 [NC]
 
 #authors
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/authors?/([^/]+)/?([^/]+)?/?([^/]+)?$				/customise/db/authors/index.php?u=$1&page=$2 [NC]
+Rewriterule ^authors?/([^/]+)/?([^/]+)?/?([^/]+)?$				/customise/db/authors/index.php?u=$1&page=$2 [NC]
 
 #display all contribs
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/contributions/all/?([^/]+)?$						/customise/db/index.php?action=contributions [NC]
+Rewriterule ^contributions/all/?([^/]+)?$						/customise/db/index.php?action=contributions [NC]
 
 #display support topics
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/support/(all|mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/?([^/]+)?$								/customise/db/index.php?action=support&type=$1 [NC]
+Rewriterule ^support/(all|mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/?([^/]+)?$								/customise/db/index.php?action=support&type=$1 [NC]
 
 #contributions
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/contribution/id/([0-9]+)/?$						/customise/db/contributions/index.php?id=$1 [NC]
+Rewriterule ^contribution/id/([0-9]+)/?$						/customise/db/contributions/index.php?id=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/(create)/?([^/]+)?$						/customise/db/contributions/index.php?page=$2&type=$1 [NC]
+Rewriterule ^(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/(create)/?([^/]+)?$						/customise/db/contributions/index.php?page=$2&type=$1 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			/customise/db/contributions/index.php?c=$2&page=$3&type=$1 [NC]
+Rewriterule ^(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/([^/]+)/?([^/]+)?/?([^/]+)?$			/customise/db/contributions/index.php?c=$2&page=$3&type=$1 [NC]
 
 #search/faq/cron
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/(search|faq|cron)/?([^/]+)?$						/customise/db/$1.php [NC]
+Rewriterule ^(search|faq|cron)/?([^/]+)?$						/customise/db/$1.php [NC]
 
 #find-contribution
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/(find\-contribution)/?([^/]+)?$					/customise/db/search.php?mode=find-contribution [NC]
+Rewriterule ^(find\-contribution)/?([^/]+)?$					/customise/db/search.php?mode=find-contribution [NC]
 
 #rating/login/logout
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/(rate|login|logout)/?([^/]+)?$						/customise/db/index.php?action=$1 [NC]
+Rewriterule ^(rate|login|logout)/?([^/]+)?$						/customise/db/index.php?action=$1 [NC]
 
 #misc index stuff
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/index/([^/]+)/([^/]+)?$							/customise/db/index.php?action=$1 [NC]
+Rewriterule ^index/([^/]+)/([^/]+)?$							/customise/db/index.php?action=$1 [NC]
 
 #ajax
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/ajax/([^/]+)?$										/customise/db/ajax.php [NC]
+Rewriterule ^ajax/([^/]+)?$										/customise/db/ajax.php [NC]
 
 #categories
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$		/customise/db/index.php?c=$4 [NC]
+Rewriterule ^([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$		/customise/db/index.php?c=$4 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$				/customise/db/index.php?c=$3 [NC]
+Rewriterule ^([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$				/customise/db/index.php?c=$3 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/([^/]+)-([0-9]+)/?([^/]+)?$						/customise/db/index.php?c=$2 [NC]
+Rewriterule ^([^/]+)-([0-9]+)/?([^/]+)?$						/customise/db/index.php?c=$2 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/([^/]+)?$											/customise/db/index.php [NC]
+Rewriterule ^([^/]+)?$											/customise/db/index.php [NC]
 
 #queue stats
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/queue-stats/(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/?([^/]+)?$								./index.php?action=stats&type=$1 [NC]
+Rewriterule ^queue-stats/(mod|style|converter|official_tool|bbcode|bridge|translation|contributions?)/?([^/]+)?$								./index.php?action=stats&type=$1 [NC]
