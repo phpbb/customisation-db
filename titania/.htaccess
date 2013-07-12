@@ -70,13 +70,13 @@ Rewriterule ^old/ajax/([^/]+)?$										./ajax.php [NC]
 
 #categories
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$		./index.php?c=$4 [NC]
+Rewriterule /var/www/phpbb.com/htdocs/old/([^/]+)/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$		./index.php?c=$4 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$				./index.php?c=$3 [NC]
+Rewriterule /var/www/phpbb.com/htdocs/old/([^/]+)/([^/]+)-([0-9]+)/?([^/]+)?$				./index.php?c=$3 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/([^/]+)-([0-9]+)/?([^/]+)?$						./index.php?c=$2 [NC]
+Rewriterule /var/www/phpbb.com/htdocs/old/([^/]+)-([0-9]+)/?([^/]+)?$						./index.php?c=$2 [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
-Rewriterule ^old/([^/]+)?$											./index.php [NC]
+Rewriterule /var/www/phpbb.com/htdocs/old/([^/]+)?$											./index.php [NC]
 
 #queue stats
 RewriteCond %{REQUEST_FILENAME} !-f
