@@ -129,7 +129,7 @@ class titania_attention extends titania_database_object
 			'OBJECT_LABEL'			=> $this->get_lang_string('object'),
 
 			'U_VIEW_ATTENTION'		=> $this->get_url(),
-			'U_VIEW_DETAILS'		=> titania_url::append_url(titania_url::$current_page_url, array('a' => $this->attention_id)),
+			'U_VIEW_DETAILS'		=> titania_url::append_url(titania_url::$current_page, array('a' => $this->attention_id)),
 
 			'S_CLOSED'				=> ($this->attention_close_time) ? true : false,
 			'S_UNAPPROVED'			=> ($this->attention_type == TITANIA_ATTENTION_UNAPPROVED) ? true : false,
