@@ -77,6 +77,7 @@ if ($attention_id || ($object_type && $object_id))
 
 	if ($delete)
 	{
+		$attention->report_handled();
 		$attention->delete();
 	}
 	else if ($close)
