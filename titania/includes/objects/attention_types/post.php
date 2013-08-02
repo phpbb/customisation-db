@@ -104,26 +104,39 @@ class titania_attention_post extends titania_attention
 		{
 			return;
 		}
+		
+		$this->close();
 
-		$this->post->post_reported = false;
-		$this->post->submit();
-
-		$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
-			WHERE topic_id = ' . $this->post->topic_id . '
-				AND post_reported = 1';
+		// Check for any open reports.
+		$sql = 'SELECT COUNT(attention_id) AS cnt FROM ' . TITANIA_ATTENTION_TABLE . '
+			WHERE attention_object_id = ' . (int) $this->post->post_id . '
+				AND attention_object_type = ' . TITANIA_POST . '
+				AND attention_close_time = 0';
 		phpbb::$db->sql_query($sql);
-		$cnt = phpbb::$db->sql_fetchfield('cnt');
+		$open_reports = phpbb::$db->sql_fetchfield('cnt');
 		phpbb::$db->sql_freeresult();
 
-		if (!$cnt)
+		// If there aren't any open reports, deal with the report flags
+		if (!$open_reports)
 		{
-			$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
-				SET topic_reported = 0
-				WHERE topic_id = ' . $this->post->topic_id;
-			phpbb::$db->sql_query($sql);
-		}
+			$this->post->post_reported = false;
+			$this->post->submit();
 
-		$this->close();
+			$sql = 'SELECT COUNT(post_id) AS cnt FROM ' . TITANIA_POSTS_TABLE . '
+				WHERE topic_id = ' . $this->post->topic_id . '
+					AND post_reported = 1';
+			phpbb::$db->sql_query($sql);
+			$cnt = phpbb::$db->sql_fetchfield('cnt');
+			phpbb::$db->sql_freeresult();
+
+			if (!$cnt)
+			{
+				$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+					SET topic_reported = 0
+					WHERE topic_id = ' . $this->post->topic_id;
+				phpbb::$db->sql_query($sql);
+			}
+		}
 
 		// Send notification to reporter
 		if ($this->notify_reporter)
