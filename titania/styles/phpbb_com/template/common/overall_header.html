@@ -1,6 +1,6 @@
 {PHPBB_COM_HEADER}
 
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.8.17.custom.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.10.3.custom.min.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.elastic.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.tabby.js"></script>
 
@@ -44,17 +44,14 @@
 	<!-- ENDIF -->
 
 		$('#extratabs').tabs({
-		    select: function(event, ui) {
-		        var url = $.data(ui.tab, 'load.tabs');
-		        if( url ) {
-		            location.href = url;
+		    beforeActivate: function(event, ui) {
+		        if ($('a', ui.newTab).hasClass('ui-tab-follow-link')) {
+		            location.href = $('a', ui.newTab).attr('href');
 		            return false;
 		        }
 		        return true;
 		    }
 		});
-		$('#extratabs li').removeClass('ui-corner-top');
-		$('#extratabs, #extratabs ul').removeClass('ui-widget-content ui-widget ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
 
 	<!-- IF .screenshots -->
 		$('a.screenshot').colorbox({photo: true, rel: 'group1'});
