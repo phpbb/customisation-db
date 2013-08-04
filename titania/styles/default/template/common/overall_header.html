@@ -13,8 +13,8 @@
 {META}
 <title>{PAGE_TITLE} &bull; {SITENAME}</title>
 
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.8.17.custom.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.10.3.custom.min.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.elastic.js"></script>
 <script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.tabby.js"></script>
 
@@ -60,10 +60,9 @@
 		<!-- ENDIF -->
 
 		$('#extratabs').tabs({
-		    select: function(event, ui) {
-		        var url = $.data(ui.tab, 'load.tabs');
-		        if( url ) {
-		            location.href = url;
+		    beforeActivate: function(event, ui) {
+		        if ($('a', ui.newTab).hasClass('ui-tab-follow-link')) {
+		            location.href = $('a', ui.newTab).attr('href');
 		            return false;
 		        }
 		        return true;
