@@ -11,7 +11,7 @@
 			<form method="post" id="forum-search" action="{S_SEARCHBOX_ACTION}">
 			<fieldset>
 				<input class="inputbox search tiny" type="text" name="keywords" id="search_keywords" size="20" value="{L_SEARCH_FORUM}" onclick="if (this.value == '{LA_SEARCH_FORUM}') this.value = '';" onblur="if (this.value == '') this.value = '{LA_SEARCH_FORUM}';" />
-				<input class="button2" type="submit" value="{L_SEARCH}" />
+				<input class="button2" type="submit" value="{L_SEARCH}" name="submit" />
 				<input type="hidden" value="{FORUM_ID}" name="fid[]" />
 			</fieldset>
 			</form>
