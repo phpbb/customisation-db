@@ -42,7 +42,7 @@ class titania_config extends titania_object
 			'language_path'				=> array('default' => TITANIA_ROOT . 'language/'),
 			'table_prefix'				=> array('default' => 'customisation_'),
 
-			// Unique Composer vendor name. 
+			// Unique Composer vendor name.
 			'composer_vendor_name'		=> array('default' => ''),
 
 			// Increment the user's post count?  Array of the post_types for which we will increment the post count
@@ -101,7 +101,7 @@ class titania_config extends titania_object
 			// phpBB versions array
 			'phpbb_versions'			=> array('default' => array(
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
-				'30'	=> array('latest_revision' => '11', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
+				'30'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
 			)),
 
 			// Next stable release (used to allowed contribs to be submitted for a future version)
@@ -175,7 +175,7 @@ class titania_config extends titania_object
 
 			// Remove unsubmitted revisions and attachments
 			'cleanup_titania'				=> array('default' => false),
-			
+
 		));
 	}
 }
