@@ -572,7 +572,7 @@ class titania_queue extends titania_message_object
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $data, $this);
 
 		// Submit Plz
-		submit_pm('post', $subject, $data, false);
+		submit_pm('post', $subject, $data, true);
 	}
 
 	/**
