@@ -52,15 +52,15 @@ $lang = array_merge($lang, array(
 
 It is my hope that you will provide a basic level of support for this language pack and keep it updated with future releases of phpBB. I appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
-[b]Notes from the International Manager about your language pack:[/b]
+[b]Notes from the Translations Manager about your language pack:[/b]
 [quote]%s[/quote]
 
 Best regards,
 
-The International Manager',
+The Translations Manager',
 	'TRANSLATION_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
-As you may know, all translations submitted to the phpBB Customisation Database must be validated and approved by the International Manager.
+As you may know, all translations submitted to the phpBB Customisation Database must be validated and approved by the Translations Manager.
 
 Upon validating your language pack, I regrets to inform you that I have had to [b][color=#A91F1F]deny[/color][/b] it.
 
@@ -78,6 +78,6 @@ If you have any queries and further discussion please use the Queue Discussion T
 
 Best regards,
 
-The International Manager',
+The Translations Manager',
 	'WRONG_FILE'								=> 'The file <code>%s</code> is not allowed.',
 ));
