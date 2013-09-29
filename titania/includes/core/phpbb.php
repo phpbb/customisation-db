@@ -257,6 +257,17 @@ class phpbb
 			'A_COOKIE_SETTINGS'		=> addslashes('; path=' . self::$config['cookie_path'] . ((!self::$config['cookie_domain'] || self::$config['cookie_domain'] == 'localhost' || self::$config['cookie_domain'] == '127.0.0.1') ? '' : '; domain=' . self::$config['cookie_domain']) . ((!self::$config['cookie_secure']) ? '' : '; secure')),
 		));
 
+		self::reset_template();
+		self::$template->assign_vars(array(
+			'T_THEME_PATH'			=> titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['theme_path']) . '/theme',
+			'T_TEMPLATE_PATH'		=> titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['template_path']) . '/template',
+			'T_SUPER_TEMPLATE_PATH'	=> (isset(self::$user->theme['template_inherit_path']) && self::$user->theme['template_inherit_path']) ? titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['template_inherit_path']) . '/template' : titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['template_path']) . '/template',
+			'T_IMAGESET_PATH'		=> titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['imageset_path']) . '/imageset',
+			'T_IMAGESET_LANG_PATH'	=> titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['imageset_path']) . '/imageset/' . self::$user->lang_name,
+			'T_IMAGES_PATH'			=> titania::$absolute_board . 'images/',		
+		));
+		titania::set_custom_template();
+
 		// application/xhtml+xml not used because of IE
 		header('Content-type: text/html; charset=UTF-8');
 
@@ -420,8 +431,6 @@ class phpbb
 						// Correct confirm image link
 						self::$template->assign_var('CONFIRM_IMAGE_LINK', self::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type));
 
-						self::$template->assign_display('captcha', 'CAPTCHA', false);
-
 						titania::set_custom_template();
 					}
 
@@ -492,6 +501,7 @@ class phpbb
 			'PASSWORD_CREDENTIAL'	=> ($admin) ? 'password_' . $credential : 'password',
 		));
 
+		self::$template->assign_display('captcha', 'CAPTCHA', false);
 		titania::page_footer(true, 'login_body.html');
 	}
 
