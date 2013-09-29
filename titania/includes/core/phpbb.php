@@ -492,7 +492,11 @@ class phpbb
 			'PASSWORD_CREDENTIAL'	=> ($admin) ? 'password_' . $credential : 'password',
 		));
 
-		self::$template->assign_display('captcha', 'CAPTCHA', false);
+		if (!empty($captcha_template))
+		{
+			self::$template->assign_display('captcha', 'CAPTCHA', false);
+		}
+
 		titania::page_footer(true, 'login_body.html');
 	}
 
