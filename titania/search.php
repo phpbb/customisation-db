@@ -84,7 +84,7 @@ if (!$keywords && !$user_id && !$contrib_id && !isset($_POST['submit']))
 }
 
 // Add some POST stuff to the url
-if (isset($_POST['submit']))
+if (isset($_POST['sf']))
 {
 	$author = utf8_normalize_nfc(request_var('author', '', true));
 
