@@ -84,7 +84,7 @@ if (!$keywords && !$user_id && !$contrib_id && !phpbb::$request->is_set_post('su
 }
 
 // Add some POST stuff to the url
-if (phpbb::$request->is_set_post('submit'))
+if (phpbb::$request->is_set_post('sf'))
 {
 	$author = utf8_normalize_nfc(phpbb::$request->variable('author', '', true));
 

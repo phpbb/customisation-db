@@ -283,7 +283,7 @@ class titania_revision extends titania_database_object
 				}
 
 				// OMG, it's not in our cache!
-				if (!isset($versions[$row['phpbb_version_branch'] . titania::$config->phpbb_versions[$row['phpbb_version_branch']]]))
+				if (!isset($versions[$row['phpbb_version_branch'] . titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision']]))
 				{
 					titania::$cache->destroy('_titania_phpbb_versions');
 				}
