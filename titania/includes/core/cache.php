@@ -7,25 +7,8 @@
 *
 */
 
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
+class titania_cache extends \phpbb\cache\service
 {
-	exit;
-}
-
-class titania_cache extends phpbb_cache_service
-{
-	/**
-	 * Constructor
-	 */
-	public function acm()
-	{
-		parent::acm();
-		$this->cache_dir = phpbb_realpath($this->cache_dir) . '/';
-	}
-
 	/**
 	* Get some tags
 	*
@@ -33,22 +16,20 @@ class titania_cache extends phpbb_cache_service
 	*/
 	public function get_tags($tag_type = false)
 	{
-		$tags = $this->get('_titania_tags');
-
-		if ($tags === false)
+		if (($tags = $this->driver->get('_titania_tags')) === false)
 		{
 			$tags = array();
 
 			$sql = 'SELECT * FROM ' . TITANIA_TAG_FIELDS_TABLE . '
 				ORDER BY tag_id ASC';
-			$result = phpbb::$db->sql_query($sql);
-			while ($row = phpbb::$db->sql_fetchrow($result))
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
 			{
 				$tags[$row['tag_type_id']][$row['tag_id']] = $row;
 			}
-			phpbb::$db->sql_freeresult($result);
+			$this->db->sql_freeresult($result);
 
-			$this->put('_titania_tags', $tags);
+			$this->driver->put('_titania_tags', $tags);
 		}
 
 		if ($tag_type && isset($tags[$tag_type]))
@@ -81,21 +62,19 @@ class titania_cache extends phpbb_cache_service
 			return $versions;
 		}
 
-		$versions = $this->get('_titania_phpbb_versions');
-
-		if ($versions === false)
+		if (($versions = $this->driver->get('_titania_phpbb_versions')) === false)
 		{
 			$versions = array();
 
 			$sql = 'SELECT phpbb_version_revision, phpbb_version_branch FROM ' . TITANIA_REVISIONS_PHPBB_TABLE;
-			$result = phpbb::$db->sql_query($sql);
-			while ($row = phpbb::$db->sql_fetchrow($result))
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
 			{
 				$versions[$row['phpbb_version_branch'] . $row['phpbb_version_revision']] = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' . $row['phpbb_version_revision'];
 			}
-			phpbb::$db->sql_freeresult($result);
+			$this->db->sql_freeresult($result);
 
-			$this->put('_titania_phpbb_versions', $versions);
+			$this->driver->put('_titania_phpbb_versions', $versions);
 		}
 
 		uasort($versions, 'reverse_version_compare');
@@ -110,23 +89,21 @@ class titania_cache extends phpbb_cache_service
 	 */
 	public function get_categories()
 	{
-		$categories = $this->get('_titania_categories');
-
-		if ($categories === false)
+		if (($categories = $this->driver->get('_titania_categories')) === false)
 		{
 			$categories = array();
 
 			$sql = 'SELECT * FROM ' . TITANIA_CATEGORIES_TABLE . '
 				ORDER BY left_id ASC';
-			$result = phpbb::$db->sql_query($sql);
+			$result = $this->db->sql_query($sql);
 
-			while ($row = phpbb::$db->sql_fetchrow($result))
+			while ($row = $this->db->sql_fetchrow($result))
 			{
 				$categories[$row['category_id']] = $row;
 			}
-			phpbb::$db->sql_freeresult($result);
+			$this->db->sql_freeresult($result);
 
-			$this->put('_titania_categories', $categories);
+			$this->driver->put('_titania_categories', $categories);
 		}
 
 		return $categories;
@@ -144,17 +121,15 @@ class titania_cache extends phpbb_cache_service
 	*/
 	public function get_category_parents($category_id)
 	{
-		$parent_list = $this->get('_titania_category_parents');
-
-		if ($parent_list === false)
+		if (($parent_list = $this->driver->get('_titania_category_parents')) === false)
 		{
 			$parent_list = $list = array();
 
 			$sql = 'SELECT category_id, parent_id, category_name_clean FROM ' . TITANIA_CATEGORIES_TABLE . '
 				ORDER BY left_id ASC';
-			$result = phpbb::$db->sql_query($sql);
+			$result = $this->db->sql_query($sql);
 
-			while ($row = phpbb::$db->sql_fetchrow($result))
+			while ($row = $this->db->sql_fetchrow($result))
 			{
 				// need later
 				$list[$row['category_id']] = $row;
@@ -170,9 +145,9 @@ class titania_cache extends phpbb_cache_service
 				}
 			}
 
-			phpbb::$db->sql_freeresult($result);
+			$this->db->sql_freeresult($result);
 
-			$this->put('_titania_category_parents', $parent_list);
+			$this->driver->put('_titania_category_parents', $parent_list);
 		}
 
 		return (isset($parent_list[$category_id])) ? $parent_list[$category_id] : array();
@@ -190,17 +165,15 @@ class titania_cache extends phpbb_cache_service
 	*/
 	public function get_category_children($category_id)
 	{
-		$child_list = $this->get('_titania_category_children');
-
-		if ($child_list === false)
+		if (($child_list = $this->driver->get('_titania_category_children')) === false)
 		{
 			$child_list = $list = array();
 
 			$sql = 'SELECT category_id, category_name_clean, left_id, right_id FROM ' . TITANIA_CATEGORIES_TABLE . '
 				ORDER BY left_id ASC';
-			$result = phpbb::$db->sql_query($sql);
+			$result = $this->db->sql_query($sql);
 
-			while ($row = phpbb::$db->sql_fetchrow($result))
+			while ($row = $this->db->sql_fetchrow($result))
 			{
 				// need later
 				$list[$row['category_id']] = $row;
@@ -215,9 +188,9 @@ class titania_cache extends phpbb_cache_service
 				}
 			}
 
-			phpbb::$db->sql_freeresult($result);
+			$this->db->sql_freeresult($result);
 
-			$this->put('_titania_category_children', $child_list);
+			$this->driver->put('_titania_category_children', $child_list);
 		}
 
 		return (isset($child_list[$category_id])) ? $child_list[$category_id] : array();
@@ -238,9 +211,7 @@ class titania_cache extends phpbb_cache_service
 		// We shall group authors by id in groups of 2500
 		$author_block_name = '_titania_authors_' . floor($user_id / 2500);
 
-		$author_block = $this->get($author_block_name);
-
-		if ($author_block === false)
+		if ($author_block = $this->driver->get($author_block_name) === false)
 		{
 			$author_block = array();
 		}
@@ -252,28 +223,28 @@ class titania_cache extends phpbb_cache_service
 			// Need to get the contribs for the selected author
 			$sql = 'SELECT contrib_id, contrib_type, contrib_status FROM ' . TITANIA_CONTRIBS_TABLE . '
 				WHERE contrib_user_id = ' . $user_id;
-			$result = phpbb::$db->sql_query($sql);
+			$result = $this->db->sql_query($sql);
 
-			while ($row = phpbb::$db->sql_fetchrow($result))
+			while ($row = $this->db->sql_fetchrow($result))
 			{
 				$author_block[$user_id][$row['contrib_id']] = array('status' => $row['contrib_status'], 'active' => true, 'type' => $row['contrib_type']);
 			}
 
-			phpbb::$db->sql_freeresult($result);
+			$this->db->sql_freeresult($result);
 
 			// Now get the lists where the user is a co-author
 			$sql = 'SELECT cc.contrib_id, c.contrib_status, c.contrib_type, cc.active FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . ' cc, ' . TITANIA_CONTRIBS_TABLE . ' c
 				WHERE cc.user_id = ' . $user_id . '
 					AND c.contrib_id = cc.contrib_id';
-			$result = phpbb::$db->sql_query($sql);
-			while ($row = phpbb::$db->sql_fetchrow($result))
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
 			{
 				$author_block[$user_id][$row['contrib_id']] = array('status' => $row['contrib_status'], 'active' => $row['active'], 'type' => $row['contrib_type']);
 			}
-			phpbb::$db->sql_freeresult($result);
+			$this->db->sql_freeresult($result);
 
 			// Store the updated cache data
-			$this->put($author_block_name, $author_block);
+			$this->driver->put($author_block_name, $author_block);
 		}
 
 		$contribs = array();
@@ -308,7 +279,7 @@ class titania_cache extends phpbb_cache_service
 		// We shall group authors by id in groups of 2500
 		$author_block_name = '_titania_authors_' . floor($user_id / 2500);
 
-		$author_block = $this->get($author_block_name);
+		$author_block = $this->driver->get($author_block_name);
 
 		if ($author_block === false || !isset($author_block[$user_id]))
 		{
@@ -318,6 +289,6 @@ class titania_cache extends phpbb_cache_service
 		unset($author_block[$user_id]);
 
 		// Store the updated cache data
-		$this->put($author_block_name, $author_block);
+		$this->driver->put($author_block_name, $author_block);
 	}
 }

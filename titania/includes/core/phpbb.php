@@ -47,8 +47,6 @@ class phpbb
 	/** @var phpbb_style phpBB style class */
 	public static $phpbb_style;
 
-	/** @var cache_factory phpBB Cache Factory */
-	public static $cache_factory;
 	/**
 	 * Static Constructor.
 	 */
@@ -64,7 +62,6 @@ class phpbb
 		self::$cache	= &$cache;
 		self::$request	= &$request;
 		self::$phpbb_style		= &$phpbb_style;
-		self::$cache_factory	= &$cache_factory;
 
 		// Start session management
 		if (!defined('PHPBB_INCLUDED'))

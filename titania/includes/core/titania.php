@@ -107,8 +107,8 @@ class titania
 			include TITANIA_ROOT . 'includes/core/cache.' . PHP_EXT;
 		}
 
-		$acm_type = phpbb::$cache_factory->get_driver();
-		self::$cache = new titania_cache($acm_type);
+		// @todo Use dependency injection.
+		self::$cache = new titania_cache(phpbb::$cache->get_driver(), phpbb::$config, phpbb::$db, PHPBB_ROOT_PATH, PHP_EXT);
 
 		// Set the absolute titania/board path
 		self::$absolute_path = generate_board_url(true) . '/' . self::$config->titania_script_path;
