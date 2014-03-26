@@ -229,13 +229,11 @@ class phpbb
 			'SESSION_ID'			=> self::$user->session_id,
 
 			'U_PRIVATEMSGS'			=> self::append_sid('ucp', 'i=pm&amp;folder=inbox'),
-			'UA_POPUP_PM'			=> addslashes(self::append_sid('ucp', 'i=pm&amp;mode=popup')),
 			'U_PROFILE'				=> self::append_sid('ucp'),
 			'U_RESTORE_PERMISSIONS'	=> (self::$user->data['user_perm_from'] && self::$auth->acl_get('a_switchperm')) ? self::append_sid('ucp', 'mode=restore_perm') : '',
 			'U_DELETE_COOKIES'		=> self::append_sid('ucp', 'mode=delete_cookies'),
 
 			'S_DISPLAY_PM'			=> (self::$config['allow_privmsg'] && !empty(self::$user->data['is_registered']) && (self::$auth->acl_get('u_readpm') || self::$auth->acl_get('u_sendpm'))) ? true : false,
-			'S_USER_PM_POPUP'		=> self::$user->optionget('popuppm'),
 			'S_NEW_PM'				=> ($s_privmsg_new) ? 1 : 0,
 			'S_USER_LOGGED_IN'		=> (self::$user->data['user_id'] != ANONYMOUS) ? true : false,
 			'S_AUTOLOGIN_ENABLED'	=> (self::$config['allow_autologin']) ? true : false,
