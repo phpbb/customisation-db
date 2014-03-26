@@ -404,10 +404,11 @@ class titania_sort extends titania_object
 		}
 
 		$pagination_url = titania_url::build_url($page, $params);
+		$pagination = phpbb::$container->get('pagination');
 
 		phpbb::$template->assign_vars(array(
 			$this->template_vars['PAGINATION']			=> $this->generate_pagination($pagination_url, false, false, false, true),
-			$this->template_vars['PAGE_NUMBER']			=> on_page($this->total, $this->limit, $this->start),
+			$this->template_vars['PAGE_NUMBER']			=> $pagination->on_page($this->total, $this->limit, $this->start),
 
 			$this->template_vars['S_SORT_ACTION']		=> $sort_url,
 			$this->template_vars['S_PAGINATION_ACTION']	=> $pagination_url,
