@@ -25,34 +25,34 @@ class phpbb
 
 	/** @var cache phpBB Cache class */
 	public static $cache;
-	
+
 	/** @var config phpBB Config class */
 	public static $config;
-	
+
 	/** @var db phpBB DBAL class */
 	public static $db;
-	
+
 	/** @var template phpBB Template class */
 	public static $template;
-	
+
 	/** @var user phpBB User class */
 	public static $user;
-	
-	/** @var array $user->theme */
-	public static $theme_data;
+
+	/** @var array $user->style */
+	public static $style_data;
 
 	/** @var request phpBB request class */
 	public static $request;
 
-	/** @var phpbb_style phpBB style class */
-	public static $phpbb_style;
+	/** @var object phpBB container */
+	public static $container;
 
 	/**
 	 * Static Constructor.
 	 */
 	public static function initialise()
 	{
-		global $auth, $config, $db, $template, $user, $cache, $request, $phpbb_style, $cache_factory;
+		global $auth, $config, $db, $template, $user, $cache, $request, $phpbb_container;
 
 		self::$auth		= &$auth;
 		self::$config	= &$config;
@@ -61,7 +61,7 @@ class phpbb
 		self::$user		= &$user;
 		self::$cache	= &$cache;
 		self::$request	= &$request;
-		self::$phpbb_style		= &$phpbb_style;
+		self::$container = &$phpbb_container;
 
 		// Start session management
 		if (!defined('PHPBB_INCLUDED'))
@@ -71,7 +71,7 @@ class phpbb
 			self::$user->setup();
 		}
 
-		self::$theme_data = self::$user->theme;
+		self::$style_data = self::$user->style;
 	}
 
 	/**
@@ -126,8 +126,8 @@ class phpbb
 	*/
 	public static function reset_template()
 	{
-		self::$user->theme = self::$theme_data;
-		self::$template->set_template();
+		self::$user->style = self::$style_data;
+		self::$template->set_style();
 	}
 
 	/**
@@ -253,12 +253,12 @@ class phpbb
 		));
 
 		self::reset_template();
+		$style_path = titania::$absolute_board . 'styles/' . rawurlencode(self::$user->style['style_path']) . '/';
+
 		self::$template->assign_vars(array(
-			'T_THEME_PATH'			=> titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['theme_path']) . '/theme',
-			'T_TEMPLATE_PATH'		=> titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['template_path']) . '/template',
-			'T_SUPER_TEMPLATE_PATH'	=> (isset(self::$user->theme['template_inherit_path']) && self::$user->theme['template_inherit_path']) ? titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['template_inherit_path']) . '/template' : titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['template_path']) . '/template',
-			'T_IMAGESET_PATH'		=> titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['imageset_path']) . '/imageset',
-			'T_IMAGESET_LANG_PATH'	=> titania::$absolute_board . 'styles/' . rawurlencode(self::$user->theme['imageset_path']) . '/imageset/' . self::$user->lang_name,
+			'T_THEME_PATH'			=> $style_path . 'theme',
+			'T_TEMPLATE_PATH'		=> $style_path . 'template',
+			'T_SUPER_TEMPLATE_PATH'	=> $style_path . 'template',
 			'T_IMAGES_PATH'			=> titania::$absolute_board . 'images/',		
 		));
 		titania::set_custom_template();

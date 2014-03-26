@@ -169,17 +169,16 @@ class titania
 	*/
 	public static function set_custom_template()
 	{
-		phpbb::$user->theme['template_path'] = self::$config->style;
-		phpbb::$phpbb_style->set_custom_style('titania_' . self::$config->style, TITANIA_ROOT . 'styles/' . self::$config->style . '/');
-		phpbb::$user->theme['template_storedb'] = phpbb::$template->orig_tpl_storedb = false;
+		$styles = array('titania_' . self::$config->style);
+		$style_paths = array(TITANIA_ROOT . 'styles/' . self::$config->style . '/template');
 
 		// Inherit from the boards prosilver (currently required for the Captcha)
 		if (self::$config->style !== 'default')
 		{
-			phpbb::$user->theme['template_inherits_id'] = phpbb::$template->orig_tpl_inherits_id = 1; // Doesn't seem to matter what number I put in here...
-			phpbb::$user->theme['template_inherit_path'] = 'default';
-			phpbb::$template->inherit_root = TITANIA_ROOT . 'styles/default/template';
+			$styles[] = 'titania_default';
+			$style_paths[] = TITANIA_ROOT . 'styles/default/template';
 		}
+		phpbb::$template->set_custom_style($styles, $style_paths);
 	}
 
 	/**
@@ -372,8 +371,8 @@ class titania
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
 			'T_TITANIA_IMAGES_PATH'		=> self::$images_path,
 			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . 'styles/' . rawurlencode(self::$config->style) . '/theme/stylesheet.css',
-			'T_STYLESHEET_LINK'			=> self::$absolute_board . '/styles/' . rawurlencode(phpbb::$user->theme['style_path']) . '/theme/stylesheet.css?assets_version=' . phpbb::$config['assets_version'],
-			'T_STYLESHEET_NAME'			=> phpbb::$user->theme['style_name'],
+			'T_STYLESHEET_LINK'			=> self::$absolute_board . 'styles/' . rawurlencode(phpbb::$user->style['style_path']) . '/theme/stylesheet.css?assets_version=' . phpbb::$config['assets_version'],
+			'T_STYLESHEET_NAME'			=> rawurlencode(phpbb::$user->style['style_path']),
 		));
 
 		// Header hook
