@@ -516,6 +516,13 @@ class titania_attachment extends titania_database_object
 				continue;
 			}*/
 
+			$fields = array();
+			// Update attachment_order if it has changed.
+			if (isset($original_order[$attachment_id]) && $row['attachment_order'] != $original_order[$attachment_id])
+			{
+				$fields['attachment_order'] = (int) $row['attachment_order'];
+			}
+
 			$attachment_comment = utf8_normalize_nfc(phpbb::$request->variable('attachment_comment_' . $attachment_id, '', true));
 			if ($row['attachment_comment'] != $attachment_comment)
 			{
@@ -1142,136 +1149,6 @@ class titania_attachment extends titania_database_object
 
 		return true;
 	}
-<<<<<<< HEAD
-	
-	/**
-	* Return if there is a preview image and assign block vars if necessary
-	*/
-	public function preview_image()
-	{
-		foreach ($this->attachments as $attachment_id => $attachment)
-		{
-			if (!sizeof($attachment) || !$attachment['is_preview'])
-			{
-				continue;
-			}
-
-			$block_array = array();
-
-			// Some basics...
-			$attachment['extension'] = strtolower(trim($attachment['extension']));
-			$filename = titania::$config->upload_path . $attachment['attachment_directory'] . '/' . utf8_basename($attachment['attachment_directory']) . '/' . utf8_basename($attachment['physical_filename']);
-			$thumbnail_filename = titania::$config->upload_path . $attachment['attachment_directory'] . '/' . utf8_basename($attachment['attachment_directory']) . '/thumb_' . utf8_basename($attachment['physical_filename']);
-
-			$filesize = get_formatted_filesize($attachment['filesize'], false);
-
-			$comment = bbcode_nl2br(censor_text($attachment['attachment_comment']));
-
-			$block_array += array(
-				'FILESIZE'			=> $filesize['value'],
-				'SIZE_LANG'			=> $filesize['unit'],
-				'DOWNLOAD_NAME'		=> utf8_basename($attachment['real_filename']),
-				'COMMENT'			=> $comment,
-			);
-			
-
-			$l_downloaded_viewed = $download_link = '';
-			$display_cat = (strpos($attachment['mimetype'], 'image') === 0) ? ATTACHMENT_CATEGORY_IMAGE : ATTACHMENT_CATEGORY_NONE; // @todo Probably should add support for more types...
-
-			if ($display_cat == ATTACHMENT_CATEGORY_IMAGE)
-			{
-				if ($attachment['thumbnail'])
-				{
-					$display_cat = ATTACHMENT_CATEGORY_THUMB;
-				}
-				else
-				{
-					if (phpbb::$config['img_display_inlined'])
-					{
-						if (phpbb::$config['img_link_width'] || phpbb::$config['img_link_height'])
-						{
-							$dimension = @getimagesize($filename);
-
-							// If the dimensions could not be determined or the image being 0x0 we display it as a link for safety purposes
-							if ($dimension === false || empty($dimension[0]) || empty($dimension[1]))
-							{
-								$display_cat = ATTACHMENT_CATEGORY_NONE;
-							}
-							else
-							{
-								$display_cat = ($dimension[0] <= phpbb::$config['img_link_width'] && $dimension[1] <= phpbb::$config['img_link_height']) ? ATTACHMENT_CATEGORY_IMAGE : ATTACHMENT_CATEGORY_NONE;
-							}
-						}
-					}
-					else
-					{
-						$display_cat = ATTACHMENT_CATEGORY_NONE;
-					}
-				}
-			}
-
-			// Make some descisions based on user options being set.
-			if (($display_cat == ATTACHMENT_CATEGORY_IMAGE || $display_cat == ATTACHMENT_CATEGORY_THUMB) && !phpbb::$user->optionget('viewimg'))
-			{
-				$display_cat = ATTACHMENT_CATEGORY_NONE;
-			}
-		
-			$download_link = titania_url::build_url('download', array('id' => $attachment['attachment_id']));
-			
-			switch ($display_cat)
-			{
-				// Images
-				case ATTACHMENT_CATEGORY_IMAGE:
-					$l_downloaded_viewed = 'VIEWED_COUNTS';
-
-					$download_link = ($attachment['thumbnail']) ? titania_url::append_url($download_link, array('mode' => 'view')) : $download_link;
-
-					$block_array += array(
-						'S_IMAGE'			=> true,
-						'U_INLINE_LINK'		=> $download_link,
-					);
-				break;
-
-				// Images, but display Thumbnail
-				case ATTACHMENT_CATEGORY_THUMB:
-					$l_downloaded_viewed = 'VIEWED_COUNTS';
-
-					$download_link = titania_url::append_url($download_link, array('mode' => 'view'));
-
-					$block_array += array(
-						'S_THUMBNAIL'		=> true,
-						'THUMB_IMAGE'		=> titania_url::append_url($download_link, array('mode' => 'view', 'thumb' => 1)),
-					);
-				break;
-				
-				default:
-					$l_downloaded_viewed = 'DOWNLOAD_COUNTS';
-
-					$block_array += array(
-						'S_FILE'		=> true,
-					);
-				break;
-			}
-
-			$l_download_count = (int) (empty($attachment['download_count'])) ? 0 : $attachment['download_count'];
-
-			$block_array += array(
-				'U_DOWNLOAD_LINK'		=> $download_link,
-				'L_DOWNLOAD_COUNT'		=> phpbb::$user->lang($l_downloaded_viewed, $l_download_count)
-			);
-		}
-		
-		if(!empty($block_array))
-		{
-			phpbb::$template->assign_block_vars('preview', $block_array);
-			
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}	
 
 	/**
 	* Calculate the needed size for Thumbnail
