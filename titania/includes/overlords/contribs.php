@@ -113,7 +113,7 @@ class contribs_overlord
 	 * @param int $id The parent id (only show contributions under this category, author, etc)
 	 * @param string $blockname The name of the template block to use (contribs by default)
 	 */
-	function display_contribs($mode, $id, $sort = false, $blockname = 'contribs')
+	public static function display_contribs($mode, $id, $sort = false, $blockname = 'contribs')
 	{
 		titania::add_lang('contributions');
 		titania::_include('functions_display', 'titania_topic_folder_img');
