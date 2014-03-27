@@ -1,6 +1,6 @@
 {
-    "name": "phpBB/customisation-db",
-    "type": "phpbb3-extension",
+    "name": "phpbb/titania",
+    "type": "phpbb-extension",
     "description": "This adds a very powerful and large customisation database to your forum. It is codenamed titania.",
     "homepage": "http://www.github.com/phpBB/customisation-db/",
     "version": "0.5.0",
@@ -20,7 +20,7 @@
             "role": "Developer"
         },
         {
-            "name": "Cesar Gallegos(prototech)",
+            "name": "Cesar Gallegos (prototech)",
             "email": "prototech91@gmail.com",
             "role": "Developer"
         },
@@ -32,7 +32,7 @@
         {
             "name": "Mickaël Salfati (Elglobo)",
             "email": "elglobo@phpbb.com",
-            "role": "Developer"
+            "role": "Previous Developer"
         },
         {
             "name": "Nathan Guse (EXreaction)",
@@ -53,10 +53,11 @@
         {
             "name": "CDB & phpBB Team",
             "role": "Developers, Translators etc."
-        },
+        }
     ],
     "require": {
-        "phpbb": "3.1.0"
+    	"php": ">=5.3.3",
+        "phpbb/phpbb": "3.1.*@dev"
     },
     "extra": {
         "display-name": "phpBB Customisation Database (Titania)"
