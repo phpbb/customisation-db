@@ -121,9 +121,6 @@ class titania
 			self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
 			self::$template_path = self::$style_path . 'template';
 			self::$theme_path = (self::$config->theme) ?  self::$absolute_path . 'styles/' . self::$config->theme . '/theme' : self::$style_path . 'theme';
-
-			// Set the paths for phpBB
-			self::set_custom_template();
 		}
 
 		// Setup the Access Level
@@ -162,23 +159,6 @@ class titania
 
 		// Load hooks
 		self::load_hooks();
-	}
-
-	/**
-	* Set the custom template path for titania
-	*/
-	public static function set_custom_template()
-	{
-		$styles = array('titania_' . self::$config->style);
-		$style_paths = array(TITANIA_ROOT . 'styles/' . self::$config->style . '/template');
-
-		// Inherit from the boards prosilver (currently required for the Captcha)
-		if (self::$config->style !== 'default')
-		{
-			$styles[] = 'titania_default';
-			$style_paths[] = TITANIA_ROOT . 'styles/default/template';
-		}
-		phpbb::$template->set_custom_style($styles, $style_paths);
 	}
 
 	/**
@@ -371,8 +351,6 @@ class titania
 			'T_TITANIA_THEME_PATH'		=> self::$theme_path,
 			'T_TITANIA_IMAGES_PATH'		=> self::$images_path,
 			'T_TITANIA_STYLESHEET'		=> self::$absolute_path . 'styles/' . rawurlencode(self::$config->style) . '/theme/stylesheet.css',
-			'T_STYLESHEET_LINK'			=> self::$absolute_board . 'styles/' . rawurlencode(phpbb::$user->style['style_path']) . '/theme/stylesheet.css?assets_version=' . phpbb::$config['assets_version'],
-			'T_STYLESHEET_NAME'			=> rawurlencode(phpbb::$user->style['style_path']),
 		));
 
 		// Header hook
