@@ -1,0 +1,80 @@
+	<!-- IF not S_USER_LOGGED_IN and not S_IS_BOT and not S_DISPLAY_FULL_LOGIN -->
+		<form method="post" action="{S_LOGIN_ACTION}" class="headerspace">
+		<h3><a href="{U_LOGIN_LOGOUT}">{L_LOGIN_LOGOUT}</a><!-- IF S_REGISTER_ENABLED -->&nbsp; &bull; &nbsp;<a href="{U_REGISTER}">{L_REGISTER}</a><!-- ENDIF --></h3>
+			<fieldset class="quick-login">
+				<label for="username">{L_USERNAME}:</label>&nbsp;<input type="text" name="username" id="username" size="10" class="inputbox" title="{L_USERNAME}" />
+				<label for="password">{L_PASSWORD}:</label>&nbsp;<input type="password" name="password" id="password" size="10" class="inputbox" title="{L_PASSWORD}" />
+				<!-- IF S_AUTOLOGIN_ENABLED -->
+					| <label for="autologin">{L_LOG_ME_IN} <input type="checkbox" name="autologin" id="autologin" /></label>
+				<!-- ENDIF -->
+				<input type="hidden" name="redirect" value="{LOGIN_REDIRECT}" />
+				<input type="submit" name="login" value="{L_LOGIN}" class="button2" />
+			</fieldset>
+		</form>
+	<!-- ENDIF -->
+	</div>
+
+	<div id="page-footer">
+
+		<div class="navbar">
+			<div class="inner">
+
+			<ul class="linklist bulletin">
+				<li class="small-icon icon-home breadcrumbs"><!-- IF U_SITE_HOME --><span class="crumb"><a href="{U_SITE_HOME}">{L_SITE_HOME}</a> <strong>&#8249;</strong></span> <!-- ENDIF --><span class="crumb"><a href="{U_INDEX}">{L_INDEX}</a></span>
+					<!-- EVENT overall_footer_breadcrumb_append -->
+				</li>
+				<!-- IF U_SUBSCRIBE --><li class="small-icon icon-<!-- IF IS_SUBSCRIBED -->unsubscribe<!-- ELSE -->subscribe<!-- ENDIF -->"><a href="{U_SUBSCRIBE}" title="<!-- IF IS_SUBSCRIBED -->{L_UNSUBSCRIBE_TYPE}<!-- ELSE -->{L_SUBSCRIBE_TYPE}<!-- ENDIF -->"><!-- IF IS_SUBSCRIBED -->{L_UNSUBSCRIBE_TYPE}<!-- ELSE -->{L_SUBSCRIBE_TYPE}<!-- ENDIF --></a></li><!-- ENDIF -->
+
+				<li class="rightside">{S_TIMEZONE}</li>
+				<!-- IF not S_IS_BOT --><li class="rightside"><a href="{U_DELETE_COOKIES}" data-ajax="true" data-refresh="true">{L_DELETE_COOKIES}</a></li><!-- ENDIF -->
+				<!-- IF U_TEAM --><li class="rightside"><a href="{U_TEAM}">{L_THE_TEAM}</a><!-- ENDIF -->
+			</ul>
+
+			</div>
+		</div>
+
+		<div class="copyright">
+			Powered by Titania &copy; 2010 phpBB Customisation Database Team<br />
+			{CREDIT_LINE}
+			<!-- IF TRANSLATION_INFO --><br />{TRANSLATION_INFO}<!-- ENDIF -->
+			<!-- IF DEBUG_OUTPUT --><br />{DEBUG_OUTPUT}<!-- ENDIF -->
+			<!-- IF U_ACP --><br /><strong>[ <a href="{U_ACP}">{L_ACP}</a>
+			<!-- IF U_PURGE_CACHE --> | <a href="{U_PURGE_CACHE}" id="purge-cache">{L_PURGE_CACHE}</a><!-- ENDIF --> ]</strong><!-- ENDIF -->
+		</div>
+	</div>
+
+	<div id="darkenwrapper" data-ajax-error-title="{L_AJAX_ERROR_TITLE}" data-ajax-error-text="{L_AJAX_ERROR_TEXT}" data-ajax-error-text-abort="{L_AJAX_ERROR_TEXT_ABORT}" data-ajax-error-text-timeout="{L_AJAX_ERROR_TEXT_TIMEOUT}" data-ajax-error-text-parsererror="{L_AJAX_ERROR_TEXT_PARSERERROR}">
+		<div id="darken">&nbsp;</div>
+	</div>
+	<div id="loading_indicator"></div>
+
+	<div id="phpbb_alert" class="phpbb_alert" data-l-err="{L_ERROR}" data-l-timeout-processing-req="{L_TIMEOUT_PROCESSING_REQ}">
+		<a href="#" class="alert_close"></a>
+		<h3 class="alert_title"></h3><p class="alert_text"></p>
+	</div>
+	<div id="phpbb_confirm" class="phpbb_alert">
+		<a href="#" class="alert_close"></a>
+		<div class="alert_text"></div>
+	</div>
+</div>
+
+</div>
+
+<div>
+	<a id="bottom" accesskey="z"></a>
+	<!-- IF not S_IS_BOT -->{RUN_CRON_TASK}<!-- ENDIF -->
+</div>
+
+<script type="text/javascript" src="{T_JQUERY_LINK}"></script>
+<!-- IF S_ALLOW_CDN --><script type="text/javascript">window.jQuery || document.write(unescape('%3Cscript src="{T_ASSETS_PATH}/javascript/jquery.js?assets_version={T_ASSETS_VERSION}" type="text/javascript"%3E%3C/script%3E'));</script><!-- ENDIF -->
+<script type="text/javascript" src="{T_ASSETS_PATH}/javascript/core.js?assets_version={T_ASSETS_VERSION}"></script>
+<!-- INCLUDEJS forum_fn.js -->
+<!-- INCLUDEJS ajax.js -->
+
+<!-- EVENT overall_footer_after -->
+
+<!-- IF S_PLUPLOAD --><!-- INCLUDE plupload.html --><!-- ENDIF -->
+{$SCRIPTS}
+
+</body>
+</html>

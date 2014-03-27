@@ -56,7 +56,7 @@ class titania_config extends titania_object
 			'can_modify_style_demo_url'	=> array('default' => true),
 
 			// Style to display
-			'style'						=> array('default' => 'default'),
+			'style'						=> array('default' => 'prosilver'),
 
 			// Use theme from a different style
 			'theme'						=> array('default' => ''),
