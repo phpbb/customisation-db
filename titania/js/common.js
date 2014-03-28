@@ -127,10 +127,6 @@ $(document).ready(function(){
 
 				var quickeditor = $(postbody).children('form').children('textarea');
 
-				// Make elastic and tabby
-				$(quickeditor).elastic();
-				$(quickeditor).tabby();
-
 				$(quickeditor).parent().children('.submit-buttons').children('[name=submit]').click(function(e) {
 
 					// Ajax time
