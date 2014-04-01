@@ -655,6 +655,7 @@ class titania_contribution extends titania_message_object
 				$screenshots = $this->screenshots->get_attachments();
 				$indices = array_keys($screenshots);
 				$custom_sort = 'titania_attach_order_compare';
+				$message = false;
 
 				if ((sizeof($indices) > 1))
 				{
@@ -662,7 +663,7 @@ class titania_contribution extends titania_message_object
 					$custom_sort = ($screenshots[$indices[1]]['attachment_order'] >= 1) ? $custom_sort : false;
 				}
 
-				$this->screenshots->parse_attachments($message = false, false, false, 'screenshots', $custom_sort);
+				$this->screenshots->parse_attachments($message, false, false, 'screenshots', $custom_sort);
 				unset($screenshots);
 			}
 
