@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "This adds a very powerful and large customisation database to your forum. It is codenamed titania.",
     "homepage": "http://www.github.com/phpBB/customisation-db/",
-    "version": "0.5.0",
+    "version": "2.0-dev",
     "time": "2012-02-15",
     "license": "GPLv2",
     "authors": [
