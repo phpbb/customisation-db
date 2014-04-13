@@ -5,7 +5,7 @@
     "homepage": "http://www.github.com/phpBB/customisation-db/",
     "version": "0.5.0",
     "time": "2012-02-15",
-    "licence": "GPLv2",
+    "license": "GPLv2",
     "authors": [
         {
             "name": "David Colón (DavidIQ)",
