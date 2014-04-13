@@ -1,0 +1,5 @@
+services:
+    phpbb.titania.listener:
+        class: phpbb\titania\event\main_listener
+        tags:
+            - { name: event.listener }
