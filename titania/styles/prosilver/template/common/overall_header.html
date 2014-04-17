@@ -8,74 +8,10 @@
 {META}
 <title><!-- IF UNREAD_NOTIFICATIONS_COUNT -->({UNREAD_NOTIFICATIONS_COUNT}) <!-- ENDIF --><!-- IF not S_VIEWTOPIC and not S_VIEWFORUM -->{SITENAME} - <!-- ENDIF --><!-- IF S_IN_MCP -->{L_MCP} - <!-- ELSEIF S_IN_UCP -->{L_UCP} - <!-- ENDIF -->{PAGE_TITLE}<!-- IF S_VIEWTOPIC or S_VIEWFORUM --> - {SITENAME}<!-- ENDIF --></title>
 
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-ui-1.10.3.custom.min.js"></script>
-
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/common.js"></script>
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/forum_fn.js"></script>
-
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/styleswitcher.js"></script>
-
-<!-- IF .screenshots or U_DOWNLOAD -->
-<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.colorbox-min.js"></script>
-<!-- ENDIF -->
-
-<script type="text/javascript">
-// <![CDATA[
-
-	// Rating Stuff
-	<!-- IF UA_GREY_STAR_SRC -->
-		var grey_star = new Image(16,16);
-		grey_star.src = "{UA_GREY_STAR_SRC}";
-		var green_star= new Image(16,16);
-		green_star.src = "{UA_GREEN_STAR_SRC}";
-		var red_star= new Image(16,16);
-		red_star.src = "{UA_RED_STAR_SRC}";
-		var orange_star= new Image(16,16);
-		orange_star.src = "{UA_ORANGE_STAR_SRC}";
-		var max_rating = "{UA_MAX_RATING}";
-	<!-- ENDIF -->
-
-	$(document).ready(function()
-	{
-		<!-- IF S_HIDE_ERROR_BOX -->
-			setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
-		<!-- ENDIF -->
-
-		$('#extratabs').tabs({
-		    beforeActivate: function(event, ui) {
-		        if ($('a', ui.newTab).hasClass('ui-tab-follow-link')) {
-		            location.href = $('a', ui.newTab).attr('href');
-		            return false;
-		        }
-		        return true;
-		    }
-		});
-
-		<!-- IF .screenshots -->
-			$('a.screenshot').colorbox({photo: true, rel: 'group1'});
-		<!-- ENDIF -->
-
-		/* Hide MPV/Automod Validation reports automatically */
-		$('blockquote > div > cite').each(function() {
-			if ($(this).text() == '{L_VALIDATION_MPV} {L_WROTE}:' || $(this).text() == '{L_VALIDATION_AUTOMOD} {L_WROTE}:')
-			{
-				hide_quotebox($(this).parent());
-			}
-		});
-	});
-
-// ]]>
-</script>
-
 <link href="{T_TITANIA_THEME_PATH}/print.css" rel="stylesheet" type="text/css" media="print" title="printonly" />
 <link href="{T_STYLESHEET_LINK}" rel="stylesheet" type="text/css" media="screen, projection" />
 <link href="{T_TITANIA_STYLESHEET}" rel="stylesheet" type="text/css" media="screen, projection" />
 <link href="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/buttons.css" rel="stylesheet" type="text/css" media="screen, projection" />
-
-<link href="{T_TITANIA_THEME_PATH}/normal.css" rel="stylesheet" type="text/css" title="A" />
-<link href="{T_TITANIA_THEME_PATH}/medium.css" rel="alternate stylesheet" type="text/css" title="A+" />
-<link href="{T_TITANIA_THEME_PATH}/large.css" rel="alternate stylesheet" type="text/css" title="A++" />
 
 <!-- IF U_CANONICAL --><link rel="canonical" href="{U_CANONICAL}" /><!-- ENDIF -->
 
@@ -120,8 +56,8 @@
 			<ul class="linklist navlinks">
 				<!-- DEFINE $MICRODATA = ' itemtype="http://data-vocabulary.org/Breadcrumb" itemscope=""' -->
 				<li class="small-icon icon-home breadcrumbs"><!-- IF U_SITE_HOME --><span class="crumb"><a href="{U_SITE_HOME}"{$MICRODATA}>{L_SITE_HOME}</a> <strong>&#8249;</strong></span> <!-- ENDIF -->
-					<span class="crumb"><a href="{U_INDEX}" accesskey="h"{$MICRODATA}>{L_INDEX}</a></span> 
-					<!-- BEGIN navlinks --> <span class="crumb"><strong>&#8249;</strong> <a href="{navlinks.U_VIEW_FORUM}"{$MICRODATA}>{navlinks.FORUM_NAME}</a></span><!-- END navlinks -->
+					<span class="crumb"><a href="{U_INDEX}" accesskey="h"{$MICRODATA}>{L_INDEX}</a></span>
+					<!-- BEGIN nav_header --> <span class="crumb"><strong>&#8249;</strong> <a href="{nav_header.U_TITLE}"{$MICRODATA}>{nav_header.L_TITLE}</a></span><!-- END nav_header -->
 					<!-- EVENT overall_header_breadcrumb_append -->
 				</li>
 
@@ -195,13 +131,13 @@
 				<!-- IF U_MANAGE -->
 					<li>
 						<a href="{U_MANAGE}" title="{L_MANAGE}">{L_MANAGE}</a>
-					</li>				
+					</li>
 				<!-- ENDIF -->
 				<!-- IF S_DISPLAY_SEARCH -->
-					<li class="icon-search-self"><a href="{U_SEARCH_SELF}">{L_SEARCH_SELF}</a></li>
+					<li><a href="{U_SEARCH_SELF}">{L_SEARCH_SELF}</a></li>
 				<!-- ENDIF -->
 				<!-- IF U_RESTORE_PERMISSIONS -->
-					<li class="icon-restore-permissions"><a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a></li>
+					<li class="small-icon icon-restore-permissions"><a href="{U_RESTORE_PERMISSIONS}">{L_RESTORE_PERMISSIONS}</a></li>
 				<!-- ENDIF -->
 			<!-- ENDIF -->
 

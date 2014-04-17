@@ -68,6 +68,13 @@
 <script type="text/javascript" src="{T_JQUERY_LINK}"></script>
 <!-- IF S_ALLOW_CDN --><script type="text/javascript">window.jQuery || document.write(unescape('%3Cscript src="{T_ASSETS_PATH}/javascript/jquery.js?assets_version={T_ASSETS_VERSION}" type="text/javascript"%3E%3C/script%3E'));</script><!-- ENDIF -->
 <script type="text/javascript" src="{T_ASSETS_PATH}/javascript/core.js?assets_version={T_ASSETS_VERSION}"></script>
+
+<!-- INCLUDEJS {T_TITANIA_ASSETS_PATH}javascript/jquery-ui-1.10.3.custom.min.js?assets_version={T_ASSETS_VERSION} -->
+<!-- INCLUDEJS {T_TITANIA_ASSETS_PATH}javascript/common.js?assets_version={T_ASSETS_VERSION} -->
+<!-- IF .screenshots or U_DOWNLOAD -->
+	<!-- INCLUDEJS {T_TITANIA_ASSETS_PATH}javascript/jquery.colorbox-min.js?assets_version={T_ASSETS_VERSION} -->
+<!-- ENDIF -->
+
 <!-- INCLUDEJS forum_fn.js -->
 <!-- INCLUDEJS ajax.js -->
 
@@ -76,5 +83,51 @@
 <!-- IF S_PLUPLOAD --><!-- INCLUDE plupload.html --><!-- ENDIF -->
 {$SCRIPTS}
 
+<script type="text/javascript">
+// <![CDATA[
+
+	// Rating Stuff
+	<!-- IF UA_GREY_STAR_SRC -->
+		var grey_star = new Image(16,16);
+		grey_star.src = "{UA_GREY_STAR_SRC}";
+		var green_star= new Image(16,16);
+		green_star.src = "{UA_GREEN_STAR_SRC}";
+		var red_star= new Image(16,16);
+		red_star.src = "{UA_RED_STAR_SRC}";
+		var orange_star= new Image(16,16);
+		orange_star.src = "{UA_ORANGE_STAR_SRC}";
+		var max_rating = "{UA_MAX_RATING}";
+	<!-- ENDIF -->
+
+	(function($) {
+		<!-- IF S_HIDE_ERROR_BOX -->
+			setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
+		<!-- ENDIF -->
+
+		$('#extratabs').tabs({
+		    beforeActivate: function(event, ui) {
+		        if ($('a', ui.newTab).hasClass('ui-tab-follow-link')) {
+		            location.href = $('a', ui.newTab).attr('href');
+		            return false;
+		        }
+		        return true;
+		    }
+		});
+
+		<!-- IF .screenshots -->
+			$('a.screenshot').colorbox({photo: true, rel: 'group1'});
+		<!-- ENDIF -->
+
+		/* Hide MPV/Automod Validation reports automatically */
+		$('blockquote > div > cite').each(function() {
+			if ($(this).text() == '{L_VALIDATION_MPV} {L_WROTE}:' || $(this).text() == '{L_VALIDATION_AUTOMOD} {L_WROTE}:')
+			{
+				hide_quotebox($(this).parent());
+			}
+		});
+	})(jQuery);
+
+// ]]>
+</script>
 </body>
 </html>
