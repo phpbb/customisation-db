@@ -85,12 +85,10 @@ class users_overlord
 		// Load custom profile fields
 		if (phpbb::$config['load_cpf_viewtopic'])
 		{
-			phpbb::_include('functions_profile_fields', false, 'custom_profile');
-
-			$cp = new custom_profile();
+			$cp = phpbb::$container->get('profilefields.manager');
 
 			// Grab all profile fields from users in id cache for later use - similar to the poster cache
-			$profile_fields_tmp = $cp->generate_profile_fields_template('grab', $user_ids);
+			$profile_fields_tmp = $cp->grab_profile_fields_data($user_ids);
 
 			// filter out fields not to be displayed on viewtopic. Yes, it's a hack, but this shouldn't break any MODs.
 			foreach ($profile_fields_tmp as $profile_user_id => $profile_fields)
@@ -281,7 +279,6 @@ class users_overlord
 			$prefix . 'RANK_IMG_SRC'		=> $row['rank_image_src'],
 			$prefix . 'USER_JOINED'			=> phpbb::$user->format_date($row['user_regdate']),
 			$prefix . 'USER_POSTS'			=> $row['user_posts'],
-			$prefix . 'USER_FROM'			=> $row['user_from'],
 			$prefix . 'USER_AVATAR'			=> self::get_user($user_id, '_avatar'),
 			$prefix . 'USER_WARNINGS'		=> $row['user_warnings'],
 	//		$prefix . 'USER_AGE'			=> $row['age'],
@@ -299,11 +296,6 @@ class users_overlord
 			$prefix . 'U_SEARCH'			=> (phpbb::$auth->acl_get('u_search')) ? phpbb::append_sid('search', "author_id=$user_id&amp;sr=posts") : '',
 			$prefix . 'U_PM'				=> self::get_user($user_id, '_u_pm'),
 			$prefix . 'U_EMAIL'				=> self::get_user($user_id, '_u_email'),
-			$prefix . 'U_WWW'				=> $row['user_website'],
-			$prefix . 'U_ICQ'				=> self::get_user($user_id, '_icq'),
-			$prefix . 'U_AIM'				=> self::get_user($user_id, '_aim'),
-			$prefix . 'U_MSN'				=> self::get_user($user_id, '_msnm'),
-			$prefix . 'U_YIM'				=> self::get_user($user_id, '_yim'),
 			$prefix . 'U_JABBER'			=> self::get_user($user_id, '_jabber'),
 			$prefix . 'S_JABBER_ENABLED'	=> (phpbb::$config['jab_enable']) ? true : false,
 		);
