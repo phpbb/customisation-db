@@ -726,9 +726,6 @@ class titania_contribution extends titania_message_object
 		{
 			// Increment the contrib counter
 			$this->change_author_contrib_count($this->contrib_user_id);
-
-			// Increment the count for this type
-			titania_types::increment_count($this->contrib_type);
 		}
 
 		// Clear the author contribs cache
@@ -907,9 +904,6 @@ class titania_contribution extends titania_message_object
 			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
 				// Decrement the count for the authors
 				$this->change_author_contrib_count($author_list, '-', true);
-
-				// Decrement the count for this type
-				titania_types::decrement_count($this->contrib_type);
 
 				// Decrement the category count
 				$this->update_category_count('-', true);

@@ -47,9 +47,6 @@ class titania_types
 				titania::add_lang('types/' . substr($fname, 0, strpos($fname, '.' . PHP_EXT)));
 
 				$class = new $class_name;
-
-				$class->auto_install();
-
 				self::$types[$class->id] = $class;
 			}
 		}
@@ -149,32 +146,7 @@ class titania_types
 				$types[] = $type_id;
 			}
 		}
-		
 		return $types;
-	}
-
-	public static function increment_count($type)
-	{
-		self::$types[$type]->increment_count();
-
-		phpbb::$config->increment('titania_num_contribs', 1);
-	}
-
-	public static function decrement_count($type)
-	{
-		self::$types[$type]->decrement_count();
-
-		phpbb::$config->increment('titania_num_contribs', -1);
-	}
-
-	public static function get_count($type = false)
-	{
-		if ($type)
-		{
-			return self::$types[$type]->get_count();
-		}
-
-		return phpbb::$config['titania_num_contribs'];
 	}
 }
 
