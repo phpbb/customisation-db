@@ -1,33 +1,9 @@
-<script type="text/javascript">
-// <![CDATA[
-	{FORM_NAME}_next_id = 2;
-
-	function {FORM_NAME}_clone()
-	{
-		$('#{FORM_NAME}_1').clone(true).removeAttr('id').attr('id','{FORM_NAME}_' + {FORM_NAME}_next_id).insertAfter($('#{FORM_NAME}_' + ({FORM_NAME}_next_id - 1)));
-
-		$('#{FORM_NAME}_' + ({FORM_NAME}_next_id - 1) + ' input:submit').hide();
-		$('#{FORM_NAME}_' + ({FORM_NAME}_next_id - 1) + ' input:button').hide();
-
-		// the first one is hidden after cloning, so make sure when we clone again we show them for the new ones
-		$('#{FORM_NAME}_' + {FORM_NAME}_next_id + ' input:submit').show();
-		$('#{FORM_NAME}_' + {FORM_NAME}_next_id + ' input:button').show();
-
-		// Blank the file value
-		$('#{FORM_NAME}_' + {FORM_NAME}_next_id + ' input:file').val('');
-
-		{FORM_NAME}_next_id++;
-	}
-// ]]>
-</script>
-
 <fieldset class="fields2">
 <dl id="{FORM_NAME}_1">
 	<dt><label>{L_FILENAME}:</label></dt>
 	<dd>
-		<input type="file" name="{FORM_NAME}[]" <!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
+		<input type="file" name="{FORM_NAME}" <!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
 		<input type="submit" name="add_file" value="{L_ADD_FILE}" class="button2" onclick="upload = true;" />
-		<input type="button" name="add_input" value="{L_ADD_FIELD}" class="button2" onclick="{FORM_NAME}_clone();" />
 	</dd>
 </dl>
 <!-- IF .attach_row and SELECT_PREVIEW-->

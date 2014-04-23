@@ -39,7 +39,6 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'ACCESS_LIMIT_AUTHORS'		=> 'Author-level access limit',
 	'ACCESS_LIMIT_TEAMS'		=> 'Team-level access limit',
-	'ADD_FIELD'					=> 'Add Field',
 	'AGREE'						=> 'I agree',
 	'AGREEMENT'					=> 'Agreement',
 	'ALL'						=> 'All',
