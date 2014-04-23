@@ -38,6 +38,9 @@ class titania_uploader extends fileupload
 	 */
 	public $filedata = array();
 
+	/* @var \phpbb\request\request */
+	protected $request;
+
 	/**
 	 * Class constructor
 	 *
@@ -49,6 +52,7 @@ class titania_uploader extends fileupload
 		// Set class variables.
 		$this->form_name = $form_name;
 		$this->ext_group = $ext_group;
+		$this->request = phpbb::$request;
 	}
 
 	/**
@@ -169,8 +173,11 @@ class titania_uploader extends fileupload
 	*/
 	public function form_upload($form_name)
 	{
-		unset($_FILES[$form_name]['local_mode']);
-		$file = new titania_filespec($_FILES[$form_name], $this);
+		$upload = $this->request->file($form_name);
+		unset($upload['local_mode']);
+		$this->request->overwrite($form_name, $upload, \phpbb\request\request_interface::FILES);
+
+		$file = new titania_filespec($upload, $this);
 
 		if ($file->init_error)
 		{
@@ -179,9 +186,9 @@ class titania_uploader extends fileupload
 		}
 
 		// Error array filled?
-		if (isset($_FILES[$form_name]['error']))
+		if (isset($upload['error']))
 		{
-			$error = $this->assign_internal_error($_FILES[$form_name]['error']);
+			$error = $this->assign_internal_error($upload['error']);
 
 			if ($error !== false)
 			{
@@ -191,7 +198,7 @@ class titania_uploader extends fileupload
 		}
 
 		// Check if empty file got uploaded (not catched by is_uploaded_file)
-		if (isset($_FILES[$form_name]['size']) && $_FILES[$form_name]['size'] == 0)
+		if (isset($upload['size']) && $upload['size'] == 0)
 		{
 			$file->error[] = phpbb::$user->lang[$this->error_prefix . 'EMPTY_FILEUPLOAD'];
 			return $file;
