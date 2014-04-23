@@ -55,9 +55,10 @@
 
 			<ul class="linklist navlinks">
 				<!-- DEFINE $MICRODATA = ' itemtype="http://data-vocabulary.org/Breadcrumb" itemscope=""' -->
-				<li class="small-icon icon-home breadcrumbs"><!-- IF U_SITE_HOME --><span class="crumb"><a href="{U_SITE_HOME}"{$MICRODATA}>{L_SITE_HOME}</a> <strong>&#8249;</strong></span> <!-- ENDIF -->
+				<li class="small-icon icon-home breadcrumbs">
+					<!-- IF U_SITE_HOME --><span class="crumb"><a href="{U_SITE_HOME}"{$MICRODATA}>{L_SITE_HOME}</a></span> <!-- ENDIF -->
 					<span class="crumb"><a href="{U_INDEX}" accesskey="h"{$MICRODATA}>{L_INDEX}</a></span>
-					<!-- BEGIN nav_header --> <span class="crumb"><strong>&#8249;</strong> <a href="{nav_header.U_TITLE}"{$MICRODATA}>{nav_header.L_TITLE}</a></span><!-- END nav_header -->
+					<!-- BEGIN nav_header --><span class="crumb"><a href="{nav_header.U_TITLE}"{$MICRODATA}>{nav_header.L_TITLE}</a></span><!-- END nav_header -->
 					<!-- EVENT overall_header_breadcrumb_append -->
 				</li>
 
