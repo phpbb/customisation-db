@@ -72,47 +72,56 @@
 
 		<!-- IF not posts.S_IGNORE_POST -->
 			<dl class="postprofile" id="profile{posts.POST_ID}">
-			<dt>
-				<!-- IF posts.USER_AVATAR -->
-					<!-- IF posts.U_USER_PROFILE --><a href="{posts.U_USER_PROFILE}">{posts.USER_AVATAR}</a><!-- ELSE -->{posts.USER_AVATAR}<!-- ENDIF --><br />
-				<!-- ENDIF -->
-				<!-- IF not posts.U_USER_PROFILE --><strong>{posts.USER_FULL}</strong><!-- ELSE -->{posts.USER_FULL}<!-- ENDIF -->
-			</dt>
+				<dt class="<!-- IF posts.RANK_TITLE or posts.RANK_IMG -->has-profile-rank<!-- ELSE -->no-profile-rank<!-- ENDIF -->">
+					<!-- IF posts.USER_AVATAR -->
+						<!-- IF posts.U_USER_PROFILE --><a href="{posts.U_USER_PROFILE}" class="avatar">{posts.USER_AVATAR}</a><!-- ELSE --><span class="avatar">{posts.POSTER_AVATAR}</span><!-- ENDIF -->
+					<!-- ENDIF -->
+					<!-- IF not posts.U_USER_PROFILE --><strong>{posts.USER_FULL}</strong><!-- ELSE -->{posts.USER_FULL}<!-- ENDIF -->
+				</dt>
 
-			<!-- IF posts.RANK_TITLE or posts.RANK_IMG --><dd>{posts.RANK_TITLE}<!-- IF posts.RANK_TITLE and posts.RANK_IMG --><br /><!-- ENDIF -->{posts.RANK_IMG}</dd><!-- ENDIF -->
+				<!-- IF posts.RANK_TITLE or posts.RANK_IMG --><dd class="profile-rank">{posts.RANK_TITLE}<!-- IF posts.RANK_TITLE and posts.RANK_IMG --><br /><!-- ENDIF -->{posts.RANK_IMG}</dd><!-- ENDIF -->
 
-		<dd>&nbsp;</dd>
+			<!-- IF posts.POSTER_POSTS != '' --><dd class="profile-posts"><strong>{L_POSTS}{L_COLON}</strong> {posts.POSTER_POSTS}</dd><!-- ENDIF -->
+			<!-- IF posts.POSTER_JOINED --><dd class="profile-joined"><strong>{L_JOINED}{L_COLON}</strong> {posts.POSTER_JOINED}</dd><!-- ENDIF -->
+			<!-- IF posts.POST_IP --><dd><strong>{L_POST_IP}:</strong> {posts.POST_IP}</dd><!-- ENDIF -->
 
-		<!-- IF posts.USER_POSTS != '' --><dd><strong>{L_POSTS}:</strong> {posts.USER_POSTS}</dd><!-- ENDIF -->
-		<!-- IF posts.USER_JOINED --><dd><strong>{L_JOINED}:</strong> {posts.USER_JOINED}</dd><!-- ENDIF -->
-		<!-- IF posts.USER_FROM --><dd><strong>{L_LOCATION}:</strong> {posts.USER_FROM}</dd><!-- ENDIF -->
-		<!-- IF posts.POST_IP --><dd><strong>{L_POST_IP}:</strong> {posts.POST_IP}</dd><!-- ENDIF -->
-
-		<!-- BEGIN custom_fields -->
-			<!-- IF not posts.custom_fields.S_PROFILE_FIRST_NAME and not posts.custom_fields.S_PROFILE_LAST_NAME -->
-			<dd><strong>{posts.custom_fields.PROFILE_FIELD_NAME}:</strong> {posts.custom_fields.PROFILE_FIELD_VALUE}</dd>
+			<!-- IF posts.S_PROFILE_FIELD1 -->
+				<!-- Use a construct like this to include admin defined profile fields. Replace FIELD1 with the name of your field. -->
+				<dd><strong>{posts.PROFILE_FIELD1_NAME}{L_COLON}</strong> {posts.PROFILE_FIELD1_VALUE}</dd>
 			<!-- ENDIF -->
-		<!-- END custom_fields -->
 
-		<!-- IF posts.S_PROFILE_FIRST_NAME or posts.S_PROFILE_LAST_NAME --><dd><strong>{L_NAME}:</strong> {posts.PROFILE_FIRST_NAME_VALUE} {posts.PROFILE_LAST_NAME_VALUE}</dd><!-- ENDIF -->
+			<!-- EVENT viewtopic_body_postrow_custom_fields_before -->
+			<!-- BEGIN custom_fields -->
+				<!-- IF not posts.custom_fields.S_PROFILE_CONTACT -->
+					<dd class="profile-custom-field profile-{posts.custom_fields.PROFILE_FIELD_IDENT}"><strong>{posts.custom_fields.PROFILE_FIELD_NAME}{L_COLON}</strong> {posts.custom_fields.PROFILE_FIELD_VALUE}</dd>
+				<!-- ENDIF -->
+			<!-- END custom_fields -->
+			<!-- EVENT viewtopic_body_postrow_custom_fields_after -->
 
-		<!-- IF not S_IS_BOT -->
-		<!-- IF posts.U_PM or posts.U_EMAIL or posts.U_WWW or posts.U_MSN or posts.U_ICQ or posts.U_YIM or posts.U_AIM or posts.U_JABBER -->
-			<dd>
-				<ul class="profile-icons">
-					<!-- IF posts.U_PM --><li class="pm-icon"><a href="{posts.U_PM}" title="{L_PRIVATE_MESSAGE}"><span>{L_PRIVATE_MESSAGE}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_EMAIL --><li class="email-icon"><a href="{posts.U_EMAIL}" title="{L_SEND_EMAIL_USER} {posts.POST_AUTHOR}"><span>{L_SEND_EMAIL_USER} {posts.POST_AUTHOR}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_WWW --><li class="web-icon"><a href="{posts.U_WWW}" title="{L_VISIT_WEBSITE}: {posts.U_WWW}"><span>{L_WEBSITE}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_MSN --><li class="msnm-icon"><a href="{posts.U_MSN}" onclick="popup(this.href, 550, 320); return false;" title="{L_MSNM}"><span>{L_MSNM}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_ICQ --><li class="icq-icon"><a href="{posts.U_ICQ}" onclick="popup(this.href, 550, 320); return false;" title="{L_ICQ}"><span>{L_ICQ}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_YIM --><li class="yahoo-icon"><a href="{posts.U_YIM}" onclick="popup(this.href, 780, 550); return false;" title="{L_YIM}"><span>{L_YIM}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_AIM --><li class="aim-icon"><a href="{posts.U_AIM}" onclick="popup(this.href, 550, 320); return false;" title="{L_AIM}"><span>{L_AIM}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_JABBER --><li class="jabber-icon"><a href="{posts.U_JABBER}" onclick="popup(this.href, 550, 320); return false;" title="{L_JABBER}"><span>{L_JABBER}</span></a></li><!-- ENDIF -->
-				</ul>
-			</dd>
-		<!-- ENDIF -->
-		<!-- ENDIF -->
+			<!-- IF posts.S_PROFILE_FIRST_NAME or posts.S_PROFILE_LAST_NAME -->
+				<dd><strong>{L_NAME}:</strong> {posts.PROFILE_FIRST_NAME_VALUE} {posts.PROFILE_LAST_NAME_VALUE}</dd>
+			<!-- ENDIF -->
 
+			<!-- IF not S_IS_BOT -->
+			<!-- IF posts.U_PM or posts.U_EMAIL or posts.U_JABBER -->
+				<dd class="profile-contact">
+					<ul class="profile-icons">
+						<!-- IF posts.U_PM --><li class="pm-icon"><a href="{posts.U_PM}" title="{L_PRIVATE_MESSAGE}"><span>{L_PRIVATE_MESSAGE}</span></a></li><!-- ENDIF -->
+						<!-- IF posts.U_EMAIL --><li class="email-icon"><a href="{posts.U_EMAIL}" title="{L_SEND_EMAIL_USER} {posts.POST_AUTHOR}"><span>{L_SEND_EMAIL_USER} {posts.POST_AUTHOR}</span></a></li><!-- ENDIF -->
+						<!-- IF posts.U_JABBER --><li class="jabber-icon"><a href="{posts.U_JABBER}" onclick="popup(this.href, 550, 320); return false;" title="{L_JABBER}"><span>{L_JABBER}</span></a></li><!-- ENDIF -->
+						<!-- BEGIN custom_fields -->
+							<!-- IF posts.custom_fields.S_PROFILE_CONTACT -->
+								<li class="{posts.custom_fields.PROFILE_FIELD_IDENT}-icon">
+									<a href="<!-- IF posts.custom_fields.PROFILE_FIELD_CONTACT -->{posts.custom_fields.PROFILE_FIELD_CONTACT}<!-- ELSE -->{posts.U_USER_PROFILE}<!-- ENDIF -->">
+										<span>{posts.custom_fields.PROFILE_FIELD_NAME}</span>
+									</a>
+								</li>
+							<!-- ENDIF -->
+						<!-- END custom_fields -->
+					</ul>
+				</dd>
+			<!-- ENDIF -->
+			<!-- ENDIF -->
 		</dl>
 	<!-- ENDIF -->
 

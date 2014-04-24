@@ -284,8 +284,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		// load the user data
 		users_overlord::load($user_ids);
 
-		phpbb::_include('functions_profile_fields', false, 'custom_profile');
-		$cp = new custom_profile();
+		$cp = phpbb::$container->get('profilefields.manager');
 		$post = new titania_post($topic->topic_type, $topic);
 		$attachments = new titania_attachment($topic->topic_type, false);
 
@@ -318,7 +317,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$cp_row = array();
 			if (isset(users_overlord::$cp_fields[$post->post_user_id]))
 			{
-				$cp_row = $cp->generate_profile_fields_template('show', false, users_overlord::$cp_fields[$post->post_user_id]);
+				$cp_row = $cp->generate_profile_fields_template_data(users_overlord::$cp_fields[$post->post_user_id]);
 			}
 			$cp_row['row'] = (isset($cp_row['row']) && sizeof($cp_row['row'])) ? $cp_row['row'] : array();
 			
