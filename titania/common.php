@@ -21,17 +21,9 @@ if (!defined('NOT_IN_COMMUNITY'))
 	define('NOT_IN_COMMUNITY', true);
 }
 
-// Version number (only used for the installer)
-define('TITANIA_VERSION', '0.5.12');
-
 if (!defined('PHPBB_USE_BOARD_URL_PATH'))
 {
 	define('PHPBB_USE_BOARD_URL_PATH', true);
-}
-
-if (!defined('IN_TITANIA_INSTALL'))
-{
-	define('PHPBB_MSG_HANDLER', 'titania_msg_handler');
 }
 
 // Include the non-dynamic constants
@@ -63,71 +55,11 @@ else
 // Include the dynamic constants (after reading the Titania config file, but before loading the phpBB common file)
 titania::_include('dynamic_constants');
 
-// Include common phpBB files and functions.
-if (!file_exists(PHPBB_ROOT_PATH . 'common.' . PHP_EXT))
-{
-	die('<p>No phpBB installation found. Check the Titania configuration file.</p>');
-}
-if (!defined('PHPBB_INCLUDED'))
-{
-	require(PHPBB_ROOT_PATH . 'common.' . PHP_EXT);
-}
-
 // Decode the request
 titania_url::decode_request();
 
 // Initialise phpBB
 phpbb::initialise();
 
-// If the database is not installed or outdated redirect to the installer
-if (!defined('IN_TITANIA_INSTALL') && (!isset(phpbb::$config['titania_version']) || version_compare(phpbb::$config['titania_version'], TITANIA_VERSION, '<')))
-{
-	if (phpbb::$user->data['user_type'] != USER_FOUNDER)
-	{
-		phpbb::$user->set_custom_lang_path(TITANIA_ROOT . 'language/');
-		phpbb::$user->add_lang('common');
-
-		msg_handler(E_USER_ERROR, phpbb::$user->lang['TITANIA_DISABLED'], '', '');
-	}
-
-	redirect(phpbb::append_sid(TITANIA_ROOT . 'install.' . PHP_EXT));
-}
-
 // Initialise Titania
 titania::initialise();
-
-// Allow login attempts from any page (mini login box)
-if (phpbb::$request->is_set_post('login'))
-{
-	phpbb::login_box();
-}
-
-// admin requested the cache to be purged, ensure they have permission and purge the cache.
-if (phpbb::$request->variable('cache', '') == 'purge' && phpbb::$auth->acl_get('a_'))
-{
-	titania::$cache->purge();
-
-	titania::error_box(phpbb::$user->lang['SUCCESSBOX_TITLE'], phpbb::$user->lang['CACHE_PURGED']);
-}
-
-// admin requested a sync
-if (phpbb::$request->is_set('sync', '_GET') && phpbb::$auth->acl_get('a_'))
-{
-	$sync = new titania_sync;
-	$method = explode('_', phpbb::$request->variable('sync', ''), 2);
-
-	if (method_exists($sync, $method[0]))
-	{
-		if (isset($method[1]))
-		{
-			$id = phpbb::$request->variable('id', 0);
-			$sync->$method[0]($method[1], $id);
-		}
-		else
-		{
-			$sync->$method[0]();
-		}
-
-		titania::error_box(phpbb::$user->lang['SUCCESSBOX_TITLE'], phpbb::$user->lang['SYNC_SUCCESS']);
-	}
-}
