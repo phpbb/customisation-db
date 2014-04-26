@@ -801,10 +801,6 @@ p.attention-closed {
 	text-align: center;
 }
 
-.hidden {
-	display: none !important;
-}
-
 .successbox, .errorbox, .noticebox {
 	padding: 0 10px;
 	margin: 10px 0;
