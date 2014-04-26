@@ -327,7 +327,7 @@ a.new-revision:hover {
 }
 
 a.expand, a.contract {
-	background: url("{T_THEME_PATH}/images/icon_contracted.gif") no-repeat 0 0;
+	background: url("./images/icon_contracted.gif") no-repeat 0 0;
 	display: block;
 	float: left;
 	height: 16px;
@@ -336,7 +336,7 @@ a.expand, a.contract {
 }
 
 a.contract {
-	background-image: url("{T_THEME_PATH}/images/icon_expanded.gif");
+	background-image: url("./images/icon_expanded.gif");
 }
 
 /* Author Profile
@@ -680,7 +680,7 @@ p.attention-closed {
 
 /* Queue stats
 --------------------------------------------- */
-.fade { background: url("{T_THEME_PATH}/images/fade.png") repeat-y left bottom; }
+.fade { background: url("./images/fade.png") repeat-y left bottom; }
 
 .stat-new {
 	background-color: #999999;
