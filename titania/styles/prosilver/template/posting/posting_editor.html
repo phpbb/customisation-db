@@ -21,10 +21,10 @@
 	<span class="corners-bottom"><span></span></span></div>
 </div>
 
-<div id="tabs">
+<div id="tabs" class="sub-panels" data-show-panel="options-panel">
 	<ul>
 		<!-- BEGIN panels -->
-			<li id="{panels.NAME}-tab" class="activetab"><a href="#tabs" onclick="subPanels('{panels.NAME}'); return false;"><span>{panels.TITLE}</span></a></li>
+			<li id="{panels.NAME}-tab" class="activetab"><a href="#tabs" data-subpanel="{panels.NAME}"><span>{panels.TITLE}</span></a></li>
 		<!-- END panels -->
 	</ul>
 </div>
@@ -32,9 +32,3 @@
 <!-- BEGIN panels -->
 	{panels.OUTPUT}
 <!-- END panels -->
-
-<script type="text/javascript">
-// <![CDATA[
-	subPanels(show_panel);
-// ]]>
-</script>
