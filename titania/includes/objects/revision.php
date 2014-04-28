@@ -217,8 +217,9 @@ class titania_revision extends titania_database_object
 		{
 			$translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
 			$translations->store_attachments($this->translations);
+			$message = false;
 
-			$translations->parse_attachments($message = false, false, false, $tpl_block . '.translations', '');
+			$translations->parse_attachments($message, false, false, $tpl_block . '.translations', '');
 		}
 
 		phpbb::$template->assign_var('ICON_EDIT', '<img src="' . titania::$images_path . 'icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />');
