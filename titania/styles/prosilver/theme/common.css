@@ -82,14 +82,6 @@ h3.section-name {
 	overflow: hidden;
 }
 
-.main-panel span.corners-top, .main-panel span.corners-bottom {
-	margin: 0 -10px;
-}
-
-.main-panel .forabg span.corners-top, .main-panel .forabg span.corners-bottom, .main-panel .forumbg span.corners-top, .main-panel .forumbg span.corners-bottom  {
-	margin: 0 -5px;
-}
-
 .container {
 	background-color: #FFFFFF;
 	border-radius: 5px;
@@ -100,14 +92,6 @@ h3.section-name {
 
 .rightside {
 	float: right;
-}
-
-span.corners-top.main-corners, span.corners-bottom.main-corners {
-	background-image: url("./images/corners_left.png");
-}
-
-span.corners-top.main-corners span, span.corners-bottom.main-corners span {
-	background-image: url("./images/corners_right.png");
 }
 
 /* Pagination tweaks
@@ -308,22 +292,6 @@ ul.general-info li strong {
 
 .main-panel a.screenshot:hover img {
 	border-color: #757575;
-}
-
-a.new-revision {
-	background-color: #7FA3B9;
-	padding: 3px;
-	float: right;
-	text-transform: uppercase;
-	border: 1px solid #6C889A;
-	margin-top: 5px;
-	color: #FFFFFF;
-}
-
-a.new-revision:hover {
-	text-decoration: none;
-	background-color: #5E869F;
-	border-color: #46667A;
 }
 
 a.expand, a.contract {
@@ -808,14 +776,6 @@ p.attention-closed {
 	text-align: center;
 }
 
-.errorbox span.corners-top , .successbox span.corners-top, .noticebox span.corners-top {
-	margin: 0 -10px 5px -10px;
-}
-
-.errorbox span.corners-bottom , .successbox span.corners-bottom, .noticebox span.corners-bottom {
-	margin: 5px -10px 0 -10px;
-}
-
 .success {
 	color: #228822;
 }
@@ -895,11 +855,6 @@ p.attention-closed {
 
 fieldset dl:hover dt label.error {
 	color: #BC2A4D;
-}
-
-#wrap {
-	width: 900px;
-	margin: 0 auto;
 }
 
 textarea.elastic {
