@@ -14,7 +14,7 @@
 <!-- BEGIN posts -->
 	<!-- IF posts.S_FIRST_UNREAD --><a id="unread"></a><!-- ENDIF -->
 	<div id="p{posts.POST_ID}" class="post <!-- IF posts.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF posts.S_UNREAD_POST --> unreadpost<!-- ENDIF --><!-- IF posts.S_POST_REPORTED --> reported<!-- ENDIF --><!-- IF posts.S_POST_DELETED --> deleted<!-- ENDIF --><!-- IF posts.S_ONLINE and not posts.S_IGNORE_POST --> online<!-- ENDIF -->">
-		<div class="inner"><span class="corners-top"><span></span></span>
+		<div class="inner">
 
 		<div class="postbody">
 			<!-- IF posts.S_IGNORE_POST -->
@@ -127,7 +127,7 @@
 
 		<div class="back2top"><a href="#wrap" class="top" title="{L_BACK_TO_TOP}">{L_BACK_TO_TOP}</a></div>
 
-		<span class="corners-bottom"><span></span></span></div>
+		</div>
 	</div>
 
 	<hr class="divider" />

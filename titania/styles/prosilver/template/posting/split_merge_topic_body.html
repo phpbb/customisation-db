@@ -50,7 +50,7 @@
 
 	<!-- BEGIN posts -->
 		<div class="post <!-- IF posts.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF posts.S_POST_DELETED --> deleted<!-- ENDIF -->">
-			<div class="inner"><span class="corners-top"><span></span></span>
+			<div class="inner">
 
 			<div class="postbody full" id="ppr{posts.POST_ID}"><span class="rightside"><label for="pselect{posts.POST_ID}"><input type="checkbox" name="post_ids[]" value="{posts.POST_ID}" id="pselect{posts.POST_ID}" /> {L_SELECT}</label></span>
 				<h3><a href="#ppr{posts.POST_ID}">{posts.POST_SUBJECT}</a>
@@ -75,7 +75,7 @@
 				<!-- ENDIF -->
 			</div>
 
-			<span class="corners-bottom"><span></span></span></div>
+			</div>
 		</div>
 	<!-- END posts -->
 

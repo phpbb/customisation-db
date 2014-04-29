@@ -9,11 +9,11 @@
 
 	<!-- IF posts.S_IGNORE_POST -->
 	<div class="post bg3 post-ignore">
-		<div class="inner"><span class="corners-top"><span></span></span>
+		<div class="inner">
 			{posts.L_IGNORE_POST}
 	<!-- ELSE -->
 	<div class="post <!-- IF posts.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
-		<div class="inner"><span class="corners-top"><span></span></span>
+		<div class="inner">
 	<!-- ENDIF -->
 
 		<div class="postbody" id="pr{posts.POST_ID}">
@@ -40,7 +40,7 @@
 				<div id="message_{posts.POST_ID}" style="display: none;">{posts.POST_TEXT_DECODED}</div>
 			<!-- ENDIF -->
 		</div>
-		<span class="corners-bottom"><span></span></span></div>
+		</div>
 	</div>
 	<!-- END posts -->
 </div>

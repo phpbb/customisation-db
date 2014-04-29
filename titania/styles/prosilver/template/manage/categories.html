@@ -4,7 +4,7 @@
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 <form name="postform" method="post" action="{U_ACTION}">
 	<div class="panel" id="addcategory">
-		<div class="inner"><span class="corners-top"><span></span></span>
+		<div class="inner">
 
 			<h3>{L_CATEGORY_INFORMATION}</h3>
 
@@ -47,25 +47,25 @@
 			</dl>
 			</fieldset>
 			<!-- INCLUDE posting/posting_basic_editor.html -->
-		<span class="corners-bottom"><span></span></span></div>
+		</div>
 	</div>
 	<div class="panel">
-		<div class="inner"><span class="corners-top"><span></span></span>
+		<div class="inner">
 			<h3>{L_CATEGORY_OPTIONS}</h3>
 			<fieldset class="fields1">
 				<label for="integrate_demo"><input type="checkbox" name="integrate_demo" id="integrate_demo" {S_INTEGRATE_DEMO} /> {L_INTEGRATE_DEMO}</label><br />
 				<label for="support_all_versions"><input type="checkbox" name="support_all_versions" id="support_all_versions" {S_SUPPORT_ALL_VERSIONS} /> {L_SUPPORT_ALL_VERSIONS}</label>
 			</fieldset>
-		<span class="corners-bottom"><span></span></span></div>
+		</div>
 	</div>
 	<div class="panel bg2">
-		<div class="inner"><span class="corners-top"><span></span></span>
+		<div class="inner">
 			<fieldset class="submit-buttons">
 				<input type="reset" name="reset" value="{L_RESET}" class="button2" />&nbsp;
 				<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
 				{S_FORM_TOKEN}
 			</fieldset>
-		<span class="corners-bottom"><span></span></span></div>
+		</div>
 	</div>
 </form>
 
@@ -73,7 +73,7 @@
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 <form method="post" action="{U_ACTION}">
 	<div class="panel">
-		<div class="inner"><span class="corners-top"><span></span></span>
+		<div class="inner">
 			<fieldset>
 				<dl>
 					<dt><label>{L_CATEGORY_NAME}:</label></dt>
@@ -95,7 +95,7 @@
 				<input type="submit" name="submit" value="{L_DELETE}" class="button1" />
 				{S_FORM_TOKEN}
 			</fieldset>
-		<span class="corners-bottom"><span></span></span></div>
+		</div>
 	</div>
 </form>
 
