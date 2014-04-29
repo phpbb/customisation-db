@@ -99,7 +99,6 @@ $lang = array_merge($lang, array(
 	'CONTRIB_MANAGE'			=> 'Manage Contribution',
 	'CONTRIB_SUPPORT'			=> 'Discussion/Support',
 	'CREATE_CATEGORY'			=> 'Create Category',
-	'CREATE_CONTRIBUTION'		=> 'Create Contribution',
 	'CUSTOMISATION_DATABASE'	=> 'Customisation Database',
 
 	'DATE_CLOSED'				=> 'Date closed',
@@ -146,6 +145,7 @@ $lang = array_merge($lang, array(
 	'MY_CONTRIBUTIONS'			=> 'My Contributions',
 
 	'NAME'						=> 'Name',
+	'NEW_CONTRIBUTION'			=> 'New Contribution',
 	'NEW_UNAPPROVED_POST'		=> 'New unapproved post',
 	'NEW_REVISION'				=> 'New Revision',
 	'NOT_AGREE'					=> 'I do not agree',
