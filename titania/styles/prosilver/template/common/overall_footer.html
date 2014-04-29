@@ -69,7 +69,7 @@
 <!-- IF S_ALLOW_CDN --><script type="text/javascript">window.jQuery || document.write(unescape('%3Cscript src="{T_ASSETS_PATH}/javascript/jquery.js?assets_version={T_ASSETS_VERSION}" type="text/javascript"%3E%3C/script%3E'));</script><!-- ENDIF -->
 <script type="text/javascript" src="{T_ASSETS_PATH}/javascript/core.js?assets_version={T_ASSETS_VERSION}"></script>
 
-<!-- INCLUDEJS {T_TITANIA_ASSETS_PATH}javascript/jquery-ui-1.10.3.custom.min.js?assets_version={T_ASSETS_VERSION} -->
+<!-- INCLUDEJS {T_TITANIA_ASSETS_PATH}javascript/jquery-ui-1.10.4.custom.min.js?assets_version={T_ASSETS_VERSION} -->
 <!-- INCLUDEJS {T_TITANIA_ASSETS_PATH}javascript/common.js?assets_version={T_ASSETS_VERSION} -->
 <!-- IF .screenshots or U_DOWNLOAD -->
 	<!-- INCLUDEJS {T_TITANIA_ASSETS_PATH}javascript/jquery.colorbox-min.js?assets_version={T_ASSETS_VERSION} -->
@@ -103,16 +103,6 @@
 		<!-- IF S_HIDE_ERROR_BOX -->
 			setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
 		<!-- ENDIF -->
-
-		$('#extratabs').tabs({
-		    beforeActivate: function(event, ui) {
-		        if ($('a', ui.newTab).hasClass('ui-tab-follow-link')) {
-		            location.href = $('a', ui.newTab).attr('href');
-		            return false;
-		        }
-		        return true;
-		    }
-		});
 
 		<!-- IF .screenshots -->
 			$('a.screenshot').colorbox({photo: true, rel: 'group1'});

@@ -279,7 +279,7 @@ ul.general-info li strong {
 	display: block;
 }
 
-#extratabs #extratabs-head li.ui-state-active a, #extratabs #extratabs-head li.ui-state-active a:hover {
+#extratabs #extratabs-head li.activetab a, #extratabs #extratabs-head li.activetab a:hover {
 	background-color: #FFF !important;
 	border-color: #E5E5E6 !important;
 	color: #333 !important;

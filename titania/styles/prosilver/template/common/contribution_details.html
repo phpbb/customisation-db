@@ -204,13 +204,32 @@
 <!-- IF (SCREENSHOT_COUNT > 1) or .revisions or U_NEW_REVISION -->
 <div class="container">
 	<div class="inner"><span class="corners-top main-corners"><span></span></span>
-		<div id="extratabs">
+		<!-- IF S_IN_QUEUE and .revisions -->
+			<!-- DEFINE $TAB = 'revisions' -->
+		<!-- ELSEIF SCREENSHOT_COUNT > 1 -->
+			<!-- DEFINE $TAB = 'screenshots' -->
+		<!-- ELSEIF S_TRANSLATIONS -->
+			<!-- DEFINE $TAB = 'translations' -->
+		<!-- ELSE -->
+			<!-- DEFINE $TAB = 'revisions' -->
+		<!-- ENDIF -->
+		<div id="extratabs" data-show-panel="{$TAB}-panel" class="sub-panels">
 		    <ul id="extratabs-head">
-		        <!-- IF S_IN_QUEUE and .revisions --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
-		        <!-- IF SCREENSHOT_COUNT > 1 --><li><a href="#screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li><!-- ENDIF -->
-				<!-- IF S_TRANSLATIONS --><li><a href="#translations-panel"><span>{L_TRANSLATIONS}</span></a></li><!-- ENDIF -->
-		        <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) --><li><a href="#revisions-panel"><span>{L_REVISIONS}</span></a></li><!-- ENDIF -->
-		        <!-- IF U_NEW_REVISION --><li><a href="{U_NEW_REVISION}" class="ui-tab-follow-link"><span>{L_NEW_REVISION}</span></a></li><!-- ENDIF -->
+		        <!-- IF S_IN_QUEUE and .revisions -->
+		        	<li id="revisions-panel-tab"><a href="#revisions-panel" data-subpanel="revisions-panel"><span>{L_REVISIONS}</span></a></li>
+		        <!-- ENDIF -->
+		        <!-- IF SCREENSHOT_COUNT > 1 -->
+		        	<li id="screenshots-panel-tab"><a href="#screenshots-panel" data-subpanel="screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li>
+		        <!-- ENDIF -->
+				<!-- IF S_TRANSLATIONS -->
+					<li id="translations-panel-tab"><a href="#translations-panel" data-subpanel="translations-panel"><span>{L_TRANSLATIONS}</span></a></li>
+				<!-- ENDIF -->
+		        <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) -->
+		        	<li id="revisions-panel-tab"><a href="#revisions-panel" data-subpanel="revisions-panel"><span>{L_REVISIONS}</span></a></li>
+		       <!-- ENDIF -->
+		        <!-- IF U_NEW_REVISION -->
+		        	<li><a href="{U_NEW_REVISION}"><span>{L_NEW_REVISION}</span></a></li>
+		        <!-- ENDIF -->
 		    </ul>
 
 		    <!-- IF S_IN_QUEUE and .revisions -->
