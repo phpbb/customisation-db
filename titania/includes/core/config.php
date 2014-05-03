@@ -29,7 +29,7 @@ class titania_config extends titania_object
 			'contrib_temp_path'			=> array('default' => $root_path . 'files/contrib_temp/'),
 			'modx_storage_path'			=> array('default' => $root_path . 'files/modx_files/'),
 			'language_path'				=> array('default' => $root_path . 'language/'),
-			'table_prefix'				=> array('default' => 'customisation_'),
+			'table_prefix'				=> array('default' => 'cdb_'),
 
 			// Unique Composer vendor name.
 			'composer_vendor_name'		=> array('default' => ''),
