@@ -163,26 +163,17 @@ class titania
 
 	/**
 	 * Reads a configuration file with an assoc. config array
-	 *
-	 * @param string $file	Path to configuration file
 	 */
-	public static function read_config_file($file)
+	public static function read_config_file()
 	{
-		if (!file_exists($file) || !is_readable($file))
+		try
 		{
-			die('<p>The Titania configuration file could not be found or is inaccessible. Check your configuration.</p>');
+			self::$config = titania_get_config(TITANIA_ROOT, PHP_EXT);
 		}
-
-		require($file);
-
-		self::$config = new titania_config();
-
-		if (!is_array($config))
+		catch(\Exception $e)
 		{
-			$config = array();
+			trigger_error($e->getMessage());
 		}
-
-		self::$config->__set_array($config);
 	}
 
 	/**
