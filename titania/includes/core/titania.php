@@ -252,7 +252,7 @@ class titania
 	{
 		if (!phpbb::$user->data['is_registered'])
 		{
-			phpbb::login_box();
+			login_box(build_url());
 		}
 
 		trigger_error('NO_AUTH');
