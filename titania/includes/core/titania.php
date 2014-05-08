@@ -487,35 +487,6 @@ class titania
 	}
 
 	/**
-	 * Titania Logout method to redirect the user to the Titania root instead of the phpBB Root
-	 *
-	 * @param bool $return if we are within a method, we can use the error_box instead of a trigger_error on the redirect.
-	 */
-	public static function logout($return = false)
-	{
-		if (phpbb::$user->data['user_id'] != ANONYMOUS && phpbb::$request->is_set('sid', '_GET') && phpbb::$request->variable('sid', '', false, '_GET') === phpbb::$user->session_id)
-		{
-			phpbb::$user->session_kill();
-			phpbb::$user->session_begin();
-			$message = phpbb::$user->lang['LOGOUT_REDIRECT'];
-		}
-		else
-		{
-			$message = (phpbb::$user->data['user_id'] == ANONYMOUS) ? phpbb::$user->lang['LOGOUT_REDIRECT'] : phpbb::$user->lang['LOGOUT_FAILED'];
-		}
-
-		if ($return)
-		{
-			return $message;
-		}
-
-		meta_refresh(3, titania_url::build_url());
-
-		$message = $message . '<br /><br />' . sprintf(phpbb::$user->lang['RETURN_INDEX'], '<a href="' . titania_url::build_url() . '">', '</a> ');
-		trigger_error($message);
-	}
-
-	/**
 	 * Show the errorbox or successbox
 	 *
 	 * @param string $l_title message title - custom or user->lang defined
