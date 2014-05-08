@@ -319,7 +319,7 @@ class titania
 		define('HEADER_INC', true);
 
 		// Do the phpBB page header stuff first
-		phpbb::page_header($page_title);
+		page_header($page_title);
 
 		phpbb::$template->assign_vars(array(
 			'PHPBB_ROOT_PATH'			=> self::$absolute_board,
