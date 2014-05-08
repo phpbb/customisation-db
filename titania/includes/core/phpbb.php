@@ -63,14 +63,6 @@ class phpbb
 		self::$request	= &$request;
 		self::$container = &$phpbb_container;
 
-		// Start session management
-		if (!defined('PHPBB_INCLUDED'))
-		{
-			self::$user->session_begin();
-			self::$auth->acl(self::$user->data);
-			self::$user->setup();
-		}
-
 		self::$style_data = self::$user->style;
 	}
 
