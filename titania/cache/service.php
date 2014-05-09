@@ -7,7 +7,9 @@
 *
 */
 
-class titania_cache extends \phpbb\cache\service
+namespace phpbb\titania\cache;
+
+class service extends \phpbb\cache\service
 {
 	/**
 	* Get some tags

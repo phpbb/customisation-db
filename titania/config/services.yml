@@ -1,4 +1,12 @@
 services:
+    phpbb.titania.cache:
+        class: phpbb\titania\cache\service
+        arguments:
+             - @cache.driver
+             - @config
+             - @dbal.conn
+             - %core.root_path%
+             - %core.php_ext%
     phpbb.titania.listener:
         class: phpbb\titania\event\main_listener
         tags:

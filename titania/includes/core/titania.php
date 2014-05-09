@@ -100,15 +100,7 @@ class titania
 
 		self::$page = htmlspecialchars(phpbb::$user->page['script_path'] . phpbb::$user->page['page_name']);
 		self::$time = (int) $starttime;
-
-		// Instantiate cache
-		if (!class_exists('titania_cache'))
-		{
-			include TITANIA_ROOT . 'includes/core/cache.' . PHP_EXT;
-		}
-
-		// @todo Use dependency injection.
-		self::$cache = new titania_cache(phpbb::$cache->get_driver(), phpbb::$config, phpbb::$db, PHPBB_ROOT_PATH, PHP_EXT);
+		self::$cache = phpbb::$container->get('phpbb.titania.cache');
 
 		// Set the absolute titania/board path
 		self::$absolute_path = generate_board_url(true) . '/' . self::$config->titania_script_path;
