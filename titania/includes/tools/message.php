@@ -90,6 +90,9 @@ class titania_message
 		'options-panel'			=> 'OPTIONS',
 	);
 
+	/* @var \phpbb\request\request */
+	protected $request;
+
 	public function __construct($post_object)
 	{
 		titania::add_lang('posting');
@@ -101,6 +104,7 @@ class titania_message
 		}
 
 		$this->post_object = $post_object;
+		$this->request = phpbb::$request;
 	}
 
 	/**
@@ -157,7 +161,11 @@ class titania_message
 			// Resync inline attachments if any were added
 			if ($this->attachments && $this->attachments->uploaded)
 			{
-				$_REQUEST[$this->settings['text_name']] = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "'[attachment='.(\\1 + 1).']\\2[/attachment]'", $_REQUEST[$this->settings['text_name']]);
+				$message = $this->request->variable($this->settings['text_name'], '');
+				$this->request->overwrite(
+					$this->settings['text_name'],
+					preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "'[attachment='.(\\1 + 1).']\\2[/attachment]'", $message)
+				);
 			}
 
 			// We have to reset some request data if we are going to a full editor (checkboxes will be set according to their settings)
