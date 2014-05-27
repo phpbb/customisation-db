@@ -2,7 +2,9 @@
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
-		<div class="<!-- IF S_IS_LOCKED -->locked-icon<!-- ELSE -->reply-icon<!-- ENDIF -->"><a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->"><span></span><!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF --></a></div>
+		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button icon-button <!-- IF S_IS_LOCKED -->locked<!-- ELSE -->reply<!-- ENDIF -->-icon">
+			<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->
+		</a>
 	<!-- ENDIF -->
 	</div>
 
@@ -25,12 +27,22 @@
 
 		<!-- IF not S_IS_BOT -->
 			<!-- IF posts.U_EDIT or posts.U_DELETE or posts.U_REPORT or posts.U_WARN or posts.U_INFO or posts.U_QUOTE -->
-				<ul class="profile-icons">
-					<!-- IF posts.U_EDIT --><li class="edit-icon"><a href="{posts.U_EDIT}" title="{L_EDIT_POST}"><span>{L_EDIT_POST}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_DELETE --><li class="delete-icon"><a href="{posts.U_DELETE}" title="{L_DELETE_POST}"><span>{L_DELETE_POST}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_REPORT --><li class="report-icon"><a href="{posts.U_REPORT}" title="{L_REPORT_POST}"><span>{L_REPORT_POST}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_WARN --><li class="warn-icon"><a href="{posts.U_WARN}" title="{L_WARN_USER}"><span>{L_WARN_USER}</span></a></li><!-- ENDIF -->
-					<!-- IF posts.U_QUOTE --><li class="quote-icon"><a href="{posts.U_QUOTE}" title="{L_REPLY_WITH_QUOTE}"><span>{L_REPLY_WITH_QUOTE}</span></a></li><!-- ENDIF -->
+				<ul class="post-buttons">
+					<!-- IF posts.U_EDIT -->
+						<li><a href="{posts.U_EDIT}" title="{L_EDIT_POST}" class="button icon-button edit-icon"><span>{L_EDIT_POST}</span></a></li>
+					<!-- ENDIF -->
+					<!-- IF posts.U_DELETE -->
+						<li><a href="{posts.U_DELETE}" title="{L_DELETE_POST}" class="button icon-button delete-icon"><span>{L_DELETE_POST}</span></a></li>
+					<!-- ENDIF -->
+					<!-- IF posts.U_REPORT -->
+						<li><a href="{posts.U_REPORT}" title="{L_REPORT_POST}" class="button icon-button report-icon"><span>{L_REPORT_POST}</span></a></li>
+					<!-- ENDIF -->
+					<!-- IF posts.U_WARN -->
+						<li><a href="{posts.U_WARN}" title="{L_WARN_USER}" class="button icon-button warn-icon"><span>{L_WARN_USER}</span></a></li>
+					<!-- ENDIF -->
+					<!-- IF posts.U_QUOTE -->
+						<li><a href="{posts.U_QUOTE}" title="{L_REPLY_WITH_QUOTE}" class="button icon-button quote-icon"><span>{L_REPLY_WITH_QUOTE}</span></a></li>
+					<!-- ENDIF -->
 				</ul>
 			<!-- ENDIF -->
 		<!-- ENDIF -->
@@ -143,7 +155,9 @@
 <div class="topic-actions">
 	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
-		<div class="<!-- IF S_IS_LOCKED -->locked-icon<!-- ELSE -->reply-icon<!-- ENDIF -->"><a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->"><span></span><!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF --></a></div>
+		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button icon-button <!-- IF S_IS_LOCKED -->locked<!-- ELSE -->reply<!-- ENDIF -->-icon">
+			<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->
+		</a>
 	<!-- ENDIF -->
 	</div>
 
