@@ -256,7 +256,7 @@ class titania_message
 		$post_options->set_in_template();
 
 		// Save the opened panel to show again
-		$default_panel = phpbb::$request->variable('open_panel', 'options-panel');
+		$default_panel = phpbb::$request->variable('show_panel', 'options-panel');
 		$default_panel = (isset($this->posting_panels[$default_panel])) ? $default_panel :  'options-panel';
 
 		phpbb::$template->assign_vars(array(

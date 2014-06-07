@@ -13,7 +13,7 @@
 	<fieldset class="submit-buttons">
 		{S_HIDDEN_FIELDS}
 		{S_FORM_TOKEN}
-		<input type="hidden" id="open_panel" name="open_panel" value="{POSTING_PANELS_DEFAULT}" />
+		<input type="hidden" name="show_panel" value="{POSTING_PANELS_DEFAULT}" />
 		<input type="submit" tabindex="3" name="preview" value="{L_PREVIEW}" class="button1" />&nbsp;
 		<input type="submit" tabindex="4" accesskey="s" name="submit" value="{L_SUBMIT}" class="button1" />&nbsp;
 	</fieldset>
@@ -21,7 +21,7 @@
 	</div>
 </div>
 
-<div id="tabs" class="sub-panels" data-show-panel="options-panel">
+<div id="tabs" class="sub-panels" data-show-panel="{POSTING_PANELS_DEFAULT}">
 	<ul>
 		<!-- BEGIN panels -->
 			<li id="{panels.NAME}-tab" class="activetab"><a href="#tabs" data-subpanel="{panels.NAME}"><span>{panels.TITLE}</span></a></li>
