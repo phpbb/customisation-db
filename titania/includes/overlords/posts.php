@@ -353,7 +353,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				array(
 					'ID'		=> 'jabber',
 					'NAME'		=> phpbb::$user->lang['JABBER'],
-					'U_CONTACT'	=> users_overlord::get_user($post->post_user_id, '_u_jabber'),
+					'U_CONTACT'	=> users_overlord::get_user($post->post_user_id, '_jabber'),
 				),
 			);
 
