@@ -477,10 +477,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'PM_IMG' 			=> phpbb::$user->img('icon_contact_pm', 'SEND_PRIVATE_MESSAGE'),
 			'EMAIL_IMG' 		=> phpbb::$user->img('icon_contact_email', 'SEND_EMAIL'),
 			'WWW_IMG' 			=> phpbb::$user->img('icon_contact_www', 'VISIT_WEBSITE'),
-			'ICQ_IMG' 			=> phpbb::$user->img('icon_contact_icq', 'ICQ'),
-			'AIM_IMG' 			=> phpbb::$user->img('icon_contact_aim', 'AIM'),
-			'MSN_IMG' 			=> phpbb::$user->img('icon_contact_msnm', 'MSNM'),
-			'YIM_IMG' 			=> phpbb::$user->img('icon_contact_yahoo', 'YIM'),
 			'JABBER_IMG'		=> phpbb::$user->img('icon_contact_jabber', 'JABBER') ,
 		));
 	}

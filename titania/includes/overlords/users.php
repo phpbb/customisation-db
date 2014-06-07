@@ -188,26 +188,6 @@ class users_overlord
 					return (!empty(self::$users[$user_id]['user_allow_viewemail']) || phpbb::$auth->acl_get('a_email')) ? ((phpbb::$config['board_email_form'] && phpbb::$config['email_enable']) ? phpbb::append_sid('memberlist', "mode=email&amp;u=$user_id") : ((phpbb::$config['board_hide_emails'] && !phpbb::$auth->acl_get('a_email')) ? '' : 'mailto:' . self::$users[$user_id]['user_email'])) : '';
 				break;
 
-				case '_icq' :
-					return (!empty(self::$users[$user_id]['user_icq'])) ? 'http://www.icq.com/people/webmsg.php?to=' . self::$users[$user_id]['user_icq'] : '';
-				break;
-
-				case '_icq_status' :
-					return (!empty(self::$users[$user_id]['user_icq'])) ? '<img src="http://web.icq.com/whitepages/online?icq=' . self::$users[$user_id]['user_icq'] . '&amp;img=5" width="18" height="18" alt="" />' : '';
-				break;
-
-				case '_aim' :
-					return (self::$users[$user_id]['user_aim'] && phpbb::$auth->acl_get('u_sendim')) ? phpbb::append_sid('memberlist', "mode=contact&amp;action=aim&amp;u=$user_id") : '';
-				break;
-
-				case '_msnm' :
-					return (self::$users[$user_id]['user_msnm'] && phpbb::$auth->acl_get('u_sendim')) ? phpbb::append_sid('memberlist', "mode=contact&amp;action=msnm&amp;u=$user_id") : '';
-				break;
-
-				case '_yim' :
-					return (self::$users[$user_id]['user_yim']) ? 'http://edit.yahoo.com/config/send_webmesg?.target=' . urlencode(self::$users[$user_id]['user_yim']) . '&amp;.src=pg' : '';
-				break;
-
 				case '_jabber' :
 					return (self::$users[$user_id]['user_jabber'] && phpbb::$auth->acl_get('u_sendim')) ? phpbb::append_sid('memberlist', "mode=contact&amp;action=jabber&amp;u=$user_id") : '';
 				break;
@@ -284,7 +264,6 @@ class users_overlord
 	//		$prefix . 'USER_AGE'			=> $row['age'],
 			$prefix . 'USER_SIG'			=> self::get_user($user_id, '_signature'),
 
-			$prefix . 'ICQ_STATUS_IMG'		=> self::get_user($user_id, '_icq_status'),
 			$prefix . 'ONLINE_IMG'			=> ($user_id != ANONYMOUS && isset(self::$status[$user_id])) ? ((self::$status[$user_id]) ? phpbb::$user->img('icon_user_online', 'ONLINE') : phpbb::$user->img('icon_user_offline', 'OFFLINE')) : '',
 			$prefix . 'S_ONLINE'			=> ($user_id != ANONYMOUS && isset(self::$status[$user_id])) ? self::$status[$user_id] : false,
 			$prefix . 'S_FRIEND'			=> (isset($row['friend'])) ? true : false,
