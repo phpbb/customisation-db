@@ -1046,7 +1046,7 @@ class editor_ftp extends editor
 			include($phpbb_root_path . 'includes/functions_transfer.' . $phpEx);
 		}
 
-		$this->transfer = new $config['ftp_method']($config['ftp_host'], $config['ftp_username'], phpbb::$request->variable('password', ''), $config['ftp_root_path'], $config['ftp_port'], $config['ftp_timeout']);
+		$this->transfer = new $config['ftp_method']($config['ftp_host'], $config['ftp_username'], request_var('password', ''), $config['ftp_root_path'], $config['ftp_port'], $config['ftp_timeout']);
 		$error = $this->transfer->open_session();
 
 		// Use the permissions settings specified in the AutoMOD configuration

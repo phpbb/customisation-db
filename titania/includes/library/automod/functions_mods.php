@@ -26,7 +26,7 @@ function test_ftp_connection($method, &$test_ftp_connection, &$test_connection)
 {
 	global $phpbb_root_path, $phpEx;
 
-	$transfer = new $method(phpbb::$request->variable('host', ''), phpbb::$request->variable('username', ''), phpbb::$request->variable('password', ''), phpbb::$request->variable('root_path', ''), phpbb::$request->variable('port', ''), phpbb::$request->variable('timeout', ''));
+	$transfer = new $method(request_var('host', ''), request_var('username', ''), request_var('password', ''), request_var('root_path', ''), request_var('port', ''), request_var('timeout', ''));
 
 	$test_connection = $transfer->open_session();
 
@@ -358,7 +358,7 @@ function handle_ftp_details($method, $test_ftp_connection, $test_connection)
 			'DATA'		=> $data,
 			'NAME'		=> $user->lang[strtoupper($method . '_' . $data)],
 			'EXPLAIN'	=> $user->lang[strtoupper($method . '_' . $data) . '_EXPLAIN'],
-			'DEFAULT'	=> (!empty($_REQUEST[$data])) ? phpbb::$request->variable($data, '') : $default
+			'DEFAULT'	=> (!empty($_REQUEST[$data])) ? request_var($data, '') : $default
 		));
 	}
 
@@ -496,8 +496,6 @@ if (!function_exists('scandir'))
 	}
 }
 
-<<<<<<< HEAD
-=======
 /**
 * Return the number of files (optionally including sub-directories) in a directory, optionally recursively.
 *
