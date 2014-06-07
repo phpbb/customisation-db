@@ -320,7 +320,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$cp_row = $cp->generate_profile_fields_template_data(users_overlord::$cp_fields[$post->post_user_id]);
 			}
 			$cp_row['row'] = (isset($cp_row['row']) && sizeof($cp_row['row'])) ? $cp_row['row'] : array();
-			
+
 			// Display edit info
 			$display_username = get_username_string('full', $post->post_user_id, users_overlord::get_user($post->post_user_id, 'username'), users_overlord::get_user($post->post_user_id, 'user_colour'), false, phpbb::append_sid('memberlist', 'mode=viewprofile'));
 			$l_edited_by = ($post->post_edit_time) ? sprintf(phpbb::$user->lang['EDITED_MESSAGE'], $display_username, phpbb::$user->format_date($post->post_edit_time)) : '';
@@ -339,12 +339,47 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				)
 			));
 
+			$contact_fields = array(
+				array(
+					'ID'		=> 'pm',
+					'NAME' 		=> phpbb::$user->lang['SEND_PRIVATE_MESSAGE'],
+					'U_CONTACT'	=> users_overlord::get_user($post->post_user_id, '_u_pm'),
+				),
+				array(
+					'ID'		=> 'email',
+					'NAME'		=> phpbb::$user->lang['SEND_EMAIL'],
+					'U_CONTACT'	=> users_overlord::get_user($post->post_user_id, '_u_email'),
+				),
+				array(
+					'ID'		=> 'jabber',
+					'NAME'		=> phpbb::$user->lang['JABBER'],
+					'U_CONTACT'	=> users_overlord::get_user($post->post_user_id, '_u_jabber'),
+				),
+			);
+
+			foreach ($contact_fields as $field)
+			{
+				if ($field['U_CONTACT'])
+				{
+					phpbb::$template->assign_block_vars('posts.contact', $field);
+				}
+			}
+
 			// Output CP Fields
 			if (!empty($cp_row['blockrow']))
 			{
 				foreach ($cp_row['blockrow'] as $field_data)
 				{
 					phpbb::$template->assign_block_vars('posts.custom_fields', $field_data);
+
+					if ($field_data['S_PROFILE_CONTACT'])
+					{
+						phpbb::$template->assign_block_vars('posts.contact', array(
+							'ID'		=> $field_data['PROFILE_FIELD_IDENT'],
+							'NAME'		=> $field_data['PROFILE_FIELD_NAME'],
+							'U_CONTACT'	=> $field_data['PROFILE_FIELD_CONTACT'],
+						));
+					}
 				}
 			}
 	//S_IGNORE_POST
