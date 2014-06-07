@@ -86,9 +86,9 @@ $(document).ready(function(){
 	);
 
 	// Ajax Quick Edit
-	$('.postbody > .profile-icons > .edit-icon').click(function(e) {
-		var postbody = $(this).parent().parent();
-		var full_edit = $('a', this).attr('href');
+	$('.postbody > .post-buttons .edit-icon').click(function(e) {
+		var postbody = $(this).parents('.postbody');
+		var full_edit = $(this).attr('href');
 
 		// Return false if the form is already open
 		if ($('form', postbody).length || $('.qe-error', postbody).length)

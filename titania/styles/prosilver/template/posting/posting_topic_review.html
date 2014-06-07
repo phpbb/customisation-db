@@ -18,8 +18,12 @@
 
 		<div class="postbody" id="pr{posts.POST_ID}">
 			<!-- IF posts.POST_TEXT_DECODED -->
-			<ul class="profile-icons">
-				<li class="quote-icon"><a href="#postingbox" onclick="addquote({posts.POST_ID}, '{posts.USERNAME}');" title="{L_QUOTE} {posts.USERNAME}"><span>{L_QUOTE} {posts.USERNAME}</span></a></li>
+			<ul class="post-buttons">
+				<li>
+					<a href="#postingbox" onclick="addquote({posts.POST_ID}, '{posts.USERNAME}');" title="{L_QUOTE} {posts.USERNAME}" class="button icon-button quote-icon">
+						<span>{L_QUOTE} {posts.USERNAME}</span>
+					</a>
+				</li>
 			</ul>
 			<!-- ENDIF -->
 			<!-- IF posts.U_MCP_DETAILS --><div class="right-box"><a href="{posts.U_MCP_DETAILS}">{L_POST_DETAILS}</a></div><!-- ENDIF -->
