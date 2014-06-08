@@ -14,28 +14,12 @@
  *
  * @category   Zend
  * @package    Zend_Search_Lucene
- * @subpackage Search
  * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id$
+ * @version    $Id: MultiSearcher.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
-/**
- * Zend_Search_Lucene base exception
- */
-require_once 'Zend/Search/Lucene/Exception.php';
-
-
-/**
- * @category   Zend
- * @package    Zend_Search_Lucene
- * @subpackage Search
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
- *
- * Special exception type, which may be used to intercept wrong user input
- */
-class Zend_Search_Lucene_Search_QueryParserException extends Zend_Search_Lucene_Exception
-{}
+/** Zend_Search_Lucene_MultiSearcher */
+require_once 'Zend/Search/Lucene/MultiSearcher.php';
 
