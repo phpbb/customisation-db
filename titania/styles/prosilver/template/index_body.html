@@ -32,7 +32,7 @@
 			<div class="search-box">
 				<form method="post" id="category-search" action="{S_SEARCHBOX_ACTION}">
 				<fieldset>
-					<input class="inputbox search tiny" type="text" name="keywords" id="search_keywords" size="20" value="{LA_SEARCH_MINI}" onclick="if (this.value == '{LA_SEARCH_MINI}') this.value = '';" onblur="if (this.value == '') this.value = '{LA_SEARCH_MINI}';" />
+					<input class="inputbox search tiny" type="text" name="keywords" id="search_keywords" size="20" placeholder="{L_SEARCH_MINI}" />
 					<input class="button2" type="submit" name="submit" value="{L_SEARCH}" />
 					<input type="hidden" value="{CATEGORY_ID}" name="c[]" />
 					<input type="hidden" value="1" name="sc" />
