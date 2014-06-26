@@ -95,6 +95,11 @@ class main_listener implements EventSubscriberInterface
 
 			'u_titania_mod_official_tool_moderate' => array('lang' => 'ACL_U_TITANIA_MOD_OFFICIAL_TOOL_MODERATE', 'cat' => 'titania_moderate'),
 
+			'u_titania_mod_extension_queue_discussion'	=> array('lang' => 'ACL_U_TITANIA_MOD_EXTENSION_QUEUE_DISCUSSION', 'cat' => 'titania_moderate'),
+			'u_titania_mod_extension_queue'				=> array('lang' => 'ACL_U_TITANIA_MOD_EXTENSION_QUEUE', 'cat' => 'titania_moderate'),
+			'u_titania_mod_extension_validate'			=> array('lang' => 'ACL_U_TITANIA_MOD_EXTENSION_VALIDATE', 'cat' => 'titania_moderate'),
+			'u_titania_mod_extension_moderate'			=> array('lang' => 'ACL_U_TITANIA_MOD_EXTENSION_MODERATE', 'cat' => 'titania_moderate'),
+
 			'u_titania_admin' => array('lang' => 'ACL_U_TITANIA_ADMIN', 'cat' => 'titania_moderate'),
 		));
 	}
