@@ -85,5 +85,10 @@ $lang = array_merge($lang, array(
 
 	'ACL_U_TITANIA_MOD_OFFICIAL_TOOL_MODERATE'			=> 'Can submit/moderate Official Tools',
 
+	'ACL_U_TITANIA_MOD_EXTENSION_QUEUE_DISCUSSION'		=> 'Can see Extensions Queue Discussion',
+	'ACL_U_TITANIA_MOD_EXTENSION_QUEUE'					=> 'Can see Extensions Queue',
+	'ACL_U_TITANIA_MOD_EXTENSION_VALIDATE'				=> 'Can validate extensions',
+	'ACL_U_TITANIA_MOD_EXTENSION_MODERATE'				=> 'Can moderate extensions',
+
 	'ACL_U_TITANIA_ADMIN'			=> 'Can <strong>administrate</strong> Titania',
 ));

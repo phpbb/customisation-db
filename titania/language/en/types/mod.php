@@ -50,7 +50,7 @@ $lang = array_merge($lang, array(
 
 [b]Modification overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]The phpBB Team is not responsible nor required to provide support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Modifications Team may not be able to provide support.[/b][/color]
+[color=blue][b]The phpBB Team is not responsible nor required to provide support for this modification. By installing this MOD, you acknowledge that the phpBB Support Team or phpBB Extensions Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]--&gt;[b]Modification support[/b]&lt;--[/url][/size]',
 	'MOD_QUEUE_TOPIC'					=> '[b]Modification name[/b]: %1$s
@@ -73,20 +73,20 @@ See first post for Download Link[/color][/b]',
 
 You also agree and accept that this MODification\'s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your MODification through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
 	'MOD_VALIDATION'					=> '[phpBB MOD-Validation] %1$s %2$s',
-	'MOD_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your modication to the phpBB.com modifications database. After careful inspection by the MOD Team your MOD has been [b][color=#5c8503]approved[/color][/b] and released into our modifications database.
+	'MOD_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your modication to the phpBB.com modifications database. After careful inspection by the Extensions Team your MOD has been [b][color=#5c8503]approved[/color][/b] and released into our modifications database.
 
 It is our hope that you will provide a basic level of support for this modification and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
-[b]Notes from the MOD Team about your modification:[/b]
+[b]Notes from the Extensions Team about your modification:[/b]
 [quote]%s[/quote]
 
 Sincerely,
-phpBB MOD Team',
+phpBB Extensions Team',
 	'MOD_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
 As you may know all modifications submitted to the phpBB modification database must be validated and approved by members of the phpBB Team.
 
-Upon validating your modification the phpBB MOD Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] your modification.
+Upon validating your modification the phpBB Extensions Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] your modification.
 
 To correct the problem(s) with your modification, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your modification being denied.
@@ -119,5 +119,5 @@ If you feel this denial was not warranted please contact the MOD Validation Lead
 If you have any queries and further discussion please use the Queue Discussion Topic.
 
 Thank you,
-phpBB MOD Team',
+phpBB Extensions Team',
 ));
