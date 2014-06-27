@@ -201,14 +201,22 @@ $lang = array_merge($lang, array(
 	
 	'TITANIA_DISABLED'			=> 'The Customisation Database is temporarily disabled, please try again in a few minutes.',
 	'TITANIA_INDEX'				=> 'Customisation Database',
-	'TOTAL_CONTRIBS'			=> '%d Contributions',
-	'TOTAL_CONTRIBS_ONE'		=> '1 Contribution',
-	'TOTAL_POSTS'				=> '%d Posts',
-	'TOTAL_POSTS_ONE'			=> '1 Post',
-	'TOTAL_RESULTS'				=> '%d Results',
-	'TOTAL_RESULTS_ONE'			=> '1 Result',
-	'TOTAL_TOPICS'				=> '%d Topics',
-	'TOTAL_TOPICS_ONE'			=> '1 Topic',
+	'TOTAL_CONTRIBS'			=> array(
+		1	=> '1 Contribution',
+		2	=> '%d Contributions',
+	),
+	'TOTAL_POSTS'				=> array(
+		1	=> '1 Post',
+		2	=> '%d Posts',
+	),
+	'TOTAL_RESULTS'				=> array(
+		1	=> '1 Result',
+		2	=> '%d Results',
+	),
+	'TOTAL_TOPICS'				=> array(
+		1	=> '1 Topic',
+		2	=> '%d Topics',
+	),
 	'TRANSLATION'				=> 'Language Pack',
 	'TRANSLATIONS'				=> 'Language Packs',
 	'TYPE'						=> 'Type',

@@ -406,8 +406,9 @@ class titania_sort extends titania_object
 		$pagination_url = titania_url::build_url($page, $params);
 		$pagination = phpbb::$container->get('pagination');
 
+		$pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $this->total, $this->limit);
+
 		phpbb::$template->assign_vars(array(
-			$this->template_vars['PAGINATION']			=> $this->generate_pagination($pagination_url, false, false, false, true),
 			$this->template_vars['PAGE_NUMBER']			=> $pagination->on_page($this->total, $this->limit, $this->start),
 
 			$this->template_vars['S_SORT_ACTION']		=> $sort_url,
@@ -418,114 +419,12 @@ class titania_sort extends titania_object
 			$this->template_vars['S_SELECT_SORT_DIR']	=> $this->get_sort_dir_list(),
 			$this->template_vars['SORT_KEYS_NAME']		=> $this->sort_key_name,
 			$this->template_vars['SORT_DIR_NAME']		=> $this->sort_dir_name,
+
+			$this->template_vars['TOTAL_ITEMS']			=> $this->total,
+			$this->template_vars['TOTAL_RESULTS']		=> phpbb::$user->lang($this->result_lang, $this->total),
 		));
 
 		return true;
-	}
-
-	/**
-	 * Generate pagination (similar to phpBB's generate_pagination function, only with some minor tweaks to work in this class better and use proper URLs)
-	 *
-	 * @param <string> $base_url
-	 * @param <int|bool> $num_items Bool false to use $this->total
-	 * @param <int|bool> $per_page Bool false to use $this->limit
-	 * @param <int|bool> $start_item Bool false to use $this->start
-	 * @param <bool> $add_prevnext_text
-	 * @return <string>
-	 */
-	public function generate_pagination($base_url, $num_items = false, $per_page = false, $start_item = false, $add_prevnext_text = true)
-	{
-		$num_items = ($num_items === false) ? $this->total : $num_items;
-		$per_page = ($per_page === false) ? $this->limit : $per_page;
-		$start_item = ($start_item === false) ? $this->start : $start_item;
-
-		$seperator = '<span class="page-sep">' . phpbb::$user->lang['COMMA_SEPARATOR'] . '</span>';
-		$total_pages = ceil($num_items / $per_page);
-		$on_page = floor($start_item / $per_page) + 1;
-		$page_string = '';
-
-		if (!$num_items)
-		{
-			return false;
-		}
-
-		if ($total_pages > 1)
-		{
-			$page_string = ($on_page == 1) ? '<strong>1</strong>' : '<a href="' . $base_url . '">1</a>';
-
-			if ($total_pages > 5)
-			{
-				$start_cnt = min(max(1, $on_page - 4), $total_pages - 5);
-				$end_cnt = max(min($total_pages, $on_page + 4), 6);
-
-				$page_string .= ($start_cnt > 1) ? ' ... ' : $seperator;
-
-				for ($i = $start_cnt + 1; $i < $end_cnt; $i++)
-				{
-					$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
-					if ($i < $end_cnt - 1)
-					{
-						$page_string .= $seperator;
-					}
-				}
-
-				$page_string .= ($end_cnt < $total_pages) ? ' ... ' : $seperator;
-			}
-			else
-			{
-				$page_string .= $seperator;
-
-				for ($i = 2; $i < $total_pages; $i++)
-				{
-					$page_string .= ($i == $on_page) ? '<strong>' . $i . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($i - 1) * $per_page))) . '">' . $i . '</a>';
-					if ($i < $total_pages)
-					{
-						$page_string .= $seperator;
-					}
-				}
-			}
-
-			$page_string .= ($on_page == $total_pages) ? '<strong>' . $total_pages . '</strong>' : '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($total_pages - 1) * $per_page))) . '">' . $total_pages . '</a>';
-
-			if ($add_prevnext_text)
-			{
-				if ($on_page == 2)
-				{
-					$page_string = '<a href="' . $base_url . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
-				}
-				else if ($on_page != 1)
-				{
-					$page_string = '<a href="' . titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page))) . '">' . phpbb::$user->lang['PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
-				}
-
-				if ($on_page != $total_pages)
-				{
-					$page_string .= '&nbsp;&nbsp;<a href="' . titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))) . '">' . phpbb::$user->lang['NEXT'] . '</a>';
-				}
-			}
-		}
-
-		if ($num_items == 1)
-		{
-			$total_results = (isset(phpbb::$user->lang[$this->result_lang . '_ONE'])) ? phpbb::$user->lang[$this->result_lang . '_ONE'] : phpbb::$user->lang['TOTAL_RESULTS_ONE'];
-		}
-		else
-		{
-			$total_results = (isset(phpbb::$user->lang[$this->result_lang])) ? sprintf(phpbb::$user->lang[$this->result_lang], $num_items) : sprintf(phpbb::$user->lang['TOTAL_RESULTS'], $num_items);
-		}
-
-		phpbb::$template->assign_vars(array(
-			$this->template_vars['PER_PAGE']		=> $per_page,
-			$this->template_vars['ON_PAGE']			=> $on_page,
-
-			$this->template_vars['PREVIOUS_PAGE']	=> ($on_page == 2) ? $base_url : (($on_page == 1) ? '' : titania_url::append_url($base_url, array($this->start_name => (($on_page - 2) * $per_page)))),
-			$this->template_vars['NEXT_PAGE']		=> ($on_page == $total_pages) ? '' : titania_url::append_url($base_url, array($this->start_name => ($on_page * $per_page))),
-			$this->template_vars['TOTAL_PAGES']		=> $total_pages,
-			$this->template_vars['TOTAL_ITEMS']		=> $num_items,
-			$this->template_vars['TOTAL_RESULTS']	=> $total_results,
-		));
-
-		return $page_string;
 	}
 
 	/**
