@@ -73,7 +73,7 @@ See first post for Download Link[/color][/b]',
 
 You also agree and accept that this MODification\'s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your MODification through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
 	'MOD_VALIDATION'					=> '[phpBB MOD-Validation] %1$s %2$s',
-	'MOD_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your modication to the phpBB.com modifications database. After careful inspection by the Extensions Team your MOD has been [b][color=#5c8503]approved[/color][/b] and released into our modifications database.
+	'MOD_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your modification to the phpBB.com modifications database. After careful inspection by the Extensions Team your MOD has been [b][color=#5c8503]approved[/color][/b] and released into our modifications database.
 
 It is our hope that you will provide a basic level of support for this modification and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
