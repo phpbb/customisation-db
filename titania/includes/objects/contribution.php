@@ -327,7 +327,7 @@ class titania_contribution extends titania_message_object
 		}
 
 		$this->rating = new titania_rating('contrib', $this);
-		$this->rating->load();
+		$this->rating->load_user_rating();
 
 		if ($this->is_author || $this->is_active_coauthor || $this->is_coauthor)
 		{

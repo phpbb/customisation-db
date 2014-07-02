@@ -166,7 +166,7 @@ class titania_rating extends titania_database_object
 	/**
 	* Get the current user's rating
 	*/
-	public function load()
+	public function load_user_rating()
 	{
 		if (!phpbb::$user->data['is_registered'] || phpbb::$user->data['is_bot'])
 		{

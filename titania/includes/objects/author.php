@@ -190,7 +190,7 @@ class titania_author extends titania_message_object
 		}
 
 		$this->rating = new titania_rating('author', $this);
-		$this->rating->load();
+		$this->rating->load_user_rating();
 
 		if (phpbb::$user->data['user_id'] == $this->user_id)
 		{
