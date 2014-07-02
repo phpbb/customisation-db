@@ -383,7 +383,7 @@ class titania_queue extends titania_message_object
 		titania::add_lang(array('manage', 'contributions'));
 		$revision = $this->get_revision();
 		$contrib = new titania_contribution;
-		if (!$contrib->load($this->contrib_id))
+		if (!$contrib->load($this->contrib_id) || !$contrib->is_visible())
 		{
 			return false;
 		}

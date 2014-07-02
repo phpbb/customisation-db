@@ -96,6 +96,12 @@ class titania_contribution extends titania_message_object
     public $clr_sample = false;
 
 	/**
+	/**
+	* @var Contribution type object
+	*/
+	public $type;
+
+	/**
 	 * Constructor class for the contribution object
 	 */
 	public function __construct()
@@ -154,15 +160,30 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
+	* Set the contribution type.
+	*
+	* @param int $type	Contribution type id.
+	* @return void
+	*/
+	public function set_type($type)
+	{
+		$this->contrib_type = $type;
+		$this->type = titania_types::$types[$this->contrib_type];
+	}
+
+	/**
 	 * Load the contrib
 	 *
 	 * @param int|string $contrib The contrib item (contrib_name_clean, contrib_id)
-	 * @param bool $allow_new Allow contrib to be loaded even if it's new
-	 *
 	 * @return bool True if the contrib exists, false if not
 	 */
-	public function load($contrib, $allow_new = false)
+	public function load($contrib = false)
 	{
+		if ($contrib === false)
+		{
+			$contrib = $this->contrib_id;
+		}
+
 		$sql_ary = array(
 			'SELECT'	=> 'c.*, a.*',
 			'FROM' 		=> array($this->sql_table => 'c'),
@@ -197,6 +218,7 @@ class titania_contribution extends titania_message_object
 
 		// Set object data.
 		$this->__set_array($sql_data);
+		$this->set_type($this->contrib_type);
 		// Fill categories
 		$this->fill_categories();
 
@@ -246,7 +268,21 @@ class titania_contribution extends titania_message_object
 			}
 		}
 
-		if (in_array($this->contrib_status, array(TITANIA_CONTRIB_NEW, TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED)) && !($this->is_author ||$this->is_active_coauthor || phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || titania_types::$types[$this->contrib_type]->acl_get('moderate') || titania_types::$types[$this->contrib_type]->acl_get('view')))
+		return true;
+	}
+
+	/**
+	* Check whether the contribution is visible to the current user.
+	*
+	* @param bool $allow_new	Whether a new contrib is allowed to be visible.
+	* @return bool				True if the contrib is visible, false otherwise.
+	*/
+	public function is_visible($allow_new = false)
+	{
+		$hidden_statuses = array(TITANIA_CONTRIB_NEW, TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED);
+		$is_mod = phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || $this->type->acl_get('moderate') || $this->type->acl_get('view');
+
+		if (in_array($this->contrib_status, $hidden_statuses) && !$this->is_author && !$this->is_active_coauthor && !$is_mod)
 		{
 			if ($this->contrib_status == TITANIA_CONTRIB_NEW && $allow_new)
 			{
