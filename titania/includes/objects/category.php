@@ -95,11 +95,15 @@ class titania_category extends titania_message_object
 	*
 	* @return bool True if the category exists, false if not
 	*/
-	public function load($category)
+	public function load($category = false)
 	{
 		$sql = 'SELECT * FROM ' . $this->sql_table . ' WHERE ';
 
-		if (is_numeric($category))
+		if ($category === false)
+		{
+			$sql .= 'category_id = ' . (int) $this->category_id;
+		}
+		else if (is_numeric($category))
 		{
 			$sql .= 'category_id = ' . (int) $category;
 		}
