@@ -4,7 +4,7 @@
 
 <form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" onsubmit="titania_post_submit();" {S_FORM_ENCTYPE}>
 	<div class="container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div class="inner">
 			<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
 			<fieldset>
@@ -32,18 +32,18 @@
 					<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{S_MAGIC_URL_CHECKED} /> {L_DISABLE_MAGIC_URL}</label></div>
 				<!-- ENDIF -->
 			</fieldset>
-		<span class="corners-bottom main-corners"><span></span></span></div>
+		</div>
 	</div>
 
 	<div class="container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div class="inner">
 			<fieldset class="submit-buttons">
 				<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
 				<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
 				{S_FORM_TOKEN}
 			</fieldset>
 
-		<span class="corners-bottom main-corners"><span></span></span></div>
+		</div>
 	</div>
 </form>
 

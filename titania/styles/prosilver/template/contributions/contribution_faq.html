@@ -4,7 +4,7 @@
 
 <!-- IF S_LIST -->
 	<div class="container" id="faqlist">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div class="inner">
 			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
 			<div class="action-bar">
 				<div class="buttons">
@@ -80,11 +80,11 @@
 			</div>
 			<!-- ENDIF -->
 
-		<span class="corners-bottom main-corners"><span></span></span></div>
+		</div>
 	</div>
 <!-- ELSEIF S_DETAILS -->
 	<div id="p{posts.POST_ID}" class="post container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div class="inner">
 			<div class="postbody">
 				<h3>{FAQ_SUBJECT}
 				<!-- IF S_ACCESS_TEAMS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_teams.png" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
@@ -103,19 +103,19 @@
 			</div>
 
 			<div class="back2top"><a href="#wrap" class="top" title="{L_BACK_TO_TOP}">{L_BACK_TO_TOP}</a></div>
-		<span class="corners-bottom main-corners"><span></span></span></div>
+		</div>
 	</div>
 <!-- ELSEIF S_EDIT -->
 	<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
 	<div class="container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div class="inner">
 			<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" onsubmit="titania_post_submit();" {S_FORM_ENCTYPE}>
 				<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
 
 				<!-- INCLUDE posting/posting_editor.html -->
 			</form>
-		<span class="corners-bottom main-corners"><span></span></span></div>
+		</div>
 	</div>
 <!-- ENDIF -->
 

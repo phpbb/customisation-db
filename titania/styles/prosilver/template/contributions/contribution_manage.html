@@ -59,7 +59,7 @@
 
 <form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" onsubmit="titania_post_submit();" {S_FORM_ENCTYPE}>
 	<div class="container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div class="inner">
 
 			<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
 
@@ -222,12 +222,12 @@
 				<h3>{L_SCREENSHOTS}</h3>
 				{SCREENSHOT_UPLOADER}
 			<!-- ENDIF -->
-		<span class="corners-bottom main-corners"><span></span></span></div>
+		</div>
 	</div>
 
 	<!-- IF S_CAN_EDIT_CONTRIB -->
 	<div class="container">
-		<div class="inner"><span class="corners-top main-corners"><span></span></span>
+		<div class="inner">
 			<fieldset class="submit-buttons">
 				<!-- IF not S_CREATE -->
 					<input type="hidden" name="contrib_type" value="{CONTRIB_TYPE}" />
@@ -237,7 +237,7 @@
 				<input type="submit" name="submit" value="<!-- IF S_CREATE -->{L_CONTINUE}<!-- ELSE -->{L_SUBMIT}<!-- ENDIF -->" class="button1" />
 				{S_FORM_TOKEN}
 			</fieldset>
-		<span class="corners-bottom main-corners"><span></span></span></div>
+		</div>
 	</div>
 	<!-- ENDIF -->
 </form>

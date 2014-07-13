@@ -3,7 +3,7 @@
 <h3 class="section-name"><!-- IF S_SPLIT -->{L_SPLIT_TOPIC}<!-- ELSE -->{L_MERGE_POSTS}<!-- ENDIF --> - {TOPIC_SUBJECT}</h3>
 <form action="{S_FORM_ACTION}" method="post">
 <div class="container">
-	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+	<div class="inner">
 	<!-- IF ERRORS -->
 		<p class="error">{ERRORS}</p>
 		<hr class="dashed" />
@@ -28,19 +28,19 @@
 			</dl>
 		<!-- ENDIF -->
 		</fieldset>
-	<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
 </div>
 
 <div class="container">
-	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+	<div class="inner">
 		<fieldset class="submit-buttons">
 			<input type="submit" class="button2" name="split" id="split" value="<!-- IF S_SPLIT -->{L_SPLIT_TOPIC}<!-- ELSE -->{L_MERGE_POSTS}<!-- ENDIF -->" />
 		</fieldset>
-	<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
 </div>
 
 <div class="container">
-	<div class="inner"><span class="corners-top main-corners"><span></span></span>
+	<div class="inner">
 	<!-- IF PAGINATION or TOTAL_RESULTS -->
 		<div class="action-bar">
 			<!-- INCLUDE common/pagination.html -->
@@ -85,7 +85,7 @@
 		</div>
 		<div class="clear"></div>
 	<!-- ENDIF -->
-	<span class="corners-bottom main-corners"><span></span></span></div>
+	</div>
 </div>
 {S_FORM_TOKEN}
 </form>
