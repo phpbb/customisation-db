@@ -26,6 +26,7 @@
 		<li class="row">
 			<dl>
 				<dt>
+					<div class="list-inner">
 					<!-- IF S_MANAGE -->
 						<!-- IF categories.HAS_CHILDREN -->
 						<a href="{categories.U_VIEW_MANAGE_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a>
@@ -37,6 +38,7 @@
 					<!-- ENDIF --><br />
 					<!-- IF categories.CATEGORY_DESC -->{categories.CATEGORY_DESC}<!-- ENDIF -->
 					<!-- IF categories.SUBFORUMS and categories.S_LIST_SUBFORUMS --><br /><strong>{categories.L_SUBFORUM_STR}</strong> {categories.SUBFORUMS}<!-- ENDIF -->
+					</div>
 				</dt>
 				<dd class="general">{categories.CATEGORY_CONTRIBS} <dfn>{L_CONTRIBUTIONS}</dfn></dd>
 				<!-- IF S_MANAGE -->
