@@ -72,12 +72,11 @@ class titania_tracking
 				'track_time'		=> ($time === false) ? titania::$time : (int) $time,
 			);
 
-			$temp = phpbb::$db->return_on_error;
-			phpbb::$db->return_on_error = true;
+			phpbb::$db->sql_return_on_error(true);
 
 			phpbb::$db->sql_query('INSERT INTO ' . self::$sql_table . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
 
-			phpbb::$db->return_on_error = $temp;
+			phpbb::$db->sql_return_on_error();
 		}
 
 		self::$store[$type][$id] = ($time === false) ? titania::$time : (int) $time;
