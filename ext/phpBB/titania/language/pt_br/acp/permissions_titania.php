@@ -123,6 +123,7 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_modification_queue'				=> array('lang' => 'Pode ver a fila de modificações', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_validate'			=> array('lang' => 'Pode validar modificações', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_moderate'			=> array('lang' => 'Pode moderar modificações', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_modification_language_pack'		=> array('lang' => 'Can attach a language pack to a Modification\'s revision', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_translation_queue_discussion'		=> array('lang' => 'Pode ver a fila de discussões de traduções', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_translation_queue'					=> array('lang' => 'Pode ver a fila de traduções', 'cat' => 'titania_moderate'),

@@ -122,6 +122,7 @@ $lang = array_merge($lang, array(
 	'acl_u_titania_mod_modification_queue'				=> array('lang' => 'Bisa melihat Antrian Modifikasi', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_validate'			=> array('lang' => 'Bisa mensahkan Modifikasi', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_modification_moderate'			=> array('lang' => 'Bisa memoderasi Modifikasi', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_modification_language_pack'		=> array('lang' => 'Can attach a language pack to a Modification\'s revision', 'cat' => 'titania_moderate'),
 
 	'acl_u_titania_mod_translation_queue_discussion'		=> array('lang' => 'Bisa melihat Diskusi Antrian Terjemahan', 'cat' => 'titania_moderate'),
 	'acl_u_titania_mod_translation_queue'					=> array('lang' => 'Bisa melihat Antrian Terjemahan', 'cat' => 'titania_moderate'),
