@@ -11,7 +11,11 @@
 			<fieldset>
 				<dl>
 					<dt><label for="revision_name">{L_REVISION_NAME}:</label></dt>
-					<dd><input type="text" name="revision_name" size="45" maxlength="60" value="{REVISION_NAME}" class="inputbox autowidth" /></dd>
+					<!-- IF S_IS_AUTHOR or S_IS_MODERATOR -->
+						<dd><input type="text" name="revision_name" size="45" maxlength="60" value="{REVISION_NAME}" class="inputbox autowidth" /></dd>
+					<!-- ELSEIF S_IS_TRANSLATOR -->
+						<dd>{REVISION_NAME}</dd>
+					<!-- ENDIF -->
 				</dl>
 				<!-- IF S_IS_MODERATOR -->
 				<dl>

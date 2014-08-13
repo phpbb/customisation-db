@@ -189,7 +189,7 @@ class titania_revision extends titania_database_object
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_COLORIZEIT'      => $url_colorizeit,
-			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',
+			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || titania_types::$types[$this->contrib->contrib_type]->acl_get('attach_language_pack') || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',
 			'U_VIEW_INSTALL'	=> (titania_types::$types[$this->contrib->contrib_type]->display_install_file && file_exists(titania::$config->modx_storage_path . $this->revision_id)) ? titania_url::build_url('view-install', array('id' => $this->revision_id)) : '',
 
 			'S_USE_QUEUE'			=> (titania::$config->use_queue && titania_types::$types[$this->contrib->contrib_type]->use_queue) ? true : false,

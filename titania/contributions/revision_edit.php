@@ -18,7 +18,7 @@ if (!defined('IN_TITANIA'))
 load_contrib();
 
 // Editing a revision can only be done by moderators
-if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate') && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('attach_language_pack'))
 {
 	titania::needs_auth();
 }
@@ -71,10 +71,15 @@ $status_list = array(
 if ($translation->uploaded || phpbb::$request->is_set_post('submit'))
 {
 	$revision_license = utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true));
-	$revision->__set_array(array(
-		'revision_name'			=> utf8_normalize_nfc(phpbb::$request->variable('revision_name', $revision->revision_name, true)),
-		'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE']) ? $revision_license : utf8_normalize_nfc(phpbb::$request->variable('revision_custom_license', '', true)),
-	));
+
+	// Translators have a limited access, therefore they can't change the revision name/licence
+	if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+	{
+		$revision->__set_array(array(
+			'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', $revision->revision_name, true)),
+			'revision_license'		=> ($revision_license != phpbb::$user->lang['CUSTOM_LICENSE']) ? $revision_license : utf8_normalize_nfc(request_var('revision_custom_license', '', true)),
+		));
+	}
 
 	// Stuff that can be done by moderators only
 	if (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
@@ -194,7 +199,9 @@ phpbb::$template->assign_vars(array(
 
 	'TRANSLATION_UPLOADER'		=> (titania_types::$types[titania::$contrib->contrib_type]->extra_upload) ? $translation->parse_uploader('posting/attachments/simple.html') : '',
 
+	'S_IS_AUTHOR'				=> (titania::$contrib->is_author || titania::$contrib->is_active_coauthor ? true : false),
 	'S_IS_MODERATOR'			=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate')) ? true : false,
+	'S_IS_TRANSLATOR'			=> (titania_types::$types[titania::$contrib->contrib_type]->acl_get('attach_language_pack')) ? true : false,
 	'S_POST_ACTION'				=> titania::$contrib->get_url('revision_edit', array('revision' => $revision_id)),
 	'S_FORM_ENCTYPE'			=> ' enctype="multipart/form-data"',
 	'S_CUSTOM_LICENSE'			=> (!in_array($revision->revision_license, titania_types::$types[titania::$contrib->contrib_type]->license_options)) ? true : false,
