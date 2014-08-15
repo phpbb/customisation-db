@@ -62,6 +62,7 @@ $lang = array_merge($lang, array(
 	'ACL_U_TITANIA_MOD_MODIFICATION_QUEUE'				=> 'Can see Modifications Queue',
 	'ACL_U_TITANIA_MOD_MODIFICATION_VALIDATE'			=> 'Can validate Modifications',
 	'ACL_U_TITANIA_MOD_MODIFICATION_MODERATE'			=> 'Can moderate Modifications',
+	'ACL_U_TITANIA_MOD_MODIFICATION_LANGUAGE_PACK'		=> 'Can attach a language pack to a Modification´s revision.<br /><em>This setting is only assigned globally. It is not contribution based.</em>',
 
 	'ACL_U_TITANIA_MOD_TRANSLATION_QUEUE_DISCUSSION'		=> 'Can see Translation Queue Discussion',
 	'ACL_U_TITANIA_MOD_TRANSLATION_QUEUE'					=> 'Can see Translation Queue',

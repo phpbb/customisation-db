@@ -519,6 +519,7 @@ class release_1_1_0 extends base
 			array('permission.add', array('u_titania_mod_modification_queue')),
 			array('permission.add', array('u_titania_mod_modification_validate')),
 			array('permission.add', array('u_titania_mod_modification_moderate')),
+			array('permission.add', array('u_titania_mod_modification_language_pack')),
 
 			array('permission.add', array('u_titania_mod_official_tool_moderate')),
 
@@ -546,6 +547,7 @@ class release_1_1_0 extends base
 			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'u_titania_mod_modification_queue')),		// Can see the modifications queue
 			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'u_titania_mod_modification_validate')),	// Can validate modifications
 			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'u_titania_mod_modification_moderate')),	// Can moderate modifications
+			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'u_titania_mod_modification_language_pack')),	// Can attach a language pack to a modification
 			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'u_titania_mod_style_queue')),			// Can see the styles queue
 			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'u_titania_mod_style_validate')),		// Can validate styles
 			array('permission.permission_set', array('ROLE_ADMIN_FULL', 'u_titania_mod_style_moderate')),		// Can moderate styles
@@ -559,6 +561,7 @@ class release_1_1_0 extends base
 			array('permission.permission_set', array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_titania_mod_modification_queue')),			// Can see the modifications queue
 			array('permission.permission_set', array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_titania_mod_modification_validate')),		// Can validate modifications
 			array('permission.permission_set', array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_titania_mod_modification_moderate')),		// Can moderate modifications
+			array('permission.permission_set', array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_titania_mod_modification_language_pack')),		// Can attach a language pack to a modification
 			array('permission.permission_set', array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_titania_mod_style_queue')),		// Can see the styles queue
 			array('permission.permission_set', array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_titania_mod_style_validate')),	// Can validate styles
 			array('permission.permission_set', array('ROLE_TITANIA_ADMINISTRATOR_TEAM', 'u_titania_mod_style_moderate')),	// Can moderate styles
@@ -569,6 +572,7 @@ class release_1_1_0 extends base
 			array('permission.permission_set', array('ROLE_TITANIA_MODIFICATION_TEAM', 'u_titania_mod_modification_queue')),		// Can see the modifications queue
 			array('permission.permission_set', array('ROLE_TITANIA_MODIFICATION_TEAM', 'u_titania_mod_modification_validate')),		// Can validate modifications
 			array('permission.permission_set', array('ROLE_TITANIA_MODIFICATION_TEAM', 'u_titania_mod_modification_moderate')),		// Can moderate modifications
+			array('permission.permission_set', array('ROLE_TITANIA_MODIFICATION_TEAM', 'u_titania_mod_modification_language_pack')),	// Can attach a language pack to a modification
 
 			array('permission.permission_set', array('ROLE_TITANIA_STYLE_TEAM', 'u_titania_mod_author_mod')),		// Can moderate author profiles
 			array('permission.permission_set', array('ROLE_TITANIA_STYLE_TEAM', 'u_titania_mod_faq_mod')),			// Can moderate FAQ entries
