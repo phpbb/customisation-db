@@ -73,7 +73,7 @@ if ($translation->uploaded || phpbb::$request->is_set_post('submit'))
 	$revision_license = utf8_normalize_nfc(phpbb::$request->variable('revision_license', '', true));
 
 	// Translators have a limited access, therefore they can't change the revision name/licence
-	if (!titania::$contrib->is_author && !titania::$contrib->is_active_coauthor && !titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
+	if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor || titania_types::$types[titania::$contrib->contrib_type]->acl_get('moderate'))
 	{
 		$revision->__set_array(array(
 			'revision_name'			=> utf8_normalize_nfc(request_var('revision_name', $revision->revision_name, true)),
