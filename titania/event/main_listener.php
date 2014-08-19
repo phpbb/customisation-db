@@ -11,21 +11,36 @@
 namespace phpbb\titania\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
-if (!defined('IN_PHPBB'))
-{
-	exit;
-}
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
 * Event listener
 */
 class main_listener implements EventSubscriberInterface
 {
+	/* @var string */
+	protected $phpbb_root_path;
+
+	/* @var string */
+	protected $php_ext;
+
+	/**
+	* Constructor
+	*
+	* @param string	$phpbb_root_path	phpBB root path
+	* @param string	$php_ext			PHP file extension
+	*/
+	public function __construct($phpbb_root_path, $php_ext)
+	{
+		$this->phpbb_root_path = $phpbb_root_path;
+		$this->php_ext = $php_ext;
+	}
+
 	static public function getSubscribedEvents()
 	{
 		return array(
 			'core.permissions'		=> 'add_permissions',
+			'kernel.request'		=> array(array('startup', -1)),
 		);
 	}
 
@@ -102,6 +117,35 @@ class main_listener implements EventSubscriberInterface
 
 			'u_titania_admin' => array('lang' => 'ACL_U_TITANIA_ADMIN', 'cat' => 'titania_moderate'),
 		));
+	}
+
+	public function startup($event)
+	{
+		if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST || 
+			strpos($event->getRequest()->attributes->get('_controller'), 'phpbb.titania') !== 0 ||
+			defined('IN_TITANIA'))
+		{
+			return;
+		}
+
+		define('IN_TITANIA', true);
+
+		if (!defined('TITANIA_ROOT'))
+		{
+			define('TITANIA_ROOT', $this->phpbb_root_path . 'ext/phpbb/titania/');
+		}
+		if (!defined('PHP_EXT'))
+		{
+			define('PHP_EXT', $this->php_ext);
+		}
+		if (!defined('PHPBB_ROOT_PATH'))
+		{
+			define('PHPBB_ROOT_PATH', $this->phpbb_root_path);
+		}
+
+		require($this->phpbb_root_path . 'ext/phpbb/titania/common.' . $this->php_ext);
+
+		\titania::$config->phpbb_root_path = $this->phpbb_root_path;
 	}
 }
 

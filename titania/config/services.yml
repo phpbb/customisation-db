@@ -9,5 +9,8 @@ services:
              - %core.php_ext%
     phpbb.titania.listener:
         class: phpbb\titania\event\main_listener
+        arguments:
+            - %core.root_path%
+            - %core.php_ext%
         tags:
             - { name: event.listener }
