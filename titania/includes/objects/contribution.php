@@ -1617,7 +1617,7 @@ class titania_contribution extends titania_message_object
 		}
 
 		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
-		$phpbb_versions = order_phpbb_version_list_from_db(array_unique($phpbb_versions));
+		$phpbb_versions = array_unique(order_phpbb_version_list_from_db($phpbb_versions));
 
 		$data = array(
 			'title'				=> $this->contrib_name,
