@@ -30,6 +30,7 @@ $config = array(
 	'phpbb_versions' => array(
 		'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
 		'30'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
+		'31'	=> array('latest_revision' => '0-RC1', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
 	),
 
 	/**
@@ -94,6 +95,7 @@ $config = array(
 	'forum_style_database'		=> 0,
 	'forum_converter_database'	=> 0,
 	'forum_bbcode_database'		=> 0,
+	'forum_extension_database'	=> 0,
 
 	/**
 	* IDs of account used for topic/post release in database forum
@@ -102,6 +104,7 @@ $config = array(
 	'forum_style_robot'		=> 0,
 	'forum_converter_robot' => 0,
 	'forum_bbcode_robot'	=> 0,
+	'forum_extension_robot'	=> 0,
 
 	/**
 	* Show the support/discussion panel in each contribution to the public?
