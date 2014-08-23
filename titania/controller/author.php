@@ -119,7 +119,7 @@ class author
 	* @param string $author		Author's username clean value.
 	* @param string $page		Requested page.
 	*
-	* @return @return \Symfony\Component\HttpFoundation\Response
+	* @return \Symfony\Component\HttpFoundation\Response
 	*/
 	public function base($author, $page)
 	{
