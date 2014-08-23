@@ -17,3 +17,7 @@ phpbb.titania.support:
 phpbb.titania.all_contribs:
     pattern: /contributions/all
     defaults: { _controller: phpbb.titania.controller.all_contribs:display_all_contributions }
+
+phpbb.titania.category:
+    pattern: /{category1}/{category2}/{category3}
+    defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '' }

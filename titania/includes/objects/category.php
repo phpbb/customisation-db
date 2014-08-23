@@ -47,6 +47,9 @@ class titania_category extends titania_message_object
 	 */
 	protected $object_type = TITANIA_CATEGORY;
 
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	/**
 	 * Constructor class for the contribution object
 	 */
@@ -70,9 +73,11 @@ class titania_category extends titania_message_object
 			'category_desc_bitfield'		=> array('default' => '',	'message_field' => 'message_bitfield'),
 			'category_desc_uid'				=> array('default' => '',	'message_field' => 'message_uid'),
 			'category_desc_options'			=> array('default' => 7,	'message_field' => 'message_options'),
-			
+
 			'category_options'				=> array('default' => 0),
 		));
+
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 	}
 
 	/**
@@ -515,12 +520,14 @@ class titania_category extends titania_message_object
 	*/
 	public function get_url()
 	{
-		$url = '';
+		$params = array();
+		$i = 1;
 
 		$parent_list = titania::$cache->get_category_parents($this->category_id);
 
 		// Pop the last two categories from the parents and attach them to the url
 		$parent_array = array();
+
 		if (!empty($parent_list))
 		{
 			$parent_array[] = array_pop($parent_list);
@@ -532,10 +539,12 @@ class titania_category extends titania_message_object
 
 		foreach ($parent_array as $row)
 		{
-			$url .= $row['category_name_clean'] . '/';
+			$params["category$i"] = $row['category_name_clean'];
+			$i++;
 		}
+		$params["category$i"] = $this->category_name_clean . '-' . $this->category_id;
 
-		return titania_url::build_url($url . $this->category_name_clean . '-' . $this->category_id);
+		return $this->controller_helper->route('phpbb.titania.category', $params);
 	}
 
 	/**
