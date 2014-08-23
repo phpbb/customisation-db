@@ -1,3 +1,7 @@
+phpbb.titania.index:
+    pattern: /
+    defaults: { _controller: phpbb.titania.controller.index:display_index }
+
 phpbb.titania.faq:
     pattern: /faq
     defaults: { _controller: phpbb.titania.controller.faq:display_list }

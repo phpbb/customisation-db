@@ -1,4 +1,16 @@
 services:
+    phpbb.titania.controller.index:
+        class: phpbb\titania\controller\index
+        arguments:
+            - @auth
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.display
+            - @phpbb.titania.cache
+            - @path_helper
+
     phpbb.titania.controller.faq:
         class: phpbb\titania\controller\faq
         arguments:

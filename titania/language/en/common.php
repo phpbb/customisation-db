@@ -156,6 +156,7 @@ $lang = array_merge($lang, array(
 	'NO_CONTRIBS'				=> 'No contributions could be found',
 	'NO_DESC'					=> 'You have to enter the description.',
 	'NO_DESTINATION_CATEGORY'	=> 'No destination category could be found.',
+	'NO_PAGE_FOUND'				=> 'The page you requested could not be found.',
 	'NO_POST'					=> 'The requested post does not exist.',
 	'NO_REVISION_NAME'			=> 'No revision name provided',
 	'NO_TOPIC'					=> 'The requested topic does not exist.',
