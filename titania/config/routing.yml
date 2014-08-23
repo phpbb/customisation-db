@@ -1,0 +1,3 @@
+phpbb.titania.general:
+    resource: "routes/general.yml"
+    prefix: /titania

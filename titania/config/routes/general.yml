@@ -1,0 +1,3 @@
+phpbb.titania.faq:
+    pattern: /faq
+    defaults: { _controller: phpbb.titania.controller.faq:display_list }

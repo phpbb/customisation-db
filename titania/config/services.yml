@@ -1,3 +1,6 @@
+imports:
+    - { resource: controllers.yml }
+
 services:
     phpbb.titania.config:
         synthetic: true

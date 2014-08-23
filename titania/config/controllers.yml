@@ -1,0 +1,8 @@
+services:
+    phpbb.titania.controller.faq:
+        class: phpbb\titania\controller\faq
+        arguments:
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.display
