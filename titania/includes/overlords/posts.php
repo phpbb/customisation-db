@@ -441,24 +441,35 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		}
 
 		$actions = array(
-			'MAKE_NORMAL'		=> ($topic->topic_sticky) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'unsticky_topic')) : false,
-			'MAKE_STICKY'		=> (!$topic->topic_sticky) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'sticky_topic')) : false,
-			'LOCK_TOPIC'		=> (!$topic->topic_locked) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'lock_topic')) : false,
-			'UNLOCK_TOPIC'		=> ($topic->topic_locked) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'unlock_topic')) : false,
-			'SPLIT_TOPIC'		=> ($is_moderator && $topic->topic_type == TITANIA_SUPPORT) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'split_topic')) : false,
-			'MERGE_POSTS'		=> ($is_moderator && $topic->topic_type == TITANIA_SUPPORT) ? titania_url::append_url(titania_url::$current_page_url, array('action' => 'move_posts')) : false,
-			'SOFT_DELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'delete_topic')),
-			'UNDELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'undelete_topic')),
+			'MAKE_NORMAL'		=> ($topic->topic_sticky) ? $topic->get_url('unsticky_topic') : false,
+			'MAKE_STICKY'		=> (!$topic->topic_sticky) ? $topic->get_url('sticky_topic') : false,
+			'LOCK_TOPIC'		=> (!$topic->topic_locked) ? $topic->get_url('lock_topic') : false,
+			'UNLOCK_TOPIC'		=> ($topic->topic_locked) ? $topic->get_url('unlock_topic') : false,
+			'SPLIT_TOPIC'		=> ($is_moderator && $topic->topic_type == TITANIA_SUPPORT) ? $topic->get_url('split_topic') : false,
+			'MERGE_POSTS'		=> ($is_moderator && $topic->topic_type == TITANIA_SUPPORT) ? $topic->get_url('move_posts') : false,
+			'SOFT_DELETE_TOPIC'	=> $topic->get_url('delete_topic'),
+			'UNDELETE_TOPIC'	=> $topic->get_url('undelete_topic'),
 		);
 
 		if (phpbb::$auth->acl_get('u_titania_post_hard_delete'))
 		{
 			$actions = array_merge($actions, array(
-				'HARD_DELETE_TOPIC'	=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'hard_delete_topic')),
+				'HARD_DELETE_TOPIC'	=> $topic->get_url('hard_delete_topic'),
 			));
 		}
 
-		phpbb::$template->assign_var('TOPIC_QUICK_ACTIONS', titania::build_quick_actions($actions));
+		foreach ($actions as $title => $link)
+		{
+			if (!$link)
+			{
+				continue;
+			}
+
+			phpbb::$template->assign_block_vars('quickmod', array(
+				'TITLE'		=> phpbb::$user->lang($title),
+				'LINK'		=> $link,
+			));
+		}
 	}
 
 	public static function assign_common()

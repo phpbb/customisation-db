@@ -158,7 +158,7 @@
 	<!-- INCLUDE posting/quickreply_editor.html -->
 <!-- ENDIF -->
 
-<!-- IF U_POST_REPLY or PAGINATION or TOTAL_RESULTS -->
+<!-- IF U_POST_REPLY or PAGINATION or TOTAL_RESULTS or .quickmod -->
 <div class="action-bar">
 	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
@@ -166,14 +166,22 @@
 			<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->
 		</a>
 	<!-- ENDIF -->
+
+	<!-- IF .quickmod -->
+		<div class="dropdown-container dropdown-container-{S_CONTENT_FLOW_BEGIN} dropdown-up dropdown-{S_CONTENT_FLOW_END} dropdown-button-control" id="quickmod">
+			<span title="{L_QUICK_MOD}" class="dropdown-trigger button icon-button modtools-icon dropdown-select">{L_QUICK_MOD}</span>
+			<div class="dropdown hidden">
+				<div class="pointer"><div class="pointer-inner"></div></div>
+				<ul class="dropdown-contents">
+				<!-- BEGIN quickmod -->
+					<li><a href="{quickmod.LINK}">{quickmod.TITLE}</a></li>
+				<!-- END quickmod -->
+				</ul>
+			</div>
+		</div>
+	<!-- ENDIF -->
 	</div>
 
 	<!-- INCLUDE common/pagination.html -->
 </div>
-<!-- ENDIF -->
-
-<!-- IF TOPIC_QUICK_ACTIONS -->
-<fieldset class="quickmod">
-	<label for="quick-mod-select">{L_QUICK_MOD}:</label> {TOPIC_QUICK_ACTIONS}
-</fieldset>
 <!-- ENDIF -->
