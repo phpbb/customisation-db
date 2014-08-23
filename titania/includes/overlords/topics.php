@@ -455,6 +455,15 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				'U_VIEW_TOPIC_CONTRIB_SUPPORT'		=> (isset($row['contrib_type']) && $row['contrib_type']) ? $contrib->get_url('support') : '',
 			)));
 
+			$sort = new titania_sort();
+			$sort->__set_array(array(
+				'template_block'	=> 'topics.pagination',
+				'total'				=> $topic->get_postcount() - 1,	
+				'limit'				=> phpbb::$config['posts_per_page'],
+			));
+			$sort->set_defaults(phpbb::$config['posts_per_page']);
+			$sort->build_pagination($topic->get_url());
+
 			$last_was_sticky = $topic->topic_sticky;
 		}
 		phpbb::$db->sql_freeresult($result);

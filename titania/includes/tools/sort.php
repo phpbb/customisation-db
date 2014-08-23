@@ -44,6 +44,9 @@ class titania_sort extends titania_object
 	*/
 	public $request_completed = false;
 
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
+
 	/**
 	 * Set some default variables, set template_vars default values
 	 */
@@ -68,10 +71,9 @@ class titania_sort extends titania_object
 
 			'total'			=> array('default' => 0),
 			'result_lang'	=> array('default' => 'TOTAL_RESULTS'), // sprintf'd into 'TOTAL_RESULTS' output;  Should have TOTAL_RESULTS and TOTAL_RESULTS_ONE strings
-			'template_vars'	=> array(
+			'template_block'	=> array('default' => 'pagination'),
+			'template_vars'		=> array(
 				'default' => array(
-					'PAGINATION'			=> 'PAGINATION',
-					'PAGE_NUMBER'			=> 'PAGE_NUMBER',
 					'S_PAGINATION_ACTION'	=> 'S_PAGINATION_ACTION',
 					'S_SORT_ACTION'			=> 'S_SORT_ACTION',
 					'S_NUM_POSTS'			=> 'S_NUM_POSTS',
@@ -90,6 +92,8 @@ class titania_sort extends titania_object
 				),
 			),
 		));
+
+		$this->path_helper = phpbb::$container->get('path_helper');
 	}
 
 	/**
@@ -261,14 +265,7 @@ class titania_sort extends titania_object
 	*/
 	public function set_url($location, $params = array())
 	{
-		if (titania_url::is_built($location))
-		{
-			$this->url_location = titania_url::unbuild_url($location);
-		}
-		else
-		{
-			$this->url_location = $location;
-		}
+		$this->url_location = $location;
 
 		if (is_array($params))
 		{
@@ -357,7 +354,7 @@ class titania_sort extends titania_object
 			$params[$this->sort_dir_name] = $this->sort_dir;
 		}
 
-		return titania_url::build_url($this->url_location, $params);
+		return $this->path_helper->append_url_params($this->url_location, $params);
 	}
 
 	/**
@@ -389,7 +386,7 @@ class titania_sort extends titania_object
 		}
 
 		// Don't include the sort key/dir in the sort action url
-		$sort_url = titania_url::build_url($page, $params);
+		$sort_url = $this->path_helper->append_url_params($page, $params);
 
 		// Add the sort key to the URL if required
 		if ($this->sort_key != $this->default_sort_key)
@@ -403,67 +400,29 @@ class titania_sort extends titania_object
 			$params[$this->sort_dir_name] = $this->sort_dir;
 		}
 
-		$pagination_url = titania_url::build_url($page, $params);
+		$pagination_url = $this->path_helper->append_url_params($page, $params);
+
 		$pagination = phpbb::$container->get('pagination');
 
-		$pagination->generate_template_pagination($pagination_url, 'pagination', 'start', $this->total, $this->limit, $this->start);
+		$pagination->generate_template_pagination($pagination_url, $this->template_block, 'start', $this->total, $this->limit, $this->start);
 
-		phpbb::$template->assign_vars(array(
-			$this->template_vars['PAGE_NUMBER']			=> $pagination->on_page($this->total, $this->limit, $this->start),
+		if ($this->template_block == 'pagination')
+		{
+			phpbb::$template->assign_vars(array(
+				$this->template_vars['S_SORT_ACTION']		=> $sort_url,
+				$this->template_vars['S_PAGINATION_ACTION']	=> $pagination_url,
+				$this->template_vars['S_NUM_POSTS']			=> $this->total,
 
-			$this->template_vars['S_SORT_ACTION']		=> $sort_url,
-			$this->template_vars['S_PAGINATION_ACTION']	=> $pagination_url,
-			$this->template_vars['S_NUM_POSTS']			=> $this->total,
+				$this->template_vars['S_SELECT_SORT_KEY']	=> $this->get_sort_key_list(),
+				$this->template_vars['S_SELECT_SORT_DIR']	=> $this->get_sort_dir_list(),
+				$this->template_vars['SORT_KEYS_NAME']		=> $this->sort_key_name,
+				$this->template_vars['SORT_DIR_NAME']		=> $this->sort_dir_name,
 
-			$this->template_vars['S_SELECT_SORT_KEY']	=> $this->get_sort_key_list(),
-			$this->template_vars['S_SELECT_SORT_DIR']	=> $this->get_sort_dir_list(),
-			$this->template_vars['SORT_KEYS_NAME']		=> $this->sort_key_name,
-			$this->template_vars['SORT_DIR_NAME']		=> $this->sort_dir_name,
-
-			$this->template_vars['TOTAL_ITEMS']			=> $this->total,
-			$this->template_vars['TOTAL_RESULTS']		=> phpbb::$user->lang($this->result_lang, $this->total),
-		));
+				$this->template_vars['TOTAL_ITEMS']			=> $this->total,
+				$this->template_vars['TOTAL_RESULTS']		=> phpbb::$user->lang($this->result_lang, $this->total),
+			));
+		}
 
 		return true;
-	}
-
-	/**
-	* Generate topic pagination
-	*/
-	public function topic_generate_pagination($replies, $base_url)
-	{
-		// Make sure $per_page is a valid value
-		$per_page = (phpbb::$config['posts_per_page'] <= 0) ? 1 : phpbb::$config['posts_per_page'];
-
-		if (($replies + 1) > $per_page)
-		{
-			$total_pages = ceil(($replies + 1) / $per_page);
-			$pagination = '';
-
-			$times = 1;
-			for ($j = 0; $j < $replies + 1; $j += $per_page)
-			{
-				$pagination .= '<a href="' . titania_url::append_url($base_url, array($this->start_name => $j)) . '">' . $times . '</a>';
-				if ($times == 1 && $total_pages > 5)
-				{
-					$pagination .= ' ... ';
-
-					// Display the last three pages
-					$times = $total_pages - 3;
-					$j += ($total_pages - 4) * $per_page;
-				}
-				else if ($times < $total_pages)
-				{
-					$pagination .= '<span class="page-sep">' . phpbb::$user->lang['COMMA_SEPARATOR'] . '</span>';
-				}
-				$times++;
-			}
-		}
-		else
-		{
-			$pagination = '';
-		}
-
-		return $pagination;
 	}
 }
