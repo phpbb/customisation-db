@@ -9,6 +9,7 @@ services:
             - @request
             - @phpbb.titania.display
             - @phpbb.titania.cache
+            - @path_helper
 
     phpbb.titania.controller.faq:
         class: phpbb\titania\controller\faq
