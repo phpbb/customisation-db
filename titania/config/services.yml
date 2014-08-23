@@ -22,6 +22,15 @@ services:
              - @dbal.conn
              - %core.root_path%
              - %core.php_ext%
+
+    phpbb.titania.display:
+        class: phpbb\titania\display
+        arguments:
+             - @auth
+             - @template
+             - @user
+             - @phpbb.titania.controller.helper
+             - @path_helper
     phpbb.titania.listener:
         class: phpbb\titania\event\main_listener
         arguments:
