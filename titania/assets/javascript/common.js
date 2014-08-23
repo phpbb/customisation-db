@@ -1,4 +1,6 @@
 $(document).ready(function(){
+	$('a.screenshot').colorbox({photo: true, rel: 'group1'});
+
 /* Not working...
 	// AJAX Rate
 	$("ul.rating li a, ul.rated li a").click(function(event){
@@ -224,7 +226,7 @@ $(document).ready(function(){
 	// Show revision details on click
 	$('.revisions > li a.toggle').click(function(e) {
 		e.preventDefault();
-		toggle_icon(this);
+		$(this).toggleClass('expand contract');
 		$(this).parents('li.row').children('.revision-details').toggle('fast');
 	});
 
@@ -235,17 +237,17 @@ $(document).ready(function(){
 		$(this).siblings('dl').find('dt div ul').each(function() {
 			$('li:eq(1)', this).nextAll().toggle();
 		});
-		toggle_icon(this);
+		$(this).toggleClass('expand contract');
 	});
 
 	$('.download-main').click(function() {
 		var cease = readCookie('cdb_ignore_subscription');
-		
+
 		if (!cease && $('.dialog#subscription').length) {
 			$.colorbox({html: $('.dialog#subscription').html(), width: '400px'});
 		}
 	});
-	
+
 	$(document).on('click', '#cboxLoadedContent #cancel', function(event) {
 		event.preventDefault();
 		$.colorbox.close();
@@ -352,16 +354,4 @@ function show_all_revisions(box)
 
 		$(this).parent().parent().children('.show-all').hide();
 	});
-}
-
-function toggle_icon(e)
-{
-	if ($(e).hasClass('expand'))
-	{
-		$(e).removeClass('expand').addClass('contract');
-	}
-	else
-	{
-		$(e).removeClass('contract').addClass('expand');
-	}
 }
