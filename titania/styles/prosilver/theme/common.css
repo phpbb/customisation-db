@@ -585,8 +585,12 @@ li.row dl.codebox dd {
 	display: none;
 }
 
+.queue-actions li:hover .subactions {
+	display: block;
+}
+
 .queue-actions div.subactions a {
-	padding: 0 10px;
+	padding: 3px 10px;
 }
 
 .queue-actions div.subactions a:hover {

@@ -238,14 +238,6 @@ $(document).ready(function(){
 		toggle_icon(this);
 	});
 
-	// Queue Subactions
-	$('.queue-actions > li > .subactions').hide();
-	$('.queue-actions > li').hover(function() {
-		$(this).children('.subactions').toggle();
-	}, function() {
-		$(this).children('.subactions').toggle();
-	});
-	
 	$('.download-main').click(function() {
 		var cease = readCookie('cdb_ignore_subscription');
 		
