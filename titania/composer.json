@@ -57,9 +57,11 @@
     ],
     "require": {
     	"php": ">=5.3.3",
-        "phpbb/phpbb": "3.1.*@dev"
     },
     "extra": {
-        "display-name": "phpBB Customisation Database (Titania)"
+        "display-name": "phpBB Customisation Database (Titania)",
+        "soft-require": {
+            "phpbb/phpbb": "3.1.*@dev"
+        }
     }
 }
