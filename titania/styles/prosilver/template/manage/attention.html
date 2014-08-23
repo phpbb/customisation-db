@@ -21,8 +21,10 @@
 		<li class="row <!-- IF attention.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
 			<dl>
 				<dt>
+					<div class="list-inner">
 					<a href="{attention.U_VIEW_DETAILS}" class="topictitle">{attention.ATTENTION_TITLE}</a><br />
 					<span>{attention.OBJECT_LABEL} {L_POST_BY_AUTHOR} {attention.USER_FULL} &raquo; {attention.ATTENTION_POST_TIME}</span>
+					</div>
 				</dt>
 				<dd class="moderation">
 					<span><!-- IF attention.S_CLOSED --><strong>[{attention.CLOSED_LABEL}]</strong> <!-- ENDIF -->{attention.ATTENTION_REASON}<br />{L_BY} {attention.REPORTER_USER_FULL} &raquo; {attention.ATTENTION_TIME}</span>

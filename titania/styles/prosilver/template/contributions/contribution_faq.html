@@ -36,12 +36,14 @@
 				<li class="row<!-- IF faqlist.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
 					<dl class="icon {faqlist.FOLDER_STYLE}">
 						<dt>
+							<div class="list-inner">
 							<!-- IF faqlist.S_ACCESS_TEAMS -->
 							<img src="{T_TITANIA_THEME_PATH}/images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
 							<!-- ELSEIF faqlist.S_ACCESS_AUTHORS -->
 							<img src="{T_TITANIA_THEME_PATH}/images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
 							<!-- ENDIF -->
 							<a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a>
+							</div>
 						</dt>
 						<dd class="faq-tools">
 							<!-- IF faqlist.U_MOVE_UP -->
