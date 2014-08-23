@@ -5,3 +5,7 @@ phpbb.titania.index:
 phpbb.titania.faq:
     pattern: /faq
     defaults: { _controller: phpbb.titania.controller.faq:display_list }
+
+phpbb.titania.queue_stats:
+    pattern: /queue-stats/{contrib_type}
+    defaults: { _controller: phpbb.titania.controller.queue_stats:display_stats }
