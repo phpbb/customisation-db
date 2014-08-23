@@ -202,11 +202,12 @@ class service extends \phpbb\cache\service
 	* Get the author contribs for the specified user id
 	*
 	* @param int $user_id The user ID
+	* @param \phpbb\user $user User object
 	* @param bool $active True to request only active contributions, false for all
 	*
 	* @return array Array of contrib_id's
 	*/
-	public function get_author_contribs($user_id, $active = false)
+	public function get_author_contribs($user_id, $user, $active = false)
 	{
 		$user_id = (int) $user_id;
 
@@ -254,10 +255,10 @@ class service extends \phpbb\cache\service
 		foreach ($author_block[$user_id] as $contrib_id => $data)
 		{
 			// If approved, or new and doesn't require approval, or the user is viewing their own, or permission to view non-validated, add them to the list
-			if (phpbb::$user->data['user_id'] == $user_id ||
+			if ($user->data['user_id'] == $user_id ||
 				in_array($data['status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) ||
-				titania_types::$types[$data['type']]->acl_get('view') ||
-				titania_types::$types[$data['type']]->acl_get('moderate'))
+				\titania_types::$types[$data['type']]->acl_get('view') ||
+				\titania_types::$types[$data['type']]->acl_get('moderate'))
 			{
 				if (!$active || $data['active'])
 				{
