@@ -54,6 +54,9 @@ class titania_author extends titania_message_object
 	 */
 	public $rating;
 
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	/**
 	 * Constructor class for titania authors
 	 *
@@ -80,6 +83,8 @@ class titania_author extends titania_message_object
 			'author_desc_uid'		=> array('default' => '',	'message_field' => 'message_uid'),
 			'author_desc_options'	=> array('default' => 7,	'message_field' => 'message_options'),
 		));
+
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		// Load the count for different types
 		foreach (titania_types::$types as $type)
@@ -216,17 +221,18 @@ class titania_author extends titania_message_object
 	 * Get profile url
 	 *
 	 * @param string $page The page we are on (Ex: faq/support/details)
+	 * @param array $parameters Extra parameters.
 	 *
 	 * @return string
 	 */
-	public function get_url($page = '')
+	public function get_url($page = '', $parameters = array())
 	{
-		if ($page)
-		{
-			return titania_url::build_url(users_overlord::get_user($this->user_id, '_unbuilt_titania_profile') . '/' . $page);
-		}
+		$parameters += array(
+			'author'	=> users_overlord::get_user($this->user_id, '_unbuilt_titania_profile'),
+			'page'		=> $page,
+		);
 
-		return users_overlord::get_user($this->user_id, '_titania_profile');
+		return $this->controller_helper->route('phpbb.titania.author', $parameters);
 	}
 
 	/**

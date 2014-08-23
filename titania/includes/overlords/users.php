@@ -27,6 +27,9 @@ class users_overlord
 	public static $cp_fields = array();
 	public static $status = array();
 
+	/** @var \phpbb\titania\controller\helper */
+	public static $controller_helper;
+
 	public static function load($user_ids)
 	{
 		self::load_users($user_ids);
@@ -155,6 +158,11 @@ class users_overlord
 			$user_id = ANONYMOUS;
 		}
 
+		if (!self::$controller_helper)
+		{
+			self::$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		}
+
 		// Special things...
 		if ($field[0] == '_')
 		{
@@ -169,11 +177,11 @@ class users_overlord
 				break;
 
 				case '_unbuilt_titania_profile' :
-					return 'author/' . htmlspecialchars_decode(self::$users[$user_id]['username_clean']);
+					return self::$users[$user_id]['username_clean'];
 				break;
 
 				case '_titania_profile' :
-					return titania_url::build_url(self::get_user($user_id, '_unbuilt_titania_profile'));
+					return self::$controller_helper->route('phpbb.titania.author', array('author' => self::get_user($user_id, '_unbuilt_titania_profile')));
 				break;
 
 				case '_titania' :
