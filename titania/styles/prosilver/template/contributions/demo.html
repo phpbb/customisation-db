@@ -85,8 +85,9 @@
 		</li>
 <!-- END stylerow -->
 	</ul>
-	<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery-1.10.2.min.js"></script>
-	<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/jquery.livesearch.min.js"></script>
-	<script type="text/javascript" src="{TITANIA_ROOT_PATH}js/demo.js"></script>
+	<script type="text/javascript" src="{T_JQUERY_LINK}"></script>
+	<!-- IF S_ALLOW_CDN --><script type="text/javascript">window.jQuery || document.write(unescape('%3Cscript src="{T_ASSETS_PATH}/javascript/jquery.min.js?assets_version={T_ASSETS_VERSION}" type="text/javascript"%3E%3C/script%3E'));</script><!-- ENDIF -->
+	<script type="text/javascript" src="{T_TITANIA_ASSETS_PATH}/javascript/jquery.livesearch.min.js"></script>
+	<script type="text/javascript" src="{T_TITANIA_ASSETS_PATH}/javascript/demo.js"></script>
 </body>
 </html>
