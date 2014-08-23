@@ -96,36 +96,6 @@ class display
 	}
 
 	/**
-	* Build the quick actions
-	*
-	* @param array $quick_actions
-	* @return string
-	*/
-	public function build_quick_actions($quick_actions)
-	{
-		$this->template->destroy_block_vars('quick_actions');
-
-		foreach ($quick_actions as $lang => $url)
-		{
-			if (!$url)
-			{
-				continue;
-			}
-
-			$this->template->assign_block_vars('quick_actions', array(
-				'URL'		=> $url,
-				'NAME'		=> $this->user->lang($lang),
-			));
-		}
-
-		$this->template->set_filenames(array(
-			'quick_actions'		=> 'common/quick_actions.html',
-		));
-
-		return $this->template->assign_display('quick_actions');
-	}
-
-	/**
 	* Generate the navigation tabs/menu for display
 	*
 	* @param array $nav_ary The array of data to output
