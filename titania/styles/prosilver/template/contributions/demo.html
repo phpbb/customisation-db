@@ -74,14 +74,13 @@
 	<ul id="demo-data">
 <!-- BEGIN stylerow -->
 		<li class="style{stylerow.ID}">
-			<div class="preview"><!-- IF stylerow.PREVIEW --><img src="" alt="{stylerow.NAME}" /><!-- ENDIF -->
+			<div class="preview"><!-- IF stylerow.PREVIEW --><img src="" alt="{stylerow.NAME}" data-source="{stylerow.PREVIEW}" /><!-- ENDIF -->
 				<ul class="style-details">
 					<li>{L_BY} {stylerow.AUTHORS}</li>
 					<li>{L_PHPBB_VERSION}: {stylerow.PHPBB_VERSION}</li>
 					<li>{L_LICENSE}: {stylerow.LICENSE}</li>
 				</ul>
 			</div>
-			<span class="source">{stylerow.PREVIEW}</span>
 		</li>
 <!-- END stylerow -->
 	</ul>

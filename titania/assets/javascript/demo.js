@@ -57,11 +57,11 @@ function preload_images()
 	});
 }
 
-function load_image(cid)
+function load_image(id)
 {
-	if (!$(cid+' .preview img').attr('src') && $(cid).length)
-	{
-		var img_src = $(cid+ ' .source').html();
-		$(cid+' .preview img').attr('src', img_src);
+	var img = $('.preview img', id);
+
+	if (!img.attr('src')) {
+		img.attr('src', img.data('source'));
 	}
 }
