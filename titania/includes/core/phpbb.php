@@ -47,12 +47,15 @@ class phpbb
 	/** @var object phpBB container */
 	public static $container;
 
+	/* @var \phpbb\event\dispatcher */
+	public static $dispatcher;
+
 	/**
 	 * Static Constructor.
 	 */
 	public static function initialise()
 	{
-		global $auth, $config, $db, $template, $user, $cache, $request, $phpbb_container;
+		global $auth, $config, $db, $template, $user, $cache, $request, $phpbb_container, $phpbb_dispatcher;
 
 		self::$auth		= &$auth;
 		self::$config	= &$config;
@@ -62,8 +65,10 @@ class phpbb
 		self::$cache	= &$cache;
 		self::$request	= &$request;
 		self::$container = &$phpbb_container;
+		self::$dispatcher = &$phpbb_dispatcher;
 
 		self::$style_data = self::$user->style;
+		self::$container->set('phpbb.titania.config', titania::$config);
 	}
 
 	/**

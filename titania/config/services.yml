@@ -1,4 +1,6 @@
 services:
+    phpbb.titania.config:
+        synthetic: true
     phpbb.titania.cache:
         class: phpbb\titania\cache\service
         arguments:
