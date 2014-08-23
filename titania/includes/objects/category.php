@@ -129,6 +129,16 @@ class titania_category extends titania_message_object
 	}
 
 	/**
+	* Get translated category name.
+	*
+	* @return string
+	*/
+	public function get_name()
+	{
+		return phpbb::$user->lang($this->category_name);
+	}
+
+	/**
 	* Get category branch
 	*/
 	public function get_category_branch($type = 'all', $order = 'descending', $include_category = true)

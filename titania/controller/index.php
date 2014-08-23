@@ -142,7 +142,7 @@ class index
 		$children[] = $this->id;
 		$this->list_contributions($children, $this->category->get_url());
 
-		$title = $this->user->lang($this->category->category_name) . ' - ' . $this->user->lang['CUSTOMISATION_DATABASE'];
+		$title = $this->category->get_name() . ' - ' . $this->user->lang['CUSTOMISATION_DATABASE'];
 
 		return $this->helper->render('index_body.html', $title);
 	}
@@ -210,13 +210,13 @@ class index
 		{
 			$category->__set_array($this->categories[$row['category_id']]);
 			$this->display->generate_breadcrumbs(array(
-				$this->user->lang($category->category_name) => $category->get_url(),
+				$category->get_name() => $category->get_url(),
 			));
 		}
 
 		// Self
 		$this->display->generate_breadcrumbs(array(
-			$this->user->lang($this->category->category_name) => $this->category->get_url(),
+			$this->category->get_name() => $this->category->get_url(),
 		));
 	}
 
