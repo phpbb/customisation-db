@@ -18,20 +18,35 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 */
 class main_listener implements EventSubscriberInterface
 {
-	/* @var string */
+	/** @var \phpbb\user */
+	protected $user;
+
+	/** @var \phpbb\template\template */
+	protected $template;
+
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
+	/** @var string */
 	protected $phpbb_root_path;
 
-	/* @var string */
+	/** @var string */
 	protected $php_ext;
 
 	/**
 	* Constructor
 	*
+	* @param \phpbb\user $user
+	* @param \phpbb\template\template $template
+	* @param \phpbb\titania\controller\helper $controller_helper
 	* @param string	$phpbb_root_path	phpBB root path
 	* @param string	$php_ext			PHP file extension
 	*/
-	public function __construct($phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $php_ext)
 	{
+		$this->user = $user;
+		$this->template = $template;
+		$this->controller_helper = $controller_helper;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
 	}
@@ -39,8 +54,9 @@ class main_listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.permissions'		=> 'add_permissions',
-			'kernel.request'		=> array(array('startup', -1)),
+			'core.permissions'			=> 'add_permissions',
+			'kernel.request'			=> array(array('startup', -1)),
+			'core.page_header_after'	=> 'overwrite_template_vars',
 		);
 	}
 
@@ -146,6 +162,32 @@ class main_listener implements EventSubscriberInterface
 		require($this->phpbb_root_path . 'ext/phpbb/titania/common.' . $this->php_ext);
 
 		\titania::$config->phpbb_root_path = $this->phpbb_root_path;
+	}
+
+	public function overwrite_template_vars($event)
+	{
+		if (!defined('IN_TITANIA'))
+		{
+			return;
+		}
+
+		$this->template->assign_vars(array(
+			'U_FAQ'		=> $this->controller_helper->route('phpbb.titania.faq'),
+			'U_SEARCH'	=> $this->controller_helper->route('phpbb.titania.search'),
+		));
+
+		if ($this->user->data['user_id'] == ANONYMOUS)
+		{
+			$this->template->assign_vars(array(
+				'U_LOGIN_LOGOUT'	=> append_sid(
+					"{$this->phpbb_root_path}ucp.{$this->php_ext}",
+					array(
+						'mode'		=> 'login',
+						'redirect'	=> urlencode($this->controller_helper->get_current_url()),
+					)
+				),
+			));
+		}
 	}
 }
 

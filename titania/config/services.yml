@@ -34,6 +34,9 @@ services:
     phpbb.titania.listener:
         class: phpbb\titania\event\main_listener
         arguments:
+            - @user
+            - @template
+            - @phpbb.titania.controller.helper
             - %core.root_path%
             - %core.php_ext%
         tags:
