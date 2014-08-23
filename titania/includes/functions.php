@@ -348,59 +348,6 @@ function titania_attach_order_compare($attach1, $attach2)
 }
 
 /**
-* GMT version of getdate()
-*
-* @param int $time Timestamp
-*
-* @return array Returns array of info about the timestamp provided, similar to getdate()
-*/
-function gmgetdate($time)
-{
-	$keys = array('seconds', 'minutes', 'hours', 'mday', 'wday', 'mon', 'year', 'yday', 'weekday', 'month', 0);
-	$values = explode(' ', gmdate('s i G j w n Y z l F U', $time));
-
-	return array_combine($keys, $values);
-}
-
-/**
-* Offset a timestamp using the user's timezone and DST settings
-*
-* @param int $time Timestamp to offset
-* @param bool $reverse Reverse the offset -- from user's timezone to UTC
-*
-* @return int Returns offset timestamp
-*/
-function offset_user_time($time , $reverse = false)
-{
-	$zone_offset = phpbb::$user->timezone + phpbb::$user->dst;
-	$time += ($reverse) ? - $zone_offset : $zone_offset;
-
-	return $time;
-}
-
-/**
-* Offset a timestamp by a certain number of days
-*
-* @param int $time Timestamp to offset
-* @param int $days Number of days to offset
-* @param bool $from_next_midnight Offset to next midnight first before offsetting the days
-*
-* @return int Returns offset timestamp
-*/
-function offset_time_by_days($time, $days, $from_next_midnight = false)
-{
-	if ($from_next_midnight)
-	{
-		$time = offset_user_time($time) + 86400;
-		$date = gmgetdate($time);
-		$time = gmmktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
-		$time = offset_user_time($time, true);
-	}
-
-	return  $time + ($days * 86400); 
-}
-
-/**
 * Format the delta between two timestamps.
 *
 * @param int $start_time Lower time limit. If only $start_time is provided, then its value is used as the delta.

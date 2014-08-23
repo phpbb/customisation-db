@@ -1,19 +1,15 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2013 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
-
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
 
 /**
  * Class to handle queue stats
@@ -27,16 +23,43 @@ class titania_queue_stats
 	 *
 	 * @var int
 	 */
-	private $queue_type;
+	protected $queue_type;
 
-	public function __construct($queue_type)
+	/** @var \DateTimezone */
+	protected $utc;
+
+	/** @var \DateTime */
+	protected $date;
+
+	/** @var \phpbb\user */
+	protected $user;
+
+	public function __construct($queue_type, $user)
 	{
 		$this->set_queue_type($queue_type);
+		$this->utc = new \DateTimezone('UTC');
+		$this->date = new \DateTime();
+		$this->user = $user;
 	}
 
 	public function set_queue_type($queue_type)
 	{
 		$this->queue_type = (int) $queue_type;
+	}
+
+	/**
+	* Returns a \DateTime object configured to the given timestamp
+	* in the user's timezone.
+	*
+	* @param int $time		Time stamp
+	* @return \DateTime
+	*/
+	protected function get_user_datetime($time)
+	{
+		return $this->date
+			->setTimezone($this->utc)
+			->setTimestamp($time)
+			->setTimezone($this->user->timezone);
 	}
 
 	/**
@@ -123,18 +146,18 @@ class titania_queue_stats
 	/**
 	 * Get the queue history between two timestamps
 	 *
-	 * @param int $start_time Lower time limit of the queue activity calendar
-	 * @param int $end_time Upper time limit of the queue activity calendar
+	 * @param \DateTime $start	Lower time limit of the queue activity calendar
+	 * @param \DateTime $end	Upper time limit of the queue activity calendar
 	 *
 	 * @return Retuns an array in the form of Array([year] => Array([month] => Array([day] => Array('new' => int, 'approved' => int, 'denied' => int))))
 	 */
-	public function get_queue_history($start_time, $end_time)
+	public function get_queue_history(\DateTime $start, \DateTime $end)
 	{
-		$start_time = (int) $start_time;
-		$end_time = (int) $end_time;
+		$start_time = (int) $start->setTimezone($this->utc)->getTimestamp();
+		$end_time = (int) $end->setTimezone($this->utc)->getTimestamp();
 		$day_tpl = array('new' => 0, 'approved' => 0, 'denied' => 0);
-	
-		$history = create_calendar_ary($start_time, $end_time, $day_tpl);
+
+		$history = titania_create_calendar_ary($this->user, $start, $end, $day_tpl);
 
 		$sql = 'SELECT queue_status AS status, queue_submit_time AS submit_time, queue_close_time AS close_time
 			FROM ' . TITANIA_QUEUE_TABLE . '
@@ -191,8 +214,9 @@ class titania_queue_stats
 	 */
 	public function add_history_action(&$history, $action, $time)
 	{
-		$time = offset_user_time($time);
-		list($day, $month, $year) = explode(' ', gmdate('j n Y', $time));
+		$time = $this->get_user_datetime($time);
+
+		list($day, $month, $year) = explode(' ', $time->format('j n Y'));
 
 		$history[$year][$month][$day][$action]++;
 	}
