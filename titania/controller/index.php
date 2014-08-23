@@ -36,9 +36,6 @@ class index
 	/** @var \phpbb\titania\cache\service */
 	protected $cache;
 
-	/** @var \phpbb\path_helper */
-	protected $path_helper;
-
 	/** @var int */
 	protected $id;
 
@@ -59,9 +56,8 @@ class index
 	* @param \phpbb\titania\controller\helper $helper
 	* @param \phpbb\request\request_interace $request;
 	* @param \phpbb\titania\display $display
-	* @param \phpbb\path_helper $path_helper
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache)
 	{
 		$this->auth = $auth;
 		$this->template = $template;
@@ -70,7 +66,6 @@ class index
 		$this->request = $request;
 		$this->display = $display;
 		$this->cache = $cache;
-		$this->path_helper = $path_helper;
 
 		\titania::_include('functions_display', 'titania_display_categories');
 	}
@@ -94,7 +89,7 @@ class index
 			'CATEGORY_ID'			=> self::ALL_CONTRIBS,
 
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
-			'U_MARK_FORUMS'			=> $this->path_helper->append_url_params($this->helper->get_current_url(), array('mark' => 'contribs')),
+			'U_MARK_FORUMS'			=> $this->helper->route('phpbb.titania.index', array('mark' => 'contribs')),
 			'L_MARK_FORUMS_READ'	=> $this->user->lang['MARK_CONTRIBS_READ'],
 
 			'S_DISPLAY_SEARCHBOX'	=> true,
