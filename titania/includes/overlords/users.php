@@ -285,6 +285,8 @@ class users_overlord
 			$prefix . 'U_EMAIL'				=> self::get_user($user_id, '_u_email'),
 			$prefix . 'U_JABBER'			=> self::get_user($user_id, '_jabber'),
 			$prefix . 'S_JABBER_ENABLED'	=> (phpbb::$config['jab_enable']) ? true : false,
+
+			$prefix . 'SEND_EMAIL_USER'		=> phpbb::$user->lang('SEND_EMAIL_USER', self::get_user($user_id, '_username')),
 		);
 
 		if ($output_to_template)
