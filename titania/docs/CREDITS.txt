@@ -1,0 +1,27 @@
+/**
+*
+* phpBB Customisation Database © Copyright phpBB Limited 2008-2014
+* http://www.phpbb.com
+*
+* phpBB Customisation Database is free software. You can redistribute it and/or modify it
+* under the terms of the GNU General Public License, version 2 (GPL-2.0)
+* as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* A copy of the license can be viewed in the docs/LICENSE.txt file.
+* The same can be viewed at <http://opensource.org/licenses/gpl-2.0.php>
+*
+*/
+
+-- Copyrights --
+
+phpBB Customisation Database contains code from the following applications:
+
+MIT licenced:
+Colorbox (c) 2014 Jack Moore, http://www.jacklmoore.com/colorbox/
+jQuery Livesearch (c) 2009 Pat Nakajima, https://github.com/nakajima/jquery-livesearch
+jQuery UI (c) 2014 jQuery Foundation and other contributors, http://jqueryui.com/
