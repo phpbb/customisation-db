@@ -955,9 +955,6 @@ class titania_contribution extends titania_message_object
 				// Increment the count for the authors
 				$this->change_author_contrib_count($author_list);
 
-				// Increment the count for this type
-				titania_types::increment_count($this->contrib_type);
-
 				// Increment the category count
 				$this->update_category_count();
 
