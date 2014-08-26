@@ -1,0 +1,5 @@
+phpbb.titania.contrib:
+    pattern: /{page}
+    defaults: { _controller: phpbb.titania.controller.contrib:base, page: details }
+    requirements:
+        page: |details|report|queue_discussion|rate|demo

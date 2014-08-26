@@ -72,3 +72,17 @@ services:
             - @phpbb.titania.config
             - %core.root_path%
             - %core.php_ext%
+
+    phpbb.titania.controller.contrib:
+        class: phpbb\titania\controller\contribution\contribution
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.cache
+            - @phpbb.titania.config
+            - @phpbb.titania.display
