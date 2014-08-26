@@ -60,3 +60,15 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.config
             - @phpbb.titania.cache
+
+    phpbb.titania.controller.download:
+        class: phpbb\titania\controller\download
+        arguments:
+            - @dbal.conn
+            - @auth
+            - @user
+            - @request
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.config
+            - %core.root_path%
+            - %core.php_ext%

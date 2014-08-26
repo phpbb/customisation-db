@@ -23,6 +23,14 @@ phpbb.titania.author:
     defaults: { _controller: phpbb.titania.controller.author:base, page: details }
     requirements:
         page: |details|contributions|support|discussion|manage|create
+
+phpbb.titania.download:
+    pattern: /download/{id}
+    defaults: { _controller: phpbb.titania.controller.download:file, id: 0 }
+    requirements:
+        id: \d+
+
+
 phpbb.titania.category:
     pattern: /{category1}/{category2}/{category3}
     defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '' }
