@@ -21,12 +21,16 @@ class titania_posting
 	* Contrib type of parent
 	*
 	* @var int
-	*/	
+	*/
 	public $parent_type = 0;
 
-	public function act($template_body, $parent_id = false, $parent_url = false, $post_type = false, $s_post_action = false)
+	/** @var \titania_contrib */
+	protected $contrib;
+
+	public function act($contrib, $action, $topic_id, $template_body, $parent_id = false, $parent_url = false, $post_type = false, $s_post_action = false)
 	{
-		$action = phpbb::$request->variable('action', '');
+		$this->contrib = $contrib;
+		$post_id = phpbb::$request->variable('post_id', 0);
 
 		switch ($action)
 		{
@@ -36,62 +40,50 @@ class titania_posting
 					throw new exception('Must send parent_id, parent_url, and new post type to allow posting new topics');
 				}
 
-				$this->post($parent_id, $parent_url, $post_type, (($s_post_action === false) ? titania_url::$current_page_url : $s_post_action));
-
-				titania::page_footer(true, $template_body);
+				return $this->post($parent_id, $parent_url, $post_type, (($s_post_action === false) ? titania_url::$current_page_url : $s_post_action));
 			break;
 
 			case 'quote' :
-				$this->reply(phpbb::$request->variable('t', 0), phpbb::$request->variable('p', 0));
-
-				titania::page_footer(true, $template_body);
+				return $this->reply($topic_id, $post_id);
 			break;
 
 			case 'reply' :
-				$this->reply(phpbb::$request->variable('t', 0));
-
-				titania::page_footer(true, $template_body);
+				return $this->reply($topic_id);
 			break;
 
 			case 'edit' :
-				$this->edit(phpbb::$request->variable('p', 0));
-
-				titania::page_footer(true, $template_body);
+				return $this->edit($post_id);
 			break;
 
 			case 'quick_edit' :
-				$this->quick_edit(phpbb::$request->variable('p', 0));
-
-				titania::page_footer(true, $template_body);
+				return $this->quick_edit($post_id);
 			break;
 
 			case 'delete' :
 			case 'undelete' :
 			case 'report' :
-				$this->$action(phpbb::$request->variable('p', 0));
+				return $this->$action($post_id);
 			break;
 
 			case 'sticky_topic' :
 			case 'unsticky_topic' :
-				$this->toggle_sticky(phpbb::$request->variable('t', 0));
+				return $this->toggle_sticky($topic_id);
 			break;
 
 			case 'lock_topic' :
 			case 'unlock_topic' :
 			case 'delete_topic' :
 			case 'undelete_topic' :
-				$this->$action(phpbb::$request->variable('t', 0));
+				return $this->$action($topic_id);
 			break;
 
 			case 'split_topic' :
 			case 'move_posts' :
-				$this->split_topic(request_var('t', 0), $action);
-
-				titania::page_footer(true, 'posting/split_merge_topic_body.html');
+				return $this->split_topic($topic_id, $action);
 			break;
 
 			case 'hard_delete_topic' :
-				$this->delete_topic(phpbb::$request->variable('t', 0), true);
+				$this->delete_topic($topic_id, true);
 			break;
 		}
 	}
@@ -114,21 +106,21 @@ class titania_posting
 		// Setup the post object we'll use
 		$post_object = new titania_post($post_type);
 		$post_object->topic->parent_id = $parent_id;
-		$post_object->topic->topic_url = titania_url::unbuild_url($parent_url);
+		$post_object->topic->topic_url = $parent_url;
 
 		// Some more complicated permissions for stickes in support
 		$can_sticky = phpbb::$auth->acl_get('u_titania_mod_post_mod');
 		if ($post_type == TITANIA_SUPPORT)
 		{
-			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			if (is_object($this->contrib) && $this->contrib->contrib_id == $parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)
 			{
 				$can_sticky = true;
 			}
-			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $parent_id)
+			else if (!is_object($this->contrib) || !$this->contrib->contrib_id == $parent_id)
 			{
 				$contrib = new titania_contribution();
 				$contrib->load((int) $parent_id);
-				if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+				if ($this->contrib->is_author || $this->contrib->is_active_coauthor)
 				{
 					$can_sticky = true;
 				}
@@ -136,17 +128,17 @@ class titania_posting
 		}
 		else if ($post_type == TITANIA_QUEUE_DISCUSSION)
 		{
-			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			if (is_object($this->contrib) && $this->contrib->contrib_id == $parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)
 			{
-				$post_object->topic->topic_category = titania::$contrib->contrib_type;
+				$post_object->topic->topic_category = $this->contrib->contrib_type;
 			}
-			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $parent_id)
+			else if (!is_object($this->contrib) || !$this->contrib->contrib_id == $parent_id)
 			{
 				$contrib = new titania_contribution();
 				$contrib->load((int) $parent_id);
-				if (titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+				if ($this->contrib->is_author || $this->contrib->is_active_coauthor)
 				{
-					$post_object->topic->topic_category = titania::$contrib->contrib_type;
+					$post_object->topic->topic_category = $this->contrib->contrib_type;
 				}
 			}
 		}
@@ -157,7 +149,7 @@ class titania_posting
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
 			'sticky_topic'	=> $can_sticky,
-			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && is_object(titania::$contrib) && titania::$contrib->contrib_id == $parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && is_object($this->contrib) && $this->contrib->contrib_id == $parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message_object->set_settings(array(
@@ -172,7 +164,8 @@ class titania_posting
 			'S_POST_ACTION'		=> $s_post_action,
 			'L_POST_A'			=> phpbb::$user->lang['POST_TOPIC'],
 		));
-		titania::page_header('NEW_TOPIC');
+
+		return array('title' => 'NEW_TOPIC');
 	}
 
 	/**
@@ -217,7 +210,7 @@ class titania_posting
 		$message_object->set_auth(array(
 			'bbcode'		=> phpbb::$auth->acl_get('u_titania_bbcode'),
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
-			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)) ? true : false,
+			'lock_topic'	=> (phpbb::$auth->acl_get('u_titania_mod_post_mod') || (phpbb::$auth->acl_get('u_titania_post_mod_own') && is_object($this->contrib) && $this->contrib->contrib_id == $post_object->topic->parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 		$message_object->set_settings(array(
@@ -243,7 +236,7 @@ class titania_posting
 
 			'S_DISPLAY_REVIEW'	=> true,
 		));
-		titania::page_header('POST_REPLY');
+		return array('title' => 'POST_REPLY');
 	}
 
 	/**
@@ -410,11 +403,11 @@ class titania_posting
 		$can_sticky = $can_lock = phpbb::$auth->acl_get('u_titania_mod_post_mod');
 		if ($post_object->post_type == TITANIA_SUPPORT)
 		{
-			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			if (is_object($this->contrib) && $this->contrib->contrib_id == $post_object->topic->parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)
 			{
 				$can_sticky = $can_lock = true;
 			}
-			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $post_object->topic->parent_id)
+			else if (!is_object($this->contrib) || !$this->contrib->contrib_id == $post_object->topic->parent_id)
 			{
 				$contrib = new titania_contribution();
 				$contrib->load((int) $post_object->topic->parent_id);
@@ -432,7 +425,7 @@ class titania_posting
 			'smilies'		=> phpbb::$auth->acl_get('u_titania_smilies'),
 			'lock'			=> ($post_object->post_user_id != phpbb::$user->data['user_id'] && phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? true : false,
 			'sticky_topic'	=> ($post_object->post_id == $post_object->topic->topic_first_post_id && $can_sticky) ? true : false,
-			'lock_topic'	=> ($can_lock || (phpbb::$auth->acl_get('u_titania_post_mod_own') && (phpbb::$auth->acl_get('u_titania_post_mod_own') && is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor))) ? true : false,
+			'lock_topic'	=> ($can_lock || (phpbb::$auth->acl_get('u_titania_post_mod_own') && (phpbb::$auth->acl_get('u_titania_post_mod_own') && is_object($this->contrib) && $this->contrib->contrib_id == $post_object->topic->parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor))) ? true : false,
 			'attachments'	=> phpbb::$auth->acl_get('u_titania_post_attach'),
 		));
 
@@ -444,7 +437,7 @@ class titania_posting
 			'S_POST_ACTION'		=> $post_object->get_url('edit', false, titania_url::$current_page_url),
 			'L_POST_A'			=> phpbb::$user->lang['EDIT_POST'],
 		));
-		titania::page_header('EDIT_POST');
+		return array('title' => 'EDIT_POST');
 	}
 
 	/**
@@ -527,11 +520,11 @@ class titania_posting
 		}
 		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
-			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			if (is_object($this->contrib) && $this->contrib->contrib_id == $topic_object->parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)
 			{
 				$is_authed = true;
 			}
-			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $topic_object->parent_id)
+			else if (!is_object($this->contrib) || !$this->contrib->contrib_id == $topic_object->parent_id)
 			{
 				$contrib = new titania_contribution();
 				$contrib->load((int) $topic_object->parent_id);
@@ -575,11 +568,11 @@ class titania_posting
 		}
 		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
-			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			if (is_object($this->contrib) && $this->contrib->contrib_id == $topic_object->parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)
 			{
 				$is_authed = true;
 			}
-			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $topic_object->parent_id)
+			else if (!is_object($this->contrib) || !$this->contrib->contrib_id == $topic_object->parent_id)
 			{
 				$contrib = new titania_contribution();
 				$contrib->load((int) $topic_object->parent_id);
@@ -596,7 +589,7 @@ class titania_posting
 			titania::needs_auth();
 		}
 
-		if (titania::confirm_box(true))
+		if (confirm_box(true))
 		{
 			$topic_object->topic_locked = true;
 			$topic_object->submit();
@@ -605,7 +598,7 @@ class titania_posting
 		}
 		else
 		{
-			titania::confirm_box(false, 'LOCK_TOPIC');
+			confirm_box(false, 'LOCK_TOPIC');
 		}
 
 		redirect($topic_object->get_url());
@@ -642,7 +635,7 @@ class titania_posting
 		}
 
 		$page_title = ($mode == 'split_topic') ? 'SPLIT_TOPIC' : 'MERGE_POSTS';
-		titania::page_header(phpbb::$user->lang[$page_title] . ' - ' . $topic->topic_subject);
+		$page_title = phpbb::$user->lang[$page_title] . ' - ' . $topic->topic_subject;
 
 		if ($submit)
 		{
@@ -785,6 +778,7 @@ class titania_posting
 
 			add_form_key('split_topic');
 		}
+		return array('title' => $page_title, 'template' => 'posting/split_merge_topic_body.html');
 	}
 
 	/**
@@ -808,11 +802,11 @@ class titania_posting
 		}
 		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
-			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			if (is_object($this->contrib) && $this->contrib->contrib_id == $topic_object->parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)
 			{
 				$is_authed = true;
 			}
-			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $topic_object->parent_id)
+			else if (!is_object($this->contrib) || !$this->contrib->contrib_id == $topic_object->parent_id)
 			{
 				$contrib = new titania_contribution();
 				$contrib->load((int) $topic_object->parent_id);
@@ -829,7 +823,7 @@ class titania_posting
 			titania::needs_auth();
 		}
 
-		if (titania::confirm_box(true))
+		if (confirm_box(true))
 		{
 			$topic_object->topic_locked = false;
 			$topic_object->submit();
@@ -838,7 +832,7 @@ class titania_posting
 		}
 		else
 		{
-			titania::confirm_box(false, 'UNLOCK_TOPIC');
+			confirm_box(false, 'UNLOCK_TOPIC');
 		}
 
 		redirect($topic_object->get_url());
@@ -866,11 +860,11 @@ class titania_posting
 		}
 		else if (!$hard_delete && phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
-			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			if (is_object($this->contrib) && $this->contrib->contrib_id == $topic_object->parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)
 			{
 				$is_authed = true;
 			}
-			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $topic_object->parent_id)
+			else if (!is_object($this->contrib) || !$this->contrib->contrib_id == $topic_object->parent_id)
 			{
 				$contrib = new titania_contribution();
 				$contrib->load((int) $topic_object->parent_id);
@@ -887,7 +881,7 @@ class titania_posting
 			titania::needs_auth();
 		}
 
-		if (titania::confirm_box(true))
+		if (confirm_box(true))
 		{
 			if ($hard_delete)
 			{
@@ -909,11 +903,11 @@ class titania_posting
 		{
 			if ($hard_delete)
 			{
-				titania::confirm_box(false, 'HARD_DELETE_TOPIC');
+				confirm_box(false, 'HARD_DELETE_TOPIC');
 			}
 			else
 			{
-				titania::confirm_box(false, 'SOFT_DELETE_TOPIC');
+				confirm_box(false, 'SOFT_DELETE_TOPIC');
 			}
 		}
 
@@ -941,11 +935,11 @@ class titania_posting
 		}
 		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
-			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic_object->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			if (is_object($this->contrib) && $this->contrib->contrib_id == $topic_object->parent_id && $this->contrib->is_author || $this->contrib->is_active_coauthor)
 			{
 				$is_authed = true;
 			}
-			else if (!is_object(titania::$contrib) || !titania::$contrib->contrib_id == $topic_object->parent_id)
+			else if (!is_object($this->contrib) || !$this->contrib->contrib_id == $topic_object->parent_id)
 			{
 				$contrib = new titania_contribution();
 				$contrib->load((int) $topic_object->parent_id);
@@ -962,7 +956,7 @@ class titania_posting
 			titania::needs_auth();
 		}
 
-		if (titania::confirm_box(true))
+		if (confirm_box(true))
 		{
 			$topic_object->undelete();
 
@@ -970,7 +964,7 @@ class titania_posting
 		}
 		else
 		{
-			titania::confirm_box(false, 'UNDELETE_TOPIC');
+			confirm_box(false, 'UNDELETE_TOPIC');
 		}
 
 		redirect($topic_object->get_url());
@@ -1063,13 +1057,13 @@ class titania_posting
 					// Subscriptions
 					if ($mode == 'reply')
 					{
-						if ($post_object->post_type == TITANIA_SUPPORT && is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->contrib_name)
+						if ($post_object->post_type == TITANIA_SUPPORT && is_object($this->contrib) && $this->contrib->contrib_id == $post_object->topic->parent_id && $this->contrib->contrib_name)
 						{
 							// Support topic reply
 							$email_vars = array(
 								'NAME'			=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'		=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
-								'CONTRIB_NAME'	=> titania::$contrib->contrib_name,
+								'CONTRIB_NAME'	=> $this->contrib->contrib_name,
 							);
 							titania_subscriptions::send_notifications(array(TITANIA_TOPIC, TITANIA_SUPPORT), array($post_object->topic_id, $post_object->topic->parent_id), 'subscribe_notify_contrib.txt', $email_vars, $post_object->post_user_id);
 						}
@@ -1084,13 +1078,13 @@ class titania_posting
 					}
 					else if ($mode == 'post')
 					{
-						if ($post_object->post_type == TITANIA_SUPPORT && is_object(titania::$contrib) && titania::$contrib->contrib_id == $post_object->topic->parent_id && titania::$contrib->contrib_name)
+						if ($post_object->post_type == TITANIA_SUPPORT && is_object($this->contrib) && $this->contrib->contrib_id == $post_object->topic->parent_id && $this->contrib->contrib_name)
 						{
 							// New support topic
 							$email_vars = array(
 								'NAME'			=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'		=> $post_object->topic->get_url(),
-								'CONTRIB_NAME'	=> titania::$contrib->contrib_name,
+								'CONTRIB_NAME'	=> $this->contrib->contrib_name,
 							);
 							titania_subscriptions::send_notifications($post_object->post_type, $post_object->topic->parent_id, 'subscribe_notify_forum_contrib.txt', $email_vars, $post_object->post_user_id);
 						}
@@ -1146,7 +1140,7 @@ class titania_posting
 			titania::needs_auth();
 		}
 
-		if (titania::confirm_box(true))
+		if (confirm_box(true))
 		{
 			if (!$undelete)
 			{
@@ -1204,7 +1198,7 @@ class titania_posting
 		{
 			phpbb::$template->assign_var('S_HARD_DELETE', ((!$undelete && !$post_object->post_deleted && phpbb::$auth->acl_get('u_titania_post_hard_delete')) ? true : false));
 
-			titania::confirm_box(false, ((!$undelete) ? 'DELETE_POST' : 'UNDELETE_POST'), '', array(), 'posting/delete_confirm.html');
+			confirm_box(false, ((!$undelete) ? 'DELETE_POST' : 'UNDELETE_POST'), '', array(), 'posting/delete_confirm.html');
 		}
 
 		redirect($post_object->get_url());
