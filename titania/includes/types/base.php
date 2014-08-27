@@ -261,14 +261,6 @@ class titania_type_base
 	public $root_not_found_key = 'COULD_NOT_FIND_ROOT';
 
 	/**
-	* Display the install file to the users?
-	* Note that this only works with ModX files
-	*
-	* @var bool
-	*/
-	public $display_install_file = false;
-
-	/**
 	 * The forum_database and forum_robot, initialize in constructor
 	 *
 	 * @var int

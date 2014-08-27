@@ -68,7 +68,6 @@ class titania_type_mod extends titania_type_base
 	public $automod_test = true;
 	public $clean_and_restore_root = true;
 	public $root_search = array(array('install', '.xml'));
-	public $display_install_file = true;
 
 	public function __construct()
 	{
