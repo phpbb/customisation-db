@@ -245,6 +245,7 @@ class titania_styles_demo
 
 		$category = '';
 		$style = new titania_contribution();
+		$style->set_type(TITANIA_TYPE_STYLE);
 		$file = new titania_attachment(TITANIA_CONTRIB);
 
 		foreach ($this->styles as $id => $data)
@@ -252,7 +253,6 @@ class titania_styles_demo
 			$style->__set_array(array(
 				'contrib_id'			=> $id,
 				'contrib_name_clean'	=> $data['contrib_name_clean'],
-				'contrib_type'			=> TITANIA_TYPE_STYLE,
 			));
 
 			$preview_img = false;

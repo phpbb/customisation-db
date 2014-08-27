@@ -95,7 +95,9 @@ class titania_contribution extends titania_message_object
      */
     public $clr_sample = false;
 
-	/**
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	/**
 	* @var Contribution type object
 	*/
@@ -154,6 +156,8 @@ class titania_contribution extends titania_message_object
 			// Author does not provide support
 			'contrib_limited_support'		=> array('default' => 0),
 		));
+
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -730,12 +734,35 @@ class titania_contribution extends titania_message_object
 	*/
 	public function get_url($page = '', $parameters = array())
 	{
-		if ($page)
+		$controller = 'phpbb.titania.contrib';
+
+		switch ($page)
 		{
-			return titania_url::build_url(titania_types::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean . '/' . $page, $parameters);
+			case 'revision' :
+				$controller .= '.revision';
+
+				if (isset($parameters['page']) && $parameters['page'] == 'edit')
+				{
+					$controller .= '.edit';
+					unset($parameters['page']);
+				}
+			break;
+
+			case 'posting' :
+				$controller .= '.support.post_topic';
+				unset($parameters['page']);
+			break;
+
+			default :
+				$parameters['page']	= $page;
 		}
 
-		return titania_url::build_url(titania_types::$types[$this->contrib_type]->url . '/' . $this->contrib_name_clean, $parameters);
+		$parameters += array(
+			'contrib_type'	=> $this->type->url,
+			'contrib'		=> $this->contrib_name_clean,
+		);
+
+		return $this->controller_helper->route($controller, $parameters);
 	}
 
 	/**
