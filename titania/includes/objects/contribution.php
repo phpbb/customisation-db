@@ -167,7 +167,7 @@ class titania_contribution extends titania_message_object
 	* Set the contribution type.
 	*
 	* @param int $type	Contribution type id.
-	* @return void
+	* @return null
 	*/
 	public function set_type($type)
 	{
