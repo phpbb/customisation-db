@@ -244,15 +244,17 @@ class titania_styles_demo
 		));
 
 		$category = '';
+		$style = new titania_contribution();
 		$file = new titania_attachment(TITANIA_CONTRIB);
 
 		foreach ($this->styles as $id => $data)
-		{			
-			$style = new titania_contribution();
-			$style->contrib_id = $id;
-			$style->contrib_name_clean = $data['contrib_name_clean'];
-			$style->contrib_type = TITANIA_TYPE_STYLE;
 		{
+			$style->__set_array(array(
+				'contrib_id'			=> $id,
+				'contrib_name_clean'	=> $data['contrib_name_clean'],
+				'contrib_type'			=> TITANIA_TYPE_STYLE,
+			));
+
 			$preview_img = false;
 
 			if (isset($data['thumb_id']))
