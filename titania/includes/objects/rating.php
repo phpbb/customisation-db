@@ -119,6 +119,9 @@ class titania_rating extends titania_database_object
 	*/
 	public $cannot_rate				= false;
 
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
+
 	/**
 	 * Constructor class for titania authors
 	 *
@@ -161,6 +164,8 @@ class titania_rating extends titania_database_object
 		$this->rating = $object->{$this->cache_rating};
 		$this->rating_count = $object->{$this->cache_rating_count};
 		$this->rating_object_id = $object->{$this->object_column};
+
+		$this->path_helper = phpbb::$container->get('path_helper');
 	}
 
 	/**
@@ -193,12 +198,12 @@ class titania_rating extends titania_database_object
 	/**
 	* Get rating string
 	*
+	* @param $rate_url string	Rating URL
 	* @return string The rating string ready for output
 	*/
-	public function get_rating_string()
+	public function get_rating_string($rate_url)
 	{
 		$can_rate = (!$this->cannot_rate && phpbb::$user->data['is_registered'] && phpbb::$auth->acl_get('u_titania_rate') && !$this->rating_id) ? true : false;
-		$rate_url = titania_url::build_url('rate', array('type' => $this->rating_type, 'id' => $this->rating_object_id));
 
 		// If it has not had any ratings yet, give it 1/2 the max for the rating
 		if ($this->rating_count == 0)
@@ -236,7 +241,7 @@ class titania_rating extends titania_database_object
 			phpbb::$template->assign_block_vars('stars', array(
 				'ALT'		=> $rating . '/' . titania::$config->max_rating,
 				'ID'		=> $i,
-				'RATE_URL'	=> titania_url::append_url($rate_url, array('value' => $i)),
+				'RATE_URL'	=> $this->path_helper->append_url_params($rate_url, array('value' => $i)),
 			));
 		}
 
