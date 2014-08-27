@@ -242,25 +242,34 @@ class titania_styles_demo
 			'U_NEXT'	=> $next['url'],
 			'NEXT_ID'	=> $next['id'],
 		));
-		
+
 		$category = '';
-		
+		$file = new titania_attachment(TITANIA_CONTRIB);
+
 		foreach ($this->styles as $id => $data)
 		{			
 			$style = new titania_contribution();
 			$style->contrib_id = $id;
 			$style->contrib_name_clean = $data['contrib_name_clean'];
 			$style->contrib_type = TITANIA_TYPE_STYLE;
-			
+		{
 			$preview_img = false;
-			
+
 			if (isset($data['thumb_id']))
 			{
-				$preview_img = titania_url::build_url('download', array('id' => $data['thumb_id']));
-				$parameters = ($data['thumbnail']) ? array('mode' => 'view', 'thumb' => 1) : false;
-				$preview_img = titania_url::append_url($preview_img, $parameters);			
+				$parameters = array();
+
+				if ($data['thumbnail'])
+				{
+					$parameters = array(
+						'mode'	=> 'view',
+						'thumb'	=> 1,
+					);
+				}
+
+				$preview_img = $file->get_url($data['thumb_id'], $parameters);		
 			}
-			
+
 			$authors = $this->get_author_profile(array(
 				'username_clean'	=> $data['username_clean'],
 				'username'			=> $data['username'],
@@ -284,10 +293,10 @@ class titania_styles_demo
 				'PREVIEW'		=> $preview_img,
 				'S_OUTDATED'	=> phpbb_version_compare($phpbb_version, $current_phpbb_version, '<'),
 				'U_DEMO'		=> $style->get_url('demo'),
-				'U_DOWNLOAD'	=> titania_url::build_url('download', array('id' => $data['attachment_id'])),
+				'U_DOWNLOAD'	=> $file->get_url($data['attachment_id']),
 				'U_VIEW'		=> $style->get_url(),
 			);
-			
+
 			if ($this->default_style == $id)
 			{
 				phpbb::$template->assign_vars($vars);

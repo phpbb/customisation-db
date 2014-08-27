@@ -561,13 +561,14 @@ class titania_contribution extends titania_message_object
 		{
 			if (!empty($this->download['attachment_id']))
 			{
+				$file = new titania_attachment(TITANIA_CONTRIB);
 				$vars = array_merge($vars, array(
 					//Download Data
 					'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
 					'DOWNLOAD_SIZE'					=> (isset($this->download['filesize'])) ? get_formatted_filesize($this->download['filesize']) : '',
 					'DOWNLOAD_CHECKSUM'				=> (isset($this->download['hash'])) ? $this->download['hash'] : '',
 					'DOWNLOAD_INSTALL_LEVEL'		=> (isset($this->download['install_level']) && $this->download['install_level'] > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->download['install_level']] : '',			
-					'U_DOWNLOAD'					=> (isset($this->download['attachment_id'])) ? titania_url::build_url('download', array('id' => $this->download['attachment_id'])): '',
+					'U_DOWNLOAD'					=> $file->get_url($this->download['attachment_id']),
 				));
 			}
 

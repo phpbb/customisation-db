@@ -91,6 +91,9 @@ class titania_attachment extends titania_database_object
 	/* @var \phpbb\request\request */
 	protected $request;
 
+	/* @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	/**
 	 * Constructor for attachment/download class
 	 *
@@ -131,6 +134,7 @@ class titania_attachment extends titania_database_object
 
 		$this->form_name = 'titania_attachment_' . $this->object_type . '_' . $this->object_id;
 		$this->request = phpbb::$request;
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		phpbb::$user->add_lang('posting');
 	}
@@ -284,7 +288,7 @@ class titania_attachment extends titania_database_object
 				'ATTACH_ID'			=> $row['attachment_id'],
 				'INDEX'				=> $index,
 
-				'U_VIEW_ATTACHMENT'	=> titania_url::build_url('download', array('id' => $row['attachment_id'])),
+				'U_VIEW_ATTACHMENT'	=> $this->get_url($row['attachment_id']),
 
 				'S_DELETE'			=> (!isset($row['no_delete']) || !$row['no_delete']) ? true : false,
 				'S_PREVIEW'			=> (isset($row['is_preview']) && $row['is_preview']) ? true : false,
@@ -810,7 +814,7 @@ class titania_attachment extends titania_database_object
 				$display_cat = ATTACHMENT_CATEGORY_NONE;
 			}
 
-			$download_link = titania_url::build_url('download', array('id' => $attachment['attachment_id']));
+			$download_link = $this->get_url($attachment['attachment_id']);
 
 			switch ($display_cat)
 			{
@@ -818,7 +822,7 @@ class titania_attachment extends titania_database_object
 				case ATTACHMENT_CATEGORY_IMAGE:
 					$l_downloaded_viewed = 'VIEWED_COUNT';
 
-					$download_link = ($attachment['thumbnail']) ? titania_url::append_url($download_link, array('mode' => 'view')) : $download_link;
+					$download_link = ($attachment['thumbnail']) ? $this->get_url($attachment['attachment_id'], array('mode' => 'view')) : $download_link;
 
 					$block_array += array(
 						'S_IMAGE'			=> true,
@@ -831,11 +835,11 @@ class titania_attachment extends titania_database_object
 				case ATTACHMENT_CATEGORY_THUMB:
 					$l_downloaded_viewed = 'VIEWED_COUNT';
 
-					$download_link = titania_url::append_url($download_link, array('mode' => 'view'));
+					$download_link = $this->get_url($attachment['attachment_id'], array('mode' => 'view'));
 
 					$block_array += array(
 						'S_THUMBNAIL'		=> true,
-						'THUMB_IMAGE'		=> titania_url::append_url($download_link, array('mode' => 'view', 'thumb' => 1)),
+						'THUMB_IMAGE'		=> $this->get_url($attachment['attachment_id'], array('mode' => 'view', 'thumb' => 1)),
 						'IS_PREVIEW'		=> $attachment['is_preview'],
 					);
 				break;
@@ -876,7 +880,7 @@ class titania_attachment extends titania_database_object
 						'S_FLASH_FILE'	=> true,
 						'WIDTH'			=> $width,
 						'HEIGHT'		=> $height,
-						'U_VIEW_LINK'	=> titania_url::append_url($download_link, array('view' => 1)),
+						'U_VIEW_LINK'	=> $this->get_url($attachment['attachment_id'], array('view' => 1)),
 					);
 				break;
 
@@ -1231,5 +1235,24 @@ class titania_attachment extends titania_database_object
 		}
 
 		return $original;
+	}
+
+	/**
+	* Get attachment download URL.
+	*
+	* @param int|bool $attachment_id	Optional attachment id; if false is specified,
+	*	the value from the attachment_id property is used.
+	* @param array $parameters			Optional parameters to add to the URL.
+	*
+	* @return string Returns generated URL.
+	*/
+	public function get_url($attachment_id = false, $parameters = array())
+	{
+		$attachment_id = ($attachment_id === false) ? $this->attachment_id : (int) $attachment_id;
+		$parameters += array(
+			'id'	=> $attachment_id,
+		);
+
+		return $this->controller_helper->route('phpbb.titania.download', $parameters);
 	}
 }
