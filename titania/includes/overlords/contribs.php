@@ -102,6 +102,7 @@ class contribs_overlord
 
 		$contrib = new titania_contribution();
 		$contrib->__set_array(self::$contribs[$contrib_id]);
+		$contrib->set_type(self::$contribs[$contrib_id]['contrib_type']);
 
 		return $contrib;
 	}
@@ -296,6 +297,7 @@ class contribs_overlord
 			$row = self::$contribs[$contrib_id];
 
 			$contrib->__set_array($row);
+			$contrib->set_type($row['contrib_type']);
 
 			$contrib->author->user_id = $contrib->contrib_user_id;
 			$contrib->author->__set_array($row);

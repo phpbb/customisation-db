@@ -383,6 +383,7 @@ class author
 
 			if (empty($error))
 			{
+				$contrib->set_type($contrib->contrib_type);
 				$contrib->contrib_categories = implode(',', $settings['categories']);
 				$contrib->contrib_creation_time = time();
 				$contrib->submit();

@@ -418,6 +418,7 @@ class titania_sync
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
 					$contrib->__set_array($row);
+					$contrib->set_type($row['contrib_type']);
 					$queue->__set_array($row);
 
 					$queue->update_first_queue_post(false, $contrib);
