@@ -4,6 +4,10 @@ phpbb.titania.contribution:
     requirements:
         contrib_type: mod|extension|style|converter|official_tool|bbcode|bridge|translation
 
+phpbb.titania.manage:
+    resource: "routes/manage.yml"
+    prefix: /titania/manage
+
 phpbb.titania.general:
     resource: "routes/general.yml"
     prefix: /titania

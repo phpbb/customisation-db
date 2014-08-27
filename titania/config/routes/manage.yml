@@ -1,0 +1,9 @@
+phpbb.titania.queue:
+    pattern: /queue
+    defaults: { _controller: phpbb.titania.controller.manage.queue:list_queues }
+
+phpbb.titania.queue.type:
+    pattern: /queue/{queue_type}
+    defaults: { _controller: phpbb.titania.controller.manage.queue:display_queue }
+    requirements:
+        queue_type: mod|extension|style|converter|official_tool|bbcode|bridge|translation
