@@ -87,6 +87,20 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
 
+    phpbb.titania.controller.manage:
+        class: phpbb\titania\controller\manage\manage
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
     phpbb.titania.controller.manage.queue:
         class: phpbb\titania\controller\manage\queue\queue
         arguments:
