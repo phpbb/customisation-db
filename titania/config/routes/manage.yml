@@ -22,3 +22,4 @@ phpbb.titania.queue.item.action:
     pattern: /queue/item/{id}/{action}
     defaults: { _controller: phpbb.titania.controller.manage.queue.item:item_action }
     requirements:
+        id: \d+
