@@ -45,13 +45,6 @@ class titania_type_extension extends titania_type_base
 	 */
 	public $url = 'extension';
 
-	/**
-	 * The name of the field used to hold the number of this item in the authors table
-	 *
-	 * @var string author count
-	 */
-	public $author_count = 'author_extensions';
-
 	// Validation messages (for the PM)
 	public $validation_subject = 'EXTENSION_VALIDATION';
 	public $validation_message_approve = 'EXTENSION_VALIDATION_MESSAGE_APPROVE';
