@@ -7,3 +7,14 @@ phpbb.titania.queue.type:
     defaults: { _controller: phpbb.titania.controller.manage.queue:display_queue }
     requirements:
         queue_type: mod|extension|style|converter|official_tool|bbcode|bridge|translation
+
+phpbb.titania.queue.item:
+    pattern: /queue/item/{id}
+    defaults: { _controller: phpbb.titania.controller.manage.queue.item:display_item }
+    requirements:
+        id: \d+
+
+phpbb.titania.queue.item.action:
+    pattern: /queue/item/{id}/{action}
+    defaults: { _controller: phpbb.titania.controller.manage.queue.item:item_action }
+    requirements:
