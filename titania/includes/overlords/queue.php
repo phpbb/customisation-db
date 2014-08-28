@@ -256,6 +256,7 @@ class queue_overlord
 		}
 
 		self::$queue[$queue_id] = $row;
+		$queue = self::get_queue_object($queue_id);
 
 		// Load the contribution
 		$contrib = new titania_contribution();
@@ -295,14 +296,14 @@ class queue_overlord
 			if ($row['queue_progress'] == phpbb::$user->data['user_id'])
 			{
 				$quick_actions['MARK_NO_PROGRESS'] = array(
-					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'no_progress')),
+					'url'		=> $queue->get_url('no_progress'),
 					'class'		=> 'queue_progress',
 				);
 			}
 			else if (!$row['queue_progress'])
 			{
 				$quick_actions['MARK_IN_PROGRESS'] = array(
-					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'in_progress')),
+					'url'		=> $queue->get_url('in_progress'),
 					'class'		=> 'queue_progress',
 				);
 			}
@@ -311,7 +312,7 @@ class queue_overlord
 			unset($tags[$row['queue_status']]);
 
 			$quick_actions['CHANGE_STATUS'] = array(
-				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'move')),
+				'url'		=> $queue->get_url('move'),
 				'class'		=> 'change_status',
 				'tags'		=> $tags,
 			);
@@ -331,26 +332,26 @@ class queue_overlord
 
 			// misc subactions
 			$subactions['REBUILD_FIRST_POST'] = array(
-				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'rebuild')),
+				'url'		=> $queue->get_url('rebuild'),
 			);
 			if (titania_types::$types[$contrib->contrib_type]->acl_get('moderate') && !$row['allow_author_repack'])
 			{
 				$subactions['ALLOW_AUTHOR_REPACK'] = array(
-					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'allow_author_repack')),
+					'url'		=> $queue->get_url('allow_author_repack'),
 				);
 			}
 
 			if (!$row['queue_tested'])
 			{
 				$subactions['MARK_TESTED'] = array(
-					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'tested')),
-				);			
+					'url'		=> $queue->get_url('tested'),
+				);
 			}
 			else
 			{
 				$subactions['MARK_UNTESTED'] = array(
-					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'not_tested')),
-				);				
+					'url'		=> $queue->get_url('not_tested'),
+				);
 			}
 
 			$quick_actions['CAT_MISC'] = array(
@@ -367,12 +368,12 @@ class queue_overlord
 				if ($row['revision_status'] == TITANIA_REVISION_NEW || ($row['revision_status'] == TITANIA_REVISION_ON_HOLD && !prerelease_submission_allowed($phpbb_branch, $contrib->contrib_type)))
 				{
 					$quick_actions['APPROVE'] = array(
-						'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'approve', 'start' => '*destroy*')),
+						'url'		=> $queue->get_url('approve'),
 						'class'		=> 'approve',
 					);
 				}
 				$quick_actions['DENY'] = array(
-					'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'deny', 'start' => '*destroy*')),
+					'url'		=> $queue->get_url('deny'),
 					'class'		=> 'deny',
 				);
 			}
@@ -439,7 +440,7 @@ class queue_overlord
 			'S_DISPLAY_CONTRIBUTION'	=> true,
 			'S_IN_QUEUE'				=> true,
 
-			'U_POST_REPLY'				=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'reply', 't' => $topic->topic_id)),
+			'U_POST_REPLY'				=> $queue->get_url('reply'),
 			'U_NEW_REVISION'			=> false, // Prevent nubs from trying to submit a new revision when they want to actually repack
 		));
 

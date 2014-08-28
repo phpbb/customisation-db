@@ -47,6 +47,9 @@ class titania_queue extends titania_message_object
 	 */
 	protected $object_type = TITANIA_QUEUE;
 
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	public function __construct()
 	{
 		// Configure object properties
@@ -87,6 +90,8 @@ class titania_queue extends titania_message_object
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 	}
 
 	public function submit($update_first_post = true)
@@ -648,5 +653,29 @@ class titania_queue extends titania_message_object
 		$this->queue_discussion_topic_id = $post->topic->topic_id;
 
 		return $post->topic;
+	}
+
+	/**
+	* Get queue item URL.
+	*
+	* @param bool|string $action	Optional action to link to.
+	* @param array $params			Optional parameters to add to URL.
+	*
+	* @return string Returns generated URL.
+	*/
+	public function get_url($action = false, $params = array())
+	{
+		$controller = 'phpbb.titania.queue.item';
+		$params += array(
+			'id'	=> $this->queue_id,
+		);
+
+		if ($action)
+		{
+			$controller .= '.action';
+			$params['action'] = $action;
+		}
+
+		return $this->controller_helper->route($controller, $params);
 	}
 }
