@@ -101,6 +101,20 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
 
+    phpbb.titania.controller.contrib.faq:
+        class: phpbb\titania\controller\contribution\faq
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.cache
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
     phpbb.titania.controller.manage:
         class: phpbb\titania\controller\manage\manage
         arguments:

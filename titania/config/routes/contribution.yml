@@ -23,3 +23,24 @@ phpbb.titania.contrib.support.topic.action:
     defaults: { _controller: phpbb.titania.controller.contrib.support:topic_action }
     requirements:
         topic_id: \d+
+
+phpbb.titania.contrib.faq:
+    pattern: /faq
+    defaults: { _controller: phpbb.titania.controller.contrib.faq:display_list}
+
+phpbb.titania.contrib.faq.create:
+    pattern: /faq/new
+    defaults: { _controller: phpbb.titania.controller.contrib.faq:item_action, action: 'create', id: 0 }
+
+phpbb.titania.contrib.faq.item:
+    pattern: /faq/{id}
+    defaults: { _controller: phpbb.titania.controller.contrib.faq:display_item }
+    requirements:
+        id: \d+
+
+phpbb.titania.contrib.faq.item.action:
+    pattern: /faq/{id}/{action}
+    defaults: { _controller: phpbb.titania.controller.contrib.faq:item_action }
+    requirements:
+        id: \d+
+        page: edit|delete|move_up|move_down
