@@ -432,14 +432,14 @@ function titania_get_config($titania_root_path, $php_ext)
 		include($titania_root_path . 'includes/constants.' . $php_ext);
 	}
 
-	if (!class_exists('\titania_config'))
-	{
-		include($titania_root_path . 'includes/core/config.' . $php_ext);
-	}
-
 	if (!class_exists('\titania_object'))
 	{
 		include($titania_root_path . 'includes/core/object.' . $php_ext);
+	}
+
+	if (!class_exists('\titania_config'))
+	{
+		include($titania_root_path . 'includes/core/config.' . $php_ext);
 	}
 
 	include($config_file);
