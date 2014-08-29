@@ -76,6 +76,10 @@ if (!defined('PHPBB_INCLUDED'))
 	require(PHPBB_ROOT_PATH . 'common.' . PHP_EXT);
 }
 
+if (class_exists('\QafooLabs\Profiler')) {
+	\QafooLabs\Profiler::setTransactionName("Titania: default");
+}
+
 // Initialise phpBB
 phpbb::initialise();
 
