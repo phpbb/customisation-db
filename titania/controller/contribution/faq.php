@@ -22,9 +22,6 @@ class faq extends base
 	protected $id;
 
 	/** @var bool */
-	protected $is_author;
-
-	/** @var bool */
 	protected $is_moderator;
 
 	/**
@@ -343,7 +340,6 @@ class faq extends base
 		$this->load_contrib($contrib);
 		$this->faq = new \titania_faq;
 		$this->faq->contrib = $this->contrib;
-		$this->is_author = $this->contrib->is_author || $this->contrib->is_active_coauthor;
 		$this->is_moderator = $this->auth->acl_get('u_titania_mod_faq_mod');
 	}
 
