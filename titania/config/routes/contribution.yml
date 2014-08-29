@@ -3,3 +3,23 @@ phpbb.titania.contrib:
     defaults: { _controller: phpbb.titania.controller.contrib:base, page: details }
     requirements:
         page: |details|report|queue_discussion|rate|demo
+
+phpbb.titania.contrib.support:
+    pattern: /support
+    defaults: { _controller: phpbb.titania.controller.contrib.support:display_support }
+
+phpbb.titania.contrib.support.post_topic:
+    pattern: /support/new
+    defaults: { _controller: phpbb.titania.controller.contrib.support:topic_action, topic_id: 0, action: post }
+
+phpbb.titania.contrib.support.topic:
+    pattern: /support/topic/{topic_id}
+    defaults: { _controller: phpbb.titania.controller.contrib.support:display_topic }
+    requirements:
+        topic_id: \d+
+
+phpbb.titania.contrib.support.topic.action:
+    pattern: /support/topic/{topic_id}/{action}
+    defaults: { _controller: phpbb.titania.controller.contrib.support:topic_action }
+    requirements:
+        topic_id: \d+

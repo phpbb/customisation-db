@@ -30,7 +30,7 @@ class titania_posting
 	public function act($contrib, $action, $topic_id, $template_body, $parent_id = false, $parent_url = false, $post_type = false, $s_post_action = false)
 	{
 		$this->contrib = $contrib;
-		$post_id = phpbb::$request->variable('post_id', 0);
+		$post_id = phpbb::$request->variable('p', 0);
 
 		switch ($action)
 		{
