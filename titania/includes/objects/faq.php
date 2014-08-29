@@ -47,6 +47,9 @@ class titania_faq extends titania_message_object
 	 */
 	protected $object_type = TITANIA_FAQ;
 
+	/** @param \titania_contribution */
+	public $contrib;
+
 	/**
 	 * Constructor class for titania faq
 	 *
@@ -111,7 +114,7 @@ class titania_faq extends titania_message_object
 	public function post_data($message)
 	{
 		$this->__set_array(array(
-			'contrib_id'		=> titania::$contrib->contrib_id,
+			'contrib_id'		=> $this->contrib->contrib_id,
 		));
 
 		parent::post_data($message);
