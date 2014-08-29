@@ -326,4 +326,30 @@ class titania_faq extends titania_message_object
 		phpbb::$db->sql_query($sql);
 	}
 
+	/**
+	* Set the left/right id values for a newly created item.
+	*
+	* @return null
+	*/
+	public function set_left_right_ids()
+	{
+		$sql = "SELECT right_id
+			FROM {$this->sql_table}
+			WHERE contrib_id = " . (int) $this->contrib_id . '
+			ORDER BY right_id DESC';
+		$result = $this->db->sql_query_limit($sql, 1);
+		$right_id = (int) $this->db->sql_fetchfield('right_id');
+		phpbb::$db->sql_freeresult($result);
+
+		// Update the faqs table
+		$sql_ary = array(
+			'left_id'	=> $right_id + 1,
+			'right_id'	=> $right_id + 2,
+		);
+
+		$sql = "UPDATE {$this->sql_table}
+			SET " . phpbb::$db->sql_build_array('UPDATE', $sql_ary) . '
+			WHERE faq_id = ' . (int) $this->faq_id;
+		phpbb::$db->sql_query($sql);
+	}
 }
