@@ -167,4 +167,20 @@ class display
 			));
 		}
 	}
+
+	/**
+	* Generate <img> tag string.
+	*
+	* @param string $image_name		Image file name.
+	* @param string $title			Title lang key.	
+	*
+	* @return string
+	*/
+	public function get_image($image_name, $title)
+	{
+		$source = $this->path_helper->get_web_root_path() . 'ext/phpbb/titania/images/' . $image_name;
+		$title = $this->user->lang($title);
+
+		return '<img src="' . $source . '" alt="' . $title . '" title="' . $title . '" />';
+	}
 }
