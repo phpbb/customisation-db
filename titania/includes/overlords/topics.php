@@ -443,7 +443,11 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			$topic->__set_array($row);
 			$contrib->__set_array($row);
-			$contrib->set_type($row['contrib_type']);
+
+			if (!empty($row['contrib_type']))
+			{
+				$contrib->set_type($row['contrib_type']);
+			}
 			$topic->topic_posted = $row['topic_posted'];
 
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
