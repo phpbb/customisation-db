@@ -337,8 +337,8 @@ class titania_faq extends titania_message_object
 			FROM {$this->sql_table}
 			WHERE contrib_id = " . (int) $this->contrib_id . '
 			ORDER BY right_id DESC';
-		$result = $this->db->sql_query_limit($sql, 1);
-		$right_id = (int) $this->db->sql_fetchfield('right_id');
+		$result = phpbb::$db->sql_query_limit($sql, 1);
+		$right_id = (int) phpbb::$db->sql_fetchfield('right_id');
 		phpbb::$db->sql_freeresult($result);
 
 		// Update the faqs table
