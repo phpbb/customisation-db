@@ -270,23 +270,23 @@ class titania_faq extends titania_message_object
 		if ($action == 'move_up')
 		{
 			$left_id = $target['left_id'];
-			$right_id = $faq_row['right_id'];
+			$right_id = $this->right_id;
 
-			$diff_up = $faq_row['left_id'] - $target['left_id'];
-			$diff_down = $faq_row['right_id'] + 1 - $faq_row['left_id'];
+			$diff_up = $this->left_id - $target['left_id'];
+			$diff_down = $this->right_id + 1 - $this->left_id;
 
-			$move_up_left = $faq_row['left_id'];
-			$move_up_right = $faq_row['right_id'];
+			$move_up_left = $this->left_id;
+			$move_up_right = $this->right_id;
 		}
 		else
 		{
-			$left_id = $faq_row['left_id'];
+			$left_id = $this->left_id;
 			$right_id = $target['right_id'];
 
-			$diff_up = $faq_row['right_id'] + 1 - $faq_row['left_id'];
-			$diff_down = $target['right_id'] - $faq_row['right_id'];
+			$diff_up = $this->right_id + 1 - $this->left_id;
+			$diff_down = $target['right_id'] - $this->right_id;
 
-			$move_up_left = $faq_row['right_id'] + 1;
+			$move_up_left = $this->right_id + 1;
 			$move_up_right = $target['right_id'];
 		}
 
