@@ -672,15 +672,8 @@ class titania_queue extends titania_message_object
 
 		if ($action)
 		{
-		if ($action == 'approve')
-		{
-			$controller .= '.approve';
-		}
-		else
-		{
 			$controller .= '.action';
 			$params['action'] = $action;
-			}
 		}
 
 		return $this->controller_helper->route($controller, $params);
