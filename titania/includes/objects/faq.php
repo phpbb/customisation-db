@@ -218,9 +218,12 @@ class titania_faq extends titania_message_object
 	/**
 	* Move a FAQ item
 	*
-	* @param string $direction (move_up|move_down)
+	* @param string $action (move_up|move_down)
+	* @param int $steps		Number of steps to move by. Defaults to 1.
+	*
+	* @return bool Returns true on success.
 	*/
-	public function move($faq_row, $action = 'move_up', $steps = 1)
+	public function move($action = 'move_up', $steps = 1)
 	{
 		/**
 		* Fetch all the siblings between the faq's current spot
@@ -228,11 +231,20 @@ class titania_faq extends titania_message_object
 		* siblings between the current spot and the target then the
 		* faq will move as far as possible
 		*/
+
+		if ($action == 'move_up')
+		{
+			$sql_extra = "right_id < {$this->right_id} ORDER BY right_id DESC";
+		}
+		else
+		{
+			$sql_extra = "left_id > {$this->left_id} ORDER BY left_id ASC";
+		}
+
 		$sql = 'SELECT faq_id, left_id, right_id
 			FROM ' . $this->sql_table . '
 			WHERE contrib_id = ' . $this->contrib_id . '
-				AND ' . (($action == 'move_up') ? "right_id < {$faq_row['right_id']} ORDER BY right_id DESC" : "left_id > {$faq_row['left_id']} ORDER BY left_id ASC");
-
+				AND ' . $sql_extra;
 		$result = phpbb::$db->sql_query_limit($sql, $steps);
 
 		$target = array();
