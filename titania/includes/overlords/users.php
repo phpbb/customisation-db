@@ -201,15 +201,8 @@ class users_overlord
 				break;
 
 				case '_avatar' :
-					// IT'S A HACK!
-					global $phpbb_root_path;
-					$phpbb_root_path = titania::$absolute_board;
-
 					// Get avatar (need hacks for this)
 					$avatar = (phpbb::$user->optionget('viewavatars')) ? get_user_avatar(self::$users[$user_id]['user_avatar'], self::$users[$user_id]['user_avatar_type'], self::$users[$user_id]['user_avatar_width'], self::$users[$user_id]['user_avatar_height']) : '';
-
-					// Undo
-					$phpbb_root_path = PHPBB_ROOT_PATH;
 
 					return $avatar;
 				break;
