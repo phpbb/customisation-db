@@ -74,10 +74,10 @@ class titania_queue extends titania_message_object
 			'queue_notes_uid'		=> array('default' => '',	'message_field' => 'message_uid'),
 			'queue_notes_options'	=> array('default' => 7,	'message_field' => 'message_options'),
 
-			'queue_validation_notes'			=> array('default' => '',	'message_field' => 'message_validation'),
-			'queue_validation_notes_bitfield'	=> array('default' => '',	'message_field' => 'message_validation_bitfield'),
-			'queue_validation_notes_uid'		=> array('default' => '',	'message_field' => 'message_validation_uid'),
-			'queue_validation_notes_options'	=> array('default' => 7,	'message_field' => 'message_validation_options'),
+			'validation_notes'			=> array('default' => '',	'message_field' => 'message_validation'),
+			'validation_notes_bitfield'	=> array('default' => '',	'message_field' => 'message_validation_bitfield'),
+			'validation_notes_uid'		=> array('default' => '',	'message_field' => 'message_validation_uid'),
+			'validation_notes_options'	=> array('default' => 7,	'message_field' => 'message_validation_options'),
 
 			'mpv_results'			=> array('default' => ''),
 			'mpv_results_bitfield'	=> array('default' => ''),
@@ -395,8 +395,8 @@ class titania_queue extends titania_message_object
 		$revision->contrib = $contrib;
 		$contrib_release_topic_id = $contrib->contrib_release_topic_id;
 
-		$notes = $this->queue_validation_notes;
-		titania_decode_message($notes, $this->queue_validation_notes_uid);
+		$notes = $this->validation_notes;
+		titania_decode_message($notes, $this->validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_APPROVED'], $revision->revision_version, $notes);
 
 		// Replace empty quotes if there are no notes
@@ -477,8 +477,8 @@ class titania_queue extends titania_message_object
 		titania::add_lang('manage');
 		$revision = $this->get_revision();
 
-		$notes = $this->queue_validation_notes;
-		titania_decode_message($notes, $this->queue_validation_notes_uid);
+		$notes = $this->validation_notes;
+		titania_decode_message($notes, $this->validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_DENIED'], $revision->revision_version, $notes);
 
 		// Replace empty quotes if there are no notes
@@ -536,8 +536,8 @@ class titania_queue extends titania_message_object
 		$subject = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->validation_subject], $contrib->contrib_name, $revision->revision_version);
 
 		// Message
-		$notes = $this->queue_validation_notes;
-		titania_decode_message($notes, $this->queue_validation_notes_uid);
+		$notes = $this->validation_notes;
+		titania_decode_message($notes, $this->validation_notes_uid);
 		if ($approve)
 		{
 			$message = titania_types::$types[$contrib->contrib_type]->validation_message_approve;
@@ -672,8 +672,15 @@ class titania_queue extends titania_message_object
 
 		if ($action)
 		{
+		if ($action == 'approve')
+		{
+			$controller .= '.approve';
+		}
+		else
+		{
 			$controller .= '.action';
 			$params['action'] = $action;
+			}
 		}
 
 		return $this->controller_helper->route($controller, $params);
