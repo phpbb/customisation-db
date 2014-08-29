@@ -304,8 +304,6 @@ class faq extends base
 		if (confirm_box(true))
 		{
 			$this->faq->delete();
-
-			redirect($this->contrib->get_url('faq'));
 		}
 		else
 		{
