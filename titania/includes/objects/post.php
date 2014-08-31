@@ -68,6 +68,9 @@ class titania_post extends titania_message_object
 	*/
 	public $parent_contrib_type = 0;
 
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	/**
 	 * Constructor class for titania posts
 	 *
@@ -108,6 +111,8 @@ class titania_post extends titania_message_object
 			'post_text_uid'			=> array('default' => '',	'message_field' => 'message_uid'),
 			'post_text_options'		=> array('default' => 7,	'message_field' => 'message_options'),
 		));
+
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		switch ($type)
 		{
@@ -221,21 +226,32 @@ class titania_post extends titania_message_object
 	 */
 	public function get_url($action = false, $use_anchor = true)
 	{
-		$base = $append = false;
-		titania_url::split_base_params($base, $append, $this->post_url);
+		switch ($this->post_type)
+		{
+			case TITANIA_SUPPORT:
+			case TITANIA_QUEUE_DISCUSSION:
+				$controller = 'phpbb.titania.contrib.support.topic';
+			break;
 
-		$append['p'] = $this->post_id;
+			case TITANIA_QUEUE:
+				$controller = 'phpbb.titania.queue.item';
+			break;
+		}
+
+		$params = $this->topic->get_url_params();
+		$params['p'] = $this->post_id;
 
 		if ($action)
 		{
-			$append['action'] = $action;
+			$controller .= '.action';
+			$params['action'] = $action;
 		}
 		else if ($use_anchor)
 		{
-			$append['#p'] = $this->post_id;
+			$params['#'] = 'p' . $this->post_id;
 		}
 
-		return titania_url::build_url($base, $append);
+		return $this->controller_helper->route($controller, $params);
 	}
 
 	/**
