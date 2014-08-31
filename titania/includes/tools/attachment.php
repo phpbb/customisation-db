@@ -94,6 +94,9 @@ class titania_attachment extends titania_database_object
 	/* @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var \phpbb\mimetype\guesser */
+	protected $mimetype_guesser;
+
 	/**
 	 * Constructor for attachment/download class
 	 *
@@ -135,6 +138,7 @@ class titania_attachment extends titania_database_object
 		$this->form_name = 'titania_attachment_' . $this->object_type . '_' . $this->object_id;
 		$this->request = phpbb::$request;
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->mimetype_guesser = phpbb::$container->get('mimetype.guesser');
 
 		phpbb::$user->add_lang('posting');
 	}
@@ -408,7 +412,7 @@ class titania_attachment extends titania_database_object
 			if ($upload['name'] != 'none' && trim($upload['name']))
 			{
 				// Setup uploader tool.
-				$this->uploader = new titania_uploader($this->form_name, $this->object_type);
+				$this->uploader = new titania_uploader($this->form_name, $this->object_type, $this->mimetype_guesser);
 
 				// Try uploading the file.
 				$this->uploader->upload_file();

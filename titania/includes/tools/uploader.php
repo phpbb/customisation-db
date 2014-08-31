@@ -41,18 +41,28 @@ class titania_uploader extends fileupload
 	/* @var \phpbb\request\request */
 	protected $request;
 
+	/** @var \phpbb\mimetype\guesser */
+	protected $mimetype_guesser;
+
+	/** @var \phpbb\plupload\plupload */
+	protected $plupload;
+
 	/**
 	 * Class constructor
 	 *
 	 * @param string $form_name Form name from where we can find the file.
 	 * @param string $ext_group The extension type (use the same as what is in titania::$config->upload_allowed_extensions)
+	 * @param \phpbb\mimetype\guesser $mimetype_guesser Mimetype guesser
+	 * @param \phpbb\plupload\plupload $plupload The plupload object
 	 */
-	public function __construct($form_name, $ext_group)
+	public function __construct($form_name, $ext_group, $mimetype_guesser = null, $plupload = null)
 	{
 		// Set class variables.
 		$this->form_name = $form_name;
 		$this->ext_group = $ext_group;
 		$this->request = phpbb::$request;
+		$this->mimetype_guesser = $mimetype_guesser;
+		$this->plupload = $plupload;
 	}
 
 	/**
@@ -83,7 +93,7 @@ class titania_uploader extends fileupload
 
 		$this->set_allowed_extensions(titania::$config->upload_allowed_extensions[$this->ext_group]);
 
-		$file = $this->form_upload($this->form_name);
+		$file = $this->form_upload($this->form_name, $this->plupload, $this->mimetype_guesser);
 
 		if ($file->init_error)
 		{
@@ -168,16 +178,28 @@ class titania_uploader extends fileupload
 	* Same method as one in functions_upload.php except using some different methods to allow us to place the file outside the phpbb_root_path
 	*
 	* @param string $form_name Form name assigned to the file input field (if it is an array, the key has to be specified)
+	* @param \phpbb\mimetype\guesser $mimetype_guesser Mimetype guesser
+	* @param \phpbb\plupload\plupload $plupload The plupload object
+	*
 	* @return object $file Object "filespec" is returned, all further operations can be done with this object
 	* @access public
 	*/
-	public function form_upload($form_name)
+	public function form_upload($form_name, phpbb\mimetype\guesser $mimetype_guesser = null, phpbb\plupload\plupload $plupload = null)
 	{
 		$upload = $this->request->file($form_name);
 		unset($upload['local_mode']);
 		$this->request->overwrite($form_name, $upload, \phpbb\request\request_interface::FILES);
 
-		$file = new titania_filespec($upload, $this);
+		if ($plupload)
+		{
+			$result = $plupload->handle_upload($form_name);
+			if (is_array($result))
+			{
+				$upload = array_merge($upload, $result);
+			}
+		}
+
+		$file = new titania_filespec($upload, $this, $mimetype_guesser, $plupload);
 
 		if ($file->init_error)
 		{

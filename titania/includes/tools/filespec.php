@@ -111,6 +111,9 @@ class titania_filespec extends filespec
 		// Try to get real filesize from destination folder
 		$this->filesize = (@filesize($this->destination_file)) ? @filesize($this->destination_file) : $this->filesize;
 
+		// Get mimetype of supplied file
+		$this->mimetype = $this->get_mimetype($this->destination_file);
+
 		if ($this->is_image() && !$skip_image_check)
 		{
 			$this->width = $this->height = 0;
