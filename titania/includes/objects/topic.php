@@ -53,6 +53,9 @@ class titania_topic extends titania_database_object
 	public $unread = true;
 	public $additional_unread_fields = array();
 
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	/**
 	 * Constructor class for titania topics
 	 *
@@ -99,6 +102,7 @@ class titania_topic extends titania_database_object
 		));
 
 		$this->topic_id = $topic_id;
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -211,24 +215,62 @@ class titania_topic extends titania_database_object
 	/**
 	 * Get the URL to this topic
 	 *
-	 * @param string|bool $action The topic action if any
+	 * @param string|bool $action	The topic action if any
+	 * @param array $params			Additional parameters to add to the URL.	
 	 */
-	public function get_url($action = false)
+	public function get_url($action = false, $params = array())
 	{
-		$base = $append = false;
-		titania_url::split_base_params($base, $append, $this->topic_url);
+		$params = array_merge($this->get_url_params(), $params);
 
-		$append = array_merge($append, array(
-			$this->topic_subject_clean,
-			't' => $this->topic_id,
-		));
+		switch ($this->topic_type)
+		{
+			case TITANIA_SUPPORT:
+			case TITANIA_QUEUE_DISCUSSION:
+				$controller = 'phpbb.titania.contrib.support.topic';
+			break;
+
+			case TITANIA_QUEUE:
+				$controller = 'phpbb.titania.queue.item';
+			break;
+		}
 
 		if ($action)
 		{
-			$append['action'] = $action;
+			$controller .= '.action';
+			$params['action'] = $action;
 		}
 
-		return titania_url::build_url($base, $append);
+		return $this->controller_helper->route($controller, $params);
+	}
+
+	/**
+	* Get the parameters necessary to generate a URL.
+	*
+	* @return array
+	*/
+	public function get_url_params()
+	{
+		$_params = explode('/', $this->topic_url);
+
+		switch ($this->topic_type)
+		{
+			case TITANIA_SUPPORT:
+			case TITANIA_QUEUE_DISCUSSION:
+				$params = array(
+					'contrib_type'	=> $_params[0],
+					'contrib'		=> $_params[1],
+					'topic_id'		=> $this->topic_id,
+				);
+			break;
+
+			case TITANIA_QUEUE:
+				$params = array(
+					'id'		=> $this->parent_id,
+				);
+			break;
+		}
+
+		return $params;
 	}
 
 	/**
