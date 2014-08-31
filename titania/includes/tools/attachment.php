@@ -1255,4 +1255,24 @@ class titania_attachment extends titania_database_object
 
 		return $this->controller_helper->route('phpbb.titania.download', $parameters);
 	}
+
+	/**
+	* Get full path to an attachment's file.
+	*
+	* @param bool|int $attachment_id		Attachment id. If none given, the value from the
+	*	attachment_id property is used.
+	* @param bool $thumb					Whether to provide the path to the thumbnail.
+	*
+	* @return string
+	*/
+	public function get_filepath($attachment_id = false, $thumb = false)
+	{
+		$attachment_id = ($attachment_id === false) ? $this->attachment_id : (int) $attachment_id;
+		$prefix = ($thumb) ? 'thumb_' : '';
+
+		return titania::$config->upload_path . '/' .
+			utf8_basename($this->attachments[$attachment_id]['attachment_directory']) . '/' .
+			$prefix .
+			utf8_basename($this->attachments[$attachment_id]['physical_filename']);
+	}
 }
