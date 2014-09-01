@@ -23,3 +23,24 @@ phpbb.titania.queue.item.action:
     defaults: { _controller: phpbb.titania.controller.manage.queue.item:item_action }
     requirements:
         id: \d+
+
+phpbb.titania.manage.attention:
+    pattern: /attention
+    defaults: { _controller: phpbb.titania.controller.manage.attention:display_list }
+
+phpbb.titania.manage.attention.redirect:
+    pattern: /attention/redirect
+    defaults: { _controller: phpbb.titania.controller.manage.attention:redirect_to_item }
+
+phpbb.titania.manage.attention.item:
+    pattern: /attention/item/{id}
+    defaults: { _controller: phpbb.titania.controller.manage.attention:display_item }
+    requirements:
+        id: \d+
+
+phpbb.titania.manage.attention.item.action:
+    pattern: /attention/item/{id}/{action}
+    defaults: { _controller: phpbb.titania.controller.manage.attention:item_action }
+    requirements:
+        id: \d+
+        action: approve|disapprove|close|delete

@@ -121,7 +121,7 @@ class base
 		return array(
 			'attention' => array(
 				'title'		=> 'ATTENTION',
-				'url'		=> $this->helper->route('phpbb.titania.attention'),
+				'url'		=> $this->helper->route('phpbb.titania.manage.attention'),
 				'auth'		=> $this->auth->acl_gets(
 						'u_titania_mod_author_mod',
 						'u_titania_mod_contrib_mod',

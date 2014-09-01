@@ -144,7 +144,7 @@ class titania_attention extends titania_database_object
 	*/
 	public function get_report_url($action = false, $params = array())
 	{
-		$controller = 'phpbb.titania.attention.item';
+		$controller = 'phpbb.titania.manage.attention.item';
 		$params['id'] = $this->attention_id;
 
 		if ($action)

@@ -156,3 +156,17 @@ services:
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
+
+    phpbb.titania.controller.manage.attention:
+        class: phpbb\titania\controller\manage\attention
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display
