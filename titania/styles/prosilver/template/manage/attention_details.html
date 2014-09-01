@@ -14,14 +14,10 @@
 		<!-- ENDIF -->
 
 		<!-- IF attention.S_REPORTED -->
-		<form method="post" id="reported" action="{S_ACTION}">
 			<p class="rules">
-				<input type="hidden" value="{attention.ATTENTION_ID}" name="a" />
-				<input class="button1" type="submit" value="{L_CLOSE_REPORT}" name="close" />
-				<input class="button1" type="submit" value="{L_DELETE_REPORT}" name="delete" />
-				{S_FORM_TOKEN}
+				<a href="{attention.U_CLOSE}" class="button1">{L_CLOSE_REPORT}</a>
+				<a href="{attention.U_DELETE}" class="button2">{L_DELETE_REPORT}</a>
 			</p>
-		</form>
 		<!-- ENDIF -->
 	</div>
 <!-- END attention -->
@@ -51,13 +47,8 @@
 				<p class="author">{MINI_POST_IMG} {L_POSTED} {L_POST_BY_AUTHOR} {POSTER_USER_FULL} &raquo; {POST_DATE}</p>
 
 				<!-- IF S_UNAPPROVED -->
-					<form method="post" id="approve" action="{S_ACTION}">
-						<p class="rules">
-							<input class="button1" type="submit" value="{L_APPROVE}" name="approve" /> &nbsp;
-							<input class="button2" type="submit" value="{L_DISAPPROVE}" name="disapprove" />
-							{S_FORM_TOKEN}
-						</p>
-					</form>
+					<a href="{attention.U_APPROVE}" class="button1">{L_APPROVE}</a>
+					<a href="{attention.U_DISAPPROVE}" class="button2">{L_DISAPPROVE}</a>
 				<!-- ENDIF -->
 
 				<div class="content">
