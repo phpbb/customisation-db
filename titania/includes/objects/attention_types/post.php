@@ -355,6 +355,8 @@ class titania_attention_post extends titania_attention
 		users_overlord::assign_details($this->post->post_user_id, 'POSTER_', true);
 		$this->load_contrib_object();
 
+		$action_param = array('hash' => generate_link_hash('attention_action'));
+
 		phpbb::$template->assign_vars(array(
 			'OBJECT_TYPE'		=> $this->get_lang_string('object'),
 			'PARENT'			=> $this->contrib->contrib_name,
@@ -367,11 +369,13 @@ class titania_attention_post extends titania_attention
 			'DELETED_MESSAGE'	=> ($this->post->post_deleted != 0) ? sprintf(phpbb::$user->lang['DELETED_MESSAGE'], users_overlord::get_user($this->post->post_delete_user, '_full'), phpbb::$user->format_date($this->post->post_deleted), $this->post->get_url('undelete')) : '',
 			'POST_EDIT_REASON'	=> censor_text($this->post->post_edit_reason),
 
+			'U_APPROVE'			=> (!$this->post->post_approved) ? $this->get_report_url('approve', $action_param) : false,
+			'U_DISAPPROVE'		=> (!$this->post->post_approved) ? $this->get_report_url('disapprove', $action_param) : false,
 			'U_VIEW'			=> $this->post->get_url(),
 			'U_EDIT'			=> $this->post->get_url('edit'),
 
 			'SECTION_NAME'		=> '<a href="' . $this->post->get_url() . '">' . censor_text($this->post->post_subject) . '</a> - ' . phpbb::$user->lang['ATTENTION'],
-			'S_UNAPPROVED'		=> ($this->post->post_approved) ? false : true,
+			'S_UNAPPROVED'		=> !$this->post->post_approved,
 		));
 	}
 }

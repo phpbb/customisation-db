@@ -188,8 +188,6 @@ class titania_attention extends titania_database_object
 		// Does the item need handling? This only applies to "reports" - those which
 		// only need a simple close/delete action.
 		$needs_handling = $this->is_open() && $this->is_report();
-		// Does the item need approval?
-		$needs_approval = $this->is_open() && $this->attention_type == TITANIA_ATTENTION_UNAPPROVED;
 		$action_param = array('hash' => generate_link_hash('attention_action'));
 
 		$output = array(
@@ -206,15 +204,12 @@ class titania_attention extends titania_database_object
 			'CLOSED_BY_LABEL'		=> $this->get_lang_string('closed_by'),
 			'OBJECT_LABEL'			=> $this->get_lang_string('object'),
 
-			'U_APPROVE'				=> ($needs_approval) ? $this->get_report_url('approve', $action_param) : false,
-			'U_DISAPPROVE'			=> ($needs_approval) ? $this->get_report_url('disapprove', $action_param) : false,
 			'U_CLOSE'				=> ($needs_handling) ? $this->get_report_url('close', $action_param) : false,
 			'U_DELETE'				=> ($needs_handling) ? $this->get_report_url('delete', $action_param) : false,
 			'U_VIEW_ATTENTION'		=> $this->get_url(),
 			'U_VIEW_DETAILS'		=> $this->get_report_url(),
 
 			'S_CLOSED'				=> !$this->is_open(),
-			'S_UNAPPROVED'			=> $needs_approval,
 			'S_REPORTED'			=> $this->is_report(),
 		);
 
