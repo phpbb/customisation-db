@@ -70,6 +70,14 @@ class titania_attention_post extends titania_attention
 		}
 	}
 
+	/**
+	* {@inheritDoc}
+	*/
+	public function get_title()
+	{
+		return $this->post->post_subject;
+	}
+
 	public function get_lang_string($label)
 	{
 		$labels = array('object' => 'POST');

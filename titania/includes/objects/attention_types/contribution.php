@@ -38,6 +38,14 @@ class titania_attention_contribution extends titania_attention
 		return (is_object($this->contrib)) ? true : false;
 	}
 
+	/**
+	* {@inheritDoc}
+	*/
+	public function get_title()
+	{
+		return $this->contrib->contrib_name;
+	}
+
 	public function get_lang_string($label)
 	{
 		titania::add_lang('contributions');

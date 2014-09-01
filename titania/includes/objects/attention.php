@@ -93,6 +93,16 @@ class titania_attention extends titania_database_object
 	}
 
 	/**
+	* Get attention title.
+	*
+	* @return string
+	*/
+	public function get_title()
+	{
+		return $this->attention_title;
+	}
+
+	/**
 	* Get the URL for the item needing attention
 	*
 	* @return string the built url
