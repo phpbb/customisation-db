@@ -40,6 +40,9 @@ class titania_attention extends titania_database_object
 	 */
 	protected $sql_id_field = 'attention_id';
 
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	/**
 	 * Constructor class for the attention object
 	 */
@@ -62,6 +65,8 @@ class titania_attention extends titania_database_object
 			'attention_description'			=> array('default' => ''),
 			'notify_reporter'				=> array('default' => 0),
 		));
+
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 	}
 
 	public function submit()
@@ -120,6 +125,26 @@ class titania_attention extends titania_database_object
 	}
 
 	/**
+	* Get URL to attention report.
+	*
+	* @param bool|string $action	Optional actional to link to.
+	* @param array $params			Additional parameters to add.
+	*
+	* @return string
+	*/
+	public function get_report_url($action = false, $params = array())
+	{
+		$controller = 'phpbb.titania.attention.item';
+		$params['id'] = $this->attention_id;
+
+		if ($action)
+		{
+			$controller .= '.action';
+			$params['action'] = $action;
+		}
+
+		return $this->controller_helper->route($controller, $params);
+	}
 
 	/**
 	* Check whether attention item is a report.
