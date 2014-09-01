@@ -69,6 +69,16 @@ class titania_attention extends titania_database_object
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 	}
 
+	/**
+	* Check user's auth.
+	*
+	* @return bool
+	*/
+	public function check_auth()
+	{
+		return false;
+	}
+
 	public function submit()
 	{
 		$this->attention_url = titania_url::unbuild_url($this->attention_url);

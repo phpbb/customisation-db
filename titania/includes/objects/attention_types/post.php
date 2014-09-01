@@ -32,6 +32,14 @@ class titania_attention_post extends titania_attention
 	public $contrib;
 
 	/**
+	* {@inheritDoc}
+	*/
+	public function check_auth()
+	{
+		return phpbb::$auth->acl_get('u_titania_mod_post_mod');
+	}
+
+	/**
 	* Set up the post object.
 	*/
 	public function load_source_object()

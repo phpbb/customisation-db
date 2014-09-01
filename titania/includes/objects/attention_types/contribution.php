@@ -25,6 +25,14 @@ class titania_attention_contribution extends titania_attention
 	public $contrib;
 
 	/**
+	* {@inheritDoc}
+	*/
+	public function check_auth()
+	{
+		return $this->contrib->type->acl_get('moderate');
+	}
+
+	/**
 	* Set up contrib object.
 	*/
 	public function load_source_object()
