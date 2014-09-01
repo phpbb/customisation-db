@@ -50,6 +50,9 @@ class titania_faq extends titania_message_object
 	/** @param \titania_contribution */
 	public $contrib;
 
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	/**
 	 * Constructor class for titania faq
 	 *
@@ -77,6 +80,8 @@ class titania_faq extends titania_message_object
 			$this->faq_id = $faq_id;
 			$this->load();
 		}
+
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 	}
 
 	/**
@@ -130,19 +135,27 @@ class titania_faq extends titania_message_object
 	*/
 	public function get_url($action = '', $faq_id = false)
 	{
-		$url = titania::$contrib->get_url('faq');
-		$faq_id = (($faq_id) ? $faq_id : $this->faq_id);
+		$faq_id =  ($faq_id) ? (int) $faq_id : $this->faq_id;
 
-		if ($action == 'create')
-		{
-			return titania_url::append_url($url, array('action' => $action));
-		}
-		else if (!$action)
-		{
-			return titania_url::append_url($url, array('f' => $faq_id));
-		}
+		$controller = 'phpbb.titania.contrib.faq.item';
+		$parameters = array(
+			'contrib_type'	=> $this->contrib->type->url,
+			'contrib'		=> $this->contrib->contrib_name_clean,
+		);
 
-		return titania_url::append_url($url, array('action' => $action, 'f' => $faq_id));
+		if ($action)
+		{
+			if ($action == 'create')
+			{
+				return $this->controller_helper->route('phpbb.titania.contrib.faq.create', $parameters);
+			}
+
+			$controller .= '.action';
+			$parameters['action'] = $action;
+		}
+		$parameters['id'] = $faq_id;
+
+		return $this->controller_helper->route($controller, $parameters);
 	}
 
 	/**
