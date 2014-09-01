@@ -86,6 +86,10 @@ class titania_attention extends titania_database_object
 	*/
 	public function close()
 	{
+		if (!$this->is_open())
+		{
+			return;
+		}
 		$this->attention_close_time = titania::$time;
 		$this->attention_close_user = phpbb::$user->data['user_id'];
 
@@ -113,6 +117,30 @@ class titania_attention extends titania_database_object
 		titania_url::split_base_params($base, $append, $this->attention_url);
 
 		return titania_url::build_url($base, $append);
+	}
+
+	/**
+
+	/**
+	* Check whether attention item is a report.
+	*
+	* @return bool
+	*/
+	public function is_report()
+	{
+		return !in_array($this->attention_type, array(
+			TITANIA_ATTENTION_UNAPPROVED,
+		));
+	}
+
+	/**
+	* Check whether attention item is still open.
+	*
+	* @return bool
+	*/
+	public function is_open()
+	{
+		return empty($this->attention_close_time);
 	}
 
 	/**
@@ -169,6 +197,10 @@ class titania_attention extends titania_database_object
 	*/
 	public function report_handled()
 	{
+		if (!$this->is_open())
+		{
+			return;
+		}
 		$this->close();
 
 		// Send notification to reporter

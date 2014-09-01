@@ -108,7 +108,7 @@ class titania_attention_post extends titania_attention
 	*/
 	public function report_handled()
 	{
-		if (!$this->load_source_object())
+		if (!$this->load_source_object() || !$this->is_open())
 		{
 			return;
 		}
@@ -158,7 +158,7 @@ class titania_attention_post extends titania_attention
 	*/
 	public function disapprove($reason_id, $explanation)
 	{
-		if (!$this->load_source_object())
+		if (!$this->load_source_object() || !$this->is_open() || $this->is_report())
 		{
 			return false;
 		}
@@ -201,7 +201,7 @@ class titania_attention_post extends titania_attention
 	*/
 	public function approve()
 	{
-		if (!$this->load_source_object())
+		if (!$this->load_source_object() || !$this->is_open() || $this->is_report())
 		{
 			return;
 		}
