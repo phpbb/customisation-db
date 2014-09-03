@@ -595,4 +595,54 @@ class titania_category extends titania_message_object
 		titania::$cache->destroy('_titania_category_parents');
 		titania::$cache->destroy('_titania_category_children');
 	}
+
+	/**
+	* Set left and right id values for a newly created category.
+	*
+	* @return bool|string Returns an error string if something went wrong,
+	*	otherwise returns false.
+	*/
+	public function set_left_right_ids()
+	{
+		if ($this->parent_id)
+		{
+			$sql = 'SELECT left_id, right_id
+				FROM ' . TITANIA_CATEGORIES_TABLE . '
+				WHERE category_id = ' . $this->parent_id;
+			$result = phpbb::$db->sql_query($sql);
+			$row = phpbb::$db->sql_fetchrow($result);
+			phpbb::$db->sql_freeresult($result);
+
+			if (!$row)
+			{
+				return phpbb::$user->lang['PARENT_NOT_EXIST'];
+			}
+
+			$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . '
+				SET left_id = left_id + 2, right_id = right_id + 2
+				WHERE left_id > ' . (int) $row['right_id'];
+			phpbb::$db->sql_query($sql);
+
+			$sql = 'UPDATE ' . TITANIA_CATEGORIES_TABLE . '
+				SET right_id = right_id + 2
+				WHERE ' . (int) $row['left_id'] . ' BETWEEN left_id AND right_id';
+			phpbb::$db->sql_query($sql);
+
+			$this->left_id = $row['right_id'];
+			$this->right_id = $row['right_id'] + 1;
+		}
+		else
+		{
+			$sql = 'SELECT MAX(right_id) AS right_id
+				FROM ' . TITANIA_CATEGORIES_TABLE;
+			$result = phpbb::$db->sql_query($sql);
+			$row = phpbb::$db->sql_fetchrow($result);
+			phpbb::$db->sql_freeresult($result);
+
+			$this->left_id = $row['right_id'] + 1;
+			$this->right_id = $row['right_id'] + 2;
+		}
+
+		return false;
+	}
 }
