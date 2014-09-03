@@ -549,10 +549,24 @@ class titania_category extends titania_message_object
 
 	/**
 	* Build view URL for a category in the Category Management panel
+	*
+	* @param bool|string $action		Optional action. Defaults to false.
+	* @param array $params				Additional parameters to add to URL.
+	*
+	* @return string
 	*/
-	public function get_manage_url()
+	public function get_manage_url($action = false, $params = array())
 	{
-		return titania_url::build_url('manage/categories', array('c' => $this->category_id));
+		$controller = 'phpbb.titania.manage.categories';
+		$params['id'] = $this->category_id;
+
+		if ($action)
+		{
+			$controller .= '.action';
+			$params['action'] = $action;
+		}
+		
+		return $this->controller_helper->route($controller, $params);
 	}
 
 	/**
@@ -562,16 +576,18 @@ class titania_category extends titania_message_object
 	*/
 	public function assign_display($return = false)
 	{
+		$action_hash = array('hash' => generate_link_hash('category_action'));
+
 		$display = array(
 			'CATEGORY_NAME'				=> (isset(phpbb::$user->lang[$this->category_name])) ? phpbb::$user->lang[$this->category_name] : $this->category_name,
 			'CATEGORY_CONTRIBS'			=> $this->category_contribs,
 			'CATEGORY_TYPE'				=> $this->category_type,
 			'CATEGORY_DESC'				=> $this->generate_text_for_display(),
 
-			'U_MOVE_UP'					=> titania_url::append_url($this->get_manage_url(), array('action' => 'move_up')),
-			'U_MOVE_DOWN'				=> titania_url::append_url($this->get_manage_url(), array('action' => 'move_down')),
-			'U_EDIT'					=> titania_url::append_url($this->get_manage_url(), array('action' => 'edit')),
-			'U_DELETE'					=> titania_url::append_url($this->get_manage_url(), array('action' => 'delete')),
+			'U_MOVE_UP'					=> $this->get_manage_url('move_up', $action_hash),
+			'U_MOVE_DOWN'				=> $this->get_manage_url('move_down', $action_hash),
+			'U_EDIT'					=> $this->get_manage_url('edit'),
+			'U_DELETE'					=> $this->get_manage_url('delete'),
 			'U_VIEW_CATEGORY'			=> $this->get_url(),
 			'U_VIEW_MANAGE_CATEGORY'	=> $this->get_manage_url(),
 

@@ -152,6 +152,7 @@ $lang = array_merge($lang, array(
 	'NO_AUTH'					=> 'You are not authorised to see this page.',
 	'NO_CATEGORY'				=> 'The requested category does not exist.',
 	'NO_CATEGORY_NAME'			=> 'Enter the category name',
+	'NO_CATEGORY_URL'			=> 'Invalid category URL',
 	'NO_CONTRIB'				=> 'The requested contribution does not exist.',
 	'NO_CONTRIBS'				=> 'No contributions could be found',
 	'NO_DESC'					=> 'You have to enter the description.',

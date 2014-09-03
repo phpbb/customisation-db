@@ -44,3 +44,16 @@ phpbb.titania.manage.attention.item.action:
     requirements:
         id: \d+
         action: approve|disapprove|close|delete
+
+phpbb.titania.manage.categories:
+    pattern: /categories/{id}
+    defaults: { _controller: phpbb.titania.controller.manage.categories:list_categories, id: 0 }
+    requirements:
+        id: \d+
+
+phpbb.titania.manage.categories.action:
+    pattern: /categories/{id}/{action}
+    defaults: { _controller: phpbb.titania.controller.manage.categories:category_action, id: 0 }
+    requirements:
+        id: \d+
+        action: add|edit|delete|move_up|move_down
