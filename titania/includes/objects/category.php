@@ -645,4 +645,30 @@ class titania_category extends titania_message_object
 
 		return false;
 	}
+
+	/**
+	* Validate category settings.
+	*
+	* @return array Returns array containing any errors found.
+	*/
+	public function validate()
+	{
+		$error = array();
+
+		if (!$this->category_name)
+		{
+			$error[] = phpbb::$user->lang['NO_CATEGORY_NAME'];
+		}
+
+		if (!$this->category_name_clean || $this->category_name_clean != titania_url::url_slug($this->category_name_clean))
+		{
+			$error[] = phpbb::$user->lang['NO_CATEGORY_URL'];
+		}
+
+		if ($this->category_id && $this->parent_id == $this->category_id)
+		{
+			$error[] = phpbb::$user->lang['CATEGORY_DUPLICATE_PARENT'];
+		}
+		return $error;
+	}
 }
