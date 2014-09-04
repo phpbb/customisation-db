@@ -38,6 +38,7 @@ class categories
 	*/
 	function display_options()
 	{
-		redirect(titania_url::build_url('manage/categories'));
+		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		redirect($controller_helper->route('phpbb.titania.manage.categories'));
 	}
 }
