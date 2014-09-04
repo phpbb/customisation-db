@@ -1100,7 +1100,15 @@ class titania_contribution extends titania_message_object
 		phpbb::$db->sql_query($sql);
 	}
 
-	public function validate($contrib_categories = array())
+	/**
+	* Validate contribution settings.
+	*
+	* @param array $contrib_categories		Contribution categories.
+	* @param string $old_permalink			Old permalink. Defaults to empty string.
+	*
+	* @return array Returns array containing any errors found.
+	*/
+	public function validate($contrib_categories = array(), $old_permalink = '')
 	{
 		$error = array();
 
@@ -1173,31 +1181,15 @@ class titania_contribution extends titania_message_object
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_LOCAL_NAME'];
 		}
 
-		if (!$this->contrib_id)
+		if (!$this->contrib_name_clean)
 		{
-			if (!$this->contrib_name_clean)
-			{
-				// If they leave it blank automatically create it
-				$this->contrib_name_clean = titania_url::url_slug($this->contrib_name);
+			// If they leave it blank automatically create it
+			$this->generate_permalink();
+		}
 
-				$append = '';
-				$i = 2;
-				while ($this->validate_permalink($this->contrib_name_clean . $append) == false)
-				{
-					$append = '_' . $i;
-					$i++;
-				}
-
-				$this->contrib_name_clean = $this->contrib_name_clean . $append;
-			}
-			elseif (titania_url::url_slug($this->contrib_name_clean) !== $this->contrib_name_clean)
-			{
-				$error[] = sprintf(phpbb::$user->lang['INVALID_PERMALINK'], titania_url::url_slug($this->contrib_name_clean));
-			}
-			elseif (!$this->validate_permalink($this->contrib_name_clean))
-			{
-				$error[] = phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
-			}
+		if (($permalink_error = $this->validate_permalink($this->contrib_name_clean, $old_permalink)) !== false)
+		{
+			$error[] = $permalink_error;
 		}
 
 		// Hooks
@@ -1206,22 +1198,61 @@ class titania_contribution extends titania_message_object
 		return $error;
 	}
 
+	/**
+	* Automatically generate permalink value from contribution name.
+	*
+	* @return null
+	*/
+	public function generate_permalink()
+	{
+		$clean_name = titania_url::url_slug($this->contrib_name);
+		$append = '';
+		$i = 2;
+		while ($this->permalink_exists($clean_name . $append))
+		{
+			$append = '_' . $i;
+			$i++;
+		}
+		$this->contrib_name_clean = $clean_name . $append;
+	}
+
 	/*
 	 * Validate a contrib permalink
 	 *
-	 * @param string $permalink
-	 * @return bool
+	 * @param string $permalink			New permalink.
+	 * @param string $old_permalink		Old permalink.
+	 *
+	 * @return bool|string Returns error string if error found. Otherwise returns false.
 	 */
-	public function validate_permalink($permalink)
+	public function validate_permalink($permalink, $old_permalink)
+	{
+		if (titania_url::url_slug($permalink) !== $permalink)
+		{
+			return phpbb::$user->lang('INVALID_PERMALINK', titania_url::url_slug($permalink));
+		}
+		else if ($permalink !== $old_permalink && $this->permalink_exists($permalink))
+		{
+			return phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
+		}
+		return false;
+	}
+
+	/**
+	* Check whether a contribution uses the given permalink.
+	*
+	* @param string $permalink	Permalink
+	* @return bool Returns true if a contribution was found.
+	*/
+	public function permalink_exists($permalink)
 	{
 		$sql = 'SELECT contrib_id
 			FROM ' . $this->sql_table . "
 			WHERE contrib_name_clean = '" . phpbb::$db->sql_escape($permalink) . "'";
 		$result = phpbb::$db->sql_query($sql);
-		$found = phpbb::$db->sql_fetchfield('contrib_id');
+		$found = !empty(phpbb::$db->sql_fetchfield('contrib_id'));
 		phpbb::$db->sql_freeresult($result);
 
-		return ($found) ? false : true;
+		return $found;
 	}
 
 	/**
