@@ -93,7 +93,7 @@ class titania_uploader extends fileupload
 
 		$this->set_allowed_extensions(titania::$config->upload_allowed_extensions[$this->ext_group]);
 
-		$file = $this->form_upload($this->form_name, $this->plupload, $this->mimetype_guesser);
+		$file = $this->form_upload($this->form_name, $this->mimetype_guesser, $this->plupload);
 
 		if ($file->init_error)
 		{
