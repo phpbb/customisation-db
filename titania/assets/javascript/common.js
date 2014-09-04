@@ -1,5 +1,8 @@
 $(document).ready(function(){
-	$('a.screenshot').colorbox({photo: true, rel: 'group1'});
+
+	if (typeof $.colorbox === 'function') {
+		$('a.screenshot').colorbox({photo: true, rel: 'group1'});
+	}
 
 /* Not working...
 	// AJAX Rate
