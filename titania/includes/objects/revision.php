@@ -57,6 +57,9 @@ class titania_revision extends titania_database_object
 	public $phpbb_versions = array();
 	public $translations = array();
 
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	public function __construct($contrib, $revision_id = false)
 	{
 		// Configure object properties
@@ -88,6 +91,7 @@ class titania_revision extends titania_database_object
 		}
 
 		$this->revision_id = $revision_id;
+		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -176,7 +180,7 @@ class titania_revision extends titania_database_object
 			'NAME'					=> ($this->revision_name) ? censor_text($this->revision_name) : (($this->contrib) ? $this->contrib->contrib_name . ' ' . $this->revision_version : ''),
 			'VERSION'				=> $this->revision_version,
 			'VALIDATED_DATE'		=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
-			'REVISION_QUEUE'		=> ($show_queue && $this->revision_queue_id) ? titania_url::build_url('manage/queue', array('q' => $this->revision_queue_id)) : '',
+			'REVISION_QUEUE'		=> ($show_queue && $this->revision_queue_id) ? $this->controller_helper->route('phpbb.titania.queue.item', array('id' => $this->revision_queue_id)) : '',
 			'PHPBB_VERSION'			=> (sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
 			'REVISION_LICENSE'		=> ($this->revision_license) ? censor_text($this->revision_license) : (($this->contrib && sizeof(titania_types::$types[$this->contrib->contrib_type]->license_options)) ? phpbb::$user->lang['UNKNOWN'] : ''),
 			'INSTALL_TIME'			=> $install_time,
@@ -625,7 +629,7 @@ class titania_revision extends titania_database_object
 			return '';
 		}
 
-		return titania_url::build_url('download', array('id' => $this->attachment_id));
+		return $this->controller_helper->route('phpbb.titania.download', array('id' => $this->attachment_id));
 	}
 
 	/**
