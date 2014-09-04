@@ -2,45 +2,6 @@
 
 <script type="text/javascript">
 // <![CDATA[
-	$(document).ready(function() {
-		change_contrib_type('{CONTRIB_TYPE_ID}');
-	});
-
-	function change_contrib_type(new_type)
-	{
-		<!-- IF not S_CAN_EDIT_STYLE_DEMO -->
-			if (this.value == {S_STYLE})
-			{
-				$('#demo_url_container').hide();
-			}
-			else
-			{
-				$('#demo_url_container').show();
-			}
-		<!-- ENDIF -->
-
-		$('#contrib_category option').each(function() {
-			if (new_type == 0 || $(this).hasClass('type_' + new_type))
-			{
-				$(this).show();
-			}
-			else if (!$(this).hasClass('type_0'))
-			{
-				$(this).hide();
-				$(this).removeAttr('selected');
-			}
-		});
-
-		if (new_type != 0 && new_type == {S_TRANSLATION_TYPE_ID})
-		{
-			$('.translation_item').show();
-		}
-		else
-		{
-			$('.translation_item').hide();
-		}
-	}
-
 	var clrEditing = false;
 	function edit_contrib_colors()
 	{
@@ -80,9 +41,9 @@
 				<dl>
 					<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
 					<dd>
-						<select name="contrib_type" id="contrib_type" onchange="change_contrib_type(this.value);">
+						<select name="contrib_type" id="contrib_type" data-togglable-settings="true">
 							<!-- BEGIN type_select -->
-							<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{type_select.NAME}</option>
+							<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF --> data-toggle-setting=".custom_settings_{type_select.VALUE}, .type_{type_select.VALUE}">{type_select.NAME}</option>
 							<!-- END type_select -->
 						</select>
 					</dd>
