@@ -1,7 +1,12 @@
 $(document).ready(function(){
 
 	if (typeof $.colorbox === 'function') {
-		$('a.screenshot').colorbox({photo: true, rel: 'group1'});
+		$('a.screenshot').colorbox({photo: true, rel: 'group1'})
+		// Remove ?mode=view from screenshot links as we'll be displaying the image inline, so the image should not
+		// be wrapped in HTML in IE
+		.each(function() {
+			this.href = this.href.replace('?mode=view', '');
+		});
 	}
 
 /* Not working...
@@ -261,10 +266,6 @@ $(document).ready(function(){
 		createCookie('cdb_ignore_subscription', 'true', 365);
 		$.colorbox.close();
 	});
-
-	// Remove ?mode=view from screenshot links as we'll be displaying the image inline, so the image should not
-	// be wrapped in HTML in IE
-	$('a.screenshot').each(function() {this.href = this.href.replace('?mode=view', '');});
 
 	// Prevent the user from submitting a form more than once.
 	$('input[type="submit"]').click(function(event) {
