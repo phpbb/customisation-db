@@ -378,8 +378,18 @@ class author
 		}
 		else if ($submit)
 		{
-			$coauthors = $this->get_coauthors($settings['coauthors']);
-			$error = array_merge($error, $this->validate_contribution_settings($contrib, $message, $settings, $coauthors));
+			$authors = $contrib->get_authors_from_usernames(array(
+				'active_coauthors'		=> $settings['coauthors']['active'],
+				'nonactive_coauthors'	=> $settings['coauthors']['nonactive'],
+			));
+			$authors['author'] = array($this->user->data['username'] => $this->user->data['user_id']);
+
+			$error = $contrib->validate($settings['categories'], $authors);
+
+			if (($form_key_error = $message->validate_form_key()) !== false)
+			{
+				$error[] = $form_key_error;
+			}
 
 			if (empty($error))
 			{
@@ -388,7 +398,7 @@ class author
 				$contrib->contrib_creation_time = time();
 				$contrib->submit();
 
-				$contrib->set_coauthors($coauthors['active'], $coauthors['nonactive'], true);
+				$contrib->set_coauthors($authors['coauthors']['active'], $authors['coauthors']['nonactive'], true);
 
 				// Create relations
 				$contrib->put_contrib_in_categories($settings['categories']);
@@ -421,25 +431,6 @@ class author
 	}
 
 	/**
-	* Get coauthor id's and usernames from supplied usernames.
-	*
-	* @param array $coauthors	Array in the form of array('active' => 'usernames', nonactive => 'usernames')
-	*	with the usernames separate by a new line.
-	* @return array Returns array in the form of
-	*	array('active' => array(username => user_id), nonactive => (...), missing => array(username)
-	*/
-	protected function get_coauthors($coauthors)
-	{
-		$missing_active = $missing_nonactive = array();
-
-		get_author_ids_from_list($coauthors['active'], $missing_active);
-		get_author_ids_from_list($coauthors['nonactive'], $missing_nonactive);
-
-		$coauthors['missing'] = array_merge($missing_active, $missing_nonactive);
-		return $coauthors;
-	}
-
-	/**
 	* Set up message object for contribution description.
 	*
 	* @param \titania_contribution
@@ -460,46 +451,4 @@ class author
 
 		return $message;
 	}
-
-	/**
-	* Validate contribution settings.
-	*
-	* @param \titania_contribution $contrib	Contribution object.
-	* @param \titania_message $message		Message object for the description.
-	* @param array $settings				Submitted settings.
-	* @param array $coauthors				Coauthors array.
-	*
-	* @return array Returns array containing any errors found.
-	*/
-	protected function validate_contribution_settings($contrib, $message, $settings, $coauthors)
-	{
-		$error = $contrib->validate($settings['categories']);
-
-		if (($validate_form_key = $message->validate_form_key()) !== false)
-		{
-			$error[] = $validate_form_key;
-		}
-
-		if (!empty($coauthors['missing']))
-		{
-			$error[] = $this->user->lang('COULD_NOT_FIND_USERS', implode(', ', $coauthors['missing']));
-		}
-		$duplicates = array_intersect($coauthors['active'], $coauthors['nonactive']);
-
-		if (!empty($duplicates))
-		{
-			$error[] = $this->user->lang('DUPLICATE_AUTHORS', implode(', ', array_keys($duplicates)));
-		}
-		if (isset($coauthors['active'][$this->user->data['username']]) || isset($coauthors['nonactive'][$this->user->data['username']]))
-		{
-			$error[] = $this->user->lang['CANNOT_ADD_SELF_COAUTHOR'];
-		}
-		if ($contrib->contrib_demo && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]+\.[a-z]{2,4}#i', $contrib->contrib_demo))
-		{
-			$error[] = $this->user->lang['WRONG_DATA_WEBSITE'];
-		}
-
-		return $error;
-	}
 }
-

@@ -1104,12 +1104,17 @@ class titania_contribution extends titania_message_object
 	* Validate contribution settings.
 	*
 	* @param array $contrib_categories		Contribution categories.
+	* @param array $authors					Array in the form of array('author' => array(username => user_id),
+	*	'active_coauthors' => array(...), 'nonactive_coauthors' => array(...), 'missing' =>
+		array('active_coauthors' => array(username => username)).
 	* @param string $old_permalink			Old permalink. Defaults to empty string.
 	*
 	* @return array Returns array containing any errors found.
 	*/
-	public function validate($contrib_categories = array(), $old_permalink = '')
+	public function validate($contrib_categories = array(), $authors, $old_permalink = '')
 	{
+		phpbb::$user->add_lang('ucp');
+
 		$error = array();
 
 		if (utf8_clean_string($this->contrib_name) == '')
@@ -1192,6 +1197,35 @@ class titania_contribution extends titania_message_object
 			$error[] = $permalink_error;
 		}
 
+		$author = key($authors['author']);
+		$missing_coauthors = array_merge($authors['missing']['active_coauthors'], $authors['missing']['nonactive_coauthors']);
+
+		if (!empty($missing_coauthors))
+		{
+			$error[] = phpbb::$user->lang('COULD_NOT_FIND_USERS', phpbb_generate_string_list($missing_coauthors, phpbb::$user));
+		}
+		$duplicates = array_intersect($authors['active_coauthors'], $authors['nonactive_coauthors']);
+
+		if (!empty($duplicates))
+		{
+			$error[] = phpbb::$user->lang('DUPLICATE_AUTHORS', phpbb_generate_string_list(array_keys($duplicates), phpbb::$user));
+		}
+
+		if (isset($authors['active_coauthors'][$author]) || isset($authors['nonactive_coauthors'][$author]))
+		{
+			$error[] = phpbb::$user->lang['CANNOT_ADD_SELF_COAUTHOR'];
+		}
+
+		if (!empty($authors['missing']['new_author']))
+		{
+			$error[] = phpbb::$user->lang('CONTRIB_CHANGE_OWNER_NOT_FOUND', key($authors['missing']['new_author']));
+		}
+
+		if ($this->contrib_demo !== '' && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]{2,4}#i', $this->contrib_demo))
+		{
+			$error[] = phpbb::$user->lang('FIELD_INVALID_URL', phpbb::$user->lang['CONTRIB_DEMO']);
+		}
+
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $error, $this);
 
@@ -1253,6 +1287,29 @@ class titania_contribution extends titania_message_object
 		phpbb::$db->sql_freeresult($result);
 
 		return $found;
+	}
+
+	/**
+	* Get author id's and usernames from supplied usernames.
+	*
+	* @param array $authors	Array in the form of array('active' => 'usernames', nonactive => 'usernames')
+	*	with the usernames separated by a new line.
+	* @return array Returns array in the form of
+	*	array('active' => array(username => user_id), 'nonactive' => (...), 'missing' => array('active' => username, ...)
+	*/
+	public function get_authors_from_usernames($authors)
+	{
+		$result = array('missing' => array());
+
+		foreach ($authors as $group => $users)
+		{
+			$missing = array();
+			get_author_ids_from_list($users, $missing);
+			$result[$group] = $users;
+			$result['missing'][$group] = $missing;
+		}
+
+		return $result;
 	}
 
 	/**
