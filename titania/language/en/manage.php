@@ -58,6 +58,8 @@ $lang = array_merge($lang, array(
 	'EDIT_VALIDATION_NOTES'		=> 'Edit Validation Notes',
 	'ERROR_REVISION_ON_HOLD'	=> 'You cannot approve this revision. The next phpBB version has not been released.',
 
+	'INVALID_TOOL'				=> 'The tool selected does not exist.',
+
 	'MANAGE_CATEGORIES'			=> 'Manage Categories',
 	'MARK_IN_PROGRESS'			=> 'Mark "In Progress"',
 	'MARK_NO_PROGRESS'			=> 'Unmark "In Progress"',

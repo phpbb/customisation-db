@@ -171,6 +171,13 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
 
+    phpbb.titania.controller.manage.queue.tools:
+        class: phpbb\titania\controller\manage\queue\tools
+        arguments:
+            - @user
+            - @template
+            - @phpbb.titania.controller.helper
+
     phpbb.titania.controller.manage.attention:
         class: phpbb\titania\controller\manage\attention
         arguments:

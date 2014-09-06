@@ -24,6 +24,13 @@ phpbb.titania.queue.item.action:
     requirements:
         id: \d+
 
+phpbb.titania.queue.tools:
+    pattern:  /queue/tools/{tool}/{id}
+    defaults: { _controller: phpbb.titania.controller.manage.queue.tools:run_tool }
+    requirements:
+        tool: automod|mpv
+        id: \d+
+
 phpbb.titania.manage.attention:
     pattern: /attention
     defaults: { _controller: phpbb.titania.controller.manage.attention:display_list }

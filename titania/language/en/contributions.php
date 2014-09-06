@@ -147,6 +147,7 @@ $lang = array_merge($lang, array(
 	'NO_CATEGORY'							=> 'The selected category does not exist',
 	'NO_PHPBB_BRANCH'						=> 'You must select a phpBB branch.',
 	'NO_QUEUE_DISCUSSION_TOPIC'				=> 'No Queue Discussion topic could be found.  Have you submitted any revision for this contribution yet (it will be created when you do so)?',
+	'NO_REVISION'							=> 'No Revision',
 	'NO_REVISIONS'							=> 'No Revisions',
 	'NO_REVISION_ATTACHMENT'				=> 'Please select a file to upload',
 	'NO_REVISION_VERSION'					=> 'Please enter a version for the revision',
