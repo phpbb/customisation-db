@@ -44,3 +44,7 @@ phpbb.titania.contrib.faq.item.action:
     requirements:
         id: \d+
         page: edit|delete|move_up|move_down
+
+phpbb.titania.contrib.manage:
+    pattern: /manage
+    defaults: { _controller: phpbb.titania.controller.contrib.manage:manage }
