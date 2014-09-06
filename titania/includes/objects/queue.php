@@ -678,4 +678,21 @@ class titania_queue extends titania_message_object
 
 		return $this->controller_helper->route($controller, $params);
 	}
+
+	/**
+	* Get URL to queue tool.
+	*
+	* @param string $tool		Tool.
+	* @param int $revision_id	Revision id.
+	*
+	* @return string
+	*/
+	public function get_tool_url($tool, $revision_id)
+	{
+		$params = array(
+			'tool'	=> $tool,
+			'id'	=> $revision_id,
+		);
+		return $this->controller_helper->route('phpbb.titania.queue.tools', $params);
+	}
 }
