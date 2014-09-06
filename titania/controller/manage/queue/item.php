@@ -126,6 +126,9 @@ class item extends \phpbb\titania\controller\manage\base
 			case 'reply':
 			case 'quote':
 			case 'edit':
+			case 'quick_edit':
+			case 'delete':
+			case 'undelete':
 				return $this->posting($action);
 			break;
 
