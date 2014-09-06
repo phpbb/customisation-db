@@ -57,3 +57,13 @@ phpbb.titania.manage.categories.action:
     requirements:
         id: \d+
         action: add|edit|delete|move_up|move_down
+
+phpbb.titania.queue_discussion:
+    pattern: /queue_discussion
+    defaults: { _controller: phpbb.titania.controller.manage.queue_discussion:list_types }
+
+phpbb.titania.queue_discussion.type:
+    pattern: /queue_discussion/{queue_type}
+    defaults: { _controller: phpbb.titania.controller.manage.queue_discussion:display_type }
+    requirements:
+        queue_type: mod|extension|style|converter|official_tool|bbcode|bridge|translation
