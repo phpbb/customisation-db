@@ -129,6 +129,8 @@ $lang = array_merge($lang, array(
 	'HARD_DELETE_TOPIC'			=> 'Hard Delete Topic',
 	'HOUR'						=> 'Hour',
 
+	'INVALID_ACTION'			=> 'Invalid action.',
+
 	'LANGUAGE_PACK'				=> 'Language Pack',
 	'LESS_THAN_A_MINUTE'		=> 'Less than a minute',
 	'LIST'						=> 'List',
