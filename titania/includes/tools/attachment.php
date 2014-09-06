@@ -158,6 +158,20 @@ class titania_attachment extends titania_database_object
 	}
 
 	/**
+	* @{inheritDoc}
+	*/
+	public function load($attachment_id = false)
+	{
+		$loaded = parent::load($attachment_id);
+
+		if ($loaded)
+		{
+			$this->attachments[$this->attachment_id] = $this->__get_array();
+		}
+		return $loaded;
+	}
+
+	/**
 	* Load the attachments from the database from the ids and store them in $this->attachments
 	*
 	* @param array $attachment_ids
