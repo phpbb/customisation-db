@@ -500,7 +500,7 @@ class parser_xml
 		$sql_info = (!empty($xml_actions['SQL'])) ? $xml_actions['SQL'] : array();
 
 		$match_dbms = array();
-		switch ($db->sql_layer)
+		switch ($db->get_sql_layer())
 		{
 			case 'firebird':
 			case 'oracle':
