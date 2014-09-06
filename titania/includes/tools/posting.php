@@ -1198,7 +1198,7 @@ class titania_posting
 		{
 			phpbb::$template->assign_var('S_HARD_DELETE', ((!$undelete && !$post_object->post_deleted && phpbb::$auth->acl_get('u_titania_post_hard_delete')) ? true : false));
 
-			confirm_box(false, ((!$undelete) ? 'DELETE_POST' : 'UNDELETE_POST'), '', array(), 'posting/delete_confirm.html');
+			confirm_box(false, ((!$undelete) ? 'DELETE_POST' : 'UNDELETE_POST'), '', 'posting/delete_confirm.html');
 		}
 
 		redirect($post_object->get_url());
