@@ -115,6 +115,14 @@ class item extends \phpbb\titania\controller\manage\base
 				return $this->allow_author_repack();
 			break;
 
+			case 'approve':
+				return $this->approve();
+			break;
+
+			case 'deny':
+				return $this->deny();
+			break;
+
 			case 'reply':
 			case 'quote':
 			case 'edit':
@@ -219,14 +227,7 @@ class item extends \phpbb\titania\controller\manage\base
 		));
 
 		// Load the message object
-		$message_object = new \titania_message($post);
-		$message_object->set_auth(array(
-			'bbcode'		=> true,
-			'smilies'		=> true,
-		));
-		$message_object->set_settings(array(
-			'display_subject'	=> false,
-		));
+		$message_object = $this->get_message($post);
 
 		// Submit check...handles running $post->post_data() if required
 		$submit = $message_object->submit_check();
@@ -294,5 +295,122 @@ class item extends \phpbb\titania\controller\manage\base
 
 			confirm_box(false, 'MOVE_QUEUE');
 		}
+	}
+
+	/**
+	* Approve action.
+	*
+	* @return \Symfony\Component\HttpFoundation\Response
+	*/
+	public function approve()
+	{
+		if ($this->validate('approve'))
+		{
+			$this->queue->approve('');
+			redirect($this->queue->get_url());
+		}
+
+		return $this->helper->render(
+			'manage/queue_validate.html',
+			$this->user->lang['APPROVE_QUEUE'] . ' - ' . $this->contrib->contrib_name
+		);
+	}
+
+	/**
+	* Deny action.
+	*
+	* @return \Symfony\Component\HttpFoundation\Response
+	*/
+	public function deny()
+	{
+		if ($this->validate('deny'))
+		{
+			$this->queue->deny();
+			redirect($this->queue->get_url());
+		}
+
+		return $this->helper->render(
+			'manage/queue_validate.html',
+			$this->user->lang['DENY_QUEUE'] . ' - ' . $this->contrib->contrib_name
+		);
+	}
+
+	/**
+	* Common approval/denial message handler.
+	*
+	* @param string $action			Action: approve|deny
+	* @return bool Returns true if message was submmited properly.
+	*/
+	protected function validate($action)
+	{
+		$this->queue->message_fields_prefix = 'message_validation';
+		$message = $this->get_message($this->queue);
+		$error = array();
+
+		if ($message->submit_check())
+		{
+			// Check form key
+			if (($form_key_error = $message->validate_form_key()) !== false)
+			{
+				$error[] = $form_key_error;
+			}
+
+			if (empty($error))
+			{
+				return true;
+			}
+		}
+
+		$message->display();
+		$this->display_topic_review();
+
+		$this->template->assign_vars(array(
+			'ERROR'						=> implode('<br />', $error),
+			'L_TOPIC_REVIEW'			=> $this->user->lang['QUEUE_REVIEW'],
+			'TOPIC_TITLE'				=> $this->contrib->contrib_name,
+			'PAGE_TITLE_EXPLAIN'		=> $this->user->lang[strtoupper($action) . '_QUEUE_CONFIRM'],
+			'S_CONFIRM_ACTION'			=> $this->queue->get_url($action),
+		));
+
+		return false;
+	}
+
+	/**
+	* Get message object.
+	*
+	* @param mixed $object		Parent object receiving the message.
+	* @return \titania_message
+	*/
+	protected function get_message($object)
+	{
+		$message = new \titania_message($object);
+		$message->set_auth(array(
+			'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
+			'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
+		));
+		$message->set_settings(array(
+			'display_subject'	=> false,
+		));
+
+		return $message;
+	}
+
+	/**
+	* Display queue topic review.
+	*
+	* @return null
+	*/
+	protected function display_topic_review()
+	{
+		// Setup the sort tool
+		$topic_sort = \posts_overlord::build_sort();
+		$topic_sort->set_defaults(false, false, 'd');
+
+		// Load the topic
+		$topic = new \titania_topic;
+		$topic->load($this->queue->queue_topic_id);
+
+		// Display the posts for review
+		\posts_overlord::display_topic($topic, $topic_sort);
 	}
 }
