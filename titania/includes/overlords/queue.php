@@ -229,6 +229,8 @@ class queue_overlord
 	public static function display_queue_item($queue_id)
 	{
 		titania::add_lang('contributions');
+		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$path_helper = phpbb::$container->get('path_helper');
 
 		$sql_ary = array(
 			'SELECT' => '*',
@@ -273,149 +275,163 @@ class queue_overlord
 		// Bit of a hack for the posting
 		phpbb::$request->overwrite('t', $topic->topic_id);
 
-		// Misc actions
-		$subactions = array();
-		if (/*!$row['mpv_results'] && */titania_types::$types[$contrib->contrib_type]->mpv_test)
-		{
-			$subactions['RETEST_MPV'] = array(
-				'url'		=> titania_url::build_url('', array('action' => 'mpv', 'revision' => $row['revision_id'])),
-			);
-		}
+		$is_moderator = $contrib->type->acl_get('moderate');
+		$is_validator = $contrib->type->acl_get('validate');
 
-		if (/*!$row['automod_results'] && */titania_types::$types[$contrib->contrib_type]->automod_test)
-		{
-			$subactions['RETEST_AUTOMOD'] = array(
-				'url'		=> titania_url::build_url('', array('action' => 'automod', 'revision' => $row['revision_id'])),
-			);
-		}
+		// Misc actions
+		$misc_actions = array(
+			array(
+				'RETEST_MPV',
+				$queue->get_tool_url('mpv', $row['revision_id']),
+				$contrib->type->mpv_test,
+			),
+			array(
+				'RETEST_AUTOMOD',
+				$queue->get_tool_url('automod', $row['revision_id']),
+				$contrib->type->automod_test,
+			),
+		);
 
 		// Some quick-actions
 		$quick_actions = array();
+
 		if ($row['queue_status'] > 0)
 		{
-			if ($row['queue_progress'] == phpbb::$user->data['user_id'])
-			{
-				$quick_actions['MARK_NO_PROGRESS'] = array(
-					'url'		=> $queue->get_url('no_progress'),
-					'class'		=> 'queue_progress',
-				);
-			}
-			else if (!$row['queue_progress'])
-			{
-				$quick_actions['MARK_IN_PROGRESS'] = array(
-					'url'		=> $queue->get_url('in_progress'),
-					'class'		=> 'queue_progress',
-				);
-			}
+			$misc_actions = array_merge($misc_actions, array(
+				array(
+					'REBUILD_FIRST_POST',
+					$queue->get_url('rebuild'),
+					true,
+				),
+				array(
+					'ALLOW_AUTHOR_REPACK',
+					$queue->get_url('allow_author_repack'),
+					$is_moderator && !$row['allow_author_repack'],
+				),
+				array(
+					'MARK_TESTED',
+					$queue->get_url('tested'),
+					!$row['queue_tested'],
+				),
+				array(
+					'MARK_UNTESTED',
+					$queue->get_url('not_tested'),
+					$row['queue_tested'],
+				),
+			));
 
 			$tags = titania::$cache->get_tags(TITANIA_QUEUE);
 			unset($tags[$row['queue_status']]);
 
-			$quick_actions['CHANGE_STATUS'] = array(
-				'url'		=> $queue->get_url('move'),
-				'class'		=> 'change_status',
-				'tags'		=> $tags,
+			$quick_actions = array(
+				array(
+					'MARK_NO_PROGRESS',
+					$queue->get_url('no_progress'),
+					$row['queue_progress'] == phpbb::$user->data['user_id'],
+					'queue_progress',
+				),
+				array(
+					'MARK_IN_PROGRESS',
+					$queue->get_url('in_progress'),
+					!$row['queue_progress'],
+					'queue_progress',
+				),
+				array(
+					'CHANGE_STATUS',
+					$queue->get_url('move'),
+					true,
+					'change_status',
+					$tags,
+				),
+				array(
+					'REPACK',
+					$contrib->get_url('revision', array('page' => 'repack', 'id' => $row['revision_id'])),
+					$is_moderator,
+					'repack',
+				),
+				array(
+					'CAT_MISC',
+					'',
+					true,
+					'misc',
+					'',
+					$misc_actions,
+				),
+				array(
+					'APPROVE',
+					$queue->get_url('approve'),
+					$is_validator,
+					'approve',
+				),
+				array(
+					'DENY',
+					$queue->get_url('deny'),
+					$is_validator,
+					'deny',
+				),
 			);
-
-			if (titania_types::$types[$contrib->contrib_type]->acl_get('moderate'))
-			{
-				$quick_actions['REPACK'] = array(
-					'url'		=> titania_url::append_url($contrib->get_url('revision'), array('repack' => $row['revision_id'])),
-					'class'		=> 'repack',
-				);
-			}
-
-			// This allows you to alter the author submitted notes to the validation team, not really useful as the field's purpose was changed, so commenting out
-			/*$quick_actions['ALTER_NOTES'] = array(
-				'url'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'notes')),
-			);*/
-
-			// misc subactions
-			$subactions['REBUILD_FIRST_POST'] = array(
-				'url'		=> $queue->get_url('rebuild'),
-			);
-			if (titania_types::$types[$contrib->contrib_type]->acl_get('moderate') && !$row['allow_author_repack'])
-			{
-				$subactions['ALLOW_AUTHOR_REPACK'] = array(
-					'url'		=> $queue->get_url('allow_author_repack'),
-				);
-			}
-
-			if (!$row['queue_tested'])
-			{
-				$subactions['MARK_TESTED'] = array(
-					'url'		=> $queue->get_url('tested'),
-				);
-			}
-			else
-			{
-				$subactions['MARK_UNTESTED'] = array(
-					'url'		=> $queue->get_url('not_tested'),
-				);
-			}
-
-			$quick_actions['CAT_MISC'] = array(
-				'subactions'	=> $subactions,
-				'class'			=> 'misc',
-			);
-
-			$phpbb_branch = $contrib->revisions[$row['revision_id']]['phpbb_versions'][0]['phpbb_version_branch'];
-
-			// Validation
-			if (titania_types::$types[$contrib->contrib_type]->acl_get('validate'))
-			{
-				// If this is a prerelease submission, don't allow it to be approved unless the new phpBB version has been released.
-				if ($row['revision_status'] == TITANIA_REVISION_NEW || ($row['revision_status'] == TITANIA_REVISION_ON_HOLD && !prerelease_submission_allowed($phpbb_branch, $contrib->contrib_type)))
-				{
-					$quick_actions['APPROVE'] = array(
-						'url'		=> $queue->get_url('approve'),
-						'class'		=> 'approve',
-					);
-				}
-				$quick_actions['DENY'] = array(
-					'url'		=> $queue->get_url('deny'),
-					'class'		=> 'deny',
-				);
-			}
 		}
 
-		if (empty($quick_actions['CAT_MISC']))
+		if (empty($quick_actions) && !empty($misc_actions))
 		{
-			$quick_actions['CAT_MISC'] = array(
-				'subactions'	=> $subactions,
-				'class'			=> 'misc',
-			);		
+			$quick_actions = array(
+				array(
+					'CAT_MISC',
+					'',
+					true,
+					'misc',
+					'',
+					$misc_actions
+				),
+			);	
 		}
 
-		foreach ($quick_actions as $lang_key => $data)
+		foreach ($quick_actions as $data)
 		{
+			$properties = array('name', 'url', 'auth', 'class', 'tags', 'subactions');
+			$data = array_pad($data, sizeof($properties), '');
+			$data = array_combine($properties, $data);
+
+			if (!$data['auth'])
+			{
+				continue;
+			}
+			
 			phpbb::$template->assign_block_vars('queue_actions', array(
-				'NAME'		=> (isset(phpbb::$user->lang[$lang_key])) ? phpbb::$user->lang[$lang_key] : $lang_key,
-				'CLASS'		=> (isset($data['class'])) ? $data['class'] : '',
-
-				'U_VIEW'	=> (isset($data['url'])) ? $data['url'] : '',
+				'NAME'		=> phpbb::$user->lang($data['name']),
+				'CLASS'		=> $data['class'],
+				'U_VIEW'	=> $data['url'],
 			));
 
-			if (isset($data['tags']))
+			if ($data['tags'])
 			{
 				foreach ($data['tags'] as $tag_id => $tag_row)
 				{
 					phpbb::$template->assign_block_vars('queue_actions.subactions', array(
 						'ID'		=> $tag_id,
-						'NAME'		=> ((isset(phpbb::$user->lang[$tag_row['tag_field_name']])) ? phpbb::$user->lang[$tag_row['tag_field_name']] : $tag_row['tag_field_name']),
+						'NAME'		=> phpbb::$user->lang($tag_row['tag_field_name']),
 
-						'U_ACTION'	=> titania_url::append_url($data['url'], array('id' => $tag_id, 'hash' => generate_link_hash('quick_actions'))),
+						'U_ACTION'	=> $path_helper->append_url_params($data['url'], array(
+							'id'	=> $tag_id,
+							'hash'	=> generate_link_hash('quick_actions'),
+						)),
 					));
 				}
 			}
 
-			if (isset($data['subactions']))
+			if ($data['subactions'])
 			{
-				foreach ($data['subactions'] as $sublang_key => $subdata)
+				foreach ($data['subactions'] as $subdata)
 				{
-					phpbb::$template->assign_block_vars('queue_actions.subactions', array(
-						'NAME'		=> ((isset(phpbb::$user->lang[$sublang_key])) ? phpbb::$user->lang[$sublang_key] : $sublang_key),
+					$subdata = array_pad($subdata, sizeof($properties), '');
+					$subdata = array_combine($properties, $subdata);
 
+					if (!$subdata['auth'])
+					{
+						continue;
+					}
+					phpbb::$template->assign_block_vars('queue_actions.subactions', array(
+						'NAME'		=> phpbb::$user->lang($subdata['name']),
 						'U_ACTION'	=> $subdata['url'],
 					));
 				}
