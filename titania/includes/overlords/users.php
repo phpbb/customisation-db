@@ -32,6 +32,9 @@ class users_overlord
 
 	public static function load($user_ids)
 	{
+		// Remove any duplicate values.
+		$user_ids = array_unique($user_ids);
+
 		self::load_users($user_ids);
 		self::load_cp_fields($user_ids);
 		self::load_status($user_ids);
