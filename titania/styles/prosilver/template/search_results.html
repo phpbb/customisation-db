@@ -23,9 +23,7 @@
 		</div>
 	<!-- ENDIF -->
 
-		<div class="rightside pagination">
-			{SEARCH_MATCHES}<!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF -->
-		</div>
+		<!-- INCLUDE common/pagination.html -->
 	</div>
 
 	</form>
@@ -138,12 +136,8 @@
 	<hr />
 <!-- ENDIF -->
 
-<!-- IF PAGINATION or .searchresults or PAGE_NUMBER -->
-	<ul class="linklist">
-		<li class="rightside pagination">
-			{SEARCH_MATCHES}<!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF -->
-		</li>
-	</ul>
-<!-- ENDIF -->
+<div class="action-bar bottom">
+	<!-- INCLUDE common/pagination.html -->
+</div>
 
 <!-- INCLUDE overall_footer.html -->
