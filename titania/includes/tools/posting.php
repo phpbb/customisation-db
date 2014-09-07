@@ -479,9 +479,13 @@ class titania_posting
 		// Load the stuff we need
 		$post_object = $this->load_post($post_id);
 
-		if (titania::confirm_box(true))
+		if (phpbb::$request->is_set_post('cancel'))
 		{
-			$message = utf8_normalize_nfc(phpbb::$request->variable('report_text', '', true));
+			redirect($post_object->get_url());
+		}
+		else if (phpbb::$request->is_set_post('confirm') && check_form_key('report'))
+		{
+			$message = phpbb::$request->variable('report_text', '', true);
 			$notify_reporter = phpbb::$request->variable('notify', false);
 			$post_object->report($message, $notify_reporter);
 
@@ -489,14 +493,11 @@ class titania_posting
 
 			redirect($post_object->get_url());
 		}
-		else
-		{
-			phpbb::$template->assign_var('S_CAN_NOTIFY', true);
 
-			titania::confirm_box(false, 'REPORT_POST', '', array(), 'posting/report_body.html');
-		}
+		add_form_key('report');
+		phpbb::$template->assign_var('S_CAN_NOTIFY', true);
 
-		redirect($post_object->get_url());
+		return array('title' => 'REPORT_POST', 'template' => 'posting/report_body.html');
 	}
 
 	/**
