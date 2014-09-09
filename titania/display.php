@@ -183,4 +183,35 @@ class display
 
 		return '<img src="' . $source . '" alt="' . $title . '" title="' . $title . '" />';
 	}
+
+	/**
+	* Assign custom fields to template.
+	*
+	* @param array $fields		Fields.
+	* @param array $values		Field values.
+	* @param int $group_id		Field group id.
+	* @param bool $is_edit		Whether the parent item is being edited.
+	* @param string $block		Template block. Defaults to custom_fields.
+	*
+	* @return null
+	*/
+	public function generate_custom_fields($fields, $values, $group_id, $is_edit = false, $block = 'custom_fields')
+	{
+		foreach ($fields as $id => $field)
+		{
+			if ($is_edit && !$field['editable'])
+			{
+				continue;
+			}
+
+			$this->template->assign_block_vars($block, array(
+				'ID'				=> $id,
+				'NAME'				=> $this->user->lang($field['name']),
+				'EXPLAIN'			=> $this->user->lang($field['explain']),
+				'VALUE'				=> (!empty($values[$id])) ? $values[$id] : '',
+				'FIELD_TYPE'		=> $field['type'],
+				'GROUP_ID'			=> $group_id,
+			));
+		}
+	}
 }
