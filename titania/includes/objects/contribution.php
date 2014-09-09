@@ -1107,11 +1107,12 @@ class titania_contribution extends titania_message_object
 	* @param array $authors					Array in the form of array('author' => array(username => user_id),
 	*	'active_coauthors' => array(...), 'nonactive_coauthors' => array(...), 'missing' =>
 		array('active_coauthors' => array(username => username)).
+	* @param array $custom_fields			Custom field values.
 	* @param string $old_permalink			Old permalink. Defaults to empty string.
 	*
 	* @return array Returns array containing any errors found.
 	*/
-	public function validate($contrib_categories = array(), $authors, $old_permalink = '')
+	public function validate($contrib_categories = array(), $authors, $custom_fields, $old_permalink = '')
 	{
 		phpbb::$user->add_lang('ucp');
 
@@ -1148,6 +1149,11 @@ class titania_contribution extends titania_message_object
 			{
 				$error[] = phpbb::$user->lang['EMPTY_CONTRIB_TYPE'];
 			}
+			else
+			{
+				$this->set_type($this->contrib_type);
+				$error = array_merge($error, $this->type->validate_contrib_fields($custom_fields));
+			}
 
 			if (!$contrib_categories)
 			{
@@ -1174,16 +1180,6 @@ class titania_contribution extends titania_message_object
 		if (!$this->contrib_desc)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_DESC'];
-		}
-
-		if (defined('TITANIA_TYPE_TRANSLATION') && $this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_iso_code)
-		{
-			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_ISO_CODE'];
-		}
-
-		if (defined('TITANIA_TYPE_TRANSLATION') && $this->contrib_type == TITANIA_TYPE_TRANSLATION && !$this->contrib_local_name)
-		{
-			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_LOCAL_NAME'];
 		}
 
 		if (!$this->contrib_name_clean)
@@ -1778,6 +1774,40 @@ class titania_contribution extends titania_message_object
 		);
 
 		titania_search::index(TITANIA_CONTRIB, $this->contrib_id, $data);
+	}
+
+	/**
+	* Set custom field values. These should already be validated.
+	*
+	* @param array $values		Array in form of array(field_name => field_value)
+	* @return null
+	*/
+	public function set_custom_fields($values)
+	{
+		foreach ($this->type->contribution_fields as $name => $field)
+		{
+			if (!isset($values[$name]) || ($this->contrib_id && !$field['editable']))
+			{
+				continue;
+			}
+			$this->__set($name, $values[$name]);
+		}
+	}
+
+	/**
+	* Set custom field values.
+	*
+	* @returns array Array in form of array(field_name => field_value)
+	*/
+	public function get_custom_fields()
+	{
+		$values = array();
+
+		foreach ($this->type->contribution_fields as $name => $field)
+		{
+			$values[$name] = $this->__get($name);
+		}
+		return $values;
 	}
 
 	/**

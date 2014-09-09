@@ -274,6 +274,9 @@ class titania_type_base
 	public $license_options = array();
 	public $license_allow_custom = false;
 
+	/** Custom contribution fields */
+	public $contribution_fields = array();
+
 	/**
 	* Function that will be run when a revision of this type is uploaded
 	*
@@ -298,5 +301,15 @@ class titania_type_base
 	public function fix_package_name($contrib, $revision, $revision_attachment, $root_dir = false)
 	{
 		return false;
+	}
+
+	/**
+	* Validate contribution fields.
+	*
+	* @return array Returns array containing any errors found.
+	*/
+	public function validate_contrib_fields($fields)
+	{
+		return array();
 	}
 }
