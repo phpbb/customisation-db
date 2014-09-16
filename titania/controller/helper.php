@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 class helper extends \phpbb\controller\helper
 {
 	/**
@@ -29,6 +31,14 @@ class helper extends \phpbb\controller\helper
 		}
 
 		return $this->error($this->user->lang['NO_AUTH'], 403);
+	}
+
+	/**
+	* @{inheritDoc}
+	*/
+	public function route($route, array $params = array(), $is_amp = true, $session_id = false, $reference_type = UrlGeneratorInterface::ABSOLUTE_URL)
+	{
+		return parent::route($route, $params, $is_amp, $session_id, $reference_type);
 	}
 
 	/**
