@@ -7,7 +7,7 @@
 *
 */
 
-namespace phpbb\titania\migrations;
+namespace phpbb\titania\migration;
 
 class drop_contrib_count_config extends \phpbb\db\migration\migration
 {

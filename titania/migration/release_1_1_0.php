@@ -7,7 +7,7 @@
 *
 */
 
-namespace phpbb\titania\migrations;
+namespace phpbb\titania\migration;
 
 class release_1_1_0 extends base
 {

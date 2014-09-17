@@ -7,7 +7,7 @@
 *
 */
 
-namespace phpbb\titania\migrations;
+namespace phpbb\titania\migration;
 
 use phpbb\db\migration\exception;
 

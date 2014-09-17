@@ -11,7 +11,7 @@
 *
 */
 
-namespace phpbb\titania\migrations;
+namespace phpbb\titania\migration;
 
 class queue_validation_fields_rename extends base
 {
