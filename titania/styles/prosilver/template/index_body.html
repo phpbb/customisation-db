@@ -33,7 +33,8 @@
 				<form method="post" id="category-search" action="{S_SEARCHBOX_ACTION}">
 				<fieldset>
 					<input class="inputbox search tiny" type="text" name="keywords" id="search_keywords" size="20" placeholder="{L_SEARCH_MINI}" />
-					<input class="button2" type="submit" name="submit" value="{L_SEARCH}" />
+					<button class="button icon-button search-icon" type="submit" title="{L_SEARCH}">{L_SEARCH}</button>
+					<a href="{U_SEARCH}" class="button icon-button search-adv-icon" title="{L_SEARCH_ADV}">{L_SEARCH_ADV}</a>
 					<input type="hidden" value="{CATEGORY_ID}" name="c[]" />
 					<input type="hidden" value="1" name="sc" />
 				</fieldset>
