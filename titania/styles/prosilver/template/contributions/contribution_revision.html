@@ -16,9 +16,9 @@
 				<dl>
 					<dt><label for="phpbb_branch">{L_PHPBB_BRANCH}:</label><br /><span>{L_PHPBB_BRANCH_EXPLAIN}</span></dt>
 					<dd>
-						<select id="phpbb_branch" name="phpbb_branch[]" multiple="multiple" size="3">
+						<select id="phpbb_branch" name="phpbb_branch[]" size="3">
 							<!-- BEGIN phpbb_branches -->
-								<option value="{phpbb_branches.VALUE}">{phpbb_branches.NAME}</option>
+								<option value="{phpbb_branches.VALUE}"<!-- IF phpbb_branches.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_branches.NAME}</option>
 							<!-- END phpbb_branches -->
 						</select>
 					</dd>
