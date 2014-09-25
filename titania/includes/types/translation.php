@@ -76,6 +76,21 @@ class titania_type_translation extends titania_type_base
 		{
 			$this->upload_steps[] = array('contrib_type', 'translation_validate');
 		}
+
+		$this->contribution_fields = array(
+			'contrib_local_name'	=> array(
+				'type'				=> 'input',
+				'name'				=> 'CONTRIB_LOCAL_NAME',
+				'explain'			=> 'CONTRIB_LOCAL_NAME_EXPLAIN',
+				'editable'			=> true,
+			),
+			'contrib_iso_code'		=> array(
+				'type'				=> 'input',
+				'name'				=> 'CONTRIB_ISO_CODE',
+				'explain'			=> 'CONTRIB_ISO_CODE_EXPLAIN',
+				'editable'			=> true,
+			),
+		);
 	}
 
 	/**
@@ -164,5 +179,24 @@ class titania_type_translation extends titania_type_base
 
 		$revision_attachment->change_real_filename($new_real_filename);
 		return false;
+	}
+
+	/**
+	* @{inheritDoc}
+	*/
+	public function validate_contrib_fields($fields)
+	{
+		$error = array();
+
+		if (empty($fields['contrib_iso_code']))
+		{
+			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_ISO_CODE'];
+		}
+		if (empty($fields['contrib_local_name']))
+		{
+			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_LOCAL_NAME'];
+		}
+
+		return $error;
 	}
 }

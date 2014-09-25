@@ -59,6 +59,29 @@ class titania_type_bbcode extends titania_type_base
 	{
 		$this->lang = phpbb::$user->lang['BBCODE'];
 		$this->langs = phpbb::$user->lang['BBCODES'];
+
+		$this->revision_fields = array(
+			'revision_bbc_html_replace' => array(
+				'type'		=> 'textarea',
+				'name'		=> 'REVISION_HTML_REPLACE',
+				'explain'	=> 'REVISION_HTML_REPLACE_EXPLAIN'
+			),
+			'revision_bbc_bbcode_usage' => array(
+				'type'		=> 'textarea',
+				'name'		=> 'REVISION_BBCODE_USE',
+				'explain'	=> 'REVISION_BBCODE_USE_EXPLAIN'
+			),
+			'revision_bbc_help_line' => array(
+				'type'		=> 'input',
+				'name'		=> 'REVISION_HELP_LINE',
+				'explain'	=> '',
+			),
+			'revision_bbc_demo' => array(
+				'type'		=> 'textarea',
+				'name'		=> 'CONTRIB_DEMO',
+				'explain'	=> '',
+			),
+		);
 	}
 
 	public $extra_upload = false;
@@ -106,5 +129,25 @@ class titania_type_bbcode extends titania_type_base
 		}
 
 		return false;
+	}
+
+	/**
+	* @{inheritDoc}
+	*/
+	public function validate_revision_fields($fields)
+	{
+		$error = array();
+
+		if (empty($fields['revision_bbc_html_replace']))
+		{
+			$error[] = phpbb::$user->lang['NO_HTML_REPLACE'];
+		}
+
+		if (empty($fields['revision_bbc_bbcode_usage']))
+		{
+			$error[] = phpbb::$user->lang['NO_BBCODE_USAGE'];
+		}
+
+		return $error;
 	}
 }

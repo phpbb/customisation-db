@@ -274,6 +274,9 @@ class titania_type_base
 	public $license_options = array();
 	public $license_allow_custom = false;
 
+	/** Custom revision fields */
+	public $revision_fields = array();
+
 	/** Custom contribution fields */
 	public $contribution_fields = array();
 
@@ -309,6 +312,16 @@ class titania_type_base
 	* @return array Returns array containing any errors found.
 	*/
 	public function validate_contrib_fields($fields)
+	{
+		return array();
+	}
+
+	/**
+	* Validate revision fields.
+	*
+	* @return array Returns array containing any errors found.
+	*/
+	public function validate_revision_fields($fields)
 	{
 		return array();
 	}
