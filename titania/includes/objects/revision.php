@@ -98,6 +98,40 @@ class titania_revision extends titania_database_object
 	}
 
 	/**
+	* Set custom field values. These should already be validated.
+	*
+	* @param array $values		Array in form of array(field_name => field_value)
+	* @return null
+	*/
+	public function set_custom_fields($values)
+	{
+		foreach ($this->contrib->type->revision_fields as $name => $field)
+		{
+			if (!isset($values[$name]) || ($this->revision_id && !$field['editable']))
+			{
+				continue;
+			}
+			$this->__set($name, $values[$name]);
+		}
+	}
+
+	/**
+	* Set custom field values.
+	*
+	* @returns array Array in form of array(field_name => field_value)
+	*/
+	public function get_custom_fields()
+	{
+		$values = array();
+
+		foreach ($this->contrib->type->revision_fields as $name => $field)
+		{
+			$values[$name] = $this->__get($name);
+		}
+		return $values;
+	}
+
+	/**
 	* Load the phpBB branches we've selected for this revision
 	* Stored in $this->phpbb_versions
 	*/
