@@ -1293,4 +1293,18 @@ class titania_attachment extends titania_database_object
 			$prefix .
 			utf8_basename($this->attachments[$attachment_id]['physical_filename']);
 	}
+
+	/**
+	* Get directory name to unzip to from contribution name and revision version.
+	*
+	* @param string $contrib_name		Contribution name.
+	* @param string $revision_version	Revision version
+	*
+	* @retun string
+	*/
+	public function get_unzip_dir($contrib_name, $revision_version)
+	{
+		return \titania_url::url_slug($contrib_name) . '_' .
+			preg_replace('#[^0-9a-z]#', '_', strtolower($revision_version));
+	}
 }

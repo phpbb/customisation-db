@@ -129,10 +129,11 @@ class tools
 			return $this->helper->error('INVALID_TOOl');
 		}
 
-		$new_dir_name = $this->contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($this->revision->revision_version));
-
 		// Start up the machine
-		$tool = new \titania_contrib_tools($this->attachment->get_filepath(), $new_dir_name);
+		$tool = new \titania_contrib_tools(
+			$this->attachment->get_filepath(),
+			$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
+		);
 
 		// Automod testing time
 		$details = '';
