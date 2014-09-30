@@ -30,6 +30,21 @@ phpbb.titania.download:
     requirements:
         id: \d+
 
+phpbb.titania.search:
+    pattern: /search
+    defaults: { _controller: phpbb.titania.controller.search:general }
+
+phpbb.titania.search.results:
+    pattern: /search/results
+    defaults: { _controller: phpbb.titania.controller.search:general_results }
+
+phpbb.titania.search.contributions:
+    pattern: /find-contribution
+    defaults: { _controller: phpbb.titania.controller.search:contributions }
+
+phpbb.titania.search.contributions.results:
+    pattern: /find-contribution/results
+    defaults: { _controller: phpbb.titania.controller.search:contribution_results }
 
 phpbb.titania.category:
     pattern: /{category1}/{category2}/{category3}
