@@ -1,10 +1,10 @@
-titania/config.php
-titania/store/*
-titania/files/*
+config.php
+store/*
+files/*
 Thumbs.db
 .DS_Store
 *.bak
-titania/files/revisions/*
-titania/files/screenshots/*
-titania/composer/*
-titania/vendor
+files/revisions/*
+files/screenshots/*
+composer/*
+vendor
