@@ -11,6 +11,11 @@ namespace phpbb\titania\migrations;
 
 class drop_contrib_count_config extends \phpbb\db\migration\migration
 {
+	static public function depends_on()
+	{
+		return array('\phpbb\titania\migrations\release_1_1_0');	
+	}
+
 	public function effectively_installed()
 	{
 		return !isset($this->config['titania_num_styles']);

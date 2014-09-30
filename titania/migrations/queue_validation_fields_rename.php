@@ -15,6 +15,11 @@ namespace phpbb\titania\migrations;
 
 class queue_validation_fields_rename extends base
 {
+	static public function depends_on()
+	{
+		return array('\phpbb\titania\migrations\release_1_1_0');
+	}
+
 	public function effectively_installed()
 	{
 		$table_prefix = $this->get_titania_table_prefix();

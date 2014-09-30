@@ -17,7 +17,10 @@ class queue_validation_fields_rename_p2 extends base
 {
 	static public function depends_on()
 	{
-		return array('\phpbb\titania\migrations\queue_validation_fields_rename');
+		return array(
+			'\phpbb\titania\migrations\release_1_1_0',
+			'\phpbb\titania\migrations\queue_validation_fields_rename',
+		);
 	}
 
 	public function effectively_installed()

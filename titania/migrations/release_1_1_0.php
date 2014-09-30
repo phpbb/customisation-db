@@ -11,6 +11,11 @@ namespace phpbb\titania\migrations;
 
 class release_1_1_0 extends base
 {
+	static public function depends_on()
+	{
+		return array('\phpbb\db\migration\data\v310\dev');
+	}
+
 	public function effectively_installed()
 	{
 		return isset($this->config['titania_version']);
