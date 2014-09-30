@@ -56,7 +56,8 @@
         }
     ],
     "require": {
-    	"php": ">=5.3.3"
+    	"php": ">=5.3.3",
+    	"phpbb/epv": "dev-master"
     },
     "extra": {
         "display-name": "phpBB Customisation Database (Titania)",
