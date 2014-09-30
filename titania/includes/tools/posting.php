@@ -231,7 +231,7 @@ class titania_posting
 
 		// Common stuff
 		phpbb::$template->assign_vars(array(
-			'S_POST_ACTION'		=> $post_object->topic->get_url('reply', titania_url::$current_page_url),
+			'S_POST_ACTION'		=> $topic->get_url('reply'),
 			'L_POST_A'			=> phpbb::$user->lang['POST_REPLY'],
 
 			'S_DISPLAY_REVIEW'	=> true,
