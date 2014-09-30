@@ -44,7 +44,10 @@ class support extends base
 			$topic_id,
 			'contributions/contribution_support_post.html',
 			$this->contrib->contrib_id,
-			"$contrib_type/{$this->contrib->contrib_name_clean}/support",
+			array(
+				'contrib_type'	=> $this->contrib->type->url,
+				'contrib'		=> $this->contrib->contrib_name_clean,
+			),
 			TITANIA_SUPPORT,
 			$this->helper->get_current_url()
 		);

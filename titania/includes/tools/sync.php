@@ -227,7 +227,10 @@ class titania_sync
 						'text_options'	=> $row['contrib_desc_options'],
 						'author'		=> $row['contrib_user_id'],
 						'date'			=> $row['contrib_last_update'],
-						'url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'],
+						'url'			=> serialize(array(
+							'contrib_type'	=> titania_types::$types[$row['contrib_type']]->url,
+							'contrib'		=> $row['contrib_name_clean'],
+						)),
 						'approved'		=> (in_array($row['contrib_status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
 						'categories'	=> explode(',', $row['contrib_categories']),
 					);
@@ -353,7 +356,7 @@ class titania_sync
 						'text_options'	=> $post->post_text_options,
 						'author'		=> $post->post_user_id,
 						'date'			=> $post->post_time,
-						'url'			=> titania_url::unbuild_url($post->get_url()),
+						'url'			=> $post->post_url,
 						'approved'		=> $post->post_approved,
 						'access_level'	=> $post->post_access,
 						'parent_contrib_type'	=> (int) ($post->post_type == TITANIA_QUEUE) ? $row['queue_type'] : $row['contrib_type'],
@@ -392,7 +395,10 @@ class titania_sync
 						'text_options'	=> $row['faq_text_options'],
 						'author'		=> 0,
 						'date'			=> 0,
-						'url'			=> titania_types::$types[$row['contrib_type']]->url . '/' . $row['contrib_name_clean'] . '/faq/f_' . $row['faq_id'],
+						'url'			=> serialize(array(
+							'contrib_type'	=> titania_types::$types[$row['contrib_type']]->url,
+							'contrib'		=> $row['contrib_name_clean'],
+						)),
 						'access_level'	=> $row['faq_access'],
 					);
 				}

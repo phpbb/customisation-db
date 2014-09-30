@@ -106,7 +106,7 @@ class titania_posting
 		// Setup the post object we'll use
 		$post_object = new titania_post($post_type);
 		$post_object->topic->parent_id = $parent_id;
-		$post_object->topic->topic_url = $parent_url;
+		$post_object->topic->topic_url = serialize($parent_url);
 
 		// Some more complicated permissions for stickes in support
 		$can_sticky = phpbb::$auth->acl_get('u_titania_mod_post_mod');

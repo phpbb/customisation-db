@@ -226,20 +226,21 @@ class titania_post extends titania_message_object
 	 */
 	public function get_url($action = false, $use_anchor = true)
 	{
+		$params = unserialize($this->post_url);
+		$params['p'] = $this->post_id;
+
 		switch ($this->post_type)
 		{
 			case TITANIA_SUPPORT:
 			case TITANIA_QUEUE_DISCUSSION:
 				$controller = 'phpbb.titania.contrib.support.topic';
+				$params['topic_id'] = $this->topic_id;
 			break;
 
 			case TITANIA_QUEUE:
 				$controller = 'phpbb.titania.queue.item';
 			break;
 		}
-
-		$params = $this->topic->get_url_params();
-		$params['p'] = $this->post_id;
 
 		if ($action)
 		{
@@ -403,7 +404,7 @@ class titania_post extends titania_message_object
 		$this->update_topic_postcount();
 
 		$this->topic_id = $this->topic->topic_id;
-		$this->post_url = titania_url::unbuild_url($this->topic->get_url());
+		$this->post_url = $this->topic->topic_url;
 
 		parent::submit();
 
@@ -545,7 +546,7 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		$this->topic_id = $this->topic->topic_id;
-		$this->post_url = titania_url::unbuild_url($this->topic->get_url());
+		$this->post_url = $this->topic->topic_url;
 
 		$this->index();
 

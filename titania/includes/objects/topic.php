@@ -220,17 +220,19 @@ class titania_topic extends titania_database_object
 	 */
 	public function get_url($action = false, $params = array())
 	{
-		$params = array_merge($this->get_url_params(), $params);
+		$params = array_merge(unserialize($this->topic_url), $params);
 
 		switch ($this->topic_type)
 		{
 			case TITANIA_SUPPORT:
 			case TITANIA_QUEUE_DISCUSSION:
 				$controller = 'phpbb.titania.contrib.support.topic';
+				$params['topic_id'] = $this->topic_id;
 			break;
 
 			case TITANIA_QUEUE:
 				$controller = 'phpbb.titania.queue.item';
+				$params['id'] = $this->parent_id;
 			break;
 		}
 
@@ -241,36 +243,6 @@ class titania_topic extends titania_database_object
 		}
 
 		return $this->controller_helper->route($controller, $params);
-	}
-
-	/**
-	* Get the parameters necessary to generate a URL.
-	*
-	* @return array
-	*/
-	public function get_url_params()
-	{
-		$_params = explode('/', $this->topic_url);
-
-		switch ($this->topic_type)
-		{
-			case TITANIA_SUPPORT:
-			case TITANIA_QUEUE_DISCUSSION:
-				$params = array(
-					'contrib_type'	=> $_params[0],
-					'contrib'		=> $_params[1],
-					'topic_id'		=> $this->topic_id,
-				);
-			break;
-
-			case TITANIA_QUEUE:
-				$params = array(
-					'id'		=> $this->parent_id,
-				);
-			break;
-		}
-
-		return $params;
 	}
 
 	/**

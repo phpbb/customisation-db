@@ -154,7 +154,7 @@ class titania_queue extends titania_message_object
 			$post->post_access = TITANIA_ACCESS_TEAMS;
 			$post->topic->parent_id = $this->queue_id;
 			$post->topic->topic_category = $contrib_type;
-			$post->topic->topic_url = 'manage/queue/q_' . $this->queue_id;
+			$post->topic->topic_url = serialize(array('id' => $this->queue_id));
 		}
 		else
 		{
@@ -640,7 +640,10 @@ class titania_queue extends titania_message_object
 		$post->topic->__set_array(array(
 			'parent_id'			=> $this->contrib_id,
 			'topic_category'	=> $contrib->contrib_type,
-			'topic_url'			=> titania_types::$types[$contrib->contrib_type]->url . '/' . $contrib->contrib_name_clean . '/support/',
+			'topic_url'			=> serialize(array(
+				'contrib_type'	=> $contrib->type->url,
+				'contrib'		=> $contrib->contrib_name_clean,
+			)),
 			'topic_sticky'		=> true,
 		));
 		$post->__set_array(array(

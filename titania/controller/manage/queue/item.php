@@ -208,7 +208,7 @@ class item extends \phpbb\titania\controller\manage\base
 			$this->queue->queue_topic_id,
 			'manage/queue_post.html',
 			$this->id,
-			"manage/queue/item/{$this->id}",
+			false,
 			TITANIA_QUEUE,
 			$this->helper->get_current_url()
 		);
