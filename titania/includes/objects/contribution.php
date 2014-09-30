@@ -741,9 +741,9 @@ class titania_contribution extends titania_message_object
 			case 'revision' :
 				$controller .= '.revision';
 
-				if (isset($parameters['page']) && $parameters['page'] == 'edit')
+				if (isset($parameters['page']))
 				{
-					$controller .= '.edit';
+					$controller .= '.' . $parameters['page'];
 					unset($parameters['page']);
 				}
 			break;
