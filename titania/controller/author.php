@@ -350,7 +350,7 @@ class author
 				'active'			=> $this->request->variable('active_coauthors', '', true),
 				'nonactive'			=> $this->request->variable('nonactive_coauthors', '', true),
 			),
-			'custom'				=> $this->request->variable('custom', array('' => ''), true),
+			'custom'				=> $this->request->variable('custom_fields', array('' => ''), true),
 		);
 
 		if ($preview || $submit)
@@ -384,7 +384,7 @@ class author
 			));
 			$authors['author'] = array($this->user->data['username'] => $this->user->data['user_id']);
 
-			$error = $contrib->validate($settings['categories'], $authors);
+			$error = $contrib->validate($settings['categories'], $authors, $settings['custom']);
 
 			if (($form_key_error = $message->validate_form_key()) !== false)
 			{
@@ -394,6 +394,7 @@ class author
 			if (empty($error))
 			{
 				$contrib->set_type($contrib->contrib_type);
+				$contrib->set_custom_fields($settings['custom']);
 				$contrib->contrib_categories = implode(',', $settings['categories']);
 				$contrib->contrib_creation_time = time();
 				$contrib->submit();
@@ -414,6 +415,11 @@ class author
 		generate_category_select($settings['categories']);
 		$contrib->assign_details();
 		$message->display();
+
+		foreach (\titania_types::$types as $type)
+		{
+			$this->display->generate_custom_fields($type->contribution_fields, $settings['custom'], $type->id);
+		}
 
 		$this->template->assign_vars(array(
 			'S_POST_ACTION'			=> $this->author->get_url('create'),
