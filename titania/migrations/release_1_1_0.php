@@ -536,6 +536,11 @@ class release_1_1_0 extends base
 			array('permission.add', array('u_titania_mod_translation_validate')),
 			array('permission.add', array('u_titania_mod_translation_moderate')),
 
+			array('permission.add', array('u_titania_mod_extension_queue_discussion')),
+			array('permission.add', array('u_titania_mod_extension_queue')),
+			array('permission.add', array('u_titania_mod_extension_validate')),
+			array('permission.add', array('u_titania_mod_extension_moderate')),
+
 			array('permission.role_add', array('ROLE_TITANIA_MODIFICATION_TEAM', 'u_', '')),
 			array('permission.role_add', array('ROLE_TITANIA_STYLE_TEAM', 'u_', '')),
 			array('permission.role_add', array('ROLE_TITANIA_MODERATOR_TEAM', 'u_', '')),
