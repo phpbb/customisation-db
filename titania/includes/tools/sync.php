@@ -356,7 +356,7 @@ class titania_sync
 						'text_options'	=> $post->post_text_options,
 						'author'		=> $post->post_user_id,
 						'date'			=> $post->post_time,
-						'url'			=> $post->post_url,
+						'url'			=> serialize($post->get_url_params()),
 						'approved'		=> $post->post_approved,
 						'access_level'	=> $post->post_access,
 						'parent_contrib_type'	=> (int) ($post->post_type == TITANIA_QUEUE) ? $row['queue_type'] : $row['contrib_type'],
@@ -398,6 +398,7 @@ class titania_sync
 						'url'			=> serialize(array(
 							'contrib_type'	=> titania_types::$types[$row['contrib_type']]->url,
 							'contrib'		=> $row['contrib_name_clean'],
+							'id'			=> $row['faq_id'],
 						)),
 						'access_level'	=> $row['faq_access'],
 					);

@@ -226,33 +226,43 @@ class titania_post extends titania_message_object
 	 */
 	public function get_url($action = false, $use_anchor = true)
 	{
-		$params = unserialize($this->post_url);
-		$params['p'] = $this->post_id;
-
-		switch ($this->post_type)
-		{
-			case TITANIA_SUPPORT:
-			case TITANIA_QUEUE_DISCUSSION:
-				$controller = 'phpbb.titania.contrib.support.topic';
-				$params['topic_id'] = $this->topic_id;
-			break;
-
-			case TITANIA_QUEUE:
-				$controller = 'phpbb.titania.queue.item';
-			break;
-		}
+		$params = $this->get_url_params($action, $use_anchor);
+		$controller = 'phpbb.titania.';
+		$controller .= ($this->post_type === TITANIA_QUEUE) ? 'queue.item' : 'contrib.support.topic';
 
 		if ($action)
 		{
 			$controller .= '.action';
+		}
+
+		return $this->controller_helper->route($controller, $params);
+	}
+
+	/**
+	* Get the url parameters for the post
+	*
+	* @param string|bool $action An action (anchor will not be included if an action is sent)
+	* @param bool $use_anchor False to leave the anchor off of the URL
+	*/
+	public function get_url_params($action = false, $use_anchor = true)
+	{
+		$params = unserialize($this->post_url);
+		$params['p'] = $this->post_id;
+
+		if ($this->post_type !== TITANIA_QUEUE)
+		{
+			$params['topic_id'] = $this->topic_id;
+		}
+
+		if ($action)
+		{
 			$params['action'] = $action;
 		}
 		else if ($use_anchor)
 		{
 			$params['#'] = 'p' . $this->post_id;
 		}
-
-		return $this->controller_helper->route($controller, $params);
+		return $params;
 	}
 
 	/**
@@ -838,7 +848,7 @@ class titania_post extends titania_message_object
 			'text_options'	=> $this->post_text_options,
 			'author'		=> $this->post_user_id,
 			'date'			=> $this->post_time,
-			'url'			=> $this->post_url,
+			'url'			=> serialize($this->get_url_params()),
 			'access_level'	=> min($this->post_access, $this->topic->topic_access), // If the topic access level is lower than the post access level we still can not see it without access to the topic
 			'approved'		=> $this->post_approved,
 			'reported'		=> $this->post_reported,
