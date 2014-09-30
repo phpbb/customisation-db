@@ -253,7 +253,10 @@ class revision extends base
 					\titania_subscriptions::subscribe(TITANIA_TOPIC, $this->queue->queue_discussion_topic_id);
 				}
 			}
-			$error = $this->clean_package();
+			if ($this->contrib->type->clean_and_restore_root)
+			{
+				$error = $this->clean_package();
+			}
 		}
 
 		return array('error' => $error);
