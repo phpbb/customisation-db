@@ -116,7 +116,6 @@ class release_1_1_0 extends base
 						'uid'			=> array('UNIQUE', 'user_id'),
 						'a_rat'			=> array('INDEX', 'author_rating'),
 						'a_con'			=> array('INDEX', 'author_contribs'),
-						'a_sni'			=> array('INDEX', 'author_snippets'),
 						'a_mod'			=> array('INDEX', 'author_mods'),
 						'a_sty'			=> array('INDEX', 'author_styles'),
 						'a_vis'			=> array('INDEX', 'author_visible'),
