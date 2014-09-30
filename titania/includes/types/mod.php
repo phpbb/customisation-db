@@ -81,7 +81,7 @@ class titania_type_mod extends titania_type_base
 			if ($this->mpv_test)
 			{
 				$this->upload_steps[] = array(
-					'name'		=> 'MVP Test',
+					'name'		=> 'MVP_TEST',
 					'function'	=> array($this, 'mpv_test'),
 				);
 			}
@@ -89,7 +89,7 @@ class titania_type_mod extends titania_type_base
 			if ($this->automod_test)
 			{
 				$this->upload_steps[] = array(
-					'name'		=> 'AutoMOD Test',
+					'name'		=> 'AUTOMOD_TEST',
 					'function'	=> array($this, 'automod_test'),
 				);
 			}
