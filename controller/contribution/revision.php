@@ -462,7 +462,7 @@ class revision extends base
 		// Start up the machine
 		$this->contrib_tools = new \titania_contrib_tools(
 			$this->attachment->get_filepath(),
-			$this->get_unzip_dir()
+			$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
 		);
 
 		$result = $this->run_step($step['function']);
