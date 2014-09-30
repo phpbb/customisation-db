@@ -73,6 +73,18 @@ services:
             - %core.root_path%
             - %core.php_ext%
 
+    phpbb.titania.controller.search:
+        class: phpbb\titania\controller\search
+        arguments:
+            - @config
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @request
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
     phpbb.titania.controller.contrib:
         class: phpbb\titania\controller\contribution\contribution
         arguments:
