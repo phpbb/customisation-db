@@ -3,19 +3,12 @@
 <div class="panel">
 	<div class="inner">
 
-		<!-- IF .tools -->
-		<fieldset>
-			<!-- BEGIN tools -->
-				<form action="{S_ACTION}" method="post">
-					<dl>
-						<dt><label for="action_{tools.TOOL}">{tools.L_TITLE}</label></dt>
-						<dd><input type="hidden" name="t" value="{tools.TOOL}" /><input class="button2" type="submit" id="action_{tools.TOOL}" name="action_{tools.TOOL}" value="{L_RUN}" /></dd>
-					</dl>
-				</form>
-				<!-- IF not tools.S_LAST_ROW --><hr /><!-- ENDIF -->
-			<!-- END tools -->
-		</fieldset>
-		<!-- ENDIF -->
+		<!-- BEGIN tools -->
+			<a href="{tools.U_TITLE}">{tools.L_TITLE}</a>
+			<!-- IF not tools.S_LAST_ROW -->
+				<hr class="dashed" />
+			<!-- ENDIF -->
+		<!-- END tools -->
 
 	</div>
 </div>
