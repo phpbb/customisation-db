@@ -48,3 +48,14 @@ phpbb.titania.contrib.faq.item.action:
 phpbb.titania.contrib.manage:
     pattern: /manage
     defaults: { _controller: phpbb.titania.controller.contrib.manage:manage }
+
+phpbb.titania.contrib.revision:
+    pattern: /revision
+    defaults: { _controller: phpbb.titania.controller.contrib.revision:add }
+
+phpbb.titania.contrib.revision.repack:
+    pattern: /revision/{id}/repack
+    defaults: { _controller: phpbb.titania.controller.contrib.revision:repack }
+    requirements:
+        id: \d+
+
