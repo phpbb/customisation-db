@@ -37,6 +37,7 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	'AUTOMOD_TEST'						=> 'AutoMOD Test',
 	'MODIFICATION'						=> 'Modification',
 	'MODIFICATIONS'						=> 'Modifications',
 	'MOD_CREATE_PUBLIC'					=> '[b]Modification name[/b]: %1$s
@@ -120,4 +121,6 @@ If you have any queries and further discussion please use the Queue Discussion T
 
 Thank you,
 phpBB Extensions Team',
+
+	'MPV_TEST'			=> 'MOD Prevalidator Test',
 ));

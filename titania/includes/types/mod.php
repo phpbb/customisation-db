@@ -80,12 +80,18 @@ class titania_type_mod extends titania_type_base
 		{
 			if ($this->mpv_test)
 			{
-				$this->upload_steps[] = array('contrib_type', 'mpv_test');
+				$this->upload_steps[] = array(
+					'name'		=> 'MVP Test',
+					'function'	=> array($this, 'mpv_test'),
+				);
 			}
 
 			if ($this->automod_test)
 			{
-				$this->upload_steps[] = array('contrib_type', 'automod_test');
+				$this->upload_steps[] = array(
+					'name'		=> 'AutoMOD Test',
+					'function'	=> array($this, 'automod_test'),
+				);
 			}
 		}
 	}
