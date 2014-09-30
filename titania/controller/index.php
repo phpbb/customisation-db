@@ -98,7 +98,7 @@ class index
 			'L_MARK_FORUMS_READ'	=> $this->user->lang['MARK_CONTRIBS_READ'],
 
 			'S_DISPLAY_SEARCHBOX'	=> true,
-			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.results'),
+			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
 		));
 
 		$this->display->assign_global_vars();
@@ -132,7 +132,7 @@ class index
 			'CATEGORY_ID'			=> $this->id,
 
 			'S_DISPLAY_SEARCHBOX'	=> true,
-			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.results'),
+			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
 			'U_QUEUE_STATS'			=> $u_queue_stats,
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
 		));
