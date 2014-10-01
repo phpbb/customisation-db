@@ -476,6 +476,8 @@ class queue_overlord
 		$tags = titania::$cache->get_tags(TITANIA_QUEUE);
 		$tag_count = array();
 		$total = 0;
+		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$type_url = titania_types::$types[$type]->url;
 
 		$sql = 'SELECT queue_status, COUNT(queue_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
 			WHERE queue_type = ' . (int) $type . '
@@ -491,7 +493,7 @@ class queue_overlord
 		phpbb::$template->assign_block_vars('queue_tags', array(
 			'TAG_NAME'		=> phpbb::$user->lang['ALL'],
 			'TAG_COUNT'		=> $total,
-			'U_VIEW_TAG'	=> titania_url::append_url(titania_url::$current_page_url, array('tag' => 'all', 'start' => '*destroy*')),
+			'U_VIEW_TAG'	=> $controller_helper->route('phpbb.titania.queue', array('queue_type' => $type_url, 'tag' => 'all')),
 			'S_SELECTED'	=> ($selected == 0) ? true : false,
 		));
 
@@ -506,7 +508,7 @@ class queue_overlord
 			phpbb::$template->assign_block_vars('queue_tags', array(
 				'TAG_NAME'		=> (isset(phpbb::$user->lang[$row['tag_field_name']])) ? phpbb::$user->lang[$row['tag_field_name']] : $row['tag_field_name'],
 				'TAG_COUNT'		=> $tag_count[$tag_id],
-				'U_VIEW_TAG'	=> titania_url::append_url(titania_url::$current_page_url, array('tag' => $tag_id, 'start' => '*destroy*')),
+				'U_VIEW_TAG'	=> $controller_helper->route('phpbb.titania.queue', array('queue_type' => $type_url, 'tag' => $tag_id)),
 				'S_SELECTED'	=> ($selected == $tag_id) ? true : false,
 			));
 		}
