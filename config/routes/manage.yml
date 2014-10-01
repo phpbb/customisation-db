@@ -74,3 +74,11 @@ phpbb.titania.queue_discussion.type:
     defaults: { _controller: phpbb.titania.controller.manage.queue_discussion:display_type }
     requirements:
         queue_type: mod|extension|style|converter|official_tool|bbcode|bridge|translation
+
+phpbb.titania.administration:
+    pattern: /administration
+    defaults: { _controller: phpbb.titania.controller.manage.administration:list_tools }
+
+phpbb.titania.administration.tool:
+    pattern: /administration/{tool}
+    defaults: { _controller: phpbb.titania.controller.manage.administration:run_tool }

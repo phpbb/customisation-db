@@ -50,12 +50,17 @@ class manage_plugin
 
 	var $tool_id = '';
 
+	/** @var \phpbb\titania\controller\helper */
+	protected $controller_helper;
+
 	/**
 	 * Constructor
 	 * Load the list with available plugins and assign them in the correct category
 	 */
-	function manage_plugin()
+	public function __construct(\phpbb\titania\controller\helper $controller_helper)
 	{
+		$this->controller_helper = $controller_helper;
+
 		// Set the path
 		$this->tool_box_path = TITANIA_ROOT . 'includes/manage_tools/';
 
@@ -187,7 +192,7 @@ class manage_plugin
 				'L_TITLE'		=> $name,
 				'TOOL'			=> $tool,
 				'S_SELECTED'	=> $_s_active,
-				'U_TITLE'		=> titania_url::build_url('manage/administration', array('t' => $tool)),
+				'U_TITLE'		=> $this->controller_helper->route('phpbb.titania.administration.tool', array('tool' => $tool)),
 			));
 		}
 	}
