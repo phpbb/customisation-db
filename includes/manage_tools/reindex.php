@@ -70,20 +70,28 @@ class reindex
 			break;
 
 			case 4 :
-				trigger_back('DONE');
+				trigger_error('DONE');
 			break;
 		}
 
+		$params = array(
+			'tool'		=> 'reindex',
+			'section'	=> $section,
+			'submit'	=> 1,
+			'hash'		=> generate_link_hash('manage'),
+		);
+
 		if (($start + $limit) >= $total)
 		{
-			// Move to the next step
-			meta_refresh(0, titania_url::build_url('manage/administration', array('t' => 'reindex', 'section' => ($section + 1), 'submit' => 1, 'hash' => generate_link_hash('manage'))));
+			$params['section']++;
 		}
 		else
 		{
-			// Move to the next step
-			meta_refresh(0, titania_url::build_url('manage/administration', array('t' => 'reindex', 'section' => $section, 'start' => ($start + $limit), 'submit' => 1, 'hash' => generate_link_hash('manage'))));
+			$params['start'] = $start + $limit;
 		}
+
+		// Move to the next step
+		meta_refresh(0, phpbb::$container->get('controller.helper')->route('phpbb.titania.administration.tool', $params));
 
 		$display_message = phpbb::$user->lang[$display_message];
 		$section_status = (($start + $limit) < $total) ? sprintf(phpbb::$user->lang['SECTION_STATUS'], ($start + $limit), $total) : phpbb::$user->lang['DONE'];
