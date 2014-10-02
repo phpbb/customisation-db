@@ -1055,48 +1055,58 @@ class titania_posting
 				}
 				else
 				{
-					// Subscriptions
-					if ($mode == 'reply')
+					// Send out subscription notifications
+					if ($mode == 'post' || $mode == 'reply')
 					{
-						if ($post_object->post_type == TITANIA_SUPPORT && is_object($this->contrib) && $this->contrib->contrib_id == $post_object->topic->parent_id && $this->contrib->contrib_name)
+						$is_support_topic = $post_object->post_type == TITANIA_SUPPORT &&
+							is_object($this->contrib) &&
+							$this->contrib->contrib_id == $post_object->topic->parent_id &&
+							$this->contrib->contrib_name
+						;
+
+						$template = 'subscribe_notify';
+						$topic_params = array();
+						$email_vars = array(
+							'NAME'	=> htmlspecialchars_decode($post_object->topic->topic_subject),
+						);
+
+						if ($is_support_topic)
 						{
-							// Support topic reply
-							$email_vars = array(
-								'NAME'			=> htmlspecialchars_decode($post_object->topic->topic_subject),
-								'U_VIEW'		=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
-								'CONTRIB_NAME'	=> $this->contrib->contrib_name,
+							$email_vars['CONTRIB_NAME']	= $this->contrib->contrib_name;
+						}
+
+						if ($mode == 'reply')
+						{
+							$object_type	= array(TITANIA_TOPIC);
+							$object_id		= array($post_object->topic_id);
+							$topic_params	= array(
+								'view'	=> 'unread',
+								'#'		=> 'unread',
 							);
-							titania_subscriptions::send_notifications(array(TITANIA_TOPIC, TITANIA_SUPPORT), array($post_object->topic_id, $post_object->topic->parent_id), 'subscribe_notify_contrib.txt', $email_vars, $post_object->post_user_id);
+
+							if ($is_support_topic)
+							{
+								// Support topic reply
+								$object_id[]	= $post_object->topic->parent_id;
+								$object_type[]	= TITANIA_SUPPORT;
+								$template 		.= '_contrib';
+							}
 						}
 						else
 						{
-							$email_vars = array(
-								'NAME'		=> htmlspecialchars_decode($post_object->topic->topic_subject),
-								'U_VIEW'	=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
-							);
-							titania_subscriptions::send_notifications(TITANIA_TOPIC, $post_object->topic_id, 'subscribe_notify.txt', $email_vars, $post_object->post_user_id);
+							$object_type	= $post_object->post_type;
+							$object_id		= $post_object->topic->parent_id;
+							$template		.= ($is_support_topic) ? '_forum_contrib' : '_forum';
 						}
-					}
-					else if ($mode == 'post')
-					{
-						if ($post_object->post_type == TITANIA_SUPPORT && is_object($this->contrib) && $this->contrib->contrib_id == $post_object->topic->parent_id && $this->contrib->contrib_name)
-						{
-							// New support topic
-							$email_vars = array(
-								'NAME'			=> htmlspecialchars_decode($post_object->topic->topic_subject),
-								'U_VIEW'		=> $post_object->topic->get_url(),
-								'CONTRIB_NAME'	=> $this->contrib->contrib_name,
-							);
-							titania_subscriptions::send_notifications($post_object->post_type, $post_object->topic->parent_id, 'subscribe_notify_forum_contrib.txt', $email_vars, $post_object->post_user_id);
-						}
-						else
-						{
-							$email_vars = array(
-								'NAME'		=> htmlspecialchars_decode($post_object->topic->topic_subject),
-								'U_VIEW'	=> $post_object->topic->get_url(),
-							);
-							titania_subscriptions::send_notifications($post_object->post_type, $post_object->topic->parent_id, 'subscribe_notify_forum.txt', $email_vars, $post_object->post_user_id);
-						}
+
+						$email_vars['U_VIEW'] = $post_object->topic->get_url(false, $topic_params);
+						titania_subscriptions::send_notifications(
+							$object_type,
+							$object_id,
+							"$template.txt",
+							$email_vars,
+							$post_object->post_user_id
+						);
 					}
 				}
 
