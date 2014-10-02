@@ -238,7 +238,7 @@ class colorizeit
 			'file_src'			=> $this->get_file_source($this->attachment->attachment_id),
 			'file_created'		=> $this->attachment->filetime,
 			'sample_src'		=> $this->get_file_source($this->contrib->clr_sample['attachment_id']),
-			'sample_created' 	=> $this->contrib->clr_sample['filetime'],
+			'sample_created'	=> $this->contrib->clr_sample['filetime'],
 			'colors'			=> $this->contrib->contrib_clr_colors,
 			'parser'			=> $data['parser'],
 		);
