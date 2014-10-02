@@ -179,7 +179,7 @@ class colorizeit_helper
 				{
 					$lang_imagesets[] = $file;
 				}
-		        continue;
+				continue;
 			}
 			$name = $this->get_name_from_cfg($path . $filename);
 

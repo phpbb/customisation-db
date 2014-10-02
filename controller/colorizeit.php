@@ -195,9 +195,9 @@ class colorizeit
 		$sql = 'SELECT revision_id, contrib_id, revision_status, revision_clr_options
 			FROM ' . TITANIA_REVISIONS_TABLE . '
     		WHERE  attachment_id = ' . (int) $this->attachment->attachment_id;
-    	$result = $this->db->sql_query($sql);
-    	$data = $this->db->sql_fetchrow($result);
-    	$this->db->sql_freeresult();
+		$result = $this->db->sql_query($sql);
+		$data = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult();
 
 		if (!$data || $data['revision_status'] != TITANIA_REVISION_APPROVED)
 		{
