@@ -250,10 +250,22 @@ class titania_topic extends titania_database_object
 	 */
 	public function get_parent_url()
 	{
-		$base = $append = false;
-		titania_url::split_base_params($base, $append, $this->topic_url);
+		$params = unserialize($this->topic_url);
 
-		return titania_url::build_url($base, $append);
+		switch ($this->topic_type)
+		{
+			case TITANIA_SUPPORT:
+			case TITANIA_QUEUE_DISCUSSION:
+				$controller = 'phpbb.titania.contrib.support';
+			break;
+
+			case TITANIA_QUEUE:
+				$controller = 'phpbb.titania.queue.item';
+			break;
+		}
+		$base = $append = false;
+
+		return $this->controller_helper->route($controller, $params);
 	}
 
 	/**

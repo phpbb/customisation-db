@@ -434,7 +434,7 @@ class titania_posting
 
 		// Common stuff
 		phpbb::$template->assign_vars(array(
-			'S_POST_ACTION'		=> $post_object->get_url('edit', false, titania_url::$current_page_url),
+			'S_POST_ACTION'		=> $post_object->get_url('edit'),
 			'L_POST_A'			=> phpbb::$user->lang['EDIT_POST'],
 		));
 		return array('title' => 'EDIT_POST');
@@ -886,12 +886,10 @@ class titania_posting
 		{
 			if ($hard_delete)
 			{
-				$base = $append = false;
-				titania_url::split_base_params($base, $append, $topic_object->topic_url);
-
+				$parent_url = $topic_object->get_parent_url();
 				$topic_object->delete();
 
-				redirect(titania_url::build_url($base, $append));
+				redirect($parent_url);
 			}
 			else
 			{
@@ -1171,10 +1169,13 @@ class titania_posting
 					$redirect_post_id = posts_overlord::next_prev_post_id($post_object->topic_id, $post_object->post_id);
 					if ($redirect_post_id)
 					{
-						redirect(titania_url::append_url($post_object->topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
+						redirect($post_object->topic->get_url(false, array(
+							'p' => $redirect_post_id,
+							'#' => "p$redirect_post_id",
+						)));
 					}
 
-					redirect(titania_url::build_url($post_object->topic->topic_url));
+					redirect($post_object->topic->get_parent_url());
 				}
 				else
 				{
@@ -1191,7 +1192,10 @@ class titania_posting
 						$redirect_post_id = posts_overlord::next_prev_post_id($post_object->topic_id, $post_object->post_id);
 						if ($redirect_post_id)
 						{
-							redirect(titania_url::append_url($post_object->topic->get_url(), array('p' => $redirect_post_id, '#p' => $redirect_post_id)));
+							redirect($post_object->topic->get_url(false, array(
+								'p'	=> $redirect_post_id,
+								'#'	=> "p$redirect_post_id",
+							)));
 						}
 					}
 				}
