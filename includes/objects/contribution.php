@@ -347,15 +347,15 @@ class titania_contribution extends titania_message_object
 	 */
 	public function get_revisions()
 	{
-		if (sizeof($this->revisions) || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !titania_types::$types[$this->contrib_type]->acl_get('moderate') && !titania_types::$types[$this->contrib_type]->acl_get('view')))
+		if (sizeof($this->revisions) || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !$this->type->acl_get('moderate') && !$this->type->acl_get('view')))
 		{
 			return;
 		}
 
 		// Can they view unapproved revisions?  Yes if validation not required, is author, is active coauthor, can view validation queue or can moderate this contribution
 		$can_view_unapproved = ($this->is_author || $this->is_active_coauthor) ? true : false;
-		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('view')) ? true : false;
-		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? true : false;
+		$can_view_unapproved = ($can_view_unapproved || $this->type->acl_get('view')) ? true : false;
+		$can_view_unapproved = ($can_view_unapproved || $this->type->acl_get('moderate')) ? true : false;
 
 		$select = 'SELECT r.*, a.download_count FROM ' . TITANIA_REVISIONS_TABLE . ' r
 			LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
@@ -416,7 +416,7 @@ class titania_contribution extends titania_message_object
 	 */
 	public function get_download($revision_id = false)
 	{
-		if ($this->download || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !titania_types::$types[$this->contrib_type]->acl_get('moderate') && !titania_types::$types[$this->contrib_type]->acl_get('view')))
+		if ($this->download || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !$this->type->acl_get('moderate') && !$this->type->acl_get('view')))
 		{
 			return;
 		}
@@ -595,16 +595,16 @@ class titania_contribution extends titania_message_object
 			}
 
 			$vars = array_merge($vars, array(
-				'CONTRIB_TYPE'					=> titania_types::$types[$this->contrib_type]->lang,
+				'CONTRIB_TYPE'					=> $this->type->lang,
 				'CONTRIB_TYPE_ID'				=> $this->contrib_type,
 
-				'U_CONTRIB_MANAGE'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('manage') : '',
-				'U_NEW_REVISION'				=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? $this->get_url('revision') : '',
-				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && titania_types::$types[$this->contrib_type]->use_queue && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || titania_types::$types[$this->contrib_type]->acl_get('queue_discussion'))) ? $this->get_url('queue_discussion') : '',
+				'U_CONTRIB_MANAGE'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || $this->type->acl_get('moderate')) ? $this->get_url('manage') : '',
+				'U_NEW_REVISION'				=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || $this->type->acl_get('moderate')) ? $this->get_url('revision') : '',
+				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && $this->type->use_queue && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || $this->type->acl_get('queue_discussion'))) ? $this->get_url('queue_discussion') : '',
 				'U_VIEW_CONTRIB'				=> $this->get_url(),
 
 				'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
-				'U_INFO'						=> (titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? titania_url::build_url('manage/attention', array('type' => TITANIA_CONTRIB, 'id' => $this->contrib_id)) : '',
+				'U_INFO'						=> ($this->type->acl_get('moderate')) ? titania_url::build_url('manage/attention', array('type' => TITANIA_CONTRIB, 'id' => $this->contrib_id)) : '',
 
 				// Contribution Status
 				'S_CONTRIB_NEW'					=> ($this->contrib_status == TITANIA_CONTRIB_NEW) ? true : false,
@@ -663,7 +663,7 @@ class titania_contribution extends titania_message_object
 					$revision->__set_array($row);
 					$revision->phpbb_versions = (isset($row['phpbb_versions'])) ? $row['phpbb_versions'] : array();
 					$revision->translations = (isset($row['translations'])) ? $row['translations'] : array();
-					$revision->display('revisions', titania_types::$types[$this->contrib_type]->acl_get('view'), $this->options['all_versions']);
+					$revision->display('revisions', $this->type->acl_get('view'), $this->options['all_versions']);
 					$phpbb_versions = array_merge($phpbb_versions, $revision->phpbb_versions);
 				}
 				unset($revision);
@@ -805,7 +805,7 @@ class titania_contribution extends titania_message_object
 	*/
 	public function update_release_topic()
 	{
-		if (titania_types::$types[$this->contrib_type]->forum_robot && titania_types::$types[$this->contrib_type]->forum_database && titania_types::$types[$this->contrib_type]->create_public)
+		if ($this->type->forum_robot && $this->type->forum_database && $this->type->create_public)
 		{
 			titania::_include('functions_posting', 'phpbb_posting');
 
@@ -832,7 +832,7 @@ class titania_contribution extends titania_message_object
 			titania_decode_message($contrib_description, $this->contrib_desc_uid);
 
 			// Global body and options
-			$body = sprintf(phpbb::$user->lang[titania_types::$types[$this->contrib_type]->create_public],
+			$body = sprintf(phpbb::$user->lang[$this->type->create_public],
 				$this->contrib_name,
 				titania_url::remove_sid($this->author->get_url()),
 				users_overlord::get_user($this->author->user_id, '_username'),
@@ -847,8 +847,8 @@ class titania_contribution extends titania_message_object
 			);
 
 			$options = array(
-				'poster_id'		=> titania_types::$types[$this->contrib_type]->forum_robot,
-				'forum_id' 		=> titania_types::$types[$this->contrib_type]->forum_database,
+				'poster_id'		=> $this->type->forum_robot,
+				'forum_id' 		=> $this->type->forum_database,
 			);
 
 			if ($this->contrib_release_topic_id)
@@ -1527,7 +1527,7 @@ class titania_contribution extends titania_message_object
 		// Increment/Decrement the contrib counter for the new owner
 		$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . "
 			SET author_contribs = author_contribs $action 1" .
-				((isset(titania_types::$types[$this->contrib_type]->author_count)) ? ', ' . titania_types::$types[$this->contrib_type]->author_count . ' = ' . titania_types::$types[$this->contrib_type]->author_count . " $action 1" : '') . "
+				((isset($this->type->author_count)) ? ', ' . $this->type->author_count . ' = ' . $this->type->author_count . " $action 1" : '') . "
 			WHERE user_id = $user_id " .
 				(($action == '-') ? 'AND author_contribs > 0' : '');
 		phpbb::$db->sql_query($sql);
@@ -1538,9 +1538,9 @@ class titania_contribution extends titania_message_object
 			$author = new titania_author($user_id);
 			$author->author_contribs = 1;
 
-			if (isset(titania_types::$types[$this->contrib_type]->author_count))
+			if (isset($this->type->author_count))
 			{
-				$author->{titania_types::$types[$this->contrib_type]->author_count} = 1;
+				$author->{$this->type->author_count} = 1;
 			}
 
 			$author->submit();
@@ -1718,7 +1718,7 @@ class titania_contribution extends titania_message_object
 	 */
 	public function in_queue()
 	{
-		if (!titania::$config->use_queue || !titania_types::$types[$this->contrib_type]->use_queue)
+		if (!titania::$config->use_queue || !$this->type->use_queue)
 		{
 			return false;
 		}
@@ -1814,7 +1814,7 @@ class titania_contribution extends titania_message_object
 		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
 		$package_helper = new titania_composer_package_helper();
 
-		if (!titania::$config->composer_vendor_name || !titania_types::$types[$this->contrib_type]->create_composer_packages || !$package_helper->packages_dir_writable())
+		if (!titania::$config->composer_vendor_name || !$this->type->create_composer_packages || !$package_helper->packages_dir_writable())
 		{
 			return;
 		}
