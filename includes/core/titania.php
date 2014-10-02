@@ -212,27 +212,7 @@ class titania
 	 */
 	public static function add_lang($lang_set, $use_db = false, $use_help = false)
 	{
-		static $included = array();
-
-		// Don't include the language file a bunch of times
-		if (in_array($lang_set, $included))
-		{
-			return;
-		}
-
-		// Store so we can reset it back
-		$old_path = phpbb::$user->lang_path;
-
-		// Set the custom language path to our working language directory
-		phpbb::$user->set_custom_lang_path(self::$config->language_path);
-
-		phpbb::$user->add_lang($lang_set, $use_db, $use_help);
-
-		// Reset the custom language path to the original directory
-		phpbb::$user->set_custom_lang_path($old_path);
-
-		// Store
-		$included[] = $lang_set;
+		phpbb::$user->add_lang_ext('phpbb/titania', $lang_set, $use_db, $use_help);
 	}
 
 	/**
