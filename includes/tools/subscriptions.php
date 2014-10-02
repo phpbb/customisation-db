@@ -35,31 +35,38 @@ class titania_subscriptions
 		}
 
 		$subscribe = phpbb::$request->variable('subscribe', '');
-		if ($subscribe == 'subscribe' && check_link_hash(phpbb::$request->variable('hash', ''), 'subscribe'))
+		$hash = phpbb::$request->variable('hash', '');
+
+		if ($subscribe == 'subscribe' && check_link_hash($hash, 'subscribe'))
 		{
 			titania_subscriptions::subscribe($object_type, $object_id);
 		}
-		else if ($subscribe == 'unsubscribe' && check_link_hash(phpbb::$request->variable('hash', ''), 'unsubscribe'))
+		else if ($subscribe == 'unsubscribe' && check_link_hash($hash, 'unsubscribe'))
 		{
 			titania_subscriptions::unsubscribe($object_type, $object_id);
 		}
 
-		if (titania_subscriptions::is_subscribed($object_type, $object_id))
-		{
-			phpbb::$template->assign_vars(array(
-				'IS_SUBSCRIBED'			=> true,
+		$is_subscribed = titania_subscriptions::is_subscribed($object_type, $object_id);
+		$action = 'subscribe';
 
-				'U_SUBSCRIBE'			=> titania_url::append_url($url, array('subscribe' => 'unsubscribe', 'hash' => generate_link_hash('unsubscribe'))),
-				'L_UNSUBSCRIBE_TYPE'	=> (isset(phpbb::$user->lang['UN' . $lang_key])) ? phpbb::$user->lang['UN' . $lang_key] : phpbb::$user->lang['UNSUBSCRIBE'],
-			));
-		}
-		else
+		if ($is_subscribed)
 		{
-			phpbb::$template->assign_vars(array(
-				'U_SUBSCRIBE'			=> titania_url::append_url($url, array('subscribe' => 'subscribe', 'hash' => generate_link_hash('subscribe'))),
-				'L_SUBSCRIBE_TYPE'		=> (isset(phpbb::$user->lang[$lang_key])) ? phpbb::$user->lang[$lang_key] : phpbb::$user->lang['SUBSCRIBE'],
-			));
+			$action = 'unsubscribe';
+			$lang_key = 'UN' . $lang_key;
 		}
+
+		$path_helper = phpbb::$container->get('path_helper');
+		$params = array(
+			'subscribe'	=> $action,
+			'hash'		=> generate_link_hash($action),
+		);
+
+		phpbb::$template->assign_vars(array(
+			'IS_SUBSCRIBED'			=> $is_subscribed,
+
+			'U_SUBSCRIBE'			=> $path_helper->append_url_params($url, $params),
+			'L_UNSUBSCRIBE_TYPE'	=> phpbb::$user->lang($lang_key),
+		));
 	}
 
 	/*
