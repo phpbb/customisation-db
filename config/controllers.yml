@@ -85,6 +85,15 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
 
+    phpbb.titania.controller.colorizeit:
+        class: phpbb\titania\controller\colorizeit
+        arguments:
+            - @dbal.conn
+            - @user
+            - @request
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.config
+
     phpbb.titania.controller.contrib:
         class: phpbb\titania\controller\contribution\contribution
         arguments:

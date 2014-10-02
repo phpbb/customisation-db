@@ -46,6 +46,12 @@ phpbb.titania.search.contributions.results:
     pattern: /find-contribution/results
     defaults: { _controller: phpbb.titania.controller.search:contribution_results }
 
+phpbb.titania.colorizeit:
+    pattern: /colorizeit/{id}
+    defaults: { _controller: phpbb.titania.controller.colorizeit:colorizeit_data }
+    requirements:
+        id: \d+
+
 phpbb.titania.category:
     pattern: /{category1}/{category2}/{category3}
     defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '' }
