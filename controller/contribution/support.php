@@ -52,6 +52,11 @@ class support extends base
 			$this->helper->get_current_url()
 		);
 
+		if (!empty($result['needs_auth']))
+		{
+			return $this->helper->needs_auth();
+		}
+
 		$this->assign_vars();
 
 		$template_file = (!empty($result['template'])) ? $result['template'] : 'contributions/contribution_support_post.html';

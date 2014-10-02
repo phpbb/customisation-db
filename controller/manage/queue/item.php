@@ -202,7 +202,7 @@ class item extends \phpbb\titania\controller\manage\base
 		$posting_helper = new \titania_posting();
 		$posting_helper->parent_type = $this->queue->queue_type;
 
-		$data = $posting_helper->act(
+		$result = $posting_helper->act(
 			$this->contrib,
 			$action,
 			$this->queue->queue_topic_id,
@@ -213,7 +213,12 @@ class item extends \phpbb\titania\controller\manage\base
 			$this->helper->get_current_url()
 		);
 
-		return $this->helper->render('manage/queue_post.html', $data['title']);
+		if (!empty($result['needs_auth']))
+		{
+			return $this->helper->needs_auth();
+		}
+
+		return $this->helper->render('manage/queue_post.html', $result['title']);
 	}
 
 	/**

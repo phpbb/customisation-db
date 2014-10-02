@@ -83,7 +83,7 @@ class titania_posting
 			break;
 
 			case 'hard_delete_topic' :
-				$this->delete_topic($topic_id, true);
+				return $this->delete_topic($topic_id, true);
 			break;
 		}
 	}
@@ -100,7 +100,7 @@ class titania_posting
 	{
 		if (!phpbb::$auth->acl_get('u_titania_topic'))
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		// Setup the post object we'll use
@@ -177,7 +177,7 @@ class titania_posting
 	{
 		if (!phpbb::$auth->acl_get('u_titania_post'))
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		// Load the stuff we need
@@ -188,7 +188,7 @@ class titania_posting
 		// Check permissions
 		if (!$post_object->acl_get('reply'))
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		// Quoting?
@@ -387,7 +387,7 @@ class titania_posting
 	{
 		if (!phpbb::$auth->acl_get('u_titania_post'))
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		// Load the stuff we need
@@ -396,7 +396,7 @@ class titania_posting
 		// Check permissions
 		if (!$post_object->acl_get('edit'))
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		// Some more complicated permissions for stickes in support
@@ -447,7 +447,7 @@ class titania_posting
 	*/
 	public function delete($post_id)
 	{
-		$this->common_delete($post_id);
+		return $this->common_delete($post_id);
 	}
 
 	/**
@@ -457,7 +457,7 @@ class titania_posting
 	*/
 	public function undelete($post_id)
 	{
-		$this->common_delete($post_id, true);
+		return $this->common_delete($post_id, true);
 	}
 
 	/**
@@ -473,7 +473,7 @@ class titania_posting
 		// Check permissions
 		if (!phpbb::$user->data['is_registered'])
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		// Load the stuff we need
@@ -539,7 +539,7 @@ class titania_posting
 		// Check permissions
 		if (!$is_authed)
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		$topic_object->topic_sticky = ($topic_object->topic_sticky) ? false : true;
@@ -587,7 +587,7 @@ class titania_posting
 		// Check permissions
 		if (!$is_authed)
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		if (confirm_box(true))
@@ -616,7 +616,7 @@ class titania_posting
 		// Auth check
 		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		titania::add_lang('posting');
@@ -821,7 +821,7 @@ class titania_posting
 		// Check permissions
 		if (!$is_authed)
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		if (confirm_box(true))
@@ -879,7 +879,7 @@ class titania_posting
 		// Check permissions
 		if (!$is_authed)
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		if (confirm_box(true))
@@ -954,7 +954,7 @@ class titania_posting
 		// Check permissions
 		if (!$is_authed)
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		if (confirm_box(true))
@@ -1138,7 +1138,7 @@ class titania_posting
 		// Check permissions
 		if ((!$undelete && !$post_object->acl_get('delete')) || ($undelete && !$post_object->acl_get('undelete')))
 		{
-			titania::needs_auth();
+			return array('needs_auth' => true);
 		}
 
 		if (confirm_box(true))
@@ -1152,7 +1152,7 @@ class titania_posting
 				{
 					if (!phpbb::$auth->acl_get('u_titania_post_hard_delete'))
 					{
-						titania::needs_auth();
+						return array('needs_auth' => true);
 					}
 
 					$post_object->hard_delete();
