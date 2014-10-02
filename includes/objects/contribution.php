@@ -357,8 +357,6 @@ class titania_contribution extends titania_message_object
 		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('view')) ? true : false;
 		$can_view_unapproved = ($can_view_unapproved || titania_types::$types[$this->contrib_type]->acl_get('moderate')) ? true : false;
 
-		$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
-
 		$select = 'SELECT r.*, a.download_count FROM ' . TITANIA_REVISIONS_TABLE . ' r
 			LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
 				ON (r.attachment_id = a.attachment_id)';
@@ -422,8 +420,6 @@ class titania_contribution extends titania_message_object
 		{
 			return;
 		}
-
-		$require_upload = titania_types::$types[$this->contrib_type]->require_upload;
 
 		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r
 			LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
