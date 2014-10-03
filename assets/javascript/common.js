@@ -9,6 +9,21 @@ $(document).ready(function(){
 		});
 	}
 
+	/**
+	* Display Colorize it frame.
+	*/
+	$('[data-colorizeit-url]').one('click', function(e) {
+		$('#colorizeit-placeholder')
+		.show()
+		.replaceWith(
+			$('<iframe>')
+			.attr('id', 'colorizeit-frame')
+			.attr('src', $(this).data('colorizeit-url')
+		));
+
+		e.preventDefault();
+	});
+
 /* Not working...
 	// AJAX Rate
 	$("ul.rating li a, ul.rated li a").click(function(event){

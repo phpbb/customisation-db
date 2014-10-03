@@ -344,6 +344,12 @@ a.contract {
 .move-up-disabled	{ background-image: url("{T_IMAGES_PATH}/icon_up_disabled.gif"); }
 .move-down-disabled	{ background-image: url("{T_IMAGES_PATH}/icon_down_disabled.gif"); }
 
+#colorizeit-frame {
+	border-width: 0;
+	height: 900px;
+	width: 100%;
+}
+
 /* Listings
 --------------------------------------------- */
 .phpbb_versions {
