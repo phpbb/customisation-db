@@ -338,11 +338,12 @@ a.contract {
 	width: 16px;
 }
 
-.delete		{ background-image: url("{T_IMAGES_PATH}/icon_delete.gif"); }
-.move-up 	{ background-image: url("{T_IMAGES_PATH}/icon_up.gif"); }
-.move-down	{ background-image: url("{T_IMAGES_PATH}/icon_down.gif"); }
-.move-up-disabled	{ background-image: url("{T_IMAGES_PATH}/icon_up_disabled.gif"); }
-.move-down-disabled	{ background-image: url("{T_IMAGES_PATH}/icon_down_disabled.gif"); }
+.edit		{ background-image: url("./images/icon_edit.gif"); }
+.delete		{ background-image: url("./images/icon_delete.gif"); }
+.move-up 	{ background-image: url("./images/icon_up.gif"); }
+.move-down	{ background-image: url("./images/icon_down.gif"); }
+.move-up-disabled	{ background-image: url("./images/icon_up_disabled.gif"); }
+.move-down-disabled	{ background-image: url("./images/icon_down_disabled.gif"); }
 
 #colorizeit-frame {
 	border-width: 0;
