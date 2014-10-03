@@ -15,12 +15,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-// This gets checked in page_header() in functions.php to see whether we're in community
-if (!defined('NOT_IN_COMMUNITY'))
-{
-	define('NOT_IN_COMMUNITY', true);
-}
-
 if (!defined('PHPBB_USE_BOARD_URL_PATH'))
 {
 	define('PHPBB_USE_BOARD_URL_PATH', true);
