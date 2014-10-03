@@ -227,7 +227,7 @@ class titania_revision extends titania_database_object
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_COLORIZEIT'      => $url_colorizeit,
-			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',
+			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || $this->contrib->type->acl_get('moderate'))) ? $this->contrib->get_url('revision', array('page' => 'edit', 'id' => $this->revision_id)) : '',
 
 			'S_USE_QUEUE'			=> (titania::$config->use_queue && titania_types::$types[$this->contrib->contrib_type]->use_queue) ? true : false,
 			'S_NEW'					=> ($this->revision_status == TITANIA_REVISION_NEW) ? true : false,
