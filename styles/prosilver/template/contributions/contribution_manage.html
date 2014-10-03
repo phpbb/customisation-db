@@ -1,0 +1,186 @@
+<!-- INCLUDE contributions/contribution_header.html -->
+
+<h3 class="section-name">{PAGE_TITLE}</h3>
+
+<!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
+<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+
+<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+	<div class="container">
+		<div class="inner">
+
+			<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
+
+			<fieldset>
+				<!-- IF S_EDIT_SUBJECT or S_CREATE -->
+				<dl>
+					<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
+					<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
+				</dl>
+				<!-- ENDIF -->
+				<!-- IF S_CREATE or (S_IS_MODERATOR and not S_CONTRIB_APPROVED) -->
+				<dl>
+					<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label><br /><span>{L_CONTRIB_PERMALINK_EXPLAIN}</span></dt>
+					<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
+				</dl>
+				<!-- ENDIF -->
+				<!-- IF S_CREATE -->
+				<dl>
+					<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
+					<dd>
+						<select name="contrib_type" id="contrib_type" data-togglable-settings="true">
+							<!-- BEGIN type_select -->
+							<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF --> data-toggle-setting=".custom_settings_{type_select.VALUE}, .type_{type_select.VALUE}">{type_select.NAME}</option>
+							<!-- END type_select -->
+						</select>
+					</dd>
+				</dl>
+				<!-- ENDIF -->
+				<dl>
+					<dt><label for="{POSTING_TEXT_NAME}">{L_CONTRIB_DESCRIPTION}:</label></dt>
+					<dd></dd>
+				</dl>
+			</fieldset>
+
+			<!-- INCLUDE posting/posting_basic_editor.html -->
+
+			<fieldset class="fields1">
+				<!-- IF S_BBCODE_ALLOWED -->
+					<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{S_BBCODE_CHECKED} /> {L_DISABLE_BBCODE}</label></div>
+				<!-- ENDIF -->
+				<!-- IF S_SMILIES_ALLOWED -->
+					<div><label for="disable_smilies"><input type="checkbox" name="disable_smilies" id="disable_smilies"{S_SMILIES_CHECKED} /> {L_DISABLE_SMILIES}</label></div>
+				<!-- ENDIF -->
+				<!-- IF S_LINKS_ALLOWED -->
+					<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{S_MAGIC_URL_CHECKED} /> {L_DISABLE_MAGIC_URL}</label></div>
+				<!-- ENDIF -->
+			</fieldset>
+
+			<h3>{L_OPTIONS}</h3>
+			<fieldset>
+				<dl>
+					<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label><br /><span>{L_MULTI_SELECT_EXPLAIN}</span></dt>
+					<dd>
+						<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="5">
+							<!-- BEGIN category_select -->
+							<option class="type_{category_select.TYPE}" value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
+								<!-- BEGIN level -->&nbsp; &nbsp;<!-- END level -->{category_select.NAME}
+							</option>
+							<!-- END category_select -->
+						</select>
+					</dd>
+				</dl>
+
+				<!-- IF .custom_fields -->
+					<!-- INCLUDE common/custom_fields.html -->
+				<!-- ENDIF -->
+
+				<!-- IF not S_CREATE and S_IS_MODERATOR -->
+				<dl>
+					<dt><label for="contrib_status">{L_CONTRIB_STATUS}:</label><br /><span>{L_CONTRIB_STATUS_EXPLAIN}</span></dt>
+					<dd>
+						<select name="contrib_status" id="contrib_status">
+							<!-- BEGIN status_select -->
+								<option value="{status_select.VALUE}"<!-- IF status_select.S_SELECTED --> selected="selected"<!-- ENDIF -->>{status_select.NAME}</option>
+							<!-- END status_select -->
+						</select>
+					</dd>
+				</dl>
+				<!-- ENDIF -->
+				<!-- IF S_DELETE_CONTRIBUTION -->
+				<dl>
+					<dt><label for="delete">{L_DELETE_CONTRIBUTION}:</label><br /><span>{L_DELETE_CONTRIBUTION_EXPLAIN}</span></dt>
+					<dd>
+						<input type="checkbox" name="delete" id="delete" />
+					</dd>
+				</dl>
+				<!-- ENDIF -->
+
+				<!-- IF not S_CREATE and (S_IS_OWNER or S_IS_MODERATOR) -->
+				<dl>
+					<dt><label for="change_owner">{L_CONTRIB_CHANGE_OWNER}:</label><br /><span>{L_CONTRIB_CHANGE_OWNER_EXPLAIN}</span></dt>
+					<dd>
+						<input class="inputbox autowidth" type="text" name="change_owner" id="change_owner" />
+					</dd>
+				</dl>
+				<!-- ENDIF -->
+				<dl>
+					<dt><label for="active_coauthors">{L_CONTRIB_ACTIVE_AUTHORS}:</label><br /><span>{L_CONTRIB_ACTIVE_AUTHORS_EXPLAIN}<br /><br />{L_CONTRIB_AUTHORS_EXPLAIN}</span></dt>
+					<dd>
+						<textarea class="inputbox" name="active_coauthors" id="active_coauthors" rows="2" cols="20">{ACTIVE_COAUTHORS}</textarea>
+					</dd>
+				</dl>
+				<dl>
+					<dt><label for="nonactive_coauthors">{L_CONTRIB_NONACTIVE_AUTHORS}:</label><br /><span>{L_CONTRIB_NONACTIVE_AUTHORS_EXPLAIN}<br /><br />{L_CONTRIB_AUTHORS_EXPLAIN}</span></dt>
+					<dd>
+						<textarea class="inputbox" name="nonactive_coauthors" id="nonactive_coauthors" rows="2" cols="20">{NONACTIVE_COAUTHORS}</textarea>
+					</dd>
+				</dl>
+				<!-- IF S_CAN_EDIT_STYLE_DEMO or S_CREATE-->
+				<dl id="demo_url_container">
+					<dt><label for="demo_url">{L_DEMO_URL}:</label><br /><span>{L_DEMO_URL_EXPLAIN}</span></dt>
+					<dd>
+						<input class="inputbox" type="text" name="demo_url" id="demo_url" value="{U_VIEW_DEMO}" />
+					</dd>
+				</dl>
+				<!-- ENDIF -->
+				<!-- IF not S_CREATE -->
+				<dl>
+					<dt><label for="limited_support">{L_LIMITED_SUPPORT}:</label><br /><span>{L_LIMITED_SUPPORT_EXPLAIN}</span></dt>
+					<dd>
+						<input type="checkbox" id="limited_support" name="limited_support"<!-- IF S_LIMITED_SUPPORT -->checked="checked"<!-- ENDIF --> />
+					</dd>
+				</dl>
+				<!-- ENDIF -->
+			</fieldset>
+
+            <!-- IF MANAGE_COLORIZEIT -->
+                <h3>{L_COLORIZEIT_MANAGE}</h3>
+                <p>{L_COLORIZEIT_MANAGE_EXPLAIN}</p>
+                {CLR_SCREENSHOTS}
+                <fieldset>
+                    <dl>
+                        <dt>{L_COLORIZEIT_COLORS}:</dt>
+                        <dd><input class="inputbox" type="text" id="change-colors" name="change_colors" value="{CLR_COLORS}" /></dd>
+                    </dl>
+                </fieldset>
+                <!-- IF U_TESTSAMPLE -->
+                <p id="colorizeit-placeholder" style="display: none;">
+                    {L_COLORIZEIT_SAMPLE_EXPLAIN}
+                </p>
+                <fieldset id="test-sample">
+                    <dl>
+                        <dd>
+                            <input type="submit" value="{L_COLORIZEIT_SAMPLE}" class="button2" data-colorizeit-url="{U_TESTSAMPLE}#{CLR_COLORS}" />
+                        </dd>
+                    </dl>
+                </fieldset>
+                <!-- ENDIF -->
+            <!-- ENDIF -->
+
+			<!-- IF SCREENSHOT_UPLOADER -->
+				<h3>{L_SCREENSHOTS}</h3>
+				{SCREENSHOT_UPLOADER}
+			<!-- ENDIF -->
+		</div>
+	</div>
+
+	<!-- IF S_CAN_EDIT_CONTRIB -->
+	<div class="container">
+		<div class="inner">
+			<fieldset class="submit-buttons">
+				<!-- IF not S_CREATE -->
+					<input type="hidden" name="contrib_type" value="{CONTRIB_TYPE}" />
+				<!-- ENDIF -->
+				<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
+				<input type="submit" name="preview" value="{L_PREVIEW}" class="button1" />&nbsp;
+				<input type="submit" name="submit" value="<!-- IF S_CREATE -->{L_CONTINUE}<!-- ELSE -->{L_SUBMIT}<!-- ENDIF -->" class="button1" />
+				{S_FORM_TOKEN}
+			</fieldset>
+		</div>
+	</div>
+	<!-- ENDIF -->
+</form>
+
+
+<!-- INCLUDE contributions/contribution_footer.html -->

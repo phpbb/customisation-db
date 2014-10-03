@@ -1,0 +1,67 @@
+<!-- INCLUDE ucp_header.html -->
+
+<form id="ucp" method="post" action="{S_ACTION}">
+
+<h2>{L_SUBSCRIPTION_SECTIONS_MANAGE}</h2>
+
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<p>{L_SUBSCRIPTION_SECTIONS_MANAGE_EXPLAIN}</p>
+	
+	<!-- IF .sections -->
+		<ul class="linklist">
+			<li class="rightside pagination">
+				<!-- IF TOTAL_RESULTS -->{TOTAL_RESULTS}<!-- ENDIF -->
+				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+			</li>
+		</ul>
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="icon">
+					<dt>{L_WATCHED_SECTIONS}</dt>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist cplist">
+		<!-- BEGIN sections -->
+			<li class="row<!-- IF sections.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+				<dl>
+					<dt class="contrib-section">
+						<a href="{sections.U_VIEW_SUBSCRIPTION}" class="topictitle">{sections.SUBSCRIPTION_TITLE}</a>
+						<!-- IF not sections.S_ATTENTION --> ({sections.SUBSCRIPTION_TARGET})<!-- ENDIF -->
+						<!-- IF sections.S_ACCESS_TEAMS -->
+						<img src="{TITANIA_THEME_PATH}images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
+						<!-- ENDIF -->
+						<br />
+						<!-- IF not sections.S_ATTENTION and not sections.S_QUEUE -->{L_POST_BY_AUTHOR} {sections.SUBSCRIPTION_AUTHOR_FULL} &raquo; <!-- ELSE --> {L_WATCHED_SINCE} <!-- ENDIF -->
+						{sections.SUBSCRIPTION_TIME}
+					</dt>
+					<dd class="mark"><input type="checkbox" name="sections[{sections.SUBSCRIPTION_TYPE}][{sections.SUBSCRIPTION_ID}]" id="{sections.SUBSCRIPTION_ID}" /></dd>
+				</dl>
+			</li>
+		<!-- END sections -->
+		</ul>
+		<ul class="linklist">
+			<li class="rightside pagination">
+				<!-- IF TOTAL_RESULTS -->{TOTAL_RESULTS}<!-- ENDIF -->
+				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+			</li>
+		</ul>
+	<!-- ELSE -->
+		<p><strong>{L_NO_SECTIONS}</strong></p>
+	<!-- ENDIF -->
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+
+<!-- IF .sections -->
+	<fieldset class="display-actions">
+		<input class="button2" type="submit" name="unsubscribe" value="{L_UNWATCH_SUBSCRIPTION_MARKED}" />
+		<div><a href="#" onclick="marklist('ucp', '', true); return false;">{L_MARK_ALL}</a> :: <a href="#" onclick="marklist('ucp', '', false); return false;">{L_UNMARK_ALL}</a></div>
+		{S_FORM_TOKEN}
+	</fieldset>
+<!-- ENDIF -->
+</form>
+
+<!-- INCLUDE ucp_footer.html -->

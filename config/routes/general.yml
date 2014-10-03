@@ -1,0 +1,57 @@
+phpbb.titania.index:
+    pattern: /
+    defaults: { _controller: phpbb.titania.controller.index:display_index }
+
+phpbb.titania.faq:
+    pattern: /faq
+    defaults: { _controller: phpbb.titania.controller.faq:display_list }
+
+phpbb.titania.queue_stats:
+    pattern: /queue-stats/{contrib_type}
+    defaults: { _controller: phpbb.titania.controller.queue_stats:display_stats }
+
+phpbb.titania.support:
+    pattern: /support/{type}
+    defaults: { _controller: phpbb.titania.controller.support:display_topics, type: all }
+
+phpbb.titania.all_contribs:
+    pattern: /contributions/all
+    defaults: { _controller: phpbb.titania.controller.all_contribs:display_all_contributions }
+
+phpbb.titania.author:
+    pattern: /author/{author}/{page}
+    defaults: { _controller: phpbb.titania.controller.author:base, page: details }
+    requirements:
+        page: |details|contributions|support|discussion|manage|create
+
+phpbb.titania.download:
+    pattern: /download/{id}
+    defaults: { _controller: phpbb.titania.controller.download:file, id: 0 }
+    requirements:
+        id: \d+
+
+phpbb.titania.search:
+    pattern: /search
+    defaults: { _controller: phpbb.titania.controller.search:general }
+
+phpbb.titania.search.results:
+    pattern: /search/results
+    defaults: { _controller: phpbb.titania.controller.search:general_results }
+
+phpbb.titania.search.contributions:
+    pattern: /find-contribution
+    defaults: { _controller: phpbb.titania.controller.search:contributions }
+
+phpbb.titania.search.contributions.results:
+    pattern: /find-contribution/results
+    defaults: { _controller: phpbb.titania.controller.search:contribution_results }
+
+phpbb.titania.colorizeit:
+    pattern: /colorizeit/{id}
+    defaults: { _controller: phpbb.titania.controller.colorizeit:colorizeit_data }
+    requirements:
+        id: \d+
+
+phpbb.titania.category:
+    pattern: /{category1}/{category2}/{category3}
+    defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '' }

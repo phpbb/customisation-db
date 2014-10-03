@@ -1,0 +1,33 @@
+<fieldset class="fields2">
+<dl id="{FORM_NAME}_1">
+	<dt><label>{L_FILENAME}:</label></dt>
+	<dd>
+		<input type="file" name="{FORM_NAME}" <!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
+		<input type="submit" name="add_file" value="{L_ADD_FILE}" class="button2" onclick="upload = true;" />
+	</dd>
+</dl>
+<!-- IF .attach_row and SELECT_PREVIEW-->
+<dl class="preview-select">
+	<dt><strong>{L_SET_PREVIEW_FILE}</strong></dt>
+</dl>
+<hr class="solid" />
+<!-- ENDIF -->
+<div id="screenshot-manage">
+<!-- BEGIN attach_row -->
+	<dl>
+		<!-- IF SELECT_PREVIEW --><dt class="set-preview"><input type="radio" name="{SELECT_REVIEW_VAR}" value="{attach_row.ATTACH_ID}"<!-- IF attach_row.S_PREVIEW --> checked="checked"<!-- ENDIF --> /></dt><!-- ENDIF -->
+		<dd>
+			<a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a>
+			
+			<input type="hidden" name="{FORM_NAME}_attachments[]" value="{attach_row.ATTACH_ID}" />
+			<input type="hidden" class="attach_order" name="attach_order[]" value="{attach_row.ATTACH_ID}" />
+			<div class="rightside">
+				<a href="{attach_row.U_DELETE}#screenshot-manage" class="item-control-button delete" title="{L_DELETE}"></a>
+				<!-- IF attach_row.U_MOVE_DOWN --><span class="item-control-button move-down-disabled <!-- IF not attach_row.S_LAST_ROW --> hidden<!-- ENDIF -->"></span><a href="{attach_row.U_MOVE_DOWN}" class="item-control-button move-down<!-- IF attach_row.S_LAST_ROW --> hidden<!-- ENDIF -->" title="{L_MOVE_DOWN}"></a><!-- ENDIF -->
+				<!-- IF attach_row.U_MOVE_UP --><a href="{attach_row.U_MOVE_UP}" class="item-control-button move-up<!-- IF attach_row.S_FIRST_ROW --> hidden<!-- ENDIF -->" title="{L_MOVE_UP}"></a><span class="item-control-button move-up-disabled <!-- IF not attach_row.S_FIRST_ROW --> hidden<!-- ENDIF -->"></span><!-- ENDIF -->
+			</div>
+		</dd>
+	</dl>
+<!-- END attach_row -->
+</div>
+</fieldset>

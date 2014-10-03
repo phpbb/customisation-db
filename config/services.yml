@@ -1,0 +1,47 @@
+imports:
+    - { resource: controllers.yml }
+
+services:
+    phpbb.titania.config:
+        synthetic: true
+
+    phpbb.titania.controller.helper:
+        class: phpbb\titania\controller\helper
+        arguments:
+            - @template
+            - @user
+            - @config
+            - @controller.provider
+            - @ext.manager
+            - @symfony_request
+            - @filesystem
+            - %core.root_path%
+            - %core.php_ext%
+
+    phpbb.titania.cache:
+        class: phpbb\titania\cache\service
+        arguments:
+             - @cache.driver
+             - @config
+             - @dbal.conn
+             - %core.root_path%
+             - %core.php_ext%
+
+    phpbb.titania.display:
+        class: phpbb\titania\display
+        arguments:
+             - @auth
+             - @template
+             - @user
+             - @phpbb.titania.controller.helper
+             - @path_helper
+    phpbb.titania.listener:
+        class: phpbb\titania\event\main_listener
+        arguments:
+            - @user
+            - @template
+            - @phpbb.titania.controller.helper
+            - %core.root_path%
+            - %core.php_ext%
+        tags:
+            - { name: event.listener }

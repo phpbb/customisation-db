@@ -1,0 +1,270 @@
+services:
+    phpbb.titania.controller.index:
+        class: phpbb\titania\controller\index
+        arguments:
+            - @auth
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.display
+            - @phpbb.titania.cache
+            - @path_helper
+
+    phpbb.titania.controller.faq:
+        class: phpbb\titania\controller\faq
+        arguments:
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.queue_stats:
+        class: phpbb\titania\controller\queue_stats
+        arguments:
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.support:
+        class: phpbb\titania\controller\support
+        arguments:       
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.all_contribs:
+        class: phpbb\titania\controller\all_contribs
+        arguments:
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.display
+            - @path_helper
+
+    phpbb.titania.controller.author:
+        class: phpbb\titania\controller\author
+        arguments:
+            - @auth
+            - @config
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.display
+            - @phpbb.titania.config
+            - @phpbb.titania.cache
+
+    phpbb.titania.controller.download:
+        class: phpbb\titania\controller\download
+        arguments:
+            - @dbal.conn
+            - @auth
+            - @user
+            - @request
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.config
+            - %core.root_path%
+            - %core.php_ext%
+
+    phpbb.titania.controller.search:
+        class: phpbb\titania\controller\search
+        arguments:
+            - @config
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @request
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.colorizeit:
+        class: phpbb\titania\controller\colorizeit
+        arguments:
+            - @dbal.conn
+            - @user
+            - @request
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.config
+
+    phpbb.titania.controller.contrib:
+        class: phpbb\titania\controller\contribution\contribution
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.cache
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.contrib.support:
+        class: phpbb\titania\controller\contribution\support
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.cache
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.contrib.faq:
+        class: phpbb\titania\controller\contribution\faq
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.cache
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.contrib.manage:
+        class: phpbb\titania\controller\contribution\manage
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.cache
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.contrib.revision:
+        class: phpbb\titania\controller\contribution\revision
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.cache
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.manage:
+        class: phpbb\titania\controller\manage\manage
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.manage.queue:
+        class: phpbb\titania\controller\manage\queue\queue
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.manage.queue.item:
+        class: phpbb\titania\controller\manage\queue\item
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.manage.queue.tools:
+        class: phpbb\titania\controller\manage\queue\tools
+        arguments:
+            - @user
+            - @template
+            - @phpbb.titania.controller.helper
+
+    phpbb.titania.controller.manage.attention:
+        class: phpbb\titania\controller\manage\attention
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.manage.categories:
+        class: phpbb\titania\controller\manage\categories
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.manage.queue_discussion:
+        class: phpbb\titania\controller\manage\queue_discussion
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.manage.administration:
+        class: phpbb\titania\controller\manage\administration
+        arguments:
+            - @auth
+            - @config
+            - @dbal.conn
+            - @template
+            - @user
+            - @phpbb.titania.cache
+            - @phpbb.titania.controller.helper
+            - @request
+            - @phpbb.titania.config
+            - @phpbb.titania.display

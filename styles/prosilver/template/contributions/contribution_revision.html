@@ -1,0 +1,152 @@
+<!-- INCLUDE contributions/contribution_header.html -->
+
+<h3 class="section-name">{PAGE_TITLE}</h3>
+
+<!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
+<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+
+<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+	<div class="container">
+		<div class="inner">
+			<!-- IF REVISION_UPLOADER -->
+				{REVISION_UPLOADER}
+
+				<!-- IF .custom_fields -->
+				<fieldset class="fields2">
+					<!-- INCLUDE common/custom_fields.html -->
+				</fieldset>
+				<!-- ENDIF -->
+
+				<!-- IF .phpbb_branches -->
+				<fieldset class="fields2">
+				<dl>
+					<dt><label for="phpbb_branch">{L_PHPBB_BRANCH}:</label><br /><span>{L_PHPBB_BRANCH_EXPLAIN}</span></dt>
+					<dd>
+						<!-- BEGIN phpbb_branches -->
+							<!-- IF phpbb_branches.S_NUM_ROWS eq 1 -->
+								{phpbb_branches.NAME}
+							<!-- ELSE -->
+								<!-- IF phpbb_branches.S_FIRST_ROW -->
+								<select id="phpbb_branch" name="phpbb_branch[]" size="3">
+								<!-- ENDIF -->
+									<option value="{phpbb_branches.VALUE}"<!-- IF phpbb_branches.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_branches.NAME}</option>
+								<!-- IF phpbb_branches.S_LAST_ROW -->
+								</select>
+								<!-- ENDIF -->
+							<!-- ENDIF -->
+						<!-- END phpbb_branches -->
+					</dd>
+				</dl>
+				</fieldset>
+				<!-- ENDIF -->
+
+				<!-- IF .phpbb_versions -->
+				<fieldset class="fields2">
+				<dl>
+					<dt><label for="revision_phpbb_versions">{L_PHPBB_VERSION}:</label></dt>
+					<dd><select name="revision_phpbb_versions[]" multiple="multiple" size="10">
+						<!-- BEGIN phpbb_versions -->
+							<option value="{phpbb_versions.VERSION}"<!-- IF phpbb_versions.S_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_versions.VERSION}</option>
+						<!-- END phpbb_versions -->
+					</select></dd>
+				</dl>
+				</fieldset>
+				<!-- ENDIF -->
+
+				<!-- IF not S_REPACK and .license_options -->
+				<fieldset class="fields2">
+				<dl>
+					<dt><label for="revision_license">{L_LICENSE}:</label><br /><span>{L_LICENSE_EXPLAIN}</span></dt>
+					<dd>
+						<select id="revision_license" name="revision_license" data-togglable-settings="true">
+							<option value="">{L_SELECT}</option>
+							<!-- BEGIN license_options -->
+								<option value="{license_options.VALUE}"<!-- IF license_options.VALUE == REVISION_LICENSE --> selected="selected"<!-- ENDIF -->>{license_options.NAME}</option>
+							<!-- END license_options -->
+							<!-- IF S_ALLOW_CUSTOM_LICENSE --><option value="{L_CUSTOM_LICENSE}"<!-- IF S_CUSTOM_LICENSE --> selected="selected"<!-- ENDIF --> data-toggle-setting="#revision_custom_license">{L_CUSTOM_LICENSE}</option><!-- ENDIF -->
+						</select>
+						<!-- IF S_ALLOW_CUSTOM_LICENSE --><input type="text" id="revision_custom_license" name="revision_custom_license" size="25" maxlength="60" value="{REVISION_CUSTOM_LICENSE}" class="inputbox autowidth" /><!-- ENDIF -->
+					</dd>
+				</dl>
+				</fieldset>
+
+				<!-- ELSEIF S_REPACK -->
+				<input type="hidden" name="revision_license" value="{REVISION_LICENSE}" />
+				<!-- ENDIF -->
+
+				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
+				<fieldset class="fields2">
+				<!-- IF S_CAN_SUBMIT_PRERELEASE_VERSION -->
+				<dl>
+					<dt><label for="prerelease_submission">{L_SUBMIT_PRERELEASE_VERSION}:</label><br /><span>{L_SUBMIT_PRERELEASE_VERSION_EXPLAIN}</span></dt>
+					<dd><input type="checkbox" id="prerelease_submission" name="prerelease_submission" value="1"<!-- IF SUBMIT_PRERELEASE_VERSION --> checked="checked"<!-- ENDIF --> /></dd>
+				</dl>
+				<!-- ENDIF -->
+				<dl>
+					<dt><label for="queue_allow_repack">{L_QUEUE_ALLOW_REPACK}:</label><br /><span>{L_QUEUE_ALLOW_REPACK_EXPLAIN}</span></dt>
+					<dd><input type="checkbox" id="queue_allow_repack" name="queue_allow_repack" value="1"<!-- IF ((ERROR_MSG and QUEUE_ALLOW_REPACK) or not ERROR_MSG) --> checked="checked"<!-- ENDIF --> /></dd>
+				</dl>
+				<!-- IF S_CAN_SUBSCRIBE -->
+				<dl>
+					<dt><label for="subscribe_author">{L_SUBSCRIBE_QUEUE_DISCUSSION}</label></dd>
+					<dd><input type="checkbox" id="subscribe_author" name="subscribe_author"<!-- IF ((ERROR_MSG and SUBSCRIBE_AUTHOR) or not ERROR_MSG)  --> checked="checked"<!-- ENDIF --> /></dd>
+				</dl>
+				<!-- ENDIF -->
+				<dl>
+					<dt><br /><label for="message">{L_QUEUE_NOTES}:</label><br /><span>{L_QUEUE_NOTES_EXPLAIN}</span></dt>
+				</dl>
+				</fieldset>
+				<!-- ENDIF -->
+
+				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
+					<!-- INCLUDE posting/posting_basic_editor.html -->
+				<!-- ENDIF -->
+
+				<!-- IF AGREEMENT_NOTICE -->
+					<h3>{L_AGREEMENT}</h3>
+					{AGREEMENT_NOTICE}
+					<br /><br />
+				<!-- ENDIF -->
+			<!-- ENDIF -->
+			<!-- IF S_NEW_REVISION_SUBMITTED -->
+				{L_NEW_REVISION_SUBMITTED}
+			<!-- ENDIF -->
+			<!-- IF MPV_TEST_WARNING -->
+				<br /><br />{L_MPV_TEST}
+			<!-- ENDIF -->
+			<!-- IF MPV_RESULTS -->
+				<p class="error">{L_MPV_RESULTS}</p>
+				<hr class="dashed" />
+				{MPV_RESULTS}
+				<!-- IF S_AUTOMOD_TEST -->
+					<br /><br />
+					<hr class="dashed" />
+					<strong>{L_AUTOMOD_TEST}</strong>
+				<!-- ENDIF -->
+			<!-- ENDIF -->
+			<!-- IF AUTOMOD_RESULTS -->
+				<p class="error">{L_AUTOMOD_RESULTS}</p>
+				<hr class="dashed" />
+				{AUTOMOD_RESULTS}
+			<!-- ENDIF -->
+			<!-- IF S_PASSED_TRANSLATION_VALIDATION -->
+				{L_PASSED_VALIDATION}
+			<!-- ENDIF -->
+
+			<fieldset class="submit-buttons">
+				<!-- IF AGREEMENT_NOTICE and REVISION_UPLOADER -->
+					<input type="submit" id="new_revision" name="new_revision" value="{L_AGREE}" class="button1" />&nbsp;
+					<input type="submit" id="disagree" name="disagree" value="{L_NOT_AGREE}" class="button1" />
+				<!-- ELSE -->
+					<input type="submit" id="new_revision" name="new_revision" value="{L_CONTINUE}" class="button1" />
+				<!-- ENDIF -->
+				<input type="hidden" name="step" value="{NEXT_STEP}" />
+				<input type="hidden" name="revision_id" value="{REVISION_ID}" />
+				{S_FORM_TOKEN}
+			</fieldset>
+		</div>
+	</div>
+</form>
+
+
+<!-- INCLUDE contributions/contribution_footer.html -->

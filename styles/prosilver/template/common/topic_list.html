@@ -1,0 +1,114 @@
+<!-- IF U_POST_TOPIC or PAGINATION or TOTAL_RESULTS -->
+<div class="action-bar">
+	<!-- IF U_POST_TOPIC -->
+	<div class="buttons">
+		<a href="{U_POST_TOPIC}" title="{L_POST_TOPIC}" class="button icon-button post-icon">{L_BUTTON_NEW_TOPIC}</a>
+	</div>
+	<!-- ENDIF -->
+
+	<!-- IF S_DISPLAY_SEARCHBOX -->
+		<div class="search-box">
+			<form method="post" id="forum-search" action="{S_SEARCHBOX_ACTION}">
+			<fieldset>
+				<input class="inputbox search tiny" type="search" name="keywords" id="search_keywords" size="20" placeholder="{L_SEARCH_FORUM}" />
+				<button class="button icon-button search-icon" type="submit" title="{L_SEARCH}">{L_SEARCH}</button>
+				<a href="{U_SEARCH}" class="button icon-button search-adv-icon" title="{L_SEARCH_ADV}">{L_SEARCH_ADV}</a>
+				<input type="hidden" value="{FORUM_ID}" name="fid[]" />
+			</fieldset>
+			</form>
+		</div>
+	<!-- ENDIF -->
+
+	<!-- INCLUDE common/pagination.html -->
+</div>
+<!-- ENDIF -->
+<div class="clear"></div>
+
+<!-- BEGIN topics -->
+	<!-- IF topics.S_TOPIC_TYPE_SWITCH and not topics.S_FIRST_ROW -->
+		</ul>
+		</div>
+	</div>
+	<br />
+	<!-- ENDIF -->
+
+	<!-- IF topics.S_FIRST_ROW or topics.S_TOPIC_TYPE_SWITCH -->
+		<div class="forumbg<!-- IF topicrow.S_TOPIC_TYPE_SWITCH --> announcement<!-- ENDIF -->">
+		<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="icon">
+					<dt><div class="list-inner"><!-- IF topics.TOPIC_STICKY and S_SPLIT_BY_TOPIC_TYPE -->{L_STICKIES}<!-- ELSE -->{L_TOPICS}<!-- ENDIF --></div></dt>
+					<dd class="posts">{L_REPLIES}</dd>
+					<dd class="views">{L_VIEWS}</dd>
+					<dd class="lastpost"><span>{L_LAST_POST}</span></dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist">
+	<!-- ENDIF -->
+
+		<li class="row<!-- IF topics.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topics.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topics.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">
+			<dl class="icon {topics.FOLDER_STYLE}">
+				<dt title="{topics.FOLDER_IMG_ALT}"<!-- IF topics.S_TOPIC_PROGRESS --> class="queue_progress"<!-- ELSEIF topics.S_TESTED -->class="queue_tested"<!-- ENDIF -->>
+					<div class="list-inner">					
+						<!-- IF topics.S_ACCESS_TEAMS -->
+						<img src="{T_TITANIA_THEME_PATH}/images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
+						<!-- ELSEIF topics.S_ACCESS_AUTHORS -->
+						<img src="{T_TITANIA_THEME_PATH}/images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
+						<!-- ENDIF -->
+						<!-- IF topics.S_UNREAD_TOPIC --><a href="{topics.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF --><a href="{topics.U_VIEW_TOPIC}" class="topictitle">{topics.TOPIC_SUBJECT}</a><!-- IF topics.TOPIC_CONTRIB_NAME --><br /><em><!-- IF topics.CONTRIB_TYPE -->{topics.CONTRIB_TYPE}<!-- ENDIF --> <!-- IF topics.U_VIEW_TOPIC_CONTRIB --> &raquo; <a href="{topics.U_VIEW_TOPIC_CONTRIB}">{topics.TOPIC_CONTRIB_NAME}</a><!-- ELSE --> &raquo; {topics.TOPIC_CONTRIB_NAME}<!-- ENDIF --> <!-- IF topics.U_VIEW_TOPIC_CONTRIB_SUPPORT --> &raquo; <a href="{topics.U_VIEW_TOPIC_CONTRIB_SUPPORT}">{L_CONTRIB_SUPPORT}</a><!-- ELSE --> &raquo; {topics.TOPIC_CONTRIB_NAME}<!-- ENDIF --></em><!-- ENDIF -->
+						<!-- IF not topics.TOPIC_APPROVED or not topics.POSTS_APPROVED -->{topics.UNAPPROVED_IMG} <!-- ENDIF -->
+						<!-- IF topics.TOPIC_REPORTED -->{REPORTED_IMG}<!-- ENDIF --><br />
+						<!-- IF .topics.pagination -->
+						<div class="pagination">
+							<ul>
+							<!-- BEGIN pagination -->
+								<!-- IF topics.pagination.S_IS_PREV -->
+								<!-- ELSEIF topics.pagination.S_IS_CURRENT --><li class="active"><span>{topics.pagination.PAGE_NUMBER}</span></li>
+								<!-- ELSEIF topics.pagination.S_IS_ELLIPSIS --><li class="ellipsis"><span>{L_ELLIPSIS}</span></li>
+								<!-- ELSEIF topics.pagination.S_IS_NEXT -->
+								<!-- ELSE --><li><a href="{topics.pagination.PAGE_URL}">{topics.pagination.PAGE_NUMBER}</a></li>
+								<!-- ENDIF -->
+							<!-- END pagination -->
+							</ul>
+						</div>
+						<!-- ENDIF -->
+						<!-- IF topics.ATTACH_ICON_IMG -->{topics.ATTACH_ICON_IMG} <!-- ENDIF -->{L_POST_BY_AUTHOR} {topics.TOPIC_FIRST_POST_USER_FULL} &raquo; {topics.TOPIC_FIRST_POST_TIME}
+					</div>
+				</dt>
+				<dd class="posts">{topics.TOPIC_REPLIES} <dfn>{L_REPLIES}</dfn></dd>
+				<dd class="views">{topics.TOPIC_VIEWS} <dfn>{L_VIEWS}</dfn></dd>
+				<dd class="lastpost"><span><dfn>{L_LAST_POST} </dfn>{L_POST_BY_AUTHOR} {topics.TOPIC_LAST_POST_USER_FULL}
+					<!-- IF not S_IS_BOT --><a href="{topics.U_VIEW_LAST_POST}">{LAST_POST_IMG}</a> <!-- ENDIF --><br />{topics.TOPIC_LAST_POST_TIME}</span>
+				</dd>
+			</dl>
+		</li>
+
+	<!-- IF topics.S_LAST_ROW -->
+			</ul>
+		</div>
+	</div>
+	<!-- ENDIF -->
+
+<!-- BEGINELSE -->
+	<div class="panel">
+		<div class="inner">
+		<strong>{L_NO_TOPICS}</strong>
+		</div>
+	</div>
+<!-- END topics -->
+
+<!-- INCLUDE common/sort.html -->
+
+<!-- IF U_POST_TOPIC or PAGINATION or TOTAL_RESULTS -->
+<div class="action-bar">
+	<!-- IF U_POST_TOPIC -->
+	<div class="buttons">
+		<a href="{U_POST_TOPIC}" title="{L_POST_TOPIC}" class="button icon-button post-icon">{L_BUTTON_NEW_TOPIC}</a>
+	</div>
+	<!-- ENDIF -->
+
+	<!-- INCLUDE common/pagination.html -->
+</div>
+<!-- ENDIF -->

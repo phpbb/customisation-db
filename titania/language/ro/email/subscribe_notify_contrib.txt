@@ -1,8 +1,0 @@
-Subiect: Actualizare Notificare - {NAME}
-
-Salut {USERNAME},
-
-Primiţi această notificare pentru că v-aţi abonat la elementul "{NAME}" din baza de date a personalizării phpBB pentru contribuţia "{CONTRIB_NAME}".
-
-Dacă doriţi să vedeţi actualizarea, folosiţi următoarea legătură:
-{U_VIEW}

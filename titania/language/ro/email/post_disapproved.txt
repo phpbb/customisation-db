@@ -1,8 +1,0 @@
-Subiect: Mesaj respins - "{POST_SUBJECT}"
-
-Salut {USERNAME},
-
-Primiţi această notificare pentru că mesajul propriu "{POST_SUBJECT}" scris pe "{SITENAME}" a fost respins de către un moderator sau administrator.
-
-
-{EMAIL_SIG}

@@ -1,0 +1,78 @@
+<!-- IF U_CREATE_CATEGORY -->
+<div class="action-bar">
+	<div class="buttons">
+		<a href="{U_CREATE_CATEGORY}" title="{L_CREATE_CATEGORY}" class="button icon-button post-icon">{L_CREATE_CATEGORY}</a>
+	</div>
+</div>
+<!-- ENDIF -->
+
+<!-- IF .categories -->
+<div class="forabg" id="categories">
+	<div class="inner">
+	<ul class="topiclist">
+		<li class="header">
+			<dl>
+				<dt>{L_CATEGORY}</dt>
+				<dd class="general">{L_CONTRIBUTIONS}</dd>
+				<!-- IF S_MANAGE -->
+				<dd class="general" style="float: right;">{L_ACTIONS}</dd>
+				<!-- ENDIF -->
+			</dl>
+		</li>
+	</ul>
+	<ul class="topiclist forums">
+
+	<!-- BEGIN categories -->
+		<li class="row">
+			<dl>
+				<dt>
+					<div class="list-inner">
+					<!-- IF S_MANAGE -->
+						<!-- IF categories.HAS_CHILDREN -->
+						<a href="{categories.U_VIEW_MANAGE_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a>
+						<!-- ELSE -->
+						<span class="content">{categories.CATEGORY_NAME}</span>
+						<!-- ENDIF -->
+					<!-- ELSE -->
+						<a href="{categories.U_VIEW_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a>
+					<!-- ENDIF --><br />
+					<!-- IF categories.CATEGORY_DESC -->{categories.CATEGORY_DESC}<!-- ENDIF -->
+					<!-- IF categories.SUBFORUMS and categories.S_LIST_SUBFORUMS --><br /><strong>{categories.L_SUBFORUM_STR}</strong> {categories.SUBFORUMS}<!-- ENDIF -->
+					</div>
+				</dt>
+				<dd class="general">{categories.CATEGORY_CONTRIBS} <dfn>{L_CONTRIBUTIONS}</dfn></dd>
+				<!-- IF S_MANAGE -->
+				<dd class="general" style="float: right;">
+					<!-- IF categories.S_FIRST_ROW && not categories.S_LAST_ROW -->
+						<span class="item-control-button move-up-disabled"></span>
+						<a href="{categories.U_MOVE_DOWN}" class="item-control-button move-down"></a>
+					<!-- ELSEIF not categories.S_FIRST_ROW && not categories.S_LAST_ROW -->
+						<a href="{categories.U_MOVE_UP}" class="item-control-button move-up"></a>
+						<a href="{categories.U_MOVE_DOWN}" class="item-control-button move-down"></a>
+					<!-- ELSEIF categories.S_LAST_ROW && not categories.S_FIRST_ROW -->
+						<a href="{categories.U_MOVE_UP}" class="item-control-button move-up"></a>
+						<span class="item-control-button move-down-disabled"></span>
+					<!-- ELSE -->
+						<span class="item-control-button move-up-disabled"></span>
+						<span class="item-control-button move-down-disabled"></span>
+					<!-- ENDIF -->
+					<a href="{categories.U_EDIT}" class="item-control-button edit"></a>
+					<a href="{categories.U_DELETE}" class="item-control-button delete"></a>
+				</dd>
+				<!-- ENDIF -->
+			</dl>
+		</li>
+	<!-- END categories -->
+
+	</ul>
+	</div>
+</div>
+<!-- ENDIF -->
+
+<!-- IF U_CREATE_CATEGORY -->
+<div class="action-bar">
+	<div class="buttons">
+		<a href="{U_CREATE_CATEGORY}" title="{L_CREATE_CATEGORY}" class="button icon-button post-icon">{L_CREATE_CATEGORY}</a>
+	</div>
+</div>
+<!-- ENDIF -->

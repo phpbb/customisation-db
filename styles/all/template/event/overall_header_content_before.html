@@ -1,0 +1,22 @@
+<!-- IF S_IN_TITANIA -->
+	<!-- IF .errorbox -->
+	<div id="errorbox" class="errorbox">
+		<div class="inner">
+		<!-- IF ERRORBOX_TITLE --><h3>{ERRORBOX_TITLE}</h3><!-- ENDIF -->
+		<!-- BEGIN errorbox -->
+			<p>{errorbox.MESSAGE}</p>
+		<!-- END errorbox -->
+		</div>
+	</div>
+	<!-- ENDIF -->
+	<!-- IF .successbox -->
+	<div id="successbox" class="successbox">
+		<div class="inner">
+		<!-- IF SUCCESSBOX_TITLE --><h3>{SUCCESSBOX_TITLE}</h3><!-- ENDIF -->
+		<!-- BEGIN successbox -->
+			<p>{successbox.MESSAGE}</p>
+		<!-- END successbox -->
+		</div>
+	</div>
+	<!-- ENDIF -->
+<!-- ENDIF -->

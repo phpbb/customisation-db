@@ -1,0 +1,50 @@
+<!-- INCLUDE overall_header.html -->
+
+<h2>{L_CUSTOMISATION_DATABASE} - {L_ALL_CONTRIBUTIONS}</h2>
+
+<!-- IF U_CREATE_CONTRIBUTION or PAGINATION or TOTAL_RESULTS -->
+<div class="action-bar">
+	<div class="buttons">
+	<!-- IF U_CREATE_CONTRIBUTION -->
+		<div class="contrib-icon"><a href="{U_CREATE_CONTRIBUTION}" title="{L_CREATE_CONTRIBUTION}"><span></span>{L_CREATE_CONTRIBUTION}</a></div>
+	<!-- ENDIF -->
+	</div>
+
+	<!-- INCLUDE common/pagination.html -->
+</div>
+<!-- ENDIF -->
+
+<div class="forumbg contributions-list">
+	<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="icon">
+					<dt>{L_CONTRIBUTIONS}</dt>
+					<dd class="general phpbb-version">{L_PHPBB_VERSION}</dd>
+					<dd class="general">{L_INFORMATION}</dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist topics">
+
+			<!-- INCLUDE common/contribution_list.html -->
+
+		</ul>
+	</div>
+</div>
+
+<!-- INCLUDE common/sort.html -->
+
+<!-- IF U_CREATE_CONTRIBUTION or PAGINATION or TOTAL_RESULTS -->
+<div class="action-bar">
+	<div class="buttons">
+	<!-- IF U_CREATE_CONTRIBUTION -->
+		<div class="contrib-icon"><a href="{U_CREATE_CONTRIBUTION}" title="{L_CREATE_CONTRIBUTION}"><span></span>{L_CREATE_CONTRIBUTION}</a></div>
+	<!-- ENDIF -->
+	</div>
+
+	<!-- INCLUDE common/pagination.html -->
+</div>
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->

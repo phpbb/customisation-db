@@ -1,0 +1,35 @@
+<!-- INCLUDE authors/author_header.html -->
+
+
+<h3 class="section-name">{PAGE_TITLE}</h3>
+
+<div class="container">
+	<div class="inner">
+		<ul class="linklist">
+			<li class="rightside pagination">
+				<!-- IF TOTAL_RESULTS -->{TOTAL_RESULTS}<!-- ENDIF -->
+				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+			</li>
+		</ul>
+		<ul class="topiclist simple">
+			<li class="header">
+				<dl class="icon">
+					<dt>{L_CONTRIBUTIONS}</dt>
+					<dd class="general contribution-phpbb-version">{L_PHPBB_VERSION}</dd>
+					<dd class="general">{L_INFORMATION}</dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist cplist" id="modlist">
+			<!-- INCLUDE common/contribution_list.html -->
+		</ul>
+		<ul class="linklist">
+			<li class="rightside pagination">
+				<!-- IF TOTAL_RESULTS -->{TOTAL_RESULTS}<!-- ENDIF -->
+				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+			</li>
+		</ul>
+	</div>
+</div>
+
+<!-- INCLUDE authors/author_footer.html -->

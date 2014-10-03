@@ -1,0 +1,42 @@
+<!-- INCLUDE manage/manage_header.html -->
+
+<!-- IF .queue_tags -->
+<div class="forabg" id="categories">
+	<div class="inner">
+	<ul class="topiclist">
+		<li class="header">
+			<dl>
+				<dt>{L_CATEGORY}</dt>
+				<dd class="general">{L_CONTRIBUTIONS}</dd>
+			</dl>
+		</li>
+	</ul>
+	<ul class="topiclist forums">
+
+	<!-- BEGIN queue_tags -->
+		<li class="row<!-- IF queue_tags.S_SELECTED --> bg3<!-- ELSEIF queue_tags.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+			<dl>
+				<dt>
+					<div class="list-inner">
+						<a href="{queue_tags.U_VIEW_TAG}" class="forumtitle">{queue_tags.TAG_NAME}</a>
+					</div>
+				</dt>
+				<dd class="general">{queue_tags.TAG_COUNT} <dfn>{L_CONTRIBUTIONS}</dfn></dd>
+			</dl>
+		</li>
+		<!-- END queue_tags -->
+
+		</ul>
+	</div>
+</div>
+<!-- ENDIF -->
+
+<!-- IF S_QUEUE_LIST -->
+	<!-- INCLUDE common/category_list.html -->
+<!-- ELSEIF S_TOPIC_LIST -->
+	<!-- INCLUDE common/topic_list.html -->
+<!-- ELSE -->
+	<!-- INCLUDE common/post_list.html -->
+<!-- ENDIF -->
+
+<!-- INCLUDE manage/manage_footer.html -->

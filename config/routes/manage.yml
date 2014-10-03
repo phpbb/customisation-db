@@ -1,0 +1,84 @@
+phpbb.titania.manage:
+    pattern: /
+    defaults: { _controller: phpbb.titania.controller.manage:base }
+
+phpbb.titania.queue:
+    pattern: /queue
+    defaults: { _controller: phpbb.titania.controller.manage.queue:list_queues }
+
+phpbb.titania.queue.type:
+    pattern: /queue/{queue_type}
+    defaults: { _controller: phpbb.titania.controller.manage.queue:display_queue }
+    requirements:
+        queue_type: mod|extension|style|converter|official_tool|bbcode|bridge|translation
+
+phpbb.titania.queue.item:
+    pattern: /queue/item/{id}
+    defaults: { _controller: phpbb.titania.controller.manage.queue.item:display_item }
+    requirements:
+        id: \d+
+
+phpbb.titania.queue.item.action:
+    pattern: /queue/item/{id}/{action}
+    defaults: { _controller: phpbb.titania.controller.manage.queue.item:item_action }
+    requirements:
+        id: \d+
+
+phpbb.titania.queue.tools:
+    pattern:  /queue/tools/{tool}/{id}
+    defaults: { _controller: phpbb.titania.controller.manage.queue.tools:run_tool }
+    requirements:
+        tool: automod|mpv
+        id: \d+
+
+phpbb.titania.manage.attention:
+    pattern: /attention
+    defaults: { _controller: phpbb.titania.controller.manage.attention:display_list }
+
+phpbb.titania.manage.attention.redirect:
+    pattern: /attention/redirect
+    defaults: { _controller: phpbb.titania.controller.manage.attention:redirect_to_item }
+
+phpbb.titania.manage.attention.item:
+    pattern: /attention/item/{id}
+    defaults: { _controller: phpbb.titania.controller.manage.attention:display_item }
+    requirements:
+        id: \d+
+
+phpbb.titania.manage.attention.item.action:
+    pattern: /attention/item/{id}/{action}
+    defaults: { _controller: phpbb.titania.controller.manage.attention:item_action }
+    requirements:
+        id: \d+
+        action: approve|disapprove|close|delete
+
+phpbb.titania.manage.categories:
+    pattern: /categories/{id}
+    defaults: { _controller: phpbb.titania.controller.manage.categories:list_categories, id: 0 }
+    requirements:
+        id: \d+
+
+phpbb.titania.manage.categories.action:
+    pattern: /categories/{id}/{action}
+    defaults: { _controller: phpbb.titania.controller.manage.categories:category_action, id: 0 }
+    requirements:
+        id: \d+
+        action: add|edit|delete|move_up|move_down
+
+phpbb.titania.queue_discussion:
+    pattern: /queue_discussion
+    defaults: { _controller: phpbb.titania.controller.manage.queue_discussion:list_types }
+
+phpbb.titania.queue_discussion.type:
+    pattern: /queue_discussion/{queue_type}
+    defaults: { _controller: phpbb.titania.controller.manage.queue_discussion:display_type }
+    requirements:
+        queue_type: mod|extension|style|converter|official_tool|bbcode|bridge|translation
+
+phpbb.titania.administration:
+    pattern: /administration
+    defaults: { _controller: phpbb.titania.controller.manage.administration:list_tools }
+
+phpbb.titania.administration.tool:
+    pattern: /administration/{tool}
+    defaults: { _controller: phpbb.titania.controller.manage.administration:run_tool }
