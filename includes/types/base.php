@@ -16,7 +16,7 @@ if (!defined('IN_TITANIA'))
 }
 
 class titania_types
-{
+{	
 	/**
 	* Store the types we've setup
 	*

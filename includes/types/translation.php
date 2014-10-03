@@ -37,7 +37,7 @@ class titania_type_translation extends titania_type_base
 	public $id = 6;
 	
 	/**
-	 * For the type name
+	 * The type name
 	 *
 	 * @var string (any lang key that includes the type should match this value)
 	 */

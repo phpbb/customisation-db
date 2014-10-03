@@ -30,9 +30,9 @@ class titania_type_mod extends titania_type_base
 	 * @var int type id (for custom types not specified in titania to start, please start with 10 in case we add any extra later)
 	 */
 	public $id = 1;
-	
+
 	/**
-	 * For the type name
+	 * The type name
 	 *
 	 * @var string (any lang key that includes the type should match this value)
 	 */
