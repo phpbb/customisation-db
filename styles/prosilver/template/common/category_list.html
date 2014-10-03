@@ -44,20 +44,20 @@
 				<!-- IF S_MANAGE -->
 				<dd class="general" style="float: right;">
 					<!-- IF categories.S_FIRST_ROW && not categories.S_LAST_ROW -->
-						{ICON_MOVE_UP_DISABLED}
-						<a href="{categories.U_MOVE_DOWN}">{ICON_MOVE_DOWN}</a>
+						<span class="item-control-button move-up-disabled"></span>
+						<a href="{categories.U_MOVE_DOWN}" class="item-control-button move-down"></a>
 					<!-- ELSEIF not categories.S_FIRST_ROW && not categories.S_LAST_ROW -->
-						<a href="{categories.U_MOVE_UP}">{ICON_MOVE_UP}</a>
-						<a href="{categories.U_MOVE_DOWN}">{ICON_MOVE_DOWN}</a>
+						<a href="{categories.U_MOVE_UP}" class="item-control-button move-up"></a>
+						<a href="{categories.U_MOVE_DOWN}" class="item-control-button move-down"></a>
 					<!-- ELSEIF categories.S_LAST_ROW && not categories.S_FIRST_ROW -->
-						<a href="{categories.U_MOVE_UP}">{ICON_MOVE_UP}</a>
-						{ICON_MOVE_DOWN_DISABLED}
+						<a href="{categories.U_MOVE_UP}" class="item-control-button move-up"></a>
+						<span class="item-control-button move-down-disabled"></span>
 					<!-- ELSE -->
-						{ICON_MOVE_UP_DISABLED}
-						{ICON_MOVE_DOWN_DISABLED}
+						<span class="item-control-button move-up-disabled"></span>
+						<span class="item-control-button move-down-disabled"></span>
 					<!-- ENDIF -->
-					<a href="{categories.U_EDIT}">{ICON_EDIT}</a>
-					<a href="{categories.U_DELETE}">{ICON_DELETE}</a>
+					<a href="{categories.U_EDIT}" class="item-control-button edit"></a>
+					<a href="{categories.U_DELETE}" class="item-control-button delete"></a>
 				</dd>
 				<!-- ENDIF -->
 			</dl>

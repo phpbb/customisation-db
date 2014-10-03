@@ -41,15 +41,6 @@ class categories extends base
 		titania_display_categories($this->id, 'categories', true);
 
 		$this->template->assign_vars(array(
-			'ICON_MOVE_UP'				=> $this->display->get_image('icon_up.gif', 'MOVE_UP'),
-			'ICON_MOVE_UP_DISABLED'		=> $this->display->get_image('icon_up_disabled.gif', 'MOVE_UP'),
-			'ICON_MOVE_DOWN'			=> $this->display->get_image('icon_down.gif', 'MOVE_DOWN'),
-			'ICON_MOVE_DOWN_DISABLED'	=> $this->display->get_image('icon_down_disabled.gif', 'MOVE_DOWN'),
-			'ICON_EDIT'					=> $this->display->get_image('icon_edit.gif', 'EDIT'),
-			'ICON_EDIT_DISABLED'		=> $this->display->get_image('icon_edit_disabled.gif', 'EDIT'),
-			'ICON_DELETE'				=> $this->display->get_image('icon_delete.gif', 'DELETE'),
-			'ICON_DELETE_DISABLED'		=> $this->display->get_image('icon_delete_disabled.gif', 'DELETE'),
-
 			'SECTION_NAME'			=> '<a href="' . $this->helper->route('phpbb.titania.manage.categories') . '">' . $this->user->lang['MANAGE_CATEGORIES'] . '</a>',
 
 			'U_CREATE_CATEGORY'		=> $this->category->get_manage_url('add'),

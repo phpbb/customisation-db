@@ -47,13 +47,26 @@
 						</dt>
 						<dd class="faq-tools">
 							<!-- IF faqlist.U_MOVE_UP -->
-								<!-- IF faqlist.S_FIRST_ROW -->{ICON_MOVE_UP_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_UP}">{ICON_MOVE_UP}</a>&nbsp;<!-- ENDIF -->
+								<!-- IF faqlist.S_FIRST_ROW && not faqlist.S_LAST_ROW -->
+									<span class="item-control-button move-up-disabled"></span>
+									<a href="{faqlist.U_MOVE_DOWN}" class="item-control-button move-down"></a>
+								<!-- ELSEIF not faqlist.S_FIRST_ROW && not faqlist.S_LAST_ROW -->
+									<a href="{faqlist.U_MOVE_UP}" class="item-control-button move-up"></a>
+									<a href="{faqlist.U_MOVE_DOWN}" class="item-control-button move-down"></a>
+								<!-- ELSEIF faqlist.S_LAST_ROW && not faqlist.S_FIRST_ROW -->
+									<a href="{faqlist.U_MOVE_UP}" class="item-control-button move-up"></a>
+									<span class="item-control-button move-down-disabled"></span>
+								<!-- ELSE -->
+									<span class="item-control-button move-up-disabled"></span>
+									<span class="item-control-button move-down-disabled"></span>
+								<!-- ENDIF -->
 							<!-- ENDIF -->
-							<!-- IF faqlist.U_MOVE_DOWN -->
-								<!-- IF faqlist.S_LAST_ROW -->{ICON_MOVE_DOWN_DISABLED}&nbsp;<!-- ELSE --><a href="{faqlist.U_MOVE_DOWN}">{ICON_MOVE_DOWN}</a>&nbsp;<!-- ENDIF -->
+							<!-- IF faqlist.U_EDIT -->
+								<a href="{faqlist.U_EDIT}" class="item-control-button edit"></a>
 							<!-- ENDIF -->
-							<!-- IF faqlist.U_EDIT --><a href="{faqlist.U_EDIT}">{ICON_EDIT}</a><!-- ENDIF -->
-							<!-- IF faqlist.U_DELETE -->&nbsp;<a href="{faqlist.U_DELETE}">{ICON_DELETE}</a><!-- ENDIF -->
+							<!-- IF faqlist.U_DELETE -->
+								<a href="{faqlist.U_DELETE}" class="item-control-button delete"></a>
+							<!-- ENDIF -->
 						</dd>
 					</dl>
 				</li>
