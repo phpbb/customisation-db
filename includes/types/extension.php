@@ -54,6 +54,7 @@ class titania_type_extension extends titania_type_base
 	public $update_public = 'EXTENSION_UPDATE_PUBLIC';
 	public $upload_agreement = 'EXTENSION_UPLOAD_AGREEMENT';
 
+	public $allowed_branches = array('>=', 31);
 	public function __construct()
 	{
 		$this->lang = phpbb::$user->lang['EXTENSION'];

@@ -61,6 +61,8 @@ class titania_type_mod extends titania_type_base
 	public $update_public = 'MOD_UPDATE_PUBLIC';
 	public $upload_agreement = 'MOD_UPLOAD_AGREEMENT';
 
+	public $allowed_branches = array('<=', 30);
+
 	/**
 	* Run MPV/Automod Test for this type?
 	*/

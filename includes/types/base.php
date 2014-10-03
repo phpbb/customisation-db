@@ -200,6 +200,18 @@ class titania_type_base
 	public $upload_agreement = '';
 
 	/**
+	* Allowed phpBB branches. Examples:
+	*	Value					Matches
+	*	all						20, 30, 31
+	*	array('==', 30, 31)		30, 31
+	*	array('<=', 30)			20, 30
+	*	array('>', 30)			31
+	*
+	* @var mixed
+	*/
+	public $allowed_branches = 'all';
+
+	/**
 	* Require validation/use queue for this type?
 	* FALSE on either this or the require_validation config setting means validation is not required for the type
 	*
@@ -324,5 +336,41 @@ class titania_type_base
 	public function validate_revision_fields($fields)
 	{
 		return array();
+	}
+
+	/**
+	* Get allowed branches.
+	*
+	* @param bool $name_only			Only return branch names.
+	* @param bool $check_allow_upload	Only include branch if it allows uploads.
+	*
+	* @return array
+	*/
+	public function get_allowed_branches($name_only = false, $check_allow_upload = true)
+	{
+		$allowed_branches = $names = array();
+		$rule = $this->allowed_branches;
+
+		foreach (titania::$config->phpbb_versions as $branch => $info)
+		{
+			if ($check_allow_upload && !$info['allow_uploads'])
+			{
+				continue;
+			}
+			$branch = (int) $branch;
+
+			if ($rule != 'all')
+			{
+				$allowed = ($rule[0] == '==') ? in_array($branch, $rule) : version_compare($branch, $rule[1], $rule[0]);
+
+				if (!$allowed)
+				{
+					continue;
+				}
+			}
+			$allowed_branches[$branch] = $info;
+			$names[$branch] = $info['name']; 
+		}
+		return ($name_only) ? $names : $allowed_branches;
 	}
 }

@@ -382,7 +382,7 @@ class revision extends base
 	protected function get_selected_branches()
 	{
 		// phpBB branches
-		$allowed_branches = array_keys(get_allowed_phpbb_branches());
+		$allowed_branches = array_keys($this->contrib->type->get_allowed_branches());
 
 		if (sizeof($allowed_branches) == 1)
 		{
@@ -756,7 +756,7 @@ class revision extends base
 		// Assign separately so we can output some data first
 		$this->template->assign_var('REVISION_UPLOADER', $this->attachment->parse_uploader('posting/attachments/revisions.html'));
 
-		generate_phpbb_version_select($settings['vendor_versions']);
+		generate_phpbb_version_select($settings['vendor_versions'], $this->contrib->type->get_allowed_branches());
 
 		$this->template->assign_vars(array(
 			'ERROR_MSG'				=> (!empty($error)) ? implode('<br />', $error) : '',

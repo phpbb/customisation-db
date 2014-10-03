@@ -109,16 +109,15 @@ function generate_type_select($selected = false)
  * Create a select with the phpBB versions
  *
  * @param array $selected
+ * @param bool|array $branches		Branches to output. If false, uses value
+ *	generated from get_allowed_phpbb_branches().
  * @return void
  */
-function generate_phpbb_version_select($selected = false)
+function generate_phpbb_version_select($selected = false, $branches = false)
 {
-	$branches = get_allowed_phpbb_branches();
-
-	// Only display if more than one branch is allowed
-	if (sizeof($branches) == 1)
+	if (!$branches)
 	{
-		return;
+		$branches = get_allowed_phpbb_branches();
 	}
 
 	foreach ($branches as $branch => $row)
