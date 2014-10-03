@@ -58,12 +58,8 @@ class revision extends base
 			return $this->helper->error('NO_QUEUE_ITEM', 404);
 		}
 
-		$this->contrib->get_revisions();
-		$last_rev_id = (int) max(array_keys($this->contrib->revisions));
-		$last_rev_status = (int) $this->contrib->revisions[$last_rev_id]['revision_status'];
-	
-		// Check additional auth
-		if ((!$this->is_moderator && !$old_queue->allow_author_repack) || $last_rev_status == TITANIA_REVISION_DENIED)
+		// Only allow revisions that are still in the queue to be repacked.
+		if ($old_queue->queue_status < TITANIA_QUEUE_NEW || (!$old_queue->allow_author_repack && !$this->is_moderator))
 		{
 			return $this->helper->needs_auth();
 		}
