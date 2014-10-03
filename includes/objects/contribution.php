@@ -1763,7 +1763,10 @@ class titania_contribution extends titania_message_object
 			'text_options'		=> $this->contrib_desc_options,
 			'author'			=> $this->contrib_user_id,
 			'date'				=> $this->contrib_last_update,
-			'url'				=> titania_url::unbuild_url($this->get_url()),
+			'url'				=> serialize(array(
+				'contrib_type'	=> $this->type->url,
+				'contrib'		=> $this->contrib_name_clean,
+			)),
 			'approved'			=> (in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
 			'categories'		=> explode(',', $this->contrib_categories),
 			'phpbb_versions' 	=> $phpbb_versions,
