@@ -22,11 +22,19 @@
 				<dl>
 					<dt><label for="phpbb_branch">{L_PHPBB_BRANCH}:</label><br /><span>{L_PHPBB_BRANCH_EXPLAIN}</span></dt>
 					<dd>
-						<select id="phpbb_branch" name="phpbb_branch[]" size="3">
-							<!-- BEGIN phpbb_branches -->
-								<option value="{phpbb_branches.VALUE}"<!-- IF phpbb_branches.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_branches.NAME}</option>
-							<!-- END phpbb_branches -->
-						</select>
+						<!-- BEGIN phpbb_branches -->
+							<!-- IF phpbb_branches.S_NUM_ROWS eq 1 -->
+								{phpbb_branches.NAME}
+							<!-- ELSE -->
+								<!-- IF phpbb_branches.S_FIRST_ROW -->
+								<select id="phpbb_branch" name="phpbb_branch[]" size="3">
+								<!-- ENDIF -->
+									<option value="{phpbb_branches.VALUE}"<!-- IF phpbb_branches.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_branches.NAME}</option>
+								<!-- IF phpbb_branches.S_LAST_ROW -->
+								</select>
+								<!-- ENDIF -->
+							<!-- ENDIF -->
+						<!-- END phpbb_branches -->
 					</dd>
 				</dl>
 				</fieldset>
