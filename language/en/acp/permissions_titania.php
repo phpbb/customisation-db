@@ -145,6 +145,11 @@ $lang = array_merge($lang, array(
 
 	'acl_u_titania_mod_official_tool_moderate'			=> array('lang' => 'Can submit/moderate Official Tools', 'cat' => 'titania_moderate'),
 
+	'acl_u_titania_mod_extension_queue_discussion'		=> array('lang' => 'Can see Extensions Queue Discussion', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_extension_queue'					=> array('lang' => 'Can see Extensions Queue', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_extension_validate'				=> array('lang' => 'Can validate extensions', 'cat' => 'titania_moderate'),
+	'acl_u_titania_mod_extension_moderate'				=> array('lang' => 'Can moderate extensions', 'cat' => 'titania_moderate'),
+
 	'acl_u_titania_admin'			=> array('lang' => 'Can <strong>administrate</strong> Titania', 'cat' => 'titania_moderate'),
 ));
 
