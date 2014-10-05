@@ -85,42 +85,49 @@ class item extends \phpbb\titania\controller\manage\base
 		$this->display->assign_global_vars();
 		$this->generate_navigation('queue');
 
+		// Only allow these actions to run if the queue item is still open.
+		if ($this->queue->queue_status > 0)
+		{
+			switch ($action)
+			{
+				case 'in_progress':
+					$this->queue->in_progress();
+				break;
+
+				case 'no_progress':
+					$this->queue->no_progress();
+				break;
+
+				case 'tested':
+					$this->queue->change_tested_mark(true);
+				break;
+
+				case 'not_tested':
+					$this->queue->change_tested_mark(false);
+				break;
+
+				case 'move':
+					$this->move();
+				break;
+
+				case 'allow_author_repack' :
+					return $this->allow_author_repack();
+				break;
+
+				case 'approve':
+					return $this->approve();
+				break;
+
+				case 'deny':
+					return $this->deny();
+				break;
+			}
+		}
+
 		switch ($action)
 		{
-			case 'in_progress':
-				$this->queue->in_progress();
-			break;
-
-			case 'no_progress':
-				$this->queue->no_progress();
-			break;
-
-			case 'tested':
-				$this->queue->change_tested_mark(true);
-			break;
-
-			case 'not_tested':
-				$this->queue->change_tested_mark(false);
-			break;
-
 			case 'rebuild':
 				$this->queue->update_first_queue_post();
-			break;
-
-			case 'move':
-				$this->move();
-			break;
-
-			case 'allow_author_repack' :
-				return $this->allow_author_repack();
-			break;
-
-			case 'approve':
-				return $this->approve();
-			break;
-
-			case 'deny':
-				return $this->deny();
 			break;
 
 			case 'reply':
