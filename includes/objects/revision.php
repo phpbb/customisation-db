@@ -259,8 +259,6 @@ class titania_revision extends titania_database_object
 			$translations->parse_attachments($message, false, false, $tpl_block . '.translations', '');
 		}
 
-		phpbb::$template->assign_var('ICON_EDIT', '<img src="' . titania::$images_path . 'icon_edit.gif" alt="' . phpbb::$user->lang['EDIT'] . '" title="' . phpbb::$user->lang['EDIT'] . '" />');
-
 		// Hooks
 		titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $this, $tpl_block);
 	}
