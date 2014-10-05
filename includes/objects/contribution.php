@@ -301,6 +301,20 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
+	* Check whether the contribution is restricted.
+	* This means it's either disabled or cleaned.
+	*
+	* @return bool
+	*/
+	public function is_restricted()
+	{
+		return in_array($this->contrib_status, array(
+			TITANIA_CONTRIB_CLEANED,
+			TITANIA_CONTRIB_DISABLED,
+		));
+	}
+
+	/**
 	 * Get the rating as an object
 	 *
 	 * @return titania_rating
