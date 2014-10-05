@@ -37,8 +37,22 @@ class titania_config extends titania_object
 			'increment_postcount'		=> array('default' => array(TITANIA_SUPPORT)),
 
 			// Path to demo board we will install styles on
-			'demo_style_path'			=> array('default' => ''),
-			'demo_style_url'			=> array('default' => ''),
+			'demo_style_path'			=> array('default' => array(
+				'30'	=> '',
+				'31'	=> '',
+			)),
+
+			// URL for style demo board management hook
+			'style_demo_hook'			=> array('default' => array(
+				'30'	=> '',
+				'31'	=> '',
+			)),
+
+			// Demo board URL
+			'demo_style_url'			=> array('default' => array(
+				'30'	=> '',
+				'31'	=> '',
+			)),
 
 			// Allow non-team members to modify the style demo URL?
 			'can_modify_style_demo_url'	=> array('default' => true),
@@ -79,7 +93,7 @@ class titania_config extends titania_object
 			'display_backtrace'			=> array('default' => 2),
 
 			// Search backend (zend or solr (if solr, set the correct ip/port))
-			'search_backend'			=> array('default' => 'solr'),
+			'search_backend'			=> array('default' => 'zend'),
 			'search_backend_ip'			=> array('default' => 'localhost'),
 			'search_backend_port'		=> array('default' => 8983),
 
@@ -115,7 +129,7 @@ class titania_config extends titania_object
             'colorizeit'                => array('default' => ''),
             'colorizeit_url'            => array('default' => 'www.colorizeit.com'),
             'colorizeit_auth'           => array('default' => 'HEADER'),
-            'colorizeit_var'            => array('default' => 'X-Colorizeit'),
+            'colorizeit_var'            => array('default' => 'X-phpBB-Clr'),
             'colorizeit_value'          => array('default' => '1'),
 
 			/**

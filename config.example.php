@@ -68,7 +68,10 @@ $config = array(
 	*
 	* @param bool|string false to not use a style demo board, path to the board root
 	*/
-	'demo_style_path' => false,
+	'demo_style_path' => array(
+		'30'	=> false,
+		'31'	=> false,
+	),
 
 	/**
 	* Full URL to the demo style.  We will perform sprintf(demo_style_full, $style_id), so please write the url properly
@@ -76,7 +79,10 @@ $config = array(
 	*
 	* @param bool|string false to not use a style demo board
 	*/
-	'demo_style_url' => false,
+	'demo_style_url' => array(
+		'30'	=> false,
+		'31'	=> false,
+	),
 
 	/**
 	* Style Path (titania/style/ *path* /)
