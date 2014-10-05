@@ -322,6 +322,7 @@ class item extends \phpbb\titania\controller\manage\base
 		if ($this->validate('approve'))
 		{
 			$this->queue->approve('');
+			$this->contrib->type->approve($this->contrib, $this->queue);
 			redirect($this->queue->get_url());
 		}
 
@@ -341,6 +342,7 @@ class item extends \phpbb\titania\controller\manage\base
 		if ($this->validate('deny'))
 		{
 			$this->queue->deny();
+			$this->contrib->type->deny($this->contrib, $this->queue);
 			redirect($this->queue->get_url());
 		}
 
@@ -377,6 +379,7 @@ class item extends \phpbb\titania\controller\manage\base
 		}
 
 		$message->display();
+		$this->contrib->type->display_validation_options($action);
 		$this->display_topic_review();
 
 		$this->template->assign_vars(array(
