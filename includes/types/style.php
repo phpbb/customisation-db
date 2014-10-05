@@ -196,4 +196,50 @@ class titania_type_style extends titania_type_base
 		$revision_attachment->change_real_filename($new_real_filename);
 		return $root_dir;
 	}
+
+	/**
+	* @{inheritDoc}
+	*/
+	public function approve($contrib, $queue)
+	{
+		if (!phpbb::$request->is_set_post('style_demo_install'))
+		{
+			return;
+		}
+
+		$manager = phpbb::$container->get('phpbb.titania.style.demo.manager');
+		$attachment = new titania_attachment(TITANIA_CONTRIB, $contrib->contrib_id);
+		$revision = $queue->get_revision();
+		$revision->load_phpbb_versions();
+		$attachment->load($revision->attachment_id);
+		$branch = $revision->phpbb_versions[0]['phpbb_version_branch'];
+		$tool = new titania_contrib_tools($attachment->get_filepath($revision->attachment_id));
+
+		if ($manager->configure($branch, $contrib, $tool))
+		{
+			$result = $manager->install();
+
+			if (empty($result['error']))
+			{
+				$contrib->contrib_demo = $manager->get_demo_url($branch, $result['id']);
+				$contrib->submit();
+			}
+		}
+	}
+
+	/**
+	* @{inheritDoc}
+	*/
+	public function display_validation_options($action)
+	{
+		if ($action != 'approve')
+		{
+			return;
+		}
+
+		phpbb::$template->assign_vars(array(
+			'S_STYLE_DEMO_INSTALL'			=> true,
+			'S_STYLE_DEMO_INSTALL_CHECKED'	=> phpbb::$request->variable('style_demo_install', false),
+		));
+	}
 }
