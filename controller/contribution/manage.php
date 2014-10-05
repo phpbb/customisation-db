@@ -227,8 +227,9 @@ class manage extends base
 			else if ($action == 'attach_up' || $action == 'attach_down')
 			{
 				$move_attach = ($action == 'attach_up') ? 'up' : 'down';
+				$original_order = $this->screenshot->generate_order();
 				$this->screenshot->generate_order(false, $attach_id, $move_attach);
-				$this->screenshot->submit(TITANIA_ACCESS_PUBLIC, $orig_screen_order);
+				$this->screenshot->submit(TITANIA_ACCESS_PUBLIC, $original_order);
 			}
 		}
 	}
