@@ -150,4 +150,13 @@ class titania_type_bbcode extends titania_type_base
 
 		return $error;
 	}
+
+	/**
+	* @{inheritDoc}
+	*/
+	public function approve($contrib, $queue)
+	{
+		$demo = new \titania_bbcode_demo($contrib->contrib_id);
+		$demo->clear_cache();
+	}
 }
