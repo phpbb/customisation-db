@@ -301,6 +301,18 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
+	* Check whether the current user can manage the contribution.
+	*
+	* @param string $overridable_permission		Permission to check that always grants access
+	* @return bool
+	*/
+	public function is_manageable($overridable_permission = 'moderate')
+	{
+		return (!$this->is_restricted() && ($this->is_author || $this->is_active_coauthor)) ||
+			$this->type->acl_get($overridable_permission);
+	}
+
+	/**
 	* Check whether the contribution is restricted.
 	* This means it's either disabled or cleaned.
 	*
@@ -607,18 +619,45 @@ class titania_contribution extends titania_message_object
 					'S_CONTRIB_BBC_DEMO_RENDERED'	=> $demo_rendered,
 				));
 			}
+			$use_queue = titania::$config->use_queue && $this->type->use_queue;
+			$u_view_reports = $u_manage = $u_new_revision = $u_queue_discussion = false;
+
+			if ($this->type->acl_get('moderate'))
+			{
+				$u_view_reports = $this->controller_helper->route(
+					'phpbb.titania.manage.attention.redirect',
+					array(
+						'type'	=> TITANIA_CONTRIB,
+						'id'	=> $this->contrib_id,
+					)
+				);
+			}
+			if ($this->is_manageable())
+			{
+				$u_manage = $this->get_url('manage');
+
+				if (phpbb::$auth->acl_get('u_titania_contrib_submit'))
+				{
+					$u_new_revision = $this->get_url('revision');
+				}
+				
+			}
+			if ($use_queue && $this->is_manageable('queue_discussion'))
+			{
+				$u_queue_discussion = $this->get_url('queue_discussion');
+			}
 
 			$vars = array_merge($vars, array(
 				'CONTRIB_TYPE'					=> $this->type->lang,
 				'CONTRIB_TYPE_ID'				=> $this->contrib_type,
 
-				'U_CONTRIB_MANAGE'				=> ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || $this->type->acl_get('moderate')) ? $this->get_url('manage') : '',
-				'U_NEW_REVISION'				=> (phpbb::$auth->acl_get('u_titania_contrib_submit')) && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || $this->type->acl_get('moderate')) ? $this->get_url('revision') : '',
-				'U_QUEUE_DISCUSSION'			=> (titania::$config->use_queue && $this->type->use_queue && ((($this->is_author || $this->is_active_coauthor) && !in_array($this->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED))) || $this->type->acl_get('queue_discussion'))) ? $this->get_url('queue_discussion') : '',
+				'U_CONTRIB_MANAGE'				=> $u_manage,
+				'U_NEW_REVISION'				=> $u_new_revision,
+				'U_QUEUE_DISCUSSION'			=> $u_queue_discussion,
 				'U_VIEW_CONTRIB'				=> $this->get_url(),
 
 				'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
-				'U_INFO'						=> ($this->type->acl_get('moderate')) ? titania_url::build_url('manage/attention', array('type' => TITANIA_CONTRIB, 'id' => $this->contrib_id)) : '',
+				'U_VIEW_REPORTS'				=> $u_view_reports,
 
 				// Contribution Status
 				'S_CONTRIB_NEW'					=> ($this->contrib_status == TITANIA_CONTRIB_NEW) ? true : false,
