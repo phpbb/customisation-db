@@ -493,7 +493,7 @@ class queue_overlord
 		phpbb::$template->assign_block_vars('queue_tags', array(
 			'TAG_NAME'		=> phpbb::$user->lang['ALL'],
 			'TAG_COUNT'		=> $total,
-			'U_VIEW_TAG'	=> $controller_helper->route('phpbb.titania.queue', array('queue_type' => $type_url, 'tag' => 'all')),
+			'U_VIEW_TAG'	=> $controller_helper->route('phpbb.titania.queue.type', array('queue_type' => $type_url, 'tag' => 'all')),
 			'S_SELECTED'	=> ($selected == 0) ? true : false,
 		));
 
@@ -508,7 +508,7 @@ class queue_overlord
 			phpbb::$template->assign_block_vars('queue_tags', array(
 				'TAG_NAME'		=> (isset(phpbb::$user->lang[$row['tag_field_name']])) ? phpbb::$user->lang[$row['tag_field_name']] : $row['tag_field_name'],
 				'TAG_COUNT'		=> $tag_count[$tag_id],
-				'U_VIEW_TAG'	=> $controller_helper->route('phpbb.titania.queue', array('queue_type' => $type_url, 'tag' => $tag_id)),
+				'U_VIEW_TAG'	=> $controller_helper->route('phpbb.titania.queue.type', array('queue_type' => $type_url, 'tag' => $tag_id)),
 				'S_SELECTED'	=> ($selected == $tag_id) ? true : false,
 			));
 		}
