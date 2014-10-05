@@ -93,7 +93,7 @@ class titania_config extends titania_object
 			'display_backtrace'			=> array('default' => 2),
 
 			// Search backend (zend or solr (if solr, set the correct ip/port))
-			'search_backend'			=> array('default' => 'zend'),
+			'search_backend'			=> array('default' => 'solr'),
 			'search_backend_ip'			=> array('default' => 'localhost'),
 			'search_backend_port'		=> array('default' => 8983),
 
@@ -129,7 +129,7 @@ class titania_config extends titania_object
             'colorizeit'                => array('default' => ''),
             'colorizeit_url'            => array('default' => 'www.colorizeit.com'),
             'colorizeit_auth'           => array('default' => 'HEADER'),
-            'colorizeit_var'            => array('default' => 'X-phpBB-Clr'),
+            'colorizeit_var'            => array('default' => 'X-Colorizeit'),
             'colorizeit_value'          => array('default' => '1'),
 
 			/**
