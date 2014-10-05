@@ -84,10 +84,13 @@ class item extends \phpbb\titania\controller\manage\base
 
 		$this->display->assign_global_vars();
 		$this->generate_navigation('queue');
+		$valid_action = false;
 
 		// Only allow these actions to run if the queue item is still open.
 		if ($this->queue->queue_status > 0)
 		{
+			$valid_action = true;
+
 			switch ($action)
 			{
 				case 'in_progress':
@@ -121,6 +124,9 @@ class item extends \phpbb\titania\controller\manage\base
 				case 'deny':
 					return $this->deny();
 				break;
+
+				default:
+					$valid_action = false;
 			}
 		}
 
@@ -140,7 +146,10 @@ class item extends \phpbb\titania\controller\manage\base
 			break;
 
 			default:
-				return $this->helper->error('INVALID_ACTION', 404);
+				if (!$valid_action)
+				{
+					return $this->helper->error('INVALID_ACTION', 404);
+				}
 		}
 
 		redirect($this->queue->get_url());
