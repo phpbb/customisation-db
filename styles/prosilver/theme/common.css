@@ -3,11 +3,6 @@
 
 /* Common styles
 --------------------------------------------- */
-h2.panel-name {
-	width: auto;
-	display: inline;
-}
-
 h3.clear-top {
 	margin-top: 5px;
 }
@@ -19,57 +14,6 @@ h3.section-name {
 	color: #333333;
 	border: 0;
 	margin: 8px 0;
-}
-
-.tabs {
-	float: right;
-	display: block;
-	margin-right: 15px;
-	margin-top: 10px;
-}
-
-.tabs li {
-	list-style: none;
-	float: left;
-	display: block;
-	margin-right: 2px;
-}
-
-.tabs a {
-	background: #7fa3b9 url("./images/tab_bg.gif") no-repeat 0 -29px;
-	border-bottom: 1px solid #FFFFFF;
-	position: relative;
-	display: block;
-}
-
-.tabs a span {
-	background: transparent url("./images/tab_bg2.gif") no-repeat 100% -29px;
-	display: block;
-	padding: 5px 10px;
-	color: #FFFFFF;
-	font-weight: bold;
-	font-family: Verdana;
-}
-
-.tabs a:hover {
-	background-color: #577d94;
-	background-position: 0 -57px;
-	text-decoration: none;
-}
-
-.tabs a:hover span {
-	background-position: 100% -57px;
-}
-
-.tabs #activetab a {
-	background-color: #c6d8e5;
-	background-position: 0 0;
-	border-bottom-color: #C6D8E5;
-}
-
-.tabs #activetab a span {
-	background-position: 100% 0;
-	color: #4B6778;
 }
 
 .main-panel {
