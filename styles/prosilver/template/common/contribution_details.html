@@ -215,16 +215,13 @@
 		<!-- ENDIF -->
 		<div id="extratabs" data-show-panel="{$TAB}-panel" class="sub-panels">
 		    <ul id="extratabs-head">
-		        <!-- IF S_IN_QUEUE and .revisions -->
-		        	<li id="revisions-panel-tab"><a href="#revisions-panel" data-subpanel="revisions-panel"><span>{L_REVISIONS}</span></a></li>
-		        <!-- ENDIF -->
 		        <!-- IF SCREENSHOT_COUNT > 1 -->
 		        	<li id="screenshots-panel-tab"><a href="#screenshots-panel" data-subpanel="screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li>
 		        <!-- ENDIF -->
 				<!-- IF S_TRANSLATIONS -->
 					<li id="translations-panel-tab"><a href="#translations-panel" data-subpanel="translations-panel"><span>{L_TRANSLATIONS}</span></a></li>
 				<!-- ENDIF -->
-		        <!-- IF not S_IN_QUEUE and (.revisions or U_NEW_REVISION) -->
+		        <!-- IF .revisions -->
 		        	<li id="revisions-panel-tab"><a href="#revisions-panel" data-subpanel="revisions-panel"><span>{L_REVISIONS}</span></a></li>
 		       <!-- ENDIF -->
 		        <!-- IF U_NEW_REVISION -->
