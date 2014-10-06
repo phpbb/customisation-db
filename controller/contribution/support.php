@@ -194,7 +194,7 @@ class support extends base
 
 		if ($topic)
 		{
-			$can_view_queue_discussion = $this->is_author && $this->contrib->type->acl_get('queue_discussion');
+			$can_view_queue_discussion = $this->is_author || $this->contrib->type->acl_get('queue_discussion');
 
 			if ($this->topic->topic_access < \titania::$access_level ||
 				($this->topic->topic_type == TITANIA_QUEUE_DISCUSSION && !$can_view_queue_discussion))
