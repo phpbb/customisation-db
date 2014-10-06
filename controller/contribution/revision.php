@@ -697,7 +697,9 @@ class revision extends base
 	*/
 	protected function is_custom_license($license)
 	{
-		return $this->contrib->type->license_allow_custom && !in_array($license, $this->contrib->type->license_options);
+		return !empty($license) &&
+			$this->contrib->type->license_allow_custom &&
+			!in_array($license, $this->contrib->type->license_options);
 	}
 
 	/**
