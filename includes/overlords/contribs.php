@@ -229,7 +229,10 @@ class contribs_overlord
 			return compact('sort');
 		}
 
-		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
+		$controller_helper = phpbb::$container->get('controller.helper');
+		$path_helper = phpbb::$container->get('path_helper');
+		$url = $path_helper->get_url_parts($controller_helper->get_current_url());
+		$sort->build_pagination($url['base']);
 
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 

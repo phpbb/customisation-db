@@ -43,6 +43,9 @@ class titania_attention extends titania_database_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
+
 	/**
 	 * Constructor class for the attention object
 	 */
@@ -67,6 +70,7 @@ class titania_attention extends titania_database_object
 		));
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->path_helper = phpbb::$container->get('path_helper');
 	}
 
 	/**
@@ -86,11 +90,21 @@ class titania_attention extends titania_database_object
 		// Subscriptions
 		if (!$this->attention_id)
 		{
+			$u_view = $this->controller_helper->route('phpbb.titania.attention.redirect', array(
+				'type'	=> $this->attention_type,
+				'id'	=> $this->attention_object_id,
+			));
 			$email_vars = array(
 				'NAME'		=> $this->attention_title,
-				'U_VIEW'	=> titania_url::build_url('manage/attention', array('type' => $this->attention_type, 'id' => $this->attention_object_id)),
+				'U_VIEW'	=> $this->path_helper->strip_url_params($u_view, 'sid'),
 			);
-			titania_subscriptions::send_notifications(TITANIA_ATTENTION, 0, 'subscribe_notify.txt', $email_vars, $this->attention_poster_id);
+			titania_subscriptions::send_notifications(
+				TITANIA_ATTENTION,
+				0,
+				'subscribe_notify.txt',
+				$email_vars,
+				$this->attention_poster_id
+			);
 		}
 
 		parent::submit();

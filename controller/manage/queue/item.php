@@ -84,43 +84,56 @@ class item extends \phpbb\titania\controller\manage\base
 
 		$this->display->assign_global_vars();
 		$this->generate_navigation('queue');
+		$valid_action = false;
+
+		// Only allow these actions to run if the queue item is still open.
+		if ($this->queue->queue_status > 0)
+		{
+			$valid_action = true;
+
+			switch ($action)
+			{
+				case 'in_progress':
+					$this->queue->in_progress();
+				break;
+
+				case 'no_progress':
+					$this->queue->no_progress();
+				break;
+
+				case 'tested':
+					$this->queue->change_tested_mark(true);
+				break;
+
+				case 'not_tested':
+					$this->queue->change_tested_mark(false);
+				break;
+
+				case 'move':
+					$this->move();
+				break;
+
+				case 'allow_author_repack' :
+					return $this->allow_author_repack();
+				break;
+
+				case 'approve':
+					return $this->approve();
+				break;
+
+				case 'deny':
+					return $this->deny();
+				break;
+
+				default:
+					$valid_action = false;
+			}
+		}
 
 		switch ($action)
 		{
-			case 'in_progress':
-				$this->queue->in_progress();
-			break;
-
-			case 'no_progress':
-				$this->queue->no_progress();
-			break;
-
-			case 'tested':
-				$this->queue->change_tested_mark(true);
-			break;
-
-			case 'not_tested':
-				$this->queue->change_tested_mark(false);
-			break;
-
 			case 'rebuild':
 				$this->queue->update_first_queue_post();
-			break;
-
-			case 'move':
-				$this->move();
-			break;
-
-			case 'allow_author_repack' :
-				return $this->allow_author_repack();
-			break;
-
-			case 'approve':
-				return $this->approve();
-			break;
-
-			case 'deny':
-				return $this->deny();
 			break;
 
 			case 'reply':
@@ -133,7 +146,10 @@ class item extends \phpbb\titania\controller\manage\base
 			break;
 
 			default:
-				return $this->helper->error('INVALID_ACTION', 404);
+				if (!$valid_action)
+				{
+					return $this->helper->error('INVALID_ACTION', 404);
+				}
 		}
 
 		redirect($this->queue->get_url());
@@ -315,6 +331,7 @@ class item extends \phpbb\titania\controller\manage\base
 		if ($this->validate('approve'))
 		{
 			$this->queue->approve('');
+			$this->contrib->type->approve($this->contrib, $this->queue);
 			redirect($this->queue->get_url());
 		}
 
@@ -334,6 +351,7 @@ class item extends \phpbb\titania\controller\manage\base
 		if ($this->validate('deny'))
 		{
 			$this->queue->deny();
+			$this->contrib->type->deny($this->contrib, $this->queue);
 			redirect($this->queue->get_url());
 		}
 
@@ -370,6 +388,7 @@ class item extends \phpbb\titania\controller\manage\base
 		}
 
 		$message->display();
+		$this->contrib->type->display_validation_options($action);
 		$this->display_topic_review();
 
 		$this->template->assign_vars(array(

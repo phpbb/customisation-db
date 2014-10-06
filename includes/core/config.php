@@ -37,8 +37,22 @@ class titania_config extends titania_object
 			'increment_postcount'		=> array('default' => array(TITANIA_SUPPORT)),
 
 			// Path to demo board we will install styles on
-			'demo_style_path'			=> array('default' => ''),
-			'demo_style_url'			=> array('default' => ''),
+			'demo_style_path'			=> array('default' => array(
+				'30'	=> '',
+				'31'	=> '',
+			)),
+
+			// URL for style demo board management hook
+			'style_demo_hook'			=> array('default' => array(
+				'30'	=> '',
+				'31'	=> '',
+			)),
+
+			// Demo board URL
+			'demo_style_url'			=> array('default' => array(
+				'30'	=> '',
+				'31'	=> '',
+			)),
 
 			// Allow non-team members to modify the style demo URL?
 			'can_modify_style_demo_url'	=> array('default' => true),

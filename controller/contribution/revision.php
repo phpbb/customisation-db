@@ -610,12 +610,10 @@ class revision extends base
 	*
 	* @return bool Returns true if user is authorized.
 	*/
-	protected function check_auth($action = false)
+	protected function check_auth()
 	{
-		$is_disabled = in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED));
-
 		return $this->auth->acl_get('u_titania_contrib_submit') &&
-			($this->is_moderator || (!$is_disabled && $this->is_author));
+			($this->is_moderator || (!$contrib->is_restricted() && $this->is_author));
 	}
 
 	/**
@@ -699,7 +697,9 @@ class revision extends base
 	*/
 	protected function is_custom_license($license)
 	{
-		return $this->contrib->type->license_allow_custom && !in_array($license, $this->contrib->type->license_options);
+		return !empty($license) &&
+			$this->contrib->type->license_allow_custom &&
+			!in_array($license, $this->contrib->type->license_options);
 	}
 
 	/**

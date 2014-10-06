@@ -128,7 +128,8 @@ class attention_overlord
 			$sort = self::build_sort();
 		}
 		$sort->request();
-
+		$path_helper = phpbb::$container->get('path_helper');
+		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		$sql_ary = array(
 			'SELECT'	=> 'a.*',
@@ -191,7 +192,8 @@ class attention_overlord
 			return;
 		}
 
-		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
+		$url_parts = $path_helper->get_url_parts($controller_helper->get_current_url());
+		$sort->build_pagination($url_parts['base'], $url_parts['params']);
 
 		// Get the data
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);

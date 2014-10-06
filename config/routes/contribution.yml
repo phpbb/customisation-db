@@ -59,3 +59,8 @@ phpbb.titania.contrib.revision.repack:
     requirements:
         id: \d+
 
+phpbb.titania.contrib.revision.edit:
+    pattern: /revision/{id}/edit
+    defaults: { _controller: phpbb.titania.controller.contrib.revision.edit:edit }
+    requirements:
+        id: \d+

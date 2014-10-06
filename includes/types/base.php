@@ -319,6 +319,40 @@ class titania_type_base
 	}
 
 	/**
+	* Run custom action after revision has been denied.
+	*
+	* @param \titania_contribution $contrib
+	* @param \titania_queue $queue
+	*
+	* @return null
+	*/
+	public function deny($contrib, $queue)
+	{
+	}
+
+	/**
+	* Run custom action after revision has been approved.
+	*
+	* @param \titania_contribution $contrib
+	* @param \titania_queue $queue
+	*
+	* @return null
+	*/
+	public function approve($contrib, $queue)
+	{
+	}
+
+	/**
+	* Display additional options when approving/denying a revision
+	*
+	* @param string $action		Either approve or deny
+	* @return null
+	*/
+	public function display_validation_options($action)
+	{
+	}
+
+	/**
 	* Validate contribution fields.
 	*
 	* @return array Returns array containing any errors found.

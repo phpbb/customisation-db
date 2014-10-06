@@ -201,6 +201,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$sort = self::build_sort();
 		}
 		$sort->request();
+		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		$topic_ids = array();
 		$switch_on_sticky = true; // Display the extra block after stickies end?  Not used when not sorting with stickies first
@@ -255,12 +256,14 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			break;
 
 			case 'queue' :
-				$page_url = titania_url::build_url('manage/queue');
+				$page_url = $controller_helper->route('phpbb.titania.queue');
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_QUEUE;
 			break;
 
 			case 'queue_discussion' :
-				$page_url = titania_url::build_url('manage/queue_discussion', array('queue' => titania_types::$types[$options['topic_category']]->url));
+				$page_url = $controller_helper->route('phpbb.titania.queue_discussion.type', array(
+					'queue_type' => titania_types::$types[$options['topic_category']]->url,
+				));
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_QUEUE_DISCUSSION;
 
 				// Only display those in which the users are authed
@@ -360,13 +363,15 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 				if (isset(titania_types::$types[$options['contrib_type']]))
 				{
-					$page_url = titania_url::build_url('support/' . titania_types::$types[$options['contrib_type']]->url);
+					$page_url = $controller_helper->route('phpbb.titania.support', array(
+						'type'	=> titania_types::$types[$options['contrib_type']]->url
+					));
 
 					$sql_ary['WHERE'] .= ' AND contrib.contrib_type = ' . $options['contrib_type'];
 				}
 				else
 				{
-					$page_url = titania_url::build_url('support/all');
+					$page_url = $controller_helper->route('phpbb.titania.support');
 				}
 
 				// Additional tracking field (to allow marking all support/discussion as read)

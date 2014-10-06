@@ -260,15 +260,18 @@ class titania_attention_post extends titania_attention
 
 		// Notify poster of approval.
 		$message_vars = array(
-			'U_VIEW_TOPIC'	=> titania_url::append_url($this->post->topic->get_url()),
-			'U_VIEW_POST'	=> titania_url::append_url($this->post->get_url())		
+			'U_VIEW_TOPIC'	=> $this->path_helper->strip_url_params($this->post->topic->get_url(), 'sid'),
+			'U_VIEW_POST'	=> $this->path_helper->strip_url_params($this->post->get_url(), 'sid'),
 		);
 		$this->notify_poster('approved', $message_vars);
 
 		// Subscriptions?
 		if ($this->post->topic->topic_first_post_id != $this->post->post_id && $this->post->topic->topic_last_post_id == $this->post->post_id)
 		{
-			$message_vars = array('U_VIEW' => titania_url::append_url($this->post->topic->get_url(), array('view' => 'unread', '#' => 'unread')));
+			$u_view = $this->post->topic->get_url(false, array('view' => 'unread', '#' => 'unread'));
+			$message_vars = array(
+				'U_VIEW' => $this->path_helper->strip_url_params($u_view),
+			);
 			$object_type = array(TITANIA_TOPIC, TITANIA_SUPPORT);
 			$object_id = array($this->post->topic_id, $this->post->topic->parent_id);
 

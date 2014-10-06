@@ -20,10 +20,12 @@
 <!-- ENDIF -->
 
 <!-- IF CONTRIB_NAME --><h2 class="panel-name">{CONTRIB_NAME}<!-- IF CONTRIB_LOCAL_NAME --> / {CONTRIB_LOCAL_NAME}<!-- ENDIF --><!-- IF S_CONTRIB_CLEANED --> <img src="{T_TITANIA_THEME_PATH}/images/icon_cleaned_contrib.gif" title="{L_CLEANED_CONTRIB}" alt="{L_CLEANED_CONTRIB}" /><!-- ENDIF --></h2><!-- ENDIF -->
-<div class="tabs">
+<div id="tabs">
 	<ul>
 	<!-- BEGIN nav_menu -->
-		<li<!-- IF nav_menu.S_SELECTED --> id="activetab"<!-- ENDIF -->><a href="{nav_menu.U_TITLE}"><span>{nav_menu.L_TITLE}</span></a></li>
+		<li class="tab<!-- IF nav_menu.S_SELECTED --> activetab<!-- ENDIF -->">
+			<a href="{nav_menu.U_TITLE}">{nav_menu.L_TITLE}</a>
+		</li>
 	<!-- END nav_menu -->
 	</ul>
 </div>

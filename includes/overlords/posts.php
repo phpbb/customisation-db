@@ -333,7 +333,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 					'POST_TEXT'				=> $message,
 					'POST_TEXT_DECODED'		=> $message_decoded,
 					'EDITED_MESSAGE'		=> $l_edited_by,
-					'U_MINI_POST'			=> titania_url::append_url($topic->get_url(), array('p' => $post_id, '#p' => $post_id)),
+					'U_MINI_POST'			=> $topic->get_url(false, array('p' => $post_id, '#' => 'p' . $post_id)),
 					'MINI_POST_IMG'			=> ($post->post_time > $last_mark_time) ? phpbb::$user->img('icon_post_target_unread', 'NEW_POST') : phpbb::$user->img('icon_post_target', 'POST'),
 					'S_FIRST_UNREAD'		=> ($post->post_time > $last_mark_time && $prev_post_time <= $last_mark_time) ? true : false,
 				)

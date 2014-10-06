@@ -297,9 +297,16 @@ class titania_attachment extends titania_database_object
 
         // Delete previous attachments list
         unset(phpbb::$template->_tpldata['attach_row']);
+        $path_helper = phpbb::$container->get('path_helper');
+        $base_url = $this->controller_helper->get_current_url();
+        $hash = generate_link_hash('attach_manage');
 
 		foreach ($this->attachments as $attachment_id => $row)
 		{
+			$params = array(
+				'a'		=> $row['attachment_id'],
+				'hash'	=> $hash,
+			);
 			$output = array(
 				'FILENAME'			=> basename($row['real_filename']),
 				'FILE_COMMENT'		=> utf8_normalize_nfc(phpbb::$request->variable('attachment_comment_' . $attachment_id, (string) $row['attachment_comment'], true)),
@@ -311,14 +318,23 @@ class titania_attachment extends titania_database_object
 				'S_DELETE'			=> (!isset($row['no_delete']) || !$row['no_delete']) ? true : false,
 				'S_PREVIEW'			=> (isset($row['is_preview']) && $row['is_preview']) ? true : false,
 				//'S_DELETED'			=> (isset($row['deleted']) && $row['deleted']) ? true : false,
-				'U_DELETE'			=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'delete_attach', 'a' => $row['attachment_id'], 'hash' => generate_link_hash('attach_manage'))),
+				'U_DELETE'			=> $path_helper->append_url_params(
+					$base_url,
+					array_merge($params, array('action' => 'delete_attach'))
+				),
 			);
 
 			if ($this->object_type == TITANIA_SCREENSHOT)
 			{
 				$output = array_merge($output, array(
-					'U_MOVE_UP'			=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'attach_up', 'a' => $row['attachment_id'], 'hash' => generate_link_hash('attach_manage'))),
-					'U_MOVE_DOWN'		=> titania_url::append_url(titania_url::$current_page_url, array('action' => 'attach_down', 'a' => $row['attachment_id'], 'hash' => generate_link_hash('attach_manage'))),		
+					'U_MOVE_UP'		=> $path_helper->append_url_params(
+						$base_url,
+						array_merge($params, array('action' => 'attach_up'))
+					),
+					'U_MOVE_DOWN'	=> $path_helper->append_url_params(
+						$base_url,
+						array_merge($params, array('action' => 'attach_down'))
+					),
 				));
 			}
 			$index += (($index_dir == '+') ? 1 : -1);

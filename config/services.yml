@@ -35,6 +35,15 @@ services:
              - @user
              - @phpbb.titania.controller.helper
              - @path_helper
+
+    phpbb.titania.style.demo.manager:
+        class: phpbb\titania\contribution\style\demo\manager
+        arguments:
+            - @user
+            - @service_container
+            - @phpbb.titania.config
+            - %core.php_ext%
+
     phpbb.titania.listener:
         class: phpbb\titania\event\main_listener
         arguments:

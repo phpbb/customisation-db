@@ -65,7 +65,7 @@ class titania_subscriptions
 			'IS_SUBSCRIBED'			=> $is_subscribed,
 
 			'U_SUBSCRIBE'			=> $path_helper->append_url_params($url, $params),
-			'L_UNSUBSCRIBE_TYPE'	=> phpbb::$user->lang($lang_key),
+			'L_SUBSCRIBE_TYPE'		=> phpbb::$user->lang($lang_key),
 		));
 	}
 

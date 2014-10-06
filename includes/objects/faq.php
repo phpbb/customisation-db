@@ -205,7 +205,10 @@ class titania_faq extends titania_message_object
 			'text_options'	=> $this->faq_text_options,
 			'author'		=> 0,
 			'date'			=> 0,
-			'url'			=> titania_url::unbuild_url($this->get_url()),
+			'url'			=> serialize(array(
+				'contrib_type'	=> $this->contrib->type->url,
+				'contrib'		=> $this->contrib->contrib_name_clean
+			)),
 			'access_level'	=> $this->faq_access,
 		));
 	}
