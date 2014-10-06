@@ -6,7 +6,7 @@
 				<dd class="general revision-status"></dd>
 				<dd class="general revision-actions"></dd>
 				<dd class="general revision-version">{L_VERSION}</dd>
-				<dd class="general revision-phpbb-version">{L_PHPBB_VERSION}</dd>
+				<dd class="general phpbb-version">{L_PHPBB_VERSION}</dd>
 			</dl>
 		</li>
 	</ul>
@@ -15,7 +15,11 @@
 			<li class="row<!-- IF revisions.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF revisions.S_FIRST_ROW --> first<!-- ENDIF -->">
 				<dl>
 					<dt>
-						<!-- IF revisions.U_DOWNLOAD --><a href="{revisions.U_DOWNLOAD}" title="{L_DOWNLOAD}"><!-- ENDIF --><!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF --><!-- IF revisions.U_DOWNLOAD --></a><!-- ENDIF -->
+						<div class="list-inner">
+							<!-- IF revisions.U_DOWNLOAD --><a href="{revisions.U_DOWNLOAD}" title="{L_DOWNLOAD}"><!-- ENDIF -->
+								<!-- IF revisions.NAME -->{revisions.NAME}<!-- ELSE --><em>{L_NO_REVISION_NAME}</em><!-- ENDIF -->
+							<!-- IF revisions.U_DOWNLOAD --></a><!-- ENDIF -->
+						</div>
 					</dt>
 					<dd class="general revision-status">
 						<!-- IF revisions.S_NEW and revisions.S_USE_QUEUE --><strong>{L_NOT_VALIDATED}</strong><!-- ENDIF -->
@@ -31,7 +35,7 @@
 						<!-- IF revisions.U_EDIT --><a href="{revisions.U_EDIT}" title="{L_EDIT}"><img src="{T_TITANIA_THEME_PATH}/images/icon_settings.gif" alt="{L_EDIT}" /></a>&nbsp;<!-- ENDIF -->
 					</dd>
 					<dd class="general revision-version">{revisions.VERSION}</dd>
-					<dd class="general revision-phpbb-version">
+					<dd class="general phpbb-version">
 						<!-- IF revisions.PHPBB_VERSION -->
 							{revisions.PHPBB_VERSION}
 						<!-- ELSE -->

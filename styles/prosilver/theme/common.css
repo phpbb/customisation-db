@@ -297,22 +297,14 @@ a.contract {
 
 /* Listings
 --------------------------------------------- */
-.phpbb_versions {
-	min-width: 80px;
-}
-
 .contribution-list-actions {
 	padding-top: 9px;
 }
 
-#faqlist .topiclist dt {
-	width: 80%;
-}
-
 dd.faq-tools {
-	width: 13%;
 	text-align: right;
 	border: 0 !important;
+	width: 240px;
 }
 
 dd.general {
@@ -343,44 +335,36 @@ ul.simple li.header dt, ul.simple li.header dd {
 	border-top: 1px solid #F9F9F9;
 }
 
-.container dd.type {
-	width: 15%;
-	text-align: center;
-	padding-left: 5px;
-	padding-right: 5px;
-}
-
-.container dd.contrib-author {
-	width: 20%;
-	padding-left: 5px;
-	padding-right: 5px;
-}
-
-.container .cplist dd.type, .container .cplist dd.contrib-author {
-	font-size: 1.1em;
-}
-
 .container .forabg {
 	background-image: none;
 }
 
 .revisions dt {
-	width: 35% !important;
+	margin-right: -520px !important;
 }
 
-dd.contribution-phpbb-version {
-	text-align: center;
-	width: 15%;
+.revisions .list-inner {
+	margin-right: 520px !important;
 }
 
-dd.revision-version {
-	width: 19%;
-	text-align: center;
+.revisions dd {
+	width: 130px !important;
 }
 
-dd.revision-phpbb-version {
+.contributions dt {
+	margin-right: -260px !important;
+}
+
+.contributions .list-inner {
+	margin-right: 260px !important;
+}
+
+.contributions dd {
+	width: 130px !important;
+}
+
+dd.revision-version, dd.phpbb-version {
 	text-align: center;
-	width: 20%;
 }
 
 #translations-panel dl dt {
@@ -393,18 +377,12 @@ dd.revision-phpbb-version {
 
 ul.topiclist dd.revision-actions {
 	text-align: right;
-	width: 8%;
 	border-left: 0;
 }
 
 ul.topiclist dd.revision-status {
 	text-align: center;
-	width: 10%;
 	border-left: 0;
-}
-
-dd.phpbb-version select {
-	width: 100px;
 }
 
 dl.preview-select {
