@@ -104,6 +104,8 @@ class queue_overlord
 		}
 		$sort->request();
 
+		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$path_helper = phpbb::$container->get('path_helper');
 		$queue_ids = array();
 
 		$sql_ary = array(
@@ -154,7 +156,8 @@ class queue_overlord
 			return;
 		}
 
-		$sort->build_pagination(titania_url::$current_page, titania_url::$params);
+		$url_parts = $path_helper->get_url_parts($controller_helper->get_current_url());
+		$sort->build_pagination($url_parts['bases'], $url_parts['params']);
 
 		$queue_ids = $user_ids = array();
 
@@ -189,7 +192,7 @@ class queue_overlord
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'TOPIC_SUBJECT'				=> $row['contrib_name'] . ' - ' . $row['revision_version'],
 				'S_TOPIC_PROGRESS'			=> ($row['queue_progress']) ? true : false,
-				'U_VIEW_TOPIC'				=> titania_url::append_url($topic->get_url(), array('tag' => $queue_status)),
+				'U_VIEW_TOPIC'				=> $topic->get_url(false, array('tag' => $queue_status)),
 				'S_TESTED'					=> ($row['queue_tested']) ? true : false,
 			)));
 		}
@@ -461,7 +464,12 @@ class queue_overlord
 		));
 
 		// Subscriptions
-		titania_subscriptions::handle_subscriptions(TITANIA_TOPIC, $topic->topic_id, titania_url::$current_page_url, 'SUBSCRIBE_TOPIC');
+		titania_subscriptions::handle_subscriptions(
+			TITANIA_TOPIC,
+			$topic->topic_id,
+			$controller_helper->get_current_url(),
+			'SUBSCRIBE_TOPIC'
+		);
 
 		return compact('row', 'contrib', 'topic');
 	}

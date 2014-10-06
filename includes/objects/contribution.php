@@ -98,6 +98,9 @@ class titania_contribution extends titania_message_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
+
 	/**
 	* @var Contribution type object
 	*/
@@ -158,6 +161,7 @@ class titania_contribution extends titania_message_object
 		));
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->path_helper = phpbb::$container->get('path_helper');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -884,18 +888,22 @@ class titania_contribution extends titania_message_object
 			$contrib_description = $this->contrib_desc;
 			titania_decode_message($contrib_description, $this->contrib_desc_uid);
 
+			$u_download = $this->controller_helper->route('phpbb.titania.download', array(
+				'id' => $this->download['attachment_id']
+			));
+
 			// Global body and options
 			$body = sprintf(phpbb::$user->lang[$this->type->create_public],
 				$this->contrib_name,
-				titania_url::remove_sid($this->author->get_url()),
+				$this->path_helper->strip_url_params($this->author->get_url(), 'sid'),
 				users_overlord::get_user($this->author->user_id, '_username'),
 				$contrib_description,
 				$this->download['revision_version'],
-				titania_url::build_clean_url('download', array('id' => $this->download['attachment_id'])),
+				$this->path_helper->strip_url_params($u_download, 'sid'),
 				$this->download['real_filename'],
 				$this->download['filesize'],
-				titania_url::remove_sid($this->get_url()),
-				titania_url::remove_sid($this->get_url('support')),
+				$this->path_helper->strip_url_params($this->get_url(), 'sid'),
+				$this->path_helper->strip_url_params($this->get_url('support'), 'sid'),
 				$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision']
 			);
 

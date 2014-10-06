@@ -333,13 +333,21 @@ class titania_queue extends titania_message_object
 		$contrib = contribs_overlord::get_contrib_object($this->contrib_id, true);
 		$topic = new titania_topic();
 		$topic->load($this->queue_topic_id);
+		$path_helper = phpbb::$container->get('path_helper');
+		$u_view_queue = $topic->get_url(false, array('tag' => $new_status);
 
 		$vars = array(
 			'CONTRIB_NAME'	=> $contrib->contrib_name,
 			'CATEGORY_NAME'	=> $to,
-			'U_VIEW_QUEUE'	=> titania_url::append_url($topic->get_url(), array('tag' => $new_status)),
+			'U_VIEW_QUEUE'	=> $path_helper->strip_url_params($u_view_queue, 'sid'),
 		);
-		titania_subscriptions::send_notifications(TITANIA_QUEUE_TAG, $new_status, 'new_contrib_queue_cat.txt', $vars, phpbb::$user->data['user_id']);
+		titania_subscriptions::send_notifications(
+			TITANIA_QUEUE_TAG,
+			$new_status,
+			'new_contrib_queue_cat.txt',
+			$vars,
+			phpbb::$user->data['user_id']
+		);
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);

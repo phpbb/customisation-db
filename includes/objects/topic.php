@@ -337,6 +337,15 @@ class titania_topic extends titania_database_object
 		// To find out if we have any posts that need approval
 		$approved = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
 		$total = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, true));
+		$path_helper = phpbb::$container->get('path_helper');
+		$u_new_post = '';
+
+		if ($this->unread)
+		{
+			$u_new_post = $path_helper->append_url_params($this->get_url(), array(
+				'view' => 'unread', '#' => 'unread'
+			));
+		}
 
 		$details = array(
 			'TOPIC_ID'						=> $this->topic_id,
@@ -366,9 +375,14 @@ class titania_topic extends titania_database_object
 			'TOPIC_LAST_POST_TIME'			=> phpbb::$user->format_date($this->topic_last_post_time),
 			'TOPIC_LAST_POST_SUBJECT'		=> censor_text($this->topic_last_post_subject),
 
-			'U_NEWEST_POST'					=> ($this->unread) ? titania_url::append_url($this->get_url(), array('view' => 'unread', '#' => 'unread')) : '',
+			'U_NEWEST_POST'					=> $u_new_post,
 			'U_VIEW_TOPIC'					=> $this->get_url(),
-			'U_VIEW_LAST_POST'				=> titania_url::append_url($this->get_url(), array('p' => $this->topic_last_post_id, '#p' => $this->topic_last_post_id)),
+			'U_VIEW_LAST_POST'				=> $path_helper->append_url_params($this->get_url(),
+				array(
+					'p'	=> $this->topic_last_post_id,
+					'#'	=> 'p' . $this->topic_last_post_id,
+				)
+			),
 
 			'S_UNREAD_TOPIC'				=> ($this->unread) ? true : false,
 			'S_ACCESS_TEAMS'				=> ($this->topic_access == TITANIA_ACCESS_TEAMS) ? true : false,
@@ -582,13 +596,11 @@ class titania_topic extends titania_database_object
 			trigger_error('NO_POSTS');
 		}
 
-		$post_url = titania_url::unbuild_url($this->get_url());
-
 		// Update posts before resynchronizing topic
-		$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . ' 
-			SET topic_id = ' . (int) $this->topic_id . ', 
-				post_url = "' . phpbb::$db->sql_escape($post_url) . '", 
-				post_type = ' . (int) $this->topic_type . ' 
+		$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
+			SET topic_id = ' . (int) $this->topic_id . ',
+				post_url = "' . phpbb::$db->sql_escape($this->topic_url) . '",
+				post_type = ' . (int) $this->topic_type . '
 			WHERE ' . $sql_where;
 		phpbb::$db->sql_query($sql);
 
