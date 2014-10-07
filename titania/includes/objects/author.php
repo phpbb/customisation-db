@@ -266,12 +266,7 @@ class titania_author extends titania_message_object
 	 */
 	public function get_website_url()
 	{
-		if (!$this->author_website || strpos($this->author_website, 'http://') !== false)
-		{
-			return $this->author_website;
-		}
-
-		return 'http://' . $this->author_website;
+		return $this->author_website;
 	}
 
 	/**
