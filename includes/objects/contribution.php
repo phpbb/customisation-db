@@ -791,19 +791,19 @@ class titania_contribution extends titania_message_object
 	public function assign_download_details()
 	{
 		$file = new titania_attachment(TITANIA_CONTRIB);
-		$u_colorizeit = '';
+		$u_colorizeit_base = '';
 
 		// ColorizeIt stuff
 		if (strlen(titania::$config->colorizeit) && $this->has_colorizeit())
 		{
-			$u_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' .
+			$u_colorizeit_base = 'http://' . titania::$config->colorizeit_url . '/custom/' .
 				titania::$config->colorizeit . '.html?sample=' . $this->clr_sample['attachment_id'];
 		}
 		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
 
 		foreach ($this->download as $download)
 		{
-			$vendor_version = $install_level = $install_time = '';
+			$vendor_version = $install_level = $install_time = $u_colorizeit = '';
 
 			if (!empty($this->revisions[$download['revision_id']]['phpbb_versions']))
 			{
@@ -827,6 +827,10 @@ class titania_contribution extends titania_message_object
 			{
 				$install_level = phpbb::$user->lang['INSTALL_LEVEL_' . $download['install_level']];
 			}
+			if ($download['revision_status'] == TITANIA_REVISION_APPROVED)
+			{
+				$u_colorizeit = $u_colorizeit_base . '&amp;id=' . $download['attachment_id'];
+			}
 
 			phpbb::$template->assign_block_vars('downloads', array(
 				'NAME'			=> censor_text($download['revision_name']),
@@ -837,9 +841,9 @@ class titania_contribution extends titania_message_object
 				'RELEASE_TIME'	=> ($download['validation_date']) ? phpbb::$user->format_date($download['validation_date']) : '',
 				'PHPBB_VERSION'	=> $vendor_version,
 				'INSTALL_LEVEL'	=> $install_level,
-				'INSTALL_TIME'	=> $install_time,			
+				'INSTALL_TIME'	=> $install_time,
 				'U_DOWNLOAD'	=> $file->get_url($download['attachment_id']),
-				'U_COLORIZEIT'	=> ($u_colorizeit) ? $u_colorizeit . '&amp;id=' . $download['attachment_id'] : '',
+				'U_COLORIZEIT'	=> $u_colorizeit,
 			));
 		}
 	}
