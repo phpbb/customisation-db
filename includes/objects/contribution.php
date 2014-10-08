@@ -460,7 +460,6 @@ class titania_contribution extends titania_message_object
 				AND revision_submitted = 1
 			ORDER BY r.revision_id DESC';
 		$result = phpbb::$db->sql_query_limit($sql, 1);
-		$this->download = phpbb::$db->sql_fetchrow($result);
 		$this->download = phpbb::$db->sql_fetchrowset($result);
 		phpbb::$db->sql_freeresult($result);
 	}
