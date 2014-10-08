@@ -24,6 +24,13 @@ $(document).ready(function(){
 		e.preventDefault();
 	});
 
+	$('.contrib-download').hover(function() {
+		$('.download-info').hide();
+		$('.download-info', this).fadeIn('slow');
+	}, function() {
+		$('.download-info', this).fadeOut('slow');
+	});
+
 /* Not working...
 	// AJAX Rate
 	$("ul.rating li a, ul.rated li a").click(function(event){

@@ -16,16 +16,51 @@
 			<!-- ENDIF -->
 			<!-- IF U_VIEW_DEMO and not S_INTEGRATE_DEMO --><a href="{U_VIEW_DEMO}">{L_VIEW_DEMO}</a><!-- ENDIF -->
 
-			<!-- IF U_DOWNLOAD -->
-				<div class="download-button">
-					<a class="download-main" href="{U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">{DOWNLOAD_SIZE}</a>
-				</div>
-				<!-- IF U_COLORIZEIT -->
-                    <div class="colorizeit-button">
-                        <a class="colorizeit-main" href="{U_COLORIZEIT}" target="_blank" title="{L_COLORIZEIT_DOWNLOAD_STYLE} {CONTRIB_NAME}"></a>
-                    </div>
+			<!-- BEGIN downloads -->
+				<div class="contrib-download<!-- IF downloads.U_COLORIZEIT --> has-colorizeit<!-- ENDIF -->">
+					<a class="download-button" href="{downloads.U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">
+						<span>{downloads.VERSION}</span>
+						<span class="vendor-version">phpBB {downloads.PHPBB_VERSION}</span>
+					</a>
+				<!-- IF downloads.U_COLORIZEIT -->
+					<a class="colorizeit-button" href="{downloads.U_COLORIZEIT}" target="_colorizeit" title="{L_COLORIZEIT_DOWNLOAD_STYLE} {CONTRIB_NAME}"></a>
 				<!-- ENDIF -->
-			<!-- ENDIF -->
+					<div class="download-info">
+						<!-- IF downloads.RELEASE_TIME -->
+						<dl>
+							<dt>{L_RELEASED}{L_COLON}</dt>
+							<dd>{downloads.RELEASE_TIME}</dd>
+						</dl>
+						<!-- ENDIF -->
+						<dl>
+							<dt>{L_FILESIZE}{L_COLON}</dt>
+							<dd>{downloads.SIZE}<dd>
+						</dl>
+						<dl>
+							<dt>{L_DOWNLOAD_CHECKSUM}{L_COLON}</dt>
+							<dd>{downloads.CHECKSUM}</dd>
+						</dl>
+						<!-- IF downloads.LICENSE -->
+						<dl>
+							<dt>{L_LICENSE}{L_COLON}</dt>
+							<dd>{downloads.LICENSE}</dd>
+						</dl>
+						<!-- ENDIF -->
+						<!-- IF downloads.INSTALL_TIME -->
+						<dl>
+							<dt>{L_INSTALL_TIME}</dt>
+							<dd>{downloads.INSTALL_TIME}</dd>
+						</dl>
+						<!-- ENDIF -->
+						<!-- IF downloads.INSTALL_LEVEL -->
+						<dl>
+							<dt>{L_INSTALL_LEVEL}</dt>
+							<dd>{downloads.INSTALL_LEVEL}</dd>
+						</dl>
+						<!-- ENDIF -->
+					</div>
+				</div>
+			<!-- END downloads -->
 		</div>
 
 		<div class="left-column">
@@ -80,11 +115,6 @@
 					<strong>{L_PAST_CONTRIBUTORS}</strong> <!-- BEGIN past_coauthors -->{past_coauthors.AUTHOR_NAME_FULL}<!-- IF not past_coauthors.S_LAST_ROW -->, <!-- ENDIF --><!-- END past_coauthors -->
 				</li>
 				<!-- ENDIF -->
-				<!-- IF DOWNLOAD_VERSION -->
-				<li>
-					<strong>{L_VERSION}</strong> {DOWNLOAD_VERSION}
-				</li>
-				<!-- ENDIF -->
 				<li>
 					<strong>{L_PHPBB_VERSION}</strong>
 					<!-- IF PHPBB_VERSION -->
@@ -99,34 +129,9 @@
 					{L_NO_REVISIONS}
 					<!-- ENDIF -->
 				</li>
-				<!-- IF DOWNLOAD_LICENSE -->
-				<li>
-					<strong>{L_LICENSE}</strong> {DOWNLOAD_LICENSE}
-				</li>
-				<!-- ENDIF -->
-				<!-- IF DOWNLOAD_INSTALL_TIME -->
-				<li>
-					<strong>{L_INSTALL_TIME}</strong> {DOWNLOAD_INSTALL_TIME}
-				</li>
-				<!-- ENDIF -->
-				<!-- IF DOWNLOAD_INSTALL_LEVEL -->
-				<li>
-					<strong>{L_INSTALL_LEVEL}</strong> {DOWNLOAD_INSTALL_LEVEL}
-				</li>
-				<!-- ENDIF -->
 				<!-- IF CONTRIB_UPDATE_DATE -->
 				<li>
 					<strong>{L_CONTRIB_UPDATE_DATE}</strong> {CONTRIB_UPDATE_DATE}
-				</li>
-				<!-- ENDIF -->
-				<!-- IF DOWNLOAD_CHECKSUM -->
-				<li>
-					<strong>{L_DOWNLOAD_CHECKSUM}</strong> {DOWNLOAD_CHECKSUM}
-				</li>
-				<!-- ENDIF -->
-				<!-- IF DOWNLOAD_NAME -->
-				<li>
-					<strong>{L_REVISION_NAME}</strong> {DOWNLOAD_NAME}
 				</li>
 				<!-- ENDIF -->
 				<!-- IF CONTRIB_DOWNLOADS -->

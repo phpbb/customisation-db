@@ -334,7 +334,7 @@ class titania_queue extends titania_message_object
 		$topic = new titania_topic();
 		$topic->load($this->queue_topic_id);
 		$path_helper = phpbb::$container->get('path_helper');
-		$u_view_queue = $topic->get_url(false, array('tag' => $new_status);
+		$u_view_queue = $topic->get_url(false, array('tag' => $new_status));
 
 		$vars = array(
 			'CONTRIB_NAME'	=> $contrib->contrib_name,

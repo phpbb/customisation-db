@@ -35,7 +35,6 @@ h3.section-name {
 	border-radius: 5px;
 	padding: 5px 10px;
 	margin: 5px 0;
-	overflow: hidden;
 }
 
 .rightside {
@@ -71,24 +70,103 @@ h3.section-name {
 	color: #D8D8D7;
 }
 
-.download-button {
-	background: transparent none no-repeat 0 0;
-	margin: 5px auto 0 auto;
-}
-.colorizeit-button {
-	background: transparent none no-repeat 0 0;
-	margin: -9px auto 10px auto;
+.contrib-download {
+	margin-top: 5px;
+	position: relative;
+	text-align: left;
 }
 
-a.download-main, a.colorizeit-main {
-	height: 29px;
-	padding-top: 28px;
-	padding-left: 63px;
-	text-align: left;
-	color: #FFFFFF !important;
+
+a.download-button, a.colorizeit-button {
+	box-sizing: border-box;
+	color: #FFFFFF;
+	display: inline-block;
+	float: left;
+	height: 36px;
 	font-weight: bold;
-	display: block;
 	text-decoration: none;
+}
+
+a.download-button {
+	background-color: #8fbc2e;
+	border-radius: 2px;
+	padding: 5px;
+	width: 100%;
+}
+
+.has-colorizeit a.download-button {
+	border-radius: 2px 0 0 2px;
+	border-right: 1px solid #bbde6f;
+	width: 155px;
+}
+
+a.colorizeit-button {
+	background-color: #5483a8;
+	border-radius: 0 2px 2px 0;
+	padding: 0 10px;
+	width: 45px;
+}
+
+a.download-button:before, a.colorizeit-button:before {
+	background: url("./images/icons_download.png") no-repeat 0 0;
+	content: '';
+	display: inline-block;
+	float: left;
+	height: 25px;
+	padding-bottom: 3px;
+	transition: .3s opacity, .3s background-position;
+	width: 25px;
+}
+
+a.download-button:before {
+	margin-right: 5px;
+}
+
+a.colorizeit-button:before {
+	background-position: -26px -2px;
+	margin-top: 8px;
+	width: 22px;
+}
+
+a.download-button:hover:before, a.colorizeit-button:hover:before {
+	opacity: 0.8;
+}
+
+a.download-button:hover:before {
+	background-position: 0 3px;
+}
+
+a.download-button span {
+	display: block;
+}
+
+a.download-button .vendor-version {
+	font-weight: normal;
+	opacity: 0.8;
+}
+
+.download-info {
+	background-color: #ededee;
+	border-radius: 2px;
+	left: -235px;
+	line-height: 1.6em;
+	padding: 5px 10px 10px;
+	position: absolute;
+	visibility: hidden;
+	width: 210px;
+	z-index: 9;
+}
+
+.contrib-download:hover .download-info {
+	visibility: visible;
+}
+
+.download-info dl {
+	margin-top: 5px;
+}
+
+.download-info dt {
+	font-weight: bold;
 }
 
 .contrib-description {
@@ -827,4 +905,10 @@ ul.topiclist dd.revision-translations .file dd {
 hr.solid {
 	border-top: 1px solid #CCCCCC;
 	margin: 10px 0;
+}
+
+.contrib-download:after {
+	clear: both;
+	content: '';
+	display: block;
 }
