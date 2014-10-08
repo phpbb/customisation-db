@@ -1842,25 +1842,33 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
-	 * Check if there is a revision in the queue
-	 *
-	 * @return true if there is, false if not
-	 */
+	* Get the branch and status of active revisions in the queue.
+	*
+	* @return array Returns array in form of array(array(branch => status))
+	*/
 	public function in_queue()
 	{
 		if (!titania::$config->use_queue || !$this->type->use_queue)
 		{
-			return false;
+			return array();
 		}
 
-		$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
-			WHERE contrib_id = ' . (int) $this->contrib_id . '
-				AND queue_status > 1';
-		phpbb::$db->sql_query($sql);
-		$cnt = phpbb::$db->sql_fetchfield('cnt');
+		$sql = 'SELECT DISTINCT q.revision_id, rp.phpbb_version_branch, q.queue_status
+			FROM ' . TITANIA_QUEUE_TABLE . ' q, ' .
+				TITANIA_REVISIONS_PHPBB_TABLE . ' rp
+			WHERE q.contrib_id = ' . (int) $this->contrib_id . '
+				AND q.queue_status > 0
+				AND q.revision_id = rp.revision_id';
+		$result = phpbb::$db->sql_query($sql);
+		$in_queue = array();
+
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$in_queue[(int) $row['phpbb_version_branch']] = array_map('intval', $row);
+		}
 		phpbb::$db->sql_freeresult();
 
-		return ($cnt) ? true : false;
+		return $in_queue;
 	}
 
 	/**
