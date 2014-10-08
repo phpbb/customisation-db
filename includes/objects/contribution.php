@@ -461,6 +461,7 @@ class titania_contribution extends titania_message_object
 			ORDER BY r.revision_id DESC';
 		$result = phpbb::$db->sql_query_limit($sql, 1);
 		$this->download = phpbb::$db->sql_fetchrow($result);
+		$this->download = phpbb::$db->sql_fetchrowset($result);
 		phpbb::$db->sql_freeresult($result);
 	}
 
@@ -545,19 +546,6 @@ class titania_contribution extends titania_message_object
 	 */
 	public function assign_details($simple = false, $return = false)
 	{
-		$install_time = false;
-		if (isset($this->download['install_time']) && $this->download['install_time'] > 0)
-		{
-			if ($this->download['install_time'] < 60)
-			{
-				$install_time = phpbb::$user->lang['INSTALL_LESS_THAN_1_MINUTE'];
-			}
-			else
-			{
-				$install_time = phpbb::$user->lang('INSTALL_MINUTES', (int) ($this->download['install_time'] / 60));
-			}
-		}
-
 		$vars = array(
 			// Contribution data
 			'CONTRIB_NAME'					=> $this->contrib_name,
@@ -577,11 +565,6 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_ANNOUNCEMENT_TOPIC'	=> ($this->contrib_release_topic_id) ? sprintf(phpbb::$user->lang['ANNOUNCEMENT_TOPIC_VIEW'], '<a href="' . phpbb::append_sid('viewtopic', 't='.$this->contrib_release_topic_id) . '">', '</a>') : false,
 			'L_ANNOUNCEMENT_TOPIC'			=> (titania::$config->support_in_titania) ? phpbb::$user->lang['ANNOUNCEMENT_TOPIC'] : phpbb::$user->lang['ANNOUNCEMENT_TOPIC_SUPPORT'],
 
-			// Download data
-			'DOWNLOAD_NAME'					=> (isset($this->download['revision_name'])) ? censor_text($this->download['revision_name']) : '',
-			'DOWNLOAD_VERSION'				=> (isset($this->download['revision_version'])) ? censor_text($this->download['revision_version']) : '',
-			'DOWNLOAD_LICENSE'				=> (isset($this->download['revision_license'])) ? censor_text($this->download['revision_license']) : '',
-
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
 			'S_INTEGRATE_DEMO'				=> $this->options['demo'],
 		);
@@ -589,16 +572,12 @@ class titania_contribution extends titania_message_object
 		// Ignore some stuff before it is submitted else we can cause an error
 		if ($this->contrib_id)
 		{
-			if (!empty($this->download['attachment_id']))
+			if (!empty($this->download))
 			{
-				$file = new titania_attachment(TITANIA_CONTRIB);
+				$this->assign_download_details();
 				$vars = array_merge($vars, array(
 					//Download Data
 					'CONTRIB_DOWNLOADS'				=> $this->contrib_downloads,
-					'DOWNLOAD_SIZE'					=> (isset($this->download['filesize'])) ? get_formatted_filesize($this->download['filesize']) : '',
-					'DOWNLOAD_CHECKSUM'				=> (isset($this->download['hash'])) ? $this->download['hash'] : '',
-					'DOWNLOAD_INSTALL_LEVEL'		=> (isset($this->download['install_level']) && $this->download['install_level'] > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->download['install_level']] : '',			
-					'U_DOWNLOAD'					=> $file->get_url($this->download['attachment_id']),
 				));
 			}
 
@@ -673,12 +652,6 @@ class titania_contribution extends titania_message_object
 
 				'JS_CONTRIB_TRANSLATION'		=> !empty($this->contrib_iso_code) ? 'true' : 'false', // contrib_iso_code is a mandatory field and must be included with all translation contributions
 			));
-
-            // ColorizeIt stuff
-            if(strlen(titania::$config->colorizeit) && $this->has_colorizeit() && isset($this->download['attachment_id']))
-            {
-                $vars['U_COLORIZEIT'] = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->download['attachment_id']  . '&amp;sample=' . $this->clr_sample['attachment_id'];
-            }
 		}
 
 		// Hooks
@@ -777,6 +750,67 @@ class titania_contribution extends titania_message_object
 		}
 
 		phpbb::$template->assign_vars($vars);
+	}
+
+	/**
+	* Assign download details.
+	*
+	* @return null
+	*/
+	public function assign_download_details()
+	{
+		$file = new titania_attachment(TITANIA_CONTRIB);
+		$u_colorizeit = '';
+
+		// ColorizeIt stuff
+		if (strlen(titania::$config->colorizeit) && $this->has_colorizeit())
+		{
+			$u_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' .
+				titania::$config->colorizeit . '.html?sample=' . $this->clr_sample['attachment_id'];
+		}
+		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
+
+		foreach ($this->download as $download)
+		{
+			$vendor_version = $install_level = $install_time = '';
+
+			if (!empty($this->revisions[$download['revision_id']]['phpbb_versions']))
+			{
+				$vendor_version = $this->revisions[$download['revision_id']]['phpbb_versions'];
+				$vendor_version = order_phpbb_version_list_from_db($vendor_version, $this->options['all_versions']);
+				$vendor_version = $vendor_version[0];
+			}
+
+			if ($download['install_time'])
+			{
+				if ($download['install_time'] < 60)
+				{
+					$install_time = phpbb::$user->lang['INSTALL_LESS_THAN_1_MINUTE'];
+				}
+				else
+				{
+					$install_time = phpbb::$user->lang('INSTALL_MINUTES', (int) ($download['install_time'] / 60));
+				}
+			}
+			if ($download['install_level'])
+			{
+				$install_level = phpbb::$user->lang['INSTALL_LEVEL_' . $download['install_level']];
+			}
+
+			phpbb::$template->assign_block_vars('downloads', array(
+				'NAME'			=> censor_text($download['revision_name']),
+				'VERSION'		=> censor_text($download['revision_version']),
+				'SIZE'			=> get_formatted_filesize($download['filesize']),
+				'CHECKSUM'		=> $download['hash'],
+				'LICENSE'		=> censor_text($download['revision_license']),
+				'RELEASE_TIME'	=> ($download['validation_date']) ? phpbb::$user->format_date($download['validation_date']) : '',
+				'PHPBB_VERSION'	=> $vendor_version,
+				'INSTALL_LEVEL'	=> $install_level,
+				'INSTALL_TIME'	=> $install_time,			
+				'U_DOWNLOAD'	=> $file->get_url($download['attachment_id']),
+				'U_COLORIZEIT'	=> ($u_colorizeit) ? $u_colorizeit . '&amp;id=' . $download['attachment_id'] : '',
+			));
+		}
 	}
 
 	/**
