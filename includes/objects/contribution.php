@@ -439,10 +439,12 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
-	 * Get the latest revision (to download)
+	 * Get the latest revisions (to download)
 	 * Stored in $this->download; only gets the latest validated (if validation is required)
 	 *
-	 * @param bool|int $revision_id False to get the latest validated, integer to get a specific revision_id (used in some places such as the queue)
+	 * @param bool|int $revision_id False to get the latest validated, integer to get a
+	 * 		specific revision_id (used in some places such as the queue)
+	 * @return null
 	 */
 	public function get_download($revision_id = false)
 	{
@@ -451,17 +453,47 @@ class titania_contribution extends titania_message_object
 			return;
 		}
 
-		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r
-			LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
-				ON (a.attachment_id = r.attachment_id)
-			WHERE r.contrib_id = ' . $this->contrib_id .
-				(($revision_id === false) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') .
-				(($revision_id !== false) ? ' AND r.revision_id = ' . (int) $revision_id : '') . '
-				AND revision_submitted = 1
-			ORDER BY r.revision_id DESC';
-		$result = phpbb::$db->sql_query_limit($sql, 1);
-		$this->download = phpbb::$db->sql_fetchrowset($result);
-		phpbb::$db->sql_freeresult($result);
+		if ($revision_id)
+		{
+			$revisions = array((int) $revision_id);
+		}
+		else
+		{
+			$sql = 'SELECT DISTINCT(phpbb_version_branch), MAX(revision_id) AS revision_id
+				FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				WHERE contrib_id = ' . (int) $this->contrib_id . '
+					AND revision_validated = 1
+				GROUP BY phpbb_version_branch
+				ORDER BY phpbb_version_branch DESC';
+			$result = phpbb::$db->sql_query($sql);
+			$revisions = array();
+
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$revisions[(int) $row['phpbb_version_branch']] = (int) $row['revision_id'];
+			}
+			phpbb::$db->sql_freeresult($result);
+		}
+
+		if (!empty($revisions))
+		{
+			$sql = 'SELECT r.*, a.*
+				FROM ' . TITANIA_REVISIONS_TABLE . ' r
+				LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
+					ON (a.attachment_id = r.attachment_id)
+				WHERE r.contrib_id = ' . (int) $this->contrib_id . '
+					AND ' . phpbb::$db->sql_in_set('r.revision_id', $revisions) .
+					(($revision_id === false) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') . '
+					AND revision_submitted = 1';
+			$result = phpbb::$db->sql_query($sql);
+			$revisions = array_flip($revisions);
+
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$this->download[$revisions[$row['revision_id']]] = $row;
+			}
+			phpbb::$db->sql_freeresult($result);
+		}
 	}
 
 	/**
