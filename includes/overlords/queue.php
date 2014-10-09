@@ -157,7 +157,7 @@ class queue_overlord
 		}
 
 		$url_parts = $path_helper->get_url_parts($controller_helper->get_current_url());
-		$sort->build_pagination($url_parts['bases'], $url_parts['params']);
+		$sort->build_pagination($url_parts['base'], $url_parts['params']);
 
 		$queue_ids = $user_ids = array();
 
