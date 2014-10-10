@@ -827,7 +827,7 @@ class titania_contribution extends titania_message_object
 			{
 				$install_level = phpbb::$user->lang['INSTALL_LEVEL_' . $download['install_level']];
 			}
-			if ($download['revision_status'] == TITANIA_REVISION_APPROVED)
+			if ($u_colorizeit_base && $download['revision_status'] == TITANIA_REVISION_APPROVED)
 			{
 				$u_colorizeit = $u_colorizeit_base . '&amp;id=' . $download['attachment_id'];
 			}
