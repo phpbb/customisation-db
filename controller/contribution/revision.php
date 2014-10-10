@@ -667,10 +667,10 @@ class revision extends base
 	*/
 	protected function is_author_subscribed()
 	{
-		if (!$this->use_queue)
+		if ($this->use_queue)
 		{
 			$this->queue->contrib_id = $this->contrib->contrib_id;
-		
+
 			// Get queue discussion topic id if it exists
 			$this->queue->get_queue_discussion_topic(true);
 
