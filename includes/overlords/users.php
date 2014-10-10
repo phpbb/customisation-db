@@ -240,27 +240,20 @@ class users_overlord
 		$row = self::get_user($user_id);
 		$user_id = $row['user_id']; // Re-assign properly...in case it gives us the anonymous user
 
-		phpbb::_include('functions_display', 'get_user_rank');
+		phpbb::_include('functions_display', 'phpbb_get_user_rank');
 		phpbb::$user->add_lang('memberlist');
 
-		// IT'S A HACK!
-		global $phpbb_root_path;
-		$phpbb_root_path = titania::$absolute_board;
-
-		// Get user rank and avatar (need hacks for this)
-		get_user_rank($row['user_rank'], $row['user_posts'], $row['rank_title'], $row['rank_image'], $row['rank_image_src']);
-
-		// Undo
-		$phpbb_root_path = PHPBB_ROOT_PATH;
+		// Get user rank
+		$rank = phpbb_get_user_rank($row, $row['user_posts']);
 
 		$output = array(
 			$prefix . 'USER_FULL'			=> self::get_user($user_id, '_full'),
 			$prefix . 'USER_COLOUR'			=> self::get_user($user_id, '_colour'),
 			$prefix . 'USERNAME'			=> self::get_user($user_id, '_username'),
 
-			$prefix . 'RANK_TITLE'			=> $row['rank_title'],
-			$prefix . 'RANK_IMG'			=> $row['rank_image'],
-			$prefix . 'RANK_IMG_SRC'		=> $row['rank_image_src'],
+			$prefix . 'RANK_TITLE'			=> $rank['title'],
+			$prefix . 'RANK_IMG'			=> $rank['img'],
+			$prefix . 'RANK_IMG_SRC'		=> $rank['img_src'],
 			$prefix . 'USER_JOINED'			=> phpbb::$user->format_date($row['user_regdate']),
 			$prefix . 'USER_POSTS'			=> $row['user_posts'],
 			$prefix . 'USER_AVATAR'			=> self::get_user($user_id, '_avatar'),
