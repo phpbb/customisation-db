@@ -109,6 +109,10 @@ class revision extends base
 		$this->assign_common_vars($error, !empty($this->id), $settings);
 		$this->template->assign_vars(array(
 			'S_REPACK'			=> true,
+			'S_POST_ACTION'		=> $this->contrib->get_url('revision', array(
+				'page'	=> 'repack',
+				'id'	=> $old_revision->revision_id,
+			)),
 		));
 
 		add_form_key('postform');
@@ -186,6 +190,7 @@ class revision extends base
 		$this->template->assign_vars(array(
 			'S_CAN_SUBSCRIBE'			=> !$this->is_author_subscribed() && $this->use_queue,
 			'SUBSCRIBE_AUTHOR'			=> $this->request->variable('subscribe_author', false),
+			'S_POST_ACTION'				=> $this->contrib->get_url('revision'),
 		));
 
 		add_form_key('postform');
@@ -715,7 +720,6 @@ class revision extends base
 	{
 		$this->template->assign_vars(array(
 			'REVISION_ID'			=> $this->id,
-			'S_POST_ACTION'			=> $this->contrib->get_url('revision'),
 		));
 
 		$this->display->assign_global_vars();
