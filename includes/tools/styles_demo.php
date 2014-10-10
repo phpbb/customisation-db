@@ -253,6 +253,7 @@ class titania_styles_demo
 			$style->__set_array(array(
 				'contrib_id'			=> $id,
 				'contrib_name_clean'	=> $data['contrib_name_clean'],
+				'contrib_demo'			=> $data['contrib_demo'],
 			));
 
 			$preview_img = false;
@@ -288,7 +289,7 @@ class titania_styles_demo
 				'AUTHORS'		=> $authors,
 				'CATEGORY'		=> ($category != $data['category_name']) ? $data['category_name'] : false,
 				'ID'			=> $id,
-				'IFRAME'		=> $data['contrib_demo'],
+				'IFRAME'		=> $style->get_demo_url($this->phpbb_version),
 				'LICENSE'		=> ($data['revision_license']) ? $data['revision_license'] : phpbb::$user->lang['UNKNOWN'],
 				'NAME'			=> $data['contrib_name'],
 				'PHPBB_VERSION'	=> $phpbb_version,
