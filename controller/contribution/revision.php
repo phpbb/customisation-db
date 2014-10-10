@@ -93,6 +93,7 @@ class revision extends base
 			'version'			=> $old_revision->revision_version,
 			'vendor_versions'	=> $old_revision->get_selected_branches(),
 			'custom'			=> $old_revision->get_custom_fields(),
+			'allow_repack'		=> $old_queue->queue_allow_repack,
 		);
 
 		if ($this->is_custom_license($old_revision->revision_license))
@@ -185,7 +186,6 @@ class revision extends base
 		$this->template->assign_vars(array(
 			'S_CAN_SUBSCRIBE'			=> !$this->is_author_subscribed() && $this->use_queue,
 			'SUBSCRIBE_AUTHOR'			=> $this->request->variable('subscribe_author', false),
-			'QUEUE_ALLOW_REPACK'		=> $this->request->variable('queue_allow_repack', false),
 		));
 
 		add_form_key('postform');
@@ -727,7 +727,7 @@ class revision extends base
 			return;
 		}
 
-		$_settings = array_fill_keys(array('name', 'version', 'custom_license', 'license'), '');
+		$_settings = array_fill_keys(array('name', 'version', 'custom_license', 'license', 'allow_repack'), '');
 		$_settings['custom'] = $this->request->variable('custom_fields', array('' => ''));
 		$_settings['vendor_versions'] = array();
 		$settings = array_merge($_settings, $settings);
@@ -757,7 +757,7 @@ class revision extends base
 		$this->template->assign_vars(array(
 			'ERROR_MSG'				=> (!empty($error)) ? implode('<br />', $error) : '',
 			'AGREEMENT_NOTICE'		=> ($this->contrib->type->upload_agreement) ? nl2br($this->user->lang($this->contrib->type->upload_agreement)) : false,
-			'QUEUE_ALLOW_REPACK'	=> true,
+			'QUEUE_ALLOW_REPACK'	=> $settings['allow_repack'],
 		));
 
 		// Output the available license options
