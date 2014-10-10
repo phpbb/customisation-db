@@ -143,6 +143,12 @@ class display
 					'U_TITLE'		=> $data['url'],
 					'S_SELECTED'	=> $page == $current_page || ((isset($data['match']) && in_array($current_page, $data['match']))),
 				));
+
+				if (!empty($data['sub_menu']))
+				{
+					$current_subpage = false;
+					$this->generate_nav($data['sub_menu'], $current_subpage, $current_subpage, $block . '.sub_menu');
+				}
 			}
 
 			$retry_current_page = false;

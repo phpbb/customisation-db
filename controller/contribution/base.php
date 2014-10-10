@@ -142,7 +142,7 @@ class base
 			),
 			'demo'	=> array(
 				'title'		=> 'CONTRIB_DEMO',
-				'url'		=> $this->contrib->get_url('demo'),
+				'url'		=> '',
 				'auth'		=> $this->contrib->contrib_demo && $this->contrib->contrib_status == TITANIA_CONTRIB_APPROVED && $this->contrib->options['demo'],		
 			),
 			'manage' => array(
@@ -151,6 +151,34 @@ class base
 				'auth'		=> (($this->is_author && $this->auth->acl_get('u_titania_post_edit_own')) && !$is_disabled) || $this->auth->acl_get('u_titania_mod_contrib_mod') || $this->contrib->type->acl_get('moderate'),
 			),
 		);
+
+		if ($this->contrib->contrib_demo)
+		{
+			$demo_menu = array();
+			$allowed_branches = $this->contrib->type->get_allowed_branches(true);
+			krsort($allowed_branches);
+
+			foreach ($allowed_branches as $branch => $name)
+			{
+				$demo_url = $this->contrib->get_demo_url($branch, true);
+
+				if ($demo_url)
+				{
+					$demo_menu[] = array(
+						'url'	=> $demo_url,
+						'title'	=> $name,
+					);
+				}
+			}
+			if (sizeof($demo_menu) == 1)
+			{
+				$nav_ary['demo']['url'] = $demo_menu[0]['url'];
+			}
+			else
+			{
+				$nav_ary['demo']['sub_menu'] = $demo_menu;
+			}
+		}
 
 		$this->display->generate_nav($nav_ary, $page, 'details');
 	}
