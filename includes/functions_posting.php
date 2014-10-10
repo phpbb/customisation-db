@@ -385,7 +385,7 @@ function phpbb_posting($mode, &$options, $poll = array())
 		// Same for auth, be sure its posted with correct permissions :)
 		$old_auth = phpbb::$auth;
 
-		phpbb::$auth = new auth();
+		phpbb::$auth = new \phpbb\auth\auth();
 		phpbb::$auth->acl(phpbb::$user->data);
 	}
 
