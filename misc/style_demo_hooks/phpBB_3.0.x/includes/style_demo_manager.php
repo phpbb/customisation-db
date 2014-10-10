@@ -39,7 +39,7 @@ class titania_demo_manager
 	* @param string $root_path
 	* @param string $php_ext
 	*/
-	public function __construct($db, $user, $root_path, $php_ext)
+	public function __construct($config, $db, $user, $root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->user = $user;
