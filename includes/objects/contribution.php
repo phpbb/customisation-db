@@ -875,6 +875,11 @@ class titania_contribution extends titania_message_object
 				unset($parameters['page']);
 			break;
 
+			case 'demo' :
+				$controller .= '.demo';
+				unset($parameters['page']);
+			break;
+
 			default :
 				$parameters['page']	= $page;
 		}
@@ -885,6 +890,56 @@ class titania_contribution extends titania_message_object
 		);
 
 		return $this->controller_helper->route($controller, $parameters);
+	}
+
+	/**
+	* Get demo URL.
+	*
+	* @param int $branch			Branch - example: 30, 31
+	* @param bool $integrated_url	Whether to return the integrated demo URL
+	*	if it's supported.
+	* @return string
+	*/
+	public function get_demo_url($branch, $integrated_url = false)
+	{
+		if (empty($this->contrib_demo))
+		{
+			return '';
+		}
+		$demos = json_decode($this->contrib_demo, true);
+
+		if (empty($demos[$branch]))
+		{
+			return '';
+		}
+		else if ($integrated_url && $this->options['demo'])
+		{
+			$branch = (string) $branch;
+			return $this->get_url('demo', array(
+				'branch'	=> "{$branch[0]}.{$branch[1]}",
+			));
+		}
+		return $demos[$branch];
+	}
+
+	/**
+	* Get demo URL.
+	*
+	* @param int $branch		Branch - example: 30, 31
+	* @return string
+	*/
+	public function set_demo_url($branch, $url)
+	{
+		if (!empty($this->contrib_demo))
+		{
+			$demos = json_decode($this->contrib_demo, true);
+		}
+		else
+		{
+			$demos = array();
+		}
+		$demos[$branch] = $url;
+		$this->contrib_demo = json_encode($demos);
 	}
 
 	/**

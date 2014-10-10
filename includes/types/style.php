@@ -221,7 +221,7 @@ class titania_type_style extends titania_type_base
 
 			if (empty($result['error']))
 			{
-				$contrib->contrib_demo = $manager->get_demo_url($branch, $result['id']);
+				$contrib->set_demo_url($branch, $manager->get_demo_url($branch, $result['id']));
 				$contrib->submit();
 			}
 		}
