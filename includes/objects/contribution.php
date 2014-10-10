@@ -463,8 +463,7 @@ class titania_contribution extends titania_message_object
 				FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
 				WHERE contrib_id = ' . (int) $this->contrib_id . '
 					AND revision_validated = 1
-				GROUP BY phpbb_version_branch
-				ORDER BY phpbb_version_branch DESC';
+				GROUP BY phpbb_version_branch';
 			$result = phpbb::$db->sql_query($sql);
 			$revisions = array();
 
@@ -493,6 +492,7 @@ class titania_contribution extends titania_message_object
 				$this->download[$revisions[$row['revision_id']]] = $row;
 			}
 			phpbb::$db->sql_freeresult($result);
+			krsort($this->download);
 		}
 	}
 
