@@ -121,6 +121,7 @@ $lang = array_merge($lang, array(
 	'INSTALL_LEVEL_3'						=> 'Advanced',
 	'INSTALL_MINUTES'						=> 'About %s Minute(s)',
 	'INSTALL_TIME'							=> 'Install Time',
+	'INVALID_BRANCH'						=> 'Invalid branch',
 	'INVALID_LICENSE'						=> 'Invalid License',
 	'INVALID_PERMALINK'						=> 'You need to enter a valid permalink, for example: %s',
 

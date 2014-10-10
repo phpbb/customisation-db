@@ -25,6 +25,7 @@
 						<!-- BEGIN phpbb_branches -->
 							<!-- IF phpbb_branches.S_NUM_ROWS eq 1 -->
 								{phpbb_branches.NAME}
+								<input type="hidden" name="phpbb_branch[]" value="{phpbb_branches.VALUE}" />
 							<!-- ELSE -->
 								<!-- IF phpbb_branches.S_FIRST_ROW -->
 								<select id="phpbb_branch" name="phpbb_branch[]" size="3">

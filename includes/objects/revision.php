@@ -565,8 +565,11 @@ class titania_revision extends titania_database_object
 
 	/**
 	* Update/create the queue entry for this revision
+	*
+	* @param array $exclude_from_closing		Revisions to exclude from getting marked as repacked/resubmitted
+	*	upon the new revision getting added to the queue.
 	*/
-	public function update_queue()
+	public function update_queue($exclude_from_closing = array())
 	{
 		// Create the queue entry if required, else update it
 		if (titania::$config->use_queue && titania_types::$types[$this->contrib->contrib_type]->use_queue)
@@ -610,11 +613,18 @@ class titania_revision extends titania_database_object
 
 				if ($this->revision_submitted)
 				{
+					$exclude = '';
+
+					if (!empty($exclude_from_closing))
+					{
+						$exclude = 'AND ' . phpbb::$db->sql_in_set('revision_id', $exclude_from_closing, true);
+					}
 					// Change the status on any old revisions that were in the queue and marked as New to repacked
 					$sql = 'SELECT * FROM ' . TITANIA_QUEUE_TABLE . '
 						WHERE contrib_id = ' . (int) $this->contrib_id . '
-							AND revision_id < ' . $this->revision_id . '
-							AND queue_status = ' . TITANIA_QUEUE_NEW;
+							AND revision_id < ' . $this->revision_id . "
+							$exclude
+							AND queue_status = " . TITANIA_QUEUE_NEW;
 					$result = phpbb::$db->sql_query($sql);
 					while ($row = phpbb::$db->sql_fetchrow($result))
 					{
