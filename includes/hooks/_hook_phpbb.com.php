@@ -18,8 +18,6 @@ if (!defined('IN_TITANIA'))
 //define('TEST_INSTALLATION', true);
 
 titania::$hook->register_ary('phpbb_com_', array(
-	'titania_page_header',
-	'titania_page_footer',
 	array('titania_queue', 'update_first_queue_post'),
 	array('titania_topic', '__construct'),
 	array('titania_post', '__construct'),
@@ -32,78 +30,6 @@ titania::$hook->register_ary('phpbb_com_', array(
 	array('titania_queue', 'delete'),
 	array('titania_contribution', 'assign_details'),
 ));
-
-// Do we need to install the DB stuff?
-if (!isset(phpbb::$config['titania_hook_phpbb_com']) || version_compare(phpbb::$config['titania_hook_phpbb_com'], '1.0.1', '<'))
-{
-	phpbb::_include('../umil/umil', false, 'umil');
-
-	$umil = new umil(true, phpbb::$db);
-
-	$umil->run_actions('update', array(
-		'1.0.0' => array(
-			'table_column_add' => array(
-				array(TITANIA_TOPICS_TABLE, 'phpbb_topic_id', array('UINT', 0)),
-			),
-		),
-		'1.0.1' => array(
-			'table_column_add' => array(
-				array(TITANIA_POSTS_TABLE, 'phpbb_post_id', array('UINT', 0)),
-			),
-		),
-	),
-	'titania_hook_phpbb_com');
-
-	unset($umil);
-}
-
-/**
-* .com custom header and footer
-*/
-
-function phpbb_com_titania_page_header($hook, $page_title)
-{
-	if (defined('TEST_INSTALLATION'))
-	{
-		return;
-	}
-
-	phpbb::$template->assign_vars(array(
-		'S_BODY_CLASS'		=> 'customise customisation-database',
-		'S_IS_WEBSITE'		=> true,
-	));
-
-	global $auth, $phpEx, $template, $user;
-	$root_path = TITANIA_ROOT . '../../';
-	$base_path = generate_board_url(true) . '/';
-	include($root_path . 'vars.' . PHP_EXT);
-
-	// Setup the phpBB.com header
-	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/', 'website');
-	phpbb::$template->set_filenames(array(
-		'phpbb_com_header'		=> 'overall_header.html',
-	));
-	phpbb::$template->assign_display('phpbb_com_header', 'PHPBB_COM_HEADER', false);
-
-	titania::set_custom_template();
-}
-
-function phpbb_com_titania_page_footer($hook, $run_cron, $template_body)
-{
-	if (defined('TEST_INSTALLATION'))
-	{
-		return;
-	}
-
-	// Setup the phpBB.com footer
-	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/', 'website');
-	phpbb::$template->set_filenames(array(
-		'phpbb_com_footer'		=> 'overall_footer.html',
-	));
-	phpbb::$template->assign_display('phpbb_com_footer', 'PHPBB_COM_FOOTER', false);
-
-	titania::set_custom_template();
-}
 
 // Display a warning for styles not meeting the licensing guidelines
 function phpbb_com_titania_contribution_assign_details($hook, &$vars, $contrib)
