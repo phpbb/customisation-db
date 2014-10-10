@@ -69,6 +69,8 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 		return;
 	}
 
+	$path_helper = phpbb::$container->get('path_helper');
+
 	// First we copy over the queue discussion topic if required
 	$sql = 'SELECT topic_id, phpbb_topic_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
 		WHERE parent_id = ' . $queue_object->contrib_id . '
@@ -97,7 +99,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			phpbb_com_handle_attachments($temp_post, $post_text);
 			titania_decode_message($post_text, $row['post_text_uid']);
 
-			$post_text .= "\n\n" . titania_url::remove_sid($temp_post->get_url());
+			$post_text .= "\n\n" . $path_helper->strip_url_params($temp_post->get_url(), 'sid');
 
 			$options = array(
 				'poster_id'				=> $row['post_user_id'],
@@ -193,16 +195,17 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 
 	$description = $contrib->contrib_desc;
 	titania_decode_message($description, $contrib->contrib_desc_uid);
+	$download = current($contrib->download);
 
 	$post_text = sprintf(phpbb::$user->lang[$lang_var],
 		$contrib->contrib_name,
-		$contrib->author->get_url(),
+		$path_helper->strip_url_params($contrib->author->get_url(), 'sid'),
 		users_overlord::get_user($contrib->author->user_id, '_username'),
 		$description,
 		$revision->revision_version,
-		titania_url::build_url('download', array('id' => $revision->attachment_id)),
-		$contrib->download['real_filename'],
-		$contrib->download['filesize']
+		$path_helper->strip_url_params($revision->get_url(), 'sid'),
+		$download['real_filename'],
+		$download['filesize']
 	);
 
 	$post_text .= "\n\n" . $post_object->post_text;
@@ -210,7 +213,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	phpbb_com_handle_attachments($post_object, $post_text);
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
-	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
+	$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
 
 	$options = array(
 		'poster_id'				=> $post_object->topic->topic_first_post_user_id,
@@ -246,12 +249,13 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 
 	titania::_include('functions_posting', 'phpbb_posting');
 
+	$path_helper = phpbb::$container->get('path_helper');
 	$post_text = $post_object->post_text;
 
 	phpbb_com_handle_attachments($post_object, $post_text);
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
-	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
+	$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
 
 	$options = array(
 		'poster_id'				=> $post_object->post_user_id,
@@ -282,14 +286,16 @@ function phpbb_com_titania_post_edit($hook, &$post_object)
 		return;
 	}
 
+
 	titania::_include('functions_posting', 'phpbb_posting');
 
+	$path_helper = phpbb::$container->get('path_helper');
 	$post_text = $post_object->post_text;
 
 	phpbb_com_handle_attachments($post_object, $post_text);
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
-	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
+	$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
 
 	$options = array(
 		'post_id'				=> $post_object->phpbb_post_id,
@@ -455,10 +461,15 @@ function phpbb_com_handle_attachments($post, &$post_text)
 	$attachments = array();
 
 	phpbb::$user->add_lang('viewtopic');
+	$path_helper = phpbb::$container->get('path_helper');
+	$controller_helper = phpbb::$container->get('controller.helper');
 
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
-		$download_url = titania_url::build_clean_url('download', array('id' => $row['attachment_id']));
+		$download_url = $path_helper->strip_url_params(
+			$controller_helper->route('phpbb.titania.download', array('id' => $row['attachment_id'])),
+			'sid'
+		);
 		$attachments[] = '[' . phpbb::$user->lang['ATTACHMENT'] . "] [url=$download_url]{$row['real_filename']}[/url]";
 	}
 	phpbb::$db->sql_freeresult($result);
