@@ -34,23 +34,28 @@ titania::$hook->register_ary('phpbb_com_', array(
 // Display a warning for styles not meeting the licensing guidelines
 function phpbb_com_titania_contribution_assign_details($hook, &$vars, $contrib)
 {
-	if ($contrib->contrib_type != TITANIA_TYPE_STYLE)
+	if ($contrib->contrib_type != TITANIA_TYPE_STYLE || empty($contrib->download))
 	{
 		return;
 	}
 
-	if (isset($contrib->download['revision_license']) && $contrib->download['revision_license'] == '')
+	foreach ($contrib->download as $download)
 	{
-		if (isset($vars['WARNING']))
+		if ($download['revision_license'] == '')
 		{
-			$vars['WARNING'] .= '<br />';
-		}
-		else
-		{
-			$vars['WARNING'] = '';
-		}
+			if (isset($vars['WARNING']))
+			{
+				$vars['WARNING'] .= '<br />';
+			}
+			else
+			{
+				$vars['WARNING'] = '';
+			}
 
-		$vars['WARNING'] .= 'WARNING: This style currently does not meet our licensing guidelines.';
+			$vars['WARNING'] .= 'WARNING: This style currently does not meet our licensing guidelines.';
+
+			break;
+		}
 	}
 }
 
