@@ -74,7 +74,10 @@ class titania_type_translation extends titania_type_base
 
 		if ($this->validate_translation)
 		{
-			$this->upload_steps[] = array('contrib_type', 'translation_validate');
+			$this->upload_steps[] = array(
+				'name'		=> 'PV_TEST',
+				'function'	=> array($this, 'translation_validate'),
+			);
 		}
 
 		$this->contribution_fields = array(
@@ -155,12 +158,14 @@ class titania_type_translation extends titania_type_base
 
 		if (!empty($errors))
 		{
-			trigger_error(implode('<br /><br />', $errors));
+			return array('error' => implode('<br /><br />', $errors));
 		}
 
 		$validation_tools->remove_temp_files();
 
 		phpbb::$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
+
+		return array();
 	}
 
 	/**

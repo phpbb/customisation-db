@@ -55,7 +55,7 @@ class titania_style_demo_hook
 
 		if (!$this->validate_key())
 		{
-			return $this->error('NO_AUTH');
+			return 'NO_AUTH';
 		}
 
 		$data = $this->get_data();

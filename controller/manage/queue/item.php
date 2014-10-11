@@ -332,6 +332,7 @@ class item extends \phpbb\titania\controller\manage\base
 		{
 			$this->queue->approve('');
 			$this->contrib->type->approve($this->contrib, $this->queue);
+			$this->cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
 			redirect($this->queue->get_url());
 		}
 

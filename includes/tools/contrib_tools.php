@@ -7,6 +7,10 @@
 *
 */
 
+use \Phpbb\Epv\Output\Output;
+use \Phpbb\Epv\Output\HtmlOutput;
+use \Phpbb\Epv\Tests\TestRunner;
+
 @set_time_limit(1200);
 
 /**
@@ -444,6 +448,55 @@ class titania_contrib_tools
 
 			return $mpv_result;
 		}
+	}
+
+	/**
+	* Run extension prevalidator.
+	*
+	* @return string
+	*/
+	public function epv()
+	{
+		$int_output = new HtmlOutput(HtmlOutput::TYPE_BBCODE);
+		$output = new Output($int_output, false);
+		$runner = new TestRunner($output, $this->unzip_dir, false, true);
+
+		// Write a empty line
+		$output->writeLn('');
+
+		$found_msg = ' ';
+		$found_msg .= 'Fatal: ' . $output->getMessageCount(Output::FATAL);
+		$found_msg .= ', Error: ' . $output->getMessageCount(Output::ERROR);
+		$found_msg .= ', Warning: ' . $output->getMessageCount(Output::WARNING);
+		$found_msg .= ', Notice: ' . $output->getMessageCount(Output::NOTICE);
+		$found_msg .= ' ';
+
+		if ($output->getMessageCount(Output::FATAL) > 0 || $output->getMessageCount(Output::ERROR) > 0 || $output->getMessageCount(Output::WARNING) > 0)
+		{
+			$output->writeln('<fatal>' . str_repeat(' ', strlen($found_msg)) . '</fatal>');
+			$output->writeln('<fatal> Validation: FAILED' . str_repeat(' ', strlen($found_msg) - 19) . '</fatal>');
+			$output->writeln('<fatal>' . $found_msg . '</fatal>');
+			$output->writeln('<fatal>' . str_repeat(' ', strlen($found_msg)) . '</fatal>');
+			$output->writeln('');
+		}
+		else
+		{
+			$output->writeln('<success>PASSED: ' . $found_msg . '</success>');
+		}
+
+		$output->writeln("<info>Test results for extension:</info>");
+
+		foreach ($output->getMessages() as $msg)
+		{
+			$output->writeln((string)$msg);
+		}
+
+		if (sizeof($output->getMessages()) == 0)
+		{
+			$output->writeln("<success>No issues found </success>");
+		}
+
+		return $int_output->getBuffer();
 	}
 
 	/**

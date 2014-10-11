@@ -494,7 +494,7 @@ class manage extends base
 	*/
 	protected function assign_colorizeit_vars()
 	{
-		$clr_testsample = '';
+		$clr_testsample = $test_sample = '';
 
 		if ($this->contrib->has_colorizeit(true) || is_array($this->contrib->clr_sample))
 		{

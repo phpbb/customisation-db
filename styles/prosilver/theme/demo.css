@@ -113,11 +113,15 @@ a.button:hover {
 	width: 33px;
 }
 
-#prev, #next { display: inline-block; }
+#prev, #next {
+	display: inline-block;
+}
 
-span#prev, span#next { 
+#prev { float: none; }
+#next { float: right; }
+
+span#prev, span#next {
 	background-image: none;
-	float: none;
 	margin: 0;
 }
 
@@ -345,5 +349,5 @@ iframe {
 	height: 800px;
 	width: 100%;
 }
- 
+
 #demo-data, .hidden { display: none !important; }

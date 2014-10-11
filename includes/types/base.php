@@ -234,6 +234,7 @@ class titania_type_base
 	*/
 	public $mpv_test = false;
 	public $automod_test = false;
+	public $epv_test = false;
 
 	/**
 	 * Should the package be validated as a translation?

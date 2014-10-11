@@ -30,7 +30,7 @@ class contribution extends base
 
 		$page = ($page) ?: 'details';
 
-		if (!in_array($page, array('report', 'details', 'demo', 'queue_discussion', 'rate')))
+		if (!in_array($page, array('report', 'details', 'queue_discussion', 'rate')))
 		{
 			return $this->helper->error('NO_PAGE', 404);
 		}
@@ -111,21 +111,39 @@ class contribution extends base
 	/**
 	* Styles demo page.
 	*
+	* @param string $contrib_type		Contrib type URL identifier
+	* @param string $contrib			Contrib name clean
+	* @param string $branch				Branch - examples: 3.0 3.1
+	*
 	* @return \Symfony\Component\HttpFoundation\Response
 	*/
-	protected function demo()
+	public function demo($contrib_type, $contrib, $branch)
 	{
-		if (!$this->contrib->contrib_demo || $this->contrib->contrib_status != TITANIA_CONTRIB_APPROVED ||
-			$this->contrib->contrib_type != TITANIA_TYPE_STYLE || !$this->contrib->options['demo'])
+		$this->load_contrib($contrib);
+		$can_use_demo =
+			$this->contrib->contrib_status == TITANIA_CONTRIB_APPROVED &&
+			$this->contrib->contrib_type == TITANIA_TYPE_STYLE &&
+			$this->contrib->options['demo']
+		;
+
+		$branch = (int) $branch[0] . $branch[2];
+		$demo_url = $this->contrib->get_demo_url($branch);
+
+		if (!$can_use_demo || !$demo_url)
 		{
 			return $this->helper->error('NO_DEMO', 404);
 		}
 
-		$demo = new \titania_styles_demo($this->contrib->contrib_id);
+		$this->display->assign_global_vars();
+		$demo = new \titania_styles_demo($branch, $this->contrib->contrib_id);
 		$demo->load_styles();
 		$demo->assign_details();
 
-		return $this->helper->render('contributions/demo.html', $this->user->lang['CONTRIB_DEMO']);
+		$title = $this->contrib->contrib_name .
+			' - [' . $this->ext_config->phpbb_versions[$branch]['name'] . '] ' .
+			$this->user->lang['CONTRIB_DEMO'];
+
+		return $this->helper->render('contributions/demo.html', $title);
 	}
 
 	/**

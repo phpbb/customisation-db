@@ -2,7 +2,7 @@ phpbb.titania.contrib:
     pattern: /{page}
     defaults: { _controller: phpbb.titania.controller.contrib:base, page: details }
     requirements:
-        page: |details|report|queue_discussion|rate|demo
+        page: |details|report|queue_discussion|rate
 
 phpbb.titania.contrib.support:
     pattern: /support
@@ -64,3 +64,9 @@ phpbb.titania.contrib.revision.edit:
     defaults: { _controller: phpbb.titania.controller.contrib.revision.edit:edit }
     requirements:
         id: \d+
+
+phpbb.titania.contrib.demo:
+    pattern: /demo/{branch}
+    defaults: { _controller: phpbb.titania.controller.contrib:demo }
+    requirements:
+        branch: \d\.\d

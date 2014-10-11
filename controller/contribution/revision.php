@@ -27,6 +27,12 @@ class revision extends base
 	/** @var \titania_queue */
 	protected $queue;
 
+	/** @var array */
+	protected $revisions_in_queue;
+
+	/** @var array */
+	protected $repackable_branches;
+
 	/**
 	* Repack revision submission action.
 	*
@@ -64,6 +70,15 @@ class revision extends base
 			return $this->helper->needs_auth();
 		}
 
+		$old_revision->load_phpbb_versions();
+		$this->revisions_in_queue = $this->contrib->in_queue();
+
+		foreach ($old_revision->phpbb_versions as $version)
+		{
+			$this->repackable_branches[] = (int) $version['phpbb_version_branch'];
+		}
+		$this->repackable_branches = array_unique($this->repackable_branches);
+
 		$error = array();
 
 		if ($this->request->is_set_post('new_revision'))
@@ -87,12 +102,12 @@ class revision extends base
 			$error = $result['error'];
 		}
 
-		$old_revision->load_phpbb_versions();
 		$settings = array(
 			'name'				=> $old_revision->revision_name,
 			'version'			=> $old_revision->revision_version,
 			'vendor_versions'	=> $old_revision->get_selected_branches(),
 			'custom'			=> $old_revision->get_custom_fields(),
+			'allow_repack'		=> $old_queue->queue_allow_repack,
 		);
 
 		if ($this->is_custom_license($old_revision->revision_license))
@@ -108,6 +123,10 @@ class revision extends base
 		$this->assign_common_vars($error, !empty($this->id), $settings);
 		$this->template->assign_vars(array(
 			'S_REPACK'			=> true,
+			'S_POST_ACTION'		=> $this->contrib->get_url('revision', array(
+				'page'	=> 'repack',
+				'id'	=> $old_revision->revision_id,
+			)),
 		));
 
 		add_form_key('postform');
@@ -134,8 +153,10 @@ class revision extends base
 		{
 			return $this->helper->needs_auth();
 		}
+		$this->revisions_in_queue = $this->contrib->in_queue();
+		$allowed_branches = $this->get_allowed_branches();
 
-		if ($this->contrib->in_queue())
+		if (empty($allowed_branches))
 		{
 			return $this->helper->error('REVISION_IN_QUEUE');
 		}
@@ -185,7 +206,7 @@ class revision extends base
 		$this->template->assign_vars(array(
 			'S_CAN_SUBSCRIBE'			=> !$this->is_author_subscribed() && $this->use_queue,
 			'SUBSCRIBE_AUTHOR'			=> $this->request->variable('subscribe_author', false),
-			'QUEUE_ALLOW_REPACK'		=> $this->request->variable('queue_allow_repack', false),
+			'S_POST_ACTION'				=> $this->contrib->get_url('revision'),
 		));
 
 		add_form_key('postform');
@@ -284,7 +305,67 @@ class revision extends base
 		$this->revision->submit();
 
 		// After revision is set to submitted we must update the queue
-		$this->revision->update_queue();
+		$this->revision->update_queue($this->get_repack_exclusions());
+	}
+
+	/**
+	* Determine which active revisions in the queue should not be marked as
+	* repacked upon submitting the new revision to the queue.
+	*
+	* @return array Returns array of revision id's
+	*/
+	protected function get_repack_exclusions()
+	{
+		$exclude_from_repack = $revision_branches = array();
+		$in_queue = $this->revisions_in_queue;
+
+		if (empty($this->revision->phpbb_versions))
+		{
+			$this->revision->load_phpbb_versions();
+		}
+
+		foreach ($this->revision->phpbb_versions as $version)
+		{
+			$branch = (int) (is_array($version)) ? $version['phpbb_version_branch'] : $version;
+			$revision_branches[] = $branch;
+
+			if (in_array($branch, $this->repackable_branches) || $in_queue[$branch]['queue_status'] == TITANIA_QUEUE_NEW)
+			{
+				unset($in_queue[$branch]);
+			}
+		}
+
+		foreach ($in_queue as $info)
+		{
+			$exclude_from_repack[] = (int) $info['revision_id'];
+		}
+
+		return $exclude_from_repack;
+		
+	}
+
+	/**
+	* Get branches that the user is allowed to submit a revision for.
+	*
+	* @return array
+	*/
+	protected function get_allowed_branches()
+	{
+		$allowed_branches = $this->contrib->type->get_allowed_branches(true);
+
+		if (empty($this->revisions_in_queue))
+		{
+			return $allowed_branches;
+		}
+
+		foreach ($this->revisions_in_queue as $branch => $info)
+		{
+			if ($info['queue_status'] > TITANIA_QUEUE_NEW)
+			{
+				unset($allowed_branches[$branch]);
+			}
+		}
+		return $allowed_branches;
 	}
 
 	/**
@@ -358,6 +439,26 @@ class revision extends base
 		if (empty($settings['vendor_versions']))
 		{
 			$error[] = $this->user->lang['NO_PHPBB_BRANCH'];
+		}
+		else
+		{
+			$allowed_branches = $this->contrib->type->get_allowed_branches();
+
+			foreach ($settings['vendor_versions'] as $branch)
+			{
+				if (!isset($allowed_branches[$branch]))
+				{
+					$error[] = $this->user->lang['INVALID_BRANCH'];
+				}
+				else if (
+					isset($this->revisions_in_queue[$branch]) &&
+					$this->revisions_in_queue[$branch]['queue_status'] > TITANIA_QUEUE_NEW &&
+					!in_array($branch, $this->repackable_branches)
+				)
+				{
+					$error[] = $this->user->lang['INVALID_BRANCH'];
+				}
+			}
 		}
 
 		// Send the file to the type class so it can do custom error checks
@@ -628,6 +729,7 @@ class revision extends base
 
 		$this->revision = new \titania_revision($this->contrib);
 		$this->attachment = new \titania_attachment(TITANIA_CONTRIB, $this->contrib->contrib_id);
+		$this->revisions_in_queue = $this->repackable_branches = array();
 
 		$this->is_moderator = $this->contrib->type->acl_get('moderate');
 		$this->use_queue = $this->ext_config->use_queue && $this->contrib->type->use_queue;
@@ -662,10 +764,10 @@ class revision extends base
 	*/
 	protected function is_author_subscribed()
 	{
-		if (!$this->use_queue)
+		if ($this->use_queue)
 		{
 			$this->queue->contrib_id = $this->contrib->contrib_id;
-		
+
 			// Get queue discussion topic id if it exists
 			$this->queue->get_queue_discussion_topic(true);
 
@@ -715,7 +817,6 @@ class revision extends base
 	{
 		$this->template->assign_vars(array(
 			'REVISION_ID'			=> $this->id,
-			'S_POST_ACTION'			=> $this->contrib->get_url('revision'),
 		));
 
 		$this->display->assign_global_vars();
@@ -727,7 +828,7 @@ class revision extends base
 			return;
 		}
 
-		$_settings = array_fill_keys(array('name', 'version', 'custom_license', 'license'), '');
+		$_settings = array_fill_keys(array('name', 'version', 'custom_license', 'license', 'allow_repack'), '');
 		$_settings['custom'] = $this->request->variable('custom_fields', array('' => ''));
 		$_settings['vendor_versions'] = array();
 		$settings = array_merge($_settings, $settings);
@@ -757,7 +858,7 @@ class revision extends base
 		$this->template->assign_vars(array(
 			'ERROR_MSG'				=> (!empty($error)) ? implode('<br />', $error) : '',
 			'AGREEMENT_NOTICE'		=> ($this->contrib->type->upload_agreement) ? nl2br($this->user->lang($this->contrib->type->upload_agreement)) : false,
-			'QUEUE_ALLOW_REPACK'	=> true,
+			'QUEUE_ALLOW_REPACK'	=> $settings['allow_repack'],
 		));
 
 		// Output the available license options

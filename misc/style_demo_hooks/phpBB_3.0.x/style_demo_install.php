@@ -18,7 +18,7 @@ include($phpbb_root_path . 'common.' . $phpEx);
 include($phpbb_root_path . 'includes/style_demo_hook.' . $phpEx);
 include($phpbb_root_path . 'includes/style_demo_manager.' . $phpEx);
 
-$hook = new titania_styles_demo_hook($config, $db, $user, $phpbb_root_path, $phpEx);
+$hook = new titania_style_demo_hook($config, $db, $user, $phpbb_root_path, $phpEx);
 $result = $hook->run(request_var('key', ''));
 
 echo json_encode($result);

@@ -53,6 +53,8 @@ class titania_type_extension extends titania_type_base
 	public $reply_public = 'EXTENSION_REPLY_PUBLIC';
 	public $update_public = 'EXTENSION_UPDATE_PUBLIC';
 	public $upload_agreement = 'EXTENSION_UPLOAD_AGREEMENT';
+	public $epv_test = true;
+	public $root_search = '*';
 
 	public $allowed_branches = array('>=', 31);
 	public function __construct()
@@ -61,6 +63,14 @@ class titania_type_extension extends titania_type_base
 		$this->langs = phpbb::$user->lang['EXTENSIONS'];
 		$this->forum_database = titania::$config->forum_extension_database;
 		$this->forum_robot = titania::$config->forum_extension_robot;
+
+		if (titania::$config->use_queue && $this->use_queue && $this->epv_test)
+		{
+			$this->upload_steps[] = array(
+				'name'		=> 'EVP_TEST',
+				'function'	=> array($this, 'epv_test'),
+			);
+		}
 	}
 
 	/**
@@ -100,5 +110,38 @@ class titania_type_extension extends titania_type_base
 		}
 
 		return false;
+	}
+
+	/**
+	* Run EPV test on new submissions and submit results to queue topic.
+	*
+	* @return array
+	*/
+	public function epv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package)
+	{
+		$results = $contrib_tools->epv();
+
+		if (!empty($contrib_tools->error))
+		{
+			return array(
+				'notice'	=> implode('<br />', $contrib_tools->error),
+			);
+		}
+		else
+		{
+			$uid = $bitfield = $flags = false;
+			generate_text_for_storage($results, $uid, $bitfield, $flags, true, true, true);
+
+			// Add the prevalidator results to the queue
+			$queue = $revision->get_queue();
+			$queue->mpv_results = $results;
+			$queue->mpv_results_bitfield = $bitfield;
+			$queue->mpv_results_uid = $uid;
+			$queue->submit();
+
+			$results = titania_generate_text_for_display($mpv_results, $uid, $bitfield, $flags);
+			phpbb::$template->assign_var('PV_RESULTS', $results);
+		}
+		return array();
 	}
 }

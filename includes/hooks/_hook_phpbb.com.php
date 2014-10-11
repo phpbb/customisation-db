@@ -18,8 +18,6 @@ if (!defined('IN_TITANIA'))
 //define('TEST_INSTALLATION', true);
 
 titania::$hook->register_ary('phpbb_com_', array(
-	'titania_page_header',
-	'titania_page_footer',
 	array('titania_queue', 'update_first_queue_post'),
 	array('titania_topic', '__construct'),
 	array('titania_post', '__construct'),
@@ -33,98 +31,31 @@ titania::$hook->register_ary('phpbb_com_', array(
 	array('titania_contribution', 'assign_details'),
 ));
 
-// Do we need to install the DB stuff?
-if (!isset(phpbb::$config['titania_hook_phpbb_com']) || version_compare(phpbb::$config['titania_hook_phpbb_com'], '1.0.1', '<'))
-{
-	phpbb::_include('../umil/umil', false, 'umil');
-
-	$umil = new umil(true, phpbb::$db);
-
-	$umil->run_actions('update', array(
-		'1.0.0' => array(
-			'table_column_add' => array(
-				array(TITANIA_TOPICS_TABLE, 'phpbb_topic_id', array('UINT', 0)),
-			),
-		),
-		'1.0.1' => array(
-			'table_column_add' => array(
-				array(TITANIA_POSTS_TABLE, 'phpbb_post_id', array('UINT', 0)),
-			),
-		),
-	),
-	'titania_hook_phpbb_com');
-
-	unset($umil);
-}
-
-/**
-* .com custom header and footer
-*/
-
-function phpbb_com_titania_page_header($hook, $page_title)
-{
-	if (defined('TEST_INSTALLATION'))
-	{
-		return;
-	}
-
-	phpbb::$template->assign_vars(array(
-		'S_BODY_CLASS'		=> 'customise customisation-database',
-		'S_IS_WEBSITE'		=> true,
-	));
-
-	global $auth, $phpEx, $template, $user;
-	$root_path = TITANIA_ROOT . '../../';
-	$base_path = generate_board_url(true) . '/';
-	include($root_path . 'vars.' . PHP_EXT);
-
-	// Setup the phpBB.com header
-	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/', 'website');
-	phpbb::$template->set_filenames(array(
-		'phpbb_com_header'		=> 'overall_header.html',
-	));
-	phpbb::$template->assign_display('phpbb_com_header', 'PHPBB_COM_HEADER', false);
-
-	titania::set_custom_template();
-}
-
-function phpbb_com_titania_page_footer($hook, $run_cron, $template_body)
-{
-	if (defined('TEST_INSTALLATION'))
-	{
-		return;
-	}
-
-	// Setup the phpBB.com footer
-	phpbb::$template->set_custom_template(TITANIA_ROOT . '../../template/', 'website');
-	phpbb::$template->set_filenames(array(
-		'phpbb_com_footer'		=> 'overall_footer.html',
-	));
-	phpbb::$template->assign_display('phpbb_com_footer', 'PHPBB_COM_FOOTER', false);
-
-	titania::set_custom_template();
-}
-
 // Display a warning for styles not meeting the licensing guidelines
 function phpbb_com_titania_contribution_assign_details($hook, &$vars, $contrib)
 {
-	if ($contrib->contrib_type != TITANIA_TYPE_STYLE)
+	if ($contrib->contrib_type != TITANIA_TYPE_STYLE || empty($contrib->download))
 	{
 		return;
 	}
 
-	if (isset($contrib->download['revision_license']) && $contrib->download['revision_license'] == '')
+	foreach ($contrib->download as $download)
 	{
-		if (isset($vars['WARNING']))
+		if ($download['revision_license'] == '')
 		{
-			$vars['WARNING'] .= '<br />';
-		}
-		else
-		{
-			$vars['WARNING'] = '';
-		}
+			if (isset($vars['WARNING']))
+			{
+				$vars['WARNING'] .= '<br />';
+			}
+			else
+			{
+				$vars['WARNING'] = '';
+			}
 
-		$vars['WARNING'] .= 'WARNING: This style currently does not meet our licensing guidelines.';
+			$vars['WARNING'] .= 'WARNING: This style currently does not meet our licensing guidelines.';
+
+			break;
+		}
 	}
 }
 
@@ -137,6 +68,8 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	{
 		return;
 	}
+
+	$path_helper = phpbb::$container->get('path_helper');
 
 	// First we copy over the queue discussion topic if required
 	$sql = 'SELECT topic_id, phpbb_topic_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
@@ -166,7 +99,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			phpbb_com_handle_attachments($temp_post, $post_text);
 			titania_decode_message($post_text, $row['post_text_uid']);
 
-			$post_text .= "\n\n" . titania_url::remove_sid($temp_post->get_url());
+			$post_text .= "\n\n" . $path_helper->strip_url_params($temp_post->get_url(), 'sid');
 
 			$options = array(
 				'poster_id'				=> $row['post_user_id'],
@@ -262,16 +195,17 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 
 	$description = $contrib->contrib_desc;
 	titania_decode_message($description, $contrib->contrib_desc_uid);
+	$download = current($contrib->download);
 
 	$post_text = sprintf(phpbb::$user->lang[$lang_var],
 		$contrib->contrib_name,
-		$contrib->author->get_url(),
+		$path_helper->strip_url_params($contrib->author->get_url(), 'sid'),
 		users_overlord::get_user($contrib->author->user_id, '_username'),
 		$description,
 		$revision->revision_version,
-		titania_url::build_url('download', array('id' => $revision->attachment_id)),
-		$contrib->download['real_filename'],
-		$contrib->download['filesize']
+		$path_helper->strip_url_params($revision->get_url(), 'sid'),
+		$download['real_filename'],
+		$download['filesize']
 	);
 
 	$post_text .= "\n\n" . $post_object->post_text;
@@ -279,7 +213,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	phpbb_com_handle_attachments($post_object, $post_text);
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
-	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
+	$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
 
 	$options = array(
 		'poster_id'				=> $post_object->topic->topic_first_post_user_id,
@@ -315,12 +249,13 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 
 	titania::_include('functions_posting', 'phpbb_posting');
 
+	$path_helper = phpbb::$container->get('path_helper');
 	$post_text = $post_object->post_text;
 
 	phpbb_com_handle_attachments($post_object, $post_text);
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
-	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
+	$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
 
 	$options = array(
 		'poster_id'				=> $post_object->post_user_id,
@@ -351,14 +286,16 @@ function phpbb_com_titania_post_edit($hook, &$post_object)
 		return;
 	}
 
+
 	titania::_include('functions_posting', 'phpbb_posting');
 
+	$path_helper = phpbb::$container->get('path_helper');
 	$post_text = $post_object->post_text;
 
 	phpbb_com_handle_attachments($post_object, $post_text);
 	titania_decode_message($post_text, $post_object->post_text_uid);
 
-	$post_text .= "\n\n" . titania_url::remove_sid($post_object->get_url());
+	$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
 
 	$options = array(
 		'post_id'				=> $post_object->phpbb_post_id,
@@ -524,10 +461,15 @@ function phpbb_com_handle_attachments($post, &$post_text)
 	$attachments = array();
 
 	phpbb::$user->add_lang('viewtopic');
+	$path_helper = phpbb::$container->get('path_helper');
+	$controller_helper = phpbb::$container->get('controller.helper');
 
 	while ($row = phpbb::$db->sql_fetchrow($result))
 	{
-		$download_url = titania_url::build_clean_url('download', array('id' => $row['attachment_id']));
+		$download_url = $path_helper->strip_url_params(
+			$controller_helper->route('phpbb.titania.download', array('id' => $row['attachment_id'])),
+			'sid'
+		);
 		$attachments[] = '[' . phpbb::$user->lang['ATTACHMENT'] . "] [url=$download_url]{$row['real_filename']}[/url]";
 	}
 	phpbb::$db->sql_freeresult($result);

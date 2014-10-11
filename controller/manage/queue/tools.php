@@ -66,7 +66,7 @@ class tools
 	*/
 	public function run_tool($tool, $id)
 	{
-		if (!in_array($tool, array('automod', 'mpv')))
+		if (!in_array($tool, array('automod', 'mpv', 'epv')))
 		{
 			return $this->helper->error('INVALID_TOOL', 404);
 		}
@@ -79,6 +79,37 @@ class tools
 		}
 
 		return $this->{$tool}();
+	}
+
+	/**
+	* Run Extension PreValidator.
+	*
+	* @return \Symfony\Component\HttpFoundation\Response
+	*/
+	protected function epv()
+	{
+		if (!$this->contrib->type->epv_test)
+		{
+			return $this->helper->error('INVALID_TOOL');
+		}
+
+		$tool = new \titania_contrib_tools(
+			$this->attachment->get_filepath(),
+			$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
+		);
+		$results = $tool->epv();
+
+		if (!empty($tool->error))
+		{
+			return $this->helper->error(implode('<br />', $tool->error));
+		}
+
+		$results = $this->get_result_post('VALIDATION_PV', $results);
+		$this->queue->topic_reply($results);
+
+		$tool->remove_temp_files();
+
+		redirect($this->queue->get_url());
 	}
 
 	/**
@@ -104,7 +135,7 @@ class tools
 		}
 		else
 		{
-			$results = $this->get_result_post('VALIDATION_MPV', $results);
+			$results = $this->get_result_post('VALIDATION_PV', $results);
 			$this->queue->topic_reply($results);
 		}
 		$tool->remove_temp_files();

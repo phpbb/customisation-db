@@ -103,6 +103,8 @@ class manager
 	*/
 	protected function get_result($result)
 	{
+		$result = json_decode($result);
+
 		if (is_int($result) || ctype_digit($result))
 		{
 			return array(

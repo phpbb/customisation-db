@@ -23,8 +23,20 @@
 <div id="tabs">
 	<ul>
 	<!-- BEGIN nav_menu -->
-		<li class="tab<!-- IF nav_menu.S_SELECTED --> activetab<!-- ENDIF -->">
-			<a href="{nav_menu.U_TITLE}">{nav_menu.L_TITLE}</a>
+		<li class="tab dropdown-container<!-- IF nav_menu.S_SELECTED --> activetab<!-- ENDIF --><!-- IF nav_menu.sub_menu --> has-submenu<!-- ENDIF -->">
+			<a<!-- IF nav_menu.U_TITLE --> href="{nav_menu.U_TITLE}"<!-- ENDIF -->>
+				{nav_menu.L_TITLE}
+			</a>
+			<!-- IF nav_menu.sub_menu -->
+				<div class="dropdown hidden">
+					<div class="pointer"><div class="pointer-inner"></div></div>
+					<ul class="dropdown-contents">
+						<!-- BEGIN nav_menu.sub_menu -->
+							<li><a href="{nav_menu.sub_menu.U_TITLE}">{nav_menu.sub_menu.L_TITLE}</a></li>
+						<!-- END nav_menu.sub_menu -->
+					</ul>
+				</div>
+			<!-- ENDIF -->
 		</li>
 	<!-- END nav_menu -->
 	</ul>

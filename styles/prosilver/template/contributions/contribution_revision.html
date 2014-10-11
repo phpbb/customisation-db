@@ -25,6 +25,7 @@
 						<!-- BEGIN phpbb_branches -->
 							<!-- IF phpbb_branches.S_NUM_ROWS eq 1 -->
 								{phpbb_branches.NAME}
+								<input type="hidden" name="phpbb_branch[]" value="{phpbb_branches.VALUE}" />
 							<!-- ELSE -->
 								<!-- IF phpbb_branches.S_FIRST_ROW -->
 								<select id="phpbb_branch" name="phpbb_branch[]" size="3">
@@ -72,6 +73,7 @@
 
 				<!-- ELSEIF S_REPACK -->
 				<input type="hidden" name="revision_license" value="{REVISION_LICENSE}" />
+				<input type="hidden" name="queue_allow_repack" value="{QUEUE_ALLOW_REPACK}" />
 				<!-- ENDIF -->
 
 				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
@@ -114,10 +116,10 @@
 			<!-- IF MPV_TEST_WARNING -->
 				<br /><br />{L_MPV_TEST}
 			<!-- ENDIF -->
-			<!-- IF MPV_RESULTS -->
-				<p class="error">{L_MPV_RESULTS}</p>
+			<!-- IF PV_RESULTS -->
+				<p class="error">{L_PV_RESULTS}</p>
 				<hr class="dashed" />
-				{MPV_RESULTS}
+				{PV_RESULTS}
 				<!-- IF S_AUTOMOD_TEST -->
 					<br /><br />
 					<hr class="dashed" />
@@ -147,6 +149,5 @@
 		</div>
 	</div>
 </form>
-
 
 <!-- INCLUDE contributions/contribution_footer.html -->

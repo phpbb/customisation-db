@@ -157,7 +157,7 @@ class queue_overlord
 		}
 
 		$url_parts = $path_helper->get_url_parts($controller_helper->get_current_url());
-		$sort->build_pagination($url_parts['bases'], $url_parts['params']);
+		$sort->build_pagination($url_parts['base'], $url_parts['params']);
 
 		$queue_ids = $user_ids = array();
 
@@ -284,9 +284,14 @@ class queue_overlord
 		// Misc actions
 		$misc_actions = array(
 			array(
-				'RETEST_MPV',
+				'RETEST_PV',
 				$queue->get_tool_url('mpv', $row['revision_id']),
 				$contrib->type->mpv_test,
+			),
+			array(
+				'RETEST_PV',
+				$queue->get_tool_url('epv', $row['revision_id']),
+				$contrib->type->epv_test,
 			),
 			array(
 				'RETEST_AUTOMOD',

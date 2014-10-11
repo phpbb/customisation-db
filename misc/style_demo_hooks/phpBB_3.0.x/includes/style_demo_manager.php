@@ -39,7 +39,7 @@ class titania_demo_manager
 	* @param string $root_path
 	* @param string $php_ext
 	*/
-	public function __construct($db, $user, $root_path, $php_ext)
+	public function __construct($config, $db, $user, $root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->user = $user;
@@ -91,7 +91,7 @@ class titania_demo_manager
 		$success = $this->manager->install_style(
 			$error,
 			'install',
-			$this->root_path . 'styles/',
+			$this->root_path . 'styles/' . $this->style_dir . '/',
 			$style_id,
 			$config['style']['name'],
 			$this->style_dir,
@@ -101,7 +101,7 @@ class titania_demo_manager
 			$style_row
 		);
 
-		if (!$success)
+		if ($success === false)
 		{
 			if ($error != array($this->user->lang['STYLE_ERR_NAME_EXIST']))
 			{
@@ -349,9 +349,9 @@ parse_css_file = {PARSE_CSS_FILE}
 			// Merge only specific things. We may need them later.
 			foreach (array('inherit_from', 'parse_css_file') as $key)
 			{
-				if (!empty($config['component'][$key]) && !isset($config['style'][$key]))
+				if (!empty($config[$component][$key]) && !isset($config['style'][$key]))
 				{
-					$config['style'][$key] = $config['style'][$key];
+					$config['style'][$key] = $config[$component][$key];
 				}
 			}
 		}

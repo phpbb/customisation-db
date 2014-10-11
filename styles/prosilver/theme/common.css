@@ -247,6 +247,10 @@ ul.general-info li strong {
 	vertical-align: top;
 }
 
+.has-submenu:hover .dropdown {
+	display: block;
+}
+
 #extratabs #extratabs-head {
 	width: 98%;
 	border-bottom: 1px solid #E5E5E6;

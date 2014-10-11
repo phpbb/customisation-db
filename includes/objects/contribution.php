@@ -439,10 +439,12 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
-	 * Get the latest revision (to download)
+	 * Get the latest revisions (to download)
 	 * Stored in $this->download; only gets the latest validated (if validation is required)
 	 *
-	 * @param bool|int $revision_id False to get the latest validated, integer to get a specific revision_id (used in some places such as the queue)
+	 * @param bool|int $revision_id False to get the latest validated, integer to get a
+	 * 		specific revision_id (used in some places such as the queue)
+	 * @return null
 	 */
 	public function get_download($revision_id = false)
 	{
@@ -451,17 +453,47 @@ class titania_contribution extends titania_message_object
 			return;
 		}
 
-		$sql = 'SELECT * FROM ' . TITANIA_REVISIONS_TABLE . ' r
-			LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
-				ON (a.attachment_id = r.attachment_id)
-			WHERE r.contrib_id = ' . $this->contrib_id .
-				(($revision_id === false) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') .
-				(($revision_id !== false) ? ' AND r.revision_id = ' . (int) $revision_id : '') . '
-				AND revision_submitted = 1
-			ORDER BY r.revision_id DESC';
-		$result = phpbb::$db->sql_query_limit($sql, 1);
-		$this->download = phpbb::$db->sql_fetchrowset($result);
-		phpbb::$db->sql_freeresult($result);
+		if ($revision_id)
+		{
+			$revisions = array((int) $revision_id);
+		}
+		else
+		{
+			$sql = 'SELECT DISTINCT(phpbb_version_branch), MAX(revision_id) AS revision_id
+				FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				WHERE contrib_id = ' . (int) $this->contrib_id . '
+					AND revision_validated = 1
+				GROUP BY phpbb_version_branch';
+			$result = phpbb::$db->sql_query($sql);
+			$revisions = array();
+
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$revisions[(int) $row['phpbb_version_branch']] = (int) $row['revision_id'];
+			}
+			phpbb::$db->sql_freeresult($result);
+		}
+
+		if (!empty($revisions))
+		{
+			$sql = 'SELECT r.*, a.*
+				FROM ' . TITANIA_REVISIONS_TABLE . ' r
+				LEFT JOIN ' . TITANIA_ATTACHMENTS_TABLE . ' a
+					ON (a.attachment_id = r.attachment_id)
+				WHERE r.contrib_id = ' . (int) $this->contrib_id . '
+					AND ' . phpbb::$db->sql_in_set('r.revision_id', $revisions) .
+					(($revision_id === false) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') . '
+					AND revision_submitted = 1';
+			$result = phpbb::$db->sql_query($sql);
+			$revisions = array_flip($revisions);
+
+			while ($row = phpbb::$db->sql_fetchrow($result))
+			{
+				$this->download[$revisions[$row['revision_id']]] = $row;
+			}
+			phpbb::$db->sql_freeresult($result);
+			krsort($this->download);
+		}
 	}
 
 	/**
@@ -580,24 +612,27 @@ class titania_contribution extends titania_message_object
 				));
 			}
 
-			if ($this->contrib_type == TITANIA_TYPE_BBCODE)
+			if ($this->contrib_type == TITANIA_TYPE_BBCODE && !empty($this->download))
 			{
+				$download = reset($this->download);
+				$demo_output = $download['revision_bbc_demo'];
 				$demo_rendered = false;
-				if (isset($this->download['revision_status']) && $this->download['revision_status'] == TITANIA_REVISION_APPROVED && !empty($this->download['revision_bbc_demo']))
+
+				if ($download['revision_status'] == TITANIA_REVISION_APPROVED && !empty($demo_output))
 				{
 					titania::_include('tools/bbcode_demo', false, 'titania_bbcode_demo');
 
-					$demo = new titania_bbcode_demo($this->contrib_id, $this->download['revision_bbc_bbcode_usage'], $this->download['revision_bbc_html_replace']);
-					$this->download['revision_bbc_demo'] = $demo->get_demo($this->download['revision_bbc_demo']);
+					$demo = new titania_bbcode_demo($this->contrib_id, $download['revision_bbc_bbcode_usage'], $download['revision_bbc_html_replace']);
+					$demo_output = $demo->get_demo($demo_output);
 					unset($demo);
 					$demo_rendered = true;
 				}
 
 				$vars = array_merge($vars, array(
-					'CONTRIB_BBC_HTML_REPLACEMENT'	=> (isset($this->download['revision_bbc_html_replace'])) ? $this->download['revision_bbc_html_replace']: '',
-					'CONTRIB_BBC_BBCODE_USAGE'		=> (isset($this->download['revision_bbc_bbcode_usage'])) ? $this->download['revision_bbc_bbcode_usage'] : '',
-					'CONTRIB_BBC_HELPLINE'			=> (isset($this->download['revision_bbc_help_line'])) ? $this->download['revision_bbc_help_line'] : '',
-					'CONTRIB_BBC_DEMO'				=> (isset($this->download['revision_bbc_demo'])) ? $this->download['revision_bbc_demo'] : '',
+					'CONTRIB_BBC_HTML_REPLACEMENT'	=> (isset($download['revision_bbc_html_replace'])) ? $download['revision_bbc_html_replace']: '',
+					'CONTRIB_BBC_BBCODE_USAGE'		=> (isset($download['revision_bbc_bbcode_usage'])) ? $download['revision_bbc_bbcode_usage'] : '',
+					'CONTRIB_BBC_HELPLINE'			=> (isset($download['revision_bbc_help_line'])) ? $download['revision_bbc_help_line'] : '',
+					'CONTRIB_BBC_DEMO'				=> $demo_output,
 					'S_CONTRIB_BBC_DEMO_RENDERED'	=> $demo_rendered,
 				));
 			}
@@ -759,19 +794,19 @@ class titania_contribution extends titania_message_object
 	public function assign_download_details()
 	{
 		$file = new titania_attachment(TITANIA_CONTRIB);
-		$u_colorizeit = '';
+		$u_colorizeit_base = '';
 
 		// ColorizeIt stuff
 		if (strlen(titania::$config->colorizeit) && $this->has_colorizeit())
 		{
-			$u_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' .
+			$u_colorizeit_base = 'http://' . titania::$config->colorizeit_url . '/custom/' .
 				titania::$config->colorizeit . '.html?sample=' . $this->clr_sample['attachment_id'];
 		}
 		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
 
 		foreach ($this->download as $download)
 		{
-			$vendor_version = $install_level = $install_time = '';
+			$vendor_version = $install_level = $install_time = $u_colorizeit = '';
 
 			if (!empty($this->revisions[$download['revision_id']]['phpbb_versions']))
 			{
@@ -795,6 +830,10 @@ class titania_contribution extends titania_message_object
 			{
 				$install_level = phpbb::$user->lang['INSTALL_LEVEL_' . $download['install_level']];
 			}
+			if ($u_colorizeit_base && $download['revision_status'] == TITANIA_REVISION_APPROVED)
+			{
+				$u_colorizeit = $u_colorizeit_base . '&amp;id=' . $download['attachment_id'];
+			}
 
 			phpbb::$template->assign_block_vars('downloads', array(
 				'NAME'			=> censor_text($download['revision_name']),
@@ -805,9 +844,9 @@ class titania_contribution extends titania_message_object
 				'RELEASE_TIME'	=> ($download['validation_date']) ? phpbb::$user->format_date($download['validation_date']) : '',
 				'PHPBB_VERSION'	=> $vendor_version,
 				'INSTALL_LEVEL'	=> $install_level,
-				'INSTALL_TIME'	=> $install_time,			
+				'INSTALL_TIME'	=> $install_time,
 				'U_DOWNLOAD'	=> $file->get_url($download['attachment_id']),
-				'U_COLORIZEIT'	=> ($u_colorizeit) ? $u_colorizeit . '&amp;id=' . $download['attachment_id'] : '',
+				'U_COLORIZEIT'	=> $u_colorizeit,
 			));
 		}
 	}
@@ -839,6 +878,11 @@ class titania_contribution extends titania_message_object
 				unset($parameters['page']);
 			break;
 
+			case 'demo' :
+				$controller .= '.demo';
+				unset($parameters['page']);
+			break;
+
 			default :
 				$parameters['page']	= $page;
 		}
@@ -849,6 +893,56 @@ class titania_contribution extends titania_message_object
 		);
 
 		return $this->controller_helper->route($controller, $parameters);
+	}
+
+	/**
+	* Get demo URL.
+	*
+	* @param int $branch			Branch - example: 30, 31
+	* @param bool $integrated_url	Whether to return the integrated demo URL
+	*	if it's supported.
+	* @return string
+	*/
+	public function get_demo_url($branch, $integrated_url = false)
+	{
+		if (empty($this->contrib_demo))
+		{
+			return '';
+		}
+		$demos = json_decode($this->contrib_demo, true);
+
+		if (empty($demos[$branch]))
+		{
+			return '';
+		}
+		else if ($integrated_url && $this->options['demo'])
+		{
+			$branch = (string) $branch;
+			return $this->get_url('demo', array(
+				'branch'	=> "{$branch[0]}.{$branch[1]}",
+			));
+		}
+		return $demos[$branch];
+	}
+
+	/**
+	* Get demo URL.
+	*
+	* @param int $branch		Branch - example: 30, 31
+	* @return string
+	*/
+	public function set_demo_url($branch, $url)
+	{
+		if (!empty($this->contrib_demo))
+		{
+			$demos = json_decode($this->contrib_demo, true);
+		}
+		else
+		{
+			$demos = array();
+		}
+		$demos[$branch] = $url;
+		$this->contrib_demo = json_encode($demos);
 	}
 
 	/**
@@ -1806,25 +1900,33 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
-	 * Check if there is a revision in the queue
-	 *
-	 * @return true if there is, false if not
-	 */
+	* Get the branch and status of active revisions in the queue.
+	*
+	* @return array Returns array in form of array(array(branch => status))
+	*/
 	public function in_queue()
 	{
 		if (!titania::$config->use_queue || !$this->type->use_queue)
 		{
-			return false;
+			return array();
 		}
 
-		$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
-			WHERE contrib_id = ' . (int) $this->contrib_id . '
-				AND queue_status > 1';
-		phpbb::$db->sql_query($sql);
-		$cnt = phpbb::$db->sql_fetchfield('cnt');
+		$sql = 'SELECT DISTINCT q.revision_id, rp.phpbb_version_branch, q.queue_status
+			FROM ' . TITANIA_QUEUE_TABLE . ' q, ' .
+				TITANIA_REVISIONS_PHPBB_TABLE . ' rp
+			WHERE q.contrib_id = ' . (int) $this->contrib_id . '
+				AND q.queue_status > 0
+				AND q.revision_id = rp.revision_id';
+		$result = phpbb::$db->sql_query($sql);
+		$in_queue = array();
+
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$in_queue[(int) $row['phpbb_version_branch']] = array_map('intval', $row);
+		}
 		phpbb::$db->sql_freeresult();
 
-		return ($cnt) ? true : false;
+		return $in_queue;
 	}
 
 	/**
