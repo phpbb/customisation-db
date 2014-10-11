@@ -91,7 +91,7 @@ class titania_demo_manager
 		$success = $this->manager->install_style(
 			$error,
 			'install',
-			$this->root_path . 'styles/',
+			$this->root_path . 'styles/' . $this->style_dir . '/',
 			$style_id,
 			$config['style']['name'],
 			$this->style_dir,
@@ -349,9 +349,9 @@ parse_css_file = {PARSE_CSS_FILE}
 			// Merge only specific things. We may need them later.
 			foreach (array('inherit_from', 'parse_css_file') as $key)
 			{
-				if (!empty($config['component'][$key]) && !isset($config['style'][$key]))
+				if (!empty($config[$component][$key]) && !isset($config['style'][$key]))
 				{
-					$config['style'][$key] = $config['style'][$key];
+					$config['style'][$key] = $config[$component][$key];
 				}
 			}
 		}
