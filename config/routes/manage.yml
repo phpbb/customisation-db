@@ -28,7 +28,6 @@ phpbb.titania.queue.tools:
     pattern:  /queue/tools/{tool}/{id}
     defaults: { _controller: phpbb.titania.controller.manage.queue.tools:run_tool }
     requirements:
-        tool: automod|mpv
         id: \d+
 
 phpbb.titania.manage.attention:

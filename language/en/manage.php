@@ -103,7 +103,7 @@ $lang = array_merge($lang, array(
 	'REPACK'					=> 'Repack',
 	'REPORTED'					=> 'Reported',
 	'RETEST_AUTOMOD'			=> 'Re-test Automod',
-	'RETEST_MPV'				=> 'Re-test MPV',
+	'RETEST_PV'					=> 'Re-test prevalidator',
 	'REVISION_REPACKED'			=> 'This revision has been repacked.',
 
 	'SUBMIT_TIME'				=> 'Submission Time',
@@ -115,8 +115,8 @@ $lang = array_merge($lang, array(
 	'VALIDATION'				=> 'Validation',
 	'VALIDATION_AUTOMOD'		=> 'Automod Test',
 	'VALIDATION_MESSAGE'		=> 'Validation Message/Reason',
-	'VALIDATION_MPV'			=> 'MPV Notes',
 	'VALIDATION_NOTES'			=> 'Validation Notes',
+	'VALIDATION_PV'				=> 'Prevalidator Notes',
 	'VALIDATION_QUEUE'			=> 'Validation Queue',
 	'VALIDATION_SUBMISSION'		=> 'Validation Submission',
 ));
