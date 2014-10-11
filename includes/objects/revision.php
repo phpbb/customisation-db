@@ -221,6 +221,7 @@ class titania_revision extends titania_database_object
 			'BBC_HTML_REPLACEMENT'	=> $this->revision_bbc_html_replace,
 			'BBC_BBCODE_USAGE'		=> $this->revision_bbc_bbcode_usage,
 			'BBC_HELPLINE'			=> $this->revision_bbc_help_line,
+			'BBC_DEMO'				=> $this->revision_bbc_demo,
 			'INSTALL_LEVEL'			=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
 			'DOWNLOADS'				=> isset($this->download_count) ? $this->download_count : 0,
 			'HALF_TRANSLATIONS'		=> ceil(sizeof($this->translations) / 2),
