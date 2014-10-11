@@ -33,8 +33,8 @@ class titania_styles_demo
 	* Major phpBB version to limit style list to (30, 31, etc)
 	*
 	* @var int
-	*/	
-	public $phpbb_version;
+	*/
+	public $phpbb_branch;
 
 	/**
 	* Style data
