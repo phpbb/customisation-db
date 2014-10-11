@@ -101,7 +101,7 @@ class titania_demo_manager
 			$style_row
 		);
 
-		if (!$success)
+		if ($success === false)
 		{
 			if ($error != array($this->user->lang['STYLE_ERR_NAME_EXIST']))
 			{
