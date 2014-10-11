@@ -69,55 +69,64 @@ class titania_styles_demo
 	{
 		$sql_array = array(
 			'SELECT'	=> 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_user_id, c.contrib_demo, 
-								s.attachment_id AS thumb_id, s.thumbnail, r.revision_id, r.attachment_id, r.revision_license, u.username, 
-									u.username_clean, u.user_colour, cat.category_name',
+							s.attachment_id AS thumb_id, s.thumbnail, MAX(r.revision_id) AS revision_id,
+							u.username, u.username_clean, u.user_colour, cat.category_name',
 			'FROM'		=> array(
 				TITANIA_CONTRIBS_TABLE => 'c',
 			),
 			'LEFT_JOIN'	=> array(
 				array(
 					'FROM'	=> array(USERS_TABLE => 'u'),
-					'ON'	=> 'c.contrib_user_id = u.user_id',		
+					'ON'	=> 'c.contrib_user_id = u.user_id',
 				), array(
 					'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 's'),
-					'ON'	=> 'c.contrib_id = s.object_id AND s.is_preview = 1 AND s.is_orphan = 0 AND object_type = ' . TITANIA_SCREENSHOT,
+					'ON'	=> 'c.contrib_id = s.object_id
+						AND s.is_preview = 1
+						AND s.is_orphan = 0
+						AND object_type = ' . TITANIA_SCREENSHOT,
 				), array (
 					'FROM'	=> array(TITANIA_REVISIONS_TABLE => 'r'),
-					'ON'	=> 'c.contrib_id = r.contrib_id AND	r.revision_submitted = 1 AND c.contrib_last_update = r.validation_date AND r.revision_status = ' . TITANIA_REVISION_APPROVED,	
+					'ON'	=> 'c.contrib_id = r.contrib_id
+						AND	r.revision_submitted = 1
+						AND r.revision_status = ' . TITANIA_REVISION_APPROVED,	
 				), array(
 					'FROM'	=> array(TITANIA_CONTRIB_IN_CATEGORIES_TABLE => 'cic'),
 					'ON'	=> 'c.contrib_id = cic.contrib_id',
 				), array(
 					'FROM'	=> array(TITANIA_CATEGORIES_TABLE => 'cat'),
 					'ON'	=> 'cic.category_id = cat.category_id',
+				), array(
+					'FROM'	=> array(TITANIA_REVISIONS_PHPBB_TABLE => 'rp'),
+					'ON'	=> 'c.contrib_id = rp.contrib_id AND r.revision_id = rp.revision_id',
 				),
 			),
-			'WHERE'		=>  'c.contrib_visible = 1 AND c.contrib_type = ' . TITANIA_TYPE_STYLE . ' AND cat.category_options & ' . TITANIA_CAT_FLAG_DEMO . ' AND c.contrib_status =' . TITANIA_CONTRIB_APPROVED . '
-								AND c.contrib_demo <> ""' . (($this->phpbb_version) ? ' AND rp.phpbb_version_branch = ' . (int) $this->phpbb_version : ''),
+			'WHERE'		=>  'c.contrib_visible = 1
+								AND c.contrib_type = ' . TITANIA_TYPE_STYLE . '
+								AND cat.category_options & ' . TITANIA_CAT_FLAG_DEMO . '
+								AND c.contrib_status =' . TITANIA_CONTRIB_APPROVED . '
+								AND c.contrib_demo <> ""
+								AND rp.phpbb_version_branch = ' . (int) $this->phpbb_branch,
 
 			'GROUP_BY'	=> 'c.contrib_id',
 			'ORDER_BY'	=> 'cat.left_id, c.contrib_name ASC',
 		);
 
-		// Do we have a limit on the phpBB version?
-		if ($this->phpbb_version)
-		{
-			$sql_array['LEFT_JOIN'][] = array(
-				'FROM'	=> array(TITANIA_REVISIONS_PHPBB_TABLE => 'rp'),
-				'ON'	=> 'c.contrib_id = rp.contrib_id AND r.revision_id = rp.revision_id'
-			); 
-		}
-
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_array);
 		$result = phpbb::$db->sql_query($sql, 3600);
+		$style = new titania_contribution;
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$this->styles[$row['contrib_id']] = array_merge($row, array('coauthors' => '', 'phpbb_versions' => array()));
-			$this->revisions[] = $row['revision_id']; 
+			$style->__set('contrib_demo', $row['contrib_demo']);
+
+			if ($style->get_demo_url($this->phpbb_branch))
+			{
+				$this->styles[$row['contrib_id']] = array_merge($row, array('coauthors' => '', 'phpbb_versions' => array()));
+				$this->revisions[] = $row['revision_id'];	
+			} 
 		}
 		phpbb::$db->sql_freeresult($result);
-		
+
 		if (!sizeof($this->styles))
 		{
 			trigger_error('NO_STYLES');
@@ -126,6 +135,20 @@ class titania_styles_demo
 		{
 			trigger_error('NO_DEMO');
 		}
+
+		$sql = 'SELECT contrib_id, attachment_id, revision_license
+			FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE ' . phpbb::$db->sql_in_set('revision_id', $this->revisions);
+		$result = phpbb::$db->sql_query($sql);
+
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$this->styles[$row['contrib_id']] += array(
+				'attachment_id'		=> $row['attachment_id'],
+				'revision_license'	=> $row['revision_license'],
+			);
+		}
+		phpbb::$db->sql_freeresult($result);
 
 		// Get coauthors and phpBB versions for the styles
 		$this->get_coauthors();
@@ -207,10 +230,10 @@ class titania_styles_demo
 		{
 			return false;
 		}
-		
+
 		$direction = ($direction == 'prev') ? -1 : 1;
 		$sibling = $indexes[$position + $direction];
-		
+
 		if (isset($this->styles[$sibling]['contrib_demo']))
 		{
 			$style = new titania_contribution();
