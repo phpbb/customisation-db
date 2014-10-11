@@ -139,7 +139,11 @@ class contribution extends base
 		$demo->load_styles();
 		$demo->assign_details();
 
-		return $this->helper->render('contributions/demo.html', $this->user->lang['CONTRIB_DEMO']);
+		$title = $this->contrib->contrib_name .
+			' - [' . $this->ext_config->phpbb_versions[$branch]['name'] . '] ' .
+			$this->user->lang['CONTRIB_DEMO'];
+
+		return $this->helper->render('contributions/demo.html', $title);
 	}
 
 	/**
