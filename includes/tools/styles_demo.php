@@ -51,13 +51,15 @@ class titania_styles_demo
 	private $revisions = array();
 
 	/**
+	* Constructor.
+	*
+	* @param int $phpbb_version phpBB branch to limit style list to (30, 31, etc)
 	* @param int $default_style Default style to display
-	* @param int $phpbb_version Major phpBB version to limit style list to (30, 31, etc)
-	*/	
-	public function __construct($default_style = false, $phpbb_version = false)
+	*/
+	public function __construct($phpbb_branch, $default_style = false)
 	{
+		$this->phpbb_branch = $phpbb_branch;
 		$this->default_style = $default_style;
-		$this->phpbb_version = $phpbb_version;
 	}
 
 	/**

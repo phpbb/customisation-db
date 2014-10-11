@@ -135,7 +135,7 @@ class contribution extends base
 		}
 
 		$this->display->assign_global_vars();
-		$demo = new \titania_styles_demo($this->contrib->contrib_id, $branch);
+		$demo = new \titania_styles_demo($branch, $this->contrib->contrib_id);
 		$demo->load_styles();
 		$demo->assign_details();
 
