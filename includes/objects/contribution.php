@@ -612,24 +612,27 @@ class titania_contribution extends titania_message_object
 				));
 			}
 
-			if ($this->contrib_type == TITANIA_TYPE_BBCODE)
+			if ($this->contrib_type == TITANIA_TYPE_BBCODE && !empty($this->download))
 			{
+				$download = reset($this->download);
+				$demo_output = $download['revision_bbc_demo'];
 				$demo_rendered = false;
-				if (isset($this->download['revision_status']) && $this->download['revision_status'] == TITANIA_REVISION_APPROVED && !empty($this->download['revision_bbc_demo']))
+
+				if ($download['revision_status'] == TITANIA_REVISION_APPROVED && !empty($demo_output))
 				{
 					titania::_include('tools/bbcode_demo', false, 'titania_bbcode_demo');
 
-					$demo = new titania_bbcode_demo($this->contrib_id, $this->download['revision_bbc_bbcode_usage'], $this->download['revision_bbc_html_replace']);
-					$this->download['revision_bbc_demo'] = $demo->get_demo($this->download['revision_bbc_demo']);
+					$demo = new titania_bbcode_demo($this->contrib_id, $download['revision_bbc_bbcode_usage'], $download['revision_bbc_html_replace']);
+					$demo_output = $demo->get_demo($demo_output);
 					unset($demo);
 					$demo_rendered = true;
 				}
 
 				$vars = array_merge($vars, array(
-					'CONTRIB_BBC_HTML_REPLACEMENT'	=> (isset($this->download['revision_bbc_html_replace'])) ? $this->download['revision_bbc_html_replace']: '',
-					'CONTRIB_BBC_BBCODE_USAGE'		=> (isset($this->download['revision_bbc_bbcode_usage'])) ? $this->download['revision_bbc_bbcode_usage'] : '',
-					'CONTRIB_BBC_HELPLINE'			=> (isset($this->download['revision_bbc_help_line'])) ? $this->download['revision_bbc_help_line'] : '',
-					'CONTRIB_BBC_DEMO'				=> (isset($this->download['revision_bbc_demo'])) ? $this->download['revision_bbc_demo'] : '',
+					'CONTRIB_BBC_HTML_REPLACEMENT'	=> (isset($download['revision_bbc_html_replace'])) ? $download['revision_bbc_html_replace']: '',
+					'CONTRIB_BBC_BBCODE_USAGE'		=> (isset($download['revision_bbc_bbcode_usage'])) ? $download['revision_bbc_bbcode_usage'] : '',
+					'CONTRIB_BBC_HELPLINE'			=> (isset($download['revision_bbc_help_line'])) ? $download['revision_bbc_help_line'] : '',
+					'CONTRIB_BBC_DEMO'				=> $demo_output,
 					'S_CONTRIB_BBC_DEMO_RENDERED'	=> $demo_rendered,
 				));
 			}
@@ -1007,28 +1010,42 @@ class titania_contribution extends titania_message_object
 			{
 				return;
 			}
-			$phpbb_version = $this->revisions[$this->download['revision_id']]['phpbb_versions'][0];
+			$releases = '';
+			$branch_names = $this->type->get_allowed_branches(true, false);
+
+			foreach ($this->download as $download)
+			{
+				$phpbb_version = $this->revisions[$download['revision_id']]['phpbb_versions'][0];
+				$u_download = $this->controller_helper->route('phpbb.titania.download', array(
+					'id' => $download['attachment_id'],
+				));
+
+				$releases .= phpbb::$user->lang(
+					$this->type->create_public . '_REVISION',
+					$branch_names[$phpbb_version['phpbb_version_branch']],
+					$download['revision_version'],
+					$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision'],
+					$download['real_filename'],
+					$download['filesize'],
+					$u_download
+				);
+			}
+
 
 			$contrib_description = $this->contrib_desc;
 			titania_decode_message($contrib_description, $this->contrib_desc_uid);
 
-			$u_download = $this->controller_helper->route('phpbb.titania.download', array(
-				'id' => $this->download['attachment_id']
-			));
 
 			// Global body and options
-			$body = sprintf(phpbb::$user->lang[$this->type->create_public],
+			$body = phpbb::$user->lang(
+				$this->type->create_public,
 				$this->contrib_name,
 				$this->path_helper->strip_url_params($this->author->get_url(), 'sid'),
 				users_overlord::get_user($this->author->user_id, '_username'),
 				$contrib_description,
-				$this->download['revision_version'],
-				$this->path_helper->strip_url_params($u_download, 'sid'),
-				$this->download['real_filename'],
-				$this->download['filesize'],
+				$releases,
 				$this->path_helper->strip_url_params($this->get_url(), 'sid'),
-				$this->path_helper->strip_url_params($this->get_url('support'), 'sid'),
-				$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision']
+				$this->path_helper->strip_url_params($this->get_url('support'), 'sid')
 			);
 
 			$options = array(
