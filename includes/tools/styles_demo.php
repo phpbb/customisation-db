@@ -237,12 +237,19 @@ class titania_styles_demo
 		if (isset($this->styles[$sibling]['contrib_demo']))
 		{
 			$style = new titania_contribution();
-			$style->contrib_name_clean = $this->styles[$sibling]['contrib_name_clean'];
-			$style->contrib_type = TITANIA_TYPE_STYLE;
-						
-			return array('url' => $style->get_url('demo'), 'id' => $this->styles[$sibling]['contrib_id']);
+			$style->set_type(TITANIA_TYPE_STYLE);
+			$style->__set_array(array(
+				'contrib_name_clean'	=> $this->styles[$sibling]['contrib_name_clean'],
+				'contrib_demo'			=> $this->styles[$sibling]['contrib_demo'],
+			));
+			$style->options = array('demo' => true);
+
+			return array(
+				'url'	=> $style->get_demo_url($this->phpbb_branch, true),
+				'id'	=> $this->styles[$sibling]['contrib_id'],
+			);
 		}
-		
+
 		return false;
 	}
 
@@ -271,6 +278,7 @@ class titania_styles_demo
 		$category = '';
 		$style = new titania_contribution();
 		$style->set_type(TITANIA_TYPE_STYLE);
+		$style->options = array('demo' => true);
 		$file = new titania_attachment(TITANIA_CONTRIB);
 
 		foreach ($this->styles as $id => $data)
@@ -314,13 +322,13 @@ class titania_styles_demo
 				'AUTHORS'		=> $authors,
 				'CATEGORY'		=> ($category != $data['category_name']) ? $data['category_name'] : false,
 				'ID'			=> $id,
-				'IFRAME'		=> $style->get_demo_url($this->phpbb_version),
+				'IFRAME'		=> $style->get_demo_url($this->phpbb_branch),
 				'LICENSE'		=> ($data['revision_license']) ? $data['revision_license'] : phpbb::$user->lang['UNKNOWN'],
 				'NAME'			=> $data['contrib_name'],
 				'PHPBB_VERSION'	=> $phpbb_version,
 				'PREVIEW'		=> $preview_img,
 				'S_OUTDATED'	=> phpbb_version_compare($phpbb_version, $current_phpbb_version, '<'),
-				'U_DEMO'		=> $style->get_url('demo'),
+				'U_DEMO'		=> $style->get_demo_url($this->phpbb_branch, true),
 				'U_DOWNLOAD'	=> $file->get_url($data['attachment_id']),
 				'U_VIEW'		=> $style->get_url(),
 			);
