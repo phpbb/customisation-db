@@ -1010,42 +1010,28 @@ class titania_contribution extends titania_message_object
 			{
 				return;
 			}
-			$releases = '';
-			$branch_names = $this->type->get_allowed_branches(true, false);
-
-			foreach ($this->download as $download)
-			{
-				$phpbb_version = $this->revisions[$download['revision_id']]['phpbb_versions'][0];
-				$u_download = $this->controller_helper->route('phpbb.titania.download', array(
-					'id' => $download['attachment_id'],
-				));
-
-				$releases .= phpbb::$user->lang(
-					$this->type->create_public . '_REVISION',
-					$branch_names[$phpbb_version['phpbb_version_branch']],
-					$download['revision_version'],
-					$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision'],
-					$download['real_filename'],
-					$download['filesize'],
-					$u_download
-				);
-			}
-
+			$phpbb_version = $this->revisions[$this->download['revision_id']]['phpbb_versions'][0];
 
 			$contrib_description = $this->contrib_desc;
 			titania_decode_message($contrib_description, $this->contrib_desc_uid);
 
+			$u_download = $this->controller_helper->route('phpbb.titania.download', array(
+				'id' => $this->download['attachment_id']
+			));
 
 			// Global body and options
-			$body = phpbb::$user->lang(
-				$this->type->create_public,
+			$body = sprintf(phpbb::$user->lang[$this->type->create_public],
 				$this->contrib_name,
 				$this->path_helper->strip_url_params($this->author->get_url(), 'sid'),
 				users_overlord::get_user($this->author->user_id, '_username'),
 				$contrib_description,
-				$releases,
+				$this->download['revision_version'],
+				$this->path_helper->strip_url_params($u_download, 'sid'),
+				$this->download['real_filename'],
+				$this->download['filesize'],
 				$this->path_helper->strip_url_params($this->get_url(), 'sid'),
-				$this->path_helper->strip_url_params($this->get_url('support'), 'sid')
+				$this->path_helper->strip_url_params($this->get_url('support'), 'sid'),
+				$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision']
 			);
 
 			$options = array(
