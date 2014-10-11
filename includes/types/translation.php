@@ -137,21 +137,26 @@ class titania_type_translation extends titania_type_base
 
 	public function translation_validate(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package)
 	{
-		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
-		$validation_tools = new translation_validation($contrib_tools->original_zip, $new_dir_name);
-
 		if (empty($revision->phpbb_versions))
 		{
 			$revision->load_phpbb_versions();
 		}
 
 		$version = $revision->phpbb_versions[0];
+
+		if ($version['phpbb_version_branch'] != 30)
+		{
+			return array();
+		}
 		// If the revision is on hold, it's being submitted for a future version.
 		if ($revision->revision_status == TITANIA_REVISION_ON_HOLD)
 		{
 			$version['phpbb_version_revision'] = titania::$config->prerelease_phpbb_version[$version['phpbb_version_branch']];
 		}
 		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
+
+		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
+		$validation_tools = new translation_validation($contrib_tools->original_zip, $new_dir_name);
 
 		$reference_filepath = $validation_tools->automod_phpbb_files($version_string); // path to files against which we will validate the package
 		$errors = $validation_tools->check_package($reference_filepath);
