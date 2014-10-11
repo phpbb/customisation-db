@@ -845,7 +845,7 @@ class titania_contribution extends titania_message_object
 				'PHPBB_VERSION'	=> $vendor_version,
 				'INSTALL_LEVEL'	=> $install_level,
 				'INSTALL_TIME'	=> $install_time,
-				'U_DOWNLOAD'	=> $file->get_url($download['attachment_id']),
+				'U_DOWNLOAD'	=> ($download['attachment_id']) ? $file->get_url($download['attachment_id']) : '',
 				'U_COLORIZEIT'	=> $u_colorizeit,
 			));
 		}
