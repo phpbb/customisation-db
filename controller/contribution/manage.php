@@ -67,16 +67,22 @@ class manage extends base
 		$this->settings = array(
 			'permalink'			=> $this->request->variable('permalink', $this->contrib->contrib_name_clean, true),
 			'status'			=> $this->request->variable('contrib_status', (int) $this->contrib->contrib_status),
-			'categories'		=> $this->request->variable('contrib_category', array(0)),
-			'demo'				=> $this->request->variable('demo_url', '', true),
+			'categories'		=> $old_settings['categories'],
+			'demo'				=> array(),
 			'coauthors'			=> array(
 				'active'		=> $this->request->variable('active_coauthors', '', true),
 				'nonactive'		=> $this->request->variable('nonactive_coauthors', '', true),
 			),
 			'new_author'		=> $this->request->variable('change_owner', '', true),
-			'limited_support'	=> $this->request->variable('limited_support', false),
-			'custom'			=> $this->request->variable('custom', array('' => ''), true),
+			'limited_support'	=> $this->request->variable('limited_support', (bool) $this->contrib->contrib_limited_support),
 		);
+		$this->settings['custom'] = $this->contrib->get_custom_fields();
+
+		foreach ($this->contrib->type->get_allowed_branches(true) as $branch => $name)
+		{
+			$this->settings['demo'][$branch] = $this->contrib->get_demo_url($branch);
+		}
+
 		$this->load_message();
 		$this->load_screenshot();
 
@@ -86,9 +92,23 @@ class manage extends base
 
 		if ($preview || $submit || $this->screenshot->uploaded)
 		{
+			$this->settings += array(
+				'categories'		=> $this->request->variable('contrib_category', array(0)),
+				'custom'			=> $this->request->variable('custom_fields', array('' => ''), true),
+			);
+			$demos = $this->request->variable('demo', array(0 => ''));
+
+			foreach ($this->contrib->type->get_allowed_branches(true) as $branch => $name)
+			{
+				if (isset($demos[$branch]))
+				{
+					$this->settings['demo'][$branch] = $demos[$branch];
+				}
+			}
+
 			$this->contrib->post_data($this->message);
 			$this->contrib->__set_array(array(
-				'contrib_demo'				=> ($this->can_edit_demo) ? $this->settings['demo'] : $this->contrib->contrib_demo,
+				'contrib_demo'				=> ($this->can_edit_demo) ? json_encode($this->settings['demo']) : $this->contrib->contrib_demo,
 				'contrib_limited_support'	=> $this->settings['limited_support'], 
 			));
 		}
@@ -137,6 +157,7 @@ class manage extends base
 			$error = array_merge($error, $this->contrib->validate(
 				$this->settings['categories'],
 				$authors,
+				$this->settings['custom'],
 				$this->contrib->contrib_name_clean
 			));
 
@@ -383,6 +404,9 @@ class manage extends base
 			$this->create_change_report($old_settings);
 		}
 
+		// Set custom field values.
+		$this->contrib->set_custom_fields($this->settings['custom']);
+
 		// Create relations
 		$this->contrib->put_contrib_in_categories($this->settings['categories']);
 		// Submit the changes
@@ -458,6 +482,21 @@ class manage extends base
 			));
 		}
 
+		$this->display->generate_custom_fields(
+			$this->contrib->type->contribution_fields,
+			$this->settings['custom'],
+			$this->contrib->type->id
+		);
+
+		foreach ($this->settings['demo'] as $branch => $demo_url)
+		{
+			$this->template->assign_block_vars('demo', array(
+				'BRANCH'	=> $branch,
+				'URL'		=> $demo_url,
+				'NAME'		=> $this->ext_config->phpbb_versions[$branch]['name'],
+			));
+		}
+
 		$coauthors = $this->get_coauthor_usernames();
 
 		$this->template->assign_vars(array(
@@ -467,7 +506,7 @@ class manage extends base
 			'S_DELETE_CONTRIBUTION'		=> $this->check_auth('delete'),
 			'S_IS_OWNER'				=> $this->contrib->is_author,
 			'S_IS_MODERATOR'			=> $this->is_moderator,
-			'S_CAN_EDIT_STYLE_DEMO'		=> $this->can_edit_demo,
+			'S_CAN_EDIT_DEMO'			=> $this->can_edit_demo,
 			'S_CAN_EDIT_CONTRIB'		=> $this->auth->acl_get('u_titania_contrib_submit'),
 			'S_LIMITED_SUPPORT'			=> $this->settings['limited_support'],
 

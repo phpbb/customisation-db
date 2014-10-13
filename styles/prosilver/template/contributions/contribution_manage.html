@@ -116,11 +116,15 @@
 						<textarea class="inputbox" name="nonactive_coauthors" id="nonactive_coauthors" rows="2" cols="20">{NONACTIVE_COAUTHORS}</textarea>
 					</dd>
 				</dl>
-				<!-- IF S_CAN_EDIT_STYLE_DEMO or S_CREATE-->
-				<dl id="demo_url_container">
+				<!-- IF S_CAN_EDIT_DEMO -->
+				<dl>
 					<dt><label for="demo_url">{L_DEMO_URL}:</label><br /><span>{L_DEMO_URL_EXPLAIN}</span></dt>
 					<dd>
-						<input class="inputbox" type="text" name="demo_url" id="demo_url" value="{U_VIEW_DEMO}" />
+						<!-- BEGIN demo -->
+							<label for="demo_url_{demo.BRANCH}">{demo.NAME}</label>
+							<input class="inputbox" type="text" name="demo[{demo.BRANCH}]" id="demo_url_{demo.BRANCH}" value="{demo.URL}" />
+							<!-- IF not demo.S_LAST_ROW --><hr class="dashed" /><!-- ENDIF -->
+						<!-- END demo -->
 					</dd>
 				</dl>
 				<!-- ENDIF -->

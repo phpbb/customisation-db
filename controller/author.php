@@ -338,14 +338,12 @@ class author
 		$message = $this->setup_message($contrib);
 		$submit = $this->request->is_set_post('submit');
 		$preview = $this->request->is_set_post('preview');
-		$can_edit_demo = true;
 		$error = array();
 
 		$settings = array(
 			'type'					=> $this->request->variable('contrib_type', 0),
 			'permalink'				=> $this->request->variable('permalink', '', true),
 			'categories'			=> $this->request->variable('contrib_category', array(0)),
-			'demo'					=> $this->request->variable('demo_url', '', true),
 			'coauthors'				=> array(
 				'active'			=> $this->request->variable('active_coauthors', '', true),
 				'nonactive'			=> $this->request->variable('nonactive_coauthors', '', true),
@@ -361,15 +359,6 @@ class author
 				'contrib_name_clean'	=> $settings['permalink'],
 				'contrib_visible'		=> 1,
 			));
-
-			$can_edit_demo = $this->ext_config->can_modify_style_demo_url ||
-				$contrib->contrib_type != TITANIA_TYPE_STYLE ||
-				\titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate');
-
-			if ($can_edit_demo)
-			{
-				$contrib->contrib_demo = $settings['demo'];
-			}
 		}
 
 		if ($preview)
@@ -424,7 +413,6 @@ class author
 		$this->template->assign_vars(array(
 			'S_POST_ACTION'			=> $this->author->get_url('create'),
 			'S_CREATE'				=> true,
-			'S_CAN_EDIT_STYLE_DEMO'	=> $can_edit_demo,
 			'S_CAN_EDIT_CONTRIB'	=> $this->auth->acl_get('u_titania_contrib_submit'),
 
 			'CONTRIB_PERMALINK'		=> $settings['permalink'],

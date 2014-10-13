@@ -845,7 +845,7 @@ class titania_contribution extends titania_message_object
 				'PHPBB_VERSION'	=> $vendor_version,
 				'INSTALL_LEVEL'	=> $install_level,
 				'INSTALL_TIME'	=> $install_time,
-				'U_DOWNLOAD'	=> $file->get_url($download['attachment_id']),
+				'U_DOWNLOAD'	=> ($download['attachment_id']) ? $file->get_url($download['attachment_id']) : '',
 				'U_COLORIZEIT'	=> $u_colorizeit,
 			));
 		}
@@ -1401,9 +1401,18 @@ class titania_contribution extends titania_message_object
 			$error[] = phpbb::$user->lang('CONTRIB_CHANGE_OWNER_NOT_FOUND', key($authors['missing']['new_author']));
 		}
 
-		if ($this->contrib_demo !== '' && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]{2,4}#i', $this->contrib_demo))
+		if ($this->contrib_demo !== '')
 		{
-			$error[] = phpbb::$user->lang('FIELD_INVALID_URL', phpbb::$user->lang['CONTRIB_DEMO']);
+			$demos = json_decode($this->contrib_demo, true);
+
+			foreach ($demos as $url)
+			{
+				if ($url !== '' && !preg_match('#^http[s]?://(.*?\.)*?[a-z0-9\-]{2,4}#i', $url))
+				{
+					$error[] = phpbb::$user->lang('FIELD_INVALID_URL', phpbb::$user->lang['CONTRIB_DEMO']);
+					break;
+				}
+			}
 		}
 
 		// Hooks
