@@ -1472,10 +1472,10 @@ class titania_contribution extends titania_message_object
 			FROM ' . $this->sql_table . "
 			WHERE contrib_name_clean = '" . phpbb::$db->sql_escape($permalink) . "'";
 		$result = phpbb::$db->sql_query($sql);
-		$found = !empty(phpbb::$db->sql_fetchfield('contrib_id'));
+		$contrib_id = phpbb::$db->sql_fetchfield('contrib_id');
 		phpbb::$db->sql_freeresult($result);
 
-		return $found;
+		return !empty($contrib_id);
 	}
 
 	/**
