@@ -128,18 +128,18 @@ class base
 						'u_titania_mod_faq_mod',
 						'u_titania_mod_post_mod'
 					) ||
-					!empty(\titania_types::find_authed('moderate')),
+					\titania_types::find_authed('moderate'),
 				'count'		=> $this->get_open_attention_count(),
 			),
 			'queue' => array(
 				'title'		=> 'VALIDATION_QUEUE',
 				'url'		=> $this->helper->route('phpbb.titania.queue'),
-				'auth'		=> !empty(\titania_types::find_authed('view')) && $this->ext_config->use_queue,
+				'auth'		=> \titania_types::find_authed('view') && $this->ext_config->use_queue,
 			),
 			'queue_discussion' => array(
 				'title'		=> 'QUEUE_DISCUSSION',
 				'url'		=> $this->helper->route('phpbb.titania.queue_discussion'),
-				'auth'		=> !empty(\titania_types::find_authed('queue_discussion')) && $this->ext_config->use_queue,
+				'auth'		=> \titania_types::find_authed('queue_discussion') && $this->ext_config->use_queue,
 			),
 			'administration' => array(
 				'title'		=> 'ADMINISTRATION',

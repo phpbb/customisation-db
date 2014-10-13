@@ -158,7 +158,7 @@ class author
 			'support' => array(
 				'title'		=> 'AUTHOR_SUPPORT',
 				'url'		=> $this->author->get_url('support'),
-				'auth'		=> $this->is_owner && !empty($this->cache->get_author_contribs($this->author->user_id, $this->user)),
+				'auth'		=> $this->is_owner && $this->cache->get_author_contribs($this->author->user_id, $this->user),
 			),
 			'create' => array(
 				'title'		=> 'NEW_CONTRIBUTION',

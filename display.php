@@ -68,8 +68,9 @@ class display
 				'page'		=> 'contributions',
 			));
 		}
+		$manageable_types = \titania_types::find_authed();
 
-		if (!empty(\titania_types::find_authed()) || $this->auth->acl_get('u_titania_mod_contrib_mod') || $this->auth->acl_get('u_titania_mod_post_mod'))
+		if (!empty($manageable_types) || $this->auth->acl_get('u_titania_mod_contrib_mod') || $this->auth->acl_get('u_titania_mod_post_mod'))
 		{
 			$u_manage = $this->controller_helper->route('phpbb.titania.manage');
 		}
