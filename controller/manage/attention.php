@@ -293,6 +293,6 @@ class attention extends base
 			'u_titania_mod_contrib_mod',
 			'u_titania_mod_post_mod'
 		) ||
-		!empty(\titania_types::find_authed('moderate'));
+		\titania_types::find_authed('moderate');
 	}
 }
