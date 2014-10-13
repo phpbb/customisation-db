@@ -331,6 +331,9 @@ class item extends \phpbb\titania\controller\manage\base
 		if ($this->validate('approve'))
 		{
 			$this->queue->approve('');
+
+			// Reload contribution with new data.
+			$this->contrib->load();
 			$this->contrib->type->approve($this->contrib, $this->queue);
 			$this->cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
 			redirect($this->queue->get_url());
