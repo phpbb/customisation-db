@@ -39,8 +39,13 @@ $config = array(
 	/**
 	* IDs of database forum
 	*/
-	'forum_mod_database' => 69,
-	'forum_style_database' => 73,
+	'forum_mod_database'	=> array(
+		'30'	=> 69,
+	),
+	'forum_style_database'	=> array(
+		'30'	=> 73,
+		'31'	=> 0,
+	),
 
 	/**
 	* IDs of account used for topic/post release in database forum
