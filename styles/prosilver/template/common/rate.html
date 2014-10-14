@@ -2,15 +2,15 @@
 <!-- BEGIN stars -->
 	<li><!-- IF S_CAN_RATE --><a href="{stars.RATE_URL}"><!-- ENDIF --><img id="rating_{OBJECT_ID}_{stars.ID}" alt="{stars.ALT}" title="{stars.ALT}"
 	<!-- IF S_HAS_RATED && stars.ID <= OBJECT_RATING -->
-		class="green" src="{UA_GREEN_STAR_SRC}"
+		class="green" src="{T_TITANIA_THEME_PATH}/images/star_green.gif"
 	<!-- ELSEIF not S_HAS_RATED && stars.ID <= OBJECT_RATING -->
-		class="orange" src="{UA_ORANGE_STAR_SRC}"
+		class="orange" src="{T_TITANIA_THEME_PATH}/images/star_orange.gif"
 	<!-- ELSE -->
-		class="grey" src="{UA_GREY_STAR_SRC}"
+		class="grey" src="{T_TITANIA_THEME_PATH}/images/star_grey.gif"
 	<!-- ENDIF -->
 	/><!-- IF S_CAN_RATE --></a><!-- ENDIF --></li>
 <!-- END stars -->
-	<li<!-- IF not S_HAS_RATED --> class="hidden"<!-- ENDIF -->><a href="{RATE_URL}">
-		<img id="remove_{OBJECT_ID}" class="remove" src="{UA_REMOVE_STAR_SRC}" alt="{L_REMOVE_RATING}" title="{L_REMOVE_RATING}" />
+	<li<!-- IF not S_HAS_RATED --> style="display: none;"<!-- ENDIF -->><a href="{RATE_URL}">
+		<img id="remove_{OBJECT_ID}" class="remove" src="{T_TITANIA_THEME_PATH}/images/star_remove.gif" alt="{L_REMOVE_RATING}" title="{L_REMOVE_RATING}" />
 	</a></li>
 </ul>
