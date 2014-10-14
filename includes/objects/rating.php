@@ -224,11 +224,6 @@ class titania_rating extends titania_database_object
 			'S_HAS_RATED'			=> ($this->rating_id) ? true : false,
 			'S_CAN_RATE'			=> $can_rate,
 
-			'UA_GREY_STAR_SRC'		=> titania::$theme_path . '/images/star_grey.gif',
-			'UA_GREEN_STAR_SRC'		=> titania::$theme_path . '/images/star_green.gif',
-			'UA_RED_STAR_SRC'		=> titania::$theme_path . '/images/star_red.gif',
-			'UA_ORANGE_STAR_SRC'	=> titania::$theme_path . '/images/star_orange.gif',
-			'UA_REMOVE_STAR_SRC'	=> titania::$theme_path . '/images/star_remove.gif',
 			'UA_MAX_RATING'			=> titania::$config->max_rating,
 		));
 
