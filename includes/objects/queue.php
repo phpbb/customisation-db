@@ -401,7 +401,10 @@ class titania_queue extends titania_message_object
 			return false;
 		}
 		$revision->contrib = $contrib;
-		$contrib_release_topic_id = $contrib->contrib_release_topic_id;
+		$revision->load_phpbb_versions();
+		$branch = (int) $revision->phpbb_versions[0]['phpbb_version_branch'];
+
+		$contrib_release_topic_id = $contrib->get_release_topic_id($branch);
 
 		$notes = $this->validation_notes;
 		titania_decode_message($notes, $this->validation_notes_uid);
@@ -419,8 +422,6 @@ class titania_queue extends titania_message_object
 		// Add support for version that has just been released
 		if ($revision->revision_status == TITANIA_REVISION_ON_HOLD)
 		{
-			$revision->load_phpbb_versions();
-			$branch = $revision->phpbb_versions[0]['phpbb_version_branch'];
 			$revision->phpbb_versions = array();
 			$revision->phpbb_versions[] = array('phpbb_version_branch' => $branch, 'phpbb_version_revision' => titania::$config->prerelease_phpbb_version[$branch]);
 		}
@@ -430,17 +431,17 @@ class titania_queue extends titania_message_object
 		$revision->submit();
 
 		// Reply to the release topic
-		if ($contrib_release_topic_id && titania_types::$types[$contrib->contrib_type]->update_public)
+		if ($contrib_release_topic_id && $contrib->type->update_public)
 		{
 			// Replying to an already existing topic, use the update message
-			$public_notes = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public], $revision->revision_version) . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->update_public . '_NOTES'], $public_notes) : '');
-			$contrib->reply_release_topic($public_notes);
+			$public_notes = sprintf(phpbb::$user->lang[$contrib->type->update_public], $revision->revision_version) . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->update_public . '_NOTES'], $public_notes) : '');
+			$contrib->reply_release_topic($branch, $public_notes);
 		}
-		elseif (!$contrib_release_topic_id && titania_types::$types[$contrib->contrib_type]->reply_public)
+		elseif (!$contrib_release_topic_id && $contrib->type->reply_public)
 		{
 			// Replying to a topic that was just made, use the reply message
-			$public_notes = phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->reply_public . '_NOTES'], $public_notes) : '');
-			$contrib->reply_release_topic($public_notes);
+			$public_notes = phpbb::$user->lang[$contrib->type->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->reply_public . '_NOTES'], $public_notes) : '');
+			$contrib->reply_release_topic($branch, $public_notes);
 		}
 
 		// Self-updating
@@ -541,18 +542,18 @@ class titania_queue extends titania_message_object
 		$revision->load();
 
 		// Subject
-		$subject = sprintf(phpbb::$user->lang[titania_types::$types[$contrib->contrib_type]->validation_subject], $contrib->contrib_name, $revision->revision_version);
+		$subject = sprintf(phpbb::$user->lang[$contrib->type->validation_subject], $contrib->contrib_name, $revision->revision_version);
 
 		// Message
 		$notes = $this->validation_notes;
 		titania_decode_message($notes, $this->validation_notes_uid);
 		if ($approve)
 		{
-			$message = titania_types::$types[$contrib->contrib_type]->validation_message_approve;
+			$message = $contrib->type->validation_message_approve;
 		}
 		else
 		{
-			$message = titania_types::$types[$contrib->contrib_type]->validation_message_deny;
+			$message = $contrib->type->validation_message_deny;
 		}
 		$message = sprintf(phpbb::$user->lang[$message], $notes);
 

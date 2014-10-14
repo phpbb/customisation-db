@@ -144,7 +144,7 @@ class titania_contribution extends titania_message_object
 			// Last time the contrib item was updated (created or added a new revision, etc).  Used for tracking
 			'contrib_last_update'			=> array('default' => titania::$time),
 
-			'contrib_release_topic_id'		=> array('default' => 0),
+			'contrib_release_topic_id'		=> array('default' => ''),
 
 			// Number of FAQ items (titania_count format)
 			'contrib_faq_count'				=> array('default' => ''),
@@ -1010,74 +1010,120 @@ class titania_contribution extends titania_message_object
 			{
 				return;
 			}
-			$phpbb_version = $this->revisions[$this->download['revision_id']]['phpbb_versions'][0];
 
 			$contrib_description = $this->contrib_desc;
 			titania_decode_message($contrib_description, $this->contrib_desc_uid);
 
-			$u_download = $this->controller_helper->route('phpbb.titania.download', array(
-				'id' => $this->download['attachment_id']
-			));
-
-			// Global body and options
-			$body = sprintf(phpbb::$user->lang[$this->type->create_public],
-				$this->contrib_name,
-				$this->path_helper->strip_url_params($this->author->get_url(), 'sid'),
-				users_overlord::get_user($this->author->user_id, '_username'),
-				$contrib_description,
-				$this->download['revision_version'],
-				$this->path_helper->strip_url_params($u_download, 'sid'),
-				$this->download['real_filename'],
-				$this->download['filesize'],
-				$this->path_helper->strip_url_params($this->get_url(), 'sid'),
-				$this->path_helper->strip_url_params($this->get_url('support'), 'sid'),
-				$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision']
-			);
-
-			$options = array(
-				'poster_id'		=> $this->type->forum_robot,
-				'forum_id' 		=> $this->type->forum_database,
-			);
-
-			if ($this->contrib_release_topic_id)
+			foreach ($this->download as $download)
 			{
-				// We edit the first post of contrib release topic
-				$options_edit = array(
-					'topic_id'				=> $this->contrib_release_topic_id,
-					'topic_title'			=> $this->contrib_name,
-					'post_text'				=> $body,
-				);
-				$options_edit = array_merge($options_edit, $options);
-				phpbb_posting('edit_first_post', $options_edit);
-			}
-			else
-			{
-				// We create a new topic in database
-				$options_post = array(
-					'topic_title'			=> $this->contrib_name,
-					'post_text'				=> $body,
-					//'topic_status'			=> (titania::$config->support_in_titania) ? ITEM_LOCKED : ITEM_UNLOCKED,
-				);
-				$options_post = array_merge($options_post, $options);
-				$this->contrib_release_topic_id = phpbb_posting('post', $options_post);
+				$phpbb_version = $this->revisions[$download['revision_id']]['phpbb_versions'][0];
+				$branch = (int) $phpbb_version['phpbb_version_branch'];
 
-				$sql = 'UPDATE ' . $this->sql_table . '
-					SET contrib_release_topic_id = ' . $this->contrib_release_topic_id . '
-					WHERE contrib_id = ' . $this->contrib_id;
-				phpbb::$db->sql_query($sql);
+				if (empty($this->type->forum_database[$branch]))
+				{
+					continue;
+				}
+
+				$u_download = $this->controller_helper->route('phpbb.titania.download', array(
+					'id' => $download['attachment_id']
+				));
+
+				// Global body and options
+				$body = phpbb::$user->lang($this->type->create_public,
+					$this->contrib_name,
+					$this->path_helper->strip_url_params($this->author->get_url(), 'sid'),
+					users_overlord::get_user($this->author->user_id, '_username'),
+					$contrib_description,
+					$download['revision_version'],
+					$this->path_helper->strip_url_params($u_download, 'sid'),
+					$download['real_filename'],
+					$download['filesize'],
+					$this->path_helper->strip_url_params($this->get_url(), 'sid'),
+					$this->path_helper->strip_url_params($this->get_url('support'), 'sid'),
+					$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision']
+				);
+
+				$options = array(
+					'poster_id'		=> $this->type->forum_robot,
+					'forum_id' 		=> $this->type->forum_database[$branch],
+				);
+				$release_topic_id = (int) $this->get_release_topic_id($branch);
+
+				if ($release_topic_id)
+				{
+					// We edit the first post of contrib release topic
+					$options_edit = array(
+						'topic_id'				=> $release_topic_id,
+						'topic_title'			=> $this->contrib_name,
+						'post_text'				=> $body,
+					);
+					$options_edit = array_merge($options_edit, $options);
+					phpbb_posting('edit_first_post', $options_edit);
+				}
+				else
+				{
+					// We create a new topic in database
+					$options_post = array(
+						'topic_title'			=> $this->contrib_name,
+						'post_text'				=> $body,
+						//'topic_status'			=> (titania::$config->support_in_titania) ? ITEM_LOCKED : ITEM_UNLOCKED,
+					);
+					$options_post = array_merge($options_post, $options);
+					$release_topic_id = phpbb_posting('post', $options_post);
+					$this->set_release_topic_id($branch, $release_topic_id);
+				}
 			}
 		}
 	}
 
 	/**
+	* Get release topic id for a particular branch.
+	*
+	* @param int $branch		30|31 .. etc.
+	* @return int
+	*/
+	public function get_release_topic_id($branch)
+	{
+		if (empty($this->contrib_release_topic_id))
+		{
+			return 0;
+		}
+		$topics = json_decode($this->contrib_release_topic_id, true);
+
+		return (isset($topics[$branch])) ? (int) $topics[$branch] : 0;
+	}
+
+	/**
+	* Set release topic id for a particular branch.
+	*
+	* @param int $branch		30|31 .. etc.
+	* @return null
+	*/
+	public function set_release_topic_id($branch, $topic_id)
+	{
+		$topics = (empty($this->contrib_release_topic_id)) ? array() : json_decode($this->contrib_release_topic_id, true);
+		$topics[(int) $branch] = (int) $topic_id;
+		$topics = json_encode($topics);
+
+		$sql = 'UPDATE ' . $this->sql_table . '
+			SET contrib_release_topic_id = "' . phpbb::$db->sql_escape($topics) . '"
+			WHERE contrib_id = ' . (int) $this->contrib_id;
+		phpbb::$db->sql_query($sql);
+		$this->__set('contrib_release_topic_id', $topics);
+	}
+
+	/**
 	* Reply to the release topic
 	*
+	* @param int $branch	Specific branch release topic to reply to
 	* @param string $reply Message to reply to the topic with
 	* @param array $options Any additional options for the reply
 	*/
-	public function reply_release_topic($reply, $options = array())
+	public function reply_release_topic($branch, $reply, $options = array())
 	{
-		if (!$this->contrib_release_topic_id)
+		$release_topic_id = $this->get_release_topic_id($branch);
+
+		if (!$release_topic_id)
 		{
 			return;
 		}
@@ -1085,7 +1131,7 @@ class titania_contribution extends titania_message_object
 		titania::_include('functions_posting', 'phpbb_posting');
 
 		$options_reply = array_merge($options, array(
-			'topic_id'				=> $this->contrib_release_topic_id,
+			'topic_id'				=> $release_topic_id,
 			'topic_title'			=> 'Re: ' . $this->contrib_name,
 			'post_text'				=> $reply,
 		));
