@@ -73,11 +73,24 @@ class titania_config extends titania_object
 			'phpbbcom_viewprofile_url'	=> array('default' => 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
 
 			// Mod/style database release forums (receive announcements on updates/approval)
-			'forum_mod_database'		=> array('default' => 0),
-			'forum_style_database'		=> array('default' => 0),
-			'forum_converter_database'	=> array('default' => 0),
-			'forum_bbcode_database'		=> array('default' => 0),
-			'forum_extension_database'	=> array('default' => 0),
+			'forum_mod_database'		=> array('default' => array(
+				'30'	=> 0,
+			)),
+			'forum_style_database'		=> array('default' => array(
+				'30'	=> 0,
+				'31'	=> 0,
+			)),
+			'forum_converter_database'	=> array('default' => array(
+				'30'	=> 0,
+				'31'	=> 0
+			)),
+			'forum_bbcode_database'		=> array('default' => array(
+				'30'	=> 0,
+				'31'	=> 0,
+			)),
+			'forum_extension_database'	=> array('default' => array(
+				'31'	=> 0,
+			)),
 
 			// Accounts to use for posting in the forum
 			'forum_mod_robot'			=> array('default' => 0),
