@@ -1,13 +1,13 @@
 phpbb.titania.contribution:
     resource: "routes/contribution.yml"
-    prefix: /db/{contrib_type}/{contrib}
+    prefix: /customise/db/{contrib_type}/{contrib}
     requirements:
         contrib_type: mod|extension|style|converter|official_tool|bbcode|bridge|translation
 
 phpbb.titania.manage:
     resource: "routes/manage.yml"
-    prefix: /db/manage
+    prefix: /customise/db/manage
 
 phpbb.titania.general:
     resource: "routes/general.yml"
-    prefix: /db
+    prefix: /customise/db
