@@ -82,7 +82,6 @@ class display
 			'T_TITANIA_TEMPLATE_PATH'	=> $style_path . 'template',
 			'T_TITANIA_THEME_PATH'		=> $style_path . 'theme',
 			'T_TITANIA_IMAGES_PATH'		=> $web_root_path . 'images',
-			'T_TITANIA_STYLESHEET'		=> $style_path . 'theme/stylesheet.css',
 			'T_TITANIA_ASSETS_PATH'		=> $web_root_path . 'ext/phpbb/titania/assets',
 			'TITANIA_ROOT_PATH'			=> $web_root_path,
 
