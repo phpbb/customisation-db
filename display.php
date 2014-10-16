@@ -75,7 +75,7 @@ class display
 			$u_manage = $this->controller_helper->route('phpbb.titania.manage');
 		}
 
-		$web_root_path = $this->path_helper->get_web_root_path();
+		$web_root_path = '/community/';
 		$style_path = $web_root_path . 'ext/phpbb/titania/styles/' . rawurlencode($this->user->style['style_path']) . '/';
 
 		$this->template->assign_vars(array(
