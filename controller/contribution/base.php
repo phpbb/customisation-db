@@ -143,7 +143,7 @@ class base
 			'demo'	=> array(
 				'title'		=> 'CONTRIB_DEMO',
 				'url'		=> '',
-				'auth'		=> $this->contrib->contrib_demo && $this->contrib->contrib_status == TITANIA_CONTRIB_APPROVED && $this->contrib->options['demo'],		
+				'auth'		=> !empty($this->contrib->contrib_demo),		
 			),
 			'manage' => array(
 				'title'		=> 'CONTRIB_MANAGE',
@@ -157,26 +157,36 @@ class base
 			$demo_menu = array();
 			$allowed_branches = $this->contrib->type->get_allowed_branches(true);
 			krsort($allowed_branches);
+			$is_external = $this->contrib->contrib_status != TITANIA_CONTRIB_APPROVED || !$this->contrib->options['demo'];
 
 			foreach ($allowed_branches as $branch => $name)
 			{
-				$demo_url = $this->contrib->get_demo_url($branch, true);
+				$demo_url = $this->contrib->get_demo_url(
+					$branch,
+					!$is_external
+				);
 
 				if ($demo_url)
 				{
 					$demo_menu[] = array(
-						'url'	=> $demo_url,
-						'title'	=> $name,
+						'url'		=> $demo_url,
+						'title'		=> $name,
+						'external'	=> $is_external,
 					);
 				}
 			}
 			if (sizeof($demo_menu) == 1)
 			{
 				$nav_ary['demo']['url'] = $demo_menu[0]['url'];
+				$nav_ary['demo']['external'] = $demo_menu[0]['external'];
+			}
+			else if (!empty($demo_menu))
+			{
+				$nav_ary['demo']['sub_menu'] = $demo_menu;
 			}
 			else
 			{
-				$nav_ary['demo']['sub_menu'] = $demo_menu;
+				unset($nav_ary['demo']);
 			}
 		}
 

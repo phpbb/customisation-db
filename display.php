@@ -142,6 +142,7 @@ class display
 					'L_TITLE'		=> $this->user->lang($data['title']) . $count_lang,
 					'U_TITLE'		=> $data['url'],
 					'S_SELECTED'	=> $page == $current_page || ((isset($data['match']) && in_array($current_page, $data['match']))),
+					'S_EXTERNAL'	=> !empty($data['external']),
 				));
 
 				if (!empty($data['sub_menu']))

@@ -24,7 +24,7 @@
 	<ul>
 	<!-- BEGIN nav_menu -->
 		<li class="tab dropdown-container<!-- IF nav_menu.S_SELECTED --> activetab<!-- ENDIF --><!-- IF nav_menu.sub_menu --> has-submenu<!-- ENDIF -->">
-			<a<!-- IF nav_menu.U_TITLE --> href="{nav_menu.U_TITLE}"<!-- ENDIF -->>
+			<a<!-- IF nav_menu.U_TITLE --> href="{nav_menu.U_TITLE}"<!-- ENDIF --><!-- IF nav_menu.S_EXTERNAL --> target="demo"<!-- ENDIF -->>
 				{nav_menu.L_TITLE}
 			</a>
 			<!-- IF nav_menu.sub_menu -->
@@ -32,7 +32,11 @@
 					<div class="pointer"><div class="pointer-inner"></div></div>
 					<ul class="dropdown-contents">
 						<!-- BEGIN nav_menu.sub_menu -->
-							<li><a href="{nav_menu.sub_menu.U_TITLE}">{nav_menu.sub_menu.L_TITLE}</a></li>
+							<li>
+								<a href="{nav_menu.sub_menu.U_TITLE}"<!-- IF nav_menu.S_EXTERNAL --> target="demo"<!-- ENDIF -->>
+									{nav_menu.sub_menu.L_TITLE}
+								</a>
+							</li>
 						<!-- END nav_menu.sub_menu -->
 					</ul>
 				</div>
