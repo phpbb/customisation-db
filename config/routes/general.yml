@@ -55,3 +55,9 @@ phpbb.titania.colorizeit:
 phpbb.titania.category:
     pattern: /{category1}/{category2}/{category3}
     defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '' }
+
+phpbb.titania.legacy:
+    pattern: /{path}
+    defaults: { _controller: phpbb.titania.controller.legacy_rerouter:redirect }
+    requirements:
+        path: .*

@@ -94,6 +94,11 @@ services:
             - @phpbb.titania.controller.helper
             - @phpbb.titania.config
 
+    phpbb.titania.controller.legacy_rerouter:
+        class: phpbb\titania\controller\legacy_rerouter
+        arguments:
+            - @phpbb.titania.controller.helper
+
     phpbb.titania.controller.contrib:
         class: phpbb\titania\controller\contribution\contribution
         arguments:
