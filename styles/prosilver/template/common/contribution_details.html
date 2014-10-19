@@ -14,7 +14,6 @@
 			<!-- ELSE -->
 				<div class="no-screenshot">{L_NO_SCREENSHOT}</div>
 			<!-- ENDIF -->
-			<!-- IF U_VIEW_DEMO and not S_INTEGRATE_DEMO --><a href="{U_VIEW_DEMO}">{L_VIEW_DEMO}</a><!-- ENDIF -->
 
 			{% for downloads in loops.downloads if downloads.U_DOWNLOAD %}
 				<div class="contrib-download<!-- IF downloads.U_COLORIZEIT --> has-colorizeit<!-- ENDIF -->">
@@ -139,9 +138,12 @@
 					<strong>{L_DOWNLOADS_TOTAL}</strong> {CONTRIB_DOWNLOADS}
 				</li>
 				<!-- ENDIF -->
-				<!-- IF CONTRIB_ANNOUNCEMENT_TOPIC -->
+				<!-- IF .announce_topic -->
 				<li>
-					<strong>{L_ANNOUNCEMENT_TOPIC}</strong> {CONTRIB_ANNOUNCEMENT_TOPIC}
+					<strong>{L_ANNOUNCEMENT_TOPIC}</strong>
+					<!-- BEGIN announce_topic -->
+						<a href="{announce_topic.URL}">{announce_topic.BRANCH}</a><!-- IF not announce_topic.S_LAST_ROW -->{L_COMMA_SEPARATOR}<!-- ENDIF -->
+					<!-- END announce_topic -->
 				</li>
 				<!-- ENDIF -->
 				<!-- IF CONTRIB_RATING_STRING -->
