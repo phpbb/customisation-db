@@ -58,6 +58,11 @@ function generate_category_select($selected = false, $is_manage = false, $disabl
 			continue;
 		}
 
+		if (!$row['category_visible'] && !$is_manage)
+		{
+			continue;
+		}
+
 		phpbb::$template->assign_block_vars('category_select', array(
 			'S_SELECTED'		=> (in_array($row['category_id'], $selected)) ? true : false,
 			'S_DISABLED'		=> ($row['category_type'] == 0 && $disable_parents) ? true : false,
