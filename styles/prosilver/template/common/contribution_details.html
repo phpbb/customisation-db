@@ -138,9 +138,12 @@
 					<strong>{L_DOWNLOADS_TOTAL}</strong> {CONTRIB_DOWNLOADS}
 				</li>
 				<!-- ENDIF -->
-				<!-- IF CONTRIB_ANNOUNCEMENT_TOPIC -->
+				<!-- IF .announce_topic -->
 				<li>
-					<strong>{L_ANNOUNCEMENT_TOPIC}</strong> {CONTRIB_ANNOUNCEMENT_TOPIC}
+					<strong>{L_ANNOUNCEMENT_TOPIC}</strong>
+					<!-- BEGIN announce_topic -->
+						<a href="{announce_topic.URL}">{announce_topic.BRANCH}</a><!-- IF not announce_topic.S_LAST_ROW -->{L_COMMA_SEPARATOR}<!-- ENDIF -->
+					<!-- END announce_topic -->
 				</li>
 				<!-- ENDIF -->
 				<!-- IF CONTRIB_RATING_STRING -->

@@ -593,12 +593,24 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_RATING_COUNT'			=> $this->contrib_rating_count,
 			'CONTRIB_RATING_STRING'			=> ($this->rating) ? $this->rating->get_rating_string($this->get_url('rate')) : '',
 
-			'CONTRIB_ANNOUNCEMENT_TOPIC'	=> ($this->contrib_release_topic_id) ? sprintf(phpbb::$user->lang['ANNOUNCEMENT_TOPIC_VIEW'], '<a href="' . phpbb::append_sid('viewtopic', 't='.$this->contrib_release_topic_id) . '">', '</a>') : false,
 			'L_ANNOUNCEMENT_TOPIC'			=> (titania::$config->support_in_titania) ? phpbb::$user->lang['ANNOUNCEMENT_TOPIC'] : phpbb::$user->lang['ANNOUNCEMENT_TOPIC_SUPPORT'],
 
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
 			'S_INTEGRATE_DEMO'				=> $this->options['demo'],
 		);
+
+		foreach ($this->type->get_allowed_branches(true, false) as $branch => $name)
+		{
+			$release_topic_id = $this->get_release_topic_id($branch);
+
+			if ($release_topic_id)
+			{
+				phpbb::$template->assign_block_vars('announce_topic', array(
+					'URL'		=> phpbb::append_sid('viewtopic', 't=' . $release_topic_id),
+					'BRANCH'	=> $name,
+				));
+			}
+		}
 
 		// Ignore some stuff before it is submitted else we can cause an error
 		if ($this->contrib_id)
