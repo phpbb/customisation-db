@@ -114,7 +114,20 @@ class index
 	*/
 	public function display_category($category1, $category2, $category3)
 	{
-		$this->load_category(array($category1, $category2, $category3));
+		$categories = array($category1, $category2, $category3);
+
+		try
+		{
+			$this->load_category(array($category1, $category2, $category3));
+		}
+		catch (\Exception $e)
+		{
+			// If the category does not exist, check whether this is an old link
+			// that may have been caught by the route matcher.
+			$rerouter = new \phpbb\titania\controller\legacy_rerouter($this->helper);
+			$url = '/' . implode('/', array_filter($categories, 'strlen'));
+			return $rerouter->redirect($url);
+		}
 		titania_display_categories($this->id);
 
 		$this->display->assign_global_vars();
