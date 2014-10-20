@@ -45,7 +45,7 @@ function titania_generate_text_for_display($text, $uid, $bitfield, $flags)
 			return titania::$hook->hook_return_result(__FUNCTION__);
 		}
 	}
-
+	phpbb::_include('bbcode', false, 'bbcode');
 	return generate_text_for_display($text, $uid, $bitfield, $flags);
 }
 
