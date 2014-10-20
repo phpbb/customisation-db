@@ -225,7 +225,7 @@ class rerouter
 				->rename_param('q', 'id')
 				->remove_param('t');
 
-			if ($this->has_param('action'))
+			if ($this->url->has_param('action'))
 			{
 				$this->url->append_route('action');
 			}
