@@ -194,4 +194,17 @@ class contribution extends base
 
 		return $this->helper->error('BAD_RATING');
 	}
+
+	/**
+	* Redirect to contribution from given contrib id.
+	*
+	* @param int $id
+	* @return null
+	*/
+	public function redirect_from_id($id)
+	{
+		$this->load_contrib((int) $id);
+
+		redirect($this->contrib->get_url());
+	}
 }

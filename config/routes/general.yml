@@ -52,6 +52,12 @@ phpbb.titania.colorizeit:
     requirements:
         id: \d+
 
+phpbb.titania.contribution.id:
+    pattern: /contribution/id/{id}/
+    defaults: { _controller: phpbb.titania.controller.contrib:redirect_from_id }
+    requirements:
+        id: \d+
+
 phpbb.titania.category:
     pattern: /{category1}/{category2}/{category3}
     defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '' }
