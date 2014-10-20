@@ -78,6 +78,7 @@ $lang = array_merge($lang, array(
 	'OLD_VALIDATION_MPV'		=> 'MPV Notes from pre-repack',
 	'OPEN_ITEMS'				=> 'Open Items',
 
+	'PLEASE_WAIT_FOR_TOOL'		=> 'Please wait for the tool to finish running.',
 	'PUBLIC_NOTES'				=> 'Public release notes',
 
 	'QUEUE_APPROVE'				=> 'Awaiting Approval',

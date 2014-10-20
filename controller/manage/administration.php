@@ -110,7 +110,7 @@ class administration extends base
 		}
 		else if (is_string($options))
 		{
-			$this->confirm_action($options);
+			return $this->confirm_action($options);
 		}
 		else
 		{
@@ -231,7 +231,7 @@ class administration extends base
 
 		if (confirm_box(true) || ($submit && check_link_hash($hash, 'manage')))
 		{
-			$this->tool->run_tool();
+			return $this->tool->run_tool();
 		}
 		else
 		{
