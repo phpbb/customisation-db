@@ -714,7 +714,7 @@ class revision extends base
 	protected function check_auth()
 	{
 		return $this->auth->acl_get('u_titania_contrib_submit') &&
-			($this->is_moderator || (!$contrib->is_restricted() && $this->is_author));
+			($this->is_moderator || (!$this->contrib->is_restricted() && $this->is_author));
 	}
 
 	/**
