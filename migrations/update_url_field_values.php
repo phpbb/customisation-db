@@ -51,7 +51,8 @@ class update_url_field_values extends base
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$pieces = explode('/', $row[$field . '_url']);
+			$url = $row[$field . '_url'];
+			$pieces = explode('/', $url);
 			$params = array();
 
 			switch ($row[$field . '_type'])
@@ -66,7 +67,7 @@ class update_url_field_values extends base
 
 				case TITANIA_QUEUE:
 					$params = array(
-						'id'	=> (int) substr($row['post_url'], strrpos($row['post_url'], '_') + 1),
+						'id'	=> (int) substr($url, strrpos($url, '_') + 1),
 					);
 				break;
 			}
@@ -75,7 +76,7 @@ class update_url_field_values extends base
 
 			$sql = "UPDATE $table
 				SET {$field}_url = '" . $this->db->sql_escape($params) . "'
-				WHERE topic_id = " . (int) $row[$field . '_id'];
+				WHERE {$field}_id = " . (int) $row[$field . '_id'];
 			$this->db->sql_query($sql);
 
 			$i++;
