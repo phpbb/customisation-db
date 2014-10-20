@@ -32,17 +32,4 @@ class multibranch_release_topic_support_p1 extends base
 			),
 		);
 	}
-
-	public function revert_schema()
-	{
-		$table_prefix = $this->get_titania_table_prefix();
-
-		return array(
-			'change_columns'	=> array(
-				$table_prefix . 'contribs'	=> array(
-					'contrib_release_topic_id'	=> array('UINT', 0),
-				),
-			),
-		);
-	}
 }
