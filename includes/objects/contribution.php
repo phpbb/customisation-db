@@ -599,22 +599,22 @@ class titania_contribution extends titania_message_object
 			'S_INTEGRATE_DEMO'				=> $this->options['demo'],
 		);
 
-		foreach ($this->type->get_allowed_branches(true, false) as $branch => $name)
-		{
-			$release_topic_id = $this->get_release_topic_id($branch);
-
-			if ($release_topic_id)
-			{
-				phpbb::$template->assign_block_vars('announce_topic', array(
-					'URL'		=> phpbb::append_sid('viewtopic', 't=' . $release_topic_id),
-					'BRANCH'	=> $name,
-				));
-			}
-		}
-
 		// Ignore some stuff before it is submitted else we can cause an error
 		if ($this->contrib_id)
 		{
+			foreach ($this->type->get_allowed_branches(true, false) as $branch => $name)
+			{
+				$release_topic_id = $this->get_release_topic_id($branch);
+
+				if ($release_topic_id)
+				{
+					phpbb::$template->assign_block_vars('announce_topic', array(
+						'URL'		=> phpbb::append_sid('viewtopic', 't=' . $release_topic_id),
+						'BRANCH'	=> $name,
+					));
+				}
+			}
+
 			if (!empty($this->download))
 			{
 				$this->assign_download_details();
