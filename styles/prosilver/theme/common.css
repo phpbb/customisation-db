@@ -867,6 +867,10 @@ textarea.elastic {
 	max-height: 400px;
 }
 
+textarea.quickedit {
+	font-size: 1.1em;
+}
+
 .text-content {
 	white-space: pre-wrap;
 }
