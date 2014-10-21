@@ -32,6 +32,7 @@ function generate_category_select($selected = false, $is_manage = false, $disabl
 	$padding_store = array('0' => 0);
 
 	$categories = titania::$cache->get_categories();
+	$hidden_categories = array();
 
 	foreach ($categories as $row)
 	{
@@ -58,8 +59,9 @@ function generate_category_select($selected = false, $is_manage = false, $disabl
 			continue;
 		}
 
-		if (!$row['category_visible'] && !$is_manage)
+		if ((!$row['category_visible'] || in_array($row['parent_id'], $hidden_categories)) && !$is_manage)
 		{
+			$hidden_categories[] = $row['category_id'];
 			continue;
 		}
 
