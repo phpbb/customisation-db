@@ -137,8 +137,8 @@ a.download-button span {
 }
 
 a.download-button .vendor-version {
+	color: #D7EFC5;
 	font-weight: normal;
-	opacity: 0.8;
 }
 
 .download-info {
@@ -865,6 +865,10 @@ fieldset dl:hover dt label.error {
 textarea.elastic {
 	min-height: 100px;
 	max-height: 400px;
+}
+
+textarea.quickedit {
+	font-size: 1.1em;
 }
 
 .text-content {
