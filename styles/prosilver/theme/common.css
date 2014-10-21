@@ -137,8 +137,8 @@ a.download-button span {
 }
 
 a.download-button .vendor-version {
+	color: #D7EFC5;
 	font-weight: normal;
-	opacity: 0.8;
 }
 
 .download-info {
