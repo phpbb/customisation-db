@@ -78,7 +78,7 @@ class queue_stats
 
 		if (!$this->generate_stats())
 		{
-			return $this->helper->error('NO_STATS');
+			return $this->helper->error('NO_QUEUE_STATS');
 		}
 		$this->generate_history();
 		$this->display->assign_global_vars();
