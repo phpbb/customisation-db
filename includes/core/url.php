@@ -7,6 +7,8 @@
 *
 */
 
+use phpbb\request\request_interface;
+
 /**
  * @ignore
  */
@@ -424,14 +426,12 @@ class titania_url
 		unset(self::$params['style']);
 
 		// Merge the parameters into the get/request superglobals.  Merge them to prevent a parameter in the parameters part of the URL from over-writting one that is already in here
-		$request->enable_super_globals();
-		$get_vars = array_merge(self::$params, $_GET);
-		$request_vars = array_merge(self::$params, $_REQUEST);
-		$request->disable_super_globals();
+		$get_vars = array_merge(self::$params, $request->get_super_global(request_interface::GET));
+		$request_vars = array_merge(self::$params, $request->get_super_global(request_interface::REQUEST));
 
 		foreach ($get_vars as $key => $value)
 		{
-			$request->overwrite($key, $value, '_GET');
+			$request->overwrite($key, $value, request_interface::GET);
 		}
 
 		foreach ($request_vars as $key => $value)
