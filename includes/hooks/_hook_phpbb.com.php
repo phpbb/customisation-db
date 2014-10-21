@@ -404,6 +404,23 @@ function phpbb_com_forum_id($type, $mode)
 
 	switch ($type)
 	{
+		case TITANIA_TYPE_EXTENSION :
+			switch ($mode)
+			{
+				case TITANIA_QUEUE_DISCUSSION :
+					return 516;
+				break;
+
+				case TITANIA_QUEUE :
+					return 511;
+				break;
+
+				case 'trash' :
+					return 521;
+				break;
+			}
+		break;
+
 		case TITANIA_TYPE_MOD :
 			switch ($mode)
 			{
