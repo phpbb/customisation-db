@@ -50,6 +50,7 @@ $config = array(
 	/**
 	* IDs of account used for topic/post release in database forum
 	*/
+	'forum_extension_robot' => 77503,
 	'forum_mod_robot' => 77503,
 	'forum_style_robot' => 93260,
 
