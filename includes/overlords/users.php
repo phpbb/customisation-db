@@ -268,7 +268,7 @@ class users_overlord
 
 	// @todo: info link...need to build the mcp stuff first.
 	//		$prefix . 'U_INFO'				=> ($auth->acl_get('m_info', $forum_id)) ? phpbb::append_sid('mcp', "i=main&amp;mode=post_details&amp;f=$forum_id&amp;p=" . $row['post_id'], true, phpbb::$user->session_id) : '',
-			$prefix . 'U_USER_PROFILE'		=> self::get_user($user_id, '_profile'),
+			$prefix . 'U_USER_BOARD_PROFILE'=> self::get_user($user_id, '_profile'),
 			$prefix . 'U_SEARCH'			=> (phpbb::$auth->acl_get('u_search')) ? phpbb::append_sid('search', "author_id=$user_id&amp;sr=posts") : '',
 			$prefix . 'U_PM'				=> self::get_user($user_id, '_u_pm'),
 			$prefix . 'U_EMAIL'				=> self::get_user($user_id, '_u_email'),

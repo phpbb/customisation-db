@@ -91,10 +91,10 @@
 				<dt class="<!-- IF posts.RANK_TITLE or posts.RANK_IMG -->has-profile-rank<!-- ELSE -->no-profile-rank<!-- ENDIF --> <!-- IF posts.USER_AVATAR -->has-avatar<!-- ELSE -->no-avatar<!-- ENDIF -->">
 					<div class="avatar-container">
 						<!-- IF posts.USER_AVATAR -->
-							<!-- IF posts.U_USER_PROFILE --><a href="{posts.U_USER_PROFILE}" class="avatar">{posts.USER_AVATAR}</a><!-- ELSE --><span class="avatar">{posts.USER_AVATAR}</span><!-- ENDIF -->
+							<!-- IF posts.U_USER_BOARD_PROFILE --><a href="{posts.U_USER_BOARD_PROFILE}" class="avatar">{posts.USER_AVATAR}</a><!-- ELSE --><span class="avatar">{posts.USER_AVATAR}</span><!-- ENDIF -->
 						<!-- ENDIF -->
 					</div>
-					<!-- IF not posts.U_USER_PROFILE --><strong>{posts.USER_FULL}</strong><!-- ELSE -->{posts.USER_FULL}<!-- ENDIF -->
+					<!-- IF not posts.U_USER_BOARD_PROFILE --><strong>{posts.USER_FULL}</strong><!-- ELSE -->{posts.USER_FULL}<!-- ENDIF -->
 				</dt>
 
 				<!-- IF posts.RANK_TITLE or posts.RANK_IMG --><dd class="profile-rank">{posts.RANK_TITLE}<!-- IF posts.RANK_TITLE and posts.RANK_IMG --><br /><!-- ENDIF -->{posts.RANK_IMG}</dd><!-- ENDIF -->
