@@ -122,6 +122,10 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			{
 				switch ($topic_row['topic_category'])
 				{
+					case TITANIA_TYPE_EXTENSION :
+						$options['poster_id'] = titania::$config->forum_extension_robot;
+					break;
+
 					case TITANIA_TYPE_MOD :
 						$options['poster_id'] = titania::$config->forum_mod_robot;
 					break;
@@ -178,6 +182,11 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 
 	switch ($post_object->topic->topic_category)
 	{
+		case TITANIA_TYPE_EXTENSION :
+			$post_object->topic->topic_first_post_user_id = titania::$config->forum_extension_robot;
+			$lang_var = 'EXTENSION_QUEUE_TOPIC';
+		break;
+
 		case TITANIA_TYPE_MOD :
 			$post_object->topic->topic_first_post_user_id = titania::$config->forum_mod_robot;
 			$lang_var = 'MOD_QUEUE_TOPIC';
