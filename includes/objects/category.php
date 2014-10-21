@@ -676,7 +676,7 @@ class titania_category extends titania_message_object
 			$error[] = phpbb::$user->lang['NO_CATEGORY_NAME'];
 		}
 
-		if (!$this->category_name_clean || $this->category_name_clean != titania_url::url_slug($this->category_name_clean))
+		if (!$this->category_name_clean || !preg_match('/^[a-zA-Z0-9\-\_]+$/', $this->category_name_clean))
 		{
 			$error[] = phpbb::$user->lang['NO_CATEGORY_URL'];
 		}
