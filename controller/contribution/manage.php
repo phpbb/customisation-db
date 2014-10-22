@@ -604,7 +604,7 @@ class manage extends base
 	*/
 	protected function get_description_change($old_settings)
 	{
-		$contrib = new \titania_contrib;
+		$contrib = new \titania_contribution;
 		$contrib->__set_array($old_settings);
 		$old_description = $contrib->generate_text_for_edit();
 		$old_description = $old_description['text'];
