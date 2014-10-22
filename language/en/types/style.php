@@ -88,7 +88,8 @@ It is our hope that you will provide a basic level of support for this style and
 [b]Notes from the Styles Team about your style:[/b]
 [quote]%s[/quote]
 
-Sincerely,',
+Sincerely,
+The Styles Team',
 	'STYLE_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
 As you may know all styles submitted to the phpBB styles database must be validated and approved by members of the phpBB Team.
