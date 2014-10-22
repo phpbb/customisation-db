@@ -50,7 +50,7 @@ $lang = array_merge($lang, array(
 [b]Tested on phpBB version[/b]: %11$s
 
 [b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes
+[b]File size:[/b] %8$s
 
 [b]Style overview page:[/b] [url=%9$s]View[/url]
 
@@ -64,7 +64,7 @@ $lang = array_merge($lang, array(
 [b]Style version[/b]: %5$s
 
 [b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes',
+[b]File size:[/b] %8$s',
 	'STYLE_REPLY_PUBLIC'				=> '[b][color=darkred]Style validated/released[/color][/b]',
 	'STYLE_REPLY_PUBLIC_NOTES'			=> '
 
