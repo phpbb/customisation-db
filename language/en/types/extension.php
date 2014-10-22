@@ -69,7 +69,7 @@ See first post for Download Link[/color][/b]',
 	'EXTENSION_UPDATE_PUBLIC_NOTES'		=> '
 
 [b]Notes:[/b] %1$s',
-	'EXTENSION_UPLOAD_AGREEMENT'		=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide by the <a href="http://www.phpbb.com/extensions/policies/">Extensions database policies</a> and that your extension conforms to and follows the <a href="https://area51.phpbb.com/docs/31x/coding-guidelines.html">phpBB 3.1 Coding Guidelines</a>.
+	'EXTENSION_UPLOAD_AGREEMENT'		=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide by the <a href="https://www.phpbb.com/extensions/rules-and-policies/">Extensions database policies</a> and that your extension conforms to and follows the <a href="https://area51.phpbb.com/docs/31x/coding-guidelines.html">phpBB 3.1 Coding Guidelines</a>.
 
 You also agree and accept that this extension’s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your extension through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
 	'EXTENSION_VALIDATION'				=> '[phpBB Extension-Validation] %1$s %2$s',
