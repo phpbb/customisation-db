@@ -72,7 +72,7 @@ class download
 		$this->ext_config = $ext_config;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-		$this->access_level = TITANIA_ACCESS_PUBLIC;
+		$this->access_level = \titania::$access_level;
 
 		$this->user->add_lang('viewtopic');
 		require($this->phpbb_root_path . 'includes/functions_download.' . $this->php_ext);
