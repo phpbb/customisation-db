@@ -90,7 +90,7 @@ class titania_attention extends titania_database_object
 		// Subscriptions
 		if (!$this->attention_id)
 		{
-			$u_view = $this->controller_helper->route('phpbb.titania.attention.redirect', array(
+			$u_view = $this->controller_helper->route('phpbb.titania.manage.attention.redirect', array(
 				'type'	=> $this->attention_type,
 				'id'	=> $this->attention_object_id,
 			));
