@@ -460,6 +460,7 @@ class titania_contrib_tools
 		$int_output = new HtmlOutput(HtmlOutput::TYPE_BBCODE);
 		$output = new Output($int_output, false);
 		$runner = new TestRunner($output, $this->unzip_dir, false, true);
+		$runner->runTests();
 
 		// Write a empty line
 		$output->writeLn('');
