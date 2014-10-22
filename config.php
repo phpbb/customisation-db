@@ -44,7 +44,7 @@ $config = array(
 	),
 	'forum_style_database'	=> array(
 		'30'	=> 73,
-		'31'	=> 0,
+		'31'	=> 531,
 	),
 
 	/**
