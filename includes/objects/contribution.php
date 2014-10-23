@@ -1049,7 +1049,7 @@ class titania_contribution extends titania_message_object
 					$download['revision_version'],
 					$this->path_helper->strip_url_params($u_download, 'sid'),
 					$download['real_filename'],
-					$download['filesize'],
+					get_formatted_filesize($download['filesize']),
 					$this->path_helper->strip_url_params($this->get_url(), 'sid'),
 					$this->path_helper->strip_url_params($this->get_url('support'), 'sid'),
 					$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision']

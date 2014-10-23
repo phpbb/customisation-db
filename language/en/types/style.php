@@ -50,7 +50,7 @@ $lang = array_merge($lang, array(
 [b]Tested on phpBB version[/b]: %11$s
 
 [b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes
+[b]File size:[/b] %8$s
 
 [b]Style overview page:[/b] [url=%9$s]View[/url]
 
@@ -64,7 +64,7 @@ $lang = array_merge($lang, array(
 [b]Style version[/b]: %5$s
 
 [b]Download file[/b]: [url=%6$s]%7$s[/url]
-[b]File size:[/b] %8$s Bytes',
+[b]File size:[/b] %8$s',
 	'STYLE_REPLY_PUBLIC'				=> '[b][color=darkred]Style validated/released[/color][/b]',
 	'STYLE_REPLY_PUBLIC_NOTES'			=> '
 
@@ -88,7 +88,8 @@ It is our hope that you will provide a basic level of support for this style and
 [b]Notes from the Styles Team about your style:[/b]
 [quote]%s[/quote]
 
-Sincerely,',
+Sincerely,
+The Styles Team',
 	'STYLE_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
 As you may know all styles submitted to the phpBB styles database must be validated and approved by members of the phpBB Team.

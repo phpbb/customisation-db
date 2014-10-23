@@ -214,7 +214,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 		$revision->revision_version,
 		$path_helper->strip_url_params($revision->get_url(), 'sid'),
 		$download['real_filename'],
-		$download['filesize']
+		get_formatted_filesize($download['filesize'])
 	);
 
 	$post_text .= "\n\n" . $post_object->post_text;
