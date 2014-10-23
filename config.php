@@ -17,22 +17,6 @@ if (!defined('IN_TITANIA'))
 }
 
 $config = array(
-	/**
-	* phpBB versions array
-	*
-	* @param array(
-	*	(release branch) => array(
-	*		'latest_revision' => (revision number)
-	* 		'allow_uploads' => (allow submission of revisions for this version of phpBB?),
-	*	),
-	* ),
-	*/
-	'phpbb_versions' => array(
-		'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
-		'30'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
-		'31'	=> array('latest_revision' => '0-RC5', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
-	),
-
 	// Display backtrace for TITANIA_TEAMS_ACCESS level
 	'display_backtrace'	=> 2,
 
