@@ -119,7 +119,7 @@ class titania_config extends titania_object
 			'phpbb_versions'			=> array('default' => array(
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
 				'30'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
-				'31'	=> array('latest_revision' => '0-RC4', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
+				'31'	=> array('latest_revision' => '0-RC6', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
 			)),
 
 			// Next stable release (used to allowed contribs to be submitted for a future version)
