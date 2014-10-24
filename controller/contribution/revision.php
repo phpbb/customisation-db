@@ -324,10 +324,6 @@ class revision extends base
 	*/
 	protected function cancel($redirect = true)
 	{
-		if ($this->attachment->attachment_id)
-		{
-			$this->attachment->delete();
-		}
 		if ($this->revision->revision_id)
 		{
 			$this->revision->delete();
