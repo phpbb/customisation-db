@@ -105,11 +105,11 @@ class tools
 		}
 
 		$results = $this->get_result_post('VALIDATION_PV', $results);
-		$this->queue->topic_reply($results);
+		$post = $this->queue->topic_reply($results);
 
 		$tool->remove_temp_files();
 
-		redirect($this->queue->get_url());
+		redirect($post->get_url());
 	}
 
 	/**
@@ -136,7 +136,7 @@ class tools
 		else
 		{
 			$results = $this->get_result_post('VALIDATION_PV', $results);
-			$this->queue->topic_reply($results);
+			$post = $this->queue->topic_reply($results);
 		}
 		$tool->remove_temp_files();
 
@@ -145,7 +145,7 @@ class tools
 			return $this->helper->error(implode('<br />', $tool->error));
 		}
 
-		redirect($this->queue->get_url());
+		redirect($post->get_url());
 	}
 
 	/**
@@ -195,10 +195,10 @@ class tools
 		$bbcode_results = $this->get_result_post('VALIDATION_AUTOMOD', implode("\n\n", $bbcode_results));
 
 		// Update the queue with the results
-		$this->queue->topic_reply($bbcode_results);
+		$post = $this->queue->topic_reply($bbcode_results);
 
 		$tool->remove_temp_files();
-		redirect($this->queue->get_url());
+		redirect($post->get_url());
 	}
 
 	/**

@@ -232,6 +232,7 @@ class titania_queue extends titania_message_object
 	*
 	* @param string $message
 	* @param bool $teams_only true to set to access level of teams
+	* @return \titania_post Returns post object.
 	*/
 	public function topic_reply($message, $teams_only = true)
 	{
@@ -254,6 +255,8 @@ class titania_queue extends titania_message_object
 
 		$post->generate_text_for_storage(true, true, true);
 		$post->submit();
+
+		return $post;
 	}
 
 	/**
