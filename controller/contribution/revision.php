@@ -101,6 +101,10 @@ class revision extends base
 			}
 			$error = $result['error'];
 		}
+		else if ($this->request->is_set_post('cancel'))
+		{
+			$this->cancel();
+		}
 
 		$settings = array(
 			'name'				=> $old_revision->revision_name,
@@ -200,6 +204,10 @@ class revision extends base
 				redirect($this->contrib->get_url());
 			}
 			$error = $result['error'];
+		}
+		else if ($this->request->is_set_post('cancel'))
+		{
+			$this->cancel();
 		}
 
 		$this->assign_common_vars($error, !empty($this->id));
@@ -306,6 +314,29 @@ class revision extends base
 
 		// After revision is set to submitted we must update the queue
 		$this->revision->update_queue($this->get_repack_exclusions());
+	}
+
+	/**
+	* Cancel submission process.
+	*
+	* @param bool $redirect		Whether to redirect back to contrib details.
+	* @return null
+	*/
+	protected function cancel($redirect = true)
+	{
+		if ($this->attachment->attachment_id)
+		{
+			$this->attachment->delete();
+		}
+		if ($this->revision->revision_id)
+		{
+			$this->revision->delete();
+		}
+
+		if ($redirect)
+		{
+			redirect($this->contrib->get_url());
+		}
 	}
 
 	/**
@@ -570,15 +601,7 @@ class revision extends base
 
 		if (!$result['allow_continue'])
 		{
-			if ($this->attachment)
-			{
-				$this->attachment->delete();
-			}
-			if ($this->revision)
-			{
-				$this->revision->delete();
-			}
-
+			$this->cancel(false);
 			return $result;
 		}
 
