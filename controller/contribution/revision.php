@@ -645,12 +645,13 @@ class revision extends base
 			'complete'			=> true,
 			'allow_continue'	=> true,
 		);
+		$total_steps = sizeof($steps);
 
 		if (!empty($result['error']))
 		{
 			$result['complete'] = false;
 		}
-		else if (!empty($steps[$step + 1]))
+		else if ($total_steps > $step)
 		{
 			$result['complete'] = false;
 			$result['allow_continue'] = true;
