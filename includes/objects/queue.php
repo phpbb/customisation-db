@@ -699,12 +699,13 @@ class titania_queue extends titania_message_object
 	*
 	* @param string $tool		Tool.
 	* @param int $revision_id	Revision id.
+	* @param array $params		Additional parameters to append to the URL.
 	*
 	* @return string
 	*/
-	public function get_tool_url($tool, $revision_id)
+	public function get_tool_url($tool, $revision_id, array $params = array())
 	{
-		$params = array(
+		$params += array(
 			'tool'	=> $tool,
 			'id'	=> $revision_id,
 		);

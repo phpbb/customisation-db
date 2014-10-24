@@ -21,6 +21,9 @@ class tools
 	/** @var \phpbb\template\template */
 	protected $template;
 
+	/** @var \phpbb\request\request_interface */
+	protected $request;
+
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
 
@@ -44,12 +47,14 @@ class tools
 	*
 	* @param \phpbb\user $user
 	* @param \phpbb\template\template $template
+	* @param \phpbb\request\request_interface $request
 	* @param \phpbb\titania\controller\helper $helper
 	*/
-	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\titania\controller\helper $helper)
+	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper)
 	{
 		$this->user = $user;
 		$this->template = $template;
+		$this->request = $request;
 		$this->helper = $helper;
 
 		$this->user->add_lang_ext('phpbb/titania', array('contributions', 'manage'));
@@ -69,6 +74,12 @@ class tools
 		if (!in_array($tool, array('automod', 'mpv', 'epv')))
 		{
 			return $this->helper->error('INVALID_TOOL', 404);
+		}
+
+		// Check the hash first to avoid unnecessary queries.
+		if (!check_link_hash($this->request->variable('hash', ''), 'queue_tool'))
+		{
+			return $this->helper->error('PAGE_REQUEST_INVALID');
 		}
 
 		$this->load_objects($id);

@@ -166,6 +166,7 @@ $lang = array_merge($lang, array(
 
 	'ORDER'						=> 'Order',
 
+	'PAGE_REQUEST_INVALID'		=> 'The page request is invalid. Please try again.',
 	'PARENT_CATEGORY'			=> 'Parent Category',
 	'PARENT_CONTRIBUTION'		=> 'Parent Contribution',
 	'PARENT_NOT_EXIST'			=> 'Parent does not exist.',

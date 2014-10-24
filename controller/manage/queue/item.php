@@ -84,7 +84,20 @@ class item extends \phpbb\titania\controller\manage\base
 
 		$this->display->assign_global_vars();
 		$this->generate_navigation('queue');
+
 		$valid_action = false;
+		$check_actions = array(
+			'in_progress',
+			'no_progress',
+			'tested',
+			'not_tested',
+			'rebuild',
+		);
+
+		if (in_array($action, $check_actions) && !check_link_hash($this->request->variable('hash', ''), 'queue_action'))
+		{
+			return $this->helper->error('PAGE_REQUEST_INVALID');
+		}
 
 		// Only allow these actions to run if the queue item is still open.
 		if ($this->queue->queue_status > 0)

@@ -230,6 +230,7 @@ services:
         arguments:
             - @user
             - @template
+            - @request
             - @phpbb.titania.controller.helper
 
     phpbb.titania.controller.manage.attention:
