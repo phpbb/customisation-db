@@ -204,7 +204,7 @@ class titania_queue extends titania_message_object
 		{
 			$mpv_results = $this->mpv_results;
 			titania_decode_message($mpv_results, $this->mpv_results_uid);
-			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_MPV'] . '&quot;]' . $mpv_results . "[/quote]\n";
+			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_PV'] . '&quot;]' . $mpv_results . "[/quote]\n";
 		}
 
 		// Add the Automod results
@@ -232,6 +232,7 @@ class titania_queue extends titania_message_object
 	*
 	* @param string $message
 	* @param bool $teams_only true to set to access level of teams
+	* @return \titania_post Returns post object.
 	*/
 	public function topic_reply($message, $teams_only = true)
 	{
@@ -254,6 +255,8 @@ class titania_queue extends titania_message_object
 
 		$post->generate_text_for_storage(true, true, true);
 		$post->submit();
+
+		return $post;
 	}
 
 	/**
@@ -696,12 +699,13 @@ class titania_queue extends titania_message_object
 	*
 	* @param string $tool		Tool.
 	* @param int $revision_id	Revision id.
+	* @param array $params		Additional parameters to append to the URL.
 	*
 	* @return string
 	*/
-	public function get_tool_url($tool, $revision_id)
+	public function get_tool_url($tool, $revision_id, array $params = array())
 	{
-		$params = array(
+		$params += array(
 			'tool'	=> $tool,
 			'id'	=> $revision_id,
 		);

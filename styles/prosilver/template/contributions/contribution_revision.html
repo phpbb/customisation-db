@@ -136,9 +136,10 @@
 			<!-- ENDIF -->
 
 			<fieldset class="submit-buttons">
+				<input type="submit" id="cancel" name="cancel" value="{L_CANCEL}" class="button2" />
 				<!-- IF AGREEMENT_NOTICE and REVISION_UPLOADER -->
+					<input type="submit" id="disagree" name="disagree" value="{L_NOT_AGREE}" class="button2" />
 					<input type="submit" id="new_revision" name="new_revision" value="{L_AGREE}" class="button1" />&nbsp;
-					<input type="submit" id="disagree" name="disagree" value="{L_NOT_AGREE}" class="button1" />
 				<!-- ELSE -->
 					<input type="submit" id="new_revision" name="new_revision" value="{L_CONTINUE}" class="button1" />
 				<!-- ENDIF -->

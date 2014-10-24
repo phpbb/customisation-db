@@ -280,35 +280,41 @@ class queue_overlord
 
 		$is_moderator = $contrib->type->acl_get('moderate');
 		$is_validator = $contrib->type->acl_get('validate');
+		$hash = array(
+			'hash' => generate_link_hash('queue_tool'),
+		);
 
 		// Misc actions
 		$misc_actions = array(
 			array(
 				'RETEST_PV',
-				$queue->get_tool_url('mpv', $row['revision_id']),
+				$queue->get_tool_url('mpv', $row['revision_id'], $hash),
 				$contrib->type->mpv_test,
 			),
 			array(
 				'RETEST_PV',
-				$queue->get_tool_url('epv', $row['revision_id']),
+				$queue->get_tool_url('epv', $row['revision_id'], $hash),
 				$contrib->type->epv_test,
 			),
 			array(
 				'RETEST_AUTOMOD',
-				$queue->get_tool_url('automod', $row['revision_id']),
+				$queue->get_tool_url('automod', $row['revision_id'], $hash),
 				$contrib->type->automod_test,
 			),
 		);
 
 		// Some quick-actions
 		$quick_actions = array();
+		$hash = array(
+			'hash' => generate_link_hash('queue_action'),
+		);
 
 		if ($row['queue_status'] > 0)
 		{
 			$misc_actions = array_merge($misc_actions, array(
 				array(
 					'REBUILD_FIRST_POST',
-					$queue->get_url('rebuild'),
+					$queue->get_url('rebuild', $hash),
 					true,
 				),
 				array(
@@ -318,12 +324,12 @@ class queue_overlord
 				),
 				array(
 					'MARK_TESTED',
-					$queue->get_url('tested'),
+					$queue->get_url('tested', $hash),
 					!$row['queue_tested'],
 				),
 				array(
 					'MARK_UNTESTED',
-					$queue->get_url('not_tested'),
+					$queue->get_url('not_tested', $hash),
 					$row['queue_tested'],
 				),
 			));
@@ -334,13 +340,13 @@ class queue_overlord
 			$quick_actions = array(
 				array(
 					'MARK_NO_PROGRESS',
-					$queue->get_url('no_progress'),
+					$queue->get_url('no_progress', $hash),
 					$row['queue_progress'] == phpbb::$user->data['user_id'],
 					'queue_progress',
 				),
 				array(
 					'MARK_IN_PROGRESS',
-					$queue->get_url('in_progress'),
+					$queue->get_url('in_progress', $hash),
 					!$row['queue_progress'],
 					'queue_progress',
 				),
