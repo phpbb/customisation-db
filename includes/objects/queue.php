@@ -204,7 +204,7 @@ class titania_queue extends titania_message_object
 		{
 			$mpv_results = $this->mpv_results;
 			titania_decode_message($mpv_results, $this->mpv_results_uid);
-			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_MPV'] . '&quot;]' . $mpv_results . "[/quote]\n";
+			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_PV'] . '&quot;]' . $mpv_results . "[/quote]\n";
 		}
 
 		// Add the Automod results
