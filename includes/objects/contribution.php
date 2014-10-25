@@ -1829,20 +1829,13 @@ class titania_contribution extends titania_message_object
 			return;
 		}
 
-		$categories_to_update = $sql_ary = array();
+		$sql_ary = array();
 		foreach ($contrib_categories as $category_id)
 		{
 			$sql_ary[] = array(
 				'contrib_id' 	=> $this->contrib_id,
 				'category_id'	=> $category_id,
 			);
-
-			$categories_to_update[] = $category_id;
-			$parents = titania::$cache->get_category_parents($category_id);
-			foreach ($parents as $parent)
-			{
-				$categories_to_update[] = $parent['category_id'];
-			}
 		}
 		phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
 
