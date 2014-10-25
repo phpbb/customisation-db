@@ -188,9 +188,15 @@ class categories extends base
 			'CATEGORY_VISIBLE' 				=> $category->category_visible,
 
 			'S_MOVE_CATEGORY_OPTIONS'		=> generate_category_select($category->parent_id, true),
-			'S_INTEGRATE_DEMO'				=> ($category->category_options & TITANIA_CAT_FLAG_DEMO) ? 'checked="checked"' : '',
-			'S_SUPPORT_ALL_VERSIONS'		=> ($category->category_options & TITANIA_CAT_FLAG_ALL_VERSIONS) ? 'checked="checked"' : '',
 		));
+
+		foreach ($category->available_options as $option => $flag)
+		{
+			if ($category->is_option_set($option))
+			{
+				$this->template->assign_var(strtoupper("s_$option"), 'checked="checked"');
+			}
+		}
 
 		return false;
 	}
@@ -389,8 +395,13 @@ class categories extends base
 		));
 
 		// Set category options
-		$category->category_options += ($this->request->variable('integrate_demo', false)) ? TITANIA_CAT_FLAG_DEMO : 0; 
-		$category->category_options += ($this->request->variable('support_all_versions', false)) ? TITANIA_CAT_FLAG_ALL_VERSIONS : 0;
+		foreach ($category->available_options as $option => $flag)
+		{
+			if ($this->request->variable($option, false))
+			{
+				$category->set_option($option);
+			}
+		}
 
 		return $category;
 	}

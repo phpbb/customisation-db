@@ -50,6 +50,13 @@ class titania_category extends titania_message_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var array */
+	public $available_options;
+
+	const FLAG_DEMO = 1;
+	const FLAG_ALL_VERSIONS = 2;
+	const FLAG_TEAM_ONLY = 4;
+
 	/**
 	 * Constructor class for the contribution object
 	 */
@@ -78,6 +85,12 @@ class titania_category extends titania_message_object
 		));
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+
+		$this->available_options = array(
+			'integrate_demo'		=> self::FLAG_DEMO,
+			'support_all_versions'	=> self::FLAG_ALL_VERSIONS,
+			'team_only'				=> self::FLAG_TEAM_ONLY,
+		);
 	}
 
 	/**
@@ -686,5 +699,31 @@ class titania_category extends titania_message_object
 			$error[] = phpbb::$user->lang['CATEGORY_DUPLICATE_PARENT'];
 		}
 		return $error;
+	}
+
+	/**
+	* Set category option.
+	*
+	* @param string $option		Option to set - from those defined in available_options property.
+	* @return null
+	*/		
+	public function set_option($option)
+	{
+		if (isset($this->available_options[$option]))
+		{
+			$this->category_options += $this->available_options[$option];
+		}
+	}
+
+	/**
+	* Check whether the given option is set.
+	*
+	* @param string $option 	Option to check for - from those defined in available_options property.
+	* @return bool
+	*/
+	public function is_option_set($option)
+	{
+		return isset($this->available_options[$option]) &&
+			$this->category_options & $this->available_options[$option];
 	}
 }

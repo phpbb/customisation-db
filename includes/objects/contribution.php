@@ -1404,16 +1404,27 @@ class titania_contribution extends titania_message_object
 			else
 			{
 				$categories	= titania::$cache->get_categories();
+				$category = new \titania_category;
 
-				foreach ($contrib_categories as $category)
+				foreach ($contrib_categories as $category_id)
 				{
-					if (!isset($categories[$category]))
+					if (!isset($categories[$category_id]))
 					{
 						$error[] = phpbb::$user->lang['NO_CATEGORY'];
 					}
-					else if ($categories[$category]['category_type'] != $this->contrib_type)
+					else if ($categories[$category_id]['category_type'] != $this->contrib_type)
 					{
 						$error[] = phpbb::$user->lang['WRONG_CATEGORY'];
+					}
+
+					if ($valid_type)
+					{
+						$category->__set_array($categories[$category_id]);
+
+						if ($category->is_option_set('team_only') && !$this->type->acl_get('moderate'))
+						{
+							$error[] = phpbb::$user->lang['CATEGORY_NOT_ALLOWED'];
+						}
 					}
 				}
 			}
@@ -1802,17 +1813,44 @@ class titania_contribution extends titania_message_object
 		}
 	}
 
-	/*
-	 * Set the relations between contribs and categories
-	 *
-	 * @param bool $update
-	 * @return void
-	 */
-	public function put_contrib_in_categories($contrib_categories = array())
+	/**
+	* Set the relations between contribs and categories
+	*
+	* @param array $contrib_categories		Categories to put the contribution in
+	* @param bool $protect_team_only		Whether to protect "Team only" categories.
+	*	If true, existing categories that are "Team only" and are not part of $contrib_categories
+	*	will be preserved.
+	*
+	* @return null
+	*/
+	public function put_contrib_in_categories($contrib_categories = array(), $protect_team_only = true)
 	{
 		if (!$this->contrib_id)
 		{
 			return;
+		}
+
+		$protected_categories = array();
+		$exclude_sql = '';
+
+		if ($protect_team_only && !empty($this->category_data))
+		{
+			$category = new \titania_category;
+
+			foreach ($this->category_data as $row)
+			{
+				$category->__set_array($row);
+
+				if ($category->is_option_set('team_only'))
+				{
+					$protected_categories[] = (int) $category->category_id;
+				}
+			}
+		}
+
+		if (!empty($protected_categories))
+		{
+			$exclude_sql = 'AND ' . phpbb::$db->sql_in_set('category_id', $protected_categories, true);
 		}
 
 		// Resync the count
@@ -1821,7 +1859,8 @@ class titania_contribution extends titania_message_object
 		// Remove them from the old categories
 		$sql = 'DELETE
 			FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . '
-			WHERE contrib_id = ' . $this->contrib_id;
+			WHERE contrib_id = ' . $this->contrib_id . "
+				$exclude_sql";
 		phpbb::$db->sql_query($sql);
 
 		if (!sizeof($contrib_categories))
@@ -1839,7 +1878,7 @@ class titania_contribution extends titania_message_object
 		}
 		phpbb::$db->sql_multi_insert(TITANIA_CONTRIB_IN_CATEGORIES_TABLE, $sql_ary);
 
-		$this->contrib_categories = implode(',', $contrib_categories);
+		$this->contrib_categories = implode(',', array_merge($contrib_categories, $protected_categories));
 		$this->fill_categories();
 		// Resync the count
 		$this->update_category_count();

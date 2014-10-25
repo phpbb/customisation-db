@@ -408,7 +408,10 @@ class manage extends base
 		$this->contrib->set_custom_fields($this->settings['custom']);
 
 		// Create relations
-		$this->contrib->put_contrib_in_categories($this->settings['categories']);
+		$this->contrib->put_contrib_in_categories(
+			$this->settings['categories'],
+			!$this->contrib->type->acl_get('moderate')
+		);
 		// Submit the changes
 		$this->contrib->submit();
 		// Set the coauthors
