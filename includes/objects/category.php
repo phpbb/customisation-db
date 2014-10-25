@@ -706,10 +706,10 @@ class titania_category extends titania_message_object
 	*
 	* @param string $option		Option to set - from those defined in available_options property.
 	* @return null
-	*/		
+	*/
 	public function set_option($option)
 	{
-		if (isset($this->available_options[$option]))
+		if (isset($this->available_options[$option]) && !$this->is_option_set($option))
 		{
 			$this->category_options += $this->available_options[$option];
 		}
