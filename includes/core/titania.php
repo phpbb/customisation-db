@@ -140,10 +140,6 @@ class titania
 		self::_include('types/base');
 		titania_types::load_types();
 
-		// Initialise the URL class
-		titania_url::$root_url = self::$absolute_path;
-		titania_url::decode_url(self::$config->titania_script_path);
-
 		// Load hooks
 		self::load_hooks();
 	}
