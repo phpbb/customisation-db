@@ -128,25 +128,6 @@ class phpbb
 	}
 
 	/**
-	 * Page footer function handling the phpBB tasks
-	 */
-	public static function page_footer($run_cron = true)
-	{
-		self::$template->assign_vars(array(
-			'RUN_CRON_TASK'			=> (!defined('IN_CRON') && $run_cron && !self::$config['board_disable']) ? '<img src="' . titania_url::build_url('cron') . '" width="1" height="1" alt="cron" />' : '',
-
-			'TRANSLATION_INFO'		=> (!empty(self::$user->lang['TRANSLATION_INFO'])) ? self::$user->lang['TRANSLATION_INFO'] : '',
-
-			'U_ACP'					=> (self::$auth->acl_get('a_') && !empty(self::$user->data['is_registered'])) ? self::append_sid('adm/index', false, true, self::$user->session_id) : '',
-		));
-
-		self::$template->display('body');
-
-		garbage_collection();
-		exit_handler();
-	}
-
-	/**
 	* Update a user's postcount
 	*
 	* @param int $user_id The user_id
