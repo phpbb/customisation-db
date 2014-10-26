@@ -103,17 +103,7 @@ class titania
 		self::$cache = phpbb::$container->get('phpbb.titania.cache');
 
 		// Set the absolute titania/board path
-		self::$absolute_path = generate_board_url(true) . '/' . self::$config->titania_script_path;
 		self::$absolute_board = generate_board_url(true) . '/' . self::$config->phpbb_script_path;
-
-		// Set the style path, template path, and template name
-		if (!defined('IN_TITANIA_INSTALL') && !defined('USE_PHPBB_TEMPLATE'))
-		{
-			self::$images_path = self::$absolute_path . 'images/';
-			self::$style_path = self::$absolute_path . 'styles/' . self::$config->style . '/';
-			self::$template_path = self::$style_path . 'template';
-			self::$theme_path = (self::$config->theme) ?  self::$absolute_path . 'styles/' . self::$config->theme . '/theme' : self::$style_path . 'theme';
-		}
 
 		// Setup the Access Level
 		self::$access_level = TITANIA_ACCESS_PUBLIC;
