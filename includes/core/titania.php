@@ -21,13 +21,6 @@ if (!defined('IN_TITANIA'))
 class titania
 {
 	/**
-	 * Current viewing page location
-	 *
-	 * @var string
-	 */
-	public static $page;
-
-	/**
 	 * Titania configuration member
 	 *
 	 * @var titania_config
@@ -63,16 +56,11 @@ class titania
 	public static $access_level = 2;
 
 	/**
-	 * Absolute Titania, Board, Images, Style, Template, and Theme Path
+	 * Absolute Board Path
 	 *
 	 * @var string
 	 */
-	public static $absolute_path;
 	public static $absolute_board;
-	public static $images_path;
-	public static $style_path;
-	public static $template_path;
-	public static $theme_path;
 
 	/**
 	* Hold our main contribution object for the currently loaded contribution
@@ -80,13 +68,6 @@ class titania
 	* @var titania_contribution
 	*/
 	public static $contrib;
-
-	/**
-	* Hold our main author object for the currently loaded author
-	*
-	* @var titania_author
-	*/
-	public static $author;
 
 	/**
 	 * Initialise titania:
@@ -98,7 +79,6 @@ class titania
 	{
 		global $starttime;
 
-		self::$page = htmlspecialchars(phpbb::$user->page['script_path'] . phpbb::$user->page['page_name']);
 		self::$time = (int) $starttime;
 		self::$cache = phpbb::$container->get('phpbb.titania.cache');
 
@@ -199,95 +179,6 @@ class titania
 	public static function add_lang($lang_set, $use_db = false, $use_help = false)
 	{
 		phpbb::$user->add_lang_ext('phpbb/titania', $lang_set, $use_db, $use_help);
-	}
-
-	/**
-	 * Show the errorbox or successbox
-	 *
-	 * @param string $l_title message title - custom or user->lang defined
-	 * @param mixed $l_message message string or array of strings
-	 * @param int $error_type TITANIA_SUCCESS or TITANIA_ERROR constant
-	 * @param int $status_code an HTTP status code
-	 */
-	public static function error_box($l_title, $l_message, $error_type = TITANIA_SUCCESS, $status_code = NULL)
-	{
-		if ($status_code)
-		{
-			self::set_header_status($status_code);
-		}
-
-		$block = ($error_type == TITANIA_ERROR) ? 'errorbox' : 'successbox';
-
-		if ($l_title)
-		{
-			$title = (isset(phpbb::$user->lang[$l_title])) ? phpbb::$user->lang[$l_title] : $l_title;
-
-			phpbb::$template->assign_var(strtoupper($block) . '_TITLE', $title);
-		}
-
-		if (!is_array($l_message))
-		{
-			$l_message = array($l_message);
-		}
-
-		foreach ($l_message as $message)
-		{
-			if (!$message)
-			{
-				continue;
-			}
-
-			phpbb::$template->assign_block_vars($block, array(
-				'MESSAGE'	=> (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message,
-			));
-		}
-
-		// Setup the error box to hide.
-		phpbb::$template->assign_vars(array(
-			'S_HIDE_ERROR_BOX'		=> true,
-			'ERRORBOX_CLASS'		=> $block,
-		));
-	}
-
-	/**
-	 * Set proper page header status
-	 *
-	 * @param int $status_code
-	 */
-	public static function set_header_status($status_code = NULL)
-	{
-		// Send the appropriate HTTP status header
-		static $status = array(
-			200 => 'OK',
-			201 => 'Created',
-			202 => 'Accepted',
-			204 => 'No Content',
-			205 => 'Reset Content',
-			300 => 'Multiple Choices',
-			301 => 'Moved Permanently',
-			302 => 'Found', // Moved Temporarily
-			303 => 'See Other',
-			304 => 'Not Modified',
-			307 => 'Temporary Redirect',
-			400 => 'Bad Request',
-			401 => 'Unauthorized',
-			403 => 'Forbidden',
-			404 => 'Not Found',
-			406 => 'Not Acceptable',
-			409 => 'Conflict',
-			410 => 'Gone',
-			500 => 'Internal Server Error',
-			501 => 'Not Implemented',
-			502 => 'Bad Gateway',
-			503 => 'Service Unavailable',
-		);
-
-		if ($status_code && isset($status[$status_code]))
-		{
-			$header = $status_code . ' ' . $status[$status_code];
-			header('HTTP/1.1 ' . $header, false, $status_code);
-			header('Status: ' . $header, false, $status_code);
-		}
 	}
 
 	/**
@@ -414,5 +305,4 @@ class titania
 
 		}
 	}
-
 }
