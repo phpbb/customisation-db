@@ -228,26 +228,13 @@ class titania_message
 		// Display the Captcha if required
 		if ($this->settings['display_captcha'])
 		{
-			phpbb::_include('captcha/captcha_factory', false, 'phpbb_captcha_factory');
-
-			$captcha =& phpbb_captcha_factory::get_instance(phpbb::$config['captcha_plugin']);
+			$captcha = phpbb::$container->get('captcha.factory')->get_instance(phpbb::$config['captcha_plugin']);
 			$captcha->init(CONFIRM_POST);
 
 			if ($captcha->validate($this->request_data()) !== false)
 			{
-				phpbb::reset_template();
-
-				// Parse the captcha template
-				phpbb::$template->set_filenames(array(
-					'captcha'	=> $captcha->get_template(),
-				));
-
 				// Correct confirm image link
-				phpbb::$template->assign_var('CONFIRM_IMAGE_LINK', phpbb::append_sid('ucp', 'mode=confirm&amp;confirm_id=' . $captcha->confirm_id . '&amp;type=' . $captcha->type));
-
-				phpbb::$template->assign_display('captcha', 'CAPTCHA', false);
-
-				titania::set_custom_template();
+				phpbb::$template->assign_var('CAPTCHA_TEMPLATE', $captcha->get_template());
 			}
 
 			$this->s_hidden_fields = array_merge($this->s_hidden_fields, $captcha->get_hidden_fields());
@@ -467,9 +454,7 @@ class titania_message
 	 */
 	public function validate_captcha()
 	{
-		phpbb::_include('captcha/captcha_factory', false, 'phpbb_captcha_factory');
-
-		$captcha =& phpbb_captcha_factory::get_instance(phpbb::$config['captcha_plugin']);
+		$captcha = phpbb::$container->get('captcha.factory')->get_instance(phpbb::$config['captcha_plugin']);
 		$captcha->init(CONFIRM_POST);
 
 		return $captcha->validate($this->request_data());
