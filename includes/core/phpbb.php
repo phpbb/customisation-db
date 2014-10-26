@@ -38,9 +38,6 @@ class phpbb
 	/** @var user phpBB User class */
 	public static $user;
 
-	/** @var array $user->style */
-	public static $style_data;
-
 	/** @var request phpBB request class */
 	public static $request;
 
@@ -67,7 +64,6 @@ class phpbb
 		self::$container = &$phpbb_container;
 		self::$dispatcher = &$phpbb_dispatcher;
 
-		self::$style_data = self::$user->style;
 		self::$container->set('phpbb.titania.config', titania::$config);
 	}
 
@@ -116,15 +112,6 @@ class phpbb
 		}
 
 		include(PHPBB_ROOT_PATH . 'includes/' . $file . '.' . PHP_EXT);
-	}
-
-	/**
-	* Reset the template/theme data to the phpBB information
-	*/
-	public static function reset_template()
-	{
-		self::$user->style = self::$style_data;
-		self::$template->set_style();
 	}
 
 	/**
