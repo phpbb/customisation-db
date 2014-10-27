@@ -78,10 +78,13 @@ class support
 		}
 
 		$this->display->assign_global_vars();
+		$u_all_support = $this->helper->route('phpbb.titania.support', array('type' => 'all'));
+
+		$this->template->assign_var('U_ALL_SUPPORT', $u_all_support);
 
 		// Generate the main breadcrumbs
 		$this->display->generate_breadcrumbs(array(
-			'ALL_SUPPORT'	=> $this->helper->route('phpbb.titania.support', array('type' => 'all')),
+			'ALL_SUPPORT'	=> $u_all_support,
 		));
 
 		// Links to the support topic lists
