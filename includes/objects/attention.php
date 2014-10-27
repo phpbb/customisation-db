@@ -85,8 +85,6 @@ class titania_attention extends titania_database_object
 
 	public function submit()
 	{
-		$this->attention_url = titania_url::unbuild_url($this->attention_url);
-
 		// Subscriptions
 		if (!$this->attention_id)
 		{
@@ -142,10 +140,7 @@ class titania_attention extends titania_database_object
 	*/
 	public function get_url()
 	{
-		$base = $append = false;
-		titania_url::split_base_params($base, $append, $this->attention_url);
-
-		return titania_url::build_url($base, $append);
+		return '';
 	}
 
 	/**
