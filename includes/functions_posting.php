@@ -33,13 +33,17 @@ function generate_category_select($selected = false, $is_manage = false, $disabl
 
 	$categories = titania::$cache->get_categories();
 	$hidden_categories = array();
+	$category = new \titania_category;
 
 	foreach ($categories as $row)
 	{
-		if (isset(titania_types::$types[$row['category_type']]) && !titania_types::$types[$row['category_type']]->acl_get('submit'))
+		$type = (isset(titania_types::$types[$row['category_type']])) ? titania_types::$types[$row['category_type']] : false;
+
+		if (!$type || !$type->acl_get('submit'))
 		{
 			continue;
 		}
+		$category->__set_array($row);
 
 		if ($row['left_id'] < $right)
 		{
@@ -53,25 +57,30 @@ function generate_category_select($selected = false, $is_manage = false, $disabl
 
 		$right = $row['right_id'];
 
-		if ($row['category_type'] == 0 && ($row['left_id'] + 1 == $row['right_id']) && !$is_manage)
+		if (!$is_manage)
 		{
-			// Non-postable forum with no subforums, don't display
-			continue;
-		}
+			// Non-postable category with no children, don't display
+			$not_postable = $row['category_type'] == 0 && ($row['left_id'] + 1 == $row['right_id']);
+			$hidden = !$row['category_visible'] || in_array($row['parent_id'], $hidden_categories);
+			$team_only_restriction = $category->is_option_set('team_only') && !$type->acl_get('moderate');
 
-		if ((!$row['category_visible'] || in_array($row['parent_id'], $hidden_categories)) && !$is_manage)
-		{
-			$hidden_categories[] = $row['category_id'];
-			continue;
+			if ($not_postable || $hidden || $team_only_restriction)
+			{
+				if ($hidden)
+				{
+					$hidden_categories[] = $row['category_id'];
+				}
+				continue;
+			}
 		}
 
 		phpbb::$template->assign_block_vars('category_select', array(
-			'S_SELECTED'		=> (in_array($row['category_id'], $selected)) ? true : false,
-			'S_DISABLED'		=> ($row['category_type'] == 0 && $disable_parents) ? true : false,
+			'S_SELECTED'		=> in_array($row['category_id'], $selected),
+			'S_DISABLED'		=> $row['category_type'] == 0 && $disable_parents,
 
 			'VALUE'				=> $row['category_id'],
 			'TYPE'				=> $row['category_type'],
-			'NAME'				=> (isset(phpbb::$user->lang[$row['category_name']])) ? phpbb::$user->lang[$row['category_name']] : $row['category_name'],
+			'NAME'				=> $category->get_name(),
 		));
 
 		for ($i = 0; $i < $padding; $i++)

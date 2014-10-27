@@ -110,6 +110,8 @@ $lang = array_merge($lang, array(
 	'SUBMIT_TIME'				=> 'Submission Time',
 	'SUPPORT_ALL_VERSIONS'		=> 'Support all phpBB versions.',
 
+	'TEAM_ONLY'					=> 'May only be selected by team members.',
+
 	'UNAPPROVED'				=> 'Unapproved',
 	'UNKNOWN'					=> 'Unknown',
 

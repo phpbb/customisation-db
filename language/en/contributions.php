@@ -45,6 +45,7 @@ $lang = array_merge($lang, array(
 	'BAD_VERSION_SELECTED'					=> '%s is not a proper phpBB version.',
 
 	'CANNOT_ADD_SELF_COAUTHOR'				=> 'You are the main author, you can not add yourself to the list of co-authors.',
+	'CATEGORY_NOT_ALLOWED'					=> 'You are not allowed to select this category.',
 	'CEASE_REQUEST'							=> 'Do not ask me again',
 	'CLEANED_CONTRIB'						=> 'Cleaned contribution',
 	'CONTRIB'								=> 'Contribution',

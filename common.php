@@ -41,9 +41,6 @@ titania::read_config_file();
 // Include the dynamic constants (after reading the Titania config file, but before loading the phpBB common file)
 titania::_include('dynamic_constants');
 
-// Decode the request
-titania_url::decode_request();
-
 // Initialise phpBB
 phpbb::initialise();
 

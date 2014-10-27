@@ -34,14 +34,14 @@ class categories extends base
 		if ($id)
 		{
 			$this->load_category($id);
-			$this->generate_breadcrumbs();
 		}
+		$this->generate_breadcrumbs();
 
 		\titania::_include('functions_display', 'titania_display_categories');
 		titania_display_categories($this->id, 'categories', true);
 
 		$this->template->assign_vars(array(
-			'SECTION_NAME'			=> '<a href="' . $this->helper->route('phpbb.titania.manage.categories') . '">' . $this->user->lang['MANAGE_CATEGORIES'] . '</a>',
+			'SECTION_NAME'			=> $this->user->lang['MANAGE_CATEGORIES'],
 
 			'U_CREATE_CATEGORY'		=> $this->category->get_manage_url('add'),
 			'U_MANAGE_CATEGORIES'	=> $this->helper->route('phpbb.titania.manage.categories'),
@@ -74,11 +74,7 @@ class categories extends base
 		$this->{$action}();
 		$this->display->assign_global_vars();
 		$this->generate_navigation('administration');
-
-		if ($id)
-		{
-			$this->generate_breadcrumbs();
-		}
+		$this->generate_breadcrumbs();
 
 		return $this->helper->render('manage/categories.html', 'MANAGE_CATEGORIES');
 	}
@@ -188,9 +184,15 @@ class categories extends base
 			'CATEGORY_VISIBLE' 				=> $category->category_visible,
 
 			'S_MOVE_CATEGORY_OPTIONS'		=> generate_category_select($category->parent_id, true),
-			'S_INTEGRATE_DEMO'				=> ($category->category_options & TITANIA_CAT_FLAG_DEMO) ? 'checked="checked"' : '',
-			'S_SUPPORT_ALL_VERSIONS'		=> ($category->category_options & TITANIA_CAT_FLAG_ALL_VERSIONS) ? 'checked="checked"' : '',
 		));
+
+		foreach ($category->available_options as $option => $flag)
+		{
+			if ($category->is_option_set($option))
+			{
+				$this->template->assign_var(strtoupper("s_$option"), 'checked="checked"');
+			}
+		}
 
 		return false;
 	}
@@ -354,21 +356,26 @@ class categories extends base
 	*/
 	protected function generate_breadcrumbs()
 	{
-		$categories = $this->cache->get_categories();
-		$category = new \titania_category;
-		$crumbs = array();
+		$crumbs = array(
+			'MANAGE_CATEGORIES'		=> $this->helper->route('phpbb.titania.manage.categories'),
+		);
 
-		// Parents
-		foreach (array_reverse($this->cache->get_category_parents($this->id)) as $data)
+		if ($this->id)
 		{
-			$category->__set_array($categories[$data['category_id']]);
-			$crumbs[$category->get_name()] = $category->get_manage_url();
+			$categories = $this->cache->get_categories();
+			$category = new \titania_category;
+
+			// Parents
+			foreach (array_reverse($this->cache->get_category_parents($this->id)) as $data)
+			{
+				$category->__set_array($categories[$data['category_id']]);
+				$crumbs[$category->get_name()] = $category->get_manage_url();
+			}
+			// Self
+			$crumbs[$this->category->get_name()] = $this->category->get_manage_url();
 		}
-		// Self
-		$crumbs[$this->category->get_name()] = $this->category->get_manage_url();
 
 		$this->display->generate_breadcrumbs($crumbs);
-		$this->display->generate_breadcrumbs($crumbs, 'nav_categories');
 	}
 
 	/**
@@ -389,8 +396,13 @@ class categories extends base
 		));
 
 		// Set category options
-		$category->category_options += ($this->request->variable('integrate_demo', false)) ? TITANIA_CAT_FLAG_DEMO : 0; 
-		$category->category_options += ($this->request->variable('support_all_versions', false)) ? TITANIA_CAT_FLAG_ALL_VERSIONS : 0;
+		foreach ($category->available_options as $option => $flag)
+		{
+			if ($this->request->variable($option, false))
+			{
+				$category->set_option($option);
+			}
+		}
 
 		return $category;
 	}

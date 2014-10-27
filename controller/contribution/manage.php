@@ -92,10 +92,10 @@ class manage extends base
 
 		if ($preview || $submit || $this->screenshot->uploaded)
 		{
-			$this->settings += array(
-				'categories'		=> $this->request->variable('contrib_category', array(0)),
+			$this->settings = array_merge($this->settings, array(
+				'categories'		=> $this->request->variable('contrib_category', array(0 => 0)),
 				'custom'			=> $this->request->variable('custom_fields', array('' => ''), true),
-			);
+			));
 			$demos = $this->request->variable('demo', array(0 => ''));
 
 			foreach ($this->contrib->type->get_allowed_branches(true) as $branch => $name)
@@ -408,7 +408,10 @@ class manage extends base
 		$this->contrib->set_custom_fields($this->settings['custom']);
 
 		// Create relations
-		$this->contrib->put_contrib_in_categories($this->settings['categories']);
+		$this->contrib->put_contrib_in_categories(
+			$this->settings['categories'],
+			!$this->contrib->type->acl_get('moderate')
+		);
 		// Submit the changes
 		$this->contrib->submit();
 		// Set the coauthors
@@ -518,7 +521,7 @@ class manage extends base
 			'NONACTIVE_COAUTHORS'		=> implode("\n", $coauthors['nonactive']),
 		));
 
-		generate_category_select(array_keys($this->contrib->category_data));
+		generate_category_select($this->settings['categories']);
 		$this->message->display();
 		$this->contrib->assign_details();
 		$this->display->assign_global_vars();
