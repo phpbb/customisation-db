@@ -23,12 +23,15 @@ $config = array(
 	/**
 	* IDs of database forum
 	*/
-	'forum_mod_database'	=> array(
+	'forum_mod_database'		=> array(
 		'30'	=> 69,
 	),
-	'forum_style_database'	=> array(
+	'forum_style_database'		=> array(
 		'30'	=> 73,
 		'31'	=> 531,
+	),
+	'forum_extension_database'	=> array(
+		'31'	=> 536,
 	),
 
 	/**
