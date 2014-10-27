@@ -37,6 +37,8 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	'AUTHOR_EXTENSIONS'					=> '%d Extensions',
+	'AUTHOR_EXTENSIONS_ONE'				=> '1 Extension',
 	'EXTENSION'							=> 'Extension',
 	'EXTENSIONS'						=> 'Extensions',
 	'EXTENSION_CREATE_PUBLIC'			=> '[b]Extension name[/b]: %1$s

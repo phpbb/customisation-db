@@ -176,7 +176,7 @@ class revision_edit extends revision
 		}
 		$license_options = ($this->contrib->type->license_options) ?: array();
 
-		if (!$this->contrib->type->license_allow_custom && !in_array($settings['license'], $license_options))
+		if ($license_options && !$this->contrib->type->license_allow_custom && !in_array($settings['license'], $license_options))
 		{
 			$error[] = $this->user->lang['INVALID_LICENSE'];
 		}
