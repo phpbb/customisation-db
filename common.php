@@ -15,11 +15,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-if (!defined('PHPBB_USE_BOARD_URL_PATH'))
-{
-	define('PHPBB_USE_BOARD_URL_PATH', true);
-}
-
 // Include the non-dynamic constants
 require(TITANIA_ROOT . 'includes/constants.' . PHP_EXT);
 
