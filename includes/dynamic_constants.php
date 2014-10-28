@@ -15,17 +15,6 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
-// Some often used path constants
-if (!defined('PHPBB_ROOT_PATH'))
-{
-	define('PHPBB_ROOT_PATH', TITANIA_ROOT . titania::$config->phpbb_root_path);
-}
-
-// phpBB 3.x compatibility
-global $phpbb_root_path, $phpEx;
-$phpbb_root_path = PHPBB_ROOT_PATH;
-$phpEx = PHP_EXT;
-
 // Table names
 $table_prefix = titania::$config->table_prefix;
 define('TITANIA_ATTACHMENTS_TABLE',				$table_prefix . 'attachments');

@@ -154,14 +154,8 @@ class main_listener implements EventSubscriberInterface
 		{
 			define('PHP_EXT', $this->php_ext);
 		}
-		if (!defined('PHPBB_ROOT_PATH'))
-		{
-			define('PHPBB_ROOT_PATH', $this->phpbb_root_path);
-		}
 
 		require($this->phpbb_root_path . 'ext/phpbb/titania/common.' . $this->php_ext);
-
-		\titania::$config->phpbb_root_path = $this->phpbb_root_path;
 	}
 
 	public function overwrite_template_vars($event)

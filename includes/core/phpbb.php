@@ -47,12 +47,16 @@ class phpbb
 	/* @var \phpbb\event\dispatcher */
 	public static $dispatcher;
 
+	/** @var string */
+	public static $root_path;
+
 	/**
 	 * Static Constructor.
 	 */
 	public static function initialise()
 	{
-		global $auth, $config, $db, $template, $user, $cache, $request, $phpbb_container, $phpbb_dispatcher;
+		global $auth, $config, $db, $template, $user, $cache, $request;
+		global $phpbb_container, $phpbb_dispatcher, $phpbb_root_path;
 
 		self::$auth		= &$auth;
 		self::$config	= &$config;
@@ -63,6 +67,7 @@ class phpbb
 		self::$request	= &$request;
 		self::$container = &$phpbb_container;
 		self::$dispatcher = &$phpbb_dispatcher;
+		self::$root_path = $phpbb_root_path;
 
 		self::$container->set('phpbb.titania.config', titania::$config);
 	}
@@ -80,7 +85,7 @@ class phpbb
 	{
 		if (!strpos($url, '.' . PHP_EXT))
 		{
-			$url = titania::$absolute_board . $url . '.' . PHP_EXT;
+			$url = self::$root_path . $url . '.' . PHP_EXT;
 		}
 
 		return append_sid($url, $params, $is_amp, $session_id);
@@ -111,7 +116,7 @@ class phpbb
 			}
 		}
 
-		include(PHPBB_ROOT_PATH . 'includes/' . $file . '.' . PHP_EXT);
+		include(self::$root_path . 'includes/' . $file . '.' . PHP_EXT);
 	}
 
 	/**

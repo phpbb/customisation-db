@@ -70,6 +70,9 @@ class titania_contrib_tools
 	*/
 	public $filesize = 0;
 
+	/** @var string */
+	protected $phpbb_root_path;
+
 	/**
 	* @param string $zip Full path to the zip package
 	* @param string $new_dir_name name of the directory you want to use in the zip package (leave blank if the initial steps have been run already)
@@ -91,6 +94,7 @@ class titania_contrib_tools
 			// Unzippage
 			$this->extract($this->original_zip, $this->unzip_dir);
 		}
+		$this->phpbb_root_path = \phpbb::$root_path;
 	}
 
 	/**
@@ -638,7 +642,7 @@ class titania_contrib_tools
 		$installed = $acp_mods->process_edits($editor, $actions, $details, false, true, false);
 
 		// Reverse HAX
-		$phpbb_root_path = PHPBB_ROOT_PATH;
+		$phpbb_root_path = $this->phpbb_root_path;
 
 		phpbb::$template->set_filenames(array(
 			'automod'			=> 'contributions/automod.html',

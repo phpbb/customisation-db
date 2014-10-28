@@ -34,13 +34,6 @@ $config = array(
 	),
 
 	/**
-	* Relative path to the phpBB installation.
-	*
-	* @param	string	$phpbb_root_path	Path relative from the titania root path.
-	*/
-	'phpbb_root_path' => '../phpBB/',
-
-	/**
 	* Relative path from the server root (generate_board_url(true))
 	*
 	* @param	string	Path to the phpBB folder

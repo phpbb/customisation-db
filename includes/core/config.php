@@ -22,7 +22,6 @@ class titania_config extends titania_object
 	public function __construct($root_path)
 	{
 		$this->object_config = array_merge($this->object_config, array(
-			'phpbb_root_path'			=> array('default' => '../community/'),
 			'phpbb_script_path'			=> array('default' => 'community/'),
 			'titania_script_path'		=> array('default' => 'customisation/'),
 			'upload_path'				=> array('default' => $root_path . 'files/'),

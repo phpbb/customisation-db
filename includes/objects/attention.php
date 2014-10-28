@@ -46,6 +46,9 @@ class titania_attention extends titania_database_object
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
+	/** @var string */
+	protected $phpbb_root_path;
+
 	/**
 	 * Constructor class for the attention object
 	 */
@@ -71,6 +74,7 @@ class titania_attention extends titania_database_object
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->path_helper = phpbb::$container->get('path_helper');
+		$this->phpbb_root_path = \phpbb::$root_path;
 	}
 
 	/**
@@ -326,9 +330,9 @@ class titania_attention extends titania_database_object
 		{
 			if (!class_exists('diff_engine'))
 			{
-				include(PHPBB_ROOT_PATH . 'includes/diff/engine.' . PHP_EXT);
-				include(PHPBB_ROOT_PATH . 'includes/diff/diff.' . PHP_EXT);
-				include(PHPBB_ROOT_PATH . 'includes/diff/renderer.' . PHP_EXT);
+				include($this->phpbb_root_path . 'includes/diff/engine.' . PHP_EXT);
+				include($this->phpbb_root_path . 'includes/diff/diff.' . PHP_EXT);
+				include($this->phpbb_root_path . 'includes/diff/renderer.' . PHP_EXT);
 			}
 
 			$old = substr($temp, 0, $split_pos);
