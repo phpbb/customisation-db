@@ -56,13 +56,6 @@ class titania
 	public static $access_level = 2;
 
 	/**
-	 * Absolute Board Path
-	 *
-	 * @var string
-	 */
-	public static $absolute_board;
-
-	/**
 	* Hold our main contribution object for the currently loaded contribution
 	*
 	* @var titania_contribution
@@ -81,9 +74,6 @@ class titania
 
 		self::$time = (int) $starttime;
 		self::$cache = phpbb::$container->get('phpbb.titania.cache');
-
-		// Set the absolute titania/board path
-		self::$absolute_board = generate_board_url(true) . '/' . self::$config->phpbb_script_path;
 
 		// Setup the Access Level
 		self::$access_level = TITANIA_ACCESS_PUBLIC;
