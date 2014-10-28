@@ -7,24 +7,6 @@
 *
 */
 
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-if (!class_exists('titania_type_base'))
-{
-	include(TITANIA_ROOT . 'includes/types/base.' . PHP_EXT);
-}
-
-if (!class_exists('translation_validation'))
-{
-	include(TITANIA_ROOT . 'includes/library/translations/translation_validation.' . PHP_EXT);
-}
-
 define('TITANIA_TYPE_TRANSLATION', 6);
 
 class titania_type_translation extends titania_type_base
@@ -154,6 +136,11 @@ class titania_type_translation extends titania_type_base
 			$version['phpbb_version_revision'] = titania::$config->prerelease_phpbb_version[$version['phpbb_version_branch']];
 		}
 		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
+
+		if (!class_exists('translation_validation'))
+		{
+			include(TITANIA_ROOT . 'includes/library/translations/translation_validation.' . PHP_EXT);
+		}
 
 		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
 		$validation_tools = new translation_validation($contrib_tools->original_zip, $new_dir_name);

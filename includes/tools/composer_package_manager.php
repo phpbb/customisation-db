@@ -8,14 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
  * Composer package manager helper for handling file system functions.
  *
  * @package Titania

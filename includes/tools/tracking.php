@@ -8,14 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
  * Class to track/get read/unread status
  *
  * @package Titania

@@ -8,14 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
 * Basic class providing basic magic methods.
 *
 * @package Titania

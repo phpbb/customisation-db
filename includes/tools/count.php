@@ -8,14 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
 * Titania class to build and get the values for count fields stored in the DB
 */
 class titania_count

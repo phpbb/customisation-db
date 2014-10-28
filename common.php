@@ -10,7 +10,7 @@
 /**
  * @ignore
  */
-if (!defined('IN_TITANIA'))
+if (!defined('IN_PHPBB'))
 {
 	exit;
 }
@@ -21,6 +21,9 @@ require(TITANIA_ROOT . 'includes/constants.' . PHP_EXT);
 // Include core classes
 require(TITANIA_ROOT . 'includes/core/phpbb.' . PHP_EXT);
 require(TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT);
+require(TITANIA_ROOT . 'includes/core/object.' . PHP_EXT);
+require(TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT);
+require(TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT);
 
 // Include our core functions
 titania::_include('functions');

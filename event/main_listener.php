@@ -33,6 +33,9 @@ class main_listener implements EventSubscriberInterface
 	/** @var string */
 	protected $php_ext;
 
+	/** @var bool */
+	protected $in_titania;
+
 	/**
 	* Constructor
 	*
@@ -49,6 +52,7 @@ class main_listener implements EventSubscriberInterface
 		$this->controller_helper = $controller_helper;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+		$this->in_titania = false;
 	}
 
 	static public function getSubscribedEvents()
@@ -137,14 +141,12 @@ class main_listener implements EventSubscriberInterface
 
 	public function startup($event)
 	{
-		if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST || 
-			strpos($event->getRequest()->attributes->get('_controller'), 'phpbb.titania') !== 0 ||
-			defined('IN_TITANIA'))
+		if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST ||
+			strpos($event->getRequest()->attributes->get('_controller'), 'phpbb.titania') !== 0)
 		{
 			return;
 		}
-
-		define('IN_TITANIA', true);
+		$this->in_titania = true;
 
 		if (!defined('TITANIA_ROOT'))
 		{
@@ -160,7 +162,7 @@ class main_listener implements EventSubscriberInterface
 
 	public function overwrite_template_vars($event)
 	{
-		if (!defined('IN_TITANIA'))
+		if (!$this->in_titania)
 		{
 			return;
 		}

@@ -10,7 +10,7 @@
 /**
 * DO NOT CHANGE
 */
-if (!defined('IN_TITANIA'))
+if (!defined('IN_PHPBB'))
 {
 	exit;
 }

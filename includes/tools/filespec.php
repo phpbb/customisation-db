@@ -7,14 +7,6 @@
 *
 */
 
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
 class titania_filespec extends filespec
 {
 /**

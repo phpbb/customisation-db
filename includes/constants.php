@@ -10,15 +10,9 @@
 /**
  * @ignore
  */
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-// Without this we cannot include phpBB 3.0.x scripts.
 if (!defined('IN_PHPBB'))
 {
-	define('IN_PHPBB', true);
+	exit;
 }
 
 // Category option flags

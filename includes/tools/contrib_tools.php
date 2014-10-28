@@ -14,14 +14,6 @@ use \Phpbb\Epv\Tests\TestRunner;
 @set_time_limit(1200);
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
  * Class that handles some contrib packaging stuff
  *
  * @package Titania

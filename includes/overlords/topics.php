@@ -7,14 +7,6 @@
 *
 */
 
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
 class topics_overlord
 {
 	/**

@@ -7,14 +7,6 @@
 *
 */
 
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
 class titania_attention_post extends titania_attention
 {
 	/**

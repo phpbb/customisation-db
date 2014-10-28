@@ -8,19 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-phpbb::_include('diff/diff', false, 'diff');
-phpbb::_include('diff/engine', false, 'diff');
-phpbb::_include('diff/renderer', false, 'diff');
-phpbb::_include('functions_compress', false, 'compress');
-
-/**
 * Class to create diffs for updated versions
 * @package Titania
 */
@@ -49,6 +36,11 @@ class titania_diff
 	public function __construct($renderer_type = 'diff_renderer_unified')
 	{
 		$this->renderer_type = $renderer_type;
+
+		phpbb::_include('diff/diff', false, 'diff');
+		phpbb::_include('diff/engine', false, 'diff');
+		phpbb::_include('diff/renderer', false, 'diff');
+		phpbb::_include('functions_compress', false, 'compress');
 	}
 
 	/**

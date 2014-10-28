@@ -7,14 +7,6 @@
 *
 */
 
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
 class attention_overlord
 {
 	// Attention items

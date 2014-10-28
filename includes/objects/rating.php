@@ -8,19 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-if (!class_exists('titania_database_object'))
-{
-	require TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT;
-}
-
-/**
 * Class to abstract titania ratings.
 * @package Titania
 */

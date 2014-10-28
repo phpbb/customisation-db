@@ -8,14 +8,6 @@
 */
 
 /**
- * @ignore
- */
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
  * phpBB class that will be used in place of globalising these variables.
  */
 class phpbb

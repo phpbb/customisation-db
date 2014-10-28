@@ -8,14 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
  * BBCode demo class. Allows the rendering of BBCode without adding BBCodes to the db.
  *
  * @package Titania

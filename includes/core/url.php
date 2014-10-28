@@ -10,14 +10,6 @@
 use phpbb\request\request_interface;
 
 /**
- * @ignore
- */
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
 * URL handler class for Titania
 */
 class titania_url

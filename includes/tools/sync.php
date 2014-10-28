@@ -7,14 +7,6 @@
 *
 */
 
-/**
- * @ignore
- */
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
 // Hopefully this helps
 @set_time_limit(1200);
 

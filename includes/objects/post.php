@@ -8,19 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-if (!class_exists('titania_message_object'))
-{
-	require TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT;
-}
-
-/**
 * Class to abstract titania posts
 * @package Titania
 */

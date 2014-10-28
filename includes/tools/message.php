@@ -8,14 +8,6 @@
 */
 
 /**
- * @ignore
- */
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
  * Message handler class for Titania
  */
 class titania_message

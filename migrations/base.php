@@ -26,11 +26,6 @@ class base extends \phpbb\db\migration\migration
 			return;
 		}
 
-		if (!defined('IN_TITANIA'))
-		{
-			define('IN_TITANIA', true);
-		}
-
 		$root_path = $this->phpbb_root_path . 'ext/phpbb/titania/';
 
 		if (!function_exists('titania_get_config'))

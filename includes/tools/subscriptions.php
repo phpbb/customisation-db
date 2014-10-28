@@ -7,11 +7,6 @@
 *
 */
 
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
 // These lines can be removed/commented out when we get it integrated.
 define('SUBSCRIPTION_EMAIL', 1);
 define('SUBSCRIPTION_WATCH', 2);

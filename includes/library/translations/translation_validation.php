@@ -8,14 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
  * Description of translation_validation
  *
  * @author Vojtěch Vondra
@@ -319,4 +311,3 @@ class translation_validation extends titania_contrib_tools
 		return $keys;
 	}
 }
-?>

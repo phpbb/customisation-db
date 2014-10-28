@@ -8,19 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-if (!class_exists('titania_object'))
-{
-	require TITANIA_ROOT . 'includes/core/object.' . PHP_EXT;
-}
-
-/**
 * Class providing basic database operations.
 *
 * @package Titania

@@ -8,19 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-if (!class_exists('titania_message_object'))
-{
-	require TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT;
-}
-
-/**
 * Class to abstract titania authors.
 * @package Titania
 */
@@ -390,5 +377,4 @@ class titania_author extends titania_message_object
 
 		phpbb::$template->assign_vars($vars);
 	}
-
 }

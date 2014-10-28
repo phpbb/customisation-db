@@ -8,14 +8,6 @@
 */
 
 /**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-/**
  * Class hanldes sending notifications to users either via email, PM or both.
  * 
  * Documentation:
@@ -381,4 +373,3 @@ class titania_notifications
 		$this->set_subject(false)->set_message(false);
 	}
 }
-?>
