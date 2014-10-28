@@ -2373,7 +2373,7 @@ class acp_mods
 		{
 			$template->assign_var('S_SQL', true);
 
-			parser::parse_sql($actions['SQL']);
+			// parser::parse_sql($actions['SQL']);
 
 			$db->sql_return_on_error(true);
 

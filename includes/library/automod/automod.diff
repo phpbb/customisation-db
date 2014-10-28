@@ -124,6 +124,15 @@
  		}
  
  		// Delete (or reverse-delete) installed files
+@@ -2359,7 +2373,7 @@
+ 		{
+ 			$template->assign_var('S_SQL', true);
+ 
+-			parser::parse_sql($actions['SQL']);
++			// parser::parse_sql($actions['SQL']);
+ 
+ 			$db->sql_return_on_error(true);
+ 
 @@ -2713,6 +2727,8 @@
  
  	function handle_template_prompt(&$children, &$elements, $action)
@@ -227,31 +236,23 @@
  
 --- automod-1.0.2/root/includes/mod_parser.php
 +++ customisation-db/titania/includes/library/automod/mod_parser.php
-@@ -101,6 +100,7 @@
- 	*/
- 	function parse_sql(&$sql_query)
- 	{
-+/*
- 		global $dbms, $table_prefix;
- 
- 		if (!function_exists('get_available_dbms'))
-@@ -138,6 +138,7 @@
- 		}
- 
- 		//return $sql_query;
-+*/
- 	}
- 
- 	/**
-@@ -469,6 +470,9 @@
- 			'MOD_DESCRIPTION'	=> nl2br(localise_tags($header, 'DESCRIPTION')),
+@@ -470,6 +469,9 @@
  			'MOD_VERSION'		=> htmlspecialchars(trim($version)),
  //			'MOD_DEPENDENCIES'	=> (isset($header['TITLE'][0]['data'])) ? htmlspecialchars(trim($header['TITLE'][0]['data'])) : '',
-+
+ 
 +			'INSTALLATION_LEVEL'	=> (isset($header['INSTALLATION'][0]['children']['LEVEL'][0]['data'])) ? $header['INSTALLATION'][0]['children']['LEVEL'][0]['data'] : 0,
 +			'INSTALLATION_TIME'		=> (isset($header['INSTALLATION'][0]['children']['TIME'][0]['data'])) ? $header['INSTALLATION'][0]['children']['TIME'][0]['data'] : 0,
- 
++
  			'AUTHOR_DETAILS'	=> $author_details,
  			'AUTHOR_NOTES'		=> nl2br(localise_tags($header, 'AUTHOR-NOTES')),
-
+ 			'MOD_HISTORY'		=> $mod_history,
+@@ -496,7 +498,7 @@
+ 		$sql_info = (!empty($xml_actions['SQL'])) ? $xml_actions['SQL'] : array();
+ 
+ 		$match_dbms = array();
+-		switch ($db->sql_layer)
++		switch ($db->get_sql_layer())
+ 		{
+ 			case 'firebird':
+ 			case 'oracle':
 
