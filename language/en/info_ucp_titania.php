@@ -1,9 +1,13 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
 
@@ -30,8 +34,8 @@ $lang = array_merge($lang, array(
 	
 	'SUBSCRIPTION_ATTENTION'			=> 'Attention queue',
 	'SUBSCRIPTION_CONTRIB'				=> 'Contributions',
-	'SUBSCRIPTION_ITEMS_MANAGE'			=> 'Manage items subscriptions',
-	'SUBSCRIPTION_SECTIONS_MANAGE'		=> 'Manage sections subscriptions',
+	'SUBSCRIPTION_ITEMS_MANAGE'			=> 'Manage item subscriptions',
+	'SUBSCRIPTION_SECTIONS_MANAGE'		=> 'Manage section subscriptions',
 	'SUBSCRIPTION_ITEMS_MANAGE_EXPLAIN'	=> 'Below is a list of items you are subscribed to in the customisation database. You will be notified of new posts in either. <br />To unsubscribe mark the items then press the Unwatch marked button.',
 	'SUBSCRIPTION_SECTIONS_MANAGE_EXPLAIN'	=> 'Below is a list of sections you are subscribed to in the customisation database. You will be notified of new posts in either. <br />To unsubscribe mark the sections then press the Unwatch marked button.',
 	'SUBSCRIPTION_QUEUE'			=> 'Validation Queue',

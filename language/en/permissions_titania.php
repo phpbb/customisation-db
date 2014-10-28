@@ -1,10 +1,14 @@
 <?php
 /**
-* acp_permissions_titania (Titania Permission Set) [English]
 *
-* @package language
-* @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
+*
 */
 
 /**
