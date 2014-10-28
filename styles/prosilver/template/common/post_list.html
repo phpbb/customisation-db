@@ -99,8 +99,8 @@
 
 				<!-- IF posts.RANK_TITLE or posts.RANK_IMG --><dd class="profile-rank">{posts.RANK_TITLE}<!-- IF posts.RANK_TITLE and posts.RANK_IMG --><br /><!-- ENDIF -->{posts.RANK_IMG}</dd><!-- ENDIF -->
 
-			<!-- IF posts.POSTER_POSTS != '' --><dd class="profile-posts"><strong>{L_POSTS}{L_COLON}</strong> {posts.POSTER_POSTS}</dd><!-- ENDIF -->
-			<!-- IF posts.POSTER_JOINED --><dd class="profile-joined"><strong>{L_JOINED}{L_COLON}</strong> {posts.POSTER_JOINED}</dd><!-- ENDIF -->
+			<!-- IF posts.USER_POSTS != '' --><dd class="profile-posts"><strong>{L_POSTS}{L_COLON}</strong> {posts.USER_POSTS}</dd><!-- ENDIF -->
+			<!-- IF posts.USER_JOINED --><dd class="profile-joined"><strong>{L_JOINED}{L_COLON}</strong> {posts.USER_JOINED}</dd><!-- ENDIF -->
 			<!-- IF posts.POST_IP --><dd><strong>{L_POST_IP}:</strong> {posts.POST_IP}</dd><!-- ENDIF -->
 
 			<!-- IF posts.S_PROFILE_FIELD1 -->
@@ -110,7 +110,7 @@
 
 			<!-- EVENT viewtopic_body_postrow_custom_fields_before -->
 			<!-- BEGIN custom_fields -->
-				<!-- IF not posts.custom_fields.S_PROFILE_CONTACT -->
+				<!-- IF not posts.custom_fields.S_PROFILE_CONTACT and posts.custom_fields.PROFILE_FIELD_IDENT neq 'first_name' and posts.custom_fields.PROFILE_FIELD_IDENT neq 'last_name' -->
 					<dd class="profile-custom-field profile-{posts.custom_fields.PROFILE_FIELD_IDENT}"><strong>{posts.custom_fields.PROFILE_FIELD_NAME}{L_COLON}</strong> {posts.custom_fields.PROFILE_FIELD_VALUE}</dd>
 				<!-- ENDIF -->
 			<!-- END custom_fields -->
