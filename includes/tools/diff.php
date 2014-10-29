@@ -1,24 +1,15 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
-
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-phpbb::_include('diff/diff', false, 'diff');
-phpbb::_include('diff/engine', false, 'diff');
-phpbb::_include('diff/renderer', false, 'diff');
-phpbb::_include('functions_compress', false, 'compress');
 
 /**
 * Class to create diffs for updated versions
@@ -49,6 +40,11 @@ class titania_diff
 	public function __construct($renderer_type = 'diff_renderer_unified')
 	{
 		$this->renderer_type = $renderer_type;
+
+		phpbb::_include('diff/diff', false, 'diff');
+		phpbb::_include('diff/engine', false, 'diff');
+		phpbb::_include('diff/renderer', false, 'diff');
+		phpbb::_include('functions_compress', false, 'compress');
 	}
 
 	/**

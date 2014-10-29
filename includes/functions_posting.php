@@ -1,16 +1,20 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
 
 /**
 * @ignore
 */
-if (!defined('IN_TITANIA'))
+if (!defined('IN_PHPBB'))
 {
 	exit;
 }
@@ -19,9 +23,12 @@ if (!defined('IN_TITANIA'))
  * Generate the category select (much is from the make_jumpbox function)
  *
  * @param array $selected
+ * @param bool $is_manage			Whether in category management, in which case all are listed
+ * @param bool $disable_parents		Whether to disable categories that do not have a contribution type
+ * @param bool|int $category_type	Category type to limit list to
  * @return void
  */
-function generate_category_select($selected = false, $is_manage = false, $disable_parents = true)
+function generate_category_select($selected = false, $is_manage = false, $disable_parents = true, $category_type = false)
 {
 	if (!is_array($selected))
 	{
@@ -39,7 +46,7 @@ function generate_category_select($selected = false, $is_manage = false, $disabl
 	{
 		$type = (isset(titania_types::$types[$row['category_type']])) ? titania_types::$types[$row['category_type']] : false;
 
-		if (!$type || !$type->acl_get('submit'))
+		if (!$type || !$type->acl_get('submit') || ($category_type && $type->id != $category_type))
 		{
 			continue;
 		}

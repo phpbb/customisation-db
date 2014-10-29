@@ -1,17 +1,20 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
 *
-* Customisation Database (Titania) Configuration File.
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
+*
 */
 
 /**
  * @ignore
  */
-if (!defined('IN_TITANIA'))
+if (!defined('IN_PHPBB'))
 {
 	exit;
 }
@@ -32,13 +35,6 @@ $config = array(
 		'30'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
 		'31'	=> array('latest_revision' => '0-RC1', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
 	),
-
-	/**
-	* Relative path to the phpBB installation.
-	*
-	* @param	string	$phpbb_root_path	Path relative from the titania root path.
-	*/
-	'phpbb_root_path' => '../phpBB/',
 
 	/**
 	* Relative path from the server root (generate_board_url(true))

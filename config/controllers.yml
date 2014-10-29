@@ -288,3 +288,13 @@ services:
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
+
+    phpbb.titania.controller.ucp.subscriptions:
+        class: phpbb\titania\controller\ucp\subscriptions
+        arguments:
+            - @dbal.conn
+            - @template
+            - @user
+            - @request
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.config

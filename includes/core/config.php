@@ -1,9 +1,13 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
 
@@ -22,7 +26,6 @@ class titania_config extends titania_object
 	public function __construct($root_path)
 	{
 		$this->object_config = array_merge($this->object_config, array(
-			'phpbb_root_path'			=> array('default' => '../community/'),
 			'phpbb_script_path'			=> array('default' => 'community/'),
 			'titania_script_path'		=> array('default' => 'customisation/'),
 			'upload_path'				=> array('default' => $root_path . 'files/'),

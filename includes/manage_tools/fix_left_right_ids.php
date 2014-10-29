@@ -7,14 +7,6 @@
 *
 */
 
-/**
- * @ignore
- */
-if (!defined('IN_PHPBB'))
-{
-	exit;
-}
-
 class fix_left_right_ids
 {
 	function tool_active()
@@ -100,5 +92,3 @@ class fix_left_right_ids
 		return $changes_made;
 	}
 }
-
-?>

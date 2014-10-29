@@ -1,24 +1,15 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
-
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-if (!class_exists('titania_database_object'))
-{
-	require TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT;
-}
 
 /**
  * Class to abstract attention items
@@ -46,6 +37,9 @@ class titania_attention extends titania_database_object
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
+	/** @var string */
+	protected $phpbb_root_path;
+
 	/**
 	 * Constructor class for the attention object
 	 */
@@ -71,6 +65,7 @@ class titania_attention extends titania_database_object
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->path_helper = phpbb::$container->get('path_helper');
+		$this->phpbb_root_path = \phpbb::$root_path;
 	}
 
 	/**
@@ -326,9 +321,9 @@ class titania_attention extends titania_database_object
 		{
 			if (!class_exists('diff_engine'))
 			{
-				include(PHPBB_ROOT_PATH . 'includes/diff/engine.' . PHP_EXT);
-				include(PHPBB_ROOT_PATH . 'includes/diff/diff.' . PHP_EXT);
-				include(PHPBB_ROOT_PATH . 'includes/diff/renderer.' . PHP_EXT);
+				include($this->phpbb_root_path . 'includes/diff/engine.' . PHP_EXT);
+				include($this->phpbb_root_path . 'includes/diff/diff.' . PHP_EXT);
+				include($this->phpbb_root_path . 'includes/diff/renderer.' . PHP_EXT);
 			}
 
 			$old = substr($temp, 0, $split_pos);

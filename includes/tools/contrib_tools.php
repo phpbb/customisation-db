@@ -1,9 +1,13 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
 
@@ -12,14 +16,6 @@ use \Phpbb\Epv\Output\HtmlOutput;
 use \Phpbb\Epv\Tests\TestRunner;
 
 @set_time_limit(1200);
-
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
 
 /**
  * Class that handles some contrib packaging stuff
@@ -70,6 +66,9 @@ class titania_contrib_tools
 	*/
 	public $filesize = 0;
 
+	/** @var string */
+	protected $phpbb_root_path;
+
 	/**
 	* @param string $zip Full path to the zip package
 	* @param string $new_dir_name name of the directory you want to use in the zip package (leave blank if the initial steps have been run already)
@@ -91,6 +90,7 @@ class titania_contrib_tools
 			// Unzippage
 			$this->extract($this->original_zip, $this->unzip_dir);
 		}
+		$this->phpbb_root_path = \phpbb::$root_path;
 	}
 
 	/**
@@ -638,7 +638,7 @@ class titania_contrib_tools
 		$installed = $acp_mods->process_edits($editor, $actions, $details, false, true, false);
 
 		// Reverse HAX
-		$phpbb_root_path = PHPBB_ROOT_PATH;
+		$phpbb_root_path = $this->phpbb_root_path;
 
 		phpbb::$template->set_filenames(array(
 			'automod'			=> 'contributions/automod.html',

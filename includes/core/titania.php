@@ -1,19 +1,15 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
-
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
 
 /**
  * titania class and functions for use within titania pages and apps.
@@ -56,13 +52,6 @@ class titania
 	public static $access_level = 2;
 
 	/**
-	 * Absolute Board Path
-	 *
-	 * @var string
-	 */
-	public static $absolute_board;
-
-	/**
 	* Hold our main contribution object for the currently loaded contribution
 	*
 	* @var titania_contribution
@@ -81,9 +70,6 @@ class titania
 
 		self::$time = (int) $starttime;
 		self::$cache = phpbb::$container->get('phpbb.titania.cache');
-
-		// Set the absolute titania/board path
-		self::$absolute_board = generate_board_url(true) . '/' . self::$config->phpbb_script_path;
 
 		// Setup the Access Level
 		self::$access_level = TITANIA_ACCESS_PUBLIC;

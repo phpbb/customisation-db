@@ -1,10 +1,13 @@
 <?php
-
 /**
 *
-* @package Titania
-* @copyright (c) 2014 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
 
@@ -33,6 +36,9 @@ class main_listener implements EventSubscriberInterface
 	/** @var string */
 	protected $php_ext;
 
+	/** @var bool */
+	protected $in_titania;
+
 	/**
 	* Constructor
 	*
@@ -49,6 +55,7 @@ class main_listener implements EventSubscriberInterface
 		$this->controller_helper = $controller_helper;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+		$this->in_titania = false;
 	}
 
 	static public function getSubscribedEvents()
@@ -137,14 +144,12 @@ class main_listener implements EventSubscriberInterface
 
 	public function startup($event)
 	{
-		if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST || 
-			strpos($event->getRequest()->attributes->get('_controller'), 'phpbb.titania') !== 0 ||
-			defined('IN_TITANIA'))
+		if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST ||
+			strpos($event->getRequest()->attributes->get('_controller'), 'phpbb.titania') !== 0)
 		{
 			return;
 		}
-
-		define('IN_TITANIA', true);
+		$this->in_titania = true;
 
 		if (!defined('TITANIA_ROOT'))
 		{
@@ -154,19 +159,13 @@ class main_listener implements EventSubscriberInterface
 		{
 			define('PHP_EXT', $this->php_ext);
 		}
-		if (!defined('PHPBB_ROOT_PATH'))
-		{
-			define('PHPBB_ROOT_PATH', $this->phpbb_root_path);
-		}
 
 		require($this->phpbb_root_path . 'ext/phpbb/titania/common.' . $this->php_ext);
-
-		\titania::$config->phpbb_root_path = $this->phpbb_root_path;
 	}
 
 	public function overwrite_template_vars($event)
 	{
-		if (!defined('IN_TITANIA'))
+		if (!$this->in_titania)
 		{
 			return;
 		}

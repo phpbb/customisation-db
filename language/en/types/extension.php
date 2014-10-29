@@ -1,16 +1,20 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2014 phpBB Limited
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
 
 /**
 * DO NOT CHANGE
 */
-if (!defined('IN_TITANIA'))
+if (!defined('IN_PHPBB'))
 {
 	exit;
 }
@@ -52,7 +56,7 @@ $lang = array_merge($lang, array(
 
 [b]Extension overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]The phpBB Team is not responsible nor required to provide support for this extension. By installing this extension, you acknowledge that the phpBB Support Team or phpBB Extensions Team may not be able to provide support.[/b][/color]
+[color=blue][b]Except where otherwise noted, the phpBB Team is not responsible nor required to provide support for this extension. By installing this extension, you acknowledge that the phpBB Support Team or phpBB Extensions Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]--&gt;[b]Extension support[/b]&lt;--[/url][/size]',
 	'EXTENSION_QUEUE_TOPIC'				=> '[b]Extension name[/b]: %1$s

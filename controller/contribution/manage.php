@@ -521,7 +521,7 @@ class manage extends base
 			'NONACTIVE_COAUTHORS'		=> implode("\n", $coauthors['nonactive']),
 		));
 
-		generate_category_select($this->settings['categories']);
+		generate_category_select($this->settings['categories'], false, true, $this->contrib->type->id);
 		$this->message->display();
 		$this->contrib->assign_details();
 		$this->display->assign_global_vars();

@@ -100,7 +100,6 @@ class parser
 	*/
 	function parse_sql(&$sql_query)
 	{
-/*
 		global $dbms, $table_prefix;
 
 		if (!function_exists('get_available_dbms'))
@@ -138,7 +137,6 @@ class parser
 		}
 
 		//return $sql_query;
-*/
 	}
 
 	/**

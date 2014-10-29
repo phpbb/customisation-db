@@ -1,0 +1,111 @@
+<!-- INCLUDE ucp_header.html -->
+
+<form id="ucp" method="post" action="{S_ACTION}">
+
+<h2>{L_SUBSCRIPTION_ITEMS_MANAGE}</h2>
+
+<div class="panel">
+	<div class="inner">
+
+	<p>{L_SUBSCRIPTION_ITEMS_MANAGE_EXPLAIN}</p>
+
+	<!-- IF .subscriptions -->
+		<ul class="linklist">
+			<li class="rightside pagination">
+				{TOTAL_RESULTS}
+				<!-- IF .pagination -->
+					<!-- INCLUDE pagination.html -->
+				<!-- ELSE -->
+					&bull; {PAGE_NUMBER}
+				<!-- ENDIF -->
+			</li>
+		</ul>
+		<ul class="topiclist <!-- IF S_WATCHED_ITEMS -->missing-column<!-- ELSE -->two-columns<!-- ENDIF -->">
+			<li class="header">
+				<dl class="icon">
+					<dt><!-- IF S_WATCHED_ITEMS -->{L_WATCHED_ITEMS}<!-- ELSE -->{L_WATCHED_SECTIONS}<!-- ENDIF --></dt>
+					<!-- IF S_WATCHED_ITEMS -->
+						<dd class="lastpost"><span>{L_INFORMATION}</span></dd>
+					<!-- ENDIF -->
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist cplist <!-- IF S_WATCHED_ITEMS -->missing-column<!-- ELSE -->two-columns<!-- ENDIF -->">
+		<!-- BEGIN subscriptions -->
+			<li class="row<!-- IF subscriptions.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
+				<dl<!-- IF subscriptions.FOLDER_STYLE --> class="icon {subscriptions.FOLDER_STYLE}"<!-- ENDIF -->>
+					<dt>
+						<div class="list-inner">
+							<a href="{subscriptions.U_VIEW_SUBSCRIPTION}" class="topictitle">{subscriptions.SUBSCRIPTION_TITLE}</a>
+								<!-- IF subscriptions.SUBSCRIPTION_TARGET -->
+									({subscriptions.SUBSCRIPTION_TARGET})
+								<!-- ENDIF -->
+							<!-- IF subscriptions.S_ACCESS_TEAMS -->
+							<img src="{TITANIA_THEME_PATH}images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
+							<!-- ELSEIF subscriptions.S_ACCESS_AUTHORS -->
+							<img src="{TITANIA_THEME_PATH}images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
+							<!-- ENDIF -->
+							<br />
+							<!-- IF subscriptions.SUBSCRIPTION_AUTHOR_FULL -->
+								{L_POST_BY_AUTHOR} {subscriptions.SUBSCRIPTION_AUTHOR_FULL}
+							<!-- ELSE -->
+								{L_WATCHED_SINCE}
+							<!-- ENDIF -->
+							&raquo; {subscriptions.SUBSCRIPTION_TIME}
+						</div>
+					</dt>
+					<!-- IF S_WATCHED_ITEMS -->
+					<dd class="lastpost">
+						<!-- IF subscriptions.S_TOPIC -->
+							<span>
+								{L_LAST_POST} {L_POST_BY_AUTHOR} {subscriptions.SUBSCRIPTION_LAST_AUTHOR_FULL}
+								<a href="{subscriptions.U_VIEW_LAST_POST}">{subscriptions.LAST_POST_IMG}</a> <br />
+								&raquo; {subscriptions.SUBSCRIPTION_LAST_TIME}
+							</span>
+						<!-- ENDIF -->
+						<!-- IF subscriptions.S_CONTRIB -->
+							<span>
+								{L_TYPE}{L_COLON} {subscriptions.SUBSCRIPTION_CONTRIB_TYPE}<br />
+								{L_VIEWS}{L_COLON} {subscriptions.SUBSCRIPTION_VIEWS} &bull;
+								{L_DOWNLOAD}{L_COLON} {subscriptions.SUBSCRIPTION_DOWNLOADS}
+							</span>
+						<!-- ENDIF -->
+					</dd>
+					<!-- ENDIF -->
+					<dd class="mark">
+						<input type="checkbox" name="subscriptions[{subscriptions.SUBSCRIPTION_TYPE}][{subscriptions.SUBSCRIPTION_ID}]" id="{subscriptions.SUBSCRIPTION_ID}" />
+					</dd>
+				</dl>
+			</li>
+		<!-- END subscriptions -->
+		</ul>
+		<ul class="linklist">
+			<li class="rightside pagination">
+				{TOTAL_RESULTS}
+				<!-- IF .pagination -->
+					<!-- INCLUDE pagination.html -->
+				<!-- ELSE -->
+					&bull; {PAGE_NUMBER}
+				<!-- ENDIF -->
+			</li>
+		</ul>
+	<!-- ELSE -->
+		<p><strong><!-- IF S_WATCHED_ITEMS -->{L_NO_ITEMS}<!-- ELSE -->{L_NO_SECTIONS}<!-- ENDIF --></strong></p>
+	<!-- ENDIF -->
+
+	</div>
+</div>
+
+<!-- IF .subscriptions -->
+	<fieldset class="display-actions">
+		<input class="button2" type="submit" name="unsubscribe" value="{L_UNWATCH_SUBSCRIPTION_MARKED}" />
+		<div>
+			<a href="#" onclick="marklist('ucp', '', true); return false;">{L_MARK_ALL}</a> ::
+			<a href="#" onclick="marklist('ucp', '', false); return false;">{L_UNMARK_ALL}</a>
+		</div>
+		{S_FORM_TOKEN}
+	</fieldset>
+<!-- ENDIF -->
+</form>
+
+<!-- INCLUDE ucp_footer.html -->

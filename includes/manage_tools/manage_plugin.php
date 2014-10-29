@@ -10,16 +10,6 @@
 /**
  * @ignore
  */
-if (!defined('IN_PHPBB'))
-{
-	exit;
-}
-
-// Load functions_admin.php if required
-if (!function_exists('filelist'))
-{
-	include(PHPBB_ROOT_PATH . 'includes/functions_admin.' . PHP_EXT);
-}
 
 class manage_plugin
 {
@@ -53,6 +43,9 @@ class manage_plugin
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var string */
+	protected $phpbb_root_path;
+
 	/**
 	 * Constructor
 	 * Load the list with available plugins and assign them in the correct category
@@ -60,9 +53,16 @@ class manage_plugin
 	public function __construct(\phpbb\titania\controller\helper $controller_helper)
 	{
 		$this->controller_helper = $controller_helper;
+		$this->phpbb_root_path = \phpbb::$root_path;
 
 		// Set the path
 		$this->tool_box_path = TITANIA_ROOT . 'includes/manage_tools/';
+
+		// Load functions_admin.php if required
+		if (!function_exists('filelist'))
+		{
+			include($this->phpbb_root_path . 'includes/functions_admin.' . PHP_EXT);
+		}
 
 		// Create a list with tools
 		$filelist = filelist($this->tool_box_path, '', PHP_EXT);

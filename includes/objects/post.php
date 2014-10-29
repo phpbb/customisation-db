@@ -1,24 +1,15 @@
 <?php
 /**
 *
-* @package Titania
-* @copyright (c) 2008 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+* This file is part of the phpBB Customisation Database package.
+*
+* @copyright (c) phpBB Limited <https://www.phpbb.com>
+* @license GNU General Public License, version 2 (GPL-2.0)
+*
+* For full copyright and license information, please see
+* the docs/CREDITS.txt file.
 *
 */
-
-/**
-* @ignore
-*/
-if (!defined('IN_TITANIA'))
-{
-	exit;
-}
-
-if (!class_exists('titania_message_object'))
-{
-	require TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT;
-}
 
 /**
 * Class to abstract titania posts
@@ -189,9 +180,18 @@ class titania_post extends titania_message_object
 		$this->post_subject = truncate_string($this->post_subject);
 
 		$message_length = utf8_strlen($this->post_text);
+
 		if ($message_length < (int) phpbb::$config['min_post_chars'])
 		{
-			$error[] = sprintf(phpbb::$user->lang['TOO_FEW_CHARS_LIMIT'], $message_length, (int) phpbb::$config['min_post_chars']);
+			if ($message_length)
+			{
+				$error[] = phpbb::$user->lang('CHARS_POST_CONTAINS', $message_length) . '<br />' .
+					phpbb::$user->lang('TOO_FEW_CHARS_LIMIT', (int) phpbb::$config['min_post_chars']);
+			}
+			else
+			{
+				$error[] = phpbb::$user->lang['TOO_FEW_CHARS'];
+			}
 		}
 		else if (phpbb::$config['max_post_chars'] != 0 && $message_length > (int) phpbb::$config['max_post_chars'])
 		{
