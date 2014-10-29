@@ -24,6 +24,9 @@ class item extends \phpbb\titania\controller\manage\base
 	/** @var \titania_contribution */
 	protected $contrib;
 
+	/** @var \titania_revision */
+	protected $revision;
+
 	/** @var bool */
 	protected $is_author;
 
@@ -186,6 +189,7 @@ class item extends \phpbb\titania\controller\manage\base
 		}
 
 		$this->contrib = \contribs_overlord::get_contrib_object($this->queue->contrib_id, true);
+		$this->revision = $this->queue->get_revision();
 		$this->is_author = $this->contrib->is_author || $this->contrib->is_active_coauthor || $this->contrib->is_coauthor;
 	}
 
@@ -341,15 +345,33 @@ class item extends \phpbb\titania\controller\manage\base
 	*/
 	public function approve()
 	{
+		$public_notes = $this->request->variable('public_notes', '', true);
+
 		if ($this->validate('approve'))
 		{
-			$this->queue->approve('');
+			$this->queue->approve($public_notes);
 
 			// Reload contribution with new data.
 			$this->contrib->load();
 			$this->contrib->type->approve($this->contrib, $this->queue);
 			$this->cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
 			redirect($this->queue->get_url());
+		}
+
+		if ($this->contrib->type->update_public)
+		{
+			$this->template->assign_vars(array(
+				'PUBLIC_MESSAGE'			=> $public_notes,
+				'S_PUBLIC_NOTES'			=> true,
+			));
+
+			if ($this->request->is_set_post('preview'))
+			{
+				$this->template->assign_vars(array(
+					'PUBLIC_PREVIEW_SUBJECT'	=> 'Re: ' . $this->contrib->contrib_name,
+					'PUBLIC_PREVIEW_MESSAGE'	=> $this->get_public_notes_preview($public_notes),
+				));
+			}
 		}
 
 		return $this->helper->render(
@@ -417,6 +439,28 @@ class item extends \phpbb\titania\controller\manage\base
 		));
 
 		return false;
+	}
+
+	/**
+	* Get public notes preview.
+	*
+	* @param string $notes
+	* @return string
+	*/
+	protected function get_public_notes_preview($notes)
+	{
+		$preview = $this->user->lang(
+			$this->contrib->type->update_public,
+			$this->revision->revision_version
+		);
+
+		if ($notes)
+		{
+			$preview .= $this->user->lang($this->contrib->type->update_public . '_NOTES', $notes);
+		}
+		$uid = $bitfield = $options = false;
+		generate_text_for_storage($preview, $uid, $bitfield, $options, true, true, true);
+		return titania_generate_text_for_display($preview, $uid, $bitfield, $options);
 	}
 
 	/**
