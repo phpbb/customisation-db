@@ -56,7 +56,7 @@ $lang = array_merge($lang, array(
 
 [b]Extension overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]The phpBB Team is not responsible nor required to provide support for this extension. By installing this extension, you acknowledge that the phpBB Support Team or phpBB Extensions Team may not be able to provide support.[/b][/color]
+[color=blue][b]Except where otherwise noted, the phpBB Team is not responsible nor required to provide support for this extension. By installing this extension, you acknowledge that the phpBB Support Team or phpBB Extensions Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]--&gt;[b]Extension support[/b]&lt;--[/url][/size]',
 	'EXTENSION_QUEUE_TOPIC'				=> '[b]Extension name[/b]: %1$s
