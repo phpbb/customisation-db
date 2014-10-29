@@ -60,7 +60,7 @@ $config = array(
 	*
 	* @param	string	Path to the titania folder
 	*/
-	'titania_script_path' => 'customise/db/',
+	'titania_script_path' => 'customise/',
 
 	/**
 	* Prefix of the sql tables.  Not the prefix for the phpBB tables, prefix for the Titania tables only.
