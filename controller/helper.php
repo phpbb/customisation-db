@@ -38,7 +38,9 @@ class helper extends \phpbb\controller\helper
 	*/
 	public function route($route, array $params = array(), $is_amp = true, $session_id = false, $reference_type = UrlGeneratorInterface::ABSOLUTE_URL)
 	{
-		return parent::route($route, $params, $is_amp, $session_id, $reference_type);
+		$route = parent::route($route, $params, $is_amp, $session_id, $reference_type);
+
+		return (strpos($route, 'http://') === 0) ? 'https://' . substr($route, 7) : $route;
 	}
 
 	/**
