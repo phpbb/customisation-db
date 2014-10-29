@@ -156,6 +156,12 @@ class subscriptions
 			switch ($row['watch_object_type'])
 			{
 				case TITANIA_SUPPORT:
+					// Contribution no longer exists.
+					if (!$row['contrib_id'])
+					{
+						$this->delete_subscription($row['watch_object_type'], $row['watch_object_id'], false);
+						continue;
+					}
 					$vars = $this->get_support_tpl_row($row);
 				break;
 
@@ -246,6 +252,12 @@ class subscriptions
 			}
 			else
 			{
+				// Contribution no longer exists.
+				if (!$row['contrib_id'])
+				{
+					$this->delete_subscription($row['watch_object_type'], $row['watch_object_id'], false);
+					continue;
+				}
 				$vars = $this->get_contribution_tpl_row($row);
 			}
 			$this->template->assign_block_vars('subscriptions', $vars);
