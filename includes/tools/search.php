@@ -11,6 +11,25 @@
 *
 */
 
+/**
+* @ignore
+*/
+if (!defined('IN_PHPBB'))
+{
+	exit;
+}
+
+// Include library in include path (for Zend)
+if (titania::$config->search_backend == 'zend')
+{
+	set_include_path(get_include_path() . PATH_SEPARATOR . realpath(TITANIA_ROOT . 'includes/library/'));
+	titania::_include('library/Zend/Search/Lucene', false, 'Zend_Search_Lucene');
+}
+
+// Using the phpBB ezcomponents loader
+titania::_include('library/ezcomponents/loader', false, 'phpbb_ezcomponents_loader');
+phpbb_ezcomponents_loader::load_component('search');
+
 class titania_search
 {
 	/**
@@ -35,17 +54,6 @@ class titania_search
 	*/
 	public static function initialize()
 	{
-		// Include library in include path (for Zend)
-		if (titania::$config->search_backend == 'zend')
-		{
-			set_include_path(get_include_path() . PATH_SEPARATOR . realpath(TITANIA_ROOT . 'includes/library/'));
-			titania::_include('library/Zend/Search/Lucene', false, 'Zend_Search_Lucene');
-		}
-
-		// Using the phpBB ezcomponents loader
-		titania::_include('library/ezcomponents/loader', false, 'phpbb_ezcomponents_loader');
-		phpbb_ezcomponents_loader::load_component('search');
-
 		if (self::$index === false)
 		{
 			// Initialize the ezc/Zend Search class
