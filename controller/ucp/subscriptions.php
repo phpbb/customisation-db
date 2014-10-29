@@ -549,9 +549,9 @@ class subscriptions
 			'S_QUEUE'				=> true,
 			'S_ACCESS_TEAMS'		=> true,
 
-			'U_VIEW_SUBSCRIPTION'	=> $this->helper->route('phpbb.titania.queue.type', array(
+			'U_VIEW_SUBSCRIPTION'	=> $this->get_real_url($this->helper->route('phpbb.titania.queue.type', array(
 				'queue_type' => $type->url
-			)),
+			))),
 		);
 	}
 
@@ -584,7 +584,7 @@ class subscriptions
 	{
 		if ($this->ext_config->titania_script_path)
 		{
-			return generate_board_url(true) .'/'. $this->ext_config->titania_script_path .
+			return generate_board_url(true) .'/'. rtrim($this->ext_config->titania_script_path, '/') .
 				substr($url, strlen(generate_board_url()));
 		}
 		return $url;
