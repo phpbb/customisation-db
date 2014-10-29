@@ -180,9 +180,18 @@ class titania_post extends titania_message_object
 		$this->post_subject = truncate_string($this->post_subject);
 
 		$message_length = utf8_strlen($this->post_text);
+
 		if ($message_length < (int) phpbb::$config['min_post_chars'])
 		{
-			$error[] = sprintf(phpbb::$user->lang['TOO_FEW_CHARS_LIMIT'], $message_length, (int) phpbb::$config['min_post_chars']);
+			if ($message_length)
+			{
+				$error[] = phpbb::$user->lang('CHARS_POST_CONTAINS', $message_length) . '<br />' .
+					phpbb::$user->lang('TOO_FEW_CHARS_LIMIT', (int) phpbb::$config['min_post_chars']);
+			}
+			else
+			{
+				$error[] = phpbb::$user->lang['TOO_FEW_CHARS'];
+			}
 		}
 		else if (phpbb::$config['max_post_chars'] != 0 && $message_length > (int) phpbb::$config['max_post_chars'])
 		{
