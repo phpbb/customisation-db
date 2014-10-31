@@ -2,12 +2,24 @@
 
 <form id="ucp" method="post" action="{S_ACTION}">
 
-<h2>{L_SUBSCRIPTION_ITEMS_MANAGE}</h2>
+<h2>
+	<!-- IF S_WATCHED_ITEMS -->
+		{L_SUBSCRIPTION_ITEMS_MANAGE}
+	<!-- ELSE -->
+		{L_SUBSCRIPTION_SECTIONS_MANAGE}
+	<!-- ENDIF -->
+</h2>
 
 <div class="panel">
 	<div class="inner">
 
-	<p>{L_SUBSCRIPTION_ITEMS_MANAGE_EXPLAIN}</p>
+	<p>
+		<!-- IF S_WATCHED_ITEMS -->
+			{L_SUBSCRIPTION_ITEMS_MANAGE_EXPLAIN}
+		<!-- ELSE -->
+			{L_SUBSCRIPTION_SECTIONS_MANAGE_EXPLAIN}
+		<!-- ENDIF -->
+	</p>
 
 	<!-- IF .subscriptions -->
 		<ul class="linklist">
