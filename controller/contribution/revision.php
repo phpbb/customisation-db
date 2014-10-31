@@ -87,11 +87,14 @@ class revision extends base
 
 			if ($result['complete'])
 			{
+				$this->revision->repack($old_revision);
 				$this->submit();
 
 				if ($this->use_queue && !$this->is_author && $this->is_moderator)
 				{
-					redirect($this->queue->get_url());
+					redirect($this->helper->route('phpbb.titania.queue.item', array(
+						'id'	=> $this->revision->revision_queue_id,
+					)));
 				}
 
 				$old_queue->allow_author_repack = false;
