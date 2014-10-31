@@ -88,7 +88,7 @@ It is our hope that you will provide a basic level of support for this extension
 
 Sincerely,
 phpBB Extensions Team',
-	'EXTENSIONS_VALIDATION_MESSAGE_DENY'		=> 'Hello,
+	'EXTENSION_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
 As you may know all extensions submitted to the phpBB extensions database must be validated and approved by members of the phpBB Team.
 
