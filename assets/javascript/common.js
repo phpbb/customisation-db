@@ -1,4 +1,39 @@
-$(document).ready(function(){
+var titania = {};
+
+(function($) {  // Avoid conflicts with other libraries
+
+'use strict';
+
+/**
+* Filter select options by selected type value.
+*
+* @param jQuery $typeSelect 		Types <select>
+* @param jQuery $optionSelect		Options <select>
+* @return undefined
+*/
+titania.filterOptionsBySelectedType = function($typeSelect, $optionSelect) {
+	var $allOptions = $optionSelect.children().clone(),
+		filter = function() {
+			$optionSelect.html(
+				$allOptions.filter('[data-option-type="' + $typeSelect.val() + '"]')
+			);
+			var $options = $optionSelect.children();
+			// Select the option if there's only one.
+			if ($options.length === 1) {
+				$options.prop('selected', 'selected');
+			}
+		};
+
+	if (!$typeSelect.length || !$optionSelect.length) {
+		return;
+	}
+	if ($typeSelect.val() != 0) {
+		filter();
+	}
+	$typeSelect.change(function() {
+		filter();
+	});
+};
 
 	if (typeof $.colorbox === 'function') {
 		$('a.screenshot').colorbox({photo: true, rel: 'group1'})
@@ -295,7 +330,7 @@ $(document).ready(function(){
 		$(this).after($(this).clone()).addClass('hidden');
 		$(this).parent().children('input[type="submit"]:not(.hidden)').attr('disabled', 'disabled').addClass('disabled');
 	});
-});
+
 
 $(document).on('click', '#screenshot-manage a.item-control-button:not(.delete)', function(e) {
 	e.preventDefault();
@@ -381,3 +416,10 @@ function show_all_revisions(box)
 		$(this).parent().parent().children('.show-all').hide();
 	});
 }
+
+$(function() {
+	// Filter categories by contrib type.
+	titania.filterOptionsBySelectedType($('select#contrib_type'), $('select#contrib_category'));
+});
+
+})(jQuery);

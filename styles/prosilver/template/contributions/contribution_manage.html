@@ -30,7 +30,7 @@
 					<dd>
 						<select name="contrib_type" id="contrib_type" data-togglable-settings="true">
 							<!-- BEGIN type_select -->
-							<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF --> data-toggle-setting=".custom_settings_{type_select.VALUE}, .type_{type_select.VALUE}">{type_select.NAME}</option>
+							<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF --> data-toggle-setting=".custom_settings_{type_select.VALUE}">{type_select.NAME}</option>
 							<!-- END type_select -->
 						</select>
 					</dd>
@@ -63,7 +63,7 @@
 					<dd>
 						<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="5">
 							<!-- BEGIN category_select -->
-							<option class="type_{category_select.TYPE}" value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
+							<option data-option-type="{category_select.TYPE}" value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
 								<!-- BEGIN level -->&nbsp; &nbsp;<!-- END level -->{category_select.NAME}
 							</option>
 							<!-- END category_select -->
