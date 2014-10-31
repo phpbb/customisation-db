@@ -35,7 +35,7 @@ class queue_discussion extends base
 		// Redirect to specific type if user only has access to one.
 		if (sizeof($types) == 1)
 		{
-			redirect($this->get_type_url($this->get_type_from_id($authed[0])));
+			redirect($this->get_type_url($this->get_type_from_id($types[0])));
 		}
 
 		$counts = $this->get_type_topic_counts($types);
