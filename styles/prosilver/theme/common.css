@@ -297,10 +297,6 @@ ul.general-info li strong {
 	color: #FFFFFF;
 }
 
-.tab-panel {
-	padding: 0 !important;
-}
-
 .main-panel a.screenshot img, .main-panel img.screenshot {
 	padding: 3px;
 	border: 1px solid #A1A1A1;
@@ -451,8 +447,8 @@ dd.revision-version, dd.phpbb-version {
 	text-align: center;
 }
 
-#translations-panel dl dt {
-	width: 75%;
+#translations-panel {
+	clear: both;
 }
 
 #translations-panel dl dt ul li {
