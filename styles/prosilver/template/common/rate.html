@@ -1,16 +1,22 @@
-<ul class="<!-- IF S_HAS_RATED or not S_CAN_RATE -->rated<!-- ELSE -->rating<!-- ENDIF -->" id="rating_{OBJECT_ID}">
+<ul class="rating<!-- IF S_HAS_RATED --> rated<!-- ENDIF -->" data-rate-id="{OBJECT_ID}" data-rating="{OBJECT_RATING}">
 <!-- BEGIN stars -->
-	<li><!-- IF S_CAN_RATE --><a href="{stars.RATE_URL}"><!-- ENDIF --><img id="rating_{OBJECT_ID}_{stars.ID}" alt="{stars.ALT}" title="{stars.ALT}"
-	<!-- IF S_HAS_RATED && stars.ID <= OBJECT_RATING -->
-		class="green" src="{T_TITANIA_THEME_PATH}/images/star_green.gif"
-	<!-- ELSEIF not S_HAS_RATED && stars.ID <= OBJECT_RATING -->
-		class="orange" src="{T_TITANIA_THEME_PATH}/images/star_orange.gif"
-	<!-- ELSE -->
-		class="grey" src="{T_TITANIA_THEME_PATH}/images/star_grey.gif"
+	<li>
+	<!-- IF S_CAN_RATE -->
+		<a href="{stars.RATE_URL}">
 	<!-- ENDIF -->
-	/><!-- IF S_CAN_RATE --></a><!-- ENDIF --></li>
+		<span data-rate="{stars.ID}" title="{stars.ALT}"
+		<!-- IF S_HAS_RATED && stars.ID <= OBJECT_RATING -->
+			class="rating-rated"
+		<!-- ELSEIF not S_HAS_RATED && stars.ID <= OBJECT_RATING -->
+			class="rating-available"
+		<!-- ELSE -->
+			class="rating-inactive"
+		<!-- ENDIF -->>
+		</span>
+	<!-- IF S_CAN_RATE --></a><!-- ENDIF -->
+	</li>
 <!-- END stars -->
-	<li<!-- IF not S_HAS_RATED --> style="display: none;"<!-- ENDIF -->><a href="{RATE_URL}">
-		<img id="remove_{OBJECT_ID}" class="remove" src="{T_TITANIA_THEME_PATH}/images/star_remove.gif" alt="{L_REMOVE_RATING}" title="{L_REMOVE_RATING}" />
-	</a></li>
+	<li<!-- IF not S_HAS_RATED --> style="display: none;"<!-- ENDIF -->>
+		<a href="{RATE_URL}" title="{L_REMOVE_RATING}" class="rating-remove" /></a>
+	</li>
 </ul>

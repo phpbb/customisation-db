@@ -308,8 +308,9 @@ ul.general-info li strong {
 	border-color: #757575;
 }
 
-a.expand, a.contract {
+.icon-expand, .icon-contract {
 	background: url("./images/icon_contracted.gif") no-repeat 0 0;
+	cursor: pointer;
 	display: block;
 	float: left;
 	height: 16px;
@@ -317,7 +318,7 @@ a.expand, a.contract {
 	width: 16px;
 }
 
-a.contract {
+.icon-contract {
 	background-image: url("./images/icon_expanded.gif");
 }
 
@@ -488,6 +489,22 @@ ul.rating li, ul.rated li {
 	display: inline;
 	border: 0;
 }
+
+.rating a {
+	text-decoration: none;
+}
+
+.rating-available, .rating-inactive, .rating-rated, .rating-remove {
+	background-repeat: no-repeat;
+	display: inline-block;
+	height: 16px;
+	width: 16px;
+}
+
+.rating-available { background-image: url("./images/star_orange.gif"); }
+.rating-inactive { background-image: url("./images/star_grey.gif"); }
+.rating-rated { background-image: url("./images/star_green.gif"); }
+.rating-remove { background-image: url("./images/star_remove.gif"); }
 
 /* Soft deleted item */
 .deleted {

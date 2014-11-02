@@ -35,6 +35,12 @@ titania.filterOptionsBySelectedType = function($typeSelect, $optionSelect) {
 	});
 };
 
+/**
+* Activate Colorbox.
+*
+* @return undefined
+*/
+titania.activateColorbox = function() {
 	if (typeof $.colorbox === 'function') {
 		$('a.screenshot').colorbox({photo: true, rel: 'group1'})
 		// Remove ?mode=view from screenshot links as we'll be displaying the image inline, so the image should not
@@ -43,114 +49,151 @@ titania.filterOptionsBySelectedType = function($typeSelect, $optionSelect) {
 			this.href = this.href.replace('?mode=view', '');
 		});
 	}
+};
 
-	/**
-	* Display Colorize it frame.
-	*/
-	$('[data-colorizeit-url]').one('click', function(e) {
-		$('#colorizeit-placeholder')
-		.show()
-		.replaceWith(
-			$('<iframe>')
-			.attr('id', 'colorizeit-frame')
-			.attr('src', $(this).data('colorizeit-url')
-		));
-
-		e.preventDefault();
-	});
-
-	$('.contrib-download').hover(function() {
-		$('.download-info').hide();
-		$('.download-info', this).fadeIn('slow');
-	}, function() {
-		$('.download-info', this).fadeOut('slow');
-	});
-
-/* Not working...
-	// AJAX Rate
-	$("ul.rating li a, ul.rated li a").click(function(event){
-		event.preventDefault();
-
-		// Get the child img id which holds some info we need.
-		var child = $(this).children().attr('id');
-
-		// Child contains the object_id and the star number.
-		var object = child.split('_');
-
-		// Set the red stars that we neeed to.
-		for (i = 1; i <= max_rating; i++)
-		{
-			if (i <= object[1])
-			{
-				$('#rating_' + object[1] + '_' + i).attr({src: green_star.src});
-			}
-			else
-			{
-				$('#rating_' + object[1] + '_' + i).attr({src: grey_star.src});
-			}
-		}
-
-		if ($("#rating_" + object[1]).hasClass("rating"))
-		{
-			$("#rating_" + object[1]).removeClass("rating");
-			$("#rating_" + object[1]).addClass("rated");
-			$(this).unbind("hover");
-			$("#rating_" + object[1] + "_remove").parent().parent().removeClass("hidden");
-		}
-		else
-		{
-			$("#rating_" + object[1]).removeClass("rated");
-			$("#rating_" + object[1]).addClass("rating");
-			$("#rating_" + object[1] + "_remove").parent().parent().addClass("hidden");
-		}
-
-		return;
-
-		$.ajax({
-			type: "POST",
-			url: $(this).attr('href'),
-			success: function() {
-			}
-		});
-	});
+/**
+* Activate toggle buttons on rows.
+*
+* @param jQuery $rows		Rows to activate buttons on
+* @param function callback	Function to run when button is clicked
+* @return undefined
 */
-	// Rating hover functions
-	$("ul.rating li a").hover(
-		function(){
-			// Over function. This will change the stars up to the point that was hovered on to red
+titania.activateToggleButtons = function($rows, callback) {
+	var $toggles = $rows.find('.toggle');
 
-			// Get the child img id which holds some info we need.
-			var child = $(this).children().attr('id');
+	$toggles.show().click(function() {
+		$(this).toggleClass('icon-expand icon-contract');
 
-			// Child contains the object_id and the star number.
-			var object = child.split('_');
-
-			// Set all the stars to grey first
-			$('#rating_' + object[1] + " li a img").each(function() {
-				$(this).attr({src: grey_star.src});
-			});
-
-			// Set the red stars that we neeed to.
-			for (i = 1; i <= object[2]; i++)
-			{
-				$('#rating_' + object[1] + '_' + i).attr({src: red_star.src});
-			}
-		},
-		function(){
-			// Out function. Reset to default stars
-			$("ul.rating li a img.green").each(function() {
-				$(this).attr({src: green_star.src});
-			});
-
-			$("ul.rating li a img.orange").each(function() {
-				$(this).attr({src: orange_star.src});
-			});
-
-			$("ul.rating li a img.grey").each(function() {
-				$(this).attr({src: grey_star.src});
-			});
+		if (typeof callback === 'function') {
+			callback.call(this);
 		}
-	);
+	});
+	$rows.filter(':first-child').find('.toggle').toggleClass('icon-contract icon-expand');
+};
+
+/**
+* Hide extra revisions.
+*
+* @param int maxDisplayed		Max revisions to display
+* @return undefined
+*/
+titania.hideExtraRevisions = function(maxDisplayed) {
+	var $revisions = $('.revisions .row');
+
+	if (!$revisions.length) {
+		return;
+	}
+
+	if ($revisions.length > maxDisplayed) {
+		$('.revision-list').find('.show-all').show().click(function() {
+			$revisions.show();
+			$(this).hide();
+		});
+		// Show only the first five revisions
+		$revisions.slice(maxDisplayed).hide();
+	}
+
+	// Hide all of the revision details
+	$revisions.slice(1).find('.revision-details').hide();
+	// Add toggle button to each revision
+	titania.activateToggleButtons($revisions, function() {
+		$(this).siblings('.revision-details').toggle('fast');
+	});
+};
+
+/**
+* Hide extra revision translations.
+*
+* @param int maxDisplayed		Max translations displayed per column
+* @return undefined
+*/
+titania.hideExtraTranslations = function(maxDisplayed) {
+	var $translations = $('.translations .row'),
+		toggle = function($columns) {
+			$columns.each(function() {
+				$('li', this).slice(maxDisplayed).toggle();
+			});
+		};
+
+	if (!$translations.length) {
+		return;
+	}
+
+	$translations.slice(1).each(function() {
+		toggle($('.column1, .column2', this));
+	});
+
+	titania.activateToggleButtons($translations, function() {
+		toggle($(this).siblings().find('.column1, .column2'));
+	});
+};
+
+/**
+* Updating rating stars.
+*
+* @param jQuery $stars
+* @param int rating
+* @param bool rated
+*
+* @return undefined
+*/
+titania.updateRating = function($stars, rating, rated) {
+	$stars.each(function() {
+		var $this = $(this),
+			isActive = parseInt(rating) >= parseInt($this.data('rate'));
+
+		if (rated) {
+			$this.toggleClass('rating-rated', isActive);
+		} else {
+			$this.toggleClass('rating-available', isActive);
+		}
+		$this.toggleClass('rating-inactive', !isActive);
+	});
+};
+
+/**
+* Highlight rating stars when hovering over them
+*/
+$('a [data-rate]').mouseenter(function() {
+	var $active = $(this),
+		$stars = $active.parents('.rating').find('[data-rate]');
+
+	titania.updateRating($stars, $active.data('rate'), false);
+});
+
+/**
+* Reset rating to default value upon moving mouse out of rating.
+*/
+$('.rating').mouseleave(function() {
+	var $rating = $(this),
+		$stars = $rating.find('[data-rate]');
+	titania.updateRating($stars, $rating.data('rating'), $rating.hasClass('rated'));	
+});
+
+/**
+* Display Colorize it frame.
+*/
+$('[data-colorizeit-url]').one('click', function(e) {
+	$('#colorizeit-placeholder')
+	.show()
+	.replaceWith(
+		$('<iframe>')
+		.attr('id', 'colorizeit-frame')
+		.attr('src', $(this).data('colorizeit-url')
+	));
+
+	e.preventDefault();
+});
+
+/**
+* Display additional info when hovering over download button.
+*/
+$('.contrib-download').hover(function() {
+	$('.download-info').hide();
+	$('.download-info', this).fadeIn('slow');
+}, function() {
+	$('.download-info', this).fadeOut('slow');
+});
 
 	// Ajax Quick Edit
 	$('.postbody > .post-buttons .edit-icon').click(function(e) {
@@ -263,48 +306,6 @@ titania.filterOptionsBySelectedType = function($typeSelect, $optionSelect) {
 		$('.original_post', postbody).removeClass('hidden');
 	});
 
-	// Show only the first five revisions
-	$('.revisions > li').each(function(cnt) {
-		if (cnt > 5)
-		{
-			// Hide the revision from the list
-			$(this).hide();
-
-			$(this).parent().parent().children('.show-all').show();
-		}
-	});
-
-	// Hide all of the revision details
-	$('.revisions li.row:not(":first") .revision-details').hide();
-	// Add toggle button to each revision and translation
-	$('.revisions li.row, .translations li.row').each(function() {
-		var toggle_class = ($(this).is(':first-child')) ? 'contract' : 'expand';
-
-		$(this).prepend('<a href="" class="toggle '+toggle_class+'"></a>');
-	});
-
-	// Only show the top 3 translations in each column
-	$('.translations li.row:not(":first") dt div ul').each(function() {
-		$('li:eq(1)', this).nextAll().hide();
-	});
-
-	// Show revision details on click
-	$('.revisions > li a.toggle').click(function(e) {
-		e.preventDefault();
-		$(this).toggleClass('expand contract');
-		$(this).parents('li.row').children('.revision-details').toggle('fast');
-	});
-
-	// Toggle extra translations
-	$('.translations > li a.toggle').click(function(e) {
-		e.preventDefault();
-
-		$(this).siblings('dl').find('dt div ul').each(function() {
-			$('li:eq(1)', this).nextAll().toggle();
-		});
-		$(this).toggleClass('expand contract');
-	});
-
 	$('.download-main').click(function() {
 		var cease = readCookie('cdb_ignore_subscription');
 
@@ -392,34 +393,15 @@ $(document).on('click', '#screenshot-manage a.item-control-button:not(.delete)',
 	
 });
 
-function hide_quotebox(box)
-{
-	$(box).parent().children('div').hide();
-	$(box).parent().children('.hide_quote').hide();
-
-	$(box).parent().children('.show_quote').show();
-}
-
-function show_quotebox(box)
-{
-	$(box).parent().children('div').show();
-	$(box).parent().children('.show_quote').hide();
-
-	$(box).parent().children('.hide_quote').show();
-}
-
-function show_all_revisions(box)
-{
-	$(box).parent().children('.revisions').children('li').each(function(cnt) {
-		$(this).show();
-
-		$(this).parent().parent().children('.show-all').hide();
-	});
-}
-
 $(function() {
 	// Filter categories by contrib type.
 	titania.filterOptionsBySelectedType($('select#contrib_type'), $('select#contrib_category'));
+	// Activate Colorbox
+	titania.activateColorbox();
+	// Only display first 5 revisions
+	titania.hideExtraRevisions(5);
+	// Hide extra translations
+	titania.hideExtraTranslations(3);
 });
 
 })(jQuery);

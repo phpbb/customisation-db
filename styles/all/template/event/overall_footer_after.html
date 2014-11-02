@@ -4,37 +4,4 @@
 	<!-- IF .screenshots or U_DOWNLOAD -->
 		<!-- INCLUDEJS {T_TITANIA_ASSETS_PATH}/javascript/jquery.colorbox-min.js?assets_version={T_ASSETS_VERSION} -->
 	<!-- ENDIF -->
-
-	<script type="text/javascript">
-	// <![CDATA[
-
-		// Rating Stuff
-		<!-- IF UA_MAX_RATING -->
-			var grey_star = new Image(16,16);
-			grey_star.src = "{T_TITANIA_THEME_PATH}/images/star_grey.gif";
-			var green_star= new Image(16,16);
-			green_star.src = "{T_TITANIA_THEME_PATH}/images/star_green.gif";
-			var red_star= new Image(16,16);
-			red_star.src = "{T_TITANIA_THEME_PATH}/images/star_red.gif";
-			var orange_star= new Image(16,16);
-			orange_star.src = "{T_TITANIA_THEME_PATH}/images/star_orange.gif";
-			var max_rating = "{UA_MAX_RATING}";
-		<!-- ENDIF -->
-
-		(function($) {
-			<!-- IF S_HIDE_ERROR_BOX -->
-				setTimeout("$('.{ERRORBOX_CLASS}').fadeOut('slow');", 5000);
-			<!-- ENDIF -->
-
-			/* Hide MPV/Automod Validation reports automatically */
-			/*$('blockquote > div > cite').each(function() {
-				if ($(this).text() == '{L_VALIDATION_MPV} {L_WROTE}:' || $(this).text() == '{L_VALIDATION_AUTOMOD} {L_WROTE}:')
-				{
-					hide_quotebox($(this).parent());
-				}
-			});*/
-		})(jQuery);
-
-	// ]]>
-	</script>
 <!-- ENDIF -->
