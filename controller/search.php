@@ -209,9 +209,35 @@ class search
 		$this->assign_doc_vars($results['documents']);
 		$this->assign_result_vars($sort->total);
 
-		$params = $this->request->get_super_global(\phpbb\request\request_interface::GET);
-		unset($params['submit']);
-		$sort->build_pagination($sort_url, $params);
+		$parameters = array();
+		$expected_parameters = array(
+			'versions'		=> array(array(''), false),
+			'c'				=> array(array(0), false),
+			'sc'			=> array(false, false),
+			'keywords'		=> array('', true),
+			'sf'			=> array('', false),
+			'author'		=> array('', true),
+			'u'				=> array(0, false),
+			'type'			=> array(0, false),
+			'contrib'		=> array(0, false),
+		);
+
+		foreach ($expected_parameters as $name => $properties)
+		{
+			if ($this->request->is_set($name))
+			{
+				list($default_value, $multibyte) = $properties;
+
+				$value = $this->request->variable($name, $default_value, $multibyte);
+
+				// Clean up URL by not including default values.
+				if ($value !== $default_value)
+				{
+					$parameters[$name] = $value;
+				}
+			}
+		}
+		$sort->build_pagination($sort_url, $parameters);
 
 		return $this->helper->render('search_results.html', $this->user->lang['SEARCH']);
 	}
