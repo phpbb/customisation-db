@@ -1246,79 +1246,90 @@ class titania_contribution extends titania_message_object
 		$old_permalink = $this->contrib_name_clean;
 		$new_permalink = titania_url::url_slug($new_permalink);
 
-		if (!$this->validate_permalink($new_permalink))
+		if ($this->validate_permalink($new_permalink, $old_permalink))
 		{
 			return false;
 		}
 
 		$this->contrib_name_clean = $new_permalink;
 
+		$params = serialize(array(
+			'contrib_type'	=> $this->type->url,
+			'contrib'		=> $this->contrib_name_clean,
+		));
+
 		// Attention items
 		$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . '
-			SET attention_url = \'' . phpbb::$db->sql_escape($this->get_url()) . '\'
+			SET attention_url = "' . phpbb::$db->sql_escape($params) . '"
 			WHERE attention_object_type = ' . TITANIA_CONTRIB . '
 				AND attention_object_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
 		// Update the topics/posts under this
-		$topic_ids = $post_ids = array();
-		$topic = new titania_topic;
-		$topic->topic_url = $this->get_url('support');
-		$sql = 'SELECT topic_id, topic_subject_clean FROM ' . TITANIA_TOPICS_TABLE . '
-			WHERE ' . phpbb::$db->sql_in_set('topic_type', array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION)) . '
+		$topics = $post_ids = array();
+		$topic_where_sql = ' WHERE ' . phpbb::$db->sql_in_set('topic_type', array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION)) . '
 				AND parent_id = ' . $this->contrib_id;
+
+		$topic = new titania_topic;
+		$sql = 'SELECT *
+			FROM ' . TITANIA_TOPICS_TABLE .
+			$topic_where_sql;
 		$result = phpbb::$db->sql_query($sql);
+
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$topic_ids[$row['topic_id']] = $row;
+			$id = (int) $row['topic_id'];
+			$topics[$id] = $row;
 		}
 		phpbb::$db->sql_freeresult($result);
 
-		if (sizeof($topic_ids))
+		if (sizeof($topics))
 		{
 			$post = new titania_post;
 			$post->topic = $topic;
-			$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . '
-				WHERE ' . phpbb::$db->sql_in_set('topic_id', array_map('intval', array_keys($topic_ids)));
+			$sql = 'SELECT *
+				FROM ' . TITANIA_POSTS_TABLE . '
+				WHERE ' . phpbb::$db->sql_in_set('topic_id', array_keys($topics));
 			$result = phpbb::$db->sql_query($sql);
+
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$topic->__set_array($topic_ids[$row['topic_id']]);
+				$topic->__set_array($topics[$row['topic_id']]);
 				$post->__set_array($row);
 
-				$post->post_url = $topic->get_url();
-				$post_ids[$row['post_id']] = $post->post_url;
+				$post->post_url = $params;
+				$post_ids[] = (int) $row['post_id'];
 
 				// Need to reindex as well...
 				$post->index();
-
-				// Update the posts table
-				$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
-					SET post_url = \'' . phpbb::$db->sql_escape($post->post_url) . '\'
-					WHERE post_id = ' . $row['post_id'];
-				phpbb::$db->sql_query($sql);
 			}
 			phpbb::$db->sql_freeresult($result);
 			unset($topic, $post);
 
+			// Update the posts table
+			$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
+				SET post_url = "' . phpbb::$db->sql_escape($params) . '"
+				WHERE ' . phpbb::$db->sql_in_set('topic_id', array_keys($topics));
+			phpbb::$db->sql_query($sql);
+
 			// Update the topics table
 			$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
-				SET topic_url = \'' . phpbb::$db->sql_escape($this->get_url('support')) . '\'
-				WHERE ' . phpbb::$db->sql_in_set('topic_type', array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION)) . '
-					AND parent_id = ' . $this->contrib_id;
+				SET topic_url = "' . phpbb::$db->sql_escape($params) . '"' .
+				$topic_where_sql;
 			phpbb::$db->sql_query($sql);
 
 			if (sizeof($post_ids))
 			{
 				// On to attention items for posts
-				$sql = 'SELECT attention_id, attention_object_id FROM ' . TITANIA_ATTENTION_TABLE . '
+				$sql = 'SELECT attention_id, attention_object_id
+					FROM ' . TITANIA_ATTENTION_TABLE . '
 					WHERE attention_object_type = ' . TITANIA_POST . '
-						AND ' . phpbb::$db->sql_in_set('attention_object_id', array_map('intval', array_keys($post_ids)));
+						AND ' . phpbb::$db->sql_in_set('attention_object_id', $post_ids);
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
 				{
 					$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . '
-						SET attention_url = \'' . phpbb::$db->sql_escape($post_ids[$row['attention_object_id']]) . '\'
+						SET attention_url = "' . phpbb::$db->sql_escape($params) . '"
 						WHERE attention_id = ' . $row['attention_id'];
 					phpbb::$db->sql_query($sql);
 				}
