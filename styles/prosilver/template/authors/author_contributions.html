@@ -5,12 +5,9 @@
 
 <div class="container">
 	<div class="inner">
-		<ul class="linklist">
-			<li class="rightside pagination">
-				<!-- IF TOTAL_RESULTS -->{TOTAL_RESULTS}<!-- ENDIF -->
-				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-			</li>
-		</ul>
+		<div class="action-bar top">
+			<!-- INCLUDE common/pagination.html -->
+		</div>
 		<ul class="topiclist simple contributions">
 			<li class="header">
 				<dl class="icon">
@@ -23,12 +20,9 @@
 		<ul class="topiclist cplist contributions" id="modlist">
 			<!-- INCLUDE common/contribution_list.html -->
 		</ul>
-		<ul class="linklist">
-			<li class="rightside pagination">
-				<!-- IF TOTAL_RESULTS -->{TOTAL_RESULTS}<!-- ENDIF -->
-				<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
-			</li>
-		</ul>
+		<div class="action-bar bottom">
+			<!-- INCLUDE common/pagination.html -->
+		</div>
 	</div>
 </div>
 
