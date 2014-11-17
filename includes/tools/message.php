@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\request\request_interface;
+
 /**
  * Message handler class for Titania
  */
@@ -454,12 +456,12 @@ class titania_message
 
 				if (isset($for_edit[$edit_name]) && !$for_edit[$edit_name])
 				{
-					phpbb::$request->overwrite($post_name, true, '_POST');
+					$this->request->overwrite($post_name, true, request_interface::POST);
 				}
 			}
 			else if (isset($for_edit[$edit_name]) && $for_edit[$edit_name])
 			{
-				phpbb::$request->overwrite($post_name, true, '_POST');
+				$this->request->overwrite($post_name, true, request_interface::POST);
 			}
 		}
 	}
