@@ -148,7 +148,8 @@ class support extends base
 			'U_CANONICAL'			=> $data['sort']->build_canonical(),
 
 			'S_DISPLAY_SEARCHBOX'	=> true,
-			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search', array(
+			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.results'),
+			'SEARCH_HIDDEN_FIELDS'	=> build_hidden_fields(array(
 				'type'		=> TITANIA_SUPPORT,
 				'contrib'	=> $this->contrib->contrib_id,
 			)),
