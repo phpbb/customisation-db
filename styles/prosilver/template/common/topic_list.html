@@ -8,12 +8,12 @@
 
 	<!-- IF S_DISPLAY_SEARCHBOX -->
 		<div class="search-box">
-			<form method="post" id="forum-search" action="{S_SEARCHBOX_ACTION}">
+			<form method="get" id="forum-search" action="{S_SEARCHBOX_ACTION}">
 			<fieldset>
 				<input class="inputbox search tiny" type="search" name="keywords" id="search_keywords" size="20" placeholder="{L_SEARCH_FORUM}" />
 				<button class="button icon-button search-icon" type="submit" title="{L_SEARCH}">{L_SEARCH}</button>
 				<a href="{U_SEARCH}" class="button icon-button search-adv-icon" title="{L_SEARCH_ADV}">{L_SEARCH_ADV}</a>
-				<input type="hidden" value="{FORUM_ID}" name="fid[]" />
+				{SEARCH_HIDDEN_FIELDS}
 			</fieldset>
 			</form>
 		</div>
@@ -65,7 +65,6 @@
 							<ul>
 							<!-- BEGIN pagination -->
 								<!-- IF topics.pagination.S_IS_PREV -->
-								<!-- ELSEIF topics.pagination.S_IS_CURRENT --><li class="active"><span>{topics.pagination.PAGE_NUMBER}</span></li>
 								<!-- ELSEIF topics.pagination.S_IS_ELLIPSIS --><li class="ellipsis"><span>{L_ELLIPSIS}</span></li>
 								<!-- ELSEIF topics.pagination.S_IS_NEXT -->
 								<!-- ELSE --><li><a href="{topics.pagination.PAGE_URL}">{topics.pagination.PAGE_NUMBER}</a></li>

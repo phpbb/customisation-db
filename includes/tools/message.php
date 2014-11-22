@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\request\request_interface;
+
 /**
  * Message handler class for Titania
  */
@@ -77,6 +79,9 @@ class titania_message
 		'text_default_override'		=> false, // Force over-ride the text with one you specify, false to use the one gotten from the post object
 	);
 
+	/** @var string */
+	protected $message_text;
+
 	/**
 	 * Array of posting panels
 	 *
@@ -142,6 +147,8 @@ class titania_message
 		// Submit the data to the post object
 		if (method_exists($this->post_object, 'post_data') && ($submit || $preview || $full_editor || ($this->attachments && ($this->attachments->uploaded || $this->attachments->deleted))))
 		{
+			$message = $this->get_message_text();
+
 			// Resync inline attachments if any were deleted
 			if ($this->attachments && $this->attachments->deleted)
 			{
@@ -149,20 +156,22 @@ class titania_message
 				foreach ($delete as $attach_id => $null)
 				{
 					$index = phpbb::$request->variable('index_' . $attach_id, 0);
-					$text_name_value = preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "(\\1 == \$index) ? '' : ((\\1 > \$index) ? '[attachment=' . (\\1 - 1) . ']\\2[/attachment]' : '\\0')", phpbb::$request->variable($this->settings['text_name'], '', true));
-					phpbb::$request->overwrite($this->settings['text_name'], $text_name_value); 
+					$message = preg_replace(
+						'#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "(\\1 == \$index) ? '' : ((\\1 > \$index) ? '[attachment=' . (\\1 - 1) . ']\\2[/attachment]' : '\\0')",
+						$message
+					);
 				}
 			}
 
 			// Resync inline attachments if any were added
 			if ($this->attachments && $this->attachments->uploaded)
 			{
-				$message = $this->request->variable($this->settings['text_name'], '');
-				$this->request->overwrite(
-					$this->settings['text_name'],
-					preg_replace('#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "'[attachment='.(\\1 + 1).']\\2[/attachment]'", $message)
+				$message = preg_replace(
+					'#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e', "'[attachment='.(\\1 + 1).']\\2[/attachment]'",
+					$message
 				);
 			}
+			$this->set_message_text($message);
 
 			// We have to reset some request data if we are going to a full editor (checkboxes will be set according to their settings)
 			if ($full_editor)
@@ -381,13 +390,44 @@ class titania_message
 
 		if ($this->auth['edit_message'])
 		{
+			$default_message = (isset($for_edit['text'])) ? $for_edit['text'] : '';
 			$data = array_merge($data, array(
-				'message'	=> utf8_normalize_nfc(phpbb::$request->variable($this->settings['text_name'], ((isset($for_edit['text'])) ? $for_edit['text'] : ''), true)),
+				'message'	=> $this->get_message_text($default_message),
 				'options'	=> get_posting_options(!$bbcode_disabled, !$smilies_disabled, !$magic_url_disabled),
 			));
 		}
 
 		return $data;
+	}
+
+	/**
+	* Get message text.
+	*
+	* @param string $default_value
+	* @return string
+	*/
+	public function get_message_text($default_value = '')
+	{
+		if (!$this->request->is_set($this->settings['text_name']))
+		{
+			return $default_value;
+		}
+		if ($this->message_text === null)
+		{
+			$this->message_text = $this->request->variable($this->settings['text_name'], '', true);
+		}
+		return $this->message_text;
+	}
+
+	/**
+	* Set message text.
+	*
+	* @param string $message
+	* @return null
+	*/
+	public function set_message_text($message)
+	{
+		$this->message_text = $message;
 	}
 
 	/**
@@ -416,12 +456,12 @@ class titania_message
 
 				if (isset($for_edit[$edit_name]) && !$for_edit[$edit_name])
 				{
-					phpbb::$request->overwrite($post_name, true, '_POST');
+					$this->request->overwrite($post_name, true, request_interface::POST);
 				}
 			}
 			else if (isset($for_edit[$edit_name]) && $for_edit[$edit_name])
 			{
-				phpbb::$request->overwrite($post_name, true, '_POST');
+				$this->request->overwrite($post_name, true, request_interface::POST);
 			}
 		}
 	}
