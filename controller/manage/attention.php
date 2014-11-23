@@ -207,7 +207,7 @@ class attention extends base
 				// Make sure we can reuse the confirm box
 				$this->request->overwrite('confirm_key', null, \phpbb\request\request_interface::REQUEST);
 				$this->request->overwrite('confirm_key', null, \phpbb\request\request_interface::POST);
-				$this->request->ovewrite('confirm', null, \phpbb\request\request_interface::POST);
+				$this->request->overwrite('confirm', null, \phpbb\request\request_interface::POST);
 			}
 
 			\phpbb::_include('functions_display', 'display_reasons');
