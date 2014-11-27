@@ -8,3 +8,4 @@ files/revisions/*
 files/screenshots/*
 composer/*
 vendor
+.idea/*
