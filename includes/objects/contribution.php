@@ -886,6 +886,10 @@ class titania_contribution extends titania_message_object
 				unset($parameters['page']);
 			break;
 
+			case 'version_check' :
+				$controller .= '.version_check';
+			break;
+
 			default :
 				$parameters['page']	= $page;
 		}

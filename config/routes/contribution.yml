@@ -70,3 +70,7 @@ phpbb.titania.contrib.demo:
     defaults: { _controller: phpbb.titania.controller.contrib:demo }
     requirements:
         branch: \d\.\d
+
+phpbb.titania.contrib.version_check:
+    pattern: /version_check
+    defaults: { _controller: phpbb.titania.controller.contrib:version_check }

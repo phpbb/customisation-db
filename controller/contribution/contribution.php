@@ -207,4 +207,44 @@ class contribution extends base
 
 		redirect($this->contrib->get_url());
 	}
+
+	/**
+	 * Version check.
+	 *
+	 * @param string $contrib_type		Contrib type URL identifier
+	 * @param string $contrib			Contrib name clean
+	 *
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse
+	 */
+	public function version_check($contrib_type, $contrib)
+	{
+		$this->load_contrib($contrib);
+		$this->contrib->get_download();
+		$branches = array();
+
+		foreach ($this->contrib->download as $download)
+		{
+			$version = $download['revision_version'];
+
+			if (!preg_match('#^(\d+\.\d+)#', $version, $matches))
+			{
+				continue;
+			}
+
+			$branches[$matches[1]] = array(
+				'current'		=> $version,
+				'download'		=> $this->helper->route('phpbb.titania.download', array(
+					'id' => $download['revision_id'],
+				)),
+				'announcement'	=> '',
+				'eol'			=> null,
+				'security'		=> false,
+			);
+		}
+		$versions = array(
+			'stable'	=> $branches,
+		);
+
+		return new \Symfony\Component\HttpFoundation\JsonResponse($versions);
+	}
 }
