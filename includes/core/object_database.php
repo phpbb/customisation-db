@@ -16,7 +16,7 @@
 *
 * @package Titania
 */
-abstract class titania_database_object extends titania_object
+abstract class titania_database_object extends \phpbb\titania\entity\base
 {
 	/**
 	* SQL table our fields will reside in
