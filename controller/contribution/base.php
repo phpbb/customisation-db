@@ -39,7 +39,7 @@ class base
 	/** @var \phpbb\titania\cache\service */
 	protected $cache;
 
-	/** @var \titania_config */
+	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
 	/** @var \phpbb\titania\display */
@@ -62,10 +62,10 @@ class base
 	* @param \phpbb\titania\controller\helper $helper
 	* @param \phpbb\request\request $request
 	* @param \phpbb\titania\cache\service $cache
-	* @param \titania_config $ext_config
+	* @param \phpbb\titania\config\config $ext_config
 	* @param \phpbb\titania\display $display
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \titania_config $ext_config, \phpbb\titania\display $display)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display)
 	{
 		$this->auth = $auth;
 		$this->config = $config;

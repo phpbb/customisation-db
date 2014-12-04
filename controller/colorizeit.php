@@ -32,7 +32,7 @@ class colorizeit
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
 
-	/** @var \titania_config */
+	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
 	/**
@@ -42,9 +42,9 @@ class colorizeit
 	* @param \phpbb\user $user
 	* @param \phpbb\request\request_inteface $request
 	* @param \phpbb\titania\controller\helper $helper
-	* @param \titania_config $ext_config
+	* @param \phpbb\titania\config\config $ext_config
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \titania_config $ext_config)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config)
 	{
 		$this->db = $db;
 		$this->user = $user;

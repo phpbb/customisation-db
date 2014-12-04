@@ -56,10 +56,10 @@ class base
 	* @param \phpbb\titania\cache\service $cache
 	* @param \phpbb\titania\controller\helper $helper
 	* @param \phpbb\request\request_interace $request
-	* @param \titania_config $ext_config
+	* @param \phpbb\titania\config\config $ext_config
 	* @param \phpbb\titania\display $display
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \titania_config $ext_config, \phpbb\titania\display $display)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display)
 	{
 		$this->auth = $auth;
 		$this->config = $config;

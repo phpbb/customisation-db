@@ -50,10 +50,10 @@ class search
 	* @param \phpbb\titania\cache\service $cache
 	* @param \phpbb\request\request_interface
 	* @param \phpbb\titania\controller\helper $helper
-	* @param \titania_config $ext_config
+	* @param \phpbb\titania\config\config $ext_config
 	* @param \phpbb\titania\display $display
 	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \titania_config $ext_config, \phpbb\titania\display $display)
+	public function __construct(\phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display)
 	{
 		$this->config = $config;
 		$this->template = $template;

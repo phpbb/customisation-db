@@ -33,7 +33,7 @@ class author
 	/** @var \phpbb\request\request_inteface */
 	protected $request;
 
-	/** @var \titania_config */
+	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
 	/** @var \phpbb\titania\display */
@@ -57,11 +57,11 @@ class author
 	* @param \phpbb\user $user
 	* @param \phpbb\titania\controller\helper $helper
 	* @param \phpbb\request\request_interface $request
-	* @param \titania_config $ext_config
+	* @param \phpbb\titania\config\config $ext_config
 	* @param \phpbb\titania\display $display
 	* @param \phpbb\titania\cache\service $cache
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \titania_config $ext_config, \phpbb\titania\cache\service $cache)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache)
 	{
 		$this->auth = $auth;
 		$this->config = $config;

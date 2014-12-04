@@ -21,7 +21,7 @@ class manager
 	/** @var */
 	protected $container;
 
-	/** @var \titania_config */
+	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
 	/** @var string */
@@ -47,7 +47,7 @@ class manager
 	*
 	* @param \phpbb\user $user
 	* @param $container
-	* @param \titania_config $ext_config
+	* @param \phpbb\titania\config\config $ext_config
 	* @param string $php_ext
 	*/
 	public function __construct(\phpbb\user $user, $container, $ext_config, $php_ext)
