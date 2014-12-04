@@ -1,5 +1,6 @@
 imports:
     - { resource: controllers.yml }
+    - { resource: parameters.yml }
 
 services:
     phpbb.titania.config:
