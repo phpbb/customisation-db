@@ -64,8 +64,6 @@ class phpbb
 		self::$container = &$phpbb_container;
 		self::$dispatcher = &$phpbb_dispatcher;
 		self::$root_path = $phpbb_root_path;
-
-		self::$container->set('phpbb.titania.config', titania::$config);
 	}
 
 	/**

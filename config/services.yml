@@ -4,7 +4,11 @@ imports:
 
 services:
     phpbb.titania.config:
-        synthetic: true
+        class: phpbb\titania\config\config
+        arguments:
+            - @config
+            - %phpbb.titania.root_path%
+            - %core.php_ext%
 
     phpbb.titania.controller.helper:
         class: phpbb\titania\controller\helper

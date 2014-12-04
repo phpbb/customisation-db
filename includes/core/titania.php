@@ -19,7 +19,7 @@ class titania
 	/**
 	 * Titania configuration member
 	 *
-	 * @var titania_config
+	 * @var \phpbb\titania\config\config
 	 */
 	public static $config;
 
@@ -29,6 +29,12 @@ class titania
 	 * @var titania_cache
 	 */
 	public static $cache;
+
+	/** @var string */
+	public static $root_path;
+
+	/** @var string */
+	public static $php_ext;
 
 	/**
 	* Hooks instance
@@ -57,6 +63,20 @@ class titania
 	* @var titania_contribution
 	*/
 	public static $contrib;
+
+	/**
+	 * Configure Titania.
+	 *
+	 * @param \phpbb\titania\config\config $config
+	 * @param string $root_path
+	 * @param string $php_ext
+	 */
+	public static function configure(\phpbb\titania\config\config $config, $root_path, $php_ext)
+	{
+		self::$config = $config;
+		self::$root_path = $root_path;
+		self::$php_ext = $php_ext;
+	}
 
 	/**
 	 * Initialise titania:
@@ -98,21 +118,6 @@ class titania
 
 		// Load hooks
 		self::load_hooks();
-	}
-
-	/**
-	 * Reads a configuration file with an assoc. config array
-	 */
-	public static function read_config_file()
-	{
-		try
-		{
-			self::$config = titania_get_config(TITANIA_ROOT, PHP_EXT);
-		}
-		catch(\Exception $e)
-		{
-			trigger_error($e->getMessage());
-		}
 	}
 
 	/**
