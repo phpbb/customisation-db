@@ -46,6 +46,9 @@ class manage_plugin
 	/** @var string */
 	protected $phpbb_root_path;
 
+	/** @var string */
+	protected $php_ext;
+
 	/**
 	 * Constructor
 	 * Load the list with available plugins and assign them in the correct category
@@ -54,18 +57,19 @@ class manage_plugin
 	{
 		$this->controller_helper = $controller_helper;
 		$this->phpbb_root_path = \phpbb::$root_path;
+		$this->php_ext = \phpbb::$php_ext;
 
 		// Set the path
-		$this->tool_box_path = TITANIA_ROOT . 'includes/manage_tools/';
+		$this->tool_box_path = $this->phpbb_root_path . 'ext/phpbb/titania/includes/manage_tools/';
 
 		// Load functions_admin.php if required
 		if (!function_exists('filelist'))
 		{
-			include($this->phpbb_root_path . 'includes/functions_admin.' . PHP_EXT);
+			include($this->phpbb_root_path . 'includes/functions_admin.' . $this->php_ext);
 		}
 
 		// Create a list with tools
-		$filelist = filelist($this->tool_box_path, '', PHP_EXT);
+		$filelist = filelist($this->tool_box_path, '', $this->php_ext);
 
 		// Need to do some sanitization on the result of filelist
 		foreach ($filelist as $tools)
@@ -78,7 +82,7 @@ class manage_plugin
 					continue;
 				}
 
-				$this->plugin_list[] = (($pos = strpos($tool, '.' . PHP_EXT)) !== false) ? substr($tool, 0, $pos) : $tool;
+				$this->plugin_list[] = (($pos = strpos($tool, '.' . $this->php_ext)) !== false) ? substr($tool, 0, $pos) : $tool;
 			}
 		}
 
@@ -86,7 +90,7 @@ class manage_plugin
 		$this->tool_id = phpbb::$request->variable('t', '');
 
 		// Check if they want to use a tool or not, make sure that the tool name is legal, and make sure the tool exists
-		if (!$this->tool_id || preg_match('#([^a-zA-Z0-9_])#', $this->tool_id) || !file_exists($this->tool_box_path . $this->tool_id . '.' . PHP_EXT))
+		if (!$this->tool_id || preg_match('#([^a-zA-Z0-9_])#', $this->tool_id) || !file_exists($this->tool_box_path . $this->tool_id . '.' . $this->php_ext))
 		{
 			$this->tool_id = '';
 		}
@@ -116,7 +120,7 @@ class manage_plugin
 			return ($return) ? $tools_loaded[$tool_name] : true;
 		}
 
-		$tool_path = $this->tool_box_path . $tool_name . '.' . PHP_EXT;
+		$tool_path = $this->tool_box_path . $tool_name . '.' . $this->php_ext;
 		if (false === (@include $tool_path))
 		{
 			trigger_error(sprintf($user->lang['TOOL_INCLUTION_NOT_FOUND'], $tool_path), E_USER_ERROR);
@@ -124,7 +128,7 @@ class manage_plugin
 
 		if (!class_exists($tool_name))
 		{
-			trigger_error(sprintf($user->lang['INCORRECT_CLASS'], $tool_name, PHP_EXT), E_USER_ERROR);
+			trigger_error(sprintf($user->lang['INCORRECT_CLASS'], $tool_name, $this->php_ext), E_USER_ERROR);
 		}
 
 		// Construct the class

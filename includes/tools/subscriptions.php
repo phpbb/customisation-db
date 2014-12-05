@@ -17,6 +17,9 @@ define('SUBSCRIPTION_WATCH', 2);
 
 class titania_subscriptions
 {
+	/** @var string */
+	public static $ext_root_path;
+
 	/**
 	* Shorten the amount of code required for some places
 	*
@@ -164,6 +167,8 @@ class titania_subscriptions
 	 */
 	public static function send_notifications($object_type, $object_id, $email_tpl, $vars, $exclude_user = false)
 	{
+		self::$ext_root_path = \titania::$root_path;
+
 		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email, u.user_lang
 				FROM ' . TITANIA_WATCH_TABLE . ' w, ' . USERS_TABLE . ' u
 				WHERE w.watch_user_id = u.user_id ';
@@ -219,17 +224,17 @@ class titania_subscriptions
 		foreach($user_data as $data)
 		{
 			// You wanted the email template parsed? Well here you go.
-			if (file_exists(TITANIA_ROOT . 'language/' . $data['user_lang'] . '/email/' . $email_tpl))
+			if (file_exists(self::$ext_root_path . 'language/' . $data['user_lang'] . '/email/' . $email_tpl))
 			{
-				$template = file_get_contents(TITANIA_ROOT . 'language/' . $data['user_lang'] . '/email/' . $email_tpl);
+				$template = file_get_contents(self::$ext_root_path . 'language/' . $data['user_lang'] . '/email/' . $email_tpl);
 			}
-			else if (file_exists(TITANIA_ROOT . 'language/' . phpbb::$config['default_lang'] . '/email/' . $email_tpl))
+			else if (file_exists(self::$ext_root_path . 'language/' . phpbb::$config['default_lang'] . '/email/' . $email_tpl))
 			{
-				$template = file_get_contents(TITANIA_ROOT . 'language/' . phpbb::$config['default_lang'] . '/email/' . $email_tpl);
+				$template = file_get_contents(self::$ext_root_path . 'language/' . phpbb::$config['default_lang'] . '/email/' . $email_tpl);
 			}
 			else
 			{
-				$template = file_get_contents(TITANIA_ROOT . 'language/en/email/' . $email_tpl);
+				$template = file_get_contents(self::$ext_root_path . 'language/en/email/' . $email_tpl);
 			}
 
 			foreach($vars as $var => $replace)
@@ -280,7 +285,7 @@ class titania_subscriptions
 
 					// HAX
 					$user_lang_path = phpbb::$user->lang_path;
-					phpbb::$user->lang_path = TITANIA_ROOT . 'language/';
+					phpbb::$user->lang_path = self::$ext_root_path . 'language/';
 
 					$messenger->template('subscribe_generic');
 

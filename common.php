@@ -25,14 +25,13 @@ $ext_root_path = $phpbb_container->getParameter('phpbb.titania.root_path');
 $php_ext = $phpbb_container->getParameter('core.php_ext');
 
 // Include the non-dynamic constants
-require(TITANIA_ROOT . 'includes/constants.' . PHP_EXT);
+require($ext_root_path . 'includes/constants.' . $php_ext);
 
 // Include core classes
-require(TITANIA_ROOT . 'includes/core/phpbb.' . PHP_EXT);
-require(TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT);
-require(TITANIA_ROOT . 'includes/core/object.' . PHP_EXT);
-require(TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT);
-require(TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT);
+require($ext_root_path . 'includes/core/phpbb.' . $php_ext);
+require($ext_root_path . 'includes/core/titania.' . $php_ext);
+require($ext_root_path . 'includes/core/object_database.' . $php_ext);
+require($ext_root_path . 'includes/core/object_message.' . $php_ext);
 
 titania::configure(
 	$phpbb_container->get('phpbb.titania.config'),

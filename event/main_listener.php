@@ -151,15 +151,6 @@ class main_listener implements EventSubscriberInterface
 		}
 		$this->in_titania = true;
 
-		if (!defined('TITANIA_ROOT'))
-		{
-			define('TITANIA_ROOT', $this->phpbb_root_path . 'ext/phpbb/titania/');
-		}
-		if (!defined('PHP_EXT'))
-		{
-			define('PHP_EXT', $this->php_ext);
-		}
-
 		require($this->phpbb_root_path . 'ext/phpbb/titania/common.' . $this->php_ext);
 	}
 

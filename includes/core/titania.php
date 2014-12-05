@@ -114,7 +114,7 @@ class titania
 
 		// Load the contrib types
 		self::_include('types/base');
-		titania_types::load_types();
+		titania_types::load_types(self::$root_path, self::$php_ext);
 
 		// Load hooks
 		self::load_hooks();
@@ -135,9 +135,9 @@ class titania
 		// Overlords always have _overlord in and the file name can conflict with objects
 		if (strpos($class_name, '_overlord') !== false)
 		{
-			if (file_exists(TITANIA_ROOT . 'includes/overlords/' . $file_name . '.' . PHP_EXT))
+			if (file_exists(self::$root_path . 'includes/overlords/' . $file_name . '.' . self::$php_ext))
 			{
-				include(TITANIA_ROOT . 'includes/overlords/' . $file_name . '.' . PHP_EXT);
+				include(self::$root_path . 'includes/overlords/' . $file_name . '.' . self::$php_ext);
 				return;
 			}
 		}
@@ -150,9 +150,9 @@ class titania
 
 		foreach ($directories as $dir)
 		{
-			if (file_exists(TITANIA_ROOT . 'includes/' . $dir . '/' . $file_name . '.' . PHP_EXT))
+			if (file_exists(self::$root_path . 'includes/' . $dir . '/' . $file_name . '.' . self::$php_ext))
 			{
-				include(TITANIA_ROOT . 'includes/' . $dir . '/' . $file_name . '.' . PHP_EXT);
+				include(self::$root_path . 'includes/' . $dir . '/' . $file_name . '.' . self::$php_ext);
 				return;
 			}
 		}
@@ -187,14 +187,14 @@ class titania
 		self::$hook = new titania_hook();
 
 		// Now search for hooks...
-		$dh = @opendir(TITANIA_ROOT . 'includes/hooks/');
+		$dh = @opendir(self::$root_path . 'includes/hooks/');
 		if ($dh)
 		{
 			while (($file = readdir($dh)) !== false)
 			{
-				if (strpos($file, 'hook_') === 0 && substr($file, -(strlen(PHP_EXT) + 1)) === '.' . PHP_EXT)
+				if (strpos($file, 'hook_') === 0 && substr($file, -(strlen(self::$php_ext) + 1)) === '.' . self::$php_ext)
 				{
-					include(TITANIA_ROOT . 'includes/hooks/' . $file);
+					include(self::$root_path . 'includes/hooks/' . $file);
 				}
 			}
 			closedir($dh);
@@ -226,7 +226,7 @@ class titania
 			}
 		}
 
-		include(TITANIA_ROOT . 'includes/' . $file . '.' . PHP_EXT);
+		include(self::$root_path . 'includes/' . $file . '.' . self::$php_ext);
 	}
 
 	/**
@@ -273,7 +273,7 @@ class titania
 				}
 
 				//Use PHP's error_log function to write to file
-				error_log($text . "\r\n=================================================\r\n", 3, TITANIA_ROOT . "store/titania_log.log");
+				error_log($text . "\r\n=================================================\r\n", 3, self::$root_path . "store/titania_log.log");
 			break;
 
 			case TITANIA_DEBUG :
@@ -285,7 +285,7 @@ class titania
 				$text .= (($message !== false) ? "\r\n" . $message : '');
 
 				//Use PHP's error_log function to write to file
-				error_log($text . "\r\n=================================================\r\n", 3, TITANIA_ROOT . "store/titania_debug.log");
+				error_log($text . "\r\n=================================================\r\n", 3, self::$root_path . "store/titania_debug.log");
 			break;
 
 			default:

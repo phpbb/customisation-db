@@ -46,6 +46,9 @@ class phpbb
 	/** @var string */
 	public static $root_path;
 
+	/** @var string */
+	public static $php_ext;
+
 	/**
 	 * Static Constructor.
 	 */
@@ -64,6 +67,7 @@ class phpbb
 		self::$container = &$phpbb_container;
 		self::$dispatcher = &$phpbb_dispatcher;
 		self::$root_path = $phpbb_root_path;
+		self::$php_ext = self::$container->getParameter('core.php_ext');
 	}
 
 	/**
@@ -77,9 +81,9 @@ class phpbb
 	*/
 	public static function append_sid($url, $params = false, $is_amp = true, $session_id = false)
 	{
-		if (!strpos($url, '.' . PHP_EXT))
+		if (!strpos($url, '.' . self::$php_ext))
 		{
-			$url = self::$root_path . $url . '.' . PHP_EXT;
+			$url = self::$root_path . $url . '.' . self::$php_ext;
 		}
 
 		return append_sid($url, $params, $is_amp, $session_id);
@@ -110,7 +114,7 @@ class phpbb
 			}
 		}
 
-		include(self::$root_path . 'includes/' . $file . '.' . PHP_EXT);
+		include(self::$root_path . 'includes/' . $file . '.' . self::$php_ext);
 	}
 
 	/**

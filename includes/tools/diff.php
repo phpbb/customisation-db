@@ -32,6 +32,9 @@ class titania_diff
 	 */
 	private $id_old, $id_new;
 
+	/** @var string */
+	protected $ext_root_path;
+
 	/**
 	 * constructor
 	 *
@@ -40,6 +43,7 @@ class titania_diff
 	public function __construct($renderer_type = 'diff_renderer_unified')
 	{
 		$this->renderer_type = $renderer_type;
+		$this->ext_root_path = \titania::$root_path;
 
 		phpbb::_include('diff/diff', false, 'diff');
 		phpbb::_include('diff/engine', false, 'diff');
@@ -143,8 +147,8 @@ class titania_diff
 		}
 
 		// temporary dirs
-		$tmp_old = TITANIA_ROOT . 'files/temp/' . basename($filename_old) . '/';
-		$tmp_new = TITANIA_ROOT . 'files/temp/' . basename($filename_new) . '/';
+		$tmp_old = $this->ext_root_path . 'files/temp/' . basename($filename_old) . '/';
+		$tmp_new = $this->ext_root_path . 'files/temp/' . basename($filename_new) . '/';
 
 		// extract files
 		$result_old = self::extract_zip($filename_old, $tmp_old);

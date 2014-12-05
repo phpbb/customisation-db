@@ -98,12 +98,6 @@ class subscriptions_module
 	*/
 	protected function startup()
 	{
-		if (!defined('PHP_EXT'))
-		{
-			define('PHP_EXT', $this->php_ext);
-		}
-		define('TITANIA_ROOT', $this->ext_root);
-
 		require($this->ext_root . 'common.' . $this->php_ext);
 	}
 }
