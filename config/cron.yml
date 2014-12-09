@@ -1,0 +1,13 @@
+services:
+    phpbb.titania.cron.task.cleanup:
+        class: phpbb\titania\cron\task\cleanup
+        arguments:
+            - @dbal.conn
+            - @config
+            - @phpbb.titania.config
+            - %phpbb.titania.root_path%
+            - %core.php_ext%
+        calls:
+            - [set_name, [phpbb.titania.cron.task.cleanup]]
+        tags:
+            - { name: cron.task }
