@@ -70,14 +70,14 @@ $lang = array_merge($lang, array(
 	'EXTENSION_REPLY_PUBLIC_NOTES'		=> '
 
 [b]Notes:[/b] %s',
-	'EXTENSION_UPDATE_PUBLIC'			=> '[b][color=darkred]extension Updated to version %1$s
+	'EXTENSION_UPDATE_PUBLIC'			=> '[b][color=darkred]Extension Updated to version %1$s
 See first post for Download Link[/color][/b]',
 	'EXTENSION_UPDATE_PUBLIC_NOTES'		=> '
 
 [b]Notes:[/b] %1$s',
 	'EXTENSION_UPLOAD_AGREEMENT'		=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide by the <a href="https://www.phpbb.com/extensions/rules-and-policies/">Extensions database policies</a> and that your extension conforms to and follows the <a href="https://area51.phpbb.com/docs/31x/coding-guidelines.html">phpBB 3.1 Coding Guidelines</a>.
 
-You also agree and accept that this extension’s license and the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distributibution of your extension through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
+You also agree and accept that this extension is to be released under the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distribution of your extension through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
 	'EXTENSION_VALIDATION'				=> '[phpBB Extension-Validation] %1$s %2$s',
 	'EXTENSION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your extension to the phpBB.com extensions database. After careful inspection by the Extensions Team, your extension has been [b][color=#5c8503]approved[/color][/b] and released into our extensions database.
 
@@ -102,7 +102,7 @@ Please ensure you tested your extension on the latest version of phpBB (see the 
 Here is a report on why your extension was denied:
 [quote]%s[/quote]
 
-Please refer to the following links before you reupload your extension:
+Please refer to the following links before you re-upload your extension:
 [list][/list]
 
 For further reading, you may want to review the following:
