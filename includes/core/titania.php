@@ -19,7 +19,7 @@ class titania
 	/**
 	 * Titania configuration member
 	 *
-	 * @var titania_config
+	 * @var \phpbb\titania\config\config
 	 */
 	public static $config;
 
@@ -29,6 +29,12 @@ class titania
 	 * @var titania_cache
 	 */
 	public static $cache;
+
+	/** @var string */
+	public static $root_path;
+
+	/** @var string */
+	public static $php_ext;
 
 	/**
 	* Hooks instance
@@ -57,6 +63,20 @@ class titania
 	* @var titania_contribution
 	*/
 	public static $contrib;
+
+	/**
+	 * Configure Titania.
+	 *
+	 * @param \phpbb\titania\config\config $config
+	 * @param string $root_path
+	 * @param string $php_ext
+	 */
+	public static function configure(\phpbb\titania\config\config $config, $root_path, $php_ext)
+	{
+		self::$config = $config;
+		self::$root_path = $root_path;
+		self::$php_ext = $php_ext;
+	}
 
 	/**
 	 * Initialise titania:
@@ -94,25 +114,10 @@ class titania
 
 		// Load the contrib types
 		self::_include('types/base');
-		titania_types::load_types();
+		titania_types::load_types(self::$root_path, self::$php_ext);
 
 		// Load hooks
 		self::load_hooks();
-	}
-
-	/**
-	 * Reads a configuration file with an assoc. config array
-	 */
-	public static function read_config_file()
-	{
-		try
-		{
-			self::$config = titania_get_config(TITANIA_ROOT, PHP_EXT);
-		}
-		catch(\Exception $e)
-		{
-			trigger_error($e->getMessage());
-		}
 	}
 
 	/**
@@ -130,9 +135,9 @@ class titania
 		// Overlords always have _overlord in and the file name can conflict with objects
 		if (strpos($class_name, '_overlord') !== false)
 		{
-			if (file_exists(TITANIA_ROOT . 'includes/overlords/' . $file_name . '.' . PHP_EXT))
+			if (file_exists(self::$root_path . 'includes/overlords/' . $file_name . '.' . self::$php_ext))
 			{
-				include(TITANIA_ROOT . 'includes/overlords/' . $file_name . '.' . PHP_EXT);
+				include(self::$root_path . 'includes/overlords/' . $file_name . '.' . self::$php_ext);
 				return;
 			}
 		}
@@ -145,9 +150,9 @@ class titania
 
 		foreach ($directories as $dir)
 		{
-			if (file_exists(TITANIA_ROOT . 'includes/' . $dir . '/' . $file_name . '.' . PHP_EXT))
+			if (file_exists(self::$root_path . 'includes/' . $dir . '/' . $file_name . '.' . self::$php_ext))
 			{
-				include(TITANIA_ROOT . 'includes/' . $dir . '/' . $file_name . '.' . PHP_EXT);
+				include(self::$root_path . 'includes/' . $dir . '/' . $file_name . '.' . self::$php_ext);
 				return;
 			}
 		}
@@ -182,14 +187,14 @@ class titania
 		self::$hook = new titania_hook();
 
 		// Now search for hooks...
-		$dh = @opendir(TITANIA_ROOT . 'includes/hooks/');
+		$dh = @opendir(self::$root_path . 'includes/hooks/');
 		if ($dh)
 		{
 			while (($file = readdir($dh)) !== false)
 			{
-				if (strpos($file, 'hook_') === 0 && substr($file, -(strlen(PHP_EXT) + 1)) === '.' . PHP_EXT)
+				if (strpos($file, 'hook_') === 0 && substr($file, -(strlen(self::$php_ext) + 1)) === '.' . self::$php_ext)
 				{
-					include(TITANIA_ROOT . 'includes/hooks/' . $file);
+					include(self::$root_path . 'includes/hooks/' . $file);
 				}
 			}
 			closedir($dh);
@@ -221,7 +226,7 @@ class titania
 			}
 		}
 
-		include(TITANIA_ROOT . 'includes/' . $file . '.' . PHP_EXT);
+		include(self::$root_path . 'includes/' . $file . '.' . self::$php_ext);
 	}
 
 	/**
@@ -268,7 +273,7 @@ class titania
 				}
 
 				//Use PHP's error_log function to write to file
-				error_log($text . "\r\n=================================================\r\n", 3, TITANIA_ROOT . "store/titania_log.log");
+				error_log($text . "\r\n=================================================\r\n", 3, self::$root_path . "store/titania_log.log");
 			break;
 
 			case TITANIA_DEBUG :
@@ -280,7 +285,7 @@ class titania
 				$text .= (($message !== false) ? "\r\n" . $message : '');
 
 				//Use PHP's error_log function to write to file
-				error_log($text . "\r\n=================================================\r\n", 3, TITANIA_ROOT . "store/titania_debug.log");
+				error_log($text . "\r\n=================================================\r\n", 3, self::$root_path . "store/titania_debug.log");
 			break;
 
 			default:

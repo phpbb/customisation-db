@@ -46,7 +46,7 @@ class phpbb_ezcomponents_loader
 			self::load_component('base');
 		}
 
-		$ezc_path = TITANIA_ROOT . 'includes/library/ezcomponents/';
+		$ezc_path = \titania::$root_path . 'includes/library/ezcomponents/';
 
 		// retrieve the autoload list
 		$classes = include($ezc_path . ucfirst($component) . '/' . $component . '_autoload.php');

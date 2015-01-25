@@ -17,7 +17,7 @@ use phpbb\db\migration\exception;
 
 class base extends \phpbb\db\migration\migration
 {
-	/** @var \titania_config */
+	/** @var \phpbb\titania\config\config */
 	protected $titania_config;
 
 	/** @var string */
@@ -30,21 +30,8 @@ class base extends \phpbb\db\migration\migration
 			return;
 		}
 
-		$root_path = $this->phpbb_root_path . 'ext/phpbb/titania/';
-
-		if (!function_exists('titania_get_config'))
-		{
-			include($root_path . 'includes/functions.' . $this->php_ext);
-		}
-
-		try
-		{
-			$this->titania_config = titania_get_config($root_path, $this->php_ext);
-		}
-		catch(\Exception $e)
-		{
-			throw new exception($e->getMessage());
-		}
+		global $phpbb_container;
+		$this->titania_config = $phpbb_container->get('phpbb.titania.config');
 	}
 
 	protected function get_titania_table_prefix()

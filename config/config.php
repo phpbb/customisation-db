@@ -11,26 +11,52 @@
 *
 */
 
-/**
-* Titania configuration
-*
-* @package Titania
-*/
-class titania_config extends titania_object
+namespace phpbb\titania\config;
+
+class config extends \phpbb\titania\entity\base
 {
+	/** @var \phpbb\config\config */
+	protected $config;
+
+	/** @var string */
+	protected $ext_root_path;
+
+	/** @var string */
+	protected $php_ext;
+
 	/**
-	 * Setup default configuration
+	 * Constructor.
 	 *
-	 * @var string $root_path	Titania root path.
+	 * @param \phpbb\config\config $config
+	 * @param string $ext_root_path
+	 * @param string $php_ext
 	 */
-	public function __construct($root_path)
+	public function __construct(\phpbb\config\config $config, $ext_root_path, $php_ext)
 	{
+		$this->config = $config;
+		$this->ext_root_path = $ext_root_path;
+		$this->php_ext = $php_ext;
+
+		$this->set_default_config();
+		$this->set_custom_config();
+	}
+
+	/**
+	 * Set default configuration properties.
+	 */
+	public function set_default_config()
+	{
+		if (!defined('TITANIA_SUPPORT'))
+		{
+			include($this->ext_root_path . 'includes/constants.' . $this->php_ext);
+		}
+
 		$this->object_config = array_merge($this->object_config, array(
 			'phpbb_script_path'			=> array('default' => 'community/'),
 			'titania_script_path'		=> array('default' => 'customisation/'),
-			'upload_path'				=> array('default' => $root_path . 'files/'),
-			'contrib_temp_path'			=> array('default' => $root_path . 'files/contrib_temp/'),
-			'language_path'				=> array('default' => $root_path . 'language/'),
+			'upload_path'				=> array('default' => $this->ext_root_path . 'files/'),
+			'contrib_temp_path'			=> array('default' => $this->ext_root_path . 'files/contrib_temp/'),
+			'language_path'				=> array('default' => $this->ext_root_path . 'language/'),
 			'table_prefix'				=> array('default' => 'cdb_'),
 
 			// Unique Composer vendor name.
@@ -142,15 +168,15 @@ class titania_config extends titania_object
 			)),
 
 			// ColorizeIt
-            'colorizeit'                => array('default' => ''),
-            'colorizeit_url'            => array('default' => 'www.colorizeit.com'),
-            'colorizeit_auth'           => array('default' => 'HEADER'),
-            'colorizeit_var'            => array('default' => 'X-Colorizeit'),
-            'colorizeit_value'          => array('default' => '1'),
+			'colorizeit'                => array('default' => ''),
+			'colorizeit_url'            => array('default' => 'www.colorizeit.com'),
+			'colorizeit_auth'           => array('default' => 'HEADER'),
+			'colorizeit_var'            => array('default' => 'X-Colorizeit'),
+			'colorizeit_value'          => array('default' => '1'),
 
 			/**
-			* Attachments -------
-			*/
+			 * Attachments -------
+			 */
 			'upload_max_filesize'		=> array('default' => array(
 				TITANIA_CONTRIB		=> 10485760, // 10 MiB
 				TITANIA_SCREENSHOT	=> 524288, // 512 Kib
@@ -197,7 +223,42 @@ class titania_config extends titania_object
 
 			// Remove unsubmitted revisions and attachments
 			'cleanup_titania'				=> array('default' => false),
-
 		));
+	}
+
+	/**
+	 * Set custom configuration property values.
+	 */
+	public function set_custom_config()
+	{
+		$this->set_from_file();
+		$this->set_from_phpbb_config();
+	}
+
+	/**
+	 * Set configuration values from file.
+	 */
+	protected function set_from_file()
+	{
+		$custom_config_file = $this->ext_root_path . 'config.' . $this->php_ext;
+
+		if (file_exists($custom_config_file))
+		{
+			include($custom_config_file);
+
+			if (!isset($config) || !is_array($config))
+			{
+				$config = array();
+			}
+
+			$this->__set_array($config);
+		}
+	}
+
+	/**
+	 * Set configuration values from phpBB's config.
+	 */
+	protected function set_from_phpbb_config()
+	{
 	}
 }

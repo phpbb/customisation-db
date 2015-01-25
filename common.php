@@ -19,15 +19,25 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+global $phpbb_container;
+
+$ext_root_path = $phpbb_container->getParameter('phpbb.titania.root_path');
+$php_ext = $phpbb_container->getParameter('core.php_ext');
+
 // Include the non-dynamic constants
-require(TITANIA_ROOT . 'includes/constants.' . PHP_EXT);
+require($ext_root_path . 'includes/constants.' . $php_ext);
 
 // Include core classes
-require(TITANIA_ROOT . 'includes/core/phpbb.' . PHP_EXT);
-require(TITANIA_ROOT . 'includes/core/titania.' . PHP_EXT);
-require(TITANIA_ROOT . 'includes/core/object.' . PHP_EXT);
-require(TITANIA_ROOT . 'includes/core/object_database.' . PHP_EXT);
-require(TITANIA_ROOT . 'includes/core/object_message.' . PHP_EXT);
+require($ext_root_path . 'includes/core/phpbb.' . $php_ext);
+require($ext_root_path . 'includes/core/titania.' . $php_ext);
+require($ext_root_path . 'includes/core/object_database.' . $php_ext);
+require($ext_root_path . 'includes/core/object_message.' . $php_ext);
+
+titania::configure(
+	$phpbb_container->get('phpbb.titania.config'),
+	$ext_root_path,
+	$php_ext
+);
 
 // Include our core functions
 titania::_include('functions');
@@ -36,9 +46,6 @@ set_exception_handler('titania_exception_handler');
 
 // Set up our auto-loader
 spl_autoload_register(array('titania', 'autoload'));
-
-// Read config.php file
-titania::read_config_file();
 
 // Include the dynamic constants (after reading the Titania config file, but before loading the phpBB common file)
 titania::_include('dynamic_constants');

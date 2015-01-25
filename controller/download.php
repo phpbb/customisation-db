@@ -27,7 +27,7 @@ class download
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
 
-	/** @ var \titania_config */
+	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
 	/** @var string */
@@ -58,11 +58,11 @@ class download
 	* @param \phpbb\user $user
 	* @param \phpbb\request\request_interface
 	* @param \phpbb\titania\controller\helper $helper
-	* @param \titania_config $ext_config
+	* @param \phpbb\titania\config\config $ext_config
 	* @param string $phpbb_root_path
 	* @param string $php_ext
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\user $user, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \titania_config $ext_config, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\user $user, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, $phpbb_root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->auth = $auth;

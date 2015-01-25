@@ -11,12 +11,12 @@
 *
 */
 
+namespace phpbb\titania\entity;
+
 /**
 * Basic class providing basic magic methods.
-*
-* @package Titania
 */
-abstract class titania_object
+abstract class base
 {
 	/**
 	* Object data
@@ -264,7 +264,7 @@ abstract class titania_object
 *
 * @package Titania
 */
-class UnknownPropertyException extends Exception
+class UnknownPropertyException extends \Exception
 {
 	function __construct($name, $code = 0)
 	{
@@ -277,7 +277,7 @@ class UnknownPropertyException extends Exception
 *
 * @package Titania
 */
-class UnknownMethodException extends Exception
+class UnknownMethodException extends \Exception
 {
 	function __construct($name, $code = 0)
 	{
@@ -290,7 +290,7 @@ class UnknownMethodException extends Exception
 *
 * @package Titania
 */
-class SetReadOnlyPropertyException extends Exception
+class SetReadOnlyPropertyException extends \Exception
 {
 	function __construct($name, $code = 0)
 	{

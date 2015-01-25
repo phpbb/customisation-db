@@ -21,11 +21,14 @@ class titania_types
 	public static $types = array();
 
 	/**
-	* Load the types into the $types array
-	*/
-	public static function load_types()
+	 * Load the types into the $types array
+	 *
+	 * @param string $ext_root_path
+	 * @param string $php_ext
+	 */
+	public static function load_types($ext_root_path, $php_ext)
 	{
-		$dh = @opendir(TITANIA_ROOT . 'includes/types/');
+		$dh = @opendir($ext_root_path . 'includes/types/');
 
 		if (!$dh)
 		{
@@ -34,13 +37,13 @@ class titania_types
 
 		while (($fname = readdir($dh)) !== false)
 		{
-			if (strpos($fname, '.' . PHP_EXT) && substr($fname, 0, 1) != '_' && $fname != 'base.' . PHP_EXT)
+			if (strpos($fname, '.' . $php_ext) && substr($fname, 0, 1) != '_' && $fname != 'base.' . $php_ext)
 			{
-				include(TITANIA_ROOT . 'includes/types/' . $fname);
+				include($ext_root_path . 'includes/types/' . $fname);
 
-				$class_name = 'titania_type_' . substr($fname, 0, strpos($fname, '.' . PHP_EXT));
+				$class_name = 'titania_type_' . substr($fname, 0, strpos($fname, '.' . $php_ext));
 
-				titania::add_lang('types/' . substr($fname, 0, strpos($fname, '.' . PHP_EXT)));
+				titania::add_lang('types/' . substr($fname, 0, strpos($fname, '.' . $php_ext)));
 
 				$class = new $class_name;
 				self::$types[$class->id] = $class;

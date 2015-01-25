@@ -16,7 +16,7 @@
  *
  * @package Titania
  */
-class titania_sort extends titania_object
+class titania_sort extends \phpbb\titania\entity\base
 {
 	/**
 	 * Constants

@@ -99,10 +99,7 @@ class titania_message
 		titania::add_lang('posting');
 		phpbb::$user->add_lang('posting');
 
-		if (!function_exists('titania_access_select'))
-		{
-			include(TITANIA_ROOT . 'includes/functions_posting.' . PHP_EXT);
-		}
+		\titania::_include('functions_posting', 'titania_access_select');
 
 		$this->post_object = $post_object;
 		$this->request = phpbb::$request;

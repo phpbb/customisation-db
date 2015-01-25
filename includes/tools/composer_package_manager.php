@@ -30,7 +30,7 @@ class titania_composer_package_helper
 
 	public function __construct()
 	{
-		$this->packages_dir = TITANIA_ROOT . 'composer/';
+		$this->packages_dir = \titania::$root_path . 'composer/';
 		$this->resources = array();
 	}
 

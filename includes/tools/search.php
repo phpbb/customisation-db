@@ -22,7 +22,7 @@ if (!defined('IN_PHPBB'))
 // Include library in include path (for Zend)
 if (titania::$config->search_backend == 'zend')
 {
-	set_include_path(get_include_path() . PATH_SEPARATOR . realpath(TITANIA_ROOT . 'includes/library/'));
+	set_include_path(get_include_path() . PATH_SEPARATOR . realpath(\titania::$root_path . 'includes/library/'));
 	titania::_include('library/Zend/Search/Lucene', false, 'Zend_Search_Lucene');
 }
 
@@ -49,22 +49,27 @@ class titania_search
 	*/
 	public static $do_not_index = false;
 
+	/** @var string */
+	public static $ext_root_path;
+
 	/**
 	* Initialize the Search
 	*/
 	public static function initialize()
 	{
+		self::$ext_root_path = \titania::$root_path;
+
 		if (self::$index === false)
 		{
 			// Initialize the ezc/Zend Search class
 			if (titania::$config->search_backend == 'zend')
 			{
-				if (!is_writable(TITANIA_ROOT . self::store_path))
+				if (!is_writable(self::$ext_root_path . self::store_path))
 				{
 					throw new exception(self::store_path . ' must be writable to use the Zend Lucene Search');
 				}
 
-				$handler = new ezcSearchZendLuceneHandler(TITANIA_ROOT . self::store_path);
+				$handler = new ezcSearchZendLuceneHandler(self::$ext_root_path . self::store_path);
 			}
 			else if (titania::$config->search_backend == 'solr')
 			{

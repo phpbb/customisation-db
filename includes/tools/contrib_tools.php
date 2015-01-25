@@ -69,6 +69,9 @@ class titania_contrib_tools
 	/** @var string */
 	protected $phpbb_root_path;
 
+	/** @var  string */
+	protected $ext_root_path;
+
 	/**
 	* @param string $zip Full path to the zip package
 	* @param string $new_dir_name name of the directory you want to use in the zip package (leave blank if the initial steps have been run already)
@@ -91,6 +94,7 @@ class titania_contrib_tools
 			$this->extract($this->original_zip, $this->unzip_dir);
 		}
 		$this->phpbb_root_path = \phpbb::$root_path;
+		$this->ext_root_path = \titania::$root_path;
 	}
 
 	/**
@@ -509,8 +513,8 @@ class titania_contrib_tools
 	{
 		$version = preg_replace('#[^a-zA-Z0-9\.\-]+#', '', $version);
 
-		$phpbb_root = TITANIA_ROOT . 'store/extracted/' . $version . '/';
-		$phpbb_package = TITANIA_ROOT . 'includes/phpbb_packages/phpBB-' . $version . '.zip';
+		$phpbb_root = $this->ext_root_path . 'store/extracted/' . $version . '/';
+		$phpbb_package = $this->ext_root_path . 'includes/phpbb_packages/phpBB-' . $version . '.zip';
 
 		if (!file_exists($phpbb_root . 'common.php'))
 		{
@@ -912,7 +916,7 @@ class titania_contrib_tools
 		// If minimum directory is false, we check the store, upload path, and temp path
 		if ($minimum_directory === false)
 		{
-			return ($this->check_filesystem_path($directory, TITANIA_ROOT . 'store/') || $this->check_filesystem_path($directory, titania::$config->upload_path) || $this->check_filesystem_path($directory, titania::$config->contrib_temp_path) || $this->check_filesystem_path($directory, TITANIA_ROOT . 'includes/')) ? true : false;
+			return ($this->check_filesystem_path($directory, $this->ext_root_path . 'store/') || $this->check_filesystem_path($directory, titania::$config->upload_path) || $this->check_filesystem_path($directory, titania::$config->contrib_temp_path) || $this->check_filesystem_path($directory, $this->ext_root_path . 'includes/')) ? true : false;
 		}
 
 		// Find the directory (ignore files and roll back through non-existant directories)
