@@ -147,6 +147,12 @@ class titania_type_translation extends titania_type_base
 		$validation_tools = new translation_validation($contrib_tools->original_zip, $new_dir_name);
 
 		$reference_filepath = $validation_tools->automod_phpbb_files($version_string); // path to files against which we will validate the package
+
+		if (!empty($validation_tools->error))
+		{
+			return array('error' => implode('<br /><br />', $validation_tools->error));
+		}
+
 		$errors = $validation_tools->check_package($reference_filepath);
 
 		if (!empty($errors))
