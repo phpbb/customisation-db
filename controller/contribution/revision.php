@@ -879,7 +879,7 @@ class revision extends base
 		generate_phpbb_version_select($settings['vendor_versions'], $this->contrib->type->get_allowed_branches());
 
 		$this->template->assign_vars(array(
-			'ERROR_MSG'				=> (!empty($error)) ? implode('<br />', $error) : '',
+			'ERROR_MSG'				=> (!empty($error)) ? (is_array($error) ? implode('<br />', $error) : $error) : '',
 			'AGREEMENT_NOTICE'		=> ($this->contrib->type->upload_agreement) ? nl2br($this->user->lang($this->contrib->type->upload_agreement)) : false,
 			'QUEUE_ALLOW_REPACK'	=> $settings['allow_repack'],
 		));
