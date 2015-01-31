@@ -234,7 +234,7 @@ class contribution extends base
 			$branches[$matches[1]] = array(
 				'current'		=> $version,
 				'download'		=> $this->helper->route('phpbb.titania.download', array(
-					'id' => $download['revision_id'],
+					'id' => $download['attachment_id'],
 				)),
 				'announcement'	=> '',
 				'eol'			=> null,
