@@ -101,7 +101,7 @@ $config = array(
 	'colorizeit'    	=> 'phpbb',
 	'colorizeit_auth'   => 'HEADER',
 	'colorizeit_var'    => 'X-phpBB-Clr',
-	'colorizeit_value'  => '1',
+	'colorizeit_value'  => '',
 
 	// When editing styles, do not allow non-team members to modify the demo URL
 	'can_modify_style_demo_url' => false,
