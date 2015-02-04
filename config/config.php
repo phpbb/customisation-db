@@ -162,7 +162,7 @@ class config extends \phpbb\titania\entity\base
 			'mpv_server_list'			=> array('default' => array(
 				array(
 					'host'		=> 'mpv.phpbb.com',
-					'lb'		=> '140.211.15.223',
+					'lb'		=> array('140.211.15.223', '140.211.15.224'),
 					'directory'	=> '',
 					'file'		=> 'index.php',
 				),

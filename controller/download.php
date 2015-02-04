@@ -267,7 +267,7 @@ class download
 			$dns_ipv4 = dns_get_record($data['host'], DNS_A);
 			$dns_ipv6 = dns_get_record($data['host'], DNS_AAAA);
 
-			if ($this->dns_matches_user_ip($dns_ipv4) || $this->dns_matches_user_ip($dns_ipv6) || (isset($data['lb']) && $dns_ipv4 == $data['lb']))
+			if ($this->dns_matches_user_ip($dns_ipv4) || $this->dns_matches_user_ip($dns_ipv6) || in_array($this->user->ip, $data['lb']))
 			{
 				return true;
 			}
