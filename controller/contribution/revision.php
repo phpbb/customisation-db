@@ -589,11 +589,19 @@ class revision extends base
 
 		$step = $steps[$step_num];
 
-		// Start up the machine
-		$this->contrib_tools = new \titania_contrib_tools(
-			$this->attachment->get_filepath(),
-			$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
-		);
+		if ($this->attachment->attachment_id)
+		{
+			// Start up the machine
+			$this->contrib_tools = new \titania_contrib_tools(
+				$this->attachment->get_filepath(),
+				$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
+			);
+		}
+		else
+		{
+			$this->contrib_tools = null;
+		}
+
 
 		$result = $this->run_step($step['function']);
 		$result = $this->get_result($result, $steps, $step_num);
@@ -774,7 +782,7 @@ class revision extends base
 		$this->id = (int) $id;
 
 		if (!$this->id || !$this->revision->load($this->id) || $this->revision->contrib_id != $this->contrib->contrib_id ||
-			!$this->attachment->load($this->revision->attachment_id))
+			($this->revision->attachment_id && !$this->attachment->load($this->revision->attachment_id)))
 		{
 			throw new \Exception($this->user->lang['NO_REVISION']);
 		}

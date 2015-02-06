@@ -97,16 +97,23 @@ Upon validating your extension the phpBB Extensions Team regrets to inform you t
 To correct the problem(s) with your extension, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your extension being denied.
 [*]Re-upload your extension to our extensions database.[/list]
-Please ensure you tested your extension on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your extension.
+Please ensure you tested your extension on the latest version of phpBB (see the [url=https://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your extension.
 
 Here is a report on why your extension was denied:
 [quote]%s[/quote]
 
 Please refer to the following links before you re-upload your extension:
-[list][/list]
+[list]
+[*][url=https://www.phpbb.com/extensions/rules-and-policies/]Extensions Rules and Policies[/url]
+[*][url=https://www.phpbb.com/extensions/writing/]Writing Extensions[/url]
+[*][url=https://blog.phpbb.com/tag/security/]Security[/url]
+[/list]
 
 For further reading, you may want to review the following:
-[list][/list]
+[list]
+[*][url=https://wiki.phpbb.com/Category:Extensions]Extensions Development Wiki[/url]
+[*][url=http://php.net/docs.php]PHP Documentation[/url]
+[/list]
 
 For help with writing phpBB extensions, the following resources exist:
 [list][*][url=https://www.phpbb.com/community/viewforum.php?f=461]Extension Writers Discussion forum[/url]
