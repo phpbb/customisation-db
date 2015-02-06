@@ -108,7 +108,7 @@ class titania_type_extension extends titania_type_base
 	*
 	* @return array
 	*/
-	public function epv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package)
+	public function epv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, &$package)
 	{
 		$results = $contrib_tools->epv();
 

@@ -122,7 +122,7 @@ class titania_type_translation extends titania_type_base
 		return false;
 	}
 
-	public function translation_validate(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package)
+	public function translation_validate(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, &$package)
 	{
 		if (empty($revision->phpbb_versions))
 		{
