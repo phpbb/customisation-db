@@ -163,19 +163,12 @@ class titania_type_style extends titania_type_base
 	}
 
 	/**
-	* Function to fix package name to ensure naming convention is followed
-	*
-	* @param $contrib Contribution object
-	* @param $revision Revision object
-	* @param $revision_attachment Attachment object
-	* @param $root_dir Package root directory
-	*
-	* @return New root dir name
-	*/		
-	public function fix_package_name($contrib, $revision, $revision_attachment, $root_dir = false)
+	 * @inheritDoc
+	 */
+	public function fix_package_name($contrib, $revision, $revision_attachment, $root_dir = null)
 	{
 		// If we managed to find a single parent directory, then we use that in the zip name, otherwise we fall back to using contrib_name_clean
-		if ($root_dir !== false)
+		if ($root_dir !== null)
 		{
 			$new_real_filename = $root_dir . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
 		}
