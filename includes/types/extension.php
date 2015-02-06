@@ -110,7 +110,16 @@ class titania_type_extension extends titania_type_base
 	*/
 	public function epv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, &$package)
 	{
-		$results = $contrib_tools->epv();
+		try
+		{
+			$this->repack($package, $contrib);
+		}
+		catch (\Exception $e)
+		{
+			return array(
+				'error'	=> array(phpbb::$user->lang($e->getMessage())),
+			);
+		}
 		$results = $contrib_tools->epv($package->get_temp_path());
 
 		if (!empty($contrib_tools->error))
@@ -135,5 +144,97 @@ class titania_type_extension extends titania_type_base
 			phpbb::$template->assign_var('PV_RESULTS', $results);
 		}
 		return array();
+	}
+
+	/**
+	 * Repack extension to add version check info and match
+	 * correct directory structure to given ext name.
+	 *
+	 * @param \phpbb\titania\entity\package $package
+	 * @param \titania_contribution $contrib
+	 * @throw Throws \Exception if an error occurred
+	 */
+	protected function repack($package, $contrib)
+	{
+		$package->ensure_extracted();
+		$ext_base_path = $package->find_directory(
+			array('files' => array(
+				'required' => 'composer.json',
+				'optional' => 'ext.php',
+			)),
+			'vendor'
+		);
+
+		if ($ext_base_path === null)
+		{
+			throw new \Exception($this->root_not_found_key);
+		}
+		$composer_file = $package->get_temp_path() . '/' . $ext_base_path . '/composer.json';
+		$data = $this->get_composer_data($composer_file);
+
+		if (!is_array($data) || empty($data['name']) || !preg_match('#^[a-zA-Z0-9_\x7f-\xff]{2,}/[a-zA-Z0-9_\x7f-\xff]{2,}$#', $data['name']))
+		{
+			throw new \Exception('INVALID_EXT_NAME');
+		}
+
+		$ext_name = $data['name'];
+		$data = json_encode(
+			$this->set_version_check($data, $contrib),
+			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+		);
+
+		file_put_contents($composer_file, $data);
+		$package->restore_root($ext_base_path, $ext_name);
+		$package->repack($this->clean_package);
+	}
+
+	/**
+	 * Get data from composer.json
+	 *
+	 * @param string $file	Full path to composer.json
+	 * @return mixed
+	 */
+	protected function get_composer_data($file)
+	{
+		$file = new \SplFileInfo($file);
+
+		if (!$file->isReadable() || !$file->isWritable())
+		{
+			return;
+		}
+		$data = file_get_contents($file->getPathname());
+
+		if (!$data)
+		{
+			return;
+		}
+		return json_decode($data, true);
+	}
+
+	/**
+	 * Set version check info for composer.json
+	 *
+	 * @param array $data						composer.json data
+	 * @param \titania_contribution $contrib
+	 * @return array Returns $data array with version check info set
+	 */
+	protected function set_version_check($data, $contrib)
+	{
+		$data['extra'] = (isset($data['extra']) && is_array($data['extra'])) ? $data['extra'] : array();
+		unset($data['extra']['version_check']);
+		$version_check_url = $contrib->get_url('version_check');
+
+		$parts = parse_url($version_check_url);
+
+		if ($parts !== false)
+		{
+			$directory = substr($parts['path'], 0, strrpos($parts['path'], '/'));
+			$data['extra']['version-check'] = array(
+				'host'		=> $parts['host'],
+				'directory' => $directory,
+				'file'		=> substr($parts['path'], strlen($directory) + 1),
+			);
+		}
+		return $data;
 	}
 }
