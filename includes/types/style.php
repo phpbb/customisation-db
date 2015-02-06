@@ -50,8 +50,8 @@ class titania_type_style extends titania_type_base
 	public $create_public = 'STYLE_CREATE_PUBLIC';
 	public $reply_public = 'STYLE_REPLY_PUBLIC';
 	public $update_public = 'STYLE_UPDATE_PUBLIC';
-	public $clean_and_restore_root = true;
-	public $root_search = '*';
+	public $clean_package = true;
+
 	//public $upload_agreement = 'STYLE_UPLOAD_AGREEMENT';
 
 	// License options

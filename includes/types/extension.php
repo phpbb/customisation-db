@@ -45,7 +45,7 @@ class titania_type_extension extends titania_type_base
 	public $update_public = 'EXTENSION_UPDATE_PUBLIC';
 	public $upload_agreement = 'EXTENSION_UPLOAD_AGREEMENT';
 	public $epv_test = true;
-	public $root_search = '*';
+	public $clean_package = true;
 
 	public $allowed_branches = array('>=', 31);
 	public function __construct()

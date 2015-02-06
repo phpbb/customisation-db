@@ -268,7 +268,8 @@ class titania_type_base
 	*
 	* @var mixed
 	*/
-	public $clean_and_restore_root = false;
+	public $restore_root = false;
+	public $clean_package = false;
 	public $root_search = false;
 	public $root_not_found_key = 'COULD_NOT_FIND_ROOT';
 
