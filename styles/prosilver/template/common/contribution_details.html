@@ -114,20 +114,6 @@
 					<strong>{L_PAST_CONTRIBUTORS}</strong> <!-- BEGIN past_coauthors -->{past_coauthors.AUTHOR_NAME_FULL}<!-- IF not past_coauthors.S_LAST_ROW -->, <!-- ENDIF --><!-- END past_coauthors -->
 				</li>
 				<!-- ENDIF -->
-				<li>
-					<strong>{L_PHPBB_VERSION}</strong>
-					<!-- IF PHPBB_VERSION -->
-						{PHPBB_VERSION}
-					<!-- ELSEIF .phpbb_versions -->
-					<select class="phpbb_versions">
-						<!-- BEGIN phpbb_versions -->
-							<option>{phpbb_versions.NAME}</option>
-						<!-- END phpbb_versions -->
-					</select>
-					<!-- ELSE -->
-					{L_NO_REVISIONS}
-					<!-- ENDIF -->
-				</li>
 				<!-- IF CONTRIB_UPDATE_DATE -->
 				<li>
 					<strong>{L_CONTRIB_UPDATE_DATE}</strong> {CONTRIB_UPDATE_DATE}
