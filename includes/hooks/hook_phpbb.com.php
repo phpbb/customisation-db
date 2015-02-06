@@ -335,21 +335,8 @@ function phpbb_com_titania_post_hard_delete($hook, &$post_object)
 	$result = phpbb::$db->sql_query($sql);
 	$post_data = phpbb::$db->sql_fetchrow($result);
 	phpbb::$db->sql_freeresult($result);
-		
-	$data = array(
-		'topic_first_post_id'	=> $post_data['topic_first_post_id'],
-		'topic_last_post_id'	=> $post_data['topic_last_post_id'],
-		'topic_replies_real'	=> $post_data['topic_replies_real'],
-		'topic_approved'		=> $post_data['topic_approved'],
-		'topic_type'			=> $post_data['topic_type'],
-		'post_approved'			=> $post_data['post_approved'],
-		'post_reported'			=> $post_data['post_reported'],
-		'post_time'				=> $post_data['post_time'],
-		'poster_id'				=> $post_data['poster_id'],
-		'post_postcount'		=> $post_data['post_postcount']
-	);
-	
-	delete_post($post_data['forum_id'], $post_data['topic_id'], $post_data['post_id'], $data);
+
+	delete_post($post_data['forum_id'], $post_data['topic_id'], $post_data['post_id'], $post_data);
 }
 
 function phpbb_com_titania_topic___construct($hook, &$topic_object)

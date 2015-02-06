@@ -143,7 +143,7 @@ class cleanup extends \phpbb\cron\task\base
 	 */
 	protected function remove_file(array $data)
 	{
-		$attachment = new \titania_attachment;
+		$attachment = new \titania_attachment(TITANIA_CONTRIB);
 		$attachment->store_attachments(array($data));
 
 		$file = $attachment->get_filepath($data['attachment_id']);
