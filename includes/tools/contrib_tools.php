@@ -457,9 +457,10 @@ class titania_contrib_tools
 	/**
 	* Run extension prevalidator.
 	*
+	* @param string $directory	Directory on which to run EPV on
 	* @return string
 	*/
-	public function epv()
+	public function epv($directory)
 	{
 		$int_output = new HtmlOutput(HtmlOutput::TYPE_BBCODE);
 		$output = new Output($int_output, false);

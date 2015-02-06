@@ -108,7 +108,7 @@ class tools
 			$this->attachment->get_filepath(),
 			$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
 		);
-		$results = $tool->epv();
+		$results = $tool->epv($tool->unzip_dir);
 
 		if (!empty($tool->error))
 		{

@@ -111,6 +111,7 @@ class titania_type_extension extends titania_type_base
 	public function epv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, &$package)
 	{
 		$results = $contrib_tools->epv();
+		$results = $contrib_tools->epv($package->get_temp_path());
 
 		if (!empty($contrib_tools->error))
 		{
