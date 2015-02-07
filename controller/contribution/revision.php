@@ -24,6 +24,9 @@ class revision extends base
 	/** @var \titania_attachment */
 	protected $attachment;
 
+	/** @var \phpbb\titania\entity\package */
+	protected $package;
+
 	/** @var \titania_queue */
 	protected $queue;
 
@@ -281,10 +284,12 @@ class revision extends base
 					\titania_subscriptions::subscribe(TITANIA_TOPIC, $this->queue->queue_discussion_topic_id);
 				}
 			}
-			if ($this->contrib->type->clean_and_restore_root)
+			if ($this->attachment->attachment_id)
 			{
-				$error = $this->clean_package();
+				$this->set_package_paths();
 			}
+
+			$error = $this->clean_package();
 		}
 
 		return array('error' => $error);
@@ -596,15 +601,29 @@ class revision extends base
 				$this->attachment->get_filepath(),
 				$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
 			);
+
+			if (!$this->package->get_source())
+			{
+				$this->set_package_paths();
+			}
 		}
 		else
 		{
 			$this->contrib_tools = null;
 		}
 
+		$hash = $this->package->get_md5_hash();
 
 		$result = $this->run_step($step['function']);
 		$result = $this->get_result($result, $steps, $step_num);
+
+		$this->package->cleanup();
+		$new_hash = $this->package->get_md5_hash();
+
+		if ($hash !== $new_hash)
+		{
+			$this->update_package_stats();
+		}
 
 		if (!$result['allow_continue'])
 		{
@@ -631,8 +650,9 @@ class revision extends base
 			&$this->revision,
 			&$this->attachment,
 			&$this->contrib_tools,
-			$this->attachment->get_url()
-		));	
+			$this->attachment->get_url(),
+			&$this->package
+		));
 	}
 
 	/**
@@ -676,65 +696,67 @@ class revision extends base
 	{
 		$error = array();
 
-		// Start up the machine
-		$this->contrib_tools = new \titania_contrib_tools(
-			$this->attachment->get_filepath(),
-			$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
-		);
-
-		// Clean the package
-		$this->contrib_tools->clean_package();
-
-		// Restore the root package directory
-		if ($this->contrib->type->root_search)
+		if (!$this->contrib->type->restore_root && !$this->contrib->type->clean_package)
 		{
-			$package_root = $this->contrib_tools->find_root(false, $this->contrib->type->root_search);
-		}
-		else
-		{
-			$package_root = $this->contrib_tools->find_root();
+			return $error;
 		}
 
-		if ($package_root === false)
-		{
-			$error[] = $this->user->lang($this->contrib->type->root_not_found_key);
-		}
-		else
-		{
-			$this->contrib_tools->restore_root($package_root);
-		}
+		$root_directory = null;
 
-		$error = array_merge($error, $this->contrib_tools->error);
+		if ($this->contrib->type->restore_root && is_array($this->contrib->type->root_search))
+		{
+			$search = $this->contrib->type->root_search;
+			$exclude = (!empty($search['exclude'])) ? $search['exclude'] : null;
+			unset($search['exclude']);
+
+			$root_directory = $this->package->find_directory($search, $exclude);
+
+			if ($root_directory === null)
+			{
+				$error[] = $this->user->lang($this->contrib->type->root_not_found_key);
+			}
+		}
 
 		if (empty($error))
 		{
-			// Adjust package name to follow naming conventions
-			$new_root_name = $this->contrib->type->fix_package_name($this->contrib, $this->revision, $this->attachment, $package_root);
-
-			if ($new_root_name)
+			if ($root_directory !== null)
 			{
-				$this->contrib_tools->new_dir_name = $new_root_name;
+				// Adjust package name to follow naming conventions
+				$new_root_name = $this->contrib->type->fix_package_name(
+					$this->contrib,
+					$this->revision,
+					$this->attachment,
+					$root_directory
+				);
+				$this->package->restore_root($root_directory, $new_root_name);
 			}
 
 			// Replace the uploaded zip package with the new one
-			$this->contrib_tools->replace_zip();
-
-			$sql_ary = array(
-				'filesize'	=> (int) $this->contrib_tools->filesize,
-				'hash'		=> $this->contrib_tools->md5_hash,
-			);
-
-			// Update the attachment MD5 and filesize, it may have changed
-			$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
-				SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
-				WHERE attachment_id = ' . (int) $this->attachment->attachment_id;
-			$this->db->sql_query($sql);
+			$this->package->repack($this->contrib->type->clean_package);
+			$this->update_package_stats();
 		}
 
 		// Remove our temp files
-		$this->contrib_tools->remove_temp_files();
+		$this->package->cleanup();
 
 		return $error;
+	}
+
+	/**
+	 * Update package size and hash.
+	 */
+	protected function update_package_stats()
+	{
+		$sql_ary = array(
+			'filesize'	=> $this->package->get_size(),
+			'hash'		=> $this->package->get_md5_hash(),
+		);
+
+		// Update the attachment MD5 and filesize, it may have changed
+		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+				SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
+				WHERE attachment_id = ' . (int) $this->attachment->attachment_id;
+		$this->db->sql_query($sql);
 	}
 
 	/**
@@ -760,6 +782,7 @@ class revision extends base
 
 		$this->revision = new \titania_revision($this->contrib);
 		$this->attachment = new \titania_attachment(TITANIA_CONTRIB, $this->contrib->contrib_id);
+		$this->package = new \phpbb\titania\entity\package;
 		$this->revisions_in_queue = $this->repackable_branches = array();
 
 		$this->is_moderator = $this->contrib->type->acl_get('moderate');
@@ -767,6 +790,17 @@ class revision extends base
 		$this->require_upload = $this->contrib->type->require_upload;
 
 		\titania::_include('functions_posting', 'generate_phpbb_version_select');
+	}
+
+	/**
+	 * Set package location and temp path.
+	 */
+	protected function set_package_paths()
+	{
+		$this->package
+			->set_temp_path($this->package->generate_temp_path($this->ext_config->__get('contrib_temp_path')))
+			->set_source($this->attachment->get_filepath())
+		;
 	}
 
 	/**

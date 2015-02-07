@@ -59,8 +59,9 @@ class titania_type_mod extends titania_type_base
 	*/
 	public $mpv_test = true;
 	public $automod_test = true;
-	public $clean_and_restore_root = true;
-	public $root_search = array(array('install', '.xml'));
+	public $restore_root = true;
+	public $clean_package = true;
+	public $root_search = array('files' => array('required' => 'install*.xml'));
 
 	public function __construct()
 	{
@@ -128,7 +129,7 @@ class titania_type_mod extends titania_type_base
 		return false;
 	}
 
-	public function mpv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package)
+	public function mpv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, $package)
 	{
 		// Run MPV
 		$mpv_results = $contrib_tools->mpv($download_package);
@@ -158,7 +159,7 @@ class titania_type_mod extends titania_type_base
 		}
 	}
 
-	public function automod_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package)
+	public function automod_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, $package)
 	{
 		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
 

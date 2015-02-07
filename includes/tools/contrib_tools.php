@@ -98,108 +98,6 @@ class titania_contrib_tools
 	}
 
 	/**
-	* Clean crap out of the directories that should not be in packages
-	*
-	* Ignore the variables, don't send anything, this is a recursive function
-	*/
-	public function clean_package($sub_dir = '', $cnt = 0)
-	{
-		// Ok, have to draw the line somewhere; 50 sub directories is insane
-		if ($cnt > 50)
-		{
-			$this->remove_temp_files();
-
-			trigger_error('SUBDIRECTORY_LIMIT');
-		}
-
-		// Array of the things we want to remove
-		$dirs_to_remove = array('.git', '.svn', 'CVS', '__MACOSX');
-		$files_to_remove = array('desktop.ini', 'Thumbs.db', '.DS_Store', '.gitmodules', '.gitignore');
-
-		if (!is_dir($this->unzip_dir . $sub_dir))
-		{
-			return true;
-		}
-
-        foreach (scandir($this->unzip_dir . $sub_dir) as $item)
-		{
-            if ($item == '.' || $item == '..')
-			{
-				continue;
-			}
-
-			if (in_array($item, $dirs_to_remove) && is_dir($this->unzip_dir . $sub_dir . $item))
-			{
-				$this->rmdir_recursive($this->unzip_dir . $sub_dir . $item . '/');
-			}
-			else if (in_array($item, $files_to_remove) && is_file($this->unzip_dir . $sub_dir . $item))
-			{
-				@unlink($this->unzip_dir . $sub_dir . $item);
-			}
-			else if (is_dir($this->unzip_dir . $sub_dir . $item))
-			{
-				$this->clean_package($sub_dir. $item . '/', ($cnt + 1));
-			}
-        }
-
-        return true;
-	}
-
-	/**
-	* Place the root directory appropriately so we have package.zip/mod_name_1_0_0/(install files)
-	*
-	* @param string $package_root the root path ($this->find_root())
-	*/
-	public function restore_root($package_root)
-	{
-		if ($package_root === false)
-		{
-			$this->remove_temp_files();
-
-			titania::add_lang('contributions');
-			$this->error[] = phpbb::$user->lang['COULD_NOT_FIND_ROOT'];
-			return false;
-		}
-
-		// Move it to the correct location
-		if ($package_root != '')
-		{
-			// Find the main subdirectory off the unzip dir
-			$sub_dir = $package_root;
-			if (strpos($sub_dir, '/') !== false)
-			{
-				$sub_dir = substr($sub_dir, 0, strpos($sub_dir, '/'));
-			}
-
-			// First remove everything but the subdirectory that the package root is in
-			foreach (scandir($this->unzip_dir) as $item)
-			{
-	            if ($item == '.' || $item == '..' || ($item == $sub_dir && is_dir($this->unzip_dir . $item)))
-				{
-					continue;
-				}
-
-				if (is_dir($this->unzip_dir . $item))
-				{
-					$this->rmdir_recursive($this->unzip_dir . $item . '/');
-				}
-				else
-				{
-					@unlink($this->unzip_dir . $item);
-				}
-			}
-
-			// Now move the package root to our unzip directory
-			$this->mvdir_recursive($this->unzip_dir . $package_root, $this->unzip_dir);
-
-			// Now remove the old directory
-			$this->rmdir_recursive($this->unzip_dir . $sub_dir . '/');
-		}
-
-		return true;
-	}
-
-	/**
 	* Find the root directory of the mod package
 	*
 	* Ignore the variables other than $directory and $find, this is a recursive function
@@ -457,9 +355,10 @@ class titania_contrib_tools
 	/**
 	* Run extension prevalidator.
 	*
+	* @param string $directory	Directory on which to run EPV on
 	* @return string
 	*/
-	public function epv()
+	public function epv($directory)
 	{
 		$int_output = new HtmlOutput(HtmlOutput::TYPE_BBCODE);
 		$output = new Output($int_output, false);
