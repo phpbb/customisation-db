@@ -232,7 +232,7 @@ class titania_type_extension extends titania_type_base
 			$data['extra']['version-check'] = array(
 				'host'		=> $parts['host'],
 				'directory' => $directory,
-				'file'		=> substr($parts['path'], strlen($directory) + 1),
+				'filename'	=> substr($parts['path'], strlen($directory) + 1),
 			);
 		}
 		return $data;
