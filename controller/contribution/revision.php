@@ -676,7 +676,7 @@ class revision extends base
 
 		if (!empty($result['error']))
 		{
-			$result['complete'] = false;
+			$result['complete'] = $result['allow_continue'] = false;
 		}
 		else if ($total_steps > $step)
 		{
