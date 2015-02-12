@@ -47,6 +47,7 @@ $lang = array_merge($lang, array(
 	'AUTOMOD_TEST'							=> 'The Mod will be tested against AutoMod and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 
 	'BAD_VERSION_SELECTED'					=> '%s is not a proper phpBB version.',
+	'BRANCH_ALREADY_IN_QUEUE'				=> 'There is already a revision in the queue in the process of being validated for %s.',
 
 	'CANNOT_ADD_SELF_COAUTHOR'				=> 'You are the main author, you can not add yourself to the list of co-authors.',
 	'CATEGORY_NOT_ALLOWED'					=> 'You are not allowed to select this category.',

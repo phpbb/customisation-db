@@ -492,7 +492,7 @@ class revision extends base
 					!in_array($branch, $this->repackable_branches)
 				)
 				{
-					$error[] = $this->user->lang['INVALID_BRANCH'];
+					$error[] = $this->user->lang('BRANCH_ALREADY_IN_QUEUE', $allowed_branches[$branch]['name']);
 				}
 			}
 		}
