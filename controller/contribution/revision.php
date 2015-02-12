@@ -336,6 +336,7 @@ class revision extends base
 		{
 			$this->revision->delete();
 		}
+		$this->id = 0;
 
 		if ($redirect)
 		{
