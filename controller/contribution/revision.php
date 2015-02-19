@@ -597,20 +597,10 @@ class revision extends base
 
 		if ($this->attachment->attachment_id)
 		{
-			// Start up the machine
-			$this->contrib_tools = new \titania_contrib_tools(
-				$this->attachment->get_filepath(),
-				$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
-			);
-
 			if (!$this->package->get_source())
 			{
 				$this->set_package_paths();
 			}
-		}
-		else
-		{
-			$this->contrib_tools = null;
 		}
 
 		$hash = $this->package->get_md5_hash();
@@ -650,7 +640,6 @@ class revision extends base
 			&$this->contrib,
 			&$this->revision,
 			&$this->attachment,
-			&$this->contrib_tools,
 			$this->attachment->get_url(),
 			&$this->package
 		));
@@ -799,7 +788,7 @@ class revision extends base
 	protected function set_package_paths()
 	{
 		$this->package
-			->set_temp_path($this->package->generate_temp_path($this->ext_config->__get('contrib_temp_path')))
+			->set_temp_path($this->ext_config->__get('contrib_temp_path'), true)
 			->set_source($this->attachment->get_filepath())
 		;
 	}

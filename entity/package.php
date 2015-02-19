@@ -72,10 +72,15 @@ class package
 	 * Set temporary extraction path.
 	 *
 	 * @param string $path
+	 * @param bool $generate_dir	Generate temp directory under given path.
 	 * @return \phpbb\titania\entity\package
 	 */
-	public function set_temp_path($path)
+	public function set_temp_path($path, $generate_dir = false)
 	{
+		if ($generate_dir)
+		{
+			$path = $this->generate_temp_path($path);
+		}
 		$this->temp_path = new \SplFileInfo($path);
 		return $this;
 	}
