@@ -92,7 +92,10 @@ class colorizeit
 
 			try
 			{
-				$options = $colorizeit_helper->generate_options($this->attachment->get_filepath());
+				$options = $colorizeit_helper->generate_options(
+					$this->attachment->get_filepath(),
+					$this->ext_config->__get('contrib_temp_path')
+				);
 			}
 			catch (\Exception $e)
 			{

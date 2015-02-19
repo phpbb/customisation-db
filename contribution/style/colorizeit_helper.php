@@ -34,20 +34,25 @@ class colorizeit_helper
 	* Generate ColorizeIt options for a revision.
 	*
 	* @param string $zip_file	Full path to revision zip file
+	* @param string $temp_dir	Temporary directory
 	* @throws \Exception		Throws exception if zip file does not exist
 	* @return array
 	*/
-	public function generate_options($zip_file)
+	public function generate_options($zip_file, $temp_dir)
 	{
 		if (!@file_exists($zip_file))
 		{
 		    throw new \Exception('ERROR_NO_ATTACHMENT');
 		}
 
-		$new_dir_name = md5(gen_rand_string(64)) . '_' . microtime();
-		$contrib_tools = new \titania_contrib_tools($zip_file, $new_dir_name);
-		$data = $this->get_data($contrib_tools->unzip_dir);
-		$contrib_tools->remove_temp_files();
+		$package = new \phpbb\titania\entity\package;
+		$package
+			->set_source($zip_file)
+			->set_temp_path($temp_dir, true)
+			->extract()
+		;
+		$data = $this->get_data($package->get_temp_path());
+		$package->cleanup();
 
 		return $data;
 	}
