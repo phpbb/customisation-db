@@ -123,41 +123,19 @@ class titania_type_style extends titania_type_base
 	*/
 	public function upload_check($revision_attachment)
 	{
-		$zip_file = titania::$config->upload_path . '/' . utf8_basename($revision_attachment->attachment_directory) . '/' . utf8_basename($revision_attachment->physical_filename);
-		$new_dir_name = phpbb::$user->data['user_id'] . '_' . microtime();
+		$package = new \phpbb\titania\entity\package;
+		$package
+			->set_source($revision_attachment->get_filepath())
+			->set_temp_path(titania::$config->__get('contrib_temp_path'), true)
+			->extract()
+		;
+		$license_location = $package->find_directory(array('files' => array('required' => 'license.txt')));
+		$package->cleanup();
 
-		$contrib_tools = new titania_contrib_tools($zip_file, $new_dir_name);
-
-        foreach (scandir($contrib_tools->unzip_dir) as $item)
+		if ($license_location !== null && substr_count($license_location, '/') < 2)
 		{
-			if ($item == '.' || $item == '..')
-			{
-				continue;
-			}
-
-			// Allow the license to be either in the main directory or under one subdirectory
-			if (is_dir($contrib_tools->unzip_dir . '/' . $item))
-			{
-				foreach (scandir($contrib_tools->unzip_dir . '/' . $item) as $sub_item)
-				{
-		            if ($sub_item == 'license.txt')
-					{
-						// License file found
-						$contrib_tools->remove_temp_files();
-						return array();
-					}
-				}
-			}
-
-            if ($item == 'license.txt')
-			{
-				// License file found
-				$contrib_tools->remove_temp_files();
-				return array();
-			}
-        }
-
-		$contrib_tools->remove_temp_files();
+			return array();
+		}
 
 		return array(phpbb::$user->lang['LICENSE_FILE_MISSING']);
 	}
