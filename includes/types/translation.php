@@ -122,7 +122,7 @@ class titania_type_translation extends titania_type_base
 		return false;
 	}
 
-	public function translation_validate(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, &$package)
+	public function translation_validate(&$contrib, &$revision, &$revision_attachment, $download_package, &$package)
 	{
 		if (empty($revision->phpbb_versions))
 		{
@@ -144,8 +144,7 @@ class titania_type_translation extends titania_type_base
 
 		\titania::_include('library/translations/translation_validation', false, 'translation_validation');
 
-		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
-		$validation_tools = new translation_validation($contrib_tools->original_zip, $new_dir_name);
+		$validation_tools = new translation_validation;
 
 		$reference_filepath = $validation_tools->automod_phpbb_files($version_string); // path to files against which we will validate the package
 
@@ -154,14 +153,12 @@ class titania_type_translation extends titania_type_base
 			return array('error' => implode('<br /><br />', $validation_tools->error));
 		}
 
-		$errors = $validation_tools->check_package($reference_filepath);
+		$errors = $validation_tools->check_package($package, $reference_filepath);
 
 		if (!empty($errors))
 		{
-			return array('error' => implode('<br /><br />', $errors));
+			return array('error' => $errors);
 		}
-
-		$validation_tools->remove_temp_files();
 
 		phpbb::$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
 
