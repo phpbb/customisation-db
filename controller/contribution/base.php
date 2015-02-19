@@ -85,15 +85,17 @@ class base
 	/**
 	* Load contribution.
 	*
-	* @param string $contrib	Contrib name clean.
-	* @throws \Exception		Throws exception if contrib is not found.
+	* @param string $contrib_type		Contrib type URL identifier.
+	* @param string $contrib			Contrib name clean.
+	* @throws \Exception				Throws exception if contrib is not found.
 	* @return null
 	*/
-	protected function load_contrib($contrib)
+	protected function load_contrib($contrib_type, $contrib)
 	{
+		$type = ($contrib_type) ? \titania_types::type_from_url($contrib_type) : false;
 		$this->contrib = new \titania_contribution;
 
-		if (!$this->contrib->load($contrib) || !$this->contrib->is_visible())
+		if (!$this->contrib->load($contrib, $type) || !$this->contrib->is_visible())
 		{
 			throw new \Exception($this->user->lang['CONTRIB_NOT_FOUND']);
 		}

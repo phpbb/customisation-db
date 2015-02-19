@@ -27,7 +27,7 @@ class support extends base
 	*/
 	public function topic_action($contrib_type, $contrib, $topic_id, $action)
 	{
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 
 		if (!$this->check_auth())
 		{
@@ -76,7 +76,7 @@ class support extends base
 	public function display_topic($contrib_type, $contrib, $topic_id)
 	{
 		// Load the contrib item
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 		$this->load_topic($topic_id);
 
 		if (!$this->check_auth(true))
@@ -112,7 +112,7 @@ class support extends base
 	*/
 	public function display_support($contrib_type, $contrib)
 	{
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 
 		if (!$this->check_auth())
 		{

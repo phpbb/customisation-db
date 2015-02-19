@@ -47,7 +47,7 @@ class revision extends base
 	*/
 	public function repack($contrib_type, $contrib, $id)
 	{
-		$this->setup($contrib);
+		$this->setup($contrib_type, $contrib);
 
 		if (!$this->check_auth())
 		{
@@ -157,7 +157,7 @@ class revision extends base
 	*/
 	public function add($contrib_type, $contrib)
 	{
-		$this->setup($contrib);
+		$this->setup($contrib_type, $contrib);
 
 		if (!$this->check_auth())
 		{
@@ -763,12 +763,13 @@ class revision extends base
 	/**
 	* Common handler for initial setup tasks
 	*
+	* @param string $contrib_type	Contrib type URL identifier.
 	* @param string $contrib		Contrib name clean.
 	* @return null
 	*/
-	protected function setup($contrib)
+	protected function setup($contrib_type, $contrib)
 	{
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 
 		$this->revision = new \titania_revision($this->contrib);
 		$this->attachment = new \titania_attachment(TITANIA_CONTRIB, $this->contrib->contrib_id);
