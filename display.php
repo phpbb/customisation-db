@@ -87,6 +87,7 @@ class display
 
 			'U_MANAGE'					=> $u_manage,
 			'U_MY_CONTRIBUTIONS'		=> $u_my_contribs,
+			'U_ALL_SUPPORT'				=> $this->controller_helper->route('phpbb.titania.support'),
 			'U_ALL_CONTRIBUTIONS'		=> $this->controller_helper->route('phpbb.titania.all_contribs'),
 			'U_TITANIA_INDEX'			=> $this->controller_helper->route('phpbb.titania.index'),
 			'U_TITANIA_FAQ'				=> $this->controller_helper->route('phpbb.titania.faq'),
