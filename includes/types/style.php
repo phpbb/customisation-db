@@ -175,9 +175,13 @@ class titania_type_style extends titania_type_base
 		$revision->load_phpbb_versions();
 		$attachment->load($revision->attachment_id);
 		$branch = $revision->phpbb_versions[0]['phpbb_version_branch'];
-		$tool = new titania_contrib_tools($attachment->get_filepath($revision->attachment_id));
+		$package = new \phpbb\titania\entity\package;
+		$package
+			->set_source($attachment->get_filepath())
+			->set_temp_path(titania::$config->__get('contrib_temp_path'), true)
+		;
 
-		if ($manager->configure($branch, $contrib, $tool))
+		if ($manager->configure($branch, $contrib, $package))
 		{
 			$result = $manager->install();
 
@@ -187,6 +191,7 @@ class titania_type_style extends titania_type_base
 				$contrib->submit();
 			}
 		}
+		$package->cleanup();
 	}
 
 	/**
