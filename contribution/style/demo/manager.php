@@ -36,8 +36,8 @@ class manager
 	/** @var string */
 	protected $board_root_path;
 
-	/** @var \titania_contrib_tools */
-	protected $tool;
+	/** @var \phpbb\titania\entity\package */
+	protected $package;
 
 	/** @var \titania_contribution */
 	protected $contrib;
@@ -65,15 +65,15 @@ class manager
 	*
 	* @param int $branch
 	* @param \titania_contribution $contrib
-	* @param \titania_contrib_tools $tool
+	* @param \phpbb\titania\entity\package $package
 	*
 	* @return bool Returns false if an error occurred.
 	*/
-	public function configure($branch, $contrib, $tool)
+	public function configure($branch, $contrib, $package)
 	{
 		$this->branch = $branch;
 		$this->contrib = $contrib;
-		$this->tool = $tool;
+		$this->package = $package;
 
 		if (empty($this->ext_config->demo_style_path[$this->branch]))
 		{
@@ -276,25 +276,13 @@ class manager
 	*/
 	public function extract_package()
 	{
-		if (empty($this->tool->unzip_dir))
-		{
-			// Extract zip.
-			$this->tool->unzip_dir = $this->ext_config->contrib_temp_path . utf8_basename($this->tool->original_zip, 'zip') . '/';
-
-			// Clear out old stuff if there is anything here...
-			$this->tool->rmdir_recursive($this->tool->unzip_dir);
-
-			// Unzip to our temp directory
-			$this->tool->extract($this->tool->original_zip, $this->tool->unzip_dir);
-		}
-
-		$package_root = $this->tool->find_root(false, 'style.cfg');
+		$this->package->ensure_extracted();
+		$package_root = $this->package->find_directory(array('files' => array('required' => 'style.cfg')));
 		$style_root = $this->get_style_dir();
+		$filesystem = new \Symfony\Component\Filesystem\Filesystem;
 
-		$this->tool->rmdir_recursive($style_root, false);
-
-		$this->tool->mvdir_recursive($this->tool->unzip_dir . $package_root, $style_root, false);
-		$this->tool->remove_temp_files();
+		$filesystem->remove($style_root);
+		$filesystem->rename($this->package->get_temp_path() . '/' . $package_root, $style_root);
 	}
 
 	/**

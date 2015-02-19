@@ -46,6 +46,7 @@ class titania_type_extension extends titania_type_base
 	public $upload_agreement = 'EXTENSION_UPLOAD_AGREEMENT';
 	public $epv_test = true;
 	public $clean_package = true;
+	public $root_not_found_key = 'COULD_NOT_FIND_EXT_ROOT';
 
 	public $allowed_branches = array('>=', 31);
 	public function __construct()
@@ -108,7 +109,7 @@ class titania_type_extension extends titania_type_base
 	*
 	* @return array
 	*/
-	public function epv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, &$package)
+	public function epv_test(&$contrib, &$revision, &$revision_attachment, $download_package, &$package)
 	{
 		try
 		{
@@ -120,6 +121,7 @@ class titania_type_extension extends titania_type_base
 				'error'	=> array(phpbb::$user->lang($e->getMessage())),
 			);
 		}
+		$contrib_tools = new \titania_contrib_tools;
 		$results = $contrib_tools->epv($package->get_temp_path());
 
 		if (!empty($contrib_tools->error))

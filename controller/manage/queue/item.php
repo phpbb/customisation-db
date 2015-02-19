@@ -276,10 +276,14 @@ class item extends \phpbb\titania\controller\manage\base
 		if ($submit)
 		{
 			$this->queue->allow_author_repack = true;
+			$repack_url = $this->contrib->get_url('revision', array(
+				'page'	=> 'repack',
+				'id' 	=> $this->queue->revision_id,
+			));
 
 			$for_edit = $post->generate_text_for_edit();
-			$post->post_text = $for_edit['message'] . "\n\n[url=" .
-				$this->contrib->get_url('revision', array('repack' => $this->queue->revision_id)) . ']' .
+			$post->post_text = $for_edit['message'] . "\n\n
+				[url=" . $repack_url . ']' .
 				$this->user->lang['AUTHOR_REPACK_LINK'] . '[/url]';
 			$post->generate_text_for_storage($for_edit['allow_bbcode'], $for_edit['allow_smilies'], $for_edit['allow_urls']);
 			$post->submit();

@@ -43,6 +43,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'AUTHOR_EXTENSIONS'					=> '%d Extensions',
 	'AUTHOR_EXTENSIONS_ONE'				=> '1 Extension',
+	'COULD_NOT_FIND_EXT_ROOT'			=> 'Could not find the main directory. Please ensure that there is a composer.json file in the zip package.',
 	'EXTENSION'							=> 'Extension',
 	'EXTENSIONS'						=> 'Extensions',
 	'EXTENSION_CREATE_PUBLIC'			=> '[b]Extension name[/b]: %1$s

@@ -32,7 +32,7 @@ class revision_edit extends revision
 	*/
 	public function edit($contrib_type, $contrib, $id)
 	{
-		$this->setup($contrib);
+		$this->setup($contrib_type, $contrib);
 
 		if (!$this->check_auth())
 		{

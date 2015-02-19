@@ -232,6 +232,7 @@ services:
             - @template
             - @request
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.config
 
     phpbb.titania.controller.manage.attention:
         class: phpbb\titania\controller\manage\attention

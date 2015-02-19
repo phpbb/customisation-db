@@ -49,7 +49,7 @@ class manage extends base
 	*/
 	public function manage($contrib_type, $contrib)
 	{
-		$this->setup($contrib);
+		$this->setup($contrib_type, $contrib);
 
 		if (!$this->check_auth())
 		{
@@ -258,12 +258,13 @@ class manage extends base
 	/**
 	* Common setup tasks.
 	*
+	* @param string $contrib_type	Contrib type URL identifier.
 	* @param string $contrib		Contrib name clean.
 	* @return null
 	*/
-	protected function setup($contrib)
+	protected function setup($contrib_type, $contrib)
 	{
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 		$this->is_moderator = $this->contrib->type->acl_get('moderate');
 		$this->use_colorizeit = strlen($this->ext_config->colorizeit) && $this->contrib->type->acl_get('colorizeit');
 		$this->can_edit_demo = $this->ext_config->can_modify_style_demo_url || \titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate')
@@ -395,6 +396,11 @@ class manage extends base
 
 			if ($this->settings['permalink'] != $this->contrib->contrib_name_clean)
 			{
+				if ($this->settings['permalink'] == '')
+				{
+					$this->contrib->generate_permalink();
+					$this->settings['permalink'] = $this->contrib->contrib_name_clean;
+				}
 				$this->contrib->change_permalink($this->settings['permalink']);
 			}
 		}

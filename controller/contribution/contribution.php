@@ -26,7 +26,7 @@ class contribution extends base
 	*/
 	public function base($contrib_type, $contrib, $page)
 	{
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 
 		$page = ($page) ?: 'details';
 
@@ -119,7 +119,7 @@ class contribution extends base
 	*/
 	public function demo($contrib_type, $contrib, $branch)
 	{
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 		$can_use_demo =
 			$this->contrib->contrib_status == TITANIA_CONTRIB_APPROVED &&
 			$this->contrib->contrib_type == TITANIA_TYPE_STYLE &&
@@ -203,7 +203,7 @@ class contribution extends base
 	*/
 	public function redirect_from_id($id)
 	{
-		$this->load_contrib((int) $id);
+		$this->load_contrib(false, (int) $id);
 
 		redirect($this->contrib->get_url());
 	}
@@ -218,7 +218,7 @@ class contribution extends base
 	 */
 	public function version_check($contrib_type, $contrib)
 	{
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 		$this->contrib->get_download();
 		$branches = array();
 

@@ -34,7 +34,7 @@ class faq extends base
 	*/
 	public function display_item($contrib_type, $contrib, $id)
 	{
-		$this->setup($contrib);
+		$this->setup($contrib_type, $contrib);
 		$this->load_item($id);
 
 		if ($this->faq->faq_access < \titania::$access_level)
@@ -92,7 +92,7 @@ class faq extends base
 	*/
 	public function display_list($contrib_type, $contrib)
 	{
-		$this->setup($contrib);
+		$this->setup($contrib_type, $contrib);
 
 		// Setup the sort tool
 		$sort = new \titania_sort();
@@ -147,7 +147,7 @@ class faq extends base
 			return $this->helper->error('INVALID_ACTION');
 		}
 
-		$this->setup($contrib);
+		$this->setup($contrib_type, $contrib);
 
 		if ($action != 'create')
 		{
@@ -322,13 +322,14 @@ class faq extends base
 	/**
 	* Do some common set up tasks.
 	*
+	* @param string $contrib_type	Contrib type URL identifier.
 	* @param string $contrib		Contrib name clean.
 	* @return null
 	*/
-	protected function setup($contrib)
+	protected function setup($contrib_type, $contrib)
 	{
 		$this->user->add_lang_ext('phpbb/titania', 'faq');
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 		$this->faq = new \titania_faq;
 		$this->faq->contrib = $this->contrib;
 		$this->is_moderator = $this->auth->acl_get('u_titania_mod_faq_mod');

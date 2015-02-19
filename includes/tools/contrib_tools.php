@@ -73,26 +73,10 @@ class titania_contrib_tools
 	protected $ext_root_path;
 
 	/**
-	* @param string $zip Full path to the zip package
-	* @param string $new_dir_name name of the directory you want to use in the zip package (leave blank if the initial steps have been run already)
+	* Constructor.
 	*/
-	public function __construct($original_zip, $new_dir_name = '')
+	public function __construct()
 	{
-		$this->original_zip = $original_zip;
-
-		// Calculate the md5
-		$this->md5_hash = md5_file($this->original_zip);
-
-		$this->filesize = @filesize($this->original_zip);
-
-		if ($new_dir_name)
-		{
-			$this->new_dir_name = utf8_basename($new_dir_name);
-			$this->unzip_dir = titania::$config->contrib_temp_path . $this->new_dir_name . '/';
-
-			// Unzippage
-			$this->extract($this->original_zip, $this->unzip_dir);
-		}
 		$this->phpbb_root_path = \phpbb::$root_path;
 		$this->ext_root_path = \titania::$root_path;
 	}
@@ -415,53 +399,29 @@ class titania_contrib_tools
 		$phpbb_root = $this->ext_root_path . 'store/extracted/' . $version . '/';
 		$phpbb_package = $this->ext_root_path . 'includes/phpbb_packages/phpBB-' . $version . '.zip';
 
+		$package = new \phpbb\titania\entity\package;
+		$package
+			->set_temp_path($phpbb_root)
+			->set_source($phpbb_package);
+
 		if (!file_exists($phpbb_root . 'common.php'))
 		{
-			if (!file_exists($phpbb_package))
+			if (!$package->source_exists())
 			{
 				$this->error[] = sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], $phpbb_package);
 				return false;
 			}
 
 			// Unzip to our temp directory
-			$this->extract($phpbb_package, $phpbb_root);
+			$package->extract();
 
 			// Find the phpBB root
-			$package_root = $this->find_root($phpbb_root, 'common.php');
+			$package_root = $package->find_directory(array('files' => array('required' => 'common.php')));
 
 			// Move it to the correct location
 			if ($package_root != '')
 			{
-				// Find the main subdirectory off the unzip dir
-				$sub_dir = $package_root;
-				if (strpos($sub_dir, '/') !== false)
-				{
-					$sub_dir = substr($sub_dir, 0, strpos($sub_dir, '/'));
-				}
-
-				// First remove everything but the subdirectory that the package root is in
-				foreach (scandir($phpbb_root) as $item)
-				{
-		            if ($item == '.' || $item == '..' || ($item == $sub_dir && is_dir($phpbb_root . $item)))
-					{
-						continue;
-					}
-
-					if (is_dir($phpbb_root . $item))
-					{
-						$this->rmdir_recursive($phpbb_root . $item . '/');
-					}
-					else
-					{
-						@unlink($phpbb_root . $item);
-					}
-				}
-
-				// Now move the package root to our unzip directory
-				$this->mvdir_recursive($phpbb_root . $package_root, $phpbb_root);
-
-				// Now remove the old directory
-				$this->rmdir_recursive($phpbb_root . $sub_dir);
+				$package->restore_root($package_root, '');
 			}
 		}
 
@@ -472,13 +432,14 @@ class titania_contrib_tools
 	* Automod test
 	* TY AJD
 	*
+	* @param \phpbb\titania\entity\package $package
 	* @param string $phpbb_path Path to phpBB files we run the test on
 	* @param string $details Will hold the details of the mod
 	* @param string $results Will hold the results for output
 	* @param string $bbcode_results Will hold the results for storage
 	* @return bool true on success, false on failure
 	*/
-	public function automod($phpbb_path, &$details, &$results, &$bbcode_results)
+	public function automod($package, $phpbb_path, &$details, &$results, &$bbcode_results)
 	{
 		phpbb::_include('functions_transfer', false, 'transfer');
 		phpbb::_include('functions_admin', 'recalc_nested_sets');
@@ -490,32 +451,39 @@ class titania_contrib_tools
 		titania::add_lang('automod');
 
 		// Find the main modx file
-		$modx_root = $this->find_root();
+		$modx_root = $package->find_directory(array('files' => array('required' => 'install*.xml')));
 
-		if ($modx_root === false)
+		if ($modx_root === null)
 		{
 			titania::add_lang('contributions');
 
 			$this->error[] = phpbb::$user->lang['COULD_NOT_FIND_ROOT'];
 			return false;
 		}
-		$modx_root = $this->unzip_dir . $modx_root;
 
+		$modx_root = $package->get_temp_path() . '/' . $modx_root . '/';
 		$modx_file = false;
+
 		if (file_exists($modx_root . 'install.xml'))
 		{
 			$modx_file = $modx_root . 'install.xml';
 		}
 		else
 		{
-			// Find the first item with install in the name
-			foreach (scandir($modx_root) as $item)
+			$finder = new \Symfony\Component\Finder\Finder;
+			$finder
+				->name('install*.xml')
+				->depth(0)
+				->in($modx_root)
+			;
+
+			if ($finder->count())
 			{
-		       if (strpos($item, 'install') !== false && strpos($item, '.xml'))
-		       {
-				   $modx_file = $modx_root . $item;
-				   break;
-		       }
+				foreach ($finder as $file)
+				{
+					$modx_file = $file->getPathname();
+					break;
+				}
 			}
 		}
 

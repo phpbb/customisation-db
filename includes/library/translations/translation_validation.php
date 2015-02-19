@@ -32,20 +32,17 @@ class translation_validation extends titania_contrib_tools
 	*/
 	protected $ignore_files = array('language/en/AUTHORS', 'language/en/README', 'language/en/LICENSE', 'language/en/CHANGELOG', 'language/en/VERSION');
 
-	public function __construct($original_zip, $new_dir_name)
-	{
-		parent::__construct($original_zip, $new_dir_name);
-	}
-
 	/**
 	* Checks the file for the array contents
 	* Make sure it has all the keys present in the newest version
-	* 
+	*
+	* @param \phpbb\titania\entity\package $package
 	* @param string $reference_filepath The path to the files against I want to validate the uploaded package
 	* @return array Returns an array of error messages encountered
 	*/
-	public function check_package($reference_filepath)
+	public function check_package($package, $reference_filepath)
 	{
+		$package->ensure_extracted();
 		$error = $missing_keys = array();
 
 		// Basically the individual parts of the translation, we check them separately, because they have colliding filenames
@@ -59,7 +56,7 @@ class translation_validation extends titania_contrib_tools
 		foreach ($types as $type => $path)
 		{
 			// Get all the files present in the uploaded package for the currently iterated type
-			$uploaded_files = $this->lang_filelist($this->unzip_dir);
+			$uploaded_files = $this->lang_filelist($package->get_temp_path());
 			$reference_files = $this->lang_filelist($reference_filepath);
 			ksort($uploaded_files);
 			ksort($reference_files);
@@ -71,7 +68,7 @@ class translation_validation extends titania_contrib_tools
 					// Have it stored in the variable so we can work with it
 					$uploaded_files_prefix = explode('/', key($uploaded_files));
 					$iso_code = $uploaded_files_prefix[2];
-					$uploaded_files_prefix = $this->unzip_dir . $uploaded_files_prefix[0];
+					$uploaded_files_prefix = $package->get_temp_path() . '/' . $uploaded_files_prefix[0];
 
 					// This goes directly to the root of the uploaded language pack, like /upload_path/language/cs/
 					$uploaded_lang_root = $uploaded_files_prefix . '/language/' . $iso_code . '/';
@@ -182,10 +179,10 @@ class translation_validation extends titania_contrib_tools
 				$error[] = sprintf(phpbb::$user->lang['WRONG_FILE'], str_replace('/en/', '/'.$iso_code.'/', $file)); // report a wrong file
 			}
 		}
-		
+
 		if (!sizeof($error))
-		{	
-			$this->replace_zip(); // we have made changes to the package, so replace the original zip file
+		{
+			$package->repack(); // we have made changes to the package, so replace the original zip file
 		}
 		return $error;
 	}

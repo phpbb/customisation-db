@@ -129,9 +129,10 @@ class titania_type_mod extends titania_type_base
 		return false;
 	}
 
-	public function mpv_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, $package)
+	public function mpv_test(&$contrib, &$revision, &$revision_attachment, $download_package, $package)
 	{
 		// Run MPV
+		$contrib_tools = new \titania_contrib_tools;
 		$mpv_results = $contrib_tools->mpv($download_package);
 
 		if ($mpv_results === false)
@@ -159,19 +160,19 @@ class titania_type_mod extends titania_type_base
 		}
 	}
 
-	public function automod_test(&$contrib, &$revision, &$revision_attachment, &$contrib_tools, $download_package, $package)
+	public function automod_test(&$contrib, &$revision, &$revision_attachment, $download_package, $package)
 	{
-		$new_dir_name = $contrib->contrib_name_clean . '_' . preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version));
-
-		// Start up the machine
-		$contrib_tools = new titania_contrib_tools($contrib_tools->original_zip, $new_dir_name);
+		$package->ensure_extracted();
+		$contrib_tools = new \titania_contrib_tools;
 
 		// Automod testing time
 		$details = '';
 		$error = $html_results = $bbcode_results = array();
-		$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+		$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision
+			FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
 			WHERE revision_id = ' . $revision->revision_id;
 		$result = phpbb::$db->sql_query($sql);
+
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
@@ -189,7 +190,13 @@ class titania_type_mod extends titania_type_base
 			));
 
 			$html_result = $bbcode_result = '';
-			$installed = $contrib_tools->automod($phpbb_path, $details, $html_result, $bbcode_result);
+			$installed = $contrib_tools->automod(
+				$package,
+				$phpbb_path,
+				$details,
+				$html_result,
+				$bbcode_result
+			);
 
 			$html_results[] = $html_result;
 			$bbcode_results[] = $bbcode_result;
@@ -227,9 +234,6 @@ class titania_type_mod extends titania_type_base
 		$queue->submit();
 
 		phpbb::$template->assign_var('AUTOMOD_RESULTS', $html_results);
-
-		// Remove our temp files
-		$contrib_tools->remove_temp_files();
 
 		return array(
 			'error'	=> $error,

@@ -27,6 +27,9 @@ class tools
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
 
+	/** @var \phpbb\titania\config\config */
+	protected $ext_config;
+
 	/** @var \titania_revision */
 	protected $revision;
 
@@ -35,6 +38,9 @@ class tools
 
 	/** @var \titania_attachment */
 	protected $attachment;
+
+	/** @var \phpbb\titania\entity\package */
+	protected $package;
 
 	/** @var \titania_queue */
 	protected $queue;
@@ -49,13 +55,15 @@ class tools
 	* @param \phpbb\template\template $template
 	* @param \phpbb\request\request_interface $request
 	* @param \phpbb\titania\controller\helper $helper
+	* @param \phpbb\titania\config\config
 	*/
-	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper)
+	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config)
 	{
 		$this->user = $user;
 		$this->template = $template;
 		$this->request = $request;
 		$this->helper = $helper;
+		$this->ext_config = $ext_config;
 
 		$this->user->add_lang_ext('phpbb/titania', array('contributions', 'manage'));
 		$this->user->add_lang('viewtopic');
@@ -103,12 +111,10 @@ class tools
 		{
 			return $this->helper->error('INVALID_TOOL');
 		}
+		$this->package->ensure_extracted();
 
-		$tool = new \titania_contrib_tools(
-			$this->attachment->get_filepath(),
-			$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
-		);
-		$results = $tool->epv($tool->unzip_dir);
+		$tool = new \titania_contrib_tools;
+		$results = $tool->epv($this->package->get_temp_path());
 
 		if (!empty($tool->error))
 		{
@@ -118,7 +124,7 @@ class tools
 		$results = $this->get_result_post('VALIDATION_PV', $results);
 		$post = $this->queue->topic_reply($results);
 
-		$tool->remove_temp_files();
+		$this->package->cleanup();
 
 		redirect($post->get_url());
 	}
@@ -136,7 +142,7 @@ class tools
 		}
 
 		// Start up the machine
-		$tool = new \titania_contrib_tools($this->attachment->get_filepath());
+		$tool = new \titania_contrib_tools;
 		// Run MPV
 		$results = $tool->mpv($this->attachment->get_url());
 
@@ -149,7 +155,6 @@ class tools
 			$results = $this->get_result_post('VALIDATION_PV', $results);
 			$post = $this->queue->topic_reply($results);
 		}
-		$tool->remove_temp_files();
 
 		if (!empty($tool->error))
 		{
@@ -170,12 +175,10 @@ class tools
 		{
 			return $this->helper->error('INVALID_TOOl');
 		}
+		$this->package->ensure_extracted();
 
 		// Start up the machine
-		$tool = new \titania_contrib_tools(
-			$this->attachment->get_filepath(),
-			$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
-		);
+		$tool = new \titania_contrib_tools;
 
 		// Automod testing time
 		$details = '';
@@ -198,7 +201,7 @@ class tools
 			));
 
 			$html_result = $bbcode_result = '';
-			$tool->automod($phpbb_path, $details, $html_result, $bbcode_result);
+			$tool->automod($this->package, $phpbb_path, $details, $html_result, $bbcode_result);
 
 			$bbcode_results[] = $bbcode_result;
 		}
@@ -207,8 +210,8 @@ class tools
 
 		// Update the queue with the results
 		$post = $this->queue->topic_reply($bbcode_results);
+		$this->package->cleanup();
 
-		$tool->remove_temp_files();
 		redirect($post->get_url());
 	}
 
@@ -224,6 +227,7 @@ class tools
 		$this->load_contrib();
 		$this->load_queue();
 		$this->load_attachment();
+		$this->load_package();
 	}
 
 	/**
@@ -284,6 +288,18 @@ class tools
 		{
 			throw new \Exception($this->user->lang['ERROR_NO_ATTACHMENT']);
 		}
+	}
+
+	/**
+	 * Load revision package.
+	 */
+	protected function load_package()
+	{
+		$this->package = new \phpbb\titania\entity\package;
+		$this->package
+			->set_source($this->attachment->get_filepath())
+			->set_temp_path($this->ext_config->__get('contrib_temp_path'), true)
+		;
 	}
 
 	/**

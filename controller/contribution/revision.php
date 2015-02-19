@@ -47,7 +47,7 @@ class revision extends base
 	*/
 	public function repack($contrib_type, $contrib, $id)
 	{
-		$this->setup($contrib);
+		$this->setup($contrib_type, $contrib);
 
 		if (!$this->check_auth())
 		{
@@ -157,7 +157,7 @@ class revision extends base
 	*/
 	public function add($contrib_type, $contrib)
 	{
-		$this->setup($contrib);
+		$this->setup($contrib_type, $contrib);
 
 		if (!$this->check_auth())
 		{
@@ -336,6 +336,7 @@ class revision extends base
 		{
 			$this->revision->delete();
 		}
+		$this->id = 0;
 
 		if ($redirect)
 		{
@@ -491,7 +492,7 @@ class revision extends base
 					!in_array($branch, $this->repackable_branches)
 				)
 				{
-					$error[] = $this->user->lang['INVALID_BRANCH'];
+					$error[] = $this->user->lang('BRANCH_ALREADY_IN_QUEUE', $allowed_branches[$branch]['name']);
 				}
 			}
 		}
@@ -596,20 +597,10 @@ class revision extends base
 
 		if ($this->attachment->attachment_id)
 		{
-			// Start up the machine
-			$this->contrib_tools = new \titania_contrib_tools(
-				$this->attachment->get_filepath(),
-				$this->attachment->get_unzip_dir($this->contrib->contrib_name, $this->revision->revision_version)
-			);
-
 			if (!$this->package->get_source())
 			{
 				$this->set_package_paths();
 			}
-		}
-		else
-		{
-			$this->contrib_tools = null;
 		}
 
 		$hash = $this->package->get_md5_hash();
@@ -649,7 +640,6 @@ class revision extends base
 			&$this->contrib,
 			&$this->revision,
 			&$this->attachment,
-			&$this->contrib_tools,
 			$this->attachment->get_url(),
 			&$this->package
 		));
@@ -676,7 +666,7 @@ class revision extends base
 
 		if (!empty($result['error']))
 		{
-			$result['complete'] = false;
+			$result['complete'] = $result['allow_continue'] = false;
 		}
 		else if ($total_steps > $step)
 		{
@@ -773,12 +763,13 @@ class revision extends base
 	/**
 	* Common handler for initial setup tasks
 	*
+	* @param string $contrib_type	Contrib type URL identifier.
 	* @param string $contrib		Contrib name clean.
 	* @return null
 	*/
-	protected function setup($contrib)
+	protected function setup($contrib_type, $contrib)
 	{
-		$this->load_contrib($contrib);
+		$this->load_contrib($contrib_type, $contrib);
 
 		$this->revision = new \titania_revision($this->contrib);
 		$this->attachment = new \titania_attachment(TITANIA_CONTRIB, $this->contrib->contrib_id);
@@ -798,7 +789,7 @@ class revision extends base
 	protected function set_package_paths()
 	{
 		$this->package
-			->set_temp_path($this->package->generate_temp_path($this->ext_config->__get('contrib_temp_path')))
+			->set_temp_path($this->ext_config->__get('contrib_temp_path'), true)
 			->set_source($this->attachment->get_filepath())
 		;
 	}

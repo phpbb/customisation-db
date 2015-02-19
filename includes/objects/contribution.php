@@ -174,9 +174,10 @@ class titania_contribution extends titania_message_object
 	 * Load the contrib
 	 *
 	 * @param int|string $contrib The contrib item (contrib_name_clean, contrib_id)
+	 * @param int $type Contrib type
 	 * @return bool True if the contrib exists, false if not
 	 */
-	public function load($contrib = false)
+	public function load($contrib = false, $type = false)
 	{
 		if ($contrib === false)
 		{
@@ -200,9 +201,14 @@ class titania_contribution extends titania_message_object
 		}
 		else
 		{
+			if (!$type)
+			{
+				return false;
+			}
 			// Temp fix until issue is fixed in phpBB (http://tracker.phpbb.com/browse/PHPBB3-10921)
 			$contrib = strtr(utf8_clean_string($contrib), array('!' => 'ǃ'));
-			$sql_ary['WHERE'] = 'contrib_name_clean = \'' . phpbb::$db->sql_escape($contrib) . '\'';
+			$sql_ary['WHERE'] = 'contrib_name_clean = \'' . phpbb::$db->sql_escape($contrib) . '\'
+				AND contrib_type = ' . (int) $type;
 		}
 
 		$result = phpbb::$db->sql_query(phpbb::$db->sql_build_query('SELECT', $sql_ary));
@@ -1401,6 +1407,17 @@ class titania_contribution extends titania_message_object
 			{
 				$this->set_type($this->contrib_type);
 				$error = array_merge($error, $this->type->validate_contrib_fields($custom_fields));
+
+				if (!$this->contrib_name_clean)
+				{
+					// If they leave it blank automatically create it
+					$this->generate_permalink();
+				}
+
+				if (($permalink_error = $this->validate_permalink($this->contrib_name_clean, $old_permalink)) !== false)
+				{
+					$error[] = $permalink_error;
+				}
 			}
 
 			if (!$contrib_categories)
@@ -1439,17 +1456,6 @@ class titania_contribution extends titania_message_object
 		if (!$this->contrib_desc)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_DESC'];
-		}
-
-		if (!$this->contrib_name_clean)
-		{
-			// If they leave it blank automatically create it
-			$this->generate_permalink();
-		}
-
-		if (($permalink_error = $this->validate_permalink($this->contrib_name_clean, $old_permalink)) !== false)
-		{
-			$error[] = $permalink_error;
 		}
 
 		$author = key($authors['author']);
@@ -1528,7 +1534,7 @@ class titania_contribution extends titania_message_object
 		{
 			return phpbb::$user->lang('INVALID_PERMALINK', titania_url::url_slug($permalink));
 		}
-		else if ($permalink !== $old_permalink && $this->permalink_exists($permalink))
+		else if ($permalink == '' || $permalink !== $old_permalink && $this->permalink_exists($permalink))
 		{
 			return phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
 		}
@@ -1545,7 +1551,8 @@ class titania_contribution extends titania_message_object
 	{
 		$sql = 'SELECT contrib_id
 			FROM ' . $this->sql_table . "
-			WHERE contrib_name_clean = '" . phpbb::$db->sql_escape($permalink) . "'";
+			WHERE contrib_name_clean = '" . phpbb::$db->sql_escape($permalink) . "'
+				AND contrib_type = " . (int) $this->contrib_type;
 		$result = phpbb::$db->sql_query($sql);
 		$contrib_id = phpbb::$db->sql_fetchfield('contrib_id');
 		phpbb::$db->sql_freeresult($result);
