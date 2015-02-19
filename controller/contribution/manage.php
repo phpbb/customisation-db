@@ -395,6 +395,11 @@ class manage extends base
 
 			if ($this->settings['permalink'] != $this->contrib->contrib_name_clean)
 			{
+				if ($this->settings['permalink'] == '')
+				{
+					$this->contrib->generate_permalink();
+					$this->settings['permalink'] = $this->contrib->contrib_name_clean;
+				}
 				$this->contrib->change_permalink($this->settings['permalink']);
 			}
 		}

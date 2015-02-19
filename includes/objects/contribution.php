@@ -1528,7 +1528,7 @@ class titania_contribution extends titania_message_object
 		{
 			return phpbb::$user->lang('INVALID_PERMALINK', titania_url::url_slug($permalink));
 		}
-		else if ($permalink !== $old_permalink && $this->permalink_exists($permalink))
+		else if ($permalink == '' || $permalink !== $old_permalink && $this->permalink_exists($permalink))
 		{
 			return phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
 		}
