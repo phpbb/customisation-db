@@ -73,26 +73,10 @@ class titania_contrib_tools
 	protected $ext_root_path;
 
 	/**
-	* @param string $zip Full path to the zip package
-	* @param string $new_dir_name name of the directory you want to use in the zip package (leave blank if the initial steps have been run already)
+	* Constructor.
 	*/
-	public function __construct($original_zip, $new_dir_name = '')
+	public function __construct()
 	{
-		$this->original_zip = $original_zip;
-
-		// Calculate the md5
-		$this->md5_hash = md5_file($this->original_zip);
-
-		$this->filesize = @filesize($this->original_zip);
-
-		if ($new_dir_name)
-		{
-			$this->new_dir_name = utf8_basename($new_dir_name);
-			$this->unzip_dir = titania::$config->contrib_temp_path . $this->new_dir_name . '/';
-
-			// Unzippage
-			$this->extract($this->original_zip, $this->unzip_dir);
-		}
 		$this->phpbb_root_path = \phpbb::$root_path;
 		$this->ext_root_path = \titania::$root_path;
 	}
