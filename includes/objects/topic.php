@@ -613,7 +613,7 @@ class titania_topic extends titania_database_object
 			$new_post->__set_array($post_data);
 			$new_post->sql_data = $post_data;
 			$new_post->topic_id = $this->topic_id;
-			$new_post->post_url = $post_url;
+			$new_post->post_url = $this->topic_url;
 			$new_post->post_type = $this->topic_type;
 			$new_post->index();
 
