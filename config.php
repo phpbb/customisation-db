@@ -111,9 +111,7 @@ $config = array(
 	*/
 	'team_groups' => array(4, 7331, 13330, 993, 7332, 228685, 228778, 47077, 228777, 7330),
 
-	'search_backend' => 'solr',
-	'search_backend_ip' => '140.211.15.49',
-	'search_backend_port' => 8983,
+	'search_backend' => 'zend',
 
 	'upload_max_filesize'		=> array(
 		TITANIA_CONTRIB		=> 10485760, // 10 MiB
