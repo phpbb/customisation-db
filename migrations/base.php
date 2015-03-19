@@ -31,7 +31,12 @@ class base extends \phpbb\db\migration\migration
 		}
 
 		global $phpbb_container;
-		$this->titania_config = $phpbb_container->get('phpbb.titania.config');
+
+		$this->titania_config = new \phpbb\titania\config\config(
+			$phpbb_container->get('config'),
+			$phpbb_container->getParameter('core.root_path') . 'ext/phpbb/titania/',
+			$phpbb_container->getParameter('core.php_ext')
+		);
 	}
 
 	protected function get_titania_table_prefix()

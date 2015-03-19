@@ -38,8 +38,8 @@
 					<strong>{L_AUTHOR_RATING}</strong> {AUTHOR_RATING_STRING} ({AUTHOR_RATING_COUNT})
 				</li>
 				<!-- ENDIF -->
-				<li style="border: 0;">
-					<strong>{L_AUTHOR_CONTRIBS}</strong>{AUTHOR_CONTRIBS} <!-- IF AUTHOR_CONTRIB_LIST -->(<a href="{U_AUTHOR_CONTRIBUTIONS}">{AUTHOR_CONTRIB_LIST}</a>)<!-- ENDIF -->
+				<li>
+					<strong>{L_AUTHOR_CONTRIBS}</strong> {AUTHOR_CONTRIBS} <!-- IF AUTHOR_CONTRIB_LIST -->(<a href="{U_AUTHOR_CONTRIBUTIONS}">{AUTHOR_CONTRIB_LIST}</a>)<!-- ENDIF -->
 				</li>
 				<!-- IF U_EMAIL -->
 				<li>
@@ -57,14 +57,14 @@
 				</li>
 				<!-- ENDIF -->
 			</ul>
-		
+
 			<!-- IF AUTHOR_DESC -->
 			<dl class="contrib-description">
 				<dt><strong>{L_DESCRIPTION}</strong></dt>
 				<dd>{AUTHOR_DESC}</dd>
 			</dl>
 			<!-- ENDIF -->
-		
+
 			<!-- IF USER_SIG -->
 
 			<dl class="contrib-description">
@@ -72,7 +72,7 @@
 				<dd>{USER_SIG}</dd>
 			</dl>
 			<!-- ENDIF -->
-			
+
 		</div>
 	</div>
 </div>

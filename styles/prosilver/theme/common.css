@@ -233,8 +233,7 @@ ul.general-info li li {
 
 ul.general-info li strong {
 	width: 25%;
-	display: block;
-	float: left;
+	display: inline-block;
 	background-color: #F6FAFC;
 	padding-left: 10px;
 	margin-right: 10px;
