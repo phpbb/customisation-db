@@ -517,8 +517,14 @@ class titania_queue extends titania_message_object
 		titania::add_lang('manage');
 		phpbb::_include('functions_privmsgs', 'submit_pm');
 
+		// Need some stuff
+		$contrib = new titania_contribution();
+		$contrib->load((int) $this->contrib_id);
+		$revision = new titania_revision($contrib, $this->revision_id);
+		$revision->load();
+
 		// Generate the authors list to send it to
-		$authors = array($this->submitter_user_id => 'to');
+		$authors = array($contrib->contrib_user_id => 'to');
 		$sql = 'SELECT user_id FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
 			WHERE contrib_id = ' . (int) $this->contrib_id . '
 				AND active = 1';
@@ -528,12 +534,6 @@ class titania_queue extends titania_message_object
 			$authors[$row['user_id']] = 'to';
 		}
 		phpbb::$db->sql_freeresult($result);
-
-		// Need some stuff
-		$contrib = new titania_contribution();
-		$contrib->load((int) $this->contrib_id);
-		$revision = new titania_revision($contrib, $this->revision_id);
-		$revision->load();
 
 		// Subject
 		$subject = sprintf(phpbb::$user->lang[$contrib->type->validation_subject], $contrib->contrib_name, $revision->revision_version);
