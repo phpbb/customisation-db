@@ -111,6 +111,7 @@ $config = array(
 	*/
 	'team_groups' => array(4, 7331, 13330, 993, 7332, 228685, 228778, 47077, 228777, 7330),
 
+	'search_enabled' => false,
 	'search_backend' => 'zend',
 
 	'upload_max_filesize'		=> array(
