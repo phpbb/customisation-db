@@ -57,6 +57,11 @@ class titania_search
 	*/
 	public static function initialize()
 	{
+		if (!\titania::$config->search_enabled)
+		{
+			\titania_search::$do_not_index = true;
+			return false;
+		}
 		self::$ext_root_path = \titania::$root_path;
 
 		if (self::$index === false)

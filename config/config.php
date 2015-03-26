@@ -134,6 +134,8 @@ class config extends \phpbb\titania\entity\base
 			// Display backtrace? 0 = never, 1 = for administrators, 2 = for TITANIA_ACCESS_TEAMS, 3 = for all
 			'display_backtrace'			=> array('default' => 2),
 
+			'search_enabled'			=> array('default' => true),
+
 			// Search backend (zend or solr (if solr, set the correct ip/port))
 			'search_backend'			=> array('default' => 'solr'),
 			'search_backend_ip'			=> array('default' => 'localhost'),

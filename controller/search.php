@@ -420,6 +420,11 @@ class search
 		$this->user->add_lang('search');
 		$this->user->add_lang_ext('phpbb/titania', 'search');
 
+		if (!$this->ext_config->search_enabled)
+		{
+			throw new \Exception($this->user->lang['SEARCH_UNAVAILABLE']);
+		}
+
 		$this->engine = new \titania_search;
 
 		// Available Search Types
