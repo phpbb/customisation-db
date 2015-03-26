@@ -328,13 +328,13 @@ class titania_topic extends titania_database_object
 		// To find out if we have any posts that need approval
 		$approved = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
 		$total = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, true));
-		$path_helper = phpbb::$container->get('path_helper');
 		$u_new_post = '';
 
 		if ($this->unread)
 		{
-			$u_new_post = $path_helper->append_url_params($this->get_url(), array(
-				'view' => 'unread', '#' => 'unread'
+			$u_new_post = $this->get_url(false, array(
+				'view'	=> 'unread',
+				'#' 	=> 'unread',
 			));
 		}
 
@@ -368,7 +368,7 @@ class titania_topic extends titania_database_object
 
 			'U_NEWEST_POST'					=> $u_new_post,
 			'U_VIEW_TOPIC'					=> $this->get_url(),
-			'U_VIEW_LAST_POST'				=> $path_helper->append_url_params($this->get_url(),
+			'U_VIEW_LAST_POST'				=> $this->get_url(false,
 				array(
 					'p'	=> $this->topic_last_post_id,
 					'#'	=> 'p' . $this->topic_last_post_id,
