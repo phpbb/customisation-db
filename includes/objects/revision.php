@@ -462,8 +462,9 @@ class titania_revision extends titania_database_object
 	* Repack a revision
 	*
 	* @param titania_revision $old_revision titania_revision object
+	* @param titania_queue $old_queue Old queue object
 	*/
-	public function repack($old_revision)
+	public function repack($old_revision, $old_queue)
 	{
 		if (!$this->revision_id)
 		{
@@ -473,7 +474,6 @@ class titania_revision extends titania_database_object
 		titania::add_lang('manage');
 
 		// Get the old and new queue objects
-		$old_queue = $old_revision->get_queue();
 		$queue = $this->get_queue();
 
 		if ($old_queue === false)
