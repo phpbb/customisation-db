@@ -72,7 +72,7 @@ class config extends \phpbb\titania\entity\base
 			)),
 
 			// URL for style demo board management hook
-			'style_demo_hook'			=> array('default' => array(
+			'demo_style_hook'			=> array('default' => array(
 				'30'	=> '',
 				'31'	=> '',
 			)),

@@ -90,7 +90,7 @@ class revision extends base
 
 			if ($result['complete'])
 			{
-				$this->revision->repack($old_revision);
+				$this->revision->repack($old_revision, $old_queue);
 				$this->submit();
 
 				if ($this->use_queue && !$this->is_author && $this->is_moderator)
