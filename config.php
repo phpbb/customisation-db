@@ -94,7 +94,7 @@ $config = array(
 
 	'demo_style_hook' => array(
 		'30'	=> 'https://www.phpbb.com/styles/demo/3.0/board/style_demo_install.php',
-		'31'	=> 'https://www.phpbb.com/styles/demo/3.0/board/style_demo_install.php',	
+		'31'	=> 'https://www.phpbb.com/styles/demo/3.1/board/style_demo_install.php',	
 	),
 
 	// ColorizeIt Config for Styles Section
