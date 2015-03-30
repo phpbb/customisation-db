@@ -77,8 +77,8 @@ $config = array(
 	* @param bool|string false to not use a style demo board, path to the board root
 	*/
 	'demo_style_path' => array(
-		'30'	=> '../../styles/demo/3.0/board',
-		'31'	=> '../../styles/demo/3.1/board',
+		'30'	=> '../styles/demo/3.0/board/',
+		'31'	=> '../styles/demo/3.1/board/',
 	),
 
 	/**
