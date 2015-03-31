@@ -49,6 +49,12 @@ phpbb.titania.contrib.manage:
     pattern: /manage
     defaults: { _controller: phpbb.titania.controller.contrib.manage:manage }
 
+phpbb.titania.contrib.manage.demo:
+    pattern: /manage/demo/{action}
+    defaults: { _controller: phpbb.titania.controller.contrib.manage:manage_demo }
+    requirements:
+        action: install|delete
+
 phpbb.titania.contrib.revision:
     pattern: /revision
     defaults: { _controller: phpbb.titania.controller.contrib.revision:add }

@@ -892,6 +892,11 @@ class titania_contribution extends titania_message_object
 				unset($parameters['page']);
 			break;
 
+			case 'manage_demo' :
+				$controller .= '.manage.demo';
+				unset($parameters['page']);
+			break;
+
 			case 'version_check' :
 				$controller .= '.version_check';
 			break;

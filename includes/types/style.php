@@ -169,9 +169,17 @@ class titania_type_style extends titania_type_base
 			return;
 		}
 
+		$revision = $queue->get_revision();
+		$this->install_demo($contrib, $revision);
+	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function install_demo($contrib, $revision)
+	{
 		$manager = phpbb::$container->get('phpbb.titania.style.demo.manager');
 		$attachment = new titania_attachment(TITANIA_CONTRIB, $contrib->contrib_id);
-		$revision = $queue->get_revision();
 		$revision->load_phpbb_versions();
 		$attachment->load($revision->attachment_id);
 		$branch = $revision->phpbb_versions[0]['phpbb_version_branch'];
@@ -181,17 +189,22 @@ class titania_type_style extends titania_type_base
 			->set_temp_path(titania::$config->__get('contrib_temp_path'), true)
 		;
 
+		$demo_url = '';
+
 		if ($manager->configure($branch, $contrib, $package))
 		{
 			$result = $manager->install();
 
 			if (empty($result['error']))
 			{
-				$contrib->set_demo_url($branch, $manager->get_demo_url($branch, $result['id']));
+				$demo_url = $manager->get_demo_url($branch, $result['id']);
+				$contrib->set_demo_url($branch, $demo_url);
 				$contrib->submit();
 			}
 		}
 		$package->cleanup();
+
+		return $demo_url;
 	}
 
 	/**

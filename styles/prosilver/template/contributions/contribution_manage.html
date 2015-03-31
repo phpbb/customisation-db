@@ -123,6 +123,9 @@
 						<!-- BEGIN demo -->
 							<label for="demo_url_{demo.BRANCH}">{demo.NAME}</label>
 							<input class="inputbox" type="text" name="demo[{demo.BRANCH}]" id="demo_url_{demo.BRANCH}" value="{demo.URL}" />
+							<!-- IF S_CONTRIB_VALIDATED and S_INTEGRATE_DEMO and S_IS_MODERATOR -->
+								<a href="{demo.U_INSTALL}" class="button2" data-ajax="titania.demo.install" data-branch="{demo.BRANCH}">{L_INSTALL_DEMO}</a>
+							<!-- ENDIF -->
 							<!-- IF not demo.S_LAST_ROW --><hr class="dashed" /><!-- ENDIF -->
 						<!-- END demo -->
 					</dd>
