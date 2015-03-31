@@ -352,6 +352,18 @@ class titania_type_base
 	}
 
 	/**
+	 * Install demo.
+	 *
+	 * @param \titania_contribution $contrib
+	 * @param \titania_revision $revision
+	 * @return string Demo url
+	 */
+	public function install_demo($contrib, $revision)
+	{
+		return '';
+	}
+
+	/**
 	* Display additional options when approving/denying a revision
 	*
 	* @param string $action		Either approve or deny

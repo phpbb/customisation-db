@@ -13,6 +13,9 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 class manage extends base
 {
 	/** @var array */
@@ -432,6 +435,8 @@ class manage extends base
 			$this->confirm_author_change(key($new_author), array_shift($new_author));
 		}
 
+		$this->cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
+
 		redirect($this->contrib->get_url());
 	}
 
@@ -464,6 +469,60 @@ class manage extends base
 			$contrib_clr_colors = $this->request->variable('change_colors', $this->contrib->contrib_clr_colors);
 			$this->contrib->__set('contrib_clr_colors', $contrib_clr_colors);
 		}
+	}
+
+	/**
+	 * Handle demo management.
+	 *
+	 * @param string $contrib_type		Contrib type URL identifier.
+	 * @param string $contrib			Contrib name clean.
+	 * @param string $action
+	 * @return \phpbb\titania\controller\Response|JsonResponse|RedirectResponse
+	 */
+	public function manage_demo($contrib_type, $contrib, $action)
+	{
+		$this->setup($contrib_type, $contrib);
+
+		if (!$this->is_moderator || $this->contrib->contrib_status != TITANIA_CONTRIB_APPROVED)
+		{
+			return $this->helper->needs_auth();
+		}
+
+		$branch = $this->request->variable('branch', 0);
+		$data = array();
+
+		if ($action == 'install')
+		{
+			$data = $this->install_demo($branch);
+		}
+
+		if ($this->request->is_ajax())
+		{
+			return new JsonResponse($data);
+		}
+		return new RedirectResponse($this->contrib->get_url('manage'));
+	}
+
+	/**
+	 * Install contribution demo.
+	 *
+	 * @param int $branch
+	 * @return array
+	 */
+	protected function install_demo($branch)
+	{
+		$this->contrib->get_download();
+		$demo_url = '';
+
+		if (!empty($this->contrib->download[$branch]))
+		{
+			$revision = new \titania_revision($this->contrib);
+			$revision->__set_array($this->contrib->download[$branch]);
+			$demo_url = $this->contrib->type->install_demo($this->contrib, $revision);
+		}
+		return array(
+			'url'	=> $demo_url,
+		);
 	}
 
 	/**
@@ -503,6 +562,10 @@ class manage extends base
 				'BRANCH'	=> $branch,
 				'URL'		=> $demo_url,
 				'NAME'		=> $this->ext_config->phpbb_versions[$branch]['name'],
+				'U_INSTALL'	=> $this->contrib->get_url('manage_demo', array(
+					'action'	=> 'install',
+					'branch'	=> $branch,
+				)),
 			));
 		}
 
