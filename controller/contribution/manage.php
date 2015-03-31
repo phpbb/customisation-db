@@ -435,6 +435,8 @@ class manage extends base
 			$this->confirm_author_change(key($new_author), array_shift($new_author));
 		}
 
+		$this->cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
+
 		redirect($this->contrib->get_url());
 	}
 
