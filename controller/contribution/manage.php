@@ -15,6 +15,7 @@ namespace phpbb\titania\controller\contribution;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use phpbb\exception\http_exception;
 
 class manage extends base
 {
@@ -481,6 +482,12 @@ class manage extends base
 	 */
 	public function manage_demo($contrib_type, $contrib, $action)
 	{
+		$hash = $this->request->variable('hash', '');
+
+		if (!check_link_hash($hash, 'manage_demo'))
+		{
+			throw new http_exception(403, 'PAGE_REQUEST_INVALID');
+		}
 		$this->setup($contrib_type, $contrib);
 
 		if (!$this->is_moderator || $this->contrib->contrib_status != TITANIA_CONTRIB_APPROVED)
@@ -565,6 +572,7 @@ class manage extends base
 				'U_INSTALL'	=> $this->contrib->get_url('manage_demo', array(
 					'action'	=> 'install',
 					'branch'	=> $branch,
+					'hash'		=> generate_link_hash('manage_demo'),
 				)),
 			));
 		}
