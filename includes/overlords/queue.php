@@ -102,6 +102,8 @@ class queue_overlord
 
 		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$path_helper = phpbb::$container->get('path_helper');
+		$tracking = phpbb::$container->get('phpbb.titania.tracking');
+
 		$queue_ids = array();
 
 		$sql_ary = array(
@@ -140,7 +142,7 @@ class queue_overlord
 			'ON'	=> 't.topic_last_post_user_id = ul.user_id',
 		);
 
-		titania_tracking::get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
+		$tracking->get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
 
 		// Main SQL Query
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
@@ -163,7 +165,7 @@ class queue_overlord
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			// Store the tracking info we grabbed from the DB
-			titania_tracking::store_from_db($row);
+			$tracking->store_from_db($row);
 
 			$queue_ids[] = $row['queue_id'];
 			$user_ids[] = $row['topic_first_post_user_id'];

@@ -30,6 +30,9 @@ class all_contribs
 	/** @var \phpbb\titania\display */
 	protected $display;
 
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
@@ -42,15 +45,17 @@ class all_contribs
 	* @param \phpbb\titania\controller\helper $helper
 	* @param \phpbb\request\request_interface $request
 	* @param \phpbb\titania\display $display
+	* @param \phpbb\titania\tracking $tracking
 	* @param \phpbb\path_helper $path_helper
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request_interface $request, \phpbb\titania\display $display, \phpbb\path_helper $path_helper)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request_interface $request, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking, \phpbb\path_helper $path_helper)
 	{
 		$this->template = $template;
 		$this->user = $user;
 		$this->helper = $helper;
 		$this->request = $request;
 		$this->display = $display;
+		$this->tracking = $tracking;
 		$this->path_helper = $path_helper;
 	}
 
@@ -64,7 +69,7 @@ class all_contribs
 		// Mark all contribs read
 		if ($this->request->variable('mark', '') == 'contribs')
 		{
-			\titania_tracking::track(TITANIA_CONTRIB, self::ALL_CONTRIBS);
+			$this->tracking->track(TITANIA_CONTRIB, self::ALL_CONTRIBS);
 		}
 		$this->template->assign_vars(array(
 			'U_MARK_TOPICS'			=> $this->path_helper->append_url_params($this->helper->get_current_url(), array('mark' => 'contribs')),

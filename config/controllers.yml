@@ -10,6 +10,7 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.cache
             - @path_helper
+            - @phpbb.titania.tracking
 
     phpbb.titania.controller.faq:
         class: phpbb\titania\controller\faq
@@ -38,6 +39,7 @@ services:
             - @phpbb.titania.controller.helper
             - @request
             - @phpbb.titania.display
+            - @phpbb.titania.tracking
 
     phpbb.titania.controller.all_contribs:
         class: phpbb\titania\controller\all_contribs
@@ -47,6 +49,7 @@ services:
             - @phpbb.titania.controller.helper
             - @request
             - @phpbb.titania.display
+            - @phpbb.titania.tracking
             - @path_helper
 
     phpbb.titania.controller.author:
@@ -62,6 +65,7 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.cache
             - @phpbb.titania.access
+            - @phpbb.titania.tracking
 
     phpbb.titania.controller.download:
         class: phpbb\titania\controller\download
@@ -116,6 +120,7 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.access
+            - @phpbb.titania.tracking
 
     phpbb.titania.controller.contrib.support:
         class: phpbb\titania\controller\contribution\support
@@ -131,6 +136,7 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.access
+            - @phpbb.titania.tracking
 
     phpbb.titania.controller.contrib.faq:
         class: phpbb\titania\controller\contribution\faq
@@ -146,6 +152,7 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.access
+            - @phpbb.titania.tracking
 
     phpbb.titania.controller.contrib.manage:
         class: phpbb\titania\controller\contribution\manage
@@ -285,6 +292,7 @@ services:
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.tracking
 
     phpbb.titania.controller.manage.administration:
         class: phpbb\titania\controller\manage\administration
@@ -309,3 +317,4 @@ services:
             - @request
             - @phpbb.titania.controller.helper
             - @phpbb.titania.config
+            - @phpbb.titania.tracking

@@ -82,3 +82,11 @@ services:
         arguments:
             - @user
             - @phpbb.titania.cache
+
+    phpbb.titania.tracking:
+         class: phpbb\titania\tracking
+         arguments:
+             - @dbal.conn
+             - @user
+             - @request
+             - @config

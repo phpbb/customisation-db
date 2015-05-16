@@ -199,6 +199,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		}
 		$sort->request();
 		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$tracking = phpbb::$container->get('phpbb.titania.tracking');
 
 		$topic_ids = array();
 		$switch_on_sticky = true; // Display the extra block after stickies end?  Not used when not sorting with stickies first
@@ -232,7 +233,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'ON'	=> 't.topic_last_post_user_id = ul.user_id',
 		);
 
-		titania_tracking::get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
+		$tracking->get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
 
 		// Setup the contribution/topic we will use for parsing the output (before the switch so we are able to do type specific things for it)
 		$topic = new titania_topic();
@@ -284,11 +285,11 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				}
 
 				// Additional tracking for all queue discussion topics
-				titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
+				$tracking->get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 				$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
 
 				// Additional tracking for marking items as read in each contribution
-				titania_tracking::get_track_sql($sql_ary, TITANIA_SUPPORT, 't.parent_id', 'tst');
+				$tracking->get_track_sql($sql_ary, TITANIA_SUPPORT, 't.parent_id', 'tst');
 				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
 			break;
 
@@ -304,17 +305,17 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sql_ary['WHERE'] .= 'AND contrib.contrib_limited_support = 0';
 
 				// Additional tracking for marking items as read in each contribution
-				titania_tracking::get_tracks(TITANIA_SUPPORT, $contrib_ids);
+				$tracking->get_tracks(TITANIA_SUPPORT, $contrib_ids);
 				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
 
 				// Additional tracking for all support topics
-				titania_tracking::get_track_sql($sql_ary, TITANIA_ALL_SUPPORT, 0, 'tstg');
+				$tracking->get_track_sql($sql_ary, TITANIA_ALL_SUPPORT, 0, 'tstg');
 				$topic->additional_unread_fields[] = array('type' => TITANIA_ALL_SUPPORT, 'id' => 0);
 
 				// Track the queue discussion too if applicable
 				if (titania_types::find_authed('queue_discussion'))
 				{
-					titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
+					$tracking->get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
 				}
 
@@ -374,11 +375,11 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				// Additional tracking field (to allow marking all support/discussion as read)
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_SUPPORT;
 
-				titania_tracking::get_track_sql($sql_ary, TITANIA_SUPPORT, 'contrib.contrib_id', 'tst');
+				$tracking->get_track_sql($sql_ary, TITANIA_SUPPORT, 'contrib.contrib_id', 'tst');
 				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
 
 				// Additional tracking for all support topics
-				titania_tracking::get_track_sql($sql_ary, TITANIA_ALL_SUPPORT, 0, 'tstg');
+				$tracking->get_track_sql($sql_ary, TITANIA_ALL_SUPPORT, 0, 'tstg');
 				$topic->additional_unread_fields[] = array('type' => TITANIA_ALL_SUPPORT, 'id' => 0);
 
 				// Do not order stickies first
@@ -402,17 +403,17 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				}
 
 				// Additional tracking for marking items as read in each contribution
-				titania_tracking::get_track_sql($sql_ary, TITANIA_SUPPORT, $object->contrib_id, 'tst');
+				$tracking->get_track_sql($sql_ary, TITANIA_SUPPORT, $object->contrib_id, 'tst');
 				$topic->additional_unread_fields[] = array('type' => TITANIA_SUPPORT, 'parent_match' => true);
 
 				// Additional tracking for all support topics
-				titania_tracking::get_track_sql($sql_ary, TITANIA_ALL_SUPPORT, 0, 'tstg');
+				$tracking->get_track_sql($sql_ary, TITANIA_ALL_SUPPORT, 0, 'tstg');
 				$topic->additional_unread_fields[] = array('type' => TITANIA_ALL_SUPPORT, 'id' => 0);
 
 				// Track the queue discussion too if applicable
 				if (titania_types::$types[$object->contrib_type]->acl_get('queue_discussion'))
 				{
-					titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
+					$tracking->get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
 				}
 			break;
@@ -439,7 +440,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			// Store the tracking info we grabbed from the DB
-			titania_tracking::store_from_db($row);
+			$tracking->store_from_db($row);
 
 			self::$topics[$row['topic_id']] = $row;
 

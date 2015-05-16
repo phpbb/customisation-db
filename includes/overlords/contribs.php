@@ -115,6 +115,8 @@ class contribs_overlord
 		titania::_include('functions_display', 'titania_topic_folder_img');
 		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
+		$tracking = phpbb::$container->get('phpbb.titania.tracking');
+
 		// Setup the sort tool if not sent, then request
 		if ($sort === false)
 		{
@@ -185,7 +187,7 @@ class contribs_overlord
 			break;
 		}
 
-		titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
+		$tracking->get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 
 		$mod_contrib_mod = (bool) phpbb::$auth->acl_get('u_titania_mod_contrib_mod');
 
@@ -289,7 +291,7 @@ class contribs_overlord
 		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], phpbb::$user, true);
 
 		// Get the mark all tracking
-		titania_tracking::get_track(TITANIA_CONTRIB, 0);
+		$tracking->get_track(TITANIA_CONTRIB, 0);
 
 		foreach ($contrib_ids as $contrib_id)
 		{
@@ -308,12 +310,12 @@ class contribs_overlord
 			$contrib->is_active_coauthor = (in_array($contrib->contrib_id, $author_contribs)) ? true : false;
 
 			// Store the tracking info we grabbed from the DB
-			titania_tracking::store_from_db($row);
+			$tracking->store_from_db($row);
 
 			// Get the folder image
 			$folder_img = $folder_alt = '';
-			$last_read_mark = titania_tracking::get_track(TITANIA_CONTRIB, $contrib->contrib_id, true);
-			$last_complete_mark = titania_tracking::get_track(TITANIA_CONTRIB, 0, true);
+			$last_read_mark = $tracking->get_track(TITANIA_CONTRIB, $contrib->contrib_id, true);
+			$last_complete_mark = $tracking->get_track(TITANIA_CONTRIB, 0, true);
 			$is_unread = ($contrib->contrib_last_update > $last_read_mark && $contrib->contrib_last_update > $last_complete_mark) ? true : false;
 			titania_topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
 

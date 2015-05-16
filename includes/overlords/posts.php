@@ -161,7 +161,8 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		// check to see if they want to view the latest unread post
 		if (phpbb::$request->variable('view', '') == 'unread')
 		{
-			$mark_time = titania_tracking::get_track(TITANIA_TOPIC, $topic->topic_id);
+			$tracking = phpbb::$container->get('phpbb.titania.tracking');
+			$mark_time = $tracking->get_track(TITANIA_TOPIC, $topic->topic_id);
 
 			if ($mark_time > 0)
 			{
@@ -214,6 +215,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	*/
 	public static function display_topic($topic, $sort = false)
 	{
+		$tracking = phpbb::$container->get('phpbb.titania.tracking');
+
 		if ($sort === false)
 		{
 			// Setup the sort tool
@@ -273,10 +276,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		phpbb::$db->sql_freeresult($result);
 
 		// Grab the tracking data
-		$last_mark_time = titania_tracking::get_track(TITANIA_TOPIC, $topic->topic_id);
+		$last_mark_time = $tracking->get_track(TITANIA_TOPIC, $topic->topic_id);
 
 		// Store tracking data
-		titania_tracking::track(TITANIA_TOPIC, $topic->topic_id, $last_post_time);
+		$tracking->track(TITANIA_TOPIC, $topic->topic_id, $last_post_time);
 
 		// load the user data
 		users_overlord::load($user_ids);

@@ -47,6 +47,9 @@ class author
 	/** @var \phpbb\titania\access */
 	protected $access;
 
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
 	/** @var \titania_author */
 	protected $author;
 
@@ -66,8 +69,9 @@ class author
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param access $access
+	 * @param \phpbb\titania\tracking $tracking
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access, \phpbb\titania\tracking $tracking)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -79,6 +83,7 @@ class author
 		$this->display = $display;
 		$this->cache = $cache;
 		$this->access = $access;
+		$this->tracking = $tracking;
 
 		// Add common lang
 		$this->user->add_lang_ext('phpbb/titania', 'authors');
@@ -212,7 +217,7 @@ class author
 		{
 			foreach ($this->cache->get_author_contribs($this->author->user_id, $this->user) as $contrib_id)
 			{
-				\titania_tracking::track(TITANIA_SUPPORT, $contrib_id);
+				$this->tracking->track(TITANIA_SUPPORT, $contrib_id);
 			}
 		}
 

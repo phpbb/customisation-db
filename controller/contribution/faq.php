@@ -15,6 +15,9 @@ namespace phpbb\titania\controller\contribution;
 
 class faq extends base
 {
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
 	/** @var \titania_faq */
 	protected $faq;
 
@@ -23,6 +26,29 @@ class faq extends base
 
 	/** @var bool */
 	protected $is_moderator;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\access $access
+	 * @param \phpbb\titania\tracking $tracking
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
+
+		$this->tracking = $tracking;
+	}
 
 	/**
 	* Display FAQ item.
@@ -46,7 +72,7 @@ class faq extends base
 		$this->faq->increase_views_counter();
 
 		// Tracking
-		\titania_tracking::track(TITANIA_FAQ, $this->id);
+		$this->tracking->track(TITANIA_FAQ, $this->id);
 
 		$message = $this->faq->generate_text_for_display();
 
@@ -386,7 +412,7 @@ class faq extends base
 			$this->db->sql_freeresult($result);
 
 			// Grab the tracking info
-			\titania_tracking::get_tracks(TITANIA_FAQ, array_keys($items));
+			$this->tracking->get_tracks(TITANIA_FAQ, array_keys($items));
 		}
 
 		return $items;
@@ -406,7 +432,7 @@ class faq extends base
 
 		// @todo probably should setup an edit time or something for better read tracking in case it was edited
 		$folder_img = $folder_alt = '';
-		$unread = \titania_tracking::get_track(TITANIA_FAQ, $data['faq_id'], true) === 0;
+		$unread = $this->tracking->get_track(TITANIA_FAQ, $data['faq_id'], true) === 0;
 		titania_topic_folder_img($folder_img, $folder_alt, 0, $unread);
 
 		$this->template->assign_block_vars('faqlist', array(

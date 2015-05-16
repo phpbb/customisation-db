@@ -51,6 +51,9 @@ class titania_topic extends titania_database_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
 	/**
 	 * Constructor class for titania topics
 	 *
@@ -98,6 +101,7 @@ class titania_topic extends titania_database_object
 
 		$this->topic_id = $topic_id;
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->tracking = phpbb::$container->get('phpbb.titania.tracking');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -180,7 +184,7 @@ class titania_topic extends titania_database_object
 		phpbb::$db->sql_query($sql);
 
 		// Remove any tracking for this topic
-		titania_tracking::clear_item(TITANIA_TOPIC, $this->topic_id);
+		$this->tracking->clear_item(TITANIA_TOPIC, $this->topic_id);
 
 		// Delete the now empty topic
 		$sql = 'DELETE FROM ' . TITANIA_TOPICS_TABLE . '
@@ -322,8 +326,8 @@ class titania_topic extends titania_database_object
 	public function assign_details()
 	{
 		// Tracking check
-		$last_read_mark = titania_tracking::get_track(TITANIA_TOPIC, $this->topic_id, true);
-		$last_read_mark = max($last_read_mark, titania_tracking::find_last_read_mark($this->additional_unread_fields, $this->topic_type, $this->parent_id));
+		$last_read_mark = $this->tracking->get_track(TITANIA_TOPIC, $this->topic_id, true);
+		$last_read_mark = max($last_read_mark, $this->tracking->find_last_read_mark($this->additional_unread_fields, $this->topic_type, $this->parent_id));
 		$this->unread = ($this->topic_last_post_time > $last_read_mark) ? true : false;
 
 		$folder_img = $folder_alt = '';

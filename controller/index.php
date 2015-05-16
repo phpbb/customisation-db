@@ -39,6 +39,9 @@ class index
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
 	/** @var int */
 	protected $id;
 
@@ -51,17 +54,19 @@ class index
 	const ALL_CONTRIBS = 0;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\auth\auth $auth
-	* @param \phpbb\template\template $template
-	* @param \phpbb\user $user
-	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\request\request_interace $request;
-	* @param \phpbb\titania\display $display
-	* @param \phpbb\path_helper $path_helper
-	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper)
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\path_helper $path_helper
+	 * @param \phpbb\titania\tracking $tracking
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper, \phpbb\titania\tracking $tracking)
 	{
 		$this->auth = $auth;
 		$this->template = $template;
@@ -73,6 +78,7 @@ class index
 		$this->path_helper = $path_helper;
 
 		\titania::_include('functions_display', 'titania_display_categories');
+		$this->tracking = $tracking;
 	}
 
 	/**
@@ -87,7 +93,7 @@ class index
 		// Mark all contribs read
 		if ($this->request->variable('mark', '') == 'contribs')
 		{
-			\titania_tracking::track(TITANIA_CONTRIB, self::ALL_CONTRIBS);
+			$this->tracking->track(TITANIA_CONTRIB, self::ALL_CONTRIBS);
 		}
 
 		$this->template->assign_vars(array(
