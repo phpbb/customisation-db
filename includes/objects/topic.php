@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\count;
 use phpbb\titania\url\url;
 
 /**
@@ -201,8 +202,8 @@ class titania_topic extends titania_database_object
 		}
 
 		$is_mod = phpbb::$auth->acl_get('u_titania_mod_post_mod');
-		$flags = titania_count::get_flags($access_level, $is_mod, $is_mod);
-		return titania_count::from_db($this->topic_posts, $flags);
+		$flags = count::get_flags($access_level, $is_mod, $is_mod);
+		return count::from_db($this->topic_posts, $flags);
 	}
 
 	/**
@@ -328,8 +329,8 @@ class titania_topic extends titania_database_object
 		$this->topic_folder_img($folder_img, $folder_alt);
 
 		// To find out if we have any posts that need approval
-		$approved = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
-		$total = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, true));
+		$approved = count::from_db($this->topic_posts, count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
+		$total = count::from_db($this->topic_posts, count::get_flags(TITANIA_ACCESS_PUBLIC, false, true));
 		$u_new_post = '';
 
 		if ($this->unread)
@@ -401,7 +402,7 @@ class titania_topic extends titania_database_object
 	public function sync_hidden_post_inclusion()
 	{
 		$include = array('unapproved' => false, 'deleted' => false);
-		$counts = titania_count::from_db($this->topic_posts, false);
+		$counts = count::from_db($this->topic_posts, false);
 		$visible_posts = $counts['teams'] + $counts['authors'] + $counts['public'];
 
 		if (!$visible_posts)
@@ -499,7 +500,7 @@ class titania_topic extends titania_database_object
 			return;
 		}
 
-		$counts = titania_count::from_db($this->topic_posts, false);
+		$counts = count::from_db($this->topic_posts, false);
 		$visible_posts = $counts['teams'] + $counts['authors'] + $counts['public'];
 		$total_posts = array_sum($counts);
 

@@ -11,12 +11,14 @@
 *
 */
 
+namespace phpbb\titania;
+
 /**
 * Titania class to build and get the values for count fields stored in the DB
 */
-class titania_count
+class count
 {
-	private static $fields = array(
+	protected static $fields = array(
 		'teams'			=> 0,
 		'authors'		=> 0,
 		'public'		=> 0,
@@ -37,9 +39,9 @@ class titania_count
 
 		switch ($access_level)
 		{
-			case TITANIA_ACCESS_TEAMS :
+			case access::TEAM_LEVEL :
 				$flags[] = 'teams';
-			case TITANIA_ACCESS_AUTHORS :
+			case access::AUTHOR_LEVEL :
 				$flags[] = 'authors';
 			default :
 				$flags[] = 'public';
@@ -81,10 +83,10 @@ class titania_count
 		{
 			switch ($access_level)
 			{
-				case TITANIA_ACCESS_TEAMS :
+				case access::TEAM_LEVEL :
 					$flags[] = 'teams';
 				break;
-				case TITANIA_ACCESS_AUTHORS :
+				case access::AUTHOR_LEVEL :
 					$flags[] = 'authors';
 				break;
 				default :
@@ -135,7 +137,7 @@ class titania_count
 	{
 		if (sizeof($flags) != 1)
 		{
-			throw new exception('Only increment one field at a time (you are using the field incorrectly if you increment more than one field per item)');
+			throw new \Exception('Only increment one field at a time (you are using the field incorrectly if you increment more than one field per item)');
 		}
 
 		// Get the count array from the data
@@ -161,7 +163,7 @@ class titania_count
 	{
 		if (sizeof($flags) != 1)
 		{
-			throw new exception('Only decrement one field at a time (you are using the field incorrectly if you decrement more than one field per item)');
+			throw new \Exception('Only decrement one field at a time (you are using the field incorrectly if you decrement more than one field per item)');
 		}
 
 		// Get the count array from the data

@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\count;
+
 /**
 * Class to abstract titania posts
 * @package Titania
@@ -586,14 +588,14 @@ class titania_post extends titania_message_object
 		$this->update_topic_postcount();
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
-		$flags = titania_count::get_flags(TITANIA_ACCESS_PUBLIC);
-		if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+		$flags = count::get_flags(TITANIA_ACCESS_PUBLIC);
+		if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 		{
 			// There are no posts visible to the public, change it to authors level access
 			$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
 
-			$flags = titania_count::get_flags(TITANIA_ACCESS_AUTHORS);
-			if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+			$flags = count::get_flags(TITANIA_ACCESS_AUTHORS);
+			if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 			{
 				// There are no posts visible to authors, change it to teams level access
 				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
@@ -649,14 +651,14 @@ class titania_post extends titania_message_object
 		$this->update_topic_postcount();
 
 		// Set the visibility appropriately
-		$flags = titania_count::get_flags(TITANIA_ACCESS_AUTHORS);
-		if (titania_count::from_db($this->topic->topic_posts, $flags) > 0)
+		$flags = count::get_flags(TITANIA_ACCESS_AUTHORS);
+		if (count::from_db($this->topic->topic_posts, $flags) > 0)
 		{
 			// There are posts visible to the authors, change it to authors level access
 			$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
 
-			$flags = titania_count::get_flags(TITANIA_ACCESS_PUBLIC);
-			if (titania_count::from_db($this->topic->topic_posts, $flags) > 0)
+			$flags = count::get_flags(TITANIA_ACCESS_PUBLIC);
+			if (count::from_db($this->topic->topic_posts, $flags) > 0)
 			{
 				// There are posts visible to the public, change it to public level access
 				$this->topic->topic_access = TITANIA_ACCESS_PUBLIC;
@@ -723,14 +725,14 @@ class titania_post extends titania_message_object
 		$this->update_topic_postcount(true);
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
-		$flags = titania_count::get_flags(TITANIA_ACCESS_PUBLIC);
-		if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+		$flags = count::get_flags(TITANIA_ACCESS_PUBLIC);
+		if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 		{
 			// There are no posts visible to the public, change it to authors level access
 			$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
 
-			$flags = titania_count::get_flags(TITANIA_ACCESS_AUTHORS);
-			if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+			$flags = count::get_flags(TITANIA_ACCESS_AUTHORS);
+			if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 			{
 				// There are no posts visible to authors, change it to teams level access
 				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
@@ -779,8 +781,8 @@ class titania_post extends titania_message_object
 		$this->topic->update_posted_status('remove', $this->post_user_id);
 
 		// Check if the topic is empty
-		$flags = titania_count::get_flags(TITANIA_ACCESS_TEAMS, true, true);
-		if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+		$flags = count::get_flags(TITANIA_ACCESS_TEAMS, true, true);
+		if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 		{
 			$this->topic->delete();
 		}
@@ -873,7 +875,7 @@ class titania_post extends titania_message_object
 		}
 
 		// Get the current count
-		$to_db = titania_count::from_db($this->topic->topic_posts, false);
+		$to_db = count::from_db($this->topic->topic_posts, false);
 
 		// Revert the old count from this post
 		if ($this->post_id)
@@ -936,7 +938,7 @@ class titania_post extends titania_message_object
 		}
 
 		// Update the field on the topic
-		$this->topic->topic_posts = titania_count::to_db($to_db);
+		$this->topic->topic_posts = count::to_db($to_db);
 	}
 
 	/**

@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use phpbb\titania\count;
+
 class base
 {
 	/** @var \phpbb\auth\auth */
@@ -113,8 +115,8 @@ class base
 	protected function generate_navigation($page)
 	{
 		// Count the number of FAQ items to display
-		$flags = \titania_count::get_flags(\titania::$access_level);
-		$faq_count = \titania_count::from_db($this->contrib->contrib_faq_count, $flags);
+		$flags = count::get_flags(\titania::$access_level);
+		$faq_count = count::from_db($this->contrib->contrib_faq_count, $flags);
 		$is_disabled = in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED));
 
 		/**
