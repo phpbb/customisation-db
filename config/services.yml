@@ -4,6 +4,13 @@ imports:
     - { resource: parameters.yml }
 
 services:
+    phpbb.titania.access:
+        class: phpbb\titania\access
+        arguments:
+            - @dbal.conn
+            - @user
+            - @phpbb.titania.config
+
     phpbb.titania.config:
         class: phpbb\titania\config\config
         arguments:

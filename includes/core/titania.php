@@ -92,22 +92,7 @@ class titania
 		self::$cache = phpbb::$container->get('phpbb.titania.cache');
 
 		// Setup the Access Level
-		self::$access_level = TITANIA_ACCESS_PUBLIC;
-
-		// The user might be in a group with team access even if it's not his default group.
-		$group_ids = implode(', ', self::$config->team_groups);
-
-		$sql = 'SELECT group_id, user_id, user_pending FROM ' . USER_GROUP_TABLE . '
-				WHERE user_id = ' . phpbb::$user->data['user_id'] . '
-				AND user_pending = 0
-				AND group_id IN (' . $group_ids . ')';
-		$result = phpbb::$db->sql_query_limit($sql, 1);
-
-		if ($group_id = phpbb::$db->sql_fetchfield('group_id'))
-		{
-			self::$access_level = TITANIA_ACCESS_TEAMS;
-		}
-		phpbb::$db->sql_freeresult($result);
+		self::$access_level = phpbb::$container->get('phpbb.titania.access')->get_level();
 
 		// Add common titania language file
 		phpbb::$user->add_lang_ext('phpbb/titania', 'common');
