@@ -68,3 +68,11 @@ services:
             - %core.php_ext%
         tags:
             - { name: event.listener }
+
+    phpbb.titania.queue.stats:
+        class: phpbb\titania\queue\stats
+        arguments:
+            - @dbal.conn
+            - @user
+            - @template
+
