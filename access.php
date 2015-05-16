@@ -117,7 +117,11 @@ class access
 	 */
 	public function set_level($level)
 	{
-		$this->level = $level;
+		// Is it a valid level?
+		if ($this->is_team($level) || $this->is_author($level) || $this->is_public($level))
+		{
+			$this->level = (int) $level;
+		}
 	}
 
 	/**
