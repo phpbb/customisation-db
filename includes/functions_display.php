@@ -107,28 +107,3 @@ function titania_display_categories($parent_id = 0, $blockname = 'categories', $
 
 	unset($category);
 }
-
-/**
-* Creates a simple calendar array for each day in a time interval
-*
-* @param \phpbb\user $user	User object
-* @param \DateTime $start	Time to start the calendar
-* @param \DateTime $end		Time to end the calendar
-* @param mixed $day_tpl		Value to fill each day with
-*
-* @return array Retuns an array in the form of Array([year] => Array([month] => Array([day] => $day_tpl)))
-*/
-function titania_create_calendar_ary($user, \DateTime $start, \DateTime $end, $day_tpl)
-{
-	$start->setTimezone($user->timezone);
-	$end->setTimezone($user->timezone);
-	$period = new \DatePeriod($start, new \DateInterval('P1D'), $end);
-	$calendar = array();
-
-	foreach ($period as $time)
-	{
-		list($day, $month, $year) = explode(' ', $time->format('j n Y'));
-		$calendar[$year][$month][$day] = $day_tpl;
-	}
-	return $calendar;
-}

@@ -84,54 +84,6 @@ function titania_attach_order_compare($attach1, $attach2)
 	}
 }
 
-/**
-* Format the delta between two timestamps.
-*
-* @param int $start_time Lower time limit. If only $start_time is provided, then its value is used as the delta.
-* @param int $end_time Upper time limit.
-*
-* @return string Returns a translated string containing the appropriate label (up to days) for the time delta. Eg. Less than a minute, 2 Minutes, 1 Hour, 10 Days
-*/
-function format_time_delta($start_time, $end_time = 0)
-{
-	if ($end_time)
-	{
-		$delta = abs($end_time - $start_time);
-	}
-	else
-	{
-		$delta = $start_time;
-	}
-
-	if ($delta < 60)
-	{
-		$delta = '';
-		$delta_label = 'LESS_THAN_A_MINUTE';
-	}
-	else 
-	{
-		if ($delta < 3600)
-		{
-			$delta = floor($delta / 60);
-			$delta_label = 'MINUTE';
-		}
-		else if ($delta < 86400)
-		{
-			$delta = floor($delta / 3600);
-			$delta_label = 'HOUR';
-		}
-		else
-		{
-			$delta = floor($delta / 86400);
-			$delta_label = 'DAY';
-		}
-
-		$delta_label .= ($delta != 1) ? 'S' : '';
-	}
-
-	return $delta . ' ' . phpbb::$user->lang[$delta_label] ;
-}
-
 function prerelease_submission_allowed($branch, $contrib_type)
 {
 	if (empty(titania::$config->prerelease_phpbb_version[$branch]) || empty(titania::$config->phpbb_versions[$branch]) || !titania_types::$types[$contrib_type]->prerelease_submission_allowed)
