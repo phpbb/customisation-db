@@ -464,7 +464,7 @@ class item extends \phpbb\titania\controller\manage\base
 		}
 		$uid = $bitfield = $options = false;
 		generate_text_for_storage($preview, $uid, $bitfield, $options, true, true, true);
-		return titania_generate_text_for_display($preview, $uid, $bitfield, $options);
+		return generate_text_for_display($preview, $uid, $bitfield, $options);
 	}
 
 	/**

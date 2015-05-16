@@ -153,7 +153,7 @@ class titania_type_mod extends titania_type_base
 			$queue->mpv_results_uid = $uid;
 			$queue->submit();
 
-			$mpv_results = titania_generate_text_for_display($mpv_results, $uid, $bitfield, $flags);
+			$mpv_results = generate_text_for_display($mpv_results, $uid, $bitfield, $flags);
 			phpbb::$template->assign_var('PV_RESULTS', $mpv_results);
 
 			phpbb::$template->assign_var('S_AUTOMOD_TEST', titania_types::$types[$contrib->contrib_type]->automod_test);

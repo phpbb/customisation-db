@@ -31,29 +31,6 @@ function get_real_revision_version($revision)
 }
 
 /**
-* Generate text for display
-* Returns the result of generate_text_for_display() from phpBB's functions_content.php file, but has hacks in place to let us use our own bbcode.html file
-*
-* @param mixed $text
-* @param mixed $uid
-* @param mixed $bitfield
-* @param mixed $flags
-* @return mixed
-*/
-function titania_generate_text_for_display($text, $uid, $bitfield, $flags)
-{
-	if (titania::$hook->call_hook(__FUNCTION__, $text, $uid, $bitfield, $flags))
-	{
-		if (titania::$hook->hook_return(__FUNCTION__))
-		{
-			return titania::$hook->hook_return_result(__FUNCTION__);
-		}
-	}
-	phpbb::_include('bbcode', false, 'bbcode');
-	return generate_text_for_display($text, $uid, $bitfield, $flags);
-}
-
-/**
 * Decode a message from the database (properly)
 *
 * @param string $message

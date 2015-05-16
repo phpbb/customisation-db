@@ -142,7 +142,7 @@ class titania_type_extension extends titania_type_base
 			$queue->mpv_results_uid = $uid;
 			$queue->submit();
 
-			$results = titania_generate_text_for_display($results, $uid, $bitfield, $flags);
+			$results = generate_text_for_display($results, $uid, $bitfield, $flags);
 			phpbb::$template->assign_var('PV_RESULTS', $results);
 		}
 		return array();

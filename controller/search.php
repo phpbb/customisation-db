@@ -471,7 +471,7 @@ class search
 				'POST_AUTHOR_FULL'	=> ($document->author) ? \users_overlord::get_user($document->author, '_full') : false,
 				'POST_DATE'			=> ($document->date) ? $this->user->format_date($document->date) : false,
 				'POST_SUBJECT'		=> censor_text($document->title),
-				'MESSAGE'			=> titania_generate_text_for_display(
+				'MESSAGE'			=> generate_text_for_display(
 					$document->text,
 					$document->text_uid,
 					$document->text_bitfield,
