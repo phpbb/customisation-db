@@ -308,8 +308,6 @@ class titania_attention_post extends titania_attention
 	{
 		$this->load_contrib_object();
 
-		phpbb::_include('functions_messenger', false, 'messenger');
-
 		$message_vars = array_merge($message_vars, array(
 			'NAME'			=> $this->post->topic->topic_subject,
 			'CONTRIB_NAME'	=> $this->contrib->contrib_name,
