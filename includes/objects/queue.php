@@ -315,12 +315,12 @@ class titania_queue extends titania_message_object
 		parent::delete();
 	}
 
-	public function move($new_status)
+	public function move($new_status, \phpbb\titania\tags $tags)
 	{
 		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
-		$from = titania_tags::get_tag_name($this->queue_status);
-		$to = titania_tags::get_tag_name($new_status);
+		$from = $tags->get_tag_name($this->queue_status);
+		$to = $tags->get_tag_name($new_status);
 
 		$this->topic_reply(sprintf(phpbb::$user->lang['QUEUE_REPLY_MOVE'], $from, $to));
 

@@ -232,6 +232,7 @@ services:
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.tags
 
     phpbb.titania.controller.manage.queue.tools:
         class: phpbb\titania\controller\manage\queue\tools

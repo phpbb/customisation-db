@@ -76,3 +76,9 @@ services:
             - @user
             - @template
 
+
+    phpbb.titania.tags:
+        class: phpbb\titania\tags
+        arguments:
+            - @user
+            - @phpbb.titania.cache

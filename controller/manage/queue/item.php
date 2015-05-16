@@ -15,6 +15,9 @@ namespace phpbb\titania\controller\manage\queue;
 
 class item extends \phpbb\titania\controller\manage\base
 {
+	/** @var \phpbb\titania\tags */
+	protected $tags;
+
 	/** @var int */
 	protected $id;
 
@@ -29,6 +32,28 @@ class item extends \phpbb\titania\controller\manage\base
 
 	/** @var bool */
 	protected $is_author;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\tags $tags
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tags $tags)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+
+		$this->tags = $tags;
+	}
 
 	/**
 	* Display queue item.
@@ -61,8 +86,8 @@ class item extends \phpbb\titania\controller\manage\base
 		{
 			// Add tag to Breadcrumbs
 			$this->display->generate_breadcrumbs(array(
-				\titania_tags::get_tag_name($tag)	=> $this->queue->get_url(false, array('tag' => $tag)),
-			));	
+				$this->tags->get_tag_name($tag)	=> $this->queue->get_url(false, array('tag' => $tag)),
+			));
 		}
 
 		return $this->helper->render('manage/queue.html', \queue_overlord::$queue[$this->id]['topic_subject']);
@@ -325,7 +350,7 @@ class item extends \phpbb\titania\controller\manage\base
 				return $this->helper->error('NO_TAG');
 			}
 
-			$this->queue->move($new_tag);
+			$this->queue->move($new_tag, $this->tags);
 		}
 		else
 		{
