@@ -79,33 +79,6 @@ function titania_decode_message(&$message, $bbcode_uid = '')
 }
 
 /**
-* Exception handler
-*
-* @param mixed $exception
-*/
-function titania_exception_handler($exception)
-{
-	$message = $exception->getMessage();
-
-	$message .= titania_backtrace($exception);
-
-	trigger_error($message);
-}
-
-function titania_backtrace($exception = false)
-{
-	if (titania::$config->display_backtrace == 3 || (titania::$config->display_backtrace == 2 && titania::$access_level == TITANIA_ACCESS_TEAMS) || (titania::$config->display_backtrace == 1 && phpbb::$auth->acl_get('a_')))
-	{
-		if ($exception !== false)
-		{
-			return '<br /><br /><pre>' . var_export($exception->getTrace(), true) . '</pre>';
-		}
-
-		return '<br /><br /><pre>' . get_backtrace() . '</pre>';
-	}
-}
-
-/**
 * Used in titania::$cache->get_phpbb_versions()
 *
 * @param mixed $version1

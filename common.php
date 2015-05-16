@@ -42,8 +42,6 @@ titania::configure(
 // Include our core functions
 titania::_include('functions');
 
-set_exception_handler('titania_exception_handler');
-
 // Set up our auto-loader
 spl_autoload_register(array('titania', 'autoload'));
 
