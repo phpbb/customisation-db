@@ -46,6 +46,9 @@ class titania_queue extends titania_message_object
 	/** @var  \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	public function __construct()
 	{
 		// Configure object properties
@@ -89,6 +92,7 @@ class titania_queue extends titania_message_object
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->user = phpbb::$container->get('user');
+		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
 	}
 
 	public function submit($update_first_post = true)
@@ -341,7 +345,7 @@ class titania_queue extends titania_message_object
 			'CATEGORY_NAME'	=> $to,
 			'U_VIEW_QUEUE'	=> $path_helper->strip_url_params($u_view_queue, 'sid'),
 		);
-		titania_subscriptions::send_notifications(
+		$this->subscriptions->send_notifications(
 			TITANIA_QUEUE_TAG,
 			$new_status,
 			'new_contrib_queue_cat.txt',

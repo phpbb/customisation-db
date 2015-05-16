@@ -15,7 +15,32 @@ namespace phpbb\titania\controller\manage\queue;
 
 class queue extends \phpbb\titania\controller\manage\base
 {
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	protected $type;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request_interace $request
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\subscriptions $subscriptions
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\subscriptions $subscriptions)
+	{
+		parent::_construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+
+		$this->subscriptions = $subscriptions;
+	}
 
 	/**
 	* Display queue.
@@ -36,11 +61,21 @@ class queue extends \phpbb\titania\controller\manage\base
 		// Subscriptions
 		if (!$tag)
 		{
-			\titania_subscriptions::handle_subscriptions(TITANIA_QUEUE, $this->type->id, $this->helper->get_current_url(), 'SUBSCRIBE_QUEUE');
+			$this->subscriptions->handle_subscriptions(
+				TITANIA_QUEUE,
+				$this->type->id,
+				$this->helper->get_current_url(),
+				'SUBSCRIBE_QUEUE'
+			);
 		}
 		else
 		{
-			\titania_subscriptions::handle_subscriptions(TITANIA_QUEUE_TAG, $tag, $this->helper->get_current_url(), 'SUBSCRIBE_CATEGORY');
+			$this->subscriptions->handle_subscriptions(
+				TITANIA_QUEUE_TAG,
+				$tag,
+				$this->helper->get_current_url(),
+				'SUBSCRIBE_CATEGORY'
+			);
 		}
 
 		\queue_overlord::display_queue($this->type->id, $tag);

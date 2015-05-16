@@ -54,6 +54,9 @@ class titania_revision extends titania_database_object
 	/** @var \phpbb\user */
 	protected $user;
 
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	public function __construct($contrib, $revision_id = false)
 	{
 		// Configure object properties
@@ -87,6 +90,7 @@ class titania_revision extends titania_database_object
 		$this->revision_id = $revision_id;
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->user = phpbb::$user;
+		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -284,7 +288,12 @@ class titania_revision extends titania_database_object
 					'NAME'		=> $this->contrib->contrib_name,
 					'U_VIEW'	=> $this->contrib->get_url(),
 				);
-				titania_subscriptions::send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
+				$this->subscriptions->send_notifications(
+					TITANIA_CONTRIB,
+					$this->contrib_id,
+					'subscribe_notify.txt',
+					$email_vars
+				);
 			}
 		}
 		else if (sizeof($this->phpbb_versions))

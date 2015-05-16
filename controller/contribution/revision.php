@@ -24,6 +24,11 @@ class revision extends base
 	/** @var \titania_attachment */
 	protected $attachment;
 
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
+	protected $attachment;
+
 	/** @var \phpbb\titania\entity\package */
 	protected $package;
 
@@ -35,6 +40,29 @@ class revision extends base
 
 	/** @var array */
 	protected $repackable_branches;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\access $access
+	 * @param \phpbb\titania\subscriptions $subscriptions
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\subscriptions $subscriptions)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
+
+		$this->subscriptions = $subscriptions;
+	}
 
 	/**
 	* Repack revision submission action.
@@ -199,7 +227,7 @@ class revision extends base
 						'U_VIEW'	=> $this->queue->get_url(),
 					);
 
-					\titania_subscriptions::send_notifications(
+					$this->subscriptions->send_notifications(
 						TITANIA_QUEUE,
 						$this->contrib->contrib_type,
 						'subscribe_notify_forum.txt',
@@ -281,7 +309,10 @@ class revision extends base
 				// Subscribe author to queue discussion topic
 				if ($this->request->variable('subscribe_author', false))
 				{
-					\titania_subscriptions::subscribe(TITANIA_TOPIC, $this->queue->queue_discussion_topic_id);
+					$this->subscriptions->subscribe(
+						TITANIA_TOPIC,
+						$this->queue->queue_discussion_topic_id
+					);
 				}
 			}
 			if ($this->attachment->attachment_id)
@@ -830,7 +861,10 @@ class revision extends base
 			if (!empty($this->queue->queue_discussion_topic_id))
 			{
 				// Is the author subscribed already?
-				return \titania_subscriptions::is_subscribed(TITANIA_TOPIC, $this->queue->queue_discussion_topic_id);
+				return $this->subscriptions->is_subscribed(
+					TITANIA_TOPIC,
+					$this->queue->queue_discussion_topic_id
+				);
 			}
 		}
 		return false;

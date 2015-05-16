@@ -13,6 +13,9 @@
 
 class titania_attention_post extends titania_attention
 {
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	/**
 	 * Post object for the source post.
 	 *
@@ -313,7 +316,13 @@ class titania_attention_post extends titania_attention
 			'CONTRIB_NAME'	=> $this->contrib->contrib_name,
 		));
 
-		titania_subscriptions::send_notifications($object_type, $object_id, $email_template, $message_vars, $this->post->post_user_id);
+		$this->subscriptions->send_notifications(
+			$object_type,
+			$object_id,
+			$email_template,
+			$message_vars,
+			$this->post->post_user_id
+		);
 	}
 
 	/**

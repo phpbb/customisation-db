@@ -76,6 +76,19 @@ services:
             - @user
             - @template
 
+    phpbb.titania.subscriptions:
+        class: phpbb\titania\subscriptions
+        arguments:
+            - @dbal.conn
+            - @config
+            - @request
+            - @template
+            - @user
+            - @path_helper
+            - %tables.users%
+            - %core.root_path%
+            - %core.php_ext%
+
 
     phpbb.titania.tags:
         class: phpbb\titania\tags

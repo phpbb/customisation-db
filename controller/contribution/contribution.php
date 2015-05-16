@@ -18,6 +18,9 @@ class contribution extends base
 	/** @var \phpbb\titania\tracking */
 	protected $tracking;
 
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	/**
 	 * Constructor
 	 *
@@ -33,12 +36,14 @@ class contribution extends base
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\tracking $tracking
+	 * @param \phpbb\titania\subscriptions $subscriptions
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
 
 		$this->tracking = $tracking;
+		$this->subscriptions = $subscriptions;
 	}
 
 	/**
@@ -123,7 +128,12 @@ class contribution extends base
 		$this->tracking->track(TITANIA_CONTRIB, $this->contrib->contrib_id);
 
 		// Subscriptions
-		\titania_subscriptions::handle_subscriptions(TITANIA_CONTRIB, $this->contrib->contrib_id, $this->contrib->get_url(), 'SUBSCRIBE_CONTRIB');
+		$this->subscriptions->handle_subscriptions(
+			TITANIA_CONTRIB,
+			$this->contrib->contrib_id,
+			$this->contrib->get_url(),
+			'SUBSCRIBE_CONTRIB'
+		);
 
 		// Canonical URL
 		$this->template->assign_var('U_CANONICAL', $this->contrib->get_url());

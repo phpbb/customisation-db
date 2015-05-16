@@ -473,7 +473,7 @@ class queue_overlord
 		));
 
 		// Subscriptions
-		titania_subscriptions::handle_subscriptions(
+		phpbb::$container->get('phpbb.titania.subscriptions')->handle_subscriptions(
 			TITANIA_TOPIC,
 			$topic->topic_id,
 			$controller_helper->get_current_url(),

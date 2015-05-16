@@ -121,6 +121,7 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.access
             - @phpbb.titania.tracking
+            - @phpbb.titania.subscriptions
 
     phpbb.titania.controller.contrib.support:
         class: phpbb\titania\controller\contribution\support
@@ -137,6 +138,7 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.access
             - @phpbb.titania.tracking
+            - @phpbb.titania.subscriptions
 
     phpbb.titania.controller.contrib.faq:
         class: phpbb\titania\controller\contribution\faq
@@ -183,6 +185,7 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.access
+            - @phpbb.titania.subscriptions
 
     phpbb.titania.controller.contrib.revision.edit:
         class: phpbb\titania\controller\contribution\revision_edit
@@ -264,6 +267,7 @@ services:
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.subscriptions
 
     phpbb.titania.controller.manage.categories:
         class: phpbb\titania\controller\manage\categories

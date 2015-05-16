@@ -37,6 +37,9 @@ class titania_attention extends titania_database_object
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	/** @var string */
 	protected $phpbb_root_path;
 
@@ -68,6 +71,7 @@ class titania_attention extends titania_database_object
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->path_helper = phpbb::$container->get('path_helper');
+		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
 		$this->phpbb_root_path = \phpbb::$root_path;
 		$this->php_ext = \phpbb::$php_ext;
 	}
@@ -95,7 +99,7 @@ class titania_attention extends titania_database_object
 				'NAME'		=> $this->attention_title,
 				'U_VIEW'	=> $this->path_helper->strip_url_params($u_view, 'sid'),
 			);
-			titania_subscriptions::send_notifications(
+			$this->subscriptions->send_notifications(
 				TITANIA_ATTENTION,
 				0,
 				'subscribe_notify.txt',
