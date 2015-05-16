@@ -60,6 +60,7 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.config
             - @phpbb.titania.cache
+            - @phpbb.titania.access
 
     phpbb.titania.controller.download:
         class: phpbb\titania\controller\download
@@ -70,6 +71,7 @@ services:
             - @request
             - @phpbb.titania.controller.helper
             - @phpbb.titania.config
+            - @phpbb.titania.access
             - %core.root_path%
             - %core.php_ext%
 
@@ -112,6 +114,7 @@ services:
             - @phpbb.titania.cache
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.access
 
     phpbb.titania.controller.contrib.support:
         class: phpbb\titania\controller\contribution\support
@@ -126,6 +129,7 @@ services:
             - @phpbb.titania.cache
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.access
 
     phpbb.titania.controller.contrib.faq:
         class: phpbb\titania\controller\contribution\faq
@@ -140,6 +144,7 @@ services:
             - @phpbb.titania.cache
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.access
 
     phpbb.titania.controller.contrib.manage:
         class: phpbb\titania\controller\contribution\manage
@@ -154,6 +159,7 @@ services:
             - @phpbb.titania.cache
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.access
 
     phpbb.titania.controller.contrib.revision:
         class: phpbb\titania\controller\contribution\revision
@@ -168,6 +174,7 @@ services:
             - @phpbb.titania.cache
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.access
 
     phpbb.titania.controller.contrib.revision.edit:
         class: phpbb\titania\controller\contribution\revision_edit
@@ -182,6 +189,7 @@ services:
             - @phpbb.titania.cache
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.access
 
     phpbb.titania.controller.manage:
         class: phpbb\titania\controller\manage\manage

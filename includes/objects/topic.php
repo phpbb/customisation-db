@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\access;
 use phpbb\titania\count;
 use phpbb\titania\url\url;
 
@@ -62,7 +63,7 @@ class titania_topic extends titania_database_object
 			'topic_id'						=> array('default' => 0),
 			'parent_id'						=> array('default' => 0), // contrib_id most of the time
 			'topic_type'					=> array('default' => 0), // Post Type, Main TITANIA_ constants
-			'topic_access'					=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
+			'topic_access'					=> array('default' => access::PUBLIC_LEVEL), // Access level, access class constants
 			'topic_category'				=> array('default' => 0), // Category for the topic. For the Tracker and stores the contrib_type for queue_discussion topics
 			'topic_url'						=> array('default' => ''), // URL for the topic (simple unbuilt URL)
 
@@ -329,8 +330,8 @@ class titania_topic extends titania_database_object
 		$this->topic_folder_img($folder_img, $folder_alt);
 
 		// To find out if we have any posts that need approval
-		$approved = count::from_db($this->topic_posts, count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
-		$total = count::from_db($this->topic_posts, count::get_flags(TITANIA_ACCESS_PUBLIC, false, true));
+		$approved = count::from_db($this->topic_posts, count::get_flags(access::PUBLIC_LEVEL, false, false));
+		$total = count::from_db($this->topic_posts, count::get_flags(access::PUBLIC_LEVEL, false, true));
 		$u_new_post = '';
 
 		if ($this->unread)
@@ -379,8 +380,8 @@ class titania_topic extends titania_database_object
 			),
 
 			'S_UNREAD_TOPIC'				=> ($this->unread) ? true : false,
-			'S_ACCESS_TEAMS'				=> ($this->topic_access == TITANIA_ACCESS_TEAMS) ? true : false,
-			'S_ACCESS_AUTHORS'				=> ($this->topic_access == TITANIA_ACCESS_AUTHORS) ? true : false,
+			'S_ACCESS_TEAMS'				=> ($this->topic_access == access::TEAM_LEVEL) ? true : false,
+			'S_ACCESS_AUTHORS'				=> ($this->topic_access == access::AUTHOR_LEVEL) ? true : false,
 
 			'FOLDER_STYLE'					=> $folder_img,
 			'FOLDER_IMG'					=> phpbb::$user->img($folder_img, $folder_alt),
@@ -521,7 +522,7 @@ class titania_topic extends titania_database_object
 
 			if (!$first_post_data)
 			{
-				$this->topic_access = TITANIA_ACCESS_TEAMS;
+				$this->topic_access = access::TEAM_LEVEL;
 				$this->topic_approved = 1;
 
 				return;
@@ -534,22 +535,22 @@ class titania_topic extends titania_database_object
 		// Adjust the topic access
 		if ($visible_posts && !in_array($this->topic_type, array(TITANIA_QUEUE_DISCUSSION, TITANIA_QUEUE)))
 		{
-			$this->topic_access = TITANIA_ACCESS_PUBLIC;
+			$this->topic_access = access::PUBLIC_LEVEL;
 
 			if (!$counts['public'])
 			{
-				$this->topic_access = TITANIA_ACCESS_AUTHORS;
+				$this->topic_access = access::AUTHOR_LEVEL;
 
 				if (!$counts['authors'])
 				{
-					$this->topic_access = TITANIA_ACCESS_TEAMS;
+					$this->topic_access = access::TEAM_LEVEL;
 				}
 			}
 		}
 		else
 		{
 			// If no posts are visible and first post is deleted, then only the teams have access.
-			$this->topic_access = (!$visible_posts && $first_post_data['post_deleted']) ? TITANIA_ACCESS_TEAMS : $this->topic_access;		
+			$this->topic_access = (!$visible_posts && $first_post_data['post_deleted']) ? access::TEAM_LEVEL : $this->topic_access;		
 		}
 	}
 

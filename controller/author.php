@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\titania\access;
+
 class author
 {
 	/** @var \phpbb\auth\auth */
@@ -42,6 +44,9 @@ class author
 	/** @var \phpbb\titania\cache\service */
 	protected $cache;
 
+	/** @var \phpbb\titania\access */
+	protected $access;
+
 	/** @var \titania_author */
 	protected $author;
 
@@ -49,19 +54,20 @@ class author
 	protected $is_owner;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\auth\auth $auth
-	* @param \phpbb\config\config $config
-	* @param \phpbb\template\template $template
-	* @param \phpbb\user $user
-	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\request\request_interface $request
-	* @param \phpbb\titania\config\config $ext_config
-	* @param \phpbb\titania\display $display
-	* @param \phpbb\titania\cache\service $cache
-	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache)
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param access $access
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -72,6 +78,7 @@ class author
 		$this->ext_config = $ext_config;
 		$this->display = $display;
 		$this->cache = $cache;
+		$this->access = $access;
 
 		// Add common lang
 		$this->user->add_lang_ext('phpbb/titania', 'authors');
@@ -96,9 +103,9 @@ class author
 		$this->is_owner = $this->user->data['user_id'] == $this->author->user_id;
 
 		// Check to see if the currently accessing user is the author
-		if (\titania::$access_level == TITANIA_ACCESS_PUBLIC && $this->is_owner)
+		if ($this->access->is_public() && $this->is_owner)
 		{
-			\titania::$access_level = TITANIA_ACCESS_AUTHORS;
+			$this->access->set_level(access::AUTHOR_LEVEL);
 		}
 	}
 

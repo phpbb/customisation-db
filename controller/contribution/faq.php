@@ -37,7 +37,7 @@ class faq extends base
 		$this->setup($contrib_type, $contrib);
 		$this->load_item($id);
 
-		if ($this->faq->faq_access < \titania::$access_level)
+		if ($this->faq->faq_access < $this->access->get_level())
 		{
 			return $this->helper->needs_auth();
 		}
@@ -68,8 +68,8 @@ class faq extends base
 			'FAQ_VIEWS'				=> $this->faq->faq_views,
 
 			'S_DETAILS'				=> true,
-			'S_ACCESS_TEAMS'		=> $this->faq->faq_access == TITANIA_ACCESS_TEAMS,
-			'S_ACCESS_AUTHORS'		=> $this->faq->faq_access == TITANIA_ACCESS_AUTHORS,
+			'S_ACCESS_TEAMS'		=> $this->access->is_team($this->faq->faq_access),
+			'S_ACCESS_AUTHORS'		=> $this->access->is_author($this->faq->faq_access),
 
 			'U_CANONICAL'			=> $this->faq->get_url(),
 			'U_EDIT_FAQ'			=> ($this->check_auth('edit')) ? $this->faq->get_url('edit') : false,
@@ -364,7 +364,7 @@ class faq extends base
 				TITANIA_CONTRIB_FAQ_TABLE => 'f',
 			),
 			'WHERE' => 'f.contrib_id = ' . (int) $this->contrib->contrib_id . '
-				AND f.faq_access >= ' . \titania::$access_level,
+				AND f.faq_access >= ' . $this->access->get_level(),
 			'ORDER_BY'	=> 'f.left_id ASC',
 		);
 
@@ -428,8 +428,8 @@ class faq extends base
 			'U_EDIT'						=> ($auth['edit']) ? $this->faq->get_url('edit') : false,
 			'U_DELETE'						=> ($auth['delete']) ? $this->faq->get_url('delete') : false,
 
-			'S_ACCESS_TEAMS'				=> $data['faq_access'] == TITANIA_ACCESS_TEAMS,
-			'S_ACCESS_AUTHORS'				=> $data['faq_access'] == TITANIA_ACCESS_AUTHORS,
+			'S_ACCESS_TEAMS'				=> $this->access->is_team($data['faq_access']),
+			'S_ACCESS_AUTHORS'				=> $this->access->is_author($data['faq_access']),
 		));
 	}
 

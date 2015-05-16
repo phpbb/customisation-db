@@ -35,9 +35,10 @@ class posts_overlord
 	 */
 	public static function sql_permissions($prefix = 'p.', $where = false)
 	{
+		$access = phpbb::$container->get('phpbb.titania.access');
 		$sql = ($where) ? ' WHERE' : ' AND';
 
-		$sql .= " ({$prefix}post_access >= " . titania::$access_level . " OR {$prefix}post_user_id = " . phpbb::$user->data['user_id'] . ')';
+		$sql .= " ({$prefix}post_access >= " . $access->get_level() . " OR {$prefix}post_user_id = " . phpbb::$user->data['user_id'] . ')';
 
 		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
 		{

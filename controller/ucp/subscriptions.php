@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\ucp;
 
+use phpbb\titania\access;
+
 class subscriptions
 {
 	/** @var \phpbb\db\driver\driver_inteface */
@@ -479,8 +481,8 @@ class subscriptions
 				'#'		=> 'p' . $topic->topic_last_post_id,
 			))),
 
-			'S_ACCESS_TEAMS'				=> $row['topic_access'] == TITANIA_ACCESS_TEAMS || $row['topic_type'] == TITANIA_QUEUE,
-			'S_ACCESS_AUTHORS'				=> $row['topic_access'] == TITANIA_ACCESS_AUTHORS,
+			'S_ACCESS_TEAMS'				=> $row['topic_access'] == access::TEAM_LEVEL || $row['topic_type'] == TITANIA_QUEUE,
+			'S_ACCESS_AUTHORS'				=> $row['topic_access'] == access::AUTHOR_LEVEL,
 			'S_TOPIC'						=> true,
 		);
 	}

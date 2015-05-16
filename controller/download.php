@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\titania\access;
+
 class download
 {
 	/** @var \phpbb\db\driver\driver_interface */
@@ -30,14 +32,14 @@ class download
 	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
+	/** @var \phpbb\titania\access */
+	protected $access;
+
 	/** @var string */
 	protected $phpbb_root_path;
 
 	/** @var string */
 	protected $php_ext;
-
-	/** @var int */
-	protected $access_level;
 
 	/** @var array */
 	protected $file;
@@ -56,13 +58,14 @@ class download
 	* @param \phpbb\db\driver\driver_interface $db
 	* @param \phpbb\auth\auth $auth
 	* @param \phpbb\user $user
-	* @param \phpbb\request\request_interface
+	* @param \phpbb\request\request_interface $request
 	* @param \phpbb\titania\controller\helper $helper
 	* @param \phpbb\titania\config\config $ext_config
+	* @param \phpbb\titania\access $access
 	* @param string $phpbb_root_path
 	* @param string $php_ext
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\user $user, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\user $user, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, access $access, $phpbb_root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->auth = $auth;
@@ -70,9 +73,9 @@ class download
 		$this->request = $request;
 		$this->helper = $helper;
 		$this->ext_config = $ext_config;
+		$this->access = $access;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-		$this->access_level = \titania::$access_level;
 
 		$this->user->add_lang('viewtopic');
 		require($this->phpbb_root_path . 'includes/functions_download.' . $this->php_ext);
@@ -242,11 +245,11 @@ class download
 			{
 				$status = self::FORBIDDEN;
 			}
-			else if ($this->file['attachment_access'] < $this->access_level && $this->file['attachment_access'] == TITANIA_ACCESS_TEAMS)
+			else if ($this->file['attachment_access'] < $this->access->get_level() && $this->access->is_team($this->file['attachment_access']))
 			{
 				$status = self::FORBIDDEN;
 			}
-			else if ($this->file['attachment_access'] < $this->access_level && $this->file['attachment_access'] == TITANIA_ACCESS_AUTHORS)
+			else if ($this->file['attachment_access'] < $this->access->get_level() && $this->access->is_author($this->file['attachment_access']))
 			{
 				$status = $this->check_author_level_access();
 			}
@@ -321,7 +324,7 @@ class download
 		// Set access Level
 		if ($is_author)
 		{
-			$this->access_level = TITANIA_ACCESS_AUTHORS;
+			$this->access->set_level(access::AUTHOR_LEVEL);
 		}
 
 		return self::OK;
@@ -370,7 +373,7 @@ class download
 			if ($contrib['contrib_user_id'] == $this->user->data['user_id'])
 			{
 				// Main author
-				$this->access_level = TITANIA_ACCESS_AUTHORS;
+				$this->access->set_level(access::AUTHOR_LEVEL);
 			}
 			else
 			{
@@ -384,14 +387,14 @@ class download
 
 				if ($this->db->sql_fetchrow($result))
 				{
-					$this->access_level = TITANIA_ACCESS_AUTHORS;
+					$this->access->set_level(access::AUTHOR_LEVEL);
 				}
 				$this->db->sql_freeresult($result);
 			}
 		}
 
 		// Still not authorised?
-		return ($this->file['attachment_access'] < $this->access_level) ? self::FORBIDDEN : self::OK;
+		return ($this->file['attachment_access'] < $this->access->get_level()) ? self::FORBIDDEN : self::OK;
 	}
 
 	/**

@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\access;
+
 /**
 * Class to abstract titania queue
 * @package Titania
@@ -146,7 +148,7 @@ class titania_queue extends titania_message_object
 
 			// Create the topic
 			$post = new titania_post(TITANIA_QUEUE);
-			$post->post_access = TITANIA_ACCESS_TEAMS;
+			$post->post_access = access::TEAM_LEVEL;
 			$post->topic->parent_id = $this->queue_id;
 			$post->topic->topic_category = $contrib_type;
 			$post->topic->topic_url = serialize(array('id' => $this->queue_id));
@@ -243,7 +245,7 @@ class titania_queue extends titania_message_object
 
 		if ($teams_only)
 		{
-			$post->post_access = TITANIA_ACCESS_TEAMS;
+			$post->post_access = access::TEAM_LEVEL;
 		}
 
 		$post->parent_contrib_type = $this->queue_type;
@@ -276,7 +278,7 @@ class titania_queue extends titania_message_object
 
 		if ($teams_only)
 		{
-			$post->post_access = TITANIA_ACCESS_TEAMS;
+			$post->post_access = access::TEAM_LEVEL;
 		}
 
 		$post->parent_contrib_type = $this->queue_type;
@@ -654,7 +656,7 @@ class titania_queue extends titania_message_object
 			'topic_sticky'		=> true,
 		));
 		$post->__set_array(array(
-			'post_access'		=> TITANIA_ACCESS_AUTHORS,
+			'post_access'		=> access::AUTHOR_LEVEL,
 			'post_subject'		=> sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_TITLE'], $contrib->contrib_name),
 			'post_text'			=> phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_MESSAGE'],
 		));

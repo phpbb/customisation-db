@@ -13,6 +13,7 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use phpbb\titania\access;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use phpbb\exception\http_exception;
@@ -254,7 +255,7 @@ class manage extends base
 				$move_attach = ($action == 'attach_up') ? 'up' : 'down';
 				$original_order = $this->screenshot->generate_order();
 				$this->screenshot->generate_order(false, $attach_id, $move_attach);
-				$this->screenshot->submit(TITANIA_ACCESS_PUBLIC, $original_order);
+				$this->screenshot->submit(access::PUBLIC_LEVEL, $original_order);
 			}
 		}
 	}
@@ -453,7 +454,7 @@ class manage extends base
 		$this->screenshot->generate_order(array_flip($new_order));
 
 		// Submit screenshots
-		$this->screenshot->submit(TITANIA_ACCESS_PUBLIC, $original_order);
+		$this->screenshot->submit(access::PUBLIC_LEVEL, $original_order);
 	}
 
 	/**

@@ -188,7 +188,7 @@ class support extends base
 	*/
 	protected function check_auth($topic = false)
 	{
-		if (!$this->ext_config->support_in_titania && \titania::$access_level == TITANIA_ACCESS_PUBLIC)
+		if (!$this->ext_config->support_in_titania && $this->access->is_public())
 		{
 			return false;
 		}
@@ -197,7 +197,7 @@ class support extends base
 		{
 			$can_view_queue_discussion = $this->is_author || $this->contrib->type->acl_get('queue_discussion');
 
-			if ($this->topic->topic_access < \titania::$access_level ||
+			if ($this->topic->topic_access < $this->access->get_level() ||
 				($this->topic->topic_type == TITANIA_QUEUE_DISCUSSION && !$can_view_queue_discussion))
 			{
 				return false;

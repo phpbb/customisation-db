@@ -16,6 +16,7 @@ namespace phpbb\titania\controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use phpbb\request\request_interface;
+use phpbb\titania\access;
 use phpbb\titania\contribution\style\colorizeit_helper;
 
 class colorizeit
@@ -184,7 +185,7 @@ class colorizeit
 	{
 		return $this->attachment->object_type == TITANIA_CONTRIB &&
 			!$this->attachment->is_orphan &&
-			$this->attachment->attachment_access == TITANIA_ACCESS_PUBLIC;
+			$this->attachment->attachment_access == access::PUBLIC_LEVEL;
 	}
 
 	/**
