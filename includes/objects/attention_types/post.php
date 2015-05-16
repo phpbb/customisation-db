@@ -266,7 +266,7 @@ class titania_attention_post extends titania_attention
 		{
 			$u_view = $this->post->topic->get_url(false, array('view' => 'unread', '#' => 'unread'));
 			$message_vars = array(
-				'U_VIEW' => $this->path_helper->strip_url_params($u_view),
+				'U_VIEW' => $this->path_helper->strip_url_params($u_view, 'sid'),
 			);
 			$object_type = array(TITANIA_TOPIC, TITANIA_SUPPORT);
 			$object_id = array($this->post->topic_id, $this->post->topic->parent_id);
