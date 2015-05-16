@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\url\url;
+
 /**
 * Class to abstract titania topic
 * @package Titania
@@ -103,7 +105,7 @@ class titania_topic extends titania_database_object
 	{
 		// @todo search indexer on posts (reindex all in case the topic_access level has changed))
 
-		$this->topic_subject_clean = titania_url::url_slug($this->topic_subject);
+		$this->topic_subject_clean = url::generate_slug($this->topic_subject);
 
 		parent::submit();
 

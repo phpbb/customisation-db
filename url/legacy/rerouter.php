@@ -17,6 +17,9 @@ use phpbb\titania\url\url;
 
 class rerouter
 {
+	protected $separator = '-';
+	protected $separator_replacement = '%96';
+
 	/**
 	* Get data for new URL from old one.
 	*
@@ -51,7 +54,7 @@ class rerouter
 
 		$base = '';
 		$params = array();
-		\titania_url::split_base_params($base, $params, $url);
+		$this->split_base_params($base, $params, $url);
 
 		$base = trim($base, '/');
 		$this->base_parts = explode('/', $base);
@@ -395,5 +398,80 @@ class rerouter
 	{
 		$this->url->set_route('support')
 			->set_param('type', $this->base_parts[1]);
+	}
+
+	/**
+	 * Unbuild a url (used from the indexer)
+	 *
+	 * @param string $base The base (send $url param here and we'll just update it properly)
+	 * @param string $params The params
+	 * @param string|bool $url The url to unbuild from storage (can send it through $base optionally and leave as false)
+	 */
+	public function split_base_params(&$base, &$params, $url = false)
+	{
+		$base = ($url !== false) ? $url : $base;
+		$params = array();
+
+		if (substr($base, -1) != '/')
+		{
+			$params = substr($base, (strrpos($base, '/') + 1));
+			$base = substr($base, 0, (strrpos($base, '/') + 1));
+			$params = $this->split_params($params);
+		}
+	}
+
+	/**
+	 * Split up the parameters (from a string to an array, used for the search page from the indexer)
+	 *
+	 * @param string $params
+	 */
+	public function split_params($params)
+	{
+		$new_params = array();
+
+		if (strpos($params, '#') !== false)
+		{
+			$new_params['#'] = substr($params, (strpos($params, '#') + 1));
+			$params = substr($params, 0, strpos($params, '#'));
+		}
+
+		foreach (explode($this->separator, $params) as $section)
+		{
+			// Overwrite the sid_ with the ?sid= so we can use the current session.
+			if ((strlen($section) == 37) && (strpos($section, '?sid=') === 0))
+			{
+				$section = 'sid_' . substr($section, 5);
+			}
+
+			$parts = explode('_', $section, 2);
+			if (sizeof($parts) == 2)
+			{
+				if (strpos(urldecode($parts[0]), '[]'))
+				{
+					$parts[0] = str_replace('[]', '', urldecode($parts[0]));
+
+					if (!isset($new_params[$parts[0]]))
+					{
+						$new_params[$parts[0]] = array();
+					}
+
+					$new_params[$parts[0]][] = urldecode(str_replace(
+						$this->separator_replacement,
+						$this->separator,
+						$parts[1]
+					));
+				}
+				else
+				{
+					$new_params[$parts[0]] = $parts[1];
+				}
+			}
+			else if (sizeof($parts) == 1)
+			{
+				$new_params[] = $parts[0];
+			}
+		}
+
+		return $new_params;
 	}
 }

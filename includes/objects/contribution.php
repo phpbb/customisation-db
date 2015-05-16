@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\url\url;
+
 /**
  * Class to abstract contributions.
  * @package Titania
@@ -1259,7 +1261,7 @@ class titania_contribution extends titania_message_object
 	public function change_permalink($new_permalink)
 	{
 		$old_permalink = $this->contrib_name_clean;
-		$new_permalink = titania_url::url_slug($new_permalink);
+		$new_permalink = url::generate_slug($new_permalink);
 
 		if ($this->validate_permalink($new_permalink, $old_permalink))
 		{
@@ -1514,7 +1516,7 @@ class titania_contribution extends titania_message_object
 	*/
 	public function generate_permalink()
 	{
-		$clean_name = titania_url::url_slug($this->contrib_name);
+		$clean_name = url::generate_slug($this->contrib_name);
 		$append = '';
 		$i = 2;
 		while ($this->permalink_exists($clean_name . $append))
@@ -1535,9 +1537,9 @@ class titania_contribution extends titania_message_object
 	 */
 	public function validate_permalink($permalink, $old_permalink)
 	{
-		if (titania_url::url_slug($permalink) !== $permalink)
+		if (url::generate_slug($permalink) !== $permalink)
 		{
-			return phpbb::$user->lang('INVALID_PERMALINK', titania_url::url_slug($permalink));
+			return phpbb::$user->lang('INVALID_PERMALINK', url::generate_slug($permalink));
 		}
 		else if ($permalink == '' || $permalink !== $old_permalink && $this->permalink_exists($permalink))
 		{

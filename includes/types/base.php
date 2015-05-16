@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\url\url;
+
 class titania_types
 {	
 	/**
@@ -317,7 +319,7 @@ class titania_type_base
 	public function fix_package_name($contrib, $revision, $revision_attachment, $root_dir = null)
 	{
 		$new_real_filename =
-			titania_url::url_slug($contrib->contrib_name_clean) .
+			url::generate_slug($contrib->contrib_name_clean) .
 			'_' .
 			preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version))
 		;
