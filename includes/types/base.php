@@ -45,7 +45,7 @@ class titania_types
 
 				$class_name = 'titania_type_' . substr($fname, 0, strpos($fname, '.' . $php_ext));
 
-				titania::add_lang('types/' . substr($fname, 0, strpos($fname, '.' . $php_ext)));
+				phpbb::$user->add_lang_ext('phpbb/titania', 'types/' . substr($fname, 0, strpos($fname, '.' . $php_ext)));
 
 				$class = new $class_name;
 				self::$types[$class->id] = $class;

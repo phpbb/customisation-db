@@ -51,6 +51,9 @@ class titania_revision extends titania_database_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var \phpbb\user */
+	protected $user;
+
 	public function __construct($contrib, $revision_id = false)
 	{
 		// Configure object properties
@@ -83,6 +86,7 @@ class titania_revision extends titania_database_object
 
 		$this->revision_id = $revision_id;
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->user = phpbb::$user;
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -471,7 +475,7 @@ class titania_revision extends titania_database_object
 			throw new exception('Submit the revision before repacking');
 		}
 
-		titania::add_lang('manage');
+		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
 		// Get the old and new queue objects
 		$queue = $this->get_queue();

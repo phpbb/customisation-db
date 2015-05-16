@@ -178,7 +178,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	titania::_include('functions_posting', 'phpbb_posting');
 
 	// Need some stuff
-	titania::add_lang('contributions');
+	phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 	$contrib = new titania_contribution;
 	$contrib->load((int) $queue_object->contrib_id);
 	$revision = $queue_object->get_revision();

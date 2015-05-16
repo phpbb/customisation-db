@@ -112,8 +112,8 @@ class contribs_overlord
 	 */
 	public static function display_contribs($mode, $id, $sort = false, $blockname = 'contribs')
 	{
-		titania::add_lang('contributions');
 		titania::_include('functions_display', 'titania_topic_folder_img');
+		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
 		// Setup the sort tool if not sent, then request
 		if ($sort === false)

@@ -110,7 +110,7 @@ class titania
 		phpbb::$db->sql_freeresult($result);
 
 		// Add common titania language file
-		self::add_lang('common');
+		phpbb::$user->add_lang_ext('phpbb/titania', 'common');
 
 		// Load the contrib types
 		self::_include('types/base');
@@ -158,18 +158,6 @@ class titania
 		}
 
 		// No error if file cant be found!
-	}
-
-	/**
-	 * Add a Titania language file
-	 *
-	 * @param mixed $lang_set
-	 * @param bool $use_db
-	 * @param bool $use_help
-	 */
-	public static function add_lang($lang_set, $use_db = false, $use_help = false)
-	{
-		phpbb::$user->add_lang_ext('phpbb/titania', $lang_set, $use_db, $use_help);
 	}
 
 	/**

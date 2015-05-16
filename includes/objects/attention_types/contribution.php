@@ -13,12 +13,23 @@
 
 class titania_attention_contribution extends titania_attention
 {
+	/** @var \phpbb\user */
+	protected $user;
+
 	/**
 	 * Contrib object for the source contrib.
 	 *
 	 * @var object
 	 */
 	public $contrib;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		$this->user = \phpbb::$user;
+	}
 
 	/**
 	* {@inheritDoc}
@@ -52,7 +63,7 @@ class titania_attention_contribution extends titania_attention
 
 	public function get_lang_string($label)
 	{
-		titania::add_lang('contributions');
+		$this->user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$labels = array(
 			'object'	=> 'CONTRIBUTION',

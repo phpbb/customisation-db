@@ -227,7 +227,7 @@ class queue_overlord
 	*/
 	public static function display_queue_item($queue_id)
 	{
-		titania::add_lang('contributions');
+		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$path_helper = phpbb::$container->get('path_helper');
 
