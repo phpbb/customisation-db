@@ -28,6 +28,7 @@ services:
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.queue.stats
 
     phpbb.titania.controller.support:
         class: phpbb\titania\controller\support
