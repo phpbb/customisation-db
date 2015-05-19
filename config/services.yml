@@ -11,6 +11,13 @@ services:
             - @user
             - @phpbb.titania.config
 
+    phpbb.titania.bbcode.demo:
+        class: phpbb\titania\contribution\bbcode\demo\demo
+        arguments:
+            - @phpbb.titania.cache
+            - %core.root_path%
+            - %core.php_ext%
+
     phpbb.titania.config:
         class: phpbb\titania\config\config
         arguments:

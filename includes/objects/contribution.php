@@ -631,9 +631,12 @@ class titania_contribution extends titania_message_object
 
 				if ($download['revision_status'] == TITANIA_REVISION_APPROVED && !empty($demo_output))
 				{
-					titania::_include('tools/bbcode_demo', false, 'titania_bbcode_demo');
 
-					$demo = new titania_bbcode_demo($this->contrib_id, $download['revision_bbc_bbcode_usage'], $download['revision_bbc_html_replace']);
+					$demo = $this->type->get_demo()->configure(
+						$this->contrib_id,
+						$download['revision_bbc_bbcode_usage'],
+						$download['revision_bbc_html_replace']
+					);
 					$demo_output = $demo->get_demo($demo_output);
 					unset($demo);
 					$demo_rendered = true;

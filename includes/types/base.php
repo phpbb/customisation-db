@@ -430,4 +430,14 @@ class titania_type_base
 		}
 		return ($name_only) ? $names : $allowed_branches;
 	}
+
+	/**
+	 * Get instance of type demo class.
+	 *
+	 * @return mixed
+	 */
+	public function get_demo()
+	{
+		return null;
+	}
 }
