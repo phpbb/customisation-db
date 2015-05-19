@@ -172,7 +172,10 @@ class contribution extends base
 
 		$this->display->assign_global_vars();
 		$this->generate_breadcrumbs();
-		$demo = new \titania_styles_demo($branch, $this->contrib->contrib_id);
+		$demo = $this->contrib->type->get_demo()->configure(
+			$branch,
+			$this->contrib->contrib_id
+		);
 		$demo->load_styles();
 		$demo->assign_details();
 

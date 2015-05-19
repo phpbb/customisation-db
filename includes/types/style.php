@@ -222,4 +222,12 @@ class titania_type_style extends titania_type_base
 			'S_STYLE_DEMO_INSTALL_CHECKED'	=> phpbb::$request->variable('style_demo_install', false),
 		));
 	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function get_demo()
+	{
+		return phpbb::$container->get('phpbb.titania.style.demo');
+	}
 }
