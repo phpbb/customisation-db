@@ -135,7 +135,7 @@ class manage_plugin
 		$tools_loaded[$tool_name] = new $tool_name();
 
 		// Add the language file
-		titania::add_lang('manage_tools/' . $tool_name);
+		phpbb::$user->add_lang_ext('phpbb/titania', 'manage_tools/' . $tool_name);
 
 		// Return
 		return ($return) ? $tools_loaded[$tool_name] : true;
