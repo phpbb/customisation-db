@@ -25,6 +25,12 @@ services:
             - %phpbb.titania.root_path%
             - %core.php_ext%
 
+    phpbb.titania.contribution.prevalidator_helper:
+        class: phpbb\titania\contribution\prevalidator_helper
+        arguments:
+            - @user
+            - %phpbb.titania.root_path%
+
     phpbb.titania.controller.helper:
         class: phpbb\titania\controller\helper
         arguments:
@@ -57,6 +63,9 @@ services:
              - @phpbb.titania.controller.helper
              - @path_helper
 
+    phpbb.titania.extension.prevalidator:
+        class: phpbb\titania\contribution\extension\prevalidator
+
     phpbb.titania.listener:
         class: phpbb\titania\event\main_listener
         arguments:
@@ -67,6 +76,17 @@ services:
             - %core.php_ext%
         tags:
             - { name: event.listener }
+
+    phpbb.titania.mod.prevalidator:
+        class: phpbb\titania\contribution\mod\prevalidator
+        arguments:
+             - @phpbb.titania.config
+             - @user
+             - @template
+             - @phpbb.titania.contribution.prevalidator_helper
+             - %core.root_path%
+             - %phpbb.titania.root_path%
+             - %core.php_ext%
 
     phpbb.titania.queue.stats:
         class: phpbb\titania\queue\stats
@@ -120,3 +140,9 @@ services:
              - @user
              - @request
              - @config
+
+    phpbb.titania.translation.prevalidator:
+         class: phpbb\titania\contribution\translation\prevalidator
+         arguments:
+             - @user
+             - @phpbb.titania.contribution.prevalidator_helper

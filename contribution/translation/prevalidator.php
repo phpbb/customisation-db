@@ -1,24 +1,30 @@
 <?php
 /**
-*
-* This file is part of the phpBB Customisation Database package.
-*
-* @copyright (c) phpBB Limited <https://www.phpbb.com>
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-* For full copyright and license information, please see
-* the docs/CREDITS.txt file.
-*
-*/
+ *
+ * This file is part of the phpBB Customisation Database package.
+ *
+ * @copyright (c) phpBB Limited <https://www.phpbb.com>
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ * For full copyright and license information, please see
+ * the docs/CREDITS.txt file.
+ *
+ */
+
+namespace phpbb\titania\contribution\translation;
 
 /**
- * Description of translation_validation
+ * Translation prevalidator
  *
  * @author Vojtěch Vondra
- * @package Titania
  */
-class translation_validation extends titania_contrib_tools
+class prevalidator
 {
+	/** @var \phpbb\user */
+	protected $user;
+
+	/** @var \phpbb\titania\contribution\prevalidator_helper */
+	protected $helper;
 
 	const NOT_REQUIRED = 0;
 	const REQUIRED = 1;
@@ -26,20 +32,48 @@ class translation_validation extends titania_contrib_tools
 	const REQUIRED_DEFAULT = 3;
 
 	/**
-	* Array of files to ignore in language pack
-	*
-	* @var array
-	*/
-	protected $ignore_files = array('language/en/AUTHORS', 'language/en/README', 'language/en/LICENSE', 'language/en/CHANGELOG', 'language/en/VERSION');
+	 * Array of files to ignore in language pack
+	 *
+	 * @var array
+	 */
+	protected $ignore_files = array(
+		'language/en/AUTHORS',
+		'language/en/README',
+		'language/en/LICENSE',
+		'language/en/CHANGELOG',
+		'language/en/VERSION',
+	);
 
 	/**
-	* Checks the file for the array contents
-	* Make sure it has all the keys present in the newest version
-	*
-	* @param \phpbb\titania\entity\package $package
-	* @param string $reference_filepath The path to the files against I want to validate the uploaded package
-	* @return array Returns an array of error messages encountered
-	*/
+	 * Constructor
+	 *
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\contribution\prevalidator_helper $helper
+	 */
+	public function __construct(\phpbb\user $user, \phpbb\titania\contribution\prevalidator_helper $helper)
+	{
+		$this->user = $user;
+		$this->helper = $helper;
+	}
+
+	/**
+	 * Get helper.
+	 *
+	 * @return \phpbb\titania\contribution\prevalidator_helper
+	 */
+	public function get_helper()
+	{
+		return $this->helper;
+	}
+
+	/**
+	 * Checks the file for the array contents
+	 * Make sure it has all the keys present in the newest version
+	 *
+	 * @param \phpbb\titania\entity\package $package
+	 * @param string $reference_filepath The path to the files against I want to validate the uploaded package
+	 * @return array Returns an array of error messages encountered
+	 */
 	public function check_package($package, $reference_filepath)
 	{
 		$package->ensure_extracted();
@@ -72,13 +106,13 @@ class translation_validation extends titania_contrib_tools
 
 					// This goes directly to the root of the uploaded language pack, like /upload_path/language/cs/
 					$uploaded_lang_root = $uploaded_files_prefix . '/language/' . $iso_code . '/';
-				
+
 					// Just perform a basic check if the common file is there
 					if (!is_file($uploaded_lang_root . 'common.php'))
 					{
-						return array(phpbb::$user->lang('NO_TRANSLATION'));
+						return array($this->user->lang('NO_TRANSLATION'));
 					}
-		
+
 					// Loop through the reference files
 					foreach ($reference_files as $dir => $files)
 					{
@@ -90,18 +124,18 @@ class translation_validation extends titania_contrib_tools
 							{
 								$exists = true;
 								$uploaded_file_path = str_replace('/en/', '/' . $iso_code . '/', $uploaded_files_prefix . '/' . $dir . $file);
-							
-								$ext = strtolower(substr($file, -3)); 
+
+								$ext = strtolower(substr($file, -3));
 								// Require php and txt files
 								if ($ext == 'php' || $ext == 'txt')
 								{
 									if (!is_file($uploaded_file_path))
 									{
-										$error[] = sprintf(phpbb::$user->lang('MISSING_FILE'), str_replace('/en/', '/' . $iso_code . '/', $dir. $file)); // report a missing file
+										$error[] = $this->user->lang('MISSING_FILE', str_replace('/en/', '/' . $iso_code . '/', $dir. $file)); // report a missing file
 										$exists = false;
 									}
 								}
-							
+
 								// If the file is a php file and actually exists, no point in checking keys in a nonexistent one
 								if ($ext == 'php' && $exists)
 								{
@@ -114,27 +148,27 @@ class translation_validation extends titania_contrib_tools
 							}
 						}
 					}
-				
+
 					if (sizeof($missing_keys))
 					{
 						foreach ($missing_keys as $file => $keys)
 						{
 							if (sizeof($keys))
 							{
-								$error[] = sprintf(phpbb::$user->lang['MISSING_KEYS'], $file, implode('<br />', $keys));
+								$error[] = $this->user->lang('MISSING_KEYS', $file, implode('<br />', $keys));
 							}
 						}
 					}
-				break;
-			
+					break;
+
 				case 'prosilver':
 				case 'subsilver2':
 					// just let them go through atm...
-				break;
+					break;
 			}
-		
+
 		}
-		
+
 		// We are going to check if all files included in the language pack are allowed
 		// Before we need some stuff
 		// We construct a list of all reference files with complete structure
@@ -165,7 +199,7 @@ class translation_validation extends titania_contrib_tools
 				$dir_prefix = explode($types['subsilver2'] ,$dir);
 			}
 			$dir_clean = str_replace('/'.$iso_code.'/', '/en/', str_replace($dir_prefix[0], '', $dir));
-			
+
 			foreach ($files as $file)
 			{
 				$list_uploaded_files[] = $dir_clean . $file;
@@ -176,7 +210,7 @@ class translation_validation extends titania_contrib_tools
 		{
 			if (!in_array($file, $list_reference_files) && !in_array($file, $this->ignore_files))
 			{
-				$error[] = sprintf(phpbb::$user->lang['WRONG_FILE'], str_replace('/en/', '/'.$iso_code.'/', $file)); // report a wrong file
+				$error[] = $this->user->lang('WRONG_FILE', str_replace('/en/', '/'.$iso_code.'/', $file)); // report a wrong file
 			}
 		}
 
@@ -186,22 +220,22 @@ class translation_validation extends titania_contrib_tools
 		}
 		return $error;
 	}
-	
+
 	/**
-	* Compares two phpBB 3.0.x language files and computes the missing keys in the uploaded file
-	* Does not include the uploaded file for security and uses string check on the file contents
-	*
-	* @param string $uploaded_file
-	* @param string $reference_file
-	* @return array returns an array with the missing keys
-	*/
+	 * Compares two phpBB 3.0.x language files and computes the missing keys in the uploaded file
+	 * Does not include the uploaded file for security and uses string check on the file contents
+	 *
+	 * @param string $uploaded_file
+	 * @param string $reference_file
+	 * @return array returns an array with the missing keys
+	 */
 	private function check_missing_keys($reference_file, $uploaded_file)
 	{
 		// Check original file by including the language entries...
 		$lang = $missing_keys = array();
-		
+
 		$contents = file_get_contents($uploaded_file);
-		
+
 		include($reference_file);
 		//$lang_keys = $this->multiarray_keys($lang);
 
@@ -210,7 +244,7 @@ class translation_validation extends titania_contrib_tools
 		$file_data = explode("\n", $file_data);
 
 		$file_data = str_replace("\n", '', implode("\n", $file_data));
-			
+
 		// Now we have all array keys... let us have a look within $contents if all keys are there...
 		// This can take a bit because we check every key... luckily with strpos...
 		foreach (array_keys($lang) as $current_key)
@@ -225,7 +259,7 @@ class translation_validation extends titania_contrib_tools
 				$missing_keys[] = $current_key;
 			}
 		}
-		
+
 		return $missing_keys;
 	}
 
@@ -234,29 +268,29 @@ class translation_validation extends titania_contrib_tools
 		$res = fopen($license_file, 'w');
 		fwrite($res, file_get_contents($reference_path . '/docs/COPYING'));
 		fclose($res);
- 	}
- 	
- 	private function add_htm_files($lang_root_path, $reference_path)
- 	{
- 		$htm_files = array('', 'acp/', 'mods/');
- 		
- 		if (!is_dir($lang_root_path . 'mods'))
- 		{
- 			mkdir($lang_root_path . 'mods');
- 			phpbb_chmod($lang_root_path . 'mods', CHMOD_READ | CHMOD_WRITE);
- 		}
- 		
- 		foreach ($htm_files as $htm_file)
- 		{
- 			$res = fopen($lang_root_path . $htm_file . 'index.htm', 'w');
- 			fwrite($res, file_get_contents($reference_path . '/language/en/index.htm'));
- 			fclose($res);
- 		}
- 	}
+	}
+
+	private function add_htm_files($lang_root_path, $reference_path)
+	{
+		$htm_files = array('', 'acp/', 'mods/');
+
+		if (!is_dir($lang_root_path . 'mods'))
+		{
+			mkdir($lang_root_path . 'mods');
+			phpbb_chmod($lang_root_path . 'mods', CHMOD_READ | CHMOD_WRITE);
+		}
+
+		foreach ($htm_files as $htm_file)
+		{
+			$res = fopen($lang_root_path . $htm_file . 'index.htm', 'w');
+			fwrite($res, file_get_contents($reference_path . '/language/en/index.htm'));
+			fclose($res);
+		}
+	}
 
 	/**
 	 * Basically flattens the files from all subdirectories of $root_dir into an array
-	 * 
+	 *
 	 * @param string $root_dir
 	 * @param string $dir DO NOT USE, recursive!
 	 * @return array
@@ -293,7 +327,7 @@ class translation_validation extends titania_contrib_tools
 
 	/**
 	 * array_keys for a multidimensional array
-	 * 
+	 *
 	 * @param array $array
 	 * @return array
 	 */

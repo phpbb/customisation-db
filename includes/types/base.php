@@ -440,4 +440,14 @@ class titania_type_base
 	{
 		return null;
 	}
+
+	/**
+	 * Get instance of type prevalidator class.
+	 *
+	 * @return mixed
+	 */
+	public function get_prevalidator()
+	{
+		return null;
+	}
 }

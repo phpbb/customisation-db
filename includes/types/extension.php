@@ -121,30 +121,22 @@ class titania_type_extension extends titania_type_base
 				'error'	=> array(phpbb::$user->lang($e->getMessage())),
 			);
 		}
-		$contrib_tools = new \titania_contrib_tools;
-		$results = $contrib_tools->epv($package->get_temp_path());
+		$prevalidator = $this->get_prevalidator();
+		$results = $prevalidator->run_epv($package->get_temp_path());
 
-		if (!empty($contrib_tools->error))
-		{
-			return array(
-				'notice'	=> implode('<br />', $contrib_tools->error),
-			);
-		}
-		else
-		{
-			$uid = $bitfield = $flags = false;
-			generate_text_for_storage($results, $uid, $bitfield, $flags, true, true, true);
+		$uid = $bitfield = $flags = false;
+		generate_text_for_storage($results, $uid, $bitfield, $flags, true, true, true);
 
-			// Add the prevalidator results to the queue
-			$queue = $revision->get_queue();
-			$queue->mpv_results = $results;
-			$queue->mpv_results_bitfield = $bitfield;
-			$queue->mpv_results_uid = $uid;
-			$queue->submit();
+		// Add the prevalidator results to the queue
+		$queue = $revision->get_queue();
+		$queue->mpv_results = $results;
+		$queue->mpv_results_bitfield = $bitfield;
+		$queue->mpv_results_uid = $uid;
+		$queue->submit();
 
-			$results = generate_text_for_display($results, $uid, $bitfield, $flags);
-			phpbb::$template->assign_var('PV_RESULTS', $results);
-		}
+		$results = generate_text_for_display($results, $uid, $bitfield, $flags);
+		phpbb::$template->assign_var('PV_RESULTS', $results);
+
 		return array();
 	}
 
@@ -238,5 +230,13 @@ class titania_type_extension extends titania_type_base
 			);
 		}
 		return $data;
+	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function get_prevalidator()
+	{
+		return phpbb::$container->get('phpbb.titania.extension.prevalidator');
 	}
 }

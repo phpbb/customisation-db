@@ -132,13 +132,13 @@ class titania_type_mod extends titania_type_base
 	public function mpv_test(&$contrib, &$revision, &$revision_attachment, $download_package, $package)
 	{
 		// Run MPV
-		$contrib_tools = new \titania_contrib_tools;
-		$mpv_results = $contrib_tools->mpv($download_package);
+		$prevalidator = $this->get_prevalidator();
+		$mpv_results = $prevalidator->run_mpv($download_package);
 
 		if ($mpv_results === false)
 		{
 			return array(
-				'notice'	=> $contrib_tools->error,
+				'notice'	=> $prevalidator->get_errors(),
 			);
 		}
 		else
@@ -156,14 +156,14 @@ class titania_type_mod extends titania_type_base
 			$mpv_results = generate_text_for_display($mpv_results, $uid, $bitfield, $flags);
 			phpbb::$template->assign_var('PV_RESULTS', $mpv_results);
 
-			phpbb::$template->assign_var('S_AUTOMOD_TEST', titania_types::$types[$contrib->contrib_type]->automod_test);
+			phpbb::$template->assign_var('S_AUTOMOD_TEST', $this->automod_test);
 		}
 	}
 
 	public function automod_test(&$contrib, &$revision, &$revision_attachment, $download_package, $package)
 	{
 		$package->ensure_extracted();
-		$contrib_tools = new \titania_contrib_tools;
+		$prevalidator = $this->get_prevalidator();
 
 		// Automod testing time
 		$details = '';
@@ -176,11 +176,11 @@ class titania_type_mod extends titania_type_base
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
-			$phpbb_path = $contrib_tools->automod_phpbb_files($version_string);
+			$phpbb_path = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string);
 
 			if ($phpbb_path === false)
 			{
-				$error = array_merge($error, $contrib_tools->error);
+				$error = array_merge($error, $prevalidator->get_helper()->get_errors());
 				continue;
 			}
 
@@ -190,7 +190,7 @@ class titania_type_mod extends titania_type_base
 			));
 
 			$html_result = $bbcode_result = '';
-			$installed = $contrib_tools->automod(
+			$installed = $prevalidator->run_automod_test(
 				$package,
 				$phpbb_path,
 				$details,
@@ -238,5 +238,13 @@ class titania_type_mod extends titania_type_base
 		return array(
 			'error'	=> $error,
 		);
+	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function get_prevalidator()
+	{
+		return phpbb::$container->get('phpbb.titania.mod.prevalidator');
 	}
 }
