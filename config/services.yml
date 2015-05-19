@@ -95,6 +95,17 @@ services:
             - @user
             - @template
 
+    phpbb.titania.sort:
+        class: phpbb\titania\sort
+        scope: prototype
+        arguments:
+            - @dbal.conn
+            - @user
+            - @template
+            - @request
+            - @pagination
+            - @path_helper
+
     phpbb.titania.style.demo:
         class: phpbb\titania\contribution\style\demo\demo
         arguments:

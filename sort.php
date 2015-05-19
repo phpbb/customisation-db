@@ -11,13 +11,31 @@
 *
 */
 
+namespace phpbb\titania;
+
 /**
  * Class to generate pagination
- *
- * @package Titania
  */
-class titania_sort extends \phpbb\titania\entity\base
+class sort extends entity\base
 {
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+
+	/** @var \phpbb\user */
+	protected $user;
+
+	/** @var \phpbb\template\template */
+	protected $template;
+
+	/** @var \phpbb\request\request_interface */
+	protected $request;
+
+	/** @var \phpbb\pagination */
+	protected $pagination;
+
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
+
 	/**
 	 * Constants
 	 */
@@ -40,13 +58,34 @@ class titania_sort extends \phpbb\titania\entity\base
 	*/
 	public $request_completed = false;
 
-	/** @var \phpbb\path_helper */
-	protected $path_helper;
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\user $user
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\request\request_interface $request
+	 * @param \phpbb\pagination $pagination
+	 * @param \phpbb\path_helper $path_helper
+	 */
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\pagination $pagination, \phpbb\path_helper $path_helper)
+	{
+		$this->db = $db;
+		$this->user = $user;
+		$this->template = $template;
+		$this->request = $request;
+		$this->pagination = $pagination;
+		$this->path_helper = $path_helper;
+
+		$this->configure_properties();
+	}
 
 	/**
 	 * Set some default variables, set template_vars default values
+	 *
+	 * @return $this
 	 */
-	public function __construct()
+	public function configure_properties()
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -88,16 +127,16 @@ class titania_sort extends \phpbb\titania\entity\base
 				),
 			),
 		));
-
-		$this->path_helper = phpbb::$container->get('path_helper');
+		return $this;
 	}
 
 	/**
 	* Set some defaults
 	*
 	* @param int $limit Default limit, false to not change
-	* @param string $sort_key Default sort key, false to not change
-	* @param string $sort_dir (a|d) for ascending/descending, false to not change
+	* @param string|bool $sort_key Default sort key, false to not change
+	* @param string|bool $sort_dir (a|d) for ascending/descending, false to not change
+	* @return $this
 	*/
 	public function set_defaults($limit, $sort_key = false, $sort_dir = false)
 	{
@@ -115,16 +154,19 @@ class titania_sort extends \phpbb\titania\entity\base
 		{
 			$this->default_sort_dir = ($sort_dir == 'a') ? 'a' : 'd';
 		}
+		return $this;
 	}
 
 	/**
 	 * Request function to run the start and limit grabbing functions
+	 *
+	 * @return $this
 	 */
 	public function request()
 	{
 		if ($this->request_completed)
 		{
-			return;
+			return $this;
 		}
 
 		$this->get_start();
@@ -134,6 +176,8 @@ class titania_sort extends \phpbb\titania\entity\base
 		$this->get_sort_dir();
 
 		$this->request_completed = true;
+
+		return $this;
 	}
 
 	/**
@@ -145,7 +189,7 @@ class titania_sort extends \phpbb\titania\entity\base
 	 */
 	public function get_start($default = 0)
 	{
-		$this->start = phpbb::$request->variable($this->start_name, (int) $default);
+		$this->start = $this->request->variable($this->start_name, (int) $default);
 
 		return $this->start;
 	}
@@ -153,8 +197,7 @@ class titania_sort extends \phpbb\titania\entity\base
 	/**
 	 * Set limit variable for pagination
 	 *
-	 * @param int $default default Offset/Limit -- uses the constant if unset.
-	 *
+	 * @param int|bool $default	Default Offset/Limit -- uses the constant if false is given
 	 * @return int	$limit
 	 */
 	public function get_limit($default = false)
@@ -164,7 +207,7 @@ class titania_sort extends \phpbb\titania\entity\base
 			$this->default_limit = $default;
 		}
 
-		$limit = phpbb::$request->variable($this->limit_name, (int) $this->default_limit);
+		$limit = $this->request->variable($this->limit_name, (int) $this->default_limit);
 
 		// Don't allow limits of 0 which is unlimited results. Instead use the max limit.
 		$limit = ($limit == 0) ? $this->max_limit : $limit;
@@ -177,10 +220,12 @@ class titania_sort extends \phpbb\titania\entity\base
 
 	/**
 	 * Set sort key
+	 *
+	 * @return string
 	 */
 	public function get_sort_key()
 	{
-		$this->sort_key = phpbb::$request->variable($this->sort_key_name, (string) $this->default_sort_key);
+		$this->sort_key = $this->request->variable($this->sort_key_name, (string) $this->default_sort_key);
 
 		if (!isset($this->sort_key_ary[$this->sort_key]))
 		{
@@ -192,10 +237,12 @@ class titania_sort extends \phpbb\titania\entity\base
 
 	/**
 	 * Set sort direction
+	 *
+	 * @return string
 	 */
 	public function get_sort_dir()
 	{
-		$this->sort_dir = (phpbb::$request->variable($this->sort_dir_name, (string) $this->default_sort_dir) == $this->default_sort_dir) ? $this->default_sort_dir : (($this->default_sort_dir == 'a') ? 'd' : 'a');
+		$this->sort_dir = ($this->request->variable($this->sort_dir_name, (string) $this->default_sort_dir) == $this->default_sort_dir) ? $this->default_sort_dir : (($this->default_sort_dir == 'a') ? 'd' : 'a');
 
 		return $this->sort_dir;
 	}
@@ -205,16 +252,17 @@ class titania_sort extends \phpbb\titania\entity\base
 	*
 	* @param mixed $sql_ary
 	* @param mixed $field
+	* @return int
 	*/
 	public function sql_count($sql_ary, $field)
 	{
 		$sql_ary['SELECT'] = "COUNT($field) AS cnt";
 		unset($sql_ary['ORDER_BY']);
 
-		$count_sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
-		phpbb::$db->sql_query($count_sql);
-		$this->total = phpbb::$db->sql_fetchfield('cnt');
-		phpbb::$db->sql_freeresult();
+		$count_sql = $this->db->sql_build_query('SELECT', $sql_ary);
+		$this->db->sql_query($count_sql);
+		$this->total = (int) $this->db->sql_fetchfield('cnt');
+		$this->db->sql_freeresult();
 
 		return $this->total;
 	}
@@ -232,6 +280,7 @@ class titania_sort extends \phpbb\titania\entity\base
 	 * </code>
 	 *
 	 * @param array $sort_keys
+	 * @return $this
 	 */
 	public function set_sort_keys($sort_keys)
 	{
@@ -249,8 +298,9 @@ class titania_sort extends \phpbb\titania\entity\base
 				$this->default_sort_key = $key;
 			}
 		}
-
 		$this->sort_key_ary = $sort_keys;
+
+		return $this;
 	}
 
 	/**
@@ -258,6 +308,7 @@ class titania_sort extends \phpbb\titania\entity\base
 	*
 	* @param string $location
 	* @param array $params
+	* @return $this
 	*/
 	public function set_url($location, $params = array())
 	{
@@ -267,6 +318,7 @@ class titania_sort extends \phpbb\titania\entity\base
 		{
 			$this->url_parameters = $params;
 		}
+		return $this;
 	}
 
 	/**
@@ -282,7 +334,7 @@ class titania_sort extends \phpbb\titania\entity\base
 			$selected = ($this->sort_key == $key) ? ' selected="selected"' : '';
 			$value = $options[0];
 
-			$s_sort_key .= '<option value="' . $key . '"' . $selected . '>' . ((isset(phpbb::$user->lang[$value])) ? phpbb::$user->lang[$value] : $value) . '</option>';
+			$s_sort_key .= '<option value="' . $key . '"' . $selected . '>' . ((isset($this->user->lang[$value])) ? $this->user->lang[$value] : $value) . '</option>';
 		}
 
 		return $s_sort_key;
@@ -304,7 +356,7 @@ class titania_sort extends \phpbb\titania\entity\base
 		foreach ($sort_dir as $key => $value)
 		{
 			$selected = ($this->sort_dir == $key) ? ' selected="selected"' : '';
-			$s_sort_dir .= '<option value="' . $key . '"' . $selected . '>' . ((isset(phpbb::$user->lang[$value])) ? phpbb::$user->lang[$value] : $value) . '</option>';
+			$s_sort_dir .= '<option value="' . $key . '"' . $selected . '>' . ((isset($this->user->lang[$value])) ? $this->user->lang[$value] : $value) . '</option>';
 		}
 
 		return $s_sort_dir;
@@ -360,6 +412,7 @@ class titania_sort extends \phpbb\titania\entity\base
 	 *
 	 * @param string $page path/page to be used in pagination url
 	 * @param array $params to be used in pagination url
+	 * @return $this
 	 */
 	public function build_pagination($page, $params = array())
 	{
@@ -398,13 +451,11 @@ class titania_sort extends \phpbb\titania\entity\base
 
 		$pagination_url = $this->path_helper->append_url_params($page, $params);
 
-		$pagination = phpbb::$container->get('pagination');
-
-		$pagination->generate_template_pagination($pagination_url, $this->template_block, 'start', $this->total, $this->limit, $this->start);
+		$this->pagination->generate_template_pagination($pagination_url, $this->template_block, 'start', $this->total, $this->limit, $this->start);
 
 		if ($this->template_block == 'pagination')
 		{
-			phpbb::$template->assign_vars(array(
+			$this->template->assign_vars(array(
 				$this->template_vars['S_SORT_ACTION']		=> $sort_url,
 				$this->template_vars['S_PAGINATION_ACTION']	=> $pagination_url,
 				$this->template_vars['S_NUM_POSTS']			=> $this->total,
@@ -415,10 +466,9 @@ class titania_sort extends \phpbb\titania\entity\base
 				$this->template_vars['SORT_DIR_NAME']		=> $this->sort_dir_name,
 
 				$this->template_vars['TOTAL_ITEMS']			=> $this->total,
-				$this->template_vars['TOTAL_RESULTS']		=> phpbb::$user->lang($this->result_lang, $this->total),
+				$this->template_vars['TOTAL_RESULTS']		=> $this->user->lang($this->result_lang, $this->total),
 			));
 		}
-
-		return true;
+		return $this;
 	}
 }
