@@ -460,7 +460,7 @@ class queue_overlord
 		}
 		else
 		{
-			$current_status = titania_tags::get_tag_name($row['queue_status']);
+			$current_status = phpbb::$container->get('phpbb.titania.tags')->get_tag_name($row['queue_status']);
 		}
 		phpbb::$template->assign_vars(array(
 			'CURRENT_STATUS'			=> $current_status,
