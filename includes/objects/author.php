@@ -48,6 +48,10 @@ class titania_author extends titania_message_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** Author visibility */
+	const HIDDEN = 0;
+	const VISIBLE = 1;
+
 	/**
 	 * Constructor class for titania authors
 	 *
@@ -67,7 +71,7 @@ class titania_author extends titania_message_object
 			'author_rating_count'	=> array('default' => 0),
 
 			'author_contribs'		=> array('default' => 0),
-			'author_visible'		=> array('default' => TITANIA_AUTHOR_VISIBLE),
+			'author_visible'		=> array('default' => self::VISIBLE),
 
 			'author_desc'			=> array('default' => '',	'message_field' => 'message'),
 			'author_desc_bitfield'	=> array('default' => '',	'message_field' => 'message_bitfield'),
