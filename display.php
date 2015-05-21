@@ -21,6 +21,9 @@ class display
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var \phpbb\titania\cache\service */
+	protected $cache;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -38,15 +41,17 @@ class display
 	*
 	* @param \phpbb\auth\auth $auth
 	* @param \phpbb\config\config $config
+	* @param cache\service $cache
 	* @param \phpbb\template\template $template
 	* @param \phpbb\user $user
 	* @param \phpbb\controller\helper $controller_helper
 	* @param \phpbb\path_helper $path_helper
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\controller\helper $controller_helper, \phpbb\path_helper $path_helper)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, cache\service $cache, \phpbb\template\template $template, \phpbb\user $user, \phpbb\controller\helper $controller_helper, \phpbb\path_helper $path_helper)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
+		$this->cache = $cache;
 		$this->template = $template;
 		$this->user = $user;
 		$this->controller_helper = $controller_helper;
@@ -256,6 +261,140 @@ class display
 		if ($posted)
 		{
 			$folder_img .= '_mine';
+		}
+	}
+
+	/**
+	 * Generate the category select (much is from the make_jumpbox function)
+	 *
+	 * @param array|bool $selected		Array of selected categories. Defaults to false.
+	 * @param bool $is_manage			Whether in category management, in which case all are listed
+	 * @param bool $disable_parents		Whether to disable categories that do not have a contribution type
+	 * @param bool|int $category_type	Category type to limit list to
+	 * @return void
+	 */
+	public function generate_category_select($selected = false, $is_manage = false, $disable_parents = true, $category_type = false)
+	{
+		if (!is_array($selected))
+		{
+			$selected = array($selected);
+		}
+
+		$right = $padding = 0;
+		$padding_store = array('0' => 0);
+
+		$categories = $this->cache->get_categories();
+		$hidden_categories = array();
+		$category = new \titania_category;
+
+		foreach ($categories as $row)
+		{
+			$type = (isset(\titania_types::$types[$row['category_type']])) ? \titania_types::$types[$row['category_type']] : false;
+
+			if ($type && (!$type->acl_get('submit') || ($category_type && $type->id != $category_type)))
+			{
+				continue;
+			}
+			$category->__set_array($row);
+
+			if ($row['left_id'] < $right)
+			{
+				$padding++;
+				$padding_store[$row['parent_id']] = $padding;
+			}
+			else if ($row['left_id'] > $right + 1)
+			{
+				$padding = (isset($padding_store[$row['parent_id']])) ? $padding_store[$row['parent_id']] : $padding;
+			}
+
+			$right = $row['right_id'];
+
+			if (!$is_manage)
+			{
+				// Non-postable category with no children, don't display
+				$not_postable = $row['category_type'] == 0 && ($row['left_id'] + 1 == $row['right_id']);
+				$hidden = !$row['category_visible'] || in_array($row['parent_id'], $hidden_categories);
+				$team_only_restriction = $category->is_option_set('team_only') && !$type->acl_get('moderate');
+
+				if ($not_postable || $hidden || $team_only_restriction)
+				{
+					if ($hidden)
+					{
+						$hidden_categories[] = $row['category_id'];
+					}
+					continue;
+				}
+			}
+
+			$this->template->assign_block_vars('category_select', array(
+				'S_SELECTED'		=> in_array($row['category_id'], $selected),
+				'S_DISABLED'		=> $row['category_type'] == 0 && $disable_parents,
+
+				'VALUE'				=> $row['category_id'],
+				'TYPE'				=> $row['category_type'],
+				'NAME'				=> $category->get_name(),
+			));
+
+			for ($i = 0; $i < $padding; $i++)
+			{
+				$this->template->assign_block_vars('category_select.level', array());
+			}
+		}
+	}
+
+	/**
+	 * Create a select with the contrib types
+	 *
+	 * @param int|bool $selected	Selected contrib type id. Defaults to false.
+	 * @return void
+	 */
+	public function generate_type_select($selected = false)
+	{
+		$this->template->assign_block_vars('type_select', array(
+			'S_IS_SELECTED'		=> $selected === false,
+
+			'VALUE'				=> 0,
+			'NAME'				=> (isset($this->user->lang['SELECT_CONTRIB_TYPE'])) ? $this->user->lang['SELECT_CONTRIB_TYPE'] : '--',
+		));
+
+		foreach (\titania_types::$types as $key => $type)
+		{
+			if (!$type->acl_get('submit'))
+			{
+				continue;
+			}
+
+			$this->template->assign_block_vars('type_select', array(
+				'S_IS_SELECTED'		=> $key == $selected,
+
+				'VALUE'				=> $key,
+				'NAME'				=> (isset($this->user->lang['SELECT_CONTRIB_TYPE'])) ? $type->lang : $type->langs,
+			));
+		}
+	}
+
+	/**
+	 * Create a select with the phpBB branches.
+	 *
+	 * @param array|bool $selected	Array of selected branches. Defaults to false.
+	 * @param array|bool $branches	Array of branches to output. Defaults to false.
+	 * @return void
+	 */
+	public function generate_phpbb_version_select($selected = false, $branches = false)
+	{
+		if (!$branches)
+		{
+			$branches = get_allowed_phpbb_branches();
+		}
+
+		foreach ($branches as $branch => $row)
+		{
+			$this->template->assign_block_vars('phpbb_branches', array(
+				'S_IS_SELECTED'		=> (is_array($selected) && in_array($branch, $selected)) ? true : false,
+
+				'VALUE'				=> $branch,
+				'NAME'				=> $row['name'],
+			));
 		}
 	}
 }

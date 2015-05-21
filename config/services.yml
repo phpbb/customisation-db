@@ -59,6 +59,7 @@ services:
         arguments:
              - @auth
              - @config
+             - @phpbb.titania.cache
              - @template
              - @user
              - @phpbb.titania.controller.helper
