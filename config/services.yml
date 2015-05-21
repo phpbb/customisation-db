@@ -58,6 +58,7 @@ services:
         class: phpbb\titania\display
         arguments:
              - @auth
+             - @config
              - @template
              - @user
              - @phpbb.titania.controller.helper

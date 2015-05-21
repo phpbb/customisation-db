@@ -18,6 +18,9 @@ class display
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -34,14 +37,16 @@ class display
 	* Constructor
 	*
 	* @param \phpbb\auth\auth $auth
+	* @param \phpbb\config\config $config
 	* @param \phpbb\template\template $template
 	* @param \phpbb\user $user
 	* @param \phpbb\controller\helper $controller_helper
 	* @param \phpbb\path_helper $path_helper
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\controller\helper $controller_helper, \phpbb\path_helper $path_helper)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\controller\helper $controller_helper, \phpbb\path_helper $path_helper)
 	{
 		$this->auth = $auth;
+		$this->config = $config;
 		$this->template = $template;
 		$this->user = $user;
 		$this->controller_helper = $controller_helper;
@@ -204,6 +209,53 @@ class display
 				'FIELD_TYPE'		=> $field['type'],
 				'GROUP_ID'			=> $group_id,
 			));
+		}
+	}
+
+	/**
+	 * Determine appropriate folder status image.
+	 *
+	 * @param string $folder_img		Folder image name holder
+	 * @param string $folder_alt		Folder language key holder
+	 * @param int $post_count			(Optional) Post count for given topic
+	 * @param bool $unread				(Optional) Whether the object is unread. Defaults to false.
+	 * @param bool $posted				(Optional) Whether the user has posted in the given topic. Defaults to false.
+	 * @param bool $sticky				(Optional) Whether the topic is a sticky. Defaults to false.
+	 * @param bool $locked				(Optional) Whether the topic is locked. Defaults to false.
+	 */
+	public function topic_folder_img(&$folder_img, &$folder_alt, $post_count = 0, $unread = false, $posted = false, $sticky = false, $locked = false)
+	{
+		if ($sticky)
+		{
+			$folder = 'sticky_read';
+			$folder_new = 'sticky_unread';
+		}
+		else
+		{
+			$folder = 'topic_read';
+			$folder_new = 'topic_unread';
+
+			// Hot topic threshold is for posts in a topic, which is replies + the first post. ;)
+			if ($this->config['hot_threshold'] && ($post_count + 1) >= $this->config['hot_threshold'] && !$locked)
+			{
+				$folder .= '_hot';
+				$folder_new .= '_hot';
+			}
+		}
+
+		if ($locked)
+		{
+			$folder .= '_locked';
+			$folder_new .= '_locked';
+		}
+
+		$folder_img = ($unread) ? $folder_new : $folder;
+		$folder_alt = ($unread) ? 'NEW_POSTS' : 'NO_NEW_POSTS';
+
+		// Posted image?
+		if ($posted)
+		{
+			$folder_img .= '_mine';
 		}
 	}
 }
