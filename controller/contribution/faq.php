@@ -132,8 +132,6 @@ class faq extends base
 			->request()
 		;
 
-		\titania::_include('functions_display', 'titania_topic_folder_img');
-
 		// Define permissions here so we don't have to check these in a loop.
 		$auth = array(
 			'move'		=> $this->check_auth('move'),
@@ -438,7 +436,7 @@ class faq extends base
 		// @todo probably should setup an edit time or something for better read tracking in case it was edited
 		$folder_img = $folder_alt = '';
 		$unread = $this->tracking->get_track(TITANIA_FAQ, $data['faq_id'], true) === 0;
-		titania_topic_folder_img($folder_img, $folder_alt, 0, $unread);
+		$this->display->topic_folder_img($folder_img, $folder_alt, 0, $unread);
 
 		$this->template->assign_block_vars('faqlist', array(
 			'U_FAQ'							=> $this->faq->get_url(),

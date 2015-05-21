@@ -112,7 +112,6 @@ class contribs_overlord
 	 */
 	public static function display_contribs($mode, $id, $sort = false, $blockname = 'contribs')
 	{
-		titania::_include('functions_display', 'titania_topic_folder_img');
 		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$tracking = phpbb::$container->get('phpbb.titania.tracking');
@@ -317,7 +316,7 @@ class contribs_overlord
 			$last_read_mark = $tracking->get_track(TITANIA_CONTRIB, $contrib->contrib_id, true);
 			$last_complete_mark = $tracking->get_track(TITANIA_CONTRIB, 0, true);
 			$is_unread = ($contrib->contrib_last_update > $last_read_mark && $contrib->contrib_last_update > $last_complete_mark) ? true : false;
-			titania_topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
+			phpbb::$container->get('phpbb.titania.display')->topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
 
 			// Only get unique phpBB versions supported
 			if (isset($row['phpbb_versions']))

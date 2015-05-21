@@ -536,9 +536,8 @@ class queue_overlord
 	*/
 	public static function folder_img($is_unread, &$folder_img, &$folder_alt, $replies = 0)
 	{
-		titania::_include('functions_display', 'titania_topic_folder_img');
-
-		titania_topic_folder_img($folder_img, $folder_alt, $replies, $is_unread);
+		phpbb::$container->get('phpbb.titania.display')
+			->topic_folder_img($folder_img, $folder_alt, $replies, $is_unread);
 	}
 
 	/**

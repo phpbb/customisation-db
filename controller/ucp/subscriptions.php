@@ -35,6 +35,9 @@ class subscriptions
 	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
+	/** @var \phpbb\titania\display */
+	protected $display;
+
 	/** @var \phpbb\titania\tracking */
 	protected $tracking;
 
@@ -59,10 +62,11 @@ class subscriptions
 	 * @param \phpbb\request\request_interface $request
 	 * @param \phpbb\titania\controller\helper $helper
 	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\tracking $tracking
 	 * @param \phpbb\titania\sort $sort
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort)
 	{
 		$this->db = $db;
 		$this->template = $template;
@@ -70,6 +74,7 @@ class subscriptions
 		$this->request = $request;
 		$this->helper = $helper;
 		$this->ext_config = $ext_config;
+		$this->display = $display;
 		$this->tracking = $tracking;
 		$this->sort = $sort;
 		$this->contribs_table = TITANIA_CONTRIBS_TABLE;
@@ -387,10 +392,9 @@ class subscriptions
 	*/
 	protected function get_contribution_tpl_row($row)
 	{
-		\titania::_include('functions_display', 'titania_topic_folder_img');
-
+		$folder_img = $folder_alt = '';
 		$contrib = $this->get_contrib($row);
-		titania_topic_folder_img(
+		$this->display->topic_folder_img(
 			$folder_img,
 			$folder_alt,
 			0,

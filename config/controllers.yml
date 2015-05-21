@@ -326,5 +326,6 @@ services:
             - @request
             - @phpbb.titania.controller.helper
             - @phpbb.titania.config
+            - @phpbb.titania.display
             - @phpbb.titania.tracking
             - @phpbb.titania.sort

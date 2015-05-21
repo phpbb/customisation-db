@@ -54,6 +54,9 @@ class titania_topic extends titania_database_object
 	/** @var \phpbb\titania\tracking */
 	protected $tracking;
 
+	/** @var \phpbb\titania\display */
+	protected $display;
+
 	/**
 	 * Constructor class for titania topics
 	 *
@@ -102,6 +105,7 @@ class titania_topic extends titania_database_object
 		$this->topic_id = $topic_id;
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->tracking = phpbb::$container->get('phpbb.titania.tracking');
+		$this->display = phpbb::$container->get('phpbb.titania.display');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -272,9 +276,7 @@ class titania_topic extends titania_database_object
 	*/
 	public function topic_folder_img(&$folder_img, &$folder_alt)
 	{
-		titania::_include('functions_display', 'titania_topic_folder_img');
-
-		titania_topic_folder_img($folder_img, $folder_alt, $this->get_postcount(), $this->unread, $this->topic_posted, $this->topic_sticky, $this->topic_locked);
+		$this->display->topic_folder_img($folder_img, $folder_alt, $this->get_postcount(), $this->unread, $this->topic_posted, $this->topic_sticky, $this->topic_locked);
 	}
 
 	/**
