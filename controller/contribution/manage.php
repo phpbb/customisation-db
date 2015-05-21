@@ -541,8 +541,6 @@ class manage extends base
 	*/
 	protected function assign_vars($error)
 	{
-		\titania::_include('functions_posting', 'generate_type_select');
-
 		// ColorizeIt
 		if ($this->use_colorizeit)
 		{
@@ -599,7 +597,12 @@ class manage extends base
 			'NONACTIVE_COAUTHORS'		=> implode("\n", $coauthors['nonactive']),
 		));
 
-		generate_category_select($this->settings['categories'], false, true, $this->contrib->type->id);
+		$this->display->generate_category_select(
+			$this->settings['categories'],
+			false,
+			true,
+			$this->contrib->type->id
+		);
 		$this->message->display();
 		$this->contrib->assign_details();
 		$this->display->assign_global_vars();

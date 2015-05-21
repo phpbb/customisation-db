@@ -810,8 +810,6 @@ class revision extends base
 		$this->is_moderator = $this->contrib->type->acl_get('moderate');
 		$this->use_queue = $this->ext_config->use_queue && $this->contrib->type->use_queue;
 		$this->require_upload = $this->contrib->type->require_upload;
-
-		\titania::_include('functions_posting', 'generate_phpbb_version_select');
 	}
 
 	/**
@@ -943,7 +941,10 @@ class revision extends base
 		// Assign separately so we can output some data first
 		$this->template->assign_var('REVISION_UPLOADER', $this->attachment->parse_uploader('posting/attachments/revisions.html'));
 
-		generate_phpbb_version_select($settings['vendor_versions'], $this->contrib->type->get_allowed_branches());
+		$this->display->generate_phpbb_version_select(
+			$settings['vendor_versions'],
+			$this->contrib->type->get_allowed_branches()
+		);
 
 		$this->template->assign_vars(array(
 			'ERROR_MSG'				=> (!empty($error)) ? (is_array($error) ? implode('<br />', $error) : $error) : '',

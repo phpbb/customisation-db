@@ -409,11 +409,9 @@ class author
 			}
 		}
 
-		\titania::_include('functions_posting', 'generate_type_select');
-
 		// Generate some stuff
-		generate_type_select($contrib->contrib_type);
-		generate_category_select($settings['categories']);
+		$this->display->generate_type_select($contrib->contrib_type);
+		$this->display->generate_category_select($settings['categories']);
 		$contrib->assign_details();
 		$message->display();
 

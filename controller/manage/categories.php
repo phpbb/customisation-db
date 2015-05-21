@@ -170,10 +170,8 @@ class categories extends base
 			}
 		}
 
-		\titania::_include('functions_posting', 'generate_type_select');
-
 		// Generate data for category type dropdown box
-		generate_type_select($category->category_type);
+		$this->display->generate_type_select($category->category_type);
 		$message->display();
 
 		$this->template->assign_vars(array(
@@ -183,7 +181,7 @@ class categories extends base
 			'CATEGORY_NAME_CLEAN'			=> $category->category_name_clean,
 			'CATEGORY_VISIBLE' 				=> $category->category_visible,
 
-			'S_MOVE_CATEGORY_OPTIONS'		=> generate_category_select($category->parent_id, true),
+			'S_MOVE_CATEGORY_OPTIONS'		=> $this->display->generate_category_select($category->parent_id, true, false),
 		));
 
 		foreach ($category->available_options as $option => $flag)
@@ -293,8 +291,6 @@ class categories extends base
 		}
 
 		add_form_key('category_move');
-
-		\titania::_include('functions_posting', 'generate_category_select');
 
 		$this->template->assign_vars(array(
 			'S_DELETE_CATEGORY'				=> true,
