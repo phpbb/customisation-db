@@ -463,7 +463,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				'U_VIEW_TOPIC_CONTRIB_SUPPORT'		=> (isset($row['contrib_type']) && $row['contrib_type']) ? $contrib->get_url('support') : '',
 			)));
 
-			$sort = new titania_sort();
+			$sort = phpbb::$container->get('phpbb.titania.sort');
 			$sort->__set_array(array(
 				'template_block'	=> 'topics.pagination',
 				'total'				=> $topic->get_postcount(),	
@@ -494,12 +494,12 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	/**
 	* Setup the sort tool and return it for topics display
 	*
-	* @return titania_sort
+	* @return \phpbb\titania\sort
 	*/
 	public static function build_sort()
 	{
 		// Setup the sort and set the sort keys
-		$sort = new titania_sort();
+		$sort = phpbb::$container->get('phpbb.titania.sort');
 		$sort->set_sort_keys(self::$sort_by);
 
 		if (isset(self::$sort_by[phpbb::$user->data['user_topic_sortby_type']]))

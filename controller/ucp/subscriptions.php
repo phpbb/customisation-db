@@ -38,6 +38,9 @@ class subscriptions
 	/** @var \phpbb\titania\tracking */
 	protected $tracking;
 
+	/** @var \phpbb\titania\sort */
+	protected $sort;
+
 	/** @var string */
 	protected $contribs_table;
 
@@ -57,8 +60,9 @@ class subscriptions
 	 * @param \phpbb\titania\controller\helper $helper
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\tracking $tracking
+	 * @param \phpbb\titania\sort $sort
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort)
 	{
 		$this->db = $db;
 		$this->template = $template;
@@ -67,6 +71,7 @@ class subscriptions
 		$this->helper = $helper;
 		$this->ext_config = $ext_config;
 		$this->tracking = $tracking;
+		$this->sort = $sort;
 		$this->contribs_table = TITANIA_CONTRIBS_TABLE;
 		$this->topics_table = TITANIA_TOPICS_TABLE;
 		$this->watch_table = TITANIA_WATCH_TABLE;
@@ -142,11 +147,11 @@ class subscriptions
 
 		$user_ids = $rows = array();
 		$subscription_count = $this->get_subscription_count($object_types);
-		$sort = $this->build_sort($subscription_count);
+		$this->build_sort($subscription_count);
 
 		$sql_ary = $this->get_subscription_sql_ary($cases, $object_types, TITANIA_SUPPORT);
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
-		$result = $this->db->sql_query_limit($sql, $sort->limit, $sort->start);
+		$result = $this->db->sql_query_limit($sql, $this->sort->limit, $this->sort->start);
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -198,7 +203,7 @@ class subscriptions
 		$object_types = array(TITANIA_CONTRIB, TITANIA_TOPIC);
 
 		$subscription_count = $this->get_subscription_count($object_types);
-		$sort = $this->build_sort($subscription_count);
+		$this->build_sort($subscription_count);
 
 		$cases = array(
 			TITANIA_CONTRIB	=> 'c.contrib_last_update',
@@ -222,7 +227,7 @@ class subscriptions
 		$this->tracking->get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id', 'tc');
 
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
-		$result = $this->db->sql_query_limit($sql, $sort->limit, $sort->start);
+		$result = $this->db->sql_query_limit($sql, $this->sort->limit, $this->sort->start);
 		$user_ids = $contributions = $topics = $rows = array();
 
 		while ($row = $this->db->sql_fetchrow($result))
@@ -365,17 +370,13 @@ class subscriptions
 	* Build sort object.
 	*
 	* @param int $subscription_count
-	* @return \titania_sort
 	*/
 	protected function build_sort($subscription_count)
 	{
 		// Setup the sort tool
-		$sort = new \titania_sort();
-		$sort->request();
-		$sort->total = $subscription_count;
-		$sort->build_pagination($this->u_action);
-
-		return $sort;
+		$this->sort->request();
+		$this->sort->total = $subscription_count;
+		$this->sort->build_pagination($this->u_action);
 	}
 
 	/**

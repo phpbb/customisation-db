@@ -358,12 +358,12 @@ class contribs_overlord
 	/**
 	* Setup the sort tool and return it for contributions display
 	*
-	* @return titania_sort
+	* @return \phpbb\titania\sort
 	*/
 	public static function build_sort()
 	{
 		// Setup the sort and set the sort keys
-		$sort = new titania_sort();
+		$sort = phpbb::$container->get('phpbb.titania.sort');
 		$sort->set_sort_keys(self::$sort_by);
 
 		// Show update time descending and limit to the topics per page by default

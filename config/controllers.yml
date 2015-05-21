@@ -82,6 +82,7 @@ services:
 
     phpbb.titania.controller.search:
         class: phpbb\titania\controller\search
+        scope: prototype
         arguments:
             - @config
             - @template
@@ -91,6 +92,7 @@ services:
             - @phpbb.titania.controller.helper
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.sort
 
     phpbb.titania.controller.colorizeit:
         class: phpbb\titania\controller\colorizeit
@@ -142,6 +144,7 @@ services:
 
     phpbb.titania.controller.contrib.faq:
         class: phpbb\titania\controller\contribution\faq
+        scope: prototype
         arguments:
             - @auth
             - @config
@@ -155,6 +158,7 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.access
             - @phpbb.titania.tracking
+            - @phpbb.titania.sort
 
     phpbb.titania.controller.contrib.manage:
         class: phpbb\titania\controller\contribution\manage
@@ -314,6 +318,7 @@ services:
 
     phpbb.titania.controller.ucp.subscriptions:
         class: phpbb\titania\controller\ucp\subscriptions
+        scope: prototype
         arguments:
             - @dbal.conn
             - @template
@@ -322,3 +327,4 @@ services:
             - @phpbb.titania.controller.helper
             - @phpbb.titania.config
             - @phpbb.titania.tracking
+            - @phpbb.titania.sort

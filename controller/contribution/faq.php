@@ -18,6 +18,9 @@ class faq extends base
 	/** @var \phpbb\titania\tracking */
 	protected $tracking;
 
+	/** @var \phpbb\titania\sort */
+	protected $sort;
+
 	/** @var \titania_faq */
 	protected $faq;
 
@@ -42,12 +45,14 @@ class faq extends base
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\tracking $tracking
+	 * @param \phpbb\titania\sort $sort
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
 
 		$this->tracking = $tracking;
+		$this->sort = $sort;
 	}
 
 	/**
@@ -121,10 +126,11 @@ class faq extends base
 		$this->setup($contrib_type, $contrib);
 
 		// Setup the sort tool
-		$sort = new \titania_sort();
-		$sort->set_url($this->contrib->get_url('faq'));
-		$sort->set_defaults($this->config['topics_per_page']);
-		$sort->request();
+		$this->sort
+			->set_url($this->contrib->get_url('faq'))
+			->set_defaults($this->config['topics_per_page'])
+			->request()
+		;
 
 		\titania::_include('functions_display', 'titania_topic_folder_img');
 
@@ -377,10 +383,9 @@ class faq extends base
 	/**
 	* Get contribution's FAQ items limited by the $sort options.
 	*
-	* @param \titania_sort $sort	Sort object.
 	* @return array Returns FAQ item data matching the sort options.
 	*/
-	protected function get_items($sort)
+	protected function get_items()
 	{
 		$items = array();
 
@@ -398,12 +403,12 @@ class faq extends base
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		if ($sort->sql_count($sql_ary, 'faq_id'))
+		if ($this->sort->sql_count($sql_ary, 'faq_id'))
 		{
-			$sort->build_pagination($this->contrib->get_url('faq'));
+			$this->sort->build_pagination($this->contrib->get_url('faq'));
 
 			// Get the data
-			$result = $this->db->sql_query_limit($sql, $sort->limit, $sort->start);
+			$result = $this->db->sql_query_limit($sql, $this->sort->limit, $this->sort->start);
 
 			while ($row = $this->db->sql_fetchrow($result))
 			{

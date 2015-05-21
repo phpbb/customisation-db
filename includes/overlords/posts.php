@@ -211,7 +211,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	* Display topic section for support/tracker/etc
 	*
 	* @param object $topic The topic object
-	* @param titania_sort $sort The sort object (includes/tools/sort.php)
+	* @param \phpbb\titania\sort $sort The sort object
 	*/
 	public static function display_topic($topic, $sort = false)
 	{
@@ -535,12 +535,12 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	/**
 	* Setup the sort tool and return it for posts display
 	*
-	* @return titania_sort
+	* @return \phpbb\titania\sort
 	*/
 	public static function build_sort()
 	{
 		// Setup the sort and set the sort keys
-		$sort = new titania_sort();
+		$sort = phpbb::$container->get('phpbb.titania.sort');
 		$sort->set_sort_keys(self::$sort_by);
 
 		if (isset(self::$sort_by[phpbb::$user->data['user_post_sortby_type']]))

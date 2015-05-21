@@ -37,23 +37,27 @@ class search
 	protected $display;
 
 	/** @var \titania_search */
+	/** @var \phpbb\titania\sort */
+	protected $sort;
+
 	protected $engine;
 
 	const SEARCH_ALL = 0;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\config\config $config
-	* @param \phpbb\template\template $template
-	* @param \phpbb\user $user
-	* @param \phpbb\titania\cache\service $cache
-	* @param \phpbb\request\request_interface
-	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\titania\config\config $ext_config
-	* @param \phpbb\titania\display $display
-	*/
-	public function __construct(\phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display)
+	 * Constructor
+	 *
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\request\request_interface $request
+	 * @param helper $helper
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\sort $sort
+	 */
+	public function __construct(\phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\sort $sort)
 	{
 		$this->config = $config;
 		$this->template = $template;
@@ -63,6 +67,7 @@ class search
 		$this->helper = $helper;
 		$this->ext_config = $ext_config;
 		$this->display = $display;
+		$this->sort = $sort;
 	}
 
 	/**
@@ -195,9 +200,10 @@ class search
 	protected function show_results($sort_url)
 	{
 		// Setup the sort tool
-		$sort = new \titania_sort();
-		$sort->set_defaults($this->config['posts_per_page']);
-		$sort->request();
+		$this->sort
+			->set_defaults($this->config['posts_per_page'])
+			->request()
+		;
 
 		// Do the search
 		$results = $this->engine->custom_search($this->query, $sort);
@@ -207,7 +213,7 @@ class search
 
 		$this->display->assign_global_vars();
 		$this->assign_doc_vars($results['documents']);
-		$this->assign_result_vars($sort->total);
+		$this->assign_result_vars($this->sort->total);
 
 		$parameters = array();
 		$expected_parameters = array(
@@ -237,7 +243,7 @@ class search
 				}
 			}
 		}
-		$sort->build_pagination($sort_url, $parameters);
+		$this->sort->build_pagination($sort_url, $parameters);
 
 		return $this->helper->render('search_results.html', $this->user->lang['SEARCH']);
 	}

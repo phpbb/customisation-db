@@ -544,15 +544,16 @@ class queue_overlord
 	/**
 	* Setup the sort tool and return it for posts display
 	*
-	* @return titania_sort
+	* @return \phpbb\titania\sort
 	*/
 	public static function build_sort()
 	{
 		// Setup the sort and set the sort keys
-		$sort = new titania_sort();
-		$sort->set_sort_keys(self::$sort_by);
-
-		$sort->set_defaults(phpbb::$config['topics_per_page']);
+		$sort = phpbb::$container->get('phpbb.titania.sort');
+		$sort
+			->set_sort_keys(self::$sort_by)
+			->set_defaults(phpbb::$config['topics_per_page'])
+		;
 
 		return $sort;
 	}
