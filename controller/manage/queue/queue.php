@@ -30,14 +30,14 @@ class queue extends \phpbb\titania\controller\manage\base
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param \phpbb\titania\controller\helper $helper
-	 * @param \phpbb\request\request_interace $request
+	 * @param \phpbb\request\request_interface $request
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\subscriptions $subscriptions
 	 */
 	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\subscriptions $subscriptions)
 	{
-		parent::_construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
 
 		$this->subscriptions = $subscriptions;
 	}
