@@ -33,12 +33,11 @@ class queue_discussion extends base
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
-	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\tracking $tracking
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking)
 	{
-		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display, $access);
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
 
 		$this->tracking = $tracking;
 	}
