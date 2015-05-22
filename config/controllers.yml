@@ -233,6 +233,7 @@ services:
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.subscriptions
 
     phpbb.titania.controller.manage.queue.item:
         class: phpbb\titania\controller\manage\queue\item
