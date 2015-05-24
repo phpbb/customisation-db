@@ -230,6 +230,8 @@ class contribs_overlord
 
 		$controller_helper = phpbb::$container->get('controller.helper');
 		$path_helper = phpbb::$container->get('path_helper');
+		$access = phpbb::$container->get('phpbb.titania.access');
+
 		$url = $path_helper->get_url_parts($controller_helper->get_current_url());
 		$sort->build_pagination($url['base']);
 
