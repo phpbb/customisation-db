@@ -60,6 +60,7 @@ class faq extends base
 	*
 	* @param string $contrib_type		Contrib type URL identifier.
 	* @param string $contrib			Contrib name clean.
+	* @param int $id					FAQ item id
 	*
 	* @return \Symfony\Component\HttpFoundation\Response
 	*/
