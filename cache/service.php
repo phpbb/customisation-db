@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\cache;
 
+use phpbb\titania\versions;
+
 class service extends \phpbb\cache\service
 {
 	/**
@@ -83,7 +85,7 @@ class service extends \phpbb\cache\service
 			$this->driver->put('_titania_phpbb_versions', $versions);
 		}
 
-		uasort($versions, 'reverse_version_compare');
+		uasort($versions, array('versions', 'reverse_version_compare'));
 
 		return $versions;
 	}

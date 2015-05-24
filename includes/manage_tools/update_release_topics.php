@@ -19,6 +19,8 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+use phpbb\titania\versions;
+
 class update_release_topics
 {
 	/**
@@ -112,7 +114,7 @@ class update_release_topics
 			phpbb::$db->sql_freeresult($rev_result);
 
 			// Sort the revisions by their version, put the newest one in $revision
-			uksort($revisions, 'reverse_version_compare');
+			uksort($revisions, array('versions', 'reverse_version_compare'));
 
 			if (!sizeof($revisions))
 			{

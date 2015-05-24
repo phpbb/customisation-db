@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\versions;
+
 class contribs_overlord
 {
 	/**
@@ -321,9 +323,11 @@ class contribs_overlord
 			// Only get unique phpBB versions supported
 			if (isset($row['phpbb_versions']))
 			{
-				titania::_include('functions_display', 'order_phpbb_version_list_from_db');
-
-				$ordered_phpbb_versions = order_phpbb_version_list_from_db($row['phpbb_versions'], $contrib->options['all_versions']);
+				$ordered_phpbb_versions = versions::order_phpbb_version_list_from_db(
+					titania::$cache,
+					$row['phpbb_versions'],
+					$contrib->options['all_versions']
+				);
 			}
 
 			phpbb::$template->assign_block_vars($blockname, array_merge($contrib->assign_details(true, true), array(

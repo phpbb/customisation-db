@@ -56,18 +56,6 @@ function titania_decode_message(&$message, $bbcode_uid = '')
 }
 
 /**
-* Used in titania::$cache->get_phpbb_versions()
-*
-* @param mixed $version1
-* @param mixed $version2
-* @return mixed
-*/
-function reverse_version_compare($version1, $version2)
-{
-	return version_compare($version2, $version1);
-}
-
-/**
 * Compare the order of two attachments. Used to sort attachments in conjuction with uasort()
 * @param array $attach1
 * @param array $attach2

@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\versions;
+
 /**
 * Class to titania revision.
 * @package Titania
@@ -179,9 +181,11 @@ class titania_revision extends titania_database_object
 
 	public function display($tpl_block = 'revisions', $show_queue = false, $all_versions = false)
 	{
-		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
-
-		$ordered_phpbb_versions = order_phpbb_version_list_from_db($this->phpbb_versions, $all_versions);
+		$ordered_phpbb_versions = versions::order_phpbb_version_list_from_db(
+			$this->cache,
+			$this->phpbb_versions,
+			$all_versions
+		);
 
 		// Get rid of the day of the week if it exists in the dateformat
 		$old_date_format = phpbb::$user->date_format;

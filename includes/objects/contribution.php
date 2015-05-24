@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\versions;
 use phpbb\titania\url\url;
 
 /**
@@ -746,7 +747,12 @@ class titania_contribution extends titania_message_object
 				}
 				unset($revision);
 
-				$ordered_phpbb_versions = order_phpbb_version_list_from_db($phpbb_versions, $this->options['all_versions']);
+				$ordered_phpbb_versions = versions::order_phpbb_version_list_from_db(
+					$this->cache,
+					$phpbb_versions,
+					$this->options['all_versions']
+				);
+
 				if (sizeof($ordered_phpbb_versions) == 1)
 				{
 					phpbb::$template->assign_vars(array(
@@ -816,7 +822,6 @@ class titania_contribution extends titania_message_object
 			$u_colorizeit_base = 'http://' . titania::$config->colorizeit_url . '/custom/' .
 				titania::$config->colorizeit . '.html?sample=' . $this->clr_sample['attachment_id'];
 		}
-		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
 
 		foreach ($this->download as $download)
 		{
@@ -825,7 +830,11 @@ class titania_contribution extends titania_message_object
 			if (!empty($this->revisions[$download['revision_id']]['phpbb_versions']))
 			{
 				$vendor_version = $this->revisions[$download['revision_id']]['phpbb_versions'];
-				$vendor_version = order_phpbb_version_list_from_db($vendor_version, $this->options['all_versions']);
+				$vendor_version = versions::order_phpbb_version_list_from_db(
+					$this->cache,
+					$vendor_version,
+					$this->options['all_versions']
+				);
 				$vendor_version = $vendor_version[0];
 			}
 
@@ -2070,8 +2079,7 @@ class titania_contribution extends titania_message_object
 			}
 		}
 
-		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
-		$phpbb_versions = array_unique(order_phpbb_version_list_from_db($phpbb_versions));
+		$phpbb_versions = array_unique(versions::order_phpbb_version_list_from_db($this->cache, $phpbb_versions));
 
 		$data = array(
 			'title'				=> $this->contrib_name,
