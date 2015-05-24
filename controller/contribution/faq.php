@@ -141,7 +141,7 @@ class faq extends base
 		);
 
 		// Output items.
-		foreach ($this->get_items($sort) as $id => $data)
+		foreach ($this->get_items() as $id => $data)
 		{
 			$this->assign_item_row_vars($data, $auth);
 		}
