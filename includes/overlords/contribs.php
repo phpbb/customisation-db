@@ -354,6 +354,133 @@ class contribs_overlord
 	}
 
 	/**
+	 * Get a list of contributions
+	 *
+	 * @param string $type The type of the contributions
+	 * @return array
+	 */
+	public static function get_contribs_list($type)
+	{
+		$result_list = array();
+
+		$type_id = ($type == 'all') ? 0 : \titania_types::type_from_url($type);
+		if ($type_id === false)
+		{
+			return array();
+		}
+
+		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id, c.contrib_limited_support, c.contrib_categories';
+		$get_type = ($type != 'all') ? ' AND ' . phpbb::$db->sql_in_set('c.contrib_type', $type_id) : '';
+		$sql_ary = array(
+			'SELECT'	=> $select,
+
+			'FROM'		=> array(
+				TITANIA_CONTRIBS_TABLE	=> 'c',
+			),
+
+			'WHERE'		=> 'c.contrib_visible = 1' . $get_type,
+		);
+
+		// Permissions
+		$sql_ary['WHERE'] .= ' AND ' . phpbb::$db->sql_in_set('c.contrib_status', TITANIA_CONTRIB_APPROVED);
+
+		// Main SQL Query
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		$result = phpbb::$db->sql_query($sql);
+
+		$contrib_ids = array();
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$contrib_ids[] = $row['contrib_id'];
+			self::$contribs[$row['contrib_id']] = $row;
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		// Get phpBB versions
+		if (!sizeof($contrib_ids))
+		{
+			return array();
+		}
+		$validation_free = titania_types::find_validation_free();
+		if (sizeof($validation_free) && titania::$config->require_validation)
+		{
+			$sql = 'SELECT rp.contrib_id, rp.phpbb_version_branch, rp.phpbb_version_revision
+				FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . ' rp, ' . TITANIA_CONTRIBS_TABLE . ' c
+				WHERE ' . phpbb::$db->sql_in_set('rp.contrib_id', array_map('intval', $contrib_ids)) .'
+				AND c.contrib_id = rp.contrib_id
+				AND (rp.revision_validated = 1
+					OR ' . phpbb::$db->sql_in_set('c.contrib_type', $validation_free) . ')
+				ORDER BY rp.row_id DESC';
+		}
+		else
+		{
+			$sql = 'SELECT contrib_id, phpbb_version_branch, phpbb_version_revision FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+				WHERE ' . phpbb::$db->sql_in_set('contrib_id', array_map('intval', $contrib_ids)) .
+				((titania::$config->require_validation) ? ' AND revision_validated = 1' : '') . '
+				ORDER BY row_id DESC';
+		}
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			self::$contribs[$row['contrib_id']]['phpbb_versions'][] = $row;
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
+
+		foreach ($contrib_ids as $contrib_id)
+		{
+			$row = self::$contribs[$contrib_id];
+
+			// Setup some objects we'll use for temps
+			$contrib = new titania_contribution();
+			$contrib->__set_array($row);
+			$contrib->set_type($row['contrib_type']);
+			$contrib->get_revisions();
+			$contrib->get_options();
+			$contrib->get_download();
+
+			foreach ($contrib->download as $download)
+			{
+				$version = $download['revision_version'];
+
+				if (!preg_match('#^(\d+\.\d+)#', $version, $matches) || empty($contrib->revisions[$download['revision_id']]['phpbb_versions']))
+				{
+					continue;
+				}
+
+				$vendor_version = $contrib->revisions[$download['revision_id']]['phpbb_versions'];
+				$vendor_version = order_phpbb_version_list_from_db($vendor_version, $contrib->options['all_versions']);
+				$vendor_version = $vendor_version[0];
+
+				if ($type != 'all')
+				{
+					$contrib_list = &$result_list;
+				}
+				else
+				{
+					$contrib_list = &$result_list[$contrib->type->name];
+					$contrib_list = (isset($contrib_list)) ? $contrib_list : array();
+				}
+				$contrib_list[$vendor_version] = (isset($contrib_list[$vendor_version])) ? $contrib_list[$vendor_version] : array();
+				$contrib_list[$vendor_version][$contrib->contrib_id] = (isset($contrib_list[$vendor_version][$contrib->contrib_id])) ? $contrib_list[$vendor_version][$contrib->contrib_id] : array();
+				$contrib_list[$vendor_version][$contrib->contrib_id][$matches[1]] = array(
+					'contribution'	=> $contrib->contrib_name,
+					'current'		=> $version,
+					'download'		=> phpbb::$container->get('phpbb.titania.controller.helper')->route('phpbb.titania.download', array(
+						'id' => $download['attachment_id'],
+					)),
+					'announcement'	=> $contrib->get_url(),
+					'eol'			=> null,
+					'security'		=> false,
+				);
+			}
+			unset($contrib);
+		}
+		return $result_list;
+	}
+
+	/**
 	* Setup the sort tool and return it for contributions display
 	*
 	* @return titania_sort
