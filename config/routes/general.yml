@@ -18,6 +18,12 @@ phpbb.titania.all_contribs:
     pattern: /contributions/all
     defaults: { _controller: phpbb.titania.controller.all_contribs:display_all_contributions }
 
+phpbb.titania.get_all_contribs:
+    pattern: /contributions/get/{type}
+    defaults: { _controller: phpbb.titania.controller.all_contribs:get_all_contributions, type: all }
+    requirements:
+        type: all|mod|extension|style|converter|official_tool|bbcode|bridge|translation
+
 phpbb.titania.author:
     pattern: /author/{author}/{page}
     defaults: { _controller: phpbb.titania.controller.author:base, page: details }

@@ -90,4 +90,18 @@ class all_contribs
 		$data['sort']->set_url($this->helper->route('phpbb.titania.all_contribs'));
 		$this->template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
 	}
+
+	/**
+	 * Get the list of contributions in JSON format.
+	 *
+	 * @param string $type	Contrib type URL identifier.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse
+	 */
+	public function get_all_contributions($type)
+	{
+		$contribs = \contribs_overlord::get_contribs_list($type);
+
+		return new \Symfony\Component\HttpFoundation\JsonResponse($contribs);
+	}
 }
