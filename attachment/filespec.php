@@ -1,27 +1,51 @@
 <?php
 /**
-*
-* This file is part of the phpBB Customisation Database package.
-*
-* @copyright (c) phpBB Limited <https://www.phpbb.com>
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-* For full copyright and license information, please see
-* the docs/CREDITS.txt file.
-*
-*/
+ *
+ * This file is part of the phpBB Customisation Database package.
+ *
+ * @copyright (c) phpBB Limited <https://www.phpbb.com>
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ * For full copyright and license information, please see
+ * the docs/CREDITS.txt file.
+ *
+ */
 
-class titania_filespec extends filespec
+namespace phpbb\titania\attachment;
+
+class filespec extends \filespec
 {
-/**
-	* Move file to destination folder
-	*
-	* @param string $destination_path Destination path, for example $config['avatar_path']
-	* @param bool $overwrite If set to true, an already existing file will be overwritten
-	* @param string $chmod Permission mask for chmodding the file after a successful move. The mode entered here reflects the mode defined by {@link phpbb_chmod()}
-	*
-	* @access public
-	*/
+	/** @var \phpbb\user */
+	protected $user;
+
+	/**
+	 * Constructor
+	 *
+	 * @param array $upload_ary
+	 * @param \phpbb\titania\attachment\uploader $uploader
+	 * @param \phpbb\user $user
+	 * @param \phpbb\mimetype\guesser $mimetype_guesser
+	 * @param \phpbb\plupload\plupload $plupload
+	 */
+	public function __construct($upload_ary, $uploader, \phpbb\user $user, \phpbb\mimetype\guesser $mimetype_guesser = null, \phpbb\plupload\plupload $plupload = null)
+	{
+		$this->user = $user;
+
+		parent::filespec($upload_ary, $uploader, $mimetype_guesser, $plupload);
+	}
+
+	/**
+	 * Move file to destination folder
+	 *
+	 * @param string $destination		Destination path, for example $config['avatar_path']
+	 * @param bool $overwrite			If set to true, an already existing file will be overwritten
+	 * @param bool $skip_image_check	Whether to skip check for valid image
+	 * @param string|bool $chmod		Permission mask for chmodding the file after a successful move.
+	 * 		The mode entered here reflects the mode defined by {@link phpbb_chmod()}
+	 *
+	 * @access public
+	 * @return bool	Returns true on success, false on failure.
+	 */
 	function move_file($destination, $overwrite = false, $skip_image_check = false, $chmod = false)
 	{
 		if (sizeof($this->error))
@@ -65,14 +89,14 @@ class titania_filespec extends filespec
 					{
 						if (!@move_uploaded_file($this->filename, $this->destination_file))
 						{
-							$this->error[] = sprintf(phpbb::$user->lang[$this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR'], $this->destination_file);
+							$this->error[] = $this->user->lang($this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR', $this->destination_file);
 							return false;
 						}
 					}
 
 					@unlink($this->filename);
 
-				break;
+					break;
 
 				case 'move':
 
@@ -80,25 +104,25 @@ class titania_filespec extends filespec
 					{
 						if (!@copy($this->filename, $this->destination_file))
 						{
-							$this->error[] = sprintf(phpbb::$user->lang[$this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR'], $this->destination_file);
+							$this->error[] = $this->user->lang($this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR', $this->destination_file);
 							return false;
 						}
 					}
 
 					@unlink($this->filename);
 
-				break;
+					break;
 
 				case 'local':
 
 					if (!@copy($this->filename, $this->destination_file))
 					{
-						$this->error[] = sprintf(phpbb::$user->lang[$this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR'], $this->destination_file);
+						$this->error[] = $this->user->lang($this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR', $this->destination_file);
 						return false;
 					}
 					@unlink($this->filename);
 
-				break;
+					break;
 			}
 
 			phpbb_chmod($this->destination_file, $chmod);
@@ -131,23 +155,23 @@ class titania_filespec extends filespec
 				{
 					if (!isset($types[$this->image_info[2]]))
 					{
-						$this->error[] = sprintf(phpbb::$user->lang['IMAGE_FILETYPE_INVALID'], $this->image_info[2], $this->mimetype);
+						$this->error[] = $this->user->lang('IMAGE_FILETYPE_INVALID', $this->image_info[2], $this->mimetype);
 					}
 					else
 					{
-						$this->error[] = sprintf(phpbb::$user->lang['IMAGE_FILETYPE_MISMATCH'], $types[$this->image_info[2]][0], $this->extension);
+						$this->error[] = $this->user->lang('IMAGE_FILETYPE_MISMATCH', $types[$this->image_info[2]][0], $this->extension);
 					}
 				}
 
 				// Make sure the dimensions match a valid image
 				if (empty($this->width) || empty($this->height))
 				{
-					$this->error[] = phpbb::$user->lang['ATTACHED_IMAGE_NOT_IMAGE'];
+					$this->error[] = $this->user->lang('ATTACHED_IMAGE_NOT_IMAGE');
 				}
 			}
 			else
 			{
-				$this->error[] = phpbb::$user->lang['UNABLE_GET_IMAGE_SIZE'];
+				$this->error[] = $this->user->lang('UNABLE_GET_IMAGE_SIZE');
 			}
 		}
 

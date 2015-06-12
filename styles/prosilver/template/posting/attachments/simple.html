@@ -18,8 +18,8 @@
 		<!-- IF SELECT_PREVIEW --><dt class="set-preview"><input type="radio" name="{SELECT_REVIEW_VAR}" value="{attach_row.ATTACH_ID}"<!-- IF attach_row.S_PREVIEW --> checked="checked"<!-- ENDIF --> /></dt><!-- ENDIF -->
 		<dd>
 			<a href="{attach_row.U_VIEW_ATTACHMENT}" class="{S_CONTENT_FLOW_END}">{attach_row.FILENAME}</a>
-			
-			<input type="hidden" name="{FORM_NAME}_attachments[]" value="{attach_row.ATTACH_ID}" />
+
+			{attach_row.S_HIDDEN}
 			<input type="hidden" class="attach_order" name="attach_order[]" value="{attach_row.ATTACH_ID}" />
 			<div class="rightside">
 				<a href="{attach_row.U_DELETE}#screenshot-manage" class="item-control-button delete" title="{L_DELETE}"></a>

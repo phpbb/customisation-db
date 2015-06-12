@@ -11,6 +11,54 @@ services:
             - @user
             - @phpbb.titania.config
 
+    phpbb.titania.attachment:
+        class: phpbb\titania\attachment\attachment
+        scope: prototype
+        arguments:
+            - @dbal.conn
+            - @config
+            - @user
+            - @phpbb.titania.config
+            - @phpbb.titania.controller.helper
+
+    phpbb.titania.attachment.operator:
+        class: phpbb\titania\attachment\operator
+        scope: prototype
+        arguments:
+            - @dbal.conn
+            - @config
+            - @user
+            - @template
+            - @phpbb.titania.attachment
+
+    phpbb.titania.attachment.plupload:
+        class: phpbb\titania\attachment\plupload
+        arguments:
+             - %core.root_path%
+             - @config
+             - @request
+             - @user
+             - @php_ini
+             - @mimetype.guesser
+
+    phpbb.titania.attachment.uploader:
+        class: phpbb\titania\attachment\uploader
+        scope: prototype
+        arguments:
+            - @phpbb.titania.attachment.operator
+            - @user
+            - @config
+            - @request
+            - @template
+            - @path_helper
+            - @controller.helper
+            - @phpbb.titania.config
+            - @mimetype.guesser
+            - @phpbb.titania.attachment.plupload
+            - @phpbb.titania.access
+            - %core.root_path%
+            - %core.php_ext%
+
     phpbb.titania.bbcode.demo:
         class: phpbb\titania\contribution\bbcode\demo\demo
         arguments:
