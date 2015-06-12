@@ -216,7 +216,7 @@ class subscriptions
 
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 		$result = $this->db->sql_query_limit($sql, $sort->limit, $sort->start);
-		$user_ids = $contributions = $topics = array();
+		$user_ids = $contributions = $topics = $rows = array();
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
