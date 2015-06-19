@@ -40,61 +40,6 @@ function get_allowed_phpbb_branches()
 }
 
 /**
-* Generate the _options flag from the given settings
-*
-* @param bool $bbcode
-* @param bool $smilies
-* @param bool $url
-* @return int options flag
-*/
-function get_posting_options($bbcode, $smilies, $url)
-{
-	return (($bbcode) ? OPTION_FLAG_BBCODE : 0) + (($smilies) ? OPTION_FLAG_SMILIES : 0) + (($url) ? OPTION_FLAG_LINKS : 0);
-}
-
-/*
- * Create select with Titania's accesses
- *
- * @param integer $default
- * @param integer $min_access Minimum access level to display
- * @return string
- */
-function titania_access_select($default = false, $min_access = TITANIA_ACCESS_PUBLIC)
-{
-	if (titania::$access_level == TITANIA_ACCESS_PUBLIC)
-	{
-		return '';
-	}
-
-	$access_types = array(
-		TITANIA_ACCESS_TEAMS 	=> 'ACCESS_TEAMS',
-		TITANIA_ACCESS_AUTHORS 	=> 'ACCESS_AUTHORS',
-		TITANIA_ACCESS_PUBLIC 	=> 'ACCESS_PUBLIC',
-	);
-
-	if ($default === false)
-	{
-		$default = TITANIA_ACCESS_PUBLIC;
-	}
-
-	$s_options = '';
-
-	foreach ($access_types as $type => $lang_key)
-	{
-		if (titania::$access_level > $type || $min_access < $type)
-		{
-			continue;
-		}
-
-		$selected = ($default == $type) ? ' selected="selected"' : '';
-
-		$s_options .= '<option value="' . $type . '"' . $selected . '>' . phpbb::$user->lang[$lang_key] . '</option>';
-	}
-
-	return $s_options;
-}
-
-/**
 * Get the author user_ids from the list of usernames
 *
 * @param string $list the list of usernames (after executed it will be an array of the user_ids)
