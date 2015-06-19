@@ -127,6 +127,20 @@ services:
         tags:
             - { name: event.listener }
 
+    phpbb.titania.message:
+        class: phpbb\titania\message\message
+        scope: prototype
+        arguments:
+             - @config
+             - @request
+             - @user
+             - @template
+             - @captcha.factory
+             - @phpbb.titania.attachment.uploader
+             - @phpbb.titania.access
+             - %core.root_path%
+             - %core.php_ext%
+
     phpbb.titania.mod.prevalidator:
         class: phpbb\titania\contribution\mod\prevalidator
         arguments:
