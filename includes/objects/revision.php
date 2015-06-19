@@ -62,6 +62,9 @@ class titania_revision extends titania_database_object
 	/** @var \phpbb\titania\subscriptions */
 	protected $subscriptions;
 
+	/** @var \phpbb\titania\cache\service */
+	protected $cache;
+
 	public function __construct($contrib, $revision_id = false)
 	{
 		// Configure object properties
@@ -97,6 +100,7 @@ class titania_revision extends titania_database_object
 		$this->user = phpbb::$user;
 		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
 		$this->translations = phpbb::$container->get('phpbb.titania.attachment.operator');
+		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);

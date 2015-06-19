@@ -99,6 +99,9 @@ class titania_contribution extends titania_message_object
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
+	/** @var \phpbb\titania\cache\service */
+	protected $cache;
+
 	/**
 	* @var Contribution type object
 	*/
@@ -161,6 +164,7 @@ class titania_contribution extends titania_message_object
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->path_helper = phpbb::$container->get('path_helper');
 		$this->screenshots = phpbb::$container->get('phpbb.titania.attachment.operator');
+		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
