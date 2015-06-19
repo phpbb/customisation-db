@@ -54,6 +54,7 @@ services:
 
     phpbb.titania.controller.author:
         class: phpbb\titania\controller\author
+        scope: prototype
         arguments:
             - @auth
             - @config
@@ -66,6 +67,7 @@ services:
             - @phpbb.titania.cache
             - @phpbb.titania.access
             - @phpbb.titania.tracking
+            - @phpbb.titania.message
 
     phpbb.titania.controller.download:
         class: phpbb\titania\controller\download
@@ -159,9 +161,11 @@ services:
             - @phpbb.titania.access
             - @phpbb.titania.tracking
             - @phpbb.titania.sort
+            - @phpbb.titania.message
 
     phpbb.titania.controller.contrib.manage:
         class: phpbb\titania\controller\contribution\manage
+        scope: prototype
         arguments:
             - @auth
             - @config
@@ -174,9 +178,11 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.access
+            - @phpbb.titania.message
 
     phpbb.titania.controller.contrib.revision:
         class: phpbb\titania\controller\contribution\revision
+        scope: prototype
         arguments:
             - @auth
             - @config
@@ -190,6 +196,7 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.access
             - @phpbb.titania.subscriptions
+            - @phpbb.titania.message
 
     phpbb.titania.controller.contrib.revision.edit:
         class: phpbb\titania\controller\contribution\revision_edit
@@ -237,6 +244,7 @@ services:
 
     phpbb.titania.controller.manage.queue.item:
         class: phpbb\titania\controller\manage\queue\item
+        scope: prototype
         arguments:
             - @auth
             - @config
@@ -249,6 +257,7 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.tags
+            - @phpbb.titania.message
 
     phpbb.titania.controller.manage.queue.tools:
         class: phpbb\titania\controller\manage\queue\tools
@@ -276,6 +285,7 @@ services:
 
     phpbb.titania.controller.manage.categories:
         class: phpbb\titania\controller\manage\categories
+        scope: prototype
         arguments:
             - @auth
             - @config
@@ -287,6 +297,7 @@ services:
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
+            - @phpbb.titania.message
 
     phpbb.titania.controller.manage.queue_discussion:
         class: phpbb\titania\controller\manage\queue_discussion

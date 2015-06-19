@@ -21,6 +21,9 @@ class faq extends base
 	/** @var \phpbb\titania\sort */
 	protected $sort;
 
+	/** @var \phpbb\titania\message\message */
+	protected $message;
+
 	/** @var \titania_faq */
 	protected $faq;
 
@@ -46,13 +49,15 @@ class faq extends base
 	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\tracking $tracking
 	 * @param \phpbb\titania\sort $sort
+	 * @param \phpbb\titania\message\message $message
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort, \phpbb\titania\message\message $message)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
 
 		$this->tracking = $tracking;
 		$this->sort = $sort;
+		$this->message = $message;
 	}
 
 	/**
@@ -243,12 +248,14 @@ class faq extends base
 	protected function common_post()
 	{
 		// Load the message object
-		$this->message = new \titania_message($this->faq);
-		$this->message->set_auth(array(
-			'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
-			'attachments'	=> true,
-		));
+		$this->message
+			->set_parent($this->faq)
+			->set_auth(array(
+				'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
+				'attachments'	=> true,
+			))
+		;
 
 		// Submit check...handles running $this->faq->post_data() if required
 		$submit = $this->message->submit_check();

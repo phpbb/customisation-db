@@ -27,6 +27,9 @@ class revision extends base
 	/** @var \phpbb\titania\subscriptions */
 	protected $subscriptions;
 
+	/** @var \phpbb\titania\message\message */
+	protected $message;
+
 	protected $attachment;
 
 	/** @var \phpbb\titania\entity\package */
@@ -56,12 +59,14 @@ class revision extends base
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\subscriptions $subscriptions
+	 * @param \phpbb\titania\message\message $message
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\subscriptions $subscriptions, \phpbb\titania\message\message $message)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
 
 		$this->subscriptions = $subscriptions;
+		$this->message = $message;
 	}
 
 	/**
@@ -563,23 +568,25 @@ class revision extends base
 	/**
 	* Get queue message object.
 	*
-	* @return \titania_message
+	* @return \phpbb\titania\message\message
 	*/
 	protected function get_message()
 	{
-		$message = new \titania_message($this->queue);
-		$message->set_auth(array(
-			'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
-		));
-		$message->set_settings(array(
-			'display_error'		=> false,
-			'display_subject'	=> false,
-		));
+		$this->message
+			->set_parent($this->queue)
+			->set_auth(array(
+				'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
+			))
+			->set_settings(array(
+				'display_error'		=> false,
+				'display_subject'	=> false,
+			))
+		;
 
-		$this->queue->post_data($message);
+		$this->queue->post_data($this->message);
 
-		return $message;
+		return $this->message;
 	}
 
 	/**

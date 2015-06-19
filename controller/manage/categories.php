@@ -15,10 +15,35 @@ namespace phpbb\titania\controller\manage;
 
 class categories extends base
 {
+	/** @var \phpbb\titania\message\message */
+	protected $message;
+
 	/** @var \titania_category */
 	protected $category;
 
 	const ROOT_CATEGORY = 0;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\message\message $message
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\message\message $message)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+
+		$this->message = $message;
+	}
 
 	public function list_categories($id)
 	{
@@ -131,17 +156,19 @@ class categories extends base
 	*/
 	protected function common_post($category, $old_settings = false)
 	{
-		$message = new \titania_message($category);
-		$message->set_auth(array(
-			'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
-		));
-		$message->set_settings(array(
-			'display_error'		=> false,
-			'display_subject'	=> false,
-		));
+		$this->message
+			->set_parent($category)
+			->set_auth(array(
+				'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
+			))
+			->set_settings(array(
+				'display_error'		=> false,
+				'display_subject'	=> false,
+			))
+		;
 
-		$category->post_data($message);
+		$category->post_data($this->message);
 		$error = array();
 
 		if ($this->request->is_set_post('submit'))
@@ -154,7 +181,7 @@ class categories extends base
 			}
 			$error = $category->validate();
 
-			if (($form_error = $message->validate_form_key()) !== false)
+			if (($form_error = $this->message->validate_form_key()) !== false)
 			{
 				$error[] = $form_error;
 			}
@@ -172,7 +199,7 @@ class categories extends base
 
 		// Generate data for category type dropdown box
 		$this->display->generate_type_select($category->category_type);
-		$message->display();
+		$this->message->display();
 
 		$this->template->assign_vars(array(
 			'ERROR_MSG'						=> (!empty($error)) ? implode('<br />', $error) : '',

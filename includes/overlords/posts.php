@@ -198,7 +198,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$post_object = new titania_post($topic->topic_type, $topic);
 		if ($post_object->acl_get('reply'))
 		{
-			$message = new titania_message($topic);
+			$message = phpbb::$container->get('phpbb.titania.message');
+			$message->set_parent($topic);
 			$message->display_quick_reply();
 		}
 

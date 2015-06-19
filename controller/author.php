@@ -50,6 +50,9 @@ class author
 	/** @var \phpbb\titania\tracking */
 	protected $tracking;
 
+	/** @var \phpbb\titania\message\message */
+	protected $message;
+
 	/** @var \titania_author */
 	protected $author;
 
@@ -70,8 +73,9 @@ class author
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param access $access
 	 * @param \phpbb\titania\tracking $tracking
+	 * @param \phpbb\titania\message\message
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\message\message $message)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -84,6 +88,7 @@ class author
 		$this->cache = $cache;
 		$this->access = $access;
 		$this->tracking = $tracking;
+		$this->message = $message;
 
 		// Add common lang
 		$this->user->add_lang_ext('phpbb/titania', 'authors');
@@ -257,19 +262,21 @@ class author
 		}
 
 		$error = array();
-		$message = new \titania_message($this->author);
-		$message->set_auth(array(
-			'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
-		));
-		$message->set_settings(array(
-			'display_error'		=> false,
-			'display_subject'	=> false,
-		));
+		$this->message
+			->set_parent($this->author)
+			->set_auth(array(
+				'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
+			))
+			->set_settings(array(
+				'display_error'		=> false,
+				'display_subject'	=> false,
+			))
+		;
 
 		if ($this->request->is_set_post('submit'))
 		{
-			$this->author->post_data($message);
+			$this->author->post_data($this->message);
 
 			$this->author->__set_array(array(
 				'author_realname'	=> $this->request->variable('realname', '', true),
@@ -278,7 +285,7 @@ class author
 
 			$error = $this->author->validate();
 
-			if (($validate_form_key = $message->validate_form_key()) !== false)
+			if (($validate_form_key = $this->message->validate_form_key()) !== false)
 			{
 				$error[] = $validate_form_key;
 			}
@@ -291,7 +298,7 @@ class author
 			}
 		}
 
-		$message->display();
+		$this->message->display();
 
 		$this->template->assign_vars(array(
 			'S_POST_ACTION'				=> $this->author->get_url('manage'),
@@ -438,21 +445,23 @@ class author
 	* Set up message object for contribution description.
 	*
 	* @param \titania_contribution
-	* @return \titania_message
+	* @return \phpbb\titania\message\message
 	*/
 	protected function setup_message($contrib)
 	{
-		$message = new \titania_message($contrib);
-		$message->set_auth(array(
-			'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
-		));
-		$message->set_settings(array(
-			'display_error'		=> false,
-			'display_subject'	=> false,
-			'subject_name'		=> 'name',
-		));
+		$this->message
+			->set_parent($contrib)
+			->set_auth(array(
+				'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
+			))
+			->set_settings(array(
+				'display_error'		=> false,
+				'display_subject'	=> false,
+				'subject_name'		=> 'name',
+			))
+		;
 
-		return $message;
+		return $this->message;
 	}
 }

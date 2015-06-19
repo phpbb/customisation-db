@@ -18,6 +18,9 @@ class item extends \phpbb\titania\controller\manage\base
 	/** @var \phpbb\titania\tags */
 	protected $tags;
 
+	/** @var \phpbb\titania\message\message */
+	protected $message;
+
 	/** @var int */
 	protected $id;
 
@@ -47,12 +50,14 @@ class item extends \phpbb\titania\controller\manage\base
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\tags $tags
+	 * @param \phpbb\titania\message\message $message
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tags $tags)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tags $tags, \phpbb\titania\message\message $message)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
 
 		$this->tags = $tags;
+		$this->message = $message;
 	}
 
 	/**
@@ -496,20 +501,22 @@ class item extends \phpbb\titania\controller\manage\base
 	* Get message object.
 	*
 	* @param mixed $object		Parent object receiving the message.
-	* @return \titania_message
+	* @return \phpbb\titania\message\message
 	*/
 	protected function get_message($object)
 	{
-		$message = new \titania_message($object);
-		$message->set_auth(array(
-			'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
-		));
-		$message->set_settings(array(
-			'display_subject'	=> false,
-		));
+		$this->message
+			->set_parent($object)
+			->set_auth(array(
+				'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
+			))
+			->set_settings(array(
+				'display_subject'	=> false,
+			))
+		;
 
-		return $message;
+		return $this->message;
 	}
 
 	/**
