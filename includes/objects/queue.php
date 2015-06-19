@@ -463,7 +463,7 @@ class titania_queue extends titania_message_object
 			'NAME'		=> $contrib->contrib_name,
 			'U_VIEW'	=> $contrib->get_url(),
 		);
-		titania_subscriptions::send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
+		$this->subscriptions->send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
