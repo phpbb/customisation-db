@@ -163,7 +163,7 @@ class faq extends base
 		$this->template->assign_vars(array(
 			'S_LIST'					=> true,
 
-			'U_CANONICAL'				=> $sort->build_canonical(),
+			'U_CANONICAL'				=> $this->sort->build_canonical(),
 			'U_CREATE_FAQ'				=> ($auth['create']) ? $this->faq->get_url('create') : false,
 		));
 		$this->assign_vars();
