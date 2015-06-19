@@ -44,12 +44,14 @@ class titania_revision extends titania_database_object
 	public $contrib = false;
 
 	/**
-	* phpBB versions, translations
+	* phpBB versions
 	*
 	* @var mixed
 	*/
 	public $phpbb_versions = array();
-	public $translations = array();
+
+	/** @var \phpbb\titania\attachment\operator */
+	protected $translations;
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
@@ -94,6 +96,7 @@ class titania_revision extends titania_database_object
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->user = phpbb::$user;
 		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
+		$this->translations = phpbb::$container->get('phpbb.titania.attachment.operator');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -134,6 +137,18 @@ class titania_revision extends titania_database_object
 	}
 
 	/**
+	 * Set revision translations.
+	 *
+	 * @param array $translations
+	 * @return $this
+	 */
+	public function set_translations(array $translations)
+	{
+		$this->translations->clear_all()->store($translations);
+		return $this;
+	}
+
+	/**
 	* Load the phpBB branches we've selected for this revision
 	* Stored in $this->phpbb_versions
 	*/
@@ -155,15 +170,10 @@ class titania_revision extends titania_database_object
 	*/
 	public function load_translations()
 	{
-		$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . '
-			WHERE object_type = ' . TITANIA_TRANSLATION . '
-				AND object_id = ' . $this->revision_id;
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$this->translations[] = $row;
-		}
-		phpbb::$db->sql_freeresult($result);
+		$this->translations
+			->configure(TITANIA_TRANSLATION, $this->revision_id)
+			->load()
+		;
 	}
 
 	/**
@@ -228,7 +238,6 @@ class titania_revision extends titania_database_object
 			'BBC_DEMO'				=> $this->revision_bbc_demo,
 			'INSTALL_LEVEL'			=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
 			'DOWNLOADS'				=> isset($this->download_count) ? $this->download_count : 0,
-			'HALF_TRANSLATIONS'		=> ceil(sizeof($this->translations) / 2),
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_COLORIZEIT'      => $url_colorizeit,
@@ -255,13 +264,11 @@ class titania_revision extends titania_database_object
 		}
 
 		// Output translations
-		if (sizeof($this->translations))
+		if ($this->translations->get_count())
 		{
-			$translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
-			$translations->store_attachments($this->translations);
 			$message = false;
 
-			$translations->parse_attachments($message, false, false, $tpl_block . '.translations', '');
+			$this->translations->parse_attachments($message, false, false, $tpl_block . '.translations', '');
 		}
 
 		// Hooks

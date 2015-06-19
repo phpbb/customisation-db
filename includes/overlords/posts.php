@@ -289,10 +289,13 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 		$cp = phpbb::$container->get('profilefields.manager');
 		$post = new titania_post($topic->topic_type, $topic);
-		$attachments = new titania_attachment($topic->topic_type, false);
+		$attachments = phpbb::$container->get('phpbb.titania.attachment.operator');
 
 		// Grab all attachments
-		$attachments_set = $attachments->load_attachments_set($post_ids);
+		$attachments_set = $attachments
+			->configure($topic->topic_type, false)
+			->load_attachments_set($post_ids)
+		;
 
 		// Loop de loop
 		$prev_post_time = 0;
@@ -300,11 +303,11 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		{
 			$post->__set_array(self::$posts[$post_id]);
 
-			$attachments->clear_attachments();
+			$attachments->clear_all();
 
 			if (isset($attachments_set[$post_id]))
 			{
-				$attachments->store_attachments($attachments_set[$post_id]);
+				$attachments->store($attachments_set[$post_id]);
 			}
 
 			// Parse attachments before outputting the message

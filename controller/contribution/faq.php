@@ -21,6 +21,9 @@ class faq extends base
 	/** @var \phpbb\titania\sort */
 	protected $sort;
 
+	/** @var \phpbb\titania\attachment\operator */
+	protected $attachments;
+
 	/** @var \phpbb\titania\message\message */
 	protected $message;
 
@@ -49,14 +52,16 @@ class faq extends base
 	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\tracking $tracking
 	 * @param \phpbb\titania\sort $sort
+	 * @param \phpbb\titania\attachment\operator
 	 * @param \phpbb\titania\message\message $message
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort, \phpbb\titania\message\message $message)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort, \phpbb\titania\attachment\operator $attachments, \phpbb\titania\message\message $message)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
 
 		$this->tracking = $tracking;
 		$this->sort = $sort;
+		$this->attachments = $attachments;
 		$this->message = $message;
 	}
 
@@ -88,9 +93,10 @@ class faq extends base
 		$message = $this->faq->generate_text_for_display();
 
 		// Grab attachments
-		$attachments = new \titania_attachment(TITANIA_FAQ, $this->id);
-		$attachments->load_attachments();
-		$parsed_attachments = $attachments->parse_attachments($message);
+		$this->attachments
+			->configure(TITANIA_FAQ, $this->id)
+			->load();
+		$parsed_attachments = $this->attachments->parse_attachments($message);
 
 		foreach ($parsed_attachments as $attachment)
 		{

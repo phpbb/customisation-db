@@ -26,10 +26,10 @@ class manage extends base
 	/** @var \phpbb\titania\message\message */
 	protected $message;
 
-	/** @var \titania_attachment */
-	protected $screenshot;
+	/** @var \phpbb\titania\attachment\uploader */
+	protected $screenshots;
 
-	/** @var \titania_attachment */
+	/** @var \phpbb\titania\attachment\uploader */
 	protected $colorizeit_sample;
 
 	/** @var bool */
@@ -59,12 +59,16 @@ class manage extends base
 	 * @param \phpbb\titania\display $display
 	 * @param access $access
 	 * @param \phpbb\titania\message\message $message
+	 * @param \phpbb\titania\attachment\uploader $screenshots
+	 * @param \phpbb\titania\attachment\uploader $colorizeit_sample
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\message\message $message)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\message\message $message, \phpbb\titania\attachment\uploader $screenshots, \phpbb\titania\attachment\uploader $colorizeit_sample)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
 
 		$this->message = $message;
+		$this->screenshots = $screenshots;
+		$this->colorizeit_sample = $colorizeit_sample;
 	}
 
 	/**
@@ -116,9 +120,9 @@ class manage extends base
 
 		$submit	= $this->request->is_set_post('submit');
 		$preview = $this->request->is_set_post('preview');
-		$error = $this->screenshot->error;
+		$error = $this->screenshots->get_errors();
 
-		if ($preview || $submit || $this->screenshot->uploaded)
+		if ($preview || $submit || $this->screenshots->uploaded)
 		{
 			$this->settings = array_merge($this->settings, array(
 				'categories'		=> $this->request->variable('contrib_category', array(0 => 0)),
@@ -145,7 +149,7 @@ class manage extends base
 		if ($this->use_colorizeit)
 		{
 			$this->load_colorizeit();
-			$error = array_merge($error, $this->colorizeit_sample->error);
+			$error = array_merge($error, $this->colorizeit_sample->get_errors());
 
 			if ($this->colorizeit_sample->uploaded)
 			{
@@ -267,18 +271,19 @@ class manage extends base
 			if ($action == 'delete_attach')
 			{
 				// The delete() method will check if the attachment is part of the screenshot/clr_sample array
-				$this->screenshot->delete($attach_id);
-				if (isset($this->colorizeit_sample))
+				$this->screenshots->get_operator()->delete(array($attach_id));
+				if ($this->use_colorizeit)
 				{
-					$this->colorizeit_sample->delete($attach_id);
+					$this->colorizeit_sample->get_operator()->delete(array($attach_id));
 				}
 			}
 			else if ($action == 'attach_up' || $action == 'attach_down')
 			{
 				$move_attach = ($action == 'attach_up') ? 'up' : 'down';
-				$original_order = $this->screenshot->generate_order();
-				$this->screenshot->generate_order(false, $attach_id, $move_attach);
-				$this->screenshot->submit(access::PUBLIC_LEVEL, $original_order);
+				$this->screenshots->get_operator()
+					->change_order($attach_id, $move_attach)
+					->submit()
+				;
 			}
 		}
 	}
@@ -347,9 +352,11 @@ class manage extends base
 	*/
 	protected function load_screenshot()
 	{
-		$this->screenshot = new \titania_attachment(TITANIA_SCREENSHOT, $this->contrib->contrib_id);
-		$this->screenshot->load_attachments(false, false ,true);
-		$this->screenshot->upload(175, true);
+		$this->screenshots
+			->configure(TITANIA_SCREENSHOT, $this->contrib->contrib_id, false, 175, true)
+			->get_operator()->load()
+		;
+		$this->screenshots->handle_form_action();
 	}
 
 	/**
@@ -359,9 +366,10 @@ class manage extends base
 	*/
 	protected function load_colorizeit()
 	{
-		$this->colorizeit_sample = new \titania_attachment(TITANIA_CLR_SCREENSHOT, $this->contrib->contrib_id);
-		$this->colorizeit_sample->load_attachments();
-		$this->colorizeit_sample->upload();
+		$this->colorizeit_sample
+			->configure(TITANIA_CLR_SCREENSHOT, $this->contrib->contrib_id)
+			->handle_form_action()
+		;
 	}
 
 	/**
@@ -394,12 +402,12 @@ class manage extends base
 	protected function preview()
 	{
 		$this->message->preview();
-		$attach_order = $this->request->variable('attach_order', array(0));
+		$attach_order = $this->request->variable('attach_order', array(0 => 0));
 
 		// Preserve the attachment order when preview is hit just in case it has been modified
 		if (!empty($attach_order))
 		{
-			$this->screenshot->generate_order(array_flip($attach_order));
+			$this->screenshots->get_operator()->sort(true, $attach_order, true);
 		}
 	}
 
@@ -474,12 +482,11 @@ class manage extends base
 	*/
 	protected function submit_screenshots()
 	{
-		$original_order = $this->screenshot->generate_order();
-		$new_order = $this->request->variable('attach_order', array(0));
-		$this->screenshot->generate_order(array_flip($new_order));
-
-		// Submit screenshots
-		$this->screenshot->submit(access::PUBLIC_LEVEL, $original_order);
+		$new_order = $this->request->variable('attach_order', array(0 => 0));
+		$this->screenshots->get_operator()
+			->sort(true, $new_order, true)
+			->submit()
+		;
 	}
 
 	/**
@@ -492,7 +499,7 @@ class manage extends base
 		// ColorizeIt stuff
 		if ($this->use_colorizeit)
 		{
-			$this->colorizeit_sample->submit();
+			$this->colorizeit_sample->get_operator()->submit();
 			$contrib_clr_colors = $this->request->variable('change_colors', $this->contrib->contrib_clr_colors);
 			$this->contrib->__set('contrib_clr_colors', $contrib_clr_colors);
 		}
@@ -616,7 +623,7 @@ class manage extends base
 
 			'CONTRIB_PERMALINK'			=> $this->settings['permalink'],
 			'CONTRIB_TYPE'				=> $this->contrib->contrib_type,
-			'SCREENSHOT_UPLOADER'		=> ($this->auth->acl_get('u_titania_contrib_submit')) ? $this->screenshot->parse_uploader('posting/attachments/simple.html', 'titania_attach_order_compare') : false,
+			'SCREENSHOT_UPLOADER'		=> ($this->auth->acl_get('u_titania_contrib_submit')) ? $this->screenshots->parse_uploader('posting/attachments/simple.html', true) : false,
 			'ERROR_MSG'					=> (!empty($error)) ? implode('<br />', $error) : false,
 			'ACTIVE_COAUTHORS'			=> implode("\n", $coauthors['active']),
 			'NONACTIVE_COAUTHORS'		=> implode("\n", $coauthors['nonactive']),
@@ -646,7 +653,7 @@ class manage extends base
 
 		if ($this->contrib->has_colorizeit(true) || is_array($this->contrib->clr_sample))
 		{
-			$sample_url = $this->colorizeit_sample->get_url($this->contrib->clr_sample['attachment_id']);
+			$sample_url = $this->colorizeit_sample->get_operator()->get($this->contrib->clr_sample['attachment_id'])->get_url();
 			$test_sample = 'http://' . $this->ext_config->colorizeit_url .
 				'/testsample.html?sub=' . $this->ext_config->colorizeit . '&amp;sample=' . urlencode($sample_url);
 		}

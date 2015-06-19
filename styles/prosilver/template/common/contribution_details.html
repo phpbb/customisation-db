@@ -195,6 +195,7 @@
 	</div>
 <!-- ENDIF -->
 
+{% set SCREENSHOT_COUNT = loops.screenshots|length %}
 <!-- IF (SCREENSHOT_COUNT > 1) or .revisions or U_NEW_REVISION -->
 <div class="container">
 	<div class="inner">
@@ -260,6 +261,7 @@
 				<ul class="topiclist cplist translations two-long-columns">
 					<!-- BEGIN revisions -->
 						<!-- IF .revisions.translations -->
+						{% set HALF_TRANSLATIONS = loops.revisions.translations|length / 2 %}
 						<li class="row bg1">
 							<span class="toggle icon-expand" style="display: none;"></span>
 							<dl>
@@ -271,7 +273,7 @@
 											<ul>
 										<!-- ENDIF -->
 												<li><a class="arrow-left" href="{revisions.translations.U_DOWNLOAD_LINK}" title="{revisions.translations.FILESIZE} {revisions.translations.SIZE_LANG} &bull; {revisions.translations.L_DOWNLOAD_COUNT}">{revisions.translations.DOWNLOAD_NAME}</a></li>
-										<!-- IF not revisions.translations.S_FIRST_ROW and not revisions.translations.S_LAST_ROW and (revisions.HALF_TRANSLATIONS == (revisions.translations.S_ROW_COUNT + 1)) -->
+										<!-- IF not revisions.translations.S_FIRST_ROW and not revisions.translations.S_LAST_ROW and (HALF_TRANSLATIONS == (revisions.translations.S_ROW_COUNT + 1)) -->
 											</ul>
 										</div>
 										<div class="column2">

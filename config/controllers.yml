@@ -161,6 +161,7 @@ services:
             - @phpbb.titania.access
             - @phpbb.titania.tracking
             - @phpbb.titania.sort
+            - @phpbb.titania.attachment.operator
             - @phpbb.titania.message
 
     phpbb.titania.controller.contrib.manage:
@@ -179,6 +180,8 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.access
             - @phpbb.titania.message
+            - @phpbb.titania.attachment.uploader
+            - @phpbb.titania.attachment.uploader
 
     phpbb.titania.controller.contrib.revision:
         class: phpbb\titania\controller\contribution\revision
@@ -195,6 +198,7 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.access
+            - @phpbb.titania.attachment.uploader
             - @phpbb.titania.subscriptions
             - @phpbb.titania.message
 

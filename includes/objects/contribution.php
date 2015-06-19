@@ -12,6 +12,7 @@
 */
 
 use phpbb\titania\versions;
+use phpbb\titania\attachment\attachment;
 use phpbb\titania\message\message;
 use phpbb\titania\url\url;
 
@@ -62,6 +63,8 @@ class titania_contribution extends titania_message_object
 	 * @var titania_rating/titania_attachment
 	 */
 	public $rating;
+
+	/** @var \phpbb\titania\attachment\operator */
 	public $screenshots;
 
 	/**
@@ -157,6 +160,7 @@ class titania_contribution extends titania_message_object
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->path_helper = phpbb::$container->get('path_helper');
+		$this->screenshots = phpbb::$container->get('phpbb.titania.attachment.operator');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -338,13 +342,15 @@ class titania_contribution extends titania_message_object
 	 */
 	public function get_screenshots()
 	{
-		if ($this->screenshots)
+		if ($this->screenshots->get_object_type() !== null)
 		{
 			return $this->screenshots;
 		}
 
-		$this->screenshots = new titania_attachment(TITANIA_SCREENSHOT, $this->contrib_id);
-		$this->screenshots->load_attachments(false, false, true);
+		$this->screenshots
+			->configure(TITANIA_SCREENSHOT, $this->contrib_id)
+			->load()
+		;
 
 		return $this->screenshots;
 	}
@@ -742,7 +748,7 @@ class titania_contribution extends titania_message_object
 				{
 					$revision->__set_array($row);
 					$revision->phpbb_versions = (isset($row['phpbb_versions'])) ? $row['phpbb_versions'] : array();
-					$revision->translations = (isset($row['translations'])) ? $row['translations'] : array();
+					$revision->translations = (isset($row['translations'])) ? $revision->set_translations($row['translations']) : array();
 					$revision->display('revisions', $this->type->acl_get('view'), $this->options['all_versions']);
 					$phpbb_versions = array_merge($phpbb_versions, $revision->phpbb_versions);
 				}
@@ -772,21 +778,10 @@ class titania_contribution extends titania_message_object
 			}
 
 			// Display Screenshots
-			if ($this->screenshots)
+			if ($this->screenshots->get_count())
 			{
-				$screenshots = $this->screenshots->get_attachments();
-				$indices = array_keys($screenshots);
-				$custom_sort = 'titania_attach_order_compare';
 				$message = false;
-
-				if ((sizeof($indices) > 1))
-				{
-					// If attachment_order hasn't been filled, then we fall back to the default behavior of sorting by attachment_id. 
-					$custom_sort = ($screenshots[$indices[1]]['attachment_order'] >= 1) ? $custom_sort : false;
-				}
-
-				$this->screenshots->parse_attachments($message, false, false, 'screenshots', $custom_sort);
-				unset($screenshots);
+				$this->screenshots->parse_attachments($message, false, false, 'screenshots', true);
 			}
 
 			// Display categories
@@ -814,7 +809,6 @@ class titania_contribution extends titania_message_object
 	*/
 	public function assign_download_details()
 	{
-		$file = new titania_attachment(TITANIA_CONTRIB);
 		$u_colorizeit_base = '';
 
 		// ColorizeIt stuff
@@ -869,7 +863,7 @@ class titania_contribution extends titania_message_object
 				'PHPBB_VERSION'	=> $vendor_version,
 				'INSTALL_LEVEL'	=> $install_level,
 				'INSTALL_TIME'	=> $install_time,
-				'U_DOWNLOAD'	=> ($download['attachment_id']) ? $file->get_url($download['attachment_id']) : '',
+				'U_DOWNLOAD'	=> ($download['attachment_id']) ? $this->controller_helper->route('phpbb.titania.download', array('id' => $download['attachment_id'])) : '',
 				'U_COLORIZEIT'	=> $u_colorizeit,
 			));
 		}
