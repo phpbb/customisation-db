@@ -12,6 +12,7 @@
 */
 
 use phpbb\titania\access;
+use phpbb\titania\message\message;
 
 /**
 * Class to abstract titania queue
@@ -196,7 +197,7 @@ class titania_queue extends titania_message_object
 		if ($this->queue_notes)
 		{
 			$queue_notes = $this->queue_notes;
-			titania_decode_message($queue_notes, $this->queue_notes_uid);
+			message::decode($queue_notes, $this->queue_notes_uid);
 			$post->post_text .= '[quote=&quot;' . users_overlord::get_user($this->submitter_user_id, 'username', true) . '&quot;]' . $queue_notes . "[/quote]\n";
 		}
 
@@ -204,7 +205,7 @@ class titania_queue extends titania_message_object
 		if ($this->mpv_results)
 		{
 			$mpv_results = $this->mpv_results;
-			titania_decode_message($mpv_results, $this->mpv_results_uid);
+			message::decode($mpv_results, $this->mpv_results_uid);
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_PV'] . '&quot;]' . $mpv_results . "[/quote]\n";
 		}
 
@@ -411,7 +412,7 @@ class titania_queue extends titania_message_object
 		$contrib_release_topic_id = $contrib->get_release_topic_id($branch);
 
 		$notes = $this->validation_notes;
-		titania_decode_message($notes, $this->validation_notes_uid);
+		message::decode($notes, $this->validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_APPROVED'], $revision->revision_version, $notes);
 
 		// Replace empty quotes if there are no notes
@@ -491,7 +492,7 @@ class titania_queue extends titania_message_object
 		$revision = $this->get_revision();
 
 		$notes = $this->validation_notes;
-		titania_decode_message($notes, $this->validation_notes_uid);
+		message::decode($notes, $this->validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_DENIED'], $revision->revision_version, $notes);
 
 		// Replace empty quotes if there are no notes
@@ -550,7 +551,7 @@ class titania_queue extends titania_message_object
 
 		// Message
 		$notes = $this->validation_notes;
-		titania_decode_message($notes, $this->validation_notes_uid);
+		message::decode($notes, $this->validation_notes_uid);
 		if ($approve)
 		{
 			$message = $contrib->type->validation_message_approve;

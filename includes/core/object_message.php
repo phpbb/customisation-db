@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\message\message;
+
 /**
  * Class providing basic interaction with the message tool
  * This extension expects you use at least message, message_uid, message_bitfield, and message_options fields.  If you do not use at least all of those do not use this extension
@@ -100,7 +102,7 @@ abstract class titania_message_object extends titania_database_object
 		$message = $message_uid = $message_bitfield = $message_options = false;
 		$this->get_message_fields($message, $message_uid, $message_bitfield, $message_options);
 
-		titania_decode_message($message, $message_uid);
+		message::decode($message, $message_uid);
 
 		$for_edit = array_merge($for_edit, array(
 			'allow_bbcode'	=> ($message_options & OPTION_FLAG_BBCODE) ? 1 : 0,

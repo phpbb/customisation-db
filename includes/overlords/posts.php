@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\message\message;
+
 class posts_overlord
 {
 	/**
@@ -311,7 +313,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			// Prepare message text for use in javascript
 			$message_decoded = censor_text($post->post_text);
-			titania_decode_message($message_decoded, $post->post_text_uid);
+			message::decode($message_decoded, $post->post_text_uid);
 			$message_decoded = bbcode_nl2br($message_decoded);
 
 			// Build CP Fields

@@ -19,6 +19,8 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+use phpbb\titania\message\message;
+
 //define('TEST_INSTALLATION', true);
 
 titania::$hook->register_ary('phpbb_com_', array(
@@ -101,7 +103,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			$post_text = $row['post_text'];
 
 			phpbb_com_handle_attachments($temp_post, $post_text);
-			titania_decode_message($post_text, $row['post_text_uid']);
+			message::decode($post_text, $row['post_text_uid']);
 
 			$post_text .= "\n\n" . $path_helper->strip_url_params($temp_post->get_url(), 'sid');
 
@@ -207,7 +209,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	}
 
 	$description = $contrib->contrib_desc;
-	titania_decode_message($description, $contrib->contrib_desc_uid);
+	message::decode($description, $contrib->contrib_desc_uid);
 	$download = current($contrib->download);
 
 	$post_text = sprintf(phpbb::$user->lang[$lang_var],
@@ -224,7 +226,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	$post_text .= "\n\n" . $post_object->post_text;
 
 	phpbb_com_handle_attachments($post_object, $post_text);
-	titania_decode_message($post_text, $post_object->post_text_uid);
+	message::decode($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
 
@@ -266,7 +268,7 @@ function phpbb_com_titania_post_post($hook, &$post_object)
 	$post_text = $post_object->post_text;
 
 	phpbb_com_handle_attachments($post_object, $post_text);
-	titania_decode_message($post_text, $post_object->post_text_uid);
+	message::decode($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
 
@@ -306,7 +308,7 @@ function phpbb_com_titania_post_edit($hook, &$post_object)
 	$post_text = $post_object->post_text;
 
 	phpbb_com_handle_attachments($post_object, $post_text);
-	titania_decode_message($post_text, $post_object->post_text_uid);
+	message::decode($post_text, $post_object->post_text_uid);
 
 	$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
 

@@ -12,6 +12,7 @@
 */
 
 use phpbb\titania\versions;
+use phpbb\titania\message\message;
 use phpbb\titania\url\url;
 
 /**
@@ -1044,7 +1045,7 @@ class titania_contribution extends titania_message_object
 			}
 
 			$contrib_description = $this->contrib_desc;
-			titania_decode_message($contrib_description, $this->contrib_desc_uid);
+			message::decode($contrib_description, $this->contrib_desc_uid);
 
 			foreach ($this->download as $download)
 			{

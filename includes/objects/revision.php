@@ -12,6 +12,7 @@
 */
 
 use phpbb\titania\versions;
+use phpbb\titania\message\message;
 
 /**
 * Class to titania revision.
@@ -504,8 +505,8 @@ class titania_revision extends titania_database_object
 		// Add the MPV results
 		if ($queue->mpv_results)
 		{
-			titania_decode_message($queue->mpv_results, $queue->mpv_results_uid);
-			$repack_message .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_PV'] . '&quot;]' . $queue->mpv_results . "[/quote]\n";
+			message::decode($queue->mpv_results, $queue->mpv_results_uid);
+			$repack_message .= '[quote=&quot;' . $this->user->lang['VALIDATION_PV'] . '&quot;]' . $queue->mpv_results . "[/quote]\n";
 		}
 
 		// Add the Automod results

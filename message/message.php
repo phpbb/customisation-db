@@ -722,4 +722,30 @@ class message
 	{
 		return $this->uploader->get_plupload_response_data();
 	}
+
+	/**
+	 * Decode a message from the database (properly)
+	 *
+	 * @param string $message
+	 * @param mixed $bbcode_uid
+	 */
+	public static function decode(&$message, $bbcode_uid = '')
+	{
+		decode_message($message, $bbcode_uid);
+
+		// We have to do all sorts of crap because decode_message doesn't properly
+		// decode a message for reinserting into the database
+
+		// Replace &nbsp; with spaces - otherwise a number of issues happen...
+		$message = str_replace('&nbsp;', ' ', $message);
+
+		// Decode HTML entities, else bbcode reparsing will fail
+		$message = html_entity_decode($message, ENT_QUOTES);
+
+		// With magic_quotes_gpc on slashes are stripped too many times, so add them
+		$message = (STRIP) ? addslashes($message) : $message;
+
+		// Run set_var to re-encode the proper entities as if the user had submitted it themselves
+		set_var($message, $message, 'string', true);
+	}
 }
