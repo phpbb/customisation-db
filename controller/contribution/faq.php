@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 class faq extends base
 {
 	/** @var \phpbb\titania\tracking */
@@ -212,7 +214,14 @@ class faq extends base
 	*/
 	protected function edit()
 	{
-		if ($this->common_post())
+		$result = $this->common_post();
+
+		if (is_object($result))
+		{
+			return $result;
+		}
+
+		if ($result)
 		{
 			redirect($this->faq->get_url());
 		}
@@ -232,7 +241,14 @@ class faq extends base
 	*/
 	protected function create()
 	{
-		if ($this->common_post())
+		$result = $this->common_post();
+
+		if (is_object($result))
+		{
+			return $result;
+		}
+
+		if ($result)
 		{
 			$this->faq->set_left_right_ids();
 			redirect($this->faq->get_url());
@@ -249,7 +265,7 @@ class faq extends base
 	/**
 	* Common handler for edit/create action.
 	*
-	* @return bool Returns true if item was submitted.
+	* @return bool|JsonResponse Returns true if item was submitted.
 	*/
 	protected function common_post()
 	{
@@ -266,6 +282,13 @@ class faq extends base
 		// Submit check...handles running $this->faq->post_data() if required
 		$submit = $this->message->submit_check();
 		$error = $this->message->error;
+
+		if ($this->message->is_plupload_request())
+		{
+			return new JsonResponse(
+				$this->message->get_plupload_response_data()
+			);
+		}
 
 		if ($submit)
 		{
