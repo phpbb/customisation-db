@@ -52,21 +52,6 @@ function get_posting_options($bbcode, $smilies, $url)
 	return (($bbcode) ? OPTION_FLAG_BBCODE : 0) + (($smilies) ? OPTION_FLAG_SMILIES : 0) + (($url) ? OPTION_FLAG_LINKS : 0);
 }
 
-/**
-* Reverses the posting options
-*
-* @param int $options The given posting options
-* @param bool $bbcode
-* @param bool $smilies
-* @param bool $url
-*/
-function reverse_posting_options($options, &$bbcode, &$smilies, &$url)
-{
-	$bbcode = ($options & OPTION_FLAG_BBCODE) ? true : false;
-	$smilies = ($options & OPTION_FLAG_SMILIES) ? true : false;
-	$url = ($options & OPTION_FLAG_LINKS) ? true : false;
-}
-
 /*
  * Create select with Titania's accesses
  *
