@@ -19,23 +19,6 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-/**
-* Compare the order of two attachments. Used to sort attachments in conjuction with uasort()
-* @param array $attach1
-* @param array $attach2
-*/
-function titania_attach_order_compare($attach1, $attach2)
-{
-	if ($attach1['attachment_order'] == $attach2['attachment_order'])
-	{
-		return 0;
-	}
-	else
-	{
-		return ($attach1['attachment_order'] > $attach2['attachment_order']) ? 1 : -1;
-	}
-}
-
 function prerelease_submission_allowed($branch, $contrib_type)
 {
 	if (empty(titania::$config->prerelease_phpbb_version[$branch]) || empty(titania::$config->phpbb_versions[$branch]) || !titania_types::$types[$contrib_type]->prerelease_submission_allowed)
