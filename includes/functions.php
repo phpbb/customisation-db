@@ -20,17 +20,6 @@ if (!defined('IN_PHPBB'))
 }
 
 /**
-* phpBB is nub like that
-*
-* @param string $revision
-* @return string
-*/
-function get_real_revision_version($revision)
-{
-	return str_replace('rc', 'RC', strtolower($revision));
-}
-
-/**
 * Compare the order of two attachments. Used to sort attachments in conjuction with uasort()
 * @param array $attach1
 * @param array $attach2

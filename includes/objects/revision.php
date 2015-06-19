@@ -350,7 +350,7 @@ class titania_revision extends titania_database_object
 					'contrib_id'				=> $this->contrib_id,
 					'revision_validated'		=> ($this->revision_status == TITANIA_REVISION_APPROVED) ? true : false,
 					'phpbb_version_branch'		=> $row['phpbb_version_branch'],
-					'phpbb_version_revision'	=> get_real_revision_version(((isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'])),
+					'phpbb_version_revision'	=> $this->get_real_phpbb_version(((isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'])),
 				);
 			}
 
@@ -718,5 +718,16 @@ class titania_revision extends titania_database_object
 			$package_manager->remove_release($this->revision_version);
 		}
 		$package_manager->submit();
+	}
+
+	/**
+	 * Normalize phpBB version - pl always in lowercase, RC in uppercase
+	 *
+	 * @param string $version
+	 * @return string
+	 */
+	protected function get_real_phpbb_version($version)
+	{
+		return str_replace('rc', 'RC', strtolower($version));
 	}
 }
