@@ -15,6 +15,7 @@ use phpbb\titania\versions;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\message\message;
 use phpbb\titania\url\url;
+use phpbb\titania\user\helper as user_helper;
 
 /**
  * Class to abstract contributions.
@@ -102,6 +103,9 @@ class titania_contribution extends titania_message_object
 	/** @var \phpbb\titania\cache\service */
 	protected $cache;
 
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+
 	/**
 	* @var Contribution type object
 	*/
@@ -165,6 +169,7 @@ class titania_contribution extends titania_message_object
 		$this->path_helper = phpbb::$container->get('path_helper');
 		$this->screenshots = phpbb::$container->get('phpbb.titania.attachment.operator');
 		$this->cache = phpbb::$container->get('phpbb.titania.cache');
+		$this->db = phpbb::$container->get('dbal.conn');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -1593,7 +1598,7 @@ class titania_contribution extends titania_message_object
 		foreach ($authors as $group => $users)
 		{
 			$missing = array();
-			get_author_ids_from_list($users, $missing);
+			user_helper::get_user_ids_from_list($this->db, $users, $missing);
 			$result[$group] = $users;
 			$result['missing'][$group] = $missing;
 		}

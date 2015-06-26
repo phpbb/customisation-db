@@ -40,49 +40,6 @@ function get_allowed_phpbb_branches()
 }
 
 /**
-* Get the author user_ids from the list of usernames
-*
-* @param string $list the list of usernames (after executed it will be an array of the user_ids)
-* @param array $missing array of usernames that could not be found (will be populated if any)
-* @param string $separator the delimiter
-*/
-function get_author_ids_from_list(&$list, &$missing, $separator = "\n")
-{
-	if (!$list)
-	{
-		$list = $missing = array();
-		return true;
-	}
-
-	$usernames = explode($separator, $list);
-	$list = array();
-
-	foreach ($usernames as &$username)
-	{
-		$missing[$username] = $username;
-		$username = utf8_clean_string($username);
-	}
-
-	$sql = 'SELECT username, username_clean, user_id FROM ' . USERS_TABLE . '
-		WHERE ' . phpbb::$db->sql_in_set('username_clean', $usernames) . '
-		AND user_type != ' . USER_IGNORE;
-	$result = phpbb::$db->sql_query($sql);
-	while ($row = phpbb::$db->sql_fetchrow($result))
-	{
-		unset($missing[$row['username']], $missing[$row['username_clean']]);
-
-		$list[$row['username']] = $row['user_id'];
-	}
-
-	if (sizeof($missing))
-	{
-		return false;
-	}
-
-	return true;
-}
-
-/**
  * Allow to create a new topic, to reply to a topic, to edit a post or the first_post of a topic in database
  * @param $mode post/reply/edit/edit_first_post/edit_last_post
  * @param $options array Array with post data, see our documentation for exact required items
