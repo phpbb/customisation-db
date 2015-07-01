@@ -68,6 +68,9 @@ class titania_post extends titania_message_object
 	/** @var \phpbb\titania\access */
 	protected $access;
 
+	/** @var \phpbb\titania\search\manager */
+	protected $search_manager;
+
 	/**
 	 * Constructor class for titania posts
 	 *
@@ -111,6 +114,7 @@ class titania_post extends titania_message_object
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->access = phpbb::$container->get('phpbb.titania.access');
+		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 
 		switch ($type)
 		{
@@ -760,7 +764,7 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		// Remove from the search index
-		titania_search::delete($this->post_type, $this->post_id);
+		$this->search_manager->delete($this->post_type, $this->post_id);
 
 		// @todo remove attachments and other things
 
@@ -846,7 +850,7 @@ class titania_post extends titania_message_object
 	*/
 	public function index()
 	{
-		titania_search::index($this->post_type, $this->post_id, array(
+		$this->search_manager->index($this->post_type, $this->post_id, array(
 			'parent_id'		=> $this->topic->parent_id,
 			'title'			=> $this->post_subject,
 			'text'			=> $this->post_text,

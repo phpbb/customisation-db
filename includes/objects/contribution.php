@@ -106,6 +106,9 @@ class titania_contribution extends titania_message_object
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
+	/** @var \phpbb\titania\search\manager */
+	protected $search_manager;
+
 	/**
 	* @var Contribution type object
 	*/
@@ -170,6 +173,7 @@ class titania_contribution extends titania_message_object
 		$this->screenshots = phpbb::$container->get('phpbb.titania.attachment.operator');
 		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 		$this->db = phpbb::$container->get('dbal.conn');
+		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -2102,7 +2106,7 @@ class titania_contribution extends titania_message_object
 			'phpbb_versions' 	=> $phpbb_versions,
 		);
 
-		titania_search::index(TITANIA_CONTRIB, $this->contrib_id, $data);
+		$this->search_manager->index(TITANIA_CONTRIB, $this->contrib_id, $data);
 	}
 
 	/**

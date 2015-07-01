@@ -46,6 +46,9 @@ class titania_faq extends titania_message_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var \phpbb\titania\search\manager */
+	protected $search_manager;
+
 	/**
 	 * Constructor class for titania faq
 	 *
@@ -75,6 +78,7 @@ class titania_faq extends titania_message_object
 		}
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 	}
 
 	/**
@@ -190,7 +194,7 @@ class titania_faq extends titania_message_object
 		parent::submit();
 
 		// Index
-		titania_search::index(TITANIA_FAQ, $this->faq_id, array(
+		$this->search_manager->index(TITANIA_FAQ, $this->faq_id, array(
 			'title'			=> $this->faq_subject,
 			'text'			=> $this->faq_text,
 			'text_uid'		=> $this->faq_text_uid,
@@ -208,7 +212,7 @@ class titania_faq extends titania_message_object
 
 	public function delete()
 	{
-		titania_search::delete(TITANIA_FAQ, $this->faq_id);
+		$this->search_manager->delete(TITANIA_FAQ, $this->faq_id);
 
 		// Update the FAQ count
 		$sql = 'SELECT contrib_faq_count FROM ' . TITANIA_CONTRIBS_TABLE . '
