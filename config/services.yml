@@ -251,6 +251,14 @@ services:
             - %core.root_path%
             - %core.php_ext%
 
+    phpbb.titania.sync:
+        class: phpbb\titania\sync
+        scope: prototype
+        arguments:
+            - @dbal.conn
+            - @phpbb.titania.cache
+            - @phpbb.titania.attachment
+            - @phpbb.titania.search.manager
 
     phpbb.titania.tags:
         class: phpbb\titania\tags
