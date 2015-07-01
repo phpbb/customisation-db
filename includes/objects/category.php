@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\sync;
+
 /**
  * Class to abstract categories.
  * @package Titania
@@ -192,8 +194,12 @@ class titania_category extends titania_message_object
 
 	/**
 	* Move category
+	*
+	* @param int $to_id			New parent id
+	* @param sync|null $sync	If given sync class, category counts are resynchronized
+	* @return array
 	*/
-	function move_category($to_id, $sync = true)
+	function move_category($to_id, $sync)
 	{
 		$to_data = $moved_ids = $errors = array();
 
@@ -286,7 +292,6 @@ class titania_category extends titania_message_object
 			if ($sync)
 			{
 				// Resync counters
-				$sync = new titania_sync;
 				$sync->categories('count');
 			}
 		}
@@ -296,8 +301,12 @@ class titania_category extends titania_message_object
 
 	/**
 	* Move category content from one to another category
+	*
+	* @param int $to_id			New parent id
+	* @param sync|null $sync	If given sync class, category counts are resynchronized
+	* @return array
 	*/
-	public function move_category_content($to_id = 0, $sync = true)
+	public function move_category_content($to_id = 0, $sync = null)
 	{
 		$sql = 'SELECT category_type
 			FROM ' . $this->sql_table . '
@@ -350,7 +359,6 @@ class titania_category extends titania_message_object
 			if ($sync)
 			{
 				// Resync counters
-				$sync = new titania_sync;
 				$sync->categories('count');
 			}
 		}
@@ -404,8 +412,11 @@ class titania_category extends titania_message_object
 
 	/**
 	* Remove complete category
+	*
+	* @param sync|null $sync	If given sync class, category counts are resynchronized
+	* @return null
 	*/
-	public function delete($sync = true)
+	public function delete($sync = null)
 	{
 		// This should be the correct diff value each time
 		$diff = 2;
@@ -432,7 +443,6 @@ class titania_category extends titania_message_object
 		// Resync counters
 		if ($sync)
 		{
-			$sync = new titania_sync;
 			$sync->categories('count');
 		}
 

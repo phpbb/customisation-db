@@ -30,7 +30,7 @@ class reindex
 		$limit = (titania::$config->search_backend == 'solr') ? 250 : 100;
 		$total = 0;
 
-		$sync = new titania_sync;
+		$sync = phpbb::$container->get('phpbb.titania.sync');
 
 		switch ($section)
 		{

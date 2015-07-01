@@ -18,6 +18,9 @@ class categories extends base
 	/** @var \phpbb\titania\message\message */
 	protected $message;
 
+	/** @var \phpbb\titania\sync */
+	protected $sync;
+
 	/** @var \titania_category */
 	protected $category;
 
@@ -37,12 +40,14 @@ class categories extends base
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\message\message $message
+	 * @param \phpbb\titania\sync $sync
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\message\message $message)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\message\message $message, \phpbb\titania\sync $sync)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
 
 		$this->message = $message;
+		$this->sync = $sync;
 	}
 
 	public function list_categories($id)
@@ -298,7 +303,7 @@ class categories extends base
 				{
 					if ($action_contribs == 'move' && !empty($contribs_to_id))
 					{
-						$error = array_merge($error, $this->category->move_category_content($contribs_to_id));
+						$error = array_merge($error, $this->category->move_category_content($contribs_to_id, $this->sync));
 					}
 				}
 			}
@@ -310,7 +315,7 @@ class categories extends base
 			if (empty($error))
 			{
 				// Delete category
-				$this->category->delete();
+				$this->category->delete($this->sync);
 
 				// Redirect back to the parent category
 				redirect($this->helper->route('phpbb.titania.manage.categories', array('id' => $parent_id)));
@@ -458,7 +463,7 @@ class categories extends base
 			{
 				if ($category->category_id != $category->parent_id)
 				{
-					$errors_extra = $category->move_category($category->parent_id);
+					$errors_extra = $category->move_category($category->parent_id, $this->sync);
 
 					// Check for errors from moving the category
 					if (!empty($errors_extra))

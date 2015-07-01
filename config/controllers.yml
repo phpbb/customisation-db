@@ -305,6 +305,7 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.message
+            - @phpbb.titania.sync
 
     phpbb.titania.controller.manage.queue_discussion:
         class: phpbb\titania\controller\manage\queue_discussion
