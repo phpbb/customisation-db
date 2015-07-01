@@ -152,6 +152,21 @@ services:
              - %phpbb.titania.root_path%
              - %core.php_ext%
 
+    phpbb.titania.posting:
+        class: phpbb\titania\posting
+        scope: prototype
+        arguments:
+             - @auth
+             - @dbal.conn
+             - @user
+             - @request
+             - @template
+             - @phpbb.titania.controller.helper
+             - @phpbb.titania.message
+             - @phpbb.titania.access
+             - @phpbb.titania.subscriptions
+             - @phpbb.titania.attachment.operator
+
     phpbb.titania.queue.stats:
         class: phpbb\titania\queue\stats
         arguments:
