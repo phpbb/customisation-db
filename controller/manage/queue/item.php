@@ -21,6 +21,9 @@ class item extends \phpbb\titania\controller\manage\base
 	/** @var \phpbb\titania\message\message */
 	protected $message;
 
+	/** @var \phpbb\titania\posting */
+	protected $posting;
+
 	/** @var int */
 	protected $id;
 
@@ -51,13 +54,15 @@ class item extends \phpbb\titania\controller\manage\base
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\tags $tags
 	 * @param \phpbb\titania\message\message $message
+	 * @param \phpbb\titania\posting $posting
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tags $tags, \phpbb\titania\message\message $message)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tags $tags, \phpbb\titania\message\message $message, \phpbb\titania\posting $posting)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
 
 		$this->tags = $tags;
 		$this->message = $message;
+		$this->posting = $posting;
 	}
 
 	/**
@@ -256,16 +261,16 @@ class item extends \phpbb\titania\controller\manage\base
 	}
 
 	/**
-	* Posting action.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Posting action.
+	 *
+	 * @param string $action
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	protected function posting($action)
 	{
-		$posting_helper = new \titania_posting();
-		$posting_helper->parent_type = $this->queue->queue_type;
+		$this->posting->parent_type = $this->queue->queue_type;
 
-		$result = $posting_helper->act(
+		return $this->posting->act(
 			$this->contrib,
 			$action,
 			$this->queue->queue_topic_id,
@@ -275,13 +280,6 @@ class item extends \phpbb\titania\controller\manage\base
 			TITANIA_QUEUE,
 			$this->helper->get_current_url()
 		);
-
-		if (!empty($result['needs_auth']))
-		{
-			return $this->helper->needs_auth();
-		}
-
-		return $this->helper->render('manage/queue_post.html', $result['title']);
 	}
 
 	/**

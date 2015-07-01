@@ -129,6 +129,7 @@ services:
 
     phpbb.titania.controller.contrib.support:
         class: phpbb\titania\controller\contribution\support
+        scope: prototype
         arguments:
             - @auth
             - @config
@@ -143,6 +144,7 @@ services:
             - @phpbb.titania.access
             - @phpbb.titania.tracking
             - @phpbb.titania.subscriptions
+            - @phpbb.titania.posting
 
     phpbb.titania.controller.contrib.faq:
         class: phpbb\titania\controller\contribution\faq
@@ -262,6 +264,7 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.tags
             - @phpbb.titania.message
+            - @phpbb.titania.posting
 
     phpbb.titania.controller.manage.queue.tools:
         class: phpbb\titania\controller\manage\queue\tools

@@ -21,6 +21,9 @@ class support extends base
 	/** @var \phpbb\titania\subscriptions */
 	protected $subscriptions;
 
+	/** @var \phpbb\titania\posting */
+	protected $posting;
+
 	/**
 	 * Constructor
 	 *
@@ -37,25 +40,26 @@ class support extends base
 	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\tracking $tracking
 	 * @param \phpbb\titania\subscriptions $subscriptions
+	 * @param \phpbb\titania\posting $posting
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions, \phpbb\titania\posting $posting)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
 
 		$this->tracking = $tracking;
 		$this->subscriptions = $subscriptions;
+		$this->posting = $posting;
 	}
 
 	/**
-	* Handle topic action.
-	*
-	* @param string $contrib_type	Contrib type URL identifier.
-	* @param string $contrib		Contrib name clean.
-	* @param int $topic_id			Topic id.
-	* @param string $action			Action.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Handle topic action.
+	 *
+	 * @param string $contrib_type	Contrib type URL identifier.
+	 * @param string $contrib		Contrib name clean.
+	 * @param int $topic_id			Topic id.
+	 * @param string $action		Action.
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function topic_action($contrib_type, $contrib, $topic_id, $action)
 	{
 		$this->load_contrib($contrib_type, $contrib);
@@ -66,10 +70,10 @@ class support extends base
 		}
 
 		// Handle replying/editing/etc
-		$posting_helper = new \titania_posting();
-		$posting_helper->parent_type = $this->contrib->contrib_type;
+		$this->posting->parent_type = $this->contrib->contrib_type;
+		$this->assign_vars();
 
-		$result = $posting_helper->act(
+		return $this->posting->act(
 			$this->contrib,
 			$action,
 			$topic_id,
@@ -82,17 +86,6 @@ class support extends base
 			TITANIA_SUPPORT,
 			$this->helper->get_current_url()
 		);
-
-		if (!empty($result['needs_auth']))
-		{
-			return $this->helper->needs_auth();
-		}
-
-		$this->assign_vars();
-
-		$template_file = (!empty($result['template'])) ? $result['template'] : 'contributions/contribution_support_post.html';
-
-		return $this->helper->render($template_file, $result['title']);
 	}
 
 	/**
