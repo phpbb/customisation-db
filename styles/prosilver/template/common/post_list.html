@@ -29,7 +29,7 @@
 			<!-- IF posts.U_EDIT or posts.U_DELETE or posts.U_REPORT or posts.U_WARN or posts.U_INFO or posts.U_QUOTE -->
 				<ul class="post-buttons">
 					<!-- IF posts.U_EDIT -->
-						<li><a href="{posts.U_EDIT}" title="{L_EDIT_POST}" class="button icon-button edit-icon"><span>{L_EDIT_POST}</span></a></li>
+						<li><a href="{posts.U_EDIT}" title="{L_EDIT_POST}" class="button icon-button edit-icon" data-ajax="titania.quick_edit" data-filter="titania.quickEditFilter"><span>{L_EDIT_POST}</span></a></li>
 					<!-- ENDIF -->
 					<!-- IF posts.U_DELETE -->
 						<li><a href="{posts.U_DELETE}" title="{L_DELETE_POST}" class="button icon-button delete-icon"><span>{L_DELETE_POST}</span></a></li>
