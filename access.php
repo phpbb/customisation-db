@@ -145,7 +145,7 @@ class access
 
 		if ($group_id = $this->db->sql_fetchfield('group_id'))
 		{
-			$this->set_level(self::AUTHOR_LEVEL);
+			$this->set_level(self::TEAM_LEVEL);
 		}
 		$this->db->sql_freeresult($result);
 	}
