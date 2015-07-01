@@ -99,10 +99,10 @@ class posting
 	 * @param string $action
 	 * @param int $topic_id
 	 * @param string $template_body
-	 * @param bool $parent_id
-	 * @param bool $parent_url
-	 * @param bool $post_type
-	 * @param bool $s_post_action
+	 * @param int|bool $parent_id
+	 * @param array|bool $parent_url
+	 * @param int|bool $post_type
+	 * @param string|bool $s_post_action
 	 * @return JsonResponse|RedirectResponse|Response
 	 * @throws \LogicException
 	 */
