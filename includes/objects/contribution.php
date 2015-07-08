@@ -298,6 +298,16 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
+	 * Check whether the current user is an author.
+	 *
+	 * @return bool
+	 */
+	public function is_author()
+	{
+		return $this->is_author || $this->is_active_coauthor;
+	}
+
+	/**
 	* Check whether the contribution is visible to the current user.
 	*
 	* @param bool $allow_new	Whether a new contrib is allowed to be visible.
