@@ -1601,10 +1601,9 @@ class titania_contribution extends titania_message_object
 
 		foreach ($authors as $group => $users)
 		{
-			$missing = array();
-			user_helper::get_user_ids_from_list($this->db, $users, $missing);
-			$result[$group] = $users;
-			$result['missing'][$group] = $missing;
+			$users = user_helper::get_user_ids_from_list($this->db, $users);
+			$result[$group] = $users['ids'];
+			$result['missing'][$group] = $users['missing'];
 		}
 
 		return $result;
