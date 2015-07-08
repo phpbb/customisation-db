@@ -219,6 +219,22 @@ class search
 		if ($author)
 		{
 			$author_id = $this->get_author_id($author);
+
+			if (!$author_id)
+			{
+				throw new http_exception(
+					200,
+					'NO_USER'
+				);
+			}
+		}
+
+		if ($author === '' && $keywords === '')
+		{
+			throw new http_exception(
+				200,
+				'NO_SEARCH_TERMS'
+			);
 		}
 
 		$this->engine->new_search_query();
