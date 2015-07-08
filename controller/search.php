@@ -427,12 +427,9 @@ class search
 	*/
 	protected function get_author_id($author)
 	{
-		\titania::_include('functions_posting', 'get_author_ids_from_list');
+		$user = user_helper::get_user_ids_from_list($this->db, $author);
 
-		$missing = array();
-		get_author_ids_from_list($author, $missing);
-
-		return (int) array_shift($author);
+		return (int) array_shift($user['ids']);
 	}
 
 	/**
