@@ -142,8 +142,7 @@ class search
 		$this->setup();
 		$this->user->add_lang_ext('phpbb/titania', 'contributions');
 
-		\titania::_include('functions_posting', 'generate_category_select');
-		generate_category_select(false, false, false);
+		$this->display->generate_category_select(false, false, false);
 
 		// Display the list of phpBB versions available
 		foreach ($this->cache->get_phpbb_versions() as $version => $name)
