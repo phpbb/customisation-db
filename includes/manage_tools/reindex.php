@@ -30,12 +30,13 @@ class reindex
 		$limit = (titania::$config->search_backend == 'solr') ? 250 : 100;
 		$total = 0;
 
+		$search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 		$sync = phpbb::$container->get('phpbb.titania.sync');
 
 		switch ($section)
 		{
 			case 0 :
-				titania_search::truncate();
+				$search_manager->truncate();
 
 				$display_message = 'TRUNCATING_SEARCH';
 			break;
