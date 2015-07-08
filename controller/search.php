@@ -13,10 +13,20 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\exception\http_exception;
+use phpbb\titania\access;
+use phpbb\titania\user\helper as user_helper;
+
 class search
 {
 	/** @var \phpbb\config\config */
 	protected $config;
+
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+
+	/** @var \phpbb\auth\auth */
+	protected $auth;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -36,11 +46,26 @@ class search
 	/** @var \phpbb\titania\display */
 	protected $display;
 
-	/** @var \titania_search */
 	/** @var \phpbb\titania\sort */
 	protected $sort;
 
+	/** @var \phpbb\titania\access */
+	protected $access;
+
+	/** @var \phpbb\titania\search\manager */
+	protected $manager;
+
+	/** @var \phpbb\titania\search\driver\driver_interface */
 	protected $engine;
+
+	/** @var string */
+	protected $posts_table;
+
+	/** @var string */
+	protected $faq_table;
+
+	/** @var string */
+	protected $contribs_table;
 
 	const SEARCH_ALL = 0;
 
@@ -48,6 +73,8 @@ class search
 	 * Constructor
 	 *
 	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\auth\auth $auth
 	 * @param \phpbb\template\template $template
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\cache\service $cache
@@ -56,10 +83,14 @@ class search
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\sort $sort
+	 * @param access $access
+	 * @param \phpbb\titania\search\manager $manager
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\sort $sort)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\sort $sort, \phpbb\titania\access $access, \phpbb\titania\search\manager $manager)
 	{
 		$this->config = $config;
+		$this->db = $db;
+		$this->auth = $auth;
 		$this->template = $template;
 		$this->user = $user;
 		$this->cache = $cache;
@@ -68,6 +99,11 @@ class search
 		$this->ext_config = $ext_config;
 		$this->display = $display;
 		$this->sort = $sort;
+		$this->access = $access;
+		$this->manager = $manager;
+		$this->posts_table = TITANIA_POSTS_TABLE;
+		$this->faq_table = TITANIA_CONTRIB_FAQ_TABLE;
+		$this->contribs_table = TITANIA_CONTRIBS_TABLE;
 	}
 
 	/**
@@ -174,7 +210,6 @@ class search
 	public function common_results()
 	{
 		$this->setup();
-		$this->initialise_engine();
 
 		$keywords		= $this->request->variable('keywords', '', true);
 		$search_fields	= $this->request->variable('sf', '');
@@ -186,8 +221,7 @@ class search
 			$author_id = $this->get_author_id($author);
 		}
 
-		// Initialize the query
-		$this->query = $this->engine->create_find_query();
+		$this->engine->new_search_query();
 		$this->generate_main_query($search_fields, $keywords, $author_id);
 	}
 
@@ -206,12 +240,13 @@ class search
 		;
 
 		// Do the search
-		$results = $this->engine->custom_search($this->query, $sort);
+		$results = $this->query_index();
 
 		// Grab the users
 		\users_overlord::load_users($results['user_ids']);
 
 		$this->display->assign_global_vars();
+
 		$this->assign_doc_vars($results['documents']);
 		$this->assign_result_vars($this->sort->total);
 
@@ -259,38 +294,29 @@ class search
 	*/
 	protected function generate_main_query($search_fields, $keywords, $author_id)
 	{
-		// Query fields
-		$query_fields = array();
-		switch ($search_fields)
-		{
-			case 'titleonly' :
-				$query_fields[] = 'title';
-			break;
-
-			case 'msgonly' :
-				$query_fields[] = 'text';
-			break;
-
-			default:
-				$query_fields[] = 'title';
-				$query_fields[] = 'text';
-			break;
-		}
-
 		// Keywords specified?
 		if ($keywords)
 		{
-			$this->engine->clean_keywords($keywords);
+			// Query fields
+			$search_title = $search_text = true;
 
-			$qb = new \ezcSearchQueryBuilder();
-			$qb->parseSearchQuery($this->query, $keywords, $query_fields);
-			unset($qb);
+			switch ($search_fields)
+			{
+				case 'titleonly' :
+					$search_text = false;
+					break;
+
+				case 'msgonly' :
+					$search_title = false;
+					break;
+			}
+			$this->engine->set_keywords($keywords, $search_title, $search_text);
 		}
 
 		// Author specified?
 		if ($author_id)
 		{
-			$this->query->where($this->query->eq('author', $author_id));
+			$this->engine->where_equals('author', $author_id);
 		}
 	}
 
@@ -317,13 +343,13 @@ class search
 		}
 		else
 		{
-			$this->query->where($this->query->eq('type', $type));
+			$this->engine->set_type($type);
 		}
 
 		// Contrib specified?
 		if ($contrib_id)
 		{
-			$this->query->where($this->query->eq('parent_id', $contrib_id));
+			$this->engine->where_equals('parent_id', $contrib_id);
 		}
 	}
 
@@ -352,15 +378,14 @@ class search
 				}
 			}
 
-			$this->query->where($this->engine->in_set($this->query, 'categories', $categories));
+			$this->engine->where_in_set('categories', $categories);
 		}
 
 		if (!empty($versions))
 		{
-			$this->query->where($this->engine->in_set($this->query, 'phpbb_versions', $versions));
+			$this->engine->where_in_set('phpbb_versions', $versions);
 		}
-
-		$this->query->where($this->query->eq('type', TITANIA_CONTRIB));
+		$this->engine->set_type(TITANIA_CONTRIB);
 	}
 
 	/**
@@ -370,11 +395,13 @@ class search
 	*/
 	protected function generate_search_all_query()
 	{
-		$query_or_clauses = array($this->engine->in_set(
-			$this->query,
-			'type',
-			array(TITANIA_SUPPORT, TITANIA_CONTRIB, TITANIA_FAQ)
-		));
+		$contrib_types = array_keys(\titania_types::$types);
+
+		$restrictions = array(
+			TITANIA_SUPPORT		=> $contrib_types,
+			TITANIA_CONTRIB		=> $contrib_types,
+			TITANIA_FAQ			=> $contrib_types,
+		);
 
 		// Enforce permissions on the results to ensure that we don't leak posts to users who don't have access to the originating queues.
 		$access_queue_discussion = \titania_types::find_authed('queue_discussion');
@@ -382,21 +409,14 @@ class search
 
 		if (!empty($access_validation_queue))
 		{
-			$query_or_clauses[] = $this->query->lAnd(
-				$this->query->eq('type', TITANIA_QUEUE),
-				$this->engine->in_set($this->query, 'parent_contrib_type', $access_validation_queue)
-			);
+			$restrictions[TITANIA_QUEUE] = $access_validation_queue;
 		}
 
 		if (!empty($access_queue_discussion))
 		{
-			$query_or_clauses[] = $this->query->lAnd(
-				$this->query->eq('type', TITANIA_QUEUE_DISCUSSION),
-				$this->engine->in_set($this->query, 'parent_contrib_type', $access_queue_discussion)
-			);
+			$restrictions[TITANIA_QUEUE_DISCUSSION] = $access_queue_discussion;
 		}
-
-		$this->query->where($this->query->lOr($query_or_clauses));
+		$this->engine->set_granular_type_restrictions($restrictions);
 	}
 
 	/**
@@ -425,13 +445,13 @@ class search
 		// Add common lang
 		$this->user->add_lang('search');
 		$this->user->add_lang_ext('phpbb/titania', 'search');
+		$this->manager->set_active_driver();
 
-		if (!$this->ext_config->search_enabled)
+		if (!$this->manager->search_enabled())
 		{
-			throw new \Exception($this->user->lang['SEARCH_UNAVAILABLE']);
+			throw new http_exception(200, 'SEARCH_UNAVAILABLE');
 		}
-
-		$this->engine = new \titania_search;
+		$this->engine = $this->manager->get_active_driver();
 
 		// Available Search Types
 		$this->search_types = array(
@@ -446,24 +466,6 @@ class search
 	}
 
 	/**
-	* Initialise search engine.
-	*
-	* @throws \Exception	Throws exception if search is unavailable.
-	* @return null
-	*/
-	protected function initialise_engine()
-	{
-		// Setup the search tool and make sure it is working
-		$this->engine->initialize();
-
-		if (\titania_search::$do_not_index)
-		{
-			// Solr service is down
-			throw new \Exception($this->user->lang['SEARCH_UNAVAILABLE']);
-		}
-	}
-
-	/**
 	* Assign document variables to template.
 	*
 	* @param array $documents		Documents
@@ -474,17 +476,16 @@ class search
 		foreach ($documents as $document)
 		{
 			$this->template->assign_block_vars('searchresults', array(
-				'POST_AUTHOR_FULL'	=> ($document->author) ? \users_overlord::get_user($document->author, '_full') : false,
-				'POST_DATE'			=> ($document->date) ? $this->user->format_date($document->date) : false,
-				'POST_SUBJECT'		=> censor_text($document->title),
+				'POST_AUTHOR_FULL'	=> ($document['author']) ? \users_overlord::get_user($document['author'], '_full') : false,
+				'POST_DATE'			=> ($document['date']) ? $this->user->format_date($document['date']) : false,
+				'POST_SUBJECT'		=> censor_text($document['title']),
 				'MESSAGE'			=> generate_text_for_display(
-					$document->text,
-					$document->text_uid,
-					$document->text_bitfield,
-					$document->text_options
+					$document['text'],
+					$document['text_uid'],
+					$document['text_bitfield'],
+					$document['text_options']
 				),
-				'U_VIEW_POST'		=> $this->get_document_url($document->type, $document->url),
-				'S_POST_REPORTED'	=> $document->reported,
+				'U_VIEW_POST'		=> $this->get_document_url($document['type'], $document['url']),
 			));
 		}
 	}
@@ -543,5 +544,171 @@ class search
 			'S_IN_SEARCH'		=> true,
 			'S_SEARCH_ACTION'	=> $this->helper->get_current_url(),
 		));
+	}
+
+	/**
+	 * Query search index.
+	 *
+	 * @return array
+	 */
+	protected function query_index()
+	{
+		// For those without moderator permissions do not display unapproved stuff
+		if (!$this->auth->acl_get('m_'))
+		{
+			$this->engine->where_equals('approved', 1);
+		}
+
+		// Don't worry about authors level access...no search page that can search where a
+		// person would have authors access
+		if (!$this->access->is_team())
+		{
+			$this->engine->where_equals('access_level', access::PUBLIC_LEVEL);
+		}
+
+		$this->engine->set_limit($this->sort->start, $this->sort->limit);
+
+		$results = $this->engine->search();
+		$contribs = $faqs = $posts = array();
+
+		$this->sort->total = $results['total'];
+
+		foreach ($results['documents'] as $data)
+		{
+			switch ($data['type'])
+			{
+				case TITANIA_CONTRIB :
+					$contribs[] = $data['id'];
+					break;
+
+				case TITANIA_SUPPORT :
+				case TITANIA_QUEUE_DISCUSSION :
+				case TITANIA_QUEUE :
+					$posts[] = $data['id'];
+				break;
+
+				case TITANIA_FAQ :
+					$faqs[] = $data['id'];
+					break;
+			}
+		}
+
+		// Get additional data not included in result.
+		if ($results['documents'])
+		{
+			$results['documents'] = $this->get_contribs($contribs, $results['documents']);
+			$results['documents'] = $this->get_posts($posts, $results['documents']);
+			$results['documents'] = $this->get_faqs($faqs, $results['documents']);
+		}
+		return $results;
+	}
+
+	/**
+	 * Get additional post data.
+	 *
+	 * @param array $ids
+	 * @param array $documents
+	 * @return array
+	 */
+	protected function get_posts(array $ids, array $documents)
+	{
+		if (!$ids)
+		{
+			return $documents;
+		}
+
+		$sql = 'SELECT post_id AS id, post_type, topic_id, post_subject AS title, post_text AS text, post_text_uid AS text_uid,
+				post_text_bitfield AS text_bitfield, post_text_options AS text_options,
+				post_url AS url
+			FROM ' . $this->posts_table . '
+			WHERE ' . $this->db->sql_in_set('post_id', $ids);
+		$result = $this->db->sql_query($sql);
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$id = $row['post_type'] . '_' . $row['id'];
+			$row['url'] = serialize(array_merge(unserialize($row['url']), array(
+				'topic_id' 	=> $row['topic_id'],
+				'p'			=> $row['id'],
+				'#'			=> 'p' . $row['id'],
+			)));
+			$documents[$id] = array_merge($documents[$id], $row);
+		}
+		$this->db->sql_freeresult($result);
+
+		return $documents;
+	}
+
+	/**
+	 * Get additional contrib data.
+	 *
+	 * @param array $ids
+	 * @param array $documents
+	 * @return array
+	 */
+	protected function get_contribs(array $ids, array $documents)
+	{
+		if (!$ids)
+		{
+			return $documents;
+		}
+
+		$sql = 'SELECT contrib_id AS id, contrib_name AS title, contrib_name_clean, contrib_type, contrib_desc AS text,
+				contrib_desc_uid AS text_uid, contrib_desc_bitfield AS text_bitfield,
+				contrib_desc_options AS text_options
+			FROM ' . $this->contribs_table . '
+			WHERE ' . $this->db->sql_in_set('contrib_id', $ids);
+		$result = $this->db->sql_query($sql);
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$id = TITANIA_CONTRIB . '_' . $row['id'];
+			$row['url'] = serialize(array(
+				'contrib_type'	=> \titania_types::$types[$row['contrib_type']]->url,
+				'contrib'		=> $row['contrib_name_clean'],
+			));
+			$documents[$id] = array_merge($documents[$id], $row);
+		}
+		$this->db->sql_freeresult($result);
+
+		return $documents;
+	}
+
+	/**
+	 * Get additional FAQ data.
+	 *
+	 * @param array $ids
+	 * @param array $documents
+	 * @return array
+	 */
+	protected function get_faqs(array $ids, array $documents)
+	{
+		if (!$ids)
+		{
+			return $documents;
+		}
+
+		$sql = 'SELECT f.faq_id AS id, f.faq_subject AS title, c.contrib_name_clean, c.contrib_type, f.faq_text AS text,
+				f.faq_text_uid AS text_uid, f.faq_text_bitfield AS text_bitfield,
+				f.faq_text_options AS text_options
+			FROM ' . $this->contribs_table . ' c, ' .
+				$this->faq_table . ' f
+			WHERE ' . $this->db->sql_in_set('f.faq_id', $ids) . '
+				AND f.contrib_id = c.contrib_id';
+		$result = $this->db->sql_query($sql);
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$id = TITANIA_FAQ . '_' . $row['id'];
+			$row['url'] = serialize(array(
+				'contrib_type'	=> \titania_types::$types[$row['contrib_type']]->url,
+				'contrib'		=> $row['contrib_name_clean'],
+				'id'			=> $row['id'],
+			));
+			$documents[$id] = array_merge($documents[$id], $row);
+		}
+		$this->db->sql_freeresult($result);
+
+		return $documents;
 	}
 }

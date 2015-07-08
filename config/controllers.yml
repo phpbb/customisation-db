@@ -87,6 +87,8 @@ services:
         scope: prototype
         arguments:
             - @config
+            - @dbal.conn
+            - @auth
             - @template
             - @user
             - @phpbb.titania.cache
@@ -95,6 +97,8 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.sort
+            - @phpbb.titania.access
+            - @phpbb.titania.search.manager
 
     phpbb.titania.controller.colorizeit:
         class: phpbb\titania\controller\colorizeit
