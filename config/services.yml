@@ -187,6 +187,19 @@ services:
         tags:
             - { name: service_collection, tag: titania.search.driver }
 
+    phpbb.titania.search.driver.fulltext_sphinx:
+        class: phpbb\titania\search\driver\fulltext_sphinx
+        arguments:
+            - @config
+            - @auth
+            - @user
+            - %tables.config%
+            - %core.root_path%
+            - %core.php_ext%
+        calls:
+            - [set_name, [phpbb.titania.search.driver.fulltext_sphinx]]
+        tags:
+            - { name: titania.search.driver }
 
     phpbb.titania.search.driver.solr:
         class: phpbb\titania\search\driver\solr
