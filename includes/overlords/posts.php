@@ -258,7 +258,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			return;
 		}
 
-		$sort->build_pagination($topic->get_url());
+		$topic_action = (isset($sort->url_parameters['action'])) ? $sort->url_parameters['action'] : false;
+		unset($sort->url_parameters['action']);
+		$sort->build_pagination($topic->get_url($topic_action));
 
 		// Get the data
 		$post_ids = $user_ids = array();
