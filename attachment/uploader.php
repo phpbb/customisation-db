@@ -588,7 +588,7 @@ class uploader
 					);
 
 					// set first screenshot as preview image when it is uploaded
-					$is_preview = $this->operator->get_count() === 1;
+					$is_preview = !$this->operator->get_count();
 				}
 
 				$attachment->__set_array(array(
