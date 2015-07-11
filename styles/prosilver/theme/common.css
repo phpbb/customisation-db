@@ -57,15 +57,6 @@ h3.section-name {
 	color: #333333;
 }
 
-.no-screenshot {
-	background: url("./images/no_screenshot.gif") no-repeat 0 0;
-	width: 175px;
-	height: 19px;
-	padding-top: 101px;
-	margin: auto;
-	color: #D8D8D7;
-}
-
 .contrib-download {
 	margin-left: -5px;
 	margin-top: 5px;
