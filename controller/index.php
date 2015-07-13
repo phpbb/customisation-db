@@ -76,8 +76,6 @@ class index
 		$this->display = $display;
 		$this->cache = $cache;
 		$this->path_helper = $path_helper;
-
-		\titania::_include('functions_display', 'titania_display_categories');
 		$this->tracking = $tracking;
 	}
 
@@ -88,7 +86,12 @@ class index
 	*/
 	public function display_index()
 	{
-		titania_display_categories(self::ALL_CONTRIBS);
+		$this->display->display_categories(
+			self::ALL_CONTRIBS,
+			'categories',
+			false,
+			true
+		);
 
 		// Mark all contribs read
 		if ($this->request->variable('mark', '') == 'contribs')
@@ -134,10 +137,16 @@ class index
 			$url = '/' . implode('/', array_filter($categories, 'strlen'));
 			return $rerouter->redirect($url);
 		}
-		titania_display_categories($this->id);
 
 		$this->display->assign_global_vars();
 		$this->generate_breadcrumbs();
+
+		$this->display->display_categories(
+			$this->id,
+			'categories',
+			false,
+			true
+		);
 
 		$type = $this->get_category_type();
 		$u_queue_stats = '';

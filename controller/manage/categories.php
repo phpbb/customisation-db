@@ -67,8 +67,7 @@ class categories extends base
 		}
 		$this->generate_breadcrumbs();
 
-		\titania::_include('functions_display', 'titania_display_categories');
-		titania_display_categories($this->id, 'categories', true);
+		$this->display->display_categories($this->id, 'categories', true);
 
 		$this->template->assign_vars(array(
 			'SECTION_NAME'			=> $this->user->lang['MANAGE_CATEGORIES'],
