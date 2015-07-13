@@ -241,7 +241,7 @@ class contribs_overlord
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			//Check to see if user has permission
-			if (!$mod_contrib_mod && $row['contrib_user_id'] != phpbb::$user->data['user_id'] && $row['coauthor'] != phpbb::$user->data['user_id'] && titania::$access_level != TITANIA_ACCESS_TEAMS)
+			if (!$mod_contrib_mod && $row['contrib_user_id'] != phpbb::$user->data['user_id'] && $row['coauthor'] != phpbb::$user->data['user_id'] && !$access->is_team())
 			{
 				//If the contribution has a status that is not accessible by the current user let's not add it
 				if (in_array($row['contrib_status'], array(TITANIA_CONTRIB_NEW, TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED)))
