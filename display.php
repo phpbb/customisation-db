@@ -265,6 +265,54 @@ class display
 	}
 
 	/**
+	 * Display categories
+	 *
+	 * @param int $parent_id			The parent id (only show categories under this category)
+	 * @param string $blockname 		The name of the template block to use (categories by default)
+	 * @param bool $is_manage			Whether the categories are being displayed in management page. Defaults to false.
+	 * @param bool $display_full_tree	Whether to display the full category tree.
+	 */
+	public function display_categories($parent_id = 0, $blockname = 'categories', $is_manage = false, $display_full_tree = false)
+	{
+		$categories = $this->cache->get_categories();
+		$category = new \titania_category;
+		$active_parents = array();
+
+		if ($parent_id)
+		{
+			$active_parents = $this->cache->get_category_parents($parent_id);
+			$active_parents = ($active_parents) ? array_keys($active_parents) : array();
+			$active_parents[] = $parent_id;
+		}
+
+		foreach ($categories as $data)
+		{
+			$category->__set_array($data);
+
+			$ignore =
+				(!$is_manage && !$category->category_visible) ||
+				(!$display_full_tree && $parent_id != $category->parent_id)
+			;
+
+			if ($ignore)
+			{
+				continue;
+			}
+			$active = in_array($category->category_id, $active_parents) ||
+				in_array($category->parent_id, $active_parents)
+			;
+
+			$this->template->assign_block_vars(
+				$blockname,
+				array_merge(
+					$category->assign_display(true),
+					array('ACTIVE'	=> $active)
+				)
+			);
+		}
+	}
+
+	/**
 	 * Generate the category select (much is from the make_jumpbox function)
 	 *
 	 * @param array|bool $selected		Array of selected categories. Defaults to false.
