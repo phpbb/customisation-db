@@ -272,7 +272,7 @@ class display
 	 * @param bool $is_manage			Whether the categories are being displayed in management page. Defaults to false.
 	 * @param bool $display_full_tree	Whether to display the full category tree.
 	 */
-	public function display_categories($parent_id = 0, $blockname = 'categories', $is_manage = false, $display_full_tree = false)
+	public function display_categories($parent_id = 0, $blockname = 'categories', $is_manage = false, $display_full_tree = false, array $params = array())
 	{
 		$categories = $this->cache->get_categories();
 		$category = new \titania_category;
@@ -306,7 +306,10 @@ class display
 				$blockname,
 				array_merge(
 					$category->assign_display(true),
-					array('ACTIVE'	=> $active)
+					array(
+						'ACTIVE'			=> $active,
+						'U_VIEW_CATEGORY'	=> $category->get_url($params),
+					)
 				)
 			);
 		}

@@ -532,9 +532,8 @@ class titania_category extends titania_message_object
 	/**
 	* Build view URL for a category
 	*/
-	public function get_url()
+	public function get_url(array $params = array())
 	{
-		$params = array();
 		$i = 1;
 
 		$parent_list = titania::$cache->get_category_parents($this->category_id);
@@ -557,6 +556,13 @@ class titania_category extends titania_message_object
 			$i++;
 		}
 		$params["category$i"] = $this->category_name_clean . '-' . $this->category_id;
+
+		if (isset($params['branch']))
+		{
+			$i++;
+			$params["category$i"] = $params['branch'];
+			unset($params['branch']);
+		}
 
 		return $this->controller_helper->route('phpbb.titania.category', $params);
 	}
