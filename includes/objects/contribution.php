@@ -615,7 +615,6 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_UPDATE_DATE'			=> ($this->contrib_last_update) ? phpbb::$user->format_date($this->contrib_last_update) : '',
 			'CONTRIB_STATUS'				=> $this->contrib_status,
 			'CONTRIB_LIMITED_SUPPORT'		=> $this->contrib_limited_support,
-			'CONTRIB_TYPE_CLEAN'        	=> $this->type->url,
 
 			'CONTRIB_LOCAL_NAME'			=> $this->contrib_local_name,
 			'CONTRIB_ISO_CODE'				=> $this->contrib_iso_code,
@@ -713,6 +712,7 @@ class titania_contribution extends titania_message_object
 			$vars = array_merge($vars, array(
 				'CONTRIB_TYPE'					=> $this->type->lang,
 				'CONTRIB_TYPE_ID'				=> $this->contrib_type,
+				'CONTRIB_TYPE_CLEAN'        	=> $this->type->url,
 
 				'U_CONTRIB_MANAGE'				=> $u_manage,
 				'U_NEW_REVISION'				=> $u_new_revision,
