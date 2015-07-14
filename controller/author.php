@@ -324,7 +324,7 @@ class author
 		));
 		$sort->set_defaults(false, 'sc', 'a');
 
-		\contribs_overlord::display_contribs('author', $this->author->user_id, $sort);
+		\contribs_overlord::display_contribs('author', $this->author->user_id, false, $sort);
 
 		$this->template->assign_vars(array(
 			'S_AUTHOR_LIST'		=> true,

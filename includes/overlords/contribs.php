@@ -110,9 +110,13 @@ class contribs_overlord
 	 *
 	 * @param string $mode The mode (category, author)
 	 * @param int $id The parent id (only show contributions under this category, author, etc)
+	 * @param int|bool $branch	Branch to limit results to: 20|30|31. Defaults to false.
+	 * @param \phpbb\titania\sort|bool $sort
 	 * @param string $blockname The name of the template block to use (contribs by default)
+	 *
+	 * @return array
 	 */
-	public static function display_contribs($mode, $id, $sort = false, $blockname = 'contribs')
+	public static function display_contribs($mode, $id, $branch = false, $sort = false, $blockname = 'contribs')
 	{
 		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
@@ -125,7 +129,13 @@ class contribs_overlord
 		}
 		$sort->request();
 
-		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id, c.contrib_limited_support, c.contrib_categories';
+		$branch = ($branch) ? (int) $branch : null;
+
+		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean,
+			c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating,
+			c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
+			c.contrib_limited_support, c.contrib_categories, c.contrib_desc, c.contrib_desc_uid';
+
 		switch ($mode)
 		{
 			case 'author' :
@@ -164,10 +174,15 @@ class contribs_overlord
 							'FROM'	=> array(TITANIA_CONTRIBS_TABLE => 'c'),
 							'ON'	=> 'cic.contrib_id = c.contrib_id',
 						),
+						array(
+							'FROM'	=> array(TITANIA_REVISIONS_PHPBB_TABLE => 'rp'),
+							'ON'	=> 'cic.contrib_id = rp.contrib_id',
+						),
 					),
 
 					'WHERE'		=> ((is_array($id) && sizeof($id)) ? phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $id)) : 'cic.category_id = ' . (int) $id) . '
-						AND c.contrib_visible = 1',
+						AND c.contrib_visible = 1' .
+						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
@@ -181,7 +196,14 @@ class contribs_overlord
 						TITANIA_CONTRIBS_TABLE	=> 'c',
 					),
 
-					'WHERE'		=> 'c.contrib_visible = 1',
+					'LEFT_JOIN'	=> array(
+						array(
+							'FROM'	=> array(TITANIA_REVISIONS_PHPBB_TABLE => 'rp'),
+							'ON'	=> 'c.contrib_id = rp.contrib_id',
+						),
+
+					'WHERE'		=> 'c.contrib_visible = 1' .
+						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
@@ -345,11 +367,20 @@ class contribs_overlord
 
 			if (isset($row['phpbb_versions']))
 			{
+				$prev_branch = '';
+
 				foreach ($ordered_phpbb_versions as $version_row)
 				{
 					phpbb::$template->assign_block_vars($blockname . '.phpbb_versions', array(
 						'NAME'		=> $version_row,
 					));
+					if ($prev_branch != $version_row)
+					{
+						phpbb::$template->assign_block_vars($blockname . '.branches', array(
+							'NAME'	=> $version_row,
+						));
+					}
+					$prev_branch = $version_row;
 				}
 			}
 
