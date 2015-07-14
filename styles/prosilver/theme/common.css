@@ -287,7 +287,8 @@ ul.general-info li strong {
 	color: #FFFFFF;
 }
 
-.main-panel a.screenshot img, .main-panel img.screenshot {
+a.screenshot img, img.screenshot {
+	background-color: #FFFFFF;
 	padding: 3px;
 	border: 1px solid #A1A1A1;
 	vertical-align: text-top;
@@ -366,12 +367,119 @@ ul.general-info li strong {
 	width: 100%;
 }
 
-/* Listings
+/* Contribution List
 --------------------------------------------- */
-.contribution-list-actions {
-	padding-top: 9px;
+.contrib-filter {
+	background-color: #f1f4f6;
+	border-radius: 5px;
+	padding: 5px;
 }
 
+.contrib-list-container {
+	box-sizing: border-box;
+	display: inline-block;
+	padding-left: 10px;
+	width: 80%;
+}
+
+.contrib-list-container .action-bar:first-child {
+	margin-bottom: 10px;
+}
+
+.no-results {
+	color: #BC2A4D;
+	font-size: 1.2em;
+	padding: 20px;
+	text-align: center;
+}
+
+.contrib-quickview {
+	background-color: #f1f4f6;
+	border-radius: 5px;
+	box-sizing: border-box;
+	display: inline-block;
+	margin-bottom: 10px;
+	padding: 15px 10px 10px;
+	position: relative;
+	text-align: center;
+	width: 33%;
+}
+
+.quickview-title {
+	font-size: 1.2em;
+	position: relative;
+}
+
+.quickview-image, .quickview-desc {
+	height: 130px;
+	margin-top: 5px;
+}
+
+.quickview-desc {
+	display: none;
+}
+
+.quickview-label {
+	background-color: #FFFFFF;
+	border: 1px solid #c9cacb;
+	border-radius: 3px;
+	display: inline-block;
+	padding: 4px;
+}
+
+.label-clean, .label-hidden, .label-disabled, .label-new {
+	color: #9D1212;
+}
+
+.categories {
+	border-right: 1px dotted #b4bac0;
+	box-sizing: border-box;
+	display: inline-block;
+	float: left;
+	font-size: 1.2em;
+	list-style: none;
+	padding-right: 5px;
+	vertical-align: top;
+	width: 20%;
+}
+
+.categories a {
+	display: block;
+	padding: 5px;
+}
+
+.categories a:hover, .sort-option a:hover {
+	text-decoration: none;
+}
+
+.categories span {
+	float: right;
+}
+
+.categories .active {
+	background-color: #4692bf;
+	border-radius: 3px;
+	color: #FFFFFF;
+	padding-right: 5px;
+}
+
+.sort-option .active {
+	font-style: italic;
+}
+
+.sort-option {
+	display: inline-block;
+	margin-left: 5px;
+	margin-top: 2px;
+	padding: 3px;
+}
+
+.sort-option:before {
+	content: '\25BC';
+}
+
+/* Listings
+--------------------------------------------- */
 dd.faq-tools {
 	text-align: right;
 	border: 0 !important;
@@ -419,18 +527,6 @@ ul.simple li.header dt, ul.simple li.header dd {
 }
 
 .revisions dd {
-	width: 130px !important;
-}
-
-.contributions dt {
-	margin-right: -260px !important;
-}
-
-.contributions .list-inner {
-	margin-right: 260px !important;
-}
-
-.contributions dd {
 	width: 130px !important;
 }
 
@@ -487,12 +583,12 @@ ul.rating li, ul.rated li {
 .rating-available, .rating-inactive, .rating-rated, .rating-remove {
 	background-repeat: no-repeat;
 	display: inline-block;
-	height: 16px;
-	width: 16px;
+	height: 13px;
+	width: 12px;
 }
 
-.rating-available { background-image: url("./images/star_orange.gif"); }
-.rating-inactive { background-image: url("./images/star_grey.gif"); }
+.rating-available { background-image: url("./images/rating_active.png"); }
+.rating-inactive { background-image: url("./images/rating_inactive.png"); }
 .rating-rated { background-image: url("./images/star_green.gif"); }
 .rating-remove { background-image: url("./images/star_remove.gif"); }
 
@@ -814,7 +910,7 @@ hr.solid {
 	margin: 10px 0;
 }
 
-.contrib-download:after {
+.contrib-download:after, .contrib-quickview:after {
 	clear: both;
 	content: '';
 	display: block;

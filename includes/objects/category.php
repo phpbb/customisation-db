@@ -597,12 +597,16 @@ class titania_category extends titania_message_object
 	public function assign_display($return = false)
 	{
 		$action_hash = array('hash' => generate_link_hash('category_action'));
+		$depth = sizeof(titania::$cache->get_category_parents($this->category_id)) * 15;
 
 		$display = array(
 			'CATEGORY_NAME'				=> (isset(phpbb::$user->lang[$this->category_name])) ? phpbb::$user->lang[$this->category_name] : $this->category_name,
 			'CATEGORY_CONTRIBS'			=> $this->category_contribs,
 			'CATEGORY_TYPE'				=> $this->category_type,
 			'CATEGORY_DESC'				=> $this->generate_text_for_display(),
+			'CATEGORY_ID'				=> $this->category_id,
+			'PARENT_ID'					=> $this->parent_id,
+			'DEPTH'						=> $depth,
 
 			'U_MOVE_UP'					=> $this->get_manage_url('move_up', $action_hash),
 			'U_MOVE_DOWN'				=> $this->get_manage_url('move_down', $action_hash),

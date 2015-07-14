@@ -11,26 +11,21 @@
 		<!-- IF U_QUEUE_STATS --> &bull; <a href="{U_QUEUE_STATS}">{L_QUEUE_STATS}</a><!-- ENDIF -->
 	</li>
 	<li class="rightside">
-		<!-- IF not S_IS_BOT and U_MARK_FORUMS --><a href="{U_MARK_FORUMS}" accesskey="m">{L_MARK_FORUMS_READ}</a><!-- ENDIF -->
-		<!-- IF U_TITANIA_SEARCH_SELF --><!-- IF not S_IS_BOT and U_MARK_FORUMS --> &bull; <!-- ENDIF --><a href="{U_TITANIA_SEARCH_SELF}">{L_SEARCH_SELF}</a><!-- ENDIF -->
+		<!-- IF U_TITANIA_SEARCH_SELF --><a href="{U_TITANIA_SEARCH_SELF}">{L_SEARCH_SELF}</a><!-- ENDIF -->
 	</li>
 </ul>
 <!-- ENDIF -->
 
-<!-- INCLUDE common/category_list.html -->
-
-<!-- IF not .categories or .contribs -->
-	<!-- IF U_CREATE_CONTRIBUTION or PAGINATION or TOTAL_RESULTS -->
-	<div class="action-bar" style="margin-top: 2em;">
-		<div class="buttons">
+	<div class="action-bar contrib-filter" style="margin-top: 2em;">
 		<!-- IF U_CREATE_CONTRIBUTION -->
+		<div class="buttons">
 			<a href="{U_CREATE_CONTRIBUTION}" title="{L_NEW_CONTRIBUTION}" class="button icon-button post-icon">{L_NEW_CONTRIBUTION}</a>
-		<!-- ENDIF -->
 		</div>
+		<!-- ENDIF -->
 
 		<!-- IF S_DISPLAY_SEARCHBOX -->
-			<div class="search-box">
-				<form method="get" id="category-search" action="{S_SEARCHBOX_ACTION}">
+		<div class="search-box">
+			<form method="get" id="category-search" action="{S_SEARCHBOX_ACTION}">
 				<fieldset>
 					<input class="inputbox search tiny" type="text" name="keywords" id="search_keywords" size="20" placeholder="{L_SEARCH_MINI}" />
 					<button class="button icon-button search-icon" type="submit" title="{L_SEARCH}">{L_SEARCH}</button>
@@ -38,47 +33,74 @@
 					<input type="hidden" value="{CATEGORY_ID}" name="c[]" />
 					<input type="hidden" value="1" name="sc" />
 				</fieldset>
-				</form>
+			</form>
+		</div>
+		<!-- ENDIF -->
+
+		<div class="dropdown-container sort-option branch-sort rightside">
+			<span title="{L_SORT}" class="dropdown-trigger sort-active">
+				{ACTIVE_BRANCH}
+			</span>
+			<div class="dropdown hidden">
+				<div class="pointer"><div class="pointer-inner"></div></div>
+				<ul class="dropdown-contents branch-sort-options">
+					<!-- BEGIN sort_branches -->
+						<li>
+							<a href="{sort_branches.URL}" data-ajax="titania.category.load" data-sort="{sort_branches.ID}"<!-- IF sort_branches.ACTIVE --> class="active"<!-- ENDIF -->>
+								{sort_branches.NAME}
+							</a>
+						</li>
+					<!-- END sort_branches -->
+				</ul>
 			</div>
-		<!-- ENDIF -->
-
-		<!-- INCLUDE common/pagination.html -->
-	</div>
-	<!-- ENDIF -->
-
-	<div class="forumbg contributions-list">
-		<div class="inner">
-			<ul class="topiclist contributions">
-				<li class="header">
-					<dl class="icon">
-						<dt>{L_CONTRIBUTIONS}</dt>
-						<dd class="general phpbb-version">{L_PHPBB_VERSION}</dd>
-						<dd class="general">{L_INFORMATION}</dd>
-					</dl>
-				</li>
-			</ul>
-			<ul class="topiclist contributions">
-
-				<!-- INCLUDE common/contribution_list.html -->
-
-			</ul>
-		</div>
-	</div>
-
-	<!-- INCLUDE common/sort.html -->
-
-	<!-- IF U_CREATE_CONTRIBUTION or PAGINATION or TOTAL_RESULTS -->
-	<div class="action-bar">
-		<div class="buttons">
-		<!-- IF U_CREATE_CONTRIBUTION -->
-			<a href="{U_CREATE_CONTRIBUTION}" title="{L_NEW_CONTRIBUTION}" class="button icon-button post-icon">{L_NEW_CONTRIBUTION}</a>
-		<!-- ENDIF -->
 		</div>
 
+		<div class="dropdown-container sort-option key-sort rightside">
+			<span title="{L_SORT}" class="dropdown-trigger sort-active">
+				{ACTIVE_SORT_OPTION}
+			</span>
+			<div class="dropdown hidden">
+				<div class="pointer"><div class="pointer-inner"></div></div>
+				<ul class="dropdown-contents key-sort-options">
+					<!-- BEGIN sort -->
+						<li>
+							<a href="{sort.URL}" data-ajax="titania.category.load" data-sort="{sort.ID}"<!-- IF sort.ACTIVE --> class="active"<!-- ENDIF -->>
+								{sort.NAME}
+							</a>
+						</li>
+					<!-- END sort -->
+				</ul>
+			</div>
+		</div>
+
+	</div>
+
+	<div class="categories">
+		<a href="{U_ALL_CONTRIBUTIONS}" data-ajax="titania.category.load"<!-- IF !CATEGORY_ID --> class="active"<!-- ENDIF --> data-category-id="0">{L_ALL_CONTRIBUTIONS}</a>
+		<!-- BEGIN categories -->
+		<!-- IF LAST_DEPTH and categories.DEPTH neq LAST_DEPTH --></div><!-- ENDIF -->
+		<!-- IF categories.DEPTH and LAST_DEPTH neq categories.DEPTH --><div data-parent-id="{categories.PARENT_ID}"<!-- IF not categories.ACTIVE --> style="display: none;"<!-- ENDIF -->><!-- ENDIF -->
+		<a href="{categories.U_VIEW_CATEGORY}" data-ajax="titania.category.load"<!-- IF CATEGORY_ID eq categories.CATEGORY_ID --> class="active"<!-- ENDIF --><!-- IF categories.DEPTH --> style="margin-left: {categories.DEPTH}px;"<!-- ENDIF --> data-category-id="{categories.CATEGORY_ID}">
+			{categories.CATEGORY_NAME}
+			<span>{categories.CATEGORY_CONTRIBS}</span>
+		</a>
+		{% set LAST_DEPTH = categories.DEPTH %}
+		<!-- END categories -->
+	</div>
+
+<div class="contrib-list-container">
+	<div class="action-bar"<!-- IF !PAGINATION and !TOTAL_RESULTS --> style="display: none;"<!-- ENDIF -->>
 		<!-- INCLUDE common/pagination.html -->
 	</div>
-	<!-- ENDIF -->
-<!-- ENDIF -->
+
+	<div class="contrib-list">
+		<!-- INCLUDE common/contribution_list.html -->
+	</div>
+
+	<div class="action-bar"<!-- IF !PAGINATION and !TOTAL_RESULTS --> style="display: none;"<!-- ENDIF -->>
+		<!-- INCLUDE common/pagination.html -->
+	</div>
+</div>
 
 <br />
 

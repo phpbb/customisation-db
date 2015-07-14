@@ -10,6 +10,7 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.cache
             - @path_helper
+            - @phpbb.titania.config
             - @phpbb.titania.tracking
 
     phpbb.titania.controller.faq:

@@ -215,6 +215,15 @@ $('.contrib-download').hover(function() {
 	$('.download-info', this).fadeOut('slow');
 });
 
+	$('.contrib-list').on('mouseenter', '.quickview-image', function() {
+		$(this).slideUp('fast')
+			.siblings('.quickview-desc').slideDown('fast');
+
+	}).on('mouseleave', '.quickview-desc', function() {
+		$(this).slideUp('fast')
+			.siblings('.quickview-image').slideDown('fast');
+	});
+
 	// Canceled quick edit, so display original post again
 	$('.postbody').on('click', '#cancel', function(event) {
 		event.preventDefault();

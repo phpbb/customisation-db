@@ -57,4 +57,76 @@
 		$('h3 a', $postbody).html(response.subject);
 		$('.original_post', $postbody).remove();
 	});
+
+	phpbb.addAjaxCallback('titania.category.load', function(res) {
+		var $this = $(this),
+			$crumbs = $('#nav-breadcrumbs .breadcrumbs'),
+			$title = $('title'),
+			title = $title.html(),
+			$categories = $('.categories [data-category-id]'),
+			$contribList = $('.contrib-list-container'),
+			$search = $('#category-search');
+
+		phpbb.history.replaceUrl($this.attr('href'));
+
+		var getParents = function($self) {
+			var $tree = $self.parents('[data-parent-id]'),
+				parentID = $tree.data('parent-id');
+
+			if (parentID) {
+				$tree = $tree.add(getParents($('[data-category-id="' + parentID + '"]')));
+			}
+			return $tree;
+		};
+		if ($this.data('category-id') !== undefined) {
+			var $children = $('.categories [data-parent-id="' + $this.data('category-id') + '"]');
+			$children.slideDown('slow');
+
+			$('.categories [data-parent-id]').not($children.add(getParents($this))).slideUp('slow');
+			$('.categories .active').removeClass('active');
+			$this.addClass('active');
+		}
+
+		$contribList.fadeOut('fast', function() {
+			$contribList.find('.contrib-list').html(res.content);
+			$contribList.find('.action-bar').html(res.pagination).show();
+			$contribList.fadeIn('fast');
+		});
+
+		$search.find('[name="c[]"]').remove();
+		$search.find('#search_keywords').after(
+			$('<input \>').attr({
+				type: 'hidden',
+				name: 'c[]',
+				value: $this.data('category-id')
+			})
+		);
+
+		$categories.each(function() {
+			var $this = $(this);
+			$this.attr('href', res.categories[$this.data('category-id')]);
+		});
+
+		titania.updateSortOptions($('.branch-sort'), $('.branch-sort-options'), res.branches);
+		titania.updateSortOptions($('.key-sort'), $('.key-sort-options'), res.sort);
+
+		$title.html(title.substr(0, title.indexOf('-') + 2) + res.title);
+		$crumbs.children(':not(:first-child)').remove();
+		$crumbs.append(res.breadcrumbs);
+	});
+
+	titania.updateSortOptions = function($container, $sort, options) {
+		$.each(options, function(i) {
+			var option = options[i],
+				$option = $sort.find('[data-sort="' + option.ID + '"]');
+
+			if (option.ACTIVE) {
+				$('.sort-active', $container).html(option.NAME);
+				$option.addClass('active');
+			} else {
+				$option.attr('href', option.URL).removeClass('active');
+			}
+		});
+	};
+
 })(jQuery); // Avoid conflicts with other libraries

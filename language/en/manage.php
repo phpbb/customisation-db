@@ -116,7 +116,6 @@ $lang = array_merge($lang, array(
 
 	'TEAM_ONLY'					=> 'May only be selected by team members.',
 
-	'UNAPPROVED'				=> 'Unapproved',
 	'UNKNOWN'					=> 'Unknown',
 
 	'VALIDATION'				=> 'Validation',
