@@ -386,7 +386,7 @@ class rerouter
 	*/
 	protected function contributions()
 	{
-		$this->url->set_route('all_contribs');
+		$this->url->remove_param(0)->set_route('index');
 	}
 
 	/**

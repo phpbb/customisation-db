@@ -42,17 +42,6 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.tracking
 
-    phpbb.titania.controller.all_contribs:
-        class: phpbb\titania\controller\all_contribs
-        arguments:
-            - @template
-            - @user
-            - @phpbb.titania.controller.helper
-            - @request
-            - @phpbb.titania.display
-            - @phpbb.titania.tracking
-            - @path_helper
-
     phpbb.titania.controller.author:
         class: phpbb\titania\controller\author
         scope: prototype

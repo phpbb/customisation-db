@@ -16,10 +16,6 @@ phpbb.titania.support:
     pattern: /support/{type}
     defaults: { _controller: phpbb.titania.controller.support:display_topics, type: all }
 
-phpbb.titania.all_contribs:
-    pattern: /contributions/all
-    defaults: { _controller: phpbb.titania.controller.all_contribs:display_all_contributions }
-
 phpbb.titania.author:
     pattern: /author/{author}/{page}
     defaults: { _controller: phpbb.titania.controller.author:base, page: details }
