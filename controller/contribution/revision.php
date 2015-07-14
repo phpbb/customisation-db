@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\attachment\attachment;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class revision extends base
 {
@@ -143,6 +144,10 @@ class revision extends base
 
 				redirect($this->contrib->get_url());
 			}
+			else if (isset($result['response']))
+			{
+				return $result['response'];
+			}
 			$error = $result['error'];
 		}
 		else if ($this->request->is_set_post('cancel'))
@@ -182,7 +187,7 @@ class revision extends base
 		return $this->helper->render(
 			'contributions/contribution_revision.html',
 			$this->contrib->contrib_name . ' - ' . $this->user->lang['NEW_REVISION']
-		); 
+		);
 	}
 
 	/**
@@ -247,6 +252,10 @@ class revision extends base
 				}
 				redirect($this->contrib->get_url());
 			}
+			else if (isset($result['response']))
+			{
+				return $result['response'];
+			}
 			$error = $result['error'];
 		}
 		else if ($this->request->is_set_post('cancel'))
@@ -266,7 +275,7 @@ class revision extends base
 		return $this->helper->render(
 			'contributions/contribution_revision.html',
 			$this->contrib->contrib_name . ' - ' . $this->user->lang['NEW_REVISION']
-		); 
+		);
 	}
 
 	/**
@@ -288,7 +297,36 @@ class revision extends base
 
 		if ($this->uploader->uploaded)
 		{
+			$uploaded = $this->uploader->get_operator()->get_all_ids();
+
+			// If multiple files are uploaded, then one is being replaced.
+			if (sizeof($uploaded) > 1)
+			{
+				$this->uploader->get_operator()->delete(
+					array_diff(
+						$uploaded,
+						array($this->uploader->uploaded)
+					)
+				);
+			}
 			$this->attachment = $this->uploader->get_uploaded_attachment();
+		}
+
+		if ($this->uploader->plupload_active())
+		{
+			return array(
+				'response'	=> new JsonResponse($this->uploader->get_plupload_response_data()),
+			);
+		}
+		else if ($this->request->is_set('attachment_data'))
+		{
+			$data = $this->uploader->get_filtered_request_data();
+
+			if (!empty($data))
+			{
+				$attachment = array_shift($data);
+				$this->load_attachment($attachment['attach_id']);
+			}
 		}
 
 		$settings = array(
@@ -423,7 +461,7 @@ class revision extends base
 		}
 
 		return $exclude_from_repack;
-		
+
 	}
 
 	/**
@@ -824,7 +862,8 @@ class revision extends base
 		$this->revision = new \titania_revision($this->contrib);
 		$this->uploader->configure(
 			TITANIA_CONTRIB,
-			$this->contrib->contrib_id
+			$this->contrib->contrib_id,
+			true
 		);
 		$this->package = new \phpbb\titania\entity\package;
 		$this->revisions_in_queue = $this->repackable_branches = array();
@@ -982,6 +1021,7 @@ class revision extends base
 			'S_CUSTOM_LICENSE'			=> $this->has_custom_license($this->request->variable('revision_license', $settings['license'], true)),
 			'S_ALLOW_CUSTOM_LICENSE'	=> $this->contrib->type->license_allow_custom,
 			'S_REQUIRE_UPLOAD'			=> $this->require_upload,
+			'S_REVISION_FORM'			=> true,
 		));
 
 		// Assign separately so we can output some data first

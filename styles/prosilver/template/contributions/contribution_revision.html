@@ -11,11 +11,19 @@
 			<!-- IF REVISION_UPLOADER -->
 				{REVISION_UPLOADER}
 
-				<!-- IF .custom_fields -->
 				<fieldset class="fields2">
-					<!-- INCLUDE common/custom_fields.html -->
+					<dl>
+						<dt><label for="revision_version">{L_REVISION_VERSION}:</label><br /><span>{L_REVISION_VERSION_EXPLAIN}</span></dt>
+						<dd><input type="text" name="revision_version" id="revision_version" class="inputbox autowidth" value="{REVISION_VERSION}" /></dd>
+					</dl>
+					<dl>
+						<dt><label for="revision_name">{L_REVISION_NAME}:</label><br /><span>{L_REVISION_NAME_EXPLAIN}</span></dt>
+						<dd><input type="text" name="revision_name" id="revision_name" class="inputbox autowidth" value="{REVISION_NAME}" /></dd>
+					</dl>
+					<!-- IF .custom_fields -->
+						<!-- INCLUDE common/custom_fields.html -->
+					<!-- ENDIF -->
 				</fieldset>
-				<!-- ENDIF -->
 
 				<!-- IF .phpbb_branches -->
 				<fieldset class="fields2">

@@ -621,6 +621,36 @@ li.row dl.codebox dd {
 	padding: 0;
 }
 
+/* Revision uploader
+-------------------------------------------- */
+.revision-uploader #file-total-progress {
+	bottom: -4px;
+	left: 0;
+	margin: 0;
+	position: absolute;
+	width: 100%;
+}
+
+.revision-uploader .attach-row {
+	background-color: #f1f4f6;
+	border: 1px dotted #c9cacb;
+	border-radius: 3px;
+	display: inline-block;
+	margin-right: 5px;
+	margin-top: 5px;
+	padding: 4px;
+	position: relative;
+}
+
+.revision-uploader .file-name {
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+.revision-uploader .file-status {
+	vertical-align: middle;
+}
+
 /* Manage sections
 --------------------------------------------- */
 

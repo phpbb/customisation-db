@@ -55,7 +55,9 @@ phpbb.plupload = {
 		},
 		file_data_name: '{FORM_NAME}',
 		multipart_params: {
-			add_file: '{LA_ADD_FILE}'
+			add_file: '{LA_ADD_FILE}',
+			creation_time: $('[name="creation_time"]', '#postform').val(),
+			form_token: $('[name="form_token"]', '#postform').val(),
 		},
 		form_hook: '#postform',
 		browse_button: 'add_files',
@@ -69,7 +71,15 @@ phpbb.plupload = {
 	maxFiles: {MAX_ATTACHMENTS},
 	data: {S_ATTACH_DATA}
 }
+
+<!-- IF S_REVISION_FORM -->
+	phpbb.plupload.config.multi_selection = false;
+	phpbb.plupload.config.multipart_params.new_revision = 1;
+	phpbb.plupload.isRevision = true;
+<!-- ENDIF -->
+
 //]]>
 </script>
-<!-- INCLUDEJS {T_ASSETS_PATH}/plupload/plupload.full.min.js -->
-<!-- INCLUDEJS {T_ASSETS_PATH}/javascript/plupload.js -->
+<!-- INCLUDEJS {T_ASSETS_PATH}/plupload/plupload.full.min.js?assets_version={T_ASSETS_VERSION} -->
+<!-- INCLUDEJS {T_ASSETS_PATH}/javascript/plupload.js?assets_version={T_ASSETS_VERSION} -->
+<!-- INCLUDEJS {T_TITANIA_ASSETS_PATH}/javascript/plupload.js?assets_version={T_ASSETS_VERSION} -->

@@ -201,6 +201,7 @@ $lang = array_merge($lang, array(
 
 	'SCREENSHOTS'							=> 'Screenshots',
 	'SELECT_CONTRIB_TYPE'					=> '-- Select contribution type --',
+	'SELECT_FILE'							=> 'Select file',
 	'SELECT_PHPBB_BRANCH'					=> 'Select phpBB branch',
 	'SUBDIRECTORY_LIMIT'					=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
 	'SUBMIT_NEW_REVISION'					=> 'Submit and add new revision',
