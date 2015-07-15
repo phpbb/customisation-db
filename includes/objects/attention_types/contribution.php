@@ -28,6 +28,7 @@ class titania_attention_contribution extends titania_attention
 	 */
 	public function __construct()
 	{
+		parent::__construct();
 		$this->user = \phpbb::$user;
 	}
 
