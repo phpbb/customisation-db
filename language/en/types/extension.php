@@ -127,4 +127,8 @@ If you have any queries and further discussion please use the Queue Discussion T
 
 Thank you,
 phpBB Extensions Team',
+
+	'INVALID_EXT_NAME'						=> 'Invalid value for <em>name</em> property in composer.json.
+													Please refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for the valid format.',
+
 ));
