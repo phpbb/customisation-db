@@ -43,6 +43,7 @@ $lang = array_merge($lang, array(
 	'ANNOUNCEMENT_TOPIC_VIEW'				=> '%sView%s',
 	'ATTENTION_CONTRIB_CATEGORIES_CHANGED'	=> 'Contribution categories changed',
 	'ATTENTION_CONTRIB_DESC_CHANGED'		=> 'Contribution description changed',
+	'ATTENTION_CONTRIB_NAME_CHANGED'		=> 'Contribution name changed',
 	'AUTOMOD_RESULTS'						=> '<strong>Please check over the AutoMod install results and make sure that nothing needs to be fixed.<br /><br />If an error comes up and you are certain that the error is incorrect, just hit continue below.</strong>',
 	'AUTOMOD_TEST'							=> 'The Mod will be tested against AutoMod and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 

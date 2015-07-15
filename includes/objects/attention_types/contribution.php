@@ -86,6 +86,12 @@ class titania_attention_contribution extends titania_attention
 				));
 			break;
 
+			case TITANIA_ATTENTION_NAME_CHANGED :
+				$labels = array_merge($labels, array(
+					'reason' => 'ATTENTION_CONTRIB_NAME_CHANGED',
+				));
+			break;
+
 			case TITANIA_ATTENTION_DESC_CHANGED :
 				$labels = array_merge($labels, array(
 					'reason' => 'ATTENTION_CONTRIB_DESC_CHANGED',
@@ -115,7 +121,7 @@ class titania_attention_contribution extends titania_attention
 			'U_EDIT'				=> $this->contrib->get_url('manage'),
 
 			'SECTION_NAME'			=> '<a href="' . $this->contrib->get_url() . '">' . censor_text($this->contrib->contrib_name) . '</a>  - ' . phpbb::$user->lang['ATTENTION'],
-		));	
+		));
 	}
 
 	/**

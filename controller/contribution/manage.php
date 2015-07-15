@@ -141,7 +141,7 @@ class manage extends base
 			$this->contrib->post_data($this->message);
 			$this->contrib->__set_array(array(
 				'contrib_demo'				=> ($this->can_edit_demo) ? json_encode($this->settings['demo']) : $this->contrib->contrib_demo,
-				'contrib_limited_support'	=> $this->settings['limited_support'], 
+				'contrib_limited_support'	=> $this->settings['limited_support'],
 			));
 		}
 
@@ -337,11 +337,11 @@ class manage extends base
 
 				default:
 					$action_auth = false;
-			}	
+			}
 		}
 		$is_author_editable = !in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED));
 
-		return $action_auth && ($this->is_moderator || 
+		return $action_auth && ($this->is_moderator ||
 			($this->is_author && $is_author_editable && $this->auth->acl_get('u_titania_post_edit_own')));
 	}
 
@@ -384,7 +384,7 @@ class manage extends base
 			->set_auth(array(
 				'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
 				'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
-				'edit_subject'	=> $this->is_moderator,
+				'edit_subject'	=> $this->is_moderator || $this->contrib->is_author(),
 			))
 			->set_settings(array(
 				'display_error'		=> false,
@@ -613,7 +613,7 @@ class manage extends base
 		$this->template->assign_vars(array(
 			'S_CONTRIB_APPROVED'		=> $this->contrib->contrib_status == TITANIA_CONTRIB_APPROVED,
 			'S_POST_ACTION'				=> $this->contrib->get_url('manage'),
-			'S_EDIT_SUBJECT'			=> $this->is_moderator,
+			'S_EDIT_SUBJECT'			=> $this->is_moderator || $this->contrib->is_author(),
 			'S_DELETE_CONTRIBUTION'		=> $this->check_auth('delete'),
 			'S_IS_OWNER'				=> $this->contrib->is_author,
 			'S_IS_MODERATOR'			=> $this->is_moderator,
@@ -699,9 +699,14 @@ class manage extends base
 	*/
 	protected function create_change_report($old_settings)
 	{
+		$name_change = $this->get_name_change($old_settings);
 		$description_change = $this->get_description_change($old_settings);
 		$category_change = $this->get_category_change($old_settings['categories']);
 
+		if ($name_change)
+		{
+			$this->contrib->report($name_change, false, TITANIA_ATTENTION_NAME_CHANGED);
+		}
 		if ($description_change)
 		{
 			$this->contrib->report($description_change, false, TITANIA_ATTENTION_DESC_CHANGED);
@@ -711,6 +716,20 @@ class manage extends base
 		{
 			$this->contrib->report($category_change, false, TITANIA_ATTENTION_CATS_CHANGED);
 		}
+	}
+
+	/**
+	 * Generate report message for a change in name.
+	 *
+	 * @param array $old_settings
+	 * @return string
+	 */
+	protected function get_name_change($old_settings)
+	{
+		$old_name = $old_settings['contrib_name'];
+		$name = $this->contrib->contrib_name;
+
+		return ($old_name != $name) ? "$old_name>>>>>>>>>>$name" : '';
 	}
 
 	/**
