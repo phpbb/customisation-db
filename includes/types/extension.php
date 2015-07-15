@@ -166,7 +166,7 @@ class titania_type_extension extends titania_type_base
 		$composer_file = $package->get_temp_path() . '/' . $ext_base_path . '/composer.json';
 		$data = $this->get_composer_data($composer_file);
 
-		if (!is_array($data) || empty($data['name']) || !preg_match('#^[a-zA-Z0-9_\x7f-\xff]{2,}/[a-zA-Z0-9_\x7f-\xff]{2,}$#', $data['name']))
+		if (!is_array($data) || empty($data['name']) || !preg_match('#^[a-zA-Z0-9\x7f-\xff]{2,}/[a-zA-Z0-9\x7f-\xff]{2,}$#', $data['name']))
 		{
 			throw new \Exception('INVALID_EXT_NAME');
 		}
