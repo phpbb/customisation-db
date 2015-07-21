@@ -58,6 +58,7 @@ services:
             - @phpbb.titania.access
             - @phpbb.titania.tracking
             - @phpbb.titania.message
+            - @phpbb.titania.subscriptions
 
     phpbb.titania.controller.download:
         class: phpbb\titania\controller\download
@@ -178,6 +179,7 @@ services:
             - @phpbb.titania.message
             - @phpbb.titania.attachment.uploader
             - @phpbb.titania.attachment.uploader
+            - @phpbb.titania.subscriptions
 
     phpbb.titania.controller.contrib.revision:
         class: phpbb\titania\controller\contribution\revision

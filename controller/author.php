@@ -53,6 +53,9 @@ class author
 	/** @var \phpbb\titania\message\message */
 	protected $message;
 
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	/** @var \titania_author */
 	protected $author;
 
@@ -73,9 +76,10 @@ class author
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param access $access
 	 * @param \phpbb\titania\tracking $tracking
-	 * @param \phpbb\titania\message\message
+	 * @param \phpbb\titania\message\message $message
+	 * @param \phpbb\titania\subscriptions $subscriptions
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\message\message $message)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\message\message $message, \phpbb\titania\subscriptions $subscriptions)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -89,6 +93,7 @@ class author
 		$this->access = $access;
 		$this->tracking = $tracking;
 		$this->message = $message;
+		$this->subscriptions = $subscriptions;
 
 		// Add common lang
 		$this->user->add_lang_ext('phpbb/titania', 'authors');
@@ -255,7 +260,7 @@ class author
 	* @return \Symfony\Component\HttpFoundation\Response
 	*/
 	protected function manage()
-	{ 
+	{
 		if (!$this->is_owner && !$this->auth->acl_get('u_titania_mod_author_mod'))
 		{
 			return $this->helper->needs_auth();
@@ -412,6 +417,15 @@ class author
 				// Create relations
 				$contrib->put_contrib_in_categories($settings['categories']);
 
+				if ($this->ext_config->support_in_titania)
+				{
+					$active_authors = array_merge($authors['author'], $authors['active_coauthors']);
+
+					foreach ($active_authors as $author)
+					{
+						$this->subscriptions->subscribe(TITANIA_SUPPORT, $contrib->contrib_id, $author);
+					}
+				}
 				redirect($contrib->get_url('revision'));
 			}
 		}

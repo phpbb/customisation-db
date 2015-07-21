@@ -32,6 +32,9 @@ class manage extends base
 	/** @var \phpbb\titania\attachment\uploader */
 	protected $colorizeit_sample;
 
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	/** @var bool */
 	protected $is_moderator;
 
@@ -61,14 +64,16 @@ class manage extends base
 	 * @param \phpbb\titania\message\message $message
 	 * @param \phpbb\titania\attachment\uploader $screenshots
 	 * @param \phpbb\titania\attachment\uploader $colorizeit_sample
+	 * @param \phpbb\titania\subscriptions $subscriptions
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\message\message $message, \phpbb\titania\attachment\uploader $screenshots, \phpbb\titania\attachment\uploader $colorizeit_sample)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\message\message $message, \phpbb\titania\attachment\uploader $screenshots, \phpbb\titania\attachment\uploader $colorizeit_sample, \phpbb\titania\subscriptions $subscriptions)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
 
 		$this->message = $message;
 		$this->screenshots = $screenshots;
 		$this->colorizeit_sample = $colorizeit_sample;
+		$this->subscriptions = $subscriptions;
 	}
 
 	/**
@@ -249,6 +254,11 @@ class manage extends base
 			$this->contrib->update_release_topic();
 			$this->contrib->index();
 			$this->cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
+
+			if ($this->ext_config->support_in_titania)
+			{
+				$this->subscriptions->subscribe(TITANIA_SUPPORT, $this->contrib->contrib_id, $new_author);
+			}
 
 			redirect($this->contrib->get_url());
 		}
@@ -459,6 +469,11 @@ class manage extends base
 		// Submit the changes
 		$this->contrib->submit();
 		// Set the coauthors
+
+		if ($this->ext_config->support_in_titania)
+		{
+			$this->subscribe_new_coauthors($this->contrib->coauthors, $authors['active_coauthors']);
+		}
 		$this->contrib->set_coauthors($authors['active_coauthors'], $authors['nonactive_coauthors'], true);
 		// Update the release topic
 		$this->contrib->update_release_topic();
@@ -502,6 +517,31 @@ class manage extends base
 			$this->colorizeit_sample->get_operator()->submit();
 			$contrib_clr_colors = $this->request->variable('change_colors', $this->contrib->contrib_clr_colors);
 			$this->contrib->__set('contrib_clr_colors', $contrib_clr_colors);
+		}
+	}
+
+	/**
+	 * Subscribe new coauthors to contrib support section.
+	 *
+	 * @param array $old_coauthors		Value of contrib's "coauthors" property
+	 * @param array $new_coauthors		Array of new active coauthors
+	 */
+	protected function subscribe_new_coauthors(array $old_coauthors, array $new_coauthors)
+	{
+		$old_active = array();
+
+		foreach ($old_coauthors as $id => $data)
+		{
+			if ($data['active'])
+			{
+				$old_active[] = (int) $id;
+			}
+		}
+		$subscribe = array_diff($new_coauthors, $old_active);
+
+		foreach ($subscribe as $user_id)
+		{
+			$this->subscriptions->subscribe(TITANIA_SUPPORT, $this->contrib->contrib_id, $user_id);
 		}
 	}
 
