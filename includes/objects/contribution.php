@@ -749,18 +749,27 @@ class titania_contribution extends titania_message_object
 
 		if (!$simple && !$return)
 		{
+			$active_coauthors = $past_coauthors = array();
+			$author_sort = function($a, $b) {
+				return strcmp($a['AUTHOR_NAME'], $b['AUTHOR_NAME']);
+			};
+
 			// Display Co-authors
 			foreach ($this->coauthors as $user_id => $row)
 			{
 				if ($row['active'])
 				{
-					phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
+					$active_coauthors[] = $this->author->assign_details(true, $row);
 				}
 				else
 				{
-					phpbb::$template->assign_block_vars('past_coauthors', $this->author->assign_details(true, $row));
+					$past_coauthors[] = $this->author->assign_details(true, $row);
 				}
 			}
+			usort($active_coauthors, $author_sort);
+			usort($past_coauthors, $author_sort);
+			phpbb::$template->assign_block_vars_array('coauthors', $active_coauthors);
+			phpbb::$template->assign_block_vars_array('past_coauthors', $past_coauthors);
 
 			// Display Revisions and phpBB versions
 			if (sizeof($this->revisions))

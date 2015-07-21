@@ -288,6 +288,7 @@ class titania_author extends titania_message_object
 		}
 
 		$vars = array(
+			'AUTHOR_NAME'					=> $this->get_username_string('username'),
 			'AUTHOR_NAME_FULL'				=> $this->get_username_string(),
 			'AUTHOR_REALNAME'				=> $this->author_realname,
 			'AUTHOR_WEBSITE'				=> $this->get_website_url(),
@@ -321,7 +322,7 @@ class titania_author extends titania_message_object
 			{
 				// Figure out the counts some other way
 				$valid_statuses = array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED);
-				
+
 				$sql_ary = array(
 					'SELECT'	=> 'COUNT(*) AS contrib_cnt',
 
@@ -352,7 +353,7 @@ class titania_author extends titania_message_object
 			if ($contrib_cnt > 0)
 			{
 				$lang_key = 'AUTHOR_' . strtoupper($type->name) . 'S';
-				
+
 				if ($contrib_cnt == 1)
 				{
 					$type_list[] = (isset(phpbb::$user->lang[$lang_key . '_ONE'])) ? phpbb::$user->lang[$lang_key . '_ONE'] : '{' . $lang_key . '_ONE}';
