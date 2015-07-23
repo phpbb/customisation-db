@@ -285,7 +285,7 @@ class subscriptions
 			{
 				case self::EMAIL:
 
-					if ($messenger = null)
+					if ($messenger === null)
 					{
 						// Only make the object if we need it
 						require($this->phpbb_root_path. 'includes/functions_messenger.' . $this->php_ext);
