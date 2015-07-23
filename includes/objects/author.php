@@ -15,7 +15,7 @@
 * Class to abstract titania authors.
 * @package Titania
 */
-class titania_author extends titania_message_object
+class titania_author extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * SQL Table
@@ -79,6 +79,7 @@ class titania_author extends titania_message_object
 			'author_desc_options'	=> array('default' => 7,	'message_field' => 'message_options'),
 		));
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		// Load the count for different types

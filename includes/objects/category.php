@@ -17,7 +17,7 @@ use phpbb\titania\sync;
  * Class to abstract categories.
  * @package Titania
  */
-class titania_category extends titania_message_object
+class titania_category extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * Database table to be used for the contribution object
@@ -77,6 +77,7 @@ class titania_category extends titania_message_object
 			'category_options'				=> array('default' => 0),
 		));
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		$this->available_options = array(
@@ -374,7 +375,7 @@ class titania_category extends titania_message_object
 			$sql = 'SELECT ci.contrib_id, c.contrib_categories
 				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ci
 				LEFT JOIN ' . TITANIA_CONTRIBS_TABLE . ' c
-					ON (ci.contrib_id = c.contrib_id) 
+					ON (ci.contrib_id = c.contrib_id)
 				WHERE ci.category_id = ' . (int) $from_id;
 			$all = false;
 		}
@@ -387,7 +388,7 @@ class titania_category extends titania_message_object
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$contribs[$row['contrib_id']][] = ($all) ? $row['category_id'] : $row['contrib_categories']; 
+			$contribs[$row['contrib_id']][] = ($all) ? $row['category_id'] : $row['contrib_categories'];
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -406,8 +407,8 @@ class titania_category extends titania_message_object
 			}
 
 			phpbb::$db->sql_query('UPDATE ' . TITANIA_CONTRIBS_TABLE . ' SET contrib_categories = "' . phpbb::$db->sql_escape($categories) . '" WHERE contrib_id = ' . (int) $id);
-			unset($contribs[$id]); 
-		}		
+			unset($contribs[$id]);
+		}
 	}
 
 	/**
@@ -585,7 +586,7 @@ class titania_category extends titania_message_object
 			$controller .= '.action';
 			$params['action'] = $action;
 		}
-		
+
 		return $this->controller_helper->route($controller, $params);
 	}
 

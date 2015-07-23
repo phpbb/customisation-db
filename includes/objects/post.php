@@ -13,12 +13,13 @@
 
 use phpbb\titania\access;
 use phpbb\titania\count;
+use phpbb\titania\message\message;
 
 /**
 * Class to abstract titania posts
 * @package Titania
 */
-class titania_post extends titania_message_object
+class titania_post extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * SQL Table
@@ -112,6 +113,7 @@ class titania_post extends titania_message_object
 			'post_text_options'		=> array('default' => 7,	'message_field' => 'message_options'),
 		));
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->access = phpbb::$container->get('phpbb.titania.access');
 		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
@@ -213,11 +215,9 @@ class titania_post extends titania_message_object
 	}
 
 	/**
-	* Submit data in the post_data format (from includes/tools/message.php)
-	*
-	* @param object $message The message object
-	*/
-	public function post_data($message)
+	 * {@inheritDoc}
+	 */
+	public function post_data(message $message)
 	{
 		$post_data = $message->request_data();
 

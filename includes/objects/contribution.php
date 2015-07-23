@@ -21,7 +21,7 @@ use phpbb\titania\user\helper as user_helper;
  * Class to abstract contributions.
  * @package Titania
  */
-class titania_contribution extends titania_message_object
+class titania_contribution extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * Database table to be used for the contribution object
@@ -43,7 +43,7 @@ class titania_contribution extends titania_message_object
 	 * @var string
 	 */
 	protected $object_type = TITANIA_CONTRIB;
-	
+
 	/**
 	 * Author & co-authors of this contribution
 	 *
@@ -160,7 +160,7 @@ class titania_contribution extends titania_message_object
 			// Translation items
 			'contrib_iso_code'				=> array('default' => ''),
 			'contrib_local_name'			=> array('default' => ''),
-			
+
 			// ColorizeIt stuff
 			'contrib_clr_colors'            => array('default' => ''),
 
@@ -441,7 +441,7 @@ class titania_contribution extends titania_message_object
 				WHERE object_type = ' . TITANIA_TRANSLATION . '
 					AND is_orphan = 0
 					AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', array_keys($this->revisions))) . '
-				ORDER BY ' . phpbb::$db->sql_lower_text('real_filename') . ' ASC'; 
+				ORDER BY ' . phpbb::$db->sql_lower_text('real_filename') . ' ASC';
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
@@ -528,7 +528,7 @@ class titania_contribution extends titania_message_object
 
 	/**
 	 * Fill categories with data from cache.
-	 */	
+	 */
 	public function fill_categories()
 	{
 		// Empty out category_data in case object is being reused via __set_array()
@@ -555,7 +555,7 @@ class titania_contribution extends titania_message_object
 
 	/**
 	 * Get all options inherited from category options.
-	 */	
+	 */
 	public function get_options()
 	{
 		$this->options = array(
@@ -569,7 +569,7 @@ class titania_contribution extends titania_message_object
 		}
 
 		$map = array(
-			TITANIA_CAT_FLAG_DEMO 			=> 'demo', 
+			TITANIA_CAT_FLAG_DEMO 			=> 'demo',
 			TITANIA_CAT_FLAG_ALL_VERSIONS	=> 'all_versions'
 		);
 
@@ -702,7 +702,7 @@ class titania_contribution extends titania_message_object
 				{
 					$u_new_revision = $this->get_url('revision');
 				}
-				
+
 			}
 			if ($use_queue && $this->is_manageable('queue_discussion'))
 			{
@@ -822,7 +822,7 @@ class titania_contribution extends titania_message_object
 			foreach ($this->category_data as $category_row)
 			{
 				$category->__set_array($category_row);
-				
+
 				phpbb::$template->assign_block_vars('categories', $category->assign_display(true));
 			}
 		}
@@ -1981,7 +1981,7 @@ class titania_contribution extends titania_message_object
 			phpbb::$db->sql_query($sql);
 		}
 	}
-	
+
 	/**
 	* Check if ColorizeIt is available
 	*/

@@ -30,7 +30,6 @@ require($ext_root_path . 'includes/constants.' . $php_ext);
 // Include core classes
 require($ext_root_path . 'includes/core/phpbb.' . $php_ext);
 require($ext_root_path . 'includes/core/titania.' . $php_ext);
-require($ext_root_path . 'includes/core/object_message.' . $php_ext);
 
 titania::configure(
 	$phpbb_container->get('phpbb.titania.config'),

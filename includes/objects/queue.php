@@ -18,7 +18,7 @@ use phpbb\titania\message\message;
 * Class to abstract titania queue
 * @package Titania
 */
-class titania_queue extends titania_message_object
+class titania_queue extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * SQL Table
@@ -83,7 +83,7 @@ class titania_queue extends titania_message_object
 			'mpv_results_bitfield'	=> array('default' => ''),
 			'mpv_results_uid'		=> array('default' => ''),
 			'automod_results'		=> array('default' => ''),
-			
+
 			'allow_author_repack'	=> array('default' => false),
 			'queue_tested'			=> array('default' => false),
 		));
@@ -91,6 +91,7 @@ class titania_queue extends titania_message_object
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->user = phpbb::$container->get('user');
 		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');

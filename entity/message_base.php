@@ -1,39 +1,42 @@
 <?php
 /**
-*
-* This file is part of the phpBB Customisation Database package.
-*
-* @copyright (c) phpBB Limited <https://www.phpbb.com>
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-* For full copyright and license information, please see
-* the docs/CREDITS.txt file.
-*
-*/
+ *
+ * This file is part of the phpBB Customisation Database package.
+ *
+ * @copyright (c) phpBB Limited <https://www.phpbb.com>
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ * For full copyright and license information, please see
+ * the docs/CREDITS.txt file.
+ *
+ */
+
+namespace phpbb\titania\entity;
 
 use phpbb\titania\message\message;
 
 /**
  * Class providing basic interaction with the message tool
- * This extension expects you use at least message, message_uid, message_bitfield, and message_options fields.  If you do not use at least all of those do not use this extension
  *
- * @package Titania
+ * This extension expects you use at least message, message_uid,
+ * message_bitfield, and message_options fields.  If you do not use
+ * at least all of those do not use this extension
  */
-abstract class titania_message_object extends titania_database_object
+abstract class message_base extends database_base
 {
 	/**
-	* This allows us to have multiple message items for a single object
-	*
-	* @var string
-	*/
+	 * This allows us to have multiple message items for a single object
+	 *
+	 * @var string
+	 */
 	public $message_fields_prefix = 'message';
 
 	/**
 	 * Submit data in the post_data format (from includes/tools/message.php)
 	 *
-	 * @param object $message The message object
+	 * @param message $message The message object
 	 */
-	public function post_data($message)
+	public function post_data(message $message)
 	{
 		$post_data = $message->request_data();
 
@@ -95,8 +98,8 @@ abstract class titania_message_object extends titania_database_object
 		// Add the object type and object id
 		$for_edit = array(
 			// Object types can be setup to grab the value of another field (such as $this->post_type) by setting $this->object_type to the field name (post_type)
-			'object_type'	=> (is_string($this->object_type) && isset($this->{$this->object_type})) ? $this->{$this->object_type} : $this->object_type,
-			'object_id'		=> $this->{$this->sql_id_field},
+		'object_type'	=> (is_string($this->object_type) && isset($this->{$this->object_type})) ? $this->{$this->object_type} : $this->object_type,
+		'object_id'		=> $this->{$this->sql_id_field},
 		);
 
 		$message = $message_uid = $message_bitfield = $message_options = false;
@@ -105,11 +108,11 @@ abstract class titania_message_object extends titania_database_object
 		message::decode($message, $message_uid);
 
 		$for_edit = array_merge($for_edit, array(
-			'allow_bbcode'	=> ($message_options & OPTION_FLAG_BBCODE) ? 1 : 0,
-			'allow_smilies'	=> ($message_options & OPTION_FLAG_SMILIES) ? 1 : 0,
-			'allow_urls'	=> ($message_options & OPTION_FLAG_LINKS) ? 1 : 0,
-			'text'			=> $message, // text is expected by some (it's the default for generate_text_for_edit)
-			'message'		=> $message,
+		'allow_bbcode'	=> ($message_options & OPTION_FLAG_BBCODE) ? 1 : 0,
+		'allow_smilies'	=> ($message_options & OPTION_FLAG_SMILIES) ? 1 : 0,
+		'allow_urls'	=> ($message_options & OPTION_FLAG_LINKS) ? 1 : 0,
+		'text'			=> $message, // text is expected by some (it's the default for generate_text_for_edit)
+		'message'		=> $message,
 		));
 
 		// Add any of the marked fields to the array
@@ -124,7 +127,7 @@ abstract class titania_message_object extends titania_database_object
 		return $for_edit;
 	}
 
-	private function get_message_fields(&$message, &$message_uid, &$message_bitfield, &$message_options)
+	protected function get_message_fields(&$message, &$message_uid, &$message_bitfield, &$message_options)
 	{
 		foreach ($this->object_config as $field => $options)
 		{
@@ -152,7 +155,7 @@ abstract class titania_message_object extends titania_database_object
 		}
 	}
 
-	private function set_message_fields($message, $message_uid, $message_bitfield, $message_options)
+	protected function set_message_fields($message, $message_uid, $message_bitfield, $message_options)
 	{
 		foreach ($this->object_config as $field => $options)
 		{
