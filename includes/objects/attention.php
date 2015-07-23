@@ -103,7 +103,7 @@ class titania_attention extends \phpbb\titania\entity\database_base
 			$this->subscriptions->send_notifications(
 				TITANIA_ATTENTION,
 				0,
-				'subscribe_notify.txt',
+				'subscribe_notify',
 				$email_vars,
 				$this->attention_poster_id
 			);

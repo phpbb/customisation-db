@@ -350,7 +350,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->subscriptions->send_notifications(
 			TITANIA_QUEUE_TAG,
 			$new_status,
-			'new_contrib_queue_cat.txt',
+			'new_contrib_queue_cat',
 			$vars,
 			phpbb::$user->data['user_id']
 		);
@@ -464,7 +464,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'NAME'		=> $contrib->contrib_name,
 			'U_VIEW'	=> $contrib->get_url(),
 		);
-		$this->subscriptions->send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
+		$this->subscriptions->send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify', $email_vars);
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);

@@ -119,7 +119,7 @@ class titania_attention_post extends titania_attention
 		{
 			return;
 		}
-		
+
 		$this->close();
 
 		// Check for any open reports.
@@ -274,7 +274,7 @@ class titania_attention_post extends titania_attention
 			$object_type = array(TITANIA_TOPIC, TITANIA_SUPPORT);
 			$object_id = array($this->post->topic_id, $this->post->topic->parent_id);
 
-			$this->send_notifications($object_type, $object_id, 'subscribe_notify_contrib.txt', $message_vars);
+			$this->send_notifications($object_type, $object_id, 'subscribe_notify_contrib', $message_vars);
 		}
 	}
 
@@ -295,7 +295,7 @@ class titania_attention_post extends titania_attention
 		{
 			$message_vars = array('U_VIEW' => $this->post->topic->get_url());
 
-			$this->send_notifications($this->post->post_type, $this->post->topic->parent_id, 'subscribe_notify_forum_contrib.txt', $message_vars);
+			$this->send_notifications($this->post->post_type, $this->post->topic->parent_id, 'subscribe_notify_forum_contrib', $message_vars);
 		}
 	}
 

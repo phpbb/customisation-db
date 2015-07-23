@@ -308,7 +308,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 				$this->subscriptions->send_notifications(
 					TITANIA_CONTRIB,
 					$this->contrib_id,
-					'subscribe_notify.txt',
+					'subscribe_notify',
 					$email_vars
 				);
 			}

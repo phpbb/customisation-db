@@ -413,7 +413,7 @@ class posting
 			$for_edit['allow_urls'],
 			$for_edit['allow_smilies']
 		);
-		
+
 		// If u_titania_mod_post_mod permission then no edit info
 		// Update edit info if user is editing his post, which is not the last within the topic.
 		if (!$this->auth->acl_get('u_titania_mod_post_mod') && ($post->topic->topic_last_post_id != $post->post_id))
@@ -421,7 +421,7 @@ class posting
 			$post->post_edit_time = time();
 			$post->post_edit_user = $this->user->data['user_id'];
 		}
-		
+
 		// Submit
 		$post->submit();
 
@@ -689,7 +689,7 @@ class posting
 		$range = $this->request->variable('from', '');
 		$topic = $this->load_topic($topic_id);
 		$errors = array();
-				
+
 		if ($topic->topic_type != TITANIA_SUPPORT)
 		{
 			return $this->controller_helper->message('SPLIT_NOT_ALLOWED');
@@ -753,7 +753,7 @@ class posting
 					// Get info from first post
 					$sql = 'SELECT post_id, post_access, post_approved, post_time
 						FROM ' . TITANIA_POSTS_TABLE . '
-						WHERE post_type = ' . TITANIA_SUPPORT . ' 
+						WHERE post_type = ' . TITANIA_SUPPORT . '
 							AND topic_id = ' . (int) $topic->topic_id . '
 							AND ';
 					$result = $this->db->sql_query_limit($sql . $sql_extra, 1);
@@ -1287,7 +1287,7 @@ class posting
 		$this->subscriptions->send_notifications(
 			$object_type,
 			$object_id,
-			"$template.txt",
+			$template,
 			$email_vars,
 			$post->post_user_id
 		);

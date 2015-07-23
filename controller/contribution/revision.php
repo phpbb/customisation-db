@@ -245,7 +245,7 @@ class revision extends base
 					$this->subscriptions->send_notifications(
 						TITANIA_QUEUE,
 						$this->contrib->contrib_type,
-						'subscribe_notify_forum.txt',
+						'subscribe_notify_forum',
 						$email_vars,
 						$this->user->data['user_id']
 					);
