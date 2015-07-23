@@ -15,7 +15,7 @@
  * Class to abstract attention items
  * @package Titania
  */
-class titania_attention extends titania_database_object
+class titania_attention extends \phpbb\titania\entity\database_base
 {
 	/**
 	 * Database table to be used
@@ -69,6 +69,7 @@ class titania_attention extends titania_database_object
 			'notify_reporter'				=> array('default' => 0),
 		));
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->path_helper = phpbb::$container->get('path_helper');
 		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
@@ -258,7 +259,7 @@ class titania_attention extends titania_database_object
 		if ($this->notify_reporter)
 		{
 			$this->notify_reporter_closed();
-		}	
+		}
 	}
 
 	/**
@@ -290,7 +291,7 @@ class titania_attention extends titania_database_object
 		}
 
 		phpbb::_include('functions_messenger', false, 'messenger');
-					
+
 		$lang_path = phpbb::$user->lang_path;
 		phpbb::$user->set_custom_lang_path(titania::$config->language_path);
 
@@ -309,7 +310,7 @@ class titania_attention extends titania_database_object
 		$messenger->send();
 
 		phpbb::$user->set_custom_lang_path($lang_path);
-		// This gets reset when $template->_tpl_load() gets called 
+		// This gets reset when $template->_tpl_load() gets called
 		phpbb::$user->theme['template_inherits_id'] = 1;
 	}
 
@@ -336,15 +337,15 @@ class titania_attention extends titania_database_object
 
 			$old = substr($temp, 0, $split_pos);
 			$new = substr($temp, $split_pos + 10);
-			
+
 			$diff = new diff($old, $new);
 			$renderer = new diff_renderer_inline();
-			// <pre> is used to display the diff, so get rid of \n to get remove double line spacing 
+			// <pre> is used to display the diff, so get rid of \n to get remove double line spacing
 			$desc_diff = str_replace("\n", '', html_entity_decode($renderer->get_diff_content($diff)));
 
-			return $desc_diff;		
+			return $desc_diff;
 		}
-		
-		return $this->attention_description;	
+
+		return $this->attention_description;
 	}
 }

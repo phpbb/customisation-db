@@ -15,7 +15,7 @@
 * Class to abstract titania ratings.
 * @package Titania
 */
-class titania_rating extends titania_database_object
+class titania_rating extends \phpbb\titania\entity\database_base
 {
 	/**
 	 * SQL Table
@@ -156,6 +156,7 @@ class titania_rating extends titania_database_object
 		$this->rating_count = $object->{$this->cache_rating_count};
 		$this->rating_object_id = $object->{$this->object_column};
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->path_helper = phpbb::$container->get('path_helper');
 	}
 

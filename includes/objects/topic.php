@@ -19,7 +19,7 @@ use phpbb\titania\url\url;
 * Class to abstract titania topic
 * @package Titania
 */
-class titania_topic extends titania_database_object
+class titania_topic extends \phpbb\titania\entity\database_base
 {
 	/**
 	 * SQL Table
@@ -103,6 +103,7 @@ class titania_topic extends titania_database_object
 		));
 
 		$this->topic_id = $topic_id;
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->tracking = phpbb::$container->get('phpbb.titania.tracking');
 		$this->display = phpbb::$container->get('phpbb.titania.display');
@@ -219,7 +220,7 @@ class titania_topic extends titania_database_object
 	 * Get the URL to this topic
 	 *
 	 * @param string|bool $action	The topic action if any
-	 * @param array $params			Additional parameters to add to the URL.	
+	 * @param array $params			Additional parameters to add to the URL.
 	 */
 	public function get_url($action = false, $params = array())
 	{
@@ -301,7 +302,7 @@ class titania_topic extends titania_database_object
 
 			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_TOPICS_POSTED_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
 
-			phpbb::$db->sql_return_on_error(false);			
+			phpbb::$db->sql_return_on_error(false);
 		}
 		else if ($mode == 'remove')
 		{
@@ -556,7 +557,7 @@ class titania_topic extends titania_database_object
 		else
 		{
 			// If no posts are visible and first post is deleted, then only the teams have access.
-			$this->topic_access = (!$visible_posts && $first_post_data['post_deleted']) ? access::TEAM_LEVEL : $this->topic_access;		
+			$this->topic_access = (!$visible_posts && $first_post_data['post_deleted']) ? access::TEAM_LEVEL : $this->topic_access;
 		}
 	}
 
@@ -586,7 +587,7 @@ class titania_topic extends titania_database_object
 		}
 
 		$sql = 'SELECT *
-			FROM ' . TITANIA_POSTS_TABLE . ' 
+			FROM ' . TITANIA_POSTS_TABLE . '
 			WHERE ' . $sql_where;
 		$result = phpbb::$db->sql_query($sql);
 		$posts = phpbb::$db->sql_fetchrowset($result);

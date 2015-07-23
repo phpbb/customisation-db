@@ -1,50 +1,53 @@
 <?php
 /**
-*
-* This file is part of the phpBB Customisation Database package.
-*
-* @copyright (c) phpBB Limited <https://www.phpbb.com>
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-* For full copyright and license information, please see
-* the docs/CREDITS.txt file.
-*
-*/
+ *
+ * This file is part of the phpBB Customisation Database package.
+ *
+ * @copyright (c) phpBB Limited <https://www.phpbb.com>
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ * For full copyright and license information, please see
+ * the docs/CREDITS.txt file.
+ *
+ */
+
+namespace phpbb\titania\entity;
 
 /**
-* Class providing basic database operations.
-*
-* @package Titania
-*/
-abstract class titania_database_object extends \phpbb\titania\entity\base
+ * Class providing basic database operations.
+ */
+abstract class database_base extends base
 {
 	/**
-	* SQL table our fields will reside in
-	*
-	* @var	string
-	*/
+	 * SQL table our fields will reside in
+	 *
+	 * @var	string
+	 */
 	protected $sql_table;
 
 	/**
-	* Unique field in $this->sql_table which we can use to identify
-	* records.. it's usually the primary key of the table
-	*
-	* @var	string
-	*/
+	 * Unique field in $this->sql_table which we can use to identify
+	 * records.. it's usually the primary key of the table
+	 *
+	 * @var	string
+	 */
 	protected $sql_id_field;
 
 	/**
-	* Array holding data we got from the db.
-	*
-	* @var	array[string]mixed
-	*/
+	 * Array holding data we got from the db.
+	 *
+	 * @var	array[string]mixed
+	 */
 	protected $sql_data = array();
 
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+
 	/**
-	* Triggers an insert or an update depending on presence of $this->sql_id_field
-	*
-	* @return	bool		true on success, else false
-	*/
+	 * Triggers an insert or an update depending on presence of $this->sql_id_field
+	 *
+	 * @return	bool		true on success, else false
+	 */
 	public function submit()
 	{
 		$identifier = $this->sql_id_field;
@@ -60,10 +63,10 @@ abstract class titania_database_object extends \phpbb\titania\entity\base
 	}
 
 	/**
-	* Updates $this->sql_table with object data identified by $this->sql_id_field
-	*
-	* @return	bool		true on success, else false
-	*/
+	 * Updates $this->sql_table with object data identified by $this->sql_id_field
+	 *
+	 * @return	bool		true on success, else false
+	 */
 	public function update()
 	{
 		$sql_array = array();
@@ -93,14 +96,14 @@ abstract class titania_database_object extends \phpbb\titania\entity\base
 		}
 
 		$sql = 'UPDATE ' . $this->sql_table . '
-			SET ' . phpbb::$db->sql_build_array('UPDATE', $sql_array) . '
+			SET ' . $this->db->sql_build_array('UPDATE', $sql_array) . '
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
-		phpbb::$db->sql_query($sql);
+		$this->db->sql_query($sql);
 
 		// Merge sql data back
 		$this->sql_data = array_merge($this->sql_data, $sql_array);
 
-		if (phpbb::$db->sql_affectedrows())
+		if ($this->db->sql_affectedrows())
 		{
 			return true;
 		}
@@ -109,11 +112,11 @@ abstract class titania_database_object extends \phpbb\titania\entity\base
 	}
 
 	/**
-	* Inserts object data into $this->sql_table.
-	* Sets the identifier property to the correct id.
-	*
-	* @return	bool		true on success, else false
-	*/
+	 * Inserts object data into $this->sql_table.
+	 * Sets the identifier property to the correct id.
+	 *
+	 * @return	bool		true on success, else false
+	 */
 	public function insert()
 	{
 		$sql_array = array();
@@ -122,10 +125,10 @@ abstract class titania_database_object extends \phpbb\titania\entity\base
 			$sql_array[$name] = $this->validate_property($this->$name, $this->object_config[$name]);
 		}
 
-		$sql = 'INSERT INTO ' . $this->sql_table . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_array);
-		phpbb::$db->sql_query($sql);
+		$sql = 'INSERT INTO ' . $this->sql_table . ' ' . $this->db->sql_build_array('INSERT', $sql_array);
+		$this->db->sql_query($sql);
 
-		if ($id = phpbb::$db->sql_nextid())
+		if ($id = $this->db->sql_nextid())
 		{
 			$this->{$this->sql_id_field} = $id;
 
@@ -136,10 +139,10 @@ abstract class titania_database_object extends \phpbb\titania\entity\base
 	}
 
 	/**
-	* Gets object data from the database and sets the properties.
-	*
-	* @return	bool		true when object found, else false
-	*/
+	 * Gets object data from the database and sets the properties.
+	 *
+	 * @return	bool		true when object found, else false
+	 */
 	public function load($sql_id = false)
 	{
 		if ($sql_id !== false)
@@ -155,9 +158,9 @@ abstract class titania_database_object extends \phpbb\titania\entity\base
 		$sql = 'SELECT ' . implode(', ', array_keys($this->object_config)) . '
 			FROM ' . $this->sql_table . '
 			WHERE ' . $this->sql_id_field . ' = ' . (int) $this->{$this->sql_id_field};
-		$result = phpbb::$db->sql_query($sql);
-		$this->sql_data = phpbb::$db->sql_fetchrow($result);
-		phpbb::$db->sql_freeresult($result);
+		$result = $this->db->sql_query($sql);
+		$this->sql_data = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
 
 		if (empty($this->sql_data))
 		{
@@ -173,41 +176,41 @@ abstract class titania_database_object extends \phpbb\titania\entity\base
 	}
 
 	/**
-	* Deletes an object identified by $this->sql_id_field
-	*
-	* @return	int		rows deleted
-	*/
+	 * Deletes an object identified by $this->sql_id_field
+	 *
+	 * @return	int		rows deleted
+	 */
 	public function delete()
 	{
 		$sql = 'DELETE FROM ' . $this->sql_table . '
 			WHERE ' . $this->sql_id_field . ' = ' . $this->{$this->sql_id_field};
-		phpbb::$db->sql_query($sql);
+		$this->db->sql_query($sql);
 
 		// Unset the sql indentifier field
 		unset($this->{$this->sql_id_field});
 
-		return phpbb::$db->sql_affectedrows();
+		return $this->db->sql_affectedrows();
 	}
 
 	/**
-	* Set the SQL data
-	* This should only be used when you are loading just this item from the database (do not modify anything before sending it to this)!
-	*
-	* @param mixed $sql_data
-	*/
+	 * Set the SQL data
+	 * This should only be used when you are loading just this item from the database (do not modify anything before sending it to this)!
+	 *
+	 * @param mixed $sql_data
+	 */
 	public function set_sql_data($sql_data)
 	{
 		$this->sql_data = $sql_data;
 	}
 
 	/**
-	* Function data has to pass before entering the database.
-	*
-	* @param	mixed				$value		Value to validate
-	* @param	array[string]mixed	$config		Configuration array
-	*
-	* @return	mixed
-	*/
+	 * Function data has to pass before entering the database.
+	 *
+	 * @param	mixed				$value		Value to validate
+	 * @param	array[string]mixed	$config		Configuration array
+	 *
+	 * @return	mixed
+	 */
 	protected function validate_property($value, $config)
 	{
 		if (is_string($value))
@@ -219,15 +222,15 @@ abstract class titania_database_object extends \phpbb\titania\entity\base
 	}
 
 	/**
-	* Private function strings have to pass before entering the database.
-	* Ensures string length et cetera.
-	*
-	* @param	string	$value		The string we want to validate
-	* @param	array	$config		The configuration array we're validating against
-	*
-	* @return	string				The validated string
-	*/
-	private function validate_string($value, $config)
+	 * Private function strings have to pass before entering the database.
+	 * Ensures string length et cetera.
+	 *
+	 * @param	string	$value		The string we want to validate
+	 * @param	array	$config		The configuration array we're validating against
+	 *
+	 * @return	string				The validated string
+	 */
+	protected function validate_string($value, $config)
 	{
 		if (empty($value))
 		{
@@ -252,8 +255,6 @@ abstract class titania_database_object extends \phpbb\titania\entity\base
 		// Truncate to the maximum length
 		if (isset($config['max']) && $config['max'])
 		{
-			phpbb::_include('functions_content', 'truncate_string');
-
 			truncate_string($value, $config['max']);
 		}
 

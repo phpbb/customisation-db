@@ -15,11 +15,8 @@ namespace phpbb\titania\attachment;
 
 use phpbb\titania\access;
 
-class attachment extends \titania_database_object
+class attachment extends \phpbb\titania\entity\database_base
 {
-	/** @var \phpbb\db\driver\driver_interface */
-	protected $db;
-
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -417,7 +414,7 @@ class attachment extends \titania_database_object
 	* Change the realname of an existing attachment
 	*
 	* @param string $real_filename New filename
-	*/	
+	*/
 	public function change_real_filename($real_filename)
 	{
 		$sql = 'UPDATE ' . $this->attachments_table . '

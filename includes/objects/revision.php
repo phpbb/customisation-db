@@ -20,7 +20,7 @@ use phpbb\titania\message\message;
 *
 * @todo Create revision_status field to store whether this revision is new, validated, or pulled (for security or other reasons)
 */
-class titania_revision extends titania_database_object
+class titania_revision extends \phpbb\titania\entity\database_base
 {
 	/**
 	 * SQL Table
@@ -96,6 +96,7 @@ class titania_revision extends titania_database_object
 		}
 
 		$this->revision_id = $revision_id;
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->user = phpbb::$user;
 		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
@@ -218,7 +219,7 @@ class titania_revision extends titania_database_object
 				$install_time = phpbb::$user->lang('INSTALL_MINUTES', (int) ($this->install_time / 60));
 			}
 		}
-		
+
         // ColorizeIt stuff
         $url_colorizeit = '';
         if($this->revision_status == TITANIA_REVISION_APPROVED && strlen(titania::$config->colorizeit) && $this->contrib && $this->contrib->has_colorizeit())
