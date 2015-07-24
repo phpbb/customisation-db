@@ -152,6 +152,7 @@ class author
 			return $this->helper->error('NO_PAGE', 404);
 		}
 
+		$author = urldecode($author);
 		$this->load_author($author);
 		$this->display->assign_global_vars();
 		$this->generate_navigation($page);

@@ -176,7 +176,7 @@ class users_overlord
 				break;
 
 				case '_unbuilt_titania_profile' :
-					return self::$users[$user_id]['username_clean'];
+					return urlencode(self::$users[$user_id]['username_clean']);
 				break;
 
 				case '_titania_profile' :
