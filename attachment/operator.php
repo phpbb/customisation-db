@@ -284,6 +284,30 @@ class operator
 	}
 
 	/**
+	 * Load attachments by id.
+	 *
+	 * Note that this will not check the object type or id.
+	 * 
+	 * @param array $ids
+	 * @return $this
+	 */
+	public function load_from_ids(array $ids)
+	{
+		if (!$ids)
+		{
+			return $this;
+		}
+		$sql = 'SELECT *
+			FROM ' . $this->attachments_table . '
+			WHERE ' . $this->db->sql_in_set('attachment_id', array_map('intval', $ids));
+		$result = $this->db->sql_query($sql);
+		$this->store($this->db->sql_fetchrowset($result));
+		$this->db->sql_freeresult($result);
+
+		return $this;
+	}
+
+	/**
 	 * Load the attachments from the database from the ids
 	 *
 	 * @param array $object_ids Array of object_ids to load
