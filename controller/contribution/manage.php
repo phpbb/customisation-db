@@ -378,8 +378,9 @@ class manage extends base
 	{
 		$this->colorizeit_sample
 			->configure(TITANIA_CLR_SCREENSHOT, $this->contrib->contrib_id)
-			->handle_form_action()
+			->get_operator()->load()
 		;
+		$this->colorizeit_sample->handle_form_action();
 	}
 
 	/**

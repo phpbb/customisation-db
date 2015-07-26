@@ -641,7 +641,9 @@ class message
 
 			$this->uploader
 				->configure($for_edit['object_type'], $for_edit['object_id'], true)
-				->handle_form_action();
+				->get_operator()->load()
+			;
+			$this->uploader->handle_form_action();
 			$this->error = array_merge($this->error, $this->uploader->get_errors());
 			$this->uploader->clear_errors(); // Empty the error array to prevent showing duplicates
 		}
