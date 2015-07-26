@@ -348,6 +348,10 @@ class posting
 	 */
 	public function quick_edit($post_id)
 	{
+		if ($this->request->header('X-PHPBB-USING-PLUPLOAD', false))
+		{
+			return $this->edit($post_id);
+		}
 		$submit = $this->request->is_set_post('submit');
 		$full_editor = $this->request->is_set_post('full_editor');
 
