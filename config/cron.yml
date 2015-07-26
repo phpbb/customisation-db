@@ -1,10 +1,12 @@
 services:
     phpbb.titania.cron.task.cleanup:
         class: phpbb\titania\cron\task\cleanup
+        scope: prototype
         arguments:
             - @dbal.conn
             - @config
             - @phpbb.titania.config
+            - @phpbb.titania.attachment.operator
             - %phpbb.titania.root_path%
             - %core.php_ext%
         calls:

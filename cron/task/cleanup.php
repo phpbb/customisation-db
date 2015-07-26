@@ -24,6 +24,9 @@ class cleanup extends \phpbb\cron\task\base
 	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
+	/** @var \phpbb\titania\attachment\operator */
+	protected $attachments;
+
 	/** @var string */
 	protected $ext_root_path;
 
@@ -36,14 +39,16 @@ class cleanup extends \phpbb\cron\task\base
 	 * @param \phpbb\db\driver\driver_interface $db
 	 * @param \phpbb\config\config $config
 	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\attachment\operator $attachments
 	 * @param $ext_root_path
 	 * @param $php_ext
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\titania\config\config $ext_config, $ext_root_path, $php_ext)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\titania\config\config $ext_config, \phpbb\titania\attachment\operator $attachments, $ext_root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->config = $config;
 		$this->ext_config = $ext_config;
+		$this->attachments = $attachments;
 		$this->ext_root_path = $ext_root_path;
 		$this->php_ext = $php_ext;
 	}
@@ -120,43 +125,9 @@ class cleanup extends \phpbb\cron\task\base
 	 */
 	protected function delete_attachments(array $attachments)
 	{
-		$ids = array();
-
-		foreach ($attachments as $attachment)
-		{
-			$ids[] = (int) $attachment['attachment_id'];
-			$this->remove_file($attachment);
-		}
-		if (!empty($attachments))
-		{
-			$sql = 'DELETE
-				FROM ' . TITANIA_ATTACHMENTS_TABLE . '
-				WHERE ' . $this->db->sql_in_set('attachment_id', $ids);
-			$this->db->sql_query($sql);
-		}
-	}
-
-	/**
-	 * Remove attachment file.
-	 *
-	 * @param array $data	Attachment data
-	 */
-	protected function remove_file(array $data)
-	{
-		$attachment = new \titania_attachment(TITANIA_CONTRIB);
-		$attachment->store_attachments(array($data));
-
-		$file = $attachment->get_filepath($data['attachment_id']);
-		$thumb = ($data['thumbnail']) ? $attachment->get_filepath($data['attachment_id'], true) : false;
-
-		if (file_exists($file))
-		{
-			@unlink($file);
-		}
-		if ($thumb && file_exists($thumb))
-		{
-			@unlink($thumb);
-		}
+		$this->attachments
+			->store($attachments)
+			->delete_all();
 	}
 
 	/**
@@ -167,7 +138,7 @@ class cleanup extends \phpbb\cron\task\base
 	 */
 	protected function get_attachments($conditions)
 	{
-		$sql = 'SELECT attachment_id, attachment_directory, physical_filename, thumbnail
+		$sql = 'SELECT *
 			FROM ' . TITANIA_ATTACHMENTS_TABLE . "
 			WHERE $conditions";
 		$result = $this->db->sql_query_limit($sql, 25);
