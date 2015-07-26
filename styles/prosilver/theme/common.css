@@ -631,7 +631,7 @@ li.row dl.codebox dd {
 	width: 100%;
 }
 
-.revision-uploader .attach-row {
+.revision-uploader .attach-row, .screenshot-uploader .attach-row {
 	background-color: #f1f4f6;
 	border: 1px dotted #c9cacb;
 	border-radius: 3px;
@@ -649,6 +649,54 @@ li.row dl.codebox dd {
 
 .revision-uploader .file-status {
 	vertical-align: middle;
+}
+
+.screenshot-uploader .file-control {
+	display: block;
+}
+
+.sortable-uploader .attach-row {
+	cursor: move;
+}
+
+.screenshot-uploader .attach-row {
+	display: inline-block;
+	padding: 5px;
+	position: relative;
+	vertical-align: top;
+}
+
+.screenshot-uploader .file-status {
+	float: right;
+	margin-left: 10px;
+}
+
+.screenshot-uploader .file-delete {
+	cursor: pointer;
+	display: inline-block;
+	float: none;
+	margin-left: 0;
+}
+
+.file-control input {
+	vertical-align: top;
+}
+
+.file-contrib-preview {
+	background: #FFFFFF 2px -13px url('./images/icons.png') no-repeat;
+	border: 1px solid #C6D8E5;
+	border-radius: 4px;
+	cursor: pointer;
+	display: inline-block;
+	height: 8px;
+	padding: 3px 2px;
+	width: 16px;
+}
+
+.file-contrib-preview-active, .file-contrib-preview:hover {
+	background-color: #4692bf;
+	background-position: 2px 3px;
+	border-color: #4692bf;
 }
 
 /* Manage sections

@@ -93,6 +93,13 @@ class manage extends base
 			return $this->helper->needs_auth();
 		}
 
+		$this->load_screenshot();
+
+		if ($this->screenshots->plupload_active())
+		{
+			return new JsonResponse($this->screenshots->get_plupload_response_data());
+		}
+
 		if (confirm_box(true) && $this->check_auth('change_author'))
 		{
 			$this->change_author();
@@ -121,7 +128,6 @@ class manage extends base
 		}
 
 		$this->load_message();
-		$this->load_screenshot();
 
 		$submit	= $this->request->is_set_post('submit');
 		$preview = $this->request->is_set_post('preview');
@@ -363,7 +369,7 @@ class manage extends base
 	protected function load_screenshot()
 	{
 		$this->screenshots
-			->configure(TITANIA_SCREENSHOT, $this->contrib->contrib_id, false, 175, true)
+			->configure(TITANIA_SCREENSHOT, $this->contrib->contrib_id, true, 175, true)
 			->get_operator()->load()
 		;
 		$this->screenshots->handle_form_action();
