@@ -10,7 +10,33 @@
 		<div class="inner">
 
 			<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
+			<!-- IF not S_CREATE -->
+			<div id="extratabs" data-show-panel="settings-panel" class="sub-panels">
+				<ul id="extratabs-head">
+					<li id="settings-panel-tab">
+						<a href="#settings-panel" data-subpanel="settings-panel">
+							<span>{L_SETTINGS}</span>
+						</a>
+					</li>
+					<!-- IF SCREENSHOT_UPLOADER -->
+					<li id="attach-panel-tab">
+						<a href="#attach-panel" data-subpanel="attach-panel">
+							<span>{L_SCREENSHOTS}</span>
+						</a>
+					</li>
+					<!-- ENDIF -->
+					<!-- IF MANAGE_COLORIZEIT -->
+					<li id="colorizeit-panel-tab">
+						<a href="#colorizeit-panel" data-subpanel="colorizeit-panel">
+							<span>{L_COLORIZEIT}</span>
+						</a>
+					</li>
+					<!-- ENDIF -->
+				</ul>
+			</div>
+			<!-- ENDIF -->
 
+			<div id="settings-panel" class="tab-panel">
 			<fieldset>
 				<!-- IF S_EDIT_SUBJECT or S_CREATE -->
 				<dl>
@@ -140,38 +166,39 @@
 				</dl>
 				<!-- ENDIF -->
 			</fieldset>
+			</div>
 
             <!-- IF MANAGE_COLORIZEIT -->
-                <h3>{L_COLORIZEIT_MANAGE}</h3>
-                <p>{L_COLORIZEIT_MANAGE_EXPLAIN}</p>
-                {CLR_SCREENSHOTS}
-                <fieldset>
-                    <dl>
-                        <dt>{L_COLORIZEIT_COLORS}:</dt>
-                        <dd><input class="inputbox" type="text" id="change-colors" name="change_colors" value="{CLR_COLORS}" /></dd>
-                    </dl>
-                </fieldset>
-                <!-- IF U_TESTSAMPLE -->
-                <p id="colorizeit-placeholder" style="display: none;">
-                    {L_COLORIZEIT_SAMPLE_EXPLAIN}
-                </p>
-                <fieldset id="test-sample">
-                    <dl>
-                        <dd>
-                            <input type="submit" value="{L_COLORIZEIT_SAMPLE}" class="button2" data-colorizeit-url="{U_TESTSAMPLE}#{CLR_COLORS}" />
-                        </dd>
-                    </dl>
-                </fieldset>
-                <!-- ENDIF -->
-            <!-- ENDIF -->
-
-			<!-- IF SCREENSHOT_UPLOADER -->
-				<h3>{L_SCREENSHOTS}</h3>
+				<div id="colorizeit-panel" class="tab-panel">
+					<p>{L_COLORIZEIT_MANAGE_EXPLAIN}</p>
+					{CLR_SCREENSHOTS}
+					<fieldset>
+						<dl>
+							<dt>{L_COLORIZEIT_COLORS}:</dt>
+							<dd><input class="inputbox" type="text" id="change-colors" name="change_colors" value="{CLR_COLORS}" /></dd>
+						</dl>
+					</fieldset>
+					<!-- IF U_TESTSAMPLE -->
+					<p id="colorizeit-placeholder" style="display: none;">
+						{L_COLORIZEIT_SAMPLE_EXPLAIN}
+					</p>
+					<fieldset id="test-sample">
+						<dl>
+							<dd>
+								<input type="submit" value="{L_COLORIZEIT_SAMPLE}" class="button2" data-colorizeit-url="{U_TESTSAMPLE}#{CLR_COLORS}" />
+							</dd>
+						</dl>
+					</fieldset>
+					<!-- ENDIF -->
+                </div>
+        <!-- ENDIF -->
+        <!-- IF SCREENSHOT_UPLOADER -->
+			<div id="attach-panel" class="tab-panel">
 				{SCREENSHOT_UPLOADER}
-			<!-- ENDIF -->
-		</div>
+			</div>
+		<!-- ENDIF -->
 	</div>
-
+</div>
 	<!-- IF S_CAN_EDIT_CONTRIB -->
 	<div class="container">
 		<div class="inner">

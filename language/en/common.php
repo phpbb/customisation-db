@@ -89,6 +89,7 @@ $lang = array_merge($lang, array(
 	'CLOSED'					=> 'Closed',
 	'CLOSED_BY'					=> 'Closed by',
 	'CLOSED_ITEMS'				=> 'Closed Items',
+	'COLORIZEIT'				=> 'ColorizeIt',
 	'COLORIZEIT_COLORS'         => 'Colour scheme',
 	'COLORIZEIT_DOWNLOAD'       => 'Change colour scheme.',
 	'COLORIZEIT_DOWNLOAD_STYLE' => 'Change colour scheme and download',
@@ -215,7 +216,7 @@ $lang = array_merge($lang, array(
 	'SUBSCRIBE_TOPIC'			=> 'Subscribe to topic',
 	'SUCCESSBOX_TITLE'			=> 'Success',
 	'SYNC_SUCCESS'				=> 'Sync Success',
-	
+
 	'TITANIA_DISABLED'			=> 'The Customisation Database is temporarily disabled, please try again in a few minutes.',
 	'TITANIA_INDEX'				=> 'Customisation Database',
 	'TOTAL_CONTRIBS'			=> array(
@@ -246,7 +247,7 @@ $lang = array_merge($lang, array(
 	'UNSUBSCRIBE_CONTRIB'		=> 'Unsubscribe from contribution',
 	'UNSUBSCRIBE_QUEUE'			=> 'Unsubscribe from queue',
 	'UNSUBSCRIBE_SUPPORT'		=> 'Unsubscribe from support section',
-	'UNSUBSCRIBE_TOPIC'			=> 'Unsubscribe from topic',	
+	'UNSUBSCRIBE_TOPIC'			=> 'Unsubscribe from topic',
 	'UPDATE_TIME'				=> 'Updated',
 	'UPDATE_TIME_ASC'			=> 'Least recently updated',
 	'UPDATE_TIME_DESC'			=> 'Most recently updated',
