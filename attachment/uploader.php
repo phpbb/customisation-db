@@ -355,6 +355,7 @@ class uploader
 			'S_INLINE_ATTACHMENT_OPTIONS'	=> true,
 			'S_PLUPLOAD_ENABLED'			=> $this->use_plupload,
 			'S_SET_CUSTOM_ORDER'			=> $this->set_custom_order,
+			'S_UPLOADER_KEY'				=> generate_link_hash('uploader_key'),
 			'SELECT_PREVIEW'				=> $this->object_type == TITANIA_SCREENSHOT,
 			'SELECT_REVIEW_VAR' 			=> 'set_preview_file' . $this->object_type,
 		));
@@ -489,10 +490,11 @@ class uploader
 		{
 			$this->operator->load($to_query, true);
 		}
-		$plupload_key = $this->request->header('X-PLUPLOAD_KEY', '');
+		$uploader_key = $this->request->header('X-PLUPLOAD_KEY', '');
+		$uploader_key = ($uploader_key) ?: $this->request->variable('uploader_key', '');
 
-		// Do not perform any Plupload actions without a valid key.
-		if ($this->plupload_active() && !check_link_hash($plupload_key, 'plupload_key'))
+		// Do not perform any actions without a valid key.
+		if (!check_link_hash($uploader_key, 'uploader_key'))
 		{
 			return;
 		}
