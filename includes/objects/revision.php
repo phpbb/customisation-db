@@ -224,7 +224,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
         $url_colorizeit = '';
         if($this->revision_status == TITANIA_REVISION_APPROVED && strlen(titania::$config->colorizeit) && $this->contrib && $this->contrib->has_colorizeit())
         {
-            $url_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->attachment_id . '&amp;sample=' . $this->contrib->clr_sample['attachment_id'];
+            $url_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->attachment_id . '&amp;sample=' . $this->contrib->clr_sample->get_id();
         }
 
 		phpbb::$template->assign_block_vars($tpl_block, array(

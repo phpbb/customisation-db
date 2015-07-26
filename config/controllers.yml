@@ -34,7 +34,7 @@ services:
 
     phpbb.titania.controller.support:
         class: phpbb\titania\controller\support
-        arguments:       
+        arguments:
             - @template
             - @user
             - @phpbb.titania.controller.helper
@@ -93,12 +93,14 @@ services:
 
     phpbb.titania.controller.colorizeit:
         class: phpbb\titania\controller\colorizeit
+        scope: prototype
         arguments:
             - @dbal.conn
             - @user
             - @request
             - @phpbb.titania.controller.helper
             - @phpbb.titania.config
+            - @phpbb.titania.attachment.operator
 
     phpbb.titania.controller.legacy_rerouter:
         class: phpbb\titania\controller\legacy_rerouter

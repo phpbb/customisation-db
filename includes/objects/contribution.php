@@ -848,7 +848,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		if (strlen(titania::$config->colorizeit) && $this->has_colorizeit())
 		{
 			$u_colorizeit_base = 'http://' . titania::$config->colorizeit_url . '/custom/' .
-				titania::$config->colorizeit . '.html?sample=' . $this->clr_sample['attachment_id'];
+				titania::$config->colorizeit . '.html?sample=' . $this->clr_sample->get_id();
 		}
 
 		foreach ($this->download as $download)
@@ -1987,13 +1987,18 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function has_colorizeit($force_update = false)
 	{
-	    if($force_update || $this->clr_sample === false)
+	    if ($force_update || !$this->clr_sample)
 	    {
 	        // get sample id from database
-            $attachment = new titania_attachment(TITANIA_CLR_SCREENSHOT, $this->contrib_id);
-            $this->clr_sample = $attachment->get_preview();
+			$operator = phpbb::$container->get('phpbb.titania.attachment.operator');
+			$attachments = $operator
+				->configure(TITANIA_CLR_SCREENSHOT, $this->contrib_id)
+				->load()
+				->get_all()
+			;
+			$this->clr_sample = array_shift($attachments);
 	    }
-	    return is_array($this->clr_sample) && strlen($this->contrib_clr_colors) > 0;
+	    return $this->clr_sample && strlen($this->contrib_clr_colors) > 0;
 	}
 
 	/**

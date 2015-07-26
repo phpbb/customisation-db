@@ -689,11 +689,11 @@ class manage extends base
 	*/
 	protected function assign_colorizeit_vars()
 	{
-		$clr_testsample = $test_sample = '';
+		$test_sample = '';
 
-		if ($this->contrib->has_colorizeit(true) || is_array($this->contrib->clr_sample))
+		if ($this->contrib->has_colorizeit(true) || $this->contrib->clr_sample)
 		{
-			$sample_url = $this->colorizeit_sample->get_operator()->get($this->contrib->clr_sample['attachment_id'])->get_url();
+			$sample_url = $this->contrib->clr_sample->get_url();
 			$test_sample = 'http://' . $this->ext_config->colorizeit_url .
 				'/testsample.html?sub=' . $this->ext_config->colorizeit . '&amp;sample=' . urlencode($sample_url);
 		}
