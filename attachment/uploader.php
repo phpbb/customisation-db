@@ -353,8 +353,10 @@ class uploader
 			'S_FORM_ENCTYPE'	=> ' enctype="multipart/form-data"',
 
 			'S_INLINE_ATTACHMENT_OPTIONS'	=> true,
-			'SELECT_PREVIEW'	=> $this->object_type == TITANIA_SCREENSHOT,
-			'SELECT_REVIEW_VAR' => 'set_preview_file' . $this->object_type,
+			'S_PLUPLOAD_ENABLED'			=> $this->use_plupload,
+			'S_SET_CUSTOM_ORDER'			=> $this->set_custom_order,
+			'SELECT_PREVIEW'				=> $this->object_type == TITANIA_SCREENSHOT,
+			'SELECT_REVIEW_VAR' 			=> 'set_preview_file' . $this->object_type,
 		));
 
 		$index_dir = '-';
@@ -387,7 +389,7 @@ class uploader
 			{
 				$_hidden_data["attachment_data[$index_prefix$index][$property]"] = $value;
 			}
-			$output = array(
+			$output = array_merge(array(
 				'FILENAME'			=> $attach->get_filename(),
 				'FILE_COMMENT'		=> (isset($comments[$attachment_id])) ? $comments[$attachment_id] : $attach->get('attachment_comment'),
 				'ATTACH_ID'			=> $attachment_id,
@@ -401,7 +403,7 @@ class uploader
 						$base_url,
 						array_merge($params, array('action' => 'delete_attach'))
 					),
-			);
+			), $attach->get_display_vars(''));
 
 			if ($attach->is_type(TITANIA_SCREENSHOT))
 			{
@@ -646,10 +648,16 @@ class uploader
 
 		foreach ($this->operator->get_fixed_indices() as $id)
 		{
+			$attach = $this->operator->get($id);
 			$data[$id] = array(
 				'attach_id'			=> $id,
-				'real_filename'		=> $this->operator->get($id)->get('real_filename'),
+				'real_filename'		=> $attach->get('real_filename'),
 				'type'				=> $this->form_name,
+				'url'				=> $attach->get_url(),
+				'thumb'				=> ($attach->has_thumbnail()) ? $attach->get_url(array(
+					'thumb' => 1,
+					'view' => 'inline',
+				)) : '',
 			);
 		}
 		return $data;
