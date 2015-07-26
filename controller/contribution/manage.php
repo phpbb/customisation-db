@@ -387,6 +387,24 @@ class manage extends base
 			->get_operator()->load()
 		;
 		$this->colorizeit_sample->handle_form_action();
+
+		if ($this->colorizeit_sample->uploaded)
+		{
+			$uploaded = $this->colorizeit_sample->get_operator()->get_all_ids();
+
+			// If multiple files are uploaded, then one is being replaced.
+			if (sizeof($uploaded) > 1)
+			{
+				$this->colorizeit_sample->get_operator()
+					->delete(
+						array_diff(
+							$uploaded,
+							array($this->colorizeit_sample->uploaded)
+						)
+					)
+				;
+			}
+		}
 	}
 
 	/**
