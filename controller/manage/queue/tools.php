@@ -36,7 +36,10 @@ class tools
 	/** @var \titania_contribution */
 	protected $contrib;
 
-	/** @var \titania_attachment */
+	/** @var \phpbb\titania\attachment\operator */
+	protected $attachments;
+
+	/** @var \phpbb\titania\attachment\attachment */
 	protected $attachment;
 
 	/** @var \phpbb\titania\entity\package */
@@ -55,15 +58,17 @@ class tools
 	* @param \phpbb\template\template $template
 	* @param \phpbb\request\request_interface $request
 	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\titania\config\config
+	* @param \phpbb\titania\config\config $ext_config
+	* @param \phpbb\titania\attachment\operator $attachments
 	*/
-	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config)
+	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\attachment\operator $attachments)
 	{
 		$this->user = $user;
 		$this->template = $template;
 		$this->request = $request;
 		$this->helper = $helper;
 		$this->ext_config = $ext_config;
+		$this->attachments = $attachments;
 
 		$this->user->add_lang_ext('phpbb/titania', array('contributions', 'manage'));
 		$this->user->add_lang('viewtopic');
@@ -283,9 +288,13 @@ class tools
 	*/
 	protected function load_attachment()
 	{
-		$this->attachment = new \titania_attachment(TITANIA_CONTRIB, $this->contrib->contrib_id);
+		$this->attachments
+			->configure(TITANIA_CONTRIB, $this->contrib->contrib_id)
+			->load(array($this->revision->attachment_id))
+		;
+		$this->attachment = $this->attachments->get($this->revision->attachment_id);
 
-		if (!$this->attachment->load($this->revision->attachment_id))
+		if (!$this->attachment)
 		{
 			throw new \Exception($this->user->lang['ERROR_NO_ATTACHMENT']);
 		}

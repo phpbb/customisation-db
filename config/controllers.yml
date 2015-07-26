@@ -266,12 +266,14 @@ services:
 
     phpbb.titania.controller.manage.queue.tools:
         class: phpbb\titania\controller\manage\queue\tools
+        scope: prototype
         arguments:
             - @user
             - @template
             - @request
             - @phpbb.titania.controller.helper
             - @phpbb.titania.config
+            - @phpbb.titania.attachment.operator
 
     phpbb.titania.controller.manage.attention:
         class: phpbb\titania\controller\manage\attention
