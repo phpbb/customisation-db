@@ -373,6 +373,7 @@ class uploader
 		$hash = generate_link_hash('attach_manage');
 		$comments = $this->get_request_comments();
 		$hidden_data = $this->get_basic_attachment_data();
+		$index_prefix = ($this->use_plupload) ? '' : $this->form_name . '_';
 
 		foreach ($this->operator->get_all() as $attachment_id => $attach)
 		{
@@ -384,13 +385,13 @@ class uploader
 
 			foreach ($hidden_data[$attachment_id] as $property => $value)
 			{
-				$_hidden_data["attachment_data[$index][$property]"] = $value;
+				$_hidden_data["attachment_data[$index_prefix$index][$property]"] = $value;
 			}
 			$output = array(
 				'FILENAME'			=> $attach->get_filename(),
 				'FILE_COMMENT'		=> (isset($comments[$attachment_id])) ? $comments[$attachment_id] : $attach->get('attachment_comment'),
 				'ATTACH_ID'			=> $attachment_id,
-				'INDEX'				=> $index,
+				'INDEX'				=> $index_prefix . $index,
 				'FILESIZE'			=> get_formatted_filesize($attach->get('filesize')),
 
 				'S_HIDDEN'			=> build_hidden_fields($_hidden_data),
@@ -438,8 +439,8 @@ class uploader
 	 */
 	public function get_filtered_request_data()
 	{
-		$attachments = $this->request->variable('attachment_data', array(0 => array('' => '')));
-		$comments = $this->request->variable('comment_list', array(0 => ''), true);
+		$attachments = $this->request->variable('attachment_data', array('' => array('' => '')));
+		$comments = $this->request->variable('comment_list', array('' => ''), true);
 		$filtered_data = array();
 
 		foreach ($attachments as $index => $data)
