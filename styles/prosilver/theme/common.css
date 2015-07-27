@@ -622,7 +622,7 @@ li.row dl.codebox dd {
 	padding: 0;
 }
 
-/* Revision uploader
+/* Uploaders
 -------------------------------------------- */
 .revision-uploader #file-total-progress {
 	bottom: -4px;
@@ -698,6 +698,10 @@ li.row dl.codebox dd {
 	background-color: #4692bf;
 	background-position: 2px 3px;
 	border-color: #4692bf;
+}
+
+.translations-uploader .attach-comment, .translations-uploader .file-inline-bbcode {
+	display: none !important;
 }
 
 /* Manage sections

@@ -13,13 +13,43 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 class revision_edit extends revision
 {
 	/** @var array */
 	protected $vendor_versions;
 
-	/** @var \titania_attachment */
+	/** @var \phpbb\titania\attachment\operator */
+	protected $attachments;
+
+	/** @var \phpbb\titania\attachment\uploader */
 	protected $translations;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\access $access
+	 * @param \phpbb\titania\attachment\operator $attachments
+	 * @param \phpbb\titania\attachment\uploader $translations
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\attachment\operator $attachments, \phpbb\titania\attachment\uploader $translations)
+	{
+		base::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
+
+		$this->attachments = $attachments;
+		$this->translations = $translations;
+	}
 
 	/**
 	* Edit revision action.
@@ -28,7 +58,7 @@ class revision_edit extends revision
 	* @param string $contrib			Contrib name clean
 	* @param int $id					Revision id
 	*
-	* @return \Symfony\Component\HttpFoundation\Response
+	* @return \Symfony\Component\HttpFoundation\Response|JsonResponse
 	*/
 	public function edit($contrib_type, $contrib, $id)
 	{
@@ -45,13 +75,18 @@ class revision_edit extends revision
 		$this->handle_revision_delete();
 
 		// Translations
-		$this->translations = new \titania_attachment(TITANIA_TRANSLATION, $this->id);
+		$this->translations->configure(TITANIA_TRANSLATION, $this->id, true);
 
 		if ($this->contrib->type->extra_upload)
 		{
-			$this->translations->load_attachments();
-			$this->translations->upload();
+			$this->translations->get_operator()->load();
+			$this->translations->handle_form_action();
 			$this->handle_translation_delete();
+
+			if ($this->translations->plupload_active())
+			{
+				return new JsonResponse($this->translations->get_plupload_response_data());
+			}
 		}
 
 		$settings = $this->get_settings();
@@ -62,7 +97,7 @@ class revision_edit extends revision
 		{
 			$error = array_merge(
 				$this->validate_settings($settings),
-				$this->translations->error
+				$this->translations->get_errors()
 			);
 
 			// If no errors, submit
@@ -81,6 +116,37 @@ class revision_edit extends revision
 			'contributions/contribution_revision_edit.html',
 			$this->contrib->contrib_name . ' - ' . $this->user->lang['EDIT_REVISION']
 		);
+	}
+
+	/**
+	 * Common handler for initial setup tasks
+	 *
+	 * @param string $contrib_type	Contrib type URL identifier.
+	 * @param string $contrib		Contrib name clean.
+	 * @return null
+	 */
+	protected function setup($contrib_type, $contrib)
+	{
+		$this->load_contrib($contrib_type, $contrib);
+
+		$this->revision = new \titania_revision($this->contrib);
+		$this->is_moderator = $this->contrib->type->acl_get('moderate');
+	}
+
+	/**
+	 * Load attachment
+	 *
+	 * @param int $id	Attachment id
+	 * @return bool	Returns true if the attachment loaded successfully
+	 */
+	protected function load_attachment($id)
+	{
+		$this->attachment = $this->attachments
+			->configure(TITANIA_CONTRIB, $this->contrib->contrib_id)
+			->load(array((int) $id))
+			->get($id);
+
+		return !empty($this->attachment);
 	}
 
 	/**
@@ -142,7 +208,7 @@ class revision_edit extends revision
 
 		if ($action == 'delete_attach' && check_link_hash($hash, 'attach_manage'))
 		{
-			$this->translations->delete($attach_id);
+			$this->translations->get_operator()->delete(array($attach_id));
 		}
 	}
 
@@ -238,7 +304,7 @@ class revision_edit extends revision
 			{
 				$branch = (int) $version[0] . (int) $version[2];
 				$release = substr($version, 4);
-				
+
 				if (!isset($this->vendor_versions[$branch . $release]))
 				{
 					// Have we added some new phpBB version that does not exist?  We need to purge the cache then
@@ -253,7 +319,7 @@ class revision_edit extends revision
 			}
 		}
 
-		$this->translations->submit();
+		$this->translations->get_operator()->submit();
 		$this->revision->submit();
 	}
 
@@ -312,7 +378,7 @@ class revision_edit extends revision
 
 		if ($this->contrib->type->extra_upload)
 		{
-			$translation_uploader = $this->translations->parse_uploader('posting/attachments/simple.html');
+			$translation_uploader = $this->translations->parse_uploader('posting/attachments/default.html');
 		}
 
 		// Display the rest of the page

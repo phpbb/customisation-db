@@ -59,8 +59,11 @@
 				</fieldset>
 
 				<!-- IF TRANSLATION_UPLOADER -->
-					<h3>{L_TRANSLATIONS}</h3>
-					{TRANSLATION_UPLOADER}
+					<div class="translations-uploader">
+						<h3>{L_TRANSLATIONS}</h3>
+						{TRANSLATION_UPLOADER}
+						<textarea name="message" id="message" value="" style="display: none;"></textarea>
+					</div>
 				<!-- ENDIF -->
 		</div>
 	</div>
