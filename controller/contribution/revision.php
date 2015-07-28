@@ -656,7 +656,7 @@ class revision extends base
 		if (!check_form_key('postform'))
 		{
 			return $this->get_result(
-				array('error' => array($this->user->lang['INVALID_FORM'])),
+				array('error' => array($this->user->lang['FORM_INVALID'])),
 				$steps,
 				-1
 			);

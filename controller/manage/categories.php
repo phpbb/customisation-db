@@ -308,7 +308,7 @@ class categories extends base
 			}
 			else
 			{
-				$error[] = $this->user->lang['INVALID_FORM'];
+				$error[] = $this->user->lang['FORM_INVALID'];
 			}
 
 			if (empty($error))
@@ -471,7 +471,7 @@ class categories extends base
 					}
 				}
 			}
-		} 
+		}
 
 		// Only update category if no errors occurred from moving it
 		if (empty($error))
