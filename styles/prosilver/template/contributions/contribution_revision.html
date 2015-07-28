@@ -5,7 +5,7 @@
 <!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
-<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+<form id="<!-- IF POSTING_FORM_NAME -->{POSTING_FORM_NAME}<!-- ELSE -->postform<!-- ENDIF -->" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
 	<div class="container">
 		<div class="inner">
 			<!-- IF REVISION_UPLOADER -->
@@ -110,6 +110,8 @@
 
 				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
 					<!-- INCLUDE posting/posting_basic_editor.html -->
+				<!-- ELSE -->
+					<textarea name="message" id="message" style="display: none;"></textarea>
 				<!-- ENDIF -->
 
 				<!-- IF AGREEMENT_NOTICE -->
