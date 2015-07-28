@@ -11,5 +11,5 @@ services:
             - %core.php_ext%
         calls:
             - [set_name, [phpbb.titania.cron.task.cleanup]]
-        tags:
-            - { name: cron.task }
+#        tags:
+#            - { name: cron.task }
