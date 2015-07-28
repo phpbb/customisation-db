@@ -110,7 +110,7 @@
 		titania.updateSortOptions($('.branch-sort'), $('.branch-sort-options'), res.branches);
 		titania.updateSortOptions($('.key-sort'), $('.key-sort-options'), res.sort);
 
-		$title.html(res.title + ' ' + title.substr(title.lastIndexOf('-')));
+		$title.html(title.substr(0, title.indexOf('\u2022') + 1) + ' ' + res.title);
 		$crumbs.children(':not(:first-child)').remove();
 		$crumbs.append(res.breadcrumbs);
 	});
