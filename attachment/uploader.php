@@ -178,6 +178,7 @@ class uploader
 	public function set_object_id($id)
 	{
 		$this->object_id = (int) $id;
+		$this->operator->set_object_id($id);
 		return $this;
 	}
 
