@@ -571,10 +571,12 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		}
 
 		// Delete the attachment
-		$attachment = new titania_attachment(TITANIA_CONTRIB);
-		$attachment->attachment_id = $this->attachment_id;
-		$attachment->load();
-		$attachment->delete();
+		$operator = phpbb::$container->get('phpbb.titania.attachment.operator');
+		$operator
+			->configure(TITANIA_CONTRIB, $this->contrib_id)
+			->load(array($this->attachment_id))
+			->delete(array($this->attachment_id))
+		;
 		$this->update_composer_package('remove');
 
 		// Delete translations
