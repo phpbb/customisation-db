@@ -412,7 +412,7 @@ a.screenshot img, img.screenshot {
 	position: relative;
 }
 
-.quickview-image, .quickview-desc {
+.quickview-preview {
 	height: 130px;
 	margin-top: 5px;
 }

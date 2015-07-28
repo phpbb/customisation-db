@@ -1,13 +1,15 @@
 <!-- BEGIN contribs -->
 	<div class="contrib-quickview">
 		<a href="{contribs.U_VIEW_CONTRIB}" class="quickview-title">{contribs.CONTRIB_NAME}</a>
-		<div class="quickview-desc">{contribs.DESC_SNIPPET}</div>
-		<div class="quickview-image">
-			<!-- IF contribs.PREVIEW -->
-				<img src="{contribs.PREVIEW}" alt="{contribs.CONTRIB_NAME}" class="screenshot" />
-			<!-- ELSE -->
-				<img src="{T_TITANIA_THEME_PATH}/images/types/{contribs.CONTRIB_TYPE_CLEAN}.png" alt="{L_NO_SCREENSHOT}" class="screenshot" />
-			<!-- ENDIF -->
+		<div class="quickview-preview">
+			<div class="quickview-desc">{contribs.DESC_SNIPPET}&hellip;</div>
+			<div class="quickview-image">
+				<!-- IF contribs.PREVIEW -->
+					<img src="{contribs.PREVIEW}" alt="{contribs.CONTRIB_NAME}" class="screenshot" />
+				<!-- ELSE -->
+					<img src="{T_TITANIA_THEME_PATH}/images/types/{contribs.CONTRIB_TYPE_CLEAN}.png" alt="{L_NO_SCREENSHOT}" class="screenshot" />
+				<!-- ENDIF -->
+			</div>
 		</div>
 		{contribs.CONTRIB_RATING_STRING}
 		<br />

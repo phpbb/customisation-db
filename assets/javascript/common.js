@@ -187,7 +187,7 @@ $('a [data-rate]').mouseenter(function() {
 $('.rating').mouseleave(function() {
 	var $rating = $(this),
 		$stars = $rating.find('[data-rate]');
-	titania.updateRating($stars, $rating.data('rating'), $rating.hasClass('rated'));	
+	titania.updateRating($stars, $rating.data('rating'), $rating.hasClass('rated'));
 });
 
 /**
@@ -215,13 +215,18 @@ $('.contrib-download').hover(function() {
 	$('.download-info', this).fadeOut('slow');
 });
 
-	$('.contrib-list').on('mouseenter', '.quickview-image', function() {
-		$(this).slideUp('fast')
-			.siblings('.quickview-desc').slideDown('fast');
+	$('.contrib-list').on('mouseenter mouseleave', '.quickview-preview', function(event) {
+		var $this = $(this),
+			$image = $this.find('.quickview-image'),
+			$desc = $this.find('.quickview-desc');
 
-	}).on('mouseleave', '.quickview-desc', function() {
-		$(this).slideUp('fast')
-			.siblings('.quickview-image').slideDown('fast');
+		if (event.type === 'mouseenter') {
+			$image.slideUp('fast');
+			$desc.slideDown('fast');
+		} else {
+			$desc.slideUp('fast');
+			$image.slideDown('fast');
+		}
 	});
 
 	// Canceled quick edit, so display original post again
@@ -247,7 +252,7 @@ $('.contrib-download').hover(function() {
 		event.preventDefault();
 		$.colorbox.close();
 	});
-	
+
 	$(document).on('click', '#cboxLoadedContent #cease', function(event) {
 		event.preventDefault();
 		createCookie('cdb_ignore_subscription', 'true', 365);
@@ -268,7 +273,7 @@ $(document).on('click', '#screenshot-manage a.item-control-button:not(.delete)',
 	var container = $(this).closest('dl');
 
 	if ($(this).hasClass('move-up'))
-	{	
+	{
 		$(container).insertBefore($(container).prev());
 
 		// Enable move-down button
@@ -319,7 +324,7 @@ $(document).on('click', '#screenshot-manage a.item-control-button:not(.delete)',
 			$(container).prev().find('dd div .move-up-disabled').removeClass('hidden');
 		}
 	}
-	
+
 });
 
 $(function() {
