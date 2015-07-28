@@ -421,6 +421,14 @@ a.screenshot img, img.screenshot {
 	display: none;
 }
 
+.quickview-image {
+	height: 100%;
+}
+
+.quickview-image .screenshot {
+	max-height: 115px;
+}
+
 .quickview-label {
 	background-color: #FFFFFF;
 	border: 1px solid #c9cacb;
