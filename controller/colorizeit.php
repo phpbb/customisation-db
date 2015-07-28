@@ -16,6 +16,7 @@ namespace phpbb\titania\controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use phpbb\request\request_interface;
+use phpbb\titania\access;
 use phpbb\titania\contribution\style\colorizeit_helper;
 
 class colorizeit
@@ -35,22 +36,30 @@ class colorizeit
 	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
+	/** @var \phpbb\titania\attachment\operator */
+	protected $attachments;
+
+	/** @var \phpbb\titania\attachment\attachment */
+	protected $attachment;
+
 	/**
 	* Constructor
 	*
 	* @param \phpbb\db\driver\driver_interface $db
 	* @param \phpbb\user $user
-	* @param \phpbb\request\request_inteface $request
+	* @param \phpbb\request\request_interface $request
 	* @param \phpbb\titania\controller\helper $helper
 	* @param \phpbb\titania\config\config $ext_config
+	* @param \phpbb\titania\attachment\operator $attachments
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\attachment\operator $attachments)
 	{
 		$this->db = $db;
 		$this->user = $user;
 		$this->request = $request;
 		$this->helper = $helper;
 		$this->ext_config = $ext_config;
+		$this->attachments = $attachments;
 
 		$this->user->add_lang('viewtopic');
 	}
@@ -167,9 +176,17 @@ class colorizeit
 	protected function load_attachment($id)
 	{
 		$id = (int) $id;
-		$this->attachment = new \titania_attachment(TITANIA_CONTRIB);
 
-		if (!$id || !$this->attachment->load($id) || !$this->check_attachment_auth())
+		if ($id)
+		{
+			$this->attachment = $this->attachments
+				->configure(TITANIA_CONTRIB, 0)
+				->load_from_ids(array($id))
+				->get($id)
+			;
+		}
+
+		if (!$id || !$this->attachment || !$this->check_attachment_auth())
 		{
 			throw new \Exception('ERROR_NO_ATTACHMENT');
 		}
@@ -184,7 +201,7 @@ class colorizeit
 	{
 		return $this->attachment->object_type == TITANIA_CONTRIB &&
 			!$this->attachment->is_orphan &&
-			$this->attachment->attachment_access == TITANIA_ACCESS_PUBLIC;
+			$this->attachment->attachment_access == access::PUBLIC_LEVEL;
 	}
 
 	/**
@@ -240,8 +257,8 @@ class colorizeit
 			'name'				=> $this->contrib->contrib_name,
 			'file_src'			=> $this->get_file_source($this->attachment->attachment_id),
 			'file_created'		=> $this->attachment->filetime,
-			'sample_src'		=> $this->get_file_source($this->contrib->clr_sample['attachment_id']),
-			'sample_created'	=> $this->contrib->clr_sample['filetime'],
+			'sample_src'		=> $this->get_file_source($this->contrib->clr_sample->get_id()),
+			'sample_created'	=> $this->contrib->clr_sample->get('filetime'),
 			'colors'			=> $this->contrib->contrib_clr_colors,
 			'parser'			=> $data['parser'],
 		);

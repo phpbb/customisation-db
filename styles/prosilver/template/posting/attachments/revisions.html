@@ -1,20 +1,26 @@
-<fieldset class="fields2">
+<fieldset class="fields2 revision-uploader">
 <!-- IF S_REQUIRE_UPLOAD -->
 <dl>
 	<dt><label for="fileupload">{L_FILENAME}:</label></dt>
-	<dd>
+	<dd id="attach-panel-basic">
 		<input type="file" name="{FORM_NAME}" id="{FORM_NAME}"<!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
+	</dd>
+	<dd id="attach-panel-multi">
+		<input type="button" class="button2" value="{L_SELECT_FILE}" id="add_files" />
+		<div id="file-list-container">
+			<div id="file-list">
+			<div class="attach-row" id="attach-row-tpl">
+				<span class="file-name ellipsis-text"></span>
+				<span class="file-status"></span>
+				<textarea name="comment[]" style="display: none;"></textarea>
+				<strong id="file-total-progress"><strong id="file-total-progress-bar"></strong></strong>
+			</div>
+			</div>
+		</div>
 	</dd>
 </dl>
 <!-- ENDIF -->
-<dl>
-	<dt><label for="revision_version">{L_REVISION_VERSION}:</label><br /><span>{L_REVISION_VERSION_EXPLAIN}</span></dt>
-	<dd><input type="text" name="revision_version" id="revision_version" class="inputbox autowidth" value="{REVISION_VERSION}" /></dd>
-</dl>
-<dl>
-	<dt><label for="revision_name">{L_REVISION_NAME}:</label><br /><span>{L_REVISION_NAME_EXPLAIN}</span></dt>
-	<dd><input type="text" name="revision_name" id="revision_name" class="inputbox autowidth" value="{REVISION_NAME}" /></dd>
-</dl>
+
 <!-- IF not S_REQUIRE_UPLOAD -->
 <dl>
 	<dt><label for="fileupload">{L_OPTIONAL_FILE}:</label><br /><span>{L_OPTIONAL_FILE_EXPLAIN}</span></dt>
@@ -23,4 +29,5 @@
 	</dd>
 </dl>
 <!-- ENDIF -->
+<input type="hidden" name="uploader_key" value="{S_UPLOADER_KEY}" />
 </fieldset>

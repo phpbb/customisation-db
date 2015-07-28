@@ -15,7 +15,32 @@ namespace phpbb\titania\controller\manage;
 
 class queue_discussion extends base
 {
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
 	const ALL_TYPES = 0;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\tracking $tracking
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+
+		$this->tracking = $tracking;
+	}
 
 	/**
 	* List available queue discussion types.
@@ -77,7 +102,7 @@ class queue_discussion extends base
 		// Mark all topics read
 		if ($this->request->variable('mark', '') == 'topics')
 		{
-			\titania_tracking::track(TITANIA_QUEUE_DISCUSSION, self::ALL_TYPES);
+			$this->tracking->track(TITANIA_QUEUE_DISCUSSION, self::ALL_TYPES);
 		}
 
 		$this->display->assign_global_vars();

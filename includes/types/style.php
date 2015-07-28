@@ -179,7 +179,8 @@ class titania_type_style extends titania_type_base
 	public function install_demo($contrib, $revision)
 	{
 		$manager = phpbb::$container->get('phpbb.titania.style.demo.manager');
-		$attachment = new titania_attachment(TITANIA_CONTRIB, $contrib->contrib_id);
+		$attachment = phpbb::$container->get('phpbb.titania.attachment');
+
 		$revision->load_phpbb_versions();
 		$attachment->load($revision->attachment_id);
 		$branch = $revision->phpbb_versions[0]['phpbb_version_branch'];
@@ -221,5 +222,13 @@ class titania_type_style extends titania_type_base
 			'S_STYLE_DEMO_INSTALL'			=> true,
 			'S_STYLE_DEMO_INSTALL_CHECKED'	=> phpbb::$request->variable('style_demo_install', false),
 		));
+	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function get_demo()
+	{
+		return phpbb::$container->get('phpbb.titania.style.demo');
 	}
 }

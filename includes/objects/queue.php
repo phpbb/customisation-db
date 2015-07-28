@@ -11,11 +11,14 @@
 *
 */
 
+use phpbb\titania\access;
+use phpbb\titania\message\message;
+
 /**
 * Class to abstract titania queue
 * @package Titania
 */
-class titania_queue extends titania_message_object
+class titania_queue extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * SQL Table
@@ -40,6 +43,12 @@ class titania_queue extends titania_message_object
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
+
+	/** @var  \phpbb\user */
+	protected $user;
+
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
 
 	public function __construct()
 	{
@@ -74,7 +83,7 @@ class titania_queue extends titania_message_object
 			'mpv_results_bitfield'	=> array('default' => ''),
 			'mpv_results_uid'		=> array('default' => ''),
 			'automod_results'		=> array('default' => ''),
-			
+
 			'allow_author_repack'	=> array('default' => false),
 			'queue_tested'			=> array('default' => false),
 		));
@@ -82,14 +91,17 @@ class titania_queue extends titania_message_object
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->user = phpbb::$container->get('user');
+		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
 	}
 
 	public function submit($update_first_post = true)
 	{
 		if (!$this->queue_id)
 		{
-			titania::add_lang('manage');
+			$this->user->add_lang_ext('phpbb/titania', 'manage');
 
 			$sql = 'SELECT c.contrib_id, c.contrib_name_clean, c.contrib_name, c.contrib_type, r.revision_version
 				FROM ' . TITANIA_CONTRIBS_TABLE . ' c, ' . TITANIA_REVISIONS_TABLE . ' r
@@ -130,7 +142,7 @@ class titania_queue extends titania_message_object
 	*/
 	public function update_first_queue_post($post_subject = false)
 	{
-		titania::add_lang('manage');
+		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
 		if (!$this->queue_topic_id)
 		{
@@ -142,7 +154,7 @@ class titania_queue extends titania_message_object
 
 			// Create the topic
 			$post = new titania_post(TITANIA_QUEUE);
-			$post->post_access = TITANIA_ACCESS_TEAMS;
+			$post->post_access = access::TEAM_LEVEL;
 			$post->topic->parent_id = $this->queue_id;
 			$post->topic->topic_category = $contrib_type;
 			$post->topic->topic_url = serialize(array('id' => $this->queue_id));
@@ -186,7 +198,7 @@ class titania_queue extends titania_message_object
 		if ($this->queue_notes)
 		{
 			$queue_notes = $this->queue_notes;
-			titania_decode_message($queue_notes, $this->queue_notes_uid);
+			message::decode($queue_notes, $this->queue_notes_uid);
 			$post->post_text .= '[quote=&quot;' . users_overlord::get_user($this->submitter_user_id, 'username', true) . '&quot;]' . $queue_notes . "[/quote]\n";
 		}
 
@@ -194,7 +206,7 @@ class titania_queue extends titania_message_object
 		if ($this->mpv_results)
 		{
 			$mpv_results = $this->mpv_results;
-			titania_decode_message($mpv_results, $this->mpv_results_uid);
+			message::decode($mpv_results, $this->mpv_results_uid);
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_PV'] . '&quot;]' . $mpv_results . "[/quote]\n";
 		}
 
@@ -227,7 +239,7 @@ class titania_queue extends titania_message_object
 	*/
 	public function topic_reply($message, $teams_only = true)
 	{
-		titania::add_lang('manage');
+		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
 		$message = (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message;
 
@@ -239,7 +251,7 @@ class titania_queue extends titania_message_object
 
 		if ($teams_only)
 		{
-			$post->post_access = TITANIA_ACCESS_TEAMS;
+			$post->post_access = access::TEAM_LEVEL;
 		}
 
 		$post->parent_contrib_type = $this->queue_type;
@@ -258,7 +270,7 @@ class titania_queue extends titania_message_object
 	*/
 	public function discussion_reply($message, $teams_only = false)
 	{
-		titania::add_lang('manage');
+		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
 		$message = (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message;
 
@@ -272,7 +284,7 @@ class titania_queue extends titania_message_object
 
 		if ($teams_only)
 		{
-			$post->post_access = TITANIA_ACCESS_TEAMS;
+			$post->post_access = access::TEAM_LEVEL;
 		}
 
 		$post->parent_contrib_type = $this->queue_type;
@@ -309,12 +321,12 @@ class titania_queue extends titania_message_object
 		parent::delete();
 	}
 
-	public function move($new_status)
+	public function move($new_status, \phpbb\titania\tags $tags)
 	{
-		titania::add_lang('manage');
+		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
-		$from = titania_tags::get_tag_name($this->queue_status);
-		$to = titania_tags::get_tag_name($new_status);
+		$from = $tags->get_tag_name($this->queue_status);
+		$to = $tags->get_tag_name($new_status);
 
 		$this->topic_reply(sprintf(phpbb::$user->lang['QUEUE_REPLY_MOVE'], $from, $to));
 
@@ -335,10 +347,10 @@ class titania_queue extends titania_message_object
 			'CATEGORY_NAME'	=> $to,
 			'U_VIEW_QUEUE'	=> $path_helper->strip_url_params($u_view_queue, 'sid'),
 		);
-		titania_subscriptions::send_notifications(
+		$this->subscriptions->send_notifications(
 			TITANIA_QUEUE_TAG,
 			$new_status,
-			'new_contrib_queue_cat.txt',
+			'new_contrib_queue_cat',
 			$vars,
 			phpbb::$user->data['user_id']
 		);
@@ -387,7 +399,7 @@ class titania_queue extends titania_message_object
 	*/
 	public function approve($public_notes)
 	{
-		titania::add_lang(array('manage', 'contributions'));
+		$this->user->add_lang_ext('phpbb/titania', array('manage', 'contributions'));
 		$revision = $this->get_revision();
 		$contrib = new titania_contribution;
 		if (!$contrib->load($this->contrib_id) || !$contrib->is_visible())
@@ -401,7 +413,7 @@ class titania_queue extends titania_message_object
 		$contrib_release_topic_id = $contrib->get_release_topic_id($branch);
 
 		$notes = $this->validation_notes;
-		titania_decode_message($notes, $this->validation_notes_uid);
+		message::decode($notes, $this->validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_APPROVED'], $revision->revision_version, $notes);
 
 		// Replace empty quotes if there are no notes
@@ -452,7 +464,7 @@ class titania_queue extends titania_message_object
 			'NAME'		=> $contrib->contrib_name,
 			'U_VIEW'	=> $contrib->get_url(),
 		);
-		titania_subscriptions::send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
+		$this->subscriptions->send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify', $email_vars);
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -477,11 +489,11 @@ class titania_queue extends titania_message_object
 	public function deny()
 	{
 		// Reply to the queue topic and discussion with the message
-		titania::add_lang('manage');
+		$this->user->add_lang_ext('phpbb/titania', 'manage');
 		$revision = $this->get_revision();
 
 		$notes = $this->validation_notes;
-		titania_decode_message($notes, $this->validation_notes_uid);
+		message::decode($notes, $this->validation_notes_uid);
 		$message = sprintf(phpbb::$user->lang['QUEUE_REPLY_DENIED'], $revision->revision_version, $notes);
 
 		// Replace empty quotes if there are no notes
@@ -514,7 +526,7 @@ class titania_queue extends titania_message_object
 	*/
 	private function send_approve_deny_notification($approve = true)
 	{
-		titania::add_lang('manage');
+		$this->user->add_lang_ext('phpbb/titania', 'manage');
 		phpbb::_include('functions_privmsgs', 'submit_pm');
 
 		// Need some stuff
@@ -540,7 +552,7 @@ class titania_queue extends titania_message_object
 
 		// Message
 		$notes = $this->validation_notes;
-		titania_decode_message($notes, $this->validation_notes_uid);
+		message::decode($notes, $this->validation_notes_uid);
 		if ($approve)
 		{
 			$message = $contrib->type->validation_message_approve;
@@ -635,7 +647,7 @@ class titania_queue extends titania_message_object
 		}
 
 		// No queue discussion topic...so we must create one
-		titania::add_lang('posting');
+		$this->user->add_lang_ext('phpbb/titania', 'posting');
 
 		$contrib = contribs_overlord::get_contrib_object($this->contrib_id, true);
 
@@ -650,7 +662,7 @@ class titania_queue extends titania_message_object
 			'topic_sticky'		=> true,
 		));
 		$post->__set_array(array(
-			'post_access'		=> TITANIA_ACCESS_AUTHORS,
+			'post_access'		=> access::AUTHOR_LEVEL,
 			'post_subject'		=> sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_TITLE'], $contrib->contrib_name),
 			'post_text'			=> phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC_MESSAGE'],
 		));

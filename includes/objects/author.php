@@ -15,7 +15,7 @@
 * Class to abstract titania authors.
 * @package Titania
 */
-class titania_author extends titania_message_object
+class titania_author extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * SQL Table
@@ -48,6 +48,10 @@ class titania_author extends titania_message_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** Author visibility */
+	const HIDDEN = 0;
+	const VISIBLE = 1;
+
 	/**
 	 * Constructor class for titania authors
 	 *
@@ -67,7 +71,7 @@ class titania_author extends titania_message_object
 			'author_rating_count'	=> array('default' => 0),
 
 			'author_contribs'		=> array('default' => 0),
-			'author_visible'		=> array('default' => TITANIA_AUTHOR_VISIBLE),
+			'author_visible'		=> array('default' => self::VISIBLE),
 
 			'author_desc'			=> array('default' => '',	'message_field' => 'message'),
 			'author_desc_bitfield'	=> array('default' => '',	'message_field' => 'message_bitfield'),
@@ -75,6 +79,7 @@ class titania_author extends titania_message_object
 			'author_desc_options'	=> array('default' => 7,	'message_field' => 'message_options'),
 		));
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		// Load the count for different types
@@ -284,6 +289,7 @@ class titania_author extends titania_message_object
 		}
 
 		$vars = array(
+			'AUTHOR_NAME'					=> $this->get_username_string('username'),
 			'AUTHOR_NAME_FULL'				=> $this->get_username_string(),
 			'AUTHOR_REALNAME'				=> $this->author_realname,
 			'AUTHOR_WEBSITE'				=> $this->get_website_url(),
@@ -317,7 +323,7 @@ class titania_author extends titania_message_object
 			{
 				// Figure out the counts some other way
 				$valid_statuses = array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED);
-				
+
 				$sql_ary = array(
 					'SELECT'	=> 'COUNT(*) AS contrib_cnt',
 
@@ -348,7 +354,7 @@ class titania_author extends titania_message_object
 			if ($contrib_cnt > 0)
 			{
 				$lang_key = 'AUTHOR_' . strtoupper($type->name) . 'S';
-				
+
 				if ($contrib_cnt == 1)
 				{
 					$type_list[] = (isset(phpbb::$user->lang[$lang_key . '_ONE'])) ? phpbb::$user->lang[$lang_key . '_ONE'] : '{' . $lang_key . '_ONE}';

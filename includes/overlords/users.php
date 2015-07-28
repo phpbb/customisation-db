@@ -176,7 +176,7 @@ class users_overlord
 				break;
 
 				case '_unbuilt_titania_profile' :
-					return self::$users[$user_id]['username_clean'];
+					return urlencode(self::$users[$user_id]['username_clean']);
 				break;
 
 				case '_titania_profile' :
@@ -209,7 +209,7 @@ class users_overlord
 				case '_signature' :
 					if (self::$users[$user_id]['user_sig'] && phpbb::$config['allow_sig'] && phpbb::$user->optionget('viewsigs'))
 					{
-						return titania_generate_text_for_display(self::$users[$user_id]['user_sig'], self::$users[$user_id]['user_sig_bbcode_uid'], self::$users[$user_id]['user_sig_bbcode_bitfield'], 7);
+						return generate_text_for_display(self::$users[$user_id]['user_sig'], self::$users[$user_id]['user_sig_bbcode_uid'], self::$users[$user_id]['user_sig_bbcode_bitfield'], 7);
 					}
 					return '';
 				break;

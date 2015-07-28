@@ -30,24 +30,29 @@ class support
 	/** @var \phpbb\titania\display */
 	protected $display;
 
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
 	const ALL_SUPPORT = 0;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\template\template $template
-	* @param \phpbb\user $user
-	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\request\request_interface $request
-	* @param \phpbb\titania\display
-	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display)
+	 * Constructor
+	 *
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\tracking $tracking
+	 */
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking)
 	{
 		$this->template = $template;
 		$this->user = $user;
 		$this->helper = $helper;
 		$this->request = $request;
 		$this->display = $display;
+		$this->tracking = $tracking;
 	}
 
 	/**
@@ -70,7 +75,7 @@ class support
 			// Mark all topics read
 			if ($this->request->variable('mark', '') == 'topics')
 			{
-				\titania_tracking::track(TITANIA_ALL_SUPPORT, self::ALL_SUPPORT);
+				$this->tracking->track(TITANIA_ALL_SUPPORT, self::ALL_SUPPORT);
 			}
 
 			// Mark all topics read

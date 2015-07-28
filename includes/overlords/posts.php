@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\message\message;
+
 class posts_overlord
 {
 	/**
@@ -35,9 +37,10 @@ class posts_overlord
 	 */
 	public static function sql_permissions($prefix = 'p.', $where = false)
 	{
+		$access = phpbb::$container->get('phpbb.titania.access');
 		$sql = ($where) ? ' WHERE' : ' AND';
 
-		$sql .= " ({$prefix}post_access >= " . titania::$access_level . " OR {$prefix}post_user_id = " . phpbb::$user->data['user_id'] . ')';
+		$sql .= " ({$prefix}post_access >= " . $access->get_level() . " OR {$prefix}post_user_id = " . phpbb::$user->data['user_id'] . ')';
 
 		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
 		{
@@ -160,7 +163,8 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		// check to see if they want to view the latest unread post
 		if (phpbb::$request->variable('view', '') == 'unread')
 		{
-			$mark_time = titania_tracking::get_track(TITANIA_TOPIC, $topic->topic_id);
+			$tracking = phpbb::$container->get('phpbb.titania.tracking');
+			$mark_time = $tracking->get_track(TITANIA_TOPIC, $topic->topic_id);
 
 			if ($mark_time > 0)
 			{
@@ -196,7 +200,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$post_object = new titania_post($topic->topic_type, $topic);
 		if ($post_object->acl_get('reply'))
 		{
-			$message = new titania_message($topic);
+			$message = phpbb::$container->get('phpbb.titania.message');
+			$message->set_parent($topic);
 			$message->display_quick_reply();
 		}
 
@@ -209,10 +214,12 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	* Display topic section for support/tracker/etc
 	*
 	* @param object $topic The topic object
-	* @param titania_sort $sort The sort object (includes/tools/sort.php)
+	* @param \phpbb\titania\sort $sort The sort object
 	*/
 	public static function display_topic($topic, $sort = false)
 	{
+		$tracking = phpbb::$container->get('phpbb.titania.tracking');
+
 		if ($sort === false)
 		{
 			// Setup the sort tool
@@ -251,7 +258,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			return;
 		}
 
-		$sort->build_pagination($topic->get_url());
+		$topic_action = (isset($sort->url_parameters['action'])) ? $sort->url_parameters['action'] : false;
+		unset($sort->url_parameters['action']);
+		$sort->build_pagination($topic->get_url($topic_action));
 
 		// Get the data
 		$post_ids = $user_ids = array();
@@ -272,20 +281,23 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		phpbb::$db->sql_freeresult($result);
 
 		// Grab the tracking data
-		$last_mark_time = titania_tracking::get_track(TITANIA_TOPIC, $topic->topic_id);
+		$last_mark_time = $tracking->get_track(TITANIA_TOPIC, $topic->topic_id);
 
 		// Store tracking data
-		titania_tracking::track(TITANIA_TOPIC, $topic->topic_id, $last_post_time);
+		$tracking->track(TITANIA_TOPIC, $topic->topic_id, $last_post_time);
 
 		// load the user data
 		users_overlord::load($user_ids);
 
 		$cp = phpbb::$container->get('profilefields.manager');
 		$post = new titania_post($topic->topic_type, $topic);
-		$attachments = new titania_attachment($topic->topic_type, false);
+		$attachments = phpbb::$container->get('phpbb.titania.attachment.operator');
 
 		// Grab all attachments
-		$attachments_set = $attachments->load_attachments_set($post_ids);
+		$attachments_set = $attachments
+			->configure($topic->topic_type, false)
+			->load_attachments_set($post_ids)
+		;
 
 		// Loop de loop
 		$prev_post_time = 0;
@@ -293,11 +305,11 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		{
 			$post->__set_array(self::$posts[$post_id]);
 
-			$attachments->clear_attachments();
+			$attachments->clear_all();
 
 			if (isset($attachments_set[$post_id]))
 			{
-				$attachments->store_attachments($attachments_set[$post_id]);
+				$attachments->store($attachments_set[$post_id]);
 			}
 
 			// Parse attachments before outputting the message
@@ -306,7 +318,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			// Prepare message text for use in javascript
 			$message_decoded = censor_text($post->post_text);
-			titania_decode_message($message_decoded, $post->post_text_uid);
+			message::decode($message_decoded, $post->post_text_uid);
 			$message_decoded = bbcode_nl2br($message_decoded);
 
 			// Build CP Fields
@@ -531,12 +543,12 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 	/**
 	* Setup the sort tool and return it for posts display
 	*
-	* @return titania_sort
+	* @return \phpbb\titania\sort
 	*/
 	public static function build_sort()
 	{
 		// Setup the sort and set the sort keys
-		$sort = new titania_sort();
+		$sort = phpbb::$container->get('phpbb.titania.sort');
 		$sort->set_sort_keys(self::$sort_by);
 
 		if (isset(self::$sort_by[phpbb::$user->data['user_post_sortby_type']]))

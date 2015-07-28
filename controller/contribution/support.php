@@ -15,16 +15,51 @@ namespace phpbb\titania\controller\contribution;
 
 class support extends base
 {
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
+	/** @var \phpbb\titania\posting */
+	protected $posting;
+
 	/**
-	* Handle topic action.
-	*
-	* @param string $contrib_type	Contrib type URL identifier.
-	* @param string $contrib		Contrib name clean.
-	* @param int $topic_id			Topic id.
-	* @param string $action			Action.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\access $access
+	 * @param \phpbb\titania\tracking $tracking
+	 * @param \phpbb\titania\subscriptions $subscriptions
+	 * @param \phpbb\titania\posting $posting
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions, \phpbb\titania\posting $posting)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
+
+		$this->tracking = $tracking;
+		$this->subscriptions = $subscriptions;
+		$this->posting = $posting;
+	}
+
+	/**
+	 * Handle topic action.
+	 *
+	 * @param string $contrib_type	Contrib type URL identifier.
+	 * @param string $contrib		Contrib name clean.
+	 * @param int $topic_id			Topic id.
+	 * @param string $action		Action.
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function topic_action($contrib_type, $contrib, $topic_id, $action)
 	{
 		$this->load_contrib($contrib_type, $contrib);
@@ -35,10 +70,10 @@ class support extends base
 		}
 
 		// Handle replying/editing/etc
-		$posting_helper = new \titania_posting();
-		$posting_helper->parent_type = $this->contrib->contrib_type;
+		$this->posting->parent_type = $this->contrib->contrib_type;
+		$this->assign_vars();
 
-		$result = $posting_helper->act(
+		return $this->posting->act(
 			$this->contrib,
 			$action,
 			$topic_id,
@@ -51,17 +86,6 @@ class support extends base
 			TITANIA_SUPPORT,
 			$this->helper->get_current_url()
 		);
-
-		if (!empty($result['needs_auth']))
-		{
-			return $this->helper->needs_auth();
-		}
-
-		$this->assign_vars();
-
-		$template_file = (!empty($result['template'])) ? $result['template'] : 'contributions/contribution_support_post.html';
-
-		return $this->helper->render($template_file, $result['title']);
 	}
 
 	/**
@@ -87,7 +111,12 @@ class support extends base
 		$this->user->add_lang('viewforum');
 
 		// Subscriptions
-		\titania_subscriptions::handle_subscriptions(TITANIA_TOPIC, $topic_id, $this->topic->get_url(), 'SUBSCRIBE_TOPIC');
+		$this->subscriptions->handle_subscriptions(
+			TITANIA_TOPIC,
+			$topic_id,
+			$this->topic->get_url(),
+			'SUBSCRIBE_TOPIC'
+		);
 		\posts_overlord::display_topic_complete($this->topic);
 
 		$this->template->assign_vars(array(
@@ -122,7 +151,7 @@ class support extends base
 		$this->user->add_lang('viewforum');
 
 		// Subscriptions
-		\titania_subscriptions::handle_subscriptions(
+		$this->subscriptions->handle_subscriptions(
 			TITANIA_SUPPORT,
 			$this->contrib->contrib_id,
 			$this->contrib->get_url('support'),
@@ -132,7 +161,7 @@ class support extends base
 		// Mark all topics read
 		if ($this->request->variable('mark', '') == 'topics')
 		{
-			\titania_tracking::track(TITANIA_SUPPORT, $this->contrib->contrib_id);
+			$this->tracking->track(TITANIA_SUPPORT, $this->contrib->contrib_id);
 		}
 
 		$can_post_topic = $this->ext_config->support_in_titania && $this->auth->acl_get('u_titania_topic');
@@ -188,7 +217,7 @@ class support extends base
 	*/
 	protected function check_auth($topic = false)
 	{
-		if (!$this->ext_config->support_in_titania && \titania::$access_level == TITANIA_ACCESS_PUBLIC)
+		if (!$this->ext_config->support_in_titania && $this->access->is_public())
 		{
 			return false;
 		}
@@ -197,7 +226,7 @@ class support extends base
 		{
 			$can_view_queue_discussion = $this->is_author || $this->contrib->type->acl_get('queue_discussion');
 
-			if ($this->topic->topic_access < \titania::$access_level ||
+			if ($this->topic->topic_access < $this->access->get_level() ||
 				($this->topic->topic_type == TITANIA_QUEUE_DISCUSSION && !$can_view_queue_discussion))
 			{
 				return false;

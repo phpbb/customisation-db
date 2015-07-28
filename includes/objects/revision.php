@@ -11,13 +11,16 @@
 *
 */
 
+use phpbb\titania\versions;
+use phpbb\titania\message\message;
+
 /**
 * Class to titania revision.
 * @package Titania
 *
 * @todo Create revision_status field to store whether this revision is new, validated, or pulled (for security or other reasons)
 */
-class titania_revision extends titania_database_object
+class titania_revision extends \phpbb\titania\entity\database_base
 {
 	/**
 	 * SQL Table
@@ -41,15 +44,26 @@ class titania_revision extends titania_database_object
 	public $contrib = false;
 
 	/**
-	* phpBB versions, translations
+	* phpBB versions
 	*
 	* @var mixed
 	*/
 	public $phpbb_versions = array();
-	public $translations = array();
+
+	/** @var \phpbb\titania\attachment\operator */
+	protected $translations;
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
+
+	/** @var \phpbb\user */
+	protected $user;
+
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
+	/** @var \phpbb\titania\cache\service */
+	protected $cache;
 
 	public function __construct($contrib, $revision_id = false)
 	{
@@ -82,7 +96,12 @@ class titania_revision extends titania_database_object
 		}
 
 		$this->revision_id = $revision_id;
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->user = phpbb::$user;
+		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
+		$this->translations = phpbb::$container->get('phpbb.titania.attachment.operator');
+		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -123,6 +142,18 @@ class titania_revision extends titania_database_object
 	}
 
 	/**
+	 * Set revision translations.
+	 *
+	 * @param array $translations
+	 * @return $this
+	 */
+	public function set_translations(array $translations)
+	{
+		$this->translations->clear_all()->store($translations);
+		return $this;
+	}
+
+	/**
 	* Load the phpBB branches we've selected for this revision
 	* Stored in $this->phpbb_versions
 	*/
@@ -144,15 +175,10 @@ class titania_revision extends titania_database_object
 	*/
 	public function load_translations()
 	{
-		$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . '
-			WHERE object_type = ' . TITANIA_TRANSLATION . '
-				AND object_id = ' . $this->revision_id;
-		$result = phpbb::$db->sql_query($sql);
-		while ($row = phpbb::$db->sql_fetchrow($result))
-		{
-			$this->translations[] = $row;
-		}
-		phpbb::$db->sql_freeresult($result);
+		$this->translations
+			->configure(TITANIA_TRANSLATION, $this->revision_id)
+			->load()
+		;
 	}
 
 	/**
@@ -171,9 +197,11 @@ class titania_revision extends titania_database_object
 
 	public function display($tpl_block = 'revisions', $show_queue = false, $all_versions = false)
 	{
-		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
-
-		$ordered_phpbb_versions = order_phpbb_version_list_from_db($this->phpbb_versions, $all_versions);
+		$ordered_phpbb_versions = versions::order_phpbb_version_list_from_db(
+			$this->cache,
+			$this->phpbb_versions,
+			$all_versions
+		);
 
 		// Get rid of the day of the week if it exists in the dateformat
 		$old_date_format = phpbb::$user->date_format;
@@ -191,12 +219,12 @@ class titania_revision extends titania_database_object
 				$install_time = phpbb::$user->lang('INSTALL_MINUTES', (int) ($this->install_time / 60));
 			}
 		}
-		
+
         // ColorizeIt stuff
         $url_colorizeit = '';
         if($this->revision_status == TITANIA_REVISION_APPROVED && strlen(titania::$config->colorizeit) && $this->contrib && $this->contrib->has_colorizeit())
         {
-            $url_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->attachment_id . '&amp;sample=' . $this->contrib->clr_sample['attachment_id'];
+            $url_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->attachment_id . '&amp;sample=' . $this->contrib->clr_sample->get_id();
         }
 
 		phpbb::$template->assign_block_vars($tpl_block, array(
@@ -215,7 +243,6 @@ class titania_revision extends titania_database_object
 			'BBC_DEMO'				=> $this->revision_bbc_demo,
 			'INSTALL_LEVEL'			=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
 			'DOWNLOADS'				=> isset($this->download_count) ? $this->download_count : 0,
-			'HALF_TRANSLATIONS'		=> ceil(sizeof($this->translations) / 2),
 
 			'U_DOWNLOAD'		=> $this->get_url(),
 			'U_COLORIZEIT'      => $url_colorizeit,
@@ -242,13 +269,11 @@ class titania_revision extends titania_database_object
 		}
 
 		// Output translations
-		if (sizeof($this->translations))
+		if ($this->translations->get_count())
 		{
-			$translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
-			$translations->store_attachments($this->translations);
 			$message = false;
 
-			$translations->parse_attachments($message, false, false, $tpl_block . '.translations', '');
+			$this->translations->parse_attachments($message, false, false, $tpl_block . '.translations', '');
 		}
 
 		// Hooks
@@ -280,7 +305,12 @@ class titania_revision extends titania_database_object
 					'NAME'		=> $this->contrib->contrib_name,
 					'U_VIEW'	=> $this->contrib->get_url(),
 				);
-				titania_subscriptions::send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify.txt', $email_vars);
+				$this->subscriptions->send_notifications(
+					TITANIA_CONTRIB,
+					$this->contrib_id,
+					'subscribe_notify',
+					$email_vars
+				);
 			}
 		}
 		else if (sizeof($this->phpbb_versions))
@@ -321,7 +351,7 @@ class titania_revision extends titania_database_object
 					'contrib_id'				=> $this->contrib_id,
 					'revision_validated'		=> ($this->revision_status == TITANIA_REVISION_APPROVED) ? true : false,
 					'phpbb_version_branch'		=> $row['phpbb_version_branch'],
-					'phpbb_version_revision'	=> get_real_revision_version(((isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'])),
+					'phpbb_version_revision'	=> $this->get_real_phpbb_version(((isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'])),
 				);
 			}
 
@@ -471,7 +501,7 @@ class titania_revision extends titania_database_object
 			throw new exception('Submit the revision before repacking');
 		}
 
-		titania::add_lang('manage');
+		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
 		// Get the old and new queue objects
 		$queue = $this->get_queue();
@@ -487,8 +517,8 @@ class titania_revision extends titania_database_object
 		// Add the MPV results
 		if ($queue->mpv_results)
 		{
-			titania_decode_message($queue->mpv_results, $queue->mpv_results_uid);
-			$repack_message .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_PV'] . '&quot;]' . $queue->mpv_results . "[/quote]\n";
+			message::decode($queue->mpv_results, $queue->mpv_results_uid);
+			$repack_message .= '[quote=&quot;' . $this->user->lang['VALIDATION_PV'] . '&quot;]' . $queue->mpv_results . "[/quote]\n";
 		}
 
 		// Add the Automod results
@@ -541,10 +571,12 @@ class titania_revision extends titania_database_object
 		}
 
 		// Delete the attachment
-		$attachment = new titania_attachment(TITANIA_CONTRIB);
-		$attachment->attachment_id = $this->attachment_id;
-		$attachment->load();
-		$attachment->delete();
+		$operator = phpbb::$container->get('phpbb.titania.attachment.operator');
+		$operator
+			->configure(TITANIA_CONTRIB, $this->contrib_id)
+			->load(array($this->attachment_id))
+			->delete(array($this->attachment_id))
+		;
 		$this->update_composer_package('remove');
 
 		// Delete translations
@@ -689,5 +721,16 @@ class titania_revision extends titania_database_object
 			$package_manager->remove_release($this->revision_version);
 		}
 		$package_manager->submit();
+	}
+
+	/**
+	 * Normalize phpBB version - pl always in lowercase, RC in uppercase
+	 *
+	 * @param string $version
+	 * @return string
+	 */
+	protected function get_real_phpbb_version($version)
+	{
+		return str_replace('rc', 'RC', strtolower($version));
 	}
 }

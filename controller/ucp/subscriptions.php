@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\ucp;
 
+use phpbb\titania\access;
+
 class subscriptions
 {
 	/** @var \phpbb\db\driver\driver_inteface */
@@ -33,6 +35,15 @@ class subscriptions
 	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
+	/** @var \phpbb\titania\display */
+	protected $display;
+
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
+	/** @var \phpbb\titania\sort */
+	protected $sort;
+
 	/** @var string */
 	protected $contribs_table;
 
@@ -43,16 +54,19 @@ class subscriptions
 	protected $watch_table;
 
 	/**
-	* Constructor.
-	*
-	* @param \phpbb\db\driver\driver_inteface $db
-	* @param \phpbb\template\template $template
-	* @param \phpbb\user $user
-	* @param \phpbb\request\request_interface $request
-	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\titania\config\config $ext_config
-	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config)
+	 * Constructor
+	 *
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\request\request_interface $request
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\tracking $tracking
+	 * @param \phpbb\titania\sort $sort
+	 */
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort)
 	{
 		$this->db = $db;
 		$this->template = $template;
@@ -60,6 +74,9 @@ class subscriptions
 		$this->request = $request;
 		$this->helper = $helper;
 		$this->ext_config = $ext_config;
+		$this->display = $display;
+		$this->tracking = $tracking;
+		$this->sort = $sort;
 		$this->contribs_table = TITANIA_CONTRIBS_TABLE;
 		$this->topics_table = TITANIA_TOPICS_TABLE;
 		$this->watch_table = TITANIA_WATCH_TABLE;
@@ -135,11 +152,11 @@ class subscriptions
 
 		$user_ids = $rows = array();
 		$subscription_count = $this->get_subscription_count($object_types);
-		$sort = $this->build_sort($subscription_count);
+		$this->build_sort($subscription_count);
 
 		$sql_ary = $this->get_subscription_sql_ary($cases, $object_types, TITANIA_SUPPORT);
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
-		$result = $this->db->sql_query_limit($sql, $sort->limit, $sort->start);
+		$result = $this->db->sql_query_limit($sql, $this->sort->limit, $this->sort->start);
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -191,7 +208,7 @@ class subscriptions
 		$object_types = array(TITANIA_CONTRIB, TITANIA_TOPIC);
 
 		$subscription_count = $this->get_subscription_count($object_types);
-		$sort = $this->build_sort($subscription_count);
+		$this->build_sort($subscription_count);
 
 		$cases = array(
 			TITANIA_CONTRIB	=> 'c.contrib_last_update',
@@ -206,21 +223,21 @@ class subscriptions
 		);
 
 		// Additional tracking for support topics
-		\titania_tracking::get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
-		\titania_tracking::get_track_sql($sql_ary, TITANIA_SUPPORT, 0, 'tsa');
-		\titania_tracking::get_track_sql($sql_ary, TITANIA_SUPPORT, 't.parent_id', 'tsc');
-		\titania_tracking::get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
+		$this->tracking->get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
+		$this->tracking->get_track_sql($sql_ary, TITANIA_SUPPORT, 0, 'tsa');
+		$this->tracking->get_track_sql($sql_ary, TITANIA_SUPPORT, 't.parent_id', 'tsc');
+		$this->tracking->get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 
 		// Tracking for contributions
-		\titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id', 'tc');
+		$this->tracking->get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id', 'tc');
 
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
-		$result = $this->db->sql_query_limit($sql, $sort->limit, $sort->start);
-		$user_ids = $contributions = $topics = array();
+		$result = $this->db->sql_query_limit($sql, $this->sort->limit, $this->sort->start);
+		$user_ids = $contributions = $topics = $rows = array();
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			\titania_tracking::store_from_db($row);
+			$this->tracking->store_from_db($row);
 			$rows[] = $row;
 
 			if ($row['watch_object_type'] == TITANIA_TOPIC)
@@ -358,17 +375,13 @@ class subscriptions
 	* Build sort object.
 	*
 	* @param int $subscription_count
-	* @return \titania_sort
 	*/
 	protected function build_sort($subscription_count)
 	{
 		// Setup the sort tool
-		$sort = new \titania_sort();
-		$sort->request();
-		$sort->total = $subscription_count;
-		$sort->build_pagination($this->u_action);
-
-		return $sort;
+		$this->sort->request();
+		$this->sort->total = $subscription_count;
+		$this->sort->build_pagination($this->u_action);
 	}
 
 	/**
@@ -379,14 +392,13 @@ class subscriptions
 	*/
 	protected function get_contribution_tpl_row($row)
 	{
-		\titania::_include('functions_display', 'titania_topic_folder_img');
-
+		$folder_img = $folder_alt = '';
 		$contrib = $this->get_contrib($row);
-		titania_topic_folder_img(
+		$this->display->topic_folder_img(
 			$folder_img,
 			$folder_alt,
 			0,
-			\titania_tracking::is_unread(TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update)
+			$this->tracking->is_unread(TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update)
 		);
 
 		return array(
@@ -450,8 +462,8 @@ class subscriptions
 		}
 
 		// Tracking check
-		$last_read_mark = \titania_tracking::get_track(TITANIA_TOPIC, $topic->topic_id, true);
-		$last_read_mark = max($last_read_mark, \titania_tracking::find_last_read_mark(
+		$last_read_mark = $this->tracking->get_track(TITANIA_TOPIC, $topic->topic_id, true);
+		$last_read_mark = max($last_read_mark, $this->tracking->find_last_read_mark(
 			$topic->additional_unread_fields,
 			$topic->topic_type,
 			$topic->parent_id
@@ -479,8 +491,8 @@ class subscriptions
 				'#'		=> 'p' . $topic->topic_last_post_id,
 			))),
 
-			'S_ACCESS_TEAMS'				=> $row['topic_access'] == TITANIA_ACCESS_TEAMS || $row['topic_type'] == TITANIA_QUEUE,
-			'S_ACCESS_AUTHORS'				=> $row['topic_access'] == TITANIA_ACCESS_AUTHORS,
+			'S_ACCESS_TEAMS'				=> $row['topic_access'] == access::TEAM_LEVEL || $row['topic_type'] == TITANIA_QUEUE,
+			'S_ACCESS_AUTHORS'				=> $row['topic_access'] == access::AUTHOR_LEVEL,
 			'S_TOPIC'						=> true,
 		);
 	}

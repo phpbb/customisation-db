@@ -11,11 +11,15 @@
 *
 */
 
+use phpbb\titania\access;
+use phpbb\titania\count;
+use phpbb\titania\message\message;
+
 /**
 * Class to abstract titania posts
 * @package Titania
 */
-class titania_post extends titania_message_object
+class titania_post extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * SQL Table
@@ -62,6 +66,12 @@ class titania_post extends titania_message_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var \phpbb\titania\access */
+	protected $access;
+
+	/** @var \phpbb\titania\search\manager */
+	protected $search_manager;
+
 	/**
 	 * Constructor class for titania posts
 	 *
@@ -76,7 +86,7 @@ class titania_post extends titania_message_object
 			'post_id'				=> array('default' => 0),
 			'topic_id'				=> array('default' => 0),
 			'post_type'				=> array('default' => 0), // Post Type, Main TITANIA_ constants
-			'post_access'			=> array('default' => TITANIA_ACCESS_PUBLIC,	'message_field' => 'access'), // Access level, TITANIA_ACCESS_ constants
+			'post_access'			=> array('default' => access::PUBLIC_LEVEL,	'message_field' => 'access'), // Access level, access class constants
 			'post_url'				=> array('default' => ''), // URL for the post (simple unbuilt URL)
 
 			'post_locked'			=> array('default' => false,	'message_field' => 'lock'),
@@ -103,7 +113,10 @@ class titania_post extends titania_message_object
 			'post_text_options'		=> array('default' => 7,	'message_field' => 'message_options'),
 		));
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->access = phpbb::$container->get('phpbb.titania.access');
+		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 
 		switch ($type)
 		{
@@ -202,11 +215,9 @@ class titania_post extends titania_message_object
 	}
 
 	/**
-	* Submit data in the post_data format (from includes/tools/message.php)
-	*
-	* @param object $message The message object
-	*/
-	public function post_data($message)
+	 * {@inheritDoc}
+	 */
+	public function post_data(message $message)
 	{
 		$post_data = $message->request_data();
 
@@ -296,7 +307,7 @@ class titania_post extends titania_message_object
 		}
 
 		// Can never do anything if the topic access level is greater than current access level
-		if (is_object($this->topic) && $this->topic->topic_access < titania::$access_level)
+		if (is_object($this->topic) && $this->topic->topic_access < $this->access->get_level())
 		{
 			return false;
 		}
@@ -318,8 +329,8 @@ class titania_post extends titania_message_object
 			break;
 
 			case 'edit' :
-				if (($is_poster && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_edit_own')) || // Is poster and can edit own
-					($is_author && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
+				if (($is_poster && !$this->post_locked && $this->post_access >= $this->access->get_level() && phpbb::$auth->acl_get('u_titania_post_edit_own')) || // Is poster and can edit own
+					($is_author && !$this->post_locked && $this->post_access >= $this->access->get_level() && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
 					phpbb::$auth->acl_get('u_titania_mod_post_mod')) // Can moderate posts
 				{
 					return true;
@@ -331,8 +342,8 @@ class titania_post extends titania_message_object
 			break;
 
 			case 'soft_delete' :
-				if (($is_poster && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own
-					($is_author && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
+				if (($is_poster && !$this->post_locked && $this->post_access >= $this->access->get_level() && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own
+					($is_author && !$this->post_locked && $this->post_access >= $this->access->get_level() && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own
 					phpbb::$auth->acl_get('u_titania_mod_post_mod')) // Can moderate posts
 				{
 					return true;
@@ -340,8 +351,8 @@ class titania_post extends titania_message_object
 			break;
 
 			case 'undelete' :
-				if (($is_poster && $is_deleter && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own and did delete their own
-					($is_author && $is_deleter && !$this->post_locked && $this->post_access >= titania::$access_level && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own and did delete the message
+				if (($is_poster && $is_deleter && !$this->post_locked && $this->post_access >= $this->access->get_level() && phpbb::$auth->acl_get('u_titania_post_delete_own')) || // Is poster and can delete own and did delete their own
+					($is_author && $is_deleter && !$this->post_locked && $this->post_access >= $this->access->get_level() && phpbb::$auth->acl_get('u_titania_post_mod_own')) || // Is contrib author and can moderate own and did delete the message
 					phpbb::$auth->acl_get('u_titania_mod_post_mod')) // Can moderate posts
 				{
 					return true;
@@ -586,17 +597,17 @@ class titania_post extends titania_message_object
 		$this->update_topic_postcount();
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
-		$flags = titania_count::get_flags(TITANIA_ACCESS_PUBLIC);
-		if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+		$flags = count::get_flags(access::PUBLIC_LEVEL);
+		if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 		{
 			// There are no posts visible to the public, change it to authors level access
-			$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
+			$this->topic->topic_access = access::AUTHOR_LEVEL;
 
-			$flags = titania_count::get_flags(TITANIA_ACCESS_AUTHORS);
-			if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+			$flags = count::get_flags(access::AUTHOR_LEVEL);
+			if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 			{
 				// There are no posts visible to authors, change it to teams level access
-				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
+				$this->topic->topic_access = access::TEAM_LEVEL;
 			}
 		}
 
@@ -649,17 +660,17 @@ class titania_post extends titania_message_object
 		$this->update_topic_postcount();
 
 		// Set the visibility appropriately
-		$flags = titania_count::get_flags(TITANIA_ACCESS_AUTHORS);
-		if (titania_count::from_db($this->topic->topic_posts, $flags) > 0)
+		$flags = count::get_flags(access::AUTHOR_LEVEL);
+		if (count::from_db($this->topic->topic_posts, $flags) > 0)
 		{
 			// There are posts visible to the authors, change it to authors level access
-			$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
+			$this->topic->topic_access = access::AUTHOR_LEVEL;
 
-			$flags = titania_count::get_flags(TITANIA_ACCESS_PUBLIC);
-			if (titania_count::from_db($this->topic->topic_posts, $flags) > 0)
+			$flags = count::get_flags(access::PUBLIC_LEVEL);
+			if (count::from_db($this->topic->topic_posts, $flags) > 0)
 			{
 				// There are posts visible to the public, change it to public level access
-				$this->topic->topic_access = TITANIA_ACCESS_PUBLIC;
+				$this->topic->topic_access = access::PUBLIC_LEVEL;
 			}
 		}
 
@@ -723,17 +734,17 @@ class titania_post extends titania_message_object
 		$this->update_topic_postcount(true);
 
 		// Set the visibility appropriately if no posts are visibile to the public/authors
-		$flags = titania_count::get_flags(TITANIA_ACCESS_PUBLIC);
-		if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+		$flags = count::get_flags(access::PUBLIC_LEVEL);
+		if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 		{
 			// There are no posts visible to the public, change it to authors level access
-			$this->topic->topic_access = TITANIA_ACCESS_AUTHORS;
+			$this->topic->topic_access = access::AUTHOR_LEVEL;
 
-			$flags = titania_count::get_flags(TITANIA_ACCESS_AUTHORS);
-			if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+			$flags = count::get_flags(access::AUTHOR_LEVEL);
+			if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 			{
 				// There are no posts visible to authors, change it to teams level access
-				$this->topic->topic_access = TITANIA_ACCESS_TEAMS;
+				$this->topic->topic_access = access::TEAM_LEVEL;
 			}
 		}
 
@@ -753,7 +764,7 @@ class titania_post extends titania_message_object
 		$this->topic->submit();
 
 		// Remove from the search index
-		titania_search::delete($this->post_type, $this->post_id);
+		$this->search_manager->delete($this->post_type, $this->post_id);
 
 		// @todo remove attachments and other things
 
@@ -779,8 +790,8 @@ class titania_post extends titania_message_object
 		$this->topic->update_posted_status('remove', $this->post_user_id);
 
 		// Check if the topic is empty
-		$flags = titania_count::get_flags(TITANIA_ACCESS_TEAMS, true, true);
-		if (titania_count::from_db($this->topic->topic_posts, $flags) <= 0)
+		$flags = count::get_flags(access::TEAM_LEVEL, true, true);
+		if (count::from_db($this->topic->topic_posts, $flags) <= 0)
 		{
 			$this->topic->delete();
 		}
@@ -839,7 +850,7 @@ class titania_post extends titania_message_object
 	*/
 	public function index()
 	{
-		titania_search::index($this->post_type, $this->post_id, array(
+		$this->search_manager->index($this->post_type, $this->post_id, array(
 			'parent_id'		=> $this->topic->parent_id,
 			'title'			=> $this->post_subject,
 			'text'			=> $this->post_text,
@@ -873,7 +884,7 @@ class titania_post extends titania_message_object
 		}
 
 		// Get the current count
-		$to_db = titania_count::from_db($this->topic->topic_posts, false);
+		$to_db = count::from_db($this->topic->topic_posts, false);
 
 		// Revert the old count from this post
 		if ($this->post_id)
@@ -890,15 +901,15 @@ class titania_post extends titania_message_object
 			{
 				switch ($this->sql_data['post_access'])
 				{
-					case TITANIA_ACCESS_PUBLIC :
+					case access::PUBLIC_LEVEL :
 						$to_db['public']--;
 					break;
 
-					case TITANIA_ACCESS_AUTHORS :
+					case access::AUTHOR_LEVEL :
 						$to_db['authors']--;
 					break;
 
-					case TITANIA_ACCESS_TEAMS :
+					case access::TEAM_LEVEL :
 						$to_db['teams']--;
 					break;
 				}
@@ -920,15 +931,15 @@ class titania_post extends titania_message_object
 			{
 				switch ($this->post_access)
 				{
-					case TITANIA_ACCESS_PUBLIC :
+					case access::PUBLIC_LEVEL :
 						$to_db['public']++;
 					break;
 
-					case TITANIA_ACCESS_AUTHORS :
+					case access::AUTHOR_LEVEL :
 						$to_db['authors']++;
 					break;
 
-					case TITANIA_ACCESS_TEAMS :
+					case access::TEAM_LEVEL :
 						$to_db['teams']++;
 					break;
 				}
@@ -936,7 +947,7 @@ class titania_post extends titania_message_object
 		}
 
 		// Update the field on the topic
-		$this->topic->topic_posts = titania_count::to_db($to_db);
+		$this->topic->topic_posts = count::to_db($to_db);
 	}
 
 	/**
@@ -975,8 +986,8 @@ class titania_post extends titania_message_object
 			'S_POST_APPROVED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->post_approved : true,
 			'S_POST_REPORTED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->post_reported : false,
 			'S_POST_DELETED'				=> ($this->post_deleted != 0) ? true : false,
-			'S_ACCESS_TEAMS'				=> ($this->post_access == TITANIA_ACCESS_TEAMS) ? true : false,
-			'S_ACCESS_AUTHORS'				=> ($this->post_access == TITANIA_ACCESS_AUTHORS) ? true : false,
+			'S_ACCESS_TEAMS'				=> $this->access->is_team($this->post_access),
+			'S_ACCESS_AUTHORS'				=> $this->access->is_author($this->post_access),
 		);
 
 		// Hooks

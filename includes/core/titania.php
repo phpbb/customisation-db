@@ -92,25 +92,10 @@ class titania
 		self::$cache = phpbb::$container->get('phpbb.titania.cache');
 
 		// Setup the Access Level
-		self::$access_level = TITANIA_ACCESS_PUBLIC;
-
-		// The user might be in a group with team access even if it's not his default group.
-		$group_ids = implode(', ', self::$config->team_groups);
-
-		$sql = 'SELECT group_id, user_id, user_pending FROM ' . USER_GROUP_TABLE . '
-				WHERE user_id = ' . phpbb::$user->data['user_id'] . '
-				AND user_pending = 0
-				AND group_id IN (' . $group_ids . ')';
-		$result = phpbb::$db->sql_query_limit($sql, 1);
-
-		if ($group_id = phpbb::$db->sql_fetchfield('group_id'))
-		{
-			self::$access_level = TITANIA_ACCESS_TEAMS;
-		}
-		phpbb::$db->sql_freeresult($result);
+		self::$access_level = phpbb::$container->get('phpbb.titania.access')->get_level();
 
 		// Add common titania language file
-		self::add_lang('common');
+		phpbb::$user->add_lang_ext('phpbb/titania', 'common');
 
 		// Load the contrib types
 		self::_include('types/base');
@@ -158,18 +143,6 @@ class titania
 		}
 
 		// No error if file cant be found!
-	}
-
-	/**
-	 * Add a Titania language file
-	 *
-	 * @param mixed $lang_set
-	 * @param bool $use_db
-	 * @param bool $use_help
-	 */
-	public static function add_lang($lang_set, $use_db = false, $use_help = false)
-	{
-		phpbb::$user->add_lang_ext('phpbb/titania', $lang_set, $use_db, $use_help);
 	}
 
 	/**
@@ -227,73 +200,5 @@ class titania
 		}
 
 		include(self::$root_path . 'includes/' . $file . '.' . self::$php_ext);
-	}
-
-	/**
-	* Creates a log file with information that can help with identifying a problem
-	*
-	* @param int $log_type The log type to record. To be expanded for different types as needed
-	* @param string $text The description to add with the log entry
-	*/
-	public static function log($log_type, $message = false)
-	{
-		switch ($log_type)
-		{
-			case TITANIA_ERROR:
-				//Append the current server date/time, user information, and URL
-				$text = date('d-m-Y @ H:i:s') . ' USER: ' . phpbb::$user->data['username'] . ' - ' . phpbb::$user->data['user_id'] . "\r\n";
-				$text .= titania_url::$current_page_url;
-
-				// Append the sent message if any
-				$text .= (($message !== false) ? "\r\n" . $message : '');
-
-				$server_keys = phpbb::$request->variable_names('_SERVER');
-				$request_keys = phpbb::$request->variable_names('_REQUEST');
-
-				//Let's gather the $_SERVER array contents
-				if ($server_keys)
-				{
-					$text .= "\r\n-------------------------------------------------\r\n_SERVER: ";
-					foreach ($server_keys as $key => $var_name)
-					{
-						$text .= sprintf('%1s = %2s; ', $key, phpbb::$request->server($var_name));
-					}
-					$text = rtrim($text, '; ');
-				}
-
-				//Let's gather the $_REQUEST array contents
-				if ($request_keys)
-				{
-					$text .= "\r\n-------------------------------------------------\r\n_REQUEST: ";
-					foreach ($request_keys as $key => $var_name)
-					{
-						$text .= sprintf('%1s = %2s; ', $key, phpbb::$request->variable($var_name, '', true));
-					}
-					$text = rtrim($text, '; ');
-				}
-
-				//Use PHP's error_log function to write to file
-				error_log($text . "\r\n=================================================\r\n", 3, self::$root_path . "store/titania_log.log");
-			break;
-
-			case TITANIA_DEBUG :
-				//Append the current server date/time, user information, and URL
-				$text = date('d-m-Y @ H:i:s') . ' USER: ' . phpbb::$user->data['username'] . ' - ' . phpbb::$user->data['user_id'] . "\r\n";
-				$text .= titania_url::$current_page_url;
-
-				// Append the sent message if any
-				$text .= (($message !== false) ? "\r\n" . $message : '');
-
-				//Use PHP's error_log function to write to file
-				error_log($text . "\r\n=================================================\r\n", 3, self::$root_path . "store/titania_debug.log");
-			break;
-
-			default:
-				// phpBB Log System
-				$args = func_get_args();
-				call_user_func_array('add_log', $args);
-			break;
-
-		}
 	}
 }

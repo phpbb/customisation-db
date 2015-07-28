@@ -15,6 +15,37 @@ namespace phpbb\titania\controller\contribution;
 
 class contribution extends base
 {
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\access $access
+	 * @param \phpbb\titania\tracking $tracking
+	 * @param \phpbb\titania\subscriptions $subscriptions
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
+
+		$this->tracking = $tracking;
+		$this->subscriptions = $subscriptions;
+	}
+
 	/**
 	* Delegates requested page to appropriate method.
 	*
@@ -94,10 +125,15 @@ class contribution extends base
 		}
 
 		// Set tracking
-		\titania_tracking::track(TITANIA_CONTRIB, $this->contrib->contrib_id);
+		$this->tracking->track(TITANIA_CONTRIB, $this->contrib->contrib_id);
 
 		// Subscriptions
-		\titania_subscriptions::handle_subscriptions(TITANIA_CONTRIB, $this->contrib->contrib_id, $this->contrib->get_url(), 'SUBSCRIBE_CONTRIB');
+		$this->subscriptions->handle_subscriptions(
+			TITANIA_CONTRIB,
+			$this->contrib->contrib_id,
+			$this->contrib->get_url(),
+			'SUBSCRIBE_CONTRIB'
+		);
 
 		// Canonical URL
 		$this->template->assign_var('U_CANONICAL', $this->contrib->get_url());
@@ -136,7 +172,10 @@ class contribution extends base
 
 		$this->display->assign_global_vars();
 		$this->generate_breadcrumbs();
-		$demo = new \titania_styles_demo($branch, $this->contrib->contrib_id);
+		$demo = $this->contrib->type->get_demo()->configure(
+			$branch,
+			$this->contrib->contrib_id
+		);
 		$demo->load_styles();
 		$demo->assign_details();
 

@@ -13,8 +13,22 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 class faq extends base
 {
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
+	/** @var \phpbb\titania\sort */
+	protected $sort;
+
+	/** @var \phpbb\titania\attachment\operator */
+	protected $attachments;
+
+	/** @var \phpbb\titania\message\message */
+	protected $message;
+
 	/** @var \titania_faq */
 	protected $faq;
 
@@ -25,10 +39,40 @@ class faq extends base
 	protected $is_moderator;
 
 	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\access $access
+	 * @param \phpbb\titania\tracking $tracking
+	 * @param \phpbb\titania\sort $sort
+	 * @param \phpbb\titania\attachment\operator
+	 * @param \phpbb\titania\message\message $message
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort, \phpbb\titania\attachment\operator $attachments, \phpbb\titania\message\message $message)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
+
+		$this->tracking = $tracking;
+		$this->sort = $sort;
+		$this->attachments = $attachments;
+		$this->message = $message;
+	}
+
+	/**
 	* Display FAQ item.
 	*
 	* @param string $contrib_type		Contrib type URL identifier.
 	* @param string $contrib			Contrib name clean.
+	* @param int $id					FAQ item id
 	*
 	* @return \Symfony\Component\HttpFoundation\Response
 	*/
@@ -37,7 +81,7 @@ class faq extends base
 		$this->setup($contrib_type, $contrib);
 		$this->load_item($id);
 
-		if ($this->faq->faq_access < \titania::$access_level)
+		if ($this->faq->faq_access < $this->access->get_level())
 		{
 			return $this->helper->needs_auth();
 		}
@@ -46,14 +90,15 @@ class faq extends base
 		$this->faq->increase_views_counter();
 
 		// Tracking
-		\titania_tracking::track(TITANIA_FAQ, $this->id);
+		$this->tracking->track(TITANIA_FAQ, $this->id);
 
 		$message = $this->faq->generate_text_for_display();
 
 		// Grab attachments
-		$attachments = new \titania_attachment(TITANIA_FAQ, $this->id);
-		$attachments->load_attachments();
-		$parsed_attachments = $attachments->parse_attachments($message);
+		$this->attachments
+			->configure(TITANIA_FAQ, $this->id)
+			->load();
+		$parsed_attachments = $this->attachments->parse_attachments($message);
 
 		foreach ($parsed_attachments as $attachment)
 		{
@@ -68,8 +113,8 @@ class faq extends base
 			'FAQ_VIEWS'				=> $this->faq->faq_views,
 
 			'S_DETAILS'				=> true,
-			'S_ACCESS_TEAMS'		=> $this->faq->faq_access == TITANIA_ACCESS_TEAMS,
-			'S_ACCESS_AUTHORS'		=> $this->faq->faq_access == TITANIA_ACCESS_AUTHORS,
+			'S_ACCESS_TEAMS'		=> $this->access->is_team($this->faq->faq_access),
+			'S_ACCESS_AUTHORS'		=> $this->access->is_author($this->faq->faq_access),
 
 			'U_CANONICAL'			=> $this->faq->get_url(),
 			'U_EDIT_FAQ'			=> ($this->check_auth('edit')) ? $this->faq->get_url('edit') : false,
@@ -95,12 +140,11 @@ class faq extends base
 		$this->setup($contrib_type, $contrib);
 
 		// Setup the sort tool
-		$sort = new \titania_sort();
-		$sort->set_url($this->contrib->get_url('faq'));
-		$sort->set_defaults($this->config['topics_per_page']);
-		$sort->request();
-
-		\titania::_include('functions_display', 'titania_topic_folder_img');
+		$this->sort
+			->set_url($this->contrib->get_url('faq'))
+			->set_defaults($this->config['topics_per_page'])
+			->request()
+		;
 
 		// Define permissions here so we don't have to check these in a loop.
 		$auth = array(
@@ -111,7 +155,7 @@ class faq extends base
 		);
 
 		// Output items.
-		foreach ($this->get_items($sort) as $id => $data)
+		foreach ($this->get_items() as $id => $data)
 		{
 			$this->assign_item_row_vars($data, $auth);
 		}
@@ -119,7 +163,7 @@ class faq extends base
 		$this->template->assign_vars(array(
 			'S_LIST'					=> true,
 
-			'U_CANONICAL'				=> $sort->build_canonical(),
+			'U_CANONICAL'				=> $this->sort->build_canonical(),
 			'U_CREATE_FAQ'				=> ($auth['create']) ? $this->faq->get_url('create') : false,
 		));
 		$this->assign_vars();
@@ -170,7 +214,14 @@ class faq extends base
 	*/
 	protected function edit()
 	{
-		if ($this->common_post())
+		$result = $this->common_post();
+
+		if (is_object($result))
+		{
+			return $result;
+		}
+
+		if ($result)
 		{
 			redirect($this->faq->get_url());
 		}
@@ -190,7 +241,14 @@ class faq extends base
 	*/
 	protected function create()
 	{
-		if ($this->common_post())
+		$result = $this->common_post();
+
+		if (is_object($result))
+		{
+			return $result;
+		}
+
+		if ($result)
 		{
 			$this->faq->set_left_right_ids();
 			redirect($this->faq->get_url());
@@ -207,21 +265,30 @@ class faq extends base
 	/**
 	* Common handler for edit/create action.
 	*
-	* @return bool Returns true if item was submitted.
+	* @return bool|JsonResponse Returns true if item was submitted.
 	*/
 	protected function common_post()
 	{
 		// Load the message object
-		$this->message = new \titania_message($this->faq);
-		$this->message->set_auth(array(
-			'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
-			'attachments'	=> true,
-		));
+		$this->message
+			->set_parent($this->faq)
+			->set_auth(array(
+				'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
+				'attachments'	=> true,
+			))
+		;
 
 		// Submit check...handles running $this->faq->post_data() if required
 		$submit = $this->message->submit_check();
 		$error = $this->message->error;
+
+		if ($this->message->is_plupload_request())
+		{
+			return new JsonResponse(
+				$this->message->get_plupload_response_data()
+			);
+		}
 
 		if ($submit)
 		{
@@ -351,10 +418,9 @@ class faq extends base
 	/**
 	* Get contribution's FAQ items limited by the $sort options.
 	*
-	* @param \titania_sort $sort	Sort object.
 	* @return array Returns FAQ item data matching the sort options.
 	*/
-	protected function get_items($sort)
+	protected function get_items()
 	{
 		$items = array();
 
@@ -364,7 +430,7 @@ class faq extends base
 				TITANIA_CONTRIB_FAQ_TABLE => 'f',
 			),
 			'WHERE' => 'f.contrib_id = ' . (int) $this->contrib->contrib_id . '
-				AND f.faq_access >= ' . \titania::$access_level,
+				AND f.faq_access >= ' . $this->access->get_level(),
 			'ORDER_BY'	=> 'f.left_id ASC',
 		);
 
@@ -372,12 +438,12 @@ class faq extends base
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 
 		// Handle pagination
-		if ($sort->sql_count($sql_ary, 'faq_id'))
+		if ($this->sort->sql_count($sql_ary, 'faq_id'))
 		{
-			$sort->build_pagination($this->contrib->get_url('faq'));
+			$this->sort->build_pagination($this->contrib->get_url('faq'));
 
 			// Get the data
-			$result = $this->db->sql_query_limit($sql, $sort->limit, $sort->start);
+			$result = $this->db->sql_query_limit($sql, $this->sort->limit, $this->sort->start);
 
 			while ($row = $this->db->sql_fetchrow($result))
 			{
@@ -386,7 +452,7 @@ class faq extends base
 			$this->db->sql_freeresult($result);
 
 			// Grab the tracking info
-			\titania_tracking::get_tracks(TITANIA_FAQ, array_keys($items));
+			$this->tracking->get_tracks(TITANIA_FAQ, array_keys($items));
 		}
 
 		return $items;
@@ -406,8 +472,8 @@ class faq extends base
 
 		// @todo probably should setup an edit time or something for better read tracking in case it was edited
 		$folder_img = $folder_alt = '';
-		$unread = \titania_tracking::get_track(TITANIA_FAQ, $data['faq_id'], true) === 0;
-		titania_topic_folder_img($folder_img, $folder_alt, 0, $unread);
+		$unread = $this->tracking->get_track(TITANIA_FAQ, $data['faq_id'], true) === 0;
+		$this->display->topic_folder_img($folder_img, $folder_alt, 0, $unread);
 
 		$this->template->assign_block_vars('faqlist', array(
 			'U_FAQ'							=> $this->faq->get_url(),
@@ -428,8 +494,8 @@ class faq extends base
 			'U_EDIT'						=> ($auth['edit']) ? $this->faq->get_url('edit') : false,
 			'U_DELETE'						=> ($auth['delete']) ? $this->faq->get_url('delete') : false,
 
-			'S_ACCESS_TEAMS'				=> $data['faq_access'] == TITANIA_ACCESS_TEAMS,
-			'S_ACCESS_AUTHORS'				=> $data['faq_access'] == TITANIA_ACCESS_AUTHORS,
+			'S_ACCESS_TEAMS'				=> $this->access->is_team($data['faq_access']),
+			'S_ACCESS_AUTHORS'				=> $this->access->is_author($data['faq_access']),
 		));
 	}
 

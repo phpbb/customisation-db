@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\titania\date;
+
 class queue_stats
 {
 	/** @var \phpbb\template\template */
@@ -33,6 +35,9 @@ class queue_stats
 	/** @var \phpbb\titania\display */
 	protected $display;
 
+	/** @var \phpbb\titania\queue\stats */
+	protected $stats;
+
 	/** @var Object Contribution type */
 	protected $type;
 
@@ -46,7 +51,7 @@ class queue_stats
 	* @param \phpbb\titania\config\config $ext_config
 	* @param \phpbb\titania\display $display
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\queue\stats $stats)
 	{
 		$this->template = $template;
 		$this->user = $user;
@@ -54,6 +59,7 @@ class queue_stats
 		$this->request = $request;
 		$this->ext_config = $ext_config;
 		$this->display = $display;
+		$this->stats = $stats;
 	}
 
 	/**
@@ -72,9 +78,7 @@ class queue_stats
 			return $this->helper->error('NO_QUEUE_STATS');
 		}
 
-		\titania::_include('functions_display', 'titania_create_calendar_ary');
-
-		$this->stats = new \titania_queue_stats($this->type->id, $this->user);
+		$this->stats->set_queue_type($this->type->id);
 
 		if (!$this->generate_stats())
 		{
@@ -149,7 +153,11 @@ class queue_stats
 			'APPROVED_RATIO'				=> round(($total_revs_approved / $total_revs_validated) * 100),
 			'AVG_PAST_VALIDATION_TIME'		=> $this->user->lang('AVG_PAST_VALIDATION_TIME', $validated_avg_wait),
 			'AVG_CURRENT_QUEUE_WAIT'		=> $this->user->lang('AVG_CURRENT_QUEUE_WAIT', $unvalidated_avg_wait),
-			'OLDEST_UNVALIDATED_REV'		=> $this->user->lang('OLDEST_UNVALIDATED_REV', format_time_delta($oldest_unvalidated_rev, $current_time)),
+			'OLDEST_UNVALIDATED_REV'		=> $this->user->lang('OLDEST_UNVALIDATED_REV', date::format_time_delta(
+				$this->user,
+				$oldest_unvalidated_rev,
+				$current_time
+			)),
 			'NUM_REVISIONS_IN_QUEUE'		=> $this->user->lang('NUM_REVISIONS_IN_QUEUE', $revisions_in_queue),
 			'SINCE_X_VALIDATED_REVS'		=> $this->user->lang(
 				'SINCE_X_VALIDATED_REVS',

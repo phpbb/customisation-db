@@ -11,11 +11,13 @@
 *
 */
 
+use phpbb\titania\sync;
+
 /**
  * Class to abstract categories.
  * @package Titania
  */
-class titania_category extends titania_message_object
+class titania_category extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * Database table to be used for the contribution object
@@ -75,6 +77,7 @@ class titania_category extends titania_message_object
 			'category_options'				=> array('default' => 0),
 		));
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 
 		$this->available_options = array(
@@ -192,8 +195,12 @@ class titania_category extends titania_message_object
 
 	/**
 	* Move category
+	*
+	* @param int $to_id			New parent id
+	* @param sync|null $sync	If given sync class, category counts are resynchronized
+	* @return array
 	*/
-	function move_category($to_id, $sync = true)
+	function move_category($to_id, $sync)
 	{
 		$to_data = $moved_ids = $errors = array();
 
@@ -286,7 +293,6 @@ class titania_category extends titania_message_object
 			if ($sync)
 			{
 				// Resync counters
-				$sync = new titania_sync;
 				$sync->categories('count');
 			}
 		}
@@ -296,8 +302,12 @@ class titania_category extends titania_message_object
 
 	/**
 	* Move category content from one to another category
+	*
+	* @param int $to_id			New parent id
+	* @param sync|null $sync	If given sync class, category counts are resynchronized
+	* @return array
 	*/
-	public function move_category_content($to_id = 0, $sync = true)
+	public function move_category_content($to_id = 0, $sync = null)
 	{
 		$sql = 'SELECT category_type
 			FROM ' . $this->sql_table . '
@@ -350,7 +360,6 @@ class titania_category extends titania_message_object
 			if ($sync)
 			{
 				// Resync counters
-				$sync = new titania_sync;
 				$sync->categories('count');
 			}
 		}
@@ -366,7 +375,7 @@ class titania_category extends titania_message_object
 			$sql = 'SELECT ci.contrib_id, c.contrib_categories
 				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' ci
 				LEFT JOIN ' . TITANIA_CONTRIBS_TABLE . ' c
-					ON (ci.contrib_id = c.contrib_id) 
+					ON (ci.contrib_id = c.contrib_id)
 				WHERE ci.category_id = ' . (int) $from_id;
 			$all = false;
 		}
@@ -379,7 +388,7 @@ class titania_category extends titania_message_object
 
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$contribs[$row['contrib_id']][] = ($all) ? $row['category_id'] : $row['contrib_categories']; 
+			$contribs[$row['contrib_id']][] = ($all) ? $row['category_id'] : $row['contrib_categories'];
 		}
 		phpbb::$db->sql_freeresult($result);
 
@@ -398,14 +407,17 @@ class titania_category extends titania_message_object
 			}
 
 			phpbb::$db->sql_query('UPDATE ' . TITANIA_CONTRIBS_TABLE . ' SET contrib_categories = "' . phpbb::$db->sql_escape($categories) . '" WHERE contrib_id = ' . (int) $id);
-			unset($contribs[$id]); 
-		}		
+			unset($contribs[$id]);
+		}
 	}
 
 	/**
 	* Remove complete category
+	*
+	* @param sync|null $sync	If given sync class, category counts are resynchronized
+	* @return null
 	*/
-	public function delete($sync = true)
+	public function delete($sync = null)
 	{
 		// This should be the correct diff value each time
 		$diff = 2;
@@ -432,7 +444,6 @@ class titania_category extends titania_message_object
 		// Resync counters
 		if ($sync)
 		{
-			$sync = new titania_sync;
 			$sync->categories('count');
 		}
 
@@ -522,9 +533,8 @@ class titania_category extends titania_message_object
 	/**
 	* Build view URL for a category
 	*/
-	public function get_url()
+	public function get_url(array $params = array())
 	{
-		$params = array();
 		$i = 1;
 
 		$parent_list = titania::$cache->get_category_parents($this->category_id);
@@ -548,6 +558,13 @@ class titania_category extends titania_message_object
 		}
 		$params["category$i"] = $this->category_name_clean . '-' . $this->category_id;
 
+		if (isset($params['branch']))
+		{
+			$i++;
+			$params["category$i"] = $params['branch'];
+			unset($params['branch']);
+		}
+
 		return $this->controller_helper->route('phpbb.titania.category', $params);
 	}
 
@@ -569,7 +586,7 @@ class titania_category extends titania_message_object
 			$controller .= '.action';
 			$params['action'] = $action;
 		}
-		
+
 		return $this->controller_helper->route($controller, $params);
 	}
 
@@ -581,12 +598,16 @@ class titania_category extends titania_message_object
 	public function assign_display($return = false)
 	{
 		$action_hash = array('hash' => generate_link_hash('category_action'));
+		$depth = sizeof(titania::$cache->get_category_parents($this->category_id)) * 15;
 
 		$display = array(
 			'CATEGORY_NAME'				=> (isset(phpbb::$user->lang[$this->category_name])) ? phpbb::$user->lang[$this->category_name] : $this->category_name,
 			'CATEGORY_CONTRIBS'			=> $this->category_contribs,
 			'CATEGORY_TYPE'				=> $this->category_type,
 			'CATEGORY_DESC'				=> $this->generate_text_for_display(),
+			'CATEGORY_ID'				=> $this->category_id,
+			'PARENT_ID'					=> $this->parent_id,
+			'DEPTH'						=> $depth,
 
 			'U_MOVE_UP'					=> $this->get_manage_url('move_up', $action_hash),
 			'U_MOVE_DOWN'				=> $this->get_manage_url('move_down', $action_hash),

@@ -13,6 +13,9 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\exception\http_exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 class index
 {
 	/** @var \phpbb\auth\auth */
@@ -39,6 +42,12 @@ class index
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
+	/** @var \phpbb\titania\config\config */
+	protected $ext_config;
+
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
 	/** @var int */
 	protected $id;
 
@@ -48,20 +57,29 @@ class index
 	/** @var array */
 	protected $categories;
 
+	/** @var string */
+	protected $branch = '';
+
+	/** @var array */
+	protected $params = array();
+
 	const ALL_CONTRIBS = 0;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\auth\auth $auth
-	* @param \phpbb\template\template $template
-	* @param \phpbb\user $user
-	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\request\request_interace $request;
-	* @param \phpbb\titania\display $display
-	* @param \phpbb\path_helper $path_helper
-	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper)
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\path_helper $path_helper
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\tracking $tracking
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking)
 	{
 		$this->auth = $auth;
 		$this->template = $template;
@@ -71,8 +89,8 @@ class index
 		$this->display = $display;
 		$this->cache = $cache;
 		$this->path_helper = $path_helper;
-
-		\titania::_include('functions_display', 'titania_display_categories');
+		$this->ext_config = $ext_config;
+		$this->tracking = $tracking;
 	}
 
 	/**
@@ -80,14 +98,32 @@ class index
 	*
 	* @return \Symfony\Component\HttpFoundation\Response
 	*/
-	public function display_index()
+	public function display_index($branch)
 	{
-		titania_display_categories(self::ALL_CONTRIBS);
+		$this->set_branch($branch);
+
+		$title = $this->user->lang('CUSTOMISATION_DATABASE');
+		$sort = $this->list_contributions('', self::ALL_CONTRIBS, '');
+		$this->params = $this->get_params($sort);
+		$this->display->assign_global_vars();
+
+		if ($this->request->is_ajax())
+		{
+			return $this->get_ajax_response($title, $sort);
+		}
+
+		$this->display->display_categories(
+			self::ALL_CONTRIBS,
+			'categories',
+			false,
+			true,
+			$this->params
+		);
 
 		// Mark all contribs read
 		if ($this->request->variable('mark', '') == 'contribs')
 		{
-			\titania_tracking::track(TITANIA_CONTRIB, self::ALL_CONTRIBS);
+			$this->tracking->track(TITANIA_CONTRIB, self::ALL_CONTRIBS);
 		}
 
 		$this->template->assign_vars(array(
@@ -96,15 +132,16 @@ class index
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
 			'U_MARK_FORUMS'			=> $this->path_helper->append_url_params($this->helper->get_current_url(), array('mark' => 'contribs')),
 			'L_MARK_FORUMS_READ'	=> $this->user->lang['MARK_CONTRIBS_READ'],
+			'U_ALL_CONTRIBUTIONS'	=> $this->helper->route('phpbb.titania.index', $this->params),
 
 			'S_DISPLAY_SEARCHBOX'	=> true,
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
 		));
 
-		$this->display->assign_global_vars();
-		$this->list_contributions('', self::ALL_CONTRIBS);
+		$this->assign_sorting($sort);
+		$this->assign_branches();
 
-		return $this->helper->render('index_body.html', $this->user->lang['CUSTOMISATION_DATABASE']);
+		return $this->helper->render('index_body.html', $title);
 	}
 
 	/**
@@ -112,13 +149,13 @@ class index
 	*
 	* @return \Symfony\Component\HttpFoundation\Response
 	*/
-	public function display_category($category1, $category2, $category3)
+	public function display_category($category1, $category2, $category3, $category4)
 	{
-		$categories = array($category1, $category2, $category3);
+		$categories = array($category1, $category2, $category3, $category4);
 
 		try
 		{
-			$this->load_category(array($category1, $category2, $category3));
+			$this->load_category($categories);
 		}
 		catch (\Exception $e)
 		{
@@ -128,10 +165,31 @@ class index
 			$url = '/' . implode('/', array_filter($categories, 'strlen'));
 			return $rerouter->redirect($url);
 		}
-		titania_display_categories($this->id);
+		$this->set_branch($this->get_branch($categories));
+
+		$children = $this->get_children_ids();
+		// Include the current category in the ones selected
+		$children[] = $this->id;
+		$sort = $this->list_contributions($children, $this->category->get_url());
+		$this->params = $this->get_params($sort);
+
+		$title = $this->category->get_name() . ' - ' . $this->user->lang['CUSTOMISATION_DATABASE'];
 
 		$this->display->assign_global_vars();
 		$this->generate_breadcrumbs();
+
+		if ($this->request->is_ajax())
+		{
+			return $this->get_ajax_response($title, $sort);
+		}
+
+		$this->display->display_categories(
+			$this->id,
+			'categories',
+			false,
+			true,
+			$this->params
+		);
 
 		$type = $this->get_category_type();
 		$u_queue_stats = '';
@@ -148,14 +206,10 @@ class index
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
 			'U_QUEUE_STATS'			=> $u_queue_stats,
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
+			'U_ALL_CONTRIBUTIONS'	=> $this->helper->route('phpbb.titania.index', $this->params),
 		));
-
-		$children = $this->get_children_ids();
-		// Include the current category in the ones selected
-		$children[] = $this->id;
-		$this->list_contributions($children, $this->category->get_url());
-
-		$title = $this->category->get_name() . ' - ' . $this->user->lang['CUSTOMISATION_DATABASE'];
+		$this->assign_sorting($sort);
+		$this->assign_branches();
 
 		return $this->helper->render('index_body.html', $title);
 	}
@@ -177,6 +231,11 @@ class index
 		}
 
 		$category = array_pop($categories);
+
+		if (preg_match('/^\d\.\d$/', $category))
+		{
+			$category = array_pop($categories);
+		}
 		$category = explode('-', $category);
 		$category_id = array_pop($category);
 
@@ -185,6 +244,30 @@ class index
 			return (int) $category_id;
 		}
 		return false;
+	}
+
+	/**
+	 * Get branch.
+	 *
+	 * @param $categories
+	 * @return string
+	 */
+	protected function get_branch($categories)
+	{
+		$categories = array_filter($categories, 'strlen');
+
+		if (empty($categories))
+		{
+			return '';
+		}
+
+		$category = array_pop($categories);
+
+		if (preg_match('/^\d\.\d$/', $category))
+		{
+			return $category;
+		}
+		return '';
 	}
 
 	/**
@@ -264,22 +347,25 @@ class index
 	/**
 	* List the contributions for the category and its children
 	*
-	* @param array $children The id's of the categories from which to select.
+	* @param array $categories The id's of the categories from which to select.
 	* @param string $sort_url The base url from which to sort.
 	*
-	* @return null
+	* @return \phpbb\titania\sort
 	*/
 	protected function list_contributions($categories, $sort_url)
 	{
 		$mode = ($this->id) ? 'category' : 'all';
 		$sort = \contribs_overlord::build_sort();
 		$sort->set_defaults(25);
+		$branch = (int) str_replace('.', '', $this->branch);
 
-		$data = \contribs_overlord::display_contribs($mode, $categories, $sort);
+		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort);
 
 		// Canonical URL
 		$data['sort']->set_url($sort_url);
 		$this->template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
+
+		return $data['sort'];
 	}
 
 	/**
@@ -297,6 +383,229 @@ class index
 				'author' => $this->user->data['username_clean'],
 				'page' => 'create',
 		));
+	}
+
+	/**
+	 * Get AJAX response.
+	 *
+	 * @param string $title
+	 * @param \phpbb\titania\sort $sort
+	 * @return JsonResponse
+	 */
+	protected function get_ajax_response($title, $sort)
+	{
+		$this->template->set_filenames(array(
+			'body'			=> 'common/contribution_list.html',
+			'breadcrumbs'	=> 'breadcrumbs.html',
+			'pagination'    => 'common/pagination.html',
+		));
+
+		return new JsonResponse(array(
+			'title'			=> $title,
+			'content'		=> $this->template->assign_display('body'),
+			'breadcrumbs'	=> $this->template->assign_display('breadcrumbs'),
+			'categories'	=> $this->get_category_urls(),
+			'branches'		=> $this->get_branches(),
+			'sort'			=> $this->get_sorting($sort),
+			'pagination'    => $this->template->assign_display('pagination'),
+		));
+	}
+
+	/**
+	 * Get sorting options.
+	 *
+	 * @param \phpbb\titania\sort $sort
+	 * @return array
+	 */
+	protected function get_sorting($sort)
+	{
+		$keys = \contribs_overlord::$sort_by;
+		$options = array();
+
+		foreach ($keys as $key => $info)
+		{
+			$options["{$key}_d"] = $this->get_sort_data($sort, $key, 'd', $info[0] . '_DESC');
+			$options["{$key}_a"] = $this->get_sort_data($sort, $key, 'a', $info[0] . '_ASC');
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Assign sorting options to the template.
+	 *
+	 * @param \phpbb\titania\sort $sort
+	 */
+	protected function assign_sorting($sort)
+	{
+		foreach ($this->get_sorting($sort) as $vars)
+		{
+			$this->template->assign_block_vars('sort', $vars);
+
+			if ($vars['ACTIVE'])
+			{
+				$this->template->assign_var('ACTIVE_SORT_OPTION', $vars['NAME']);
+			}
+		}
+	}
+
+	/**
+	 * Get template data for sort options.
+	 *
+	 * @param \phpbb\titania\sort $sort
+	 * @param string $key
+	 * @param string $dir
+	 * @param string $name
+	 * @return array
+	 */
+	protected function get_sort_data($sort, $key, $dir, $name)
+	{
+		$params = array_merge($this->get_params($sort), array(
+			'sk' 	=> $key,
+			'sd'	=> $dir,
+		));
+
+		$url = $this->get_item_url($params);
+		$id = $key . '_' . $dir;
+
+		return array(
+			'NAME'		=> $this->user->lang($name),
+			'URL'		=> ($this->request->is_ajax()) ? str_replace('&amp;', '&', $url) : $url,
+			'ACTIVE'	=> $id == $sort->sort_key . '_' . $sort->sort_dir,
+			'ID'		=> $id,
+		);
+	}
+
+	/**
+	 * Assign branch sort options to template.
+	 */
+	protected function assign_branches()
+	{
+		foreach ($this->get_branches() as $branch => $vars)
+		{
+			$this->template->assign_block_vars('sort_branches', $vars);
+			if ($vars['ACTIVE'])
+			{
+				$this->template->assign_var('ACTIVE_BRANCH', $vars['NAME']);
+			}
+		}
+	}
+
+	/**
+	 * Get branch sort options.
+	 *
+	 * @return array
+	 */
+	protected function get_branches()
+	{
+		$params = $this->params;
+		unset($params['branch']);
+		$is_ajax = $this->request->is_ajax();
+
+		$branches = $this->ext_config->__get('phpbb_versions');
+		$url = $this->get_item_url($params);
+
+		$_branches = array(array(
+			'NAME'		=> $this->user->lang('ALL_BRANCHES'),
+			'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
+			'ACTIVE'	=> empty($this->branch),
+			'ID'		=> 0,
+		));
+
+		foreach ($branches as $branch => $info)
+		{
+			$branch = (string) $branch;
+			$branch = $branch[0] . '.' . $branch[1];
+			$params['branch'] = $branch;
+			$url = $this->get_item_url($params);
+
+			$_branches[$branch] = array(
+				'NAME'		=> $info['name'],
+				'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
+				'ACTIVE'	=> $this->branch == $branch,
+				'ID'		=> $branch,
+			);
+		}
+		return $_branches;
+	}
+
+	/**
+	 * Get category URL's.
+	 *
+	 * @return array
+	 */
+	protected function get_category_urls()
+	{
+		$category = new \titania_category;
+		$url = $this->helper->route('phpbb.titania.index', $this->params);
+		$urls = array(
+			0	=> ($this->request->is_ajax()) ? str_replace('&amp;', '&', $url) : $url,
+		);
+
+		foreach ($this->cache->get_categories() as $data)
+		{
+			if (!$category->category_visible)
+			{
+				continue;
+			}
+			$category->__set_array($data);
+			$url = $category->get_url($this->params);
+			$urls[$category->category_id] = ($this->request->is_ajax()) ? str_replace('&amp;', '&', $url) : $url;
+		}
+		return $urls;
+	}
+
+	/**
+	 * Get category/index URL.
+	 *
+	 * @param array $params
+	 * @return string
+	 */
+	protected function get_item_url(array $params)
+	{
+		return ($this->id) ? $this->category->get_url($params) : $this->helper->route('phpbb.titania.index', $params);
+	}
+
+	/**
+	 * Get parameters for the current page.
+	 *
+	 * @param \phpbb\titania\sort $sort
+	 * @return array
+	 */
+	protected function get_params($sort)
+	{
+		$params = array();
+
+		if ($sort->default_sort_key != $sort->sort_key)
+		{
+			$params['sk'] = $sort->sort_key;
+		}
+		if ($sort->default_sort_dir != $sort->sort_dir)
+		{
+			$params['sd'] = $sort->sort_dir;
+		}
+		if ($this->branch)
+		{
+			$params['branch'] = $this->branch;
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Set branch.
+	 *
+	 * @param string $branch
+	 */
+	protected function set_branch($branch)
+	{
+		$_branch = (int) str_replace('.', '', $branch);
+
+		if ($branch != '' && !isset($this->ext_config->phpbb_versions[$_branch]))
+		{
+			throw new http_exception(404, 'NO_PAGE_FOUND');
+		}
+		$this->branch = $branch;
 	}
 }
 

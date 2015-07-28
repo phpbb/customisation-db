@@ -30,8 +30,6 @@ require($ext_root_path . 'includes/constants.' . $php_ext);
 // Include core classes
 require($ext_root_path . 'includes/core/phpbb.' . $php_ext);
 require($ext_root_path . 'includes/core/titania.' . $php_ext);
-require($ext_root_path . 'includes/core/object_database.' . $php_ext);
-require($ext_root_path . 'includes/core/object_message.' . $php_ext);
 
 titania::configure(
 	$phpbb_container->get('phpbb.titania.config'),
@@ -41,8 +39,6 @@ titania::configure(
 
 // Include our core functions
 titania::_include('functions');
-
-set_exception_handler('titania_exception_handler');
 
 // Set up our auto-loader
 spl_autoload_register(array('titania', 'autoload'));

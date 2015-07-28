@@ -102,6 +102,8 @@ class queue_overlord
 
 		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$path_helper = phpbb::$container->get('path_helper');
+		$tracking = phpbb::$container->get('phpbb.titania.tracking');
+
 		$queue_ids = array();
 
 		$sql_ary = array(
@@ -140,7 +142,7 @@ class queue_overlord
 			'ON'	=> 't.topic_last_post_user_id = ul.user_id',
 		);
 
-		titania_tracking::get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
+		$tracking->get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
 
 		// Main SQL Query
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
@@ -163,7 +165,7 @@ class queue_overlord
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			// Store the tracking info we grabbed from the DB
-			titania_tracking::store_from_db($row);
+			$tracking->store_from_db($row);
 
 			$queue_ids[] = $row['queue_id'];
 			$user_ids[] = $row['topic_first_post_user_id'];
@@ -227,7 +229,7 @@ class queue_overlord
 	*/
 	public static function display_queue_item($queue_id)
 	{
-		titania::add_lang('contributions');
+		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$path_helper = phpbb::$container->get('path_helper');
 
@@ -458,7 +460,7 @@ class queue_overlord
 		}
 		else
 		{
-			$current_status = titania_tags::get_tag_name($row['queue_status']);
+			$current_status = phpbb::$container->get('phpbb.titania.tags')->get_tag_name($row['queue_status']);
 		}
 		phpbb::$template->assign_vars(array(
 			'CURRENT_STATUS'			=> $current_status,
@@ -471,7 +473,7 @@ class queue_overlord
 		));
 
 		// Subscriptions
-		titania_subscriptions::handle_subscriptions(
+		phpbb::$container->get('phpbb.titania.subscriptions')->handle_subscriptions(
 			TITANIA_TOPIC,
 			$topic->topic_id,
 			$controller_helper->get_current_url(),
@@ -530,186 +532,27 @@ class queue_overlord
 	}
 
 	/**
-	* Generate the stats page
-	*/
-	public function display_stats()
-	{
-		$stats = false;//titania::$cache->get('queue_stats');
-
-		if ($stats === false)
-		{
-			$stats = array();
-
-			foreach (titania_types::$types as $type_id => $class)
-			{
-				foreach (titania::$config->queue_stats_periods as $name => $data)
-				{
-					// Shorten
-					$temp_stats = array();
-
-					// Select the stats for this type
-					$sql = 'SELECT revision_id, contrib_id, queue_type, submitter_user_id, queue_submit_time, queue_close_time, queue_close_user
-						FROM ' . TITANIA_QUEUE_TABLE . '
-							WHERE queue_type = ' . (int) $type_id . '
-								AND queue_close_time > 0 ' .
-								((isset($data['where'])) ? 'AND ' . $data['where'] : '');
-					$result = phpbb::$db->sql_query($sql);
-					while ($row = phpbb::$db->sql_fetchrow($result))
-					{
-						// List of submitters with totals
-						$temp_stats['submitters'][$row['submitter_user_id']] = (isset($temp_stats['submitters'][$row['submitter_user_id']])) ? $temp_stats['submitters'][$row['submitter_user_id']] + 1 : 1;
-
-						// List of users who closed the queue items with totals
-						$temp_stats['closers'][$row['queue_close_user']] = (isset($temp_stats['closers'][$row['queue_close_user']])) ? $temp_stats['closers'][$row['queue_close_user']] + 1 : 1;
-
-						// Count
-						$temp_stats['total'] = (isset($temp_stats['total'])) ? $temp_stats['total'] + 1 : 1;
-
-						// Total time in validation
-						$temp_stats['total_validation_time'] = (isset($temp_stats['total_validation_time'])) ? $temp_stats['total_validation_time'] + ($row['queue_close_time'] - $row['queue_submit_time']): ($row['queue_close_time'] - $row['queue_submit_time']);
-					}
-					phpbb::$db->sql_freeresult($result);
-
-					// Shorten
-					$stats[$type_id][$name] = $temp_stats;
-				}
-
-				// Handle the data
-				foreach (titania::$config->queue_stats_periods as $name => $data)
-				{
-					// Shorten
-					$temp_stats = $stats[$type_id][$name];
-
-					// List of submitters with totals
-					if (isset($temp_stats['submitters']) && sizeof($temp_stats['submitters']))
-					{
-						arsort($temp_stats['submitters']);
-					}
-
-					// List of users who closed the queue items with totals
-					if (isset($temp_stats['closers']) && sizeof($temp_stats['closers']))
-					{
-						arsort($temp_stats['closers']);
-					}
-
-					// Average time in validation
-					$temp_stats['average_validation_time'] = floor((isset($temp_stats['total_validation_time']) && $temp_stats['total_validation_time'] > 0) ? $temp_stats['total_validation_time'] / $temp_stats['total'] : 0);
-
-					// Shorten
-					$stats[$type_id][$name] = $temp_stats;
-				}
-			}
-
-			titania::$cache->put('queue_stats', $stats, (60 * 60));
-		}
-
-		// Need to grab some user data
-		$user_ids = array();
-		foreach (titania_types::$types as $type_id => $class)
-		{
-			foreach (titania::$config->queue_stats_periods as $name => $data)
-			{
-				// Shorten
-				$temp_stats = $stats[$type_id][$name];
-
-				foreach (array('submitters', 'closers') as $type)
-				{
-					if (isset($temp_stats[$type]) && sizeof($temp_stats[$type]))
-					{
-						$i = 1;
-						foreach ($temp_stats[$type] as $user_id => $cnt)
-						{
-							// Only grab the first 5
-							if ($i > 5)
-							{
-								break;
-							}
-							$i++;
-
-							$user_ids[] = $user_id;
-						}
-					}
-				}
-			}
-		}
-
-		// Load the users
-		users_overlord::load_users($user_ids);
-
-		// Output
-		foreach (titania_types::$types as $type_id => $class)
-		{
-			phpbb::$template->assign_block_vars('stats', array(
-				'TITLE'		=> $class->lang,
-			));
-
-			foreach (titania::$config->queue_stats_periods as $name => $data)
-			{
-				// Shorten
-				$temp_stats = $stats[$type_id][$name];
-
-				$avg_num_weeks = $avg_num_days = 0;
-				if ($temp_stats['average_validation_time'] > 0)
-				{
-					$avg_num_weeks = floor($temp_stats['average_validation_time'] / (60 * 60 * 24 * 7));
-					$avg_num_days = floor($temp_stats['average_validation_time'] / (60 * 60 * 24)) %7;
-				}
-
-				phpbb::$template->assign_block_vars('stats.periods', array(
-					'TITLE'		=> (isset(phpbb::$user->lang[$data['lang']])) ? phpbb::$user->lang[$data['lang']] : $data['lang'],
-
-					'AVERAGE_VALIDATION_TIME'	=> phpbb::$user->lang('NUM_WEEKS', $avg_num_weeks) . ' ' . phpbb::$user->lang('NUM_DAYS', $avg_num_days),
-				));
-
-				// Submitter/closer data
-				foreach (array('submitters', 'closers') as $type)
-				{
-					if (isset($temp_stats[$type]) && sizeof($temp_stats[$type]))
-					{
-						$i = 1;
-						foreach ($temp_stats[$type] as $user_id => $cnt)
-						{
-							// Only output the first 5
-							if ($i > 5)
-							{
-								break;
-							}
-							$i++;
-
-							// Assign user details and total
-							phpbb::$template->assign_block_vars('stats.periods.' . $type, array_merge(
-								users_overlord::assign_details($user_id), array(
-								'TOTAL'		=> $cnt,
-							)));
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
 	* Generate topic status
 	*/
 	public static function folder_img($is_unread, &$folder_img, &$folder_alt, $replies = 0)
 	{
-		titania::_include('functions_display', 'titania_topic_folder_img');
-
-		titania_topic_folder_img($folder_img, $folder_alt, $replies, $is_unread);
+		phpbb::$container->get('phpbb.titania.display')
+			->topic_folder_img($folder_img, $folder_alt, $replies, $is_unread);
 	}
 
 	/**
 	* Setup the sort tool and return it for posts display
 	*
-	* @return titania_sort
+	* @return \phpbb\titania\sort
 	*/
 	public static function build_sort()
 	{
 		// Setup the sort and set the sort keys
-		$sort = new titania_sort();
-		$sort->set_sort_keys(self::$sort_by);
-
-		$sort->set_defaults(phpbb::$config['topics_per_page']);
+		$sort = phpbb::$container->get('phpbb.titania.sort');
+		$sort
+			->set_sort_keys(self::$sort_by)
+			->set_defaults(phpbb::$config['topics_per_page'])
+		;
 
 		return $sort;
 	}

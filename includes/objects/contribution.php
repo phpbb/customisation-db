@@ -11,11 +11,17 @@
 *
 */
 
+use phpbb\titania\versions;
+use phpbb\titania\attachment\attachment;
+use phpbb\titania\message\message;
+use phpbb\titania\url\url;
+use phpbb\titania\user\helper as user_helper;
+
 /**
  * Class to abstract contributions.
  * @package Titania
  */
-class titania_contribution extends titania_message_object
+class titania_contribution extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * Database table to be used for the contribution object
@@ -37,7 +43,7 @@ class titania_contribution extends titania_message_object
 	 * @var string
 	 */
 	protected $object_type = TITANIA_CONTRIB;
-	
+
 	/**
 	 * Author & co-authors of this contribution
 	 *
@@ -58,6 +64,8 @@ class titania_contribution extends titania_message_object
 	 * @var titania_rating/titania_attachment
 	 */
 	public $rating;
+
+	/** @var \phpbb\titania\attachment\operator */
 	public $screenshots;
 
 	/**
@@ -91,6 +99,15 @@ class titania_contribution extends titania_message_object
 
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
+
+	/** @var \phpbb\titania\cache\service */
+	protected $cache;
+
+	/** @var \phpbb\db\driver\driver_interface */
+	protected $db;
+
+	/** @var \phpbb\titania\search\manager */
+	protected $search_manager;
 
 	/**
 	* @var Contribution type object
@@ -143,7 +160,7 @@ class titania_contribution extends titania_message_object
 			// Translation items
 			'contrib_iso_code'				=> array('default' => ''),
 			'contrib_local_name'			=> array('default' => ''),
-			
+
 			// ColorizeIt stuff
 			'contrib_clr_colors'            => array('default' => ''),
 
@@ -153,6 +170,10 @@ class titania_contribution extends titania_message_object
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->path_helper = phpbb::$container->get('path_helper');
+		$this->screenshots = phpbb::$container->get('phpbb.titania.attachment.operator');
+		$this->cache = phpbb::$container->get('phpbb.titania.cache');
+		$this->db = phpbb::$container->get('dbal.conn');
+		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -277,6 +298,16 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
+	 * Check whether the current user is an author.
+	 *
+	 * @return bool
+	 */
+	public function is_author()
+	{
+		return $this->is_author || $this->is_active_coauthor;
+	}
+
+	/**
 	* Check whether the contribution is visible to the current user.
 	*
 	* @param bool $allow_new	Whether a new contrib is allowed to be visible.
@@ -334,13 +365,15 @@ class titania_contribution extends titania_message_object
 	 */
 	public function get_screenshots()
 	{
-		if ($this->screenshots)
+		if ($this->screenshots->get_object_type() !== null)
 		{
 			return $this->screenshots;
 		}
 
-		$this->screenshots = new titania_attachment(TITANIA_SCREENSHOT, $this->contrib_id);
-		$this->screenshots->load_attachments(false, false, true);
+		$this->screenshots
+			->configure(TITANIA_SCREENSHOT, $this->contrib_id)
+			->load()
+		;
 
 		return $this->screenshots;
 	}
@@ -408,7 +441,7 @@ class titania_contribution extends titania_message_object
 				WHERE object_type = ' . TITANIA_TRANSLATION . '
 					AND is_orphan = 0
 					AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', array_keys($this->revisions))) . '
-				ORDER BY ' . phpbb::$db->sql_lower_text('real_filename') . ' ASC'; 
+				ORDER BY ' . phpbb::$db->sql_lower_text('real_filename') . ' ASC';
 			$result = phpbb::$db->sql_query($sql);
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
@@ -495,7 +528,7 @@ class titania_contribution extends titania_message_object
 
 	/**
 	 * Fill categories with data from cache.
-	 */	
+	 */
 	public function fill_categories()
 	{
 		// Empty out category_data in case object is being reused via __set_array()
@@ -522,7 +555,7 @@ class titania_contribution extends titania_message_object
 
 	/**
 	 * Get all options inherited from category options.
-	 */	
+	 */
 	public function get_options()
 	{
 		$this->options = array(
@@ -536,7 +569,7 @@ class titania_contribution extends titania_message_object
 		}
 
 		$map = array(
-			TITANIA_CAT_FLAG_DEMO 			=> 'demo', 
+			TITANIA_CAT_FLAG_DEMO 			=> 'demo',
 			TITANIA_CAT_FLAG_ALL_VERSIONS	=> 'all_versions'
 		);
 
@@ -629,9 +662,12 @@ class titania_contribution extends titania_message_object
 
 				if ($download['revision_status'] == TITANIA_REVISION_APPROVED && !empty($demo_output))
 				{
-					titania::_include('tools/bbcode_demo', false, 'titania_bbcode_demo');
 
-					$demo = new titania_bbcode_demo($this->contrib_id, $download['revision_bbc_bbcode_usage'], $download['revision_bbc_html_replace']);
+					$demo = $this->type->get_demo()->configure(
+						$this->contrib_id,
+						$download['revision_bbc_bbcode_usage'],
+						$download['revision_bbc_html_replace']
+					);
 					$demo_output = $demo->get_demo($demo_output);
 					unset($demo);
 					$demo_rendered = true;
@@ -666,7 +702,7 @@ class titania_contribution extends titania_message_object
 				{
 					$u_new_revision = $this->get_url('revision');
 				}
-				
+
 			}
 			if ($use_queue && $this->is_manageable('queue_discussion'))
 			{
@@ -676,6 +712,7 @@ class titania_contribution extends titania_message_object
 			$vars = array_merge($vars, array(
 				'CONTRIB_TYPE'					=> $this->type->lang,
 				'CONTRIB_TYPE_ID'				=> $this->contrib_type,
+				'CONTRIB_TYPE_CLEAN'        	=> $this->type->url,
 
 				'U_CONTRIB_MANAGE'				=> $u_manage,
 				'U_NEW_REVISION'				=> $u_new_revision,
@@ -712,18 +749,27 @@ class titania_contribution extends titania_message_object
 
 		if (!$simple && !$return)
 		{
+			$active_coauthors = $past_coauthors = array();
+			$author_sort = function($a, $b) {
+				return strcmp($a['AUTHOR_NAME'], $b['AUTHOR_NAME']);
+			};
+
 			// Display Co-authors
 			foreach ($this->coauthors as $user_id => $row)
 			{
 				if ($row['active'])
 				{
-					phpbb::$template->assign_block_vars('coauthors', $this->author->assign_details(true, $row));
+					$active_coauthors[] = $this->author->assign_details(true, $row);
 				}
 				else
 				{
-					phpbb::$template->assign_block_vars('past_coauthors', $this->author->assign_details(true, $row));
+					$past_coauthors[] = $this->author->assign_details(true, $row);
 				}
 			}
+			usort($active_coauthors, $author_sort);
+			usort($past_coauthors, $author_sort);
+			phpbb::$template->assign_block_vars_array('coauthors', $active_coauthors);
+			phpbb::$template->assign_block_vars_array('past_coauthors', $past_coauthors);
 
 			// Display Revisions and phpBB versions
 			if (sizeof($this->revisions))
@@ -735,13 +781,18 @@ class titania_contribution extends titania_message_object
 				{
 					$revision->__set_array($row);
 					$revision->phpbb_versions = (isset($row['phpbb_versions'])) ? $row['phpbb_versions'] : array();
-					$revision->translations = (isset($row['translations'])) ? $row['translations'] : array();
+					$revision->translations = (isset($row['translations'])) ? $revision->set_translations($row['translations']) : array();
 					$revision->display('revisions', $this->type->acl_get('view'), $this->options['all_versions']);
 					$phpbb_versions = array_merge($phpbb_versions, $revision->phpbb_versions);
 				}
 				unset($revision);
 
-				$ordered_phpbb_versions = order_phpbb_version_list_from_db($phpbb_versions, $this->options['all_versions']);
+				$ordered_phpbb_versions = versions::order_phpbb_version_list_from_db(
+					$this->cache,
+					$phpbb_versions,
+					$this->options['all_versions']
+				);
+
 				if (sizeof($ordered_phpbb_versions) == 1)
 				{
 					phpbb::$template->assign_vars(array(
@@ -760,21 +811,10 @@ class titania_contribution extends titania_message_object
 			}
 
 			// Display Screenshots
-			if ($this->screenshots)
+			if ($this->screenshots->get_count())
 			{
-				$screenshots = $this->screenshots->get_attachments();
-				$indices = array_keys($screenshots);
-				$custom_sort = 'titania_attach_order_compare';
 				$message = false;
-
-				if ((sizeof($indices) > 1))
-				{
-					// If attachment_order hasn't been filled, then we fall back to the default behavior of sorting by attachment_id. 
-					$custom_sort = ($screenshots[$indices[1]]['attachment_order'] >= 1) ? $custom_sort : false;
-				}
-
-				$this->screenshots->parse_attachments($message, false, false, 'screenshots', $custom_sort);
-				unset($screenshots);
+				$this->screenshots->parse_attachments($message, false, false, 'screenshots', true);
 			}
 
 			// Display categories
@@ -782,7 +822,7 @@ class titania_contribution extends titania_message_object
 			foreach ($this->category_data as $category_row)
 			{
 				$category->__set_array($category_row);
-				
+
 				phpbb::$template->assign_block_vars('categories', $category->assign_display(true));
 			}
 		}
@@ -802,16 +842,14 @@ class titania_contribution extends titania_message_object
 	*/
 	public function assign_download_details()
 	{
-		$file = new titania_attachment(TITANIA_CONTRIB);
 		$u_colorizeit_base = '';
 
 		// ColorizeIt stuff
 		if (strlen(titania::$config->colorizeit) && $this->has_colorizeit())
 		{
 			$u_colorizeit_base = 'http://' . titania::$config->colorizeit_url . '/custom/' .
-				titania::$config->colorizeit . '.html?sample=' . $this->clr_sample['attachment_id'];
+				titania::$config->colorizeit . '.html?sample=' . $this->clr_sample->get_id();
 		}
-		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
 
 		foreach ($this->download as $download)
 		{
@@ -820,7 +858,11 @@ class titania_contribution extends titania_message_object
 			if (!empty($this->revisions[$download['revision_id']]['phpbb_versions']))
 			{
 				$vendor_version = $this->revisions[$download['revision_id']]['phpbb_versions'];
-				$vendor_version = order_phpbb_version_list_from_db($vendor_version, $this->options['all_versions']);
+				$vendor_version = versions::order_phpbb_version_list_from_db(
+					$this->cache,
+					$vendor_version,
+					$this->options['all_versions']
+				);
 				$vendor_version = $vendor_version[0];
 			}
 
@@ -854,7 +896,7 @@ class titania_contribution extends titania_message_object
 				'PHPBB_VERSION'	=> $vendor_version,
 				'INSTALL_LEVEL'	=> $install_level,
 				'INSTALL_TIME'	=> $install_time,
-				'U_DOWNLOAD'	=> ($download['attachment_id']) ? $file->get_url($download['attachment_id']) : '',
+				'U_DOWNLOAD'	=> ($download['attachment_id']) ? $this->controller_helper->route('phpbb.titania.download', array('id' => $download['attachment_id'])) : '',
 				'U_COLORIZEIT'	=> $u_colorizeit,
 			));
 		}
@@ -1030,7 +1072,7 @@ class titania_contribution extends titania_message_object
 			}
 
 			$contrib_description = $this->contrib_desc;
-			titania_decode_message($contrib_description, $this->contrib_desc_uid);
+			message::decode($contrib_description, $this->contrib_desc_uid);
 
 			foreach ($this->download as $download)
 			{
@@ -1259,7 +1301,7 @@ class titania_contribution extends titania_message_object
 	public function change_permalink($new_permalink)
 	{
 		$old_permalink = $this->contrib_name_clean;
-		$new_permalink = titania_url::url_slug($new_permalink);
+		$new_permalink = url::generate_slug($new_permalink);
 
 		if ($this->validate_permalink($new_permalink, $old_permalink))
 		{
@@ -1514,7 +1556,7 @@ class titania_contribution extends titania_message_object
 	*/
 	public function generate_permalink()
 	{
-		$clean_name = titania_url::url_slug($this->contrib_name);
+		$clean_name = url::generate_slug($this->contrib_name);
 		$append = '';
 		$i = 2;
 		while ($this->permalink_exists($clean_name . $append))
@@ -1535,9 +1577,9 @@ class titania_contribution extends titania_message_object
 	 */
 	public function validate_permalink($permalink, $old_permalink)
 	{
-		if (titania_url::url_slug($permalink) !== $permalink)
+		if (url::generate_slug($permalink) !== $permalink)
 		{
-			return phpbb::$user->lang('INVALID_PERMALINK', titania_url::url_slug($permalink));
+			return phpbb::$user->lang('INVALID_PERMALINK', url::generate_slug($permalink));
 		}
 		else if ($permalink == '' || $permalink !== $old_permalink && $this->permalink_exists($permalink))
 		{
@@ -1579,10 +1621,9 @@ class titania_contribution extends titania_message_object
 
 		foreach ($authors as $group => $users)
 		{
-			$missing = array();
-			get_author_ids_from_list($users, $missing);
-			$result[$group] = $users;
-			$result['missing'][$group] = $missing;
+			$users = user_helper::get_user_ids_from_list($this->db, $users);
+			$result[$group] = $users['ids'];
+			$result['missing'][$group] = $users['missing'];
 		}
 
 		return $result;
@@ -1940,19 +1981,24 @@ class titania_contribution extends titania_message_object
 			phpbb::$db->sql_query($sql);
 		}
 	}
-	
+
 	/**
 	* Check if ColorizeIt is available
 	*/
 	public function has_colorizeit($force_update = false)
 	{
-	    if($force_update || $this->clr_sample === false)
+	    if ($force_update || !$this->clr_sample)
 	    {
 	        // get sample id from database
-            $attachment = new titania_attachment(TITANIA_CLR_SCREENSHOT, $this->contrib_id);
-            $this->clr_sample = $attachment->get_preview();
+			$operator = phpbb::$container->get('phpbb.titania.attachment.operator');
+			$attachments = $operator
+				->configure(TITANIA_CLR_SCREENSHOT, $this->contrib_id)
+				->load()
+				->get_all()
+			;
+			$this->clr_sample = array_shift($attachments);
 	    }
-	    return is_array($this->clr_sample) && strlen($this->contrib_clr_colors) > 0;
+	    return $this->clr_sample && strlen($this->contrib_clr_colors) > 0;
 	}
 
 	/**
@@ -2065,8 +2111,7 @@ class titania_contribution extends titania_message_object
 			}
 		}
 
-		titania::_include('functions_display', 'order_phpbb_version_list_from_db');
-		$phpbb_versions = array_unique(order_phpbb_version_list_from_db($phpbb_versions));
+		$phpbb_versions = array_unique(versions::order_phpbb_version_list_from_db($this->cache, $phpbb_versions));
 
 		$data = array(
 			'title'				=> $this->contrib_name,
@@ -2085,7 +2130,7 @@ class titania_contribution extends titania_message_object
 			'phpbb_versions' 	=> $phpbb_versions,
 		);
 
-		titania_search::index(TITANIA_CONTRIB, $this->contrib_id, $data);
+		$this->search_manager->index(TITANIA_CONTRIB, $this->contrib_id, $data);
 	}
 
 	/**

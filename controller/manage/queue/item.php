@@ -15,6 +15,15 @@ namespace phpbb\titania\controller\manage\queue;
 
 class item extends \phpbb\titania\controller\manage\base
 {
+	/** @var \phpbb\titania\tags */
+	protected $tags;
+
+	/** @var \phpbb\titania\message\message */
+	protected $message;
+
+	/** @var \phpbb\titania\posting */
+	protected $posting;
+
 	/** @var int */
 	protected $id;
 
@@ -29,6 +38,32 @@ class item extends \phpbb\titania\controller\manage\base
 
 	/** @var bool */
 	protected $is_author;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\tags $tags
+	 * @param \phpbb\titania\message\message $message
+	 * @param \phpbb\titania\posting $posting
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tags $tags, \phpbb\titania\message\message $message, \phpbb\titania\posting $posting)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+
+		$this->tags = $tags;
+		$this->message = $message;
+		$this->posting = $posting;
+	}
 
 	/**
 	* Display queue item.
@@ -61,8 +96,8 @@ class item extends \phpbb\titania\controller\manage\base
 		{
 			// Add tag to Breadcrumbs
 			$this->display->generate_breadcrumbs(array(
-				\titania_tags::get_tag_name($tag)	=> $this->queue->get_url(false, array('tag' => $tag)),
-			));	
+				$this->tags->get_tag_name($tag)	=> $this->queue->get_url(false, array('tag' => $tag)),
+			));
 		}
 
 		return $this->helper->render('manage/queue.html', \queue_overlord::$queue[$this->id]['topic_subject']);
@@ -226,16 +261,16 @@ class item extends \phpbb\titania\controller\manage\base
 	}
 
 	/**
-	* Posting action.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Posting action.
+	 *
+	 * @param string $action
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	protected function posting($action)
 	{
-		$posting_helper = new \titania_posting();
-		$posting_helper->parent_type = $this->queue->queue_type;
+		$this->posting->parent_type = $this->queue->queue_type;
 
-		$result = $posting_helper->act(
+		return $this->posting->act(
 			$this->contrib,
 			$action,
 			$this->queue->queue_topic_id,
@@ -245,13 +280,6 @@ class item extends \phpbb\titania\controller\manage\base
 			TITANIA_QUEUE,
 			$this->helper->get_current_url()
 		);
-
-		if (!empty($result['needs_auth']))
-		{
-			return $this->helper->needs_auth();
-		}
-
-		return $this->helper->render('manage/queue_post.html', $result['title']);
 	}
 
 	/**
@@ -325,7 +353,7 @@ class item extends \phpbb\titania\controller\manage\base
 				return $this->helper->error('NO_TAG');
 			}
 
-			$this->queue->move($new_tag);
+			$this->queue->move($new_tag, $this->tags);
 		}
 		else
 		{
@@ -464,27 +492,29 @@ class item extends \phpbb\titania\controller\manage\base
 		}
 		$uid = $bitfield = $options = false;
 		generate_text_for_storage($preview, $uid, $bitfield, $options, true, true, true);
-		return titania_generate_text_for_display($preview, $uid, $bitfield, $options);
+		return generate_text_for_display($preview, $uid, $bitfield, $options);
 	}
 
 	/**
 	* Get message object.
 	*
 	* @param mixed $object		Parent object receiving the message.
-	* @return \titania_message
+	* @return \phpbb\titania\message\message
 	*/
 	protected function get_message($object)
 	{
-		$message = new \titania_message($object);
-		$message->set_auth(array(
-			'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
-		));
-		$message->set_settings(array(
-			'display_subject'	=> false,
-		));
+		$this->message
+			->set_parent($object)
+			->set_auth(array(
+				'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
+			))
+			->set_settings(array(
+				'display_subject'	=> false,
+			))
+		;
 
-		return $message;
+		return $this->message;
 	}
 
 	/**

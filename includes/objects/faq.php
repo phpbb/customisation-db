@@ -11,11 +11,14 @@
 *
 */
 
+use phpbb\titania\count;
+use phpbb\titania\message\message;
+
 /**
 * Class to titania faq.
 * @package Titania
 */
-class titania_faq extends titania_message_object
+class titania_faq extends \phpbb\titania\entity\message_base
 {
 	/**
 	 * SQL Table
@@ -43,6 +46,9 @@ class titania_faq extends titania_message_object
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
+
+	/** @var \phpbb\titania\search\manager */
+	protected $search_manager;
 
 	/**
 	 * Constructor class for titania faq
@@ -72,7 +78,9 @@ class titania_faq extends titania_message_object
 			$this->load();
 		}
 
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 	}
 
 	/**
@@ -103,11 +111,9 @@ class titania_faq extends titania_message_object
 	}
 
 	/**
-	* Submit data in the post_data format (from includes/tools/message.php)
-	*
-	* @param object $message The message object
-	*/
-	public function post_data($message)
+	 * {@inheritDoc}
+	 */
+	public function post_data(message $message)
 	{
 		$this->__set_array(array(
 			'contrib_id'		=> $this->contrib->contrib_id,
@@ -171,16 +177,16 @@ class titania_faq extends titania_message_object
 				throw new exception('Modifying a FAQ entry requires you load it through the load() function (we require the original information).');
 			}
 
-			$original_flags = titania_count::update_flags($this->sql_data['faq_access']);
+			$original_flags = count::update_flags($this->sql_data['faq_access']);
 
-			$contrib_faq_count = titania_count::decrement($contrib_faq_count, $original_flags);
+			$contrib_faq_count = count::decrement($contrib_faq_count, $original_flags);
 		}
 
 		// Update the FAQ count
-		$flags = titania_count::update_flags($this->faq_access);
+		$flags = count::update_flags($this->faq_access);
 
 		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-			SET contrib_faq_count = \'' . phpbb::$db->sql_escape(titania_count::increment($contrib_faq_count, $flags)) . '\'
+			SET contrib_faq_count = \'' . phpbb::$db->sql_escape(count::increment($contrib_faq_count, $flags)) . '\'
 			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
@@ -188,7 +194,7 @@ class titania_faq extends titania_message_object
 		parent::submit();
 
 		// Index
-		titania_search::index(TITANIA_FAQ, $this->faq_id, array(
+		$this->search_manager->index(TITANIA_FAQ, $this->faq_id, array(
 			'title'			=> $this->faq_subject,
 			'text'			=> $this->faq_text,
 			'text_uid'		=> $this->faq_text_uid,
@@ -206,7 +212,7 @@ class titania_faq extends titania_message_object
 
 	public function delete()
 	{
-		titania_search::delete(TITANIA_FAQ, $this->faq_id);
+		$this->search_manager->delete(TITANIA_FAQ, $this->faq_id);
 
 		// Update the FAQ count
 		$sql = 'SELECT contrib_faq_count FROM ' . TITANIA_CONTRIBS_TABLE . '
@@ -215,10 +221,10 @@ class titania_faq extends titania_message_object
 		$contrib_faq_count = phpbb::$db->sql_fetchfield('contrib_faq_count');
 		phpbb::$db->sql_freeresult();
 
-		$flags = titania_count::update_flags($this->faq_access);
+		$flags = count::update_flags($this->faq_access);
 
 		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
-			SET contrib_faq_count = \'' . phpbb::$db->sql_escape(titania_count::decrement($contrib_faq_count, $flags)) . '\'
+			SET contrib_faq_count = \'' . phpbb::$db->sql_escape(count::decrement($contrib_faq_count, $flags)) . '\'
 			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
