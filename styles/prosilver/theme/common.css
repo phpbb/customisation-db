@@ -382,6 +382,11 @@ a.screenshot img, img.screenshot {
 	width: 75%;
 }
 
+.author-contribs {
+	padding: 0;
+	width: 100%;
+}
+
 .contrib-list-container .action-bar:first-child {
 	margin-bottom: 10px;
 }
@@ -405,6 +410,10 @@ a.screenshot img, img.screenshot {
 	position: relative;
 	text-align: center;
 	width: 50%;
+}
+
+.author-contribs .contrib-quickview {
+	width: 33.3%;
 }
 
 .quickview-title {

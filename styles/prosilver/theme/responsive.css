@@ -7,6 +7,14 @@
 		width: 100%;
 	}
 
+	.author-contribs {
+		border-top: none;
+	}
+
+	.author-contribs .contrib-quickview {
+		width: 50%;
+	}
+
 	.categories {
 		border-right: none;
 		display: block;
