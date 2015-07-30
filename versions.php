@@ -72,4 +72,17 @@ class versions
 		$string .= ($revision !== null) ? ".$revision" : ".{$version['phpbb_version_revision']}";
 		return $string;
 	}
+
+	/**
+	 * Get branch from version string.
+	 *
+	 * Given 3.1.0, returns 31
+	 *
+	 * @param string $version
+	 * @return int
+	 */
+	public static function get_branch_from_string($version)
+	{
+		return (int) ($version[0] . $version[2]);
+	}
 }

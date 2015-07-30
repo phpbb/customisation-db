@@ -407,13 +407,15 @@ class contribs_overlord
 					phpbb::$template->assign_block_vars($blockname . '.phpbb_versions', array(
 						'NAME'		=> $version_row,
 					));
-					if ($prev_branch != $version_row[0])
+					$branch = versions::get_branch_from_string($version_row);
+
+					if ($prev_branch != $branch)
 					{
 						phpbb::$template->assign_block_vars($blockname . '.branches', array(
 							'NAME'	=> $version_row,
 						));
 					}
-					$prev_branch = $version_row[0];
+					$prev_branch = $branch;
 				}
 			}
 
