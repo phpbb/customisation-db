@@ -3,12 +3,16 @@
 <h2>{L_CUSTOMISATION_DATABASE}</h2>
 
 <!-- IF .categories or U_QUEUE_STATS -->
-<ul class="linklist">
-	<li>
-		<!-- IF U_ALL_SUPPORT --><a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a><!-- ENDIF -->
-		<!-- IF U_FIND_CONTRIBUTION -->&bull; <a href="{U_FIND_CONTRIBUTION}">{L_FIND_CONTRIBUTION}</a><!-- ENDIF -->
-		<!-- IF U_QUEUE_STATS --> &bull; <a href="{U_QUEUE_STATS}">{L_QUEUE_STATS}</a><!-- ENDIF -->
-	</li>
+<ul class="linklist bulletin titania-navigation">
+	<!-- IF U_ALL_SUPPORT -->
+		<li><a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a></li>
+	<!-- ENDIF -->
+	<!-- IF U_FIND_CONTRIBUTION -->
+		<li><a href="{U_FIND_CONTRIBUTION}">{L_FIND_CONTRIBUTION}</a></li>
+	<!-- ENDIF -->
+	<!-- IF U_QUEUE_STATS -->
+		<li id="queue-stats-link"><a href="{U_QUEUE_STATS}">{L_QUEUE_STATS}</a></li>
+	<!-- ENDIF -->
 	<li class="rightside">
 		<!-- IF U_TITANIA_SEARCH_SELF --><a href="{U_TITANIA_SEARCH_SELF}">{L_SEARCH_SELF}</a><!-- ENDIF -->
 	</li>

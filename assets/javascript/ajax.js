@@ -92,6 +92,16 @@
 			$contribList.find('.action-bar').html(res.pagination).show();
 			$contribList.fadeIn('fast');
 		});
+		$('#queue-stats-link').remove();
+
+		if (res.u_queue_stats) {
+			var $queueStats = $('<a />')
+				.attr('href', res.u_queue_stats)
+				.html(res.l_queue_stats);
+			$('.titania-navigation').append(
+				$('<li />').attr('id', 'queue-stats-link').html($queueStats)
+			);
+		}
 
 		$search.find('[name="c[]"]').remove();
 		$search.find('#search_keywords').after(
