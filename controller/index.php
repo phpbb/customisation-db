@@ -372,8 +372,8 @@ class index
 			return '';
 		}
 		return $this->helper->route('phpbb.titania.author', array(
-				'author' => $this->user->data['username_clean'],
-				'page' => 'create',
+			'author' => urlencode($this->user->data['username_clean']),
+			'page' => 'create',
 		));
 	}
 
