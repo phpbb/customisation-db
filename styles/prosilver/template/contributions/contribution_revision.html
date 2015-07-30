@@ -102,6 +102,12 @@
 					<dd><input type="checkbox" id="subscribe_author" name="subscribe_author"<!-- IF ((ERROR_MSG and SUBSCRIBE_AUTHOR) or not ERROR_MSG)  --> checked="checked"<!-- ENDIF --> /></dd>
 				</dl>
 				<!-- ENDIF -->
+				<!-- IF REQUEST_TEST_ACCOUNT -->
+				<dl>
+					<dt><label for="test-account">{L_TEST_ACCOUNT}:</label><br /><span>{L_TEST_ACCOUNT_EXPLAIN}</span></dt>
+					<dd><textarea class="inputbox" name="revision_test_account" id="test-account" rows="8">{REVISION_TEST_ACCOUNT}</textarea></dd>
+				</dl>
+				<!-- ENDIF -->
 				<dl>
 					<dt><br /><label for="message">{L_QUEUE_NOTES}:</label><br /><span>{L_QUEUE_NOTES_EXPLAIN}</span></dt>
 				</dl>
