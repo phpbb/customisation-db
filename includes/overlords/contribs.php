@@ -148,10 +148,20 @@ class contribs_overlord
 				}
 
 				$sql_ary = array(
-					'SELECT'	=> $select,
+					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
 					'FROM'		=> array(
 						TITANIA_CONTRIBS_TABLE	=> 'c',
+					),
+
+					'LEFT_JOIN'	=> array(
+						array(
+							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
+							'ON'	=> 'c.contrib_id = a.object_id
+								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.is_orphan = 0
+								AND a.is_preview = 1',
+						),
 					),
 
 					'WHERE'		=> phpbb::$db->sql_in_set('c.contrib_id', $contrib_ids) . '
