@@ -54,7 +54,7 @@ class zend extends base
 
 		if (!class_exists('\Zend_Search_Lucene'))
 		{
-			require($this->ext_root_path . 'library/Zend/Search/Lucene.' . $this->php_ext);
+			require($this->ext_root_path . 'includes/library/Zend/Search/Lucene.' . $this->php_ext);
 		}
 		$this->load_search_component();
 
@@ -78,7 +78,7 @@ class zend extends base
 	{
 		if (!class_exists('\phpbb_ezcomponents_loader'))
 		{
-			require($this->ext_root_path . 'library/ezcomponents/loader.' . $this->php_ext);
+			require($this->ext_root_path . 'includes/library/ezcomponents/loader.' . $this->php_ext);
 		}
 
 		\phpbb_ezcomponents_loader::load_component('search');

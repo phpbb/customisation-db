@@ -128,7 +128,10 @@ If you have any queries and further discussion please use the Queue Discussion T
 Thank you,
 phpBB Extensions Team',
 
-	'INVALID_EXT_NAME'						=> 'Invalid value for <em>name</em> property in composer.json.
-													Please refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for the valid format.',
+	'INVALID_EXT_NAME'		=> 'Invalid value for <em>name</em> property in composer.json.
+									Please refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for the valid format.',
 
+	'TEST_ACCOUNT'			=> 'Test account',
+	'TEST_ACCOUNT_EXPLAIN'	=> 'Do we need any information (Like an API key, username, password to login to a third party webservice) for testing your extension?
+									Please provide all required information to test your extension. <strong>If we are unable to test your extension because of missing information, we will deny your extension.</strong>',
 ));

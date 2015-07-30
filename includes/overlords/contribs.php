@@ -148,10 +148,20 @@ class contribs_overlord
 				}
 
 				$sql_ary = array(
-					'SELECT'	=> $select,
+					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
 					'FROM'		=> array(
 						TITANIA_CONTRIBS_TABLE	=> 'c',
+					),
+
+					'LEFT_JOIN'	=> array(
+						array(
+							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
+							'ON'	=> 'c.contrib_id = a.object_id
+								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.is_orphan = 0
+								AND a.is_preview = 1',
+						),
 					),
 
 					'WHERE'		=> phpbb::$db->sql_in_set('c.contrib_id', $contrib_ids) . '
@@ -407,13 +417,15 @@ class contribs_overlord
 					phpbb::$template->assign_block_vars($blockname . '.phpbb_versions', array(
 						'NAME'		=> $version_row,
 					));
-					if ($prev_branch != $version_row[0])
+					$branch = versions::get_branch_from_string($version_row);
+
+					if ($prev_branch != $branch)
 					{
 						phpbb::$template->assign_block_vars($blockname . '.branches', array(
 							'NAME'	=> $version_row,
 						));
 					}
-					$prev_branch = $version_row[0];
+					$prev_branch = $branch;
 				}
 			}
 

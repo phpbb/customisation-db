@@ -191,20 +191,12 @@ class index
 			$this->params
 		);
 
-		$type = $this->get_category_type();
-		$u_queue_stats = '';
-
-		if ($type && $type->use_queue)
-		{
-			$u_queue_stats = $this->helper->route('phpbb.titania.queue_stats', array('contrib_type' => $type->url));
-		}
-
 		$this->template->assign_vars(array(
 			'CATEGORY_ID'			=> $this->id,
 
 			'S_DISPLAY_SEARCHBOX'	=> true,
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
-			'U_QUEUE_STATS'			=> $u_queue_stats,
+			'U_QUEUE_STATS'			=> $this->get_queue_stats_url(),
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
 			'U_ALL_CONTRIBUTIONS'	=> $this->helper->route('phpbb.titania.index', $this->params),
 		));
@@ -380,9 +372,32 @@ class index
 			return '';
 		}
 		return $this->helper->route('phpbb.titania.author', array(
-				'author' => $this->user->data['username_clean'],
-				'page' => 'create',
+			'author' => urlencode($this->user->data['username_clean']),
+			'page' => 'create',
 		));
+	}
+
+	/**
+	 * Get queue stats URL.
+	 *
+	 * @return string
+	 */
+	protected function get_queue_stats_url()
+	{
+		if (!$this->id)
+		{
+			return '';
+		}
+		$type = $this->get_category_type();
+		$u_queue_stats = '';
+
+		if ($type && $type->use_queue)
+		{
+			$u_queue_stats = $this->helper->route('phpbb.titania.queue_stats', array(
+				'contrib_type' => $type->url,
+			));
+		}
+		return $u_queue_stats;
 	}
 
 	/**
@@ -408,6 +423,8 @@ class index
 			'branches'		=> $this->get_branches(),
 			'sort'			=> $this->get_sorting($sort),
 			'pagination'    => $this->template->assign_display('pagination'),
+			'u_queue_stats'	=> $this->get_queue_stats_url(),
+			'l_queue_stats'	=> $this->user->lang('QUEUE_STATS'),
 		));
 	}
 

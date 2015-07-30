@@ -395,7 +395,7 @@ class queue_overlord
 					'',
 					$misc_actions
 				),
-			);	
+			);
 		}
 
 		foreach ($quick_actions as $data)
@@ -408,7 +408,7 @@ class queue_overlord
 			{
 				continue;
 			}
-			
+
 			phpbb::$template->assign_block_vars('queue_actions', array(
 				'NAME'		=> phpbb::$user->lang($data['name']),
 				'CLASS'		=> $data['class'],
@@ -450,7 +450,11 @@ class queue_overlord
 			}
 		}
 
-		if ($row['queue_status'] == -2)
+		if ($row['queue_status'] == -3)
+		{
+			$current_status = phpbb::$user->lang('QUEUE_CLOSED');
+		}
+		else if ($row['queue_status'] == -2)
 		{
 			$current_status = phpbb::$user->lang['REVISION_DENIED'];
 		}

@@ -161,6 +161,7 @@ class revision extends base
 			'vendor_versions'	=> $old_revision->get_selected_branches(),
 			'custom'			=> $old_revision->get_custom_fields(),
 			'allow_repack'		=> $old_queue->queue_allow_repack,
+			'test_account'		=> '',
 		);
 
 		if ($this->is_custom_license($old_revision->revision_license))
@@ -336,6 +337,7 @@ class revision extends base
 			'license'			=> $this->request->variable('revision_license', '', true),
 			'custom'			=> $this->request->variable('custom_fields', array('' => ''), true),
 			'vendor_versions'	=> $this->get_selected_branches(),
+			'test_account'		=> $this->request->variable('revision_test_account', '', true),
 		);
 
 		if ($this->has_custom_license($settings['license']))
@@ -356,7 +358,7 @@ class revision extends base
 			// Add queue values to the queue table
 			if ($this->use_queue)
 			{
-				$this->create_queue_item($settings['allow_repack']);
+				$this->create_queue_item($settings['allow_repack'], $settings['test_account']);
 
 				// Subscribe author to queue discussion topic
 				if ($this->request->variable('subscribe_author', false))
@@ -515,9 +517,10 @@ class revision extends base
 	* Create queue item
 	*
 	* @param bool $allow_repack		Whether author has allowed repacking.
+	* @param string $test_account	Test account details.
 	* @return null
 	*/
-	protected function create_queue_item($allow_repack)
+	protected function create_queue_item($allow_repack, $test_account)
 	{
 		// Create the queue
 		$this->revision->update_queue();
@@ -527,6 +530,14 @@ class revision extends base
 		$this->get_message();
 
 		$this->queue->queue_allow_repack = $allow_repack;
+
+		if ($test_account)
+		{
+			$this->queue->queue_notes .=
+				"\n\n[b]" . $this->user->lang('TEST_ACCOUNT') . "[/b]\n" .
+				$test_account
+			;
+		}
 		$this->queue->submit();
 	}
 
@@ -1001,7 +1012,7 @@ class revision extends base
 			return;
 		}
 
-		$_settings = array_fill_keys(array('name', 'version', 'custom_license', 'license', 'allow_repack'), '');
+		$_settings = array_fill_keys(array('name', 'version', 'custom_license', 'license', 'allow_repack', 'test_account'), '');
 		$_settings['custom'] = $this->request->variable('custom_fields', array('' => ''));
 		$_settings['vendor_versions'] = array();
 		$settings = array_merge($_settings, $settings);
@@ -1017,6 +1028,8 @@ class revision extends base
 			'REVISION_VERSION'			=> $this->request->variable('revision_version', $settings['version'], true),
 			'REVISION_LICENSE'			=> $this->request->variable('revision_license', $settings['license'], true),
 			'REVISION_CUSTOM_LICENSE'	=> $this->request->variable('revision_custom_license', $settings['custom_license'], true),
+			'REVISION_TEST_ACCOUNT'		=> $this->request->variable('revision_test_account', $settings['test_account'], true),
+			'REQUEST_TEST_ACCOUNT'		=> $this->use_queue && $this->contrib->type->id === TITANIA_TYPE_EXTENSION,
 
 			'S_CUSTOM_LICENSE'			=> $this->has_custom_license($this->request->variable('revision_license', $settings['license'], true)),
 			'S_ALLOW_CUSTOM_LICENSE'	=> $this->contrib->type->license_allow_custom,

@@ -40,10 +40,12 @@
 			var data = json['data'][0],
 				attachID = data['attach_id'],
 				$row = $('[data-attach-id="' + attachID + '"]'),
+				$previewControl = $row.find('.file-contrib-preview-control'),
 				$preview = $('<img />').attr({
 					src: (data['thumb']) ? data['thumb'] : data['url'],
 					class: 'screenshot'
 				});
+
 
 			$row.append($('<input />').attr({
 				name: 'attach_order[]',
@@ -51,7 +53,11 @@
 				class: 'attach_order',
 				type: 'hidden'
 			}));
-			$('.file-contrib-preview-control').val(attachID);
+			$previewControl.val(attachID);
+
+			if (json['data'].length === 1) {
+				setPreview($row.find('.file-contrib-preview'));
+			}
 
 			$preview.load(function() {
 				if (data['thumb']) {
