@@ -287,6 +287,10 @@ ul.general-info li strong {
 	color: #FFFFFF;
 }
 
+.tab-panel {
+	clear: both;
+}
+
 a.screenshot img, img.screenshot {
 	background-color: #FFFFFF;
 	padding: 3px;
