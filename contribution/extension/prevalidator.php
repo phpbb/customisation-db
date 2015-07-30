@@ -72,7 +72,7 @@ class prevalidator
 		}
 		else
 		{
-			$output->writeln("<success>[color=#00BF40]No issues found[/c] </success>");
+			$output->writeln("<success>[color=#00BF40]No issues found[/color] </success>");
 		}
 
 		return $int_output->getBuffer();
