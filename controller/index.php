@@ -132,7 +132,7 @@ class index
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
 			'U_MARK_FORUMS'			=> $this->path_helper->append_url_params($this->helper->get_current_url(), array('mark' => 'contribs')),
 			'L_MARK_FORUMS_READ'	=> $this->user->lang['MARK_CONTRIBS_READ'],
-			'U_ALL_CONTRIBUTIONS'	=> $this->helper->route('phpbb.titania.index', $this->params),
+			'U_ALL_CONTRIBUTIONS'	=> $this->get_index_url($this->params),
 
 			'S_DISPLAY_SEARCHBOX'	=> true,
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
@@ -198,7 +198,7 @@ class index
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
 			'U_QUEUE_STATS'			=> $this->get_queue_stats_url(),
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
-			'U_ALL_CONTRIBUTIONS'	=> $this->helper->route('phpbb.titania.index', $this->params),
+			'U_ALL_CONTRIBUTIONS'	=> $this->get_index_url($this->params),
 		));
 		$this->assign_sorting($sort);
 		$this->assign_branches();
@@ -554,7 +554,7 @@ class index
 	protected function get_category_urls()
 	{
 		$category = new \titania_category;
-		$url = $this->helper->route('phpbb.titania.index', $this->params);
+		$url = $this->get_index_url($this->params);
 		$urls = array(
 			0	=> ($this->request->is_ajax()) ? str_replace('&amp;', '&', $url) : $url,
 		);
@@ -580,7 +580,20 @@ class index
 	 */
 	protected function get_item_url(array $params)
 	{
-		return ($this->id) ? $this->category->get_url($params) : $this->helper->route('phpbb.titania.index', $params);
+		return ($this->id) ? $this->category->get_url($params) : $this->get_index_url($params);
+	}
+
+	/**
+	 * Get index URL.
+	 *
+	 * @param array $params
+	 * @return string
+	 */
+	protected function get_index_url(array $params = array())
+	{
+		$suffix = (isset($params['branch'])) ? '.branch' : '';
+
+		return $this->helper->route('phpbb.titania.index' . $suffix, $params);
 	}
 
 	/**
