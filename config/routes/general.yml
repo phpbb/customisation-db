@@ -1,4 +1,8 @@
 phpbb.titania.index:
+    pattern: /
+    defaults: { _controller: phpbb.titania.controller.index:display_index, branch: '' }
+
+phpbb.titania.index.branch:
     pattern: /{branch}
     defaults: { _controller: phpbb.titania.controller.index:display_index, branch: '' }
     requirements:
