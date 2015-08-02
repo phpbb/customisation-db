@@ -288,7 +288,10 @@ class subscriptions
 					if ($messenger === null)
 					{
 						// Only make the object if we need it
-						require($this->phpbb_root_path. 'includes/functions_messenger.' . $this->php_ext);
+						if (!class_exists('\messenger'))
+						{
+							require($this->phpbb_root_path . 'includes/functions_messenger.' . $this->php_ext);
+						}
 						$messenger = new \messenger;
 					}
 
