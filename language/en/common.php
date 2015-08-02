@@ -187,8 +187,8 @@ $lang = array_merge($lang, array(
 	'QUICK_ACTIONS'				=> 'Quick Actions',
 
 	'RATING'					=> 'Rating',
-	'RATING_ASC'				=> 'Lowest rating',
-	'RATING_DESC'				=> 'Higuest rating',
+	'RATING_ASC'				=> 'Worst rating',
+	'RATING_DESC'				=> 'Best rating',
 	'REMOVE_RATING'				=> 'Remove Rating',
 	'REPORT'					=> 'Report',
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
