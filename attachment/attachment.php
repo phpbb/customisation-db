@@ -32,6 +32,12 @@ class attachment extends \phpbb\titania\entity\database_base
 	/** @var string */
 	protected $attachments_table;
 
+	/** @var string */
+	protected $phpbb_root_path;
+
+	/** @var string */
+	protected $php_ext;
+
 	/**
 	 * SQL Table
 	 *
@@ -54,8 +60,10 @@ class attachment extends \phpbb\titania\entity\database_base
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\controller\helper $controller_helper
+	 * @param string $phpbb_root_path
+	 * @param string $php_ext
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\titania\config\config $ext_config, \phpbb\titania\controller\helper $controller_helper)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\titania\config\config $ext_config, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->config = $config;
@@ -63,6 +71,8 @@ class attachment extends \phpbb\titania\entity\database_base
 		$this->ext_config = $ext_config;
 		$this->controller_helper = $controller_helper;
 		$this->attachments_table = $this->sql_table;
+		$this->phpbb_root_path = $phpbb_root_path;
+		$this->php_ext = $php_ext;
 
 		$this->user->add_lang('posting');
 		$this->configure_properties();
@@ -275,6 +285,10 @@ class attachment extends \phpbb\titania\entity\database_base
 
 		if (!$used_imagick)
 		{
+			if (!function_exists('get_supported_image_types'))
+			{
+				include($this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
+			}
 			$type = get_supported_image_types($type);
 
 			if ($type['gd'])
