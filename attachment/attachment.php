@@ -500,8 +500,7 @@ class attachment extends \phpbb\titania\entity\database_base
 			$vars += $this->get_default_file_vars();
 		}
 
-		$l_download_count = (int) (empty($attachment['download_count'])) ? 0 : $attachment['download_count'];
-		$vars['L_DOWNLOAD_COUNT'] = $this->user->lang($vars['L_DOWNLOAD_COUNT'], $l_download_count);
+		$vars['L_DOWNLOAD_COUNT'] = $this->user->lang($vars['L_DOWNLOAD_COUNT'], (int) $this->get('download_count'));
 
 		return $vars;
 	}
