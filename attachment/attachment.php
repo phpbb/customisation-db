@@ -554,6 +554,7 @@ class attachment extends \phpbb\titania\entity\database_base
 	protected function get_default_file_vars()
 	{
 		return array(
+			'U_DOWNLOAD_LINK'	=> $this->get_url(),
 			'L_DOWNLOAD_COUNT'	=> 'DOWNLOAD_COUNTS',
 			'S_FILE'			=> true,
 		);
