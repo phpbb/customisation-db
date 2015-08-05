@@ -20,6 +20,8 @@ services:
             - @user
             - @phpbb.titania.config
             - @phpbb.titania.controller.helper
+            - %core.root_path%
+            - %core.php_ext%
 
     phpbb.titania.attachment.operator:
         class: phpbb\titania\attachment\operator

@@ -391,7 +391,7 @@ class uploader
 			{
 				$_hidden_data["attachment_data[$index_prefix$index][$property]"] = $value;
 			}
-			$output = array_merge(array(
+			$output = array_merge($attach->get_display_vars(''), array(
 				'FILENAME'			=> $attach->get_filename(),
 				'FILE_COMMENT'		=> (isset($comments[$attachment_id])) ? $comments[$attachment_id] : $attach->get('attachment_comment'),
 				'ATTACH_ID'			=> $attachment_id,
@@ -405,7 +405,7 @@ class uploader
 						$base_url,
 						array_merge($params, array('action' => 'delete_attach'))
 					),
-			), $attach->get_display_vars(''));
+			));
 
 			if ($attach->is_type(TITANIA_SCREENSHOT))
 			{
