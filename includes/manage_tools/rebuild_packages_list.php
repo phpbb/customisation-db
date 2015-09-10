@@ -25,11 +25,6 @@ class rebuild_packages_list
 
 	function run_tool()
 	{
-		if (!titania::$config->composer_vendor_name)
-		{
-			trigger_error('COMPOSER_VENDOR_EMPTY');
-		}
-
 		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
 		$package_helper = new titania_composer_package_helper();
 
@@ -48,7 +43,7 @@ class rebuild_packages_list
 			$package_helper->clear_packages_dir();
 		}
 
-		$excluded_types = titania_types::use_composer(true); 
+		$excluded_types = titania_types::use_composer(true);
 
 		$sql = 'SELECT COUNT(contrib_id) AS total_contribs
 			FROM ' . TITANIA_CONTRIBS_TABLE . '
@@ -57,7 +52,7 @@ class rebuild_packages_list
 		phpbb::$db->sql_query($sql);
 		$total_contribs = phpbb::$db->sql_fetchfield('total_contribs');
 
-		$sql = 'SELECT contrib_name_clean, contrib_id, contrib_type 
+		$sql = 'SELECT contrib_package_name, contrib_id, contrib_type
 			FROM ' . TITANIA_CONTRIBS_TABLE . '
 			WHERE contrib_status = ' . TITANIA_CONTRIB_APPROVED .
 				(!empty($excluded_types) ? ' AND ' . phpbb::$db->sql_in_set('contrib_type', $excluded_types, true) : '') . '
@@ -72,9 +67,9 @@ class rebuild_packages_list
 		phpbb::$db->sql_freeresult($result);
 
 		// Grab all approved revisions for the contribs that we're handling
-		$sql = 'SELECT contrib_id, revision_version, attachment_id
+		$sql = 'SELECT contrib_id, revision_version, attachment_id, revision_composer_json
 			FROM ' . TITANIA_REVISIONS_TABLE . '
-			WHERE revision_status = ' . TITANIA_REVISION_APPROVED . ' 
+			WHERE revision_status = ' . TITANIA_REVISION_APPROVED . '
 				AND ' . phpbb::$db->sql_in_set('contrib_id', array_keys($contribs)) . '
 			ORDER BY contrib_id ASC, revision_id ASC';
 		$result = phpbb::$db->sql_query($sql);
@@ -92,7 +87,7 @@ class rebuild_packages_list
 		{
 			$i--;
 
-			if (empty($data['revisions']))
+			if (empty($data['revisions']) || empty($data['contrib_package_name']))
 			{
 				continue;
 			}
@@ -104,7 +99,7 @@ class rebuild_packages_list
 					$this->put_data($package_manager, $map);
 				}
 
-				$package_manager = new titania_composer_package_manager($contrib_id, $data['contrib_name_clean'], $data['contrib_type'], $package_helper, false);
+				$package_manager = new titania_composer_package_manager($contrib_id, $data['contrib_package_name'], $data['contrib_type'], $package_helper, false);
 				$map = $package_manager->helper->get_json_data($package_manager->type_name . '-map', true);
 
 				$group_count = sizeof($package_manager->packages_data);
@@ -114,7 +109,7 @@ class rebuild_packages_list
 			else
 			{
 				$package_manager->contrib_id = $contrib_id;
-				$package_manager->package_name = titania::$config->composer_vendor_name . '/' . $data['contrib_name_clean'];
+				$package_manager->package_name = $data['contrib_package_name'];
 
 				if ($group != $prev_group)
 				{
@@ -124,7 +119,10 @@ class rebuild_packages_list
 
 			foreach ($data['revisions'] as $revision)
 			{
-				$package_manager->add_release($revision['revision_version'], $revision['attachment_id'], true);
+				if (!empty($revision['revision_composer_json']))
+				{
+					$package_manager->add_release(json_decode($revision['revision_composer_json'], true), $revision['attachment_id'], true);
+				}
 			}
 
 			$map[] = (int) $contrib_id;
@@ -147,7 +145,15 @@ class rebuild_packages_list
 			trigger_error('DONE');
 		}
 
-		meta_refresh(3, titania_url::build_url('manage/administration', array('t' => 'rebuild_packages_list', 'start' => $start, 'submit' => 1, 'hash' => generate_link_hash('manage'))));
+		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		meta_refresh(3, $controller_helper->route('phpbb.titania.administration.tool', array(
+			'tool' => 'rebuild_packages_list',
+			'start' => $start,
+			'submit' => 1,
+			'hash' => generate_link_hash('manage')
+		)));
+
+		//meta_refresh(3, titania_url::build_url('manage/administration', array('t' => 'rebuild_packages_list', 'start' => $start, 'submit' => 1, 'hash' => generate_link_hash('manage'))));
 		trigger_error($start . '/' . $total_contribs);
 	}
 
