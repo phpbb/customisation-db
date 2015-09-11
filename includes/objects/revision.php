@@ -709,7 +709,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 		if (!titania_types::$types[$this->contrib->contrib_type]->create_composer_packages
 			|| !$package_helper->packages_dir_writable()
-			|| empty($this->contrib_package_name))
+			|| empty($this->contrib->contrib_package_name))
 		{
 			return;
 		}

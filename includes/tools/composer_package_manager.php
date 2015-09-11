@@ -145,7 +145,15 @@ class titania_composer_package_helper
 		{
 			return false;
 		}
-		$json = fgets($resource);
+
+		$filesize = filesize($this->packages_dir . $file . '.json');
+
+		if ($filesize === 0)
+		{
+			return array();
+		}
+
+		$json = fread($resource, $filesize);
 		rewind($resource);
 
 		if (!$json)
@@ -302,6 +310,7 @@ class titania_composer_package_manager
 		{
 			return false;
 		}
+
 		$reverse_map = array_flip($map);
 
 		// If the contrib id isn't set, then this is the first revision approved.
