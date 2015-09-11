@@ -251,6 +251,9 @@ class titania_type_extension extends titania_type_base
 			if (isset($data['extra']['soft-require']['phpbb/phpbb']))
 			{
 				$data['require']['phpbb/phpbb'] = $data['extra']['soft-require']['phpbb/phpbb'];
+
+				// fix common error
+				$data['require']['phpbb/phpbb'] = str_replace('<3.2.*', '<3.2.0', $data['require']['phpbb/phpbb']);
 			}
 		}
 
