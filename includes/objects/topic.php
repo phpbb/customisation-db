@@ -57,6 +57,9 @@ class titania_topic extends \phpbb\titania\entity\database_base
 	/** @var \phpbb\titania\display */
 	protected $display;
 
+	/** @var \phpbb\titania\access */
+	protected $access;
+
 	/**
 	 * Constructor class for titania topics
 	 *
@@ -107,6 +110,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->tracking = phpbb::$container->get('phpbb.titania.tracking');
 		$this->display = phpbb::$container->get('phpbb.titania.display');
+		$this->access = phpbb::$container->get('phpbb.titania.access');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -208,7 +212,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 	{
 		if ($access_level === false)
 		{
-			$access_level = titania::$access_level;
+			$access_level = $this->access->get_level();
 		}
 
 		$is_mod = phpbb::$auth->acl_get('u_titania_mod_post_mod');
