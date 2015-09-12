@@ -721,7 +721,8 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		}
 		else
 		{
-			$package_manager->remove_release($this->revision_composer_json['version']);
+			$composer_json_data = json_decode($this->revision_composer_json, true);
+			$package_manager->remove_release($composer_json_data['version']);
 		}
 		$package_manager->submit();
 	}

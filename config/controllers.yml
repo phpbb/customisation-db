@@ -358,3 +358,4 @@ services:
         arguments:
             - @user
             - @phpbb.titania.controller.helper
+            - %phpbb.titania.root_path%

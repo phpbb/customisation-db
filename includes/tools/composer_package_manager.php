@@ -342,9 +342,12 @@ class titania_composer_package_manager
 	public function add_release($composer_json, $attachment_id, $validated)
 	{
 		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$path_helper = phpbb::$container->get('path_helper');
 
 		$composer_json['dist'] = array(
-			'url'	=> $controller_helper->route('phpbb.titania.download', array('id' => $attachment_id)),
+			'url'	=> $path_helper->strip_url_params(
+				$controller_helper->route('phpbb.titania.download', array('id' => $attachment_id)),
+				'sid'),
 			'type'	=> 'zip',
 		);
 

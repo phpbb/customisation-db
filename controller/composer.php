@@ -24,16 +24,20 @@ class composer
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
 
+	/** @var string */
+	protected $titania_root_path;
+
 	/**
 	 * Constructor
 	 *
 	 * @param \phpbb\user $user
 	 * @param helper $helper
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\titania\controller\helper $helper)
+	public function __construct(\phpbb\user $user, \phpbb\titania\controller\helper $helper, $titania_root_path)
 	{
 		$this->user = $user;
 		$this->helper = $helper;
+		$this->titania_root_path = $titania_root_path;
 	}
 
 	/**
@@ -49,7 +53,7 @@ class composer
 			throw new http_exception(404, 'NO_PAGE_FOUND');
 		}
 
-		$filename = \titania::$root_path . 'composer/' . $filename . '.json';
+		$filename = $this->titania_root_path . 'composer/' . $filename . '.json';
 
 		try
 		{
