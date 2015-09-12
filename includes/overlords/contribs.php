@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\message\message;
 use phpbb\titania\versions;
 
 class contribs_overlord
