@@ -750,4 +750,31 @@ class message
 		// Run set_var to re-encode the proper entities as if the user had submitted it themselves
 		set_var($message, $message, 'string', true);
 	}
+
+	/**
+	 * Get clean message excerpt free of bbcode.
+	 *
+	 * @param string $string	Message
+	 * @param string $uid		BBCode uid
+	 * @param int $length		Max excerpt length
+	 * @param string $append	String to append to excerpt if original length exceeds
+	 * 	max excerpt length.
+	 * @return string
+	 */
+	public static function generate_clean_excerpt($string, $uid, $length, $append = '')
+	{
+		$_uid = preg_quote($uid, '#');
+		$full_bbcode_removal = array(
+			'#\[flash=([0-9]+),([0-9]+):' . $_uid . '\](.*?)\[/flash:' . $_uid . '\]#',
+			'#\[img:' . $_uid . '\](.*?)\[/img:' . $_uid . '\]#s',
+		);
+		$string = preg_replace($full_bbcode_removal, '', $string);
+
+		strip_bbcode($string, $uid);
+		$string = str_replace(array('&#58;', '&#46;'), array(':', '.'), $string);
+		$string = truncate_string($string, $length, $length, false, $append);
+
+		return $string;
+	}
+
 }

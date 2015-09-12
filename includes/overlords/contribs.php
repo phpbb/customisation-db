@@ -382,9 +382,14 @@ class contribs_overlord
 					$contrib->options['all_versions']
 				);
 			}
-			$stripped_desc = $contrib->contrib_desc;
+
 			$preview_params = array();
-			strip_bbcode($stripped_desc, $contrib->contrib_desc_uid);
+			$stripped_desc = message::generate_clean_excerpt(
+				$contrib->contrib_desc,
+				$contrib->contrib_desc_uid,
+				255,
+				'&hellip;'
+			);
 
 			if (!empty($row['attachment_id']))
 			{
@@ -404,7 +409,7 @@ class contribs_overlord
 				'FOLDER_IMG_WIDTH'			=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 				'FOLDER_IMG_HEIGHT'			=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 				'PHPBB_VERSION'				=> (isset($row['phpbb_versions']) && sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
-				'DESC_SNIPPET'				=> truncate_string($stripped_desc, 250),
+				'DESC_SNIPPET'				=> $stripped_desc,
 				'PREVIEW'					=> ($preview_params) ? $controller_helper->route('phpbb.titania.download', $preview_params) : '',
 			)));
 
