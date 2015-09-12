@@ -413,7 +413,7 @@ class author
 				$contrib->contrib_creation_time = time();
 				$contrib->submit();
 
-				$contrib->set_coauthors($authors['coauthors']['active'], $authors['coauthors']['nonactive'], true);
+				$contrib->set_coauthors($authors['active_coauthors'], $authors['nonactive_coauthors'], true);
 
 				// Create relations
 				$contrib->put_contrib_in_categories($settings['categories']);
