@@ -50,7 +50,7 @@ abstract class base
 	* </code>
 	*
 	*	Note: 'max' and 'multibyte' only works when the object
-	*		is an instance of titania_database_object.
+	*		is an instance of \phpbb\titania\entity\database_base.
 	*
 	*
 	* Example 2:

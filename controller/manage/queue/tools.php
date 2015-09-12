@@ -36,7 +36,10 @@ class tools
 	/** @var \titania_contribution */
 	protected $contrib;
 
-	/** @var \titania_attachment */
+	/** @var \phpbb\titania\attachment\operator */
+	protected $attachments;
+
+	/** @var \phpbb\titania\attachment\attachment */
 	protected $attachment;
 
 	/** @var \phpbb\titania\entity\package */
@@ -55,15 +58,17 @@ class tools
 	* @param \phpbb\template\template $template
 	* @param \phpbb\request\request_interface $request
 	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\titania\config\config
+	* @param \phpbb\titania\config\config $ext_config
+	* @param \phpbb\titania\attachment\operator $attachments
 	*/
-	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config)
+	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\attachment\operator $attachments)
 	{
 		$this->user = $user;
 		$this->template = $template;
 		$this->request = $request;
 		$this->helper = $helper;
 		$this->ext_config = $ext_config;
+		$this->attachments = $attachments;
 
 		$this->user->add_lang_ext('phpbb/titania', array('contributions', 'manage'));
 		$this->user->add_lang('viewtopic');
@@ -113,13 +118,8 @@ class tools
 		}
 		$this->package->ensure_extracted();
 
-		$tool = new \titania_contrib_tools;
-		$results = $tool->epv($this->package->get_temp_path());
-
-		if (!empty($tool->error))
-		{
-			return $this->helper->error(implode('<br />', $tool->error));
-		}
+		$results = $this->contrib->type->get_prevalidator()
+			->run_epv($this->package->get_temp_path());
 
 		$results = $this->get_result_post('VALIDATION_PV', $results);
 		$post = $this->queue->topic_reply($results);
@@ -141,10 +141,10 @@ class tools
 			return $this->helper->error('INVALID_TOOl');
 		}
 
-		// Start up the machine
-		$tool = new \titania_contrib_tools;
 		// Run MPV
-		$results = $tool->mpv($this->attachment->get_url());
+		$prevalidator = $this->contrib->type->get_prevalidator();
+		$results = $prevalidator->run_mpv($this->attachment->get_url());
+		$errors = $prevalidator->get_errors();
 
 		if ($results === false)
 		{
@@ -156,9 +156,9 @@ class tools
 			$post = $this->queue->topic_reply($results);
 		}
 
-		if (!empty($tool->error))
+		if (!empty($errors))
 		{
-			return $this->helper->error(implode('<br />', $tool->error));
+			return $this->helper->error(implode('<br />', $errors));
 		}
 
 		redirect($post->get_url());
@@ -178,7 +178,7 @@ class tools
 		$this->package->ensure_extracted();
 
 		// Start up the machine
-		$tool = new \titania_contrib_tools;
+		$prevalidator = $this->contrib->type->get_prevalidator();
 
 		// Automod testing time
 		$details = '';
@@ -188,7 +188,7 @@ class tools
 		foreach ($this->revision->phpbb_versions as $row)
 		{
 			$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' . $row['phpbb_version_revision'];
-			$phpbb_path = $tool->automod_phpbb_files($version_string);
+			$phpbb_path = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string);
 
 			if ($phpbb_path === false)
 			{
@@ -201,7 +201,13 @@ class tools
 			));
 
 			$html_result = $bbcode_result = '';
-			$tool->automod($this->package, $phpbb_path, $details, $html_result, $bbcode_result);
+			$prevalidator->run_automod_test(
+				$this->package,
+				$phpbb_path,
+				$details,
+				$html_result,
+				$bbcode_result
+			);
 
 			$bbcode_results[] = $bbcode_result;
 		}
@@ -282,9 +288,13 @@ class tools
 	*/
 	protected function load_attachment()
 	{
-		$this->attachment = new \titania_attachment(TITANIA_CONTRIB, $this->contrib->contrib_id);
+		$this->attachments
+			->configure(TITANIA_CONTRIB, $this->contrib->contrib_id)
+			->load(array($this->revision->attachment_id))
+		;
+		$this->attachment = $this->attachments->get($this->revision->attachment_id);
 
-		if (!$this->attachment->load($this->revision->attachment_id))
+		if (!$this->attachment)
 		{
 			throw new \Exception($this->user->lang['ERROR_NO_ATTACHMENT']);
 		}

@@ -13,12 +13,24 @@
 
 class titania_attention_contribution extends titania_attention
 {
+	/** @var \phpbb\user */
+	protected $user;
+
 	/**
 	 * Contrib object for the source contrib.
 	 *
 	 * @var object
 	 */
 	public $contrib;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->user = \phpbb::$user;
+	}
 
 	/**
 	* {@inheritDoc}
@@ -52,7 +64,7 @@ class titania_attention_contribution extends titania_attention
 
 	public function get_lang_string($label)
 	{
-		titania::add_lang('contributions');
+		$this->user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$labels = array(
 			'object'	=> 'CONTRIBUTION',
@@ -71,6 +83,12 @@ class titania_attention_contribution extends titania_attention
 			case TITANIA_ATTENTION_CATS_CHANGED :
 				$labels = array_merge($labels, array(
 					'reason' => 'ATTENTION_CONTRIB_CATEGORIES_CHANGED',
+				));
+			break;
+
+			case TITANIA_ATTENTION_NAME_CHANGED :
+				$labels = array_merge($labels, array(
+					'reason' => 'ATTENTION_CONTRIB_NAME_CHANGED',
 				));
 			break;
 
@@ -103,7 +121,7 @@ class titania_attention_contribution extends titania_attention
 			'U_EDIT'				=> $this->contrib->get_url('manage'),
 
 			'SECTION_NAME'			=> '<a href="' . $this->contrib->get_url() . '">' . censor_text($this->contrib->contrib_name) . '</a>  - ' . phpbb::$user->lang['ATTENTION'],
-		));	
+		));
 	}
 
 	/**

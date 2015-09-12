@@ -5,17 +5,25 @@
 <!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
 <!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
 
-<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+<form id="<!-- IF POSTING_FORM_NAME -->{POSTING_FORM_NAME}<!-- ELSE -->postform<!-- ENDIF -->" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
 	<div class="container">
 		<div class="inner">
 			<!-- IF REVISION_UPLOADER -->
 				{REVISION_UPLOADER}
 
-				<!-- IF .custom_fields -->
 				<fieldset class="fields2">
-					<!-- INCLUDE common/custom_fields.html -->
+					<dl>
+						<dt><label for="revision_version">{L_REVISION_VERSION}:</label><br /><span>{L_REVISION_VERSION_EXPLAIN}</span></dt>
+						<dd><input type="text" name="revision_version" id="revision_version" class="inputbox autowidth" value="{REVISION_VERSION}" /></dd>
+					</dl>
+					<dl>
+						<dt><label for="revision_name">{L_REVISION_NAME}:</label><br /><span>{L_REVISION_NAME_EXPLAIN}</span></dt>
+						<dd><input type="text" name="revision_name" id="revision_name" class="inputbox autowidth" value="{REVISION_NAME}" /></dd>
+					</dl>
+					<!-- IF .custom_fields -->
+						<!-- INCLUDE common/custom_fields.html -->
+					<!-- ENDIF -->
 				</fieldset>
-				<!-- ENDIF -->
 
 				<!-- IF .phpbb_branches -->
 				<fieldset class="fields2">
@@ -94,6 +102,12 @@
 					<dd><input type="checkbox" id="subscribe_author" name="subscribe_author"<!-- IF ((ERROR_MSG and SUBSCRIBE_AUTHOR) or not ERROR_MSG)  --> checked="checked"<!-- ENDIF --> /></dd>
 				</dl>
 				<!-- ENDIF -->
+				<!-- IF REQUEST_TEST_ACCOUNT -->
+				<dl>
+					<dt><label for="test-account">{L_TEST_ACCOUNT}:</label><br /><span>{L_TEST_ACCOUNT_EXPLAIN}</span></dt>
+					<dd><textarea class="inputbox" name="revision_test_account" id="test-account" rows="8">{REVISION_TEST_ACCOUNT}</textarea></dd>
+				</dl>
+				<!-- ENDIF -->
 				<dl>
 					<dt><br /><label for="message">{L_QUEUE_NOTES}:</label><br /><span>{L_QUEUE_NOTES_EXPLAIN}</span></dt>
 				</dl>
@@ -102,6 +116,8 @@
 
 				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
 					<!-- INCLUDE posting/posting_basic_editor.html -->
+				<!-- ELSE -->
+					<textarea name="message" id="message" style="display: none;"></textarea>
 				<!-- ENDIF -->
 
 				<!-- IF AGREEMENT_NOTICE -->

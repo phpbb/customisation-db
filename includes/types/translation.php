@@ -142,18 +142,17 @@ class titania_type_translation extends titania_type_base
 		}
 		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
 
-		\titania::_include('library/translations/translation_validation', false, 'translation_validation');
+		$prevalidator = $this->get_prevalidator();
 
-		$validation_tools = new translation_validation;
+		$reference_filepath = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string); // path to files against which we will validate the package
+		$errors = $prevalidator->get_helper()->get_errors();
 
-		$reference_filepath = $validation_tools->automod_phpbb_files($version_string); // path to files against which we will validate the package
-
-		if (!empty($validation_tools->error))
+		if (!empty($errors))
 		{
-			return array('error' => implode('<br /><br />', $validation_tools->error));
+			return array('error' => implode('<br /><br />', $errors));
 		}
 
-		$errors = $validation_tools->check_package($package, $reference_filepath);
+		$errors = $prevalidator->check_package($package, $reference_filepath);
 
 		if (!empty($errors))
 		{
@@ -182,5 +181,13 @@ class titania_type_translation extends titania_type_base
 		}
 
 		return $error;
+	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function get_prevalidator()
+	{
+		return phpbb::$container->get('phpbb.titania.translation.prevalidator');
 	}
 }

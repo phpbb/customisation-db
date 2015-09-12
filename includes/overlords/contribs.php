@@ -11,6 +11,9 @@
 *
 */
 
+use phpbb\titania\message\message;
+use phpbb\titania\versions;
+
 class contribs_overlord
 {
 	/**
@@ -108,12 +111,17 @@ class contribs_overlord
 	 *
 	 * @param string $mode The mode (category, author)
 	 * @param int $id The parent id (only show contributions under this category, author, etc)
+	 * @param int|bool $branch	Branch to limit results to: 20|30|31. Defaults to false.
+	 * @param \phpbb\titania\sort|bool $sort
 	 * @param string $blockname The name of the template block to use (contribs by default)
+	 *
+	 * @return array
 	 */
-	public static function display_contribs($mode, $id, $sort = false, $blockname = 'contribs')
+	public static function display_contribs($mode, $id, $branch = false, $sort = false, $blockname = 'contribs')
 	{
-		titania::add_lang('contributions');
-		titania::_include('functions_display', 'titania_topic_folder_img');
+		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
+
+		$tracking = phpbb::$container->get('phpbb.titania.tracking');
 
 		// Setup the sort tool if not sent, then request
 		if ($sort === false)
@@ -122,7 +130,13 @@ class contribs_overlord
 		}
 		$sort->request();
 
-		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean, c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating, c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id, c.contrib_limited_support, c.contrib_categories';
+		$branch = ($branch) ? (int) $branch : null;
+
+		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean,
+			c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating,
+			c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
+			c.contrib_limited_support, c.contrib_categories, c.contrib_desc, c.contrib_desc_uid';
+
 		switch ($mode)
 		{
 			case 'author' :
@@ -135,10 +149,20 @@ class contribs_overlord
 				}
 
 				$sql_ary = array(
-					'SELECT'	=> $select,
+					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
 					'FROM'		=> array(
 						TITANIA_CONTRIBS_TABLE	=> 'c',
+					),
+
+					'LEFT_JOIN'	=> array(
+						array(
+							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
+							'ON'	=> 'c.contrib_id = a.object_id
+								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.is_orphan = 0
+								AND a.is_preview = 1',
+						),
 					),
 
 					'WHERE'		=> phpbb::$db->sql_in_set('c.contrib_id', $contrib_ids) . '
@@ -150,7 +174,7 @@ class contribs_overlord
 
 			case 'category' :
 				$sql_ary = array(
-					'SELECT'	=> $select,
+					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
 					'FROM'		=> array(
 						TITANIA_CONTRIB_IN_CATEGORIES_TABLE => 'cic',
@@ -161,10 +185,22 @@ class contribs_overlord
 							'FROM'	=> array(TITANIA_CONTRIBS_TABLE => 'c'),
 							'ON'	=> 'cic.contrib_id = c.contrib_id',
 						),
+						array(
+							'FROM'	=> array(TITANIA_REVISIONS_PHPBB_TABLE => 'rp'),
+							'ON'	=> 'cic.contrib_id = rp.contrib_id',
+						),
+						array(
+							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
+							'ON'	=> 'c.contrib_id = a.object_id
+								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.is_orphan = 0
+								AND a.is_preview = 1',
+						)
 					),
 
 					'WHERE'		=> ((is_array($id) && sizeof($id)) ? phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $id)) : 'cic.category_id = ' . (int) $id) . '
-						AND c.contrib_visible = 1',
+						AND c.contrib_visible = 1' .
+						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
@@ -172,20 +208,36 @@ class contribs_overlord
 
 			case 'all' :
 				$sql_ary = array(
-					'SELECT'	=> $select,
+					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
 					'FROM'		=> array(
 						TITANIA_CONTRIBS_TABLE	=> 'c',
 					),
 
-					'WHERE'		=> 'c.contrib_visible = 1',
+					'LEFT_JOIN'	=> array(
+						array(
+							'FROM'	=> array(TITANIA_REVISIONS_PHPBB_TABLE => 'rp'),
+							'ON'	=> 'c.contrib_id = rp.contrib_id',
+						),
+
+						array(
+							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
+							'ON'	=> 'c.contrib_id = a.object_id
+								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.is_orphan = 0
+								AND a.is_preview = 1',
+						),
+					),
+
+					'WHERE'		=> 'c.contrib_visible = 1' .
+						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
 			break;
 		}
 
-		titania_tracking::get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
+		$tracking->get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
 
 		$mod_contrib_mod = (bool) phpbb::$auth->acl_get('u_titania_mod_contrib_mod');
 
@@ -227,6 +279,8 @@ class contribs_overlord
 
 		$controller_helper = phpbb::$container->get('controller.helper');
 		$path_helper = phpbb::$container->get('path_helper');
+		$access = phpbb::$container->get('phpbb.titania.access');
+
 		$url = $path_helper->get_url_parts($controller_helper->get_current_url());
 		$sort->build_pagination($url['base']);
 
@@ -236,7 +290,7 @@ class contribs_overlord
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
 			//Check to see if user has permission
-			if (!$mod_contrib_mod && $row['contrib_user_id'] != phpbb::$user->data['user_id'] && $row['coauthor'] != phpbb::$user->data['user_id'] && titania::$access_level != TITANIA_ACCESS_TEAMS)
+			if (!$mod_contrib_mod && $row['contrib_user_id'] != phpbb::$user->data['user_id'] && $row['coauthor'] != phpbb::$user->data['user_id'] && !$access->is_team())
 			{
 				//If the contribution has a status that is not accessible by the current user let's not add it
 				if (in_array($row['contrib_status'], array(TITANIA_CONTRIB_NEW, TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED)))
@@ -289,7 +343,7 @@ class contribs_overlord
 		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], phpbb::$user, true);
 
 		// Get the mark all tracking
-		titania_tracking::get_track(TITANIA_CONTRIB, 0);
+		$tracking->get_track(TITANIA_CONTRIB, 0);
 
 		foreach ($contrib_ids as $contrib_id)
 		{
@@ -306,23 +360,45 @@ class contribs_overlord
 			// Author contrib variables
 			$contrib->is_author = ($contrib->contrib_user_id == phpbb::$user->data['user_id']) ? true : false;
 			$contrib->is_active_coauthor = (in_array($contrib->contrib_id, $author_contribs)) ? true : false;
+			$rating = new \titania_rating('contrib',$contrib);
+			$rating->cannot_rate = true;
+			$contrib->rating = $rating;
 
 			// Store the tracking info we grabbed from the DB
-			titania_tracking::store_from_db($row);
+			$tracking->store_from_db($row);
 
 			// Get the folder image
 			$folder_img = $folder_alt = '';
-			$last_read_mark = titania_tracking::get_track(TITANIA_CONTRIB, $contrib->contrib_id, true);
-			$last_complete_mark = titania_tracking::get_track(TITANIA_CONTRIB, 0, true);
+			$last_read_mark = $tracking->get_track(TITANIA_CONTRIB, $contrib->contrib_id, true);
+			$last_complete_mark = $tracking->get_track(TITANIA_CONTRIB, 0, true);
 			$is_unread = ($contrib->contrib_last_update > $last_read_mark && $contrib->contrib_last_update > $last_complete_mark) ? true : false;
-			titania_topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
+			phpbb::$container->get('phpbb.titania.display')->topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
 
 			// Only get unique phpBB versions supported
 			if (isset($row['phpbb_versions']))
 			{
-				titania::_include('functions_display', 'order_phpbb_version_list_from_db');
+				$ordered_phpbb_versions = versions::order_phpbb_version_list_from_db(
+					titania::$cache,
+					$row['phpbb_versions'],
+					$contrib->options['all_versions']
+				);
+			}
 
-				$ordered_phpbb_versions = order_phpbb_version_list_from_db($row['phpbb_versions'], $contrib->options['all_versions']);
+			$preview_params = array();
+			$stripped_desc = message::generate_clean_excerpt(
+				$contrib->contrib_desc,
+				$contrib->contrib_desc_uid,
+				255,
+				'&hellip;'
+			);
+
+			if (!empty($row['attachment_id']))
+			{
+				$preview_params['id'] = $row['attachment_id'];
+				if ($row['thumbnail'])
+				{
+					$preview_params['thumb'] = 1;
+				}
 			}
 
 			phpbb::$template->assign_block_vars($blockname, array_merge($contrib->assign_details(true, true), array(
@@ -334,15 +410,28 @@ class contribs_overlord
 				'FOLDER_IMG_WIDTH'			=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 				'FOLDER_IMG_HEIGHT'			=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 				'PHPBB_VERSION'				=> (isset($row['phpbb_versions']) && sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
+				'DESC_SNIPPET'				=> $stripped_desc,
+				'PREVIEW'					=> ($preview_params) ? $controller_helper->route('phpbb.titania.download', $preview_params) : '',
 			)));
 
 			if (isset($row['phpbb_versions']))
 			{
+				$prev_branch = '';
+
 				foreach ($ordered_phpbb_versions as $version_row)
 				{
 					phpbb::$template->assign_block_vars($blockname . '.phpbb_versions', array(
 						'NAME'		=> $version_row,
 					));
+					$branch = versions::get_branch_from_string($version_row);
+
+					if ($prev_branch != $branch)
+					{
+						phpbb::$template->assign_block_vars($blockname . '.branches', array(
+							'NAME'	=> $version_row,
+						));
+					}
+					$prev_branch = $branch;
 				}
 			}
 
@@ -356,12 +445,12 @@ class contribs_overlord
 	/**
 	* Setup the sort tool and return it for contributions display
 	*
-	* @return titania_sort
+	* @return \phpbb\titania\sort
 	*/
 	public static function build_sort()
 	{
 		// Setup the sort and set the sort keys
-		$sort = new titania_sort();
+		$sort = phpbb::$container->get('phpbb.titania.sort');
 		$sort->set_sort_keys(self::$sort_by);
 
 		// Show update time descending and limit to the topics per page by default

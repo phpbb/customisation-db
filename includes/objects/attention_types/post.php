@@ -13,6 +13,9 @@
 
 class titania_attention_post extends titania_attention
 {
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	/**
 	 * Post object for the source post.
 	 *
@@ -116,7 +119,7 @@ class titania_attention_post extends titania_attention
 		{
 			return;
 		}
-		
+
 		$this->close();
 
 		// Check for any open reports.
@@ -266,12 +269,12 @@ class titania_attention_post extends titania_attention
 		{
 			$u_view = $this->post->topic->get_url(false, array('view' => 'unread', '#' => 'unread'));
 			$message_vars = array(
-				'U_VIEW' => $this->path_helper->strip_url_params($u_view),
+				'U_VIEW' => $this->path_helper->strip_url_params($u_view, 'sid'),
 			);
 			$object_type = array(TITANIA_TOPIC, TITANIA_SUPPORT);
 			$object_id = array($this->post->topic_id, $this->post->topic->parent_id);
 
-			$this->send_notifications($object_type, $object_id, 'subscribe_notify_contrib.txt', $message_vars);
+			$this->send_notifications($object_type, $object_id, 'subscribe_notify_contrib', $message_vars);
 		}
 	}
 
@@ -292,7 +295,7 @@ class titania_attention_post extends titania_attention
 		{
 			$message_vars = array('U_VIEW' => $this->post->topic->get_url());
 
-			$this->send_notifications($this->post->post_type, $this->post->topic->parent_id, 'subscribe_notify_forum_contrib.txt', $message_vars);
+			$this->send_notifications($this->post->post_type, $this->post->topic->parent_id, 'subscribe_notify_forum_contrib', $message_vars);
 		}
 	}
 
@@ -308,14 +311,18 @@ class titania_attention_post extends titania_attention
 	{
 		$this->load_contrib_object();
 
-		phpbb::_include('functions_messenger', false, 'messenger');
-
 		$message_vars = array_merge($message_vars, array(
 			'NAME'			=> $this->post->topic->topic_subject,
 			'CONTRIB_NAME'	=> $this->contrib->contrib_name,
 		));
 
-		titania_subscriptions::send_notifications($object_type, $object_id, $email_template, $message_vars, $this->post->post_user_id);
+		$this->subscriptions->send_notifications(
+			$object_type,
+			$object_id,
+			$email_template,
+			$message_vars,
+			$this->post->post_user_id
+		);
 	}
 
 	/**

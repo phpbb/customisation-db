@@ -114,7 +114,7 @@ class attention_overlord
 	* 	only_closed bool only display closed items
 	* 	display_closed bool display closed and open items
 	* 	template_block string the name of the template block to output to (attention if not sent)
-	* @param titania_sort $sort
+	* @param \phpbb\titania\sort $sort
 	*/
 	public static function display_attention_list($options = array(), $sort = false)
 	{
@@ -245,12 +245,12 @@ class attention_overlord
 	/**
 	* Setup the sort tool and return it for posts display
 	*
-	* @return titania_sort
+	* @return \phpbb\titania\sort
 	*/
 	public static function build_sort()
 	{
 		// Setup the sort and set the sort keys
-		$sort = new titania_sort();
+		$sort = phpbb::$container->get('phpbb.titania.sort');;
 		$sort->set_sort_keys(self::$sort_by);
 
 		$sort->default_sort_dir = 'd';

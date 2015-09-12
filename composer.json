@@ -57,7 +57,7 @@
     ],
     "require": {
     	"php": ">=5.3.3",
-    	"phpbb/epv": "dev-master",
+    	"phpbb/epv": "dev-master@dev",
     	"composer/installers": "~1.0"
     },
     "extra": {

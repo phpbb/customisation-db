@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\url\url;
+
 class titania_types
 {	
 	/**
@@ -43,7 +45,7 @@ class titania_types
 
 				$class_name = 'titania_type_' . substr($fname, 0, strpos($fname, '.' . $php_ext));
 
-				titania::add_lang('types/' . substr($fname, 0, strpos($fname, '.' . $php_ext)));
+				phpbb::$user->add_lang_ext('phpbb/titania', 'types/' . substr($fname, 0, strpos($fname, '.' . $php_ext)));
 
 				$class = new $class_name;
 				self::$types[$class->id] = $class;
@@ -317,7 +319,7 @@ class titania_type_base
 	public function fix_package_name($contrib, $revision, $revision_attachment, $root_dir = null)
 	{
 		$new_real_filename =
-			titania_url::url_slug($contrib->contrib_name_clean) .
+			url::generate_slug($contrib->contrib_name_clean) .
 			'_' .
 			preg_replace('#[^0-9a-z]#', '_', strtolower($revision->revision_version))
 		;
@@ -427,5 +429,25 @@ class titania_type_base
 			$names[$branch] = $info['name']; 
 		}
 		return ($name_only) ? $names : $allowed_branches;
+	}
+
+	/**
+	 * Get instance of type demo class.
+	 *
+	 * @return mixed
+	 */
+	public function get_demo()
+	{
+		return null;
+	}
+
+	/**
+	 * Get instance of type prevalidator class.
+	 *
+	 * @return mixed
+	 */
+	public function get_prevalidator()
+	{
+		return null;
 	}
 }

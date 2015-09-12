@@ -1,6 +1,12 @@
 phpbb.titania.index:
     pattern: /
-    defaults: { _controller: phpbb.titania.controller.index:display_index }
+    defaults: { _controller: phpbb.titania.controller.index:display_index, branch: '' }
+
+phpbb.titania.index.branch:
+    pattern: /{branch}
+    defaults: { _controller: phpbb.titania.controller.index:display_index, branch: '' }
+    requirements:
+        branch: \d\.\d|
 
 phpbb.titania.faq:
     pattern: /faq
@@ -13,10 +19,6 @@ phpbb.titania.queue_stats:
 phpbb.titania.support:
     pattern: /support/{type}
     defaults: { _controller: phpbb.titania.controller.support:display_topics, type: all }
-
-phpbb.titania.all_contribs:
-    pattern: /contributions/all
-    defaults: { _controller: phpbb.titania.controller.all_contribs:display_all_contributions }
 
 phpbb.titania.author:
     pattern: /author/{author}/{page}
@@ -59,8 +61,8 @@ phpbb.titania.contribution.id:
         id: \d+
 
 phpbb.titania.category:
-    pattern: /{category1}/{category2}/{category3}
-    defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '' }
+    pattern: /{category1}/{category2}/{category3}/{category4}
+    defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '', category4: '' }
 
 phpbb.titania.legacy:
     pattern: /{path}

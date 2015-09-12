@@ -11,11 +11,15 @@
 *
 */
 
+use phpbb\titania\access;
+use phpbb\titania\count;
+use phpbb\titania\url\url;
+
 /**
 * Class to abstract titania topic
 * @package Titania
 */
-class titania_topic extends titania_database_object
+class titania_topic extends \phpbb\titania\entity\database_base
 {
 	/**
 	 * SQL Table
@@ -47,6 +51,15 @@ class titania_topic extends titania_database_object
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
+	/** @var \phpbb\titania\display */
+	protected $display;
+
+	/** @var \phpbb\titania\access */
+	protected $access;
+
 	/**
 	 * Constructor class for titania topics
 	 *
@@ -59,7 +72,7 @@ class titania_topic extends titania_database_object
 			'topic_id'						=> array('default' => 0),
 			'parent_id'						=> array('default' => 0), // contrib_id most of the time
 			'topic_type'					=> array('default' => 0), // Post Type, Main TITANIA_ constants
-			'topic_access'					=> array('default' => TITANIA_ACCESS_PUBLIC), // Access level, TITANIA_ACCESS_ constants
+			'topic_access'					=> array('default' => access::PUBLIC_LEVEL), // Access level, access class constants
 			'topic_category'				=> array('default' => 0), // Category for the topic. For the Tracker and stores the contrib_type for queue_discussion topics
 			'topic_url'						=> array('default' => ''), // URL for the topic (simple unbuilt URL)
 
@@ -93,7 +106,11 @@ class titania_topic extends titania_database_object
 		));
 
 		$this->topic_id = $topic_id;
+		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->tracking = phpbb::$container->get('phpbb.titania.tracking');
+		$this->display = phpbb::$container->get('phpbb.titania.display');
+		$this->access = phpbb::$container->get('phpbb.titania.access');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -103,7 +120,7 @@ class titania_topic extends titania_database_object
 	{
 		// @todo search indexer on posts (reindex all in case the topic_access level has changed))
 
-		$this->topic_subject_clean = titania_url::url_slug($this->topic_subject);
+		$this->topic_subject_clean = url::generate_slug($this->topic_subject);
 
 		parent::submit();
 
@@ -176,7 +193,7 @@ class titania_topic extends titania_database_object
 		phpbb::$db->sql_query($sql);
 
 		// Remove any tracking for this topic
-		titania_tracking::clear_item(TITANIA_TOPIC, $this->topic_id);
+		$this->tracking->clear_item(TITANIA_TOPIC, $this->topic_id);
 
 		// Delete the now empty topic
 		$sql = 'DELETE FROM ' . TITANIA_TOPICS_TABLE . '
@@ -195,19 +212,19 @@ class titania_topic extends titania_database_object
 	{
 		if ($access_level === false)
 		{
-			$access_level = titania::$access_level;
+			$access_level = $this->access->get_level();
 		}
 
 		$is_mod = phpbb::$auth->acl_get('u_titania_mod_post_mod');
-		$flags = titania_count::get_flags($access_level, $is_mod, $is_mod);
-		return titania_count::from_db($this->topic_posts, $flags);
+		$flags = count::get_flags($access_level, $is_mod, $is_mod);
+		return count::from_db($this->topic_posts, $flags);
 	}
 
 	/**
 	 * Get the URL to this topic
 	 *
 	 * @param string|bool $action	The topic action if any
-	 * @param array $params			Additional parameters to add to the URL.	
+	 * @param array $params			Additional parameters to add to the URL.
 	 */
 	public function get_url($action = false, $params = array())
 	{
@@ -264,9 +281,7 @@ class titania_topic extends titania_database_object
 	*/
 	public function topic_folder_img(&$folder_img, &$folder_alt)
 	{
-		titania::_include('functions_display', 'titania_topic_folder_img');
-
-		titania_topic_folder_img($folder_img, $folder_alt, $this->get_postcount(), $this->unread, $this->topic_posted, $this->topic_sticky, $this->topic_locked);
+		$this->display->topic_folder_img($folder_img, $folder_alt, $this->get_postcount(), $this->unread, $this->topic_posted, $this->topic_sticky, $this->topic_locked);
 	}
 
 	/**
@@ -291,7 +306,7 @@ class titania_topic extends titania_database_object
 
 			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_TOPICS_POSTED_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
 
-			phpbb::$db->sql_return_on_error(false);			
+			phpbb::$db->sql_return_on_error(false);
 		}
 		else if ($mode == 'remove')
 		{
@@ -318,16 +333,16 @@ class titania_topic extends titania_database_object
 	public function assign_details()
 	{
 		// Tracking check
-		$last_read_mark = titania_tracking::get_track(TITANIA_TOPIC, $this->topic_id, true);
-		$last_read_mark = max($last_read_mark, titania_tracking::find_last_read_mark($this->additional_unread_fields, $this->topic_type, $this->parent_id));
+		$last_read_mark = $this->tracking->get_track(TITANIA_TOPIC, $this->topic_id, true);
+		$last_read_mark = max($last_read_mark, $this->tracking->find_last_read_mark($this->additional_unread_fields, $this->topic_type, $this->parent_id));
 		$this->unread = ($this->topic_last_post_time > $last_read_mark) ? true : false;
 
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);
 
 		// To find out if we have any posts that need approval
-		$approved = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
-		$total = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, true));
+		$approved = count::from_db($this->topic_posts, count::get_flags(access::PUBLIC_LEVEL, false, false));
+		$total = count::from_db($this->topic_posts, count::get_flags(access::PUBLIC_LEVEL, false, true));
 		$u_new_post = '';
 
 		if ($this->unread)
@@ -376,8 +391,8 @@ class titania_topic extends titania_database_object
 			),
 
 			'S_UNREAD_TOPIC'				=> ($this->unread) ? true : false,
-			'S_ACCESS_TEAMS'				=> ($this->topic_access == TITANIA_ACCESS_TEAMS) ? true : false,
-			'S_ACCESS_AUTHORS'				=> ($this->topic_access == TITANIA_ACCESS_AUTHORS) ? true : false,
+			'S_ACCESS_TEAMS'				=> ($this->topic_access == access::TEAM_LEVEL) ? true : false,
+			'S_ACCESS_AUTHORS'				=> ($this->topic_access == access::AUTHOR_LEVEL) ? true : false,
 
 			'FOLDER_STYLE'					=> $folder_img,
 			'FOLDER_IMG'					=> phpbb::$user->img($folder_img, $folder_alt),
@@ -399,7 +414,7 @@ class titania_topic extends titania_database_object
 	public function sync_hidden_post_inclusion()
 	{
 		$include = array('unapproved' => false, 'deleted' => false);
-		$counts = titania_count::from_db($this->topic_posts, false);
+		$counts = count::from_db($this->topic_posts, false);
 		$visible_posts = $counts['teams'] + $counts['authors'] + $counts['public'];
 
 		if (!$visible_posts)
@@ -497,7 +512,7 @@ class titania_topic extends titania_database_object
 			return;
 		}
 
-		$counts = titania_count::from_db($this->topic_posts, false);
+		$counts = count::from_db($this->topic_posts, false);
 		$visible_posts = $counts['teams'] + $counts['authors'] + $counts['public'];
 		$total_posts = array_sum($counts);
 
@@ -518,7 +533,7 @@ class titania_topic extends titania_database_object
 
 			if (!$first_post_data)
 			{
-				$this->topic_access = TITANIA_ACCESS_TEAMS;
+				$this->topic_access = access::TEAM_LEVEL;
 				$this->topic_approved = 1;
 
 				return;
@@ -531,22 +546,22 @@ class titania_topic extends titania_database_object
 		// Adjust the topic access
 		if ($visible_posts && !in_array($this->topic_type, array(TITANIA_QUEUE_DISCUSSION, TITANIA_QUEUE)))
 		{
-			$this->topic_access = TITANIA_ACCESS_PUBLIC;
+			$this->topic_access = access::PUBLIC_LEVEL;
 
 			if (!$counts['public'])
 			{
-				$this->topic_access = TITANIA_ACCESS_AUTHORS;
+				$this->topic_access = access::AUTHOR_LEVEL;
 
 				if (!$counts['authors'])
 				{
-					$this->topic_access = TITANIA_ACCESS_TEAMS;
+					$this->topic_access = access::TEAM_LEVEL;
 				}
 			}
 		}
 		else
 		{
 			// If no posts are visible and first post is deleted, then only the teams have access.
-			$this->topic_access = (!$visible_posts && $first_post_data['post_deleted']) ? TITANIA_ACCESS_TEAMS : $this->topic_access;		
+			$this->topic_access = (!$visible_posts && $first_post_data['post_deleted']) ? access::TEAM_LEVEL : $this->topic_access;
 		}
 	}
 
@@ -576,7 +591,7 @@ class titania_topic extends titania_database_object
 		}
 
 		$sql = 'SELECT *
-			FROM ' . TITANIA_POSTS_TABLE . ' 
+			FROM ' . TITANIA_POSTS_TABLE . '
 			WHERE ' . $sql_where;
 		$result = phpbb::$db->sql_query($sql);
 		$posts = phpbb::$db->sql_fetchrowset($result);

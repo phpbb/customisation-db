@@ -13,6 +13,9 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use phpbb\titania\attachment\attachment;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 class revision extends base
 {
 	/** @var int */
@@ -21,7 +24,16 @@ class revision extends base
 	/** @var \titania_revision */
 	protected $revision;
 
-	/** @var \titania_attachment */
+	/** @var \phpbb\titania\attachment\uploader */
+	protected $uploader;
+
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
+	/** @var \phpbb\titania\message\message */
+	protected $message;
+
+	/** @var \phpbb\titania\attachment\attachment */
 	protected $attachment;
 
 	/** @var \phpbb\titania\entity\package */
@@ -35,6 +47,33 @@ class revision extends base
 
 	/** @var array */
 	protected $repackable_branches;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\access $access
+	 * @param \phpbb\titania\attachment\uploader $uploader
+	 * @param \phpbb\titania\subscriptions $subscriptions
+	 * @param \phpbb\titania\message\message $message
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\attachment\uploader $uploader, \phpbb\titania\subscriptions $subscriptions, \phpbb\titania\message\message $message)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
+
+		$this->uploader = $uploader;
+		$this->subscriptions = $subscriptions;
+		$this->message = $message;
+	}
 
 	/**
 	* Repack revision submission action.
@@ -105,6 +144,10 @@ class revision extends base
 
 				redirect($this->contrib->get_url());
 			}
+			else if (isset($result['response']))
+			{
+				return $result['response'];
+			}
 			$error = $result['error'];
 		}
 		else if ($this->request->is_set_post('cancel'))
@@ -118,6 +161,7 @@ class revision extends base
 			'vendor_versions'	=> $old_revision->get_selected_branches(),
 			'custom'			=> $old_revision->get_custom_fields(),
 			'allow_repack'		=> $old_queue->queue_allow_repack,
+			'test_account'		=> '',
 		);
 
 		if ($this->is_custom_license($old_revision->revision_license))
@@ -144,7 +188,7 @@ class revision extends base
 		return $this->helper->render(
 			'contributions/contribution_revision.html',
 			$this->contrib->contrib_name . ' - ' . $this->user->lang['NEW_REVISION']
-		); 
+		);
 	}
 
 	/**
@@ -199,15 +243,19 @@ class revision extends base
 						'U_VIEW'	=> $this->queue->get_url(),
 					);
 
-					\titania_subscriptions::send_notifications(
+					$this->subscriptions->send_notifications(
 						TITANIA_QUEUE,
 						$this->contrib->contrib_type,
-						'subscribe_notify_forum.txt',
+						'subscribe_notify_forum',
 						$email_vars,
 						$this->user->data['user_id']
 					);
 				}
 				redirect($this->contrib->get_url());
+			}
+			else if (isset($result['response']))
+			{
+				return $result['response'];
 			}
 			$error = $result['error'];
 		}
@@ -228,7 +276,7 @@ class revision extends base
 		return $this->helper->render(
 			'contributions/contribution_revision.html',
 			$this->contrib->contrib_name . ' - ' . $this->user->lang['NEW_REVISION']
-		); 
+		);
 	}
 
 	/**
@@ -245,9 +293,42 @@ class revision extends base
 			redirect($this->contrib->get_url());
 		}
 
-		// Set up attachment object to get some default values
-		$this->attachment->is_orphan = false;
-		$this->attachment->upload();
+		// Handle upload
+		$this->uploader->handle_form_action();
+
+		if ($this->uploader->uploaded)
+		{
+			$uploaded = $this->uploader->get_operator()->get_all_ids();
+
+			// If multiple files are uploaded, then one is being replaced.
+			if (sizeof($uploaded) > 1)
+			{
+				$this->uploader->get_operator()->delete(
+					array_diff(
+						$uploaded,
+						array($this->uploader->uploaded)
+					)
+				);
+			}
+			$this->attachment = $this->uploader->get_uploaded_attachment();
+		}
+
+		if ($this->uploader->plupload_active())
+		{
+			return array(
+				'response'	=> new JsonResponse($this->uploader->get_plupload_response_data()),
+			);
+		}
+		else if ($this->request->is_set('attachment_data'))
+		{
+			$data = $this->uploader->get_filtered_request_data();
+
+			if (!empty($data))
+			{
+				$attachment = array_shift($data);
+				$this->load_attachment($attachment['attach_id']);
+			}
+		}
 
 		$settings = array(
 			'version'			=> $this->request->variable('revision_version', '', true),
@@ -256,6 +337,7 @@ class revision extends base
 			'license'			=> $this->request->variable('revision_license', '', true),
 			'custom'			=> $this->request->variable('custom_fields', array('' => ''), true),
 			'vendor_versions'	=> $this->get_selected_branches(),
+			'test_account'		=> $this->request->variable('revision_test_account', '', true),
 		);
 
 		if ($this->has_custom_license($settings['license']))
@@ -265,7 +347,7 @@ class revision extends base
 
 		// Check for errors
 		$error = array_merge(
-			$this->attachment->error,
+			$this->uploader->get_errors(),
 			$this->validate_settings($settings)
 		);
 
@@ -276,15 +358,18 @@ class revision extends base
 			// Add queue values to the queue table
 			if ($this->use_queue)
 			{
-				$this->create_queue_item($settings['allow_repack']);
+				$this->create_queue_item($settings['allow_repack'], $settings['test_account']);
 
 				// Subscribe author to queue discussion topic
 				if ($this->request->variable('subscribe_author', false))
 				{
-					\titania_subscriptions::subscribe(TITANIA_TOPIC, $this->queue->queue_discussion_topic_id);
+					$this->subscriptions->subscribe(
+						TITANIA_TOPIC,
+						$this->queue->queue_discussion_topic_id
+					);
 				}
 			}
-			if ($this->attachment->attachment_id)
+			if ($this->attachment)
 			{
 				$this->set_package_paths();
 			}
@@ -319,6 +404,7 @@ class revision extends base
 			$this->revision->update_composer_package();
 		}
 		$this->revision->submit();
+		$this->uploader->get_operator()->submit();
 
 		// After revision is set to submitted we must update the queue
 		$this->revision->update_queue($this->get_repack_exclusions());
@@ -377,7 +463,7 @@ class revision extends base
 		}
 
 		return $exclude_from_repack;
-		
+
 	}
 
 	/**
@@ -413,7 +499,7 @@ class revision extends base
 	protected function create_revision($settings)
 	{
 		$this->revision->__set_array(array(
-			'attachment_id'			=> $this->attachment->attachment_id,
+			'attachment_id'			=> ($this->attachment) ? $this->attachment->get_id() : 0,
 			'revision_name'			=> $settings['name'],
 			'revision_version'		=> $settings['version'],
 			'revision_status'		=> TITANIA_REVISION_NEW,
@@ -431,9 +517,10 @@ class revision extends base
 	* Create queue item
 	*
 	* @param bool $allow_repack		Whether author has allowed repacking.
+	* @param string $test_account	Test account details.
 	* @return null
 	*/
-	protected function create_queue_item($allow_repack)
+	protected function create_queue_item($allow_repack, $test_account)
 	{
 		// Create the queue
 		$this->revision->update_queue();
@@ -443,6 +530,14 @@ class revision extends base
 		$this->get_message();
 
 		$this->queue->queue_allow_repack = $allow_repack;
+
+		if ($test_account)
+		{
+			$this->queue->queue_notes .=
+				"\n\n[b]" . $this->user->lang('TEST_ACCOUNT') . "[/b]\n" .
+				$test_account
+			;
+		}
 		$this->queue->submit();
 	}
 
@@ -456,7 +551,7 @@ class revision extends base
 	{
 		$error = array();
 
-		if ($this->require_upload && !$this->attachment->uploaded)
+		if ($this->require_upload && !$this->uploader->uploaded && !$this->attachment)
 		{
 			$error[] = $this->user->lang['NO_REVISION_ATTACHMENT'];
 		}
@@ -498,7 +593,7 @@ class revision extends base
 		}
 
 		// Send the file to the type class so it can do custom error checks
-		if ($this->attachment->uploaded)
+		if ($this->uploader->uploaded)
 		{
 			$error = array_merge($error, $this->contrib->type->upload_check($this->attachment));
 		}
@@ -532,23 +627,25 @@ class revision extends base
 	/**
 	* Get queue message object.
 	*
-	* @return \titania_message
+	* @return \phpbb\titania\message\message
 	*/
 	protected function get_message()
 	{
-		$message = new \titania_message($this->queue);
-		$message->set_auth(array(
-			'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
-		));
-		$message->set_settings(array(
-			'display_error'		=> false,
-			'display_subject'	=> false,
-		));
+		$this->message
+			->set_parent($this->queue)
+			->set_auth(array(
+				'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
+			))
+			->set_settings(array(
+				'display_error'		=> false,
+				'display_subject'	=> false,
+			))
+		;
 
-		$this->queue->post_data($message);
+		$this->queue->post_data($this->message);
 
-		return $message;
+		return $this->message;
 	}
 
 	/**
@@ -570,7 +667,7 @@ class revision extends base
 		if (!check_form_key('postform'))
 		{
 			return $this->get_result(
-				array('error' => array($this->user->lang['INVALID_FORM'])),
+				array('error' => array($this->user->lang['FORM_INVALID'])),
 				$steps,
 				-1
 			);
@@ -595,7 +692,7 @@ class revision extends base
 
 		$step = $steps[$step_num];
 
-		if ($this->attachment->attachment_id)
+		if ($this->attachment)
 		{
 			if (!$this->package->get_source())
 			{
@@ -636,11 +733,13 @@ class revision extends base
 	*/
 	protected function run_step($function)
 	{
+		$download_url = ($this->attachment) ? $this->attachment->get_url() : '';
+
 		return call_user_func_array($function, array(
 			&$this->contrib,
 			&$this->revision,
 			&$this->attachment,
-			$this->attachment->get_url(),
+			$download_url,
 			&$this->package
 		));
 	}
@@ -744,8 +843,8 @@ class revision extends base
 
 		// Update the attachment MD5 and filesize, it may have changed
 		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
-				SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
-				WHERE attachment_id = ' . (int) $this->attachment->attachment_id;
+			SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
+			WHERE attachment_id = ' . (int) $this->attachment->get_id();
 		$this->db->sql_query($sql);
 	}
 
@@ -772,15 +871,17 @@ class revision extends base
 		$this->load_contrib($contrib_type, $contrib);
 
 		$this->revision = new \titania_revision($this->contrib);
-		$this->attachment = new \titania_attachment(TITANIA_CONTRIB, $this->contrib->contrib_id);
+		$this->uploader->configure(
+			TITANIA_CONTRIB,
+			$this->contrib->contrib_id,
+			true
+		);
 		$this->package = new \phpbb\titania\entity\package;
 		$this->revisions_in_queue = $this->repackable_branches = array();
 
 		$this->is_moderator = $this->contrib->type->acl_get('moderate');
 		$this->use_queue = $this->ext_config->use_queue && $this->contrib->type->use_queue;
 		$this->require_upload = $this->contrib->type->require_upload;
-
-		\titania::_include('functions_posting', 'generate_phpbb_version_select');
 	}
 
 	/**
@@ -807,10 +908,34 @@ class revision extends base
 		$this->id = (int) $id;
 
 		if (!$this->id || !$this->revision->load($this->id) || $this->revision->contrib_id != $this->contrib->contrib_id ||
-			($this->revision->attachment_id && !$this->attachment->load($this->revision->attachment_id)))
+			($this->revision->attachment_id && !$this->load_attachment($this->revision->attachment_id)))
 		{
 			throw new \Exception($this->user->lang['NO_REVISION']);
 		}
+	}
+
+	/**
+	 * Load attachment
+	 *
+	 * @param int $id	Attachment id
+	 * @return bool	Returns true if the attachment loaded successfully
+	 */
+	protected function load_attachment($id)
+	{
+		$operator = $this->uploader->get_operator();
+		$attachment = $operator->load(array((int) $id), true, $this->user->data['user_id'])->get($id);
+		$valid = false;
+
+		if ($attachment &&
+			$attachment->object_type == TITANIA_CONTRIB &&
+			$attachment->object_id == $this->contrib->contrib_id &&
+			$attachment->get('is_orphan')
+		)
+		{
+			$this->attachment = $attachment;
+			$valid = true;
+		}
+		return $valid;
 	}
 
 	/**
@@ -830,7 +955,10 @@ class revision extends base
 			if (!empty($this->queue->queue_discussion_topic_id))
 			{
 				// Is the author subscribed already?
-				return \titania_subscriptions::is_subscribed(TITANIA_TOPIC, $this->queue->queue_discussion_topic_id);
+				return $this->subscriptions->is_subscribed(
+					TITANIA_TOPIC,
+					$this->queue->queue_discussion_topic_id
+				);
 			}
 		}
 		return false;
@@ -884,7 +1012,7 @@ class revision extends base
 			return;
 		}
 
-		$_settings = array_fill_keys(array('name', 'version', 'custom_license', 'license', 'allow_repack'), '');
+		$_settings = array_fill_keys(array('name', 'version', 'custom_license', 'license', 'allow_repack', 'test_account'), '');
 		$_settings['custom'] = $this->request->variable('custom_fields', array('' => ''));
 		$_settings['vendor_versions'] = array();
 		$settings = array_merge($_settings, $settings);
@@ -900,16 +1028,25 @@ class revision extends base
 			'REVISION_VERSION'			=> $this->request->variable('revision_version', $settings['version'], true),
 			'REVISION_LICENSE'			=> $this->request->variable('revision_license', $settings['license'], true),
 			'REVISION_CUSTOM_LICENSE'	=> $this->request->variable('revision_custom_license', $settings['custom_license'], true),
+			'REVISION_TEST_ACCOUNT'		=> $this->request->variable('revision_test_account', $settings['test_account'], true),
+			'REQUEST_TEST_ACCOUNT'		=> $this->use_queue && $this->contrib->type->id === TITANIA_TYPE_EXTENSION,
 
 			'S_CUSTOM_LICENSE'			=> $this->has_custom_license($this->request->variable('revision_license', $settings['license'], true)),
 			'S_ALLOW_CUSTOM_LICENSE'	=> $this->contrib->type->license_allow_custom,
 			'S_REQUIRE_UPLOAD'			=> $this->require_upload,
+			'S_REVISION_FORM'			=> true,
 		));
 
 		// Assign separately so we can output some data first
-		$this->template->assign_var('REVISION_UPLOADER', $this->attachment->parse_uploader('posting/attachments/revisions.html'));
+		$this->template->assign_var(
+			'REVISION_UPLOADER',
+			$this->uploader->parse_uploader('posting/attachments/revisions.html')
+		);
 
-		generate_phpbb_version_select($settings['vendor_versions'], $this->contrib->type->get_allowed_branches());
+		$this->display->generate_phpbb_version_select(
+			$settings['vendor_versions'],
+			$this->contrib->type->get_allowed_branches()
+		);
 
 		$this->template->assign_vars(array(
 			'ERROR_MSG'				=> (!empty($error)) ? (is_array($error) ? implode('<br />', $error) : $error) : '',

@@ -87,6 +87,7 @@ $lang = array_merge($lang, array(
 
 	'QUEUE_APPROVE'				=> 'Awaiting Approval',
 	'QUEUE_ATTENTION'			=> 'Attention',
+	'QUEUE_CLOSED'				=> 'Closed',
 	'QUEUE_DENY'				=> 'Awaiting Denial',
 	'QUEUE_DISCUSSION_TOPIC'	=> 'Queue Discussion Topic',
 	'QUEUE_NEW'					=> 'New',
@@ -116,7 +117,6 @@ $lang = array_merge($lang, array(
 
 	'TEAM_ONLY'					=> 'May only be selected by team members.',
 
-	'UNAPPROVED'				=> 'Unapproved',
 	'UNKNOWN'					=> 'Unknown',
 
 	'VALIDATION'				=> 'Validation',

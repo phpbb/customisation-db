@@ -147,7 +147,15 @@ class titania_type_bbcode extends titania_type_base
 	*/
 	public function approve($contrib, $queue)
 	{
-		$demo = new \titania_bbcode_demo($contrib->contrib_id);
+		$demo = $this->get_demo()->configure($contrib->contrib_id);
 		$demo->clear_cache();
+	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function get_demo()
+	{
+		return phpbb::$container->get('phpbb.titania.bbcode.demo');
 	}
 }

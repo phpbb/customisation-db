@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\titania\access;
+
 class author
 {
 	/** @var \phpbb\auth\auth */
@@ -42,6 +44,18 @@ class author
 	/** @var \phpbb\titania\cache\service */
 	protected $cache;
 
+	/** @var \phpbb\titania\access */
+	protected $access;
+
+	/** @var \phpbb\titania\tracking */
+	protected $tracking;
+
+	/** @var \phpbb\titania\message\message */
+	protected $message;
+
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
 	/** @var \titania_author */
 	protected $author;
 
@@ -49,19 +63,23 @@ class author
 	protected $is_owner;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\auth\auth $auth
-	* @param \phpbb\config\config $config
-	* @param \phpbb\template\template $template
-	* @param \phpbb\user $user
-	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\request\request_interface $request
-	* @param \phpbb\titania\config\config $ext_config
-	* @param \phpbb\titania\display $display
-	* @param \phpbb\titania\cache\service $cache
-	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache)
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param access $access
+	 * @param \phpbb\titania\tracking $tracking
+	 * @param \phpbb\titania\message\message $message
+	 * @param \phpbb\titania\subscriptions $subscriptions
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\message\message $message, \phpbb\titania\subscriptions $subscriptions)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -72,6 +90,10 @@ class author
 		$this->ext_config = $ext_config;
 		$this->display = $display;
 		$this->cache = $cache;
+		$this->access = $access;
+		$this->tracking = $tracking;
+		$this->message = $message;
+		$this->subscriptions = $subscriptions;
 
 		// Add common lang
 		$this->user->add_lang_ext('phpbb/titania', 'authors');
@@ -96,9 +118,9 @@ class author
 		$this->is_owner = $this->user->data['user_id'] == $this->author->user_id;
 
 		// Check to see if the currently accessing user is the author
-		if (\titania::$access_level == TITANIA_ACCESS_PUBLIC && $this->is_owner)
+		if ($this->access->is_public() && $this->is_owner)
 		{
-			\titania::$access_level = TITANIA_ACCESS_AUTHORS;
+			$this->access->set_level(access::AUTHOR_LEVEL);
 		}
 	}
 
@@ -130,6 +152,7 @@ class author
 			return $this->helper->error('NO_PAGE', 404);
 		}
 
+		$author = urldecode($author);
 		$this->load_author($author);
 		$this->display->assign_global_vars();
 		$this->generate_navigation($page);
@@ -205,7 +228,7 @@ class author
 		{
 			foreach ($this->cache->get_author_contribs($this->author->user_id, $this->user) as $contrib_id)
 			{
-				\titania_tracking::track(TITANIA_SUPPORT, $contrib_id);
+				$this->tracking->track(TITANIA_SUPPORT, $contrib_id);
 			}
 		}
 
@@ -238,26 +261,28 @@ class author
 	* @return \Symfony\Component\HttpFoundation\Response
 	*/
 	protected function manage()
-	{ 
+	{
 		if (!$this->is_owner && !$this->auth->acl_get('u_titania_mod_author_mod'))
 		{
 			return $this->helper->needs_auth();
 		}
 
 		$error = array();
-		$message = new \titania_message($this->author);
-		$message->set_auth(array(
-			'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
-		));
-		$message->set_settings(array(
-			'display_error'		=> false,
-			'display_subject'	=> false,
-		));
+		$this->message
+			->set_parent($this->author)
+			->set_auth(array(
+				'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
+			))
+			->set_settings(array(
+				'display_error'		=> false,
+				'display_subject'	=> false,
+			))
+		;
 
 		if ($this->request->is_set_post('submit'))
 		{
-			$this->author->post_data($message);
+			$this->author->post_data($this->message);
 
 			$this->author->__set_array(array(
 				'author_realname'	=> $this->request->variable('realname', '', true),
@@ -266,7 +291,7 @@ class author
 
 			$error = $this->author->validate();
 
-			if (($validate_form_key = $message->validate_form_key()) !== false)
+			if (($validate_form_key = $this->message->validate_form_key()) !== false)
 			{
 				$error[] = $validate_form_key;
 			}
@@ -279,7 +304,7 @@ class author
 			}
 		}
 
-		$message->display();
+		$this->message->display();
 
 		$this->template->assign_vars(array(
 			'S_POST_ACTION'				=> $this->author->get_url('manage'),
@@ -305,7 +330,7 @@ class author
 		));
 		$sort->set_defaults(false, 'sc', 'a');
 
-		\contribs_overlord::display_contribs('author', $this->author->user_id, $sort);
+		\contribs_overlord::display_contribs('author', $this->author->user_id, false, $sort);
 
 		$this->template->assign_vars(array(
 			'S_AUTHOR_LIST'		=> true,
@@ -388,20 +413,27 @@ class author
 				$contrib->contrib_creation_time = time();
 				$contrib->submit();
 
-				$contrib->set_coauthors($authors['coauthors']['active'], $authors['coauthors']['nonactive'], true);
+				$contrib->set_coauthors($authors['active_coauthors'], $authors['nonactive_coauthors'], true);
 
 				// Create relations
 				$contrib->put_contrib_in_categories($settings['categories']);
 
+				if ($this->ext_config->support_in_titania)
+				{
+					$active_authors = array_merge($authors['author'], $authors['active_coauthors']);
+
+					foreach ($active_authors as $author)
+					{
+						$this->subscriptions->subscribe(TITANIA_SUPPORT, $contrib->contrib_id, $author);
+					}
+				}
 				redirect($contrib->get_url('revision'));
 			}
 		}
 
-		\titania::_include('functions_posting', 'generate_type_select');
-
 		// Generate some stuff
-		generate_type_select($contrib->contrib_type);
-		generate_category_select($settings['categories']);
+		$this->display->generate_type_select($contrib->contrib_type);
+		$this->display->generate_category_select($settings['categories']);
 		$contrib->assign_details();
 		$message->display();
 
@@ -428,21 +460,23 @@ class author
 	* Set up message object for contribution description.
 	*
 	* @param \titania_contribution
-	* @return \titania_message
+	* @return \phpbb\titania\message\message
 	*/
 	protected function setup_message($contrib)
 	{
-		$message = new \titania_message($contrib);
-		$message->set_auth(array(
-			'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
-		));
-		$message->set_settings(array(
-			'display_error'		=> false,
-			'display_subject'	=> false,
-			'subject_name'		=> 'name',
-		));
+		$this->message
+			->set_parent($contrib)
+			->set_auth(array(
+				'bbcode'	=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'	=> $this->auth->acl_get('u_titania_smilies'),
+			))
+			->set_settings(array(
+				'display_error'		=> false,
+				'display_subject'	=> false,
+				'subject_name'		=> 'name',
+			))
+		;
 
-		return $message;
+		return $this->message;
 	}
 }

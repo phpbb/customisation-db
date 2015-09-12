@@ -13,6 +13,7 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use phpbb\titania\access;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use phpbb\exception\http_exception;
@@ -22,14 +23,17 @@ class manage extends base
 	/** @var array */
 	protected $settings;
 
-	/** @var \titania_message */
+	/** @var \phpbb\titania\message\message */
 	protected $message;
 
-	/** @var \titania_attachment */
-	protected $screenshot;
+	/** @var \phpbb\titania\attachment\uploader */
+	protected $screenshots;
 
-	/** @var \titania_attachment */
+	/** @var \phpbb\titania\attachment\uploader */
 	protected $colorizeit_sample;
+
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
 
 	/** @var bool */
 	protected $is_moderator;
@@ -42,6 +46,35 @@ class manage extends base
 
 	/** @var array */
 	protected $status_list;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request $request
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param access $access
+	 * @param \phpbb\titania\message\message $message
+	 * @param \phpbb\titania\attachment\uploader $screenshots
+	 * @param \phpbb\titania\attachment\uploader $colorizeit_sample
+	 * @param \phpbb\titania\subscriptions $subscriptions
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\message\message $message, \phpbb\titania\attachment\uploader $screenshots, \phpbb\titania\attachment\uploader $colorizeit_sample, \phpbb\titania\subscriptions $subscriptions)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
+
+		$this->message = $message;
+		$this->screenshots = $screenshots;
+		$this->colorizeit_sample = $colorizeit_sample;
+		$this->subscriptions = $subscriptions;
+	}
 
 	/**
 	* Manage contribution.
@@ -58,6 +91,13 @@ class manage extends base
 		if (!$this->check_auth())
 		{
 			return $this->helper->needs_auth();
+		}
+
+		$this->load_screenshot();
+
+		if ($this->screenshots->plupload_active())
+		{
+			return new JsonResponse($this->screenshots->get_plupload_response_data());
 		}
 
 		if (confirm_box(true) && $this->check_auth('change_author'))
@@ -88,13 +128,12 @@ class manage extends base
 		}
 
 		$this->load_message();
-		$this->load_screenshot();
 
 		$submit	= $this->request->is_set_post('submit');
 		$preview = $this->request->is_set_post('preview');
-		$error = $this->screenshot->error;
+		$error = $this->screenshots->get_errors();
 
-		if ($preview || $submit || $this->screenshot->uploaded)
+		if ($preview || $submit || $this->screenshots->uploaded)
 		{
 			$this->settings = array_merge($this->settings, array(
 				'categories'		=> $this->request->variable('contrib_category', array(0 => 0)),
@@ -113,7 +152,7 @@ class manage extends base
 			$this->contrib->post_data($this->message);
 			$this->contrib->__set_array(array(
 				'contrib_demo'				=> ($this->can_edit_demo) ? json_encode($this->settings['demo']) : $this->contrib->contrib_demo,
-				'contrib_limited_support'	=> $this->settings['limited_support'], 
+				'contrib_limited_support'	=> $this->settings['limited_support'],
 			));
 		}
 
@@ -121,7 +160,7 @@ class manage extends base
 		if ($this->use_colorizeit)
 		{
 			$this->load_colorizeit();
-			$error = array_merge($error, $this->colorizeit_sample->error);
+			$error = array_merge($error, $this->colorizeit_sample->get_errors());
 
 			if ($this->colorizeit_sample->uploaded)
 			{
@@ -222,6 +261,11 @@ class manage extends base
 			$this->contrib->index();
 			$this->cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
 
+			if ($this->ext_config->support_in_titania)
+			{
+				$this->subscriptions->subscribe(TITANIA_SUPPORT, $this->contrib->contrib_id, $new_author);
+			}
+
 			redirect($this->contrib->get_url());
 		}
 	}
@@ -243,18 +287,19 @@ class manage extends base
 			if ($action == 'delete_attach')
 			{
 				// The delete() method will check if the attachment is part of the screenshot/clr_sample array
-				$this->screenshot->delete($attach_id);
-				if (isset($this->colorizeit_sample))
+				$this->screenshots->get_operator()->delete(array($attach_id));
+				if ($this->use_colorizeit)
 				{
-					$this->colorizeit_sample->delete($attach_id);
+					$this->colorizeit_sample->get_operator()->delete(array($attach_id));
 				}
 			}
 			else if ($action == 'attach_up' || $action == 'attach_down')
 			{
 				$move_attach = ($action == 'attach_up') ? 'up' : 'down';
-				$original_order = $this->screenshot->generate_order();
-				$this->screenshot->generate_order(false, $attach_id, $move_attach);
-				$this->screenshot->submit(TITANIA_ACCESS_PUBLIC, $original_order);
+				$this->screenshots->get_operator()
+					->change_order($attach_id, $move_attach)
+					->submit()
+				;
 			}
 		}
 	}
@@ -308,11 +353,11 @@ class manage extends base
 
 				default:
 					$action_auth = false;
-			}	
+			}
 		}
 		$is_author_editable = !in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED));
 
-		return $action_auth && ($this->is_moderator || 
+		return $action_auth && ($this->is_moderator ||
 			($this->is_author && $is_author_editable && $this->auth->acl_get('u_titania_post_edit_own')));
 	}
 
@@ -323,9 +368,11 @@ class manage extends base
 	*/
 	protected function load_screenshot()
 	{
-		$this->screenshot = new \titania_attachment(TITANIA_SCREENSHOT, $this->contrib->contrib_id);
-		$this->screenshot->load_attachments(false, false ,true);
-		$this->screenshot->upload(175, true);
+		$this->screenshots
+			->configure(TITANIA_SCREENSHOT, $this->contrib->contrib_id, true, 175, true)
+			->get_operator()->load()
+		;
+		$this->screenshots->handle_form_action();
 	}
 
 	/**
@@ -335,9 +382,29 @@ class manage extends base
 	*/
 	protected function load_colorizeit()
 	{
-		$this->colorizeit_sample = new \titania_attachment(TITANIA_CLR_SCREENSHOT, $this->contrib->contrib_id);
-		$this->colorizeit_sample->load_attachments();
-		$this->colorizeit_sample->upload();
+		$this->colorizeit_sample
+			->configure(TITANIA_CLR_SCREENSHOT, $this->contrib->contrib_id)
+			->get_operator()->load()
+		;
+		$this->colorizeit_sample->handle_form_action();
+
+		if ($this->colorizeit_sample->uploaded)
+		{
+			$uploaded = $this->colorizeit_sample->get_operator()->get_all_ids();
+
+			// If multiple files are uploaded, then one is being replaced.
+			if (sizeof($uploaded) > 1)
+			{
+				$this->colorizeit_sample->get_operator()
+					->delete(
+						array_diff(
+							$uploaded,
+							array($this->colorizeit_sample->uploaded)
+						)
+					)
+				;
+			}
+		}
 	}
 
 	/**
@@ -347,17 +414,19 @@ class manage extends base
 	*/
 	protected function load_message()
 	{
-		$this->message = new \titania_message($this->contrib);
-		$this->message->set_auth(array(
-			'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
-			'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
-			'edit_subject'	=> $this->is_moderator,
-		));
-		$this->message->set_settings(array(
-			'display_error'		=> false,
-			'display_subject'	=> false,
-			'subject_name'		=> 'name',
-		));
+		$this->message
+			->set_parent($this->contrib)
+			->set_auth(array(
+				'bbcode'		=> $this->auth->acl_get('u_titania_bbcode'),
+				'smilies'		=> $this->auth->acl_get('u_titania_smilies'),
+				'edit_subject'	=> $this->is_moderator || $this->contrib->is_author(),
+			))
+			->set_settings(array(
+				'display_error'		=> false,
+				'display_subject'	=> false,
+				'subject_name'		=> 'name',
+			))
+		;
 	}
 
 	/**
@@ -368,12 +437,12 @@ class manage extends base
 	protected function preview()
 	{
 		$this->message->preview();
-		$attach_order = $this->request->variable('attach_order', array(0));
+		$attach_order = $this->request->variable('attach_order', array(0 => 0));
 
 		// Preserve the attachment order when preview is hit just in case it has been modified
 		if (!empty($attach_order))
 		{
-			$this->screenshot->generate_order(array_flip($attach_order));
+			$this->screenshots->get_operator()->sort(true, $attach_order, true);
 		}
 	}
 
@@ -425,6 +494,11 @@ class manage extends base
 		// Submit the changes
 		$this->contrib->submit();
 		// Set the coauthors
+
+		if ($this->ext_config->support_in_titania)
+		{
+			$this->subscribe_new_coauthors($this->contrib->coauthors, $authors['active_coauthors']);
+		}
 		$this->contrib->set_coauthors($authors['active_coauthors'], $authors['nonactive_coauthors'], true);
 		// Update the release topic
 		$this->contrib->update_release_topic();
@@ -448,12 +522,11 @@ class manage extends base
 	*/
 	protected function submit_screenshots()
 	{
-		$original_order = $this->screenshot->generate_order();
-		$new_order = $this->request->variable('attach_order', array(0));
-		$this->screenshot->generate_order(array_flip($new_order));
-
-		// Submit screenshots
-		$this->screenshot->submit(TITANIA_ACCESS_PUBLIC, $original_order);
+		$new_order = $this->request->variable('attach_order', array(0 => 0));
+		$this->screenshots->get_operator()
+			->sort(true, $new_order, true)
+			->submit()
+		;
 	}
 
 	/**
@@ -466,9 +539,34 @@ class manage extends base
 		// ColorizeIt stuff
 		if ($this->use_colorizeit)
 		{
-			$this->colorizeit_sample->submit();
+			$this->colorizeit_sample->get_operator()->submit();
 			$contrib_clr_colors = $this->request->variable('change_colors', $this->contrib->contrib_clr_colors);
 			$this->contrib->__set('contrib_clr_colors', $contrib_clr_colors);
+		}
+	}
+
+	/**
+	 * Subscribe new coauthors to contrib support section.
+	 *
+	 * @param array $old_coauthors		Value of contrib's "coauthors" property
+	 * @param array $new_coauthors		Array of new active coauthors
+	 */
+	protected function subscribe_new_coauthors(array $old_coauthors, array $new_coauthors)
+	{
+		$old_active = array();
+
+		foreach ($old_coauthors as $id => $data)
+		{
+			if ($data['active'])
+			{
+				$old_active[] = (int) $id;
+			}
+		}
+		$subscribe = array_diff($new_coauthors, $old_active);
+
+		foreach ($subscribe as $user_id)
+		{
+			$this->subscriptions->subscribe(TITANIA_SUPPORT, $this->contrib->contrib_id, $user_id);
 		}
 	}
 
@@ -540,8 +638,6 @@ class manage extends base
 	*/
 	protected function assign_vars($error)
 	{
-		\titania::_include('functions_posting', 'generate_type_select');
-
 		// ColorizeIt
 		if ($this->use_colorizeit)
 		{
@@ -582,7 +678,7 @@ class manage extends base
 		$this->template->assign_vars(array(
 			'S_CONTRIB_APPROVED'		=> $this->contrib->contrib_status == TITANIA_CONTRIB_APPROVED,
 			'S_POST_ACTION'				=> $this->contrib->get_url('manage'),
-			'S_EDIT_SUBJECT'			=> $this->is_moderator,
+			'S_EDIT_SUBJECT'			=> $this->is_moderator || $this->contrib->is_author(),
 			'S_DELETE_CONTRIBUTION'		=> $this->check_auth('delete'),
 			'S_IS_OWNER'				=> $this->contrib->is_author,
 			'S_IS_MODERATOR'			=> $this->is_moderator,
@@ -592,13 +688,18 @@ class manage extends base
 
 			'CONTRIB_PERMALINK'			=> $this->settings['permalink'],
 			'CONTRIB_TYPE'				=> $this->contrib->contrib_type,
-			'SCREENSHOT_UPLOADER'		=> ($this->auth->acl_get('u_titania_contrib_submit')) ? $this->screenshot->parse_uploader('posting/attachments/simple.html', 'titania_attach_order_compare') : false,
+			'SCREENSHOT_UPLOADER'		=> ($this->auth->acl_get('u_titania_contrib_submit')) ? $this->screenshots->parse_uploader('posting/attachments/simple.html', true) : false,
 			'ERROR_MSG'					=> (!empty($error)) ? implode('<br />', $error) : false,
 			'ACTIVE_COAUTHORS'			=> implode("\n", $coauthors['active']),
 			'NONACTIVE_COAUTHORS'		=> implode("\n", $coauthors['nonactive']),
 		));
 
-		generate_category_select($this->settings['categories'], false, true, $this->contrib->type->id);
+		$this->display->generate_category_select(
+			$this->settings['categories'],
+			false,
+			true,
+			$this->contrib->type->id
+		);
 		$this->message->display();
 		$this->contrib->assign_details();
 		$this->display->assign_global_vars();
@@ -613,11 +714,11 @@ class manage extends base
 	*/
 	protected function assign_colorizeit_vars()
 	{
-		$clr_testsample = $test_sample = '';
+		$test_sample = '';
 
-		if ($this->contrib->has_colorizeit(true) || is_array($this->contrib->clr_sample))
+		if ($this->contrib->has_colorizeit(true) || $this->contrib->clr_sample)
 		{
-			$sample_url = $this->colorizeit_sample->get_url($this->contrib->clr_sample['attachment_id']);
+			$sample_url = $this->contrib->clr_sample->get_url();
 			$test_sample = 'http://' . $this->ext_config->colorizeit_url .
 				'/testsample.html?sub=' . $this->ext_config->colorizeit . '&amp;sample=' . urlencode($sample_url);
 		}
@@ -663,9 +764,14 @@ class manage extends base
 	*/
 	protected function create_change_report($old_settings)
 	{
+		$name_change = $this->get_name_change($old_settings);
 		$description_change = $this->get_description_change($old_settings);
 		$category_change = $this->get_category_change($old_settings['categories']);
 
+		if ($name_change)
+		{
+			$this->contrib->report($name_change, false, TITANIA_ATTENTION_NAME_CHANGED);
+		}
 		if ($description_change)
 		{
 			$this->contrib->report($description_change, false, TITANIA_ATTENTION_DESC_CHANGED);
@@ -675,6 +781,20 @@ class manage extends base
 		{
 			$this->contrib->report($category_change, false, TITANIA_ATTENTION_CATS_CHANGED);
 		}
+	}
+
+	/**
+	 * Generate report message for a change in name.
+	 *
+	 * @param array $old_settings
+	 * @return string
+	 */
+	protected function get_name_change($old_settings)
+	{
+		$old_name = $old_settings['contrib_name'];
+		$name = $this->contrib->contrib_name;
+
+		return ($old_name != $name) ? "$old_name>>>>>>>>>>$name" : '';
 	}
 
 	/**

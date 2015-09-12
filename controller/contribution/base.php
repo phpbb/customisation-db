@@ -13,6 +13,9 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use phpbb\titania\access;
+use phpbb\titania\count;
+
 class base
 {
 	/** @var \phpbb\auth\auth */
@@ -45,6 +48,9 @@ class base
 	/** @var \phpbb\titania\display */
 	protected $display;
 
+	/** @var \phpbb\titania\access */
+	protected $access;
+
 	/** @var \titania_contribution */
 	protected $contrib;
 
@@ -64,8 +70,9 @@ class base
 	* @param \phpbb\titania\cache\service $cache
 	* @param \phpbb\titania\config\config $ext_config
 	* @param \phpbb\titania\display $display
+	* @param \phpbb\titania\access $access
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, access $access)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -77,6 +84,7 @@ class base
 		$this->cache = $cache;
 		$this->ext_config = $ext_config;
 		$this->display = $display;
+		$this->access = $access;
 
 		// Add common lang
 		$this->user->add_lang_ext('phpbb/titania', 'contributions');
@@ -113,8 +121,8 @@ class base
 	protected function generate_navigation($page)
 	{
 		// Count the number of FAQ items to display
-		$flags = \titania_count::get_flags(\titania::$access_level);
-		$faq_count = \titania_count::from_db($this->contrib->contrib_faq_count, $flags);
+		$flags = count::get_flags($this->access->get_level());
+		$faq_count = count::from_db($this->contrib->contrib_faq_count, $flags);
 		$is_disabled = in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED));
 
 		/**
@@ -134,13 +142,13 @@ class base
 			'faq' => array(
 				'title'		=> 'CONTRIB_FAQ',
 				'url'		=> $this->contrib->get_url('faq'),
-				'auth'		=> \titania::$access_level != TITANIA_ACCESS_PUBLIC || $faq_count,
+				'auth'		=> !$this->access->is_public() || $faq_count,
 				'count'		=> $faq_count,
 			),
 			'support' => array(
 				'title'		=> 'CONTRIB_SUPPORT',
 				'url'		=> $this->contrib->get_url('support'),
-				'auth'		=> $this->ext_config->support_in_titania || \titania::$access_level < TITANIA_ACCESS_PUBLIC,
+				'auth'		=> $this->ext_config->support_in_titania || $this->access->get_level() < access::PUBLIC_LEVEL,
 			),
 			'demo'	=> array(
 				'title'		=> 'CONTRIB_DEMO',
@@ -228,11 +236,11 @@ class base
 	*/
 	protected function set_access_level()
 	{
-		if (\titania::$access_level == TITANIA_ACCESS_PUBLIC && $this->user->data['is_registered'] && !$this->user->data['is_bot'])
+		if ($this->access->is_public() && $this->user->data['is_registered'] && !$this->user->data['is_bot'])
 		{
 			if ($this->is_author)
 			{
-				\titania::$access_level = TITANIA_ACCESS_AUTHORS;
+				$this->access->set_level(access::AUTHOR_LEVEL);
 			}
 		}
 	}

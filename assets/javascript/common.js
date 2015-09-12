@@ -151,6 +151,26 @@ titania.updateRating = function($stars, rating, rated) {
 	});
 };
 
+titania.ajaxify = function($el) {
+	$el.find('[data-ajax]').addBack('[data-ajax]').each(function() {
+		var $this = $(this);
+		var ajax = $this.attr('data-ajax');
+		var filter = $this.attr('data-filter');
+
+		if (ajax !== 'false') {
+			var fn = (ajax !== 'true') ? ajax : null;
+			filter = (filter !== undefined) ? phpbb.getFunctionByName(filter) : null;
+
+			phpbb.ajaxify({
+				selector: this,
+				refresh: $this.attr('data-refresh') !== undefined,
+				filter: filter,
+				callback: fn
+			});
+		}
+	});
+};
+
 /**
 * Highlight rating stars when hovering over them
 */
@@ -167,7 +187,7 @@ $('a [data-rate]').mouseenter(function() {
 $('.rating').mouseleave(function() {
 	var $rating = $(this),
 		$stars = $rating.find('[data-rate]');
-	titania.updateRating($stars, $rating.data('rating'), $rating.hasClass('rated'));	
+	titania.updateRating($stars, $rating.data('rating'), $rating.hasClass('rated'));
 });
 
 /**
@@ -195,115 +215,29 @@ $('.contrib-download').hover(function() {
 	$('.download-info', this).fadeOut('slow');
 });
 
-	// Ajax Quick Edit
-	$('.postbody > .post-buttons .edit-icon').click(function(e) {
-		var postbody = $(this).parents('.postbody');
-		var full_edit = $(this).attr('href');
+	$('.contrib-list-container').on('mouseenter mouseleave', '.quickview-preview', function(event) {
+		var $this = $(this),
+			$image = $this.find('.quickview-image'),
+			$desc = $this.find('.quickview-desc');
 
-		// Return false if the form is already open
-		if ($('form', postbody).length || $('.qe-error', postbody).length)
-		{
-			e.preventDefault();
-			return;
+		if (event.type === 'mouseenter') {
+			$image.slideUp('fast');
+			$desc.slideDown('fast');
+		} else {
+			$desc.slideUp('fast');
+			$image.slideDown('fast');
 		}
-
-		var post = $(postbody).children('.content');
-
-		// Store the original post in case the user cancels the edit
-		$(post).after($(post).clone());
-		$(post).next().addClass('hidden original_post');
-
-		// Ajax time
-		$.ajax({
-			type: "POST",
-			url: $(post).parent().children('.quick_edit').val(),
-			success: function(response){
-
-				// If a full page was served, then an error occurred. Redirect to full edit.
-				if (response.indexOf('{') !== 0)
-				{
-					window.location.href = full_edit;
-				}
-
-				var response = eval('(' + response + ')');
-
-				if (response.result == 'error')
-				{
-					$(post).before('<div class="error qe-error">' + response.content + '</div>');
-					return;
-				}
-
-				$(post).replaceWith(response.content);
-
-				var quickeditor = $(postbody).children('form').children('textarea');
-
-				$(quickeditor).parent().children('.submit-buttons').children('[name=submit]').click(function(e) {
-
-					// Ajax time
-					$.ajax({
-						type: "POST",
-						url: $(quickeditor).parent().attr('action'),
-						data: $(quickeditor).parent().serialize() + '&submit=1',
-						success: function(response){
-							var qe_form = $(quickeditor).parent();
-	
-							// If a full page was served, then an error occurred.
-							if (response.indexOf('{') !== 0)
-							{
-								$(qe_form).before('<div class="error qe-error">' + form_error + '</div>');
-							}
-							else
-							{
-								var response = eval('(' + response + ')');
-
-								// If the form token is invalid, redirect to full edit.
-								if (response.result == 'invalid_token')
-								{
-									$('[name=full_editor]', qe_form).trigger('click');
-									
-								}
-								else if (response.result == 'error')
-								{
-									$(qe_form).before('<div class="error qe-error">' + response.content + '</div>');
-								}
-								else
-								{
-									// Hide the form only if the AJAX call succeeded
-									$(qe_form).hide();
-
-									$(qe_form).replaceWith('<div class="content text-content">' + response.content + '</div>');
-									var subject = $('.content:not(.original_post)', postbody).children('span:first-child');
-									$('h3 a', postbody).html($(subject).html());
-									$(subject).remove();
-									$('.original_post', postbody).remove();
-								}
-							}
-						}
-					});
-
-					// Do not redirect
-					e.preventDefault();
-				});
-			},
-			error: function() {
-				window.location.href = full_edit;
-			}
-		});
-
-		// Do not follow the link
-		e.preventDefault();
 	});
 
 	// Canceled quick edit, so display original post again
-	$(document).on('click', '.postbody #cancel', function(event) {
+	$('.postbody').on('click', '#cancel', function(event) {
 		event.preventDefault();
 
-		var postbody = $(this).parents('.postbody');
+		var $postbody = $(this).parents('.postbody');
 
-		$('form', postbody).remove();
+		$('form', $postbody).remove();
 		// Remove warnings
-		$('.qe-error', postbody).remove();
-		$('.original_post', postbody).removeClass('hidden');
+		$('.original_post', $postbody).removeClass('hidden');
 	});
 
 	$('.download-main').click(function() {
@@ -318,7 +252,7 @@ $('.contrib-download').hover(function() {
 		event.preventDefault();
 		$.colorbox.close();
 	});
-	
+
 	$(document).on('click', '#cboxLoadedContent #cease', function(event) {
 		event.preventDefault();
 		createCookie('cdb_ignore_subscription', 'true', 365);
@@ -339,7 +273,7 @@ $(document).on('click', '#screenshot-manage a.item-control-button:not(.delete)',
 	var container = $(this).closest('dl');
 
 	if ($(this).hasClass('move-up'))
-	{	
+	{
 		$(container).insertBefore($(container).prev());
 
 		// Enable move-down button
@@ -390,7 +324,7 @@ $(document).on('click', '#screenshot-manage a.item-control-button:not(.delete)',
 			$(container).prev().find('dd div .move-up-disabled').removeClass('hidden');
 		}
 	}
-	
+
 });
 
 $(function() {

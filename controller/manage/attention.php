@@ -15,6 +15,31 @@ namespace phpbb\titania\controller\manage;
 
 class attention extends base
 {
+	/** @var \phpbb\titania\subscriptions */
+	protected $subscriptions;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\auth\auth $auth
+	 * @param \phpbb\config\config $config
+	 * @param \phpbb\db\driver\driver_interface $db
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\user $user
+	 * @param \phpbb\titania\cache\service $cache
+	 * @param \phpbb\titania\controller\helper $helper
+	 * @param \phpbb\request\request_interace $request
+	 * @param \phpbb\titania\config\config $ext_config
+	 * @param \phpbb\titania\display $display
+	 * @param \phpbb\titania\subscriptions $subscriptions
+	 */
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\subscriptions $subscriptions)
+	{
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+
+		$this->subscriptions = $subscriptions;
+	}
+
 	/**
 	* Display attention item.
 	*
@@ -133,7 +158,11 @@ class attention extends base
 		));
 
 		// Subscriptions
-		\titania_subscriptions::handle_subscriptions(TITANIA_ATTENTION, 0, $this->helper->route('phpbb.titania.manage.attention'));
+		$this->subscriptions->handle_subscriptions(
+			TITANIA_ATTENTION,
+			0,
+			$this->helper->route('phpbb.titania.manage.attention')
+		);
 
 		$this->display->assign_global_vars();
 		$this->generate_navigation('attention');
