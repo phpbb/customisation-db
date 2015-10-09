@@ -352,3 +352,10 @@ services:
             - @phpbb.titania.display
             - @phpbb.titania.tracking
             - @phpbb.titania.sort
+
+    phpbb.titania.controller.composer:
+        class: phpbb\titania\controller\composer
+        arguments:
+            - @user
+            - @phpbb.titania.controller.helper
+            - %phpbb.titania.root_path%
