@@ -45,7 +45,7 @@ class titania_composer_package_helper
 		{
 			return false;
 		}
-		return true;
+		return true;	
 	}
 
 	/**
@@ -68,7 +68,7 @@ class titania_composer_package_helper
 			}
 			return $this->resources[$file]['resource'];
 		}
-
+		
 		$filepath = $this->packages_dir . $file . '.json';
 
 		if (!file_exists($filepath))
@@ -145,15 +145,7 @@ class titania_composer_package_helper
 		{
 			return false;
 		}
-
-		$filesize = filesize($this->packages_dir . $file . '.json');
-
-		if ($filesize === 0)
-		{
-			return array();
-		}
-
-		$json = fread($resource, $filesize);
+		$json = fgets($resource);
 		rewind($resource);
 
 		if (!$json)
@@ -181,7 +173,7 @@ class titania_composer_package_helper
 			return false;
 		}
 
-		$data = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		$data = json_encode($data);
 		fwrite($resource, $data);
 		$data_sha1 = sha1($data);
 
@@ -218,7 +210,7 @@ class titania_composer_package_helper
 class titania_composer_package_manager
 {
 	/**
-	 * @var string Package name for the contribution
+	 * @var string Package name for the contribution in the form of vendor_name/contrib_name_clean
 	 */
 	public $package_name;
 
@@ -261,10 +253,10 @@ class titania_composer_package_manager
 	 *
 	 * @return Returns false if the composer directory is not writable.
 	 */
-	public function __construct($contrib_id, $package_name, $contrib_type, $helper, $write_map = true)
+	public function __construct($contrib_id, $contrib_name_clean, $contrib_type, $helper, $write_map = true)
 	{
 		$this->contrib_id = (int) $contrib_id;
-		$this->package_name = $package_name;
+		$this->package_name = titania::$config->composer_vendor_name . '/' . $contrib_name_clean;
 		$this->helper = $helper;
 		$this->contribs_per_file = 50;
 
@@ -294,7 +286,7 @@ class titania_composer_package_manager
 	/**
 	 * Determine which group the contribution belongs to.
 	 *
-	 * The contrib type map has the contribs arranged by the order in which they were added.
+	 * The contrib type map has the contribs arranged by the order in which they were added. 
 	 * We then divide the map into groups of 50 (from contribs_per_file) to determine where the contrib belongs.
 	 * If the contribs_per_file value is changed, the JSON files need to be regenerated.
 	 *
@@ -310,14 +302,13 @@ class titania_composer_package_manager
 		{
 			return false;
 		}
-
 		$reverse_map = array_flip($map);
 
 		// If the contrib id isn't set, then this is the first revision approved.
 		if (!isset($reverse_map[$this->contrib_id]))
 		{
 			// Add the contrib to the map.
-			$map[] = $this->contrib_id;
+			$map[] = $this->contrib_id;		
 
 			if ($write_map)
 			{
@@ -334,24 +325,25 @@ class titania_composer_package_manager
 	/**
 	 * Add a release to the packages data array.
 	 *
-	 * @param string $composer_json Package composer.json content
+	 * @param string $version Revision version.
 	 * @param int $attachment_id Attachment id for the revision download.
 	 *
 	 * @return void
 	 */
-	public function add_release($composer_json, $attachment_id, $validated)
+	public function add_release($version, $attachment_id, $validated)
 	{
-		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
-		$path_helper = phpbb::$container->get('path_helper');
-
-		$composer_json['dist'] = array(
-			'url'	=> $path_helper->strip_url_params(
-				$controller_helper->route('phpbb.titania.download', array('id' => $attachment_id)),
-				'sid'),
-			'type'	=> 'zip',
+		$version .= ($validated) ? '' : '-RC';
+		$release_info = array(
+			'name'		=> $this->package_name,
+			'version'	=> $version,
+			'dist'		=> 
+				array (
+					'url'	=> titania_url::build_clean_url('download', array('id' => $attachment_id)),
+					'type'	=> 'zip',
+			),
 		);
 
-		$this->packages_data['packages'][$this->package_name][$composer_json['version']] = $composer_json;
+		$this->packages_data['packages'][$this->package_name][$version] = $release_info;
 	}
 
 	/**
@@ -418,7 +410,7 @@ class titania_composer_package_manager
 	 * @param string $include Included file.
 	 * @param string $sha1 SHA1 hash of the data in the included file.
 	 *
-	 * @return Returns the new SHA1 hash for the file that we've just updated.
+	 * @return Returns the new SHA1 hash for the file that we've just updated. 
 	 */
 	function update_include_sha1($file, $include, $sha1)
 	{
