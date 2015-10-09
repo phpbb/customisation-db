@@ -87,7 +87,6 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			'revision_bbc_help_line' 	=> array('default' => ''),
 			'revision_bbc_bbcode_usage' => array('default' => ''),
 			'revision_bbc_demo'			=> array('default' => ''),
-			'revision_composer_json'	=> array('default' => ''),
 		));
 
 		if ($contrib)
@@ -707,22 +706,19 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
 		$package_helper = new titania_composer_package_helper();
 
-		if (!titania_types::$types[$this->contrib->contrib_type]->create_composer_packages
-			|| !$package_helper->packages_dir_writable()
-			|| empty($this->contrib->contrib_package_name))
+		if (!titania::$config->composer_vendor_name || !titania_types::$types[$this->contrib->contrib_type]->create_composer_packages || !$package_helper->packages_dir_writable())
 		{
 			return;
 		}
-		$package_manager = new titania_composer_package_manager($this->contrib->contrib_id, $this->contrib->contrib_package_name, $this->contrib->contrib_type, $package_helper);
+		$package_manager = new titania_composer_package_manager($this->contrib->contrib_id, $this->contrib->contrib_name_clean, $this->contrib->contrib_type, $package_helper);
 
 		if ($mode == 'add')
 		{
-			$package_manager->add_release(json_decode($this->revision_composer_json, true), $this->attachment_id, true);
+			$package_manager->add_release($this->revision_version, $this->attachment_id, true);
 		}
 		else
 		{
-			$composer_json_data = json_decode($this->revision_composer_json, true);
-			$package_manager->remove_release($composer_json_data['version']);
+			$package_manager->remove_release($this->revision_version);
 		}
 		$package_manager->submit();
 	}

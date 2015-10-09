@@ -60,10 +60,6 @@ phpbb.titania.contribution.id:
     requirements:
         id: \d+
 
-phpbb.titania.composer:
-    path: /composer/{filename}.json
-    defaults: { _controller: phpbb.titania.controller.composer:serve_file }
-
 phpbb.titania.category:
     pattern: /{category1}/{category2}/{category3}/{category4}
     defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '', category4: '' }
@@ -73,4 +69,3 @@ phpbb.titania.legacy:
     defaults: { _controller: phpbb.titania.controller.legacy_rerouter:redirect }
     requirements:
         path: .*
-
