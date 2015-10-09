@@ -102,7 +102,7 @@ class titania_type_mod extends titania_type_base
 		{
 			// Can submit a mod
 			case 'submit' :
-				return true;
+				return false; // Disabled MODs due to 3.0.x EOM
 			break;
 
 			// Can view the mod queue discussion
