@@ -166,6 +166,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 			// Author does not provide support
 			'contrib_limited_support'		=> array('default' => 0),
+
+			'contrib_package_name'			 => array('default' => ''),
 		));
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
@@ -2175,15 +2177,17 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
 		$package_helper = new titania_composer_package_helper();
 
-		if (!titania::$config->composer_vendor_name || !$this->type->create_composer_packages || !$package_helper->packages_dir_writable())
+		if (!$this->type->create_composer_packages
+			|| !$package_helper->packages_dir_writable()
+			|| empty($this->contrib_package_name))
 		{
 			return;
 		}
-		$package_manager = new titania_composer_package_manager($this->contrib_id, $this->contrib_name_clean, $this->contrib_type, $package_helper);
+		$package_manager = new titania_composer_package_manager($this->contrib_id, $this->contrib_package_name, $this->contrib_type, $package_helper);
 
 		if ($mode == 'add')
 		{
-			$sql = 'SELECT revision_version, attachment_id
+			$sql = 'SELECT revision_composer_json, attachment_id
 				FROM ' . TITANIA_REVISIONS_TABLE . '
 				WHERE revision_status = ' . TITANIA_REVISION_APPROVED . '
 					AND contrib_id = ' . (int) $this->contrib_id;
@@ -2191,7 +2195,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$package_manager->add_release($row['revision_version'], $row['attachment_id'], true);
+				$package_manager->add_release(json_decode($row['revision_composer_json'], true), $row['attachment_id'], true);
 			}
 			phpbb::$db->sql_freeresult($result);
 		}
