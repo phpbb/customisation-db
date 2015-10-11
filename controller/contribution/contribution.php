@@ -13,6 +13,9 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 class contribution extends base
 {
 	/** @var \phpbb\titania\tracking */
@@ -216,8 +219,7 @@ class contribution extends base
 	/**
 	* Rating action.
 	*
-	* @return Returns \Symfony\Component\HttpFoundation\Response if error found,
-	*	otherwise redirects back to details page.
+	* @return \Symfony\Component\HttpFoundation\Response|RedirectResponse|JsonResponse
 	*/
 	protected function rate()
 	{
@@ -228,7 +230,18 @@ class contribution extends base
 
 		if ($result)
 		{
-			redirect($this->contrib->get_url());
+			if ($this->request->is_ajax())
+			{
+				$rating->load_user_rating();
+				$rating_string = $rating->get_rating_string($this->contrib->get_url('rate'));
+				$rating_count = $this->contrib->contrib_rating_count + (($rating_value == -1) ? -1 : 1);
+
+				return new JsonResponse(array(
+					'rating'	=> $rating_string,
+					'count'		=> $rating_count,
+				));
+			}
+			return new RedirectResponse($this->contrib->get_url());
 		}
 
 		return $this->helper->error('BAD_RATING');

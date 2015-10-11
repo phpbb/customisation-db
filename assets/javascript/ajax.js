@@ -139,4 +139,13 @@
 		});
 	};
 
+	phpbb.addAjaxCallback('titania.rate', function(res) {
+		if (res.rating) {
+			var $rating = $(res.rating);
+			titania.ajaxify($rating);
+			$(this).parents('.rating').replaceWith($rating);
+			$('.rating-count').html(res.count);
+		}
+	});
+
 })(jQuery); // Avoid conflicts with other libraries
