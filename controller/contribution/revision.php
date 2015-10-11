@@ -451,7 +451,8 @@ class revision extends base
 			$branch = (int) (is_array($version)) ? $version['phpbb_version_branch'] : $version;
 			$revision_branches[] = $branch;
 
-			if (in_array($branch, $this->repackable_branches) || $in_queue[$branch]['queue_status'] == TITANIA_QUEUE_NEW)
+			if (in_array($branch, $this->repackable_branches) ||
+				(isset($in_queue[$branch]) && $in_queue[$branch]['queue_status'] == TITANIA_QUEUE_NEW))
 			{
 				unset($in_queue[$branch]);
 			}
