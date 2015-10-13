@@ -14,7 +14,7 @@
 use phpbb\titania\url\url;
 
 class titania_types
-{	
+{
 	/**
 	* Store the types we've setup
 	*
@@ -112,7 +112,7 @@ class titania_types
 
 		return $free;
 	}
-	
+
 	/**
 	* Get the types that require an upload
 	*/
@@ -127,7 +127,7 @@ class titania_types
 				$strict[] = $type_id;
 			}
 		}
-		
+
 		return $strict;
 	}
 
@@ -257,13 +257,6 @@ class titania_type_base
 	 * @var bool
 	 */
 	public $create_composer_packages = true;
-
-	/**
-	 * Allow revisions for a future release to be submitted
-	 *
-	 * @var bool
-	 */
-	public $prerelease_submission_allowed = false;
 
 	/**
 	* Find the root of the install package for this type?  If so, what to search for (see contrib_tools::find_root())?
@@ -426,7 +419,7 @@ class titania_type_base
 				}
 			}
 			$allowed_branches[$branch] = $info;
-			$names[$branch] = $info['name']; 
+			$names[$branch] = $info['name'];
 		}
 		return ($name_only) ? $names : $allowed_branches;
 	}

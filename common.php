@@ -37,9 +37,6 @@ titania::configure(
 	$php_ext
 );
 
-// Include our core functions
-titania::_include('functions');
-
 // Set up our auto-loader
 spl_autoload_register(array('titania', 'autoload'));
 

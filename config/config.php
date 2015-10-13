@@ -153,13 +153,6 @@ class config extends \phpbb\titania\entity\base
 				'31'	=> array('latest_revision' => '6', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
 			)),
 
-			// Next stable release (used to allowed contribs to be submitted for a future version)
-			'prerelease_phpbb_version'	=> array('default' => array(
-				'20'	=> '',
-				'30'	=> '',
-				'31'	=> '',
-			)),
-
 			// MPV server(s)
 			'mpv_server_list'			=> array('default' => array(
 				array(

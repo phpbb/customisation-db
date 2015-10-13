@@ -425,13 +425,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->topic_reply($message, false);
 		$this->discussion_reply($message);
 
-		// Add support for version that has just been released
-		if ($revision->revision_status == TITANIA_REVISION_ON_HOLD)
-		{
-			$revision->phpbb_versions = array();
-			$revision->phpbb_versions[] = array('phpbb_version_branch' => $branch, 'phpbb_version_revision' => titania::$config->prerelease_phpbb_version[$branch]);
-		}
-
 		// Update the revisions
 		$revision->change_status(TITANIA_REVISION_APPROVED);
 		$revision->submit();

@@ -21,7 +21,7 @@ class titania_type_translation extends titania_type_base
 	 * @var int type id (for custom types not specified in titania to start, please start with 10 in case we add any extra later)
 	 */
 	public $id = 6;
-	
+
 	/**
 	 * The type name
 	 *
@@ -46,8 +46,6 @@ class titania_type_translation extends titania_type_base
 	public $clean_package = true;
 
 	public $root_not_found_key = 'COULD_NOT_FIND_TRANSLATION_ROOT';
-
-	public $prerelease_submission_allowed = true;
 
 	public $validate_translation = true;
 
@@ -134,11 +132,6 @@ class titania_type_translation extends titania_type_base
 		if ($version['phpbb_version_branch'] != 30)
 		{
 			return array();
-		}
-		// If the revision is on hold, it's being submitted for a future version.
-		if ($revision->revision_status == TITANIA_REVISION_ON_HOLD)
-		{
-			$version['phpbb_version_revision'] = titania::$config->prerelease_phpbb_version[$version['phpbb_version_branch']];
 		}
 		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
 
