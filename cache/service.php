@@ -13,6 +13,7 @@
 
 namespace phpbb\titania\cache;
 
+use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\versions;
 
 class service extends \phpbb\cache\service
@@ -208,12 +209,13 @@ class service extends \phpbb\cache\service
 	* Get the author contribs for the specified user id
 	*
 	* @param int $user_id The user ID
+	* @param type_collection $types
 	* @param \phpbb\user $user User object
 	* @param bool $active True to request only active contributions, false for all
 	*
 	* @return array Array of contrib_id's
 	*/
-	public function get_author_contribs($user_id, $user, $active = false)
+	public function get_author_contribs($user_id, type_collection $types, $user, $active = false)
 	{
 		$user_id = (int) $user_id;
 
@@ -263,8 +265,8 @@ class service extends \phpbb\cache\service
 			// If approved, or new and doesn't require approval, or the user is viewing their own, or permission to view non-validated, add them to the list
 			if ($user->data['user_id'] == $user_id ||
 				in_array($data['status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) ||
-				\titania_types::$types[$data['type']]->acl_get('view') ||
-				\titania_types::$types[$data['type']]->acl_get('moderate'))
+				$types->get($data['type'])->acl_get('view') ||
+				$types->get($data['type'])->acl_get('moderate'))
 			{
 				if (!$active || $data['active'])
 				{

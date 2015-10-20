@@ -187,7 +187,7 @@ class author
 			'support' => array(
 				'title'		=> 'AUTHOR_SUPPORT',
 				'url'		=> $this->author->get_url('support'),
-				'auth'		=> $this->is_owner && $this->cache->get_author_contribs($this->author->user_id, $this->user),
+				'auth'		=> $this->is_owner && $this->cache->get_author_contribs($this->author->user_id, $this->types, $this->user),
 			),
 			'create' => array(
 				'title'		=> 'NEW_CONTRIBUTION',
@@ -232,7 +232,7 @@ class author
 		// Mark all topics read
 		if ($this->request->variable('mark', '') == 'topics')
 		{
-			foreach ($this->cache->get_author_contribs($this->author->user_id, $this->user) as $contrib_id)
+			foreach ($this->cache->get_author_contribs($this->author->user_id, $this->types, $this->user) as $contrib_id)
 			{
 				$this->tracking->track(TITANIA_SUPPORT, $contrib_id);
 			}

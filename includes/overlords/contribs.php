@@ -142,7 +142,7 @@ class contribs_overlord
 		{
 			case 'author' :
 				// Get the contrib_ids this user is an author in (includes as a co-author)
-				$contrib_ids = titania::$cache->get_author_contribs($id, phpbb::$user);
+				$contrib_ids = titania::$cache->get_author_contribs($id, $types, phpbb::$user);
 
 				if (!sizeof($contrib_ids))
 				{
@@ -341,7 +341,7 @@ class contribs_overlord
 		$contrib = new titania_contribution();
 		$contrib->author = new titania_author();
 		$versions = titania::$cache->get_phpbb_versions();
-		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], phpbb::$user, true);
+		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], $types, phpbb::$user, true);
 
 		// Get the mark all tracking
 		$tracking->get_track(TITANIA_CONTRIB, 0);
