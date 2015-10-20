@@ -360,8 +360,8 @@ class fulltext_sphinx extends base
 	{
 		$post_query = '
 			SELECT
-				p.post_id AS real_id,
 				p.post_id + 20000000 AS id,
+				p.post_id AS real_id,
 				t.parent_id,
 				p.post_user_id AS author,
 				p.post_type AS type,
@@ -375,8 +375,8 @@ class fulltext_sphinx extends base
 			WHERE p.topic_id = t.topic_id AND ';
 		$contrib_query = '
 			SELECT
-				contrib_id AS real_id,
 				contrib_id AS id,
+				contrib_id AS real_id,
 				0 AS parent_id,
 				contrib_user_id AS author,' .
 				TITANIA_CONTRIB . ' AS type,' .
@@ -412,8 +412,8 @@ class fulltext_sphinx extends base
 
 		$faq_query = '
 			SELECT
-				f.faq_id AS real_id,
 				f.faq_id + 10000000 AS id,
+				f.faq_id AS real_id,
 				f.contrib_id AS parent_id,
 				c.contrib_user_id AS author,' .
 				TITANIA_FAQ . ' AS type,
