@@ -53,7 +53,7 @@ class composer
 			throw new http_exception(404, 'NO_PAGE_FOUND');
 		}
 
-		$filename = $this->titania_root_path . 'composer/' . $filename . '.json';
+		$filename = $this->titania_root_path . 'composer_packages/prod/' . $filename . '.json';
 
 		try
 		{

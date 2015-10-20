@@ -23,6 +23,9 @@ class titania_composer_package_helper
 	 */
 	protected $packages_dir;
 
+	/** @var string */
+	protected $production_dir;
+
 	/**
 	 * @var array Array of open resource handles.
 	 */
@@ -30,7 +33,9 @@ class titania_composer_package_helper
 
 	public function __construct()
 	{
-		$this->packages_dir = \titania::$root_path . 'composer/';
+		$this->packages_dir = \titania::$root_path . 'composer_packages/';
+		$this->production_dir = $this->packages_dir . 'prod/';
+		$this->fs = new \Symfony\Component\Filesystem\Filesystem;
 		$this->resources = array();
 	}
 
@@ -69,10 +74,21 @@ class titania_composer_package_helper
 			return $this->resources[$file]['resource'];
 		}
 
-		$filepath = $this->packages_dir . $file . '.json';
+		$filepath = $this->production_dir . $file . '.json';
 
 		if (!file_exists($filepath))
 		{
+			if (!$this->fs->exists($this->production_dir))
+			{
+				try
+				{
+					$this->fs->mkdir($this->production_dir);
+				}
+				catch (\Exception $e)
+				{
+					return false;
+				}
+			}
 			touch($filepath);
 		}
 		$resource = @fopen($filepath, $mode);
@@ -146,7 +162,7 @@ class titania_composer_package_helper
 			return false;
 		}
 
-		$filesize = filesize($this->packages_dir . $file . '.json');
+		$filesize = filesize($this->production_dir . $file . '.json');
 
 		if ($filesize === 0)
 		{
@@ -174,6 +190,17 @@ class titania_composer_package_helper
 	 */
 	public function put_json_data($file, $data)
 	{
+		if (!$this->fs->exists($this->production_dir))
+		{
+			try
+			{
+				$this->fs->mkdir($this->production_dir);
+			}
+			catch (\Exception $e)
+			{
+				return false;
+			}
+		}
 		$resource = $this->get_resource($file, 'wb');
 
 		if (!$resource)
@@ -195,16 +222,20 @@ class titania_composer_package_helper
 	 */
 	public function clear_packages_dir()
 	{
-        foreach (scandir($this->packages_dir) as $item)
+		if (!$this->fs->exists($this->production_dir))
+		{
+			return;
+		}
+		foreach (scandir($this->production_dir) as $item)
 		{
             if ($item == '.' || $item == '..')
 			{
 				continue;
 			}
 
-			if (!is_dir($this->packages_dir . $item) && substr($item, strrchr($item, '.') == '.json'))
+			if (!is_dir($this->production_dir . $item) && substr($item, strrchr($item, '.') == '.json'))
 			{
-				@unlink($this->packages_dir . $item);
+				@unlink($this->production_dir . $item);
 			}
 		}
 	}
