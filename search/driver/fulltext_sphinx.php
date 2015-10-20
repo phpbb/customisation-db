@@ -412,7 +412,7 @@ class fulltext_sphinx extends base
 
 		$faq_query = '
 			SELECT
-				f.faq_id AS real_id
+				f.faq_id AS real_id,
 				f.faq_id + 10000000 AS id,
 				f.contrib_id AS parent_id,
 				c.contrib_user_id AS author,' .
