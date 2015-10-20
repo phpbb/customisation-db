@@ -182,7 +182,6 @@ class fulltext_sphinx extends base
 			foreach ($result['matches'] as $data)
 			{
 				$attrs = $data['attrs'];
-				$attrs['title'] = $attrs['title_attr'];
 				$attrs['id'] = $attrs['real_id'];
 				unset($attrs['real_id']);
 				$_result['documents'][$attrs['type'] . '_' . $attrs['id']] = $attrs;
