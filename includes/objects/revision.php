@@ -435,11 +435,8 @@ class titania_revision extends \phpbb\titania\entity\database_base
 				{
 					$this->contrib->change_status(TITANIA_CONTRIB_APPROVED);
 				}
-				else
-				{
-					// Add the revision to the Composer package
-					$this->update_composer_package();
-				}
+				// Add the revision to the Composer package
+				$this->update_composer_package();
 
 				// Update the revisions phpbb version table
 				$sql = 'UPDATE ' . TITANIA_REVISIONS_PHPBB_TABLE . '
