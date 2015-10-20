@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\attachment\attachment;
 use phpbb\titania\versions;
 use phpbb\titania\message\message;
 
@@ -49,6 +50,9 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	* @var mixed
 	*/
 	public $phpbb_versions = array();
+
+	/** @var attachment */
+	protected $attachment;
 
 	/** @var \phpbb\titania\attachment\operator */
 	protected $translations;
@@ -684,6 +688,42 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		}
 
 		return false;
+	}
+
+	/**
+	 * Set attachment object.
+	 *
+	 * @param attachment $attachment
+	 * @return $this
+	 */
+	public function set_attachment(attachment $attachment)
+	{
+		$this->attachment = $attachment;
+		return $this;
+	}
+
+	/**
+	 * Get attachment.
+	 *
+	 * @return null|attachment
+	 */
+	public function get_attachment()
+	{
+		if (!$this->attachment_id)
+		{
+			return null;
+		}
+		if ($this->attachment)
+		{
+			return $this->attachment;
+		}
+		$attachment = phpbb::$container->get('phpbb.titania.attachment');
+
+		if ($attachment->load($this->attachment_id))
+		{
+			$this->set_attachment($attachment);
+		}
+		return $this->attachment;
 	}
 
 	/**
