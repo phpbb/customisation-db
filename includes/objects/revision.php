@@ -19,7 +19,6 @@ use phpbb\titania\message\message;
 * Class to titania revision.
 * @package Titania
 *
-* @todo Create revision_status field to store whether this revision is new, validated, or pulled (for security or other reasons)
 */
 class titania_revision extends \phpbb\titania\entity\database_base
 {
