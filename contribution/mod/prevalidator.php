@@ -83,7 +83,7 @@ class prevalidator
 
 	/**
 	 * Run the prevalidator.
-	 * @param $download_location	Revision download URL.
+	 * @param string $download_location	Revision download URL.
 	 * @return bool|mixed
 	 */
 	public function run_mpv($download_location)
