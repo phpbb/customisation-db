@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\manage\queue;
 
+use \phpbb\titania\contribution\type\collection as type_collection;
+
 class queue extends \phpbb\titania\controller\manage\base
 {
 	/** @var \phpbb\titania\subscriptions */
@@ -30,14 +32,15 @@ class queue extends \phpbb\titania\controller\manage\base
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param \phpbb\titania\controller\helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\request\request_interface $request
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\subscriptions $subscriptions
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request_interface $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request_interface $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\subscriptions $subscriptions)
 	{
-		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $types, $request, $ext_config, $display);
 
 		$this->subscriptions = $subscriptions;
 	}
@@ -49,7 +52,7 @@ class queue extends \phpbb\titania\controller\manage\base
 	*/
 	public function display_queue($queue_type)
 	{
-		$this->set_type(\titania_types::type_from_url($queue_type));
+		$this->set_type($this->types->type_from_url($queue_type));
 
 		if (!$this->type->acl_get('view'))
 		{
@@ -101,7 +104,7 @@ class queue extends \phpbb\titania\controller\manage\base
 	public function list_queues()
 	{
 		// We need to select the queue if they only have one that they can access, else display the list
-		$authed_types = \titania_types::find_authed('view');
+		$authed_types = $this->types->find_authed('view');
 
 		if (empty($authed_types))
 		{
@@ -119,7 +122,7 @@ class queue extends \phpbb\titania\controller\manage\base
 		{
 			$this->template->assign_block_vars('categories', array(
 				'U_VIEW_CATEGORY'	=> $this->get_queue_url($queue_type),
-				'CATEGORY_NAME'		=> \titania_types::$types[$queue_type]->lang,
+				'CATEGORY_NAME'		=> $this->types->get($queue_type)->lang,
 				'CATEGORY_CONTRIBS' => $counts[$queue_type],
 			));
 		}
@@ -142,7 +145,7 @@ class queue extends \phpbb\titania\controller\manage\base
 	*/
 	protected function set_type($type)
 	{
-		$this->type = \titania_types::$types[$type];
+		$this->type = $this->types->get($type);
 	}
 
 	/**
@@ -179,6 +182,8 @@ class queue extends \phpbb\titania\controller\manage\base
 	*/
 	protected function get_queue_url($type)
 	{
-		return $this->helper->route('phpbb.titania.queue.type', array('queue_type' => \titania_types::$types[$type]->url));
+		return $this->helper->route('phpbb.titania.queue.type', array(
+			'queue_type' => $this->types->get($type)->url,
+		));
 	}
 }

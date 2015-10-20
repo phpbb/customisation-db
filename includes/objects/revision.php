@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\attachment\attachment;
 use phpbb\titania\versions;
 use phpbb\titania\message\message;
 
@@ -18,7 +19,6 @@ use phpbb\titania\message\message;
 * Class to titania revision.
 * @package Titania
 *
-* @todo Create revision_status field to store whether this revision is new, validated, or pulled (for security or other reasons)
 */
 class titania_revision extends \phpbb\titania\entity\database_base
 {
@@ -49,6 +49,9 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	* @var mixed
 	*/
 	public $phpbb_versions = array();
+
+	/** @var attachment */
+	protected $attachment;
 
 	/** @var \phpbb\titania\attachment\operator */
 	protected $translations;
@@ -87,6 +90,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			'revision_bbc_help_line' 	=> array('default' => ''),
 			'revision_bbc_bbcode_usage' => array('default' => ''),
 			'revision_bbc_demo'			=> array('default' => ''),
+			'revision_composer_json'	=> array('default' => ''),
 		));
 
 		if ($contrib)
@@ -235,7 +239,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			'VALIDATED_DATE'		=> ($this->validation_date) ? phpbb::$user->format_date($this->validation_date) : phpbb::$user->lang['NOT_VALIDATED'],
 			'REVISION_QUEUE'		=> ($show_queue && $this->revision_queue_id) ? $this->controller_helper->route('phpbb.titania.queue.item', array('id' => $this->revision_queue_id)) : '',
 			'PHPBB_VERSION'			=> (sizeof($ordered_phpbb_versions) == 1) ? $ordered_phpbb_versions[0] : '',
-			'REVISION_LICENSE'		=> ($this->revision_license) ? censor_text($this->revision_license) : (($this->contrib && sizeof(titania_types::$types[$this->contrib->contrib_type]->license_options)) ? phpbb::$user->lang['UNKNOWN'] : ''),
+			'REVISION_LICENSE'		=> ($this->revision_license) ? censor_text($this->revision_license) : (($this->contrib && sizeof($this->contrib->type->license_options)) ? phpbb::$user->lang['UNKNOWN'] : ''),
 			'INSTALL_TIME'			=> $install_time,
 			'BBC_HTML_REPLACEMENT'	=> $this->revision_bbc_html_replace,
 			'BBC_BBCODE_USAGE'		=> $this->revision_bbc_bbcode_usage,
@@ -248,7 +252,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			'U_COLORIZEIT'      => $url_colorizeit,
 			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || $this->contrib->type->acl_get('moderate'))) ? $this->contrib->get_url('revision', array('page' => 'edit', 'id' => $this->revision_id)) : '',
 
-			'S_USE_QUEUE'			=> (titania::$config->use_queue && titania_types::$types[$this->contrib->contrib_type]->use_queue) ? true : false,
+			'S_USE_QUEUE'			=> (titania::$config->use_queue && $this->contrib->type->use_queue) ? true : false,
 			'S_NEW'					=> ($this->revision_status == TITANIA_REVISION_NEW) ? true : false,
 			'S_APPROVED'			=> ($this->revision_status == TITANIA_REVISION_APPROVED) ? true : false,
 			'S_DENIED'				=> ($this->revision_status == TITANIA_REVISION_DENIED) ? true : false,
@@ -288,7 +292,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		if (!$this->revision_id)
 		{
 			// Update the contrib_last_update if required here
-			if (!titania::$config->require_validation || !titania_types::$types[$this->contrib->contrib_type]->require_validation)
+			if (!titania::$config->require_validation || !$this->contrib->type->require_validation)
 			{
 				$this->contrib->contrib_last_update = titania::$time;
 				$sql_ary = array(
@@ -431,11 +435,8 @@ class titania_revision extends \phpbb\titania\entity\database_base
 				{
 					$this->contrib->change_status(TITANIA_CONTRIB_APPROVED);
 				}
-				else
-				{
-					// Add the revision to the Composer package
-					$this->update_composer_package();
-				}
+				// Add the revision to the Composer package
+				$this->update_composer_package();
 
 				// Update the revisions phpbb version table
 				$sql = 'UPDATE ' . TITANIA_REVISIONS_PHPBB_TABLE . '
@@ -596,7 +597,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	public function update_queue($exclude_from_closing = array())
 	{
 		// Create the queue entry if required, else update it
-		if (titania::$config->use_queue && titania_types::$types[$this->contrib->contrib_type]->use_queue)
+		if (titania::$config->use_queue && $this->contrib->type->use_queue)
 		{
 			$queue = $this->get_queue();
 
@@ -686,6 +687,42 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	}
 
 	/**
+	 * Set attachment object.
+	 *
+	 * @param attachment $attachment
+	 * @return $this
+	 */
+	public function set_attachment(attachment $attachment)
+	{
+		$this->attachment = $attachment;
+		return $this;
+	}
+
+	/**
+	 * Get attachment.
+	 *
+	 * @return null|attachment
+	 */
+	public function get_attachment()
+	{
+		if (!$this->attachment_id)
+		{
+			return null;
+		}
+		if ($this->attachment)
+		{
+			return $this->attachment;
+		}
+		$attachment = phpbb::$container->get('phpbb.titania.attachment');
+
+		if ($attachment->load($this->attachment_id))
+		{
+			$this->set_attachment($attachment);
+		}
+		return $this->attachment;
+	}
+
+	/**
 	 * Download URL
 	 */
 	public function get_url()
@@ -706,19 +743,22 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
 		$package_helper = new titania_composer_package_helper();
 
-		if (!titania::$config->composer_vendor_name || !titania_types::$types[$this->contrib->contrib_type]->create_composer_packages || !$package_helper->packages_dir_writable())
+		if (!$this->contrib->type->create_composer_packages
+			|| !$package_helper->packages_dir_writable()
+			|| empty($this->contrib->contrib_package_name))
 		{
 			return;
 		}
-		$package_manager = new titania_composer_package_manager($this->contrib->contrib_id, $this->contrib->contrib_name_clean, $this->contrib->contrib_type, $package_helper);
+		$package_manager = new titania_composer_package_manager($this->contrib->contrib_id, $this->contrib->contrib_package_name, $this->contrib->contrib_type, $package_helper);
 
 		if ($mode == 'add')
 		{
-			$package_manager->add_release($this->revision_version, $this->attachment_id, true);
+			$package_manager->add_release(json_decode($this->revision_composer_json, true), $this->attachment_id, true);
 		}
 		else
 		{
-			$package_manager->remove_release($this->revision_version);
+			$composer_json_data = json_decode($this->revision_composer_json, true);
+			$package_manager->remove_release($composer_json_data['version']);
 		}
 		$package_manager->submit();
 	}

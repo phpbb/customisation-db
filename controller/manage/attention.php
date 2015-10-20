@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\manage;
 
+use phpbb\titania\contribution\type\collection as type_collection;
+
 class attention extends base
 {
 	/** @var \phpbb\titania\subscriptions */
@@ -28,14 +30,15 @@ class attention extends base
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param \phpbb\titania\controller\helper $helper
-	 * @param \phpbb\request\request_interace $request
+	 * @param type_collection $types
+	 * @param \phpbb\request\request_interface $request
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\subscriptions $subscriptions
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request_interface $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\subscriptions $subscriptions)
 	{
-		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $types, $request, $ext_config, $display);
 
 		$this->subscriptions = $subscriptions;
 	}
@@ -77,7 +80,7 @@ class attention extends base
 		return $this->helper->render(
 			'manage/attention_details.html',
 			censor_text($this->attention->get_title()) . ' - ' . $this->user->lang['ATTENTION']
-		); 
+		);
 	}
 
 	/**
@@ -322,6 +325,6 @@ class attention extends base
 			'u_titania_mod_contrib_mod',
 			'u_titania_mod_post_mod'
 		) ||
-		\titania_types::find_authed('moderate');
+		$this->types->find_authed('moderate');
 	}
 }

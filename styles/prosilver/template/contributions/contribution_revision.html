@@ -86,12 +86,6 @@
 
 				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
 				<fieldset class="fields2">
-				<!-- IF S_CAN_SUBMIT_PRERELEASE_VERSION -->
-				<dl>
-					<dt><label for="prerelease_submission">{L_SUBMIT_PRERELEASE_VERSION}:</label><br /><span>{L_SUBMIT_PRERELEASE_VERSION_EXPLAIN}</span></dt>
-					<dd><input type="checkbox" id="prerelease_submission" name="prerelease_submission" value="1"<!-- IF SUBMIT_PRERELEASE_VERSION --> checked="checked"<!-- ENDIF --> /></dd>
-				</dl>
-				<!-- ENDIF -->
 				<dl>
 					<dt><label for="queue_allow_repack">{L_QUEUE_ALLOW_REPACK}:</label><br /><span>{L_QUEUE_ALLOW_REPACK_EXPLAIN}</span></dt>
 					<dd><input type="checkbox" id="queue_allow_repack" name="queue_allow_repack" value="1"<!-- IF ((ERROR_MSG and QUEUE_ALLOW_REPACK) or not ERROR_MSG) --> checked="checked"<!-- ENDIF --> /></dd>

@@ -14,6 +14,7 @@
 namespace phpbb\titania;
 
 use phpbb\titania\access;
+use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\count;
 
 /**
@@ -34,6 +35,9 @@ class sync
 
 	/** @var \phpbb\titania\search\manager */
 	protected $search_manager;
+
+	/** @var type_collection */
+	protected $types;
 
 	/** @var string */
 	protected $attachments_table;
@@ -75,13 +79,15 @@ class sync
 	 * @param cache\service $cache
 	 * @param attachment\attachment $attachment
 	 * @param search\manager $search_manager
+	 * @param type_collection $types
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, cache\service $cache, \phpbb\titania\attachment\attachment $attachment, search\manager $search_manager)
+	public function __construct(\phpbb\db\driver\driver_interface $db, cache\service $cache, \phpbb\titania\attachment\attachment $attachment, search\manager $search_manager, type_collection $types)
 	{
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->attachment = $attachment;
 		$this->search_manager = $search_manager;
+		$this->types = $types;
 		$this->attachments_table = TITANIA_ATTACHMENTS_TABLE;
 		$this->authors_table = TITANIA_AUTHORS_TABLE;
 		$this->categories_table = TITANIA_CATEGORIES_TABLE;
@@ -144,7 +150,7 @@ class sync
 				$sql_ary = array(
 					'author_contribs' => 0,
 				);
-				foreach (\titania_types::$types as $type_id => $class)
+				foreach ($this->types->get_all() as $type_id => $class)
 				{
 					if (!isset($class->author_count))
 					{
@@ -309,7 +315,7 @@ class sync
 						'author'		=> $row['contrib_user_id'],
 						'date'			=> $row['contrib_last_update'],
 						'url'			=> serialize(array(
-							'contrib_type'	=> \titania_types::$types[$row['contrib_type']]->url,
+							'contrib_type'	=> $this->types->get($row['contrib_type'])->url,
 							'contrib'		=> $row['contrib_name_clean'],
 						)),
 						'approved'		=> (in_array($row['contrib_status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
@@ -328,7 +334,7 @@ class sync
 
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$phpbb_versions[$row['contrib_id']][] = $row; 
+					$phpbb_versions[$row['contrib_id']][] = $row;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -415,7 +421,7 @@ class sync
 				$post = new \titania_post;
 
 				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean, t.parent_id, q.queue_type, c.contrib_type
-					FROM ' . $this->posts_table . ' p, ' . $this->topics_table . ' t 
+					FROM ' . $this->posts_table . ' p, ' . $this->topics_table . ' t
 					LEFT JOIN ' . TITANIA_QUEUE_TABLE . ' q
 						ON (t.parent_id = q.queue_id AND t.topic_type = ' . TITANIA_QUEUE . ')
 					LEFT JOIN ' . $this->contribs_table . ' c
@@ -494,7 +500,7 @@ class sync
 						'author'		=> 0,
 						'date'			=> 0,
 						'url'			=> serialize(array(
-							'contrib_type'	=> \titania_types::$types[$row['contrib_type']]->url,
+							'contrib_type'	=> $this->types->get($row['contrib_type'])->url,
 							'contrib'		=> $row['contrib_name_clean'],
 							'id'			=> $row['faq_id'],
 						)),
@@ -687,7 +693,7 @@ class sync
 		$sql_ary = array(
 			'author_contribs' => 0,
 		);
-		foreach (\titania_types::$types as $type_id => $class)
+		foreach ($this->types->get_all() as $type_id => $class)
 		{
 			if (!isset($class->author_count))
 			{
@@ -698,7 +704,7 @@ class sync
 		}
 
 		// Count the contribution totals for each user
-		foreach (\titania_types::$types as $type_id => $class)
+		foreach ($this->types->get_all() as $type_id => $class)
 		{
 			// Main authors
 			$sql = 'SELECT COUNT(contrib_id) AS cnt

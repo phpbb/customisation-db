@@ -113,7 +113,7 @@ class titania_type_extension extends titania_type_base
 	{
 		try
 		{
-			$this->repack($package, $contrib);
+			$this->repack($package, $contrib, $revision);
 		}
 		catch (\Exception $e)
 		{
@@ -146,9 +146,10 @@ class titania_type_extension extends titania_type_base
 	 *
 	 * @param \phpbb\titania\entity\package $package
 	 * @param \titania_contribution $contrib
-	 * @throw Throws \Exception if an error occurred
+	 * @pram \titania_revision $revision
+	 * @throws \Exception if an error occurred
 	 */
-	protected function repack($package, $contrib)
+	protected function repack($package, $contrib, $revision)
 	{
 		$package->ensure_extracted();
 		$ext_base_path = $package->find_directory(
@@ -172,6 +173,7 @@ class titania_type_extension extends titania_type_base
 		}
 
 		$ext_name = $data['name'];
+		$data = $this->update_phpbb_requirement($data);
 		$data = json_encode(
 			$this->set_version_check($data, $contrib),
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
@@ -180,6 +182,10 @@ class titania_type_extension extends titania_type_base
 		file_put_contents($composer_file, $data);
 		$package->restore_root($ext_base_path, $ext_name);
 		$package->repack($this->clean_package);
+
+		$revision->revision_composer_json = $data;
+		$contrib->contrib_package_name = $ext_name;
+		$contrib->submit();
 	}
 
 	/**
@@ -229,6 +235,28 @@ class titania_type_extension extends titania_type_base
 				'filename'	=> substr($parts['path'], strlen($directory) + 1),
 			);
 		}
+		return $data;
+	}
+
+	/**
+	 * Updates phpBB requirements in composer.json
+	 *
+	 * @param array $data composer.json data
+	 * @return array Returns $data array with phpBB requirement updated
+	 */
+	protected function update_phpbb_requirement($data)
+	{
+		if (!isset($data['require']['phpbb/phpbb']))
+		{
+			if (isset($data['extra']['soft-require']['phpbb/phpbb']))
+			{
+				$data['require']['phpbb/phpbb'] = $data['extra']['soft-require']['phpbb/phpbb'];
+
+				// fix common error
+				$data['require']['phpbb/phpbb'] = str_replace('<3.2.*', '<3.2.0', $data['require']['phpbb/phpbb']);
+			}
+		}
+
 		return $data;
 	}
 

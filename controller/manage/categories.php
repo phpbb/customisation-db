@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\manage;
 
+use phpbb\titania\contribution\type\collection as type_collection;
+
 class categories extends base
 {
 	/** @var \phpbb\titania\message\message */
@@ -36,15 +38,16 @@ class categories extends base
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param \phpbb\titania\controller\helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\message\message $message
 	 * @param \phpbb\titania\sync $sync
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\message\message $message, \phpbb\titania\sync $sync)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\message\message $message, \phpbb\titania\sync $sync)
 	{
-		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $types, $request, $ext_config, $display);
 
 		$this->message = $message;
 		$this->sync = $sync;

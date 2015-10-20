@@ -59,9 +59,6 @@ class config extends \phpbb\titania\entity\base
 			'language_path'				=> array('default' => $this->ext_root_path . 'language/'),
 			'table_prefix'				=> array('default' => 'cdb_'),
 
-			// Unique Composer vendor name.
-			'composer_vendor_name'		=> array('default' => ''),
-
 			// Increment the user's post count?  Array of the post_types for which we will increment the post count
 			'increment_postcount'		=> array('default' => array(TITANIA_SUPPORT)),
 
@@ -151,13 +148,6 @@ class config extends \phpbb\titania\entity\base
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
 				'30'	=> array('latest_revision' => '14', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
 				'31'	=> array('latest_revision' => '6', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
-			)),
-
-			// Next stable release (used to allowed contribs to be submitted for a future version)
-			'prerelease_phpbb_version'	=> array('default' => array(
-				'20'	=> '',
-				'30'	=> '',
-				'31'	=> '',
 			)),
 
 			// MPV server(s)

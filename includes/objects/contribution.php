@@ -11,6 +11,9 @@
 *
 */
 
+
+use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\contribution\type\type_interface;
 use phpbb\titania\versions;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\message\message;
@@ -109,8 +112,11 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	/** @var \phpbb\titania\search\manager */
 	protected $search_manager;
 
+	/** @var type_collection */
+	protected $types;
+
 	/**
-	* @var Contribution type object
+	* @var type_interface
 	*/
 	public $type;
 
@@ -166,6 +172,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 			// Author does not provide support
 			'contrib_limited_support'		=> array('default' => 0),
+
+			'contrib_package_name'			 => array('default' => ''),
 		));
 
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
@@ -174,6 +182,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 		$this->db = phpbb::$container->get('dbal.conn');
 		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
+		$this->types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -188,7 +197,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	public function set_type($type)
 	{
 		$this->contrib_type = $type;
-		$this->type = titania_types::$types[$this->contrib_type];
+		$this->type = $this->types->get($this->contrib_type);
 	}
 
 	/**
@@ -1432,7 +1441,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		{
 			// Check for a valid type
 			$valid_type = false;
-			foreach (titania_types::$types as $type_id => $class)
+			foreach ($this->types->get_all() as $type_id => $class)
 			{
 				if (!$class->acl_get('submit'))
 				{
@@ -2175,15 +2184,17 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
 		$package_helper = new titania_composer_package_helper();
 
-		if (!titania::$config->composer_vendor_name || !$this->type->create_composer_packages || !$package_helper->packages_dir_writable())
+		if (!$this->type->create_composer_packages
+			|| !$package_helper->packages_dir_writable()
+			|| empty($this->contrib_package_name))
 		{
 			return;
 		}
-		$package_manager = new titania_composer_package_manager($this->contrib_id, $this->contrib_name_clean, $this->contrib_type, $package_helper);
+		$package_manager = new titania_composer_package_manager($this->contrib_id, $this->contrib_package_name, $this->contrib_type, $package_helper);
 
 		if ($mode == 'add')
 		{
-			$sql = 'SELECT revision_version, attachment_id
+			$sql = 'SELECT revision_composer_json, attachment_id
 				FROM ' . TITANIA_REVISIONS_TABLE . '
 				WHERE revision_status = ' . TITANIA_REVISION_APPROVED . '
 					AND contrib_id = ' . (int) $this->contrib_id;
@@ -2191,7 +2202,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$package_manager->add_release($row['revision_version'], $row['attachment_id'], true);
+				$package_manager->add_release(json_decode($row['revision_composer_json'], true), $row['attachment_id'], true);
 			}
 			phpbb::$db->sql_freeresult($result);
 		}

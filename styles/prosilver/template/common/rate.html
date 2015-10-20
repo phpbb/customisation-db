@@ -2,7 +2,7 @@
 <!-- BEGIN stars -->
 	<li>
 	<!-- IF S_CAN_RATE -->
-		<a href="{stars.RATE_URL}">
+		<a href="{stars.RATE_URL}" data-ajax="titania.rate">
 	<!-- ENDIF -->
 		<span data-rate="{stars.ID}" title="{stars.ALT}"
 		<!-- IF S_HAS_RATED && stars.ID <= OBJECT_RATING -->
@@ -17,6 +17,6 @@
 	</li>
 <!-- END stars -->
 	<li<!-- IF not S_HAS_RATED --> style="display: none;"<!-- ENDIF -->>
-		<a href="{RATE_URL}" title="{L_REMOVE_RATING}" class="rating-remove" /></a>
+		<a href="{RATE_URL}" title="{L_REMOVE_RATING}" class="rating-remove" data-ajax="titania.rate"></a>
 	</li>
 </ul>

@@ -46,9 +46,9 @@ class helper extends \phpbb\controller\helper
 	/**
 	* {@inheritDoc}
 	*/
-	public function render($template_file, $page_title = '', $status_code = 200, $display_online_list = false)
+	public function render($template_file, $page_title = '', $status_code = 200, $display_online_list = false, $item_id = 0, $item = 'forum')
 	{
-		return parent::render($template_file, $this->user->lang($page_title), $status_code, $display_online_list);
+		return parent::render($template_file, $this->user->lang($page_title), $status_code, $display_online_list, $item_id, $item);
 	}
 
 	/**
