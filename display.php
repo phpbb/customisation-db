@@ -13,6 +13,8 @@
 
 namespace phpbb\titania;
 
+use phpbb\titania\contribution\type\collection as type_collection;
+
 class display
 {
 	/** @var \phpbb\auth\auth */
@@ -36,6 +38,9 @@ class display
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
+	/** @var type_collection */
+	protected $types;
+
 	/**
 	* Constructor
 	*
@@ -46,8 +51,9 @@ class display
 	* @param \phpbb\user $user
 	* @param \phpbb\controller\helper $controller_helper
 	* @param \phpbb\path_helper $path_helper
+	* @parma type_collection $types
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, cache\service $cache, \phpbb\template\template $template, \phpbb\user $user, \phpbb\controller\helper $controller_helper, \phpbb\path_helper $path_helper)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, cache\service $cache, \phpbb\template\template $template, \phpbb\user $user, \phpbb\controller\helper $controller_helper, \phpbb\path_helper $path_helper, type_collection $types)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -56,6 +62,7 @@ class display
 		$this->user = $user;
 		$this->controller_helper = $controller_helper;
 		$this->path_helper = $path_helper;
+		$this->types = $types;
 	}
 
 	/**
@@ -78,7 +85,7 @@ class display
 				'page'		=> 'contributions',
 			));
 		}
-		$manageable_types = \titania_types::find_authed();
+		$manageable_types = $this->types->find_authed();
 
 		if (!empty($manageable_types) || $this->auth->acl_get('u_titania_mod_contrib_mod') || $this->auth->acl_get('u_titania_mod_post_mod'))
 		{
@@ -339,7 +346,7 @@ class display
 
 		foreach ($categories as $row)
 		{
-			$type = (isset(\titania_types::$types[$row['category_type']])) ? \titania_types::$types[$row['category_type']] : false;
+			$type = $this->types->get($row['category_type']);
 
 			if ($type && (!$type->acl_get('submit') || ($category_type && $type->id != $category_type)))
 			{
@@ -407,7 +414,7 @@ class display
 			'NAME'				=> (isset($this->user->lang['SELECT_CONTRIB_TYPE'])) ? $this->user->lang['SELECT_CONTRIB_TYPE'] : '--',
 		));
 
-		foreach (\titania_types::$types as $key => $type)
+		foreach ($this->types->get_all() as $key => $type)
 		{
 			if (!$type->acl_get('submit'))
 			{

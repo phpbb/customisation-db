@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller;
 
 use phpbb\titania\access;
+use phpbb\titania\contribution\type\collection as type_collection;
 
 class author
 {
@@ -32,7 +33,10 @@ class author
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
 
-	/** @var \phpbb\request\request_inteface */
+	/** @var type_collection */
+	protected $types;
+
+	/** @var \phpbb\request\request_interface */
 	protected $request;
 
 	/** @var \phpbb\titania\config\config */
@@ -70,6 +74,7 @@ class author
 	 * @param \phpbb\template\template $template
 	 * @param \phpbb\user $user
 	 * @param helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\config\config $ext_config
@@ -79,13 +84,14 @@ class author
 	 * @param \phpbb\titania\message\message $message
 	 * @param \phpbb\titania\subscriptions $subscriptions
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\message\message $message, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\config\config $ext_config, \phpbb\titania\cache\service $cache, access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\message\message $message, \phpbb\titania\subscriptions $subscriptions)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->template = $template;
 		$this->user = $user;
 		$this->helper = $helper;
+		$this->types = $types;
 		$this->request = $request;
 		$this->ext_config = $ext_config;
 		$this->display = $display;
@@ -437,7 +443,7 @@ class author
 		$contrib->assign_details();
 		$message->display();
 
-		foreach (\titania_types::$types as $type)
+		foreach ($this->types->get_all() as $type)
 		{
 			$this->display->generate_custom_fields($type->contribution_fields, $settings['custom'], $type->id);
 		}

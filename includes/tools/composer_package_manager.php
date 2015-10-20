@@ -268,7 +268,8 @@ class titania_composer_package_manager
 		$this->helper = $helper;
 		$this->contribs_per_file = 50;
 
-		$this->type_name = titania_types::$types[$contrib_type]->name;
+		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
+		$this->type_name = $types->get($contrib_type)->name;
 		$this->packages_type_file = 'packages-' . $this->type_name;
 		$this->set_group_data($this->get_packages_group($write_map));
 	}

@@ -269,7 +269,8 @@ class attention_overlord
 	public static function get_permission_sql()
 	{
 		$sql_where = '';
-		$types_managed = titania_types::find_authed('moderate');
+		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
+		$types_managed = $types->find_authed('moderate');
 
 		if (phpbb::$auth->acl_get('u_titania_mod_post_mod'))
 		{
@@ -284,7 +285,7 @@ class attention_overlord
 
 		if (!empty($types_managed))
 		{
-			$sql_where .= ($negated) ? ' AND ' : ' OR '; 
+			$sql_where .= ($negated) ? ' AND ' : ' OR ';
 			$sql_where .= '(a.attention_object_type = ' . TITANIA_CONTRIB . ' AND ' . phpbb::$db->sql_in_set('c.contrib_type', $types_managed) . ')';
 		}
 		else

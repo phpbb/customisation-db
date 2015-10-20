@@ -43,7 +43,8 @@ class rebuild_packages_list
 			$package_helper->clear_packages_dir();
 		}
 
-		$excluded_types = titania_types::use_composer(true);
+		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
+		$excluded_types = $types->use_composer(true);
 
 		$sql = 'SELECT COUNT(contrib_id) AS total_contribs
 			FROM ' . TITANIA_CONTRIBS_TABLE . '

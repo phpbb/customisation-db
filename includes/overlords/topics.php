@@ -200,6 +200,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sort->request();
 		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$tracking = phpbb::$container->get('phpbb.titania.tracking');
+		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 
 		$topic_ids = array();
 		$switch_on_sticky = true; // Display the extra block after stickies end?  Not used when not sorting with stickies first
@@ -260,12 +261,12 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			case 'queue_discussion' :
 				$page_url = $controller_helper->route('phpbb.titania.queue_discussion.type', array(
-					'queue_type' => titania_types::$types[$options['topic_category']]->url,
+					'queue_type' => $types->get($options['topic_category'])->url,
 				));
 				$sql_ary['WHERE'] .= ' AND t.topic_type = ' . TITANIA_QUEUE_DISCUSSION;
 
 				// Only display those in which the users are authed
-				$authed = titania_types::find_authed('queue_discussion');
+				$authed = $types->find_authed('queue_discussion');
 				if (!sizeof($authed))
 				{
 					return compact('sort');
@@ -313,7 +314,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$topic->additional_unread_fields[] = array('type' => TITANIA_ALL_SUPPORT, 'id' => 0);
 
 				// Track the queue discussion too if applicable
-				if (titania_types::find_authed('queue_discussion'))
+				if ($types->find_authed('queue_discussion'))
 				{
 					$tracking->get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
@@ -353,16 +354,16 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 				if (!phpbb::$auth->acl_get('u_titania_mod_post_mod'))
 				{
-					$mod_in_types = titania_types::find_authed('moderate');
+					$mod_in_types = $types->find_authed('moderate');
 
-					$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('contrib.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) . 
+					$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('contrib.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
 											(sizeof($mod_in_types) ? ' OR ' . phpbb::$db->sql_in_set('contrib.contrib_type', $mod_in_types) : '') . ')';
 				}
 
-				if (isset(titania_types::$types[$options['contrib_type']]))
+				if ($types->exists($options['contrib_type']))
 				{
 					$page_url = $controller_helper->route('phpbb.titania.support', array(
-						'type'	=> titania_types::$types[$options['contrib_type']]->url
+						'type'	=> $types->get($options['contrib_type'])->url
 					));
 
 					$sql_ary['WHERE'] .= ' AND contrib.contrib_type = ' . $options['contrib_type'];
@@ -393,7 +394,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$sql_ary['WHERE'] .= ' AND t.parent_id = ' . (int) $object->contrib_id;
 
 				// We also display the queue discussion topic between validators and authors in the support area
-				if ($object->is_author ||$object->is_active_coauthor || titania_types::$types[$object->contrib_type]->acl_get('queue_discussion'))
+				if ($object->is_author ||$object->is_active_coauthor || $object->type->acl_get('queue_discussion'))
 				{
 					$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
 				}
@@ -411,7 +412,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				$topic->additional_unread_fields[] = array('type' => TITANIA_ALL_SUPPORT, 'id' => 0);
 
 				// Track the queue discussion too if applicable
-				if (titania_types::$types[$object->contrib_type]->acl_get('queue_discussion'))
+				if ($object->type->acl_get('queue_discussion'))
 				{
 					$tracking->get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 					$topic->additional_unread_fields[] = array('type' => TITANIA_QUEUE_DISCUSSION, 'id' => 0, 'type_match' => true);
@@ -456,7 +457,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'S_TOPIC_TYPE_SWITCH'		=> ($switch_on_sticky && $last_was_sticky && !$topic->topic_sticky) ? true : false,
 
-				'CONTRIB_TYPE'				=> (isset($row['contrib_type']) && $row['contrib_type']) ? titania_types::$types[$row['contrib_type']]->lang : '',
+				'CONTRIB_TYPE'				=> (isset($row['contrib_type']) && $row['contrib_type']) ? $types->get($row['contrib_type'])->lang : '',
 				'TOPIC_CONTRIB_NAME'		=> (isset($row['contrib_name']) && $row['contrib_name']) ? censor_text($row['contrib_name']) : '',
 
 				'U_VIEW_TOPIC_CONTRIB'				=> (isset($row['contrib_type']) && $row['contrib_type']) ? $contrib->get_url() : '',
@@ -466,7 +467,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			$sort = phpbb::$container->get('phpbb.titania.sort');
 			$sort->__set_array(array(
 				'template_block'	=> 'topics.pagination',
-				'total'				=> $topic->get_postcount(),	
+				'total'				=> $topic->get_postcount(),
 				'limit'				=> phpbb::$config['posts_per_page'],
 			));
 			$sort->set_defaults(phpbb::$config['posts_per_page']);

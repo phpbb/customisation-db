@@ -11,6 +11,9 @@
 *
 */
 
+
+use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\contribution\type\type_interface;
 use phpbb\titania\versions;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\message\message;
@@ -109,8 +112,11 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	/** @var \phpbb\titania\search\manager */
 	protected $search_manager;
 
+	/** @var type_collection */
+	protected $types;
+
 	/**
-	* @var Contribution type object
+	* @var type_interface
 	*/
 	public $type;
 
@@ -176,6 +182,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 		$this->db = phpbb::$container->get('dbal.conn');
 		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
+		$this->types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -190,7 +197,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	public function set_type($type)
 	{
 		$this->contrib_type = $type;
-		$this->type = titania_types::$types[$this->contrib_type];
+		$this->type = $this->types->get($this->contrib_type);
 	}
 
 	/**
@@ -1434,7 +1441,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		{
 			// Check for a valid type
 			$valid_type = false;
-			foreach (titania_types::$types as $type_id => $class)
+			foreach ($this->types->get_all() as $type_id => $class)
 			{
 				if (!$class->acl_get('submit'))
 				{

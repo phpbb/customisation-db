@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\manage;
 
+use phpbb\titania\contribution\type\collection as type_collection;
+
 class base
 {
 	/** @var \phpbb\auth\auth */
@@ -36,10 +38,13 @@ class base
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
 
+	/** @var type_collection */
+	protected $types;
+
 	/** @var \phpbb\request\request_interface */
 	protected $request;
 
-	/** @var \phpbb\titania\config */
+	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
 	/** @var \phpbb\titania\display */
@@ -55,11 +60,12 @@ class base
 	* @param \phpbb\user $user
 	* @param \phpbb\titania\cache\service $cache
 	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\request\request_interace $request
+	* @parma type_collection $types
+	* @param \phpbb\request\request_interface $request
 	* @param \phpbb\titania\config\config $ext_config
 	* @param \phpbb\titania\display $display
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request_interface $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -68,6 +74,7 @@ class base
 		$this->user = $user;
 		$this->cache = $cache;
 		$this->helper = $helper;
+		$this->types = $types;
 		$this->request = $request;
 		$this->ext_config = $ext_config;
 		$this->display = $display;
@@ -128,18 +135,18 @@ class base
 						'u_titania_mod_faq_mod',
 						'u_titania_mod_post_mod'
 					) ||
-					\titania_types::find_authed('moderate'),
+					$this->types->find_authed('moderate'),
 				'count'		=> $this->get_open_attention_count(),
 			),
 			'queue' => array(
 				'title'		=> 'VALIDATION_QUEUE',
 				'url'		=> $this->helper->route('phpbb.titania.queue'),
-				'auth'		=> \titania_types::find_authed('view') && $this->ext_config->use_queue,
+				'auth'		=> $this->types->find_authed('view') && $this->ext_config->use_queue,
 			),
 			'queue_discussion' => array(
 				'title'		=> 'QUEUE_DISCUSSION',
 				'url'		=> $this->helper->route('phpbb.titania.queue_discussion'),
-				'auth'		=> \titania_types::find_authed('queue_discussion') && $this->ext_config->use_queue,
+				'auth'		=> $this->types->find_authed('queue_discussion') && $this->ext_config->use_queue,
 			),
 			'administration' => array(
 				'title'		=> 'ADMINISTRATION',

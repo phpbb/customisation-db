@@ -14,10 +14,11 @@
 namespace phpbb\titania\controller\ucp;
 
 use phpbb\titania\access;
+use phpbb\titania\contribution\type\collection as type_collection;
 
 class subscriptions
 {
-	/** @var \phpbb\db\driver\driver_inteface */
+	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
 	/** @var \phpbb\template\template */
@@ -31,6 +32,9 @@ class subscriptions
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
+
+	/** @var type_collection */
+	protected $types;
 
 	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
@@ -61,18 +65,20 @@ class subscriptions
 	 * @param \phpbb\user $user
 	 * @param \phpbb\request\request_interface $request
 	 * @param \phpbb\titania\controller\helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\tracking $tracking
 	 * @param \phpbb\titania\sort $sort
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking, \phpbb\titania\sort $sort)
 	{
 		$this->db = $db;
 		$this->template = $template;
 		$this->user = $user;
 		$this->request = $request;
 		$this->helper = $helper;
+		$this->types = $types;
 		$this->ext_config = $ext_config;
 		$this->display = $display;
 		$this->tracking = $tracking;
@@ -302,7 +308,7 @@ class subscriptions
 		{
 			$where = 'watch_user_id = ' . (int) $this->user->data['user_id'] . ' AND ';
 		}
-		
+
 		$sql = 'DELETE FROM ' . $this->watch_table . "
 			WHERE $where watch_object_type = " . (int) $type . '
 				AND watch_object_id = ' . (int) $id;
@@ -549,7 +555,7 @@ class subscriptions
 	protected function get_queue_tpl_row($row)
 	{
 		$queue_id = $row['watch_object_id'];
-		$type = \titania_types::$types[$queue_id];
+		$type = $this->types->get($queue_id);
 
 		return array(
 			'SUBSCRIPTION_ID'		=> $queue_id,

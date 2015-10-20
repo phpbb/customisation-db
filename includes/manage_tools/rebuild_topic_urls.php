@@ -54,7 +54,7 @@ class rebuild_topic_urls
 		$this->request = \phpbb::$request;
 		$this->controller_helper = \phpbb::$container->get('phpbb.titania.controller.helper');
 
-		$this->contrib_types = \titania_types::$types;
+		$this->contrib_types = \phpbb::$container->get('phpbb.titania.contribution.type.collection');
 		$this->contribs_table = TITANIA_CONTRIBS_TABLE;
 		$this->queue_table = TITANIA_QUEUE_TABLE;
 		$this->posts_table = TITANIA_POSTS_TABLE;
@@ -193,7 +193,7 @@ class rebuild_topic_urls
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$url = serialize(array(
-				'contrib_type'	=> $this->contrib_types[$row['contrib_type']]->url,
+				'contrib_type'	=> $this->contrib_types->get($row['contrib_type'])->url,
 				'contrib'		=> $row['contrib_name_clean'],
 			));
 			$where = 'parent_id = ' . (int) $row['contrib_id'] . '

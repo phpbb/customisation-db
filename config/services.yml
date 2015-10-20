@@ -154,6 +154,7 @@ services:
              - @user
              - @phpbb.titania.controller.helper
              - @path_helper
+             - @phpbb.titania.contribution.type.collection
 
     phpbb.titania.extension.prevalidator:
         class: phpbb\titania\contribution\extension\prevalidator
@@ -355,6 +356,7 @@ services:
             - @phpbb.titania.cache
             - @phpbb.titania.attachment
             - @phpbb.titania.search.manager
+            - @phpbb.titania.contribution.type.collection
 
     phpbb.titania.tags:
         class: phpbb\titania\tags

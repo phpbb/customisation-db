@@ -39,6 +39,7 @@ class update_release_topics
 		// Define some vars that we'll need
 		$start = phpbb::$request->variable('start', 0);
 		$limit = 100;
+		$contrib_types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 
 		// Create topic if it does not exist?
 		$create_topic = true;
@@ -47,7 +48,7 @@ class update_release_topics
 		titania::add_lang('contributions');
 
 		$types = array();
-		foreach (titania_types::$types as $id => $class)
+		foreach ($contrib_types->get_all() as $id => $class)
 		{
 			if ($class->forum_robot && $class->forum_database)
 			{

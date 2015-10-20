@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\access;
+use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\count;
 
 class base
@@ -24,7 +25,7 @@ class base
 	/** @var \phpbb\config\config */
 	protected $config;
 
-	/** @var \phpbb\db\driver\driver_interace */
+	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
 	/** @var \phpbb\template\template */
@@ -35,6 +36,9 @@ class base
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
+
+	/** @var type_collection */
+	protected $types;
 
 	/** @var \phpbb\request\request_interface */
 	protected $request;
@@ -66,13 +70,14 @@ class base
 	* @param \phpbb\template\template $template
 	* @param \phpbb\user $user
 	* @param \phpbb\titania\controller\helper $helper
+	* @param type_collection $types
 	* @param \phpbb\request\request $request
 	* @param \phpbb\titania\cache\service $cache
 	* @param \phpbb\titania\config\config $ext_config
 	* @param \phpbb\titania\display $display
 	* @param \phpbb\titania\access $access
 	*/
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, access $access)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, access $access)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
@@ -80,6 +85,7 @@ class base
 		$this->template = $template;
 		$this->user = $user;
 		$this->helper = $helper;
+		$this->types = $types;
 		$this->request = $request;
 		$this->cache = $cache;
 		$this->ext_config = $ext_config;
@@ -100,7 +106,7 @@ class base
 	*/
 	protected function load_contrib($contrib_type, $contrib)
 	{
-		$type = ($contrib_type) ? \titania_types::type_from_url($contrib_type) : false;
+		$type = ($contrib_type) ? $this->types->type_from_url($contrib_type) : false;
 		$this->contrib = new \titania_contribution;
 
 		if (!$this->contrib->load($contrib, $type) || !$this->contrib->is_visible())
@@ -153,7 +159,7 @@ class base
 			'demo'	=> array(
 				'title'		=> 'CONTRIB_DEMO',
 				'url'		=> '',
-				'auth'		=> !empty($this->contrib->contrib_demo),		
+				'auth'		=> !empty($this->contrib->contrib_demo),
 			),
 			'manage' => array(
 				'title'		=> 'CONTRIB_MANAGE',

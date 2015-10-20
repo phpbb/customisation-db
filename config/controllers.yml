@@ -6,6 +6,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.display
             - @phpbb.titania.cache
@@ -27,6 +28,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
@@ -38,6 +40,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.display
             - @phpbb.titania.tracking
@@ -51,6 +54,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.display
             - @phpbb.titania.config
@@ -85,6 +89,7 @@ services:
             - @phpbb.titania.cache
             - @request
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.sort
@@ -116,6 +121,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.cache
             - @phpbb.titania.config
@@ -134,6 +140,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.cache
             - @phpbb.titania.config
@@ -153,6 +160,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.cache
             - @phpbb.titania.config
@@ -173,6 +181,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.cache
             - @phpbb.titania.config
@@ -193,6 +202,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.cache
             - @phpbb.titania.config
@@ -212,6 +222,7 @@ services:
             - @template
             - @user
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.cache
             - @phpbb.titania.config
@@ -230,6 +241,7 @@ services:
             - @user
             - @phpbb.titania.cache
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
@@ -244,6 +256,7 @@ services:
             - @user
             - @phpbb.titania.cache
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
@@ -260,6 +273,7 @@ services:
             - @user
             - @phpbb.titania.cache
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
@@ -288,6 +302,7 @@ services:
             - @user
             - @phpbb.titania.cache
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
@@ -304,6 +319,7 @@ services:
             - @user
             - @phpbb.titania.cache
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
@@ -320,6 +336,7 @@ services:
             - @user
             - @phpbb.titania.cache
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
@@ -335,6 +352,7 @@ services:
             - @user
             - @phpbb.titania.cache
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @request
             - @phpbb.titania.config
             - @phpbb.titania.display
@@ -348,6 +366,7 @@ services:
             - @user
             - @request
             - @phpbb.titania.controller.helper
+            - @phpbb.titania.contribution.type.collection
             - @phpbb.titania.config
             - @phpbb.titania.display
             - @phpbb.titania.tracking

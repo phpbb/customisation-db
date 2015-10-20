@@ -122,6 +122,7 @@ class contribs_overlord
 		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$tracking = phpbb::$container->get('phpbb.titania.tracking');
+		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 
 		// Setup the sort tool if not sent, then request
 		if ($sort === false)
@@ -251,13 +252,13 @@ class contribs_overlord
 				'ON'	=> 'cc.contrib_id = c.contrib_id AND cc.user_id = ' . phpbb::$user->data['user_id'],
 			);
 			$view_unapproved = array();
-			if (sizeof(titania_types::find_authed('moderate')))
+			if ($types->find_authed('moderate'))
 			{
-				$view_unapproved = array_merge($view_unapproved, titania_types::find_authed('moderate'));
+				$view_unapproved = array_merge($view_unapproved, $types->find_authed('moderate'));
 			}
-			if (sizeof(titania_types::find_authed('view')))
+			if ($types->find_authed('view'))
 			{
-				$view_unapproved = array_merge($view_unapproved, titania_types::find_authed('view'));
+				$view_unapproved = array_merge($view_unapproved, $types->find_authed('view'));
 			}
 
 			$view_unapproved = array_unique($view_unapproved);
@@ -310,7 +311,7 @@ class contribs_overlord
 		// Get phpBB versions
 		if (sizeof($contrib_ids))
 		{
-			$validation_free = titania_types::find_validation_free();
+			$validation_free = $types->find_validation_free();
 			if (sizeof($validation_free) && titania::$config->require_validation)
 			{
 				$sql = 'SELECT rp.contrib_id, rp.phpbb_version_branch, rp.phpbb_version_revision

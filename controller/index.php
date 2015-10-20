@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller;
 
 use phpbb\exception\http_exception;
+use phpbb\titania\contribution\type\collection as type_collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class index
@@ -29,6 +30,9 @@ class index
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
+
+	/** @var type_collection */
+	protected $types;
 
 	/** @var \phpbb\request\request_interface */
 	protected $request;
@@ -72,6 +76,7 @@ class index
 	 * @param \phpbb\template\template $template
 	 * @param \phpbb\user $user
 	 * @param helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\cache\service $cache
@@ -79,12 +84,13 @@ class index
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\tracking $tracking
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking)
 	{
 		$this->auth = $auth;
 		$this->template = $template;
 		$this->user = $user;
 		$this->helper = $helper;
+		$this->types = $types;
 		$this->request = $request;
 		$this->display = $display;
 		$this->cache = $cache;
@@ -321,7 +327,7 @@ class index
 	/**
 	* Get the contribution type of the category.
 	*
-	* @return \titania_type or false if the type couldn't be determined
+	* @return \phpbb\titania\contribution\type\type_interface|bool False if the type couldn't be determined
 	*/
 	protected function get_category_type()
 	{
@@ -333,7 +339,7 @@ class index
 		{
 			$type_id = $this->categories[$children[0]]['category_type'];
 		}
-		return ($type_id) ? \titania_types::$types[$type_id] : false;
+		return ($type_id) ? $this->types->get($type_id) : false;
 	}
 
 	/**
