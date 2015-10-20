@@ -385,7 +385,7 @@ class item extends \phpbb\titania\controller\manage\base
 
 			// Reload contribution with new data.
 			$this->contrib->load();
-			$this->contrib->type->approve($this->contrib, $this->queue);
+			$this->contrib->type->approve($this->contrib, $this->queue, $this->request);
 			$this->cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
 			redirect($this->queue->get_url());
 		}
@@ -422,7 +422,7 @@ class item extends \phpbb\titania\controller\manage\base
 		if ($this->validate('deny'))
 		{
 			$this->queue->deny();
-			$this->contrib->type->deny($this->contrib, $this->queue);
+			$this->contrib->type->deny($this->contrib, $this->queue, $this->request);
 			redirect($this->queue->get_url());
 		}
 
@@ -459,7 +459,7 @@ class item extends \phpbb\titania\controller\manage\base
 		}
 
 		$message->display();
-		$this->contrib->type->display_validation_options($action);
+		$this->contrib->type->display_validation_options($action, $this->request, $this->template);
 		$this->display_topic_review();
 
 		$this->template->assign_vars(array(

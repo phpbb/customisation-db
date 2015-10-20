@@ -742,6 +742,7 @@ class revision extends base
 			&$this->attachment,
 			$download_url,
 			&$this->package
+			$this->template
 		));
 	}
 
