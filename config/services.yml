@@ -211,7 +211,6 @@ services:
             - @phpbb.titania.config
             - @user
             - @auth
-            - @dbal.conn
             - @phpbb.titania.mod.prevalidator
         tags:
             - { name: titania.contribution.type }

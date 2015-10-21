@@ -38,14 +38,12 @@ class type extends base
 	 * @param ext_config $ext_config
 	 * @param user $user
 	 * @param auth $auth
-	 * @param db_driver_interface $db
 	 * @param prevalidator $prevalidator
 	 */
-	public function __construct(ext_config $ext_config, user $user, auth $auth, db_driver_interface $db, prevalidator $prevalidator)
+	public function __construct(ext_config $ext_config, user $user, auth $auth, prevalidator $prevalidator)
 	{
 		parent::__construct($ext_config, $user, $auth);
 
-		$this->db = $db;
 		$this->prevalidator = $prevalidator;
 	}
 
@@ -202,12 +200,13 @@ class type extends base
 		// Automod testing time
 		$details = '';
 		$error = $html_results = $bbcode_results = array();
-		$sql = 'SELECT row_id, phpbb_version_branch, phpbb_version_revision
-			FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
-			WHERE revision_id = ' . $revision->revision_id;
-		$result = $this->db->sql_query($sql);
 
-		while ($row = $this->db->sql_fetchrow($result))
+		if (!$revision->phpbb_versions)
+		{
+			$revision->load_phpbb_versions();
+		}
+
+		foreach ($revision->phpbb_versions as $row)
 		{
 			$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' .$row['phpbb_version_revision'];
 			$phpbb_path = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string);
@@ -235,7 +234,6 @@ class type extends base
 			$html_results[] = $html_result;
 			$bbcode_results[] = $bbcode_result;
 		}
-		$this->db->sql_freeresult($result);
 
 		if (is_array($details))
 		{
