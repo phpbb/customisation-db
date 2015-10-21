@@ -6,6 +6,6 @@ Thumbs.db
 *.bak
 files/revisions/*
 files/screenshots/*
-composer/*
+composer_packages/*
 vendor
 .idea/*
