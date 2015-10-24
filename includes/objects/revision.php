@@ -11,7 +11,9 @@
 *
 */
 
+use phpbb\config\config;
 use phpbb\titania\attachment\attachment;
+use phpbb\titania\composer\repository;
 use phpbb\titania\versions;
 use phpbb\titania\message\message;
 
@@ -68,6 +70,9 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	/** @var \phpbb\titania\cache\service */
 	protected $cache;
 
+	/** @var config */
+	protected $config;
+
 	public function __construct($contrib, $revision_id = false)
 	{
 		// Configure object properties
@@ -106,6 +111,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		$this->subscriptions = phpbb::$container->get('phpbb.titania.subscriptions');
 		$this->translations = phpbb::$container->get('phpbb.titania.attachment.operator');
 		$this->cache = phpbb::$container->get('phpbb.titania.cache');
+		$this->config = phpbb::$container->get('config');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -435,8 +441,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 				{
 					$this->contrib->change_status(TITANIA_CONTRIB_APPROVED);
 				}
-				// Add the revision to the Composer package
-				$this->update_composer_package();
+				repository::trigger_cron($this->config);
 
 				// Update the revisions phpbb version table
 				$sql = 'UPDATE ' . TITANIA_REVISIONS_PHPBB_TABLE . '
@@ -473,7 +478,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 				$sql_ary['validation_date'] = $this->validation_date= 0;
 				// Remove the revision from the Composer package
-				$this->update_composer_package('remove');
+				repository::trigger_cron($this->config);
 			break;
 		}
 
@@ -578,7 +583,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			->load(array($this->attachment_id))
 			->delete(array($this->attachment_id))
 		;
-		$this->update_composer_package('remove');
+		repository::trigger_cron($this->config);
 
 		// Delete translations
 		// $translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
@@ -733,34 +738,6 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		}
 
 		return $this->controller_helper->route('phpbb.titania.download', array('id' => $this->attachment_id));
-	}
-
-	/**
-	 * Add/remove the revision from the Composer packages file.
-	 */
-	public function update_composer_package($mode = 'add')
-	{
-		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
-		$package_helper = new titania_composer_package_helper();
-
-		if (!$this->contrib->type->create_composer_packages
-			|| !$package_helper->packages_dir_writable()
-			|| empty($this->contrib->contrib_package_name))
-		{
-			return;
-		}
-		$package_manager = new titania_composer_package_manager($this->contrib->contrib_id, $this->contrib->contrib_package_name, $this->contrib->contrib_type, $package_helper);
-
-		if ($mode == 'add')
-		{
-			$package_manager->add_release(json_decode($this->revision_composer_json, true), $this->attachment_id, true);
-		}
-		else
-		{
-			$composer_json_data = json_decode($this->revision_composer_json, true);
-			$package_manager->remove_release($composer_json_data['version']);
-		}
-		$package_manager->submit();
 	}
 
 	/**

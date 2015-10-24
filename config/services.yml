@@ -87,6 +87,11 @@ services:
         tags:
             - { name: titania.contribution.type }
 
+    phpbb.titania.composer.repository:
+        class: phpbb\titania\composer\repository
+        arguments:
+            - %phpbb.titania.root_path%
+
     phpbb.titania.config:
         class: phpbb\titania\config\config
         arguments:
