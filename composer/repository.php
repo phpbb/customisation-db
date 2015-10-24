@@ -154,7 +154,7 @@ class repository
 	{
 		foreach ($packages as $package_name => $versions)
 		{
-			uksort($packages[$package_name], 'version_compare');
+			uksort($packages[$package_name], array('\phpbb\titania\versions', 'reverse_version_compare'));
 		}
 		$packages = json_encode(
 			array('packages' => $packages),
