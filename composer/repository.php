@@ -250,6 +250,6 @@ class repository
 	public static function trigger_cron(config $config)
 	{
 		// Trigger it in the next 5 minutes.
-		// $config->set('titania_next_composer_rebuild', time() + 300, false);
+		$config->set('titania_next_repo_rebuild', time() + 300, false);
 	}
 }
