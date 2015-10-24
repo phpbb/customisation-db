@@ -193,6 +193,8 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.contribution.type.collection
             - @phpbb.titania.composer.repository
+            - @phpbb.titania.controller.helper
+            - @path_helper
 
     phpbb.titania.message:
         class: phpbb\titania\message\message

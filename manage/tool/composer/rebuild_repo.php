@@ -14,9 +14,11 @@
 namespace phpbb\titania\manage\tool\composer;
 
 use phpbb\db\driver\driver_interface as db_driver_interface;
+use phpbb\path_helper;
 use phpbb\titania\composer\repository;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\controller\helper;
 use phpbb\titania\entity\package;
 use phpbb\titania\manage\tool\base;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -35,6 +37,12 @@ class rebuild_repo extends base
 
 	/** @var repository */
 	protected $repo;
+
+	/** @var helper */
+	protected $controller_helper;
+
+	/** @var path_helper */
+	protected $path_helper;
 
 	/** @var package */
 	protected $package;
@@ -58,13 +66,17 @@ class rebuild_repo extends base
 	 * @param ext_config $ext_config
 	 * @param type_collection $types
 	 * @param repository $repo
+	 * @param helper $controller_helper
+	 * @param path_helper $path_helper
 	 */
-	public function __construct(db_driver_interface $db, ext_config $ext_config, type_collection $types, repository $repo)
+	public function __construct(db_driver_interface $db, ext_config $ext_config, type_collection $types, repository $repo, helper $controller_helper, path_helper $path_helper)
 	{
 		$this->db = $db;
 		$this->ext_config = $ext_config;
 		$this->types = $types;
 		$this->repo = $repo;
+		$this->controller_helper = $controller_helper;
+		$this->path_helper = $path_helper;
 		$this->package = new package;
 
 		$table_prefix = $this->ext_config->__get('table_prefix');
@@ -121,14 +133,13 @@ class rebuild_repo extends base
 
 		if ($fetch_attach_data)
 		{
-			$attach_fields = ', r.attachment_id, a.attachment_directory,
-				a.physical_filename';
+			$attach_fields = ', a.attachment_directory, a.physical_filename';
 			$attach_table = ", {$this->attachments_table} a";
 			$attach_where = 'AND a.attachment_id = r.attachment_id';
 		}
 
 		$sql = 'SELECT c.contrib_id, c.contrib_type, r.revision_id,
-				r.revision_composer_json' . $attach_fields . '
+				r.attachment_id, r.revision_composer_json' . $attach_fields . '
 			FROM ' . $this->contribs_table . ' c, ' .
 			$this->revisions_table . ' r ' .
 			$attach_table . '
@@ -204,10 +215,17 @@ class rebuild_repo extends base
 					$group_count = $group = 1;
 				}
 				$last_type = $revision['contrib_type'];
+				$download_url = $this->path_helper->strip_url_params(
+					$this->controller_helper->route('phpbb.titania.download',
+						array('id'	=> (int) $revision['attachment_id'])
+					),
+					'sid'
+				);
 
 				$packages = $this->repo->set_release(
 					$packages,
-					$revision['revision_composer_json']
+					$revision['revision_composer_json'],
+					$download_url
 				);
 				unset($batch[$contrib_id][$index]);
 			}
