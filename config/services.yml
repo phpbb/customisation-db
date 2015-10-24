@@ -1,4 +1,5 @@
 imports:
+    - { resource: console.yml }
     - { resource: controllers.yml }
     - { resource: cron.yml }
     - { resource: parameters.yml }
@@ -86,6 +87,11 @@ services:
             - @auth
         tags:
             - { name: titania.contribution.type }
+
+    phpbb.titania.composer.repository:
+        class: phpbb\titania\composer\repository
+        arguments:
+            - %phpbb.titania.root_path%
 
     phpbb.titania.config:
         class: phpbb\titania\config\config
@@ -180,6 +186,14 @@ services:
         tags:
             - { name: event.listener }
 
+    phpbb.titania.manage.tool.composer.rebuild_repo:
+        class: phpbb\titania\manage\tool\composer\rebuild_repo
+        arguments:
+            - @dbal.conn
+            - @phpbb.titania.config
+            - @phpbb.titania.contribution.type.collection
+            - @phpbb.titania.composer.repository
+
     phpbb.titania.message:
         class: phpbb\titania\message\message
         scope: prototype
@@ -211,7 +225,6 @@ services:
             - @phpbb.titania.config
             - @user
             - @auth
-            - @dbal.conn
             - @phpbb.titania.mod.prevalidator
         tags:
             - { name: titania.contribution.type }

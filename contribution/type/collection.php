@@ -32,6 +32,9 @@ class collection
 	/** @var array */
 	protected $url_id_map = array();
 
+	/** @var array */
+	protected $name_id_map = array();
+
 	/**
 	 * Constructor
 	 *
@@ -88,6 +91,17 @@ class collection
 	public function get_ids()
 	{
 		return array_keys($this->types);
+	}
+
+	/**
+	 * Get type id by its name.
+	 *
+	 * @param string $name
+	 * @return int|null
+	 */
+	public function get_id_by_name($name)
+	{
+		return (isset($this->name_id_map[$name])) ? $this->name_id_map[$name] : null;
 	}
 
 	/**
@@ -175,6 +189,7 @@ class collection
 				$this->require_validation[] = $id;
 			}
 			$this->url_id_map[$type::URL] = $id;
+			$this->name_id_map[$type::NAME] = $id;
 		}
 		return $this;
 	}
