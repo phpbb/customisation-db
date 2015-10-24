@@ -1,0 +1,8 @@
+services:
+    phpbb.titania.console.command.composer.rebuild_repo:
+        class: phpbb\titania\console\command\composer\rebuild_repo
+        arguments:
+            - @user
+            - @phpbb.titania.manage.tool.composer.rebuild_repo
+        tags:
+            - { name: console.command }

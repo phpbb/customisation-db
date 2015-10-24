@@ -1,4 +1,5 @@
 imports:
+    - { resource: console.yml }
     - { resource: controllers.yml }
     - { resource: cron.yml }
     - { resource: parameters.yml }
