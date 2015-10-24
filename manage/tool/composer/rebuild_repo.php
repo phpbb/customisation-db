@@ -215,12 +215,13 @@ class rebuild_repo extends base
 					$group_count = $group = 1;
 				}
 				$last_type = $revision['contrib_type'];
-				$download_url = $this->path_helper->strip_url_params(
+				/*$download_url = $this->path_helper->strip_url_params(
 					$this->controller_helper->route('phpbb.titania.download',
 						array('id'	=> (int) $revision['attachment_id'])
 					),
 					'sid'
-				);
+				);*/
+				$download_url = 'https://www.phpbb.com/customise/db/download/' . (int) $revision['attachment_id'];
 
 				$packages = $this->repo->set_release(
 					$packages,
