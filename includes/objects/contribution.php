@@ -12,6 +12,8 @@
 */
 
 
+use phpbb\config\config;
+use phpbb\titania\composer\repository;
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\contribution\type\type_interface;
 use phpbb\titania\versions;
@@ -115,6 +117,9 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	/** @var type_collection */
 	protected $types;
 
+	/** @var config */
+	protected $config;
+
 	/**
 	* @var type_interface
 	*/
@@ -183,6 +188,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$this->db = phpbb::$container->get('dbal.conn');
 		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 		$this->types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
+		$this->config = phpbb::$container->get('config');
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
@@ -1263,7 +1269,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		switch ($old_status)
 		{
 			case TITANIA_CONTRIB_APPROVED :
-				$this->update_composer_package('remove');
+				repository::trigger_cron($this->config);
 			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
 				// Decrement the count for the authors
 				$this->change_author_contrib_count($author_list, '-', true);
@@ -1277,7 +1283,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		switch ($this->contrib_status)
 		{
 			case TITANIA_CONTRIB_APPROVED :
-				$this->update_composer_package();
+				repository::trigger_cron($this->config);
 			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
 				// Increment the count for the authors
 				$this->change_author_contrib_count($author_list);
@@ -2065,7 +2071,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			WHERE contrib_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
-		$this->update_composer_package('remove');
+		repository::trigger_cron($this->config);
 
 		// Self delete
 		parent::delete();
@@ -2174,42 +2180,5 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$values[$name] = $this->__get($name);
 		}
 		return $values;
-	}
-
-	/**
-	 * Add/remove the contribution from the Composer packages file.
-	 */
-	public function update_composer_package($mode = 'add')
-	{
-		titania::_include('tools/composer_package_manager', false, 'titania_composer_package_helper');
-		$package_helper = new titania_composer_package_helper();
-
-		if (!$this->type->create_composer_packages
-			|| !$package_helper->packages_dir_writable()
-			|| empty($this->contrib_package_name))
-		{
-			return;
-		}
-		$package_manager = new titania_composer_package_manager($this->contrib_id, $this->contrib_package_name, $this->contrib_type, $package_helper);
-
-		if ($mode == 'add')
-		{
-			$sql = 'SELECT revision_composer_json, attachment_id
-				FROM ' . TITANIA_REVISIONS_TABLE . '
-				WHERE revision_status = ' . TITANIA_REVISION_APPROVED . '
-					AND contrib_id = ' . (int) $this->contrib_id;
-			$result = phpbb::$db->sql_query($sql);
-
-			while ($row = phpbb::$db->sql_fetchrow($result))
-			{
-				$package_manager->add_release(json_decode($row['revision_composer_json'], true), $row['attachment_id'], true);
-			}
-			phpbb::$db->sql_freeresult($result);
-		}
-		else if ($mode == 'remove')
-		{
-			$package_manager->remove_package();
-		}
-		$package_manager->submit();
 	}
 }
