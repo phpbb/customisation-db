@@ -181,7 +181,7 @@ class rebuild_repo extends base
 	{
 		$this->repo->prepare_build_dir($force);
 
-		$batch = $this->get_batch($force);
+		$batch = $this->get_batch($from_file);
 
 		$group_count = $group = 1;
 		$last_type = $last_contrib = '';
