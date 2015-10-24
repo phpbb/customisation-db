@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\titania\contribution\type\collection as type_collection;
+
 class support
 {
 	/** @var \phpbb\template\template */
@@ -24,7 +26,10 @@ class support
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
 
-	/** @var \phpbb\request\request_interace */
+	/** @var type_collection */
+	protected $types;
+
+	/** @var \phpbb\request\request_interface */
 	protected $request;
 
 	/** @var \phpbb\titania\display */
@@ -41,15 +46,17 @@ class support
 	 * @param \phpbb\template\template $template
 	 * @param \phpbb\user $user
 	 * @param helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\tracking $tracking
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking)
 	{
 		$this->template = $template;
 		$this->user = $user;
 		$this->helper = $helper;
+		$this->types = $types;
 		$this->request = $request;
 		$this->display = $display;
 		$this->tracking = $tracking;
@@ -93,7 +100,7 @@ class support
 		));
 
 		// Links to the support topic lists
-		foreach (\titania_types::$types as $id => $class)
+		foreach ($this->types->get_all() as $id => $class)
 		{
 			$this->template->assign_block_vars('support_types', array(
 				'U_SUPPORT'		=> $this->helper->route('phpbb.titania.support', array('type' => $class->url)),
@@ -119,6 +126,6 @@ class support
 	*/
 	protected function get_type_id($type)
 	{
-		return ($type == 'all') ? self::ALL_SUPPORT : \titania_types::type_from_url($type);
+		return ($type == 'all') ? self::ALL_SUPPORT : $this->types->type_from_url($type);
 	}
 }

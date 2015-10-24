@@ -12,6 +12,7 @@
 */
 
 use phpbb\titania\access;
+use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\count;
 use phpbb\titania\message\message;
 
@@ -72,6 +73,9 @@ class titania_post extends \phpbb\titania\entity\message_base
 	/** @var \phpbb\titania\search\manager */
 	protected $search_manager;
 
+	/** @var type_collection */
+	protected $types;
+
 	/**
 	 * Constructor class for titania posts
 	 *
@@ -117,6 +121,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$this->access = phpbb::$container->get('phpbb.titania.access');
 		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
+		$this->types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 
 		switch ($type)
 		{
@@ -979,7 +984,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 			'U_DELETE'						=> ($this->acl_get('delete') && (!$this->post_deleted || phpbb::$auth->acl_get('u_titania_post_hard_delete'))) ? $this->get_url('delete') : '',
 			'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
 			'U_WARN'						=> false, //$this->get_url('warn'),
-			'U_INFO'						=> (phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_mod', 'u_titania_mod_faq_mod', 'u_titania_mod_post_mod') || sizeof(titania_types::find_authed('moderate'))) ? $this->controller_helper->route('phpbb.titania.manage.attention.redirect', array('type' => TITANIA_POST, 'id' => $this->post_id)) : '',
+			'U_INFO'						=> (phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_mod', 'u_titania_mod_faq_mod', 'u_titania_mod_post_mod') || $this->types->find_authed('moderate')) ? $this->controller_helper->route('phpbb.titania.manage.attention.redirect', array('type' => TITANIA_POST, 'id' => $this->post_id)) : '',
 			'U_QUOTE'						=> $this->acl_get('post') ? $this->get_url('quote') : '',
 
 			'S_UNREAD_POST'					=> ($this->unread) ? true : false, // remember that you must set this up extra...

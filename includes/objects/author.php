@@ -48,6 +48,9 @@ class titania_author extends \phpbb\titania\entity\message_base
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
 
+	/** @var \phpbb\titania\contribution\type\collection */
+	protected $types;
+
 	/** Author visibility */
 	const HIDDEN = 0;
 	const VISIBLE = 1;
@@ -81,9 +84,10 @@ class titania_author extends \phpbb\titania\entity\message_base
 
 		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$this->types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 
 		// Load the count for different types
-		foreach (titania_types::$types as $type)
+		foreach ($this->types->get_all() as $type)
 		{
 			if (isset($type->author_count))
 			{
@@ -317,7 +321,7 @@ class titania_author extends \phpbb\titania\entity\message_base
 
 		// Output the count for different types
 		$type_list = array();
-		foreach (titania_types::$types as $type)
+		foreach ($this->types->get_all() as $type)
 		{
 			if (!isset($type->author_count))
 			{

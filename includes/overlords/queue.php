@@ -494,11 +494,13 @@ class queue_overlord
 	*/
 	public static function display_categories($type, $selected = false)
 	{
+		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
+		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
+
 		$tags = titania::$cache->get_tags(TITANIA_QUEUE);
 		$tag_count = array();
 		$total = 0;
-		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
-		$type_url = titania_types::$types[$type]->url;
+		$type_url = $types->get($type)->url;
 
 		$sql = 'SELECT queue_status, COUNT(queue_id) AS cnt FROM ' . TITANIA_QUEUE_TABLE . '
 			WHERE queue_type = ' . (int) $type . '

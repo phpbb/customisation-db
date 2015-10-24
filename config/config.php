@@ -59,9 +59,6 @@ class config extends \phpbb\titania\entity\base
 			'language_path'				=> array('default' => $this->ext_root_path . 'language/'),
 			'table_prefix'				=> array('default' => 'cdb_'),
 
-			// Unique Composer vendor name.
-			'composer_vendor_name'		=> array('default' => ''),
-
 			// Increment the user's post count?  Array of the post_types for which we will increment the post count
 			'increment_postcount'		=> array('default' => array(TITANIA_SUPPORT)),
 

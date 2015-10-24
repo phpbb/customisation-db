@@ -19,6 +19,16 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+// Contribution types
+define('TITANIA_TYPE_MOD', 1);
+define('TITANIA_TYPE_STYLE', 2);
+define('TITANIA_TYPE_CONVERTER', 3);
+define('TITANIA_TYPE_OFFICIAL_TOOL', 4);
+define('TITANIA_TYPE_BRIDGE', 5);
+define('TITANIA_TYPE_TRANSLATION', 6);
+define('TITANIA_TYPE_BBCODE', 7);
+define('TITANIA_TYPE_EXTENSION', 8);
+
 // Category option flags
 define('TITANIA_CAT_FLAG_DEMO', 1); // Integrated styles demo
 define('TITANIA_CAT_FLAG_ALL_VERSIONS', 2); // Contributions support all phpBB versions

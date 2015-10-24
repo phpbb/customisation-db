@@ -15,6 +15,7 @@ namespace phpbb\titania\controller;
 
 use phpbb\exception\http_exception;
 use phpbb\titania\access;
+use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\user\helper as user_helper;
 
 class search
@@ -42,6 +43,9 @@ class search
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
+
+	/** @var type_collection */
+	protected $types;
 
 	/** @var \phpbb\titania\display */
 	protected $display;
@@ -80,13 +84,14 @@ class search
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param \phpbb\request\request_interface $request
 	 * @param helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\sort $sort
 	 * @param access $access
 	 * @param \phpbb\titania\search\manager $manager
 	 */
-	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\sort $sort, \phpbb\titania\access $access, \phpbb\titania\search\manager $manager)
+	public function __construct(\phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\request\request_interface $request, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\sort $sort, \phpbb\titania\access $access, \phpbb\titania\search\manager $manager)
 	{
 		$this->config = $config;
 		$this->db = $db;
@@ -96,6 +101,7 @@ class search
 		$this->cache = $cache;
 		$this->request = $request;
 		$this->helper = $helper;
+		$this->types = $types;
 		$this->ext_config = $ext_config;
 		$this->display = $display;
 		$this->sort = $sort;
@@ -410,7 +416,7 @@ class search
 	*/
 	protected function generate_search_all_query()
 	{
-		$contrib_types = array_keys(\titania_types::$types);
+		$contrib_types = $this->types->get_ids();
 
 		$restrictions = array(
 			TITANIA_SUPPORT		=> $contrib_types,
@@ -419,8 +425,8 @@ class search
 		);
 
 		// Enforce permissions on the results to ensure that we don't leak posts to users who don't have access to the originating queues.
-		$access_queue_discussion = \titania_types::find_authed('queue_discussion');
-		$access_validation_queue = \titania_types::find_authed('view');
+		$access_queue_discussion = $this->types->find_authed('queue_discussion');
+		$access_validation_queue = $this->types->find_authed('view');
 
 		if (!empty($access_validation_queue))
 		{
@@ -676,7 +682,7 @@ class search
 		{
 			$id = TITANIA_CONTRIB . '_' . $row['id'];
 			$row['url'] = serialize(array(
-				'contrib_type'	=> \titania_types::$types[$row['contrib_type']]->url,
+				'contrib_type'	=> $this->types->get($row['contrib_type'])->url,
 				'contrib'		=> $row['contrib_name_clean'],
 			));
 			$documents[$id] = array_merge($documents[$id], $row);
@@ -713,7 +719,7 @@ class search
 		{
 			$id = TITANIA_FAQ . '_' . $row['id'];
 			$row['url'] = serialize(array(
-				'contrib_type'	=> \titania_types::$types[$row['contrib_type']]->url,
+				'contrib_type'	=> $this->types->get($row['contrib_type'])->url,
 				'contrib'		=> $row['contrib_name_clean'],
 				'id'			=> $row['id'],
 			));

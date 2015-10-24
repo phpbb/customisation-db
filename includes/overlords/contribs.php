@@ -122,6 +122,7 @@ class contribs_overlord
 		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$tracking = phpbb::$container->get('phpbb.titania.tracking');
+		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 
 		// Setup the sort tool if not sent, then request
 		if ($sort === false)
@@ -141,7 +142,7 @@ class contribs_overlord
 		{
 			case 'author' :
 				// Get the contrib_ids this user is an author in (includes as a co-author)
-				$contrib_ids = titania::$cache->get_author_contribs($id, phpbb::$user);
+				$contrib_ids = titania::$cache->get_author_contribs($id, $types, phpbb::$user);
 
 				if (!sizeof($contrib_ids))
 				{
@@ -251,13 +252,13 @@ class contribs_overlord
 				'ON'	=> 'cc.contrib_id = c.contrib_id AND cc.user_id = ' . phpbb::$user->data['user_id'],
 			);
 			$view_unapproved = array();
-			if (sizeof(titania_types::find_authed('moderate')))
+			if ($types->find_authed('moderate'))
 			{
-				$view_unapproved = array_merge($view_unapproved, titania_types::find_authed('moderate'));
+				$view_unapproved = array_merge($view_unapproved, $types->find_authed('moderate'));
 			}
-			if (sizeof(titania_types::find_authed('view')))
+			if ($types->find_authed('view'))
 			{
-				$view_unapproved = array_merge($view_unapproved, titania_types::find_authed('view'));
+				$view_unapproved = array_merge($view_unapproved, $types->find_authed('view'));
 			}
 
 			$view_unapproved = array_unique($view_unapproved);
@@ -310,7 +311,7 @@ class contribs_overlord
 		// Get phpBB versions
 		if (sizeof($contrib_ids))
 		{
-			$validation_free = titania_types::find_validation_free();
+			$validation_free = $types->find_validation_free();
 			if (sizeof($validation_free) && titania::$config->require_validation)
 			{
 				$sql = 'SELECT rp.contrib_id, rp.phpbb_version_branch, rp.phpbb_version_revision
@@ -340,7 +341,7 @@ class contribs_overlord
 		$contrib = new titania_contribution();
 		$contrib->author = new titania_author();
 		$versions = titania::$cache->get_phpbb_versions();
-		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], phpbb::$user, true);
+		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], $types, phpbb::$user, true);
 
 		// Get the mark all tracking
 		$tracking->get_track(TITANIA_CONTRIB, 0);

@@ -13,10 +13,11 @@
 
 namespace phpbb\titania\controller\contribution;
 
+use phpbb\exception\http_exception;
 use phpbb\titania\access;
+use phpbb\titania\contribution\type\collection as type_collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use phpbb\exception\http_exception;
 
 class manage extends base
 {
@@ -56,6 +57,7 @@ class manage extends base
 	 * @param \phpbb\template\template $template
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\controller\helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param \phpbb\titania\config\config $ext_config
@@ -66,9 +68,9 @@ class manage extends base
 	 * @param \phpbb\titania\attachment\uploader $colorizeit_sample
 	 * @param \phpbb\titania\subscriptions $subscriptions
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\message\message $message, \phpbb\titania\attachment\uploader $screenshots, \phpbb\titania\attachment\uploader $colorizeit_sample, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\message\message $message, \phpbb\titania\attachment\uploader $screenshots, \phpbb\titania\attachment\uploader $colorizeit_sample, \phpbb\titania\subscriptions $subscriptions)
 	{
-		parent::__construct($auth, $config, $db, $template, $user, $helper, $request, $cache, $ext_config, $display, $access);
+		parent::__construct($auth, $config, $db, $template, $user, $helper, $types, $request, $cache, $ext_config, $display, $access);
 
 		$this->message = $message;
 		$this->screenshots = $screenshots;
@@ -316,7 +318,7 @@ class manage extends base
 		$this->load_contrib($contrib_type, $contrib);
 		$this->is_moderator = $this->contrib->type->acl_get('moderate');
 		$this->use_colorizeit = strlen($this->ext_config->colorizeit) && $this->contrib->type->acl_get('colorizeit');
-		$this->can_edit_demo = $this->ext_config->can_modify_style_demo_url || \titania_types::$types[TITANIA_TYPE_STYLE]->acl_get('moderate')
+		$this->can_edit_demo = $this->ext_config->can_modify_style_demo_url || $this->types->get(TITANIA_TYPE_STYLE)->acl_get('moderate')
 				|| $this->contrib->contrib_type != TITANIA_TYPE_STYLE;
 
 		$this->status_list = array(

@@ -13,6 +13,7 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\date;
 
 class queue_stats
@@ -25,6 +26,9 @@ class queue_stats
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $helper;
+
+	/** @var type_collection */
+	protected $types;
 
 	/** @var \phpbb\request\request_interface */
 	protected $request;
@@ -51,11 +55,12 @@ class queue_stats
 	* @param \phpbb\titania\config\config $ext_config
 	* @param \phpbb\titania\display $display
 	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\queue\stats $stats)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request_interface $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\queue\stats $stats)
 	{
 		$this->template = $template;
 		$this->user = $user;
 		$this->helper = $helper;
+		$this->types = $types;
 		$this->request = $request;
 		$this->ext_config = $ext_config;
 		$this->display = $display;
@@ -104,8 +109,8 @@ class queue_stats
 	*/
 	protected function set_type($type)
 	{
-		$type = \titania_types::type_from_url($type);
-		$this->type = ($type) ? \titania_types::$types[$type] : false;
+		$type = $this->types->type_from_url($type);
+		$this->type = ($type) ? $this->types->get($type) : false;
 	}
 
 	/**

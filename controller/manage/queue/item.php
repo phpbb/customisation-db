@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\manage\queue;
 
+use phpbb\titania\contribution\type\collection as type_collection;
+
 class item extends \phpbb\titania\controller\manage\base
 {
 	/** @var \phpbb\titania\tags */
@@ -49,6 +51,7 @@ class item extends \phpbb\titania\controller\manage\base
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param \phpbb\titania\controller\helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
@@ -56,9 +59,9 @@ class item extends \phpbb\titania\controller\manage\base
 	 * @param \phpbb\titania\message\message $message
 	 * @param \phpbb\titania\posting $posting
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tags $tags, \phpbb\titania\message\message $message, \phpbb\titania\posting $posting)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tags $tags, \phpbb\titania\message\message $message, \phpbb\titania\posting $posting)
 	{
-		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $types, $request, $ext_config, $display);
 
 		$this->tags = $tags;
 		$this->message = $message;
@@ -70,7 +73,7 @@ class item extends \phpbb\titania\controller\manage\base
 	*
 	* @param int $id		Queue item id.
 	* @return \Symfony\Component\HttpFoundation\Response
-	*/	
+	*/
 	public function display_item($id)
 	{
 		$this->load_item($id);
@@ -318,7 +321,7 @@ class item extends \phpbb\titania\controller\manage\base
 
 			$this->queue->submit();
 
-			$this->queue->topic_reply('QUEUE_REPLY_ALLOW_REPACK');	
+			$this->queue->topic_reply('QUEUE_REPLY_ALLOW_REPACK');
 			$this->queue->submit();
 
 			redirect($this->queue->get_url());
@@ -385,7 +388,7 @@ class item extends \phpbb\titania\controller\manage\base
 
 			// Reload contribution with new data.
 			$this->contrib->load();
-			$this->contrib->type->approve($this->contrib, $this->queue);
+			$this->contrib->type->approve($this->contrib, $this->queue, $this->request);
 			$this->cache->destroy('sql', TITANIA_CONTRIBS_TABLE);
 			redirect($this->queue->get_url());
 		}
@@ -422,7 +425,7 @@ class item extends \phpbb\titania\controller\manage\base
 		if ($this->validate('deny'))
 		{
 			$this->queue->deny();
-			$this->contrib->type->deny($this->contrib, $this->queue);
+			$this->contrib->type->deny($this->contrib, $this->queue, $this->request);
 			redirect($this->queue->get_url());
 		}
 
@@ -459,7 +462,7 @@ class item extends \phpbb\titania\controller\manage\base
 		}
 
 		$message->display();
-		$this->contrib->type->display_validation_options($action);
+		$this->contrib->type->display_validation_options($action, $this->request, $this->template);
 		$this->display_topic_review();
 
 		$this->template->assign_vars(array(

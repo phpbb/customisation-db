@@ -97,10 +97,6 @@ class titania
 		// Add common titania language file
 		phpbb::$user->add_lang_ext('phpbb/titania', 'common');
 
-		// Load the contrib types
-		self::_include('types/base');
-		titania_types::load_types(self::$root_path, self::$php_ext);
-
 		// Load hooks
 		self::load_hooks();
 	}

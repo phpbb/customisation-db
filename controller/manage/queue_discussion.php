@@ -13,6 +13,9 @@
 
 namespace phpbb\titania\controller\manage;
 
+use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\contribution\type\type_interface;
+
 class queue_discussion extends base
 {
 	/** @var \phpbb\titania\tracking */
@@ -30,14 +33,15 @@ class queue_discussion extends base
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param \phpbb\titania\controller\helper $helper
+	 * @param type_collection $types
 	 * @param \phpbb\request\request $request
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\tracking $tracking
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\tracking $tracking)
 	{
-		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $request, $ext_config, $display);
+		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $types, $request, $ext_config, $display);
 
 		$this->tracking = $tracking;
 	}
@@ -50,7 +54,7 @@ class queue_discussion extends base
 	public function list_types()
 	{
 		// Get all types that the user has permission to view.
-		$types = \titania_types::find_authed('queue_discussion');
+		$types = $this->types->find_authed('queue_discussion');
 
 		if (empty($types))
 		{
@@ -151,28 +155,28 @@ class queue_discussion extends base
 	* Load type from URL identifier.
 	*
 	* @param string $type		Queue type URL identifier.
-	* @return \titania_type
+	* @return type_interface
 	*/
 	protected function load_type($type)
 	{
-		$type_id = \titania_types::type_from_url($type);
+		$type_id = $this->types->type_from_url($type);
 		return $this->get_type_from_id($type_id);
 	}
 
 	/**
 	* Get type class from id.
 	*
-	* @return \titania_type
+	* @return type_interface
 	*/
 	protected function get_type_from_id($id)
 	{
-		return \titania_types::$types[$id];
+		return $this->types->get($id);
 	}
 
 	/**
 	* Get URL for a type.
 	*
-	* @param \titania_type $type		Queue type class.
+	* @param type_interface $type		Queue type class.
 	* @param array $params 				Additional parameters to add to URL.
 	*
 	* @return string Returns generated URL.
