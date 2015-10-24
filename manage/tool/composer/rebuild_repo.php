@@ -239,10 +239,11 @@ class rebuild_repo extends base
 			if (($group_count % 50) === 0)
 			{
 				$this->dump_include($last_type, $group, $packages);
-				$group_count = 1;
+				$group_count = 0;
 				$group++;
 				$packages = array();
 			}
+			$group_count++;
 		}
 		if (!empty($packages))
 		{
