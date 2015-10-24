@@ -185,6 +185,14 @@ services:
         tags:
             - { name: event.listener }
 
+    phpbb.titania.manage.tool.composer.rebuild_repo:
+        class: phpbb\titania\manage\tool\composer\rebuild_repo
+        arguments:
+            - @dbal.conn
+            - @phpbb.titania.config
+            - @phpbb.titania.contribution.type.collection
+            - @phpbb.titania.composer.repository
+
     phpbb.titania.message:
         class: phpbb\titania\message\message
         scope: prototype
