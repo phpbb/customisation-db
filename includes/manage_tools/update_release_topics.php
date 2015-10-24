@@ -58,7 +58,7 @@ class update_release_topics
 
 		if (!sizeof($types))
 		{
-			trigger_back('UPDATE_RELEASE_TOPICS_COMPLETE');
+			trigger_error('UPDATE_RELEASE_TOPICS_COMPLETE');
 		}
 
 		$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
@@ -142,7 +142,7 @@ class update_release_topics
 
 		if (($start + $limit) >= $total)
 		{
-			trigger_back('UPDATE_RELEASE_TOPICS_COMPLETE');
+			trigger_error('UPDATE_RELEASE_TOPICS_COMPLETE');
 		}
 		else
 		{

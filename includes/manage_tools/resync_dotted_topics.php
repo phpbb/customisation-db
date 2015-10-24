@@ -68,6 +68,6 @@ class resync_dotted_topics
 		}
 
 
-		trigger_back('RESYNC_DOTTED_TOPICS_COMPLETE');
+		trigger_error('RESYNC_DOTTED_TOPICS_COMPLETE');
 	}
 }
