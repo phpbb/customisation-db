@@ -21,7 +21,7 @@ use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\controller\helper;
 use phpbb\titania\entity\package;
 use phpbb\titania\manage\tool\base;
-use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\ProgressHelper;
 use Symfony\Component\Finder\SplFileInfo;
 
 class rebuild_repo extends base
@@ -174,7 +174,7 @@ class rebuild_repo extends base
 	 * 	from the revision zip files
 	 * @param bool|false $force		Force tool to run if a build is already
 	 * 	in progress
-	 * @param ProgressBar|null $progress
+	 * @param ProgressHelper|null $progress
 	 * @return array
 	 */
 	public function run($from_file = false, $force = false, $progress = null)
