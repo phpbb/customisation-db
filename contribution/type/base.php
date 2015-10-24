@@ -152,7 +152,7 @@ class base implements type_interface
 	 *
 	 * @var bool
 	 */
-	public $create_composer_packages = true;
+	public $create_composer_packages = false;
 
 	/**
 	 * Find the root of the install package for this type?
@@ -214,7 +214,7 @@ class base implements type_interface
 	 * 			'explain'	=> 'CONTRIB_LOCAL_NAME_EXPLAIN',
 	 * 			'editable'	=> true,
 	 * 	))
-	 * 
+	 *
 	 * @var array
 	 */
 	public $contribution_fields = array();

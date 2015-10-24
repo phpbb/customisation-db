@@ -53,6 +53,7 @@ class type extends base
 	{
 		$this->epv_test = true;
 		$this->clean_package = true;
+		$this->create_composer_packages = true;
 
 		$this->allowed_branches = array('>=', 31);
 		$this->forum_database = $this->ext_config->forum_extension_database;
