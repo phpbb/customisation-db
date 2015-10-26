@@ -1,0 +1,26 @@
+<IfModule mod_version.c>
+	<IfVersion < 2.4>
+		<FilesMatch "\.(js|css|png|gif|jpe?g)$">
+			Order Allow,Deny
+			Allow from All
+		</FilesMatch>
+	</IfVersion>
+	<IfVersion >= 2.4>
+		<FilesMatch "\.(js|css|png|gif|jpe?g)$">
+			Require all granted
+		</FilesMatch>
+	</IfVersion>
+</IfModule>
+<IfModule !mod_version.c>
+	<IfModule !mod_authz_core.c>
+		<FilesMatch "\.(js|css|png|gif|jpe?g)$">
+			Order Allow,Deny
+			Allow from All
+		</FilesMatch>
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		<FilesMatch "\.(js|css|png|gif|jpe?g)$">
+			Require all granted
+		</FilesMatch>
+	</IfModule>
+</IfModule>
