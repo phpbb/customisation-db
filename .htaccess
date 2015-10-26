@@ -1,0 +1,28 @@
+Options -Indexes
+
+<IfModule mod_version.c>
+	<IfVersion < 2.4>
+		<Files "*">
+			Order Allow,Deny
+			Deny from All
+		</Files>
+	</IfVersion>
+	<IfVersion >= 2.4>
+		<Files "*">
+			Require all denied
+		</Files>
+	</IfVersion>
+</IfModule>
+<IfModule !mod_version.c>
+	<IfModule !mod_authz_core.c>
+		<Files "*">
+			Order Allow,Deny
+			Deny from All
+		</Files>
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		<Files "*">
+			Require all denied
+		</Files>
+	</IfModule>
+</IfModule>
