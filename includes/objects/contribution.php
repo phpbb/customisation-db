@@ -2089,7 +2089,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			return array();
 		}
 
-		$sql = 'SELECT DISTINCT q.revision_id, rp.phpbb_version_branch, q.queue_status
+		$sql = 'SELECT DISTINCT q.revision_id, rp.phpbb_version_branch, q.queue_status, q.queue_tested
 			FROM ' . TITANIA_QUEUE_TABLE . ' q, ' .
 				TITANIA_REVISIONS_PHPBB_TABLE . ' rp
 			WHERE q.contrib_id = ' . (int) $this->contrib_id . '
