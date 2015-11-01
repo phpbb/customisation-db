@@ -46,11 +46,11 @@ class fix_left_right_ids
 
 		if ($changes_made)
 		{
-			trigger_back('LEFT_RIGHT_IDS_FIX_SUCCESS');
+			trigger_error('LEFT_RIGHT_IDS_FIX_SUCCESS');
 		}
 		else
 		{
-			trigger_back('LEFT_RIGHT_IDS_NO_CHANGE');
+			trigger_error('LEFT_RIGHT_IDS_NO_CHANGE');
 		}
 	}
 
