@@ -45,7 +45,7 @@ class update_release_topics
 		$create_topic = true;
 
 		titania::_include('functions_posting', 'phpbb_posting');
-		titania::add_lang('contributions');
+		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$types = array();
 		foreach ($contrib_types->get_all() as $id => $class)
