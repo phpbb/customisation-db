@@ -45,7 +45,7 @@ class update_release_topics
 		$create_topic = true;
 
 		titania::_include('functions_posting', 'phpbb_posting');
-		titania::add_lang('contributions');
+		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$types = array();
 		foreach ($contrib_types->get_all() as $id => $class)
@@ -58,7 +58,7 @@ class update_release_topics
 
 		if (!sizeof($types))
 		{
-			trigger_back('UPDATE_RELEASE_TOPICS_COMPLETE');
+			trigger_error('UPDATE_RELEASE_TOPICS_COMPLETE');
 		}
 
 		$sql = 'SELECT COUNT(contrib_id) AS cnt FROM ' . TITANIA_CONTRIBS_TABLE . '
@@ -142,7 +142,7 @@ class update_release_topics
 
 		if (($start + $limit) >= $total)
 		{
-			trigger_back('UPDATE_RELEASE_TOPICS_COMPLETE');
+			trigger_error('UPDATE_RELEASE_TOPICS_COMPLETE');
 		}
 		else
 		{

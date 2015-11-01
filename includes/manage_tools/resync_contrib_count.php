@@ -55,7 +55,7 @@ class resync_contrib_count
 
 		if (!sizeof($types))
 		{
-			trigger_back('RESYNC_CONTRIB_COUNT_COMPLETE');
+			trigger_error('RESYNC_CONTRIB_COUNT_COMPLETE');
 		}
 
 		// Reset counts to 0
@@ -132,7 +132,7 @@ class resync_contrib_count
 
 		if (($start + $limit) >= $total)
 		{
-			trigger_back('RESYNC_CONTRIB_COUNT_COMPLETE');
+			trigger_error('RESYNC_CONTRIB_COUNT_COMPLETE');
 		}
 		else
 		{
