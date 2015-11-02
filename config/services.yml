@@ -124,13 +124,9 @@ services:
             - @template
             - @user
             - @config
-            - @controller.provider
-            - @ext.manager
             - @symfony_request
             - @request
-            - @filesystem
-            - %core.root_path%
-            - %core.php_ext%
+            - @routing.helper
 
     phpbb.titania.cache:
         class: phpbb\titania\cache\service
