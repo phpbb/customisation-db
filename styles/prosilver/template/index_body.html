@@ -28,8 +28,14 @@
 			<form method="get" id="category-search" action="{S_SEARCHBOX_ACTION}">
 				<fieldset>
 					<input class="inputbox search tiny" type="text" name="keywords" id="search_keywords" size="20" placeholder="{L_SEARCH_MINI}" />
-					<button class="button icon-button search-icon" type="submit" title="{L_SEARCH}">{L_SEARCH}</button>
-					<a href="{U_SEARCH}" class="button icon-button search-adv-icon" title="{L_SEARCH_ADV}">{L_SEARCH_ADV}</a>
+					<button class="button button-search" type="submit" title="{L_SEARCH}">
+						<i class="icon fa-search fa-fw" aria-hidden="true"></i>
+						<span class="sr-only">{L_SEARCH}</span>
+					</button>
+					<a href="{U_SEARCH}" class="button button-search-end" title="{L_SEARCH_ADV}">
+						<i class="icon fa-cog fa-fw" aria-hidden="true"></i>
+						<span class="sr-only">{L_SEARCH_ADV}</span>
+					</a>
 					<input type="hidden" value="{CATEGORY_ID}" name="c[]" />
 					<input type="hidden" value="1" name="sc" />
 				</fieldset>

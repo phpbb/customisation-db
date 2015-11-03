@@ -11,8 +11,13 @@
 			<form method="get" id="forum-search" action="{S_SEARCHBOX_ACTION}">
 			<fieldset>
 				<input class="inputbox search tiny" type="search" name="keywords" id="search_keywords" size="20" placeholder="{L_SEARCH_FORUM}" />
-				<button class="button icon-button search-icon" type="submit" title="{L_SEARCH}">{L_SEARCH}</button>
-				<a href="{U_SEARCH}" class="button icon-button search-adv-icon" title="{L_SEARCH_ADV}">{L_SEARCH_ADV}</a>
+				<button class="button button-search" type="submit" title="{L_SEARCH}">
+					<i class="icon fa-search fa-fw" aria-hidden="true"></i>
+					<span class="sr-only">{L_SEARCH}</span>
+				</button>
+				<a href="{U_SEARCH}" class="button button-search-end" title="{L_SEARCH_ADV}">
+					<i class="icon fa-cog fa-fw" aria-hidden="true"></i><span class="sr-only">{L_SEARCH_ADV}</span>
+				</a>
 				{SEARCH_HIDDEN_FIELDS}
 			</fieldset>
 			</form>
@@ -51,7 +56,7 @@
 		<li class="row<!-- IF topics.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topics.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topics.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">
 			<dl class="icon {topics.FOLDER_STYLE}">
 				<dt title="{topics.FOLDER_IMG_ALT}"<!-- IF topics.S_TOPIC_PROGRESS --> class="queue_progress"<!-- ELSEIF topics.S_TESTED -->class="queue_tested"<!-- ENDIF -->>
-					<div class="list-inner">					
+					<div class="list-inner">
 						<!-- IF topics.S_ACCESS_TEAMS -->
 						<img src="{T_TITANIA_THEME_PATH}/images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
 						<!-- ELSEIF topics.S_ACCESS_AUTHORS -->
