@@ -1,12 +1,14 @@
 <!-- IF U_POST_REPLY or PAGINATION or TOTAL_RESULTS -->
 <div class="action-bar">
-	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
-		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button icon-button <!-- IF S_IS_LOCKED -->locked<!-- ELSE -->reply<!-- ENDIF -->-icon">
-			<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->
+		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button">
+			<!-- IF S_IS_LOCKED -->
+				<span>{L_BUTTON_TOPIC_LOCKED}</span> <i class="icon fa-lock fa-fw" aria-hidden="true"></i>
+			<!-- ELSE -->
+				<span>{L_BUTTON_POST_REPLY}</span> <i class="icon fa-reply fa-fw" aria-hidden="true"></i>
+			<!-- ENDIF -->
 		</a>
 	<!-- ENDIF -->
-	</div>
 
 	<!-- INCLUDE common/pagination.html -->
 </div>
@@ -29,19 +31,44 @@
 			<!-- IF posts.U_EDIT or posts.U_DELETE or posts.U_REPORT or posts.U_WARN or posts.U_INFO or posts.U_QUOTE -->
 				<ul class="post-buttons">
 					<!-- IF posts.U_EDIT -->
-						<li><a href="{posts.U_EDIT}" title="{L_EDIT_POST}" class="button icon-button edit-icon" data-ajax="titania.quick_edit" data-filter="titania.quickEditFilter"><span>{L_EDIT_POST}</span></a></li>
+						<li>
+							<a href="{posts.U_EDIT}" title="{L_EDIT_POST}" class="button button-icon-only" data-ajax="titania.quick_edit" data-filter="titania.quickEditFilter">
+								<i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_EDIT_POST}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 					<!-- IF posts.U_DELETE -->
-						<li><a href="{posts.U_DELETE}" title="{L_DELETE_POST}" class="button icon-button delete-icon"><span>{L_DELETE_POST}</span></a></li>
+						<li>
+							<a href="{posts.U_DELETE}" title="{L_DELETE_POST}" class="button button-icon-only">
+								<i class="icon fa-times fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_DELETE_POST}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 					<!-- IF posts.U_REPORT -->
-						<li><a href="{posts.U_REPORT}" title="{L_REPORT_POST}" class="button icon-button report-icon"><span>{L_REPORT_POST}</span></a></li>
+						<li>
+							<a href="{posts.U_REPORT}" title="{L_REPORT_POST}" class="button button-icon-only">
+								<i class="icon fa-exclamation fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_REPORT_POST}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 					<!-- IF posts.U_WARN -->
-						<li><a href="{posts.U_WARN}" title="{L_WARN_USER}" class="button icon-button warn-icon"><span>{L_WARN_USER}</span></a></li>
+						<li>
+							<a href="{posts.U_WARN}" title="{L_WARN_USER}" class="button button-icon-only">
+								<i class="icon fa-exclamation-triangle fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_WARN_USER}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 					<!-- IF posts.U_QUOTE -->
-						<li><a href="{posts.U_QUOTE}" title="{L_REPLY_WITH_QUOTE}" class="button icon-button quote-icon"><span>{L_REPLY_WITH_QUOTE}</span></a></li>
+						<li>
+							<a href="{posts.U_QUOTE}" title="{L_REPLY_WITH_QUOTE}" class="button button-icon-only">
+								<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_REPLY_WITH_QUOTE}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 				</ul>
 			<!-- ENDIF -->
@@ -166,10 +193,13 @@
 
 <!-- IF U_POST_REPLY or PAGINATION or TOTAL_RESULTS or .quickmod -->
 <div class="action-bar">
-	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
-		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button icon-button <!-- IF S_IS_LOCKED -->locked<!-- ELSE -->reply<!-- ENDIF -->-icon">
-			<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->
+		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button">
+			<!-- IF S_IS_LOCKED -->
+				<span>{L_BUTTON_TOPIC_LOCKED}</span> <i class="icon fa-lock fa-fw" aria-hidden="true"></i>
+			<!-- ELSE -->
+				<span>{L_BUTTON_POST_REPLY}</span> <i class="icon fa-reply fa-fw" aria-hidden="true"></i>
+			<!-- ENDIF -->
 		</a>
 	<!-- ENDIF -->
 
@@ -186,7 +216,6 @@
 			</div>
 		</div>
 	<!-- ENDIF -->
-	</div>
 
 	<!-- INCLUDE common/pagination.html -->
 </div>
