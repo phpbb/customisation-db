@@ -62,7 +62,13 @@
 						<!-- ELSEIF topics.S_ACCESS_AUTHORS -->
 						<img src="{T_TITANIA_THEME_PATH}/images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
 						<!-- ENDIF -->
-						<!-- IF topics.S_UNREAD_TOPIC --><a href="{topics.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF --><a href="{topics.U_VIEW_TOPIC}" class="topictitle">{topics.TOPIC_SUBJECT}</a><!-- IF topics.TOPIC_CONTRIB_NAME --><br /><em><!-- IF topics.CONTRIB_TYPE -->{topics.CONTRIB_TYPE}<!-- ENDIF --> <!-- IF topics.U_VIEW_TOPIC_CONTRIB --> &raquo; <a href="{topics.U_VIEW_TOPIC_CONTRIB}">{topics.TOPIC_CONTRIB_NAME}</a><!-- ELSE --> &raquo; {topics.TOPIC_CONTRIB_NAME}<!-- ENDIF --> <!-- IF topics.U_VIEW_TOPIC_CONTRIB_SUPPORT --> &raquo; <a href="{topics.U_VIEW_TOPIC_CONTRIB_SUPPORT}">{L_CONTRIB_SUPPORT}</a><!-- ELSE --> &raquo; {topics.TOPIC_CONTRIB_NAME}<!-- ENDIF --></em><!-- ENDIF -->
+						<!-- IF topics.S_UNREAD_TOPIC -->
+							<a href="{topics.U_NEWEST_POST}">
+								<i class="icon fa-file fa-fw icon-red icon-md" aria-hidden="true"></i>
+								<span class="sr-only">{NEW_POST}</span>
+							</a>
+						<!-- ENDIF -->
+						<a href="{topics.U_VIEW_TOPIC}" class="topictitle">{topics.TOPIC_SUBJECT}</a><!-- IF topics.TOPIC_CONTRIB_NAME --><br /><em><!-- IF topics.CONTRIB_TYPE -->{topics.CONTRIB_TYPE}<!-- ENDIF --> <!-- IF topics.U_VIEW_TOPIC_CONTRIB --> &raquo; <a href="{topics.U_VIEW_TOPIC_CONTRIB}">{topics.TOPIC_CONTRIB_NAME}</a><!-- ELSE --> &raquo; {topics.TOPIC_CONTRIB_NAME}<!-- ENDIF --> <!-- IF topics.U_VIEW_TOPIC_CONTRIB_SUPPORT --> &raquo; <a href="{topics.U_VIEW_TOPIC_CONTRIB_SUPPORT}">{L_CONTRIB_SUPPORT}</a><!-- ELSE --> &raquo; {topics.TOPIC_CONTRIB_NAME}<!-- ENDIF --></em><!-- ENDIF -->
 						<!-- IF not topics.TOPIC_APPROVED or not topics.POSTS_APPROVED -->{topics.UNAPPROVED_IMG} <!-- ENDIF -->
 						<!-- IF topics.TOPIC_REPORTED -->{REPORTED_IMG}<!-- ENDIF --><br />
 						<!-- IF .topics.pagination -->
@@ -84,7 +90,13 @@
 				<dd class="posts">{topics.TOPIC_REPLIES} <dfn>{L_REPLIES}</dfn></dd>
 				<dd class="views">{topics.TOPIC_VIEWS} <dfn>{L_VIEWS}</dfn></dd>
 				<dd class="lastpost"><span><dfn>{L_LAST_POST} </dfn>{L_POST_BY_AUTHOR} {topics.TOPIC_LAST_POST_USER_FULL}
-					<!-- IF not S_IS_BOT --><a href="{topics.U_VIEW_LAST_POST}">{LAST_POST_IMG}</a> <!-- ENDIF --><br />{topics.TOPIC_LAST_POST_TIME}</span>
+					<!-- IF not S_IS_BOT -->
+						<a href="{topics.U_VIEW_LAST_POST}">
+							<i class="icon fa-external-link-square fa-fw icon-lightgray icon-md" aria-hidden="true"></i>
+							<span class="sr-only">{VIEW_LATEST_POST}</span>
+						</a>
+					<!-- ENDIF -->
+					<br />{topics.TOPIC_LAST_POST_TIME}</span>
 				</dd>
 			</dl>
 		</li>
