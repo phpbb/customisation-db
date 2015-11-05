@@ -24,6 +24,43 @@ services:
             - %core.root_path%
             - %core.php_ext%
 
+    phpbb.titania.attachment.files.factory:
+        class: phpbb\titania\attachment\files\factory
+        parent: files.factory
+
+    phpbb.titania.attachment.files.filespec:
+        class: phpbb\files\filespec
+        scope: prototype
+        arguments:
+            - @filesystem
+            - @language
+            - @php_ini
+            - @upload_imagesize
+            - ''
+            - @mimetype.guesser
+            - @phpbb.titania.attachment.plupload
+
+    phpbb.titania.attachment.files.types.form:
+        class: phpbb\files\types\form
+        scope: prototype
+        arguments:
+            - @phpbb.titania.attachment.files.factory
+            - @language
+            - @php_ini
+            - @phpbb.titania.attachment.plupload
+            - @request
+
+    phpbb.titania.attachment.files.upload:
+        class: phpbb\files\upload
+        scope: prototype
+        arguments:
+            - @filesystem
+            - @phpbb.titania.attachment.files.factory
+            - @language
+            - @php_ini
+            - @request
+            - ''
+
     phpbb.titania.attachment.operator:
         class: phpbb\titania\attachment\operator
         scope: prototype
@@ -56,11 +93,9 @@ services:
             - @path_helper
             - @controller.helper
             - @phpbb.titania.config
-            - @mimetype.guesser
+            - @phpbb.titania.attachment.files.upload
             - @phpbb.titania.attachment.plupload
             - @phpbb.titania.access
-            - %core.root_path%
-            - %core.php_ext%
 
     phpbb.titania.bbcode.demo:
         class: phpbb\titania\contribution\bbcode\demo\demo
