@@ -46,11 +46,6 @@ class config extends \phpbb\titania\entity\base
 	 */
 	public function set_default_config()
 	{
-		if (!defined('TITANIA_SUPPORT'))
-		{
-			include($this->ext_root_path . 'includes/constants.' . $this->php_ext);
-		}
-
 		$this->object_config = array_merge($this->object_config, array(
 			'phpbb_script_path'			=> array('default' => 'community/'),
 			'titania_script_path'		=> array('default' => 'customisation/'),

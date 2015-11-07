@@ -120,10 +120,11 @@ class repository
 	 * @param array $packages
 	 * @param string $composer_json
 	 * @param string $download_url
+	 * @param string $contrib_url
 	 * @return array Returns $packages array with $composer_json
 	 * 	set in appropriate package if valid
 	 */
-	public function set_release(array $packages, $composer_json, $download_url)
+	public function set_release(array $packages, $composer_json, $download_url, $contrib_url)
 	{
 		$composer_json = json_decode($composer_json, true);
 
@@ -135,6 +136,7 @@ class repository
 		{
 			$packages[$composer_json['name']] = array();
 		}
+		$composer_json['homepage'] = $contrib_url;
 		$composer_json['dist'] = array(
 			'url'	=> $download_url,
 			'type'	=> 'zip',

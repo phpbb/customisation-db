@@ -138,7 +138,7 @@ class rebuild_repo extends base
 			$attach_where = 'AND a.attachment_id = r.attachment_id';
 		}
 
-		$sql = 'SELECT c.contrib_id, c.contrib_type, r.revision_id,
+		$sql = 'SELECT c.contrib_id, c.contrib_name_clean, c.contrib_type, r.revision_id,
 				r.attachment_id, r.revision_composer_json' . $attach_fields . '
 			FROM ' . $this->contribs_table . ' c, ' .
 			$this->revisions_table . ' r ' .
@@ -221,11 +221,21 @@ class rebuild_repo extends base
 					),
 					'sid'
 				);
+				$contrib_url = $this->path_helper->strip_url_params(
+					$this->controller_helper->route('phpbb.titania.contrib',
+						array(
+							'contrib_type'	=> $this->types->get($revision['contrib_type'])->url,
+							'contrib_name'	=> $revision['contrib_name_clean'],
+						)
+					),
+					'sid'
+				);
 
 				$packages = $this->repo->set_release(
 					$packages,
 					$revision['revision_composer_json'],
-					$download_url
+					$download_url,
+					$contrib_url
 				);
 				unset($batch[$contrib_id][$index]);
 			}
