@@ -35,6 +35,12 @@
 							<dt>{L_FILESIZE}{L_COLON}</dt>
 							<dd>{downloads.SIZE}<dd>
 						</dl>
+						<!-- IF downloads.PHPBB_VERSION -->
+						<dl>
+							<dt>{L_DOWNLOAD_VALIDATION_VERSION}{L_COLON}</dt>
+							<dd>phpBB {downloads.PHPBB_VERSION}</dd>
+						</dl>
+						<!-- ENDIF -->
 						<dl>
 							<dt>{L_DOWNLOAD_CHECKSUM}{L_COLON}</dt>
 							<dd>{downloads.CHECKSUM}</dd>
