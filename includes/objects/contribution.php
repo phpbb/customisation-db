@@ -1994,6 +1994,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				SET category_contribs = category_contribs ' . (($dir == '+') ? '+' : '-') . ' 1
 				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories));
 			phpbb::$db->sql_query($sql);
+
+			titania::$cache->destroy('_titania_categories');
 		}
 	}
 
