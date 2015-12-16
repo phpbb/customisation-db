@@ -138,7 +138,7 @@ class repository
 		}
 		$composer_json['homepage'] = $contrib_url;
 		$composer_json['dist'] = array(
-			'url'	=> $download_url,
+			'url'	=> $download_url.'/composer',
 			'type'	=> 'zip',
 		);
 		$packages[$composer_json['name']][$composer_json['version']] = $composer_json;

@@ -14,6 +14,8 @@
 namespace phpbb\titania\controller;
 
 use phpbb\titania\access;
+use phpbb\titania\entity\package;
+use Symfony\Component\Filesystem\Filesystem;
 
 class download
 {
@@ -84,10 +86,11 @@ class download
 	/**
 	* Output attachment browser.
 	*
-	* @param int $id	Attachment id.
+	* @param int	$id		Attachment id.
+	* @param string	$type	Type of download (manual or composer)
 	* @return \Symfony\Component\HttpFoundation\Response if error found. Otherwise method exits.
 	*/
-	public function file($id)
+	public function file($id , $type)
 	{
 		$this->check_invalid_request();
 		$this->id = (int) $id;
@@ -127,6 +130,38 @@ class download
 		{
 			$this->file['physical_filename'] = $directory . $base_filename;
 			$this->increase_download_count();
+		}
+
+		if ($type === 'composer')
+		{
+			$composer_package = $this->file['physical_filename'] . '.composer';
+
+			if (!file_exists($this->ext_config->upload_path . $composer_package))
+			{
+				$package = new package();
+				$package->set_source($this->ext_config->upload_path . $this->file['physical_filename']);
+				$package->set_temp_path($this->ext_config->contrib_temp_path, true);
+
+				$ext_base_path = $package->find_directory(
+					array(
+						'files' => array(
+							'required' => 'composer.json',
+							'optional' => 'ext.php',
+						),
+					),
+					'vendor'
+				);
+
+				$package->restore_root($ext_base_path, $this->id);
+
+				$filesystem = new Filesystem();
+				$filesystem->copy($package->get_source(), $this->ext_config->upload_path . $composer_package);
+
+				$package->set_source($package->get_source() . '.composer');
+				$package->repack(true);
+			}
+
+			$this->file['physical_filename'] = $composer_package;
 		}
 
 		if (!$thumbnail && $mode === 'view' && $is_image && $is_ie && !phpbb_is_greater_ie_version($this->user->browser, 7))
