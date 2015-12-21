@@ -225,7 +225,7 @@ class rebuild_repo extends base
 					$this->controller_helper->route('phpbb.titania.contrib',
 						array(
 							'contrib_type'	=> $this->types->get($revision['contrib_type'])->url,
-							'contrib_name'	=> $revision['contrib_name_clean'],
+							'contrib'	=> $revision['contrib_name_clean'],
 						)
 					),
 					'sid'

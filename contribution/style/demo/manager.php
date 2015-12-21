@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\contribution\style\demo;
 
+use Symfony\Component\Finder\Finder;
+
 class manager
 {
 	/** @var \phpbb\user */
@@ -246,7 +248,7 @@ class manager
 
 		$this->db = new \phpbb\db\driver\factory($this->container);
 		$this->db->set_driver($db_driver);
-		$this->table_prefix = $config->get('table_prefix');	
+		$this->table_prefix = $config->get('table_prefix');
 
 		return true;
 	}
@@ -282,6 +284,17 @@ class manager
 		$filesystem = new \Symfony\Component\Filesystem\Filesystem;
 
 		$filesystem->remove($style_root);
+
+		// Only copy necessary files
+		$finder = new Finder();
+		$finder
+			->ignoreVCS(false)
+			->ignoreDotFiles(false)
+			->files()
+			->notName('/\.(svg|png|jpe?g|gif|html|js|css|cfg)$/i')
+			->in($this->package->get_temp_path())
+		;
+		$filesystem->remove($finder);
 		$filesystem->rename($this->package->get_temp_path() . '/' . $package_root, $style_root);
 	}
 
