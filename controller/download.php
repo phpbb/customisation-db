@@ -142,27 +142,7 @@ class download
 
 			if (!file_exists($this->ext_config->upload_path . $composer_package))
 			{
-				$package = new package();
-				$package->set_source($this->ext_config->upload_path . $this->file['physical_filename']);
-				$package->set_temp_path($this->ext_config->contrib_temp_path, true);
-
-				$ext_base_path = $package->find_directory(
-					array(
-						'files' => array(
-							'required' => 'composer.json',
-							'optional' => 'ext.php',
-						),
-					),
-					'vendor'
-				);
-
-				$package->restore_root($ext_base_path, $this->id);
-
-				$filesystem = new Filesystem();
-				$filesystem->copy($package->get_source(), $this->ext_config->upload_path . $composer_package);
-
-				$package->set_source($package->get_source() . '.composer');
-				$package->repack(true);
+				$this->generate_composer_package($composer_package);
 			}
 
 			$this->file['physical_filename'] = $composer_package;
@@ -181,6 +161,36 @@ class download
 
 			return $this->send_file_to_browser($this->file, $filename, $display_cat);
 		}
+	}
+
+	/**
+	 * Generate Composer package.
+	 *
+	 * @param string $composer_package Path to package destination
+	 */
+	protected function generate_composer_package($composer_package)
+	{
+		$package = new package();
+		$package->set_source($this->ext_config->upload_path . $this->file['physical_filename']);
+		$package->set_temp_path($this->ext_config->contrib_temp_path, true);
+
+		$ext_base_path = $package->find_directory(
+			array(
+				'files' => array(
+					'required' => 'composer.json',
+					'optional' => 'ext.php',
+				),
+			),
+			'vendor'
+		);
+
+		$package->restore_root($ext_base_path, $this->id);
+
+		$filesystem = new Filesystem();
+		$filesystem->copy($package->get_source(), $this->ext_config->upload_path . $composer_package);
+
+		$package->set_source($package->get_source() . '.composer');
+		$package->repack(true);
 	}
 
 	/**
