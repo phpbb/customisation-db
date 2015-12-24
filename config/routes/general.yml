@@ -27,8 +27,8 @@ phpbb.titania.author:
         page: |details|contributions|support|discussion|manage|create
 
 phpbb.titania.download:
-    pattern: /download/{id}
-    defaults: { _controller: phpbb.titania.controller.download:file, id: 0 }
+    pattern: /download/{id}/{type}
+    defaults: { _controller: phpbb.titania.controller.download:file, id: 0, type: 'manual' }
     requirements:
         id: \d+
 

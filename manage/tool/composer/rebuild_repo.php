@@ -217,7 +217,10 @@ class rebuild_repo extends base
 				$last_type = $revision['contrib_type'];
 				$download_url = $this->path_helper->strip_url_params(
 					$this->controller_helper->route('phpbb.titania.download',
-						array('id'	=> (int) $revision['attachment_id'])
+						array(
+							'id'	=> (int) $revision['attachment_id'],
+							'type'	=> 'composer',
+						)
 					),
 					'sid'
 				);
@@ -261,7 +264,7 @@ class rebuild_repo extends base
 		$this->repo->deploy_build();
 
 		return $this->get_result(
-			'COMPOSER_PACKAGES_REBUILT',
+			'COMPOSER_REPO_REBUILT',
 			$this->get_total(),
 			false
 		);
@@ -336,5 +339,13 @@ class rebuild_repo extends base
 			$revision['revision_composer_json'] = $composer_json;
 		}
 		return $revision;
+	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function get_route()
+	{
+		return 'phpbb.titania.manage.composer.rebuild_repo';
 	}
 }
