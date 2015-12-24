@@ -264,7 +264,7 @@ class rebuild_repo extends base
 		$this->repo->deploy_build();
 
 		return $this->get_result(
-			'COMPOSER_PACKAGES_REBUILT',
+			'COMPOSER_REPO_REBUILT',
 			$this->get_total(),
 			false
 		);

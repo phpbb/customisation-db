@@ -41,6 +41,7 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	'COMPOSER_REPO_REBUILT'			=> 'The Composer repository has been rebuilt.',
 	'CONFIRM_TOOL_ACTION'			=> 'Are you sure you want to run this tool?',
 	'FIX_LEFT_RIGHT_IDS'			=> 'Fix Left/Right ID’s',
 	'FIX_LEFT_RIGHT_IDS_CONFIRM'	=> 'Are you sure you want to fix the left and right ID’s?<br /><br /><strong>Backup your database before running this tool!</strong>',
