@@ -148,4 +148,38 @@
 		}
 	});
 
+	phpbb.addAjaxCallback('titania.manage.tool', function(res) {
+		var $this = $(this),
+			$tool = $this.parents('.manage-tool'),
+			$info = $tool.find('.tool-info');
+
+		if (res.next_call) {
+			var $next = $('<a />').attr({
+				href: res.next_call,
+				style: 'display: none;',
+				'data-ajax': 'titania.manage.tool',
+				'data-overlay': false
+			});
+			titania.ajaxify($next);
+			$this.after($next);
+			$next.click();
+		}
+		if (res.message) {
+			$info.find('.tool-message').html(res.message);
+			$info.fadeIn('fast');
+		}
+
+		if (res.total) {
+			var progress = (res.next_batch) ? res.next_batch : res.total;
+			$tool.find('.tool-progressbar').show();
+			$tool.find('.tool-progress').css({width: ((progress / res.total) * 100) + '%'})
+		}
+
+		if (!res.next_call) {
+			setTimeout(function() {
+				$info.fadeOut('slow');
+			}, 5000);
+		}
+	});
+
 })(jQuery); // Avoid conflicts with other libraries

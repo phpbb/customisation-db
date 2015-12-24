@@ -81,7 +81,7 @@ class display
 		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 		{
 			$u_my_contribs = $this->controller_helper->route('phpbb.titania.author', array(
-				'author'	=> $this->user->data['username_clean'],
+				'author'	=> urlencode($this->user->data['username_clean']),
 				'page'		=> 'contributions',
 			));
 		}

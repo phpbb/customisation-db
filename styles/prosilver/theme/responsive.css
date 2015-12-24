@@ -70,3 +70,11 @@
 		margin-left: 0;
 	}
 }
+
+@media only screen and (max-width: 400px), only screen and (max-device-width: 400px) {
+	/* Contribution List
+	--------------------------------------------- */
+	.contrib-quickview {
+		width: 100% !important;
+	}
+}

@@ -334,7 +334,7 @@ class author
 		$sort->set_sort_keys(array(
 			'sc' => array('SORT_CONTRIB_NAME', 'c.contrib_limited_support, c.contrib_name', true),
 		));
-		$sort->set_defaults(false, 'sc', 'a');
+		$sort->set_defaults(24, 'sc', 'a');
 
 		\contribs_overlord::display_contribs('author', $this->author->user_id, false, $sort);
 

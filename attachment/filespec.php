@@ -67,12 +67,15 @@ class filespec extends \filespec
 
 		$upload_mode = (@ini_get('open_basedir') || @ini_get('safe_mode') || strtolower(@ini_get('safe_mode')) == 'on') ? 'move' : 'copy';
 		$upload_mode = ($this->local) ? 'local' : $upload_mode;
-		$this->destination_file = $this->destination_path . '/' . basename($this->realname);
+		$this->destination_file = $this->destination_path . '/' . utf8_basename($this->realname);
 
 		// Check if the file already exist, else there is something wrong...
 		if (file_exists($this->destination_file) && !$overwrite)
 		{
 			@unlink($this->filename);
+			$this->error[] = $this->user->lang($this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR', $this->destination_file);
+			$this->file_moved = false;
+			return false;
 		}
 		else
 		{
@@ -90,13 +93,10 @@ class filespec extends \filespec
 						if (!@move_uploaded_file($this->filename, $this->destination_file))
 						{
 							$this->error[] = $this->user->lang($this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR', $this->destination_file);
-							return false;
 						}
 					}
 
-					@unlink($this->filename);
-
-					break;
+				break;
 
 				case 'move':
 
@@ -105,24 +105,27 @@ class filespec extends \filespec
 						if (!@copy($this->filename, $this->destination_file))
 						{
 							$this->error[] = $this->user->lang($this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR', $this->destination_file);
-							return false;
 						}
 					}
 
-					@unlink($this->filename);
-
-					break;
+				break;
 
 				case 'local':
 
 					if (!@copy($this->filename, $this->destination_file))
 					{
 						$this->error[] = $this->user->lang($this->upload->error_prefix . 'GENERAL_UPLOAD_ERROR', $this->destination_file);
-						return false;
 					}
-					@unlink($this->filename);
 
-					break;
+				break;
+			}
+
+			// Remove temporary filename
+			@unlink($this->filename);
+
+			if (sizeof($this->error))
+			{
+				return false;
 			}
 
 			phpbb_chmod($this->destination_file, $chmod);

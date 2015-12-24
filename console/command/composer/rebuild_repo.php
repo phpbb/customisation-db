@@ -33,7 +33,7 @@ class rebuild_repo extends \phpbb\console\command\command
 	 */
 	public function __construct(user $user, rebuild_tool $tool)
 	{
-		$user->add_lang_ext('phpbb/titania', 'console');
+		$user->add_lang_ext('phpbb/titania', array('console', 'manage_tools'));
 		parent::__construct($user);
 
 		$this->tool = $tool;
