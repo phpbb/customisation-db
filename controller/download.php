@@ -49,6 +49,9 @@ class download
 	/** @var int */
 	protected $id;
 
+	/** @var string */
+	protected $type;
+
 	const OK = 200;
 	const FORBIDDEN = 403;
 	const NOT_FOUND = 404;
@@ -94,6 +97,7 @@ class download
 	{
 		$this->check_invalid_request();
 		$this->id = (int) $id;
+		$this->type = $type;
 
 		// If no download id is provided, check for legacy download.
 		if (!$this->id)
@@ -272,6 +276,12 @@ class download
 
 		if ($status === self::OK)
 		{
+			// Only revisions can be downloaded as Composer packages
+			if ($this->type == 'composer' && $this->file['object_type'] != TITANIA_CONTRIB)
+			{
+				return self::NOT_FOUND;
+			}
+
 			if ($this->file['is_orphan'] && $this->user->data['user_id'] != $this->file['attachment_user_id'] && !$this->auth->acl_get('a_attach'))
 			{
 				$status = self::NOT_FOUND;
@@ -341,6 +351,11 @@ class download
 		$contrib = new \titania_contribution;
 
 		if (!$revision || !$contrib->load((int) $revision['contrib_id']) || !$contrib->is_visible(true))
+		{
+			return self::NOT_FOUND;
+		}
+
+		if ($this->type == 'composer' && !$contrib->type->create_composer_packages)
 		{
 			return self::NOT_FOUND;
 		}
