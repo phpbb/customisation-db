@@ -191,6 +191,7 @@ class download
 
 		$package->set_source($package->get_source() . '.composer');
 		$package->repack(true);
+		$package->cleanup();
 	}
 
 	/**
