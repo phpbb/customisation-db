@@ -217,7 +217,10 @@ class rebuild_repo extends base
 				$last_type = $revision['contrib_type'];
 				$download_url = $this->path_helper->strip_url_params(
 					$this->controller_helper->route('phpbb.titania.download',
-						array('id'	=> (int) $revision['attachment_id'])
+						array(
+							'id'	=> (int) $revision['attachment_id'],
+							'type'	=> 'composer',
+						)
 					),
 					'sid'
 				);
