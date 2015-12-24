@@ -233,7 +233,10 @@ class rebuild_repo extends base
 					),
 					'sid'
 				);*/
-				$download_url = 'https://www.phpbb.com/customise/db/download/' . (int) $revision['attachment_id'];
+				$contrib_url = 'https://www.phpbb.com/customise/db/' .
+					$this->types->get($revision['contrib_type'])->url . '/' .
+					$revision['contrib_name_clean'] . '/';
+				$download_url = 'https://www.phpbb.com/customise/db/download/' . (int) $revision['attachment_id'] . '/composer';
 
 				$packages = $this->repo->set_release(
 					$packages,
