@@ -78,6 +78,26 @@ phpbb.titania.administration:
     pattern: /administration
     defaults: { _controller: phpbb.titania.controller.manage.administration:list_tools }
 
-phpbb.titania.administration.tool:
-    pattern: /administration/{tool}
-    defaults: { _controller: phpbb.titania.controller.manage.administration:run_tool }
+phpbb.titania.manage.composer.rebuild_repo:
+    pattern: /administration/composer/rebuild_repo
+    defaults: { _controller: phpbb.titania.controller.manage.composer.rebuild_repo:handle }
+
+phpbb.titania.manage.contrib.resync_count:
+    pattern: /administration/contrib/resync_count
+    defaults: { _controller: phpbb.titania.controller.manage.contrib.resync_count:handle }
+
+phpbb.titania.manage.contrib.update_release_topics:
+    pattern: /administration/contrib/update_release_topics
+    defaults: { _controller: phpbb.titania.controller.manage.contrib.update_release_topics:handle }
+
+phpbb.titania.manage.search.reindex:
+    pattern: /administration/search/reindex
+    defaults: { _controller: phpbb.titania.controller.manage.search.reindex:handle }
+
+phpbb.titania.manage.topic.rebuild_urls:
+    pattern: /administration/topic/rebuild_urls
+    defaults: { _controller: phpbb.titania.controller.manage.topic.rebuild_urls:handle }
+
+phpbb.titania.manage.topic.resync_dots:
+    pattern: /administration/topic/resync_dots
+    defaults: { _controller: phpbb.titania.controller.manage.topic.resync_dots:handle }

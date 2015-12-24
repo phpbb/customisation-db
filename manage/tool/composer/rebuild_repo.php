@@ -337,4 +337,12 @@ class rebuild_repo extends base
 		}
 		return $revision;
 	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function get_route()
+	{
+		return 'phpbb.titania.manage.composer.rebuild_repo';
+	}
 }

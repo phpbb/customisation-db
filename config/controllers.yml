@@ -357,6 +357,52 @@ services:
             - @phpbb.titania.config
             - @phpbb.titania.display
 
+    phpbb.titania.controller.manage.tool:
+        class: phpbb\titania\controller\manage\tool\tool
+        abstract: true
+        arguments:
+            - @request
+            - @auth
+            - @user
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.manage.contrib.resync_count:
+        calls:
+            - [set_tool, ["@phpbb.titania.manage.tool.contrib.resync_count"]]
+        class: phpbb\titania\controller\manage\tool\contribution\resync_count
+        arguments:
+            - @request
+            - @auth
+            - @user
+            - @phpbb.titania.controller.helper
+            - @phpbb.titania.display
+
+    phpbb.titania.controller.manage.contrib.update_release_topics:
+        calls:
+            - [set_tool, ["@phpbb.titania.manage.tool.contrib.update_release_topics"]]
+        parent: phpbb.titania.controller.manage.tool
+
+    phpbb.titania.controller.manage.composer.rebuild_repo:
+        calls:
+            - [set_tool, ["@phpbb.titania.manage.tool.composer.rebuild_repo"]]
+        parent: phpbb.titania.controller.manage.tool
+
+    phpbb.titania.controller.manage.search.reindex:
+        calls:
+            - [set_tool, ["@phpbb.titania.manage.tool.search.reindex"]]
+        parent: phpbb.titania.controller.manage.tool
+
+    phpbb.titania.controller.manage.topic.rebuild_urls:
+        calls:
+            - [set_tool, ["@phpbb.titania.manage.tool.topic.rebuild_urls"]]
+        parent: phpbb.titania.controller.manage.tool
+
+    phpbb.titania.controller.manage.topic.resync_dots:
+        calls:
+            - [set_tool, ["@phpbb.titania.manage.tool.topic.resync_dots"]]
+        parent: phpbb.titania.controller.manage.tool
+
     phpbb.titania.controller.ucp.subscriptions:
         class: phpbb\titania\controller\ucp\subscriptions
         scope: prototype
