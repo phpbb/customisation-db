@@ -141,8 +141,8 @@ class config extends \phpbb\titania\entity\base
 			// phpBB versions array
 			'phpbb_versions'			=> array('default' => array(
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
-				'30'	=> array('latest_revision' => '14', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
-				'31'	=> array('latest_revision' => '6', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
+				'30'	=> array('latest_revision' => '14', 'name' => 'phpBB 3.0.x', 'allow_uploads' => false),
+				'31'	=> array('latest_revision' => '7-pl1', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
 			)),
 
 			// MPV server(s)
