@@ -389,6 +389,7 @@ services:
         parent: phpbb.titania.controller.manage.tool
 
     phpbb.titania.controller.manage.search.reindex:
+        scope: prototype
         calls:
             - [set_tool, ["@phpbb.titania.manage.tool.search.reindex"]]
         parent: phpbb.titania.controller.manage.tool

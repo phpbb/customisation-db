@@ -247,13 +247,13 @@ services:
 
     phpbb.titania.manage.tool.search.reindex:
         class: phpbb\titania\manage\tool\search\reindex
+        scope: prototype
         arguments:
             - @dbal.conn
+            - @user
             - @phpbb.titania.config
-            - @phpbb.titania.contribution.type.collection
-            - @phpbb.titania.composer.repository
-            - @phpbb.titania.controller.helper
-            - @path_helper
+            - @phpbb.titania.sync
+            - @phpbb.titania.search.manager
 
     phpbb.titania.manage.tool.topic.rebuild_urls:
         class: phpbb\titania\manage\tool\topic\rebuild_urls
