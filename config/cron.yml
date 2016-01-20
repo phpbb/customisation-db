@@ -13,3 +13,13 @@ services:
             - [set_name, [phpbb.titania.cron.task.cleanup]]
 #        tags:
 #            - { name: cron.task }
+
+    phpbb.titania.cron.task.rebuild_composer_repo:
+        class: phpbb\titania\cron\task\rebuild_composer_repo
+        arguments:
+            - @config
+            - @phpbb.titania.manage.tool.composer.rebuild_repo
+        calls:
+            - [set_name, [phpbb.titania.cron.task.rebuild_composer_repo]]
+        tags:
+            - { name: cron.task }

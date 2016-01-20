@@ -1994,6 +1994,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				SET category_contribs = category_contribs ' . (($dir == '+') ? '+' : '-') . ' 1
 				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories));
 			phpbb::$db->sql_query($sql);
+
+			titania::$cache->destroy('_titania_categories');
 		}
 	}
 
@@ -2089,7 +2091,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			return array();
 		}
 
-		$sql = 'SELECT DISTINCT q.revision_id, rp.phpbb_version_branch, q.queue_status
+		$sql = 'SELECT DISTINCT q.revision_id, rp.phpbb_version_branch, q.queue_status, q.queue_tested
 			FROM ' . TITANIA_QUEUE_TABLE . ' q, ' .
 				TITANIA_REVISIONS_PHPBB_TABLE . ' rp
 			WHERE q.contrib_id = ' . (int) $this->contrib_id . '

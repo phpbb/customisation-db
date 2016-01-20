@@ -440,7 +440,7 @@ class revision extends base
 	*/
 	protected function get_repack_exclusions()
 	{
-		$exclude_from_repack = $revision_branches = array();
+		$exclude_from_repack = array();
 		$in_queue = $this->revisions_in_queue;
 
 		if (empty($this->revision->phpbb_versions))
@@ -451,7 +451,6 @@ class revision extends base
 		foreach ($this->revision->phpbb_versions as $version)
 		{
 			$branch = (int) (is_array($version)) ? $version['phpbb_version_branch'] : $version;
-			$revision_branches[] = $branch;
 
 			if (in_array($branch, $this->repackable_branches) ||
 				(isset($in_queue[$branch]) && $in_queue[$branch]['queue_status'] == TITANIA_QUEUE_NEW))
@@ -485,12 +484,27 @@ class revision extends base
 
 		foreach ($this->revisions_in_queue as $branch => $info)
 		{
-			if ($info['queue_status'] > TITANIA_QUEUE_NEW)
+			if ($this->revision_branch_in_progress($branch))
 			{
 				unset($allowed_branches[$branch]);
 			}
 		}
 		return $allowed_branches;
+	}
+
+	/**
+	 * Check whether the given revision branch validation is in progress.
+	 *
+	 * @param $branch
+	 * @return bool
+	 */
+	protected function revision_branch_in_progress($branch)
+	{
+		return isset($this->revisions_in_queue[$branch])
+			&& ($this->revisions_in_queue[$branch]['queue_status'] > TITANIA_QUEUE_NEW
+				|| $this->revisions_in_queue[$branch]['queue_tested']
+			)
+		;
 	}
 
 	/**
@@ -584,9 +598,7 @@ class revision extends base
 				{
 					$error[] = $this->user->lang['INVALID_BRANCH'];
 				}
-				else if (
-					isset($this->revisions_in_queue[$branch]) &&
-					$this->revisions_in_queue[$branch]['queue_status'] > TITANIA_QUEUE_NEW &&
+				else if ($this->revision_branch_in_progress($branch) &&
 					!in_array($branch, $this->repackable_branches)
 				)
 				{

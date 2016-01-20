@@ -862,6 +862,22 @@ p.attention-closed {
 	height: 185px;
 }
 
+.tool-info {
+	float: right;
+}
+
+.tool-progressbar {
+	background-color: #FFFFFF;
+	border-radius: 4px;
+	height: 16px;
+	width: 200px;
+}
+
+.tool-progress {
+	background-color: #006600;
+	height: 100%;
+}
+
 /* Queue stats
 --------------------------------------------- */
 .fade { background: url("./images/fade.png") repeat-y left bottom; }

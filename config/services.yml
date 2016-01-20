@@ -24,6 +24,43 @@ services:
             - %core.root_path%
             - %core.php_ext%
 
+    phpbb.titania.attachment.files.factory:
+        class: phpbb\titania\attachment\files\factory
+        parent: files.factory
+
+    phpbb.titania.attachment.files.filespec:
+        class: phpbb\files\filespec
+        scope: prototype
+        arguments:
+            - @filesystem
+            - @language
+            - @php_ini
+            - @upload_imagesize
+            - ''
+            - @mimetype.guesser
+            - @phpbb.titania.attachment.plupload
+
+    phpbb.titania.attachment.files.types.form:
+        class: phpbb\files\types\form
+        scope: prototype
+        arguments:
+            - @phpbb.titania.attachment.files.factory
+            - @language
+            - @php_ini
+            - @phpbb.titania.attachment.plupload
+            - @request
+
+    phpbb.titania.attachment.files.upload:
+        class: phpbb\files\upload
+        scope: prototype
+        arguments:
+            - @filesystem
+            - @phpbb.titania.attachment.files.factory
+            - @language
+            - @php_ini
+            - @request
+            - ''
+
     phpbb.titania.attachment.operator:
         class: phpbb\titania\attachment\operator
         scope: prototype
@@ -56,11 +93,9 @@ services:
             - @path_helper
             - @controller.helper
             - @phpbb.titania.config
-            - @mimetype.guesser
+            - @phpbb.titania.attachment.files.upload
             - @phpbb.titania.attachment.plupload
             - @phpbb.titania.access
-            - %core.root_path%
-            - %core.php_ext%
 
     phpbb.titania.bbcode.demo:
         class: phpbb\titania\contribution\bbcode\demo\demo
@@ -124,13 +159,9 @@ services:
             - @template
             - @user
             - @config
-            - @controller.provider
-            - @ext.manager
             - @symfony_request
             - @request
-            - @filesystem
-            - %core.root_path%
-            - %core.php_ext%
+            - @routing.helper
 
     phpbb.titania.cache:
         class: phpbb\titania\cache\service
@@ -195,6 +226,49 @@ services:
             - @phpbb.titania.composer.repository
             - @phpbb.titania.controller.helper
             - @path_helper
+
+    phpbb.titania.manage.tool.contrib.resync_count:
+        class: phpbb\titania\manage\tool\contribution\resync_count
+        arguments:
+            - @dbal.conn
+            - @phpbb.titania.contribution.type.collection
+            - @user
+            - @phpbb.titania.config
+
+    phpbb.titania.manage.tool.contrib.update_release_topics:
+        class: phpbb\titania\manage\tool\contribution\update_release_topics
+        arguments:
+            - @dbal.conn
+            - @phpbb.titania.contribution.type.collection
+            - @user
+            - @phpbb.titania.config
+            - %tables.topics%
+            - %tables.users%
+
+    phpbb.titania.manage.tool.search.reindex:
+        class: phpbb\titania\manage\tool\search\reindex
+        scope: prototype
+        arguments:
+            - @dbal.conn
+            - @user
+            - @phpbb.titania.config
+            - @phpbb.titania.sync
+            - @phpbb.titania.search.manager
+
+    phpbb.titania.manage.tool.topic.rebuild_urls:
+        class: phpbb\titania\manage\tool\topic\rebuild_urls
+        arguments:
+            - @dbal.conn
+            - @user
+            - @phpbb.titania.contribution.type.collection
+            - @phpbb.titania.config
+
+    phpbb.titania.manage.tool.topic.resync_dots:
+        class: phpbb\titania\manage\tool\topic\resync_dots
+        arguments:
+            - @dbal.conn
+            - @user
+            - @phpbb.titania.config
 
     phpbb.titania.message:
         class: phpbb\titania\message\message

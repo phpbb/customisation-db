@@ -292,8 +292,8 @@ class type extends base
 			{
 				$data['require']['phpbb/phpbb'] = $data['extra']['soft-require']['phpbb/phpbb'];
 
-				// fix common error
-				$data['require']['phpbb/phpbb'] = str_replace('<3.2.*', '<3.2.0', $data['require']['phpbb/phpbb']);
+				// fix common error (<=3.2.*@dev)
+				$data['require']['phpbb/phpbb'] = preg_replace('/(<|<=|~|\^|>|>=)([0-9]+(\.[0-9]+)?)\.[*x]/', '$1$2', $data['require']['phpbb/phpbb']);
 			}
 		}
 

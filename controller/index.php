@@ -354,7 +354,7 @@ class index
 	{
 		$mode = ($this->id) ? 'category' : 'all';
 		$sort = \contribs_overlord::build_sort();
-		$sort->set_defaults(25);
+		$sort->set_defaults(24);
 		$branch = (int) str_replace('.', '', $this->branch);
 
 		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort);

@@ -21,7 +21,7 @@ use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\controller\helper;
 use phpbb\titania\entity\package;
 use phpbb\titania\manage\tool\base;
-use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\ProgressHelper;
 use Symfony\Component\Finder\SplFileInfo;
 
 class rebuild_repo extends base
@@ -138,7 +138,7 @@ class rebuild_repo extends base
 			$attach_where = 'AND a.attachment_id = r.attachment_id';
 		}
 
-		$sql = 'SELECT c.contrib_id, c.contrib_type, r.revision_id,
+		$sql = 'SELECT c.contrib_id, c.contrib_name_clean, c.contrib_type, r.revision_id,
 				r.attachment_id, r.revision_composer_json' . $attach_fields . '
 			FROM ' . $this->contribs_table . ' c, ' .
 			$this->revisions_table . ' r ' .
@@ -174,14 +174,14 @@ class rebuild_repo extends base
 	 * 	from the revision zip files
 	 * @param bool|false $force		Force tool to run if a build is already
 	 * 	in progress
-	 * @param ProgressBar|null $progress
+	 * @param ProgressHelper|null $progress
 	 * @return array
 	 */
 	public function run($from_file = false, $force = false, $progress = null)
 	{
 		$this->repo->prepare_build_dir($force);
 
-		$batch = $this->get_batch($force);
+		$batch = $this->get_batch($from_file);
 
 		$group_count = $group = 1;
 		$last_type = $last_contrib = '';
@@ -217,7 +217,19 @@ class rebuild_repo extends base
 				$last_type = $revision['contrib_type'];
 				$download_url = $this->path_helper->strip_url_params(
 					$this->controller_helper->route('phpbb.titania.download',
-						array('id'	=> (int) $revision['attachment_id'])
+						array(
+							'id'	=> (int) $revision['attachment_id'],
+							'type'	=> 'composer',
+						)
+					),
+					'sid'
+				);
+				$contrib_url = $this->path_helper->strip_url_params(
+					$this->controller_helper->route('phpbb.titania.contrib',
+						array(
+							'contrib_type'	=> $this->types->get($revision['contrib_type'])->url,
+							'contrib'	=> $revision['contrib_name_clean'],
+						)
 					),
 					'sid'
 				);
@@ -225,7 +237,8 @@ class rebuild_repo extends base
 				$packages = $this->repo->set_release(
 					$packages,
 					$revision['revision_composer_json'],
-					$download_url
+					$download_url,
+					$contrib_url
 				);
 				unset($batch[$contrib_id][$index]);
 			}
@@ -238,10 +251,11 @@ class rebuild_repo extends base
 			if (($group_count % 50) === 0)
 			{
 				$this->dump_include($last_type, $group, $packages);
-				$group_count = 1;
+				$group_count = 0;
 				$group++;
 				$packages = array();
 			}
+			$group_count++;
 		}
 		if (!empty($packages))
 		{
@@ -250,7 +264,7 @@ class rebuild_repo extends base
 		$this->repo->deploy_build();
 
 		return $this->get_result(
-			'COMPOSER_PACKAGES_REBUILT',
+			'COMPOSER_REPO_REBUILT',
 			$this->get_total(),
 			false
 		);
@@ -325,5 +339,13 @@ class rebuild_repo extends base
 			$revision['revision_composer_json'] = $composer_json;
 		}
 		return $revision;
+	}
+
+	/**
+	 * @{inheritDoc}
+	 */
+	public function get_route()
+	{
+		return 'phpbb.titania.manage.composer.rebuild_repo';
 	}
 }

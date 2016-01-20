@@ -14,6 +14,8 @@
 namespace phpbb\titania\controller;
 
 use phpbb\titania\access;
+use phpbb\titania\entity\package;
+use Symfony\Component\Filesystem\Filesystem;
 
 class download
 {
@@ -46,6 +48,9 @@ class download
 
 	/** @var int */
 	protected $id;
+
+	/** @var string */
+	protected $type;
 
 	const OK = 200;
 	const FORBIDDEN = 403;
@@ -84,13 +89,15 @@ class download
 	/**
 	* Output attachment browser.
 	*
-	* @param int $id	Attachment id.
+	* @param int	$id		Attachment id.
+	* @param string	$type	Type of download (manual or composer)
 	* @return \Symfony\Component\HttpFoundation\Response if error found. Otherwise method exits.
 	*/
-	public function file($id)
+	public function file($id , $type)
 	{
 		$this->check_invalid_request();
 		$this->id = (int) $id;
+		$this->type = $type;
 
 		// If no download id is provided, check for legacy download.
 		if (!$this->id)
@@ -129,6 +136,18 @@ class download
 			$this->increase_download_count();
 		}
 
+		if ($type === 'composer')
+		{
+			$composer_package = $this->file['physical_filename'] . '.composer';
+
+			if (!file_exists($this->ext_config->upload_path . $composer_package))
+			{
+				$this->generate_composer_package($composer_package);
+			}
+
+			$this->file['physical_filename'] = $composer_package;
+		}
+
 		if (!$thumbnail && $mode === 'view' && $is_image && $is_ie && !phpbb_is_greater_ie_version($this->user->browser, 7))
 		{
 			$file_url = $this->helper->route('phpbb.titania.download', array('id' => $this->id));
@@ -142,6 +161,37 @@ class download
 
 			return $this->send_file_to_browser($this->file, $filename, $display_cat);
 		}
+	}
+
+	/**
+	 * Generate Composer package.
+	 *
+	 * @param string $composer_package Path to package destination
+	 */
+	protected function generate_composer_package($composer_package)
+	{
+		$package = new package();
+		$package->set_source($this->ext_config->upload_path . $this->file['physical_filename']);
+		$package->set_temp_path($this->ext_config->contrib_temp_path, true);
+
+		$ext_base_path = $package->find_directory(
+			array(
+				'files' => array(
+					'required' => 'composer.json',
+					'optional' => 'ext.php',
+				),
+			),
+			'vendor'
+		);
+
+		$package->restore_root($ext_base_path, $this->id);
+
+		$filesystem = new Filesystem();
+		$filesystem->copy($package->get_source(), $this->ext_config->upload_path . $composer_package);
+
+		$package->set_source($package->get_source() . '.composer');
+		$package->repack(true);
+		$package->cleanup();
 	}
 
 	/**
@@ -237,6 +287,12 @@ class download
 
 		if ($status === self::OK)
 		{
+			// Only revisions can be downloaded as Composer packages
+			if ($this->type == 'composer' && $this->file['object_type'] != TITANIA_CONTRIB)
+			{
+				return self::NOT_FOUND;
+			}
+
 			if ($this->file['is_orphan'] && $this->user->data['user_id'] != $this->file['attachment_user_id'] && !$this->auth->acl_get('a_attach'))
 			{
 				$status = self::NOT_FOUND;
@@ -306,6 +362,11 @@ class download
 		$contrib = new \titania_contribution;
 
 		if (!$revision || !$contrib->load((int) $revision['contrib_id']) || !$contrib->is_visible(true))
+		{
+			return self::NOT_FOUND;
+		}
+
+		if ($this->type == 'composer' && !$contrib->type->create_composer_packages)
 		{
 			return self::NOT_FOUND;
 		}

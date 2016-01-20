@@ -462,7 +462,7 @@ class attachment extends \phpbb\titania\entity\database_base
 	{
 		$prefix = ($thumb) ? 'thumb_' : '';
 
-		return $this->ext_config->__get('upload_path') . '/' .
+		return $this->ext_config->__get('upload_path') .
 			utf8_basename($this->get('attachment_directory')) . '/' .
 			$prefix .
 			utf8_basename($this->get('physical_filename'));

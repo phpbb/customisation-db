@@ -24,9 +24,6 @@ global $phpbb_container;
 $ext_root_path = $phpbb_container->getParameter('phpbb.titania.root_path');
 $php_ext = $phpbb_container->getParameter('core.php_ext');
 
-// Include the non-dynamic constants
-require($ext_root_path . 'includes/constants.' . $php_ext);
-
 // Include core classes
 require($ext_root_path . 'includes/core/phpbb.' . $php_ext);
 require($ext_root_path . 'includes/core/titania.' . $php_ext);

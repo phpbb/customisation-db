@@ -109,6 +109,7 @@ $lang = array_merge($lang, array(
 	'DOWNLOADS_TOTAL'						=> 'Total Downloads',
 	'DOWNLOADS_VERSION'						=> 'Version Downloads',
 	'DOWNLOAD_CHECKSUM'						=> 'MD5 checksum',
+	'DOWNLOAD_VALIDATION_VERSION'			=> 'Validated for',
 	'DUPLICATE_AUTHORS'						=> 'You have the following authors listed as both active and non-active (they can not be both): %s',
 
 	'EDIT_REVISION'							=> 'Edit Revision',

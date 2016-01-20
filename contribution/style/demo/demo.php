@@ -105,13 +105,14 @@ class demo
 		$this->ext_config = $ext_config;
 		$this->controller_helper = $controller_helper;
 		$this->users_table = $users_table;
-		$this->contribs_table = TITANIA_CONTRIBS_TABLE;
-		$this->attachments_table = TITANIA_ATTACHMENTS_TABLE;
-		$this->revisions_table = TITANIA_REVISIONS_TABLE;
-		$this->contrib_in_categories_table = TITANIA_CONTRIB_IN_CATEGORIES_TABLE;
-		$this->categories_table = TITANIA_CATEGORIES_TABLE;
-		$this->revisions_phpbb_table = TITANIA_REVISIONS_PHPBB_TABLE;
-		$this->contrib_coauthors_table = TITANIA_CONTRIB_COAUTHORS_TABLE;
+		$table_prefix = $this->ext_config->__get('table_prefix');
+		$this->contribs_table = $table_prefix . 'contribs';
+		$this->attachments_table = $table_prefix . 'attachments';
+		$this->revisions_table = $table_prefix . 'revisions';
+		$this->contrib_in_categories_table = $table_prefix . 'contrib_in_categories';
+		$this->categories_table = $table_prefix . 'categories';
+		$this->revisions_phpbb_table = $table_prefix . 'revisions_phpbb';
+		$this->contrib_coauthors_table = $table_prefix . 'contrib_coauthors';
 	}
 
 	/**

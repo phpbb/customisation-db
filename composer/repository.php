@@ -120,10 +120,11 @@ class repository
 	 * @param array $packages
 	 * @param string $composer_json
 	 * @param string $download_url
+	 * @param string $contrib_url
 	 * @return array Returns $packages array with $composer_json
 	 * 	set in appropriate package if valid
 	 */
-	public function set_release(array $packages, $composer_json, $download_url)
+	public function set_release(array $packages, $composer_json, $download_url, $contrib_url)
 	{
 		$composer_json = json_decode($composer_json, true);
 
@@ -135,6 +136,7 @@ class repository
 		{
 			$packages[$composer_json['name']] = array();
 		}
+		$composer_json['homepage'] = $contrib_url;
 		$composer_json['dist'] = array(
 			'url'	=> $download_url,
 			'type'	=> 'zip',
@@ -154,7 +156,7 @@ class repository
 	{
 		foreach ($packages as $package_name => $versions)
 		{
-			uksort($packages[$package_name], 'version_compare');
+			uksort($packages[$package_name], array('\phpbb\titania\versions', 'reverse_version_compare'));
 		}
 		$packages = json_encode(
 			array('packages' => $packages),
@@ -250,6 +252,6 @@ class repository
 	public static function trigger_cron(config $config)
 	{
 		// Trigger it in the next 5 minutes.
-		// $config->set('titania_next_composer_rebuild', time() + 300, false);
+		$config->set('titania_next_repo_rebuild', time() + 300, false);
 	}
 }
