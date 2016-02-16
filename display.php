@@ -296,7 +296,7 @@ class display
 			$category->__set_array($data);
 
 			$ignore =
-				(!$is_manage && !$category->category_visible) ||
+				(!$is_manage && (!$category->category_visible || ($category->parent_id && !$categories[$category->parent_id]['category_visible']))) ||
 				(!$display_full_tree && $parent_id != $category->parent_id)
 			;
 
