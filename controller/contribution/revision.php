@@ -929,6 +929,7 @@ class revision extends base
 		{
 			throw new \Exception($this->user->lang['NO_REVISION']);
 		}
+		$this->revision->load_phpbb_versions();
 	}
 
 	/**
