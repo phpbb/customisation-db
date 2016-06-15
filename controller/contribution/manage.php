@@ -120,7 +120,7 @@ class manage extends base
 				'nonactive'		=> $this->request->variable('nonactive_coauthors', '', true),
 			),
 			'new_author'		=> $this->request->variable('change_owner', '', true),
-			'limited_support'	=> $this->request->variable('limited_support', (bool) $this->contrib->contrib_limited_support),
+			'limited_support'	=> $this->contrib->contrib_limited_support,
 		);
 		$this->settings['custom'] = $this->contrib->get_custom_fields();
 
@@ -140,6 +140,7 @@ class manage extends base
 			$this->settings = array_merge($this->settings, array(
 				'categories'		=> $this->request->variable('contrib_category', array(0 => 0)),
 				'custom'			=> $this->request->variable('custom_fields', array('' => ''), true),
+				'limited_support'	=> $this->request->is_set('limited_support'),
 			));
 			$demos = $this->request->variable('demo', array(0 => ''));
 

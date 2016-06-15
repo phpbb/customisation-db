@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\attachment\attachment;
+use phpbb\titania\composer\repository;
 use phpbb\titania\contribution\type\collection as type_collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -403,7 +404,7 @@ class revision extends base
 			{
 				$this->contrib->change_status(TITANIA_CONTRIB_APPROVED);
 			}
-			$this->revision->update_composer_package();
+			repository::trigger_cron($this->config);
 		}
 		$this->revision->submit();
 		$this->uploader->get_operator()->submit();
@@ -928,6 +929,7 @@ class revision extends base
 		{
 			throw new \Exception($this->user->lang['NO_REVISION']);
 		}
+		$this->revision->load_phpbb_versions();
 	}
 
 	/**
