@@ -14,7 +14,7 @@
 
 	<!-- INCLUDE posting/posting_buttons.html -->
 
-	<div id="smiley-box">
+	<div id="smiley-box" class="smiley-box">
 		<!-- IF S_SMILIES_ALLOWED and .smiley -->
 			<strong>{L_SMILIES}</strong><br />
 			<!-- BEGIN smiley -->
@@ -41,7 +41,7 @@
 		<!-- ENDIF -->
 	</div>
 
-	<div id="message-box">
+	<div id="message-box" class="message-box">
 		<textarea name="{POSTING_TEXT_NAME}" id="{POSTING_TEXT_NAME}" rows="15" cols="76" tabindex="2" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" class="inputbox">{POSTING_TEXT}</textarea>
 	</div>
 </fieldset>
