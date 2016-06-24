@@ -543,7 +543,7 @@ class search
 				return '';
 		}
 
-		return $this->helper->route($controller, $params);
+		return $this->helper->route($controller, is_array($params) ? $params : array());
 	}
 
 	/**
