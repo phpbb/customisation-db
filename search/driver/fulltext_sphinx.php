@@ -179,7 +179,7 @@ class fulltext_sphinx extends base
 
 		if (!empty($result['matches']))
 		{
-			foreach ($result['matches'] as $data)
+			foreach ($result['matches'] as $key => $data)
 			{
 				$attrs = $data['attrs'];
 				$attrs['id'] = $key;
