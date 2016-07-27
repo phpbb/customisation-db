@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7663006d223467fa3493f7c1e6a92369",
+    "hash": "b236137393095329ccb515c3ee270f77",
     "packages": [
         {
             "name": "composer/installers",
@@ -204,12 +204,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpbb/epv.git",
-                "reference": "a054539914b0dd2c625c4694059730c517e59623"
+                "reference": "5238b08ae3ad434c7bac6baba0cb1afe1e13b012"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpbb/epv/zipball/a054539914b0dd2c625c4694059730c517e59623",
-                "reference": "a054539914b0dd2c625c4694059730c517e59623",
+                "url": "https://api.github.com/repos/phpbb/epv/zipball/5238b08ae3ad434c7bac6baba0cb1afe1e13b012",
+                "reference": "5238b08ae3ad434c7bac6baba0cb1afe1e13b012",
                 "shasum": ""
             },
             "require": {
@@ -217,10 +217,10 @@
                 "nikic/php-parser": "0.9.*@dev",
                 "php": ">=5.3.3",
                 "sensiolabs/ansi-to-html": "~1.1",
-                "symfony/console": ">=2.3,<2.7",
-                "symfony/finder": ">=2.3,<2.7",
-                "symfony/process": ">=2.3,<2.7",
-                "symfony/yaml": ">=2.3,<2.7"
+                "symfony/console": "~2.3",
+                "symfony/finder": "~2.3",
+                "symfony/process": "~2.3",
+                "symfony/yaml": "~2.3"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.4.*",
@@ -246,7 +246,7 @@
                 }
             ],
             "description": "A extension validator for phpBB extensions. Extensions are required to pass the validator when submitted to the extension database.",
-            "time": "2015-06-26 10:43:47"
+            "time": "2016-07-25 09:32:06"
         },
         {
             "name": "sensiolabs/ansi-to-html",
@@ -298,12 +298,12 @@
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Console.git",
+                "url": "https://github.com/symfony/console.git",
                 "reference": "042107bc202845086739414339e551fbe81293d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/042107bc202845086739414339e551fbe81293d7",
+                "url": "https://api.github.com/repos/symfony/console/zipball/042107bc202845086739414339e551fbe81293d7",
                 "reference": "042107bc202845086739414339e551fbe81293d7",
                 "shasum": ""
             },
