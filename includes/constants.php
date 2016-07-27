@@ -11,14 +11,6 @@
 *
 */
 
-/**
- * @ignore
- */
-if (!defined('IN_PHPBB'))
-{
-	exit;
-}
-
 // Contribution types
 define('TITANIA_TYPE_MOD', 1);
 define('TITANIA_TYPE_STYLE', 2);
