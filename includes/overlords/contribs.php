@@ -457,7 +457,7 @@ class contribs_overlord
 		// Show update time descending and limit to the topics per page by default
 		$sort->set_defaults(phpbb::$config['topics_per_page'], 't', 'd');
 
-		$sort->result_lang = 'TOTAL_CONTRIBS';
+		$sort->result_lang = 'NUM_CONTRIBS';
 
 		return $sort;
 	}
