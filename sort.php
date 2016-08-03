@@ -105,7 +105,7 @@ class sort extends entity\base
 			'sort_dir_name'		=> array('default' => 'sd'),
 
 			'total'			=> array('default' => 0),
-			'result_lang'	=> array('default' => 'TOTAL_RESULTS'), // sprintf'd into 'TOTAL_RESULTS' output;  Should have TOTAL_RESULTS and TOTAL_RESULTS_ONE strings
+			'result_lang'	=> array('default' => 'NUM_RESULTS'), // sprintf'd into 'TOTAL_RESULTS' output;  Should have TOTAL_RESULTS and TOTAL_RESULTS_ONE strings
 			'template_block'	=> array('default' => 'pagination'),
 			'template_vars'		=> array(
 				'default' => array(
