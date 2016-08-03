@@ -156,6 +156,20 @@ class main_listener implements EventSubscriberInterface
 
 	public function overwrite_template_vars($event)
 	{
+		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
+		{
+			$this->user->add_lang_ext('phpbb/titania', 'common');
+
+			$u_my_contribs = $this->controller_helper->route('phpbb.titania.author', array(
+				'author'	=> urlencode($this->user->data['username_clean']),
+				'page'		=> 'contributions',
+			));
+
+			$this->template->assign_vars(array(
+				'U_MY_CONTRIBUTIONS'		=> $this->controller_helper->get_real_url($u_my_contribs),
+			));
+		}
+
 		if (!$this->in_titania)
 		{
 			return;
@@ -180,4 +194,3 @@ class main_listener implements EventSubscriberInterface
 		}
 	}
 }
-
