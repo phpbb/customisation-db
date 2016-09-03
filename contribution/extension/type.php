@@ -291,12 +291,15 @@ class type extends base
 			if (isset($data['extra']['soft-require']['phpbb/phpbb']))
 			{
 				$data['require']['phpbb/phpbb'] = $data['extra']['soft-require']['phpbb/phpbb'];
-
-				// fix common error (<=3.2.*@dev)
-				$data['require']['phpbb/phpbb'] = preg_replace('/(<|<=|~|\^|>|>=)([0-9]+(\.[0-9]+)?)\.[*x]/', '$1$2', $data['require']['phpbb/phpbb']);
 			}
 		}
 
+		if (isset($data['require']['phpbb/phpbb']))
+		{
+			// fix common error (<=3.2.*@dev, >=3.1.x)
+			$data['require']['phpbb/phpbb'] = preg_replace('/(<|<=|~|\^|>|>=)([0-9]+(\.[0-9]+)?)\.[*x]/', '$1$2', $data['require']['phpbb/phpbb']);
+		}
+		
 		return $data;
 	}
 
