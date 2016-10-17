@@ -204,12 +204,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpbb/epv.git",
-                "reference": "5238b08ae3ad434c7bac6baba0cb1afe1e13b012"
+                "reference": "87c89df9560431910fa9027a8129a9efac362ba4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpbb/epv/zipball/5238b08ae3ad434c7bac6baba0cb1afe1e13b012",
-                "reference": "5238b08ae3ad434c7bac6baba0cb1afe1e13b012",
+                "url": "https://api.github.com/repos/phpbb/epv/zipball/87c89df9560431910fa9027a8129a9efac362ba4",
+                "reference": "87c89df9560431910fa9027a8129a9efac362ba4",
                 "shasum": ""
             },
             "require": {
@@ -246,7 +246,7 @@
                 }
             ],
             "description": "A extension validator for phpBB extensions. Extensions are required to pass the validator when submitted to the extension database.",
-            "time": "2016-07-25 09:32:06"
+            "time": "2016-10-17 12:04:32"
         },
         {
             "name": "sensiolabs/ansi-to-html",
