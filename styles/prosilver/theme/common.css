@@ -423,6 +423,10 @@ a.screenshot img, img.screenshot {
 .quickview-title {
 	font-size: 1.2em;
 	position: relative;
+	display: block;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	white-space: nowrap;
 }
 
 .quickview-preview {
