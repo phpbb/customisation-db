@@ -510,7 +510,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sort->default_sort_dir = phpbb::$user->data['user_topic_sortby_dir'];
 		$sort->default_limit = phpbb::$config['topics_per_page'];
 
-		$sort->result_lang = 'TOTAL_TOPICS';
+		$sort->result_lang = 'NUM_TOPICS';
 
 		return $sort;
 	}

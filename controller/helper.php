@@ -13,10 +13,65 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\config\config;
+use phpbb\controller\provider;
+use phpbb\extension\manager;
+use phpbb\filesystem;
+use phpbb\request\request_interface;
+use phpbb\symfony_request;
+use phpbb\template\template;
+use phpbb\titania\config\config as ext_config;
+use phpbb\user;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class helper extends \phpbb\controller\helper
 {
+	/** @var ext_config  */
+	protected $ext_config;
+
+	/**
+	 * Constructor
+	 *
+	 * @param template $template
+	 * @param user $user
+	 * @param config $config
+	 * @param provider $provider
+	 * @param manager $manager
+	 * @param symfony_request $symfony_request
+	 * @param request_interface $request
+	 * @param filesystem $filesystem
+	 * @param string $phpbb_root_path
+	 * @param string $php_ext
+	 * @param ext_config|null $ext_config
+	 */
+	public function __construct(template $template, user $user, config $config, provider $provider, manager $manager, symfony_request $symfony_request, request_interface $request, filesystem $filesystem, $phpbb_root_path, $php_ext, ext_config $ext_config = null)
+	{
+		parent::__construct($template, $user, $config, $provider, $manager, $symfony_request, $request, $filesystem, $phpbb_root_path, $php_ext);
+
+		$this->ext_config = $ext_config;
+	}
+
+	/**
+	 * Modify URL to point back to correct Titania location.
+	 *
+	 * If Titania is running from an app.php that is not under
+	 * the board root, the URL needs to be adjusted since routes
+	 * that are generated on the phpBB board will always point
+	 * back to it.
+	 *
+	 * @param string $url
+	 * @return string
+	 */
+	public function get_real_url($url)
+	{
+		if (!is_null($this->ext_config) && $this->ext_config->titania_script_path)
+		{
+			return generate_board_url(true) .'/'. rtrim($this->ext_config->titania_script_path, '/') .
+			substr($url, strlen(generate_board_url()));
+		}
+		return $url;
+	}
+
 	/**
 	* Checks whether user is logged in and outputs login box
 	* for guests or returns error response for registered users.
@@ -44,7 +99,7 @@ class helper extends \phpbb\controller\helper
 	/**
 	* {@inheritDoc}
 	*/
-	public function render($template_file, $page_title = '', $status_code = 200, $display_online_list = false, $item_id = 0, $item = 'forum')
+	public function render($template_file, $page_title = '', $status_code = 200, $display_online_list = false, $item_id = 0, $item = 'forum', $send_headers = false)
 	{
 		return parent::render($template_file, $this->user->lang($page_title), $status_code, $display_online_list, $item_id, $item);
 	}
