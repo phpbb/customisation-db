@@ -14,9 +14,7 @@
 namespace phpbb\titania\controller;
 
 use phpbb\config\config;
-use phpbb\controller\provider;
 use phpbb\extension\manager;
-use phpbb\filesystem;
 use phpbb\request\request_interface;
 use phpbb\symfony_request;
 use phpbb\template\template;
@@ -35,18 +33,14 @@ class helper extends \phpbb\controller\helper
 	 * @param template $template
 	 * @param user $user
 	 * @param config $config
-	 * @param provider $provider
-	 * @param manager $manager
 	 * @param symfony_request $symfony_request
 	 * @param request_interface $request
-	 * @param filesystem $filesystem
-	 * @param string $phpbb_root_path
-	 * @param string $php_ext
+	 * @param helper $helper
 	 * @param ext_config|null $ext_config
 	 */
-	public function __construct(template $template, user $user, config $config, provider $provider, manager $manager, symfony_request $symfony_request, request_interface $request, filesystem $filesystem, $phpbb_root_path, $php_ext, ext_config $ext_config = null)
+	public function __construct(template $template, user $user, config $config, symfony_request $symfony_request, request_interface $request, \phpbb\routing\helper $helper, ext_config $ext_config = null)
 	{
-		parent::__construct($template, $user, $config, $provider, $manager, $symfony_request, $request, $filesystem, $phpbb_root_path, $php_ext);
+		parent::__construct($template, $user, $config, $symfony_request, $request, $helper);
 
 		$this->ext_config = $ext_config;
 	}
