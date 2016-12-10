@@ -419,7 +419,7 @@ class subscriptions
 			'SUBSCRIPTION_TYPE'				=> $row['watch_object_type'],
 			'SUBSCRIPTION_VIEWS'			=> $row['contrib_views'],
 
-			'U_VIEW_SUBSCRIPTION'			=> $this->get_real_url($contrib->get_url()),
+			'U_VIEW_SUBSCRIPTION'			=> $this->helper->get_real_url($contrib->get_url()),
 
 			'S_CONTRIB'						=> true,
 		);
@@ -491,8 +491,8 @@ class subscriptions
 			'SUBSCRIPTION_TITLE'			=> censor_text($row['topic_subject']),
 			'SUBSCRIPTION_TYPE'				=> $row['watch_object_type'],
 
-			'U_VIEW_SUBSCRIPTION'			=> $this->get_real_url($topic->get_url()),
-			'U_VIEW_LAST_POST'				=> $this->get_real_url($topic->get_url(false, array(
+			'U_VIEW_SUBSCRIPTION'			=> $this->helper->get_real_url($topic->get_url()),
+			'U_VIEW_LAST_POST'				=> $this->helper->get_real_url($topic->get_url(false, array(
 				'p'		=> $topic->topic_last_post_id,
 				'#'		=> 'p' . $topic->topic_last_post_id,
 			))),
@@ -521,7 +521,7 @@ class subscriptions
 			'SUBSCRIPTION_TITLE'			=> $row['contrib_name'],
 			'SUBSCRIPTION_TYPE'				=> $row['watch_object_type'],
 
-			'U_VIEW_SUBSCRIPTION'			=> $this->get_real_url($contrib->get_url('support'))
+			'U_VIEW_SUBSCRIPTION'			=> $this->helper->get_real_url($contrib->get_url('support'))
 		);
 	}
 
@@ -542,7 +542,7 @@ class subscriptions
 			'S_ATTENTION'			=> true,
 			'S_ACCESS_TEAMS'		=> true,
 
-			'U_VIEW_SUBSCRIPTION'	=> $this->get_real_url($this->helper->route('phpbb.titania.manage.attention')),
+			'U_VIEW_SUBSCRIPTION'	=> $this->helper->get_real_url($this->helper->route('phpbb.titania.manage.attention')),
 		);
 	}
 
@@ -567,7 +567,7 @@ class subscriptions
 			'S_QUEUE'				=> true,
 			'S_ACCESS_TEAMS'		=> true,
 
-			'U_VIEW_SUBSCRIPTION'	=> $this->get_real_url($this->helper->route('phpbb.titania.queue.type', array(
+			'U_VIEW_SUBSCRIPTION'	=> $this->helper->get_real_url($this->helper->route('phpbb.titania.queue.type', array(
 				'queue_type' => $type->url
 			))),
 		);
@@ -586,25 +586,5 @@ class subscriptions
 		$contrib->set_type($data['contrib_type']);
 
 		return $contrib;
-	}
-
-	/**
-	* Modify URL to point back to correct Titania location.
-	*
-	* Since the UCP module does not run from app.php, the generated route will
-	* always point back under the phpBB board. The URL needs to be adjusted
-	* if Titania is running from an app.php that is not under the board root.
-	*
-	* @param string $url
-	* @return array
-	*/
-	protected function get_real_url($url)
-	{
-		if ($this->ext_config->titania_script_path)
-		{
-			return generate_board_url(true) .'/'. rtrim($this->ext_config->titania_script_path, '/') .
-				substr($url, strlen(generate_board_url()));
-		}
-		return $url;
 	}
 }

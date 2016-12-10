@@ -76,15 +76,8 @@ class display
 			'CUSTOMISATION_DATABASE'	=> $this->controller_helper->route('phpbb.titania.index'),
 		));
 
-		$u_my_contribs = $u_manage = false;
+		$u_manage = false;
 
-		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
-		{
-			$u_my_contribs = $this->controller_helper->route('phpbb.titania.author', array(
-				'author'	=> urlencode($this->user->data['username_clean']),
-				'page'		=> 'contributions',
-			));
-		}
 		$manageable_types = $this->types->find_authed();
 
 		if (!empty($manageable_types) || $this->auth->acl_get('u_titania_mod_contrib_mod') || $this->auth->acl_get('u_titania_mod_post_mod'))
@@ -103,7 +96,6 @@ class display
 			'TITANIA_ROOT_PATH'			=> $web_root_path,
 
 			'U_MANAGE'					=> $u_manage,
-			'U_MY_CONTRIBUTIONS'		=> $u_my_contribs,
 			'U_ALL_SUPPORT'				=> $this->controller_helper->route('phpbb.titania.support'),
 			'U_TITANIA_INDEX'			=> $this->controller_helper->route('phpbb.titania.index'),
 			'U_TITANIA_FAQ'				=> $this->controller_helper->route('phpbb.titania.faq'),

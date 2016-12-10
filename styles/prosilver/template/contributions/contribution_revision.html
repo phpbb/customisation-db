@@ -8,6 +8,7 @@
 <form id="<!-- IF POSTING_FORM_NAME -->{POSTING_FORM_NAME}<!-- ELSE -->postform<!-- ENDIF -->" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
 	<div class="container">
 		<div class="inner">
+			<div class="content">
 			<!-- IF REVISION_UPLOADER -->
 				{REVISION_UPLOADER}
 
@@ -129,7 +130,9 @@
 			<!-- IF PV_RESULTS -->
 				<p class="error">{L_PV_RESULTS}</p>
 				<hr class="dashed" />
-				{PV_RESULTS}
+				<div style="font-size:12px;">
+					{PV_RESULTS}
+				</div>
 				<!-- IF S_AUTOMOD_TEST -->
 					<br /><br />
 					<hr class="dashed" />
@@ -157,6 +160,7 @@
 				<input type="hidden" name="revision_id" value="{REVISION_ID}" />
 				{S_FORM_TOKEN}
 			</fieldset>
+			</div>
 		</div>
 	</div>
 </form>

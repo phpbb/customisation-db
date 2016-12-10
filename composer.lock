@@ -206,12 +206,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpbb/epv.git",
-                "reference": "5238b08ae3ad434c7bac6baba0cb1afe1e13b012"
+                "reference": "87c89df9560431910fa9027a8129a9efac362ba4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpbb/epv/zipball/5238b08ae3ad434c7bac6baba0cb1afe1e13b012",
-                "reference": "5238b08ae3ad434c7bac6baba0cb1afe1e13b012",
+                "url": "https://api.github.com/repos/phpbb/epv/zipball/87c89df9560431910fa9027a8129a9efac362ba4",
+                "reference": "87c89df9560431910fa9027a8129a9efac362ba4",
                 "shasum": ""
             },
             "require": {
@@ -248,7 +248,7 @@
                 }
             ],
             "description": "A extension validator for phpBB extensions. Extensions are required to pass the validator when submitted to the extension database.",
-            "time": "2016-07-25 09:32:06"
+            "time": "2016-10-17 12:04:32"
         },
         {
             "name": "sensiolabs/ansi-to-html",
@@ -300,12 +300,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "c392a6ec72f2122748032c2ad6870420561ffcfa"
+                "reference": "042107bc202845086739414339e551fbe81293d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/c392a6ec72f2122748032c2ad6870420561ffcfa",
-                "reference": "c392a6ec72f2122748032c2ad6870420561ffcfa",
+                "url": "https://api.github.com/repos/symfony/console/zipball/042107bc202845086739414339e551fbe81293d7",
+                "reference": "042107bc202845086739414339e551fbe81293d7",
                 "shasum": ""
             },
             "require": {
