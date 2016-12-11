@@ -7,11 +7,11 @@
 		<div class="inner">
 			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
 			<div class="action-bar">
-				<div class="buttons">
 				<!-- IF U_CREATE_FAQ -->
-					<a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}" class="button icon-button post-icon">{L_CREATE_FAQ}</a>
+					<a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}" class="button">
+						<span>{L_CREATE_FAQ}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
+					</a>
 				<!-- ENDIF -->
-				</div>
 
 				<!-- IF PAGINATION or TOTAL_POSTS -->
 					<div class="pagination">
@@ -25,7 +25,7 @@
 			<!-- IF faqlist.S_FIRST_ROW -->
 			<ul class="topiclist simple two-long-columns">
 				<li class="header">
-					<dl class="icon">
+					<dl class="row-item">
 						<dt>{L_QUESTIONS}</dt>
 						<dd></dd>
 					</dl>
@@ -34,7 +34,7 @@
 			<ul class="topiclist cplist two-long-columns responsive-show-all">
 			<!-- ENDIF -->
 				<li class="row<!-- IF faqlist.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
-					<dl class="icon {faqlist.FOLDER_STYLE}">
+					<dl class="row-item {faqlist.FOLDER_STYLE}">
 						<dt>
 							<div class="list-inner">
 							<!-- IF faqlist.S_ACCESS_TEAMS -->
@@ -81,11 +81,11 @@
 
 			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
 			<div class="action-bar">
-				<div class="buttons">
 				<!-- IF U_CREATE_FAQ -->
-					<a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}" class="button icon-button post-icon">{L_CREATE_FAQ}</a>
+					<a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}" class="button">
+						<span>{L_CREATE_FAQ}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
+					</a>
 				<!-- ENDIF -->
-				</div>
 
 				<!-- IF PAGINATION or TOTAL_POSTS -->
 					<div class="pagination">
@@ -117,7 +117,12 @@
 				<!-- ENDIF -->
 			</div>
 
-			<div class="back2top"><a href="#wrap" class="top" title="{L_BACK_TO_TOP}">{L_BACK_TO_TOP}</a></div>
+			<div class="back2top">
+				<a href="#wrap" class="top" title="{L_BACK_TO_TOP}">
+					<i class="icon fa-chevron-circle-up fa-fw icon-gray" aria-hidden="true"></i>
+					<span class="sr-only">{L_BACK_TO_TOP}</span>
+				</a>
+			</div>
 		</div>
 	</div>
 <!-- ELSEIF S_EDIT -->
