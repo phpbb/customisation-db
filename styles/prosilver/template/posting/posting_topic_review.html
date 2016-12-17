@@ -20,8 +20,9 @@
 			<!-- IF posts.POST_TEXT_DECODED -->
 			<ul class="post-buttons">
 				<li>
-					<a href="#postingbox" onclick="addquote({posts.POST_ID}, '{posts.USERNAME}');" title="{L_QUOTE} {posts.USERNAME}" class="button icon-button quote-icon">
-						<span>{L_QUOTE} {posts.USERNAME}</span>
+					<a href="#postingbox" onclick="addquote({posts.POST_ID}, '{posts.USERNAME}');" title="{L_QUOTE} {posts.USERNAME}" class="button button-icon-only">
+						<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i>
+						<span class="sr-only">{L_QUOTE} {posts.USERNAME}</span>
 					</a>
 				</li>
 			</ul>
