@@ -94,20 +94,29 @@ class contribution extends base
 		$this->user->add_lang_ext('phpbb/titania', 'posting');
 		$this->user->add_lang('mcp');
 
-		if (confirm_box(true))
+		if ($this->request->is_set_post('cancel'))
+		{
+			return new RedirectResponse($this->contrib->get_url());
+		}
+		else if ($this->request->is_set_post('confirm') && check_form_key('report'))
 		{
 			$message = $this->request->variable('report_text', '', true);
 			$notify_reporter = $this->request->variable('notify', false);
 			$this->contrib->report($message, $notify_reporter);
-		}
-		else
-		{
-			$this->template->assign_var('S_CAN_NOTIFY', true);
 
-			confirm_box(false, 'REPORT_CONTRIBUTION', '', 'posting/report_body.html');
+			return new RedirectResponse($this->contrib->get_url());
 		}
 
-		redirect($this->contrib->get_url());
+		add_form_key('report');
+		$this->template->assign_vars(array(
+			'S_CAN_NOTIFY'	=> true,
+			'MESSAGE_TEXT'	=> $this->user->lang('REPORT_CONTRIBUTION_CONFIRM')
+		));
+
+		return $this->helper->render(
+			'posting/report_body.html',
+			'REPORT_CONTRIBUTION'
+		);
 	}
 
 	/**
