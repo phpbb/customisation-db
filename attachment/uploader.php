@@ -13,6 +13,7 @@
 
 namespace phpbb\titania\attachment;
 
+use phpbb\files\upload;
 use phpbb\request\request_interface;
 use phpbb\titania\access;
 
@@ -42,8 +43,8 @@ class uploader
 	/** @var \phpbb\titania\config\config */
 	protected $ext_config;
 
-	/** @var  \phpbb\mimetype\guesser_interface */
-	protected $mimetype_guesser;
+	/** @var upload */
+	protected $upload;
 
 	/** @var \phpbb\titania\attachment\plupload */
 	protected $plupload;
@@ -98,13 +99,11 @@ class uploader
 	 * @param \phpbb\path_helper $path_helper
 	 * @param \phpbb\controller\helper $controller_helper
 	 * @param \phpbb\titania\config\config $ext_config
-	 * @param $mimetype_guesser
+	 * @param upload $upload
 	 * @param plupload $plupload
 	 * @param access $access
-	 * @param string $phpbb_root_path
-	 * @param string $php_ext
 	 */
-	public function __construct(operator $operator, \phpbb\user $user, \phpbb\config\config $config, request_interface $request, \phpbb\template\template $template, \phpbb\path_helper $path_helper, \phpbb\controller\helper $controller_helper, \phpbb\titania\config\config $ext_config, $mimetype_guesser, plupload $plupload, access $access, $phpbb_root_path, $php_ext)
+	public function __construct(operator $operator, \phpbb\user $user, \phpbb\config\config $config, request_interface $request, \phpbb\template\template $template, \phpbb\path_helper $path_helper, \phpbb\controller\helper $controller_helper, \phpbb\titania\config\config $ext_config, upload $upload, plupload $plupload, access $access)
 	{
 		$this->operator = $operator;
 		$this->user = $user;
@@ -114,11 +113,9 @@ class uploader
 		$this->path_helper = $path_helper;
 		$this->controller_helper = $controller_helper;
 		$this->ext_config = $ext_config;
-		$this->mimetype_guesser = $mimetype_guesser;
+		$this->upload = $upload;
 		$this->plupload = $plupload;
 		$this->access = $access;
-		$this->phpbb_root_path = $phpbb_root_path;
-		$this->php_ext = $php_ext;
 	}
 
 	/**
@@ -230,16 +227,9 @@ class uploader
 	 */
 	public function upload_file()
 	{
-		if (!class_exists('\fileupload'))
-		{
-			require($this->phpbb_root_path . 'includes/functions_upload.' . $this->php_ext);
-		}
-
-		$upload = new fileupload($this->request, $this->user, $this->plupload);
-		$upload->configure($this->use_plupload);
 		$this->filedata = array(
 			'error'			=> array(),
-			'post_attach'	=> $upload->is_valid($this->form_name),
+			'post_attach'	=> $this->upload->is_valid($this->form_name),
 		);
 
 		if (!$this->filedata['post_attach'])
@@ -256,10 +246,13 @@ class uploader
 			return false;
 		}
 
-		$upload->set_allowed_extensions($this->ext_config->upload_allowed_extensions[$this->object_type]);
-		$file = $upload->form_upload($this->form_name, $this->mimetype_guesser);
+		$this->upload->set_allowed_extensions($this->ext_config->upload_allowed_extensions[$this->object_type]);
+		$file = $this->upload->handle_upload(
+			'phpbb.titania.attachment.files.types.form',
+			$this->form_name
+		);
 
-		if ($file->init_error)
+		if ($file->init_error())
 		{
 			$this->filedata['post_attach'] = false;
 
@@ -269,7 +262,7 @@ class uploader
 		// Set max file size for anyone but team members.
 		if (!$this->access->is_team())
 		{
-			$upload->set_max_filesize($this->get_max_filesize());
+			$this->upload->set_max_filesize($this->get_max_filesize());
 		}
 
 		$file->clean_filename('unique', $this->user->data['user_id'] . '_');

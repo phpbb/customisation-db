@@ -292,14 +292,11 @@ class titania_attention extends \phpbb\titania\entity\database_base
 
 		phpbb::_include('functions_messenger', false, 'messenger');
 
-		$lang_path = phpbb::$user->lang_path;
-		phpbb::$user->set_custom_lang_path(titania::$config->language_path);
-
 		$messenger = new messenger(false);
 
 		users_overlord::load_users(array($user_id));
 
-		$messenger->template($email_template, users_overlord::get_user($user_id, 'user_lang'));
+		$messenger->template('@phpbb_titania/' . $email_template, users_overlord::get_user($user_id, 'user_lang'));
 
 		$messenger->to(users_overlord::get_user($user_id, 'user_email'), users_overlord::get_user($user_id, '_username'));
 
@@ -308,10 +305,6 @@ class titania_attention extends \phpbb\titania\entity\database_base
 		)));
 
 		$messenger->send();
-
-		phpbb::$user->set_custom_lang_path($lang_path);
-		// This gets reset when $template->_tpl_load() gets called
-		phpbb::$user->theme['template_inherits_id'] = 1;
 	}
 
 	/**

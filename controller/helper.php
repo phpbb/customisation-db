@@ -13,15 +13,7 @@
 
 namespace phpbb\titania\controller;
 
-use phpbb\config\config;
-use phpbb\controller\provider;
-use phpbb\extension\manager;
-use phpbb\filesystem;
-use phpbb\request\request_interface;
-use phpbb\symfony_request;
-use phpbb\template\template;
 use phpbb\titania\config\config as ext_config;
-use phpbb\user;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class helper extends \phpbb\controller\helper
@@ -32,21 +24,17 @@ class helper extends \phpbb\controller\helper
 	/**
 	 * Constructor
 	 *
-	 * @param template $template
-	 * @param user $user
-	 * @param config $config
-	 * @param provider $provider
-	 * @param manager $manager
-	 * @param symfony_request $symfony_request
-	 * @param request_interface $request
-	 * @param filesystem $filesystem
-	 * @param string $phpbb_root_path
-	 * @param string $php_ext
+	 * @param \phpbb\template\template $template Template object
+	 * @param \phpbb\user $user User object
+	 * @param \phpbb\config\config $config Config object
+	 * @param \phpbb\symfony_request $symfony_request Symfony Request object
+	 * @param \phpbb\request\request_interface $request phpBB request object
+	 * @param \phpbb\routing\helper $routing_helper Helper to generate the routes
 	 * @param ext_config|null $ext_config
 	 */
-	public function __construct(template $template, user $user, config $config, provider $provider, manager $manager, symfony_request $symfony_request, request_interface $request, filesystem $filesystem, $phpbb_root_path, $php_ext, ext_config $ext_config = null)
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\config $config, \phpbb\symfony_request $symfony_request, \phpbb\request\request_interface $request, \phpbb\routing\helper $routing_helper, ext_config $ext_config = null)
 	{
-		parent::__construct($template, $user, $config, $provider, $manager, $symfony_request, $request, $filesystem, $phpbb_root_path, $php_ext);
+		parent::__construct($template, $user, $config, $symfony_request, $request, $routing_helper);
 
 		$this->ext_config = $ext_config;
 	}

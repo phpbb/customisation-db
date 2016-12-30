@@ -1,12 +1,14 @@
 <!-- IF U_POST_REPLY or PAGINATION or TOTAL_RESULTS -->
 <div class="action-bar">
-	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
-		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button icon-button <!-- IF S_IS_LOCKED -->locked<!-- ELSE -->reply<!-- ENDIF -->-icon">
-			<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->
+		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button">
+			<!-- IF S_IS_LOCKED -->
+				<span>{L_BUTTON_TOPIC_LOCKED}</span> <i class="icon fa-lock fa-fw" aria-hidden="true"></i>
+			<!-- ELSE -->
+				<span>{L_BUTTON_POST_REPLY}</span> <i class="icon fa-reply fa-fw" aria-hidden="true"></i>
+			<!-- ENDIF -->
 		</a>
 	<!-- ENDIF -->
-	</div>
 
 	<!-- INCLUDE common/pagination.html -->
 </div>
@@ -29,19 +31,44 @@
 			<!-- IF posts.U_EDIT or posts.U_DELETE or posts.U_REPORT or posts.U_WARN or posts.U_INFO or posts.U_QUOTE -->
 				<ul class="post-buttons">
 					<!-- IF posts.U_EDIT -->
-						<li><a href="{posts.U_EDIT}" title="{L_EDIT_POST}" class="button icon-button edit-icon" data-ajax="titania.quick_edit" data-filter="titania.quickEditFilter"><span>{L_EDIT_POST}</span></a></li>
+						<li>
+							<a href="{posts.U_EDIT}" title="{L_EDIT_POST}" class="button button-icon-only" data-ajax="titania.quick_edit" data-filter="titania.quickEditFilter">
+								<i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_EDIT_POST}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 					<!-- IF posts.U_DELETE -->
-						<li><a href="{posts.U_DELETE}" title="{L_DELETE_POST}" class="button icon-button delete-icon"><span>{L_DELETE_POST}</span></a></li>
+						<li>
+							<a href="{posts.U_DELETE}" title="{L_DELETE_POST}" class="button button-icon-only">
+								<i class="icon fa-times fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_DELETE_POST}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 					<!-- IF posts.U_REPORT -->
-						<li><a href="{posts.U_REPORT}" title="{L_REPORT_POST}" class="button icon-button report-icon"><span>{L_REPORT_POST}</span></a></li>
+						<li>
+							<a href="{posts.U_REPORT}" title="{L_REPORT_POST}" class="button button-icon-only">
+								<i class="icon fa-exclamation fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_REPORT_POST}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 					<!-- IF posts.U_WARN -->
-						<li><a href="{posts.U_WARN}" title="{L_WARN_USER}" class="button icon-button warn-icon"><span>{L_WARN_USER}</span></a></li>
+						<li>
+							<a href="{posts.U_WARN}" title="{L_WARN_USER}" class="button button-icon-only">
+								<i class="icon fa-exclamation-triangle fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_WARN_USER}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 					<!-- IF posts.U_QUOTE -->
-						<li><a href="{posts.U_QUOTE}" title="{L_REPLY_WITH_QUOTE}" class="button icon-button quote-icon"><span>{L_REPLY_WITH_QUOTE}</span></a></li>
+						<li>
+							<a href="{posts.U_QUOTE}" title="{L_REPLY_WITH_QUOTE}" class="button button-icon-only">
+								<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i>
+								<span class="sr-only">{L_REPLY_WITH_QUOTE}</span>
+							</a>
+						</li>
 					<!-- ENDIF -->
 				</ul>
 			<!-- ENDIF -->
@@ -50,16 +77,25 @@
 			<h3 <!-- IF posts.S_FIRST_ROW -->class="first"<!-- ENDIF -->><!-- IF posts.POST_ICON_IMG --><img src="{T_ICONS_PATH}{posts.POST_ICON_IMG}" width="{posts.POST_ICON_IMG_WIDTH}" height="{posts.POST_ICON_IMG_HEIGHT}" alt="" /> <!-- ENDIF --><a href="{posts.U_VIEW}">{posts.POST_SUBJECT}</a>
 			<!-- IF posts.S_ACCESS_TEAMS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_teams.png" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
 			<!-- ELSEIF posts.S_ACCESS_AUTHORS--><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_author.png" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" /><!-- ENDIF --></h3>
-			<p class="author"><!-- IF S_IS_BOT -->{posts.MINI_POST_IMG}<!-- ELSE --><a href="{posts.U_MINI_POST}">{posts.MINI_POST_IMG}</a><!-- ENDIF -->{L_POST_BY_AUTHOR} <strong>{posts.USER_FULL}</strong> &raquo; {posts.POST_TIME} </p>
+			<p class="author">
+				<!-- IF S_IS_BOT -->
+					<span><i class="icon fa-file fa-fw <!-- IF posts.S_UNREAD_POST -->icon-red<!-- ELSE -->icon-lightgray<!-- ENDIF --> icon-md" aria-hidden="true"></i><span class="sr-only">{posts.MINI_POST}</span></span>
+				<!-- ELSE -->
+					<a class="unread" href="{posts.U_MINI_POST}" title="{posts.MINI_POST}">
+						<i class="icon fa-file fa-fw <!-- IF posts.S_UNREAD_POST -->icon-red<!-- ELSE -->icon-lightgray<!-- ENDIF --> icon-md" aria-hidden="true"></i><span class="sr-only">{posts.MINI_POST}</span>
+					</a>
+				<!-- ENDIF -->
+				{L_POST_BY_AUTHOR} <strong>{posts.USER_FULL}</strong> &raquo; {posts.POST_TIME}
+			</p>
 
 			<!-- IF not posts.S_POST_APPROVED -->
 				<p class="post-notice unapproved">
-					<a href="{posts.U_INFO}"><strong>{L_POST_UNAPPROVED}</strong></a>
+					<a href="{posts.U_INFO}"><i class="icon fa-question icon-red fa-fw" aria-hidden="true"></i><strong>{L_POST_UNAPPROVED}</strong></a>
 				</p>
 			<!-- ENDIF -->
 			<!-- IF posts.S_POST_REPORTED -->
 				<p class="post-notice reported">
-					<a href="{posts.U_INFO}"><strong>{L_POST_REPORTED}</strong></a>
+					<a href="{posts.U_INFO}"><i class="icon fa-exclamation fa-fw icon-red" aria-hidden="true"></i><strong>{L_POST_REPORTED}</strong></a>
 				</p>
 			<!-- ENDIF -->
 
@@ -124,7 +160,9 @@
 				<dd class="profile-contact">
 					<strong>{L_CONTACT}{L_COLON}</strong>
 					<div class="dropdown-container dropdown-left">
-						<a href="#" class="dropdown-trigger"><span class="imageset icon_contact"></span></a>
+						<a href="#" class="dropdown-trigger">
+							<i class="icon fa-commenting-o fa-fw icon-lg" aria-hidden="true"></i><span class="sr-only"></span>
+						</a>
 						<div class="dropdown hidden">
 							<div class="pointer"><div class="pointer-inner"></div></div>
 							<div class="dropdown-contents contact-icons">
@@ -150,7 +188,12 @@
 		</dl>
 	<!-- ENDIF -->
 
-		<div class="back2top"><a href="#wrap" class="top" title="{L_BACK_TO_TOP}">{L_BACK_TO_TOP}</a></div>
+		<div class="back2top">
+			<a href="#wrap" class="top" title="{L_BACK_TO_TOP}">
+				<i class="icon fa-chevron-circle-up fa-fw icon-gray" aria-hidden="true"></i>
+				<span class="sr-only">{L_BACK_TO_TOP}</span>
+			</a>
+		</div>
 
 		</div>
 	</div>
@@ -166,16 +209,22 @@
 
 <!-- IF U_POST_REPLY or PAGINATION or TOTAL_RESULTS or .quickmod -->
 <div class="action-bar">
-	<div class="buttons">
 	<!-- IF U_POST_REPLY -->
-		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button icon-button <!-- IF S_IS_LOCKED -->locked<!-- ELSE -->reply<!-- ENDIF -->-icon">
-			<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED_SHORT}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->
+		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button">
+			<!-- IF S_IS_LOCKED -->
+				<span>{L_BUTTON_TOPIC_LOCKED}</span> <i class="icon fa-lock fa-fw" aria-hidden="true"></i>
+			<!-- ELSE -->
+				<span>{L_BUTTON_POST_REPLY}</span> <i class="icon fa-reply fa-fw" aria-hidden="true"></i>
+			<!-- ENDIF -->
 		</a>
 	<!-- ENDIF -->
 
 	<!-- IF .quickmod -->
 		<div class="dropdown-container dropdown-container-{S_CONTENT_FLOW_BEGIN} dropdown-up dropdown-{S_CONTENT_FLOW_END} dropdown-button-control" id="quickmod">
-			<span title="{L_QUICK_MOD}" class="dropdown-trigger button icon-button modtools-icon dropdown-select">{L_QUICK_MOD}</span>
+			<span title="{L_QUICK_MOD}" class="dropdown-trigger button button-secondary dropdown-select">
+				<i class="icon fa-gavel fa-fw" aria-hidden="true"></i><span class="sr-only">{L_QUICK_MOD}</span>
+				<span class="caret"><i class="icon fa-sort-down fa-fw" aria-hidden="true"></i></span>
+			</span>
 			<div class="dropdown hidden">
 				<div class="pointer"><div class="pointer-inner"></div></div>
 				<ul class="dropdown-contents">
@@ -186,7 +235,6 @@
 			</div>
 		</div>
 	<!-- ENDIF -->
-	</div>
 
 	<!-- INCLUDE common/pagination.html -->
 </div>

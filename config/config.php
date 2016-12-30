@@ -61,18 +61,21 @@ class config extends \phpbb\titania\entity\base
 			'demo_style_path'			=> array('default' => array(
 				'30'	=> '',
 				'31'	=> '',
+				'32'	=> '',
 			)),
 
 			// URL for style demo board management hook
 			'demo_style_hook'			=> array('default' => array(
 				'30'	=> '',
 				'31'	=> '',
+				'32'	=> '',
 			)),
 
 			// Demo board URL
 			'demo_style_url'			=> array('default' => array(
 				'30'	=> '',
 				'31'	=> '',
+				'32'	=> '',
 			)),
 
 			// Allow non-team members to modify the style demo URL?
@@ -100,6 +103,7 @@ class config extends \phpbb\titania\entity\base
 			'forum_style_database'		=> array('default' => array(
 				'30'	=> 0,
 				'31'	=> 0,
+				'32'	=> 0,
 			)),
 			'forum_converter_database'	=> array('default' => array(
 				'30'	=> 0,
@@ -111,6 +115,7 @@ class config extends \phpbb\titania\entity\base
 			)),
 			'forum_extension_database'	=> array('default' => array(
 				'31'	=> 0,
+				'32'	=> 0,
 			)),
 
 			// Accounts to use for posting in the forum
@@ -143,6 +148,7 @@ class config extends \phpbb\titania\entity\base
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
 				'30'	=> array('latest_revision' => '14', 'name' => 'phpBB 3.0.x', 'allow_uploads' => false),
 				'31'	=> array('latest_revision' => '10', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
+				'32'	=> array('latest_revision' => '0', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
 			)),
 
 			// MPV server(s)
