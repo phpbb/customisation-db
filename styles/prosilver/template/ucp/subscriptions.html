@@ -34,7 +34,7 @@
 		</ul>
 		<ul class="topiclist <!-- IF S_WATCHED_ITEMS -->missing-column<!-- ELSE -->two-columns<!-- ENDIF -->">
 			<li class="header">
-				<dl class="icon">
+				<dl class="row-item">
 					<dt><!-- IF S_WATCHED_ITEMS -->{L_WATCHED_ITEMS}<!-- ELSE -->{L_WATCHED_SECTIONS}<!-- ENDIF --></dt>
 					<!-- IF S_WATCHED_ITEMS -->
 						<dd class="lastpost"><span>{L_INFORMATION}</span></dd>
@@ -45,7 +45,7 @@
 		<ul class="topiclist cplist <!-- IF S_WATCHED_ITEMS -->missing-column<!-- ELSE -->two-columns<!-- ENDIF -->">
 		<!-- BEGIN subscriptions -->
 			<li class="row<!-- IF subscriptions.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
-				<dl<!-- IF subscriptions.FOLDER_STYLE --> class="icon {subscriptions.FOLDER_STYLE}"<!-- ENDIF -->>
+				<dl<!-- IF subscriptions.FOLDER_STYLE --> class="row-item {subscriptions.FOLDER_STYLE}"<!-- ENDIF -->>
 					<dt>
 						<div class="list-inner">
 							<a href="{subscriptions.U_VIEW_SUBSCRIPTION}" class="topictitle">{subscriptions.SUBSCRIPTION_TITLE}</a>
