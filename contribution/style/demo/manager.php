@@ -291,7 +291,7 @@ class manager
 			->ignoreVCS(false)
 			->ignoreDotFiles(false)
 			->files()
-			->notName('/\.(svg|png|jpe?g|gif|html|js|css|cfg)$/i')
+			->notName('/\.(svg|png|jpe?g|gif|html|js|css|cfg|otf|eot|ttf|woff2?)$/i')
 			->in($this->package->get_temp_path())
 		;
 		$filesystem->remove($finder);
