@@ -195,7 +195,7 @@ a.download-button .vendor-version {
 }
 
 .contrib-description dd ul, .contrib-description dd ol {
-	margin-left: 3em;
+	margin: 0 0 1em 3em;
 }
 
 .contrib-description dd dl.codebox dt {margin-top: 1px;}
@@ -1021,10 +1021,6 @@ textarea.elastic {
 
 textarea.quickedit {
 	font-size: 1.1em;
-}
-
-.text-content {
-	white-space: pre-wrap;
 }
 
 .inline-attachment {
