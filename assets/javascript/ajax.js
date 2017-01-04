@@ -53,7 +53,7 @@
 		var $form = $(this),
 			$postbody = $form.parents('.postbody');
 
-		$form.replaceWith('<div class="content text-content">' + response.message + '</div>');
+		$form.replaceWith('<div class="content">' + response.message + '</div>');
 		$('h3 a', $postbody).html(response.subject);
 		$('.original_post', $postbody).remove();
 	});
