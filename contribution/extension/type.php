@@ -149,6 +149,8 @@ class type extends base
 		$uid = $bitfield = $flags = false;
 		generate_text_for_storage($results, $uid, $bitfield, $flags, true, true, true);
 
+		$results = htmlspecialchars_decode($results);
+
 		// Add the prevalidator results to the queue
 		$queue = $revision->get_queue();
 		$queue->mpv_results = $results;
