@@ -75,6 +75,18 @@ class prevalidator
 			$output->writeln("<success>[color=#00BF40]No issues found[/color] </success>");
 		}
 
-		return $int_output->getBuffer();
+		return $this->clear_formatting($int_output->getBuffer());
+	}
+
+	/**
+	 * Remove EPV CLI style formatting from the message
+	 *
+	 * @param string $text
+	 *
+	 * @return string
+	 */
+	protected function clear_formatting($text)
+	{
+		return preg_replace('/<\/?(success|notice|noticebg|warning|error|fatal|info)b?>/', '', $text);
 	}
 }
