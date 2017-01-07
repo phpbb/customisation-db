@@ -878,7 +878,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 					$vendor_version,
 					$this->options['all_versions']
 				);
-				$vendor_version = $vendor_version[0];
+				$vendor_version = implode(phpbb::$user->lang('COMMA_SEPARATOR'), $vendor_version);
 			}
 
 			if ($download['install_time'])
