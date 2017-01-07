@@ -168,7 +168,7 @@ $lang = array_merge($lang, array(
 
 	'PAST_CONTRIBUTORS'						=> 'Past Contributors',
 	'PHPBB_BRANCH'							=> 'phpBB Branch',
-	'PHPBB_BRANCH_EXPLAIN'					=> 'Select the phpBB branch that this revision supports.',
+	'PHPBB_BRANCH_EXPLAIN'					=> 'Select the phpBB branch that this revision supports. Use shift to select multiple branches.',
 	'PHPBB_VERSION'							=> 'phpBB Version(s)',
 	'PV_TEST'								=> 'Prevalidator test',
 	'PV_RESULTS'							=> '<strong>Please check over the prevalidator results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
