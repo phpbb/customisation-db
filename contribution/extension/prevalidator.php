@@ -24,6 +24,7 @@ class prevalidator
 	 *
 	 * @param string $directory		Directory where extracted revision is located
 	 * @return string
+	 * @throws \InvalidArgumentException
 	 */
 	public function run_epv($directory)
 	{
@@ -33,48 +34,56 @@ class prevalidator
 		$runner->runTests();
 
 		// Write a empty line
-		$output->writeLn('');
+		$output->writeln('');
 
-		$found_msg = ' ';
-		$found_msg .= 'Fatal: ' . $output->getMessageCount(Output::FATAL);
-		$found_msg .= ', Error: ' . $output->getMessageCount(Output::ERROR);
-		$found_msg .= ', Warning: ' . $output->getMessageCount(Output::WARNING);
-		$found_msg .= ', Notice: ' . $output->getMessageCount(Output::NOTICE);
-		$found_msg .= ' ';
+		$found_msg = implode(', ', array(
+			'Fatal: ' . $output->getMessageCount(Output::FATAL),
+			'Error: ' . $output->getMessageCount(Output::ERROR),
+			'Warning: ' . $output->getMessageCount(Output::WARNING),
+			'Notice: ' . $output->getMessageCount(Output::NOTICE),
+		));
 
 		if ($output->getMessageCount(Output::FATAL) > 0 || $output->getMessageCount(Output::ERROR) > 0 || $output->getMessageCount(Output::WARNING) > 0)
 		{
-			$output->writeln('<fatal>' . str_repeat(' ', strlen($found_msg)) . '</fatal>');
-			$output->writeln('<fatal> Validation: [b][color=#A91F1F]FAILED[/color][/b]' . str_repeat(' ', strlen($found_msg) - 19) . '</fatal>');
-			$output->writeln('<fatal>' . $found_msg . '</fatal>');
-			$output->writeln('<fatal>' . str_repeat(' ', strlen($found_msg)) . '</fatal>');
-			$output->writeln('');
+			$output->writeln('Validation: [b][color=#A91F1F]FAILED[/color][/b]');
 		}
 		else
 		{
-			$output->writeln('<success>PASSED: ' . $found_msg . '</success>');
+			$output->writeln('Validation: [b][color=#00BF40]PASSED[/color][/b]');
 		}
 
-		$output->writeln("<info>Test results for extension:</info>");
+		$output->writeln($found_msg);
+		$output->writeln('');
+
+		$output->writeln('Test results for extension:');
 		$messages = $output->getMessages();
 
 		if (!empty($messages))
 		{
 			$output->writeln('[list]');
-		}
-		foreach ($messages as $msg)
-		{
-			$output->writeln('[*]' . (string) $msg);
-		}
-		if (!empty($messages))
-		{
+			foreach ($messages as $msg)
+			{
+				$output->writeln('[*]' . (string) $msg);
+			}
 			$output->writeln('[/list]');
 		}
 		else
 		{
-			$output->writeln("<success>[color=#00BF40]No issues found[/color] </success>");
+			$output->writeln('[color=#00BF40]No issues found[/color]');
 		}
 
-		return $int_output->getBuffer();
+		return $this->clear_formatting($int_output->getBuffer());
+	}
+
+	/**
+	 * Remove EPV CLI style formatting from the message
+	 *
+	 * @param string $text
+	 *
+	 * @return string
+	 */
+	protected function clear_formatting($text)
+	{
+		return preg_replace('/<\/?(success|notice|noticebg|warning|error|fatal|info)b?>/', '', $text);
 	}
 }
