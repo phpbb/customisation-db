@@ -80,7 +80,7 @@ $config = array(
 	'demo_style_path' => array(
 		'30'	=> '../styles/demo/3.0/board/',
 		'31'	=> '../styles/demo/3.1/board/',
-		'31'	=> '../styles/demo/3.2/board/',
+		'32'	=> '../styles/demo/3.2/board/',
 	),
 
 	/**
@@ -92,13 +92,13 @@ $config = array(
 	'demo_style_url' =>	array(
 		'30'	=> 'https://www.phpbb.com/styles/demo/3.0/board/index.php?style=%s',
 		'31'	=> 'https://www.phpbb.com/styles/demo/3.1/board/index.php?style=%s',
-		'31'	=> 'https://www.phpbb.com/styles/demo/3.2/board/index.php?style=%s',
+		'32'	=> 'https://www.phpbb.com/styles/demo/3.2/board/index.php?style=%s',
 	),
 
 	'demo_style_hook' => array(
 		'30'	=> 'https://www.phpbb.com/styles/demo/3.0/board/style_demo_install.php',
 		'31'	=> 'https://www.phpbb.com/styles/demo/3.1/board/style_demo_install.php',	
-		'31'	=> 'https://www.phpbb.com/styles/demo/3.2/board/style_demo_install.php',
+		'32'	=> 'https://www.phpbb.com/styles/demo/3.2/board/style_demo_install.php',
 	),
 
 	// ColorizeIt Config for Styles Section
