@@ -10,7 +10,7 @@ phpbb.titania.index.branch:
 
 phpbb.titania.faq:
     pattern: /faq
-    defaults: { _controller: phpbb.titania.controller.faq:display_list }
+    defaults: { _controller: phpbb.titania.controller.faq:handle }
 
 phpbb.titania.queue_stats:
     pattern: /queue-stats/{contrib_type}
