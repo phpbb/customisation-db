@@ -299,7 +299,11 @@ class contribution extends base
 				'download'		=> $this->helper->route('phpbb.titania.download', array(
 					'id' => $download['attachment_id'],
 				)),
-				'announcement'	=> '',
+				'announcement'	=> $this->helper->route('phpbb.titania.contrib', array(
+					'page'			=> '',
+					'contrib_type'	=> $contrib_type,
+					'contrib'		=> $contrib,
+				)),
 				'eol'			=> null,
 				'security'		=> false,
 			);
