@@ -17,10 +17,13 @@ services:
     phpbb.titania.controller.faq:
         class: phpbb\titania\controller\faq
         arguments:
+            - @controller.helper
+            - @phpbb.help.manager
             - @template
-            - @user
-            - @phpbb.titania.controller.helper
+            - @language
             - @phpbb.titania.display
+            - %core.root_path%
+            - %core.php_ext%
 
     phpbb.titania.controller.queue_stats:
         class: phpbb\titania\controller\queue_stats
