@@ -13,86 +13,92 @@
 
 namespace phpbb\titania\controller;
 
-class faq
+class faq extends \phpbb\help\controller\controller
 {
-	/** @var \phpbb\template\template */
-	protected $template;
-
-	/** @var \phpbb\user */
-	protected $user;
-
-	/** @var \phpbb\titania\controller\helper */
-	protected $helper;
-
 	/** @var \phpbb\titania\display */
 	protected $display;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\template\template $template
-	* @param \phpbb\user $user
-	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\titania\display $display
-	*/
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, \phpbb\titania\display $display)
+	 * faq constructor.
+	 *
+	 * @param \phpbb\controller\helper $helper
+	 * @param \phpbb\help\manager      $manager
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\language\language $language
+	 * @param \phpbb\titania\display   $display
+	 * @param string                   $root_path
+	 * @param                          $php_ext
+	 */
+	public function __construct(\phpbb\controller\helper $helper, \phpbb\help\manager $manager, \phpbb\template\template $template, \phpbb\language\language $language, \phpbb\titania\display $display, $root_path, $php_ext)
 	{
-		$this->template = $template;
-		$this->user = $user;
-		$this->helper = $helper;
 		$this->display = $display;
+		parent::__construct($helper, $manager, $template, $language, $root_path, $php_ext);
 	}
 
-	public function display_list()
+	/**
+	 * @return string The title of the page
+	 */
+	public function display()
 	{
-		$this->user->add_lang_ext('phpbb/titania', 'faq', false, true);
+		$this->language->add_lang('help_faq', 'phpbb/titania');
 
-		/**
-		* From phpBB faq.php
-		*/
-
-		// Pull the array data from the lang pack
-		$switch_column = $found_switch = false;
-		$help_blocks = array();
-
-		foreach ($this->user->help as $help_ary)
-		{
-			if ($help_ary[0] == '--')
-			{
-				if ($help_ary[1] == '--')
-				{
-					$switch_column = true;
-					$found_switch = true;
-					continue;
-				}
-
-				$this->template->assign_block_vars('faq_block', array(
-					'BLOCK_TITLE'		=> $help_ary[1],
-					'SWITCH_COLUMN'		=> $switch_column,
-				));
-
-				if ($switch_column)
-				{
-					$switch_column = false;
-				}
-				continue;
-			}
-
-			$this->template->assign_block_vars('faq_block.faq_row', array(
-				'FAQ_QUESTION'		=> $help_ary[0],
-				'FAQ_ANSWER'		=> $help_ary[1])
-			);
-		}
-
-		// Lets build a page ...
-		$this->template->assign_vars(array(
-			'L_FAQ_TITLE'				=> $this->user->lang['FAQ_EXPLAIN'],
-			'L_BACK_TO_TOP'				=> $this->user->lang['BACK_TO_TOP'],
-
-			'SWITCH_COLUMN_MANUALLY'	=> !$found_switch,
+		$this->display->generate_breadcrumbs(array(
+			'CUSTOMISATION_DATABASE' => $this->helper->route('phpbb.titania.index'),
 		));
-		$this->display->assign_global_vars();
 
-		return $this->helper->render('faq_body.html', 'FAQ_EXPLAIN');
+		$this->manager->add_block(
+			'HELP_FAQ_BLOCK_TITANIA',
+			false,
+			array(
+				'HELP_FAQ_TITANIA_QUESTION'    => 'HELP_FAQ_TITANIA_ANSWER',
+				'HELP_FAQ_VALIDATION_QUESTION' => 'HELP_FAQ_VALIDATION_ANSWER',
+			)
+		);
+		$this->manager->add_block(
+			'HELP_FAQ_BLOCK_USE_TITANIA',
+			false,
+			array(
+				'HELP_FAQ_FIND_CONTRIB_QUESTION' => 'HELP_FAQ_FIND_CONTRIB_ANSWER',
+				'HELP_FAQ_FIND_EXT_QUESTION'     => 'HELP_FAQ_FIND_EXT_ANSWER',
+				'HELP_FAQ_FIND_STYLE_QUESTION'   => 'HELP_FAQ_FIND_STYLE_ANSWER',
+			)
+		);
+		$this->manager->add_block(
+			'HELP_FAQ_BLOCK_SUPPORT',
+			false,
+			array(
+				'HELP_FAQ_RULES_QUESTION'       => 'HELP_FAQ_RULES_ANSWER',
+				'HELP_FAQ_GET_SUPPORT_QUESTION' => 'HELP_FAQ_GET_SUPPORT_ANSWER',
+			)
+		);
+		$this->manager->add_block(
+			'HELP_FAQ_BLOCK_MANAGING',
+			true,
+			array(
+				'HELP_FAQ_CREATING_CONTRIB_QUESTION' => 'HELP_FAQ_CREATING_CONTRIB_ANSWER',
+				'HELP_FAQ_SUBMIT_CONTRIB_QUESTION'   => 'HELP_FAQ_SUBMIT_CONTRIB_ANSWER',
+				'HELP_FAQ_MANAGING_CONTRIB_QUESTION' => 'HELP_FAQ_MANAGING_CONTRIB_ANSWER',
+				'HELP_FAQ_SUBMIT_REVISION_QUESTION'  => 'HELP_FAQ_SUBMIT_REVISION_ANSWER',
+			)
+		);
+		$this->manager->add_block(
+			'HELP_FAQ_BLOCK_SUPPORTING',
+			true,
+			array(
+				'HELP_FAQ_SUPPORT_FAQ_QUESTION'   => 'HELP_FAQ_SUPPORT_FAQ_ANSWER',
+				'HELP_FAQ_SUPPORT_FORUM_QUESTION' => 'HELP_FAQ_SUPPORT_FORUM_ANSWER',
+			)
+		);
+		$this->manager->add_block(
+			'HELP_FAQ_BLOCK_VALIDATION',
+			true,
+			array(
+				'HELP_FAQ_VALIDATION_FAIL_QUESTION' => 'HELP_FAQ_VALIDATION_FAIL_ANSWER',
+				'HELP_FAQ_VALIDATION_PASS_QUESTION' => 'HELP_FAQ_VALIDATION_PASS_ANSWER',
+				'HELP_FAQ_VALIDATORS_QUESTION'      => 'HELP_FAQ_VALIDATORS_ANSWER',
+			)
+		);
+
+		return $this->language->lang('CUSTOMISATION_DATABASE') . ' ' . $this->language->lang('FAQ_EXPLAIN');
 	}
 }
