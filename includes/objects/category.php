@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\ext;
 use phpbb\titania\sync;
 
 /**
@@ -38,7 +39,7 @@ class titania_category extends \phpbb\titania\entity\message_base
 	 *
 	 * @var string
 	 */
-	protected $object_type = TITANIA_CATEGORY;
+	protected $object_type = ext::TITANIA_CATEGORY;
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;

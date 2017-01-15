@@ -15,6 +15,7 @@ namespace phpbb\titania\controller\manage;
 
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\contribution\type\type_interface;
+use phpbb\titania\ext;
 
 class queue_discussion extends base
 {
@@ -106,7 +107,7 @@ class queue_discussion extends base
 		// Mark all topics read
 		if ($this->request->variable('mark', '') == 'topics')
 		{
-			$this->tracking->track(TITANIA_QUEUE_DISCUSSION, self::ALL_TYPES);
+			$this->tracking->track(ext::TITANIA_QUEUE_DISCUSSION, self::ALL_TYPES);
 		}
 
 		$this->display->assign_global_vars();
@@ -137,7 +138,7 @@ class queue_discussion extends base
 
 		$sql = 'SELECT topic_category, COUNT(topic_id) AS cnt
 			FROM ' . TITANIA_TOPICS_TABLE . '
-			WHERE topic_type = ' . TITANIA_QUEUE_DISCUSSION . '
+			WHERE topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION . '
 				AND ' . $this->db->sql_in_set('topic_category', $types) . '
 			GROUP BY topic_category';
 		$result = $this->db->sql_query($sql);

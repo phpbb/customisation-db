@@ -13,7 +13,8 @@
 
 namespace phpbb\titania\controller\manage\queue;
 
-use \phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 
 class queue extends \phpbb\titania\controller\manage\base
 {
@@ -65,7 +66,7 @@ class queue extends \phpbb\titania\controller\manage\base
 		if (!$tag)
 		{
 			$this->subscriptions->handle_subscriptions(
-				TITANIA_QUEUE,
+				ext::TITANIA_QUEUE,
 				$this->type->id,
 				$this->helper->get_current_url(),
 				'SUBSCRIBE_QUEUE'
@@ -74,7 +75,7 @@ class queue extends \phpbb\titania\controller\manage\base
 		else
 		{
 			$this->subscriptions->handle_subscriptions(
-				TITANIA_QUEUE_TAG,
+				ext::TITANIA_QUEUE_TAG,
 				$tag,
 				$this->helper->get_current_url(),
 				'SUBSCRIBE_CATEGORY'

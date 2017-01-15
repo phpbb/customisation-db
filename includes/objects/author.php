@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 /**
 * Class to abstract titania authors.
 * @package Titania
@@ -36,7 +38,7 @@ class titania_author extends \phpbb\titania\entity\message_base
 	 *
 	 * @var string
 	 */
-	protected $object_type = TITANIA_AUTHOR;
+	protected $object_type = ext::TITANIA_AUTHOR;
 
 	/**
 	 * Rating of this author
@@ -326,7 +328,7 @@ class titania_author extends \phpbb\titania\entity\message_base
 			if (!isset($type->author_count))
 			{
 				// Figure out the counts some other way
-				$valid_statuses = array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED);
+				$valid_statuses = array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED);
 
 				$sql_ary = array(
 					'SELECT'	=> 'COUNT(*) AS contrib_cnt',

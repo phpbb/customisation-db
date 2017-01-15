@@ -13,8 +13,6 @@
 
 namespace phpbb\titania\migrations;
 
-use phpbb\db\migration\exception;
-
 class base extends \phpbb\db\migration\migration
 {
 	/** @var \phpbb\titania\config\config */

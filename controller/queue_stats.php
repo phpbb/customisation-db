@@ -15,6 +15,7 @@ namespace phpbb\titania\controller;
 
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\date;
+use phpbb\titania\ext;
 
 class queue_stats
 {
@@ -130,8 +131,8 @@ class queue_stats
 	*/
 	protected function generate_stats()
 	{
-		$total_revs_denied		= $this->stats->get_queue_item_count(TITANIA_QUEUE_DENIED);
-		$total_revs_approved	= $this->stats->get_queue_item_count(TITANIA_QUEUE_APPROVED);
+		$total_revs_denied		= $this->stats->get_queue_item_count(ext::TITANIA_QUEUE_DENIED);
+		$total_revs_approved	= $this->stats->get_queue_item_count(ext::TITANIA_QUEUE_APPROVED);
 		$total_revs_validated	= $total_revs_denied + $total_revs_approved;
 
 		if (!$total_revs_validated)
@@ -144,8 +145,8 @@ class queue_stats
 		$year_ago->modify('-1 year')->setTimezone(new \DateTimezone('UTC'));
 
 		$validated_cache_ttl	= round($total_revs_validated / 1000) * 86400;
-		$validated_statuses		= array(TITANIA_QUEUE_DENIED, TITANIA_QUEUE_APPROVED);
-		$closed_statuses		= array(TITANIA_QUEUE_CLOSED, TITANIA_QUEUE_DENIED, TITANIA_QUEUE_APPROVED, TITANIA_QUEUE_HIDE);
+		$validated_statuses		= array(ext::TITANIA_QUEUE_DENIED, ext::TITANIA_QUEUE_APPROVED);
+		$closed_statuses		= array(ext::TITANIA_QUEUE_CLOSED, ext::TITANIA_QUEUE_DENIED, ext::TITANIA_QUEUE_APPROVED, ext::TITANIA_QUEUE_HIDE);
 
 		$oldest_unvalidated_rev	= $this->stats->get_oldest_revision_time(false, $closed_statuses);
 		$oldest_validated_rev	= $this->stats->get_oldest_revision_time($validated_statuses);

@@ -14,12 +14,11 @@
 namespace phpbb\titania\contribution\translation;
 
 use phpbb\auth\auth;
+use phpbb\template\template;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
 use phpbb\titania\entity\package;
-use phpbb\titania\url\url;
-use phpbb\template\template;
 use phpbb\user;
 
 class type extends base

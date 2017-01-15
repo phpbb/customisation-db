@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\migrations;
 
+use phpbb\titania\ext;
+
 class release_1_1_0 extends base
 {
 	static public function depends_on()
@@ -673,7 +675,7 @@ class release_1_1_0 extends base
 
 		$tag_types = array(
 			array(
-				'tag_type_id'	=> TITANIA_QUEUE,
+				'tag_type_id'	=> ext::TITANIA_QUEUE,
 				'tag_type_name'	=> 'QUEUE_TAGS',
 			)
 		);
@@ -683,7 +685,7 @@ class release_1_1_0 extends base
 		$tags = array(
 			array(
 				'tag_id'			=> 1,
-				'tag_type_id'		=> TITANIA_QUEUE,
+				'tag_type_id'		=> ext::TITANIA_QUEUE,
 				'tag_field_name'	=> 'QUEUE_NEW',
 				'tag_clean_name'	=> 'new',
 				'no_delete'			=> true,
@@ -691,42 +693,42 @@ class release_1_1_0 extends base
 			// Leave space for others if we need to hard-code any
 			array(
 				'tag_id'			=> 15,
-				'tag_type_id'		=> TITANIA_QUEUE,
+				'tag_type_id'		=> ext::TITANIA_QUEUE,
 				'tag_field_name'	=> 'QUEUE_ATTENTION',
 				'tag_clean_name'	=> 'attention',
 				'no_delete'			=> false,
 			),
 			array(
 				'tag_id'			=> 16,
-				'tag_type_id'		=> TITANIA_QUEUE,
+				'tag_type_id'		=> ext::TITANIA_QUEUE,
 				'tag_field_name'	=> 'QUEUE_REPACK',
 				'tag_clean_name'	=> 'repack',
 				'no_delete'			=> false,
 			),
 			array(
 				'tag_id'			=> 17,
-				'tag_type_id'		=> TITANIA_QUEUE,
+				'tag_type_id'		=> ext::TITANIA_QUEUE,
 				'tag_field_name'	=> 'QUEUE_VALIDATING',
 				'tag_clean_name'	=> 'validating',
 				'no_delete'			=> false,
 			),
 			array(
 				'tag_id'			=> 18,
-				'tag_type_id'		=> TITANIA_QUEUE,
+				'tag_type_id'		=> ext::TITANIA_QUEUE,
 				'tag_field_name'	=> 'QUEUE_TESTING',
 				'tag_clean_name'	=> 'testing',
 				'no_delete'			=> false,
 			),
 			array(
 				'tag_id'			=> 19,
-				'tag_type_id'		=> TITANIA_QUEUE,
+				'tag_type_id'		=> ext::TITANIA_QUEUE,
 				'tag_field_name'	=> 'QUEUE_APPROVE',
 				'tag_clean_name'	=> 'approve',
 				'no_delete'			=> false,
 			),
 			array(
 				'tag_id'			=> 20,
-				'tag_type_id'		=> TITANIA_QUEUE,
+				'tag_type_id'		=> ext::TITANIA_QUEUE,
 				'tag_field_name'	=> 'QUEUE_DENY',
 				'tag_clean_name'	=> 'deny',
 				'no_delete'			=> false,

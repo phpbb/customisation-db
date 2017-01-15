@@ -13,9 +13,9 @@
 
 namespace phpbb\titania\controller\contribution;
 
-use phpbb\titania\attachment\attachment;
 use phpbb\titania\composer\repository;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class revision extends base
@@ -110,7 +110,7 @@ class revision extends base
 		}
 
 		// Only allow revisions that are still in the queue to be repacked.
-		if ($old_queue->queue_status < TITANIA_QUEUE_NEW || (!$old_queue->allow_author_repack && !$this->is_moderator))
+		if ($old_queue->queue_status < ext::TITANIA_QUEUE_NEW || (!$old_queue->allow_author_repack && !$this->is_moderator))
 		{
 			return $this->helper->needs_auth();
 		}
@@ -247,7 +247,7 @@ class revision extends base
 					);
 
 					$this->subscriptions->send_notifications(
-						TITANIA_QUEUE,
+						ext::TITANIA_QUEUE,
 						$this->contrib->contrib_type,
 						'subscribe_notify_forum',
 						$email_vars,
@@ -367,7 +367,7 @@ class revision extends base
 				if ($this->request->variable('subscribe_author', false))
 				{
 					$this->subscriptions->subscribe(
-						TITANIA_TOPIC,
+						ext::TITANIA_TOPIC,
 						$this->queue->queue_discussion_topic_id
 					);
 				}
@@ -398,11 +398,11 @@ class revision extends base
 		if (!$this->use_queue)
 		{
 			$this->revision->validation_date = time();
-			$this->revision->revision_status = TITANIA_REVISION_APPROVED;
+			$this->revision->revision_status = ext::TITANIA_REVISION_APPROVED;
 
-			if ($this->contrib->contrib_status != TITANIA_CONTRIB_APPROVED)
+			if ($this->contrib->contrib_status != ext::TITANIA_CONTRIB_APPROVED)
 			{
-				$this->contrib->change_status(TITANIA_CONTRIB_APPROVED);
+				$this->contrib->change_status(ext::TITANIA_CONTRIB_APPROVED);
 			}
 			repository::trigger_cron($this->config);
 		}
@@ -454,7 +454,7 @@ class revision extends base
 			$branch = (int) (is_array($version)) ? $version['phpbb_version_branch'] : $version;
 
 			if (in_array($branch, $this->repackable_branches) ||
-				(isset($in_queue[$branch]) && $in_queue[$branch]['queue_status'] == TITANIA_QUEUE_NEW))
+				(isset($in_queue[$branch]) && $in_queue[$branch]['queue_status'] == ext::TITANIA_QUEUE_NEW))
 			{
 				unset($in_queue[$branch]);
 			}
@@ -502,7 +502,7 @@ class revision extends base
 	protected function revision_branch_in_progress($branch)
 	{
 		return isset($this->revisions_in_queue[$branch])
-			&& ($this->revisions_in_queue[$branch]['queue_status'] > TITANIA_QUEUE_NEW
+			&& ($this->revisions_in_queue[$branch]['queue_status'] > ext::TITANIA_QUEUE_NEW
 				|| $this->revisions_in_queue[$branch]['queue_tested']
 			)
 		;
@@ -520,7 +520,7 @@ class revision extends base
 			'attachment_id'			=> ($this->attachment) ? $this->attachment->get_id() : 0,
 			'revision_name'			=> $settings['name'],
 			'revision_version'		=> $settings['version'],
-			'revision_status'		=> TITANIA_REVISION_NEW,
+			'revision_status'		=> ext::TITANIA_REVISION_NEW,
 			'queue_allow_repack'	=> $settings['allow_repack'],
 			'revision_license'		=> $settings['license'],
 		));
@@ -889,7 +889,7 @@ class revision extends base
 
 		$this->revision = new \titania_revision($this->contrib);
 		$this->uploader->configure(
-			TITANIA_CONTRIB,
+			ext::TITANIA_CONTRIB,
 			$this->contrib->contrib_id,
 			true
 		);
@@ -945,7 +945,7 @@ class revision extends base
 		$valid = false;
 
 		if ($attachment &&
-			$attachment->object_type == TITANIA_CONTRIB &&
+			$attachment->object_type == ext::TITANIA_CONTRIB &&
 			$attachment->object_id == $this->contrib->contrib_id &&
 			$attachment->get('is_orphan')
 		)
@@ -974,7 +974,7 @@ class revision extends base
 			{
 				// Is the author subscribed already?
 				return $this->subscriptions->is_subscribed(
-					TITANIA_TOPIC,
+					ext::TITANIA_TOPIC,
 					$this->queue->queue_discussion_topic_id
 				);
 			}
@@ -1047,7 +1047,7 @@ class revision extends base
 			'REVISION_LICENSE'			=> $this->request->variable('revision_license', $settings['license'], true),
 			'REVISION_CUSTOM_LICENSE'	=> $this->request->variable('revision_custom_license', $settings['custom_license'], true),
 			'REVISION_TEST_ACCOUNT'		=> $this->request->variable('revision_test_account', $settings['test_account'], true),
-			'REQUEST_TEST_ACCOUNT'		=> $this->use_queue && $this->contrib->type->id === TITANIA_TYPE_EXTENSION,
+			'REQUEST_TEST_ACCOUNT'		=> $this->use_queue && $this->contrib->type->id === ext::TITANIA_TYPE_EXTENSION,
 
 			'S_CUSTOM_LICENSE'			=> $this->has_custom_license($this->request->variable('revision_license', $settings['license'], true)),
 			'S_ALLOW_CUSTOM_LICENSE'	=> $this->contrib->type->license_allow_custom,

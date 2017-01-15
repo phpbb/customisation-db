@@ -14,6 +14,7 @@
 namespace phpbb\titania\attachment;
 
 use phpbb\titania\access;
+use phpbb\titania\ext;
 
 class attachment extends \phpbb\titania\entity\database_base
 {
@@ -619,7 +620,7 @@ class attachment extends \phpbb\titania\entity\database_base
 	 */
 	public function set_preview()
 	{
-		if (!$this->is_type(TITANIA_SCREENSHOT))
+		if (!$this->is_type(ext::TITANIA_SCREENSHOT))
 		{
 			return false;
 		}

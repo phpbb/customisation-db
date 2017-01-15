@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class revision_edit extends revision
@@ -77,7 +78,7 @@ class revision_edit extends revision
 		$this->handle_revision_delete();
 
 		// Translations
-		$this->translations->configure(TITANIA_TRANSLATION, $this->id, true);
+		$this->translations->configure(ext::TITANIA_TRANSLATION, $this->id, true);
 
 		if ($this->contrib->type->extra_upload)
 		{
@@ -144,7 +145,7 @@ class revision_edit extends revision
 	protected function load_attachment($id)
 	{
 		$this->attachment = $this->attachments
-			->configure(TITANIA_CONTRIB, $this->contrib->contrib_id)
+			->configure(ext::TITANIA_CONTRIB, $this->contrib->contrib_id)
 			->load(array((int) $id))
 			->get($id);
 
@@ -294,7 +295,7 @@ class revision_edit extends revision
 			;
 
 			// Update the status
-			if ($settings['status'] != $this->revision->revision_status && $settings['status'] != TITANIA_REVISION_APPROVED && $can_change_status)
+			if ($settings['status'] != $this->revision->revision_status && $settings['status'] != ext::TITANIA_REVISION_APPROVED && $can_change_status)
 			{
 				$this->revision->change_status($settings['status']);
 			}
@@ -357,13 +358,13 @@ class revision_edit extends revision
 		}
 
 		$status_list = array(
-			TITANIA_REVISION_NEW				=> 'REVISION_NEW',
-			TITANIA_REVISION_APPROVED			=> 'REVISION_APPROVED',
-			TITANIA_REVISION_DENIED				=> 'REVISION_DENIED',
-			TITANIA_REVISION_PULLED_SECURITY	=> 'REVISION_PULLED_FOR_SECURITY',
-			TITANIA_REVISION_PULLED_OTHER		=> 'REVISION_PULLED_FOR_OTHER',
-			TITANIA_REVISION_REPACKED			=> 'REVISION_REPACKED',
-			TITANIA_REVISION_RESUBMITTED		=> 'REVISION_RESUBMITTED',
+			ext::TITANIA_REVISION_NEW				=> 'REVISION_NEW',
+			ext::TITANIA_REVISION_APPROVED			=> 'REVISION_APPROVED',
+			ext::TITANIA_REVISION_DENIED			=> 'REVISION_DENIED',
+			ext::TITANIA_REVISION_PULLED_SECURITY	=> 'REVISION_PULLED_FOR_SECURITY',
+			ext::TITANIA_REVISION_PULLED_OTHER		=> 'REVISION_PULLED_FOR_OTHER',
+			ext::TITANIA_REVISION_REPACKED			=> 'REVISION_REPACKED',
+			ext::TITANIA_REVISION_RESUBMITTED		=> 'REVISION_RESUBMITTED',
 		);
 
 		// Display the status list

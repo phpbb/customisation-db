@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\cron\task;
 
+use phpbb\titania\ext;
+
 class cleanup extends \phpbb\cron\task\base
 {
 	/** @var \phpbb\db\driver\driver_interface */
@@ -162,7 +164,7 @@ class cleanup extends \phpbb\cron\task\base
 		}
 
 		return $this->get_attachments(
-			'object_type = ' . TITANIA_CONTRIB . '
+			'object_type = ' . ext::TITANIA_CONTRIB . '
 				AND ' . $this->db->sql_in_set('attachment_id', $ids)
 		);
 	}
@@ -177,7 +179,7 @@ class cleanup extends \phpbb\cron\task\base
 		$time_limit = time() - (3600 * 4);
 
 		return $this->get_attachments(
-			'object_type <> ' . TITANIA_CONTRIB . '
+			'object_type <> ' . ext::TITANIA_CONTRIB . '
 				AND is_orphan = 1 AND filetime < ' . $time_limit
 		);
 	}

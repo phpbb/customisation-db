@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 /**
  * Class to abstract attention items
  * @package Titania
@@ -101,7 +103,7 @@ class titania_attention extends \phpbb\titania\entity\database_base
 				'U_VIEW'	=> $this->path_helper->strip_url_params($u_view, 'sid'),
 			);
 			$this->subscriptions->send_notifications(
-				TITANIA_ATTENTION,
+				ext::TITANIA_ATTENTION,
 				0,
 				'subscribe_notify',
 				$email_vars,
@@ -177,7 +179,7 @@ class titania_attention extends \phpbb\titania\entity\database_base
 	public function is_report()
 	{
 		return !in_array($this->attention_type, array(
-			TITANIA_ATTENTION_UNAPPROVED,
+			ext::TITANIA_ATTENTION_UNAPPROVED,
 		));
 	}
 

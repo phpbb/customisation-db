@@ -15,9 +15,9 @@ namespace phpbb\titania;
 
 use phpbb\exception\http_exception;
 use phpbb\titania\message\message;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class posting
 {
@@ -191,7 +191,7 @@ class posting
 		{
 			$is_author = $this->get_contrib($parent_id)->is_author();
 		}
-		if ($is_author && $post_type == TITANIA_QUEUE_DISCUSSION)
+		if ($is_author && $post_type == ext::TITANIA_QUEUE_DISCUSSION)
 		{
 			$post->topic->topic_category = $this->contrib->contrib_type;
 		}
@@ -199,7 +199,7 @@ class posting
 		// Load the message object
 		$this->setup_message($post,
 			array(
-				'sticky_topic'	=> $post_type == TITANIA_SUPPORT && ($is_moderator || $is_author),
+				'sticky_topic'	=> $post_type == ext::TITANIA_SUPPORT && ($is_moderator || $is_author),
 				'lock_topic'	=> $is_moderator || ($is_author && $can_moderate_own),
 			),
 			array(
@@ -497,7 +497,7 @@ class posting
 		$is_moderator = $this->auth->acl_get('u_titania_mod_post_mod');
 		$is_author = false;
 
-		if ($post->post_type == TITANIA_SUPPORT)
+		if ($post->post_type == ext::TITANIA_SUPPORT)
 		{
 			$is_author = $this->get_contrib($post->topic->parent_id)->is_author();
 		}
@@ -694,7 +694,7 @@ class posting
 		$topic = $this->load_topic($topic_id);
 		$errors = array();
 
-		if ($topic->topic_type != TITANIA_SUPPORT)
+		if ($topic->topic_type != ext::TITANIA_SUPPORT)
 		{
 			return $this->controller_helper->message('SPLIT_NOT_ALLOWED');
 		}
@@ -742,7 +742,7 @@ class posting
 					}
 
 					// Only allow support posts to be moved to the same contrib
-					if ($new_topic->parent_id != $topic->parent_id || $new_topic->topic_type != TITANIA_SUPPORT)
+					if ($new_topic->parent_id != $topic->parent_id || $new_topic->topic_type != ext::TITANIA_SUPPORT)
 					{
 						$errors[] = $this->user->lang['ERROR_NOT_SAME_PARENT'];
 					}
@@ -757,7 +757,7 @@ class posting
 					// Get info from first post
 					$sql = 'SELECT post_id, post_access, post_approved, post_time
 						FROM ' . TITANIA_POSTS_TABLE . '
-						WHERE post_type = ' . TITANIA_SUPPORT . '
+						WHERE post_type = ' . ext::TITANIA_SUPPORT . '
 							AND topic_id = ' . (int) $topic->topic_id . '
 							AND ';
 					$result = $this->db->sql_query_limit($sql . $sql_extra, 1);
@@ -1030,13 +1030,13 @@ class posting
 			else
 			{
 				// Force Queue Discussion topics to always be stickies
-				if ($post->post_type == TITANIA_QUEUE_DISCUSSION)
+				if ($post->post_type == ext::TITANIA_QUEUE_DISCUSSION)
 				{
 					$post->topic->topic_sticky = true;
 				}
 
 				// Does the post need approval?  Never for the Queue Discussion or Queue. Do not set again in edit mode, otherwise this causes problems when the post has been approved.
-				if (!$this->auth->acl_get('u_titania_post_approved') && $post->post_type != TITANIA_QUEUE_DISCUSSION && $post->post_type != TITANIA_QUEUE && $mode != 'edit')
+				if (!$this->auth->acl_get('u_titania_post_approved') && $post->post_type != ext::TITANIA_QUEUE_DISCUSSION && $post->post_type != ext::TITANIA_QUEUE && $mode != 'edit')
 				{
 					$post->post_approved = false;
 				}
@@ -1050,7 +1050,7 @@ class posting
 				// Did they want to subscribe?
 				if ($this->request->is_set_post('notify') && $this->user->data['is_registered'])
 				{
-					$this->subscriptions->subscribe(TITANIA_TOPIC, $post->topic->topic_id);
+					$this->subscriptions->subscribe(ext::TITANIA_TOPIC, $post->topic->topic_id);
 				}
 
 				// Unapproved posts will get a notice
@@ -1094,12 +1094,12 @@ class posting
 		}
 
 		// Do we subscribe to actual topic?
-		$is_subscribed 	= $is_reply && $this->subscriptions->is_subscribed(TITANIA_TOPIC, $post->topic->topic_id);
+		$is_subscribed 	= $is_reply && $this->subscriptions->is_subscribed(ext::TITANIA_TOPIC, $post->topic->topic_id);
 		$can_subscribe = $this->user->data['is_registered'] && !$is_subscribed;
 
 		$this->template->assign_vars(array(
 			'S_NOTIFY_ALLOWED'	=> $can_subscribe,
-			'S_NOTIFY_CHECKED'	=> ($can_subscribe && $this->user->data['user_notify'] && $post->post_type == TITANIA_SUPPORT) ? ' checked=checked' : '',
+			'S_NOTIFY_CHECKED'	=> ($can_subscribe && $this->user->data['user_notify'] && $post->post_type == ext::TITANIA_SUPPORT) ? ' checked=checked' : '',
 		));
 
 		$topic_access_level = access::PUBLIC_LEVEL;
@@ -1246,7 +1246,7 @@ class posting
 	 */
 	protected function send_notifications(\titania_post $post, $mode)
 	{
-		$is_support_topic = $post->post_type == TITANIA_SUPPORT &&
+		$is_support_topic = $post->post_type == ext::TITANIA_SUPPORT &&
 			is_object($this->contrib) &&
 			$this->contrib->contrib_id == $post->topic->parent_id &&
 			$this->contrib->contrib_name
@@ -1265,7 +1265,7 @@ class posting
 
 		if ($mode == 'reply')
 		{
-			$object_type	= array(TITANIA_TOPIC);
+			$object_type	= array(ext::TITANIA_TOPIC);
 			$object_id		= array($post->topic_id);
 			$topic_params	= array(
 				'view'	=> 'unread',
@@ -1276,7 +1276,7 @@ class posting
 			{
 				// Support topic reply
 				$object_id[]	= $post->topic->parent_id;
-				$object_type[]	= TITANIA_SUPPORT;
+				$object_type[]	= ext::TITANIA_SUPPORT;
 				$template 		.= '_contrib';
 			}
 		}
@@ -1344,6 +1344,6 @@ class posting
 	 */
 	protected function is_topic_moderatable($type)
 	{
-		return in_array($type, array(TITANIA_QUEUE_DISCUSSION, TITANIA_SUPPORT));
+		return in_array($type, array(ext::TITANIA_QUEUE_DISCUSSION, ext::TITANIA_SUPPORT));
 	}
 }

@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 class titania_attention_post extends titania_attention
 {
 	/** @var \phpbb\titania\subscriptions */
@@ -91,7 +93,7 @@ class titania_attention_post extends titania_attention
 
 		switch ((int) $this->attention_type)
 		{
-			case TITANIA_ATTENTION_REPORTED :
+			case ext::TITANIA_ATTENTION_REPORTED :
 				$labels = array_merge($labels, array(
 					'reason'	=> 'REPORTED',
 					'closed'	=> 'CLOSED',
@@ -99,7 +101,7 @@ class titania_attention_post extends titania_attention
 				));
 			break;
 
-			case TITANIA_ATTENTION_UNAPPROVED :
+			case ext::TITANIA_ATTENTION_UNAPPROVED :
 				$labels = array_merge($labels, array(
 					'reason'	=> 'NEW_UNAPPROVED_POST',
 					'closed'	=> 'APPROVED',
@@ -125,7 +127,7 @@ class titania_attention_post extends titania_attention
 		// Check for any open reports.
 		$sql = 'SELECT COUNT(attention_id) AS cnt FROM ' . TITANIA_ATTENTION_TABLE . '
 			WHERE attention_object_id = ' . (int) $this->post->post_id . '
-				AND attention_object_type = ' . TITANIA_POST . '
+				AND attention_object_type = ' . ext::TITANIA_POST . '
 				AND attention_close_time = 0';
 		phpbb::$db->sql_query($sql);
 		$open_reports = phpbb::$db->sql_fetchfield('cnt');
@@ -271,7 +273,7 @@ class titania_attention_post extends titania_attention
 			$message_vars = array(
 				'U_VIEW' => $this->path_helper->strip_url_params($u_view, 'sid'),
 			);
-			$object_type = array(TITANIA_TOPIC, TITANIA_SUPPORT);
+			$object_type = array(ext::TITANIA_TOPIC, ext::TITANIA_SUPPORT);
 			$object_id = array($this->post->topic_id, $this->post->topic->parent_id);
 
 			$this->send_notifications($object_type, $object_id, 'subscribe_notify_contrib', $message_vars);

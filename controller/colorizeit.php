@@ -13,11 +13,12 @@
 
 namespace phpbb\titania\controller;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use phpbb\request\request_interface;
 use phpbb\titania\access;
 use phpbb\titania\contribution\style\colorizeit_helper;
+use phpbb\titania\ext;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class colorizeit
 {
@@ -180,7 +181,7 @@ class colorizeit
 		if ($id)
 		{
 			$this->attachment = $this->attachments
-				->configure(TITANIA_CONTRIB, 0)
+				->configure(ext::TITANIA_CONTRIB, 0)
 				->load_from_ids(array($id))
 				->get($id)
 			;
@@ -199,7 +200,7 @@ class colorizeit
 	*/
 	protected function check_attachment_auth()
 	{
-		return $this->attachment->object_type == TITANIA_CONTRIB &&
+		return $this->attachment->object_type == ext::TITANIA_CONTRIB &&
 			!$this->attachment->is_orphan &&
 			$this->attachment->attachment_access == access::PUBLIC_LEVEL;
 	}
@@ -219,7 +220,7 @@ class colorizeit
 		$data = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult();
 
-		if (!$data || $data['revision_status'] != TITANIA_REVISION_APPROVED)
+		if (!$data || $data['revision_status'] != ext::TITANIA_REVISION_APPROVED)
 		{
 			throw new \Exception('NO_REVISION');
 		}
