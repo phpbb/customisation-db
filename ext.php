@@ -15,14 +15,4 @@ namespace phpbb\titania;
 
 class ext extends \phpbb\extension\base
 {
-	public function is_enableable()
-	{
-		if (!defined('TITANIA_SUPPORT'))
-		{
-			$php_ext = $this->container->getParameter('core.php_ext');
-			include($this->extension_path . 'includes/constants.' . $php_ext);
-		}
-
-		return true;
-	}
 }
