@@ -33,7 +33,7 @@ $config = array(
 	),
 	'forum_extension_database'	=> array(
 		'31'	=> 536,
-		'32'	=> 536,
+		'32'	=> 616,
 	),
 
 	/**
