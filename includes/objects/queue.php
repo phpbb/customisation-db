@@ -408,9 +408,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		}
 		$revision->contrib = $contrib;
 		$revision->load_phpbb_versions();
-		$branch = (int) $revision->phpbb_versions[0]['phpbb_version_branch'];
-
-		$contrib_release_topic_id = $contrib->get_release_topic_id($branch);
 
 		$notes = $this->validation_notes;
 		message::decode($notes, $this->validation_notes_uid);
@@ -425,22 +422,34 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->topic_reply($message, false);
 		$this->discussion_reply($message);
 
-		// Update the revisions
+		// Get branch information first
+		$version_branches = array();
+		foreach ($revision->phpbb_versions as $phpbb_version)
+		{
+			$branch = (int) $phpbb_version['phpbb_version_branch'];
+			$version_branches[$branch] = $contrib->get_release_topic_id($branch);
+		}
+
+		// Update the revisions (this will create the release topics)
 		$revision->change_status(TITANIA_REVISION_APPROVED);
 		$revision->submit();
 
-		// Reply to the release topic
-		if ($contrib_release_topic_id && $contrib->type->update_public)
+		// Go through each version branch in this revision and create the replies as needed
+		foreach ($version_branches as $branch => $contrib_release_topic_id)
 		{
-			// Replying to an already existing topic, use the update message
-			$public_notes = sprintf(phpbb::$user->lang[$contrib->type->update_public], $revision->revision_version) . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->update_public . '_NOTES'], $public_notes) : '');
-			$contrib->reply_release_topic($branch, $public_notes);
-		}
-		elseif (!$contrib_release_topic_id && $contrib->type->reply_public)
-		{
-			// Replying to a topic that was just made, use the reply message
-			$public_notes = phpbb::$user->lang[$contrib->type->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->reply_public . '_NOTES'], $public_notes) : '');
-			$contrib->reply_release_topic($branch, $public_notes);
+			// Reply to the release topic
+			if ($contrib_release_topic_id && $contrib->type->update_public)
+			{
+				// Replying to an already existing topic, use the update message
+				$post_public_notes = sprintf(phpbb::$user->lang[$contrib->type->update_public], $revision->revision_version) . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->update_public . '_NOTES'], $public_notes) : '');
+				$contrib->reply_release_topic($branch, $post_public_notes);
+			}
+			elseif (!$contrib_release_topic_id && $contrib->type->reply_public)
+			{
+				// Replying to a topic that was just made, use the reply message
+				$post_public_notes = phpbb::$user->lang[$contrib->type->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->reply_public . '_NOTES'], $public_notes) : '');
+				$contrib->reply_release_topic($branch, $post_public_notes);
+			}
 		}
 
 		// Self-updating

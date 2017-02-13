@@ -1089,10 +1089,11 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$contrib_description = $this->contrib_desc;
 			message::decode($contrib_description, $this->contrib_desc_uid);
 
-			foreach ($this->download as $download)
+			$download = reset($this->download); // Just need the first download entry
+			$phpbb_versions = $this->revisions[$download['revision_id']]['phpbb_versions'];
+			foreach ($phpbb_versions as $phpbb_version)
 			{
-				$phpbb_version = $this->revisions[$download['revision_id']]['phpbb_versions'][0];
-				$branch = (int) $phpbb_version['phpbb_version_branch'];
+				$branch = (int)$phpbb_version['phpbb_version_branch'];
 
 				if (empty($this->type->forum_database[$branch]))
 				{
@@ -1115,7 +1116,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 					get_formatted_filesize($download['filesize']),
 					$this->path_helper->strip_url_params($this->get_url(), 'sid'),
 					$this->path_helper->strip_url_params($this->get_url('support'), 'sid'),
-					$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision']
+					$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' . $phpbb_version['phpbb_version_revision']
 				);
 
 				$options = array(
