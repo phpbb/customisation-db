@@ -11,7 +11,7 @@
             "name": "David Colón (DavidIQ)",
             "email": "davidiq@phpbb.com",
             "homepage": "http://www.davidiq.com",
-            "role": "Developer"
+            "role": "Lead Developer"
         },
         {
             "name": "Michael Cullum (MichaelC)",
@@ -37,10 +37,6 @@
         {
             "name": "Nathan Guse (EXreaction)",
             "role": "Previous Lead Developer"
-        },
-        {
-            "name": "mtotheikle",
-            "role": "Previous Developer"
         },
         {
             "name": "Andreas Fischer (bantu)",
