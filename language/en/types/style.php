@@ -101,7 +101,7 @@ As you may know all styles submitted to the phpBB styles database must be valida
 Upon validating your style the phpBB Styles Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] your style. The reasons for this denial are outlined below:
 [quote]%s[/quote]
 
-If you wish to resubmit this style to the styles database please ensure that you fix the issues identified and that it meets the [url=http://www.phpbb.com/community/viewtopic.php?t=988545]Styles Submission Policy[/url].
+If you wish to resubmit this style to the styles database please ensure that you fix the issues identified and that it meets the applicable [url=https://www.phpbb.com/styles/rules-and-policies/]Styles Submission Policy[/url].
 
 If you feel this denial is not warranted please contact the Styles Team Leader.
 

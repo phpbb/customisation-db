@@ -260,6 +260,10 @@ class revision extends base
 			{
 				return $result['response'];
 			}
+			else if (!isset($result['error']))
+			{
+				$this->template->assign_var('S_NEW_REVISION_SUBMITTED', true);
+			}
 			$error = $result['error'];
 		}
 		else if ($this->request->is_set_post('cancel'))

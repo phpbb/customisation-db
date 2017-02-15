@@ -1,7 +1,7 @@
 {
     "name": "phpbb/titania",
     "type": "phpbb-extension",
-    "description": "This adds a very powerful and large customisation database to your forum. It is codenamed titania.",
+    "description": "This adds a very powerful and large customisation database to your forum. It is codenamed Titania.",
     "homepage": "http://www.github.com/phpBB/customisation-db/",
     "time": "2012-02-15",
     "version": "3.2.2-dev",
@@ -11,10 +11,10 @@
             "name": "David Colón (DavidIQ)",
             "email": "davidiq@phpbb.com",
             "homepage": "http://www.davidiq.com",
-            "role": "Developer"
+            "role": "Lead Developer"
         },
         {
-            "name": "Michael Cullum (Unknown Bliss)",
+            "name": "Michael Cullum (MichaelC)",
             "email": "unknownbliss@phpbb.com",
             "homepage": "http://www.michaelcullum.com",
             "role": "Developer"
@@ -27,7 +27,7 @@
         {
             "name": "Raimon Meuldijk (Raimon)",
             "email": "raimon@phpbb.com",
-            "role": "Developer"
+            "role": "Previous Developer"
         },
         {
             "name": "Mickaël Salfati (Elglobo)",
@@ -37,10 +37,6 @@
         {
             "name": "Nathan Guse (EXreaction)",
             "role": "Previous Lead Developer"
-        },
-        {
-            "name": "mtotheikle",
-            "role": "Previous Developer"
         },
         {
             "name": "Andreas Fischer (bantu)",

@@ -150,7 +150,7 @@ $lang = array_merge($lang, array(
 
 	'NEW_CONTRIBUTION'						=> 'New Contribution',
 	'NEW_REVISION'							=> 'New Revision',
-	'NEW_REVISION_SUBMITTED'				=> 'New revision has been submitted successfully!',
+	'NEW_REVISION_SUBMITTED'				=> 'New revision has been submitted successfully. Click <em>Continue</em> to go to the next step.',
 	'NEW_TOPIC'								=> 'New Topic',
 	'NOT_VALIDATED'							=> 'Not Validated',
 	'NO_CATEGORY'							=> 'The selected category does not exist',
