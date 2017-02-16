@@ -71,7 +71,7 @@ Upon validating your language pack, I regrets to inform you that I have had to [
 To correct the problem(s) with your language pack, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your language pack being denied.
 [*]Please ensure your language pack is up-to-date with the latest version of phpBB (see the [url=https://www.phpbb.com/customise/db/translation/british_english/]Downloads[/url] page).
-[*]Please ensure that you\'ll comply with our [url=https://www.phpbb.com/community/viewtopic.php?f=79&t=2117453]Important Read Me![/url] (where you\'ll find the latest submission policies).
+[*]Please ensure that you are in compliance with the latest [url=https://www.phpbb.com/community/viewtopic.php?f=79&t=2117453]translation and submission policies and instructions[/url].
 [*]Please ensure that your language pack is working correctly. Therefore please test it elaborately with a suitable phpBB installation. Our [url=https://www.phpbb.com/community/viewtopic.php?f=79&t=2205631]Translation Validator Tool[/url] will help you find bugs on your own.
 [*]Fix and re-upload your language pack to our Customisation Database.[/list]
 
