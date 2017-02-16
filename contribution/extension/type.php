@@ -14,12 +14,11 @@
 namespace phpbb\titania\contribution\extension;
 
 use phpbb\auth\auth;
+use phpbb\template\template;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
 use phpbb\titania\entity\package;
-use phpbb\titania\url\url;
-use phpbb\template\template;
 use phpbb\user;
 
 class type extends base
@@ -299,7 +298,7 @@ class type extends base
 			// fix common error (<=3.2.*@dev, >=3.1.x)
 			$data['require']['phpbb/phpbb'] = preg_replace('/(<|<=|~|\^|>|>=)([0-9]+(\.[0-9]+)?)\.[*x]/', '$1$2', $data['require']['phpbb/phpbb']);
 		}
-		
+
 		return $data;
 	}
 

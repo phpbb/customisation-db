@@ -16,6 +16,7 @@ namespace phpbb\titania\controller\contribution;
 use phpbb\titania\access;
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\count;
+use phpbb\titania\ext;
 
 class base
 {
@@ -129,7 +130,7 @@ class base
 		// Count the number of FAQ items to display
 		$flags = count::get_flags($this->access->get_level());
 		$faq_count = count::from_db($this->contrib->contrib_faq_count, $flags);
-		$is_disabled = in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED));
+		$is_disabled = in_array($this->contrib->contrib_status, array(ext::TITANIA_CONTRIB_CLEANED, ext::TITANIA_CONTRIB_DISABLED));
 
 		/**
 		* Menu Array
@@ -173,7 +174,7 @@ class base
 			$demo_menu = array();
 			$allowed_branches = $this->contrib->type->get_allowed_branches(true);
 			krsort($allowed_branches);
-			$is_external = $this->contrib->contrib_status != TITANIA_CONTRIB_APPROVED || !$this->contrib->options['demo'];
+			$is_external = $this->contrib->contrib_status != ext::TITANIA_CONTRIB_APPROVED || !$this->contrib->options['demo'];
 
 			foreach ($allowed_branches as $branch => $name)
 			{

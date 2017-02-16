@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\config;
 
+use phpbb\titania\ext;
+
 class config extends \phpbb\titania\entity\base
 {
 	/** @var \phpbb\config\config */
@@ -54,8 +56,8 @@ class config extends \phpbb\titania\entity\base
 			'language_path'				=> array('default' => $this->ext_root_path . 'language/'),
 			'table_prefix'				=> array('default' => 'cdb_'),
 
-			// Increment the user's post count?  Array of the post_types for which we will increment the post count
-			'increment_postcount'		=> array('default' => array(TITANIA_SUPPORT)),
+			// Increment the user's post count? Array of the post_types for which we will increment the post count
+			'increment_postcount'		=> array('default' => array(ext::TITANIA_SUPPORT)),
 
 			// Path to demo board we will install styles on
 			'demo_style_path'			=> array('default' => array(
@@ -162,57 +164,57 @@ class config extends \phpbb\titania\entity\base
 			)),
 
 			// ColorizeIt
-			'colorizeit'                => array('default' => ''),
-			'colorizeit_url'            => array('default' => 'www.colorizeit.com'),
-			'colorizeit_auth'           => array('default' => 'HEADER'),
-			'colorizeit_var'            => array('default' => 'X-Colorizeit'),
-			'colorizeit_value'          => array('default' => '1'),
+			'colorizeit'		=> array('default' => ''),
+			'colorizeit_url'	=> array('default' => 'www.colorizeit.com'),
+			'colorizeit_auth'	=> array('default' => 'HEADER'),
+			'colorizeit_var'	=> array('default' => 'X-Colorizeit'),
+			'colorizeit_value'	=> array('default' => '1'),
 
 			/**
 			 * Attachments -------
 			 */
 			'upload_max_filesize'		=> array('default' => array(
-				TITANIA_CONTRIB		=> 10485760, // 10 MiB
-				TITANIA_SCREENSHOT	=> 524288, // 512 Kib
-				TITANIA_TRANSLATION	=> 1048576, // 1 Mib
-				TITANIA_CLR_SCREENSHOT  => 131072, // 128 Kib
+				ext::TITANIA_CONTRIB			=> 10485760,	// 10 MiB
+				ext::TITANIA_SCREENSHOT			=> 524288,		// 512 Kib
+				ext::TITANIA_TRANSLATION		=> 1048576,		// 1 Mib
+				ext::TITANIA_CLR_SCREENSHOT		=> 131072,		// 128 Kib
 			)),
 
 			// Extensions allowed
 			'upload_allowed_extensions'	=> array('default' => array(
-				TITANIA_CONTRIB				=> array('zip'),
-				TITANIA_SCREENSHOT			=> array('jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'),
-				TITANIA_TRANSLATION			=> array('zip'),
-				TITANIA_SUPPORT				=> array(
+				ext::TITANIA_CONTRIB			=> array('zip'),
+				ext::TITANIA_SCREENSHOT			=> array('jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'),
+				ext::TITANIA_TRANSLATION		=> array('zip'),
+				ext::TITANIA_SUPPORT			=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
 					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
 				),
-				TITANIA_QUEUE				=> array(
+				ext::TITANIA_QUEUE				=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
 					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
 				),
-				TITANIA_QUEUE_DISCUSSION	=> array(
+				ext::TITANIA_QUEUE_DISCUSSION	=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
 					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
 				),
-				TITANIA_FAQ					=> array(
+				ext::TITANIA_FAQ				=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
 					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
 				),
 				// ColorizeIt sample image
-				TITANIA_CLR_SCREENSHOT      => array('gif'),
+				ext::TITANIA_CLR_SCREENSHOT		=> array('gif'),
 			)),
 
 			// Attachment directory names
 			'upload_directory'	=> array('default' => array(
-				TITANIA_CONTRIB				=> 'revisions',
-				TITANIA_SCREENSHOT			=> 'screenshots',
-				TITANIA_TRANSLATION			=> 'translations',
-				TITANIA_SUPPORT				=> 'support',
-				TITANIA_QUEUE				=> 'queue',
-				TITANIA_QUEUE_DISCUSSION	=> 'queue_discussion',
-				TITANIA_FAQ					=> 'faq',
-				TITANIA_CLR_SCREENSHOT      => 'colorizeit',
+				ext::TITANIA_CONTRIB			=> 'revisions',
+				ext::TITANIA_SCREENSHOT			=> 'screenshots',
+				ext::TITANIA_TRANSLATION		=> 'translations',
+				ext::TITANIA_SUPPORT			=> 'support',
+				ext::TITANIA_QUEUE				=> 'queue',
+				ext::TITANIA_QUEUE_DISCUSSION	=> 'queue_discussion',
+				ext::TITANIA_FAQ				=> 'faq',
+				ext::TITANIA_CLR_SCREENSHOT		=> 'colorizeit',
 			)),
 
 			// Remove unsubmitted revisions and attachments

@@ -13,9 +13,7 @@
 
 namespace phpbb\titania;
 
-use phpbb\titania\access;
 use phpbb\titania\contribution\type\collection as type_collection;
-use phpbb\titania\count;
 
 /**
  * Sync handler for Titania
@@ -252,14 +250,14 @@ class sync
 					$sql = 'SELECT COUNT(revision_id) AS cnt
 						FROM ' . $this->revisions_table . '
 						WHERE contrib_id = ' . $row['contrib_id'] . '
-							AND revision_status = ' . TITANIA_REVISION_APPROVED;
+							AND revision_status = ' . ext::TITANIA_REVISION_APPROVED;
 					$result1 = $this->db->sql_query($sql);
 					$cnt = $this->db->sql_fetchfield('cnt', $result1);
 					$this->db->sql_freeresult($result1);
 
-					if (($cnt > 0 && $row['contrib_status'] == TITANIA_CONTRIB_NEW) || ($cnt == 0 && $row['contrib_status'] == TITANIA_CONTRIB_APPROVED))
+					if (($cnt > 0 && $row['contrib_status'] == ext::TITANIA_CONTRIB_NEW) || ($cnt == 0 && $row['contrib_status'] == ext::TITANIA_CONTRIB_APPROVED))
 					{
-						$sql = 'UPDATE ' . $this->contribs_table . ' SET contrib_status = ' . (($cnt > 0) ? TITANIA_CONTRIB_APPROVED : TITANIA_CONTRIB_NEW) . '
+						$sql = 'UPDATE ' . $this->contribs_table . ' SET contrib_status = ' . (($cnt > 0) ? ext::TITANIA_CONTRIB_APPROVED : ext::TITANIA_CONTRIB_NEW) . '
 							WHERE contrib_id = ' . $row['contrib_id'];
 						$this->db->sql_query($sql);
 					}
@@ -304,7 +302,7 @@ class sync
 				while ($row = $this->db->sql_fetchrow($result))
 				{
 					$data[$row['contrib_id']] = array(
-						'object_type'	=> TITANIA_CONTRIB,
+						'object_type'	=> ext::TITANIA_CONTRIB,
 						'object_id'		=> $row['contrib_id'],
 
 						'title'			=> $row['contrib_name'],
@@ -318,7 +316,7 @@ class sync
 							'contrib_type'	=> $this->types->get($row['contrib_type'])->url,
 							'contrib'		=> $row['contrib_name_clean'],
 						)),
-						'approved'		=> (in_array($row['contrib_status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
+						'approved'		=> (in_array($row['contrib_status'], array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
 						'categories'	=> explode(',', $row['contrib_categories']),
 					);
 
@@ -389,7 +387,7 @@ class sync
 				$sql = 'SELECT t.topic_id, c.contrib_type
 					FROM ' . $this->topics_table . ' t, ' . $this->contribs_table . ' c
 					WHERE c.contrib_id = t.parent_id
-						AND t.topic_type = ' . TITANIA_QUEUE_DISCUSSION .
+						AND t.topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION .
 						(($topic_id) ? ' AND topic_id = ' . (int) $topic_id : '') . '
 					ORDER BY topic_id ASC';
 				$result = $this->db->sql_query($sql);
@@ -423,9 +421,9 @@ class sync
 				$sql = 'SELECT p.*, t.topic_id, t.topic_type, t.topic_subject_clean, t.parent_id, q.queue_type, c.contrib_type
 					FROM ' . $this->posts_table . ' p, ' . $this->topics_table . ' t
 					LEFT JOIN ' . TITANIA_QUEUE_TABLE . ' q
-						ON (t.parent_id = q.queue_id AND t.topic_type = ' . TITANIA_QUEUE . ')
+						ON (t.parent_id = q.queue_id AND t.topic_type = ' . ext::TITANIA_QUEUE . ')
 					LEFT JOIN ' . $this->contribs_table . ' c
-						ON (t.parent_id = c.contrib_id AND t.topic_type <> ' . TITANIA_QUEUE . ')
+						ON (t.parent_id = c.contrib_id AND t.topic_type <> ' . ext::TITANIA_QUEUE . ')
 					WHERE t.topic_id = p.topic_id
 					ORDER BY p.post_id ASC';
 				if ($start === false || $limit === false)
@@ -458,7 +456,7 @@ class sync
 						'url'			=> serialize($post->get_url_params()),
 						'approved'		=> $post->post_approved,
 						'access_level'	=> $post->post_access,
-						'parent_contrib_type'	=> (int) ($post->post_type == TITANIA_QUEUE) ? $row['queue_type'] : $row['contrib_type'],
+						'parent_contrib_type'	=> (int) ($post->post_type == ext::TITANIA_QUEUE) ? $row['queue_type'] : $row['contrib_type'],
 					);
 				}
 				$this->db->sql_freeresult($result);
@@ -478,7 +476,7 @@ class sync
 		switch ($mode)
 		{
 			case 'index' :
-				$this->search_manager->truncate(TITANIA_FAQ);
+				$this->search_manager->truncate(ext::TITANIA_FAQ);
 
 				$data = array();
 
@@ -489,7 +487,7 @@ class sync
 				while ($row = $this->db->sql_fetchrow($result))
 				{
 					$data[] = array(
-						'object_type'	=> TITANIA_FAQ,
+						'object_type'	=> ext::TITANIA_FAQ,
 						'object_id'		=> $row['faq_id'],
 
 						'title'			=> $row['faq_subject'],
@@ -607,7 +605,7 @@ class sync
 			'WHERE'		=> 'cic.contrib_id = c.contrib_id
 				AND ' . $this->db->sql_in_set('cic.category_id', array_map('intval', $child_list)) . '
 				AND c.contrib_visible = 1
-				AND ' . $this->db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)),
+				AND ' . $this->db->sql_in_set('c.contrib_status', array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED)),
 		);
 
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
@@ -711,7 +709,7 @@ class sync
 				FROM ' . $this->contribs_table . '
 				WHERE contrib_type = ' . (int) $type_id . '
 					AND contrib_user_id = ' . (int) $user_id . '
-					AND ' . $this->db->sql_in_set('contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED));
+					AND ' . $this->db->sql_in_set('contrib_status', array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED));
 			$this->db->sql_query($sql);
 			$cnt = $this->db->sql_fetchfield('cnt');
 
@@ -727,7 +725,7 @@ class sync
 				WHERE c.contrib_type = ' . (int) $type_id . '
 					AND cc.user_id = ' . (int) $user_id . '
 					AND c.contrib_id = cc.contrib_id
-					AND ' . $this->db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED));
+					AND ' . $this->db->sql_in_set('c.contrib_status', array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED));
 			$this->db->sql_query($sql);
 			$cnt = $this->db->sql_fetchfield('cnt');
 

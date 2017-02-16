@@ -13,8 +13,8 @@
 
 namespace phpbb\titania\contribution\extension;
 
-use Phpbb\Epv\Output\Output;
 use Phpbb\Epv\Output\HtmlOutput;
+use Phpbb\Epv\Output\Output;
 use Phpbb\Epv\Tests\TestRunner;
 
 class prevalidator

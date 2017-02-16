@@ -19,6 +19,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+use phpbb\titania\ext;
 use phpbb\titania\message\message;
 
 //define('TEST_INSTALLATION', true);
@@ -40,7 +41,7 @@ titania::$hook->register_ary('phpbb_com_', array(
 // Display a warning for styles not meeting the licensing guidelines
 function phpbb_com_titania_contribution_assign_details($hook, &$vars, $contrib)
 {
-	if ($contrib->contrib_type != TITANIA_TYPE_STYLE || empty($contrib->download))
+	if ($contrib->contrib_type != ext::TITANIA_TYPE_STYLE || empty($contrib->download))
 	{
 		return;
 	}
@@ -70,7 +71,7 @@ function phpbb_com_titania_contribution_assign_details($hook, &$vars, $contrib)
 */
 function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $queue_object)
 {
-	if ($queue_object->queue_status == TITANIA_QUEUE_HIDE || !$queue_object->queue_topic_id)
+	if ($queue_object->queue_status == ext::TITANIA_QUEUE_HIDE || !$queue_object->queue_topic_id)
 	{
 		return;
 	}
@@ -80,7 +81,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	// First we copy over the queue discussion topic if required
 	$sql = 'SELECT topic_id, phpbb_topic_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
 		WHERE parent_id = ' . $queue_object->contrib_id . '
-			AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+			AND topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION;
 	$result = phpbb::$db->sql_query($sql);
 	$topic_row = phpbb::$db->sql_fetchrow($result);
 	phpbb::$db->sql_freeresult($result);
@@ -88,7 +89,7 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 	// Do we need to create the queue discussion topic or not?
 	if ($topic_row['topic_id'] && !$topic_row['phpbb_topic_id'])
 	{
-		$forum_id = phpbb_com_forum_id($post_object->topic->topic_category, TITANIA_QUEUE_DISCUSSION);
+		$forum_id = phpbb_com_forum_id($post_object->topic->topic_category, ext::TITANIA_QUEUE_DISCUSSION);
 
 		$temp_post = new titania_post;
 
@@ -128,15 +129,15 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 			{
 				switch ($topic_row['topic_category'])
 				{
-					case TITANIA_TYPE_EXTENSION :
+					case ext::TITANIA_TYPE_EXTENSION:
 						$options['poster_id'] = titania::$config->forum_extension_robot;
 					break;
 
-					case TITANIA_TYPE_MOD :
+					case ext::TITANIA_TYPE_MOD:
 						$options['poster_id'] = titania::$config->forum_mod_robot;
 					break;
 
-					case TITANIA_TYPE_STYLE :
+					case ext::TITANIA_TYPE_STYLE:
 						$options['poster_id'] = titania::$config->forum_style_robot;
 					break;
 				}
@@ -188,22 +189,22 @@ function phpbb_com_titania_queue_update_first_queue_post($hook, &$post_object, $
 
 	switch ($post_object->topic->topic_category)
 	{
-		case TITANIA_TYPE_EXTENSION :
+		case ext::TITANIA_TYPE_EXTENSION:
 			$post_object->topic->topic_first_post_user_id = titania::$config->forum_extension_robot;
 			$lang_var = 'EXTENSION_QUEUE_TOPIC';
 		break;
 
-		case TITANIA_TYPE_MOD :
+		case ext::TITANIA_TYPE_MOD:
 			$post_object->topic->topic_first_post_user_id = titania::$config->forum_mod_robot;
 			$lang_var = 'MOD_QUEUE_TOPIC';
 		break;
 
-		case TITANIA_TYPE_STYLE :
+		case ext::TITANIA_TYPE_STYLE:
 			$post_object->topic->topic_first_post_user_id = titania::$config->forum_style_robot;
 			$lang_var = 'STYLE_QUEUE_TOPIC';
 		break;
 
-		default :
+		default:
 			return;
 		break;
 	}
@@ -327,9 +328,9 @@ function phpbb_com_titania_post_hard_delete($hook, &$post_object)
 	{
 		return;
 	}
-	
+
 	phpbb::_include('functions_posting', 'delete_post');
-	
+
 	$sql = 'SELECT t.*, p.*
 	FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
 		WHERE p.post_id = ' . $post_object->phpbb_post_id . '
@@ -406,52 +407,52 @@ function phpbb_com_forum_id($type, $mode)
 
 	switch ($type)
 	{
-		case TITANIA_TYPE_EXTENSION :
+		case ext::TITANIA_TYPE_EXTENSION:
 			switch ($mode)
 			{
-				case TITANIA_QUEUE_DISCUSSION :
+				case ext::TITANIA_QUEUE_DISCUSSION:
 					return 516;
 				break;
 
-				case TITANIA_QUEUE :
+				case ext::TITANIA_QUEUE:
 					return 511;
 				break;
 
-				case 'trash' :
+				case 'trash':
 					return 521;
 				break;
 			}
 		break;
 
-		case TITANIA_TYPE_MOD :
+		case ext::TITANIA_TYPE_MOD:
 			switch ($mode)
 			{
-				case TITANIA_QUEUE_DISCUSSION :
+				case ext::TITANIA_QUEUE_DISCUSSION:
 					return 61;
 				break;
 
-				case TITANIA_QUEUE :
+				case ext::TITANIA_QUEUE:
 					return 38;
 				break;
 
-				case 'trash' :
+				case 'trash':
 					return 28;
 				break;
 			}
 		break;
 
-		case TITANIA_TYPE_STYLE :
+		case ext::TITANIA_TYPE_STYLE:
 			switch ($mode)
 			{
-				case TITANIA_QUEUE_DISCUSSION :
+				case ext::TITANIA_QUEUE_DISCUSSION:
 					return 87;
 				break;
 
-				case TITANIA_QUEUE :
+				case ext::TITANIA_QUEUE:
 					return 40;
 				break;
 
-				case 'trash' :
+				case 'trash':
 					return 83;
 				break;
 			}

@@ -15,11 +15,8 @@ namespace phpbb\titania\contribution\bbcode;
 
 use phpbb\auth\auth;
 use phpbb\request\request_interface;
-use phpbb\titania\attachment\attachment;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
-use phpbb\titania\entity\package;
-use phpbb\titania\url\url;
 use phpbb\user;
 
 class type extends base
