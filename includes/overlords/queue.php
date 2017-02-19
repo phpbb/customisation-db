@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 class queue_overlord
 {
 	/**
@@ -91,7 +93,7 @@ class queue_overlord
 	* @param string $type The type of queue (the contrib type)
 	* @param object|boolean $sort The sort object (includes/tools/sort.php)
 	*/
-	public static function display_queue($type, $queue_status = TITANIA_QUEUE_NEW, $sort = false)
+	public static function display_queue($type, $queue_status = ext::TITANIA_QUEUE_NEW, $sort = false)
 	{
 		if ($sort === false)
 		{
@@ -142,7 +144,7 @@ class queue_overlord
 			'ON'	=> 't.topic_last_post_user_id = ul.user_id',
 		);
 
-		$tracking->get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
+		$tracking->get_track_sql($sql_ary, ext::TITANIA_TOPIC, 't.topic_id');
 
 		// Main SQL Query
 		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
@@ -332,7 +334,7 @@ class queue_overlord
 				),
 			));
 
-			$tags = titania::$cache->get_tags(TITANIA_QUEUE);
+			$tags = titania::$cache->get_tags(ext::TITANIA_QUEUE);
 			unset($tags[$row['queue_status']]);
 
 			$quick_actions = array(
@@ -478,7 +480,7 @@ class queue_overlord
 
 		// Subscriptions
 		phpbb::$container->get('phpbb.titania.subscriptions')->handle_subscriptions(
-			TITANIA_TOPIC,
+			ext::TITANIA_TOPIC,
 			$topic->topic_id,
 			$controller_helper->get_current_url(),
 			'SUBSCRIBE_TOPIC'
@@ -497,7 +499,7 @@ class queue_overlord
 		$controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
 		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 
-		$tags = titania::$cache->get_tags(TITANIA_QUEUE);
+		$tags = titania::$cache->get_tags(ext::TITANIA_QUEUE);
 		$tag_count = array();
 		$total = 0;
 		$type_url = $types->get($type)->url;

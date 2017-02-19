@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\ext;
 use phpbb\titania\message\message;
 use phpbb\titania\versions;
 
@@ -160,7 +161,7 @@ class contribs_overlord
 						array(
 							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
 							'ON'	=> 'c.contrib_id = a.object_id
-								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.object_type = ' . ext::TITANIA_SCREENSHOT . '
 								AND a.is_orphan = 0
 								AND a.is_preview = 1',
 						),
@@ -193,7 +194,7 @@ class contribs_overlord
 						array(
 							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
 							'ON'	=> 'c.contrib_id = a.object_id
-								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.object_type = ' . ext::TITANIA_SCREENSHOT . '
 								AND a.is_orphan = 0
 								AND a.is_preview = 1',
 						)
@@ -224,7 +225,7 @@ class contribs_overlord
 						array(
 							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
 							'ON'	=> 'c.contrib_id = a.object_id
-								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.object_type = ' . ext::TITANIA_SCREENSHOT . '
 								AND a.is_orphan = 0
 								AND a.is_preview = 1',
 						),
@@ -238,7 +239,7 @@ class contribs_overlord
 			break;
 		}
 
-		$tracking->get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
+		$tracking->get_track_sql($sql_ary, ext::TITANIA_CONTRIB, 'c.contrib_id');
 
 		$mod_contrib_mod = (bool) phpbb::$auth->acl_get('u_titania_mod_contrib_mod');
 
@@ -262,7 +263,7 @@ class contribs_overlord
 			}
 
 			$view_unapproved = array_unique($view_unapproved);
-			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
+			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
 				((sizeof($view_unapproved)) ? ' OR ' . phpbb::$db->sql_in_set('c.contrib_type', array_map('intval', $view_unapproved)) : '') . '
 				OR c.contrib_user_id = ' . phpbb::$user->data['user_id'] . '
 				OR cc.active = 1)';
@@ -294,7 +295,7 @@ class contribs_overlord
 			if (!$mod_contrib_mod && $row['contrib_user_id'] != phpbb::$user->data['user_id'] && $row['coauthor'] != phpbb::$user->data['user_id'] && !$access->is_team())
 			{
 				//If the contribution has a status that is not accessible by the current user let's not add it
-				if (in_array($row['contrib_status'], array(TITANIA_CONTRIB_NEW, TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED)))
+				if (in_array($row['contrib_status'], array(ext::TITANIA_CONTRIB_NEW, ext::TITANIA_CONTRIB_CLEANED, ext::TITANIA_CONTRIB_HIDDEN, ext::TITANIA_CONTRIB_DISABLED)))
 				{
 					continue;
 				}
@@ -344,7 +345,7 @@ class contribs_overlord
 		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], $types, phpbb::$user, true);
 
 		// Get the mark all tracking
-		$tracking->get_track(TITANIA_CONTRIB, 0);
+		$tracking->get_track(ext::TITANIA_CONTRIB, 0);
 
 		foreach ($contrib_ids as $contrib_id)
 		{
@@ -370,8 +371,8 @@ class contribs_overlord
 
 			// Get the folder image
 			$folder_img = $folder_alt = '';
-			$last_read_mark = $tracking->get_track(TITANIA_CONTRIB, $contrib->contrib_id, true);
-			$last_complete_mark = $tracking->get_track(TITANIA_CONTRIB, 0, true);
+			$last_read_mark = $tracking->get_track(ext::TITANIA_CONTRIB, $contrib->contrib_id, true);
+			$last_complete_mark = $tracking->get_track(ext::TITANIA_CONTRIB, 0, true);
 			$is_unread = ($contrib->contrib_last_update > $last_read_mark && $contrib->contrib_last_update > $last_complete_mark) ? true : false;
 			phpbb::$container->get('phpbb.titania.display')->topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
 

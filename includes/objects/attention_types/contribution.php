@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 class titania_attention_contribution extends titania_attention
 {
 	/** @var \phpbb\user */
@@ -74,25 +76,25 @@ class titania_attention_contribution extends titania_attention
 
 		switch ((int) $this->attention_type)
 		{
-			case TITANIA_ATTENTION_REPORTED :
+			case ext::TITANIA_ATTENTION_REPORTED :
 				$labels = array_merge($labels, array(
 					'reason' => 'REPORTED',
 				));
 			break;
 
-			case TITANIA_ATTENTION_CATS_CHANGED :
+			case ext::TITANIA_ATTENTION_CATS_CHANGED :
 				$labels = array_merge($labels, array(
 					'reason' => 'ATTENTION_CONTRIB_CATEGORIES_CHANGED',
 				));
 			break;
 
-			case TITANIA_ATTENTION_NAME_CHANGED :
+			case ext::TITANIA_ATTENTION_NAME_CHANGED :
 				$labels = array_merge($labels, array(
 					'reason' => 'ATTENTION_CONTRIB_NAME_CHANGED',
 				));
 			break;
 
-			case TITANIA_ATTENTION_DESC_CHANGED :
+			case ext::TITANIA_ATTENTION_DESC_CHANGED :
 				$labels = array_merge($labels, array(
 					'reason' => 'ATTENTION_CONTRIB_DESC_CHANGED',
 				));

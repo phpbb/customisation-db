@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 class attention_overlord
 {
 	// Attention items
@@ -41,12 +43,12 @@ class attention_overlord
 
 		switch ($data['attention_object_type'])
 		{
-			case TITANIA_POST:
+			case ext::TITANIA_POST:
 				titania::_include('objects/attention_types/post', false, 'titania_attention_post');
 				$object = new titania_attention_post();
 			break;
 
-			case TITANIA_CONTRIB:
+			case ext::TITANIA_CONTRIB:
 				titania::_include('objects/attention_types/contribution', false, 'titania_attention_contribution');
 				$object = new titania_attention_contribution();
 			break;
@@ -70,7 +72,7 @@ class attention_overlord
 	{
 		$sql = 'SELECT a.* FROM ' . TITANIA_ATTENTION_TABLE . ' a
 			LEFT JOIN ' . TITANIA_CONTRIBS_TABLE . ' c
-				ON (a.attention_object_type = ' . TITANIA_CONTRIB . ' AND a.attention_object_id = c.contrib_id)
+				ON (a.attention_object_type = ' . ext::TITANIA_CONTRIB . ' AND a.attention_object_id = c.contrib_id)
 			WHERE ';
 
 		if ($attention_id)
@@ -137,7 +139,7 @@ class attention_overlord
 			'LEFT_JOIN'	=> array(
 				array(
 					'FROM'	=> array(TITANIA_CONTRIBS_TABLE => 'c'),
-					'ON'	=> 'a.attention_object_type = ' . TITANIA_CONTRIB . ' AND a.attention_object_id = c.contrib_id',
+					'ON'	=> 'a.attention_object_type = ' . ext::TITANIA_CONTRIB . ' AND a.attention_object_id = c.contrib_id',
 				),
 			),
 
@@ -274,23 +276,23 @@ class attention_overlord
 
 		if (phpbb::$auth->acl_get('u_titania_mod_post_mod'))
 		{
-			$sql_where .= '(a.attention_object_type = ' . TITANIA_POST . ')';
+			$sql_where .= '(a.attention_object_type = ' . ext::TITANIA_POST . ')';
 			$negated = false;
 		}
 		else
 		{
-			$sql_where .= '(a.attention_object_type <> ' . TITANIA_POST . ')';
+			$sql_where .= '(a.attention_object_type <> ' . ext::TITANIA_POST . ')';
 			$negated = true;
 		}
 
 		if (!empty($types_managed))
 		{
 			$sql_where .= ($negated) ? ' AND ' : ' OR ';
-			$sql_where .= '(a.attention_object_type = ' . TITANIA_CONTRIB . ' AND ' . phpbb::$db->sql_in_set('c.contrib_type', $types_managed) . ')';
+			$sql_where .= '(a.attention_object_type = ' . ext::TITANIA_CONTRIB . ' AND ' . phpbb::$db->sql_in_set('c.contrib_type', $types_managed) . ')';
 		}
 		else
 		{
-			$sql_where .= 'AND (a.attention_object_type <> ' . TITANIA_CONTRIB . ')';
+			$sql_where .= 'AND (a.attention_object_type <> ' . ext::TITANIA_CONTRIB . ')';
 		}
 
 		return '(' . $sql_where . ')';

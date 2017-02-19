@@ -14,9 +14,9 @@
 namespace phpbb\titania\manage\tool\contribution;
 
 use phpbb\db\driver\driver_interface as db_driver_interface;
-use phpbb\request\request_interface;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use phpbb\user;
 use Symfony\Component\Console\Helper\ProgressHelper;
@@ -46,8 +46,8 @@ class resync_count extends base
 
 	/** @var array */
 	protected $valid_statuses = array(
-		TITANIA_CONTRIB_APPROVED,
-		TITANIA_CONTRIB_DOWNLOAD_DISABLED,
+		ext::TITANIA_CONTRIB_APPROVED,
+		ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED,
 	);
 
 	/**

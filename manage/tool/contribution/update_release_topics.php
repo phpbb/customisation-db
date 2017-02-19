@@ -14,9 +14,9 @@
 namespace phpbb\titania\manage\tool\contribution;
 
 use phpbb\db\driver\driver_interface as db_driver_interface;
-use phpbb\request\request_interface;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use phpbb\titania\versions;
 use phpbb\user;
@@ -88,8 +88,8 @@ class update_release_topics extends base
 				$sql = 'SELECT COUNT(contrib_id) AS cnt
 					FROM ' . $this->contribs_table . '
 					WHERE ' . $this->db->sql_in_set('contrib_status', array(
-							TITANIA_CONTRIB_APPROVED,
-							TITANIA_CONTRIB_DOWNLOAD_DISABLED,
+							ext::TITANIA_CONTRIB_APPROVED,
+							ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED,
 						)) . '
 						AND ' . $this->db->sql_in_set('contrib_type', $types);
 				$result = $this->db->sql_query($sql);
@@ -134,8 +134,8 @@ class update_release_topics extends base
 			'GROUP_BY'	=> 'c.contrib_id',
 
 			'WHERE'		=> $this->db->sql_in_set('c.contrib_status', array(
-					TITANIA_CONTRIB_APPROVED,
-					TITANIA_CONTRIB_DOWNLOAD_DISABLED,
+					ext::TITANIA_CONTRIB_APPROVED,
+					ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED,
 				)) . '
 				AND u.user_id = c.contrib_user_id
 				AND ' . $this->db->sql_in_set('contrib_type', $types),

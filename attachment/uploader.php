@@ -16,6 +16,7 @@ namespace phpbb\titania\attachment;
 use phpbb\files\upload;
 use phpbb\request\request_interface;
 use phpbb\titania\access;
+use phpbb\titania\ext;
 
 class uploader
 {
@@ -350,7 +351,7 @@ class uploader
 			'S_PLUPLOAD_ENABLED'			=> $this->use_plupload,
 			'S_SET_CUSTOM_ORDER'			=> $this->set_custom_order,
 			'S_UPLOADER_KEY'				=> generate_link_hash('uploader_key'),
-			'SELECT_PREVIEW'				=> $this->object_type == TITANIA_SCREENSHOT,
+			'SELECT_PREVIEW'				=> $this->object_type == ext::TITANIA_SCREENSHOT,
 			'SELECT_REVIEW_VAR' 			=> 'set_preview_file' . $this->object_type,
 		));
 
@@ -400,7 +401,7 @@ class uploader
 					),
 			));
 
-			if ($attach->is_type(TITANIA_SCREENSHOT))
+			if ($attach->is_type(ext::TITANIA_SCREENSHOT))
 			{
 				$output = array_merge($output, array(
 					'U_MOVE_UP'		=> $this->path_helper->append_url_params(

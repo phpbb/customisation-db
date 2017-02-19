@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\manage\queue;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 
 class item extends \phpbb\titania\controller\manage\base
 {
@@ -280,7 +281,7 @@ class item extends \phpbb\titania\controller\manage\base
 			'manage/queue_post.html',
 			$this->id,
 			false,
-			TITANIA_QUEUE,
+			ext::TITANIA_QUEUE,
 			$this->helper->get_current_url()
 		);
 	}
@@ -293,7 +294,7 @@ class item extends \phpbb\titania\controller\manage\base
 	protected function allow_author_repack()
 	{
 		$topic = $this->queue->get_queue_discussion_topic();
-		$post = new \titania_post(TITANIA_QUEUE_DISCUSSION, $topic);
+		$post = new \titania_post(ext::TITANIA_QUEUE_DISCUSSION, $topic);
 		$post->__set_array(array(
 			'post_subject'		=> 'Re: ' . $post->topic->topic_subject,
 		));
@@ -345,7 +346,7 @@ class item extends \phpbb\titania\controller\manage\base
 	*/
 	protected function move()
 	{
-		$tags = $this->cache->get_tags(TITANIA_QUEUE);
+		$tags = $this->cache->get_tags(ext::TITANIA_QUEUE);
 
 		if (check_link_hash($this->request->variable('hash', ''), 'quick_actions') || confirm_box(true))
 		{

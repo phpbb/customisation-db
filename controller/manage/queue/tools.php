@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\controller\manage\queue;
 
+use phpbb\titania\ext;
+
 class tools
 {
 	/** @var \phpbb\user */
@@ -289,7 +291,7 @@ class tools
 	protected function load_attachment()
 	{
 		$this->attachments
-			->configure(TITANIA_CONTRIB, $this->contrib->contrib_id)
+			->configure(ext::TITANIA_CONTRIB, $this->contrib->contrib_id)
 			->load(array($this->revision->attachment_id))
 		;
 		$this->attachment = $this->attachments->get($this->revision->attachment_id);

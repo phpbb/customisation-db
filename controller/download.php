@@ -15,6 +15,7 @@ namespace phpbb\titania\controller;
 
 use phpbb\titania\access;
 use phpbb\titania\entity\package;
+use phpbb\titania\ext;
 use Symfony\Component\Filesystem\Filesystem;
 
 class download
@@ -260,7 +261,7 @@ class download
 			$sql = 'SELECT attachment_id
 				FROM ' . TITANIA_REVISIONS_TABLE . '
 				WHERE contrib_id = ' . $contrib_id . '
-					AND revision_status = ' . TITANIA_REVISION_APPROVED . '
+					AND revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
 				ORDER BY revision_id DESC';
 			$this->db->sql_query_limit($sql, 1);
 			$download_id = (int) $this->db->sql_fetchfield('attachment_id');
@@ -280,7 +281,7 @@ class download
 		$status = self::OK;
 
 		// Don't allow downloads of revisions for TITANIA_CONTRIB_DOWNLOAD_DISABLED items unless on the team or an author.
-		if ($this->file['object_type'] == TITANIA_CONTRIB)
+		if ($this->file['object_type'] == ext::TITANIA_CONTRIB)
 		{
 			$status = $this->check_revision_auth();
 		}
@@ -288,7 +289,7 @@ class download
 		if ($status === self::OK)
 		{
 			// Only revisions can be downloaded as Composer packages
-			if ($this->type == 'composer' && $this->file['object_type'] != TITANIA_CONTRIB)
+			if ($this->type == 'composer' && $this->file['object_type'] != ext::TITANIA_CONTRIB)
 			{
 				return self::NOT_FOUND;
 			}
@@ -374,8 +375,8 @@ class download
 		$is_author = $contrib->is_author || $contrib->is_active_coauthor;
 		$can_download_hidden = $is_author || $contrib->type->acl_get('view') || $contrib->type->acl_get('moderate');
 		$use_queue = $this->ext_config->require_validation && $contrib->type->require_validation;
-		$is_unvalidated = $revision['revision_status'] != TITANIA_REVISION_APPROVED && $use_queue;
-		$is_disabled = $contrib->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED;
+		$is_unvalidated = $revision['revision_status'] != ext::TITANIA_REVISION_APPROVED && $use_queue;
+		$is_disabled = $contrib->contrib_status == ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED;
 
 		if (!$can_download_hidden && !$this->is_auto_validator() && ($is_unvalidated || $is_disabled))
 		{
@@ -403,7 +404,7 @@ class download
 
 		switch ((int) $this->file['object_type'])
 		{
-			case TITANIA_FAQ :
+			case ext::TITANIA_FAQ:
 				$sql = 'SELECT c.contrib_id, c.contrib_user_id
 					FROM ' . TITANIA_CONTRIB_FAQ_TABLE . ' f, ' .
 						TITANIA_CONTRIBS_TABLE . ' c
@@ -414,8 +415,8 @@ class download
 				$this->db->sql_freeresult($result);
 			break;
 
-			case TITANIA_SUPPORT :
-			case TITANIA_QUEUE_DISCUSSION :
+			case ext::TITANIA_SUPPORT:
+			case ext::TITANIA_QUEUE_DISCUSSION:
 				$sql = 'SELECT c.contrib_id, c.contrib_user_id
 					FROM ' . TITANIA_POSTS_TABLE . ' p, ' .
 						TITANIA_TOPICS_TABLE . ' t, ' .
@@ -472,7 +473,7 @@ class download
 		$this->db->sql_query($sql);
 
 		// Update download count for the contrib object as well
-		if ($this->file['object_type'] == TITANIA_CONTRIB)
+		if ($this->file['object_type'] == ext::TITANIA_CONTRIB)
 		{
 			$this->increase_contrib_download_count($this->file['object_id']);
 		}

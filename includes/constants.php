@@ -11,6 +11,13 @@
 *
 */
 
+/**
+ * All constants defined below are deprecated and may be removed in the future.
+ * Use the class constants as defined in ext.php instead.
+ *
+ * @deprecated
+ */
+
 // Contribution types
 define('TITANIA_TYPE_MOD', 1);
 define('TITANIA_TYPE_STYLE', 2);

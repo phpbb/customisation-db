@@ -14,6 +14,7 @@
 namespace phpbb\titania\attachment;
 
 use phpbb\titania\access;
+use phpbb\titania\ext;
 
 class operator
 {
@@ -287,7 +288,7 @@ class operator
 	 * Load attachments by id.
 	 *
 	 * Note that this will not check the object type or id.
-	 * 
+	 *
 	 * @param array $ids
 	 * @return $this
 	 */
@@ -472,7 +473,7 @@ class operator
 				$this->template->assign_block_vars($template_block, $vars);
 			}
 
-			if ($attach->is_preview() && $attach->is_type(TITANIA_SCREENSHOT))
+			if ($attach->is_preview() && $attach->is_type(ext::TITANIA_SCREENSHOT))
 			{
 				$this->template->assign_block_vars('preview', $vars);
 			}

@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class faq extends base
@@ -92,13 +93,13 @@ class faq extends base
 		$this->faq->increase_views_counter();
 
 		// Tracking
-		$this->tracking->track(TITANIA_FAQ, $this->id);
+		$this->tracking->track(ext::TITANIA_FAQ, $this->id);
 
 		$message = $this->faq->generate_text_for_display();
 
 		// Grab attachments
 		$this->attachments
-			->configure(TITANIA_FAQ, $this->id)
+			->configure(ext::TITANIA_FAQ, $this->id)
 			->load();
 		$parsed_attachments = $this->attachments->parse_attachments($message);
 
@@ -454,7 +455,7 @@ class faq extends base
 			$this->db->sql_freeresult($result);
 
 			// Grab the tracking info
-			$this->tracking->get_tracks(TITANIA_FAQ, array_keys($items));
+			$this->tracking->get_tracks(ext::TITANIA_FAQ, array_keys($items));
 		}
 
 		return $items;
@@ -474,7 +475,7 @@ class faq extends base
 
 		// @todo probably should setup an edit time or something for better read tracking in case it was edited
 		$folder_img = $folder_alt = '';
-		$unread = $this->tracking->get_track(TITANIA_FAQ, $data['faq_id'], true) === 0;
+		$unread = $this->tracking->get_track(ext::TITANIA_FAQ, $data['faq_id'], true) === 0;
 		$this->display->topic_folder_img($folder_img, $folder_alt, 0, $unread);
 
 		$this->template->assign_block_vars('faqlist', array(

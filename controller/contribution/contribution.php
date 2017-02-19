@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -139,11 +140,11 @@ class contribution extends base
 		}
 
 		// Set tracking
-		$this->tracking->track(TITANIA_CONTRIB, $this->contrib->contrib_id);
+		$this->tracking->track(ext::TITANIA_CONTRIB, $this->contrib->contrib_id);
 
 		// Subscriptions
 		$this->subscriptions->handle_subscriptions(
-			TITANIA_CONTRIB,
+			ext::TITANIA_CONTRIB,
 			$this->contrib->contrib_id,
 			$this->contrib->get_url(),
 			'SUBSCRIBE_CONTRIB'
@@ -171,8 +172,8 @@ class contribution extends base
 	{
 		$this->load_contrib($contrib_type, $contrib);
 		$can_use_demo =
-			$this->contrib->contrib_status == TITANIA_CONTRIB_APPROVED &&
-			$this->contrib->contrib_type == TITANIA_TYPE_STYLE &&
+			$this->contrib->contrib_status == ext::TITANIA_CONTRIB_APPROVED &&
+			$this->contrib->contrib_type == ext::TITANIA_TYPE_STYLE &&
 			$this->contrib->options['demo']
 		;
 
@@ -210,7 +211,7 @@ class contribution extends base
 	{
 		$sql = 'SELECT *
 			FROM ' . TITANIA_TOPICS_TABLE . '
-			WHERE topic_type = ' . TITANIA_QUEUE_DISCUSSION . '
+			WHERE topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION . '
 			AND parent_id = ' . $this->contrib->contrib_id;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);

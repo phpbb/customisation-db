@@ -15,6 +15,7 @@ namespace phpbb\titania\message;
 
 use phpbb\request\request_interface;
 use phpbb\titania\access;
+use phpbb\titania\ext;
 
 class message
 {
@@ -382,7 +383,7 @@ class message
 
 		$qr_hidden_fields = array();
 
-		if ($this->user->data['user_notify'] && $this->post_object->topic_type == TITANIA_SUPPORT)
+		if ($this->user->data['user_notify'] && $this->post_object->topic_type == ext::TITANIA_SUPPORT)
 		{
 			$qr_hidden_fields['notify'] = true;
 		}
