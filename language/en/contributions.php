@@ -150,6 +150,8 @@ $lang = array_merge($lang, array(
 
 	'NEW_CONTRIBUTION'						=> 'New Contribution',
 	'NEW_REVISION'							=> 'New Revision',
+	'NEW_REVISION_READY'					=> 'New revision ready for processing.',
+	'NEW_REVISION_REPACK_COMPLETE'			=> 'New revision has been repacked to ensure packaging compliance. Click <em>Continue</em> to process through EPV.',
 	'NEW_REVISION_SUBMITTED'				=> 'New revision has been submitted successfully. Click <em>Continue</em> to go to the next step.',
 	'NEW_TOPIC'								=> 'New Topic',
 	'NOT_VALIDATED'							=> 'Not Validated',
