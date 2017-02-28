@@ -76,6 +76,9 @@ class revision extends base
 		$this->uploader = $uploader;
 		$this->subscriptions = $subscriptions;
 		$this->message = $message;
+
+		// Increase timeout when dealing with revisions
+		@set_time_limit(90);
 	}
 
 	/**
