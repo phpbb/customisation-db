@@ -16,6 +16,8 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+use phpbb\titania\ext;
+
 $config = array(
 	// Display backtrace for TITANIA_TEAMS_ACCESS level
 	'display_backtrace'	=> 2,
@@ -119,9 +121,9 @@ $config = array(
 	'search_backend' => 'fulltext_sphinx',
 
 	'upload_max_filesize'		=> array(
-		TITANIA_CONTRIB		=> 10485760, // 10 MiB
-		TITANIA_SCREENSHOT	=> 524288, // 512 Kib
-		TITANIA_TRANSLATION	=> -1,
+		ext::TITANIA_CONTRIB		=> 10485760, // 10 MiB
+		ext::TITANIA_SCREENSHOT	=> 524288, // 512 Kib
+		ext::TITANIA_TRANSLATION	=> -1,
 	),
 
 	// Remove unsubmitted revisions and attachments
