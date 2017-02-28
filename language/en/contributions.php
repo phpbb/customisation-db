@@ -113,7 +113,7 @@ $lang = array_merge($lang, array(
 	'DUPLICATE_AUTHORS'						=> 'You have the following authors listed as both active and non-active (they can not be both): %s',
 
 	'EDIT_REVISION'							=> 'Edit Revision',
-	'EMPTY_CATEGORY'						=> 'Select one category at least',
+	'EMPTY_CATEGORY'						=> 'Select at least one category',
 	'EMPTY_CONTRIB_DESC'					=> 'Enter the contrib description',
 	'EMPTY_CONTRIB_ISO_CODE'				=> 'Enter the ISO Code',
 	'EMPTY_CONTRIB_LOCAL_NAME'				=> 'Enter the local name',
