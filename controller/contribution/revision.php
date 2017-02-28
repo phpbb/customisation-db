@@ -260,9 +260,13 @@ class revision extends base
 			{
 				return $result['response'];
 			}
-			else if (!isset($result['error']))
+			else if (isset($result['message']))
 			{
-				$this->template->assign_var('S_NEW_REVISION_SUBMITTED', true);
+				$this->template->assign_var('STEP_MESSAGE', $result['message']);
+			}
+			else if (!isset($result['error']) || empty($result['error']))
+			{
+				$this->template->assign_var('STEP_MESSAGE', $this->user->lang['NEW_REVISION_READY']);
 			}
 			$error = $result['error'];
 		}
