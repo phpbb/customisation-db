@@ -698,12 +698,16 @@ class manage extends base
 			'NONACTIVE_COAUTHORS'		=> implode("\n", $coauthors['nonactive']),
 		));
 
-		$this->display->generate_category_select(
-			$this->settings['categories'],
-			false,
-			true,
-			$this->contrib->type->id
-		);
+		// Render category list if user is authorized for the current contribution type
+		if ($this->contrib->type->acl_get('submit'))
+		{
+			$this->display->generate_category_select(
+				$this->settings['categories'],
+				false,
+				true,
+				$this->contrib->type->id
+			);
+		}
 		$this->message->display();
 		$this->contrib->assign_details();
 		$this->display->assign_global_vars();

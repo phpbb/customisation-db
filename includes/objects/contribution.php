@@ -1447,10 +1447,12 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		{
 			// Check for a valid type
 			$valid_type = false;
+			$read_only_type = false;
 			foreach ($this->types->get_all() as $type_id => $class)
 			{
 				if (!$class->acl_get('submit'))
 				{
+					$read_only_type = ($this->contrib_type == $type_id);
 					continue;
 				}
 
@@ -1461,7 +1463,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				}
 			}
 
-			if (!$valid_type)
+			if (!$valid_type && !$read_only_type)
 			{
 				$error[] = phpbb::$user->lang['EMPTY_CONTRIB_TYPE'];
 			}
@@ -1484,7 +1486,10 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 			if (!$contrib_categories)
 			{
-				$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
+				if (!$read_only_type)
+				{
+					$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
+				}
 			}
 			else
 			{
@@ -1939,7 +1944,15 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		if (!sizeof($contrib_categories))
 		{
-			return;
+			// Check for read-only type
+			if (!$this->type->acl_get('submit'))
+			{
+				$contrib_categories = array_keys($this->category_data);
+			}
+			else
+			{
+				return;
+			}
 		}
 
 		$sql_ary = array();
