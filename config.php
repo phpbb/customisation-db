@@ -114,7 +114,7 @@ $config = array(
 	/**
 	* Team groups (members will get TITANIA_TEAMS_ACCESS)
 	*/
-	'team_groups' => array(4, 7331, 13330, 993, 7332, 228685, 228778, 47077, 228777, 7330),
+	'team_groups' => array(228811, 4, 13330, 993, 228685, 228778, 47077, 7330),
 
 	'search_backend' => 'fulltext_sphinx',
 
