@@ -295,16 +295,18 @@ class contribution extends base
 				continue;
 			}
 
+			$empty_sid = '';
+
 			$branches[$matches[1]] = array(
 				'current'		=> $version,
 				'download'		=> $this->helper->route('phpbb.titania.download', array(
 					'id' => $download['attachment_id'],
-				)),
+				), true, $empty_sid),
 				'announcement'	=> $this->helper->route('phpbb.titania.contrib', array(
 					'page'			=> '',
 					'contrib_type'	=> $contrib_type,
 					'contrib'		=> $contrib,
-				)),
+				), true, $empty_sid),
 				'eol'			=> null,
 				'security'		=> false,
 			);
