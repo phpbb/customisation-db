@@ -286,18 +286,22 @@ class contribution extends base
 		$this->contrib->get_download();
 		$branches = array();
 
-		foreach ($this->contrib->download as $download)
+		ksort($this->contrib->download);
+
+		foreach ($this->contrib->download as $branch => $download)
 		{
 			$version = $download['revision_version'];
 
-			if (!preg_match('#^(\d+\.\d+)#', $version, $matches))
+			if (!preg_match('#^(\d+\.\d+)#', $version))
 			{
 				continue;
 			}
 
+			$branch = substr_replace($branch, '.', 1, 0);
+
 			$empty_sid = '';
 
-			$branches[$matches[1]] = array(
+			$branches[$branch] = array(
 				'current'		=> $version,
 				'download'		=> $this->helper->route('phpbb.titania.download', array(
 					'id' => $download['attachment_id'],
