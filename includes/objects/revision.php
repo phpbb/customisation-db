@@ -346,7 +346,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 					$row = array('phpbb_version_branch' => (int) $row);
 				}
 
-				if (!isset($row['phpbb_version_branch']) || !isset(titania::$config->phpbb_versions[$row['phpbb_version_branch']]))
+				if (!isset($row['phpbb_version_branch']) || titania::$config->phpbb_versions[$row['phpbb_version_branch']] === null)
 				{
 					continue;
 				}
