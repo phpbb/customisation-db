@@ -106,5 +106,5 @@ If you wish to resubmit this style to the styles database please ensure that you
 If you feel this denial is not warranted please contact the Style Customisations Team Leader.
 
 Sincerely,
-The Styles Team',
+The Style Customisations Team',
 ));
