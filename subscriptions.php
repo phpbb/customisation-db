@@ -99,23 +99,35 @@ class subscriptions
 
 		$is_subscribed = $this->is_subscribed($object_type, $object_id);
 		$action = 'subscribe';
+		$toggle = 'unsubscribe';
 
 		if ($is_subscribed)
 		{
 			$action = 'unsubscribe';
-			$lang_key = 'UN' . $lang_key;
+			$toggle = 'subscribe';
 		}
 
+		$hash = generate_link_hash($action);
+
 		$params = array(
-			'subscribe'	=> $action,
-			'hash'		=> generate_link_hash($action),
+			'subscribe'	=> array(
+				'subscribe'	=> $action,
+				'hash'		=> $hash,
+			),
+			'toggle'	=> array(
+				'subscribe'	=> $toggle,
+				'hash'		=> $hash,
+			),
 		);
 
 		$this->template->assign_vars(array(
 			'IS_SUBSCRIBED'			=> $is_subscribed,
 
-			'U_SUBSCRIBE'			=> $this->path_helper->append_url_params($url, $params),
-			'L_SUBSCRIBE_TYPE'		=> $this->user->lang($lang_key),
+			'U_SUBSCRIBE'			=> $this->path_helper->append_url_params($url, $params['subscribe']),
+			'L_SUBSCRIBE_TYPE'		=> $this->user->lang(($is_subscribed ? 'UN' . $lang_key : $lang_key)),
+
+			'U_SUBSCRIBE_TOGGLE'	=> $this->path_helper->append_url_params($url, $params['toggle']),
+			'L_SUBSCRIBE_TOGGLE'	=> $this->user->lang(($is_subscribed ? $lang_key : 'UN' . $lang_key)),
 		));
 	}
 
