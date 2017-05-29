@@ -638,7 +638,7 @@ class index
 	{
 		$_branch = (int) str_replace('.', '', $branch);
 
-		if ($branch != '' && !isset($this->ext_config->phpbb_versions[$_branch]))
+		if ($branch != '' && $this->ext_config->phpbb_versions[$_branch] === null)
 		{
 			throw new http_exception(404, 'NO_PAGE_FOUND');
 		}

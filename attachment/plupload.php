@@ -48,7 +48,7 @@ class plupload extends \phpbb\plupload\plupload
 	 */
 	public function generate_filter_string_ext($ext_config, $object_type)
 	{
-		if (!isset($ext_config->upload_allowed_extensions[$object_type]))
+		if ($ext_config->upload_allowed_extensions[$object_type] === null)
 		{
 			return '';
 		}

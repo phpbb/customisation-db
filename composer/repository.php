@@ -91,10 +91,11 @@ class repository
 
 		try
 		{
-			$new_build = $this->repo_dir . 'prod_' . time();
+			$new_prod = 'prod_' . time();
+			$new_build = $this->repo_dir . $new_prod;
 			$this->fs->rename($this->build_dir, $new_build);
 			$this->fs->remove($this->production_link);
-			$this->fs->symlink($new_build, $this->production_link);
+			$this->fs->symlink('./' . $new_prod, $this->production_link);
 		}
 		catch (\Exception $e)
 		{
@@ -109,7 +110,7 @@ class repository
 		}
 		if ($current_build)
 		{
-			$this->fs->remove($current_build);
+			$this->fs->remove($this->repo_dir . $current_build);
 		}
 		return $this;
 	}

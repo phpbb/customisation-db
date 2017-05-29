@@ -43,12 +43,12 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'AUTHOR_TRANSLATIONS'						=> '%d Language Packs',
 	'AUTHOR_TRANSLATIONS_ONE'					=> '1 Language Pack',
-	'COULD_NOT_FIND_TRANSLATION_ROOT'			=> 'We couldn’t locate the root directory of your language pack.  Make sure you have a directory containing <code>language/</code> and <code>styles/</code> in the top level.',
+	'COULD_NOT_FIND_TRANSLATION_ROOT'			=> 'We couldn’t locate the root directory of your language pack. Make sure you have a directory containing <code>language/</code> and <code>styles/</code> in the top level.',
 
 	'MISSING_FILE'								=> 'The file <code>%s</code> is missing in your language pack.',
 	'MISSING_KEYS'								=> 'You are missing the following language key(s) in <code>%1$s</code>:<br />%2$s',
 
-	'PASSED_VALIDATION'							=> 'Your language pack has been repacked and has passed the validation process which checks for missing keys, structure, additionnal files and license.  Please continue.',
+	'PASSED_VALIDATION'							=> 'Your language pack has been repacked and has passed the validation process which checks for missing keys, structure, additionnal files and license. Please continue.',
 
 	'TRANSLATION'								=> 'Language Pack',
 	'TRANSLATION_VALIDATION'					=> '[phpBB Language Pack-Validation] %1$s %2$s',
