@@ -71,7 +71,7 @@ a.download-button, a.colorizeit-button {
 	color: #FFFFFF;
 	display: inline-block;
 	float: left;
-	height: 36px;
+	min-height: 36px;
 	font-weight: bold;
 	text-decoration: none;
 }

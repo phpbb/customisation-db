@@ -87,7 +87,7 @@ class service extends \phpbb\cache\service
 			$this->driver->put('_titania_phpbb_versions', $versions);
 		}
 
-		uasort($versions, array('versions', 'reverse_version_compare'));
+		uasort($versions, array(versions::class, 'reverse_version_compare'));
 
 		return $versions;
 	}
