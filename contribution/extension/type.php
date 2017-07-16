@@ -14,12 +14,11 @@
 namespace phpbb\titania\contribution\extension;
 
 use phpbb\auth\auth;
+use phpbb\template\template;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
 use phpbb\titania\entity\package;
-use phpbb\titania\url\url;
-use phpbb\template\template;
 use phpbb\user;
 
 class type extends base
@@ -61,6 +60,11 @@ class type extends base
 
 		if ($this->ext_config->use_queue && $this->use_queue && $this->epv_test)
 		{
+			$this->upload_steps[] = array(
+				'name'		=> 'PERFORM_REPACK',
+				'function'	=> array($this, 'perform_repack'),
+			);
+
 			$this->upload_steps[] = array(
 				'name'		=> 'EPV_TEST',
 				'function'	=> array($this, 'epv_test'),
@@ -119,6 +123,33 @@ class type extends base
 		return false;
 	}
 
+	/**
+	 * Do the repack for the contribution
+	 *
+	 * @param \titania_contribution $contrib
+	 * @param \titania_revision $revision
+	 * @param attachment $attachment
+	 * @param string $download_package
+	 * @param package $package
+	 * @param template $template
+	 * @return array Returns array containing any errors found.
+	 */
+	public function perform_repack(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
+	{
+		try
+		{
+			$this->repack($package, $contrib, $revision);
+		}
+		catch (\Exception $e)
+		{
+			return array(
+				'error'	=> array($this->user->lang($e->getMessage())),
+			);
+		}
+		return array(
+			'message'	=> $this->user->lang['NEW_REVISION_REPACK_COMPLETE'],
+		);
+	}
 
 	/**
 	 * Run EPV test on new submissions and submit results to queue topic.
@@ -133,16 +164,7 @@ class type extends base
 	 */
 	public function epv_test(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
 	{
-		try
-		{
-			$this->repack($package, $contrib, $revision);
-		}
-		catch (\Exception $e)
-		{
-			return array(
-				'error'	=> array($this->user->lang($e->getMessage())),
-			);
-		}
+		$package->ensure_extracted();
 		$prevalidator = $this->get_prevalidator();
 		$results = $prevalidator->run_epv($package->get_temp_path());
 
@@ -187,7 +209,6 @@ class type extends base
 	 */
 	protected function repack(package $package, \titania_contribution $contrib, \titania_revision $revision)
 	{
-		$package->ensure_extracted();
 		$ext_base_path = $package->find_directory(
 			array(
 				'files' => array(
@@ -299,7 +320,7 @@ class type extends base
 			// fix common error (<=3.2.*@dev, >=3.1.x)
 			$data['require']['phpbb/phpbb'] = preg_replace('/(<|<=|~|\^|>|>=)([0-9]+(\.[0-9]+)?)\.[*x]/', '$1$2', $data['require']['phpbb/phpbb']);
 		}
-		
+
 		return $data;
 	}
 

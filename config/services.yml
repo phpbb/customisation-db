@@ -162,6 +162,7 @@ services:
             - @symfony_request
             - @request
             - @routing.helper
+            - @phpbb.titania.config
 
     phpbb.titania.cache:
         class: phpbb\titania\cache\service

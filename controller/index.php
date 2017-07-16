@@ -15,6 +15,7 @@ namespace phpbb\titania\controller;
 
 use phpbb\exception\http_exception;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class index
@@ -129,7 +130,7 @@ class index
 		// Mark all contribs read
 		if ($this->request->variable('mark', '') == 'contribs')
 		{
-			$this->tracking->track(TITANIA_CONTRIB, self::ALL_CONTRIBS);
+			$this->tracking->track(ext::TITANIA_CONTRIB, self::ALL_CONTRIBS);
 		}
 
 		$this->template->assign_vars(array(
@@ -637,7 +638,7 @@ class index
 	{
 		$_branch = (int) str_replace('.', '', $branch);
 
-		if ($branch != '' && !isset($this->ext_config->phpbb_versions[$_branch]))
+		if ($branch != '' && $this->ext_config->phpbb_versions[$_branch] === null)
 		{
 			throw new http_exception(404, 'NO_PAGE_FOUND');
 		}

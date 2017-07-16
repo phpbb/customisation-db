@@ -14,6 +14,7 @@
 namespace phpbb\titania\queue;
 
 use phpbb\titania\date;
+use phpbb\titania\ext;
 
 /**
  * Class to handle queue stats
@@ -94,7 +95,7 @@ class stats
 	 */
 	public function get_queue_item_count($included_statuses = false, $excluded_statuses = false)
 	{
-		$sql = 'SELECT COUNT(queue_id) AS status_count 
+		$sql = 'SELECT COUNT(queue_id) AS status_count
 			FROM ' . TITANIA_QUEUE_TABLE . '
 			WHERE queue_type = ' . $this->queue_type .
 			((!empty($included_statuses)) ? ' AND ' . $this->db->sql_in_set('queue_status', $included_statuses) : '') .
@@ -184,8 +185,8 @@ class stats
 		$sql = 'SELECT queue_status AS status, queue_submit_time AS submit_time, queue_close_time AS close_time
 			FROM ' . TITANIA_QUEUE_TABLE . '
 			WHERE queue_type = ' . $this->queue_type . '
-				AND ' . $this->db->sql_in_set('queue_status', array(TITANIA_QUEUE_CLOSED, TITANIA_QUEUE_HIDE), true) . '
-				AND ((queue_submit_time > ' . $start_time . ' AND queue_submit_time < ' . $end_time . ') 
+				AND ' . $this->db->sql_in_set('queue_status', array(ext::TITANIA_QUEUE_CLOSED, ext::TITANIA_QUEUE_HIDE), true) . '
+				AND ((queue_submit_time > ' . $start_time . ' AND queue_submit_time < ' . $end_time . ')
 					OR (queue_close_time > ' . $start_time . ' AND queue_close_time < ' . $end_time . '))';
 		$result = $this->db->sql_query($sql);
 
@@ -215,8 +216,8 @@ class stats
 			$this->add_history_action($history, 'new', $item['submit_time']);
 		}
 		$validated_status_map = array(
-			TITANIA_QUEUE_APPROVED	=> 'approved',
-			TITANIA_QUEUE_DENIED 	=> 'denied',
+			ext::TITANIA_QUEUE_APPROVED	=> 'approved',
+			ext::TITANIA_QUEUE_DENIED	=> 'denied',
 		);
 
 		if (isset($validated_status_map[$item['status']]) && $start_time <= $item['close_time'] && $end_time >= $item['close_time'])

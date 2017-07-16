@@ -58,7 +58,7 @@ $lang = array_merge($lang, array(
 
 [b]Style overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]The phpBB Team is not responsible nor required to provide support for this Style. By installing this Style, you acknowledge that the phpBB Support Team or phpBB Styles Team may not be able to provide support.[/b][/color]
+[color=blue][b]The phpBB Team is not responsible nor required to provide support for this Style. By installing this Style, you acknowledge that the phpBB Support Team or phpBB Style Customisations Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]--&gt;[b]Style support[/b]&lt;--[/url][/size]',
 	'STYLE_DEMO_INSTALL'				=> 'Install on style demo board',
@@ -86,25 +86,25 @@ See first post for Download Link[/color][/b]',
 // \'Page %s of %s\' you can (and should) write \'Page %1$s of %2$s\', this allows
 // translators to re-order the output of data while ensuring it remains correct',
 	'STYLE_VALIDATION'					=> '[phpBB Style-Validation] %1$s %2$s',
-	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Styles Team your style has been [b][color=#5c8503]approved[/color][/b] and released into our styles database.
+	'STYLE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your style to the phpBB.com styles database. After inspection by the Style Customisations Team your style has been [b][color=#5c8503]approved[/color][/b] and released into our styles database.
 
 It is our hope that you will provide a basic level of support for this style and keep it updated as required for future releases of phpBB. We appreciate your work and contribution to the community.
-[b]Notes from the Styles Team about your style:[/b]
+[b]Notes from the Style Customisations Team about your style:[/b]
 [quote]%s[/quote]
 
 Sincerely,
-The Styles Team',
+The Style Customisations Team',
 	'STYLE_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
 As you may know all styles submitted to the phpBB styles database must be validated and approved by members of the phpBB Team.
 
-Upon validating your style the phpBB Styles Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] your style. The reasons for this denial are outlined below:
+Upon validating your style the phpBB Style Customisations Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] your style. The reasons for this denial are outlined below:
 [quote]%s[/quote]
 
-If you wish to resubmit this style to the styles database please ensure that you fix the issues identified and that it meets the [url=http://www.phpbb.com/community/viewtopic.php?t=988545]Styles Submission Policy[/url].
+If you wish to resubmit this style to the styles database please ensure that you fix the issues identified and that it meets the applicable [url=https://www.phpbb.com/styles/rules-and-policies/]Styles Submission Policy[/url].
 
-If you feel this denial is not warranted please contact the Styles Team Leader.
+If you feel this denial is not warranted please contact the Style Customisations Team Leader.
 
 Sincerely,
-The Styles Team',
+The Style Customisations Team',
 ));

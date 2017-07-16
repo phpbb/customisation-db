@@ -71,7 +71,7 @@ a.download-button, a.colorizeit-button {
 	color: #FFFFFF;
 	display: inline-block;
 	float: left;
-	height: 36px;
+	min-height: 36px;
 	font-weight: bold;
 	text-decoration: none;
 }
@@ -195,7 +195,7 @@ a.download-button .vendor-version {
 }
 
 .contrib-description dd ul, .contrib-description dd ol {
-	margin-left: 3em;
+	margin: 0 0 1em 3em;
 }
 
 .contrib-description dd dl.codebox dt {margin-top: 1px;}
@@ -423,6 +423,10 @@ a.screenshot img, img.screenshot {
 .quickview-title {
 	font-size: 1.2em;
 	position: relative;
+	display: block;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	white-space: nowrap;
 }
 
 .quickview-preview {
@@ -1017,10 +1021,6 @@ textarea.elastic {
 
 textarea.quickedit {
 	font-size: 1.1em;
-}
-
-.text-content {
-	white-space: pre-wrap;
 }
 
 .inline-attachment {

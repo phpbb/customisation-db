@@ -13,9 +13,9 @@
 
 namespace phpbb\titania\entity;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Expression\Expression;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Filesystem\Filesystem;
 
 class package
 {

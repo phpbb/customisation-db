@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 /**
 * Class to abstract titania ratings.
 * @package Titania
@@ -135,7 +137,7 @@ class titania_rating extends \phpbb\titania\entity\database_base
 		switch($this->rating_type)
 		{
 			case 'author' :
-				$this->rating_type_id = TITANIA_AUTHOR;
+				$this->rating_type_id = ext::TITANIA_AUTHOR;
 				$this->cache_table = TITANIA_AUTHORS_TABLE;
 				$this->cache_rating = 'author_rating';
 				$this->cache_rating_count = 'author_rating_count';
@@ -143,7 +145,7 @@ class titania_rating extends \phpbb\titania\entity\database_base
 			break;
 
 			case 'contrib' :
-				$this->rating_type_id = TITANIA_CONTRIB;
+				$this->rating_type_id = ext::TITANIA_CONTRIB;
 				$this->cache_table = TITANIA_CONTRIBS_TABLE;
 				$this->cache_rating = 'contrib_rating';
 				$this->cache_rating_count = 'contrib_rating_count';

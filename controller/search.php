@@ -16,6 +16,7 @@ namespace phpbb\titania\controller;
 use phpbb\exception\http_exception;
 use phpbb\titania\access;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use phpbb\titania\user\helper as user_helper;
 
 class search
@@ -406,7 +407,7 @@ class search
 		{
 			$this->engine->where_in_set('phpbb_versions', $versions);
 		}
-		$this->engine->set_type(TITANIA_CONTRIB);
+		$this->engine->set_type(ext::TITANIA_CONTRIB);
 	}
 
 	/**
@@ -419,9 +420,9 @@ class search
 		$contrib_types = $this->types->get_ids();
 
 		$restrictions = array(
-			TITANIA_SUPPORT		=> $contrib_types,
-			TITANIA_CONTRIB		=> $contrib_types,
-			TITANIA_FAQ			=> $contrib_types,
+			ext::TITANIA_SUPPORT	=> $contrib_types,
+			ext::TITANIA_CONTRIB	=> $contrib_types,
+			ext::TITANIA_FAQ		=> $contrib_types,
 		);
 
 		// Enforce permissions on the results to ensure that we don't leak posts to users who don't have access to the originating queues.
@@ -430,12 +431,12 @@ class search
 
 		if (!empty($access_validation_queue))
 		{
-			$restrictions[TITANIA_QUEUE] = $access_validation_queue;
+			$restrictions[ext::TITANIA_QUEUE] = $access_validation_queue;
 		}
 
 		if (!empty($access_queue_discussion))
 		{
-			$restrictions[TITANIA_QUEUE_DISCUSSION] = $access_queue_discussion;
+			$restrictions[ext::TITANIA_QUEUE_DISCUSSION] = $access_queue_discussion;
 		}
 		$this->engine->set_granular_type_restrictions($restrictions);
 	}
@@ -473,13 +474,13 @@ class search
 
 		// Available Search Types
 		$this->search_types = array(
-			TITANIA_CONTRIB		=> 'CONTRIBUTION_NAME_DESCRIPTION',
-			TITANIA_FAQ			=> 'CONTRIB_FAQ',
+			ext::TITANIA_CONTRIB	=> 'CONTRIBUTION_NAME_DESCRIPTION',
+			ext::TITANIA_FAQ		=> 'CONTRIB_FAQ',
 		);
 
 		if ($this->ext_config->support_in_titania)
 		{
-			$this->search_types[TITANIA_SUPPORT] = 'CONTRIB_SUPPORT';
+			$this->search_types[ext::TITANIA_SUPPORT] = 'CONTRIB_SUPPORT';
 		}
 	}
 
@@ -522,20 +523,20 @@ class search
 
 		switch ($type)
 		{
-			case TITANIA_FAQ:
+			case ext::TITANIA_FAQ:
 				$controller = 'phpbb.titania.contrib.faq.item';
 			break;
 
-			case TITANIA_QUEUE:
+			case ext::TITANIA_QUEUE:
 				$controller = 'phpbb.titania.queue.item';
 			break;
 
-			case TITANIA_SUPPORT:
-			case TITANIA_QUEUE_DISCUSSION:
+			case ext::TITANIA_SUPPORT:
+			case ext::TITANIA_QUEUE_DISCUSSION:
 				$controller = 'phpbb.titania.contrib.support.topic';
 			break;
 
-			case TITANIA_CONTRIB:
+			case ext::TITANIA_CONTRIB:
 				$controller = 'phpbb.titania.contrib';
 			break;
 
@@ -595,17 +596,17 @@ class search
 		{
 			switch ($data['type'])
 			{
-				case TITANIA_CONTRIB :
+				case ext::TITANIA_CONTRIB:
 					$contribs[] = $data['id'];
 					break;
 
-				case TITANIA_SUPPORT :
-				case TITANIA_QUEUE_DISCUSSION :
-				case TITANIA_QUEUE :
+				case ext::TITANIA_SUPPORT:
+				case ext::TITANIA_QUEUE_DISCUSSION:
+				case ext::TITANIA_QUEUE :
 					$posts[] = $data['id'];
-				break;
+					break;
 
-				case TITANIA_FAQ :
+				case ext::TITANIA_FAQ:
 					$faqs[] = $data['id'];
 					break;
 			}
@@ -680,7 +681,7 @@ class search
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$id = TITANIA_CONTRIB . '_' . $row['id'];
+			$id = ext::TITANIA_CONTRIB . '_' . $row['id'];
 			$row['url'] = serialize(array(
 				'contrib_type'	=> $this->types->get($row['contrib_type'])->url,
 				'contrib'		=> $row['contrib_name_clean'],
@@ -717,7 +718,7 @@ class search
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$id = TITANIA_FAQ . '_' . $row['id'];
+			$id = ext::TITANIA_FAQ . '_' . $row['id'];
 			$row['url'] = serialize(array(
 				'contrib_type'	=> $this->types->get($row['contrib_type'])->url,
 				'contrib'		=> $row['contrib_name_clean'],

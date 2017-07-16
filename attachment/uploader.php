@@ -16,6 +16,7 @@ namespace phpbb\titania\attachment;
 use phpbb\files\upload;
 use phpbb\request\request_interface;
 use phpbb\titania\access;
+use phpbb\titania\ext;
 
 class uploader
 {
@@ -223,7 +224,7 @@ class uploader
 	/**
 	 * Uploads a file to server
 	 *
-	 * @return array filedata
+	 * @return false|array filedata
 	 */
 	public function upload_file()
 	{
@@ -239,7 +240,7 @@ class uploader
 			return false;
 		}
 
-		if (!isset($this->ext_config->upload_allowed_extensions[$this->object_type]))
+		if ($this->ext_config->upload_allowed_extensions[$this->object_type] === null)
 		{
 			$this->filedata['error'][] = $this->user->lang['NO_UPLOAD_FORM_FOUND'];
 
@@ -268,7 +269,7 @@ class uploader
 		$file->clean_filename('unique', $this->user->data['user_id'] . '_');
 
 		// Move files into their own directory depending on the extension group assigned.  Should keep at least some of it organized.
-		if (!isset($this->ext_config->upload_directory[$this->object_type]))
+		if ($this->ext_config->upload_directory[$this->object_type] === null)
 		{
 			$this->filedata['error'][] = $this->user->lang('NO_UPLOAD_FORM_FOUND');
 
@@ -331,12 +332,9 @@ class uploader
 	public function parse_uploader($tpl_file = 'posting/attachments/default.html', $custom_sort = false)
 	{
 		// If the upload max filesize is less than 0, do not show the uploader (0 = unlimited)
-		if (!$this->access->is_team())
+		if (!$this->access->is_team() && $this->ext_config->upload_max_filesize[$this->object_type] !== null && $this->ext_config->upload_max_filesize[$this->object_type] < 0)
 		{
-			if (isset($this->ext_config->upload_max_filesize[$this->object_type]) && $this->ext_config->upload_max_filesize[$this->object_type] < 0)
-			{
-				return '';
-			}
+			return '';
 		}
 
 		$this->template->assign_vars(array(
@@ -350,7 +348,7 @@ class uploader
 			'S_PLUPLOAD_ENABLED'			=> $this->use_plupload,
 			'S_SET_CUSTOM_ORDER'			=> $this->set_custom_order,
 			'S_UPLOADER_KEY'				=> generate_link_hash('uploader_key'),
-			'SELECT_PREVIEW'				=> $this->object_type == TITANIA_SCREENSHOT,
+			'SELECT_PREVIEW'				=> $this->object_type == ext::TITANIA_SCREENSHOT,
 			'SELECT_REVIEW_VAR' 			=> 'set_preview_file' . $this->object_type,
 		));
 
@@ -400,7 +398,7 @@ class uploader
 					),
 			));
 
-			if ($attach->is_type(TITANIA_SCREENSHOT))
+			if ($attach->is_type(ext::TITANIA_SCREENSHOT))
 			{
 				$output = array_merge($output, array(
 					'U_MOVE_UP'		=> $this->path_helper->append_url_params(
@@ -613,14 +611,12 @@ class uploader
 	 */
 	protected function get_max_filesize()
 	{
-		if (isset($this->ext_config->upload_max_filesize[$this->object_type]))
+		if ($this->ext_config->upload_max_filesize[$this->object_type] !== null)
 		{
 			return $this->ext_config->upload_max_filesize[$this->object_type];
 		}
-		else
-		{
-			return $this->config['max_filesize'];
-		}
+
+		return $this->config['max_filesize'];
 	}
 
 	/**

@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 
 class support
 {
@@ -82,7 +83,7 @@ class support
 			// Mark all topics read
 			if ($this->request->variable('mark', '') == 'topics')
 			{
-				$this->tracking->track(TITANIA_ALL_SUPPORT, self::ALL_SUPPORT);
+				$this->tracking->track(ext::TITANIA_ALL_SUPPORT, self::ALL_SUPPORT);
 			}
 
 			// Mark all topics read

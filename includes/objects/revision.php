@@ -14,8 +14,9 @@
 use phpbb\config\config;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\composer\repository;
-use phpbb\titania\versions;
+use phpbb\titania\ext;
 use phpbb\titania\message\message;
+use phpbb\titania\versions;
 
 /**
 * Class to titania revision.
@@ -79,7 +80,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		$this->object_config = array_merge($this->object_config, array(
 			'revision_id'				=> array('default' => 0),
 			'contrib_id' 				=> array('default' => 0),
-			'revision_status'			=> array('default' => TITANIA_REVISION_NEW),
+			'revision_status'			=> array('default' => ext::TITANIA_REVISION_NEW),
 			'attachment_id' 			=> array('default' => 0),
 			'revision_name' 			=> array('default' => '', 'max' => 255),
 			'revision_time'				=> array('default' => (int) titania::$time),
@@ -186,7 +187,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	public function load_translations()
 	{
 		$this->translations
-			->configure(TITANIA_TRANSLATION, $this->revision_id)
+			->configure(ext::TITANIA_TRANSLATION, $this->revision_id)
 			->load()
 		;
 	}
@@ -232,7 +233,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
         // ColorizeIt stuff
         $url_colorizeit = '';
-        if($this->revision_status == TITANIA_REVISION_APPROVED && strlen(titania::$config->colorizeit) && $this->contrib && $this->contrib->has_colorizeit())
+        if($this->revision_status == ext::TITANIA_REVISION_APPROVED && strlen(titania::$config->colorizeit) && $this->contrib && $this->contrib->has_colorizeit())
         {
             $url_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->attachment_id . '&amp;sample=' . $this->contrib->clr_sample->get_id();
         }
@@ -259,13 +260,13 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || $this->contrib->type->acl_get('moderate'))) ? $this->contrib->get_url('revision', array('page' => 'edit', 'id' => $this->revision_id)) : '',
 
 			'S_USE_QUEUE'			=> (titania::$config->use_queue && $this->contrib->type->use_queue) ? true : false,
-			'S_NEW'					=> ($this->revision_status == TITANIA_REVISION_NEW) ? true : false,
-			'S_APPROVED'			=> ($this->revision_status == TITANIA_REVISION_APPROVED) ? true : false,
-			'S_DENIED'				=> ($this->revision_status == TITANIA_REVISION_DENIED) ? true : false,
-			'S_PULLED_SECURITY'		=> ($this->revision_status == TITANIA_REVISION_PULLED_SECURITY) ? true : false,
-			'S_PULLED_OTHER'		=> ($this->revision_status == TITANIA_REVISION_PULLED_OTHER) ? true : false,
-			'S_REPACKED'			=> ($this->revision_status == TITANIA_REVISION_REPACKED) ? true : false,
-			'S_RESUBMITTED'			=> ($this->revision_status == TITANIA_REVISION_RESUBMITTED) ? true : false,
+			'S_NEW'					=> ($this->revision_status == ext::TITANIA_REVISION_NEW) ? true : false,
+			'S_APPROVED'			=> ($this->revision_status == ext::TITANIA_REVISION_APPROVED) ? true : false,
+			'S_DENIED'				=> ($this->revision_status == ext::TITANIA_REVISION_DENIED) ? true : false,
+			'S_PULLED_SECURITY'		=> ($this->revision_status == ext::TITANIA_REVISION_PULLED_SECURITY) ? true : false,
+			'S_PULLED_OTHER'		=> ($this->revision_status == ext::TITANIA_REVISION_PULLED_OTHER) ? true : false,
+			'S_REPACKED'			=> ($this->revision_status == ext::TITANIA_REVISION_REPACKED) ? true : false,
+			'S_RESUBMITTED'			=> ($this->revision_status == ext::TITANIA_REVISION_RESUBMITTED) ? true : false,
 		));
 
 		phpbb::$user->date_format = $old_date_format;
@@ -316,7 +317,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 					'U_VIEW'	=> $this->contrib->get_url(),
 				);
 				$this->subscriptions->send_notifications(
-					TITANIA_CONTRIB,
+					ext::TITANIA_CONTRIB,
 					$this->contrib_id,
 					'subscribe_notify',
 					$email_vars
@@ -345,7 +346,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 					$row = array('phpbb_version_branch' => (int) $row);
 				}
 
-				if (!isset($row['phpbb_version_branch']) || !isset(titania::$config->phpbb_versions[$row['phpbb_version_branch']]))
+				if (!isset($row['phpbb_version_branch']) || titania::$config->phpbb_versions[$row['phpbb_version_branch']] === null)
 				{
 					continue;
 				}
@@ -359,7 +360,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 				$sql_ary[] = array(
 					'revision_id'				=> $this->revision_id,
 					'contrib_id'				=> $this->contrib_id,
-					'revision_validated'		=> ($this->revision_status == TITANIA_REVISION_APPROVED) ? true : false,
+					'revision_validated'		=> ($this->revision_status == ext::TITANIA_REVISION_APPROVED) ? true : false,
 					'phpbb_version_branch'		=> $row['phpbb_version_branch'],
 					'phpbb_version_revision'	=> $this->get_real_phpbb_version(((isset($row['phpbb_version_revision'])) ? $row['phpbb_version_revision'] : titania::$config->phpbb_versions[$row['phpbb_version_branch']]['latest_revision'])),
 				);
@@ -372,7 +373,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		}
 
 		// Update the release topic
-		if ($this->revision_status == TITANIA_REVISION_APPROVED)
+		if ($this->revision_status == ext::TITANIA_REVISION_APPROVED)
 		{
 			$this->contrib->update_release_topic();
 		}
@@ -404,10 +405,10 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 		switch ($old_status)
 		{
-			case TITANIA_REVISION_APPROVED :
+			case ext::TITANIA_REVISION_APPROVED :
 				// If there are no approved revisions left we will need to reset the contribution status
 				$sql = 'SELECT COUNT(revision_id) AS cnt FROM ' . TITANIA_REVISIONS_TABLE . '
-					WHERE revision_status = ' . TITANIA_REVISION_APPROVED . '
+					WHERE revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
 						AND contrib_id = ' . $this->contrib_id . '
 						AND revision_id <> ' . $this->revision_id;
 				phpbb::$db->sql_query($sql);
@@ -420,9 +421,9 @@ class titania_revision extends \phpbb\titania\entity\database_base
 						$this->contrib = contribs_overlord::get_contrib_object($this->contrib_id, true);
 					}
 
-					if (in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)))
+					if (in_array($this->contrib->contrib_status, array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED)))
 					{
-						$this->contrib->change_status(TITANIA_CONTRIB_NEW);
+						$this->contrib->change_status(ext::TITANIA_CONTRIB_NEW);
 					}
 				}
 			break;
@@ -430,16 +431,16 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 		switch ($new_status)
 		{
-			case TITANIA_REVISION_APPROVED :
+			case ext::TITANIA_REVISION_APPROVED :
 				// If approving this revision and the contribution is set to new, approve the contribution
 				if (!$this->contrib)
 				{
 					$this->contrib = contribs_overlord::get_contrib_object($this->contrib_id, true);
 				}
 
-				if (in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_NEW)))
+				if (in_array($this->contrib->contrib_status, array(ext::TITANIA_CONTRIB_NEW)))
 				{
-					$this->contrib->change_status(TITANIA_CONTRIB_APPROVED);
+					$this->contrib->change_status(ext::TITANIA_CONTRIB_APPROVED);
 				}
 				repository::trigger_cron($this->config);
 
@@ -453,7 +454,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 				// Update the contributions table if this is the newest validated revision
 				$sql = 'SELECT revision_id FROM ' . $this->sql_table . '
-					WHERE revision_status = ' . TITANIA_REVISION_APPROVED . '
+					WHERE revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
 					AND contrib_id = ' . $this->contrib_id . '
 					ORDER BY revision_id DESC';
 				phpbb::$db->sql_query_limit($sql, 1);
@@ -488,7 +489,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		phpbb::$db->sql_query($sql);
 
 		// Update the release topic
-		if ($this->revision_status == TITANIA_REVISION_APPROVED)
+		if ($this->revision_status == ext::TITANIA_REVISION_APPROVED)
 		{
 			$this->contrib->update_release_topic();
 		}
@@ -544,7 +545,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		$queue->delete();
 
 		// Unlink the old queue_id from the old revision and set it to repacked
-		$old_revision->change_status(TITANIA_REVISION_REPACKED);
+		$old_revision->change_status(ext::TITANIA_REVISION_REPACKED);
 		$old_revision->revision_queue_id = 0;
 		$old_revision->submit();
 
@@ -555,7 +556,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		// Move any translations
 		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
 			SET object_id = ' . $this->revision_id . '
-			WHERE object_type = ' . TITANIA_TRANSLATION . '
+			WHERE object_type = ' . ext::TITANIA_TRANSLATION . '
 				AND object_id = ' . $old_revision->revision_id;
 		phpbb::$db->sql_query($sql);
 
@@ -579,7 +580,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		// Delete the attachment
 		$operator = phpbb::$container->get('phpbb.titania.attachment.operator');
 		$operator
-			->configure(TITANIA_CONTRIB, $this->contrib_id)
+			->configure(ext::TITANIA_CONTRIB, $this->contrib_id)
 			->load(array($this->attachment_id))
 			->delete(array($this->attachment_id))
 		;
@@ -607,7 +608,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			$queue = $this->get_queue();
 
 			// Only create the queue for revisions set as new
-			if ($queue === false && ($this->revision_status == TITANIA_REVISION_NEW || $this->revision_status == TITANIA_REVISION_ON_HOLD))
+			if ($queue === false && ($this->revision_status == ext::TITANIA_REVISION_NEW || $this->revision_status == ext::TITANIA_REVISION_ON_HOLD))
 			{
 				$queue = new titania_queue;
 			}
@@ -622,7 +623,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 				));
 
 				// Set the queue status to new if it's submitted and the queue status is set to hide it
-				if ($this->revision_submitted && $queue->queue_status == TITANIA_QUEUE_HIDE)
+				if ($this->revision_submitted && $queue->queue_status == ext::TITANIA_QUEUE_HIDE)
 				{
 					// Only set the queue as new if there are not any newer revisions in the queue
 					$sql = 'SELECT queue_id FROM ' . TITANIA_QUEUE_TABLE . '
@@ -631,7 +632,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 					$result = phpbb::$db->sql_query($sql);
 					if(!($row = phpbb::$db->sql_fetchrow($result)))
 					{
-						$queue->queue_status = TITANIA_QUEUE_NEW;
+						$queue->queue_status = ext::TITANIA_QUEUE_NEW;
 					}
 				}
 
@@ -654,13 +655,13 @@ class titania_revision extends \phpbb\titania\entity\database_base
 						WHERE contrib_id = ' . (int) $this->contrib_id . '
 							AND revision_id < ' . $this->revision_id . "
 							$exclude
-							AND queue_status = " . TITANIA_QUEUE_NEW;
+							AND queue_status = " . ext::TITANIA_QUEUE_NEW;
 					$result = phpbb::$db->sql_query($sql);
 					while ($row = phpbb::$db->sql_fetchrow($result))
 					{
 						$queue = new titania_queue;
 						$queue->__set_array($row);
-						$queue->close(TITANIA_REVISION_RESUBMITTED);
+						$queue->close(ext::TITANIA_REVISION_RESUBMITTED);
 						unset($queue);
 					}
 					phpbb::$db->sql_freeresult($result);

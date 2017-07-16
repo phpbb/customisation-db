@@ -20,6 +20,7 @@ use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\controller\helper;
 use phpbb\titania\entity\package;
+use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use Symfony\Component\Console\Helper\ProgressHelper;
 use Symfony\Component\Finder\SplFileInfo;
@@ -106,8 +107,8 @@ class rebuild_repo extends base
 				FROM ' . $this->contribs_table . ' c, ' .
 				$this->revisions_table . ' r
 				WHERE c.contrib_id = r.contrib_id
-					AND c.contrib_status = ' . TITANIA_CONTRIB_APPROVED . '
-					AND r.revision_status = ' . TITANIA_REVISION_APPROVED . '
+					AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
+					AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
 					AND ' . $this->db->sql_in_set('c.contrib_type', $types);
 			$this->db->sql_query($sql);
 			$this->total = (int) $this->db->sql_fetchfield('cnt');
@@ -145,8 +146,8 @@ class rebuild_repo extends base
 			$attach_table . '
 			WHERE c.contrib_id = r.contrib_id ' .
 			$attach_where . '
-				AND c.contrib_status = ' . TITANIA_CONTRIB_APPROVED . '
-				AND r.revision_status = ' . TITANIA_REVISION_APPROVED . '
+				AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
+				AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
 				AND ' . $this->db->sql_in_set('c.contrib_type', $types) . '
 			ORDER BY c.contrib_id ASC, r.revision_id ASC';
 		$result = $this->db->sql_query_limit($sql, $this->limit, $this->start);

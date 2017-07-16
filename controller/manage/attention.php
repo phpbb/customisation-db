@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\manage;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 
 class attention extends base
 {
@@ -61,7 +62,7 @@ class attention extends base
 		// Display the current attention items
 		$options = array(
 			'attention_object_id'		=> $this->attention->attention_object_id,
-			'exclude_attention_types'	=> TITANIA_ATTENTION_UNAPPROVED,
+			'exclude_attention_types'	=> ext::TITANIA_ATTENTION_UNAPPROVED,
 		);
 		\attention_overlord::display_attention_list($options);
 
@@ -135,11 +136,11 @@ class attention extends base
 		switch ($type)
 		{
 			case 'reported' :
-				$type = TITANIA_ATTENTION_REPORTED;
+				$type = ext::TITANIA_ATTENTION_REPORTED;
 			break;
 
 			case 'unapproved' :
-				$type = TITANIA_ATTENTION_UNAPPROVED;
+				$type = ext::TITANIA_ATTENTION_UNAPPROVED;
 			break;
 
 			default :
@@ -162,7 +163,7 @@ class attention extends base
 
 		// Subscriptions
 		$this->subscriptions->handle_subscriptions(
-			TITANIA_ATTENTION,
+			ext::TITANIA_ATTENTION,
 			0,
 			$this->helper->route('phpbb.titania.manage.attention')
 		);
@@ -300,8 +301,8 @@ class attention extends base
 			$this->attention->delete();
 
 			$error = array(
-				TITANIA_POST	=> 'NO_POST',
-				TITANIA_CONTRIB	=> 'NO_CONTRIB',
+				ext::TITANIA_POST		=> 'NO_POST',
+				ext::TITANIA_CONTRIB	=> 'NO_CONTRIB',
 			);
 
 			throw new \Exception($error[$this->attention->attention_object_type]);

@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 /**
  * Class to abstract attention items
  * @package Titania
@@ -101,7 +103,7 @@ class titania_attention extends \phpbb\titania\entity\database_base
 				'U_VIEW'	=> $this->path_helper->strip_url_params($u_view, 'sid'),
 			);
 			$this->subscriptions->send_notifications(
-				TITANIA_ATTENTION,
+				ext::TITANIA_ATTENTION,
 				0,
 				'subscribe_notify',
 				$email_vars,
@@ -177,7 +179,7 @@ class titania_attention extends \phpbb\titania\entity\database_base
 	public function is_report()
 	{
 		return !in_array($this->attention_type, array(
-			TITANIA_ATTENTION_UNAPPROVED,
+			ext::TITANIA_ATTENTION_UNAPPROVED,
 		));
 	}
 
@@ -292,14 +294,11 @@ class titania_attention extends \phpbb\titania\entity\database_base
 
 		phpbb::_include('functions_messenger', false, 'messenger');
 
-		$lang_path = phpbb::$user->lang_path;
-		phpbb::$user->set_custom_lang_path(titania::$config->language_path);
-
 		$messenger = new messenger(false);
 
 		users_overlord::load_users(array($user_id));
 
-		$messenger->template($email_template, users_overlord::get_user($user_id, 'user_lang'));
+		$messenger->template('@phpbb_titania/' . $email_template, users_overlord::get_user($user_id, 'user_lang'));
 
 		$messenger->to(users_overlord::get_user($user_id, 'user_email'), users_overlord::get_user($user_id, '_username'));
 
@@ -308,10 +307,6 @@ class titania_attention extends \phpbb\titania\entity\database_base
 		)));
 
 		$messenger->send();
-
-		phpbb::$user->set_custom_lang_path($lang_path);
-		// This gets reset when $template->_tpl_load() gets called
-		phpbb::$user->theme['template_inherits_id'] = 1;
 	}
 
 	/**

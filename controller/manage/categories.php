@@ -335,7 +335,7 @@ class categories extends base
 			'CATEGORY_NAME'					=> $this->category->get_name(),
 			'SECTION_NAME'					=> $this->user->lang['DELETE_CATEGORY'] . ' - ' . $this->category->get_name(),
 			'S_HAS_SUBCATS'					=> ($this->category->right_id - $this->category->left_id > 1),
-			'S_MOVE_CATEGORY_OPTIONS'		=> generate_category_select($this->category->parent_id, true),
+			'S_MOVE_CATEGORY_OPTIONS'		=> $this->display->generate_category_select($this->category->parent_id, true),
 			'ERROR_MSG'						=> (!empty($error)) ? implode('<br />', $error) : '')
 		);
 	}

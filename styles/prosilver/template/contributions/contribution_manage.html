@@ -84,6 +84,7 @@
 
 			<h3>{L_OPTIONS}</h3>
 			<fieldset>
+				<!-- IF category_select -->
 				<dl>
 					<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label><br /><span>{L_MULTI_SELECT_EXPLAIN}</span></dt>
 					<dd>
@@ -96,7 +97,7 @@
 						</select>
 					</dd>
 				</dl>
-
+				<!-- ENDIF -->
 				<!-- IF .custom_fields -->
 					<!-- INCLUDE common/custom_fields.html -->
 				<!-- ENDIF -->

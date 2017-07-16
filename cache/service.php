@@ -14,6 +14,7 @@
 namespace phpbb\titania\cache;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use phpbb\titania\versions;
 
 class service extends \phpbb\cache\service
@@ -86,7 +87,7 @@ class service extends \phpbb\cache\service
 			$this->driver->put('_titania_phpbb_versions', $versions);
 		}
 
-		uasort($versions, array('versions', 'reverse_version_compare'));
+		uasort($versions, array(versions::class, 'reverse_version_compare'));
 
 		return $versions;
 	}
@@ -264,7 +265,7 @@ class service extends \phpbb\cache\service
 		{
 			// If approved, or new and doesn't require approval, or the user is viewing their own, or permission to view non-validated, add them to the list
 			if ($user->data['user_id'] == $user_id ||
-				in_array($data['status'], array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) ||
+				in_array($data['status'], array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED)) ||
 				$types->get($data['type'])->acl_get('view') ||
 				$types->get($data['type'])->acl_get('moderate'))
 			{

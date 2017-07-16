@@ -15,6 +15,7 @@ namespace phpbb\titania\controller;
 
 use phpbb\titania\access;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 
 class author
 {
@@ -234,7 +235,7 @@ class author
 		{
 			foreach ($this->cache->get_author_contribs($this->author->user_id, $this->types, $this->user) as $contrib_id)
 			{
-				$this->tracking->track(TITANIA_SUPPORT, $contrib_id);
+				$this->tracking->track(ext::TITANIA_SUPPORT, $contrib_id);
 			}
 		}
 
@@ -430,7 +431,7 @@ class author
 
 					foreach ($active_authors as $author)
 					{
-						$this->subscriptions->subscribe(TITANIA_SUPPORT, $contrib->contrib_id, $author);
+						$this->subscriptions->subscribe(ext::TITANIA_SUPPORT, $contrib->contrib_id, $author);
 					}
 				}
 				redirect($contrib->get_url('revision'));

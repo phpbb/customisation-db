@@ -13,6 +13,7 @@
 
 use phpbb\titania\access;
 use phpbb\titania\count;
+use phpbb\titania\ext;
 use phpbb\titania\url\url;
 
 /**
@@ -188,12 +189,12 @@ class titania_topic extends \phpbb\titania\entity\database_base
 
 		// Remove any subscriptions to this topic
 		$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . '
-			WHERE watch_object_type = ' . TITANIA_TOPIC . '
+			WHERE watch_object_type = ' . ext::TITANIA_TOPIC . '
 				AND watch_object_id = ' . $this->topic_id;
 		phpbb::$db->sql_query($sql);
 
 		// Remove any tracking for this topic
-		$this->tracking->clear_item(TITANIA_TOPIC, $this->topic_id);
+		$this->tracking->clear_item(ext::TITANIA_TOPIC, $this->topic_id);
 
 		// Delete the now empty topic
 		$sql = 'DELETE FROM ' . TITANIA_TOPICS_TABLE . '
@@ -232,13 +233,13 @@ class titania_topic extends \phpbb\titania\entity\database_base
 
 		switch ($this->topic_type)
 		{
-			case TITANIA_SUPPORT:
-			case TITANIA_QUEUE_DISCUSSION:
+			case ext::TITANIA_SUPPORT:
+			case ext::TITANIA_QUEUE_DISCUSSION:
 				$controller = 'phpbb.titania.contrib.support.topic';
 				$params['topic_id'] = $this->topic_id;
 			break;
 
-			case TITANIA_QUEUE:
+			case ext::TITANIA_QUEUE:
 				$controller = 'phpbb.titania.queue.item';
 				$params['id'] = $this->parent_id;
 			break;
@@ -262,12 +263,12 @@ class titania_topic extends \phpbb\titania\entity\database_base
 
 		switch ($this->topic_type)
 		{
-			case TITANIA_SUPPORT:
-			case TITANIA_QUEUE_DISCUSSION:
+			case ext::TITANIA_SUPPORT:
+			case ext::TITANIA_QUEUE_DISCUSSION:
 				$controller = 'phpbb.titania.contrib.support';
 			break;
 
-			case TITANIA_QUEUE:
+			case ext::TITANIA_QUEUE:
 				$controller = 'phpbb.titania.queue.item';
 			break;
 		}
@@ -333,7 +334,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 	public function assign_details()
 	{
 		// Tracking check
-		$last_read_mark = $this->tracking->get_track(TITANIA_TOPIC, $this->topic_id, true);
+		$last_read_mark = $this->tracking->get_track(ext::TITANIA_TOPIC, $this->topic_id, true);
 		$last_read_mark = max($last_read_mark, $this->tracking->find_last_read_mark($this->additional_unread_fields, $this->topic_type, $this->parent_id));
 		$this->unread = ($this->topic_last_post_time > $last_read_mark) ? true : false;
 
@@ -544,7 +545,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 		$this->topic_approved = (!$visible_posts && !$first_post_data['post_approved']) ? 0 : 1;
 
 		// Adjust the topic access
-		if ($visible_posts && !in_array($this->topic_type, array(TITANIA_QUEUE_DISCUSSION, TITANIA_QUEUE)))
+		if ($visible_posts && !in_array($this->topic_type, array(ext::TITANIA_QUEUE_DISCUSSION, ext::TITANIA_QUEUE)))
 		{
 			$this->topic_access = access::PUBLIC_LEVEL;
 

@@ -171,6 +171,22 @@ $lang = array_merge($lang, array(
 	'NO_POST'					=> 'The requested post does not exist.',
 	'NO_REVISION_NAME'			=> 'No revision name provided',
 	'NO_TOPIC'					=> 'The requested topic does not exist.',
+	'NUM_CONTRIBS'				=> array(
+		1	=> '1 Contribution',
+		2	=> '%d Contributions',
+	),
+	'NUM_POSTS'					=> array(
+		1	=> '1 Post',
+		2	=> '%d Posts',
+	),
+	'NUM_RESULTS'				=> array(
+		1	=> '1 Result',
+		2	=> '%d Results',
+	),
+	'NUM_TOPICS'				=> array(
+		1	=> '1 Topic',
+		2	=> '%d Topics',
+	),
 
 	'ORDER'						=> 'Order',
 
@@ -194,7 +210,7 @@ $lang = array_merge($lang, array(
 	'RETURN_LAST_PAGE'			=> 'Return to the previous page',
 	'ROOT'						=> 'Root',
 
-	'SEARCH_UNAVAILABLE'		=> 'The search system is currently unavailable.  Please try again in a few minutes.',
+	'SEARCH_UNAVAILABLE'		=> 'The search system is currently unavailable. Please try again in a few minutes.',
 	'SELECT_CATEGORY'			=> '-- Select category --',
 	'SELECT_CATEGORY_TYPE'		=> '-- Select category type --',
 	'SELECT_SORT_METHOD'		=> 'Sort By',
@@ -219,22 +235,6 @@ $lang = array_merge($lang, array(
 
 	'TITANIA_DISABLED'			=> 'The Customisation Database is temporarily disabled, please try again in a few minutes.',
 	'TITANIA_INDEX'				=> 'Customisation Database',
-	'TOTAL_CONTRIBS'			=> array(
-		1	=> '1 Contribution',
-		2	=> '%d Contributions',
-	),
-	'TOTAL_POSTS'				=> array(
-		1	=> '1 Post',
-		2	=> '%d Posts',
-	),
-	'TOTAL_RESULTS'				=> array(
-		1	=> '1 Result',
-		2	=> '%d Results',
-	),
-	'TOTAL_TOPICS'				=> array(
-		1	=> '1 Topic',
-		2	=> '%d Topics',
-	),
 	'TRANSLATION'				=> 'Language Pack',
 	'TRANSLATIONS'				=> 'Language Packs',
 	'TYPE'						=> 'Type',

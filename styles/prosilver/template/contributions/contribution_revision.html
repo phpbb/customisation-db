@@ -8,6 +8,7 @@
 <form id="<!-- IF POSTING_FORM_NAME -->{POSTING_FORM_NAME}<!-- ELSE -->postform<!-- ENDIF -->" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
 	<div class="container">
 		<div class="inner">
+			<div class="content">
 			<!-- IF REVISION_UPLOADER -->
 				{REVISION_UPLOADER}
 
@@ -36,7 +37,7 @@
 								<input type="hidden" name="phpbb_branch[]" value="{phpbb_branches.VALUE}" />
 							<!-- ELSE -->
 								<!-- IF phpbb_branches.S_FIRST_ROW -->
-								<select id="phpbb_branch" name="phpbb_branch[]" size="3">
+								<select id="phpbb_branch" name="phpbb_branch[]" size="3" multiple="multiple" class="autowidth">
 								<!-- ENDIF -->
 									<option value="{phpbb_branches.VALUE}"<!-- IF phpbb_branches.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_branches.NAME}</option>
 								<!-- IF phpbb_branches.S_LAST_ROW -->
@@ -120,8 +121,10 @@
 					<br /><br />
 				<!-- ENDIF -->
 			<!-- ENDIF -->
-			<!-- IF S_NEW_REVISION_SUBMITTED -->
-				{L_NEW_REVISION_SUBMITTED}
+			<!-- IF STEP_MESSAGE -->
+				<div style="font-size:14px; padding:5px; width:100%; text-align:center;">
+					{STEP_MESSAGE}
+				</div>
 			<!-- ENDIF -->
 			<!-- IF MPV_TEST_WARNING -->
 				<br /><br />{L_MPV_TEST}
@@ -129,7 +132,9 @@
 			<!-- IF PV_RESULTS -->
 				<p class="error">{L_PV_RESULTS}</p>
 				<hr class="dashed" />
-				{PV_RESULTS}
+				<div style="font-size:12px;">
+					{PV_RESULTS}
+				</div>
 				<!-- IF S_AUTOMOD_TEST -->
 					<br /><br />
 					<hr class="dashed" />
@@ -157,6 +162,7 @@
 				<input type="hidden" name="revision_id" value="{REVISION_ID}" />
 				{S_FORM_TOKEN}
 			</fieldset>
+			</div>
 		</div>
 	</div>
 </form>

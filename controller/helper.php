@@ -13,10 +13,53 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\titania\config\config as ext_config;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class helper extends \phpbb\controller\helper
 {
+	/** @var ext_config  */
+	protected $ext_config;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\template\template $template Template object
+	 * @param \phpbb\user $user User object
+	 * @param \phpbb\config\config $config Config object
+	 * @param \phpbb\symfony_request $symfony_request Symfony Request object
+	 * @param \phpbb\request\request_interface $request phpBB request object
+	 * @param \phpbb\routing\helper $routing_helper Helper to generate the routes
+	 * @param ext_config|null $ext_config
+	 */
+	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\config $config, \phpbb\symfony_request $symfony_request, \phpbb\request\request_interface $request, \phpbb\routing\helper $routing_helper, ext_config $ext_config = null)
+	{
+		parent::__construct($template, $user, $config, $symfony_request, $request, $routing_helper);
+
+		$this->ext_config = $ext_config;
+	}
+
+	/**
+	 * Modify URL to point back to correct Titania location.
+	 *
+	 * If Titania is running from an app.php that is not under
+	 * the board root, the URL needs to be adjusted since routes
+	 * that are generated on the phpBB board will always point
+	 * back to it.
+	 *
+	 * @param string $url
+	 * @return string
+	 */
+	public function get_real_url($url)
+	{
+		if (!is_null($this->ext_config) && $this->ext_config->titania_script_path)
+		{
+			return generate_board_url(true) .'/'. rtrim($this->ext_config->titania_script_path, '/') .
+			substr($url, strlen(generate_board_url()));
+		}
+		return $url;
+	}
+
 	/**
 	* Checks whether user is logged in and outputs login box
 	* for guests or returns error response for registered users.

@@ -14,6 +14,7 @@
 namespace phpbb\titania\contribution\style\demo;
 
 use phpbb\exception\http_exception;
+use phpbb\titania\ext;
 
 /**
  * Class that handles displaying styles demo
@@ -136,7 +137,7 @@ class demo
 	public function load_styles()
 	{
 		$sql_array = array(
-			'SELECT'	=> 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_user_id, c.contrib_demo, 
+			'SELECT'	=> 'c.contrib_id, c.contrib_name, c.contrib_name_clean, c.contrib_user_id, c.contrib_demo,
 							s.attachment_id AS thumb_id, s.thumbnail, MAX(r.revision_id) AS revision_id,
 							u.username, u.username_clean, u.user_colour, cat.category_name',
 			'FROM'		=> array(
@@ -151,12 +152,12 @@ class demo
 					'ON'	=> 'c.contrib_id = s.object_id
 						AND s.is_preview = 1
 						AND s.is_orphan = 0
-						AND object_type = ' . TITANIA_SCREENSHOT,
+						AND object_type = ' . ext::TITANIA_SCREENSHOT,
 				), array (
 					'FROM'	=> array($this->revisions_table => 'r'),
 					'ON'	=> 'c.contrib_id = r.contrib_id
 						AND	r.revision_submitted = 1
-						AND r.revision_status = ' . TITANIA_REVISION_APPROVED,
+						AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED,
 				), array(
 					'FROM'	=> array($this->contrib_in_categories_table => 'cic'),
 					'ON'	=> 'c.contrib_id = cic.contrib_id',
@@ -169,9 +170,9 @@ class demo
 				),
 			),
 			'WHERE'		=>  'c.contrib_visible = 1
-								AND c.contrib_type = ' . TITANIA_TYPE_STYLE . '
-								AND cat.category_options & ' . TITANIA_CAT_FLAG_DEMO . '
-								AND c.contrib_status =' . TITANIA_CONTRIB_APPROVED . '
+								AND c.contrib_type = ' . ext::TITANIA_TYPE_STYLE . '
+								AND cat.category_options & ' . ext::TITANIA_CAT_FLAG_DEMO . '
+								AND c.contrib_status =' . ext::TITANIA_CONTRIB_APPROVED . '
 								AND c.contrib_demo <> ""
 								AND rp.phpbb_version_branch = ' . (int) $this->phpbb_branch,
 
@@ -253,7 +254,7 @@ class demo
 	 */
 	protected function get_coauthors()
 	{
-		$sql = 'SELECT a.contrib_id, u.user_id, u.username, u.username_clean, u.user_colour 
+		$sql = 'SELECT a.contrib_id, u.user_id, u.username, u.username_clean, u.user_colour
 			FROM ' . $this->contrib_coauthors_table . ' a
 			LEFT JOIN ' . $this->users_table . ' u ON a.user_id = u.user_id
 			WHERE a.active = 1 AND ' . $this->db->sql_in_set('a.contrib_id', array_keys($this->styles));
@@ -271,7 +272,7 @@ class demo
 	 */
 	protected function get_phpbb_versions()
 	{
-		$sql = 'SELECT contrib_id, phpbb_version_branch, phpbb_version_revision 
+		$sql = 'SELECT contrib_id, phpbb_version_branch, phpbb_version_revision
 			FROM ' . $this->revisions_phpbb_table . '
 			WHERE revision_validated = 1 AND ' . $this->db->sql_in_set('revision_id', $this->revisions) . '
 			ORDER BY phpbb_version_revision ASC';
@@ -310,7 +311,7 @@ class demo
 		if (isset($this->styles[$sibling]['contrib_demo']))
 		{
 			$style = new \titania_contribution();
-			$style->set_type(TITANIA_TYPE_STYLE);
+			$style->set_type(ext::TITANIA_TYPE_STYLE);
 			$style->__set_array(array(
 				'contrib_name_clean'	=> $this->styles[$sibling]['contrib_name_clean'],
 				'contrib_demo'			=> $this->styles[$sibling]['contrib_demo'],
@@ -349,7 +350,7 @@ class demo
 
 		$category = '';
 		$style = new \titania_contribution;
-		$style->set_type(TITANIA_TYPE_STYLE);
+		$style->set_type(ext::TITANIA_TYPE_STYLE);
 		$style->options = array('demo' => true);
 
 		foreach ($this->styles as $id => $data)
