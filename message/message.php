@@ -746,7 +746,7 @@ class message
 		$message = html_entity_decode($message, ENT_QUOTES);
 
 		// With magic_quotes_gpc on slashes are stripped too many times, so add them
-		$message = (STRIP) ? addslashes($message) : $message;
+		$message = (defined('STRIP') && STRIP) ? addslashes($message) : $message;
 
 		// Run set_var to re-encode the proper entities as if the user had submitted it themselves
 		set_var($message, $message, 'string', true);
