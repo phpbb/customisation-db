@@ -8,21 +8,21 @@ services:
     phpbb.titania.access:
         class: phpbb\titania\access
         arguments:
-            - @dbal.conn
-            - @user
-            - @phpbb.titania.config
+            - '@dbal.conn'
+            - '@user'
+            - '@phpbb.titania.config'
 
     phpbb.titania.attachment:
         class: phpbb\titania\attachment\attachment
-        scope: prototype
+        shared: false
         arguments:
-            - @dbal.conn
-            - @config
-            - @user
-            - @phpbb.titania.config
-            - @phpbb.titania.controller.helper
-            - %core.root_path%
-            - %core.php_ext%
+            - '@dbal.conn'
+            - '@config'
+            - '@user'
+            - '@phpbb.titania.config'
+            - '@phpbb.titania.controller.helper'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     phpbb.titania.attachment.files.factory:
         class: phpbb\titania\attachment\files\factory
@@ -30,169 +30,169 @@ services:
 
     phpbb.titania.attachment.files.filespec:
         class: phpbb\files\filespec
-        scope: prototype
+        shared: false
         arguments:
-            - @filesystem
-            - @language
-            - @php_ini
-            - @upload_imagesize
+            - '@filesystem'
+            - '@language'
+            - '@php_ini'
+            - '@upload_imagesize'
             - ''
-            - @mimetype.guesser
-            - @phpbb.titania.attachment.plupload
+            - '@mimetype.guesser'
+            - '@phpbb.titania.attachment.plupload'
 
     phpbb.titania.attachment.files.types.form:
         class: phpbb\files\types\form
-        scope: prototype
+        shared: false
         arguments:
-            - @phpbb.titania.attachment.files.factory
-            - @language
-            - @php_ini
-            - @phpbb.titania.attachment.plupload
-            - @request
+            - '@phpbb.titania.attachment.files.factory'
+            - '@language'
+            - '@php_ini'
+            - '@phpbb.titania.attachment.plupload'
+            - '@request'
 
     phpbb.titania.attachment.files.upload:
         class: phpbb\files\upload
-        scope: prototype
+        shared: false
         arguments:
-            - @filesystem
-            - @phpbb.titania.attachment.files.factory
-            - @language
-            - @php_ini
-            - @request
+            - '@filesystem'
+            - '@phpbb.titania.attachment.files.factory'
+            - '@language'
+            - '@php_ini'
+            - '@request'
             - ''
 
     phpbb.titania.attachment.operator:
         class: phpbb\titania\attachment\operator
-        scope: prototype
+        shared: false
         arguments:
-            - @dbal.conn
-            - @config
-            - @user
-            - @template
-            - @phpbb.titania.attachment
+            - '@dbal.conn'
+            - '@config'
+            - '@user'
+            - '@template'
+            - '@phpbb.titania.attachment'
 
     phpbb.titania.attachment.plupload:
         class: phpbb\titania\attachment\plupload
         arguments:
-             - %core.root_path%
-             - @config
-             - @request
-             - @user
-             - @php_ini
-             - @mimetype.guesser
+             - '%core.root_path%'
+             - '@config'
+             - '@request'
+             - '@user'
+             - '@php_ini'
+             - '@mimetype.guesser'
 
     phpbb.titania.attachment.uploader:
         class: phpbb\titania\attachment\uploader
-        scope: prototype
+        shared: false
         arguments:
-            - @phpbb.titania.attachment.operator
-            - @user
-            - @config
-            - @request
-            - @template
-            - @path_helper
-            - @controller.helper
-            - @phpbb.titania.config
-            - @phpbb.titania.attachment.files.upload
-            - @phpbb.titania.attachment.plupload
-            - @phpbb.titania.access
+            - '@phpbb.titania.attachment.operator'
+            - '@user'
+            - '@config'
+            - '@request'
+            - '@template'
+            - '@path_helper'
+            - '@controller.helper'
+            - '@phpbb.titania.config'
+            - '@phpbb.titania.attachment.files.upload'
+            - '@phpbb.titania.attachment.plupload'
+            - '@phpbb.titania.access'
 
     phpbb.titania.bbcode.demo:
         class: phpbb\titania\contribution\bbcode\demo\demo
         arguments:
-            - @phpbb.titania.cache
-            - %core.root_path%
-            - %core.php_ext%
+            - '@phpbb.titania.cache'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     phpbb.titania.bbcode.type:
         class: phpbb\titania\contribution\bbcode\type
         arguments:
-            - @phpbb.titania.config
-            - @user
-            - @auth
-            - @phpbb.titania.bbcode.demo
+            - '@phpbb.titania.config'
+            - '@user'
+            - '@auth'
+            - '@phpbb.titania.bbcode.demo'
         tags:
             - { name: titania.contribution.type }
 
     phpbb.titania.bridge.type:
         class: phpbb\titania\contribution\bridge\type
         arguments:
-            - @phpbb.titania.config
-            - @user
-            - @auth
+            - '@phpbb.titania.config'
+            - '@user'
+            - '@auth'
         tags:
             - { name: titania.contribution.type }
 
     phpbb.titania.composer.repository:
         class: phpbb\titania\composer\repository
         arguments:
-            - %phpbb.titania.root_path%
+            - '%phpbb.titania.root_path%'
 
     phpbb.titania.config:
         class: phpbb\titania\config\config
         arguments:
-            - @config
-            - %phpbb.titania.root_path%
-            - %core.php_ext%
+            - '@config'
+            - '%phpbb.titania.root_path%'
+            - '%core.php_ext%'
 
     phpbb.titania.contribution.prevalidator_helper:
         class: phpbb\titania\contribution\prevalidator_helper
         arguments:
-            - @user
-            - %phpbb.titania.root_path%
+            - '@user'
+            - '%phpbb.titania.root_path%'
 
     phpbb.titania.contribution.type.collection:
         class: phpbb\titania\contribution\type\collection
         arguments:
-            - @phpbb.titania.contribution.type.service_collection
+            - '@phpbb.titania.contribution.type.service_collection'
 
     phpbb.titania.contribution.type.service_collection:
         class: phpbb\di\service_collection
         arguments:
-            - @service_container
+            - '@service_container'
         tags:
             - { name: service_collection, tag: titania.contribution.type }
 
     phpbb.titania.controller.helper:
         class: phpbb\titania\controller\helper
         arguments:
-            - @template
-            - @user
-            - @config
-            - @symfony_request
-            - @request
-            - @routing.helper
-            - @phpbb.titania.config
+            - '@template'
+            - '@user'
+            - '@config'
+            - '@symfony_request'
+            - '@request'
+            - '@routing.helper'
+            - '@phpbb.titania.config'
 
     phpbb.titania.cache:
         class: phpbb\titania\cache\service
         arguments:
-             - @cache.driver
-             - @config
-             - @dbal.conn
-             - %core.root_path%
-             - %core.php_ext%
+             - '@cache.driver'
+             - '@config'
+             - '@dbal.conn'
+             - '%core.root_path%'
+             - '%core.php_ext%'
 
     phpbb.titania.converter.type:
         class: phpbb\titania\contribution\converter\type
         arguments:
-            - @phpbb.titania.config
-            - @user
-            - @auth
+            - '@phpbb.titania.config'
+            - '@user'
+            - '@auth'
         tags:
             - { name: titania.contribution.type }
 
     phpbb.titania.display:
         class: phpbb\titania\display
         arguments:
-             - @auth
-             - @config
-             - @phpbb.titania.cache
-             - @template
-             - @user
-             - @phpbb.titania.controller.helper
-             - @path_helper
-             - @phpbb.titania.contribution.type.collection
+             - '@auth'
+             - '@config'
+             - '@phpbb.titania.cache'
+             - '@template'
+             - '@user'
+             - '@phpbb.titania.controller.helper'
+             - '@path_helper'
+             - '@phpbb.titania.contribution.type.collection'
 
     phpbb.titania.extension.prevalidator:
         class: phpbb\titania\contribution\extension\prevalidator
@@ -200,165 +200,165 @@ services:
     phpbb.titania.extension.type:
         class: phpbb\titania\contribution\extension\type
         arguments:
-            - @phpbb.titania.config
-            - @user
-            - @auth
-            - @phpbb.titania.extension.prevalidator
+            - '@phpbb.titania.config'
+            - '@user'
+            - '@auth'
+            - '@phpbb.titania.extension.prevalidator'
         tags:
             - { name: titania.contribution.type }
 
     phpbb.titania.listener:
         class: phpbb\titania\event\main_listener
         arguments:
-            - @user
-            - @template
-            - @phpbb.titania.controller.helper
-            - %core.root_path%
-            - %core.php_ext%
+            - '@user'
+            - '@template'
+            - '@phpbb.titania.controller.helper'
+            - '%core.root_path%'
+            - '%core.php_ext%'
         tags:
             - { name: event.listener }
 
     phpbb.titania.manage.tool.composer.rebuild_repo:
         class: phpbb\titania\manage\tool\composer\rebuild_repo
         arguments:
-            - @dbal.conn
-            - @phpbb.titania.config
-            - @phpbb.titania.contribution.type.collection
-            - @phpbb.titania.composer.repository
-            - @phpbb.titania.controller.helper
-            - @path_helper
+            - '@dbal.conn'
+            - '@phpbb.titania.config'
+            - '@phpbb.titania.contribution.type.collection'
+            - '@phpbb.titania.composer.repository'
+            - '@phpbb.titania.controller.helper'
+            - '@path_helper'
 
     phpbb.titania.manage.tool.contrib.resync_count:
         class: phpbb\titania\manage\tool\contribution\resync_count
         arguments:
-            - @dbal.conn
-            - @phpbb.titania.contribution.type.collection
-            - @user
-            - @phpbb.titania.config
+            - '@dbal.conn'
+            - '@phpbb.titania.contribution.type.collection'
+            - '@user'
+            - '@phpbb.titania.config'
 
     phpbb.titania.manage.tool.contrib.update_release_topics:
         class: phpbb\titania\manage\tool\contribution\update_release_topics
         arguments:
-            - @dbal.conn
-            - @phpbb.titania.contribution.type.collection
-            - @user
-            - @phpbb.titania.config
-            - %tables.topics%
-            - %tables.users%
+            - '@dbal.conn'
+            - '@phpbb.titania.contribution.type.collection'
+            - '@user'
+            - '@phpbb.titania.config'
+            - '%tables.topics%'
+            - '%tables.users%'
 
     phpbb.titania.manage.tool.search.reindex:
         class: phpbb\titania\manage\tool\search\reindex
-        scope: prototype
+        shared: false
         arguments:
-            - @dbal.conn
-            - @user
-            - @phpbb.titania.config
-            - @phpbb.titania.sync
-            - @phpbb.titania.search.manager
+            - '@dbal.conn'
+            - '@user'
+            - '@phpbb.titania.config'
+            - '@phpbb.titania.sync'
+            - '@phpbb.titania.search.manager'
 
     phpbb.titania.manage.tool.topic.rebuild_urls:
         class: phpbb\titania\manage\tool\topic\rebuild_urls
         arguments:
-            - @dbal.conn
-            - @user
-            - @phpbb.titania.contribution.type.collection
-            - @phpbb.titania.config
+            - '@dbal.conn'
+            - '@user'
+            - '@phpbb.titania.contribution.type.collection'
+            - '@phpbb.titania.config'
 
     phpbb.titania.manage.tool.topic.resync_dots:
         class: phpbb\titania\manage\tool\topic\resync_dots
         arguments:
-            - @dbal.conn
-            - @user
-            - @phpbb.titania.config
+            - '@dbal.conn'
+            - '@user'
+            - '@phpbb.titania.config'
 
     phpbb.titania.message:
         class: phpbb\titania\message\message
-        scope: prototype
+        shared: false
         arguments:
-             - @config
-             - @request
-             - @user
-             - @template
-             - @captcha.factory
-             - @phpbb.titania.attachment.uploader
-             - @phpbb.titania.access
-             - %core.root_path%
-             - %core.php_ext%
+             - '@config'
+             - '@request'
+             - '@user'
+             - '@template'
+             - '@captcha.factory'
+             - '@phpbb.titania.attachment.uploader'
+             - '@phpbb.titania.access'
+             - '%core.root_path%'
+             - '%core.php_ext%'
 
     phpbb.titania.mod.prevalidator:
         class: phpbb\titania\contribution\mod\prevalidator
         arguments:
-             - @phpbb.titania.config
-             - @user
-             - @template
-             - @phpbb.titania.contribution.prevalidator_helper
-             - %core.root_path%
-             - %phpbb.titania.root_path%
-             - %core.php_ext%
+             - '@phpbb.titania.config'
+             - '@user'
+             - '@template'
+             - '@phpbb.titania.contribution.prevalidator_helper'
+             - '%core.root_path%'
+             - '%phpbb.titania.root_path%'
+             - '%core.php_ext%'
 
     phpbb.titania.mod.type:
         class: phpbb\titania\contribution\mod\type
         arguments:
-            - @phpbb.titania.config
-            - @user
-            - @auth
-            - @phpbb.titania.mod.prevalidator
+            - '@phpbb.titania.config'
+            - '@user'
+            - '@auth'
+            - '@phpbb.titania.mod.prevalidator'
         tags:
             - { name: titania.contribution.type }
 
     phpbb.titania.official_tool.type:
         class: phpbb\titania\contribution\official_tool\type
         arguments:
-            - @phpbb.titania.config
-            - @user
-            - @auth
+            - '@phpbb.titania.config'
+            - '@user'
+            - '@auth'
         tags:
             - { name: titania.contribution.type }
 
     phpbb.titania.posting:
         class: phpbb\titania\posting
-        scope: prototype
+        shared: false
         arguments:
-             - @auth
-             - @dbal.conn
-             - @user
-             - @request
-             - @template
-             - @phpbb.titania.controller.helper
-             - @phpbb.titania.message
-             - @phpbb.titania.access
-             - @phpbb.titania.subscriptions
-             - @phpbb.titania.attachment.operator
+             - '@auth'
+             - '@dbal.conn'
+             - '@user'
+             - '@request'
+             - '@template'
+             - '@phpbb.titania.controller.helper'
+             - '@phpbb.titania.message'
+             - '@phpbb.titania.access'
+             - '@phpbb.titania.subscriptions'
+             - '@phpbb.titania.attachment.operator'
 
     phpbb.titania.queue.stats:
         class: phpbb\titania\queue\stats
         arguments:
-            - @dbal.conn
-            - @user
-            - @template
+            - '@dbal.conn'
+            - '@user'
+            - '@template'
 
     phpbb.titania.search.manager:
         class: phpbb\titania\search\manager
         arguments:
-            - @phpbb.titania.search.driver_collection
-            - @phpbb.titania.config
+            - '@phpbb.titania.search.driver_collection'
+            - '@phpbb.titania.config'
 
     phpbb.titania.search.driver_collection:
         class: phpbb\di\service_collection
         arguments:
-            - @service_container
+            - '@service_container'
         tags:
             - { name: service_collection, tag: titania.search.driver }
 
     phpbb.titania.search.driver.fulltext_sphinx:
         class: phpbb\titania\search\driver\fulltext_sphinx
         arguments:
-            - @config
-            - @auth
-            - @user
-            - %tables.config%
-            - %core.root_path%
-            - %core.php_ext%
+            - '@config'
+            - '@auth'
+            - '@user'
+            - '%tables.config%'
+            - '%core.root_path%'
+            - '%core.php_ext%'
         calls:
             - [set_name, [phpbb.titania.search.driver.fulltext_sphinx]]
         tags:
@@ -367,9 +367,9 @@ services:
     phpbb.titania.search.driver.solr:
         class: phpbb\titania\search\driver\solr
         arguments:
-            - %phpbb.titania.root_path%
-            - %core.php_ext%
-            - @phpbb.titania.config
+            - '%phpbb.titania.root_path%'
+            - '%core.php_ext%'
+            - '@phpbb.titania.config'
         calls:
             - [set_name, [phpbb.titania.search.driver.solr]]
         tags:
@@ -378,8 +378,8 @@ services:
     phpbb.titania.search.driver.zend:
         class: phpbb\titania\search\driver\zend
         arguments:
-            - %phpbb.titania.root_path%
-            - %core.php_ext%
+            - '%phpbb.titania.root_path%'
+            - '%core.php_ext%'
         calls:
             - [set_name, [phpbb.titania.search.driver.zend]]
         tags:
@@ -387,93 +387,93 @@ services:
 
     phpbb.titania.sort:
         class: phpbb\titania\sort
-        scope: prototype
+        shared: false
         arguments:
-            - @dbal.conn
-            - @user
-            - @template
-            - @request
-            - @pagination
-            - @path_helper
+            - '@dbal.conn'
+            - '@user'
+            - '@template'
+            - '@request'
+            - '@pagination'
+            - '@path_helper'
 
     phpbb.titania.style.demo:
         class: phpbb\titania\contribution\style\demo\demo
         arguments:
-            - @dbal.conn
-            - @user
-            - @template
-            - @phpbb.titania.config
-            - @phpbb.titania.controller.helper
-            - %tables.users%
+            - '@dbal.conn'
+            - '@user'
+            - '@template'
+            - '@phpbb.titania.config'
+            - '@phpbb.titania.controller.helper'
+            - '%tables.users%'
 
     phpbb.titania.style.demo.manager:
         class: phpbb\titania\contribution\style\demo\manager
         arguments:
-            - @user
-            - @service_container
-            - @phpbb.titania.config
-            - %core.php_ext%
+            - '@user'
+            - '@service_container'
+            - '@phpbb.titania.config'
+            - '%core.php_ext%'
 
     phpbb.titania.style.type:
         class: phpbb\titania\contribution\style\type
         arguments:
-            - @phpbb.titania.config
-            - @user
-            - @auth
-            - @phpbb.titania.style.demo
-            - @phpbb.titania.style.demo.manager
+            - '@phpbb.titania.config'
+            - '@user'
+            - '@auth'
+            - '@phpbb.titania.style.demo'
+            - '@phpbb.titania.style.demo.manager'
         tags:
             - { name: titania.contribution.type }
 
     phpbb.titania.subscriptions:
         class: phpbb\titania\subscriptions
         arguments:
-            - @dbal.conn
-            - @config
-            - @request
-            - @template
-            - @user
-            - @path_helper
-            - %tables.users%
-            - %core.root_path%
-            - %core.php_ext%
+            - '@dbal.conn'
+            - '@config'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@path_helper'
+            - '%tables.users%'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     phpbb.titania.sync:
         class: phpbb\titania\sync
-        scope: prototype
+        shared: false
         arguments:
-            - @dbal.conn
-            - @phpbb.titania.cache
-            - @phpbb.titania.attachment
-            - @phpbb.titania.search.manager
-            - @phpbb.titania.contribution.type.collection
+            - '@dbal.conn'
+            - '@phpbb.titania.cache'
+            - '@phpbb.titania.attachment'
+            - '@phpbb.titania.search.manager'
+            - '@phpbb.titania.contribution.type.collection'
 
     phpbb.titania.tags:
         class: phpbb\titania\tags
         arguments:
-            - @user
-            - @phpbb.titania.cache
+            - '@user'
+            - '@phpbb.titania.cache'
 
     phpbb.titania.tracking:
          class: phpbb\titania\tracking
          arguments:
-             - @dbal.conn
-             - @user
-             - @request
-             - @config
+             - '@dbal.conn'
+             - '@user'
+             - '@request'
+             - '@config'
 
     phpbb.titania.translation.prevalidator:
          class: phpbb\titania\contribution\translation\prevalidator
          arguments:
-             - @user
-             - @phpbb.titania.contribution.prevalidator_helper
+             - '@user'
+             - '@phpbb.titania.contribution.prevalidator_helper'
 
     phpbb.titania.translation.type:
         class: phpbb\titania\contribution\translation\type
         arguments:
-            - @phpbb.titania.config
-            - @user
-            - @auth
-            - @phpbb.titania.translation.prevalidator
+            - '@phpbb.titania.config'
+            - '@user'
+            - '@auth'
+            - '@phpbb.titania.translation.prevalidator'
         tags:
             - { name: titania.contribution.type }
