@@ -6,7 +6,7 @@ This is a quick setup guide to walk you through the process of installing and co
 
 1. Create a phpBB board.
    
-   The easiest is option is to use [QuickInstall](https://www.phpbb.com/customise/db/official_tool/phpbb3_quickinstall/) to create a phpBB board. Make sure your config.php is set to Production mode.
+   The easiest option is to use [QuickInstall](https://www.phpbb.com/customise/db/official_tool/phpbb3_quickinstall/) to create a phpBB board. Make sure your config.php is set to Production mode.
    
 2. Download [Titania](https://github.com/VSEphpbb/customisation-db) from github, using the **3.2.x** branch.
 
