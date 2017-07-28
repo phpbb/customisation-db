@@ -1,14 +1,14 @@
 services:
     phpbb.titania.cron.task.cleanup:
         class: phpbb\titania\cron\task\cleanup
-        scope: prototype
+        shared: false
         arguments:
-            - @dbal.conn
-            - @config
-            - @phpbb.titania.config
-            - @phpbb.titania.attachment.operator
-            - %phpbb.titania.root_path%
-            - %core.php_ext%
+            - '@dbal.conn'
+            - '@config'
+            - '@phpbb.titania.config'
+            - '@phpbb.titania.attachment.operator'
+            - '%phpbb.titania.root_path%'
+            - '%core.php_ext%'
         calls:
             - [set_name, [phpbb.titania.cron.task.cleanup]]
 #        tags:
@@ -17,8 +17,8 @@ services:
     phpbb.titania.cron.task.rebuild_composer_repo:
         class: phpbb\titania\cron\task\rebuild_composer_repo
         arguments:
-            - @config
-            - @phpbb.titania.manage.tool.composer.rebuild_repo
+            - '@config'
+            - '@phpbb.titania.manage.tool.composer.rebuild_repo'
         calls:
             - [set_name, [phpbb.titania.cron.task.rebuild_composer_repo]]
         tags:

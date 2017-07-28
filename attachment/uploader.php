@@ -240,7 +240,7 @@ class uploader
 			return false;
 		}
 
-		if ($this->ext_config->upload_allowed_extensions[$this->object_type] === null)
+		if (!array_key_exists($this->object_type, $this->ext_config->upload_allowed_extensions))
 		{
 			$this->filedata['error'][] = $this->user->lang['NO_UPLOAD_FORM_FOUND'];
 
@@ -269,7 +269,7 @@ class uploader
 		$file->clean_filename('unique', $this->user->data['user_id'] . '_');
 
 		// Move files into their own directory depending on the extension group assigned.  Should keep at least some of it organized.
-		if ($this->ext_config->upload_directory[$this->object_type] === null)
+		if (!array_key_exists($this->object_type, $this->ext_config->upload_directory))
 		{
 			$this->filedata['error'][] = $this->user->lang('NO_UPLOAD_FORM_FOUND');
 
@@ -332,7 +332,7 @@ class uploader
 	public function parse_uploader($tpl_file = 'posting/attachments/default.html', $custom_sort = false)
 	{
 		// If the upload max filesize is less than 0, do not show the uploader (0 = unlimited)
-		if (!$this->access->is_team() && $this->ext_config->upload_max_filesize[$this->object_type] !== null && $this->ext_config->upload_max_filesize[$this->object_type] < 0)
+		if (!$this->access->is_team() && array_key_exists($this->object_type, $this->ext_config->upload_max_filesize) && $this->ext_config->upload_max_filesize[$this->object_type] < 0)
 		{
 			return '';
 		}
@@ -611,7 +611,7 @@ class uploader
 	 */
 	protected function get_max_filesize()
 	{
-		if ($this->ext_config->upload_max_filesize[$this->object_type] !== null)
+		if (array_key_exists($this->object_type, $this->ext_config->upload_max_filesize))
 		{
 			return $this->ext_config->upload_max_filesize[$this->object_type];
 		}
