@@ -37,18 +37,6 @@ class rebuild_composer_repo extends \phpbb\cron\task\base
 	}
 
 	/**
-	 * Check whether the task can run.
-	 *
-	 * This can only run from the system cron.
-	 *
-	 * @return bool
-	 */
-	public function is_runnable()
-	{
-		return (bool) $this->config['use_system_cron'];
-	}
-
-	/**
 	 * Check whether the cron task should run.
 	 *
 	 * @return bool

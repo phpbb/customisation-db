@@ -184,7 +184,9 @@ class rebuild_repo extends base
 
 		$batch = $this->get_batch($from_file);
 
-		$group_count = $group = 1;
+		$group_count = 1;
+		$group = $this->start / $this->limit + 1;
+
 		$last_type = $last_contrib = '';
 		$packages = array();
 
@@ -268,10 +270,12 @@ class rebuild_repo extends base
 		}
 		$this->repo->deploy_build();
 
+		$next_batch = $this->start + $this->limit;
+
 		return $this->get_result(
 			'COMPOSER_REPO_REBUILT',
 			$this->get_total(),
-			false
+			$next_batch < $this->get_total() ? $next_batch : false
 		);
 	}
 
