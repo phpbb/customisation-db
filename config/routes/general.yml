@@ -24,7 +24,7 @@ phpbb.titania.author:
     path: /author/{author}/{page}
     defaults: { _controller: phpbb.titania.controller.author:base, page: details }
     requirements:
-        page: |details|contributions|support|discussion|manage|create
+        page: details|contributions|support|discussion|manage|create|
 
 phpbb.titania.download:
     path: /download/{id}/{type}
