@@ -22,6 +22,6 @@
 phpBB Customisation Database contains code from the following applications:
 
 MIT licenced:
-Colorbox (c) 2014 Jack Moore, http://www.jacklmoore.com/colorbox/
+Featherlight (c) 2014 Noel Bossart, http://noelboss.com
 jQuery Livesearch (c) 2009 Pat Nakajima, https://github.com/nakajima/jquery-livesearch
 jQuery UI (c) 2014 jQuery Foundation and other contributors, http://jqueryui.com/
