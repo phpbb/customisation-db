@@ -240,25 +240,6 @@ $('.contrib-download').hover(function() {
 		$('.original_post', $postbody).removeClass('hidden');
 	});
 
-	$('.download-main').click(function() {
-		var cease = readCookie('cdb_ignore_subscription');
-
-		if (!cease && $('.dialog#subscription').length) {
-			$.colorbox({html: $('.dialog#subscription').html(), width: '400px'});
-		}
-	});
-
-	$(document).on('click', '#cboxLoadedContent #cancel', function(event) {
-		event.preventDefault();
-		$.colorbox.close();
-	});
-
-	$(document).on('click', '#cboxLoadedContent #cease', function(event) {
-		event.preventDefault();
-		createCookie('cdb_ignore_subscription', 'true', 365);
-		$.colorbox.close();
-	});
-
 	// Prevent the user from submitting a form more than once.
 	$('input[type="submit"]').click(function(event) {
 		// Since the submit value is no longer passed once the button is disabled, we must hide the original button and create a clone.
