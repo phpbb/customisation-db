@@ -52,14 +52,14 @@
         }
     ],
     "require": {
-    	"php": ">=5.3.3",
-    	"phpbb/epv": "dev-master@dev",
-    	"composer/installers": "~1.0"
+        "php": ">=5.5",
+        "composer/installers": "~1.0",
+        "phpbb/epv": "dev-master@dev"
     },
     "extra": {
         "display-name": "phpBB Customisation Database (Titania)",
         "soft-require": {
-            "phpbb/phpbb": "3.1.*@dev"
+            "phpbb/phpbb": "3.2.*@dev"
         }
     }
 }
