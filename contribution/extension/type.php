@@ -226,7 +226,15 @@ class type extends base
 		$composer_file = $package->get_temp_path() . '/' . $ext_base_path . '/composer.json';
 		$data = $this->get_composer_data($composer_file);
 
-		if (!is_array($data) || empty($data['name']) || !$this->validate_ext_name($data['name']))
+		if (!is_array($data))
+		{
+			throw new \Exception('INVALID_COMPOSER_FILE');
+		}
+		if (empty($data['name']))
+		{
+			throw new \Exception('MISSING_EXT_NAME');
+		}
+		if (!$this->validate_ext_name($data['name']))
 		{
 			throw new \Exception('INVALID_EXT_NAME');
 		}

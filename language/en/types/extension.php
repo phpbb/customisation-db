@@ -128,8 +128,10 @@ If you have any queries and further discussion please use the Queue Discussion T
 Thank you,
 phpBB Extension Customisations Team',
 
+	'INVALID_COMPOSER_FILE'	=> 'Invalid composer.json file. The file either could not be read/written or it contains no data.',
 	'INVALID_EXT_NAME'		=> 'Invalid value for <em>name</em> property in composer.json.
 									Please refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for the valid format.',
+	'MISSING_EXT_NAME'		=> 'Missing value for <em>name</em> property in composer.json.',
 
 	'TEST_ACCOUNT'			=> 'Test account',
 	'TEST_ACCOUNT_EXPLAIN'	=> 'Do we need any information (Like an API key, username, password to login to a third party webservice) for testing your extension?
