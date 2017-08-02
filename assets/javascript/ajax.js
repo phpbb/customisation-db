@@ -13,7 +13,7 @@
 	titania.quickEditFilter = function(data, event) {
 		var $postbody = $(this).parents('.postbody');
 
-		if ($('form', $postbody).length) {
+		if ($('form', $postbody).length || $('.loading_indicator').is(':visible')) {
 			event.preventDefault();
 			return false;
 		}
