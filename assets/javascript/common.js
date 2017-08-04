@@ -36,13 +36,13 @@ titania.filterOptionsBySelectedType = function($typeSelect, $optionSelect) {
 };
 
 /**
-* Activate Featherlight.
+* Activate Magnific Popup.
 *
 * @return undefined
 */
-titania.activateFeatherlight = function() {
-	if (typeof $.featherlightGallery === 'function') {
-		$('a.screenshot').featherlightGallery('image')
+titania.activateMagnificPopup = function() {
+	if (typeof $.magnificPopup === 'object') {
+		$('a.screenshot').magnificPopup({type: 'image', image: {verticalFit: false}, gallery: {enabled: true}})
 		// Remove ?mode=view from screenshot links as we'll be displaying the image inline, so the image should not
 		// be wrapped in HTML in IE
 		.each(function() {
@@ -311,8 +311,8 @@ $(document).on('click', '#screenshot-manage a.item-control-button:not(.delete)',
 $(function() {
 	// Filter categories by contrib type.
 	titania.filterOptionsBySelectedType($('select#contrib_type'), $('select#contrib_category'));
-	// Activate Featherlight
-	titania.activateFeatherlight();
+	// Activate Magnific Popup
+	titania.activateMagnificPopup();
 	// Only display first 5 revisions
 	titania.hideExtraRevisions(5);
 	// Hide extra translations

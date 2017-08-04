@@ -4,7 +4,6 @@
 */
 
 @import url("common.css");
-@import url("featherlight.min.css");
-@import url("featherlight.gallery.min.css");
+@import url("magnific-popup.css");
 @import url("jquery-ui-1.10.4.custom.css");
 @import url("responsive.css");

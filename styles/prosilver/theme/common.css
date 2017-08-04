@@ -979,11 +979,6 @@ p.attention-closed {
 --------------------------------------------- */
 .postbody.full { width: 100%; }
 
-/* Featherlight adjustments; primarily switching control buttons to top */
-.featherlight-next span, .featherlight-previous span {
-	color: #c8c8c8 !important;
-}
-
 .dialog-options {
 	text-align: center;
 }
