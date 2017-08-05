@@ -46,7 +46,7 @@ titania.activateMagnificPopup = function() {
 		// Remove ?mode=view from screenshot links as we'll be displaying the image inline, so the image should not
 		// be wrapped in HTML in IE
 		.each(function() {
-			this.href = this.href.replace('?mode=view', '');
+			this.href = this.href.replace('?mode=view&', '?').replace('?mode=view', '');
 		});
 	}
 };
