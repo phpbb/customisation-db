@@ -1,61 +1,61 @@
 phpbb.titania.index:
-    pattern: /
+    path: /
     defaults: { _controller: phpbb.titania.controller.index:display_index, branch: '' }
 
 phpbb.titania.index.branch:
-    pattern: /{branch}
+    path: /{branch}
     defaults: { _controller: phpbb.titania.controller.index:display_index, branch: '' }
     requirements:
         branch: \d\.\d|
 
 phpbb.titania.faq:
-    pattern: /faq
+    path: /faq
     defaults: { _controller: phpbb.titania.controller.faq:handle }
 
 phpbb.titania.queue_stats:
-    pattern: /queue-stats/{contrib_type}
+    path: /queue-stats/{contrib_type}
     defaults: { _controller: phpbb.titania.controller.queue_stats:display_stats }
 
 phpbb.titania.support:
-    pattern: /support/{type}
+    path: /support/{type}
     defaults: { _controller: phpbb.titania.controller.support:display_topics, type: all }
 
 phpbb.titania.author:
-    pattern: /author/{author}/{page}
+    path: /author/{author}/{page}
     defaults: { _controller: phpbb.titania.controller.author:base, page: details }
     requirements:
-        page: |details|contributions|support|discussion|manage|create
+        page: '|details|contributions|support|discussion|manage|create'
 
 phpbb.titania.download:
-    pattern: /download/{id}/{type}
-    defaults: { _controller: phpbb.titania.controller.download:file, id: 0, type: 'manual' }
+    path: /download/{id}/{type}
+    defaults: { _controller: phpbb.titania.controller.download:file, id: 0, type: manual }
     requirements:
         id: \d+
 
 phpbb.titania.search:
-    pattern: /search
+    path: /search
     defaults: { _controller: phpbb.titania.controller.search:general }
 
 phpbb.titania.search.results:
-    pattern: /search/results
+    path: /search/results
     defaults: { _controller: phpbb.titania.controller.search:general_results }
 
 phpbb.titania.search.contributions:
-    pattern: /find-contribution
+    path: /find-contribution
     defaults: { _controller: phpbb.titania.controller.search:contributions }
 
 phpbb.titania.search.contributions.results:
-    pattern: /find-contribution/results
+    path: /find-contribution/results
     defaults: { _controller: phpbb.titania.controller.search:contribution_results }
 
 phpbb.titania.colorizeit:
-    pattern: /colorizeit/{id}
+    path: /colorizeit/{id}
     defaults: { _controller: phpbb.titania.controller.colorizeit:colorizeit_data }
     requirements:
         id: \d+
 
 phpbb.titania.contribution.id:
-    pattern: /contribution/id/{id}/
+    path: /contribution/id/{id}/
     defaults: { _controller: phpbb.titania.controller.contrib:redirect_from_id }
     requirements:
         id: \d+
@@ -65,11 +65,11 @@ phpbb.titania.composer:
     defaults: { _controller: phpbb.titania.controller.composer:serve_file }
 
 phpbb.titania.category:
-    pattern: /{category1}/{category2}/{category3}/{category4}
+    path: /{category1}/{category2}/{category3}/{category4}
     defaults: { _controller: phpbb.titania.controller.index:display_category, category2: '', category3: '', category4: '' }
 
 phpbb.titania.legacy:
-    pattern: /{path}
+    path: /{path}
     defaults: { _controller: phpbb.titania.controller.legacy_rerouter:redirect }
     requirements:
         path: .*
