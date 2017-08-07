@@ -180,12 +180,15 @@ class rebuild_repo extends base
 	 */
 	public function run($from_file = false, $force = false, $progress = null)
 	{
-		$this->repo->prepare_build_dir($force);
-
 		$batch = $this->get_batch($from_file);
 
 		$group_count = 1;
-		$group = $this->start / $this->limit + 1;
+		$group = $this->limit > 0 ? ($this->start / $this->limit + 1) : 1;
+
+		if ($group === 1)
+		{
+			$this->repo->prepare_build_dir($force);
+		}
 
 		$last_type = $last_contrib = '';
 		$packages = array();
@@ -213,7 +216,7 @@ class rebuild_repo extends base
 				}
 				$added = true;
 
-				if ($last_type != $revision['contrib_type'])
+				if ($last_type !== '' && $last_type != $revision['contrib_type'])
 				{
 					$group_count = $group = 1;
 				}
@@ -264,9 +267,13 @@ class rebuild_repo extends base
 		{
 			$this->dump_include($last_type, $group, $packages);
 		}
-		$this->repo->deploy_build();
 
 		$next_batch = $this->start + $this->limit;
+
+		if ($next_batch >= $this->get_total())
+		{
+			$this->repo->deploy_build();
+		}
 
 		return $this->get_result(
 			'COMPOSER_REPO_REBUILT',
