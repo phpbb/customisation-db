@@ -979,28 +979,6 @@ p.attention-closed {
 --------------------------------------------- */
 .postbody.full { width: 100%; }
 
-/* ColorBox adjustments; primarily switching control buttons to top */
-#cboxLoadedContent {
-	margin-top: 28px;
-	margin-bottom: 0 !important;
-	text-align: left;
-}
-
-#cboxLoadedContent h3 {
-	top: 0;
-	width: 100%;
-	position: absolute;
-}
-
-#cboxNext, #cboxPrevious, #cboxClose, #cboxTitle, #cboxCurrent {
-	top: 0;
-	bottom: auto !important;
-}
-
-#cboxCurrent {
-	top: 5px;
-}
-
 .dialog-options {
 	text-align: center;
 }
