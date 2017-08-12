@@ -264,6 +264,7 @@ class contribs_overlord
 
 			$view_unapproved = array_unique($view_unapproved);
 			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
+				($branch ? ' AND rp.revision_validated = 1' : '') .
 				((sizeof($view_unapproved)) ? ' OR ' . phpbb::$db->sql_in_set('c.contrib_type', array_map('intval', $view_unapproved)) : '') . '
 				OR c.contrib_user_id = ' . phpbb::$user->data['user_id'] . '
 				OR cc.active = 1)';

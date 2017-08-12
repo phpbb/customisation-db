@@ -1,82 +1,82 @@
 phpbb.titania.contrib:
-    pattern: /{page}
+    path: /{page}
     defaults: { _controller: phpbb.titania.controller.contrib:base, page: details }
     requirements:
-        page: |details|report|queue_discussion|rate
+        page: '|details|report|queue_discussion|rate'
 
 phpbb.titania.contrib.support:
-    pattern: /support
+    path: /support
     defaults: { _controller: phpbb.titania.controller.contrib.support:display_support }
 
 phpbb.titania.contrib.support.post_topic:
-    pattern: /support/new
+    path: /support/new
     defaults: { _controller: phpbb.titania.controller.contrib.support:topic_action, topic_id: 0, action: post }
 
 phpbb.titania.contrib.support.topic:
-    pattern: /support/topic/{topic_id}
+    path: /support/topic/{topic_id}
     defaults: { _controller: phpbb.titania.controller.contrib.support:display_topic }
     requirements:
         topic_id: \d+
 
 phpbb.titania.contrib.support.topic.action:
-    pattern: /support/topic/{topic_id}/{action}
+    path: /support/topic/{topic_id}/{action}
     defaults: { _controller: phpbb.titania.controller.contrib.support:topic_action }
     requirements:
         topic_id: \d+
 
 phpbb.titania.contrib.faq:
-    pattern: /faq
+    path: /faq
     defaults: { _controller: phpbb.titania.controller.contrib.faq:display_list}
 
 phpbb.titania.contrib.faq.create:
-    pattern: /faq/new
-    defaults: { _controller: phpbb.titania.controller.contrib.faq:item_action, action: 'create', id: 0 }
+    path: /faq/new
+    defaults: { _controller: phpbb.titania.controller.contrib.faq:item_action, action: create, id: 0 }
 
 phpbb.titania.contrib.faq.item:
-    pattern: /faq/{id}
+    path: /faq/{id}
     defaults: { _controller: phpbb.titania.controller.contrib.faq:display_item }
     requirements:
         id: \d+
 
 phpbb.titania.contrib.faq.item.action:
-    pattern: /faq/{id}/{action}
+    path: /faq/{id}/{action}
     defaults: { _controller: phpbb.titania.controller.contrib.faq:item_action }
     requirements:
         id: \d+
         page: edit|delete|move_up|move_down
 
 phpbb.titania.contrib.manage:
-    pattern: /manage
+    path: /manage
     defaults: { _controller: phpbb.titania.controller.contrib.manage:manage }
 
 phpbb.titania.contrib.manage.demo:
-    pattern: /manage/demo/{action}
+    path: /manage/demo/{action}
     defaults: { _controller: phpbb.titania.controller.contrib.manage:manage_demo }
     requirements:
         action: install|delete
 
 phpbb.titania.contrib.revision:
-    pattern: /revision
+    path: /revision
     defaults: { _controller: phpbb.titania.controller.contrib.revision:add }
 
 phpbb.titania.contrib.revision.repack:
-    pattern: /revision/{id}/repack
+    path: /revision/{id}/repack
     defaults: { _controller: phpbb.titania.controller.contrib.revision:repack }
     requirements:
         id: \d+
 
 phpbb.titania.contrib.revision.edit:
-    pattern: /revision/{id}/edit
+    path: /revision/{id}/edit
     defaults: { _controller: phpbb.titania.controller.contrib.revision.edit:edit }
     requirements:
         id: \d+
 
 phpbb.titania.contrib.demo:
-    pattern: /demo/{branch}
+    path: /demo/{branch}
     defaults: { _controller: phpbb.titania.controller.contrib:demo }
     requirements:
         branch: \d\.\d
 
 phpbb.titania.contrib.version_check:
-    pattern: /version_check
+    path: /version_check
     defaults: { _controller: phpbb.titania.controller.contrib:version_check }
