@@ -13,7 +13,7 @@
 	titania.quickEditFilter = function(data, event) {
 		var $postbody = $(this).parents('.postbody');
 
-		if ($('form', $postbody).length) {
+		if ($('form', $postbody).length || $('.loading_indicator').is(':visible')) {
 			event.preventDefault();
 			return false;
 		}
@@ -120,7 +120,7 @@
 		titania.updateSortOptions($('.branch-sort'), $('.branch-sort-options'), res.branches);
 		titania.updateSortOptions($('.key-sort'), $('.key-sort-options'), res.sort);
 
-		$title.html(title.substr(0, title.indexOf('-') + 2) + res.title);
+		$title.html(title.match(/(.*?[-\u2022]\s)/)[0] + res.title);
 		$crumbs.children(':not(:first-child)').remove();
 		$crumbs.append(res.breadcrumbs);
 	});
