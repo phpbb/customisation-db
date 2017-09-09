@@ -329,6 +329,9 @@ class type extends base
 			$data['require']['phpbb/phpbb'] = preg_replace('/(<|<=|~|\^|>|>=)([0-9]+(\.[0-9]+)?)\.[*x]/', '$1$2', $data['require']['phpbb/phpbb']);
 		}
 
+		// Composer installers must be required by all extensions in order to be installed correctly
+		$data['require']['composer/installers'] = '~1.0.0';
+
 		return $data;
 	}
 
