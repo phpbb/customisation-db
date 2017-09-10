@@ -240,6 +240,7 @@ class type extends base
 		}
 
 		$ext_name = $data['name'];
+		$data['type'] = 'phpbb-extension';
 		$data = $this->update_phpbb_requirement($data);
 		$data = $this->set_version_check($data, $contrib);
 
