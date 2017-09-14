@@ -91,10 +91,10 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			'revision_submitted'		=> array('default' => false), // False if it is still in the process of being submitted/verified; True if submission has finished
 			'revision_queue_id'			=> array('default' => 0),
 			'revision_license'			=> array('default' => ''),
-			'revision_clr_options'  	=> array('default' => ''),
-			'revision_bbc_html_replace' => array('default' => ''),
-			'revision_bbc_help_line' 	=> array('default' => ''),
-			'revision_bbc_bbcode_usage' => array('default' => ''),
+			'revision_clr_options'		=> array('default' => ''),
+			'revision_bbc_html_replace'	=> array('default' => ''),
+			'revision_bbc_help_line'	=> array('default' => ''),
+			'revision_bbc_bbcode_usage'	=> array('default' => ''),
 			'revision_bbc_demo'			=> array('default' => ''),
 			'revision_composer_json'	=> array('default' => ''),
 		));
@@ -231,12 +231,12 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			}
 		}
 
-        // ColorizeIt stuff
-        $url_colorizeit = '';
-        if($this->revision_status == ext::TITANIA_REVISION_APPROVED && strlen(titania::$config->colorizeit) && $this->contrib && $this->contrib->has_colorizeit())
-        {
-            $url_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->attachment_id . '&amp;sample=' . $this->contrib->clr_sample->get_id();
-        }
+		// ColorizeIt stuff
+		$url_colorizeit = '';
+		if($this->revision_status == ext::TITANIA_REVISION_APPROVED && strlen(titania::$config->colorizeit) && $this->contrib && $this->contrib->has_colorizeit())
+		{
+			$url_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->attachment_id . '&amp;sample=' . $this->contrib->clr_sample->get_id();
+		}
 
 		phpbb::$template->assign_block_vars($tpl_block, array(
 			'REVISION_ID'			=> $this->revision_id,
@@ -255,9 +255,9 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			'INSTALL_LEVEL'			=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
 			'DOWNLOADS'				=> isset($this->download_count) ? $this->download_count : 0,
 
-			'U_DOWNLOAD'		=> $this->get_url(),
-			'U_COLORIZEIT'      => $url_colorizeit,
-			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || $this->contrib->type->acl_get('moderate'))) ? $this->contrib->get_url('revision', array('page' => 'edit', 'id' => $this->revision_id)) : '',
+			'U_DOWNLOAD'			=> $this->get_url(),
+			'U_COLORIZEIT'			=> $url_colorizeit,
+			'U_EDIT'				=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || $this->contrib->type->acl_get('moderate'))) ? $this->contrib->get_url('revision', array('page' => 'edit', 'id' => $this->revision_id)) : '',
 
 			'S_USE_QUEUE'			=> (titania::$config->use_queue && $this->contrib->type->use_queue) ? true : false,
 			'S_NEW'					=> ($this->revision_status == ext::TITANIA_REVISION_NEW) ? true : false,
@@ -535,17 +535,17 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		}
 
 		// Repack diff
-        titania::_include('tools/diff', false, 'titania_diff');
+		titania::_include('tools/diff', false, 'titania_diff');
 
 		$diff = (new titania_diff)
 			->set_renderer_type('diff_renderer_raw')
 			->set_ignore_equal_files(true)
-        	->from_zip($old_revision->get_attachment()->get_filepath(), $this->get_attachment()->get_filepath());
+			->from_zip($old_revision->get_attachment()->get_filepath(), $this->get_attachment()->get_filepath());
 
-        if ($diff !== false)
-        {
-            $repack_message .= '[quote=&quot;' . $this->user->lang('VALIDATION_DIFF') . '&quot;][code lang=diff]' . $diff . "[/code][/quote]\n";
-        }
+		if ($diff !== false)
+		{
+			$repack_message .= '[quote=&quot;' . $this->user->lang('VALIDATION_DIFF') . '&quot;][code lang=diff]' . $diff . "[/code][/quote]\n";
+		}
 
 		// Reply
 		$old_queue->topic_reply($repack_message);
