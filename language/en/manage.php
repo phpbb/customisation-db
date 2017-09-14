@@ -126,5 +126,5 @@ $lang = array_merge($lang, array(
 	'VALIDATION_PV'				=> 'Prevalidator Notes',
 	'VALIDATION_QUEUE'			=> 'Validation Queue',
 	'VALIDATION_SUBMISSION'		=> 'Validation Submission',
-    'VALIDATION_DIFF'			=> 'Repack Diff',
+    'VALIDATION_REPACK_DIFF'	=> 'Repack Diff',
 ));

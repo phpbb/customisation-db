@@ -544,7 +544,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 		if ($diff !== false)
 		{
-			$repack_message .= '[quote=&quot;' . $this->user->lang('VALIDATION_DIFF') . '&quot;][code lang=diff]' . $diff . "[/code][/quote]\n";
+			$repack_message .= '[quote=&quot;' . $this->user->lang('VALIDATION_REPACK_DIFF') . '&quot;][code lang=diff]' . $diff . "[/code][/quote]\n";
 		}
 
 		// Reply
