@@ -534,6 +534,19 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			$repack_message .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_AUTOMOD'] . '&quot;]' . $queue->automod_results . "[/quote]\n";
 		}
 
+		// Repack diff
+        titania::_include('tools/diff', false, 'titania_diff');
+
+		$diff = (new titania_diff)
+			->set_renderer_type('diff_renderer_raw')
+			->set_ignore_equal_files(true)
+        	->from_zip($old_revision->get_attachment()->get_filepath(), $this->get_attachment()->get_filepath());
+
+        if ($diff !== false)
+        {
+            $repack_message .= '[quote=&quot;' . $this->user->lang('VALIDATION_DIFF') . '&quot;][code lang=diff]' . $diff . "[/code][/quote]\n";
+        }
+
 		// Reply
 		$old_queue->topic_reply($repack_message);
 

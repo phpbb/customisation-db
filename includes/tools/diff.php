@@ -11,19 +11,14 @@
 *
 */
 
+use Symfony\Component\Filesystem\Filesystem;
+
 /**
 * Class to create diffs for updated versions
 * @package Titania
 */
 class titania_diff
 {
-	/**
-	 * Classname of the diff renderer to use
-	 *
-	 * @var string
-	 */
-	private $renderer_type;
-
 	/**
 	 * Identification for old and new
 	 * This is used by from_dir to add an identification to the diff file
@@ -35,20 +30,25 @@ class titania_diff
 	/** @var string */
 	protected $ext_root_path;
 
+	/** @var string */
+	protected $renderer_type = 'diff_renderer_unified';
+
+	/** @var bool */
+	protected $ignore_equal_files = false;
+
 	/**
 	 * constructor
 	 *
 	 * @param string $renderer_type Classname of the renderer to use
 	 */
-	public function __construct($renderer_type = 'diff_renderer_unified')
+	public function __construct()
 	{
-		$this->renderer_type = $renderer_type;
 		$this->ext_root_path = \titania::$root_path;
 
-		phpbb::_include('diff/diff', false, 'diff');
-		phpbb::_include('diff/engine', false, 'diff');
-		phpbb::_include('diff/renderer', false, 'diff');
-		phpbb::_include('functions_compress', false, 'compress');
+		phpbb::_include('diff/diff', false, 'diff', false);
+		phpbb::_include('diff/engine', false, 'diff_engine', false);
+		phpbb::_include('diff/renderer', false, 'diff_renderer', false);
+		phpbb::_include('functions_compress', false, 'compress', false);
 	}
 
 	/**
@@ -63,6 +63,32 @@ class titania_diff
 		$this->id_new = $id_new;
 	}
 
+	/**
+	 * Classname of the diff renderer to use
+	 *
+	 * @param $renderer_type
+	 * @return titania_diff
+	 */
+	public function set_renderer_type($renderer_type)
+	{
+		$this->renderer_type = $renderer_type;
+
+		return $this;
+	}
+
+	/**
+	 * Whether or not unchanged file names should be listed
+	 *
+	 * @param $ignore_equal_files
+	 * @return titania_diff
+	 */
+	public function set_ignore_equal_files($ignore_equal_files)
+	{
+		$this->ignore_equal_files = $ignore_equal_files;
+
+		return $this;
+	}
+
 	// diff layers
 
 	/**
@@ -71,11 +97,11 @@ class titania_diff
 	 *
 	 * @param string $filename_old Path to old file
 	 * @param string $filename_new Path to new file
-	 * @return diff
+	 * @return string
 	 */
 	public function from_file($filename_old, $filename_new)
 	{
-	    $file_old = ($filename_old) ? self::file_contents($filename_old) : '';
+		$file_old = ($filename_old) ? self::file_contents($filename_old) : '';
 		$file_new = ($filename_new) ? self::file_contents($filename_new) : '';
 
 		// create renderer and process diff
@@ -88,12 +114,12 @@ class titania_diff
 	 *
 	 * @param string $dir_old Path to old dir
 	 * @param string $dir_new Path to new dir
-	 * @return diff
+	 * @return bool|string
 	 */
 	public function from_dir($dir_old, $dir_new)
 	{
-	    if (!file_exists($dir_old) || !file_exists($dir_new))
-	    {
+		if (!file_exists($dir_old) || !file_exists($dir_new))
+		{
 			return false;
 		}
 
@@ -106,26 +132,30 @@ class titania_diff
 
 		while (list($filename) = each($files_merged))
 		{
-			// add a context header for the file
-			$result .= "Index: $filename\n";
-			$result .= "===================================================================\n";
-			$result .= "--- $filename" . ($this->id_old ? "\t{$this->id_old}" : '') . "\n";
-			$result .= "+++ $filename" . ($this->id_new ? "\t{$this->id_new}" : '') . "\n";
+			$diff = '';
 
 			if (isset($files_old[$filename]) && isset($files_new[$filename]))
 			{
 				// old and new files exist
-				$result .= $this->from_file($dir_old . $filename, $dir_new . $filename) . "\n";
+				$diff .= $this->from_file($dir_old . $filename, $dir_new . $filename) . "\n";
 			}
 			else if (!isset($files_old[$filename]))
 			{
 				// old file doesn't exist, so it gets added
-				$result .= $this->from_file(false, $dir_new . $filename) . "\n";
+				$diff .= $this->from_file(false, $dir_new . $filename) . "\n";
 			}
 			else if (!isset($files_new[$filename]))
 			{
 				// new file doesn't exist, so it gets removed
-				$result .= $this->from_file($dir_old . $filename, false) . "\n";
+				$diff .= $this->from_file($dir_old . $filename, false) . "\n";
+			}
+
+			if (!$this->ignore_equal_files || trim($diff))
+			{
+				// add a context header for the file
+				$result .= "--- $filename" . ($this->id_old ? "\t{$this->id_old}" : '') . "\n";
+				$result .= "+++ $filename" . ($this->id_new ? "\t{$this->id_new}" : '') . "\n";
+				$result .= $diff;
 			}
 		}
 
@@ -137,12 +167,12 @@ class titania_diff
 	 *
 	 * @param string $filename_old Path to old zip file
 	 * @param string $filename_new Path to new zip file
-	 * @return diff
+	 * @return bool|string
 	 */
 	public function from_zip($filename_old, $filename_new)
 	{
-	    if (!file_exists($filename_old) || !file_exists($filename_new))
-	    {
+		if (!file_exists($filename_old) || !file_exists($filename_new))
+		{
 			return false;
 		}
 
@@ -151,15 +181,15 @@ class titania_diff
 		$tmp_new = $this->ext_root_path . 'files/temp/' . basename($filename_new) . '/';
 
 		// extract files
-		$result_old = self::extract_zip($filename_old, $tmp_old);
-		$result_new = self::extract_zip($filename_new, $tmp_new);
+		self::extract_zip($filename_old, $tmp_old);
+		self::extract_zip($filename_new, $tmp_new);
 
 		// get diff
 		$result = $this->from_dir($tmp_old, $tmp_new);
 
 		// clean up
-		self::rmdir($tmp_old, true);
-		self::rmdir($tmp_new, true);
+		(new Filesystem)->remove($tmp_old);
+		(new Filesystem)->remove($tmp_new);
 
 		return $result;
 	}
@@ -169,7 +199,7 @@ class titania_diff
 	 *
 	 * @param int $rev_old Old revision
 	 * @param int $rev_new New revision
-	 * @return diff
+	 * @return string
 	 */
 	public function from_revision($rev_old, $rev_new)
 	{
@@ -282,7 +312,7 @@ class titania_diff
 	 * Get contents of a file, don't mess up linefeeds
 	 *
 	 * @param string $filename Path to file
-	 * @return File contents
+	 * @return string contents
 	 */
 	public static function file_contents($filename)
 	{
