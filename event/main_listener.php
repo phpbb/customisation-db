@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\event;
 
+use phpbb\event\data;
+use s9e\TextFormatter\Configurator\Items\TemplateDocument;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
@@ -61,9 +63,10 @@ class main_listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.permissions'			=> 'add_permissions',
-			'kernel.request'			=> array(array('startup', -1)),
-			'core.page_header_after'	=> 'overwrite_template_vars',
+			'core.permissions'							=> 'add_permissions',
+			'kernel.request'							=> array(array('startup', -1)),
+			'core.page_header_after'					=> 'overwrite_template_vars',
+            'core.text_formatter_s9e_configure_after'	=> 'inject_bbcode_code_lang',
 		);
 	}
 
@@ -125,7 +128,7 @@ class main_listener implements EventSubscriberInterface
 			'u_titania_mod_bbcode_queue'			=> array('lang' => 'ACL_U_TITANIA_MOD_BBCODE_QUEUE', 'cat' => 'titania_moderate'),
 			'u_titania_mod_bbcode_validate'			=> array('lang' => 'ACL_U_TITANIA_MOD_BBCODE_VALIDATE', 'cat' => 'titania_moderate'),
 			'u_titania_mod_bbcode_moderate'			=> array('lang' => 'ACL_U_TITANIA_MOD_BBCODE_MODERATE', 'cat' => 'titania_moderate'),
-	
+
 			'u_titania_mod_bridge_queue_discussion'	=> array('lang' => 'ACL_U_TITANIA_MOD_BRIDGE_QUEUE_DISCUSSION', 'cat' => 'titania_moderate'),
 			'u_titania_mod_bridge_queue'			=> array('lang' => 'ACL_U_TITANIA_MOD_BRIDGE_QUEUE', 'cat' => 'titania_moderate'),
 			'u_titania_mod_bridge_validate'			=> array('lang' => 'ACL_U_TITANIA_MOD_BRIDGE_VALIDATE', 'cat' => 'titania_moderate'),
@@ -193,4 +196,26 @@ class main_listener implements EventSubscriberInterface
 			));
 		}
 	}
+
+    /**
+     * Reads the value for the lang attribute passed to each code BBCode, e.g. [code=diff] or [code lang=diff],
+     * and adds it as a class attribute to the code element, e.g. <code class="diff">
+     *
+     * @param data $event
+     */
+    public function inject_bbcode_code_lang(data $event)
+    {
+        $tag = $event['configurator']->tags['CODE'];
+
+        /** @var TemplateDocument $dom */
+        $dom = $tag->template->asDOM();
+
+        foreach ($dom->getElementsByTagName('code') as $code)
+        {
+        	/** @var \DOMElement $code */
+			$code->setAttribute('class', '{@lang}');
+		}
+
+        $dom->saveChanges();
+    }
 }
