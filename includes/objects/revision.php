@@ -539,6 +539,17 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 		$diff = (new titania_diff)
 			->set_renderer_type('diff_renderer_raw')
+			->set_file_extensions(array(
+				'php',
+				'html',
+				'htm',
+				'css',
+				'js',
+				'cfg',
+				'json',
+				'yml',
+				'txt',
+			))
 			->set_ignore_equal_files(true)
 			->from_zip($old_revision->get_attachment()->get_filepath(), $this->get_attachment()->get_filepath());
 

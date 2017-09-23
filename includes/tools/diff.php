@@ -36,6 +36,9 @@ class titania_diff
 	/** @var bool */
 	protected $ignore_equal_files = false;
 
+	/** @var array */
+	protected $file_extensions = array();
+
 	/**
 	 * constructor
 	 *
@@ -89,6 +92,21 @@ class titania_diff
 		return $this;
 	}
 
+	/**
+	 * Whitelist file extensions. Pass an array of file extensions that shall be processed.
+	 * Files with extensions not in this array are not included in the diff.
+	 * Pass an empty array to include all files in the diff (default)
+	 *
+	 * @param array $file_extensions ['txt', 'html']
+	 * @return titania_diff
+	 */
+	public function set_file_extensions($file_extensions)
+	{
+		$this->file_extensions = array_map('strtolower', $file_extensions);
+
+		return $this;
+	}
+
 	// diff layers
 
 	/**
@@ -101,10 +119,10 @@ class titania_diff
 	 */
 	public function from_file($filename_old, $filename_new)
 	{
-		$file_old = ($filename_old) ? self::file_contents($filename_old) : '';
-		$file_new = ($filename_new) ? self::file_contents($filename_new) : '';
+		$file_old = $filename_old ? self::file_contents($filename_old) : '';
+		$file_new = $filename_new ? self::file_contents($filename_new) : '';
 
-		// create renderer and process diff
+		/** @var diff_renderer $renderer */
 		$renderer = new $this->renderer_type();
 		return $renderer->render(new diff($file_old, $file_new));
 	}
@@ -128,10 +146,17 @@ class titania_diff
 		$files_old = array_flip(self::list_files($dir_old));
 		$files_new = array_flip(self::list_files($dir_new));
 
-		$files_merged = array_merge($files_old, $files_new);
+		$files_merged = array_keys(array_merge($files_old, $files_new));
 
-		while (list($filename) = each($files_merged))
+		foreach ($files_merged as $filename)
 		{
+			$file_extension = (new SplFileInfo($filename))->getExtension();
+
+			if ($this->file_extensions && !in_array(strtolower($file_extension), $this->file_extensions))
+			{
+				continue;
+			}
+
 			$diff = '';
 
 			if (isset($files_old[$filename]) && isset($files_new[$filename]))
