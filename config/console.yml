@@ -15,7 +15,6 @@ services:
             - '@config'
             - '@template'
             - '@dbal.conn'
-            - '@router'
             - '%core.root_path%'
             - '%core.php_ext%'
         calls:

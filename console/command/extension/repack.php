@@ -16,7 +16,6 @@ namespace phpbb\titania\console\command\extension;
 use phpbb\config\config;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\language\language;
-use phpbb\routing\router;
 use phpbb\template\template;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\attachment\operator as attachments;
@@ -46,9 +45,6 @@ class repack extends \phpbb\console\command\command
 
 	/** @var db */
 	protected $db;
-
-	/** @var router */
-	protected $router;
 
 	/** @var titania_config */
 	protected $titania_config;
@@ -88,7 +84,6 @@ class repack extends \phpbb\console\command\command
 	 * @param config	$config
 	 * @param template	$template
 	 * @param db		$db
-	 * @param router	$router
 	 * @param string	$root_path
 	 * @param string	$php_ext
 	 */
@@ -98,7 +93,6 @@ class repack extends \phpbb\console\command\command
 		config $config,
 		template $template,
 		db $db,
-		router $router,
 		$root_path,
 		$php_ext
 	)
@@ -112,14 +106,14 @@ class repack extends \phpbb\console\command\command
 		$this->config			= $config;
 		$this->template			= $template;
 		$this->db				= $db;
-		$this->router			= $router;
 
 		$this->contribs_table	= TITANIA_CONTRIBS_TABLE;
 		$this->revisions_table	= TITANIA_REVISIONS_TABLE;
 
 		$this->language->add_lang(array('console', 'manage', 'manage_tools', 'contributions'), 'phpbb/titania');
 
-		$this->configure_request_context();
+		// As we're in the CLI, we need to force server vars so that the route helper generates correct version check URLs
+		$this->config['force_server_vars'] = true;
 
 		// The parent constructor calls configure(), all properties need to be set up at this point
 		parent::__construct($user);
@@ -135,22 +129,6 @@ class repack extends \phpbb\console\command\command
 			->setDescription($this->language->lang('CLI_DESCRIPTION_EXTENSION_REPACK'))
 			->addArgument('vendor/extname', InputArgument::OPTIONAL, $this->language->lang('CLI_EXTENSION_REPACK_EXT_NAME'))
 			->addOption('message', 'm', InputOption::VALUE_REQUIRED, $this->language->lang('CLI_EXTENSION_REPACK_MESSAGE'))
-		;
-	}
-
-	/**
-	 * Set request context to generate correct version check URLs in composer.json
-	 *
-	 * See http://symfony.com/doc/current/console/request_context.html
-	 */
-	protected function configure_request_context()
-	{
-		$this->router->getContext()
-        	->setScheme(substr($this->config['server_protocol'], 0, -3))
-			->setHost($this->config['server_name'])
-			->setHttpPort($this->config['server_port'])
-			->setHttpsPort($this->config['server_port'])
-			->setBaseUrl(rtrim($this->config['script_path'], '/'))
 		;
 	}
 
