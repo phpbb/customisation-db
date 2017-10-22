@@ -128,12 +128,16 @@ If you have any queries and further discussion please use the Queue Discussion T
 Thank you,
 phpBB Extension Customisations Team',
 
-	'INVALID_COMPOSER_FILE'	=> 'Invalid composer.json file. The file either could not be read/written or it contains no data.',
-	'INVALID_EXT_NAME'		=> 'Invalid value for <em>name</em> property in composer.json.
-									Please refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for the valid format.',
-	'MISSING_EXT_NAME'		=> 'Missing value for <em>name</em> property in composer.json.',
+	'INVALID_COMPOSER_FILE'		=> 'Invalid composer.json file. The file either could not be read/written or it contains no data.',
+	'INVALID_EXT_NAME'			=> 'Invalid value for <em>name</em> property in composer.json.
+										Please refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for the valid format.',
+	'MISSING_EXT_NAME'			=> 'Missing value for <em>name</em> property in composer.json.',
+	'MISSING_COMPOSER_VERSION'	=> 'The composer.json file is missing the version property.',
+	'MISMATCH_COMPOSER_VERSION'	=> 'The version in the composer.json file ([b]%1$s[/b]) does not match the version of this revision ([b]%2$s[/b]).',
+	'UNSTABLE_COMPOSER_VERSION'	=> 'This revision has an unstable version. Please use a stable version number.
+										Refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for more information.',
 
-	'TEST_ACCOUNT'			=> 'Test account',
-	'TEST_ACCOUNT_EXPLAIN'	=> 'Do we need any information (Like an API key, username, password to login to a third party webservice) for testing your extension?
-									Please provide all required information to test your extension. <strong>If we are unable to test your extension because of missing information, we will deny your extension.</strong>',
+	'TEST_ACCOUNT'				=> 'Test account',
+	'TEST_ACCOUNT_EXPLAIN'		=> 'Do we need any information (Like an API key, username, password to login to a third party webservice) for testing your extension?
+										Please provide all required information to test your extension. <strong>If we are unable to test your extension because of missing information, we will deny your extension.</strong>',
 ));

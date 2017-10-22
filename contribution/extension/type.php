@@ -238,6 +238,18 @@ class type extends base
 		{
 			throw new \Exception('INVALID_EXT_NAME');
 		}
+		if (empty($data['version']))
+		{
+			throw new \Exception('MISSING_COMPOSER_VERSION');
+		}
+		if ($data['version'] !== $revision->revision_version)
+		{
+			throw new \Exception($this->user->lang('MISMATCH_COMPOSER_VERSION', $data['version'], $revision->revision_version));
+		}
+		if (!$this->is_stable_version($data['version']))
+		{
+			throw new \Exception('UNSTABLE_COMPOSER_VERSION');
+		}
 
 		$ext_name = $data['name'];
 		$data['type'] = 'phpbb-extension';
@@ -334,6 +346,49 @@ class type extends base
 		$data['require']['composer/installers'] = '~1.0.0';
 
 		return $data;
+	}
+
+	/**
+	 * Checks if the version is stable (1.2.3) or not (1.2.3-RC1)
+	 *
+	 * @param string $version
+	 * @return bool
+	 */
+	protected function is_stable_version($version)
+	{
+		$version = strtolower($version);
+
+		$unstable = array(
+			'rc',
+			'alpha',
+			'beta',
+			'dev',
+			'a',
+			'b',
+		);
+
+		$option = implode('|', $unstable);
+
+		// Check the version format and numbering
+		if (preg_match('#((\d+)\.)+(\d+)[a-z]?#', $version, $matches))
+		{
+			if (preg_match('#((\d+)\.)+(\d+)-(' . $option . '+)(\d+{0,)?#i', $version, $matches))
+			{
+				return false;
+			}
+
+			if (version_compare('1.0.0', $version) > 0)
+			{
+				return false;
+			}
+		}
+		else
+		{
+			// Not a valid version
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
