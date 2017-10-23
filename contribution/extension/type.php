@@ -349,46 +349,15 @@ class type extends base
 	}
 
 	/**
-	 * Checks if the version is stable (1.2.3) or not (1.2.3-RC1)
+	 * Checks if the version is stable (1.2.3, 4.5.6-PL1) or not (7.8.9-RC1, 0.9.8)
 	 *
 	 * @param string $version
 	 * @return bool
 	 */
 	protected function is_stable_version($version)
 	{
-		$version = strtolower($version);
-
-		$unstable = array(
-			'rc',
-			'alpha',
-			'beta',
-			'dev',
-			'a',
-			'b',
-		);
-
-		$option = implode('|', $unstable);
-
-		// Check the version format and numbering
-		if (preg_match('#((\d+)\.)+(\d+)[a-z]?#', $version, $matches))
-		{
-			if (preg_match('#((\d+)\.)+(\d+)-(' . $option . '+)(\d+{0,)?#i', $version, $matches))
-			{
-				return false;
-			}
-
-			if (version_compare('1.0.0', $version) > 0)
-			{
-				return false;
-			}
-		}
-		else
-		{
-			// Not a valid version
-			return false;
-		}
-
-		return true;
+		// version_compare() doesn't understand -PLx
+		return preg_match('#^(\d+\.\d+\.\d+)(-pl\d+)?$#i', $version, $matches) === 1 && version_compare('1.0.0', $matches[1]) >= 0;
 	}
 
 	/**
