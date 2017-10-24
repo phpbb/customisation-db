@@ -356,8 +356,7 @@ class type extends base
 	 */
 	protected function is_stable_version($version)
 	{
-		// version_compare() doesn't understand -PLx
-		return preg_match('#^(\d+\.\d+\.\d+)(-pl\d+)?$#i', $version, $matches) === 1 && version_compare('1.0.0', $matches[1]) >= 0;
+		return preg_match('#^\d+\.\d+\.\d+(-pl\d+)?$#i', $version) === 1 && phpbb_version_compare('1.0.0', $version) >= 0;
 	}
 
 	/**
