@@ -133,7 +133,7 @@ phpBB Extension Customisations Team',
 										Please refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for the valid format.',
 	'MISSING_EXT_NAME'			=> 'Missing value for <em>name</em> property in composer.json.',
 	'MISSING_COMPOSER_VERSION'	=> 'The composer.json file is missing the version property.',
-	'MISMATCH_COMPOSER_VERSION'	=> 'The version in the composer.json file ([b]%1$s[/b]) does not match the version of this revision ([b]%2$s[/b]).',
+	'MISMATCH_COMPOSER_VERSION'	=> 'The version in the composer.json file (%1$s) does not match the version of this revision (%2$s).',
 	'UNSTABLE_COMPOSER_VERSION'	=> 'This revision has an unstable version. Please use a stable version number.
 										Refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for more information.',
 
