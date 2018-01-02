@@ -268,8 +268,9 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	*
 	* @param string $message
 	* @param bool $teams_only true to set to access level of teams
+	* @param int $post_user_id
 	*/
-	public function discussion_reply($message, $teams_only = false)
+	public function discussion_reply($message, $teams_only = false, $post_user_id = 0)
 	{
 		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
@@ -286,6 +287,11 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		if ($teams_only)
 		{
 			$post->post_access = access::TEAM_LEVEL;
+		}
+
+		if ($post_user_id)
+		{
+			$post->post_user_id = (int) $post_user_id;
 		}
 
 		$post->parent_contrib_type = $this->queue_type;
