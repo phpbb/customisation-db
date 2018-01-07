@@ -145,12 +145,20 @@ class config extends \phpbb\titania\entity\base
 			'use_queue'					=> array('default' => true),
 			'allow_self_validation'		=> array('default' => true),
 
+			// File extensions that are included in a repack diff
+			'repack_diff_extensions'	=> array('default' => array(
+				'php',
+				'html', 'htm',
+				'js', 'css',
+				'cfg', 'json', 'yml', 'txt',
+			)),
+
 			// phpBB versions array
 			'phpbb_versions'			=> array('default' => array(
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
 				'30'	=> array('latest_revision' => '14', 'name' => 'phpBB 3.0.x', 'allow_uploads' => false),
-				'31'	=> array('latest_revision' => '11', 'name' => 'phpBB 3.1.x', 'allow_uploads' => true),
-				'32'	=> array('latest_revision' => '1', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
+				'31'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.1.x', 'allow_uploads' => false),
+				'32'	=> array('latest_revision' => '2', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
 			)),
 
 			// MPV server(s)
