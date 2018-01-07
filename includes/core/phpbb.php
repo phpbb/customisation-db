@@ -11,6 +11,16 @@
 *
 */
 
+use phpbb\auth\auth;
+use phpbb\cache\service as cache;
+use phpbb\config\config;
+use phpbb\db\driver\driver as db;
+use phpbb\event\dispatcher;
+use phpbb\request\request;
+use phpbb\template\template;
+use phpbb\user;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
 /**
  * phpBB class that will be used in place of globalising these variables.
  */
@@ -37,10 +47,10 @@ class phpbb
 	/** @var request phpBB request class */
 	public static $request;
 
-	/** @var object phpBB container */
+	/** @var ContainerBuilder phpBB container */
 	public static $container;
 
-	/* @var \phpbb\event\dispatcher */
+	/* @var dispatcher */
 	public static $dispatcher;
 
 	/** @var string */
@@ -95,8 +105,9 @@ class phpbb
 	* @param string $file The name of the file
 	* @param string|bool $function_check Bool false to ignore; string function name to check if the function exists (and not load the file if it does)
 	* @param string|bool $class_check Bool false to ignore; string class name to check if the class exists (and not load the file if it does)
+	* @param bool $class_auto_load Whether or not to attempt to auto-load the class given in $class_check
 	*/
-	public static function _include($file, $function_check = false, $class_check = false)
+	public static function _include($file, $function_check = false, $class_check = false, $class_auto_load = true)
 	{
 		if ($function_check !== false)
 		{
@@ -108,7 +119,7 @@ class phpbb
 
 		if ($class_check !== false)
 		{
-			if (class_exists($class_check))
+			if (class_exists($class_check, $class_auto_load))
 			{
 				return;
 			}

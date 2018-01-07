@@ -69,7 +69,7 @@ phpbb.plupload = {
 	},
 	order: '{ATTACH_ORDER}',
 	maxFiles: {MAX_ATTACHMENTS},
-	data: {S_ATTACH_DATA}
+	data: <!-- IF S_ATTACH_DATA -->{S_ATTACH_DATA}<!-- ELSE -->[]<!-- ENDIF -->
 }
 
 <!-- IF S_REVISION_FORM -->

@@ -238,8 +238,21 @@ class type extends base
 		{
 			throw new \Exception('INVALID_EXT_NAME');
 		}
+		if (empty($data['version']))
+		{
+			throw new \Exception('MISSING_COMPOSER_VERSION');
+		}
+		if ($data['version'] !== $revision->revision_version)
+		{
+			throw new \Exception($this->user->lang('MISMATCH_COMPOSER_VERSION', $data['version'], $revision->revision_version));
+		}
+		if (!$this->is_stable_version($data['version']))
+		{
+			throw new \Exception('UNSTABLE_COMPOSER_VERSION');
+		}
 
 		$ext_name = $data['name'];
+		$data['type'] = 'phpbb-extension';
 		$data = $this->update_phpbb_requirement($data);
 		$data = $this->set_version_check($data, $contrib);
 
@@ -329,7 +342,21 @@ class type extends base
 			$data['require']['phpbb/phpbb'] = preg_replace('/(<|<=|~|\^|>|>=)([0-9]+(\.[0-9]+)?)\.[*x]/', '$1$2', $data['require']['phpbb/phpbb']);
 		}
 
+		// Composer installers must be required by all extensions in order to be installed correctly
+		$data['require']['composer/installers'] = '~1.0.0';
+
 		return $data;
+	}
+
+	/**
+	 * Checks if the version is stable (1.2.3, 4.5.6-PL1) or not (7.8.9-RC1, 0.9.8)
+	 *
+	 * @param string $version
+	 * @return bool
+	 */
+	protected function is_stable_version($version)
+	{
+		return preg_match('#^\d+\.\d+\.\d+(-pl\d+)?$#i', $version) === 1 && phpbb_version_compare($version, '1.0.0', '>=');
 	}
 
 	/**
