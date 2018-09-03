@@ -209,6 +209,22 @@ class revision extends base
 	{
 		$this->setup($contrib_type, $contrib);
 
+		$settings = array();
+
+        // Load the revisions for this contribution
+        $this->contrib->get_revisions();
+
+		if (sizeof($this->contrib->revisions))
+        {
+            // Find out what the previous revision was, if this is a new revision to an existing contribution
+            $previous_revision_id = max(array_keys($this->contrib->revisions));
+
+            // Load up that revision to get the selected branches
+            $previous_revision = new \titania_revision($this->contrib, $previous_revision_id);
+            $previous_revision->load_phpbb_versions();
+            $settings['vendor_versions'] = $previous_revision->get_selected_branches();
+        }
+
 		if (!$this->check_auth())
 		{
 			return $this->helper->needs_auth();
@@ -278,7 +294,7 @@ class revision extends base
 			$this->cancel();
 		}
 
-		$this->assign_common_vars($error, !empty($this->id));
+		$this->assign_common_vars($error, !empty($this->id), $settings);
 		$this->template->assign_vars(array(
 			'S_CAN_SUBSCRIBE'			=> !$this->is_author_subscribed() && $this->use_queue,
 			'SUBSCRIBE_AUTHOR'			=> $this->request->variable('subscribe_author', false),
