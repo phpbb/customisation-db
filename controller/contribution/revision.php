@@ -211,19 +211,19 @@ class revision extends base
 
 		$settings = array();
 
-        // Load the revisions for this contribution
-        $this->contrib->get_revisions();
+		// Load the revisions for this contribution
+		$this->contrib->get_revisions();
 
 		if (sizeof($this->contrib->revisions))
-        {
-            // Find out what the previous revision was, if this is a new revision to an existing contribution
-            $previous_revision_id = max(array_keys($this->contrib->revisions));
+		{
+			// Find out what the previous revision was, if this is a new revision to an existing contribution
+			$previous_revision_id = max(array_keys($this->contrib->revisions));
 
-            // Load up that revision to get the selected branches
-            $previous_revision = new \titania_revision($this->contrib, $previous_revision_id);
-            $previous_revision->load_phpbb_versions();
-            $settings['vendor_versions'] = $previous_revision->get_selected_branches();
-        }
+			// Load up that revision to get the selected branches
+			$previous_revision = new \titania_revision($this->contrib, $previous_revision_id);
+			$previous_revision->load_phpbb_versions();
+			$settings['vendor_versions'] = $previous_revision->get_selected_branches();
+		}
 
 		if (!$this->check_auth())
 		{
