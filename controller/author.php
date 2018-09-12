@@ -292,7 +292,6 @@ class author
 			$this->author->post_data($this->message);
 
 			$this->author->__set_array(array(
-				'author_realname'	=> $this->request->variable('realname', '', true),
 				'author_website'	=> $this->request->variable('website', ''),
 			));
 
