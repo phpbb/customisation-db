@@ -97,7 +97,7 @@ class config extends \phpbb\titania\entity\base
 			'max_rating'				=> array('default' => 5),
 
 			'phpbbcom_profile'			=> array('default' => true),
-			'phpbbcom_viewprofile_url'	=> array('default' => 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
+			'phpbbcom_viewprofile_url'	=> array('default' => 'https://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
 
 			// Mod/style database release forums (receive announcements on updates/approval)
 			'forum_mod_database'		=> array('default' => array(
