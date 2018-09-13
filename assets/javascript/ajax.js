@@ -95,11 +95,8 @@
 		$('#queue-stats-link').remove();
 
 		if (res.u_queue_stats) {
-			var $queueStats = $('<a />')
-				.attr('href', res.u_queue_stats)
-				.html(res.l_queue_stats);
 			$('.titania-navigation').append(
-				$('<li />').attr('id', 'queue-stats-link').html($queueStats)
+				$('<a />').attr({'id': 'queue-stats-link', 'href': res.u_queue_stats}).html(res.l_queue_stats)
 			);
 		}
 
