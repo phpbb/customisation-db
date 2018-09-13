@@ -104,6 +104,8 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'topic_last_post_user_colour'	=> array('default' => ''),
 			'topic_last_post_time'			=> array('default' => (int) titania::$time),
 			'topic_last_post_subject'		=> array('default' => ''),
+
+			'topic_queue_id'				=> array('default' => 0),
 		));
 
 		$this->topic_id = $topic_id;

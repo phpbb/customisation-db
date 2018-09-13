@@ -750,6 +750,28 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $vars, $this);
+		// Display a warning for styles not meeting the licensing guidelines
+		if ($this->contrib_type == ext::TITANIA_TYPE_STYLE && !empty($this->download))
+		{
+			foreach ($this->download as $download)
+			{
+				if ($download['revision_license'] == '')
+				{
+					if (isset($vars['WARNING']))
+					{
+						$vars['WARNING'] .= '<br />';
+					}
+					else
+					{
+						$vars['WARNING'] = '';
+					}
+
+					$vars['WARNING'] .= phpbb::$user->lang('STYLE_LICENSE_WARNING');
+
+					break;
+				}
+			}
+		}
 
 		// Display real author
 		if ($return)

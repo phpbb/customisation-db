@@ -87,10 +87,11 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 			'allow_author_repack'	=> array('default' => false),
 			'queue_tested'			=> array('default' => false),
-		));
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+			'topic_queue_id'	=> array('default' => 0),
+		));
 
 		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
@@ -223,6 +224,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $post, $this);
+		$this->forum_queue_update_first_queue_post($post);
 
 		// Store the post
 		$post->generate_text_for_storage(true, true, true);
@@ -304,6 +306,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	{
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+		$this->trash_queue_topic();
 
 		$post = new titania_post;
 
@@ -477,6 +480,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+		$this->trash_queue_topic();
 	}
 
 	public function close($revision_status)
@@ -493,6 +497,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this, $revision_status);
+		$this->trash_queue_topic();
 	}
 
 	public function deny()
@@ -528,6 +533,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		// Hooks
 		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+		$this->trash_queue_topic();
 	}
 
 	/**
@@ -722,5 +728,210 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'id'	=> $revision_id,
 		);
 		return $this->controller_helper->route('phpbb.titania.queue.tools', $params);
+	}
+
+	/**
+	 * Copy new posts for queue discussion, queue to the forum
+	 *
+	 * @param titania_post $post_object
+	 */
+	protected function forum_queue_update_first_queue_post(&$post_object)
+	{
+		if ($this->queue_status == ext::TITANIA_QUEUE_HIDE || !$this->queue_topic_id)
+		{
+			return;
+		}
+
+		$path_helper = phpbb::$container->get('path_helper');
+
+		// First we copy over the queue discussion topic if required
+		$sql = 'SELECT topic_id, topic_queue_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
+		WHERE parent_id = ' . $this->contrib_id . '
+			AND topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION;
+		$result = phpbb::$db->sql_query($sql);
+		$topic_row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		// Do we need to create the queue discussion topic or not?
+		if ($topic_row['topic_id'] && !$topic_row['topic_queue_id'])
+		{
+			$forum_id = titania::$config->{$post_object->topic->topic_category}[ext::TITANIA_QUEUE_DISCUSSION];
+
+			$temp_post = new titania_post;
+
+			// Go through any posts in the queue discussion topic and copy them
+			$topic_id = false;
+			$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . ' WHERE topic_id = ' . $topic_row['topic_id'];
+			$result = phpbb::$db->sql_query($sql);
+			while($row = phpbb::$db->sql_fetchrow($result))
+			{
+				titania::_include('functions_posting', 'phpbb_posting');
+
+				$temp_post->__set_array($row);
+
+				$post_text = $row['post_text'];
+
+				handle_queue_attachments($temp_post, $post_text);
+				message::decode($post_text, $row['post_text_uid']);
+
+				$post_text .= "\n\n" . $path_helper->strip_url_params($temp_post->get_url(), 'sid');
+
+				$options = array(
+					'poster_id'				=> $row['post_user_id'],
+					'forum_id' 				=> $forum_id,
+					'topic_title'			=> $row['post_subject'],
+					'post_text'				=> $post_text,
+				);
+
+				if ($topic_id)
+				{
+					$options = array_merge($options, array(
+						'topic_id'	=> $topic_id,
+					));
+
+					phpbb_posting('reply', $options);
+				}
+				else
+				{
+					switch ($topic_row['topic_category'])
+					{
+						case ext::TITANIA_TYPE_EXTENSION:
+							$options['poster_id'] = titania::$config->forum_extension_robot;
+							break;
+
+						case ext::TITANIA_TYPE_MOD:
+							$options['poster_id'] = titania::$config->forum_mod_robot;
+							break;
+
+						case ext::TITANIA_TYPE_STYLE:
+							$options['poster_id'] = titania::$config->forum_style_robot;
+							break;
+					}
+
+					$topic_id = phpbb_posting('post', $options);
+				}
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			if ($topic_id)
+			{
+				$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+				SET topic_queue_id = ' . $topic_id . '
+				WHERE topic_id = ' . $topic_row['topic_id'];
+				phpbb::$db->sql_query($sql);
+			}
+
+			unset($temp_post);
+		}
+
+		// Does a queue topic already exist?  If so, don't repost.
+		$sql = 'SELECT topic_queue_id FROM ' . TITANIA_TOPICS_TABLE . '
+		WHERE topic_id = ' . $this->queue_topic_id;
+		phpbb::$db->sql_query($sql);
+		$topic_queue_id = phpbb::$db->sql_fetchfield('topic_queue_id');
+		phpbb::$db->sql_freeresult();
+		if ($topic_queue_id)
+		{
+			return;
+		}
+
+		$forum_id = titania::$config->{$post_object->topic->topic_category}[$post_object->topic->topic_type];
+
+		if (!$forum_id)
+		{
+			return;
+		}
+
+		$post_object->submit();
+
+		titania::_include('functions_posting', 'phpbb_posting');
+
+		// Need some stuff
+		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
+		$contrib = new titania_contribution;
+		$contrib->load((int) $this->contrib_id);
+		$revision = $this->get_revision();
+		$contrib->get_download($revision->revision_id);
+
+		switch ($post_object->topic->topic_category)
+		{
+			case ext::TITANIA_TYPE_EXTENSION:
+				$post_object->topic->topic_first_post_user_id = titania::$config->forum_extension_robot;
+				$lang_var = 'EXTENSION_QUEUE_TOPIC';
+				break;
+
+			case ext::TITANIA_TYPE_MOD:
+				$post_object->topic->topic_first_post_user_id = titania::$config->forum_mod_robot;
+				$lang_var = 'MOD_QUEUE_TOPIC';
+				break;
+
+			case ext::TITANIA_TYPE_STYLE:
+				$post_object->topic->topic_first_post_user_id = titania::$config->forum_style_robot;
+				$lang_var = 'STYLE_QUEUE_TOPIC';
+				break;
+
+			default:
+				return;
+				break;
+		}
+
+		$description = $contrib->contrib_desc;
+		message::decode($description, $contrib->contrib_desc_uid);
+		$download = current($contrib->download);
+
+		$post_text = sprintf(phpbb::$user->lang[$lang_var],
+			$contrib->contrib_name,
+			$path_helper->strip_url_params($contrib->author->get_url(), 'sid'),
+			users_overlord::get_user($contrib->author->user_id, '_username'),
+			$description,
+			$revision->revision_version,
+			$path_helper->strip_url_params($revision->get_url(), 'sid'),
+			$download['real_filename'],
+			get_formatted_filesize($download['filesize'])
+		);
+
+		$post_text .= "\n\n" . $post_object->post_text;
+
+		handle_queue_attachments($post_object, $post_text);
+		message::decode($post_text, $post_object->post_text_uid);
+
+		$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
+
+		$options = array(
+			'poster_id'				=> $post_object->topic->topic_first_post_user_id,
+			'forum_id' 				=> $forum_id,
+			'topic_title'			=> $post_object->topic->topic_subject,
+			'post_text'				=> $post_text,
+		);
+
+		$topic_id = phpbb_posting('post', $options);
+
+		$post_object->topic->topic_queue_id = $topic_id;
+
+		$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+			SET topic_queue_id = ' . (int) $topic_id . '
+			WHERE topic_id = ' . $post_object->topic->topic_id;
+		phpbb::$db->sql_query($sql);
+	}
+
+	/**
+	 * Move queue topics to the trash can
+	 */
+	protected function trash_queue_topic()
+	{
+		$sql = 'SELECT topic_queue_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE topic_id = ' . (int) $this->queue_topic_id;
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		if (!$row['topic_queue_id'])
+		{
+			return;
+		}
+
+		phpbb::_include('functions_admin', 'move_topics');
+
+		move_topics($row['topic_queue_id'], titania::$config->{$row['topic_category']}['trash']);
 	}
 }
