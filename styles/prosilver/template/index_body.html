@@ -2,17 +2,6 @@
 
 <h2>{L_CUSTOMISATION_DATABASE}</h2>
 
-<!-- IF .categories or U_QUEUE_STATS -->
-<ul class="linklist bulletin titania-navigation">
-	<!-- IF U_ALL_SUPPORT -->
-		<li><a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a></li>
-	<!-- ENDIF -->
-	<!-- IF U_QUEUE_STATS -->
-		<li id="queue-stats-link"><a href="{U_QUEUE_STATS}">{L_QUEUE_STATS}</a></li>
-	<!-- ENDIF -->
-</ul>
-<!-- ENDIF -->
-
 	<div class="action-bar contrib-filter" style="margin-top: 2em;">
 		<!-- IF U_CREATE_CONTRIBUTION -->
 			<a href="{U_CREATE_CONTRIBUTION}" title="{L_NEW_CONTRIBUTION}" class="button">
@@ -90,6 +79,16 @@
 		<!-- IF categories.DEPTH and categories.S_LAST_ROW --></div><!-- ENDIF -->
 		{% set LAST_DEPTH = categories.DEPTH %}
 		<!-- END categories -->
+		<!-- IF .categories or U_QUEUE_STATS -->
+			<div class="titania-navigation">
+				<!-- IF U_ALL_SUPPORT -->
+					<a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a>
+				<!-- ENDIF -->
+				<!-- IF U_QUEUE_STATS -->
+					<a id="queue-stats-link" href="{U_QUEUE_STATS}">{L_QUEUE_STATS}</a>
+				<!-- ENDIF -->
+			</div>
+		<!-- ENDIF -->
 	</div>
 
 <div class="contrib-list-container">
