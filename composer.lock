@@ -218,12 +218,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpbb/epv.git",
-                "reference": "d2fc4e022f06512c4205551fb04bcfd2cdc9fedf"
+                "reference": "fa799a5ed0196089fa93658da4d56289d3b57b76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpbb/epv/zipball/d2fc4e022f06512c4205551fb04bcfd2cdc9fedf",
-                "reference": "d2fc4e022f06512c4205551fb04bcfd2cdc9fedf",
+                "url": "https://api.github.com/repos/phpbb/epv/zipball/fa799a5ed0196089fa93658da4d56289d3b57b76",
+                "reference": "fa799a5ed0196089fa93658da4d56289d3b57b76",
                 "shasum": ""
             },
             "require": {
@@ -260,7 +260,7 @@
                 }
             ],
             "description": "A extension validator for phpBB extensions. Extensions are required to pass the validator when submitted to the extension database.",
-            "time": "2017-09-07 16:20:48"
+            "time": "2018-05-05T19:07:37+00:00"
         },
         {
             "name": "psr/log",
