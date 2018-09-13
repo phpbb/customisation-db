@@ -17,7 +17,7 @@
 </head>
 <body id="demo">
 	<div class="demo-header">
-		<a href="{U_HOME}" id="logo">
+		<a href="<!-- IF U_SITE_HOME -->{U_SITE_HOME}<!-- ELSE -->{U_INDEX}<!-- ENDIF -->" id="logo">
 			<img src="{T_TITANIA_THEME_PATH}/images/phpbb_logo.png" alt="" />
 		</a>
 
@@ -69,7 +69,7 @@
 
 		<ul class="linklist">
 			<li>
-				<a href="{U_HOME}" accesskey="h">{L_HOME}</a>
+				<a href="<!-- IF U_SITE_HOME -->{U_SITE_HOME}<!-- ELSE -->{U_INDEX}<!-- ENDIF -->" accesskey="h">{L_HOME}</a>
 				<!-- BEGIN navlinks --> <strong>&#8249;</strong> <a href="{navlinks.U_VIEW_FORUM}">{navlinks.FORUM_NAME}</a><!-- END navlinks -->
 			</li>
 		</ul>

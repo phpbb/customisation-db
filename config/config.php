@@ -55,6 +55,7 @@ class config extends \phpbb\titania\entity\base
 			'contrib_temp_path'			=> array('default' => $this->ext_root_path . 'files/contrib_temp/'),
 			'language_path'				=> array('default' => $this->ext_root_path . 'language/'),
 			'table_prefix'				=> array('default' => 'cdb_'),
+			'site_home_url'				=> array('default' => 'https://www.phpbb.com'),
 
 			// Increment the user's post count? Array of the post_types for which we will increment the post count
 			'increment_postcount'		=> array('default' => array(ext::TITANIA_SUPPORT)),
@@ -96,7 +97,7 @@ class config extends \phpbb\titania\entity\base
 			'max_rating'				=> array('default' => 5),
 
 			'phpbbcom_profile'			=> array('default' => true),
-			'phpbbcom_viewprofile_url'	=> array('default' => 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
+			'phpbbcom_viewprofile_url'	=> array('default' => 'https://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
 
 			// Mod/style database release forums (receive announcements on updates/approval)
 			'forum_mod_database'		=> array('default' => array(
