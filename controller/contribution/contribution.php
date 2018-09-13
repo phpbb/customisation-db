@@ -194,6 +194,8 @@ class contribution extends base
 		$demo->load_styles();
 		$demo->assign_details();
 
+		$this->template->assign_var('U_SITE_HOME', $this->config['site_home_url'] ?: $this->ext_config->site_home_url);
+
 		$title = $this->contrib->contrib_name .
 			' - [' . $this->ext_config->phpbb_versions[$branch]['name'] . '] ' .
 			$this->user->lang['CONTRIB_DEMO'];
