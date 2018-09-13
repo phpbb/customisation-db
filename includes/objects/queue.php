@@ -87,8 +87,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 			'allow_author_repack'	=> array('default' => false),
 			'queue_tested'			=> array('default' => false),
-
-			'topic_queue_id'	=> array('default' => 0),
 		));
 
 		$this->db = phpbb::$container->get('dbal.conn');
@@ -716,7 +714,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		// First we copy over the queue discussion topic if required
 		$sql = 'SELECT topic_id, topic_queue_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
-		WHERE parent_id = ' . $this->contrib_id . '
+			WHERE parent_id = ' . $this->contrib_id . '
 			AND topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION;
 		$result = phpbb::$db->sql_query($sql);
 		$topic_row = phpbb::$db->sql_fetchrow($result);
@@ -725,7 +723,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		// Do we need to create the queue discussion topic or not?
 		if ($topic_row['topic_id'] && !$topic_row['topic_queue_id'])
 		{
-			$forum_id = titania::$config->{$post_object->topic->topic_category}[ext::TITANIA_QUEUE_DISCUSSION];
+			$forum_id = titania_post::get_queue_forum_id($post_object->topic->topic_category, ext::TITANIA_QUEUE_DISCUSSION);
 
 			$temp_post = new titania_post;
 
@@ -796,7 +794,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		// Does a queue topic already exist?  If so, don't repost.
 		$sql = 'SELECT topic_queue_id FROM ' . TITANIA_TOPICS_TABLE . '
-		WHERE topic_id = ' . $this->queue_topic_id;
+			WHERE topic_id = ' . $this->queue_topic_id;
 		phpbb::$db->sql_query($sql);
 		$topic_queue_id = phpbb::$db->sql_fetchfield('topic_queue_id');
 		phpbb::$db->sql_freeresult();
@@ -805,7 +803,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			return;
 		}
 
-		$forum_id = titania::$config->{$post_object->topic->topic_category}[$post_object->topic->topic_type];
+		$forum_id = titania_post::get_queue_forum_id($post_object->topic->topic_category, $post_object->topic->topic_type);
 
 		if (!$forum_id)
 		{
@@ -902,6 +900,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		phpbb::_include('functions_admin', 'move_topics');
 
-		move_topics($row['topic_queue_id'], titania::$config->{$row['topic_category']}['trash']);
+		move_topics($row['topic_queue_id'], titania_post::get_queue_forum_id($row['topic_category'], 'trash'));
 	}
 }

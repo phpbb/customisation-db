@@ -13,7 +13,7 @@
 
 namespace phpbb\titania\migrations;
 
-class forum_posting extends base
+class validation_queue_forums extends base
 {
 	public function effectively_installed()
 	{

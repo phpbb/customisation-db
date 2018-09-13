@@ -997,7 +997,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 			return;
 		}
 
-		$forum_id = titania::$config->{$this->topic->topic_category}[$this->post_type];
+		$forum_id = self::get_queue_forum_id($this->topic->topic_category, $this->post_type);
 
 		if (!$forum_id)
 		{
@@ -1039,7 +1039,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 			return;
 		}
 
-		$forum_id = titania::$config->{$this->topic->topic_category}[$this->post_type];
+		$forum_id = self::get_queue_forum_id($this->topic->topic_category, $this->post_type);
 
 		if (!$forum_id)
 		{
@@ -1086,5 +1086,38 @@ class titania_post extends \phpbb\titania\entity\message_base
 		phpbb::$db->sql_freeresult($result);
 
 		delete_post($post_data['forum_id'], $post_data['topic_id'], $post_data['post_id'], $post_data);
+	}
+
+	/**
+	 * Get a validation queue forum ID
+	 *
+	 * @param int|string $type TITANIA_TYPE_EXTENSION|TITANIA_TYPE_MOD|TITANIA_TYPE_STYLE
+	 * @param int|string $mode TITANIA_QUEUE_DISCUSSION|TITANIA_QUEUE|trash
+	 *
+	 * @return int The forum's id
+	 */
+	public static function get_queue_forum_id($type, $mode)
+	{
+		switch ($type)
+		{
+			case ext::TITANIA_TYPE_EXTENSION:
+				$type = 'titania_extensions_queue';
+				break;
+
+			case ext::TITANIA_TYPE_MOD:
+				$type = 'titania_mods_queue';
+				break;
+
+			case ext::TITANIA_TYPE_STYLE:
+				$type = 'titania_styles_queue';
+				break;
+		}
+
+		if (null !== titania::$config->{$type}[$mode])
+		{
+			return (int) titania::$config->{$type}[$mode];
+		}
+
+		return 0;
 	}
 }
