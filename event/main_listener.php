@@ -181,6 +181,7 @@ class main_listener implements EventSubscriberInterface
 		$this->template->assign_vars(array(
 			'U_FAQ'		=> $this->controller_helper->route('phpbb.titania.faq'),
 			'U_SEARCH'	=> $this->controller_helper->route('phpbb.titania.search'),
+			'S_BODY_CLASS'	=> 'customisation-database',
 		));
 
 		if ($this->user->data['user_id'] == ANONYMOUS)
