@@ -188,9 +188,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 		$this->types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 		$this->config = phpbb::$container->get('config');
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -748,8 +745,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			));
 		}
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $vars, $this);
 		// Display a warning for styles not meeting the licensing guidelines
 		if ($this->contrib_type == ext::TITANIA_TYPE_STYLE && !empty($this->download))
 		{
@@ -1075,9 +1070,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		// Index!
 		$this->index();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -1324,9 +1316,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		// Index!
 		$this->index();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -1584,9 +1573,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				}
 			}
 		}
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $error, $this);
 
 		return $error;
 	}

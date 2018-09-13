@@ -177,9 +177,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 			$this->topic = new titania_topic;
 			$this->topic->topic_type = $this->post_type;
 		}
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -520,8 +517,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 			phpbb::update_user_postcount($this->post_user_id);
 		}
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 		$this->forum_queue_post();
 	}
 
@@ -582,8 +577,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 
 		parent::submit();
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 		$this->forum_queue_edit();
 	}
 
@@ -646,9 +639,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 		{
 			phpbb::update_user_postcount($this->post_user_id, '-');
 		}
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -722,9 +712,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 		{
 			phpbb::update_user_postcount($this->post_user_id);
 		}
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -790,8 +777,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 			phpbb::update_user_postcount($this->post_user_id, '-');
 		}
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 		$this->forum_queue_hard_delete();
 
 		// Initiate self-destruct mode
@@ -835,9 +820,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 
 		// Self submission
 		parent::submit();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -1001,8 +983,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 			'S_ACCESS_AUTHORS'				=> $this->access->is_author($this->post_access),
 		);
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $details, $this);
 
 		return $details;
 	}

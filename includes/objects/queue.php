@@ -88,8 +88,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'allow_author_repack'	=> array('default' => false),
 			'queue_tested'			=> array('default' => false),
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 			'topic_queue_id'	=> array('default' => 0),
 		));
 
@@ -134,9 +132,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		}
 
 		parent::submit();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -222,8 +217,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		phpbb::$config['min_post_chars'] = 1;
 		phpbb::$config['max_post_chars'] = 0;
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $post, $this);
 		$this->forum_queue_update_first_queue_post($post);
 
 		// Store the post
@@ -304,8 +297,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 	public function delete()
 	{
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 		$this->trash_queue_topic();
 
 		$post = new titania_post;
@@ -364,9 +355,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			$vars,
 			phpbb::$user->data['user_id']
 		);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function in_progress()
@@ -376,9 +364,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->queue_progress = phpbb::$user->data['user_id'];
 		$this->queue_progress_time = titania::$time;
 		$this->submit(false);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function no_progress()
@@ -388,18 +373,12 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->queue_progress = 0;
 		$this->queue_progress_time = 0;
 		$this->submit(false);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function change_tested_mark($mark)
 	{
 		$this->queue_tested = (bool) $mark;
 		$this->submit(false);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this, $mark);
 	}
 
 	/**
@@ -478,8 +457,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		);
 		$this->subscriptions->send_notifications(ext::TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify', $email_vars);
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 		$this->trash_queue_topic();
 	}
 
@@ -495,8 +472,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->queue_close_user = phpbb::$user->data['user_id'];
 		$this->submit(false);
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this, $revision_status);
 		$this->trash_queue_topic();
 	}
 
@@ -531,8 +506,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		// Send notification message
 		$this->send_approve_deny_notification(false);
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 		$this->trash_queue_topic();
 	}
 
@@ -602,9 +575,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'bbcode_bitfield'	=> $message_bitfield,
 			'bbcode_uid'		=> $message_uid,
 		);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $data, $this);
 
 		// Submit Plz
 		submit_pm('post', $subject, $data, true);

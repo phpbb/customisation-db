@@ -114,9 +114,6 @@ class titania_topic extends \phpbb\titania\entity\database_base
 		$this->tracking = phpbb::$container->get('phpbb.titania.tracking');
 		$this->display = phpbb::$container->get('phpbb.titania.display');
 		$this->access = phpbb::$container->get('phpbb.titania.access');
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function submit()
@@ -126,9 +123,6 @@ class titania_topic extends \phpbb\titania\entity\database_base
 		$this->topic_subject_clean = url::generate_slug($this->topic_subject);
 
 		parent::submit();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -404,9 +398,6 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'FOLDER_IMG_WIDTH'				=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 			'FOLDER_IMG_HEIGHT'				=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 		);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $details, $this);
 
 		return $details;
 	}
