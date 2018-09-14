@@ -1113,9 +1113,9 @@ class titania_post extends \phpbb\titania\entity\message_base
 				break;
 		}
 
-		if (null !== titania::$config->{$type}[$mode])
+		if (isset(titania::$config->$type[$mode]))
 		{
-			return (int) titania::$config->{$type}[$mode];
+			return (int) titania::$config->$type[$mode];
 		}
 
 		return 0;
