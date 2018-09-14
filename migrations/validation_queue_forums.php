@@ -24,7 +24,10 @@ class validation_queue_forums extends base
 
 	static public function depends_on()
 	{
-		return array('\phpbb\titania\migrations\release_1_1_1');
+		return array(
+			'\phpbb\titania\migrations\release_1_1_0',
+			'\phpbb\titania\migrations\release_1_1_1',
+		);
 	}
 
 	public function update_schema()
