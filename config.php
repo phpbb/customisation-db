@@ -39,6 +39,25 @@ $config = array(
 	),
 
 	/**
+	* IDs of forums used for extension/styles validation queue topics
+	*/
+	'titania_extensions_queue' => array(
+		ext::TITANIA_QUEUE_DISCUSSION => 516,
+		ext::TITANIA_QUEUE            => 511,
+		'trash'                       => 521,
+	),
+	'titania_mods_queue'       => array(
+		ext::TITANIA_QUEUE_DISCUSSION => 61,
+		ext::TITANIA_QUEUE            => 38,
+		'trash'                       => 28,
+	),
+	'titania_styles_queue'     => array(
+		ext::TITANIA_QUEUE_DISCUSSION => 87,
+		ext::TITANIA_QUEUE            => 40,
+		'trash'                       => 83,
+	),
+
+	/**
 	* IDs of account used for topic/post release in database forum
 	*/
 	'forum_extension_robot' => 77503,
