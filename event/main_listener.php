@@ -13,7 +13,10 @@
 
 namespace phpbb\titania\event;
 
+use phpbb\db\driver\driver_interface as db_driver_interface;
 use phpbb\event\data;
+use phpbb\auth\auth;
+use phpbb\titania\ext;
 use s9e\TextFormatter\Configurator\Items\TemplateDocument;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -23,6 +26,9 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 */
 class main_listener implements EventSubscriberInterface
 {
+	/** @var db_driver_interface */
+	protected $db;
+
 	/** @var \phpbb\user */
 	protected $user;
 
@@ -50,8 +56,9 @@ class main_listener implements EventSubscriberInterface
 	* @param string	$phpbb_root_path	phpBB root path
 	* @param string	$php_ext			PHP file extension
 	*/
-	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $php_ext)
+	public function __construct(db_driver_interface $db, \phpbb\user $user, \phpbb\template\template $template, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $php_ext)
 	{
+		$this->db = $db;
 		$this->user = $user;
 		$this->template = $template;
 		$this->controller_helper = $controller_helper;
@@ -67,6 +74,9 @@ class main_listener implements EventSubscriberInterface
 			'kernel.request'							=> array(array('startup', -1)),
 			'core.page_header_after'					=> 'overwrite_template_vars',
             'core.text_formatter_s9e_configure_after'	=> 'inject_bbcode_code_lang',
+
+			// Check whether a user is removed from a team
+			'core.group_delete_user_after'				=> 'remove_users_from_subscription',
 		);
 	}
 
@@ -218,4 +228,68 @@ class main_listener implements EventSubscriberInterface
 
         $dom->saveChanges();
     }
+
+	/**
+	 * Remove users from queue subscription if they are removed from a team and subsequently lose all queue permissions
+	 * @param $event
+	 */
+	public function remove_users_from_subscription($event)
+	{
+		$this->controller_helper->include_dynamic_constants();
+
+		$queue_permissions = array(
+			'u_titania_mod_extension_queue',
+			'u_titania_mod_bridge_queue',
+			'u_titania_mod_bbcode_queue',
+			'u_titania_mod_converter_queue',
+			'u_titania_mod_translation_queue',
+			'u_titania_mod_modification_queue',
+			'u_titania_mod_style_queue'
+		);
+
+		$remove_user_ids = array();
+
+		foreach ($event['user_id_ary'] as $user_id)
+		{
+			// For every user removed from the group, check if they should still receive emails
+			$auth = new auth();
+
+			//$user = \users_overlord::get_user($user_id);
+			$user_data = $auth->obtain_user_data($user_id);
+			$auth->acl($user_data);
+
+			$hasQueueAccess = false;
+
+			foreach ($queue_permissions as $permission)
+			{
+				// If the user has access to any of the private queues, then it can be assumed they
+				// will still be eligible to receive emails.
+				if ($auth->acl_get($permission))
+				{
+					$hasQueueAccess = true;
+					break;
+				}
+			}
+
+			if (!$hasQueueAccess)
+			{
+				// Remove queue subscriptions
+				$remove_user_ids[] = (int) $user_id;
+			}
+		}
+
+		// Only continue if there are users to remove from the Titania queue subscriptions
+		if (sizeof($remove_user_ids) > 0)
+		{
+			// Remove subscription
+			$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . '
+					WHERE watch_user_id IN (' . implode(',', $remove_user_ids) . ')
+						AND watch_object_type = ' . ext::TITANIA_QUEUE;
+echo $sql . '<br /><br />';
+			//$this->db->sql_query($sql);
+		}
+
+		var_dump($event);
+		die();
+	}
 }

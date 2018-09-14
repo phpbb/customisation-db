@@ -101,4 +101,12 @@ class helper extends \phpbb\controller\helper
 	{
 		return parent::error($this->user->lang($message), $code);
 	}
+
+
+
+	// See if this is required or not??
+	public function include_dynamic_constants()
+	{
+		\titania::_include('dynamic_constants');
+	}
 }

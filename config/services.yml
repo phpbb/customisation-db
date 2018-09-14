@@ -210,6 +210,7 @@ services:
     phpbb.titania.listener:
         class: phpbb\titania\event\main_listener
         arguments:
+            - '@dbal.conn'
             - '@user'
             - '@template'
             - '@phpbb.titania.controller.helper'
