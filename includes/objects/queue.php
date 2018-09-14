@@ -713,7 +713,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$path_helper = phpbb::$container->get('path_helper');
 
 		// First we copy over the queue discussion topic if required
-		$sql = 'SELECT topic_id, topic_queue_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
+		$sql = 'SELECT topic_id, phpbb_topic_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
 			WHERE parent_id = ' . $this->contrib_id . '
 			AND topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION;
 		$result = phpbb::$db->sql_query($sql);
@@ -721,7 +721,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		phpbb::$db->sql_freeresult($result);
 
 		// Do we need to create the queue discussion topic or not?
-		if ($topic_row['topic_id'] && !$topic_row['topic_queue_id'])
+		if ($topic_row['topic_id'] && !$topic_row['phpbb_topic_id'])
 		{
 			$forum_id = titania_post::get_queue_forum_id($post_object->topic->topic_category, ext::TITANIA_QUEUE_DISCUSSION);
 
@@ -784,8 +784,8 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			if ($topic_id)
 			{
 				$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
-				SET topic_queue_id = ' . $topic_id . '
-				WHERE topic_id = ' . $topic_row['topic_id'];
+					SET phpbb_topic_id = ' . $topic_id . '
+					WHERE topic_id = ' . $topic_row['topic_id'];
 				phpbb::$db->sql_query($sql);
 			}
 
@@ -793,12 +793,12 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		}
 
 		// Does a queue topic already exist?  If so, don't repost.
-		$sql = 'SELECT topic_queue_id FROM ' . TITANIA_TOPICS_TABLE . '
+		$sql = 'SELECT phpbb_topic_id FROM ' . TITANIA_TOPICS_TABLE . '
 			WHERE topic_id = ' . $this->queue_topic_id;
 		phpbb::$db->sql_query($sql);
-		$topic_queue_id = phpbb::$db->sql_fetchfield('topic_queue_id');
+		$phpbb_topic_id = phpbb::$db->sql_fetchfield('phpbb_topic_id');
 		phpbb::$db->sql_freeresult();
-		if ($topic_queue_id)
+		if ($phpbb_topic_id)
 		{
 			return;
 		}
@@ -874,10 +874,10 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		$topic_id = phpbb_posting('post', $options);
 
-		$post_object->topic->topic_queue_id = $topic_id;
+		$post_object->topic->phpbb_topic_id = $topic_id;
 
 		$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
-			SET topic_queue_id = ' . (int) $topic_id . '
+			SET phpbb_topic_id = ' . (int) $topic_id . '
 			WHERE topic_id = ' . $post_object->topic->topic_id;
 		phpbb::$db->sql_query($sql);
 	}
@@ -887,19 +887,19 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	 */
 	protected function trash_queue_topic()
 	{
-		$sql = 'SELECT topic_queue_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
+		$sql = 'SELECT phpbb_topic_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
 			WHERE topic_id = ' . (int) $this->queue_topic_id;
 		$result = phpbb::$db->sql_query($sql);
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
 
-		if (!$row['topic_queue_id'])
+		if (!$row['phpbb_topic_id'])
 		{
 			return;
 		}
 
 		phpbb::_include('functions_admin', 'move_topics');
 
-		move_topics($row['topic_queue_id'], titania_post::get_queue_forum_id($row['topic_category'], 'trash'));
+		move_topics($row['phpbb_topic_id'], titania_post::get_queue_forum_id($row['topic_category'], 'trash'));
 	}
 }

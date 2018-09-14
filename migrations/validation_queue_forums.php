@@ -19,7 +19,7 @@ class validation_queue_forums extends base
 	{
 		$table_prefix = $this->get_titania_table_prefix();
 
-		return $this->db_tools->sql_column_exists($table_prefix . 'posts', 'post_queue_id');
+		return $this->db_tools->sql_column_exists($table_prefix . 'posts', 'phpbb_post_id');
 	}
 
 	static public function depends_on()
@@ -34,10 +34,10 @@ class validation_queue_forums extends base
 		return array(
 			'add_columns'		=> array(
 				$table_prefix . 'posts'			=> array(
-					'post_queue_id'		=> array('UINT', 0),
+					'phpbb_post_id'		=> array('UINT', 0),
 				),
 				$table_prefix . 'topics'			=> array(
-					'topic_queue_id'	=> array('UINT', 0),
+					'phpbb_topic_id'	=> array('UINT', 0),
 				),
 			),
 		);
@@ -50,10 +50,10 @@ class validation_queue_forums extends base
 		return array(
 			'drop_columns'		=> array(
 				$table_prefix . 'posts'			=> array(
-					'post_queue_id'
+					'phpbb_post_id'
 				),
 				$table_prefix . 'topics'		=> array(
-					'topic_queue_id'
+					'phpbb_topic_id'
 				),
 			),
 		);

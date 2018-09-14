@@ -117,7 +117,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 			'post_text_uid'			=> array('default' => '',	'message_field' => 'message_uid'),
 			'post_text_options'		=> array('default' => 7,	'message_field' => 'message_options'),
 
-			'post_queue_id'			=> array('default' => 0)
+			'phpbb_post_id'			=> array('default' => 0)
 		));
 
 		$this->db = phpbb::$container->get('dbal.conn');
@@ -992,7 +992,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 	 */
 	protected function forum_queue_post()
 	{
-		if (!$this->topic->topic_queue_id)
+		if (!$this->topic->phpbb_topic_id)
 		{
 			return;
 		}
@@ -1016,15 +1016,15 @@ class titania_post extends \phpbb\titania\entity\message_base
 
 		$options = array(
 			'poster_id'				=> $this->post_user_id,
-			'topic_id'				=> $this->topic->topic_queue_id,
+			'topic_id'				=> $this->topic->phpbb_topic_id,
 			'topic_title'			=> $this->post_subject,
 			'post_text'				=> $post_text,
 		);
 
-		$this->post_queue_id = phpbb_posting('reply', $options);
+		$this->phpbb_post_id = phpbb_posting('reply', $options);
 
 		$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
-			SET post_queue_id = ' . $this->post_queue_id . '
+			SET phpbb_post_id = ' . $this->phpbb_post_id . '
 			WHERE post_id = ' . $this->post_id;
 		phpbb::$db->sql_query($sql);
 	}
@@ -1034,7 +1034,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 	 */
 	protected function forum_queue_edit()
 	{
-		if (!$this->post_queue_id)
+		if (!$this->phpbb_post_id)
 		{
 			return;
 		}
@@ -1057,7 +1057,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 		$post_text .= "\n\n" . $path_helper->strip_url_params($this->get_url(), 'sid');
 
 		$options = array(
-			'post_id'				=> $this->post_queue_id,
+			'post_id'				=> $this->phpbb_post_id,
 			'topic_title'			=> $this->post_subject,
 			'post_text'				=> $post_text,
 		);
@@ -1070,7 +1070,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 	 */
 	protected function forum_queue_hard_delete()
 	{
-		if (!$this->post_queue_id)
+		if (!$this->phpbb_post_id)
 		{
 			return;
 		}
@@ -1079,7 +1079,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 
 		$sql = 'SELECT t.*, p.*
 			FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
-			WHERE p.post_id = ' . $this->post_queue_id . '
+			WHERE p.post_id = ' . $this->phpbb_post_id . '
 				AND t.topic_id = p.topic_id';
 		$result = phpbb::$db->sql_query($sql);
 		$post_data = phpbb::$db->sql_fetchrow($result);
