@@ -241,8 +241,11 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function remove_users_from_subscription($event)
 	{
-		// Include Titania so we can access the constants
-		require($this->ext_root_path . 'common.' . $this->php_ext);
+		if (!defined('TITANIA_WATCH_TABLE'))
+		{
+			// Include Titania so we can access the constants
+			require($this->ext_root_path . 'common.' . $this->php_ext);
+		}
 
 		$queue_permissions = array(
 			'u_titania_mod_extension_queue',
@@ -261,11 +264,10 @@ class main_listener implements EventSubscriberInterface
 			// For every user removed from the group, check if they should still receive emails
 			$auth = new auth();
 
-			//$user = \users_overlord::get_user($user_id);
 			$user_data = $auth->obtain_user_data($user_id);
 			$auth->acl($user_data);
 
-			$hasQueueAccess = false;
+			$has_queue_access = false;
 
 			foreach ($queue_permissions as $permission)
 			{
@@ -273,12 +275,12 @@ class main_listener implements EventSubscriberInterface
 				// will still be eligible to receive emails.
 				if ($auth->acl_get($permission))
 				{
-					$hasQueueAccess = true;
+					$has_queue_access = true;
 					break;
 				}
 			}
 
-			if (!$hasQueueAccess)
+			if (!$has_queue_access)
 			{
 				// Remove queue subscriptions
 				$remove_user_ids[] = (int) $user_id;
@@ -290,7 +292,7 @@ class main_listener implements EventSubscriberInterface
 		{
 			// Remove subscription
 			$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . '
-					WHERE watch_user_id IN (' . implode(',', $remove_user_ids) . ')
+					WHERE ' . $this->db->sql_in_set('watch_user_id', $remove_user_ids) . '
 						AND watch_object_type = ' . ext::TITANIA_QUEUE;
 
 			$this->db->sql_query($sql);
