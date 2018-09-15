@@ -108,6 +108,34 @@ class contribs_overlord
 	}
 
 	/**
+	 * Get list of the hidden categories
+	 * @return array
+	 */
+	public static function get_hidden_categories()
+	{
+		$hidden_categories_ary = array(
+			'SELECT'	=> 'c.category_id',
+
+			'FROM'		=> array(
+				TITANIA_CATEGORIES_TABLE	=> 'c',
+			),
+
+			'WHERE'		=> 'c.category_visible = 0',
+		);
+
+		$hidden_categories_sql = phpbb::$db->sql_build_query('SELECT', $hidden_categories_ary);
+		$hidden_categories_result = phpbb::$db->sql_query($hidden_categories_sql);
+		$hidden_categories_ids = array();
+
+		while ($hidden_categories_row = phpbb::$db->sql_fetchrow($hidden_categories_result))
+		{
+			$hidden_categories_ids[] = (int)$hidden_categories_row['category_id'];
+		}
+
+		return $hidden_categories_ids;
+	}
+
+	/**
 	 * Display contributions
 	 *
 	 * @param string $mode The mode (category, author)
@@ -124,6 +152,7 @@ class contribs_overlord
 
 		$tracking = phpbb::$container->get('phpbb.titania.tracking');
 		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
+		$cache = phpbb::$container->get('phpbb.titania.cache');
 
 		// Setup the sort tool if not sent, then request
 		if ($sort === false)
@@ -138,6 +167,9 @@ class contribs_overlord
 			c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating,
 			c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
 			c.contrib_limited_support, c.contrib_categories, c.contrib_desc, c.contrib_desc_uid';
+
+		$check_hidden_categories_on_all = false;
+		$hidden_categories_ids = self::get_hidden_categories();
 
 		switch ($mode)
 		{
@@ -175,6 +207,43 @@ class contribs_overlord
 			break;
 
 			case 'category' :
+				// Get a list of hidden categories, so that if a category has been set to invisible we won't show
+				// the contribs in the parent category listing
+				$all_subcategory_ids = array();
+
+				foreach ($hidden_categories_ids as $hidden_category_id)
+				{
+					$all_subcategory_ids[] = (int) $hidden_category_id;
+					$children_ids = array_keys($cache->get_category_children($hidden_category_id));
+
+					foreach ($children_ids as $child_id)
+					{
+						// Get a list of the children, it's the only way we can find out if we are in the
+						// hidden category explicitly in the next step
+						if (!in_array((int) $child_id, $all_subcategory_ids))
+						{
+							$all_subcategory_ids[] = (int) $child_id;
+						}
+					}
+				}
+
+				// We'll only remove categories if these are not equal. If they ARE equal then it means we are currently
+				// inside the hidden category (as the other ids will be the subcategories)
+				asort($all_subcategory_ids);
+				asort($id);
+
+				if (serialize(array_values($all_subcategory_ids)) != serialize(array_values($id)))
+				{
+					// Remove the invisible category ids from the list of categories we check against
+					$visible_category_ids = array_diff($id, $hidden_categories_ids);
+				}
+
+				else
+				{
+					// Show everything
+					$visible_category_ids = $all_subcategory_ids;
+				}
+
 				$sql_ary = array(
 					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
@@ -200,7 +269,9 @@ class contribs_overlord
 						)
 					),
 
-					'WHERE'		=> ((is_array($id) && sizeof($id)) ? phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $id)) : 'cic.category_id = ' . (int) $id) . '
+					// If multiple categories, use the stripped list. If it's just the single hidden category, that's okay
+					// as presumably someone has gone looking for the hidden category, or it has been linked to, etc.
+					'WHERE'		=> ((is_array($visible_category_ids) && sizeof($visible_category_ids)) ? phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $visible_category_ids)) : 'cic.category_id = ' . (int) $id) . '
 						AND c.contrib_visible = 1' .
 						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
 
@@ -209,6 +280,7 @@ class contribs_overlord
 			break;
 
 			case 'all' :
+				$check_hidden_categories_on_all = true;
 				$sql_ary = array(
 					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
@@ -290,8 +362,21 @@ class contribs_overlord
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
 		$contrib_ids = $user_ids = array();
+
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			if ($check_hidden_categories_on_all)
+			{
+				$contrib_categories = explode(',', $row['contrib_categories']);
+
+				if (sizeof($contrib_categories) == 1 && in_array($contrib_categories[0], $hidden_categories_ids))
+				{
+					// If this contribution is only in one category, and that category is hidden, then don't
+					// show it on the "all" listings page.
+					continue;
+				}
+			}
+
 			//Check to see if user has permission
 			if (!$mod_contrib_mod && $row['contrib_user_id'] != phpbb::$user->data['user_id'] && $row['coauthor'] != phpbb::$user->data['user_id'] && !$access->is_team())
 			{
