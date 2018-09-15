@@ -292,11 +292,8 @@ class main_listener implements EventSubscriberInterface
 			$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . '
 					WHERE watch_user_id IN (' . implode(',', $remove_user_ids) . ')
 						AND watch_object_type = ' . ext::TITANIA_QUEUE;
-echo $sql . '<br /><br />';
-			//$this->db->sql_query($sql);
-		}
 
-		var_dump($event);
-		die();
+			$this->db->sql_query($sql);
+		}
 	}
 }
