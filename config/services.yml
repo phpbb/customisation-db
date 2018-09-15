@@ -215,6 +215,7 @@ services:
             - '@template'
             - '@phpbb.titania.controller.helper'
             - '%core.root_path%'
+            - '%phpbb.titania.root_path%'
             - '%core.php_ext%'
         tags:
             - { name: event.listener }

@@ -44,19 +44,24 @@ class main_listener implements EventSubscriberInterface
 	/** @var string */
 	protected $php_ext;
 
+	/** @var string */
+	protected $ext_root_path;
+
 	/** @var bool */
 	protected $in_titania;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\user $user
-	* @param \phpbb\template\template $template
-	* @param \phpbb\titania\controller\helper $controller_helper
-	* @param string	$phpbb_root_path	phpBB root path
-	* @param string	$php_ext			PHP file extension
-	*/
-	public function __construct(db_driver_interface $db, \phpbb\user $user, \phpbb\template\template $template, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $php_ext)
+	 * Constructor
+	 *
+	 * @param db_driver_interface $db
+	 * @param \phpbb\user $user
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\titania\controller\helper $controller_helper
+	 * @param string $phpbb_root_path phpBB root path
+	 * @param string $ext_root_path Titania root path
+	 * @param string $php_ext PHP file extension
+	 */
+	public function __construct(db_driver_interface $db, \phpbb\user $user, \phpbb\template\template $template, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $ext_root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->user = $user;
@@ -64,6 +69,7 @@ class main_listener implements EventSubscriberInterface
 		$this->controller_helper = $controller_helper;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+		$this->ext_root_path = $ext_root_path;
 		$this->in_titania = false;
 	}
 
@@ -164,7 +170,7 @@ class main_listener implements EventSubscriberInterface
 		}
 		$this->in_titania = true;
 
-		require($this->phpbb_root_path . 'ext/phpbb/titania/common.' . $this->php_ext);
+		require($this->ext_root_path . 'common.' . $this->php_ext);
 	}
 
 	public function overwrite_template_vars($event)
@@ -235,7 +241,8 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function remove_users_from_subscription($event)
 	{
-		$this->controller_helper->include_dynamic_constants();
+		// Include Titania so we can access the constants
+		require($this->ext_root_path . 'common.' . $this->php_ext);
 
 		$queue_permissions = array(
 			'u_titania_mod_extension_queue',
