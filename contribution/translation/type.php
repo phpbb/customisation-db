@@ -152,6 +152,20 @@ class type extends base
 			$revision->load_phpbb_versions();
 		}
 
+		// Check whether the LICENSE file exists; if it doesn't then let the user know
+		$package->ensure_extracted();
+		$license_file = $package->find_directory(array('files' => array('required' => 'LICENSE')));
+
+		if (empty($license_file))
+		{
+			$errors = array(
+				// Inform the user that they must include a LICENSE file
+				$this->user->lang('ERROR_NO_TRANSLATION_LICENSE')
+			);
+
+			return array('error' => $errors);
+		}
+
 		$version = $revision->phpbb_versions[0];
 
 		if ($version['phpbb_version_branch'] != 30)
