@@ -141,7 +141,7 @@ class contribs_overlord
 	 * Display contributions
 	 *
 	 * @param string $mode The mode (category, author)
-	 * @param int|array $id The parent id (only show contributions under this category, author, etc)
+	 * @param int|array $hierarchy_ids The parent id (plus any subcategory ids; if categories) (only show contributions under this category, author, etc)
 	 * @param int|bool $branch Branch to limit results to: 20|30|31. Defaults to false.
 	 * @param \phpbb\titania\sort|bool $sort
 	 * @param string $blockname The name of the template block to use (contribs by default)
@@ -149,7 +149,7 @@ class contribs_overlord
 	 * @return array
 	 * @throws Exception
 	 */
-	public static function display_contribs($mode, $id, $branch = false, $sort = false, $blockname = 'contribs')
+	public static function display_contribs($mode, $hierarchy_ids, $branch = false, $sort = false, $blockname = 'contribs')
 	{
 		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
@@ -178,7 +178,7 @@ class contribs_overlord
 		{
 			case 'author' :
 				// Get the contrib_ids this user is an author in (includes as a co-author)
-				$contrib_ids = titania::$cache->get_author_contribs($id, $types, phpbb::$user);
+				$contrib_ids = titania::$cache->get_author_contribs($hierarchy_ids, $types, phpbb::$user);
 
 				if (!sizeof($contrib_ids))
 				{
@@ -209,42 +209,50 @@ class contribs_overlord
 				);
 			break;
 
-			case 'category' :
-				// Get a list of hidden categories, so that if a category has been set to invisible we won't show
-				// the contribs in the parent category listing
-				$all_subcategory_ids = array();
+			case 'category':
+				// We need to determine if we are currently inside the "hidden" category
+				// The only way we can do that is to look at each id, get it's children and then compare the array
+				// against the $hierarchy_ids - if we get a match on any of them, we know we are in the actual category
+				$actual_category = array(
+					'actual' => false,
+					'id' => 0,
+					'all' => array(),
+				);
 
-				foreach ($hidden_categories_ids as $hidden_category_id)
+				// Simplify it - just make it an array
+				if (is_integer($hierarchy_ids))
 				{
-					$all_subcategory_ids[] = (int) $hidden_category_id;
-					$children_ids = array_keys($cache->get_category_children($hidden_category_id));
+					$hierarchy_ids = array($hierarchy_ids);
+				}
 
-					foreach ($children_ids as $child_id)
+				foreach ($hierarchy_ids as $hierarchy_id)
+				{
+					$all_subcategory_ids = array_keys($cache->get_category_children($hierarchy_id));
+					$all_subcategory_ids[] = (int) $hierarchy_id;
+
+					asort($all_subcategory_ids);
+					asort($hierarchy_ids);
+
+					if (array_values($all_subcategory_ids) == array_values($hierarchy_ids))
 					{
-						// Get a list of the children, it's the only way we can find out if we are in the
-						// hidden category explicitly in the next step
-						if (!in_array((int) $child_id, $all_subcategory_ids))
-						{
-							$all_subcategory_ids[] = (int) $child_id;
-						}
+						$actual_category['actual'] = true;
+						$actual_category['id'] = $hierarchy_id;
+						$actual_category['all'] = $all_subcategory_ids;
+						break;
 					}
 				}
 
-				// We'll only remove categories if these are not equal. If they ARE equal then it means we are currently
-				// inside the hidden category (as the other ids will be the subcategories)
-				asort($all_subcategory_ids);
-				asort($id);
-
-				if (array_values($all_subcategory_ids) != array_values($id))
+				// If we found a hit, and that hit is inside the hidden category list - then that means
+				// we are inside the category
+				if ($actual_category['actual'] && in_array($actual_category['id'], $hidden_categories_ids))
 				{
-					// Remove the invisible category ids from the list of categories we check against
-					$visible_category_ids = array_diff($id, $hidden_categories_ids);
+					$visible_category_ids = $actual_category['all'];
 				}
 
+				// Otherwise, it's some parent category so we just strip out the hidden subcategories
 				else
 				{
-					// Show everything
-					$visible_category_ids = $all_subcategory_ids;
+					$visible_category_ids = array_diff($hierarchy_ids, $hidden_categories_ids);
 				}
 
 				$sql_ary = array(
@@ -274,9 +282,8 @@ class contribs_overlord
 
 					// If multiple categories, use the stripped list. If it's just the single hidden category, that's okay
 					// as presumably someone has gone looking for the hidden category, or it has been linked to, etc.
-					'WHERE'		=> ((is_array($visible_category_ids) && sizeof($visible_category_ids)) ? phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $visible_category_ids)) : 'cic.category_id = ' . (int) $id) . '
-						AND c.contrib_visible = 1' .
-						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
+					'WHERE'		=> phpbb::$db->sql_in_set('cic.category_id', $visible_category_ids, false, true) . '
+						AND c.contrib_visible = 1 ' . (($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
