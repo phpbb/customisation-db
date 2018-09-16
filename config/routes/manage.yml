@@ -101,3 +101,7 @@ phpbb.titania.manage.topic.rebuild_urls:
 phpbb.titania.manage.topic.resync_dots:
     path: /administration/topic/resync_dots
     defaults: { _controller: phpbb.titania.controller.manage.topic.resync_dots:handle }
+
+phpbb.titania.manage.config_settings:
+    path: /administration/config_settings
+    defaults: { _controller: phpbb.titania.controller.manage.config_settings:display }

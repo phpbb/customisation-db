@@ -381,6 +381,22 @@ services:
             - '@phpbb.titania.controller.helper'
             - '@phpbb.titania.display'
 
+    phpbb.titania.controller.manage.config_settings:
+        class: phpbb\titania\controller\manage\config_settings
+        arguments:
+            - '@auth'
+            - '@config'
+            - '@dbal.conn'
+            - '@template'
+            - '@user'
+            - '@phpbb.titania.cache'
+            - '@phpbb.titania.controller.helper'
+            - '@phpbb.titania.contribution.type.collection'
+            - '@request'
+            - '@phpbb.titania.config'
+            - '@phpbb.titania.display'
+            - '@phpbb.titania.message'
+
     phpbb.titania.controller.manage.contrib.update_release_topics:
         calls:
             - [set_tool, ["@phpbb.titania.manage.tool.contrib.update_release_topics"]]

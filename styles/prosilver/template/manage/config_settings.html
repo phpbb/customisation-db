@@ -1,0 +1,50 @@
+{% include 'manage/manage_header.html' %}
+
+{% if S_ERROR %}
+	<div class="errorbox">
+		<h3>{{ lang('WARNING') }}</h3>
+		<p>{{ ERROR_MSG }}</p>
+	</div>
+{% endif %}
+
+<form id="config_settings" method="post" action="{{ S_ACTION }}" name="config_settings" autocomplete="off">
+	<div class="panel">
+		<div class="inner">
+			<fieldset>
+				{% for config, options in loops.options %}
+					<dl>
+						<dt><label for="{{ options.NAME }}">${{ options.NAME }}:</label><br /><span>{{ lang(options.NAME|upper) }}</span></dt>
+						<dd>
+							{% if options.TYPE === 'string' %}
+								<input type="text" name="{{ options.NAME }}" id="{{ options.NAME }}" size="50" value="{{ options.VALUE }}" class="inputbox autowidth" />
+							{% elseif options.TYPE === 'int' %}
+								<input type="number" name="{{ options.NAME }}" id="{{ options.NAME }}" size="50" value="{{ options.VALUE }}" class="inputbox autowidth" />
+							{% elseif options.TYPE === 'bool' %}
+								<input type="radio" name="{{ options.NAME }}" value="1" {% if options.VALUE %}checked="checked"{% endif %} /> {{ lang('YES') }}
+								<input type="radio" name="{{ options.NAME }}" value="0" {% if not options.VALUE %}checked="checked"{% endif %} /> {{ lang('NO') }}
+							{% elseif options.TYPE === 'array' %}
+								{% for subKey, subValue in options.VALUE %}
+									<label for="{{ options.NAME ~ subKey }}">{{ subKey }} <input type="text" name="{{ options.NAME ~ subKey }}" id="{{ options.NAME ~ subKey }}" size="50" value="{{ subValue }}" class="inputbox autowidth" /></label><br />
+								{% endfor %}
+							{% endif %}
+						</dd>
+					</dl>
+				{% endfor %}
+			</fieldset>
+		</div>
+	</div>
+	<div class="panel">
+		<div class="inner">
+		<fieldset>
+			<p class="submit-buttons">
+				<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+				<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+			</p>
+			{{ S_HIDDEN_FIELDS }}
+			{{ S_FORM_TOKEN }}
+		</fieldset>
+		</div>
+	</div>
+</form>
+
+{% include 'manage/manage_footer.html' %}
