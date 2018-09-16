@@ -129,8 +129,10 @@ class contribs_overlord
 
 		while ($hidden_categories_row = phpbb::$db->sql_fetchrow($hidden_categories_result))
 		{
-			$hidden_categories_ids[] = (int)$hidden_categories_row['category_id'];
+			$hidden_categories_ids[] = (int) $hidden_categories_row['category_id'];
 		}
+
+		phpbb::$db->sql_freeresult($hidden_categories_result);
 
 		return $hidden_categories_ids;
 	}
@@ -139,12 +141,13 @@ class contribs_overlord
 	 * Display contributions
 	 *
 	 * @param string $mode The mode (category, author)
-	 * @param int $id The parent id (only show contributions under this category, author, etc)
-	 * @param int|bool $branch	Branch to limit results to: 20|30|31. Defaults to false.
+	 * @param int|array $id The parent id (only show contributions under this category, author, etc)
+	 * @param int|bool $branch Branch to limit results to: 20|30|31. Defaults to false.
 	 * @param \phpbb\titania\sort|bool $sort
 	 * @param string $blockname The name of the template block to use (contribs by default)
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
 	public static function display_contribs($mode, $id, $branch = false, $sort = false, $blockname = 'contribs')
 	{
@@ -232,7 +235,7 @@ class contribs_overlord
 				asort($all_subcategory_ids);
 				asort($id);
 
-				if (serialize(array_values($all_subcategory_ids)) != serialize(array_values($id)))
+				if (array_values($all_subcategory_ids) != array_values($id))
 				{
 					// Remove the invisible category ids from the list of categories we check against
 					$visible_category_ids = array_diff($id, $hidden_categories_ids);
