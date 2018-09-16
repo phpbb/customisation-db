@@ -220,7 +220,7 @@ class contribs_overlord
 				);
 
 				// Simplify it - just make it an array
-				if (is_integer($hierarchy_ids))
+				if (!is_array($hierarchy_ids))
 				{
 					$hierarchy_ids = array($hierarchy_ids);
 				}
@@ -379,7 +379,7 @@ class contribs_overlord
 			{
 				$contrib_categories = explode(',', $row['contrib_categories']);
 
-				if (count(array_diff($contrib_categories, $hidden_categories_ids)) == 0)
+				if (!count(array_diff($contrib_categories, $hidden_categories_ids)))
 				{
 					// Don't show it on the "all" listings page, because the contrib is only in hidden categories
 					continue;
