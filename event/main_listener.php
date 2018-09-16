@@ -16,7 +16,10 @@ namespace phpbb\titania\event;
 use phpbb\db\driver\driver_interface as db_driver_interface;
 use phpbb\event\data;
 use phpbb\auth\auth;
+use phpbb\template\template;
+use phpbb\titania\controller\helper;
 use phpbb\titania\ext;
+use phpbb\user;
 use s9e\TextFormatter\Configurator\Items\TemplateDocument;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -61,7 +64,7 @@ class main_listener implements EventSubscriberInterface
 	 * @param string $ext_root_path Titania root path
 	 * @param string $php_ext PHP file extension
 	 */
-	public function __construct(db_driver_interface $db, \phpbb\user $user, \phpbb\template\template $template, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $ext_root_path, $php_ext)
+	public function __construct(db_driver_interface $db, user $user, template $template, helper $controller_helper, $phpbb_root_path, $ext_root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->user = $user;
@@ -288,7 +291,7 @@ class main_listener implements EventSubscriberInterface
 		}
 
 		// Only continue if there are users to remove from the Titania queue subscriptions
-		if (sizeof($remove_user_ids) > 0)
+		if (count($remove_user_ids))
 		{
 			// Remove subscription
 			$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . '
