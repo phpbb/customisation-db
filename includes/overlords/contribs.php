@@ -379,10 +379,9 @@ class contribs_overlord
 			{
 				$contrib_categories = explode(',', $row['contrib_categories']);
 
-				if (count($contrib_categories) === 1 && in_array($contrib_categories[0], $hidden_categories_ids))
+				if (count(array_diff($contrib_categories, $hidden_categories_ids)) == 0)
 				{
-					// If this contribution is only in one category, and that category is hidden, then don't
-					// show it on the "all" listings page.
+					// Don't show it on the "all" listings page, because the contrib is only in hidden categories
 					continue;
 				}
 			}
