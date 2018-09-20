@@ -20,6 +20,7 @@ use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
 use phpbb\titania\entity\package;
 use phpbb\user;
+use Symfony\Component\Finder\Finder;
 
 class type extends base
 {
@@ -153,10 +154,37 @@ class type extends base
 		}
 
 		// Check whether the LICENSE file exists; if it doesn't then let the user know
+		$license_file_exists = true;
 		$package->ensure_extracted();
-		$license_file = $package->find_directory(array('files' => array('required' => 'LICENSE')));
 
-		if (empty($license_file))
+		/** @var Finder $finder */
+		$finder = $package->get_finder();
+		$directories = $finder->directories()
+			->in($package->get_temp_path())
+			->name('language')
+			->depth(1); // Restrict the depth so we don't mistakenly search other language directories like viglink
+
+		// There should only be a single result for the root language/ folder
+		if (count($directories) === 1)
+		{
+			// Find the directory path
+			$iterator = $directories->getIterator();
+			$iterator->rewind();
+			$language_directory = $iterator->current();
+			$path_name = $language_directory->getPathname();
+
+			// Check for the license file
+			$license_file = $finder->files()
+				->name('LICENSE')
+				->in($path_name);
+
+			if (!count($license_file))
+			{
+				$license_file_exists = false;
+			}
+		}
+
+		if (!$license_file_exists)
 		{
 			$errors = array(
 				// Inform the user that they must include a LICENSE file

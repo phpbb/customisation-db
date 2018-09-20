@@ -127,7 +127,11 @@ class package
 		return ($this->source_exists()) ? md5_file($this->get_source()) : '';
 	}
 
-	protected function get_finder()
+	/**
+	 * Returns a Symfony Finder object
+	 * @return Finder
+	 */
+	public function get_finder()
 	{
 		$finder = new Finder;
 		return $finder
