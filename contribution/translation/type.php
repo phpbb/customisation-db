@@ -136,6 +136,49 @@ class type extends base
 	}
 
 	/**
+	 * Check whether the LICENSE file exists; if it doesn't then let the user know
+	 * @param package $package
+	 * @return bool
+	 */
+	private function translation_license_file_exists(package $package)
+	{
+		$license_file_exists = true;
+		$package->ensure_extracted();
+
+		/** @var Finder $finder */
+		$finder = $package->get_finder();
+
+		$directories = $finder
+			->directories()
+			->in($package->get_temp_path())
+			->name('language')
+			->depth(1); // Restrict the depth so we don't mistakenly search other language directories like viglink
+
+		// There should only be a single result for the root language/ folder
+		if (count($directories) === 1)
+		{
+			// Find the directory path
+			$iterator = $directories->getIterator();
+			$iterator->rewind();
+			$language_directory = $iterator->current();
+			$path_name = $language_directory->getPathname();
+
+			// Check for the license file
+			$license_file = $finder
+				->files()
+				->name('LICENSE')
+				->in($path_name);
+
+			if (!count($license_file))
+			{
+				$license_file_exists = false;
+			}
+		}
+
+		return $license_file_exists;
+	}
+
+	/**
 	 * Translation validation.
 	 *
 	 * @param \titania_contribution $contrib
@@ -153,36 +196,7 @@ class type extends base
 			$revision->load_phpbb_versions();
 		}
 
-		// Check whether the LICENSE file exists; if it doesn't then let the user know
-		$license_file_exists = true;
-		$package->ensure_extracted();
-
-		/** @var Finder $finder */
-		$finder = $package->get_finder();
-		$directories = $finder->directories()
-			->in($package->get_temp_path())
-			->name('language')
-			->depth(1); // Restrict the depth so we don't mistakenly search other language directories like viglink
-
-		// There should only be a single result for the root language/ folder
-		if (count($directories) === 1)
-		{
-			// Find the directory path
-			$iterator = $directories->getIterator();
-			$iterator->rewind();
-			$language_directory = $iterator->current();
-			$path_name = $language_directory->getPathname();
-
-			// Check for the license file
-			$license_file = $finder->files()
-				->name('LICENSE')
-				->in($path_name);
-
-			if (!count($license_file))
-			{
-				$license_file_exists = false;
-			}
-		}
+		$license_file_exists = $this->translation_license_file_exists($package);
 
 		if (!$license_file_exists)
 		{
@@ -200,6 +214,7 @@ class type extends base
 		{
 			return array();
 		}
+
 		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
 
 		$prevalidator = $this->get_prevalidator();
