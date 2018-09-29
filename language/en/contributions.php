@@ -121,7 +121,6 @@ $lang = array_merge($lang, array(
 	'EMPTY_CONTRIB_PERMALINK'				=> 'Enter your proposal for permalink for the contribution',
 	'EMPTY_CONTRIB_TYPE'					=> 'Select at least one contribution type',
 	'ERROR_CONTRIB_EMAIL_FRIEND'			=> 'You are not permitted to recommend this contribution to someone else.',
-	'ERROR_NO_TRANSLATION_LICENSE'			=> 'You must include a \'LICENSE\' file in the translation package.',
 
 	'INSTALL_DEMO'							=> 'Install',
 	'INSTALL_LESS_THAN_1_MINUTE'			=> 'Less Than One Minute',
