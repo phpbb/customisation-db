@@ -142,40 +142,40 @@ class type extends base
 	 */
 	private function translation_license_file_exists(package $package)
 	{
-		$license_file_exists = true;
-		$package->ensure_extracted();
-
-		/** @var Finder $finder */
-		$finder = $package->get_finder();
-
-		$directories = $finder
-			->directories()
-			->in($package->get_temp_path())
-			->name('language')
-			->depth(1); // Restrict the depth so we don't mistakenly search other language directories like viglink
-
-		// There should only be a single result for the root language/ folder
-		if (count($directories) === 1)
-		{
-			// Find the directory path
-			$iterator = $directories->getIterator();
-			$iterator->rewind();
-			$language_directory = $iterator->current();
-			$path_name = $language_directory->getPathname();
-
-			// Check for the license file
-			$license_file = $finder
-				->files()
-				->name('LICENSE')
-				->in($path_name);
-
-			if (!count($license_file))
-			{
-				$license_file_exists = false;
-			}
-		}
-
-		return $license_file_exists;
+//		$license_file_exists = false;
+//		$package->ensure_extracted();
+//
+//		/** @var Finder $finder */
+//		$finder = $package->get_finder();
+//
+//		$directories = $finder
+//			->directories()
+//			->in($package->get_temp_path())
+//			->name('language')
+//			->depth(1); // Restrict the depth so we don't mistakenly search other language directories like viglink
+//
+//		// There should only be a single result for the root language/ folder
+//		if (count($directories) === 1)
+//		{
+//			// Find the directory path
+//			$iterator = $directories->getIterator();
+//			$iterator->rewind();
+//			$language_directory = $iterator->current();
+//			$path_name = $language_directory->getPathname();
+//
+//			// Check for the license file
+//			$license_file = $finder
+//				->files()
+//				->name('LICENSE')
+//				->in($path_name);
+//
+//			if (count($license_file))
+//			{
+//				$license_file_exists = true;
+//			}
+//		}
+//
+//		return $license_file_exists;
 	}
 
 	/**
@@ -196,7 +196,7 @@ class type extends base
 			$revision->load_phpbb_versions();
 		}
 
-		$license_file_exists = $this->translation_license_file_exists($package);
+		/*$license_file_exists = $this->translation_license_file_exists($package);
 
 		if (!$license_file_exists)
 		{
@@ -206,11 +206,11 @@ class type extends base
 			);
 
 			return array('error' => $errors);
-		}
+		}*/
 
 		$version = $revision->phpbb_versions[0];
 
-		if ($version['phpbb_version_branch'] != 30)
+		if ($version['phpbb_version_branch'] == 30)
 		{
 			return array();
 		}

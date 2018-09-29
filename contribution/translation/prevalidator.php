@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\contribution\translation;
 
+use Symfony\Component\Finder\Finder;
+
 /**
  * Translation prevalidator
  *
@@ -42,6 +44,13 @@ class prevalidator
 		'language/en/LICENSE',
 		'language/en/CHANGELOG',
 		'language/en/VERSION',
+
+		// Ignore markdown files too
+		'language/en/AUTHORS.md',
+		'language/en/README.md',
+		'language/en/LICENSE.md',
+		'language/en/CHANGELOG.md',
+		'language/en/VERSION.md',
 	);
 
 	/**
@@ -81,10 +90,12 @@ class prevalidator
 
 		// Basically the individual parts of the translation, we check them separately, because they have colliding filenames
 		$types = array(
+			'ext' => 'ext/phpbb/viglink/language/en/',
 			'language' => 'language/',
-			'prosilver' => 'styles/prosilver/imageset/en',
-			'subsilver2' => 'styles/subsilver2/imageset/en',
+			'prosilver' => 'styles/prosilver/theme/en/',
 		);
+
+		$iso_code = '';
 
 		// Do the check for all types
 		foreach ($types as $type => $path)
@@ -99,13 +110,16 @@ class prevalidator
 			{
 				case 'language':
 					// The uploaded files array has keys prefixed with the upload path of the contribution
-					// Have it stored in the variable so we can work with it
-					$uploaded_files_prefix = explode('/', key($uploaded_files));
+					// Have it stored in the variable so we can work with it. Need to get the first key to ignore viglink
+					$uploaded_files_keys = array_keys($uploaded_files);
+
+					$uploaded_files_prefix = explode('/', $uploaded_files_keys[1]);
 					$iso_code = $uploaded_files_prefix[2];
 					$uploaded_files_prefix = $package->get_temp_path() . '/' . $uploaded_files_prefix[0];
 
 					// This goes directly to the root of the uploaded language pack, like /upload_path/language/cs/
-					$uploaded_lang_root = $uploaded_files_prefix . '/language/' . $iso_code . '/';
+					$uploaded_language = $uploaded_files_prefix . '/language/';
+					$uploaded_lang_root = $uploaded_language . $iso_code . '/';
 
 					// Just perform a basic check if the common file is there
 					if (!is_file($uploaded_lang_root . 'common.php'))
@@ -141,10 +155,6 @@ class prevalidator
 								{
 									$missing_keys[$dir . $file] = $this->check_missing_keys($reference_filepath . '' .	$dir . $file, $uploaded_file_path);
 								}
-
-								// In the last step we have removed the license and index files if there were any. We'll just put a new one instead
-								$this->add_license_files($uploaded_lang_root . '/LICENSE', $reference_filepath);
-								$this->add_htm_files($uploaded_lang_root, $reference_filepath);
 							}
 						}
 					}
@@ -159,10 +169,15 @@ class prevalidator
 							}
 						}
 					}
+
+					// In the last step we have removed the license and index files if there were any. We'll just put a new one instead
+					$this->add_license_files($uploaded_lang_root . 'LICENSE', $reference_filepath);
+					$this->add_htm_files($uploaded_language, $reference_filepath);
+
 					break;
 
 				case 'prosilver':
-				case 'subsilver2':
+				case 'ext':
 					// just let them go through atm...
 					break;
 			}
@@ -174,7 +189,7 @@ class prevalidator
 		// We construct a list of all reference files with complete structure
 		foreach ($reference_files as $dir => $files)
 		{
-			if (strpos($dir, $types['language']) === 0 || strpos($dir, $types['prosilver']) === 0 || strpos($dir, $types['subsilver2']) === 0)
+			if (strpos($dir, $types['language']) === 0 || strpos($dir, $types['prosilver']) === 0 || strpos($dir, $types['ext']) === 0)
 			{
 				foreach ($files as $file)
 				{
@@ -182,21 +197,26 @@ class prevalidator
 				}
 			}
 		}
+
+		$replaced_types_ext = str_replace('/en/', '/' . $iso_code . '/', $types['ext']);
+		$replaced_types_prosilver = str_replace('/en/', '/' . $iso_code . '/', $types['prosilver']);
+
 		// We construct a list of all uploaded file with complete structure
 		foreach ($uploaded_files as $dir => $files)
 		{
 			// We need to clean our directory path according the type and replace iso_code package by en
-			if (strpos($dir, $types['language']) != 0)
+			if (strpos($dir, $replaced_types_ext) != 0)
 			{
-				$dir_prefix = explode($types['language'] ,$dir);
+				// We must have this first because otherwise the next language/{iso} condition would pick up the ext
+				$dir_prefix = explode($replaced_types_ext, $dir);
 			}
-			else if (strpos($dir, $types['prosilver']) != 0)
+			else if (strpos($dir, $types['language']) != 0)
 			{
-				$dir_prefix = explode($types['prosilver'] ,$dir);
+				$dir_prefix = explode($types['language'], $dir);
 			}
-			else if (strpos($dir, $types['subsilver2']) != 0)
+			else if (strpos($dir, $replaced_types_prosilver) != 0)
 			{
-				$dir_prefix = explode($types['subsilver2'] ,$dir);
+				$dir_prefix = explode($replaced_types_prosilver, $dir);
 			}
 			$dir_clean = str_replace('/'.$iso_code.'/', '/en/', str_replace($dir_prefix[0], '', $dir));
 
@@ -266,23 +286,24 @@ class prevalidator
 	private function add_license_files($license_file, $reference_path)
 	{
 		$res = fopen($license_file, 'w');
-		fwrite($res, file_get_contents($reference_path . '/docs/COPYING'));
+		fwrite($res, file_get_contents($reference_path . 'docs/LICENSE.txt'));
 		fclose($res);
 	}
 
+	/**
+	 * Add index.htm files to any subdirectories of language/
+	 * @param $lang_root_path
+	 * @param $reference_path
+	 */
 	private function add_htm_files($lang_root_path, $reference_path)
 	{
-		$htm_files = array('', 'acp/', 'mods/');
+		// Add index.htm files in all directories and subdirectories
+		$finder = new Finder();
+		$iterator = $finder->directories()->in($lang_root_path);
 
-		if (!is_dir($lang_root_path . 'mods'))
+		foreach ($iterator as $file)
 		{
-			mkdir($lang_root_path . 'mods');
-			phpbb_chmod($lang_root_path . 'mods', CHMOD_READ | CHMOD_WRITE);
-		}
-
-		foreach ($htm_files as $htm_file)
-		{
-			$res = fopen($lang_root_path . $htm_file . 'index.htm', 'w');
+			$res = fopen($file->getRealpath() . '/index.htm', 'w');
 			fwrite($res, file_get_contents($reference_path . '/language/en/index.htm'));
 			fclose($res);
 		}
