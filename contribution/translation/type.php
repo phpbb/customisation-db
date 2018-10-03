@@ -20,7 +20,6 @@ use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
 use phpbb\titania\entity\package;
 use phpbb\user;
-use Symfony\Component\Finder\Finder;
 
 class type extends base
 {

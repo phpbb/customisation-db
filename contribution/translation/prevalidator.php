@@ -54,6 +54,16 @@ class prevalidator
 	);
 
 	/**
+	 * For some reason we don't put index.htm in these directories
+	 * @var array
+	 */
+	protected $exclude_htm_paths = array(
+		'language/%s/email/short',
+		'language/%s/help',
+		'styles/prosilver/theme/%s'
+	);
+
+	/**
 	 * Constructor
 	 *
 	 * @param \phpbb\user $user
@@ -172,7 +182,7 @@ class prevalidator
 
 					// In the last step we have removed the license and index files if there were any. We'll just put a new one instead
 					$this->add_license_files($uploaded_lang_root . 'LICENSE', $reference_filepath);
-					$this->add_htm_files($uploaded_language, $reference_filepath);
+					$this->add_htm_files($uploaded_language, $reference_filepath, $iso_code);
 
 					break;
 
@@ -220,15 +230,37 @@ class prevalidator
 			}
 			$dir_clean = str_replace('/'.$iso_code.'/', '/en/', str_replace($dir_prefix[0], '', $dir));
 
+			// Form the paths we don't worry about for index.htm files
+			$exclude_htm_paths = $this->generate_exclude_htm_paths('en');
+
 			foreach ($files as $file)
 			{
-				$list_uploaded_files[] = $dir_clean . $file;
+				$add_file_to_list = true;
+
+				if ($this->check_string_in_array($dir_clean, $exclude_htm_paths))
+				{
+					// There are some folders we don't need index.htm files in, it's neither here nor there.
+					// Validation shouldn't fail because of it.
+					if ($file == 'index.htm')
+					{
+						$add_file_to_list = false;
+					}
+				}
+
+				if ($add_file_to_list)
+				{
+					// Add the file to the list which we will compare the package against
+					$list_uploaded_files[] = $dir_clean . $file;
+				}
 			}
 		}
 		// It's time to check if each file uploaded in the package is allowed
 		foreach ($list_uploaded_files as $file)
 		{
-			if (!in_array($file, $list_reference_files) && !in_array($file, $this->ignore_files))
+			$in_reference_list = in_array($file, $list_reference_files);
+			$in_ignore_list = in_array($file, $this->ignore_files);
+
+			if (!$in_reference_list && !$in_ignore_list)
 			{
 				$error[] = $this->user->lang('WRONG_FILE', str_replace('/en/', '/'.$iso_code.'/', $file)); // report a wrong file
 			}
@@ -283,6 +315,11 @@ class prevalidator
 		return $missing_keys;
 	}
 
+	/**
+	 * Add license file
+	 * @param $license_file
+	 * @param $reference_path
+	 */
 	private function add_license_files($license_file, $reference_path)
 	{
 		$res = fopen($license_file, 'w');
@@ -294,19 +331,67 @@ class prevalidator
 	 * Add index.htm files to any subdirectories of language/
 	 * @param $lang_root_path
 	 * @param $reference_path
+	 * @param $iso_code
 	 */
-	private function add_htm_files($lang_root_path, $reference_path)
+	private function add_htm_files($lang_root_path, $reference_path, $iso_code)
 	{
+		/* If we choose not to add the index.htm files for the excluded paths, we just need to add this:
+		 *  $exclude_paths = $this->generate_exclude_htm_paths($iso_code);
+		 * And then this inside the foreach loop:
+		 *  if (!$this->check_string_in_array($real_path, $exclude_paths)) { ... }
+		 */
+
 		// Add index.htm files in all directories and subdirectories
 		$finder = new Finder();
 		$iterator = $finder->directories()->in($lang_root_path);
 
 		foreach ($iterator as $file)
 		{
-			$res = fopen($file->getRealpath() . '/index.htm', 'w');
+			$real_path = $file->getRealpath();
+
+			$res = fopen($real_path . '/index.htm', 'w');
 			fwrite($res, file_get_contents($reference_path . '/language/en/index.htm'));
 			fclose($res);
 		}
+	}
+
+	/**
+	 * Pop the iso code (language) into the path name dynamically
+	 * @param $iso_code
+	 * @return array
+	 */
+	private function generate_exclude_htm_paths($iso_code)
+	{
+		$exclude_paths = array();
+
+		foreach ($this->exclude_htm_paths as $exclude_htm_path)
+		{
+			$exclude_paths[] = sprintf($exclude_htm_path, $iso_code);
+		}
+
+		return $exclude_paths;
+	}
+
+	/**
+	 * Simple function to run strpos over an array of strings
+	 * @param $string
+	 * @param $array
+	 * @return bool
+	 */
+	private function check_string_in_array($string, $array)
+	{
+		$match = false;
+
+		foreach ($array as $item)
+		{
+			if (strpos($string, $item) !== false)
+			{
+				$match = true;
+				break;
+			}
+		}
+
+		return $match;
 	}
 
 	/**
