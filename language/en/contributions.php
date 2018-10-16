@@ -121,6 +121,7 @@ $lang = array_merge($lang, array(
 	'EMPTY_CONTRIB_PERMALINK'				=> 'Enter your proposal for permalink for the contribution',
 	'EMPTY_CONTRIB_TYPE'					=> 'Select at least one contribution type',
 	'ERROR_CONTRIB_EMAIL_FRIEND'			=> 'You are not permitted to recommend this contribution to someone else.',
+	'ERROR_UNSUPPORTED_VERSION'				=> 'Uploads for this phpBB version are not supported.',
 
 	'INSTALL_DEMO'							=> 'Install',
 	'INSTALL_LESS_THAN_1_MINUTE'			=> 'Less Than One Minute',

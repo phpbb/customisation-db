@@ -144,6 +144,7 @@ class type extends base
 	 * @param package $package
 	 * @param template $template
 	 * @return array Returns array containing any errors found.
+	 * @throws \phpbb\titania\entity\UnknownPropertyException
 	 */
 	public function translation_validate(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
 	{
@@ -152,35 +153,51 @@ class type extends base
 			$revision->load_phpbb_versions();
 		}
 
+		// Set defaults
+		$return_value = $errors = array();
+
 		$version = $revision->phpbb_versions[0];
+		$translation_versions = $this->ext_config->__get('phpbb_versions');
 
-		if ($version['phpbb_version_branch'] != 32)
+		// Check to see if the translation can be uploaded for the specified phpBB version
+		if (!$translation_versions[$version['phpbb_version_branch']]['allow_uploads'])
 		{
-			return array();
+			$errors[] = $this->user->lang('ERROR_UNSUPPORTED_VERSION');
 		}
 
-		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
+		// Run the prevalidator
+		if (!count($errors))
+		{
+			$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
+			$prevalidator = $this->get_prevalidator();
 
-		$prevalidator = $this->get_prevalidator();
+			// Path to files against which we will validate the package
+			$reference_filepath = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string);
 
-		$reference_filepath = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string); // path to files against which we will validate the package
-		$errors = $prevalidator->get_helper()->get_errors();
+			// Overwrite the array value
+			$errors = $prevalidator->get_helper()->get_errors();
+		}
+
+		// Check the package
+		if (!count($errors))
+		{
+			// Overwrite the array value
+			$errors = $prevalidator->check_package($package, $reference_filepath);
+		}
 
 		if (!empty($errors))
 		{
-			return array('error' => implode('<br /><br />', $errors));
+			// If we have errors, display them
+			$return_value = array('error' => implode('<br /><br />', $errors));
 		}
 
-		$errors = $prevalidator->check_package($package, $reference_filepath);
-
-		if (!empty($errors))
+		else
 		{
-			return array('error' => $errors);
+			// No errors
+			$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
 		}
 
-		$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
-
-		return array();
+		return $return_value;
 	}
 
 	/**
