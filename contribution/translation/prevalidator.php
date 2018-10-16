@@ -44,14 +44,23 @@ class prevalidator
 		'language/en/LICENSE',
 		'language/en/CHANGELOG',
 		'language/en/VERSION',
-
-		// Ignore markdown files too
-		'language/en/AUTHORS.md',
-		'language/en/README.md',
-		'language/en/LICENSE.md',
-		'language/en/CHANGELOG.md',
-		'language/en/VERSION.md',
 	);
+
+	/**
+	 * File extensions list
+	 * @var array
+	 */
+	protected $ignore_files_extensions = array(
+		'',
+		'.md',
+		'.txt'
+	);
+
+	/**
+	 * Computed ignore files
+	 * @var array
+	 */
+	private $ignore_listing = array();
 
 	/**
 	 * For some reason we don't put index.htm in these directories
@@ -76,6 +85,17 @@ class prevalidator
 	}
 
 	/**
+	 * Check to see if a file should be ignored
+	 * @param $file
+	 * @return bool
+	 */
+	private function is_in_ignored_list($file)
+	{
+		// Is the specified file in our listing?
+		return in_array(strtolower($file), $this->ignore_listing);
+	}
+
+	/**
 	 * Get helper.
 	 *
 	 * @return \phpbb\titania\contribution\prevalidator_helper
@@ -97,6 +117,19 @@ class prevalidator
 	{
 		$package->ensure_extracted();
 		$error = $missing_keys = array();
+
+		// Build up the list of files to ignore; do it here because we only want to run this computation once
+		if (!count($this->ignore_listing))
+		{
+			foreach ($this->ignore_files as $ignore_file)
+			{
+				foreach ($this->ignore_files_extensions as $ignore_files_extension)
+				{
+					// Build up a list of our ignored files with the different extensions
+					$this->ignore_listing[] = strtolower($ignore_file . $ignore_files_extension);
+				}
+			}
+		}
 
 		// Basically the individual parts of the translation, we check them separately, because they have colliding filenames
 		$types = array(
@@ -258,7 +291,7 @@ class prevalidator
 		foreach ($list_uploaded_files as $file)
 		{
 			$in_reference_list = in_array($file, $list_reference_files);
-			$in_ignore_list = in_array($file, $this->ignore_files);
+			$in_ignore_list = $this->is_in_ignored_list($file);
 
 			if (!$in_reference_list && !$in_ignore_list)
 			{
@@ -417,7 +450,7 @@ class prevalidator
 		$dp = opendir($root_dir . $dir);
 		while (($fname = readdir($dp)))
 		{
-			if (is_file("$root_dir$dir$fname") && !in_array(strtoupper($fname), $this->ignore_files))
+			if (is_file("$root_dir$dir$fname") && !$this->is_in_ignored_list($fname))
 			{
 				$matches[$dir][] = $fname;
 			}
