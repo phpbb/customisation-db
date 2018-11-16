@@ -1032,3 +1032,7 @@ hr.solid {
 .titania-navigation {
 	margin-top: 8px;
 }
+
+.customisation-database {
+	/* available class for custom CSS/scripting in the body tag */
+}

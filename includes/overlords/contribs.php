@@ -108,22 +108,54 @@ class contribs_overlord
 	}
 
 	/**
+	 * Get list of the hidden categories
+	 * @return array
+	 */
+	public static function get_hidden_categories()
+	{
+		$hidden_categories_ary = array(
+			'SELECT'	=> 'c.category_id',
+
+			'FROM'		=> array(
+				TITANIA_CATEGORIES_TABLE	=> 'c',
+			),
+
+			'WHERE'		=> 'c.category_visible = 0',
+		);
+
+		$hidden_categories_sql = phpbb::$db->sql_build_query('SELECT', $hidden_categories_ary);
+		$hidden_categories_result = phpbb::$db->sql_query($hidden_categories_sql);
+		$hidden_categories_ids = array();
+
+		while ($hidden_categories_row = phpbb::$db->sql_fetchrow($hidden_categories_result))
+		{
+			$hidden_categories_ids[] = (int) $hidden_categories_row['category_id'];
+		}
+
+		phpbb::$db->sql_freeresult($hidden_categories_result);
+
+		return $hidden_categories_ids;
+	}
+
+	/**
 	 * Display contributions
 	 *
 	 * @param string $mode The mode (category, author)
-	 * @param int $id The parent id (only show contributions under this category, author, etc)
-	 * @param int|bool $branch	Branch to limit results to: 20|30|31. Defaults to false.
+	 * @param int|array $hierarchy_ids The parent id (plus any subcategory ids; if categories) (only show contributions under this category, author, etc)
+	 * @param int|bool $branch Branch to limit results to: 20|30|31. Defaults to false.
 	 * @param \phpbb\titania\sort|bool $sort
 	 * @param string $blockname The name of the template block to use (contribs by default)
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
-	public static function display_contribs($mode, $id, $branch = false, $sort = false, $blockname = 'contribs')
+	public static function display_contribs($mode, $hierarchy_ids, $branch = false, $sort = false, $blockname = 'contribs')
 	{
 		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$tracking = phpbb::$container->get('phpbb.titania.tracking');
 		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
+		$cache = phpbb::$container->get('phpbb.titania.cache');
 
 		// Setup the sort tool if not sent, then request
 		if ($sort === false)
@@ -139,11 +171,14 @@ class contribs_overlord
 			c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
 			c.contrib_limited_support, c.contrib_categories, c.contrib_desc, c.contrib_desc_uid';
 
+		$check_hidden_categories_on_all = false;
+		$hidden_categories_ids = self::get_hidden_categories();
+
 		switch ($mode)
 		{
 			case 'author' :
 				// Get the contrib_ids this user is an author in (includes as a co-author)
-				$contrib_ids = titania::$cache->get_author_contribs($id, $types, phpbb::$user);
+				$contrib_ids = titania::$cache->get_author_contribs($hierarchy_ids, $types, phpbb::$user);
 
 				if (!sizeof($contrib_ids))
 				{
@@ -174,7 +209,52 @@ class contribs_overlord
 				);
 			break;
 
-			case 'category' :
+			case 'category':
+				// We need to determine if we are currently inside the "hidden" category
+				// The only way we can do that is to look at each id, get it's children and then compare the array
+				// against the $hierarchy_ids - if we get a match on any of them, we know we are in the actual category
+				$actual_category = array(
+					'actual' => false,
+					'id' => 0,
+					'all' => array(),
+				);
+
+				// Simplify it - just make it an array
+				if (!is_array($hierarchy_ids))
+				{
+					$hierarchy_ids = array($hierarchy_ids);
+				}
+
+				foreach ($hierarchy_ids as $hierarchy_id)
+				{
+					$all_subcategory_ids = array_keys($cache->get_category_children($hierarchy_id));
+					$all_subcategory_ids[] = (int) $hierarchy_id;
+
+					asort($all_subcategory_ids);
+					asort($hierarchy_ids);
+
+					if (array_values($all_subcategory_ids) == array_values($hierarchy_ids))
+					{
+						$actual_category['actual'] = true;
+						$actual_category['id'] = $hierarchy_id;
+						$actual_category['all'] = $all_subcategory_ids;
+						break;
+					}
+				}
+
+				// If we found a hit, and that hit is inside the hidden category list - then that means
+				// we are inside the category
+				if ($actual_category['actual'] && in_array($actual_category['id'], $hidden_categories_ids))
+				{
+					$visible_category_ids = $actual_category['all'];
+				}
+
+				// Otherwise, it's some parent category so we just strip out the hidden subcategories
+				else
+				{
+					$visible_category_ids = array_diff($hierarchy_ids, $hidden_categories_ids);
+				}
+
 				$sql_ary = array(
 					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
@@ -200,15 +280,17 @@ class contribs_overlord
 						)
 					),
 
-					'WHERE'		=> ((is_array($id) && sizeof($id)) ? phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $id)) : 'cic.category_id = ' . (int) $id) . '
-						AND c.contrib_visible = 1' .
-						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
+					// If multiple categories, use the stripped list. If it's just the single hidden category, that's okay
+					// as presumably someone has gone looking for the hidden category, or it has been linked to, etc.
+					'WHERE'		=> phpbb::$db->sql_in_set('cic.category_id', $visible_category_ids, false, true) . '
+						AND c.contrib_visible = 1 ' . (($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
 			break;
 
 			case 'all' :
+				$check_hidden_categories_on_all = true;
 				$sql_ary = array(
 					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
@@ -290,8 +372,20 @@ class contribs_overlord
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
 		$contrib_ids = $user_ids = array();
+
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			if ($check_hidden_categories_on_all)
+			{
+				$contrib_categories = explode(',', $row['contrib_categories']);
+
+				if (!count(array_diff($contrib_categories, $hidden_categories_ids)))
+				{
+					// Don't show it on the "all" listings page, because the contrib is only in hidden categories
+					continue;
+				}
+			}
+
 			//Check to see if user has permission
 			if (!$mod_contrib_mod && $row['contrib_user_id'] != phpbb::$user->data['user_id'] && $row['coauthor'] != phpbb::$user->data['user_id'] && !$access->is_team())
 			{
