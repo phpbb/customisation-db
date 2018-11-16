@@ -62,6 +62,8 @@ $lang = array_merge($lang, array(
 	'PLEASE_WAIT'		=> 'Please wait...',
 
 	'REBUILD_COMPOSER_REPO'	=> 'Rebuild Composer repository',
+	'BUILD_IN_PROGRESS'		=> 'A build is already in progress.',
+	'PACKAGES_BUILD_DEPLOYMENT_FAILED'	=> 'Packages build deployment failed.',
 
 	'REBUILD_TOPIC_URLS'	=> 'Rebuild topic URL’s',
 

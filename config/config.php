@@ -55,6 +55,7 @@ class config extends \phpbb\titania\entity\base
 			'contrib_temp_path'			=> array('default' => $this->ext_root_path . 'files/contrib_temp/'),
 			'language_path'				=> array('default' => $this->ext_root_path . 'language/'),
 			'table_prefix'				=> array('default' => 'cdb_'),
+			'site_home_url'				=> array('default' => 'https://www.phpbb.com'),
 
 			// Increment the user's post count? Array of the post_types for which we will increment the post count
 			'increment_postcount'		=> array('default' => array(ext::TITANIA_SUPPORT)),
@@ -96,7 +97,7 @@ class config extends \phpbb\titania\entity\base
 			'max_rating'				=> array('default' => 5),
 
 			'phpbbcom_profile'			=> array('default' => true),
-			'phpbbcom_viewprofile_url'	=> array('default' => 'http://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
+			'phpbbcom_viewprofile_url'	=> array('default' => 'https://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
 
 			// Mod/style database release forums (receive announcements on updates/approval)
 			'forum_mod_database'		=> array('default' => array(
@@ -158,7 +159,7 @@ class config extends \phpbb\titania\entity\base
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
 				'30'	=> array('latest_revision' => '14', 'name' => 'phpBB 3.0.x', 'allow_uploads' => false),
 				'31'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.1.x', 'allow_uploads' => false),
-				'32'	=> array('latest_revision' => '3', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
+				'32'	=> array('latest_revision' => '4', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
 			)),
 
 			// MPV server(s)

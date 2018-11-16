@@ -354,6 +354,9 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			));
 		}
 
+		// Don't allow negative replies; but show the number of replies minus the original post
+		$topic_replies = ($this->get_postcount() > 0) ? ($this->get_postcount() - 1) : 0;
+
 		$details = array(
 			'TOPIC_ID'						=> $this->topic_id,
 			'TOPIC_TYPE'					=> $this->topic_type,
@@ -365,7 +368,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'TOPIC_APPROVED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->topic_approved : true,
 			'TOPIC_REPORTED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->topic_reported : false,
 			'TOPIC_ASSIGNED'				=> $this->topic_assigned, // @todo output this to be something useful
-			'TOPIC_REPLIES'					=> ($this->get_postcount() - 1), // Number of replies (posts minus the OP)
+			'TOPIC_REPLIES'					=> $topic_replies,
 			'TOPIC_VIEWS'					=> $this->topic_views,
 			'TOPIC_SUBJECT'					=> censor_text($this->topic_subject),
 

@@ -653,6 +653,15 @@ li.row dl.codebox dd {
 	padding: 0;
 }
 
+/* Codebox adjustments for the revision section of BBCode */
+.revision-details > .bbcode-container > .codebox {
+	min-height: 40px;
+}
+
+.revision-details > .bbcode-container > .codebox > dt {
+	font-size: 1.0em;
+}
+
 /* Uploaders
 -------------------------------------------- */
 .revision-uploader #file-total-progress {
@@ -1018,4 +1027,12 @@ hr.solid {
 	clear: both;
 	content: '';
 	display: block;
+}
+
+.titania-navigation {
+	margin-top: 8px;
+}
+
+.customisation-database {
+	/* available class for custom CSS/scripting in the body tag */
 }
