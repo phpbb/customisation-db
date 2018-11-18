@@ -1113,9 +1113,11 @@ class titania_post extends \phpbb\titania\entity\message_base
 				break;
 		}
 
-		if (isset(titania::$config->$type[$mode]))
+		$forums = titania::$config->$type;
+
+		if (isset($forums[$mode]))
 		{
-			return (int) titania::$config->$type[$mode];
+			return (int) $forums[$mode];
 		}
 
 		return 0;
