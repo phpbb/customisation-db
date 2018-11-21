@@ -567,24 +567,24 @@ dd.revision-version, dd.phpbb-version {
 	text-align: center;
 }
 
-ul.revisions-version-list > {
+ul.revision-version-list {
 	margin: 0;
 	padding: 0;
 	display: inline;
 }
 
-ul.revisions-version-list > li {
+ul.revision-version-list li {
 	margin: 0;
 	padding: 0;
 	display: inline;
 	list-style: none;
 }
 
-ul.revisions-version-list > li:after {
+ul.revision-version-list li:after {
 	content: ", ";
 }
 
-ul.revisions-version-list > li:last-child:after {
+ul.revision-version-list li:last-child:after {
 	content: "";
 }
 
