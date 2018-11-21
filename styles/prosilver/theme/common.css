@@ -561,8 +561,31 @@ ul.simple li.header dt, ul.simple li.header dd {
 	width: 130px !important;
 }
 
+/* If multiple versions, then comma separate
+--------------------------------------------- */
 dd.revision-version, dd.phpbb-version {
 	text-align: center;
+}
+
+ul.revisions-version-list > {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+
+ul.revisions-version-list > li {
+	margin: 0;
+	padding: 0;
+	display: inline;
+	list-style: none;
+}
+
+ul.revisions-version-list > li:after {
+	content: ", ";
+}
+
+ul.revisions-version-list > li:last-child:after {
+	content: "";
 }
 
 #translations-panel {
