@@ -1,4 +1,27 @@
+/* Queue stats */
+@media only screen and (max-width: 890px), only screen and (max-device-width: 890px) {
+	.day-list span {
+		width: 9px;
+	}
+
+	.day-list-date {
+		font-size: 0.4em;
+	}
+
+	.stat-day {
+		margin-right: 1px;
+	}
+
+	.stat-ratio span, .stat-day span {
+		width: 8px;
+	}
+}
+
 @media only screen and (max-width: 700px), only screen and (max-device-width: 700px) {
+	.day-list-date {
+		color: red; /* JUST FOR TESTING */
+	}
+
 	/* Contribution List
 	--------------------------------------------- */
 	.contrib-list-container {
@@ -36,6 +59,10 @@
 }
 
 @media only screen and (max-width: 550px), only screen and (max-device-width: 550px) {
+	.day-list-date {
+		color: green; /* JUST FOR TESTING */
+	}
+
 	/* Contribution Details
 	--------------------------------------------- */
 	.left-column {
@@ -72,6 +99,10 @@
 }
 
 @media only screen and (max-width: 400px), only screen and (max-device-width: 400px) {
+	.day-list-date {
+		color: blue; /* JUST FOR TESTING */
+	}
+
 	/* Contribution List
 	--------------------------------------------- */
 	.contrib-quickview {

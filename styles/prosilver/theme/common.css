@@ -968,6 +968,10 @@ p.attention-closed {
 	position: relative;
 }
 
+.day-list-date {
+	font-size: 1.0em;
+}
+
 .stat-day span strong {
 	font-weight: normal;
 	height: 10px;

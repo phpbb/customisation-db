@@ -52,7 +52,9 @@
 		<!-- BEGIN dayrow -->
 			<span>
 				<span class="pip"></span>
-				<!-- IF (dayrow.S_FIRST_ROW or dayrow.S_LAST_ROW and (dayrow.DAY % 7) >= 3 ) or (dayrow.DAY % 7) == 0 or dayrow.MONTH_SWITCH-->{dayrow.MONTH}/{dayrow.DAY}<!-- ELSE -->&nbsp;<!-- ENDIF -->
+				<!-- IF (dayrow.S_FIRST_ROW or dayrow.S_LAST_ROW and (dayrow.DAY % 7) >= 3 ) or (dayrow.DAY % 7) == 0 or dayrow.MONTH_SWITCH-->
+				<span class="day-list-date">{dayrow.MONTH}/{dayrow.DAY}</span>
+				<!-- ELSE -->&nbsp;<!-- ENDIF -->
 			</span>
 		<!-- END dayrow -->
 		</div>
