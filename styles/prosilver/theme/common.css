@@ -972,6 +972,12 @@ p.attention-closed {
 	font-size: 1.0em;
 }
 
+.queue-statistics-box {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
 .stat-day span strong {
 	font-weight: normal;
 	height: 10px;
