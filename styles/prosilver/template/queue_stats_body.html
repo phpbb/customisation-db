@@ -11,14 +11,20 @@
 					<!-- ENDIF -->
 					<li>{AVG_PAST_VALIDATION_TIME}</li>
 					<li>{SINCE_X_VALIDATED_REVS}</li>
-					<li>{L_APPROVAL_DENIAL_RATE}:
-						<div class="stat-ratio">
-							<!-- IF APPROVED_RATIO --><span class="stat-approved" style="width: {APPROVED_RATIO}%">{APPROVED_RATIO}%</span><!-- ENDIF -->
-							<!-- IF DENIED_RATIO --><span class="stat-denied" style="width: {DENIED_RATIO}%">{DENIED_RATIO}%</span><!-- ENDIF -->
-						</div>
-					</li>
 				</ul>
 			</div>
+	</div>
+</div>
+
+<div class="panel">
+	<div class="inner">
+		<h3>{L_APPROVAL_DENIAL_RATE}</h3>
+		<div class="queue-statistics-box">
+			<div class="stat-ratio">
+				<!-- IF APPROVED_RATIO --><span class="stat-approved" style="width: {APPROVED_RATIO}%">{APPROVED_RATIO}%</span><!-- ENDIF -->
+				<!-- IF DENIED_RATIO --><span class="stat-denied" style="width: {DENIED_RATIO}%">{DENIED_RATIO}%</span><!-- ENDIF -->
+			</div>
+		</div>
 	</div>
 </div>
 
