@@ -949,7 +949,10 @@ p.attention-closed {
 	width: 20px;
 }
 
-.stat-ratio { width: 300px; }
+.stat-ratio {
+	width: 80%;
+	margin: 25px 0;
+}
 
 .stat-ratio span {
 	height: 16px;
@@ -966,6 +969,16 @@ p.attention-closed {
 	float: none;
 	margin-bottom: 1px;
 	position: relative;
+}
+
+.day-list-date {
+	font-size: 1.0em;
+}
+
+.queue-statistics-box {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .stat-day span strong {
