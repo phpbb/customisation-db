@@ -37,13 +37,6 @@ class titania
 	public static $php_ext;
 
 	/**
-	* Hooks instance
-	*
-	* @var phpbb_hook
-	*/
-	public static $hook;
-
-	/**
 	 * Request time (unix timestamp)
 	 *
 	 * @var int
@@ -96,9 +89,6 @@ class titania
 
 		// Add common titania language file
 		phpbb::$user->add_lang_ext('phpbb/titania', 'common');
-
-		// Load hooks
-		self::load_hooks();
 	}
 
 	/**
@@ -139,35 +129,6 @@ class titania
 		}
 
 		// No error if file cant be found!
-	}
-
-	/**
-	* Load the hooks
-	* Using something very similar to the phpBB hook system
-	*/
-	public static function load_hooks()
-	{
-		if (self::$hook)
-		{
-			return;
-		}
-
-		// Add own hook handler
-		self::$hook = new titania_hook();
-
-		// Now search for hooks...
-		$dh = @opendir(self::$root_path . 'includes/hooks/');
-		if ($dh)
-		{
-			while (($file = readdir($dh)) !== false)
-			{
-				if (strpos($file, 'hook_') === 0 && substr($file, -(strlen(self::$php_ext) + 1)) === '.' . self::$php_ext)
-				{
-					include(self::$root_path . 'includes/hooks/' . $file);
-				}
-			}
-			closedir($dh);
-		}
 	}
 
 	/**
