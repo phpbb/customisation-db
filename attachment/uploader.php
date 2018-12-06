@@ -386,7 +386,7 @@ class uploader
 				'FILENAME'			=> $attach->get_filename(),
 				'FILE_COMMENT'		=> (isset($comments[$attachment_id])) ? $comments[$attachment_id] : $attach->get('attachment_comment'),
 				'ATTACH_ID'			=> $attachment_id,
-				'INDEX'				=> $index_prefix . $index,
+				'ASSOC_INDEX'		=> $index_prefix . $index,
 				'FILESIZE'			=> get_formatted_filesize($attach->get('filesize')),
 
 				'S_HIDDEN'			=> build_hidden_fields($_hidden_data),
