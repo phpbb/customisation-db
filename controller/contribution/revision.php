@@ -286,6 +286,12 @@ class revision extends base
 			else if (!isset($result['error']) || empty($result['error']))
 			{
 				$this->template->assign_var('STEP_MESSAGE', $this->user->lang['NEW_REVISION_READY']);
+
+				// We can pass a flag to bypass translation validation
+				if ($this->request->variable('ignore_validation_errors', 0))
+				{
+					$this->template->assign_var('IGNORE_VALIDATION_ERRORS', true);
+				}
 			}
 			$error = $result['error'];
 		}
@@ -745,7 +751,20 @@ class revision extends base
 
 		$hash = $this->package->get_md5_hash();
 
-		$result = $this->run_step($step['function']);
+		$ignore_validation_errors = $this->request->variable('ignore_validation_errors', 0);
+
+		if ($ignore_validation_errors && $step['function'][1] == 'translation_validate')
+		{
+			// Force submit: the user wants to submit a validation and they know there are errors
+			$result = '';
+		}
+
+		else
+		{
+			// Run the validation if it's not a translation and the user hasn't checked the ignore box
+			$result = $this->run_step($step['function']);
+		}
+
 		$result = $this->get_result($result, $steps, $step_num);
 
 		$this->package->cleanup();

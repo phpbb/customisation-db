@@ -85,6 +85,20 @@
 				<input type="hidden" name="queue_allow_repack" value="{QUEUE_ALLOW_REPACK}" />
 				<!-- ENDIF -->
 
+				<!-- IF S_IGNORE_VALIDATION_ERRORS -->
+				<fieldset class="fields2">
+					<dl>
+						<dt>
+							<label for="ignore_validation_errors">{L_QUEUE_IGNORE_ERRORS}:</label><br />
+							<span>{L_QUEUE_IGNORE_ERRORS_EXPLAIN}</span>
+						</dt>
+						<dd>
+							<input type="checkbox" id="ignore_validation_errors" name="ignore_validation_errors" checked="checked" value="1">
+						</dd>
+					</dl>
+				</fieldset>
+				<!-- ENDIF -->
+
 				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
 				<fieldset class="fields2">
 				<dl>
@@ -124,6 +138,9 @@
 			<!-- IF STEP_MESSAGE -->
 				<div style="font-size:14px; padding:5px; width:100%; text-align:center;">
 					{STEP_MESSAGE}
+					<!-- IF IGNORE_VALIDATION_ERRORS -->
+					<input type="hidden" name="ignore_validation_errors" value="1" />
+					<!-- ENDIF -->
 				</div>
 			<!-- ENDIF -->
 			<!-- IF MPV_TEST_WARNING -->

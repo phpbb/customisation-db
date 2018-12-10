@@ -176,6 +176,8 @@ $lang = array_merge($lang, array(
 	'PV_TEST'								=> 'Prevalidator test',
 	'PV_RESULTS'							=> '<strong>Please check over the prevalidator results and make sure that nothing needs to be fixed.<br /><br />If you do not think anything requires fixing or you are not sure, just hit continue below.</strong>',
 
+	'QUEUE_IGNORE_ERRORS'					=> 'Submit With Validation Errors',
+	'QUEUE_IGNORE_ERRORS_EXPLAIN'			=> 'Ignore validation errors and continue with submission.',
 	'QUEUE_ALLOW_REPACK'					=> 'Allow Repacking',
 	'QUEUE_ALLOW_REPACK_EXPLAIN'			=> 'Allow this contribution to be repacked for small errors?',
 	'QUEUE_NOTES'							=> 'Validation Notes',

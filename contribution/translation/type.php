@@ -189,6 +189,9 @@ class type extends base
 		{
 			// If we have errors, display them
 			$return_value = array('error' => implode('<br /><br />', $errors));
+
+			// Show a checkbox to enable the user to submit despite the errors
+			$template->assign_var('S_IGNORE_VALIDATION_ERRORS', true);
 		}
 
 		else
