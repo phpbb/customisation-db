@@ -65,6 +65,24 @@
 			</div>
 		</div>
 
+		<div class="dropdown-container sort-option status-sort rightside">
+			<span title="{L_SORT}" class="dropdown-trigger sort-status">
+				{ACTIVE_STATUS}
+			</span>
+			<div class="dropdown hidden">
+				<div class="pointer"><div class="pointer-inner"></div></div>
+				<ul class="dropdown-contents key-status-options">
+					<!-- BEGIN sort_status -->
+					<li>
+						<a href="{sort_status.URL}" data-ajax="titania.category.load" data-sort="{sort_status.ID}"<!-- IF sort_status.ACTIVE --> class="active"<!-- ENDIF -->>
+						{sort_status.NAME}
+						</a>
+					</li>
+					<!-- END sort_status -->
+				</ul>
+			</div>
+		</div>
+
 	</div>
 
 	<div class="categories">

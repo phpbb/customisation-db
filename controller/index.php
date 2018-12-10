@@ -65,6 +65,9 @@ class index
 	/** @var string */
 	protected $branch = '';
 
+	/** @var string */
+	protected $status = '';
+
 	/** @var array */
 	protected $params = array();
 
@@ -147,6 +150,7 @@ class index
 
 		$this->assign_sorting($sort);
 		$this->assign_branches();
+		$this->assign_status();
 
 		return $this->helper->render('index_body.html', $title);
 	}
@@ -207,8 +211,10 @@ class index
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
 			'U_ALL_CONTRIBUTIONS'	=> $this->get_index_url($this->params),
 		));
+
 		$this->assign_sorting($sort);
 		$this->assign_branches();
+		$this->assign_status();
 
 		return $this->helper->render('index_body.html', $title);
 	}
@@ -500,6 +506,66 @@ class index
 		);
 	}
 
+	protected function assign_status()
+	{
+		foreach ($this->get_status() as $status => $vars)
+		{
+			$this->template->assign_block_vars('sort_status', $vars);
+
+			if ($vars['ACTIVE'])
+			{
+				$this->template->assign_var('ACTIVE_STATUS', $vars['NAME']);
+			}
+		}
+	}
+
+	protected function get_status()
+	{
+		$params = $this->params;
+		unset($params['status']);
+
+		$is_ajax = $this->request->is_ajax();
+		$url = $this->get_item_url($params);
+
+		$status_list = array();
+		$status_list[] = array(
+			'NAME'		=> $this->user->lang('STATUS_ALL'),
+			'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
+			'ACTIVE'	=> empty($this->status),
+			'ID'		=> 0,
+		);
+
+		// Set up how the URL will look
+		$status_types = array(
+			$this->user->lang('STATUS_APPROVED') => 'approved',
+			$this->user->lang('STATUS_UNAPPROVED') => 'unapproved',
+		);
+
+		$i = 0;
+
+		foreach ($status_types as $status_type => $status_type_url)
+		{
+			$params['status'] = $status_type_url;
+			$url = $this->get_item_url($params);
+
+			$status_list[] = array(
+				'NAME'		=> $status_type,
+				'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
+				'ACTIVE'	=> $this->status == $status_type,
+				'ID'		=> $i,
+			);
+
+			$i++;
+		}
+
+		return $status_list;
+	}
+
+	protected function set_status($status)
+	{
+		$this->status = $status;
+	}
+
 	/**
 	 * Assign branch sort options to template.
 	 */
@@ -624,6 +690,10 @@ class index
 		if ($this->branch)
 		{
 			$params['branch'] = $this->branch;
+		}
+		if ($this->status)
+		{
+			$params['status'] = $this->status;
 		}
 
 		return $params;
