@@ -121,6 +121,23 @@ class config extends \phpbb\titania\entity\base
 				'32'	=> 0,
 			)),
 
+			// Extension/style validation queue forums
+			'titania_extensions_queue'	=> array('default' => array(
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
+				ext::TITANIA_QUEUE				=> 0,
+				'trash'							=> 0,
+			)),
+			'titania_mods_queue'		=> array('default' => array(
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
+				ext::TITANIA_QUEUE				=> 0,
+				'trash'							=> 0,
+			)),
+			'titania_styles_queue'		=> array('default' => array(
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
+				ext::TITANIA_QUEUE				=> 0,
+				'trash'							=> 0,
+			)),
+
 			// Accounts to use for posting in the forum
 			'forum_mod_robot'			=> array('default' => 0),
 			'forum_style_robot'			=> array('default' => 0),

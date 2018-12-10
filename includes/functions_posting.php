@@ -262,3 +262,65 @@ function phpbb_posting($mode, &$options, $poll = array())
 
 	return true;
 }
+
+function handle_queue_attachments($post, &$post_text)
+{
+	if (!$post->post_attachment)
+	{
+		return;
+	}
+
+	$sort_order = (phpbb::$config['display_order']) ? 'ASC' : 'DESC';
+
+	$sql = 'SELECT attachment_id, real_filename
+		FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+		WHERE is_orphan = 0
+			AND object_type = ' . (int) $post->post_type . '
+			AND object_id = ' . (int) $post->post_id . '
+		ORDER BY attachment_id ' . $sort_order;
+	$result = phpbb::$db->sql_query($sql);
+	$attachments = array();
+
+	phpbb::$user->add_lang('viewtopic');
+	$path_helper = phpbb::$container->get('path_helper');
+	$controller_helper = phpbb::$container->get('controller.helper');
+
+	while ($row = phpbb::$db->sql_fetchrow($result))
+	{
+		$download_url = $path_helper->strip_url_params(
+			$controller_helper->route('phpbb.titania.download', array('id' => $row['attachment_id'])),
+			'sid'
+		);
+		$attachments[] = '[' . phpbb::$user->lang['ATTACHMENT'] . "] [url=$download_url]{$row['real_filename']}[/url]";
+	}
+	phpbb::$db->sql_freeresult($result);
+
+	if (empty($attachments))
+	{
+		return;
+	}
+
+	preg_match_all('#<!\-\- ia([0-9]+) \-\->(.*?)<!\-\- ia\1 \-\->#', $post_text, $matches, PREG_PATTERN_ORDER);
+
+	$replace = array();
+	foreach ($matches[0] as $num => $capture)
+	{
+		// Flip index if we are displaying the reverse way
+		$index = (phpbb::$config['display_order']) ? ($tpl_size-($matches[1][$num] + 1)) : $matches[1][$num];
+
+		$replace['from'][] = $matches[0][$num];
+		$replace['to'][] = (isset($attachments[$index])) ? "\n$attachments[$index]\n" : '';
+
+		unset($attachments[$index]);
+	}
+
+	if (isset($replace['from']))
+	{
+		$post_text = str_replace($replace['from'], $replace['to'], $post_text);
+	}
+
+	if (!empty($attachments))
+	{
+		$post_text .= "\n\n" . implode("\n", $attachments);
+	}
+}
