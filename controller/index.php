@@ -112,8 +112,11 @@ class index
 	{
 		$this->set_branch($branch);
 
+		// Approval status
+		$status = $this->request->variable('status', '');
+
 		$title = $this->user->lang('CUSTOMISATION_DATABASE');
-		$sort = $this->list_contributions('', self::ALL_CONTRIBS, '');
+		$sort = $this->list_contributions('', self::ALL_CONTRIBS, $status);
 		$this->params = $this->get_params($sort);
 		$this->display->assign_global_vars();
 
@@ -181,7 +184,7 @@ class index
 		$children = $this->get_children_ids();
 		// Include the current category in the ones selected
 		$children[] = $this->id;
-		$sort = $this->list_contributions($children, $this->category->get_url());
+		$sort = $this->list_contributions($children, $this->category->get_url()); //TODO: add status
 		$this->params = $this->get_params($sort);
 
 		$title = $this->category->get_name() . ' - ' . $this->user->lang['CUSTOMISATION_DATABASE'];
@@ -354,17 +357,18 @@ class index
 	*
 	* @param array $categories The id's of the categories from which to select.
 	* @param string $sort_url The base url from which to sort.
+	* @param string $status Approval status
 	*
 	* @return \phpbb\titania\sort
 	*/
-	protected function list_contributions($categories, $sort_url)
+	protected function list_contributions($categories, $sort_url, $status = null)
 	{
 		$mode = ($this->id) ? 'category' : 'all';
 		$sort = \contribs_overlord::build_sort();
 		$sort->set_defaults(24);
 		$branch = (int) str_replace('.', '', $this->branch);
 
-		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort);
+		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort);//TODO: add status
 
 		// Canonical URL
 		$data['sort']->set_url($sort_url);
