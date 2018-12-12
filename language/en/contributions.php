@@ -178,6 +178,7 @@ $lang = array_merge($lang, array(
 
 	'QUEUE_IGNORE_ERRORS'					=> 'Submit With Validation Errors',
 	'QUEUE_IGNORE_ERRORS_EXPLAIN'			=> 'Ignore validation errors and continue with submission.',
+	'QUEUE_IGNORE_AND_SKIP'					=> 'Ignore validation errors and skip to revision submission.',
 	'QUEUE_ALLOW_REPACK'					=> 'Allow Repacking',
 	'QUEUE_ALLOW_REPACK_EXPLAIN'			=> 'Allow this contribution to be repacked for small errors?',
 	'QUEUE_NOTES'							=> 'Validation Notes',

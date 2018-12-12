@@ -285,13 +285,21 @@ class revision extends base
 			}
 			else if (!isset($result['error']) || empty($result['error']))
 			{
-				$this->template->assign_var('STEP_MESSAGE', $this->user->lang['NEW_REVISION_READY']);
+				$user_display_message = $this->user->lang['NEW_REVISION_READY'];
 
 				// We can pass a flag to bypass translation validation
 				if ($this->request->variable('ignore_validation_errors', 0))
 				{
 					$this->template->assign_var('IGNORE_VALIDATION_ERRORS', true);
+
+					if ($this->request->variable('revision_id', 0))
+					{
+						// If the revision hasn't been created yet just show the regular processing message
+						$user_display_message = $this->user->lang['QUEUE_IGNORE_AND_SKIP'];
+					}
 				}
+
+				$this->template->assign_var('STEP_MESSAGE', $user_display_message);
 			}
 			$error = $result['error'];
 		}
