@@ -761,7 +761,7 @@ class revision extends base
 
 		$ignore_validation_errors = $this->request->variable('ignore_validation_errors', 0);
 
-		if ($ignore_validation_errors && $step['function'][1] == 'translation_validate')
+		if ($ignore_validation_errors && isset($step['function'][1]) && $step['function'][1] == 'translation_validate')
 		{
 			// Force submit: the user wants to submit a validation and they know there are errors
 			$result = '';
