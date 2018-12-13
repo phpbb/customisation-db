@@ -1029,6 +1029,17 @@ hr.solid {
 	display: block;
 }
 
+.validation-message {
+	text-align: center;
+}
+
+.validation-message-main {
+	font-size: 14px;
+	padding: 5px;
+	width: 100%;
+	text-align: center;
+}
+
 .titania-navigation {
 	margin-top: 8px;
 }

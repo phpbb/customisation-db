@@ -136,7 +136,7 @@
 				<!-- ENDIF -->
 			<!-- ENDIF -->
 			<!-- IF STEP_MESSAGE -->
-				<div style="font-size:14px; padding:5px; width:100%; text-align:center;">
+				<div class="validation-message-main">
 					{STEP_MESSAGE}
 					<!-- IF IGNORE_VALIDATION_ERRORS -->
 					<input type="hidden" name="ignore_validation_errors" value="1" />
@@ -164,7 +164,7 @@
 				{AUTOMOD_RESULTS}
 			<!-- ENDIF -->
 			<!-- IF S_PASSED_TRANSLATION_VALIDATION -->
-				<div style="text-align:center;">{L_PASSED_VALIDATION}</div>
+				<div class="validation-message">{L_PASSED_VALIDATION}</div>
 			<!-- ENDIF -->
 
 			<fieldset class="submit-buttons">
