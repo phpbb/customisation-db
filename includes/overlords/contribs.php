@@ -145,17 +145,27 @@ class contribs_overlord
 	 * @param int|bool $branch Branch to limit results to: 20|30|31. Defaults to false.
 	 * @param \phpbb\titania\sort|bool $sort
 	 * @param string $blockname The name of the template block to use (contribs by default)
+	 * @param string $status Approval status
 	 *
 	 * @return array
 	 * @throws Exception
 	 */
-	public static function display_contribs($mode, $hierarchy_ids, $branch = false, $sort = false, $blockname = 'contribs')
+	public static function display_contribs($mode, $hierarchy_ids, $branch = false, $sort = false, $blockname = 'contribs', $status = null)
 	{
 		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$tracking = phpbb::$container->get('phpbb.titania.tracking');
 		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 		$cache = phpbb::$container->get('phpbb.titania.cache');
+
+		// Handle status filter
+		$status_filter = false;
+
+		if (!empty($status))
+		{
+			$status_filter_type = ($status == 'approved') ? ext::TITANIA_CONTRIB_APPROVED : ext::TITANIA_CONTRIB_NEW;
+			$status_filter = ' AND c.contrib_status = ' . $status_filter_type;
+		}
 
 		// Setup the sort tool if not sent, then request
 		if ($sort === false)
@@ -283,7 +293,8 @@ class contribs_overlord
 					// If multiple categories, use the stripped list. If it's just the single hidden category, that's okay
 					// as presumably someone has gone looking for the hidden category, or it has been linked to, etc.
 					'WHERE'		=> phpbb::$db->sql_in_set('cic.category_id', $visible_category_ids, false, true) . '
-						AND c.contrib_visible = 1 ' . (($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
+						AND c.contrib_visible = 1 ' . (($branch) ? " AND rp.phpbb_version_branch = $branch" : '') .
+						(($status_filter) ? $status_filter : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
@@ -314,7 +325,8 @@ class contribs_overlord
 					),
 
 					'WHERE'		=> 'c.contrib_visible = 1' .
-						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
+						(($branch) ? " AND rp.phpbb_version_branch = $branch" : '') .
+						(($status_filter) ? $status_filter : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);

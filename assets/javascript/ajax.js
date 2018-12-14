@@ -116,6 +116,7 @@
 
 		titania.updateSortOptions($('.branch-sort'), $('.branch-sort-options'), res.branches);
 		titania.updateSortOptions($('.key-sort'), $('.key-sort-options'), res.sort);
+        titania.updateSortOptions($('.status-sort'), $('.status-sort-options'), res.status);
 
 		$title.html(title.match(/(.*?[-\u2022]\s)/)[0] + res.title);
 		$crumbs.children(':not(:first-child)').remove();

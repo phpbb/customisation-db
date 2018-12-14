@@ -114,6 +114,7 @@ class index
 
 		// Approval status
 		$status = $this->request->variable('status', '');
+		$this->set_status($status);
 
 		$title = $this->user->lang('CUSTOMISATION_DATABASE');
 		$sort = $this->list_contributions('', self::ALL_CONTRIBS, $status);
@@ -122,7 +123,7 @@ class index
 
 		if ($this->request->is_ajax())
 		{
-			return $this->get_ajax_response($title, $sort);
+			return $this->get_ajax_response($title, $sort, $status);
 		}
 
 		$this->display->display_categories(
@@ -194,6 +195,7 @@ class index
 
 		if ($this->request->is_ajax())
 		{
+			// TODO: add status
 			return $this->get_ajax_response($title, $sort);
 		}
 
@@ -368,7 +370,7 @@ class index
 		$sort->set_defaults(24);
 		$branch = (int) str_replace('.', '', $this->branch);
 
-		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort);//TODO: add status
+		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort, 'contribs', $status);
 
 		// Canonical URL
 		$data['sort']->set_url($sort_url);
@@ -424,7 +426,7 @@ class index
 	 * @param \phpbb\titania\sort $sort
 	 * @return JsonResponse
 	 */
-	protected function get_ajax_response($title, $sort)
+	protected function get_ajax_response($title, $sort, $status) //TODO: might be able to get rid of this
 	{
 		$this->template->set_filenames(array(
 			'body'			=> 'common/contribution_list.html',
@@ -439,6 +441,7 @@ class index
 			'categories'	=> $this->get_category_urls(),
 			'branches'		=> $this->get_branches(),
 			'sort'			=> $this->get_sorting($sort),
+			'status'		=> $this->get_status(),
 			'pagination'    => $this->template->assign_display('pagination'),
 			'u_queue_stats'	=> $this->get_queue_stats_url(),
 			'l_queue_stats'	=> $this->user->lang('QUEUE_STATS'),
@@ -536,7 +539,7 @@ class index
 			'NAME'		=> $this->user->lang('STATUS_ALL'),
 			'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
 			'ACTIVE'	=> empty($this->status),
-			'ID'		=> 0,
+			'ID'		=> 'all',
 		);
 
 		// Set up how the URL will look
@@ -555,8 +558,8 @@ class index
 			$status_list[] = array(
 				'NAME'		=> $status_type,
 				'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
-				'ACTIVE'	=> $this->status == $status_type,
-				'ID'		=> $i,
+				'ACTIVE'	=> $this->status == $status_type_url,
+				'ID'		=> $status_type_url,
 			);
 
 			$i++;
