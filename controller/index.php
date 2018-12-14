@@ -117,7 +117,7 @@ class index
 		$this->set_status($status);
 
 		$title = $this->user->lang('CUSTOMISATION_DATABASE');
-		$sort = $this->list_contributions('', self::ALL_CONTRIBS, $status);
+		$sort = $this->list_contributions('', self::ALL_CONTRIBS);
 		$this->params = $this->get_params($sort);
 		$this->display->assign_global_vars();
 
@@ -166,6 +166,10 @@ class index
 	*/
 	public function display_category($category1, $category2, $category3, $category4)
 	{
+		// Approval status
+		$status = $this->request->variable('status', '');
+		$this->set_status($status);
+
 		$categories = array($category1, $category2, $category3, $category4);
 
 		try
@@ -185,7 +189,7 @@ class index
 		$children = $this->get_children_ids();
 		// Include the current category in the ones selected
 		$children[] = $this->id;
-		$sort = $this->list_contributions($children, $this->category->get_url()); //TODO: add status
+		$sort = $this->list_contributions($children, $this->category->get_url());
 		$this->params = $this->get_params($sort);
 
 		$title = $this->category->get_name() . ' - ' . $this->user->lang['CUSTOMISATION_DATABASE'];
@@ -195,8 +199,7 @@ class index
 
 		if ($this->request->is_ajax())
 		{
-			// TODO: add status
-			return $this->get_ajax_response($title, $sort);
+			return $this->get_ajax_response($title, $sort, $status);
 		}
 
 		$this->display->display_categories(
@@ -359,18 +362,17 @@ class index
 	*
 	* @param array $categories The id's of the categories from which to select.
 	* @param string $sort_url The base url from which to sort.
-	* @param string $status Approval status
 	*
 	* @return \phpbb\titania\sort
 	*/
-	protected function list_contributions($categories, $sort_url, $status = null)
+	protected function list_contributions($categories, $sort_url)
 	{
 		$mode = ($this->id) ? 'category' : 'all';
 		$sort = \contribs_overlord::build_sort();
 		$sort->set_defaults(24);
 		$branch = (int) str_replace('.', '', $this->branch);
 
-		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort, 'contribs', $status);
+		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort, 'contribs', $this->status);
 
 		// Canonical URL
 		$data['sort']->set_url($sort_url);
@@ -426,7 +428,7 @@ class index
 	 * @param \phpbb\titania\sort $sort
 	 * @return JsonResponse
 	 */
-	protected function get_ajax_response($title, $sort, $status) //TODO: might be able to get rid of this
+	protected function get_ajax_response($title, $sort)
 	{
 		$this->template->set_filenames(array(
 			'body'			=> 'common/contribution_list.html',
