@@ -557,8 +557,6 @@ class index
 			$this->user->lang('STATUS_UNAPPROVED') => 'unapproved',
 		);
 
-		$i = 0;
-
 		foreach ($status_types as $status_type => $status_type_url)
 		{
 			$params['status'] = $status_type_url;
@@ -571,8 +569,6 @@ class index
 				'ACTIVE'	=> $this->status == $status_type_url,
 				'ID'		=> $status_type_url,
 			);
-
-			$i++;
 		}
 
 		return $status_list;
