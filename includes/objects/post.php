@@ -1111,6 +1111,9 @@ class titania_post extends \phpbb\titania\entity\message_base
 			case ext::TITANIA_TYPE_STYLE:
 				$type = 'titania_styles_queue';
 				break;
+
+			default:
+				return 0;
 		}
 
 		$titania_config = titania::$config;
