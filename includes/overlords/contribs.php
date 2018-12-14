@@ -163,6 +163,7 @@ class contribs_overlord
 
 		if (!empty($status))
 		{
+			// Filter by status
 			$status_filter_type = ($status == 'approved') ? ext::TITANIA_CONTRIB_APPROVED : ext::TITANIA_CONTRIB_NEW;
 			$status_filter = ' AND c.contrib_status = ' . $status_filter_type;
 		}

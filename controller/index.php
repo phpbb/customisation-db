@@ -515,6 +515,9 @@ class index
 		);
 	}
 
+	/**
+	 * Prepare status dropdown lists to show the various options
+	 */
 	protected function assign_status()
 	{
 		foreach ($this->get_status() as $status => $vars)
@@ -528,6 +531,10 @@ class index
 		}
 	}
 
+	/**
+	 * Get the list of statuses, including the one which is currently set to active
+	 * @return array
+	 */
 	protected function get_status()
 	{
 		$params = $this->params;
@@ -557,6 +564,7 @@ class index
 			$params['status'] = $status_type_url;
 			$url = $this->get_item_url($params);
 
+			// Set to active if it's the one currently selected
 			$status_list[] = array(
 				'NAME'		=> $status_type,
 				'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
@@ -570,6 +578,10 @@ class index
 		return $status_list;
 	}
 
+	/**
+	 * Store the selected status
+	 * @param $status
+	 */
 	protected function set_status($status)
 	{
 		$this->status = $status;
