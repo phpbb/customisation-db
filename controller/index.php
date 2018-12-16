@@ -347,7 +347,7 @@ class index
 	protected function get_category_type()
 	{
 		$children = $this->get_children_ids();
-		$type_id = (!is_null($this->category)) ? $this->category->category_type : false;
+		$type_id = ($this->category !== null) ? $this->category->category_type : false;
 
 		// If the category is the top most parent, we'll try to get the type from the first child
 		if (!$type_id && !empty($children))
@@ -541,15 +541,14 @@ class index
 	 */
 	private function valid_type_permissions()
 	{
-		$types = \phpbb::$container->get('phpbb.titania.contribution.type.collection');
-		$types_managed = $types->find_authed('validate');
+		$types_managed = $this->types->find_authed('validate');
 
 		// If current type id is null, it's the index page
 		$current_category_type = $this->get_category_type();
-		$current_type_id = ($current_category_type !== false) ? $this->get_category_type()->get_id() : null;
+		$current_type_id = ($current_category_type !== false) ? $current_category_type->get_id() : null;
 
 		// If the user manages some types, and the current type is in that list (or it's the index) show the dropdown.
-		$show = (sizeof($types_managed) && (is_null($current_type_id) || in_array($current_type_id, $types_managed)));
+		$show = (sizeof($types_managed) && ($current_type_id === null || in_array($current_type_id, $types_managed)));
 
 		return $show;
 	}

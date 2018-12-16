@@ -120,13 +120,7 @@
 		titania.updateSortOptions($('.status-sort'), $('.status-sort-options'), res.status);
 
 		// If the initial screen is for a type the user doesn't have validate permission for, don't show the dropdown
-		if (!res.show_status) {
-			$('.status-sort').hide();
-		}
-
-		else {
-			$('.status-sort').show();
-		}
+		$('.status-sort').toggle(res.show_status);
 
 		$title.html(title.match(/(.*?[-\u2022]\s)/)[0] + res.title);
 		$crumbs.children(':not(:first-child)').remove();

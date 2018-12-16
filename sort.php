@@ -253,7 +253,7 @@ class sort extends entity\base
 
 	/**
 	 * Filter for contribution status
-	 * @return mixed
+	 * @return string
 	 */
 	public function get_status()
 	{
