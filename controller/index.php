@@ -347,7 +347,7 @@ class index
 	protected function get_category_type()
 	{
 		$children = $this->get_children_ids();
-		$type_id = $this->category->category_type;
+		$type_id = ($this->category !== null) ? $this->category->category_type : false;
 
 		// If the category is the top most parent, we'll try to get the type from the first child
 		if (!$type_id && !empty($children))
@@ -444,6 +444,7 @@ class index
 			'branches'		=> $this->get_branches(),
 			'sort'			=> $this->get_sorting($sort),
 			'status'		=> $this->get_status(),
+			'show_status'	=> $this->valid_type_permissions(),
 			'pagination'    => $this->template->assign_display('pagination'),
 			'u_queue_stats'	=> $this->get_queue_stats_url(),
 			'l_queue_stats'	=> $this->user->lang('QUEUE_STATS'),
@@ -529,11 +530,33 @@ class index
 				$this->template->assign_var('ACTIVE_STATUS', $vars['NAME']);
 			}
 		}
+
+		$this->template->assign_var('SHOW_STATUS', $this->valid_type_permissions());
+	}
+
+	/**
+	 * Check whether the user has permission to filter by unapproved contributions
+	 * @return bool
+	 * @throws \Exception
+	 */
+	private function valid_type_permissions()
+	{
+		$types_managed = $this->types->find_authed('validate');
+
+		// If current type id is null, it's the index page
+		$current_category_type = $this->get_category_type();
+		$current_type_id = ($current_category_type !== false) ? $current_category_type->get_id() : null;
+
+		// If the user manages some types, and the current type is in that list (or it's the index) show the dropdown.
+		$show = (sizeof($types_managed) && ($current_type_id === null || in_array($current_type_id, $types_managed)));
+
+		return $show;
 	}
 
 	/**
 	 * Get the list of statuses, including the one which is currently set to active
 	 * @return array
+	 * @throws \Exception
 	 */
 	protected function get_status()
 	{
