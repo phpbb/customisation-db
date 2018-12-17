@@ -252,6 +252,10 @@ $lang = array_merge($lang, array(
 	'UPDATE_TIME_ASC'			=> 'Least recently updated',
 	'UPDATE_TIME_DESC'			=> 'Most recently updated',
 
+	'STATUS_ALL'				=> 'All',
+	'STATUS_APPROVED'			=> 'Approved',
+	'STATUS_UNAPPROVED'			=> 'Unapproved',
+
 	'VERSION'					=> 'Version',
 	'VIEW'						=> 'View',
 ));

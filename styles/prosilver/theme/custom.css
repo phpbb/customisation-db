@@ -3,5 +3,11 @@
 	$Custom
 -------------------------------------------------------------- */
 .rank-img img {
-	width: 200px;
+	width: 160px;
+}
+
+@media (min-width: 701px) {
+	.rank-img img {
+		width: 95%;
+	}
 }

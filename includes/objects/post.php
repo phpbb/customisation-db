@@ -1111,13 +1111,22 @@ class titania_post extends \phpbb\titania\entity\message_base
 			case ext::TITANIA_TYPE_STYLE:
 				$type = 'titania_styles_queue';
 				break;
+
+			default:
+				return 0;
 		}
 
-		$forums = titania::$config->$type;
+		$titania_config = titania::$config;
+		$titania_object_config = $titania_config->object_config;
 
-		if (isset($forums[$mode]))
+		if (array_key_exists($type, $titania_object_config))
 		{
-			return (int) $forums[$mode];
+			$forums = $titania_config->$type;
+
+			if (isset($forums[$mode]))
+			{
+				return (int) $forums[$mode];
+			}
 		}
 
 		return 0;
