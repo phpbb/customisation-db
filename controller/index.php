@@ -65,6 +65,9 @@ class index
 	/** @var string */
 	protected $branch = '';
 
+	/** @var string */
+	protected $status = '';
+
 	/** @var array */
 	protected $params = array();
 
@@ -109,14 +112,18 @@ class index
 	{
 		$this->set_branch($branch);
 
+		// Approval status
+		$status = $this->request->variable('status', '');
+		$this->set_status($status);
+
 		$title = $this->user->lang('CUSTOMISATION_DATABASE');
-		$sort = $this->list_contributions('', self::ALL_CONTRIBS, '');
+		$sort = $this->list_contributions('', self::ALL_CONTRIBS);
 		$this->params = $this->get_params($sort);
 		$this->display->assign_global_vars();
 
 		if ($this->request->is_ajax())
 		{
-			return $this->get_ajax_response($title, $sort);
+			return $this->get_ajax_response($title, $sort, $status);
 		}
 
 		$this->display->display_categories(
@@ -147,6 +154,7 @@ class index
 
 		$this->assign_sorting($sort);
 		$this->assign_branches();
+		$this->assign_status();
 
 		return $this->helper->render('index_body.html', $title);
 	}
@@ -158,6 +166,10 @@ class index
 	*/
 	public function display_category($category1, $category2, $category3, $category4)
 	{
+		// Approval status
+		$status = $this->request->variable('status', '');
+		$this->set_status($status);
+
 		$categories = array($category1, $category2, $category3, $category4);
 
 		try
@@ -187,7 +199,7 @@ class index
 
 		if ($this->request->is_ajax())
 		{
-			return $this->get_ajax_response($title, $sort);
+			return $this->get_ajax_response($title, $sort, $status);
 		}
 
 		$this->display->display_categories(
@@ -207,8 +219,10 @@ class index
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
 			'U_ALL_CONTRIBUTIONS'	=> $this->get_index_url($this->params),
 		));
+
 		$this->assign_sorting($sort);
 		$this->assign_branches();
+		$this->assign_status();
 
 		return $this->helper->render('index_body.html', $title);
 	}
@@ -333,7 +347,7 @@ class index
 	protected function get_category_type()
 	{
 		$children = $this->get_children_ids();
-		$type_id = $this->category->category_type;
+		$type_id = ($this->category !== null) ? $this->category->category_type : false;
 
 		// If the category is the top most parent, we'll try to get the type from the first child
 		if (!$type_id && !empty($children))
@@ -358,7 +372,7 @@ class index
 		$sort->set_defaults(24);
 		$branch = (int) str_replace('.', '', $this->branch);
 
-		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort);
+		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort, 'contribs', $this->status);
 
 		// Canonical URL
 		$data['sort']->set_url($sort_url);
@@ -429,6 +443,8 @@ class index
 			'categories'	=> $this->get_category_urls(),
 			'branches'		=> $this->get_branches(),
 			'sort'			=> $this->get_sorting($sort),
+			'status'		=> $this->get_status(),
+			'show_status'	=> $this->valid_type_permissions(),
 			'pagination'    => $this->template->assign_display('pagination'),
 			'u_queue_stats'	=> $this->get_queue_stats_url(),
 			'l_queue_stats'	=> $this->user->lang('QUEUE_STATS'),
@@ -498,6 +514,96 @@ class index
 			'ACTIVE'	=> $id == $sort->sort_key . '_' . $sort->sort_dir,
 			'ID'		=> $id,
 		);
+	}
+
+	/**
+	 * Prepare status dropdown lists to show the various options
+	 */
+	protected function assign_status()
+	{
+		foreach ($this->get_status() as $status => $vars)
+		{
+			$this->template->assign_block_vars('sort_status', $vars);
+
+			if ($vars['ACTIVE'])
+			{
+				$this->template->assign_var('ACTIVE_STATUS', $vars['NAME']);
+			}
+		}
+
+		$this->template->assign_var('SHOW_STATUS', $this->valid_type_permissions());
+	}
+
+	/**
+	 * Check whether the user has permission to filter by unapproved contributions
+	 * @return bool
+	 * @throws \Exception
+	 */
+	private function valid_type_permissions()
+	{
+		$types_managed = $this->types->find_authed('validate');
+
+		// If current type id is null, it's the index page
+		$current_category_type = $this->get_category_type();
+		$current_type_id = ($current_category_type !== false) ? $current_category_type->get_id() : null;
+
+		// If the user manages some types, and the current type is in that list (or it's the index) show the dropdown.
+		$show = (sizeof($types_managed) && ($current_type_id === null || in_array($current_type_id, $types_managed)));
+
+		return $show;
+	}
+
+	/**
+	 * Get the list of statuses, including the one which is currently set to active
+	 * @return array
+	 * @throws \Exception
+	 */
+	protected function get_status()
+	{
+		$params = $this->params;
+		unset($params['status']);
+
+		$is_ajax = $this->request->is_ajax();
+		$url = $this->get_item_url($params);
+
+		$status_list = array();
+		$status_list[] = array(
+			'NAME'		=> $this->user->lang('STATUS_ALL'),
+			'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
+			'ACTIVE'	=> empty($this->status),
+			'ID'		=> 'all',
+		);
+
+		// Set up how the URL will look
+		$status_types = array(
+			$this->user->lang('STATUS_APPROVED') => 'approved',
+			$this->user->lang('STATUS_UNAPPROVED') => 'unapproved',
+		);
+
+		foreach ($status_types as $status_type => $status_type_url)
+		{
+			$params['status'] = $status_type_url;
+			$url = $this->get_item_url($params);
+
+			// Set to active if it's the one currently selected
+			$status_list[] = array(
+				'NAME'		=> $status_type,
+				'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
+				'ACTIVE'	=> $this->status == $status_type_url,
+				'ID'		=> $status_type_url,
+			);
+		}
+
+		return $status_list;
+	}
+
+	/**
+	 * Store the selected status
+	 * @param $status
+	 */
+	protected function set_status($status)
+	{
+		$this->status = $status;
 	}
 
 	/**
@@ -624,6 +730,10 @@ class index
 		if ($this->branch)
 		{
 			$params['branch'] = $this->branch;
+		}
+		if ($this->status)
+		{
+			$params['status'] = $this->status;
 		}
 
 		return $params;

@@ -121,6 +121,23 @@ class config extends \phpbb\titania\entity\base
 				'32'	=> 0,
 			)),
 
+			// Extension/style validation queue forums
+			'titania_extensions_queue'	=> array('default' => array(
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
+				ext::TITANIA_QUEUE				=> 0,
+				'trash'							=> 0,
+			)),
+			'titania_mods_queue'		=> array('default' => array(
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
+				ext::TITANIA_QUEUE				=> 0,
+				'trash'							=> 0,
+			)),
+			'titania_styles_queue'		=> array('default' => array(
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
+				ext::TITANIA_QUEUE				=> 0,
+				'trash'							=> 0,
+			)),
+
 			// Accounts to use for posting in the forum
 			'forum_mod_robot'			=> array('default' => 0),
 			'forum_style_robot'			=> array('default' => 0),
@@ -159,7 +176,7 @@ class config extends \phpbb\titania\entity\base
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
 				'30'	=> array('latest_revision' => '14', 'name' => 'phpBB 3.0.x', 'allow_uploads' => false),
 				'31'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.1.x', 'allow_uploads' => false),
-				'32'	=> array('latest_revision' => '4', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
+				'32'	=> array('latest_revision' => '5', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
 			)),
 
 			// MPV server(s)

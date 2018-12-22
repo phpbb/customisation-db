@@ -20,6 +20,12 @@ use phpbb\titania\attachment\attachment;
 interface type_interface
 {
 	/**
+	 * Get type id
+	 * @return int
+	 */
+	public function get_id();
+
+	/**
 	 * Check if the user is authorized for the given action.
 	 *
 	 * @param string $action E.g. view, test, validate, etc.

@@ -40,11 +40,11 @@
 						<!-- IF revisions.PHPBB_VERSION -->
 							{revisions.PHPBB_VERSION}
 						<!-- ELSE -->
-							<select class="phpbb_versions">
-							<!-- BEGIN phpbb_versions -->
-								<option>{revisions.phpbb_versions.VERSION}</option>
-							<!-- END phpbb_versions -->
-							</select>
+							<ul class="revision-version-list">
+								<!-- BEGIN phpbb_versions -->
+								<li>{revisions.phpbb_versions.VERSION}</li>
+								<!-- END phpbb_versions -->
+							</ul>
 						<!-- ENDIF -->
 					</dd>
 				</dl>

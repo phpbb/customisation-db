@@ -207,6 +207,7 @@ $lang = array_merge($lang, array(
 	'SELECT_CONTRIB_TYPE'					=> '-- Select contribution type --',
 	'SELECT_FILE'							=> 'Select file',
 	'SELECT_PHPBB_BRANCH'					=> 'Select phpBB branch',
+	'STYLE_LICENSE_WARNING'					=> 'Warning: This style currently does not meet our licensing guidelines.',
 	'SUBDIRECTORY_LIMIT'					=> 'Packages are not allowed to be more than 50 subdirectories deep at any point.',
 	'SUBMIT_NEW_REVISION'					=> 'Submit and add new revision',
 	'SUBMIT_PRERELEASE_VERSION'				=> 'Prerelease submission',

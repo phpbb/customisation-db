@@ -561,8 +561,31 @@ ul.simple li.header dt, ul.simple li.header dd {
 	width: 130px !important;
 }
 
+/* If multiple versions, then comma separate
+--------------------------------------------- */
 dd.revision-version, dd.phpbb-version {
 	text-align: center;
+}
+
+ul.revision-version-list {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+
+ul.revision-version-list li {
+	margin: 0;
+	padding: 0;
+	display: inline;
+	list-style: none;
+}
+
+ul.revision-version-list li:after {
+	content: ", ";
+}
+
+ul.revision-version-list li:last-child:after {
+	content: "";
 }
 
 #translations-panel {
@@ -926,7 +949,10 @@ p.attention-closed {
 	width: 20px;
 }
 
-.stat-ratio { width: 300px; }
+.stat-ratio {
+	width: 80%;
+	margin: 25px 0;
+}
 
 .stat-ratio span {
 	height: 16px;
@@ -943,6 +969,16 @@ p.attention-closed {
 	float: none;
 	margin-bottom: 1px;
 	position: relative;
+}
+
+.day-list-date {
+	font-size: 1.0em;
+}
+
+.queue-statistics-box {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .stat-day span strong {
