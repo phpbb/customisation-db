@@ -108,8 +108,7 @@ class events extends \phpbb\console\command\command
 		// As we're in the CLI, we need to force server vars so that the route helper generates correct version check URLs
 		$this->config['force_server_vars'] = true; // TODO: ???
 
-		// The parent constructor calls configure(), all properties need to be set up at this point
-		parent::__construct($user); // TODO: ???
+		parent::__construct($user);
 	}
 
 	/**
@@ -127,6 +126,10 @@ class events extends \phpbb\console\command\command
 		$this->input = $input;
 		$this->output = $output;
 
+		// Show quick explanation
+		$this->output->writeln($this->language->lang('CLI_DESCRIPTION_EXTENSION_EVENTS_EXPLAIN'));
+
+		// Run the script - could take a while if there's a lot of extensions to unzip and scan
 		$this->analyse();
 	}
 
@@ -139,7 +142,7 @@ class events extends \phpbb\console\command\command
 		$revisions = $this->get_latest_approved_revisions();
 
 		$progress = $this->create_progress_bar(
-			count($revisions) + 1,
+			count($revisions),
 			new SymfonyStyle($this->input, $this->output),
 			$this->output,
 			true
@@ -205,6 +208,10 @@ class events extends \phpbb\console\command\command
 		$this->display_stats_table('php');
 	}
 
+	/**
+	 * Display the output in a table
+	 * @param $type
+	 */
 	private function display_stats_table($type)
 	{
 		$table = new Table($this->output);
@@ -221,6 +228,71 @@ class events extends \phpbb\console\command\command
 			->render();
 
 		$this->output->writeln('');
+	}
+
+	/**
+	 * Find template events
+	 * @return array
+	 */
+	private function find_template_events()
+	{
+		$revision_template_events = [];
+
+		// Find all of the template events being used using Symfony Finder and wildcards
+		$finder = new Finder();
+		$finder->in($this->tmp_folder . '/*/*/styles/*/template/event');
+
+		/** @var SplFileInfo $file */
+		foreach ($finder as $file)
+		{
+			$event_name = $file->getBasename('.html');
+
+			// Save the event name
+			if (!in_array($event_name, $revision_template_events))
+			{
+				$revision_template_events[] = $event_name;
+			}
+		}
+
+		// Save to the master list
+		$this->save_events_to_master_list($revision_template_events, 'template');
+
+		return $revision_template_events;
+	}
+
+	/**
+	 * Find PHP events
+	 * @return array
+	 * @throws \Exception
+	 */
+	private function find_php_events()
+	{
+		$revision_php_events = [];
+
+		// Find the PHP events
+		$finder = new Finder();
+		$finder->in($this->tmp_folder)->files()->name('*.php');
+
+		/** @var SplFileInfo $file */
+		foreach ($finder as $file)
+		{
+			// Parse the array text
+			$matches = \array_parser::check_events($file->getRealPath());
+			$event_list = array_keys($matches);
+
+			foreach ($event_list as $event_name)
+			{
+				if (!in_array($event_name, $revision_php_events))
+				{
+					$revision_php_events[] = $event_name;
+				}
+			}
+		}
+
+		// Save to the master list
+		$this->save_events_to_master_list($revision_php_events, 'php');
+
+		return $revision_php_events;
 	}
 
 	/**
@@ -263,74 +335,6 @@ class events extends \phpbb\console\command\command
 		return $revisions;
 	}
 
-	public function set_titania_dependencies(titania_config $titania_config)
-	{
-		$this->titania_config = $titania_config;
-	}
-
-	/**
-	 * @return array
-	 */
-	private function find_template_events()
-	{
-		$revision_template_events = [];
-
-		// Find all of the template events being used using Symfony Finder and wildcards
-		$finder = new Finder();
-		$finder->in($this->tmp_folder . '/*/*/styles/*/template/event');
-
-		/** @var SplFileInfo $file */
-		foreach ($finder as $file)
-		{
-			$event_name = $file->getBasename('.html');
-
-			// Save the event name
-			if (!in_array($event_name, $revision_template_events))
-			{
-				$revision_template_events[] = $event_name;
-			}
-		}
-
-		// Save to the master list
-		$this->save_events_to_master_list($revision_template_events, 'template');
-
-		return $revision_template_events;
-	}
-
-	/**
-	 * @return array
-	 * @throws \Exception
-	 */
-	private function find_php_events()
-	{
-		$revision_php_events = [];
-
-		// Find the PHP events
-		$finder = new Finder();
-		$finder->in($this->tmp_folder)->files()->name('*.php');
-
-		/** @var SplFileInfo $file */
-		foreach ($finder as $file)
-		{
-			// Parse the array text
-			$matches = \array_parser::check_events($file->getRealPath());
-			$event_list = array_keys($matches);
-
-			foreach ($event_list as $event_name)
-			{
-				if (!in_array($event_name, $revision_php_events))
-				{
-					$revision_php_events[] = $event_name;
-				}
-			}
-		}
-
-		// Save to the master list
-		$this->save_events_to_master_list($revision_php_events, 'php');
-
-		return $revision_php_events;
-	}
-
 	/**
 	 * Save the events to the master list
 	 * @param $list
@@ -362,5 +366,10 @@ class events extends \phpbb\console\command\command
 		// This deletes the temporary folder
 		$system = new Filesystem();
 		$system->remove($this->tmp_folder);
+	}
+
+	public function set_titania_dependencies(titania_config $titania_config)
+	{
+		$this->titania_config = $titania_config;
 	}
 }
