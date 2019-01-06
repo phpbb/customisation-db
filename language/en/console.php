@@ -54,4 +54,14 @@ $lang = array_merge($lang, array(
 		0 => 'No revisions to repack.',
 		1 => 'Successful repacked revisions: %1$d',
 	),
+
+	// Event analyser
+	'CLI_DESCRIPTION_EXTENSION_EVENTS'		=> 'Scan extensions to discover the most frequently used events.',
+	'CLI_EXTENSION_EVENTS_SCAN_CONTRIB'		=> 'Scanning "%s", revision id "%d", file "%s".',
+	'CLI_EXTENSION_EVENTS_SCAN_START'		=> 'Start scanning contributions...',
+	'CLI_EXTENSION_EVENTS_SCAN_FINISH'		=> 'Finished scanning contributions...',
+	'CLI_EXTENSION_EVENTS_NAME'				=> 'Event Name',
+	'CLI_EXTENSION_EVENTS_USAGES'			=> 'Usages',
+	'CLI_EXTENSION_EVENTS_TEMPLATE'			=> 'phpBB Template Event Usages',
+	'CLI_EXTENSION_EVENTS_PHP'				=> 'phpBB Core Event Usages',
 ));

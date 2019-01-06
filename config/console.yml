@@ -21,3 +21,17 @@ services:
             - [set_titania_dependencies, ['@phpbb.titania.config', '@phpbb.titania.extension.type', '@phpbb.titania.attachment.operator']]
         tags:
             - { name: console.command }
+
+    phpbb.titania.console.command.extension.events:
+        class: phpbb\titania\console\command\extension\events
+        arguments:
+            - '@user'
+            - '@language'
+            - '@config'
+            - '@dbal.conn'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+        calls:
+            - [set_titania_dependencies, ['@phpbb.titania.config']]
+        tags:
+            - { name: console.command }
