@@ -27,11 +27,8 @@ services:
         arguments:
             - '@user'
             - '@language'
-            - '@config'
             - '@dbal.conn'
             - '%core.root_path%'
             - '%core.php_ext%'
-        calls:
-            - [set_titania_dependencies, ['@phpbb.titania.config']]
         tags:
             - { name: console.command }

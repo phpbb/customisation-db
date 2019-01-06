@@ -13,10 +13,8 @@
 
 namespace phpbb\titania\console\command\extension;
 
-use phpbb\config\config;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\language\language;
-use phpbb\titania\config\config as titania_config;
 use phpbb\titania\ext;
 use phpbb\user;
 use Symfony\Component\Console\Helper\Table;
@@ -27,6 +25,14 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * Class events
+ * A script that can be run which will find the latest revision of all approved extensions, one by one unpackage them
+ * and then scan the files for a) template events; b) php files for anything extending EventSubscriberInterface and if
+ * it is, then find the subscribed events. Finally, output the results to show the most commonly referenced events.
+ * battye was here in 2019
+ * @package phpbb\titania\console\command\extension
+ */
 class events extends \phpbb\console\command\command
 {
 	const COMMAND_NAME = 'titania:extension:events';
@@ -34,17 +40,11 @@ class events extends \phpbb\console\command\command
 	/** @var language */
 	protected $language;
 
-	/** @var config */
-	protected $config;
-
 	/** @var db */
 	protected $db;
 
 	/** @var $root_path */
 	protected $root_path;
-
-	/** @var titania_config */
-	protected $titania_config;
 
 	/** @var OutputInterface */
 	protected $output;
@@ -72,23 +72,23 @@ class events extends \phpbb\console\command\command
 	 *
 	 * @param user $user
 	 * @param language $language
-	 * @param config $config
 	 * @param db $db
 	 * @param string $root_path
 	 * @param string $php_ext
 	 */
-	public function __construct(user $user, language $language, config $config, db $db, $root_path, $php_ext)
+	public function __construct(user $user, language $language, db $db, $root_path, $php_ext)
 	{
 		if (!defined('TITANIA_CONTRIBS_TABLE'))
 		{
 			include($root_path . 'ext/phpbb/titania/common.' . $php_ext);
 		}
 
+		// Set up the injected properties
 		$this->language				= $language;
-		$this->config				= $config;
 		$this->db					= $db;
 		$this->root_path			= $root_path;
 
+		// Save our table names
 		$this->contribs_table		= TITANIA_CONTRIBS_TABLE;
 		$this->revisions_table		= TITANIA_REVISIONS_TABLE;
 		$this->attachments_table	= TITANIA_ATTACHMENTS_TABLE;
@@ -102,11 +102,8 @@ class events extends \phpbb\console\command\command
 		// Temporary folder
 		$this->tmp_folder = $this->root_path . 'ext/phpbb/titania/files/contrib_temp/tmp';
 
-		$language_files = array('console');
+		$language_files = ['console'];
 		$this->language->add_lang($language_files, 'phpbb/titania');
-
-		// As we're in the CLI, we need to force server vars so that the route helper generates correct version check URLs
-		$this->config['force_server_vars'] = true; // TODO: ???
 
 		parent::__construct($user);
 	}
@@ -120,6 +117,12 @@ class events extends \phpbb\console\command\command
 			->setDescription($this->language->lang('CLI_DESCRIPTION_EXTENSION_EVENTS'));
 	}
 
+	/**
+	 * Execute the script
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
+	 * @return int|null|void
+	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		// Store the IO object for use later
@@ -182,7 +185,7 @@ class events extends \phpbb\console\command\command
 					// Find PHP events
 					$this->find_php_events();
 
-					// Remove temp folder before we unzip the next one
+					// Remove temp folder before we unzip the next one.
 					$this->remove_temporary_folder();
 				}
 			}
@@ -366,10 +369,5 @@ class events extends \phpbb\console\command\command
 		// This deletes the temporary folder
 		$system = new Filesystem();
 		$system->remove($this->tmp_folder);
-	}
-
-	public function set_titania_dependencies(titania_config $titania_config)
-	{
-		$this->titania_config = $titania_config;
 	}
 }
