@@ -35,6 +35,7 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class events extends \phpbb\console\command\command
 {
+	// To execute this script, run: php bin/phpbbcli.php titania:extension:event
 	const COMMAND_NAME = 'titania:extension:events';
 
 	/** @var language */
@@ -63,6 +64,9 @@ class events extends \phpbb\console\command\command
 
 	/** @var array */
 	protected $event_listing;
+
+	/** @var array */
+	protected $custom_php_events;
 
 	/** @var string */
 	protected $tmp_folder;
@@ -98,6 +102,9 @@ class events extends \phpbb\console\command\command
 			'template' 	=> [],
 			'php' 		=> [],
 		];
+
+		// Custom events
+		$this->custom_php_events = [];
 
 		// Temporary folder
 		$this->tmp_folder = $this->root_path . 'ext/phpbb/titania/files/contrib_temp/tmp';
@@ -209,93 +216,10 @@ class events extends \phpbb\console\command\command
 		// PHP stats
 		$this->output->writeln($this->language->lang('CLI_EXTENSION_EVENTS_PHP'));
 		$this->display_stats_table('php');
-	}
 
-	/**
-	 * Display the output in a table
-	 * @param $type
-	 */
-	private function display_stats_table($type)
-	{
-		$table = new Table($this->output);
-		$usages = [];
-
-		foreach ($this->event_listing[$type] as $name => $count)
-		{
-			$usages[] = [$count, $name];
-		}
-
-		$table_header = [$this->language->lang('CLI_EXTENSION_EVENTS_USAGES'), $this->language->lang('CLI_EXTENSION_EVENTS_NAME')];
-		$table->setHeaders($table_header)
-			->setRows($usages)
-			->render();
-
-		$this->output->writeln('');
-	}
-
-	/**
-	 * Find template events
-	 * @return array
-	 */
-	private function find_template_events()
-	{
-		$revision_template_events = [];
-
-		// Find all of the template events being used using Symfony Finder and wildcards
-		$finder = new Finder();
-		$finder->in($this->tmp_folder . '/*/*/styles/*/template/event');
-
-		/** @var SplFileInfo $file */
-		foreach ($finder as $file)
-		{
-			$event_name = $file->getBasename('.html');
-
-			// Save the event name
-			if (!in_array($event_name, $revision_template_events))
-			{
-				$revision_template_events[] = $event_name;
-			}
-		}
-
-		// Save to the master list
-		$this->save_events_to_master_list($revision_template_events, 'template');
-
-		return $revision_template_events;
-	}
-
-	/**
-	 * Find PHP events
-	 * @return array
-	 * @throws \Exception
-	 */
-	private function find_php_events()
-	{
-		$revision_php_events = [];
-
-		// Find the PHP events
-		$finder = new Finder();
-		$finder->in($this->tmp_folder)->files()->name('*.php');
-
-		/** @var SplFileInfo $file */
-		foreach ($finder as $file)
-		{
-			// Parse the array text
-			$matches = \array_parser::check_events($file->getRealPath());
-			$event_list = array_keys($matches);
-
-			foreach ($event_list as $event_name)
-			{
-				if (!in_array($event_name, $revision_php_events))
-				{
-					$revision_php_events[] = $event_name;
-				}
-			}
-		}
-
-		// Save to the master list
-		$this->save_events_to_master_list($revision_php_events, 'php');
-
-		return $revision_php_events;
+		// Custom events
+		$this->output->writeln($this->language->lang('CLI_EXTENSION_EVENTS_CUSTOM'));
+		$this->display_custom_events_table();
 	}
 
 	/**
@@ -339,6 +263,152 @@ class events extends \phpbb\console\command\command
 	}
 
 	/**
+	 * Display the output in a table
+	 * @param $type
+	 */
+	private function display_stats_table($type)
+	{
+		$table = new Table($this->output);
+		$usages = [];
+
+		foreach ($this->event_listing[$type] as $name => $count)
+		{
+			$usages[] = [$count, $name];
+		}
+
+		$table_header = [$this->language->lang('CLI_EXTENSION_EVENTS_USAGES'), $this->language->lang('CLI_EXTENSION_EVENTS_NAME')];
+		$table->setHeaders($table_header)
+			->setRows($usages)
+			->render();
+
+		$this->output->writeln('');
+	}
+
+	/**
+	 * Show the custom extension events
+	 */
+	private function display_custom_events_table()
+	{
+		// Show the custom PHP events
+		// Firstly, convert our custom event list to a proper map
+		$map = [];
+
+		// Sort alphabetically
+		ksort($this->custom_php_events);
+
+		foreach ($this->custom_php_events as $extension => $events)
+		{
+			ksort($events);
+
+			// Grab each event
+			foreach ($events as $event)
+			{
+				$map[] = [$extension, $event];
+			}
+		}
+
+		$table = new Table($this->output);
+		$table_header = [$this->language->lang('CLI_EXTENSION_EVENTS_EXTENSION_NAME'), $this->language->lang('CLI_EXTENSION_EVENTS_NAME')];
+		$table->setHeaders($table_header)
+			->setRows($map)
+			->render();
+
+		$this->output->writeln('');
+	}
+
+	/**
+	 * Find template events
+	 * @return array
+	 */
+	private function find_template_events()
+	{
+		$revision_template_events = [];
+
+		// Find all of the template events being used using Symfony Finder and wildcards
+		$finder = new Finder();
+		$finder->in($this->tmp_folder . '/*/*/styles/*/template/event');
+
+		/** @var SplFileInfo $file */
+		foreach ($finder as $file)
+		{
+			$event_name = $file->getBasename('.html');
+
+			// Save the event name
+			if (!in_array($event_name, $revision_template_events))
+			{
+				$revision_template_events[] = $event_name;
+			}
+		}
+
+		// Save to the master list
+		$this->save_events_to_master_list($revision_template_events, 'template');
+
+		return $revision_template_events;
+	}
+
+	/**
+	 * Find PHP events
+	 * @return array
+	 * @throws \Exception
+	 */
+	private function find_php_events()
+	{
+		$revision_php_events = $custom_php_events = [];
+
+		// Find the PHP events
+		$finder = new Finder();
+		$finder->in($this->tmp_folder)->files()->name('*.php');
+
+		/** @var SplFileInfo $file */
+		foreach ($finder as $file)
+		{
+			// Parse the array text
+			$matches = \array_parser::check_events($file->getRealPath());
+			$event_list = array_keys($matches);
+
+			foreach ($event_list as $event_name)
+			{
+				if (!in_array($event_name, $revision_php_events))
+				{
+					$revision_php_events[] = $event_name;
+				}
+			}
+
+			// Check for new events
+			$extension_relative_path = explode('/', $file->getRelativePath());
+			$extension_path = $extension_relative_path[0] . '/' . $extension_relative_path[1];
+
+			// Ignore anything in the vendor folder
+			if ($extension_relative_path[2] != 'vendor')
+			{
+				$exporter = new \extracted_php_exporter($this->root_path, $this->tmp_folder);
+				$exporter->crawl_php_file($file);
+				$new_events = $exporter->get_events();
+
+				if (count($new_events) > 0)
+				{
+					if (!array_key_exists($extension_path, $custom_php_events))
+					{
+						$custom_php_events[$extension_path] = [];
+					}
+
+					// Store the custom events
+					foreach ($new_events as $event)
+					{
+						$custom_php_events[$extension_path][] = $event['event'];
+					}
+				}
+			}
+		}
+
+		// Save to the master list
+		$this->save_events_to_master_list($revision_php_events, 'php');
+		$this->save_custom_events($custom_php_events);
+
+		return $revision_php_events;
+	}
+
+	/**
 	 * Save the events to the master list
 	 * @param $list
 	 * @param $type Must be either 'template' or 'php'
@@ -357,6 +427,27 @@ class events extends \phpbb\console\command\command
 			{
 				// Increment counter because it does exist
 				$this->event_listing[$type][$revision_event]++;
+			}
+		}
+	}
+
+	/**
+	 * Save the custom events that users have added themselves (non core events)
+	 * @param $custom_php_events
+	 */
+	private function save_custom_events($custom_php_events)
+	{
+		foreach ($custom_php_events as $extension => $names)
+		{
+			if (!array_key_exists($extension, $this->custom_php_events))
+			{
+				$this->custom_php_events[$extension] = [];
+			}
+
+			foreach ($names as $name)
+			{
+				// Save each name individually
+				$this->custom_php_events[$extension][] = $name;
 			}
 		}
 	}

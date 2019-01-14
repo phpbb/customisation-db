@@ -63,6 +63,8 @@ $lang = array_merge($lang, array(
 	'CLI_EXTENSION_EVENTS_SCAN_FINISH'			=> 'Finished scanning contributions...',
 	'CLI_EXTENSION_EVENTS_NAME'					=> 'Event Name',
 	'CLI_EXTENSION_EVENTS_USAGES'				=> 'Usages',
+	'CLI_EXTENSION_EVENTS_EXTENSION_NAME'		=> 'Extension Name',
 	'CLI_EXTENSION_EVENTS_TEMPLATE'				=> 'phpBB Template Event Usages',
 	'CLI_EXTENSION_EVENTS_PHP'					=> 'phpBB Code Event Usages',
+	'CLI_EXTENSION_EVENTS_CUSTOM'				=> 'Custom Extension Events',
 ));
