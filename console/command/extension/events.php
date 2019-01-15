@@ -88,14 +88,14 @@ class events extends \phpbb\console\command\command
 		}
 
 		// Set up the injected properties
-		$this->language				= $language;
-		$this->db					= $db;
-		$this->root_path			= $root_path;
+		$this->language = $language;
+		$this->db = $db;
+		$this->root_path = $root_path;
 
 		// Save our table names
-		$this->contribs_table		= TITANIA_CONTRIBS_TABLE;
-		$this->revisions_table		= TITANIA_REVISIONS_TABLE;
-		$this->attachments_table	= TITANIA_ATTACHMENTS_TABLE;
+		$this->contribs_table = TITANIA_CONTRIBS_TABLE;
+		$this->revisions_table = TITANIA_REVISIONS_TABLE;
+		$this->attachments_table = TITANIA_ATTACHMENTS_TABLE;
 
 		// Set up empty structure
 		$this->event_listing = [
@@ -129,6 +129,7 @@ class events extends \phpbb\console\command\command
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @return int|null|void
+	 * @throws \Exception
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
@@ -140,11 +141,22 @@ class events extends \phpbb\console\command\command
 		$this->output->writeln($this->language->lang('CLI_DESCRIPTION_EXTENSION_EVENTS_EXPLAIN'));
 
 		// Run the script - could take a while if there's a lot of extensions to unzip and scan
-		$this->analyse();
+		$start = time();
+		$count = $this->analyse();
+		$total = time() - $start;
+
+		// Show the execution time
+		$total_time = $this->execution_time($total);
+		$average_time = $this->execution_time($total, $count);
+
+		$this->output->writeln($this->language->lang('CLI_EXTENSION_EVENTS_EXECUTION_TIME',
+			$total_time['h'], $total_time['m'], $total_time['s'], $average_time['h'], $average_time['m'], $average_time['s']));
 	}
 
 	/**
 	 * Scan the files for events
+	 * @return int
+	 * @throws \Exception
 	 */
 	private function analyse()
 	{
@@ -220,6 +232,8 @@ class events extends \phpbb\console\command\command
 		// Custom events
 		$this->output->writeln($this->language->lang('CLI_EXTENSION_EVENTS_CUSTOM'));
 		$this->display_custom_events_table();
+
+		return count($revisions);
 	}
 
 	/**
@@ -460,5 +474,37 @@ class events extends \phpbb\console\command\command
 		// This deletes the temporary folder
 		$system = new Filesystem();
 		$system->remove($this->tmp_folder);
+	}
+
+	/**
+	 * Generate a human readable execution time
+	 * @param int $total
+	 * @param int $count
+	 * @return array
+	 */
+	private function execution_time($total, $count = 0)
+	{
+		$hours = $minutes = $seconds = 0;
+
+		if ($count > 0)
+		{
+			// If calculating an average, divide the total by the count
+			$total = floor($total / $count);
+		}
+
+		if ($total > 0)
+		{
+			// Pad each number to two digits
+			$hours = str_pad(floor($total / 3600), 2, '0', STR_PAD_LEFT);
+			$minutes = str_pad(floor(($total / 60) % 60), 2, '0', STR_PAD_LEFT);
+			$seconds = str_pad($total % 60, 2, '0', STR_PAD_LEFT);
+		}
+
+		// Return a simple array
+		return array(
+			'h' => $hours,
+			'm' => $minutes,
+			's' => $seconds
+		);
 	}
 }

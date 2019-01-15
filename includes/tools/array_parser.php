@@ -11,7 +11,7 @@
  *
  */
 
-use Battye\ArrayParser\parser;
+use battye\array_parser\parser;
 
 class array_parser
 {

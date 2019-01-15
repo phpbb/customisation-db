@@ -61,6 +61,7 @@ $lang = array_merge($lang, array(
 	'CLI_EXTENSION_EVENTS_SCAN_CONTRIB'			=> 'Scanning "%s", revision id "%d", file "%s".',
 	'CLI_EXTENSION_EVENTS_SCAN_START'			=> 'Start scanning contributions...',
 	'CLI_EXTENSION_EVENTS_SCAN_FINISH'			=> 'Finished scanning contributions...',
+	'CLI_EXTENSION_EVENTS_EXECUTION_TIME'		=> 'Total execution time: %d hr, %d min, %d sec. (average per contribution: %d hr, %d min, %d sec)',
 	'CLI_EXTENSION_EVENTS_NAME'					=> 'Event Name',
 	'CLI_EXTENSION_EVENTS_USAGES'				=> 'Usages',
 	'CLI_EXTENSION_EVENTS_EXTENSION_NAME'		=> 'Extension Name',

@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "battye/php-array-parser",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/battye/php-array-parser.git",
-                "reference": "07d8a2fa850d3bbf95540cf6fe0988e3a3fc1afd"
+                "reference": "1bb594cf481ed90d7b5624f2956aeca0c1f4fb52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/battye/php-array-parser/zipball/07d8a2fa850d3bbf95540cf6fe0988e3a3fc1afd",
-                "reference": "07d8a2fa850d3bbf95540cf6fe0988e3a3fc1afd",
+                "url": "https://api.github.com/repos/battye/php-array-parser/zipball/1bb594cf481ed90d7b5624f2956aeca0c1f4fb52",
+                "reference": "1bb594cf481ed90d7b5624f2956aeca0c1f4fb52",
                 "shasum": ""
             },
             "require": {
@@ -29,7 +29,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Battye\\ArrayParser\\": "src"
+                    "battye\\array_parser\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -42,7 +42,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2019-01-14T13:40:37+00:00"
+            "time": "2019-01-15T09:04:57+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -523,23 +523,23 @@
         },
         {
             "name": "justinrainbow/json-schema",
-            "version": "5.2.7",
+            "version": "5.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/justinrainbow/json-schema.git",
-                "reference": "8560d4314577199ba51bf2032f02cd1315587c23"
+                "reference": "dcb6e1006bb5fd1e392b4daa68932880f37550d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/8560d4314577199ba51bf2032f02cd1315587c23",
-                "reference": "8560d4314577199ba51bf2032f02cd1315587c23",
+                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/dcb6e1006bb5fd1e392b4daa68932880f37550d4",
+                "reference": "dcb6e1006bb5fd1e392b4daa68932880f37550d4",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.1",
+                "friendsofphp/php-cs-fixer": "~2.2.20",
                 "json-schema/json-schema-test-suite": "1.2.0",
                 "phpunit/phpunit": "^4.8.35"
             },
@@ -585,7 +585,7 @@
                 "json",
                 "schema"
             ],
-            "time": "2018-02-14T22:26:30+00:00"
+            "time": "2019-01-14T23:55:14+00:00"
         },
         {
             "name": "nikic/php-parser",

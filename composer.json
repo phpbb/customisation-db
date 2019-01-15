@@ -20,9 +20,18 @@
             "role": "Developer"
         },
         {
+            "name": "VSE",
+            "role": "Developer"
+        },
+        {
+            "name": "battye",
+            "email": "battye@phpbb.com",
+            "role": "Developer"
+        },
+        {
             "name": "Cesar Gallegos (prototech)",
             "email": "prototech91@gmail.com",
-            "role": "Developer"
+            "role": "Previous Developer"
         },
         {
             "name": "Raimon Meuldijk (Raimon)",
