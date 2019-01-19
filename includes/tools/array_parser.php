@@ -27,6 +27,6 @@ class array_parser
 		$regex = '/\bclass\s+\S+\s+implements\s+EventSubscriberInterface\s*{\s*(?:[^{}]*{[^{}]*})*[^{}]*\bgetSubscribedEvents\(\)\s*{[^{}]*?(?:\barray\s*\(|\[)([^{}]*?)(?:\)|\])[^{}]*}/x';
 		$result = parser::parse_regex($regex, $file_path);
 
-		return (!empty($result)) ? $result : [];
+		return (!empty($result)) ? $result[0] : [];
 	}
 }

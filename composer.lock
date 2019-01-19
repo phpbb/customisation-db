@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "battye/php-array-parser",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/battye/php-array-parser.git",
-                "reference": "1bb594cf481ed90d7b5624f2956aeca0c1f4fb52"
+                "reference": "ef33ef14942ffd83d1a770cf11abda66bc09d283"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/battye/php-array-parser/zipball/1bb594cf481ed90d7b5624f2956aeca0c1f4fb52",
-                "reference": "1bb594cf481ed90d7b5624f2956aeca0c1f4fb52",
+                "url": "https://api.github.com/repos/battye/php-array-parser/zipball/ef33ef14942ffd83d1a770cf11abda66bc09d283",
+                "reference": "ef33ef14942ffd83d1a770cf11abda66bc09d283",
                 "shasum": ""
             },
             "require": {
@@ -42,7 +42,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2019-01-15T09:04:57+00:00"
+            "time": "2019-01-19T04:47:53+00:00"
         },
         {
             "name": "composer/ca-bundle",
