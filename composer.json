@@ -51,9 +51,16 @@
             "role": "Developers, Translators etc."
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/battye/phpbb-translation-validator.git"
+        }
+    ],
     "require": {
     	"php": ">=5.3.3",
     	"phpbb/epv": "dev-master@dev",
+        "phpbb/translation-validator": "dev-cdb-integration@dev",
     	"composer/installers": "~1.0"
     },
     "extra": {
