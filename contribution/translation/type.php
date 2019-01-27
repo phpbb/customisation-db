@@ -150,8 +150,14 @@ class type extends base
 		// Run the translation validator
 		$translation_validator_output = $this->get_prevalidator()->check_package($package, $contrib->contrib_iso_code);
 
-		$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
-		return array();
+		$template->assign_vars(array(
+			'S_PASSED_TRANSLATION_VALIDATION'		=> true,
+			'TRANSLATION_VALIDATOR_OUTPUT'			=> $translation_validator_output,
+		));
+
+		return array(
+			'message' => $this->user->lang('TRANSLATION_VALIDATION_TESTS')
+		);
 	}
 
 	/**
