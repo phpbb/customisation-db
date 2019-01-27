@@ -16,6 +16,8 @@ namespace phpbb\titania\contribution\translation;
 use Phpbb\TranslationValidator\Cli;
 use Phpbb\TranslationValidator\Command\ValidateCommand;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Translation prevalidator
@@ -34,6 +36,9 @@ class prevalidator
 	const REQUIRED = 1;
 	const REQUIRED_EMPTY = 2;
 	const REQUIRED_DEFAULT = 3;
+
+	const BRITISH_ENGLISH = 'british_english_3_2_5';
+	const EN = 'en';
 
 	/**
 	 * Constructor
@@ -58,32 +63,78 @@ class prevalidator
 	}
 
 	/**
-	 * Checks the file for the array contents
-	 * Make sure it has all the keys present in the newest version
+	 * Run the phpBB Translation Validator
 	 *
 	 * @param \phpbb\titania\entity\package $package
-	 * @param string $reference_filepath The path to the files against I want to validate the uploaded package
-	 * @return array Returns an array of error messages encountered
-	 * @throws \Exception
+	 * @param string $origin_iso
+	 * @return int Returns an array of error messages encountered
 	 */
-	public function check_package($package, $reference_filepath)
+	public function check_package($package, $origin_iso)
 	{
 		$package->ensure_extracted();
 		$path = $package->get_temp_path();
 
-		$inputs = array(
-			'command' => 'translation.php validate ja',
-			'--phpbb-version' => '3.2',
-			'--safe-mode' => true,
-			'--display-notices' => true,
-		);
-		
-		$commandTester = new CommandTester('translation.php validate ja'); // todo: add lang
-		$commandTester->setInputs($inputs);
-		return $commandTester->execute();
+		// Rename the extracted directory to be the ISO code.
+		$finder = new Finder();
+		$iterator = $finder->directories()->in($path)->depth('== 0');
 
-		//$app = new Cli();
-		//$app->add(new ValidateCommand());
-		//$app->run();
+		if ($iterator->count() == 1)
+		{
+			$iterator = $finder->getIterator();
+			$iterator->rewind();
+
+			// We know there's only one result
+			$root_extracted = $iterator->current();
+		}
+
+		// Rename the directory to use the iso code
+		$new_directory_name = str_replace($root_extracted->getFilename(), $origin_iso, $root_extracted->getPathname());
+		$file_system = new Filesystem();
+		$file_system->rename($root_extracted->getPathname(), $new_directory_name);
+
+		// Get the British English language in there too
+		$en_path = $this->get_helper()->get_root_path() . 'includes/language_packages/' . self::BRITISH_ENGLISH . '.zip';
+		$zip = new \ZipArchive();
+		$result = $zip->open($en_path);
+
+		// TODO: is there a better way to handle the en package?
+
+		if ($result)
+		{
+			// Unzip the revision to a temporary folder
+			$zip->extractTo($path);
+			$zip->close();
+
+			// Change to "en"
+			$file_system->rename(sprintf('%s/%s', $path, self::BRITISH_ENGLISH), sprintf('%s/%s', $path, self::EN));
+		}
+
+		// Parameters for the validation script
+		$inputs = array(
+			// Arguments
+			'command' 			=> 'validate',
+			'origin-iso' 		=> $origin_iso,
+
+			// Options
+			'--phpbb-version' 	=> '3.2',
+			'--package-dir'		=> $path,
+			'--safe-mode' 		=> true,
+			'--display-notices'	=> true,
+		);
+
+		// TODO: should 3.2 or validate be consts?
+
+		// Set up an instance of the translation validation script
+		$app = new Cli();
+		$app->add(new ValidateCommand());
+		$translation = $app->find('validate');
+		
+		$commandTester = new CommandTester($translation);
+		$commandTester->execute($inputs);
+
+		// TODO: delete the temp folder here?
+
+		// Return the output of the translation validation script
+		return $commandTester->getDisplay();
 	}
 }

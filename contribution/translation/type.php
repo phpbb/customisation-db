@@ -147,45 +147,10 @@ class type extends base
 	 */
 	public function translation_validate(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
 	{
-		if (empty($revision->phpbb_versions))
-		{
-			$revision->load_phpbb_versions();
-		}
-
-		// new
-		$version = $revision->phpbb_versions[0];
-		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
-		$prevalidator = $this->get_prevalidator();
-		$reference_filepath = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string); // path to files against which we will validate the package
-		$errors = $prevalidator->check_package($package, $reference_filepath);
-
-		/*$version = $revision->phpbb_versions[0];
-
-		if ($version['phpbb_version_branch'] != 30)
-		{
-			return array();
-		}
-		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
-
-		$prevalidator = $this->get_prevalidator();
-
-		$reference_filepath = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string); // path to files against which we will validate the package
-		$errors = $prevalidator->get_helper()->get_errors();
-
-		if (!empty($errors))
-		{
-			return array('error' => implode('<br /><br />', $errors));
-		}
-
-		$errors = $prevalidator->check_package($package, $reference_filepath);
-
-		if (!empty($errors))
-		{
-			return array('error' => $errors);
-		}*/
+		// Run the translation validator
+		$translation_validator_output = $this->get_prevalidator()->check_package($package, $contrib->contrib_iso_code);
 
 		$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
-
 		return array();
 	}
 
