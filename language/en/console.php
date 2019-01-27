@@ -57,7 +57,7 @@ $lang = array_merge($lang, array(
 
 	// Event analyser
 	'CLI_DESCRIPTION_EXTENSION_EVENTS'			=> 'Scan extensions to discover the most frequently used events.',
-	'CLI_DESCRIPTION_EXTENSION_EVENTS_EXPLAIN'	=> 'This script will scan through approved phpBB3 extensions to determine the most commonly used template and PHP events.',
+	'CLI_DESCRIPTION_EXTENSION_EVENTS_EXPLAIN'	=> 'This script will scan through approved phpBB extensions to determine the most commonly used template and PHP events.',
 	'CLI_EXTENSION_EVENTS_SCAN_CONTRIB'			=> 'Scanning "%s", revision id "%d", file "%s".',
 	'CLI_EXTENSION_EVENTS_SCAN_START'			=> 'Start scanning contributions...',
 	'CLI_EXTENSION_EVENTS_SCAN_FINISH'			=> 'Finished scanning contributions...',
@@ -66,6 +66,6 @@ $lang = array_merge($lang, array(
 	'CLI_EXTENSION_EVENTS_USAGES'				=> 'Usages',
 	'CLI_EXTENSION_EVENTS_EXTENSION_NAME'		=> 'Extension Name',
 	'CLI_EXTENSION_EVENTS_TEMPLATE'				=> 'phpBB Template Event Usages',
-	'CLI_EXTENSION_EVENTS_PHP'					=> 'phpBB Code Event Usages',
+	'CLI_EXTENSION_EVENTS_PHP'					=> 'phpBB PHP Event Usages',
 	'CLI_EXTENSION_EVENTS_CUSTOM'				=> 'Custom Extension Events',
 ));

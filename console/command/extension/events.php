@@ -27,16 +27,19 @@ use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Class events
+ *
  * A script that can be run which will find the latest revision of all approved extensions, one by one unpackage them
  * and then scan the files for a) template events; b) php files for anything extending EventSubscriberInterface and if
  * it is, then find the subscribed events. Finally, output the results to show the most commonly referenced events.
  * battye was here in 2019
+ *
  * @package phpbb\titania\console\command\extension
  */
 class events extends \phpbb\console\command\command
 {
-	// To execute this script, run: php bin/phpbbcli.php titania:extension:event
+	// To execute this script, run: php bin/phpbbcli.php titania:extension:events
 	const COMMAND_NAME = 'titania:extension:events';
+	const COMMAND_TMP_DIRECTORY = 'ext/phpbb/titania/files/contrib_temp/tmp';
 
 	/** @var language */
 	protected $language;
@@ -107,7 +110,7 @@ class events extends \phpbb\console\command\command
 		$this->custom_php_events = [];
 
 		// Temporary folder
-		$this->tmp_folder = $this->root_path . 'ext/phpbb/titania/files/contrib_temp/tmp';
+		$this->tmp_folder = $this->root_path . COMMAND_TMP_DIRECTORY;
 
 		$language_files = ['console'];
 		$this->language->add_lang($language_files, 'phpbb/titania');
@@ -184,7 +187,7 @@ class events extends \phpbb\console\command\command
 			$progress->advance();
 
 			// Read the attachment
-			if ($revision['extension'] == 'zip')
+			if ($revision['extension'] === 'zip')
 			{
 				$path = $this->root_path . 'ext/phpbb/titania/files/revisions/' . $revision['physical_filename'];
 
@@ -244,6 +247,9 @@ class events extends \phpbb\console\command\command
 	{
 		$revisions = [];
 
+		// Start transaction
+		$this->db->sql_transaction('begin');
+
 		$sql = 'SELECT *
 				FROM ' . $this->contribs_table . '
 				WHERE contrib_type = ' . ext::TITANIA_TYPE_EXTENSION;
@@ -272,17 +278,34 @@ class events extends \phpbb\console\command\command
 			}
 		}
 
+		// End transaction
 		$this->db->sql_freeresult($result);
+		$this->db->sql_transaction('commit');
+
 		return $revisions;
 	}
 
 	/**
+	 * Render table to show the data
+	 * @param array $table_header
+	 * @param array $table_content
+	 */
+	private function render_table($table_header, $table_content)
+	{
+		$table = new Table($this->output);
+		$table->setHeaders($table_header)
+			->setRows($table_content)
+			->render();
+
+		$this->output->writeln('');
+	}
+
+	/**
 	 * Display the output in a table
-	 * @param $type
+	 * @param string $type
 	 */
 	private function display_stats_table($type)
 	{
-		$table = new Table($this->output);
 		$usages = [];
 
 		foreach ($this->event_listing[$type] as $name => $count)
@@ -290,12 +313,9 @@ class events extends \phpbb\console\command\command
 			$usages[] = [$count, $name];
 		}
 
+		// Show the table
 		$table_header = [$this->language->lang('CLI_EXTENSION_EVENTS_USAGES'), $this->language->lang('CLI_EXTENSION_EVENTS_NAME')];
-		$table->setHeaders($table_header)
-			->setRows($usages)
-			->render();
-
-		$this->output->writeln('');
+		$this->render_table($table_header, $usages);
 	}
 
 	/**
@@ -321,13 +341,9 @@ class events extends \phpbb\console\command\command
 			}
 		}
 
-		$table = new Table($this->output);
+		// Show the table
 		$table_header = [$this->language->lang('CLI_EXTENSION_EVENTS_EXTENSION_NAME'), $this->language->lang('CLI_EXTENSION_EVENTS_NAME')];
-		$table->setHeaders($table_header)
-			->setRows($map)
-			->render();
-
-		$this->output->writeln('');
+		$this->render_table($table_header, $map);
 	}
 
 	/**
@@ -393,7 +409,7 @@ class events extends \phpbb\console\command\command
 			$extension_path = $extension_relative_path[0] . '/' . $extension_relative_path[1];
 
 			// Ignore anything in the vendor folder
-			if ($extension_relative_path[2] != 'vendor')
+			if ($extension_relative_path[2] !== 'vendor')
 			{
 				$exporter = new \extracted_php_exporter($this->root_path, $this->tmp_folder);
 				$exporter->crawl_php_file($file);
@@ -424,8 +440,8 @@ class events extends \phpbb\console\command\command
 
 	/**
 	 * Save the events to the master list
-	 * @param $list
-	 * @param $type Must be either 'template' or 'php'
+	 * @param array $list
+	 * @param string $type Must be either 'template' or 'php'
 	 */
 	private function save_events_to_master_list($list, $type)
 	{
@@ -447,7 +463,7 @@ class events extends \phpbb\console\command\command
 
 	/**
 	 * Save the custom events that users have added themselves (non core events)
-	 * @param $custom_php_events
+	 * @param array $custom_php_events
 	 */
 	private function save_custom_events($custom_php_events)
 	{
