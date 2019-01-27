@@ -152,7 +152,14 @@ class type extends base
 			$revision->load_phpbb_versions();
 		}
 
+		// new
 		$version = $revision->phpbb_versions[0];
+		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
+		$prevalidator = $this->get_prevalidator();
+		$reference_filepath = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string); // path to files against which we will validate the package
+		$errors = $prevalidator->check_package($package, $reference_filepath);
+
+		/*$version = $revision->phpbb_versions[0];
 
 		if ($version['phpbb_version_branch'] != 30)
 		{
@@ -175,7 +182,7 @@ class type extends base
 		if (!empty($errors))
 		{
 			return array('error' => $errors);
-		}
+		}*/
 
 		$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
 
