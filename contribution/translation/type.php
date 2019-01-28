@@ -156,7 +156,8 @@ class type extends base
 		));
 
 		return array(
-			'message' => $this->user->lang('TRANSLATION_VALIDATION_TESTS')
+			'message' => $this->user->lang('TRANSLATION_VALIDATION_TESTS'),
+			'translation_validator_output' => $translation_validator_output,
 		);
 	}
 
