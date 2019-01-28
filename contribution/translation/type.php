@@ -155,9 +155,13 @@ class type extends base
 			'TRANSLATION_VALIDATOR_OUTPUT'			=> $translation_validator_output,
 		));
 
+		// Save the translation validation results (we need to save it here so that we can add it to the post later)
+		$queue = $revision->get_queue();
+		$queue->tv_results = $translation_validator_output;
+		$queue->submit();
+
 		return array(
 			'message' => $this->user->lang('TRANSLATION_VALIDATION_TESTS'),
-			'translation_validator_output' => $translation_validator_output,
 		);
 	}
 

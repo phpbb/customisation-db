@@ -84,6 +84,8 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'mpv_results_bitfield'	=> array('default' => ''),
 			'mpv_results_uid'		=> array('default' => ''),
 			'automod_results'		=> array('default' => ''),
+			'tv_results'			=> array('default' => ''),
+			// TODO: Need to add a migration for tv_results, mediumtext
 
 			'allow_author_repack'	=> array('default' => false),
 			'queue_tested'			=> array('default' => false),
@@ -203,6 +205,12 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			$mpv_results = $this->mpv_results;
 			message::decode($mpv_results, $this->mpv_results_uid);
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_PV'] . '&quot;]' . $mpv_results . "[/quote]\n";
+		}
+
+		// Translation Validator
+		if ($this->tv_results)
+		{
+			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_TV'] . '&quot;][code]' . $this->tv_results . "[/quote]\n";
 		}
 
 		// Add the Automod results
