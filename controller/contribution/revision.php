@@ -243,14 +243,28 @@ class revision extends base
 			$message = $this->get_message();
 			$message->display();
 		}
+
+		$translation_validation_output = null;
 		$error = array();
 
 		if ($this->request->is_set_post('new_revision'))
 		{
 			$result = $this->process_steps();
 
+			// We have access to the translation validation output at this point
+			if (array_key_exists('translation_validator_output', $result))
+			{
+				$translation_validation_output = base64_encode($result['translation_validator_output']);
+			}
+
 			if ($result['complete'])
 			{
+				// We send the translation validation output to ourselves via POST vars.
+				if ($this->request->is_set_post('saved_translation_validation_output'))
+				{
+					$saved_translation_validation_output = base64_decode($this->request->variable('saved_translation_validation_output', ''));
+				}
+
 				$this->submit();
 
 				if ($this->use_queue)
@@ -299,6 +313,10 @@ class revision extends base
 			'S_CAN_SUBSCRIBE'			=> !$this->is_author_subscribed() && $this->use_queue,
 			'SUBSCRIBE_AUTHOR'			=> $this->request->variable('subscribe_author', false),
 			'S_POST_ACTION'				=> $this->contrib->get_url('revision'),
+
+			// Translation Validation Output
+			'S_SAVED_TRANSLATION_VALIDATION'	=> ($translation_validation_output !== null),
+			'SAVED_TRANSLATION_VALIDATION'		=> $translation_validation_output,
 		));
 
 		add_form_key('postform');

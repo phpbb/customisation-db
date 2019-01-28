@@ -151,6 +151,9 @@
 					<textarea disabled>{TRANSLATION_VALIDATOR_OUTPUT}</textarea>
 				</div>
 			<!-- ENDIF -->
+			<!-- IF S_SAVED_TRANSLATION_VALIDATION -->
+				<input type="hidden" name="saved_translation_validation_output" value="{SAVED_TRANSLATION_VALIDATION}" />
+			<!-- ENDIF -->
 
 			<fieldset class="submit-buttons">
 				<input type="submit" id="cancel" name="cancel" value="{L_CANCEL}" class="button2" />
