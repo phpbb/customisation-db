@@ -918,7 +918,18 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			}
 
 			// We have the revision composer file, so we'll use that as the source of truth
-			$composer_json = (array_key_exists('revision_composer_json', $download)) ? json_decode($download['revision_composer_json'], true) : [];
+			$composer_json = [];
+
+			if (array_key_exists('revision_composer_json', $download))
+			{
+				$decoded_json = json_decode($download['revision_composer_json'], true);
+
+				if (!empty($decoded_json) && is_array($decoded_json))
+				{
+					// We have a valid array.
+					$composer_json = $decoded_json;
+				}
+			}
 
 			phpbb::$template->assign_block_vars('downloads', array(
 				'NAME'			=> censor_text($download['revision_name']),
