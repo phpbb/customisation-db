@@ -917,6 +917,9 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				$u_colorizeit = $u_colorizeit_base . '&amp;id=' . $download['attachment_id'];
 			}
 
+			// We have the revision composer file, so we'll use that as the source of truth
+			$composer_json = (array_key_exists('revision_composer_json', $download)) ? json_decode($download['revision_composer_json'], true) : [];
+
 			phpbb::$template->assign_block_vars('downloads', array(
 				'NAME'			=> censor_text($download['revision_name']),
 				'VERSION'		=> censor_text($download['revision_version']),
@@ -927,6 +930,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				'PHPBB_VERSION'	=> $vendor_version,
 				'INSTALL_LEVEL'	=> $install_level,
 				'INSTALL_TIME'	=> $install_time,
+				'INSTALL_TO'	=> (array_key_exists('name', $composer_json) && $composer_json['name']) ? 'ext/' . $composer_json['name'] : '',
 				'U_DOWNLOAD'	=> ($download['attachment_id']) ? $this->controller_helper->route('phpbb.titania.download', array('id' => $download['attachment_id'])) : '',
 				'U_COLORIZEIT'	=> $u_colorizeit,
 			));
