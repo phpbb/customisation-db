@@ -1,164 +1,164 @@
-<!-- IF U_POST_REPLY or PAGINATION or TOTAL_RESULTS -->
+{% if U_POST_REPLY or PAGINATION or TOTAL_RESULTS %}
 <div class="action-bar">
-	<!-- IF U_POST_REPLY -->
-		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button">
-			<!-- IF S_IS_LOCKED -->
-				<span>{L_BUTTON_TOPIC_LOCKED}</span> <i class="icon fa-lock fa-fw" aria-hidden="true"></i>
-			<!-- ELSE -->
-				<span>{L_BUTTON_POST_REPLY}</span> <i class="icon fa-reply fa-fw" aria-hidden="true"></i>
-			<!-- ENDIF -->
+	{% if U_POST_REPLY %}
+		<a href="{{ U_POST_REPLY }}" title="{% if S_IS_LOCKED %}{{ lang('TOPIC_LOCKED') }}{% else %}{{ lang('POST_REPLY') }}{% endif %}" class="button">
+			{% if S_IS_LOCKED %}
+				<span>{{ lang('BUTTON_TOPIC_LOCKED') }}</span> <i class="icon fa-lock fa-fw" aria-hidden="true"></i>
+			{% else %}
+				<span>{{ lang('BUTTON_POST_REPLY') }}</span> <i class="icon fa-reply fa-fw" aria-hidden="true"></i>
+			{% endif %}
 		</a>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- INCLUDE common/pagination.html -->
+	{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 </div>
 <div class="clear"></div>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- BEGIN posts -->
-	<!-- IF posts.S_FIRST_UNREAD --><a id="unread"></a><!-- ENDIF -->
-	<div id="p{posts.POST_ID}" class="post <!-- IF posts.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF posts.S_UNREAD_POST --> unreadpost<!-- ENDIF --><!-- IF posts.S_POST_REPORTED --> reported<!-- ENDIF --><!-- IF posts.S_POST_DELETED --> deleted<!-- ENDIF --><!-- IF posts.S_ONLINE and not posts.S_IGNORE_POST --> online<!-- ENDIF -->">
+{% for posts in loops.posts %}
+	{% if posts.S_FIRST_UNREAD %}<a id="unread"></a>{% endif %}
+	<div id="p{{ posts.POST_ID }}" class="post {% if posts.S_ROW_COUNT is odd %}bg1{% else %}bg2{% endif %}{% if posts.S_UNREAD_POST %} unreadpost{% endif %}{% if posts.S_POST_REPORTED %} reported{% endif %}{% if posts.S_POST_DELETED %} deleted{% endif %}{% if posts.S_ONLINE and not posts.S_IGNORE_POST %} online{% endif %}">
 		<div class="inner">
 
 		<div class="postbody">
-			<!-- IF posts.S_IGNORE_POST -->
-				<div class="ignore">{posts.L_IGNORE_POST}</div>
-			<!-- ELSE -->
+			{% if posts.S_IGNORE_POST %}
+				<div class="ignore">{{ posts.L_IGNORE_POST }}</div>
+			{% else %}
 
-			<!-- IF posts.U_QUICKEDIT --><input type="hidden" class="quick_edit" value="{posts.U_QUICKEDIT}" /><!-- ENDIF -->
+			{% if posts.U_QUICKEDIT %}<input type="hidden" class="quick_edit" value="{{ posts.U_QUICKEDIT }}" />{% endif %}
 
-		<!-- IF not S_IS_BOT -->
-			<!-- IF posts.U_EDIT or posts.U_DELETE or posts.U_REPORT or posts.U_WARN or posts.U_INFO or posts.U_QUOTE -->
+		{% if not S_IS_BOT %}
+			{% if posts.U_EDIT or posts.U_DELETE or posts.U_REPORT or posts.U_WARN or posts.U_INFO or posts.U_QUOTE %}
 				<ul class="post-buttons">
-					<!-- IF posts.U_EDIT -->
+					{% if posts.U_EDIT %}
 						<li>
-							<a href="{posts.U_EDIT}" title="{L_EDIT_POST}" class="button button-icon-only" data-ajax="titania.quick_edit" data-filter="titania.quickEditFilter">
+							<a href="{{ posts.U_EDIT }}" title="{{ lang('EDIT_POST') }}" class="button button-icon-only" data-ajax="titania.quick_edit" data-filter="titania.quickEditFilter">
 								<i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
-								<span class="sr-only">{L_EDIT_POST}</span>
+								<span class="sr-only">{{ lang('EDIT_POST') }}</span>
 							</a>
 						</li>
-					<!-- ENDIF -->
-					<!-- IF posts.U_DELETE -->
+					{% endif %}
+					{% if posts.U_DELETE %}
 						<li>
-							<a href="{posts.U_DELETE}" title="{L_DELETE_POST}" class="button button-icon-only">
+							<a href="{{ posts.U_DELETE }}" title="{{ lang('DELETE_POST') }}" class="button button-icon-only">
 								<i class="icon fa-times fa-fw" aria-hidden="true"></i>
-								<span class="sr-only">{L_DELETE_POST}</span>
+								<span class="sr-only">{{ lang('DELETE_POST') }}</span>
 							</a>
 						</li>
-					<!-- ENDIF -->
-					<!-- IF posts.U_REPORT -->
+					{% endif %}
+					{% if posts.U_REPORT %}
 						<li>
-							<a href="{posts.U_REPORT}" title="{L_REPORT_POST}" class="button button-icon-only">
+							<a href="{{ posts.U_REPORT }}" title="{{ lang('REPORT_POST') }}" class="button button-icon-only">
 								<i class="icon fa-exclamation fa-fw" aria-hidden="true"></i>
-								<span class="sr-only">{L_REPORT_POST}</span>
+								<span class="sr-only">{{ lang('REPORT_POST') }}</span>
 							</a>
 						</li>
-					<!-- ENDIF -->
-					<!-- IF posts.U_WARN -->
+					{% endif %}
+					{% if posts.U_WARN %}
 						<li>
-							<a href="{posts.U_WARN}" title="{L_WARN_USER}" class="button button-icon-only">
+							<a href="{{ posts.U_WARN }}" title="{{ lang('WARN_USER') }}" class="button button-icon-only">
 								<i class="icon fa-exclamation-triangle fa-fw" aria-hidden="true"></i>
-								<span class="sr-only">{L_WARN_USER}</span>
+								<span class="sr-only">{{ lang('WARN_USER') }}</span>
 							</a>
 						</li>
-					<!-- ENDIF -->
-					<!-- IF posts.U_QUOTE -->
+					{% endif %}
+					{% if posts.U_QUOTE %}
 						<li>
-							<a href="{posts.U_QUOTE}" title="{L_REPLY_WITH_QUOTE}" class="button button-icon-only">
+							<a href="{{ posts.U_QUOTE }}" title="{{ lang('REPLY_WITH_QUOTE') }}" class="button button-icon-only">
 								<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i>
-								<span class="sr-only">{L_REPLY_WITH_QUOTE}</span>
+								<span class="sr-only">{{ lang('REPLY_WITH_QUOTE') }}</span>
 							</a>
 						</li>
-					<!-- ENDIF -->
+					{% endif %}
 				</ul>
-			<!-- ENDIF -->
-		<!-- ENDIF -->
+			{% endif %}
+		{% endif %}
 
-			<h3 <!-- IF posts.S_FIRST_ROW -->class="first"<!-- ENDIF -->><!-- IF posts.POST_ICON_IMG --><img src="{T_ICONS_PATH}{posts.POST_ICON_IMG}" width="{posts.POST_ICON_IMG_WIDTH}" height="{posts.POST_ICON_IMG_HEIGHT}" alt="" /> <!-- ENDIF --><a href="{posts.U_VIEW}">{posts.POST_SUBJECT}</a>
-			<!-- IF posts.S_ACCESS_TEAMS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_teams.png" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
-			<!-- ELSEIF posts.S_ACCESS_AUTHORS--><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_author.png" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" /><!-- ENDIF --></h3>
+			<h3 {% if posts.S_FIRST_ROW %}class="first"{% endif %}>{% if posts.POST_ICON_IMG %}<img src="{{ T_ICONS_PATH ~ posts.POST_ICON_IMG }}" width="{{ posts.POST_ICON_IMG_WIDTH }}" height="{{ posts.POST_ICON_IMG_HEIGHT }}" alt="" /> {% endif %}<a href="{{ posts.U_VIEW }}">{{ posts.POST_SUBJECT }}</a>
+			{% if posts.S_ACCESS_TEAMS %}<img src="{{ T_TITANIA_THEME_PATH }}/{{ S_USER_LANG }}/icon_access_teams.png" alt="{{ lang('ACCESS_LIMIT_TEAMS') }}" title="{{ lang('ACCESS_LIMIT_TEAMS') }}" />
+			{% elseif posts.S_ACCESS_AUTHORS%}<img src="{{ T_TITANIA_THEME_PATH }}/{{ S_USER_LANG }}/icon_access_author.png" alt="{{ lang('ACCESS_LIMIT_AUTHORS') }}" title="{{ lang('ACCESS_LIMIT_AUTHORS') }}" />{% endif %}</h3>
 			<p class="author">
-				<!-- IF S_IS_BOT -->
-					<span><i class="icon fa-file fa-fw <!-- IF posts.S_UNREAD_POST -->icon-red<!-- ELSE -->icon-lightgray<!-- ENDIF --> icon-md" aria-hidden="true"></i><span class="sr-only">{posts.MINI_POST}</span></span>
-				<!-- ELSE -->
-					<a class="unread" href="{posts.U_MINI_POST}" title="{posts.MINI_POST}">
-						<i class="icon fa-file fa-fw <!-- IF posts.S_UNREAD_POST -->icon-red<!-- ELSE -->icon-lightgray<!-- ENDIF --> icon-md" aria-hidden="true"></i><span class="sr-only">{posts.MINI_POST}</span>
+				{% if S_IS_BOT %}
+					<span><i class="icon fa-file fa-fw {% if posts.S_UNREAD_POST %}icon-red{% else %}icon-lightgray{% endif %} icon-md" aria-hidden="true"></i><span class="sr-only">{{ posts.MINI_POST }}</span></span>
+				{% else %}
+					<a class="unread" href="{{ posts.U_MINI_POST }}" title="{{ posts.MINI_POST }}">
+						<i class="icon fa-file fa-fw {% if posts.S_UNREAD_POST %}icon-red{% else %}icon-lightgray{% endif %} icon-md" aria-hidden="true"></i><span class="sr-only">{{ posts.MINI_POST }}</span>
 					</a>
-				<!-- ENDIF -->
-				{L_POST_BY_AUTHOR} <strong>{posts.USER_FULL}</strong> &raquo; {posts.POST_TIME}
+				{% endif %}
+				{{ lang('POST_BY_AUTHOR') }} <strong>{{ posts.USER_FULL }}</strong> &raquo; {{ posts.POST_TIME }}
 			</p>
 
-			<!-- IF not posts.S_POST_APPROVED -->
+			{% if not posts.S_POST_APPROVED %}
 				<p class="post-notice unapproved">
-					<a href="{posts.U_INFO}"><i class="icon fa-question icon-red fa-fw" aria-hidden="true"></i><strong>{L_POST_UNAPPROVED}</strong></a>
+					<a href="{{ posts.U_INFO }}"><i class="icon fa-question icon-red fa-fw" aria-hidden="true"></i><strong>{{ lang('POST_UNAPPROVED') }}</strong></a>
 				</p>
-			<!-- ENDIF -->
-			<!-- IF posts.S_POST_REPORTED -->
+			{% endif %}
+			{% if posts.S_POST_REPORTED %}
 				<p class="post-notice reported">
-					<a href="{posts.U_INFO}"><i class="icon fa-exclamation fa-fw icon-red" aria-hidden="true"></i><strong>{L_POST_REPORTED}</strong></a>
+					<a href="{{ posts.U_INFO }}"><i class="icon fa-exclamation fa-fw icon-red" aria-hidden="true"></i><strong>{{ lang('POST_REPORTED') }}</strong></a>
 				</p>
-			<!-- ENDIF -->
+			{% endif %}
 
-			<div class="content">{posts.POST_TEXT}</div>
+			<div class="content">{{ posts.POST_TEXT }}</div>
 
-			<!-- IF .posts.attachment -->
+			{% if posts.attachment|length %}
 				<dl class="attachbox">
-					<dt>{L_ATTACHMENTS}</dt>
-					<!-- BEGIN attachment -->
-						<dd>{posts.attachment.DISPLAY_ATTACHMENT}</dd>
-					<!-- END attachment -->
+					<dt>{{ lang('ATTACHMENTS') }}</dt>
+					{% for attachment in posts.attachment %}
+						<dd>{{ attachment.DISPLAY_ATTACHMENT }}</dd>
+					{% endfor %}
 				</dl>
-			<!-- ENDIF -->
+			{% endif %}
 
-			<!-- IF posts.EDITED_MESSAGE or posts.DELETED_MESSAGE -->
+			{% if posts.EDITED_MESSAGE or posts.DELETED_MESSAGE %}
 				<div class="notice">
-					{posts.EDITED_MESSAGE}<!-- IF posts.EDITED_MESSAGE and posts.DELETED_MESSAGE --><br /><!-- ENDIF -->{posts.DELETED_MESSAGE}
-					<!-- IF posts.POST_EDIT_REASON --><br /><strong>{L_REASON}:</strong> <em>{posts.POST_EDIT_REASON}</em><!-- ENDIF -->
+					{{ posts.EDITED_MESSAGE }}{% if posts.EDITED_MESSAGE and posts.DELETED_MESSAGE %}<br />{% endif %}{{ posts.DELETED_MESSAGE }}
+					{% if posts.POST_EDIT_REASON %}<br /><strong>{{ lang('REASON') ~ lang('COLON') }}</strong> <em>{{ posts.POST_EDIT_REASON }}</em>{% endif %}
 				</div>
-			<!-- ENDIF -->
+			{% endif %}
 
-			<!-- IF posts.USER_SIG --><div id="sig{posts.POST_ID}" class="signature">{posts.USER_SIG}</div><!-- ENDIF -->
-		<!-- ENDIF -->
+			{% if posts.USER_SIG %}<div id="sig{{ posts.POST_ID }}" class="signature">{{ posts.USER_SIG }}</div>{% endif %}
+		{% endif %}
 
 		</div>
 
-		<!-- IF not posts.S_IGNORE_POST -->
-			<dl class="postprofile" id="profile{posts.POST_ID}">
-				<dt class="<!-- IF posts.RANK_TITLE or posts.RANK_IMG -->has-profile-rank<!-- ELSE -->no-profile-rank<!-- ENDIF --> <!-- IF posts.USER_AVATAR -->has-avatar<!-- ELSE -->no-avatar<!-- ENDIF -->">
+		{% if not posts.S_IGNORE_POST %}
+			<dl class="postprofile" id="profile{{ posts.POST_ID }}">
+				<dt class="{% if posts.RANK_TITLE or posts.RANK_IMG %}has-profile-rank{% else %}no-profile-rank{% endif %} {% if posts.USER_AVATAR %}has-avatar{% else %}no-avatar{% endif %}">
 					<div class="avatar-container">
-						<!-- IF posts.USER_AVATAR -->
-							<!-- IF posts.U_USER_BOARD_PROFILE --><a href="{posts.U_USER_BOARD_PROFILE}" class="avatar">{posts.USER_AVATAR}</a><!-- ELSE --><span class="avatar">{posts.USER_AVATAR}</span><!-- ENDIF -->
-						<!-- ENDIF -->
+						{% if posts.USER_AVATAR %}
+							{% if posts.U_USER_BOARD_PROFILE %}<a href="{{ posts.U_USER_BOARD_PROFILE }}" class="avatar">{{ posts.USER_AVATAR }}</a>{% else %}<span class="avatar">{{ posts.USER_AVATAR }}</span>{% endif %}
+						{% endif %}
 					</div>
-					<!-- IF not posts.U_USER_BOARD_PROFILE --><strong>{posts.USER_FULL}</strong><!-- ELSE -->{posts.USER_FULL}<!-- ENDIF -->
+					{% if not posts.U_USER_BOARD_PROFILE %}<strong>{{ posts.USER_FULL }}</strong>{% else %}{{ posts.USER_FULL }}{% endif %}
 				</dt>
 
-				<!-- IF posts.RANK_TITLE or posts.RANK_IMG --><dd class="profile-rank rank-img">{posts.RANK_TITLE}<!-- IF posts.RANK_TITLE and posts.RANK_IMG --><br /><!-- ENDIF -->{posts.RANK_IMG}</dd><!-- ENDIF -->
+				{% if posts.RANK_TITLE or posts.RANK_IMG %}<dd class="profile-rank rank-img">{{ posts.RANK_TITLE }}{% if posts.RANK_TITLE and posts.RANK_IMG %}<br />{% endif %}{{ posts.RANK_IMG }}</dd>{% endif %}
 
-			<!-- IF posts.USER_POSTS != '' --><dd class="profile-posts"><strong>{L_POSTS}{L_COLON}</strong> {posts.USER_POSTS}</dd><!-- ENDIF -->
-			<!-- IF posts.USER_JOINED --><dd class="profile-joined"><strong>{L_JOINED}{L_COLON}</strong> {posts.USER_JOINED}</dd><!-- ENDIF -->
-			<!-- IF posts.POST_IP --><dd><strong>{L_POST_IP}:</strong> {posts.POST_IP}</dd><!-- ENDIF -->
+			{% if posts.USER_POSTS != '' %}<dd class="profile-posts"><strong>{{ lang('POSTS') ~ lang('COLON') }}</strong> {{ posts.USER_POSTS }}</dd>{% endif %}
+			{% if posts.USER_JOINED %}<dd class="profile-joined"><strong>{{ lang('JOINED') ~ lang('COLON') }}</strong> {{ posts.USER_JOINED }}</dd>{% endif %}
+			{% if posts.POST_IP %}<dd><strong>{{ lang('POST_IP') ~ lang('COLON') }}</strong> {{ posts.POST_IP }}</dd>{% endif %}
 
-			<!-- IF posts.S_PROFILE_FIELD1 -->
-				<!-- Use a construct like this to include admin defined profile fields. Replace FIELD1 with the name of your field. -->
-				<dd><strong>{posts.PROFILE_FIELD1_NAME}{L_COLON}</strong> {posts.PROFILE_FIELD1_VALUE}</dd>
-			<!-- ENDIF -->
+			{% if posts.S_PROFILE_FIELD1 %}
+				{# Use a construct like this to include admin defined profile fields. Replace FIELD1 with the name of your field. #}
+				<dd><strong>{{ posts.PROFILE_FIELD1_NAME ~ lang('COLON') }}</strong> {{ posts.PROFILE_FIELD1_VALUE }}</dd>
+			{% endif %}
 
-			<!-- EVENT viewtopic_body_postrow_custom_fields_before -->
-			<!-- BEGIN custom_fields -->
-				<!-- IF not posts.custom_fields.S_PROFILE_CONTACT and posts.custom_fields.PROFILE_FIELD_IDENT neq 'first_name' and posts.custom_fields.PROFILE_FIELD_IDENT neq 'last_name' -->
-					<dd class="profile-custom-field profile-{posts.custom_fields.PROFILE_FIELD_IDENT}"><strong>{posts.custom_fields.PROFILE_FIELD_NAME}{L_COLON}</strong> {posts.custom_fields.PROFILE_FIELD_VALUE}</dd>
-				<!-- ENDIF -->
-			<!-- END custom_fields -->
-			<!-- EVENT viewtopic_body_postrow_custom_fields_after -->
+			{% EVENT viewtopic_body_postrow_custom_fields_before %}
+			{% for custom_fields in posts.custom_fields %}
+				{% if not custom_fields.S_PROFILE_CONTACT and custom_fields.PROFILE_FIELD_IDENT neq 'first_name' and custom_fields.PROFILE_FIELD_IDENT neq 'last_name' %}
+					<dd class="profile-custom-field profile-{{ custom_fields.PROFILE_FIELD_IDENT }}"><strong>{{ custom_fields.PROFILE_FIELD_NAME ~ lang('COLON') }}</strong> {{ custom_fields.PROFILE_FIELD_VALUE }}</dd>
+				{% endif %}
+			{% endfor %}
+			{% EVENT viewtopic_body_postrow_custom_fields_after %}
 
-			<!-- IF posts.S_PROFILE_FIRST_NAME or posts.S_PROFILE_LAST_NAME -->
-				<dd><strong>{L_NAME}:</strong> {posts.PROFILE_FIRST_NAME_VALUE} {posts.PROFILE_LAST_NAME_VALUE}</dd>
-			<!-- ENDIF -->
+			{% if posts.S_PROFILE_FIRST_NAME or posts.S_PROFILE_LAST_NAME %}
+				<dd><strong>{{ lang('NAME') ~ lang('COLON') }}</strong> {{ posts.PROFILE_FIRST_NAME_VALUE }} {{ posts.PROFILE_LAST_NAME_VALUE }}</dd>
+			{% endif %}
 
-			<!-- IF not S_IS_BOT and .posts.contact -->
+			{% if not S_IS_BOT and posts.contact|length %}
 				<dd class="profile-contact">
-					<strong>{L_CONTACT}{L_COLON}</strong>
+					<strong>{{ lang('CONTACT') ~ lang('COLON') }}</strong>
 					<div class="dropdown-container dropdown-left">
 						<a href="#" class="dropdown-trigger">
 							<i class="icon fa-commenting-o fa-fw icon-lg" aria-hidden="true"></i><span class="sr-only"></span>
@@ -166,32 +166,32 @@
 						<div class="dropdown hidden">
 							<div class="pointer"><div class="pointer-inner"></div></div>
 							<div class="dropdown-contents contact-icons">
-								<!-- BEGIN contact -->
-									{% set REMAINDER = posts.contact.S_ROW_COUNT % 4 %}
-									<!-- DEFINE $S_LAST_CELL = ((REMAINDER eq 3) or (posts.contact.S_LAST_ROW and posts.contact.S_NUM_ROWS < 4)) -->
-									<!-- IF REMAINDER eq 0 -->
+								{% for contact in posts.contact %}
+									{% set REMAINDER = contact.S_ROW_COUNT % 4 %}
+									{% DEFINE S_LAST_CELL = ((REMAINDER eq 3) or (contact.S_LAST_ROW and contact.S_NUM_ROWS < 4)) %}
+									{% if REMAINDER eq 0 %}
 										<div>
-									<!-- ENDIF -->
-										<a href="<!-- IF posts.contact.U_CONTACT -->{posts.contact.U_CONTACT}<!-- ELSE -->{posts.contact.U_PROFILE_AUTHOR}<!-- ENDIF -->" title="{posts.contact.NAME}"<!-- IF $S_LAST_CELL --> class="last-cell"<!-- ENDIF --><!-- IF posts.contact.ID eq 'jabber' --> onclick="popup(this.href, 550, 320); return false;"<!-- ENDIF -->>
-											<span class="contact-icon {posts.contact.ID}-icon"></span>
+									{% endif %}
+										<a href="{% if contact.U_CONTACT %}{{ contact.U_CONTACT }}{% else %}{{ contact.U_PROFILE_AUTHOR }}{% endif %}" title="{{ contact.NAME }}"{% if definition.S_LAST_CELL %} class="last-cell"{% endif %}{% if contact.ID eq 'jabber' %} onclick="popup(this.href, 550, 320); return false;"{% endif %}>
+											<span class="contact-icon {{ contact.ID }}-icon"></span>
 										</a>
-									<!-- IF REMAINDER eq 3 or posts.contact.S_LAST_ROW -->
+									{% if REMAINDER eq 3 or contact.S_LAST_ROW %}
 										</div>
-									<!-- ENDIF -->
-								<!-- END contact -->
+									{% endif %}
+								{% endfor %}
 							</div>
 						</div>
 					</div>
 				</dd>
-			<!-- ENDIF -->
+			{% endif %}
 
 		</dl>
-	<!-- ENDIF -->
+	{% endif %}
 
 		<div class="back2top">
-			<a href="#wrap" class="top" title="{L_BACK_TO_TOP}">
+			<a href="#wrap" class="top" title="{{ lang('BACK_TO_TOP') }}">
 				<i class="icon fa-chevron-circle-up fa-fw icon-gray" aria-hidden="true"></i>
-				<span class="sr-only">{L_BACK_TO_TOP}</span>
+				<span class="sr-only">{{ lang('BACK_TO_TOP') }}</span>
 			</a>
 		</div>
 
@@ -199,43 +199,43 @@
 	</div>
 
 	<hr class="divider" />
-<!-- END posts -->
+{% endfor %}
 
-<!-- INCLUDE common/sort.html -->
+{% INCLUDE '@phpbb_titania/common/sort.html' %}
 
-<!-- IF S_QUICK_REPLY -->
-	<!-- INCLUDE posting/quickreply_editor.html -->
-<!-- ENDIF -->
+{% if S_QUICK_REPLY %}
+	{% INCLUDE '@phpbb_titania/posting/quickreply_editor.html' %}
+{% endif %}
 
-<!-- IF U_POST_REPLY or PAGINATION or TOTAL_RESULTS or .quickmod -->
+{% if U_POST_REPLY or PAGINATION or TOTAL_RESULTS or loops.quickmod|length %}
 <div class="action-bar">
-	<!-- IF U_POST_REPLY -->
-		<a href="{U_POST_REPLY}" title="<!-- IF S_IS_LOCKED -->{L_TOPIC_LOCKED}<!-- ELSE -->{L_POST_REPLY}<!-- ENDIF -->" class="button">
-			<!-- IF S_IS_LOCKED -->
-				<span>{L_BUTTON_TOPIC_LOCKED}</span> <i class="icon fa-lock fa-fw" aria-hidden="true"></i>
-			<!-- ELSE -->
-				<span>{L_BUTTON_POST_REPLY}</span> <i class="icon fa-reply fa-fw" aria-hidden="true"></i>
-			<!-- ENDIF -->
+	{% if U_POST_REPLY %}
+		<a href="{{ U_POST_REPLY }}" title="{% if S_IS_LOCKED %}{{ lang('TOPIC_LOCKED') }}{% else %}{{ lang('POST_REPLY') }}{% endif %}" class="button">
+			{% if S_IS_LOCKED %}
+				<span>{{ lang('BUTTON_TOPIC_LOCKED') }}</span> <i class="icon fa-lock fa-fw" aria-hidden="true"></i>
+			{% else %}
+				<span>{{ lang('BUTTON_POST_REPLY') }}</span> <i class="icon fa-reply fa-fw" aria-hidden="true"></i>
+			{% endif %}
 		</a>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- IF .quickmod -->
-		<div class="dropdown-container dropdown-container-{S_CONTENT_FLOW_BEGIN} dropdown-up dropdown-{S_CONTENT_FLOW_END} dropdown-button-control" id="quickmod">
-			<span title="{L_QUICK_MOD}" class="dropdown-trigger button button-secondary dropdown-select">
-				<i class="icon fa-gavel fa-fw" aria-hidden="true"></i><span class="sr-only">{L_QUICK_MOD}</span>
+	{% if loops.quickmod|length %}
+		<div class="dropdown-container dropdown-container-{{ S_CONTENT_FLOW_BEGIN }} dropdown-up dropdown-{{ S_CONTENT_FLOW_END }} dropdown-button-control" id="quickmod">
+			<span title="{{ lang('QUICK_MOD') }}" class="dropdown-trigger button button-secondary dropdown-select">
+				<i class="icon fa-gavel fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('QUICK_MOD') }}</span>
 				<span class="caret"><i class="icon fa-sort-down fa-fw" aria-hidden="true"></i></span>
 			</span>
 			<div class="dropdown hidden">
 				<div class="pointer"><div class="pointer-inner"></div></div>
 				<ul class="dropdown-contents">
-				<!-- BEGIN quickmod -->
-					<li><a href="{quickmod.LINK}">{quickmod.TITLE}</a></li>
-				<!-- END quickmod -->
+				{% for quickmod in loops.quickmod %}
+					<li><a href="{{ quickmod.LINK }}">{{ quickmod.TITLE }}</a></li>
+				{% endfor %}
 				</ul>
 			</div>
 		</div>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- INCLUDE common/pagination.html -->
+	{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 </div>
-<!-- ENDIF -->
+{% endif %}

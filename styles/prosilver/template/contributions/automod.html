@@ -1,62 +1,62 @@
-<h3>{PHPBB_VERSION}</h3>
+<h3>{{ PHPBB_VERSION }}</h3>
 
-<!-- IF S_AUTOMOD_SUCCESS -->
-	{L_SUCCESS}
-<!-- ELSE -->
+{% if S_AUTOMOD_SUCCESS %}
+	{{ lang('SUCCESS') }}
+{% else %}
 
-<div id="automod_{TEST_ID}">
-<!-- IF S_DISPLAY_FILE_EDITS -->
+<div id="automod_{{ TEST_ID }}">
+{% if S_DISPLAY_FILE_EDITS %}
 
-<h2>{L_FILE_EDITS}</h2>
-<!-- BEGIN edit_files -->
-	<!-- IF not edit_files.S_SUCCESS -->
+<h2>{{ lang('FILE_EDITS') }}</h2>
+{% for edit_files in loops.edit_files %}
+	{% if not edit_files.S_SUCCESS %}
 		<fieldset>
-			<legend>{edit_files.FILENAME}</legend>
+			<legend>{{ edit_files.FILENAME }}</legend>
 
-			<!-- IF edit_files.S_MISSING_FILE -->
-			<strong style="color: red;">{L_FILE_MISSING}</strong>
-			<!-- ELSEIF edit_files.INHERIT_MSG -->
-			<strong>{edit_files.INHERIT_MSG}</strong>
-			<!-- ENDIF -->
+			{% if edit_files.S_MISSING_FILE %}
+			<strong style="color: red;">{{ lang('FILE_MISSING') }}</strong>
+			{% elseif edit_files.INHERIT_MSG %}
+			<strong>{{ edit_files.INHERIT_MSG }}</strong>
+			{% endif %}
 
-			<!-- BEGIN finds -->
-				<!-- IF not finds.S_SUCCESS -->
+			{% for finds in edit_files.finds %}
+				{% if not finds.S_SUCCESS %}
 					<fieldset>
-						<h4 style="margin: 0; padding:0;">{L_FIND}</h4>
-						<pre style="overflow-x: scroll;">{edit_files.finds.FIND_STRING}</pre>
-						<!-- IF edit_files.finds.S_MISSING_FIND -->
-						<strong style="color: red;">{L_FIND_MISSING}</strong>
-						<!-- ENDIF -->
-						<!-- BEGIN actions -->
+						<h4 style="margin: 0; padding:0;">{{ lang('FIND') }}</h4>
+						<pre style="overflow-x: scroll;">{{ finds.FIND_STRING }}</pre>
+						{% if finds.S_MISSING_FIND %}
+						<strong style="color: red;">{{ lang('FIND_MISSING') }}</strong>
+						{% endif %}
+						{% for actions in finds.actions %}
 							<div>
 								<hr style="padding-top: 10px; margin-top: 10px;" />
-								<h4 style="margin: 0; padding:0;">{edit_files.finds.actions.NAME}</h4>
-								<pre style="overflow-x: scroll;">{edit_files.finds.actions.COMMAND}</pre>
-								<!-- BEGIN inline -->
+								<h4 style="margin: 0; padding:0;">{{ actions.NAME }}</h4>
+								<pre style="overflow-x: scroll;">{{ actions.COMMAND }}</pre>
+								{% for inline in actions.inline %}
 									<hr style="padding-top: 10px; margin-top: 10px;" />
-									<h4 style="margin: 0; padding:0;">{edit_files.finds.actions.inline.NAME}</h4>
-									<pre style="overflow-x: scroll;">{edit_files.finds.actions.inline.COMMAND}</pre>
-									<!-- IF not edit_files.finds.actions.inline.S_SUCCESS --><span style="color: red;">{L_INLINE_FIND_MISSING}</span><!-- ENDIF -->
-								<!-- END inline -->
-								<!-- IF edit_files.finds.actions.S_SUCCESS --><span style="color: green;">{L_SUCCESS}</span><!-- ELSE --><span style="color: red;">{L_FIND_MISSING}</span><!-- ENDIF -->
+									<h4 style="margin: 0; padding:0;">{{ inline.NAME }}</h4>
+									<pre style="overflow-x: scroll;">{{ inline.COMMAND }}</pre>
+									{% if not inline.S_SUCCESS %}<span style="color: red;">{{ lang('INLINE_FIND_MISSING') }}</span>{% endif %}
+								{% endfor %}
+								{% if actions.S_SUCCESS %}<span style="color: green;">{{ lang('SUCCESS') }}</span>{% else %}<span style="color: red;">{{ lang('FIND_MISSING') }}</span>{% endif %}
 							</div>
-						<!-- END actions -->
+						{% endfor %}
 					</fieldset>
-				<!-- ENDIF -->
-			<!-- END finds -->
+				{% endif %}
+			{% endfor %}
 		</fieldset>
-	<!-- ENDIF -->
-<!-- END edit_files -->
+	{% endif %}
+{% endfor %}
 
-<!-- ENDIF -->
-<!-- IF S_DISPLAY_NEW_FILES -->
-<h2>{L_NEW_FILES}</h2>
+{% endif %}
+{% if S_DISPLAY_NEW_FILES %}
+<h2>{{ lang('NEW_FILES') }}</h2>
 <ul style="margin-left: 2.5em;">
-<!-- BEGIN new_files -->
-	<!-- IF not (new_files.S_SUCCESS or new_files.S_NO_COPY_ATTEMPT) --><li>{new_files.SOURCE} <br /><strong style="color: red;">{L_FILE_MISSING}</strong></li><!-- ENDIF -->
-<!-- END new_files -->
+{% for new_files in loops.new_files %}
+	{% if not (new_files.S_SUCCESS or new_files.S_NO_COPY_ATTEMPT) %}<li>{{ new_files.SOURCE }} <br /><strong style="color: red;">{{ lang('FILE_MISSING') }}</strong></li>{% endif %}
+{% endfor %}
 </ul>
-<!-- ENDIF -->
+{% endif %}
 </div>
 
-<!-- ENDIF -->
+{% endif %}

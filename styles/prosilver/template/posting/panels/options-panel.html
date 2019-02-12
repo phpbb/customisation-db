@@ -2,44 +2,44 @@
 	<div class="inner">
 
 	<fieldset class="fields1">
-		<!-- IF S_BBCODE_ALLOWED -->
-			<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{S_BBCODE_CHECKED} /> {L_DISABLE_BBCODE}</label></div>
-		<!-- ENDIF -->
-		<!-- IF S_SMILIES_ALLOWED -->
-			<div><label for="disable_smilies"><input type="checkbox" name="disable_smilies" id="disable_smilies"{S_SMILIES_CHECKED} /> {L_DISABLE_SMILIES}</label></div>
-		<!-- ENDIF -->
-		<!-- IF S_LINKS_ALLOWED -->
-			<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{S_MAGIC_URL_CHECKED} /> {L_DISABLE_MAGIC_URL}</label></div>
-		<!-- ENDIF -->
-		<!-- IF S_SIG_ALLOWED -->
-			<div><label for="attach_sig"><input type="checkbox" name="attach_sig" id="attach_sig"{S_SIGNATURE_CHECKED} /> {L_ATTACH_SIG}</label></div>
-		<!-- ENDIF -->
-		<!-- IF S_NOTIFY_ALLOWED -->
-			<div><label for="notify"><input type="checkbox" name="notify" id="notify"{S_NOTIFY_CHECKED} /> {L_NOTIFY_REPLY}</label></div>
-		<!-- ENDIF -->
+		{% if S_BBCODE_ALLOWED %}
+			<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{{ S_BBCODE_CHECKED }} /> {{ lang('DISABLE_BBCODE') }}</label></div>
+		{% endif %}
+		{% if S_SMILIES_ALLOWED %}
+			<div><label for="disable_smilies"><input type="checkbox" name="disable_smilies" id="disable_smilies"{{ S_SMILIES_CHECKED }} /> {{ lang('DISABLE_SMILIES') }}</label></div>
+		{% endif %}
+		{% if S_LINKS_ALLOWED %}
+			<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{{ S_MAGIC_URL_CHECKED }} /> {{ lang('DISABLE_MAGIC_URL') }}</label></div>
+		{% endif %}
+		{% if S_SIG_ALLOWED %}
+			<div><label for="attach_sig"><input type="checkbox" name="attach_sig" id="attach_sig"{{ S_SIGNATURE_CHECKED }} /> {{ lang('ATTACH_SIG') }}</label></div>
+		{% endif %}
+		{% if S_NOTIFY_ALLOWED %}
+			<div><label for="notify"><input type="checkbox" name="notify" id="notify"{{ S_NOTIFY_CHECKED }} /> {{ lang('NOTIFY_REPLY') }}</label></div>
+		{% endif %}
 
 		<br />
 
-		<!-- IF ACCESS_OPTIONS -->
-			<div><select name="message_access">{ACCESS_OPTIONS}</select></div>
-		<!-- ENDIF -->
+		{% if ACCESS_OPTIONS %}
+			<div><select name="message_access">{{ ACCESS_OPTIONS }}</select></div>
+		{% endif %}
 
-		<!-- IF S_STICKY_TOPIC_ALLOWED -->
-			<div><label for="sticky_topic"><input type="checkbox" name="sticky_topic" id="sticky_topic"<!-- IF S_STICKY_TOPIC_CHECKED --> checked="checked"<!-- ENDIF --> /> {L_STICKY_TOPIC}</label></div>
-		<!-- ENDIF -->
-		<!-- IF S_LOCK_TOPIC_ALLOWED -->
-			<div><label for="lock_topic"><input type="checkbox" name="lock_topic" id="lock_topic"<!-- IF S_LOCK_TOPIC_CHECKED --> checked="checked"<!-- ENDIF --> /> {L_LOCK_TOPIC}</label></div>
-		<!-- ENDIF -->
-		<!-- IF S_LOCK_POST_ALLOWED -->
-			<div><label for="lock_post"><input type="checkbox" name="lock_post" id="lock_post"<!-- IF S_LOCK_POST_CHECKED --> checked="checked"<!-- ENDIF --> /> {L_LOCK_POST} [{L_LOCK_POST_EXPLAIN}]</label></div>
-		<!-- ENDIF -->
+		{% if S_STICKY_TOPIC_ALLOWED %}
+			<div><label for="sticky_topic"><input type="checkbox" name="sticky_topic" id="sticky_topic"{% if S_STICKY_TOPIC_CHECKED %} checked="checked"{% endif %} /> {{ lang('STICKY_TOPIC') }}</label></div>
+		{% endif %}
+		{% if S_LOCK_TOPIC_ALLOWED %}
+			<div><label for="lock_topic"><input type="checkbox" name="lock_topic" id="lock_topic"{% if S_LOCK_TOPIC_CHECKED %} checked="checked"{% endif %} /> {{ lang('LOCK_TOPIC') }}</label></div>
+		{% endif %}
+		{% if S_LOCK_POST_ALLOWED %}
+			<div><label for="lock_post"><input type="checkbox" name="lock_post" id="lock_post"{% if S_LOCK_POST_CHECKED %} checked="checked"{% endif %} /> {{ lang('LOCK_POST') }} [{{ lang('LOCK_POST_EXPLAIN') }}]</label></div>
+		{% endif %}
 
-		<!-- IF S_EDIT_REASON -->
+		{% if S_EDIT_REASON %}
 		<dl>
-			<dt><label for="edit_reason">{L_EDIT_REASON}:</label></dt>
-			<dd><input type="text" name="edit_reason" id="edit_reason" value="{EDIT_REASON}" class="inputbox" /></dd>
+			<dt><label for="edit_reason">{{ lang('EDIT_REASON') ~ lang('COLON') }}</label></dt>
+			<dd><input type="text" name="edit_reason" id="edit_reason" value="{{ EDIT_REASON }}" class="inputbox" /></dd>
 		</dl>
-		<!-- ENDIF -->
+		{% endif %}
 	</fieldset>
 
 	</div>

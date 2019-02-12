@@ -1,97 +1,91 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" dir="{S_CONTENT_DIRECTION}" lang="{S_USER_LANG}" xml:lang="{S_USER_LANG}">
+<!DOCTYPE html>
+<html dir="{{ S_CONTENT_DIRECTION }}" lang="{{ S_USER_LANG }}">
 <head>
-
-<meta http-equiv="content-type" content="text/html; charset={S_CONTENT_ENCODING}" />
-<meta http-equiv="content-style-type" content="text/css" />
-<meta http-equiv="content-language" content="{S_USER_LANG}" />
-<meta http-equiv="imagetoolbar" content="no" />
-<meta name="resource-type" content="document" />
-<meta name="distribution" content="global" />
-<meta name="keywords" content="" />
-<meta name="description" content="{META_DESCRIPTION}" />
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 {META}
-<title>{SITENAME} &bull; {PAGE_TITLE}</title>
+<title>{{ SITENAME }} &bull; {{ PAGE_TITLE }}</title>
 
-<link href="{T_TITANIA_THEME_PATH}/demo.css" rel="stylesheet" type="text/css" media="screen, projection" />
+<link href="{{ T_TITANIA_THEME_PATH }}/demo.css" rel="stylesheet" type="text/css" media="screen, projection" />
 </head>
 <body id="demo">
 	<div class="demo-header">
-		<a href="<!-- IF U_SITE_HOME -->{U_SITE_HOME}<!-- ELSE -->{U_INDEX}<!-- ENDIF -->" id="logo">
-			<img src="{T_TITANIA_THEME_PATH}/images/phpbb_logo.png" alt="" />
+		<a href="{% if U_SITE_HOME %}{{ U_SITE_HOME }}{% else %}{{ U_INDEX }}{% endif %}" id="logo">
+			<img src="{{ T_TITANIA_THEME_PATH }}/images/phpbb_logo.png" alt="" />
 		</a>
 
 		<div class="demo-selection">
 			<div>
-				<a href="#" id="select-style" class="button"><span></span>{L_SELECT_STYLE}</a>
+				<a href="#" id="select-style" class="button"><span></span>{{ lang('SELECT_STYLE') }}</a>
 				<div class="style-select simple">
 					<div class="viewport">
 						<div>
-							<!-- IF PREVIEW --><img src="{PREVIEW}" alt="{NAME}" /><!-- ENDIF -->
+							{% if PREVIEW %}<img src="{{ PREVIEW }}" alt="{{ NAME }}" />{% endif %}
 							<ul class="style-details">
-								<li>{L_BY} {AUTHORS}</li>
-								<li>{L_PHPBB_VERSION}: {PHPBB_VERSION}</li>
-								<li>{L_LICENSE}: {LICENSE}</li>
+								<li>{{ lang('BY') }} {{ AUTHORS }}</li>
+								<li>{{ lang('PHPBB_VERSION') ~ lang('COLON') ~ PHPBB_VERSION }}</li>
+								<li>{{ lang('LICENSE') ~ lang('COLON') ~ LICENSE }}</li>
 							</ul>						
 						</div>
 					</div>
 					<div class="demo-list">
 						<form action="" method="post" autocomplete="off">
 							<fieldset>
-								<input type="text" name="q" id="q" value="{L_SEARCH}..." />
+								<input type="text" name="q" id="q" value="{{ lang('SEARCH') }}..." />
 							</fieldset>
 						</form>
 						<ul>
-						<!-- BEGIN stylerow -->
-							<!-- IF stylerow.CATEGORY --><li class="category">{stylerow.CATEGORY}</li><!-- ENDIF -->
-							<li class="style{stylerow.ID}"><a href="{stylerow.U_DEMO}"<!-- IF stylerow.NAME eq NAME --> class="active"<!-- ENDIF -->><span></span>{stylerow.NAME}</a></li>
-						<!-- END stylerow -->
+						{% for stylerow in loops.stylerow %}
+							{% if stylerow.CATEGORY %}<li class="category">{{ stylerow.CATEGORY }}</li>{% endif %}
+							<li class="style{{ stylerow.ID }}"><a href="{{ stylerow.U_DEMO }}"{% if stylerow.NAME eq NAME %} class="active"{% endif %}><span></span>{{ stylerow.NAME }}</a></li>
+						{% endfor %}
 						</ul>
 					</div>
 				</div>
 			</div>
 
 			<div class="button" id="sibling-select"> 
-				<!-- IF U_PREV --><a href="{U_PREV}" id="prev" title="{L_PREVIOUS}"><span></span></a><!-- ELSE --><span id="prev"><span></span></span><!-- ENDIF -->
-				<!-- IF U_NEXT --><a href="{U_NEXT}" id="next" title="{L_NEXT}"><span></span></a><!-- ELSE --><span id="next"><span></span></span><!-- ENDIF -->
+				{% if U_PREV %}<a href="{{ U_PREV }}" id="prev" title="{{ lang('PREVIOUS') }}"><span></span></a>{% else %}<span id="prev"><span></span></span>{% endif %}
+				{% if U_NEXT %}<a href="{{ U_NEXT }}" id="next" title="{{ lang('NEXT') }}"><span></span></a>{% else %}<span id="next"><span></span></span>{% endif %}
 			</div>
 		</div>
 			
 		<div class="style-info">
-			<p class="style-name">{NAME}</p>
-			<p class="demo-buttons"><a href="{U_VIEW}" class="button details"><span></span>{L_DETAILS}</a><a href="{U_DOWNLOAD}" class="button download"><span></span>{L_DOWNLOAD}</a></p> 
+			<p class="style-name">{{ NAME }}</p>
+			<p class="demo-buttons"><a href="{{ U_VIEW }}" class="button details"><span></span>{{ lang('DETAILS') }}</a><a href="{{ U_DOWNLOAD }}" class="button download"><span></span>{{ lang('DOWNLOAD') }}</a></p> 
 			<ul class="style-details">
-				<li>{L_BY} {AUTHORS}</li>
-				<li>{L_PHPBB_VERSION}: {PHPBB_VERSION}</li>
-				<li>{L_LICENSE}: {LICENSE}</li>
+				<li>{{ lang('BY') }} {{ AUTHORS }}</li>
+				<li>{{ lang('PHPBB_VERSION') ~ lang('COLON') ~ PHPBB_VERSION }}</li>
+				<li>{{ lang('LICENSE') ~ lang('COLON') ~ LICENSE }}</li>
 			</ul>
 		</div>
 
 		<ul class="linklist">
 			<li>
-				<a href="<!-- IF U_SITE_HOME -->{U_SITE_HOME}<!-- ELSE -->{U_INDEX}<!-- ENDIF -->" accesskey="h">{L_HOME}</a>
-				<!-- BEGIN navlinks --> <strong>&#8249;</strong> <a href="{navlinks.U_VIEW_FORUM}">{navlinks.FORUM_NAME}</a><!-- END navlinks -->
+				<a href="{% if U_SITE_HOME %}{{ U_SITE_HOME }}{% else %}{{ U_INDEX }}{% endif %}" accesskey="h">{{ lang('HOME') }}</a>
+				{% for navlinks in loops.navlinks %} <strong>&#8249;</strong> <a href="{{ navlinks.U_VIEW_FORUM }}">{{ navlinks.FORUM_NAME }}</a>{% endfor %}
 			</li>
 		</ul>
 	</div>
 
-	<iframe src="{IFRAME}"></iframe>
+	<iframe src="{{ IFRAME }}"></iframe>
 	<ul id="demo-data">
-<!-- BEGIN stylerow -->
-		<li class="style{stylerow.ID}">
-			<div class="preview"><!-- IF stylerow.PREVIEW --><img src="" alt="{stylerow.NAME}" data-source="{stylerow.PREVIEW}" /><!-- ENDIF -->
+{% for stylerow in loops.stylerow %}
+		<li class="style{{ stylerow.ID }}">
+			<div class="preview">{% if stylerow.PREVIEW %}<img src="" alt="{{ stylerow.NAME }}" data-source="{{ stylerow.PREVIEW }}" />{% endif %}
 				<ul class="style-details">
-					<li>{L_BY} {stylerow.AUTHORS}</li>
-					<li>{L_PHPBB_VERSION}: {stylerow.PHPBB_VERSION}</li>
-					<li>{L_LICENSE}: {stylerow.LICENSE}</li>
+					<li>{{ lang('BY') }} {{ stylerow.AUTHORS }}</li>
+					<li>{{ lang('PHPBB_VERSION') ~ lang('COLON') ~ stylerow.PHPBB_VERSION }}</li>
+					<li>{{ lang('LICENSE') ~ lang('COLON') ~ stylerow.LICENSE }}</li>
 				</ul>
 			</div>
 		</li>
-<!-- END stylerow -->
+{% endfor %}
 	</ul>
-	<script type="text/javascript" src="{T_JQUERY_LINK}"></script>
-	<!-- IF S_ALLOW_CDN --><script type="text/javascript">window.jQuery || document.write(unescape('%3Cscript src="{T_ASSETS_PATH}/javascript/jquery.min.js?assets_version={T_ASSETS_VERSION}" type="text/javascript"%3E%3C/script%3E'));</script><!-- ENDIF -->
-	<script type="text/javascript" src="{T_TITANIA_ASSETS_PATH}/javascript/jquery.livesearch.min.js"></script>
-	<script type="text/javascript" src="{T_TITANIA_ASSETS_PATH}/javascript/demo.js"></script>
+	<script type="text/javascript" src="{{ T_JQUERY_LINK }}"></script>
+	{% if S_ALLOW_CDN %}<script type="text/javascript">window.jQuery || document.write(unescape('%3Cscript src="{{ T_ASSETS_PATH }}/javascript/jquery.min.js?assets_version={{ T_ASSETS_VERSION }}" type="text/javascript"%3E%3C/script%3E'));</script>{% endif %}
+	<script type="text/javascript" src="{{ T_TITANIA_ASSETS_PATH }}/javascript/jquery.livesearch.min.js"></script>
+	<script type="text/javascript" src="{{ T_TITANIA_ASSETS_PATH }}/javascript/demo.js"></script>
 </body>
 </html>

@@ -1,66 +1,66 @@
-<!-- INCLUDE manage/manage_header.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_header.html' %}
 
-<form id="mcp" method="get" action="{S_ACTION}">
+<form id="mcp" method="get" action="{{ S_ACTION }}">
 
-<!-- IF .attention -->
+{% if loops.attention|length %}
 	<div class="action-bar">
-		<!-- INCLUDE common/pagination.html -->
+		{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 	</div>
 	<ul class="topiclist simple">
 		<li class="header">
 			<dl>
-				<dt>{L_VIEW_DETAILS}</dt>
-				<dd class="moderation"><span>{L_INFORMATION}</span></dd>
-				<!--<dd class="mark">{L_MARK}</dd>-->
+				<dt>{{ lang('VIEW_DETAILS') }}</dt>
+				<dd class="moderation"><span>{{ lang('INFORMATION') }}</span></dd>
+				{#<dd class="mark">{{ lang('MARK') }}</dd>#}
 			</dl>
 		</li>
 	</ul>
 	<ul class="topiclist cplist">
 
-	<!-- BEGIN attention -->
-		<li class="row <!-- IF attention.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
+	{% for attention in loops.attention %}
+		<li class="row {% if attention.S_ROW_COUNT is odd %}bg1{% else %}bg2{% endif %}">
 			<dl>
 				<dt>
 					<div class="list-inner">
-					<a href="{attention.U_VIEW_DETAILS}" class="topictitle">{attention.ATTENTION_TITLE}</a><br />
-					<span>{attention.OBJECT_LABEL} {L_POST_BY_AUTHOR} {attention.USER_FULL} &raquo; {attention.ATTENTION_POST_TIME}</span>
+					<a href="{{ attention.U_VIEW_DETAILS }}" class="topictitle">{{ attention.ATTENTION_TITLE }}</a><br />
+					<span>{{ attention.OBJECT_LABEL }} {{ lang('POST_BY_AUTHOR') }} {{ attention.USER_FULL }} &raquo; {{ attention.ATTENTION_POST_TIME }}</span>
 					</div>
 				</dt>
 				<dd class="moderation">
-					<span><!-- IF attention.S_CLOSED --><strong>[{attention.CLOSED_LABEL}]</strong> <!-- ENDIF -->{attention.ATTENTION_REASON}<br />{L_BY} {attention.REPORTER_USER_FULL} &raquo; {attention.ATTENTION_TIME}</span>
+					<span>{% if attention.S_CLOSED %}<strong>[{{ attention.CLOSED_LABEL }}]</strong> {% endif %}{{ attention.ATTENTION_REASON }}<br />{{ lang('BY') }} {{ attention.REPORTER_USER_FULL }} &raquo; {{ attention.ATTENTION_TIME }}</span>
 				</dd>
-				<!--<dd class="mark"><input type="checkbox" name="id_list[]" value="{attention.ATTENTION_ID}" /></dd>-->
+				{#<dd class="mark"><input type="checkbox" name="id_list[]" value="{{ attention.ATTENTION_ID }}" /></dd>#}
 			</dl>
 		</li>
-	<!-- END attention -->
+	{% endfor %}
 	</ul>
 
-<!-- ELSE -->
-	<p><strong>{L_NO_REPORTS}</strong></p>
-<!-- ENDIF -->
+{% else %}
+	<p><strong>{{ lang('NO_REPORTS') }}</strong></p>
+{% endif %}
 
 <fieldset class="display-options">
-	<!-- IF S_SELECT_SORT_DAYS -->
-		<label>{L_DISPLAY_POSTS}: {S_SELECT_SORT_DAYS}</label>
-		<label>{L_SORT_BY} {S_SELECT_SORT_KEY}</label><label>{S_SELECT_SORT_DIR}</label>
-	<!-- ENDIF -->
-	<input type="checkbox" name="open" id="open"<!-- IF S_OPEN_CHECKED --> checked="checked"<!-- ENDIF --> value="1" /> <label for="open">{L_OPEN_ITEMS}</label> &nbsp;
-	<input type="checkbox" name="closed" id="closed"<!-- IF S_CLOSED_CHECKED --> checked="checked"<!-- ENDIF --> value="1" /> <label for="closed">{L_CLOSED_ITEMS}</label>
-	<input type="submit" name="sort" value="{L_GO}" class="button2" />
+	{% if S_SELECT_SORT_DAYS %}
+		<label>{{ lang('DISPLAY_POSTS') ~ lang('COLON') ~ S_SELECT_SORT_DAYS }}</label>
+		<label>{{ lang('SORT_BY') }} {{ S_SELECT_SORT_KEY }}</label><label>{{ S_SELECT_SORT_DIR }}</label>
+	{% endif %}
+	<input type="checkbox" name="open" id="open"{% if S_OPEN_CHECKED %} checked="checked"{% endif %} value="1" /> <label for="open">{{ lang('OPEN_ITEMS') }}</label> &nbsp;
+	<input type="checkbox" name="closed" id="closed"{% if S_CLOSED_CHECKED %} checked="checked"{% endif %} value="1" /> <label for="closed">{{ lang('CLOSED_ITEMS') }}</label>
+	<input type="submit" name="sort" value="{{ lang('GO') }}" class="button2" />
 </fieldset>
-<!-- IF TOTAL_RESULTS --><hr /><!-- ENDIF -->
+{% if TOTAL_RESULTS %}<hr />{% endif %}
 <div class="action-bar">
-	<!-- INCLUDE common/pagination.html -->
+	{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 </div>
 
-<!--
-<!-- IF .attention -->
+{#
+{% if loops.attention|length %}
 	<fieldset class="display-actions">
-		<!-- IF not S_CLOSED -->&nbsp;<input class="button1" type="submit" name="close" value="{L_CLOSE_REPORTS}" /><!-- ENDIF -->
-		<div><a href="#" onclick="marklist('mcp', 'report_id_list', true); return false;">{L_MARK_ALL}</a> :: <a href="#" onclick="marklist('mcp', 'report_id_list', false); return false;">{L_UNMARK_ALL}</a></div>
+		{% if not S_CLOSED %}&nbsp;<input class="button1" type="submit" name="close" value="{{ lang('CLOSE_REPORTS') }}" />{% endif %}
+		<div><a href="#" onclick="marklist('mcp', 'report_id_list', true); return false;">{{ lang('MARK_ALL') }}</a> :: <a href="#" onclick="marklist('mcp', 'report_id_list', false); return false;">{{ lang('UNMARK_ALL') }}</a></div>
 	</fieldset>
-<!-- ENDIF -->
--->
+{% endif %}
+#}
 </form>
 
-<!-- INCLUDE manage/manage_footer.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_footer.html' %}

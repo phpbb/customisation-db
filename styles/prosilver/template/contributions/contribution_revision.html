@@ -1,170 +1,170 @@
-<!-- INCLUDE contributions/contribution_header.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_header.html' %}
 
-<h3 class="section-name">{PAGE_TITLE}</h3>
+<h3 class="section-name">{{ PAGE_TITLE }}</h3>
 
-<!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
-<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+{% if NOTICE %}<p class="error">{{ NOTICE }}</p>{% endif %}
+{% if ERROR_MSG %}<p class="error">{{ ERROR_MSG }}</p>{% endif %}
 
-<form id="<!-- IF POSTING_FORM_NAME -->{POSTING_FORM_NAME}<!-- ELSE -->postform<!-- ENDIF -->" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+<form id="{% if POSTING_FORM_NAME %}{{ POSTING_FORM_NAME }}{% else %}postform{% endif %}" method="post" action="{{ S_POST_ACTION }}" {{ S_FORM_ENCTYPE }}>
 	<div class="container">
 		<div class="inner">
 			<div class="content">
-			<!-- IF REVISION_UPLOADER -->
-				{REVISION_UPLOADER}
+			{% if REVISION_UPLOADER %}
+				{{ REVISION_UPLOADER }}
 
 				<fieldset class="fields2">
 					<dl>
-						<dt><label for="revision_version">{L_REVISION_VERSION}:</label><br /><span>{L_REVISION_VERSION_EXPLAIN}</span></dt>
-						<dd><input type="text" name="revision_version" id="revision_version" class="inputbox autowidth" value="{REVISION_VERSION}" /></dd>
+						<dt><label for="revision_version">{{ lang('REVISION_VERSION') ~ lang('COLON') }}</label><br /><span>{{ lang('REVISION_VERSION_EXPLAIN') }}</span></dt>
+						<dd><input type="text" name="revision_version" id="revision_version" class="inputbox autowidth" value="{{ REVISION_VERSION }}" /></dd>
 					</dl>
 					<dl>
-						<dt><label for="revision_name">{L_REVISION_NAME}:</label><br /><span>{L_REVISION_NAME_EXPLAIN}</span></dt>
-						<dd><input type="text" name="revision_name" id="revision_name" class="inputbox autowidth" value="{REVISION_NAME}" /></dd>
+						<dt><label for="revision_name">{{ lang('REVISION_NAME') ~ lang('COLON') }}</label><br /><span>{{ lang('REVISION_NAME_EXPLAIN') }}</span></dt>
+						<dd><input type="text" name="revision_name" id="revision_name" class="inputbox autowidth" value="{{ REVISION_NAME }}" /></dd>
 					</dl>
-					<!-- IF .custom_fields -->
-						<!-- INCLUDE common/custom_fields.html -->
-					<!-- ENDIF -->
+					{% if loops.custom_fields|length %}
+						{% INCLUDE '@phpbb_titania/common/custom_fields.html' %}
+					{% endif %}
 				</fieldset>
 
-				<!-- IF .phpbb_branches -->
+				{% if loops.phpbb_branches|length %}
 				<fieldset class="fields2">
 				<dl>
-					<dt><label for="phpbb_branch">{L_PHPBB_BRANCH}:</label><br /><span>{L_PHPBB_BRANCH_EXPLAIN}</span></dt>
+					<dt><label for="phpbb_branch">{{ lang('PHPBB_BRANCH') ~ lang('COLON') }}</label><br /><span>{{ lang('PHPBB_BRANCH_EXPLAIN') }}</span></dt>
 					<dd>
-						<!-- BEGIN phpbb_branches -->
-							<!-- IF phpbb_branches.S_NUM_ROWS eq 1 -->
-								{phpbb_branches.NAME}
-								<input type="hidden" name="phpbb_branch[]" value="{phpbb_branches.VALUE}" />
-							<!-- ELSE -->
-								<!-- IF phpbb_branches.S_FIRST_ROW -->
+						{% for phpbb_branches in loops.phpbb_branches %}
+							{% if phpbb_branches.S_NUM_ROWS eq 1 %}
+								{{ phpbb_branches.NAME }}
+								<input type="hidden" name="phpbb_branch[]" value="{{ phpbb_branches.VALUE }}" />
+							{% else %}
+								{% if phpbb_branches.S_FIRST_ROW %}
 								<select id="phpbb_branch" name="phpbb_branch[]" size="3" multiple="multiple" class="autowidth">
-								<!-- ENDIF -->
-									<option value="{phpbb_branches.VALUE}"<!-- IF phpbb_branches.S_IS_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_branches.NAME}</option>
-								<!-- IF phpbb_branches.S_LAST_ROW -->
+								{% endif %}
+									<option value="{{ phpbb_branches.VALUE }}"{% if phpbb_branches.S_IS_SELECTED %} selected="selected"{% endif %}>{{ phpbb_branches.NAME }}</option>
+								{% if phpbb_branches.S_LAST_ROW %}
 								</select>
-								<!-- ENDIF -->
-							<!-- ENDIF -->
-						<!-- END phpbb_branches -->
+								{% endif %}
+							{% endif %}
+						{% endfor %}
 					</dd>
 				</dl>
 				</fieldset>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<!-- IF .phpbb_versions -->
+				{% if loops.phpbb_versions|length %}
 				<fieldset class="fields2">
 				<dl>
-					<dt><label for="revision_phpbb_versions">{L_PHPBB_VERSION}:</label></dt>
+					<dt><label for="revision_phpbb_versions">{{ lang('PHPBB_VERSION') ~ lang('COLON') }}</label></dt>
 					<dd><select name="revision_phpbb_versions[]" multiple="multiple" size="10">
-						<!-- BEGIN phpbb_versions -->
-							<option value="{phpbb_versions.VERSION}"<!-- IF phpbb_versions.S_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_versions.VERSION}</option>
-						<!-- END phpbb_versions -->
+						{% for phpbb_versions in loops.phpbb_versions %}
+							<option value="{{ phpbb_versions.VERSION }}"{% if phpbb_versions.S_SELECTED %} selected="selected"{% endif %}>{{ phpbb_versions.VERSION }}</option>
+						{% endfor %}
 					</select></dd>
 				</dl>
 				</fieldset>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<!-- IF not S_REPACK and .license_options -->
+				{% if not S_REPACK and loops.license_options|length %}
 				<fieldset class="fields2">
 				<dl>
-					<dt><label for="revision_license">{L_LICENSE}:</label><br /><span>{L_LICENSE_EXPLAIN}</span></dt>
+					<dt><label for="revision_license">{{ lang('LICENSE') ~ lang('COLON') }}</label><br /><span>{{ lang('LICENSE_EXPLAIN') }}</span></dt>
 					<dd>
 						<select id="revision_license" name="revision_license" data-togglable-settings="true">
-							<option value="">{L_SELECT}</option>
-							<!-- BEGIN license_options -->
-								<option value="{license_options.VALUE}"<!-- IF license_options.VALUE == REVISION_LICENSE --> selected="selected"<!-- ENDIF -->>{license_options.NAME}</option>
-							<!-- END license_options -->
-							<!-- IF S_ALLOW_CUSTOM_LICENSE --><option value="{L_CUSTOM_LICENSE}"<!-- IF S_CUSTOM_LICENSE --> selected="selected"<!-- ENDIF --> data-toggle-setting="#revision_custom_license">{L_CUSTOM_LICENSE}</option><!-- ENDIF -->
+							<option value="">{{ lang('SELECT') }}</option>
+							{% for license_options in loops.license_options %}
+								<option value="{{ license_options.VALUE }}"{% if license_options.VALUE == REVISION_LICENSE %} selected="selected"{% endif %}>{{ license_options.NAME }}</option>
+							{% endfor %}
+							{% if S_ALLOW_CUSTOM_LICENSE %}<option value="{{ lang('CUSTOM_LICENSE') }}"{% if S_CUSTOM_LICENSE %} selected="selected"{% endif %} data-toggle-setting="#revision_custom_license">{{ lang('CUSTOM_LICENSE') }}</option>{% endif %}
 						</select>
-						<!-- IF S_ALLOW_CUSTOM_LICENSE --><input type="text" id="revision_custom_license" name="revision_custom_license" size="25" maxlength="60" value="{REVISION_CUSTOM_LICENSE}" class="inputbox autowidth" /><!-- ENDIF -->
+						{% if S_ALLOW_CUSTOM_LICENSE %}<input type="text" id="revision_custom_license" name="revision_custom_license" size="25" maxlength="60" value="{{ REVISION_CUSTOM_LICENSE }}" class="inputbox autowidth" />{% endif %}
 					</dd>
 				</dl>
 				</fieldset>
 
-				<!-- ELSEIF S_REPACK -->
-				<input type="hidden" name="revision_license" value="{REVISION_LICENSE}" />
-				<input type="hidden" name="queue_allow_repack" value="{QUEUE_ALLOW_REPACK}" />
-				<!-- ENDIF -->
+				{% elseif S_REPACK %}
+				<input type="hidden" name="revision_license" value="{{ REVISION_LICENSE }}" />
+				<input type="hidden" name="queue_allow_repack" value="{{ QUEUE_ALLOW_REPACK }}" />
+				{% endif %}
 
-				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
+				{% if not S_REPACK and POSTING_TEXT_NAME %}
 				<fieldset class="fields2">
 				<dl>
-					<dt><label for="queue_allow_repack">{L_QUEUE_ALLOW_REPACK}:</label><br /><span>{L_QUEUE_ALLOW_REPACK_EXPLAIN}</span></dt>
-					<dd><input type="checkbox" id="queue_allow_repack" name="queue_allow_repack" value="1"<!-- IF ((ERROR_MSG and QUEUE_ALLOW_REPACK) or not ERROR_MSG) --> checked="checked"<!-- ENDIF --> /></dd>
+					<dt><label for="queue_allow_repack">{{ lang('QUEUE_ALLOW_REPACK') ~ lang('COLON') }}</label><br /><span>{{ lang('QUEUE_ALLOW_REPACK_EXPLAIN') }}</span></dt>
+					<dd><input type="checkbox" id="queue_allow_repack" name="queue_allow_repack" value="1"{% if ((ERROR_MSG and QUEUE_ALLOW_REPACK) or not ERROR_MSG) %} checked="checked"{% endif %} /></dd>
 				</dl>
-				<!-- IF S_CAN_SUBSCRIBE -->
+				{% if S_CAN_SUBSCRIBE %}
 				<dl>
-					<dt><label for="subscribe_author">{L_SUBSCRIBE_QUEUE_DISCUSSION}</label></dd>
-					<dd><input type="checkbox" id="subscribe_author" name="subscribe_author"<!-- IF ((ERROR_MSG and SUBSCRIBE_AUTHOR) or not ERROR_MSG)  --> checked="checked"<!-- ENDIF --> /></dd>
+					<dt><label for="subscribe_author">{{ lang('SUBSCRIBE_QUEUE_DISCUSSION') }}</label></dd>
+					<dd><input type="checkbox" id="subscribe_author" name="subscribe_author"{% if ((ERROR_MSG and SUBSCRIBE_AUTHOR) or not ERROR_MSG)  %} checked="checked"{% endif %} /></dd>
 				</dl>
-				<!-- ENDIF -->
-				<!-- IF REQUEST_TEST_ACCOUNT -->
+				{% endif %}
+				{% if REQUEST_TEST_ACCOUNT %}
 				<dl>
-					<dt><label for="test-account">{L_TEST_ACCOUNT}:</label><br /><span>{L_TEST_ACCOUNT_EXPLAIN}</span></dt>
-					<dd><textarea class="inputbox" name="revision_test_account" id="test-account" rows="8">{REVISION_TEST_ACCOUNT}</textarea></dd>
+					<dt><label for="test-account">{{ lang('TEST_ACCOUNT') ~ lang('COLON') }}</label><br /><span>{{ lang('TEST_ACCOUNT_EXPLAIN') }}</span></dt>
+					<dd><textarea class="inputbox" name="revision_test_account" id="test-account" rows="8">{{ REVISION_TEST_ACCOUNT }}</textarea></dd>
 				</dl>
-				<!-- ENDIF -->
+				{% endif %}
 				<dl>
-					<dt><br /><label for="message">{L_QUEUE_NOTES}:</label><br /><span>{L_QUEUE_NOTES_EXPLAIN}</span></dt>
+					<dt><br /><label for="message">{{ lang('QUEUE_NOTES') ~ lang('COLON') }}</label><br /><span>{{ lang('QUEUE_NOTES_EXPLAIN') }}</span></dt>
 				</dl>
 				</fieldset>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<!-- IF not S_REPACK and POSTING_TEXT_NAME -->
-					<!-- INCLUDE posting/posting_basic_editor.html -->
-				<!-- ELSE -->
+				{% if not S_REPACK and POSTING_TEXT_NAME %}
+					{% INCLUDE '@phpbb_titania/posting/posting_basic_editor.html' %}
+				{% else %}
 					<textarea name="message" id="message" style="display: none;"></textarea>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<!-- IF AGREEMENT_NOTICE -->
-					<h3>{L_AGREEMENT}</h3>
-					{AGREEMENT_NOTICE}
+				{% if AGREEMENT_NOTICE %}
+					<h3>{{ lang('AGREEMENT') }}</h3>
+					{{ AGREEMENT_NOTICE }}
 					<br /><br />
-				<!-- ENDIF -->
-			<!-- ENDIF -->
-			<!-- IF STEP_MESSAGE -->
+				{% endif %}
+			{% endif %}
+			{% if STEP_MESSAGE %}
 				<div style="font-size:14px; padding:5px; width:100%; text-align:center;">
-					{STEP_MESSAGE}
+					{{ STEP_MESSAGE }}
 				</div>
-			<!-- ENDIF -->
-			<!-- IF MPV_TEST_WARNING -->
-				<br /><br />{L_MPV_TEST}
-			<!-- ENDIF -->
-			<!-- IF PV_RESULTS -->
-				<p class="error">{L_PV_RESULTS}</p>
+			{% endif %}
+			{% if MPV_TEST_WARNING %}
+				<br /><br />{{ lang('MPV_TEST') }}
+			{% endif %}
+			{% if PV_RESULTS %}
+				<p class="error">{{ lang('PV_RESULTS') }}</p>
 				<hr class="dashed" />
 				<div style="font-size:12px;">
-					{PV_RESULTS}
+					{{ PV_RESULTS }}
 				</div>
-				<!-- IF S_AUTOMOD_TEST -->
+				{% if S_AUTOMOD_TEST %}
 					<br /><br />
 					<hr class="dashed" />
-					<strong>{L_AUTOMOD_TEST}</strong>
-				<!-- ENDIF -->
-			<!-- ENDIF -->
-			<!-- IF AUTOMOD_RESULTS -->
-				<p class="error">{L_AUTOMOD_RESULTS}</p>
+					<strong>{{ lang('AUTOMOD_TEST') }}</strong>
+				{% endif %}
+			{% endif %}
+			{% if AUTOMOD_RESULTS %}
+				<p class="error">{{ lang('AUTOMOD_RESULTS') }}</p>
 				<hr class="dashed" />
-				{AUTOMOD_RESULTS}
-			<!-- ENDIF -->
-			<!-- IF S_PASSED_TRANSLATION_VALIDATION -->
-				{L_PASSED_VALIDATION}
-			<!-- ENDIF -->
+				{{ AUTOMOD_RESULTS }}
+			{% endif %}
+			{% if S_PASSED_TRANSLATION_VALIDATION %}
+				{{ lang('PASSED_VALIDATION') }}
+			{% endif %}
 
 			<fieldset class="submit-buttons">
-				<input type="submit" id="cancel" name="cancel" value="{L_CANCEL}" class="button2" />
-				<!-- IF AGREEMENT_NOTICE and REVISION_UPLOADER -->
-					<input type="submit" id="disagree" name="disagree" value="{L_NOT_AGREE}" class="button2" />
-					<input type="submit" id="new_revision" name="new_revision" value="{L_AGREE}" class="button1" />&nbsp;
-				<!-- ELSE -->
-					<input type="submit" id="new_revision" name="new_revision" value="{L_CONTINUE}" class="button1" />
-				<!-- ENDIF -->
-				<input type="hidden" name="step" value="{NEXT_STEP}" />
-				<input type="hidden" name="revision_id" value="{REVISION_ID}" />
-				{S_FORM_TOKEN}
+				<input type="submit" id="cancel" name="cancel" value="{{ lang('CANCEL') }}" class="button2" />
+				{% if AGREEMENT_NOTICE and REVISION_UPLOADER %}
+					<input type="submit" id="disagree" name="disagree" value="{{ lang('NOT_AGREE') }}" class="button2" />
+					<input type="submit" id="new_revision" name="new_revision" value="{{ lang('AGREE') }}" class="button1" />&nbsp;
+				{% else %}
+					<input type="submit" id="new_revision" name="new_revision" value="{{ lang('CONTINUE') }}" class="button1" />
+				{% endif %}
+				<input type="hidden" name="step" value="{{ NEXT_STEP }}" />
+				<input type="hidden" name="revision_id" value="{{ REVISION_ID }}" />
+				{{ S_FORM_TOKEN }}
 			</fieldset>
 			</div>
 		</div>
 	</div>
 </form>
 
-<!-- INCLUDE contributions/contribution_footer.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_footer.html' %}

@@ -1,12 +1,12 @@
 <fieldset class="fields2 revision-uploader">
-<!-- IF S_REQUIRE_UPLOAD -->
+{% if S_REQUIRE_UPLOAD %}
 <dl>
-	<dt><label for="fileupload">{L_FILENAME}:</label></dt>
+	<dt><label for="fileupload">{{ lang('FILENAME') ~ lang('COLON') }}</label></dt>
 	<dd id="attach-panel-basic">
-		<input type="file" name="{FORM_NAME}" id="{FORM_NAME}"<!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
+		<input type="file" name="{{ FORM_NAME }}" id="{{ FORM_NAME }}"{% if MAX_LENGTH %} maxlength="{{ MAX_LENGTH }}"{% endif %} value="" class="inputbox autowidth" />
 	</dd>
 	<dd id="attach-panel-multi">
-		<input type="button" class="button2" value="{L_SELECT_FILE}" id="add_files" />
+		<input type="button" class="button2" value="{{ lang('SELECT_FILE') }}" id="add_files" />
 		<div id="file-list-container">
 			<div id="file-list">
 			<div class="attach-row" id="attach-row-tpl">
@@ -19,15 +19,15 @@
 		</div>
 	</dd>
 </dl>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- IF not S_REQUIRE_UPLOAD -->
+{% if not S_REQUIRE_UPLOAD %}
 <dl>
-	<dt><label for="fileupload">{L_OPTIONAL_FILE}:</label><br /><span>{L_OPTIONAL_FILE_EXPLAIN}</span></dt>
+	<dt><label for="fileupload">{{ lang('OPTIONAL_FILE') ~ lang('COLON') }}</label><br /><span>{{ lang('OPTIONAL_FILE_EXPLAIN') }}</span></dt>
 	<dd>
-		<input type="file" name="{FORM_NAME}" id="{FORM_NAME}"<!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
+		<input type="file" name="{{ FORM_NAME }}" id="{{ FORM_NAME }}"{% if MAX_LENGTH %} maxlength="{{ MAX_LENGTH }}"{% endif %} value="" class="inputbox autowidth" />
 	</dd>
 </dl>
-<!-- ENDIF -->
-<input type="hidden" name="uploader_key" value="{S_UPLOADER_KEY}" />
+{% endif %}
+<input type="hidden" name="uploader_key" value="{{ S_UPLOADER_KEY }}" />
 </fieldset>

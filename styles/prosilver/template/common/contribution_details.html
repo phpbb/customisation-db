@@ -2,316 +2,316 @@
 	<div class="inner">
 
 		<div class="right-column demo">
-			<!-- IF .preview -->
-				<!-- BEGIN preview(0,0) -->
-					<!-- IF preview.S_THUMBNAIL -->
-						<a href="{preview.U_DOWNLOAD_LINK}" class="screenshot"><img src="{preview.THUMB_IMAGE}" alt="{preview.DOWNLOAD_NAME}" title="{preview.DOWNLOAD_NAME} ({preview.FILESIZE} {preview.SIZE_LANG}) {preview.L_DOWNLOAD_COUNT}" /></a>
-					<!-- ELSE -->
-						<img src="{preview.U_INLINE_LINK}" class="screenshot" alt="{preview.DOWNLOAD_NAME}" />
-					<!-- ENDIF -->
+			{% if loops.preview|length %}
+				{% for preview in loops.preview|subset(0,0) %}
+					{% if preview.S_THUMBNAIL %}
+						<a href="{{ preview.U_DOWNLOAD_LINK }}" class="screenshot"><img src="{{ preview.THUMB_IMAGE }}" alt="{{ preview.DOWNLOAD_NAME }}" title="{{ preview.DOWNLOAD_NAME }} ({{ preview.FILESIZE }} {{ preview.SIZE_LANG }}) {{ preview.L_DOWNLOAD_COUNT }}" /></a>
+					{% else %}
+						<img src="{{ preview.U_INLINE_LINK }}" class="screenshot" alt="{{ preview.DOWNLOAD_NAME }}" />
+					{% endif %}
 					<br />
-				<!-- END preview -->
-			<!-- ELSE -->
-				<img src="{T_TITANIA_THEME_PATH}/images/types/{CONTRIB_TYPE_CLEAN}.png" alt="{L_NO_SCREENSHOT}" class="screenshot" />
-			<!-- ENDIF -->
+				{% endfor %}
+			{% else %}
+				<img src="{{ T_TITANIA_THEME_PATH }}/images/types/{{ CONTRIB_TYPE_CLEAN }}.png" alt="{{ lang('NO_SCREENSHOT') }}" class="screenshot" />
+			{% endif %}
 
 			{% for downloads in loops.downloads if downloads.U_DOWNLOAD %}
-				<div class="contrib-download<!-- IF downloads.U_COLORIZEIT --> has-colorizeit<!-- ENDIF -->">
-					<a class="download-button" href="{downloads.U_DOWNLOAD}" title="{L_DOWNLOAD} {CONTRIB_NAME}">
-						<span>{downloads.VERSION}</span>
-						<span class="vendor-version">phpBB {downloads.PHPBB_VERSION}</span>
+				<div class="contrib-download{% if downloads.U_COLORIZEIT %} has-colorizeit{% endif %}">
+					<a class="download-button" href="{{ downloads.U_DOWNLOAD }}" title="{{ lang('DOWNLOAD') }} {{ CONTRIB_NAME }}">
+						<span>{{ downloads.VERSION }}</span>
+						<span class="vendor-version">phpBB {{ downloads.PHPBB_VERSION }}</span>
 					</a>
-				<!-- IF downloads.U_COLORIZEIT -->
-					<a class="colorizeit-button" href="{downloads.U_COLORIZEIT}" target="_colorizeit" title="{L_COLORIZEIT_DOWNLOAD_STYLE} {CONTRIB_NAME}"></a>
-				<!-- ENDIF -->
+				{% if downloads.U_COLORIZEIT %}
+					<a class="colorizeit-button" href="{{ downloads.U_COLORIZEIT }}" target="_colorizeit" title="{{ lang('COLORIZEIT_DOWNLOAD_STYLE') }} {{ CONTRIB_NAME }}"></a>
+				{% endif %}
 					<div class="download-info">
-						<!-- IF downloads.RELEASE_TIME -->
+						{% if downloads.RELEASE_TIME %}
 						<dl>
-							<dt>{L_RELEASED}{L_COLON}</dt>
-							<dd>{downloads.RELEASE_TIME}</dd>
+							<dt>{{ lang('RELEASED') ~ lang('COLON') }}</dt>
+							<dd>{{ downloads.RELEASE_TIME }}</dd>
 						</dl>
-						<!-- ENDIF -->
+						{% endif %}
 						<dl>
-							<dt>{L_FILESIZE}{L_COLON}</dt>
-							<dd>{downloads.SIZE}<dd>
+							<dt>{{ lang('FILESIZE') ~ lang('COLON') }}</dt>
+							<dd>{{ downloads.SIZE }}<dd>
 						</dl>
-						<!-- IF downloads.PHPBB_VERSION -->
+						{% if downloads.PHPBB_VERSION %}
 						<dl>
-							<dt>{L_DOWNLOAD_VALIDATION_VERSION}{L_COLON}</dt>
-							<dd>phpBB {downloads.PHPBB_VERSION}</dd>
+							<dt>{{ lang('DOWNLOAD_VALIDATION_VERSION') ~ lang('COLON') }}</dt>
+							<dd>phpBB {{ downloads.PHPBB_VERSION }}</dd>
 						</dl>
-						<!-- ENDIF -->
+						{% endif %}
 						<dl>
-							<dt>{L_DOWNLOAD_CHECKSUM}{L_COLON}</dt>
-							<dd>{downloads.CHECKSUM}</dd>
+							<dt>{{ lang('DOWNLOAD_CHECKSUM') ~ lang('COLON') }}</dt>
+							<dd>{{ downloads.CHECKSUM }}</dd>
 						</dl>
-						<!-- IF downloads.LICENSE -->
+						{% if downloads.LICENSE %}
 						<dl>
-							<dt>{L_LICENSE}{L_COLON}</dt>
-							<dd>{downloads.LICENSE}</dd>
+							<dt>{{ lang('LICENSE') ~ lang('COLON') }}</dt>
+							<dd>{{ downloads.LICENSE }}</dd>
 						</dl>
-						<!-- ENDIF -->
-						<!-- IF downloads.INSTALL_TIME -->
+						{% endif %}
+						{% if downloads.INSTALL_TIME %}
 						<dl>
-							<dt>{L_INSTALL_TIME}</dt>
-							<dd>{downloads.INSTALL_TIME}</dd>
+							<dt>{{ lang('INSTALL_TIME') }}</dt>
+							<dd>{{ downloads.INSTALL_TIME }}</dd>
 						</dl>
-						<!-- ENDIF -->
-						<!-- IF downloads.INSTALL_LEVEL -->
+						{% endif %}
+						{% if downloads.INSTALL_LEVEL %}
 						<dl>
-							<dt>{L_INSTALL_LEVEL}</dt>
-							<dd>{downloads.INSTALL_LEVEL}</dd>
+							<dt>{{ lang('INSTALL_LEVEL') }}</dt>
+							<dd>{{ downloads.INSTALL_LEVEL }}</dd>
 						</dl>
-						<!-- ENDIF -->
+						{% endif %}
 					</div>
 				</div>
 			{% endfor %}
 		</div>
 
 		<div class="left-column">
-		<!-- IF CONTRIB_DESC -->
+		{% if CONTRIB_DESC %}
 			<dl class="contrib-description">
 				<dt>
-					<strong>{L_DESCRIPTION}</strong>
-					<!-- IF U_SUBSCRIBE or U_REPORT -->
+					<strong>{{ lang('DESCRIPTION') }}</strong>
+					{% if U_SUBSCRIBE or U_REPORT %}
 					<div style="float: right;">
-						<!-- IF U_REPORT -->
-							<a href="{U_REPORT}" title="{L_REPORT}">{L_REPORT}</a>
-						<!-- ENDIF -->
-						<!-- IF U_SUBSCRIBE -->
-							<!-- IF U_REPORT -->&bull;<!-- ENDIF -->
-							<a href="{U_SUBSCRIBE}" title="<!-- IF IS_SUBSCRIBED -->{L_UNSUBSCRIBE}<!-- ELSE -->{L_SUBSCRIBE}<!-- ENDIF -->">
-								<!-- IF IS_SUBSCRIBED -->{L_UNSUBSCRIBE}<!-- ELSE -->{L_SUBSCRIBE}<!-- ENDIF -->
+						{% if U_REPORT %}
+							<a href="{{ U_REPORT }}" title="{{ lang('REPORT') }}">{{ lang('REPORT') }}</a>
+						{% endif %}
+						{% if U_SUBSCRIBE %}
+							{% if U_REPORT %}&bull;{% endif %}
+							<a href="{{ U_SUBSCRIBE }}" title="{% if IS_SUBSCRIBED %}{{ lang('UNSUBSCRIBE') }}{% else %}{{ lang('SUBSCRIBE') }}{% endif %}">
+								{% if IS_SUBSCRIBED %}{{ lang('UNSUBSCRIBE') }}{% else %}{{ lang('SUBSCRIBE') }}{% endif %}
 							</a>
-						<!-- ENDIF -->
+						{% endif %}
 					</div>
-					<!-- ENDIF -->
+					{% endif %}
 				</dt>
 				<dd>
-					<!-- IF WARNING -->
-						<div class="rules"><strong>{WARNING}</strong></div>
-					<!-- ENDIF -->
-					{CONTRIB_DESC}
+					{% if WARNING %}
+						<div class="rules"><strong>{{ WARNING }}</strong></div>
+					{% endif %}
+					{{ CONTRIB_DESC }}
 				</dd>
 			</dl>
-		<!-- ENDIF -->
+		{% endif %}
 
 			<ul class="general-info">
-				<!-- IF CONTRIB_LOCAL_NAME -->
+				{% if CONTRIB_LOCAL_NAME %}
 				<li>
-					<strong>{L_CONTRIB_LOCAL_NAME}</strong> {CONTRIB_LOCAL_NAME}
+					<strong>{{ lang('CONTRIB_LOCAL_NAME') }}</strong> {{ CONTRIB_LOCAL_NAME }}
 				</li>
-				<!-- ENDIF -->
-				<!-- IF CONTRIB_ISO_CODE -->
+				{% endif %}
+				{% if CONTRIB_ISO_CODE %}
 				<li>
-					<strong>{L_CONTRIB_ISO_CODE}</strong> {CONTRIB_ISO_CODE}
+					<strong>{{ lang('CONTRIB_ISO_CODE') }}</strong> {{ CONTRIB_ISO_CODE }}
 				</li>
-				<!-- ENDIF -->
+				{% endif %}
 				<li>
-					<strong>{L_AUTHOR}</strong> {AUTHOR_NAME_FULL}
+					<strong>{{ lang('AUTHOR') }}</strong> {{ AUTHOR_NAME_FULL }}
 				</li>
-				<!-- IF .coauthors -->
+				{% if loops.coauthors|length %}
 				<li>
-					<strong>{L_CO_AUTHORS}</strong> <!-- BEGIN coauthors -->{coauthors.AUTHOR_NAME_FULL}<!-- IF not coauthors.S_LAST_ROW -->, <!-- ENDIF --><!-- END coauthors -->
+					<strong>{{ lang('CO_AUTHORS') }}</strong> {% for coauthors in loops.coauthors %}{{ coauthors.AUTHOR_NAME_FULL }}{% if not coauthors.S_LAST_ROW %}, {% endif %}{% endfor %}
 				</li>
-				<!-- ENDIF -->
-				<!-- IF .past_coauthors -->
+				{% endif %}
+				{% if loops.past_coauthors|length %}
 				<li>
-					<strong>{L_PAST_CONTRIBUTORS}</strong> <!-- BEGIN past_coauthors -->{past_coauthors.AUTHOR_NAME_FULL}<!-- IF not past_coauthors.S_LAST_ROW -->, <!-- ENDIF --><!-- END past_coauthors -->
+					<strong>{{ lang('PAST_CONTRIBUTORS') }}</strong> {% for past_coauthors in loops.past_coauthors %}{{ past_coauthors.AUTHOR_NAME_FULL }}{% if not past_coauthors.S_LAST_ROW %}, {% endif %}{% endfor %}
 				</li>
-				<!-- ENDIF -->
-				<!-- IF CONTRIB_UPDATE_DATE -->
+				{% endif %}
+				{% if CONTRIB_UPDATE_DATE %}
 				<li>
-					<strong>{L_CONTRIB_UPDATE_DATE}</strong> {CONTRIB_UPDATE_DATE}
+					<strong>{{ lang('CONTRIB_UPDATE_DATE') }}</strong> {{ CONTRIB_UPDATE_DATE }}
 				</li>
-				<!-- ENDIF -->
-				<!-- IF CONTRIB_DOWNLOADS -->
+				{% endif %}
+				{% if CONTRIB_DOWNLOADS %}
 				<li>
-					<strong>{L_DOWNLOADS_TOTAL}</strong> {CONTRIB_DOWNLOADS}
+					<strong>{{ lang('DOWNLOADS_TOTAL') }}</strong> {{ CONTRIB_DOWNLOADS }}
 				</li>
-				<!-- ENDIF -->
-				<!-- IF .announce_topic -->
+				{% endif %}
+				{% if loops.announce_topic|length %}
 				<li>
-					<strong>{L_ANNOUNCEMENT_TOPIC}</strong>
-					<!-- BEGIN announce_topic -->
-						<a href="{announce_topic.URL}">{announce_topic.BRANCH}</a><!-- IF not announce_topic.S_LAST_ROW -->{L_COMMA_SEPARATOR}<!-- ENDIF -->
-					<!-- END announce_topic -->
+					<strong>{{ lang('ANNOUNCEMENT_TOPIC') }}</strong>
+					{% for announce_topic in loops.announce_topic %}
+						<a href="{{ announce_topic.URL }}">{{ announce_topic.BRANCH }}</a>{% if not announce_topic.S_LAST_ROW %}{{ lang('COMMA_SEPARATOR') }}{% endif %}
+					{% endfor %}
 				</li>
-				<!-- ENDIF -->
-				<!-- IF CONTRIB_RATING_STRING -->
+				{% endif %}
+				{% if CONTRIB_RATING_STRING %}
 				<li>
-					<strong>{L_RATING}</strong> {CONTRIB_RATING_STRING} (<span class="rating-count">{CONTRIB_RATING_COUNT}</span>)
+					<strong>{{ lang('RATING') }}</strong> {{ CONTRIB_RATING_STRING }} (<span class="rating-count">{{ CONTRIB_RATING_COUNT }}</span>)
 				</li>
-				<!-- ENDIF -->
+				{% endif %}
 				<li style="border-bottom: none;">
-					<strong>{L_CATEGORIES}</strong> <!-- BEGIN categories --><a href="{categories.U_VIEW_CATEGORY}">{categories.CATEGORY_NAME}</a><!-- IF not categories.S_LAST_ROW -->{L_COMMA_SEPARATOR}<!-- ENDIF --><!-- END categories -->
+					<strong>{{ lang('CATEGORIES') }}</strong> {% for categories in loops.categories %}<a href="{{ categories.U_VIEW_CATEGORY }}">{{ categories.CATEGORY_NAME }}</a>{% if not categories.S_LAST_ROW %}{{ lang('COMMA_SEPARATOR') }}{% endif %}{% endfor %}
 				</li>
 			</ul>
-			<!-- IF CONTRIB_BBC_HTML_REPLACEMENT -->
+			{% if CONTRIB_BBC_HTML_REPLACEMENT %}
 			<br />
-			<a href="http://creativecommons.org/licenses/by/3.0/"><img src="https://i.creativecommons.org/l/by/3.0/88x31.png" alt="" /></a> <span class="license-info">{L_PUBLIC_ATTR_WAIVED}</span>
-			<!-- ENDIF --> 
+			<a href="http://creativecommons.org/licenses/by/3.0/"><img src="https://i.creativecommons.org/l/by/3.0/88x31.png" alt="" /></a> <span class="license-info">{{ lang('PUBLIC_ATTR_WAIVED') }}</span>
+			{% endif %} 
 		</div>
-		<!-- IF .queue_actions or CURRENT_STATUS -->
+		{% if loops.queue_actions|length or CURRENT_STATUS %}
 			<ul class="queue-actions">
-			<!-- BEGIN queue_actions -->
-				<li<!-- IF queue_actions.S_FIRST_ROW --> class="first"<!-- ELSEIF queue_actions.S_LAST_ROW --> class="last"<!-- ENDIF -->>
-					<a href="<!-- IF queue_actions.U_VIEW -->{queue_actions.U_VIEW}<!-- ELSE -->#<!-- ENDIF -->" class="{queue_actions.CLASS}">{queue_actions.NAME}</a>
+			{% for queue_actions in loops.queue_actions %}
+				<li{% if queue_actions.S_FIRST_ROW %} class="first"{% elseif queue_actions.S_LAST_ROW %} class="last"{% endif %}>
+					<a href="{% if queue_actions.U_VIEW %}{{ queue_actions.U_VIEW }}{% else %}#{% endif %}" class="{{ queue_actions.CLASS }}">{{ queue_actions.NAME }}</a>
 
-				<!-- IF .queue_actions.subactions -->
-					<div class="subactions"><!-- BEGIN subactions --><a href="{queue_actions.subactions.U_ACTION}">{queue_actions.subactions.NAME}</a><!-- END subactions --></div>
-				<!-- ENDIF -->
+				{% if queue_actions.subactions|length %}
+					<div class="subactions">{% for subactions in queue_actions.subactions %}<a href="{{ subactions.U_ACTION }}">{{ subactions.NAME }}</a>{% endfor %}</div>
+				{% endif %}
 				</li>
-			<!-- END queue_actions -->
+			{% endfor %}
 
-			<!-- IF CURRENT_STATUS -->
-				<li class="info"><img src="{T_TITANIA_THEME_PATH}/images/icon_info.gif" alt="" /> &nbsp;{L_QUEUE_STATUS}: {CURRENT_STATUS}</li>
-			<!-- ENDIF -->
+			{% if CURRENT_STATUS %}
+				<li class="info"><img src="{{ T_TITANIA_THEME_PATH }}/images/icon_info.gif" alt="" /> &nbsp;{{ lang('QUEUE_STATUS') ~ lang('COLON') ~ CURRENT_STATUS }}</li>
+			{% endif %}
 			</ul>
-		<!-- ENDIF -->
+		{% endif %}
 	</div>
 </div>
 
 <div class="clear"></div>
 
-<!-- IF CONTRIB_BBC_HTML_REPLACEMENT -->
+{% if CONTRIB_BBC_HTML_REPLACEMENT %}
 	<div class="container">
 		<div class="inner">
 			<div class="content bbcode-container">
-				<!-- IF CONTRIB_BBC_DEMO -->
-				<h3 class="details-heading">{L_CONTRIB_DEMO}</h3>
-				<!-- IF S_CONTRIB_BBC_DEMO_RENDERED -->
-				{CONTRIB_BBC_DEMO}
-				<!-- ELSE -->
-				<dl class="codebox"><dt>{L_CONTRIB_DEMO}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_DEMO}</code></dd></dl>
-				<!-- ENDIF -->
+				{% if CONTRIB_BBC_DEMO %}
+				<h3 class="details-heading">{{ lang('CONTRIB_DEMO') }}</h3>
+				{% if S_CONTRIB_BBC_DEMO_RENDERED %}
+				{{ CONTRIB_BBC_DEMO }}
+				{% else %}
+				<dl class="codebox"><dt>{{ lang('CONTRIB_DEMO') ~ lang('COLON') }} <a href="#" onclick="selectCode(this); return false;">{{ lang('SELECT_ALL_CODE') }}</a></dt><dd><code>{{ CONTRIB_BBC_DEMO }}</code></dd></dl>
+				{% endif %}
 				<br />
 				<br />
-				<!-- ENDIF -->
-				<h3 class="details-heading">{L_SETTINGS}</h3>
-				<dl class="codebox"><dt>{L_REVISION_BBCODE_USE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_BBCODE_USAGE}</code></dd></dl>
+				{% endif %}
+				<h3 class="details-heading">{{ lang('SETTINGS') }}</h3>
+				<dl class="codebox"><dt>{{ lang('REVISION_BBCODE_USE') ~ lang('COLON') }} <a href="#" onclick="selectCode(this); return false;">{{ lang('SELECT_ALL_CODE') }}</a></dt><dd><code>{{ CONTRIB_BBC_BBCODE_USAGE }}</code></dd></dl>
 				<br />
-				<dl class="codebox"><dt>{L_REVISION_HTML_REPLACE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_HTML_REPLACEMENT}</code></dd></dl>
-				<!-- IF CONTRIB_BBC_HELPLINE -->
+				<dl class="codebox"><dt>{{ lang('REVISION_HTML_REPLACE') ~ lang('COLON') }} <a href="#" onclick="selectCode(this); return false;">{{ lang('SELECT_ALL_CODE') }}</a></dt><dd><code>{{ CONTRIB_BBC_HTML_REPLACEMENT }}</code></dd></dl>
+				{% if CONTRIB_BBC_HELPLINE %}
 				<br />
-				<dl class="codebox"><dt>{L_REVISION_HELP_LINE}: <a href="#" onclick="selectCode(this); return false;">{L_SELECT_ALL_CODE}</a></dt><dd><code>{CONTRIB_BBC_HELPLINE}</code></dd></dl>
-				<!-- ENDIF -->
+				<dl class="codebox"><dt>{{ lang('REVISION_HELP_LINE') ~ lang('COLON') }} <a href="#" onclick="selectCode(this); return false;">{{ lang('SELECT_ALL_CODE') }}</a></dt><dd><code>{{ CONTRIB_BBC_HELPLINE }}</code></dd></dl>
+				{% endif %}
 			</div>
 		</div>
 	</div>
-<!-- ENDIF -->
+{% endif %}
 
 {% set SCREENSHOT_COUNT = loops.screenshots|length %}
-<!-- IF (SCREENSHOT_COUNT > 1) or .revisions or U_NEW_REVISION -->
+{% if (SCREENSHOT_COUNT > 1) or loops.revisions|length or U_NEW_REVISION %}
 <div class="container">
 	<div class="inner">
-		<!-- IF S_IN_QUEUE and .revisions -->
-			<!-- DEFINE $TAB = 'revisions' -->
-		<!-- ELSEIF SCREENSHOT_COUNT > 1 -->
-			<!-- DEFINE $TAB = 'screenshots' -->
-		<!-- ELSEIF S_TRANSLATIONS -->
-			<!-- DEFINE $TAB = 'translations' -->
-		<!-- ELSE -->
-			<!-- DEFINE $TAB = 'revisions' -->
-		<!-- ENDIF -->
-		<div id="extratabs" data-show-panel="{$TAB}-panel" class="sub-panels">
+		{% if S_IN_QUEUE and loops.revisions|length %}
+			{% DEFINE TAB = 'revisions' %}
+		{% elseif SCREENSHOT_COUNT > 1 %}
+			{% DEFINE TAB = 'screenshots' %}
+		{% elseif S_TRANSLATIONS %}
+			{% DEFINE TAB = 'translations' %}
+		{% else %}
+			{% DEFINE TAB = 'revisions' %}
+		{% endif %}
+		<div id="extratabs" data-show-panel="{{ definition.TAB }}-panel" class="sub-panels">
 		    <ul id="extratabs-head">
-		        <!-- IF SCREENSHOT_COUNT > 1 -->
-		        	<li id="screenshots-panel-tab"><a href="#screenshots-panel" data-subpanel="screenshots-panel"><span>{L_SCREENSHOTS}</span></a></li>
-		        <!-- ENDIF -->
-				<!-- IF S_TRANSLATIONS -->
-					<li id="translations-panel-tab"><a href="#translations-panel" data-subpanel="translations-panel"><span>{L_TRANSLATIONS}</span></a></li>
-				<!-- ENDIF -->
-		        <!-- IF .revisions -->
-		        	<li id="revisions-panel-tab"><a href="#revisions-panel" data-subpanel="revisions-panel"><span>{L_REVISIONS}</span></a></li>
-		       <!-- ENDIF -->
-		        <!-- IF U_NEW_REVISION -->
-		        	<li><a href="{U_NEW_REVISION}"><span>{L_NEW_REVISION}</span></a></li>
-		        <!-- ENDIF -->
+		        {% if SCREENSHOT_COUNT > 1 %}
+		        	<li id="screenshots-panel-tab"><a href="#screenshots-panel" data-subpanel="screenshots-panel"><span>{{ lang('SCREENSHOTS') }}</span></a></li>
+		        {% endif %}
+				{% if S_TRANSLATIONS %}
+					<li id="translations-panel-tab"><a href="#translations-panel" data-subpanel="translations-panel"><span>{{ lang('TRANSLATIONS') }}</span></a></li>
+				{% endif %}
+		        {% if loops.revisions|length %}
+		        	<li id="revisions-panel-tab"><a href="#revisions-panel" data-subpanel="revisions-panel"><span>{{ lang('REVISIONS') }}</span></a></li>
+		       {% endif %}
+		        {% if U_NEW_REVISION %}
+		        	<li><a href="{{ U_NEW_REVISION }}"><span>{{ lang('NEW_REVISION') }}</span></a></li>
+		        {% endif %}
 		    </ul>
 
-		    <!-- IF S_IN_QUEUE and .revisions -->
+		    {% if S_IN_QUEUE and loops.revisions|length %}
 		    <div id="revisions-panel" class="tab-panel">
 				<div class="clear"></div>
 
-				<!-- INCLUDE common/revision_list.html -->
+				{% INCLUDE '@phpbb_titania/common/revision_list.html' %}
 		    </div>
-		    <!-- ENDIF -->
+		    {% endif %}
 
-		    <!-- IF SCREENSHOT_COUNT > 1 -->
+		    {% if SCREENSHOT_COUNT > 1 %}
 		    <div id="screenshots-panel" class="tab-panel">
-				<!-- BEGIN screenshots -->
-				<!-- IF not screenshots.IS_PREVIEW -->
-					<!-- IF screenshots.S_THUMBNAIL -->
-						<a href="{screenshots.U_DOWNLOAD_LINK}" class="screenshot"><img src="{screenshots.THUMB_IMAGE}" alt="{screenshots.DOWNLOAD_NAME}" title="{screenshots.DOWNLOAD_NAME} ({screenshots.FILESIZE} {screenshots.SIZE_LANG}) {screenshots.L_DOWNLOAD_COUNT}" /></a>
-					<!-- ENDIF -->
+				{% for screenshots in loops.screenshots %}
+				{% if not screenshots.IS_PREVIEW %}
+					{% if screenshots.S_THUMBNAIL %}
+						<a href="{{ screenshots.U_DOWNLOAD_LINK }}" class="screenshot"><img src="{{ screenshots.THUMB_IMAGE }}" alt="{{ screenshots.DOWNLOAD_NAME }}" title="{{ screenshots.DOWNLOAD_NAME }} ({{ screenshots.FILESIZE }} {{ screenshots.SIZE_LANG }}) {{ screenshots.L_DOWNLOAD_COUNT }}" /></a>
+					{% endif %}
 
-					<!-- IF screenshots.S_IMAGE -->
-						<img src="{screenshots.U_INLINE_LINK}" class="screenshot" alt="{screenshots.DOWNLOAD_NAME}" />
-					<!-- ENDIF -->
-				<!-- ENDIF -->
-				<!-- END screenshots -->
+					{% if screenshots.S_IMAGE %}
+						<img src="{{ screenshots.U_INLINE_LINK }}" class="screenshot" alt="{{ screenshots.DOWNLOAD_NAME }}" />
+					{% endif %}
+				{% endif %}
+				{% endfor %}
 		    </div>
-		    <!-- ENDIF -->
+		    {% endif %}
 
-			<!-- IF S_TRANSLATIONS -->
+			{% if S_TRANSLATIONS %}
 			<div id="translations-panel" class="tab-panel">
 				<ul class="topiclist simple two-long-columns">
 					<li class="header">
 						<dl>
-							<dt><div class="list-inner">{L_TRANSLATIONS}</div></dt>
-							<dd class="revision-version general">{L_VERSION}</dd>
+							<dt><div class="list-inner">{{ lang('TRANSLATIONS') }}</div></dt>
+							<dd class="revision-version general">{{ lang('VERSION') }}</dd>
 						</dl>
 					</li>
 				</ul>
 				<ul class="topiclist cplist translations two-long-columns">
-					<!-- BEGIN revisions -->
-						<!-- IF .revisions.translations -->
+					{% for revisions in loops.revisions %}
+						{% if revisions.translations|length %}
 						{% set HALF_TRANSLATIONS = loops.revisions.translations|length / 2 %}
 						<li class="row bg1">
 							<span class="toggle icon-expand" style="display: none;"></span>
 							<dl>
 								<dt>
 									<div class="list-inner">
-									<!-- BEGIN translations -->
-										<!-- IF revisions.translations.S_FIRST_ROW -->
+									{% for translations in revisions.translations %}
+										{% if translations.S_FIRST_ROW %}
 										<div class="column1">
 											<ul>
-										<!-- ENDIF -->
-												<li><a class="arrow-left" href="{revisions.translations.U_DOWNLOAD_LINK}" title="{revisions.translations.FILESIZE} {revisions.translations.SIZE_LANG} &bull; {revisions.translations.L_DOWNLOAD_COUNT}">{revisions.translations.DOWNLOAD_NAME}</a></li>
-										<!-- IF not revisions.translations.S_FIRST_ROW and not revisions.translations.S_LAST_ROW and (HALF_TRANSLATIONS == (revisions.translations.S_ROW_COUNT + 1)) -->
+										{% endif %}
+												<li><a class="arrow-left" href="{{ translations.U_DOWNLOAD_LINK }}" title="{{ translations.FILESIZE }} {{ translations.SIZE_LANG }} &bull; {{ translations.L_DOWNLOAD_COUNT }}">{{ translations.DOWNLOAD_NAME }}</a></li>
+										{% if not translations.S_FIRST_ROW and not translations.S_LAST_ROW and (HALF_TRANSLATIONS == (translations.S_ROW_COUNT + 1)) %}
 											</ul>
 										</div>
 										<div class="column2">
 											<ul>
-										<!-- ENDIF --> 
-										<!-- IF revisions.translations.S_LAST_ROW -->
+										{% endif %} 
+										{% if translations.S_LAST_ROW %}
 											</ul>
 										</div>
-									<!-- ENDIF -->
-									<!-- END translations -->	
+									{% endif %}
+									{% endfor %}	
 									</div>
 								</dt>
 								<dd class="revision-version general">
-									{revisions.VERSION}
+									{{ revisions.VERSION }}
 								</dd>
 							</dl>
 						</li>
-						<!-- ENDIF -->
-				<!-- END revisions -->
+						{% endif %}
+				{% endfor %}
 				</ul>
 			</div>
-			<!-- ENDIF -->
+			{% endif %}
 
-		    <!-- IF not S_IN_QUEUE and .revisions -->
+		    {% if not S_IN_QUEUE and loops.revisions|length %}
 		    <div id="revisions-panel" class="tab-panel">
 				<div class="clear"></div>
 
-				<!-- INCLUDE common/revision_list.html -->
+				{% INCLUDE '@phpbb_titania/common/revision_list.html' %}
 		    </div>
-		    <!-- ENDIF -->
+		    {% endif %}
 		</div>
 
 	</div>
 </div>
-<!-- ENDIF -->
+{% endif %}

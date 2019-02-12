@@ -1,47 +1,47 @@
 <fieldset class="fields1">
-	<!-- IF ERROR and S_DISPLAY_ERROR --><p class="error">{ERROR}</p><!-- ENDIF -->
+	{% if ERROR and S_DISPLAY_ERROR %}<p class="error">{{ ERROR }}</p>{% endif %}
 
-	<!-- IF S_DISPLAY_SUBJECT -->
+	{% if S_DISPLAY_SUBJECT %}
 	<dl style="clear: left;">
-		<dt><label for="{POSTING_SUBJECT_NAME}">{L_SUBJECT}:</label></dt>
-		<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" tabindex="1" value="{SUBJECT}" class="inputbox autowidth" /></dd>
+		<dt><label for="{{ POSTING_SUBJECT_NAME }}">{{ lang('SUBJECT') ~ lang('COLON') }}</label></dt>
+		<dd><input type="text" name="{{ POSTING_SUBJECT_NAME }}" id="{{ POSTING_SUBJECT_NAME }}" size="45" maxlength="60" tabindex="1" value="{{ SUBJECT }}" class="inputbox autowidth" /></dd>
 	</dl>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- IF CAPTCHA_TEMPLATE -->
-		<!-- INCLUDE {CAPTCHA_TEMPLATE} -->
-	<!-- ENDIF -->
+	{% if CAPTCHA_TEMPLATE %}
+		{% INCLUDE CAPTCHA_TEMPLATE %}
+	{% endif %}
 
-	<!-- INCLUDE posting/posting_buttons.html -->
+	{% INCLUDE '@phpbb_titania/posting/posting_buttons.html' %}
 
 	<div id="smiley-box" class="smiley-box">
-		<!-- IF S_SMILIES_ALLOWED and .smiley -->
-			<strong>{L_SMILIES}</strong><br />
-			<!-- BEGIN smiley -->
-				<a href="#" onclick="insert_text('{smiley.A_SMILEY_CODE}', true); return false;"><img src="{smiley.SMILEY_IMG}" width="{smiley.SMILEY_WIDTH}" height="{smiley.SMILEY_HEIGHT}" alt="{smiley.SMILEY_CODE}" title="{smiley.SMILEY_DESC}" /></a>
-			<!-- END smiley -->
-		<!-- ENDIF -->
-		<!-- IF S_SHOW_SMILEY_LINK and S_SMILIES_ALLOWED-->
-			<br /><a href="{U_MORE_SMILIES}" onclick="popup(this.href, 300, 350, '_phpbbsmilies'); return false;">{L_MORE_SMILIES}</a>
-		<!-- ENDIF -->
+		{% if S_SMILIES_ALLOWED and loops.smiley|length %}
+			<strong>{{ lang('SMILIES') }}</strong><br />
+			{% for smiley in loops.smiley %}
+				<a href="#" onclick="insert_text('{{ smiley.A_SMILEY_CODE }}', true); return false;"><img src="{{ smiley.SMILEY_IMG }}" width="{{ smiley.SMILEY_WIDTH }}" height="{{ smiley.SMILEY_HEIGHT }}" alt="{{ smiley.SMILEY_CODE }}" title="{{ smiley.SMILEY_DESC }}" /></a>
+			{% endfor %}
+		{% endif %}
+		{% if S_SHOW_SMILEY_LINK and S_SMILIES_ALLOWED%}
+			<br /><a href="{{ U_MORE_SMILIES }}" onclick="popup(this.href, 300, 350, '_phpbbsmilies'); return false;">{{ lang('MORE_SMILIES') }}</a>
+		{% endif %}
 
-		<!-- IF BBCODE_STATUS -->
-		<!-- IF .smiley --><hr /><!-- ENDIF -->
-		{BBCODE_STATUS}<br />
-		<!-- IF S_BBCODE_ALLOWED -->
-			{IMG_STATUS}<br />
-			{FLASH_STATUS}<br />
-			{URL_STATUS}<br />
-			{SMILIES_STATUS}
-		<!-- ENDIF -->
-		<!-- ENDIF -->
-		<!-- IF S_DISPLAY_REVIEW -->
-			<!-- IF S_DISPLAY_REVIEW --><hr /><!-- ENDIF -->
-			<!-- IF S_DISPLAY_REVIEW --><strong><a href="#review">{L_TOPIC_REVIEW}</a></strong><!-- ENDIF -->
-		<!-- ENDIF -->
+		{% if BBCODE_STATUS %}
+		{% if loops.smiley|length %}<hr />{% endif %}
+		{{ BBCODE_STATUS }}<br />
+		{% if S_BBCODE_ALLOWED %}
+			{{ IMG_STATUS }}<br />
+			{{ FLASH_STATUS }}<br />
+			{{ URL_STATUS }}<br />
+			{{ SMILIES_STATUS }}
+		{% endif %}
+		{% endif %}
+		{% if S_DISPLAY_REVIEW %}
+			{% if S_DISPLAY_REVIEW %}<hr />{% endif %}
+			{% if S_DISPLAY_REVIEW %}<strong><a href="#review">{{ lang('TOPIC_REVIEW') }}</a></strong>{% endif %}
+		{% endif %}
 	</div>
 
 	<div id="message-box" class="message-box">
-		<textarea name="{POSTING_TEXT_NAME}" id="{POSTING_TEXT_NAME}" rows="15" cols="76" tabindex="2" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" class="inputbox">{POSTING_TEXT}</textarea>
+		<textarea name="{{ POSTING_TEXT_NAME }}" id="{{ POSTING_TEXT_NAME }}" rows="15" cols="76" tabindex="2" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onfocus="initInsertions();" class="inputbox">{{ POSTING_TEXT }}</textarea>
 	</div>
 </fieldset>
