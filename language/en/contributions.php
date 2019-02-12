@@ -105,6 +105,7 @@ $lang = array_merge($lang, array(
 	'DELETE_REVISION_EXPLAIN'				=> 'Permanently remove this revision (use the revision status field if you need to hide it).',
 	'DEMO_URL'								=> 'Demo URL',
 	'DEMO_URL_EXPLAIN'						=> 'Location of the demonstration',
+	'DEPENDENCIES'							=> 'Dependencies',
 	'DOWNLOADS_PER_DAY'						=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'						=> 'Total Downloads',
 	'DOWNLOADS_VERSION'						=> 'Version Downloads',

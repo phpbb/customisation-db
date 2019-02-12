@@ -69,6 +69,12 @@
 							<dd>{downloads.INSTALL_TO}</dd>
 						</dl>
 						<!-- ENDIF -->
+                        <!-- IF downloads.DEPENDENCIES -->
+                        <dl>
+                            <dt>{L_DEPENDENCIES}{L_COLON}</dt>
+                            <dd>{downloads.DEPENDENCIES}</dd>
+                        </dl>
+                        <!-- ENDIF -->
 					</div>
 				</div>
 			{% endfor %}
