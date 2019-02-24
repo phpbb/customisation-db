@@ -1,7 +1,7 @@
 
 <h3 id="review">
 	<span class="right-box"><a href="#review" onclick="viewableArea(getElementById('topicreview'), true); var rev_text = getElementById('review').getElementsByTagName('a').item(0).firstChild; if (rev_text.data == '{{ lang('EXPAND_VIEW')|escape('js') }}'){rev_text.data = '{{ lang('COLLAPSE_VIEW')|escape('js') }}'; } else if (rev_text.data == '{{ lang('COLLAPSE_VIEW')|escape('js') }}'){rev_text.data = '{{ lang('EXPAND_VIEW')|escape('js') }}'};">{{ lang('EXPAND_VIEW') }}</a></span>
-	{{ lang('TOPIC_REVIEW') ~ lang('COLON') ~ TOPIC_TITLE }}
+	{{ lang('TOPIC_REVIEW') ~ lang('COLON') }} {{ TOPIC_TITLE }}
 </h3>
 
 <div id="topicreview" class="topicreview">

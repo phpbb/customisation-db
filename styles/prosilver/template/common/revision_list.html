@@ -51,11 +51,11 @@
 				<div class="revision-details">
 					<dl>
 						<dt class="revision-information">
-							{% if revisions.REVISION_LICENSE %}{{ lang('LICENSE') ~ lang('COLON') ~ revisions.REVISION_LICENSE }}<br />{% endif %}
-							{% if revisions.S_USE_QUEUE %}{{ lang('VALIDATION_TIME') ~ lang('COLON') ~ revisions.VALIDATED_DATE }}<br />{% endif %}
-							{% if revisions.INSTALL_TIME %}{{ lang('INSTALL_TIME') ~ lang('COLON') ~ revisions.INSTALL_TIME }}<br />{% endif %}
-							{% if revisions.INSTALL_LEVEL %}{{ lang('INSTALL_LEVEL') ~ lang('COLON') ~ revisions.INSTALL_LEVEL }}<br />{% endif %}
-							{% if revisions.DOWNLOADS %}{{ lang('DOWNLOADS') ~ lang('COLON') ~ revisions.DOWNLOADS }}<br />{% endif %}
+							{% if revisions.REVISION_LICENSE %}{{ lang('LICENSE') ~ lang('COLON') }} {{ revisions.REVISION_LICENSE }}<br />{% endif %}
+							{% if revisions.S_USE_QUEUE %}{{ lang('VALIDATION_TIME') ~ lang('COLON') }} {{ revisions.VALIDATED_DATE }}<br />{% endif %}
+							{% if revisions.INSTALL_TIME %}{{ lang('INSTALL_TIME') ~ lang('COLON') }} {{ revisions.INSTALL_TIME }}<br />{% endif %}
+							{% if revisions.INSTALL_LEVEL %}{{ lang('INSTALL_LEVEL') ~ lang('COLON') }} {{ revisions.INSTALL_LEVEL }}<br />{% endif %}
+							{% if revisions.DOWNLOADS %}{{ lang('DOWNLOADS') ~ lang('COLON') }} {{ revisions.DOWNLOADS }}<br />{% endif %}
 						</dt>
 					</dl>
 					{% if revisions.BBC_HTML_REPLACEMENT %}

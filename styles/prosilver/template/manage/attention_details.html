@@ -4,7 +4,7 @@
 	<h3 class="clear-top">{{ lang('OPEN_ITEMS') }}</h3>
 	{% for attention in loops.attention %}
 	<div class="attention{% if attention.S_LAST_ROW %} last{% endif %}">
-		<h4>{{ lang('REASON') ~ lang('COLON') ~ attention.ATTENTION_REASON }}</h4>
+		<h4>{{ lang('REASON') ~ lang('COLON') }} {{ attention.ATTENTION_REASON }}</h4>
 		<p class="author">{{ lang('POST_BY_AUTHOR') }} {{ attention.REPORTER_USER_FULL }} &raquo; {{ attention.ATTENTION_TIME }}</p>
 
 		{% if attention.ATTENTION_DESCRIPTION %}
@@ -85,7 +85,7 @@
 
 	{% for attention_closed in loops.attention_closed %}
 	<div class="attention{% if attention_closed.S_LAST_ROW %} last{% endif %}">
-		<h4>{{ lang('REASON') ~ lang('COLON') ~ attention_closed.ATTENTION_REASON }}</h4>
+		<h4>{{ lang('REASON') ~ lang('COLON') }} {{ attention_closed.ATTENTION_REASON }}</h4>
 		<p class="author">{{ lang('POST_BY_AUTHOR') }} {{ attention_closed.REPORTER_USER_FULL }} &raquo; {{ attention_closed.ATTENTION_TIME }}</p>
 		<p class="author attention-closed">{{ attention_closed.CLOSED_BY_LABEL }} {{ attention_closed.CLOSER_USER_FULL }} &raquo; {{ attention_closed.ATTENTION_CLOSE_TIME }}</p>
 

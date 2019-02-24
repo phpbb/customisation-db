@@ -165,7 +165,7 @@
 			{% endfor %}
 
 			{% if CURRENT_STATUS %}
-				<li class="info"><img src="{{ T_TITANIA_THEME_PATH }}/images/icon_info.gif" alt="" /> &nbsp;{{ lang('QUEUE_STATUS') ~ lang('COLON') ~ CURRENT_STATUS }}</li>
+				<li class="info"><img src="{{ T_TITANIA_THEME_PATH }}/images/icon_info.gif" alt="" /> &nbsp;{{ lang('QUEUE_STATUS') ~ lang('COLON') }} {{ CURRENT_STATUS }}</li>
 			{% endif %}
 			</ul>
 		{% endif %}

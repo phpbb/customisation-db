@@ -41,7 +41,7 @@
 
 <fieldset class="display-options">
 	{% if S_SELECT_SORT_DAYS %}
-		<label>{{ lang('DISPLAY_POSTS') ~ lang('COLON') ~ S_SELECT_SORT_DAYS }}</label>
+		<label>{{ lang('DISPLAY_POSTS') ~ lang('COLON') }} {{ S_SELECT_SORT_DAYS }}</label>
 		<label>{{ lang('SORT_BY') }} {{ S_SELECT_SORT_KEY }}</label><label>{{ S_SELECT_SORT_DIR }}</label>
 	{% endif %}
 	<input type="checkbox" name="open" id="open"{% if S_OPEN_CHECKED %} checked="checked"{% endif %} value="1" /> <label for="open">{{ lang('OPEN_ITEMS') }}</label> &nbsp;

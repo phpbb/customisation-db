@@ -38,17 +38,17 @@
 				<div class="stat-day" title="{{ dayrow.MONTH }}/{{ dayrow.DAY }}">
 					<span style="height: {{ dayrow.REMAINDER_PCT }}%; margin-top: {{ dayrow.PIXEL_OFFSET }}px;"></span>
 					{% if dayrow.NEW_CNT %}
-						<span class="stat-new fade" style="height: {{ dayrow.NEW_PCT }}%" title="{{ lang('REVISION_NEW') ~ lang('COLON') ~ dayrow.NEW_CNT }}">
+						<span class="stat-new fade" style="height: {{ dayrow.NEW_PCT }}%" title="{{ lang('REVISION_NEW') ~ lang('COLON') }} {{ dayrow.NEW_CNT }}">
 						{% if dayrow.NEW_PCT > 7 %}<strong>{{ dayrow.NEW_CNT }}</strong>{% endif %}
 						</span>
 					{% endif %}
 					{% if dayrow.DENIED_CNT %}
-						<span class="stat-denied fade" style="height: {{ dayrow.DENIED_PCT }}%" title="{{ lang('REVISION_DENIED') ~ lang('COLON') ~ dayrow.DENIED_CNT }}">
+						<span class="stat-denied fade" style="height: {{ dayrow.DENIED_PCT }}%" title="{{ lang('REVISION_DENIED') ~ lang('COLON') }} {{ dayrow.DENIED_CNT }}">
 						{% if dayrow.DENIED_PCT > 7 %}<strong>{{ dayrow.DENIED_CNT }}</strong>{% endif %}
 						</span>
 						{% endif %}
 					{% if dayrow.APPROVED_CNT %}
-						<span class="stat-approved fade" style="height: {{ dayrow.APPROVED_PCT }}%" title="{{ lang('REVISION_APPROVED') ~ lang('COLON') ~ dayrow.APPROVED_CNT }}">
+						<span class="stat-approved fade" style="height: {{ dayrow.APPROVED_PCT }}%" title="{{ lang('REVISION_APPROVED') ~ lang('COLON') }} {{ dayrow.APPROVED_CNT }}">
 						{% if dayrow.APPROVED_PCT > 7 %}<strong>{{ dayrow.APPROVED_CNT }}</strong>{% endif %}
 						</span>
 					{% endif %}

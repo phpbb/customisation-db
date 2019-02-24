@@ -24,8 +24,8 @@
 							{% if PREVIEW %}<img src="{{ PREVIEW }}" alt="{{ NAME }}" />{% endif %}
 							<ul class="style-details">
 								<li>{{ lang('BY') }} {{ AUTHORS }}</li>
-								<li>{{ lang('PHPBB_VERSION') ~ lang('COLON') ~ PHPBB_VERSION }}</li>
-								<li>{{ lang('LICENSE') ~ lang('COLON') ~ LICENSE }}</li>
+								<li>{{ lang('PHPBB_VERSION') ~ lang('COLON') }} {{ PHPBB_VERSION }}</li>
+								<li>{{ lang('LICENSE') ~ lang('COLON') }} {{ LICENSE }}</li>
 							</ul>						
 						</div>
 					</div>
@@ -56,8 +56,8 @@
 			<p class="demo-buttons"><a href="{{ U_VIEW }}" class="button details"><span></span>{{ lang('DETAILS') }}</a><a href="{{ U_DOWNLOAD }}" class="button download"><span></span>{{ lang('DOWNLOAD') }}</a></p> 
 			<ul class="style-details">
 				<li>{{ lang('BY') }} {{ AUTHORS }}</li>
-				<li>{{ lang('PHPBB_VERSION') ~ lang('COLON') ~ PHPBB_VERSION }}</li>
-				<li>{{ lang('LICENSE') ~ lang('COLON') ~ LICENSE }}</li>
+				<li>{{ lang('PHPBB_VERSION') ~ lang('COLON') }} {{ PHPBB_VERSION }}</li>
+				<li>{{ lang('LICENSE') ~ lang('COLON') }} {{ LICENSE }}</li>
 			</ul>
 		</div>
 
@@ -76,8 +76,8 @@
 			<div class="preview">{% if stylerow.PREVIEW %}<img src="" alt="{{ stylerow.NAME }}" data-source="{{ stylerow.PREVIEW }}" />{% endif %}
 				<ul class="style-details">
 					<li>{{ lang('BY') }} {{ stylerow.AUTHORS }}</li>
-					<li>{{ lang('PHPBB_VERSION') ~ lang('COLON') ~ stylerow.PHPBB_VERSION }}</li>
-					<li>{{ lang('LICENSE') ~ lang('COLON') ~ stylerow.LICENSE }}</li>
+					<li>{{ lang('PHPBB_VERSION') ~ lang('COLON') }} {{ stylerow.PHPBB_VERSION }}</li>
+					<li>{{ lang('LICENSE') ~ lang('COLON') }} {{ stylerow.LICENSE }}</li>
 				</ul>
 			</div>
 		</li>

@@ -4,7 +4,7 @@
 {% if IGNORED_WORDS %} <p>{{ lang('IGNORED_TERMS') ~ lang('COLON') }} <strong>{{ IGNORED_WORDS }}</strong></p>{% endif %}
 
 {% if SEARCH_TOPIC %}
-	<p><a class="{{ S_CONTENT_FLOW_BEGIN }}" href="{{ U_SEARCH_TOPIC }}">{{ lang('RETURN_TO') ~ lang('COLON') ~ SEARCH_TOPIC }}</a></p>
+	<p><a class="{{ S_CONTENT_FLOW_BEGIN }}" href="{{ U_SEARCH_TOPIC }}">{{ lang('RETURN_TO') ~ lang('COLON') }} {{ SEARCH_TOPIC }}</a></p>
 {% else %}
 	<p><a class="{{ S_CONTENT_FLOW_BEGIN }}" href="{{ U_SEARCH }}" title="{{ lang('SEARCH_ADV') }}">{{ lang('GO_TO_SEARCH_ADV') }}</a></p>
 {% endif %}
