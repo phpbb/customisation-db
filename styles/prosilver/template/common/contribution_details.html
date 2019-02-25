@@ -63,6 +63,18 @@
 							<dd>{downloads.INSTALL_LEVEL}</dd>
 						</dl>
 						<!-- ENDIF -->
+						{% if downloads.INSTALL_TO %}
+						<dl>
+							<dt>{{ lang('INSTALL_TO') ~ lang('COLON') }}</dt>
+							<dd>{{ downloads.INSTALL_TO }}</dd>
+						</dl>
+						{% endif %}
+						{% if downloads.DEPENDENCIES %}
+						<dl>
+							<dt>{{ lang('DEPENDENCIES') ~ lang('COLON') }}</dt>
+							<dd>{{ downloads.DEPENDENCIES }}</dd>
+						</dl>
+						{% endif %}
 					</div>
 				</div>
 			{% endfor %}

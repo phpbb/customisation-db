@@ -125,6 +125,16 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	public $type;
 
 	/**
+	 * Dependencies to ignore for extensions with requirements
+	 * @var array
+	 */
+	public $ignored_dependencies = [
+		'php',
+		'composer/installers',
+		'phpbb/phpbb',
+	];
+
+	/**
 	 * Constructor class for the contribution object
 	 */
 	public function __construct()
@@ -917,6 +927,37 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				$u_colorizeit = $u_colorizeit_base . '&amp;id=' . $download['attachment_id'];
 			}
 
+			// We have the revision composer file, so we'll use that as the source of truth
+			$composer_json_values = [
+				'install_to' => '',
+				'dependencies' => '',
+			];
+
+			if (array_key_exists('revision_composer_json', $download))
+			{
+				$decoded_json = json_decode($download['revision_composer_json'], true);
+
+				if (!empty($decoded_json) && is_array($decoded_json))
+				{
+					// We have a valid array.
+					$composer_json = $decoded_json;
+
+					// Install directory
+					if (array_key_exists('name', $composer_json) && $composer_json['name'])
+					{
+						$composer_json_values['install_to'] = 'ext/' . $composer_json['name'];
+					}
+
+					// Dependencies
+					if (array_key_exists('require', $decoded_json) && is_array($decoded_json['require']))
+					{
+						// Strip out the dependencies which aren't other extensions
+						$composer_json_values['dependencies'] = implode(phpbb::$user->lang('COMMA_SEPARATOR'),
+							array_diff(array_keys($decoded_json['require']), $this->ignored_dependencies));
+					}
+				}
+			}
+
 			phpbb::$template->assign_block_vars('downloads', array(
 				'NAME'			=> censor_text($download['revision_name']),
 				'VERSION'		=> censor_text($download['revision_version']),
@@ -927,6 +968,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				'PHPBB_VERSION'	=> $vendor_version,
 				'INSTALL_LEVEL'	=> $install_level,
 				'INSTALL_TIME'	=> $install_time,
+				'INSTALL_TO'	=> $composer_json_values['install_to'],
+				'DEPENDENCIES'	=> $composer_json_values['dependencies'],
 				'U_DOWNLOAD'	=> ($download['attachment_id']) ? $this->controller_helper->route('phpbb.titania.download', array('id' => $download['attachment_id'])) : '',
 				'U_COLORIZEIT'	=> $u_colorizeit,
 			));
