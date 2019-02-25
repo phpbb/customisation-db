@@ -1,22 +1,22 @@
-<ul class="rating<!-- IF S_HAS_RATED --> rated<!-- ENDIF -->" data-rate-id="{OBJECT_ID}" data-rating="{OBJECT_RATING}">
-<!-- BEGIN stars -->
+<ul class="rating{% if S_HAS_RATED %} rated{% endif %}" data-rate-id="{{ OBJECT_ID }}" data-rating="{{ OBJECT_RATING }}">
+{% for stars in loops.stars %}
 	<li>
-	<!-- IF S_CAN_RATE -->
-		<a href="{stars.RATE_URL}" data-ajax="titania.rate">
-	<!-- ENDIF -->
-		<span data-rate="{stars.ID}" title="{stars.ALT}"
-		<!-- IF S_HAS_RATED && stars.ID <= OBJECT_RATING -->
+	{% if S_CAN_RATE %}
+		<a href="{{ stars.RATE_URL }}" data-ajax="titania.rate">
+	{% endif %}
+		<span data-rate="{{ stars.ID }}" title="{{ stars.ALT }}"
+		{% if S_HAS_RATED and stars.ID <= OBJECT_RATING %}
 			class="rating-rated"
-		<!-- ELSEIF not S_HAS_RATED && stars.ID <= OBJECT_RATING -->
+		{% elseif not S_HAS_RATED and stars.ID <= OBJECT_RATING %}
 			class="rating-available"
-		<!-- ELSE -->
+		{% else %}
 			class="rating-inactive"
-		<!-- ENDIF -->>
+		{% endif %}>
 		</span>
-	<!-- IF S_CAN_RATE --></a><!-- ENDIF -->
+	{% if S_CAN_RATE %}</a>{% endif %}
 	</li>
-<!-- END stars -->
-	<li<!-- IF not S_HAS_RATED --> style="display: none;"<!-- ENDIF -->>
-		<a href="{RATE_URL}" title="{L_REMOVE_RATING}" class="rating-remove" data-ajax="titania.rate"></a>
+{% endfor %}
+	<li{% if not S_HAS_RATED %} style="display: none;"{% endif %}>
+		<a href="{{ RATE_URL }}" title="{{ lang('REMOVE_RATING') }}" class="rating-remove" data-ajax="titania.rate"></a>
 	</li>
 </ul>

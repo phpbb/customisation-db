@@ -1,29 +1,29 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<h2 class="panel-name"><!-- IF CONTRIB_NAME --><a href="{U_VIEW_CONTRIB}">{CONTRIB_NAME}</a><!-- ELSE -->{L_MANAGE}<!-- ENDIF --></h2>
+<h2 class="panel-name">{% if CONTRIB_NAME %}<a href="{{ U_VIEW_CONTRIB }}">{{ CONTRIB_NAME }}</a>{% else %}{{ lang('MANAGE') }}{% endif %}</h2>
 <div id="tabs" class="tabs">
 	<ul>
-	<!-- BEGIN nav_menu -->
-		<li class="tab<!-- IF nav_menu.S_SELECTED --> activetab<!-- ENDIF -->">
-			<a href="{nav_menu.U_TITLE}">{nav_menu.L_TITLE}</a>
+	{% for nav_menu in loops.nav_menu %}
+		<li class="tab{% if nav_menu.S_SELECTED %} activetab{% endif %}">
+			<a href="{{ nav_menu.U_TITLE }}">{{ nav_menu.L_TITLE }}</a>
 		</li>
-	<!-- END nav_menu -->
+	{% endfor %}
 	</ul>
 </div>
 
 <div class="main-panel">
 	<div class="inner">
 		<h3 class="section-name">
-			<!-- IF SECTION_NAME -->{SECTION_NAME}<!-- ELSE -->{PAGE_TITLE}<!-- ENDIF -->
-			<!-- BEGIN queue_tags -->
-				<!-- IF queue_tags.S_SELECTED --> - {queue_tags.TAG_NAME}<!-- ENDIF -->
-			<!-- END queue_tags -->
+			{% if SECTION_NAME %}{{ SECTION_NAME }}{% else %}{{ PAGE_TITLE }}{% endif %}
+			{% for queue_tags in loops.queue_tags %}
+				{% if queue_tags.S_SELECTED %} - {{ queue_tags.TAG_NAME }}{% endif %}
+			{% endfor %}
 		</h3>
-		<!-- IF S_DISPLAY_CONTRIBUTION -->
-			<!-- INCLUDE common/contribution_details.html -->
+		{% if S_DISPLAY_CONTRIBUTION %}
+			{% INCLUDE '@phpbb_titania/common/contribution_details.html' %}
 			<br />
 			<br />
-		<!-- ENDIF -->
+		{% endif %}
 
 		<div class="container">
 			<div class="inner">
