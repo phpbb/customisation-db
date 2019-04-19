@@ -72,6 +72,8 @@ class prevalidator
 	 */
 	public function check_package($package, $origin_iso, $phpbb_version)
 	{
+		// We don't need to clean up (delete) the temporary files here because that is
+		// handled at revision.php:752
 		$package->ensure_extracted();
 		$path = $package->get_temp_path();
 
@@ -122,14 +124,13 @@ class prevalidator
 		);
 
 		// Set up an instance of the translation validation script
+		// https://github.com/phpbb/phpbb-translation-validator
 		$app = new Cli();
 		$app->add(new ValidateCommand());
 		$translation = $app->find('validate');
 		
 		$commandTester = new CommandTester($translation);
 		$commandTester->execute($inputs);
-
-		// TODO: delete the temp folder here?
 
 		// Return the output of the translation validation script
 		return $commandTester->getDisplay();
