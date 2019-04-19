@@ -67,9 +67,10 @@ class prevalidator
 	 *
 	 * @param \phpbb\titania\entity\package $package
 	 * @param string $origin_iso
+	 * @param string $phpbb_version
 	 * @return int Returns an array of error messages encountered
 	 */
-	public function check_package($package, $origin_iso)
+	public function check_package($package, $origin_iso, $phpbb_version)
 	{
 		$package->ensure_extracted();
 		$path = $package->get_temp_path();
@@ -97,8 +98,6 @@ class prevalidator
 		$zip = new \ZipArchive();
 		$result = $zip->open($en_path);
 
-		// TODO: is there a better way to handle the en package?
-
 		if ($result)
 		{
 			// Unzip the revision to a temporary folder
@@ -116,13 +115,11 @@ class prevalidator
 			'origin-iso' 		=> $origin_iso,
 
 			// Options
-			'--phpbb-version' 	=> '3.2',
+			'--phpbb-version' 	=> $phpbb_version,
 			'--package-dir'		=> $path,
 			'--safe-mode' 		=> true,
 			'--display-notices'	=> true,
 		);
-
-		// TODO: should 3.2 or validate be consts?
 
 		// Set up an instance of the translation validation script
 		$app = new Cli();

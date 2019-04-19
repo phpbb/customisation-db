@@ -30,6 +30,8 @@ class type extends base
 	const NAME = 'translation';
 	const URL = 'translation';
 
+	const PHPBB_LATEST_VERSION = '3.2';
+
 	/**
 	 * Constructor
 	 *
@@ -147,8 +149,16 @@ class type extends base
 	 */
 	public function translation_validate(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
 	{
+		$phpbb_version = self::PHPBB_LATEST_VERSION;
+
+		if (is_array($revision->phpbb_versions) && count($revision->phpbb_versions) > 0)
+		{
+			$branch_number = $revision->phpbb_versions[0]['phpbb_version_branch'];
+			$phpbb_version = sprintf('%d.%d', $branch_number[0], $branch_number[1]);
+		}
+
 		// Run the translation validator
-		$translation_validator_output = $this->get_prevalidator()->check_package($package, $contrib->contrib_iso_code);
+		$translation_validator_output = $this->get_prevalidator()->check_package($package, $contrib->contrib_iso_code, $phpbb_version);
 
 		$template->assign_vars(array(
 			'S_PASSED_TRANSLATION_VALIDATION'		=> true,
