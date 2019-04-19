@@ -1,11 +1,11 @@
-<!-- INCLUDE manage/manage_header.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_header.html' %}
 
-<!-- IF S_QUEUE_LIST -->
-	<!-- INCLUDE common/category_list.html -->
-<!-- ELSEIF S_TOPIC_LIST -->
-	<!-- INCLUDE common/topic_list.html -->
-<!-- ELSE -->
-	<!-- INCLUDE common/post_list.html -->
-<!-- ENDIF -->
+{% if S_QUEUE_LIST %}
+	{% INCLUDE '@phpbb_titania/common/category_list.html' %}
+{% elseif S_TOPIC_LIST %}
+	{% INCLUDE '@phpbb_titania/common/topic_list.html' %}
+{% else %}
+	{% INCLUDE '@phpbb_titania/common/post_list.html' %}
+{% endif %}
 
-<!-- INCLUDE manage/manage_footer.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_footer.html' %}

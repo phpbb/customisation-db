@@ -1,23 +1,23 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<h2 class="solo">{L_SEARCH}</h2>
+<h2 class="solo">{{ lang('SEARCH') }}</h2>
 
-<form method="get" action="{S_SEARCH_ACTION}">
+<form method="get" action="{{ S_SEARCH_ACTION }}">
 
 <div class="panel">
 	<div class="inner">
-	<h3>{L_SEARCH_QUERY}</h3>
+	<h3>{{ lang('SEARCH_QUERY') }}</h3>
 
 	<fieldset>
 	<dl>
-		<dt><label for="keywords">{L_SEARCH_KEYWORDS}:</label><br /><span>{L_SEARCH_KEYWORDS_EXPLAIN}</span></dt>
-		<dd><input type="text" class="inputbox" name="keywords" id="keywords" size="40" title="{L_SEARCH_KEYWORDS}" /></dd>
-		<!--<dd><label for="terms1"><input type="radio" name="terms" id="terms1" value="all" checked="checked" /> {L_SEARCH_ALL_TERMS}</label></dd>
-		<dd><label for="terms2"><input type="radio" name="terms" id="terms2" value="any" /> {L_SEARCH_ANY_TERMS}</label></dd>-->
+		<dt><label for="keywords">{{ lang('SEARCH_KEYWORDS') ~ lang('COLON') }}</label><br /><span>{{ lang('SEARCH_KEYWORDS_EXPLAIN') }}</span></dt>
+		<dd><input type="text" class="inputbox" name="keywords" id="keywords" size="40" title="{{ lang('SEARCH_KEYWORDS') }}" /></dd>
+		{#<dd><label for="terms1"><input type="radio" name="terms" id="terms1" value="all" checked="checked" /> {{ lang('SEARCH_ALL_TERMS') }}</label></dd>
+		<dd><label for="terms2"><input type="radio" name="terms" id="terms2" value="any" /> {{ lang('SEARCH_ANY_TERMS') }}</label></dd>#}
 	</dl>
 	<dl>
-		<dt><label for="author">{L_SEARCH_AUTHOR}:</label><!--<br /><span>{L_SEARCH_AUTHOR_EXPLAIN}</span>--></dt>
-		<dd><input type="text" class="inputbox" name="author" id="author" size="40" title="{L_SEARCH_AUTHOR}" /></dd>
+		<dt><label for="author">{{ lang('SEARCH_AUTHOR') ~ lang('COLON') }}</label></dt>
+		<dd><input type="text" class="inputbox" name="author" id="author" size="40" title="{{ lang('SEARCH_AUTHOR') }}" /></dd>
 	</dl>
 	</fieldset>
 
@@ -27,47 +27,49 @@
 <div class="panel bg2">
 	<div class="inner">
 
-	<h3>{L_SEARCH_OPTIONS}</h3>
+	<h3>{{ lang('SEARCH_OPTIONS') }}</h3>
 
 	<fieldset>
 	<dl>
-		<dt><label for="sf1">{L_SEARCH_WITHIN}:</label></dt>
-		<dd><label for="sf1"><input type="radio" name="sf" id="sf1" value="" checked="checked" /> {L_SEARCH_TITLE_MSG}</label></dd>
-		<dd><label for="sf2"><input type="radio" name="sf" id="sf2" value="msgonly" /> {L_SEARCH_MSG_ONLY}</label></dd>
-		<dd><label for="sf3"><input type="radio" name="sf" id="sf3" value="titleonly" /> {L_SEARCH_TITLE_ONLY}</label></dd>
-		<!--<dd><label for="sf4"><input type="radio" name="sf" id="sf4" value="firstpost" /> {L_SEARCH_FIRST_POST}</label></dd>-->
+		<dt><label for="sf1">{{ lang('SEARCH_WITHIN') ~ lang('COLON') }}</label></dt>
+		<dd><label for="sf1"><input type="radio" name="sf" id="sf1" value="" checked="checked" /> {{ lang('SEARCH_TITLE_MSG') }}</label></dd>
+		<dd><label for="sf2"><input type="radio" name="sf" id="sf2" value="msgonly" /> {{ lang('SEARCH_MSG_ONLY') }}</label></dd>
+		<dd><label for="sf3"><input type="radio" name="sf" id="sf3" value="titleonly" /> {{ lang('SEARCH_TITLE_ONLY') }}</label></dd>
+		{#<dd><label for="sf4"><input type="radio" name="sf" id="sf4" value="firstpost" /> {{ lang('SEARCH_FIRST_POST') }}</label></dd>#}
 	</dl>
 
 	<hr class="dashed" />
 
 	<dl>
-		<dt><label for="type">{L_SEARCH_WITHIN_TYPES}:</label></dt>
-		<dd><label for="type"><input type="radio" name="type" id="type" value="0" checked="checked" /> {L_ALL}</label></dd>
-		<!-- BEGIN types -->
-			<dd><label for="type_{types.S_ROW_COUNT}"><input type="radio" name="type" id="type_{types.S_ROW_COUNT}" value="{types.VALUE}" /> {types.NAME}</label></dd>
-		<!-- END types -->
+		<dt><label for="type">{{ lang('SEARCH_WITHIN_TYPES') ~ lang('COLON') }}</label></dt>
+		<dd><label for="type"><input type="radio" name="type" id="type" value="0" checked="checked" /> {{ lang('ALL') }}</label></dd>
+		{% for types in loops.types %}
+			<dd><label for="type_{{ types.S_ROW_COUNT }}"><input type="radio" name="type" id="type_{{ types.S_ROW_COUNT }}" value="{{ types.VALUE }}" /> {{ types.NAME }}</label></dd>
+		{% endfor %}
 	</dl>
 
-	<!--<hr class="dashed" />
+	{#
+	<hr class="dashed" />
 
 	<dl>
-		<dt><label for="show_results1">{L_DISPLAY_RESULTS}:</label></dt>
+		<dt><label for="show_results1">{{ lang('DISPLAY_RESULTS') ~ lang('COLON') }}</label></dt>
 		<dd>
-			<label for="show_results1"><input type="radio" name="sr" id="show_results1" value="posts" checked="checked" /> {L_POSTS}</label>
-			<label for="show_results2"><input type="radio" name="sr" id="show_results2" value="topics" /> {L_TOPICS}</label>
+			<label for="show_results1"><input type="radio" name="sr" id="show_results1" value="posts" checked="checked" /> {{ lang('POSTS') }}</label>
+			<label for="show_results2"><input type="radio" name="sr" id="show_results2" value="topics" /> {{ lang('TOPICS') }}</label>
 		</dd>
 	</dl>
 	<dl>
-		<dt><label for="sd">{L_RESULT_SORT}:</label></dt>
-		<dd>{S_SELECT_SORT_KEY}&nbsp;
-			<label for="sa"><input type="radio" name="sd" id="sa" value="a" /> {L_SORT_ASCENDING}</label>
-			<label for="sd"><input type="radio" name="sd" id="sd" value="d" checked="checked" /> {L_SORT_DESCENDING}</label>
+		<dt><label for="sd">{{ lang('RESULT_SORT') ~ lang('COLON') }}</label></dt>
+		<dd>{{ S_SELECT_SORT_KEY }}&nbsp;
+			<label for="sa"><input type="radio" name="sd" id="sa" value="a" /> {{ lang('SORT_ASCENDING') }}</label>
+			<label for="sd"><input type="radio" name="sd" id="sd" value="d" checked="checked" /> {{ lang('SORT_DESCENDING') }}</label>
 		</dd>
 	</dl>
 	<dl>
-		<dt><label>{L_RESULT_DAYS}:</label></dt>
-		<dd>{S_SELECT_SORT_DAYS}</dd>
-	</dl>-->
+		<dt><label>{{ lang('RESULT_DAYS') ~ lang('COLON') }}</label></dt>
+		<dd>{{ S_SELECT_SORT_DAYS }}</dd>
+	</dl>
+	#}
 	</fieldset>
 
 	</div>
@@ -77,8 +79,8 @@
 	<div class="inner">
 
 	<fieldset class="submit-buttons">
-		{S_HIDDEN_FIELDS}<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
-		<input type="submit" name="submit" value="{L_SEARCH}" class="button1" />
+		{{ S_HIDDEN_FIELDS }}<input type="reset" value="{{ lang('RESET') }}" name="reset" class="button2" />&nbsp;
+		<input type="submit" name="submit" value="{{ lang('SEARCH') }}" class="button1" />
 	</fieldset>
 
 	</div>
@@ -86,4 +88,4 @@
 
 </form>
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

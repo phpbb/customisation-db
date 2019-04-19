@@ -1,101 +1,101 @@
-<!-- INCLUDE manage/manage_header.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_header.html' %}
 
-<!-- IF .attention -->
-	<h3 class="clear-top">{L_OPEN_ITEMS}</h3>
-	<!-- BEGIN attention -->
-	<div class="attention<!-- IF attention.S_LAST_ROW --> last<!-- ENDIF -->">
-		<h4>{L_REASON}: {attention.ATTENTION_REASON}</h4>
-		<p class="author">{L_POST_BY_AUTHOR} {attention.REPORTER_USER_FULL} &raquo; {attention.ATTENTION_TIME}</p>
+{% if loops.attention|length %}
+	<h3 class="clear-top">{{ lang('OPEN_ITEMS') }}</h3>
+	{% for attention in loops.attention %}
+	<div class="attention{% if attention.S_LAST_ROW %} last{% endif %}">
+		<h4>{{ lang('REASON') ~ lang('COLON') }} {{ attention.ATTENTION_REASON }}</h4>
+		<p class="author">{{ lang('POST_BY_AUTHOR') }} {{ attention.REPORTER_USER_FULL }} &raquo; {{ attention.ATTENTION_TIME }}</p>
 
-		<!-- IF attention.ATTENTION_DESCRIPTION -->
+		{% if attention.ATTENTION_DESCRIPTION %}
 		<div class="content">
-			{attention.ATTENTION_DESCRIPTION}
+			{{ attention.ATTENTION_DESCRIPTION }}
 		</div>
-		<!-- ENDIF -->
+		{% endif %}
 
-		<!-- IF attention.S_REPORTED -->
+		{% if attention.S_REPORTED %}
 			<p class="rules">
-				<a href="{attention.U_CLOSE}" class="button1">{L_CLOSE_REPORT}</a>
-				<a href="{attention.U_DELETE}" class="button2">{L_DELETE_REPORT}</a>
+				<a href="{{ attention.U_CLOSE }}" class="button1">{{ lang('CLOSE_REPORT') }}</a>
+				<a href="{{ attention.U_DELETE }}" class="button2">{{ lang('DELETE_REPORT') }}</a>
 			</p>
-		<!-- ENDIF -->
+		{% endif %}
 	</div>
-<!-- END attention -->
+{% endfor %}
 	</div>
 </div>
 
 <div class="container">
 	<div class="inner">
-<!-- ENDIF -->
-		<h3 class="clear-top">{OBJECT_TYPE}</h3>
-		<!-- IF PARENT -->
+{% endif %}
+		<h3 class="clear-top">{{ OBJECT_TYPE }}</h3>
+		{% if PARENT %}
 		<p>
-			{L_PARENT_CONTRIBUTION}: <a href="{U_PARENT}">{PARENT}</a>
+			{{ lang('PARENT_CONTRIBUTION') ~ lang('COLON') }} <a href="{{ U_PARENT }}">{{ PARENT }}</a>
 		</p>
-		<!-- ENDIF -->
+		{% endif %}
 		<div class="panel">
 			<div class="inner">
 
 			<div class="postbody full">
-				<!-- IF U_EDIT -->
+				{% if U_EDIT %}
 				<div class="break-ajax"><ul class="post-buttons">
-					<li><a href="{U_EDIT}" title="{L_EDIT_POST}" class="button icon-button edit-icon"><span>{L_EDIT_POST}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i></a></li>
+					<li><a href="{{ U_EDIT }}" title="{{ lang('EDIT_POST') }}" class="button icon-button edit-icon"><span>{{ lang('EDIT_POST') }}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i></a></li>
 				</ul></div>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<h3><a href="{U_VIEW}">{POST_SUBJECT}</a></h3>
-				<p class="author">{MINI_POST_IMG} {L_POSTED} {L_POST_BY_AUTHOR} {POSTER_USER_FULL} &raquo; {POST_DATE}</p>
+				<h3><a href="{{ U_VIEW }}">{{ POST_SUBJECT }}</a></h3>
+				<p class="author">{{ MINI_POST_IMG }} {{ lang('POSTED') }} {{ lang('POST_BY_AUTHOR') }} {{ POSTER_USER_FULL }} &raquo; {{ POST_DATE }}</p>
 
-				<!-- IF S_UNAPPROVED -->
-					<a href="{U_APPROVE}" class="button1">{L_APPROVE}</a>
-					<a href="{U_DISAPPROVE}" class="button2">{L_DISAPPROVE}</a>
-				<!-- ENDIF -->
+				{% if S_UNAPPROVED %}
+					<a href="{{ U_APPROVE }}" class="button1">{{ lang('APPROVE') }}</a>
+					<a href="{{ U_DISAPPROVE }}" class="button2">{{ lang('DISAPPROVE') }}</a>
+				{% endif %}
 
 				<div class="content">
-					{POST_TEXT}
+					{{ POST_TEXT }}
 				</div>
 
-				<!-- IF .attachment -->
+				{% if loops.attachment|length %}
 					<dl class="attachbox">
-						<dt>{L_ATTACHMENTS}</dt>
-						<!-- BEGIN attachment -->
-							<dd>{attachment.DISPLAY_ATTACHMENT}</dd>
-						<!-- END attachment -->
+						<dt>{{ lang('ATTACHMENTS') }}</dt>
+						{% for attachment in loops.attachment %}
+							<dd>{{ attachment.DISPLAY_ATTACHMENT }}</dd>
+						{% endfor %}
 					</dl>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<!-- IF EDITED_MESSAGE or DELETED_MESSAGE -->
+				{% if EDITED_MESSAGE or DELETED_MESSAGE %}
 					<div class="notice">
-						{EDITED_MESSAGE}<!-- IF EDITED_MESSAGE and DELETED_MESSAGE --><br /><!-- ENDIF -->{DELETED_MESSAGE}
-						<!-- IF POST_EDIT_REASON --><br /><strong>{L_REASON}:</strong> <em>{POST_EDIT_REASON}</em><!-- ENDIF -->
+						{{ EDITED_MESSAGE }}{% if EDITED_MESSAGE and DELETED_MESSAGE %}<br />{% endif %}{{ DELETED_MESSAGE }}
+						{% if POST_EDIT_REASON %}<br /><strong>{{ lang('REASON') ~ lang('COLON') }}</strong> <em>{{ POST_EDIT_REASON }}</em>{% endif %}
 					</div>
-				<!-- ENDIF -->
+				{% endif %}
 			</div>
 
 		</div>
 	</div>
 
-<!-- IF .attention_closed -->
+{% if loops.attention_closed|length %}
 	</div>
 </div>
 
 <div class="container">
 	<div class="inner">
-	<h3 class="clear-top">{L_CLOSED_ITEMS}</h3>
+	<h3 class="clear-top">{{ lang('CLOSED_ITEMS') }}</h3>
 
-	<!-- BEGIN attention_closed -->
-	<div class="attention<!-- IF attention_closed.S_LAST_ROW --> last<!-- ENDIF -->">
-		<h4>{L_REASON}: {attention_closed.ATTENTION_REASON}</h4>
-		<p class="author">{L_POST_BY_AUTHOR} {attention_closed.REPORTER_USER_FULL} &raquo; {attention_closed.ATTENTION_TIME}</p>
-		<p class="author attention-closed">{attention_closed.CLOSED_BY_LABEL} {attention_closed.CLOSER_USER_FULL} &raquo; {attention_closed.ATTENTION_CLOSE_TIME}</p>
+	{% for attention_closed in loops.attention_closed %}
+	<div class="attention{% if attention_closed.S_LAST_ROW %} last{% endif %}">
+		<h4>{{ lang('REASON') ~ lang('COLON') }} {{ attention_closed.ATTENTION_REASON }}</h4>
+		<p class="author">{{ lang('POST_BY_AUTHOR') }} {{ attention_closed.REPORTER_USER_FULL }} &raquo; {{ attention_closed.ATTENTION_TIME }}</p>
+		<p class="author attention-closed">{{ attention_closed.CLOSED_BY_LABEL }} {{ attention_closed.CLOSER_USER_FULL }} &raquo; {{ attention_closed.ATTENTION_CLOSE_TIME }}</p>
 
-		<!-- IF attention_closed.ATTENTION_DESCRIPTION -->
+		{% if attention_closed.ATTENTION_DESCRIPTION %}
 		<div class="content">
-			{attention_closed.ATTENTION_DESCRIPTION}
+			{{ attention_closed.ATTENTION_DESCRIPTION }}
 		</div>
-		<!-- ENDIF -->
+		{% endif %}
 	</div>
-	<!-- END attention_closed -->
-<!-- ENDIF -->
+	{% endfor %}
+{% endif %}
 
-<!-- INCLUDE manage/manage_footer.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_footer.html' %}

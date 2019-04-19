@@ -144,6 +144,10 @@ a.download-button .vendor-version {
 	visibility: hidden;
 	width: 210px;
 	z-index: 9;
+
+	/* Centre the box to the left, as it's now containing more information */
+	transform: translateY(-50%);
+	top: 50%;
 }
 
 .contrib-download:hover .download-info {
@@ -934,7 +938,7 @@ p.attention-closed {
 }
 
 #queue-stat-info {
-	font-family: Verdana, Helvetica, Arial;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 1.1em;
 }
 
@@ -944,7 +948,7 @@ p.attention-closed {
 .stat-ratio span, .stat-day span, .day-list span {
 	display: block;
 	float: left;
-	font-family: Helvetica, Arial, Verdana;
+	font-family: Helvetica, Arial, Verdana, sans-serif;
 	text-align: center;
 	width: 20px;
 }

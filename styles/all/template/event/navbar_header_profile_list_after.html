@@ -1,7 +1,7 @@
-<!-- IF U_MY_CONTRIBUTIONS -->
+{% if U_MY_CONTRIBUTIONS %}
 <li>
-	<a href="{U_MY_CONTRIBUTIONS}" title="{L_MY_CONTRIBUTIONS}" role="menuitem">
-		<i class="icon fa-puzzle-piece fa-fw" aria-hidden="true"></i>{L_MY_CONTRIBUTIONS}
+	<a href="{{ U_MY_CONTRIBUTIONS }}" title="{{ lang('MY_CONTRIBUTIONS') }}" role="menuitem">
+		<i class="icon fa-puzzle-piece fa-fw" aria-hidden="true"></i>{{ lang('MY_CONTRIBUTIONS') }}
 	</a>
 </li>
-<!-- ENDIF -->
+{% endif %}

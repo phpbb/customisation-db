@@ -1,14 +1,14 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<h2>{L_CUSTOMISATION_DATABASE} - {L_ALL_SUPPORT}</h2>
+<h2>{{ lang('CUSTOMISATION_DATABASE') }} - {{ lang('ALL_SUPPORT') }}</h2>
 
-<!-- IF .support_types and U_ALL_SUPPORT -->
+{% if loops.support_types|length and U_ALL_SUPPORT %}
 <p>
-	<!-- IF U_ALL_SUPPORT --><a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a> &bull; <!-- ENDIF -->
-	<!-- BEGIN support_types --><a href="{support_types.U_SUPPORT}">{support_types.TYPE_SUPPORT}</a><!-- IF not support_types.S_LAST_ROW --> &bull; <!-- ENDIF --><!-- END support_types -->
+	{% if U_ALL_SUPPORT %}<a href="{{ U_ALL_SUPPORT }}">{{ lang('ALL_SUPPORT') }}</a> &bull; {% endif %}
+	{% for support_types in loops.support_types %}<a href="{{ support_types.U_SUPPORT }}">{{ support_types.TYPE_SUPPORT }}</a>{% if not support_types.S_LAST_ROW %} &bull; {% endif %}{% endfor %}
 </p>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- INCLUDE common/topic_list.html -->
+{% INCLUDE '@phpbb_titania/common/topic_list.html' %}
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

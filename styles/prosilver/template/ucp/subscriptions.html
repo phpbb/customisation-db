@@ -1,123 +1,123 @@
-<!-- INCLUDE ucp_header.html -->
+{% INCLUDE 'ucp_header.html' %}
 
-<form id="ucp" method="post" action="{S_ACTION}">
+<form id="ucp" method="post" action="{{ S_ACTION }}">
 
 <h2>
-	<!-- IF S_WATCHED_ITEMS -->
-		{L_SUBSCRIPTION_ITEMS_MANAGE}
-	<!-- ELSE -->
-		{L_SUBSCRIPTION_SECTIONS_MANAGE}
-	<!-- ENDIF -->
+	{% if S_WATCHED_ITEMS %}
+		{{ lang('SUBSCRIPTION_ITEMS_MANAGE') }}
+	{% else %}
+		{{ lang('SUBSCRIPTION_SECTIONS_MANAGE') }}
+	{% endif %}
 </h2>
 
 <div class="panel">
 	<div class="inner">
 
 	<p>
-		<!-- IF S_WATCHED_ITEMS -->
-			{L_SUBSCRIPTION_ITEMS_MANAGE_EXPLAIN}
-		<!-- ELSE -->
-			{L_SUBSCRIPTION_SECTIONS_MANAGE_EXPLAIN}
-		<!-- ENDIF -->
+		{% if S_WATCHED_ITEMS %}
+			{{ lang('SUBSCRIPTION_ITEMS_MANAGE_EXPLAIN') }}
+		{% else %}
+			{{ lang('SUBSCRIPTION_SECTIONS_MANAGE_EXPLAIN') }}
+		{% endif %}
 	</p>
 
-	<!-- IF .subscriptions -->
+	{% if loops.subscriptions|length %}
 		<ul class="linklist">
 			<li class="rightside pagination">
-				{TOTAL_RESULTS}
-				<!-- IF .pagination -->
-					<!-- INCLUDE pagination.html -->
-				<!-- ELSE -->
-					&bull; {PAGE_NUMBER}
-				<!-- ENDIF -->
+				{{ TOTAL_RESULTS }}
+				{% if loops.pagination|length %}
+					{% INCLUDE 'pagination.html' %}
+				{% else %}
+					&bull; {{ PAGE_NUMBER }}
+				{% endif %}
 			</li>
 		</ul>
-		<ul class="topiclist <!-- IF S_WATCHED_ITEMS -->missing-column<!-- ELSE -->two-columns<!-- ENDIF -->">
+		<ul class="topiclist {% if S_WATCHED_ITEMS %}missing-column{% else %}two-columns{% endif %}">
 			<li class="header">
 				<dl class="row-item">
-					<dt><!-- IF S_WATCHED_ITEMS -->{L_WATCHED_ITEMS}<!-- ELSE -->{L_WATCHED_SECTIONS}<!-- ENDIF --></dt>
-					<!-- IF S_WATCHED_ITEMS -->
-						<dd class="lastpost"><span>{L_INFORMATION}</span></dd>
-					<!-- ENDIF -->
+					<dt>{% if S_WATCHED_ITEMS %}{{ lang('WATCHED_ITEMS') }}{% else %}{{ lang('WATCHED_SECTIONS') }}{% endif %}</dt>
+					{% if S_WATCHED_ITEMS %}
+						<dd class="lastpost"><span>{{ lang('INFORMATION') }}</span></dd>
+					{% endif %}
 				</dl>
 			</li>
 		</ul>
-		<ul class="topiclist cplist <!-- IF S_WATCHED_ITEMS -->missing-column<!-- ELSE -->two-columns<!-- ENDIF -->">
-		<!-- BEGIN subscriptions -->
-			<li class="row<!-- IF subscriptions.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
-				<dl<!-- IF subscriptions.FOLDER_STYLE --> class="row-item {subscriptions.FOLDER_STYLE}"<!-- ENDIF -->>
+		<ul class="topiclist cplist {% if S_WATCHED_ITEMS %}missing-column{% else %}two-columns{% endif %}">
+		{% for subscriptions in loops.subscriptions %}
+			<li class="row{% if subscriptions.S_ROW_COUNT is odd %} bg1{% else %} bg2{% endif %}">
+				<dl{% if subscriptions.FOLDER_STYLE %} class="row-item {{ subscriptions.FOLDER_STYLE }}"{% endif %}>
 					<dt>
 						<div class="list-inner">
-							<a href="{subscriptions.U_VIEW_SUBSCRIPTION}" class="topictitle">{subscriptions.SUBSCRIPTION_TITLE}</a>
-								<!-- IF subscriptions.SUBSCRIPTION_TARGET -->
-									({subscriptions.SUBSCRIPTION_TARGET})
-								<!-- ENDIF -->
-							<!-- IF subscriptions.S_ACCESS_TEAMS -->
-							<img src="{TITANIA_THEME_PATH}images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
-							<!-- ELSEIF subscriptions.S_ACCESS_AUTHORS -->
-							<img src="{TITANIA_THEME_PATH}images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
-							<!-- ENDIF -->
+							<a href="{{ subscriptions.U_VIEW_SUBSCRIPTION }}" class="topictitle">{{ subscriptions.SUBSCRIPTION_TITLE }}</a>
+								{% if subscriptions.SUBSCRIPTION_TARGET %}
+									({{ subscriptions.SUBSCRIPTION_TARGET }})
+								{% endif %}
+							{% if subscriptions.S_ACCESS_TEAMS %}
+							<img src="{{ TITANIA_THEME_PATH }}images/icon_access_teams.png" class="icon" alt="{{ lang('ACCESS_LIMIT_TEAMS') }}" title="{{ lang('ACCESS_LIMIT_TEAMS') }}" />
+							{% elseif subscriptions.S_ACCESS_AUTHORS %}
+							<img src="{{ TITANIA_THEME_PATH }}images/icon_access_author.png" class="icon" alt="{{ lang('ACCESS_LIMIT_AUTHORS') }}" title="{{ lang('ACCESS_LIMIT_AUTHORS') }}" />
+							{% endif %}
 							<br />
-							<!-- IF subscriptions.SUBSCRIPTION_AUTHOR_FULL -->
-								{L_POST_BY_AUTHOR} {subscriptions.SUBSCRIPTION_AUTHOR_FULL}
-							<!-- ELSE -->
-								{L_WATCHED_SINCE}
-							<!-- ENDIF -->
-							&raquo; {subscriptions.SUBSCRIPTION_TIME}
+							{% if subscriptions.SUBSCRIPTION_AUTHOR_FULL %}
+								{{ lang('POST_BY_AUTHOR') }} {{ subscriptions.SUBSCRIPTION_AUTHOR_FULL }}
+							{% else %}
+								{{ lang('WATCHED_SINCE') }}
+							{% endif %}
+							&raquo; {{ subscriptions.SUBSCRIPTION_TIME }}
 						</div>
 					</dt>
-					<!-- IF S_WATCHED_ITEMS -->
+					{% if S_WATCHED_ITEMS %}
 					<dd class="lastpost">
-						<!-- IF subscriptions.S_TOPIC -->
+						{% if subscriptions.S_TOPIC %}
 							<span>
-								{L_LAST_POST} {L_POST_BY_AUTHOR} {subscriptions.SUBSCRIPTION_LAST_AUTHOR_FULL}
-								<a href="{subscriptions.U_VIEW_LAST_POST}">{subscriptions.LAST_POST_IMG}</a> <br />
-								&raquo; {subscriptions.SUBSCRIPTION_LAST_TIME}
+								{{ lang('LAST_POST') }} {{ lang('POST_BY_AUTHOR') }} {{ subscriptions.SUBSCRIPTION_LAST_AUTHOR_FULL }}
+								<a href="{{ subscriptions.U_VIEW_LAST_POST }}">{{ subscriptions.LAST_POST_IMG }}</a> <br />
+								&raquo; {{ subscriptions.SUBSCRIPTION_LAST_TIME }}
 							</span>
-						<!-- ENDIF -->
-						<!-- IF subscriptions.S_CONTRIB -->
+						{% endif %}
+						{% if subscriptions.S_CONTRIB %}
 							<span>
-								{L_TYPE}{L_COLON} {subscriptions.SUBSCRIPTION_CONTRIB_TYPE}<br />
-								{L_VIEWS}{L_COLON} {subscriptions.SUBSCRIPTION_VIEWS} &bull;
-								{L_DOWNLOAD}{L_COLON} {subscriptions.SUBSCRIPTION_DOWNLOADS}
+								{{ lang('TYPE') ~ lang('COLON') }} {{ subscriptions.SUBSCRIPTION_CONTRIB_TYPE }}<br />
+								{{ lang('VIEWS') ~ lang('COLON') }} {{ subscriptions.SUBSCRIPTION_VIEWS }} &bull;
+								{{ lang('DOWNLOAD') ~ lang('COLON') }} {{ subscriptions.SUBSCRIPTION_DOWNLOADS }}
 							</span>
-						<!-- ENDIF -->
+						{% endif %}
 					</dd>
-					<!-- ENDIF -->
+					{% endif %}
 					<dd class="mark">
-						<input type="checkbox" name="subscriptions[{subscriptions.SUBSCRIPTION_TYPE}][{subscriptions.SUBSCRIPTION_ID}]" id="{subscriptions.SUBSCRIPTION_ID}" />
+						<input type="checkbox" name="subscriptions[{{ subscriptions.SUBSCRIPTION_TYPE }}][{{ subscriptions.SUBSCRIPTION_ID }}]" id="{{ subscriptions.SUBSCRIPTION_ID }}" />
 					</dd>
 				</dl>
 			</li>
-		<!-- END subscriptions -->
+		{% endfor %}
 		</ul>
 		<ul class="linklist">
 			<li class="rightside pagination">
-				{TOTAL_RESULTS}
-				<!-- IF .pagination -->
-					<!-- INCLUDE pagination.html -->
-				<!-- ELSE -->
-					&bull; {PAGE_NUMBER}
-				<!-- ENDIF -->
+				{{ TOTAL_RESULTS }}
+				{% if loops.pagination|length %}
+					{% INCLUDE 'pagination.html' %}
+				{% else %}
+					&bull; {{ PAGE_NUMBER }}
+				{% endif %}
 			</li>
 		</ul>
-	<!-- ELSE -->
-		<p><strong><!-- IF S_WATCHED_ITEMS -->{L_NO_ITEMS}<!-- ELSE -->{L_NO_SECTIONS}<!-- ENDIF --></strong></p>
-	<!-- ENDIF -->
+	{% else %}
+		<p><strong>{% if S_WATCHED_ITEMS %}{{ lang('NO_ITEMS') }}{% else %}{{ lang('NO_SECTIONS') }}{% endif %}</strong></p>
+	{% endif %}
 
 	</div>
 </div>
 
-<!-- IF .subscriptions -->
+{% if loops.subscriptions|length %}
 	<fieldset class="display-actions">
-		<input class="button2" type="submit" name="unsubscribe" value="{L_UNWATCH_SUBSCRIPTION_MARKED}" />
+		<input class="button2" type="submit" name="unsubscribe" value="{{ lang('UNWATCH_SUBSCRIPTION_MARKED') }}" />
 		<div>
-			<a href="#" onclick="marklist('ucp', '', true); return false;">{L_MARK_ALL}</a> ::
-			<a href="#" onclick="marklist('ucp', '', false); return false;">{L_UNMARK_ALL}</a>
+			<a href="#" onclick="marklist('ucp', '', true); return false;">{{ lang('MARK_ALL') }}</a> ::
+			<a href="#" onclick="marklist('ucp', '', false); return false;">{{ lang('UNMARK_ALL') }}</a>
 		</div>
-		{S_FORM_TOKEN}
+		{{ S_FORM_TOKEN }}
 	</fieldset>
-<!-- ENDIF -->
+{% endif %}
 </form>
 
-<!-- INCLUDE ucp_footer.html -->
+{% INCLUDE 'ucp_footer.html' %}

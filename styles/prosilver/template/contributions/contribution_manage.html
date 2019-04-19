@@ -1,221 +1,221 @@
-<!-- INCLUDE contributions/contribution_header.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_header.html' %}
 
-<h3 class="section-name">{PAGE_TITLE}</h3>
+<h3 class="section-name">{{ PAGE_TITLE }}</h3>
 
-<!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
-<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+{% if NOTICE %}<p class="error">{{ NOTICE }}</p>{% endif %}
+{% if ERROR_MSG %}<p class="error">{{ ERROR_MSG }}</p>{% endif %}
 
-<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+<form id="{{ POSTING_FORM_NAME }}" method="post" action="{{ S_POST_ACTION }}" {{ S_FORM_ENCTYPE }}>
 	<div class="container">
 		<div class="inner">
 
-			<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
-			<!-- IF not S_CREATE -->
+			{% if S_DISPLAY_PREVIEW %}{% INCLUDE '@phpbb_titania/posting/posting_preview.html' %}{% endif %}
+			{% if not S_CREATE %}
 			<div id="extratabs" data-show-panel="settings-panel" class="sub-panels">
 				<ul id="extratabs-head">
 					<li id="settings-panel-tab">
 						<a href="#settings-panel" data-subpanel="settings-panel">
-							<span>{L_SETTINGS}</span>
+							<span>{{ lang('SETTINGS') }}</span>
 						</a>
 					</li>
-					<!-- IF SCREENSHOT_UPLOADER -->
+					{% if SCREENSHOT_UPLOADER %}
 					<li id="attach-panel-tab">
 						<a href="#attach-panel" data-subpanel="attach-panel">
-							<span>{L_SCREENSHOTS}</span>
+							<span>{{ lang('SCREENSHOTS') }}</span>
 						</a>
 					</li>
-					<!-- ENDIF -->
-					<!-- IF MANAGE_COLORIZEIT -->
+					{% endif %}
+					{% if MANAGE_COLORIZEIT %}
 					<li id="colorizeit-panel-tab">
 						<a href="#colorizeit-panel" data-subpanel="colorizeit-panel">
-							<span>{L_COLORIZEIT}</span>
+							<span>{{ lang('COLORIZEIT') }}</span>
 						</a>
 					</li>
-					<!-- ENDIF -->
+					{% endif %}
 				</ul>
 			</div>
-			<!-- ENDIF -->
+			{% endif %}
 
 			<div id="settings-panel" class="tab-panel">
 			<fieldset>
-				<!-- IF S_EDIT_SUBJECT or S_CREATE -->
+				{% if S_EDIT_SUBJECT or S_CREATE %}
 				<dl>
-					<dt><label for="name">{L_CONTRIB_NAME}:</label></dt>
-					<dd><input type="text" name="{POSTING_SUBJECT_NAME}" id="{POSTING_SUBJECT_NAME}" size="45" maxlength="60" value="{CONTRIB_NAME}" class="inputbox autowidth" /></dd>
+					<dt><label for="name">{{ lang('CONTRIB_NAME') ~ lang('COLON') }}</label></dt>
+					<dd><input type="text" name="{{ POSTING_SUBJECT_NAME }}" id="{{ POSTING_SUBJECT_NAME }}" size="45" maxlength="60" value="{{ CONTRIB_NAME }}" class="inputbox autowidth" /></dd>
 				</dl>
-				<!-- ENDIF -->
-				<!-- IF S_CREATE or (S_IS_MODERATOR and not S_CONTRIB_APPROVED) -->
+				{% endif %}
+				{% if S_CREATE or (S_IS_MODERATOR and not S_CONTRIB_APPROVED) %}
 				<dl>
-					<dt><label for="permalink">{L_CONTRIB_PERMALINK}:</label><br /><span>{L_CONTRIB_PERMALINK_EXPLAIN}</span></dt>
-					<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{CONTRIB_PERMALINK}" class="inputbox autowidth" /></dd>
+					<dt><label for="permalink">{{ lang('CONTRIB_PERMALINK') ~ lang('COLON') }}</label><br /><span>{{ lang('CONTRIB_PERMALINK_EXPLAIN') }}</span></dt>
+					<dd><input type="text" name="permalink" id="permalink" size="45" maxlength="60" value="{{ CONTRIB_PERMALINK }}" class="inputbox autowidth" /></dd>
 				</dl>
-				<!-- ENDIF -->
-				<!-- IF S_CREATE -->
+				{% endif %}
+				{% if S_CREATE %}
 				<dl>
-					<dt><label for="contrib_type">{L_CONTRIB_TYPE}:</label></dt>
+					<dt><label for="contrib_type">{{ lang('CONTRIB_TYPE') ~ lang('COLON') }}</label></dt>
 					<dd>
 						<select name="contrib_type" id="contrib_type" data-togglable-settings="true">
-							<!-- BEGIN type_select -->
-							<option value="{type_select.VALUE}"<!-- IF type_select.S_IS_SELECTED --> selected="selected"<!-- ENDIF --> data-toggle-setting=".custom_settings_{type_select.VALUE}">{type_select.NAME}</option>
-							<!-- END type_select -->
+							{% for type_select in loops.type_select %}
+							<option value="{{ type_select.VALUE }}"{% if type_select.S_IS_SELECTED %} selected="selected"{% endif %} data-toggle-setting=".custom_settings_{{ type_select.VALUE }}">{{ type_select.NAME }}</option>
+							{% endfor %}
 						</select>
 					</dd>
 				</dl>
-				<!-- ENDIF -->
+				{% endif %}
 				<dl>
-					<dt><label for="{POSTING_TEXT_NAME}">{L_CONTRIB_DESCRIPTION}:</label></dt>
+					<dt><label for="{{ POSTING_TEXT_NAME }}">{{ lang('CONTRIB_DESCRIPTION') ~ lang('COLON') }}</label></dt>
 					<dd></dd>
 				</dl>
 			</fieldset>
 
-			<!-- INCLUDE posting/posting_basic_editor.html -->
+			{% INCLUDE '@phpbb_titania/posting/posting_basic_editor.html' %}
 
 			<fieldset class="fields1">
-				<!-- IF S_BBCODE_ALLOWED -->
-					<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{S_BBCODE_CHECKED} /> {L_DISABLE_BBCODE}</label></div>
-				<!-- ENDIF -->
-				<!-- IF S_SMILIES_ALLOWED -->
-					<div><label for="disable_smilies"><input type="checkbox" name="disable_smilies" id="disable_smilies"{S_SMILIES_CHECKED} /> {L_DISABLE_SMILIES}</label></div>
-				<!-- ENDIF -->
-				<!-- IF S_LINKS_ALLOWED -->
-					<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{S_MAGIC_URL_CHECKED} /> {L_DISABLE_MAGIC_URL}</label></div>
-				<!-- ENDIF -->
+				{% if S_BBCODE_ALLOWED %}
+					<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{{ S_BBCODE_CHECKED }} /> {{ lang('DISABLE_BBCODE') }}</label></div>
+				{% endif %}
+				{% if S_SMILIES_ALLOWED %}
+					<div><label for="disable_smilies"><input type="checkbox" name="disable_smilies" id="disable_smilies"{{ S_SMILIES_CHECKED }} /> {{ lang('DISABLE_SMILIES') }}</label></div>
+				{% endif %}
+				{% if S_LINKS_ALLOWED %}
+					<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{{ S_MAGIC_URL_CHECKED }} /> {{ lang('DISABLE_MAGIC_URL') }}</label></div>
+				{% endif %}
 			</fieldset>
 
-			<h3>{L_OPTIONS}</h3>
+			<h3>{{ lang('OPTIONS') }}</h3>
 			<fieldset>
-				<!-- IF category_select -->
+				{% if category_select %}
 				<dl>
-					<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label><br /><span>{L_MULTI_SELECT_EXPLAIN}</span></dt>
+					<dt><label for="contrib_category">{{ lang('CONTRIB_CATEGORY') ~ lang('COLON') }}</label><br /><span>{{ lang('MULTI_SELECT_EXPLAIN') }}</span></dt>
 					<dd>
 						<select name="contrib_category[]" id="contrib_category" multiple="multiple" size="5">
-							<!-- BEGIN category_select -->
-							<option data-option-type="{category_select.TYPE}" value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
-								<!-- BEGIN level -->&nbsp; &nbsp;<!-- END level -->{category_select.NAME}
+							{% for category_select in loops.category_select %}
+							<option data-option-type="{{ category_select.TYPE }}" value="{{ category_select.VALUE }}"{% if category_select.S_SELECTED %} selected="selected"{% endif %}{% if category_select.S_DISABLED %} disabled="disabled"{% endif %}>
+								{% for level in category_select.level %}&nbsp; &nbsp;{% endfor %}{{ category_select.NAME }}
 							</option>
-							<!-- END category_select -->
+							{% endfor %}
 						</select>
 					</dd>
 				</dl>
-				<!-- ENDIF -->
-				<!-- IF .custom_fields -->
-					<!-- INCLUDE common/custom_fields.html -->
-				<!-- ENDIF -->
+				{% endif %}
+				{% if loops.custom_fields|length %}
+					{% INCLUDE '@phpbb_titania/common/custom_fields.html' %}
+				{% endif %}
 
-				<!-- IF not S_CREATE and S_IS_MODERATOR -->
+				{% if not S_CREATE and S_IS_MODERATOR %}
 				<dl>
-					<dt><label for="contrib_status">{L_CONTRIB_STATUS}:</label><br /><span>{L_CONTRIB_STATUS_EXPLAIN}</span></dt>
+					<dt><label for="contrib_status">{{ lang('CONTRIB_STATUS') ~ lang('COLON') }}</label><br /><span>{{ lang('CONTRIB_STATUS_EXPLAIN') }}</span></dt>
 					<dd>
 						<select name="contrib_status" id="contrib_status">
-							<!-- BEGIN status_select -->
-								<option value="{status_select.VALUE}"<!-- IF status_select.S_SELECTED --> selected="selected"<!-- ENDIF -->>{status_select.NAME}</option>
-							<!-- END status_select -->
+							{% for status_select in loops.status_select %}
+								<option value="{{ status_select.VALUE }}"{% if status_select.S_SELECTED %} selected="selected"{% endif %}>{{ status_select.NAME }}</option>
+							{% endfor %}
 						</select>
 					</dd>
 				</dl>
-				<!-- ENDIF -->
-				<!-- IF S_DELETE_CONTRIBUTION -->
+				{% endif %}
+				{% if S_DELETE_CONTRIBUTION %}
 				<dl>
-					<dt><label for="delete">{L_DELETE_CONTRIBUTION}:</label><br /><span>{L_DELETE_CONTRIBUTION_EXPLAIN}</span></dt>
+					<dt><label for="delete">{{ lang('DELETE_CONTRIBUTION') ~ lang('COLON') }}</label><br /><span>{{ lang('DELETE_CONTRIBUTION_EXPLAIN') }}</span></dt>
 					<dd>
 						<input type="checkbox" name="delete" id="delete" />
 					</dd>
 				</dl>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<!-- IF not S_CREATE and (S_IS_OWNER or S_IS_MODERATOR) -->
+				{% if not S_CREATE and (S_IS_OWNER or S_IS_MODERATOR) %}
 				<dl>
-					<dt><label for="change_owner">{L_CONTRIB_CHANGE_OWNER}:</label><br /><span>{L_CONTRIB_CHANGE_OWNER_EXPLAIN}</span></dt>
+					<dt><label for="change_owner">{{ lang('CONTRIB_CHANGE_OWNER') ~ lang('COLON') }}</label><br /><span>{{ lang('CONTRIB_CHANGE_OWNER_EXPLAIN') }}</span></dt>
 					<dd>
 						<input class="inputbox autowidth" type="text" name="change_owner" id="change_owner" />
 					</dd>
 				</dl>
-				<!-- ENDIF -->
+				{% endif %}
 				<dl>
-					<dt><label for="active_coauthors">{L_CONTRIB_ACTIVE_AUTHORS}:</label><br /><span>{L_CONTRIB_ACTIVE_AUTHORS_EXPLAIN}<br /><br />{L_CONTRIB_AUTHORS_EXPLAIN}</span></dt>
+					<dt><label for="active_coauthors">{{ lang('CONTRIB_ACTIVE_AUTHORS') ~ lang('COLON') }}</label><br /><span>{{ lang('CONTRIB_ACTIVE_AUTHORS_EXPLAIN') }}<br /><br />{{ lang('CONTRIB_AUTHORS_EXPLAIN') }}</span></dt>
 					<dd>
-						<textarea class="inputbox" name="active_coauthors" id="active_coauthors" rows="2" cols="20">{ACTIVE_COAUTHORS}</textarea>
+						<textarea class="inputbox" name="active_coauthors" id="active_coauthors" rows="2" cols="20">{{ ACTIVE_COAUTHORS }}</textarea>
 					</dd>
 				</dl>
 				<dl>
-					<dt><label for="nonactive_coauthors">{L_CONTRIB_NONACTIVE_AUTHORS}:</label><br /><span>{L_CONTRIB_NONACTIVE_AUTHORS_EXPLAIN}<br /><br />{L_CONTRIB_AUTHORS_EXPLAIN}</span></dt>
+					<dt><label for="nonactive_coauthors">{{ lang('CONTRIB_NONACTIVE_AUTHORS') ~ lang('COLON') }}</label><br /><span>{{ lang('CONTRIB_NONACTIVE_AUTHORS_EXPLAIN') }}<br /><br />{{ lang('CONTRIB_AUTHORS_EXPLAIN') }}</span></dt>
 					<dd>
-						<textarea class="inputbox" name="nonactive_coauthors" id="nonactive_coauthors" rows="2" cols="20">{NONACTIVE_COAUTHORS}</textarea>
+						<textarea class="inputbox" name="nonactive_coauthors" id="nonactive_coauthors" rows="2" cols="20">{{ NONACTIVE_COAUTHORS }}</textarea>
 					</dd>
 				</dl>
-				<!-- IF S_CAN_EDIT_DEMO -->
+				{% if S_CAN_EDIT_DEMO %}
 				<dl>
-					<dt><label for="demo_url">{L_DEMO_URL}:</label><br /><span>{L_DEMO_URL_EXPLAIN}</span></dt>
+					<dt><label for="demo_url">{{ lang('DEMO_URL') ~ lang('COLON') }}</label><br /><span>{{ lang('DEMO_URL_EXPLAIN') }}</span></dt>
 					<dd>
-						<!-- BEGIN demo -->
-							<label for="demo_url_{demo.BRANCH}">{demo.NAME}</label>
-							<input class="inputbox" type="text" name="demo[{demo.BRANCH}]" id="demo_url_{demo.BRANCH}" value="{demo.URL}" />
-							<!-- IF S_CONTRIB_VALIDATED and S_INTEGRATE_DEMO and S_IS_MODERATOR -->
-								<a href="{demo.U_INSTALL}" class="button2" data-ajax="titania.demo.install" data-branch="{demo.BRANCH}">{L_INSTALL_DEMO}</a>
-							<!-- ENDIF -->
-							<!-- IF not demo.S_LAST_ROW --><hr class="dashed" /><!-- ENDIF -->
-						<!-- END demo -->
+						{% for demo in loops.demo %}
+							<label for="demo_url_{{ demo.BRANCH }}">{{ demo.NAME }}</label>
+							<input class="inputbox" type="text" name="demo[{{ demo.BRANCH }}]" id="demo_url_{{ demo.BRANCH }}" value="{{ demo.URL }}" />
+							{% if S_CONTRIB_VALIDATED and S_INTEGRATE_DEMO and S_IS_MODERATOR %}
+								<a href="{{ demo.U_INSTALL }}" class="button2" data-ajax="titania.demo.install" data-branch="{{ demo.BRANCH }}">{{ lang('INSTALL_DEMO') }}</a>
+							{% endif %}
+							{% if not demo.S_LAST_ROW %}<hr class="dashed" />{% endif %}
+						{% endfor %}
 					</dd>
 				</dl>
-				<!-- ENDIF -->
-				<!-- IF not S_CREATE -->
+				{% endif %}
+				{% if not S_CREATE %}
 				<dl>
-					<dt><label for="limited_support">{L_LIMITED_SUPPORT}:</label><br /><span>{L_LIMITED_SUPPORT_EXPLAIN}</span></dt>
+					<dt><label for="limited_support">{{ lang('LIMITED_SUPPORT') ~ lang('COLON') }}</label><br /><span>{{ lang('LIMITED_SUPPORT_EXPLAIN') }}</span></dt>
 					<dd>
-						<input type="checkbox" id="limited_support" name="limited_support"<!-- IF S_LIMITED_SUPPORT -->checked="checked"<!-- ENDIF --> />
+						<input type="checkbox" id="limited_support" name="limited_support"{% if S_LIMITED_SUPPORT %}checked="checked"{% endif %} />
 					</dd>
 				</dl>
-				<!-- ENDIF -->
+				{% endif %}
 			</fieldset>
 			</div>
 
-            <!-- IF MANAGE_COLORIZEIT -->
+            {% if MANAGE_COLORIZEIT %}
 				<div id="colorizeit-panel" class="tab-panel">
-					<p>{L_COLORIZEIT_MANAGE_EXPLAIN}</p>
-					{CLR_SCREENSHOTS}
+					<p>{{ lang('COLORIZEIT_MANAGE_EXPLAIN') }}</p>
+					{{ CLR_SCREENSHOTS }}
 					<fieldset>
 						<dl>
-							<dt>{L_COLORIZEIT_COLORS}:</dt>
-							<dd><input class="inputbox" type="text" id="change-colors" name="change_colors" value="{CLR_COLORS}" /></dd>
+							<dt>{{ lang('COLORIZEIT_COLORS') ~ lang('COLON') }}</dt>
+							<dd><input class="inputbox" type="text" id="change-colors" name="change_colors" value="{{ CLR_COLORS }}" /></dd>
 						</dl>
 					</fieldset>
-					<!-- IF U_TESTSAMPLE -->
+					{% if U_TESTSAMPLE %}
 					<p id="colorizeit-placeholder" style="display: none;">
-						{L_COLORIZEIT_SAMPLE_EXPLAIN}
+						{{ lang('COLORIZEIT_SAMPLE_EXPLAIN') }}
 					</p>
 					<fieldset id="test-sample">
 						<dl>
 							<dd>
-								<input type="submit" value="{L_COLORIZEIT_SAMPLE}" class="button2" data-colorizeit-url="{U_TESTSAMPLE}#{CLR_COLORS}" />
+								<input type="submit" value="{{ lang('COLORIZEIT_SAMPLE') }}" class="button2" data-colorizeit-url="{{ U_TESTSAMPLE }}#{{ CLR_COLORS }}" />
 							</dd>
 						</dl>
 					</fieldset>
-					<!-- ENDIF -->
+					{% endif %}
                 </div>
-        <!-- ENDIF -->
-        <!-- IF SCREENSHOT_UPLOADER -->
+        {% endif %}
+        {% if SCREENSHOT_UPLOADER %}
 			<div id="attach-panel" class="tab-panel">
-				{SCREENSHOT_UPLOADER}
+				{{ SCREENSHOT_UPLOADER }}
 			</div>
-		<!-- ENDIF -->
+		{% endif %}
 	</div>
 </div>
-	<!-- IF S_CAN_EDIT_CONTRIB -->
+	{% if S_CAN_EDIT_CONTRIB %}
 	<div class="container">
 		<div class="inner">
 			<fieldset class="submit-buttons">
-				<!-- IF not S_CREATE -->
-					<input type="hidden" name="contrib_type" value="{CONTRIB_TYPE}" />
-				<!-- ENDIF -->
-				<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
-				<input type="submit" name="preview" value="{L_PREVIEW}" class="button1" />&nbsp;
-				<input type="submit" name="submit" value="<!-- IF S_CREATE -->{L_CONTINUE}<!-- ELSE -->{L_SUBMIT}<!-- ENDIF -->" class="button1" />
-				{S_FORM_TOKEN}
+				{% if not S_CREATE %}
+					<input type="hidden" name="contrib_type" value="{{ CONTRIB_TYPE }}" />
+				{% endif %}
+				<input type="reset" value="{{ lang('RESET') }}" name="reset" class="button2" />&nbsp;
+				<input type="submit" name="preview" value="{{ lang('PREVIEW') }}" class="button1" />&nbsp;
+				<input type="submit" name="submit" value="{% if S_CREATE %}{{ lang('CONTINUE') }}{% else %}{{ lang('SUBMIT') }}{% endif %}" class="button1" />
+				{{ S_FORM_TOKEN }}
 			</fieldset>
 		</div>
 	</div>
-	<!-- ENDIF -->
+	{% endif %}
 </form>
 
 
-<!-- INCLUDE contributions/contribution_footer.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_footer.html' %}
