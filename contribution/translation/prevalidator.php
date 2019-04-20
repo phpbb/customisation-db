@@ -40,7 +40,8 @@ class prevalidator
 	const REQUIRED_EMPTY = 2;
 	const REQUIRED_DEFAULT = 3;
 
-	const BRITISH_ENGLISH = 'british_english_3_2_5';
+	const BRITISH_ENGLISH = 'british_english_';
+	const LANGUAGE_PACKAGES = 'includes/language_packages/';
 	const EN = 'en';
 
 	/**
@@ -65,6 +66,58 @@ class prevalidator
 	public function get_helper()
 	{
 		return $this->helper;
+	}
+
+	/**
+	 * Get the latest British English pack
+	 * @return array Return the path and version to the pre-supplied British English language pack
+	 */
+	private function get_latest_english_pack()
+	{
+		/** @var Finder $finder */
+		$finder = new Finder();
+		$finder->files()->in($this->get_helper()->get_root_path() . self::LANGUAGE_PACKAGES);
+
+		if ($finder->hasResults())
+		{
+			$latest = ['name' => '', 'x' => 0, 'y' => 0, 'z' => 0];
+
+			foreach ($finder as $file)
+			{
+				// Extract the version number
+				preg_match_all('/' . self::BRITISH_ENGLISH . '(\d+)_(\d+)_(\d+)\.zip/', $file->getFilename(), $result);
+
+				if ($result[0])
+				{
+					// Save the path and the version
+					$pack = [
+						'name' => $file->getPathname(), // file path
+						'x' => $result[1][0], // major version (eg. 3)
+						'y' => $result[2][0], // minor version (eg. 2)
+						'z' => $result[3][0], // revision version (eg. 5)
+					];
+
+					// Check if it's a higher number
+					$new_major = ($pack['x'] > $latest['x']);
+					$new_minor = ($pack['x'] === $latest['x'] && $pack['y'] > $latest['y']);
+					$new_revision = ($pack['x'] === $latest['x'] && $pack['y'] === $latest['y'] && $pack['z'] > $latest['z']);
+
+					if ($new_major || $new_minor || $new_revision)
+					{
+						// This is the new latest version
+						$latest = $pack;
+					}
+				}
+			}
+		}
+
+		else
+		{
+			// Could not locate the British English language pack
+			throw new \phpbb\extension\exception($this->language->lang('TRANSLATION_EN_PACK_NOT_FOUND'));
+		}
+
+		return $latest;
 	}
 
 	/**
@@ -117,9 +170,9 @@ class prevalidator
 				$file_system->rename($root_extracted->getPathname(), $new_directory_name);
 
 				// Get the British English language in there too
-				$en_path = $this->get_helper()->get_root_path() . 'includes/language_packages/' . self::BRITISH_ENGLISH . '.zip';
+				$english_pack = $this->get_latest_english_pack();
 				$zip = new \ZipArchive();
-				$result = $zip->open($en_path);
+				$result = $zip->open($english_pack['name']);
 
 				if ($result)
 				{
@@ -128,14 +181,14 @@ class prevalidator
 					$zip->close();
 
 					// Change to "en"
-					$file_system->rename(sprintf('%s/%s', $path, self::BRITISH_ENGLISH), sprintf('%s/%s', $path, self::EN));
+					$replace_name = sprintf('%s%d_%d_%d', self::BRITISH_ENGLISH, $english_pack['x'], $english_pack['y'], $english_pack['z']);
+					$file_system->rename(sprintf('%s/%s', $path, $replace_name), sprintf('%s/%s', $path, self::EN));
 				}
 
 				// Before running the translation validator, check that an expected path exists. If it doesn't, it could be
 				// because the user has typed the incorrect language ISO code. Tell the user, and crash out.
 				if (!$file_system->exists(sprintf('%s/%s/language/%s/common.php', $path, $origin_iso, $origin_iso)))
 				{
-					//$package->cleanup();
 					throw new \phpbb\extension\exception($this->language->lang('TRANSLATION_ISO_MISMATCH'));
 				}
 
