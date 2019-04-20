@@ -121,7 +121,7 @@ For help with writing phpBB extensions, the following resources exist:
 [*]IRC Support - [url=irc://irc.freenode.net/phpBB-coding]#phpBB-coding[/url] is registered on the FreeNode IRC network ([url=irc://irc.freenode.net/]irc.freenode.net[/url])[/list]
 
 [b]If you wish to discuss anything in this PM please use the “Validation Discussion“ sticky topic located in your extension’s Discussion/Support tab.[/b]
-c
+
 If you feel this denial was not warranted please contact the Extension Validation Leader.
 If you have any queries and further discussion please use the Queue Discussion Topic.
 

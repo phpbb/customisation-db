@@ -218,6 +218,7 @@ $lang = array_merge($lang, array(
 	'SUBSCRIPTION_REQUEST'					=> 'Would you like to subscribe to the contribution in order to receive e-mail notifications about new versions and security vulnerabilities?',
 
 	'TOO_MANY_TRANSLATOR_LINKS'				=> 'You are currently using %d external links within the TRANSLATION/TRANSLATION_INFO line. Please only include <strong>one link</strong>. Including two links is allowed on a case-by-case basis - please post within the translations forum noting your reasoning behind putting more external links within the line.',
+	'TRANSLATION_DIRECTORY_MISMATCH'		=> 'Could not locate the language directory. Please try again.',
 	'TRANSLATION_EN_SKIP'					=> 'No prevalidation checks were run because this is the default English language pack.',
 	'TRANSLATION_ISO_MISMATCH'				=> 'Could not locate files for testing. Please try again, and ensure that you typed the correct ISO language code.',
 

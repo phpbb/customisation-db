@@ -13,7 +13,6 @@
 
 namespace phpbb\titania\contribution\translation;
 
-use phpbb\extension\exception;
 use Phpbb\TranslationValidator\Cli;
 use Phpbb\TranslationValidator\Command\ValidateCommand;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -33,6 +32,9 @@ class prevalidator
 	/** @var \phpbb\titania\contribution\prevalidator_helper */
 	protected $helper;
 
+	/** @var \phpbb\language\language */
+	protected $language;
+
 	const NOT_REQUIRED = 0;
 	const REQUIRED = 1;
 	const REQUIRED_EMPTY = 2;
@@ -46,11 +48,13 @@ class prevalidator
 	 *
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\contribution\prevalidator_helper $helper
+	 * @param \phpbb\language\language $language
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\titania\contribution\prevalidator_helper $helper)
+	public function __construct(\phpbb\user $user, \phpbb\titania\contribution\prevalidator_helper $helper, \phpbb\language\language $language)
 	{
 		$this->user = $user;
 		$this->helper = $helper;
+		$this->language = $language;
 	}
 
 	/**
@@ -73,87 +77,100 @@ class prevalidator
 	 */
 	public function check_package($package, $origin_iso, $phpbb_version)
 	{
-		$results = '';
-
-		if ($origin_iso == self::EN)
+		if ($origin_iso === self::EN)
 		{
 			// We can't validate "en", because it would be trying to check against itself and
 			// fail because we can't unpack both at the same time (and it would serve no purpose).
-			$results = $this->user->lang('TRANSLATION_EN_SKIP');
+			$results = $this->language->lang('TRANSLATION_EN_SKIP');
 		}
 
 		else
 		{
-			// We don't need to clean up (delete) the temporary files here because that is
-			// handled at revision.php:752
-			$package->ensure_extracted();
-			$path = $package->get_temp_path();
-
-			// Rename the extracted directory to be the ISO code.
-			$finder = new Finder();
-			$iterator = $finder->directories()->in($path)->depth('== 0');
-
-			if ($iterator->count() == 1)
+			try
 			{
-				$iterator = $finder->getIterator();
-				$iterator->rewind();
+				// We don't need to clean up (delete) the temporary files here because that is
+				// handled at revision.php:752
+				$package->ensure_extracted();
+				$path = $package->get_temp_path();
 
-				// We know there's only one result
-				$root_extracted = $iterator->current();
+				// Rename the extracted directory to be the ISO code.
+				$finder = new Finder();
+				$iterator = $finder->directories()->in($path)->depth('== 0');
+
+				if ($iterator->count() == 1)
+				{
+					$iterator = $finder->getIterator();
+					$iterator->rewind();
+
+					// We know there's only one result
+					$root_extracted = $iterator->current();
+				}
+
+				else
+				{
+					throw new \phpbb\extension\exception($this->language->lang('TRANSLATION_DIRECTORY_MISMATCH'));
+				}
+
+				// Rename the directory to use the iso code
+				$new_directory_name = str_replace($root_extracted->getFilename(), $origin_iso, $root_extracted->getPathname());
+				$file_system = new Filesystem();
+				$file_system->rename($root_extracted->getPathname(), $new_directory_name);
+
+				// Get the British English language in there too
+				$en_path = $this->get_helper()->get_root_path() . 'includes/language_packages/' . self::BRITISH_ENGLISH . '.zip';
+				$zip = new \ZipArchive();
+				$result = $zip->open($en_path);
+
+				if ($result)
+				{
+					// Unzip the revision to a temporary folder
+					$zip->extractTo($path);
+					$zip->close();
+
+					// Change to "en"
+					$file_system->rename(sprintf('%s/%s', $path, self::BRITISH_ENGLISH), sprintf('%s/%s', $path, self::EN));
+				}
+
+				// Before running the translation validator, check that an expected path exists. If it doesn't, it could be
+				// because the user has typed the incorrect language ISO code. Tell the user, and crash out.
+				if (!$file_system->exists(sprintf('%s/%s/language/%s/common.php', $path, $origin_iso, $origin_iso)))
+				{
+					//$package->cleanup();
+					throw new \phpbb\extension\exception($this->language->lang('TRANSLATION_ISO_MISMATCH'));
+				}
+
+				// Parameters for the validation script
+				$inputs = array(
+					// Arguments
+					'command' => 'validate',
+					'origin-iso' => $origin_iso,
+
+					// Options
+					'--phpbb-version' => $phpbb_version,
+					'--package-dir' => $path,
+					'--safe-mode' => true,
+					'--display-notices' => true,
+				);
+
+				// Set up an instance of the translation validation script
+				// https://github.com/phpbb/phpbb-translation-validator
+				$app = new Cli();
+				$app->add(new ValidateCommand());
+				$translation = $app->find('validate');
+
+				$commandTester = new CommandTester($translation);
+				$commandTester->execute($inputs);
+
+				// Return the output of the translation validation script
+				$results = $commandTester->getDisplay();
 			}
 
-			// Rename the directory to use the iso code
-			$new_directory_name = str_replace($root_extracted->getFilename(), $origin_iso, $root_extracted->getPathname());
-			$file_system = new Filesystem();
-			$file_system->rename($root_extracted->getPathname(), $new_directory_name);
-
-			// Get the British English language in there too
-			$en_path = $this->get_helper()->get_root_path() . 'includes/language_packages/' . self::BRITISH_ENGLISH . '.zip';
-			$zip = new \ZipArchive();
-			$result = $zip->open($en_path);
-
-			if ($result)
+			catch (\phpbb\extension\exception $e)
 			{
-				// Unzip the revision to a temporary folder
-				$zip->extractTo($path);
-				$zip->close();
-
-				// Change to "en"
-				$file_system->rename(sprintf('%s/%s', $path, self::BRITISH_ENGLISH), sprintf('%s/%s', $path, self::EN));
-			}
-
-			// Before running the translation validator, check that an expected path exists. If it doesn't, it could be
-			// because the user has typed the incorrect language ISO code. Tell the user, and crash out.
-			if (!$file_system->exists(sprintf('%s/%s/language/%s/common.php', $path, $origin_iso, $origin_iso)))
-			{
+				// Clean up and send the error message to the next catch block
 				$package->cleanup();
-				throw new exception($this->user->lang('TRANSLATION_ISO_MISMATCH'));
+				throw new \phpbb\extension\exception($e->getMessage());
 			}
-
-			// Parameters for the validation script
-			$inputs = array(
-				// Arguments
-				'command' => 'validate',
-				'origin-iso' => $origin_iso,
-
-				// Options
-				'--phpbb-version' => $phpbb_version,
-				'--package-dir' => $path,
-				'--safe-mode' => true,
-				'--display-notices' => true,
-			);
-
-			// Set up an instance of the translation validation script
-			// https://github.com/phpbb/phpbb-translation-validator
-			$app = new Cli();
-			$app->add(new ValidateCommand());
-			$translation = $app->find('validate');
-
-			$commandTester = new CommandTester($translation);
-			$commandTester->execute($inputs);
-
-			// Return the output of the translation validation script
-			$results = $commandTester->getDisplay();
 		}
 
 		return $results;
