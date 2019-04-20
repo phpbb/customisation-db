@@ -118,7 +118,7 @@ For further reading, you may want to review the following:
 
 For help with writing phpBB extensions, the following resources exist:
 [list][*][url=https://www.phpbb.com/community/viewforum.php?f=461]Extension Writers Discussion forum[/url]
-[*]IRC Support - [url=irc://irc.freenode.net/phpBB-coding]#phpBB-coding[/url] is registered on the FreeNode IRC network ([url=irc://irc.freenode.net/]irc.freenode.net[/url])[/list]
+[*][url=https://www.phpbb.com/support/chat/]Discord and IRC Support[/url][/list]
 
 [b]If you wish to discuss anything in this PM please use the “Validation Discussion“ sticky topic located in your extension’s Discussion/Support tab.[/b]
 
