@@ -76,7 +76,10 @@ class prevalidator
 	{
 		/** @var Finder $finder */
 		$finder = new Finder();
-		$finder->files()->in($this->get_helper()->get_root_path() . self::LANGUAGE_PACKAGES);
+
+		$finder->files()
+			->in($this->get_helper()->get_root_path() . self::LANGUAGE_PACKAGES)
+			->name(self::BRITISH_ENGLISH . '*');
 
 		if ($finder->hasResults())
 		{
