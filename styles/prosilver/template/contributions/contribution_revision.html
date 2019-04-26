@@ -147,7 +147,9 @@
 				{{ AUTOMOD_RESULTS }}
 			{% endif %}
 			{% if S_PASSED_TRANSLATION_VALIDATION %}
-				{{ lang('PASSED_VALIDATION') }}
+				<div class="translation-validation">
+					<textarea disabled>{{ TRANSLATION_VALIDATOR_OUTPUT }}</textarea>
+				</div>
 			{% endif %}
 
 			<fieldset class="submit-buttons">

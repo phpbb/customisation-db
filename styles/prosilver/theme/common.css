@@ -1076,3 +1076,14 @@ hr.solid {
 .customisation-database {
 	/* available class for custom CSS/scripting in the body tag */
 }
+
+/* Translation Submission
+--------------------------------------------- */
+.translation-validation {
+	text-align: center;
+	margin: 30px 0px 30px 0px;
+}
+
+.translation-validation > textarea {
+	display: inline-block;
+}

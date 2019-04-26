@@ -110,7 +110,7 @@ class events extends \phpbb\console\command\command
 		$this->custom_php_events = [];
 
 		// Temporary folder
-		$this->tmp_folder = $this->root_path . COMMAND_TMP_DIRECTORY;
+		$this->tmp_folder = $this->root_path . self::COMMAND_TMP_DIRECTORY;
 
 		$language_files = ['console'];
 		$this->language->add_lang($language_files, 'phpbb/titania');
