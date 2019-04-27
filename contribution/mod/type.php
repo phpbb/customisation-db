@@ -117,7 +117,7 @@ class type extends base
 
 			// Can view the mod queue
 			case 'view' :
-				return $this->auth->acl_get('u_titania_mod_modification_queue');
+				return false; // Disabled as no new MODs will be entering the queue
 			break;
 
 			// Can validate mods in the queue
