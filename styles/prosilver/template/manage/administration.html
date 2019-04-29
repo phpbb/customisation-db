@@ -1,24 +1,24 @@
-<!-- INCLUDE manage/manage_header.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_header.html' %}
 
 <div class="panel">
 	<div class="inner">
 
-		<!-- BEGIN tools -->
+		{% for tools in loops.tools %}
 			<div class="manage-tool">
-			<a href="{tools.U_TITLE}"<!-- IF tools.S_AJAX -->data-ajax="titania.manage.tool"<!-- ENDIF -->>{tools.L_TITLE}</a>
-			<!-- IF tools.S_AJAX -->
+			<a href="{{ tools.U_TITLE }}"{% if tools.S_AJAX %}data-ajax="titania.manage.tool"{% endif %}>{{ tools.L_TITLE }}</a>
+			{% if tools.S_AJAX %}
 				<div class="tool-info" style="display: none;">
 					<span class="tool-message"></span>
 					<div class="tool-progressbar" style="display: none;"><div class="tool-progress"></div></div>
 				</div>
-			<!-- ENDIF -->
-			<!-- IF not tools.S_LAST_ROW -->
+			{% endif %}
+			{% if not tools.S_LAST_ROW %}
 				<hr class="dashed" />
-			<!-- ENDIF -->
+			{% endif %}
 			</div>
-		<!-- END tools -->
+		{% endfor %}
 
 	</div>
 </div>
 
-<!-- INCLUDE manage/manage_footer.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_footer.html' %}

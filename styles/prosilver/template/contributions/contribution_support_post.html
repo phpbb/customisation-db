@@ -1,9 +1,9 @@
-<!-- INCLUDE contributions/contribution_header.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_header.html' %}
 
-<h3 class="section-name">{L_POST_A}</h3>
+<h3 class="section-name">{{ lang('POST_A') }}</h3>
 <div class="container">
 	<div class="inner">
-<!-- INCLUDE posting/posting_layout.html -->
+{% INCLUDE '@phpbb_titania/posting/posting_layout.html' %}
 	</div>
 </div>
-<!-- INCLUDE contributions/contribution_footer.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_footer.html' %}

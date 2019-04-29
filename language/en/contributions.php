@@ -105,6 +105,7 @@ $lang = array_merge($lang, array(
 	'DELETE_REVISION_EXPLAIN'				=> 'Permanently remove this revision (use the revision status field if you need to hide it).',
 	'DEMO_URL'								=> 'Demo URL',
 	'DEMO_URL_EXPLAIN'						=> 'Location of the demonstration',
+	'DEPENDENCIES'							=> 'Dependencies',
 	'DOWNLOADS_PER_DAY'						=> '%.2f Downloads per Day',
 	'DOWNLOADS_TOTAL'						=> 'Total Downloads',
 	'DOWNLOADS_VERSION'						=> 'Version Downloads',
@@ -130,6 +131,7 @@ $lang = array_merge($lang, array(
 	'INSTALL_LEVEL_3'						=> 'Advanced',
 	'INSTALL_MINUTES'						=> 'About %s Minute(s)',
 	'INSTALL_TIME'							=> 'Install Time',
+	'INSTALL_TO'							=> 'Install directory',
 	'INVALID_BRANCH'						=> 'Invalid branch',
 	'INVALID_LICENSE'						=> 'Invalid License',
 	'INVALID_PERMALINK'						=> 'You need to enter a valid permalink, for example: %s',
@@ -216,6 +218,10 @@ $lang = array_merge($lang, array(
 	'SUBSCRIPTION_REQUEST'					=> 'Would you like to subscribe to the contribution in order to receive e-mail notifications about new versions and security vulnerabilities?',
 
 	'TOO_MANY_TRANSLATOR_LINKS'				=> 'You are currently using %d external links within the TRANSLATION/TRANSLATION_INFO line. Please only include <strong>one link</strong>. Including two links is allowed on a case-by-case basis - please post within the translations forum noting your reasoning behind putting more external links within the line.',
+	'TRANSLATION_DIRECTORY_MISMATCH'		=> 'Could not locate the language directory. Please try again.',
+	'TRANSLATION_EN_PACK_NOT_FOUND'			=> 'Could not locate the British English source language pack. Please contact an administrator.',
+	'TRANSLATION_EN_SKIP'					=> 'No prevalidation checks were run because this is the default English language pack.',
+	'TRANSLATION_ISO_MISMATCH'				=> 'Could not locate files for testing. Please try again, and ensure that you typed the correct ISO language code.',
 
 	'VALIDATION_TIME'						=> 'Validation time',
 	'VIEW_DEMO'								=> 'View Demo',

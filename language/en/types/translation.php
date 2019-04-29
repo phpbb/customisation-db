@@ -48,7 +48,7 @@ $lang = array_merge($lang, array(
 	'MISSING_FILE'								=> 'The file <code>%s</code> is missing in your language pack.',
 	'MISSING_KEYS'								=> 'You are missing the following language key(s) in <code>%1$s</code>:<br />%2$s',
 
-	'PASSED_VALIDATION'							=> 'Your language pack has been repacked and has passed the validation process which checks for missing keys, structure, additionnal files and license. Please continue.',
+	'TRANSLATION_VALIDATION_TESTS'				=> 'Please review the results of the automatic translation validation before proceeding.',
 
 	'TRANSLATION'								=> 'Language Pack',
 	'TRANSLATION_VALIDATION'					=> '[phpBB Language Pack-Validation] %1$s %2$s',
@@ -71,8 +71,8 @@ Upon validating your language pack, I regrets to inform you that I have had to [
 To correct the problem(s) with your language pack, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your language pack being denied.
 [*]Please ensure your language pack is up-to-date with the latest version of phpBB (see the [url=https://www.phpbb.com/customise/db/translation/british_english/]Downloads[/url] page).
-[*]Please ensure that you are in compliance with the latest [url=https://www.phpbb.com/community/viewtopic.php?f=79&t=2117453]translation and submission policies and instructions[/url].
-[*]Please ensure that your language pack is working correctly. Therefore please test it elaborately with a suitable phpBB installation. Our [url=https://www.phpbb.com/community/viewtopic.php?f=79&t=2205631]Translation Validator Tool[/url] will help you find bugs on your own.
+[*]Please ensure that you are in compliance with the latest [url=https://area51.phpbb.com/docs/dev/3.2.x/language/guidelines.html]translation and submission policies[/url] and [url=https://www.phpbb.com/community/viewtopic.php?f=79&t=2117453]instructions[/url].
+[*]Please ensure that your language pack is working correctly. Therefore please test it elaborately with a suitable phpBB installation. Our [url=https://github.com/phpbb/phpbb-translation-validator]Translation Validator Tool[/url] will help you find bugs on your own.
 [*]Fix and re-upload your language pack to our Customisation Database.[/list]
 
 Here is a report on why your language pack was denied:

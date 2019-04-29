@@ -1,26 +1,26 @@
 <fieldset class="fields2">
-<!-- IF !S_PLUPLOAD_ENABLED --><!-- DEFINE $UPLOADER_SUFFIX = '_{FORM_NAME}' --><!-- ENDIF -->
-<dl id="attach-panel-basic{$UPLOADER_SUFFIX}">
-	<dt><label>{L_FILENAME}:</label></dt>
+{% if not S_PLUPLOAD_ENABLED %}{% DEFINE UPLOADER_SUFFIX = '_' ~ FORM_NAME %}{% endif %}
+<dl id="attach-panel-basic{{ definition.UPLOADER_SUFFIX }}">
+	<dt><label>{{ lang('FILENAME') ~ lang('COLON') }}</label></dt>
 	<dd>
-		<input type="file" name="{FORM_NAME}" <!-- IF MAX_LENGTH --> maxlength="{MAX_LENGTH}"<!-- ENDIF --> value="" class="inputbox autowidth" />
-		<input type="submit" name="add_file" value="{L_ADD_FILE}" class="button2" onclick="upload = true;" />
+		<input type="file" name="{{ FORM_NAME }}" {% if MAX_LENGTH %} maxlength="{{ MAX_LENGTH }}"{% endif %} value="" class="inputbox autowidth" />
+		<input type="submit" name="add_file" value="{{ lang('ADD_FILE') }}" class="button2" onclick="upload = true;" />
 	</dd>
 </dl>
-<!-- IF S_PLUPLOAD_ENABLED -->
+{% if S_PLUPLOAD_ENABLED %}
 <div id="attach-panel-multi">
-	<input type="button" class="button2" value="{L_PLUPLOAD_ADD_FILES}" id="add_files" />
+	<input type="button" class="button2" value="{{ lang('PLUPLOAD_ADD_FILES') }}" id="add_files" />
 </div>
-<!-- ENDIF -->
-<div id="file-list-container{$UPLOADER_SUFFIX}" class="screenshot-uploader<!-- IF S_SET_CUSTOM_ORDER--> sortable-uploader<!-- ENDIF -->">
-	<div id="file-list{$UPLOADER_SUFFIX}">
-		<!-- IF S_PLUPLOAD_ENABLED -->
+{% endif %}
+<div id="file-list-container{{ definition.UPLOADER_SUFFIX }}" class="screenshot-uploader{% if S_SET_CUSTOM_ORDER%} sortable-uploader{% endif %}">
+	<div id="file-list{{ definition.UPLOADER_SUFFIX }}">
+		{% if S_PLUPLOAD_ENABLED %}
 		<div id="attach-row-tpl" class="attach-row">
 			<div class="file-control">
-				<!-- IF SELECT_PREVIEW -->
-					<span class="file-contrib-preview" style="display: none;" title="{L_SET_PREVIEW_FILE}"></span>
-					<input class="file-contrib-preview-control" type="radio" name="{SELECT_REVIEW_VAR}" value="" style="display: none;" />
-				<!-- ENDIF -->
+				{% if SELECT_PREVIEW %}
+					<span class="file-contrib-preview" style="display: none;" title="{{ lang('SET_PREVIEW_FILE') }}"></span>
+					<input class="file-contrib-preview-control" type="radio" name="{{ SELECT_REVIEW_VAR }}" value="" style="display: none;" />
+				{% endif %}
 				<span class="file-delete item-control-button delete"></span>
 				<span class="file-status"></span>
 			</div>
@@ -30,37 +30,37 @@
 			<span class="file-preview" style="display: none;"></span>
 			<textarea name="comment[]" style="display: none;"></textarea>
 		</div>
-		<!-- ENDIF -->
-		<!-- BEGIN attach_row -->
-		<div class="attach-row" data-attach-id="{attach_row.ATTACH_ID}">
+		{% endif %}
+		{% for attach_row in loops.attach_row %}
+		<div class="attach-row" data-attach-id="{{ attach_row.ATTACH_ID }}">
 			<div class="file-control">
-				<!-- IF SELECT_PREVIEW -->
-					<span class="file-contrib-preview<!-- IF attach_row.S_PREVIEW --> file-contrib-preview-active<!-- ENDIF -->" title="{L_SET_PREVIEW_FILE}"></span>
-				<!-- ENDIF -->
-				<input class="file-contrib-preview-control" type="radio" name="{SELECT_REVIEW_VAR}" value="{attach_row.ATTACH_ID}"<!-- IF attach_row.S_PREVIEW --> checked="checked"<!-- ENDIF --> style="display: none;" />
-				<a href="{attach_row.U_DELETE}" class="file-delete item-control-button delete"></a>
+				{% if SELECT_PREVIEW %}
+					<span class="file-contrib-preview{% if attach_row.S_PREVIEW %} file-contrib-preview-active{% endif %}" title="{{ lang('SET_PREVIEW_FILE') }}"></span>
+				{% endif %}
+				<input class="file-contrib-preview-control" type="radio" name="{{ SELECT_REVIEW_VAR }}" value="{{ attach_row.ATTACH_ID }}"{% if attach_row.S_PREVIEW %} checked="checked"{% endif %} style="display: none;" />
+				<a href="{{ attach_row.U_DELETE }}" class="file-delete item-control-button delete"></a>
 				<span class="file-status file-uploaded"></span>
 			</div>
 			<span class="file-preview">
 
-			<!-- IF attach_row.S_THUMBNAIL -->
-			<a href="{attach_row.U_DOWNLOAD_LINK}" class="screenshot">
-				<img src="{attach_row.THUMB_IMAGE}" alt="{attach_row.FILENAME}" />
+			{% if attach_row.S_THUMBNAIL %}
+			<a href="{{ attach_row.U_DOWNLOAD_LINK }}" class="screenshot">
+				<img src="{{ attach_row.THUMB_IMAGE }}" alt="{{ attach_row.FILENAME }}" />
 			</a>
-			<!-- ENDIF -->
+			{% endif %}
 
-			<!-- IF attach_row.S_IMAGE -->
-				<img class="screenshot" src="{attach_row.U_INLINE_LINK}" alt="{attach_row.FILENAME}" />
-			<!-- ENDIF -->
+			{% if attach_row.S_IMAGE %}
+				<img class="screenshot" src="{{ attach_row.U_INLINE_LINK }}" alt="{{ attach_row.FILENAME }}" />
+			{% endif %}
 			</span>
 			<textarea name="comment[]" style="display: none;"></textarea>
-			{attach_row.S_HIDDEN}
-			<!-- IF S_SET_CUSTOM_ORDER -->
-				<input type="hidden" class="attach_order" name="attach_order[]" value="{attach_row.ATTACH_ID}" />
-			<!-- ENDIF -->
+			{{ attach_row.S_HIDDEN }}
+			{% if S_SET_CUSTOM_ORDER %}
+				<input type="hidden" class="attach_order" name="attach_order[]" value="{{ attach_row.ATTACH_ID }}" />
+			{% endif %}
 		</div>
-		<!-- END attach_row -->
-		<input type="hidden" name="uploader_key" value="{S_UPLOADER_KEY}" />
+		{% endfor %}
+		<input type="hidden" name="uploader_key" value="{{ S_UPLOADER_KEY }}" />
 	</div>
 </div>
 </fieldset>

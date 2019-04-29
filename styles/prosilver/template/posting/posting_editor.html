@@ -1,9 +1,9 @@
 <div class="panel" id="postingbox">
 	<div class="inner">
 
-	<h3>{L_POST_A}</h3>
+	<h3>{{ lang('POST_A') }}</h3>
 
-	<!-- INCLUDE posting/posting_basic_editor.html -->
+	{% INCLUDE '@phpbb_titania/posting/posting_basic_editor.html' %}
 
 	</div>
 </div>
@@ -11,24 +11,24 @@
 <div class="panel bg2">
 	<div class="inner">
 	<fieldset class="submit-buttons">
-		{S_HIDDEN_FIELDS}
-		{S_FORM_TOKEN}
-		<input type="hidden" name="show_panel" value="{POSTING_PANELS_DEFAULT}" />
-		<input type="submit" tabindex="3" name="preview" value="{L_PREVIEW}" class="button1" />&nbsp;
-		<input type="submit" tabindex="4" accesskey="s" name="submit" value="{L_SUBMIT}" class="button1" />&nbsp;
+		{{ S_HIDDEN_FIELDS }}
+		{{ S_FORM_TOKEN }}
+		<input type="hidden" name="show_panel" value="{{ POSTING_PANELS_DEFAULT }}" />
+		<input type="submit" tabindex="3" name="preview" value="{{ lang('PREVIEW') }}" class="button1" />&nbsp;
+		<input type="submit" tabindex="4" accesskey="s" name="submit" value="{{ lang('SUBMIT') }}" class="button1" />&nbsp;
 	</fieldset>
 
 	</div>
 </div>
 
-<div id="tabs" class="sub-panels tabs" data-show-panel="{POSTING_PANELS_DEFAULT}">
+<div id="tabs" class="sub-panels tabs" data-show-panel="{{ POSTING_PANELS_DEFAULT }}">
 	<ul>
-		<!-- BEGIN panels -->
-			<li id="{panels.NAME}-tab" class="activetab tab"><a href="#tabs" data-subpanel="{panels.NAME}">{panels.TITLE}</a></li>
-		<!-- END panels -->
+		{% for panels in loops.panels %}
+			<li id="{{ panels.NAME }}-tab" class="activetab tab"><a href="#tabs" data-subpanel="{{ panels.NAME }}">{{ panels.TITLE }}</a></li>
+		{% endfor %}
 	</ul>
 </div>
 
-<!-- BEGIN panels -->
-	{panels.OUTPUT}
-<!-- END panels -->
+{% for panels in loops.panels %}
+	{{ panels.OUTPUT }}
+{% endfor %}

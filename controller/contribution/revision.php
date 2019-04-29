@@ -243,6 +243,7 @@ class revision extends base
 			$message = $this->get_message();
 			$message->display();
 		}
+
 		$error = array();
 
 		if ($this->request->is_set_post('new_revision'))

@@ -1,16 +1,16 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 <div class="panel">
 	<div class="inner">
-		<h3>{L_QUEUE_STATS}</h3>
+		<h3>{{ lang('QUEUE_STATS') }}</h3>
 			<div class="content" id="queue-stat-info">
 				<ul>
-					<li>{NUM_REVISIONS_IN_QUEUE}</li>
-					<!-- IF S_QUEUE_ACTIVE -->
-					<li>{AVG_CURRENT_QUEUE_WAIT}</li>
-					<li>{OLDEST_UNVALIDATED_REV}</li>
-					<!-- ENDIF -->
-					<li>{AVG_PAST_VALIDATION_TIME}</li>
-					<li>{SINCE_X_VALIDATED_REVS}</li>
+					<li>{{ NUM_REVISIONS_IN_QUEUE }}</li>
+					{% if S_QUEUE_ACTIVE %}
+					<li>{{ AVG_CURRENT_QUEUE_WAIT }}</li>
+					<li>{{ OLDEST_UNVALIDATED_REV }}</li>
+					{% endif %}
+					<li>{{ AVG_PAST_VALIDATION_TIME }}</li>
+					<li>{{ SINCE_X_VALIDATED_REVS }}</li>
 				</ul>
 			</div>
 	</div>
@@ -18,11 +18,11 @@
 
 <div class="panel">
 	<div class="inner">
-		<h3>{L_APPROVAL_DENIAL_RATE}</h3>
+		<h3>{{ lang('APPROVAL_DENIAL_RATE') }}</h3>
 		<div class="queue-statistics-box">
 			<div class="stat-ratio">
-				<!-- IF APPROVED_RATIO --><span class="stat-approved" style="width: {APPROVED_RATIO}%">{APPROVED_RATIO}%</span><!-- ENDIF -->
-				<!-- IF DENIED_RATIO --><span class="stat-denied" style="width: {DENIED_RATIO}%">{DENIED_RATIO}%</span><!-- ENDIF -->
+				{% if APPROVED_RATIO %}<span class="stat-approved" style="width: {{ APPROVED_RATIO }}%">{{ APPROVED_RATIO }}%</span>{% endif %}
+				{% if DENIED_RATIO %}<span class="stat-denied" style="width: {{ DENIED_RATIO }}%">{{ DENIED_RATIO }}%</span>{% endif %}
 			</div>
 		</div>
 	</div>
@@ -30,52 +30,52 @@
 
 <div class="panel">
 	<div class="inner">
-		<h3>{L_QUEUE_ACTIVITY_30_DAYS}</h3>
-		<!-- IF .dayrow -->
+		<h3>{{ lang('QUEUE_ACTIVITY_30_DAYS') }}</h3>
+		{% if loops.dayrow|length %}
 		<div class="queue-statistics-box">
 			<div id="queue-activity">
-			<!-- BEGIN dayrow -->
-				<div class="stat-day" title="{dayrow.MONTH}/{dayrow.DAY}">
-					<span style="height: {dayrow.REMAINDER_PCT}%; margin-top: {dayrow.PIXEL_OFFSET}px;"></span>
-					<!-- IF dayrow.NEW_CNT -->
-						<span class="stat-new fade" style="height: {dayrow.NEW_PCT}%" title="{L_REVISION_NEW}: {dayrow.NEW_CNT}">
-						<!-- IF dayrow.NEW_PCT > 7 --><strong>{dayrow.NEW_CNT}</strong><!-- ENDIF -->
+			{% for dayrow in loops.dayrow %}
+				<div class="stat-day" title="{{ dayrow.MONTH }}/{{ dayrow.DAY }}">
+					<span style="height: {{ dayrow.REMAINDER_PCT }}%; margin-top: {{ dayrow.PIXEL_OFFSET }}px;"></span>
+					{% if dayrow.NEW_CNT %}
+						<span class="stat-new fade" style="height: {{ dayrow.NEW_PCT }}%" title="{{ lang('REVISION_NEW') ~ lang('COLON') }} {{ dayrow.NEW_CNT }}">
+						{% if dayrow.NEW_PCT > 7 %}<strong>{{ dayrow.NEW_CNT }}</strong>{% endif %}
 						</span>
-					<!-- ENDIF -->
-					<!-- IF dayrow.DENIED_CNT -->
-						<span class="stat-denied fade" style="height: {dayrow.DENIED_PCT}%" title="{L_REVISION_DENIED}: {dayrow.DENIED_CNT}">
-						<!-- IF dayrow.DENIED_PCT > 7 --><strong>{dayrow.DENIED_CNT}</strong><!-- ENDIF -->
+					{% endif %}
+					{% if dayrow.DENIED_CNT %}
+						<span class="stat-denied fade" style="height: {{ dayrow.DENIED_PCT }}%" title="{{ lang('REVISION_DENIED') ~ lang('COLON') }} {{ dayrow.DENIED_CNT }}">
+						{% if dayrow.DENIED_PCT > 7 %}<strong>{{ dayrow.DENIED_CNT }}</strong>{% endif %}
 						</span>
-						<!-- ENDIF -->
-					<!-- IF dayrow.APPROVED_CNT -->
-						<span class="stat-approved fade" style="height: {dayrow.APPROVED_PCT}%" title="{L_REVISION_APPROVED}: {dayrow.APPROVED_CNT}">
-						<!-- IF dayrow.APPROVED_PCT > 7 --><strong>{dayrow.APPROVED_CNT}</strong><!-- ENDIF -->
+						{% endif %}
+					{% if dayrow.APPROVED_CNT %}
+						<span class="stat-approved fade" style="height: {{ dayrow.APPROVED_PCT }}%" title="{{ lang('REVISION_APPROVED') ~ lang('COLON') }} {{ dayrow.APPROVED_CNT }}">
+						{% if dayrow.APPROVED_PCT > 7 %}<strong>{{ dayrow.APPROVED_CNT }}</strong>{% endif %}
 						</span>
-					<!-- ENDIF -->
+					{% endif %}
 				</div>
-			<!-- END dayrow -->
+			{% endfor %}
 			</div>
 			<div class="day-list">
-			<!-- BEGIN dayrow -->
+			{% for dayrow in loops.dayrow %}
 				<span>
 					<span class="pip"></span>
-					<!-- IF (dayrow.S_FIRST_ROW or dayrow.S_LAST_ROW and (dayrow.DAY % 7) >= 3 ) or (dayrow.DAY % 7) == 0 or dayrow.MONTH_SWITCH-->
-					<span class="day-list-date">{dayrow.MONTH}/{dayrow.DAY}</span>
-					<!-- ELSE -->&nbsp;<!-- ENDIF -->
+					{% if (dayrow.S_FIRST_ROW or dayrow.S_LAST_ROW and (dayrow.DAY % 7) >= 3 ) or (dayrow.DAY % 7) == 0 or dayrow.MONTH_SWITCH%}
+					<span class="day-list-date">{{ dayrow.MONTH }}/{{ dayrow.DAY }}</span>
+					{% else %}&nbsp;{% endif %}
 				</span>
-			<!-- END dayrow -->
+			{% endfor %}
 			</div>
 		</div>
 		<div class="queue-statistics-box">
 			<p>
-				<span class="legend stat-new"></span> {L_REVISION_NEW}
-				<span class="legend stat-denied"></span> {L_REVISION_DENIED}
-				<span class="legend stat-approved"></span> {L_REVISION_APPROVED}
+				<span class="legend stat-new"></span> {{ lang('REVISION_NEW') }}
+				<span class="legend stat-denied"></span> {{ lang('REVISION_DENIED') }}
+				<span class="legend stat-approved"></span> {{ lang('REVISION_APPROVED') }}
 			</p>
 		</div>
-		<!-- ELSE -->
-			<p>{L_NO_QUEUE_ACTIVITY}</p>
-		<!-- ENDIF -->
+		{% else %}
+			<p>{{ lang('NO_QUEUE_ACTIVITY') }}</p>
+		{% endif %}
 	</div>
 </div>
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

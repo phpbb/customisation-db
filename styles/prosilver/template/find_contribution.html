@@ -1,49 +1,49 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<h2 class="solo">{L_SEARCH}</h2>
+<h2 class="solo">{{ lang('SEARCH') }}</h2>
 
-<form method="get" action="{S_SEARCH_ACTION}">
+<form method="get" action="{{ S_SEARCH_ACTION }}">
 
 <div class="panel">
 	<div class="inner">
-	<h3>{L_SEARCH_QUERY}</h3>
+	<h3>{{ lang('SEARCH_QUERY') }}</h3>
 
 	<fieldset>
 	<dl>
-		<dt><label for="keywords">{L_SEARCH_KEYWORDS}:</label><br /><span>{L_SEARCH_KEYWORDS_EXPLAIN}</span></dt>
-		<dd><input type="text" class="inputbox" name="keywords" id="keywords" size="40" title="{L_SEARCH_KEYWORDS}" /></dd>
-		<!--<dd><label for="terms1"><input type="radio" name="terms" id="terms1" value="all" checked="checked" /> {L_SEARCH_ALL_TERMS}</label></dd>
-		<dd><label for="terms2"><input type="radio" name="terms" id="terms2" value="any" /> {L_SEARCH_ANY_TERMS}</label></dd>-->
+		<dt><label for="keywords">{{ lang('SEARCH_KEYWORDS') ~ lang('COLON') }}</label><br /><span>{{ lang('SEARCH_KEYWORDS_EXPLAIN') }}</span></dt>
+		<dd><input type="text" class="inputbox" name="keywords" id="keywords" size="40" title="{{ lang('SEARCH_KEYWORDS') }}" /></dd>
+		{#<dd><label for="terms1"><input type="radio" name="terms" id="terms1" value="all" checked="checked" /> {{ lang('SEARCH_ALL_TERMS') }}</label></dd>
+		<dd><label for="terms2"><input type="radio" name="terms" id="terms2" value="any" /> {{ lang('SEARCH_ANY_TERMS') }}</label></dd>#}
 	</dl>
 	<dl>
-		<dt><label for="author">{L_SEARCH_AUTHOR}:</label><!--<br /><span>{L_SEARCH_AUTHOR_EXPLAIN}</span>--></dt>
-		<dd><input type="text" class="inputbox" name="author" id="author" size="40" title="{L_SEARCH_AUTHOR}" /></dd>
+		<dt><label for="author">{{ lang('SEARCH_AUTHOR') ~ lang('COLON') }}</label></dt>
+		<dd><input type="text" class="inputbox" name="author" id="author" size="40" title="{{ lang('SEARCH_AUTHOR') }}" /></dd>
 	</dl>
 	<dl>
-		<dt><label for="contrib_category">{L_CONTRIB_CATEGORY}:</label><br /><span>{L_MULTI_SELECT_EXPLAIN}</span></dt>
+		<dt><label for="contrib_category">{{ lang('CONTRIB_CATEGORY') ~ lang('COLON') }}</label><br /><span>{{ lang('MULTI_SELECT_EXPLAIN') }}</span></dt>
 		<dd>
 			<select name="c[]" id="contrib_category" multiple="multiple" size="5">
-				<!-- BEGIN category_select -->
-				<option class="type_{category_select.TYPE}" value="{category_select.VALUE}"<!-- IF category_select.S_SELECTED --> selected="selected"<!-- ENDIF --><!-- IF category_select.S_DISABLED --> disabled="disabled"<!-- ENDIF -->>
-					<!-- BEGIN level -->&nbsp; &nbsp;<!-- END level -->{category_select.NAME}
+				{% for category_select in loops.category_select %}
+				<option class="type_{{ category_select.TYPE }}" value="{{ category_select.VALUE }}"{% if category_select.S_SELECTED %} selected="selected"{% endif %}{% if category_select.S_DISABLED %} disabled="disabled"{% endif %}>
+					{% for level in category_select.level %}&nbsp; &nbsp;{% endfor %}{{ category_select.NAME }}
 				</option>
-				<!-- END category_select -->
+				{% endfor %}
 			</select>
 		</dd>
 	</dl>
 	<dl>
-		<dt><label for="search_child1">{L_SEARCH_SUBCATEGORIES}:</label></dt>
+		<dt><label for="search_child1">{{ lang('SEARCH_SUBCATEGORIES') ~ lang('COLON') }}</label></dt>
 		<dd>
-			<label for="search_child1"><input type="radio" name="sc" id="search_child1" value="1" checked="checked" /> {L_YES}</label>
-			<label for="search_child2"><input type="radio" name="sc" id="search_child2" value="0" /> {L_NO}</label>
+			<label for="search_child1"><input type="radio" name="sc" id="search_child1" value="1" checked="checked" /> {{ lang('YES') }}</label>
+			<label for="search_child2"><input type="radio" name="sc" id="search_child2" value="0" /> {{ lang('NO') }}</label>
 		</dd>
 	</dl>
 	<dl>
-		<dt><label for="versions">{L_PHPBB_VERSION}:</label></dt>
+		<dt><label for="versions">{{ lang('PHPBB_VERSION') ~ lang('COLON') }}</label></dt>
 		<dd><select name="versions[]" multiple="multiple" size="5">
-			<!-- BEGIN phpbb_versions -->
-				<option value="{phpbb_versions.VERSION}"<!-- IF phpbb_versions.S_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_versions.VERSION}</option>
-			<!-- END phpbb_versions -->
+			{% for phpbb_versions in loops.phpbb_versions %}
+				<option value="{{ phpbb_versions.VERSION }}"{% if phpbb_versions.S_SELECTED %} selected="selected"{% endif %}>{{ phpbb_versions.VERSION }}</option>
+			{% endfor %}
 		</select></dd>
 	</dl>
 	</fieldset>
@@ -54,14 +54,14 @@
 <div class="panel bg2">
 	<div class="inner">
 
-	<h3>{L_SEARCH_OPTIONS}</h3>
+	<h3>{{ lang('SEARCH_OPTIONS') }}</h3>
 
 	<fieldset>
 	<dl>
-		<dt><label for="sf1">{L_SEARCH_WITHIN}:</label></dt>
-		<dd><label for="sf1"><input type="radio" name="sf" id="sf1" value="" checked="checked" /> {L_CONTRIB_NAME_DESCRIPTION}</label></dd>
-		<dd><label for="sf2"><input type="radio" name="sf" id="sf2" value="msgonly" /> {L_CONTRIB_DESCRIPTION}</label></dd>
-		<dd><label for="sf3"><input type="radio" name="sf" id="sf3" value="titleonly" /> {L_CONTRIB_NAME}</label></dd>
+		<dt><label for="sf1">{{ lang('SEARCH_WITHIN') ~ lang('COLON') }}</label></dt>
+		<dd><label for="sf1"><input type="radio" name="sf" id="sf1" value="" checked="checked" /> {{ lang('CONTRIB_NAME_DESCRIPTION') }}</label></dd>
+		<dd><label for="sf2"><input type="radio" name="sf" id="sf2" value="msgonly" /> {{ lang('CONTRIB_DESCRIPTION') }}</label></dd>
+		<dd><label for="sf3"><input type="radio" name="sf" id="sf3" value="titleonly" /> {{ lang('CONTRIB_NAME') }}</label></dd>
 	</dl>
 	</fieldset>
 
@@ -72,8 +72,8 @@
 	<div class="inner">
 
 	<fieldset class="submit-buttons">
-		{S_HIDDEN_FIELDS}<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
-		<input type="submit" name="submit" value="{L_SEARCH}" class="button1" />
+		{{ S_HIDDEN_FIELDS }}<input type="reset" value="{{ lang('RESET') }}" name="reset" class="button2" />&nbsp;
+		<input type="submit" name="submit" value="{{ lang('SEARCH') }}" class="button1" />
 	</fieldset>
 
 	</div>
@@ -81,4 +81,4 @@
 
 </form>
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

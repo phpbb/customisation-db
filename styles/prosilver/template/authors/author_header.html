@@ -1,13 +1,13 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<h2 class="panel-name">{L_AUTHOR_PROFILE} - {USERNAME}</h2>
+<h2 class="panel-name">{{ lang('AUTHOR_PROFILE') }} - {{ USERNAME }}</h2>
 <div id="tabs" class="tabs">
 	<ul>
-	<!-- BEGIN nav_menu -->
-		<li class="tab<!-- IF nav_menu.S_SELECTED --> activetab<!-- ENDIF -->">
-			<a href="{nav_menu.U_TITLE}">{nav_menu.L_TITLE}</a>
+	{% for nav_menu in loops.nav_menu %}
+		<li class="tab{% if nav_menu.S_SELECTED %} activetab{% endif %}">
+			<a href="{{ nav_menu.U_TITLE }}">{{ nav_menu.L_TITLE }}</a>
 		</li>
-	<!-- END nav_menu -->
+	{% endfor %}
 	</ul>
 </div>
 

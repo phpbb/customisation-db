@@ -1,40 +1,40 @@
-<!-- INCLUDE manage/manage_header.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_header.html' %}
 
-<!-- IF S_ERROR -->
+{% if S_ERROR %}
 	<div class="errorbox">
-		<h3>{L_WARNING}</h3>
-		<p>{ERROR_MSG}</p>
+		<h3>{{ lang('WARNING') }}</h3>
+		<p>{{ ERROR_MSG }}</p>
 	</div>
-<!-- ENDIF -->
+{% endif %}
 
-<form id="stk" method="post" action="{S_ACTION}" name="support_tool_kit" autocomplete="off">
+<form id="stk" method="post" action="{{ S_ACTION }}" name="support_tool_kit" autocomplete="off">
 
-	<!-- BEGIN options -->
-		<!-- IF options.S_LEGEND or options.S_FIRST_ROW -->
-			<!-- IF not options.S_FIRST_ROW -->
+	{% for options in loops.options %}
+		{% if options.S_LEGEND or options.S_FIRST_ROW %}
+			{% if not options.S_FIRST_ROW %}
 				</fieldset>
-			<!-- ENDIF -->
+			{% endif %}
 			<fieldset>
-				<legend>{options.LEGEND}</legend>
-		<!-- ENDIF -->
+				<legend>{{ options.LEGEND }}</legend>
+		{% endif %}
 
-		<!-- IF not options.S_LEGEND-->
+		{% if not options.S_LEGEND%}
 			<dl>
-				<dt><label for="{options.KEY}">{options.TITLE}:</label><!-- IF options.S_EXPLAIN --><br /><span>{options.TITLE_EXPLAIN}</span><!-- ENDIF --></dt>
-				<dd>{options.CONTENT}</dd>
-				<!-- IF options.S_FIND_USER --><dd>[ <a href="{options.U_FIND_USER}" onclick="find_username(this.href); return false;">{L_FIND_USERNAME}</a> ]</dd><!-- ENDIF -->
+				<dt><label for="{{ options.KEY }}">{{ options.TITLE ~ lang('COLON') }}</label>{% if options.S_EXPLAIN %}<br /><span>{{ options.TITLE_EXPLAIN }}</span>{% endif %}</dt>
+				<dd>{{ options.CONTENT }}</dd>
+				{% if options.S_FIND_USER %}<dd>[ <a href="{{ options.U_FIND_USER }}" onclick="find_username(this.href); return false;">{{ lang('FIND_USERNAME') }}</a> ]</dd>{% endif %}
 			</dl>
 
-		<!-- ENDIF -->
-	<!-- END options -->
+		{% endif %}
+	{% endfor %}
 
 	<p class="submit-buttons">
-		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
-		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
 	</p>
-	{S_HIDDEN_FIELDS}
-	{S_FORM_TOKEN}
+	{{ S_HIDDEN_FIELDS }}
+	{{ S_FORM_TOKEN }}
 </fieldset>
 </form>
 
-<!-- INCLUDE manage/manage_footer.html -->
+{% INCLUDE '@phpbb_titania/manage/manage_footer.html' %}

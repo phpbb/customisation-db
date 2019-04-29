@@ -1,11 +1,11 @@
-<form method="post" action="{U_QR_ACTION}"  data-ajax="titania.quick_edit.submit" data-filter="titania.quickEditSubmitFilter">
-	<label for="subject">{L_SUBJECT}:</label><input type="text" class="inputbox autowidth" value="{SUBJECT}" tabindex="1" maxlength="60" size="45" id="subject" name="subject"><br /><br />
-	<textarea name="message" class="inputbox quickedit elastic">{MESSAGE}</textarea>
+<form method="post" action="{{ U_QR_ACTION }}"  data-ajax="titania.quick_edit.submit" data-filter="titania.quickEditSubmitFilter">
+	<label for="subject">{{ lang('SUBJECT') ~ lang('COLON') }}</label><input type="text" class="inputbox autowidth" value="{{ SUBJECT }}" tabindex="1" maxlength="60" size="45" id="subject" name="subject"><br /><br />
+	<textarea name="message" class="inputbox quickedit elastic">{{ MESSAGE }}</textarea>
 	<fieldset class="submit-buttons">
-		{S_FORM_TOKEN}
-		{QR_HIDDEN_FIELDS}
-		<input type="submit" accesskey="f" name="full_editor" value="{L_FULL_EDITOR}" class="button2" />&nbsp;
-		<input type="submit" accesskey="s" name="submit" value="{L_SUBMIT}" class="button1" />&nbsp;
-		<input type="submit" id="cancel" name="cancel" value="{L_CANCEL}" class="button2" />&nbsp;
+		{{ S_FORM_TOKEN }}
+		{{ QR_HIDDEN_FIELDS }}
+		<input type="submit" accesskey="f" name="full_editor" value="{{ lang('FULL_EDITOR') }}" class="button2" />&nbsp;
+		<input type="submit" accesskey="s" name="submit" value="{{ lang('SUBMIT') }}" class="button1" />&nbsp;
+		<input type="submit" id="cancel" name="cancel" value="{{ lang('CANCEL') }}" class="button2" />&nbsp;
 	</fieldset>
 </form>
