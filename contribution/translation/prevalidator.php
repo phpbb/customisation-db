@@ -81,7 +81,7 @@ class prevalidator
 			->in($this->get_helper()->get_root_path() . self::LANGUAGE_PACKAGES)
 			->name(self::BRITISH_ENGLISH . '*');
 
-		if ($finder->hasResults())
+		if (iterator_count($finder) > 0)
 		{
 			$latest = ['name' => '', 'x' => 0, 'y' => 0, 'z' => 0];
 

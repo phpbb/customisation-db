@@ -63,7 +63,7 @@
     "require": {
         "php": ">=5.3.3",
         "phpbb/epv": "dev-master@dev",
-        "phpbb/translation-validator": "~1.5",
+        "phpbb/translation-validator": "dev-symfony-2.8@dev",
         "composer/installers": "~1.0",
         "battye/php-array-parser": "~1.0"
     },
