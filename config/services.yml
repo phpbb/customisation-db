@@ -469,6 +469,7 @@ services:
          arguments:
              - '@user'
              - '@phpbb.titania.contribution.prevalidator_helper'
+             - '@language'
 
     phpbb.titania.translation.type:
         class: phpbb\titania\contribution\translation\type

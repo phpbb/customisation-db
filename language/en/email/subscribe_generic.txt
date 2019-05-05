@@ -1,5 +1,5 @@
-Subject: {SUBJECT}
+Subject: {{ SUBJECT }}
 
-{MESSAGE}
+{{ MESSAGE }}
 
-{EMAIL_SIG}
+{{ EMAIL_SIG }}

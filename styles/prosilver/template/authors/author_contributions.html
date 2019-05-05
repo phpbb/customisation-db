@@ -1,22 +1,22 @@
-<!-- INCLUDE authors/author_header.html -->
+{% INCLUDE '@phpbb_titania/authors/author_header.html' %}
 
 
-<h3 class="section-name">{PAGE_TITLE}</h3>
+<h3 class="section-name">{{ PAGE_TITLE }}</h3>
 
 <div class="container">
 	<div class="inner">
 		<div class="contrib-list-container author-contribs">
 			<div class="action-bar top">
-				<!-- INCLUDE common/pagination.html -->
+				{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 			</div>
 
-			<!-- INCLUDE common/contribution_list.html -->
+			{% INCLUDE '@phpbb_titania/common/contribution_list.html' %}
 
 			<div class="action-bar bottom">
-				<!-- INCLUDE common/pagination.html -->
+				{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 			</div>
 		</div>
 	</div>
 </div>
 
-<!-- INCLUDE authors/author_footer.html -->
+{% INCLUDE '@phpbb_titania/authors/author_footer.html' %}

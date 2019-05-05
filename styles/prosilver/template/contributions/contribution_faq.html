@@ -1,143 +1,143 @@
-<!-- INCLUDE contributions/contribution_header.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_header.html' %}
 
-<h3 class="section-name">{L_FAQ_EXPANDED}</h3>
+<h3 class="section-name">{{ lang('FAQ_EXPANDED') }}</h3>
 
-<!-- IF S_LIST -->
+{% if S_LIST %}
 	<div class="container" id="faqlist">
 		<div class="inner">
-			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
+			{% if (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) %}
 			<div class="action-bar">
-				<!-- IF U_CREATE_FAQ -->
-					<a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}" class="button">
-						<span>{L_CREATE_FAQ}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
+				{% if U_CREATE_FAQ %}
+					<a href="{{ U_CREATE_FAQ }}" title="{{ lang('CREATE_FAQ') }}" class="button">
+						<span>{{ lang('CREATE_FAQ') }}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
 					</a>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<!-- IF PAGINATION or TOTAL_POSTS -->
+				{% if PAGINATION or TOTAL_POSTS %}
 					<div class="pagination">
-						<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+						{% if PAGE_NUMBER %}{% if PAGINATION %}<a href="#" onclick="jumpto(); return false;" title="{{ lang('JUMP_TO_PAGE') }}">{{ PAGE_NUMBER }}</a> &bull; <span>{{ PAGINATION }}</span>{% else %} &bull; {{ PAGE_NUMBER }}{% endif %}{% endif %}
 					</div>
-				<!-- ENDIF -->
+				{% endif %}
 			</div>
-			<!-- ENDIF -->
+			{% endif %}
 
-			<!-- BEGIN faqlist -->
-			<!-- IF faqlist.S_FIRST_ROW -->
+			{% for faqlist in loops.faqlist %}
+			{% if faqlist.S_FIRST_ROW %}
 			<ul class="topiclist simple two-long-columns">
 				<li class="header">
 					<dl class="row-item">
-						<dt>{L_QUESTIONS}</dt>
+						<dt>{{ lang('QUESTIONS') }}</dt>
 						<dd></dd>
 					</dl>
 				</li>
 			</ul>
 			<ul class="topiclist cplist two-long-columns responsive-show-all">
-			<!-- ENDIF -->
-				<li class="row<!-- IF faqlist.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
-					<dl class="row-item {faqlist.FOLDER_STYLE}">
+			{% endif %}
+				<li class="row{% if faqlist.S_ROW_COUNT is even %} bg1{% else %} bg2{% endif %}">
+					<dl class="row-item {{ faqlist.FOLDER_STYLE }}">
 						<dt>
 							<div class="list-inner">
-							<!-- IF faqlist.S_ACCESS_TEAMS -->
-							<img src="{T_TITANIA_THEME_PATH}/images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
-							<!-- ELSEIF faqlist.S_ACCESS_AUTHORS -->
-							<img src="{T_TITANIA_THEME_PATH}/images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
-							<!-- ENDIF -->
-							<a href="{faqlist.U_FAQ}" class="topictitle">{faqlist.SUBJECT}</a>
+							{% if faqlist.S_ACCESS_TEAMS %}
+							<img src="{{ T_TITANIA_THEME_PATH }}/images/icon_access_teams.png" class="icon" alt="{{ lang('ACCESS_LIMIT_TEAMS') }}" title="{{ lang('ACCESS_LIMIT_TEAMS') }}" />
+							{% elseif faqlist.S_ACCESS_AUTHORS %}
+							<img src="{{ T_TITANIA_THEME_PATH }}/images/icon_access_author.png" class="icon" alt="{{ lang('ACCESS_LIMIT_AUTHORS') }}" title="{{ lang('ACCESS_LIMIT_AUTHORS') }}" />
+							{% endif %}
+							<a href="{{ faqlist.U_FAQ }}" class="topictitle">{{ faqlist.SUBJECT }}</a>
 							</div>
 						</dt>
 						<dd class="faq-tools">
-							<!-- IF faqlist.U_MOVE_UP -->
-								<!-- IF faqlist.S_FIRST_ROW && not faqlist.S_LAST_ROW -->
+							{% if faqlist.U_MOVE_UP %}
+								{% if faqlist.S_FIRST_ROW and not faqlist.S_LAST_ROW %}
 									<span class="item-control-button move-up-disabled"></span>
-									<a href="{faqlist.U_MOVE_DOWN}" class="item-control-button move-down"></a>
-								<!-- ELSEIF not faqlist.S_FIRST_ROW && not faqlist.S_LAST_ROW -->
-									<a href="{faqlist.U_MOVE_UP}" class="item-control-button move-up"></a>
-									<a href="{faqlist.U_MOVE_DOWN}" class="item-control-button move-down"></a>
-								<!-- ELSEIF faqlist.S_LAST_ROW && not faqlist.S_FIRST_ROW -->
-									<a href="{faqlist.U_MOVE_UP}" class="item-control-button move-up"></a>
+									<a href="{{ faqlist.U_MOVE_DOWN }}" class="item-control-button move-down"></a>
+								{% elseif not faqlist.S_FIRST_ROW and not faqlist.S_LAST_ROW %}
+									<a href="{{ faqlist.U_MOVE_UP }}" class="item-control-button move-up"></a>
+									<a href="{{ faqlist.U_MOVE_DOWN }}" class="item-control-button move-down"></a>
+								{% elseif faqlist.S_LAST_ROW and not faqlist.S_FIRST_ROW %}
+									<a href="{{ faqlist.U_MOVE_UP }}" class="item-control-button move-up"></a>
 									<span class="item-control-button move-down-disabled"></span>
-								<!-- ELSE -->
+								{% else %}
 									<span class="item-control-button move-up-disabled"></span>
 									<span class="item-control-button move-down-disabled"></span>
-								<!-- ENDIF -->
-							<!-- ENDIF -->
-							<!-- IF faqlist.U_EDIT -->
-								<a href="{faqlist.U_EDIT}" class="item-control-button edit"></a>
-							<!-- ENDIF -->
-							<!-- IF faqlist.U_DELETE -->
-								<a href="{faqlist.U_DELETE}" class="item-control-button delete"></a>
-							<!-- ENDIF -->
+								{% endif %}
+							{% endif %}
+							{% if faqlist.U_EDIT %}
+								<a href="{{ faqlist.U_EDIT }}" class="item-control-button edit"></a>
+							{% endif %}
+							{% if faqlist.U_DELETE %}
+								<a href="{{ faqlist.U_DELETE }}" class="item-control-button delete"></a>
+							{% endif %}
 						</dd>
 					</dl>
 				</li>
-			<!-- IF faqlist.S_LAST_ROW --></ul><!-- ENDIF -->
-			<!-- BEGINELSE -->
+			{% if faqlist.S_LAST_ROW %}</ul>{% endif %}
+			{% else %}
 			<div class="panel">
 				<div class="inner">
-					<strong>{L_NO_FAQ}</strong>
+					<strong>{{ lang('NO_FAQ') }}</strong>
 				</div>
 			</div>
-			<!-- END faqlist -->
+			{% endfor %}
 
-			<!-- IF (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) -->
+			{% if (U_CREATE_FAQ or PAGINATION or TOTAL_POSTS) %}
 			<div class="action-bar">
-				<!-- IF U_CREATE_FAQ -->
-					<a href="{U_CREATE_FAQ}" title="{L_CREATE_FAQ}" class="button">
-						<span>{L_CREATE_FAQ}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
+				{% if U_CREATE_FAQ %}
+					<a href="{{ U_CREATE_FAQ }}" title="{{ lang('CREATE_FAQ') }}" class="button">
+						<span>{{ lang('CREATE_FAQ') }}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
 					</a>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<!-- IF PAGINATION or TOTAL_POSTS -->
+				{% if PAGINATION or TOTAL_POSTS %}
 					<div class="pagination">
-						<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --><a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+						{% if PAGE_NUMBER %}{% if PAGINATION %}<a href="#" onclick="jumpto(); return false;" title="{{ lang('JUMP_TO_PAGE') }}">{{ PAGE_NUMBER }}</a> &bull; <span>{{ PAGINATION }}</span>{% else %} &bull; {{ PAGE_NUMBER }}{% endif %}{% endif %}
 					</div>
-				<!-- ENDIF -->
+				{% endif %}
 			</div>
-			<!-- ENDIF -->
+			{% endif %}
 
 		</div>
 	</div>
-<!-- ELSEIF S_DETAILS -->
-	<div id="p{posts.POST_ID}" class="post container">
+{% elseif S_DETAILS %}
+	<div id="p{{ posts.POST_ID }}" class="post container">
 		<div class="inner">
 			<div class="postbody full">
-				<h3>{FAQ_SUBJECT}
-				<!-- IF S_ACCESS_TEAMS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_teams.png" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
-				<!-- ELSEIF S_ACCESS_AUTHORS--><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_author.png" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" /><!-- ENDIF --></h3>
+				<h3>{{ FAQ_SUBJECT }}
+				{% if S_ACCESS_TEAMS %}<img src="{{ T_TITANIA_THEME_PATH }}/{{ S_USER_LANG }}/icon_access_teams.png" alt="{{ lang('ACCESS_LIMIT_TEAMS') }}" title="{{ lang('ACCESS_LIMIT_TEAMS') }}" />
+				{% elseif S_ACCESS_AUTHORS%}<img src="{{ T_TITANIA_THEME_PATH }}/{{ S_USER_LANG }}/icon_access_author.png" alt="{{ lang('ACCESS_LIMIT_AUTHORS') }}" title="{{ lang('ACCESS_LIMIT_AUTHORS') }}" />{% endif %}</h3>
 
-				<div class="content">{FAQ_TEXT}</div>
+				<div class="content">{{ FAQ_TEXT }}</div>
 
-				<!-- IF .attachment -->
+				{% if loops.attachment|length %}
 					<dl class="attachbox">
-						<dt>{L_ATTACHMENTS}</dt>
-						<!-- BEGIN attachment -->
-							<dd>{attachment.DISPLAY_ATTACHMENT}</dd>
-						<!-- END attachment -->
+						<dt>{{ lang('ATTACHMENTS') }}</dt>
+						{% for attachment in loops.attachment %}
+							<dd>{{ attachment.DISPLAY_ATTACHMENT }}</dd>
+						{% endfor %}
 					</dl>
-				<!-- ENDIF -->
+				{% endif %}
 			</div>
 
 			<div class="back2top">
-				<a href="#wrap" class="top" title="{L_BACK_TO_TOP}">
+				<a href="#wrap" class="top" title="{{ lang('BACK_TO_TOP') }}">
 					<i class="icon fa-chevron-circle-up fa-fw icon-gray" aria-hidden="true"></i>
-					<span class="sr-only">{L_BACK_TO_TOP}</span>
+					<span class="sr-only">{{ lang('BACK_TO_TOP') }}</span>
 				</a>
 			</div>
 		</div>
 	</div>
-<!-- ELSEIF S_EDIT -->
-	<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+{% elseif S_EDIT %}
+	{% if ERROR_MSG %}<p class="error">{{ ERROR_MSG }}</p>{% endif %}
 
 	<div class="container">
 		<div class="inner">
-			<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
-				<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
+			<form id="{{ POSTING_FORM_NAME }}" method="post" action="{{ S_POST_ACTION }}" {{ S_FORM_ENCTYPE }}>
+				{% if S_DISPLAY_PREVIEW %}{% INCLUDE '@phpbb_titania/posting/posting_preview.html' %}{% endif %}
 
-				<!-- INCLUDE posting/posting_editor.html -->
+				{% INCLUDE '@phpbb_titania/posting/posting_editor.html' %}
 			</form>
 		</div>
 	</div>
-<!-- ENDIF -->
+{% endif %}
 
 
-<!-- INCLUDE contributions/contribution_footer.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_footer.html' %}

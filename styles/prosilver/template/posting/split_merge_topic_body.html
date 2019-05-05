@@ -1,32 +1,32 @@
-<!-- INCLUDE contributions/contribution_header.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_header.html' %}
 
-<h3 class="section-name"><!-- IF S_SPLIT -->{L_SPLIT_TOPIC}<!-- ELSE -->{L_MERGE_POSTS}<!-- ENDIF --> - {TOPIC_SUBJECT}</h3>
-<form action="{S_FORM_ACTION}" method="post">
+<h3 class="section-name">{% if S_SPLIT %}{{ lang('SPLIT_TOPIC') }}{% else %}{{ lang('MERGE_POSTS') }}{% endif %} - {{ TOPIC_SUBJECT }}</h3>
+<form action="{{ S_FORM_ACTION }}" method="post">
 <div class="container">
 	<div class="inner">
-	<!-- IF ERRORS -->
-		<p class="error">{ERRORS}</p>
+	{% if ERRORS %}
+		<p class="error">{{ ERRORS }}</p>
 		<hr class="dashed" />
-	<!-- ENDIF -->
+	{% endif %}
 		<fieldset>
-		<!-- IF S_SPLIT -->
+		{% if S_SPLIT %}
 			<dl>
-				<dt><label for="subject">{L_SPLIT_SUBJECT}:</label></dd>
-				<dd><input type="text" class="inputbox" name="subject" id="subject" value="{SUBJECT}" /></dd>
+				<dt><label for="subject">{{ lang('SPLIT_SUBJECT') ~ lang('COLON') }}</label></dd>
+				<dd><input type="text" class="inputbox" name="subject" id="subject" value="{{ SUBJECT }}" /></dd>
 			</dl>
 			<dl>
 				<dt></dt>
 				<dd>
-					<label for="selected_posts"><input type="radio" name="from" value="selected" id="selected_posts" checked="checked" />{L_SPLIT_TOPIC_ALL}</label>
-					<label for="selected_onward"><input type="radio" name="from" value="from" id="selected_onward" />{L_SPLIT_AFTER}</label>
+					<label for="selected_posts"><input type="radio" name="from" value="selected" id="selected_posts" checked="checked" />{{ lang('SPLIT_TOPIC_ALL') }}</label>
+					<label for="selected_onward"><input type="radio" name="from" value="from" id="selected_onward" />{{ lang('SPLIT_AFTER') }}</label>
 				</dd>
 			</dl>
-		<!-- ELSE -->
+		{% else %}
 			<dl>
-				<dt><label for="new_topic_id">{L_MERGE_TOPIC_ID}</label></dt>
-				<dd><input type="text" class="inputbox autowidth" name="new_topic_id" id="new_topic_id" value="{TO_ID}" size="4" /></dd>
+				<dt><label for="new_topic_id">{{ lang('MERGE_TOPIC_ID') }}</label></dt>
+				<dd><input type="text" class="inputbox autowidth" name="new_topic_id" id="new_topic_id" value="{{ TO_ID }}" size="4" /></dd>
 			</dl>
-		<!-- ENDIF -->
+		{% endif %}
 		</fieldset>
 	</div>
 </div>
@@ -34,60 +34,60 @@
 <div class="container">
 	<div class="inner">
 		<fieldset class="submit-buttons">
-			<input type="submit" class="button2" name="split" id="split" value="<!-- IF S_SPLIT -->{L_SPLIT_TOPIC}<!-- ELSE -->{L_MERGE_POSTS}<!-- ENDIF -->" />
+			<input type="submit" class="button2" name="split" id="split" value="{% if S_SPLIT %}{{ lang('SPLIT_TOPIC') }}{% else %}{{ lang('MERGE_POSTS') }}{% endif %}" />
 		</fieldset>
 	</div>
 </div>
 
 <div class="container">
 	<div class="inner">
-	<!-- IF PAGINATION or TOTAL_RESULTS -->
+	{% if PAGINATION or TOTAL_RESULTS %}
 		<div class="action-bar">
-			<!-- INCLUDE common/pagination.html -->
+			{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 		</div>
 		<div class="clear"></div>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- BEGIN posts -->
-		<div class="post <!-- IF posts.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF posts.S_POST_DELETED --> deleted<!-- ENDIF -->">
+	{% for posts in loops.posts %}
+		<div class="post {% if posts.S_ROW_COUNT is odd %}bg1{% else %}bg2{% endif %}{% if posts.S_POST_DELETED %} deleted{% endif %}">
 			<div class="inner">
 
-			<div class="postbody full" id="ppr{posts.POST_ID}"><span class="rightside"><label for="pselect{posts.POST_ID}"><input type="checkbox" name="post_ids[]" value="{posts.POST_ID}" id="pselect{posts.POST_ID}" /> {L_SELECT}</label></span>
-				<h3><a href="#ppr{posts.POST_ID}">{posts.POST_SUBJECT}</a>
-				<!-- IF posts.S_ACCESS_TEAMS --><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_teams.png" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
-				<!-- ELSEIF posts.S_ACCESS_AUTHORS--><img src="{T_TITANIA_THEME_PATH}/{S_USER_LANG}/icon_access_author.png" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" /><!-- ENDIF --></h3>
-				<p class="author"><a href="{posts.U_MINI_POST}">{posts.MINI_POST_IMG}</a> {L_POST_BY_AUTHOR}<strong>  {posts.USER_FULL}</strong> &raquo; {posts.POST_TIME}</p>
-			<!-- IF not posts.S_POST_APPROVED or posts.S_POST_REPORTED -->
+			<div class="postbody full" id="ppr{{ posts.POST_ID }}"><span class="rightside"><label for="pselect{{ posts.POST_ID }}"><input type="checkbox" name="post_ids[]" value="{{ posts.POST_ID }}" id="pselect{{ posts.POST_ID }}" /> {{ lang('SELECT') }}</label></span>
+				<h3><a href="#ppr{{ posts.POST_ID }}">{{ posts.POST_SUBJECT }}</a>
+				{% if posts.S_ACCESS_TEAMS %}<img src="{{ T_TITANIA_THEME_PATH }}/{{ S_USER_LANG }}/icon_access_teams.png" alt="{{ lang('ACCESS_LIMIT_TEAMS') }}" title="{{ lang('ACCESS_LIMIT_TEAMS') }}" />
+				{% elseif posts.S_ACCESS_AUTHORS%}<img src="{{ T_TITANIA_THEME_PATH }}/{{ S_USER_LANG }}/icon_access_author.png" alt="{{ lang('ACCESS_LIMIT_AUTHORS') }}" title="{{ lang('ACCESS_LIMIT_AUTHORS') }}" />{% endif %}</h3>
+				<p class="author"><a href="{{ posts.U_MINI_POST }}">{{ posts.MINI_POST_IMG }}</a> {{ lang('POST_BY_AUTHOR') }}<strong>  {{ posts.USER_FULL }}</strong> &raquo; {{ posts.POST_TIME }}</p>
+			{% if not posts.S_POST_APPROVED or posts.S_POST_REPORTED %}
 				<p class="rules">
-					<!-- IF not posts.S_POST_APPROVED -->{UNAPPROVED_IMG} <a href="{posts.U_INFO}"><strong>{L_POST_UNAPPROVED}</strong></a><br /><!-- ENDIF -->
-					<!-- IF posts.S_POST_REPORTED -->{REPORTED_IMG} <a href="{posts.U_INFO}"><strong>{L_POST_REPORTED}</strong></a><!-- ENDIF -->
+					{% if not posts.S_POST_APPROVED %}{{ UNAPPROVED_IMG }} <a href="{{ posts.U_INFO }}"><strong>{{ lang('POST_UNAPPROVED') }}</strong></a><br />{% endif %}
+					{% if posts.S_POST_REPORTED %}{{ REPORTED_IMG }} <a href="{{ posts.U_INFO }}"><strong>{{ lang('POST_REPORTED') }}</strong></a>{% endif %}
 				</p>
-			<!-- ENDIF -->
-				<div class="content">{posts.POST_TEXT}</div>
+			{% endif %}
+				<div class="content">{{ posts.POST_TEXT }}</div>
 
-				<!-- IF posts.S_HAS_ATTACHMENTS -->
+				{% if posts.S_HAS_ATTACHMENTS %}
 					<dl class="attachbox">
-						<dt>{L_ATTACHMENTS}</dt>
-						<!-- BEGIN attachment -->
-							<dd>{post_review_row.attachment.DISPLAY_ATTACHMENT}</dd>
-						<!-- END attachment -->
+						<dt>{{ lang('ATTACHMENTS') }}</dt>
+						{% for attachment in posts.attachment %}
+							<dd>{{ post_review_row.attachment.DISPLAY_ATTACHMENT }}</dd>
+						{% endfor %}
 					</dl>
-				<!-- ENDIF -->
+				{% endif %}
 			</div>
 
 			</div>
 		</div>
-	<!-- END posts -->
+	{% endfor %}
 
-	<!-- IF PAGINATION or TOTAL_RESULTS -->
+	{% if PAGINATION or TOTAL_RESULTS %}
 		<div class="action-bar">
-			<!-- INCLUDE common/pagination.html -->
+			{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 		</div>
 		<div class="clear"></div>
-	<!-- ENDIF -->
+	{% endif %}
 	</div>
 </div>
-{S_FORM_TOKEN}
+{{ S_FORM_TOKEN }}
 </form>
 
-<!-- INCLUDE contributions/contribution_footer.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_footer.html' %}

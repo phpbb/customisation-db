@@ -1,78 +1,78 @@
-<!-- IF U_CREATE_CATEGORY -->
+{% if U_CREATE_CATEGORY %}
 <div class="action-bar">
-	<a href="{U_CREATE_CATEGORY}" title="{L_CREATE_CATEGORY}" class="button">
-		<span>{L_CREATE_CATEGORY}</span> <i class="icon fa-plus-circle fa-fw" aria-hidden="true"></i>
+	<a href="{{ U_CREATE_CATEGORY }}" title="{{ lang('CREATE_CATEGORY') }}" class="button">
+		<span>{{ lang('CREATE_CATEGORY') }}</span> <i class="icon fa-plus-circle fa-fw" aria-hidden="true"></i>
 	</a>
 </div>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- IF .categories -->
+{% if loops.categories|length %}
 <div class="forabg" id="categories">
 	<div class="inner">
 	<ul class="topiclist">
 		<li class="header">
 			<dl>
-				<dt>{L_CATEGORY}</dt>
-				<dd class="general">{L_CONTRIBUTIONS}</dd>
-				<!-- IF S_MANAGE -->
-				<dd class="general" style="float: right;">{L_ACTIONS}</dd>
-				<!-- ENDIF -->
+				<dt>{{ lang('CATEGORY') }}</dt>
+				<dd class="general">{{ lang('CONTRIBUTIONS') }}</dd>
+				{% if S_MANAGE %}
+				<dd class="general" style="float: right;">{{ lang('ACTIONS') }}</dd>
+				{% endif %}
 			</dl>
 		</li>
 	</ul>
 	<ul class="topiclist forums">
 
-	<!-- BEGIN categories -->
+	{% for categories in loops.categories %}
 		<li class="row">
 			<dl>
 				<dt>
 					<div class="list-inner">
-					<!-- IF S_MANAGE -->
-						<!-- IF categories.HAS_CHILDREN -->
-						<a href="{categories.U_VIEW_MANAGE_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a>
-						<!-- ELSE -->
-						<span class="content">{categories.CATEGORY_NAME}</span>
-						<!-- ENDIF -->
-					<!-- ELSE -->
-						<a href="{categories.U_VIEW_CATEGORY}" class="forumtitle">{categories.CATEGORY_NAME}</a>
-					<!-- ENDIF --><br />
-					<!-- IF categories.CATEGORY_DESC -->{categories.CATEGORY_DESC}<!-- ENDIF -->
-					<!-- IF categories.SUBFORUMS and categories.S_LIST_SUBFORUMS --><br /><strong>{categories.L_SUBFORUM_STR}</strong> {categories.SUBFORUMS}<!-- ENDIF -->
+					{% if S_MANAGE %}
+						{% if categories.HAS_CHILDREN %}
+						<a href="{{ categories.U_VIEW_MANAGE_CATEGORY }}" class="forumtitle">{{ categories.CATEGORY_NAME }}</a>
+						{% else %}
+						<span class="content">{{ categories.CATEGORY_NAME }}</span>
+						{% endif %}
+					{% else %}
+						<a href="{{ categories.U_VIEW_CATEGORY }}" class="forumtitle">{{ categories.CATEGORY_NAME }}</a>
+					{% endif %}<br />
+					{% if categories.CATEGORY_DESC %}{{ categories.CATEGORY_DESC }}{% endif %}
+					{% if categories.SUBFORUMS and categories.S_LIST_SUBFORUMS %}<br /><strong>{{ categories.L_SUBFORUM_STR }}</strong> {{ categories.SUBFORUMS }}{% endif %}
 					</div>
 				</dt>
-				<dd class="general">{categories.CATEGORY_CONTRIBS} <dfn>{L_CONTRIBUTIONS}</dfn></dd>
-				<!-- IF S_MANAGE -->
+				<dd class="general">{{ categories.CATEGORY_CONTRIBS }} <dfn>{{ lang('CONTRIBUTIONS') }}</dfn></dd>
+				{% if S_MANAGE %}
 				<dd class="general" style="float: right;">
-					<!-- IF categories.S_FIRST_ROW && not categories.S_LAST_ROW -->
+					{% if categories.S_FIRST_ROW and not categories.S_LAST_ROW %}
 						<span class="item-control-button move-up-disabled"></span>
-						<a href="{categories.U_MOVE_DOWN}" class="item-control-button move-down"></a>
-					<!-- ELSEIF not categories.S_FIRST_ROW && not categories.S_LAST_ROW -->
-						<a href="{categories.U_MOVE_UP}" class="item-control-button move-up"></a>
-						<a href="{categories.U_MOVE_DOWN}" class="item-control-button move-down"></a>
-					<!-- ELSEIF categories.S_LAST_ROW && not categories.S_FIRST_ROW -->
-						<a href="{categories.U_MOVE_UP}" class="item-control-button move-up"></a>
+						<a href="{{ categories.U_MOVE_DOWN }}" class="item-control-button move-down"></a>
+					{% elseif not categories.S_FIRST_ROW and not categories.S_LAST_ROW %}
+						<a href="{{ categories.U_MOVE_UP }}" class="item-control-button move-up"></a>
+						<a href="{{ categories.U_MOVE_DOWN }}" class="item-control-button move-down"></a>
+					{% elseif categories.S_LAST_ROW and not categories.S_FIRST_ROW %}
+						<a href="{{ categories.U_MOVE_UP }}" class="item-control-button move-up"></a>
 						<span class="item-control-button move-down-disabled"></span>
-					<!-- ELSE -->
+					{% else %}
 						<span class="item-control-button move-up-disabled"></span>
 						<span class="item-control-button move-down-disabled"></span>
-					<!-- ENDIF -->
-					<a href="{categories.U_EDIT}" class="item-control-button edit"></a>
-					<a href="{categories.U_DELETE}" class="item-control-button delete"></a>
+					{% endif %}
+					<a href="{{ categories.U_EDIT }}" class="item-control-button edit"></a>
+					<a href="{{ categories.U_DELETE }}" class="item-control-button delete"></a>
 				</dd>
-				<!-- ENDIF -->
+				{% endif %}
 			</dl>
 		</li>
-	<!-- END categories -->
+	{% endfor %}
 
 	</ul>
 	</div>
 </div>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- IF U_CREATE_CATEGORY -->
+{% if U_CREATE_CATEGORY %}
 <div class="action-bar">
-	<a href="{U_CREATE_CATEGORY}" title="{L_CREATE_CATEGORY}" class="button">
-		<span>{L_CREATE_CATEGORY}</span> <i class="icon fa-plus-circle fa-fw" aria-hidden="true"></i>
+	<a href="{{ U_CREATE_CATEGORY }}" title="{{ lang('CREATE_CATEGORY') }}" class="button">
+		<span>{{ lang('CREATE_CATEGORY') }}</span> <i class="icon fa-plus-circle fa-fw" aria-hidden="true"></i>
 	</a>
 </div>
-<!-- ENDIF -->
+{% endif %}
