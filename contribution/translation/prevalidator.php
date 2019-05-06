@@ -144,6 +144,9 @@ class prevalidator
 		{
 			try
 			{
+				// Language pack directory names use an underscore
+				$sanitised_iso = str_replace('-', '_', $origin_iso);
+
 				// We don't need to clean up (delete) the temporary files here because that is
 				// handled at revision.php:752
 				$package->ensure_extracted();
@@ -168,7 +171,7 @@ class prevalidator
 				}
 
 				// Rename the directory to use the iso code
-				$new_directory_name = str_replace($root_extracted->getFilename(), $origin_iso, $root_extracted->getPathname());
+				$new_directory_name = str_replace($root_extracted->getFilename(), $sanitised_iso, $root_extracted->getPathname());
 				$file_system = new Filesystem();
 				$file_system->rename($root_extracted->getPathname(), $new_directory_name);
 
@@ -190,7 +193,7 @@ class prevalidator
 
 				// Before running the translation validator, check that an expected path exists. If it doesn't, it could be
 				// because the user has typed the incorrect language ISO code. Tell the user, and crash out.
-				if (!$file_system->exists(sprintf('%s/%s/language/%s/common.php', $path, $origin_iso, $origin_iso)))
+				if (!$file_system->exists(sprintf('%s/%s/language/%s/common.php', $path, $sanitised_iso, $sanitised_iso)))
 				{
 					throw new \phpbb\extension\exception($this->language->lang('TRANSLATION_ISO_MISMATCH'));
 				}
@@ -199,7 +202,7 @@ class prevalidator
 				$inputs = array(
 					// Arguments
 					'command' => 'validate',
-					'origin-iso' => $origin_iso,
+					'origin-iso' => $sanitised_iso,
 
 					// Options
 					'--phpbb-version' => $phpbb_version,
