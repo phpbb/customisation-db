@@ -22,12 +22,24 @@ services:
         tags:
             - { name: console.command }
 
+    # Event usage analyser
     phpbb.titania.console.command.extension.events:
         class: phpbb\titania\console\command\extension\events
         arguments:
             - '@user'
             - '@language'
             - '@dbal.conn'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+        tags:
+            - { name: console.command }
+
+    # Language pack generator
+    phpbb.titania.console.command.extension.language:
+        class: phpbb\titania\console\command\extension\language
+        arguments:
+            - '@user'
+            - '@language'
             - '%core.root_path%'
             - '%core.php_ext%'
         tags:
