@@ -227,8 +227,8 @@ class titania_post extends \phpbb\titania\entity\message_base
 		$post_data = $message->request_data();
 
 		$this->topic->__set_array(array(
-			'topic_sticky'			=> ($message->auth['sticky_topic']) ? $post_data['sticky_topic'] : $this->topic->topic_sticky,
-			'topic_locked'			=> ($message->auth['lock_topic']) ? $post_data['lock_topic'] : $this->topic->topic_locked,
+			'topic_sticky'			=> (!$post_data['quick_reply_mode'] && $message->auth['sticky_topic']) ? $post_data['sticky_topic'] : $this->topic->topic_sticky,
+			'topic_locked'			=> (!$post_data['quick_reply_mode'] && $message->auth['lock_topic']) ? $post_data['lock_topic'] : $this->topic->topic_locked,
 		));
 
 		parent::post_data($message);
