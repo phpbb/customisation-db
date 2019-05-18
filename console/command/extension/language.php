@@ -207,7 +207,7 @@ class language extends \phpbb\console\command\command
 
 			// Move the license file
 			$system = new Filesystem();
-			$system->copy($this->tmp_folder . '/docs/LICENSE.txt', $this->tmp_folder . '/language/en/LICENSE.txt');
+			$system->copy($this->tmp_folder . '/docs/LICENSE.txt', $this->tmp_folder . '/language/en/LICENSE');
 			$system->remove($this->tmp_folder . '/docs');
 
 			// Create the new zip file with our British English language pack
