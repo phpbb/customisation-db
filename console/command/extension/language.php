@@ -189,8 +189,9 @@ class language extends \phpbb\console\command\command
 
 		else
 		{
-			// These are the language directories we want to extract from phpBB in order to form British English
+			// These are the language directories (and license) we want to extract from phpBB in order to form British English
 			$language_directories = [
+				'docs/LICENSE.txt',
 				'ext/phpbb/viglink/language/en',
 				'language/en',
 				'styles/prosilver/theme/en',
@@ -204,6 +205,11 @@ class language extends \phpbb\console\command\command
 				->folder('phpBB3')
 				->extractTo($this->tmp_folder, $language_directories, Zipper::WHITELIST);
 
+			// Move the license file
+			$system = new Filesystem();
+			$system->copy($this->tmp_folder . '/docs/LICENSE.txt', $this->tmp_folder . '/language/en/LICENSE.txt');
+			$system->remove($this->tmp_folder . '/docs');
+
 			// Create the new zip file with our British English language pack
 			$zip->make($save_name)
 				->folder($save_version)
@@ -211,7 +217,6 @@ class language extends \phpbb\console\command\command
 				->close();
 
 			// This deletes the entire temporary folder
-			$system = new Filesystem();
 			$system->remove($this->tmp_folder);
 
 			// Script has completed
