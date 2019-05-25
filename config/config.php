@@ -213,19 +213,19 @@ class config extends \phpbb\titania\entity\base
 				ext::TITANIA_TRANSLATION		=> array('zip'),
 				ext::TITANIA_SUPPORT			=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
-					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
+					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff', 'yml', 'yaml'
 				),
 				ext::TITANIA_QUEUE				=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
-					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
+					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff', 'yml', 'yaml'
 				),
 				ext::TITANIA_QUEUE_DISCUSSION	=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
-					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
+					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff', 'yml', 'yaml'
 				),
 				ext::TITANIA_FAQ				=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
-					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
+					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff', 'yml', 'yaml'
 				),
 				// ColorizeIt sample image
 				ext::TITANIA_CLR_SCREENSHOT		=> array('gif'),
