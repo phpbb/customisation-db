@@ -381,7 +381,9 @@ class message
 		// Add the forum key
 		add_form_key($this->settings['form_name']);
 
-		$qr_hidden_fields = array();
+		$qr_hidden_fields = array(
+			'quick_reply_mode' => true,
+		);
 
 		if ($this->user->data['user_notify'] && $this->post_object->topic_type == ext::TITANIA_SUPPORT)
 		{
@@ -460,6 +462,9 @@ class message
 
 			'sticky_topic'		=> $this->auth['sticky_topic'] && $this->request->is_set_post('sticky_topic'),
 			'lock_topic'		=> $this->auth['lock_topic'] && $this->request->is_set_post('lock_topic'),
+
+			// Are we in Quick Reply mode
+			'quick_reply_mode'	=> $this->request->variable('quick_reply_mode', 0),
 		);
 
 		if ($this->auth['edit_subject'])
