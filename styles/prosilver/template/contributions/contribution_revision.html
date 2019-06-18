@@ -91,6 +91,12 @@
 					<dt><label for="queue_allow_repack">{{ lang('QUEUE_ALLOW_REPACK') ~ lang('COLON') }}</label><br /><span>{{ lang('QUEUE_ALLOW_REPACK_EXPLAIN') }}</span></dt>
 					<dd><input type="checkbox" id="queue_allow_repack" name="queue_allow_repack" value="1"{% if ((ERROR_MSG and QUEUE_ALLOW_REPACK) or not ERROR_MSG) %} checked="checked"{% endif %} /></dd>
 				</dl>
+				{% if S_CAN_SKIP_EPV %}
+				<dl>
+					<dt><label for="allow_skip_epv">{{ lang('SKIP_EPV') ~ lang('COLON') }}</label><br /><span>{{ lang('SKIP_EPV_EXPLAIN') }}</span></dt>
+					<dd><input type="checkbox" id="allow_skip_epv" name="skip_epv" value="1" /></dd>
+				</dl>
+				{% endif %}
 				{% if S_CAN_SUBSCRIBE %}
 				<dl>
 					<dt><label for="subscribe_author">{{ lang('SUBSCRIBE_QUEUE_DISCUSSION') }}</label></dd>
@@ -159,6 +165,9 @@
 					<input type="submit" id="new_revision" name="new_revision" value="{{ lang('AGREE') }}" class="button1" />&nbsp;
 				{% else %}
 					<input type="submit" id="new_revision" name="new_revision" value="{{ lang('CONTINUE') }}" class="button1" />
+					{% if S_CAN_SKIP_EPV %}
+					<input type="hidden" name="skip_epv" value="{{ SKIP_EPV }}" />
+					{% endif %}
 				{% endif %}
 				<input type="hidden" name="step" value="{{ NEXT_STEP }}" />
 				<input type="hidden" name="revision_id" value="{{ REVISION_ID }}" />

@@ -53,6 +53,13 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	*/
 	public $phpbb_versions = array();
 
+	/**
+	 * Skip EPV
+	 *
+	 * @var boolean
+	 */
+	public $skip_epv = false;
+
 	/** @var attachment */
 	protected $attachment;
 

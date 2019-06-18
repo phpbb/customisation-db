@@ -164,9 +164,18 @@ class type extends base
 	 */
 	public function epv_test(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
 	{
-		$package->ensure_extracted();
-		$prevalidator = $this->get_prevalidator();
-		$results = $prevalidator->run_epv($package->get_temp_path());
+		if ($revision->skip_epv)
+		{
+			// Skip EPV
+			$results = $this->user->lang('SKIP_EPV_MESSAGE');
+		}
+
+		else
+		{
+			$package->ensure_extracted();
+			$prevalidator = $this->get_prevalidator();
+			$results = $prevalidator->run_epv($package->get_temp_path());
+		}
 
 		$uid = $bitfield = $flags = false;
 		generate_text_for_storage($results, $uid, $bitfield, $flags, true, true, true);

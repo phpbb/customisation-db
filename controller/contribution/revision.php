@@ -50,6 +50,9 @@ class revision extends base
 	/** @var array */
 	protected $repackable_branches;
 
+	/** @var bool */
+	private $skip_epv = false;
+
 	/**
 	 * Constructor
 	 *
@@ -295,9 +298,13 @@ class revision extends base
 			$this->cancel();
 		}
 
+		$this->skip_epv = $this->auth->acl_get('u_titania_mod_extension_validate') && (boolean) $this->request->variable('skip_epv', 0);
+
 		$this->assign_common_vars($error, !empty($this->id), $settings);
 		$this->template->assign_vars(array(
 			'S_CAN_SUBSCRIBE'			=> !$this->is_author_subscribed() && $this->use_queue,
+			'S_CAN_SKIP_EPV'			=> $this->auth->acl_get('u_titania_mod_extension_validate'),
+			'SKIP_EPV'					=> (int) $this->skip_epv,
 			'SUBSCRIBE_AUTHOR'			=> $this->request->variable('subscribe_author', false),
 			'S_POST_ACTION'				=> $this->contrib->get_url('revision'),
 		));
@@ -736,6 +743,9 @@ class revision extends base
 
 		$step = $steps[$step_num];
 
+		// Check if we are to skip the EPV
+		$this->skip_epv = $this->auth->acl_get('u_titania_mod_extension_validate') && (boolean) $this->request->variable('skip_epv', 0);
+
 		if ($this->attachment)
 		{
 			if (!$this->package->get_source())
@@ -778,6 +788,11 @@ class revision extends base
 	protected function run_step($function)
 	{
 		$download_url = ($this->attachment) ? $this->attachment->get_url() : '';
+
+		if ($this->skip_epv)
+		{
+			$this->revision->skip_epv = true;
+		}
 
 		return call_user_func_array($function, array(
 			$this->contrib,
