@@ -139,6 +139,14 @@ class type extends base
 		try
 		{
 			$this->repack($package, $contrib, $revision);
+			$repack_complete = $this->user->lang('NEW_REVISION_REPACK_COMPLETE');
+
+			// Oversized packages are over 2MB
+			if ($package->get_size() > 2097152)
+			{
+				$repack_complete .= $this->user->lang('NEW_REVISION_REPACK_OVERSIZE');
+			}
+
 		}
 		catch (\Exception $e)
 		{
@@ -147,7 +155,7 @@ class type extends base
 			);
 		}
 		return array(
-			'message'	=> $this->user->lang['NEW_REVISION_REPACK_COMPLETE'],
+			'message' => $repack_complete,
 		);
 	}
 
