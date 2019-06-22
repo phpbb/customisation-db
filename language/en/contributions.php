@@ -154,7 +154,7 @@ $lang = array_merge($lang, array(
 	'NEW_REVISION'							=> 'New Revision',
 	'NEW_REVISION_READY'					=> 'New revision ready for processing.',
 	'NEW_REVISION_REPACK_COMPLETE'			=> 'New revision has been repacked to ensure packaging compliance. Click <em>Continue</em> to process through EPV. ',
-	'NEW_REVISION_REPACK_OVERSIZE'			=> 'If you are unable to submit your contribution, please contact a member of the <a href="https://www.phpbb.com/community/memberlist.php?mode=group&g=228811">Customisations Team</a>.',
+	'NEW_REVISION_REPACK_OVERSIZE'			=> 'If you are unable to submit your contribution due to a system error, please contact us through your contribution\'s <a href="%s">validation discussion topic</a> for further assistance.',
 	'NEW_REVISION_SUBMITTED'				=> 'New revision has been submitted successfully. Click <em>Continue</em> to go to the next step.',
 	'NEW_TOPIC'								=> 'New Topic',
 	'NOT_VALIDATED'							=> 'Not Validated',

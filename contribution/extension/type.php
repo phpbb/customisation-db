@@ -144,7 +144,7 @@ class type extends base
 			// Oversized packages are over 2MB
 			if ($package->get_size() > 2097152)
 			{
-				$repack_complete .= $this->user->lang('NEW_REVISION_REPACK_OVERSIZE');
+				$repack_complete .= $this->user->lang('NEW_REVISION_REPACK_OVERSIZE', $contrib->get_url('queue_discussion'));
 			}
 
 		}
