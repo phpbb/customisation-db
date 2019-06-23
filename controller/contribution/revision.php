@@ -299,11 +299,12 @@ class revision extends base
 		}
 
 		$this->skip_epv = $this->auth->acl_get('u_titania_mod_extension_validate') && (boolean) $this->request->variable('skip_epv', 0);
+		$can_skip_epv = $this->auth->acl_get('u_titania_mod_extension_validate') && $this->contrib->type instanceof \phpbb\titania\contribution\extension\type;
 
 		$this->assign_common_vars($error, !empty($this->id), $settings);
 		$this->template->assign_vars(array(
 			'S_CAN_SUBSCRIBE'			=> !$this->is_author_subscribed() && $this->use_queue,
-			'S_CAN_SKIP_EPV'			=> $this->auth->acl_get('u_titania_mod_extension_validate'),
+			'S_CAN_SKIP_EPV'			=> $can_skip_epv,
 			'SKIP_EPV'					=> (int) $this->skip_epv,
 			'SUBSCRIBE_AUTHOR'			=> $this->request->variable('subscribe_author', false),
 			'S_POST_ACTION'				=> $this->contrib->get_url('revision'),
