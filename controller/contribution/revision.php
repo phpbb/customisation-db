@@ -298,7 +298,7 @@ class revision extends base
 			$this->cancel();
 		}
 
-		$this->skip_epv = $this->auth->acl_get('u_titania_mod_extension_validate') && (boolean) $this->request->variable('skip_epv', 0);
+		$this->skip_epv = $this->auth->acl_get('u_titania_mod_extension_validate') && $this->request->variable('skip_epv', false);
 		$can_skip_epv = $this->auth->acl_get('u_titania_mod_extension_validate') && $this->contrib->type instanceof \phpbb\titania\contribution\extension\type;
 
 		$this->assign_common_vars($error, !empty($this->id), $settings);
@@ -745,7 +745,7 @@ class revision extends base
 		$step = $steps[$step_num];
 
 		// Check if we are to skip the EPV
-		$this->skip_epv = $this->auth->acl_get('u_titania_mod_extension_validate') && (boolean) $this->request->variable('skip_epv', 0);
+		$this->skip_epv = $this->auth->acl_get('u_titania_mod_extension_validate') && $this->request->variable('skip_epv', false);
 
 		if ($this->attachment)
 		{
