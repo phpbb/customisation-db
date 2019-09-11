@@ -331,15 +331,16 @@ class package
 		{
 			$this->filesystem->mkdir($copy_root_path);
 		}
-		$this->filesystem->mirror($root_path, $copy_root_path);
-		$this->filesystem->remove($root_path);
+
+		$this->filesystem->rename($root_path, $copy_root_path, true);
 		$this->filesystem->remove($temp_path);
+
 		if ($new_name)
 		{
 			$this->filesystem->mkdir($new_root_path);
 		}
-		$this->filesystem->mirror($copy_root_path, $new_root_path);
-		$this->filesystem->remove($copy_root_path);
+
+		$this->filesystem->rename($copy_root_path, $new_root_path, true);
 		$this->filesystem->remove($copy_path);
 	}
 
