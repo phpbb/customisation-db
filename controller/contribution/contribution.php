@@ -15,6 +15,7 @@ namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\ext;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -25,6 +26,9 @@ class contribution extends base
 
 	/** @var \phpbb\titania\subscriptions */
 	protected $subscriptions;
+
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
 
 	/**
 	 * Constructor
@@ -43,13 +47,15 @@ class contribution extends base
 	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\tracking $tracking
 	 * @param \phpbb\titania\subscriptions $subscriptions
+	 * @param \phpbb\path_helper $path_helper
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions, \phpbb\path_helper $path_helper)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $types, $request, $cache, $ext_config, $display, $access);
 
 		$this->tracking = $tracking;
 		$this->subscriptions = $subscriptions;
+		$this->path_helper = $path_helper;
 	}
 
 	/**
@@ -67,7 +73,7 @@ class contribution extends base
 
 		$page = ($page) ?: 'details';
 
-		if (!in_array($page, array('report', 'details', 'queue_discussion', 'rate')))
+		if (!in_array($page, array('report', 'details', 'queue_discussion', 'rate', 'feed')))
 		{
 			return $this->helper->error('NO_PAGE', 404);
 		}
@@ -77,6 +83,95 @@ class contribution extends base
 		$this->generate_breadcrumbs();
 
 		return $this->{$page}();
+	}
+
+	/**
+	 * Feed for the contribution revisions (new releases)
+	 * @return Response
+	 * @throws \Exception
+	 */
+	protected function feed()
+	{
+		if (!$this->config['feed_overall'])
+		{
+			// Don't proceed if feeds are disabled
+			trigger_error('NO_FEED_ENABLED');
+		}
+
+		$sql = 'SELECT r.*, c.*, u.username_clean
+ 			FROM ' . TITANIA_REVISIONS_TABLE . ' r, ' . TITANIA_CONTRIBS_TABLE . ' c, ' . USERS_TABLE . ' u
+			WHERE r.contrib_id = ' . (int) $this->contrib->contrib_id . '
+			AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
+				AND r.revision_submitted = 1
+				AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
+				AND r.contrib_id = c.contrib_id
+				AND u.user_id = c.contrib_user_id
+			ORDER BY r.validation_date DESC';
+
+		$result = $this->db->sql_query($sql);
+
+		$rows = [];
+		$feed_updated_time = false;
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$feed_rows = [];
+			$feed_rows['item_date'] = date(\DateTime::ATOM, $row['validation_date']);
+
+			// Get the most recent time
+			if (!$feed_updated_time)
+			{
+				$feed_updated_time = $row['validation_date'];
+			}
+
+			// Make the name including the version
+			$feed_rows['item_title'] = $row['contrib_name'] . ' ' . $row['revision_version'];
+
+			if ($row['revision_name'])
+			{
+				// Include the code name if it's supplied
+				$feed_rows['item_title'] .= ' (' . $row['revision_name'] . ')';
+			}
+
+			$feed_rows['item_author'] = $row['username_clean'];
+			$feed_rows['item_description'] = $this->user->lang('FEED_NEW_VERSION', $row['revision_version'], $row['contrib_name']);
+
+			// Download link; strip the session id out
+			$feed_rows['item_link'] = ($row['attachment_id']) ? $this->path_helper->strip_url_params($this->helper->route('phpbb.titania.download', array('id' => $row['attachment_id'])), 'sid') : '';
+
+			$rows[] = $feed_rows;
+		}
+
+		$this->db->sql_freeresult($result);
+
+		// Generic feed information
+		$this->template->assign_vars(array(
+			'SELF_LINK'				=> $this->contrib->get_url('feed'),
+			'FEED_LINK'				=> $this->contrib->get_url(),
+			'FEED_TITLE'			=> $this->user->lang('FEED_CDB', $this->config['sitename'], $this->contrib->contrib_name),
+			'FEED_SUBTITLE'			=> $this->config['site_desc'],
+			'FEED_UPDATED'			=> date(\DateTime::ATOM),
+			'FEED_LANG'				=> $this->user->lang('USER_LANG'),
+			'FEED_AUTHOR'			=> $this->config['sitename'],
+		));
+
+		$this->template->assign_block_vars_array('feed', $rows);
+
+		// Put it in our custom xml
+		$content = $this->helper->render('feed.xml.twig');
+
+		// Return the response
+		$response = $content;
+		$response->headers->set('Content-Type', 'application/atom+xml');
+		$response->setCharset('UTF-8');
+		$response->setLastModified(new \DateTime('@' . $feed_updated_time));
+
+		if (!empty($this->user->data['is_bot']))
+		{
+			$response->headers->set('X-PHPBB-IS-BOT', 'yes');
+		}
+
+		return $response;
 	}
 
 	/**

@@ -132,6 +132,7 @@ services:
             - '@phpbb.titania.access'
             - '@phpbb.titania.tracking'
             - '@phpbb.titania.subscriptions'
+            - '@path_helper'
 
     phpbb.titania.controller.contrib.support:
         class: phpbb\titania\controller\contribution\support
