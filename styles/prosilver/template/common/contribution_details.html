@@ -95,8 +95,10 @@
 								{% if IS_SUBSCRIBED %}{{ lang('UNSUBSCRIBE') }}{% else %}{{ lang('SUBSCRIBE') }}{% endif %}
 							</a>
 						{% endif %}
-						{% if U_SUBSCRIBE or U_REPORT %}&bull;{% endif %}
-						<a href="{{ U_CONTRIB_FEED }}" title="{{ lang('FEED') }}">{{ lang('FEED') }}</a>
+						{% if S_ENABLE_FEEDS %}
+							{% if U_SUBSCRIBE or U_REPORT %}&bull;{% endif %}
+							<a type="application/rss+xml" href="{{ U_CONTRIB_FEED }}">{{ lang('FEED') }}</a>
+						{% endif %}
 					</div>
 				</dt>
 				<dd>
