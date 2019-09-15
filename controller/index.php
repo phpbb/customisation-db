@@ -23,6 +23,9 @@ class index
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -88,9 +91,10 @@ class index
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\tracking $tracking
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking)
 	{
 		$this->auth = $auth;
+		$this->config = $config;
 		$this->template = $template;
 		$this->user = $user;
 		$this->helper = $helper;
@@ -147,6 +151,7 @@ class index
 			'U_MARK_FORUMS'			=> $this->path_helper->append_url_params($this->helper->get_current_url(), array('mark' => 'contribs')),
 			'L_MARK_FORUMS_READ'	=> $this->user->lang['MARK_CONTRIBS_READ'],
 			'U_ALL_CONTRIBUTIONS'	=> $this->get_index_url($this->params),
+			'U_CONTRIB_FEED'		=> $this->helper->route('phpbb.titania.index.feed'),
 
 			'S_DISPLAY_SEARCHBOX'	=> true,
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
@@ -157,6 +162,27 @@ class index
 		$this->assign_status();
 
 		return $this->helper->render('index_body.html', $title);
+	}
+
+	/**
+	 * ATOM feed for all contribution revisions (new releases)
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @throws \Exception
+	 */
+	public function feed()
+	{
+		// Generic feed information
+		$this->template->assign_vars(array(
+			'SELF_LINK'				=> $this->helper->route('phpbb.titania.index.feed'),
+			'FEED_LINK'				=> $this->helper->route('phpbb.titania.index'),
+			'FEED_TITLE'			=> $this->user->lang('FEED_CDB_ALL', $this->config['sitename']),
+			'FEED_SUBTITLE'			=> $this->config['site_desc'],
+			'FEED_UPDATED'			=> date(\DateTime::ATOM),
+			'FEED_LANG'				=> $this->user->lang('USER_LANG'),
+			'FEED_AUTHOR'			=> $this->config['sitename'],
+		));
+
+		return \contribs_overlord::build_feed($this->template, $this->helper, $this->path_helper);
 	}
 
 	/**
@@ -216,6 +242,7 @@ class index
 			'S_DISPLAY_SEARCHBOX'	=> true,
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
 			'U_QUEUE_STATS'			=> $this->get_queue_stats_url(),
+			'U_CONTRIB_FEED'		=> $this->helper->route('phpbb.titania.index.feed'),
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
 			'U_ALL_CONTRIBUTIONS'	=> $this->get_index_url($this->params),
 		));

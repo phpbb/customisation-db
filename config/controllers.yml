@@ -3,6 +3,7 @@ services:
         class: phpbb\titania\controller\index
         arguments:
             - '@auth'
+            - '@config'
             - '@template'
             - '@user'
             - '@phpbb.titania.controller.helper'
