@@ -102,7 +102,7 @@ class contribution extends base
 			'FEED_AUTHOR'			=> $this->config['sitename'],
 		));
 
-		return \contribs_overlord::build_feed($this->template, $this->helper, $this->path_helper, $this->contrib->contrib_id);
+		return \contribs_overlord::build_feed($this->template, $this->helper, $this->path_helper, $this->contrib);
 	}
 
 	/**
