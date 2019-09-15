@@ -15,7 +15,6 @@ namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\ext;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -134,7 +133,7 @@ class contribution extends base
 			}
 
 			$feed_rows['item_author'] = $row['username_clean'];
-			$feed_rows['item_description'] = $this->user->lang('FEED_NEW_VERSION', $row['revision_version'], $row['contrib_name']);
+			$feed_rows['item_description'] = $this->user->lang('FEED_CDB_NEW_VERSION', $row['revision_version'], $row['contrib_name']);
 
 			// Download link; strip the session id out
 			$feed_rows['item_link'] = ($row['attachment_id']) ? $this->path_helper->strip_url_params($this->helper->route('phpbb.titania.download', array('id' => $row['attachment_id'])), 'sid') : '';
@@ -143,6 +142,12 @@ class contribution extends base
 		}
 
 		$this->db->sql_freeresult($result);
+
+		if (!$rows)
+		{
+			// If there's no results, we can't proceed
+			trigger_error('FEED_CDB_NOT_AVAILABLE');
+		}
 
 		// Generic feed information
 		$this->template->assign_vars(array(
