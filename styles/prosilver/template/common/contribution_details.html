@@ -91,8 +91,8 @@
 						{% endif %}
 						{% if U_SUBSCRIBE %}
 							{% if U_REPORT %}&bull;{% endif %}
-							<a href="{{ U_SUBSCRIBE }}" title="{% if IS_SUBSCRIBED %}{{ lang('UNSUBSCRIBE') }}{% else %}{{ lang('SUBSCRIBE') }}{% endif %}">
-								{% if IS_SUBSCRIBED %}{{ lang('UNSUBSCRIBE') }}{% else %}{{ lang('SUBSCRIBE') }}{% endif %}
+							<a href="{{ U_SUBSCRIBE }}" title="{{ lang(IS_SUBSCRIBED ? 'UNSUBSCRIBE' : 'SUBSCRIBE') }}">
+								{{ lang(IS_SUBSCRIBED ? 'UNSUBSCRIBE' : 'SUBSCRIBE') }}
 							</a>
 						{% endif %}
 						{% if S_ENABLE_FEEDS %}
