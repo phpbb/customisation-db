@@ -679,19 +679,14 @@ class contribs_overlord
 		}
 
 		phpbb::$db->sql_freeresult($result);
-
-		if (!$rows)
-		{
-			// If there's no results, we can't proceed
-			trigger_error('FEED_CDB_NOT_AVAILABLE');
-		}
-
 		$template->assign_block_vars_array('feed', $rows);
 
 		/** @var \Symfony\Component\HttpFoundation\Response $content */
 		$content = $helper->render('feed.xml.twig');
 
 		// Return the response
+		$feed_updated_time = (!$feed_updated_time) ? time() : $feed_updated_time;
+
 		$response = $content;
 		$response->headers->set('Content-Type', 'application/atom+xml');
 		$response->setCharset('UTF-8');
