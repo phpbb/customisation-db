@@ -105,6 +105,9 @@
 				{% if U_QUEUE_STATS %}
 					<a id="queue-stats-link" href="{{ U_QUEUE_STATS }}">{{ lang('QUEUE_STATS') }}</a>
 				{% endif %}
+				{% if S_ENABLE_FEEDS and U_CONTRIB_FEED %}
+					<a href="{{ U_CONTRIB_FEED }}">{{ lang('FEED') }}</a>
+				{% endif %}
 			</div>
 		{% endif %}
 	</div>

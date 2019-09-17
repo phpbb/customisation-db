@@ -8,6 +8,10 @@ phpbb.titania.index.branch:
     requirements:
         branch: \d\.\d|
 
+phpbb.titania.index.feed:
+    path: /feed
+    defaults: { _controller: phpbb.titania.controller.index:feed }
+
 phpbb.titania.faq:
     path: /faq
     defaults: { _controller: phpbb.titania.controller.faq:handle }

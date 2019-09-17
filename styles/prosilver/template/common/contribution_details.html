@@ -85,19 +85,21 @@
 			<dl class="contrib-description">
 				<dt>
 					<strong>{{ lang('DESCRIPTION') }}</strong>
-					{% if U_SUBSCRIBE or U_REPORT %}
 					<div style="float: right;">
 						{% if U_REPORT %}
 							<a href="{{ U_REPORT }}" title="{{ lang('REPORT') }}">{{ lang('REPORT') }}</a>
 						{% endif %}
 						{% if U_SUBSCRIBE %}
 							{% if U_REPORT %}&bull;{% endif %}
-							<a href="{{ U_SUBSCRIBE }}" title="{% if IS_SUBSCRIBED %}{{ lang('UNSUBSCRIBE') }}{% else %}{{ lang('SUBSCRIBE') }}{% endif %}">
-								{% if IS_SUBSCRIBED %}{{ lang('UNSUBSCRIBE') }}{% else %}{{ lang('SUBSCRIBE') }}{% endif %}
+							<a href="{{ U_SUBSCRIBE }}" title="{{ lang(IS_SUBSCRIBED ? 'UNSUBSCRIBE' : 'SUBSCRIBE') }}">
+								{{ lang(IS_SUBSCRIBED ? 'UNSUBSCRIBE' : 'SUBSCRIBE') }}
 							</a>
 						{% endif %}
+						{% if S_ENABLE_FEEDS %}
+							{% if U_SUBSCRIBE or U_REPORT %}&bull;{% endif %}
+							<a type="application/rss+xml" href="{{ U_CONTRIB_FEED }}">{{ lang('FEED') }}</a>
+						{% endif %}
 					</div>
-					{% endif %}
 				</dt>
 				<dd>
 					{% if WARNING %}

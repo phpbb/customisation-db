@@ -741,6 +741,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				'U_VIEW_CONTRIB'				=> $this->get_url(),
 
 				'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
+				'U_CONTRIB_FEED'				=> $this->get_url('feed'),
 				'U_VIEW_REPORTS'				=> $u_view_reports,
 
 				// Contribution Status
