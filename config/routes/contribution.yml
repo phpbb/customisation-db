@@ -2,7 +2,7 @@ phpbb.titania.contrib:
     path: /{page}
     defaults: { _controller: phpbb.titania.controller.contrib:base, page: details }
     requirements:
-        page: '|details|report|queue_discussion|rate'
+        page: '|details|report|queue_discussion|rate|feed'
 
 phpbb.titania.contrib.support:
     path: /support
