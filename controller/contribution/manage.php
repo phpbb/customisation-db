@@ -16,6 +16,7 @@ namespace phpbb\titania\controller\contribution;
 use phpbb\exception\http_exception;
 use phpbb\titania\access;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -120,7 +121,7 @@ class manage extends base
 				'nonactive'		=> $this->request->variable('nonactive_coauthors', '', true),
 			),
 			'new_author'		=> $this->request->variable('change_owner', '', true),
-			'limited_support'	=> $this->request->variable('limited_support', (bool) $this->contrib->contrib_limited_support),
+			'limited_support'	=> $this->contrib->contrib_limited_support,
 		);
 		$this->settings['custom'] = $this->contrib->get_custom_fields();
 
@@ -140,6 +141,7 @@ class manage extends base
 			$this->settings = array_merge($this->settings, array(
 				'categories'		=> $this->request->variable('contrib_category', array(0 => 0)),
 				'custom'			=> $this->request->variable('custom_fields', array('' => ''), true),
+				'limited_support'	=> $this->request->is_set('limited_support'),
 			));
 			$demos = $this->request->variable('demo', array(0 => ''));
 
@@ -265,7 +267,7 @@ class manage extends base
 
 			if ($this->ext_config->support_in_titania)
 			{
-				$this->subscriptions->subscribe(TITANIA_SUPPORT, $this->contrib->contrib_id, $new_author);
+				$this->subscriptions->subscribe(ext::TITANIA_SUPPORT, $this->contrib->contrib_id, $new_author);
 			}
 
 			redirect($this->contrib->get_url());
@@ -318,16 +320,16 @@ class manage extends base
 		$this->load_contrib($contrib_type, $contrib);
 		$this->is_moderator = $this->contrib->type->acl_get('moderate');
 		$this->use_colorizeit = strlen($this->ext_config->colorizeit) && $this->contrib->type->acl_get('colorizeit');
-		$this->can_edit_demo = $this->ext_config->can_modify_style_demo_url || $this->types->get(TITANIA_TYPE_STYLE)->acl_get('moderate')
-				|| $this->contrib->contrib_type != TITANIA_TYPE_STYLE;
+		$this->can_edit_demo = $this->ext_config->can_modify_style_demo_url || $this->types->get(ext::TITANIA_TYPE_STYLE)->acl_get('moderate')
+				|| $this->contrib->contrib_type != ext::TITANIA_TYPE_STYLE;
 
 		$this->status_list = array(
-			TITANIA_CONTRIB_NEW					=> 'CONTRIB_NEW',
-			TITANIA_CONTRIB_APPROVED			=> 'CONTRIB_APPROVED',
-			TITANIA_CONTRIB_DOWNLOAD_DISABLED	=> 'CONTRIB_DOWNLOAD_DISABLED',
-			TITANIA_CONTRIB_CLEANED				=> 'CONTRIB_CLEANED',
-			TITANIA_CONTRIB_HIDDEN				=> 'CONTRIB_HIDDEN',
-			TITANIA_CONTRIB_DISABLED			=> 'CONTRIB_DISABLED',
+			ext::TITANIA_CONTRIB_NEW				=> 'CONTRIB_NEW',
+			ext::TITANIA_CONTRIB_APPROVED			=> 'CONTRIB_APPROVED',
+			ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED	=> 'CONTRIB_DOWNLOAD_DISABLED',
+			ext::TITANIA_CONTRIB_CLEANED			=> 'CONTRIB_CLEANED',
+			ext::TITANIA_CONTRIB_HIDDEN				=> 'CONTRIB_HIDDEN',
+			ext::TITANIA_CONTRIB_DISABLED			=> 'CONTRIB_DISABLED',
 		);
 	}
 
@@ -357,7 +359,7 @@ class manage extends base
 					$action_auth = false;
 			}
 		}
-		$is_author_editable = !in_array($this->contrib->contrib_status, array(TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_DISABLED));
+		$is_author_editable = !in_array($this->contrib->contrib_status, array(ext::TITANIA_CONTRIB_CLEANED, ext::TITANIA_CONTRIB_DISABLED));
 
 		return $action_auth && ($this->is_moderator ||
 			($this->is_author && $is_author_editable && $this->auth->acl_get('u_titania_post_edit_own')));
@@ -371,7 +373,7 @@ class manage extends base
 	protected function load_screenshot()
 	{
 		$this->screenshots
-			->configure(TITANIA_SCREENSHOT, $this->contrib->contrib_id, true, 175, true)
+			->configure(ext::TITANIA_SCREENSHOT, $this->contrib->contrib_id, true, 175, true)
 			->get_operator()->load()
 		;
 		$this->screenshots->handle_form_action();
@@ -385,7 +387,7 @@ class manage extends base
 	protected function load_colorizeit()
 	{
 		$this->colorizeit_sample
-			->configure(TITANIA_CLR_SCREENSHOT, $this->contrib->contrib_id)
+			->configure(ext::TITANIA_CLR_SCREENSHOT, $this->contrib->contrib_id)
 			->get_operator()->load()
 		;
 		$this->colorizeit_sample->handle_form_action();
@@ -568,7 +570,7 @@ class manage extends base
 
 		foreach ($subscribe as $user_id)
 		{
-			$this->subscriptions->subscribe(TITANIA_SUPPORT, $this->contrib->contrib_id, $user_id);
+			$this->subscriptions->subscribe(ext::TITANIA_SUPPORT, $this->contrib->contrib_id, $user_id);
 		}
 	}
 
@@ -590,7 +592,7 @@ class manage extends base
 		}
 		$this->setup($contrib_type, $contrib);
 
-		if (!$this->is_moderator || $this->contrib->contrib_status != TITANIA_CONTRIB_APPROVED)
+		if (!$this->is_moderator || $this->contrib->contrib_status != ext::TITANIA_CONTRIB_APPROVED)
 		{
 			return $this->helper->needs_auth();
 		}
@@ -678,7 +680,7 @@ class manage extends base
 		$coauthors = $this->get_coauthor_usernames();
 
 		$this->template->assign_vars(array(
-			'S_CONTRIB_APPROVED'		=> $this->contrib->contrib_status == TITANIA_CONTRIB_APPROVED,
+			'S_CONTRIB_APPROVED'		=> $this->contrib->contrib_status == ext::TITANIA_CONTRIB_APPROVED,
 			'S_POST_ACTION'				=> $this->contrib->get_url('manage'),
 			'S_EDIT_SUBJECT'			=> $this->is_moderator || $this->contrib->is_author(),
 			'S_DELETE_CONTRIBUTION'		=> $this->check_auth('delete'),
@@ -696,12 +698,16 @@ class manage extends base
 			'NONACTIVE_COAUTHORS'		=> implode("\n", $coauthors['nonactive']),
 		));
 
-		$this->display->generate_category_select(
-			$this->settings['categories'],
-			false,
-			true,
-			$this->contrib->type->id
-		);
+		// Render category list if user is authorized for the current contribution type
+		if ($this->contrib->type->acl_get('submit'))
+		{
+			$this->display->generate_category_select(
+				$this->settings['categories'],
+				false,
+				true,
+				$this->contrib->type->id
+			);
+		}
 		$this->message->display();
 		$this->contrib->assign_details();
 		$this->display->assign_global_vars();
@@ -772,16 +778,16 @@ class manage extends base
 
 		if ($name_change)
 		{
-			$this->contrib->report($name_change, false, TITANIA_ATTENTION_NAME_CHANGED);
+			$this->contrib->report($name_change, false, ext::TITANIA_ATTENTION_NAME_CHANGED);
 		}
 		if ($description_change)
 		{
-			$this->contrib->report($description_change, false, TITANIA_ATTENTION_DESC_CHANGED);
+			$this->contrib->report($description_change, false, ext::TITANIA_ATTENTION_DESC_CHANGED);
 		}
 
 		if ($category_change)
 		{
-			$this->contrib->report($category_change, false, TITANIA_ATTENTION_CATS_CHANGED);
+			$this->contrib->report($category_change, false, ext::TITANIA_ATTENTION_CATS_CHANGED);
 		}
 	}
 

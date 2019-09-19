@@ -17,6 +17,7 @@ namespace phpbb\titania\manage\tool\topic;
 use phpbb\db\driver\driver_interface as db_driver_interface;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use phpbb\user;
 use Symfony\Component\Console\Helper\ProgressHelper;
@@ -190,7 +191,7 @@ class rebuild_urls extends base
 		$i = 0;
 
 		$topic_type_where = $this->db->sql_in_set('topic_type',
-			array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION)
+			array(ext::TITANIA_SUPPORT, ext::TITANIA_QUEUE_DISCUSSION)
 		);
 
 		$sql = 'SELECT contrib_id, contrib_type, contrib_name_clean

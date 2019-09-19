@@ -12,12 +12,11 @@
 */
 
 /**
- * @ignore
+ * All constants defined below are deprecated and may be removed in the future.
+ * Use the class constants as defined in ext.php instead.
+ *
+ * @deprecated
  */
-if (!defined('IN_PHPBB'))
-{
-	exit;
-}
 
 // Contribution types
 define('TITANIA_TYPE_MOD', 1);

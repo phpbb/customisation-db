@@ -103,9 +103,11 @@ class sort extends entity\base
 			'sort_dir'			=> array('default' => 'a'),
 			'default_sort_dir'	=> array('default' => 'a'),
 			'sort_dir_name'		=> array('default' => 'sd'),
+			'status'			=> array('default' => ''),
+			'status_name'		=> array('default' => 'status'),
 
 			'total'			=> array('default' => 0),
-			'result_lang'	=> array('default' => 'TOTAL_RESULTS'), // sprintf'd into 'TOTAL_RESULTS' output;  Should have TOTAL_RESULTS and TOTAL_RESULTS_ONE strings
+			'result_lang'	=> array('default' => 'NUM_RESULTS'), // sprintf'd into 'TOTAL_RESULTS' output;  Should have TOTAL_RESULTS and TOTAL_RESULTS_ONE strings
 			'template_block'	=> array('default' => 'pagination'),
 			'template_vars'		=> array(
 				'default' => array(
@@ -174,6 +176,8 @@ class sort extends entity\base
 
 		$this->get_sort_key();
 		$this->get_sort_dir();
+
+		$this->get_status();
 
 		$this->request_completed = true;
 
@@ -245,6 +249,16 @@ class sort extends entity\base
 		$this->sort_dir = ($this->request->variable($this->sort_dir_name, (string) $this->default_sort_dir) == $this->default_sort_dir) ? $this->default_sort_dir : (($this->default_sort_dir == 'a') ? 'd' : 'a');
 
 		return $this->sort_dir;
+	}
+
+	/**
+	 * Filter for contribution status
+	 * @return string
+	 */
+	public function get_status()
+	{
+		$this->status = $this->request->variable($this->status_name, '');
+		return $this->status;
 	}
 
 	/**
@@ -447,6 +461,12 @@ class sort extends entity\base
 		if ($this->sort_dir != $this->default_sort_dir)
 		{
 			$params[$this->sort_dir_name] = $this->sort_dir;
+		}
+
+		// Add status to the URL
+		if ($this->status != '')
+		{
+			$params[$this->status_name] = $this->status;
 		}
 
 		$pagination_url = $this->path_helper->append_url_params($page, $params);

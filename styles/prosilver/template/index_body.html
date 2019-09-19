@@ -1,80 +1,84 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<h2>{L_CUSTOMISATION_DATABASE}</h2>
-
-<!-- IF .categories or U_QUEUE_STATS -->
-<ul class="linklist bulletin titania-navigation">
-	<!-- IF U_ALL_SUPPORT -->
-		<li><a href="{U_ALL_SUPPORT}">{L_ALL_SUPPORT}</a></li>
-	<!-- ENDIF -->
-	<!-- IF U_FIND_CONTRIBUTION -->
-		<li><a href="{U_FIND_CONTRIBUTION}">{L_FIND_CONTRIBUTION}</a></li>
-	<!-- ENDIF -->
-	<!-- IF U_QUEUE_STATS -->
-		<li id="queue-stats-link"><a href="{U_QUEUE_STATS}">{L_QUEUE_STATS}</a></li>
-	<!-- ENDIF -->
-</ul>
-<!-- ENDIF -->
+<h2>{{ lang('CUSTOMISATION_DATABASE') }}</h2>
 
 	<div class="action-bar contrib-filter" style="margin-top: 2em;">
-		<!-- IF U_CREATE_CONTRIBUTION -->
-			<a href="{U_CREATE_CONTRIBUTION}" title="{L_NEW_CONTRIBUTION}" class="button">
-				<span>{L_NEW_CONTRIBUTION}</span> <i class="icon fa-plus-circle fa-fw" aria-hidden="true"></i>
+		{% if U_CREATE_CONTRIBUTION %}
+			<a href="{{ U_CREATE_CONTRIBUTION }}" title="{{ lang('NEW_CONTRIBUTION') }}" class="button">
+				<span>{{ lang('NEW_CONTRIBUTION') }}</span> <i class="icon fa-plus-circle fa-fw" aria-hidden="true"></i>
 			</a>
-		<!-- ENDIF -->
+		{% endif %}
 
-		<!-- IF S_DISPLAY_SEARCHBOX -->
+		{% if S_DISPLAY_SEARCHBOX %}
 		<div class="search-box">
-			<form method="get" id="category-search" action="{S_SEARCHBOX_ACTION}">
+			<form method="get" id="category-search" action="{{ S_SEARCHBOX_ACTION }}">
 				<fieldset>
-					<input class="inputbox search tiny" type="text" name="keywords" id="search_keywords" size="20" placeholder="{L_SEARCH_MINI}" />
-					<button class="button button-search" type="submit" title="{L_SEARCH}">
+					<input class="inputbox search tiny" type="text" name="keywords" id="search_keywords" size="20" placeholder="{{ lang('SEARCH_MINI') }}" />
+					<button class="button button-search" type="submit" title="{{ lang('SEARCH') }}">
 						<i class="icon fa-search fa-fw" aria-hidden="true"></i>
-						<span class="sr-only">{L_SEARCH}</span>
+						<span class="sr-only">{{ lang('SEARCH') }}</span>
 					</button>
-					<a href="{U_SEARCH}" class="button button-search-end" title="{L_SEARCH_ADV}">
+					<a href="{{ U_SEARCH }}" class="button button-search-end" title="{{ lang('SEARCH_ADV') }}">
 						<i class="icon fa-cog fa-fw" aria-hidden="true"></i>
-						<span class="sr-only">{L_SEARCH_ADV}</span>
+						<span class="sr-only">{{ lang('SEARCH_ADV') }}</span>
 					</a>
-					<input type="hidden" value="{CATEGORY_ID}" name="c[]" />
+					<input type="hidden" value="{{ CATEGORY_ID }}" name="c[]" />
 					<input type="hidden" value="1" name="sc" />
 				</fieldset>
 			</form>
 		</div>
-		<!-- ENDIF -->
+		{% endif %}
 
 		<div class="dropdown-container sort-option branch-sort rightside">
-			<span title="{L_SORT}" class="dropdown-trigger sort-active">
-				{ACTIVE_BRANCH}
+			<span title="{{ lang('SORT') }}" class="dropdown-trigger sort-active">
+				{{ ACTIVE_BRANCH }}
 			</span>
 			<div class="dropdown hidden">
 				<div class="pointer"><div class="pointer-inner"></div></div>
 				<ul class="dropdown-contents branch-sort-options">
-					<!-- BEGIN sort_branches -->
+					{% for sort_branches in loops.sort_branches %}
 						<li>
-							<a href="{sort_branches.URL}" data-ajax="titania.category.load" data-sort="{sort_branches.ID}"<!-- IF sort_branches.ACTIVE --> class="active"<!-- ENDIF -->>
-								{sort_branches.NAME}
+							<a href="{{ sort_branches.URL }}" data-ajax="titania.category.load" data-sort="{{ sort_branches.ID }}"{% if sort_branches.ACTIVE %} class="active"{% endif %}>
+								{{ sort_branches.NAME }}
 							</a>
 						</li>
-					<!-- END sort_branches -->
+					{% endfor %}
 				</ul>
 			</div>
 		</div>
 
 		<div class="dropdown-container sort-option key-sort rightside">
-			<span title="{L_SORT}" class="dropdown-trigger sort-active">
-				{ACTIVE_SORT_OPTION}
+			<span title="{{ lang('SORT') }}" class="dropdown-trigger sort-active">
+				{{ ACTIVE_SORT_OPTION }}
 			</span>
 			<div class="dropdown hidden">
 				<div class="pointer"><div class="pointer-inner"></div></div>
 				<ul class="dropdown-contents key-sort-options">
-					<!-- BEGIN sort -->
+					{% for sort in loops.sort %}
 						<li>
-							<a href="{sort.URL}" data-ajax="titania.category.load" data-sort="{sort.ID}"<!-- IF sort.ACTIVE --> class="active"<!-- ENDIF -->>
-								{sort.NAME}
+							<a href="{{ sort.URL }}" data-ajax="titania.category.load" data-sort="{{ sort.ID }}"{% if sort.ACTIVE %} class="active"{% endif %}>
+								{{ sort.NAME }}
 							</a>
 						</li>
-					<!-- END sort -->
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+
+		<div class="dropdown-container sort-option status-sort rightside"{% if not SHOW_STATUS %} style="display: none;"{% endif %}>
+			<span title="{{ lang('SORT') }}" class="dropdown-trigger sort-active">
+				{{ ACTIVE_STATUS }}
+			</span>
+			<div class="dropdown hidden">
+				<div class="pointer"><div class="pointer-inner"></div></div>
+				<ul class="dropdown-contents status-sort-options">
+					{% for sort_status in loops.sort_status %}
+					<li>
+						<a href="{{ sort_status.URL }}" data-ajax="titania.category.load" data-sort="{{ sort_status.ID }}"{% if sort_status.ACTIVE %} class="active"{% endif %}>
+						{{ sort_status.NAME }}
+						</a>
+					</li>
+					{% endfor %}
 				</ul>
 			</div>
 		</div>
@@ -82,33 +86,46 @@
 	</div>
 
 	<div class="categories">
-		<a href="{U_ALL_CONTRIBUTIONS}" data-ajax="titania.category.load"<!-- IF !CATEGORY_ID --> class="active"<!-- ENDIF --> data-category-id="0">{L_ALL_CONTRIBUTIONS}</a>
-		<!-- BEGIN categories -->
-		<!-- IF LAST_DEPTH and categories.DEPTH neq LAST_DEPTH --></div><!-- ENDIF -->
-		<!-- IF categories.DEPTH and LAST_DEPTH neq categories.DEPTH --><div data-parent-id="{categories.PARENT_ID}"<!-- IF not categories.ACTIVE --> style="display: none;"<!-- ENDIF -->><!-- ENDIF -->
-		<a href="{categories.U_VIEW_CATEGORY}" data-ajax="titania.category.load"<!-- IF CATEGORY_ID eq categories.CATEGORY_ID --> class="active"<!-- ENDIF --><!-- IF categories.DEPTH --> style="margin-left: {categories.DEPTH}px;"<!-- ENDIF --> data-category-id="{categories.CATEGORY_ID}">
-			{categories.CATEGORY_NAME}
-			<span>{categories.CATEGORY_CONTRIBS}</span>
+		<a href="{{ U_ALL_CONTRIBUTIONS }}" data-ajax="titania.category.load"{% if not CATEGORY_ID %} class="active"{% endif %} data-category-id="0">{{ lang('ALL_CONTRIBUTIONS') }}</a>
+		{% for categories in loops.categories %}
+		{% if LAST_DEPTH and categories.DEPTH neq LAST_DEPTH %}</div>{% endif %}
+		{% if categories.DEPTH and LAST_DEPTH neq categories.DEPTH %}<div data-parent-id="{{ categories.PARENT_ID }}"{% if not categories.ACTIVE %} style="display: none;"{% endif %}>{% endif %}
+		<a href="{{ categories.U_VIEW_CATEGORY }}" data-ajax="titania.category.load"{% if CATEGORY_ID eq categories.CATEGORY_ID %} class="active"{% endif %}{% if categories.DEPTH %} style="margin-left: {{ categories.DEPTH }}px;"{% endif %} data-category-id="{{ categories.CATEGORY_ID }}">
+			{{ categories.CATEGORY_NAME }}
+			<span>{{ categories.CATEGORY_CONTRIBS }}</span>
 		</a>
-		<!-- IF categories.DEPTH and categories.S_LAST_ROW --></div><!-- ENDIF -->
+		{% if categories.DEPTH and categories.S_LAST_ROW %}</div>{% endif %}
 		{% set LAST_DEPTH = categories.DEPTH %}
-		<!-- END categories -->
+		{% endfor %}
+		{% if loops.categories|length or U_QUEUE_STATS %}
+			<div class="titania-navigation">
+				{% if U_ALL_SUPPORT %}
+					<a href="{{ U_ALL_SUPPORT }}">{{ lang('ALL_SUPPORT') }}</a>
+				{% endif %}
+				{% if U_QUEUE_STATS %}
+					<a id="queue-stats-link" href="{{ U_QUEUE_STATS }}">{{ lang('QUEUE_STATS') }}</a>
+				{% endif %}
+				{% if S_ENABLE_FEEDS and U_CONTRIB_FEED %}
+					<a href="{{ U_CONTRIB_FEED }}">{{ lang('FEED') }}</a>
+				{% endif %}
+			</div>
+		{% endif %}
 	</div>
 
 <div class="contrib-list-container">
-	<div class="action-bar"<!-- IF !PAGINATION and !TOTAL_RESULTS --> style="display: none;"<!-- ENDIF -->>
-		<!-- INCLUDE common/pagination.html -->
+	<div class="action-bar"{% if not PAGINATION and not TOTAL_RESULTS %} style="display: none;"{% endif %}>
+		{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 	</div>
 
 	<div class="contrib-list">
-		<!-- INCLUDE common/contribution_list.html -->
+		{% INCLUDE '@phpbb_titania/common/contribution_list.html' %}
 	</div>
 
-	<div class="action-bar"<!-- IF !PAGINATION and !TOTAL_RESULTS --> style="display: none;"<!-- ENDIF -->>
-		<!-- INCLUDE common/pagination.html -->
+	<div class="action-bar"{% if not PAGINATION and not TOTAL_RESULTS %} style="display: none;"{% endif %}>
+		{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 	</div>
 </div>
 
 <br />
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

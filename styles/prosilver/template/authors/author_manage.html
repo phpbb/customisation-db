@@ -1,36 +1,32 @@
-<!-- INCLUDE authors/author_header.html -->
+{% INCLUDE '@phpbb_titania/authors/author_header.html' %}
 
-<h3 class="section-name">{PAGE_TITLE}</h3>
+<h3 class="section-name">{{ PAGE_TITLE }}</h3>
 
-<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+<form id="{{ POSTING_FORM_NAME }}" method="post" action="{{ S_POST_ACTION }}" {{ S_FORM_ENCTYPE }}>
 	<div class="container">
 		<div class="inner">
-			<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+			{% if ERROR_MSG %}<p class="error">{{ ERROR_MSG }}</p>{% endif %}
 
 			<fieldset>
 				<dl>
-					<dt><label for="realname">{L_AUTHOR_REAL_NAME}:</label></dt>
-					<dd><input type="text" name="realname" id="realname" size="45" maxlength="60" value="{AUTHOR_REALNAME}" class="inputbox autowidth" /></dd>
+					<dt><label for="website">{{ lang('WEBSITE') ~ lang('COLON') }}</label></dt>
+					<dd><input type="text" name="website" id="website" size="45" maxlength="60" value="{{ AUTHOR_WEBSITE }}" class="inputbox autowidth" /></dd>
 				</dl>
 				<dl>
-					<dt><label for="website">{L_WEBSITE}:</label></dt>
-					<dd><input type="text" name="website" id="website" size="45" maxlength="60" value="{AUTHOR_WEBSITE}" class="inputbox autowidth" /></dd>
-				</dl>
-				<dl>
-					<dt><label for="{POSTING_TEXT_NAME}">{L_AUTHOR_DESC}:</label></dt>
+					<dt><label for="{{ POSTING_TEXT_NAME }}">{{ lang('AUTHOR_DESC') ~ lang('COLON') }}</label></dt>
 				</dl>
 			</fieldset>
-			<!-- INCLUDE posting/posting_basic_editor.html -->
+			{% INCLUDE '@phpbb_titania/posting/posting_basic_editor.html' %}
 			<fieldset class="fields1">
-				<!-- IF S_BBCODE_ALLOWED -->
-					<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{S_BBCODE_CHECKED} /> {L_DISABLE_BBCODE}</label></div>
-				<!-- ENDIF -->
-				<!-- IF S_SMILIES_ALLOWED -->
-					<div><label for="disable_smilies"><input type="checkbox" name="disable_smilies" id="disable_smilies"{S_SMILIES_CHECKED} /> {L_DISABLE_SMILIES}</label></div>
-				<!-- ENDIF -->
-				<!-- IF S_LINKS_ALLOWED -->
-					<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{S_MAGIC_URL_CHECKED} /> {L_DISABLE_MAGIC_URL}</label></div>
-				<!-- ENDIF -->
+				{% if S_BBCODE_ALLOWED %}
+					<div><label for="disable_bbcode"><input type="checkbox" name="disable_bbcode" id="disable_bbcode"{{ S_BBCODE_CHECKED }} /> {{ lang('DISABLE_BBCODE') }}</label></div>
+				{% endif %}
+				{% if S_SMILIES_ALLOWED %}
+					<div><label for="disable_smilies"><input type="checkbox" name="disable_smilies" id="disable_smilies"{{ S_SMILIES_CHECKED }} /> {{ lang('DISABLE_SMILIES') }}</label></div>
+				{% endif %}
+				{% if S_LINKS_ALLOWED %}
+					<div><label for="disable_magic_url"><input type="checkbox" name="disable_magic_url" id="disable_magic_url"{{ S_MAGIC_URL_CHECKED }} /> {{ lang('DISABLE_MAGIC_URL') }}</label></div>
+				{% endif %}
 			</fieldset>
 		</div>
 	</div>
@@ -38,13 +34,13 @@
 	<div class="container">
 		<div class="inner">
 			<fieldset class="submit-buttons">
-				<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
-				<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
-				{S_FORM_TOKEN}
+				<input type="reset" value="{{ lang('RESET') }}" name="reset" class="button2" />&nbsp;
+				<input type="submit" name="submit" value="{{ lang('SUBMIT') }}" class="button1" />
+				{{ S_FORM_TOKEN }}
 			</fieldset>
 
 		</div>
 	</div>
 </form>
 
-<!-- INCLUDE authors/author_footer.html -->
+{% INCLUDE '@phpbb_titania/authors/author_footer.html' %}

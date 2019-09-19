@@ -13,6 +13,14 @@
 
 namespace phpbb\titania\event;
 
+use phpbb\db\driver\driver_interface as db_driver_interface;
+use phpbb\event\data;
+use phpbb\auth\auth;
+use phpbb\template\template;
+use phpbb\titania\controller\helper;
+use phpbb\titania\ext;
+use phpbb\user;
+use s9e\TextFormatter\Configurator\Items\TemplateDocument;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
@@ -21,6 +29,9 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 */
 class main_listener implements EventSubscriberInterface
 {
+	/** @var db_driver_interface */
+	protected $db;
+
 	/** @var \phpbb\user */
 	protected $user;
 
@@ -36,34 +47,45 @@ class main_listener implements EventSubscriberInterface
 	/** @var string */
 	protected $php_ext;
 
+	/** @var string */
+	protected $ext_root_path;
+
 	/** @var bool */
 	protected $in_titania;
 
 	/**
-	* Constructor
-	*
-	* @param \phpbb\user $user
-	* @param \phpbb\template\template $template
-	* @param \phpbb\titania\controller\helper $controller_helper
-	* @param string	$phpbb_root_path	phpBB root path
-	* @param string	$php_ext			PHP file extension
-	*/
-	public function __construct(\phpbb\user $user, \phpbb\template\template $template, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $php_ext)
+	 * Constructor
+	 *
+	 * @param db_driver_interface $db
+	 * @param \phpbb\user $user
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\titania\controller\helper $controller_helper
+	 * @param string $phpbb_root_path phpBB root path
+	 * @param string $ext_root_path Titania root path
+	 * @param string $php_ext PHP file extension
+	 */
+	public function __construct(db_driver_interface $db, user $user, template $template, helper $controller_helper, $phpbb_root_path, $ext_root_path, $php_ext)
 	{
+		$this->db = $db;
 		$this->user = $user;
 		$this->template = $template;
 		$this->controller_helper = $controller_helper;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+		$this->ext_root_path = $ext_root_path;
 		$this->in_titania = false;
 	}
 
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.permissions'			=> 'add_permissions',
-			'kernel.request'			=> array(array('startup', -1)),
-			'core.page_header_after'	=> 'overwrite_template_vars',
+			'core.permissions'							=> 'add_permissions',
+			'kernel.request'							=> array(array('startup', -1)),
+			'core.page_header_after'					=> 'overwrite_template_vars',
+            'core.text_formatter_s9e_configure_after'	=> 'inject_bbcode_code_lang',
+
+			// Check whether a user is removed from a team
+			'core.group_delete_user_after'				=> 'remove_users_from_subscription',
 		);
 	}
 
@@ -125,7 +147,7 @@ class main_listener implements EventSubscriberInterface
 			'u_titania_mod_bbcode_queue'			=> array('lang' => 'ACL_U_TITANIA_MOD_BBCODE_QUEUE', 'cat' => 'titania_moderate'),
 			'u_titania_mod_bbcode_validate'			=> array('lang' => 'ACL_U_TITANIA_MOD_BBCODE_VALIDATE', 'cat' => 'titania_moderate'),
 			'u_titania_mod_bbcode_moderate'			=> array('lang' => 'ACL_U_TITANIA_MOD_BBCODE_MODERATE', 'cat' => 'titania_moderate'),
-	
+
 			'u_titania_mod_bridge_queue_discussion'	=> array('lang' => 'ACL_U_TITANIA_MOD_BRIDGE_QUEUE_DISCUSSION', 'cat' => 'titania_moderate'),
 			'u_titania_mod_bridge_queue'			=> array('lang' => 'ACL_U_TITANIA_MOD_BRIDGE_QUEUE', 'cat' => 'titania_moderate'),
 			'u_titania_mod_bridge_validate'			=> array('lang' => 'ACL_U_TITANIA_MOD_BRIDGE_VALIDATE', 'cat' => 'titania_moderate'),
@@ -151,11 +173,25 @@ class main_listener implements EventSubscriberInterface
 		}
 		$this->in_titania = true;
 
-		require($this->phpbb_root_path . 'ext/phpbb/titania/common.' . $this->php_ext);
+		require($this->ext_root_path . 'common.' . $this->php_ext);
 	}
 
 	public function overwrite_template_vars($event)
 	{
+		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
+		{
+			$this->user->add_lang_ext('phpbb/titania', 'common');
+
+			$u_my_contribs = $this->controller_helper->route('phpbb.titania.author', array(
+				'author'	=> urlencode($this->user->data['username_clean']),
+				'page'		=> 'contributions',
+			));
+
+			$this->template->assign_vars(array(
+				'U_MY_CONTRIBUTIONS'		=> $this->controller_helper->get_real_url($u_my_contribs),
+			));
+		}
+
 		if (!$this->in_titania)
 		{
 			return;
@@ -164,6 +200,7 @@ class main_listener implements EventSubscriberInterface
 		$this->template->assign_vars(array(
 			'U_FAQ'		=> $this->controller_helper->route('phpbb.titania.faq'),
 			'U_SEARCH'	=> $this->controller_helper->route('phpbb.titania.search'),
+			'S_BODY_CLASS'	=> 'customisation-database',
 		));
 
 		if ($this->user->data['user_id'] == ANONYMOUS)
@@ -179,5 +216,90 @@ class main_listener implements EventSubscriberInterface
 			));
 		}
 	}
-}
 
+    /**
+     * Reads the value for the lang attribute passed to each code BBCode, e.g. [code=diff] or [code lang=diff],
+     * and adds it as a class attribute to the code element, e.g. <code class="diff">
+     *
+     * @param data $event
+     */
+    public function inject_bbcode_code_lang(data $event)
+    {
+        $tag = $event['configurator']->tags['CODE'];
+
+        /** @var TemplateDocument $dom */
+        $dom = $tag->template->asDOM();
+
+        foreach ($dom->getElementsByTagName('code') as $code)
+        {
+        	/** @var \DOMElement $code */
+			$code->setAttribute('class', '{@lang}');
+		}
+
+        $dom->saveChanges();
+    }
+
+	/**
+	 * Remove users from queue subscription if they are removed from a team and subsequently lose all queue permissions
+	 * @param $event
+	 */
+	public function remove_users_from_subscription($event)
+	{
+		if (!defined('TITANIA_WATCH_TABLE'))
+		{
+			// Include Titania so we can access the constants
+			require($this->ext_root_path . 'common.' . $this->php_ext);
+		}
+
+		$queue_permissions = array(
+			'u_titania_mod_extension_queue',
+			'u_titania_mod_bridge_queue',
+			'u_titania_mod_bbcode_queue',
+			'u_titania_mod_converter_queue',
+			'u_titania_mod_translation_queue',
+			'u_titania_mod_modification_queue',
+			'u_titania_mod_style_queue'
+		);
+
+		$remove_user_ids = array();
+
+		foreach ($event['user_id_ary'] as $user_id)
+		{
+			// For every user removed from the group, check if they should still receive emails
+			$auth = new auth();
+
+			$user_data = $auth->obtain_user_data($user_id);
+			$auth->acl($user_data);
+
+			$has_queue_access = false;
+
+			foreach ($queue_permissions as $permission)
+			{
+				// If the user has access to any of the private queues, then it can be assumed they
+				// will still be eligible to receive emails.
+				if ($auth->acl_get($permission))
+				{
+					$has_queue_access = true;
+					break;
+				}
+			}
+
+			if (!$has_queue_access)
+			{
+				// Remove queue subscriptions
+				$remove_user_ids[] = (int) $user_id;
+			}
+		}
+
+		// Only continue if there are users to remove from the Titania queue subscriptions
+		if (count($remove_user_ids))
+		{
+			// Remove subscription
+			$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . '
+					WHERE ' . $this->db->sql_in_set('watch_user_id', $remove_user_ids) . '
+						AND watch_object_type = ' . ext::TITANIA_QUEUE;
+
+			$this->db->sql_query($sql);
+		}
+	}
+}

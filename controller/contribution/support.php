@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 
 class support extends base
 {
@@ -86,7 +87,7 @@ class support extends base
 				'contrib_type'	=> $this->contrib->type->url,
 				'contrib'		=> $this->contrib->contrib_name_clean,
 			),
-			TITANIA_SUPPORT,
+			ext::TITANIA_SUPPORT,
 			$this->helper->get_current_url()
 		);
 	}
@@ -115,7 +116,7 @@ class support extends base
 
 		// Subscriptions
 		$this->subscriptions->handle_subscriptions(
-			TITANIA_TOPIC,
+			ext::TITANIA_TOPIC,
 			$topic_id,
 			$this->topic->get_url(),
 			'SUBSCRIBE_TOPIC'
@@ -155,7 +156,7 @@ class support extends base
 
 		// Subscriptions
 		$this->subscriptions->handle_subscriptions(
-			TITANIA_SUPPORT,
+			ext::TITANIA_SUPPORT,
 			$this->contrib->contrib_id,
 			$this->contrib->get_url('support'),
 			'SUBSCRIBE_SUPPORT'
@@ -164,7 +165,7 @@ class support extends base
 		// Mark all topics read
 		if ($this->request->variable('mark', '') == 'topics')
 		{
-			$this->tracking->track(TITANIA_SUPPORT, $this->contrib->contrib_id);
+			$this->tracking->track(ext::TITANIA_SUPPORT, $this->contrib->contrib_id);
 		}
 
 		$can_post_topic = $this->ext_config->support_in_titania && $this->auth->acl_get('u_titania_topic');
@@ -182,7 +183,7 @@ class support extends base
 			'S_DISPLAY_SEARCHBOX'	=> true,
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.results'),
 			'SEARCH_HIDDEN_FIELDS'	=> build_hidden_fields(array(
-				'type'		=> TITANIA_SUPPORT,
+				'type'		=> ext::TITANIA_SUPPORT,
 				'contrib'	=> $this->contrib->contrib_id,
 			)),
 		));
@@ -230,7 +231,7 @@ class support extends base
 			$can_view_queue_discussion = $this->is_author || $this->contrib->type->acl_get('queue_discussion');
 
 			if ($this->topic->topic_access < $this->access->get_level() ||
-				($this->topic->topic_type == TITANIA_QUEUE_DISCUSSION && !$can_view_queue_discussion))
+				($this->topic->topic_type == ext::TITANIA_QUEUE_DISCUSSION && !$can_view_queue_discussion))
 			{
 				return false;
 			}

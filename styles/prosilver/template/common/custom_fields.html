@@ -1,15 +1,15 @@
-<!-- BEGIN custom_fields -->
-	<dl<!-- IF custom_fields.GROUP_ID --> class="custom_settings_{custom_fields.GROUP_ID}"<!-- ENDIF -->>
+{% for custom_fields in loops.custom_fields %}
+	<dl{% if custom_fields.GROUP_ID %} class="custom_settings_{{ custom_fields.GROUP_ID }}"{% endif %}>
 		<dt>
-			<label for="custom_{custom_fields.ID}">{custom_fields.NAME}:</label>
-			<!-- IF custom_fields.EXPLAIN --><br /><span>{custom_fields.EXPLAIN}</span><!-- ENDIF -->
+			<label for="custom_{{ custom_fields.ID }}">{{ custom_fields.NAME ~ lang('COLON') }}</label>
+			{% if custom_fields.EXPLAIN %}<br /><span>{{ custom_fields.EXPLAIN }}</span>{% endif %}
 		</dt>
 		<dd>
-			<!-- IF custom_fields.FIELD_TYPE eq 'textarea' -->
-				<textarea name="custom_fields[{custom_fields.ID}]" class="inputbox" id="custom_{custom_fields.ID}">{custom_fields.VALUE}</textarea>
-			<!-- ELSEIF custom_fields.FIELD_TYPE eq 'input' -->
-				<input type="text" name="custom_fields[{custom_fields.ID}]" value="{custom_fields.VALUE}" class="inputbox medium" id="custom_{custom_fields.ID}" />
-			<!-- ENDIF -->
+			{% if custom_fields.FIELD_TYPE eq 'textarea' %}
+				<textarea name="custom_fields[{{ custom_fields.ID }}]" class="inputbox" id="custom_{{ custom_fields.ID }}">{{ custom_fields.VALUE }}</textarea>
+			{% elseif custom_fields.FIELD_TYPE eq 'input' %}
+				<input type="text" name="custom_fields[{{ custom_fields.ID }}]" value="{{ custom_fields.VALUE }}" class="inputbox medium" id="custom_{{ custom_fields.ID }}" />
+			{% endif %}
 		</dd>
 	</dl>
-<!-- END custom_fields -->
+{% endfor %}

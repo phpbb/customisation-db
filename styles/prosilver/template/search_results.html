@@ -1,144 +1,144 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<h2><!-- IF SEARCH_TITLE -->{SEARCH_TITLE}<!-- ELSE -->{SEARCH_MATCHES}<!-- ENDIF --><!-- IF SEARCH_WORDS -->: <a href="{U_SEARCH_WORDS}">{SEARCH_WORDS}</a><!-- ENDIF --></h2>
-<!-- IF IGNORED_WORDS --> <p>{L_IGNORED_TERMS}: <strong>{IGNORED_WORDS}</strong></p><!-- ENDIF -->
+<h2>{% if SEARCH_TITLE %}{{ SEARCH_TITLE }}{% else %}{{ SEARCH_MATCHES }}{% endif %}{% if SEARCH_WORDS %}{{ lang('COLON') }} <a href="{{ U_SEARCH_WORDS }}">{{ SEARCH_WORDS }}</a>{% endif %}</h2>
+{% if IGNORED_WORDS %} <p>{{ lang('IGNORED_TERMS') ~ lang('COLON') }} <strong>{{ IGNORED_WORDS }}</strong></p>{% endif %}
 
-<!-- IF SEARCH_TOPIC -->
-	<p><a class="{S_CONTENT_FLOW_BEGIN}" href="{U_SEARCH_TOPIC}">{L_RETURN_TO}: {SEARCH_TOPIC}</a></p>
-<!-- ELSE -->
-	<p><a class="{S_CONTENT_FLOW_BEGIN}" href="{U_SEARCH}" title="{L_SEARCH_ADV}">{L_GO_TO_SEARCH_ADV}</a></p>
-<!-- ENDIF -->
+{% if SEARCH_TOPIC %}
+	<p><a class="{{ S_CONTENT_FLOW_BEGIN }}" href="{{ U_SEARCH_TOPIC }}">{{ lang('RETURN_TO') ~ lang('COLON') }} {{ SEARCH_TOPIC }}</a></p>
+{% else %}
+	<p><a class="{{ S_CONTENT_FLOW_BEGIN }}" href="{{ U_SEARCH }}" title="{{ lang('SEARCH_ADV') }}">{{ lang('GO_TO_SEARCH_ADV') }}</a></p>
+{% endif %}
 
-<!-- IF PAGINATION or SEARCH_MATCHES or PAGE_NUMBER -->
-	<form method="post" action="{S_SEARCH_ACTION}">
+{% if PAGINATION or SEARCH_MATCHES or PAGE_NUMBER %}
+	<form method="post" action="{{ S_SEARCH_ACTION }}">
 
 	<div class="action-bar">
 
-	<!-- IF SEARCH_MATCHES -->
+	{% if SEARCH_MATCHES %}
 		<div class="search-box">
-			<!-- IF SEARCH_IN_RESULTS -->
-				<label for="add_keywords">{L_SEARCH_IN_RESULTS}: <input type="text" name="add_keywords" id="add_keywords" value="" class="inputbox narrow" /></label>
-				<button class="button icon-button search-icon" type="submit" title="{L_SEARCH}">{L_SEARCH}</button>
-				<a href="{U_SEARCH}" class="button icon-button search-adv-icon" title="{L_SEARCH_ADV}">{L_SEARCH_ADV}</a>
-			<!-- ENDIF -->
+			{% if SEARCH_IN_RESULTS %}
+				<label for="add_keywords">{{ lang('SEARCH_IN_RESULTS') ~ lang('COLON') }} <input type="text" name="add_keywords" id="add_keywords" value="" class="inputbox narrow" /></label>
+				<button class="button icon-button search-icon" type="submit" title="{{ lang('SEARCH') }}">{{ lang('SEARCH') }}</button>
+				<a href="{{ U_SEARCH }}" class="button icon-button search-adv-icon" title="{{ lang('SEARCH_ADV') }}">{{ lang('SEARCH_ADV') }}</a>
+			{% endif %}
 		</div>
-	<!-- ENDIF -->
+	{% endif %}
 
-		<!-- INCLUDE common/pagination.html -->
+		{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 	</div>
 
 	</form>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- IF S_SHOW_TOPICS -->
+{% if S_SHOW_TOPICS %}
 
-	<!-- IF .searchresults -->
+	{% if loops.searchresults|length %}
 	<div class="forumbg">
 
 		<div class="inner">
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="icon">
-					<dt>{L_TOPICS}</dt>
-					<dd class="posts">{L_REPLIES}</dd>
-					<dd class="views">{L_VIEWS}</dd>
-					<dd class="lastpost"><span>{L_LAST_POST}</span></dd>
+					<dt>{{ lang('TOPICS') }}</dt>
+					<dd class="posts">{{ lang('REPLIES') }}</dd>
+					<dd class="views">{{ lang('VIEWS') }}</dd>
+					<dd class="lastpost"><span>{{ lang('LAST_POST') }}</span></dd>
 				</dl>
 			</li>
 		</ul>
 		<ul class="topiclist topics">
 
-		<!-- BEGIN searchresults -->
-			<li class="row<!-- IF searchresults.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">
-				<dl class="icon" style="background-image: url({searchresults.FOLDER_IMG_SRC}); background-repeat: no-repeat;">
-					<dt <!-- IF searchresults.TOPIC_ICON_IMG -->style="background-image: url({T_ICONS_PATH}{searchresults.TOPIC_ICON_IMG}); background-repeat: no-repeat;"<!-- ENDIF -->>
-						<!-- IF searchresults.S_UNREAD_TOPIC --><a href="{searchresults.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF -->
-						<a href="{searchresults.U_VIEW_TOPIC}" class="topictitle">{searchresults.TOPIC_TITLE}</a> {searchresults.ATTACH_ICON_IMG}
-						<!-- IF searchresults.S_TOPIC_UNAPPROVED or searchresults.S_POSTS_UNAPPROVED --><a href="{searchresults.U_MCP_QUEUE}">{searchresults.UNAPPROVED_IMG}</a> <!-- ENDIF -->
-						<!-- IF searchresults.S_TOPIC_REPORTED --><a href="{searchresults.U_MCP_REPORT}">{REPORTED_IMG}</a><!-- ENDIF --><br />
-						<!-- IF searchresults.PAGINATION --><strong class="pagination"><span>{searchresults.PAGINATION}</span></strong><!-- ENDIF -->
-						{L_POST_BY_AUTHOR} {searchresults.TOPIC_AUTHOR_FULL} &raquo; {searchresults.FIRST_POST_TIME}
-						<!-- IF not searchresults.S_TOPIC_GLOBAL -->{L_IN} <a href="{searchresults.U_VIEW_FORUM}">{searchresults.FORUM_TITLE}</a><!-- ELSE --> ({L_GLOBAL})<!-- ENDIF -->
+		{% for searchresults in loops.searchresults %}
+			<li class="row{% if searchresults.S_ROW_COUNT is even %} bg1{% else %} bg2{% endif %}">
+				<dl class="icon" style="background-image: url({{ searchresults.FOLDER_IMG_SRC }}); background-repeat: no-repeat;">
+					<dt {% if searchresults.TOPIC_ICON_IMG %}style="background-image: url({{ T_ICONS_PATH ~ searchresults.TOPIC_ICON_IMG }}); background-repeat: no-repeat;"{% endif %}>
+						{% if searchresults.S_UNREAD_TOPIC %}<a href="{{ searchresults.U_NEWEST_POST }}">{{ NEWEST_POST_IMG }}</a> {% endif %}
+						<a href="{{ searchresults.U_VIEW_TOPIC }}" class="topictitle">{{ searchresults.TOPIC_TITLE }}</a> {{ searchresults.ATTACH_ICON_IMG }}
+						{% if searchresults.S_TOPIC_UNAPPROVED or searchresults.S_POSTS_UNAPPROVED %}<a href="{{ searchresults.U_MCP_QUEUE }}">{{ searchresults.UNAPPROVED_IMG }}</a> {% endif %}
+						{% if searchresults.S_TOPIC_REPORTED %}<a href="{{ searchresults.U_MCP_REPORT }}">{{ REPORTED_IMG }}</a>{% endif %}<br />
+						{% if searchresults.PAGINATION %}<strong class="pagination"><span>{{ searchresults.PAGINATION }}</span></strong>{% endif %}
+						{{ lang('POST_BY_AUTHOR') }} {{ searchresults.TOPIC_AUTHOR_FULL }} &raquo; {{ searchresults.FIRST_POST_TIME }}
+						{% if not searchresults.S_TOPIC_GLOBAL %}{{ lang('IN') }} <a href="{{ searchresults.U_VIEW_FORUM }}">{{ searchresults.FORUM_TITLE }}</a>{% else %} ({{ lang('GLOBAL') }}){% endif %}
 					</dt>
-					<dd class="posts">{searchresults.TOPIC_REPLIES}</dd>
-					<dd class="views">{searchresults.TOPIC_VIEWS}</dd>
+					<dd class="posts">{{ searchresults.TOPIC_REPLIES }}</dd>
+					<dd class="views">{{ searchresults.TOPIC_VIEWS }}</dd>
 					<dd class="lastpost"><span>
-						{L_POST_BY_AUTHOR} {searchresults.LAST_POST_AUTHOR_FULL}
-						<!-- IF not S_IS_BOT --><a href="{searchresults.U_LAST_POST}">{LAST_POST_IMG}</a> <!-- ENDIF --><br />{searchresults.LAST_POST_TIME}<br /> </span>
+						{{ lang('POST_BY_AUTHOR') }} {{ searchresults.LAST_POST_AUTHOR_FULL }}
+						{% if not S_IS_BOT %}<a href="{{ searchresults.U_LAST_POST }}">{{ LAST_POST_IMG }}</a> {% endif %}<br />{{ searchresults.LAST_POST_TIME }}<br /> </span>
 					</dd>
 				</dl>
 			</li>
-		<!-- END searchresults -->
+		{% endfor %}
 		</ul>
 
 		</div>
 	</div>
-	<!-- ELSE -->
+	{% else %}
 		<div class="panel">
 			<div class="inner">
-			<strong>{L_NO_SEARCH_RESULTS}</strong>
+			<strong>{{ lang('NO_SEARCH_RESULTS') }}</strong>
 			</div>
 		</div>
-	<!-- ENDIF -->
+	{% endif %}
 
-<!-- ELSE -->
+{% else %}
 
-	<!-- BEGIN searchresults -->
-		<div class="search post <!-- IF searchresults.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF searchresults.S_POST_REPORTED --> reported<!-- ENDIF -->">
+	{% for searchresults in loops.searchresults %}
+		<div class="search post {% if searchresults.S_ROW_COUNT is odd %}bg1{% else %}bg2{% endif %}{% if searchresults.S_POST_REPORTED %} reported{% endif %}">
 			<div class="inner">
 
-	<!-- IF searchresults.S_IGNORE_POST -->
+	{% if searchresults.S_IGNORE_POST %}
 		<div class="postbody">
-			{searchresults.L_IGNORE_POST}
+			{{ searchresults.L_IGNORE_POST }}
 		</div>
-	<!-- ELSE -->
+	{% else %}
 		<div class="postbody">
-			<h3><a href="{searchresults.U_VIEW_POST}">{searchresults.POST_SUBJECT}</a></h3>
-			<div class="content">{searchresults.MESSAGE}</div>
+			<h3><a href="{{ searchresults.U_VIEW_POST }}">{{ searchresults.POST_SUBJECT }}</a></h3>
+			<div class="content">{{ searchresults.MESSAGE }}</div>
 		</div>
 
 		<dl class="postprofile">
-			<!-- IF searchresults.POST_AUTHOR_FULL --><dt class="author">{L_POST_BY_AUTHOR} {searchresults.POST_AUTHOR_FULL}</dt><!-- ENDIF -->
-			<!-- IF searchresults.POST_DATE --><dd>{searchresults.POST_DATE}</dd><!-- ENDIF -->
+			{% if searchresults.POST_AUTHOR_FULL %}<dt class="author">{{ lang('POST_BY_AUTHOR') }} {{ searchresults.POST_AUTHOR_FULL }}</dt>{% endif %}
+			{% if searchresults.POST_DATE %}<dd>{{ searchresults.POST_DATE }}</dd>{% endif %}
 		</dl>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- IF not searchresults.S_IGNORE_POST -->
+	{% if not searchresults.S_IGNORE_POST %}
 		<ul class="searchresults">
-			<li ><a href="{searchresults.U_VIEW_POST}" class="{S_CONTENT_FLOW_END}">{L_JUMP_TO_POST}</a></li>
+			<li ><a href="{{ searchresults.U_VIEW_POST }}" class="{{ S_CONTENT_FLOW_END }}">{{ lang('JUMP_TO_POST') }}</a></li>
 		</ul>
-	<!-- ENDIF -->
+	{% endif %}
 
 			</div>
 		</div>
-	<!-- BEGINELSE -->
+	{% else %}
 		<div class="panel">
 			<div class="inner">
-			<strong>{L_NO_SEARCH_RESULTS}</strong>
+			<strong>{{ lang('NO_SEARCH_RESULTS') }}</strong>
 			</div>
 		</div>
-	<!-- END searchresults -->
-<!-- ENDIF -->
+	{% endfor %}
+{% endif %}
 
-<!-- IF PAGINATION or .searchresults or S_SELECT_SORT_KEY or S_SELECT_SORT_DAYS -->
-	<form method="post" action="{S_SEARCH_ACTION}">
+{% if PAGINATION or loops.searchresults|length or S_SELECT_SORT_KEY or S_SELECT_SORT_DAYS %}
+	<form method="post" action="{{ S_SEARCH_ACTION }}">
 
 	<fieldset class="display-options">
-		<!-- IF PREVIOUS_PAGE --><a href="{PREVIOUS_PAGE}" class="left-box {S_CONTENT_FLOW_BEGIN}">{L_PREVIOUS}</a><!-- ENDIF -->
-		<!-- IF NEXT_PAGE --><a href="{NEXT_PAGE}" class="right-box {S_CONTENT_FLOW_END}">{L_NEXT}</a><!-- ENDIF -->
-		<!-- IF S_SELECT_SORT_DAYS or S_SELECT_SORT_KEY -->
-			<label><!-- IF S_SHOW_TOPICS -->{L_DISPLAY_POSTS}<!-- ELSE -->{L_SORT_BY}</label><label><!-- ENDIF --> {S_SELECT_SORT_DAYS}<!-- IF S_SELECT_SORT_KEY --></label> <label>{S_SELECT_SORT_KEY}</label>
-			<label>{S_SELECT_SORT_DIR} <!-- ELSE --></label><!-- ENDIF --><input type="submit" name="sort" value="{L_GO}" class="button2" /></label>
-		<!-- ENDIF -->
+		{% if PREVIOUS_PAGE %}<a href="{{ PREVIOUS_PAGE }}" class="left-box {{ S_CONTENT_FLOW_BEGIN }}">{{ lang('PREVIOUS') }}</a>{% endif %}
+		{% if NEXT_PAGE %}<a href="{{ NEXT_PAGE }}" class="right-box {{ S_CONTENT_FLOW_END }}">{{ lang('NEXT') }}</a>{% endif %}
+		{% if S_SELECT_SORT_DAYS or S_SELECT_SORT_KEY %}
+			<label>{% if S_SHOW_TOPICS %}{{ lang('DISPLAY_POSTS') }}{% else %}{{ lang('SORT_BY') }}</label><label>{% endif %} {{ S_SELECT_SORT_DAYS }}{% if S_SELECT_SORT_KEY %}</label> <label>{{ S_SELECT_SORT_KEY }}</label>
+			<label>{{ S_SELECT_SORT_DIR }} {% else %}</label>{% endif %}<input type="submit" name="sort" value="{{ lang('GO') }}" class="button2" /></label>
+		{% endif %}
 	</fieldset>
 
 	</form>
 
 	<hr />
-<!-- ENDIF -->
+{% endif %}
 
 <div class="action-bar bottom">
-	<!-- INCLUDE common/pagination.html -->
+	{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 </div>
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

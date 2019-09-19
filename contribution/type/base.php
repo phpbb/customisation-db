@@ -32,6 +32,9 @@ class base implements type_interface
 	/** @var auth */
 	protected $auth;
 
+	/** @var int **/
+	public $id;
+
 	/**
 	 * Type identifier for URL slug.
 	 *
@@ -250,6 +253,15 @@ class base implements type_interface
 	 */
 	protected function configure()
 	{
+	}
+
+	/**
+	 * Get type id
+	 * @return int
+	 */
+	public function get_id()
+	{
+		return $this->id;
 	}
 
 	/**

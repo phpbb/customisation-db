@@ -14,12 +14,11 @@
 namespace phpbb\titania\contribution\translation;
 
 use phpbb\auth\auth;
+use phpbb\template\template;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
 use phpbb\titania\entity\package;
-use phpbb\titania\url\url;
-use phpbb\template\template;
 use phpbb\user;
 
 class type extends base
@@ -30,6 +29,8 @@ class type extends base
 	const ID = 6;
 	const NAME = 'translation';
 	const URL = 'translation';
+
+	const PHPBB_LATEST_VERSION = '3.2';
 
 	/**
 	 * Constructor
@@ -148,39 +149,30 @@ class type extends base
 	 */
 	public function translation_validate(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
 	{
-		if (empty($revision->phpbb_versions))
+		$phpbb_version = self::PHPBB_LATEST_VERSION;
+
+		if (is_array($revision->phpbb_versions) && count($revision->phpbb_versions) > 0)
 		{
-			$revision->load_phpbb_versions();
+			$branch_number = $revision->phpbb_versions[0]['phpbb_version_branch'];
+			$phpbb_version = sprintf('%d.%d', $branch_number[0], $branch_number[1]);
 		}
 
-		$version = $revision->phpbb_versions[0];
+		// Run the translation validator
+		$translation_validator_output = $this->get_prevalidator()->check_package($package, $contrib->contrib_iso_code, $phpbb_version);
 
-		if ($version['phpbb_version_branch'] != 30)
-		{
-			return array();
-		}
-		$version_string = $version['phpbb_version_branch'][0] . '.' . $version['phpbb_version_branch'][1] . '.' . $version['phpbb_version_revision'];
+		$template->assign_vars(array(
+			'S_PASSED_TRANSLATION_VALIDATION'		=> true,
+			'TRANSLATION_VALIDATOR_OUTPUT'			=> $translation_validator_output,
+		));
 
-		$prevalidator = $this->get_prevalidator();
+		// Save the translation validation results (we need to save it here so that we can add it to the post later)
+		$queue = $revision->get_queue();
+		$queue->tv_results = $translation_validator_output;
+		$queue->submit();
 
-		$reference_filepath = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string); // path to files against which we will validate the package
-		$errors = $prevalidator->get_helper()->get_errors();
-
-		if (!empty($errors))
-		{
-			return array('error' => implode('<br /><br />', $errors));
-		}
-
-		$errors = $prevalidator->check_package($package, $reference_filepath);
-
-		if (!empty($errors))
-		{
-			return array('error' => $errors);
-		}
-
-		$template->assign_var('S_PASSED_TRANSLATION_VALIDATION', true);
-
-		return array();
+		return array(
+			'message' => $this->user->lang('TRANSLATION_VALIDATION_TESTS'),
+		);
 	}
 
 	/**

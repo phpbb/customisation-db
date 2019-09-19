@@ -11,16 +11,15 @@
 *
 */
 
-
 use phpbb\config\config;
 use phpbb\titania\composer\repository;
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\contribution\type\type_interface;
-use phpbb\titania\versions;
-use phpbb\titania\attachment\attachment;
+use phpbb\titania\ext;
 use phpbb\titania\message\message;
 use phpbb\titania\url\url;
 use phpbb\titania\user\helper as user_helper;
+use phpbb\titania\versions;
 
 /**
  * Class to abstract contributions.
@@ -47,7 +46,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	 *
 	 * @var string
 	 */
-	protected $object_type = TITANIA_CONTRIB;
+	protected $object_type = ext::TITANIA_CONTRIB;
 
 	/**
 	 * Author & co-authors of this contribution
@@ -126,6 +125,16 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	public $type;
 
 	/**
+	 * Dependencies to ignore for extensions with requirements
+	 * @var array
+	 */
+	public $ignored_dependencies = [
+		'php',
+		'composer/installers',
+		'phpbb/phpbb',
+	];
+
+	/**
 	 * Constructor class for the contribution object
 	 */
 	public function __construct()
@@ -146,7 +155,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 			'contrib_demo'					=> array('default' => ''),
 
-			'contrib_status'				=> array('default' => TITANIA_CONTRIB_NEW),
+			'contrib_status'				=> array('default' => ext::TITANIA_CONTRIB_NEW),
 
 			'contrib_user_id'				=> array('default' => 0),
 
@@ -189,9 +198,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 		$this->types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 		$this->config = phpbb::$container->get('config');
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -330,12 +336,12 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function is_visible($allow_new = false)
 	{
-		$hidden_statuses = array(TITANIA_CONTRIB_NEW, TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED);
+		$hidden_statuses = array(ext::TITANIA_CONTRIB_NEW, ext::TITANIA_CONTRIB_HIDDEN, ext::TITANIA_CONTRIB_DISABLED);
 		$is_mod = phpbb::$auth->acl_get('u_titania_mod_contrib_mod') || $this->type->acl_get('moderate') || $this->type->acl_get('view');
 
 		if (in_array($this->contrib_status, $hidden_statuses) && !$this->is_author && !$this->is_active_coauthor && !$is_mod)
 		{
-			if ($this->contrib_status == TITANIA_CONTRIB_NEW && $allow_new)
+			if ($this->contrib_status == ext::TITANIA_CONTRIB_NEW && $allow_new)
 			{
 				return true;
 			}
@@ -368,8 +374,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	public function is_restricted()
 	{
 		return in_array($this->contrib_status, array(
-			TITANIA_CONTRIB_CLEANED,
-			TITANIA_CONTRIB_DISABLED,
+			ext::TITANIA_CONTRIB_CLEANED,
+			ext::TITANIA_CONTRIB_DISABLED,
 		));
 	}
 
@@ -386,7 +392,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		}
 
 		$this->screenshots
-			->configure(TITANIA_SCREENSHOT, $this->contrib_id)
+			->configure(ext::TITANIA_SCREENSHOT, $this->contrib_id)
 			->load()
 		;
 
@@ -422,7 +428,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	 */
 	public function get_revisions()
 	{
-		if (sizeof($this->revisions) || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !$this->type->acl_get('moderate') && !$this->type->acl_get('view')))
+		if (sizeof($this->revisions) || ($this->contrib_status == ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !$this->type->acl_get('moderate') && !$this->type->acl_get('view')))
 		{
 			return;
 		}
@@ -438,7 +444,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		$sql = $select .
 			'WHERE r.contrib_id = ' . $this->contrib_id .
-				((!$can_view_unapproved) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') . '
+				((!$can_view_unapproved) ? ' AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED : '') . '
 				AND r.revision_submitted = 1
 			ORDER BY r.revision_id DESC';
 		$result = phpbb::$db->sql_query($sql);
@@ -453,7 +459,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$has_translations = false;
 			// Get translations
 			$sql = 'SELECT * FROM ' . TITANIA_ATTACHMENTS_TABLE . '
-				WHERE object_type = ' . TITANIA_TRANSLATION . '
+				WHERE object_type = ' . ext::TITANIA_TRANSLATION . '
 					AND is_orphan = 0
 					AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', array_keys($this->revisions))) . '
 				ORDER BY ' . phpbb::$db->sql_lower_text('real_filename') . ' ASC';
@@ -493,7 +499,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	 */
 	public function get_download($revision_id = false)
 	{
-		if ($this->download || ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !$this->type->acl_get('moderate') && !$this->type->acl_get('view')))
+		if ($this->download || ($this->contrib_status == ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED && !$this->is_author && !$this->is_active_coauthor && !$this->type->acl_get('moderate') && !$this->type->acl_get('view')))
 		{
 			return;
 		}
@@ -527,7 +533,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 					ON (a.attachment_id = r.attachment_id)
 				WHERE r.contrib_id = ' . (int) $this->contrib_id . '
 					AND ' . phpbb::$db->sql_in_set('r.revision_id', $revisions) .
-					(($revision_id === false) ? ' AND r.revision_status = ' . TITANIA_REVISION_APPROVED : '') . '
+					(($revision_id === false) ? ' AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED : '') . '
 					AND revision_submitted = 1';
 			$result = phpbb::$db->sql_query($sql);
 			$revisions = array_flip($revisions);
@@ -584,8 +590,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		}
 
 		$map = array(
-			TITANIA_CAT_FLAG_DEMO 			=> 'demo',
-			TITANIA_CAT_FLAG_ALL_VERSIONS	=> 'all_versions'
+			ext::TITANIA_CAT_FLAG_DEMO 			=> 'demo',
+			ext::TITANIA_CAT_FLAG_ALL_VERSIONS	=> 'all_versions'
 		);
 
 		foreach ($this->category_data as $cat_id => $data)
@@ -669,13 +675,13 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				));
 			}
 
-			if ($this->contrib_type == TITANIA_TYPE_BBCODE && !empty($this->download))
+			if ($this->contrib_type == ext::TITANIA_TYPE_BBCODE && !empty($this->download))
 			{
 				$download = reset($this->download);
 				$demo_output = $download['revision_bbc_demo'];
 				$demo_rendered = false;
 
-				if ($download['revision_status'] == TITANIA_REVISION_APPROVED && !empty($demo_output))
+				if ($download['revision_status'] == ext::TITANIA_REVISION_APPROVED && !empty($demo_output))
 				{
 
 					$demo = $this->type->get_demo()->configure(
@@ -704,7 +710,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				$u_view_reports = $this->controller_helper->route(
 					'phpbb.titania.manage.attention.redirect',
 					array(
-						'type'	=> TITANIA_CONTRIB,
+						'type'	=> ext::TITANIA_CONTRIB,
 						'id'	=> $this->contrib_id,
 					)
 				);
@@ -735,22 +741,43 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				'U_VIEW_CONTRIB'				=> $this->get_url(),
 
 				'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
+				'U_CONTRIB_FEED'				=> $this->get_url('feed'),
 				'U_VIEW_REPORTS'				=> $u_view_reports,
 
 				// Contribution Status
-				'S_CONTRIB_NEW'					=> ($this->contrib_status == TITANIA_CONTRIB_NEW) ? true : false,
-				'S_CONTRIB_VALIDATED'			=> ($this->contrib_status == TITANIA_CONTRIB_APPROVED) ? true : false,
-				'S_CONTRIB_CLEANED'				=> ($this->contrib_status == TITANIA_CONTRIB_CLEANED) ? true : false,
-				'S_CONTRIB_DOWNLOAD_DISABLED'	=> ($this->contrib_status == TITANIA_CONTRIB_DOWNLOAD_DISABLED) ? true : false,
-				'S_CONTRIB_HIDDEN'				=> ($this->contrib_status == TITANIA_CONTRIB_HIDDEN) ? true : false,
-				'S_CONTRIB_DISABLED'			=> ($this->contrib_status == TITANIA_CONTRIB_DISABLED) ? true : false,
+				'S_CONTRIB_NEW'					=> $this->contrib_status == ext::TITANIA_CONTRIB_NEW,
+				'S_CONTRIB_VALIDATED'			=> $this->contrib_status == ext::TITANIA_CONTRIB_APPROVED,
+				'S_CONTRIB_CLEANED'				=> $this->contrib_status == ext::TITANIA_CONTRIB_CLEANED,
+				'S_CONTRIB_DOWNLOAD_DISABLED'	=> $this->contrib_status == ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED,
+				'S_CONTRIB_HIDDEN'				=> $this->contrib_status == ext::TITANIA_CONTRIB_HIDDEN,
+				'S_CONTRIB_DISABLED'			=> $this->contrib_status == ext::TITANIA_CONTRIB_DISABLED,
 
 				'JS_CONTRIB_TRANSLATION'		=> !empty($this->contrib_iso_code) ? 'true' : 'false', // contrib_iso_code is a mandatory field and must be included with all translation contributions
 			));
 		}
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $vars, $this);
+		// Display a warning for styles not meeting the licensing guidelines
+		if ($this->contrib_type == ext::TITANIA_TYPE_STYLE && !empty($this->download))
+		{
+			foreach ($this->download as $download)
+			{
+				if ($download['revision_license'] == '')
+				{
+					if (isset($vars['WARNING']))
+					{
+						$vars['WARNING'] .= '<br />';
+					}
+					else
+					{
+						$vars['WARNING'] = '';
+					}
+
+					$vars['WARNING'] .= phpbb::$user->lang('STYLE_LICENSE_WARNING');
+
+					break;
+				}
+			}
+		}
 
 		// Display real author
 		if ($return)
@@ -878,7 +905,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 					$vendor_version,
 					$this->options['all_versions']
 				);
-				$vendor_version = $vendor_version[0];
+				$vendor_version = implode(phpbb::$user->lang('COMMA_SEPARATOR'), $vendor_version);
 			}
 
 			if ($download['install_time'])
@@ -896,9 +923,40 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			{
 				$install_level = phpbb::$user->lang['INSTALL_LEVEL_' . $download['install_level']];
 			}
-			if ($u_colorizeit_base && $download['revision_status'] == TITANIA_REVISION_APPROVED)
+			if ($u_colorizeit_base && $download['revision_status'] == ext::TITANIA_REVISION_APPROVED)
 			{
 				$u_colorizeit = $u_colorizeit_base . '&amp;id=' . $download['attachment_id'];
+			}
+
+			// We have the revision composer file, so we'll use that as the source of truth
+			$composer_json_values = [
+				'install_to' => '',
+				'dependencies' => '',
+			];
+
+			if (array_key_exists('revision_composer_json', $download))
+			{
+				$decoded_json = json_decode($download['revision_composer_json'], true);
+
+				if (!empty($decoded_json) && is_array($decoded_json))
+				{
+					// We have a valid array.
+					$composer_json = $decoded_json;
+
+					// Install directory
+					if (array_key_exists('name', $composer_json) && $composer_json['name'])
+					{
+						$composer_json_values['install_to'] = 'ext/' . $composer_json['name'];
+					}
+
+					// Dependencies
+					if (array_key_exists('require', $decoded_json) && is_array($decoded_json['require']))
+					{
+						// Strip out the dependencies which aren't other extensions
+						$composer_json_values['dependencies'] = implode(phpbb::$user->lang('COMMA_SEPARATOR'),
+							array_diff(array_keys($decoded_json['require']), $this->ignored_dependencies));
+					}
+				}
 			}
 
 			phpbb::$template->assign_block_vars('downloads', array(
@@ -911,6 +969,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				'PHPBB_VERSION'	=> $vendor_version,
 				'INSTALL_LEVEL'	=> $install_level,
 				'INSTALL_TIME'	=> $install_time,
+				'INSTALL_TO'	=> $composer_json_values['install_to'],
+				'DEPENDENCIES'	=> $composer_json_values['dependencies'],
 				'U_DOWNLOAD'	=> ($download['attachment_id']) ? $this->controller_helper->route('phpbb.titania.download', array('id' => $download['attachment_id'])) : '',
 				'U_COLORIZEIT'	=> $u_colorizeit,
 			));
@@ -1041,7 +1101,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			phpbb::$db->sql_freeresult();
 		}
 
-		if (!$this->contrib_id && in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)))
+		if (!$this->contrib_id && in_array($this->contrib_status, array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED)))
 		{
 			// Increment the contrib counter
 			$this->change_author_contrib_count($this->contrib_user_id);
@@ -1054,9 +1114,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		// Index!
 		$this->index();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -1089,10 +1146,11 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$contrib_description = $this->contrib_desc;
 			message::decode($contrib_description, $this->contrib_desc_uid);
 
-			foreach ($this->download as $download)
+			$download = reset($this->download); // Just need the first download entry
+			$phpbb_versions = $this->revisions[$download['revision_id']]['phpbb_versions'];
+			foreach ($phpbb_versions as $phpbb_version)
 			{
-				$phpbb_version = $this->revisions[$download['revision_id']]['phpbb_versions'][0];
-				$branch = (int) $phpbb_version['phpbb_version_branch'];
+				$branch = (int)$phpbb_version['phpbb_version_branch'];
 
 				if (empty($this->type->forum_database[$branch]))
 				{
@@ -1115,7 +1173,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 					get_formatted_filesize($download['filesize']),
 					$this->path_helper->strip_url_params($this->get_url(), 'sid'),
 					$this->path_helper->strip_url_params($this->get_url('support'), 'sid'),
-					$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' .$phpbb_version['phpbb_version_revision']
+					$phpbb_version['phpbb_version_branch'][0] . '.' . $phpbb_version['phpbb_version_branch'][1] . '.' . $phpbb_version['phpbb_version_revision']
 				);
 
 				$options = array(
@@ -1213,13 +1271,13 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		phpbb_posting('reply', $options_reply);
 	}
 
-	public function report($reason = '', $notify_reporter = false, $attention_type = TITANIA_ATTENTION_REPORTED)
+	public function report($reason = '', $notify_reporter = false, $attention_type = ext::TITANIA_ATTENTION_REPORTED)
 	{
 		// Setup the attention object and submit it
 		$attention = new titania_attention;
 		$attention->__set_array(array(
 			'attention_type'		=> $attention_type,
-			'attention_object_type'	=> TITANIA_CONTRIB,
+			'attention_object_type'	=> ext::TITANIA_CONTRIB,
 			'attention_object_id'	=> $this->contrib_id,
 			'attention_poster_id'	=> $this->contrib_user_id,
 			'attention_post_time'	=> $this->contrib_last_update,
@@ -1268,9 +1326,9 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		// First we are essentially resetting the contrib and category counts back to "New"
 		switch ($old_status)
 		{
-			case TITANIA_CONTRIB_APPROVED :
+			case ext::TITANIA_CONTRIB_APPROVED:
 				repository::trigger_cron($this->config);
-			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
+			case ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED:
 				// Decrement the count for the authors
 				$this->change_author_contrib_count($author_list, '-', true);
 
@@ -1282,9 +1340,9 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		// Now, for the new status, if approved, we increment the contrib and category counts
 		switch ($this->contrib_status)
 		{
-			case TITANIA_CONTRIB_APPROVED :
+			case ext::TITANIA_CONTRIB_APPROVED:
 				repository::trigger_cron($this->config);
-			case TITANIA_CONTRIB_DOWNLOAD_DISABLED :
+			case ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED:
 				// Increment the count for the authors
 				$this->change_author_contrib_count($author_list);
 
@@ -1302,9 +1360,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		// Index!
 		$this->index();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -1333,13 +1388,13 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		// Attention items
 		$sql = 'UPDATE ' . TITANIA_ATTENTION_TABLE . '
 			SET attention_url = "' . phpbb::$db->sql_escape($params) . '"
-			WHERE attention_object_type = ' . TITANIA_CONTRIB . '
+			WHERE attention_object_type = ' . ext::TITANIA_CONTRIB . '
 				AND attention_object_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
 		// Update the topics/posts under this
 		$topics = $post_ids = array();
-		$topic_where_sql = ' WHERE ' . phpbb::$db->sql_in_set('topic_type', array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION)) . '
+		$topic_where_sql = ' WHERE ' . phpbb::$db->sql_in_set('topic_type', array(ext::TITANIA_SUPPORT, ext::TITANIA_QUEUE_DISCUSSION)) . '
 				AND parent_id = ' . $this->contrib_id;
 
 		$topic = new titania_topic;
@@ -1395,7 +1450,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				// On to attention items for posts
 				$sql = 'SELECT attention_id, attention_object_id
 					FROM ' . TITANIA_ATTENTION_TABLE . '
-					WHERE attention_object_type = ' . TITANIA_POST . '
+					WHERE attention_object_type = ' . ext::TITANIA_POST . '
 						AND ' . phpbb::$db->sql_in_set('attention_object_id', $post_ids);
 				$result = phpbb::$db->sql_query($sql);
 				while ($row = phpbb::$db->sql_fetchrow($result))
@@ -1447,10 +1502,12 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		{
 			// Check for a valid type
 			$valid_type = false;
+			$read_only_type = false;
 			foreach ($this->types->get_all() as $type_id => $class)
 			{
 				if (!$class->acl_get('submit'))
 				{
+					$read_only_type = ($this->contrib_type == $type_id);
 					continue;
 				}
 
@@ -1461,7 +1518,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				}
 			}
 
-			if (!$valid_type)
+			if (!$valid_type && !$read_only_type)
 			{
 				$error[] = phpbb::$user->lang['EMPTY_CONTRIB_TYPE'];
 			}
@@ -1484,7 +1541,10 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 			if (!$contrib_categories)
 			{
-				$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
+				if (!$read_only_type)
+				{
+					$error[] = phpbb::$user->lang['EMPTY_CATEGORY'];
+				}
 			}
 			else
 			{
@@ -1557,9 +1617,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				}
 			}
 		}
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $error, $this);
 
 		return $error;
 	}
@@ -1856,7 +1913,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		}
 
 		// Don't change if it's not approved
-		if ($force == false && (!in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))))
+		if ($force == false && (!in_array($this->contrib_status, array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED))))
 		{
 			return;
 		}
@@ -1939,7 +1996,15 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		if (!sizeof($contrib_categories))
 		{
-			return;
+			// Check for read-only type
+			if (!$this->type->acl_get('submit'))
+			{
+				$contrib_categories = array_keys($this->category_data);
+			}
+			else
+			{
+				return;
+			}
 		}
 
 		$sql_ary = array();
@@ -1965,7 +2030,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function update_category_count($dir = '+', $force = false)
 	{
-		if (!in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) && !$force)
+		if (!in_array($this->contrib_status, array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED)) && !$force)
 		{
 			return;
 		}
@@ -2009,7 +2074,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	        // get sample id from database
 			$operator = phpbb::$container->get('phpbb.titania.attachment.operator');
 			$attachments = $operator
-				->configure(TITANIA_CLR_SCREENSHOT, $this->contrib_id)
+				->configure(ext::TITANIA_CLR_SCREENSHOT, $this->contrib_id)
 				->load()
 				->get_all()
 			;
@@ -2039,7 +2104,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		// Delete Support/Discussion/Queue Discussion Topics
 		$topic = new titania_topic;
 		$sql = 'SELECT * FROM ' . TITANIA_TOPICS_TABLE . '
-			WHERE ' . phpbb::$db->sql_in_set('topic_type', array(TITANIA_SUPPORT, TITANIA_QUEUE_DISCUSSION)) . '
+			WHERE ' . phpbb::$db->sql_in_set('topic_type', array(ext::TITANIA_SUPPORT, ext::TITANIA_QUEUE_DISCUSSION)) . '
 				AND parent_id = ' . $this->contrib_id;
 		$result = phpbb::$db->sql_query($sql);
 		while ($row = phpbb::$db->sql_fetchrow($result))
@@ -2051,11 +2116,11 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		phpbb::$db->sql_freeresult($result);
 
 		// Change the status to new (handles resetting counts)
-		$this->change_status(TITANIA_CONTRIB_NEW);
+		$this->change_status(ext::TITANIA_CONTRIB_NEW);
 
 		// Remove any attention items
 		$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
-			WHERE attention_object_type = ' . TITANIA_CONTRIB . '
+			WHERE attention_object_type = ' . ext::TITANIA_CONTRIB . '
 				AND attention_object_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
 
@@ -2122,7 +2187,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$phpbb_versions = array();
 		foreach ($this->revisions as $revision)
 		{
-			if ($revision['revision_status'] == TITANIA_REVISION_APPROVED)
+			if ($revision['revision_status'] == ext::TITANIA_REVISION_APPROVED)
 			{
 				$phpbb_versions = array_merge($phpbb_versions, $revision['phpbb_versions']);
 			}
@@ -2142,12 +2207,12 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				'contrib_type'	=> $this->type->url,
 				'contrib'		=> $this->contrib_name_clean,
 			)),
-			'approved'			=> (in_array($this->contrib_status, array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
+			'approved'			=> (in_array($this->contrib_status, array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED))) ? true : false,
 			'categories'		=> explode(',', $this->contrib_categories),
 			'phpbb_versions' 	=> $phpbb_versions,
 		);
 
-		$this->search_manager->index(TITANIA_CONTRIB, $this->contrib_id, $data);
+		$this->search_manager->index(ext::TITANIA_CONTRIB, $this->contrib_id, $data);
 	}
 
 	/**

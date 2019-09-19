@@ -19,6 +19,8 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+use phpbb\titania\ext;
+
 $config = array(
 	/**
 	* phpBB versions array
@@ -116,7 +118,7 @@ $config = array(
 	/**
 	* If the type of post made is in this array we will increment their postcount as posts are made within titania
 	*/
-	'increment_postcount'	=> array(TITANIA_SUPPORT),
+	'increment_postcount'	=> array(ext::TITANIA_SUPPORT),
 
 	/**
 	* Note: There are still more configuration settings!

@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -24,6 +25,9 @@ class contribution extends base
 
 	/** @var \phpbb\titania\subscriptions */
 	protected $subscriptions;
+
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
 
 	/**
 	 * Constructor
@@ -42,13 +46,15 @@ class contribution extends base
 	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\tracking $tracking
 	 * @param \phpbb\titania\subscriptions $subscriptions
+	 * @param \phpbb\path_helper $path_helper
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions, \phpbb\path_helper $path_helper)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $types, $request, $cache, $ext_config, $display, $access);
 
 		$this->tracking = $tracking;
 		$this->subscriptions = $subscriptions;
+		$this->path_helper = $path_helper;
 	}
 
 	/**
@@ -66,7 +72,7 @@ class contribution extends base
 
 		$page = ($page) ?: 'details';
 
-		if (!in_array($page, array('report', 'details', 'queue_discussion', 'rate')))
+		if (!in_array($page, array('report', 'details', 'queue_discussion', 'rate', 'feed')))
 		{
 			return $this->helper->error('NO_PAGE', 404);
 		}
@@ -76,6 +82,27 @@ class contribution extends base
 		$this->generate_breadcrumbs();
 
 		return $this->{$page}();
+	}
+
+	/**
+	 * ATOM feed for the contribution revisions (new releases for an individual customisation)
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @throws \Exception
+	 */
+	protected function feed()
+	{
+		// Generic feed information
+		$this->template->assign_vars(array(
+			'SELF_LINK'				=> $this->contrib->get_url('feed'),
+			'FEED_LINK'				=> $this->contrib->get_url(),
+			'FEED_TITLE'			=> $this->user->lang('FEED_CDB', $this->config['sitename'], $this->contrib->contrib_name),
+			'FEED_SUBTITLE'			=> $this->config['site_desc'],
+			'FEED_UPDATED'			=> date(\DateTime::ATOM),
+			'FEED_LANG'				=> $this->user->lang('USER_LANG'),
+			'FEED_AUTHOR'			=> $this->config['sitename'],
+		));
+
+		return \contribs_overlord::build_feed($this->template, $this->helper, $this->path_helper, $this->contrib);
 	}
 
 	/**
@@ -94,20 +121,29 @@ class contribution extends base
 		$this->user->add_lang_ext('phpbb/titania', 'posting');
 		$this->user->add_lang('mcp');
 
-		if (confirm_box(true))
+		if ($this->request->is_set_post('cancel'))
+		{
+			return new RedirectResponse($this->contrib->get_url());
+		}
+		else if ($this->request->is_set_post('confirm') && check_form_key('report'))
 		{
 			$message = $this->request->variable('report_text', '', true);
 			$notify_reporter = $this->request->variable('notify', false);
 			$this->contrib->report($message, $notify_reporter);
-		}
-		else
-		{
-			$this->template->assign_var('S_CAN_NOTIFY', true);
 
-			confirm_box(false, 'REPORT_CONTRIBUTION', '', 'posting/report_body.html');
+			return new RedirectResponse($this->contrib->get_url());
 		}
 
-		redirect($this->contrib->get_url());
+		add_form_key('report');
+		$this->template->assign_vars(array(
+			'S_CAN_NOTIFY'	=> true,
+			'MESSAGE_TEXT'	=> $this->user->lang('REPORT_CONTRIBUTION_CONFIRM')
+		));
+
+		return $this->helper->render(
+			'posting/report_body.html',
+			'REPORT_CONTRIBUTION'
+		);
 	}
 
 	/**
@@ -130,11 +166,11 @@ class contribution extends base
 		}
 
 		// Set tracking
-		$this->tracking->track(TITANIA_CONTRIB, $this->contrib->contrib_id);
+		$this->tracking->track(ext::TITANIA_CONTRIB, $this->contrib->contrib_id);
 
 		// Subscriptions
 		$this->subscriptions->handle_subscriptions(
-			TITANIA_CONTRIB,
+			ext::TITANIA_CONTRIB,
 			$this->contrib->contrib_id,
 			$this->contrib->get_url(),
 			'SUBSCRIBE_CONTRIB'
@@ -162,8 +198,8 @@ class contribution extends base
 	{
 		$this->load_contrib($contrib_type, $contrib);
 		$can_use_demo =
-			$this->contrib->contrib_status == TITANIA_CONTRIB_APPROVED &&
-			$this->contrib->contrib_type == TITANIA_TYPE_STYLE &&
+			$this->contrib->contrib_status == ext::TITANIA_CONTRIB_APPROVED &&
+			$this->contrib->contrib_type == ext::TITANIA_TYPE_STYLE &&
 			$this->contrib->options['demo']
 		;
 
@@ -184,6 +220,8 @@ class contribution extends base
 		$demo->load_styles();
 		$demo->assign_details();
 
+		$this->template->assign_var('U_SITE_HOME', $this->config['site_home_url'] ?: $this->ext_config->site_home_url);
+
 		$title = $this->contrib->contrib_name .
 			' - [' . $this->ext_config->phpbb_versions[$branch]['name'] . '] ' .
 			$this->user->lang['CONTRIB_DEMO'];
@@ -201,7 +239,7 @@ class contribution extends base
 	{
 		$sql = 'SELECT *
 			FROM ' . TITANIA_TOPICS_TABLE . '
-			WHERE topic_type = ' . TITANIA_QUEUE_DISCUSSION . '
+			WHERE topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION . '
 			AND parent_id = ' . $this->contrib->contrib_id;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
@@ -276,21 +314,31 @@ class contribution extends base
 		$this->contrib->get_download();
 		$branches = array();
 
-		foreach ($this->contrib->download as $download)
+		ksort($this->contrib->download);
+
+		foreach ($this->contrib->download as $branch => $download)
 		{
 			$version = $download['revision_version'];
 
-			if (!preg_match('#^(\d+\.\d+)#', $version, $matches))
+			if (!preg_match('#^(\d+\.\d+)#', $version))
 			{
 				continue;
 			}
 
-			$branches[$matches[1]] = array(
+			$branch = substr_replace($branch, '.', 1, 0);
+
+			$empty_sid = '';
+
+			$branches[$branch] = array(
 				'current'		=> $version,
 				'download'		=> $this->helper->route('phpbb.titania.download', array(
 					'id' => $download['attachment_id'],
-				)),
-				'announcement'	=> '',
+				), true, $empty_sid),
+				'announcement'	=> $this->helper->route('phpbb.titania.contrib', array(
+					'page'			=> '',
+					'contrib_type'	=> $contrib_type,
+					'contrib'		=> $contrib,
+				), true, $empty_sid),
 				'eol'			=> null,
 				'security'		=> false,
 			);

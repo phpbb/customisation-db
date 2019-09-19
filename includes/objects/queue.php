@@ -12,6 +12,7 @@
 */
 
 use phpbb\titania\access;
+use phpbb\titania\ext;
 use phpbb\titania\message\message;
 
 /**
@@ -39,7 +40,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	 *
 	 * @var string
 	 */
-	protected $object_type = TITANIA_QUEUE;
+	protected $object_type = ext::TITANIA_QUEUE;
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
@@ -62,7 +63,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'queue_allow_repack'	=> array('default' => 1),
 
 			'queue_type'			=> array('default' => 0), // contrib type
-			'queue_status'			=> array('default' => TITANIA_QUEUE_HIDE), // Uses either TITANIA_QUEUE_NEW or one of the tags for the queue status from the DB
+			'queue_status'			=> array('default' => ext::TITANIA_QUEUE_HIDE), // Uses either TITANIA_QUEUE_NEW or one of the tags for the queue status from the DB
 			'queue_submit_time'		=> array('default' => titania::$time),
 			'queue_close_time'		=> array('default' => 0),
 			'queue_close_user'		=> array('default' => 0),
@@ -83,13 +84,11 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'mpv_results_bitfield'	=> array('default' => ''),
 			'mpv_results_uid'		=> array('default' => ''),
 			'automod_results'		=> array('default' => ''),
+			'tv_results'			=> array('default' => ''),
 
 			'allow_author_repack'	=> array('default' => false),
 			'queue_tested'			=> array('default' => false),
 		));
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 
 		$this->db = phpbb::$container->get('dbal.conn');
 		$this->controller_helper = phpbb::$container->get('phpbb.titania.controller.helper');
@@ -132,9 +131,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		}
 
 		parent::submit();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -153,7 +149,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			phpbb::$db->sql_freeresult();
 
 			// Create the topic
-			$post = new titania_post(TITANIA_QUEUE);
+			$post = new titania_post(ext::TITANIA_QUEUE);
 			$post->post_access = access::TEAM_LEVEL;
 			$post->topic->parent_id = $this->queue_id;
 			$post->topic->topic_category = $contrib_type;
@@ -186,7 +182,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$queue_topic = $this->get_queue_discussion_topic();
 		$post->post_text .= '[url=' . $queue_topic->get_url() . ']' . phpbb::$user->lang['QUEUE_DISCUSSION_TOPIC'] . "[/url]\n\n";
 
-		if ($revision->revision_status == TITANIA_REVISION_ON_HOLD)
+		if ($revision->revision_status == ext::TITANIA_REVISION_ON_HOLD)
 		{
 			$post->post_text .= '<strong>' . phpbb::$user->lang['REVISION_FOR_NEXT_PHPBB'] . "</strong>\n\n";
 		}
@@ -210,6 +206,12 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_PV'] . '&quot;]' . $mpv_results . "[/quote]\n";
 		}
 
+		// Translation Validator
+		if ($this->tv_results)
+		{
+			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_TV'] . '&quot;][code]' . $this->tv_results . "[/code][/quote]\n";
+		}
+
 		// Add the Automod results
 		if ($this->automod_results)
 		{
@@ -220,8 +222,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		phpbb::$config['min_post_chars'] = 1;
 		phpbb::$config['max_post_chars'] = 0;
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $post, $this);
+		$this->forum_queue_update_first_queue_post($post);
 
 		// Store the post
 		$post->generate_text_for_storage(true, true, true);
@@ -243,7 +244,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		$message = (isset(phpbb::$user->lang[$message])) ? phpbb::$user->lang[$message] : $message;
 
-		$post = new titania_post(TITANIA_QUEUE, $this->queue_topic_id);
+		$post = new titania_post(ext::TITANIA_QUEUE, $this->queue_topic_id);
 		$post->__set_array(array(
 			'post_subject'		=> 'Re: ' . $post->topic->topic_subject,
 			'post_text'			=> $message,
@@ -267,8 +268,9 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	*
 	* @param string $message
 	* @param bool $teams_only true to set to access level of teams
+	* @param int $post_user_id
 	*/
-	public function discussion_reply($message, $teams_only = false)
+	public function discussion_reply($message, $teams_only = false, $post_user_id = 0)
 	{
 		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
@@ -276,7 +278,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		$topic = $this->get_queue_discussion_topic();
 
-		$post = new titania_post(TITANIA_QUEUE_DISCUSSION, $topic);
+		$post = new titania_post(ext::TITANIA_QUEUE_DISCUSSION, $topic);
 		$post->__set_array(array(
 			'post_subject'		=> 'Re: ' . $post->topic->topic_subject,
 			'post_text'			=> $message,
@@ -287,6 +289,11 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			$post->post_access = access::TEAM_LEVEL;
 		}
 
+		if ($post_user_id)
+		{
+			$post->post_user_id = (int) $post_user_id;
+		}
+
 		$post->parent_contrib_type = $this->queue_type;
 
 		$post->generate_text_for_storage(true, true, true);
@@ -295,8 +302,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 	public function delete()
 	{
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+		$this->trash_queue_topic();
 
 		$post = new titania_post;
 
@@ -348,15 +354,12 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'U_VIEW_QUEUE'	=> $path_helper->strip_url_params($u_view_queue, 'sid'),
 		);
 		$this->subscriptions->send_notifications(
-			TITANIA_QUEUE_TAG,
+			ext::TITANIA_QUEUE_TAG,
 			$new_status,
 			'new_contrib_queue_cat',
 			$vars,
 			phpbb::$user->data['user_id']
 		);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function in_progress()
@@ -366,9 +369,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->queue_progress = phpbb::$user->data['user_id'];
 		$this->queue_progress_time = titania::$time;
 		$this->submit(false);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function no_progress()
@@ -378,18 +378,12 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->queue_progress = 0;
 		$this->queue_progress_time = 0;
 		$this->submit(false);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function change_tested_mark($mark)
 	{
 		$this->queue_tested = (bool) $mark;
 		$this->submit(false);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this, $mark);
 	}
 
 	/**
@@ -408,9 +402,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		}
 		$revision->contrib = $contrib;
 		$revision->load_phpbb_versions();
-		$branch = (int) $revision->phpbb_versions[0]['phpbb_version_branch'];
-
-		$contrib_release_topic_id = $contrib->get_release_topic_id($branch);
 
 		$notes = $this->validation_notes;
 		message::decode($notes, $this->validation_notes_uid);
@@ -425,26 +416,38 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->topic_reply($message, false);
 		$this->discussion_reply($message);
 
-		// Update the revisions
-		$revision->change_status(TITANIA_REVISION_APPROVED);
+		// Get branch information first
+		$version_branches = array();
+		foreach ($revision->phpbb_versions as $phpbb_version)
+		{
+			$branch = (int) $phpbb_version['phpbb_version_branch'];
+			$version_branches[$branch] = $contrib->get_release_topic_id($branch);
+		}
+
+		// Update the revisions (this will create the release topics)
+		$revision->change_status(ext::TITANIA_REVISION_APPROVED);
 		$revision->submit();
 
-		// Reply to the release topic
-		if ($contrib_release_topic_id && $contrib->type->update_public)
+		// Go through each version branch in this revision and create the replies as needed
+		foreach ($version_branches as $branch => $contrib_release_topic_id)
 		{
-			// Replying to an already existing topic, use the update message
-			$public_notes = sprintf(phpbb::$user->lang[$contrib->type->update_public], $revision->revision_version) . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->update_public . '_NOTES'], $public_notes) : '');
-			$contrib->reply_release_topic($branch, $public_notes);
-		}
-		elseif (!$contrib_release_topic_id && $contrib->type->reply_public)
-		{
-			// Replying to a topic that was just made, use the reply message
-			$public_notes = phpbb::$user->lang[$contrib->type->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->reply_public . '_NOTES'], $public_notes) : '');
-			$contrib->reply_release_topic($branch, $public_notes);
+			// Reply to the release topic
+			if ($contrib_release_topic_id && $contrib->type->update_public)
+			{
+				// Replying to an already existing topic, use the update message
+				$post_public_notes = sprintf(phpbb::$user->lang[$contrib->type->update_public], $revision->revision_version) . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->update_public . '_NOTES'], $public_notes) : '');
+				$contrib->reply_release_topic($branch, $post_public_notes);
+			}
+			elseif (!$contrib_release_topic_id && $contrib->type->reply_public)
+			{
+				// Replying to a topic that was just made, use the reply message
+				$post_public_notes = phpbb::$user->lang[$contrib->type->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->reply_public . '_NOTES'], $public_notes) : '');
+				$contrib->reply_release_topic($branch, $post_public_notes);
+			}
 		}
 
 		// Self-updating
-		$this->queue_status = TITANIA_QUEUE_APPROVED;
+		$this->queue_status = ext::TITANIA_QUEUE_APPROVED;
 		$this->queue_close_time = titania::$time;
 		$this->queue_close_user = phpbb::$user->data['user_id'];
 		$this->submit(false);
@@ -457,10 +460,9 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'NAME'		=> $contrib->contrib_name,
 			'U_VIEW'	=> $contrib->get_url(),
 		);
-		$this->subscriptions->send_notifications(TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify', $email_vars);
+		$this->subscriptions->send_notifications(ext::TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify', $email_vars);
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+		$this->trash_queue_topic();
 	}
 
 	public function close($revision_status)
@@ -470,13 +472,12 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$revision->change_status($revision_status);
 
 		// Self-updating
-		$this->queue_status = TITANIA_QUEUE_CLOSED;
+		$this->queue_status = ext::TITANIA_QUEUE_CLOSED;
 		$this->queue_close_time = titania::$time;
 		$this->queue_close_user = phpbb::$user->data['user_id'];
 		$this->submit(false);
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this, $revision_status);
+		$this->trash_queue_topic();
 	}
 
 	public function deny()
@@ -499,10 +500,10 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->discussion_reply($message);
 
 		// Update the revision
-		$revision->change_status(TITANIA_REVISION_DENIED);
+		$revision->change_status(ext::TITANIA_REVISION_DENIED);
 
 		// Self-updating
-		$this->queue_status = TITANIA_QUEUE_DENIED;
+		$this->queue_status = ext::TITANIA_QUEUE_DENIED;
 		$this->queue_close_time = titania::$time;
 		$this->queue_close_user = phpbb::$user->data['user_id'];
 		$this->submit(false);
@@ -510,8 +511,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		// Send notification message
 		$this->send_approve_deny_notification(false);
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+		$this->trash_queue_topic();
 	}
 
 	/**
@@ -581,9 +581,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'bbcode_uid'		=> $message_uid,
 		);
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $data, $this);
-
 		// Submit Plz
 		submit_pm('post', $subject, $data, true);
 	}
@@ -621,7 +618,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	{
 		$sql = 'SELECT * FROM ' . TITANIA_TOPICS_TABLE . '
 			WHERE parent_id = ' . $this->contrib_id . '
-				AND topic_type = ' . TITANIA_QUEUE_DISCUSSION;
+				AND topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION;
 		$result = phpbb::$db->sql_query($sql);
 		$row = phpbb::$db->sql_fetchrow($result);
 		phpbb::$db->sql_freeresult($result);
@@ -644,7 +641,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		$contrib = contribs_overlord::get_contrib_object($this->contrib_id, true);
 
-		$post = new titania_post(TITANIA_QUEUE_DISCUSSION);
+		$post = new titania_post(ext::TITANIA_QUEUE_DISCUSSION);
 		$post->topic->__set_array(array(
 			'parent_id'			=> $this->contrib_id,
 			'topic_category'	=> $contrib->contrib_type,
@@ -706,5 +703,210 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'id'	=> $revision_id,
 		);
 		return $this->controller_helper->route('phpbb.titania.queue.tools', $params);
+	}
+
+	/**
+	 * Copy new posts for queue discussion, queue to the forum
+	 *
+	 * @param titania_post $post_object
+	 */
+	protected function forum_queue_update_first_queue_post(&$post_object)
+	{
+		if ($this->queue_status == ext::TITANIA_QUEUE_HIDE || !$this->queue_topic_id)
+		{
+			return;
+		}
+
+		$path_helper = phpbb::$container->get('path_helper');
+
+		// First we copy over the queue discussion topic if required
+		$sql = 'SELECT topic_id, phpbb_topic_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE parent_id = ' . $this->contrib_id . '
+			AND topic_type = ' . ext::TITANIA_QUEUE_DISCUSSION;
+		$result = phpbb::$db->sql_query($sql);
+		$topic_row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		// Do we need to create the queue discussion topic or not?
+		if ($topic_row['topic_id'] && !$topic_row['phpbb_topic_id'])
+		{
+			$forum_id = titania_post::get_queue_forum_id($post_object->topic->topic_category, ext::TITANIA_QUEUE_DISCUSSION);
+
+			$temp_post = new titania_post;
+
+			// Go through any posts in the queue discussion topic and copy them
+			$topic_id = false;
+			$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . ' WHERE topic_id = ' . $topic_row['topic_id'];
+			$result = phpbb::$db->sql_query($sql);
+			while($row = phpbb::$db->sql_fetchrow($result))
+			{
+				titania::_include('functions_posting', 'phpbb_posting');
+
+				$temp_post->__set_array($row);
+
+				$post_text = $row['post_text'];
+
+				handle_queue_attachments($temp_post, $post_text);
+				message::decode($post_text, $row['post_text_uid']);
+
+				$post_text .= "\n\n" . $path_helper->strip_url_params($temp_post->get_url(), 'sid');
+
+				$options = array(
+					'poster_id'				=> $row['post_user_id'],
+					'forum_id' 				=> $forum_id,
+					'topic_title'			=> $row['post_subject'],
+					'post_text'				=> $post_text,
+				);
+
+				if ($topic_id)
+				{
+					$options = array_merge($options, array(
+						'topic_id'	=> $topic_id,
+					));
+
+					phpbb_posting('reply', $options);
+				}
+				else
+				{
+					switch ($topic_row['topic_category'])
+					{
+						case ext::TITANIA_TYPE_EXTENSION:
+							$options['poster_id'] = titania::$config->forum_extension_robot;
+							break;
+
+						case ext::TITANIA_TYPE_MOD:
+							$options['poster_id'] = titania::$config->forum_mod_robot;
+							break;
+
+						case ext::TITANIA_TYPE_STYLE:
+							$options['poster_id'] = titania::$config->forum_style_robot;
+							break;
+					}
+
+					$topic_id = phpbb_posting('post', $options);
+				}
+			}
+			phpbb::$db->sql_freeresult($result);
+
+			if ($topic_id)
+			{
+				$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+					SET phpbb_topic_id = ' . $topic_id . '
+					WHERE topic_id = ' . $topic_row['topic_id'];
+				phpbb::$db->sql_query($sql);
+			}
+
+			unset($temp_post);
+		}
+
+		// Does a queue topic already exist?  If so, don't repost.
+		$sql = 'SELECT phpbb_topic_id FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE topic_id = ' . $this->queue_topic_id;
+		phpbb::$db->sql_query($sql);
+		$phpbb_topic_id = phpbb::$db->sql_fetchfield('phpbb_topic_id');
+		phpbb::$db->sql_freeresult();
+		if ($phpbb_topic_id)
+		{
+			return;
+		}
+
+		$forum_id = titania_post::get_queue_forum_id($post_object->topic->topic_category, $post_object->topic->topic_type);
+
+		if (!$forum_id)
+		{
+			return;
+		}
+
+		$post_object->submit();
+
+		titania::_include('functions_posting', 'phpbb_posting');
+
+		// Need some stuff
+		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
+		$contrib = new titania_contribution;
+		$contrib->load((int) $this->contrib_id);
+		$revision = $this->get_revision();
+		$contrib->get_download($revision->revision_id);
+
+		switch ($post_object->topic->topic_category)
+		{
+			case ext::TITANIA_TYPE_EXTENSION:
+				$post_object->topic->topic_first_post_user_id = titania::$config->forum_extension_robot;
+				$lang_var = 'EXTENSION_QUEUE_TOPIC';
+				break;
+
+			case ext::TITANIA_TYPE_MOD:
+				$post_object->topic->topic_first_post_user_id = titania::$config->forum_mod_robot;
+				$lang_var = 'MOD_QUEUE_TOPIC';
+				break;
+
+			case ext::TITANIA_TYPE_STYLE:
+				$post_object->topic->topic_first_post_user_id = titania::$config->forum_style_robot;
+				$lang_var = 'STYLE_QUEUE_TOPIC';
+				break;
+
+			default:
+				return;
+				break;
+		}
+
+		$description = $contrib->contrib_desc;
+		message::decode($description, $contrib->contrib_desc_uid);
+		$download = current($contrib->download);
+
+		$post_text = sprintf(phpbb::$user->lang[$lang_var],
+			$contrib->contrib_name,
+			$path_helper->strip_url_params($contrib->author->get_url(), 'sid'),
+			users_overlord::get_user($contrib->author->user_id, '_username'),
+			$description,
+			$revision->revision_version,
+			$path_helper->strip_url_params($revision->get_url(), 'sid'),
+			$download['real_filename'],
+			get_formatted_filesize($download['filesize'])
+		);
+
+		$post_text .= "\n\n" . $post_object->post_text;
+
+		handle_queue_attachments($post_object, $post_text);
+		message::decode($post_text, $post_object->post_text_uid);
+
+		$post_text .= "\n\n" . $path_helper->strip_url_params($post_object->get_url(), 'sid');
+
+		$options = array(
+			'poster_id'				=> $post_object->topic->topic_first_post_user_id,
+			'forum_id' 				=> $forum_id,
+			'topic_title'			=> $post_object->topic->topic_subject,
+			'post_text'				=> $post_text,
+		);
+
+		$topic_id = phpbb_posting('post', $options);
+
+		$post_object->topic->phpbb_topic_id = $topic_id;
+
+		$sql = 'UPDATE ' . TITANIA_TOPICS_TABLE . '
+			SET phpbb_topic_id = ' . (int) $topic_id . '
+			WHERE topic_id = ' . $post_object->topic->topic_id;
+		phpbb::$db->sql_query($sql);
+	}
+
+	/**
+	 * Move queue topics to the trash can
+	 */
+	protected function trash_queue_topic()
+	{
+		$sql = 'SELECT phpbb_topic_id, topic_category FROM ' . TITANIA_TOPICS_TABLE . '
+			WHERE topic_id = ' . (int) $this->queue_topic_id;
+		$result = phpbb::$db->sql_query($sql);
+		$row = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		if (!$row['phpbb_topic_id'])
+		{
+			return;
+		}
+
+		phpbb::_include('functions_admin', 'move_topics');
+
+		move_topics($row['phpbb_topic_id'], titania_post::get_queue_forum_id($row['topic_category'], 'trash'));
 	}
 }

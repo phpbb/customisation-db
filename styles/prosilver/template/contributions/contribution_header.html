@@ -1,48 +1,37 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<!-- IF U_DOWNLOAD and U_SUBSCRIBE and not IS_SUBSCRIBED and not QUEUE_STATUS -->
-<div class="dialog hidden" id="subscription">
-	<h3>{L_SUBSCRIBE}</h3>
-	<br />
-	<p>{L_SUBSCRIPTION_REQUEST}</p>
-	<p class="dialog-options"><a href="#cancel" id="cancel" class="button2">{L_NO}</a> <a href="{U_SUBSCRIBE}" id="subscribe" class="button1">{L_SUBSCRIBE}</a></p>
-	<hr class="dashed" />
-	<span class="rightside"><a href="#cease" id="cease">{L_CEASE_REQUEST}</a></span>
-</div>
-<!-- ENDIF -->
-
-<!-- IF CONTRIB_LIMITED_SUPPORT -->
+{% if CONTRIB_LIMITED_SUPPORT %}
 <div class="rules">
 	<div class="inner">
-		{L_LIMITED_SUPPORT_WARN}
+		{{ lang('LIMITED_SUPPORT_WARN') }}
 	</div>
 </div>
-<!-- ENDIF -->
+{% endif %}
 
-<!-- IF CONTRIB_NAME --><h2 class="panel-name">{CONTRIB_NAME}<!-- IF CONTRIB_LOCAL_NAME --> / {CONTRIB_LOCAL_NAME}<!-- ENDIF --><!-- IF S_CONTRIB_CLEANED --> <img src="{T_TITANIA_THEME_PATH}/images/icon_cleaned_contrib.gif" title="{L_CLEANED_CONTRIB}" alt="{L_CLEANED_CONTRIB}" /><!-- ENDIF --></h2><!-- ENDIF -->
+{% if CONTRIB_NAME %}<h2 class="panel-name">{{ CONTRIB_NAME }}{% if CONTRIB_LOCAL_NAME %} / {{ CONTRIB_LOCAL_NAME }}{% endif %}{% if S_CONTRIB_CLEANED %} <img src="{{ T_TITANIA_THEME_PATH }}/images/icon_cleaned_contrib.gif" title="{{ lang('CLEANED_CONTRIB') }}" alt="{{ lang('CLEANED_CONTRIB') }}" />{% endif %}</h2>{% endif %}
 <div id="tabs" class="tabs">
 	<ul>
-	<!-- BEGIN nav_menu -->
-		<li class="tab dropdown-container<!-- IF nav_menu.S_SELECTED --> activetab<!-- ENDIF --><!-- IF nav_menu.sub_menu --> has-submenu<!-- ENDIF -->">
-			<a<!-- IF nav_menu.U_TITLE --> href="{nav_menu.U_TITLE}"<!-- ENDIF --><!-- IF nav_menu.S_EXTERNAL --> target="demo"<!-- ENDIF -->>
-				{nav_menu.L_TITLE}
+	{% for nav_menu in loops.nav_menu %}
+		<li class="tab dropdown-container{% if nav_menu.S_SELECTED %} activetab{% endif %}{% if nav_menu.sub_menu %} has-submenu{% endif %}">
+			<a{% if nav_menu.U_TITLE %} href="{{ nav_menu.U_TITLE }}"{% endif %}{% if nav_menu.S_EXTERNAL %} target="demo"{% endif %}>
+				{{ nav_menu.L_TITLE }}
 			</a>
-			<!-- IF nav_menu.sub_menu -->
+			{% if nav_menu.sub_menu %}
 				<div class="dropdown hidden">
 					<div class="pointer"><div class="pointer-inner"></div></div>
 					<ul class="dropdown-contents">
-						<!-- BEGIN nav_menu.sub_menu -->
+						{% for sub_menu in nav_menu.sub_menu %}
 							<li>
-								<a href="{nav_menu.sub_menu.U_TITLE}"<!-- IF nav_menu.S_EXTERNAL --> target="demo"<!-- ENDIF -->>
-									{nav_menu.sub_menu.L_TITLE}
+								<a href="{{ sub_menu.U_TITLE }}"{% if nav_menu.S_EXTERNAL %} target="demo"{% endif %}>
+									{{ sub_menu.L_TITLE }}
 								</a>
 							</li>
-						<!-- END nav_menu.sub_menu -->
+						{% endfor %}
 					</ul>
 				</div>
-			<!-- ENDIF -->
+			{% endif %}
 		</li>
-	<!-- END nav_menu -->
+	{% endfor %}
 	</ul>
 </div>
 

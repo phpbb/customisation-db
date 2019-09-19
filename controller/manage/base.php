@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\manage;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 
 class base
 {
@@ -174,7 +175,7 @@ class base
 		$sql = 'SELECT COUNT(a.attention_id) AS cnt
 			FROM ' . TITANIA_ATTENTION_TABLE . ' a
 			LEFT JOIN ' . TITANIA_CONTRIBS_TABLE . ' c
-				ON (a.attention_object_type = ' . TITANIA_CONTRIB . '
+				ON (a.attention_object_type = ' . ext::TITANIA_CONTRIB . '
 					AND a.attention_object_id = c.contrib_id)
 			WHERE a.attention_close_time = 0
 				AND ' . \attention_overlord::get_permission_sql();

@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\ext;
 use phpbb\titania\message\message;
 use phpbb\titania\versions;
 
@@ -107,22 +108,65 @@ class contribs_overlord
 	}
 
 	/**
+	 * Get list of the hidden categories
+	 * @return array
+	 */
+	public static function get_hidden_categories()
+	{
+		$hidden_categories_ary = array(
+			'SELECT'	=> 'c.category_id',
+
+			'FROM'		=> array(
+				TITANIA_CATEGORIES_TABLE	=> 'c',
+			),
+
+			'WHERE'		=> 'c.category_visible = 0',
+		);
+
+		$hidden_categories_sql = phpbb::$db->sql_build_query('SELECT', $hidden_categories_ary);
+		$hidden_categories_result = phpbb::$db->sql_query($hidden_categories_sql);
+		$hidden_categories_ids = array();
+
+		while ($hidden_categories_row = phpbb::$db->sql_fetchrow($hidden_categories_result))
+		{
+			$hidden_categories_ids[] = (int) $hidden_categories_row['category_id'];
+		}
+
+		phpbb::$db->sql_freeresult($hidden_categories_result);
+
+		return $hidden_categories_ids;
+	}
+
+	/**
 	 * Display contributions
 	 *
 	 * @param string $mode The mode (category, author)
-	 * @param int $id The parent id (only show contributions under this category, author, etc)
-	 * @param int|bool $branch	Branch to limit results to: 20|30|31. Defaults to false.
+	 * @param int|array $hierarchy_ids The parent id (plus any subcategory ids; if categories) (only show contributions under this category, author, etc)
+	 * @param int|bool $branch Branch to limit results to: 20|30|31. Defaults to false.
 	 * @param \phpbb\titania\sort|bool $sort
 	 * @param string $blockname The name of the template block to use (contribs by default)
+	 * @param string $status Approval status
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
-	public static function display_contribs($mode, $id, $branch = false, $sort = false, $blockname = 'contribs')
+	public static function display_contribs($mode, $hierarchy_ids, $branch = false, $sort = false, $blockname = 'contribs', $status = null)
 	{
 		phpbb::$user->add_lang_ext('phpbb/titania', 'contributions');
 
 		$tracking = phpbb::$container->get('phpbb.titania.tracking');
 		$types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
+		$cache = phpbb::$container->get('phpbb.titania.cache');
+
+		// Handle status filter
+		$status_filter = false;
+
+		if (!empty($status))
+		{
+			// Filter by status
+			$status_filter_type = ($status == 'approved') ? ext::TITANIA_CONTRIB_APPROVED : ext::TITANIA_CONTRIB_NEW;
+			$status_filter = ' AND c.contrib_status = ' . $status_filter_type;
+		}
 
 		// Setup the sort tool if not sent, then request
 		if ($sort === false)
@@ -138,11 +182,14 @@ class contribs_overlord
 			c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
 			c.contrib_limited_support, c.contrib_categories, c.contrib_desc, c.contrib_desc_uid';
 
+		$check_hidden_categories_on_all = false;
+		$hidden_categories_ids = self::get_hidden_categories();
+
 		switch ($mode)
 		{
 			case 'author' :
 				// Get the contrib_ids this user is an author in (includes as a co-author)
-				$contrib_ids = titania::$cache->get_author_contribs($id, $types, phpbb::$user);
+				$contrib_ids = titania::$cache->get_author_contribs($hierarchy_ids, $types, phpbb::$user);
 
 				if (!sizeof($contrib_ids))
 				{
@@ -160,7 +207,7 @@ class contribs_overlord
 						array(
 							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
 							'ON'	=> 'c.contrib_id = a.object_id
-								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.object_type = ' . ext::TITANIA_SCREENSHOT . '
 								AND a.is_orphan = 0
 								AND a.is_preview = 1',
 						),
@@ -173,7 +220,52 @@ class contribs_overlord
 				);
 			break;
 
-			case 'category' :
+			case 'category':
+				// We need to determine if we are currently inside the "hidden" category
+				// The only way we can do that is to look at each id, get it's children and then compare the array
+				// against the $hierarchy_ids - if we get a match on any of them, we know we are in the actual category
+				$actual_category = array(
+					'actual' => false,
+					'id' => 0,
+					'all' => array(),
+				);
+
+				// Simplify it - just make it an array
+				if (!is_array($hierarchy_ids))
+				{
+					$hierarchy_ids = array($hierarchy_ids);
+				}
+
+				foreach ($hierarchy_ids as $hierarchy_id)
+				{
+					$all_subcategory_ids = array_keys($cache->get_category_children($hierarchy_id));
+					$all_subcategory_ids[] = (int) $hierarchy_id;
+
+					asort($all_subcategory_ids);
+					asort($hierarchy_ids);
+
+					if (array_values($all_subcategory_ids) == array_values($hierarchy_ids))
+					{
+						$actual_category['actual'] = true;
+						$actual_category['id'] = $hierarchy_id;
+						$actual_category['all'] = $all_subcategory_ids;
+						break;
+					}
+				}
+
+				// If we found a hit, and that hit is inside the hidden category list - then that means
+				// we are inside the category
+				if ($actual_category['actual'] && in_array($actual_category['id'], $hidden_categories_ids))
+				{
+					$visible_category_ids = $actual_category['all'];
+				}
+
+				// Otherwise, it's some parent category so we just strip out the hidden subcategories
+				else
+				{
+					$visible_category_ids = array_diff($hierarchy_ids, $hidden_categories_ids);
+				}
+
 				$sql_ary = array(
 					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
@@ -193,21 +285,24 @@ class contribs_overlord
 						array(
 							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
 							'ON'	=> 'c.contrib_id = a.object_id
-								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.object_type = ' . ext::TITANIA_SCREENSHOT . '
 								AND a.is_orphan = 0
 								AND a.is_preview = 1',
 						)
 					),
 
-					'WHERE'		=> ((is_array($id) && sizeof($id)) ? phpbb::$db->sql_in_set('cic.category_id', array_map('intval', $id)) : 'cic.category_id = ' . (int) $id) . '
-						AND c.contrib_visible = 1' .
-						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
+					// If multiple categories, use the stripped list. If it's just the single hidden category, that's okay
+					// as presumably someone has gone looking for the hidden category, or it has been linked to, etc.
+					'WHERE'		=> phpbb::$db->sql_in_set('cic.category_id', $visible_category_ids, false, true) . '
+						AND c.contrib_visible = 1 ' . (($branch) ? " AND rp.phpbb_version_branch = $branch" : '') .
+						(($status_filter) ? $status_filter : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
 			break;
 
 			case 'all' :
+				$check_hidden_categories_on_all = true;
 				$sql_ary = array(
 					'SELECT'	=> $select . ', a.attachment_id, a.thumbnail',
 
@@ -224,21 +319,22 @@ class contribs_overlord
 						array(
 							'FROM'	=> array(TITANIA_ATTACHMENTS_TABLE => 'a'),
 							'ON'	=> 'c.contrib_id = a.object_id
-								AND a.object_type = ' . TITANIA_SCREENSHOT . '
+								AND a.object_type = ' . ext::TITANIA_SCREENSHOT . '
 								AND a.is_orphan = 0
 								AND a.is_preview = 1',
 						),
 					),
 
 					'WHERE'		=> 'c.contrib_visible = 1' .
-						(($branch) ? " AND rp.phpbb_version_branch = $branch" : ''),
+						(($branch) ? " AND rp.phpbb_version_branch = $branch" : '') .
+						(($status_filter) ? $status_filter : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
 			break;
 		}
 
-		$tracking->get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id');
+		$tracking->get_track_sql($sql_ary, ext::TITANIA_CONTRIB, 'c.contrib_id');
 
 		$mod_contrib_mod = (bool) phpbb::$auth->acl_get('u_titania_mod_contrib_mod');
 
@@ -262,7 +358,8 @@ class contribs_overlord
 			}
 
 			$view_unapproved = array_unique($view_unapproved);
-			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
+			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
+				($branch ? ' AND rp.revision_validated = 1' : '') .
 				((sizeof($view_unapproved)) ? ' OR ' . phpbb::$db->sql_in_set('c.contrib_type', array_map('intval', $view_unapproved)) : '') . '
 				OR c.contrib_user_id = ' . phpbb::$user->data['user_id'] . '
 				OR cc.active = 1)';
@@ -288,13 +385,25 @@ class contribs_overlord
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
 		$contrib_ids = $user_ids = array();
+
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
+			if ($check_hidden_categories_on_all)
+			{
+				$contrib_categories = explode(',', $row['contrib_categories']);
+
+				if (!count(array_diff($contrib_categories, $hidden_categories_ids)))
+				{
+					// Don't show it on the "all" listings page, because the contrib is only in hidden categories
+					continue;
+				}
+			}
+
 			//Check to see if user has permission
 			if (!$mod_contrib_mod && $row['contrib_user_id'] != phpbb::$user->data['user_id'] && $row['coauthor'] != phpbb::$user->data['user_id'] && !$access->is_team())
 			{
 				//If the contribution has a status that is not accessible by the current user let's not add it
-				if (in_array($row['contrib_status'], array(TITANIA_CONTRIB_NEW, TITANIA_CONTRIB_CLEANED, TITANIA_CONTRIB_HIDDEN, TITANIA_CONTRIB_DISABLED)))
+				if (in_array($row['contrib_status'], array(ext::TITANIA_CONTRIB_NEW, ext::TITANIA_CONTRIB_CLEANED, ext::TITANIA_CONTRIB_HIDDEN, ext::TITANIA_CONTRIB_DISABLED)))
 				{
 					continue;
 				}
@@ -344,7 +453,7 @@ class contribs_overlord
 		$author_contribs = titania::$cache->get_author_contribs(phpbb::$user->data['user_id'], $types, phpbb::$user, true);
 
 		// Get the mark all tracking
-		$tracking->get_track(TITANIA_CONTRIB, 0);
+		$tracking->get_track(ext::TITANIA_CONTRIB, 0);
 
 		foreach ($contrib_ids as $contrib_id)
 		{
@@ -370,8 +479,8 @@ class contribs_overlord
 
 			// Get the folder image
 			$folder_img = $folder_alt = '';
-			$last_read_mark = $tracking->get_track(TITANIA_CONTRIB, $contrib->contrib_id, true);
-			$last_complete_mark = $tracking->get_track(TITANIA_CONTRIB, 0, true);
+			$last_read_mark = $tracking->get_track(ext::TITANIA_CONTRIB, $contrib->contrib_id, true);
+			$last_complete_mark = $tracking->get_track(ext::TITANIA_CONTRIB, 0, true);
 			$is_unread = ($contrib->contrib_last_update > $last_read_mark && $contrib->contrib_last_update > $last_complete_mark) ? true : false;
 			phpbb::$container->get('phpbb.titania.display')->topic_folder_img($folder_img, $folder_alt, 0, $is_unread);
 
@@ -457,8 +566,166 @@ class contribs_overlord
 		// Show update time descending and limit to the topics per page by default
 		$sort->set_defaults(phpbb::$config['topics_per_page'], 't', 'd');
 
-		$sort->result_lang = 'TOTAL_CONTRIBS';
+		$sort->result_lang = 'NUM_CONTRIBS';
 
 		return $sort;
+	}
+
+	/**
+	 * Create a feed either for an individual contribution or for all contributions
+	 * @param $template
+	 * @param $helper
+	 * @param $path_helper
+	 * @param mixed $contrib
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @throws Exception
+	 */
+	public static function build_feed($template, $helper, $path_helper, $contrib = false)
+	{
+		$contrib_id = ($contrib) ? $contrib->contrib_id : false;
+
+		if (!phpbb::$config['feed_overall'])
+		{
+			// Don't proceed if feeds are disabled
+			trigger_error('NO_FEED_ENABLED');
+		}
+
+		// Show one contribution only, if on the specific contrib page
+		$contrib_specific = ($contrib_id) ? 'AND r.contrib_id = ' . (int) $contrib_id : '';
+
+		$sql_ary = [
+			'SELECT' => 'r.*, c.*, u.username_clean',
+
+			'FROM' => [
+				TITANIA_REVISIONS_TABLE => 'r',
+				TITANIA_CONTRIBS_TABLE => 'c',
+				USERS_TABLE => 'u',
+			],
+
+			'WHERE'	=> 'r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
+				AND r.revision_submitted = 1
+				AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
+				AND r.contrib_id = c.contrib_id
+				AND u.user_id = c.contrib_user_id 
+				' . $contrib_specific,
+
+			'ORDER_BY'	=> 'r.validation_date DESC',
+		];
+
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		$result = phpbb::$db->sql_query_limit($sql, 100);
+
+		$rows = [];
+		$feed_updated_time = false;
+
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			// Only proceed if the contribution is not in categories that are all hidden
+			if (!self::feed_hidden_category_check($row['contrib_id']))
+			{
+				$feed_rows = [];
+				$feed_rows['item_date'] = date(\DateTime::ATOM, $row['validation_date']);
+
+				// Get the most recent time
+				if (!$feed_updated_time)
+				{
+					$feed_updated_time = $row['validation_date'];
+				}
+
+				// Make the name including the version
+				$feed_rows['item_title'] = $row['contrib_name'] . ' ' . $row['revision_version'];
+
+				if ($row['revision_name'])
+				{
+					// Include the code name if it's supplied
+					$feed_rows['item_title'] .= ' (' . $row['revision_name'] . ')';
+				}
+
+				$feed_rows['item_author'] = $row['username_clean'];
+				$feed_rows['item_description'] = phpbb::$user->lang('FEED_CDB_NEW_VERSION', $row['revision_version'], $row['contrib_name']);
+				$feed_rows['item_link'] = '';
+
+				if ($row['attachment_id'])
+				{
+					// Include the download link
+					$feed_rows['item_link'] = $helper->route('phpbb.titania.download', array('id' => $row['attachment_id']));
+				}
+
+				else
+				{
+					// This is so we can link to a bbCode customisation details page for example, because it doesn't
+					// have a download link.
+					if ($contrib)
+					{
+						$feed_rows['item_link'] = $contrib->get_url();
+					}
+
+					else
+					{
+						// Load the contribution if we don't have it already.
+						self::load_contrib($row['contrib_id']);
+						$feed_rows['item_link'] = self::get_contrib_object($row['contrib_id'])->get_url();
+					}
+				}
+
+				if ($feed_rows['item_link'])
+				{
+					// Strip session
+					$feed_rows['item_link'] = $path_helper->strip_url_params($feed_rows['item_link'], 'sid');
+				}
+
+				$rows[] = $feed_rows;
+			}
+		}
+
+		phpbb::$db->sql_freeresult($result);
+		$template->assign_block_vars_array('feed', $rows);
+
+		/** @var \Symfony\Component\HttpFoundation\Response $content */
+		$content = $helper->render('feed.xml.twig');
+
+		// Return the response
+		$feed_updated_time = (!$feed_updated_time) ? time() : $feed_updated_time;
+
+		$response = $content;
+		$response->headers->set('Content-Type', 'application/atom+xml');
+		$response->setCharset('UTF-8');
+		$response->setLastModified(new \DateTime('@' . $feed_updated_time));
+
+		if (!empty(phpbb::$user->data['is_bot']))
+		{
+			$response->headers->set('X-PHPBB-IS-BOT', 'yes');
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Check if the contribution is visible somewhere
+	 * @param $contrib_id
+	 * @return bool
+	 */
+	private static function feed_hidden_category_check($contrib_id)
+	{
+		$sql = 'SELECT cc.category_id, ct.category_visible
+				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' cc, ' . TITANIA_CATEGORIES_TABLE . ' ct 
+				WHERE cc.contrib_id = ' . (int) $contrib_id . '
+					AND ct.category_id = cc.category_id';
+
+		$result = phpbb::$db->sql_query($sql);
+		$count = $hidden = 0;
+
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$count++;
+
+			if (!$row['category_visible'])
+			{
+				$hidden++;
+			}
+		}
+
+		// True if all the categories the contribution is in are hidden
+		return ($count > 0 && $count === $hidden);
 	}
 }

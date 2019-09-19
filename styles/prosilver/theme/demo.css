@@ -229,11 +229,11 @@ a#next:hover span { background-position: 6px -26px; }
 }
 
 .simple .demo-list ul {
-	border-radius-top-left: 
+	border-radius: 0;
 	float: none;
 	height: 280px;
 }
- 
+
 .demo-list li a {
 	border-radius: 2px;
 	color: #9ca0a1 !important;

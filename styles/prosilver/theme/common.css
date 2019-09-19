@@ -71,7 +71,7 @@ a.download-button, a.colorizeit-button {
 	color: #FFFFFF;
 	display: inline-block;
 	float: left;
-	height: 36px;
+	min-height: 36px;
 	font-weight: bold;
 	text-decoration: none;
 }
@@ -144,6 +144,10 @@ a.download-button .vendor-version {
 	visibility: hidden;
 	width: 210px;
 	z-index: 9;
+
+	/* Centre the box to the left, as it's now containing more information */
+	transform: translateY(-50%);
+	top: 50%;
 }
 
 .contrib-download:hover .download-info {
@@ -195,7 +199,7 @@ a.download-button .vendor-version {
 }
 
 .contrib-description dd ul, .contrib-description dd ol {
-	margin-left: 3em;
+	margin: 0 0 1em 3em;
 }
 
 .contrib-description dd dl.codebox dt {margin-top: 1px;}
@@ -423,6 +427,10 @@ a.screenshot img, img.screenshot {
 .quickview-title {
 	font-size: 1.2em;
 	position: relative;
+	display: block;
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	white-space: nowrap;
 }
 
 .quickview-preview {
@@ -557,8 +565,31 @@ ul.simple li.header dt, ul.simple li.header dd {
 	width: 130px !important;
 }
 
+/* If multiple versions, then comma separate
+--------------------------------------------- */
 dd.revision-version, dd.phpbb-version {
 	text-align: center;
+}
+
+ul.revision-version-list {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+
+ul.revision-version-list li {
+	margin: 0;
+	padding: 0;
+	display: inline;
+	list-style: none;
+}
+
+ul.revision-version-list li:after {
+	content: ", ";
+}
+
+ul.revision-version-list li:last-child:after {
+	content: "";
 }
 
 #translations-panel {
@@ -647,6 +678,15 @@ li.row dl.codebox dt, li.row dl.codebox dd {
 li.row dl.codebox dd {
 	border: 0;
 	padding: 0;
+}
+
+/* Codebox adjustments for the revision section of BBCode */
+.revision-details > .bbcode-container > .codebox {
+	min-height: 40px;
+}
+
+.revision-details > .bbcode-container > .codebox > dt {
+	font-size: 1.0em;
 }
 
 /* Uploaders
@@ -898,7 +938,7 @@ p.attention-closed {
 }
 
 #queue-stat-info {
-	font-family: Verdana, Helvetica, Arial;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 1.1em;
 }
 
@@ -908,12 +948,15 @@ p.attention-closed {
 .stat-ratio span, .stat-day span, .day-list span {
 	display: block;
 	float: left;
-	font-family: Helvetica, Arial, Verdana;
+	font-family: Helvetica, Arial, Verdana, sans-serif;
 	text-align: center;
 	width: 20px;
 }
 
-.stat-ratio { width: 300px; }
+.stat-ratio {
+	width: 80%;
+	margin: 25px 0;
+}
 
 .stat-ratio span {
 	height: 16px;
@@ -930,6 +973,16 @@ p.attention-closed {
 	float: none;
 	margin-bottom: 1px;
 	position: relative;
+}
+
+.day-list-date {
+	font-size: 1.0em;
+}
+
+.queue-statistics-box {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .stat-day span strong {
@@ -975,28 +1028,6 @@ p.attention-closed {
 --------------------------------------------- */
 .postbody.full { width: 100%; }
 
-/* ColorBox adjustments; primarily switching control buttons to top */
-#cboxLoadedContent {
-	margin-top: 28px;
-	margin-bottom: 0 !important;
-	text-align: left;
-}
-
-#cboxLoadedContent h3 {
-	top: 0;
-	width: 100%;
-	position: absolute;
-}
-
-#cboxNext, #cboxPrevious, #cboxClose, #cboxTitle, #cboxCurrent {
-	top: 0;
-	bottom: auto !important;
-}
-
-#cboxCurrent {
-	top: 5px;
-}
-
 .dialog-options {
 	text-align: center;
 }
@@ -1019,10 +1050,6 @@ textarea.quickedit {
 	font-size: 1.1em;
 }
 
-.text-content {
-	white-space: pre-wrap;
-}
-
 .inline-attachment {
 	white-space: normal;
 }
@@ -1040,4 +1067,23 @@ hr.solid {
 	clear: both;
 	content: '';
 	display: block;
+}
+
+.titania-navigation {
+	margin-top: 8px;
+}
+
+.customisation-database {
+	/* available class for custom CSS/scripting in the body tag */
+}
+
+/* Translation Submission
+--------------------------------------------- */
+.translation-validation {
+	text-align: center;
+	margin: 30px 0px 30px 0px;
+}
+
+.translation-validation > textarea {
+	display: inline-block;
 }

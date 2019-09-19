@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\ext;
 use phpbb\titania\message\message;
 
 class posts_overlord
@@ -164,7 +165,7 @@ $sort_by_post_sql = array('a' => 'u.username_clean', 't' => 'p.post_id', 's' => 
 		if (phpbb::$request->variable('view', '') == 'unread')
 		{
 			$tracking = phpbb::$container->get('phpbb.titania.tracking');
-			$mark_time = $tracking->get_track(TITANIA_TOPIC, $topic->topic_id);
+			$mark_time = $tracking->get_track(ext::TITANIA_TOPIC, $topic->topic_id);
 
 			if ($mark_time > 0)
 			{
@@ -191,7 +192,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		self::assign_common();
 
 		// Build Quick Actions
-		if ($topic->topic_type != TITANIA_QUEUE)
+		if ($topic->topic_type != ext::TITANIA_QUEUE)
 		{
 			self::build_quick_actions($topic);
 		}
@@ -281,10 +282,10 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		phpbb::$db->sql_freeresult($result);
 
 		// Grab the tracking data
-		$last_mark_time = $tracking->get_track(TITANIA_TOPIC, $topic->topic_id);
+		$last_mark_time = $tracking->get_track(ext::TITANIA_TOPIC, $topic->topic_id);
 
 		// Store tracking data
-		$tracking->track(TITANIA_TOPIC, $topic->topic_id, $last_post_time);
+		$tracking->track(ext::TITANIA_TOPIC, $topic->topic_id, $last_post_time);
 
 		// load the user data
 		users_overlord::load($user_ids);
@@ -304,6 +305,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		foreach ($post_ids as $post_id)
 		{
 			$post->__set_array(self::$posts[$post_id]);
+			$post->unread = $post->post_time > $last_mark_time;
 
 			$attachments->clear_all();
 
@@ -342,8 +344,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 					'POST_TEXT_DECODED'		=> $message_decoded,
 					'EDITED_MESSAGE'		=> $l_edited_by,
 					'U_MINI_POST'			=> $topic->get_url(false, array('p' => $post_id, '#' => 'p' . $post_id)),
-					'MINI_POST_IMG'			=> ($post->post_time > $last_mark_time) ? phpbb::$user->img('icon_post_target_unread', 'NEW_POST') : phpbb::$user->img('icon_post_target', 'POST'),
-					'S_FIRST_UNREAD'		=> ($post->post_time > $last_mark_time && $prev_post_time <= $last_mark_time) ? true : false,
+					'MINI_POST_IMG'			=> ($post->unread) ? phpbb::$user->img('icon_post_target_unread', 'NEW_POST') : phpbb::$user->img('icon_post_target', 'POST'),
+					'S_FIRST_UNREAD'		=> ($post->unread && $prev_post_time <= $last_mark_time) ? true : false,
 				)
 			));
 
@@ -453,8 +455,8 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'MAKE_STICKY'		=> (!$topic->topic_sticky) ? $topic->get_url('sticky_topic') : false,
 			'LOCK_TOPIC'		=> (!$topic->topic_locked) ? $topic->get_url('lock_topic') : false,
 			'UNLOCK_TOPIC'		=> ($topic->topic_locked) ? $topic->get_url('unlock_topic') : false,
-			'SPLIT_TOPIC'		=> ($is_moderator && $topic->topic_type == TITANIA_SUPPORT) ? $topic->get_url('split_topic') : false,
-			'MERGE_POSTS'		=> ($is_moderator && $topic->topic_type == TITANIA_SUPPORT) ? $topic->get_url('move_posts') : false,
+			'SPLIT_TOPIC'		=> ($is_moderator && $topic->topic_type == ext::TITANIA_SUPPORT) ? $topic->get_url('split_topic') : false,
+			'MERGE_POSTS'		=> ($is_moderator && $topic->topic_type == ext::TITANIA_SUPPORT) ? $topic->get_url('move_posts') : false,
 			'SOFT_DELETE_TOPIC'	=> $topic->get_url('delete_topic'),
 			'UNDELETE_TOPIC'	=> $topic->get_url('undelete_topic'),
 		);
@@ -558,7 +560,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$sort->default_sort_dir = phpbb::$user->data['user_post_sortby_dir'];
 		$sort->default_limit = phpbb::$config['posts_per_page'];
 
-		$sort->result_lang = 'TOTAL_POSTS';
+		$sort->result_lang = 'NUM_POSTS';
 
 		return $sort;
 	}

@@ -15,6 +15,7 @@ namespace phpbb\titania\message;
 
 use phpbb\request\request_interface;
 use phpbb\titania\access;
+use phpbb\titania\ext;
 
 class message
 {
@@ -380,9 +381,11 @@ class message
 		// Add the forum key
 		add_form_key($this->settings['form_name']);
 
-		$qr_hidden_fields = array();
+		$qr_hidden_fields = array(
+			'quick_reply_mode' => true,
+		);
 
-		if ($this->user->data['user_notify'] && $this->post_object->topic_type == TITANIA_SUPPORT)
+		if ($this->user->data['user_notify'] && $this->post_object->topic_type == ext::TITANIA_SUPPORT)
 		{
 			$qr_hidden_fields['notify'] = true;
 		}
@@ -459,6 +462,9 @@ class message
 
 			'sticky_topic'		=> $this->auth['sticky_topic'] && $this->request->is_set_post('sticky_topic'),
 			'lock_topic'		=> $this->auth['lock_topic'] && $this->request->is_set_post('lock_topic'),
+
+			// Are we in Quick Reply mode
+			'quick_reply_mode'	=> $this->request->variable('quick_reply_mode', 0),
 		);
 
 		if ($this->auth['edit_subject'])
@@ -745,7 +751,7 @@ class message
 		$message = html_entity_decode($message, ENT_QUOTES);
 
 		// With magic_quotes_gpc on slashes are stripped too many times, so add them
-		$message = (STRIP) ? addslashes($message) : $message;
+		$message = (defined('STRIP') && STRIP) ? addslashes($message) : $message;
 
 		// Run set_var to re-encode the proper entities as if the user had submitted it themselves
 		set_var($message, $message, 'string', true);

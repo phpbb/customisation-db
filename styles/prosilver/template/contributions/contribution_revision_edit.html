@@ -1,81 +1,81 @@
-<!-- INCLUDE contributions/contribution_header.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_header.html' %}
 
-<h3 class="section-name">{PAGE_TITLE}</h3>
+<h3 class="section-name">{{ PAGE_TITLE }}</h3>
 
-<!-- IF NOTICE --><p class="error">{NOTICE}</p><!-- ENDIF -->
-<!-- IF ERROR_MSG --><p class="error">{ERROR_MSG}</p><!-- ENDIF -->
+{% if NOTICE %}<p class="error">{{ NOTICE }}</p>{% endif %}
+{% if ERROR_MSG %}<p class="error">{{ ERROR_MSG }}</p>{% endif %}
 
-<form id="revision_edit" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+<form id="revision_edit" method="post" action="{{ S_POST_ACTION }}" {{ S_FORM_ENCTYPE }}>
 	<div class="container">
 		<div class="inner">
 			<fieldset>
 				<dl>
-					<dt><label for="revision_name">{L_REVISION_NAME}:</label></dt>
-					<dd><input type="text" name="revision_name" size="45" maxlength="60" value="{REVISION_NAME}" class="inputbox autowidth" /></dd>
+					<dt><label for="revision_name">{{ lang('REVISION_NAME') ~ lang('COLON') }}</label></dt>
+					<dd><input type="text" name="revision_name" size="45" maxlength="60" value="{{ REVISION_NAME }}" class="inputbox autowidth" /></dd>
 				</dl>
-				<!-- IF S_IS_MODERATOR -->
+				{% if S_IS_MODERATOR %}
 				<dl>
-					<dt><label for="revision_phpbb_versions">{L_PHPBB_VERSION}:</label></dt>
+					<dt><label for="revision_phpbb_versions">{{ lang('PHPBB_VERSION') ~ lang('COLON') }}</label></dt>
 					<dd><select name="revision_phpbb_versions[]" multiple="multiple" size="10">
-						<!-- BEGIN phpbb_versions -->
-							<option value="{phpbb_versions.VERSION}"<!-- IF phpbb_versions.S_SELECTED --> selected="selected"<!-- ENDIF -->>{phpbb_versions.VERSION}</option>
-						<!-- END phpbb_versions -->
+						{% for phpbb_versions in loops.phpbb_versions %}
+							<option value="{{ phpbb_versions.VERSION }}"{% if phpbb_versions.S_SELECTED %} selected="selected"{% endif %}>{{ phpbb_versions.VERSION }}</option>
+						{% endfor %}
 					</select></dd>
 				</dl>
 				<dl>
-					<dt><label for="revision_status">{L_REVISION_STATUS}:</label><br /><span>{L_REVISION_STATUS_EXPLAIN}</span></dt>
+					<dt><label for="revision_status">{{ lang('REVISION_STATUS') ~ lang('COLON') }}</label><br /><span>{{ lang('REVISION_STATUS_EXPLAIN') }}</span></dt>
 					<dd>
 						<select name="revision_status" id="revision_status">
-							<!-- BEGIN status_select -->
-								<option value="{status_select.VALUE}"<!-- IF status_select.S_SELECTED --> selected="selected"<!-- ENDIF -->>{status_select.NAME}</option>
-							<!-- END status_select -->
+							{% for status_select in loops.status_select %}
+								<option value="{{ status_select.VALUE }}"{% if status_select.S_SELECTED %} selected="selected"{% endif %}>{{ status_select.NAME }}</option>
+							{% endfor %}
 						</select>
 					</dd>
 				</dl>
 				<dl>
-					<dt><label for="delete">{L_DELETE_REVISION}:</label><br /><span>{L_DELETE_REVISION_EXPLAIN}</span></dt>
+					<dt><label for="delete">{{ lang('DELETE_REVISION') ~ lang('COLON') }}</label><br /><span>{{ lang('DELETE_REVISION_EXPLAIN') }}</span></dt>
 					<dd>
 						<input type="checkbox" name="delete" id="delete" />
 					</dd>
 				</dl>
-				<!-- ENDIF -->
+				{% endif %}
 
-				<!-- IF .license_options -->
+				{% if loops.license_options|length %}
 				<dl>
-					<dt><label for="revision_license">{L_LICENSE}:</label><br /><span>{L_LICENSE_EXPLAIN}</span></dt>
+					<dt><label for="revision_license">{{ lang('LICENSE') ~ lang('COLON') }}</label><br /><span>{{ lang('LICENSE_EXPLAIN') }}</span></dt>
 					<dd>
 						<select id="revision_license" name="revision_license" data-togglable-settings="true">
-							<option value="">{L_SELECT}</option>
-							<!-- BEGIN license_options -->
-								<option value="{license_options.VALUE}"<!-- IF license_options.VALUE == REVISION_LICENSE --> selected="selected"<!-- ENDIF -->>{license_options.NAME}</option>
-							<!-- END license_options -->
-							<!-- IF S_ALLOW_CUSTOM_LICENSE --><option value="{L_CUSTOM_LICENSE}"<!-- IF S_CUSTOM_LICENSE --> selected="selected"<!-- ENDIF --> data-toggle-setting="#revision_custom_license">{L_CUSTOM_LICENSE}</option><!-- ENDIF -->
+							<option value="">{{ lang('SELECT') }}</option>
+							{% for license_options in loops.license_options %}
+								<option value="{{ license_options.VALUE }}"{% if license_options.VALUE == REVISION_LICENSE %} selected="selected"{% endif %}>{{ license_options.NAME }}</option>
+							{% endfor %}
+							{% if S_ALLOW_CUSTOM_LICENSE %}<option value="{{ lang('CUSTOM_LICENSE') }}"{% if S_CUSTOM_LICENSE %} selected="selected"{% endif %} data-toggle-setting="#revision_custom_license">{{ lang('CUSTOM_LICENSE') }}</option>{% endif %}
 						</select>
-						<!-- IF S_ALLOW_CUSTOM_LICENSE --><input type="text" id="revision_custom_license" name="revision_custom_license" size="25" maxlength="60" value="{REVISION_CUSTOM_LICENSE}" class="inputbox autowidth" /><!-- ENDIF -->
+						{% if S_ALLOW_CUSTOM_LICENSE %}<input type="text" id="revision_custom_license" name="revision_custom_license" size="25" maxlength="60" value="{{ REVISION_CUSTOM_LICENSE }}" class="inputbox autowidth" />{% endif %}
 					</dd>
 				</dl>
 
-				<!-- ENDIF -->
+				{% endif %}
 				</fieldset>
 
-				<!-- IF TRANSLATION_UPLOADER -->
+				{% if TRANSLATION_UPLOADER %}
 					<div class="translations-uploader">
-						<h3>{L_TRANSLATIONS}</h3>
-						{TRANSLATION_UPLOADER}
-						<textarea name="message" id="message" value="" style="display: none;"></textarea>
+						<h3>{{ lang('TRANSLATIONS') }}</h3>
+						{{ TRANSLATION_UPLOADER }}
+						<textarea name="message" id="message" style="display: none;"></textarea>
 					</div>
-				<!-- ENDIF -->
+				{% endif %}
 		</div>
 	</div>
 	<div class="container">
 		<div class="inner">
 			<fieldset class="submit-buttons">
-				<input type="submit" id="submit" name="submit" value="{L_SUBMIT}" class="button1"/>
-				{S_FORM_TOKEN}
+				<input type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" class="button1"/>
+				{{ S_FORM_TOKEN }}
 			</fieldset>
 		</div>
 	</div>
 </form>
 
 
-<!-- INCLUDE contributions/contribution_footer.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_footer.html' %}

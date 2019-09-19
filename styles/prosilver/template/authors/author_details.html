@@ -1,79 +1,74 @@
-<!-- INCLUDE authors/author_header.html -->
+{% INCLUDE '@phpbb_titania/authors/author_header.html' %}
 
 <div class="container" id="author-profile">
 	<div class="inner">
 		<div class="left-column demo">
-				<!-- IF USER_AVATAR -->{USER_AVATAR}<br /><!-- ELSE --><div class="no-avatar-img">{L_NO_AVATAR}</div><!-- ENDIF -->
-				<!-- IF U_USER_BOARD_PROFILE --><a href="{U_USER_BOARD_PROFILE}">{L_VIEW_USER_PROFILE}</a><!-- ENDIF -->
+				{% if USER_AVATAR %}{{ USER_AVATAR }}<br />{% else %}<div class="no-avatar-img">{{ lang('NO_AVATAR') }}</div>{% endif %}
+				{% if U_USER_BOARD_PROFILE %}<a href="{{ U_USER_BOARD_PROFILE }}">{{ lang('VIEW_USER_PROFILE') }}</a>{% endif %}
 		</div>
 
 		<div class="right-column">
 			<ul class="general-info">
 				<li>
-					<strong>{L_AUTHOR}</strong> {USER_FULL}
+					<strong>{{ lang('AUTHOR') }}</strong> {{ USER_FULL }}
 				</li>
-				<!-- IF AUTHOR_REALNAME -->
+				{% if U_AUTHOR_PROFILE_PHPBB_COM %}
 				<li>
-					<strong>{L_AUTHOR_REAL_NAME}</strong> {AUTHOR_REALNAME}
+					<strong>{{ lang('PHPBB_PROFILE') }}</strong> <a href="{{ U_AUTHOR_PROFILE_PHPBB_COM }}">{{ lang('VIEW') }}</a>
 				</li>
-				<!-- ENDIF -->
-				<!-- IF U_AUTHOR_PROFILE_PHPBB_COM -->
+				{% endif %}
+				{% if AUTHOR_WEBSITE %}
 				<li>
-					<strong>{L_PHPBB_PROFILE}</strong> <a href="{U_AUTHOR_PROFILE_PHPBB_COM}">{L_VIEW}</a>
+					<strong>{{ lang('WEBSITE') }}</strong> {{ AUTHOR_WEBSITE_LINK }}
 				</li>
-				<!-- ENDIF -->
-				<!-- IF AUTHOR_WEBSITE -->
+				{% endif %}
 				<li>
-					<strong>{L_WEBSITE}</strong> {AUTHOR_WEBSITE_LINK}
-				</li>
-				<!-- ENDIF -->
-				<li>
-					<strong>{L_JOINED}</strong> {USER_JOINED}
+					<strong>{{ lang('JOINED') }}</strong> {{ USER_JOINED }}
 				</li>
 				<li>
-					<strong>{L_POSTS}</strong> {USER_POSTS}
+					<strong>{{ lang('POSTS') }}</strong> {{ USER_POSTS }}
 				</li>
-				<!-- IF AUTHOR_RATING_STRING -->
+				{% if AUTHOR_RATING_STRING %}
 				<li>
-					<strong>{L_AUTHOR_RATING}</strong> {AUTHOR_RATING_STRING} ({AUTHOR_RATING_COUNT})
+					<strong>{{ lang('AUTHOR_RATING') }}</strong> {{ AUTHOR_RATING_STRING }} ({{ AUTHOR_RATING_COUNT }})
 				</li>
-				<!-- ENDIF -->
+				{% endif %}
 				<li>
-					<strong>{L_AUTHOR_CONTRIBS}</strong> {AUTHOR_CONTRIBS} <!-- IF AUTHOR_CONTRIB_LIST -->(<a href="{U_AUTHOR_CONTRIBUTIONS}">{AUTHOR_CONTRIB_LIST}</a>)<!-- ENDIF -->
+					<strong>{{ lang('AUTHOR_CONTRIBS') }}</strong> {{ AUTHOR_CONTRIBS }} {% if AUTHOR_CONTRIB_LIST %}(<a href="{{ U_AUTHOR_CONTRIBUTIONS }}">{{ AUTHOR_CONTRIB_LIST }}</a>){% endif %}
 				</li>
-				<!-- IF U_EMAIL -->
+				{% if U_EMAIL %}
 				<li>
-					<strong>{L_EMAIL_ADDRESS}</strong> <a href="{U_EMAIL}">{SEND_EMAIL_USER}</a>
+					<strong>{{ lang('EMAIL_ADDRESS') }}</strong> <a href="{{ U_EMAIL }}">{{ SEND_EMAIL_USER }}</a>
 				</li>
-				<!-- ENDIF -->
-				<!-- IF U_PM -->
+				{% endif %}
+				{% if U_PM %}
 				<li>
-					<strong>{L_PM}</strong> <a href="{U_PM}">{L_SEND_PRIVATE_MESSAGE}</a>
+					<strong>{{ lang('PM') }}</strong> <a href="{{ U_PM }}">{{ lang('SEND_PRIVATE_MESSAGE') }}</a>
 				</li>
-				<!-- ENDIF -->
-				<!-- IF U_JABBER and S_JABBER_ENABLED -->
+				{% endif %}
+				{% if U_JABBER and S_JABBER_ENABLED %}
 				<li>
-					<strong>{L_JABBER}</strong> <a href="{U_JABBER}" onclick="popup(this.href, 550, 320); return false;">{L_SEND_JABBER_MESSAGE}</a>
+					<strong>{{ lang('JABBER') }}</strong> <a href="{{ U_JABBER }}" onclick="popup(this.href, 550, 320); return false;">{{ lang('SEND_JABBER_MESSAGE') }}</a>
 				</li>
-				<!-- ENDIF -->
+				{% endif %}
 			</ul>
 
-			<!-- IF AUTHOR_DESC -->
+			{% if AUTHOR_DESC %}
 			<dl class="contrib-description">
-				<dt><strong>{L_DESCRIPTION}</strong></dt>
-				<dd>{AUTHOR_DESC}</dd>
+				<dt><strong>{{ lang('DESCRIPTION') }}</strong></dt>
+				<dd>{{ AUTHOR_DESC }}</dd>
 			</dl>
-			<!-- ENDIF -->
+			{% endif %}
 
-			<!-- IF USER_SIG -->
+			{% if USER_SIG %}
 
 			<dl class="contrib-description">
-				<dt><strong>{L_SIGNATURE}</strong></dt>
-				<dd>{USER_SIG}</dd>
+				<dt><strong>{{ lang('SIGNATURE') }}</strong></dt>
+				<dd>{{ USER_SIG }}</dd>
 			</dl>
-			<!-- ENDIF -->
+			{% endif %}
 
 		</div>
 	</div>
 </div>
-<!-- INCLUDE authors/author_footer.html -->
+{% INCLUDE '@phpbb_titania/authors/author_footer.html' %}

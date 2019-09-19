@@ -13,6 +13,7 @@
 
 use phpbb\titania\access;
 use phpbb\titania\count;
+use phpbb\titania\ext;
 use phpbb\titania\url\url;
 
 /**
@@ -103,6 +104,8 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'topic_last_post_user_colour'	=> array('default' => ''),
 			'topic_last_post_time'			=> array('default' => (int) titania::$time),
 			'topic_last_post_subject'		=> array('default' => ''),
+
+			'phpbb_topic_id'				=> array('default' => 0),
 		));
 
 		$this->topic_id = $topic_id;
@@ -111,9 +114,6 @@ class titania_topic extends \phpbb\titania\entity\database_base
 		$this->tracking = phpbb::$container->get('phpbb.titania.tracking');
 		$this->display = phpbb::$container->get('phpbb.titania.display');
 		$this->access = phpbb::$container->get('phpbb.titania.access');
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function submit()
@@ -123,9 +123,6 @@ class titania_topic extends \phpbb\titania\entity\database_base
 		$this->topic_subject_clean = url::generate_slug($this->topic_subject);
 
 		parent::submit();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -188,12 +185,12 @@ class titania_topic extends \phpbb\titania\entity\database_base
 
 		// Remove any subscriptions to this topic
 		$sql = 'DELETE FROM ' . TITANIA_WATCH_TABLE . '
-			WHERE watch_object_type = ' . TITANIA_TOPIC . '
+			WHERE watch_object_type = ' . ext::TITANIA_TOPIC . '
 				AND watch_object_id = ' . $this->topic_id;
 		phpbb::$db->sql_query($sql);
 
 		// Remove any tracking for this topic
-		$this->tracking->clear_item(TITANIA_TOPIC, $this->topic_id);
+		$this->tracking->clear_item(ext::TITANIA_TOPIC, $this->topic_id);
 
 		// Delete the now empty topic
 		$sql = 'DELETE FROM ' . TITANIA_TOPICS_TABLE . '
@@ -232,13 +229,13 @@ class titania_topic extends \phpbb\titania\entity\database_base
 
 		switch ($this->topic_type)
 		{
-			case TITANIA_SUPPORT:
-			case TITANIA_QUEUE_DISCUSSION:
+			case ext::TITANIA_SUPPORT:
+			case ext::TITANIA_QUEUE_DISCUSSION:
 				$controller = 'phpbb.titania.contrib.support.topic';
 				$params['topic_id'] = $this->topic_id;
 			break;
 
-			case TITANIA_QUEUE:
+			case ext::TITANIA_QUEUE:
 				$controller = 'phpbb.titania.queue.item';
 				$params['id'] = $this->parent_id;
 			break;
@@ -262,12 +259,12 @@ class titania_topic extends \phpbb\titania\entity\database_base
 
 		switch ($this->topic_type)
 		{
-			case TITANIA_SUPPORT:
-			case TITANIA_QUEUE_DISCUSSION:
+			case ext::TITANIA_SUPPORT:
+			case ext::TITANIA_QUEUE_DISCUSSION:
 				$controller = 'phpbb.titania.contrib.support';
 			break;
 
-			case TITANIA_QUEUE:
+			case ext::TITANIA_QUEUE:
 				$controller = 'phpbb.titania.queue.item';
 			break;
 		}
@@ -333,7 +330,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 	public function assign_details()
 	{
 		// Tracking check
-		$last_read_mark = $this->tracking->get_track(TITANIA_TOPIC, $this->topic_id, true);
+		$last_read_mark = $this->tracking->get_track(ext::TITANIA_TOPIC, $this->topic_id, true);
 		$last_read_mark = max($last_read_mark, $this->tracking->find_last_read_mark($this->additional_unread_fields, $this->topic_type, $this->parent_id));
 		$this->unread = ($this->topic_last_post_time > $last_read_mark) ? true : false;
 
@@ -353,6 +350,9 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			));
 		}
 
+		// Don't allow negative replies; but show the number of replies minus the original post
+		$topic_replies = ($this->get_postcount() > 0) ? ($this->get_postcount() - 1) : 0;
+
 		$details = array(
 			'TOPIC_ID'						=> $this->topic_id,
 			'TOPIC_TYPE'					=> $this->topic_type,
@@ -364,7 +364,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'TOPIC_APPROVED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->topic_approved : true,
 			'TOPIC_REPORTED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->topic_reported : false,
 			'TOPIC_ASSIGNED'				=> $this->topic_assigned, // @todo output this to be something useful
-			'TOPIC_REPLIES'					=> ($this->get_postcount() - 1), // Number of replies (posts minus the OP)
+			'TOPIC_REPLIES'					=> $topic_replies,
 			'TOPIC_VIEWS'					=> $this->topic_views,
 			'TOPIC_SUBJECT'					=> censor_text($this->topic_subject),
 
@@ -401,9 +401,6 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'FOLDER_IMG_WIDTH'				=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 			'FOLDER_IMG_HEIGHT'				=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 		);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $details, $this);
 
 		return $details;
 	}
@@ -544,7 +541,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 		$this->topic_approved = (!$visible_posts && !$first_post_data['post_approved']) ? 0 : 1;
 
 		// Adjust the topic access
-		if ($visible_posts && !in_array($this->topic_type, array(TITANIA_QUEUE_DISCUSSION, TITANIA_QUEUE)))
+		if ($visible_posts && !in_array($this->topic_type, array(ext::TITANIA_QUEUE_DISCUSSION, ext::TITANIA_QUEUE)))
 		{
 			$this->topic_access = access::PUBLIC_LEVEL;
 

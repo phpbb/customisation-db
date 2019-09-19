@@ -2,7 +2,45 @@ services:
     phpbb.titania.console.command.composer.rebuild_repo:
         class: phpbb\titania\console\command\composer\rebuild_repo
         arguments:
-            - @user
-            - @phpbb.titania.manage.tool.composer.rebuild_repo
+            - '@user'
+            - '@phpbb.titania.manage.tool.composer.rebuild_repo'
+        tags:
+            - { name: console.command }
+
+    phpbb.titania.console.command.extension.repack:
+        class: phpbb\titania\console\command\extension\repack
+        arguments:
+            - '@user'
+            - '@language'
+            - '@config'
+            - '@template'
+            - '@dbal.conn'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+        calls:
+            - [set_titania_dependencies, ['@phpbb.titania.config', '@phpbb.titania.extension.type', '@phpbb.titania.attachment.operator']]
+        tags:
+            - { name: console.command }
+
+    # Event usage analyser
+    phpbb.titania.console.command.extension.events:
+        class: phpbb\titania\console\command\extension\events
+        arguments:
+            - '@user'
+            - '@language'
+            - '@dbal.conn'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+        tags:
+            - { name: console.command }
+
+    # Language pack generator
+    phpbb.titania.console.command.extension.language:
+        class: phpbb\titania\console\command\extension\language
+        arguments:
+            - '@user'
+            - '@language'
+            - '%core.root_path%'
+            - '%core.php_ext%'
         tags:
             - { name: console.command }

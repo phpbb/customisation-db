@@ -1,20 +1,20 @@
 <div class="post bg2" id="preview">
 	<div class="inner">
 	<div class="postbody">
-		<h3>{L_PREVIEW}: <!-- IF PREVIEW_SUBJECT -->{PREVIEW_SUBJECT}<!-- ELSE -->{PAGE_TITLE}<!-- ENDIF --></h3>
+		<h3>{{ lang('PREVIEW') ~ lang('COLON') }} {% if PREVIEW_SUBJECT %}{{ PREVIEW_SUBJECT }}{% else %}{{ PAGE_TITLE }}{% endif %}</h3>
 
-		<div class="content text-content">{PREVIEW_MESSAGE}</div>
+		<div class="content">{{ PREVIEW_MESSAGE }}</div>
 
-		<!-- IF .preview_attachment -->
+		{% if loops.preview_attachment|length %}
 			<dl class="attachbox">
-				<dt>{L_ATTACHMENTS}</dt>
-				<!-- BEGIN preview_attachment -->
-					<dd>{preview_attachment.DISPLAY_ATTACHMENT}</dd>
-				<!-- END preview_attachment -->
+				<dt>{{ lang('ATTACHMENTS') }}</dt>
+				{% for preview_attachment in loops.preview_attachment %}
+					<dd>{{ preview_attachment.DISPLAY_ATTACHMENT }}</dd>
+				{% endfor %}
 			</dl>
-		<!-- ENDIF -->
+		{% endif %}
 
-		<!-- IF PREVIEW_SIGNATURE --><div class="signature">{PREVIEW_SIGNATURE}</div><!-- ENDIF -->
+		{% if PREVIEW_SIGNATURE %}<div class="signature">{{ PREVIEW_SIGNATURE }}</div>{% endif %}
 	</div>
 
 	</div>

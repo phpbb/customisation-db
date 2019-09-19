@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 /**
 * Class to abstract titania authors.
 * @package Titania
@@ -36,7 +38,7 @@ class titania_author extends \phpbb\titania\entity\message_base
 	 *
 	 * @var string
 	 */
-	protected $object_type = TITANIA_AUTHOR;
+	protected $object_type = ext::TITANIA_AUTHOR;
 
 	/**
 	 * Rating of this author
@@ -68,7 +70,6 @@ class titania_author extends \phpbb\titania\entity\message_base
 			'user_id'				=> array('default' => 0),
 			'phpbb_user_id'			=> array('default' => 0),
 
-			'author_realname'		=> array('default' => '',	'max' => 255),
 			'author_website'		=> array('default' => '',	'max' => 200),
 			'author_rating'			=> array('default' => 0.0),
 			'author_rating_count'	=> array('default' => 0),
@@ -295,7 +296,6 @@ class titania_author extends \phpbb\titania\entity\message_base
 		$vars = array(
 			'AUTHOR_NAME'					=> $this->get_username_string('username'),
 			'AUTHOR_NAME_FULL'				=> $this->get_username_string(),
-			'AUTHOR_REALNAME'				=> $this->author_realname,
 			'AUTHOR_WEBSITE'				=> $this->get_website_url(),
 			'AUTHOR_WEBSITE_LINK'			=> '<a href="' . $this->get_website_url() . '">' . $this->get_website_url() . '</a>',
 
@@ -326,7 +326,7 @@ class titania_author extends \phpbb\titania\entity\message_base
 			if (!isset($type->author_count))
 			{
 				// Figure out the counts some other way
-				$valid_statuses = array(TITANIA_CONTRIB_APPROVED, TITANIA_CONTRIB_DOWNLOAD_DISABLED);
+				$valid_statuses = array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED);
 
 				$sql_ary = array(
 					'SELECT'	=> 'COUNT(*) AS contrib_cnt',

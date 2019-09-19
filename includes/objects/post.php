@@ -14,6 +14,7 @@
 use phpbb\titania\access;
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\count;
+use phpbb\titania\ext;
 use phpbb\titania\message\message;
 
 /**
@@ -83,7 +84,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 	 * @param object|bool|int $topic The topic object, topic_id to load it ourselves for an existing topic, boolean false for making a new post (we will create the topic object)
 	 * @param int $post_id The post_id, 0 for making a new post
 	 */
-	public function __construct($type = TITANIA_SUPPORT, $topic = false, $post_id = 0)
+	public function __construct($type = ext::TITANIA_SUPPORT, $topic = false, $post_id = 0)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -115,6 +116,8 @@ class titania_post extends \phpbb\titania\entity\message_base
 			'post_text_bitfield'	=> array('default' => '',	'message_field' => 'message_bitfield'),
 			'post_text_uid'			=> array('default' => '',	'message_field' => 'message_uid'),
 			'post_text_options'		=> array('default' => 7,	'message_field' => 'message_options'),
+
+			'phpbb_post_id'			=> array('default' => 0)
 		));
 
 		$this->db = phpbb::$container->get('dbal.conn');
@@ -126,22 +129,22 @@ class titania_post extends \phpbb\titania\entity\message_base
 		switch ($type)
 		{
 			case 'queue_discussion' :
-			case TITANIA_QUEUE_DISCUSSION :
-				$this->post_type = TITANIA_QUEUE_DISCUSSION;
+			case ext::TITANIA_QUEUE_DISCUSSION :
+				$this->post_type = ext::TITANIA_QUEUE_DISCUSSION;
 			break;
 
 			case 'tracker' :
-			case TITANIA_TRACKER :
-				$this->post_type = TITANIA_TRACKER;
+			case ext::TITANIA_TRACKER :
+				$this->post_type = ext::TITANIA_TRACKER;
 			break;
 
 			case 'queue' :
-			case TITANIA_QUEUE :
-				$this->post_type = TITANIA_QUEUE;
+			case ext::TITANIA_QUEUE :
+				$this->post_type = ext::TITANIA_QUEUE;
 			break;
 
 			default :
-				$this->post_type = TITANIA_SUPPORT;
+				$this->post_type = ext::TITANIA_SUPPORT;
 			break;
 		}
 
@@ -174,9 +177,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 			$this->topic = new titania_topic;
 			$this->topic->topic_type = $this->post_type;
 		}
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -227,8 +227,8 @@ class titania_post extends \phpbb\titania\entity\message_base
 		$post_data = $message->request_data();
 
 		$this->topic->__set_array(array(
-			'topic_sticky'			=> ($message->auth['sticky_topic']) ? $post_data['sticky_topic'] : $this->topic->topic_sticky,
-			'topic_locked'			=> ($message->auth['lock_topic']) ? $post_data['lock_topic'] : $this->topic->topic_locked,
+			'topic_sticky'			=> (!$post_data['quick_reply_mode'] && $message->auth['sticky_topic']) ? $post_data['sticky_topic'] : $this->topic->topic_sticky,
+			'topic_locked'			=> (!$post_data['quick_reply_mode'] && $message->auth['lock_topic']) ? $post_data['lock_topic'] : $this->topic->topic_locked,
 		));
 
 		parent::post_data($message);
@@ -244,7 +244,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 	{
 		$params = $this->get_url_params($action, $use_anchor);
 		$controller = 'phpbb.titania.';
-		$controller .= ($this->post_type === TITANIA_QUEUE) ? 'queue.item' : 'contrib.support.topic';
+		$controller .= ($this->post_type === ext::TITANIA_QUEUE) ? 'queue.item' : 'contrib.support.topic';
 
 		if ($action)
 		{
@@ -265,7 +265,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 		$params = unserialize($this->post_url);
 		$params['p'] = $this->post_id;
 
-		if ($this->post_type !== TITANIA_QUEUE)
+		if ($this->post_type !== ext::TITANIA_QUEUE)
 		{
 			$params['topic_id'] = $this->topic_id;
 		}
@@ -440,8 +440,8 @@ class titania_post extends \phpbb\titania\entity\message_base
 			// Setup the attention object and submit it
 			$attention = new titania_attention;
 			$attention->__set_array(array(
-				'attention_type'		=> TITANIA_ATTENTION_UNAPPROVED,
-				'attention_object_type'	=> TITANIA_POST,
+				'attention_type'		=> ext::TITANIA_ATTENTION_UNAPPROVED,
+				'attention_object_type'	=> ext::TITANIA_POST,
 				'attention_object_id'	=> $this->post_id,
 				'attention_poster_id'	=> $this->post_user_id,
 				'attention_post_time'	=> $this->post_time,
@@ -517,8 +517,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 			phpbb::update_user_postcount($this->post_user_id);
 		}
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+		$this->forum_queue_post();
 	}
 
 	/**
@@ -578,8 +577,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 
 		parent::submit();
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+		$this->forum_queue_edit();
 	}
 
 	/**
@@ -641,9 +639,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 		{
 			phpbb::update_user_postcount($this->post_user_id, '-');
 		}
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -717,9 +712,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 		{
 			phpbb::update_user_postcount($this->post_user_id);
 		}
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -775,7 +767,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 
 		// Remove any attention items
 		$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
-			WHERE attention_object_type = ' . TITANIA_POST . '
+			WHERE attention_object_type = ' . ext::TITANIA_POST . '
 				AND attention_object_id = ' . $this->post_id;
 		phpbb::$db->sql_query($sql);
 
@@ -785,8 +777,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 			phpbb::update_user_postcount($this->post_user_id, '-');
 		}
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
+		$this->forum_queue_hard_delete();
 
 		// Initiate self-destruct mode
 		parent::delete();
@@ -810,8 +801,8 @@ class titania_post extends \phpbb\titania\entity\message_base
 		// Setup the attention object and submit it
 		$attention = new titania_attention;
 		$attention->__set_array(array(
-			'attention_type'		=> TITANIA_ATTENTION_REPORTED,
-			'attention_object_type'	=> TITANIA_POST,
+			'attention_type'		=> ext::TITANIA_ATTENTION_REPORTED,
+			'attention_object_type'	=> ext::TITANIA_POST,
 			'attention_object_id'	=> $this->post_id,
 			'attention_poster_id'	=> $this->post_user_id,
 			'attention_post_time'	=> $this->post_time,
@@ -829,9 +820,6 @@ class titania_post extends \phpbb\titania\entity\message_base
 
 		// Self submission
 		parent::submit();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -984,7 +972,7 @@ class titania_post extends \phpbb\titania\entity\message_base
 			'U_DELETE'						=> ($this->acl_get('delete') && (!$this->post_deleted || phpbb::$auth->acl_get('u_titania_post_hard_delete'))) ? $this->get_url('delete') : '',
 			'U_REPORT'						=> (phpbb::$user->data['is_registered']) ? $this->get_url('report') : '',
 			'U_WARN'						=> false, //$this->get_url('warn'),
-			'U_INFO'						=> (phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_mod', 'u_titania_mod_faq_mod', 'u_titania_mod_post_mod') || $this->types->find_authed('moderate')) ? $this->controller_helper->route('phpbb.titania.manage.attention.redirect', array('type' => TITANIA_POST, 'id' => $this->post_id)) : '',
+			'U_INFO'						=> (phpbb::$auth->acl_gets('u_titania_mod_author_mod', 'u_titania_mod_contrib_mod', 'u_titania_mod_faq_mod', 'u_titania_mod_post_mod') || $this->types->find_authed('moderate')) ? $this->controller_helper->route('phpbb.titania.manage.attention.redirect', array('type' => ext::TITANIA_POST, 'id' => $this->post_id)) : '',
 			'U_QUOTE'						=> $this->acl_get('post') ? $this->get_url('quote') : '',
 
 			'S_UNREAD_POST'					=> ($this->unread) ? true : false, // remember that you must set this up extra...
@@ -995,9 +983,152 @@ class titania_post extends \phpbb\titania\entity\message_base
 			'S_ACCESS_AUTHORS'				=> $this->access->is_author($this->post_access),
 		);
 
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $details, $this);
 
 		return $details;
+	}
+
+	/**
+	 * When phpBB forums are set up as Titania validation queues, add contribution posts to it.
+	 */
+	protected function forum_queue_post()
+	{
+		if (!$this->topic->phpbb_topic_id)
+		{
+			return;
+		}
+
+		$forum_id = self::get_queue_forum_id($this->topic->topic_category, $this->post_type);
+
+		if (!$forum_id)
+		{
+			return;
+		}
+
+		titania::_include('functions_posting', 'phpbb_posting');
+
+		$path_helper = phpbb::$container->get('path_helper');
+		$post_text = $this->post_text;
+
+		handle_queue_attachments($this, $post_text);
+		message::decode($post_text, $this->post_text_uid);
+
+		$post_text .= "\n\n" . $path_helper->strip_url_params($this->get_url(), 'sid');
+
+		$options = array(
+			'poster_id'				=> $this->post_user_id,
+			'topic_id'				=> $this->topic->phpbb_topic_id,
+			'topic_title'			=> $this->post_subject,
+			'post_text'				=> $post_text,
+		);
+
+		$this->phpbb_post_id = phpbb_posting('reply', $options);
+
+		$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
+			SET phpbb_post_id = ' . $this->phpbb_post_id . '
+			WHERE post_id = ' . $this->post_id;
+		phpbb::$db->sql_query($sql);
+	}
+
+	/**
+	 * When phpBB forums are set up as Titania validation queues, apply contribution post edits to the forum also.
+	 */
+	protected function forum_queue_edit()
+	{
+		if (!$this->phpbb_post_id)
+		{
+			return;
+		}
+
+		$forum_id = self::get_queue_forum_id($this->topic->topic_category, $this->post_type);
+
+		if (!$forum_id)
+		{
+			return;
+		}
+
+		titania::_include('functions_posting', 'phpbb_posting');
+
+		$path_helper = phpbb::$container->get('path_helper');
+		$post_text = $this->post_text;
+
+		handle_queue_attachments($this, $post_text);
+		message::decode($post_text, $this->post_text_uid);
+
+		$post_text .= "\n\n" . $path_helper->strip_url_params($this->get_url(), 'sid');
+
+		$options = array(
+			'post_id'				=> $this->phpbb_post_id,
+			'topic_title'			=> $this->post_subject,
+			'post_text'				=> $post_text,
+		);
+
+		phpbb_posting('edit', $options);
+	}
+
+	/**
+	 * When phpBB forums are set up as Titania validation queues, apply hard deleted contribution posts to the forum also.
+	 */
+	protected function forum_queue_hard_delete()
+	{
+		if (!$this->phpbb_post_id)
+		{
+			return;
+		}
+
+		phpbb::_include('functions_posting', 'delete_post');
+
+		$sql = 'SELECT t.*, p.*
+			FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
+			WHERE p.post_id = ' . $this->phpbb_post_id . '
+				AND t.topic_id = p.topic_id';
+		$result = phpbb::$db->sql_query($sql);
+		$post_data = phpbb::$db->sql_fetchrow($result);
+		phpbb::$db->sql_freeresult($result);
+
+		delete_post($post_data['forum_id'], $post_data['topic_id'], $post_data['post_id'], $post_data);
+	}
+
+	/**
+	 * Get a validation queue forum ID
+	 *
+	 * @param int|string $type TITANIA_TYPE_EXTENSION|TITANIA_TYPE_MOD|TITANIA_TYPE_STYLE
+	 * @param int|string $mode TITANIA_QUEUE_DISCUSSION|TITANIA_QUEUE|trash
+	 *
+	 * @return int The forum's id
+	 */
+	public static function get_queue_forum_id($type, $mode)
+	{
+		switch ($type)
+		{
+			case ext::TITANIA_TYPE_EXTENSION:
+				$type = 'titania_extensions_queue';
+				break;
+
+			case ext::TITANIA_TYPE_MOD:
+				$type = 'titania_mods_queue';
+				break;
+
+			case ext::TITANIA_TYPE_STYLE:
+				$type = 'titania_styles_queue';
+				break;
+
+			default:
+				return 0;
+		}
+
+		$titania_config = titania::$config;
+		$titania_object_config = $titania_config->object_config;
+
+		if (array_key_exists($type, $titania_object_config))
+		{
+			$forums = $titania_config->$type;
+
+			if (isset($forums[$mode]))
+			{
+				return (int) $forums[$mode];
+			}
+		}
+
+		return 0;
 	}
 }

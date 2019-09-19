@@ -1,11 +1,11 @@
-<form id="{POSTING_FORM_NAME}" method="post" action="{S_POST_ACTION}" {S_FORM_ENCTYPE}>
+<form id="{{ POSTING_FORM_NAME }}" method="post" action="{{ S_POST_ACTION }}" {{ S_FORM_ENCTYPE }}>
 
-<!-- IF S_POST_REVIEW --><!-- INCLUDE posting/posting_review.html --><!-- ENDIF -->
+{% if S_POST_REVIEW %}{% INCLUDE '@phpbb_titania/posting/posting_review.html' %}{% endif %}
 
-<!-- IF S_DISPLAY_PREVIEW --><!-- INCLUDE posting/posting_preview.html --><!-- ENDIF -->
+{% if S_DISPLAY_PREVIEW %}{% INCLUDE '@phpbb_titania/posting/posting_preview.html' %}{% endif %}
 
-<!-- INCLUDE posting/posting_editor.html -->
+{% INCLUDE '@phpbb_titania/posting/posting_editor.html' %}
 
-<!-- IF S_DISPLAY_REVIEW --><!-- INCLUDE posting/posting_topic_review.html --><!-- ENDIF -->
+{% if S_DISPLAY_REVIEW %}{% INCLUDE '@phpbb_titania/posting/posting_topic_review.html' %}{% endif %}
 
 </form>

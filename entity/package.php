@@ -13,9 +13,9 @@
 
 namespace phpbb\titania\entity;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Expression\Expression;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Filesystem\Filesystem;
 
 class package
 {
@@ -331,12 +331,15 @@ class package
 		{
 			$this->filesystem->mkdir($copy_root_path);
 		}
+
 		$this->filesystem->rename($root_path, $copy_root_path, true);
 		$this->filesystem->remove($temp_path);
+
 		if ($new_name)
 		{
 			$this->filesystem->mkdir($new_root_path);
 		}
+
 		$this->filesystem->rename($copy_root_path, $new_root_path, true);
 		$this->filesystem->remove($copy_path);
 	}

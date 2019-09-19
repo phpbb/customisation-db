@@ -15,6 +15,7 @@ namespace phpbb\titania\controller\ucp;
 
 use phpbb\titania\access;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 
 class subscriptions
 {
@@ -148,19 +149,19 @@ class subscriptions
 	protected function display_sections()
 	{
 		$object_types = array(
-			TITANIA_SUPPORT,
-			TITANIA_QUEUE,
-			TITANIA_ATTENTION
+			ext::TITANIA_SUPPORT,
+			ext::TITANIA_QUEUE,
+			ext::TITANIA_ATTENTION
 		);
 		$cases = array(
-			TITANIA_SUPPORT		=> 'c.contrib_last_update',
+			ext::TITANIA_SUPPORT		=> 'c.contrib_last_update',
 		);
 
 		$user_ids = $rows = array();
 		$subscription_count = $this->get_subscription_count($object_types);
 		$this->build_sort($subscription_count);
 
-		$sql_ary = $this->get_subscription_sql_ary($cases, $object_types, TITANIA_SUPPORT);
+		$sql_ary = $this->get_subscription_sql_ary($cases, $object_types, ext::TITANIA_SUPPORT);
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 		$result = $this->db->sql_query_limit($sql, $this->sort->limit, $this->sort->start);
 
@@ -178,7 +179,7 @@ class subscriptions
 		{
 			switch ($row['watch_object_type'])
 			{
-				case TITANIA_SUPPORT:
+				case ext::TITANIA_SUPPORT:
 					// Contribution no longer exists.
 					if (!$row['contrib_id'])
 					{
@@ -188,11 +189,11 @@ class subscriptions
 					$vars = $this->get_support_tpl_row($row);
 				break;
 
-				case TITANIA_ATTENTION:
+				case ext::TITANIA_ATTENTION:
 					$vars = $vars = $this->get_attention_tpl_row($row);
 				break;
 
-				case TITANIA_QUEUE:
+				case ext::TITANIA_QUEUE:
 					$vars = $this->get_queue_tpl_row($row);
 				break;
 
@@ -211,31 +212,31 @@ class subscriptions
 	*/
 	protected function display_items()
 	{
-		$object_types = array(TITANIA_CONTRIB, TITANIA_TOPIC);
+		$object_types = array(ext::TITANIA_CONTRIB, ext::TITANIA_TOPIC);
 
 		$subscription_count = $this->get_subscription_count($object_types);
 		$this->build_sort($subscription_count);
 
 		$cases = array(
-			TITANIA_CONTRIB	=> 'c.contrib_last_update',
-			TITANIA_TOPIC	=> 't.topic_last_post_time',
+			ext::TITANIA_CONTRIB	=> 'c.contrib_last_update',
+			ext::TITANIA_TOPIC		=> 't.topic_last_post_time',
 		);
-		$sql_ary = $this->get_subscription_sql_ary($cases, $object_types, TITANIA_CONTRIB);
+		$sql_ary = $this->get_subscription_sql_ary($cases, $object_types, ext::TITANIA_CONTRIB);
 
 		$sql_ary['LEFT_JOIN'][] = array(
 			'FROM'	=> array($this->topics_table => 't'),
-			'ON'	=> 'w.watch_object_type = ' . TITANIA_TOPIC. '
+			'ON'	=> 'w.watch_object_type = ' . ext::TITANIA_TOPIC. '
 							AND t.topic_id = w.watch_object_id',
 		);
 
 		// Additional tracking for support topics
-		$this->tracking->get_track_sql($sql_ary, TITANIA_TOPIC, 't.topic_id');
-		$this->tracking->get_track_sql($sql_ary, TITANIA_SUPPORT, 0, 'tsa');
-		$this->tracking->get_track_sql($sql_ary, TITANIA_SUPPORT, 't.parent_id', 'tsc');
-		$this->tracking->get_track_sql($sql_ary, TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
+		$this->tracking->get_track_sql($sql_ary, ext::TITANIA_TOPIC, 't.topic_id');
+		$this->tracking->get_track_sql($sql_ary, ext::TITANIA_SUPPORT, 0, 'tsa');
+		$this->tracking->get_track_sql($sql_ary, ext::TITANIA_SUPPORT, 't.parent_id', 'tsc');
+		$this->tracking->get_track_sql($sql_ary, ext::TITANIA_QUEUE_DISCUSSION, 0, 'tqt');
 
 		// Tracking for contributions
-		$this->tracking->get_track_sql($sql_ary, TITANIA_CONTRIB, 'c.contrib_id', 'tc');
+		$this->tracking->get_track_sql($sql_ary, ext::TITANIA_CONTRIB, 'c.contrib_id', 'tc');
 
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 		$result = $this->db->sql_query_limit($sql, $this->sort->limit, $this->sort->start);
@@ -246,7 +247,7 @@ class subscriptions
 			$this->tracking->store_from_db($row);
 			$rows[] = $row;
 
-			if ($row['watch_object_type'] == TITANIA_TOPIC)
+			if ($row['watch_object_type'] == ext::TITANIA_TOPIC)
 			{
 				$user_ids[] = (int) $row['topic_first_post_user_id'];
 				$user_ids[] = (int) $row['topic_last_post_user_id'];
@@ -263,7 +264,7 @@ class subscriptions
 
 		foreach ($rows as $row)
 		{
-			if ($row['watch_object_type'] == TITANIA_TOPIC)
+			if ($row['watch_object_type'] == ext::TITANIA_TOPIC)
 			{
 				// Topic was deleted, remove all subscriptions for it.
 				if (!$row['topic_id'])
@@ -404,7 +405,7 @@ class subscriptions
 			$folder_img,
 			$folder_alt,
 			0,
-			$this->tracking->is_unread(TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update)
+			$this->tracking->is_unread(ext::TITANIA_CONTRIB, $contrib->contrib_id, $contrib->contrib_last_update)
 		);
 
 		return array(
@@ -419,7 +420,7 @@ class subscriptions
 			'SUBSCRIPTION_TYPE'				=> $row['watch_object_type'],
 			'SUBSCRIPTION_VIEWS'			=> $row['contrib_views'],
 
-			'U_VIEW_SUBSCRIPTION'			=> $this->get_real_url($contrib->get_url()),
+			'U_VIEW_SUBSCRIPTION'			=> $this->helper->get_real_url($contrib->get_url()),
 
 			'S_CONTRIB'						=> true,
 		);
@@ -437,15 +438,15 @@ class subscriptions
 		$topic->__set_array($row);
 		$additional_unread_fields = array(
 			array(
-				'type'			=> TITANIA_SUPPORT,
+				'type'			=> ext::TITANIA_SUPPORT,
 				'id'			=> 0,
 			),
 			array(
-				'type'			=> TITANIA_SUPPORT,
+				'type'			=> ext::TITANIA_SUPPORT,
 				'parent_match'	=> true,
 			),
 			array(
-				'type' 			=> TITANIA_QUEUE_DISCUSSION,
+				'type' 			=> ext::TITANIA_QUEUE_DISCUSSION,
 				'id'			=> 0,
 				'type_match'	=> true,
 			),
@@ -457,9 +458,9 @@ class subscriptions
 
 		$subscription_target = '';
 		$type_lang = array(
-			TITANIA_QUEUE_DISCUSSION	=> 'SUBSCRIPTION_QUEUE_VALIDATION',
-			TITANIA_QUEUE				=> 'SUBSCRIPTION_QUEUE',
-			TITANIA_SUPPORT				=> 'SUBSCRIPTION_SUPPORT_TOPIC',
+			ext::TITANIA_QUEUE_DISCUSSION	=> 'SUBSCRIPTION_QUEUE_VALIDATION',
+			ext::TITANIA_QUEUE				=> 'SUBSCRIPTION_QUEUE',
+			ext::TITANIA_SUPPORT			=> 'SUBSCRIPTION_SUPPORT_TOPIC',
 		);
 
 		if (isset($type_lang[$row['topic_type']]))
@@ -468,7 +469,7 @@ class subscriptions
 		}
 
 		// Tracking check
-		$last_read_mark = $this->tracking->get_track(TITANIA_TOPIC, $topic->topic_id, true);
+		$last_read_mark = $this->tracking->get_track(ext::TITANIA_TOPIC, $topic->topic_id, true);
 		$last_read_mark = max($last_read_mark, $this->tracking->find_last_read_mark(
 			$topic->additional_unread_fields,
 			$topic->topic_type,
@@ -491,13 +492,13 @@ class subscriptions
 			'SUBSCRIPTION_TITLE'			=> censor_text($row['topic_subject']),
 			'SUBSCRIPTION_TYPE'				=> $row['watch_object_type'],
 
-			'U_VIEW_SUBSCRIPTION'			=> $this->get_real_url($topic->get_url()),
-			'U_VIEW_LAST_POST'				=> $this->get_real_url($topic->get_url(false, array(
+			'U_VIEW_SUBSCRIPTION'			=> $this->helper->get_real_url($topic->get_url()),
+			'U_VIEW_LAST_POST'				=> $this->helper->get_real_url($topic->get_url(false, array(
 				'p'		=> $topic->topic_last_post_id,
 				'#'		=> 'p' . $topic->topic_last_post_id,
 			))),
 
-			'S_ACCESS_TEAMS'				=> $row['topic_access'] == access::TEAM_LEVEL || $row['topic_type'] == TITANIA_QUEUE,
+			'S_ACCESS_TEAMS'				=> $row['topic_access'] == access::TEAM_LEVEL || $row['topic_type'] == ext::TITANIA_QUEUE,
 			'S_ACCESS_AUTHORS'				=> $row['topic_access'] == access::AUTHOR_LEVEL,
 			'S_TOPIC'						=> true,
 		);
@@ -521,7 +522,7 @@ class subscriptions
 			'SUBSCRIPTION_TITLE'			=> $row['contrib_name'],
 			'SUBSCRIPTION_TYPE'				=> $row['watch_object_type'],
 
-			'U_VIEW_SUBSCRIPTION'			=> $this->get_real_url($contrib->get_url('support'))
+			'U_VIEW_SUBSCRIPTION'			=> $this->helper->get_real_url($contrib->get_url('support'))
 		);
 	}
 
@@ -542,7 +543,7 @@ class subscriptions
 			'S_ATTENTION'			=> true,
 			'S_ACCESS_TEAMS'		=> true,
 
-			'U_VIEW_SUBSCRIPTION'	=> $this->get_real_url($this->helper->route('phpbb.titania.manage.attention')),
+			'U_VIEW_SUBSCRIPTION'	=> $this->helper->get_real_url($this->helper->route('phpbb.titania.manage.attention')),
 		);
 	}
 
@@ -567,7 +568,7 @@ class subscriptions
 			'S_QUEUE'				=> true,
 			'S_ACCESS_TEAMS'		=> true,
 
-			'U_VIEW_SUBSCRIPTION'	=> $this->get_real_url($this->helper->route('phpbb.titania.queue.type', array(
+			'U_VIEW_SUBSCRIPTION'	=> $this->helper->get_real_url($this->helper->route('phpbb.titania.queue.type', array(
 				'queue_type' => $type->url
 			))),
 		);
@@ -586,25 +587,5 @@ class subscriptions
 		$contrib->set_type($data['contrib_type']);
 
 		return $contrib;
-	}
-
-	/**
-	* Modify URL to point back to correct Titania location.
-	*
-	* Since the UCP module does not run from app.php, the generated route will
-	* always point back under the phpBB board. The URL needs to be adjusted
-	* if Titania is running from an app.php that is not under the board root.
-	*
-	* @param string $url
-	* @return array
-	*/
-	protected function get_real_url($url)
-	{
-		if ($this->ext_config->titania_script_path)
-		{
-			return generate_board_url(true) .'/'. rtrim($this->ext_config->titania_script_path, '/') .
-				substr($url, strlen(generate_board_url()));
-		}
-		return $url;
 	}
 }

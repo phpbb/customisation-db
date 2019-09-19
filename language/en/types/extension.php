@@ -57,7 +57,7 @@ $lang = array_merge($lang, array(
 
 [b]Extension overview page:[/b] [url=%9$s]View[/url]
 
-[color=blue][b]Except where otherwise noted, the phpBB Team is not responsible nor required to provide support for this extension. By installing this extension, you acknowledge that the phpBB Support Team or phpBB Extensions Team may not be able to provide support.[/b][/color]
+[color=blue][b]Except where otherwise noted, the phpBB Team is not responsible nor required to provide support for this extension. By installing this extension, you acknowledge that the phpBB Support Team or phpBB Extension Customisations Team may not be able to provide support.[/b][/color]
 
 [size=150][url=%10$s]--&gt;[b]Extension support[/b]&lt;--[/url][/size]',
 	'EXTENSION_QUEUE_TOPIC'				=> '[b]Extension name[/b]: %1$s
@@ -76,24 +76,24 @@ See first post for Download Link[/color][/b]',
 	'EXTENSION_UPDATE_PUBLIC_NOTES'		=> '
 
 [b]Notes:[/b] %1$s',
-	'EXTENSION_UPLOAD_AGREEMENT'		=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide by the <a href="https://www.phpbb.com/extensions/rules-and-policies/">Extensions database policies</a> and that your extension conforms to and follows the <a href="https://area51.phpbb.com/docs/31x/coding-guidelines.html">phpBB 3.1 Coding Guidelines</a>.
+	'EXTENSION_UPLOAD_AGREEMENT'		=> '<span style="font-size: 1.5em;">By submitting this revision you agree to abide by the <a href="https://www.phpbb.com/extensions/rules-and-policies/">Extensions database policies</a> and that your extension conforms to and follows the <a href="https://area51.phpbb.com/docs/32x/coding-guidelines.html">phpBB 3.2 Coding Guidelines</a>.
 
 You also agree and accept that this extension is to be released under the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that the license of any included components are compatible with the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPLv2</a> and that you also allow the re-distribution of your extension through this website indefinitely. For a list of available licenses and licenses compatible with the GNU GPLv2 please reference the <a href="http://en.wikipedia.org/wiki/List_of_FSF_approved_software_licenses">list of FSF approved software licenses</a>.</span>',
 	'EXTENSION_VALIDATION'				=> '[phpBB Extension-Validation] %1$s %2$s',
-	'EXTENSION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your extension to the phpBB.com extensions database. After careful inspection by the Extensions Team, your extension has been [b][color=#5c8503]approved[/color][/b] and released into our extensions database.
+	'EXTENSION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your extension to the phpBB.com extensions database. After careful inspection by the Extension Customisations Team, your extension has been [b][color=#5c8503]approved[/color][/b] and released into our extensions database.
 
 It is our hope that you will provide a basic level of support for this extension and keep it updated with future releases of phpBB. We appreciate your work and contribution to the community. Authors like yourself make phpBB.com a better place for everyone.
 
-[b]Notes from the Extensions Team about your extension:[/b]
+[b]Notes from the Extension Customisations Team about your extension:[/b]
 [quote]%s[/quote]
 
 Sincerely,
-phpBB Extensions Team',
+phpBB Extension Customisations Team',
 	'EXTENSION_VALIDATION_MESSAGE_DENY'		=> 'Hello,
 
 As you may know all extensions submitted to the phpBB extensions database must be validated and approved by members of the phpBB Team.
 
-Upon validating your extension the phpBB Extensions Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] your extension.
+Upon validating your extension the phpBB Extension Customisations Team regrets to inform you that we have had to [b][color=#A91F1F]deny[/color][/b] your extension.
 
 To correct the problem(s) with your extension, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your extension being denied.
@@ -118,7 +118,7 @@ For further reading, you may want to review the following:
 
 For help with writing phpBB extensions, the following resources exist:
 [list][*][url=https://www.phpbb.com/community/viewforum.php?f=461]Extension Writers Discussion forum[/url]
-[*]IRC Support - [url=irc://irc.freenode.net/phpBB-coding]#phpBB-coding[/url] is registered on the FreeNode IRC network ([url=irc://irc.freenode.net/]irc.freenode.net[/url])[/list]
+[*][url=https://www.phpbb.com/support/chat/]Discord and IRC Support[/url][/list]
 
 [b]If you wish to discuss anything in this PM please use the “Validation Discussion“ sticky topic located in your extension’s Discussion/Support tab.[/b]
 
@@ -126,12 +126,18 @@ If you feel this denial was not warranted please contact the Extension Validatio
 If you have any queries and further discussion please use the Queue Discussion Topic.
 
 Thank you,
-phpBB Extensions Team',
+phpBB Extension Customisations Team',
 
-	'INVALID_EXT_NAME'		=> 'Invalid value for <em>name</em> property in composer.json.
-									Please refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for the valid format.',
+	'INVALID_COMPOSER_FILE'		=> 'Invalid composer.json file. The file either could not be read/written or it contains no data.',
+	'INVALID_EXT_NAME'			=> 'Invalid value for <em>name</em> property in composer.json.
+										Please refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for the valid format.',
+	'MISSING_EXT_NAME'			=> 'Missing value for <em>name</em> property in composer.json.',
+	'MISSING_COMPOSER_VERSION'	=> 'The composer.json file is missing the version property.',
+	'MISMATCH_COMPOSER_VERSION'	=> 'The version in the composer.json file (%1$s) does not match the version of this revision (%2$s).',
+	'UNSTABLE_COMPOSER_VERSION'	=> 'This revision has an unstable version. Please use a stable version number.
+										Refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for more information.',
 
-	'TEST_ACCOUNT'			=> 'Test account',
-	'TEST_ACCOUNT_EXPLAIN'	=> 'Do we need any information (Like an API key, username, password to login to a third party webservice) for testing your extension?
-									Please provide all required information to test your extension. <strong>If we are unable to test your extension because of missing information, we will deny your extension.</strong>',
+	'TEST_ACCOUNT'				=> 'Test account',
+	'TEST_ACCOUNT_EXPLAIN'		=> 'Do we need any information (Like an API key, username, password to login to a third party webservice) for testing your extension?
+										Please provide all required information to test your extension. <strong>If we are unable to test your extension because of missing information, we will deny your extension.</strong>',
 ));

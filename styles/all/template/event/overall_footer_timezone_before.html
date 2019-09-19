@@ -1,7 +1,7 @@
-<!-- IF S_IN_TITANIA and U_SUBSCRIBE -->
-	<li class="small-icon icon-<!-- IF IS_SUBSCRIBED -->un<!-- ENDIF -->subscribe" data-last-responsive="true">
-		<a href="{U_SUBSCRIBE}" title="{L_SUBSCRIBE_TYPE}">
-			{L_SUBSCRIBE_TYPE}
+{% if S_IN_TITANIA and U_SUBSCRIBE %}
+	<li data-last-responsive="true">
+		<a href="{{ U_SUBSCRIBE }}" title="{{ lang('SUBSCRIBE_TYPE') }}" data-ajax="toggle_link" data-toggle-class="icon {% if IS_SUBSCRIBED %}fa-check-square-o{% else %}fa-square-o{% endif %} fa-fw" data-toggle-text="{{ lang('SUBSCRIBE_TOGGLE') }}" data-toggle-url="{{ U_SUBSCRIBE_TOGGLE }}">
+			<i class="icon {% if IS_SUBSCRIBED %}fa-square-o{% else %}fa-check-square-o{% endif %} fa-fw" aria-hidden="true"></i><span>{{ lang('SUBSCRIBE_TYPE') }}</span>
 		</a>
 	</li>
-<!-- ENDIF -->
+{% endif %}

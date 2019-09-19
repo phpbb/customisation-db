@@ -1,3 +1,59 @@
+/* Responsive queue statistics
+--------------------------------------------- */
+@media only screen and (max-width: 890px), only screen and (max-device-width: 890px) {
+	.day-list span {
+		width: 16px;
+	}
+
+	.day-list-date {
+		font-size: 0.6em;
+	}
+
+	.stat-day {
+		margin-right: 1px;
+	}
+
+	.stat-ratio span, .stat-day span {
+		width: 15px;
+	}
+}
+
+@media only screen and (max-width: 520px), only screen and (max-device-width: 520px) {
+	.day-list span {
+		width: 12px;
+	}
+
+	.day-list-date {
+		font-size: 0.4em;
+	}
+
+	.stat-day {
+		margin-right: 1px;
+	}
+
+	.stat-ratio span, .stat-day span {
+		width: 11px;
+	}
+}
+
+@media only screen and (max-width: 385px), only screen and (max-device-width: 385px) {
+	.day-list span {
+		width: 9px;
+	}
+
+	.day-list-date {
+		font-size: 0.4em;
+	}
+
+	.stat-day {
+		margin-right: 1px;
+	}
+
+	.stat-ratio span, .stat-day span {
+		width: 8px;
+	}
+}
+
 @media only screen and (max-width: 700px), only screen and (max-device-width: 700px) {
 	/* Contribution List
 	--------------------------------------------- */
@@ -78,3 +134,4 @@
 		width: 100% !important;
 	}
 }
+

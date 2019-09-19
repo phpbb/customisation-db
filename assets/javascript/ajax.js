@@ -13,7 +13,7 @@
 	titania.quickEditFilter = function(data, event) {
 		var $postbody = $(this).parents('.postbody');
 
-		if ($('form', $postbody).length) {
+		if ($('form', $postbody).length || $('.loading_indicator').is(':visible')) {
 			event.preventDefault();
 			return false;
 		}
@@ -53,7 +53,7 @@
 		var $form = $(this),
 			$postbody = $form.parents('.postbody');
 
-		$form.replaceWith('<div class="content text-content">' + response.message + '</div>');
+		$form.replaceWith('<div class="content">' + response.message + '</div>');
 		$('h3 a', $postbody).html(response.subject);
 		$('.original_post', $postbody).remove();
 	});
@@ -95,11 +95,8 @@
 		$('#queue-stats-link').remove();
 
 		if (res.u_queue_stats) {
-			var $queueStats = $('<a />')
-				.attr('href', res.u_queue_stats)
-				.html(res.l_queue_stats);
 			$('.titania-navigation').append(
-				$('<li />').attr('id', 'queue-stats-link').html($queueStats)
+				$('<a />').attr({'id': 'queue-stats-link', 'href': res.u_queue_stats}).html(res.l_queue_stats)
 			);
 		}
 
@@ -117,10 +114,15 @@
 			$this.attr('href', res.categories[$this.data('category-id')]);
 		});
 
+		// When the filter options change, make sure the correct option is shown as active on the screen
 		titania.updateSortOptions($('.branch-sort'), $('.branch-sort-options'), res.branches);
 		titania.updateSortOptions($('.key-sort'), $('.key-sort-options'), res.sort);
+		titania.updateSortOptions($('.status-sort'), $('.status-sort-options'), res.status);
 
-		$title.html(title.substr(0, title.indexOf('-') + 2) + res.title);
+		// If the initial screen is for a type the user doesn't have validate permission for, don't show the dropdown
+		$('.status-sort').toggle(res.show_status);
+
+		$title.html(title.match(/(.*?[-\u2022]\s)/)[0] + res.title);
 		$crumbs.children(':not(:first-child)').remove();
 		$crumbs.append(res.breadcrumbs);
 	});

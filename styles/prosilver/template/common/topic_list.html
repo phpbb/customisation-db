@@ -1,130 +1,131 @@
-<!-- IF U_POST_TOPIC or PAGINATION or TOTAL_RESULTS -->
+{% if U_POST_TOPIC or PAGINATION or TOTAL_RESULTS %}
 <div class="action-bar">
-	<!-- IF U_POST_TOPIC -->
-		<a href="{U_POST_TOPIC}" title="{L_POST_TOPIC}" class="button">
-			<span>{L_BUTTON_NEW_TOPIC}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
+	{% if U_POST_TOPIC %}
+		<a href="{{ U_POST_TOPIC }}" title="{{ lang('POST_TOPIC') }}" class="button">
+			<span>{{ lang('BUTTON_NEW_TOPIC') }}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
 		</a>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- IF S_DISPLAY_SEARCHBOX -->
+	{% if S_DISPLAY_SEARCHBOX %}
 		<div class="search-box">
-			<form method="get" id="forum-search" action="{S_SEARCHBOX_ACTION}">
+			<form method="get" id="forum-search" action="{{ S_SEARCHBOX_ACTION }}">
 			<fieldset>
-				<input class="inputbox search tiny" type="search" name="keywords" id="search_keywords" size="20" placeholder="{L_SEARCH_FORUM}" />
-				<button class="button button-search" type="submit" title="{L_SEARCH}">
+				<input class="inputbox search tiny" type="search" name="keywords" id="search_keywords" size="20" placeholder="{{ lang('SEARCH_FORUM') }}" />
+				<button class="button button-search" type="submit" title="{{ lang('SEARCH') }}">
 					<i class="icon fa-search fa-fw" aria-hidden="true"></i>
-					<span class="sr-only">{L_SEARCH}</span>
+					<span class="sr-only">{{ lang('SEARCH') }}</span>
 				</button>
-				<a href="{U_SEARCH}" class="button button-search-end" title="{L_SEARCH_ADV}">
-					<i class="icon fa-cog fa-fw" aria-hidden="true"></i><span class="sr-only">{L_SEARCH_ADV}</span>
+				<a href="{{ U_SEARCH }}" class="button button-search-end" title="{{ lang('SEARCH_ADV') }}">
+					<i class="icon fa-cog fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('SEARCH_ADV') }}</span>
 				</a>
-				{SEARCH_HIDDEN_FIELDS}
+				{{ SEARCH_HIDDEN_FIELDS }}
 			</fieldset>
 			</form>
 		</div>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- INCLUDE common/pagination.html -->
+	{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 </div>
-<!-- ENDIF -->
+{% endif %}
 <div class="clear"></div>
 
-<!-- BEGIN topics -->
-	<!-- IF topics.S_TOPIC_TYPE_SWITCH and not topics.S_FIRST_ROW -->
+{% for topics in loops.topics %}
+	{% if topics.S_TOPIC_TYPE_SWITCH and not topics.S_FIRST_ROW %}
 		</ul>
 		</div>
 	</div>
 	<br />
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- IF topics.S_FIRST_ROW or topics.S_TOPIC_TYPE_SWITCH -->
-		<div class="forumbg<!-- IF topicrow.S_TOPIC_TYPE_SWITCH --> announcement<!-- ENDIF -->">
+	{% if topics.S_FIRST_ROW or topics.S_TOPIC_TYPE_SWITCH %}
+		<div class="forumbg{% if topicrow.S_TOPIC_TYPE_SWITCH %} announcement{% endif %}">
 		<div class="inner">
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="row-item">
-					<dt><div class="list-inner"><!-- IF topics.TOPIC_STICKY and S_SPLIT_BY_TOPIC_TYPE -->{L_STICKIES}<!-- ELSE -->{L_TOPICS}<!-- ENDIF --></div></dt>
-					<dd class="posts">{L_REPLIES}</dd>
-					<dd class="views">{L_VIEWS}</dd>
-					<dd class="lastpost"><span>{L_LAST_POST}</span></dd>
+					<dt><div class="list-inner">{% if topics.TOPIC_STICKY and S_SPLIT_BY_TOPIC_TYPE %}{{ lang('STICKIES') }}{% else %}{{ lang('TOPICS') }}{% endif %}</div></dt>
+					<dd class="posts">{{ lang('REPLIES') }}</dd>
+					<dd class="views">{{ lang('VIEWS') }}</dd>
+					<dd class="lastpost"><span>{{ lang('LAST_POST') }}</span></dd>
 				</dl>
 			</li>
 		</ul>
 		<ul class="topiclist">
-	<!-- ENDIF -->
+	{% endif %}
 
-		<li class="row<!-- IF topics.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topics.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topics.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">
-			<dl class="row-item {topics.FOLDER_STYLE}">
-				<dt title="{topics.FOLDER_IMG_ALT}"<!-- IF topics.S_TOPIC_PROGRESS --> class="queue_progress"<!-- ELSEIF topics.S_TESTED -->class="queue_tested"<!-- ENDIF -->>
+		<li class="row{% if topics.S_ROW_COUNT is even %} bg1{% else %} bg2{% endif %}{% if topics.S_POST_STICKY %} sticky{% endif %}{% if topics.S_TOPIC_REPORTED %} reported{% endif %}">
+			<dl class="row-item {{ topics.FOLDER_STYLE }}">
+				<dt title="{{ topics.FOLDER_IMG_ALT }}"{% if topics.S_TOPIC_PROGRESS %} class="queue_progress"{% elseif topics.S_TESTED %}class="queue_tested"{% endif %}>
+					{% if topics.S_UNREAD_TOPIC and not S_IS_BOT %}<a href="{{ topics.U_NEWEST_POST }}" class="row-item-link"></a>{% endif %}
 					<div class="list-inner">
-						<!-- IF topics.S_ACCESS_TEAMS -->
-						<img src="{T_TITANIA_THEME_PATH}/images/icon_access_teams.png" class="icon" alt="{L_ACCESS_LIMIT_TEAMS}" title="{L_ACCESS_LIMIT_TEAMS}" />
-						<!-- ELSEIF topics.S_ACCESS_AUTHORS -->
-						<img src="{T_TITANIA_THEME_PATH}/images/icon_access_author.png" class="icon" alt="{L_ACCESS_LIMIT_AUTHORS}" title="{L_ACCESS_LIMIT_AUTHORS}" />
-						<!-- ENDIF -->
-						<!-- IF topics.S_UNREAD_TOPIC -->
-							<a href="{topics.U_NEWEST_POST}">
+						{% if topics.S_ACCESS_TEAMS %}
+						<img src="{{ T_TITANIA_THEME_PATH }}/images/icon_access_teams.png" class="icon" alt="{{ lang('ACCESS_LIMIT_TEAMS') }}" title="{{ lang('ACCESS_LIMIT_TEAMS') }}" />
+						{% elseif topics.S_ACCESS_AUTHORS %}
+						<img src="{{ T_TITANIA_THEME_PATH }}/images/icon_access_author.png" class="icon" alt="{{ lang('ACCESS_LIMIT_AUTHORS') }}" title="{{ lang('ACCESS_LIMIT_AUTHORS') }}" />
+						{% endif %}
+						{% if topics.S_UNREAD_TOPIC and not S_IS_BOT %}
+							<a href="{{ topics.U_NEWEST_POST }}">
 								<i class="icon fa-file fa-fw icon-red icon-md" aria-hidden="true"></i>
-								<span class="sr-only">{NEW_POST}</span>
+								<span class="sr-only">{{ NEW_POST }}</span>
 							</a>
-						<!-- ENDIF -->
-						<a href="{topics.U_VIEW_TOPIC}" class="topictitle">{topics.TOPIC_SUBJECT}</a><!-- IF topics.TOPIC_CONTRIB_NAME --><br /><em><!-- IF topics.CONTRIB_TYPE -->{topics.CONTRIB_TYPE}<!-- ENDIF --> <!-- IF topics.U_VIEW_TOPIC_CONTRIB --> &raquo; <a href="{topics.U_VIEW_TOPIC_CONTRIB}">{topics.TOPIC_CONTRIB_NAME}</a><!-- ELSE --> &raquo; {topics.TOPIC_CONTRIB_NAME}<!-- ENDIF --> <!-- IF topics.U_VIEW_TOPIC_CONTRIB_SUPPORT --> &raquo; <a href="{topics.U_VIEW_TOPIC_CONTRIB_SUPPORT}">{L_CONTRIB_SUPPORT}</a><!-- ELSE --> &raquo; {topics.TOPIC_CONTRIB_NAME}<!-- ENDIF --></em><!-- ENDIF -->
-						<!-- IF not topics.TOPIC_APPROVED or not topics.POSTS_APPROVED -->{topics.UNAPPROVED_IMG} <!-- ENDIF -->
-						<!-- IF topics.TOPIC_REPORTED -->{REPORTED_IMG}<!-- ENDIF --><br />
-						<!-- IF .topics.pagination -->
+						{% endif %}
+						<a href="{{ topics.U_VIEW_TOPIC }}" class="topictitle">{{ topics.TOPIC_SUBJECT }}</a>{% if topics.TOPIC_CONTRIB_NAME %}<br /><em>{% if topics.CONTRIB_TYPE %}{{ topics.CONTRIB_TYPE }}{% endif %} {% if topics.U_VIEW_TOPIC_CONTRIB %} &raquo; <a href="{{ topics.U_VIEW_TOPIC_CONTRIB }}">{{ topics.TOPIC_CONTRIB_NAME }}</a>{% else %} &raquo; {{ topics.TOPIC_CONTRIB_NAME }}{% endif %} {% if topics.U_VIEW_TOPIC_CONTRIB_SUPPORT %} &raquo; <a href="{{ topics.U_VIEW_TOPIC_CONTRIB_SUPPORT }}">{{ lang('CONTRIB_SUPPORT') }}</a>{% else %} &raquo; {{ topics.TOPIC_CONTRIB_NAME }}{% endif %}</em>{% endif %}
+						{% if not topics.TOPIC_APPROVED or not topics.POSTS_APPROVED %}{{ topics.UNAPPROVED_IMG }} {% endif %}
+						{% if topics.TOPIC_REPORTED %}<i class="icon fa-exclamation fa-fw icon-red" aria-hidden="true"></i><span class="sr-only">{{ lang('TOPIC_REPORTED') }}</span>{% endif %}<br />
+						{% if topics.pagination|length %}
 						<div class="pagination">
 							<ul>
-							<!-- BEGIN pagination -->
-								<!-- IF topics.pagination.S_IS_PREV -->
-								<!-- ELSEIF topics.pagination.S_IS_ELLIPSIS --><li class="ellipsis"><span>{L_ELLIPSIS}</span></li>
-								<!-- ELSEIF topics.pagination.S_IS_NEXT -->
-								<!-- ELSE --><li><a href="{topics.pagination.PAGE_URL}">{topics.pagination.PAGE_NUMBER}</a></li>
-								<!-- ENDIF -->
-							<!-- END pagination -->
+							{% for pagination in topics.pagination %}
+								{% if pagination.S_IS_PREV %}
+								{% elseif pagination.S_IS_ELLIPSIS %}<li class="ellipsis"><span>{{ lang('ELLIPSIS') }}</span></li>
+								{% elseif pagination.S_IS_NEXT %}
+								{% else %}<li><a href="{{ pagination.PAGE_URL }}">{{ pagination.PAGE_NUMBER }}</a></li>
+								{% endif %}
+							{% endfor %}
 							</ul>
 						</div>
-						<!-- ENDIF -->
-						<!-- IF topics.ATTACH_ICON_IMG -->{topics.ATTACH_ICON_IMG} <!-- ENDIF -->{L_POST_BY_AUTHOR} {topics.TOPIC_FIRST_POST_USER_FULL} &raquo; {topics.TOPIC_FIRST_POST_TIME}
+						{% endif %}
+						{% if topics.ATTACH_ICON_IMG %}{{ topics.ATTACH_ICON_IMG }} {% endif %}{{ lang('POST_BY_AUTHOR') }} {{ topics.TOPIC_FIRST_POST_USER_FULL }} &raquo; {{ topics.TOPIC_FIRST_POST_TIME }}
 					</div>
 				</dt>
-				<dd class="posts">{topics.TOPIC_REPLIES} <dfn>{L_REPLIES}</dfn></dd>
-				<dd class="views">{topics.TOPIC_VIEWS} <dfn>{L_VIEWS}</dfn></dd>
-				<dd class="lastpost"><span><dfn>{L_LAST_POST} </dfn>{L_POST_BY_AUTHOR} {topics.TOPIC_LAST_POST_USER_FULL}
-					<!-- IF not S_IS_BOT -->
-						<a href="{topics.U_VIEW_LAST_POST}">
+				<dd class="posts">{{ topics.TOPIC_REPLIES }} <dfn>{{ lang('REPLIES') }}</dfn></dd>
+				<dd class="views">{{ topics.TOPIC_VIEWS }} <dfn>{{ lang('VIEWS') }}</dfn></dd>
+				<dd class="lastpost"><span><dfn>{{ lang('LAST_POST') }} </dfn>{{ lang('POST_BY_AUTHOR') }} {{ topics.TOPIC_LAST_POST_USER_FULL }}
+					{% if not S_IS_BOT %}
+						<a href="{{ topics.U_VIEW_LAST_POST }}">
 							<i class="icon fa-external-link-square fa-fw icon-lightgray icon-md" aria-hidden="true"></i>
-							<span class="sr-only">{VIEW_LATEST_POST}</span>
+							<span class="sr-only">{{ VIEW_LATEST_POST }}</span>
 						</a>
-					<!-- ENDIF -->
-					<br />{topics.TOPIC_LAST_POST_TIME}</span>
+					{% endif %}
+					<br />{{ topics.TOPIC_LAST_POST_TIME }}</span>
 				</dd>
 			</dl>
 		</li>
 
-	<!-- IF topics.S_LAST_ROW -->
+	{% if topics.S_LAST_ROW %}
 			</ul>
 		</div>
 	</div>
-	<!-- ENDIF -->
+	{% endif %}
 
-<!-- BEGINELSE -->
+{% else %}
 	<div class="panel">
 		<div class="inner">
-		<strong>{L_NO_TOPICS}</strong>
+		<strong>{{ lang('NO_TOPICS') }}</strong>
 		</div>
 	</div>
-<!-- END topics -->
+{% endfor %}
 
-<!-- INCLUDE common/sort.html -->
+{% INCLUDE '@phpbb_titania/common/sort.html' %}
 
-<!-- IF U_POST_TOPIC or PAGINATION or TOTAL_RESULTS -->
+{% if U_POST_TOPIC or PAGINATION or TOTAL_RESULTS %}
 <div class="action-bar">
-	<!-- IF U_POST_TOPIC -->
-		<a href="{U_POST_TOPIC}" title="{L_POST_TOPIC}" class="button">
-			<span>{L_BUTTON_NEW_TOPIC}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
+	{% if U_POST_TOPIC %}
+		<a href="{{ U_POST_TOPIC }}" title="{{ lang('POST_TOPIC') }}" class="button">
+			<span>{{ lang('BUTTON_NEW_TOPIC') }}</span> <i class="icon fa-pencil fa-fw" aria-hidden="true"></i>
 		</a>
-	<!-- ENDIF -->
+	{% endif %}
 
-	<!-- INCLUDE common/pagination.html -->
+	{% INCLUDE '@phpbb_titania/common/pagination.html' %}
 </div>
-<!-- ENDIF -->
+{% endif %}

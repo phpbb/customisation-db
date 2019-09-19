@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\migrations;
 
+use phpbb\titania\ext;
+
 class update_url_field_values extends base
 {
 	static public function depends_on()
@@ -25,7 +27,6 @@ class update_url_field_values extends base
 		return array(
 			array('custom', array(array($this, 'update_post_url'))),
 			array('custom', array(array($this, 'update_topic_url'))),
-			
 		);
 	}
 
@@ -57,15 +58,15 @@ class update_url_field_values extends base
 
 			switch ($row[$field . '_type'])
 			{
-				case TITANIA_SUPPORT:
-				case TITANIA_QUEUE_DISCUSSION:
+				case ext::TITANIA_SUPPORT:
+				case ext::TITANIA_QUEUE_DISCUSSION:
 					$params = array(
 						'contrib_type'	=> $pieces[0],
 						'contrib'		=> $pieces[1],
 					);
 				break;
 
-				case TITANIA_QUEUE:
+				case ext::TITANIA_QUEUE:
 					$params = array(
 						'id'	=> (int) substr($url, strrpos($url, '_') + 1),
 					);

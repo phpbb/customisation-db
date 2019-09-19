@@ -1,58 +1,68 @@
 
 <h3 id="review">
-	<span class="right-box"><a href="#review" onclick="viewableArea(getElementById('topicreview'), true); var rev_text = getElementById('review').getElementsByTagName('a').item(0).firstChild; if (rev_text.data == '{LA_EXPAND_VIEW}'){rev_text.data = '{LA_COLLAPSE_VIEW}'; } else if (rev_text.data == '{LA_COLLAPSE_VIEW}'){rev_text.data = '{LA_EXPAND_VIEW}'};">{L_EXPAND_VIEW}</a></span>
-	{L_TOPIC_REVIEW}: {TOPIC_TITLE}
+	<span class="right-box"><a href="#review" onclick="viewableArea(getElementById('topicreview'), true); var rev_text = getElementById('review').getElementsByTagName('a').item(0).firstChild; if (rev_text.data == '{{ lang('EXPAND_VIEW')|escape('js') }}'){rev_text.data = '{{ lang('COLLAPSE_VIEW')|escape('js') }}'; } else if (rev_text.data == '{{ lang('COLLAPSE_VIEW')|escape('js') }}'){rev_text.data = '{{ lang('EXPAND_VIEW')|escape('js') }}'};">{{ lang('EXPAND_VIEW') }}</a></span>
+	{{ lang('TOPIC_REVIEW') ~ lang('COLON') }} {{ TOPIC_TITLE }}
 </h3>
 
-<div id="topicreview">
-	<!-- BEGIN posts -->
+<div id="topicreview" class="topicreview">
+	{% for posts in loops.posts %}
 
-	<!-- IF posts.S_IGNORE_POST -->
+	{% if posts.S_IGNORE_POST %}
 	<div class="post bg3 post-ignore">
 		<div class="inner">
-			{posts.L_IGNORE_POST}
-	<!-- ELSE -->
-	<div class="post <!-- IF posts.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF -->">
+			{{ posts.L_IGNORE_POST }}
+	{% else %}
+	<div class="post {% if posts.S_ROW_COUNT is odd %}bg1{% else %}bg2{% endif %}">
 		<div class="inner">
-	<!-- ENDIF -->
+	{% endif %}
 
-		<div class="postbody" id="pr{posts.POST_ID}">
-			<!-- IF posts.POST_TEXT_DECODED -->
+		<div class="postbody" id="pr{{ posts.POST_ID }}">
+			{% if posts.POST_TEXT_DECODED %}
 			<ul class="post-buttons">
 				<li>
-					<a href="#postingbox" onclick="addquote({posts.POST_ID}, '{posts.USERNAME}');" title="{L_QUOTE} {posts.USERNAME}" class="button icon-button quote-icon">
-						<span>{L_QUOTE} {posts.USERNAME}</span>
+					<a href="#postingbox" onclick="addquote({{ posts.POST_ID }}, '{{ posts.USERNAME }}');" title="{{ lang('QUOTE') }} {{ posts.USERNAME }}" class="button button-icon-only">
+						<i class="icon fa-quote-left fa-fw" aria-hidden="true"></i>
+						<span class="sr-only">{{ lang('QUOTE') }} {{ posts.USERNAME }}</span>
 					</a>
 				</li>
 			</ul>
-			<!-- ENDIF -->
-			<!-- IF posts.U_MCP_DETAILS --><div class="right-box"><a href="{posts.U_MCP_DETAILS}">{L_POST_DETAILS}</a></div><!-- ENDIF -->
-			<h3><a href="{posts.U_VIEW}">{posts.POST_SUBJECT}</a></h3>
-			<p class="author"><!-- IF S_IS_BOT -->{posts.MINI_POST_IMG}<!-- ELSE --><a href="{posts.U_MINI_POST}">{posts.MINI_POST_IMG}</a><!-- ENDIF --> {L_POST_BY_AUTHOR} <strong>{posts.USER_FULL}</strong> &raquo; {posts.POST_TIME}  </p>
-			<div class="content">{posts.POST_TEXT}</div>
+			{% endif %}
+			{% if posts.U_MCP_DETAILS %}<div class="right-box"><a href="{{ posts.U_MCP_DETAILS }}">{{ lang('POST_DETAILS') }}</a></div>{% endif %}
+			<h3><a href="{{ posts.U_VIEW }}">{{ posts.POST_SUBJECT }}</a></h3>
+			<p class="author">
+				{% if S_IS_BOT %}
+				<span><i class="icon fa-file fa-fw {% if posts.S_UNREAD_POST %}icon-red{% else %}icon-lightgray{% endif %} icon-md" aria-hidden="true"></i><span class="sr-only">{{ posts.MINI_POST }}</span></span>
+				{% else %}
+				<a class="unread" href="{{ posts.U_MINI_POST }}" title="{{ posts.MINI_POST }}">
+					<i class="icon fa-file fa-fw {% if posts.S_UNREAD_POST %}icon-red{% else %}icon-lightgray{% endif %} icon-md" aria-hidden="true"></i><span class="sr-only">{{ posts.MINI_POST }}</span>
+				</a>
+				{% endif %}
+				{{ lang('POST_BY_AUTHOR') }} <strong>{{ posts.USER_FULL }}</strong> &raquo; {{ posts.POST_TIME }}
+			</p>
+			<div class="content">{{ posts.POST_TEXT }}</div>
 
-			<!-- IF .posts.attachment -->
+			{% if posts.attachment|length %}
 				<dl class="attachbox">
-					<dt>{L_ATTACHMENTS}</dt>
-					<!-- BEGIN attachment -->
-						<dd>{posts.attachment.DISPLAY_ATTACHMENT}</dd>
-					<!-- END attachment -->
+					<dt>{{ lang('ATTACHMENTS') }}</dt>
+					{% for attachment in posts.attachment %}
+						<dd>{{ attachment.DISPLAY_ATTACHMENT }}</dd>
+					{% endfor %}
 				</dl>
-			<!-- ENDIF -->
+			{% endif %}
 
-			<!-- IF posts.POST_TEXT_DECODED -->
-				<div id="message_{posts.POST_ID}" style="display: none;">{posts.POST_TEXT_DECODED}</div>
-			<!-- ENDIF -->
+			{% if posts.POST_TEXT_DECODED %}
+				<div id="message_{{ posts.POST_ID }}" style="display: none;">{{ posts.POST_TEXT_DECODED }}</div>
+			{% endif %}
 		</div>
 		</div>
 	</div>
-	<!-- END posts -->
+	{% endfor %}
 </div>
 
 <hr />
 
-<!-- IF S_MCP_REPORT -->
-	<p><a href="#report" class="top2">{L_BACK_TO_TOP}</a></p>
-<!-- ELSE -->
-	<p><a href="#postingbox" class="top2">{L_BACK_TO_TOP}</a></p>
-<!-- ENDIF -->
+{% if S_MCP_REPORT %}
+	<p><a href="#report" class="top2">{{ lang('BACK_TO_TOP') }}</a></p>
+{% else %}
+	<p><a href="#postingbox" class="top2">{{ lang('BACK_TO_TOP') }}</a></p>
+{% endif %}

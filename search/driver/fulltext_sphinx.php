@@ -15,6 +15,7 @@ namespace phpbb\titania\search\driver;
 
 use phpbb\exception\http_exception;
 use phpbb\titania\access;
+use phpbb\titania\ext;
 
 class fulltext_sphinx extends base
 {
@@ -59,9 +60,9 @@ class fulltext_sphinx extends base
 
 	/** @var array */
 	protected $types = array(
-		TITANIA_CONTRIB		=> 'contrib',
-		TITANIA_FAQ			=> 'faq',
-		TITANIA_SUPPORT		=> 'post',
+		ext::TITANIA_CONTRIB		=> 'contrib',
+		ext::TITANIA_FAQ			=> 'faq',
+		ext::TITANIA_SUPPORT		=> 'post',
 	);
 
 	const MAX_MATCHES = 20000;
@@ -179,11 +180,10 @@ class fulltext_sphinx extends base
 
 		if (!empty($result['matches']))
 		{
-			foreach ($result['matches'] as $data)
+			foreach ($result['matches'] as $key => $data)
 			{
 				$attrs = $data['attrs'];
-				$attrs['id'] = $attrs['real_id'];
-				unset($attrs['real_id']);
+				$attrs['id'] = $key;
 				$_result['documents'][$attrs['type'] . '_' . $attrs['id']] = $attrs;
 				$_result['user_ids'][] = $attrs['author'];
 			}
@@ -378,19 +378,19 @@ class fulltext_sphinx extends base
 				contrib_id AS real_id,
 				0 AS parent_id,
 				contrib_user_id AS author,' .
-				TITANIA_CONTRIB . ' AS type,' .
+				ext::TITANIA_CONTRIB . ' AS type,' .
 				access::PUBLIC_LEVEL . ' AS access_level,
 				CASE contrib_status
-					WHEN ' . TITANIA_CONTRIB_NEW . '
-						OR ' . TITANIA_CONTRIB_HIDDEN . '
-						OR ' . TITANIA_CONTRIB_DISABLED . '
+					WHEN ' . ext::TITANIA_CONTRIB_NEW . '
+						OR ' . ext::TITANIA_CONTRIB_HIDDEN . '
+						OR ' . ext::TITANIA_CONTRIB_DISABLED . '
 					THEN 0
 					ELSE 1
 				END AS approved,
 				contrib_last_update AS date,
 				contrib_name AS title,
 				contrib_desc AS data,
-				CONCAT("' . TITANIA_CONTRIB . '0", contrib_type) AS type_ptype
+				CONCAT("' . ext::TITANIA_CONTRIB . '0", contrib_type) AS type_ptype
 			FROM ' . $this->contribs_table . '
 			WHERE ';
 		$categories_sql = '
@@ -415,19 +415,19 @@ class fulltext_sphinx extends base
 				f.faq_id AS real_id,
 				f.contrib_id AS parent_id,
 				c.contrib_user_id AS author,' .
-				TITANIA_FAQ . ' AS type,
+				ext::TITANIA_FAQ . ' AS type,
 				f.faq_access AS access_level,
 				CASE c.contrib_status
-					WHEN (' . TITANIA_CONTRIB_NEW . '
-						OR ' . TITANIA_CONTRIB_HIDDEN . '
-						OR ' . TITANIA_CONTRIB_DISABLED . ')
+					WHEN (' . ext::TITANIA_CONTRIB_NEW . '
+						OR ' . ext::TITANIA_CONTRIB_HIDDEN . '
+						OR ' . ext::TITANIA_CONTRIB_DISABLED . ')
 					THEN 0
 					ELSE 1
 				END AS approved,
 				0 AS date,
 				f.faq_subject AS title,
 				f.faq_text AS data,
-				CONCAT("' . TITANIA_FAQ . '0", c.contrib_type) AS type_ptype
+				CONCAT("' . ext::TITANIA_FAQ . '0", c.contrib_type) AS type_ptype
 			FROM ' . $this->faq_table . ' f, ' . $this->contribs_table . ' c
 			WHERE f.contrib_id = c.contrib_id AND ';
 

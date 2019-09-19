@@ -1,27 +1,27 @@
-<!-- INCLUDE overall_header.html -->
+{% INCLUDE 'overall_header.html' %}
 
-<h2 class="titlespace">{PAGE_TITLE}</h2>
+<h2 class="titlespace">{{ PAGE_TITLE }}</h2>
 
-<form method="post" action="{S_CONFIRM_ACTION}">
+<form method="post" action="{{ S_CONFIRM_ACTION }}">
 <div class="panel">
 	<div class="inner">
 
 	<div class="content">
-		<p>{MESSAGE_TEXT}</p>
+		<p>{{ MESSAGE_TEXT }}</p>
 
 		<fieldset>
-		<!-- IF S_CAN_NOTIFY -->
+		{% if S_CAN_NOTIFY %}
 			<dl class="fields2">
-				<dt><label for="notify1">{L_REPORT_NOTIFY}:</label><br /><span>{L_REPORT_NOTIFY_EXPLAIN}</span></dt>
+				<dt><label for="notify1">{{ lang('REPORT_NOTIFY') ~ lang('COLON') }}</label><br /><span>{{ lang('REPORT_NOTIFY_EXPLAIN') }}</span></dt>
 				<dd>
-					<label for="notify1"><input type="radio" name="notify" id="notify1" value="1" <!-- IF not S_NOTIFY -->checked="checked"<!-- ENDIF --> /> {L_YES}</label>
-					<label for="notify0"><input type="radio" name="notify" id="notify0" value="0" <!-- IF S_NOTIFY -->checked="checked"<!-- ENDIF --> /> {L_NO}</label>
+					<label for="notify1"><input type="radio" name="notify" id="notify1" value="1" {% if not S_NOTIFY %}checked="checked"{% endif %} /> {{ lang('YES') }}</label>
+					<label for="notify0"><input type="radio" name="notify" id="notify0" value="0" {% if S_NOTIFY %}checked="checked"{% endif %} /> {{ lang('NO') }}</label>
 				</dd>
 			</dl>
-		<!-- ENDIF -->
+		{% endif %}
 		<dl class="fields2">
-			<dt><label for="report_text">{L_MORE_INFO}:</label><br /><span>{L_CAN_LEAVE_BLANK}</span></dt>
-			<dd><textarea name="report_text" id="report_text" rows="10" cols="76" class="inputbox">{REPORT_TEXT}</textarea></dd>
+			<dt><label for="report_text">{{ lang('MORE_INFO') ~ lang('COLON') }}</label><br /><span>{{ lang('CAN_LEAVE_BLANK') }}</span></dt>
+			<dd><textarea name="report_text" id="report_text" rows="10" cols="76" class="inputbox">{{ REPORT_TEXT }}</textarea></dd>
 		</dl>
 		</fieldset>
 	</div>
@@ -34,9 +34,9 @@
 
 	<div class="content">
 		<fieldset class="submit-buttons">
-			<input type="submit" name="confirm" class="button1" value="{L_SUBMIT}" />&nbsp;
-			<input type="submit" name="cancel" class="button2" value="{L_CANCEL}" />
-			{S_FORM_TOKEN}
+			<input type="submit" name="confirm" class="button1" value="{{ lang('SUBMIT') }}" />&nbsp;
+			<input type="submit" name="cancel" class="button2" value="{{ lang('CANCEL') }}" />
+			{{ S_FORM_TOKEN }}
 		</fieldset>
 	</div>
 
@@ -44,4 +44,4 @@
 </div>
 </form>
 
-<!-- INCLUDE overall_footer.html -->
+{% INCLUDE 'overall_footer.html' %}

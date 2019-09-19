@@ -14,12 +14,11 @@
 namespace phpbb\titania\contribution\extension;
 
 use phpbb\auth\auth;
+use phpbb\template\template;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
 use phpbb\titania\entity\package;
-use phpbb\titania\url\url;
-use phpbb\template\template;
 use phpbb\user;
 
 class type extends base
@@ -61,6 +60,11 @@ class type extends base
 
 		if ($this->ext_config->use_queue && $this->use_queue && $this->epv_test)
 		{
+			$this->upload_steps[] = array(
+				'name'		=> 'PERFORM_REPACK',
+				'function'	=> array($this, 'perform_repack'),
+			);
+
 			$this->upload_steps[] = array(
 				'name'		=> 'EPV_TEST',
 				'function'	=> array($this, 'epv_test'),
@@ -119,6 +123,41 @@ class type extends base
 		return false;
 	}
 
+	/**
+	 * Do the repack for the contribution
+	 *
+	 * @param \titania_contribution $contrib
+	 * @param \titania_revision $revision
+	 * @param attachment $attachment
+	 * @param string $download_package
+	 * @param package $package
+	 * @param template $template
+	 * @return array Returns array containing any errors found.
+	 */
+	public function perform_repack(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
+	{
+		try
+		{
+			$this->repack($package, $contrib, $revision);
+			$repack_complete = $this->user->lang('NEW_REVISION_REPACK_COMPLETE');
+
+			// Oversized packages are over 2MB
+			if ($package->get_size() > 2097152)
+			{
+				$repack_complete .= $this->user->lang('NEW_REVISION_REPACK_OVERSIZE', $contrib->get_url('queue_discussion'));
+			}
+
+		}
+		catch (\Exception $e)
+		{
+			return array(
+				'error'	=> array($this->user->lang($e->getMessage())),
+			);
+		}
+		return array(
+			'message' => $repack_complete,
+		);
+	}
 
 	/**
 	 * Run EPV test on new submissions and submit results to queue topic.
@@ -133,18 +172,18 @@ class type extends base
 	 */
 	public function epv_test(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
 	{
-		try
+		if ($revision->skip_epv)
 		{
-			$this->repack($package, $contrib, $revision);
+			// Skip EPV
+			$results = $this->user->lang('SKIP_EPV_MESSAGE');
 		}
-		catch (\Exception $e)
+
+		else
 		{
-			return array(
-				'error'	=> array($this->user->lang($e->getMessage())),
-			);
+			$package->ensure_extracted();
+			$prevalidator = $this->get_prevalidator();
+			$results = $prevalidator->run_epv($package->get_temp_path());
 		}
-		$prevalidator = $this->get_prevalidator();
-		$results = $prevalidator->run_epv($package->get_temp_path());
 
 		$uid = $bitfield = $flags = false;
 		generate_text_for_storage($results, $uid, $bitfield, $flags, true, true, true);
@@ -187,7 +226,6 @@ class type extends base
 	 */
 	protected function repack(package $package, \titania_contribution $contrib, \titania_revision $revision)
 	{
-		$package->ensure_extracted();
 		$ext_base_path = $package->find_directory(
 			array(
 				'files' => array(
@@ -205,12 +243,33 @@ class type extends base
 		$composer_file = $package->get_temp_path() . '/' . $ext_base_path . '/composer.json';
 		$data = $this->get_composer_data($composer_file);
 
-		if (!is_array($data) || empty($data['name']) || !$this->validate_ext_name($data['name']))
+		if (!is_array($data))
+		{
+			throw new \Exception('INVALID_COMPOSER_FILE');
+		}
+		if (empty($data['name']))
+		{
+			throw new \Exception('MISSING_EXT_NAME');
+		}
+		if (!$this->validate_ext_name($data['name']))
 		{
 			throw new \Exception('INVALID_EXT_NAME');
 		}
+		if (empty($data['version']))
+		{
+			throw new \Exception('MISSING_COMPOSER_VERSION');
+		}
+		if ($data['version'] !== $revision->revision_version)
+		{
+			throw new \Exception($this->user->lang('MISMATCH_COMPOSER_VERSION', $data['version'], $revision->revision_version));
+		}
+		if (!$this->is_stable_version($data['version']))
+		{
+			throw new \Exception('UNSTABLE_COMPOSER_VERSION');
+		}
 
 		$ext_name = $data['name'];
+		$data['type'] = 'phpbb-extension';
 		$data = $this->update_phpbb_requirement($data);
 		$data = $this->set_version_check($data, $contrib);
 
@@ -291,13 +350,30 @@ class type extends base
 			if (isset($data['extra']['soft-require']['phpbb/phpbb']))
 			{
 				$data['require']['phpbb/phpbb'] = $data['extra']['soft-require']['phpbb/phpbb'];
-
-				// fix common error (<=3.2.*@dev)
-				$data['require']['phpbb/phpbb'] = preg_replace('/(<|<=|~|\^|>|>=)([0-9]+(\.[0-9]+)?)\.[*x]/', '$1$2', $data['require']['phpbb/phpbb']);
 			}
 		}
 
+		if (isset($data['require']['phpbb/phpbb']))
+		{
+			// fix common error (<=3.2.*@dev, >=3.1.x)
+			$data['require']['phpbb/phpbb'] = preg_replace('/(<|<=|~|\^|>|>=)([0-9]+(\.[0-9]+)?)\.[*x]/', '$1$2', $data['require']['phpbb/phpbb']);
+		}
+
+		// Composer installers must be required by all extensions in order to be installed correctly
+		$data['require']['composer/installers'] = '~1.0.0';
+
 		return $data;
+	}
+
+	/**
+	 * Checks if the version is stable (1.2.3, 4.5.6-PL1) or not (7.8.9-RC1, 0.9.8)
+	 *
+	 * @param string $version
+	 * @return bool
+	 */
+	protected function is_stable_version($version)
+	{
+		return preg_match('#^\d+\.\d+\.\d+(-pl\d+)?$#i', $version) === 1 && phpbb_version_compare($version, '1.0.0', '>=');
 	}
 
 	/**

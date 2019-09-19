@@ -1,15 +1,15 @@
-<!-- INCLUDE contributions/contribution_header.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_header.html' %}
 
-<h3 class="section-name">{PAGE_TITLE}</h3>
+<h3 class="section-name">{{ PAGE_TITLE }}</h3>
 
 <div class="container">
 	<div class="inner">
-<!-- IF S_TOPIC_LIST -->
-	<!-- INCLUDE common/topic_list.html -->
-<!-- ELSE -->
-	<!-- INCLUDE common/post_list.html -->
-<!-- ENDIF -->
+{% if S_TOPIC_LIST %}
+	{% INCLUDE '@phpbb_titania/common/topic_list.html' %}
+{% else %}
+	{% INCLUDE '@phpbb_titania/common/post_list.html' %}
+{% endif %}
 	</div>
 </div>
 
-<!-- INCLUDE contributions/contribution_footer.html -->
+{% INCLUDE '@phpbb_titania/contributions/contribution_footer.html' %}
