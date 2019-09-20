@@ -570,4 +570,162 @@ class contribs_overlord
 
 		return $sort;
 	}
+
+	/**
+	 * Create a feed either for an individual contribution or for all contributions
+	 * @param $template
+	 * @param $helper
+	 * @param $path_helper
+	 * @param mixed $contrib
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @throws Exception
+	 */
+	public static function build_feed($template, $helper, $path_helper, $contrib = false)
+	{
+		$contrib_id = ($contrib) ? $contrib->contrib_id : false;
+
+		if (!phpbb::$config['feed_overall'])
+		{
+			// Don't proceed if feeds are disabled
+			trigger_error('NO_FEED_ENABLED');
+		}
+
+		// Show one contribution only, if on the specific contrib page
+		$contrib_specific = ($contrib_id) ? 'AND r.contrib_id = ' . (int) $contrib_id : '';
+
+		$sql_ary = [
+			'SELECT' => 'r.*, c.*, u.username_clean',
+
+			'FROM' => [
+				TITANIA_REVISIONS_TABLE => 'r',
+				TITANIA_CONTRIBS_TABLE => 'c',
+				USERS_TABLE => 'u',
+			],
+
+			'WHERE'	=> 'r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
+				AND r.revision_submitted = 1
+				AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
+				AND r.contrib_id = c.contrib_id
+				AND u.user_id = c.contrib_user_id 
+				' . $contrib_specific,
+
+			'ORDER_BY'	=> 'r.validation_date DESC',
+		];
+
+		$sql = phpbb::$db->sql_build_query('SELECT', $sql_ary);
+		$result = phpbb::$db->sql_query_limit($sql, 100);
+
+		$rows = [];
+		$feed_updated_time = false;
+
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			// Only proceed if the contribution is not in categories that are all hidden
+			if (!self::feed_hidden_category_check($row['contrib_id']))
+			{
+				$feed_rows = [];
+				$feed_rows['item_date'] = date(\DateTime::ATOM, $row['validation_date']);
+
+				// Get the most recent time
+				if (!$feed_updated_time)
+				{
+					$feed_updated_time = $row['validation_date'];
+				}
+
+				// Make the name including the version
+				$feed_rows['item_title'] = $row['contrib_name'] . ' ' . $row['revision_version'];
+
+				if ($row['revision_name'])
+				{
+					// Include the code name if it's supplied
+					$feed_rows['item_title'] .= ' (' . $row['revision_name'] . ')';
+				}
+
+				$feed_rows['item_author'] = $row['username'];
+				$feed_rows['item_description'] = phpbb::$user->lang('FEED_CDB_NEW_VERSION', $row['revision_version'], $row['contrib_name']);
+				$feed_rows['item_link'] = '';
+
+				if ($row['attachment_id'])
+				{
+					// Include the download link
+					$feed_rows['item_link'] = $helper->route('phpbb.titania.download', array('id' => $row['attachment_id']));
+				}
+
+				else
+				{
+					// This is so we can link to a bbCode customisation details page for example, because it doesn't
+					// have a download link.
+					if ($contrib)
+					{
+						$feed_rows['item_link'] = $contrib->get_url();
+					}
+
+					else
+					{
+						// Load the contribution if we don't have it already.
+						self::load_contrib($row['contrib_id']);
+						$feed_rows['item_link'] = self::get_contrib_object($row['contrib_id'])->get_url();
+					}
+				}
+
+				if ($feed_rows['item_link'])
+				{
+					// Strip session
+					$feed_rows['item_link'] = $path_helper->strip_url_params($feed_rows['item_link'], 'sid');
+				}
+
+				$rows[] = $feed_rows;
+			}
+		}
+
+		phpbb::$db->sql_freeresult($result);
+		$template->assign_block_vars_array('feed', $rows);
+
+		/** @var \Symfony\Component\HttpFoundation\Response $content */
+		$content = $helper->render('feed.xml.twig');
+
+		// Return the response
+		$feed_updated_time = (!$feed_updated_time) ? time() : $feed_updated_time;
+
+		$response = $content;
+		$response->headers->set('Content-Type', 'application/atom+xml');
+		$response->setCharset('UTF-8');
+		$response->setLastModified(new \DateTime('@' . $feed_updated_time));
+
+		if (!empty(phpbb::$user->data['is_bot']))
+		{
+			$response->headers->set('X-PHPBB-IS-BOT', 'yes');
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Check if the contribution is visible somewhere
+	 * @param $contrib_id
+	 * @return bool
+	 */
+	private static function feed_hidden_category_check($contrib_id)
+	{
+		$sql = 'SELECT cc.category_id, ct.category_visible
+				FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' cc, ' . TITANIA_CATEGORIES_TABLE . ' ct 
+				WHERE cc.contrib_id = ' . (int) $contrib_id . '
+					AND ct.category_id = cc.category_id';
+
+		$result = phpbb::$db->sql_query($sql);
+		$count = $hidden = 0;
+
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$count++;
+
+			if (!$row['category_visible'])
+			{
+				$hidden++;
+			}
+		}
+
+		// True if all the categories the contribution is in are hidden
+		return ($count > 0 && $count === $hidden);
+	}
 }

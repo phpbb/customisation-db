@@ -128,6 +128,10 @@ $lang = array_merge($lang, array(
 	'EDIT_CATEGORY'				=> 'Edit Category',
 	'ERROR'						=> 'Error',
 
+	'FEED_CDB'					=> '%s Customisation Database Feed - %s',
+	'FEED_CDB_ALL'				=> '%s Customisation Database Feed - All Contributions',
+	'FEED_CDB_NEW_VERSION'		=> 'Version %s of %s has been released.',
+	'FEED_CDB_NOT_AVAILABLE'	=> 'No feed is available.',
 	'FORM_ERROR'				=> 'An error occurred while submitting the form.',
 	'FILE_NOT_EXIST'			=> 'File does not exist: %s',
 	'FIND_CONTRIBUTION'			=> 'Find Contribution',

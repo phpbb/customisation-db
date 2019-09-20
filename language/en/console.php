@@ -68,4 +68,14 @@ $lang = array_merge($lang, array(
 	'CLI_EXTENSION_EVENTS_TEMPLATE'				=> 'phpBB Template Event Usages',
 	'CLI_EXTENSION_EVENTS_PHP'					=> 'phpBB PHP Event Usages',
 	'CLI_EXTENSION_EVENTS_CUSTOM'				=> 'Custom Extension Events',
+
+	// Language pack generator
+	'CLI_DESCRIPTION_EXTENSION_LANGUAGE'			=> 'Create a British English language pack from phpBB.',
+	'CLI_DESCRIPTION_EXTENSION_LANGUAGE_EXPLAIN'	=> 'Language files will be extracted from the latest zip of phpBB and then archived in a standalone language pack.',
+	'CLI_EXTENSION_LANGUAGE_PHPBB'					=> 'Enter the full path and filename of the phpBB zip package.',
+	'CLI_EXTENSION_LANGUAGE_PHPBB_NAME'				=> 'File name only, Titania will assume the path.',
+	'CLI_EXTENSION_LANGUAGE_FILE_NOT_FOUND'			=> 'The supplied file cannot be found: %s',
+	'CLI_EXTENSION_LANGUAGE_FILE_WRONG_FORMAT'		=> 'Please check that the format of the phpBB zip file is correct.',
+	'CLI_EXTENSION_LANGUAGE_PACK_EXISTS'			=> 'The language pack already exists: %s',
+	'CLI_EXTENSION_LANGUAGE_PACK_GENERATED'			=> 'British English language pack generated at [%s]. Please commit this file to Git to add to Titania, or copy it to use as a standalone language pack.',
 ));

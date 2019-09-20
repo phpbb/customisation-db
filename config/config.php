@@ -176,7 +176,7 @@ class config extends \phpbb\titania\entity\base
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
 				'30'	=> array('latest_revision' => '14', 'name' => 'phpBB 3.0.x', 'allow_uploads' => false),
 				'31'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.1.x', 'allow_uploads' => false),
-				'32'	=> array('latest_revision' => '6', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
+				'32'	=> array('latest_revision' => '8', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
 			)),
 
 			// MPV server(s)
@@ -213,19 +213,19 @@ class config extends \phpbb\titania\entity\base
 				ext::TITANIA_TRANSLATION		=> array('zip'),
 				ext::TITANIA_SUPPORT			=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
-					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
+					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff', 'yml', 'yaml'
 				),
 				ext::TITANIA_QUEUE				=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
-					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
+					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff', 'yml', 'yaml'
 				),
 				ext::TITANIA_QUEUE_DISCUSSION	=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
-					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
+					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff', 'yml', 'yaml'
 				),
 				ext::TITANIA_FAQ				=> array(
 					'zip', 'tar', 'gz', '7z', 'bz2', 'gtar',
-					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff'
+					'jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff', 'yml', 'yaml'
 				),
 				// ColorizeIt sample image
 				ext::TITANIA_CLR_SCREENSHOT		=> array('gif'),
