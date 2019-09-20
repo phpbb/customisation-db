@@ -641,7 +641,7 @@ class contribs_overlord
 					$feed_rows['item_title'] .= ' (' . $row['revision_name'] . ')';
 				}
 
-				$feed_rows['item_author'] = $row['username_clean'];
+				$feed_rows['item_author'] = $row['username'];
 				$feed_rows['item_description'] = phpbb::$user->lang('FEED_CDB_NEW_VERSION', $row['revision_version'], $row['contrib_name']);
 				$feed_rows['item_link'] = '';
 
