@@ -375,6 +375,31 @@ a.screenshot img, img.screenshot {
 	width: 100%;
 }
 
+/* Featured contributions
+--------------------------------------------- */
+
+.contrib-featured-container {
+	margin-top: 5px;
+	box-sizing: border-box;
+	display: inline-block;
+	width: 100%;
+}
+
+.contrib-quickview-featured:nth-child(1) {
+	margin-left: -5px;
+	margin-right: 5px;
+}
+
+.contrib-featured {
+	margin-bottom: 10px;
+}
+
+.contrib-featured > span {
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 1.1em;
+}
+
 /* Contribution List
 --------------------------------------------- */
 .contrib-filter {
@@ -388,14 +413,6 @@ a.screenshot img, img.screenshot {
 	display: inline-block;
 	padding-left: 10px;
 	width: 75%;
-}
-
-.contrib-featured-container {
-	margin-top: 5px;
-	margin-left: -5px;
-	box-sizing: border-box;
-	display: inline-block;
-	width: 100%;
 }
 
 .author-contribs {
@@ -412,16 +429,6 @@ a.screenshot img, img.screenshot {
 	font-size: 1.2em;
 	padding: 20px;
 	text-align: center;
-}
-
-.contrib-featured {
-	margin-bottom: 10px;
-}
-
-.contrib-featured > span {
-	text-transform: uppercase;
-	font-weight: bold;
-	font-size: 1.1em;
 }
 
 .contrib-quickview {
