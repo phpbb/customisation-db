@@ -390,6 +390,14 @@ a.screenshot img, img.screenshot {
 	width: 75%;
 }
 
+.contrib-featured-container {
+	margin-top: 5px;
+	margin-left: -5px;
+	box-sizing: border-box;
+	display: inline-block;
+	width: 100%;
+}
+
 .author-contribs {
 	padding: 0;
 	width: 100%;
@@ -404,6 +412,16 @@ a.screenshot img, img.screenshot {
 	font-size: 1.2em;
 	padding: 20px;
 	text-align: center;
+}
+
+.contrib-featured {
+	margin-bottom: 10px;
+}
+
+.contrib-featured > span {
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 1.1em;
 }
 
 .contrib-quickview {
@@ -436,6 +454,7 @@ a.screenshot img, img.screenshot {
 .quickview-preview {
 	height: 130px;
 	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .quickview-desc {

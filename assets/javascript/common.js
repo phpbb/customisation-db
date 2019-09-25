@@ -215,7 +215,7 @@ $('.contrib-download').hover(function() {
 	$('.download-info', this).fadeOut('slow');
 });
 
-	$('.contrib-list-container').on('mouseenter mouseleave', '.quickview-preview', function(event) {
+	$('.contrib-list-container, .contrib-featured-container').on('mouseenter mouseleave', '.quickview-preview', function(event) {
 		var $this = $(this),
 			$image = $this.find('.quickview-image'),
 			$desc = $this.find('.quickview-desc');

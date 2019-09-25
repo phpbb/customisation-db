@@ -17,6 +17,9 @@ use phpbb\titania\versions;
 
 class contribs_overlord
 {
+	// Number of contributions to select from of the "recent" additions.
+	const FEATURE_RECENT = 5;
+
 	/**
 	* Contribs array
 	* Stores [id] => contrib row
@@ -138,6 +141,14 @@ class contribs_overlord
 	}
 
 	/**
+	 * Display two featured contributions at the top of the index
+	 */
+	public static function featured_contribs()
+	{
+		return self::display_contribs('featured', null, false, false, 'featured_contribs');
+	}
+
+	/**
 	 * Display contributions
 	 *
 	 * @param string $mode The mode (category, author)
@@ -182,6 +193,7 @@ class contribs_overlord
 			c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
 			c.contrib_limited_support, c.contrib_categories, c.contrib_desc, c.contrib_desc_uid';
 
+		$is_featured = false;
 		$check_hidden_categories_on_all = false;
 		$hidden_categories_ids = self::get_hidden_categories();
 
@@ -301,6 +313,44 @@ class contribs_overlord
 				);
 			break;
 
+			case 'featured':
+				$is_featured = true;
+
+				// Get a list of all valid contrib_ids and put them in an array
+				$sql_ary = [
+					'SELECT' => 'c.contrib_id',
+
+					'FROM' => [
+						TITANIA_REVISIONS_TABLE => 'r',
+						TITANIA_CONTRIBS_TABLE => 'c',
+					],
+
+					'WHERE'	=> 'r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
+						AND r.revision_submitted = 1
+						AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
+						AND r.contrib_id = c.contrib_id',
+
+					'ORDER_BY'	=> 'c.contrib_id ASC',
+				];
+
+				$sql = phpbb::$db->sql_build_query('SELECT_DISTINCT', $sql_ary);
+				$result = phpbb::$db->sql_query($sql);
+				$set = phpbb::$db->sql_fetchrowset($result);
+
+				$contrib_id_set = array_column($set, 'contrib_id');
+
+				$offset = count($contrib_id_set) - self::FEATURE_RECENT;
+				$contrib_id_featured = array_slice($contrib_id_set, $offset);
+				$contrib_id_all = array_slice($contrib_id_set, 0, $offset);
+
+				// Pick a random contribution
+				$date_seed = date('d') + 1;
+				$featured_contrib_all = self::consistent_random($contrib_id_all, $date_seed);
+				$featured_contrib_new = self::consistent_random($contrib_id_featured, $date_seed);
+
+				// Don't break, we'll just flow into the next section to get the requisite data
+				$featured_where_clause = ' AND ' . phpbb::$db->sql_in_set('c.contrib_id', [$featured_contrib_new, $featured_contrib_all]);
+
 			case 'all' :
 				$check_hidden_categories_on_all = true;
 				$sql_ary = array(
@@ -327,7 +377,8 @@ class contribs_overlord
 
 					'WHERE'		=> 'c.contrib_visible = 1' .
 						(($branch) ? " AND rp.phpbb_version_branch = $branch" : '') .
-						(($status_filter) ? $status_filter : ''),
+						(($status_filter) ? $status_filter : '') .
+						((isset($featured_where_clause)) ? $featured_where_clause : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
 				);
@@ -379,8 +430,11 @@ class contribs_overlord
 		$path_helper = phpbb::$container->get('path_helper');
 		$access = phpbb::$container->get('phpbb.titania.access');
 
-		$url = $path_helper->get_url_parts($controller_helper->get_current_url());
-		$sort->build_pagination($url['base']);
+		if (!$is_featured)
+		{
+			$url = $path_helper->get_url_parts($controller_helper->get_current_url());
+			$sort->build_pagination($url['base']);
+		}
 
 		$result = phpbb::$db->sql_query_limit($sql, $sort->limit, $sort->start);
 
@@ -727,5 +781,37 @@ class contribs_overlord
 
 		// True if all the categories the contribution is in are hidden
 		return ($count > 0 && $count === $hidden);
+	}
+
+	/**
+	 * Generate a psuedo-random number which we can rely on to stay constant throughout the day
+	 * @param $my_array
+	 * @param $seed
+	 * @return int
+	 */
+	private static function consistent_random($my_array, $seed)
+	{
+		// Use the filesize as a consistent number to loop through
+		$array_size = count($my_array);
+		$seed = filesize(__FILE__) + $seed;
+
+		$scan = true;
+		$i = 0; // counter
+		$j = 0;
+
+		while ($scan)
+		{
+			$i++;
+			$scan = ($i !== $seed);
+
+			$j++;
+
+			if ($j === $array_size)
+			{
+				$j = 0;
+			}
+		}
+
+		return $my_array[$j];
 	}
 }
