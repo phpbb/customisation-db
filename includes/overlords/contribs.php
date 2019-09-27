@@ -316,6 +316,9 @@ class contribs_overlord
 			case 'featured':
 				$is_featured = true;
 
+				// Get the latest phpBB version branch
+				$latest_version_branch = max(array_keys(titania::$config->phpbb_versions));
+
 				// Get a list of all valid contrib_ids and put them in an array
 				$sql_ary = [
 					'SELECT' => 'c.contrib_id',
@@ -323,12 +326,15 @@ class contribs_overlord
 					'FROM' => [
 						TITANIA_REVISIONS_TABLE => 'r',
 						TITANIA_CONTRIBS_TABLE => 'c',
+						TITANIA_REVISIONS_PHPBB_TABLE => 'p',
 					],
 
 					'WHERE'	=> 'r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
 						AND r.revision_submitted = 1
 						AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
-						AND r.contrib_id = c.contrib_id',
+						AND r.contrib_id = c.contrib_id
+						AND p.revision_id = r.revision_id
+						AND p.phpbb_version_branch = ' . (int) $latest_version_branch,
 
 					'ORDER_BY'	=> 'c.contrib_id ASC',
 				];

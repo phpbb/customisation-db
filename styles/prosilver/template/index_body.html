@@ -21,8 +21,7 @@
 				</div>
 			</div>
 			{{ contribs.CONTRIB_RATING_STRING }}
-			<br />
-			{{ lang('BY') }} {{ contribs.AUTHOR_NAME_FULL }}<br /><br />
+			<p>{{ lang('BY') }} {{ contribs.AUTHOR_NAME_FULL }}</p>
 			{% for branches in contribs.branches %}
 			<span class="quickview-label">{{ branches.NAME }}</span>
 			{% endfor %}
