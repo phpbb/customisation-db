@@ -409,7 +409,7 @@ class index
 
 		$this->template->assign_vars([
 			'U_CANONICAL' => $data['sort']->build_canonical(),
-			'U_IS_TITANIA_INDEX' => (!$sort_url) ? true : false,
+			'S_IS_TITANIA_INDEX' => ($sort_url === 0),
 		]);
 
 		return $data['sort'];
