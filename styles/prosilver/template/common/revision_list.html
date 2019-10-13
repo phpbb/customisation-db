@@ -19,7 +19,7 @@
 						<div class="list-inner">
 							{% if revisions.U_DOWNLOAD %}<a href="{{ revisions.U_DOWNLOAD }}" title="{{ lang('DOWNLOAD') }}">{% endif %}
 								{% if revisions.NAME %}{{ revisions.NAME }}{% else %}<em>{{ lang('NO_REVISION_NAME') }}</em>{% endif %}
-							{% if revisions.U_DOWNLOAD %}</a>{% endif %}
+							{% if revisions.U_DOWNLOAD %}</a>{% if revisions.S_PACKAGE %} <span class="package-builder-add"><a href="{{ revisions.U_PACKAGE_ADD }}" data-ajax="titania.package.builder.add" data-revision-id="{{ revisions.REVISION_ID }}">[+]</a></span>{% endif %}{% endif %}
 						</div>
 					</dt>
 					<dd class="general revision-status">

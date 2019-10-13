@@ -141,6 +141,17 @@
 		});
 	};
 
+	phpbb.addAjaxCallback('titania.package.builder.add', function(result) {
+		var $revision = $(this).data('revision-id');
+
+		// Hide the other buttons
+		$('.package-builder-add').has('a:not([data-revision-id="' + $revision + '"])').hide();
+
+		// Change the button that was clicked
+		$('.package-builder-add > a').remove();
+		$('.package-builder-add').append('<span class="package-builder-download-prompt">' + result.message + '</span>');
+	});
+
 	phpbb.addAjaxCallback('titania.rate', function(res) {
 		if (res.rating) {
 			var $rating = $(res.rating);

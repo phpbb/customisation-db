@@ -65,6 +65,9 @@ h3.section-name {
 	text-align: left;
 }
 
+.package-builder-download-prompt {
+	font-size: 0.8em;
+}
 
 a.download-button, a.colorizeit-button {
 	box-sizing: border-box;

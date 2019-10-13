@@ -194,6 +194,13 @@ $lang = array_merge($lang, array(
 
 	'ORDER'						=> 'Order',
 
+	'PACKAGE_ADDED'				=> array(
+		1	=> 'Download package with 1 customisation',
+		2	=> 'Download package with %d customisations',
+	),
+
+	'PACKAGE_ALREADY_ADDED'		=> 'This contribution has already been added to the package',
+
 	'PAGE_REQUEST_INVALID'		=> 'The page request is invalid. Please try again.',
 	'PARENT_CATEGORY'			=> 'Parent Category',
 	'PARENT_CONTRIBUTION'		=> 'Parent Contribution',
