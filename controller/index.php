@@ -399,11 +399,18 @@ class index
 		$sort->set_defaults(24);
 		$branch = (int) str_replace('.', '', $this->branch);
 
+		// Get the featured contributions
+		\contribs_overlord::featured_contribs();
+
 		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort, 'contribs', $this->status);
 
 		// Canonical URL
 		$data['sort']->set_url($sort_url);
-		$this->template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
+
+		$this->template->assign_vars([
+			'U_CANONICAL' => $data['sort']->build_canonical(),
+			'S_IS_TITANIA_INDEX' => ($sort_url === 0),
+		]);
 
 		return $data['sort'];
 	}
