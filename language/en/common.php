@@ -128,7 +128,7 @@ $lang = array_merge($lang, array(
 	'EDIT_CATEGORY'				=> 'Edit Category',
 	'ERROR'						=> 'Error',
 
-	'FEATURED_CONTRIBUTION'		=> 'Featured contribution',
+	'RANDOM_CONTRIBUTION'		=> 'Random contribution',
 	'FEED_CDB'					=> '%s Customisation Database Feed - %s',
 	'FEED_CDB_ALL'				=> '%s Customisation Database Feed - All Contributions',
 	'FEED_CDB_NEW_VERSION'		=> 'Version %s of %s has been released.',
