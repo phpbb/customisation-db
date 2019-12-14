@@ -178,6 +178,12 @@ class base
 
 			foreach ($allowed_branches as $branch => $name)
 			{
+				if ($this->contrib->type instanceof \phpbb\titania\contribution\style\type && $branch === 31)
+				{
+					// Disable links only to the 3.1 styles demo
+					continue;
+				}
+
 				$demo_url = $this->contrib->get_demo_url(
 					$branch,
 					!$is_external
