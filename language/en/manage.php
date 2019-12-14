@@ -152,8 +152,14 @@ $lang = array_merge($lang, array(
 	'TEAM_GROUPS'					=> 'Team groups (members will get TITANIA_TEAMS_ACCESS)',
 	'UPLOAD_MAX_FILESIZE'			=> '',
 	'CLEANUP_TITANIA' 				=> 'Remove unsubmitted revisions and attachments',
-
 	'TITANIA_EXTENSIONS_QUEUE'		=> 'IDs of the extensions queue forum.',
 	'TITANIA_STYLES_QUEUE'			=> 'IDs of the styles queue forum.',
 	'TITANIA_MODS_QUEUE'			=> 'IDs of the MODs queue forum.',
+
+	'KEY_30'	=> '3.0',
+	'KEY_31'	=> '3.1',
+	'KEY_32'	=> '3.2',
+	'KEY_' . \phpbb\titania\ext::TITANIA_QUEUE_DISCUSSION => 'Queue Forum',
+	'KEY_' . \phpbb\titania\ext::TITANIA_QUEUE => 'Queue Category',
+	'KEY_trash' => 'Queue Trash Can',
 ));

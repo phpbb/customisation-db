@@ -24,7 +24,7 @@
 								<input type="radio" name="{{ options.NAME }}" value="0" {% if not options.VALUE %}checked="checked"{% endif %} /> {{ lang('NO') }}
 							{% elseif options.TYPE === 'array' %}
 								{% for subKey, subValue in options.VALUE %}
-									<label for="{{ options.NAME ~ subKey }}">{{ subKey }} <input type="text" name="{{ options.NAME ~ subKey }}" id="{{ options.NAME ~ subKey }}" size="50" value="{{ subValue }}" class="inputbox autowidth" /></label><br />
+									<label for="{{ options.NAME }}[{{ subKey }}]">{{ lang('KEY_' ~ subKey) }} <input type="text" name="{{ options.NAME }}[{{ subKey }}]" id="{{ options.NAME }}[{{ subKey }}]" size="50" value="{{ subValue }}" class="inputbox autowidth" /></label><br />
 								{% endfor %}
 							{% endif %}
 						</dd>
