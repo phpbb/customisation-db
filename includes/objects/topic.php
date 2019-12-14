@@ -104,6 +104,8 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'topic_last_post_user_colour'	=> array('default' => ''),
 			'topic_last_post_time'			=> array('default' => (int) titania::$time),
 			'topic_last_post_subject'		=> array('default' => ''),
+
+			'phpbb_topic_id'				=> array('default' => 0),
 		));
 
 		$this->topic_id = $topic_id;
@@ -112,9 +114,6 @@ class titania_topic extends \phpbb\titania\entity\database_base
 		$this->tracking = phpbb::$container->get('phpbb.titania.tracking');
 		$this->display = phpbb::$container->get('phpbb.titania.display');
 		$this->access = phpbb::$container->get('phpbb.titania.access');
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function submit()
@@ -124,9 +123,6 @@ class titania_topic extends \phpbb\titania\entity\database_base
 		$this->topic_subject_clean = url::generate_slug($this->topic_subject);
 
 		parent::submit();
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -354,6 +350,9 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			));
 		}
 
+		// Don't allow negative replies; but show the number of replies minus the original post
+		$topic_replies = ($this->get_postcount() > 0) ? ($this->get_postcount() - 1) : 0;
+
 		$details = array(
 			'TOPIC_ID'						=> $this->topic_id,
 			'TOPIC_TYPE'					=> $this->topic_type,
@@ -365,7 +364,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'TOPIC_APPROVED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->topic_approved : true,
 			'TOPIC_REPORTED'				=> (phpbb::$auth->acl_get('u_titania_mod_post_mod')) ? $this->topic_reported : false,
 			'TOPIC_ASSIGNED'				=> $this->topic_assigned, // @todo output this to be something useful
-			'TOPIC_REPLIES'					=> ($this->get_postcount() - 1), // Number of replies (posts minus the OP)
+			'TOPIC_REPLIES'					=> $topic_replies,
 			'TOPIC_VIEWS'					=> $this->topic_views,
 			'TOPIC_SUBJECT'					=> censor_text($this->topic_subject),
 
@@ -402,9 +401,6 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'FOLDER_IMG_WIDTH'				=> phpbb::$user->img($folder_img, '', false, '', 'width'),
 			'FOLDER_IMG_HEIGHT'				=> phpbb::$user->img($folder_img, '', false, '', 'height'),
 		);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $details, $this);
 
 		return $details;
 	}

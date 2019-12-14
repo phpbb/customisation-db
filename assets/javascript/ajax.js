@@ -78,6 +78,13 @@
 			}
 			return $tree;
 		};
+
+		// Handle the featured contributions
+		if ($this.data('category-id') > 0) {
+			// Hide the featured list once a category is being viewed
+			$('.contrib-featured-container').slideUp(400);
+		}
+
 		if ($this.data('category-id') !== undefined) {
 			var $children = $('.categories [data-parent-id="' + $this.data('category-id') + '"]');
 			$children.slideDown('slow');
@@ -114,8 +121,13 @@
 			$this.attr('href', res.categories[$this.data('category-id')]);
 		});
 
+		// When the filter options change, make sure the correct option is shown as active on the screen
 		titania.updateSortOptions($('.branch-sort'), $('.branch-sort-options'), res.branches);
 		titania.updateSortOptions($('.key-sort'), $('.key-sort-options'), res.sort);
+		titania.updateSortOptions($('.status-sort'), $('.status-sort-options'), res.status);
+
+		// If the initial screen is for a type the user doesn't have validate permission for, don't show the dropdown
+		$('.status-sort').toggle(res.show_status);
 
 		$title.html(title.match(/(.*?[-\u2022]\s)/)[0] + res.title);
 		$crumbs.children(':not(:first-child)').remove();

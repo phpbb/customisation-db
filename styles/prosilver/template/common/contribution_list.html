@@ -1,33 +1,33 @@
-<!-- BEGIN contribs -->
+{% for contribs in loops.contribs %}
 	<div class="contrib-quickview">
-		<a href="{contribs.U_VIEW_CONTRIB}" class="quickview-title">{contribs.CONTRIB_NAME}</a>
+		<a href="{{ contribs.U_VIEW_CONTRIB }}" class="quickview-title">{{ contribs.CONTRIB_NAME }}</a>
 		<div class="quickview-preview">
-			<div class="quickview-desc">{contribs.DESC_SNIPPET}</div>
+			<div class="quickview-desc">{{ contribs.DESC_SNIPPET }}</div>
 			<div class="quickview-image">
-				<!-- IF contribs.PREVIEW -->
-					<img src="{contribs.PREVIEW}" alt="{contribs.CONTRIB_NAME}" class="screenshot" />
-				<!-- ELSE -->
-					<img src="{T_TITANIA_THEME_PATH}/images/types/{contribs.CONTRIB_TYPE_CLEAN}.png" alt="{L_NO_SCREENSHOT}" class="screenshot" />
-				<!-- ENDIF -->
+				{% if contribs.PREVIEW %}
+					<img src="{{ contribs.PREVIEW }}" alt="{{ contribs.CONTRIB_NAME }}" class="screenshot" />
+				{% else %}
+					<img src="{{ T_TITANIA_THEME_PATH }}/images/types/{{ contribs.CONTRIB_TYPE_CLEAN }}.png" alt="{{ lang('NO_SCREENSHOT') }}" class="screenshot" />
+				{% endif %}
 			</div>
 		</div>
-		{contribs.CONTRIB_RATING_STRING}
+		{{ contribs.CONTRIB_RATING_STRING }}
 		<br />
-		{L_BY} {contribs.AUTHOR_NAME_FULL}<br /><br />
-		<!-- BEGIN branches -->
-			<span class="quickview-label">{contribs.branches.NAME}</span>
-		<!-- END branches -->
-		<!-- IF contribs.S_CONTRIB_CLEANED -->
-			<span class="quickview-label label-clean">{L_CONTRIB_CLEANED}</span>
-		<!-- ELSEIF contribs.S_CONTRIB_NEW -->
-			<span class="quickview-label label-new">{L_UNAPPROVED}</span>
-		<!-- ELSEIF contribs.S_CONTRIB_HIDDEN -->
-			<span class="quickview-label label-hidden">{L_HIDDEN}</span>
-		<!-- ELSEIF contribs.S_CONTRIB_DISABLED -->
-			<span class="quickview-label label-disabled">{L_DISABLED}</span>
-		<!-- ENDIF -->
-		<span class="quickview-label">{contribs.CONTRIB_TYPE}</span>
+		{{ lang('BY') }} {{ contribs.AUTHOR_NAME_FULL }}<br /><br />
+		{% for branches in contribs.branches %}
+			<span class="quickview-label">{{ branches.NAME }}</span>
+		{% endfor %}
+		{% if contribs.S_CONTRIB_CLEANED %}
+			<span class="quickview-label label-clean">{{ lang('CONTRIB_CLEANED') }}</span>
+		{% elseif contribs.S_CONTRIB_NEW %}
+			<span class="quickview-label label-new">{{ lang('UNAPPROVED') }}</span>
+		{% elseif contribs.S_CONTRIB_HIDDEN %}
+			<span class="quickview-label label-hidden">{{ lang('HIDDEN') }}</span>
+		{% elseif contribs.S_CONTRIB_DISABLED %}
+			<span class="quickview-label label-disabled">{{ lang('DISABLED') }}</span>
+		{% endif %}
+		<span class="quickview-label">{{ contribs.CONTRIB_TYPE }}</span>
 	</div>
-<!-- BEGINELSE -->
-	<div class="no-results">{L_NO_CONTRIBS}</div>
-<!-- END contribs -->
+{% else %}
+	<div class="no-results">{{ lang('NO_CONTRIBS') }}</div>
+{% endfor %}

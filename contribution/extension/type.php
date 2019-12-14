@@ -139,6 +139,14 @@ class type extends base
 		try
 		{
 			$this->repack($package, $contrib, $revision);
+			$repack_complete = $this->user->lang('NEW_REVISION_REPACK_COMPLETE');
+
+			// Oversized packages are over 2MB
+			if ($package->get_size() > 2097152)
+			{
+				$repack_complete .= $this->user->lang('NEW_REVISION_REPACK_OVERSIZE', $contrib->get_url('queue_discussion'));
+			}
+
 		}
 		catch (\Exception $e)
 		{
@@ -147,7 +155,7 @@ class type extends base
 			);
 		}
 		return array(
-			'message'	=> $this->user->lang['NEW_REVISION_REPACK_COMPLETE'],
+			'message' => $repack_complete,
 		);
 	}
 
@@ -164,9 +172,18 @@ class type extends base
 	 */
 	public function epv_test(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $download_package, package $package, template $template)
 	{
-		$package->ensure_extracted();
-		$prevalidator = $this->get_prevalidator();
-		$results = $prevalidator->run_epv($package->get_temp_path());
+		if ($revision->skip_epv)
+		{
+			// Skip EPV
+			$results = $this->user->lang('SKIP_EPV_MESSAGE');
+		}
+
+		else
+		{
+			$package->ensure_extracted();
+			$prevalidator = $this->get_prevalidator();
+			$results = $prevalidator->run_epv($package->get_temp_path());
+		}
 
 		$uid = $bitfield = $flags = false;
 		generate_text_for_storage($results, $uid, $bitfield, $flags, true, true, true);
@@ -249,6 +266,10 @@ class type extends base
 		if (!$this->is_stable_version($data['version']))
 		{
 			throw new \Exception('UNSTABLE_COMPOSER_VERSION');
+		}
+		if ($data['extra']['display-name'] !== $contrib->contrib_name)
+		{
+			throw new \Exception($this->user->lang('MISMATCH_DISPLAY_NAME', $data['extra']['display-name'], $contrib->contrib_name));
 		}
 
 		$ext_name = $data['name'];

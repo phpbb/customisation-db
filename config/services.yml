@@ -210,10 +210,12 @@ services:
     phpbb.titania.listener:
         class: phpbb\titania\event\main_listener
         arguments:
+            - '@dbal.conn'
             - '@user'
             - '@template'
             - '@phpbb.titania.controller.helper'
             - '%core.root_path%'
+            - '%phpbb.titania.root_path%'
             - '%core.php_ext%'
         tags:
             - { name: event.listener }
@@ -467,6 +469,7 @@ services:
          arguments:
              - '@user'
              - '@phpbb.titania.contribution.prevalidator_helper'
+             - '@language'
 
     phpbb.titania.translation.type:
         class: phpbb\titania\contribution\translation\type

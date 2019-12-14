@@ -53,6 +53,13 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	*/
 	public $phpbb_versions = array();
 
+	/**
+	 * Skip EPV
+	 *
+	 * @var boolean
+	 */
+	public $skip_epv = false;
+
 	/** @var attachment */
 	protected $attachment;
 
@@ -113,9 +120,6 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		$this->translations = phpbb::$container->get('phpbb.titania.attachment.operator');
 		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 		$this->config = phpbb::$container->get('config');
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -286,9 +290,6 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 			$this->translations->parse_attachments($message, false, false, $tpl_block . '.translations', '');
 		}
-
-		// Hooks
-		titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $this, $tpl_block);
 	}
 
 	/**
@@ -377,9 +378,6 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		{
 			$this->contrib->update_release_topic();
 		}
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	/**
@@ -573,16 +571,10 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			WHERE object_type = ' . ext::TITANIA_TRANSLATION . '
 				AND object_id = ' . $old_revision->revision_id;
 		phpbb::$db->sql_query($sql);
-
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
 	}
 
 	public function delete()
 	{
-		// Hooks
-		titania::$hook->call_hook_ref(array(__CLASS__, __FUNCTION__), $this);
-
 		// Delete the queue item
 		$queue = $this->get_queue();
 

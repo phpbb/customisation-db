@@ -47,10 +47,21 @@ class prevalidator_helper
 	}
 
 	/**
+	 * Get the Titania root path
+	 *
+	 * @return string
+	 */
+	public function get_root_path()
+	{
+		return $this->ext_root_path;
+	}
+
+	/**
 	 * Prepare a test directory containing phpBB source files.
 	 *
 	 * @param string $version the full phpBB version number.  Ex: 2.0.23, 3.0.1, 3.0.7-pl1
 	 * @return string Returns the path to the test directory
+	 * @throws \Exception
 	 */
 	public function prepare_phpbb_test_directory($version)
 	{

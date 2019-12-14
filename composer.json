@@ -20,9 +20,18 @@
             "role": "Developer"
         },
         {
+            "name": "VSE",
+            "role": "Developer"
+        },
+        {
+            "name": "battye",
+            "email": "battye@phpbb.com",
+            "role": "Developer"
+        },
+        {
             "name": "Cesar Gallegos (prototech)",
             "email": "prototech91@gmail.com",
-            "role": "Developer"
+            "role": "Previous Developer"
         },
         {
             "name": "Raimon Meuldijk (Raimon)",
@@ -52,9 +61,12 @@
         }
     ],
     "require": {
-    	"php": ">=5.3.3",
-    	"phpbb/epv": "dev-master@dev",
-    	"composer/installers": "~1.0"
+        "php": ">=5.3.3",
+        "phpbb/epv": "dev-master@dev",
+        "phpbb/translation-validator": "dev-symfony-2.8@dev",
+        "composer/installers": "~1.0",
+        "battye/php-array-parser": "~1.0",
+        "chumper/zipper": "1.0.0"
     },
     "extra": {
         "display-name": "phpBB Customisation Database (Titania)",

@@ -13,6 +13,12 @@
 
 namespace phpbb\titania\contribution\translation;
 
+use Phpbb\TranslationValidator\Cli;
+use Phpbb\TranslationValidator\Command\ValidateCommand;
+use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+
 /**
  * Translation prevalidator
  *
@@ -26,34 +32,30 @@ class prevalidator
 	/** @var \phpbb\titania\contribution\prevalidator_helper */
 	protected $helper;
 
+	/** @var \phpbb\language\language */
+	protected $language;
+
 	const NOT_REQUIRED = 0;
 	const REQUIRED = 1;
 	const REQUIRED_EMPTY = 2;
 	const REQUIRED_DEFAULT = 3;
 
-	/**
-	 * Array of files to ignore in language pack
-	 *
-	 * @var array
-	 */
-	protected $ignore_files = array(
-		'language/en/AUTHORS',
-		'language/en/README',
-		'language/en/LICENSE',
-		'language/en/CHANGELOG',
-		'language/en/VERSION',
-	);
+	const BRITISH_ENGLISH = 'british_english_';
+	const LANGUAGE_PACKAGES = 'includes/language_packages/';
+	const EN = 'en';
 
 	/**
 	 * Constructor
 	 *
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\contribution\prevalidator_helper $helper
+	 * @param \phpbb\language\language $language
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\titania\contribution\prevalidator_helper $helper)
+	public function __construct(\phpbb\user $user, \phpbb\titania\contribution\prevalidator_helper $helper, \phpbb\language\language $language)
 	{
 		$this->user = $user;
 		$this->helper = $helper;
+		$this->language = $language;
 	}
 
 	/**
@@ -67,282 +69,169 @@ class prevalidator
 	}
 
 	/**
-	 * Checks the file for the array contents
-	 * Make sure it has all the keys present in the newest version
+	 * Get the latest British English pack
+	 * @return array Return the path and version to the pre-supplied British English language pack
+	 */
+	private function get_latest_english_pack()
+	{
+		/** @var Finder $finder */
+		$finder = new Finder();
+
+		$finder->files()
+			->in($this->get_helper()->get_root_path() . self::LANGUAGE_PACKAGES)
+			->name(self::BRITISH_ENGLISH . '*');
+
+		if (iterator_count($finder) > 0)
+		{
+			$latest = ['name' => '', 'x' => 0, 'y' => 0, 'z' => 0];
+
+			foreach ($finder as $file)
+			{
+				// Extract the version number
+				preg_match_all('/' . self::BRITISH_ENGLISH . '(\d+)_(\d+)_(\d+)\.zip/', $file->getFilename(), $result);
+
+				if ($result[0])
+				{
+					// Save the path and the version
+					$pack = [
+						'name' => $file->getPathname(), // file path
+						'x' => $result[1][0], // major version (eg. 3)
+						'y' => $result[2][0], // minor version (eg. 2)
+						'z' => $result[3][0], // revision version (eg. 5)
+					];
+
+					// Check if it's a higher number
+					$new_major = ($pack['x'] > $latest['x']);
+					$new_minor = ($pack['x'] === $latest['x'] && $pack['y'] > $latest['y']);
+					$new_revision = ($pack['x'] === $latest['x'] && $pack['y'] === $latest['y'] && $pack['z'] > $latest['z']);
+
+					if ($new_major || $new_minor || $new_revision)
+					{
+						// This is the new latest version
+						$latest = $pack;
+					}
+				}
+			}
+		}
+
+		else
+		{
+			// Could not locate the British English language pack
+			throw new \phpbb\extension\exception($this->language->lang('TRANSLATION_EN_PACK_NOT_FOUND'));
+		}
+
+		return $latest;
+	}
+
+	/**
+	 * Run the phpBB Translation Validator
 	 *
 	 * @param \phpbb\titania\entity\package $package
-	 * @param string $reference_filepath The path to the files against I want to validate the uploaded package
-	 * @return array Returns an array of error messages encountered
+	 * @param string $origin_iso
+	 * @param string $phpbb_version
+	 * @return int Returns an array of error messages encountered
 	 */
-	public function check_package($package, $reference_filepath)
+	public function check_package($package, $origin_iso, $phpbb_version)
 	{
-		$package->ensure_extracted();
-		$error = $missing_keys = array();
-
-		// Basically the individual parts of the translation, we check them separately, because they have colliding filenames
-		$types = array(
-			'language' => 'language/',
-			'prosilver' => 'styles/prosilver/imageset/en',
-			'subsilver2' => 'styles/subsilver2/imageset/en',
-		);
-
-		// Do the check for all types
-		foreach ($types as $type => $path)
+		if ($origin_iso === self::EN)
 		{
-			// Get all the files present in the uploaded package for the currently iterated type
-			$uploaded_files = $this->lang_filelist($package->get_temp_path());
-			$reference_files = $this->lang_filelist($reference_filepath);
-			ksort($uploaded_files);
-			ksort($reference_files);
-
-			switch ($type)
-			{
-				case 'language':
-					// The uploaded files array has keys prefixed with the upload path of the contribution
-					// Have it stored in the variable so we can work with it
-					$uploaded_files_prefix = explode('/', key($uploaded_files));
-					$iso_code = $uploaded_files_prefix[2];
-					$uploaded_files_prefix = $package->get_temp_path() . '/' . $uploaded_files_prefix[0];
-
-					// This goes directly to the root of the uploaded language pack, like /upload_path/language/cs/
-					$uploaded_lang_root = $uploaded_files_prefix . '/language/' . $iso_code . '/';
-
-					// Just perform a basic check if the common file is there
-					if (!is_file($uploaded_lang_root . 'common.php'))
-					{
-						return array($this->user->lang('NO_TRANSLATION'));
-					}
-
-					// Loop through the reference files
-					foreach ($reference_files as $dir => $files)
-					{
-						// Do not loop through files which are in non-language directories
-						if (strpos($dir, $path) === 0)
-						{
-							// Loop through the files in the language/, language/adm etc. directories
-							foreach ($files as $file)
-							{
-								$exists = true;
-								$uploaded_file_path = str_replace('/en/', '/' . $iso_code . '/', $uploaded_files_prefix . '/' . $dir . $file);
-
-								$ext = strtolower(substr($file, -3));
-								// Require php and txt files
-								if ($ext == 'php' || $ext == 'txt')
-								{
-									if (!is_file($uploaded_file_path))
-									{
-										$error[] = $this->user->lang('MISSING_FILE', str_replace('/en/', '/' . $iso_code . '/', $dir. $file)); // report a missing file
-										$exists = false;
-									}
-								}
-
-								// If the file is a php file and actually exists, no point in checking keys in a nonexistent one
-								if ($ext == 'php' && $exists)
-								{
-									$missing_keys[$dir . $file] = $this->check_missing_keys($reference_filepath . '' .	$dir . $file, $uploaded_file_path);
-								}
-
-								// In the last step we have removed the license and index files if there were any. We'll just put a new one instead
-								$this->add_license_files($uploaded_lang_root . '/LICENSE', $reference_filepath);
-								$this->add_htm_files($uploaded_lang_root, $reference_filepath);
-							}
-						}
-					}
-
-					if (sizeof($missing_keys))
-					{
-						foreach ($missing_keys as $file => $keys)
-						{
-							if (sizeof($keys))
-							{
-								$error[] = $this->user->lang('MISSING_KEYS', $file, implode('<br />', $keys));
-							}
-						}
-					}
-					break;
-
-				case 'prosilver':
-				case 'subsilver2':
-					// just let them go through atm...
-					break;
-			}
-
+			// We can't validate "en", because it would be trying to check against itself and
+			// fail because we can't unpack both at the same time (and it would serve no purpose).
+			$results = $this->language->lang('TRANSLATION_EN_SKIP');
 		}
 
-		// We are going to check if all files included in the language pack are allowed
-		// Before we need some stuff
-		// We construct a list of all reference files with complete structure
-		foreach ($reference_files as $dir => $files)
+		else
 		{
-			if (strpos($dir, $types['language']) === 0 || strpos($dir, $types['prosilver']) === 0 || strpos($dir, $types['subsilver2']) === 0)
+			try
 			{
-				foreach ($files as $file)
+				// Language pack directory names use an underscore
+				$sanitised_iso = str_replace('-', '_', $origin_iso);
+
+				// We don't need to clean up (delete) the temporary files here because that is
+				// handled at revision.php:752
+				$package->ensure_extracted();
+				$path = $package->get_temp_path();
+
+				// Rename the extracted directory to be the ISO code.
+				$finder = new Finder();
+				$iterator = $finder->directories()->in($path)->depth('== 0');
+
+				if ($iterator->count() == 1)
 				{
-					$list_reference_files[] = $dir . $file;
-				}
-			}
-		}
-		// We construct a list of all uploaded file with complete structure
-		foreach ($uploaded_files as $dir => $files)
-		{
-			// We need to clean our directory path according the type and replace iso_code package by en
-			if (strpos($dir, $types['language']) != 0)
-			{
-				$dir_prefix = explode($types['language'] ,$dir);
-			}
-			else if (strpos($dir, $types['prosilver']) != 0)
-			{
-				$dir_prefix = explode($types['prosilver'] ,$dir);
-			}
-			else if (strpos($dir, $types['subsilver2']) != 0)
-			{
-				$dir_prefix = explode($types['subsilver2'] ,$dir);
-			}
-			$dir_clean = str_replace('/'.$iso_code.'/', '/en/', str_replace($dir_prefix[0], '', $dir));
+					$iterator = $finder->getIterator();
+					$iterator->rewind();
 
-			foreach ($files as $file)
-			{
-				$list_uploaded_files[] = $dir_clean . $file;
-			}
-		}
-		// It's time to check if each file uploaded in the package is allowed
-		foreach ($list_uploaded_files as $file)
-		{
-			if (!in_array($file, $list_reference_files) && !in_array($file, $this->ignore_files))
-			{
-				$error[] = $this->user->lang('WRONG_FILE', str_replace('/en/', '/'.$iso_code.'/', $file)); // report a wrong file
-			}
-		}
-
-		if (!sizeof($error))
-		{
-			$package->repack(); // we have made changes to the package, so replace the original zip file
-		}
-		return $error;
-	}
-
-	/**
-	 * Compares two phpBB 3.0.x language files and computes the missing keys in the uploaded file
-	 * Does not include the uploaded file for security and uses string check on the file contents
-	 *
-	 * @param string $uploaded_file
-	 * @param string $reference_file
-	 * @return array returns an array with the missing keys
-	 */
-	private function check_missing_keys($reference_file, $uploaded_file)
-	{
-		// Check original file by including the language entries...
-		$lang = $missing_keys = array();
-
-		$contents = file_get_contents($uploaded_file);
-
-		include($reference_file);
-		//$lang_keys = $this->multiarray_keys($lang);
-
-		// General cleanup
-		$file_data = trim(str_replace(array("\r", "\t", ' '), '', $contents));
-		$file_data = explode("\n", $file_data);
-
-		$file_data = str_replace("\n", '', implode("\n", $file_data));
-
-		// Now we have all array keys... let us have a look within $contents if all keys are there...
-		// This can take a bit because we check every key... luckily with strpos...
-		foreach (array_keys($lang) as $current_key)
-		{
-			if (is_string($current_key) && !is_array($lang[$current_key]) && strpos($file_data, "'{$current_key}'=>") === false)
-			{
-				if (empty($lang[$current_key]))
-				{
-					continue;
+					// We know there's only one result
+					$root_extracted = $iterator->current();
 				}
 
-				$missing_keys[] = $current_key;
+				else
+				{
+					throw new \phpbb\extension\exception($this->language->lang('TRANSLATION_DIRECTORY_MISMATCH'));
+				}
+
+				// Rename the directory to use the iso code
+				$new_directory_name = str_replace($root_extracted->getFilename(), $sanitised_iso, $root_extracted->getPathname());
+				$file_system = new Filesystem();
+				$file_system->rename($root_extracted->getPathname(), $new_directory_name);
+
+				// Get the British English language in there too
+				$english_pack = $this->get_latest_english_pack();
+				$zip = new \ZipArchive();
+				$result = $zip->open($english_pack['name']);
+
+				if ($result)
+				{
+					// Unzip the revision to a temporary folder
+					$zip->extractTo($path);
+					$zip->close();
+
+					// Change to "en"
+					$replace_name = sprintf('%s%d_%d_%d', self::BRITISH_ENGLISH, $english_pack['x'], $english_pack['y'], $english_pack['z']);
+					$file_system->rename(sprintf('%s/%s', $path, $replace_name), sprintf('%s/%s', $path, self::EN));
+				}
+
+				// Before running the translation validator, check that an expected path exists. If it doesn't, it could be
+				// because the user has typed the incorrect language ISO code. Tell the user, and crash out.
+				if (!$file_system->exists(sprintf('%s/%s/language/%s/common.php', $path, $sanitised_iso, $sanitised_iso)))
+				{
+					throw new \phpbb\extension\exception($this->language->lang('TRANSLATION_ISO_MISMATCH'));
+				}
+
+				// Parameters for the validation script
+				$inputs = array(
+					// Arguments
+					'command' => 'validate',
+					'origin-iso' => $sanitised_iso,
+
+					// Options
+					'--phpbb-version' => $phpbb_version,
+					'--package-dir' => $path,
+					'--safe-mode' => true,
+					'--display-notices' => true,
+				);
+
+				// Set up an instance of the translation validation script
+				// https://github.com/phpbb/phpbb-translation-validator
+				$app = new Cli();
+				$app->add(new ValidateCommand());
+				$translation = $app->find('validate');
+
+				$commandTester = new CommandTester($translation);
+				$commandTester->execute($inputs);
+
+				// Return the output of the translation validation script
+				$results = $commandTester->getDisplay();
 			}
-		}
 
-		return $missing_keys;
-	}
-
-	private function add_license_files($license_file, $reference_path)
-	{
-		$res = fopen($license_file, 'w');
-		fwrite($res, file_get_contents($reference_path . '/docs/COPYING'));
-		fclose($res);
-	}
-
-	private function add_htm_files($lang_root_path, $reference_path)
-	{
-		$htm_files = array('', 'acp/', 'mods/');
-
-		if (!is_dir($lang_root_path . 'mods'))
-		{
-			mkdir($lang_root_path . 'mods');
-			phpbb_chmod($lang_root_path . 'mods', CHMOD_READ | CHMOD_WRITE);
-		}
-
-		foreach ($htm_files as $htm_file)
-		{
-			$res = fopen($lang_root_path . $htm_file . 'index.htm', 'w');
-			fwrite($res, file_get_contents($reference_path . '/language/en/index.htm'));
-			fclose($res);
-		}
-	}
-
-	/**
-	 * Basically flattens the files from all subdirectories of $root_dir into an array
-	 *
-	 * @param string $root_dir
-	 * @param string $dir DO NOT USE, recursive!
-	 * @return array
-	 */
-	private function lang_filelist($root_dir, $dir = '')
-	{
-		clearstatcache();
-		$matches = array();
-
-		// Add closing / if present
-		$root_dir = ($root_dir && substr($root_dir, -1) != '/') ? $root_dir . '/' : $root_dir;
-
-		// Remove initial / if present
-		$dir = (substr($dir, 0, 1) == '/') ? substr($dir, 1) : $dir;
-		// Add closing / if present
-		$dir = ($dir && substr($dir, -1) != '/') ? $dir . '/' : $dir;
-
-		$dp = opendir($root_dir . $dir);
-		while (($fname = readdir($dp)))
-		{
-			if (is_file("$root_dir$dir$fname") && !in_array(strtoupper($fname), $this->ignore_files))
+			catch (\phpbb\extension\exception $e)
 			{
-				$matches[$dir][] = $fname;
-			}
-			else if ($fname[0] != '.' && is_dir("$root_dir$dir$fname"))
-			{
-				$matches += $this->lang_filelist($root_dir, "$dir$fname");
+				// Clean up and send the error message to the next catch block
+				$package->cleanup();
+				throw new \phpbb\extension\exception($e->getMessage());
 			}
 		}
-		closedir($dp);
 
-		return $matches;
-	}
-
-	/**
-	 * array_keys for a multidimensional array
-	 *
-	 * @param array $array
-	 * @return array
-	 */
-	private function multiarray_keys($array)
-	{
-		$keys = array();
-
-		foreach($array as $k => $v)
-		{
-			$keys[] = $k;
-			if (is_array($array[$k]))
-			{
-				$keys = array_merge($keys, $this->multiarray_keys($array[$k]));
-			}
-		}
-		return $keys;
+		return $results;
 	}
 }

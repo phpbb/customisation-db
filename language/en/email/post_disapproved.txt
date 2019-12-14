@@ -1,11 +1,11 @@
-Subject: Post disapproved - "{POST_SUBJECT}"
+Subject: Post disapproved - "{{ POST_SUBJECT }}"
 
-Hello {USERNAME},
+Hello {{ USERNAME }},
 
-You are receiving this notification because your post "{POST_SUBJECT}" at "{SITENAME}" was disapproved by a moderator or administrator.
+You are receiving this notification because your post "{{ POST_SUBJECT }}" at "{{ SITENAME }}" was disapproved by a moderator or administrator.
 
 The following reason was given for the disapproval:
 
-{REASON}
+{{ REASON }}
 
-{EMAIL_SIG}
+{{ EMAIL_SIG }}

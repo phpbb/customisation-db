@@ -26,6 +26,9 @@ class contribution extends base
 	/** @var \phpbb\titania\subscriptions */
 	protected $subscriptions;
 
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
+
 	/**
 	 * Constructor
 	 *
@@ -43,13 +46,15 @@ class contribution extends base
 	 * @param \phpbb\titania\access $access
 	 * @param \phpbb\titania\tracking $tracking
 	 * @param \phpbb\titania\subscriptions $subscriptions
+	 * @param \phpbb\path_helper $path_helper
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\tracking $tracking, \phpbb\titania\subscriptions $subscriptions, \phpbb\path_helper $path_helper)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $types, $request, $cache, $ext_config, $display, $access);
 
 		$this->tracking = $tracking;
 		$this->subscriptions = $subscriptions;
+		$this->path_helper = $path_helper;
 	}
 
 	/**
@@ -67,7 +72,7 @@ class contribution extends base
 
 		$page = ($page) ?: 'details';
 
-		if (!in_array($page, array('report', 'details', 'queue_discussion', 'rate')))
+		if (!in_array($page, array('report', 'details', 'queue_discussion', 'rate', 'feed')))
 		{
 			return $this->helper->error('NO_PAGE', 404);
 		}
@@ -77,6 +82,27 @@ class contribution extends base
 		$this->generate_breadcrumbs();
 
 		return $this->{$page}();
+	}
+
+	/**
+	 * ATOM feed for the contribution revisions (new releases for an individual customisation)
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @throws \Exception
+	 */
+	protected function feed()
+	{
+		// Generic feed information
+		$this->template->assign_vars(array(
+			'SELF_LINK'				=> $this->contrib->get_url('feed'),
+			'FEED_LINK'				=> $this->contrib->get_url(),
+			'FEED_TITLE'			=> $this->user->lang('FEED_CDB', $this->config['sitename'], $this->contrib->contrib_name),
+			'FEED_SUBTITLE'			=> $this->config['site_desc'],
+			'FEED_UPDATED'			=> date(\DateTime::ATOM),
+			'FEED_LANG'				=> $this->user->lang('USER_LANG'),
+			'FEED_AUTHOR'			=> $this->config['sitename'],
+		));
+
+		return \contribs_overlord::build_feed($this->template, $this->helper, $this->path_helper, $this->contrib);
 	}
 
 	/**

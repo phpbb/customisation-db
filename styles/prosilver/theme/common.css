@@ -144,6 +144,10 @@ a.download-button .vendor-version {
 	visibility: hidden;
 	width: 210px;
 	z-index: 9;
+
+	/* Centre the box to the left, as it's now containing more information */
+	transform: translateY(-50%);
+	top: 50%;
 }
 
 .contrib-download:hover .download-info {
@@ -371,6 +375,31 @@ a.screenshot img, img.screenshot {
 	width: 100%;
 }
 
+/* Featured contributions
+--------------------------------------------- */
+
+.contrib-featured-container {
+	margin-top: 5px;
+	box-sizing: border-box;
+	display: inline-block;
+	width: 100%;
+}
+
+.contrib-quickview-featured:nth-child(1) {
+	margin-left: -5px;
+	margin-right: 5px;
+}
+
+.contrib-featured {
+	margin-bottom: 10px;
+}
+
+.contrib-featured > span {
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 1.1em;
+}
+
 /* Contribution List
 --------------------------------------------- */
 .contrib-filter {
@@ -432,6 +461,7 @@ a.screenshot img, img.screenshot {
 .quickview-preview {
 	height: 130px;
 	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .quickview-desc {
@@ -561,8 +591,31 @@ ul.simple li.header dt, ul.simple li.header dd {
 	width: 130px !important;
 }
 
+/* If multiple versions, then comma separate
+--------------------------------------------- */
 dd.revision-version, dd.phpbb-version {
 	text-align: center;
+}
+
+ul.revision-version-list {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+
+ul.revision-version-list li {
+	margin: 0;
+	padding: 0;
+	display: inline;
+	list-style: none;
+}
+
+ul.revision-version-list li:after {
+	content: ", ";
+}
+
+ul.revision-version-list li:last-child:after {
+	content: "";
 }
 
 #translations-panel {
@@ -911,7 +964,7 @@ p.attention-closed {
 }
 
 #queue-stat-info {
-	font-family: Verdana, Helvetica, Arial;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 1.1em;
 }
 
@@ -921,12 +974,15 @@ p.attention-closed {
 .stat-ratio span, .stat-day span, .day-list span {
 	display: block;
 	float: left;
-	font-family: Helvetica, Arial, Verdana;
+	font-family: Helvetica, Arial, Verdana, sans-serif;
 	text-align: center;
 	width: 20px;
 }
 
-.stat-ratio { width: 300px; }
+.stat-ratio {
+	width: 80%;
+	margin: 25px 0;
+}
 
 .stat-ratio span {
 	height: 16px;
@@ -943,6 +999,16 @@ p.attention-closed {
 	float: none;
 	margin-bottom: 1px;
 	position: relative;
+}
+
+.day-list-date {
+	font-size: 1.0em;
+}
+
+.queue-statistics-box {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .stat-day span strong {
@@ -1031,4 +1097,19 @@ hr.solid {
 
 .titania-navigation {
 	margin-top: 8px;
+}
+
+.customisation-database {
+	/* available class for custom CSS/scripting in the body tag */
+}
+
+/* Translation Submission
+--------------------------------------------- */
+.translation-validation {
+	text-align: center;
+	margin: 30px 0px 30px 0px;
+}
+
+.translation-validation > textarea {
+	display: inline-block;
 }

@@ -118,7 +118,7 @@ For further reading, you may want to review the following:
 
 For help with writing phpBB extensions, the following resources exist:
 [list][*][url=https://www.phpbb.com/community/viewforum.php?f=461]Extension Writers Discussion forum[/url]
-[*]IRC Support - [url=irc://irc.freenode.net/phpBB-coding]#phpBB-coding[/url] is registered on the FreeNode IRC network ([url=irc://irc.freenode.net/]irc.freenode.net[/url])[/list]
+[*][url=https://www.phpbb.com/support/chat/]Discord and IRC Support[/url][/list]
 
 [b]If you wish to discuss anything in this PM please use the “Validation Discussion“ sticky topic located in your extension’s Discussion/Support tab.[/b]
 
@@ -134,6 +134,7 @@ phpBB Extension Customisations Team',
 	'MISSING_EXT_NAME'			=> 'Missing value for <em>name</em> property in composer.json.',
 	'MISSING_COMPOSER_VERSION'	=> 'The composer.json file is missing the version property.',
 	'MISMATCH_COMPOSER_VERSION'	=> 'The version in the composer.json file (%1$s) does not match the version of this revision (%2$s).',
+	'MISMATCH_DISPLAY_NAME'		=> 'The display name in the composer.json file (%1$s) does not match the extension name (%2$s).',
 	'UNSTABLE_COMPOSER_VERSION'	=> 'This revision has an unstable version. Please use a stable version number.
 										Refer to the <a href="https://www.phpbb.com/extensions/rules-and-policies/validation-policy/#packaging-extensions">Extension Validation Policy</a> for more information.',
 

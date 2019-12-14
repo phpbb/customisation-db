@@ -127,10 +127,9 @@ class demo
 			{
 				require($this->phpbb_root_path . 'includes/message_parser.' . $this->php_ext);
 			}
-			$this->message_parser = new \parse_message;
+			$this->message_parser = new \parse_message($message);
 		}
 
-		$this->message_parser->parse_message($message);
 		$this->bbcode_data['regexp'] = array(
 			$this->bbcode_data['first_pass_match'] => str_replace(
 				'$uid',

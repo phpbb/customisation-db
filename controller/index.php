@@ -23,6 +23,9 @@ class index
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -65,6 +68,9 @@ class index
 	/** @var string */
 	protected $branch = '';
 
+	/** @var string */
+	protected $status = '';
+
 	/** @var array */
 	protected $params = array();
 
@@ -85,9 +91,10 @@ class index
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\tracking $tracking
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\display $display, \phpbb\titania\cache\service $cache, \phpbb\path_helper $path_helper, \phpbb\titania\config\config $ext_config, \phpbb\titania\tracking $tracking)
 	{
 		$this->auth = $auth;
+		$this->config = $config;
 		$this->template = $template;
 		$this->user = $user;
 		$this->helper = $helper;
@@ -109,14 +116,18 @@ class index
 	{
 		$this->set_branch($branch);
 
+		// Approval status
+		$status = $this->request->variable('status', '');
+		$this->set_status($status);
+
 		$title = $this->user->lang('CUSTOMISATION_DATABASE');
-		$sort = $this->list_contributions('', self::ALL_CONTRIBS, '');
+		$sort = $this->list_contributions('', self::ALL_CONTRIBS);
 		$this->params = $this->get_params($sort);
 		$this->display->assign_global_vars();
 
 		if ($this->request->is_ajax())
 		{
-			return $this->get_ajax_response($title, $sort);
+			return $this->get_ajax_response($title, $sort, $status);
 		}
 
 		$this->display->display_categories(
@@ -140,6 +151,7 @@ class index
 			'U_MARK_FORUMS'			=> $this->path_helper->append_url_params($this->helper->get_current_url(), array('mark' => 'contribs')),
 			'L_MARK_FORUMS_READ'	=> $this->user->lang['MARK_CONTRIBS_READ'],
 			'U_ALL_CONTRIBUTIONS'	=> $this->get_index_url($this->params),
+			'U_CONTRIB_FEED'		=> $this->helper->route('phpbb.titania.index.feed'),
 
 			'S_DISPLAY_SEARCHBOX'	=> true,
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
@@ -147,8 +159,30 @@ class index
 
 		$this->assign_sorting($sort);
 		$this->assign_branches();
+		$this->assign_status();
 
 		return $this->helper->render('index_body.html', $title);
+	}
+
+	/**
+	 * ATOM feed for all contribution revisions (new releases)
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @throws \Exception
+	 */
+	public function feed()
+	{
+		// Generic feed information
+		$this->template->assign_vars(array(
+			'SELF_LINK'				=> $this->helper->route('phpbb.titania.index.feed'),
+			'FEED_LINK'				=> $this->helper->route('phpbb.titania.index'),
+			'FEED_TITLE'			=> $this->user->lang('FEED_CDB_ALL', $this->config['sitename']),
+			'FEED_SUBTITLE'			=> $this->config['site_desc'],
+			'FEED_UPDATED'			=> date(\DateTime::ATOM),
+			'FEED_LANG'				=> $this->user->lang('USER_LANG'),
+			'FEED_AUTHOR'			=> $this->config['sitename'],
+		));
+
+		return \contribs_overlord::build_feed($this->template, $this->helper, $this->path_helper);
 	}
 
 	/**
@@ -158,6 +192,10 @@ class index
 	*/
 	public function display_category($category1, $category2, $category3, $category4)
 	{
+		// Approval status
+		$status = $this->request->variable('status', '');
+		$this->set_status($status);
+
 		$categories = array($category1, $category2, $category3, $category4);
 
 		try
@@ -187,7 +225,7 @@ class index
 
 		if ($this->request->is_ajax())
 		{
-			return $this->get_ajax_response($title, $sort);
+			return $this->get_ajax_response($title, $sort, $status);
 		}
 
 		$this->display->display_categories(
@@ -204,11 +242,14 @@ class index
 			'S_DISPLAY_SEARCHBOX'	=> true,
 			'S_SEARCHBOX_ACTION'	=> $this->helper->route('phpbb.titania.search.contributions.results'),
 			'U_QUEUE_STATS'			=> $this->get_queue_stats_url(),
+			'U_CONTRIB_FEED'		=> $this->helper->route('phpbb.titania.index.feed'),
 			'U_CREATE_CONTRIBUTION'	=> $this->get_create_contrib_url(),
 			'U_ALL_CONTRIBUTIONS'	=> $this->get_index_url($this->params),
 		));
+
 		$this->assign_sorting($sort);
 		$this->assign_branches();
+		$this->assign_status();
 
 		return $this->helper->render('index_body.html', $title);
 	}
@@ -333,7 +374,7 @@ class index
 	protected function get_category_type()
 	{
 		$children = $this->get_children_ids();
-		$type_id = $this->category->category_type;
+		$type_id = ($this->category !== null) ? $this->category->category_type : false;
 
 		// If the category is the top most parent, we'll try to get the type from the first child
 		if (!$type_id && !empty($children))
@@ -358,11 +399,18 @@ class index
 		$sort->set_defaults(24);
 		$branch = (int) str_replace('.', '', $this->branch);
 
-		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort);
+		// Get the featured contributions
+		\contribs_overlord::featured_contribs();
+
+		$data = \contribs_overlord::display_contribs($mode, $categories, $branch, $sort, 'contribs', $this->status);
 
 		// Canonical URL
 		$data['sort']->set_url($sort_url);
-		$this->template->assign_var('U_CANONICAL', $data['sort']->build_canonical());
+
+		$this->template->assign_vars([
+			'U_CANONICAL' => $data['sort']->build_canonical(),
+			'S_IS_TITANIA_INDEX' => ($sort_url === 0),
+		]);
 
 		return $data['sort'];
 	}
@@ -429,6 +477,8 @@ class index
 			'categories'	=> $this->get_category_urls(),
 			'branches'		=> $this->get_branches(),
 			'sort'			=> $this->get_sorting($sort),
+			'status'		=> $this->get_status(),
+			'show_status'	=> $this->valid_type_permissions(),
 			'pagination'    => $this->template->assign_display('pagination'),
 			'u_queue_stats'	=> $this->get_queue_stats_url(),
 			'l_queue_stats'	=> $this->user->lang('QUEUE_STATS'),
@@ -498,6 +548,96 @@ class index
 			'ACTIVE'	=> $id == $sort->sort_key . '_' . $sort->sort_dir,
 			'ID'		=> $id,
 		);
+	}
+
+	/**
+	 * Prepare status dropdown lists to show the various options
+	 */
+	protected function assign_status()
+	{
+		foreach ($this->get_status() as $status => $vars)
+		{
+			$this->template->assign_block_vars('sort_status', $vars);
+
+			if ($vars['ACTIVE'])
+			{
+				$this->template->assign_var('ACTIVE_STATUS', $vars['NAME']);
+			}
+		}
+
+		$this->template->assign_var('SHOW_STATUS', $this->valid_type_permissions());
+	}
+
+	/**
+	 * Check whether the user has permission to filter by unapproved contributions
+	 * @return bool
+	 * @throws \Exception
+	 */
+	private function valid_type_permissions()
+	{
+		$types_managed = $this->types->find_authed('validate');
+
+		// If current type id is null, it's the index page
+		$current_category_type = $this->get_category_type();
+		$current_type_id = ($current_category_type !== false) ? $current_category_type->get_id() : null;
+
+		// If the user manages some types, and the current type is in that list (or it's the index) show the dropdown.
+		$show = (sizeof($types_managed) && ($current_type_id === null || in_array($current_type_id, $types_managed)));
+
+		return $show;
+	}
+
+	/**
+	 * Get the list of statuses, including the one which is currently set to active
+	 * @return array
+	 * @throws \Exception
+	 */
+	protected function get_status()
+	{
+		$params = $this->params;
+		unset($params['status']);
+
+		$is_ajax = $this->request->is_ajax();
+		$url = $this->get_item_url($params);
+
+		$status_list = array();
+		$status_list[] = array(
+			'NAME'		=> $this->user->lang('STATUS_ALL'),
+			'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
+			'ACTIVE'	=> empty($this->status),
+			'ID'		=> 'all',
+		);
+
+		// Set up how the URL will look
+		$status_types = array(
+			$this->user->lang('STATUS_APPROVED') => 'approved',
+			$this->user->lang('STATUS_UNAPPROVED') => 'unapproved',
+		);
+
+		foreach ($status_types as $status_type => $status_type_url)
+		{
+			$params['status'] = $status_type_url;
+			$url = $this->get_item_url($params);
+
+			// Set to active if it's the one currently selected
+			$status_list[] = array(
+				'NAME'		=> $status_type,
+				'URL'		=> ($is_ajax) ? str_replace('&amp;', '&', $url) : $url,
+				'ACTIVE'	=> $this->status == $status_type_url,
+				'ID'		=> $status_type_url,
+			);
+		}
+
+		return $status_list;
+	}
+
+	/**
+	 * Store the selected status
+	 * @param $status
+	 */
+	protected function set_status($status)
+	{
+		$this->status = $status;
 	}
 
 	/**
@@ -624,6 +764,10 @@ class index
 		if ($this->branch)
 		{
 			$params['branch'] = $this->branch;
+		}
+		if ($this->status)
+		{
+			$params['status'] = $this->status;
 		}
 
 		return $params;
