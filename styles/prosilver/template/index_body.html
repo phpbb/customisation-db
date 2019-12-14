@@ -2,7 +2,45 @@
 
 <h2>{{ lang('CUSTOMISATION_DATABASE') }}</h2>
 
-	<div class="action-bar contrib-filter" style="margin-top: 2em;">
+	{% if S_IS_TITANIA_INDEX %}
+	<div class="contrib-featured-container">
+		{% for contribs in loops.featured_contribs %}
+		<div class="contrib-quickview contrib-quickview-featured">
+			<div class="contrib-featured">
+				<span>{{ lang('RANDOM_CONTRIBUTION') }}</span>
+			</div>
+			<a href="{{ contribs.U_VIEW_CONTRIB }}" class="quickview-title">{{ contribs.CONTRIB_NAME }}</a>
+			<div class="quickview-preview">
+				<div class="quickview-desc">{{ contribs.DESC_SNIPPET }}</div>
+				<div class="quickview-image">
+					{% if contribs.PREVIEW %}
+					<img src="{{ contribs.PREVIEW }}" alt="{{ contribs.CONTRIB_NAME }}" class="screenshot" />
+					{% else %}
+					<img src="{{ T_TITANIA_THEME_PATH }}/images/types/{{ contribs.CONTRIB_TYPE_CLEAN }}.png" alt="{{ lang('NO_SCREENSHOT') }}" class="screenshot" />
+					{% endif %}
+				</div>
+			</div>
+			{{ contribs.CONTRIB_RATING_STRING }}
+			<p>{{ lang('BY') }} {{ contribs.AUTHOR_NAME_FULL }}</p>
+			{% for branches in contribs.branches %}
+			<span class="quickview-label">{{ branches.NAME }}</span>
+			{% endfor %}
+			{% if contribs.S_CONTRIB_CLEANED %}
+			<span class="quickview-label label-clean">{{ lang('CONTRIB_CLEANED') }}</span>
+			{% elseif contribs.S_CONTRIB_NEW %}
+			<span class="quickview-label label-new">{{ lang('UNAPPROVED') }}</span>
+			{% elseif contribs.S_CONTRIB_HIDDEN %}
+			<span class="quickview-label label-hidden">{{ lang('HIDDEN') }}</span>
+			{% elseif contribs.S_CONTRIB_DISABLED %}
+			<span class="quickview-label label-disabled">{{ lang('DISABLED') }}</span>
+			{% endif %}
+			<span class="quickview-label">{{ contribs.CONTRIB_TYPE }}</span>
+		</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	<div class="action-bar contrib-filter">
 		{% if U_CREATE_CONTRIBUTION %}
 			<a href="{{ U_CREATE_CONTRIBUTION }}" title="{{ lang('NEW_CONTRIBUTION') }}" class="button">
 				<span>{{ lang('NEW_CONTRIBUTION') }}</span> <i class="icon fa-plus-circle fa-fw" aria-hidden="true"></i>
