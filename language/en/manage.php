@@ -153,4 +153,7 @@ $lang = array_merge($lang, array(
 	'UPLOAD_MAX_FILESIZE'			=> '',
 	'CLEANUP_TITANIA' 				=> 'Remove unsubmitted revisions and attachments',
 
+	'TITANIA_EXTENSIONS_QUEUE'		=> 'IDs of the extensions queue forum.',
+	'TITANIA_STYLES_QUEUE'			=> 'IDs of the styles queue forum.',
+	'TITANIA_MODS_QUEUE'			=> 'IDs of the MODs queue forum.',
 ));

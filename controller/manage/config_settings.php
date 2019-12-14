@@ -92,6 +92,9 @@ class config_settings extends base
 			'demo_style_hook' 				=> 'array',
 			//'team_groups'					=> 'array',
 			//'upload_max_filesize'			=> 'array',
+			'titania_extensions_queue' 		=> 'array',
+			'titania_styles_queue'			=> 'array',
+			'titania_mods_queue'			=> 'array',
 			'cleanup_titania' 				=> 'bool',
 		);
 
