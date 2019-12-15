@@ -125,7 +125,7 @@ class demo
 	 */
 	public function configure($phpbb_branch, $default_style = false)
 	{
-		if ($phpbb_branch === 31)
+		if ($phpbb_branch == 31)
 		{
 			// Disable access to 3.1 style demos
 			throw new http_exception(404, 'NO_DEMO');
