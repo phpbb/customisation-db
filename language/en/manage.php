@@ -11,6 +11,8 @@
 *
 */
 
+use phpbb\titania\ext;
+
 /**
 * DO NOT CHANGE
 */
@@ -148,9 +150,9 @@ $lang = array_merge($lang, array(
 	'CAN_MODIFY_STYLE_DEMO_URL' 	=> 'When editing styles, do not allow non-team members to modify the demo URL',
 	'DEMO_STYLE_PATH' 				=> 'Path to the style demo board you would like styles to be installed on upon validation (there is a checkbox option for styles to be installed on the demo board when approving)',
 	'DEMO_STYLE_URL' 				=> 'Full URL to the demo style.  We will perform sprintf(demo_style_full, $style_id), so please write the url properly. Example (from phpbb.com) http://www.phpbb.com/styles/demo/3.0/?style_id=%s',
-	'DEMO_STYLE_HOOK' 				=> '',
+	'DEMO_STYLE_HOOK' 				=> 'URL for style demo board management hook',
 	'TEAM_GROUPS'					=> 'Team groups (members will get TITANIA_TEAMS_ACCESS)',
-	'UPLOAD_MAX_FILESIZE'			=> '',
+	'UPLOAD_MAX_FILESIZE'			=> 'Max file sizes of uploaded attachments (in bytes)',
 	'CLEANUP_TITANIA' 				=> 'Remove unsubmitted revisions and attachments',
 	'TITANIA_EXTENSIONS_QUEUE'		=> 'IDs of the extensions queue forum.',
 	'TITANIA_STYLES_QUEUE'			=> 'IDs of the styles queue forum.',
@@ -159,7 +161,12 @@ $lang = array_merge($lang, array(
 	'KEY_30'	=> '3.0',
 	'KEY_31'	=> '3.1',
 	'KEY_32'	=> '3.2',
-	'KEY_' . \phpbb\titania\ext::TITANIA_QUEUE_DISCUSSION => 'Queue Forum',
-	'KEY_' . \phpbb\titania\ext::TITANIA_QUEUE => 'Queue Category',
-	'KEY_trash' => 'Queue Trash Can',
+	'KEY_' . ext::TITANIA_QUEUE_DISCUSSION	=> 'Queue Forum',
+	'KEY_' . ext::TITANIA_QUEUE				=> 'Queue Category',
+	'KEY_trash'								=> 'Queue Trash Can',
+	'KEY_' . ext::TITANIA_CONTRIB			=> 'Contributions',
+	'KEY_' . ext::TITANIA_SCREENSHOT		=> 'Screenshots',
+	'KEY_' . ext::TITANIA_TRANSLATION		=> 'Translations',
+	'KEY_' . ext::TITANIA_CLR_SCREENSHOT	=> 'Colorizeit Screenshots',
+
 ));

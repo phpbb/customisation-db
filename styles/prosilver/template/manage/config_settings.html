@@ -7,7 +7,7 @@
 	</div>
 {% endif %}
 
-<form id="config_settings" method="post" action="{{ S_ACTION }}" name="config_settings" autocomplete="off">
+<form id="config_settings" method="post" action="{{ U_ACTION }}" name="config_settings" autocomplete="off"{# data-ajax="true"#}>
 	<div class="panel">
 		<div class="inner">
 			<fieldset>
@@ -24,7 +24,7 @@
 								<input type="radio" name="{{ options.NAME }}" value="0" {% if not options.VALUE %}checked="checked"{% endif %} /> {{ lang('NO') }}
 							{% elseif options.TYPE === 'array' %}
 								{% for subKey, subValue in options.VALUE %}
-									<label for="{{ options.NAME }}[{{ subKey }}]">{{ lang('KEY_' ~ subKey) }} <input type="text" name="{{ options.NAME }}[{{ subKey }}]" id="{{ options.NAME }}[{{ subKey }}]" size="50" value="{{ subValue }}" class="inputbox autowidth" /></label><br />
+									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('KEY_' ~ subKey) }} <input type="text" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" size="50" value="{{ subValue }}" class="inputbox autowidth" /></label><br />
 								{% endfor %}
 							{% endif %}
 						</dd>

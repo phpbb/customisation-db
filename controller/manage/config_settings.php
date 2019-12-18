@@ -53,24 +53,27 @@ class config_settings extends base
 		$this->display->assign_global_vars();
 		$this->generate_navigation('administration');
 
-		$this->template->assign_block_vars_array('options', $this->get_configs());
+		$this->template->assign_block_vars_array('options', $this->parse_configs());
 
-		$this->display->generate_breadcrumbs(array(
+		$this->display->generate_breadcrumbs([
 			'CONFIG_SETTINGS'		=> $this->helper->route('phpbb.titania.manage.config_settings'),
-		));
+		]);
 
-		$this->template->assign_vars(array(
-			'SECTION_NAME'			=> $this->user->lang['CONFIG_SETTINGS'],
+		$this->template->assign_vars([
+			'SECTION_NAME'			=> $this->user->lang('CONFIG_SETTINGS'),
 
 			//'S_MANAGE'			=> true,
-		));
 
-		return $this->helper->render('manage/config_settings.html', 'CONFIG_SETTINGS');
+			'U_ACTION'				=> $this->helper->route('phpbb.titania.manage.config_settings'),
+			//'U_BACK'				=> $this->helper->route('phpbb.titania.manage.config_settings'),
+		]);
+
+		return $this->helper->render('@phpbb_titania/manage/config_settings.html', 'CONFIG_SETTINGS');
 	}
 
 	protected function get_configs()
 	{
-		$configurable = array(
+		return [
 			'phpbb_root_path' 				=> 'string',
 			'phpbb_script_path' 			=> 'string',
 			'titania_script_path' 			=> 'string',
@@ -82,6 +85,9 @@ class config_settings extends base
 			'forum_extension_robot' 		=> 'int',
 			'forum_style_database' 			=> 'array',
 			'forum_style_robot' 			=> 'int',
+			'titania_extensions_queue' 		=> 'array',
+			'titania_styles_queue'			=> 'array',
+			'titania_mods_queue'			=> 'array',
 			'colorizeit' 					=> 'string',
 			'colorizeit_auth' 				=> 'string',
 			'colorizeit_var' 				=> 'string',
@@ -90,13 +96,15 @@ class config_settings extends base
 			'demo_style_path' 				=> 'array',
 			'demo_style_url' 				=> 'array',
 			'demo_style_hook' 				=> 'array',
-			//'team_groups'					=> 'array',
-			//'upload_max_filesize'			=> 'array',
-			'titania_extensions_queue' 		=> 'array',
-			'titania_styles_queue'			=> 'array',
-			'titania_mods_queue'			=> 'array',
+			//'team_groups'					=> 'array|string',
+			'upload_max_filesize'			=> 'array',
 			'cleanup_titania' 				=> 'bool',
-		);
+		];
+	}
+
+	protected function parse_configs()
+	{
+		$configurable = $this->get_configs();
 
 		foreach ($configurable as $config => $type)
 		{
@@ -104,7 +112,7 @@ class config_settings extends base
 			{
 				if (null !== $this->ext_config->__get($config))
 				{
-					$configurable[$config] = array('NAME' => $config, 'TYPE' => $type, 'VALUE' => $this->ext_config->{$config});
+					$configurable[$config] = ['NAME' => $config, 'TYPE' => $type, 'VALUE' => $this->ext_config->{$config}];
 					continue;
 				}
 			}
