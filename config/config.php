@@ -282,5 +282,55 @@ class config extends \phpbb\titania\entity\base
 	 */
 	protected function set_from_phpbb_config()
 	{
+		$configs = [];
+
+		foreach ($this->get_configurables() as $config => $type)
+		{
+			if ($this->config->offsetExists(ext::TITANIA_CONFIG_PREFIX . $config))
+			{
+				$configs[$config] = json_decode($this->config->offsetGet(ext::TITANIA_CONFIG_PREFIX . $config), true);
+			}
+		}
+
+		$this->__set_array($configs);
+	}
+
+	/**
+	 * Get an array of common configurable options
+	 * Add additional config variables to this array to be able to configure them
+	 * in Titania's administration, or remove them from this array to remove them
+	 * from Titania's administration.
+	 *
+	 * @return array
+	 */
+	public function get_configurables()
+	{
+		return [
+			'phpbb_root_path' 				=> 'string',
+			'phpbb_script_path' 			=> 'string',
+			'titania_script_path' 			=> 'string',
+			'table_prefix' 					=> 'string',
+			'search_backend' 				=> 'string',
+			'forum_mod_database' 			=> 'array',
+			'forum_mod_robot' 				=> 'int',
+			'forum_extension_database' 		=> 'array',
+			'forum_extension_robot' 		=> 'int',
+			'forum_style_database' 			=> 'array',
+			'forum_style_robot' 			=> 'int',
+			'titania_extensions_queue' 		=> 'array',
+			'titania_styles_queue'			=> 'array',
+			'titania_mods_queue'			=> 'array',
+			'colorizeit' 					=> 'string',
+			'colorizeit_auth' 				=> 'string',
+			'colorizeit_var' 				=> 'string',
+			'colorizeit_value' 				=> 'string',
+			'can_modify_style_demo_url' 	=> 'bool',
+			'demo_style_path' 				=> 'array',
+			'demo_style_url' 				=> 'array',
+			'demo_style_hook' 				=> 'array',
+			//'team_groups'					=> 'array|string',
+			'upload_max_filesize'			=> 'array',
+			'cleanup_titania' 				=> 'bool',
+		];
 	}
 }

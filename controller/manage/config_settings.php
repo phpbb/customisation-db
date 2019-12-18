@@ -15,6 +15,7 @@ namespace phpbb\titania\controller\manage;
 
 use phpbb\exception\http_exception;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\ext;
 
 class config_settings extends base
 {
@@ -88,8 +89,7 @@ class config_settings extends base
 
 	public function save()
 	{
-		$this->db->sql_transaction('begin');
-		foreach ($this->get_configs() as $config => $type)
+		foreach ($this->ext_config->get_configurables() as $config => $type)
 		{
 			if ($type === 'array')
 			{
@@ -99,55 +99,21 @@ class config_settings extends base
 					$parts[$key] = $this->request->variable($config . '_' . $key, '');
 				}
 
-				$value = json_encode($parts);
+				$value = $parts;
 			}
 			else
 			{
 				$value = $this->request->variable($config, '');
 			}
 
-			$sql = 'UPDATE ' . TITANIA_CONFIG_SETTINGS_TABLE . "
-				SET config_value = '" . $this->db->sql_escape($value) . "'
-				WHERE config_name = '" . $this->db->sql_escape($config) . "'";
-			$this->db->sql_query($sql);
+			$this->config->set(ext::TITANIA_CONFIG_PREFIX . $config, json_encode($value));
+			$this->ext_config->__set($config, $value);
 		}
-		$this->db->sql_transaction('commit');
-	}
-
-	protected function get_configs()
-	{
-		return [
-			'phpbb_root_path' 				=> 'string',
-			'phpbb_script_path' 			=> 'string',
-			'titania_script_path' 			=> 'string',
-			'table_prefix' 					=> 'string',
-			'search_backend' 				=> 'string',
-			'forum_mod_database' 			=> 'array',
-			'forum_mod_robot' 				=> 'int',
-			'forum_extension_database' 		=> 'array',
-			'forum_extension_robot' 		=> 'int',
-			'forum_style_database' 			=> 'array',
-			'forum_style_robot' 			=> 'int',
-			'titania_extensions_queue' 		=> 'array',
-			'titania_styles_queue'			=> 'array',
-			'titania_mods_queue'			=> 'array',
-			'colorizeit' 					=> 'string',
-			'colorizeit_auth' 				=> 'string',
-			'colorizeit_var' 				=> 'string',
-			'colorizeit_value' 				=> 'string',
-			'can_modify_style_demo_url' 	=> 'bool',
-			'demo_style_path' 				=> 'array',
-			'demo_style_url' 				=> 'array',
-			'demo_style_hook' 				=> 'array',
-			//'team_groups'					=> 'array|string',
-			'upload_max_filesize'			=> 'array',
-			'cleanup_titania' 				=> 'bool',
-		];
 	}
 
 	protected function parse_configs()
 	{
-		$configurable = $this->get_configs();
+		$configurable = $this->ext_config->get_configurables();
 
 		foreach ($configurable as $config => $type)
 		{
