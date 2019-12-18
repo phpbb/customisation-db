@@ -13,6 +13,7 @@
 
 namespace phpbb\titania\controller\manage;
 
+use phpbb\exception\http_exception;
 use phpbb\titania\contribution\type\collection as type_collection;
 
 class config_settings extends base
@@ -50,6 +51,20 @@ class config_settings extends base
 			return $this->helper->needs_auth();
 		}
 
+		add_form_key('config_settings');
+
+		if ($this->request->is_set_post('submit'))
+		{
+			if (check_form_key('config_settings'))
+			{
+				$this->save();
+			}
+			else
+			{
+				throw new http_exception(200, 'FORM_INVALID');
+			}
+		}
+
 		$this->display->assign_global_vars();
 		$this->generate_navigation('administration');
 
@@ -69,6 +84,34 @@ class config_settings extends base
 		]);
 
 		return $this->helper->render('@phpbb_titania/manage/config_settings.html', 'CONFIG_SETTINGS');
+	}
+
+	public function save()
+	{
+		$this->db->sql_transaction('begin');
+		foreach ($this->get_configs() as $config => $type)
+		{
+			if ($type === 'array')
+			{
+				$parts = [];
+				foreach ($this->ext_config->__get($config) as $key => $value)
+				{
+					$parts[$key] = $this->request->variable($config . '_' . $key, '');
+				}
+
+				$value = json_encode($parts);
+			}
+			else
+			{
+				$value = $this->request->variable($config, '');
+			}
+
+			$sql = 'UPDATE ' . TITANIA_CONFIG_SETTINGS_TABLE . "
+				SET config_value = '" . $this->db->sql_escape($value) . "'
+				WHERE config_name = '" . $this->db->sql_escape($config) . "'";
+			$this->db->sql_query($sql);
+		}
+		$this->db->sql_transaction('commit');
 	}
 
 	protected function get_configs()
