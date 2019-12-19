@@ -301,6 +301,15 @@ class config extends \phpbb\titania\entity\base
 	 * in Titania's administration, or remove them from this array to remove them
 	 * from Titania's administration.
 	 *
+	 * Types:
+	 * string - For a simple string field item.
+	 * int    - For a simple number field item.
+	 * bool   - For a true/false radio button.
+	 * array  - These are for multidimensional field items, i.e.: multiple phpBB
+	 *          version branches. Each array field should be appended with their
+	 *          common type such as string, int or bool, i.e: array|string
+	 * forums - For a Select forum drop down item.
+	 *
 	 * @return array
 	 */
 	public function get_configurables()

@@ -93,14 +93,15 @@ class config_settings extends base
 			if (strpos($type, 'array') === 0)
 			{
 				$value = [];
+				$type = explode('|', $type);
 				foreach ($this->ext_config->__get($config) as $key => $current)
 				{
-					$value[$key] = $this->request->variable($config . '_' . $key, '');
+					$value[$key] = $this->request->variable($config . '_' . $key, $this->get_default($type[1]));
 				}
 			}
 			else
 			{
-				$value = $this->request->variable($config, '');
+				$value = $this->request->variable($config, $this->get_default($type));
 			}
 
 			$this->config->set(ext::TITANIA_CONFIG_PREFIX . $config, json_encode($value));
@@ -131,5 +132,25 @@ class config_settings extends base
 		}
 
 		return $configurable;
+	}
+
+	protected function get_default($type)
+	{
+		switch ($type)
+		{
+			case 'int':
+			case 'forums':
+				return 0;
+			break;
+			case 'bool':
+				return false;
+			break;
+			case 'groups':
+				return array(0);
+			break;
+			default:
+				return '';
+			break;
+		}
 	}
 }
