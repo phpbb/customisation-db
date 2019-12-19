@@ -26,7 +26,6 @@ define('TITANIA_ATTENTION_TABLE',				$table_prefix . 'attention');
 define('TITANIA_AUTOMOD_QUEUE_TABLE',			$table_prefix . 'automod_queue');
 define('TITANIA_AUTHORS_TABLE',					$table_prefix . 'authors');
 define('TITANIA_CATEGORIES_TABLE',				$table_prefix . 'categories');
-define('TITANIA_CONFIG_SETTINGS_TABLE',			$table_prefix . 'config_settings');
 define('TITANIA_CONTRIBS_TABLE',				$table_prefix . 'contribs');
 define('TITANIA_CONTRIB_COAUTHORS_TABLE',		$table_prefix . 'contrib_coauthors');
 define('TITANIA_CONTRIB_FAQ_TABLE',				$table_prefix . 'contrib_faq');

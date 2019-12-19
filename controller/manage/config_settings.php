@@ -73,15 +73,14 @@ class config_settings extends base
 		$this->template->assign_block_vars_array('options', $this->parse_configs());
 
 		$this->display->generate_breadcrumbs([
-			'CONFIG_SETTINGS'		=> $this->helper->route('phpbb.titania.manage.config_settings'),
+			'CONFIG_SETTINGS'	=> $this->helper->route('phpbb.titania.manage.config_settings'),
 		]);
 
 		$this->template->assign_vars([
-			'SECTION_NAME'			=> $this->user->lang('CONFIG_SETTINGS'),
-			'FORUM_SELECT'			=> make_forum_select(false, false, false, false, true, false, true),
+			'SECTION_NAME'	=> $this->user->lang('CONFIG_SETTINGS'),
+			'FORUM_SELECT'	=> make_forum_select(false, false, false, false, true, false, true),
 
-			'U_ACTION'				=> $this->helper->route('phpbb.titania.manage.config_settings'),
-			//'U_BACK'				=> $this->helper->route('phpbb.titania.manage.config_settings'),
+			'U_ACTION'		=> $this->helper->route('phpbb.titania.manage.config_settings'),
 		]);
 
 		return $this->helper->render('@phpbb_titania/manage/config_settings.html', 'CONFIG_SETTINGS');

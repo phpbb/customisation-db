@@ -16,19 +16,19 @@
 						<dt><label for="{{ options.NAME }}">${{ options.NAME }}:</label><br /><span>{{ lang(options.NAME|upper) }}</span></dt>
 						<dd>
 							{% if options.TYPE === 'string' %}
-								<input type="text" name="{{ options.NAME }}" id="{{ options.NAME }}" size="50" value="{{ options.VALUE }}" class="inputbox autowidth" />
+								<input type="text" name="{{ options.NAME }}" id="{{ options.NAME }}" size="50" value="{{ options.VALUE }}" class="inputbox autowidth">
 							{% elseif options.TYPE === 'int' %}
-								<input type="number" name="{{ options.NAME }}" id="{{ options.NAME }}" min="0" max="9999999999" value="{{ options.VALUE }}" class="inputbox autowidth" />
+								<input type="number" name="{{ options.NAME }}" id="{{ options.NAME }}" min="0" max="9999999999" value="{{ options.VALUE }}" class="inputbox autowidth">
 							{% elseif options.TYPE === 'bool' %}
 								<input type="radio" name="{{ options.NAME }}" value="1" {% if options.VALUE %}checked="checked"{% endif %} /> {{ lang('YES') }}
 								<input type="radio" name="{{ options.NAME }}" value="0" {% if not options.VALUE %}checked="checked"{% endif %} /> {{ lang('NO') }}
 							{% elseif options.TYPE === 'array|string' %}
 								{% for subKey, subValue in options.VALUE %}
-									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('KEY_' ~ subKey) }} <input type="text" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" size="50" value="{{ subValue }}" class="inputbox autowidth" /></label><br />
+									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('KEY_' ~ subKey) }} <input type="text" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" size="50" value="{{ subValue }}" class="inputbox autowidth"></label><br />
 								{% endfor %}
 							{% elseif options.TYPE === 'array|int' %}
 								{% for subKey, subValue in options.VALUE %}
-									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('KEY_' ~ subKey) }} <input type="number" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" min="0" max="9999999999" value="{{ subValue }}" class="inputbox autowidth" /></label><br />
+									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('KEY_' ~ subKey) }} <input type="number" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" min="0" max="9999999999" value="{{ subValue }}" class="inputbox autowidth"></label><br />
 								{% endfor %}
 							{% elseif options.TYPE === 'array|forums' %}
 								{% for subKey, subValue in options.VALUE %}
@@ -36,7 +36,7 @@
 										<select id="{{ options.NAME }}_{{ subKey }}" name="{{ options.NAME }}_{{ subKey }}">
 											<option value="0">{{ lang('SELECT_FORUM') }}</option>
 											{% for f_id, f_row in FORUM_SELECT %}
-												<option value="{{ f_id }}" {{ f_id == subValue ? 'selected="selected"' }} {{ f_row.disabled ? 'disabled="disabled" class="disabled-option"' }}> {{ f_row.padding ~ f_row.forum_name }}</option>
+												<option value="{{ f_id }}"{{ f_id == subValue ? ' selected="selected"' }}{{ f_row.disabled ? ' disabled="disabled" class="disabled-option"' }}> {{ f_row.padding ~ f_row.forum_name }}</option>
 											{% endfor %}
 										</select>
 									</label><br />
