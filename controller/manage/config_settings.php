@@ -78,8 +78,6 @@ class config_settings extends base
 		$this->template->assign_vars([
 			'SECTION_NAME'			=> $this->user->lang('CONFIG_SETTINGS'),
 
-			//'S_MANAGE'			=> true,
-
 			'U_ACTION'				=> $this->helper->route('phpbb.titania.manage.config_settings'),
 			//'U_BACK'				=> $this->helper->route('phpbb.titania.manage.config_settings'),
 		]);
@@ -93,13 +91,11 @@ class config_settings extends base
 		{
 			if ($type === 'array')
 			{
-				$parts = [];
-				foreach ($this->ext_config->__get($config) as $key => $value)
+				$value = [];
+				foreach ($this->ext_config->__get($config) as $key => $current)
 				{
-					$parts[$key] = $this->request->variable($config . '_' . $key, '');
+					$value[$key] = $this->request->variable($config . '_' . $key, '');
 				}
-
-				$value = $parts;
 			}
 			else
 			{
