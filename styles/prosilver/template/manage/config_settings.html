@@ -41,6 +41,12 @@
 										</select>
 									</label><br />
 								{% endfor %}
+							{% elseif options.TYPE === 'groups' %}
+								<select id="{{ options.NAME }}" name="{{ options.NAME }}[]" size="5" multiple="multiple"  class="inputbox autowidth">
+									{% for group in GROUP_SELECT %}
+										<option value="{{ group.group_id }}"{% if group.group_id in options.VALUE %} selected="selected"{% endif %}>{{ group.group_name }}</option>
+									{% endfor %}
+								</select>
 							{% endif %}
 						</dd>
 					</dl>

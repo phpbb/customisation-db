@@ -398,6 +398,7 @@ services:
             - '@phpbb.titania.config'
             - '@phpbb.titania.display'
             - '@phpbb.titania.message'
+            - '@group_helper'
 
     phpbb.titania.controller.manage.contrib.update_release_topics:
         calls:

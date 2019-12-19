@@ -19,6 +19,9 @@ use phpbb\titania\ext;
 
 class config_settings extends base
 {
+	/** @var \phpbb\group\helper $group_helper */
+	protected $group_helper;
+
 	/** @var \phpbb\titania\message\message */
 	protected $message;
 
@@ -37,12 +40,14 @@ class config_settings extends base
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
 	 * @param \phpbb\titania\message\message $message
+	 * @param \phpbb\group\helper $group_helper
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\message\message $message)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\message\message $message, \phpbb\group\helper $group_helper)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $types, $request, $ext_config, $display);
 
 		$this->message = $message;
+		$this->group_helper = $group_helper;
 	}
 
 	public function display()
@@ -79,6 +84,7 @@ class config_settings extends base
 		$this->template->assign_vars([
 			'SECTION_NAME'	=> $this->user->lang('CONFIG_SETTINGS'),
 			'FORUM_SELECT'	=> make_forum_select(false, false, false, false, true, false, true),
+			'GROUP_SELECT'	=> $this->get_groups(),
 
 			'U_ACTION'		=> $this->helper->route('phpbb.titania.manage.config_settings'),
 		]);
@@ -132,6 +138,27 @@ class config_settings extends base
 		}
 
 		return $configurable;
+	}
+
+	protected function get_groups()
+	{
+		$sql = 'SELECT group_id, group_name
+			FROM ' . GROUPS_TABLE . '
+			WHERE ' . $this->db->sql_in_set('group_name', array('BOTS', 'GUESTS'), true, true) . '
+			ORDER BY group_name ASC';
+		$result = $this->db->sql_query($sql);
+
+		$rowset = [];
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$rowset[$row['group_id']] = [
+				'group_id' => $row['group_id'],
+				'group_name' => $this->group_helper->get_name($row['group_name']),
+			];
+		}
+		$this->db->sql_freeresult($result);
+
+		return $rowset;
 	}
 
 	protected function get_default($type)

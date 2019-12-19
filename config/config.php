@@ -309,6 +309,7 @@ class config extends \phpbb\titania\entity\base
 	 *          version branches. Each array field should be appended with their
 	 *          common type such as string, int or bool, i.e: array|string
 	 * forums - For a Select forum drop down item.
+	 * groups - For a Group multi-select box item.
 	 *
 	 * @return array
 	 */
@@ -337,7 +338,7 @@ class config extends \phpbb\titania\entity\base
 			'demo_style_path' 				=> 'array|string',
 			'demo_style_url' 				=> 'array|string',
 			'demo_style_hook' 				=> 'array|string',
-			//'team_groups'					=> 'array|string',
+			'team_groups'					=> 'groups',
 			'upload_max_filesize'			=> 'array|int',
 			'cleanup_titania' 				=> 'bool',
 		];
