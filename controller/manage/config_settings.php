@@ -66,6 +66,7 @@ class config_settings extends base
 			}
 		}
 
+		\phpbb::_include('functions_admin', 'make_forum_select');
 		$this->display->assign_global_vars();
 		$this->generate_navigation('administration');
 
@@ -77,6 +78,7 @@ class config_settings extends base
 
 		$this->template->assign_vars([
 			'SECTION_NAME'			=> $this->user->lang('CONFIG_SETTINGS'),
+			'FORUM_SELECT'			=> make_forum_select(false, false, false, false, true, false, true),
 
 			'U_ACTION'				=> $this->helper->route('phpbb.titania.manage.config_settings'),
 			//'U_BACK'				=> $this->helper->route('phpbb.titania.manage.config_settings'),
@@ -89,7 +91,7 @@ class config_settings extends base
 	{
 		foreach ($this->ext_config->get_configurables() as $config => $type)
 		{
-			if ($type === 'array')
+			if (strpos($type, 'array') === 0)
 			{
 				$value = [];
 				foreach ($this->ext_config->__get($config) as $key => $current)
