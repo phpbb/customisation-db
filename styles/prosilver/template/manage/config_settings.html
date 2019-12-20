@@ -10,8 +10,8 @@
 <form id="config_settings" method="post" action="{{ U_ACTION }}" name="config_settings" autocomplete="off"{# data-ajax="true"#}>
 	<div class="panel">
 		<div class="inner">
-			{% for config, options in loops.options %}
-				<fieldset>
+			<fieldset>
+				{% for config, options in loops.options %}
 					<dl>
 						<dt><label for="{{ options.NAME }}">{{ lang(options.NAME|upper) }}:</label><br /><span>{{ lang(options.NAME|upper ~ '_EXPLAIN') }}</span></dt>
 						<dd>
@@ -39,7 +39,7 @@
 												<option value="{{ f_id }}"{{ f_id == subValue ? ' selected="selected"' }}{{ f_row.disabled ? ' disabled="disabled" class="disabled-option"' }}> {{ f_row.padding ~ f_row.forum_name }}</option>
 											{% endfor %}
 										</select>
-									</label><br />
+									</label><br /><br />
 								{% endfor %}
 							{% elseif options.TYPE === 'groups' %}
 								<select id="{{ options.NAME }}" name="{{ options.NAME }}[]" size="5" multiple="multiple"  class="inputbox autowidth">
@@ -50,20 +50,19 @@
 							{% endif %}
 						</dd>
 					</dl>
-				</fieldset>
-			{% endfor %}
+					{% if not loop.last %}<hr />{% endif %}
+				{% endfor %}
+			</fieldset>
 		</div>
 	</div>
-	<div class="panel">
+	<div class="panel bg2">
 		<div class="inner">
-		<fieldset>
-			<p class="submit-buttons">
+			<fieldset class="submit-buttons">
 				<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
 				<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
-			</p>
-			{{ S_HIDDEN_FIELDS }}
-			{{ S_FORM_TOKEN }}
-		</fieldset>
+				{{ S_HIDDEN_FIELDS }}
+				{{ S_FORM_TOKEN }}
+			</fieldset>
 		</div>
 	</div>
 </form>
