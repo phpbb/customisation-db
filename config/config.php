@@ -282,7 +282,7 @@ class config extends \phpbb\titania\entity\base
 	 */
 	protected function set_from_phpbb_config()
 	{
-		$configs = [];
+		$configs = array();
 
 		foreach ($this->get_configurables() as $config => $type)
 		{
@@ -315,7 +315,7 @@ class config extends \phpbb\titania\entity\base
 	 */
 	public function get_configurables()
 	{
-		return [
+		return array(
 			'phpbb_root_path' 				=> 'string',
 			'phpbb_script_path' 			=> 'string',
 			'titania_script_path' 			=> 'string',
@@ -361,6 +361,6 @@ class config extends \phpbb\titania\entity\base
 //			'use_queue'						=> 'bool',
 //			'allow_self_validation'			=> 'bool',
 //			'upload_directory'				=> 'array|string',
-		];
+		);
 	}
 }

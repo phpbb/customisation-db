@@ -83,17 +83,17 @@ class config_settings extends base
 
 		$this->template->assign_block_vars_array('options', $this->parse_configs());
 
-		$this->display->generate_breadcrumbs([
+		$this->display->generate_breadcrumbs(array(
 			'CONFIG_SETTINGS'	=> $this->helper->route('phpbb.titania.manage.config_settings'),
-		]);
+		));
 
-		$this->template->assign_vars([
+		$this->template->assign_vars(array(
 			'SECTION_NAME'	=> $this->user->lang('CONFIG_SETTINGS'),
 			'FORUM_SELECT'	=> make_forum_select(false, false, false, false, true, false, true),
 			'GROUP_SELECT'	=> $this->get_groups(),
 
 			'U_ACTION'		=> $this->helper->route('phpbb.titania.manage.config_settings'),
-		]);
+		));
 
 		return $this->helper->render('@phpbb_titania/manage/config_settings.html', 'CONFIG_SETTINGS');
 	}
@@ -110,7 +110,7 @@ class config_settings extends base
 		{
 			if (strpos($type, 'array') === 0)
 			{
-				$value = [];
+				$value = array();
 				$type = explode('|', $type);
 				foreach ($this->ext_config->__get($config) as $key => $current)
 				{
@@ -143,7 +143,7 @@ class config_settings extends base
 			{
 				if (null !== $this->ext_config->__get($config))
 				{
-					$configurable[$config] = ['NAME' => $config, 'TYPE' => $type, 'VALUE' => $this->ext_config->{$config}];
+					$configurable[$config] = array('NAME' => $config, 'TYPE' => $type, 'VALUE' => $this->ext_config->{$config});
 					continue;
 				}
 			}
@@ -172,13 +172,13 @@ class config_settings extends base
 			ORDER BY group_name ASC';
 		$result = $this->db->sql_query($sql);
 
-		$rowset = [];
+		$rowset = array();
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$rowset[$row['group_id']] = [
+			$rowset[$row['group_id']] = array(
 				'group_id' => $row['group_id'],
 				'group_name' => $this->group_helper->get_name($row['group_name']),
-			];
+			);
 		}
 		$this->db->sql_freeresult($result);
 
