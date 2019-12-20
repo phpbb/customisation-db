@@ -13,7 +13,7 @@
 			{% for config, options in loops.options %}
 				<fieldset>
 					<dl>
-						<dt><label for="{{ options.NAME }}">${{ options.NAME }}:</label><br /><span>{{ lang(options.NAME|upper) }}</span></dt>
+						<dt><label for="{{ options.NAME }}">{{ lang(options.NAME|upper) }}:</label><br /><span>{{ lang(options.NAME|upper ~ '_EXPLAIN') }}</span></dt>
 						<dd>
 							{% if options.TYPE === 'string' %}
 								<input type="text" name="{{ options.NAME }}" id="{{ options.NAME }}" size="50" value="{{ options.VALUE }}" class="inputbox autowidth">
@@ -24,15 +24,15 @@
 								<input type="radio" name="{{ options.NAME }}" value="0" {% if not options.VALUE %}checked="checked"{% endif %} /> {{ lang('NO') }}
 							{% elseif options.TYPE === 'array|string' %}
 								{% for subKey, subValue in options.VALUE %}
-									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('KEY_' ~ subKey) }} <input type="text" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" size="50" value="{{ subValue }}" class="inputbox autowidth"></label><br />
+									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('TI_KEY_' ~ subKey) }} <input type="text" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" size="50" value="{{ subValue }}" class="inputbox autowidth"></label><br />
 								{% endfor %}
 							{% elseif options.TYPE === 'array|int' %}
 								{% for subKey, subValue in options.VALUE %}
-									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('KEY_' ~ subKey) }} <input type="number" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" min="0" max="9999999999" value="{{ subValue }}" class="inputbox autowidth"></label><br />
+									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('TI_KEY_' ~ subKey) }} <input type="number" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" min="0" max="9999999999" value="{{ subValue }}" class="inputbox autowidth"></label><br />
 								{% endfor %}
 							{% elseif options.TYPE === 'array|forums' %}
 								{% for subKey, subValue in options.VALUE %}
-									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('KEY_' ~ subKey) }}
+									<label for="{{ options.NAME }}_{{ subKey }}">{{ lang('TI_KEY_' ~ subKey) }}
 										<select id="{{ options.NAME }}_{{ subKey }}" name="{{ options.NAME }}_{{ subKey }}">
 											<option value="0">{{ lang('SELECT_FORUM') }}</option>
 											{% for f_id, f_row in FORUM_SELECT %}
