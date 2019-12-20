@@ -50,6 +50,12 @@ class config_settings extends base
 		$this->group_helper = $group_helper;
 	}
 
+	/**
+	 * Display the configuration settings
+	 *
+	 * @throws \phpbb\titania\entity\UnknownPropertyException
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
 	public function display()
 	{
 		if (!$this->auth->acl_get('u_titania_admin'))
@@ -92,6 +98,12 @@ class config_settings extends base
 		return $this->helper->render('@phpbb_titania/manage/config_settings.html', 'CONFIG_SETTINGS');
 	}
 
+	/**
+	 * Save configuration settings. Saves them to phpBB's config table and
+	 * updates titania's config object with the new values.
+	 *
+	 * @throws \phpbb\titania\entity\UnknownPropertyException
+	 */
 	public function save()
 	{
 		foreach ($this->ext_config->get_configurables() as $config => $type)
@@ -115,6 +127,12 @@ class config_settings extends base
 		}
 	}
 
+	/**
+	 * Gets all the configurable options and creates an array of them
+	 * and their current values in titania's config object.
+	 *
+	 * @return array
+	 */
 	protected function parse_configs()
 	{
 		$configurable = $this->ext_config->get_configurables();
@@ -140,6 +158,12 @@ class config_settings extends base
 		return $configurable;
 	}
 
+	/**
+	 * Get all user groups (except bots and guests) and return
+	 * an array of their IDs and translated group names.
+	 *
+	 * @return array
+	 */
 	protected function get_groups()
 	{
 		$sql = 'SELECT group_id, group_name
@@ -161,6 +185,15 @@ class config_settings extends base
 		return $rowset;
 	}
 
+	/**
+	 * Define the default value and type casting for the various
+	 * configuration types we are using. Some are obvious, like int
+	 * string and bool. Some are custom like the forums and groups
+	 * types.
+	 *
+	 * @param $type
+	 * @return array|bool|int|string
+	 */
 	protected function get_default($type)
 	{
 		switch ($type)
