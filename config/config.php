@@ -320,10 +320,11 @@ class config extends \phpbb\titania\entity\base
 			'phpbb_script_path' 			=> 'string',
 			'titania_script_path' 			=> 'string',
 			'table_prefix' 					=> 'string',
-//			'search_enabled'				=> 'bool',
+			'site_home_url'					=> 'string',
+			'search_enabled'				=> 'bool',
 			'search_backend' 				=> 'string',
-//			'search_backend_ip'				=> 'string',
-//			'search_backend_port'			=> 'int',
+			'search_backend_ip'				=> 'string',
+			'search_backend_port'			=> 'int',
 			'forum_extension_database' 		=> 'array|forums',
 			'forum_extension_robot' 		=> 'int',
 			'forum_style_database' 			=> 'array|forums',
@@ -338,7 +339,7 @@ class config extends \phpbb\titania\entity\base
 			'titania_styles_queue'			=> 'array|forums',
 			'titania_mods_queue'			=> 'array|forums',
 			'colorizeit' 					=> 'string',
-//			'colorizeit_url'				=> 'string',
+			'colorizeit_url'				=> 'string',
 			'colorizeit_auth' 				=> 'string',
 			'colorizeit_var' 				=> 'string',
 			'colorizeit_value' 				=> 'string',
@@ -346,21 +347,26 @@ class config extends \phpbb\titania\entity\base
 			'demo_style_path' 				=> 'array|string',
 			'demo_style_url' 				=> 'array|string',
 			'demo_style_hook' 				=> 'array|string',
-			'team_groups'					=> 'groups',
 			'upload_max_filesize'			=> 'array|int',
+			'team_groups'					=> 'groups',
 			'cleanup_titania' 				=> 'bool',
-//			'site_home_url'					=> 'string',
 //			'style'							=> 'string',
 //			'theme'							=> 'string',
 //			'max_rating'					=> 'int',
-//			'phpbbcom_profile'				=> 'bool',
-//			'phpbbcom_viewprofile_url'		=> 'string',
 //			'support_in_titania'			=> 'bool',
 //			'display_backtrace'				=> 'int',
 //			'require_validation'			=> 'bool',
 //			'use_queue'						=> 'bool',
 //			'allow_self_validation'			=> 'bool',
 //			'upload_directory'				=> 'array|string',
+
+			// Not going to support these in the admin panel
+//			'phpbbcom_profile'
+//			'phpbbcom_viewprofile_url'
+//			'upload_allowed_extensions'
+//			'mpv_server_list'
+//			'phpbb_versions'
+//			'repack_diff_extensions'
 		);
 	}
 }
