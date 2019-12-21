@@ -123,18 +123,18 @@ class config extends \phpbb\titania\entity\base
 
 			// Extension/style validation queue forums
 			'titania_extensions_queue'	=> array('default' => array(
-				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				ext::TITANIA_QUEUE				=> 0,
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				'trash'							=> 0,
 			)),
 			'titania_mods_queue'		=> array('default' => array(
-				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				ext::TITANIA_QUEUE				=> 0,
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				'trash'							=> 0,
 			)),
 			'titania_styles_queue'		=> array('default' => array(
-				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				ext::TITANIA_QUEUE				=> 0,
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				'trash'							=> 0,
 			)),
 
