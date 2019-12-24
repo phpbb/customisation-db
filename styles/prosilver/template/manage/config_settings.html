@@ -1,13 +1,6 @@
 {% include 'manage/manage_header.html' %}
 
-{% if S_ERROR %}
-	<div class="errorbox">
-		<h3>{{ lang('WARNING') }}</h3>
-		<p>{{ ERROR_MSG }}</p>
-	</div>
-{% endif %}
-
-<form id="config_settings" method="post" action="{{ U_ACTION }}" name="config_settings" autocomplete="off"{# data-ajax="true"#}>
+<form id="config_settings" method="post" action="{{ U_ACTION }}" name="config_settings">
 	<div class="panel">
 		<div class="inner">
 			<fieldset>
