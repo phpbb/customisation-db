@@ -99,9 +99,6 @@ class config extends \phpbb\titania\entity\base
 			// Maximum rating allowed when rating stuff
 			'max_rating'				=> array('default' => 5),
 
-			'phpbbcom_profile'			=> array('default' => true),
-			'phpbbcom_viewprofile_url'	=> array('default' => 'https://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
-
 			// Mod/style database release forums (receive announcements on updates/approval)
 			'forum_mod_database'		=> array('default' => array(
 				'30'	=> 0,
@@ -367,8 +364,6 @@ class config extends \phpbb\titania\entity\base
 //			'upload_directory'				=> 'array|string',
 
 			// Not going to support these in the admin panel
-//			'phpbbcom_profile'
-//			'phpbbcom_viewprofile_url'
 //			'upload_allowed_extensions'
 //			'mpv_server_list'
 //			'phpbb_versions'
