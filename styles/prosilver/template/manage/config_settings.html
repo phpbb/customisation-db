@@ -11,7 +11,7 @@
 							{% if options.TYPE === 'string' %}
 								<input type="text" name="{{ options.NAME }}" id="{{ options.NAME }}" size="50" value="{{ options.VALUE }}" class="inputbox autowidth">
 							{% elseif options.TYPE === 'int' %}
-								<input type="number" name="{{ options.NAME }}" id="{{ options.NAME }}" min="0" max="9999999999" value="{{ options.VALUE }}" class="inputbox autowidth">
+								<input type="number" name="{{ options.NAME }}" id="{{ options.NAME }}" min="-9999999999" max="9999999999" value="{{ options.VALUE }}" class="inputbox autowidth">
 							{% elseif options.TYPE === 'bool' %}
 								<input type="radio" name="{{ options.NAME }}" value="1" {% if options.VALUE %}checked="checked"{% endif %} /> {{ lang('YES') }}
 								<input type="radio" name="{{ options.NAME }}" value="0" {% if not options.VALUE %}checked="checked"{% endif %} /> {{ lang('NO') }}
@@ -21,7 +21,7 @@
 								{% endfor %}
 							{% elseif options.TYPE === 'array|int' %}
 								{% for subKey, subValue in options.VALUE %}
-									<label for="{{ options.NAME }}_{{ subKey }}"><input type="number" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" min="0" max="9999999999" value="{{ subValue }}" class="inputbox autowidth"> {{ lang('TI_KEY_' ~ subKey) }} </label><br />
+									<label for="{{ options.NAME }}_{{ subKey }}"><input type="number" name="{{ options.NAME }}_{{ subKey }}" id="{{ options.NAME }}_{{ subKey }}" min="-9999999999" max="9999999999" value="{{ subValue }}" class="inputbox autowidth"> {{ lang('TI_KEY_' ~ subKey) }} </label><br />
 								{% endfor %}
 							{% elseif options.TYPE === 'array|forums' %}
 								{% for subKey, subValue in options.VALUE %}
