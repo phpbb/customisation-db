@@ -78,6 +78,13 @@
 			}
 			return $tree;
 		};
+
+		// Handle the featured contributions
+		if ($this.data('category-id') > 0) {
+			// Hide the featured list once a category is being viewed
+			$('.contrib-featured-container').slideUp(400);
+		}
+
 		if ($this.data('category-id') !== undefined) {
 			var $children = $('.categories [data-parent-id="' + $this.data('category-id') + '"]');
 			$children.slideDown('slow');
