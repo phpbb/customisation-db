@@ -68,7 +68,6 @@ class titania_author extends \phpbb\titania\entity\message_base
 		$this->object_config = array_merge($this->object_config, array(
 			'author_id'				=> array('default' => 0),
 			'user_id'				=> array('default' => 0),
-			'phpbb_user_id'			=> array('default' => 0),
 
 			'author_website'		=> array('default' => '',	'max' => 200),
 			'author_rating'			=> array('default' => 0.0),
