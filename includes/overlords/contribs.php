@@ -799,6 +799,12 @@ class contribs_overlord
 	{
 		// Use the filesize as a consistent number to loop through
 		$array_size = count($my_array);
+
+		if ($array_size === 0)
+		{
+			return 0;
+		}
+
 		$seed = filesize(__FILE__) + $seed;
 
 		$scan = true;
