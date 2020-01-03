@@ -178,9 +178,7 @@ class titania_attention extends \phpbb\titania\entity\database_base
 	*/
 	public function is_report()
 	{
-		return !in_array($this->attention_type, array(
-			ext::TITANIA_ATTENTION_UNAPPROVED,
-		));
+		return $this->attention_type != ext::TITANIA_ATTENTION_UNAPPROVED;
 	}
 
 	/**
