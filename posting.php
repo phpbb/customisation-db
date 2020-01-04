@@ -1308,7 +1308,7 @@ class posting
 		$contrib = $this->contrib;
 
 		// Load the contrib parent if not loaded.
-		if (!is_object($contrib) || !$contrib->contrib_id == $contrib_id && $contrib_id)
+		if (!is_object($contrib) || (!$contrib->contrib_id == $contrib_id && $contrib_id))
 		{
 			$contrib = new \titania_contribution;
 			$contrib->load((int) $contrib_id);

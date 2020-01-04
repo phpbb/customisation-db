@@ -430,7 +430,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		}
 		else if (phpbb::$auth->acl_get('u_titania_post_mod_own'))
 		{
-			if (is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic->parent_id && titania::$contrib->is_author || titania::$contrib->is_active_coauthor)
+			if ((is_object(titania::$contrib) && titania::$contrib->contrib_id == $topic->parent_id && titania::$contrib->is_author) || titania::$contrib->is_active_coauthor)
 			{
 				$is_authed = true;
 			}
