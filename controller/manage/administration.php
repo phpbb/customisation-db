@@ -58,6 +58,10 @@ class administration extends base
 				'route'		=> 'phpbb.titania.manage.contrib.update_release_topics',
 				'ajax'		=> true,
 			),
+			'CONFIG_SETTINGS'		=> array(
+				'route'		=> 'phpbb.titania.manage.config_settings',
+				'ajax'		=> false,
+			),
 		);
 
 		foreach ($tools as $title => $info)

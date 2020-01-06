@@ -68,7 +68,6 @@ class titania_author extends \phpbb\titania\entity\message_base
 		$this->object_config = array_merge($this->object_config, array(
 			'author_id'				=> array('default' => 0),
 			'user_id'				=> array('default' => 0),
-			'phpbb_user_id'			=> array('default' => 0),
 
 			'author_website'		=> array('default' => '',	'max' => 200),
 			'author_rating'			=> array('default' => 0.0),
@@ -252,21 +251,6 @@ class titania_author extends \phpbb\titania\entity\message_base
 	}
 
 	/**
-	 * Get phpBB.com profile url
-	 *
-	 * @return string
-	 */
-	public function get_phpbb_com_profile_url()
-	{
-		if (titania::$config->phpbbcom_profile && $this->phpbb_user_id)
-		{
-			return sprintf(titania::$config->phpbbcom_viewprofile_url, $this->phpbb_user_id);
-		}
-
-		return '';
-	}
-
-	/**
 	 * Get correct website url
 	 *
 	 * @return string
@@ -309,7 +293,6 @@ class titania_author extends \phpbb\titania\entity\message_base
 
 			'U_AUTHOR_PROFILE'				=> $this->get_url(),
 			'U_AUTHOR_PROFILE_PHPBB'		=> $this->get_phpbb_profile_url(),
-			'U_AUTHOR_PROFILE_PHPBB_COM'	=> $this->get_phpbb_com_profile_url(),
 			'U_AUTHOR_CONTRIBUTIONS'		=> $this->get_url('contributions'),
 		);
 

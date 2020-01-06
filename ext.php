@@ -92,4 +92,7 @@ class ext extends \phpbb\extension\base
 	const TITANIA_ATTENTION_CATS_CHANGED = 3;
 	const TITANIA_ATTENTION_DESC_CHANGED = 4;
 	const TITANIA_ATTENTION_NAME_CHANGED = 5;
+
+	// Misc
+	const TITANIA_CONFIG_PREFIX = 'titania_';
 }
