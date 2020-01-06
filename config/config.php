@@ -99,9 +99,6 @@ class config extends \phpbb\titania\entity\base
 			// Maximum rating allowed when rating stuff
 			'max_rating'				=> array('default' => 5),
 
-			'phpbbcom_profile'			=> array('default' => true),
-			'phpbbcom_viewprofile_url'	=> array('default' => 'https://www.phpbb.com/community/memberlist.php?mode=viewprofile&amp;u=%u'),
-
 			// Mod/style database release forums (receive announcements on updates/approval)
 			'forum_mod_database'		=> array('default' => array(
 				'30'	=> 0,
@@ -128,18 +125,18 @@ class config extends \phpbb\titania\entity\base
 
 			// Extension/style validation queue forums
 			'titania_extensions_queue'	=> array('default' => array(
-				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				ext::TITANIA_QUEUE				=> 0,
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				'trash'							=> 0,
 			)),
 			'titania_mods_queue'		=> array('default' => array(
-				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				ext::TITANIA_QUEUE				=> 0,
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				'trash'							=> 0,
 			)),
 			'titania_styles_queue'		=> array('default' => array(
-				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				ext::TITANIA_QUEUE				=> 0,
+				ext::TITANIA_QUEUE_DISCUSSION	=> 0,
 				'trash'							=> 0,
 			)),
 
@@ -181,7 +178,7 @@ class config extends \phpbb\titania\entity\base
 				'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
 				'30'	=> array('latest_revision' => '14', 'name' => 'phpBB 3.0.x', 'allow_uploads' => false),
 				'31'	=> array('latest_revision' => '12', 'name' => 'phpBB 3.1.x', 'allow_uploads' => false),
-				'32'	=> array('latest_revision' => '8', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
+				'32'	=> array('latest_revision' => '9', 'name' => 'phpBB 3.2.x', 'allow_uploads' => true),
 				'33'	=> array('latest_revision' => '0', 'name' => 'phpBB 3.3.x', 'allow_uploads' => true),
 			)),
 
@@ -288,5 +285,89 @@ class config extends \phpbb\titania\entity\base
 	 */
 	protected function set_from_phpbb_config()
 	{
+		$configs = array();
+
+		foreach ($this->get_configurables() as $config => $type)
+		{
+			if ($this->config->offsetExists(ext::TITANIA_CONFIG_PREFIX . $config))
+			{
+				$configs[$config] = json_decode($this->config->offsetGet(ext::TITANIA_CONFIG_PREFIX . $config), true);
+			}
+		}
+
+		$this->__set_array($configs);
+	}
+
+	/**
+	 * Get an array of common configurable options
+	 * Add additional config variables to this array to be able to configure them
+	 * in Titania's administration, or remove them from this array to remove them
+	 * from Titania's administration.
+	 *
+	 * Types:
+	 * string - For a simple string field item.
+	 * int    - For a simple number field item.
+	 * bool   - For a true/false radio button.
+	 * array  - These are for multidimensional field items, i.e.: multiple phpBB
+	 *          version branches. Each array field should be appended with their
+	 *          common type such as string, int or bool, i.e: array|string
+	 * forums - For a Select forum drop down item.
+	 * groups - For a Group multi-select box item.
+	 *
+	 * @return array
+	 */
+	public function get_configurables()
+	{
+		return array(
+			'phpbb_root_path' 				=> 'string',
+			'phpbb_script_path' 			=> 'string',
+			'titania_script_path' 			=> 'string',
+			'table_prefix' 					=> 'string',
+			'site_home_url'					=> 'string',
+			'search_enabled'				=> 'bool',
+			'search_backend' 				=> 'string',
+			'search_backend_ip'				=> 'string',
+			'search_backend_port'			=> 'int',
+			'forum_extension_database' 		=> 'array|forums',
+			'forum_extension_robot' 		=> 'int',
+			'forum_style_database' 			=> 'array|forums',
+			'forum_style_robot' 			=> 'int',
+			'forum_mod_database' 			=> 'array|forums',
+			'forum_mod_robot' 				=> 'int',
+//			'forum_converter_database'		=> 'array|int',
+//			'forum_converter_robot'			=> 'int',
+//			'forum_bbcode_database'			=> 'array|int',
+//			'forum_bbcode_robot'			=> 'int',
+			'titania_extensions_queue' 		=> 'array|forums',
+			'titania_styles_queue'			=> 'array|forums',
+			'titania_mods_queue'			=> 'array|forums',
+			'colorizeit' 					=> 'string',
+			'colorizeit_url'				=> 'string',
+			'colorizeit_auth' 				=> 'string',
+			'colorizeit_var' 				=> 'string',
+			'colorizeit_value' 				=> 'string',
+			'can_modify_style_demo_url' 	=> 'bool',
+			'demo_style_path' 				=> 'array|string',
+			'demo_style_url' 				=> 'array|string',
+			'demo_style_hook' 				=> 'array|string',
+			'upload_max_filesize'			=> 'array|int',
+			'team_groups'					=> 'groups',
+			'cleanup_titania' 				=> 'bool',
+//			'style'							=> 'string',
+//			'theme'							=> 'string',
+//			'max_rating'					=> 'int',
+//			'support_in_titania'			=> 'bool',
+//			'display_backtrace'				=> 'int',
+//			'require_validation'			=> 'bool',
+//			'use_queue'						=> 'bool',
+//			'allow_self_validation'			=> 'bool',
+//			'upload_directory'				=> 'array|string',
+
+			// Not going to support these in the admin panel
+//			'upload_allowed_extensions'
+//			'mpv_server_list'
+//			'phpbb_versions'
+//			'repack_diff_extensions'
+		);
 	}
 }
