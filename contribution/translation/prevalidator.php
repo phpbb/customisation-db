@@ -72,7 +72,7 @@ class prevalidator
 	 * Get the latest British English pack
 	 * @return array Return the path and version to the pre-supplied British English language pack
 	 */
-	private function get_latest_english_pack()
+	private function get_latest_english_pack($selected_branch = null)
 	{
 		/** @var Finder $finder */
 		$finder = new Finder();
@@ -105,7 +105,11 @@ class prevalidator
 					$new_minor = ($pack['x'] === $latest['x'] && $pack['y'] > $latest['y']);
 					$new_revision = ($pack['x'] === $latest['x'] && $pack['y'] === $latest['y'] && $pack['z'] > $latest['z']);
 
-					if ($new_major || $new_minor || $new_revision)
+					// Continue if no phpBB version offered, otherwise perform a comparison to make sure we are matching
+					// language packs of the same minor version.
+					$matches_branch = ($selected_branch === null) ? true : ($selected_branch[0] == $pack['x'] && $selected_branch[1] == $pack['y']);
+
+					if ($matches_branch && ($new_major || $new_minor || $new_revision))
 					{
 						// This is the new latest version
 						$latest = $pack;
@@ -176,7 +180,16 @@ class prevalidator
 				$file_system->rename($root_extracted->getPathname(), $new_directory_name);
 
 				// Get the British English language in there too
-				$english_pack = $this->get_latest_english_pack();
+				$selected_branch = null;
+				
+				if (preg_match('/(\d+)\.(\d+)/', $phpbb_version, $version_match))
+				{
+					// Pass the selected phpBB version through so we can limit which
+					// base language pack we compare against.
+					$selected_branch = [$version_match[1], $version_match[2]];
+				}
+
+				$english_pack = $this->get_latest_english_pack($selected_branch);
 				$zip = new \ZipArchive();
 				$result = $zip->open($english_pack['name']);
 
