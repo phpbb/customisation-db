@@ -220,10 +220,11 @@ class titania_category extends \phpbb\titania\entity\message_base
 		else
 		{
 			$moved_categories = $this->get_category_branch('children');
-			$diff = sizeof($moved_categories) * 2;
+			$count = count($moved_categories);
+			$diff = $count * 2;
 
 			$moved_ids = array();
-			for ($i = 0; $i < sizeof($moved_categories); ++$i)
+			for ($i = 0; $i < $count; ++$i)
 			{
 				$moved_ids[] = (int) $moved_categories[$i]['category_id'];
 			}

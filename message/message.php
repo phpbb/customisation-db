@@ -211,9 +211,11 @@ class message
 				foreach ($delete as $attach_id)
 				{
 					$index = $this->request->variable('index_' . $attach_id, 0);
-					$message = preg_replace(
-						'#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e',
-						"(\\1 == \$index) ? '' : ((\\1 > \$index) ? '[attachment=' . (\\1 - 1) . ']\\2[/attachment]' : '\\0')",
+					$message = preg_replace_callback(
+						'#\[attachment=(\d+)\](.*?)\[\/attachment\]#',
+						function ($matches) use ($index) {
+							return ($matches[1] == $index) ? '' : (($matches[1] > $index) ? '[attachment=' . ($matches[1] - 1) . ']' . $matches[2] . '[/attachment]' : $matches[0]);
+						},
 						$message
 					);
 				}
@@ -222,9 +224,11 @@ class message
 			// Resync inline attachments if any were added
 			if ($this->uploader->uploaded)
 			{
-				$message = preg_replace(
-					'#\[attachment=([0-9]+)\](.*?)\[\/attachment\]#e',
-					"'[attachment='.(\\1 + 1).']\\2[/attachment]'",
+				$message = preg_replace_callback(
+					'#\[attachment=(\d+)\](.*?)\[\/attachment\]#',
+					function ($matches) {
+						return '[attachment=' . ($matches[1] + 1) . ']' . $matches[2] . '[/attachment]';
+					},
 					$message
 				);
 			}
