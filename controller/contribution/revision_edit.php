@@ -292,7 +292,6 @@ class revision_edit extends revision
 				!$this->is_author ||
 				$this->ext_config->allow_self_validation ||
 				$this->user->data['user_type'] == USER_FOUNDER;
-			;
 
 			// Update the status
 			if ($settings['status'] != $this->revision->revision_status && $settings['status'] != ext::TITANIA_REVISION_APPROVED && $can_change_status)

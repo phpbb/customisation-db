@@ -46,6 +46,8 @@ class helper
 			$username = utf8_clean_string($username);
 		}
 
+		unset($username);
+
 		$sql = 'SELECT username, username_clean, user_id
 			FROM ' . USERS_TABLE . '
 			WHERE ' . $db->sql_in_set('username_clean', $usernames) . '

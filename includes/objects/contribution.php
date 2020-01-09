@@ -1653,10 +1653,12 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		{
 			return phpbb::$user->lang('INVALID_PERMALINK', url::generate_slug($permalink));
 		}
-		else if ($permalink == '' || $permalink !== $old_permalink && $this->permalink_exists($permalink))
+
+		if ($permalink === '' || ($permalink !== $old_permalink && $this->permalink_exists($permalink)))
 		{
 			return phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
 		}
+
 		return false;
 	}
 

@@ -184,7 +184,7 @@ class subscriptions
 					if (!$row['contrib_id'])
 					{
 						$this->delete_subscription($row['watch_object_type'], $row['watch_object_id'], false);
-						continue;
+						continue 2; // continue inside switch behaves as break, use continue 2 to continue the external loop
 					}
 					$vars = $this->get_support_tpl_row($row);
 				break;
@@ -198,7 +198,7 @@ class subscriptions
 				break;
 
 				default:
-					continue;
+					continue 2; // continue inside switch behaves as break, use continue 2 to continue the external loop
 				break;
 			}
 			$this->template->assign_block_vars('subscriptions', $vars);

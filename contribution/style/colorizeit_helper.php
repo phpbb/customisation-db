@@ -96,6 +96,9 @@ class colorizeit_helper
 			return $no_result;
 		}
 
+		// These variables will be extracted from cfg_files
+		$properties = $imageset = $lang_imagesets = null;
+
 		$info = $this->get_style_info($cfg_files);
 		extract($info);
 
@@ -163,6 +166,9 @@ class colorizeit_helper
 		$expected = array('style.cfg', 'theme.cfg', 'template.cfg', 'imageset.cfg');
 		$imageset = false;
 		$lang_imagesets = array();
+
+		// These variables will be extracted from the finder results for $cfg_files
+		$filename = $path = null;
 
 		foreach ($cfg_files as $file)
 		{
