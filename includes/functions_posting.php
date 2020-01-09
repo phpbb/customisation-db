@@ -300,6 +300,7 @@ function handle_queue_attachments($post, &$post_text)
 		return;
 	}
 
+	$tpl_size = count($attachments);
 	preg_match_all('#<!\-\- ia([0-9]+) \-\->(.*?)<!\-\- ia\1 \-\->#', $post_text, $matches, PREG_PATTERN_ORDER);
 
 	$replace = array();

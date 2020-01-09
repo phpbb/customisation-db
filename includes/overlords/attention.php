@@ -252,7 +252,7 @@ class attention_overlord
 	public static function build_sort()
 	{
 		// Setup the sort and set the sort keys
-		$sort = phpbb::$container->get('phpbb.titania.sort');;
+		$sort = phpbb::$container->get('phpbb.titania.sort');
 		$sort->set_sort_keys(self::$sort_by);
 
 		$sort->default_sort_dir = 'd';
