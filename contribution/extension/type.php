@@ -336,6 +336,7 @@ class type extends base
 				'host'		=> $parts['host'],
 				'directory' => $directory,
 				'filename'	=> substr($parts['path'], strlen($directory) + 1),
+				'ssl'		=> true,
 			);
 		}
 		return $data;
