@@ -353,7 +353,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 				array(
 					'ID'		=> 'pm',
 					'NAME' 		=> phpbb::$user->lang['SEND_PRIVATE_MESSAGE'],
-					'U_CONTACT'	=> users_overlord::get_user($post->post_user_id, '_u_pm'),
+					'U_CONTACT'	=> users_overlord::get_user($post->post_user_id, '_u_pm') . '&amp;titania_msg_id=' . $post->post_id,
 				),
 				array(
 					'ID'		=> 'email',
