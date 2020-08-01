@@ -27,6 +27,8 @@ if (empty($lang) || !is_array($lang))
 
 // Merge the following language entries into the lang array
 $lang = array_merge($lang, array(
+	'CONFIRM_DELETE_USER_OPERATION'		=> 'This will also remove all Customisation Database posts, topics and unapproved contributions submitted by this user.',
+
 	'ROLE_TITANIA_MODIFICATION_TEAM'	=> 'Titania Modifications Team Role',
 	'ROLE_TITANIA_STYLE_TEAM'			=> 'Titania Style Team Role',
 	'ROLE_TITANIA_MODERATOR_TEAM'		=> 'Titania Moderation Team Role',

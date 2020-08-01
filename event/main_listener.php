@@ -16,6 +16,7 @@ namespace phpbb\titania\event;
 use phpbb\db\driver\driver_interface as db_driver_interface;
 use phpbb\event\data;
 use phpbb\auth\auth;
+use phpbb\language\language;
 use phpbb\template\template;
 use phpbb\titania\controller\helper;
 use phpbb\titania\ext;
@@ -43,6 +44,9 @@ class main_listener implements EventSubscriberInterface
 
 	/** @var \phpbb\template\template */
 	protected $template;
+
+	/** @var \phpbb\language\language */
+	protected $language;
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
@@ -79,12 +83,13 @@ class main_listener implements EventSubscriberInterface
 	 * @param string $ext_root_path Titania root path
 	 * @param string $php_ext PHP file extension
 	 */
-	public function __construct(request $request, db_driver_interface $db, user $user, template $template, helper $controller_helper, access $access, type_collection $types, $phpbb_root_path, $ext_root_path, $php_ext)
+	public function __construct(request $request, db_driver_interface $db, user $user, template $template, language $language, helper $controller_helper, access $access, type_collection $types, $phpbb_root_path, $ext_root_path, $php_ext)
 	{
 		$this->request = $request;
 		$this->db = $db;
 		$this->user = $user;
 		$this->template = $template;
+		$this->language = $language;
 		$this->controller_helper = $controller_helper;
 		$this->access = $access;
 		$this->types = $types;
@@ -104,6 +109,10 @@ class main_listener implements EventSubscriberInterface
 
 			// Check whether a user is removed from a team
 			'core.group_delete_user_after'				=> 'remove_users_from_subscription',
+
+			// Check whether a user is deleted
+			'core.acp_users_overview_before'			=> 'user_delete',
+			'core.delete_user_before'				=> 'remove_contributions',
 
 			// Include quoted text when private messaging
 			'core.ucp_pm_compose_predefined_message'	=> 'quote_text_upon_pm',
@@ -405,5 +414,149 @@ class main_listener implements EventSubscriberInterface
 [quote=%s time=%d user_id=%d]%s[/quote]', $post_url, $row['username'], $row['post_time'], $row['user_id'], $row['post_text']);
 			}
 		}
+	}
+
+	/**
+	 * Append our message to inform the admin that deleting the user will also delete things in Titania
+	 * @param $event
+	 */
+	public function user_delete($event)
+	{
+		// Add our message to the end of the existing one
+		$this->language->add_lang('info_acp_titania', 'phpbb/titania');
+		$stored_lang = $this->user->lang;
+		$stored_lang['CONFIRM_OPERATION'] .= ' ' . $stored_lang['CONFIRM_DELETE_USER_OPERATION'];
+		$this->user->lang = $stored_lang;
+	}
+
+	/**
+	 * Automatically remove topics, posts and contributions when user is deleted
+	 * @param $event
+	 */
+	public function remove_contributions($event)
+	{
+		if (!defined('TITANIA_CONTRIBS_TABLE'))
+		{
+			// Include Titania so we can access the constants
+			require($this->ext_root_path . 'common.' . $this->php_ext);
+		}
+
+		$event_data = $event->get_data();
+
+		// Get rid of the contribs that only have unapproved revisions.
+		// We'll keep anything that has an approved revision
+		$this->delete_user_contribs_with_unapproved_revisions($event_data);
+
+		// Delete Titania topics and posts by the user(s)
+		if ($event_data['mode'] === 'remove')
+		{
+			// Handle the topics
+			$this->delete_user_titania_topics($event_data);
+
+			// Handle the posts
+			$this->delete_user_titania_posts($event_data);
+		}
+
+// TODO: remove debug code
+die('-- STOP HERE --');
+	}
+
+	/**
+	 * Delete contributions by the selected users that only contain unapproved revisions
+	 * @param $event_data
+	 */
+	private function delete_user_contribs_with_unapproved_revisions($event_data)
+	{
+		// Delete contributions without any approved revisions
+		$sql_array = array(
+			'SELECT'	=> 'c.contrib_id, COUNT(r.revision_id) AS approved_revisions',
+			'FROM'		=> array(
+				TITANIA_CONTRIBS_TABLE => 'c',
+			),
+
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(TITANIA_REVISIONS_TABLE => 'r'),
+					'ON'	=> 'c.contrib_id = r.contrib_id AND revision_status = ' . ext::TITANIA_REVISION_APPROVED,
+				),
+			),
+
+			'WHERE'		=>  $this->db->sql_in_set('c.contrib_user_id', $event_data['user_ids']),
+
+			'GROUP_BY'	=> 'c.contrib_id',
+		);
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_array);
+		$result = $this->db->sql_query($sql);
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$contrib_id = (int) $row['contrib_id'];
+			$approved_revisions = (int) $row['approved_revisions'];
+
+			// If there are no approved revisions, then delete the contribution
+			if ($approved_revisions === 0)
+			{
+				$contrib = new \titania_contribution;
+
+				if ($contrib->load($contrib_id))
+				{
+					// Delete now
+					$contrib->delete();
+				}
+			}
+
+// TODO: remove debug code
+echo $contrib_id . ': '. $approved_revisions . '<br />';
+		}
+
+		$this->db->sql_freeresult($result);
+	}
+
+	/**
+	 * Delete Titania topics by the selected users
+	 * @param $event_data
+	 */
+	private function delete_user_titania_topics($event_data)
+	{
+		// Delete topics by the user in Titania
+		$topic = new \titania_topic();
+
+		$sql = 'SELECT * FROM ' . TITANIA_TOPICS_TABLE . '
+				WHERE ' . $this->db->sql_in_set('topic_first_post_user_id', $event_data['user_ids']);
+
+		$result = $this->db->sql_query($sql);
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			// Delete each topic created by the to-be deleted user
+			$topic->__set_array($row);
+			$topic->delete();
+		}
+
+		$this->db->sql_freeresult($result);
+	}
+
+	/**
+	 * Delete Titania posts by the selected users
+	 * @param $event_data
+	 */
+	private function delete_user_titania_posts($event_data)
+	{
+		// Delete posts by the user in Titania
+		$post = new \titania_post();
+
+		$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . '
+				WHERE ' . $this->db->sql_in_set('post_user_id', $event_data['user_ids']);
+
+		$result = $this->db->sql_query($sql);
+
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$post->__set_array($row);
+			$post->delete();
+		}
+
+		$this->db->sql_freeresult($result);
 	}
 }
