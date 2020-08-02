@@ -448,7 +448,7 @@ class main_listener implements EventSubscriberInterface
 		$this->delete_user_contribs_with_unapproved_revisions($event_data);
 
 		// Delete Titania topics and posts by the user(s)
-		if ($event_data['mode'] === 'remove')
+		if ($event_data['mode'] === 'remove' || $event_data['mode'] == 'retain')
 		{
 			// Handle the topics
 			$this->delete_user_titania_topics($event_data);
@@ -456,9 +456,6 @@ class main_listener implements EventSubscriberInterface
 			// Handle the posts
 			$this->delete_user_titania_posts($event_data);
 		}
-
-// TODO: remove debug code
-die('-- STOP HERE --');
 	}
 
 	/**
@@ -505,9 +502,6 @@ die('-- STOP HERE --');
 					$contrib->delete();
 				}
 			}
-
-// TODO: remove debug code
-echo $contrib_id . ': '. $approved_revisions . '<br />';
 		}
 
 		$this->db->sql_freeresult($result);
@@ -523,7 +517,8 @@ echo $contrib_id . ': '. $approved_revisions . '<br />';
 		$topic = new \titania_topic();
 
 		$sql = 'SELECT * FROM ' . TITANIA_TOPICS_TABLE . '
-				WHERE ' . $this->db->sql_in_set('topic_first_post_user_id', $event_data['user_ids']);
+				WHERE ' . $this->db->sql_in_set('topic_first_post_user_id', $event_data['user_ids']) . '
+				AND topic_type = ' . ext::TITANIA_SUPPORT;
 
 		$result = $this->db->sql_query($sql);
 
@@ -547,7 +542,8 @@ echo $contrib_id . ': '. $approved_revisions . '<br />';
 		$post = new \titania_post();
 
 		$sql = 'SELECT * FROM ' . TITANIA_POSTS_TABLE . '
-				WHERE ' . $this->db->sql_in_set('post_user_id', $event_data['user_ids']);
+				WHERE ' . $this->db->sql_in_set('post_user_id', $event_data['user_ids']) . '
+				AND post_type = ' . ext::TITANIA_SUPPORT;
 
 		$result = $this->db->sql_query($sql);
 
