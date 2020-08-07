@@ -267,7 +267,7 @@ class type extends base
 		{
 			throw new \Exception('UNSTABLE_COMPOSER_VERSION');
 		}
-		if ($data['extra']['display-name'] !== $contrib->contrib_name)
+		if ($data['extra']['display-name'] !== htmlspecialchars_decode($contrib->contrib_name, ENT_COMPAT))
 		{
 			throw new \Exception($this->user->lang('MISMATCH_DISPLAY_NAME', $data['extra']['display-name'], $contrib->contrib_name));
 		}
@@ -336,6 +336,7 @@ class type extends base
 				'host'		=> $parts['host'],
 				'directory' => $directory,
 				'filename'	=> substr($parts['path'], strlen($directory) + 1),
+				'ssl'		=> isset($parts['scheme']) ? $parts['scheme'] === 'https' : true,
 			);
 		}
 		return $data;

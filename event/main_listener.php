@@ -20,6 +20,9 @@ use phpbb\template\template;
 use phpbb\titania\controller\helper;
 use phpbb\titania\ext;
 use phpbb\user;
+use phpbb\request\request;
+use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\access;
 use s9e\TextFormatter\Configurator\Items\TemplateDocument;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -29,6 +32,9 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 */
 class main_listener implements EventSubscriberInterface
 {
+	/** @var request  */
+	protected $request;
+
 	/** @var db_driver_interface */
 	protected $db;
 
@@ -40,6 +46,12 @@ class main_listener implements EventSubscriberInterface
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
+
+	/** @var access */
+	protected $access;
+
+	/** @var type_collection */
+	protected $types;
 
 	/** @var string */
 	protected $phpbb_root_path;
@@ -56,20 +68,26 @@ class main_listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 *
+	 * @param request $request
 	 * @param db_driver_interface $db
 	 * @param \phpbb\user $user
 	 * @param \phpbb\template\template $template
 	 * @param \phpbb\titania\controller\helper $controller_helper
+	 * @param access $access
+	 * @param type_collection $types
 	 * @param string $phpbb_root_path phpBB root path
 	 * @param string $ext_root_path Titania root path
 	 * @param string $php_ext PHP file extension
 	 */
-	public function __construct(db_driver_interface $db, user $user, template $template, helper $controller_helper, $phpbb_root_path, $ext_root_path, $php_ext)
+	public function __construct(request $request, db_driver_interface $db, user $user, template $template, helper $controller_helper, access $access, type_collection $types, $phpbb_root_path, $ext_root_path, $php_ext)
 	{
+		$this->request = $request;
 		$this->db = $db;
 		$this->user = $user;
 		$this->template = $template;
 		$this->controller_helper = $controller_helper;
+		$this->access = $access;
+		$this->types = $types;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
 		$this->ext_root_path = $ext_root_path;
@@ -86,6 +104,9 @@ class main_listener implements EventSubscriberInterface
 
 			// Check whether a user is removed from a team
 			'core.group_delete_user_after'				=> 'remove_users_from_subscription',
+
+			// Include quoted text when private messaging
+			'core.ucp_pm_compose_predefined_message'	=> 'quote_text_upon_pm',
 		);
 	}
 
@@ -300,6 +321,89 @@ class main_listener implements EventSubscriberInterface
 						AND watch_object_type = ' . ext::TITANIA_QUEUE;
 
 			$this->db->sql_query($sql);
+		}
+	}
+
+	/**
+	 * When a user sends a PM from a Titania support topic, include the post as quoted text
+	 * @param $event
+	 */
+	public function quote_text_upon_pm($event)
+	{
+		if (!defined('TITANIA_POSTS_TABLE'))
+		{
+			// Include Titania so we can access the constants
+			require($this->ext_root_path . 'common.' . $this->php_ext);
+		}
+
+		// Check that this user has access to the Titania support post ID so that people can't just randomly
+		// stick an ID in the URL and see the post contents
+		$titania_post_id = $this->request->variable('titania_msg_id', 0);
+		$access = $this->access;
+
+		$sql_ary = array(
+			'SELECT' => 'p.post_id, p.post_text, p.post_subject, p.post_time, p.post_access, t.topic_access, 
+				t.topic_id, t.parent_id, u.user_id, u.username, c.contrib_name_clean, c.contrib_type',
+
+			'FROM' => array(
+				TITANIA_POSTS_TABLE => 'p',
+				TITANIA_TOPICS_TABLE => 't',
+				TITANIA_CONTRIBS_TABLE => 'c',
+				USERS_TABLE => 'u',
+			),
+
+			'WHERE' => 'p.post_approved = 1
+						AND t.topic_approved = 1
+						AND t.topic_type = ' . ext::TITANIA_SUPPORT . '
+						AND p.post_id = ' . $titania_post_id . ' 
+						AND t.topic_id = p.topic_id
+						AND u.user_id = p.post_user_id
+						AND t.parent_id = c.contrib_id',
+		);
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+
+		$contrib = new \titania_contribution;
+
+		if ($row && $contrib->load((int) $row['parent_id'], $row['contrib_type']) && $contrib->is_visible())
+		{
+			if ($this->access->is_public() && ($contrib->is_active_coauthor || $contrib->is_author))
+			{
+				// If the current user is the author of the contribution they are trying to quote/PM from
+				// then set their user level to author
+				$this->access->set_level(access::AUTHOR_LEVEL);
+			}
+
+			// Now do a check to make sure their access level is sufficient.
+			// This is to make sure authors can't see posts that are teams-only, and that the public can't see
+			// any posts that are author-only.
+			if ($row['post_access'] >= $access->get_level() && $row['topic_access'] >= $access->get_level())
+			{
+				// Add the subject of the Titania post to the PM
+				$event['message_subject'] = $row['post_subject'];
+
+				// If "Re:" isn't already on the subject line, add it for the private message
+				if (strpos($event['message_subject'], 'Re: ') !== 0)
+				{
+					$event['message_subject'] = 'Re: ' . $event['message_subject'];
+				}
+
+				// Add the quote to the message
+				// Format like: /foo/bar?p=123#p123
+				$post_url = sprintf('%1$s?p=%2$d#p%2$d', $this->controller_helper->route('phpbb.titania.contrib.support.topic', array(
+					'contrib_type' => $this->types->get($row['contrib_type'])->url,
+					'contrib' => $row['contrib_name_clean'],
+					'topic_id' => $row['topic_id']
+				)), (int) $row['post_id']);
+
+				$post_url = sprintf('[url=%s]%s[/url]', $post_url, $this->user->lang('FWD_SUBJECT', $row['post_subject']));
+
+				// No indenting here because it would appear in the send PM box
+				$event['message_text'] = sprintf('%s
+[quote=%s time=%d user_id=%d]%s[/quote]', $post_url, $row['username'], $row['post_time'], $row['user_id'], $row['post_text']);
+			}
 		}
 	}
 }

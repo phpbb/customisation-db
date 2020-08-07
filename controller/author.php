@@ -353,8 +353,9 @@ class author
 	*/
 	protected function create()
 	{
-		if (!$this->is_owner && !$this->auth->acl_get('u_titania_contrib_submit'))
+		if (!$this->auth->acl_get('u_titania_contrib_submit'))
 		{
+			// Show the unauthorised page if the user has insufficient permissions
 			return $this->helper->needs_auth();
 		}
 

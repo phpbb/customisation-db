@@ -54,8 +54,28 @@ class helper extends \phpbb\controller\helper
 	{
 		if (!is_null($this->ext_config) && $this->ext_config->titania_script_path)
 		{
-			return generate_board_url(true) .'/'. rtrim($this->ext_config->titania_script_path, '/') .
-			substr($url, strlen(generate_board_url()));
+			$scripts_path = array(
+				'phpbb_script_path'   => $this->ext_config->phpbb_script_path,
+				'titania_script_path' => $this->ext_config->titania_script_path,
+			);
+
+			// We start by removing the domain name from the URL
+			if (strpos($url, generate_board_url(true)) === 0)
+			{
+				$url = substr($url, strlen(generate_board_url(true)));
+			}
+
+			// Then, we remove the script path
+			foreach ($scripts_path as $script_path)
+			{
+				if (strpos($url, '/' . $script_path) === 0)
+				{
+					$url = substr($url, strlen('/' . rtrim($script_path, '/')));
+					break;
+				}
+			}
+
+			return generate_board_url(true) . '/' . rtrim($this->ext_config->titania_script_path, '/') . $url;
 		}
 		return $url;
 	}

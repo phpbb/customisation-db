@@ -466,6 +466,11 @@ class download
 	*/
 	protected function increase_download_count()
 	{
+		if ($this->user->data['is_bot'])
+		{
+			return;
+		}
+
 		// Update download count
 		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
 			SET download_count = download_count + 1
