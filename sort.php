@@ -111,6 +111,8 @@ class sort extends entity\base
 			'template_block'	=> array('default' => 'pagination'),
 			'template_vars'		=> array(
 				'default' => array(
+					'S_CONTENT_FLOW_BEGIN'	=> 'S_CONTENT_FLOW_BEGIN',
+					'S_CONTENT_FLOW_END'	=> 'S_CONTENT_FLOW_END',
 					'S_PAGINATION_ACTION'	=> 'S_PAGINATION_ACTION',
 					'S_SORT_ACTION'			=> 'S_SORT_ACTION',
 					'S_NUM_POSTS'			=> 'S_NUM_POSTS',
@@ -479,6 +481,9 @@ class sort extends entity\base
 				$this->template_vars['S_SORT_ACTION']		=> $sort_url,
 				$this->template_vars['S_PAGINATION_ACTION']	=> $pagination_url,
 				$this->template_vars['S_NUM_POSTS']			=> $this->total,
+
+				$this->template_vars['S_CONTENT_FLOW_BEGIN']=> $this->user->lang['DIRECTION'] === 'ltr' ? 'left' : 'right',
+				$this->template_vars['S_CONTENT_FLOW_END']	=> $this->user->lang['DIRECTION'] === 'ltr' ? 'right' : 'left',
 
 				$this->template_vars['S_SELECT_SORT_KEY']	=> $this->get_sort_key_list(),
 				$this->template_vars['S_SELECT_SORT_DIR']	=> $this->get_sort_dir_list(),

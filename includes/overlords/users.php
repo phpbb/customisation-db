@@ -130,7 +130,9 @@ class users_overlord
 			$update_time = phpbb::$config['load_online_time'] * 60;
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				self::$status[$row['session_user_id']]['online'] = (time() - $update_time < $row['online_time'] && (($row['viewonline']) || phpbb::$auth->acl_get('u_viewonline'))) ? true : false;
+				// Only show the user as being online in here if the user viewing it has the correct permissions
+				$is_online = (time() - $update_time < $row['online_time'] && (($row['viewonline']) || phpbb::$auth->acl_get('u_viewonline')));
+				self::$status[$row['session_user_id']]['online'] = $is_online;
 			}
 			phpbb::$db->sql_freeresult($result);
 		}
@@ -257,8 +259,8 @@ class users_overlord
 	//		$prefix . 'USER_AGE'			=> $row['age'],
 			$prefix . 'USER_SIG'			=> self::get_user($user_id, '_signature'),
 
-			$prefix . 'ONLINE_IMG'			=> ($user_id != ANONYMOUS && isset(self::$status[$user_id])) ? ((self::$status[$user_id]) ? phpbb::$user->img('icon_user_online', 'ONLINE') : phpbb::$user->img('icon_user_offline', 'OFFLINE')) : '',
-			$prefix . 'S_ONLINE'			=> ($user_id != ANONYMOUS && isset(self::$status[$user_id])) ? self::$status[$user_id] : false,
+			$prefix . 'ONLINE_IMG'			=> ($user_id != ANONYMOUS && isset(self::$status[$user_id]['online'])) ? ((self::$status[$user_id]['online']) ? phpbb::$user->img('icon_user_online', 'ONLINE') : phpbb::$user->img('icon_user_offline', 'OFFLINE')) : '',
+			$prefix . 'S_ONLINE'			=> ($user_id != ANONYMOUS && isset(self::$status[$user_id]['online'])) ? self::$status[$user_id]['online'] : false,
 			$prefix . 'S_FRIEND'			=> (isset($row['friend'])) ? true : false,
 			$prefix . 'S_FOE'				=> (isset($row['foe'])) ? true : false,
 
