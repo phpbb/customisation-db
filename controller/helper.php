@@ -13,7 +13,21 @@
 
 namespace phpbb\titania\controller;
 
+use phpbb\auth\auth;
+use phpbb\cache\driver\driver_interface as cache_interface;
+use phpbb\config\config;
+use phpbb\cron\manager;
+use phpbb\db\driver\driver_interface;
+use phpbb\event\dispatcher;
+use phpbb\language\language;
+use phpbb\request\request_interface;
+use phpbb\routing\helper as routing_helper;
+use phpbb\symfony_request;
+use phpbb\template\template;
 use phpbb\titania\config\config as ext_config;
+use phpbb\user;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class helper extends \phpbb\controller\helper
