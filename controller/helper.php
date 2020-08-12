@@ -63,7 +63,7 @@ class helper extends \phpbb\controller\helper
 								$admin_path, $php_ext, $sql_explain = false,
 								ext_config $ext_config = null)
 	{
-		parent::__construct($auth, $cache, $config, $cron_manager, $dispatcher, $language, $symfony_request, $request, $routing_helper, $request, $routing_helper, $symfony_request, $template, $user, $root_path);
+		parent::__construct($auth, $cache, $config, $cron_manager, $db, $dispatcher, $language, $symfony_request, $request, $routing_helper, $request, $routing_helper, $symfony_request, $template, $user, $root_path, $admin_path, $php_ext, $sql_explain);
 
 		$this->ext_config = $ext_config;
 	}
