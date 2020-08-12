@@ -156,12 +156,22 @@ services:
     phpbb.titania.controller.helper:
         class: phpbb\titania\controller\helper
         arguments:
-            - '@template'
-            - '@user'
+            - '@auth'
+            - '@cache.driver'
             - '@config'
-            - '@symfony_request'
+            - '@cron.manager'
+            - '@dbal.conn'
+            - '@dispatcher'
+            - '@language'
             - '@request'
             - '@routing.helper'
+            - '@symfony_request'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.adm_relative_path%'
+            - '%core.php_ext%'
+            - '%debug.sql_explain%'
             - '@phpbb.titania.config'
 
     phpbb.titania.cache:

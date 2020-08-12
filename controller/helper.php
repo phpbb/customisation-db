@@ -24,17 +24,32 @@ class helper extends \phpbb\controller\helper
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\template\template $template Template object
-	 * @param \phpbb\user $user User object
-	 * @param \phpbb\config\config $config Config object
-	 * @param \phpbb\symfony_request $symfony_request Symfony Request object
-	 * @param \phpbb\request\request_interface $request phpBB request object
-	 * @param \phpbb\routing\helper $routing_helper Helper to generate the routes
+	 * @param auth $auth
+	 * @param cache_interface $cache
+	 * @param config $config Config object
+	 * @param manager $cron_manager
+	 * @param driver_interface $db
+	 * @param dispatcher $dispatcher
+	 * @param language $language
+	 * @param request_interface $request phpBB request object
+	 * @param routing_helper $routing_helper Helper to generate the routes
+	 * @param symfony_request $symfony_request Symfony Request object
+	 * @param template $template Template object
+	 * @param user $user User object
+	 * @param $root_path
+	 * @param $admin_path
+	 * @param $php_ext
+	 * @param bool $sql_explain
 	 * @param ext_config|null $ext_config
 	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\config\config $config, \phpbb\symfony_request $symfony_request, \phpbb\request\request_interface $request, \phpbb\routing\helper $routing_helper, ext_config $ext_config = null)
+	public function __construct(auth $auth, cache_interface $cache, config $config, manager $cron_manager,
+								driver_interface $db, dispatcher $dispatcher, language $language,
+								request_interface $request, routing_helper $routing_helper,
+								symfony_request $symfony_request, template $template, user $user, $root_path,
+								$admin_path, $php_ext, $sql_explain = false,
+								ext_config $ext_config = null)
 	{
-		parent::__construct($template, $user, $config, $symfony_request, $request, $routing_helper);
+		parent::__construct($auth, $cache, $config, $cron_manager, $dispatcher, $language, $symfony_request, $request, $routing_helper, $request, $routing_helper, $symfony_request, $template, $user, $root_path);
 
 		$this->ext_config = $ext_config;
 	}
