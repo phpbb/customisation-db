@@ -16,6 +16,18 @@ phpbb.titania.faq:
     path: /faq
     defaults: { _controller: phpbb.titania.controller.faq:handle }
 
+phpbb.titania.package_builder.add:
+    path: /package-builder/add/{contrib}/{revision}
+    defaults: { _controller: phpbb.titania.controller.package_builder:add }
+
+phpbb.titania.package_builder.reset:
+    path: /package-builder/reset
+    defaults: { _controller: phpbb.titania.controller.package_builder:reset }
+
+phpbb.titania.package_builder.download:
+    path: /package-builder/download
+    defaults: { _controller: phpbb.titania.controller.package_builder:download }
+
 phpbb.titania.queue_stats:
     path: /queue-stats/{contrib_type}
     defaults: { _controller: phpbb.titania.controller.queue_stats:display_stats }

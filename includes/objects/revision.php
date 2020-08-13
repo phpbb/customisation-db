@@ -81,6 +81,9 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	/** @var config */
 	protected $config;
 
+	/** @var \phpbb\request\request_interface */
+	protected $request;
+
 	public function __construct($contrib, $revision_id = false)
 	{
 		// Configure object properties
@@ -120,6 +123,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		$this->translations = phpbb::$container->get('phpbb.titania.attachment.operator');
 		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 		$this->config = phpbb::$container->get('config');
+		$this->request = phpbb::$container->get('request');
 	}
 
 	/**
@@ -262,7 +266,12 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			'U_DOWNLOAD'			=> $this->get_url(),
 			'U_COLORIZEIT'			=> $url_colorizeit,
 			'U_EDIT'				=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || $this->contrib->type->acl_get('moderate'))) ? $this->contrib->get_url('revision', array('page' => 'edit', 'id' => $this->revision_id)) : '',
+			'U_PACKAGE_ADD'			=> $this->controller_helper->route('phpbb.titania.package_builder.add', [
+				'contrib' => $this->contrib_id,
+				'revision' => $this->revision_id,
+			]),
 
+			'S_PACKAGE'				=> $this->check_package_builder_link(),
 			'S_USE_QUEUE'			=> (titania::$config->use_queue && $this->contrib->type->use_queue) ? true : false,
 			'S_NEW'					=> ($this->revision_status == ext::TITANIA_REVISION_NEW) ? true : false,
 			'S_APPROVED'			=> ($this->revision_status == ext::TITANIA_REVISION_APPROVED) ? true : false,
@@ -290,6 +299,49 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 			$this->translations->parse_attachments($message, false, false, $tpl_block . '.translations', '');
 		}
+	}
+
+	/**
+	 * Check if the package builder link should be displayed
+	 */
+	private function check_package_builder_link()
+	{
+		// Check if the types are acceptable for the package manager
+		$show_package_builder = false;
+
+		if ($this->contrib->type instanceof \phpbb\titania\contribution\extension\type
+			|| $this->contrib->type instanceof \phpbb\titania\contribution\translation\type
+			|| $this->contrib->type instanceof \phpbb\titania\contribution\style\type)
+		{
+			// If it's an extension, style or language pack we can show it if...
+			foreach ($this->phpbb_versions as $supported_version)
+			{
+				if ($supported_version['phpbb_version_branch'] === '32')
+				{
+					$show_package_builder = true;
+					break;
+				}
+			}
+		}
+
+		if ($show_package_builder)
+		{
+			// Look at the existing package values
+			$existing_cookie = $this->request->variable($this->config['cookie_name'] . '_' . \phpbb\titania\controller\package_builder::COOKIE_NAME, '', false, \phpbb\request\request_interface::COOKIE);
+
+			if (!empty($existing_cookie))
+			{
+				$split_values = \phpbb\titania\controller\package_builder::split_cookie_values($existing_cookie);
+
+				if (in_array($this->contrib_id, $split_values['contribs']))
+				{
+					// No need to show the link if a revision from this contribution has already been added to the package
+					$show_package_builder = false;
+				}
+			}
+		}
+
+		return $show_package_builder;
 	}
 
 	/**

@@ -15,6 +15,20 @@ services:
             - '@phpbb.titania.config'
             - '@phpbb.titania.tracking'
 
+    phpbb.titania.controller.package_builder:
+        class: phpbb\titania\controller\package_builder
+        arguments:
+            - '@dbal.conn'
+            - '@template'
+            - '@config'
+            - '@user'
+            - '@language'
+            - '@phpbb.titania.controller.helper'
+            - '@phpbb.titania.cache'
+            - '@request'
+            - '@phpbb.titania.config'
+            - '%phpbb.titania.root_path%'
+
     phpbb.titania.controller.faq:
         class: phpbb\titania\controller\faq
         arguments:
