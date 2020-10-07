@@ -26,7 +26,6 @@ use phpbb\symfony_request;
 use phpbb\template\template;
 use phpbb\titania\config\config as ext_config;
 use phpbb\user;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
