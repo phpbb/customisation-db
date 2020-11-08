@@ -54,7 +54,7 @@ class config extends \phpbb\titania\entity\base
 			'upload_path'				=> array('default' => $this->ext_root_path . 'files/'),
 			'contrib_temp_path'			=> array('default' => $this->ext_root_path . 'files/contrib_temp/'),
 			'language_path'				=> array('default' => $this->ext_root_path . 'language/'),
-			'table_prefix'				=> array('default' => 'cdb_'),
+			'table_prefix'				=> array('default' => 'customisations_'),
 			'site_home_url'				=> array('default' => 'https://www.phpbb.com'),
 
 			// Increment the user's post count? Array of the post_types for which we will increment the post count
