@@ -182,7 +182,7 @@ class demo
 								AND c.contrib_demo <> ""
 								AND rp.phpbb_version_branch = ' . (int) $this->phpbb_branch,
 
-			'GROUP_BY'	=> 'c.contrib_id',
+			'GROUP_BY'	=> 'c.contrib_id, cat.left_id, cat.category_name, s.attachment_id',
 			'ORDER_BY'	=> 'cat.left_id, c.contrib_name ASC',
 		);
 
