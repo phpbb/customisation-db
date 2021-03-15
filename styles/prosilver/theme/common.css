@@ -433,20 +433,19 @@ a.screenshot img, img.screenshot {
 
 .contrib-quickview {
 	background-color: #f1f4f6;
-	border-left: 5px solid #ffffff;
+	margin-left: 5px;
 	border-radius: 10px;
 	box-sizing: border-box;
 	display: inline-block;
-	float: left;
 	margin-bottom: 10px;
 	padding: 15px 10px 10px;
 	position: relative;
 	text-align: center;
-	width: 50%;
+	width: 49%;
 }
 
 .author-contribs .contrib-quickview {
-	width: 33.3%;
+	width: 32.3%;
 }
 
 .quickview-title {
