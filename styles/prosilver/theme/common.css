@@ -433,7 +433,7 @@ a.screenshot img, img.screenshot {
 
 .contrib-quickview {
 	background-color: #f1f4f6;
-	margin-left: 5px;
+	border-left: 5px solid #ffffff;
 	border-radius: 10px;
 	box-sizing: border-box;
 	display: inline-block;
