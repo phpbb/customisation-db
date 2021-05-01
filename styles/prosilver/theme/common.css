@@ -437,16 +437,15 @@ a.screenshot img, img.screenshot {
 	border-radius: 10px;
 	box-sizing: border-box;
 	display: inline-block;
-	float: left;
 	margin-bottom: 10px;
 	padding: 15px 10px 10px;
 	position: relative;
 	text-align: center;
-	width: 50%;
+	width: 49%;
 }
 
 .author-contribs .contrib-quickview {
-	width: 33.3%;
+	width: 32.3%;
 }
 
 .quickview-title {

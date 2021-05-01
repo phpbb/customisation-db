@@ -773,12 +773,28 @@ class message
 	 */
 	public static function generate_clean_excerpt($string, $uid, $length, $append = '')
 	{
-		$_uid = preg_quote($uid, '#');
-		$full_bbcode_removal = array(
-			'#\[flash=([0-9]+),([0-9]+):' . $_uid . '\](.*?)\[/flash:' . $_uid . '\]#',
-			'#\[img:' . $_uid . '\](.*?)\[/img:' . $_uid . '\]#s',
-		);
-		$string = preg_replace($full_bbcode_removal, '', $string);
+		if (class_exists('\phpbb\textformatter\s9e\utils'))
+		{
+			static $text_formatter_utils = null;
+			if ($text_formatter_utils === null)
+			{
+				$text_formatter_utils = new \phpbb\textformatter\s9e\utils();
+			}
+
+			foreach (['flash', 'img'] as $bbcode)
+			{
+				$string = $text_formatter_utils->remove_bbcode($string, $bbcode);
+			}
+		}
+		else
+		{
+			$_uid = preg_quote($uid, '#');
+			$full_bbcode_removal = array(
+				'#\[flash=([0-9]+),([0-9]+):' . $_uid . '\](.*?)\[/flash:' . $_uid . '\]#',
+				'#\[img:' . $_uid . '\](.*?)\[/img:' . $_uid . '\]#s',
+			);
+			$string = preg_replace($full_bbcode_removal, '', $string);
+		}
 
 		strip_bbcode($string, $uid);
 		$string = str_replace(array('&#58;', '&#46;'), array(':', '.'), $string);
