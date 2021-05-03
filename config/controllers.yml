@@ -388,6 +388,7 @@ services:
         arguments:
             - '@auth'
             - '@config'
+            - '@config_text'
             - '@dbal.conn'
             - '@template'
             - '@user'
