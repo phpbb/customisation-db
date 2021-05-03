@@ -117,10 +117,22 @@ class config_settings extends base
 			{
 				$value = array();
 				$type = explode('|', $type);
+
+				// Basically updates existing config data with form input
 				foreach ($this->ext_config->__get($config) as $key => $current)
 				{
 					$value[$key] = $this->request->variable($config . '_' . $key, $this->get_default($type[1]));
 				}
+
+				// Saves new config data from newly added phpBB branches
+				foreach (array_keys($this->ext_config->__get('phpbb_versions')) as $branch)
+				{
+					if ($this->request->is_set($config . '_' . $branch) && !isset($value[$branch]))
+					{
+						$value[$branch] = $this->request->variable($config . '_' . $branch, $this->get_default($type[1]));
+					}
+				}
+
 				$this->config_text->set(ext::TITANIA_CONFIG_PREFIX . $config, json_encode($value));
 				$this->config->delete(ext::TITANIA_CONFIG_PREFIX . $config); // delete it from config if its still there for any reason
 			}
@@ -151,6 +163,7 @@ class config_settings extends base
 				if (null !== $this->ext_config->__get($config))
 				{
 					$configurable[$config] = array('NAME' => $config, 'TYPE' => $type, 'VALUE' => $this->ext_config->{$config});
+					$configurable[$config] = $this->check_for_phpbb_branches($configurable[$config]);
 					continue;
 				}
 			}
@@ -163,6 +176,36 @@ class config_settings extends base
 		}
 
 		return $configurable;
+	}
+
+	protected function check_for_phpbb_branches($config)
+	{
+		if ($config['TYPE'] !== 'array|string' && $config['TYPE'] !== 'array|forums')
+		{
+			return $config;
+		}
+
+		$phpbb_branches = array_fill_keys(array_keys($this->ext_config->__get('phpbb_versions')), '');
+
+		switch($config['NAME'])
+		{
+			// Show phpbb branches >= 3.1
+			case 'forum_extension_database':
+				unset($phpbb_branches['20'], $phpbb_branches['30']);
+				$config['VALUE'] = array_replace($phpbb_branches, $config['VALUE']);
+			break;
+
+			// Show phpbb branches >= 3.0
+			case 'forum_style_database':
+			case 'demo_style_path':
+			case 'demo_style_url':
+			case 'demo_style_hook':
+				unset($phpbb_branches['20']);
+				$config['VALUE'] = array_replace($phpbb_branches, $config['VALUE']);
+			break;
+		}
+
+		return $config;
 	}
 
 	/**
