@@ -20,6 +20,9 @@ class config extends \phpbb\titania\entity\base
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var \phpbb\config\db_text */
+	protected $config_text;
+
 	/** @var string */
 	protected $ext_root_path;
 
@@ -29,13 +32,15 @@ class config extends \phpbb\titania\entity\base
 	/**
 	 * Constructor.
 	 *
-	 * @param \phpbb\config\config $config
-	 * @param string $ext_root_path
-	 * @param string $php_ext
+	 * @param \phpbb\config\config  $config
+	 * @param \phpbb\config\db_text $config_text
+	 * @param string                $ext_root_path
+	 * @param string                $php_ext
 	 */
-	public function __construct(\phpbb\config\config $config, $ext_root_path, $php_ext)
+	public function __construct(\phpbb\config\config $config, \phpbb\config\db_text $config_text, $ext_root_path, $php_ext)
 	{
 		$this->config = $config;
+		$this->config_text = $config_text;
 		$this->ext_root_path = $ext_root_path;
 		$this->php_ext = $php_ext;
 
@@ -289,7 +294,12 @@ class config extends \phpbb\titania\entity\base
 
 		foreach ($this->get_configurables() as $config => $type)
 		{
-			if ($this->config->offsetExists(ext::TITANIA_CONFIG_PREFIX . $config))
+			if (strpos($type, 'array') === 0 && $config_text = $this->config_text->get(ext::TITANIA_CONFIG_PREFIX . $config))
+			{
+				$configs[$config] = json_decode($config_text, true);
+			}
+
+			else if ($this->config->offsetExists(ext::TITANIA_CONFIG_PREFIX . $config))
 			{
 				$configs[$config] = json_decode($this->config->offsetGet(ext::TITANIA_CONFIG_PREFIX . $config), true);
 			}
