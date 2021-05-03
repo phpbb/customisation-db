@@ -19,6 +19,9 @@ use phpbb\titania\ext;
 
 class config_settings extends base
 {
+	/** @var \phpbb\config\db_text */
+	protected $config_text;
+
 	/** @var \phpbb\group\helper $group_helper */
 	protected $group_helper;
 
@@ -28,26 +31,28 @@ class config_settings extends base
 	/**
 	 * Constructor
 	 *
-	 * @param \phpbb\auth\auth $auth
-	 * @param \phpbb\config\config $config
+	 * @param \phpbb\auth\auth                  $auth
+	 * @param \phpbb\config\config              $config
+	 * @param \phpbb\config\db_text             $config_text
 	 * @param \phpbb\db\driver\driver_interface $db
-	 * @param \phpbb\template\template $template
-	 * @param \phpbb\user $user
-	 * @param \phpbb\titania\cache\service $cache
-	 * @param \phpbb\titania\controller\helper $helper
-	 * @param type_collection $types
-	 * @param \phpbb\request\request $request
-	 * @param \phpbb\titania\config\config $ext_config
-	 * @param \phpbb\titania\display $display
-	 * @param \phpbb\titania\message\message $message
-	 * @param \phpbb\group\helper $group_helper
+	 * @param \phpbb\template\template          $template
+	 * @param \phpbb\user                       $user
+	 * @param \phpbb\titania\cache\service      $cache
+	 * @param \phpbb\titania\controller\helper  $helper
+	 * @param type_collection                   $types
+	 * @param \phpbb\request\request            $request
+	 * @param \phpbb\titania\config\config      $ext_config
+	 * @param \phpbb\titania\display            $display
+	 * @param \phpbb\titania\message\message    $message
+	 * @param \phpbb\group\helper               $group_helper
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\message\message $message, \phpbb\group\helper $group_helper)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\config\db_text $config_text, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\cache\service $cache, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\message\message $message, \phpbb\group\helper $group_helper)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $cache, $helper, $types, $request, $ext_config, $display);
 
 		$this->message = $message;
 		$this->group_helper = $group_helper;
+		$this->config_text = $config_text;
 	}
 
 	/**
@@ -116,13 +121,15 @@ class config_settings extends base
 				{
 					$value[$key] = $this->request->variable($config . '_' . $key, $this->get_default($type[1]));
 				}
+				$this->config_text->set(ext::TITANIA_CONFIG_PREFIX . $config, json_encode($value));
+				$this->config->delete(ext::TITANIA_CONFIG_PREFIX . $config); // delete it from config if its still there for any reason
 			}
 			else
 			{
 				$value = $this->request->variable($config, $this->get_default($type));
+				$this->config->set(ext::TITANIA_CONFIG_PREFIX . $config, json_encode($value));
 			}
 
-			$this->config->set(ext::TITANIA_CONFIG_PREFIX . $config, json_encode($value));
 			$this->ext_config->__set($config, $value);
 		}
 	}
