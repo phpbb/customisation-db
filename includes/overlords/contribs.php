@@ -654,7 +654,7 @@ class contribs_overlord
 		$contrib_specific = ($contrib_id) ? 'AND r.contrib_id = ' . (int) $contrib_id : '';
 
 		$sql_ary = [
-			'SELECT' => 'r.*, c.*, u.username_clean',
+			'SELECT' => 'r.*, c.*, u.username',
 
 			'FROM' => [
 				TITANIA_REVISIONS_TABLE => 'r',
