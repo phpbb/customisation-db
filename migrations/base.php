@@ -32,6 +32,7 @@ class base extends \phpbb\db\migration\migration
 
 		$this->titania_config = new \phpbb\titania\config\config(
 			$phpbb_container->get('config'),
+			$phpbb_container->get('config_text'),
 			$phpbb_container->getParameter('core.root_path') . 'ext/phpbb/titania/',
 			$phpbb_container->getParameter('core.php_ext')
 		);
