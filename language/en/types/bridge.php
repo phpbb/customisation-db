@@ -68,7 +68,7 @@ Upon validating your bridge the phpBB Team regrets to inform you that we have ha
 To correct the problem(s) with your bridge, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your bridge being denied.
 [*]Re-upload your bridge to our Customisation Database.[/list]
-Please ensure you tested your bridge on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your bridge.
+Please ensure you tested your bridge on the latest version of phpBB (see the [url=https://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your bridge.
 
 If you feel this denial was not warranted please contact the Development Leader.
 

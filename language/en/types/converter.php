@@ -68,7 +68,7 @@ Upon validating your convertor the phpBB Team regrets to inform you that we have
 To correct the problem(s) with your convertor, please following the below instructions:
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your convertor being denied.
 [*]Re-upload your convertor to our Customisation Database.[/list]
-Please ensure you tested your convertor on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your convertor.
+Please ensure you tested your convertor on the latest version of phpBB (see the [url=https://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your convertor.
 
 If you feel this denial was not warranted please contact the Development Leader.
 

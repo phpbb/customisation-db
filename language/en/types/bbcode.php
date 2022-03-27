@@ -49,7 +49,7 @@ $lang = array_merge($lang, array(
 	'BBCODE_CONTRIB_DISABLED'			=> 'Hidden + Disabled',
 	'BBCODE_CONTRIB_HIDDEN'				=> 'Hidden',
 	'BBCODE_CONTRIB_NEW'				=> 'New',
-	'BBCODE_UPLOAD_AGREEMENT'			=> '<span style="font-size: 1.5em;">By submitting this revision you agree and accept that this Custom BBcode will be released under the <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a> license with attribution rights waived for public performance of the work. Attribution will still be required for distribution.</span>',
+	'BBCODE_UPLOAD_AGREEMENT'			=> '<span style="font-size: 1.5em;">By submitting this revision you agree and accept that this Custom BBcode will be released under the <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a> license with attribution rights waived for public performance of the work. Attribution will still be required for distribution.</span>',
 
 	'BBCODE_VALIDATION'					=> '[phpBB Custom BBcode - Validation] %1$s %2$s',
 	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been [b][color=#5c8503]approved[/color][/b] and released into our Customisation Database.
@@ -71,9 +71,9 @@ To correct the problem(s) with your BBcode, please following the below instructi
 [list=1][*]Make the necessary changes to correct any problems (listed below) that resulted in your Custom BBcode being denied.
 [*]Make sure it abides by W3 Validation
 [*]Re-upload your BBcode to our Customisation Database.[/list]
-Please ensure you tested your Custom BBcode on the latest version of phpBB (see the [url=http://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your BBcode.
+Please ensure you tested your Custom BBcode on the latest version of phpBB (see the [url=https://www.phpbb.com/downloads/]Downloads[/url] page) before you re-submit your BBcode.
 
-If you feel this denial was not warranted please contact the phpBB Teams via the validation dicussion topic.
+If you feel this denial was not warranted please contact the phpBB Teams via the validation discussion topic.
 
 Here is a report on why your Custom BBcode was denied:
 [quote]%s[/quote]
