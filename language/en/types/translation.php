@@ -51,6 +51,10 @@ $lang = array_merge($lang, array(
 	'TRANSLATION_VALIDATION_TESTS'				=> 'Please review the results of the automatic translation validation before proceeding.',
 
 	'TRANSLATION'								=> 'Language Pack',
+	'TRANSLATION_CONTRIB_CLEANED'				=> 'Cleaned',
+	'TRANSLATION_CONTRIB_DISABLED'				=> 'Hidden + Disabled',
+	'TRANSLATION_CONTRIB_HIDDEN'				=> 'Hidden',
+	'TRANSLATION_CONTRIB_NEW'					=> 'New',
 	'TRANSLATION_VALIDATION'					=> '[phpBB Language Pack-Validation] %1$s %2$s',
 	'TRANSLATION_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your language pack to the phpBB.com Customisation Database. After careful inspection, your language pack has been [b][color=#5c8503]approved[/color][/b] and released into our Customisation Database.
 

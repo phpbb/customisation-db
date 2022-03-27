@@ -37,7 +37,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 //
 // Some characters you may want to copy&paste:
-// ’ » “ ” …
+// â€™ Â» â€œ â€ â€¦
 //
 
 $lang = array_merge($lang, array(
@@ -45,7 +45,11 @@ $lang = array_merge($lang, array(
 	'AUTHOR_BBCODES_ONE'				=> '1 Custom BBCode',
 	'BBCODE'							=> 'Custom BBCode',
 	'BBCODES'							=> 'Custom BBCodes',
-	'BBCODE_UPLOAD_AGREEMENT'				=> '<span style="font-size: 1.5em;">By submitting this revision you agree and accept that this Custom BBcode will be released under the <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a> license with attribution rights waived for public performance of the work. Attribution will still be required for distribution.</span>',
+	'BBCODE_CONTRIB_CLEANED'			=> 'Cleaned',
+	'BBCODE_CONTRIB_DISABLED'			=> 'Hidden + Disabled',
+	'BBCODE_CONTRIB_HIDDEN'				=> 'Hidden',
+	'BBCODE_CONTRIB_NEW'				=> 'New',
+	'BBCODE_UPLOAD_AGREEMENT'			=> '<span style="font-size: 1.5em;">By submitting this revision you agree and accept that this Custom BBcode will be released under the <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a> license with attribution rights waived for public performance of the work. Attribution will still be required for distribution.</span>',
 
 	'BBCODE_VALIDATION'					=> '[phpBB Custom BBcode - Validation] %1$s %2$s',
 	'BBCODE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Custom BBcode to the phpBB.com Customisation Database. After careful inspection your Custom BBcode has been [b][color=#5c8503]approved[/color][/b] and released into our Customisation Database.
@@ -57,7 +61,7 @@ It is our hope that you will provide a basic level of support for this BBcode an
 
 Sincerely,
 phpBB Teams',
-	'BBCODE_VALIDATION_MESSAGE_DENY'		=> 'Hello,
+	'BBCODE_VALIDATION_MESSAGE_DENY'	=> 'Hello,
 
 As you may know all Custom BBCodes submitted to the phpBB Customisation Database must be validated and approved by members of the phpBB Team.
 
@@ -79,7 +83,7 @@ phpBB Teams',
 	'NO_BBCODE_USAGE'					=> 'Please enter a BBCode usage',
 	'NO_HTML_REPLACE'					=> 'Please enter an HTML replacement',
 	'PUBLIC_ATTR_WAIVED'				=> 'Public performance attribution has been waived.',
-	'REVISION_HTML_REPLACE'				=> 'HTML Replacement',	
+	'REVISION_HTML_REPLACE'				=> 'HTML Replacement',
 	'REVISION_BBCODE_USE'				=> 'BBCode Usage',
 	'REVISION_HELP_LINE'				=> 'Help Line',
 	'REVISION_HTML_REPLACE_EXPLAIN'		=> 'Here you define the default HTML replacement.',

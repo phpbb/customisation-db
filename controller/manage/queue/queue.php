@@ -90,7 +90,7 @@ class queue extends \phpbb\titania\controller\manage\base
 
 		// Add to Breadcrumbs
 		$this->display->generate_breadcrumbs(array(
-			$this->type->lang => $this->get_queue_url($this->type->id),
+			$this->type->lang['lang'] => $this->get_queue_url($this->type->id),
 		));
 
 		return $this->helper->render('manage/queue.html', 'VALIDATION_QUEUE');

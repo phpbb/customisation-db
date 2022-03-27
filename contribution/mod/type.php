@@ -87,8 +87,14 @@ class type extends base
 		$this->author_count = 'author_mods';
 
 		// Language strings
-		$this->lang = $this->user->lang('MODIFICATION');
-		$this->langs = $this->user->lang('MODIFICATIONS');
+		$this->lang = array(
+			'lang'		=> $this->user->lang('MODIFICATION'),
+			'langs'		=> $this->user->lang('MODIFICATIONS'),
+			'new'		=> $this->user->lang('MOD_CONTRIB_NEW'),
+			'cleaned'	=> $this->user->lang('MOD_CONTRIB_CLEANED'),
+			'hidden'	=> $this->user->lang('MOD_CONTRIB_HIDDEN'),
+			'disabled'	=> $this->user->lang('MOD_CONTRIB_DISABLED'),
+		);
 		$this->validation_subject = 'MOD_VALIDATION';
 		$this->validation_message_approve = 'MOD_VALIDATION_MESSAGE_APPROVE';
 		$this->validation_message_deny = 'MOD_VALIDATION_MESSAGE_DENY';

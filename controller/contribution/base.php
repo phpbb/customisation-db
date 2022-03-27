@@ -219,7 +219,7 @@ class base
 	/**
 	* Assign breadcrumbs to template.
 	*
-	* @return null
+	* @return void
 	*/
 	protected function generate_breadcrumbs()
 	{
@@ -232,7 +232,7 @@ class base
 			$category->__set_array($category_row);
 			$name = $category->get_name();
 
-			if ($name == $this->contrib->type->lang || $name == $this->contrib->type->langs)
+			if ($name == $this->contrib->type->lang['lang'] || $name == $this->contrib->type->lang['langs'])
 			{
 				// Generate the main breadcrumbs
 				$this->display->generate_breadcrumbs(array(

@@ -46,6 +46,10 @@ $lang = array_merge($lang, array(
 	'COULD_NOT_FIND_EXT_ROOT'			=> 'Could not find the main directory. Please ensure that there is a composer.json file in the zip package.',
 	'EXTENSION'							=> 'Extension',
 	'EXTENSIONS'						=> 'Extensions',
+	'EXTENSION_CONTRIB_CLEANED'			=> 'Cleaned',
+	'EXTENSION_CONTRIB_DISABLED'		=> 'Hidden + Disabled',
+	'EXTENSION_CONTRIB_HIDDEN'			=> 'Hidden',
+	'EXTENSION_CONTRIB_NEW'				=> 'New',
 	'EXTENSION_CREATE_PUBLIC'			=> '[b]Extension name[/b]: %1$s
 [b]Author:[/b] [url=%2$s]%3$s[/url]
 [b]Extension description[/b]: %4$s

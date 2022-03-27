@@ -45,6 +45,10 @@ $lang = array_merge($lang, array(
 	'AUTHOR_CONVERTERS_ONE'					=> '1 Convertor',
 	'CONVERTER'								=> 'Convertor',
 	'CONVERTERS'							=> 'Convertors',
+	'CONVERTER_CONTRIB_CLEANED'				=> 'Cleaned',
+	'CONVERTER_CONTRIB_DISABLED'			=> 'Hidden + Disabled',
+	'CONVERTER_CONTRIB_HIDDEN'				=> 'Hidden',
+	'CONVERTER_CONTRIB_NEW'					=> 'New',
 	'CONVERTER_VALIDATION'					=> '[phpBB Convertor-Validation] %1$s %2$s',
 	'CONVERTER_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your Convertor to the phpBB.com Customisation Database. After careful inspection your Convertor has been [b][color=#5c8503]approved[/color][/b] and released into our Customisation Database.
 

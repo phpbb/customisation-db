@@ -44,6 +44,10 @@ $lang = array_merge($lang, array(
 	'AUTOMOD_TEST'						=> 'AutoMOD Test',
 	'MODIFICATION'						=> 'Modification',
 	'MODIFICATIONS'						=> 'Modifications',
+	'MOD_CONTRIB_CLEANED'				=> 'Cleaned',
+	'MOD_CONTRIB_DISABLED'				=> 'Hidden + Disabled',
+	'MOD_CONTRIB_HIDDEN'				=> 'Hidden',
+	'MOD_CONTRIB_NEW'					=> 'New',
 	'MOD_CREATE_PUBLIC'					=> '[b]Modification name[/b]: %1$s
 [b]Author:[/b] [url=%2$s]%3$s[/url]
 [b]Modification description[/b]: %4$s

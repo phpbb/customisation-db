@@ -45,6 +45,10 @@ $lang = array_merge($lang, array(
 	'AUTHOR_BRIDGES_ONE'				=> '1 Bridge',
 	'BRIDGE'							=> 'Bridge',
 	'BRIDGES'							=> 'Bridges',
+	'BRIDGE_CONTRIB_CLEANED'			=> 'Cleaned',
+	'BRIDGE_CONTRIB_DISABLED'			=> 'Hidden + Disabled',
+	'BRIDGE_CONTRIB_HIDDEN'				=> 'Hidden',
+	'BRIDGE_CONTRIB_NEW'				=> 'New',
 	'BRIDGE_VALIDATION'					=> '[phpBB Bridge-Validation] %1$s %2$s',
 	'BRIDGE_VALIDATION_MESSAGE_APPROVE'	=> 'Thank you for submitting your bridge to the phpBB.com Customisation Database. After careful inspection your bridge has been [b][color=#5c8503]approved[/color][/b] and released into our Customisation Database.
 
