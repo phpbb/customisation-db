@@ -52,9 +52,14 @@ class type extends base
 		$this->create_composer_packages = false;
 		$this->extra_upload = false;
 
-		$this->lang = $this->user->lang('BBCODE');
-		$this->langs = $this->user->lang('BBCODES');
-
+		$this->lang = array(
+			'lang'		=> $this->user->lang('BBCODE'),
+			'langs'		=> $this->user->lang('BBCODES'),
+			'new'		=> $this->user->lang('BBCODE_CONTRIB_NEW'),
+			'cleaned'	=> $this->user->lang('BBCODE_CONTRIB_CLEANED'),
+			'hidden'	=> $this->user->lang('BBCODE_CONTRIB_HIDDEN'),
+			'disabled'	=> $this->user->lang('BBCODE_CONTRIB_DISABLED'),
+		);
 		$this->validation_subject = 'BBCODE_VALIDATION';
 		$this->validation_message_approve = 'BBCODE_VALIDATION_MESSAGE_APPROVE';
 		$this->validation_message_deny = 'BBCODE_VALIDATION_MESSAGE_DENY';
@@ -64,12 +69,12 @@ class type extends base
 			'revision_bbc_html_replace' => array(
 				'type'		=> 'textarea',
 				'name'		=> 'REVISION_HTML_REPLACE',
-				'explain'	=> 'REVISION_HTML_REPLACE_EXPLAIN'
+				'explain'	=> 'REVISION_HTML_REPLACE_EXPLAIN',
 			),
 			'revision_bbc_bbcode_usage' => array(
 				'type'		=> 'textarea',
 				'name'		=> 'REVISION_BBCODE_USE',
-				'explain'	=> 'REVISION_BBCODE_USE_EXPLAIN'
+				'explain'	=> 'REVISION_BBCODE_USE_EXPLAIN',
 			),
 			'revision_bbc_help_line' => array(
 				'type'		=> 'input',

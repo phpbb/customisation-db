@@ -47,6 +47,10 @@ $lang = array_merge($lang, array(
 	'SELECT_STYLE'						=> 'Select a style',
 	'STYLE'								=> 'Style',
 	'STYLES'							=> 'Styles',
+	'STYLE_CONTRIB_CLEANED'				=> 'Cleaned',
+	'STYLE_CONTRIB_DISABLED'			=> 'Hidden + Disabled',
+	'STYLE_CONTRIB_HIDDEN'				=> 'Hidden',
+	'STYLE_CONTRIB_NEW'					=> 'New',
 	'STYLE_CREATE_PUBLIC'				=> '[b]Style name[/b]: %1$s
 [b]Author:[/b] [url=%2$s]%3$s[/url]
 [b]Style description[/b]: %4$s

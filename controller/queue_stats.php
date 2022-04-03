@@ -93,7 +93,7 @@ class queue_stats
 		$this->generate_history();
 		$this->display->assign_global_vars();
 
-		$page_title = $this->user->lang['QUEUE_STATS'] . ' - ' . $this->type->langs;
+		$page_title = $this->user->lang['QUEUE_STATS'] . ' - ' . $this->type->lang['langs'];
 
 		$this->display->generate_breadcrumbs(array(
 			$page_title	=> $this->helper->route('phpbb.titania.queue_stats', array('contrib_type' => $this->type->url)),
