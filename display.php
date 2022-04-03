@@ -417,7 +417,7 @@ class display
 				'S_IS_SELECTED'		=> $key == $selected,
 
 				'VALUE'				=> $key,
-				'NAME'				=> (isset($this->user->lang['SELECT_CONTRIB_TYPE'])) ? $type->lang : $type->langs,
+				'NAME'				=> (isset($this->user->lang['SELECT_CONTRIB_TYPE'])) ? $type->lang['lang'] : $type->lang['langs'],
 			));
 		}
 	}

@@ -53,14 +53,15 @@ class base implements type_interface
 	public $name = '';
 
 	/**
-	 * The language string identifying the type.
+	 * The language array identifying all language keys based on the type.
 	 *
-	 * $langs is the plural forms of this.
+	 * Ex:
+	 * 		lang['lang'] is the singular form.
+	 * 		lang['langs'] is the plural form.
 	 *
 	 * @var string
 	 */
-	public $lang = '';
-	public $langs = '';
+	public $lang = array();
 
 	/**
 	 * Additional steps to run when uploading a revision.

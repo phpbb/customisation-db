@@ -31,8 +31,14 @@ class type extends base
 		$this->use_queue = false;
 
 		// Language strings
-		$this->lang = $this->user->lang('OFFICIAL_TOOL');
-		$this->langs = $this->user->lang('OFFICIAL_TOOLS');
+		$this->lang = array(
+			'lang'		=> $this->user->lang('OFFICIAL_TOOL'),
+			'langs'		=> $this->user->lang('OFFICIAL_TOOLS'),
+			'new'		=> $this->user->lang('OFFICIAL_TOOL_CONTRIB_NEW'),
+			'cleaned'	=> $this->user->lang('OFFICIAL_TOOL_CONTRIB_CLEANED'),
+			'hidden'	=> $this->user->lang('OFFICIAL_TOOL_CONTRIB_HIDDEN'),
+			'disabled'	=> $this->user->lang('OFFICIAL_TOOL_CONTRIB_DISABLED'),
+		);
 	}
 
 	/**

@@ -18,13 +18,13 @@
 			<span class="quickview-label">{{ branches.NAME }}</span>
 		{% endfor %}
 		{% if contribs.S_CONTRIB_CLEANED %}
-			<span class="quickview-label label-clean">{{ lang('CONTRIB_CLEANED') }}</span>
+			<span class="quickview-label label-clean">{{ contribs.CONTRIB_CLEANED }}</span>
 		{% elseif contribs.S_CONTRIB_NEW %}
-			<span class="quickview-label label-new">{{ lang('UNAPPROVED') }}</span>
+			<span class="quickview-label label-new">{{ contribs.CONTRIB_NEW }}</span>
 		{% elseif contribs.S_CONTRIB_HIDDEN %}
-			<span class="quickview-label label-hidden">{{ lang('HIDDEN') }}</span>
+			<span class="quickview-label label-hidden">{{ contribs.CONTRIB_HIDDEN }}</span>
 		{% elseif contribs.S_CONTRIB_DISABLED %}
-			<span class="quickview-label label-disabled">{{ lang('DISABLED') }}</span>
+			<span class="quickview-label label-disabled">{{ contribs.CONTRIB_DISABLED }}</span>
 		{% endif %}
 		<span class="quickview-label">{{ contribs.CONTRIB_TYPE }}</span>
 	</div>
