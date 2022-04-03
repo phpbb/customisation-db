@@ -116,7 +116,7 @@ Please refer to the following links before you re-upload your extension:
 
 For further reading, you may want to review the following:
 [list]
-[*][url=https://wiki.phpbb.com/Category:Extensions]Extensions Development Wiki[/url]
+[*][url=https://area51.phpbb.com/docs/dev/3.3.x/extensions/index.html]Extensions Development Documentation[/url]
 [*][url=https://php.net/docs.php]PHP Documentation[/url]
 [/list]
 
