@@ -27,8 +27,14 @@ class type extends base
 	public function configure()
 	{
 		// Language strings
-		$this->lang = $this->user->lang('BRIDGE');
-		$this->langs = $this->user->lang('BRIDGES');
+		$this->lang = array(
+			'lang'		=> $this->user->lang('BRIDGE'),
+			'langs'		=> $this->user->lang('BRIDGES'),
+			'new'		=> $this->user->lang('BRIDGE_CONTRIB_NEW'),
+			'cleaned'	=> $this->user->lang('BRIDGE_CONTRIB_CLEANED'),
+			'hidden'	=> $this->user->lang('BRIDGE_CONTRIB_HIDDEN'),
+			'disabled'	=> $this->user->lang('BRIDGE_CONTRIB_DISABLED'),
+		);
 		$this->validation_subject = 'BRIDGE_VALIDATION';
 		$this->validation_message_approve = 'BRIDGE_VALIDATION_MESSAGE_APPROVE';
 		$this->validation_message_deny = 'BRIDGE_VALIDATION_MESSAGE_DENY';

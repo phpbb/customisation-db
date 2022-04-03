@@ -29,9 +29,15 @@ class type extends base
 		$this->forum_database = $this->ext_config->forum_converter_database;
 		$this->forum_robot = $this->ext_config->forum_converter_robot;
 
-		// Language strigs
-		$this->lang = $this->user->lang('CONVERTER');
-		$this->langs = $this->user->lang('CONVERTERS');
+		// Language strings
+		$this->lang = array(
+			'lang'		=> $this->user->lang('CONVERTER'),
+			'langs'		=> $this->user->lang('CONVERTERS'),
+			'new'		=> $this->user->lang('CONVERTER_CONTRIB_NEW'),
+			'cleaned'	=> $this->user->lang('CONVERTER_CONTRIB_CLEANED'),
+			'hidden'	=> $this->user->lang('CONVERTER_CONTRIB_HIDDEN'),
+			'disabled'	=> $this->user->lang('CONVERTER_CONTRIB_DISABLED'),
+		);
 		$this->validation_subject = 'CONVERTER_VALIDATION';
 		$this->validation_message_approve = 'CONVERTER_VALIDATION_MESSAGE_APPROVE';
 		$this->validation_message_deny = 'CONVERTER_VALIDATION_MESSAGE_DENY';

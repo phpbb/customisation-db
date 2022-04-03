@@ -72,8 +72,14 @@ class type extends base
 		}
 
 		// Language strings
-		$this->lang = $this->user->lang('EXTENSION');
-		$this->langs = $this->user->lang('EXTENSIONS');
+		$this->lang = array(
+			'lang'		=> $this->user->lang('EXTENSION'),
+			'langs'		=> $this->user->lang('EXTENSIONS'),
+			'new'		=> $this->user->lang('EXTENSION_CONTRIB_NEW'),
+			'cleaned'	=> $this->user->lang('EXTENSION_CONTRIB_CLEANED'),
+			'hidden'	=> $this->user->lang('EXTENSION_CONTRIB_HIDDEN'),
+			'disabled'	=> $this->user->lang('EXTENSION_CONTRIB_DISABLED'),
+		);
 		$this->validation_subject = 'EXTENSION_VALIDATION';
 		$this->validation_message_approve = 'EXTENSION_VALIDATION_MESSAGE_APPROVE';
 		$this->validation_message_deny = 'EXTENSION_VALIDATION_MESSAGE_DENY';
