@@ -73,8 +73,14 @@ class type extends base
 		$this->author_count = 'author_styles';
 
 		// Language strings
-		$this->lang = $this->user->lang('STYLE');
-		$this->langs = $this->user->lang('STYLES');
+		$this->lang = array(
+			'lang'		=> $this->user->lang('STYLE'),
+			'langs'		=> $this->user->lang('STYLES'),
+			'new'		=> $this->user->lang('STYLE_CONTRIB_NEW'),
+			'cleaned'	=> $this->user->lang('STYLE_CONTRIB_CLEANED'),
+			'hidden'	=> $this->user->lang('STYLE_CONTRIB_HIDDEN'),
+			'disabled'	=> $this->user->lang('STYLE_CONTRIB_DISABLED'),
+		);
 		$this->validation_subject = 'STYLE_VALIDATION';
 		$this->validation_message_approve = 'STYLE_VALIDATION_MESSAGE_APPROVE';
 		$this->validation_message_deny = 'STYLE_VALIDATION_MESSAGE_DENY';

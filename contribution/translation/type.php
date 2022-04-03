@@ -89,8 +89,14 @@ class type extends base
 		);
 
 		// Language strings
-		$this->lang = $this->user->lang('TRANSLATION');
-		$this->langs = $this->user->lang('TRANSLATIONS');
+		$this->lang = array(
+			'lang'		=> $this->user->lang('TRANSLATION'),
+			'langs'		=> $this->user->lang('TRANSLATIONS'),
+			'new'		=> $this->user->lang('TRANSLATION_CONTRIB_NEW'),
+			'cleaned'	=> $this->user->lang('TRANSLATION_CONTRIB_CLEANED'),
+			'hidden'	=> $this->user->lang('TRANSLATION_CONTRIB_HIDDEN'),
+			'disabled'	=> $this->user->lang('TRANSLATION_CONTRIB_DISABLED'),
+		);
 		$this->root_not_found_key = 'COULD_NOT_FIND_TRANSLATION_ROOT';
 		$this->validation_subject = 'TRANSLATION_VALIDATION';
 		$this->validation_message_approve = 'TRANSLATION_VALIDATION_MESSAGE_APPROVE';

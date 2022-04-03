@@ -705,6 +705,11 @@ li.row dl.codebox dd {
 	padding: 0;
 }
 
+.bbcode-container .codebox code {
+	white-space: pre-wrap;
+	tab-size: 4;
+}
+
 /* Codebox adjustments for the revision section of BBCode */
 .revision-details > .bbcode-container > .codebox {
 	min-height: 40px;

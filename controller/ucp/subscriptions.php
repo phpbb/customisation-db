@@ -411,7 +411,7 @@ class subscriptions
 		return array(
 			'FOLDER_STYLE'					=> $folder_img,
 			'SUBSCRIPTION_AUTHOR_FULL'		=> \users_overlord::get_user($row['contrib_user_id'], '_full'),
-			'SUBSCRIPTION_CONTRIB_TYPE'		=> $contrib->type->lang,
+			'SUBSCRIPTION_CONTRIB_TYPE'		=> $contrib->type->lang['lang'],
 			'SUBSCRIPTION_DOWNLOADS'		=> $row['contrib_downloads'],
 			'SUBSCRIPTION_ID'				=> $row['contrib_id'],
 			'SUBSCRIPTION_TARGET'			=> $this->user->lang['SUBSCRIPTION_CONTRIB'],

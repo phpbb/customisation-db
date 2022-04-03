@@ -45,4 +45,8 @@ $lang = array_merge($lang, array(
 	'AUTHOR_OFFICIAL_TOOLS_ONE'			=> '1 Official Tool',
 	'OFFICIAL_TOOL'						=> 'Official Tool',
 	'OFFICIAL_TOOLS'					=> 'Official Tools',
+	'OFFICIAL_TOOL_CONTRIB_CLEANED'		=> 'Cleaned',
+	'OFFICIAL_TOOL_CONTRIB_DISABLED'	=> 'Hidden + Disabled',
+	'OFFICIAL_TOOL_CONTRIB_HIDDEN'		=> 'Hidden',
+	'OFFICIAL_TOOL_CONTRIB_NEW'			=> 'New',
 ));

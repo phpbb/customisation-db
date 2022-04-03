@@ -731,7 +731,12 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			}
 
 			$vars = array_merge($vars, array(
-				'CONTRIB_TYPE'					=> $this->type->lang,
+				'CONTRIB_NEW'					=> $this->type->lang['new'],
+				'CONTRIB_CLEANED'				=> $this->type->lang['cleaned'],
+				'CONTRIB_HIDDEN'				=> $this->type->lang['hidden'],
+				'CONTRIB_DISABLED'				=> $this->type->lang['disabled'],
+
+				'CONTRIB_TYPE'					=> $this->type->lang['lang'],
 				'CONTRIB_TYPE_ID'				=> $this->contrib_type,
 				'CONTRIB_TYPE_CLEAN'        	=> $this->type->url,
 
