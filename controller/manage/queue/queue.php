@@ -123,7 +123,7 @@ class queue extends \phpbb\titania\controller\manage\base
 		{
 			$this->template->assign_block_vars('categories', array(
 				'U_VIEW_CATEGORY'	=> $this->get_queue_url($queue_type),
-				'CATEGORY_NAME'		=> $this->types->get($queue_type)->lang,
+				'CATEGORY_NAME'		=> $this->types->get($queue_type)->lang['langs'],
 				'CATEGORY_CONTRIBS' => $counts[$queue_type],
 			));
 		}
