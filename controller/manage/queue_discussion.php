@@ -75,7 +75,7 @@ class queue_discussion extends base
 			$type = $this->get_type_from_id($id);
 			$this->template->assign_block_vars('categories', array(
 				'U_VIEW_CATEGORY'	=> $this->get_type_url($type),
-				'CATEGORY_NAME'		=> $type->lang,
+				'CATEGORY_NAME'		=> $type->lang['langs'],
 				'CATEGORY_CONTRIBS' => $counts[$id],
 			));
 		}
