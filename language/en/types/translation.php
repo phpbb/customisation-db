@@ -51,6 +51,7 @@ $lang = array_merge($lang, array(
 	'TRANSLATION_VALIDATION_TESTS'				=> 'Please review the results of the automatic translation validation before proceeding.',
 
 	'TRANSLATION'								=> 'Language Pack',
+	'TRANSLATIONS'								=> 'Language Packs',
 	'TRANSLATION_CONTRIB_CLEANED'				=> 'Cleaned',
 	'TRANSLATION_CONTRIB_DISABLED'				=> 'Hidden + Disabled',
 	'TRANSLATION_CONTRIB_HIDDEN'				=> 'Hidden',
