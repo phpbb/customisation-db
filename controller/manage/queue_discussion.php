@@ -75,7 +75,7 @@ class queue_discussion extends base
 			$type = $this->get_type_from_id($id);
 			$this->template->assign_block_vars('categories', array(
 				'U_VIEW_CATEGORY'	=> $this->get_type_url($type),
-				'CATEGORY_NAME'		=> $type->lang,
+				'CATEGORY_NAME'		=> $type->lang['langs'],
 				'CATEGORY_CONTRIBS' => $counts[$id],
 			));
 		}
@@ -115,7 +115,7 @@ class queue_discussion extends base
 
 		// Add to Breadcrumbs
 		$this->display->generate_breadcrumbs(array(
-			$type->lang	=> $this->get_type_url($type),
+			$type->lang['lang']	=> $this->get_type_url($type),
 		));
 
 		\topics_overlord::display_forums_complete('queue_discussion', false, array('topic_category' => $type->id));
