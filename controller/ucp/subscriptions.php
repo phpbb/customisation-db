@@ -560,7 +560,7 @@ class subscriptions
 
 		return array(
 			'SUBSCRIPTION_ID'		=> $queue_id,
-			'SUBSCRIPTION_TARGET'	=> $type->lang,
+			'SUBSCRIPTION_TARGET'	=> $type->lang['lang'],
 			'SUBSCRIPTION_TIME'		=> $this->user->format_date($row['watch_mark_time']),
 			'SUBSCRIPTION_TITLE'	=> $this->user->lang['SUBSCRIPTION_QUEUE'],
 			'SUBSCRIPTION_TYPE'		=> $row['watch_object_type'],
