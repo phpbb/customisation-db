@@ -110,7 +110,7 @@ a.button:hover {
 #sibling-select {
 	margin-left: 10px;
 	padding: 0;
-	width: 33px;
+	width: 34px;
 }
 
 #prev, #next {
@@ -151,7 +151,7 @@ a#next:hover span { background-position: 6px -26px; }
 	height: 300px;
 	margin-left: -100px;
 	position: absolute;
-	width: 420px;
+	width: 421px;
 	z-index: 500;
 }
 
