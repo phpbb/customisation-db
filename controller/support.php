@@ -106,7 +106,7 @@ class support
 			$this->template->assign_block_vars('support_types', array(
 				'U_SUPPORT'		=> $this->helper->route('phpbb.titania.support', array('type' => $class->url)),
 
-				'TYPE_SUPPORT'	=> $class->langs,
+				'TYPE_SUPPORT'	=> $class->lang['langs'],
 			));
 		}
 
