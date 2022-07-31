@@ -215,6 +215,7 @@ services:
             - '@dbal.conn'
             - '@user'
             - '@template'
+            - '@language'
             - '@phpbb.titania.controller.helper'
             - '@phpbb.titania.access'
             - '@phpbb.titania.contribution.type.collection'
