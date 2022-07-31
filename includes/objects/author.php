@@ -352,7 +352,7 @@ class titania_author extends \phpbb\titania\entity\message_base
 				}
 			}
 		}
-		$vars['AUTHOR_CONTRIB_LIST'] = implode($type_list, ', ');
+		$vars['AUTHOR_CONTRIB_LIST'] = implode(', ', $type_list);
 
 		/* @todo: automatically display the common author data too...
 		if (isset($this->sql_data))
