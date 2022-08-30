@@ -392,7 +392,7 @@ class search
 	 */
 	protected function generate_contrib_query($versions, $categories, $search_subcategories)
 	{
-		if (!empty($categories) && (sizeof($categories) != 1 || $categories[0] != 0))
+		if (!empty($categories) && (count($categories) != 1 || $categories[0] != 0))
 		{
 			// Grab the children
 			if ($search_subcategories)
