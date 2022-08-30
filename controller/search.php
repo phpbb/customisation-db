@@ -1,15 +1,15 @@
 <?php
 /**
-*
-* This file is part of the phpBB Customisation Database package.
-*
-* @copyright (c) phpBB Limited <https://www.phpbb.com>
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-* For full copyright and license information, please see
-* the docs/CREDITS.txt file.
-*
-*/
+ *
+ * This file is part of the phpBB Customisation Database package.
+ *
+ * @copyright (c) phpBB Limited <https://www.phpbb.com>
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ * For full copyright and license information, please see
+ * the docs/CREDITS.txt file.
+ *
+ */
 
 namespace phpbb\titania\controller;
 
@@ -90,7 +90,7 @@ class search
 	 * @param \phpbb\user $user
 	 * @param \phpbb\titania\cache\service $cache
 	 * @param \phpbb\request\request_interface $request
-	 * @param helper $helper
+	 * @param \phpbb\titania\controller\helper $helper
 	 * @param type_collection $types
 	 * @param \phpbb\titania\config\config $ext_config
 	 * @param \phpbb\titania\display $display
@@ -120,10 +120,10 @@ class search
 	}
 
 	/**
-	* Display general search form.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Display general search form.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
 	public function general()
 	{
 		$this->setup();
@@ -146,10 +146,10 @@ class search
 	}
 
 	/**
-	* Display search page for contributions.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Display search page for contributions.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
 	public function contributions()
 	{
 		$this->setup();
@@ -174,10 +174,10 @@ class search
 	}
 
 	/**
-	* Display general results.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Display general results.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
 	public function general_results()
 	{
 		$search_type = $this->request->variable('type', 0);
@@ -194,10 +194,10 @@ class search
 	}
 
 	/**
-	* Display contribution results
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Display contribution results
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
 	public function contribution_results()
 	{
 		$versions = $this->request->variable('versions', array(''));
@@ -215,10 +215,10 @@ class search
 	}
 
 	/**
-	* Common handler for displaying general and contrib results.
-	*
-	* @return null
-	*/
+	 * Common handler for displaying general and contrib results.
+	 *
+	 * @return void
+	 */
 	public function common_results()
 	{
 		$this->setup();
@@ -254,11 +254,11 @@ class search
 	}
 
 	/**
-	* Perform search and output results.
-	*
-	* @param string $sort_url		Base sort url.
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Perform search and output results.
+	 *
+	 * @param string $sort_url Base sort url.
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
 	protected function show_results($sort_url)
 	{
 		// Setup the sort tool
@@ -312,14 +312,14 @@ class search
 	}
 
 	/**
-	* Generate main query shared by general and contribution search.
-	*
-	* @param string $search_fields		Fields to search: titleonly|msgonly|
-	* @param string $keywords			Search keywords
-	* @param int $author_id				Author id
-	*
-	* @return null
-	*/
+	 * Generate main query shared by general and contribution search.
+	 *
+	 * @param string $search_fields Fields to search: titleonly|msgonly|
+	 * @param string $keywords      Search keywords
+	 * @param int    $author_id     Author id
+	 *
+	 * @return void
+	 */
 	protected function generate_main_query($search_fields, $keywords, $author_id)
 	{
 		// Keywords specified?
@@ -349,13 +349,13 @@ class search
 	}
 
 	/**
-	* Generate query for general search.
-	*
-	* @param int $type			Search object type.
-	* @param int $contrib_id	Contrib id to search.
-	*
-	* @return null
-	*/
+	 * Generate query for general search.
+	 *
+	 * @param int $type       Search object type.
+	 * @param int $contrib_id Contrib id to search.
+	 *
+	 * @return void
+	 */
 	protected function generate_general_query($type, $contrib_id)
 	{
 		// Fall back to search all if the search type doesn't exist
@@ -382,14 +382,14 @@ class search
 	}
 
 	/**
-	* Generate query for contribution search.
-	*
-	* @param array $versions			Supported phpBB versions to limit search to.
-	* @param array $categories			Categories to filter by.
-	* @param bool $search_subcategories	Whether to search a category children.
-	*
-	* @return null
-	*/
+	 * Generate query for contribution search.
+	 *
+	 * @param array $versions             Supported phpBB versions to limit search to.
+	 * @param array $categories           Categories to filter by.
+	 * @param bool  $search_subcategories Whether to search a category children.
+	 *
+	 * @return void
+	 */
 	protected function generate_contrib_query($versions, $categories, $search_subcategories)
 	{
 		if (!empty($categories) && (sizeof($categories) != 1 || $categories[0] != 0))
@@ -417,10 +417,10 @@ class search
 	}
 
 	/**
-	* Generate query for searching all content.
-	*
-	* @return null
-	*/
+	 * Generate query for searching all content.
+	 *
+	 * @return void
+	 */
 	protected function generate_search_all_query()
 	{
 		$contrib_types = $this->types->get_ids();
@@ -448,11 +448,11 @@ class search
 	}
 
 	/**
-	* Get author id from given username.
-	*
-	* @param string $author		Author's username.
-	* @return int Return's user id or 0 if user was not found.
-	*/
+	 * Get author id from given username.
+	 *
+	 * @param string $author Author's username.
+	 * @return int Return's user id or 0 if user was not found.
+	 */
 	protected function get_author_id($author)
 	{
 		$user = user_helper::get_user_ids_from_list($this->db, $author);
@@ -461,10 +461,10 @@ class search
 	}
 
 	/**
-	* Perform common set up tasks.
-	*
-	* @return null
-	*/
+	 * Perform common set up tasks.
+	 *
+	 * @return void
+	 */
 	protected function setup()
 	{
 		// Add common lang
@@ -491,11 +491,11 @@ class search
 	}
 
 	/**
-	* Assign document variables to template.
-	*
-	* @param array $documents		Documents
-	* @return null
-	*/
+	 * Assign document variables to template.
+	 *
+	 * @param array $documents Documents
+	 * @return void
+	 */
 	protected function assign_doc_vars($documents)
 	{
 		foreach ($documents as $document)
@@ -516,13 +516,13 @@ class search
 	}
 
 	/**
-	* Get document URL.
-	*
-	* @param int $type			Document object type.
-	* @param string $params		Serialized array of parameters.
-	*
-	* @return string
-	*/
+	 * Get document URL.
+	 *
+	 * @param int          $type   Document object type.
+	 * @param string|array $params Serialized array of parameters.
+	 *
+	 * @return string
+	 */
 	protected function get_document_url($type, $params)
 	{
 		$params = unserialize($params);
@@ -554,11 +554,11 @@ class search
 	}
 
 	/**
-	* Assign result page template variables.
-	*
-	* @param int $match_count		Number of matches found.
-	* @return null
-	*/
+	 * Assign result page template variables.
+	 *
+	 * @param int $match_count Number of matches found.
+	 * @return void
+	 */
 	protected function assign_result_vars($match_count)
 	{
 		$this->template->assign_vars(array(
