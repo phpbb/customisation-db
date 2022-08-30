@@ -332,11 +332,11 @@ class search
 			{
 				case 'titleonly' :
 					$search_text = false;
-					break;
+				break;
 
 				case 'msgonly' :
 					$search_title = false;
-					break;
+				break;
 			}
 			$this->engine->set_keywords($keywords, $search_title, $search_text);
 		}
