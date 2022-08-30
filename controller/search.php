@@ -525,7 +525,7 @@ class search
 	 */
 	protected function get_document_url($type, $params)
 	{
-		$params = unserialize($params);
+		$params = unserialize($params, ['allowed_classes' => false]);
 
 		switch ($type)
 		{
@@ -660,7 +660,7 @@ class search
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$id = $row['post_type'] . '_' . ($is_sphinx ? $row['id'] + 20000000 : $row['id']);
-			$row['url'] = serialize(array_merge(unserialize($row['url']), array(
+			$row['url'] = serialize(array_merge(unserialize($row['url'], ['allowed_classes' => false]), array(
 				'topic_id' => $row['topic_id'],
 				'p'        => $row['id'],
 				'#'        => 'p' . $row['id'],
