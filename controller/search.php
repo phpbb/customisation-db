@@ -48,6 +48,9 @@ class search
 	/** @var type_collection */
 	protected $types;
 
+	/** @var \phpbb\titania\config\config */
+	protected $ext_config;
+
 	/** @var \phpbb\titania\display */
 	protected $display;
 
@@ -72,7 +75,10 @@ class search
 	/** @var string */
 	protected $contribs_table;
 
-	const SEARCH_ALL = 0;
+	/** @var string[] */
+	protected $search_types;
+
+	protected const SEARCH_ALL = 0;
 
 	/**
 	 * Constructor
