@@ -592,23 +592,30 @@ class search
 
 		$this->sort->total = $results['total'];
 
+		// https://tracker.phpbb.com/projects/CUSTDB/issues/CUSTDB-813
+		// In Sphinx context ids are incremented with a specific value:
+		//     20000000 for posts
+		//     10000000 for FAQ
+
+		$is_sphinx = $this->engine->get_name() === 'phpbb.titania.search.driver.fulltext_sphinx';
+
 		foreach ($results['documents'] as $data)
 		{
 			switch ($data['type'])
 			{
 				case ext::TITANIA_CONTRIB:
 					$contribs[] = $data['id'];
-					break;
+				break;
 
 				case ext::TITANIA_SUPPORT:
 				case ext::TITANIA_QUEUE_DISCUSSION:
 				case ext::TITANIA_QUEUE :
-					$posts[] = $data['id'];
-					break;
+					$posts[] = $is_sphinx ? $data['id'] - 20000000 : $data['id'];
+				break;
 
 				case ext::TITANIA_FAQ:
-					$faqs[] = $data['id'];
-					break;
+					$faqs[] = $is_sphinx ? $data['id'] - 10000000 : $data['id'];
+				break;
 			}
 		}
 
@@ -616,8 +623,8 @@ class search
 		if ($results['documents'])
 		{
 			$results['documents'] = $this->get_contribs($contribs, $results['documents']);
-			$results['documents'] = $this->get_posts($posts, $results['documents']);
-			$results['documents'] = $this->get_faqs($faqs, $results['documents']);
+			$results['documents'] = $this->get_posts($posts, $results['documents'], $is_sphinx);
+			$results['documents'] = $this->get_faqs($faqs, $results['documents'], $is_sphinx);
 		}
 		return $results;
 	}
@@ -627,9 +634,10 @@ class search
 	 *
 	 * @param array $ids
 	 * @param array $documents
+	 * @param bool  $is_sphinx
 	 * @return array
 	 */
-	protected function get_posts(array $ids, array $documents)
+	protected function get_posts(array $ids, array $documents, bool $is_sphinx)
 	{
 		if (!$ids)
 		{
@@ -645,11 +653,11 @@ class search
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$id = $row['post_type'] . '_' . $row['id'];
+			$id = $row['post_type'] . '_' . ($is_sphinx ? $row['id'] + 20000000 : $row['id']);
 			$row['url'] = serialize(array_merge(unserialize($row['url']), array(
-				'topic_id' 	=> $row['topic_id'],
-				'p'			=> $row['id'],
-				'#'			=> 'p' . $row['id'],
+				'topic_id' => $row['topic_id'],
+				'p'        => $row['id'],
+				'#'        => 'p' . $row['id'],
 			)));
 			$documents[$id] = array_merge($documents[$id], $row);
 		}
@@ -698,9 +706,10 @@ class search
 	 *
 	 * @param array $ids
 	 * @param array $documents
+	 * @param bool  $is_sphinx
 	 * @return array
 	 */
-	protected function get_faqs(array $ids, array $documents)
+	protected function get_faqs(array $ids, array $documents, bool $is_sphinx)
 	{
 		if (!$ids)
 		{
@@ -718,11 +727,11 @@ class search
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$id = ext::TITANIA_FAQ . '_' . $row['id'];
+			$id = ext::TITANIA_FAQ . '_' . ($is_sphinx ? $row['id'] + 10000000 : $row['id']);
 			$row['url'] = serialize(array(
-				'contrib_type'	=> $this->types->get($row['contrib_type'])->url,
-				'contrib'		=> $row['contrib_name_clean'],
-				'id'			=> $row['id'],
+				'contrib_type' => $this->types->get($row['contrib_type'])->url,
+				'contrib'      => $row['contrib_name_clean'],
+				'id'           => $row['id'],
 			));
 			$documents[$id] = array_merge($documents[$id], $row);
 		}
