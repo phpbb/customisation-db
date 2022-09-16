@@ -230,7 +230,7 @@ class attention_overlord
 			);
 
 			// Do we have to?
-			if ($row['attention_close_user'])
+			if (!empty($row['attention_close_user']))
 			{
 				$output = array_merge(
 					$output,
