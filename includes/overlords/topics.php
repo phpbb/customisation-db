@@ -459,7 +459,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'S_TOPIC_TYPE_SWITCH'		=> ($switch_on_sticky && $last_was_sticky && !$topic->topic_sticky) ? true : false,
 
-				'CONTRIB_TYPE'				=> (isset($row['contrib_type']) && $row['contrib_type']) ? $types->get($row['contrib_type'])->lang : '',
+				'CONTRIB_TYPE'				=> (isset($row['contrib_type']) && $row['contrib_type']) ? $types->get($row['contrib_type'])->lang['langs'] : '',
 				'TOPIC_CONTRIB_NAME'		=> (isset($row['contrib_name']) && $row['contrib_name']) ? censor_text($row['contrib_name']) : '',
 
 				'U_VIEW_TOPIC_CONTRIB'				=> (isset($row['contrib_type']) && $row['contrib_type']) ? $contrib->get_url() : '',
