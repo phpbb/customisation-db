@@ -42,6 +42,8 @@ $lang = array_merge($lang, array(
 	'CONTRIB_NAME_DESCRIPTION'		=> 'Contribution Name and Description',
 	'CONTRIB_SUPPORT'				=> 'Contribution Discussion/Support',
 
+	'NO_SEARCH_TERMS'				=> 'No search terms have been entered.',
+
 	'SEARCH_KEYWORDS_EXPLAIN'		=> 'Put a list of words separated by <strong>|</strong> into brackets if only one of the words must be found. Use * as a wildcard for partial matches.',
 	'SEARCH_MSG_ONLY'				=> 'Text/Description only',
 	'SEARCH_SUBCATEGORIES'			=> 'Search Subcategories',
