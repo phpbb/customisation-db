@@ -61,7 +61,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": "^7.1.3",
         "phpbb/epv": "dev-master@dev",
         "phpbb/translation-validator": "~1.5",
         "composer/installers": "~1.0",
@@ -71,7 +71,7 @@
     "extra": {
         "display-name": "phpBB Customisation Database (Titania)",
         "soft-require": {
-            "phpbb/phpbb": "3.2.*@dev"
+            "phpbb/phpbb": "3.3.*@dev"
         }
     }
 }
