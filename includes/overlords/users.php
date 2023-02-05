@@ -165,7 +165,7 @@ class users_overlord
 		}
 
 		// Special things...
-		if ($field[0] == '_')
+		if (strpos($field, '_') === 0)
 		{
 			switch ($field)
 			{
