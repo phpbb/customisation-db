@@ -609,7 +609,7 @@ class sync
 		);
 
 		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
-		$this->db->sql_query($sql);
+		$this->db->sql_query($sql, 3600);
 		$cnt = (int) $this->db->sql_fetchfield('cnt');
 		$this->db->sql_freeresult();
 
