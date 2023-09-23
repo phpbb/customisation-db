@@ -151,7 +151,7 @@ class manager
 
 		$hook_url = $this->ext_config->demo_style_hook[$this->branch];
 		$context = stream_context_create($options);
-		$result = file_get_contents($hook_url, false, $context, -1, 50);
+		$result = file_get_contents($hook_url, false, $context, 0, 50);
 		$this->delete_auth_key($key);
 
 		return $this->get_result($result);
