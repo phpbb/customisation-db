@@ -16,4 +16,4 @@ You can get involved by reporting bugs in the bug tracker (see below) and provid
 
 ## Bug Tracker
 
-If you find a bug, please submit it to the [Customisations Database](https://tracker.phpbb.com/projects/CUSTDB/issues) bug tracker.
+If you find a bug, please submit it to the [Customisations Database](https://github.com/phpbb/customisation-db/issues) bug tracker.
