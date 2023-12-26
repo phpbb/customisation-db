@@ -131,7 +131,9 @@ class helper extends \phpbb\controller\helper
 	{
 		$route = parent::route($route, $params, $is_amp, $session_id, $reference_type);
 
-		return ($this->config->offsetGet('cookie_secure') && strpos($route, 'http://') === 0) ? 'https://' . substr($route, 7) : $route;
+		$full_route = ($this->config->offsetGet('cookie_secure') && strpos($route, 'http://') === 0) ? 'https://' . substr($route, 7) : $route;
+
+		return $this->get_real_url($full_route);
 	}
 
 	/**
