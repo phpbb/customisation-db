@@ -85,6 +85,11 @@ class item extends \phpbb\titania\controller\manage\base
 			return $this->helper->needs_auth();
 		}
 
+		// Create type link information for tags (e.g., make sure the tag hyperlinks back to the type)
+		$queue_type = $this->types->get($this->queue->queue_type);
+		$queue_type_name = $queue_type->name;
+		$queue_type_url = $queue_type->url;
+
 		// Display the main queue item
 		$data = \queue_overlord::display_queue_item($this->id);
 
@@ -96,11 +101,14 @@ class item extends \phpbb\titania\controller\manage\base
 
 		$tag = $this->request->variable('tag', 0);
 
+		// Make sure the item category is added to the breadcrumb.
+		// If the user clicks on a tag (e.g., a tag like "New" or "All")
+		// then this part ensures it gets added to the navigation breadcrumbs
 		if ($tag)
 		{
 			// Add tag to Breadcrumbs
 			$this->display->generate_breadcrumbs(array(
-				$this->tags->get_tag_name($tag)	=> $this->queue->get_url(false, array('tag' => $tag)),
+				$this->tags->get_tag_name($tag)	=> $this->queue->get_url(false, array('tag' => $tag), [$queue_type_name => $queue_type_url]),
 			));
 		}
 
