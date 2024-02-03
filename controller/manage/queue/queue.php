@@ -90,6 +90,7 @@ class queue extends \phpbb\titania\controller\manage\base
 
 		// Add to Breadcrumbs
 		$this->display->generate_breadcrumbs(array(
+			// This is where the type gets displayed
 			$this->type->lang['lang'] => $this->get_queue_url($this->type->id),
 		));
 
