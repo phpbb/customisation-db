@@ -168,6 +168,10 @@ a.download-button .vendor-version {
 	position: relative;
 }
 
+.contrib-description img {
+	max-width: 100%;
+}
+
 .contrib-description dt, h3.details-heading {
 	color: #536482;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
