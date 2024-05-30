@@ -28,17 +28,20 @@ composer create-project --no-interaction phpbb/phpbb /workspaces/phpbb
 
 # Copy phpBB config
 echo "Copy phpBB config"
-cp /workspaces/customisation-db/.devcontainer/resources/phpbb-config.yml /workspaces/phpbb/install/install-config.yml
+sudo cp /workspaces/customisation-db/.devcontainer/resources/phpbb-config.yml /workspaces/phpbb/install/install-config.yml
+
+# https://docs.github.com/en/codespaces/developing-in-a-codespace/default-environment-variables-for-your-codespace
+sudo export PHPBB__CODESPACESX=$CODESPACES
 
 echo "Symlink extension"
 sudo rm -rf /var/www/html
 sudo ln -s /workspaces/phpbb /var/www/html
-mkdir /workspaces/phpbb/ext/phpbb
+sudo mkdir /workspaces/phpbb/ext/phpbb
 sudo ln -s /workspaces/customisation-db /workspaces/phpbb/ext/phpbb/titania
 
 echo "phpBB CLI install"
 cd /workspaces/phpbb && composer install --no-interaction
 sudo php /workspaces/phpbb/install/phpbbcli.php install /workspaces/phpbb/install/install-config.yml
-rm -rf /workspaces/phpbb/install 
+sudo rm -rf /workspaces/phpbb/install 
 
 echo "Completed"

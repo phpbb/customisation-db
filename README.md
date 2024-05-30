@@ -18,7 +18,7 @@ You can get involved by reporting bugs in the bug tracker (see below) and provid
 
 This project can be run in GitHub Codespaces by following the link under port 80 in the `Ports` tab and then navigating to `/app.php/db` in the browser. 
 
-If you run Titania in GitHub Codespaces, make sure to update the server name in ACP -> Server Settings -> Domain Name to match the Codespaces URL. Set `Force server URL settings` to `Yes`.
+If you run Titania in GitHub Codespaces, make sure to update the server name in ACP -> Server Settings -> Domain Name to match the Codespaces URL. Set the port to 443, copy the server name provided by GitHub automatically when the Codespace is created, and then set `Force server URL settings` to `Yes`.
 
 ## Bug Tracker
 
