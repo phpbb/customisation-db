@@ -668,20 +668,35 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	*
 	* @param bool|string $action	Optional action to link to.
 	* @param array $params			Optional parameters to add to URL.
+	* @param array $tag			Optional link to type if tags shown
 	*
 	* @return string Returns generated URL.
 	*/
-	public function get_url($action = false, $params = array())
+	public function get_url($action = false, $params = array(), $tag = false)
 	{
-		$controller = 'phpbb.titania.queue.item';
-		$params += array(
-			'id'	=> $this->queue_id,
-		);
-
-		if ($action)
+		if (!$tag)
 		{
-			$controller .= '.action';
-			$params['action'] = $action;
+			$controller = 'phpbb.titania.queue.item';
+			$params += array(
+				'id'	=> $this->queue_id,
+			);
+
+			if ($action)
+			{
+				$controller .= '.action';
+				$params['action'] = $action;
+			}
+		}
+
+		else 
+		{
+			// Link back to the correct type if the tag is shown
+			$type_name = array_key_first($tag);
+
+			$controller = 'phpbb.titania.queue.type';
+			$params += [
+				'queue_type' => $tag[$type_name],
+			];
 		}
 
 		return $this->controller_helper->route($controller, $params);
