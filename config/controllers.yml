@@ -197,6 +197,7 @@ services:
             - '@phpbb.titania.attachment.uploader'
             - '@phpbb.titania.subscriptions'
             - '@text_formatter.parser'
+            - '@text_formatter.utils'
 
     phpbb.titania.controller.contrib.revision:
         class: phpbb\titania\controller\contribution\revision
