@@ -19,7 +19,7 @@ use phpbb\titania\manage\tool\base;
 use phpbb\titania\search\manager as search_manager;
 use phpbb\titania\sync;
 use phpbb\user;
-use Symfony\Component\Console\Helper\ProgressHelper;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class reindex extends base
 {
@@ -155,7 +155,7 @@ class reindex extends base
 	/**
 	 * Run tool
 	 *
-	 * @param ProgressHelper|null $progress
+	 * @param ProgressBar|null $progress
 	 * @return array
 	 */
 	public function run($progress = null)

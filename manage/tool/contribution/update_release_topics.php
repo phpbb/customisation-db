@@ -20,7 +20,7 @@ use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use phpbb\titania\versions;
 use phpbb\user;
-use Symfony\Component\Console\Helper\ProgressHelper;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class update_release_topics extends base
 {
@@ -194,7 +194,7 @@ class update_release_topics extends base
 	/**
 	 * Run the tool
 	 *
-	 * @param ProgressHelper|null $progress
+	 * @param ProgressBar|null $progress
 	 * @return array
 	 */
 	public function run($progress = null)

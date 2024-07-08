@@ -19,7 +19,7 @@ use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use phpbb\user;
-use Symfony\Component\Console\Helper\ProgressHelper;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class resync_count extends base
 {
@@ -74,7 +74,7 @@ class resync_count extends base
 	 * Run the tool
 	 *
 	 * @param int $prev_contrib				Previous contrib that was resynced
-	 * @param ProgressHelper|null $progress
+	 * @param ProgressBar|null $progress
 	 * @return array
 	 */
 	public function run($prev_contrib = 0, $progress = null)
