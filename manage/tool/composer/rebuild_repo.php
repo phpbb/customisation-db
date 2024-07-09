@@ -268,7 +268,7 @@ class rebuild_repo extends base
 			$this->dump_include($last_type, $group, $packages);
 		}
 
-		$next_batch = $this->start + $this->limit;
+		$next_batch = $this->limit ? $this->start + $this->limit : $this->get_total();
 
 		if ($next_batch >= $this->get_total())
 		{
