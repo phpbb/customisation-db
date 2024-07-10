@@ -114,7 +114,7 @@ class reindex extends base
 		$sql = 'SELECT COUNT(contrib_id) AS cnt
 			FROM ' . $this->contribs_table;
 		$result = $this->db->sql_query($sql);
-		$total = (int) $this->db->sql_fetchfield('cnt', $result);
+		$total = (int) $this->db->sql_fetchfield('cnt');
 		$this->db->sql_freeresult($result);
 
 		return $total;
@@ -130,7 +130,7 @@ class reindex extends base
 		$sql = 'SELECT COUNT(faq_id) AS cnt
 			FROM ' . $this->contrib_faq_table;
 		$result = $this->db->sql_query($sql);
-		$total = (int) $this->db->sql_fetchfield('cnt', $result);
+		$total = (int) $this->db->sql_fetchfield('cnt');
 		$this->db->sql_freeresult($result);
 
 		return $total;
@@ -146,7 +146,7 @@ class reindex extends base
 		$sql = 'SELECT COUNT(post_id) AS cnt
 			FROM ' . $this->posts_table;
 		$result = $this->db->sql_query($sql);
-		$total = (int) $this->db->sql_fetchfield('cnt', $result);
+		$total = (int) $this->db->sql_fetchfield('cnt');
 		$this->db->sql_freeresult($result);
 
 		return $total;

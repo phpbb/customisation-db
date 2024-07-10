@@ -93,7 +93,7 @@ class update_release_topics extends base
 						)) . '
 						AND ' . $this->db->sql_in_set('contrib_type', $types);
 				$result = $this->db->sql_query($sql);
-				$this->total = (int) $this->db->sql_fetchfield('cnt', $result);
+				$this->total = (int) $this->db->sql_fetchfield('cnt');
 				$this->db->sql_freeresult($result);
 			}
 			else

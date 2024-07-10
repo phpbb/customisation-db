@@ -68,7 +68,7 @@ class resync_dots extends base
 				WHERE post_approved = 1
 					AND post_deleted = 0';
 				$result = $this->db->sql_query($sql);
-			$this->total = (int) $this->db->sql_fetchfield('cnt', $result);
+			$this->total = (int) $this->db->sql_fetchfield('cnt');
 			$this->db->sql_freeresult($result);
 		}
 

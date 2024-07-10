@@ -208,7 +208,7 @@ class resync_count extends base
 			);
 			$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 			$result = $this->db->sql_query($sql);
-			$this->total = (int) $this->db->sql_fetchfield('cnt', $result);
+			$this->total = (int) $this->db->sql_fetchfield('cnt');
 			$this->db->sql_freeresult($result);
 		}
 
