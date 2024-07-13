@@ -252,7 +252,7 @@ class sync
 						WHERE contrib_id = ' . $row['contrib_id'] . '
 							AND revision_status = ' . ext::TITANIA_REVISION_APPROVED;
 					$result1 = $this->db->sql_query($sql);
-					$cnt = $this->db->sql_fetchfield('cnt', $result1);
+					$cnt = $this->db->sql_fetchfield('cnt', false, $result1);
 					$this->db->sql_freeresult($result1);
 
 					if (($cnt > 0 && $row['contrib_status'] == ext::TITANIA_CONTRIB_NEW) || ($cnt == 0 && $row['contrib_status'] == ext::TITANIA_CONTRIB_APPROVED))
@@ -631,7 +631,7 @@ class sync
 				AND post_deleted = 0
 				AND post_approved = 1';
 		$result = $this->db->sql_query($sql);
-		$teams = $this->db->sql_fetchfield('cnt', $result);
+		$teams = $this->db->sql_fetchfield('cnt', false, $result);
 		$this->db->sql_freeresult($result);
 
 		$sql = 'SELECT COUNT(post_id) AS cnt
@@ -641,7 +641,7 @@ class sync
 				AND post_deleted = 0
 				AND post_approved = 1';
 		$result = $this->db->sql_query($sql);
-		$authors = $this->db->sql_fetchfield('cnt', $result);
+		$authors = $this->db->sql_fetchfield('cnt', false, $result);
 		$this->db->sql_freeresult($result);
 
 		$sql = 'SELECT COUNT(post_id) AS cnt
@@ -651,7 +651,7 @@ class sync
 				AND post_deleted = 0
 				AND post_approved = 1';
 		$result = $this->db->sql_query($sql);
-		$public = $this->db->sql_fetchfield('cnt', $result);
+		$public = $this->db->sql_fetchfield('cnt', false, $result);
 		$this->db->sql_freeresult($result);
 
 		$sql = 'SELECT COUNT(post_id) AS cnt
@@ -659,7 +659,7 @@ class sync
 			WHERE topic_id = ' . (int) $topic_id . '
 				AND post_deleted <> 0';
 		$result = $this->db->sql_query($sql);
-		$deleted = $this->db->sql_fetchfield('cnt', $result);
+		$deleted = $this->db->sql_fetchfield('cnt', false, $result);
 		$this->db->sql_freeresult($result);
 
 		$sql = 'SELECT COUNT(post_id) AS cnt
@@ -668,7 +668,7 @@ class sync
 				AND post_deleted = 0
 				AND post_approved = 0';
 		$result = $this->db->sql_query($sql);
-		$unapproved = $this->db->sql_fetchfield('cnt', $result);
+		$unapproved = $this->db->sql_fetchfield('cnt', false, $result);
 		$this->db->sql_freeresult($result);
 
 		return count::to_db(array(

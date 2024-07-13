@@ -18,7 +18,7 @@ use phpbb\db\sql_insert_buffer;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\manage\tool\base;
 use phpbb\user;
-use Symfony\Component\Console\Helper\ProgressHelper;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class resync_dots extends base
 {
@@ -68,7 +68,7 @@ class resync_dots extends base
 				WHERE post_approved = 1
 					AND post_deleted = 0';
 				$result = $this->db->sql_query($sql);
-			$this->total = (int) $this->db->sql_fetchfield('cnt', $result);
+			$this->total = (int) $this->db->sql_fetchfield('cnt');
 			$this->db->sql_freeresult($result);
 		}
 
@@ -96,7 +96,7 @@ class resync_dots extends base
 	/**
 	 * Run the tool
 	 *
-	 * @param ProgressHelper|null $progress
+	 * @param ProgressBar|null $progress
 	 * @return array
 	 */
 	public function run($progress = null)

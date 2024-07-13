@@ -22,7 +22,7 @@ use phpbb\titania\controller\helper;
 use phpbb\titania\entity\package;
 use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
-use Symfony\Component\Console\Helper\ProgressHelper;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Finder\SplFileInfo;
 
 class rebuild_repo extends base
@@ -175,7 +175,7 @@ class rebuild_repo extends base
 	 * 	from the revision zip files
 	 * @param bool|false $force		Force tool to run if a build is already
 	 * 	in progress
-	 * @param ProgressHelper|null $progress
+	 * @param ProgressBar|null $progress
 	 * @return array
 	 */
 	public function run($from_file = false, $force = false, $progress = null)
@@ -268,7 +268,7 @@ class rebuild_repo extends base
 			$this->dump_include($last_type, $group, $packages);
 		}
 
-		$next_batch = $this->start + $this->limit;
+		$next_batch = $this->limit ? $this->start + $this->limit : $this->get_total();
 
 		if ($next_batch >= $this->get_total())
 		{
