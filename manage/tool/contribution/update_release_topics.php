@@ -20,7 +20,7 @@ use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use phpbb\titania\versions;
 use phpbb\user;
-use Symfony\Component\Console\Helper\ProgressHelper;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class update_release_topics extends base
 {
@@ -93,7 +93,7 @@ class update_release_topics extends base
 						)) . '
 						AND ' . $this->db->sql_in_set('contrib_type', $types);
 				$result = $this->db->sql_query($sql);
-				$this->total = (int) $this->db->sql_fetchfield('cnt', $result);
+				$this->total = (int) $this->db->sql_fetchfield('cnt');
 				$this->db->sql_freeresult($result);
 			}
 			else
@@ -194,7 +194,7 @@ class update_release_topics extends base
 	/**
 	 * Run the tool
 	 *
-	 * @param ProgressHelper|null $progress
+	 * @param ProgressBar|null $progress
 	 * @return array
 	 */
 	public function run($progress = null)

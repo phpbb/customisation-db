@@ -20,7 +20,7 @@ use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use phpbb\user;
-use Symfony\Component\Console\Helper\ProgressHelper;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class rebuild_urls extends base
 {
@@ -75,7 +75,7 @@ class rebuild_urls extends base
 	/**
 	 * Run tool.
 	 *
-	 * @param ProgressHelper|null $progress
+	 * @param ProgressBar|null $progress
 	 * @return array
 	 */
 	public function run($progress = null)

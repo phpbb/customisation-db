@@ -15,6 +15,7 @@ namespace phpbb\titania\console\command\composer;
 
 use phpbb\titania\manage\tool\composer\rebuild_repo as rebuild_tool;
 use phpbb\user;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -74,8 +75,8 @@ class rebuild_repo extends \phpbb\console\command\command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$progress = $this->getHelper('progress');
-		$progress->start($output, $this->tool->get_total());
+		$progress = new ProgressBar($output, $this->tool->get_total());
+		$progress->start();
 
 		$result = $this->tool
 			->set_start(0)
