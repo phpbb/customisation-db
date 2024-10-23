@@ -73,5 +73,10 @@
         "soft-require": {
             "phpbb/phpbb": "3.3.*@dev"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
     }
 }
