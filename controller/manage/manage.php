@@ -29,7 +29,7 @@ class manage extends base
 		{
 			if ($page['auth'])
 			{
-				redirect($page['url']);
+				redirect($page['url'], false, true);
 			}
 		}
 
