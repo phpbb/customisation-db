@@ -13,20 +13,18 @@
 
 namespace phpbb\titania\console\command\extension;
 
-use Chumper\Zipper\Zipper;
-use phpbb\db\driver\driver_interface as db;
 use phpbb\user;
 use phpbb\language\language as phpbb_language;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
+use ZipArchive;
 
 /**
  * Class language
  *
- * A script that will package British English from the latest phpBB version 
+ * A script that will package British English from the latest phpBB version
  * battye was here in 2019
  *
  * @package phpbb\titania\console\command\extension
@@ -37,18 +35,12 @@ class language extends \phpbb\console\command\command
 	// 1) Name only (referencing Titania): php bin/phpbbcli.php titania:extension:language phpBB-3.2.7.zip --name
 	// 2) Full path: php bin/phpbbcli.php titania:extension:language /var/www/phpBB/ext/phpbb/titania/includes/phpbb_packages/phpBB-3.2.7.zip
 
-	const COMMAND_NAME = 'titania:extension:language';
-	const COMMAND_TMP_DIRECTORY = 'ext/phpbb/titania/files/contrib_temp/tmp';
-	const COMMAND_LANGUAGE_DIRECTORY = 'ext/phpbb/titania/includes/language_packages';
+	private const COMMAND_NAME = 'titania:extension:language';
+	private const COMMAND_LANGUAGE_DIRECTORY = 'ext/phpbb/titania/includes/language_packages';
 
 	/** @var phpbb_language */
 	protected $language;
 
-	/** @var db */
-	protected $db;
-
-	/** @var $root_path */
-	protected $root_path;
 
 	/** @var OutputInterface */
 	protected $output;
@@ -57,7 +49,7 @@ class language extends \phpbb\console\command\command
 	protected $input;
 
 	/** @var string */
-	protected $tmp_folder;
+	protected $root_path;
 
 	/** @var string */
 	protected $language_folder;
@@ -67,7 +59,6 @@ class language extends \phpbb\console\command\command
 	 *
 	 * @param user $user
 	 * @param phpbb_language $language
-	 * @param db $db
 	 * @param string $root_path
 	 * @param string $php_ext
 	 */
@@ -81,9 +72,6 @@ class language extends \phpbb\console\command\command
 		// Set up the injected properties
 		$this->language = $language;
 		$this->root_path = $root_path;
-
-		// Temporary folder
-		$this->tmp_folder = $this->root_path . self::COMMAND_TMP_DIRECTORY;
 		$this->language_folder = $this->root_path . self::COMMAND_LANGUAGE_DIRECTORY;
 
 		$language_files = ['console'];
@@ -106,9 +94,10 @@ class language extends \phpbb\console\command\command
 
 	/**
 	 * Execute the script
-	 * @param InputInterface $input
+	 *
+	 * @param InputInterface  $input
 	 * @param OutputInterface $output
-	 * @return int|null|void
+	 * @return void
 	 * @throws \Exception
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
@@ -139,9 +128,10 @@ class language extends \phpbb\console\command\command
 
 	/**
 	 * Get the version number from the phpBB package
-	 * @param $zip_path
-	 * @return array
-	 * @throws \Exception
+	 *
+	 * @param string $zip_path The path to the zip file.
+	 * @return array An array containing the major, minor, and patch versions.
+	 * @throws \Exception If the zip file name is not in the expected format.
 	 */
 	private function extract_version_number($zip_path)
 	{
@@ -165,9 +155,10 @@ class language extends \phpbb\console\command\command
 
 	/**
 	 * Package British English
-	 * @param string $zip_path
+	 *
+	 * @param string $zip_path The path to the zip file.
 	 * @return void
-	 * @throws \Exception
+	 * @throws \Exception If the language pack already exists, the phpBB package is not found, or a zip error occurs.
 	 */
 	private function package($zip_path)
 	{
@@ -181,46 +172,78 @@ class language extends \phpbb\console\command\command
 			throw new \Exception($this->language->lang('CLI_EXTENSION_LANGUAGE_PACK_EXISTS', $save_name));
 		}
 
-		else if (!file_exists($zip_path))
+		if (!file_exists($zip_path))
 		{
 			// The phpBB package could not be found - quit.
 			throw new \Exception($this->language->lang('CLI_EXTENSION_LANGUAGE_FILE_NOT_FOUND', $zip_path));
 		}
 
+		// These are the language directories (and license) we want to extract from phpBB in order to form British English
+		$language_directories = [
+			'docs/LICENSE.txt',
+			'ext/phpbb/viglink/language/en',
+			'language/en',
+			'styles/prosilver/theme/en',
+		];
+
+		// Create our Zip instance
+		$zip = new ZipArchive();
+
+		if ($zip->open($save_name, ZipArchive::CREATE) !== true)
+		{
+			throw new \Exception($this->language->lang('CLI_EXTENSION_LANGUAGE_ZIP_ERROR', self::COMMAND_LANGUAGE_DIRECTORY));
+		}
+
+		$phpbb_zip = new ZipArchive();
+		if ($phpbb_zip->open($zip_path) === true)
+		{
+			foreach ($language_directories as $dir)
+			{
+				$this->add_to_zip($phpbb_zip, $zip, $save_version, 'phpBB3/' . $dir);
+			}
+			$phpbb_zip->close();
+		}
 		else
 		{
-			// These are the language directories (and license) we want to extract from phpBB in order to form British English
-			$language_directories = [
-				'docs/LICENSE.txt',
-				'ext/phpbb/viglink/language/en',
-				'language/en',
-				'styles/prosilver/theme/en',
-			];
+			throw new \Exception($this->language->lang('CLI_EXTENSION_LANGUAGE_FILE_NOT_FOUND', $zip_path));
+		}
 
-			// Create our Zipper instance
-			$zip = new Zipper();
+		$zip->renameName($save_version . '/docs/LICENSE.txt', $save_version . '/language/en/LICENSE');
+		$zip->close();
 
-			// Extract the relevant folders from the main phpBB3 directory into an appropriate temporary directory
-			$zip->make($zip_path)
-				->folder('phpBB3')
-				->extractTo($this->tmp_folder, $language_directories, Zipper::WHITELIST);
+		$this->output->writeln($this->language->lang('CLI_EXTENSION_LANGUAGE_PACK_GENERATED', $save_name));
+	}
 
-			// Move the license file
-			$system = new Filesystem();
-			$system->copy($this->tmp_folder . '/docs/LICENSE.txt', $this->tmp_folder . '/language/en/LICENSE');
-			$system->remove($this->tmp_folder . '/docs');
+	/**
+	 * Add a directory structure and file contents from a source zip archive to a destination zip archive.
+	 *
+	 * @param ZipArchive $source_zip   The source zip archive.
+	 * @param ZipArchive $dest_zip     The destination zip archive.
+	 * @param string     $save_version The version string to prepend to file paths in the destination archive.
+	 * @param string     $source_path  The path to the directory within the source archive.
+	 *
+	 * @return void
+	 */
+	private function add_to_zip(ZipArchive $source_zip, ZipArchive $dest_zip, $save_version, $source_path)
+	{
+		for ($i = 0; $i < $source_zip->numFiles; $i++)
+		{
+			$stat = $source_zip->statIndex($i);
+			if (str_starts_with($stat['name'], $source_path))
+			{
+				if ($stat['size'] <= 0 && strpos($stat['name'], '/', strlen($source_path)))
+				{
+					$dest_zip->addEmptyDir($save_version . '/' . substr($stat['name'], strlen('phpBB3/')));
+					continue;
+				}
 
-			// Create the new zip file with our British English language pack
-			$zip->make($save_name)
-				->folder($save_version)
-				->add($this->tmp_folder)
-				->close();
-
-			// This deletes the entire temporary folder
-			$system->remove($this->tmp_folder);
-
-			// Script has completed
-			$this->output->writeln($this->language->lang('CLI_EXTENSION_LANGUAGE_PACK_GENERATED', $save_name));
+				$file_contents = $source_zip->getFromName($stat['name']);
+				if ($file_contents !== false)
+				{
+					$local_path = $save_version . '/' . substr($stat['name'], strlen('phpBB3/'));
+					$dest_zip->addFromString($local_path, $file_contents);
+				}
+			}
 		}
 	}
 }

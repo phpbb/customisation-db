@@ -61,17 +61,22 @@
         }
     ],
     "require": {
-        "php": "^7.1.3",
+        "ext-zip": "*",
+        "php": "^7.2",
         "phpbb/epv": "dev-master@dev",
         "phpbb/translation-validator": "~1.5",
         "composer/installers": "~1.0",
-        "battye/php-array-parser": "~1.0",
-        "chumper/zipper": "1.0.0"
+        "battye/php-array-parser": "~1.0"
     },
     "extra": {
         "display-name": "phpBB Customisation Database (Titania)",
         "soft-require": {
             "phpbb/phpbb": "3.3.*@dev"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
         }
     }
 }

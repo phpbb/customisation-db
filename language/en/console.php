@@ -78,4 +78,5 @@ $lang = array_merge($lang, array(
 	'CLI_EXTENSION_LANGUAGE_FILE_WRONG_FORMAT'		=> 'Please check that the format of the phpBB zip file is correct.',
 	'CLI_EXTENSION_LANGUAGE_PACK_EXISTS'			=> 'The language pack already exists: %s',
 	'CLI_EXTENSION_LANGUAGE_PACK_GENERATED'			=> 'British English language pack generated at [%s]. Please commit this file to Git to add to Titania, or copy it to use as a standalone language pack.',
+	'CLI_EXTENSION_LANGUAGE_ZIP_ERROR'				=> 'The language pack zip file cannot be created at [%s]. Please check directory permissions.',
 ));
