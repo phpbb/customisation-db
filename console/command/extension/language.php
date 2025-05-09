@@ -178,7 +178,7 @@ class language extends \phpbb\console\command\command
 			throw new \Exception($this->language->lang('CLI_EXTENSION_LANGUAGE_FILE_NOT_FOUND', $zip_path));
 		}
 
-		// These are the language directories (and license) we want to extract from phpBB in order to form British English
+		// These are the language directories (and license) we want to extract from phpBB to build British English
 		$language_directories = [
 			'docs/LICENSE.txt',
 			'ext/phpbb/viglink/language/en',
@@ -226,23 +226,32 @@ class language extends \phpbb\console\command\command
 	 */
 	private function add_to_zip(ZipArchive $source_zip, ZipArchive $dest_zip, $save_version, $source_path)
 	{
-		for ($i = 0; $i < $source_zip->numFiles; $i++)
+		$prefix_length = strlen('phpBB3/');
+
+		for ($i = 0, $n = $source_zip->numFiles; $i < $n; $i++)
 		{
 			$stat = $source_zip->statIndex($i);
-			if (str_starts_with($stat['name'], $source_path))
-			{
-				if ($stat['size'] <= 0 && strpos($stat['name'], '/', strlen($source_path)))
-				{
-					$dest_zip->addEmptyDir($save_version . '/' . substr($stat['name'], strlen('phpBB3/')));
-					continue;
-				}
+			$entry_name = $stat['name'];
 
-				$file_contents = $source_zip->getFromName($stat['name']);
-				if ($file_contents !== false)
-				{
-					$local_path = $save_version . '/' . substr($stat['name'], strlen('phpBB3/'));
-					$dest_zip->addFromString($local_path, $file_contents);
-				}
+			if (!str_starts_with($entry_name, $source_path))
+			{
+				continue;
+			}
+
+			$relative_path = substr($entry_name, $prefix_length);
+			$dest_path = $save_version . '/' . $relative_path;
+
+			// Check if it's a directory (size is 0, and the name ends with '/')
+			if ($stat['size'] === 0 && str_ends_with($entry_name, '/'))
+			{
+				$dest_zip->addEmptyDir($dest_path);
+				continue;
+			}
+
+			$file_contents = $source_zip->getFromName($entry_name);
+			if ($file_contents !== false)
+			{
+				$dest_zip->addFromString($dest_path, $file_contents);
 			}
 		}
 	}
