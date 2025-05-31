@@ -212,12 +212,6 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_TV'] . '&quot;][code]' . $this->tv_results . "[/code][/quote]\n";
 		}
 
-		// Add the Automod results
-		if ($this->automod_results)
-		{
-			$post->post_text .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_AUTOMOD'] . '&quot;]' . $this->automod_results . "[/quote]\n";
-		}
-
 		// Prevent errors from different configurations
 		phpbb::$config['min_post_chars'] = 1;
 		phpbb::$config['max_post_chars'] = 0;
@@ -688,7 +682,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			}
 		}
 
-		else 
+		else
 		{
 			// Link back to the correct type if the tag is shown
 			$type_name = array_key_first($tag);

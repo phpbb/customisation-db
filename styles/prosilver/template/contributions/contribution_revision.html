@@ -132,25 +132,12 @@
 					{{ STEP_MESSAGE }}
 				</div>
 			{% endif %}
-			{% if MPV_TEST_WARNING %}
-				<br /><br />{{ lang('MPV_TEST') }}
-			{% endif %}
 			{% if PV_RESULTS %}
 				<p class="error">{{ lang('PV_RESULTS') }}</p>
 				<hr class="dashed" />
 				<div style="font-size:12px;">
 					{{ PV_RESULTS }}
 				</div>
-				{% if S_AUTOMOD_TEST %}
-					<br /><br />
-					<hr class="dashed" />
-					<strong>{{ lang('AUTOMOD_TEST') }}</strong>
-				{% endif %}
-			{% endif %}
-			{% if AUTOMOD_RESULTS %}
-				<p class="error">{{ lang('AUTOMOD_RESULTS') }}</p>
-				<hr class="dashed" />
-				{{ AUTOMOD_RESULTS }}
 			{% endif %}
 			{% if S_PASSED_TRANSLATION_VALIDATION %}
 				<div class="translation-validation">
