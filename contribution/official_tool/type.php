@@ -17,9 +17,9 @@ use phpbb\titania\contribution\type\base;
 
 class type extends base
 {
-	const ID = 4;
-	const NAME = 'official_tool';
-	const URL = 'official_tool';
+	public const ID = 4;
+	public const NAME = 'official_tool';
+	public const URL = 'official_tool';
 
 	/**
 	 * @{inheritDoc}

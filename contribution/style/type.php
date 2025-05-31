@@ -30,9 +30,9 @@ class type extends base
 	/** @var demo\manager */
 	protected $demo_manager;
 
-	const ID = 2;
-	const NAME = 'style';
-	const URL = 'style';
+	public const ID = 2;
+	public const NAME = 'style';
+	public const URL = 'style';
 
 	/**
 	 * Constructor

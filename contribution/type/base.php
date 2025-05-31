@@ -221,9 +221,9 @@ class base implements type_interface
 	 */
 	public $contribution_fields = array();
 
-	const ID = 0;
-	const NAME = 'contribution';
-	const URL = 'contribution';
+	public const ID = 0;
+	public const NAME = 'contribution';
+	public const URL = 'contribution';
 
 	/**
 	 * Constructor

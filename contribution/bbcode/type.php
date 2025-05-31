@@ -24,9 +24,9 @@ class type extends base
 	/** @var demo\demo */
 	protected $demo;
 
-	const ID = 7;
-	const NAME = 'bbcode';
-	const URL = 'bbcode';
+	public const ID = 7;
+	public const NAME = 'bbcode';
+	public const URL = 'bbcode';
 
 	/**
 	 * Constructor
