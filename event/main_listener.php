@@ -17,6 +17,7 @@ use phpbb\db\driver\driver_interface as db_driver_interface;
 use phpbb\event\data;
 use phpbb\auth\auth;
 use phpbb\template\template;
+use phpbb\language\language;
 use phpbb\titania\controller\helper;
 use phpbb\titania\ext;
 use phpbb\user;
@@ -43,6 +44,9 @@ class main_listener implements EventSubscriberInterface
 
 	/** @var \phpbb\template\template */
 	protected $template;
+
+	/** @var \phpbb\language\language */
+	protected $language;
 
 	/** @var \phpbb\titania\controller\helper */
 	protected $controller_helper;
@@ -79,12 +83,13 @@ class main_listener implements EventSubscriberInterface
 	 * @param string $ext_root_path Titania root path
 	 * @param string $php_ext PHP file extension
 	 */
-	public function __construct(request $request, db_driver_interface $db, user $user, template $template, helper $controller_helper, access $access, type_collection $types, $phpbb_root_path, $ext_root_path, $php_ext)
+	public function __construct(request $request, db_driver_interface $db, user $user, template $template, language $language, helper $controller_helper, access $access, type_collection $types, $phpbb_root_path, $ext_root_path, $php_ext)
 	{
 		$this->request = $request;
 		$this->db = $db;
 		$this->user = $user;
 		$this->template = $template;
+		$this->language = $language;
 		$this->controller_helper = $controller_helper;
 		$this->access = $access;
 		$this->types = $types;
@@ -97,16 +102,19 @@ class main_listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.permissions'							=> 'add_permissions',
-			'kernel.request'							=> array(array('startup', -1)),
-			'core.page_header_after'					=> 'overwrite_template_vars',
-            'core.text_formatter_s9e_configure_after'	=> 'inject_bbcode_code_lang',
+			'core.permissions'									=> 'add_permissions',
+			'kernel.request'									=> array(array('startup', -1)),
+			'core.page_header_after'							=> 'overwrite_template_vars',
+            'core.text_formatter_s9e_configure_after'			=> 'inject_bbcode_code_lang',
 
 			// Check whether a user is removed from a team
-			'core.group_delete_user_after'				=> 'remove_users_from_subscription',
+			'core.group_delete_user_after'						=> 'remove_users_from_subscription',
 
 			// Include quoted text when private messaging
-			'core.ucp_pm_compose_predefined_message'	=> 'quote_text_upon_pm',
+			'core.ucp_pm_compose_predefined_message'			=> 'quote_text_upon_pm',
+
+			'core.memberlist_modify_viewprofile_sql'			=> 'query_user_contribs_data',
+			'core.memberlist_view_profile'						=> 'add_memberlist_template_vars',
 		);
 	}
 
@@ -405,5 +413,53 @@ class main_listener implements EventSubscriberInterface
 [quote=%s time=%d user_id=%d]%s[/quote]', $post_url, $row['username'], $row['post_time'], $row['user_id'], $row['post_text']);
 			}
 		}
+	}
+
+	/**
+	 * @todo
+	 * @param $event
+	 */
+	public function query_user_contribs_data($event)
+	{
+		//var_dump($event['sql_array']); die();
+	}
+
+	/**
+	 * @todo
+	 * @param $event
+	 */
+	public function add_memberlist_template_vars($event)
+	{
+		if (!defined('TITANIA_POSTS_TABLE'))
+		{
+			// Include Titania so we can access the constants
+			require($this->ext_root_path . 'common.' . $this->php_ext);
+		}
+
+		$this->language->add_lang(['memberlist'], 'phpbb/titania');
+
+		$sql_ary = array(
+			'SELECT' => 'COUNT(*)',
+			'FROM' => [
+				TITANIA_CONTRIBS_TABLE => 'c',
+			],
+			'WHERE' => 'c.contrib_user_id = ' . $event['member']['user_id'] . ' AND c.contrib_status = 2',
+		);
+
+		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
+		$result = $this->db->sql_query($sql);
+		$contribs = $this->db->sql_fetchrow($result);
+
+		$u_total_contribs = intval($contribs['COUNT(*)']);
+
+		$u_user_contribs = $this->controller_helper->route('phpbb.titania.author', array(
+			'author'	=> urlencode($event['member']['username_clean']),
+			'page'		=> 'contributions',
+		));
+
+		$this->template->assign_vars(array(
+			'U_USER_CONTRIB_TOTAL'	=> $u_total_contribs,
+			'U_USER_CONTRIB_LINK'	=> $this->controller_helper->get_real_url($u_user_contribs),
+		));
 	}
 }
