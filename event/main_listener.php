@@ -113,7 +113,6 @@ class main_listener implements EventSubscriberInterface
 			// Include quoted text when private messaging
 			'core.ucp_pm_compose_predefined_message'			=> 'quote_text_upon_pm',
 
-			'core.memberlist_modify_viewprofile_sql'			=> 'query_user_contribs_data',
 			'core.memberlist_view_profile'						=> 'add_memberlist_template_vars',
 		);
 	}
@@ -413,15 +412,6 @@ class main_listener implements EventSubscriberInterface
 [quote=%s time=%d user_id=%d]%s[/quote]', $post_url, $row['username'], $row['post_time'], $row['user_id'], $row['post_text']);
 			}
 		}
-	}
-
-	/**
-	 * @todo
-	 * @param $event
-	 */
-	public function query_user_contribs_data($event)
-	{
-		//var_dump($event['sql_array']); die();
 	}
 
 	/**
