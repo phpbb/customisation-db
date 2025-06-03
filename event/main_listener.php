@@ -420,7 +420,7 @@ class main_listener implements EventSubscriberInterface
 	 */
 	public function add_memberlist_template_vars($event)
 	{
-		if (!defined('TITANIA_POSTS_TABLE'))
+		if (!defined('TITANIA_CONTRIBS_TABLE'))
 		{
 			// Include Titania so we can access the constants
 			require($this->ext_root_path . 'common.' . $this->php_ext);
