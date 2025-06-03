@@ -437,7 +437,7 @@ class main_listener implements EventSubscriberInterface
 
 		$u_total_contribs = (int) $this->db->sql_fetchfield('contribs');
 
-		$db->sql_freeresult($result);
+		$this->db->sql_freeresult($result);
 
 		$u_user_contribs = $this->controller_helper->route('phpbb.titania.author', array(
 			'author'	=> urlencode($event['member']['username_clean']),
