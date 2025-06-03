@@ -415,7 +415,7 @@ class main_listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * @todo
+	 * Display contribution count and link to Titania profile in memberlist.php.
 	 * @param $event
 	 */
 	public function add_memberlist_template_vars($event)
@@ -428,19 +428,16 @@ class main_listener implements EventSubscriberInterface
 
 		$this->language->add_lang(['memberlist'], 'phpbb/titania');
 
-		$sql_ary = array(
-			'SELECT' => 'COUNT(*)',
-			'FROM' => [
-				TITANIA_CONTRIBS_TABLE => 'c',
-			],
-			'WHERE' => 'c.contrib_user_id = ' . $event['member']['user_id'] . ' AND c.contrib_status = 2',
-		);
+		$sql = 'SELECT COUNT(contrib_id) as contribs
+		    FROM ' . TITANIA_CONTRIBS_TABLE . '
+		    WHERE contrib_user_id = ' . (int) $event['member']['user_id'] . '
+		      AND contrib_status = 2';
 
-		$sql = $this->db->sql_build_query('SELECT', $sql_ary);
 		$result = $this->db->sql_query($sql);
-		$contribs = $this->db->sql_fetchrow($result);
 
-		$u_total_contribs = intval($contribs['COUNT(*)']);
+		$u_total_contribs = (int) $this->db->sql_fetchfield('contribs');
+
+		$db->sql_freeresult($result);
 
 		$u_user_contribs = $this->controller_helper->route('phpbb.titania.author', array(
 			'author'	=> urlencode($event['member']['username_clean']),
