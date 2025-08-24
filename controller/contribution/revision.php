@@ -53,6 +53,12 @@ class revision extends base
 	/** @var bool */
 	private $skip_epv = false;
 
+	/** @var \phpbb\textformatter\s9e\parser */
+	protected $parser;
+
+	/** @var \phpbb\textformatter\s9e\utils */
+	protected $utils;
+
 	/**
 	 * Constructor
 	 *
@@ -71,14 +77,19 @@ class revision extends base
 	 * @param \phpbb\titania\attachment\uploader $uploader
 	 * @param \phpbb\titania\subscriptions $subscriptions
 	 * @param \phpbb\titania\message\message $message
+	 * @param \phpbb\textformatter\s9e\parser $parser
+	 * @param \phpbb\textformatter\s9e\utils $utils
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\attachment\uploader $uploader, \phpbb\titania\subscriptions $subscriptions, \phpbb\titania\message\message $message)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\attachment\uploader $uploader, \phpbb\titania\subscriptions $subscriptions, \phpbb\titania\message\message $message, \phpbb\textformatter\s9e\parser $parser, \phpbb\textformatter\s9e\utils $utils)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $types, $request, $cache, $ext_config, $display, $access);
 
 		$this->uploader = $uploader;
 		$this->subscriptions = $subscriptions;
 		$this->message = $message;
+
+		$this->parser = $parser;
+		$this->utils = $utils;
 
 		// Increase timeout when dealing with revisions
 		@set_time_limit(90);
@@ -216,6 +227,9 @@ class revision extends base
 
 		// Load the revisions for this contribution
 		$this->contrib->get_revisions();
+
+		// Unparse the contrib name
+		$this->contrib->contrib_name = $this->utils->unparse($this->contrib->contrib_name);
 
 		if (sizeof($this->contrib->revisions))
 		{

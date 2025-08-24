@@ -196,6 +196,8 @@ services:
             - '@phpbb.titania.attachment.uploader'
             - '@phpbb.titania.attachment.uploader'
             - '@phpbb.titania.subscriptions'
+            - '@text_formatter.parser'
+            - '@text_formatter.utils'
 
     phpbb.titania.controller.contrib.revision:
         class: phpbb\titania\controller\contribution\revision
@@ -216,6 +218,8 @@ services:
             - '@phpbb.titania.attachment.uploader'
             - '@phpbb.titania.subscriptions'
             - '@phpbb.titania.message'
+            - '@text_formatter.parser'
+            - '@text_formatter.utils'
 
     phpbb.titania.controller.contrib.revision.edit:
         class: phpbb\titania\controller\contribution\revision_edit

@@ -37,6 +37,12 @@ class manage extends base
 	/** @var \phpbb\titania\subscriptions */
 	protected $subscriptions;
 
+	/** @var \phpbb\textformatter\s9e\parser */
+	protected $parser;
+
+	/** @var \phpbb\textformatter\s9e\utils */
+	protected $utils;
+
 	/** @var bool */
 	protected $is_moderator;
 
@@ -68,8 +74,10 @@ class manage extends base
 	 * @param \phpbb\titania\attachment\uploader $screenshots
 	 * @param \phpbb\titania\attachment\uploader $colorizeit_sample
 	 * @param \phpbb\titania\subscriptions $subscriptions
+	 * @param \phpbb\textformatter\s9e\parser $parser
+	 * @param \phpbb\textformatter\s9e\utils $utils
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\message\message $message, \phpbb\titania\attachment\uploader $screenshots, \phpbb\titania\attachment\uploader $colorizeit_sample, \phpbb\titania\subscriptions $subscriptions)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\message\message $message, \phpbb\titania\attachment\uploader $screenshots, \phpbb\titania\attachment\uploader $colorizeit_sample, \phpbb\titania\subscriptions $subscriptions, \phpbb\textformatter\s9e\parser $parser, \phpbb\textformatter\s9e\utils $utils)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $types, $request, $cache, $ext_config, $display, $access);
 
@@ -77,6 +85,8 @@ class manage extends base
 		$this->screenshots = $screenshots;
 		$this->colorizeit_sample = $colorizeit_sample;
 		$this->subscriptions = $subscriptions;
+		$this->parser = $parser;
+		$this->utils = $utils;
 	}
 
 	/**
@@ -490,6 +500,9 @@ class manage extends base
 		// Set custom field values.
 		$this->contrib->set_custom_fields($this->settings['custom']);
 
+		// Parse the contrib name so emojis can be used
+		$this->contrib->contrib_name = $this->parser->parse($this->contrib->contrib_name);
+
 		// Create relations
 		$this->contrib->put_contrib_in_categories(
 			$this->settings['categories'],
@@ -708,6 +721,10 @@ class manage extends base
 				$this->contrib->type->id
 			);
 		}
+
+		// Unparse the contrib name
+		$this->contrib->contrib_name = $this->utils->unparse($this->contrib->contrib_name);
+
 		$this->message->display();
 		$this->contrib->assign_details();
 		$this->display->assign_global_vars();

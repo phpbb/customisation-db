@@ -26,7 +26,7 @@ class plupload extends \phpbb\plupload\plupload
 			'S_PLUPLOAD_EXT'	=> true,
 			'FILTERS'			=> $filters,
 			'CHUNK_SIZE'		=> $chunk_size,
-			'S_PLUPLOAD_URL'	=> htmlspecialchars_decode($s_action),
+			'S_PLUPLOAD_URL'	=> str_replace('http', 'https', htmlspecialchars_decode($s_action)), //TODO:fix this
 			'MAX_ATTACHMENTS'	=> $max_files,
 			'ATTACH_ORDER'		=> ($this->config['display_order']) ? 'asc' : 'desc',
 			'L_TOO_MANY_ATTACHMENTS'	=> $this->user->lang('TOO_MANY_ATTACHMENTS', $max_files),
