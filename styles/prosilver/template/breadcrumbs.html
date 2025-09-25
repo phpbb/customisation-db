@@ -1,5 +1,0 @@
-{% for navlinks in loops.navlinks %}
-	{% EVENT overall_header_navlink_prepend %}
-	<span class="crumb"><a href="{{ navlinks.U_VIEW_FORUM }}"{{ definition.MICRODATA }}{% if navlinks.MICRODATA %} {{ navlinks.MICRODATA }}{% endif %}>{{ navlinks.FORUM_NAME }}</a></span>
-	{% EVENT overall_header_navlink_append %}
-{% endfor %}

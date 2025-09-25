@@ -1,13 +1,7 @@
-phpbb.titania.contribution:
-    resource: "routes/contribution.yml"
-    prefix: /db/{contrib_type}/{contrib}
-    requirements:
-        contrib_type: mod|extension|style|converter|official_tool|bbcode|bridge|translation
+custdb_index:
+    path: /custdb/index
+    defaults: { _controller: battye.custdb.controller:index }
 
-phpbb.titania.manage:
-    resource: "routes/manage.yml"
-    prefix: /db/manage
-
-phpbb.titania.general:
-    resource: "routes/general.yml"
-    prefix: /db
+custdb_add_contribution:
+    path: /custdb/add
+    defaults: { _controller: battye.custdb.controller:add }

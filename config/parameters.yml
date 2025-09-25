@@ -1,2 +1,0 @@
-parameters:
-    phpbb.titania.root_path: '%core.root_path%ext/phpbb/titania/'

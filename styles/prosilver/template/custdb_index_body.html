@@ -1,0 +1,83 @@
+{% INCLUDECSS '@battye_custdb/custdb_style.css' %}
+{% include 'overall_header.html' %}
+
+    <h2>{{ lang('CUSTDB_INDEX') }}</h2>
+
+    <div class="custdb_action_bar">
+        <div>
+            <label for="custdb_search" class="custdb_input_label">{{ lang('CUSTDB_SEARCH') }}</label>
+            <input type="text" id="custdb_search" class="custdb_input_theme custdb_search_box" placeholder="{{ lang('CUSTDB_TYPE_TO_SEARCH') }}">
+        </div>
+
+        <div>
+            <label for="custdb_status" class="custdb_input_label">{{ lang('CUSTDB_STATUS') }}</label>
+            <select id="custdb_status" class="custdb_input_theme custdb_dropdown_theme">
+                <option value="#">{{ lang('CUSTDB_STATUS_APPROVED') }}</option>
+                <option value="#">{{ lang('CUSTDB_STATUS_DENIED') }}</option>
+                <option value="">{{ lang('CUSTDB_STATUS_UNVALIDATED') }}</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="custdb_sort" class="custdb_input_label">{{ lang('CUSTDB_SORT_BY') }}</label>
+            <select id="custdb_sort" class="custdb_input_theme custdb_dropdown_theme">
+                <option value="#">{{ lang('CUSTDB_SORT_BY_DATE') }}</option>
+                <option value="#">{{ lang('CUSTDB_SORT_BY_NAME') }}</option>
+            </select>
+        </div>
+
+        <div>
+            <a href="{{ U_NEW_CONTRIBUTION }}" class="custdb_button">{{ lang('CUSTDB_NEW') }}</a>
+        </div>
+    </div>
+
+    <div class="custdb_container">
+        <div class="custdb_sidebar">
+            <div class="custdb_sidebar_category">
+                <div class="custdb_sidebar_category_content{% if TYPE == TYPE_EXTENSIONS %} custdb_sidebar_category_selected{% endif %}">
+                    <a href="{{ U_TYPE_EXTENSIONS }}">{{ lang('CUSTDB_TYPE_EXTENSIONS') }}</a>
+                </div>
+            </div>
+
+            <div class="custdb_sidebar_category">
+                <div class="custdb_sidebar_category_content{% if TYPE == TYPE_STYLES %} custdb_sidebar_category_selected{% endif %}">
+                    <a href="{{ U_TYPE_STYLES }}">{{ lang('CUSTDB_TYPE_STYLES') }}</a>
+                </div>
+            </div>
+
+            <div class="custdb_sidebar_category">
+                <div class="custdb_sidebar_category_content{% if TYPE == TYPE_TRANSLATIONS %} custdb_sidebar_category_selected{% endif %}">
+                    <a href="{{ U_TYPE_TRANSLATIONS }}">{{ lang('CUSTDB_TYPE_TRANSLATIONS') }}</a>
+                </div>
+            </div>
+
+            <div class="custdb_sidebar_category">
+                <div class="custdb_sidebar_category_content{% if TYPE == TYPE_BBCODES %} custdb_sidebar_category_selected{% endif %}">
+                    <a href="{{ U_TYPE_BBCODES }}">{{ lang('CUSTDB_TYPE_BBCODES') }}</a>
+                </div>
+            </div>
+
+            <div class="custdb_sidebar_category">
+                <div class="custdb_sidebar_category_content{% if TYPE == TYPE_TOOLS %} custdb_sidebar_category_selected{% endif %}">
+                    <a href="{{ U_TYPE_TOOLS }}">{{ lang('CUSTDB_TYPE_TOOLS') }}</a>
+                </div>
+            </div>
+
+            <div class="custdb_sidebar_category">
+                <div class="custdb_sidebar_category_content{% if TYPE == TYPE_ARCHIVE %} custdb_sidebar_category_selected{% endif %}">
+                    <a href="{{ U_TYPE_ARCHIVE }}">{{ lang('CUSTDB_TYPE_ARCHIVE') }}</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="custdb_content">
+            {% for contribution in contributions %}
+            <div class="custdb_main_category">
+                <div class="custdb_main_category_header">{{ contribution.CONTRIBUTION_NAME }}</div>
+                <div class="custdb_main_category_content">{{ contribution.CONTRIBUTION_DESCRIPTION }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% include 'overall_footer.html' %}

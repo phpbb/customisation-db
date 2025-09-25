@@ -1,9 +1,0 @@
-All files must be named like the following:
-
-phpBB-(full version).zip
-
-Example:
-
-phpBB-2.0.23.zip
-phpBB-3.0.0.zip
-phpBB-3.0.7-pl1.zip

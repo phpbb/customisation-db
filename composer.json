@@ -1,77 +1,33 @@
 {
-    "name": "phpbb/titania",
+    "name": "battye/custdb",
     "type": "phpbb-extension",
-    "description": "This adds a very powerful and large customisation database to your forum. It is codenamed Titania.",
-    "homepage": "http://www.github.com/phpBB/customisation-db/",
-    "time": "2012-02-15",
-    "version": "3.2.2-dev",
-    "license": "GPLv2",
+    "description": "An extension for the Customisation DB",
+    "homepage": "https://www.phpbb.com",
+    "version": "4.0.0-dev",
+    "time": "2022-07-23",
+    "license": "GPL-2.0-only",
     "authors": [
-        {
-            "name": "David Colón (DavidIQ)",
-            "email": "davidiq@phpbb.com",
-            "homepage": "http://www.davidiq.com",
-            "role": "Lead Developer"
-        },
-        {
-            "name": "Michael Cullum (MichaelC)",
-            "email": "unknownbliss@phpbb.com",
-            "homepage": "http://www.michaelcullum.com",
-            "role": "Developer"
-        },
-        {
-            "name": "Matt Friedman (VSE)",
-            "role": "Developer"
-        },
         {
             "name": "battye",
             "email": "battye@phpbb.com",
+            "homepage": "https://forums.cricketmx.com",
             "role": "Developer"
-        },
-        {
-            "name": "Cesar Gallegos (prototech)",
-            "email": "prototech91@gmail.com",
-            "role": "Previous Developer"
-        },
-        {
-            "name": "Raimon Meuldijk (Raimon)",
-            "email": "raimon@phpbb.com",
-            "role": "Previous Developer"
-        },
-        {
-            "name": "Mickaël Salfati (Elglobo)",
-            "email": "elglobo@phpbb.com",
-            "role": "Previous Developer"
-        },
-        {
-            "name": "Nathan Guse (EXreaction)",
-            "role": "Previous Lead Developer"
-        },
-        {
-            "name": "Andreas Fischer (bantu)",
-            "role": "Previous Developer"
-        },
-        {
-            "name": "mtotheikle",
-            "role": "Previous Developer"
-        },
-        {
-            "name": "CDB & phpBB Team",
-            "role": "Developers, Translators etc."
         }
     ],
     "require": {
-        "php": "^7.1.3",
-        "phpbb/epv": "dev-master@dev",
-        "phpbb/translation-validator": "~1.5",
-        "composer/installers": "~1.0",
-        "battye/php-array-parser": "~1.0",
-        "chumper/zipper": "1.0.0"
+        "php": ">=8.4.0",
+        "phpbb/phpbb": ">4.0.0@dev",
+        "composer/installers": "~1.0.0"
     },
     "extra": {
-        "display-name": "phpBB Customisation Database (Titania)",
+        "display-name": "Customisation DB",
         "soft-require": {
-            "phpbb/phpbb": "3.3.*@dev"
+            "phpbb/phpbb": ">4.0.0@dev"
+        },
+        "version-check": {
+            "host": "www.phpbb.com",
+            "directory": "/customise/db/extension/custdb",
+            "filename": "version_check"
         }
     }
 }

@@ -1,0 +1,4 @@
+parameters:
+  battye.custdb.tables:
+    contributions: '%core.table_prefix%custdb_contributions'
+    revisions: '%core.table_prefix%custdb_revisions'

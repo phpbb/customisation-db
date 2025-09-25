@@ -1,0 +1,215 @@
+.custdb_container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.custdb_sidebar {
+    width: 25%;
+    padding-right: 20px;
+    box-sizing: border-box;
+}
+
+.custdb_content {
+    width: 75%;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.custdb_sidebar_category, .custdb_main_category {
+    background: #eaf3f9; /* light blue background for the body */
+    border: 1px solid #c7d9f2; /* subtle border */
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden; /* ensures rounded corners look good */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.custdb_main_category_header {
+    background: #428bca; /* matches the blue top bar */
+    color: white;
+    font-weight: bold;
+    padding: 10px 15px;
+    font-size: 1rem;
+}
+
+.custdb_sidebar_category_content, .custdb_main_category_content {
+    padding: 10px 15px;
+    background: #eaf3f9;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar_category_content, .custb_main_category_content a {
+    color: #2c3e50;
+    text-decoration: none;
+    padding: 5px 0;
+    border-bottom: 1px solid #dbe4ec;
+    transition: color 0.2s ease;
+}
+
+.custdb_sidebar_category_content a:last-child {
+    border-bottom: none;
+}
+
+.custdb_sidebar_category_content a:hover {
+    color: #1e3a8a; /* darker blue on hover */
+}
+
+.custdb_sidebar_category_selected {
+    background: linear-gradient(to bottom, #c8e5f8, #92cbfa); /* subtle blue highlight */
+    color: #1e3a8a; /* strong blue text */
+}
+
+/* ================================
+   Base Shared Input Styling
+=================================== */
+.custdb_input_theme {
+    font-size: 1rem;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: linear-gradient(to bottom, #ffffff, #f2f2f2); /* subtle gradient */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+    outline: none;
+}
+
+/* On focus: highlight with red border and subtle glow */
+.custdb_input_theme:focus {
+    border-color: #d43b3b; /* matches button text color */
+    box-shadow: 0 0 5px rgba(212, 59, 59, 0.6);
+}
+
+/* ================================
+   Search Box
+=================================== */
+.custdb_search_box {
+    width: 220px; /* adjustable width */
+    padding-right: 35px; /* extra space for a search icon */
+    background: linear-gradient(to bottom, #ffffff, #f2f2f2);
+}
+
+/* ================================
+   Dropdown Menu
+=================================== */
+.custdb_dropdown_theme {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    cursor: pointer;
+    position: relative;
+    padding-right: 30px; /* space for custom arrow */
+}
+
+/* Custom dropdown arrow */
+.custdb_dropdown_theme::after {
+    content: "▼";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    color: #666;
+    pointer-events: none;
+}
+
+/* Hover and focus states */
+.custdb_dropdown_theme:hover,
+.custdb_dropdown_theme:focus {
+    border-color: #d43b3b;
+}
+
+/* ================================
+   Labels
+=================================== */
+.custdb_input_label {
+    font-weight: bold;
+    color: #d43b3b; /* same red as button */
+    display: block;
+    margin-bottom: 5px;
+}
+
+.custdb_button {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #d43b3b; /* dark text like dropdowns */
+    background: linear-gradient(to bottom, #ffffff, #f2f2f2); /* subtle gradient */
+    border: 1px solid #ccc; /* neutral border */
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none; /* remove underline for <a> */
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* subtle shadow */
+    transition: all 0.2s ease-in-out;
+}
+
+/* Hover and focus: same behavior as dropdown */
+.custdb_button:hover,
+.custdb_button:focus {
+    border-color: #d43b3b; /* highlight red border */
+    outline: none;
+}
+
+/* Active state: slight click animation */
+.custdb_button:active {
+    transform: scale(0.98);
+}
+/* ================================
+   Action Bar Layout
+=================================== */
+.custdb_action_bar {
+    display: flex;
+    justify-content: space-between; /* left items vs right button */
+    align-items: center;
+    flex-wrap: wrap; /* allow wrapping on smaller screens */
+    gap: 20px;
+    padding: 10px 15px;
+    background: linear-gradient(to bottom, #ffffff, #f6f6f6);
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+/* Left group of filters: search + dropdowns */
+.custdb_action_bar > div:not(:last-child) {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels */
+.custdb_input_label {
+    font-weight: bold;
+    color: #d43b3b;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+/* Make the button always stay on the far right */
+.custdb_action_bar > div:last-child {
+    margin-left: auto; /* pushes it to the right */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .custdb_action_bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* Button becomes full width on small screens */
+    .custdb_action_bar > div:last-child {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* Inputs and dropdowns stacked vertically */
+    .custdb_action_bar > div:not(:last-child) {
+        width: 100%;
+    }
+}
