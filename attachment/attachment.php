@@ -44,7 +44,7 @@ class attachment extends \phpbb\titania\entity\database_base
 	 *
 	 * @var string
 	 */
-	protected $sql_table = \TITANIA_ATTACHMENTS_TABLE;
+	protected $sql_table;
 
 	/**
 	 * SQL identifier field
@@ -64,7 +64,8 @@ class attachment extends \phpbb\titania\entity\database_base
 	 * @param string $phpbb_root_path
 	 * @param string $php_ext
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\titania\config\config $ext_config, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user,
+                                \phpbb\titania\config\config $ext_config, \phpbb\titania\controller\helper $controller_helper, $phpbb_root_path, $php_ext, $attachments_table)
 	{
 		$this->db = $db;
 		$this->config = $config;
@@ -74,6 +75,7 @@ class attachment extends \phpbb\titania\entity\database_base
 		$this->attachments_table = $this->sql_table;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+        $this->sql_table = $attachments_table;
 
 		$this->user->add_lang('posting');
 		$this->configure_properties();

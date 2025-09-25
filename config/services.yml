@@ -23,6 +23,7 @@ services:
             - '@phpbb.titania.controller.helper'
             - '%core.root_path%'
             - '%core.php_ext%'
+            - '%tables.titania.attachments'
 
     phpbb.titania.attachment.files.factory:
         class: phpbb\titania\attachment\files\factory
@@ -70,6 +71,7 @@ services:
             - '@user'
             - '@template'
             - '@phpbb.titania.attachment'
+            - '%tables.titania.attachments'
 
     phpbb.titania.attachment.plupload:
         class: phpbb\titania\attachment\plupload
@@ -465,6 +467,7 @@ services:
             - '@phpbb.titania.attachment'
             - '@phpbb.titania.search.manager'
             - '@phpbb.titania.contribution.type.collection'
+            - '%tables.titania.attachments'
 
     phpbb.titania.tags:
         class: phpbb\titania\tags

@@ -1,4 +1,6 @@
 <?php
+namespace \phpbb\titania\includes;
+
 /**
 *
 * This file is part of the phpBB Customisation Database package.
@@ -21,7 +23,7 @@ if (!defined('IN_PHPBB'))
 
 // Table names
 $table_prefix = titania::$config->table_prefix;
-define('TITANIA_ATTACHMENTS_TABLE',				$table_prefix . 'attachments');
+//define('TITANIA_ATTACHMENTS_TABLE',				$table_prefix . 'attachments');
 define('TITANIA_ATTENTION_TABLE',				$table_prefix . 'attention');
 define('TITANIA_AUTOMOD_QUEUE_TABLE',			$table_prefix . 'automod_queue');
 define('TITANIA_AUTHORS_TABLE',					$table_prefix . 'authors');

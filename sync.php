@@ -79,14 +79,17 @@ class sync
 	 * @param search\manager $search_manager
 	 * @param type_collection $types
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, cache\service $cache, \phpbb\titania\attachment\attachment $attachment, search\manager $search_manager, type_collection $types)
+	public function __construct(\phpbb\db\driver\driver_interface $db, cache\service $cache, \phpbb\titania\attachment\attachment $attachment,
+                                search\manager $search_manager, type_collection $types,
+        string $attachments_table
+    )
 	{
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->attachment = $attachment;
 		$this->search_manager = $search_manager;
 		$this->types = $types;
-		$this->attachments_table = \TITANIA_ATTACHMENTS_TABLE;
+		$this->attachments_table = $attachments_table;
 		$this->authors_table = TITANIA_AUTHORS_TABLE;
 		$this->categories_table = TITANIA_CATEGORIES_TABLE;
 		$this->contrib_coauthors_table = TITANIA_CONTRIB_COAUTHORS_TABLE;

@@ -80,8 +80,9 @@ class titania_revision extends \phpbb\titania\entity\database_base
 
 	/** @var config */
 	protected $config;
+    protected $attachment_table;
 
-	public function __construct($contrib, $revision_id = false)
+    public function __construct($contrib, $revision_id = false)
 	{
 		// Configure object properties
 		$this->object_config = array_merge($this->object_config, array(
@@ -120,6 +121,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		$this->translations = phpbb::$container->get('phpbb.titania.attachment.operator');
 		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 		$this->config = phpbb::$container->get('config');
+        $this->attachment_table = phpbb::$container->get('parameters.tables.titania.attachments');
 	}
 
 	/**
@@ -566,7 +568,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		$this->submit();
 
 		// Move any translations
-		$sql = 'UPDATE ' . \TITANIA_ATTACHMENTS_TABLE . '
+		$sql = 'UPDATE ' . $this->attachment_table . '
 			SET object_id = ' . $this->revision_id . '
 			WHERE object_type = ' . ext::TITANIA_TRANSLATION . '
 				AND object_id = ' . $old_revision->revision_id;

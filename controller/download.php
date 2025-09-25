@@ -53,6 +53,8 @@ class download
 	/** @var string */
 	protected $type;
 
+    protected $attachements_table;
+
 	const OK = 200;
 	const FORBIDDEN = 403;
 	const NOT_FOUND = 404;
@@ -71,7 +73,7 @@ class download
 	* @param string $phpbb_root_path
 	* @param string $php_ext
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\user $user, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, access $access, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\user $user, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, access $access, $phpbb_root_path, $php_ext, $attachements_table)
 	{
 		$this->db = $db;
 		$this->auth = $auth;
@@ -82,6 +84,7 @@ class download
 		$this->access = $access;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
+        $this->attachements_table = $attachements_table;
 
 		$this->user->add_lang('viewtopic');
 		require($this->phpbb_root_path . 'includes/functions_download.' . $this->php_ext);
@@ -208,7 +211,7 @@ class download
 		}
 
 		$sql = 'SELECT *
-			FROM ' . \TITANIA_ATTACHMENTS_TABLE . '
+			FROM ' . $this->attachements_table . '
 			WHERE attachment_id = ' . (int) $this->id;
 		$result = $this->db->sql_query_limit($sql, 1);
 		$this->file = $this->db->sql_fetchrow($result);
@@ -472,7 +475,7 @@ class download
 		}
 
 		// Update download count
-		$sql = 'UPDATE ' . \TITANIA_ATTACHMENTS_TABLE . '
+		$sql = 'UPDATE ' . $this->attachements_table . '
 			SET download_count = download_count + 1
 			WHERE attachment_id = ' . (int) $this->id;
 		$this->db->sql_query($sql);
@@ -553,7 +556,7 @@ class download
 		if ($size > 0 && $size != $attachment['filesize'])
 		{
 			// Update database record
-			$sql = 'UPDATE ' . \TITANIA_ATTACHMENTS_TABLE . '
+			$sql = 'UPDATE ' . $this->attachements_table . '
 				SET filesize = ' . (int) $size . '
 				WHERE attachment_id = ' . (int) $attachment['attachment_id'];
 			$this->db->sql_query($sql);

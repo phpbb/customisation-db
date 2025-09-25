@@ -83,7 +83,7 @@ class events extends \phpbb\console\command\command
 	 * @param string $root_path
 	 * @param string $php_ext
 	 */
-	public function __construct(user $user, language $language, db $db, $root_path, $php_ext)
+	public function __construct(user $user, language $language, db $db, $root_path, $php_ext, $attachments_table)
 	{
 		if (!defined('TITANIA_CONTRIBS_TABLE'))
 		{
@@ -98,7 +98,7 @@ class events extends \phpbb\console\command\command
 		// Save our table names
 		$this->contribs_table = \TITANIA_CONTRIBS_TABLE;
 		$this->revisions_table = \TITANIA_REVISIONS_TABLE;
-		$this->attachments_table = \TITANIA_ATTACHMENTS_TABLE;
+		$this->attachments_table = $attachments_table;
 
 		// Set up empty structure
 		$this->event_listing = [

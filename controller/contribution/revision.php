@@ -53,6 +53,8 @@ class revision extends base
 	/** @var bool */
 	private $skip_epv = false;
 
+    private $attachements_table;
+
 	/**
 	 * Constructor
 	 *
@@ -72,13 +74,14 @@ class revision extends base
 	 * @param \phpbb\titania\subscriptions $subscriptions
 	 * @param \phpbb\titania\message\message $message
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\attachment\uploader $uploader, \phpbb\titania\subscriptions $subscriptions, \phpbb\titania\message\message $message)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\template\template $template, \phpbb\user $user, \phpbb\titania\controller\helper $helper, type_collection $types, \phpbb\request\request $request, \phpbb\titania\cache\service $cache, \phpbb\titania\config\config $ext_config, \phpbb\titania\display $display, \phpbb\titania\access $access, \phpbb\titania\attachment\uploader $uploader, \phpbb\titania\subscriptions $subscriptions, \phpbb\titania\message\message $message, $attachements_table)
 	{
 		parent::__construct($auth, $config, $db, $template, $user, $helper, $types, $request, $cache, $ext_config, $display, $access);
 
 		$this->uploader = $uploader;
 		$this->subscriptions = $subscriptions;
 		$this->message = $message;
+        $this->attachements_table = $attachements_table;
 
 		// Increase timeout when dealing with revisions
 		@set_time_limit(90);
@@ -903,7 +906,7 @@ class revision extends base
 		);
 
 		// Update the attachment MD5 and filesize, it may have changed
-		$sql = 'UPDATE ' . \TITANIA_ATTACHMENTS_TABLE . '
+		$sql = 'UPDATE ' . $this->attachements_table . '
 			SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
 			WHERE attachment_id = ' . (int) $this->attachment->get_id();
 		$this->db->sql_query($sql);

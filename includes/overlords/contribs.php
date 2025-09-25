@@ -217,7 +217,7 @@ class contribs_overlord
 
 					'LEFT_JOIN'	=> array(
 						array(
-							'FROM'	=> array(\TITANIA_ATTACHMENTS_TABLE => 'a'),
+							'FROM'	=> array(phpbb::$container->get('parameters.tables.titania.attachments') => 'a'),
 							'ON'	=> 'c.contrib_id = a.object_id
 								AND a.object_type = ' . ext::TITANIA_SCREENSHOT . '
 								AND a.is_orphan = 0
@@ -295,7 +295,7 @@ class contribs_overlord
 							'ON'	=> 'cic.contrib_id = rp.contrib_id',
 						),
 						array(
-							'FROM'	=> array(\TITANIA_ATTACHMENTS_TABLE => 'a'),
+							'FROM'	=> array(phpbb::$container->get('parameters.tables.titania.attachments') => 'a'),
 							'ON'	=> 'c.contrib_id = a.object_id
 								AND a.object_type = ' . ext::TITANIA_SCREENSHOT . '
 								AND a.is_orphan = 0
@@ -373,7 +373,7 @@ class contribs_overlord
 						),
 
 						array(
-							'FROM'	=> array(\TITANIA_ATTACHMENTS_TABLE => 'a'),
+							'FROM'	=> array(phpbb::$container->get('parameters.tables.titania.attachments') => 'a'),
 							'ON'	=> 'c.contrib_id = a.object_id
 								AND a.object_type = ' . ext::TITANIA_SCREENSHOT . '
 								AND a.is_orphan = 0

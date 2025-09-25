@@ -57,14 +57,14 @@ class operator
 	 * @param \phpbb\template\template $template
 	 * @param attachment $attachment
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\template\template $template, attachment $attachment)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\template\template $template, attachment $attachment, $attachments_table)
 	{
 		$this->db = $db;
 		$this->config = $config;
 		$this->user = $user;
 		$this->template = $template;
 		$this->entity = $attachment;
-		$this->attachments_table = \TITANIA_ATTACHMENTS_TABLE;
+		$this->attachments_table = $attachments_table;
 	}
 
 	/**

@@ -35,6 +35,8 @@ class cleanup extends \phpbb\cron\task\base
 	/** @var string */
 	protected $php_ext;
 
+    protected $attachement_table;
+
 	/**
 	 * Constructor.
 	 *
@@ -45,7 +47,7 @@ class cleanup extends \phpbb\cron\task\base
 	 * @param $ext_root_path
 	 * @param $php_ext
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\titania\config\config $ext_config, \phpbb\titania\attachment\operator $attachments, $ext_root_path, $php_ext)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\titania\config\config $ext_config, \phpbb\titania\attachment\operator $attachments, $ext_root_path, $php_ext, $attachement_table)
 	{
 		$this->db = $db;
 		$this->config = $config;
@@ -53,6 +55,7 @@ class cleanup extends \phpbb\cron\task\base
 		$this->attachments = $attachments;
 		$this->ext_root_path = $ext_root_path;
 		$this->php_ext = $php_ext;
+        $this->attachement_table = $attachement_table;
 	}
 
 	/**
@@ -141,7 +144,7 @@ class cleanup extends \phpbb\cron\task\base
 	protected function get_attachments($conditions)
 	{
 		$sql = 'SELECT *
-			FROM ' . \TITANIA_ATTACHMENTS_TABLE . "
+			FROM ' . $this->attachement_table . "
 			WHERE $conditions";
 		$result = $this->db->sql_query_limit($sql, 25);
 		$attachments = $this->db->sql_fetchrowset($result);

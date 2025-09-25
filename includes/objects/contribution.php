@@ -198,6 +198,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 		$this->types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 		$this->config = phpbb::$container->get('config');
+        $this->attachement_table = phpbb::$container->get('parameters.tables.titania.attachments');
 	}
 
 	/**
@@ -439,7 +440,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$can_view_unapproved = ($can_view_unapproved || $this->type->acl_get('moderate')) ? true : false;
 
 		$select = 'SELECT r.*, a.download_count FROM ' . TITANIA_REVISIONS_TABLE . ' r
-			LEFT JOIN ' . \TITANIA_ATTACHMENTS_TABLE . ' a
+			LEFT JOIN ' . $this->attachement_table . ' a
 				ON (r.attachment_id = a.attachment_id)';
 
 		$sql = $select .
@@ -458,7 +459,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		{
 			$has_translations = false;
 			// Get translations
-			$sql = 'SELECT * FROM ' . \TITANIA_ATTACHMENTS_TABLE . '
+			$sql = 'SELECT * FROM ' . $this->attachement_table . '
 				WHERE object_type = ' . ext::TITANIA_TRANSLATION . '
 					AND is_orphan = 0
 					AND ' . phpbb::$db->sql_in_set('object_id', array_map('intval', array_keys($this->revisions))) . '
@@ -529,7 +530,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		{
 			$sql = 'SELECT r.*, a.*
 				FROM ' . \TITANIA_REVISIONS_TABLE . ' r
-				LEFT JOIN ' . \TITANIA_ATTACHMENTS_TABLE . ' a
+				LEFT JOIN ' . $this->attachement_table . ' a
 					ON (a.attachment_id = r.attachment_id)
 				WHERE r.contrib_id = ' . (int) $this->contrib_id . '
 					AND ' . phpbb::$db->sql_in_set('r.revision_id', $revisions) .
