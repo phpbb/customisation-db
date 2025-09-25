@@ -12,7 +12,7 @@ services:
             - '@language'
             - '%phpbb.oberon.tables%'
     phpbb.oberon.controller:
-        class: phpbb\oberon\controller\custdb
+        class: phpbb\oberon\controller\oberon
         arguments:
             - '%core.root_path%'
             - '%core.php_ext%'

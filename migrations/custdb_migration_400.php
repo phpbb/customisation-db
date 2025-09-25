@@ -1,7 +1,7 @@
 <?php
 namespace phpbb\oberon\migrations;
 
-class custdb_migration_400 extends \phpbb\db\migration\migration
+class oberon_migration_400 extends \phpbb\db\migration\migration
 {
     const DEFAULT_ON = true;
     const PER_PAGE = 10;
