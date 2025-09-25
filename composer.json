@@ -1,5 +1,5 @@
 {
-    "name": "battye/custdb",
+    "name": "phpbb/oberon",
     "type": "phpbb-extension",
     "description": "An extension for the Customisation DB",
     "homepage": "https://www.phpbb.com",
@@ -26,7 +26,7 @@
         },
         "version-check": {
             "host": "www.phpbb.com",
-            "directory": "/customise/db/extension/custdb",
+            "directory": "/customise/db/extension/oberon",
             "filename": "version_check"
         }
     }
