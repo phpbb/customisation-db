@@ -42,7 +42,7 @@ class ai_validation extends Command
 
         /* 
         // Your OpenAI API key
-        $apiKey = "Mu89XySfAyN67NSULcqRpdzJliHnNkMgzZYUpnGx5ql9c7fx9j7a_dB6cBVrhYooGPz6S39f3FT3BlbkFJcdwTQT3Xf0ZnF-pNBV62mttBdM9GuUZasKeJLTabAIAMUF2J5nWCvtsN6B2IQZr0WrDuqWLb4A";
+        $apiKey = "";
 
         // The API endpoint
         $url = "https://api.openai.com/v1/chat/completions";
