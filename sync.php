@@ -86,7 +86,7 @@ class sync
 		$this->attachment = $attachment;
 		$this->search_manager = $search_manager;
 		$this->types = $types;
-		$this->attachments_table = TITANIA_ATTACHMENTS_TABLE;
+		$this->attachments_table = \TITANIA_ATTACHMENTS_TABLE;
 		$this->authors_table = TITANIA_AUTHORS_TABLE;
 		$this->categories_table = TITANIA_CATEGORIES_TABLE;
 		$this->contrib_coauthors_table = TITANIA_CONTRIB_COAUTHORS_TABLE;

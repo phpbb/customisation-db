@@ -903,7 +903,7 @@ class revision extends base
 		);
 
 		// Update the attachment MD5 and filesize, it may have changed
-		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+		$sql = 'UPDATE ' . \TITANIA_ATTACHMENTS_TABLE . '
 			SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
 			WHERE attachment_id = ' . (int) $this->attachment->get_id();
 		$this->db->sql_query($sql);

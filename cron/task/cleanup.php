@@ -141,7 +141,7 @@ class cleanup extends \phpbb\cron\task\base
 	protected function get_attachments($conditions)
 	{
 		$sql = 'SELECT *
-			FROM ' . TITANIA_ATTACHMENTS_TABLE . "
+			FROM ' . \TITANIA_ATTACHMENTS_TABLE . "
 			WHERE $conditions";
 		$result = $this->db->sql_query_limit($sql, 25);
 		$attachments = $this->db->sql_fetchrowset($result);

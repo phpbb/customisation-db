@@ -208,7 +208,7 @@ class download
 		}
 
 		$sql = 'SELECT *
-			FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+			FROM ' . \TITANIA_ATTACHMENTS_TABLE . '
 			WHERE attachment_id = ' . (int) $this->id;
 		$result = $this->db->sql_query_limit($sql, 1);
 		$this->file = $this->db->sql_fetchrow($result);
@@ -472,7 +472,7 @@ class download
 		}
 
 		// Update download count
-		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+		$sql = 'UPDATE ' . \TITANIA_ATTACHMENTS_TABLE . '
 			SET download_count = download_count + 1
 			WHERE attachment_id = ' . (int) $this->id;
 		$this->db->sql_query($sql);
@@ -553,7 +553,7 @@ class download
 		if ($size > 0 && $size != $attachment['filesize'])
 		{
 			// Update database record
-			$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+			$sql = 'UPDATE ' . \TITANIA_ATTACHMENTS_TABLE . '
 				SET filesize = ' . (int) $size . '
 				WHERE attachment_id = ' . (int) $attachment['attachment_id'];
 			$this->db->sql_query($sql);

@@ -96,9 +96,9 @@ class events extends \phpbb\console\command\command
 		$this->root_path = $root_path;
 
 		// Save our table names
-		$this->contribs_table = TITANIA_CONTRIBS_TABLE;
-		$this->revisions_table = TITANIA_REVISIONS_TABLE;
-		$this->attachments_table = TITANIA_ATTACHMENTS_TABLE;
+		$this->contribs_table = \TITANIA_CONTRIBS_TABLE;
+		$this->revisions_table = \TITANIA_REVISIONS_TABLE;
+		$this->attachments_table = \TITANIA_ATTACHMENTS_TABLE;
 
 		// Set up empty structure
 		$this->event_listing = [

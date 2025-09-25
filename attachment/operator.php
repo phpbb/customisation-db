@@ -64,7 +64,7 @@ class operator
 		$this->user = $user;
 		$this->template = $template;
 		$this->entity = $attachment;
-		$this->attachments_table = TITANIA_ATTACHMENTS_TABLE;
+		$this->attachments_table = \TITANIA_ATTACHMENTS_TABLE;
 	}
 
 	/**

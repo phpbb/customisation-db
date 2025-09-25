@@ -273,7 +273,7 @@ function handle_queue_attachments($post, &$post_text)
 	$sort_order = (phpbb::$config['display_order']) ? 'ASC' : 'DESC';
 
 	$sql = 'SELECT attachment_id, real_filename
-		FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+		FROM ' . \TITANIA_ATTACHMENTS_TABLE . '
 		WHERE is_orphan = 0
 			AND object_type = ' . (int) $post->post_type . '
 			AND object_id = ' . (int) $post->post_id . '

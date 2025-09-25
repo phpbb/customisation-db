@@ -44,7 +44,7 @@ class attachment extends \phpbb\titania\entity\database_base
 	 *
 	 * @var string
 	 */
-	protected $sql_table = TITANIA_ATTACHMENTS_TABLE;
+	protected $sql_table = \TITANIA_ATTACHMENTS_TABLE;
 
 	/**
 	 * SQL identifier field

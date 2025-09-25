@@ -566,7 +566,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		$this->submit();
 
 		// Move any translations
-		$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . '
+		$sql = 'UPDATE ' . \TITANIA_ATTACHMENTS_TABLE . '
 			SET object_id = ' . $this->revision_id . '
 			WHERE object_type = ' . ext::TITANIA_TRANSLATION . '
 				AND object_id = ' . $old_revision->revision_id;
