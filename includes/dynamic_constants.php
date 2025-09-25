@@ -1,5 +1,4 @@
 <?php
-namespace \phpbb\titania\includes;
 
 /**
 *
