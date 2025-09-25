@@ -92,7 +92,10 @@ class oberon
 	public function index()
 	{
 		$type = $this->request->variable('type', 0);
-        $contributions = $this->manager->get_contributions_for_index();
+		$status = $this->request->variable('status', 0);
+		$sort = $this->request->variable('sort', 0);
+
+        $contributions = $this->manager->get_contributions_for_index($type, $status, $sort);
        
         foreach ($contributions as $contribution)
         {
@@ -104,6 +107,15 @@ class oberon
 
         $this->template->assign_vars([
 			'U_NEW_CONTRIBUTION' 	=> $this->helper->route('custdb_add_contribution'),
+
+			// Filter options
+			'STATUS_APPROVED'		=> $this->manager::STATUS_APPROVED,
+			'STATUS_DENIED'			=> $this->manager::STATUS_DENIED,
+			'STATUS_UNVALIDATED'	=> $this->manager::STATUS_UNVALIDATED,
+
+			// Sort options
+			'SORT_NAME'				=> $this->manager::SORT_NAME,
+			'SORT_DATE'				=> $this->manager::SORT_DATE,
 
 			// Sidebar links
 			'TYPE'					=> $type,

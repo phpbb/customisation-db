@@ -1,8 +1,7 @@
 {% INCLUDECSS '@phpbb_oberon/oberon_style.css' %}
-{% INCLUDEJS '@phpbb_oberon/oberon_scripts.js' %}
 {% include 'overall_header.html' %}
 
-    <h2>{{ lang('CUSTDB_INDEX') }}</h2>
+    <h2>{{ lang('CUSTDB_ADD_CONTRIBUTION') }}</h2>
 
     <div class="custdb_action_bar">
         <div>
@@ -12,18 +11,18 @@
 
         <div>
             <label for="custdb_status" class="custdb_input_label">{{ lang('CUSTDB_STATUS') }}</label>
-            <select id="custdb_status" class="custdb_input_theme custdb_dropdown_theme" onchange="updateStatus(this)">
-                <option value="{{ STATUS_APPROVED }}">{{ lang('CUSTDB_STATUS_APPROVED') }}</option>
-                <option value="{{ STATUS_DENIED }}">{{ lang('CUSTDB_STATUS_DENIED') }}</option>
-                <option value="{{ STATUS_UNVALIDATED }}">{{ lang('CUSTDB_STATUS_UNVALIDATED') }}</option>
+            <select id="custdb_status" class="custdb_input_theme custdb_dropdown_theme">
+                <option value="#">{{ lang('CUSTDB_STATUS_APPROVED') }}</option>
+                <option value="#">{{ lang('CUSTDB_STATUS_DENIED') }}</option>
+                <option value="">{{ lang('CUSTDB_STATUS_UNVALIDATED') }}</option>
             </select>
         </div>
 
         <div>
             <label for="custdb_sort" class="custdb_input_label">{{ lang('CUSTDB_SORT_BY') }}</label>
-            <select id="custdb_sort" class="custdb_input_theme custdb_dropdown_theme" onchange="updateSort(this)">
-                <option value="{{ SORT_DATE }}">{{ lang('CUSTDB_SORT_BY_DATE') }}</option>
-                <option value="{{ SORT_NAME }}">{{ lang('CUSTDB_SORT_BY_NAME') }}</option>
+            <select id="custdb_sort" class="custdb_input_theme custdb_dropdown_theme">
+                <option value="#">{{ lang('CUSTDB_SORT_BY_DATE') }}</option>
+                <option value="#">{{ lang('CUSTDB_SORT_BY_NAME') }}</option>
             </select>
         </div>
 

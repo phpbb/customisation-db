@@ -21,6 +21,15 @@ class manager
     const TYPE_TOOLS = 5;
     const TYPE_ARCHIVE = 6;
 
+    // Filter
+    const STATUS_UNVALIDATED = 1;
+    const STATUS_APPROVED = 2;
+    const STATUS_DENIED = 3;
+
+    // Sort
+    const SORT_DATE = 1;
+    const SORT_NAME = 2;
+
     /* @var \phpbb\db\driver\driver_interface $db */
     protected $db;
 
@@ -60,11 +69,34 @@ class manager
 	}
 
     // Queries
-    public function get_contributions_for_index()
+    public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0)
     {
         $sql = 'SELECT *
                 FROM ' . $this->tables['contributions'] . '
-                ORDER BY contribution_id ASC';
+                WHERE contribution_id > 0';
+
+        if ($status)
+        {
+            $sql .= ' AND contribution_status = ' . (int) $status;
+        }
+
+        if ($type)
+        {
+            $sql .= ' AND contribution_type = ' . (int) $type;  
+        }
+
+        switch ($sort)
+        {
+            case self::SORT_DATE:
+                $sql .= ' ORDER BY submission_time DESC';
+                break;
+            case self::SORT_NAME:
+                $sql .= ' ORDER BY contribution_name ASC';
+                break;
+            default:
+                $sql .= ' ORDER BY contribution_id DESC';
+                break;
+        }
 
         $result = $this->db->sql_query($sql);
         $contributions = [];
