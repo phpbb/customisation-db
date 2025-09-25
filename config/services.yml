@@ -2,17 +2,17 @@ imports:
     - { resource: tables.yml }
 
 services:
-    battye.custdb.manager:
-        class: battye\custdb\manager\manager
+    phpbb.oberon.manager:
+        class: phpbb\oberon\manager\manager
         arguments:             
             - '@dbal.conn'
             - '@config'
             - '@user'
             - '@user_loader'
             - '@language'
-            - '%battye.custdb.tables%'
-    battye.custdb.controller:
-        class: battye\custdb\controller\custdb
+            - '%phpbb.oberon.tables%'
+    phpbb.oberon.controller:
+        class: phpbb\oberon\controller\custdb
         arguments:
             - '%core.root_path%'
             - '%core.php_ext%'
@@ -23,18 +23,18 @@ services:
             - '@user'
             - '@pagination'
             - '@language'
-            - '@battye.custdb.manager'
-    battye.custdb.listener:
-        class: battye\custdb\event\custdb_listener
+            - '@phpbb.oberon.manager'
+    phpbb.oberon.listener:
+        class: phpbb\oberon\event\oberon_listener
         arguments:
             - '@config'
             - '@controller.helper'
             - '@template'
         tags:
             - { name: event.listener }
-    battye.custdb.console.queue_manager:
-        class: battye\custdb\console\queue_manager
+    phpbb.oberon.console.queue_manager:
+        class: phpbb\oberon\console\queue_manager
         arguments:
-            - '@battye.custdb.manager'
+            - '@phpbb.oberon.manager'
         tags:
             - { name: console.command }

@@ -1,5 +1,5 @@
 <?php
-namespace battye\custdb\migrations;
+namespace phpbb\oberon\migrations;
 
 class custdb_migration_400 extends \phpbb\db\migration\migration
 {

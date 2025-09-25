@@ -7,7 +7,7 @@
 *
 */
 
-namespace battye\custdb\event;
+namespace phpbb\oberon\event;
 
 /**
 * @ignore
@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
 * Event listener
 */
-class custdb_listener implements EventSubscriberInterface
+class oberon_listener implements EventSubscriberInterface
 {
 	static public function getSubscribedEvents()
 	{
@@ -55,7 +55,7 @@ class custdb_listener implements EventSubscriberInterface
 		$lang_set_ext = $event['lang_set_ext'];
 
 		$lang_set_ext[] = [
-			'ext_name' => 'battye/custdb',
+			'ext_name' => 'phpbb/oberon',
 			'lang_set' => 'common',
         ];
 

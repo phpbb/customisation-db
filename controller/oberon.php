@@ -7,12 +7,12 @@
 *
 */
 
-namespace battye\custdb\controller;
+namespace phpbb\oberon\controller;
 
 /**
  * Controller
  */
-class custdb
+class oberon
 {
 	/* @var string $root_path */
 	protected $root_path;
@@ -41,7 +41,7 @@ class custdb
 	/* @var \phpbb\language\language $language */
 	protected $language;
 
-	/* @var \battye\custdb\manager\manager $manager */
+	/* @var \phpbb\oberon\manager\manager $manager */
 	protected $manager;
 
 	/**
@@ -53,9 +53,9 @@ class custdb
 	* @param \phpbb\template\template			$template
 	* @param \phpbb\user						$user
 	* @param \phpbb\language\language           $language
-	* @param \battye\custdb\manager 		    $manager
+	* @param \phpbb\oberon\manager 		    	$manager
 	*/
-	public function __construct(string $root_path, string $php_ext, \phpbb\request\request $request, \phpbb\config\config $config, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\user $user, \phpbb\pagination $pagination, \phpbb\language\language $language, \battye\custdb\manager\manager $manager)
+	public function __construct(string $root_path, string $php_ext, \phpbb\request\request $request, \phpbb\config\config $config, \phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\user $user, \phpbb\pagination $pagination, \phpbb\language\language $language, \phpbb\oberon\manager\manager $manager)
 	{
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;

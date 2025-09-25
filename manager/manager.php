@@ -7,7 +7,7 @@
 *
 */
 
-namespace battye\custdb\manager;
+namespace phpbb\oberon\manager;
 
 /**
  * Customisation DB Manager
