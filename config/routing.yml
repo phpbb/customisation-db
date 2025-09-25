@@ -1,7 +1,7 @@
 custdb_index:
     path: /custdb/index
-    defaults: { _controller: battye.custdb.controller:index }
+    defaults: { _controller: phpbb.oberon.controller:index }
 
 custdb_add_contribution:
     path: /custdb/add
-    defaults: { _controller: battye.custdb.controller:add }
+    defaults: { _controller: phpbb.oberon.controller:add }

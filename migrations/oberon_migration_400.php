@@ -1,7 +1,7 @@
 <?php
-namespace battye\custdb\migrations;
+namespace phpbb\oberon\migrations;
 
-class custdb_migration_400 extends \phpbb\db\migration\migration
+class oberon_migration_400 extends \phpbb\db\migration\migration
 {
     const DEFAULT_ON = true;
     const PER_PAGE = 10;
@@ -49,6 +49,7 @@ class custdb_migration_400 extends \phpbb\db\migration\migration
 						'contribution_name'                     => ['VCHAR_UNI:255', ''],
                         'contribution_description'              => ['VCHAR_UNI:255', ''],
                         'contribution_type'                     => ['TINT', 0],
+                        'contribution_status'                   => ['TINT', 0],
                         'user_id'                               => ['UINT', 0],
                         'submission_time'                       => ['TIMESTAMP', null],
                     ],

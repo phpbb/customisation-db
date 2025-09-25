@@ -1,5 +1,5 @@
 <?php
-namespace battye\custdb\console;
+namespace phpbb\oberon\console;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -7,10 +7,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class queue_manager extends Command
 {
-	/* @var \battye\custdb\manager\manager $manager */
+	/* @var \phpbb\oberon\manager\manager $manager */
 	protected $manager;
 
-    public function __construct(\battye\custdb\manager\manager $manager)
+    public function __construct(\phpbb\oberon\manager\manager $manager)
     {
         $this->manager = $manager;
         parent::__construct();
