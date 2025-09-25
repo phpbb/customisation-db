@@ -41,7 +41,7 @@ class tracking
 	/**
 	 * @var <string> Database table used to store it in
 	 */
-	protected $sql_table = TITANIA_TRACK_TABLE;
+	protected string $sql_table;
 
 	/**
 	 * Constructor
@@ -51,12 +51,13 @@ class tracking
 	 * @param \phpbb\request\request_interface $request
 	 * @param \phpbb\config\config $config
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\config\config $config)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\config\config $config, $track_table)
 	{
 		$this->db = $db;
 		$this->user = $user;
 		$this->request = $request;
 		$this->config = $config;
+        $this->sql_table = $track_table;
 	}
 
 	/**
@@ -250,7 +251,7 @@ class tracking
 		$sql_ary['LEFT_JOIN'] = (!isset($sql_ary['LEFT_JOIN'])) ? array() : $sql_ary['LEFT_JOIN'];
 
 		$sql_ary['LEFT_JOIN'][] = array(
-			'FROM'	=> array(TITANIA_TRACK_TABLE => $prefix),
+			'FROM'	=> array($this->sql_table => $prefix),
 			'ON'	=> "{$prefix}.track_type = $type
 				AND {$prefix}.track_id = $id_field
 				AND {$prefix}.track_user_id = " . (int) $this->user->data['user_id'],

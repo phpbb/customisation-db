@@ -482,6 +482,7 @@ services:
              - '@user'
              - '@request'
              - '@config'
+             - '%tables.titania.track'
 
     phpbb.titania.translation.prevalidator:
          class: phpbb\titania\contribution\translation\prevalidator
