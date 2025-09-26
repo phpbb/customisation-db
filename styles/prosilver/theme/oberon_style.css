@@ -277,3 +277,122 @@ textarea.custdb_input_theme {
         gap: 15px;
     }
 }
+
+
+
+
+
+/* View Customisation page */
+
+/* Sidebar image styling */
+.custdb_contribution_image {
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto 15px auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.custdb_contribution_image_placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 200px;
+    height: 150px;
+    margin: 0 auto 15px auto;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    color: #888;
+    font-size: 0.9rem;
+    background: #f9f9f9;
+}
+
+/* Sidebar meta info */
+.custdb_sidebar_meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.custdb_sidebar_meta strong {
+    color: #d43b3b;
+    display: block;
+}
+
+/* Demo link */
+.custdb_demo_link {
+    color: #1976d2;
+    text-decoration: none;
+}
+
+.custdb_demo_link:hover {
+    text-decoration: underline;
+}
+
+/* Content heading */
+.custdb_content_title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.custdb_content_author {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Contribution description */
+.custdb_contribution_description {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Validation form */
+.custdb_validation_form {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.custdb_validation_form .custdb_form_group {
+    margin-bottom: 15px;
+}
+
+.custdb_validation_form select,
+.custdb_validation_form textarea {
+    width: 100%;
+    font-size: 1rem;
+}
+
+.custdb_submit_btn {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background: #d43b3b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.custdb_submit_btn:hover {
+    background: #b12f2f;
+}

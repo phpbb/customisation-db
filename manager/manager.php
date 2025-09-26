@@ -45,6 +45,9 @@ class manager
     /** @var \phpbb\language\language $language */
     protected $language;
 
+    /** @var \phpbb\extension\manager $ext_manager */
+    protected $ext_manager;
+
     /* @var array $tables */
     protected $tables;
 
@@ -56,19 +59,53 @@ class manager
 	* @param \phpbb\user				        $user
     * @param \phpbb\user_loader                 $user_loader
     * @param \phpbb\language\language           $language
+    * @param \phpbb\extension\manager           $ext_manager
     * array                                     $tables
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, array $tables)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\extension\manager $ext_manager, array $tables)
 	{
         $this->db = $db;
 		$this->config = $config;
 		$this->user = $user;
         $this->user_loader = $user_loader;
         $this->language = $language;
+        $this->ext_manager = $ext_manager;
         $this->tables = $tables;
 	}
 
+    /**
+     * Return tables for Oberon
+     */
+    public function get_tables()
+    {
+        return $this->tables;
+    }
+
+    public function get_ext_manager()
+    {
+        return $this->ext_manager;
+    }
+
     // Queries
+
+    // Submit a new contribution
+    public function add_contribution(array $contribution_array)
+    {
+        $sql = 'INSERT INTO ' . $this->tables['contributions'] . ' ' . $this->db->sql_build_array('INSERT', $contribution_array);
+		$this->db->sql_query($sql);
+
+		$contribution_id = (int) $this->db->sql_nextid();
+        return $contribution_id;
+    }
+
+    // Submit a new revision
+    public function add_revision(array $revision_array)
+    {
+        $sql = 'INSERT INTO ' . $this->tables['revisions'] . ' ' . $this->db->sql_build_array('INSERT', $revision_array);
+		$this->db->sql_query($sql);
+    }
+
+    // List the contributions on the index
     public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0)
     {
         $sql = 'SELECT *
@@ -113,5 +150,83 @@ class manager
         $this->db->sql_freeresult($result);
 
         return $contributions;   
+    }
+
+    /**
+    * Fetch a single contribution and its latest revision
+    *
+    * @param int $contribution_id
+    * @return array|null
+    */
+    public function get_contribution_with_latest_revision(int $contribution_id)
+    {
+        $contribution_id = (int) $contribution_id;
+
+        if ($contribution_id <= 0)
+        {
+            return null;
+        }
+
+        // Get contribution
+        $sql = 'SELECT c.*, u.username AS author_name
+                FROM ' . $this->tables['contributions'] . ' c
+                LEFT JOIN ' . USERS_TABLE . ' u
+                    ON c.user_id = u.user_id
+                WHERE c.contribution_id = ' . $contribution_id;
+
+        $result = $this->db->sql_query($sql);
+        $contribution = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        if (!$contribution)
+        {
+            return null;
+        }
+
+        // Get newest revision
+        $sql = 'SELECT *
+                FROM ' . $this->tables['revisions'] . '
+                WHERE contribution_id = ' . $contribution_id . '
+                ORDER BY submission_time DESC';
+
+        $result = $this->db->sql_query_limit($sql, 1);
+        $revision = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        // Screenshots
+        $screenshots = [];
+
+        if (!empty($revision['revision_screenshots']))
+        {
+            $screenshots = explode(',', $revision['revision_screenshots']);
+        }
+
+        // Map status code to readable label
+        $status_labels = [
+            self::STATUS_UNVALIDATED => $this->user->lang('CUSTDB_STATUS_UNVALIDATED'),
+            self::STATUS_APPROVED => $this->user->lang('CUSTDB_STATUS_APPROVED'),
+            self::STATUS_DENIED => $this->user->lang('CUSTDB_STATUS_DENIED'),
+        ];
+
+        $status_label = $status_labels[$contribution['contribution_status']] ?? '';
+
+        return [
+            'contribution_id'          => $contribution['contribution_id'],
+            'contribution_name'        => $contribution['contribution_name'],
+            'contribution_description' => $contribution['contribution_description'],
+            'contribution_demo_link'   => $contribution['contribution_demo_link'],
+            'contribution_type'        => $contribution['contribution_type'],
+            'contribution_status'      => $contribution['contribution_status'],
+            'status_label'             => $status_label,
+            'author_name'              => $contribution['author_name'],
+
+            // Revision info
+            'revision_id'              => $revision['revision_id'] ?? null,
+            'revision_name'            => $revision['revision_name'] ?? '',
+            'revision_version'         => $revision['revision_version'] ?? '',
+            'revision_description'     => $revision['revision_description'] ?? '',
+            'revision_attachment'      => $revision['revision_attachment'] ?? '',
+            'screenshots'              => $screenshots,
+        ];
     }
 }

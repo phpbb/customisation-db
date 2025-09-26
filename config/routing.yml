@@ -5,3 +5,9 @@ custdb_index:
 custdb_add_contribution:
     path: /custdb/add
     defaults: { _controller: phpbb.oberon.controller:add }
+
+custdb_view_contribution:
+    path: /custdb/view/{id}
+    requirements:
+        id: \d+
+    defaults: { _controller: phpbb.oberon.controller:view, id: 0 }

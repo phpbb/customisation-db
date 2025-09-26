@@ -10,6 +10,7 @@ services:
             - '@user'
             - '@user_loader'
             - '@language'
+            - '@ext.manager'
             - '%phpbb.oberon.tables%'
     phpbb.oberon.controller:
         class: phpbb\oberon\controller\oberon

@@ -1,0 +1,72 @@
+{% INCLUDECSS '@phpbb_oberon/oberon_style.css' %}
+{% include 'overall_header.html' %}
+
+    <div class="custdb_action_bar">
+        <h2>{{ CONTRIBUTION_NAME }}</h2>
+
+        <div>
+            <a href="#" class="custdb_button">{{ lang('CUSTDB_EDIT_CONTRIBUTION') }}</a>
+        </div>
+    </div>
+
+    <div class="custdb_container">
+        <div class="custdb_sidebar">
+            {% if CONTRIBUTION_IMAGE %}
+                <img src="{{ CONTRIBUTION_IMAGE }}" alt="{{ CONTRIBUTION_NAME }}" class="custdb_contribution_image">
+            {% else %}
+                <div class="custdb_contribution_image_placeholder">
+                    {{ lang('CUSTDB_NO_IMAGE') }}
+                </div>
+            {% endif %}
+
+            <div class="custdb_sidebar_meta">
+                <div>
+                    <strong>{{ lang('CUSTDB_VERSION_NUMBER') }}</strong>
+                    {{ VERSION_NUMBER }}
+                </div>
+                <div>
+                    <strong>{{ lang('CUSTDB_STATUS') }}</strong>
+                    {{ STATUS }}
+                </div>
+                {% if DEMO_LINK %}
+                <div>
+                    <strong>{{ lang('CUSTDB_DEMO_LINK') }}</strong>
+                    <a href="{{ DEMO_LINK }}" class="custdb_demo_link" target="_blank">{{ DEMO_LINK }}</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="custdb_content">
+            <div class="custdb_content_title">{{ CONTRIBUTION_NAME }}</div>
+            <div class="custdb_content_author">
+                {{ AUTHORS }}
+            </div>
+
+            <div class="custdb_contribution_description">
+                {{ DESCRIPTION }}
+            </div>
+
+            <form method="post" action="{{ U_VALIDATE_CONTRIBUTION }}" class="custdb_validation_form">
+                <div class="custdb_form_group">
+                    <label for="status" class="custdb_input_label">{{ lang('CUSTDB_VALIDATION_STATUS') }}</label>
+                    <select name="status" id="status" class="custdb_input_theme">
+                        <option value="pending">{{ lang('CUSTDB_PENDING') }}</option>
+                        <option value="approved">{{ lang('CUSTDB_APPROVED') }}</option>
+                        <option value="denied">{{ lang('CUSTDB_DENIED') }}</option>
+                    </select>
+                </div>
+
+                <div class="custdb_form_group">
+                    <label for="comment" class="custdb_input_label">{{ lang('CUSTDB_VALIDATION_COMMENT') }}</label>
+                    <textarea name="comment" id="comment" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_OPTIONAL_COMMENT') }}"></textarea>
+                </div>
+
+                <button type="submit" class="custdb_submit_btn">
+                    {{ lang('SUBMIT') }}
+                </button>
+            </form>
+        </div>
+    </div>
+
+{% include 'overall_footer.html' %}

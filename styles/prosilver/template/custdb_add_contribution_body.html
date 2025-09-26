@@ -13,88 +13,84 @@
                     </div>
 
                     <div class="custdb_main_category_content">
-                        <form class="custdb_add_form" method="post" enctype="multipart/form-data">
-                            
-                            <!-- Contribution Name -->
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="contribution_name">{{ lang('CUSTDB_CONTRIBUTION_NAME') }}</label>
-                                <input type="text" id="contribution_name" name="contribution_name" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_CONTRIBUTION_NAME') }}" required>
-                            </div>
+                        <!-- Contribution Name -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="contribution_name">{{ lang('CUSTDB_CONTRIBUTION_NAME') }}</label>
+                            <input type="text" id="contribution_name" name="contribution_name" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_CONTRIBUTION_NAME') }}" required>
+                        </div>
 
-                            <!-- Authors -->
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="authors">{{ lang('CUSTDB_AUTHORS') }}</label>
-                                <input type="text" id="authors" name="authors" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_AUTHORS') }}">
-                            </div>
+                        <!-- Authors -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="authors">{{ lang('CUSTDB_AUTHORS') }}</label>
+                            <input type="text" id="authors" name="authors" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_AUTHORS') }}">
+                        </div>
 
-                            <!-- Version Number -->
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="version_number">{{ lang('CUSTDB_VERSION_NUMBER') }}</label>
-                                <input type="text" id="version_number" name="version_number" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_VERSION_NUMBER') }}">
-                            </div>
+                        <!-- Version Number -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="version_number">{{ lang('CUSTDB_VERSION_NUMBER') }}</label>
+                            <input type="text" id="version_number" name="version_number" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_VERSION_NUMBER') }}">
+                        </div>
 
-                            <!-- Major Revision -->
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="major_revision">{{ lang('CUSTDB_MAJOR_REVISION') }}</label>
-                                <input type="checkbox" id="major_revision" name="major_revision" class="custdb_checkbox">
-                            </div>
+                        <!-- Major Revision -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="major_revision">{{ lang('CUSTDB_MAJOR_REVISION') }}</label>
+                            <input type="checkbox" id="major_revision" name="major_revision" class="custdb_checkbox">
+                        </div>
 
-                            <!-- Contribution Type Dropdown -->
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="contribution_type">{{ lang('CUSTDB_CONTRIBUTION_TYPE') }}</label>
-                                <select id="contribution_type" name="contribution_type" class="custdb_input_theme custdb_dropdown_theme">
-                                    <option value="{{ TYPE_EXTENSIONS }}">{{ lang('CUSTDB_TYPE_EXTENSIONS') }}</option>
-                                    <option value="{{ TYPE_STYLES }}">{{ lang('CUSTDB_TYPE_STYLES') }}</option>
-                                    <option value="{{ TYPE_TRANSLATIONS }}">{{ lang('CUSTDB_TYPE_TRANSLATIONS') }}</option>
-                                    <option value="{{ TYPE_BBCODES }}">{{ lang('CUSTDB_TYPE_BBCODES') }}</option>
-                                    <option value="{{ TYPE_TOOLS }}">{{ lang('CUSTDB_TYPE_TOOLS') }}</option>
-                                    <option value="{{ TYPE_ARCHIVE }}">{{ lang('CUSTDB_TYPE_ARCHIVE') }}</option>
-                                </select>
-                            </div>
+                        <!-- Contribution Type Dropdown -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="contribution_type">{{ lang('CUSTDB_CONTRIBUTION_TYPE') }}</label>
+                            <select id="contribution_type" name="contribution_type" class="custdb_input_theme custdb_dropdown_theme">
+                                <option value="{{ TYPE_EXTENSIONS }}">{{ lang('CUSTDB_TYPE_EXTENSIONS') }}</option>
+                                <option value="{{ TYPE_STYLES }}">{{ lang('CUSTDB_TYPE_STYLES') }}</option>
+                                <option value="{{ TYPE_TRANSLATIONS }}">{{ lang('CUSTDB_TYPE_TRANSLATIONS') }}</option>
+                                <option value="{{ TYPE_BBCODES }}">{{ lang('CUSTDB_TYPE_BBCODES') }}</option>
+                                <option value="{{ TYPE_TOOLS }}">{{ lang('CUSTDB_TYPE_TOOLS') }}</option>
+                                <option value="{{ TYPE_ARCHIVE }}">{{ lang('CUSTDB_TYPE_ARCHIVE') }}</option>
+                            </select>
+                        </div>
 
-                            <!-- Description -->
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="description">{{ lang('CUSTDB_DESCRIPTION') }}</label>
-                                <textarea id="description" name="description" class="custdb_input_theme" rows="5" placeholder="{{ lang('CUSTDB_ENTER_DESCRIPTION') }}"></textarea>
-                            </div>
+                        <!-- Description -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="description">{{ lang('CUSTDB_DESCRIPTION') }}</label>
+                            <textarea id="description" name="description" class="custdb_input_theme" rows="5" placeholder="{{ lang('CUSTDB_ENTER_DESCRIPTION') }}"></textarea>
+                        </div>
 
-                            <!-- File Uploads -->
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="contribution_file">{{ lang('CUSTDB_UPLOAD_CONTRIBUTION') }}</label>
-                                <input type="file" id="contribution_file" name="contribution_file" class="custdb_input_theme">
-                            </div>
+                        <!-- File Uploads -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="contribution_file">{{ lang('CUSTDB_UPLOAD_CONTRIBUTION') }}</label>
+                            <input type="file" id="contribution_file" name="contribution_file" class="custdb_input_theme">
+                        </div>
 
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="screenshots">{{ lang('CUSTDB_UPLOAD_SCREENSHOTS') }}</label>
-                                <input type="file" id="screenshots" name="screenshots[]" multiple class="custdb_input_theme">
-                            </div>
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="screenshots">{{ lang('CUSTDB_UPLOAD_SCREENSHOTS') }}</label>
+                            <input type="file" id="screenshots" name="screenshots[]" multiple class="custdb_input_theme">
+                        </div>
 
-                            <!-- Demo Link -->
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="demo_link">{{ lang('CUSTDB_DEMO_LINK') }}</label>
-                                <input type="url" id="demo_link" name="demo_link" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_DEMO_LINK') }}">
-                            </div>
+                        <!-- Demo Link -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="demo_link">{{ lang('CUSTDB_DEMO_LINK') }}</label>
+                            <input type="url" id="demo_link" name="demo_link" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_DEMO_LINK') }}">
+                        </div>
 
-                            <!-- Request Validation / Delete Contribution -->
-                            <!--
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="request_validation">Request Validation</label>
-                                <input type="checkbox" id="request_validation" name="request_validation" class="custdb_checkbox">
-                            </div>
+                        <!-- Request Validation / Delete Contribution -->
+                        <!--
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="request_validation">Request Validation</label>
+                            <input type="checkbox" id="request_validation" name="request_validation" class="custdb_checkbox">
+                        </div>
 
-                            <div class="custdb_form_group">
-                                <label class="custdb_input_label" for="delete_contribution">Delete Contribution</label>
-                                <input type="checkbox" id="delete_contribution" name="delete_contribution" class="custdb_checkbox">
-                            </div>
-                            -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="delete_contribution">Delete Contribution</label>
+                            <input type="checkbox" id="delete_contribution" name="delete_contribution" class="custdb_checkbox">
+                        </div>
+                        -->
 
-                            {{ S_FORM_TOKEN }}
-                            
-                            <div class="custdb_form_group">
-                                <button type="submit" class="custdb_button">{{ lang('SUBMIT') }}</button>
-                            </div>
-
-                        </form>
+                        {{ S_FORM_TOKEN }}
+                        
+                        <div class="custdb_form_group">
+                            <button name="submit" type="submit" class="custdb_button">{{ lang('SUBMIT') }}</button>
+                        </div>
                     </div>
                 </div>
             </div>
