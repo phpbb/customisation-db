@@ -75,17 +75,56 @@ class oberon
 	}
 
 	/**
-	* Add
+	* Add contribution/revision
 	*
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
 	public function add()
 	{
-        
+		// Check if form submitted
+        if ($this->request->is_set_post('submit'))
+        {
+            // Validate form token for CSRF
+            if (!check_form_key('custdb_add_contribution'))
+            {
+                trigger_error('FORM_INVALID');
+            }
+
+            $contribution_name = $this->request->variable('contribution_name', '', true);
+            $version_number = $this->request->variable('version_number', '', true);
+
+            // TODO: Validation logic here
+            if (empty($contribution_name) || empty($version_number))
+            {
+                trigger_error('MISSING_REQUIRED_FIELDS');
+            }
+
+            // TODO: Save to DB here
+            // Example: Insert into phpbb_customisations table
+
+            meta_refresh(3, $this->helper->route('custdb_index'));
+            trigger_error($this->user->lang('CONTRIBUTION_ADDED_SUCCESSFULLY'));
+        }
+
+        // Generate CSRF token
+        add_form_key('custdb_add_contribution');
+
+		$this->template->assign_vars([
+			'U_ACTION'				=> $this->helper->route('custdb_add_contribution'),
+
+			'TYPE_EXTENSIONS'		=> $this->manager::TYPE_EXTENSIONS,
+			'TYPE_STYLES'			=> $this->manager::TYPE_STYLES,
+			'TYPE_TRANSLATIONS'		=> $this->manager::TYPE_TRANSLATIONS,
+			'TYPE_BBCODES'			=> $this->manager::TYPE_BBCODES,
+			'TYPE_TOOLS'			=> $this->manager::TYPE_TOOLS,
+			'TYPE_ARCHIVE'			=> $this->manager::TYPE_ARCHIVE,
+		]); 
+
+   		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));     
     }
 
 	/**
-	* Index
+	* Index page
 	*
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
@@ -134,13 +173,8 @@ class oberon
 			'U_TYPE_ARCHIVE' 		=> $this->sidebar_route($this->manager::TYPE_ARCHIVE),
 		]); 
 
-		/* $start = $this->request->variable('start', 0);
-        $this->manager->xxx();
- $this->template->assign_block_vars('contributions', $contributions);
-
-			
-	
-        
+		
+        /*
 		// Pagination
 		$per_page = (int) 10;
 		$this->pagination->generate_template_pagination(
@@ -151,14 +185,13 @@ class oberon
 			$per_page, 
 			$start
 		);
-
-	*/
+		*/
 
 		return $this->helper->render('custdb_index_body.html', $this->user->lang('CUSTDB_INDEX'));
 	}
 
 	/**
-	 * xxx
+	 * Create sidebar route url
 	 */
 	private function sidebar_route(int $type)
 	{

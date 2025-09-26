@@ -1,3 +1,4 @@
+/* Default layout with sidebar */
 .custdb_container {
     display: flex;
     width: 100%;
@@ -14,6 +15,15 @@
     width: 75%;
     padding: 0px;
     box-sizing: border-box;
+}
+
+/* Override when there is no sidebar */
+.custdb_container.no-sidebar .custdb_content {
+    width: 100%;
+}
+
+.custdb_container.no-sidebar {
+    display: block; /* optional, keeps layout simpler */
 }
 
 .custdb_sidebar_category, .custdb_main_category {
@@ -211,5 +221,59 @@
     /* Inputs and dropdowns stacked vertically */
     .custdb_action_bar > div:not(:last-child) {
         width: 100%;
+    }
+}
+
+/* 
+ Add Contribution page
+*/
+
+/* ================================
+   Add Contribution Form Layout
+=================================== */
+.custdb_add_form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.custdb_form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* ================================
+   Checkboxes
+=================================== */
+.custdb_checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+/* ================================
+   File Inputs
+=================================== */
+input[type="file"].custdb_input_theme {
+    padding: 6px;
+    background: #fff;
+}
+
+/* ================================
+   Textarea
+=================================== */
+textarea.custdb_input_theme {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* ================================
+   Responsive
+=================================== */
+@media (max-width: 768px) {
+    .custdb_add_form {
+        gap: 15px;
     }
 }

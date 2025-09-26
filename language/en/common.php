@@ -43,4 +43,23 @@ $lang = array_merge($lang, [
     'CUSTDB_STATUS_UNVALIDATED'   => 'Unvalidated',
     'CUSTDB_STATUS_APPROVED'    => 'Approved',
     'CUSTDB_STATUS_DENIED'    => 'Denied',
+
+    // Add contribution
+    'CUSTDB_ADD_CONTRIBUTION'   => 'Add Contribution',
+    'CUSTDB_CONTRIBUTION_NAME'  => 'Contribution Name',
+    'CUSTDB_ENTER_CONTRIBUTION_NAME'  => 'Enter contribution name...',
+    'CUSTDB_AUTHORS'            => 'Authors',
+    'CUSTDB_ENTER_AUTHORS'      => 'Enter authors...',
+    'CUSTDB_VERSION_NUMBER'     => 'Version Number',
+    'CUSTDB_ENTER_VERSION_NUMBER'   => 'e.g., 1.0.0',
+    'CUSTDB_MAJOR_REVISION'         => 'Major Revision',
+    'CUSTDB_CONTRIBUTION_TYPE'      => 'Contribution Type',
+    'CUSTDB_ENTER_CONTRIBUTION_TYPE'    => 'Enter contribution type...',
+    'CUSTDB_DESCRIPTION'            => 'Description',
+    'CUSTDB_ENTER_DESCRIPTION'      => 'Enter description...',
+    'CUSTDB_UPLOAD_CONTRIBUTION'    => 'Upload Contribution',
+    'CUSTDB_UPLOAD_SCREENSHOTS'      => 'Upload Screenshots',
+    'CUSTDB_DEMO_LINK'      => 'Demo Link',
+    'CUSTDB_ENTER_DEMO_LINK' => 'Enter demo link...',
+
 ]);
