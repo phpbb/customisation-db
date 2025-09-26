@@ -41,11 +41,6 @@
 					<strong>{{ lang('PM') }}</strong> <a href="{{ U_PM }}">{{ lang('SEND_PRIVATE_MESSAGE') }}</a>
 				</li>
 				{% endif %}
-				{% if U_JABBER and S_JABBER_ENABLED %}
-				<li>
-					<strong>{{ lang('JABBER') }}</strong> <a href="{{ U_JABBER }}" onclick="popup(this.href, 550, 320); return false;">{{ lang('SEND_JABBER_MESSAGE') }}</a>
-				</li>
-				{% endif %}
 			</ul>
 
 			{% if AUTHOR_DESC %}

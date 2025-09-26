@@ -9,7 +9,7 @@ services:
             - '@phpbb.titania.attachment.operator'
             - '%phpbb.titania.root_path%'
             - '%core.php_ext%'
-            - '%tables.titania.attachments'
+            - '%tables.titania.attachments%'
         calls:
             - [set_name, [phpbb.titania.cron.task.cleanup]]
 #        tags:

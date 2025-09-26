@@ -210,7 +210,6 @@ parse_css_file = {PARSE_CSS_FILE}
 				'icon_contact_aim',
 				'icon_contact_email',
 				'icon_contact_icq',
-				'icon_contact_jabber',
 				'icon_contact_msnm',
 				'icon_contact_pm',
 				'icon_contact_yahoo',

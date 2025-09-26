@@ -360,11 +360,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 					'NAME'		=> phpbb::$user->lang['SEND_EMAIL'],
 					'U_CONTACT'	=> users_overlord::get_user($post->post_user_id, '_u_email'),
 				),
-				array(
-					'ID'		=> 'jabber',
-					'NAME'		=> phpbb::$user->lang['JABBER'],
-					'U_CONTACT'	=> users_overlord::get_user($post->post_user_id, '_jabber'),
-				),
 			);
 
 			foreach ($contact_fields as $field)
@@ -498,7 +493,6 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 			'PM_IMG' 			=> phpbb::$user->img('icon_contact_pm', 'SEND_PRIVATE_MESSAGE'),
 			'EMAIL_IMG' 		=> phpbb::$user->img('icon_contact_email', 'SEND_EMAIL'),
 			'WWW_IMG' 			=> phpbb::$user->img('icon_contact_www', 'VISIT_WEBSITE'),
-			'JABBER_IMG'		=> phpbb::$user->img('icon_contact_jabber', 'JABBER') ,
 		));
 	}
 

@@ -172,7 +172,7 @@
 									{% if REMAINDER eq 0 %}
 										<div>
 									{% endif %}
-										<a href="{% if contact.U_CONTACT %}{{ contact.U_CONTACT }}{% else %}{{ contact.U_PROFILE_AUTHOR }}{% endif %}" title="{{ contact.NAME }}"{% if definition.S_LAST_CELL %} class="last-cell"{% endif %}{% if contact.ID eq 'jabber' %} onclick="popup(this.href, 550, 320); return false;"{% endif %}>
+										<a href="{% if contact.U_CONTACT %}{{ contact.U_CONTACT }}{% else %}{{ contact.U_PROFILE_AUTHOR }}{% endif %}" title="{{ contact.NAME }}"{% if definition.S_LAST_CELL %} class="last-cell"{% endif %}>
 											<span class="contact-icon {{ contact.ID }}-icon"></span>
 										</a>
 									{% if REMAINDER eq 3 or contact.S_LAST_ROW %}

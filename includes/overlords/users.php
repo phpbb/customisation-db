@@ -197,13 +197,9 @@ class users_overlord
 					return (!empty(self::$users[$user_id]['user_allow_viewemail']) || phpbb::$auth->acl_get('a_email')) ? ((phpbb::$config['board_email_form'] && phpbb::$config['email_enable']) ? phpbb::append_sid('memberlist', "mode=email&amp;u=$user_id") : ((phpbb::$config['board_hide_emails'] && !phpbb::$auth->acl_get('a_email')) ? '' : 'mailto:' . self::$users[$user_id]['user_email'])) : '';
 				break;
 
-				case '_jabber' :
-					return (self::$users[$user_id]['user_jabber'] && phpbb::$auth->acl_get('u_sendim')) ? phpbb::append_sid('memberlist', "mode=contact&amp;action=jabber&amp;u=$user_id") : '';
-				break;
-
 				case '_avatar' :
 					// Get avatar (need hacks for this)
-					$avatar = (phpbb::$user->optionget('viewavatars')) ? get_user_avatar(self::$users[$user_id]['user_avatar'], self::$users[$user_id]['user_avatar_type'], self::$users[$user_id]['user_avatar_width'], self::$users[$user_id]['user_avatar_height']) : '';
+                    $avatar = (phpbb::$user->optionget('viewavatars')) ? phpbb::$container->get('avatar.helper')->get_user_avatar(self::$users[$user_id]) : '';
 
 					return $avatar;
 				break;
@@ -270,8 +266,6 @@ class users_overlord
 			$prefix . 'U_SEARCH'			=> (phpbb::$auth->acl_get('u_search')) ? phpbb::append_sid('search', "author_id=$user_id&amp;sr=posts") : '',
 			$prefix . 'U_PM'				=> self::get_user($user_id, '_u_pm'),
 			$prefix . 'U_EMAIL'				=> self::get_user($user_id, '_u_email'),
-			$prefix . 'U_JABBER'			=> self::get_user($user_id, '_jabber'),
-			$prefix . 'S_JABBER_ENABLED'	=> (phpbb::$config['jab_enable']) ? true : false,
 
 			$prefix . 'SEND_EMAIL_USER'		=> phpbb::$user->lang('SEND_EMAIL_USER', self::get_user($user_id, '_username')),
 		);

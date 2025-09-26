@@ -23,7 +23,7 @@ services:
             - '@phpbb.titania.controller.helper'
             - '%core.root_path%'
             - '%core.php_ext%'
-            - '%tables.titania.attachments'
+            - '%tables.titania.attachments%'
 
     phpbb.titania.attachment.files.factory:
         class: phpbb\titania\attachment\files\factory
@@ -55,12 +55,10 @@ services:
         class: phpbb\files\upload
         shared: false
         arguments:
-            - '@filesystem'
             - '@phpbb.titania.attachment.files.factory'
             - '@language'
             - '@php_ini'
             - '@request'
-            - ''
 
     phpbb.titania.attachment.operator:
         class: phpbb\titania\attachment\operator
@@ -71,7 +69,7 @@ services:
             - '@user'
             - '@template'
             - '@phpbb.titania.attachment'
-            - '%tables.titania.attachments'
+            - '%tables.titania.attachments%'
 
     phpbb.titania.attachment.plupload:
         class: phpbb\titania\attachment\plupload
@@ -467,7 +465,7 @@ services:
             - '@phpbb.titania.attachment'
             - '@phpbb.titania.search.manager'
             - '@phpbb.titania.contribution.type.collection'
-            - '%tables.titania.attachments'
+            - '%tables.titania.attachments%'
 
     phpbb.titania.tags:
         class: phpbb\titania\tags

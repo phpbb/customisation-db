@@ -758,7 +758,7 @@ class message
 		$message = (defined('STRIP') && STRIP) ? addslashes($message) : $message;
 
 		// Run set_var to re-encode the proper entities as if the user had submitted it themselves
-		set_var($message, $message, 'string', true);
+        (new \phpbb\request\type_cast_helper())->set_var($message, $message, 'string', true);
 	}
 
 	/**

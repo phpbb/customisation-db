@@ -80,7 +80,7 @@ services:
             - '@phpbb.titania.access'
             - '%core.root_path%'
             - '%core.php_ext%'
-            - '%tables.titania.attachments'
+            - '%tables.titania.attachments%'
 
     phpbb.titania.controller.search:
         class: phpbb\titania\controller\search
@@ -217,7 +217,7 @@ services:
             - '@phpbb.titania.attachment.uploader'
             - '@phpbb.titania.subscriptions'
             - '@phpbb.titania.message'
-            - '%tables.titania.attachments'
+            - '%tables.titania.attachments%'
 
     phpbb.titania.controller.contrib.revision.edit:
         class: phpbb\titania\controller\contribution\revision_edit
