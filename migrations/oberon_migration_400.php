@@ -43,6 +43,7 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
     {
         return [
             'add_tables' => [
+                // Contributions
 				$this->table_prefix . 'custdb_contributions' => [
 					'COLUMNS' => [
 						'contribution_id'                       => ['UINT', null, 'auto_increment'],
@@ -50,6 +51,7 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
                         'contribution_description'              => ['VCHAR_UNI:255', ''],
                         'contribution_type'                     => ['TINT', 0],
                         'contribution_status'                   => ['TINT', 0],
+                        'contribution_demo_link'                => ['VCHAR_UNI:255', ''],
                         'user_id'                               => ['UINT', 0],
                         'submission_time'                       => ['TIMESTAMP', null],
                     ],
@@ -57,17 +59,34 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
 					'PRIMARY_KEY' => 'contribution_id',
 				],
 
+                // Revisions
                 $this->table_prefix . 'custdb_revisions' => [
 					'COLUMNS' => [
 						'revision_id'                           => ['UINT', null, 'auto_increment'],
                         'contribution_id'                       => ['UINT', 0],
 						'revision_name'                         => ['VCHAR_UNI:255', ''],
+                        'revision_version'                      => ['VCHAR_UNI:255', ''],
                         'revision_description'                  => ['VCHAR_UNI:255', ''],
+                        'revision_attachment'                   => ['VCHAR_UNI:255', ''],
+                        'revision_screenshots'                  => ['VCHAR_UNI:255', ''],
                         'user_id'                               => ['UINT', 0],
                         'submission_time'                       => ['TIMESTAMP', null],
                     ],
 
 					'PRIMARY_KEY' => 'revision_id',
+				],
+
+                // Queue
+                $this->table_prefix . 'custdb_queue' => [
+					'COLUMNS' => [
+						'queue_id'                              => ['UINT', null, 'auto_increment'],
+						'revision_id'                           => ['UINT', 0],
+                        'queue_added_time'                      => ['UINT', 0],
+                        'queue_status'                          => ['TINT', 0],
+                        'queue_codespace_url'                   => ['VCHAR_UNI:255', ''],
+                    ],
+
+					'PRIMARY_KEY' => 'queue_id',
 				],
 			],
         ];

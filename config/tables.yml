@@ -2,3 +2,4 @@ parameters:
   phpbb.oberon.tables:
     contributions: '%core.table_prefix%custdb_contributions'
     revisions: '%core.table_prefix%custdb_revisions'
+    queue: '%core.table_prefix%custdb_queue'

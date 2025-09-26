@@ -10,6 +10,7 @@ services:
             - '@user'
             - '@user_loader'
             - '@language'
+            - '@ext.manager'
             - '%phpbb.oberon.tables%'
     phpbb.oberon.controller:
         class: phpbb\oberon\controller\oberon
@@ -35,6 +36,14 @@ services:
     phpbb.oberon.console.queue_manager:
         class: phpbb\oberon\console\queue_manager
         arguments:
+            - '@dbal.conn'
+            - '@phpbb.oberon.manager'
+        tags:
+            - { name: console.command }
+    phpbb.oberon.console.ai_validation:
+        class: phpbb\oberon\console\ai_validation
+        arguments:
+            - '@dbal.conn'
             - '@phpbb.oberon.manager'
         tags:
             - { name: console.command }

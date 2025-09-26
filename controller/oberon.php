@@ -44,6 +44,9 @@ class oberon
 	/* @var \phpbb\oberon\manager\manager $manager */
 	protected $manager;
 
+	/* @var array */
+	private $tables;
+
 	/**
 	* Constructor
 	*
@@ -68,24 +71,190 @@ class oberon
 		$this->language = $language;
 		$this->manager = $manager;
 
-		if (false)
+		/*if (false)
 		{
 			throw new \phpbb\exception\http_exception(401, 'CUSTDB_NOT_ENABLED');
-		}
+		}*/
+
+		$this->tables = $this->manager->get_tables();
 	}
 
 	/**
-	* Add
+	* View contribution
+	*
+	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	*/
+	public function view(int $id)
+	{
+		// Get contribution data via manager
+		$contribution = $this->manager->get_contribution_with_latest_revision($id);
+
+		// If no contribution is found
+		if (!$contribution)
+		{
+			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
+		}
+
+		//TODO: upload to the ext folder instead in the future
+		//$ext_path = $this->manager->get_ext_manager()->get_extension_path('phpbb/oberon', true);
+		$ext_path = $this->root_path . '/files/contributions';
+
+		// Assign template variables
+		$this->template->assign_vars([
+			// Core contribution data
+			'CONTRIBUTION_ID'       => $contribution['contribution_id'],
+			'CONTRIBUTION_NAME'     => $contribution['contribution_name'],
+			'DESCRIPTION'           => $contribution['contribution_description'],
+			'AUTHORS'               => $contribution['author_name'],
+			'VERSION_NUMBER'        => $contribution['revision_version'],
+			'DEMO_LINK'             => $contribution['contribution_demo_link'],
+			'STATUS'                => $contribution['status_label'],
+
+			// First screenshot or empty string
+			'CONTRIBUTION_IMAGE'    => !empty($contribution['screenshots'][0])
+				? $ext_path . '/' . $contribution['screenshots'][0]
+				: '',
+
+			// Actions
+			'U_EDIT_CONTRIBUTION'   => '', //$this->helper->route('phpbb_oberon_edit_contribution', ['id' => $id]),
+			'U_VALIDATE_CONTRIBUTION' => '', //$this->helper->route('phpbb_oberon_validate_contribution', ['id' => $id]),
+		]);
+
+		//        add_form_key('custdb_view_contribution');
+
+		// Render the template
+		return $this->helper->render('custdb_view_contribution_body.html', $this->user->lang('CUSTDB_VIEW_CONTRIBUTION'));
+	}	
+
+	/**
+	* Add contribution/revision
 	*
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
 	public function add()
 	{
-        
+		// Check if form submitted
+        if ($this->request->is_set_post('submit'))
+        {
+            // Validate form token for CSRF
+            if (!check_form_key('custdb_add_contribution'))
+            {
+                trigger_error('FORM_INVALID');
+            }
+
+            $contribution_name = $this->request->variable('contribution_name', '', true);
+            $version_number = $this->request->variable('version_number', '', true);
+
+            // Validation logic here
+            if (empty($contribution_name) || empty($version_number))
+            {
+                trigger_error('CUSTDB_MISSING_REQUIRED_FIELDS');
+            }
+
+            // Insert into customisations and revisions table, first gather form data
+			$description       = $this->request->variable('description', '', true);
+			$type              = $this->request->variable('contribution_type', 0);
+			$demo_link         = $this->request->variable('demo_link', '', true);
+
+			$version           = $this->request->variable('version_number', '', true);
+			$major_revision    = $this->request->variable('major_revision', 0);
+			$user_id           = (int) $this->user->data['user_id'];
+
+			$contribution_array = [
+				'contribution_name'        => $contribution_name,
+				'contribution_description' => $description,
+				'contribution_type'        => $type,
+				'contribution_status'      => 0, // 0 = Unvalidated
+				'contribution_demo_link'   => $demo_link,
+				'user_id'                  => $user_id,
+				'submission_time'          => time(),
+			];
+
+			$contribution_id = (int) $this->manager->add_contribution($contribution_array);
+
+			$upload_path = $this->root_path . 'files/contributions/';
+			$revision_file_name = '';
+			$screenshot_file_names = [];
+
+			// Handle contribution package uploads (TODO: this needs better validation)
+			$contribution_file = $this->request->file('contribution_file');
+
+			if (!empty($contribution_file['name']))
+			{
+				$revision_file_name = time() . '_' . basename($contribution_file['name']);
+
+				if (!move_uploaded_file($contribution_file['tmp_name'], $upload_path . $revision_file_name))
+				{
+					trigger_error('CUSTDB_FILE_UPLOAD_FAILED');
+				}
+			}
+
+			// Fetch multiple potential attachments
+			$screenshots = $this->request->raw_variable('screenshots', [], \phpbb\request\request_interface::FILES);
+
+			if (!empty($screenshots['name'][0])) // Check if at least one file was uploaded
+			{
+				foreach ($screenshots['name'] as $key => $name)
+				{
+					if (!empty($name))
+					{
+						$screenshot_name = time() . '_' . basename($name);
+
+						if (move_uploaded_file($screenshots['tmp_name'][$key], $upload_path . $screenshot_name))
+						{
+							$screenshot_file_names[] = $screenshot_name;
+						}
+
+						else
+						{
+							trigger_error('CUSTDB_SCREENSHOT_UPLOAD_FAILED');
+						}
+					}
+				}
+			}
+
+			// Store screenshots as comma-separated list
+			$screenshot_list = implode(',', $screenshot_file_names);
+
+			$revision_array = [
+				'contribution_id'      => $contribution_id,
+				'revision_name'        => $contribution_name,
+				'revision_version'     => $version,
+				'revision_description' => $description,
+				'revision_attachment'  => $revision_file_name,
+				'revision_screenshots' => $screenshot_list,
+				'user_id'              => $user_id,
+				'submission_time'      => time(),
+			];
+
+			$revision_id = $this->manager->add_revision($revision_array);
+
+			// Add the revision to the queue
+			$this->manager->add_revision_to_queue($revision_id);
+
+			meta_refresh(3, $this->helper->route('custdb_index'));
+			trigger_error($this->user->lang('CUSTDB_CONTRIBUTION_ADDED_SUCCESSFULLY'));
+		}
+
+        // Generate CSRF token
+        add_form_key('custdb_add_contribution');
+
+		$this->template->assign_vars([
+			'U_ACTION'				=> $this->helper->route('custdb_add_contribution'),
+
+			'TYPE_EXTENSIONS'		=> $this->manager::TYPE_EXTENSIONS,
+			'TYPE_STYLES'			=> $this->manager::TYPE_STYLES,
+			'TYPE_TRANSLATIONS'		=> $this->manager::TYPE_TRANSLATIONS,
+			'TYPE_BBCODES'			=> $this->manager::TYPE_BBCODES,
+			'TYPE_TOOLS'			=> $this->manager::TYPE_TOOLS,
+			'TYPE_ARCHIVE'			=> $this->manager::TYPE_ARCHIVE,
+		]); 
+
+   		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));     
     }
 
 	/**
-	* Index
+	* Index page
 	*
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
@@ -100,7 +269,9 @@ class oberon
         foreach ($contributions as $contribution)
         {
             $this->template->assign_block_vars('contributions', [
-                'CONTRIBUTION_NAME' => $contribution['contribution_name'],
+				'U_VIEW_CONTRIBUTION' => $this->helper->route('custdb_view_contribution', ['id' => $contribution['contribution_id']]),
+                
+				'CONTRIBUTION_NAME' => $contribution['contribution_name'],
                 'CONTRIBUTION_DESCRIPTION' => $contribution['contribution_description'],
             ]);
         }
@@ -134,13 +305,8 @@ class oberon
 			'U_TYPE_ARCHIVE' 		=> $this->sidebar_route($this->manager::TYPE_ARCHIVE),
 		]); 
 
-		/* $start = $this->request->variable('start', 0);
-        $this->manager->xxx();
- $this->template->assign_block_vars('contributions', $contributions);
-
-			
-	
-        
+		
+        /*
 		// Pagination
 		$per_page = (int) 10;
 		$this->pagination->generate_template_pagination(
@@ -151,14 +317,13 @@ class oberon
 			$per_page, 
 			$start
 		);
-
-	*/
+		*/
 
 		return $this->helper->render('custdb_index_body.html', $this->user->lang('CUSTDB_INDEX'));
 	}
 
 	/**
-	 * xxx
+	 * Create sidebar route url
 	 */
 	private function sidebar_route(int $type)
 	{
