@@ -1,15 +1,15 @@
 <?php
 /**
-*
-* This file is part of the phpBB Customisation Database package.
-*
-* @copyright (c) phpBB Limited <https://www.phpbb.com>
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-* For full copyright and license information, please see
-* the docs/CREDITS.txt file.
-*
-*/
+ *
+ * This file is part of the phpBB Customisation Database package.
+ *
+ * @copyright (c) phpBB Limited <https://www.phpbb.com>
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ * For full copyright and license information, please see
+ * the docs/CREDITS.txt file.
+ *
+ */
 
 namespace phpbb\titania\controller;
 
@@ -17,135 +17,136 @@ use phpbb\titania\access;
 use phpbb\titania\entity\package;
 use phpbb\titania\ext;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class download
 {
-	/** @var \phpbb\db\driver\driver_interface */
-	protected $db;
+    /** @var \phpbb\db\driver\driver_interface */
+    protected $db;
 
-	/** @var \phpbb\auth\auth */
-	protected $auth;
+    /** @var \phpbb\auth\auth */
+    protected $auth;
 
-	/** @var \phpbb\user */
-	protected $user;
+    /** @var \phpbb\user */
+    protected $user;
 
-	/** @var \phpbb\titania\controller\helper */
-	protected $helper;
+    /** @var \phpbb\titania\controller\helper */
+    protected $helper;
 
-	/** @var \phpbb\titania\config\config */
-	protected $ext_config;
+    /** @var \phpbb\titania\config\config */
+    protected $ext_config;
 
-	/** @var \phpbb\titania\access */
-	protected $access;
+    /** @var \phpbb\titania\access */
+    protected $access;
 
-	/** @var string */
-	protected $phpbb_root_path;
+    /** @var string */
+    protected $phpbb_root_path;
 
-	/** @var string */
-	protected $php_ext;
+    /** @var string */
+    protected $php_ext;
 
-	/** @var array */
-	protected $file;
+    /** @var array */
+    protected $file;
 
-	/** @var int */
-	protected $id;
+    /** @var int */
+    protected $id;
 
-	/** @var string */
-	protected $type;
+    /** @var string */
+    protected $type;
 
     protected $attachements_table;
 
-	const OK = 200;
-	const FORBIDDEN = 403;
-	const NOT_FOUND = 404;
-	const INTERNAL_SERVER_ERROR = 500;
+    const OK = 200;
+    const FORBIDDEN = 403;
+    const NOT_FOUND = 404;
+    const INTERNAL_SERVER_ERROR = 500;
 
-	/**
-	* Constructor
-	*
-	* @param \phpbb\db\driver\driver_interface $db
-	* @param \phpbb\auth\auth $auth
-	* @param \phpbb\user $user
-	* @param \phpbb\request\request_interface $request
-	* @param \phpbb\titania\controller\helper $helper
-	* @param \phpbb\titania\config\config $ext_config
-	* @param \phpbb\titania\access $access
-	* @param string $phpbb_root_path
-	* @param string $php_ext
-	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\user $user, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, access $access, $phpbb_root_path, $php_ext, $attachements_table)
-	{
-		$this->db = $db;
-		$this->auth = $auth;
-		$this->user = $user;
-		$this->request = $request;
-		$this->helper = $helper;
-		$this->ext_config = $ext_config;
-		$this->access = $access;
-		$this->phpbb_root_path = $phpbb_root_path;
-		$this->php_ext = $php_ext;
+    /**
+     * Constructor
+     *
+     * @param \phpbb\db\driver\driver_interface $db
+     * @param \phpbb\auth\auth $auth
+     * @param \phpbb\user $user
+     * @param \phpbb\request\request_interface $request
+     * @param \phpbb\titania\controller\helper $helper
+     * @param \phpbb\titania\config\config $ext_config
+     * @param \phpbb\titania\access $access
+     * @param string $phpbb_root_path
+     * @param string $php_ext
+     */
+    public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\auth\auth $auth, \phpbb\user $user, \phpbb\request\request $request, \phpbb\titania\controller\helper $helper, \phpbb\titania\config\config $ext_config, access $access, $phpbb_root_path, $php_ext, $attachements_table)
+    {
+        $this->db = $db;
+        $this->auth = $auth;
+        $this->user = $user;
+        $this->request = $request;
+        $this->helper = $helper;
+        $this->ext_config = $ext_config;
+        $this->access = $access;
+        $this->phpbb_root_path = $phpbb_root_path;
+        $this->php_ext = $php_ext;
         $this->attachements_table = $attachements_table;
 
-		$this->user->add_lang('viewtopic');
-	}
+        $this->user->add_lang('viewtopic');
+    }
 
-	/**
-	* Output attachment browser.
-	*
-	* @param int	$id		Attachment id.
-	* @param string	$type	Type of download (manual or composer)
-	* @return Symfony\Component\HttpFoundation\BinaryFileResponse\BinaryFileResponse if error found. Otherwise method exits.
-	*/
-	public function file($id , $type)
-	{
-		$this->check_invalid_request();
-		$this->id = (int) $id;
-		$this->type = $type;
+    /**
+     * Output attachment browser.
+     *
+     * @param int	$id		Attachment id.
+     * @param string	$type	Type of download (manual or composer)
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse if error found. Otherwise method exits.
+     */
+    public function file($id , $type)
+    {
+        $this->check_invalid_request();
+        $this->id = (int) $id;
+        $this->type = $type;
 
-		// If no download id is provided, check for legacy download.
-		if (!$this->id)
-		{
-			$this->id = (int) $this->get_legacy_download_id();
-		}
+        // If no download id is provided, check for legacy download.
+        if (!$this->id)
+        {
+            $this->id = (int) $this->get_legacy_download_id();
+        }
 
-		$thumbnail = $this->request->variable('thumb', false);
-		$status = $this->load_file_data();
+        $thumbnail = $this->request->variable('thumb', false);
+        $status = $this->load_file_data();
 
-		if ($status !== self::OK)
-		{
-			$error = array(
-				self::NOT_FOUND		=> 'ERROR_NO_ATTACHMENT',
-				self::FORBIDDEN		=> 'SORRY_AUTH_VIEW_ATTACH',
-			);
+        if ($status !== self::OK)
+        {
+            $error = array(
+                self::NOT_FOUND		=> 'ERROR_NO_ATTACHMENT',
+                self::FORBIDDEN		=> 'SORRY_AUTH_VIEW_ATTACH',
+            );
 
-			return $this->helper->error($error[$status], $status);
-		}
+            return $this->helper->error($error[$status], $status);
+        }
 
-		$directory = utf8_basename($this->file['attachment_directory']) . '/';
-		$base_filename = utf8_basename($this->file['physical_filename']);
-		$is_image = strpos($this->file['mimetype'], 'image') === 0;
+        $directory = utf8_basename($this->file['attachment_directory']) . '/';
+        $base_filename = utf8_basename($this->file['physical_filename']);
+        $is_image = strpos($this->file['mimetype'], 'image') === 0;
 
         if ($thumbnail && $is_image)
-		{
-			$this->file['physical_filename'] = $directory . 'thumb_' . $base_filename;
+        {
+            $this->file['physical_filename'] = $directory . 'thumb_' . $base_filename;
         }
-		else
-		{
-			$this->file['physical_filename'] = $directory . $base_filename;
-			$this->increase_download_count();
-		}
+        else
+        {
+            $this->file['physical_filename'] = $directory . $base_filename;
+            $this->increase_download_count();
+        }
 
-		if ($type === 'composer')
-		{
-			$composer_package = $this->file['physical_filename'] . '.composer';
+        if ($type === 'composer')
+        {
+            $composer_package = $this->file['physical_filename'] . '.composer';
 
-			if (!file_exists($this->ext_config->upload_path . $composer_package))
-			{
-				$this->generate_composer_package($composer_package);
-			}
+            if (!file_exists($this->ext_config->upload_path . $composer_package))
+            {
+                $this->generate_composer_package($composer_package);
+            }
 
-			$this->file['physical_filename'] = $composer_package;
-		}
+            $this->file['physical_filename'] = $composer_package;
+        }
 
         $filename = $this->ext_config->upload_path . $this->file['physical_filename'];
 
@@ -158,342 +159,343 @@ class download
             'Content-Type' => 'application/octet-stream',
         ];
 
-        return new \Symfony\Component\HttpFoundation\BinaryFileResponse\BinaryFileResponse($filename, 200, $headers);
+        $response = new \Symfony\Component\HttpFoundation\BinaryFileResponse($filename, 200, $headers);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $this->file['real_filename'], $this->file['real_filename']);
+        return $response;
+    }
 
-	}
+    /**
+     * Generate Composer package.
+     *
+     * @param string $composer_package Path to package destination
+     */
+    protected function generate_composer_package($composer_package)
+    {
+        $package = new package();
+        $package->set_source($this->ext_config->upload_path . $this->file['physical_filename']);
+        $package->set_temp_path($this->ext_config->contrib_temp_path, true);
 
-	/**
-	 * Generate Composer package.
-	 *
-	 * @param string $composer_package Path to package destination
-	 */
-	protected function generate_composer_package($composer_package)
-	{
-		$package = new package();
-		$package->set_source($this->ext_config->upload_path . $this->file['physical_filename']);
-		$package->set_temp_path($this->ext_config->contrib_temp_path, true);
+        $ext_base_path = $package->find_directory(
+            array(
+                'files' => array(
+                    'required' => 'composer.json',
+                    'optional' => 'ext.php',
+                ),
+            ),
+            'vendor'
+        );
 
-		$ext_base_path = $package->find_directory(
-			array(
-				'files' => array(
-					'required' => 'composer.json',
-					'optional' => 'ext.php',
-				),
-			),
-			'vendor'
-		);
+        $package->restore_root($ext_base_path, $this->id);
 
-		$package->restore_root($ext_base_path, $this->id);
+        $filesystem = new Filesystem();
+        $filesystem->copy($package->get_source(), $this->ext_config->upload_path . $composer_package);
 
-		$filesystem = new Filesystem();
-		$filesystem->copy($package->get_source(), $this->ext_config->upload_path . $composer_package);
+        $package->set_source($package->get_source() . '.composer');
+        $package->repack(true);
+        $package->cleanup();
+    }
 
-		$package->set_source($package->get_source() . '.composer');
-		$package->repack(true);
-		$package->cleanup();
-	}
+    /**
+     * Load attachment file data.
+     *
+     * @return int Returns HTTP status code.
+     */
+    protected function load_file_data()
+    {
+        if (!$this->id)
+        {
+            return self::NOT_FOUND;
+        }
 
-	/**
-	* Load attachment file data.
-	*
-	* @return int Returns HTTP status code.
-	*/
-	protected function load_file_data()
-	{
-		if (!$this->id)
-		{
-			return self::NOT_FOUND;
-		}
-
-		$sql = 'SELECT *
+        $sql = 'SELECT *
 			FROM ' . $this->attachements_table . '
 			WHERE attachment_id = ' . (int) $this->id;
-		$result = $this->db->sql_query_limit($sql, 1);
-		$this->file = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
+        $result = $this->db->sql_query_limit($sql, 1);
+        $this->file = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
 
-		return (!$this->file) ? self::NOT_FOUND : $this->check_accessibility();
-	}
+        return (!$this->file) ? self::NOT_FOUND : $this->check_accessibility();
+    }
 
-	/**
-	* Check for invalid request.
-	*
-	* @return null. Method exits if invalid request found.
-	*/
-	protected function check_invalid_request()
-	{
-		// Thank you sun.
-		if ($this->request->server('CONTENT_TYPE') === 'application/x-java-archive')
-		{
-			exit;
-		}
-		else if (strpos($this->request->server('HTTP_USER_AGENT'), 'Java') !== false)
-		{
-			exit;
-		}
-	}
+    /**
+     * Check for invalid request.
+     *
+     * @return null. Method exits if invalid request found.
+     */
+    protected function check_invalid_request()
+    {
+        // Thank you sun.
+        if ($this->request->server('CONTENT_TYPE') === 'application/x-java-archive')
+        {
+            exit;
+        }
+        else if (strpos($this->request->server('HTTP_USER_AGENT'), 'Java') !== false)
+        {
+            exit;
+        }
+    }
 
-	/**
-	* Get attachment id from legacy Ariel URL.
-	*
-	* @return int
-	*/
-	protected function get_legacy_download_id()
-	{
-		// Mostly to make moving from Ariel easier
-		$revision_id = $this->request->variable('revision', 0);
-		$contrib_id = $this->request->variable('contrib', 0);
-		$download_id = 0;
+    /**
+     * Get attachment id from legacy Ariel URL.
+     *
+     * @return int
+     */
+    protected function get_legacy_download_id()
+    {
+        // Mostly to make moving from Ariel easier
+        $revision_id = $this->request->variable('revision', 0);
+        $contrib_id = $this->request->variable('contrib', 0);
+        $download_id = 0;
 
-		if ($revision_id)
-		{
-			$sql = 'SELECT attachment_id
+        if ($revision_id)
+        {
+            $sql = 'SELECT attachment_id
 				FROM ' . TITANIA_REVISIONS_TABLE . "
 				WHERE revision_id = $revision_id";
-			$this->db->sql_query($sql);
-			$download_id = (int) $this->db->sql_fetchfield('attachment_id');
-			$this->db->sql_freeresult();
-		}
-		else if ($contrib_id)
-		{
-			$sql = 'SELECT attachment_id
+            $this->db->sql_query($sql);
+            $download_id = (int) $this->db->sql_fetchfield('attachment_id');
+            $this->db->sql_freeresult();
+        }
+        else if ($contrib_id)
+        {
+            $sql = 'SELECT attachment_id
 				FROM ' . TITANIA_REVISIONS_TABLE . '
 				WHERE contrib_id = ' . $contrib_id . '
 					AND revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
 				ORDER BY revision_id DESC';
-			$this->db->sql_query_limit($sql, 1);
-			$download_id = (int) $this->db->sql_fetchfield('attachment_id');
-			$this->db->sql_freeresult();
-		}
+            $this->db->sql_query_limit($sql, 1);
+            $download_id = (int) $this->db->sql_fetchfield('attachment_id');
+            $this->db->sql_freeresult();
+        }
 
-		return $download_id;
-	}
+        return $download_id;
+    }
 
-	/**
-	* Check file accesibility.
-	*
-	* @return int Returns HTTP status code.
-	*/
-	protected function check_accessibility()
-	{
-		$status = self::OK;
+    /**
+     * Check file accesibility.
+     *
+     * @return int Returns HTTP status code.
+     */
+    protected function check_accessibility()
+    {
+        $status = self::OK;
 
-		// Don't allow downloads of revisions for TITANIA_CONTRIB_DOWNLOAD_DISABLED items unless on the team or an author.
-		if ($this->file['object_type'] == ext::TITANIA_CONTRIB)
-		{
-			$status = $this->check_revision_auth();
-		}
+        // Don't allow downloads of revisions for TITANIA_CONTRIB_DOWNLOAD_DISABLED items unless on the team or an author.
+        if ($this->file['object_type'] == ext::TITANIA_CONTRIB)
+        {
+            $status = $this->check_revision_auth();
+        }
 
-		if ($status === self::OK)
-		{
-			// Only revisions can be downloaded as Composer packages
-			if ($this->type == 'composer' && $this->file['object_type'] != ext::TITANIA_CONTRIB)
-			{
-				return self::NOT_FOUND;
-			}
+        if ($status === self::OK)
+        {
+            // Only revisions can be downloaded as Composer packages
+            if ($this->type == 'composer' && $this->file['object_type'] != ext::TITANIA_CONTRIB)
+            {
+                return self::NOT_FOUND;
+            }
 
-			if ($this->file['is_orphan'] && $this->user->data['user_id'] != $this->file['attachment_user_id'] && !$this->auth->acl_get('a_attach'))
-			{
-				$status = self::NOT_FOUND;
-			}
-			/*else if (!download_allowed())
-			{
-				$status = self::FORBIDDEN;
-			}*/
-			else if ($this->file['attachment_access'] < $this->access->get_level() && $this->access->is_team($this->file['attachment_access']))
-			{
-				$status = self::FORBIDDEN;
-			}
-			else if ($this->file['attachment_access'] < $this->access->get_level() && $this->access->is_author($this->file['attachment_access']))
-			{
-				$status = $this->check_author_level_access();
-			}
-		}
+            if ($this->file['is_orphan'] && $this->user->data['user_id'] != $this->file['attachment_user_id'] && !$this->auth->acl_get('a_attach'))
+            {
+                $status = self::NOT_FOUND;
+            }
+            /*else if (!download_allowed())
+            {
+                $status = self::FORBIDDEN;
+            }*/
+            else if ($this->file['attachment_access'] < $this->access->get_level() && $this->access->is_team($this->file['attachment_access']))
+            {
+                $status = self::FORBIDDEN;
+            }
+            else if ($this->file['attachment_access'] < $this->access->get_level() && $this->access->is_author($this->file['attachment_access']))
+            {
+                $status = $this->check_author_level_access();
+            }
+        }
 
-		return $status;
-	}
+        return $status;
+    }
 
-	/**
-	* Check whether the file is being requested by an automatic validator.
-	*
-	* @return bool
-	*/
-	protected function is_auto_validator()
-	{
-		foreach ($this->ext_config->mpv_server_list as $data)
-		{
-			$dns_ipv4 = dns_get_record($data['host'], DNS_A);
-			$dns_ipv6 = dns_get_record($data['host'], DNS_AAAA);
+    /**
+     * Check whether the file is being requested by an automatic validator.
+     *
+     * @return bool
+     */
+    protected function is_auto_validator()
+    {
+        foreach ($this->ext_config->mpv_server_list as $data)
+        {
+            $dns_ipv4 = dns_get_record($data['host'], DNS_A);
+            $dns_ipv6 = dns_get_record($data['host'], DNS_AAAA);
 
-			if ($this->dns_matches_user_ip($dns_ipv4) || $this->dns_matches_user_ip($dns_ipv6) || $this->user->ip == $data['ip'])
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+            if ($this->dns_matches_user_ip($dns_ipv4) || $this->dns_matches_user_ip($dns_ipv6) || $this->user->ip == $data['ip'])
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	* Check whether DNS record matches the current user's IP.
-	*
-	* @param array $record	DNS record.
-	* @return bool
-	*/
-	protected function dns_matches_user_ip($record)
-	{
-		return isset($record[0]) && isset($record[0]['ip']) && $this->user->ip == $record[0]['ip'];
-	}
+    /**
+     * Check whether DNS record matches the current user's IP.
+     *
+     * @param array $record	DNS record.
+     * @return bool
+     */
+    protected function dns_matches_user_ip($record)
+    {
+        return isset($record[0]) && isset($record[0]['ip']) && $this->user->ip == $record[0]['ip'];
+    }
 
-	/**
-	* Check if user can download the requested revision.
-	*
-	* @return int Returns HTTP status code.
-	*/
-	protected function check_revision_auth()
-	{
-		$sql = 'SELECT contrib_id, revision_status
+    /**
+     * Check if user can download the requested revision.
+     *
+     * @return int Returns HTTP status code.
+     */
+    protected function check_revision_auth()
+    {
+        $sql = 'SELECT contrib_id, revision_status
 			FROM ' . TITANIA_REVISIONS_TABLE . '
 			WHERE attachment_id = ' . (int) $this->id;
-		$result = $this->db->sql_query($sql);
-		$revision = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
+        $result = $this->db->sql_query($sql);
+        $revision = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
 
-		$contrib = new \titania_contribution;
+        $contrib = new \titania_contribution;
 
-		if (!$revision || !$contrib->load((int) $revision['contrib_id']) || !$contrib->is_visible(true))
-		{
-			return self::NOT_FOUND;
-		}
+        if (!$revision || !$contrib->load((int) $revision['contrib_id']) || !$contrib->is_visible(true))
+        {
+            return self::NOT_FOUND;
+        }
 
-		if ($this->type == 'composer' && !$contrib->type->create_composer_packages)
-		{
-			return self::NOT_FOUND;
-		}
+        if ($this->type == 'composer' && !$contrib->type->create_composer_packages)
+        {
+            return self::NOT_FOUND;
+        }
 
-		$is_author = $contrib->is_author || $contrib->is_active_coauthor;
-		$can_download_hidden = $is_author || $contrib->type->acl_get('view') || $contrib->type->acl_get('moderate');
-		$use_queue = $this->ext_config->require_validation && $contrib->type->require_validation;
-		$is_unvalidated = $revision['revision_status'] != ext::TITANIA_REVISION_APPROVED && $use_queue;
-		$is_disabled = $contrib->contrib_status == ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED;
+        $is_author = $contrib->is_author || $contrib->is_active_coauthor;
+        $can_download_hidden = $is_author || $contrib->type->acl_get('view') || $contrib->type->acl_get('moderate');
+        $use_queue = $this->ext_config->require_validation && $contrib->type->require_validation;
+        $is_unvalidated = $revision['revision_status'] != ext::TITANIA_REVISION_APPROVED && $use_queue;
+        $is_disabled = $contrib->contrib_status == ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED;
 
-		if (!$can_download_hidden && !$this->is_auto_validator() && ($is_unvalidated || $is_disabled))
-		{
-			return self::NOT_FOUND;
-		}
+        if (!$can_download_hidden && !$this->is_auto_validator() && ($is_unvalidated || $is_disabled))
+        {
+            return self::NOT_FOUND;
+        }
 
-		// Set access Level
-		if ($is_author)
-		{
-			$this->access->set_level(access::AUTHOR_LEVEL);
-		}
+        // Set access Level
+        if ($is_author)
+        {
+            $this->access->set_level(access::AUTHOR_LEVEL);
+        }
 
-		return self::OK;
-	}
+        return self::OK;
+    }
 
-	/**
-	* Check user's access against attachment access level.
-	*
-	* @return int Returns HTTP status code.
-	*/
-	protected function check_author_level_access()
-	{
-		// Author level check
-		$contrib = false;
+    /**
+     * Check user's access against attachment access level.
+     *
+     * @return int Returns HTTP status code.
+     */
+    protected function check_author_level_access()
+    {
+        // Author level check
+        $contrib = false;
 
-		switch ((int) $this->file['object_type'])
-		{
-			case ext::TITANIA_FAQ:
-				$sql = 'SELECT c.contrib_id, c.contrib_user_id
+        switch ((int) $this->file['object_type'])
+        {
+            case ext::TITANIA_FAQ:
+                $sql = 'SELECT c.contrib_id, c.contrib_user_id
 					FROM ' . TITANIA_CONTRIB_FAQ_TABLE . ' f, ' .
-						TITANIA_CONTRIBS_TABLE . ' c
+                    TITANIA_CONTRIBS_TABLE . ' c
 					WHERE f.faq_id = ' . (int) $this->file['object_id'] . '
 						AND c.contrib_id = f.contrib_id';
-				$result = $this->db->sql_query($sql);
-				$contrib = $this->db->sql_fetchrow($result);
-				$this->db->sql_freeresult($result);
-			break;
+                $result = $this->db->sql_query($sql);
+                $contrib = $this->db->sql_fetchrow($result);
+                $this->db->sql_freeresult($result);
+                break;
 
-			case ext::TITANIA_SUPPORT:
-			case ext::TITANIA_QUEUE_DISCUSSION:
-				$sql = 'SELECT c.contrib_id, c.contrib_user_id
+            case ext::TITANIA_SUPPORT:
+            case ext::TITANIA_QUEUE_DISCUSSION:
+                $sql = 'SELECT c.contrib_id, c.contrib_user_id
 					FROM ' . TITANIA_POSTS_TABLE . ' p, ' .
-						TITANIA_TOPICS_TABLE . ' t, ' .
-						TITANIA_CONTRIBS_TABLE . ' c
+                    TITANIA_TOPICS_TABLE . ' t, ' .
+                    TITANIA_CONTRIBS_TABLE . ' c
 					WHERE p.post_id = ' . (int) $this->file['object_id'] . '
 						AND t.topic_id = p.topic_id
 						AND c.contrib_id = t.parent_id';
-				$result = $this->db->sql_query($sql);
-				$contrib = $this->db->sql_fetchrow($result);
-				$this->db->sql_freeresult($result);
-			break;
-		}
+                $result = $this->db->sql_query($sql);
+                $contrib = $this->db->sql_fetchrow($result);
+                $this->db->sql_freeresult($result);
+                break;
+        }
 
-		if ($contrib !== false)
-		{
-			if ($contrib['contrib_user_id'] == $this->user->data['user_id'])
-			{
-				// Main author
-				$this->access->set_level(access::AUTHOR_LEVEL);
-			}
-			else
-			{
-				// Coauthor
-				$sql = 'SELECT user_id
+        if ($contrib !== false)
+        {
+            if ($contrib['contrib_user_id'] == $this->user->data['user_id'])
+            {
+                // Main author
+                $this->access->set_level(access::AUTHOR_LEVEL);
+            }
+            else
+            {
+                // Coauthor
+                $sql = 'SELECT user_id
 					FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
 					WHERE contrib_id = ' . (int) $contrib['contrib_id'] . '
 						AND user_id = ' . (int) $this->user->data['user_id'] . '
 						AND active = 1';
-				$result = $this->db->sql_query($sql);
+                $result = $this->db->sql_query($sql);
 
-				if ($this->db->sql_fetchrow($result))
-				{
-					$this->access->set_level(access::AUTHOR_LEVEL);
-				}
-				$this->db->sql_freeresult($result);
-			}
-		}
+                if ($this->db->sql_fetchrow($result))
+                {
+                    $this->access->set_level(access::AUTHOR_LEVEL);
+                }
+                $this->db->sql_freeresult($result);
+            }
+        }
 
-		// Still not authorised?
-		return ($this->file['attachment_access'] < $this->access->get_level()) ? self::FORBIDDEN : self::OK;
-	}
+        // Still not authorised?
+        return ($this->file['attachment_access'] < $this->access->get_level()) ? self::FORBIDDEN : self::OK;
+    }
 
-	/**
-	* Increase attachment download count by one.
-	*
-	* @return null
-	*/
-	protected function increase_download_count()
-	{
-		if ($this->user->data['is_bot'])
-		{
-			return;
-		}
+    /**
+     * Increase attachment download count by one.
+     *
+     * @return null
+     */
+    protected function increase_download_count()
+    {
+        if ($this->user->data['is_bot'])
+        {
+            return;
+        }
 
-		// Update download count
-		$sql = 'UPDATE ' . $this->attachements_table . '
+        // Update download count
+        $sql = 'UPDATE ' . $this->attachements_table . '
 			SET download_count = download_count + 1
 			WHERE attachment_id = ' . (int) $this->id;
-		$this->db->sql_query($sql);
+        $this->db->sql_query($sql);
 
-		// Update download count for the contrib object as well
-		if ($this->file['object_type'] == ext::TITANIA_CONTRIB)
-		{
-			$this->increase_contrib_download_count($this->file['object_id']);
-		}
-	}
+        // Update download count for the contrib object as well
+        if ($this->file['object_type'] == ext::TITANIA_CONTRIB)
+        {
+            $this->increase_contrib_download_count($this->file['object_id']);
+        }
+    }
 
-	/**
-	* Increase contribution download count by one.
-	*
-	* @param int $contrib_id	Contribution id.
-	* @return null
-	*/
-	protected function increase_contrib_download_count($contrib_id)
-	{
-		$sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
+    /**
+     * Increase contribution download count by one.
+     *
+     * @param int $contrib_id	Contribution id.
+     * @return null
+     */
+    protected function increase_contrib_download_count($contrib_id)
+    {
+        $sql = 'UPDATE ' . TITANIA_CONTRIBS_TABLE . '
 			SET contrib_downloads = contrib_downloads + 1
 			WHERE contrib_id = ' . (int) $contrib_id;
-		$this->db->sql_query($sql);
-	}
+        $this->db->sql_query($sql);
+    }
 
 }
