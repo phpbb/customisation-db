@@ -3,7 +3,11 @@
 <div class="container" id="author-profile">
 	<div class="inner">
 		<div class="left-column demo">
-				{% if USER_AVATAR %}{{ USER_AVATAR }}<br />{% else %}<div class="no-avatar-img">{{ lang('NO_AVATAR') }}</div>{% endif %}
+			{% if USER_AVATAR %}
+				<span class="avatar">{{ USER_AVATAR.html }}</span>
+			{% else %}
+				<div class="no-avatar-img">{{ lang('NO_AVATAR') }}</div>
+			{% endif %}
 				{% if U_USER_BOARD_PROFILE %}<a href="{{ U_USER_BOARD_PROFILE }}">{{ lang('VIEW_USER_PROFILE') }}</a>{% endif %}
 		</div>
 

@@ -65,7 +65,8 @@
         "phpbb/epv": "dev-master@dev",
         "phpbb/translation-validator": "dev-master@dev",
         "composer/installers": "^1.0 || ^2.0",
-        "battye/php-array-parser": "~1.0"
+        "battye/php-array-parser": "~1.0",
+        "symfony/http-foundation": "^6.3"
     },
     "extra": {
         "display-name": "phpBB Customisation Database (Titania)",
