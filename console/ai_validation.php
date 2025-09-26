@@ -179,7 +179,7 @@ class ai_validation extends Command
             "purpose" => $purpose,
             "file" => new \CURLFile($path)
         ]);
-
+      
         $response = curl_exec($ch);
         if ($response === false) {
             throw new \RuntimeException("cURL error: " . curl_error($ch));
