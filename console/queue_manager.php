@@ -67,6 +67,9 @@ class queue_manager extends Command
             {
                 $this->process_tool_bbcode($queue_id, $contribution, $revision);
             }
+
+//TODO:Remove this in future -- for testing I just want it to run once
+die();
         }
     }
 
