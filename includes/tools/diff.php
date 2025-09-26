@@ -230,7 +230,7 @@ class titania_diff
 	{
 		// get filenames
 		$sql = 'SELECT a.physical_filename
-			FROM ' . phpbb::$container->get('parameters.tables.titania.attachments') . ' a
+			FROM ' . phpbb::$container->getParameter('tables.titania.attachments') . ' a
 			JOIN ' . \TITANIA_REVISIONS_TABLE . ' r
 				ON a.attachment_id = r.attachment_id
 			WHERE ' . phpbb::$db->sql_in_set('r.revision_id', array($rev_old, $rev_new)) . '

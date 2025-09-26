@@ -198,7 +198,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$this->search_manager = phpbb::$container->get('phpbb.titania.search.manager');
 		$this->types = phpbb::$container->get('phpbb.titania.contribution.type.collection');
 		$this->config = phpbb::$container->get('config');
-        $this->attachement_table = phpbb::$container->get('parameters.tables.titania.attachments');
+        $this->attachement_table = phpbb::$container->getParameter('tables.titania.attachments');
 	}
 
 	/**

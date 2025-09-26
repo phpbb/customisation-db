@@ -121,7 +121,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		$this->translations = phpbb::$container->get('phpbb.titania.attachment.operator');
 		$this->cache = phpbb::$container->get('phpbb.titania.cache');
 		$this->config = phpbb::$container->get('config');
-        $this->attachment_table = phpbb::$container->get('parameters.tables.titania.attachments');
+        $this->attachment_table = phpbb::$container->getParameter('tables.titania.attachments');
 	}
 
 	/**
