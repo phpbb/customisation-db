@@ -14,6 +14,9 @@ namespace phpbb\oberon\manager;
  */
 class manager
 {
+    // TODO: Hard-coded, fix this later
+    const FILE_UPLOAD_LOCATION = '/workspaces/phpbb/phpBB/files/contributions/';
+
     const TYPE_EXTENSIONS = 1;
     const TYPE_STYLES = 2;
     const TYPE_TRANSLATIONS = 3;
@@ -263,6 +266,24 @@ class manager
     /*
         *** CLI Queries ***
     */
+    public function find_contribution_revision_for_queue_id(int $queue_id)
+    {
+        //TODO: inefficient sql below here, fix this later
+        $queue_sql = 'SELECT revision_id FROM ' . $this->tables['queue'] . ' WHERE queue_id = ' . (int) $queue_id;
+        $queue_result = $this->db->sql_query_limit($queue_sql, 1);
+        $queue_row = $this->db->sql_fetchrow($queue_result);
+
+        $revision_sql = 'SELECT * FROM ' . $this->tables['revisions'] . ' WHERE revision_id = ' . $queue_row['revision_id'];
+        $revision_query = $this->db->sql_query_limit($revision_sql, 1);
+        $revision_row = $this->db->sql_fetchrow($revision_query);
+
+        $contribution_sql = 'SELECT * FROM ' . $this->tables['contributions'] . ' WHERE contribution_id = ' . $revision_row['contribution_id'];
+        $contribution_query = $this->db->sql_query_limit($contribution_sql, 1);
+        $contribution_row = $this->db->sql_fetchrow($contribution_query);
+
+        return ['revision' => $revision_row, 'contribution' => $contribution_row];
+    }
+
     public function find_queue_items_for_processing()
     {
         $sql = 'SELECT * FROM ' . $this->tables['queue'] . '
@@ -275,19 +296,7 @@ class manager
         while ($row = $this->db->sql_fetchrow($result))
         {
             // Get the revision and contribution record
-            // TODO: combine these queries
-            $revision_sql = 'SELECT * FROM ' . $this->tables['revisions'] . ' WHERE revision_id = ' . $row['revision_id'];
-            $revision_query = $this->db->sql_query_limit($revision_sql, 1);
-            $revision_row = $this->db->sql_fetchrow($revision_query);
-
-            $contribution_sql = 'SELECT * FROM ' . $this->tables['contributions'] . ' WHERE contribution_id = ' . $revision_row['contribution_id'];
-            $contribution_query = $this->db->sql_query_limit($contribution_sql, 1);
-            $contribution_row = $this->db->sql_fetchrow($contribution_query);
-
-            $results[$row['queue_id']] = [
-                'revision' => $revision_row,
-                'contribution' => $contribution_row,
-            ];
+            $results[$row['queue_id']] = $this->find_contribution_revision_for_queue_id($row['queue_id']);
         }
         
         $this->db->sql_freeresult($result);
