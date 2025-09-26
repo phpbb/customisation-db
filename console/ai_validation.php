@@ -226,13 +226,22 @@ class ai_validation extends Command
             "Content-Type: application/json"
         ]);
 
+		// Extract only file_id strings, skip nulls
+        $file_ids = [];
+        foreach ($uploaded_files as $file_info)
+		{
+            if (!empty($file_info['file_id']))
+			{
+                $file_ids[] = $file_info['file_id'];
+            }
+        }
+        // Add manifest file id
+        $file_ids[] = $manifest_id;
+
         $body = [
             'name' => 'phpBB Extension Validation',
-            'file_ids' => array_values($uploaded_files),
+            'file_ids' => $file_ids,
         ];
-
-        // Include manifest
-        $body['file_ids'][] = $manifest_id;
 
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
