@@ -101,7 +101,7 @@ class ai_validation extends Command
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $post_fields,
         ]);
-
+      
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
