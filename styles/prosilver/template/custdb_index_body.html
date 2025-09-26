@@ -74,7 +74,9 @@
         <div class="custdb_content">
             {% for contribution in contributions %}
             <div class="custdb_main_category">
-                <div class="custdb_main_category_header">{{ contribution.CONTRIBUTION_NAME }}</div>
+                <div class="custdb_main_category_header">
+                    <a href="{{ contribution.U_VIEW_CONTRIBUTION }}">{{ contribution.CONTRIBUTION_NAME }}</a>
+                </div>
                 <div class="custdb_main_category_content">{{ contribution.CONTRIBUTION_DESCRIPTION }}</div>
             </div>
             {% endfor %}

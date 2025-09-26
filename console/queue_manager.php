@@ -4,14 +4,24 @@ namespace phpbb\oberon\console;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class queue_manager extends Command
 {
+    /* @var \phpbb\db\driver\driver_interface $db */
+    protected $db;
+
 	/* @var \phpbb\oberon\manager\manager $manager */
 	protected $manager;
 
-    public function __construct(\phpbb\oberon\manager\manager $manager)
-    {
+    // TODO: add types
+    protected $input;
+    protected $output;
+
+    public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\oberon\manager\manager $manager)
+    {        
+        $this->db = $db;
         $this->manager = $manager;
         parent::__construct();
     }
@@ -21,29 +31,94 @@ class queue_manager extends Command
         // Run the command with php bin/phpbbcli.php custdb:queue_manager
         $this
             ->setName('custdb:queue_manager')
-            ->setDescription('TEST')
-            ->setHelp('TEST');
+            ->setDescription('Manage the Customisation DB queue')
+            ->setHelp('Manage the Customisation DB queue');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('<info>TEST</info>');
-        $output->writeln('<info>TEST</info>');
+        $output->writeln('<info>Begin queue manager...</info>');
+        $this->process($input, $output);
+        $output->writeln('<info>End queue manager...</info>');
         return Command::SUCCESS;
     }
 
-    private function process()
+    private function process(InputInterface $input, OutputInterface $output)
     {
-        // Find all items in the queue for processing
-        // ...
+        $this->input = $input;
+        $this->output = $output;
 
-        // Retrieve revision and customisation records
-        // ...
+        // Find all items in the queue for processing and retrieve revision and customisation records
+        $queue_items = $this->manager->find_queue_items_for_processing();
 
-        // Is it an extension, style or translation?
-        // Then run the AI-validation, run the GitHub Codespaces integration
+        foreach ($queue_items as $queue_id => $queue_item)
+        {
+            $contribution = $queue_item['contribution'];
+            $revision = $queue_item['revision'];
 
-        // Is it a tool or bbCode?
-        // Publish...
+            // Is it an extension, style or translation?
+            // Then run the AI-validation, run the GitHub Codespaces integration
+            if (in_array($contribution['contribution_type'], [$this->manager::TYPE_EXTENSIONS, $this->manager::TYPE_STYLES, $this->manager::TYPE_TRANSLATIONS]))
+            {
+                $this->process_extension_style_translation($queue_id, $contribution, $revision);
+            }
+
+            else
+            {
+                $this->process_tool_bbcode($queue_id, $contribution, $revision);
+            }
+        }
+    }
+
+    // Process extensions, styles and translations separately - as these are things that we need a more thorough validation of
+    public function process_extension_style_translation(int $queue_id, array $contribution, array $revision)
+    {
+        // Run AI validation (if internal queue status is unvalidated)
+        if ($contribution['contribution_type'] == $this->manager::TYPE_EXTENSIONS)
+        {
+            // Call AI Validation and pass along arguments if needed
+            $this->runAiValidationCommand([
+                'queue_id' => $queue_id,
+            ], $this->output);
+
+            $this->output->writeln('<info>Running AI validation on item ' . $queue_id . '</info>');
+        }
+
+        // Run GitHub Codespace integration for testing (if internal queue status is completed ai validation)
+    }
+
+    // Process tools and bbcodes, these require a different type of validation
+    public function process_tool_bbcode()
+    {
+        // Publish - set internal queue status to awaiting testing
+    }
+
+    private function runAiValidationCommand(array $arguments)
+    {
+        // Get the current application
+        $application = $this->getApplication();
+
+        if (!$application) 
+        {
+            throw new \RuntimeException('No application instance available.');
+        }
+
+        // Find the ai_validation command
+        $command = $application->find('custdb:ai_validation');
+
+        // Prepare input for the ai_validation command
+        $input = new ArrayInput(array_merge(['command' => 'custdb:ai_validation'], $arguments));
+
+        // Capture the output instead of sending directly to terminal
+        $bufferedOutput = new BufferedOutput();
+
+        // Run the ai_validation command
+        $returnCode = $command->run($input, $bufferedOutput);
+
+        // Display the captured output
+        $this->output->writeln('<info>Output of ai_validation:</info>');
+        $this->output->writeln($bufferedOutput->fetch());
+
+        return $returnCode;
     }
 }

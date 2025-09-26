@@ -43,6 +43,7 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
     {
         return [
             'add_tables' => [
+                // Contributions
 				$this->table_prefix . 'custdb_contributions' => [
 					'COLUMNS' => [
 						'contribution_id'                       => ['UINT', null, 'auto_increment'],
@@ -58,6 +59,7 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
 					'PRIMARY_KEY' => 'contribution_id',
 				],
 
+                // Revisions
                 $this->table_prefix . 'custdb_revisions' => [
 					'COLUMNS' => [
 						'revision_id'                           => ['UINT', null, 'auto_increment'],
@@ -72,6 +74,19 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
                     ],
 
 					'PRIMARY_KEY' => 'revision_id',
+				],
+
+                // Queue
+                $this->table_prefix . 'custdb_queue' => [
+					'COLUMNS' => [
+						'queue_id'                              => ['UINT', null, 'auto_increment'],
+						'revision_id'                           => ['UINT', 0],
+                        'queue_added_time'                      => ['UINT', 0],
+                        'queue_status'                          => ['TINT', 0],
+                        'queue_codespace_url'                   => ['VCHAR_UNI:255', ''],
+                    ],
+
+					'PRIMARY_KEY' => 'queue_id',
 				],
 			],
         ];

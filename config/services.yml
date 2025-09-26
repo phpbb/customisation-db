@@ -36,6 +36,14 @@ services:
     phpbb.oberon.console.queue_manager:
         class: phpbb\oberon\console\queue_manager
         arguments:
+            - '@dbal.conn'
+            - '@phpbb.oberon.manager'
+        tags:
+            - { name: console.command }
+    phpbb.oberon.console.ai_validation:
+        class: phpbb\oberon\console\ai_validation
+        arguments:
+            - '@dbal.conn'
             - '@phpbb.oberon.manager'
         tags:
             - { name: console.command }

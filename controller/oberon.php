@@ -227,7 +227,10 @@ class oberon
 				'submission_time'      => time(),
 			];
 
-			$this->manager->add_revision($revision_array);
+			$revision_id = $this->manager->add_revision($revision_array);
+
+			// Add the revision to the queue
+			$this->manager->add_revision_to_queue($revision_id);
 
 			meta_refresh(3, $this->helper->route('custdb_index'));
 			trigger_error($this->user->lang('CUSTDB_CONTRIBUTION_ADDED_SUCCESSFULLY'));
@@ -266,7 +269,9 @@ class oberon
         foreach ($contributions as $contribution)
         {
             $this->template->assign_block_vars('contributions', [
-                'CONTRIBUTION_NAME' => $contribution['contribution_name'],
+				'U_VIEW_CONTRIBUTION' => $this->helper->route('custdb_view_contribution', ['id' => $contribution['contribution_id']]),
+                
+				'CONTRIBUTION_NAME' => $contribution['contribution_name'],
                 'CONTRIBUTION_DESCRIPTION' => $contribution['contribution_description'],
             ]);
         }

@@ -4,14 +4,19 @@ namespace phpbb\oberon\console;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputArgument;
 
 class ai_validation extends Command
 {
+    /* @var \phpbb\db\driver\driver_interface $db */
+    protected $db;
+
 	/* @var \phpbb\oberon\manager\manager $manager */
 	protected $manager;
 
-    public function __construct(\phpbb\oberon\manager\manager $manager)
-    {
+    public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\oberon\manager\manager $manager)
+    {        
+        $this->db = $db;
         $this->manager = $manager;
         parent::__construct();
     }
@@ -22,12 +27,20 @@ class ai_validation extends Command
         $this
             ->setName('custdb:ai_validation')
             ->setDescription('TEST')
-            ->setHelp('TEST');
+            ->setHelp('TEST')
+            ->addArgument(
+                'queue_id', // Argument name
+                InputArgument::REQUIRED, // Required argument
+                'The ID of the queue item to process'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('<info>TEST</info>');
+        // Retrieve argument
+        $queue_id = (int) $input->getArgument('queue_id');
+
+        $output->writeln('<info>RUNNING THE AI VALIDATOR</info>');
         $output->writeln('<info>TEST</info>');
         return Command::SUCCESS;
     }

@@ -43,6 +43,17 @@
     font-size: 1rem;
 }
 
+.custdb_main_category_header > a {
+    color: white;
+    text-decoration: none; /* optional, removes underline */
+}
+
+.custdb_main_category_header > a:hover,
+.custdb_main_category_header > a:focus {
+    color: white;
+    text-decoration: underline; /* optional, only if you want a hover underline */
+}
+
 .custdb_sidebar_category_content, .custdb_main_category_content {
     padding: 10px 15px;
     background: #eaf3f9;

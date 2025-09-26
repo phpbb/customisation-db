@@ -26,6 +26,15 @@ class manager
     const STATUS_APPROVED = 2;
     const STATUS_DENIED = 3;
 
+    // Internal Customisation Team statuses
+    const INTERNAL_STATUS_UNVALIDATED = 1;
+    const INTERNAL_STATUS_AWAITING_AI_VALIDATION = 2;
+    const INTERNAL_STATUS_COMPLETED_AI_VALIDATION = 3;
+    const INTERNAL_STATUS_AWAITING_TESTING = 4;
+    const INTERNAL_STATUS_COMPLETED_TESTING = 5;
+    const INTERNAL_STATUS_DENIED = 6;
+    const INTERNAL_STATUS_APPROVED = 7;
+
     // Sort
     const SORT_DATE = 1;
     const SORT_NAME = 2;
@@ -86,7 +95,9 @@ class manager
         return $this->ext_manager;
     }
 
-    // Queries
+    /*
+        *** UI Queries ***
+    */
 
     // Submit a new contribution
     public function add_contribution(array $contribution_array)
@@ -103,6 +114,25 @@ class manager
     {
         $sql = 'INSERT INTO ' . $this->tables['revisions'] . ' ' . $this->db->sql_build_array('INSERT', $revision_array);
 		$this->db->sql_query($sql);
+
+        $revision_id = (int) $this->db->sql_nextid();
+        return $revision_id;
+    }
+
+    // Add revision to queue
+    public function add_revision_to_queue(int $revision_id)
+    {
+        // Build the insert data array
+        $sql_ary = [
+            'revision_id'           => $revision_id,
+            'queue_added_time'      => time(),
+            'queue_status'          => self::INTERNAL_STATUS_UNVALIDATED,
+            'queue_codespace_url'   => '',
+        ];
+
+        // Insert into the database
+        $sql = 'INSERT INTO ' . $this->tables['queue'] . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+        $this->db->sql_query($sql);
     }
 
     // List the contributions on the index
@@ -228,5 +258,40 @@ class manager
             'revision_attachment'      => $revision['revision_attachment'] ?? '',
             'screenshots'              => $screenshots,
         ];
+    }
+
+    /*
+        *** CLI Queries ***
+    */
+    public function find_queue_items_for_processing()
+    {
+        $sql = 'SELECT * FROM ' . $this->tables['queue'] . '
+                ORDER BY queue_added_time ASC';
+
+        $result = $this->db->sql_query($sql);
+
+        $results = [];
+        
+        while ($row = $this->db->sql_fetchrow($result))
+        {
+            // Get the revision and contribution record
+            // TODO: combine these queries
+            $revision_sql = 'SELECT * FROM ' . $this->tables['revisions'] . ' WHERE revision_id = ' . $row['revision_id'];
+            $revision_query = $this->db->sql_query_limit($revision_sql, 1);
+            $revision_row = $this->db->sql_fetchrow($revision_query);
+
+            $contribution_sql = 'SELECT * FROM ' . $this->tables['contributions'] . ' WHERE contribution_id = ' . $revision_row['contribution_id'];
+            $contribution_query = $this->db->sql_query_limit($contribution_sql, 1);
+            $contribution_row = $this->db->sql_fetchrow($contribution_query);
+
+            $results[$row['queue_id']] = [
+                'revision' => $revision_row,
+                'contribution' => $contribution_row,
+            ];
+        }
+        
+        $this->db->sql_freeresult($result);
+
+        return $results;
     }
 }
