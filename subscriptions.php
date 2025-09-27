@@ -42,10 +42,12 @@ class subscriptions
 	/** @var string */
 	protected $php_ext;
 
+    private \phpbb\messenger\method\email $email;
+
 	const EMAIL = 1;
 	const WATCH = 2;
 
-	/**
+    /**
 	 * Constructor
 	 *
 	 * @param \phpbb\db\driver\driver_interface $db
@@ -58,7 +60,7 @@ class subscriptions
 	 * @param string $phpbb_root_path
 	 * @param string $php_ext
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\request\request_interface $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\path_helper $path_helper, $users_table, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\messenger\method\email $email, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\request\request_interface $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\path_helper $path_helper, $users_table, $phpbb_root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->config = $config;
@@ -70,7 +72,8 @@ class subscriptions
 		$this->watch_table = TITANIA_WATCH_TABLE;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
-	}
+        $this->email = $email;
+    }
 
 	/**
 	* Shorten the amount of code required for some places
@@ -280,7 +283,6 @@ class subscriptions
 		{
 			return;
 		}
-		$messenger = null;
 
 		// Send to each user
 		// Add a new case statment for each subscription type
@@ -296,30 +298,17 @@ class subscriptions
 			switch($data['watch_type'])
 			{
 				case self::EMAIL:
-
-					if ($messenger === null)
-					{
-						// Only make the object if we need it
-						if (!class_exists('\messenger'))
-						{
-							require($this->phpbb_root_path . 'includes/functions_messenger.' . $this->php_ext);
-						}
-						$messenger = new \messenger;
-					}
-
-					$messenger->anti_abuse_headers($this->config, $this->user);
-					$messenger->template('@phpbb_titania/' . $email_tpl, $data['user_lang']);
-					$messenger->to($data['user_email'], $data['username']);
-					$messenger->assign_vars(array_merge($vars, array(
-						'USERNAME'			=> $data['username'],
-					)));
-
-					$messenger->send();
-					$messenger->save_queue();
+                    $this->email->init();
+                    $this->email->set_use_queue(true);
+                    $this->email->template('@phpbb_titania/' . $email_tpl, $data['user_lang']);
+                    $this->email->set_addresses($data);
+                    $this->email->anti_abuse_headers($this->config, $this->user);
+                    $this->email->assign_vars([
+                        'USERNAME'			=> $data['username'],
+                    ]);
+                    $this->email->send();
 				break;
 			}
 		}
-
-		return;
 	}
 }

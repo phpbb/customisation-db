@@ -446,6 +446,7 @@ services:
     phpbb.titania.subscriptions:
         class: phpbb\titania\subscriptions
         arguments:
+            - '@messenger.method.email'
             - '@dbal.conn'
             - '@config'
             - '@request'
