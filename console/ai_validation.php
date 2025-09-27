@@ -25,7 +25,7 @@ class ai_validation extends Command
 
     protected function configure()
     {
-        // Run the command with php bin/phpbbcli.php custdb:ai_validation
+        // Run the command with: e.g., php bin/phpbbcli.php custdb:ai_validation 2
         $this
             ->setName('custdb:ai_validation')
             ->setDescription('TEST')
@@ -275,10 +275,16 @@ class ai_validation extends Command
 
         $body = [
             'name' => 'phpBB Extension Validator',
-            'instructions' => 'You are a phpBB extension validator. Your job is to check the uploaded ZIP file for compliance with phpBB’s validation policies and coding guidelines.',
+            'instructions' => 'You are a phpBB extension validator. Your job is to check the uploaded package for compliance with phpBB\'s validation policies and coding guidelines. Before validating the extension, read the manifest file to understand where each file would sit in the phpBB extension hierarchy.',
             'model' => 'gpt-4.1',
             'tools' => [
                 ['type' => 'file_search']
+            ],
+            // THIS IS THE CRITICAL PART
+            'tool_resources' => [
+                'file_search' => [
+                    'vector_store_ids' => [$vector_store_id]
+                ]
             ]
         ];
 
@@ -303,28 +309,72 @@ class ai_validation extends Command
     /**
      * Run a validation job by prompting the Assistant
      */
-    private function run_validation(string $assistant_id, OutputInterface $output)
+    private function run_validation(string $assistant_id, OutputInterface $output): string
     {
         $output->writeln("Starting validation run...");
 
-        $ch = curl_init("https://api.openai.com/v1/threads/runs");
+        // 1. Create a thread with the initial validation request
+        $threadData = [
+            'messages' => [
+                [
+                    'role' => 'user',
+                    'content' => 'Please read all files in the vector store and validate this extension for compliance with phpBB rules. Provide a detailed, structured validation report.'
+                ]
+            ]
+        ];
+
+        $thread_id = $this->createThread($threadData, $output);
+
+        // 2. Start the run
+        $run_id = $this->startRun($assistant_id, $thread_id, $output);
+
+        // 3. Wait until the run is complete
+        $this->waitForRunCompletion($thread_id, $run_id, $output);
+
+        // 4. Fetch the final report
+        $finalReport = $this->fetchFinalMessages($thread_id, $output);
+
+        $output->writeln("<info>Final Report Retrieved:</info>");
+        $output->writeln($finalReport);
+
+        return $finalReport;
+    }
+
+    private function createThread(array $threadData, OutputInterface $output): string
+    {
+        $ch = curl_init("https://api.openai.com/v1/threads");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer " . self::OPENAI_API_KEY,
+            "Content-Type: application/json",
+            "OpenAI-Beta: assistants=v2"
+        ]);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($threadData));
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($response, true);
+
+        if (empty($data['id'])) {
+            throw new \RuntimeException("Failed to create thread: $response");
+        }
+
+        $output->writeln("Thread created: {$data['id']}");
+        return $data['id'];
+    }
+
+    private function startRun(string $assistant_id, string $thread_id, OutputInterface $output): string
+    {
+        $ch = curl_init("https://api.openai.com/v1/threads/$thread_id/runs");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Authorization: Bearer " . self::OPENAI_API_KEY,
             "Content-Type: application/json",
             "OpenAI-Beta: assistants=v2"
         ]);
 
-        $body = [
-            'assistant_id' => $assistant_id,
-            'thread' => [
-                'messages' => [
-                    [
-                        'role' => 'user',
-                        'content' => 'Please read all the files in the vector store and check this extension for compliance with phpBB validation policies and coding guidelines. Provide a detailed report of any issues found.'
-                    ]
-                ]
-            ]
-        ];
+        $body = ['assistant_id' => $assistant_id];
 
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -334,6 +384,76 @@ class ai_validation extends Command
         curl_close($ch);
 
         $data = json_decode($response, true);
-        $output->writeln("Validation run started. Response:\n" . print_r($data, true));
+
+        if (empty($data['id'])) {
+            throw new \RuntimeException("Failed to start run: $response");
+        }
+
+        $output->writeln("Run started: {$data['id']}");
+        return $data['id'];
     }
+
+    private function waitForRunCompletion(string $thread_id, string $run_id, OutputInterface $output)
+    {
+        $status = 'in_progress';
+        $pollUrl = "https://api.openai.com/v1/threads/$thread_id/runs/$run_id";
+
+        while ($status === 'in_progress' || $status === 'queued') {
+            sleep(2); // Poll every 2 seconds
+
+            $ch = curl_init($pollUrl);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "Authorization: Bearer " . self::OPENAI_API_KEY,
+                "OpenAI-Beta: assistants=v2"
+            ]);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            $response = curl_exec($ch);
+            curl_close($ch);
+
+            $data = json_decode($response, true);
+
+            if (isset($data['status'])) {
+                $status = $data['status'];
+                $output->writeln("Run status: $status");
+            } else {
+                throw new \RuntimeException("Unable to check run status: $response");
+            }
+        }
+
+        if ($status !== 'completed') {
+            throw new \RuntimeException("Run ended unexpectedly with status: $status");
+        }
+
+        $output->writeln("<info>Run completed successfully!</info>");
+    }
+
+    private function fetchFinalMessages(string $thread_id, OutputInterface $output): string
+    {
+        $ch = curl_init("https://api.openai.com/v1/threads/$thread_id/messages");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer " . self::OPENAI_API_KEY,
+            "OpenAI-Beta: assistants=v2"
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($response, true);
+
+        if (empty($data['data'])) {
+            throw new \RuntimeException("No messages found: $response");
+        }
+
+        $report = '';
+        foreach ($data['data'] as $message) {
+            if ($message['role'] === 'assistant' && isset($message['content'][0]['text']['value'])) {
+                $report .= $message['content'][0]['text']['value'] . "\n\n";
+            }
+        }
+
+        return trim($report);
+    }
+
 }
