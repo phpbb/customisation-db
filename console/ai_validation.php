@@ -226,13 +226,20 @@ class ai_validation extends Command
             "Content-Type: application/json"
         ]);
 
+        // Extract only file_id strings, skip nulls
+        $file_ids = [];
+        foreach ($uploaded_files as $file_info) {
+            if (!empty($file_info['file_id'])) {
+                $file_ids[] = $file_info['file_id'];
+            }
+        }
+        // Add manifest file id
+        $file_ids[] = $manifest_id;
+
         $body = [
             'name' => 'phpBB Extension Validation',
-            'file_ids' => array_values($uploaded_files),
+            'file_ids' => $file_ids,
         ];
-
-        // Include manifest
-        $body['file_ids'][] = $manifest_id;
 
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -262,7 +269,8 @@ class ai_validation extends Command
         $ch = curl_init("https://api.openai.com/v1/assistants");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Authorization: Bearer " . self::OPENAI_API_KEY,
-            "Content-Type: application/json"
+            "Content-Type: application/json",
+            "OpenAI-Beta: assistants=v2"
         ]);
 
         $body = [
@@ -271,8 +279,7 @@ class ai_validation extends Command
             'model' => 'gpt-4.1',
             'tools' => [
                 ['type' => 'file_search']
-            ],
-            'vector_store_ids' => [$vector_store_id]
+            ]
         ];
 
         curl_setopt($ch, CURLOPT_POST, true);
@@ -303,7 +310,8 @@ class ai_validation extends Command
         $ch = curl_init("https://api.openai.com/v1/threads/runs");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Authorization: Bearer " . self::OPENAI_API_KEY,
-            "Content-Type: application/json"
+            "Content-Type: application/json",
+            "OpenAI-Beta: assistants=v2"
         ]);
 
         $body = [
