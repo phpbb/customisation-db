@@ -16,6 +16,9 @@ class ai_validation extends Command
 	/* @var \phpbb\oberon\manager\manager $manager */
 	protected $manager;
 
+    /* int $contribution_type */
+    protected $contribution_type;
+
     public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\oberon\manager\manager $manager)
     {        
         $this->db = $db;
@@ -58,40 +61,47 @@ class ai_validation extends Command
     {
         // Retrieve revision record from database
         $result = $this->manager->find_contribution_revision_for_queue_id($queue_id);
+        $this->contribution_type = $result['contribution']['contribution_type'];
 
         // Get full path to uploaded ZIP
         $zip_path = $this->manager::FILE_UPLOAD_LOCATION . $result['revision']['revision_attachment'];
 
         $output->writeln("<info>Extracting ZIP: $zip_path</info>");
 
-        // 1. Extract ZIP
+        // Extract ZIP
         $extract_dir = sys_get_temp_dir() . '/phpbb_ai_validation_' . uniqid();
-        if (!is_dir($extract_dir)) {
+        
+        if (!is_dir($extract_dir)) 
+        {
             mkdir($extract_dir, 0777, true);
         }
 
         $zip = new \ZipArchive();
-        if ($zip->open($zip_path) === TRUE) {
+        if ($zip->open($zip_path) === TRUE) 
+        {
             $zip->extractTo($extract_dir);
             $zip->close();
             $output->writeln("<info>Extraction complete: $extract_dir</info>");
-        } else {
+        } 
+        
+        else 
+        {
             throw new \RuntimeException("Failed to open ZIP file: $zip_path");
         }
 
-        // 2. Upload all files to OpenAI
+        // Upload all files to OpenAI
         $uploaded_files = $this->upload_files_to_openai($extract_dir, $output);
 
-        // 3. Create & upload manifest.json
+        // Create and upload manifest.json
         $manifest_id = $this->create_and_upload_manifest($uploaded_files, $output);
 
-        // 4. Create a vector store and attach files
+        // Create a vector store and attach files
         $vector_store_id = $this->create_vector_store($uploaded_files, $manifest_id, $output);
 
-        // 5. Create an Assistant configured as a phpBB extension validator
+        // Create an Assistant configured as a phpBB customisation validator
         $assistant_id = $this->create_assistant($vector_store_id, $output);
 
-        // 6. Prompt OpenAI to read and analyze the uploaded files
+        // Prompt OpenAI to read and analyze the uploaded files
         $this->run_validation($assistant_id, $output);
     }
 
@@ -106,14 +116,16 @@ class ai_validation extends Command
             new \RecursiveDirectoryIterator($root_dir, \RecursiveDirectoryIterator::SKIP_DOTS)
         );
 
-        // Define allowed text-based extensions we will convert and upload
+        // Define allowed text-based file extensions we will convert and upload
         $text_extensions = [
-            'php','html','js','css','json','xml','txt','md','yml','yaml','csv',
-            'py','rb','ts','c','cpp','java','go','tex'
+            'php', 'html', 'js', 'css', 'json', 'xml', 'txt', 'md', 'yml', 'yaml', 'csv',
+            'py', 'rb', 'ts', 'c', 'cpp', 'java', 'go', 'tex'
         ];
 
-        foreach ($iterator as $file) {
-            if (!$file->isFile()) {
+        foreach ($iterator as $file) 
+        {
+            if (!$file->isFile()) 
+            {
                 continue;
             }
 
@@ -122,7 +134,8 @@ class ai_validation extends Command
             $size = filesize($file->getPathname());
 
             // Skip zero-byte files, but record in manifest
-            if ($size === 0) {
+            if ($size === 0) 
+            {
                 $output->writeln("<comment>Skipping empty file: $rel_path</comment>");
                 $uploaded_files[$rel_path] = [
                     'file_id' => null,
@@ -134,7 +147,8 @@ class ai_validation extends Command
             }
 
             // Skip unsupported/binary file types
-            if (!in_array($extension, $text_extensions)) {
+            if (!in_array($extension, $text_extensions)) 
+            {
                 $output->writeln("<comment>Skipping non-text/binary file: $rel_path ($extension)</comment>");
                 $uploaded_files[$rel_path] = [
                     'file_id' => null,
@@ -181,13 +195,15 @@ class ai_validation extends Command
         ]);
       
         $response = curl_exec($ch);
-        if ($response === false) {
+        if ($response === false) 
+        {
             throw new \RuntimeException("cURL error: " . curl_error($ch));
         }
         curl_close($ch);
 
         $data = json_decode($response, true);
-        if (empty($data['id'])) {
+        if (empty($data['id'])) 
+        {
             throw new \RuntimeException("Upload failed: $response");
         }
 
@@ -228,8 +244,10 @@ class ai_validation extends Command
 
         // Extract only file_id strings, skip nulls
         $file_ids = [];
-        foreach ($uploaded_files as $file_info) {
-            if (!empty($file_info['file_id'])) {
+        foreach ($uploaded_files as $file_info) 
+        {
+            if (!empty($file_info['file_id'])) 
+            {
                 $file_ids[] = $file_info['file_id'];
             }
         }
@@ -237,7 +255,7 @@ class ai_validation extends Command
         $file_ids[] = $manifest_id;
 
         $body = [
-            'name' => 'phpBB Extension Validation',
+            'name' => 'phpBB Customisation Validation',
             'file_ids' => $file_ids,
         ];
 
@@ -249,7 +267,8 @@ class ai_validation extends Command
         curl_close($ch);
 
         $data = json_decode($response, true);
-        if (empty($data['id'])) {
+        if (empty($data['id'])) 
+        {
             throw new \RuntimeException("Vector store creation failed: $response");
         }
 
@@ -274,13 +293,13 @@ class ai_validation extends Command
         ]);
 
         $body = [
-            'name' => 'phpBB Extension Validator',
-            'instructions' => 'You are a phpBB extension validator. Your job is to check the uploaded package for compliance with phpBB\'s validation policies and coding guidelines. Before validating the extension, read the manifest file to understand where each file would sit in the phpBB extension hierarchy.',
+            'name' => 'phpBB Customisation Validator',
+            'instructions' => $this->get_ai_prompt('system'),
             'model' => 'gpt-4.1',
             'tools' => [
                 ['type' => 'file_search']
             ],
-            // THIS IS THE CRITICAL PART
+            // This is very important, we have to supply the vector store so OpenAI knows what files to process
             'tool_resources' => [
                 'file_search' => [
                     'vector_store_ids' => [$vector_store_id]
@@ -296,7 +315,8 @@ class ai_validation extends Command
         curl_close($ch);
 
         $data = json_decode($response, true);
-        if (empty($data['id'])) {
+        if (empty($data['id'])) 
+        {
             throw new \RuntimeException("Assistant creation failed: $response");
         }
 
@@ -309,45 +329,53 @@ class ai_validation extends Command
     /**
      * Run a validation job by prompting the Assistant
      */
-    private function run_validation(string $assistant_id, OutputInterface $output): string
+    private function run_validation(string $assistant_id, OutputInterface $output)
     {
         $output->writeln("Starting validation run...");
 
-        // 1. Create a thread with the initial validation request
+        // Create a thread with the initial validation request
         $threadData = [
             'messages' => [
                 [
                     'role' => 'user',
-                    'content' => 'Please read all files in the vector store and validate this extension for compliance with phpBB rules. Provide a detailed, structured validation report.'
+                    'content' => $this->get_ai_prompt('user'), // this is the user prompt
                 ]
             ]
         ];
 
-        $thread_id = $this->createThread($threadData, $output);
+        $thread_id = $this->create_thread($threadData, $output);
 
-        // 2. Start the run
-        $run_id = $this->startRun($assistant_id, $thread_id, $output);
+        // Start the run
+        $run_id = $this->start_run($assistant_id, $thread_id, $output);
 
-        // 3. Wait until the run is complete
-        $this->waitForRunCompletion($thread_id, $run_id, $output);
+        // Wait until the run is complete
+        $this->wait_for_run_completion($thread_id, $run_id, $output);
 
-        // 4. Fetch the final report
-        $finalReport = $this->fetchFinalMessages($thread_id, $output);
+        // Fetch the final report
+        $final_report = $this->fetch_final_messages($thread_id, $output);
 
         $output->writeln("<info>Final Report Retrieved:</info>");
-        $output->writeln($finalReport);
+        $output->writeln($final_report);
 
-        return $finalReport;
+        // Now, send this report to a topic in the private validation forum
+        $array_report = json_decode($final_report, true);
+
+        /* INTERNAL STATUS CHANGE */
+
+
+        var_dump($array_report);
     }
 
-    private function createThread(array $threadData, OutputInterface $output): string
+    private function create_thread(array $threadData, OutputInterface $output): string
     {
         $ch = curl_init("https://api.openai.com/v1/threads");
+        
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Authorization: Bearer " . self::OPENAI_API_KEY,
             "Content-Type: application/json",
             "OpenAI-Beta: assistants=v2"
         ]);
+
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($threadData));
@@ -357,7 +385,8 @@ class ai_validation extends Command
 
         $data = json_decode($response, true);
 
-        if (empty($data['id'])) {
+        if (empty($data['id'])) 
+        {
             throw new \RuntimeException("Failed to create thread: $response");
         }
 
@@ -365,7 +394,7 @@ class ai_validation extends Command
         return $data['id'];
     }
 
-    private function startRun(string $assistant_id, string $thread_id, OutputInterface $output): string
+    private function start_run(string $assistant_id, string $thread_id, OutputInterface $output): string
     {
         $ch = curl_init("https://api.openai.com/v1/threads/$thread_id/runs");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -385,7 +414,8 @@ class ai_validation extends Command
 
         $data = json_decode($response, true);
 
-        if (empty($data['id'])) {
+        if (empty($data['id'])) 
+        {
             throw new \RuntimeException("Failed to start run: $response");
         }
 
@@ -393,13 +423,14 @@ class ai_validation extends Command
         return $data['id'];
     }
 
-    private function waitForRunCompletion(string $thread_id, string $run_id, OutputInterface $output)
+    private function wait_for_run_completion(string $thread_id, string $run_id, OutputInterface $output)
     {
         $status = 'in_progress';
         $pollUrl = "https://api.openai.com/v1/threads/$thread_id/runs/$run_id";
 
-        while ($status === 'in_progress' || $status === 'queued') {
-            sleep(2); // Poll every 2 seconds
+        while ($status === 'in_progress' || $status === 'queued') 
+        {
+            sleep(2); // Poll every 2 seconds because it takes some time for OpenAI to index
 
             $ch = curl_init($pollUrl);
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -413,24 +444,30 @@ class ai_validation extends Command
 
             $data = json_decode($response, true);
 
-            if (isset($data['status'])) {
+            if (isset($data['status'])) 
+            {
                 $status = $data['status'];
                 $output->writeln("Run status: $status");
-            } else {
+            } 
+            
+            else 
+            {
                 throw new \RuntimeException("Unable to check run status: $response");
             }
         }
 
-        if ($status !== 'completed') {
+        if ($status !== 'completed') 
+        {
             throw new \RuntimeException("Run ended unexpectedly with status: $status");
         }
 
         $output->writeln("<info>Run completed successfully!</info>");
     }
 
-    private function fetchFinalMessages(string $thread_id, OutputInterface $output): string
+    private function fetch_final_messages(string $thread_id, OutputInterface $output): string
     {
         $ch = curl_init("https://api.openai.com/v1/threads/$thread_id/messages");
+        
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Authorization: Bearer " . self::OPENAI_API_KEY,
             "OpenAI-Beta: assistants=v2"
@@ -442,18 +479,41 @@ class ai_validation extends Command
 
         $data = json_decode($response, true);
 
-        if (empty($data['data'])) {
+        if (empty($data['data'])) 
+        {
             throw new \RuntimeException("No messages found: $response");
         }
 
         $report = '';
-        foreach ($data['data'] as $message) {
-            if ($message['role'] === 'assistant' && isset($message['content'][0]['text']['value'])) {
+        foreach ($data['data'] as $message) 
+        {
+            if ($message['role'] === 'assistant' && isset($message['content'][0]['text']['value'])) 
+            {
                 $report .= $message['content'][0]['text']['value'] . "\n\n";
             }
         }
 
         return trim($report);
+    }
+
+    /**
+     * $prompt_type can be "system" or "user"
+     * Pulls from text files in this folder
+     */
+    private function get_ai_prompt(string $prompt_type)
+    {
+        switch ($this->contribution_type)
+        {
+            case $this->manager::TYPE_EXTENSIONS:
+                return ($prompt_type === "system") ? file_get_contents('./ext/phpbb/oberon/console/system.prompt.txt') : file_get_contents('./ext/phpbb/oberon/console/user.prompt.txt');
+                break;
+            case $this->manager::TYPE_STYLES:
+                // TODO
+                break;
+            case $this->manager::TYPE_TRANSLATIONS:
+                // TODO
+                break;
+        }
     }
 
 }

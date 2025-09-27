@@ -6,6 +6,9 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
     const DEFAULT_ON = true;
     const PER_PAGE = 10;
 
+    const PRIVATE_VALIDATION_FORUM = 1;
+    const PUBLIC_RELEASE_FORUM = 1;
+
     /**
      * So we know if it's installed
      */
@@ -32,7 +35,9 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
 		return [            
             // Config settings
 			['config.add', ['custdb_enabled', self::DEFAULT_ON]],
-            ['config.add', ['custdb_per_page', self::PER_PAGE]]
+            ['config.add', ['custdb_per_page', self::PER_PAGE]],
+            ['config.add', ['custdb_private_validation_forum_id', self::PRIVATE_VALIDATION_FORUM]],
+            ['config.add', ['custdb_public_release_forum_id', self::PUBLIC_RELEASE_FORUM]],
         ];
 	}
 

@@ -129,7 +129,7 @@ class manager
         $sql_ary = [
             'revision_id'           => $revision_id,
             'queue_added_time'      => time(),
-            'queue_status'          => self::INTERNAL_STATUS_UNVALIDATED,
+            'queue_status'          => self::INTERNAL_STATUS_UNVALIDATED, /* INTERNAL STATUS CHANGE */
             'queue_codespace_url'   => '',
         ];
 
