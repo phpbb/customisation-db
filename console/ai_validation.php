@@ -361,9 +361,7 @@ class ai_validation extends Command
         $array_report = json_decode($final_report, true);
 
         /* INTERNAL STATUS CHANGE */
-
-
-        var_dump($array_report);
+        $this->manager->new_topic(2, '[Validation Report] ' . $array_report['name'], sprintf("Outcome: %s, Confidence: %s - ", $array_report['outcome'], $array_report['confidence']) . 'Report: ' . $array_report['report']);
     }
 
     private function create_thread(array $threadData, OutputInterface $output): string
