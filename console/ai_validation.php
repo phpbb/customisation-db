@@ -59,6 +59,10 @@ class ai_validation extends Command
      */
     private function process_queue($queue_id, OutputInterface $output)
     {
+        // --- PRE-CLEANUP: Delete all files from OpenAI before starting ---
+        $output->writeln("<info>Deleting ALL files from OpenAI before starting...</info>");
+        $this->delete_all_openai_files($output);
+
         // Retrieve revision record from database
         $result = $this->manager->find_contribution_revision_for_queue_id($queue_id);
         $this->contribution_type = $result['contribution']['contribution_type'];
@@ -103,6 +107,80 @@ class ai_validation extends Command
 
         // Prompt OpenAI to read and analyze the uploaded files
         $this->run_validation($assistant_id, $output);
+
+        // --- CLEANUP: Remove temp extraction directory ---
+        $output->writeln("<info>Cleaning up extraction directory: $extract_dir</info>");
+        $this->delete_directory_recursive($extract_dir);
+
+        // --- CLEANUP: Delete uploaded files from OpenAI ---
+        $output->writeln("<info>Deleting uploaded files from OpenAI...</info>");
+        foreach ($uploaded_files as $rel_path => $info) {
+            if (!empty($info['file_id'])) {
+                $this->delete_openai_file($info['file_id'], $output);
+            }
+        }
+        // Also delete manifest file
+        if (!empty($manifest_id)) {
+            $this->delete_openai_file($manifest_id, $output);
+        }
+    }
+
+    /**
+     * Recursively delete a directory and its contents
+     */
+    private function delete_directory_recursive($dir)
+    {
+        if (!is_dir($dir)) return;
+        $items = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+        foreach ($items as $item) {
+            if ($item->isDir()) {
+                rmdir($item->getPathname());
+            } else {
+                unlink($item->getPathname());
+            }
+        }
+        rmdir($dir);
+    }
+
+    /**
+     * Delete a file from OpenAI by file_id
+     */
+    private function delete_openai_file($file_id, OutputInterface $output)
+    {
+        $ch = curl_init("https://api.openai.com/v1/files/" . urlencode($file_id));
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer " . self::OPENAI_API_KEY
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        //$output->writeln("  Deleted file $file_id: $response");
+    }
+
+    /**
+     * Delete all files from OpenAI account
+     */
+    private function delete_all_openai_files(OutputInterface $output)
+    {
+        $ch = curl_init("https://api.openai.com/v1/files");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer " . self::OPENAI_API_KEY
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $data = json_decode($response, true);
+        if (!empty($data['data'])) {
+            foreach ($data['data'] as $file) {
+                if (!empty($file['id'])) {
+                    $this->delete_openai_file($file['id'], $output);
+                }
+            }
+        }
     }
 
     /**
