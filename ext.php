@@ -95,4 +95,5 @@ class ext extends \phpbb\extension\base
 
 	// Misc
 	const TITANIA_CONFIG_PREFIX = 'titania_';
+	const TITANIA_REPOSITORY_MIN_PHPBB_BRANCH = 40;
 }

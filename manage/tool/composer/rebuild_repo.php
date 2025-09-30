@@ -23,7 +23,6 @@ use phpbb\titania\entity\package;
 use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Finder\SplFileInfo;
 
 class rebuild_repo extends base
 {
@@ -57,6 +56,9 @@ class rebuild_repo extends base
 	/** @var string */
 	protected $revisions_table;
 
+	/** @var string */
+	protected $revisions_phpbb_table;
+
 	/** @var int */
 	protected $total;
 
@@ -84,6 +86,7 @@ class rebuild_repo extends base
 		$this->attachments_table = $table_prefix . 'attachments';
 		$this->contribs_table = $table_prefix . 'contribs';
 		$this->revisions_table = $table_prefix . 'revisions';
+		$this->revisions_phpbb_table = $table_prefix . 'revisions_phpbb';
 	}
 
 	/**
@@ -105,10 +108,13 @@ class rebuild_repo extends base
 
 			$sql = 'SELECT COUNT(r.revision_id) AS cnt
 				FROM ' . $this->contribs_table . ' c, ' .
-				$this->revisions_table . ' r
+				$this->revisions_table . ' r, ' .
+				$this->revisions_phpbb_table . ' rp
 				WHERE c.contrib_id = r.contrib_id
+					AND r.revision_id = rp.revision_id
 					AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
 					AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
+					AND rp.phpbb_version_branch >= ' . ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH . '
 					AND ' . $this->db->sql_in_set('c.contrib_type', $types);
 			$this->db->sql_query($sql);
 			$this->total = (int) $this->db->sql_fetchfield('cnt');
@@ -142,12 +148,15 @@ class rebuild_repo extends base
 		$sql = 'SELECT c.contrib_id, c.contrib_name_clean, c.contrib_type, r.revision_id,
 				r.attachment_id, r.revision_composer_json' . $attach_fields . '
 			FROM ' . $this->contribs_table . ' c, ' .
-			$this->revisions_table . ' r ' .
+			$this->revisions_table . ' r, ' .
+			$this->revisions_phpbb_table . ' rp ' .
 			$attach_table . '
-			WHERE c.contrib_id = r.contrib_id ' .
+			WHERE c.contrib_id = r.contrib_id
+				AND r.revision_id = rp.revision_id ' .
 			$attach_where . '
 				AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
 				AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
+				AND rp.phpbb_version_branch >= ' . ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH . '
 				AND ' . $this->db->sql_in_set('c.contrib_type', $types) . '
 			ORDER BY c.contrib_id ASC, r.revision_id ASC';
 		$result = $this->db->sql_query_limit($sql, $this->limit, $this->start);
