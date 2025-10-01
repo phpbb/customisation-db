@@ -108,13 +108,10 @@ class rebuild_repo extends base
 
 			$sql = 'SELECT COUNT(r.revision_id) AS cnt
 				FROM ' . $this->contribs_table . ' c, ' .
-				$this->revisions_table . ' r, ' .
-				$this->revisions_phpbb_table . ' rp
+				$this->revisions_table . ' r
 				WHERE c.contrib_id = r.contrib_id
-					AND r.revision_id = rp.revision_id
 					AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
 					AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
-					AND rp.phpbb_version_branch >= ' . ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH . '
 					AND ' . $this->db->sql_in_set('c.contrib_type', $types);
 			$this->db->sql_query($sql);
 			$this->total = (int) $this->db->sql_fetchfield('cnt');
@@ -146,7 +143,7 @@ class rebuild_repo extends base
 		}
 
 		$sql = 'SELECT c.contrib_id, c.contrib_name_clean, c.contrib_type, r.revision_id,
-				r.attachment_id, r.revision_composer_json' . $attach_fields . '
+				r.attachment_id, r.revision_composer_json, rp.phpbb_version_branch' . $attach_fields . '
 			FROM ' . $this->contribs_table . ' c, ' .
 			$this->revisions_table . ' r, ' .
 			$this->revisions_phpbb_table . ' rp ' .
@@ -156,7 +153,6 @@ class rebuild_repo extends base
 			$attach_where . '
 				AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
 				AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
-				AND rp.phpbb_version_branch >= ' . ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH . '
 				AND ' . $this->db->sql_in_set('c.contrib_type', $types) . '
 			ORDER BY c.contrib_id ASC, r.revision_id ASC';
 		$result = $this->db->sql_query_limit($sql, $this->limit, $this->start);
@@ -201,6 +197,7 @@ class rebuild_repo extends base
 
 		$last_type = $last_contrib = '';
 		$packages = array();
+		$packages_phpbb4_only = array();
 
 		foreach ($batch as $contrib_id => $revisions)
 		{
@@ -255,6 +252,17 @@ class rebuild_repo extends base
 					$download_url,
 					$contrib_url
 				);
+
+				if ($revision['phpbb_version_branch'] >= ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH)
+				{
+					$packages_phpbb4_only = $this->repo->set_release(
+						$packages_phpbb4_only,
+						$revision['revision_composer_json'],
+						$download_url,
+						$contrib_url
+					);
+				}
+
 				unset($batch[$contrib_id][$index]);
 			}
 
@@ -266,15 +274,18 @@ class rebuild_repo extends base
 			if (($group_count % 50) === 0)
 			{
 				$this->dump_include($last_type, $group, $packages);
+				$this->dump_include($last_type, $group, $packages_phpbb4_only, ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH);
 				$group_count = 0;
 				$group++;
 				$packages = array();
+				$packages_phpbb4_only = array();
 			}
 			$group_count++;
 		}
 		if (!empty($packages))
 		{
 			$this->dump_include($last_type, $group, $packages);
+			$this->dump_include($last_type, $group, $packages_phpbb4_only, ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH);
 		}
 
 		$next_batch = $this->limit ? $this->start + $this->limit : $this->get_total();
@@ -297,11 +308,13 @@ class rebuild_repo extends base
 	 * @param string $type		Contrib type name
 	 * @param int $group		Group id
 	 * @param array $packages	Packages
+	 * @param string $suffix	Optional suffix for filename
 	 */
-	protected function dump_include($type, $group, array $packages)
+	protected function dump_include($type, $group, array $packages, $prefix = '')
 	{
 		$type_name = $this->types->get($type)->name;
-		$this->repo->dump_include("packages-$type_name-$group.json", $packages);
+		$filename = $prefix ? "packages-$prefix-$type_name-$group.json" : "packages-$type_name-$group.json";
+		$this->repo->dump_include($filename, $packages);
 	}
 
 	/**

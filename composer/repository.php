@@ -15,6 +15,7 @@ namespace phpbb\titania\composer;
 
 use phpbb\config\config;
 use phpbb\exception\runtime_exception;
+use phpbb\titania\ext;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -170,15 +171,17 @@ class repository
 	/**
 	 * Get include files.
 	 *
+	 * @param string $prefix Optional prefix to filter files
 	 * @return Finder
 	 */
-	protected function get_include_files()
+	protected function get_include_files($prefix = '')
 	{
 		$finder = new Finder;
+		$pattern = $prefix ? '/^packages\-' . preg_quote($prefix, '/') . '[a-z]+\-\d+\.json$/' : '/^packages\-[a-z]+\-\d+\.json$/';
 		$finder
 			->files()
 			->depth('== 0')
-			->name('/^packages\-[a-z]+\-\d+\.json$/')
+			->name($pattern)
 			->in($this->build_dir)
 		;
 
@@ -190,12 +193,23 @@ class repository
 	 */
 	protected function build_parents()
 	{
-		$includes = $this->get_include_files();
+		$this->build_parent_structure();
+		$this->build_parent_structure(ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH . '-');
+	}
+
+	/**
+	 * Build parent structure for given prefix
+	 *
+	 * @param string $prefix Optional prefix for files
+	 */
+	protected function build_parent_structure($prefix = '')
+	{
+		$includes = $this->get_include_files($prefix);
 		$parent = $types = array();
 
 		foreach ($includes as $file)
 		{
-			$type = $this->get_include_type($file->getFilename());
+			$type = $this->get_include_type($file->getFilename(), $prefix);
 
 			if ($type)
 			{
@@ -211,7 +225,7 @@ class repository
 
 		foreach ($types as $type => $includes)
 		{
-			$type_filename = 'packages-' . $type . '.json';
+			$type_filename = $prefix ? 'packages-' . $prefix . $type . '.json' : 'packages-' . $type . '.json';
 			$type_filepath = $this->build_dir . $type_filename;
 			$contents = json_encode(array('includes' => $includes));
 			$this->fs->dumpFile($type_filepath, $contents);
@@ -222,8 +236,9 @@ class repository
 		}
 		if (!empty($parent))
 		{
+			$main_filename = $prefix ? 'packages-' . rtrim($prefix, '-') . '.json' : 'packages.json';
 			$contents = json_encode(array('includes' => $parent));
-			$this->fs->dumpFile($this->build_dir . 'packages.json', $contents);
+			$this->fs->dumpFile($this->build_dir . $main_filename, $contents);
 		}
 	}
 
@@ -231,14 +246,16 @@ class repository
 	 * Get contrib type name from include file name.
 	 *
 	 * @param string $filename
+	 * @param string $prefix Optional prefix to match
 	 * @return bool|string Returns contrib type name or false if not a valid filename
 	 */
-	protected function get_include_type($filename)
+	protected function get_include_type($filename, $prefix = '')
 	{
 		$filename = utf8_basename($filename);
 		$match = array();
+		$pattern = $prefix ? '/^packages\-' . preg_quote($prefix, '/') . '([a-z]+)\-\d+\.json$/' : '/^packages\-([a-z]+)\-\d+\.json$/';
 
-		if (preg_match('/^packages\-([a-z]+)\-\d+\.json$/', $filename, $match))
+		if (preg_match($pattern, $filename, $match))
 		{
 			return $match[1];
 		}
