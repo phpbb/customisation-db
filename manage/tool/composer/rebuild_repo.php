@@ -197,7 +197,12 @@ class rebuild_repo extends base
 
 		$last_type = $last_contrib = '';
 		$packages = array();
-		$packages_phpbb4_only = array();
+		$filtered_packages = array();
+		$branches = ext::get_filtered_repository_branches();
+		foreach ($branches as $branch)
+		{
+			$filtered_packages[$branch] = array();
+		}
 
 		foreach ($batch as $contrib_id => $revisions)
 		{
@@ -253,14 +258,17 @@ class rebuild_repo extends base
 					$contrib_url
 				);
 
-				if ($revision['phpbb_version_branch'] >= ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH)
+				foreach ($filtered_packages as $branch => $packages_data)
 				{
-					$packages_phpbb4_only = $this->repo->set_release(
-						$packages_phpbb4_only,
-						$revision['revision_composer_json'],
-						$download_url,
-						$contrib_url
-					);
+					if ($revision['phpbb_version_branch'] >= $branch)
+					{
+						$filtered_packages[$branch] = $this->repo->set_release(
+							$filtered_packages[$branch],
+							$revision['revision_composer_json'],
+							$download_url,
+							$contrib_url
+						);
+					}
 				}
 
 				unset($batch[$contrib_id][$index]);
@@ -274,18 +282,24 @@ class rebuild_repo extends base
 			if (($group_count % 50) === 0)
 			{
 				$this->dump_include($last_type, $group, $packages);
-				$this->dump_include($last_type, $group, $packages_phpbb4_only, ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH);
+				foreach ($filtered_packages as $branch => $packages_data)
+				{
+					$this->dump_include($last_type, $group, $packages_data, $branch);
+					$filtered_packages[$branch] = array();
+				}
 				$group_count = 0;
 				$group++;
 				$packages = array();
-				$packages_phpbb4_only = array();
 			}
 			$group_count++;
 		}
 		if (!empty($packages))
 		{
 			$this->dump_include($last_type, $group, $packages);
-			$this->dump_include($last_type, $group, $packages_phpbb4_only, ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH);
+			foreach ($filtered_packages as $branch => $packages_data)
+			{
+				$this->dump_include($last_type, $group, $packages_data, $branch);
+			}
 		}
 
 		$next_batch = $this->limit ? $this->start + $this->limit : $this->get_total();

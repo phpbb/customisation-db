@@ -194,7 +194,11 @@ class repository
 	protected function build_parents()
 	{
 		$this->build_parent_structure();
-		$this->build_parent_structure(ext::TITANIA_REPOSITORY_MIN_PHPBB_BRANCH . '-');
+		$branches = ext::get_filtered_repository_branches();
+		foreach ($branches as $branch)
+		{
+			$this->build_parent_structure($branch . '-');
+		}
 	}
 
 	/**
