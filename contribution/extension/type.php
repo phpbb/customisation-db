@@ -371,7 +371,15 @@ class type extends base
 		}
 
 		// Composer installers must be required by all extensions in order to be installed correctly
-		$data['require']['composer/installers'] = '~1.0.0';
+		if (!isset($data['require']['composer/installers']))
+		{
+			$installers_version = '~1.0';
+			if (isset($data['require']['phpbb/phpbb']) && $this->requires_phpbb_4_or_higher($data['require']['phpbb/phpbb']))
+			{
+				$installers_version = '^1.0 || ^2.0';
+			}
+			$data['require']['composer/installers'] = $installers_version;
+		}
 
 		return $data;
 	}
@@ -385,6 +393,27 @@ class type extends base
 	protected function is_stable_version($version)
 	{
 		return preg_match('#^\d+\.\d+\.\d+(-pl\d+)?$#i', $version) === 1 && phpbb_version_compare($version, '1.0.0', '>=');
+	}
+
+	/**
+	 * Check if phpBB requirement allows 4.0.0 or higher
+	 *
+	 * @param string $constraint Version constraint
+	 * @return bool True if constraint allows phpBB 4.0.0+
+	 */
+	protected function requires_phpbb_4_or_higher($constraint)
+	{
+		try
+		{
+			$parser = new \Composer\Semver\VersionParser();
+			$constraintObj = $parser->parseConstraints($constraint);
+			// Check if the constraint excludes versions below 4.0.0 by testing if 3.9.9 does NOT satisfy the constraint
+			return !$constraintObj->matches(new \Composer\Semver\Constraint\Constraint('==', '3.9.9.0'));
+		}
+		catch (\Exception $e)
+		{
+			return false;
+		}
 	}
 
 	/**
