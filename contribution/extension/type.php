@@ -396,19 +396,21 @@ class type extends base
 	}
 
 	/**
-	 * Check if phpBB requirement allows 4.0.0 or higher
+	 * Check if phpBB requires 4.0.0 or higher
 	 *
 	 * @param string $constraint Version constraint
-	 * @return bool True if constraint allows phpBB 4.0.0+
+	 * @return bool True if constraint requires phpBB 4.0.0+
 	 */
 	protected function requires_phpbb_4_or_higher($constraint)
 	{
 		try
 		{
 			$parser = new \Composer\Semver\VersionParser();
-			$constraintObj = $parser->parseConstraints($constraint);
-			// Check if the constraint excludes versions below 4.0.0 by testing if 3.9.9 does NOT satisfy the constraint
-			return !$constraintObj->matches(new \Composer\Semver\Constraint\Constraint('==', '3.9.9.0'));
+			$constraint_obj = $parser->parseConstraints($constraint);
+			$phpbb4_constraint = $parser->parseConstraints('>=4.0.0');
+			$phpbb3_constraint = $parser->parseConstraints('<4.0.0');
+			// Check if constraint allows 4.0.0+ and excludes all versions below 4.0.0
+			return $constraint_obj->matches($phpbb4_constraint) && !$constraint_obj->matches($phpbb3_constraint);
 		}
 		catch (\Exception $e)
 		{
