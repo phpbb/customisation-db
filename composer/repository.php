@@ -153,8 +153,9 @@ class repository
 	 *
 	 * @param string $name		File name
 	 * @param array $packages	Packages to be dumped
+	 * @param string $subdir	Optional subdirectory
 	 */
-	public function dump_include($name, array $packages)
+	public function dump_include($name, array $packages, $subdir = '')
 	{
 		foreach ($packages as $package_name => $versions)
 		{
@@ -164,24 +165,27 @@ class repository
 			array('packages' => $packages),
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
 		);
-		$file = $this->build_dir . $name;
+		$target_dir = $this->build_dir . $subdir;
+		if ($subdir && !$this->fs->exists($target_dir))
+		{
+			$this->fs->mkdir($target_dir);
+		}
+		$file = $target_dir . $name;
 		$this->fs->dumpFile($file, $packages);
 	}
 
 	/**
 	 * Get include files.
 	 *
-	 * @param string $prefix Optional prefix to filter files
 	 * @return Finder
 	 */
-	protected function get_include_files($prefix = '')
+	protected function get_include_files()
 	{
 		$finder = new Finder;
-		$pattern = $prefix ? '/^packages\-' . preg_quote($prefix, '/') . '[a-z]+\-\d+\.json$/' : '/^packages\-[a-z]+\-\d+\.json$/';
 		$finder
 			->files()
 			->depth('== 0')
-			->name($pattern)
+			->name('/^packages\-[a-z]+\-\d+\.json$/')
 			->in($this->build_dir)
 		;
 
@@ -197,23 +201,29 @@ class repository
 		$branches = ext::get_filtered_repository_branches();
 		foreach ($branches as $branch)
 		{
-			$this->build_parent_structure($branch . '-');
+			$this->build_parent_structure($branch . '/');
 		}
 	}
 
 	/**
-	 * Build parent structure for given prefix
+	 * Build parent structure for given subdirectory
 	 *
-	 * @param string $prefix Optional prefix for files
+	 * @param string $subdir Optional subdirectory
 	 */
-	protected function build_parent_structure($prefix = '')
+	protected function build_parent_structure($subdir = '')
 	{
-		$includes = $this->get_include_files($prefix);
+		$includes = $this->get_include_files();
 		$parent = $types = array();
+		$target_dir = $this->build_dir . $subdir;
+		
+		if ($subdir && !$this->fs->exists($target_dir))
+		{
+			$this->fs->mkdir($target_dir);
+		}
 
 		foreach ($includes as $file)
 		{
-			$type = $this->get_include_type($file->getFilename(), $prefix);
+			$type = $this->get_include_type($file->getFilename());
 
 			if ($type)
 			{
@@ -229,8 +239,8 @@ class repository
 
 		foreach ($types as $type => $includes)
 		{
-			$type_filename = $prefix ? 'packages-' . $prefix . $type . '.json' : 'packages-' . $type . '.json';
-			$type_filepath = $this->build_dir . $type_filename;
+			$type_filename = 'packages-' . $type . '.json';
+			$type_filepath = $target_dir . $type_filename;
 			$contents = json_encode(array('includes' => $includes));
 			$this->fs->dumpFile($type_filepath, $contents);
 
@@ -240,9 +250,8 @@ class repository
 		}
 		if (!empty($parent))
 		{
-			$main_filename = $prefix ? 'packages-' . rtrim($prefix, '-') . '.json' : 'packages.json';
 			$contents = json_encode(array('includes' => $parent));
-			$this->fs->dumpFile($this->build_dir . $main_filename, $contents);
+			$this->fs->dumpFile($target_dir . 'packages.json', $contents);
 		}
 	}
 
@@ -250,16 +259,14 @@ class repository
 	 * Get contrib type name from include file name.
 	 *
 	 * @param string $filename
-	 * @param string $prefix Optional prefix to match
 	 * @return bool|string Returns contrib type name or false if not a valid filename
 	 */
-	protected function get_include_type($filename, $prefix = '')
+	protected function get_include_type($filename)
 	{
 		$filename = utf8_basename($filename);
 		$match = array();
-		$pattern = $prefix ? '/^packages\-' . preg_quote($prefix, '/') . '([a-z]+)\-\d+\.json$/' : '/^packages\-([a-z]+)\-\d+\.json$/';
 
-		if (preg_match($pattern, $filename, $match))
+		if (preg_match('/^packages\-([a-z]+)\-\d+\.json$/', $filename, $match))
 		{
 			return $match[1];
 		}

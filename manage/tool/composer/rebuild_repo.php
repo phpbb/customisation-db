@@ -322,13 +322,13 @@ class rebuild_repo extends base
 	 * @param string $type		Contrib type name
 	 * @param int $group		Group id
 	 * @param array $packages	Packages
-	 * @param string $suffix	Optional suffix for filename
+	 * @param int $branch		Optional branch number for subdirectory
 	 */
-	protected function dump_include($type, $group, array $packages, $prefix = '')
+	protected function dump_include($type, $group, array $packages, $branch = null)
 	{
 		$type_name = $this->types->get($type)->name;
-		$filename = $prefix ? "packages-$prefix-$type_name-$group.json" : "packages-$type_name-$group.json";
-		$this->repo->dump_include($filename, $packages);
+		$subdir = $branch ? $branch . '/' : '';
+		$this->repo->dump_include("packages-$type_name-$group.json", $packages, $subdir);
 	}
 
 	/**
