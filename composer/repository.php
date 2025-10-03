@@ -64,6 +64,13 @@ class repository
 		}
 		$this->fs->mkdir($this->build_dir);
 
+		// Create filtered repository subdirectories
+		$branches = ext::get_filtered_repository_branches();
+		foreach ($branches as $branch)
+		{
+			$this->fs->mkdir($this->build_dir . $branch);
+		}
+
 		return $this;
 	}
 
@@ -166,10 +173,6 @@ class repository
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
 		);
 		$target_dir = $this->build_dir . $subdir;
-		if ($subdir && !$this->fs->exists($target_dir))
-		{
-			$this->fs->mkdir($target_dir);
-		}
 		$file = $target_dir . $name;
 		$this->fs->dumpFile($file, $packages);
 	}
@@ -215,11 +218,6 @@ class repository
 		$includes = $this->get_include_files();
 		$parent = $types = array();
 		$target_dir = $this->build_dir . $subdir;
-		
-		if ($subdir && !$this->fs->exists($target_dir))
-		{
-			$this->fs->mkdir($target_dir);
-		}
 
 		foreach ($includes as $file)
 		{
