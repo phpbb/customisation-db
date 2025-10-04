@@ -14,7 +14,7 @@ namespace phpbb\oberon\manager;
  */
 class manager
 {
-    // TODO: Hard-coded, fix this later
+    // TODO: Hard-coded, fix this later!!!!
     const FILE_UPLOAD_LOCATION = '/workspaces/phpbb/phpBB/files/contributions/';
 
     const TYPE_EXTENSIONS = 1;
@@ -145,7 +145,7 @@ class manager
     }
 
     // List the contributions on the index
-    public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0)
+    public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0, string $search_query = '')
     {
         $sql = 'SELECT *
                 FROM ' . $this->tables['contributions'] . '
@@ -159,6 +159,13 @@ class manager
         if ($type)
         {
             $sql .= ' AND contribution_type = ' . (int) $type;  
+        }
+
+        if ($search_query !== '')
+        {
+            // Check name and description for a match: https://area51.phpbb.com/docs/dev/master/db/dbal.html#sql-like-expression
+            $escaped_search = $this->db->sql_like_expression($this->db->get_any_char() . $this->db->sql_escape($search_query) . $this->db->get_any_char());
+            $sql .= ' AND (contribution_name ' . $escaped_search . ' OR contribution_description ' . $escaped_search . ')';  
         }
 
         switch ($sort)

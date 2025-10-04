@@ -7,7 +7,7 @@
     <div class="custdb_action_bar">
         <div>
             <label for="custdb_search" class="custdb_input_label">{{ lang('CUSTDB_SEARCH') }}</label>
-            <input type="text" id="custdb_search" class="custdb_input_theme custdb_search_box" placeholder="{{ lang('CUSTDB_TYPE_TO_SEARCH') }}">
+            <input type="text" id="custdb_search" class="custdb_input_theme custdb_search_box" placeholder="{{ lang('CUSTDB_TYPE_TO_SEARCH') }}" data-search-url="{{ U_CUSTDB_INDEX }}" value="{{ SEARCH_TERM }}">
         </div>
 
         <div>

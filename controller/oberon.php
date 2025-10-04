@@ -260,11 +260,12 @@ class oberon
 	*/
 	public function index()
 	{
-		$type = $this->request->variable('type', 0);
-		$status = $this->request->variable('status', 0);
-		$sort = $this->request->variable('sort', 0);
+		$type = $this->request->variable('type', 0); // Extension, style, translation, etc?
+		$status = $this->request->variable('status', 0); // Approved, unvalidated, denied
+		$sort = $this->request->variable('sort', 0); // By date, by name, etc
+		$search_query = $this->request->variable('q', '', true);
 
-        $contributions = $this->manager->get_contributions_for_index($type, $status, $sort);
+        $contributions = $this->manager->get_contributions_for_index($type, $status, $sort, $search_query);
        
         foreach ($contributions as $contribution)
         {
@@ -277,6 +278,7 @@ class oberon
         }
 
         $this->template->assign_vars([
+			'U_CUSTDB_INDEX'		=> $this->helper->route('custdb_index'),
 			'U_NEW_CONTRIBUTION' 	=> $this->helper->route('custdb_add_contribution'),
 
 			// Filter options
@@ -287,6 +289,8 @@ class oberon
 			// Sort options
 			'SORT_NAME'				=> $this->manager::SORT_NAME,
 			'SORT_DATE'				=> $this->manager::SORT_DATE,
+
+			'SEARCH_TERM'			=> $search_query,
 
 			// Sidebar links
 			'TYPE'					=> $type,
