@@ -16,6 +16,7 @@ class manager
 {
     // TODO: Hard-coded, fix this later!!!!
     const FILE_UPLOAD_LOCATION = '/workspaces/phpbb/phpBB/files/contributions/';
+    const SUPPORTED_PHPBB_VERSIONS = ['4.0.0', '3.3.15'];
 
     const TYPE_EXTENSIONS = 1;
     const TYPE_STYLES = 2;

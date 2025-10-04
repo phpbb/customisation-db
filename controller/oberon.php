@@ -152,13 +152,13 @@ class oberon
             }
 
             // Insert into customisations and revisions table, first gather form data
-			$description       = $this->request->variable('description', '', true);
-			$type              = $this->request->variable('contribution_type', 0);
-			$demo_link         = $this->request->variable('demo_link', '', true);
+			$description       	= $this->request->variable('description', '', true);
+			$type              	= $this->request->variable('contribution_type', 0);
+			$demo_link         	= $this->request->variable('demo_link', '', true);
 
-			$version           = $this->request->variable('version_number', '', true);
-			$major_revision    = $this->request->variable('major_revision', 0);
-			$user_id           = (int) $this->user->data['user_id'];
+			$version        	= $this->request->variable('version_number', '', true);
+			$phpbb_version  	= $this->request->variable('phpbb_version', '');
+			$user_id           	= (int) $this->user->data['user_id'];
 
 			$contribution_array = [
 				'contribution_name'        => $contribution_name,
@@ -217,14 +217,15 @@ class oberon
 			$screenshot_list = implode(',', $screenshot_file_names);
 
 			$revision_array = [
-				'contribution_id'      => $contribution_id,
-				'revision_name'        => $contribution_name,
-				'revision_version'     => $version,
-				'revision_description' => $description,
-				'revision_attachment'  => $revision_file_name,
-				'revision_screenshots' => $screenshot_list,
-				'user_id'              => $user_id,
-				'submission_time'      => time(),
+				'contribution_id'      		=> $contribution_id,
+				'revision_name'        		=> $contribution_name,
+				'revision_version'     		=> $version,
+				'revision_phpbb_version'	=> $phpbb_version,
+				'revision_description' 		=> $description,
+				'revision_attachment'  		=> $revision_file_name,
+				'revision_screenshots' 		=> $screenshot_list,
+				'user_id'              		=> $user_id,
+				'submission_time'      		=> time(),
 			];
 
 			$revision_id = $this->manager->add_revision($revision_array);
@@ -248,6 +249,8 @@ class oberon
 			'TYPE_BBCODES'			=> $this->manager::TYPE_BBCODES,
 			'TYPE_TOOLS'			=> $this->manager::TYPE_TOOLS,
 			'TYPE_ARCHIVE'			=> $this->manager::TYPE_ARCHIVE,
+
+			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager::SUPPORTED_PHPBB_VERSIONS,
 		]); 
 
    		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));     

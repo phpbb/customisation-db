@@ -71,6 +71,7 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
                         'contribution_id'                       => ['UINT', 0],
 						'revision_name'                         => ['VCHAR_UNI:255', ''],
                         'revision_version'                      => ['VCHAR_UNI:255', ''],
+                        'revision_phpbb_version'                => ['VCHAR_UNI:255', ''],
                         'revision_description'                  => ['VCHAR_UNI:255', ''],
                         'revision_attachment'                   => ['VCHAR_UNI:255', ''],
                         'revision_screenshots'                  => ['VCHAR_UNI:255', ''],

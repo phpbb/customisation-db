@@ -8,8 +8,6 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class ai_validation extends Command
 {
-    const OPENAI_API_KEY = '';
-
     /* @var \phpbb\db\driver\driver_interface $db */
     protected $db;
 
@@ -18,6 +16,12 @@ class ai_validation extends Command
 
     /* int $contribution_type */
     protected $contribution_type;
+
+    private function get_openai_api_secret()
+    {
+        // TODO: this may need to change later, but for now it means we can use GitHub secrets
+        return getenv('PHPBB_CUSTDB_TEST_CHATGPT_API_AI_KEY');
+    }
 
     public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\oberon\manager\manager $manager)
     {        
@@ -28,7 +32,7 @@ class ai_validation extends Command
 
     protected function configure()
     {
-        // Run the command with: e.g., php bin/phpbbcli.php custdb:ai_validation 2
+        // Run the command with: e.g., php bin/phpbbcli.php custdb:ai_validation 2 (the number has to be an id from phpbb_custdb_queue)
         $this
             ->setName('custdb:ai_validation')
             ->setDescription('TEST')
@@ -153,7 +157,7 @@ class ai_validation extends Command
         $ch = curl_init("https://api.openai.com/v1/files/" . urlencode($file_id));
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . self::OPENAI_API_KEY
+            "Authorization: Bearer " . $this->get_openai_api_secret()
         ]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
@@ -168,7 +172,7 @@ class ai_validation extends Command
     {
         $ch = curl_init("https://api.openai.com/v1/files");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . self::OPENAI_API_KEY
+            "Authorization: Bearer " . $this->get_openai_api_secret()
         ]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
@@ -263,7 +267,7 @@ class ai_validation extends Command
     {
         $ch = curl_init("https://api.openai.com/v1/files");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . self::OPENAI_API_KEY
+            "Authorization: Bearer " . $this->get_openai_api_secret()
         ]);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -316,7 +320,7 @@ class ai_validation extends Command
 
         $ch = curl_init("https://api.openai.com/v1/vector_stores");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . self::OPENAI_API_KEY,
+            "Authorization: Bearer " . $this->get_openai_api_secret(),
             "Content-Type: application/json"
         ]);
 
@@ -365,7 +369,7 @@ class ai_validation extends Command
 
         $ch = curl_init("https://api.openai.com/v1/assistants");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . self::OPENAI_API_KEY,
+            "Authorization: Bearer " . $this->get_openai_api_secret(),
             "Content-Type: application/json",
             "OpenAI-Beta: assistants=v2"
         ]);
@@ -439,6 +443,7 @@ class ai_validation extends Command
         $array_report = json_decode($final_report, true);
 
         /* INTERNAL STATUS CHANGE */
+        // TODO: potential error here... PHP Warning:  Trying to access array offset on null in /workspaces/phpbb/phpBB/ext/phpbb/oberon/console/ai_validation.php on line 446
         $this->manager->new_topic(2, '[Validation Report] ' . $array_report['name'], sprintf("Outcome: %s, Confidence: %s - ", $array_report['outcome'], $array_report['confidence']) . 'Report: ' . $array_report['report']);
     }
 
@@ -447,7 +452,7 @@ class ai_validation extends Command
         $ch = curl_init("https://api.openai.com/v1/threads");
         
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . self::OPENAI_API_KEY,
+            "Authorization: Bearer " . $this->get_openai_api_secret(),
             "Content-Type: application/json",
             "OpenAI-Beta: assistants=v2"
         ]);
@@ -474,7 +479,7 @@ class ai_validation extends Command
     {
         $ch = curl_init("https://api.openai.com/v1/threads/$thread_id/runs");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . self::OPENAI_API_KEY,
+            "Authorization: Bearer " . $this->get_openai_api_secret(),
             "Content-Type: application/json",
             "OpenAI-Beta: assistants=v2"
         ]);
@@ -510,7 +515,7 @@ class ai_validation extends Command
 
             $ch = curl_init($pollUrl);
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                "Authorization: Bearer " . self::OPENAI_API_KEY,
+                "Authorization: Bearer " . $this->get_openai_api_secret(),
                 "OpenAI-Beta: assistants=v2"
             ]);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -545,7 +550,7 @@ class ai_validation extends Command
         $ch = curl_init("https://api.openai.com/v1/threads/$thread_id/messages");
         
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . self::OPENAI_API_KEY,
+            "Authorization: Bearer " . $this->get_openai_api_secret(),
             "OpenAI-Beta: assistants=v2"
         ]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
