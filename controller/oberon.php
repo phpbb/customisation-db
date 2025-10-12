@@ -99,6 +99,9 @@ class oberon
 		//$ext_path = $this->manager->get_ext_manager()->get_extension_path('phpbb/oberon', true);
 		$ext_path = $this->root_path . '/files/contributions';
 
+		// Team member or author
+		$can_add_revision = $this->manager->is_team_member() || $this->manager->is_customisation_author($id);
+
 		// Assign template variables
 		$this->template->assign_vars([
 			// Core contribution data
@@ -115,6 +118,9 @@ class oberon
 				? $ext_path . '/' . $contribution['screenshots'][0]
 				: '',
 
+			// Links
+			'U_NEW_REVISION'		=> $can_add_revision ? $this->helper->route('custdb_add_revision', ['id' => $id]) : false,
+
 			// Actions
 			'U_EDIT_CONTRIBUTION'   => '', //$this->helper->route('phpbb_oberon_edit_contribution', ['id' => $id]),
 			'U_VALIDATE_CONTRIBUTION' => '', //$this->helper->route('phpbb_oberon_validate_contribution', ['id' => $id]),
@@ -127,11 +133,22 @@ class oberon
 	}	
 
 	/**
-	* Add contribution/revision
+	* Add revision
 	*
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
-	public function add()
+	public function add_revision(int $contribution_id)
+	{
+		// Add revision
+		die('Add revision for contrib id '. $contribution_id);
+	}
+
+	/**
+	* Add contribution
+	*
+	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	*/
+	public function add_contribution()
 	{
 		// Check if form submitted
         if ($this->request->is_set_post('submit'))

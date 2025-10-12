@@ -3,8 +3,14 @@ custdb_index:
     defaults: { _controller: phpbb.oberon.controller:index }
 
 custdb_add_contribution:
-    path: /custdb/add
-    defaults: { _controller: phpbb.oberon.controller:add }
+    path: /custdb/contribution/add
+    defaults: { _controller: phpbb.oberon.controller:add_contribution }
+
+custdb_add_revision:
+    path: /custdb/revision/add
+    requirements:
+        contribution_id: \d+
+    defaults: { _controller: phpbb.oberon.controller:add_revision, contribution_id: 0 }
 
 custdb_view_contribution:
     path: /custdb/view/{id}

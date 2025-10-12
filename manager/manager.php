@@ -92,6 +92,20 @@ class manager
         $this->tables = $tables;
 	}
 
+    public function is_team_member()
+    {
+        // Is the current user a phpBB team member?
+
+        return true; // TODO: add logic here
+    }
+
+    public function is_customisation_author(int $customisation_id)
+    {
+        // Is the current user the author of the customisation?
+
+        return true; // TODO: add logic here
+    }
+
     /**
      * Return tables for Oberon
      */

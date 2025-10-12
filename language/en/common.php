@@ -65,6 +65,7 @@ $lang = array_merge($lang, [
 
     // View contribution
     'CUSTDB_EDIT_CONTRIBUTION'                  => 'Edit Contribution',
+    'CUSTDB_NEW_REVISION'                       => 'New Revision',
 
     // Errors
     'CUSTDB_MISSING_REQUIRED_FIELDS'            => 'Go back to the previous page and ensure all of the required fields have been filled.',
