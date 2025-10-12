@@ -4,12 +4,15 @@ imports:
 services:
     phpbb.oberon.manager:
         class: phpbb\oberon\manager\manager
-        arguments:             
+        arguments:    
+            - '%core.root_path%'
+            - '%core.php_ext%'         
             - '@dbal.conn'
             - '@config'
             - '@user'
             - '@user_loader'
             - '@language'
+            - '@auth'
             - '@ext.manager'
             - '%phpbb.oberon.tables%'
     phpbb.oberon.controller:

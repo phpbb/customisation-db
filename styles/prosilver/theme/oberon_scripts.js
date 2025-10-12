@@ -15,3 +15,32 @@ function updateSort(selectElement) {
     currentUrl.searchParams.set('sort', selectElement.value);
     window.location.href = currentUrl.toString();
 }
+
+// Search customisations
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('custdb_search');
+
+    searchInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            const query = searchInput.value.trim();
+            if (query.length > 0) {
+                // Use provided route or fallback
+                const baseUrl = searchInput.dataset.searchUrl || window.location.pathname;
+
+                // Build URL with existing query params
+                const url = new URL(window.location.href);
+
+                // Update the base path to your index route (if different)
+                url.pathname = baseUrl;
+
+                // Set/replace search parameter "q"
+                url.searchParams.set('q', query);
+
+                // Redirect with all parameters intact
+                window.location.href = url.toString();
+            }
+        }
+    });
+});

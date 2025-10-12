@@ -5,6 +5,9 @@
         <h2>{{ CONTRIBUTION_NAME }}</h2>
 
         <div>
+            {% if U_NEW_REVISION %}
+            <a href="{{ U_NEW_REVISION }}" class="custdb_button">{{ lang('CUSTDB_NEW_REVISION') }}</a>
+            {% endif %}
             <a href="#" class="custdb_button">{{ lang('CUSTDB_EDIT_CONTRIBUTION') }}</a>
         </div>
     </div>

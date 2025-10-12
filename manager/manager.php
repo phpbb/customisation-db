@@ -14,8 +14,9 @@ namespace phpbb\oberon\manager;
  */
 class manager
 {
-    // TODO: Hard-coded, fix this later
+    // TODO: Hard-coded, fix this later!!!!
     const FILE_UPLOAD_LOCATION = '/workspaces/phpbb/phpBB/files/contributions/';
+    const SUPPORTED_PHPBB_VERSIONS = ['4.0.0', '3.3.15'];
 
     const TYPE_EXTENSIONS = 1;
     const TYPE_STYLES = 2;
@@ -66,24 +67,44 @@ class manager
 	/**
 	* Constructor
 	*
+    * @param string                             $phpbb_root_path,
+    * @param string                             $php_ext,    
     * @param \phpbb\db\driver\driver_interface  $db
 	* @param \phpbb\config\config		        $config
 	* @param \phpbb\user				        $user
     * @param \phpbb\user_loader                 $user_loader
     * @param \phpbb\language\language           $language
+    * @param \phpbb\auth\auth                   $auth,
     * @param \phpbb\extension\manager           $ext_manager
     * array                                     $tables
 	*/
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\extension\manager $ext_manager, array $tables)
+	public function __construct(string $phpbb_root_path, string $php_ext, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\auth\auth $auth, \phpbb\extension\manager $ext_manager, array $tables)
 	{
+        $this->phpbb_root_path = $phpbb_root_path;
+        $this->php_ext = $php_ext;
         $this->db = $db;
 		$this->config = $config;
 		$this->user = $user;
         $this->user_loader = $user_loader;
         $this->language = $language;
+        $this->auth = $auth;
         $this->ext_manager = $ext_manager;
         $this->tables = $tables;
 	}
+
+    public function is_team_member()
+    {
+        // Is the current user a phpBB team member?
+
+        return true; // TODO: add logic here
+    }
+
+    public function is_customisation_author(int $customisation_id)
+    {
+        // Is the current user the author of the customisation?
+
+        return true; // TODO: add logic here
+    }
 
     /**
      * Return tables for Oberon
@@ -129,7 +150,7 @@ class manager
         $sql_ary = [
             'revision_id'           => $revision_id,
             'queue_added_time'      => time(),
-            'queue_status'          => self::INTERNAL_STATUS_UNVALIDATED,
+            'queue_status'          => self::INTERNAL_STATUS_UNVALIDATED, /* INTERNAL STATUS CHANGE */
             'queue_codespace_url'   => '',
         ];
 
@@ -139,7 +160,7 @@ class manager
     }
 
     // List the contributions on the index
-    public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0)
+    public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0, string $search_query = '')
     {
         $sql = 'SELECT *
                 FROM ' . $this->tables['contributions'] . '
@@ -153,6 +174,13 @@ class manager
         if ($type)
         {
             $sql .= ' AND contribution_type = ' . (int) $type;  
+        }
+
+        if ($search_query !== '')
+        {
+            // Check name and description for a match: https://area51.phpbb.com/docs/dev/master/db/dbal.html#sql-like-expression
+            $escaped_search = $this->db->sql_like_expression($this->db->get_any_char() . $this->db->sql_escape($search_query) . $this->db->get_any_char());
+            $sql .= ' AND (contribution_name ' . $escaped_search . ' OR contribution_description ' . $escaped_search . ')';  
         }
 
         switch ($sort)
@@ -302,5 +330,94 @@ class manager
         $this->db->sql_freeresult($result);
 
         return $results;
+    }
+
+
+
+
+    /**
+     *  New posts and topics 
+     **/
+    public function new_topic(int $forum_id, string $topic_subject, string $topic_text)
+    {
+        include_once($this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
+
+        // User ID (Customisations Robot?)
+        $customisation_robot_user_id = 2;
+
+        $this->user_loader->load_users([$customisation_robot_user_id]);
+        $this->user->data = $this->user_loader->get_user($customisation_robot_user_id);
+        $this->user->data['is_registered'] = true;
+        $this->user->data['is_anonymous']  = false;
+        $this->user->data['is_bot']        = false;
+
+        $forum_sql = 'SELECT forum_name, forum_desc, forum_type
+            FROM ' . FORUMS_TABLE . '
+            WHERE forum_id = ' . (int) $forum_id;
+        $forum_result = $this->db->sql_query($forum_sql);
+        $forum_data = $this->db->sql_fetchrow($forum_result);
+        $this->db->sql_freeresult($forum_result);
+
+        // Prepare post data
+        $data = [
+            'forum_id'          => $forum_id,
+            'topic_id'          => 0, // 0 = new topic
+            'force_approved_state' => true,
+
+            // Topic and message content
+            'topic_title'       => $topic_subject,
+            'post_text'         => $topic_text,
+            'message'           => $topic_text,
+            'message_md5'       => md5($topic_text),
+
+            // BBCode and formatting
+            'bbcode_uid'        => '',
+            'bbcode_bitfield'   => '',
+            'enable_bbcode'     => true,
+            'enable_smilies'    => true,
+            'enable_urls'       => true,
+            'enable_sig'        => true,
+
+            // System flags
+            'post_checksum'     => '',
+            'post_edit_locked'  => 0,
+            'post_edit_reason'  => '',
+            'post_time'         => time(),
+
+            // Posting type
+            'topic_type'        => POST_NORMAL,
+            'post_attachment'   => 0,
+            'icon_id'           => 0,
+            'topic_time_limit'  => 0,
+
+            // User and notifications
+            'poster_id'         => $this->user->data['user_id'],
+            'notify_set'        => 0,
+            'notify'            => 0,
+
+            // Search indexing
+            'enable_indexing'   => true,
+
+            // Forum context (important for notifications)
+            'forum_name'        => $forum_data['forum_name'],
+            'forum_desc'        => $forum_data['forum_desc'],
+            'forum_type'        => $forum_data['forum_type'],
+        ];
+
+        // Build message parsing
+        generate_text_for_storage(
+            $data['post_text'],
+            $data['bbcode_uid'],
+            $data['bbcode_bitfield'],
+            $data['enable_bbcode'],
+            $data['enable_urls'],
+            $data['enable_smilies']
+        );
+
+        // Submit post
+        $poll = []; // no poll
+        $result = submit_post('post', $data['topic_title'], $this->user->data['username'], POST_NORMAL, $poll, $data);
+
+        return $result;
     }
 }

@@ -31,10 +31,14 @@
                             <input type="text" id="version_number" name="version_number" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_VERSION_NUMBER') }}">
                         </div>
 
-                        <!-- Major Revision -->
+                        <!-- phpBB Version -->
                         <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="major_revision">{{ lang('CUSTDB_MAJOR_REVISION') }}</label>
-                            <input type="checkbox" id="major_revision" name="major_revision" class="custdb_checkbox">
+                            <label class="custdb_input_label" for="phpbb_version">{{ lang('CUSTDB_PHPBB_VERSION') }}</label>
+                            <select id="phpbb_version" name="phpbb_version" class="custdb_input_theme custdb_dropdown_theme">
+                                {% for version in SUPPORTED_PHPBB_VERSIONS %}
+                                    <option value="{{ version }}">{{ version }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <!-- Contribution Type Dropdown -->

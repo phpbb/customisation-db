@@ -99,6 +99,9 @@ class oberon
 		//$ext_path = $this->manager->get_ext_manager()->get_extension_path('phpbb/oberon', true);
 		$ext_path = $this->root_path . '/files/contributions';
 
+		// Team member or author
+		$can_add_revision = $this->manager->is_team_member() || $this->manager->is_customisation_author($id);
+
 		// Assign template variables
 		$this->template->assign_vars([
 			// Core contribution data
@@ -115,6 +118,9 @@ class oberon
 				? $ext_path . '/' . $contribution['screenshots'][0]
 				: '',
 
+			// Links
+			'U_NEW_REVISION'		=> $can_add_revision ? $this->helper->route('custdb_add_revision', ['id' => $id]) : false,
+
 			// Actions
 			'U_EDIT_CONTRIBUTION'   => '', //$this->helper->route('phpbb_oberon_edit_contribution', ['id' => $id]),
 			'U_VALIDATE_CONTRIBUTION' => '', //$this->helper->route('phpbb_oberon_validate_contribution', ['id' => $id]),
@@ -127,11 +133,22 @@ class oberon
 	}	
 
 	/**
-	* Add contribution/revision
+	* Add revision
 	*
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
-	public function add()
+	public function add_revision(int $contribution_id)
+	{
+		// Add revision
+		die('Add revision for contrib id '. $contribution_id);
+	}
+
+	/**
+	* Add contribution
+	*
+	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	*/
+	public function add_contribution()
 	{
 		// Check if form submitted
         if ($this->request->is_set_post('submit'))
@@ -152,13 +169,13 @@ class oberon
             }
 
             // Insert into customisations and revisions table, first gather form data
-			$description       = $this->request->variable('description', '', true);
-			$type              = $this->request->variable('contribution_type', 0);
-			$demo_link         = $this->request->variable('demo_link', '', true);
+			$description       	= $this->request->variable('description', '', true);
+			$type              	= $this->request->variable('contribution_type', 0);
+			$demo_link         	= $this->request->variable('demo_link', '', true);
 
-			$version           = $this->request->variable('version_number', '', true);
-			$major_revision    = $this->request->variable('major_revision', 0);
-			$user_id           = (int) $this->user->data['user_id'];
+			$version        	= $this->request->variable('version_number', '', true);
+			$phpbb_version  	= $this->request->variable('phpbb_version', '');
+			$user_id           	= (int) $this->user->data['user_id'];
 
 			$contribution_array = [
 				'contribution_name'        => $contribution_name,
@@ -217,14 +234,15 @@ class oberon
 			$screenshot_list = implode(',', $screenshot_file_names);
 
 			$revision_array = [
-				'contribution_id'      => $contribution_id,
-				'revision_name'        => $contribution_name,
-				'revision_version'     => $version,
-				'revision_description' => $description,
-				'revision_attachment'  => $revision_file_name,
-				'revision_screenshots' => $screenshot_list,
-				'user_id'              => $user_id,
-				'submission_time'      => time(),
+				'contribution_id'      		=> $contribution_id,
+				'revision_name'        		=> $contribution_name,
+				'revision_version'     		=> $version,
+				'revision_phpbb_version'	=> $phpbb_version,
+				'revision_description' 		=> $description,
+				'revision_attachment'  		=> $revision_file_name,
+				'revision_screenshots' 		=> $screenshot_list,
+				'user_id'              		=> $user_id,
+				'submission_time'      		=> time(),
 			];
 
 			$revision_id = $this->manager->add_revision($revision_array);
@@ -248,6 +266,8 @@ class oberon
 			'TYPE_BBCODES'			=> $this->manager::TYPE_BBCODES,
 			'TYPE_TOOLS'			=> $this->manager::TYPE_TOOLS,
 			'TYPE_ARCHIVE'			=> $this->manager::TYPE_ARCHIVE,
+
+			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager::SUPPORTED_PHPBB_VERSIONS,
 		]); 
 
    		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));     
@@ -260,11 +280,12 @@ class oberon
 	*/
 	public function index()
 	{
-		$type = $this->request->variable('type', 0);
-		$status = $this->request->variable('status', 0);
-		$sort = $this->request->variable('sort', 0);
+		$type = $this->request->variable('type', 0); // Extension, style, translation, etc?
+		$status = $this->request->variable('status', 0); // Approved, unvalidated, denied
+		$sort = $this->request->variable('sort', 0); // By date, by name, etc
+		$search_query = $this->request->variable('q', '', true);
 
-        $contributions = $this->manager->get_contributions_for_index($type, $status, $sort);
+        $contributions = $this->manager->get_contributions_for_index($type, $status, $sort, $search_query);
        
         foreach ($contributions as $contribution)
         {
@@ -277,6 +298,7 @@ class oberon
         }
 
         $this->template->assign_vars([
+			'U_CUSTDB_INDEX'		=> $this->helper->route('custdb_index'),
 			'U_NEW_CONTRIBUTION' 	=> $this->helper->route('custdb_add_contribution'),
 
 			// Filter options
@@ -287,6 +309,8 @@ class oberon
 			// Sort options
 			'SORT_NAME'				=> $this->manager::SORT_NAME,
 			'SORT_DATE'				=> $this->manager::SORT_DATE,
+
+			'SEARCH_TERM'			=> $search_query,
 
 			// Sidebar links
 			'TYPE'					=> $type,

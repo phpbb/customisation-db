@@ -52,7 +52,7 @@ $lang = array_merge($lang, [
     'CUSTDB_ENTER_AUTHORS'                      => 'Enter authors...',
     'CUSTDB_VERSION_NUMBER'                     => 'Version Number',
     'CUSTDB_ENTER_VERSION_NUMBER'               => 'e.g., 1.0.0',
-    'CUSTDB_MAJOR_REVISION'                     => 'Major Revision',
+    'CUSTDB_PHPBB_VERSION'                      => 'phpBB Version',
     'CUSTDB_CONTRIBUTION_TYPE'                  => 'Contribution Type',
     'CUSTDB_ENTER_CONTRIBUTION_TYPE'            => 'Enter contribution type...',
     'CUSTDB_DESCRIPTION'                        => 'Description',
@@ -65,6 +65,7 @@ $lang = array_merge($lang, [
 
     // View contribution
     'CUSTDB_EDIT_CONTRIBUTION'                  => 'Edit Contribution',
+    'CUSTDB_NEW_REVISION'                       => 'New Revision',
 
     // Errors
     'CUSTDB_MISSING_REQUIRED_FIELDS'            => 'Go back to the previous page and ensure all of the required fields have been filled.',
