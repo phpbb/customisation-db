@@ -119,7 +119,7 @@ class oberon
 				: '',
 
 			// Links
-			'U_NEW_REVISION'		=> $can_add_revision ? $this->helper->route('custdb_add_revision', ['id' => $id]) : false,
+			'U_NEW_REVISION'		=> $can_add_revision ? $this->helper->route('custdb_add_revision', ['contribution_id' => $id]) : false,
 
 			// Actions
 			'U_EDIT_CONTRIBUTION'   => '', //$this->helper->route('phpbb_oberon_edit_contribution', ['id' => $id]),
@@ -133,28 +133,63 @@ class oberon
 	}	
 
 	/**
-	* Add revision
-	*
-	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
-	*/
-	public function add_revision(int $contribution_id)
-	{
-		// Add revision
-		die('Add revision for contrib id '. $contribution_id);
-	}
-
-	/**
 	* Add contribution
 	*
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
 	public function add_contribution()
 	{
+		$this->generic_contribution_or_revision();
+
+		$this->template->assign_vars([
+			'U_ACTION'				=> $this->helper->route('custdb_add_contribution'),
+
+			'S_IS_NEW_CONTRIBUTION' => true,
+
+			// Page heading
+			'L_PAGE_HEADING'       => $this->user->lang('CUSTDB_ADD_CONTRIBUTION'),
+		]);
+
+   		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));     
+    }
+
+	/**
+	* Add revision
+	*
+	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	*/
+	public function add_revision(int $contribution_id)
+	{
+		// Get the existing contribution details
+		$contribution = $this->manager->get_contribution_with_latest_revision($contribution_id);
+
+		$this->generic_contribution_or_revision();
+
+		$this->template->assign_vars([
+			'U_ACTION'				=> $this->helper->route('custdb_add_revision', ['contribution_id' => $contribution_id]),
+			'S_IS_NEW_CONTRIBUTION' => false,
+
+			// Page heading
+			'L_PAGE_HEADING'       => $this->user->lang('CUSTDB_ADD_REVISION'),
+
+			// Current contribution
+			'CONTRIBUTION_NAME'		=> $contribution['contribution_name'],
+			'CONTRIBUTION_ID'		=> $contribution_id,
+		]);
+
+		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_REVISION'));     
+	}
+
+	/**
+	 * Can use similar functionality for adding both new contributions or revisions
+	 */
+	private function generic_contribution_or_revision()
+	{
 		// Check if form submitted
         if ($this->request->is_set_post('submit'))
         {
             // Validate form token for CSRF
-            if (!check_form_key('custdb_add_contribution'))
+            if (!check_form_key('custdb_add_contribution_or_revision'))
             {
                 trigger_error('FORM_INVALID');
             }
@@ -162,32 +197,56 @@ class oberon
             $contribution_name = $this->request->variable('contribution_name', '', true);
             $version_number = $this->request->variable('version_number', '', true);
 
-            // Validation logic here
-            if (empty($contribution_name) || empty($version_number))
-            {
-                trigger_error('CUSTDB_MISSING_REQUIRED_FIELDS');
-            }
+			$can_submit_revision = false;
+			$contribution_id = $this->request->variable('contribution_id', 0);
+
+			if ($contribution_id)
+			{
+				// If there is already a contribution id, then we are just adding a new revision.
+				// Check that the author can do it though!
+				if ($this->manager->is_customisation_author($contribution_id) || $this->manager->is_team_member())
+				{
+					$can_submit_revision = true;
+
+					// Validation logic here for revision
+					if (empty($version_number))
+					{
+						trigger_error('CUSTDB_MISSING_REQUIRED_FIELDS');
+					}
+				}
+			}
+
+			else 
+			{
+				// Validation logic here for new contribution
+				if (empty($contribution_name) || empty($version_number))
+				{
+					trigger_error('CUSTDB_MISSING_REQUIRED_FIELDS');
+				}
+			}
 
             // Insert into customisations and revisions table, first gather form data
-			$description       	= $this->request->variable('description', '', true);
 			$type              	= $this->request->variable('contribution_type', 0);
+			$description       	= $this->request->variable('description', '', true);
 			$demo_link         	= $this->request->variable('demo_link', '', true);
-
 			$version        	= $this->request->variable('version_number', '', true);
 			$phpbb_version  	= $this->request->variable('phpbb_version', '');
 			$user_id           	= (int) $this->user->data['user_id'];
 
-			$contribution_array = [
-				'contribution_name'        => $contribution_name,
-				'contribution_description' => $description,
-				'contribution_type'        => $type,
-				'contribution_status'      => 0, // 0 = Unvalidated
-				'contribution_demo_link'   => $demo_link,
-				'user_id'                  => $user_id,
-				'submission_time'          => time(),
-			];
+			if (!$contribution_id)
+			{
+				$contribution_array = [
+					'contribution_name'        => $contribution_name,
+					'contribution_description' => $description,
+					'contribution_type'        => $type,
+					'contribution_status'      => 0, // 0 = Unvalidated
+					'contribution_demo_link'   => $demo_link,
+					'user_id'                  => $user_id,
+					'submission_time'          => time(),
+				];
 
-			$contribution_id = (int) $this->manager->add_contribution($contribution_array);
+				$contribution_id = (int) $this->manager->add_contribution($contribution_array);
+			}
 
 			$upload_path = $this->root_path . 'files/contributions/';
 			$revision_file_name = '';
@@ -255,11 +314,9 @@ class oberon
 		}
 
         // Generate CSRF token
-        add_form_key('custdb_add_contribution');
+        add_form_key('custdb_add_contribution_or_revision');
 
 		$this->template->assign_vars([
-			'U_ACTION'				=> $this->helper->route('custdb_add_contribution'),
-
 			'TYPE_EXTENSIONS'		=> $this->manager::TYPE_EXTENSIONS,
 			'TYPE_STYLES'			=> $this->manager::TYPE_STYLES,
 			'TYPE_TRANSLATIONS'		=> $this->manager::TYPE_TRANSLATIONS,
@@ -269,9 +326,7 @@ class oberon
 
 			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager::SUPPORTED_PHPBB_VERSIONS,
 		]); 
-
-   		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));     
-    }
+	}
 
 	/**
 	* Index page

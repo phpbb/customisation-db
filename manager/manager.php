@@ -99,7 +99,7 @@ class manager
         return true; // TODO: add logic here
     }
 
-    public function is_customisation_author(int $customisation_id)
+    public function is_customisation_author(int $contribution_id)
     {
         // Is the current user the author of the customisation?
 

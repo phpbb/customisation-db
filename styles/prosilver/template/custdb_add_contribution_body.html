@@ -1,7 +1,7 @@
 {% INCLUDECSS '@phpbb_oberon/oberon_style.css' %}
 {% include 'overall_header.html' %}
 
-    <h2>{{ lang('CUSTDB_ADD_CONTRIBUTION') }}</h2>
+    <h2>{{ L_PAGE_HEADING }}</h2>
 
     <form id="add_contribution" method="post" action="{{ U_ACTION }}" enctype="multipart/form-data">
         <div class="custdb_container no-sidebar">
@@ -9,14 +9,17 @@
             <div class="custdb_content">
                 <div class="custdb_main_category">
                     <div class="custdb_main_category_header">
-                        {{ lang('CUSTDB_ADD_CONTRIBUTION') }}
+                        {{ L_PAGE_HEADING }}
                     </div>
 
                     <div class="custdb_main_category_content">
                         <!-- Contribution Name -->
                         <div class="custdb_form_group">
                             <label class="custdb_input_label" for="contribution_name">{{ lang('CUSTDB_CONTRIBUTION_NAME') }}</label>
-                            <input type="text" id="contribution_name" name="contribution_name" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_CONTRIBUTION_NAME') }}" required>
+                            <input type="text" id="contribution_name" name="contribution_name" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_CONTRIBUTION_NAME') }}" {% if not S_IS_NEW_CONTRIBUTION %}value="{{ CONTRIBUTION_NAME }}" disabled {% else %}required{% endif %}>
+                            {% if not S_IS_NEW_CONTRIBUTION %}
+                            <input type="hidden" name="contribution_id" value="{{ CONTRIBUTION_ID }}">
+                            {% endif %}
                         </div>
 
                         <!-- Authors -->
@@ -41,6 +44,7 @@
                             </select>
                         </div>
 
+                        {% if S_IS_NEW_CONTRIBUTION %}
                         <!-- Contribution Type Dropdown -->
                         <div class="custdb_form_group">
                             <label class="custdb_input_label" for="contribution_type">{{ lang('CUSTDB_CONTRIBUTION_TYPE') }}</label>
@@ -53,6 +57,7 @@
                                 <option value="{{ TYPE_ARCHIVE }}">{{ lang('CUSTDB_TYPE_ARCHIVE') }}</option>
                             </select>
                         </div>
+                        {% endif %}
 
                         <!-- Description -->
                         <div class="custdb_form_group">
