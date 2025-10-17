@@ -44,6 +44,9 @@ $lang = array_merge($lang, [
     'CUSTDB_STATUS_APPROVED'                    => 'Approved',
     'CUSTDB_STATUS_DENIED'                      => 'Denied',
 
+    // Add revision
+    'CUSTDB_ADD_REVISION'                       => 'Add Revision',
+
     // Add contribution
     'CUSTDB_ADD_CONTRIBUTION'                   => 'Add Contribution',
     'CUSTDB_CONTRIBUTION_NAME'                  => 'Contribution Name',

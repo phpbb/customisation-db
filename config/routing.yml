@@ -7,7 +7,7 @@ custdb_add_contribution:
     defaults: { _controller: phpbb.oberon.controller:add_contribution }
 
 custdb_add_revision:
-    path: /custdb/revision/add
+    path: /custdb/revision/add/{contribution_id}
     requirements:
         contribution_id: \d+
     defaults: { _controller: phpbb.oberon.controller:add_revision, contribution_id: 0 }
