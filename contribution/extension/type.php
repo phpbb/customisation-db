@@ -280,7 +280,7 @@ class type extends base
 
 		$ext_name = $data['name'];
 		$data['type'] = 'phpbb-extension';
-		$data = $this->update_phpbb_requirement($data);
+		$data = $this->update_phpbb_requirement($data, $revision);
 		$data = $this->set_version_check($data, $contrib);
 
 		$data = json_encode(
@@ -352,9 +352,10 @@ class type extends base
 	 * Updates phpBB requirements in composer.json
 	 *
 	 * @param array $data composer.json data
+	 * @param \titania_revision $revision
 	 * @return array Returns $data array with phpBB requirement updated
 	 */
-	protected function update_phpbb_requirement(array $data)
+	protected function update_phpbb_requirement(array $data, \titania_revision $revision)
 	{
 		if (!isset($data['require']['phpbb/phpbb']))
 		{
@@ -371,7 +372,15 @@ class type extends base
 		}
 
 		// Composer installers must be required by all extensions in order to be installed correctly
-		$data['require']['composer/installers'] = '~1.0.0';
+		if (!isset($data['require']['composer/installers']))
+		{
+			$installers_version = '~1.0';
+			if ($this->is_phpbb_4_branch($revision) || (isset($data['require']['phpbb/phpbb']) && $this->requires_phpbb_4($data['require']['phpbb/phpbb'])))
+			{
+				$installers_version = '^1.0 || ^2.0';
+			}
+			$data['require']['composer/installers'] = $installers_version;
+		}
 
 		return $data;
 	}
@@ -385,6 +394,40 @@ class type extends base
 	protected function is_stable_version($version)
 	{
 		return preg_match('#^\d+\.\d+\.\d+(-pl\d+)?$#i', $version) === 1 && phpbb_version_compare($version, '1.0.0', '>=');
+	}
+
+	/**
+	 * Check if phpBB requires 4.0.0 or higher
+	 *
+	 * @param string $constraint Version constraint
+	 * @return bool True if constraint requires phpBB 4.0.0+
+	 */
+	protected function requires_phpbb_4($constraint)
+	{
+		try
+		{
+			$parser = new \Composer\Semver\VersionParser();
+			$constraint_obj = $parser->parseConstraints($constraint);
+			$phpbb4_constraint = $parser->parseConstraints('>=4.0.0');
+			$phpbb3_constraint = $parser->parseConstraints('<4.0.0');
+			// Check if constraint allows 4.0.0+ and excludes all versions below 4.0.0
+			return $constraint_obj->matches($phpbb4_constraint) && !$constraint_obj->matches($phpbb3_constraint);
+		}
+		catch (\Exception $e)
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * Check if revision is submitted to phpBB 4.0+ branch
+	 *
+	 * @param \titania_revision $revision
+	 * @return bool True if submitted to phpBB 4.0+ branch
+	 */
+	protected function is_phpbb_4_branch(\titania_revision $revision)
+	{
+		return max(array_column($revision->phpbb_versions, 'phpbb_version_branch')) >= 40;
 	}
 
 	/**
