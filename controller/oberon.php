@@ -198,6 +198,7 @@ class oberon
             }
 
             $contribution_name = $this->request->variable('contribution_name', '', true);
+			$revision_name = $this->request->variable('revision_name', '', true);
             $version_number = $this->request->variable('version_number', '', true);
 
 			$can_submit_revision = false;
@@ -297,7 +298,7 @@ class oberon
 
 			$revision_array = [
 				'contribution_id'      		=> $contribution_id,
-				'revision_name'        		=> $contribution_name,
+				'revision_name'        		=> $revision_name,
 				'revision_version'     		=> $version,
 				'revision_phpbb_version'	=> $phpbb_version,
 				'revision_description' 		=> $description,
