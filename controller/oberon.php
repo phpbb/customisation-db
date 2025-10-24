@@ -97,7 +97,7 @@ class oberon
 
 		//TODO: upload to the ext folder instead in the future
 		//$ext_path = $this->manager->get_ext_manager()->get_extension_path('phpbb/oberon', true);
-		$ext_path = $this->root_path . '/files/contributions';
+		$ext_path = $this->config['script_path'] . 'files/contributions';
 
 		// Team member or author
 		$can_add_revision = $this->manager->is_team_member() || $this->manager->is_customisation_author($id);
@@ -111,7 +111,8 @@ class oberon
 			'AUTHORS'               => $contribution['author_name'],
 			'VERSION_NUMBER'        => $contribution['revision_version'],
 			'DEMO_LINK'             => $contribution['contribution_demo_link'],
-			'STATUS'                => $contribution['status_label'],
+			'EXTERNAL_STATUS'       => $contribution['external_status_label'],
+			'INTERNAL_STATUS'       => $contribution['internal_status_label'],
 
 			// First screenshot or empty string
 			'CONTRIBUTION_IMAGE'    => !empty($contribution['screenshots'][0])
@@ -124,6 +125,8 @@ class oberon
 			// Actions
 			'U_EDIT_CONTRIBUTION'   => '', //$this->helper->route('phpbb_oberon_edit_contribution', ['id' => $id]),
 			'U_VALIDATE_CONTRIBUTION' => '', //$this->helper->route('phpbb_oberon_validate_contribution', ['id' => $id]),
+
+			'S_IS_TEAM_MEMBER'	=> $this->manager->is_team_member(), // TODO: Could this be availble everywhere in Oberon templates??
 		]);
 
 		//        add_form_key('custdb_view_contribution');
@@ -239,7 +242,7 @@ class oberon
 					'contribution_name'        => $contribution_name,
 					'contribution_description' => $description,
 					'contribution_type'        => $type,
-					'contribution_status'      => 0, // 0 = Unvalidated
+					'contribution_status'      => $this->manager::STATUS_UNVALIDATED,
 					'contribution_demo_link'   => $demo_link,
 					'user_id'                  => $user_id,
 					'submission_time'          => time(),

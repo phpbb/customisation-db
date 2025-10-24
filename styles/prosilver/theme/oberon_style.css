@@ -87,6 +87,8 @@
    Base Shared Input Styling
 =================================== */
 .custdb_input_theme {
+    width: 100%;       /* make input/select/textarea fill the parent div */
+    box-sizing: border-box; /* include padding/border in width */
     font-size: 1rem;
     padding: 8px 12px;
     border: 1px solid #ccc;
@@ -214,6 +216,13 @@
 /* Make the button always stay on the far right */
 .custdb_action_bar > div:last-child {
     margin-left: auto; /* pushes it to the right */
+}
+
+.custdb_action_bar h2 {
+    margin: 0; /* remove default top/bottom margin */
+    line-height: 1; /* keeps text nicely centered */
+    display: flex;
+    align-items: center;
 }
 
 /* Responsive adjustments for smaller screens */

@@ -29,7 +29,7 @@
                 </div>
                 <div>
                     <strong>{{ lang('CUSTDB_STATUS') }}</strong>
-                    {{ STATUS }}
+                    {{ EXTERNAL_STATUS }}{% if INTERNAL_STATUS != '' %} ({{ INTERNAL_STATUS }}){% endif %}
                 </div>
                 {% if DEMO_LINK %}
                 <div>
@@ -50,25 +50,27 @@
                 {{ DESCRIPTION }}
             </div>
 
+            {% if S_IS_TEAM_MEMBER %}
             <form method="post" action="{{ U_VALIDATE_CONTRIBUTION }}" class="custdb_validation_form">
                 <div class="custdb_form_group">
-                    <label for="status" class="custdb_input_label">{{ lang('CUSTDB_VALIDATION_STATUS') }}</label>
+                    <label for="status" class="custdb_input_label">{{ lang('CUSTDB_STATUS') }}</label>
                     <select name="status" id="status" class="custdb_input_theme">
-                        <option value="pending">{{ lang('CUSTDB_PENDING') }}</option>
-                        <option value="approved">{{ lang('CUSTDB_APPROVED') }}</option>
-                        <option value="denied">{{ lang('CUSTDB_DENIED') }}</option>
+                        <option value="pending">{{ lang('CUSTDB_STATUS_UNVALIDATED') }}</option>
+                        <option value="approved">{{ lang('CUSTDB_STATUS_APPROVED') }}</option>
+                        <option value="denied">{{ lang('CUSTDB_STATUS_DENIED') }}</option>
                     </select>
                 </div>
 
                 <div class="custdb_form_group">
                     <label for="comment" class="custdb_input_label">{{ lang('CUSTDB_VALIDATION_COMMENT') }}</label>
-                    <textarea name="comment" id="comment" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_OPTIONAL_COMMENT') }}"></textarea>
+                    <textarea name="comment" id="comment" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_VALIDATION_OPTIONAL_COMMENT') }}"></textarea>
                 </div>
 
                 <button type="submit" class="custdb_submit_btn">
                     {{ lang('SUBMIT') }}
                 </button>
             </form>
+            {% endif %}
         </div>
     </div>
 
