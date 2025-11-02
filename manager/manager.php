@@ -139,10 +139,8 @@ class manager
         return $language_string;
     }
 
-    public function get_internal_status(int $internal_status)
+    public function get_internal_status(?int $internal_status)
     {
-        $language_string = '';
-
         switch ($internal_status)
         {
             case self::INTERNAL_STATUS_UNVALIDATED:
@@ -166,6 +164,8 @@ class manager
             case self::INTERNAL_STATUS_APPROVED:
                 $language_string = $this->user->lang('CUSTDB_INTERNAL_STATUS_APPROVED');
                 break;
+            default:
+                $language_string = '';
         }
 
         return $language_string;
@@ -253,10 +253,16 @@ class manager
 
         while ($row = $this->db->sql_fetchrow($result))
         {
+            // Get the status of the latest revision so we can colour code it on the page for team members to see
+            // TODO: this is inefficient because it's getting the contribution for a second time in the function call below
+            $latest_revision = $this->get_contribution_with_latest_revision($row['contribution_id']);
+
             $contributions[] = [
                 'contribution_id'           => $row['contribution_id'],
                 'contribution_name'         => $row['contribution_name'],
                 'contribution_description'  => $row['contribution_description'],
+
+                'revision_status'           => $latest_revision['queue_status'],
             ];
         }
 
@@ -298,9 +304,10 @@ class manager
 
         // Get newest revision
         $sql = 'SELECT r.*, q.queue_status
-                FROM ' . $this->tables['revisions'] . ' r, ' . $this->tables['queue'] . ' q
+                FROM ' . $this->tables['revisions'] . ' r
+                LEFT JOIN ' . $this->tables['queue'] . ' q
+                    ON r.revision_id = q.revision_id
                 WHERE r.contribution_id = ' . $contribution_id . '
-                    AND r.revision_id = q.revision_id
                 ORDER BY r.submission_time DESC';
 
         $result = $this->db->sql_query_limit($sql, 1);
@@ -320,23 +327,24 @@ class manager
         $external_status_label = $this->get_external_status($contribution['contribution_status']);
 
         return [
-            'contribution_id'          => $contribution['contribution_id'],
-            'contribution_name'        => $contribution['contribution_name'],
-            'contribution_description' => $contribution['contribution_description'],
-            'contribution_demo_link'   => $contribution['contribution_demo_link'],
-            'contribution_type'        => $contribution['contribution_type'],
-            'contribution_status'      => $contribution['contribution_status'],
-            'external_status_label'    => $external_status_label,
-            'internal_status_label'    => $internal_status_label,
-            'author_name'              => $contribution['author_name'],
+            'contribution_id'           => $contribution['contribution_id'],
+            'contribution_name'         => $contribution['contribution_name'],
+            'contribution_description'  => $contribution['contribution_description'],
+            'contribution_demo_link'    => $contribution['contribution_demo_link'],
+            'contribution_type'         => $contribution['contribution_type'],
+            'contribution_status'       => $contribution['contribution_status'],
+            'external_status_label'     => $external_status_label,
+            'internal_status_label'     => $internal_status_label,
+            'author_name'               => $contribution['author_name'],
 
             // Revision info
-            'revision_id'              => $revision['revision_id'] ?? null,
-            'revision_name'            => $revision['revision_name'] ?? '',
-            'revision_version'         => $revision['revision_version'] ?? '',
-            'revision_description'     => $revision['revision_description'] ?? '',
-            'revision_attachment'      => $revision['revision_attachment'] ?? '',
-            'screenshots'              => $screenshots,
+            'revision_id'               => $revision['revision_id'] ?? null,
+            'revision_name'             => $revision['revision_name'] ?? '',
+            'revision_version'          => $revision['revision_version'] ?? '',
+            'revision_description'      => $revision['revision_description'] ?? '',
+            'revision_attachment'       => $revision['revision_attachment'] ?? '',
+            'queue_status'              => $revision['queue_status'],
+            'screenshots'               => $screenshots,
         ];
     }
 

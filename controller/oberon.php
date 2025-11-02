@@ -107,7 +107,7 @@ class oberon
 			// Core contribution data
 			'CONTRIBUTION_ID'       => $contribution['contribution_id'],
 			'CONTRIBUTION_NAME'     => $contribution['contribution_name'],
-			'DESCRIPTION'           => $contribution['contribution_description'],
+			'DESCRIPTION'           => $contribution['revision_description'],
 			'AUTHORS'               => $contribution['author_name'],
 			'VERSION_NUMBER'        => $contribution['revision_version'],
 			'DEMO_LINK'             => $contribution['contribution_demo_link'],
@@ -353,6 +353,7 @@ class oberon
                 
 				'CONTRIBUTION_NAME' => $contribution['contribution_name'],
                 'CONTRIBUTION_DESCRIPTION' => $contribution['contribution_description'],
+				'CONTRIBUTION_UNVALIDATED' => $this->manager->is_team_member() && $contribution['revision_status'] < $this->manager::INTERNAL_STATUS_DENIED,
             ]);
         }
 
