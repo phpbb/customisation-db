@@ -119,6 +119,58 @@ class manager
         return $this->ext_manager;
     }
 
+    public function get_external_status(int $external_status)
+    {
+        $language_string = '';
+
+        switch ($external_status)
+        {
+            case self::STATUS_UNVALIDATED:
+                $language_string = $this->user->lang('CUSTDB_STATUS_UNVALIDATED');
+                break;
+            case self::STATUS_APPROVED:
+                $language_string = $this->user->lang('CUSTDB_STATUS_APPROVED');
+                break;
+            case self::STATUS_DENIED:
+                $language_string = $this->user->lang('CUSTDB_STATUS_DENIED');
+                break;
+        }
+
+        return $language_string;
+    }
+
+    public function get_internal_status(?int $internal_status)
+    {
+        switch ($internal_status)
+        {
+            case self::INTERNAL_STATUS_UNVALIDATED:
+                $language_string = $this->user->lang('CUSTDB_INTERNAL_STATUS_UNVALIDATED');
+                break;
+            case self::INTERNAL_STATUS_AWAITING_AI_VALIDATION:
+                $language_string = $this->user->lang('CUSTDB_INTERNAL_STATUS_AWAITING_AI_VALIDATION');
+                break;
+            case self::INTERNAL_STATUS_COMPLETED_AI_VALIDATION:
+                $language_string = $this->user->lang('CUSTDB_INTERNAL_STATUS_COMPLETED_AI_VALIDATION');
+                break;
+            case self::INTERNAL_STATUS_AWAITING_TESTING:
+                $language_string = $this->user->lang('CUSTDB_INTERNAL_STATUS_AWAITING_TESTING');
+                break;
+            case self::INTERNAL_STATUS_COMPLETED_TESTING:
+                $language_string = $this->user->lang('CUSTDB_INTERNAL_STATUS_COMPLETED_TESTING');
+                break;
+            case self::INTERNAL_STATUS_DENIED:
+                $language_string = $this->user->lang('CUSTDB_INTERNAL_STATUS_DENIED');
+                break;
+            case self::INTERNAL_STATUS_APPROVED:
+                $language_string = $this->user->lang('CUSTDB_INTERNAL_STATUS_APPROVED');
+                break;
+            default:
+                $language_string = '';
+        }
+
+        return $language_string;
+    }
+
     /*
         *** UI Queries ***
     */
@@ -201,10 +253,16 @@ class manager
 
         while ($row = $this->db->sql_fetchrow($result))
         {
+            // Get the status of the latest revision so we can colour code it on the page for team members to see
+            // TODO: this is inefficient because it's getting the contribution for a second time in the function call below
+            $latest_revision = $this->get_contribution_with_latest_revision($row['contribution_id']);
+
             $contributions[] = [
                 'contribution_id'           => $row['contribution_id'],
                 'contribution_name'         => $row['contribution_name'],
                 'contribution_description'  => $row['contribution_description'],
+
+                'revision_status'           => $latest_revision['queue_status'],
             ];
         }
 
@@ -245,10 +303,12 @@ class manager
         }
 
         // Get newest revision
-        $sql = 'SELECT *
-                FROM ' . $this->tables['revisions'] . '
-                WHERE contribution_id = ' . $contribution_id . '
-                ORDER BY submission_time DESC';
+        $sql = 'SELECT r.*, q.queue_status
+                FROM ' . $this->tables['revisions'] . ' r
+                LEFT JOIN ' . $this->tables['queue'] . ' q
+                    ON r.revision_id = q.revision_id
+                WHERE r.contribution_id = ' . $contribution_id . '
+                ORDER BY r.submission_time DESC';
 
         $result = $this->db->sql_query_limit($sql, 1);
         $revision = $this->db->sql_fetchrow($result);
@@ -263,31 +323,28 @@ class manager
         }
 
         // Map status code to readable label
-        $status_labels = [
-            self::STATUS_UNVALIDATED => $this->user->lang('CUSTDB_STATUS_UNVALIDATED'),
-            self::STATUS_APPROVED => $this->user->lang('CUSTDB_STATUS_APPROVED'),
-            self::STATUS_DENIED => $this->user->lang('CUSTDB_STATUS_DENIED'),
-        ];
-
-        $status_label = $status_labels[$contribution['contribution_status']] ?? '';
+        $internal_status_label = $this->is_team_member() ? $this->get_internal_status($revision['queue_status']) : '';
+        $external_status_label = $this->get_external_status($contribution['contribution_status']);
 
         return [
-            'contribution_id'          => $contribution['contribution_id'],
-            'contribution_name'        => $contribution['contribution_name'],
-            'contribution_description' => $contribution['contribution_description'],
-            'contribution_demo_link'   => $contribution['contribution_demo_link'],
-            'contribution_type'        => $contribution['contribution_type'],
-            'contribution_status'      => $contribution['contribution_status'],
-            'status_label'             => $status_label,
-            'author_name'              => $contribution['author_name'],
+            'contribution_id'           => $contribution['contribution_id'],
+            'contribution_name'         => $contribution['contribution_name'],
+            'contribution_description'  => $contribution['contribution_description'],
+            'contribution_demo_link'    => $contribution['contribution_demo_link'],
+            'contribution_type'         => $contribution['contribution_type'],
+            'contribution_status'       => $contribution['contribution_status'],
+            'external_status_label'     => $external_status_label,
+            'internal_status_label'     => $internal_status_label,
+            'author_name'               => $contribution['author_name'],
 
             // Revision info
-            'revision_id'              => $revision['revision_id'] ?? null,
-            'revision_name'            => $revision['revision_name'] ?? '',
-            'revision_version'         => $revision['revision_version'] ?? '',
-            'revision_description'     => $revision['revision_description'] ?? '',
-            'revision_attachment'      => $revision['revision_attachment'] ?? '',
-            'screenshots'              => $screenshots,
+            'revision_id'               => $revision['revision_id'] ?? null,
+            'revision_name'             => $revision['revision_name'] ?? '',
+            'revision_version'          => $revision['revision_version'] ?? '',
+            'revision_description'      => $revision['revision_description'] ?? '',
+            'revision_attachment'       => $revision['revision_attachment'] ?? '',
+            'queue_status'              => $revision['queue_status'],
+            'screenshots'               => $screenshots,
         ];
     }
 
@@ -296,7 +353,7 @@ class manager
     */
     public function find_contribution_revision_for_queue_id(int $queue_id)
     {
-        //TODO: inefficient sql below here, fix this later
+        //TODO: inefficient sql below here, fix this later!!!
         $queue_sql = 'SELECT revision_id FROM ' . $this->tables['queue'] . ' WHERE queue_id = ' . (int) $queue_id;
         $queue_result = $this->db->sql_query_limit($queue_sql, 1);
         $queue_row = $this->db->sql_fetchrow($queue_result);

@@ -44,6 +44,15 @@ $lang = array_merge($lang, [
     'CUSTDB_STATUS_APPROVED'                    => 'Approved',
     'CUSTDB_STATUS_DENIED'                      => 'Denied',
 
+    // Internal status
+    'CUSTDB_INTERNAL_STATUS_UNVALIDATED'                => 'Unvalidated',
+    'CUSTDB_INTERNAL_STATUS_AWAITING_AI_VALIDATION'     => 'Awaiting AI Validation',
+    'CUSTDB_INTERNAL_STATUS_COMPLETED_AI_VALIDATION'    => 'Completed AI Validation',
+    'CUSTDB_INTERNAL_STATUS_AWAITING_TESTING'           => 'Awaiting Testing',
+    'CUSTDB_INTERNAL_STATUS_COMPLETED_TESTING'          => 'Completed Testing',
+    'CUSTDB_INTERNAL_STATUS_DENIED'                     => 'Denied',
+    'CUSTDB_INTERNAL_STATUS_APPROVED'                   => 'Approved',
+
     // Add revision
     'CUSTDB_ADD_REVISION'                       => 'Add Revision',
 
@@ -51,6 +60,8 @@ $lang = array_merge($lang, [
     'CUSTDB_ADD_CONTRIBUTION'                   => 'Add Contribution',
     'CUSTDB_CONTRIBUTION_NAME'                  => 'Contribution Name',
     'CUSTDB_ENTER_CONTRIBUTION_NAME'            => 'Enter contribution name...',
+    'CUSTDB_REVISION_NAME'                      => 'Revision name',
+    'CUSTDB_ENTER_REVISION_NAME'                => 'Enter revision name...',
     'CUSTDB_AUTHORS'                            => 'Authors',
     'CUSTDB_ENTER_AUTHORS'                      => 'Enter authors...',
     'CUSTDB_VERSION_NUMBER'                     => 'Version Number',
@@ -69,6 +80,9 @@ $lang = array_merge($lang, [
     // View contribution
     'CUSTDB_EDIT_CONTRIBUTION'                  => 'Edit Contribution',
     'CUSTDB_NEW_REVISION'                       => 'New Revision',
+    'CUSTDB_NO_IMAGE'                           => 'No image',
+    'CUSTDB_VALIDATION_COMMENT'                 => 'Validation Comment',
+    'CUSTDB_VALIDATION_OPTIONAL_COMMENT'        => 'Enter an optional validation comment...',
 
     // Errors
     'CUSTDB_MISSING_REQUIRED_FIELDS'            => 'Go back to the previous page and ensure all of the required fields have been filled.',

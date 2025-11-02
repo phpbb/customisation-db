@@ -54,6 +54,37 @@
     text-decoration: underline; /* optional, only if you want a hover underline */
 }
 
+/* ================================
+   Unvalidated (Red Override)
+   Add this class alongside .custdb_main_category
+=================================== */
+
+.custdb_main_category.custdb_main_category_unvalidated {
+    background: #f9ecec; /* light red background for body */
+    border-color: #f2c7c7; /* red-tinted border */
+}
+
+/* Red header for unvalidated */
+.custdb_main_category.custdb_main_category_unvalidated .custdb_main_category_header {
+    background: #d43b3b;
+}
+
+/* Header link styling */
+.custdb_main_category.custdb_main_category_unvalidated .custdb_main_category_header > a {
+    color: #fff;
+}
+
+.custdb_main_category.custdb_main_category_unvalidated .custdb_main_category_header > a:hover,
+.custdb_main_category.custdb_main_category_unvalidated .custdb_main_category_header > a:focus {
+    text-decoration: underline;
+}
+
+/* Content styling */
+.custdb_main_category.custdb_main_category_unvalidated .custdb_main_category_content {
+    background: #f9ecec;
+    color: #5a1a1a;
+}
+
 .custdb_sidebar_category_content, .custdb_main_category_content {
     padding: 10px 15px;
     background: #eaf3f9;
@@ -87,6 +118,8 @@
    Base Shared Input Styling
 =================================== */
 .custdb_input_theme {
+    width: 100%;       /* make input/select/textarea fill the parent div */
+    box-sizing: border-box; /* include padding/border in width */
     font-size: 1rem;
     padding: 8px 12px;
     border: 1px solid #ccc;
@@ -214,6 +247,13 @@
 /* Make the button always stay on the far right */
 .custdb_action_bar > div:last-child {
     margin-left: auto; /* pushes it to the right */
+}
+
+.custdb_action_bar h2 {
+    margin: 0; /* remove default top/bottom margin */
+    line-height: 1; /* keeps text nicely centered */
+    display: flex;
+    align-items: center;
 }
 
 /* Responsive adjustments for smaller screens */
