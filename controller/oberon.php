@@ -87,6 +87,7 @@ class oberon
 	public function view(int $id)
 	{
 		// Get contribution data via manager
+		// TODO: get the contribution, then get the revision
 		$contribution = $this->manager->get_contribution_with_latest_revision($id);
 
 		// If no contribution is found
@@ -105,14 +106,14 @@ class oberon
 		// Assign template variables
 		$this->template->assign_vars([
 			// Core contribution data
-			'CONTRIBUTION_ID'       => $contribution['contribution_id'],
-			'CONTRIBUTION_NAME'     => $contribution['contribution_name'],
-			'DESCRIPTION'           => $contribution['revision_description'],
-			'AUTHORS'               => $contribution['author_name'],
-			'VERSION_NUMBER'        => $contribution['revision_version'],
-			'DEMO_LINK'             => $contribution['contribution_demo_link'],
-			'EXTERNAL_STATUS'       => $contribution['external_status_label'],
-			'INTERNAL_STATUS'       => $contribution['internal_status_label'],
+			'CONTRIBUTION_ID'       	=> $contribution['contribution_id'],
+			'CONTRIBUTION_NAME'     	=> $contribution['contribution_name'],
+			'CONTRIBUTION_DESCRIPTION'  => $contribution['contribution_description'],
+			'AUTHORS'               	=> $contribution['author_name'],
+			'VERSION_NUMBER'        	=> $contribution['revision_version'],
+			'DEMO_LINK'             	=> $contribution['contribution_demo_link'],
+			'EXTERNAL_STATUS'       	=> $contribution['external_status_label'],
+			'INTERNAL_STATUS'       	=> $contribution['internal_status_label'],
 
 			// First screenshot or empty string
 			'CONTRIBUTION_IMAGE'    => !empty($contribution['screenshots'][0])
@@ -230,18 +231,19 @@ class oberon
 			}
 
             // Insert into customisations and revisions table, first gather form data
-			$type              	= $this->request->variable('contribution_type', 0);
-			$description       	= $this->request->variable('description', '', true);
-			$demo_link         	= $this->request->variable('demo_link', '', true);
-			$version        	= $this->request->variable('version_number', '', true);
-			$phpbb_version  	= $this->request->variable('phpbb_version', '');
-			$user_id           	= (int) $this->user->data['user_id'];
+			$type              			= $this->request->variable('contribution_type', 0);
+			$contribution_description 	= $this->request->variable('contribution_description', '', true);
+			$revision_description 		= $this->request->variable('revision_description', '', true);
+			$demo_link         			= $this->request->variable('demo_link', '', true);
+			$version        			= $this->request->variable('version_number', '', true);
+			$phpbb_version  			= $this->request->variable('phpbb_version', '');
+			$user_id           			= (int) $this->user->data['user_id'];
 
 			if (!$contribution_id)
 			{
 				$contribution_array = [
 					'contribution_name'        => $contribution_name,
-					'contribution_description' => $description,
+					'contribution_description' => $contribution_description,
 					'contribution_type'        => $type,
 					'contribution_status'      => $this->manager::STATUS_UNVALIDATED,
 					'contribution_demo_link'   => $demo_link,
@@ -301,7 +303,7 @@ class oberon
 				'revision_name'        		=> $revision_name,
 				'revision_version'     		=> $version,
 				'revision_phpbb_version'	=> $phpbb_version,
-				'revision_description' 		=> $description,
+				'revision_description' 		=> $revision_description,
 				'revision_attachment'  		=> $revision_file_name,
 				'revision_screenshots' 		=> $screenshot_list,
 				'user_id'              		=> $user_id,

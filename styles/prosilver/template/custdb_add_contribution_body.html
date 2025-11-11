@@ -22,11 +22,13 @@
                             {% endif %}
                         </div>
 
-                        <!-- Revision Name -->
+                        {% if S_IS_NEW_CONTRIBUTION %}
+                        <!-- Contribution Description -->
                         <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="revision_name">{{ lang('CUSTDB_REVISION_NAME') }}</label>
-                            <input type="text" id="revision_name" name="revision_name" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_REVISION_NAME') }}">
+                            <label class="custdb_input_label" for="contribution_description">{{ lang('CUSTDB_CONTRIBUTION_DESCRIPTION') }}</label>
+                            <textarea id="contribution_description" name="contribution_description" class="custdb_input_theme" rows="5" placeholder="{{ lang('CUSTDB_ENTER_DESCRIPTION') }}"></textarea>
                         </div>
+                        {% endif %}
 
                         <!-- Authors -->
                         <div class="custdb_form_group">
@@ -65,10 +67,16 @@
                         </div>
                         {% endif %}
 
-                        <!-- Description -->
+                        <!-- Revision Name -->
                         <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="description">{{ lang('CUSTDB_DESCRIPTION') }}</label>
-                            <textarea id="description" name="description" class="custdb_input_theme" rows="5" placeholder="{{ lang('CUSTDB_ENTER_DESCRIPTION') }}"></textarea>
+                            <label class="custdb_input_label" for="revision_name">{{ lang('CUSTDB_REVISION_NAME') }}</label>
+                            <input type="text" id="revision_name" name="revision_name" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_REVISION_NAME') }}">
+                        </div>
+
+                        <!-- Revision Description -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="revision_description">{{ lang('CUSTDB_REVISION_DESCRIPTION') }}</label>
+                            <textarea id="revision_description" name="revision_description" class="custdb_input_theme" rows="5" placeholder="{{ lang('CUSTDB_ENTER_DESCRIPTION') }}"></textarea>
                         </div>
 
                         <!-- File Uploads -->
