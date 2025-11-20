@@ -183,6 +183,37 @@ class manager
     /*
         *** UI Queries ***
     */
+    // Update the external validation status of a contribution
+    public function update_external_validation_status(int $contribution_id, int $contribution_status)
+    {
+        // Build the update status data array
+        $sql_array = [
+            'contribution_status' => $contribution_status,
+        ];
+
+        $sql = 'UPDATE ' . $this->tables['contributions'] . ' 
+                SET ' . $this->db->sql_build_array('UPDATE', $sql_array) . ' 
+                WHERE contribution_id = ' . (int) $contribution_id;
+
+        $this->db->sql_query($sql);
+
+        // Update the internal status accordingly.
+        $internal_status = null;
+        switch ($contribution_status)
+        {
+            case self::STATUS_UNVALIDATED:
+                $internal_status = self::INTERNAL_STATUS_UNVALIDATED;
+                break;
+            case self::STATUS_APPROVED:
+                $internal_status = self::INTERNAL_STATUS_APPROVED;
+                break;
+            case self::STATUS_DENIED:
+                $internal_status = self::INTERNAL_STATUS_DENIED;
+                break;
+        }
+
+        // TODO: SQL for updating the internal status to go here
+    }
 
     // Submit a new contribution
     public function add_contribution(array $contribution_array)

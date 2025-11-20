@@ -13,7 +13,13 @@ custdb_add_revision:
     defaults: { _controller: phpbb.oberon.controller:add_revision, contribution_id: 0 }
 
 custdb_view_contribution:
-    path: /custdb/view/{id}
+    path: /custdb/view/{contribution_id}
     requirements:
         id: \d+
-    defaults: { _controller: phpbb.oberon.controller:view, id: 0 }
+    defaults: { _controller: phpbb.oberon.controller:view, contribution_id: 0 }
+
+phpbb_oberon_validate_contribution:
+    path: /custdb/validate/{contribution_id}
+    requirements:
+        id: \d+
+    defaults: { _controller: phpbb.oberon.controller:validate, contribution_id: 0 }    
