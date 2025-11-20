@@ -43,6 +43,12 @@ class manager
     const SORT_DATE = 1;
     const SORT_NAME = 2;
 
+	/* @var string $root_path */
+	protected $root_path;
+
+	/* @var string $php_ext */
+	protected $php_ext;
+
     /* @var \phpbb\db\driver\driver_interface $db */
     protected $db;
 
@@ -58,6 +64,9 @@ class manager
     /** @var \phpbb\language\language $language */
     protected $language;
 
+	/** @var \phpbb\auth\auth */
+	protected $auth;
+
     /** @var \phpbb\extension\manager $ext_manager */
     protected $ext_manager;
 
@@ -67,7 +76,7 @@ class manager
 	/**
 	* Constructor
 	*
-    * @param string                             $phpbb_root_path,
+    * @param string                             $root_path,
     * @param string                             $php_ext,    
     * @param \phpbb\db\driver\driver_interface  $db
 	* @param \phpbb\config\config		        $config
@@ -78,9 +87,9 @@ class manager
     * @param \phpbb\extension\manager           $ext_manager
     * array                                     $tables
 	*/
-	public function __construct(string $phpbb_root_path, string $php_ext, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\auth\auth $auth, \phpbb\extension\manager $ext_manager, array $tables)
+	public function __construct(string $root_path, string $php_ext, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\auth\auth $auth, \phpbb\extension\manager $ext_manager, array $tables)
 	{
-        $this->phpbb_root_path = $phpbb_root_path;
+        $this->root_path = $root_path;
         $this->php_ext = $php_ext;
         $this->db = $db;
 		$this->config = $config;
@@ -174,6 +183,37 @@ class manager
     /*
         *** UI Queries ***
     */
+    // Update the external validation status of a contribution
+    public function update_external_validation_status(int $contribution_id, int $contribution_status)
+    {
+        // Build the update status data array
+        $sql_array = [
+            'contribution_status' => $contribution_status,
+        ];
+
+        $sql = 'UPDATE ' . $this->tables['contributions'] . ' 
+                SET ' . $this->db->sql_build_array('UPDATE', $sql_array) . ' 
+                WHERE contribution_id = ' . (int) $contribution_id;
+
+        $this->db->sql_query($sql);
+
+        // Update the internal status accordingly.
+        $internal_status = null;
+        switch ($contribution_status)
+        {
+            case self::STATUS_UNVALIDATED:
+                $internal_status = self::INTERNAL_STATUS_UNVALIDATED;
+                break;
+            case self::STATUS_APPROVED:
+                $internal_status = self::INTERNAL_STATUS_APPROVED;
+                break;
+            case self::STATUS_DENIED:
+                $internal_status = self::INTERNAL_STATUS_DENIED;
+                break;
+        }
+
+        // TODO: SQL for updating the internal status to go here
+    }
 
     // Submit a new contribution
     public function add_contribution(array $contribution_array)
@@ -397,9 +437,9 @@ class manager
      **/
     public function new_topic(int $forum_id, string $topic_subject, string $topic_text)
     {
-        include_once($this->phpbb_root_path . 'includes/functions_posting.' . $this->php_ext);
+        include_once($this->root_path . 'includes/functions_posting.' . $this->php_ext);
 
-        // User ID (Customisations Robot?)
+        // TODO: User ID (Customisations Robot?)
         $customisation_robot_user_id = 2;
 
         $this->user_loader->load_users([$customisation_robot_user_id]);
