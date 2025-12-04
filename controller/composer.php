@@ -44,20 +44,21 @@ class composer
 	* Serve composer's files.
 	*
 	* @param string $filename	Filename to serve (without extension)
+	* @param string $subdirectory	Optional subdirectory
 	* @return \Symfony\Component\HttpFoundation\Response
 	*/
-	public function serve_file($filename)
+	public function serve_file($filename, $subdirectory = '')
 	{
-		if (strpos($filename, '..') !== false)
+		if (strpos($filename, '..') !== false || strpos($subdirectory, '..') !== false)
 		{
 			throw new http_exception(404, 'NO_PAGE_FOUND');
 		}
 
-		$filename = $this->titania_root_path . 'composer_packages/prod/' . $filename . '.json';
+		$filepath = $this->titania_root_path . 'composer_packages/prod/' . $subdirectory . $filename . '.json';
 
 		try
 		{
-			return new BinaryFileResponse($filename, 200);
+			return new BinaryFileResponse($filepath, 200);
 		}
 		catch (\Exception $e)
 		{

@@ -95,4 +95,14 @@ class ext extends \phpbb\extension\base
 
 	// Misc
 	const TITANIA_CONFIG_PREFIX = 'titania_';
+
+	/**
+	 * Get filtered repository branch versions
+	 *
+	 * @return array Array of branch numbers to create filtered repositories for
+	 */
+	public static function get_filtered_repository_branches(): array
+	{
+		return [40];
+	}
 }
