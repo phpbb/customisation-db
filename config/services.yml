@@ -303,24 +303,12 @@ services:
              - '%core.root_path%'
              - '%core.php_ext%'
 
-    phpbb.titania.mod.prevalidator:
-        class: phpbb\titania\contribution\mod\prevalidator
-        arguments:
-             - '@phpbb.titania.config'
-             - '@user'
-             - '@template'
-             - '@phpbb.titania.contribution.prevalidator_helper'
-             - '%core.root_path%'
-             - '%phpbb.titania.root_path%'
-             - '%core.php_ext%'
-
     phpbb.titania.mod.type:
         class: phpbb\titania\contribution\mod\type
         arguments:
             - '@phpbb.titania.config'
             - '@user'
             - '@auth'
-            - '@phpbb.titania.mod.prevalidator'
         tags:
             - { name: titania.contribution.type }
 

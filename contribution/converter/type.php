@@ -17,9 +17,9 @@ use phpbb\titania\contribution\type\base;
 
 class type extends base
 {
-	const ID = 3;
-	const NAME = 'converter';
-	const URL = 'converter';
+	public const ID = 3;
+	public const NAME = 'converter';
+	public const URL = 'converter';
 
 	/**
 	 * @{inheritDoc}

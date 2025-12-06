@@ -81,8 +81,6 @@ $lang = array_merge($lang, array(
 	'NO_NOTES'					=> 'No Notes',
 	'NO_QUEUE_ITEM'				=> 'Queue item does not exist.',
 
-	'OLD_VALIDATION_AUTOMOD'	=> 'Automod Test from pre-repack',
-	'OLD_VALIDATION_MPV'		=> 'MPV Notes from pre-repack',
 	'OPEN_ITEMS'				=> 'Open Items',
 
 	'PLEASE_WAIT_FOR_TOOL'		=> 'Please wait for the tool to finish running.',
@@ -111,7 +109,6 @@ $lang = array_merge($lang, array(
 	'REBUILD_FIRST_POST'		=> 'Rebuild first post',
 	'REPACK'					=> 'Repack',
 	'REPORTED'					=> 'Reported',
-	'RETEST_AUTOMOD'			=> 'Re-test Automod',
 	'RETEST_PV'					=> 'Re-test prevalidator',
 	'REVISION_REPACKED'			=> 'This revision has been repacked.',
 
@@ -123,7 +120,6 @@ $lang = array_merge($lang, array(
 	'UNKNOWN'					=> 'Unknown',
 
 	'VALIDATION'				=> 'Validation',
-	'VALIDATION_AUTOMOD'		=> 'Automod Test',
 	'VALIDATION_MESSAGE'		=> 'Validation Message/Reason',
 	'VALIDATION_NOTES'			=> 'Validation Notes',
 	'VALIDATION_PV'				=> 'Prevalidator Notes',

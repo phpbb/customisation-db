@@ -26,9 +26,9 @@ class type extends base
 	/** @var prevalidator */
 	protected $prevalidator;
 
-	const ID = 8;
-	const NAME = 'extension';
-	const URL = 'extension';
+	public const ID = 8;
+	public const NAME = 'extension';
+	public const URL = 'extension';
 
 	/**
 	 * Constructor

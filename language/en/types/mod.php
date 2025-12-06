@@ -41,7 +41,6 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'AUTOMOD_TEST'						=> 'AutoMOD Test',
 	'MODIFICATION'						=> 'Modification',
 	'MODIFICATIONS'						=> 'Modifications',
 	'MOD_CONTRIB_CLEANED'				=> 'Cleaned',
@@ -129,6 +128,4 @@ If you have any queries and further discussion please use the Queue Discussion T
 
 Thank you,
 phpBB Extension Customisations Team',
-
-	'MPV_TEST'			=> 'MOD Prevalidator Test',
 ));

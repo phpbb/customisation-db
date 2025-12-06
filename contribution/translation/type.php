@@ -26,11 +26,11 @@ class type extends base
 	/** @var prevalidator */
 	protected $prevalidator;
 
-	const ID = 6;
-	const NAME = 'translation';
-	const URL = 'translation';
+	public const ID = 6;
+	public const NAME = 'translation';
+	public const URL = 'translation';
 
-	const PHPBB_LATEST_VERSION = '3.2';
+	public const PHPBB_LATEST_VERSION = '3.2';
 
 	/**
 	 * Constructor

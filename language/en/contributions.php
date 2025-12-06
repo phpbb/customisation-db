@@ -44,8 +44,6 @@ $lang = array_merge($lang, array(
 	'ATTENTION_CONTRIB_CATEGORIES_CHANGED'	=> 'Contribution categories changed',
 	'ATTENTION_CONTRIB_DESC_CHANGED'		=> 'Contribution description changed',
 	'ATTENTION_CONTRIB_NAME_CHANGED'		=> 'Contribution name changed',
-	'AUTOMOD_RESULTS'						=> '<strong>Please check over the AutoMod install results and make sure that nothing needs to be fixed.<br /><br />If an error comes up and you are certain that the error is incorrect, just hit continue below.</strong>',
-	'AUTOMOD_TEST'							=> 'The Mod will be tested against AutoMod and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
 
 	'BAD_VERSION_SELECTED'					=> '%s is not a proper phpBB version.',
 	'BRANCH_ALREADY_IN_QUEUE'				=> 'There is already a revision in the queue in the process of being validated for %s.',
@@ -145,9 +143,6 @@ $lang = array_merge($lang, array(
 	'LOGIN_EXPLAIN_CONTRIB'					=> 'In order to create a new contribution you need to be registered',
 
 	'MANAGE_CONTRIBUTION'					=> 'Manage Contribution',
-	'MPV_TEST'								=> 'The Mod will be tested against MPV and results will be shown (this may take a few moments, so please be patient).<br /><br />Please hit continue when you are ready.',
-	'MPV_TEST_FAILED'						=> 'Sorry, the automatic MPV test failed and your MPV test results are not available. Please continue.',
-	'MPV_TEST_FAILED_QUEUE_MSG'				=> 'Automated MPV test failed. [url=%s]Click here to attempt running MPV automatically again[/url]',
 	'MUST_SELECT_ONE_VERSION'				=> 'You must select at least one phpBB version.',
 
 	'NEW_CONTRIBUTION'						=> 'New Contribution',
