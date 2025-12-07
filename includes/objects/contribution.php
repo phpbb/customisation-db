@@ -1488,7 +1488,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*
 	* @return array Returns array containing any errors found.
 	*/
-	public function validate($contrib_categories = array(), $authors, $custom_fields, $old_permalink = '')
+	public function validate($contrib_categories, $authors, $custom_fields, $old_permalink = '')
 	{
 		phpbb::$user->add_lang('ucp');
 
