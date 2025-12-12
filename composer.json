@@ -62,7 +62,7 @@
     ],
     "require": {
         "ext-zip": "*",
-        "php": "^7.4.33",
+        "php": "^7.2",
         "phpbb/epv": "dev-master@dev",
         "phpbb/translation-validator": "~1.6",
         "composer/installers": "~1.0",

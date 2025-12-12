@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9334fe2f15432d8f51a05475edcdbde",
+    "content-hash": "58b55c8949c633f3a172b3e1bf2d930a",
     "packages": [
         {
             "name": "battye/php-array-parser",
@@ -2013,7 +2013,7 @@
     "prefer-lowest": false,
     "platform": {
         "ext-zip": "*",
-        "php": "^7.4.33"
+        "php": "^7.2"
     },
     "platform-dev": {},
     "platform-overrides": {
