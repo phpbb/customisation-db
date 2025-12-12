@@ -86,7 +86,7 @@ class tools
 	*/
 	public function run_tool($tool, $id)
 	{
-		if (!in_array($tool, array('automod', 'mpv', 'epv')))
+		if ($tool != 'epv')
 		{
 			return $this->helper->error('INVALID_TOOL', 404);
 		}
@@ -132,102 +132,10 @@ class tools
 	}
 
 	/**
-	* Run MOD PreValidator.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
-	protected function mpv()
-	{
-		if (!$this->contrib->type->mpv_test)
-		{
-			return $this->helper->error('INVALID_TOOl');
-		}
-
-		// Run MPV
-		$prevalidator = $this->contrib->type->get_prevalidator();
-		$results = $prevalidator->run_mpv($this->attachment->get_url());
-		$errors = $prevalidator->get_errors();
-
-		if ($results === false)
-		{
-			return $this->helper->error('MPV_TEST_FAILED');
-		}
-		else
-		{
-			$results = $this->get_result_post('VALIDATION_PV', $results);
-			$post = $this->queue->topic_reply($results);
-		}
-
-		if (!empty($errors))
-		{
-			return $this->helper->error(implode('<br />', $errors));
-		}
-
-		redirect($post->get_url());
-	}
-
-	/**
-	* Run AutoMOD Tests.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
-	protected function automod()
-	{
-		if (!$this->contrib->type->automod_test)
-		{
-			return $this->helper->error('INVALID_TOOl');
-		}
-		$this->package->ensure_extracted();
-
-		// Start up the machine
-		$prevalidator = $this->contrib->type->get_prevalidator();
-
-		// Automod testing time
-		$details = '';
-		$html_results = $bbcode_results = array();
-		$this->revision->load_phpbb_versions();
-
-		foreach ($this->revision->phpbb_versions as $row)
-		{
-			$version_string = $row['phpbb_version_branch'][0] . '.' . $row['phpbb_version_branch'][1] . '.' . $row['phpbb_version_revision'];
-			$phpbb_path = $prevalidator->get_helper()->prepare_phpbb_test_directory($version_string);
-
-			if ($phpbb_path === false)
-			{
-				continue;
-			}
-
-			$this->template->assign_vars(array(
-				'PHPBB_VERSION'		=> $version_string,
-				'TEST_ID'			=> $row['row_id'],
-			));
-
-			$html_result = $bbcode_result = '';
-			$prevalidator->run_automod_test(
-				$this->package,
-				$phpbb_path,
-				$details,
-				$html_result,
-				$bbcode_result
-			);
-
-			$bbcode_results[] = $bbcode_result;
-		}
-
-		$bbcode_results = $this->get_result_post('VALIDATION_AUTOMOD', implode("\n\n", $bbcode_results));
-
-		// Update the queue with the results
-		$post = $this->queue->topic_reply($bbcode_results);
-		$this->package->cleanup();
-
-		redirect($post->get_url());
-	}
-
-	/**
 	* Load objects needed to run a tool.
 	*
 	* @param int $id		Revision id.
-	* @return null
+	* @return void
 	*/
 	protected function load_objects($id)
 	{
@@ -242,7 +150,7 @@ class tools
 	* Load revision.
 	*
 	* @throws \Exception Throws exception if no revision found.
-	* @return null
+	* @return void
 	*/
 	protected function load_revision($id)
 	{
@@ -259,7 +167,7 @@ class tools
 	* Load revision's parent contribution.
 	*
 	* @throws \Exception Throws exception if no contrib found.
-	* @return null
+	* @return void
 	*/
 	protected function load_contrib()
 	{
@@ -275,7 +183,7 @@ class tools
 	/**
 	* Load revision's corresponding queue item.
 	*
-	* @return null
+	* @return void
 	*/
 	protected function load_queue()
 	{
@@ -286,7 +194,7 @@ class tools
 	* Load revision attachment.
 	*
 	* @throws \Exception Throws exception if no attachment found.
-	* @return null
+	* @return void
 	*/
 	protected function load_attachment()
 	{

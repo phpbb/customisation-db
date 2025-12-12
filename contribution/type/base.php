@@ -129,12 +129,10 @@ class base implements type_interface
 	public $extra_upload = true;
 
 	/**
-	 * Run MPV/Automod Test for this type?
+	 * Run prevalidator Test for this type?
 	 *
 	 * @var bool
 	 */
-	public $mpv_test = false;
-	public $automod_test = false;
 	public $epv_test = false;
 
 	/**
@@ -223,9 +221,9 @@ class base implements type_interface
 	 */
 	public $contribution_fields = array();
 
-	const ID = 0;
-	const NAME = 'contribution';
-	const URL = 'contribution';
+	public const ID = 0;
+	public const NAME = 'contribution';
+	public const URL = 'contribution';
 
 	/**
 	 * Constructor

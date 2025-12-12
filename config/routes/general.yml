@@ -64,6 +64,14 @@ phpbb.titania.contribution.id:
     requirements:
         id: \d+
 
+phpbb.titania.composer.40.files:
+    path: /composer/40/{filename}.json
+    defaults: { _controller: phpbb.titania.controller.composer:serve_file, subdirectory: '40/' }
+
+phpbb.titania.composer.40:
+    path: /composer/40/
+    defaults: { _controller: phpbb.titania.controller.composer:serve_file, filename: packages, subdirectory: '40/' }
+
 phpbb.titania.composer:
     path: /composer/{filename}.json
     defaults: { _controller: phpbb.titania.controller.composer:serve_file }

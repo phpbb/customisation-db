@@ -516,7 +516,7 @@ class titania_revision extends \phpbb\titania\entity\database_base
 			throw new exception('Old queue missing. Revision ID: ' . $old_revision->revision_id);
 		}
 
-		// Reply to the queue topic to say that it's been repacked and have the old mpv/automod results listed in it as well
+		// Reply to the queue topic to say that it's been repacked
 		$repack_message = phpbb::$user->lang['REVISION_REPACKED'] . "\n\n";
 
 		// Add the MPV results
@@ -524,12 +524,6 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		{
 			message::decode($queue->mpv_results, $queue->mpv_results_uid);
 			$repack_message .= '[quote=&quot;' . $this->user->lang['VALIDATION_PV'] . '&quot;]' . $queue->mpv_results . "[/quote]\n";
-		}
-
-		// Add the Automod results
-		if ($queue->automod_results)
-		{
-			$repack_message .= '[quote=&quot;' . phpbb::$user->lang['VALIDATION_AUTOMOD'] . '&quot;]' . $queue->automod_results . "[/quote]\n";
 		}
 
 		// Repack diff

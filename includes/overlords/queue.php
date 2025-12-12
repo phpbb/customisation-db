@@ -288,18 +288,8 @@ class queue_overlord
 		$misc_actions = array(
 			array(
 				'RETEST_PV',
-				$queue->get_tool_url('mpv', $row['revision_id'], $hash),
-				$contrib->type->mpv_test,
-			),
-			array(
-				'RETEST_PV',
 				$queue->get_tool_url('epv', $row['revision_id'], $hash),
 				$contrib->type->epv_test,
-			),
-			array(
-				'RETEST_AUTOMOD',
-				$queue->get_tool_url('automod', $row['revision_id'], $hash),
-				$contrib->type->automod_test,
 			),
 		);
 

@@ -23,7 +23,6 @@ use phpbb\titania\entity\package;
 use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Finder\SplFileInfo;
 
 class rebuild_repo extends base
 {
@@ -57,6 +56,9 @@ class rebuild_repo extends base
 	/** @var string */
 	protected $revisions_table;
 
+	/** @var string */
+	protected $revisions_phpbb_table;
+
 	/** @var int */
 	protected $total;
 
@@ -84,6 +86,7 @@ class rebuild_repo extends base
 		$this->attachments_table = $table_prefix . 'attachments';
 		$this->contribs_table = $table_prefix . 'contribs';
 		$this->revisions_table = $table_prefix . 'revisions';
+		$this->revisions_phpbb_table = $table_prefix . 'revisions_phpbb';
 	}
 
 	/**
@@ -140,11 +143,13 @@ class rebuild_repo extends base
 		}
 
 		$sql = 'SELECT c.contrib_id, c.contrib_name_clean, c.contrib_type, r.revision_id,
-				r.attachment_id, r.revision_composer_json' . $attach_fields . '
+				r.attachment_id, r.revision_composer_json, rp.phpbb_version_branch' . $attach_fields . '
 			FROM ' . $this->contribs_table . ' c, ' .
-			$this->revisions_table . ' r ' .
+			$this->revisions_table . ' r, ' .
+			$this->revisions_phpbb_table . ' rp ' .
 			$attach_table . '
-			WHERE c.contrib_id = r.contrib_id ' .
+			WHERE c.contrib_id = r.contrib_id
+				AND r.revision_id = rp.revision_id ' .
 			$attach_where . '
 				AND c.contrib_status = ' . ext::TITANIA_CONTRIB_APPROVED . '
 				AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
@@ -192,6 +197,12 @@ class rebuild_repo extends base
 
 		$last_type = $last_contrib = '';
 		$packages = array();
+		$filtered_packages = array();
+		$branches = ext::get_filtered_repository_branches();
+		foreach ($branches as $branch)
+		{
+			$filtered_packages[$branch] = array();
+		}
 
 		foreach ($batch as $contrib_id => $revisions)
 		{
@@ -246,6 +257,20 @@ class rebuild_repo extends base
 					$download_url,
 					$contrib_url
 				);
+
+				foreach ($filtered_packages as $branch => $packages_data)
+				{
+					if ($revision['phpbb_version_branch'] >= $branch)
+					{
+						$filtered_packages[$branch] = $this->repo->set_release(
+							$filtered_packages[$branch],
+							$revision['revision_composer_json'],
+							$download_url,
+							$contrib_url
+						);
+					}
+				}
+
 				unset($batch[$contrib_id][$index]);
 			}
 
@@ -257,6 +282,11 @@ class rebuild_repo extends base
 			if (($group_count % 50) === 0)
 			{
 				$this->dump_include($last_type, $group, $packages);
+				foreach ($filtered_packages as $branch => $packages_data)
+				{
+					$this->dump_include($last_type, $group, $packages_data, $branch);
+					$filtered_packages[$branch] = array();
+				}
 				$group_count = 0;
 				$group++;
 				$packages = array();
@@ -266,6 +296,10 @@ class rebuild_repo extends base
 		if (!empty($packages))
 		{
 			$this->dump_include($last_type, $group, $packages);
+			foreach ($filtered_packages as $branch => $packages_data)
+			{
+				$this->dump_include($last_type, $group, $packages_data, $branch);
+			}
 		}
 
 		$next_batch = $this->limit ? $this->start + $this->limit : $this->get_total();
@@ -288,11 +322,13 @@ class rebuild_repo extends base
 	 * @param string $type		Contrib type name
 	 * @param int $group		Group id
 	 * @param array $packages	Packages
+	 * @param int $branch		Optional branch number for subdirectory
 	 */
-	protected function dump_include($type, $group, array $packages)
+	protected function dump_include($type, $group, array $packages, $branch = null)
 	{
 		$type_name = $this->types->get($type)->name;
-		$this->repo->dump_include("packages-$type_name-$group.json", $packages);
+		$subdir = $branch ? $branch . '/' : '';
+		$this->repo->dump_include("packages-$type_name-$group.json", $packages, $subdir);
 	}
 
 	/**

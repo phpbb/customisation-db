@@ -15,6 +15,7 @@ namespace phpbb\titania\composer;
 
 use phpbb\config\config;
 use phpbb\exception\runtime_exception;
+use phpbb\titania\ext;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -62,6 +63,13 @@ class repository
 			$this->fs->remove($this->build_dir);
 		}
 		$this->fs->mkdir($this->build_dir);
+
+		// Create filtered repository subdirectories
+		$branches = ext::get_filtered_repository_branches();
+		foreach ($branches as $branch)
+		{
+			$this->fs->mkdir($this->build_dir . $branch);
+		}
 
 		return $this;
 	}
@@ -152,8 +160,9 @@ class repository
 	 *
 	 * @param string $name		File name
 	 * @param array $packages	Packages to be dumped
+	 * @param string $subdir	Optional subdirectory
 	 */
-	public function dump_include($name, array $packages)
+	public function dump_include($name, array $packages, $subdir = '')
 	{
 		foreach ($packages as $package_name => $versions)
 		{
@@ -163,7 +172,8 @@ class repository
 			array('packages' => $packages),
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
 		);
-		$file = $this->build_dir . $name;
+		$target_dir = $this->build_dir . $subdir;
+		$file = $target_dir . $name;
 		$this->fs->dumpFile($file, $packages);
 	}
 
@@ -190,8 +200,24 @@ class repository
 	 */
 	protected function build_parents()
 	{
+		$this->build_parent_structure();
+		$branches = ext::get_filtered_repository_branches();
+		foreach ($branches as $branch)
+		{
+			$this->build_parent_structure($branch . '/');
+		}
+	}
+
+	/**
+	 * Build parent structure for given subdirectory
+	 *
+	 * @param string $subdir Optional subdirectory
+	 */
+	protected function build_parent_structure($subdir = '')
+	{
 		$includes = $this->get_include_files();
 		$parent = $types = array();
+		$target_dir = $this->build_dir . $subdir;
 
 		foreach ($includes as $file)
 		{
@@ -212,7 +238,7 @@ class repository
 		foreach ($types as $type => $includes)
 		{
 			$type_filename = 'packages-' . $type . '.json';
-			$type_filepath = $this->build_dir . $type_filename;
+			$type_filepath = $target_dir . $type_filename;
 			$contents = json_encode(array('includes' => $includes));
 			$this->fs->dumpFile($type_filepath, $contents);
 
@@ -223,7 +249,7 @@ class repository
 		if (!empty($parent))
 		{
 			$contents = json_encode(array('includes' => $parent));
-			$this->fs->dumpFile($this->build_dir . 'packages.json', $contents);
+			$this->fs->dumpFile($target_dir . 'packages.json', $contents);
 		}
 	}
 
