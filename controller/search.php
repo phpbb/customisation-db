@@ -527,30 +527,51 @@ class search
 	{
 		$params = unserialize($params, ['allowed_classes' => false]);
 
+		// Return empty string if params are invalid
+		if (!is_array($params) || empty($params))
+		{
+			return '';
+		}
+
+		$required_params = [];
+
 		switch ($type)
 		{
 			case ext::TITANIA_FAQ:
 				$controller = 'phpbb.titania.contrib.faq.item';
+				$required_params = ['contrib_type', 'contrib', 'id'];
 			break;
 
 			case ext::TITANIA_QUEUE:
 				$controller = 'phpbb.titania.queue.item';
+				$required_params = ['id'];
 			break;
 
 			case ext::TITANIA_SUPPORT:
 			case ext::TITANIA_QUEUE_DISCUSSION:
 				$controller = 'phpbb.titania.contrib.support.topic';
+				$required_params = ['contrib_type', 'contrib', 'topic_id'];
 			break;
 
 			case ext::TITANIA_CONTRIB:
 				$controller = 'phpbb.titania.contrib';
+				$required_params = ['contrib_type', 'contrib'];
 			break;
 
 			default:
 				return '';
 		}
 
-		return $this->helper->route($controller, is_array($params) ? $params : array());
+		// Verify all required parameters are present
+		foreach ($required_params as $required_param)
+		{
+			if (!isset($params[$required_param]) || $params[$required_param] === '')
+			{
+				return '';
+			}
+		}
+
+		return $this->helper->route($controller, $params);
 	}
 
 	/**
@@ -660,12 +681,23 @@ class search
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$id = $row['post_type'] . '_' . ($is_sphinx ? $row['id'] + 20000000 : $row['id']);
-			$row['url'] = serialize(array_merge(unserialize($row['url'], ['allowed_classes' => false]), array(
-				'topic_id' => $row['topic_id'],
-				'p'        => $row['id'],
-				'#'        => 'p' . $row['id'],
-			)));
-			$documents[$id] = array_merge($documents[$id], $row);
+
+			// Unserialize existing URL parameters (contains contrib_type and contrib)
+			$url_params = unserialize($row['url'], ['allowed_classes' => false]);
+
+			// Only add to documents if we have valid URL params with required fields
+			if (is_array($url_params) && !empty($url_params))
+			{
+				// Add additional parameters for topic/post navigation
+				$url_params = array_merge($url_params, array(
+					'topic_id' => $row['topic_id'],
+					'p'        => $row['id'],
+					'#'        => 'p' . $row['id'],
+				));
+
+				$row['url'] = serialize($url_params);
+				$documents[$id] = array_merge($documents[$id], $row);
+			}
 		}
 		$this->db->sql_freeresult($result);
 
@@ -696,11 +728,19 @@ class search
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$id = ext::TITANIA_CONTRIB . '_' . $row['id'];
-			$row['url'] = serialize(array(
-				'contrib_type'	=> $this->types->get($row['contrib_type'])->url,
-				'contrib'		=> $row['contrib_name_clean'],
-			));
-			$documents[$id] = array_merge($documents[$id], $row);
+
+			// Get the contrib type object to get the URL-friendly type name
+			$contrib_type_obj = $this->types->get($row['contrib_type']);
+
+			// Only add URL if we have a valid contrib type
+			if ($contrib_type_obj)
+			{
+				$row['url'] = serialize(array(
+					'contrib_type'	=> $contrib_type_obj->url,
+					'contrib'		=> $row['contrib_name_clean'],
+				));
+				$documents[$id] = array_merge($documents[$id], $row);
+			}
 		}
 		$this->db->sql_freeresult($result);
 
@@ -734,12 +774,20 @@ class search
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$id = ext::TITANIA_FAQ . '_' . ($is_sphinx ? $row['id'] + 10000000 : $row['id']);
-			$row['url'] = serialize(array(
-				'contrib_type' => $this->types->get($row['contrib_type'])->url,
-				'contrib'      => $row['contrib_name_clean'],
-				'id'           => $row['id'],
-			));
-			$documents[$id] = array_merge($documents[$id], $row);
+
+			// Get the contrib type object to get the URL-friendly type name
+			$contrib_type_obj = $this->types->get($row['contrib_type']);
+
+			// Only add URL if we have a valid contrib type
+			if ($contrib_type_obj)
+			{
+				$row['url'] = serialize(array(
+					'contrib_type' => $contrib_type_obj->url,
+					'contrib'      => $row['contrib_name_clean'],
+					'id'           => $row['id'],
+				));
+				$documents[$id] = array_merge($documents[$id], $row);
+			}
 		}
 		$this->db->sql_freeresult($result);
 
