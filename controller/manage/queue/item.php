@@ -390,10 +390,11 @@ class item extends \phpbb\titania\controller\manage\base
 	public function approve()
 	{
 		$public_notes = $this->request->variable('public_notes', '', true);
+		$post_as_robot = $this->request->variable('post_as_robot', 1);
 
 		if ($this->validate('approve'))
 		{
-			$robot_user_id = $this->contrib->type->forum_robot;
+			$robot_user_id = $post_as_robot ? $this->contrib->type->forum_robot : 0;
 			$this->queue->approve($public_notes, $robot_user_id);
 
 			// Reload contribution with new data.
@@ -432,9 +433,11 @@ class item extends \phpbb\titania\controller\manage\base
 	*/
 	public function deny()
 	{
+		$post_as_robot = $this->request->variable('post_as_robot', 1);
+
 		if ($this->validate('deny'))
 		{
-			$robot_user_id = $this->contrib->type->forum_robot;
+			$robot_user_id = $post_as_robot ? $this->contrib->type->forum_robot : 0;
 			$this->queue->deny($robot_user_id);
 			$this->contrib->type->deny($this->contrib, $this->queue, $this->request);
 			redirect($this->queue->get_url());
@@ -476,12 +479,19 @@ class item extends \phpbb\titania\controller\manage\base
 		$this->contrib->type->display_validation_options($action, $this->request, $this->template);
 		$this->display_topic_review();
 
+		$post_as_robot = $this->request->variable('post_as_robot', 1);
+		$has_robot = !empty($this->contrib->type->forum_robot);
+
 		$this->template->assign_vars(array(
 			'ERROR'						=> implode('<br />', $error),
 			'L_TOPIC_REVIEW'			=> $this->user->lang['QUEUE_REVIEW'],
 			'TOPIC_TITLE'				=> $this->contrib->contrib_name,
 			'PAGE_TITLE_EXPLAIN'		=> $this->user->lang[strtoupper($action) . '_QUEUE_CONFIRM'],
 			'S_CONFIRM_ACTION'			=> $this->queue->get_url($action),
+			'S_SHOW_POST_AS_OPTION'		=> $has_robot,
+			'POST_AS_ROBOT'				=> $post_as_robot,
+			'POST_AS_LABEL'				=> $this->user->lang['POST_AS_' . strtoupper($action)],
+			'ROBOT_NAME'				=> ucfirst($this->contrib->type->name),
 		));
 
 		return false;

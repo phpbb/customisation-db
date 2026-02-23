@@ -26,6 +26,18 @@
 	<h2>{{ PAGE_TITLE }}</h2>
 	<p>{{ PAGE_TITLE_EXPLAIN }}</p>
 
+	{% if S_SHOW_POST_AS_OPTION %}
+	<fieldset>
+		<dl>
+			<dt><label>{{ POST_AS_LABEL ~ lang('COLON') }}</label></dt>
+			<dd>
+				<label><input type="radio" name="post_as_robot" value="1"{% if POST_AS_ROBOT %} checked="checked"{% endif %} /> {{ lang('POST_AS_ROBOT', ROBOT_NAME) }}</label>
+				<label><input type="radio" name="post_as_robot" value="0"{% if not POST_AS_ROBOT %} checked="checked"{% endif %} /> {{ lang('POST_AS_SELF') }}</label>
+			</dd>
+		</dl>
+	</fieldset>
+	{% endif %}
+
 	<fieldset>
 		{% if S_STYLE_DEMO_INSTALL %}
 		<dl>
