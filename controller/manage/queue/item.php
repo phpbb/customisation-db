@@ -393,7 +393,8 @@ class item extends \phpbb\titania\controller\manage\base
 
 		if ($this->validate('approve'))
 		{
-			$this->queue->approve($public_notes);
+			$robot_user_id = $this->contrib->type->forum_robot;
+			$this->queue->approve($public_notes, $robot_user_id);
 
 			// Reload contribution with new data.
 			$this->contrib->load();
@@ -433,7 +434,8 @@ class item extends \phpbb\titania\controller\manage\base
 	{
 		if ($this->validate('deny'))
 		{
-			$this->queue->deny();
+			$robot_user_id = $this->contrib->type->forum_robot;
+			$this->queue->deny($robot_user_id);
 			$this->contrib->type->deny($this->contrib, $this->queue, $this->request);
 			redirect($this->queue->get_url());
 		}
