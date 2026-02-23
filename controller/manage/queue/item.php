@@ -481,6 +481,7 @@ class item extends \phpbb\titania\controller\manage\base
 
 		$post_as_robot = $this->request->variable('post_as_robot', 1);
 		$has_robot = !empty($this->contrib->type->forum_robot);
+		$robot_name = $has_robot ? \users_overlord::get_user($this->contrib->type->forum_robot, 'username', true) : '';
 
 		$this->template->assign_vars(array(
 			'ERROR'						=> implode('<br />', $error),
@@ -488,10 +489,10 @@ class item extends \phpbb\titania\controller\manage\base
 			'TOPIC_TITLE'				=> $this->contrib->contrib_name,
 			'PAGE_TITLE_EXPLAIN'		=> $this->user->lang[strtoupper($action) . '_QUEUE_CONFIRM'],
 			'S_CONFIRM_ACTION'			=> $this->queue->get_url($action),
-			'S_SHOW_POST_AS_OPTION'		=> $has_robot,
+			'S_SHOW_POST_AS_OPTION'		=> $has_robot && $robot_name,
 			'POST_AS_ROBOT'				=> $post_as_robot,
+			'ROBOT_NAME'				=> $robot_name,
 			'POST_AS_LABEL'				=> $this->user->lang['POST_AS_' . strtoupper($action)],
-			'ROBOT_NAME'				=> ucfirst($this->contrib->type->name),
 		));
 
 		return false;

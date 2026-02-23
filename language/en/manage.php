@@ -86,7 +86,6 @@ $lang = array_merge($lang, array(
 	'PLEASE_WAIT_FOR_TOOL'		=> 'Please wait for the tool to finish running.',
 	'POST_AS_APPROVE'			=> 'Approve as',
 	'POST_AS_DENY'				=> 'Deny as',
-	'POST_AS_ROBOT'				=> '%s Robot',
 	'POST_AS_SELF'				=> 'Yourself',
 	'PUBLIC_NOTES'				=> 'Public release notes',
 

@@ -31,7 +31,7 @@
 		<dl>
 			<dt style="width: auto"><label>{{ POST_AS_LABEL ~ lang('COLON') }}</label></dt>
 			<dd style="margin: 0 0 12px 10%">
-				<label><input type="radio" name="post_as_robot" value="1"{% if POST_AS_ROBOT %} checked="checked"{% endif %} />{{ lang('POST_AS_ROBOT', ROBOT_NAME) }}</label>
+				<label><input type="radio" name="post_as_robot" value="1"{% if POST_AS_ROBOT %} checked="checked"{% endif %} />{{ ROBOT_NAME }}</label>
 				<label><input type="radio" name="post_as_robot" value="0"{% if not POST_AS_ROBOT %} checked="checked"{% endif %} />{{ lang('POST_AS_SELF') }}</label>
 			</dd>
 		</dl>
