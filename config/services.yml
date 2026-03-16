@@ -43,6 +43,14 @@ services:
             - '@phpbb.oberon.manager'
         tags:
             - { name: console.command }
+
+    phpbb.oberon.console.ai_validation2:
+        class: phpbb\oberon\console\ai_validation2
+        arguments:
+            - '@dbal.conn'
+            - '@phpbb.oberon.manager'
+        tags:
+            - { name: console.command }
     phpbb.oberon.console.ai_validation:
         class: phpbb\oberon\console\ai_validation
         arguments:

@@ -92,7 +92,7 @@ class oberon
 			if ($this->request->is_set_post('submit'))
 			{
 				// Validate form token for CSRF
-				if (!check_form_key('custdb_view_contribution'))
+				if (!check_form_key('custdb_view_revision'))
 				{
 					trigger_error('FORM_INVALID');
 				}
@@ -103,6 +103,9 @@ class oberon
 
 				// Update status
 				$this->manager->update_external_validation_status($contribution_id, $contribution_validation_status);
+
+				// TODO: If external validation status is Approved, shouldn't we set internal to approved too to avoid
+				// a situation like Status: Approved (Unvalidated) ?
 
 				// TODO: add post to validation topic !!!
 				// ???
@@ -305,7 +308,7 @@ class oberon
 			'L_PAGE_HEADING'       => $this->user->lang('CUSTDB_ADD_CONTRIBUTION'),
 		]);
 
-// Breadcrumbs: Board Index -> Customisation Database
+		// Breadcrumbs: Board Index -> Customisation Database
 		$this->template->assign_block_vars('navlinks', [
 			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
 			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),

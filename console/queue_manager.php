@@ -48,6 +48,8 @@ class queue_manager extends Command
         $this->input = $input;
         $this->output = $output;
 
+        $output->writeln('<info>[process] Begin queue manager processing...</info>');
+
         // Find all items in the queue for processing and retrieve revision and customisation records
         $queue_items = $this->manager->find_queue_items_for_processing();
 
@@ -55,6 +57,8 @@ class queue_manager extends Command
         {
             $contribution = $queue_item['contribution'];
             $revision = $queue_item['revision'];
+
+            $output->writeln(sprintf('<info>[process] Processing queue ID %d, contribution ID %d, revision ID %d...</info>', $queue_id, $contribution, $revision));
 
             // Is it an extension, style or translation?
             // Then run the AI-validation, run the GitHub Codespaces integration
@@ -78,13 +82,13 @@ die();
     {
         // Run AI validation (if internal queue status is unvalidated)
         if ($contribution['contribution_type'] == $this->manager::TYPE_EXTENSIONS)
-        {
+        {   
             // Call AI Validation and pass along arguments if needed
-            $this->runAiValidationCommand([
+            $this->run_ai_validation_command([
                 'queue_id' => $queue_id,
-            ], $this->output);
+            ]);
 
-            $this->output->writeln('<info>Running AI validation on item ' . $queue_id . '</info>');
+            $this->output->writeln('<info>[process_extension_style_translation] Running AI validation on item ' . $queue_id . '</info>');
         }
 
         // Run GitHub Codespace integration for testing (if internal queue status is completed ai validation)
@@ -96,8 +100,10 @@ die();
         // Publish - set internal queue status to awaiting testing
     }
 
-    private function runAiValidationCommand(array $arguments)
+    private function run_ai_validation_command(array $arguments)
     {
+        $this->output->writeln(sprintf('<info>[run_ai_validation_command] Calling ai_validation script for queue ID %d...</info>', $arguments['queue_id']));
+
         // Get the current application
         $application = $this->getApplication();
 
@@ -116,6 +122,7 @@ die();
         $bufferedOutput = new BufferedOutput();
 
         // Run the ai_validation command
+        $this->output->writeln(sprintf('<info>[run_ai_validation_command] Preparing to run external call for ai_validation script for queue ID %d...</info>', $arguments['queue_id']));
         $returnCode = $command->run($input, $bufferedOutput);
 
         // Display the captured output
