@@ -17,6 +17,8 @@ class manager
     // TODO: Hard-coded, fix this later!!!!
     const FILE_UPLOAD_LOCATION = '/workspaces/phpbb/phpBB/files/contributions/';
     const SUPPORTED_PHPBB_VERSIONS = ['4.0.0', '3.3.15'];
+    const CONTRIBUTION_VALIDATION_FORUM = 2;
+    const CUSTOMISATION_ROBOT_USER_ID = 2;
 
     const TYPE_EXTENSIONS = 1;
     const TYPE_STYLES = 2;
@@ -506,7 +508,7 @@ class manager
         include_once($this->root_path . 'includes/functions_posting.' . $this->php_ext);
 
         // TODO: User ID (Customisations Robot?)
-        $customisation_robot_user_id = 2;
+        $customisation_robot_user_id = self::CUSTOMISATION_ROBOT_USER_ID;
 
         $this->user_loader->load_users([$customisation_robot_user_id]);
         $this->user->data = $this->user_loader->get_user($customisation_robot_user_id);

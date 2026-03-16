@@ -57,6 +57,7 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
                         'contribution_type'                     => ['TINT', 0],
                         'contribution_status'                   => ['TINT', 0],
                         'contribution_demo_link'                => ['VCHAR_UNI:255', ''],
+                        'contribution_validation_topic_id'      => ['UINT', 0],
                         'user_id'                               => ['UINT', 0],
                         'submission_time'                       => ['TIMESTAMP', null],
                     ],
