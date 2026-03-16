@@ -215,6 +215,13 @@ class manager
         // TODO: SQL for updating the internal status to go here
     }
 
+    public function update_internal_queue_status(int $queue_id, int $queue_status)
+    {
+        /* INTERNAL STATUS CHANGE */
+        $sql = 'UPDATE ' . $this->tables['queue'] . ' SET queue_status = ' . (int) $queue_status . ' WHERE queue_id = ' . (int) $queue_id;
+		$this->db->sql_query($sql);
+    }
+
     // Submit a new contribution
     public function add_contribution(array $contribution_array)
     {
