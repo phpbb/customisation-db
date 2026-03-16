@@ -12,67 +12,57 @@
         </div>
     </div>
 
-    <div class="custdb_container">
-        <div class="custdb_sidebar">
-            {% if CONTRIBUTION_IMAGE %}
-                <img src="{{ CONTRIBUTION_IMAGE }}" alt="{{ CONTRIBUTION_NAME }}" class="custdb_contribution_image">
-            {% else %}
-                <div class="custdb_contribution_image_placeholder">
-                    {{ lang('CUSTDB_NO_IMAGE') }}
-                </div>
-            {% endif %}
-
-            <div class="custdb_sidebar_meta">
-                <div>
-                    <strong>{{ lang('CUSTDB_VERSION_NUMBER') }}</strong>
-                    {{ VERSION_NUMBER }}
-                </div>
-                <div>
-                    <strong>{{ lang('CUSTDB_STATUS') }}</strong>
-                    {{ EXTERNAL_STATUS }}{% if INTERNAL_STATUS != '' %} ({{ INTERNAL_STATUS }}){% endif %}
-                </div>
-                {% if DEMO_LINK %}
-                <div>
-                    <strong>{{ lang('CUSTDB_DEMO_LINK') }}</strong>
-                    <a href="{{ DEMO_LINK }}" class="custdb_demo_link" target="_blank">{{ DEMO_LINK }}</a>
-                </div>
+    <div class="custdb_contribution_main_wrapper">
+        <div class="custdb_container">
+            <div class="custdb_sidebar">
+                {% if CONTRIBUTION_IMAGE %}
+                    <img src="{{ CONTRIBUTION_IMAGE }}" alt="{{ CONTRIBUTION_NAME }}" class="custdb_contribution_image">
+                {% else %}
+                    <div class="custdb_contribution_image_placeholder">
+                        {{ lang('CUSTDB_NO_IMAGE') }}
+                    </div>
                 {% endif %}
-            </div>
-        </div>
 
-        <div class="custdb_content">
-            <div class="custdb_content_title">{{ CONTRIBUTION_NAME }}</div>
-            <div class="custdb_content_author">
-                {{ AUTHORS }}
+                <div class="custdb_sidebar_meta">
+                    <div>
+                        <strong>{{ lang('CUSTDB_VERSION_NUMBER') }}</strong>
+                        {{ VERSION_NUMBER }}
+                    </div>
+                    <div>
+                        <strong>{{ lang('CUSTDB_STATUS') }}</strong>
+                        {{ EXTERNAL_STATUS }}{% if INTERNAL_STATUS != '' %} ({{ INTERNAL_STATUS }}){% endif %}
+                    </div>
+                    {% if DEMO_LINK %}
+                    <div>
+                        <strong>{{ lang('CUSTDB_DEMO_LINK') }}</strong>
+                        <a href="{{ DEMO_LINK }}" class="custdb_demo_link" target="_blank">{{ DEMO_LINK }}</a>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="custdb_contribution_description">
-                {{ CONTRIBUTION_DESCRIPTION }}
-            </div>
-
-            {% if S_IS_TEAM_MEMBER %}
-            <form method="post" action="{{ U_VALIDATE_CONTRIBUTION }}" class="custdb_validation_form">
-                <div class="custdb_form_group">
-                    <label for="validation_status" class="custdb_input_label">{{ lang('CUSTDB_STATUS') }}</label>
-                    <select name="validation_status" id="validation_status" class="custdb_input_theme">
-                        <option value="{{ VALIDATE_UNVALIDATED }}"{% if VALIDATION_STATUS == VALIDATE_UNVALIDATED %} selected{% endif %}>{{ lang('CUSTDB_STATUS_UNVALIDATED') }}</option>
-                        <option value="{{ VALIDATE_APPROVED }}"{% if VALIDATION_STATUS == VALIDATE_APPROVED %} selected{% endif %}>{{ lang('CUSTDB_STATUS_APPROVED') }}</option>
-                        <option value="{{ VALIDATE_DENIED }}"{% if VALIDATION_STATUS == VALIDATE_DENIED %} selected{% endif %}>{{ lang('CUSTDB_STATUS_DENIED') }}</option>
-                    </select>
+            <div class="custdb_content">
+                <div class="custdb_content_title">{{ CONTRIBUTION_NAME }}</div>
+                <div class="custdb_content_author">
+                    {{ AUTHORS }}
                 </div>
 
-                <div class="custdb_form_group">
-                    <label for="comment" class="custdb_input_label">{{ lang('CUSTDB_VALIDATION_COMMENT') }}</label>
-                    <textarea name="validation_comment" id="validation_comment" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_VALIDATION_OPTIONAL_COMMENT') }}"></textarea>
+                <div class="custdb_contribution_description">
+                    {{ CONTRIBUTION_DESCRIPTION }}
                 </div>
 
-                {{ S_FORM_TOKEN }}
+                {% for revision in revisions %}
+                <div class="custdb_main_category{% if revision.REVISION_UNVALIDATED %} custdb_main_category_unvalidated{% endif %}">
+                    <div class="custdb_main_category_header">
+                        <a href="{{ revision.U_VIEW_REVISION }}">{{ revision.REVISION_NAME }}{% if revision.REVISION_VERSION %} ({{ revision.REVISION_VERSION }}){% endif %}</a>
+                    </div>
 
-                <button name="submit" type="submit" class="custdb_submit_btn">
-                    {{ lang('SUBMIT') }}
-                </button>
-            </form>
-            {% endif %}
+                    <div class="custdb_main_category_content">
+                        {{ revision.REVISION_DESCRIPTION }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 

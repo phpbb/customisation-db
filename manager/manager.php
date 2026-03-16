@@ -295,7 +295,7 @@ class manager
         {
             // Get the status of the latest revision so we can colour code it on the page for team members to see
             // TODO: this is inefficient because it's getting the contribution for a second time in the function call below
-            $latest_revision = $this->get_contribution_with_latest_revision($row['contribution_id']);
+            $latest_revision = $this->get_contribution_with_revision($row['contribution_id'], true);
 
             $contributions[] = [
                 'contribution_id'           => $row['contribution_id'],
@@ -312,12 +312,14 @@ class manager
     }
 
     /**
-    * Fetch a single contribution and its latest revision
+    * Fetch a single contribution and its latest revision (or a specific revision)
     *
     * @param int $contribution_id
+    * @param bool $latest_revision
+    * @param int $revision_id
     * @return array|null
     */
-    public function get_contribution_with_latest_revision(int $contribution_id)
+    public function get_contribution_with_revision(int $contribution_id, bool $latest_revision = true, int $revision_id = 0)
     {
         $contribution_id = (int) $contribution_id;
 
@@ -342,13 +344,28 @@ class manager
             return null;
         }
 
-        // Get newest revision
-        $sql = 'SELECT r.*, q.queue_status
-                FROM ' . $this->tables['revisions'] . ' r
-                LEFT JOIN ' . $this->tables['queue'] . ' q
-                    ON r.revision_id = q.revision_id
-                WHERE r.contribution_id = ' . $contribution_id . '
-                ORDER BY r.submission_time DESC';
+        if ($latest_revision)
+        {
+            // Get newest revision
+            $sql = 'SELECT r.*, q.queue_status
+                    FROM ' . $this->tables['revisions'] . ' r
+                    LEFT JOIN ' . $this->tables['queue'] . ' q
+                        ON r.revision_id = q.revision_id
+                    WHERE r.contribution_id = ' . $contribution_id . '
+                    ORDER BY r.submission_time DESC';
+        }
+
+        else 
+        {
+            // Get specific revision
+            $sql = 'SELECT r.*, q.queue_status
+                    FROM ' . $this->tables['revisions'] . ' r
+                    LEFT JOIN ' . $this->tables['queue'] . ' q
+                        ON r.revision_id = q.revision_id
+                    WHERE r.contribution_id = ' . $contribution_id . '
+                        AND r.revision_id = ' . $revision_id . '
+                    ORDER BY r.revision_id = ' . (int) $revision_id;
+        }
 
         $result = $this->db->sql_query_limit($sql, 1);
         $revision = $this->db->sql_fetchrow($result);
@@ -386,6 +403,48 @@ class manager
             'queue_status'              => $revision['queue_status'],
             'screenshots'               => $screenshots,
         ];
+    }
+
+    /**
+     * Get all revisions for a specific contribution.
+     *
+     * @param int $contribution_id
+     * @return array
+     */
+    public function get_revisions_for_contribution(int $contribution_id)
+    {
+        $contribution_id = (int) $contribution_id;
+
+        if ($contribution_id <= 0)
+        {
+            return [];
+        }
+
+        $sql = 'SELECT r.*, q.queue_status
+                FROM ' . $this->tables['revisions'] . ' r
+                LEFT JOIN ' . $this->tables['queue'] . ' q
+                    ON r.revision_id = q.revision_id
+                WHERE r.contribution_id = ' . $contribution_id . '
+                ORDER BY r.submission_time DESC';
+
+        $result = $this->db->sql_query($sql);
+        $revisions = [];
+
+        while ($row = $this->db->sql_fetchrow($result))
+        {
+            $revisions[] = [
+                'revision_id'       => $row['revision_id'],
+                'revision_name'     => $row['revision_name'],
+                'revision_version'  => $row['revision_version'],
+                'revision_description' => $row['revision_description'],
+                'queue_status'      => $row['queue_status'],
+                'submission_time'   => $row['submission_time'],
+            ];
+        }
+
+        $this->db->sql_freeresult($result);
+
+        return $revisions;
     }
 
     /*

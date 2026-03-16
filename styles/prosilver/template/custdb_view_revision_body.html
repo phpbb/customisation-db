@@ -1,0 +1,94 @@
+{% INCLUDECSS '@phpbb_oberon/oberon_style.css' %}
+{% include 'overall_header.html' %}
+
+    <div class="custdb_action_bar">
+        <h2>{{ REVISION_NAME }}</h2>
+
+        <div>
+            <a href="{{ U_VIEW_CONTRIBUTION }}" class="custdb_button">{{ lang('CUSTDB_BACK_TO_CONTRIBUTION') }}</a>
+        </div>
+    </div>
+
+    <div class="custdb_contribution_main_wrapper">
+        <div class="custdb_container">
+            <div class="custdb_sidebar">
+                {% if CONTRIBUTION_IMAGE %}
+                    <img src="{{ CONTRIBUTION_IMAGE }}" alt="{{ CONTRIBUTION_NAME }}" class="custdb_contribution_image">
+                {% else %}
+                    <div class="custdb_contribution_image_placeholder">
+                        {{ lang('CUSTDB_NO_IMAGE') }}
+                    </div>
+                {% endif %}
+
+                <div class="custdb_sidebar_meta">
+                    <div>
+                        <strong>{{ lang('CUSTDB_VERSION_NUMBER') }}</strong>
+                        {{ REVISION_VERSION }}
+                    </div>
+                    <div>
+                        <strong>{{ lang('CUSTDB_STATUS') }}</strong>
+                        {{ EXTERNAL_STATUS }}{% if INTERNAL_STATUS != '' %} ({{ INTERNAL_STATUS }}){% endif %}
+                    </div>
+                    {% if CONTRIBUTION_DEMO_LINK %}
+                    <div>
+                        <strong>{{ lang('CUSTDB_DEMO_LINK') }}</strong>
+                        <a href="{{ CONTRIBUTION_DEMO_LINK }}" class="custdb_demo_link" target="_blank">{{ CONTRIBUTION_DEMO_LINK }}</a>
+                    </div>
+                    {% endif %}
+                    {% if REVISION_ATTACHMENT_URL %}
+                    <div>
+                        <strong>{{ lang('CUSTDB_ATTACHMENT') }}</strong>
+                        <a href="{{ REVISION_ATTACHMENT_URL }}" class="custdb_demo_link" target="_blank">{{ lang('CUSTDB_DOWNLOAD_ATTACHMENT') }}</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="custdb_content">
+                <div class="custdb_content_title">{{ REVISION_NAME }}</div>
+                <div class="custdb_content_author">
+                    {{ AUTHORS }}
+                </div>
+
+                <div class="custdb_contribution_description">
+                    {{ REVISION_DESCRIPTION }}
+                </div>
+
+                <!--
+                {% if REVISION_SCREENSHOTS %}
+                <div class="custdb_revision_screenshots">
+                    {% for screenshot in REVISION_SCREENSHOTS %}
+                        <img src="{{ screenshot }}" alt="{{ REVISION_NAME }}" class="custdb_contribution_image">
+                    {% endfor %}
+                </div>
+                {% endif %}
+                -->
+
+                {% if S_IS_TEAM_MEMBER %}
+                <form method="post" action="{{ U_VALIDATE_CONTRIBUTION }}" class="custdb_validation_form">
+                    <div class="custdb_form_group">
+                        <label for="validation_status" class="custdb_input_label">{{ lang('CUSTDB_STATUS') }}</label>
+                        <select name="validation_status" id="validation_status" class="custdb_input_theme">
+                            <option value="{{ VALIDATE_UNVALIDATED }}"{% if VALIDATION_STATUS == VALIDATE_UNVALIDATED %} selected{% endif %}>{{ lang('CUSTDB_STATUS_UNVALIDATED') }}</option>
+                            <option value="{{ VALIDATE_APPROVED }}"{% if VALIDATION_STATUS == VALIDATE_APPROVED %} selected{% endif %}>{{ lang('CUSTDB_STATUS_APPROVED') }}</option>
+                            <option value="{{ VALIDATE_DENIED }}"{% if VALIDATION_STATUS == VALIDATE_DENIED %} selected{% endif %}>{{ lang('CUSTDB_STATUS_DENIED') }}</option>
+                        </select>
+                    </div>
+
+                    <div class="custdb_form_group">
+                        <label for="comment" class="custdb_input_label">{{ lang('CUSTDB_VALIDATION_COMMENT') }}</label>
+                        <textarea name="validation_comment" id="validation_comment" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_VALIDATION_OPTIONAL_COMMENT') }}"></textarea>
+                    </div>
+
+                    {{ S_FORM_TOKEN }}
+
+                    <button name="submit" type="submit" class="custdb_submit_btn">
+                        {{ lang('SUBMIT') }}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% include 'overall_footer.html' %}

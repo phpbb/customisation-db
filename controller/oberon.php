@@ -120,11 +120,11 @@ class oberon
 	*
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
-	public function view(int $contribution_id)
+	public function view_contribution(int $contribution_id)
 	{
 		// Get contribution data via manager
 		// TODO: get the contribution, then get the revision
-		$contribution = $this->manager->get_contribution_with_latest_revision($contribution_id);
+		$contribution = $this->manager->get_contribution_with_revision($contribution_id, true);
 
 		// If no contribution is found
 		if (!$contribution)
@@ -173,8 +173,119 @@ class oberon
 		add_form_key('custdb_view_contribution');
 
 		// Render the template
+		$revisions = $this->manager->get_revisions_for_contribution($contribution_id);
+		$revision_list = [];
+
+		foreach ($revisions as $revision)
+		{
+			$this->template->assign_block_vars('revisions', [
+				'REVISION_NAME' => $revision['revision_name'],
+				'REVISION_VERSION' => $revision['revision_version'],
+				'REVISION_DESCRIPTION' => $revision['revision_description'],
+				'REVISION_UNVALIDATED' => $this->manager->is_team_member() && $contribution['queue_status'] < $this->manager::INTERNAL_STATUS_DENIED,
+				'U_VIEW_REVISION' => $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision['revision_id']]),
+			]);
+		}
+
+		$this->template->assign_vars([
+			'U_VIEW_CONTRIBUTION'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
+			'U_VALIDATE_CONTRIBUTION' => $this->helper->route('phpbb_oberon_validate_contribution', ['contribution_id' => $contribution_id]),
+
+			'VALIDATION_STATUS'     => $contribution['contribution_status'], // This is the publicly seen status (unvalidated, approved, denied)
+			'VALIDATE_UNVALIDATED'  => $this->manager::STATUS_UNVALIDATED,
+			'VALIDATE_APPROVED'     => $this->manager::STATUS_APPROVED,
+			'VALIDATE_DENIED'       => $this->manager::STATUS_DENIED,
+
+			'S_IS_TEAM_MEMBER'      => $this->manager->is_team_member(), // TODO: Could this be availble everywhere in Oberon templates??
+			'REVISIONS'             => $revision_list,
+		]);
+
+		// Breadcrumbs: Board Index -> Customisation Database
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
+
 		return $this->helper->render('custdb_view_contribution_body.html', $this->user->lang('CUSTDB_VIEW_CONTRIBUTION'));
-	}	
+	}
+
+	/**
+	 * View a specific revision.
+	 *
+	 * @param int $contribution_id The ID of the contribution to which the revision belongs.
+	 * @param int $revision_id The ID of the revision to view.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 */
+	public function view_revision(int $contribution_id, int $revision_id)
+	{
+		$revision = $this->manager->get_contribution_with_revision($contribution_id, false, $revision_id);
+
+		if (!$revision)
+		{
+			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
+		}
+
+		// Determine if the viewer may validate the revision
+		$can_validate = $this->manager->is_team_member();
+
+		// TODO: upload to the ext folder instead in the future
+		//$ext_path = $this->manager->get_ext_manager()->get_extension_path('phpbb/oberon', true);
+		$ext_path = $this->config['script_path'] . 'files/contributions';
+
+		$screenshot_urls = [];
+		foreach ($revision['screenshots'] as $screenshot)
+		{
+			if (!empty($screenshot))
+			{
+				$screenshot_urls[] = $ext_path . '/' . $screenshot;
+			}
+		}
+
+		$this->template->assign_vars([
+			'CONTRIBUTION_ID'        	=> $revision['contribution_id'],
+			'CONTRIBUTION_NAME'      	=> $revision['contribution_name'],
+			'CONTRIBUTION_DESCRIPTION' 	=> $revision['contribution_description'],
+			'AUTHORS'               	=> $revision['author_name'],
+			'CONTRIBUTION_IMAGE'     	=> !empty($screenshot_urls[0]) ? $screenshot_urls[0] : '',
+			'CONTRIBUTION_DEMO_LINK' 	=> $revision['contribution_demo_link'],
+
+			'U_VIEW_CONTRIBUTION'   	=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $revision['contribution_id']]),
+			'U_VALIDATE_CONTRIBUTION' 	=> $this->helper->route('phpbb_oberon_validate_contribution', ['contribution_id' => $revision['contribution_id']]),
+
+			'REVISION_ID'           	=> $revision['revision_id'],
+			'REVISION_NAME'         	=> $revision['revision_name'],
+			'REVISION_VERSION'      	=> $revision['revision_version'],
+			'REVISION_DESCRIPTION'  	=> $revision['revision_description'],
+			'REVISION_ATTACHMENT'   	=> $revision['revision_attachment'],
+			'REVISION_ATTACHMENT_URL' 	=> !empty($revision['revision_attachment']) ? $ext_path . '/' . $revision['revision_attachment'] : '',
+			'REVISION_SCREENSHOTS'  	=> $screenshot_urls,
+
+			'EXTERNAL_STATUS'       => $revision['external_status_label'],
+			'INTERNAL_STATUS'       => $revision['internal_status_label'],
+
+			'VALIDATION_STATUS'     => $revision['contribution_status'],
+			'VALIDATE_UNVALIDATED'  => $this->manager::STATUS_UNVALIDATED,
+			'VALIDATE_APPROVED'     => $this->manager::STATUS_APPROVED,
+			'VALIDATE_DENIED'       => $this->manager::STATUS_DENIED,
+
+			'S_IS_TEAM_MEMBER'      => $can_validate,
+		]);
+
+		add_form_key('custdb_view_revision');
+
+		// Breadcrumbs: Board Index -> Customisation Database -> Contribution
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $revision['contribution_name'],
+			'U_BREADCRUMB'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $revision['contribution_id']]),
+		]);
+
+		return $this->helper->render('custdb_view_revision_body.html', $this->user->lang('CUSTDB_VIEW_REVISION'));
+	}
 
 	/**
 	* Add contribution
@@ -194,7 +305,13 @@ class oberon
 			'L_PAGE_HEADING'       => $this->user->lang('CUSTDB_ADD_CONTRIBUTION'),
 		]);
 
-   		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));     
+// Breadcrumbs: Board Index -> Customisation Database
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
+
+		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));
     }
 
 	/**
@@ -205,7 +322,7 @@ class oberon
 	public function add_revision(int $contribution_id)
 	{
 		// Get the existing contribution details
-		$contribution = $this->manager->get_contribution_with_latest_revision($contribution_id);
+		$contribution = $this->manager->get_contribution_with_revision($contribution_id, true);
 
 		$this->generic_contribution_or_revision();
 
@@ -221,7 +338,17 @@ class oberon
 			'CONTRIBUTION_ID'		=> $contribution_id,
 		]);
 
-		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_REVISION'));     
+		// Breadcrumbs: Board Index -> Customisation Database -> Contribution
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $contribution['contribution_name'],
+			'U_BREADCRUMB'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
+		]);
+
+		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_REVISION'));
 	}
 
 	/**
@@ -382,7 +509,7 @@ class oberon
 	public function index()
 	{
 		$type = $this->request->variable('type', 0); // Extension, style, translation, etc?
-		$status = $this->request->variable('status', 0); // Approved, unvalidated, denied
+		$status = $this->request->variable('status', $this->manager::STATUS_APPROVED); // Approved, unvalidated, denied
 		$sort = $this->request->variable('sort', 0); // By date, by name, etc
 		$search_query = $this->request->variable('q', '', true);
 
@@ -391,7 +518,7 @@ class oberon
         foreach ($contributions as $contribution)
         {
             $this->template->assign_block_vars('contributions', [
-				'U_VIEW_CONTRIBUTION' => $this->helper->route('custdb_view_contribution', ['id' => $contribution['contribution_id']]),
+				'U_VIEW_CONTRIBUTION' => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution['contribution_id']]),
                 
 				'CONTRIBUTION_NAME' => $contribution['contribution_name'],
                 'CONTRIBUTION_DESCRIPTION' => $contribution['contribution_description'],
@@ -407,10 +534,12 @@ class oberon
 			'STATUS_APPROVED'		=> $this->manager::STATUS_APPROVED,
 			'STATUS_DENIED'			=> $this->manager::STATUS_DENIED,
 			'STATUS_UNVALIDATED'	=> $this->manager::STATUS_UNVALIDATED,
+			'CURRENT_STATUS'		=> $status,
 
 			// Sort options
-			'SORT_NAME'				=> $this->manager::SORT_NAME,
-			'SORT_DATE'				=> $this->manager::SORT_DATE,
+			'SORT_NAME'			=> $this->manager::SORT_NAME,
+			'SORT_DATE'			=> $this->manager::SORT_DATE,
+			'CURRENT_SORT'		=> $sort,
 
 			'SEARCH_TERM'			=> $search_query,
 
