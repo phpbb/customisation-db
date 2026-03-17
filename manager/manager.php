@@ -435,7 +435,7 @@ class manager
                     ON r.revision_id = q.revision_id
                 WHERE r.contribution_id = ' . $contribution_id . '
                 ORDER BY r.submission_time DESC';
-
+                
         $result = $this->db->sql_query($sql);
         $revisions = [];
 
@@ -583,6 +583,131 @@ class manager
         $poll = []; // no poll
         $result = submit_post('post', $data['topic_title'], $this->user->data['username'], POST_NORMAL, $poll, $data);
 
-        return $result;
+        // submit_post modifies $data by reference and will set topic_id
+        return $data['topic_id'] ?? 0;
+    }
+
+    /**
+     * [AI GENERATED]
+     * Create a new post (reply) in an existing topic.
+     */
+    public function new_post(int $topic_id, string $post_text)
+    {
+        include_once($this->root_path . 'includes/functions_posting.' . $this->php_ext);
+
+        // TODO: User ID (Customisations Robot?)
+        $customisation_robot_user_id = self::CUSTOMISATION_ROBOT_USER_ID;
+
+        $this->user_loader->load_users([$customisation_robot_user_id]);
+        $this->user->data = $this->user_loader->get_user($customisation_robot_user_id);
+        $this->user->data['is_registered'] = true;
+        $this->user->data['is_anonymous']  = false;
+        $this->user->data['is_bot']        = false;
+
+        // Prepare post data
+        $data = [
+            'forum_id'          => 0, // will be filled in by submit_post based on topic_id
+            'topic_id'          => $topic_id,
+            'force_approved_state' => true,
+
+            // Topic and message content
+            'topic_title'       => 'Validation Update',
+            'post_text'         => $post_text,
+            'message'           => $post_text,
+            'message_md5'       => md5($post_text),
+
+            // BBCode and formatting
+            'bbcode_uid'        => '',
+            'bbcode_bitfield'   => '',
+            'enable_bbcode'     => true,
+            'enable_smilies'    => true,
+            'enable_urls'       => true,
+            'enable_sig'        => true,
+
+            // System flags
+            'post_checksum'     => '',
+            'post_edit_locked'  => 0,
+            'post_edit_reason'  => '',
+            'post_time'         => time(),
+
+            // Posting type
+            'topic_type'        => POST_NORMAL,
+            'post_attachment'   => 0,
+            'icon_id'           => 0,
+            'topic_time_limit'  => 0,
+
+            // User and notifications
+            'poster_id'         => $this->user->data['user_id'],
+            'notify_set'        => 0,
+            'notify'            => 0,
+
+            // Search indexing
+            'enable_indexing'   => true,
+        ];
+
+        // Build message parsing
+        generate_text_for_storage(
+            $data['post_text'],
+            $data['bbcode_uid'],
+            $data['bbcode_bitfield'],
+            $data['enable_bbcode'],
+            $data['enable_urls'],
+            $data['enable_smilies']
+        );
+
+        // Submit reply post
+        $poll = []; // no poll
+        submit_post('reply', $data['topic_title'], $this->user->data['username'], POST_NORMAL, $poll, $data);
+
+        return $data['topic_id'] ?? $topic_id;
+    }
+
+    /**
+     * [AI GENERATED]
+     * Store a validation report into the forum.
+     *
+     * If a validation topic already exists for the contribution, append as a new post.
+     * Otherwise create a new topic and store its ID on the contribution.
+     */
+    public function store_validation_report(int $contribution_id, string $report, string $outcome, int $confidence): int
+    {
+        $contribution_id = (int) $contribution_id;
+
+        // Load contribution row
+        $sql = 'SELECT * FROM ' . $this->tables['contributions'] . ' WHERE contribution_id = ' . $contribution_id;
+        $result = $this->db->sql_query_limit($sql, 1);
+        $contribution = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        if (!$contribution)
+        {
+            return 0;
+        }
+
+        $topic_id = (int) ($contribution['contribution_validation_topic_id'] ?? 0);
+
+        $subject = 'Validation report: ' . $contribution['contribution_name'];
+        $body = "Validation outcome: {$outcome}\n" .
+                "Confidence: {$confidence}/100\n\n" .
+                "Report:\n{$report}";
+
+        // Ensure topic exists and store it
+        if ($topic_id <= 0)
+        {
+            $topic_id = $this->new_topic(self::CONTRIBUTION_VALIDATION_FORUM, $subject, $body);
+
+            if ($topic_id)
+            {
+                $sql = 'UPDATE ' . $this->tables['contributions'] . ' SET contribution_validation_topic_id = ' . (int) $topic_id . ' WHERE contribution_id = ' . $contribution_id;
+                $this->db->sql_query($sql);
+            }
+
+            return $topic_id;
+        }
+
+        // Otherwise, add a new post to the existing topic.
+        $this->new_post($topic_id, $body);
+
+        return $topic_id;
     }
 }

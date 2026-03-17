@@ -80,11 +80,11 @@ class oberon
 	}
 
 	/**
-	* Validate contribution
+	* Validate revision
 	*
 	* @param int $contribution_id The ID of the contribution to validate.
 	*/
-	public function validate(int $contribution_id)
+	public function validate(int $contribution_id) // TODO: Might need to pass revision id on queue id in here
 	{
 		if ($this->manager->is_team_member())
 		{

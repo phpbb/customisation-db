@@ -107,9 +107,32 @@ class ai_validation2 extends Command
                 $output->writeln(sprintf('<info>Outcome:</info> %s', $decoded['outcome'] ?? '')); 
                 $output->writeln(sprintf('<info>Confidence:</info> %s', $decoded['confidence'] ?? '')); 
                 $output->writeln('<info>Report:</info>');
-                $output->writeln($decoded['report'] ?? '');
+                
+                $report = $decoded['report'] ?? '';
 
-                // TODO: Store the validation report in a new post/topic
+                if (is_array($report)) 
+                {
+                    $report = json_encode($report, JSON_PRETTY_PRINT);
+                } 
+                
+                $output->writeln($report);
+
+                // Store the validation report in a new post/topic
+                $topic_id = $this->manager->store_validation_report(
+                    (int) $contribution['contribution_id'],
+                    $report,
+                    $decoded['outcome'] ?? 'unknown',
+                    (int) ($decoded['confidence'] ?? 0)
+                );
+
+                if ($topic_id)
+                {
+                    $output->writeln("<info>Stored validation report in topic id {$topic_id}.</info>");
+                }
+                else
+                {
+                    $output->writeln('<comment>Failed to store validation report in forum topic.</comment>');
+                }
 
                 // Change the internal queue status to "completed AI validation"
                 $this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_COMPLETED_AI_VALIDATION);
@@ -204,7 +227,7 @@ class ai_validation2 extends Command
             }
 
             // Truncate large files to avoid exceeding API limits
-            $max_chars = 120_000;
+            $max_chars = 120000;
             if (strlen($content) > $max_chars)
             {
                 $content = substr($content, 0, $max_chars);
@@ -268,10 +291,10 @@ class ai_validation2 extends Command
         }
 
         $file_contents = implode("\n\n", $file_contents_sections);
-        if (strlen($file_contents) > 250_000)
+        if (strlen($file_contents) > 250000)
         {
             // Trim down if it grows too large
-            $file_contents = substr($file_contents, 0, 250_000);
+            $file_contents = substr($file_contents, 0, 250000);
             $file_contents .= "\n\n... (truncated due to length)";
         }
 
@@ -318,7 +341,7 @@ class ai_validation2 extends Command
             'model' => $model,
             'messages' => $messages,
             'temperature' => 0.0,
-            'max_tokens' => 1500,
+            'max_tokens' => 4000, // this is a larger response; if a lower one is used, the JSON could cut off.
         ];
 
         $ch = curl_init('https://api.openai.com/v1/chat/completions');
