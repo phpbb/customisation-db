@@ -85,6 +85,15 @@ $lang = array_merge($lang, [
     'CUSTDB_VALIDATION_COMMENT'                 => 'Validation Comment',
     'CUSTDB_VALIDATION_OPTIONAL_COMMENT'        => 'Enter an optional validation comment...',
 
+    // View revision
+    'CUSTDB_VIEW_REVISION'                      => 'View Revision',
+    'CUSTDB_BACK_TO_CONTRIBUTION'               => 'Back to Contribution',
+    'CUSTDB_ATTACHMENT'                         => 'Attachment',
+    'CUSTDB_DOWNLOAD_ATTACHMENT'                => 'Download attachment',
+
+    // Revision list
+    'CUSTDB_REVISIONS'                          => 'Revisions',
+
     // Errors
     'CUSTDB_MISSING_REQUIRED_FIELDS'            => 'Go back to the previous page and ensure all of the required fields have been filled.',
     'CUSTDB_FILE_UPLOAD_FAILED'                 => 'There was an error uploading the contribution file.',

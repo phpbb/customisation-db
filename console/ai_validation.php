@@ -49,12 +49,12 @@ class ai_validation extends Command
         // Retrieve argument
         $queue_id = (int) $input->getArgument('queue_id');
 
-        $output->writeln('<info>START RUNNING THE AI VALIDATOR</info>');
+        $output->writeln('<info>[execute] START RUNNING THE AI VALIDATOR</info>');
 
         // Process
         $this->process_queue($queue_id, $output);
 
-        $output->writeln('<info>FINISHED RUNNING THE AI VALIDATOR</info>');
+        $output->writeln('<info>[execute] FINISHED RUNNING THE AI VALIDATOR</info>');
         return Command::SUCCESS;
     }
 
