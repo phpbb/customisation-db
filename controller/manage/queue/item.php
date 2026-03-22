@@ -394,7 +394,8 @@ class item extends \phpbb\titania\controller\manage\base
 
 		if ($this->validate('approve'))
 		{
-			$robot_user_id = $post_as_robot ? $this->contrib->type->forum_robot : 0;
+			$robot_user = $post_as_robot ? $this->get_robot_user() : false;
+			$robot_user_id = $robot_user ? (int) $robot_user['user_id'] : 0;
 			$this->queue->approve($public_notes, $robot_user_id);
 
 			// Reload contribution with new data.
@@ -437,7 +438,8 @@ class item extends \phpbb\titania\controller\manage\base
 
 		if ($this->validate('deny'))
 		{
-			$robot_user_id = $post_as_robot ? $this->contrib->type->forum_robot : 0;
+			$robot_user = $post_as_robot ? $this->get_robot_user() : false;
+			$robot_user_id = $robot_user ? (int) $robot_user['user_id'] : 0;
 			$this->queue->deny($robot_user_id);
 			$this->contrib->type->deny($this->contrib, $this->queue, $this->request);
 			redirect($this->queue->get_url());
@@ -480,8 +482,8 @@ class item extends \phpbb\titania\controller\manage\base
 		$this->display_topic_review();
 
 		$post_as_robot = $this->request->variable('post_as_robot', 1);
-		$has_robot = !empty($this->contrib->type->forum_robot);
-		$robot_name = $has_robot ? \users_overlord::get_user($this->contrib->type->forum_robot, 'username', true) : '';
+		$robot_user = $this->get_robot_user();
+		$robot_name = $robot_user ? $robot_user['username'] : '';
 
 		$this->template->assign_vars(array(
 			'ERROR'						=> implode('<br />', $error),
@@ -489,13 +491,29 @@ class item extends \phpbb\titania\controller\manage\base
 			'TOPIC_TITLE'				=> $this->contrib->contrib_name,
 			'PAGE_TITLE_EXPLAIN'		=> $this->user->lang[strtoupper($action) . '_QUEUE_CONFIRM'],
 			'S_CONFIRM_ACTION'			=> $this->queue->get_url($action),
-			'S_SHOW_POST_AS_OPTION'		=> $has_robot && $robot_name,
+			'S_SHOW_POST_AS_OPTION'		=> (bool) $robot_name,
 			'POST_AS_ROBOT'				=> $post_as_robot,
 			'ROBOT_NAME'				=> $robot_name,
 			'POST_AS_LABEL'				=> $this->user->lang['POST_AS_' . strtoupper($action)],
 		));
 
 		return false;
+	}
+
+	/**
+	* Get the validated robot user row, or false if forum_robot is unset or resolves to the anonymous user.
+	*
+	* @return array|false
+	*/
+	protected function get_robot_user()
+	{
+		if (empty($this->contrib->type->forum_robot))
+		{
+			return false;
+		}
+
+		$robot_user = \users_overlord::get_user($this->contrib->type->forum_robot, false, true);
+		return ($robot_user && $robot_user['user_id'] != ANONYMOUS) ? $robot_user : false;
 	}
 
 	/**
