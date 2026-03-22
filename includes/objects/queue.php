@@ -569,9 +569,18 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$message_uid = $message_bitfield = $message_options = false;
 		generate_text_for_storage($message, $message_uid, $message_bitfield, $message_options, true, true, true);
 
-		$sender_id = $robot_user_id ?: phpbb::$user->data['user_id'];
-		$sender_name = users_overlord::get_user($sender_id, 'username', true);
-		$sender_ip = $robot_user_id ? '' : phpbb::$user->ip;
+		if ($robot_user_id)
+		{
+			$sender_id = $robot_user_id;
+			$sender_name = users_overlord::get_user($robot_user_id, 'username', true);
+			$sender_ip = '';
+		}
+		else
+		{
+			$sender_id = phpbb::$user->data['user_id'];
+			$sender_name = phpbb::$user->data['username'];
+			$sender_ip = phpbb::$user->ip;
+		}
 
 		$data = array(
 			'address_list'		=> array('u' => $authors),
