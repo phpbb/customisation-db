@@ -685,19 +685,17 @@ class search
 			// Unserialize existing URL parameters (contains contrib_type and contrib)
 			$url_params = unserialize($row['url'], ['allowed_classes' => false]);
 
-			// Only add to documents if we have valid URL params with required fields
 			if (is_array($url_params) && !empty($url_params))
 			{
-				// Add additional parameters for topic/post navigation
 				$url_params = array_merge($url_params, array(
 					'topic_id' => $row['topic_id'],
 					'p'        => $row['id'],
 					'#'        => 'p' . $row['id'],
 				));
-
 				$row['url'] = serialize($url_params);
-				$documents[$id] = array_merge($documents[$id], $row);
 			}
+
+			$documents[$id] = array_merge($documents[$id], $row);
 		}
 		$this->db->sql_freeresult($result);
 
@@ -729,18 +727,17 @@ class search
 		{
 			$id = ext::TITANIA_CONTRIB . '_' . $row['id'];
 
-			// Get the contrib type object to get the URL-friendly type name
 			$contrib_type_obj = $this->types->get($row['contrib_type']);
 
-			// Only add URL if we have a valid contrib type
 			if ($contrib_type_obj)
 			{
 				$row['url'] = serialize(array(
 					'contrib_type'	=> $contrib_type_obj->url,
 					'contrib'		=> $row['contrib_name_clean'],
 				));
-				$documents[$id] = array_merge($documents[$id], $row);
 			}
+
+			$documents[$id] = array_merge($documents[$id], $row);
 		}
 		$this->db->sql_freeresult($result);
 
@@ -775,10 +772,8 @@ class search
 		{
 			$id = ext::TITANIA_FAQ . '_' . ($is_sphinx ? $row['id'] + 10000000 : $row['id']);
 
-			// Get the contrib type object to get the URL-friendly type name
 			$contrib_type_obj = $this->types->get($row['contrib_type']);
 
-			// Only add URL if we have a valid contrib type
 			if ($contrib_type_obj)
 			{
 				$row['url'] = serialize(array(
@@ -786,8 +781,9 @@ class search
 					'contrib'      => $row['contrib_name_clean'],
 					'id'           => $row['id'],
 				));
-				$documents[$id] = array_merge($documents[$id], $row);
 			}
+
+			$documents[$id] = array_merge($documents[$id], $row);
 		}
 		$this->db->sql_freeresult($result);
 
