@@ -619,13 +619,6 @@ class search
 
 		$this->sort->total = $results['total'];
 
-		// https://tracker.phpbb.com/projects/CUSTDB/issues/CUSTDB-813
-		// In Sphinx context ids are incremented with a specific value:
-		//     20000000 for posts
-		//     10000000 for FAQ
-
-		$is_sphinx = $this->engine->get_name() === 'phpbb.titania.search.driver.fulltext_sphinx';
-
 		foreach ($results['documents'] as $data)
 		{
 			switch ($data['type'])
@@ -637,11 +630,11 @@ class search
 				case ext::TITANIA_SUPPORT:
 				case ext::TITANIA_QUEUE_DISCUSSION:
 				case ext::TITANIA_QUEUE :
-					$posts[] = $is_sphinx ? $data['id'] - 20000000 : $data['id'];
+					$posts[] = $data['id'];
 				break;
 
 				case ext::TITANIA_FAQ:
-					$faqs[] = $is_sphinx ? $data['id'] - 10000000 : $data['id'];
+					$faqs[] = $data['id'];
 				break;
 			}
 		}
@@ -650,8 +643,8 @@ class search
 		if ($results['documents'])
 		{
 			$results['documents'] = $this->get_contribs($contribs, $results['documents']);
-			$results['documents'] = $this->get_posts($posts, $results['documents'], $is_sphinx);
-			$results['documents'] = $this->get_faqs($faqs, $results['documents'], $is_sphinx);
+			$results['documents'] = $this->get_posts($posts, $results['documents']);
+			$results['documents'] = $this->get_faqs($faqs, $results['documents']);
 		}
 		return $results;
 	}
@@ -661,10 +654,9 @@ class search
 	 *
 	 * @param array $ids
 	 * @param array $documents
-	 * @param bool  $is_sphinx
 	 * @return array
 	 */
-	protected function get_posts(array $ids, array $documents, bool $is_sphinx)
+	protected function get_posts(array $ids, array $documents)
 	{
 		if (!$ids)
 		{
@@ -680,7 +672,7 @@ class search
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$id = $row['post_type'] . '_' . ($is_sphinx ? $row['id'] + 20000000 : $row['id']);
+			$id = $row['post_type'] . '_' . $row['id'];
 
 			// Unserialize existing URL parameters (contains contrib_type and contrib)
 			$url_params = unserialize($row['url'], ['allowed_classes' => false]);
@@ -749,10 +741,9 @@ class search
 	 *
 	 * @param array $ids
 	 * @param array $documents
-	 * @param bool  $is_sphinx
 	 * @return array
 	 */
-	protected function get_faqs(array $ids, array $documents, bool $is_sphinx)
+	protected function get_faqs(array $ids, array $documents)
 	{
 		if (!$ids)
 		{
@@ -770,7 +761,7 @@ class search
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$id = ext::TITANIA_FAQ . '_' . ($is_sphinx ? $row['id'] + 10000000 : $row['id']);
+			$id = ext::TITANIA_FAQ . '_' . $row['id'];
 
 			$contrib_type_obj = $this->types->get($row['contrib_type']);
 
