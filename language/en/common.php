@@ -79,6 +79,7 @@ $lang = array_merge($lang, [
     'CUSTDB_CONTRIBUTION_ADDED_SUCCESSFULLY'    => 'Contribution has been successfully submitted',
 
     // View contribution
+    'CUSTDB_VIEW_CONTRIBUTION'                  => 'View Contribution',
     'CUSTDB_EDIT_CONTRIBUTION'                  => 'Edit Contribution',
     'CUSTDB_NEW_REVISION'                       => 'New Revision',
     'CUSTDB_NO_IMAGE'                           => 'No image',

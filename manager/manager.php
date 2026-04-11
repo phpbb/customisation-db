@@ -571,7 +571,7 @@ class manager
 
         // Build message parsing
         generate_text_for_storage(
-            $data['post_text'],
+            $data['message'],
             $data['bbcode_uid'],
             $data['bbcode_bitfield'],
             $data['enable_bbcode'],
@@ -647,7 +647,7 @@ class manager
 
         // Build message parsing
         generate_text_for_storage(
-            $data['post_text'],
+            $data['message'],
             $data['bbcode_uid'],
             $data['bbcode_bitfield'],
             $data['enable_bbcode'],
