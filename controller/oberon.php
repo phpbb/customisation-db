@@ -85,7 +85,7 @@ class oberon
 	* @param int $contribution_id The ID of the contribution to validate.
 	* @param int $queue_id ID of the queue item
 	*/
-	public function validate(int $contribution_id, int $queue_id) // TODO: Might need to pass revision id on queue id in here
+	public function validate(int $contribution_id, int $queue_id)
 	{
 		if ($this->manager->is_team_member())
 		{
@@ -99,6 +99,7 @@ class oberon
 				}
 
 				// Gather status and comment
+				// TODO: We could append a status change comment here like "Status changed from x to y"
 				$contribution_validation_status = $this->request->variable('validation_status', 0, true);
 				$contribution_validation_comment = $this->request->variable('validation_comment', '', true);
 
@@ -112,8 +113,12 @@ class oberon
 					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
 				}
 	
-				// TODO: add post to validation topic !!!
-				// ???
+				// Ensure topic exists and store it
+				$contribution = $this->manager->get_contribution_with_revision($contribution_id);
+				$topic_id = $contribution['contribution_validation_topic_id'];
+
+				// Create a topic for the validation comments (or if it already exists, just add a post to it)
+				$topic_id = $this->manager->create_or_append_validation_comment($contribution_id, $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $contribution_validation_comment);
 			}
 		}
 
