@@ -83,8 +83,9 @@ class oberon
 	* Validate revision
 	*
 	* @param int $contribution_id The ID of the contribution to validate.
+	* @param int $queue_id ID of the queue item
 	*/
-	public function validate(int $contribution_id) // TODO: Might need to pass revision id on queue id in here
+	public function validate(int $contribution_id, int $queue_id) // TODO: Might need to pass revision id on queue id in here
 	{
 		if ($this->manager->is_team_member())
 		{
@@ -98,15 +99,19 @@ class oberon
 				}
 
 				// Gather status and comment
-				$contribution_validation_status = $this->request->variable('validation_status', '', true);
+				$contribution_validation_status = $this->request->variable('validation_status', 0, true);
 				$contribution_validation_comment = $this->request->variable('validation_comment', '', true);
 
 				// Update status
 				$this->manager->update_external_validation_status($contribution_id, $contribution_validation_status);
 
-				// TODO: If external validation status is Approved, shouldn't we set internal to approved too to avoid
-				// a situation like Status: Approved (Unvalidated) ?
-
+				// If external validation status is Approved, we set internal to approved too to avoid
+				// a situation like Status: Approved (Unvalidated)
+				if ($contribution_validation_status === $this->manager::STATUS_APPROVED)
+				{
+					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
+				}
+	
 				// TODO: add post to validation topic !!!
 				// ???
 			}
@@ -164,7 +169,7 @@ class oberon
 
 			// Actions
 			'U_EDIT_CONTRIBUTION'   => '', //$this->helper->route('phpbb_oberon_edit_contribution', ['id' => $contribution_id]),
-			'U_VALIDATE_CONTRIBUTION' => $this->helper->route('phpbb_oberon_validate_contribution', ['contribution_id' => $contribution_id]),
+			//'U_VALIDATE_CONTRIBUTION' => $this->helper->route('phpbb_oberon_validate_contribution', ['contribution_id' => $contribution_id]),
 			'VALIDATION_STATUS' 		=> $contribution['contribution_status'], // This is the publicly seen status (unvalidated, approved, denied)
 			'VALIDATE_UNVALIDATED'		=> $this->manager::STATUS_UNVALIDATED,
 			'VALIDATE_APPROVED'			=> $this->manager::STATUS_APPROVED,
@@ -254,7 +259,7 @@ class oberon
 			'CONTRIBUTION_DEMO_LINK' 	=> $revision['contribution_demo_link'],
 
 			'U_VIEW_CONTRIBUTION'   	=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $revision['contribution_id']]),
-			'U_VALIDATE_CONTRIBUTION' 	=> $this->helper->route('phpbb_oberon_validate_contribution', ['contribution_id' => $revision['contribution_id']]),
+			'U_VALIDATE_CONTRIBUTION' 	=> $this->helper->route('phpbb_oberon_validate_contribution', ['contribution_id' => $revision['contribution_id'], 'queue_id' => $revision['queue_id']]),
 
 			'REVISION_ID'           	=> $revision['revision_id'],
 			'REVISION_NAME'         	=> $revision['revision_name'],

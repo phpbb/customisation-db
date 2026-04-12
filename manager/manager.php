@@ -356,7 +356,7 @@ class manager
         if ($latest_revision)
         {
             // Get newest revision
-            $sql = 'SELECT r.*, q.queue_status
+            $sql = 'SELECT r.*, q.queue_status, q.queue_id
                     FROM ' . $this->tables['revisions'] . ' r
                     LEFT JOIN ' . $this->tables['queue'] . ' q
                         ON r.revision_id = q.revision_id
@@ -367,7 +367,7 @@ class manager
         else 
         {
             // Get specific revision
-            $sql = 'SELECT r.*, q.queue_status
+            $sql = 'SELECT r.*, q.queue_status, q.queue_id
                     FROM ' . $this->tables['revisions'] . ' r
                     LEFT JOIN ' . $this->tables['queue'] . ' q
                         ON r.revision_id = q.revision_id
@@ -409,6 +409,7 @@ class manager
             'revision_version'          => $revision['revision_version'] ?? '',
             'revision_description'      => $revision['revision_description'] ?? '',
             'revision_attachment'       => $revision['revision_attachment'] ?? '',
+            'queue_id'                  => $revision['queue_id'] ?? null,
             'queue_status'              => $revision['queue_status'],
             'screenshots'               => $screenshots,
         ];

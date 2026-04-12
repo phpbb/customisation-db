@@ -26,7 +26,8 @@ custdb_view_revision:
     defaults: { _controller: phpbb.oberon.controller:view_revision, contribution_id: 0, revision_id: 0 }
 
 phpbb_oberon_validate_contribution:
-    path: /custdb/validate/{contribution_id}
+    path: /custdb/validate/{contribution_id}/{queue_id}
     requirements:
         contribution_id: \d+
-    defaults: { _controller: phpbb.oberon.controller:validate, contribution_id: 0 }    
+        queue_id: \d+
+    defaults: { _controller: phpbb.oberon.controller:validate, contribution_id: 0, queue_id: 0 }    
