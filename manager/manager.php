@@ -430,7 +430,7 @@ class manager
             return [];
         }
 
-        $sql = 'SELECT r.*, q.queue_status
+        $sql = 'SELECT r.*, q.queue_status, q.queue_id
                 FROM ' . $this->tables['revisions'] . ' r
                 LEFT JOIN ' . $this->tables['queue'] . ' q
                     ON r.revision_id = q.revision_id
@@ -443,12 +443,13 @@ class manager
         while ($row = $this->db->sql_fetchrow($result))
         {
             $revisions[] = [
-                'revision_id'       => $row['revision_id'],
-                'revision_name'     => $row['revision_name'],
-                'revision_version'  => $row['revision_version'],
-                'revision_description' => $row['revision_description'],
-                'queue_status'      => $row['queue_status'],
-                'submission_time'   => $row['submission_time'],
+                'revision_id'           => $row['revision_id'],
+                'revision_name'         => $row['revision_name'],
+                'revision_version'      => $row['revision_version'],
+                'revision_description'  => $row['revision_description'],
+                'queue_id'              => $row['queue_id'],
+                'queue_status'          => $row['queue_status'],
+                'submission_time'       => $row['submission_time'],
             ];
         }
 

@@ -157,7 +157,7 @@ class oberon
 			'VERSION_NUMBER'        	=> $contribution['revision_version'],
 			'DEMO_LINK'             	=> $contribution['contribution_demo_link'],
 			'EXTERNAL_STATUS'       	=> $contribution['external_status_label'],
-			'INTERNAL_STATUS'       	=> $contribution['internal_status_label'],
+			//'INTERNAL_STATUS'       	=> $contribution['internal_status_label'],
 
 			// First screenshot or empty string
 			'CONTRIBUTION_IMAGE'    => !empty($contribution['screenshots'][0])
@@ -190,7 +190,7 @@ class oberon
 				'REVISION_NAME' => $revision['revision_name'],
 				'REVISION_VERSION' => $revision['revision_version'],
 				'REVISION_DESCRIPTION' => $revision['revision_description'],
-				'REVISION_UNVALIDATED' => $this->manager->is_team_member() && $contribution['queue_status'] < $this->manager::INTERNAL_STATUS_DENIED,
+				'REVISION_UNVALIDATED' => $this->manager->is_team_member() && $revision['queue_status'] < $this->manager::INTERNAL_STATUS_DENIED,
 				'U_VIEW_REVISION' => $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision['revision_id']]),
 			]);
 		}
