@@ -356,7 +356,7 @@ class manager
         if ($latest_revision)
         {
             // Get newest revision
-            $sql = 'SELECT r.*, q.queue_status
+            $sql = 'SELECT r.*, q.queue_status, q.queue_id
                     FROM ' . $this->tables['revisions'] . ' r
                     LEFT JOIN ' . $this->tables['queue'] . ' q
                         ON r.revision_id = q.revision_id
@@ -367,7 +367,7 @@ class manager
         else 
         {
             // Get specific revision
-            $sql = 'SELECT r.*, q.queue_status
+            $sql = 'SELECT r.*, q.queue_status, q.queue_id
                     FROM ' . $this->tables['revisions'] . ' r
                     LEFT JOIN ' . $this->tables['queue'] . ' q
                         ON r.revision_id = q.revision_id
@@ -399,6 +399,7 @@ class manager
             'contribution_demo_link'    => $contribution['contribution_demo_link'],
             'contribution_type'         => $contribution['contribution_type'],
             'contribution_status'       => $contribution['contribution_status'],
+            'contribution_validation_topic_id' => $contribution['contribution_validation_topic_id'],
             'external_status_label'     => $external_status_label,
             'internal_status_label'     => $internal_status_label,
             'author_name'               => $contribution['author_name'],
@@ -409,6 +410,7 @@ class manager
             'revision_version'          => $revision['revision_version'] ?? '',
             'revision_description'      => $revision['revision_description'] ?? '',
             'revision_attachment'       => $revision['revision_attachment'] ?? '',
+            'queue_id'                  => $revision['queue_id'] ?? null,
             'queue_status'              => $revision['queue_status'],
             'screenshots'               => $screenshots,
         ];
@@ -429,7 +431,7 @@ class manager
             return [];
         }
 
-        $sql = 'SELECT r.*, q.queue_status
+        $sql = 'SELECT r.*, q.queue_status, q.queue_id
                 FROM ' . $this->tables['revisions'] . ' r
                 LEFT JOIN ' . $this->tables['queue'] . ' q
                     ON r.revision_id = q.revision_id
@@ -442,12 +444,13 @@ class manager
         while ($row = $this->db->sql_fetchrow($result))
         {
             $revisions[] = [
-                'revision_id'       => $row['revision_id'],
-                'revision_name'     => $row['revision_name'],
-                'revision_version'  => $row['revision_version'],
-                'revision_description' => $row['revision_description'],
-                'queue_status'      => $row['queue_status'],
-                'submission_time'   => $row['submission_time'],
+                'revision_id'           => $row['revision_id'],
+                'revision_name'         => $row['revision_name'],
+                'revision_version'      => $row['revision_version'],
+                'revision_description'  => $row['revision_description'],
+                'queue_id'              => $row['queue_id'],
+                'queue_status'          => $row['queue_status'],
+                'submission_time'       => $row['submission_time'],
             ];
         }
 
@@ -571,7 +574,7 @@ class manager
 
         // Build message parsing
         generate_text_for_storage(
-            $data['post_text'],
+            $data['message'],
             $data['bbcode_uid'],
             $data['bbcode_bitfield'],
             $data['enable_bbcode'],
@@ -647,7 +650,7 @@ class manager
 
         // Build message parsing
         generate_text_for_storage(
-            $data['post_text'],
+            $data['message'],
             $data['bbcode_uid'],
             $data['bbcode_bitfield'],
             $data['enable_bbcode'],
@@ -660,6 +663,24 @@ class manager
         submit_post('reply', $data['topic_title'], $this->user->data['username'], POST_NORMAL, $poll, $data);
 
         return $data['topic_id'] ?? $topic_id;
+    }
+
+    /*
+     * Get the topic ID we are using for validation
+     */
+    /*public function get_contribution_validation_topic_id(int $contribution_id)
+    {
+        // Load contribution row
+        $sql = 'SELECT * FROM ' . $this->tables['contributions'] . ' WHERE contribution_id = ' . (int) $contribution_id;
+        $result = $this->db->sql_query_limit($sql, 1);
+
+        return (int) $this->db->sql_fetchfield('contribution_validation_topic_id');
+    }*/
+
+    public function update_contribution_validation_topic_id(int $contribution_id, $topic_id)
+    {
+        $sql = 'UPDATE ' . $this->tables['contributions'] . ' SET contribution_validation_topic_id = ' . (int) $topic_id . ' WHERE contribution_id = ' . $contribution_id;
+        $this->db->sql_query($sql);
     }
 
     /**
@@ -686,27 +707,37 @@ class manager
 
         $topic_id = (int) ($contribution['contribution_validation_topic_id'] ?? 0);
 
-        $subject = 'Validation report: ' . $contribution['contribution_name'];
+        // Use the contribution name as the topic title
+        $subject = $contribution['contribution_name'];
+
         $body = "Validation outcome: {$outcome}\n" .
                 "Confidence: {$confidence}/100\n\n" .
                 "Report:\n{$report}";
 
         // Ensure topic exists and store it
+        $topic_id = $this->create_or_append_validation_comment($contribution_id, $topic_id, $subject, $body);
+
+        return $topic_id;
+    }
+
+    public function create_or_append_validation_comment($contribution_id, $topic_id, $subject = '', $post_body = ''): int
+    {
+        // Ensure topic exists and store it
         if ($topic_id <= 0)
         {
-            $topic_id = $this->new_topic(self::CONTRIBUTION_VALIDATION_FORUM, $subject, $body);
+            $topic_id = $this->new_topic(self::CONTRIBUTION_VALIDATION_FORUM, $subject, $post_body);
 
             if ($topic_id)
             {
-                $sql = 'UPDATE ' . $this->tables['contributions'] . ' SET contribution_validation_topic_id = ' . (int) $topic_id . ' WHERE contribution_id = ' . $contribution_id;
-                $this->db->sql_query($sql);
+                $this->update_contribution_validation_topic_id($contribution_id, $topic_id);
             }
-
-            return $topic_id;
         }
 
-        // Otherwise, add a new post to the existing topic.
-        $this->new_post($topic_id, $body);
+        else
+        {
+            // Otherwise, add a new post to the existing topic.
+            $this->new_post($topic_id, $post_body);
+        }
 
         return $topic_id;
     }

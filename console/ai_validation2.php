@@ -110,10 +110,8 @@ class ai_validation2 extends Command
                 
                 $report = $decoded['report'] ?? '';
 
-                if (is_array($report)) 
-                {
-                    $report = json_encode($report, JSON_PRETTY_PRINT);
-                } 
+                // Convert the validation report to human-readable format
+                $report = $this->format_validation_report($report);
                 
                 $output->writeln($report);
 
@@ -381,14 +379,67 @@ class ai_validation2 extends Command
             new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::CHILD_FIRST
         );
-        foreach ($items as $item) {
-            if ($item->isDir()) {
+        foreach ($items as $item) 
+        {
+            if ($item->isDir()) 
+            {
                 rmdir($item->getPathname());
-            } else {
+            } 
+            
+            else 
+            {
                 unlink($item->getPathname());
             }
         }
         rmdir($dir);
+    }
+
+    /**
+     * Convert validation report to human-readable BBCode format
+     *
+     * Converts either a JSON array or formatted string report into a structured
+     * forum post with file names, code snippets, and validation tags.
+     *
+     * @param mixed $report The report data (array or string)
+     * @return string Formatted BBCode post content
+     */
+    private function format_validation_report($report): string
+    {
+        if (is_array($report))
+        {
+            $formatted = '';
+            
+            foreach ($report as $item)
+            {
+                $filename = $item['file'] ?? 'Unknown File';
+                $issues = $item['issues'] ?? [];
+                
+                // File heading
+                $formatted .= "\n[b]File: {$filename}[/b]\n\n";
+                
+                if (is_array($issues) && !empty($issues))
+                {
+                    foreach ($issues as $issue)
+                    {
+                        $code = $issue['code'];// ?? 'valinfo';
+
+                        $formatted .= "\n[code]{$code}[/code]\n\n";
+
+                        $message = $issue['message'] ?? '';
+                        $formatted .= "\n{$message}\n\n";
+                    }
+                }
+                else
+                {
+                    // Optional fallback if no issues exist
+                    $formatted .= "[valinfo]\nNo issues found.\n[/valinfo]\n\n";
+                }
+            }
+            
+            return trim($formatted);
+        }
+        
+        return (string) $report;
     }
 
     private function get_openai_api_secret(): ?string
