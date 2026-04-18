@@ -40,6 +40,7 @@ $lang = array_merge($lang, [
 
     // Status
     'CUSTDB_STATUS'                             => 'Status',
+    'CUSTDB_QUEUE_STATUS'                       => 'Queue Status',
     'CUSTDB_STATUS_UNVALIDATED'                 => 'Unvalidated',
     'CUSTDB_STATUS_APPROVED'                    => 'Approved',
     'CUSTDB_STATUS_DENIED'                      => 'Denied',

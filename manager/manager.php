@@ -17,7 +17,10 @@ class manager
     // TODO: Hard-coded, fix this later!!!!
     const FILE_UPLOAD_LOCATION = '/workspaces/phpbb/phpBB/files/contributions/';
     const SUPPORTED_PHPBB_VERSIONS = ['4.0.0', '3.3.15'];
-    const CONTRIBUTION_VALIDATION_FORUM = 2;
+    
+    // TODO: Need to have different forums for the different customisation types in the future!!!
+    const PRIVATE_CONTRIBUTION_VALIDATION_FORUM = 2;
+    const PUBLIC_CONTRIBUTION_ANNOUNCEMENT_FORUM = 3;
     const CUSTOMISATION_ROBOT_USER_ID = 2;
 
     const TYPE_EXTENSIONS = 1;
@@ -393,26 +396,27 @@ class manager
         $external_status_label = $this->get_external_status($contribution['contribution_status']);
 
         return [
-            'contribution_id'           => $contribution['contribution_id'],
-            'contribution_name'         => $contribution['contribution_name'],
-            'contribution_description'  => $contribution['contribution_description'],
-            'contribution_demo_link'    => $contribution['contribution_demo_link'],
-            'contribution_type'         => $contribution['contribution_type'],
-            'contribution_status'       => $contribution['contribution_status'],
-            'contribution_validation_topic_id' => $contribution['contribution_validation_topic_id'],
-            'external_status_label'     => $external_status_label,
-            'internal_status_label'     => $internal_status_label,
-            'author_name'               => $contribution['author_name'],
+            'contribution_id'                   => $contribution['contribution_id'],
+            'contribution_name'                 => $contribution['contribution_name'],
+            'contribution_description'          => $contribution['contribution_description'],
+            'contribution_demo_link'            => $contribution['contribution_demo_link'],
+            'contribution_type'                 => $contribution['contribution_type'],
+            'contribution_status'               => $contribution['contribution_status'],
+            'contribution_validation_topic_id'  => $contribution['contribution_validation_topic_id'],
+            'contribution_release_topic_id'     => $contribution['contribution_release_topic_id'],
+            'external_status_label'             => $external_status_label,
+            'internal_status_label'             => $internal_status_label,
+            'author_name'                       => $contribution['author_name'],
 
             // Revision info
-            'revision_id'               => $revision['revision_id'] ?? null,
-            'revision_name'             => $revision['revision_name'] ?? '',
-            'revision_version'          => $revision['revision_version'] ?? '',
-            'revision_description'      => $revision['revision_description'] ?? '',
-            'revision_attachment'       => $revision['revision_attachment'] ?? '',
-            'queue_id'                  => $revision['queue_id'] ?? null,
-            'queue_status'              => $revision['queue_status'],
-            'screenshots'               => $screenshots,
+            'revision_id'                       => $revision['revision_id'] ?? null,
+            'revision_name'                     => $revision['revision_name'] ?? '',
+            'revision_version'                  => $revision['revision_version'] ?? '',
+            'revision_description'              => $revision['revision_description'] ?? '',
+            'revision_attachment'               => $revision['revision_attachment'] ?? '',
+            'queue_id'                          => $revision['queue_id'] ?? null,
+            'queue_status'                      => $revision['queue_status'],
+            'screenshots'                       => $screenshots,
         ];
     }
 
@@ -522,8 +526,10 @@ class manager
         $forum_sql = 'SELECT forum_name, forum_desc, forum_type
             FROM ' . FORUMS_TABLE . '
             WHERE forum_id = ' . (int) $forum_id;
+
         $forum_result = $this->db->sql_query($forum_sql);
         $forum_data = $this->db->sql_fetchrow($forum_result);
+
         $this->db->sql_freeresult($forum_result);
 
         // Prepare post data
@@ -677,11 +683,6 @@ class manager
         return (int) $this->db->sql_fetchfield('contribution_validation_topic_id');
     }*/
 
-    public function update_contribution_validation_topic_id(int $contribution_id, $topic_id)
-    {
-        $sql = 'UPDATE ' . $this->tables['contributions'] . ' SET contribution_validation_topic_id = ' . (int) $topic_id . ' WHERE contribution_id = ' . $contribution_id;
-        $this->db->sql_query($sql);
-    }
 
     /**
      * [AI GENERATED]
@@ -710,27 +711,26 @@ class manager
         // Use the contribution name as the topic title
         $subject = $contribution['contribution_name'];
 
+        // TODO: language entries here?
         $body = "Validation outcome: {$outcome}\n" .
                 "Confidence: {$confidence}/100\n\n" .
                 "Report:\n{$report}";
 
-        // Ensure topic exists and store it
-        $topic_id = $this->create_or_append_validation_comment($contribution_id, $topic_id, $subject, $body);
+        // Ensure topic exists and store it in the private validation forum
+        $topic_id = $this->create_or_append_forum_comment($contribution_id, self::PRIVATE_CONTRIBUTION_VALIDATION_FORUM, $topic_id, $subject, $body);
 
         return $topic_id;
     }
 
-    public function create_or_append_validation_comment($contribution_id, $topic_id, $subject = '', $post_body = ''): int
+    /**
+     * If there's a topic, put it in that topic. If there's not, create a topic.
+     */
+    public function create_or_append_forum_comment($contribution_id, $forum_id, $topic_id, $subject = '', $post_body = ''): int
     {
         // Ensure topic exists and store it
         if ($topic_id <= 0)
         {
-            $topic_id = $this->new_topic(self::CONTRIBUTION_VALIDATION_FORUM, $subject, $post_body);
-
-            if ($topic_id)
-            {
-                $this->update_contribution_validation_topic_id($contribution_id, $topic_id);
-            }
+            $topic_id = $this->new_topic($forum_id, $subject, $post_body);
         }
 
         else
@@ -740,5 +740,39 @@ class manager
         }
 
         return $topic_id;
+    }
+
+    /**
+     * Simple update to the validation topic id
+     */
+    public function update_contribution_validation_topic_id(int $contribution_id, int $topic_id)
+    {
+        $sql = 'UPDATE ' . $this->tables['contributions'] . ' SET contribution_validation_topic_id = ' . (int) $topic_id . ' WHERE contribution_id = ' . $contribution_id;
+        $this->db->sql_query($sql);
+    }
+
+    /**
+     * Simple update to the release topic id
+     */
+    public function update_contribution_release_topic_id(int $contribution_id, int $topic_id)
+    {
+        $sql = 'UPDATE ' . $this->tables['contributions'] . ' SET contribution_release_topic_id = ' . (int) $topic_id . ' WHERE contribution_id = ' . $contribution_id;
+        $this->db->sql_query($sql);
+    }
+
+    /**
+     * Remove queue entry. But we only do this if the internal status is approved or denied, otherwise there might
+     * still be future processing to be done.
+     */
+    public function remove_queue_entry(int $queue_id)
+    {
+        $sql = 'DELETE FROM ' . $this->tables['queue'] . '
+                WHERE queue_id = ' . (int) $queue_id . '
+                AND ' . $this->db->sql_in_set('queue_status', [
+                    self::INTERNAL_STATUS_APPROVED,
+                    self::INTERNAL_STATUS_DENIED,
+                ], false); // true allows it to be an IN clause
+
+        $this->db->sql_query($sql);
     }
 }

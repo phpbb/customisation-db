@@ -46,6 +46,8 @@ class ai_validation extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+die('THIS FILE IS NO LONGER USED');
+
         // Retrieve argument
         $queue_id = (int) $input->getArgument('queue_id');
 
