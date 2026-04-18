@@ -52,9 +52,15 @@
                 </div>
 
                 {% for revision in revisions %}
-                <div class="custdb_main_category{% if revision.REVISION_UNVALIDATED %} custdb_main_category_unvalidated{% endif %}">
+                <div class="custdb_main_category{% if revision.REVISION_UNVALIDATED %} custdb_main_category_unvalidated{% endif %}{% if revision.REVISION_DENIED %} custdb_main_category_denied{% endif %}">
                     <div class="custdb_main_category_header">
-                        <a href="{{ revision.U_VIEW_REVISION }}">{{ revision.REVISION_NAME }}{% if revision.REVISION_VERSION %} ({{ revision.REVISION_VERSION }}){% endif %}</a>
+                        <a href="{{ revision.U_VIEW_REVISION }}"></a>
+                            {% if revision.REVISION_DENIED %}
+                                <s>{{ revision.REVISION_NAME }}{% if revision.REVISION_VERSION %} ({{ revision.REVISION_VERSION }}){% endif %}</s>
+                            {% else %}
+                                {{ revision.REVISION_NAME }}{% if revision.REVISION_VERSION %} ({{ revision.REVISION_VERSION }}){% endif %}
+                            {% endif %}
+                        </a>
                     </div>
 
                     <div class="custdb_main_category_content">

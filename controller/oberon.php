@@ -99,26 +99,52 @@ class oberon
 				}
 
 				// Gather status and comment
-				// TODO: We could append a status change comment here like "Status changed from x to y"
+				// TODO: We could append a status change comment here like "Status changed from x to y". This could be useful?
 				$contribution_validation_status = $this->request->variable('validation_status', 0, true);
 				$contribution_validation_comment = $this->request->variable('validation_comment', '', true);
 
 				// Update status
 				$this->manager->update_external_validation_status($contribution_id, $contribution_validation_status);
-
-				// If external validation status is Approved, we set internal to approved too to avoid
-				// a situation like Status: Approved (Unvalidated)
-				if ($contribution_validation_status === $this->manager::STATUS_APPROVED)
-				{
-					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
-				}
 	
-				// Ensure topic exists and store it
+				// Ensure the private validation topic exists and store it
 				$contribution = $this->manager->get_contribution_with_revision($contribution_id);
-				$topic_id = $contribution['contribution_validation_topic_id'];
 
 				// Create a topic for the validation comments (or if it already exists, just add a post to it)
-				$topic_id = $this->manager->create_or_append_validation_comment($contribution_id, $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $contribution_validation_comment);
+				$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager::PRIVATE_CONTRIBUTION_VALIDATION_FORUM, $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $contribution_validation_comment);
+			
+				// If there is no pre-existing validation topic, update the value associated with the contribution record
+				if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $private_topic_id > 0)
+				{
+					$this->manager->update_contribution_validation_topic_id($contribution_id, $private_topic_id);
+				}
+
+				// This confirms a manual approval
+				if ($contribution_validation_status === $this->manager::STATUS_APPROVED)
+				{
+					// Technically this is not required, because at the end of this the queue entry will be removed
+					// as the customisation has been approved. But for completeness, we should say the queue entry is finalised as approved.
+					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
+
+					// Now update the release topic!
+					$release_comment = '[b]Approved.[/b]\n\nDownload link: URL GOES HERE\n\n' . $contribution_validation_comment; // TODO: add download link and some lang strings etc here
+					$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager::PUBLIC_CONTRIBUTION_ANNOUNCEMENT_FORUM, $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
+				
+					// If there is no release topic, update the value associated with the contribution record
+					if (isset($contribution['contribution_release_topic_id']) && $contribution['contribution_release_topic_id'] == 0 && $public_topic_id > 0)
+					{
+						$this->manager->update_contribution_release_topic_id($contribution_id, $public_topic_id);
+					}
+
+					// Remove the queue entry, we're done processing it now.
+					$this->manager->remove_queue_entry($queue_id);
+				}
+
+				else if ($contribution_validation_status === $this->manager::STATUS_DENIED) 
+				{
+					// Update the internal status and remove the queue entry, we are done processing this now
+					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_DENIED);
+					$this->manager->remove_queue_entry($queue_id);
+				}
 			}
 		}
 
@@ -162,7 +188,6 @@ class oberon
 			'VERSION_NUMBER'        	=> $contribution['revision_version'],
 			'DEMO_LINK'             	=> $contribution['contribution_demo_link'],
 			'EXTERNAL_STATUS'       	=> $contribution['external_status_label'],
-			//'INTERNAL_STATUS'       	=> $contribution['internal_status_label'],
 
 			// First screenshot or empty string
 			'CONTRIBUTION_IMAGE'    => !empty($contribution['screenshots'][0])
@@ -174,7 +199,6 @@ class oberon
 
 			// Actions
 			'U_EDIT_CONTRIBUTION'   => '', //$this->helper->route('phpbb_oberon_edit_contribution', ['id' => $contribution_id]),
-			//'U_VALIDATE_CONTRIBUTION' => $this->helper->route('phpbb_oberon_validate_contribution', ['contribution_id' => $contribution_id]),
 			'VALIDATION_STATUS' 		=> $contribution['contribution_status'], // This is the publicly seen status (unvalidated, approved, denied)
 			'VALIDATE_UNVALIDATED'		=> $this->manager::STATUS_UNVALIDATED,
 			'VALIDATE_APPROVED'			=> $this->manager::STATUS_APPROVED,
@@ -192,17 +216,20 @@ class oberon
 		foreach ($revisions as $revision)
 		{
 			$this->template->assign_block_vars('revisions', [
-				'REVISION_NAME' => $revision['revision_name'],
-				'REVISION_VERSION' => $revision['revision_version'],
-				'REVISION_DESCRIPTION' => $revision['revision_description'],
-				'REVISION_UNVALIDATED' => $this->manager->is_team_member() && $revision['queue_status'] < $this->manager::INTERNAL_STATUS_DENIED,
-				'U_VIEW_REVISION' => $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision['revision_id']]),
+				'REVISION_NAME' 		=> $revision['revision_name'],
+				'REVISION_VERSION' 		=> $revision['revision_version'],
+				'REVISION_DESCRIPTION' 	=> $revision['revision_description'],
+
+				'REVISION_UNVALIDATED' 	=> $this->manager->is_team_member() && $revision['revision_status'] === $this->manager::STATUS_UNVALIDATED,
+				'REVISION_DENIED' 		=> $this->manager->is_team_member() && $revision['revision_status'] === $this->manager::STATUS_DENIED,
+
+				'U_VIEW_REVISION' 		=> $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision['revision_id']]),
 			]);
 		}
 
 		$this->template->assign_vars([
 			'U_VIEW_CONTRIBUTION'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
-			'U_VALIDATE_CONTRIBUTION' => $this->helper->route('phpbb_oberon_validate_contribution', ['contribution_id' => $contribution_id]),
+			'U_VALIDATE_CONTRIBUTION' => $this->helper->route('custdb_validate_contribution', ['contribution_id' => $contribution_id]),
 
 			'VALIDATION_STATUS'     => $contribution['contribution_status'], // This is the publicly seen status (unvalidated, approved, denied)
 			'VALIDATE_UNVALIDATED'  => $this->manager::STATUS_UNVALIDATED,
@@ -245,8 +272,8 @@ class oberon
 		// TODO: upload to the ext folder instead in the future
 		//$ext_path = $this->manager->get_ext_manager()->get_extension_path('phpbb/oberon', true);
 		$ext_path = $this->config['script_path'] . 'files/contributions';
-
 		$screenshot_urls = [];
+
 		foreach ($revision['screenshots'] as $screenshot)
 		{
 			if (!empty($screenshot))
@@ -263,21 +290,23 @@ class oberon
 			'CONTRIBUTION_IMAGE'     	=> !empty($screenshot_urls[0]) ? $screenshot_urls[0] : '',
 			'CONTRIBUTION_DEMO_LINK' 	=> $revision['contribution_demo_link'],
 
-			'U_VIEW_CONTRIBUTION'   	=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $revision['contribution_id']]),
-			'U_VALIDATE_CONTRIBUTION' 	=> $this->helper->route('phpbb_oberon_validate_contribution', ['contribution_id' => $revision['contribution_id'], 'queue_id' => $revision['queue_id']]),
+			'U_VIEW_CONTRIBUTION'   		=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $revision['contribution_id']]),
+			'U_VALIDATE_CONTRIBUTION' 		=> $this->helper->route('custdb_validate_contribution', ['contribution_id' => $revision['contribution_id'], 'queue_id' => $revision['queue_id']]),
+			'U_INTERNAL_VALIDATION_TOPIC'	=> (int) $revision['contribution_validation_topic_id'] ? append_sid('/viewtopic.php', 't=' . (int) $revision['contribution_validation_topic_id']) : '', //TODO: route for viewtopic?
 
 			'REVISION_ID'           	=> $revision['revision_id'],
 			'REVISION_NAME'         	=> $revision['revision_name'],
+			'REVISION_DATE'				=> $this->user->format_date($revision['submission_time']),
 			'REVISION_VERSION'      	=> $revision['revision_version'],
 			'REVISION_DESCRIPTION'  	=> $revision['revision_description'],
 			'REVISION_ATTACHMENT'   	=> $revision['revision_attachment'],
 			'REVISION_ATTACHMENT_URL' 	=> !empty($revision['revision_attachment']) ? $ext_path . '/' . $revision['revision_attachment'] : '',
 			'REVISION_SCREENSHOTS'  	=> $screenshot_urls,
 
-			'EXTERNAL_STATUS'       => $revision['external_status_label'],
-			'INTERNAL_STATUS'       => $revision['internal_status_label'],
+			'REVISION_STATUS'       	=> $revision['revision_status_label'],
+			'INTERNAL_STATUS'       	=> $revision['internal_status_label'],
 
-			'VALIDATION_STATUS'     => $revision['contribution_status'],
+			'VALIDATION_STATUS'     => $revision['revision_status'],
 			'VALIDATE_UNVALIDATED'  => $this->manager::STATUS_UNVALIDATED,
 			'VALIDATE_APPROVED'     => $this->manager::STATUS_APPROVED,
 			'VALIDATE_DENIED'       => $this->manager::STATUS_DENIED,
@@ -356,6 +385,7 @@ class oberon
 			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
 			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
 		]);
+
 		$this->template->assign_block_vars('navlinks', [
 			'BREADCRUMB_NAME' => $contribution['contribution_name'],
 			'U_BREADCRUMB'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
@@ -480,6 +510,7 @@ class oberon
 
 			$revision_array = [
 				'contribution_id'      		=> $contribution_id,
+				'revision_status'    		=> $this->manager::REVISION_STATUS_MAP[$this->manager::INTERNAL_STATUS_UNVALIDATED], // This is one of two places the revision status is changed
 				'revision_name'        		=> $revision_name,
 				'revision_version'     		=> $version,
 				'revision_phpbb_version'	=> $phpbb_version,
@@ -522,7 +553,11 @@ class oberon
 	public function index()
 	{
 		$type = $this->request->variable('type', 0); // Extension, style, translation, etc?
-		$status = $this->request->variable('status', $this->manager::STATUS_APPROVED); // Approved, unvalidated, denied
+
+		// Approved, unvalidated, denied - note that this will filter by the contribution status, not the revision status
+		// So we could have new, unvalidated revisions for a previously validated contribution come up a different colour when filtering by denied or approved, for example.
+		$status = $this->request->variable('status', $this->manager::STATUS_APPROVED);
+
 		$sort = $this->request->variable('sort', 0); // By date, by name, etc
 		$search_query = $this->request->variable('q', '', true);
 
@@ -531,11 +566,14 @@ class oberon
         foreach ($contributions as $contribution)
         {
             $this->template->assign_block_vars('contributions', [
-				'U_VIEW_CONTRIBUTION' => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution['contribution_id']]),
+				'U_VIEW_CONTRIBUTION' 		=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution['contribution_id']]),
                 
-				'CONTRIBUTION_NAME' => $contribution['contribution_name'],
-                'CONTRIBUTION_DESCRIPTION' => $contribution['contribution_description'],
-				'CONTRIBUTION_UNVALIDATED' => $this->manager->is_team_member() && $contribution['revision_status'] < $this->manager::INTERNAL_STATUS_DENIED,
+				'CONTRIBUTION_NAME' 		=> $contribution['contribution_name'],
+                'CONTRIBUTION_DESCRIPTION' 	=> $contribution['contribution_description'],
+
+				// Get the *latest* revision status so we can colour code for attracting attention in a simple way
+				'CONTRIBUTION_UNVALIDATED' 	=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_UNVALIDATED,
+				'CONTRIBUTION_DENIED' 		=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_DENIED,
             ]);
         }
 

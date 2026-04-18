@@ -22,13 +22,23 @@
 
                 <div class="custdb_sidebar_meta">
                     <div>
+                        <strong>{{ lang('CUSTDB_REVISION_DATE') }}</strong>
+                        {{ REVISION_DATE }}
+                    </div>
+                    <div>
                         <strong>{{ lang('CUSTDB_VERSION_NUMBER') }}</strong>
                         {{ REVISION_VERSION }}
                     </div>
                     <div>
-                        <strong>{{ lang('CUSTDB_STATUS') }}</strong>
-                        {{ EXTERNAL_STATUS }}{% if INTERNAL_STATUS != '' %} ({{ INTERNAL_STATUS }}){% endif %}
+                        <strong>{{ lang('CUSTDB_REVISION_STATUS') }}</strong>
+                        {{ REVISION_STATUS }}
                     </div>
+                    {% if INTERNAL_STATUS != '' %}
+                    <div>
+                        <strong>{{ lang('CUSTDB_QUEUE_STATUS') }}</strong>
+                         {% if U_INTERNAL_VALIDATION_TOPIC %}<a href="{{ U_INTERNAL_VALIDATION_TOPIC }}"">{{ INTERNAL_STATUS }}</a>{% else %}{{ INTERNAL_STATUS }}{% endif %}
+                    </div>
+                    {% endif %}
                     {% if CONTRIBUTION_DEMO_LINK %}
                     <div>
                         <strong>{{ lang('CUSTDB_DEMO_LINK') }}</strong>

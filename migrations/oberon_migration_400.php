@@ -6,15 +6,17 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
     const DEFAULT_ON = true;
     const PER_PAGE = 10;
 
-    const PRIVATE_VALIDATION_FORUM = 1;
-    const PUBLIC_RELEASE_FORUM = 1;
+    const PRIVATE_VALIDATION_FORUM = 2;
+    const PUBLIC_RELEASE_FORUM = 3;
 
     /**
      * So we know if it's installed
      */
 	public function effectively_installed()
 	{
-		return isset($this->config['custdb_enabled']);
+		return false;
+        // TODO: uncomment this when no longer in dev
+        // return isset($this->config['custdb_enabled']);
 	}
 
     /**
@@ -52,12 +54,13 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
 				$this->table_prefix . 'custdb_contributions' => [
 					'COLUMNS' => [
 						'contribution_id'                       => ['UINT', null, 'auto_increment'],
+                        'contribution_status'                   => ['TINT', 0],
 						'contribution_name'                     => ['VCHAR_UNI:255', ''],
                         'contribution_description'              => ['VCHAR_UNI:255', ''],
                         'contribution_type'                     => ['TINT', 0],
-                        'contribution_status'                   => ['TINT', 0],
                         'contribution_demo_link'                => ['VCHAR_UNI:255', ''],
                         'contribution_validation_topic_id'      => ['UINT', 0],
+                        'contribution_release_topic_id'         => ['UINT', 0],// TODO: This may need to be in the revisions table, if we have different release topics for major changes?
                         'user_id'                               => ['UINT', 0],
                         'submission_time'                       => ['TIMESTAMP', null],
                     ],
@@ -70,6 +73,7 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
 					'COLUMNS' => [
 						'revision_id'                           => ['UINT', null, 'auto_increment'],
                         'contribution_id'                       => ['UINT', 0],
+                        'revision_status'                       => ['TINT', 0],
 						'revision_name'                         => ['VCHAR_UNI:255', ''],
                         'revision_version'                      => ['VCHAR_UNI:255', ''],
                         'revision_phpbb_version'                => ['VCHAR_UNI:255', ''],
@@ -108,7 +112,21 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
 			'drop_tables' => [
 				$this->table_prefix . 'custdb_contributions',
                 $this->table_prefix . 'custdb_revisions',
+                $this->table_prefix . 'custdb_queue',
             ],
+        ];
+    }
+
+    /** 
+     * Remove config settings
+     */
+    public function revert_data()
+    {
+        return [
+            ['config.remove', ['custdb_enabled']],
+            ['config.remove', ['custdb_per_page']],
+            ['config.remove', ['custdb_private_validation_forum_id']],
+            ['config.remove', ['custdb_public_release_forum_id']],
         ];
     }
 }

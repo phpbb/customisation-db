@@ -40,6 +40,7 @@ $lang = array_merge($lang, [
 
     // Status
     'CUSTDB_STATUS'                             => 'Status',
+    'CUSTDB_QUEUE_STATUS'                       => 'Queue Status',
     'CUSTDB_STATUS_UNVALIDATED'                 => 'Unvalidated',
     'CUSTDB_STATUS_APPROVED'                    => 'Approved',
     'CUSTDB_STATUS_DENIED'                      => 'Denied',
@@ -91,6 +92,8 @@ $lang = array_merge($lang, [
     'CUSTDB_BACK_TO_CONTRIBUTION'               => 'Back to Contribution',
     'CUSTDB_ATTACHMENT'                         => 'Attachment',
     'CUSTDB_DOWNLOAD_ATTACHMENT'                => 'Download attachment',
+    'CUSTDB_REVISION_STATUS'                    => 'Revision Status',
+    'CUSTDB_REVISION_DATE'                      => 'Submission Date',
 
     // Revision list
     'CUSTDB_REVISIONS'                          => 'Revisions',
