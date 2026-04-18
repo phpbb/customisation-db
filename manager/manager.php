@@ -44,6 +44,13 @@ class manager
     const INTERNAL_STATUS_DENIED = 6;
     const INTERNAL_STATUS_APPROVED = 7;
 
+    // Revision status mapping
+    const REVISION_STATUS_MAP = [
+        self::INTERNAL_STATUS_UNVALIDATED => self::STATUS_UNVALIDATED,
+        self::INTERNAL_STATUS_APPROVED    => self::STATUS_APPROVED,
+        self::INTERNAL_STATUS_DENIED      => self::STATUS_DENIED,
+    ];
+
     // Sort
     const SORT_DATE = 1;
     const SORT_NAME = 2;
@@ -203,28 +210,34 @@ class manager
         $this->db->sql_query($sql);
 
         // Update the internal status accordingly.
-        $internal_status = null;
-        switch ($contribution_status)
-        {
-            case self::STATUS_UNVALIDATED:
-                $internal_status = self::INTERNAL_STATUS_UNVALIDATED;
-                break;
-            case self::STATUS_APPROVED:
-                $internal_status = self::INTERNAL_STATUS_APPROVED;
-                break;
-            case self::STATUS_DENIED:
-                $internal_status = self::INTERNAL_STATUS_DENIED;
-                break;
-        }
-
-        // TODO: SQL for updating the internal status to go here
+        // TODO: SQL for updating the internal status to go here. If we need it at all?
+        //$revision_status_mapping = array_flip(self::REVISION_STATUS_MAP);
+        //$internal_status = $revision_status_mapping[$contribution_status] ?? null;
     }
 
+    /**
+     * An internal status (queue status and potentially revision status) change
+     * INTERNAL STATUS CHANGE
+     */
     public function update_internal_queue_status(int $queue_id, int $queue_status)
     {
-        /* INTERNAL STATUS CHANGE */
         $sql = 'UPDATE ' . $this->tables['queue'] . ' SET queue_status = ' . (int) $queue_status . ' WHERE queue_id = ' . (int) $queue_id;
 		$this->db->sql_query($sql);
+
+        if (in_array($queue_status, [self::INTERNAL_STATUS_UNVALIDATED, self::INTERNAL_STATUS_APPROVED, self::INTERNAL_STATUS_DENIED]))
+        {
+            // For these major status updates, we also update the revision status. Because if/when the queue entry is removed,
+            // we still want to know what happened to the revision. This is one of two places the revision status is changed.
+            $sql = 'UPDATE ' . $this->tables['revisions'] . '
+                    SET revision_status = ' . self::REVISION_STATUS_MAP[$queue_status] . '
+                    WHERE revision_id = (
+                        SELECT revision_id
+                        FROM ' . $this->tables['queue'] . '
+                        WHERE queue_id = ' . (int) $queue_id . '
+                    )';
+
+            $this->db->sql_query($sql);
+        }
     }
 
     // Submit a new contribution
@@ -391,10 +404,6 @@ class manager
             $screenshots = explode(',', $revision['revision_screenshots']);
         }
 
-        // Map status code to readable label
-        $internal_status_label = $this->is_team_member() ? $this->get_internal_status($revision['queue_status']) : '';
-        $external_status_label = $this->get_external_status($contribution['contribution_status']);
-
         return [
             'contribution_id'                   => $contribution['contribution_id'],
             'contribution_name'                 => $contribution['contribution_name'],
@@ -404,19 +413,23 @@ class manager
             'contribution_status'               => $contribution['contribution_status'],
             'contribution_validation_topic_id'  => $contribution['contribution_validation_topic_id'],
             'contribution_release_topic_id'     => $contribution['contribution_release_topic_id'],
-            'external_status_label'             => $external_status_label,
-            'internal_status_label'             => $internal_status_label,
+            'external_status_label'             => $this->get_external_status($contribution['contribution_status']),
+            'internal_status_label'             => $this->is_team_member() ? $this->get_internal_status($revision['queue_status']) : '',
             'author_name'                       => $contribution['author_name'],
 
             // Revision info
             'revision_id'                       => $revision['revision_id'] ?? null,
+            'revision_status'                   => $revision['revision_status'],
+            'revision_status_label'             => $this->get_external_status($revision['revision_status']),
             'revision_name'                     => $revision['revision_name'] ?? '',
             'revision_version'                  => $revision['revision_version'] ?? '',
             'revision_description'              => $revision['revision_description'] ?? '',
             'revision_attachment'               => $revision['revision_attachment'] ?? '',
-            'queue_id'                          => $revision['queue_id'] ?? null,
-            'queue_status'                      => $revision['queue_status'],
             'screenshots'                       => $screenshots,
+
+            // Queue info
+            'queue_id'                          => $revision['queue_id'] ?? null,
+            'queue_status'                      => $revision['queue_status'] ?? null,
         ];
     }
 

@@ -92,6 +92,7 @@ $lang = array_merge($lang, [
     'CUSTDB_BACK_TO_CONTRIBUTION'               => 'Back to Contribution',
     'CUSTDB_ATTACHMENT'                         => 'Attachment',
     'CUSTDB_DOWNLOAD_ATTACHMENT'                => 'Download attachment',
+    'CUSTDB_REVISION_STATUS'                    => 'Revision Status',
 
     // Revision list
     'CUSTDB_REVISIONS'                          => 'Revisions',

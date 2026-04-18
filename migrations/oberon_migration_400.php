@@ -54,10 +54,10 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
 				$this->table_prefix . 'custdb_contributions' => [
 					'COLUMNS' => [
 						'contribution_id'                       => ['UINT', null, 'auto_increment'],
+                        'contribution_status'                   => ['TINT', 0],
 						'contribution_name'                     => ['VCHAR_UNI:255', ''],
                         'contribution_description'              => ['VCHAR_UNI:255', ''],
                         'contribution_type'                     => ['TINT', 0],
-                        'contribution_status'                   => ['TINT', 0],
                         'contribution_demo_link'                => ['VCHAR_UNI:255', ''],
                         'contribution_validation_topic_id'      => ['UINT', 0],
                         'contribution_release_topic_id'         => ['UINT', 0],// TODO: This may need to be in the revisions table, if we have different release topics for major changes?
@@ -73,6 +73,7 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
 					'COLUMNS' => [
 						'revision_id'                           => ['UINT', null, 'auto_increment'],
                         'contribution_id'                       => ['UINT', 0],
+                        'revision_status'                       => ['TINT', 0],
 						'revision_name'                         => ['VCHAR_UNI:255', ''],
                         'revision_version'                      => ['VCHAR_UNI:255', ''],
                         'revision_phpbb_version'                => ['VCHAR_UNI:255', ''],

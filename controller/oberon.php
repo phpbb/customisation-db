@@ -299,8 +299,8 @@ class oberon
 			'REVISION_ATTACHMENT_URL' 	=> !empty($revision['revision_attachment']) ? $ext_path . '/' . $revision['revision_attachment'] : '',
 			'REVISION_SCREENSHOTS'  	=> $screenshot_urls,
 
-			'EXTERNAL_STATUS'       		=> $revision['external_status_label'],
-			'INTERNAL_STATUS'       		=> $revision['internal_status_label'],
+			'REVISION_STATUS'       	=> $revision['revision_status_label'],
+			'INTERNAL_STATUS'       	=> $revision['internal_status_label'],
 
 			'VALIDATION_STATUS'     => $revision['contribution_status'],
 			'VALIDATE_UNVALIDATED'  => $this->manager::STATUS_UNVALIDATED,
@@ -506,6 +506,7 @@ class oberon
 
 			$revision_array = [
 				'contribution_id'      		=> $contribution_id,
+				'revision_status'    		=> $this->manager::REVISION_STATUS_MAP[$this->manager::INTERNAL_STATUS_UNVALIDATED], // This is one of two places the revision status is changed
 				'revision_name'        		=> $revision_name,
 				'revision_version'     		=> $version,
 				'revision_phpbb_version'	=> $phpbb_version,
