@@ -318,7 +318,7 @@ class manager
 
         while ($row = $this->db->sql_fetchrow($result))
         {
-            // Get the status of the latest revision so we can colour code it on the page for team members to see
+            // Get the status of the *latest* revision so we can colour code it on the page for team members to see
             // TODO: this is inefficient because it's getting the contribution for a second time in the function call below
             $latest_revision = $this->get_contribution_with_revision($row['contribution_id'], true);
 
@@ -326,8 +326,9 @@ class manager
                 'contribution_id'           => $row['contribution_id'],
                 'contribution_name'         => $row['contribution_name'],
                 'contribution_description'  => $row['contribution_description'],
+                'contribution_status'       => (int) $row['contribution_status'],
 
-                'revision_status'           => $latest_revision['queue_status'],
+                'revision_status'           => (int) $latest_revision['revision_status'],
             ];
         }
 
@@ -425,6 +426,7 @@ class manager
             'revision_version'                  => $revision['revision_version'] ?? '',
             'revision_description'              => $revision['revision_description'] ?? '',
             'revision_attachment'               => $revision['revision_attachment'] ?? '',
+            'submission_time'                   => $revision['submission_time'] ?? null,
             'screenshots'                       => $screenshots,
 
             // Queue info
@@ -462,12 +464,14 @@ class manager
         {
             $revisions[] = [
                 'revision_id'           => $row['revision_id'],
+                'revision_status'       => (int) $row['revision_status'],
                 'revision_name'         => $row['revision_name'],
                 'revision_version'      => $row['revision_version'],
                 'revision_description'  => $row['revision_description'],
+                'submission_time'       => $row['submission_time'],
+
                 'queue_id'              => $row['queue_id'],
                 'queue_status'          => $row['queue_status'],
-                'submission_time'       => $row['submission_time'],
             ];
         }
 
@@ -684,19 +688,6 @@ class manager
         return $data['topic_id'] ?? $topic_id;
     }
 
-    /*
-     * Get the topic ID we are using for validation
-     */
-    /*public function get_contribution_validation_topic_id(int $contribution_id)
-    {
-        // Load contribution row
-        $sql = 'SELECT * FROM ' . $this->tables['contributions'] . ' WHERE contribution_id = ' . (int) $contribution_id;
-        $result = $this->db->sql_query_limit($sql, 1);
-
-        return (int) $this->db->sql_fetchfield('contribution_validation_topic_id');
-    }*/
-
-
     /**
      * [AI GENERATED]
      * Store a validation report into the forum.
@@ -731,6 +722,11 @@ class manager
 
         // Ensure topic exists and store it in the private validation forum
         $topic_id = $this->create_or_append_forum_comment($contribution_id, self::PRIVATE_CONTRIBUTION_VALIDATION_FORUM, $topic_id, $subject, $body);
+
+        if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $topic_id > 0)
+        {
+            $this->update_contribution_validation_topic_id($contribution_id, $topic_id);
+        }
 
         return $topic_id;
     }

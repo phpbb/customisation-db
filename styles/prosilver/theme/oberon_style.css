@@ -55,18 +55,18 @@
 }
 
 /* ================================
-   Unvalidated (Red Override)
-   Add this class alongside .custdb_main_category
+   Unvalidated (Yellow Override)
+   Add this class (custdb_main_category_unvalidated) alongside .custdb_main_category
 =================================== */
 
 .custdb_main_category.custdb_main_category_unvalidated {
-    background: #f9ecec; /* light red background for body */
-    border-color: #f2c7c7; /* red-tinted border */
+    background: #fff8e1; /* light yellow background for body */
+    border-color: #ffe0b2; /* yellow-tinted border */
 }
 
-/* Red header for unvalidated */
+/* Yellow header for unvalidated */
 .custdb_main_category.custdb_main_category_unvalidated .custdb_main_category_header {
-    background: #d43b3b;
+    background: #f9a825;
 }
 
 /* Header link styling */
@@ -81,6 +81,37 @@
 
 /* Content styling */
 .custdb_main_category.custdb_main_category_unvalidated .custdb_main_category_content {
+    background: #fff8e1;
+    color: #5a4500;
+}
+
+/* ================================
+   Denied (Red Override)
+   Add this class (custdb_main_category_denied) alongside .custdb_main_category
+=================================== */
+
+.custdb_main_category.custdb_main_category_denied {
+    background: #f9ecec; /* light red background for body */
+    border-color: #f2c7c7; /* red-tinted border */
+}
+
+/* Red header for denied */
+.custdb_main_category.custdb_main_category_denied .custdb_main_category_header {
+    background: #d43b3b;
+}
+
+/* Header link styling */
+.custdb_main_category.custdb_main_category_denied .custdb_main_category_header > a {
+    color: #fff;
+}
+
+.custdb_main_category.custdb_main_category_denied .custdb_main_category_header > a:hover,
+.custdb_main_category.custdb_main_category_denied .custdb_main_category_header > a:focus {
+    text-decoration: underline;
+}
+
+/* Content styling */
+.custdb_main_category.custdb_main_category_denied .custdb_main_category_content {
     background: #f9ecec;
     color: #5a1a1a;
 }

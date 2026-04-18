@@ -216,11 +216,14 @@ class oberon
 		foreach ($revisions as $revision)
 		{
 			$this->template->assign_block_vars('revisions', [
-				'REVISION_NAME' => $revision['revision_name'],
-				'REVISION_VERSION' => $revision['revision_version'],
-				'REVISION_DESCRIPTION' => $revision['revision_description'],
-				'REVISION_UNVALIDATED' => $this->manager->is_team_member() && $revision['queue_status'] < $this->manager::INTERNAL_STATUS_DENIED,
-				'U_VIEW_REVISION' => $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision['revision_id']]),
+				'REVISION_NAME' 		=> $revision['revision_name'],
+				'REVISION_VERSION' 		=> $revision['revision_version'],
+				'REVISION_DESCRIPTION' 	=> $revision['revision_description'],
+
+				'REVISION_UNVALIDATED' 	=> $this->manager->is_team_member() && $revision['revision_status'] === $this->manager::STATUS_UNVALIDATED,
+				'REVISION_DENIED' 		=> $this->manager->is_team_member() && $revision['revision_status'] === $this->manager::STATUS_DENIED,
+
+				'U_VIEW_REVISION' 		=> $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision['revision_id']]),
 			]);
 		}
 
@@ -293,6 +296,7 @@ class oberon
 
 			'REVISION_ID'           	=> $revision['revision_id'],
 			'REVISION_NAME'         	=> $revision['revision_name'],
+			'REVISION_DATE'				=> $this->user->format_date($revision['submission_time']),
 			'REVISION_VERSION'      	=> $revision['revision_version'],
 			'REVISION_DESCRIPTION'  	=> $revision['revision_description'],
 			'REVISION_ATTACHMENT'   	=> $revision['revision_attachment'],
@@ -302,7 +306,7 @@ class oberon
 			'REVISION_STATUS'       	=> $revision['revision_status_label'],
 			'INTERNAL_STATUS'       	=> $revision['internal_status_label'],
 
-			'VALIDATION_STATUS'     => $revision['contribution_status'],
+			'VALIDATION_STATUS'     => $revision['revision_status'],
 			'VALIDATE_UNVALIDATED'  => $this->manager::STATUS_UNVALIDATED,
 			'VALIDATE_APPROVED'     => $this->manager::STATUS_APPROVED,
 			'VALIDATE_DENIED'       => $this->manager::STATUS_DENIED,
@@ -549,7 +553,11 @@ class oberon
 	public function index()
 	{
 		$type = $this->request->variable('type', 0); // Extension, style, translation, etc?
-		$status = $this->request->variable('status', $this->manager::STATUS_APPROVED); // Approved, unvalidated, denied
+
+		// Approved, unvalidated, denied - note that this will filter by the contribution status, not the revision status
+		// So we could have new, unvalidated revisions for a previously validated contribution come up a different colour when filtering by denied or approved, for example.
+		$status = $this->request->variable('status', $this->manager::STATUS_APPROVED);
+
 		$sort = $this->request->variable('sort', 0); // By date, by name, etc
 		$search_query = $this->request->variable('q', '', true);
 
@@ -558,11 +566,14 @@ class oberon
         foreach ($contributions as $contribution)
         {
             $this->template->assign_block_vars('contributions', [
-				'U_VIEW_CONTRIBUTION' => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution['contribution_id']]),
+				'U_VIEW_CONTRIBUTION' 		=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution['contribution_id']]),
                 
-				'CONTRIBUTION_NAME' => $contribution['contribution_name'],
-                'CONTRIBUTION_DESCRIPTION' => $contribution['contribution_description'],
-				'CONTRIBUTION_UNVALIDATED' => $this->manager->is_team_member() && $contribution['revision_status'] < $this->manager::INTERNAL_STATUS_DENIED,
+				'CONTRIBUTION_NAME' 		=> $contribution['contribution_name'],
+                'CONTRIBUTION_DESCRIPTION' 	=> $contribution['contribution_description'],
+
+				// Get the *latest* revision status so we can colour code for attracting attention in a simple way
+				'CONTRIBUTION_UNVALIDATED' 	=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_UNVALIDATED,
+				'CONTRIBUTION_DENIED' 		=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_DENIED,
             ]);
         }
 

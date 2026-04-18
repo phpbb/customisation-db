@@ -96,10 +96,14 @@ class ai_validation2 extends Command
             $messages = $this->build_openai_messages($contribution, $revision, $manifest, $files);
             $response = $this->call_openai($messages, $output);
 
+            // Replace characters which could cause the JSON decoding to crash
+            $response = preg_replace('/[\x00-\x1F\x7F]/u', '', $response);
+
             $output->writeln('<info>OpenAI response (raw):</info>');
             $output->writeln($response);
 
             $decoded = json_decode($response, true);
+
             if (json_last_error() === JSON_ERROR_NONE && isset($decoded['outcome']))
             {
                 $output->writeln('<info>---- Parsed Validation Report ----</info>');
@@ -138,6 +142,8 @@ class ai_validation2 extends Command
             else
             {
                 $output->writeln('<comment>Unable to parse response as JSON with expected keys. Please inspect output above.</comment>');
+                $output->writeln('Error code: ' . json_last_error());
+                $output->writeln('Error message: ' . json_last_error_msg());
             }
 
             return true;
