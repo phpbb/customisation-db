@@ -110,7 +110,7 @@ class oberon
 				$contribution = $this->manager->get_contribution_with_revision($contribution_id);
 
 				// Create a topic for the validation comments (or if it already exists, just add a post to it)
-				$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager::PRIVATE_CONTRIBUTION_VALIDATION_FORUM, $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $contribution_validation_comment);
+				$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['private.contribution.validation.forum.id']['default'], $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $contribution_validation_comment);
 			
 				// If there is no pre-existing validation topic, update the value associated with the contribution record
 				if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $private_topic_id > 0)
@@ -127,7 +127,7 @@ class oberon
 
 					// Now update the release topic!
 					$release_comment = '[b]Approved.[/b]\n\nDownload link: URL GOES HERE\n\n' . $contribution_validation_comment; // TODO: add download link and some lang strings etc here
-					$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager::PUBLIC_CONTRIBUTION_ANNOUNCEMENT_FORUM, $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
+					$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['public.contribution.release.forum.id']['default'], $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
 				
 					// If there is no release topic, update the value associated with the contribution record
 					if (isset($contribution['contribution_release_topic_id']) && $contribution['contribution_release_topic_id'] == 0 && $public_topic_id > 0)
@@ -182,6 +182,7 @@ class oberon
 		$this->template->assign_vars([
 			// Core contribution data
 			'CONTRIBUTION_ID'       	=> $contribution['contribution_id'],
+			'CONTRIBUTION_TYPE'			=> $this->manager->contribution_type_mapping()[$contribution['contribution_type']],
 			'CONTRIBUTION_NAME'     	=> $contribution['contribution_name'],
 			'CONTRIBUTION_DESCRIPTION'  => $contribution['contribution_description'],
 			'AUTHORS'               	=> $contribution['author_name'],
@@ -447,7 +448,7 @@ class oberon
 			$demo_link         			= $this->request->variable('demo_link', '', true);
 			$version        			= $this->request->variable('version_number', '', true);
 			$phpbb_version  			= $this->request->variable('phpbb_version', '');
-			$user_id           			= (int) $this->user->data['user_id'];
+			$user_id           			= (int) $this->user->data['user_id']; // TODO: Pull from the authors field?
 
 			if (!$contribution_id)
 			{
@@ -541,7 +542,7 @@ class oberon
 			'TYPE_TOOLS'			=> $this->manager::TYPE_TOOLS,
 			'TYPE_ARCHIVE'			=> $this->manager::TYPE_ARCHIVE,
 
-			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager::SUPPORTED_PHPBB_VERSIONS,
+			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager->get_settings()['supported.phpbb.versions'],
 		]); 
 	}
 
@@ -570,6 +571,7 @@ class oberon
                 
 				'CONTRIBUTION_NAME' 		=> $contribution['contribution_name'],
                 'CONTRIBUTION_DESCRIPTION' 	=> $contribution['contribution_description'],
+				'CONTRIBUTION_TYPE'			=> $this->manager->contribution_type_mapping()[$contribution['contribution_type']],
 
 				// Get the *latest* revision status so we can colour code for attracting attention in a simple way
 				'CONTRIBUTION_UNVALIDATED' 	=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_UNVALIDATED,

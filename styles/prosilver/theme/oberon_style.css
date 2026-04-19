@@ -54,6 +54,22 @@
     text-decoration: underline; /* optional, only if you want a hover underline */
 }
 
+.custdb_main_category_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custdb_contribution_type {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
 /* ================================
    Unvalidated (Yellow Override)
    Add this class (custdb_main_category_unvalidated) alongside .custdb_main_category

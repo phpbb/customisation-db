@@ -14,15 +14,6 @@ namespace phpbb\oberon\manager;
  */
 class manager
 {
-    // TODO: Hard-coded, fix this later!!!!
-    const FILE_UPLOAD_LOCATION = '/workspaces/phpbb/phpBB/files/contributions/';
-    const SUPPORTED_PHPBB_VERSIONS = ['4.0.0', '3.3.15'];
-    
-    // TODO: Need to have different forums for the different customisation types in the future!!!
-    const PRIVATE_CONTRIBUTION_VALIDATION_FORUM = 2;
-    const PUBLIC_CONTRIBUTION_ANNOUNCEMENT_FORUM = 3;
-    const CUSTOMISATION_ROBOT_USER_ID = 2;
-
     const TYPE_EXTENSIONS = 1;
     const TYPE_STYLES = 2;
     const TYPE_TRANSLATIONS = 3;
@@ -85,6 +76,9 @@ class manager
     /* @var array $tables */
     protected $tables;
 
+    /* @var array $tables */
+    protected $settings;
+
 	/**
 	* Constructor
 	*
@@ -99,7 +93,7 @@ class manager
     * @param \phpbb\extension\manager           $ext_manager
     * array                                     $tables
 	*/
-	public function __construct(string $root_path, string $php_ext, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\auth\auth $auth, \phpbb\extension\manager $ext_manager, array $tables)
+	public function __construct(string $root_path, string $php_ext, \phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\user $user, \phpbb\user_loader $user_loader, \phpbb\language\language $language, \phpbb\auth\auth $auth, \phpbb\extension\manager $ext_manager, array $tables, array $settings)
 	{
         $this->root_path = $root_path;
         $this->php_ext = $php_ext;
@@ -111,6 +105,7 @@ class manager
         $this->auth = $auth;
         $this->ext_manager = $ext_manager;
         $this->tables = $tables;
+        $this->settings = $settings;
 	}
 
     public function is_team_member()
@@ -133,6 +128,14 @@ class manager
     public function get_tables()
     {
         return $this->tables;
+    }
+
+    /**
+     * Return settings for Oberon
+     */
+    public function get_settings()
+    {
+        return $this->settings;
     }
 
     public function get_ext_manager()
@@ -190,6 +193,19 @@ class manager
         }
 
         return $language_string;
+    }
+
+    // Simple mapping for the language strings for each contribution type
+    public function contribution_type_mapping()
+    {
+        return [
+            self::TYPE_EXTENSIONS => $this->user->lang('CUSTDB_TYPE_EXTENSIONS'),
+            self::TYPE_STYLES => $this->user->lang('CUSTDB_TYPE_STYLES'),
+            self::TYPE_TRANSLATIONS => $this->user->lang('CUSTDB_TYPE_TRANSLATIONS'),
+            self::TYPE_BBCODES => $this->user->lang('CUSTDB_TYPE_BBCODES'),
+            self::TYPE_TOOLS => $this->user->lang('CUSTDB_TYPE_TOOLS'),
+            self::TYPE_ARCHIVE => $this->user->lang('CUSTDB_TYPE_ARCHIVE'),
+        ];
     }
 
     /*
@@ -327,6 +343,7 @@ class manager
                 'contribution_name'         => $row['contribution_name'],
                 'contribution_description'  => $row['contribution_description'],
                 'contribution_status'       => (int) $row['contribution_status'],
+                'contribution_type'         => (int) $row['contribution_type'],
 
                 'revision_status'           => (int) $latest_revision['revision_status'],
             ];
@@ -531,8 +548,7 @@ class manager
     {
         include_once($this->root_path . 'includes/functions_posting.' . $this->php_ext);
 
-        // TODO: User ID (Customisations Robot?)
-        $customisation_robot_user_id = self::CUSTOMISATION_ROBOT_USER_ID;
+        $customisation_robot_user_id = $this->get_settings()['customisation.robot.user.id'];
 
         $this->user_loader->load_users([$customisation_robot_user_id]);
         $this->user->data = $this->user_loader->get_user($customisation_robot_user_id);
@@ -621,8 +637,7 @@ class manager
     {
         include_once($this->root_path . 'includes/functions_posting.' . $this->php_ext);
 
-        // TODO: User ID (Customisations Robot?)
-        $customisation_robot_user_id = self::CUSTOMISATION_ROBOT_USER_ID;
+        $customisation_robot_user_id = $this->get_settings()['customisation.robot.user.id'];
 
         $this->user_loader->load_users([$customisation_robot_user_id]);
         $this->user->data = $this->user_loader->get_user($customisation_robot_user_id);
@@ -721,7 +736,7 @@ class manager
                 "Report:\n{$report}";
 
         // Ensure topic exists and store it in the private validation forum
-        $topic_id = $this->create_or_append_forum_comment($contribution_id, self::PRIVATE_CONTRIBUTION_VALIDATION_FORUM, $topic_id, $subject, $body);
+        $topic_id = $this->create_or_append_forum_comment($contribution_id, $this->get_settings()['private.contribution.validation.forum.id']['default'], $topic_id, $subject, $body);
 
         if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $topic_id > 0)
         {

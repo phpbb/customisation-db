@@ -1,5 +1,6 @@
 imports:
     - { resource: tables.yml }
+    - { resource: settings.yml }
 
 services:
     phpbb.oberon.manager:
@@ -15,6 +16,7 @@ services:
             - '@auth'
             - '@ext.manager'
             - '%phpbb.oberon.tables%'
+            - '%phpbb.oberon.settings%'
     phpbb.oberon.controller:
         class: phpbb\oberon\controller\oberon
         arguments:
@@ -44,13 +46,6 @@ services:
         tags:
             - { name: console.command }
 
-    phpbb.oberon.console.ai_validation2:
-        class: phpbb\oberon\console\ai_validation2
-        arguments:
-            - '@dbal.conn'
-            - '@phpbb.oberon.manager'
-        tags:
-            - { name: console.command }
     phpbb.oberon.console.ai_validation:
         class: phpbb\oberon\console\ai_validation
         arguments:

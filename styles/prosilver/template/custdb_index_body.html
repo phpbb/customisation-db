@@ -76,6 +76,7 @@
             <div class="custdb_main_category{% if contribution.CONTRIBUTION_UNVALIDATED %} custdb_main_category_unvalidated{% endif %}{% if contribution.CONTRIBUTION_DENIED %} custdb_main_category_denied{% endif %}">
                 <div class="custdb_main_category_header">
                     <a href="{{ contribution.U_VIEW_CONTRIBUTION }}">{{ contribution.CONTRIBUTION_NAME }}</a>
+                    <span class="custdb_contribution_type">{{ contribution.CONTRIBUTION_TYPE }}</span>
                 </div>
                 <div class="custdb_main_category_content">{{ contribution.CONTRIBUTION_DESCRIPTION }}</div>
             </div>

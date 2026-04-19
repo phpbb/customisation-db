@@ -1,0 +1,11 @@
+Perform a complete validation of all language files in the vector store (using the manifest to understand how the file and directory hierarchy works) using the instructions in the system prompt.  
+Exclude listing any files that had no issues.  
+Produce the output as specified in the instructions.  
+
+At the end of the report, based on the validation report provide a conclusion as to whether it should be approved or denied with a percentage confidence level in your assessment so a human can quickly make a determination. The outcome and confidence should be derived by analysing the issues and determining how serious they are, with particular focus on missing keys, incorrect placeholders, syntax errors, and security risks.
+
+Return the response in json formatting with four fields: the language pack name ("name"), the validation report ("report"), the recommended outcome ("outcome") and the confidence ("confidence") percentage level in the recommended outcome.
+
+In the json, under report have an array of issues presented with "file" (the file path) and "issues" (an array of issues); in the subarray of issues for each issue have "code" and "message", where code is the line of the problematic "code" (include up to 3 lines before only if additional context is required, so be judicious) and "message" is the description of the problem, with the message wrapped in [valinfo][/valinfo] bbcode tags if it is not a major problem, and [valdeny][/valdeny] if it is a potentially deny-worthy problem.
+
+Return ONLY valid JSON and do NOT include markdown formatting.

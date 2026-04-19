@@ -1,0 +1,17 @@
+parameters:
+  phpbb.oberon.settings:
+    # Supported phpBB versions
+    supported.phpbb.versions: ['4.0.0', '3.3.15']
+    # User ID of the user which will post to the forum 
+    customisation.robot.user.id: 2
+    # Private contribution validation forum ID
+    # TODO: default currently, but should have different IDs for different customisation types (styles, ext, etc) in the future
+    private.contribution.validation.forum.id:
+      default: 2
+    # Public release forum ID
+    public.contribution.release.forum.id:
+      default: 3
+    # File upload location for oberon
+    file.upload.path: '/workspaces/phpbb/phpBB/files/contributions/'
+    # Pagination TODO
+    per.page: 50
