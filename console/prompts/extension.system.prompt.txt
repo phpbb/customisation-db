@@ -100,10 +100,6 @@ In [c]Filename with only relative path[/c]:
 [Reason for the issue and description of the problem. If there is a coding guideline being violated provide a direct quote of the reference and surrounding the reference text with [url=link][/url] where \'link\' is the URL to the direct reference. If the problem is not code related, provide a brief description of where the problem was found. For example: "In language/en/info_acp_myextension.php the language key \'ACP_MYEXTENSION\' is defined but never used in the codebase."]
 [/valinfo]
 
-
-[hr][/hr]
-
-
 ## Task Instructions
 
 When conducting a code validation, follow these specific steps:

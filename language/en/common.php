@@ -20,6 +20,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 
     // Customisation types
+    'CUSTDB_CONTRIBUTION_TYPE'          => 'Contribution Type',
     'CUSTDB_TYPE_EXTENSIONS'            => 'Extensions',
     'CUSTDB_TYPE_STYLES'                => 'Styles',
     'CUSTDB_TYPE_TRANSLATIONS'          => 'Translations',

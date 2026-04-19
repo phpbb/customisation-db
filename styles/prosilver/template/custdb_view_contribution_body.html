@@ -25,6 +25,10 @@
 
                 <div class="custdb_sidebar_meta">
                     <div>
+                        <strong>{{ lang('CUSTDB_CONTRIBUTION_TYPE') }}</strong>
+                        {{ CONTRIBUTION_TYPE }}
+                    </div>
+                    <div>
                         <strong>{{ lang('CUSTDB_VERSION_NUMBER') }}</strong>
                         {{ VERSION_NUMBER }}
                     </div>
@@ -54,7 +58,7 @@
                 {% for revision in revisions %}
                 <div class="custdb_main_category{% if revision.REVISION_UNVALIDATED %} custdb_main_category_unvalidated{% endif %}{% if revision.REVISION_DENIED %} custdb_main_category_denied{% endif %}">
                     <div class="custdb_main_category_header">
-                        <a href="{{ revision.U_VIEW_REVISION }}"></a>
+                        <a href="{{ revision.U_VIEW_REVISION }}">
                             {% if revision.REVISION_DENIED %}
                                 <s>{{ revision.REVISION_NAME }}{% if revision.REVISION_VERSION %} ({{ revision.REVISION_VERSION }}){% endif %}</s>
                             {% else %}
