@@ -121,8 +121,6 @@ class oberon
 				// This confirms a manual approval
 				if ($contribution_validation_status === $this->manager::STATUS_APPROVED)
 				{
-					// Technically this is not required, because at the end of this the queue entry will be removed
-					// as the customisation has been approved. But for completeness, we should say the queue entry is finalised as approved.
 					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
 
 					// Now update the release topic!
@@ -134,16 +132,12 @@ class oberon
 					{
 						$this->manager->update_contribution_release_topic_id($contribution_id, $public_topic_id);
 					}
-
-					// Remove the queue entry, we're done processing it now.
-					$this->manager->remove_queue_entry($queue_id);
 				}
 
 				else if ($contribution_validation_status === $this->manager::STATUS_DENIED) 
 				{
-					// Update the internal status and remove the queue entry, we are done processing this now
+					// Update the internal status
 					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_DENIED);
-					$this->manager->remove_queue_entry($queue_id);
 				}
 			}
 		}

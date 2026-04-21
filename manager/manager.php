@@ -518,9 +518,19 @@ class manager
         return ['revision' => $revision_row, 'contribution' => $contribution_row];
     }
 
+    public function find_queue_item(int $queue_id)
+    {
+        $sql = 'SELECT * FROM ' . $this->tables['queue'] . ' WHERE queue_id = ' . (int) $queue_id;
+        $result = $this->db->sql_query_limit($sql, 1);
+        $queue_item = $this->db->sql_fetchrow($result);
+        return $queue_item;
+    }
+
+    // Get the items awaiting processing
     public function find_queue_items_for_processing()
     {
         $sql = 'SELECT * FROM ' . $this->tables['queue'] . '
+                WHERE queue_status NOT IN (' . self::INTERNAL_STATUS_DENIED . ', ' . self::INTERNAL_STATUS_APPROVED . ')
                 ORDER BY queue_added_time ASC';
 
         $result = $this->db->sql_query($sql);
@@ -788,14 +798,19 @@ class manager
      * Remove queue entry. But we only do this if the internal status is approved or denied, otherwise there might
      * still be future processing to be done.
      */
-    public function remove_queue_entry(int $queue_id)
+    public function remove_queue_entries(int $queue_id = 0)
     {
         $sql = 'DELETE FROM ' . $this->tables['queue'] . '
-                WHERE queue_id = ' . (int) $queue_id . '
-                AND ' . $this->db->sql_in_set('queue_status', [
+                WHERE ' . $this->db->sql_in_set('queue_status', [
                     self::INTERNAL_STATUS_APPROVED,
                     self::INTERNAL_STATUS_DENIED,
                 ], false); // true allows it to be an IN clause
+
+        if ($queue_id > 0)
+        {
+            // Remove a specific queue item
+            $sql .= ' AND queue_id = ' . (int) $queue_id;   
+        }
 
         $this->db->sql_query($sql);
     }
