@@ -99,19 +99,30 @@ class oberon
 				}
 
 				// Gather status and comment
-				// TODO: We could append a status change comment here like "Status changed from x to y". This could be useful?
 				$contribution_validation_status = $this->request->variable('validation_status', 0, true);
 				$contribution_validation_comment = $this->request->variable('validation_comment', '', true);
 
-				// Update status
-				$this->manager->update_external_validation_status($contribution_id, $contribution_validation_status);
-	
 				// Ensure the private validation topic exists and store it
 				$contribution = $this->manager->get_contribution_with_revision($contribution_id);
+				
+				// Get old and new status names for status change message
+				// $old_status_name = $this->manager->get_external_status($contribution['contribution_status']);
+				$new_status_name = $this->manager->get_external_status($contribution_validation_status);
+				
+				// Prepend status change message to the validation comment
+				$status_change_message = $this->language->lang(
+					'CUSTDB_STATUS_MANUAL_CHANGE',
+					$new_status_name
+				);
+
+				$validation_comment_with_status = $status_change_message . "\n\n" . $contribution_validation_comment;
+
+				// Update status
+				$this->manager->update_external_validation_status($contribution_id, $contribution_validation_status);
 
 				// Create a topic for the validation comments (or if it already exists, just add a post to it)
-				$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['private.contribution.validation.forum.id']['default'], $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $contribution_validation_comment);
-			
+				$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['private.contribution.validation.forum.id']['default'], $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $validation_comment_with_status);
+				
 				// If there is no pre-existing validation topic, update the value associated with the contribution record
 				if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $private_topic_id > 0)
 				{
@@ -123,10 +134,18 @@ class oberon
 				{
 					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
 
-					// Now update the release topic!
-					$release_comment = '[b]Approved.[/b]\n\nDownload link: URL GOES HERE\n\n' . $contribution_validation_comment; // TODO: add download link and some lang strings etc here
+					// Now update the release topic! TODO: hard coded URL needs to change?
+					$download_url = '/files/contributions/' . basename($contribution['revision_attachment']);
+
+					$release_comment = $this->language->lang(
+						'CUSTDB_CONTRIBUTION_APPROVED', 
+						$contribution['contribution_name'],
+						$download_url,
+						$contribution_validation_comment // TODO: maybe have a public release comment here instead? Or no comment at all?
+					);
+
 					$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['public.contribution.release.forum.id']['default'], $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
-				
+					
 					// If there is no release topic, update the value associated with the contribution record
 					if (isset($contribution['contribution_release_topic_id']) && $contribution['contribution_release_topic_id'] == 0 && $public_topic_id > 0)
 					{
@@ -442,7 +461,26 @@ class oberon
 			$demo_link         			= $this->request->variable('demo_link', '', true);
 			$version        			= $this->request->variable('version_number', '', true);
 			$phpbb_version  			= $this->request->variable('phpbb_version', '');
-			$user_id           			= (int) $this->user->data['user_id']; // TODO: Pull from the authors field?
+			$authors_input              = $this->request->variable('authors', '', true);
+			
+			// TODO: AI generated... check this!
+			// Parse authors field to get user_id
+			// If no authors provided, use the current user
+			$user_id = (int) $this->user->data['user_id'];
+			if (!empty($authors_input))
+			{
+				// Take the first author from the comma-separated list
+				$author_names = array_map('trim', explode(',', $authors_input));
+				if (!empty($author_names[0]))
+				{
+					// Look up the user by username
+					$author_data = $this->manager->get_user_by_username($author_names[0]);
+					if ($author_data)
+					{
+						$user_id = (int) $author_data['user_id'];
+					}
+				}
+			}
 
 			if (!$contribution_id)
 			{
@@ -556,8 +594,16 @@ class oberon
 		$sort = $this->request->variable('sort', 0); // By date, by name, etc
 		$search_query = $this->request->variable('q', '', true);
 
-        $contributions = $this->manager->get_contributions_for_index($type, $status, $sort, $search_query);
-       
+		// Pagination
+		$settings = $this->manager->get_settings();
+		$per_page = (int) $settings['per.page'];
+		$start = $this->request->variable('start', 0);
+
+        $result = $this->manager->get_contributions_for_index($type, $status, $sort, $search_query, $start, $per_page);
+
+        $total = $result['total'];
+        $contributions = $result['contributions'];
+ 
         foreach ($contributions as $contribution)
         {
             $this->template->assign_block_vars('contributions', [
@@ -572,6 +618,16 @@ class oberon
 				'CONTRIBUTION_DENIED' 		=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_DENIED,
             ]);
         }
+   
+		// Generate pagination
+		$this->pagination->generate_template_pagination(
+			$this->helper->route('custdb_index', ['type' => $type, 'status' => $status, 'sort' => $sort, 'q' => $search_query]), 
+			'pagination', 
+			'start', 
+			$total, 
+			$per_page, 
+			$start
+		);
 
         $this->template->assign_vars([
 			'U_CUSTDB_INDEX'		=> $this->helper->route('custdb_index'),
@@ -606,20 +662,6 @@ class oberon
 			'U_TYPE_TOOLS' 			=> $this->sidebar_route($this->manager::TYPE_TOOLS),
 			'U_TYPE_ARCHIVE' 		=> $this->sidebar_route($this->manager::TYPE_ARCHIVE),
 		]); 
-
-		
-        /*
-		// Pagination
-		$per_page = (int) 10;
-		$this->pagination->generate_template_pagination(
-			$this->helper->route('custdb_index'), 
-			'pagination', 
-			'start', 
-			$TOTAL, 
-			$per_page, 
-			$start
-		);
-		*/
 
 		return $this->helper->render('custdb_index_body.html', $this->user->lang('CUSTDB_INDEX'));
 	}

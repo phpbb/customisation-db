@@ -99,6 +99,10 @@ $lang = array_merge($lang, [
     // Revision list
     'CUSTDB_REVISIONS'                          => 'Revisions',
 
+    // Posts
+    'CUSTDB_CONTRIBUTION_APPROVED'              => "%1\$s has been approved.\n\n[b]Download:[/b]\n[url=%2\$s]%1\$s[/url]\n\n[b]Validation Notes:[/b]\n%3\$s",
+    'CUSTDB_STATUS_MANUAL_CHANGE'               => '[b]Status manually changed to %s[/b]',
+
     // Errors
     'CUSTDB_MISSING_REQUIRED_FIELDS'            => 'Go back to the previous page and ensure all of the required fields have been filled.',
     'CUSTDB_FILE_UPLOAD_FAILED'                 => 'There was an error uploading the contribution file.',

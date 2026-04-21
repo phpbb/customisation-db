@@ -293,7 +293,7 @@ class manager
     }
 
     // List the contributions on the index
-    public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0, string $search_query = '')
+    public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0, string $search_query = '', int $start = 0, int $per_page = 50)
     {
         $sql = 'SELECT *
                 FROM ' . $this->tables['contributions'] . '
@@ -316,6 +316,13 @@ class manager
             $sql .= ' AND (contribution_name ' . $escaped_search . ' OR contribution_description ' . $escaped_search . ')';  
         }
 
+        // Get total count for pagination (TODO: check this... AI generated)
+        $count_sql = 'SELECT COUNT(*) as total ' . substr($sql, strpos($sql, 'FROM'));
+        $count_result = $this->db->sql_query($count_sql);
+        $count_row = $this->db->sql_fetchrow($count_result);
+        $this->db->sql_freeresult($count_result);
+        $total = (int) $count_row['total'];
+
         switch ($sort)
         {
             case self::SORT_DATE:
@@ -329,7 +336,7 @@ class manager
                 break;
         }
 
-        $result = $this->db->sql_query($sql);
+        $result = $this->db->sql_query_limit($sql, $per_page, $start);
         $contributions = [];
 
         while ($row = $this->db->sql_fetchrow($result))
@@ -351,7 +358,10 @@ class manager
 
         $this->db->sql_freeresult($result);
 
-        return $contributions;   
+        return [
+            'total' => $total,
+            'contributions' => $contributions,
+        ];   
     }
 
     /**
@@ -813,5 +823,34 @@ class manager
         }
 
         $this->db->sql_query($sql);
+    }
+
+    /**
+     * Look up a user by username
+     *
+     * @param string $username The username to search for
+     * @return array|null User data or null if not found
+     */
+    public function get_user_by_username(string $username)
+    {
+        $username = trim($username);
+        if (empty($username))
+        {
+            return null;
+        }
+
+        $sql_array = [
+            'SELECT' => 'user_id, username',
+            'FROM'   => [USERS_TABLE => 'u'],
+            'WHERE'  => 'u.username = \'' . $this->db->sql_escape($username) . '\' AND u.user_type <> ' . USER_IGNORE,
+        ];
+
+        $sql = $this->db->sql_build_query('SELECT', $sql_array);
+
+        $result = $this->db->sql_query_limit($sql, 1);
+        $user_data = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        return $user_data ?: null;
     }
 }
