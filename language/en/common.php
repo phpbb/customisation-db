@@ -101,8 +101,8 @@ $lang = array_merge($lang, [
 
     // Posts
     'CUSTDB_CONTRIBUTION_APPROVED'              => "%1\$s has been approved.\n\n[b]Download:[/b]\n[url=%2\$s]%1\$s[/url]\n\n[b]Validation Notes:[/b]\n%3\$s",
-    'CUSTDB_STATUS_MANUAL_CHANGE'               => '[b]Status manually changed to %s[/b]',
-    'CUSTDB_STATUS_AUTOMATIC_CHANGE'            => '[b]Status automatically changed from %s to %s[/b]',
+    'CUSTDB_STATUS_MANUAL_CHANGE'               => '[b]External status manually changed to %s[/b]',
+    'CUSTDB_STATUS_AUTOMATIC_CHANGE'            => '[b]Internal status automatically changed from %1$s to %2$s[/b]',
 
     // Errors
     'CUSTDB_NO_ACCESS'                          => 'You do not have permission to access this page.',

@@ -106,6 +106,9 @@ class manager
         $this->ext_manager = $ext_manager;
         $this->tables = $tables;
         $this->settings = $settings;
+
+        // Ensure the language file is loaded
+        $this->language->add_lang('common', 'phpbb/oberon');
 	}
 
     // See if the user is a team member
@@ -271,6 +274,8 @@ class manager
      */
     public function update_internal_queue_status(int $queue_id, int $queue_status)
     {
+        $queue_item = $this->find_queue_item($queue_id);
+
         $sql = 'UPDATE ' . $this->tables['queue'] . ' SET queue_status = ' . (int) $queue_status . ' WHERE queue_id = ' . (int) $queue_id;
 		$this->db->sql_query($sql);
 
@@ -280,17 +285,37 @@ class manager
             // we still want to know what happened to the revision. This is one of two places the revision status is changed.
             $sql = 'UPDATE ' . $this->tables['revisions'] . '
                     SET revision_status = ' . self::REVISION_STATUS_MAP[$queue_status] . '
-                    WHERE revision_id = (
-                        SELECT revision_id
-                        FROM ' . $this->tables['queue'] . '
-                        WHERE queue_id = ' . (int) $queue_id . '
-                    )';
+                    WHERE revision_id = ' . (int) $queue_item['revision_id'];
 
             $this->db->sql_query($sql);
         }
 
         // Only if the private validation topic already exists, put a post in the private validation topic about the internal status change
-        //$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['private.contribution.validation.forum.id']['default'], $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $validation_comment_with_status);
+        $contribution_data = $this->find_contribution_revision_for_queue_id($queue_id);
+
+        if ($contribution_data && (int) $contribution_data['contribution']['contribution_validation_topic_id'] > 0)
+        {
+            $old_status_name = $this->get_internal_status((int) $queue_item['queue_status']);
+            $new_status_name = $this->get_internal_status($queue_status);
+
+            if ($old_status_name != $new_status_name)
+            {
+                // Create status change message
+                $status_change_message = $this->language->lang(
+                    'CUSTDB_STATUS_AUTOMATIC_CHANGE',
+                    $old_status_name,
+                    $new_status_name
+                );
+
+                $this->create_or_append_forum_comment(
+                    $contribution_data['contribution']['contribution_id'], 
+                    $this->get_settings()['private.contribution.validation.forum.id']['default'], 
+                    $contribution_data['contribution']['contribution_validation_topic_id'], 
+                    $contribution_data['contribution']['contribution_name'], // subject
+                    $status_change_message // post text
+                );
+            }
+        }
     }
 
     // Submit a new contribution
