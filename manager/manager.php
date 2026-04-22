@@ -115,6 +115,16 @@ class manager
         return true; // TODO: add logic here
     }
 
+    public function is_registered()
+    {
+        return null;
+    }
+
+    public function is_guest()
+    {
+        return null;
+    }
+
     public function is_customisation_author(int $contribution_id)
     {
         // Is the current user the author of the customisation?
