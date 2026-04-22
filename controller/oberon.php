@@ -83,11 +83,20 @@ class oberon
 		$this->tables = $this->manager->get_tables();
 	}
 
+	/**
+	 * Simple permissions checker
+	 */
 	private function permissions_check($allowed_access)
 	{
-		// Add logic using manager.php to determine if access is allowed
+		if ($allowed_access === self::ACCESS_TEAM && !$this->manager->is_team_member())
+		{
+			throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
+		}
 
-		throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
+		if ($allowed_access === self::ACCESS_REGISTERED && !$this->manager->is_registered())
+		{
+			throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
+		}
 	}
 
 	/**
@@ -98,77 +107,76 @@ class oberon
 	*/
 	public function validate(int $contribution_id, int $queue_id)
 	{
-		if ($this->manager->is_team_member())
+		$this->permissions_check(self::ACCESS_TEAM);
+
+		// Check if form submitted
+		if ($this->request->is_set_post('submit'))
 		{
-			// Check if form submitted
-			if ($this->request->is_set_post('submit'))
+			// Validate form token for CSRF
+			if (!check_form_key('custdb_view_revision'))
 			{
-				// Validate form token for CSRF
-				if (!check_form_key('custdb_view_revision'))
-				{
-					trigger_error('FORM_INVALID');
-				}
+				trigger_error('FORM_INVALID');
+			}
 
-				// Gather status and comment
-				$contribution_validation_status = $this->request->variable('validation_status', 0, true);
-				$contribution_validation_comment = $this->request->variable('validation_comment', '', true);
+			// Gather status and comment
+			$contribution_validation_status = $this->request->variable('validation_status', 0, true);
+			$contribution_validation_comment = $this->request->variable('validation_comment', '', true);
 
-				// Ensure the private validation topic exists and store it
-				$contribution = $this->manager->get_contribution_with_revision($contribution_id);
-				
-				// Get old and new status names for status change message
-				// $old_status_name = $this->manager->get_external_status($contribution['contribution_status']);
-				$new_status_name = $this->manager->get_external_status($contribution_validation_status);
-				
-				// Prepend status change message to the validation comment
-				$status_change_message = $this->language->lang(
-					'CUSTDB_STATUS_MANUAL_CHANGE',
-					$new_status_name
+			// Ensure the private validation topic exists and store it
+			$contribution = $this->manager->get_contribution_with_revision($contribution_id);
+			
+			// Get old and new status names for status change message
+			// $old_status_name = $this->manager->get_external_status($contribution['contribution_status']);
+			$new_status_name = $this->manager->get_external_status($contribution_validation_status);
+			
+			// Prepend status change message to the validation comment
+			$status_change_message = $this->language->lang(
+				'CUSTDB_STATUS_MANUAL_CHANGE',
+				$new_status_name
+			);
+
+			$validation_comment_with_status = $status_change_message . "\n\n" . $contribution_validation_comment;
+
+			// Update status
+			$this->manager->update_external_validation_status($contribution_id, $contribution_validation_status);
+
+			// Create a topic for the validation comments (or if it already exists, just add a post to it)
+			$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['private.contribution.validation.forum.id']['default'], $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $validation_comment_with_status);
+			
+			// If there is no pre-existing validation topic, update the value associated with the contribution record
+			if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $private_topic_id > 0)
+			{
+				$this->manager->update_contribution_validation_topic_id($contribution_id, $private_topic_id);
+			}
+
+			// This confirms a manual approval
+			if ($contribution_validation_status === $this->manager::STATUS_APPROVED)
+			{
+				$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
+
+				// Now update the release topic! TODO: hard coded URL needs to change?
+				$download_url = '/files/contributions/' . basename($contribution['revision_attachment']);
+
+				$release_comment = $this->language->lang(
+					'CUSTDB_CONTRIBUTION_APPROVED', 
+					$contribution['contribution_name'],
+					$download_url,
+					$contribution_validation_comment // TODO: maybe have a public release comment here instead? Or no comment at all?
 				);
 
-				$validation_comment_with_status = $status_change_message . "\n\n" . $contribution_validation_comment;
-
-				// Update status
-				$this->manager->update_external_validation_status($contribution_id, $contribution_validation_status);
-
-				// Create a topic for the validation comments (or if it already exists, just add a post to it)
-				$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['private.contribution.validation.forum.id']['default'], $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $validation_comment_with_status);
+				$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['public.contribution.release.forum.id']['default'], $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
 				
-				// If there is no pre-existing validation topic, update the value associated with the contribution record
-				if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $private_topic_id > 0)
+				// If there is no release topic, update the value associated with the contribution record
+				if (isset($contribution['contribution_release_topic_id']) && $contribution['contribution_release_topic_id'] == 0 && $public_topic_id > 0)
 				{
-					$this->manager->update_contribution_validation_topic_id($contribution_id, $private_topic_id);
+					$this->manager->update_contribution_release_topic_id($contribution_id, $public_topic_id);
 				}
+			}
 
-				// This confirms a manual approval
-				if ($contribution_validation_status === $this->manager::STATUS_APPROVED)
-				{
-					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
-
-					// Now update the release topic! TODO: hard coded URL needs to change?
-					$download_url = '/files/contributions/' . basename($contribution['revision_attachment']);
-
-					$release_comment = $this->language->lang(
-						'CUSTDB_CONTRIBUTION_APPROVED', 
-						$contribution['contribution_name'],
-						$download_url,
-						$contribution_validation_comment // TODO: maybe have a public release comment here instead? Or no comment at all?
-					);
-
-					$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['public.contribution.release.forum.id']['default'], $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
-					
-					// If there is no release topic, update the value associated with the contribution record
-					if (isset($contribution['contribution_release_topic_id']) && $contribution['contribution_release_topic_id'] == 0 && $public_topic_id > 0)
-					{
-						$this->manager->update_contribution_release_topic_id($contribution_id, $public_topic_id);
-					}
-				}
-
-				else if ($contribution_validation_status === $this->manager::STATUS_DENIED) 
-				{
-					// Update the internal status
-					$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_DENIED);
-				}
+			else if ($contribution_validation_status === $this->manager::STATUS_DENIED) 
+			{
+				// Update the internal status
+				$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_DENIED);
 			}
 		}
 
@@ -185,6 +193,8 @@ class oberon
 	*/
 	public function view_contribution(int $contribution_id)
 	{
+		$this->permissions_check(self::ACCESS_GUEST);
+
 		// Get contribution data via manager
 		// TODO: get the contribution, then get the revision
 		$contribution = $this->manager->get_contribution_with_revision($contribution_id, true);
@@ -284,15 +294,14 @@ class oberon
 	 */
 	public function view_revision(int $contribution_id, int $revision_id)
 	{
+		$this->permissions_check(self::ACCESS_GUEST);
+
 		$revision = $this->manager->get_contribution_with_revision($contribution_id, false, $revision_id);
 
 		if (!$revision)
 		{
 			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
 		}
-
-		// Determine if the viewer may validate the revision
-		$can_validate = $this->manager->is_team_member();
 
 		// TODO: upload to the ext folder instead in the future
 		//$ext_path = $this->manager->get_ext_manager()->get_extension_path('phpbb/oberon', true);
@@ -336,7 +345,7 @@ class oberon
 			'VALIDATE_APPROVED'     => $this->manager::STATUS_APPROVED,
 			'VALIDATE_DENIED'       => $this->manager::STATUS_DENIED,
 
-			'S_IS_TEAM_MEMBER'      => $can_validate,
+			'S_IS_TEAM_MEMBER'      => $this->manager->is_team_member(), // To determine if the user can validate
 		]);
 
 		add_form_key('custdb_view_revision');
@@ -361,6 +370,7 @@ class oberon
 	*/
 	public function add_contribution()
 	{
+		$this->permissions_check(self::ACCESS_REGISTERED);
 		$this->generic_contribution_or_revision();
 
 		$this->template->assign_vars([
@@ -388,9 +398,10 @@ class oberon
 	*/
 	public function add_revision(int $contribution_id)
 	{
+		$this->permissions_check(self::ACCESS_REGISTERED);
+
 		// Get the existing contribution details
 		$contribution = $this->manager->get_contribution_with_revision($contribution_id, true);
-
 		$this->generic_contribution_or_revision();
 
 		$this->template->assign_vars([
@@ -596,6 +607,8 @@ class oberon
 	*/
 	public function index()
 	{
+		$this->permissions_check(self::ACCESS_GUEST);
+
 		$type = $this->request->variable('type', 0); // Extension, style, translation, etc?
 
 		// Approved, unvalidated, denied - note that this will filter by the contribution status, not the revision status
@@ -691,7 +704,7 @@ class oberon
 	* @param int $id
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
-    public function answer(int $id = 0)
+   /* public function answer(int $id = 0)
 	{
 		// We will send a JSON response back
 		$json_data = [];
@@ -700,5 +713,5 @@ class oberon
 		// Send a json response back to the submit page
 		$json_response = new \phpbb\json_response;
 		return $json_response->send($json_data);
-	}
+	}*/
 }

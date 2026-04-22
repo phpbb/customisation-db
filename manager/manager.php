@@ -108,21 +108,45 @@ class manager
         $this->settings = $settings;
 	}
 
+    // See if the user is a team member
     public function is_team_member()
     {
-        // Is the current user a phpBB team member?
+        $is_team_member = false;
 
-        return true; // TODO: add logic here
+        // Is the current user a member of a team group based on configuration?
+        if ($this->is_registered())
+        {
+            // Get team member group IDs from settings
+            $team_group_ids = $this->get_settings()['team.member.group.ids'] ?? [];
+
+            if (!function_exists('group_memberships'))
+            {
+                include_once($this->root_path . 'includes/functions_user.' . $this->php_ext);
+            }
+
+            // Get group memberships for the current user
+            $group_ids = array_column(group_memberships(false, $this->user->data['user_id']), 'group_id');
+
+            // Are there any groups the user is in that match the team member groups that we have specified in the settings?
+            $matches = array_intersect($group_ids, $team_group_ids);
+
+            if (!empty($matches)) 
+            {
+                $is_team_member = true;
+            }
+        }
+
+        return $is_team_member;
     }
 
     public function is_registered()
     {
-        return null;
+        return !$this->is_guest();
     }
 
     public function is_guest()
     {
-        return null;
+        return $this->user->data['user_id'] == ANONYMOUS;
     }
 
     public function is_customisation_author(int $contribution_id)
