@@ -255,8 +255,8 @@ class oberon
 				'REVISION_VERSION' 		=> $revision['revision_version'],
 				'REVISION_DESCRIPTION' 	=> $revision['revision_description'],
 
-				'REVISION_UNVALIDATED' 	=> $this->manager->is_team_member() && $revision['revision_status'] === $this->manager::STATUS_UNVALIDATED,
-				'REVISION_DENIED' 		=> $this->manager->is_team_member() && $revision['revision_status'] === $this->manager::STATUS_DENIED,
+				'REVISION_UNVALIDATED' 	=> $revision['revision_status'] === $this->manager::STATUS_UNVALIDATED,
+				'REVISION_DENIED' 		=> $revision['revision_status'] === $this->manager::STATUS_DENIED,
 
 				'U_VIEW_REVISION' 		=> $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision['revision_id']]),
 			]);
@@ -638,8 +638,8 @@ class oberon
 				'CONTRIBUTION_TYPE'			=> $this->manager->contribution_type_mapping()[$contribution['contribution_type']],
 
 				// Get the *latest* revision status so we can colour code for attracting attention in a simple way
-				'CONTRIBUTION_UNVALIDATED' 	=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_UNVALIDATED,
-				'CONTRIBUTION_DENIED' 		=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_DENIED,
+				'CONTRIBUTION_UNVALIDATED' 	=> $contribution['revision_status'] === $this->manager::STATUS_UNVALIDATED,
+				'CONTRIBUTION_DENIED' 		=> $contribution['revision_status'] === $this->manager::STATUS_DENIED,
             ]);
         }
    
