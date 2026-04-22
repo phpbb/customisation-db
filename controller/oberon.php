@@ -155,7 +155,7 @@ class oberon
 				$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
 
 				// Now update the release topic! TODO: hard coded URL needs to change?
-				$download_url = '/files/contributions/' . basename($contribution['revision_attachment']);
+				$download_url = $this->helper->route('custdb_download', ['revision_id' => $contribution['revision_id']]);
 
 				$release_comment = $this->language->lang(
 					'CUSTDB_CONTRIBUTION_APPROVED', 
@@ -334,7 +334,7 @@ class oberon
 			'REVISION_VERSION'      	=> $revision['revision_version'],
 			'REVISION_DESCRIPTION'  	=> $revision['revision_description'],
 			'REVISION_ATTACHMENT'   	=> $revision['revision_attachment'],
-			'REVISION_ATTACHMENT_URL' 	=> !empty($revision['revision_attachment']) ? $ext_path . '/' . $revision['revision_attachment'] : '',
+			'REVISION_ATTACHMENT_URL' 	=> !empty($revision['revision_attachment']) ? $this->helper->route('custdb_download', ['revision_id' => $revision['revision_id']]) : '',
 			'REVISION_SCREENSHOTS'  	=> $screenshot_urls,
 
 			'REVISION_STATUS'       	=> $revision['revision_status_label'],
@@ -697,6 +697,44 @@ class oberon
 	{
 		return $this->helper->route('custdb_index', ['type' => $type]);
 	}
+
+	/**
+     * Download a revision file
+     *
+     * @param int $revision_id The ID of the revision to download
+     * @return \Symfony\Component\HttpFoundation\Response A file download response
+     */
+    public function download(int $revision_id)
+    {
+        // Guests and everyone can download
+        $this->permissions_check(self::ACCESS_GUEST);
+
+        // Get the revision data
+        $revision = $this->manager->get_revision_data($revision_id);
+
+		// TODO: should probably have some logic here around downloading unvalidated/denied revisions for non-team members? Or leave it open?
+
+        if (!$revision || empty($revision['revision_attachment']))
+        {
+            trigger_error('CUSTDB_FILE_NOT_FOUND');
+        }
+
+        $file_path = $this->root_path . 'files/contributions/' . $revision['revision_attachment'];
+
+        if (!file_exists($file_path) || !is_readable($file_path))
+        {
+            trigger_error('CUSTDB_FILE_NOT_FOUND');
+        }
+
+        // Create a file download response
+        $response = new \Symfony\Component\HttpFoundation\BinaryFileResponse($file_path);
+        $response->setContentDisposition(
+            \Symfony\Component\HttpFoundation\ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            basename($revision['revision_attachment'])
+        );
+
+        return $response;
+    }
 
     /**
 	* Deliver response (for AJAX)

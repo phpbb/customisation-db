@@ -890,4 +890,23 @@ class manager
 
         return $user_data ?: null;
     }
+
+    /**
+     * Get revision data by revision_id
+     *
+     * @param int $revision_id
+     * @return array|null Revision data or null if not found
+     */
+    public function get_revision_data(int $revision_id)
+    {
+        $sql = 'SELECT r.revision_attachment, r.revision_name, r.contribution_id
+                FROM ' . $this->tables['revisions'] . ' r
+                WHERE r.revision_id = ' . (int) $revision_id;
+
+        $result = $this->db->sql_query_limit($sql, 1);
+        $revision = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        return $revision ?: null;
+    }
 }

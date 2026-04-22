@@ -110,4 +110,5 @@ $lang = array_merge($lang, [
     'CUSTDB_FILE_UPLOAD_FAILED'                 => 'There was an error uploading the contribution file.',
     'CUSTDB_SCREENSHOT_UPLOAD_FAILED'           => 'There was an error uploading the screenshot file(s).',
     'CUSTDB_CONTRIBUTION_NOT_FOUND'             => 'This contribution could not be found.',
+    'CUSTDB_FILE_NOT_FOUND'                     => 'The requested file could not be found.',
 ]);
