@@ -14,6 +14,10 @@ namespace phpbb\oberon\controller;
  */
 class oberon
 {
+	const ACCESS_TEAM = 3;
+	const ACCESS_REGISTERED = 2;
+	const ACCESS_GUEST = 1;
+
 	/* @var string $root_path */
 	protected $root_path;
 
@@ -79,8 +83,10 @@ class oberon
 		$this->tables = $this->manager->get_tables();
 	}
 
-	private function permissions_check()
+	private function permissions_check($allowed_access)
 	{
+		// Add logic using manager.php to determine if access is allowed
+
 		throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
 	}
 
