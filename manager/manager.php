@@ -254,6 +254,9 @@ class manager
 
             $this->db->sql_query($sql);
         }
+
+        // Only if the private validation topic already exists, put a post in the private validation topic about the internal status change
+        //$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['private.contribution.validation.forum.id']['default'], $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $validation_comment_with_status);
     }
 
     // Submit a new contribution

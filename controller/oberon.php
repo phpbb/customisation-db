@@ -79,6 +79,11 @@ class oberon
 		$this->tables = $this->manager->get_tables();
 	}
 
+	private function permissions_check()
+	{
+		throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
+	}
+
 	/**
 	* Validate revision
 	*
