@@ -81,6 +81,12 @@
                 <div class="custdb_main_category_content">{{ contribution.CONTRIBUTION_DESCRIPTION }}</div>
             </div>
             {% endfor %}
+            
+            {% if pagination %}
+            <div class="custdb_pagination">
+                {% INCLUDE 'pagination.html' %}
+            </div>
+            {% endif %}
         </div>
     </div>
 

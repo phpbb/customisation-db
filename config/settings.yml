@@ -15,3 +15,5 @@ parameters:
     file.upload.path: '/workspaces/phpbb/phpBB/files/contributions/'
     # Pagination TODO
     per.page: 50
+    # Team group IDs
+    team.member.group.ids: [8]

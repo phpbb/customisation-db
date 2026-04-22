@@ -31,3 +31,9 @@ custdb_validate_contribution:
         contribution_id: \d+
         queue_id: \d+
     defaults: { _controller: phpbb.oberon.controller:validate, contribution_id: 0, queue_id: 0 }    
+
+custdb_download:
+    path: /custdb/download/{revision_id}
+    requirements:
+        revision_id: \d+
+    defaults: { _controller: phpbb.oberon.controller:download, revision_id: 0 }

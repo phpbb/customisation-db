@@ -50,6 +50,9 @@ class queue_manager extends Command
 
         $output->writeln('<info>[process] Begin queue manager processing...</info>');
 
+        // Cleanup queue items that have already been processed by a human (internal status denied/approved)
+        $this->cleanup();
+
         // Find all items in the queue for processing and retrieve revision and customisation records
         $queue_items = $this->manager->find_queue_items_for_processing();
 
@@ -80,25 +83,36 @@ die();
     // Process extensions, styles and translations separately - as these are things that we need a more thorough validation of
     public function process_extension_style_translation(int $queue_id, array $contribution, array $revision)
     {
-        // Run AI validation (if internal queue status is unvalidated)
-        if ($contribution['contribution_type'] == $this->manager::TYPE_EXTENSIONS)
-        {   
+        $queue_item = $this->manager->find_queue_item($queue_id);
+        
+        // Run AI validation (if internal queue status is unvalidated) for extensions, styles and translations
+        if ($queue_item['queue_status'] == $this->manager::INTERNAL_STATUS_UNVALIDATED || $queue_item['queue_status'] == $this->manager::INTERNAL_STATUS_AWAITING_AI_VALIDATION)
+        { 
+            $this->output->writeln('<info>[process_extension_style_translation] Running AI validation on item ' . $queue_id . '</info>');
+
             // Call AI Validation and pass along arguments if needed
             $this->run_ai_validation_command([
                 'queue_id' => $queue_id,
             ]);
-
-            $this->output->writeln('<info>[process_extension_style_translation] Running AI validation on item ' . $queue_id . '</info>');
         }
 
         // Run GitHub Codespace integration for testing (if internal queue status is completed ai validation)
-        // TODO: This may be too ambitious at the moment
+        if ($queue_item['queue_status'] == $this->manager::INTERNAL_STATUS_COMPLETED_AI_VALIDATION)
+        {
+            // TODO: This may be too ambitious at the moment
+        }
     }
 
     // Process tools and bbcodes, these require a different type of validation
     public function process_tool_bbcode()
     {
         // Publish - set internal queue status to awaiting testing
+    }
+
+    private function cleanup()
+    {
+        $this->output->writeln('<info>[cleanup] Clean up stale queue entries...</info>');
+        $this->manager->remove_queue_entries();
     }
 
     private function run_ai_validation_command(array $arguments)

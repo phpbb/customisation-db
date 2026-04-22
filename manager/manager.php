@@ -106,13 +106,50 @@ class manager
         $this->ext_manager = $ext_manager;
         $this->tables = $tables;
         $this->settings = $settings;
+
+        // Ensure the language file is loaded
+        $this->language->add_lang('common', 'phpbb/oberon');
 	}
 
+    // See if the user is a team member
     public function is_team_member()
     {
-        // Is the current user a phpBB team member?
+        $is_team_member = false;
 
-        return true; // TODO: add logic here
+        // Is the current user a member of a team group based on configuration?
+        if ($this->is_registered())
+        {
+            // Get team member group IDs from settings
+            $team_group_ids = $this->get_settings()['team.member.group.ids'] ?? [];
+
+            if (!function_exists('group_memberships'))
+            {
+                include_once($this->root_path . 'includes/functions_user.' . $this->php_ext);
+            }
+
+            // Get group memberships for the current user
+            $group_ids = array_column(group_memberships(false, $this->user->data['user_id']), 'group_id');
+
+            // Are there any groups the user is in that match the team member groups that we have specified in the settings?
+            $matches = array_intersect($group_ids, $team_group_ids);
+
+            if (!empty($matches)) 
+            {
+                $is_team_member = true;
+            }
+        }
+
+        return $is_team_member;
+    }
+
+    public function is_registered()
+    {
+        return !$this->is_guest();
+    }
+
+    public function is_guest()
+    {
+        return $this->user->data['user_id'] == ANONYMOUS;
     }
 
     public function is_customisation_author(int $contribution_id)
@@ -237,6 +274,8 @@ class manager
      */
     public function update_internal_queue_status(int $queue_id, int $queue_status)
     {
+        $queue_item = $this->find_queue_item($queue_id);
+
         $sql = 'UPDATE ' . $this->tables['queue'] . ' SET queue_status = ' . (int) $queue_status . ' WHERE queue_id = ' . (int) $queue_id;
 		$this->db->sql_query($sql);
 
@@ -246,13 +285,36 @@ class manager
             // we still want to know what happened to the revision. This is one of two places the revision status is changed.
             $sql = 'UPDATE ' . $this->tables['revisions'] . '
                     SET revision_status = ' . self::REVISION_STATUS_MAP[$queue_status] . '
-                    WHERE revision_id = (
-                        SELECT revision_id
-                        FROM ' . $this->tables['queue'] . '
-                        WHERE queue_id = ' . (int) $queue_id . '
-                    )';
+                    WHERE revision_id = ' . (int) $queue_item['revision_id'];
 
             $this->db->sql_query($sql);
+        }
+
+        // Only if the private validation topic already exists, put a post in the private validation topic about the internal status change
+        $contribution_data = $this->find_contribution_revision_for_queue_id($queue_id);
+
+        if ($contribution_data && (int) $contribution_data['contribution']['contribution_validation_topic_id'] > 0)
+        {
+            $old_status_name = $this->get_internal_status((int) $queue_item['queue_status']);
+            $new_status_name = $this->get_internal_status($queue_status);
+
+            if ($old_status_name != $new_status_name)
+            {
+                // Create status change message
+                $status_change_message = $this->language->lang(
+                    'CUSTDB_STATUS_AUTOMATIC_CHANGE',
+                    $old_status_name,
+                    $new_status_name
+                );
+
+                $this->create_or_append_forum_comment(
+                    $contribution_data['contribution']['contribution_id'], 
+                    $this->get_settings()['private.contribution.validation.forum.id']['default'], 
+                    $contribution_data['contribution']['contribution_validation_topic_id'], 
+                    $contribution_data['contribution']['contribution_name'], // subject
+                    $status_change_message // post text
+                );
+            }
         }
     }
 
@@ -293,7 +355,7 @@ class manager
     }
 
     // List the contributions on the index
-    public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0, string $search_query = '')
+    public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0, string $search_query = '', int $start = 0, int $per_page = 50)
     {
         $sql = 'SELECT *
                 FROM ' . $this->tables['contributions'] . '
@@ -316,6 +378,13 @@ class manager
             $sql .= ' AND (contribution_name ' . $escaped_search . ' OR contribution_description ' . $escaped_search . ')';  
         }
 
+        // Get total count for pagination (TODO: check this... AI generated)
+        $count_sql = 'SELECT COUNT(*) as total ' . substr($sql, strpos($sql, 'FROM'));
+        $count_result = $this->db->sql_query($count_sql);
+        $count_row = $this->db->sql_fetchrow($count_result);
+        $this->db->sql_freeresult($count_result);
+        $total = (int) $count_row['total'];
+
         switch ($sort)
         {
             case self::SORT_DATE:
@@ -329,7 +398,7 @@ class manager
                 break;
         }
 
-        $result = $this->db->sql_query($sql);
+        $result = $this->db->sql_query_limit($sql, $per_page, $start);
         $contributions = [];
 
         while ($row = $this->db->sql_fetchrow($result))
@@ -351,7 +420,10 @@ class manager
 
         $this->db->sql_freeresult($result);
 
-        return $contributions;   
+        return [
+            'total' => $total,
+            'contributions' => $contributions,
+        ];   
     }
 
     /**
@@ -518,9 +590,19 @@ class manager
         return ['revision' => $revision_row, 'contribution' => $contribution_row];
     }
 
+    public function find_queue_item(int $queue_id)
+    {
+        $sql = 'SELECT * FROM ' . $this->tables['queue'] . ' WHERE queue_id = ' . (int) $queue_id;
+        $result = $this->db->sql_query_limit($sql, 1);
+        $queue_item = $this->db->sql_fetchrow($result);
+        return $queue_item;
+    }
+
+    // Get the items awaiting processing
     public function find_queue_items_for_processing()
     {
         $sql = 'SELECT * FROM ' . $this->tables['queue'] . '
+                WHERE queue_status NOT IN (' . self::INTERNAL_STATUS_DENIED . ', ' . self::INTERNAL_STATUS_APPROVED . ')
                 ORDER BY queue_added_time ASC';
 
         $result = $this->db->sql_query($sql);
@@ -788,15 +870,68 @@ class manager
      * Remove queue entry. But we only do this if the internal status is approved or denied, otherwise there might
      * still be future processing to be done.
      */
-    public function remove_queue_entry(int $queue_id)
+    public function remove_queue_entries(int $queue_id = 0)
     {
         $sql = 'DELETE FROM ' . $this->tables['queue'] . '
-                WHERE queue_id = ' . (int) $queue_id . '
-                AND ' . $this->db->sql_in_set('queue_status', [
+                WHERE ' . $this->db->sql_in_set('queue_status', [
                     self::INTERNAL_STATUS_APPROVED,
                     self::INTERNAL_STATUS_DENIED,
                 ], false); // true allows it to be an IN clause
 
+        if ($queue_id > 0)
+        {
+            // Remove a specific queue item
+            $sql .= ' AND queue_id = ' . (int) $queue_id;   
+        }
+
         $this->db->sql_query($sql);
+    }
+
+    /**
+     * Look up a user by username
+     *
+     * @param string $username The username to search for
+     * @return array|null User data or null if not found
+     */
+    public function get_user_by_username(string $username)
+    {
+        $username = trim($username);
+        if (empty($username))
+        {
+            return null;
+        }
+
+        $sql_array = [
+            'SELECT' => 'user_id, username',
+            'FROM'   => [USERS_TABLE => 'u'],
+            'WHERE'  => 'u.username = \'' . $this->db->sql_escape($username) . '\' AND u.user_type <> ' . USER_IGNORE,
+        ];
+
+        $sql = $this->db->sql_build_query('SELECT', $sql_array);
+
+        $result = $this->db->sql_query_limit($sql, 1);
+        $user_data = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        return $user_data ?: null;
+    }
+
+    /**
+     * Get revision data by revision_id
+     *
+     * @param int $revision_id
+     * @return array|null Revision data or null if not found
+     */
+    public function get_revision_data(int $revision_id)
+    {
+        $sql = 'SELECT r.revision_attachment, r.revision_name, r.contribution_id
+                FROM ' . $this->tables['revisions'] . ' r
+                WHERE r.revision_id = ' . (int) $revision_id;
+
+        $result = $this->db->sql_query_limit($sql, 1);
+        $revision = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        return $revision ?: null;
     }
 }

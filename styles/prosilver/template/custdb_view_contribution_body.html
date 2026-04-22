@@ -4,12 +4,14 @@
     <div class="custdb_action_bar">
         <h2>{{ CONTRIBUTION_NAME }}</h2>
 
+        {% if S_USER_LOGGED_IN %}
         <div>
             {% if U_NEW_REVISION %}
             <a href="{{ U_NEW_REVISION }}" class="custdb_button">{{ lang('CUSTDB_NEW_REVISION') }}</a>
             {% endif %}
             <a href="#" class="custdb_button">{{ lang('CUSTDB_EDIT_CONTRIBUTION') }}</a>
         </div>
+        {% endif %}
     </div>
 
     <div class="custdb_contribution_main_wrapper">
