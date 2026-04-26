@@ -104,9 +104,10 @@ die();
     }
 
     // Process tools and bbcodes, these require a different type of validation
-    public function process_tool_bbcode()
+    public function process_tool_bbcode(int $queue_id, array $contribution, array $revision)
     {
-        // Publish - set internal queue status to awaiting testing
+        // Set to awaiting testing
+        $this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_AWAITING_TESTING);
     }
 
     private function cleanup()

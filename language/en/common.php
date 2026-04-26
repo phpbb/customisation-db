@@ -19,6 +19,8 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, [
 
+    'CUSTDB_CUSTOMISATION_DATABASE'     => 'Customisation Database',
+
     // Customisation types
     'CUSTDB_CONTRIBUTION_TYPE'          => 'Contribution Type',
     'CUSTDB_TYPE_EXTENSIONS'            => 'Extensions',

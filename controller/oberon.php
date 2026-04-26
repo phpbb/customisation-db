@@ -118,6 +118,9 @@ class oberon
 				trigger_error('FORM_INVALID');
 			}
 
+			$contribution_type = $this->manager->get_contribution_type($contribution_id);
+			$is_auto_validate_type = in_array($contribution_type, [$this->manager::TYPE_EXTENSIONS, $this->manager::TYPE_STYLES, $this->manager::TYPE_TRANSLATIONS]);
+
 			// Gather status and comment
 			$contribution_validation_status = $this->request->variable('validation_status', 0, true);
 			$contribution_validation_comment = $this->request->variable('validation_comment', '', true);
@@ -144,7 +147,7 @@ class oberon
 			$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['private.contribution.validation.forum.id']['default'], $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $validation_comment_with_status);
 			
 			// If there is no pre-existing validation topic, update the value associated with the contribution record
-			if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $private_topic_id > 0)
+			if ($is_auto_validate_type && isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $private_topic_id > 0)
 			{
 				$this->manager->update_contribution_validation_topic_id($contribution_id, $private_topic_id);
 			}
@@ -154,22 +157,25 @@ class oberon
 			{
 				$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
 
-				// Now update the release topic! TODO: hard coded URL needs to change?
-				$download_url = $this->helper->route('custdb_download', ['revision_id' => $contribution['revision_id']]);
-
-				$release_comment = $this->language->lang(
-					'CUSTDB_CONTRIBUTION_APPROVED', 
-					$contribution['contribution_name'],
-					$download_url,
-					$contribution_validation_comment // TODO: maybe have a public release comment here instead? Or no comment at all?
-				);
-
-				$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['public.contribution.release.forum.id']['default'], $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
-				
-				// If there is no release topic, update the value associated with the contribution record
-				if (isset($contribution['contribution_release_topic_id']) && $contribution['contribution_release_topic_id'] == 0 && $public_topic_id > 0)
+				if ($is_auto_validate_type)
 				{
-					$this->manager->update_contribution_release_topic_id($contribution_id, $public_topic_id);
+					// Now update the release topic! TODO: hard coded URL needs to change?
+					$download_url = $this->helper->route('custdb_download', ['revision_id' => $contribution['revision_id']]);
+
+					$release_comment = $this->language->lang(
+						'CUSTDB_CONTRIBUTION_APPROVED', 
+						$contribution['contribution_name'],
+						$download_url,
+						$contribution_validation_comment // TODO: maybe have a public release comment here instead? Or no comment at all?
+					);
+
+					$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['public.contribution.release.forum.id']['default'], $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
+					
+					// If there is no release topic, update the value associated with the contribution record
+					if (isset($contribution['contribution_release_topic_id']) && $contribution['contribution_release_topic_id'] == 0 && $public_topic_id > 0)
+					{
+						$this->manager->update_contribution_release_topic_id($contribution_id, $public_topic_id);
+					}
 				}
 			}
 
@@ -255,8 +261,8 @@ class oberon
 				'REVISION_VERSION' 		=> $revision['revision_version'],
 				'REVISION_DESCRIPTION' 	=> $revision['revision_description'],
 
-				'REVISION_UNVALIDATED' 	=> $this->manager->is_team_member() && $revision['revision_status'] === $this->manager::STATUS_UNVALIDATED,
-				'REVISION_DENIED' 		=> $this->manager->is_team_member() && $revision['revision_status'] === $this->manager::STATUS_DENIED,
+				'REVISION_UNVALIDATED' 	=> $revision['revision_status'] === $this->manager::STATUS_UNVALIDATED,
+				'REVISION_DENIED' 		=> $revision['revision_status'] === $this->manager::STATUS_DENIED,
 
 				'U_VIEW_REVISION' 		=> $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision['revision_id']]),
 			]);
@@ -638,8 +644,8 @@ class oberon
 				'CONTRIBUTION_TYPE'			=> $this->manager->contribution_type_mapping()[$contribution['contribution_type']],
 
 				// Get the *latest* revision status so we can colour code for attracting attention in a simple way
-				'CONTRIBUTION_UNVALIDATED' 	=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_UNVALIDATED,
-				'CONTRIBUTION_DENIED' 		=> $this->manager->is_team_member() && $contribution['revision_status'] === $this->manager::STATUS_DENIED,
+				'CONTRIBUTION_UNVALIDATED' 	=> $contribution['revision_status'] === $this->manager::STATUS_UNVALIDATED,
+				'CONTRIBUTION_DENIED' 		=> $contribution['revision_status'] === $this->manager::STATUS_DENIED,
             ]);
         }
    
