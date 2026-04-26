@@ -802,30 +802,28 @@ class manager
         $contribution = $this->db->sql_fetchrow($result);
         $this->db->sql_freeresult($result);
 
-        if (!$contribution)
+        if ($contribution && in_array((int) $contribution['contribution_type'], [self::TYPE_EXTENSIONS, self::TYPE_STYLES, self::TYPE_TRANSLATIONS]))
         {
-            return 0;
+            $topic_id = (int) ($contribution['contribution_validation_topic_id'] ?? 0);
+
+            // Use the contribution name as the topic title
+            $subject = $contribution['contribution_name'];
+
+            // TODO: language entries here?
+            $body = "Validation outcome: {$outcome}\n" .
+                    "Confidence: {$confidence}/100\n\n" .
+                    "Report:\n{$report}";
+
+            // Ensure topic exists and store it in the private validation forum
+            $topic_id = $this->create_or_append_forum_comment($contribution_id, $this->get_settings()['private.contribution.validation.forum.id']['default'], $topic_id, $subject, $body);
+
+            if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $topic_id > 0)
+            {
+                $this->update_contribution_validation_topic_id($contribution_id, $topic_id);
+            }
+
+            return $topic_id;
         }
-
-        $topic_id = (int) ($contribution['contribution_validation_topic_id'] ?? 0);
-
-        // Use the contribution name as the topic title
-        $subject = $contribution['contribution_name'];
-
-        // TODO: language entries here?
-        $body = "Validation outcome: {$outcome}\n" .
-                "Confidence: {$confidence}/100\n\n" .
-                "Report:\n{$report}";
-
-        // Ensure topic exists and store it in the private validation forum
-        $topic_id = $this->create_or_append_forum_comment($contribution_id, $this->get_settings()['private.contribution.validation.forum.id']['default'], $topic_id, $subject, $body);
-
-        if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $topic_id > 0)
-        {
-            $this->update_contribution_validation_topic_id($contribution_id, $topic_id);
-        }
-
-        return $topic_id;
     }
 
     /**
@@ -933,5 +931,18 @@ class manager
         $this->db->sql_freeresult($result);
 
         return $revision ?: null;
+    }
+
+    public function get_contribution_type(int $contribution_id): int
+    {
+        $sql = 'SELECT contribution_type
+                FROM ' . $this->tables['contributions'] . '
+                WHERE contribution_id = ' . (int) $contribution_id;
+
+        $result = $this->db->sql_query_limit($sql, 1);
+        $contribution = $this->db->sql_fetchrow($result);
+        $this->db->sql_freeresult($result);
+
+        return (int) $contribution['contribution_type'];
     }
 }

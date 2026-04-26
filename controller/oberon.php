@@ -118,6 +118,9 @@ class oberon
 				trigger_error('FORM_INVALID');
 			}
 
+			$contribution_type = $this->manager->get_contribution_type($contribution_id);
+			$is_auto_validate_type = in_array($contribution_type, [$this->manager::TYPE_EXTENSIONS, $this->manager::TYPE_STYLES, $this->manager::TYPE_TRANSLATIONS]);
+
 			// Gather status and comment
 			$contribution_validation_status = $this->request->variable('validation_status', 0, true);
 			$contribution_validation_comment = $this->request->variable('validation_comment', '', true);
@@ -144,7 +147,7 @@ class oberon
 			$private_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['private.contribution.validation.forum.id']['default'], $contribution['contribution_validation_topic_id'], $contribution['contribution_name'], $validation_comment_with_status);
 			
 			// If there is no pre-existing validation topic, update the value associated with the contribution record
-			if (isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $private_topic_id > 0)
+			if ($is_auto_validate_type && isset($contribution['contribution_validation_topic_id']) && $contribution['contribution_validation_topic_id'] == 0 && $private_topic_id > 0)
 			{
 				$this->manager->update_contribution_validation_topic_id($contribution_id, $private_topic_id);
 			}
@@ -154,22 +157,25 @@ class oberon
 			{
 				$this->manager->update_internal_queue_status($queue_id, $this->manager::INTERNAL_STATUS_APPROVED);
 
-				// Now update the release topic! TODO: hard coded URL needs to change?
-				$download_url = $this->helper->route('custdb_download', ['revision_id' => $contribution['revision_id']]);
-
-				$release_comment = $this->language->lang(
-					'CUSTDB_CONTRIBUTION_APPROVED', 
-					$contribution['contribution_name'],
-					$download_url,
-					$contribution_validation_comment // TODO: maybe have a public release comment here instead? Or no comment at all?
-				);
-
-				$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['public.contribution.release.forum.id']['default'], $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
-				
-				// If there is no release topic, update the value associated with the contribution record
-				if (isset($contribution['contribution_release_topic_id']) && $contribution['contribution_release_topic_id'] == 0 && $public_topic_id > 0)
+				if ($is_auto_validate_type)
 				{
-					$this->manager->update_contribution_release_topic_id($contribution_id, $public_topic_id);
+					// Now update the release topic! TODO: hard coded URL needs to change?
+					$download_url = $this->helper->route('custdb_download', ['revision_id' => $contribution['revision_id']]);
+
+					$release_comment = $this->language->lang(
+						'CUSTDB_CONTRIBUTION_APPROVED', 
+						$contribution['contribution_name'],
+						$download_url,
+						$contribution_validation_comment // TODO: maybe have a public release comment here instead? Or no comment at all?
+					);
+
+					$public_topic_id = $this->manager->create_or_append_forum_comment($contribution_id, $this->manager->get_settings()['public.contribution.release.forum.id']['default'], $contribution['contribution_release_topic_id'], $contribution['contribution_name'], $release_comment);
+					
+					// If there is no release topic, update the value associated with the contribution record
+					if (isset($contribution['contribution_release_topic_id']) && $contribution['contribution_release_topic_id'] == 0 && $public_topic_id > 0)
+					{
+						$this->manager->update_contribution_release_topic_id($contribution_id, $public_topic_id);
+					}
 				}
 			}
 
