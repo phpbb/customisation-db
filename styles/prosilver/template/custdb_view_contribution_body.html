@@ -9,7 +9,9 @@
             {% if U_NEW_REVISION %}
             <a href="{{ U_NEW_REVISION }}" class="custdb_button">{{ lang('CUSTDB_NEW_REVISION') }}</a>
             {% endif %}
-            <a href="#" class="custdb_button">{{ lang('CUSTDB_EDIT_CONTRIBUTION') }}</a>
+            {% if S_IS_TEAM_MEMBER %}
+            <a href="{{ U_EDIT_CONTRIBUTION }}" class="custdb_button">{{ lang('CUSTDB_EDIT_CONTRIBUTION') }}</a>
+            {% endif %}
         </div>
         {% endif %}
     </div>

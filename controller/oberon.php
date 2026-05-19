@@ -239,7 +239,7 @@ class oberon
 			'U_NEW_REVISION'		=> $can_add_revision ? $this->helper->route('custdb_add_revision', ['contribution_id' => $contribution_id]) : false,
 
 			// Actions
-			'U_EDIT_CONTRIBUTION'   => '', //$this->helper->route('phpbb_oberon_edit_contribution', ['id' => $contribution_id]),
+			'U_EDIT_CONTRIBUTION'   	=> $this->helper->route('custdb_edit_contribution', ['contribution_id' => $contribution_id]),
 			'VALIDATION_STATUS' 		=> $contribution['contribution_status'], // This is the publicly seen status (unvalidated, approved, denied)
 			'VALIDATE_UNVALIDATED'		=> $this->manager::STATUS_UNVALIDATED,
 			'VALIDATE_APPROVED'			=> $this->manager::STATUS_APPROVED,
@@ -330,6 +330,7 @@ class oberon
 			'CONTRIBUTION_IMAGE'     	=> !empty($screenshot_urls[0]) ? $screenshot_urls[0] : '',
 			'CONTRIBUTION_DEMO_LINK' 	=> $revision['contribution_demo_link'],
 
+			'U_EDIT_REVISION'				=> $this->helper->route('custdb_edit_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision_id]),
 			'U_VIEW_CONTRIBUTION'   		=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $revision['contribution_id']]),
 			'U_VALIDATE_CONTRIBUTION' 		=> $this->helper->route('custdb_validate_contribution', ['contribution_id' => $revision['contribution_id'], 'queue_id' => $revision['queue_id']]),
 			'U_INTERNAL_VALIDATION_TOPIC'	=> (int) $revision['contribution_validation_topic_id'] ? append_sid('/viewtopic.php', 't=' . (int) $revision['contribution_validation_topic_id']) : '', //TODO: route for viewtopic?
@@ -338,6 +339,7 @@ class oberon
 			'REVISION_NAME'         	=> $revision['revision_name'],
 			'REVISION_DATE'				=> $this->user->format_date($revision['submission_time']),
 			'REVISION_VERSION'      	=> $revision['revision_version'],
+			'REVISION_PHPBB_VERSION'	=> $revision['revision_phpbb_version'],
 			'REVISION_DESCRIPTION'  	=> $revision['revision_description'],
 			'REVISION_ATTACHMENT'   	=> $revision['revision_attachment'],
 			'REVISION_ATTACHMENT_URL' 	=> !empty($revision['revision_attachment']) ? $this->helper->route('custdb_download', ['revision_id' => $revision['revision_id']]) : '',
@@ -394,7 +396,7 @@ class oberon
 			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
 		]);
 
-		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));
+		return $this->helper->render('custdb_add_contribution_revision_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));
     }
 
 	/**
@@ -433,7 +435,7 @@ class oberon
 			'U_BREADCRUMB'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
 		]);
 
-		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_REVISION'));
+		return $this->helper->render('custdb_add_contribution_revision_body.html', $this->user->lang('CUSTDB_ADD_REVISION'));
 	}
 
 	/**
@@ -604,6 +606,180 @@ class oberon
 
 			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager->get_settings()['supported.phpbb.versions'],
 		]); 
+	}
+
+	/**
+	* Edit revision
+	*
+	* @param int $contribution_id The ID of the contribution
+	* @param int $revision_id The ID of the revision to edit
+	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	*/
+	public function edit_revision(int $contribution_id, int $revision_id)
+	{
+		$this->permissions_check(self::ACCESS_TEAM);
+
+		// Get revision data
+		$revision = $this->manager->get_contribution_with_revision($contribution_id, false, $revision_id);
+
+		if (!$revision)
+		{
+			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
+		}
+
+		// Handle form submit
+		if ($this->request->is_set_post('submit'))
+		{
+			if (!check_form_key('custdb_edit_revision'))
+			{
+				trigger_error('FORM_INVALID');
+			}
+
+			// Update the revision
+			$this->manager->update_revision(
+				$revision_id,
+				[
+					'revision_name'				=> $this->request->variable('revision_name', '', true),
+					'revision_description'		=> $this->request->variable('revision_description', '', true),
+					'revision_version'			=> $this->request->variable('revision_version_number', '', true),
+					'revision_phpbb_version'	=> $this->request->variable('revision_phpbb_version', '', true),
+					//TODO: add uploads and screenshots
+				]
+			);
+
+			meta_refresh(3, $this->helper->route('custdb_view_revision', [
+				'contribution_id' => $contribution_id,
+				'revision_id' => $revision_id,
+			]));
+			
+			trigger_error($this->user->lang('CUSTDB_REVISION_UPDATED_SUCCESSFULLY'));
+		}
+
+		// Generate CSRF token
+        add_form_key('custdb_edit_revision');
+
+		// Need to pre-populate: version, phpBB version, revision name, revision description
+		// TODO: file upload, screenshot upload
+		$this->template->assign_vars([
+			'S_IS_EDIT_CONTRIBUTION' 	=> false,
+
+			'CONTRIBUTION_NAME'			=> $revision['contribution_name'],
+
+			'REVISION_ID'				=> $revision_id,
+			'REVISION_NAME'				=> $revision['revision_name'],
+			'REVISION_VERSION'			=> $revision['revision_version'],
+			'REVISION_DESCRIPTION' 		=> $revision['revision_description'],
+			'REVISION_PHPBB_VERSION' 	=> $revision['revision_phpbb_version'],
+
+			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager->get_settings()['supported.phpbb.versions'],
+
+			// Page heading
+			'L_PAGE_HEADING'       		=> $this->user->lang('CUSTDB_EDIT_REVISION'),
+		]); 
+
+		// TODO: we repeat the breadcrumb code a lot, maybe it could be abstracted into a function to make it cleaner
+		// Breadcrumbs: Board Index -> Customisation Database -> Contribution -> Revision
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
+
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $revision['contribution_name'],
+			'U_BREADCRUMB'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
+		]);
+
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $revision['revision_name'],
+			'U_BREADCRUMB'   => $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision_id]),
+		]);
+
+		return $this->helper->render('custdb_edit_contribution_revision_body.html', $this->user->lang('CUSTDB_EDIT_REVISION'));
+	}
+
+	/**
+	* Edit contribution
+	*
+	* @param int $contribution_id The ID of the contribution to edit
+	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	*/
+	public function edit_contribution(int $contribution_id)
+	{
+		$this->permissions_check(self::ACCESS_TEAM);
+
+		// Get contribution data
+		$contribution = $this->manager->get_contribution_with_revision($contribution_id, true);
+
+		if (!$contribution)
+		{
+			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
+		}
+
+		// Handle form submit
+		if ($this->request->is_set_post('submit'))
+		{
+			if (!check_form_key('custdb_edit_contribution'))
+			{
+				trigger_error('FORM_INVALID');
+			}
+
+			// Update the contribution
+			// TODO: The author bit needs re-doing as it's not working well currently (e.g., handle multiple authors?). We have user_id on the contribution, could have another mechanism for the revision?
+			$this->manager->update_contribution(
+				$contribution_id,
+				[
+					'contribution_name'			=> $this->request->variable('contribution_name', '', true),
+					'contribution_description'	=> $this->request->variable('contribution_description', '', true),
+					'contribution_demo_link'	=> $this->request->variable('contribution_demo_link', '', true),
+					//'author_name'				=> $this->request->variable('authors', '', true), 
+					'contribution_type'			=> $this->request->variable('contribution_type', 0),
+				]
+			);
+
+			meta_refresh(3, $this->helper->route('custdb_view_contribution', [
+				'contribution_id' => $contribution_id,
+			]));
+			
+			trigger_error($this->user->lang('CUSTDB_CONTRIBUTION_UPDATED_SUCCESSFULLY'));
+		}
+
+       	// Generate CSRF token
+        add_form_key('custdb_edit_contribution');
+
+		// Need to pre-populate: contribution name, description, authors, contribution type, demo
+		$this->template->assign_vars([
+			'S_IS_EDIT_CONTRIBUTION' 	=> true,
+
+			'CONTRIBUTION_ID'			=> $contribution_id,
+			'CONTRIBUTION_NAME'			=> $contribution['contribution_name'],
+			'CONTRIBUTION_DESCRIPTION'	=> $contribution['contribution_description'],
+			'CONTRIBUTION_AUTHORS'		=> $contribution['author_name'],
+			'CONTRIBUTION_TYPE'			=> $contribution['contribution_type'],
+			'CONTRIBUTION_DEMO_LINK'	=> $contribution['contribution_demo_link'],
+
+			'TYPE_EXTENSIONS'		=> $this->manager::TYPE_EXTENSIONS,
+			'TYPE_STYLES'			=> $this->manager::TYPE_STYLES,
+			'TYPE_TRANSLATIONS'		=> $this->manager::TYPE_TRANSLATIONS,
+			'TYPE_BBCODES'			=> $this->manager::TYPE_BBCODES,
+			'TYPE_TOOLS'			=> $this->manager::TYPE_TOOLS,
+			'TYPE_ARCHIVE'			=> $this->manager::TYPE_ARCHIVE,
+
+			// Page heading
+			'L_PAGE_HEADING'       => $this->user->lang('CUSTDB_EDIT_CONTRIBUTION'),
+		]); 
+
+		// Breadcrumbs: Board Index -> Customisation Database -> Contribution
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
+
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $contribution['contribution_name'],
+			'U_BREADCRUMB'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
+		]);
+
+		return $this->helper->render('custdb_edit_contribution_revision_body.html', $this->user->lang('CUSTDB_EDIT_CONTRIBUTION'));
 	}
 
 	/**
