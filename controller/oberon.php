@@ -677,6 +677,23 @@ class oberon
 			'L_PAGE_HEADING'       		=> $this->user->lang('CUSTDB_EDIT_REVISION'),
 		]); 
 
+		// TODO: we repeat the breadcrumb code a lot, maybe it could be abstracted into a function to make it cleaner
+		// Breadcrumbs: Board Index -> Customisation Database -> Contribution -> Revision
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
+
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $revision['contribution_name'],
+			'U_BREADCRUMB'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
+		]);
+
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $revision['revision_name'],
+			'U_BREADCRUMB'   => $this->helper->route('custdb_view_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision_id]),
+		]);
+
 		return $this->helper->render('custdb_edit_contribution_revision_body.html', $this->user->lang('CUSTDB_EDIT_REVISION'));
 	}
 
@@ -750,6 +767,17 @@ class oberon
 			// Page heading
 			'L_PAGE_HEADING'       => $this->user->lang('CUSTDB_EDIT_CONTRIBUTION'),
 		]); 
+
+		// Breadcrumbs: Board Index -> Customisation Database -> Contribution
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
+
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $contribution['contribution_name'],
+			'U_BREADCRUMB'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
+		]);
 
 		return $this->helper->render('custdb_edit_contribution_revision_body.html', $this->user->lang('CUSTDB_EDIT_CONTRIBUTION'));
 	}
