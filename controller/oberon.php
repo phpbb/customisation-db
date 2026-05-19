@@ -395,7 +395,7 @@ class oberon
 			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
 		]);
 
-		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));
+		return $this->helper->render('custdb_add_contribution_revision_body.html', $this->user->lang('CUSTDB_ADD_CONTRIBUTION'));
     }
 
 	/**
@@ -434,7 +434,7 @@ class oberon
 			'U_BREADCRUMB'   => $this->helper->route('custdb_view_contribution', ['contribution_id' => $contribution_id]),
 		]);
 
-		return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_ADD_REVISION'));
+		return $this->helper->render('custdb_add_contribution_revision_body.html', $this->user->lang('CUSTDB_ADD_REVISION'));
 	}
 
 	/**
@@ -626,7 +626,7 @@ class oberon
 			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
 		}
 
-		//return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_EDIT_REVISION'));
+		//return $this->helper->render('custdb_add_edit_contribution_revision_body.html', $this->user->lang('CUSTDB_EDIT_REVISION'));
 	}
 
 	/**
@@ -647,7 +647,60 @@ class oberon
 			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
 		}
 
-		//return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_EDIT_CONTRIBUTION'));
+		// Handle form submit
+		if ($this->request->is_set_post('submit'))
+		{
+			if (!check_form_key('custdb_edit_contribution'))
+			{
+				trigger_error('FORM_INVALID');
+			}
+
+			// Update the contribution
+			// TODO: The author bit needs re-doing as it's not working well currently (e.g., handle multiple authors?). We have user_id on the contribution, could have another mechanism for the revision?
+			$this->manager->update_contribution(
+				$contribution_id,
+				[
+					'contribution_name'			=> $this->request->variable('contribution_name', '', true),
+					'contribution_description'	=> $this->request->variable('contribution_description', '', true),
+					'contribution_demo_link'	=> $this->request->variable('contribution_demo_link', '', true),
+					//'author_name'				=> $this->request->variable('authors', '', true), 
+					'contribution_type'			=> $this->request->variable('contribution_type', 0),
+				]
+			);
+
+			meta_refresh(3, $this->helper->route('custdb_view_contribution', [
+				'contribution_id' => $contribution_id,
+			]));
+			
+			trigger_error($this->user->lang('CUSTDB_CONTRIBUTION_UPDATED_SUCCESSFULLY'));
+		}
+
+       	// Generate CSRF token
+        add_form_key('custdb_edit_contribution');
+
+		// Need to pre-populate: contribution name, description, authors, contribution type, demo
+		$this->template->assign_vars([
+			'S_IS_EDIT_CONTRIBUTION' 	=> true,
+
+			'CONTRIBUTION_ID'			=> $contribution_id,
+			'CONTRIBUTION_NAME'			=> $contribution['contribution_name'],
+			'CONTRIBUTION_DESCRIPTION'	=> $contribution['contribution_description'],
+			'CONTRIBUTION_AUTHORS'		=> $contribution['author_name'],
+			'CONTRIBUTION_TYPE'			=> $contribution['contribution_type'],
+			'CONTRIBUTION_DEMO_LINK'	=> $contribution['contribution_demo_link'],
+
+			'TYPE_EXTENSIONS'		=> $this->manager::TYPE_EXTENSIONS,
+			'TYPE_STYLES'			=> $this->manager::TYPE_STYLES,
+			'TYPE_TRANSLATIONS'		=> $this->manager::TYPE_TRANSLATIONS,
+			'TYPE_BBCODES'			=> $this->manager::TYPE_BBCODES,
+			'TYPE_TOOLS'			=> $this->manager::TYPE_TOOLS,
+			'TYPE_ARCHIVE'			=> $this->manager::TYPE_ARCHIVE,
+
+			// Page heading
+			'L_PAGE_HEADING'       => $this->user->lang('CUSTDB_EDIT_CONTRIBUTION'),
+		]); 
+
+		return $this->helper->render('custdb_edit_contribution_revision_body.html', $this->user->lang('CUSTDB_EDIT_CONTRIBUTION'));
 	}
 
 	/**
