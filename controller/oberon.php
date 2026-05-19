@@ -239,7 +239,7 @@ class oberon
 			'U_NEW_REVISION'		=> $can_add_revision ? $this->helper->route('custdb_add_revision', ['contribution_id' => $contribution_id]) : false,
 
 			// Actions
-			'U_EDIT_CONTRIBUTION'   => '', //$this->helper->route('phpbb_oberon_edit_contribution', ['id' => $contribution_id]),
+			'U_EDIT_CONTRIBUTION'   	=> $this->helper->route('custdb_edit_contribution', ['contribution_id' => $contribution_id]),
 			'VALIDATION_STATUS' 		=> $contribution['contribution_status'], // This is the publicly seen status (unvalidated, approved, denied)
 			'VALIDATE_UNVALIDATED'		=> $this->manager::STATUS_UNVALIDATED,
 			'VALIDATE_APPROVED'			=> $this->manager::STATUS_APPROVED,
@@ -330,6 +330,7 @@ class oberon
 			'CONTRIBUTION_IMAGE'     	=> !empty($screenshot_urls[0]) ? $screenshot_urls[0] : '',
 			'CONTRIBUTION_DEMO_LINK' 	=> $revision['contribution_demo_link'],
 
+			'U_EDIT_REVISION'				=> $this->helper->route('custdb_edit_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision_id]),
 			'U_VIEW_CONTRIBUTION'   		=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $revision['contribution_id']]),
 			'U_VALIDATE_CONTRIBUTION' 		=> $this->helper->route('custdb_validate_contribution', ['contribution_id' => $revision['contribution_id'], 'queue_id' => $revision['queue_id']]),
 			'U_INTERNAL_VALIDATION_TOPIC'	=> (int) $revision['contribution_validation_topic_id'] ? append_sid('/viewtopic.php', 't=' . (int) $revision['contribution_validation_topic_id']) : '', //TODO: route for viewtopic?
@@ -604,6 +605,49 @@ class oberon
 
 			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager->get_settings()['supported.phpbb.versions'],
 		]); 
+	}
+
+	/**
+	* Edit revision
+	*
+	* @param int $contribution_id The ID of the contribution
+	* @param int $revision_id The ID of the revision to edit
+	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	*/
+	public function edit_revision(int $contribution_id, int $revision_id)
+	{
+		$this->permissions_check(self::ACCESS_TEAM);
+
+		// Get revision data
+		$revision = $this->manager->get_contribution_with_revision($contribution_id, false, $revision_id);
+
+		if (!$revision)
+		{
+			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
+		}
+
+		//return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_EDIT_REVISION'));
+	}
+
+	/**
+	* Edit contribution
+	*
+	* @param int $contribution_id The ID of the contribution to edit
+	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	*/
+	public function edit_contribution(int $contribution_id)
+	{
+		$this->permissions_check(self::ACCESS_TEAM);
+
+		// Get contribution data
+		$contribution = $this->manager->get_contribution_with_revision($contribution_id, true);
+
+		if (!$contribution)
+		{
+			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
+		}
+
+		//return $this->helper->render('custdb_add_contribution_body.html', $this->user->lang('CUSTDB_EDIT_CONTRIBUTION'));
 	}
 
 	/**

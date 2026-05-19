@@ -945,4 +945,36 @@ class manager
 
         return (int) $contribution['contribution_type'];
     }
+
+    /**
+     * Update an existing contribution
+     *
+     * @param int $contribution_id
+     * @param array $contribution_array Data to update
+     * @return void
+     */
+    public function update_contribution(int $contribution_id, array $contribution_array)
+    {
+        $sql = 'UPDATE ' . $this->tables['contributions'] . ' 
+                SET ' . $this->db->sql_build_array('UPDATE', $contribution_array) . ' 
+                WHERE contribution_id = ' . (int) $contribution_id;
+
+        $this->db->sql_query($sql);
+    }
+
+    /**
+     * Update an existing revision
+     *
+     * @param int $revision_id
+     * @param array $revision_array Data to update
+     * @return void
+     */
+    public function update_revision(int $revision_id, array $revision_array)
+    {
+        $sql = 'UPDATE ' . $this->tables['revisions'] . ' 
+                SET ' . $this->db->sql_build_array('UPDATE', $revision_array) . ' 
+                WHERE revision_id = ' . (int) $revision_id;
+
+        $this->db->sql_query($sql);
+    }
 }

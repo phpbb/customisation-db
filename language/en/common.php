@@ -81,6 +81,8 @@ $lang = array_merge($lang, [
     'CUSTDB_DEMO_LINK'                          => 'Demo Link',
     'CUSTDB_ENTER_DEMO_LINK'                    => 'Enter demo link...',
     'CUSTDB_CONTRIBUTION_ADDED_SUCCESSFULLY'    => 'Contribution has been successfully submitted',
+    'CUSTDB_CONTRIBUTION_UPDATED_SUCCESSFULLY'  => 'Contribution has been successfully updated',
+    'CUSTDB_REVISION_UPDATED_SUCCESSFULLY'      => 'Revision has been successfully updated',
 
     // View contribution
     'CUSTDB_VIEW_CONTRIBUTION'                  => 'View Contribution',
@@ -92,6 +94,7 @@ $lang = array_merge($lang, [
 
     // View revision
     'CUSTDB_VIEW_REVISION'                      => 'View Revision',
+    'CUSTDB_EDIT_REVISION'                      => 'Edit Revision',
     'CUSTDB_BACK_TO_CONTRIBUTION'               => 'Back to Contribution',
     'CUSTDB_ATTACHMENT'                         => 'Attachment',
     'CUSTDB_DOWNLOAD_ATTACHMENT'                => 'Download attachment',

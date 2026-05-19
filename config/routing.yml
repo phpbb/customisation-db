@@ -6,11 +6,24 @@ custdb_add_contribution:
     path: /custdb/contribution/add
     defaults: { _controller: phpbb.oberon.controller:add_contribution }
 
+custdb_edit_contribution:
+    path: /custdb/contribution/edit/{contribution_id}
+    requirements:
+        contribution_id: \d+
+    defaults: { _controller: phpbb.oberon.controller:edit_contribution, contribution_id: 0 }
+
 custdb_add_revision:
     path: /custdb/revision/add/{contribution_id}
     requirements:
         contribution_id: \d+
     defaults: { _controller: phpbb.oberon.controller:add_revision, contribution_id: 0 }
+
+custdb_edit_revision:
+    path: /custdb/revision/edit/{contribution_id}/{revision_id}
+    requirements:
+        contribution_id: \d+
+        revision_id: \d+
+    defaults: { _controller: phpbb.oberon.controller:edit_revision, contribution_id: 0, revision_id: 0 }
 
 custdb_view_contribution:
     path: /custdb/view/contribution/{contribution_id}

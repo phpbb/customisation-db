@@ -6,6 +6,9 @@
 
         <div>
             <a href="{{ U_VIEW_CONTRIBUTION }}" class="custdb_button">{{ lang('CUSTDB_BACK_TO_CONTRIBUTION') }}</a>
+            {% if S_IS_TEAM_MEMBER %}
+            <a href="{{ U_EDIT_REVISION }}" class="custdb_button">{{ lang('CUSTDB_EDIT_REVISION') }}</a>
+            {% endif %}
         </div>
     </div>
 
