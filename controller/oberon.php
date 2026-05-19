@@ -339,6 +339,7 @@ class oberon
 			'REVISION_NAME'         	=> $revision['revision_name'],
 			'REVISION_DATE'				=> $this->user->format_date($revision['submission_time']),
 			'REVISION_VERSION'      	=> $revision['revision_version'],
+			'REVISION_PHPBB_VERSION'	=> $revision['revision_phpbb_version'],
 			'REVISION_DESCRIPTION'  	=> $revision['revision_description'],
 			'REVISION_ATTACHMENT'   	=> $revision['revision_attachment'],
 			'REVISION_ATTACHMENT_URL' 	=> !empty($revision['revision_attachment']) ? $this->helper->route('custdb_download', ['revision_id' => $revision['revision_id']]) : '',
@@ -626,7 +627,57 @@ class oberon
 			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
 		}
 
-		//return $this->helper->render('custdb_add_edit_contribution_revision_body.html', $this->user->lang('CUSTDB_EDIT_REVISION'));
+		// Handle form submit
+		if ($this->request->is_set_post('submit'))
+		{
+			if (!check_form_key('custdb_edit_revision'))
+			{
+				trigger_error('FORM_INVALID');
+			}
+
+			// Update the revision
+			$this->manager->update_revision(
+				$revision_id,
+				[
+					'revision_name'				=> $this->request->variable('revision_name', '', true),
+					'revision_description'		=> $this->request->variable('revision_description', '', true),
+					'revision_version'			=> $this->request->variable('revision_version_number', '', true),
+					'revision_phpbb_version'	=> $this->request->variable('revision_phpbb_version', '', true),
+					//TODO: add uploads and screenshots
+				]
+			);
+
+			meta_refresh(3, $this->helper->route('custdb_view_revision', [
+				'contribution_id' => $contribution_id,
+				'revision_id' => $revision_id,
+			]));
+			
+			trigger_error($this->user->lang('CUSTDB_REVISION_UPDATED_SUCCESSFULLY'));
+		}
+
+		// Generate CSRF token
+        add_form_key('custdb_edit_revision');
+
+		// Need to pre-populate: version, phpBB version, revision name, revision description
+		// TODO: file upload, screenshot upload
+		$this->template->assign_vars([
+			'S_IS_EDIT_CONTRIBUTION' 	=> false,
+
+			'CONTRIBUTION_NAME'			=> $revision['contribution_name'],
+
+			'REVISION_ID'				=> $revision_id,
+			'REVISION_NAME'				=> $revision['revision_name'],
+			'REVISION_VERSION'			=> $revision['revision_version'],
+			'REVISION_DESCRIPTION' 		=> $revision['revision_description'],
+			'REVISION_PHPBB_VERSION' 	=> $revision['revision_phpbb_version'],
+
+			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager->get_settings()['supported.phpbb.versions'],
+
+			// Page heading
+			'L_PAGE_HEADING'       		=> $this->user->lang('CUSTDB_EDIT_REVISION'),
+		]); 
+
+		return $this->helper->render('custdb_edit_contribution_revision_body.html', $this->user->lang('CUSTDB_EDIT_REVISION'));
 	}
 
 	/**

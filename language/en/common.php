@@ -100,6 +100,7 @@ $lang = array_merge($lang, [
     'CUSTDB_DOWNLOAD_ATTACHMENT'                => 'Download attachment',
     'CUSTDB_REVISION_STATUS'                    => 'Revision Status',
     'CUSTDB_REVISION_DATE'                      => 'Submission Date',
+    'CUSTDB_PHPBB_VERSION_NUMBER'               => 'phpBB %s',
 
     // Revision list
     'CUSTDB_REVISIONS'                          => 'Revisions',

@@ -513,6 +513,7 @@ class manager
             'revision_status_label'             => $this->get_external_status($revision['revision_status']),
             'revision_name'                     => $revision['revision_name'] ?? '',
             'revision_version'                  => $revision['revision_version'] ?? '',
+            'revision_phpbb_version'            => $revision['revision_phpbb_version'] ?? '',
             'revision_description'              => $revision['revision_description'] ?? '',
             'revision_attachment'               => $revision['revision_attachment'] ?? '',
             'submission_time'                   => $revision['submission_time'] ?? null,

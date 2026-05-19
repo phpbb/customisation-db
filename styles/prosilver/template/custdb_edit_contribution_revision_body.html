@@ -59,32 +59,33 @@
                         {% else %}
                         {# This is for revisions only #}
 
-                        <!-- Version Number -->
-                        <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="version_number">{{ lang('CUSTDB_VERSION_NUMBER') }}</label>
-                            <input type="text" id="version_number" name="version_number" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_VERSION_NUMBER') }}">
-                        </div>
-
-                        <!-- phpBB Version -->
-                        <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="phpbb_version">{{ lang('CUSTDB_PHPBB_VERSION') }}</label>
-                            <select id="phpbb_version" name="phpbb_version" class="custdb_input_theme custdb_dropdown_theme">
-                                {% for version in SUPPORTED_PHPBB_VERSIONS %}
-                                    <option value="{{ version }}">{{ version }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
                         <!-- Revision Name -->
                         <div class="custdb_form_group">
                             <label class="custdb_input_label" for="revision_name">{{ lang('CUSTDB_REVISION_NAME') }}</label>
-                            <input type="text" id="revision_name" name="revision_name" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_REVISION_NAME') }}">
+                            <input type="text" id="revision_name" name="revision_name" class="custdb_input_theme" value="{{ REVISION_NAME }}">
+                            <input type="hidden" name="revision_id" value="{{ REVISION_ID }}">
                         </div>
 
                         <!-- Revision Description -->
                         <div class="custdb_form_group">
                             <label class="custdb_input_label" for="revision_description">{{ lang('CUSTDB_REVISION_DESCRIPTION') }}</label>
-                            <textarea id="revision_description" name="revision_description" class="custdb_input_theme" rows="5" placeholder="{{ lang('CUSTDB_ENTER_DESCRIPTION') }}"></textarea>
+                            <textarea id="revision_description" name="revision_description" class="custdb_input_theme" rows="5">{{ REVISION_DESCRIPTION }}</textarea>
+                        </div>
+
+                        <!-- Version Number -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="revision_version_number">{{ lang('CUSTDB_VERSION_NUMBER') }}</label>
+                            <input type="text" id="version_number" name="revision_version_number" class="custdb_input_theme" value="{{ REVISION_VERSION }}">
+                        </div>
+
+                        <!-- phpBB Version -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="revision_phpbb_version">{{ lang('CUSTDB_PHPBB_VERSION') }}</label>
+                            <select id="phpbb_version" name="revision_phpbb_version" class="custdb_input_theme custdb_dropdown_theme">
+                                {% for version in SUPPORTED_PHPBB_VERSIONS %}
+                                    <option value="{{ version }}" {% if version == REVISION_PHPBB_VERSION %}selected{% endif %}>{{ version }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <!-- File Uploads -->
