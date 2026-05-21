@@ -225,7 +225,7 @@ class oberon
 			'CONTRIBUTION_TYPE'			=> $this->manager->contribution_type_mapping()[$contribution['contribution_type']],
 			'CONTRIBUTION_NAME'     	=> $contribution['contribution_name'],
 			'CONTRIBUTION_DESCRIPTION'  => $contribution['contribution_description'],
-			'AUTHORS'               	=> $contribution['author_name'],
+			'AUTHORS'               	=> $contribution['contribution_authors'],
 			'VERSION_NUMBER'        	=> $contribution['revision_version'],
 			'DEMO_LINK'             	=> $contribution['contribution_demo_link'],
 			'EXTERNAL_STATUS'       	=> $contribution['external_status_label'],
@@ -336,7 +336,7 @@ class oberon
 			'CONTRIBUTION_ID'        	=> $revision['contribution_id'],
 			'CONTRIBUTION_NAME'      	=> $revision['contribution_name'],
 			'CONTRIBUTION_DESCRIPTION' 	=> $revision['contribution_description'],
-			'AUTHORS'               	=> $revision['author_name'],
+			'AUTHORS'               	=> $revision['contribution_authors'],
 			'CONTRIBUTION_IMAGE'     	=> !empty($screenshot_urls[0]) ? $screenshot_urls[0] : '',
 			'CONTRIBUTION_DEMO_LINK' 	=> $revision['contribution_demo_link'],
 
@@ -502,12 +502,9 @@ class oberon
 			$version        			= $this->request->variable('version_number', '', true);
 			$phpbb_version  			= $this->request->variable('phpbb_version', '');
 			$authors_input              = $this->request->variable('authors', '', true);
+			$user_id 					= (int) $this->user->data['user_id'];
 			
-			// TODO: AI generated... check this!
-			// Parse authors field to get user_id
-			// If no authors provided, use the current user
-			$user_id = (int) $this->user->data['user_id'];
-			if (!empty($authors_input))
+			/*if (!empty($authors_input))
 			{
 				// Take the first author from the comma-separated list
 				$author_names = array_map('trim', explode(',', $authors_input));
@@ -520,36 +517,25 @@ class oberon
 						$user_id = (int) $author_data['user_id'];
 					}
 				}
-			}
+			}*/
 
 			if (!$contribution_id)
 			{
 				$contribution_array = [
-					'contribution_name'        => $contribution_name,
-					'contribution_description' => $contribution_description,
-					'contribution_type'        => $type,
-					'contribution_status'      => $this->manager::STATUS_UNVALIDATED,
-					'contribution_demo_link'   => $demo_link,
-					'user_id'                  => $user_id,
-					'submission_time'          => time(),
+					'contribution_name'    		=> $contribution_name,
+					'contribution_description' 	=> $contribution_description,
+					'contribution_type'        	=> $type,
+					'contribution_status'      	=> $this->manager::STATUS_UNVALIDATED,
+					'contribution_demo_link'   	=> $demo_link,
+					'contribution_authors'   	=> $authors_input,
+					'user_id'                  	=> $user_id,
+					'submission_time'          	=> time(),
 				];
 
 				$contribution_id = (int) $this->manager->add_contribution($contribution_array);
 			}
 
-			// Handle contribution package uploads (TODO: this needs better validation)
-			/*$revision_file = $this->request->file('revision_file');
-
-			if (!empty($revision_file['name']))
-			{
-				$revision_file_name = time() . '_' . basename($revision_file['name']);
-
-				if (!move_uploaded_file($revision_file['tmp_name'], $upload_path . $revision_file_name))
-				{
-					trigger_error('CUSTDB_FILE_UPLOAD_FAILED');
-				}
-			}*/
-
+			// Handle contribution package uploads
 			$revision_file_name = $this->validate_attachment();
 			$screenshot_list = $this->validate_screenshots();
 
@@ -831,14 +817,13 @@ class oberon
 			}
 
 			// Update the contribution
-			// TODO: The author bit needs re-doing as it's not working well currently (e.g., handle multiple authors?). We have user_id on the contribution, could have another mechanism for the revision?
 			$this->manager->update_contribution(
 				$contribution_id,
 				[
 					'contribution_name'			=> $this->request->variable('contribution_name', '', true),
 					'contribution_description'	=> $this->request->variable('contribution_description', '', true),
 					'contribution_demo_link'	=> $this->request->variable('contribution_demo_link', '', true),
-					//'author_name'				=> $this->request->variable('authors', '', true), 
+					'contribution_authors'		=> $this->request->variable('contribution_authors', '', true), 
 					'contribution_type'			=> $this->request->variable('contribution_type', 0),
 				]
 			);
@@ -860,7 +845,7 @@ class oberon
 			'CONTRIBUTION_ID'			=> $contribution_id,
 			'CONTRIBUTION_NAME'			=> $contribution['contribution_name'],
 			'CONTRIBUTION_DESCRIPTION'	=> $contribution['contribution_description'],
-			'CONTRIBUTION_AUTHORS'		=> $contribution['author_name'],
+			'CONTRIBUTION_AUTHORS'		=> $contribution['contribution_authors'],
 			'CONTRIBUTION_TYPE'			=> $contribution['contribution_type'],
 			'CONTRIBUTION_DEMO_LINK'	=> $contribution['contribution_demo_link'],
 

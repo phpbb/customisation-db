@@ -458,7 +458,7 @@ class manager
         }
 
         // Get contribution
-        $sql = 'SELECT c.*, u.username AS author_name
+        $sql = 'SELECT c.*, u.username AS submitter_name
                 FROM ' . $this->tables['contributions'] . ' c
                 LEFT JOIN ' . USERS_TABLE . ' u
                     ON c.user_id = u.user_id
@@ -515,11 +515,12 @@ class manager
             'contribution_demo_link'            => $contribution['contribution_demo_link'],
             'contribution_type'                 => $contribution['contribution_type'],
             'contribution_status'               => $contribution['contribution_status'],
+            'contribution_authors'              => $contribution['contribution_authors'],
             'contribution_validation_topic_id'  => $contribution['contribution_validation_topic_id'],
             'contribution_release_topic_id'     => $contribution['contribution_release_topic_id'],
             'external_status_label'             => $this->get_external_status($contribution['contribution_status']),
             'internal_status_label'             => $this->is_team_member() ? $this->get_internal_status($revision['queue_status']) : '',
-            'author_name'                       => $contribution['author_name'],
+            'submitter_name'                    => $contribution['submitter_name'],
 
             // Revision info
             'revision_id'                       => $revision['revision_id'] ?? null,
