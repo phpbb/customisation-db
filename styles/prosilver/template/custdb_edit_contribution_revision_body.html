@@ -33,8 +33,8 @@
 
                         <!-- Authors -->
                         <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="authors">{{ lang('CUSTDB_AUTHORS') }}</label>
-                            <input type="text" id="authors" name="authors" class="custdb_input_theme" value="{{ CONTRIBUTION_AUTHORS }}">
+                            <label class="custdb_input_label" for="contribution_authors">{{ lang('CUSTDB_AUTHORS') }}</label>
+                            <input type="text" id="contribution_authors" name="contribution_authors" class="custdb_input_theme" value="{{ CONTRIBUTION_AUTHORS }}">
                         </div>
 
                         <!-- Contribution Type Dropdown -->
@@ -88,15 +88,71 @@
                             </select>
                         </div>
 
-                        <!-- File Uploads -->
+                        <hr>
+
+                        <!-- Replacement upload -->
                         <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="contribution_file">{{ lang('CUSTDB_UPLOAD_CONTRIBUTION') }}</label>
-                            <input type="file" id="contribution_file" name="contribution_file" class="custdb_input_theme">
+                            <label class="custdb_input_label" for="revision_file">
+                                {{ lang('CUSTDB_UPLOAD_NEW_REVISION') }}
+                            </label>
+
+                            {% if REVISION_ATTACHMENT_URL %}
+                            <div class="custdb_input_help">
+                                {{ lang('CUSTDB_DELETE_ATTACHMENT') }}
+                                <br>
+                                <a href="{{ REVISION_ATTACHMENT_URL }}">
+                                    {{ lang('CUSTDB_CURRENT_FILE', REVISION_ATTACHMENT) }}
+                                </a>
+                            </div>
+                            {% endif %}
+
+                            <input type="file"
+                                id="revision_file"
+                                name="revision_file"
+                                class="custdb_input_theme">
                         </div>
 
+                        <hr>
+
+                        <!-- Upload new screenshots -->
                         <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="screenshots">{{ lang('CUSTDB_UPLOAD_SCREENSHOTS') }}</label>
-                            <input type="file" id="screenshots" name="screenshots[]" multiple class="custdb_input_theme">
+                            <label class="custdb_input_label" for="screenshots">
+                                {{ lang('CUSTDB_UPLOAD_SCREENSHOTS') }}
+                            </label>
+
+
+                            {% if REVISION_SCREENSHOTS %}
+                                <div class="custdb_edit_revision_existing_screenshots">
+
+                                    <div class="custdb_edit_revision_screenshot_grid">
+                                        {% for screenshot in REVISION_SCREENSHOTS %}
+                                            <div class="custdb_edit_revision_screenshot_item">
+
+                                                <img src="{{ screenshot }}"
+                                                    alt=""
+                                                    class="custdb_edit_revision_screenshot_thumb">
+
+                                                <label class="custdb_edit_revision_checkbox_label">
+                                                    <input type="checkbox"
+                                                        name="delete_screenshots[]"
+                                                        value="{{ screenshot }}">
+
+                                                    {{ lang('CUSTDB_DELETE_SCREENSHOT') }}
+                                                </label>
+
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+
+                                </div>
+                            {% endif %}
+
+                            <input type="file"
+                                id="screenshots"
+                                name="screenshots[]"
+                                multiple
+                                accept="image/*"
+                                class="custdb_input_theme">
                         </div>
 
                         {% endif %}

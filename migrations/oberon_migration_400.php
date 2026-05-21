@@ -61,6 +61,7 @@ class oberon_migration_400 extends \phpbb\db\migration\migration
                         'contribution_demo_link'                => ['VCHAR_UNI:255', ''],
                         'contribution_validation_topic_id'      => ['UINT', 0],
                         'contribution_release_topic_id'         => ['UINT', 0],// TODO: This may need to be in the revisions table, if we have different release topics for major changes?
+                        'contribution_authors'                  => ['VCHAR_UNI:255', ''],
                         'user_id'                               => ['UINT', 0],
                         'submission_time'                       => ['TIMESTAMP', null],
                     ],

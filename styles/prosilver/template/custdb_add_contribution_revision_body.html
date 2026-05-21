@@ -28,31 +28,7 @@
                             <label class="custdb_input_label" for="contribution_description">{{ lang('CUSTDB_CONTRIBUTION_DESCRIPTION') }}</label>
                             <textarea id="contribution_description" name="contribution_description" class="custdb_input_theme" rows="5" placeholder="{{ lang('CUSTDB_ENTER_DESCRIPTION') }}"></textarea>
                         </div>
-                        {% endif %}
 
-                        <!-- Authors -->
-                        <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="authors">{{ lang('CUSTDB_AUTHORS') }}</label>
-                            <input type="text" id="authors" name="authors" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_AUTHORS') }}">
-                        </div>
-
-                        <!-- Version Number -->
-                        <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="version_number">{{ lang('CUSTDB_VERSION_NUMBER') }}</label>
-                            <input type="text" id="version_number" name="version_number" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_VERSION_NUMBER') }}">
-                        </div>
-
-                        <!-- phpBB Version -->
-                        <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="phpbb_version">{{ lang('CUSTDB_PHPBB_VERSION') }}</label>
-                            <select id="phpbb_version" name="phpbb_version" class="custdb_input_theme custdb_dropdown_theme">
-                                {% for version in SUPPORTED_PHPBB_VERSIONS %}
-                                    <option value="{{ version }}">{{ version }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        {% if S_IS_NEW_CONTRIBUTION %}
                         <!-- Contribution Type Dropdown -->
                         <div class="custdb_form_group">
                             <label class="custdb_input_label" for="contribution_type">{{ lang('CUSTDB_CONTRIBUTION_TYPE') }}</label>
@@ -66,6 +42,47 @@
                             </select>
                         </div>
                         {% endif %}
+
+                        <hr>
+
+                        <!-- Authors -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="authors">{{ lang('CUSTDB_AUTHORS') }}</label>
+
+                            <div class="custdb_input_help">
+                                {{ lang('CUSTDB_ENTER_AUTHORS_HELP') }}
+                            </div>
+
+                            <input type="text" id="authors" name="authors" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_AUTHORS') }}">
+                        </div>
+
+                        <!-- Version Number -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="version_number">{{ lang('CUSTDB_VERSION_NUMBER') }}</label>
+
+                            <div class="custdb_input_help">
+                                {{ lang('CUSTDB_ENTER_VERSION_NUMBER_HELP') }}
+                            </div>
+
+                            <input type="text" id="version_number" name="version_number" class="custdb_input_theme" placeholder="{{ lang('CUSTDB_ENTER_VERSION_NUMBER') }}">
+                        </div>
+
+                        <!-- phpBB Version -->
+                        <div class="custdb_form_group">
+                            <label class="custdb_input_label" for="phpbb_version">{{ lang('CUSTDB_PHPBB_VERSION') }}</label>
+
+                            <div class="custdb_input_help">
+                                {{ lang('CUSTDB_PHPBB_VERSION_HELP') }}
+                            </div>
+
+                            <select id="phpbb_version" name="phpbb_version" class="custdb_input_theme custdb_dropdown_theme">
+                                {% for version in SUPPORTED_PHPBB_VERSIONS %}
+                                    <option value="{{ version }}">{{ version }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <hr>
 
                         <!-- Revision Name -->
                         <div class="custdb_form_group">
@@ -81,8 +98,8 @@
 
                         <!-- File Uploads -->
                         <div class="custdb_form_group">
-                            <label class="custdb_input_label" for="contribution_file">{{ lang('CUSTDB_UPLOAD_CONTRIBUTION') }}</label>
-                            <input type="file" id="contribution_file" name="contribution_file" class="custdb_input_theme">
+                            <label class="custdb_input_label" for="revision_file">{{ lang('CUSTDB_UPLOAD_CONTRIBUTION') }}</label>
+                            <input type="file" id="revision_file" name="revision_file" class="custdb_input_theme">
                         </div>
 
                         <div class="custdb_form_group">

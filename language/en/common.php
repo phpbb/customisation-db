@@ -60,6 +60,15 @@ $lang = array_merge($lang, [
     // Add revision
     'CUSTDB_ADD_REVISION'                       => 'Add Revision',
 
+    // Edit revision
+    'CUSTDB_EDIT_REVISION'                      => 'Edit Revision',
+    'CUSTDB_CURRENT_FILE'                       => 'View the current revision attachment: %s',
+    'CUSTDB_DELETE_ATTACHMENT'                  => 'Selecting a new file will replace the existing attachment. It will not trigger a new validation. Do you want to delete the existing attachment?',
+    'CUSTDB_UPLOAD_NEW_REVISION'                => 'Upload new revision file',
+
+    'CUSTDB_DELETE_SCREENSHOT'                  => 'Remove screenshot',
+    'CUSTDB_UPLOAD_SCREENSHOTS'                 => 'Upload additional screenshots',
+
     // Add contribution
     'CUSTDB_ADD_CONTRIBUTION'                   => 'Add Contribution',
     'CUSTDB_CONTRIBUTION_NAME'                  => 'Contribution Name',
@@ -68,9 +77,12 @@ $lang = array_merge($lang, [
     'CUSTDB_ENTER_REVISION_NAME'                => 'Enter revision name...',
     'CUSTDB_AUTHORS'                            => 'Authors',
     'CUSTDB_ENTER_AUTHORS'                      => 'Enter authors...',
+    'CUSTDB_ENTER_AUTHORS_HELP'                 => 'Enter the names of the authors as you wish for them to appear on the contribution listing.',
     'CUSTDB_VERSION_NUMBER'                     => 'Version Number',
     'CUSTDB_ENTER_VERSION_NUMBER'               => 'e.g., 1.0.0',
+    'CUSTDB_ENTER_VERSION_NUMBER_HELP'          => 'Enter the version number of the package attached below.',
     'CUSTDB_PHPBB_VERSION'                      => 'phpBB Version',
+    'CUSTDB_PHPBB_VERSION_HELP'                 => 'Select which version of phpBB the contribution is compatible with.',
     'CUSTDB_CONTRIBUTION_TYPE'                  => 'Contribution Type',
     'CUSTDB_ENTER_CONTRIBUTION_TYPE'            => 'Enter contribution type...',
     'CUSTDB_CONTRIBUTION_DESCRIPTION'           => 'Contribution Description',
@@ -94,7 +106,6 @@ $lang = array_merge($lang, [
 
     // View revision
     'CUSTDB_VIEW_REVISION'                      => 'View Revision',
-    'CUSTDB_EDIT_REVISION'                      => 'Edit Revision',
     'CUSTDB_BACK_TO_CONTRIBUTION'               => 'Back to Contribution',
     'CUSTDB_ATTACHMENT'                         => 'Attachment',
     'CUSTDB_DOWNLOAD_ATTACHMENT'                => 'Download attachment',

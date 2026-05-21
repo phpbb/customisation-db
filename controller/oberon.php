@@ -225,7 +225,7 @@ class oberon
 			'CONTRIBUTION_TYPE'			=> $this->manager->contribution_type_mapping()[$contribution['contribution_type']],
 			'CONTRIBUTION_NAME'     	=> $contribution['contribution_name'],
 			'CONTRIBUTION_DESCRIPTION'  => $contribution['contribution_description'],
-			'AUTHORS'               	=> $contribution['author_name'],
+			'AUTHORS'               	=> $contribution['contribution_authors'],
 			'VERSION_NUMBER'        	=> $contribution['revision_version'],
 			'DEMO_LINK'             	=> $contribution['contribution_demo_link'],
 			'EXTERNAL_STATUS'       	=> $contribution['external_status_label'],
@@ -291,6 +291,27 @@ class oberon
 	}
 
 	/**
+	 * Helper function to get screenshot URLs for a revision, given the screenshot file names
+	 */
+	private function get_revision_screenshots(array $screenshots)
+	{
+		// TODO: upload to the ext folder instead in the future
+		//$ext_path = $this->manager->get_ext_manager()->get_extension_path('phpbb/oberon', true);
+		$ext_path = $this->config['script_path'] . 'files/contributions';
+		$screenshot_urls = [];
+
+		foreach ($screenshots as $screenshot)
+		{
+			if (!empty($screenshot))
+			{
+				$screenshot_urls[] = $ext_path . '/' . $screenshot;
+			}
+		}
+
+		return $screenshot_urls;
+	}
+
+	/**
 	 * View a specific revision.
 	 *
 	 * @param int $contribution_id The ID of the contribution to which the revision belongs.
@@ -309,24 +330,13 @@ class oberon
 			trigger_error('CUSTDB_CONTRIBUTION_NOT_FOUND');
 		}
 
-		// TODO: upload to the ext folder instead in the future
-		//$ext_path = $this->manager->get_ext_manager()->get_extension_path('phpbb/oberon', true);
-		$ext_path = $this->config['script_path'] . 'files/contributions';
-		$screenshot_urls = [];
-
-		foreach ($revision['screenshots'] as $screenshot)
-		{
-			if (!empty($screenshot))
-			{
-				$screenshot_urls[] = $ext_path . '/' . $screenshot;
-			}
-		}
+		$screenshot_urls = $this->get_revision_screenshots($revision['screenshots']);
 
 		$this->template->assign_vars([
 			'CONTRIBUTION_ID'        	=> $revision['contribution_id'],
 			'CONTRIBUTION_NAME'      	=> $revision['contribution_name'],
 			'CONTRIBUTION_DESCRIPTION' 	=> $revision['contribution_description'],
-			'AUTHORS'               	=> $revision['author_name'],
+			'AUTHORS'               	=> $revision['contribution_authors'],
 			'CONTRIBUTION_IMAGE'     	=> !empty($screenshot_urls[0]) ? $screenshot_urls[0] : '',
 			'CONTRIBUTION_DEMO_LINK' 	=> $revision['contribution_demo_link'],
 
@@ -492,12 +502,9 @@ class oberon
 			$version        			= $this->request->variable('version_number', '', true);
 			$phpbb_version  			= $this->request->variable('phpbb_version', '');
 			$authors_input              = $this->request->variable('authors', '', true);
+			$user_id 					= (int) $this->user->data['user_id'];
 			
-			// TODO: AI generated... check this!
-			// Parse authors field to get user_id
-			// If no authors provided, use the current user
-			$user_id = (int) $this->user->data['user_id'];
-			if (!empty($authors_input))
+			/*if (!empty($authors_input))
 			{
 				// Take the first author from the comma-separated list
 				$author_names = array_map('trim', explode(',', $authors_input));
@@ -510,66 +517,27 @@ class oberon
 						$user_id = (int) $author_data['user_id'];
 					}
 				}
-			}
+			}*/
 
 			if (!$contribution_id)
 			{
 				$contribution_array = [
-					'contribution_name'        => $contribution_name,
-					'contribution_description' => $contribution_description,
-					'contribution_type'        => $type,
-					'contribution_status'      => $this->manager::STATUS_UNVALIDATED,
-					'contribution_demo_link'   => $demo_link,
-					'user_id'                  => $user_id,
-					'submission_time'          => time(),
+					'contribution_name'    		=> $contribution_name,
+					'contribution_description' 	=> $contribution_description,
+					'contribution_type'        	=> $type,
+					'contribution_status'      	=> $this->manager::STATUS_UNVALIDATED,
+					'contribution_demo_link'   	=> $demo_link,
+					'contribution_authors'   	=> $authors_input,
+					'user_id'                  	=> $user_id,
+					'submission_time'          	=> time(),
 				];
 
 				$contribution_id = (int) $this->manager->add_contribution($contribution_array);
 			}
 
-			$upload_path = $this->root_path . 'files/contributions/';
-			$revision_file_name = '';
-			$screenshot_file_names = [];
-
-			// Handle contribution package uploads (TODO: this needs better validation)
-			$contribution_file = $this->request->file('contribution_file');
-
-			if (!empty($contribution_file['name']))
-			{
-				$revision_file_name = time() . '_' . basename($contribution_file['name']);
-
-				if (!move_uploaded_file($contribution_file['tmp_name'], $upload_path . $revision_file_name))
-				{
-					trigger_error('CUSTDB_FILE_UPLOAD_FAILED');
-				}
-			}
-
-			// Fetch multiple potential attachments
-			$screenshots = $this->request->raw_variable('screenshots', [], \phpbb\request\request_interface::FILES);
-
-			if (!empty($screenshots['name'][0])) // Check if at least one file was uploaded
-			{
-				foreach ($screenshots['name'] as $key => $name)
-				{
-					if (!empty($name))
-					{
-						$screenshot_name = time() . '_' . basename($name);
-
-						if (move_uploaded_file($screenshots['tmp_name'][$key], $upload_path . $screenshot_name))
-						{
-							$screenshot_file_names[] = $screenshot_name;
-						}
-
-						else
-						{
-							trigger_error('CUSTDB_SCREENSHOT_UPLOAD_FAILED');
-						}
-					}
-				}
-			}
-
-			// Store screenshots as comma-separated list
-			$screenshot_list = implode(',', $screenshot_file_names);
+			// Handle contribution package uploads
+			$revision_file_name = $this->validate_attachment();
+			$screenshot_list = $this->validate_screenshots();
 
 			$revision_array = [
 				'contribution_id'      		=> $contribution_id,
@@ -608,6 +576,66 @@ class oberon
 		]); 
 	}
 
+	private function validate_attachment()
+	{
+		$upload_path = $this->root_path . 'files/contributions/'; // TODO: review this line
+
+		// Handle contribution package uploads 
+		// TODO: this needs better validation (file type, size, etc.)
+		$revision_file = $this->request->file('revision_file');
+		$revision_file_name = '';
+
+		if (!empty($revision_file['name']))
+		{
+			$revision_file_name = time() . '_' . basename($revision_file['name']);
+
+			if (!move_uploaded_file($revision_file['tmp_name'], $upload_path . $revision_file_name))
+			{
+				trigger_error('CUSTDB_FILE_UPLOAD_FAILED');
+			}
+		}
+
+		return $revision_file_name;
+	}
+
+	/*
+	 * Validate screenshots submitted for a revision 
+	 */
+	private function validate_screenshots(): string
+	{
+		$upload_path = $this->root_path . 'files/contributions/'; // TODO: review this line
+
+		// Fetch multiple potential attachments
+		$screenshots = $this->request->raw_variable('screenshots', [], \phpbb\request\request_interface::FILES);
+		$screenshot_file_names = [];
+
+		if (!empty($screenshots['name'][0])) // Check if at least one file was uploaded
+		{
+			foreach ($screenshots['name'] as $key => $name)
+			{
+				if (!empty($name))
+				{
+					$screenshot_name = time() . '_' . basename($name);
+
+					if (move_uploaded_file($screenshots['tmp_name'][$key], $upload_path . $screenshot_name))
+					{
+						$screenshot_file_names[] = $screenshot_name;
+					}
+
+					else
+					{
+						trigger_error('CUSTDB_SCREENSHOT_UPLOAD_FAILED');
+					}
+				}
+			}
+		}
+
+		// Store screenshots as comma-separated list
+		$screenshot_list = !empty($screenshot_file_names) ? implode(',', $screenshot_file_names) : '';
+
+		return $screenshot_list;
+	}
+
 	/**
 	* Edit revision
 	*
@@ -635,17 +663,75 @@ class oberon
 				trigger_error('FORM_INVALID');
 			}
 
+			// Attachment (the actual revision file) - this won't trigger another review; it's a team-only way to replace a file if necessary
+			// TODO: could add a post to the validation topic here when this happens so there's an audit trail, because this is essentially bypassing controls
+			$revision_file_name = $this->validate_attachment();
+
+			// Screenshots
+			$raw_deleted_screenshots = $this->request->get_super_global(\phpbb\request\request_interface::POST);
+			$raw_deleted_screenshots = $raw_deleted_screenshots['delete_screenshots'] ?? [];
+			$deleted_screenshots = array_map('basename', $raw_deleted_screenshots); // To be deleted
+			$new_screenshots = $this->validate_screenshots();
+
+			// Some screenshots to be deleted
+			if (!empty($deleted_screenshots))
+			{
+				// Remove deleted screenshots from the list; this ensures that only screenshots belonging to this revision can be deleted.
+				$current_screenshots = array_filter($revision['screenshots']); // gets rid of any blank values
+				$remaining_screenshots = array_diff($current_screenshots, $deleted_screenshots);
+
+				// Do a check to make sure all of the names are present in $current_screenshots to prevent deleting random files if someone manipulates the form data
+				foreach ($deleted_screenshots as $deleted_screenshot)
+				{
+					if (in_array($deleted_screenshot, $current_screenshots))
+					{
+						$this->manager->delete_file($deleted_screenshot);
+					}
+				}
+
+				// This is the new screenshot list
+				if (!empty($new_screenshots))
+				{
+					// There are new screenshots
+					$screenshot_list = implode(',', array_merge($remaining_screenshots, explode(',', $new_screenshots)));
+				}
+
+				else 
+				{
+					// Screenshots were deleted, no new ones added
+					$screenshot_list = implode(',', $remaining_screenshots);
+				}
+			}
+
+			// No screenshots to be deleted, but some to be added
+			else if (empty($deleted_screenshots) && !empty($new_screenshots))
+			{
+				$screenshot_list = implode(',', array_merge(explode(',', $revision['revision_screenshots']), explode(',', $new_screenshots)));
+			}
+
+			// No change to screenshots (none added, none deleted)
+			else 
+			{
+				$screenshot_list = $revision['revision_screenshots'];
+			}
+
 			// Update the revision
-			$this->manager->update_revision(
-				$revision_id,
-				[
+			$update_fields = [
 					'revision_name'				=> $this->request->variable('revision_name', '', true),
 					'revision_description'		=> $this->request->variable('revision_description', '', true),
 					'revision_version'			=> $this->request->variable('revision_version_number', '', true),
 					'revision_phpbb_version'	=> $this->request->variable('revision_phpbb_version', '', true),
-					//TODO: add uploads and screenshots
-				]
-			);
+					'revision_screenshots'		=> $screenshot_list,
+			];
+			
+			if (!empty($revision_file_name))
+			{
+				$update_fields['revision_attachment'] = $revision_file_name;
+				$this->manager->delete_file($revision['revision_attachment']);
+			}
+
+			// Update in the database
+			$this->manager->update_revision($revision_id, $update_fields);
 
 			meta_refresh(3, $this->helper->route('custdb_view_revision', [
 				'contribution_id' => $contribution_id,
@@ -657,6 +743,9 @@ class oberon
 
 		// Generate CSRF token
         add_form_key('custdb_edit_revision');
+
+		// Attachments
+		$screenshot_urls = $this->get_revision_screenshots($revision['screenshots']);
 
 		// Need to pre-populate: version, phpBB version, revision name, revision description
 		// TODO: file upload, screenshot upload
@@ -670,6 +759,10 @@ class oberon
 			'REVISION_VERSION'			=> $revision['revision_version'],
 			'REVISION_DESCRIPTION' 		=> $revision['revision_description'],
 			'REVISION_PHPBB_VERSION' 	=> $revision['revision_phpbb_version'],
+
+			'REVISION_SCREENSHOTS' 		=> $screenshot_urls,
+			'REVISION_ATTACHMENT_URL' 	=> !empty($revision['revision_attachment']) ? $this->helper->route('custdb_download', ['revision_id' => $revision['revision_id']]) : '',
+			'REVISION_ATTACHMENT'		=> $revision['revision_attachment'],
 
 			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager->get_settings()['supported.phpbb.versions'],
 
@@ -724,14 +817,13 @@ class oberon
 			}
 
 			// Update the contribution
-			// TODO: The author bit needs re-doing as it's not working well currently (e.g., handle multiple authors?). We have user_id on the contribution, could have another mechanism for the revision?
 			$this->manager->update_contribution(
 				$contribution_id,
 				[
 					'contribution_name'			=> $this->request->variable('contribution_name', '', true),
 					'contribution_description'	=> $this->request->variable('contribution_description', '', true),
 					'contribution_demo_link'	=> $this->request->variable('contribution_demo_link', '', true),
-					//'author_name'				=> $this->request->variable('authors', '', true), 
+					'contribution_authors'		=> $this->request->variable('contribution_authors', '', true), 
 					'contribution_type'			=> $this->request->variable('contribution_type', 0),
 				]
 			);
@@ -753,7 +845,7 @@ class oberon
 			'CONTRIBUTION_ID'			=> $contribution_id,
 			'CONTRIBUTION_NAME'			=> $contribution['contribution_name'],
 			'CONTRIBUTION_DESCRIPTION'	=> $contribution['contribution_description'],
-			'CONTRIBUTION_AUTHORS'		=> $contribution['author_name'],
+			'CONTRIBUTION_AUTHORS'		=> $contribution['contribution_authors'],
 			'CONTRIBUTION_TYPE'			=> $contribution['contribution_type'],
 			'CONTRIBUTION_DEMO_LINK'	=> $contribution['contribution_demo_link'],
 
