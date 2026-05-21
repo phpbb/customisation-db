@@ -60,6 +60,15 @@ $lang = array_merge($lang, [
     // Add revision
     'CUSTDB_ADD_REVISION'                       => 'Add Revision',
 
+    // Edit revision
+    'CUSTDB_EDIT_REVISION'                      => 'Edit Revision',
+    'CUSTDB_CURRENT_FILE'                       => 'View the current revision attachment.',
+    'CUSTDB_DELETE_ATTACHMENT'                  => 'Selecting a new file will replace the existing attachment. It will not trigger a new validation. Do you want to delete the existing attachment?',
+    'CUSTDB_UPLOAD_NEW_REVISION'                => 'Upload new revision file',
+
+    'CUSTDB_DELETE_SCREENSHOT'                  => 'Remove screenshot',
+    'CUSTDB_UPLOAD_SCREENSHOTS'                 => 'Upload additional screenshots',
+
     // Add contribution
     'CUSTDB_ADD_CONTRIBUTION'                   => 'Add Contribution',
     'CUSTDB_CONTRIBUTION_NAME'                  => 'Contribution Name',
@@ -94,7 +103,6 @@ $lang = array_merge($lang, [
 
     // View revision
     'CUSTDB_VIEW_REVISION'                      => 'View Revision',
-    'CUSTDB_EDIT_REVISION'                      => 'Edit Revision',
     'CUSTDB_BACK_TO_CONTRIBUTION'               => 'Back to Contribution',
     'CUSTDB_ATTACHMENT'                         => 'Attachment',
     'CUSTDB_DOWNLOAD_ATTACHMENT'                => 'Download attachment',

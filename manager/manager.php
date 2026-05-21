@@ -516,6 +516,7 @@ class manager
             'revision_phpbb_version'            => $revision['revision_phpbb_version'] ?? '',
             'revision_description'              => $revision['revision_description'] ?? '',
             'revision_attachment'               => $revision['revision_attachment'] ?? '',
+            'revision_screenshots'              => $revision['revision_screenshots'] ?? '',
             'submission_time'                   => $revision['submission_time'] ?? null,
             'screenshots'                       => $screenshots,
 

@@ -341,6 +341,12 @@
     gap: 5px;
 }
 
+.custdb_input_help {
+    margin: 0px 0 8px;
+    font-size: 0.9em;
+    opacity: 0.85;
+}
+
 /* ================================
    Checkboxes
 =================================== */
@@ -501,4 +507,37 @@ textarea.custdb_input_theme {
 
 .custdb_submit_btn:hover {
     background: #b12f2f;
+}
+
+
+
+/* Edit Revision */
+.custdb_edit_revision_screenshot_grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.custdb_edit_revision_screenshot_item {
+    width: 90px;
+    text-align: center;
+}
+
+.custdb_edit_revision_screenshot_thumb {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+
+    display: block;
+    margin: 0 auto 6px auto;
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.custdb_edit_revision_checkbox_label {
+    display: block;
+    font-size: 0.8em;
+    line-height: 1.2;
 }
