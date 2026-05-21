@@ -615,7 +615,7 @@ class oberon
 	/*
 	 * Validate screenshots submitted for a revision 
 	 */
-	private function validate_screenshots()
+	private function validate_screenshots(): string
 	{
 		$upload_path = $this->root_path . 'files/contributions/'; // TODO: review this line
 
@@ -645,7 +645,7 @@ class oberon
 		}
 
 		// Store screenshots as comma-separated list
-		$screenshot_list = !empty($screenshot_file_names) ? implode(',', $screenshot_file_names) : [];
+		$screenshot_list = !empty($screenshot_file_names) ? implode(',', $screenshot_file_names) : '';
 
 		return $screenshot_list;
 	}
@@ -685,22 +685,47 @@ class oberon
 			$raw_deleted_screenshots = $this->request->get_super_global(\phpbb\request\request_interface::POST);
 			$raw_deleted_screenshots = $raw_deleted_screenshots['delete_screenshots'] ?? [];
 			$deleted_screenshots = array_map('basename', $raw_deleted_screenshots); // To be deleted
+			$new_screenshots = $this->validate_screenshots();
 
+			// Some screenshots to be deleted
 			if (!empty($deleted_screenshots))
 			{
 				// Remove deleted screenshots from the list; this ensures that only screenshots belonging to this revision can be deleted.
-				$current_screenshots = $revision['screenshots'];
+				$current_screenshots = array_filter($revision['screenshots']); // gets rid of any blank values
 				$remaining_screenshots = array_diff($current_screenshots, $deleted_screenshots);
 
-				// TODO: actually delete the screenshots here, but do a check to make sure all of the names are present in $current_screenshots to prevent deleting random files if someone manipulates the form data
+				// Do a check to make sure all of the names are present in $current_screenshots to prevent deleting random files if someone manipulates the form data
+				foreach ($deleted_screenshots as $deleted_screenshot)
+				{
+					if (in_array($deleted_screenshot, $current_screenshots))
+					{
+						$this->manager->delete_file($deleted_screenshot);
+					}
+				}
 
 				// This is the new screenshot list
-				$screenshot_list = implode(',', array_merge($remaining_screenshots, explode(',', $this->validate_screenshots())));
+				if (!empty($new_screenshots))
+				{
+					// There are new screenshots
+					$screenshot_list = implode(',', array_merge($remaining_screenshots, explode(',', $new_screenshots)));
+				}
+
+				else 
+				{
+					// Screenshots were deleted, no new ones added
+					$screenshot_list = implode(',', $remaining_screenshots);
+				}
 			}
 
+			// No screenshots to be deleted, but some to be added
+			else if (empty($deleted_screenshots) && !empty($new_screenshots))
+			{
+				$screenshot_list = implode(',', array_merge(explode(',', $revision['revision_screenshots']), explode(',', $new_screenshots)));
+			}
+
+			// No change to screenshots (none added, none deleted)
 			else 
 			{
-				// No change
 				$screenshot_list = $revision['revision_screenshots'];
 			}
 
@@ -716,8 +741,7 @@ class oberon
 			if (!empty($revision_file_name))
 			{
 				$update_fields['revision_attachment'] = $revision_file_name;
-
-				// TODO: delete the actual attachment here
+				$this->manager->delete_file($revision['revision_attachment']);
 			}
 
 			// Update in the database
@@ -752,6 +776,7 @@ class oberon
 
 			'REVISION_SCREENSHOTS' 		=> $screenshot_urls,
 			'REVISION_ATTACHMENT_URL' 	=> !empty($revision['revision_attachment']) ? $this->helper->route('custdb_download', ['revision_id' => $revision['revision_id']]) : '',
+			'REVISION_ATTACHMENT'		=> $revision['revision_attachment'],
 
 			'SUPPORTED_PHPBB_VERSIONS'	=> $this->manager->get_settings()['supported.phpbb.versions'],
 

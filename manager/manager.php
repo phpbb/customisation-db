@@ -245,6 +245,20 @@ class manager
         ];
     }
 
+    /* File operations */
+    public function delete_file(string $path)
+    {
+        // This can be used to delete revision attachments or screenshots
+        $upload_path = $this->root_path . 'files/contributions/'; // TODO: review this line
+        $file = $upload_path . $path;
+
+        if (is_file($file))
+        {
+            // Delete the file if it exists
+            unlink($file);
+        }
+    }
+
     /*
         *** UI Queries ***
     */

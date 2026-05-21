@@ -62,7 +62,7 @@ $lang = array_merge($lang, [
 
     // Edit revision
     'CUSTDB_EDIT_REVISION'                      => 'Edit Revision',
-    'CUSTDB_CURRENT_FILE'                       => 'View the current revision attachment.',
+    'CUSTDB_CURRENT_FILE'                       => 'View the current revision attachment: %s',
     'CUSTDB_DELETE_ATTACHMENT'                  => 'Selecting a new file will replace the existing attachment. It will not trigger a new validation. Do you want to delete the existing attachment?',
     'CUSTDB_UPLOAD_NEW_REVISION'                => 'Upload new revision file',
 
