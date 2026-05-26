@@ -349,7 +349,7 @@ class oberon
 			'U_EDIT_REVISION'				=> $this->helper->route('custdb_edit_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision_id]),
 			'U_VIEW_CONTRIBUTION'   		=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $revision['contribution_id']]),
 			'U_VALIDATE_CONTRIBUTION' 		=> $this->helper->route('custdb_validate_contribution', ['contribution_id' => $revision['contribution_id'], 'queue_id' => $revision['queue_id']]),
-			'U_INTERNAL_VALIDATION_TOPIC'	=> (int) $revision['contribution_validation_topic_id'] ? append_sid($this->root_path . 'viewtopic.php', 't=' . (int) $revision['contribution_validation_topic_id']) : '', //TODO: route for viewtopic?
+			'U_INTERNAL_VALIDATION_TOPIC'	=> (int) $revision['contribution_validation_topic_id'] ? append_sid($this->root_path . 'viewtopic.' . $this->php_ext, 't=' . (int) $revision['contribution_validation_topic_id']) : '', //TODO: route for viewtopic?
 
 			'REVISION_ID'           	=> $revision['revision_id'],
 			'REVISION_NAME'         	=> $revision['revision_name'],
