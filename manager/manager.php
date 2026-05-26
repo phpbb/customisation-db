@@ -374,29 +374,31 @@ class manager
     // List the contributions on the index
     public function get_contributions_for_index(int $type = 0, int $status = 0, int $sort = 0, string $search_query = '', int $start = 0, int $per_page = 50)
     {
-        $sql = 'SELECT *
-                FROM ' . $this->tables['contributions'] . '
-                WHERE contribution_id > 0';
+        $sql = 'SELECT DISTINCT c.*
+                FROM ' . $this->tables['contributions'] . ' c
+                LEFT JOIN ' . $this->tables['revisions'] . ' r
+                    ON c.contribution_id = r.contribution_id
+                WHERE c.contribution_id > 0';
 
         if ($status)
         {
-            $sql .= ' AND contribution_status = ' . (int) $status;
+            $sql .= ' AND c.contribution_status = ' . (int) $status;
         }
 
         if ($type)
         {
-            $sql .= ' AND contribution_type = ' . (int) $type;  
+            $sql .= ' AND c.contribution_type = ' . (int) $type;  
         }
 
         if ($search_query !== '')
         {
-            // Check name and description for a match: https://area51.phpbb.com/docs/dev/master/db/dbal.html#sql-like-expression
-            $escaped_search = $this->db->sql_like_expression($this->db->get_any_char() . $this->db->sql_escape($search_query) . $this->db->get_any_char());
-            $sql .= ' AND (contribution_name ' . $escaped_search . ' OR contribution_description ' . $escaped_search . ')';  
+            // Check name and description for a match in both contributions and revisions: https://area51.phpbb.com/docs/dev/master/db/dbal.html#sql-like-expression
+            $escaped_search = $this->db->sql_like_expression($this->db->get_any_char() . $this->db->sql_escape(strtolower($search_query)) . $this->db->get_any_char());
+            $sql .= ' AND (LOWER(c.contribution_name) ' . $escaped_search . ' OR LOWER(c.contribution_description) ' . $escaped_search . ' OR LOWER(r.revision_name) ' . $escaped_search . ' OR LOWER(r.revision_description) ' . $escaped_search . ')';  
         }
 
         // Get total count for pagination (TODO: check this... AI generated)
-        $count_sql = 'SELECT COUNT(*) as total ' . substr($sql, strpos($sql, 'FROM'));
+        $count_sql = 'SELECT COUNT(DISTINCT c.contribution_id) as total ' . substr($sql, strpos($sql, 'FROM'));
         $count_result = $this->db->sql_query($count_sql);
         $count_row = $this->db->sql_fetchrow($count_result);
         $this->db->sql_freeresult($count_result);
@@ -405,13 +407,13 @@ class manager
         switch ($sort)
         {
             case self::SORT_DATE:
-                $sql .= ' ORDER BY submission_time DESC';
+                $sql .= ' ORDER BY c.submission_time DESC';
                 break;
             case self::SORT_NAME:
-                $sql .= ' ORDER BY contribution_name ASC';
+                $sql .= ' ORDER BY c.contribution_name ASC';
                 break;
             default:
-                $sql .= ' ORDER BY contribution_id DESC';
+                $sql .= ' ORDER BY c.contribution_id DESC';
                 break;
         }
 
