@@ -967,6 +967,12 @@ class oberon
 			'U_TYPE_ARCHIVE' 		=> $this->sidebar_route($this->manager::TYPE_ARCHIVE),
 		]); 
 
+		// Breadcrumbs: Board Index -> Customisation Database
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
+
 		return $this->helper->render('custdb_index_body.html', $this->user->lang('CUSTDB_INDEX'));
 	}
 
