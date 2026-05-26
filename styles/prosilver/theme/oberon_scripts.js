@@ -20,6 +20,8 @@ function updateSort(selectElement) {
 document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('custdb_search');
 
+    if (!searchInput) return;
+
     searchInput.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             event.preventDefault();

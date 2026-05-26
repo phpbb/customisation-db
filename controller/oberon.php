@@ -86,15 +86,21 @@ class oberon
 	/**
 	 * Simple permissions checker
 	 */
-	private function permissions_check($allowed_access)
+	private function permissions_check(int $allowed_access, bool $force_check = true)
 	{
 		if ($allowed_access === self::ACCESS_TEAM && !$this->manager->is_team_member())
 		{
 			throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
 		}
 
-		if ($allowed_access === self::ACCESS_REGISTERED && !$this->manager->is_registered())
+		else if ($allowed_access === self::ACCESS_REGISTERED && !$this->manager->is_registered())
 		{
+			throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
+		}
+
+		else if (!$force_check)
+		{
+			// If for any reason, the value is false here then we deny access (e.g., failing the check for a contribution author editing someone else's contribution)
 			throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
 		}
 	}
@@ -343,7 +349,7 @@ class oberon
 			'U_EDIT_REVISION'				=> $this->helper->route('custdb_edit_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision_id]),
 			'U_VIEW_CONTRIBUTION'   		=> $this->helper->route('custdb_view_contribution', ['contribution_id' => $revision['contribution_id']]),
 			'U_VALIDATE_CONTRIBUTION' 		=> $this->helper->route('custdb_validate_contribution', ['contribution_id' => $revision['contribution_id'], 'queue_id' => $revision['queue_id']]),
-			'U_INTERNAL_VALIDATION_TOPIC'	=> (int) $revision['contribution_validation_topic_id'] ? append_sid('/viewtopic.php', 't=' . (int) $revision['contribution_validation_topic_id']) : '', //TODO: route for viewtopic?
+			'U_INTERNAL_VALIDATION_TOPIC'	=> (int) $revision['contribution_validation_topic_id'] ? append_sid($this->root_path . 'viewtopic.php', 't=' . (int) $revision['contribution_validation_topic_id']) : '', //TODO: route for viewtopic?
 
 			'REVISION_ID'           	=> $revision['revision_id'],
 			'REVISION_NAME'         	=> $revision['revision_name'],
@@ -416,7 +422,7 @@ class oberon
 	*/
 	public function add_revision(int $contribution_id)
 	{
-		$this->permissions_check(self::ACCESS_REGISTERED);
+		$this->permissions_check(self::ACCESS_REGISTERED, $this->manager->is_customisation_author($contribution_id));
 
 		// Get the existing contribution details
 		$contribution = $this->manager->get_contribution_with_revision($contribution_id, true);
@@ -960,6 +966,12 @@ class oberon
 			'U_TYPE_TOOLS' 			=> $this->sidebar_route($this->manager::TYPE_TOOLS),
 			'U_TYPE_ARCHIVE' 		=> $this->sidebar_route($this->manager::TYPE_ARCHIVE),
 		]); 
+
+		// Breadcrumbs: Board Index -> Customisation Database
+		$this->template->assign_block_vars('navlinks', [
+			'BREADCRUMB_NAME' => $this->user->lang('CUSTDB_INDEX'),
+			'U_BREADCRUMB'   => $this->helper->route('custdb_index'),
+		]);
 
 		return $this->helper->render('custdb_index_body.html', $this->user->lang('CUSTDB_INDEX'));
 	}
