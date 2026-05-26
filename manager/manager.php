@@ -155,8 +155,11 @@ class manager
     public function is_customisation_author(int $contribution_id)
     {
         // Is the current user the author of the customisation?
+        $sql = 'SELECT * FROM ' . $this->tables['contributions'] . ' WHERE contribution_id = ' . (int) $contribution_id;
+        $result = $this->db->sql_query_limit($sql, 1);
+        $contribution_item = $this->db->sql_fetchrow($result);
 
-        return true; // TODO: add logic here
+        return (int) $contribution_item['user_id'] === (int) $this->user->data['user_id'];
     }
 
     /**

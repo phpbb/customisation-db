@@ -86,15 +86,21 @@ class oberon
 	/**
 	 * Simple permissions checker
 	 */
-	private function permissions_check($allowed_access)
+	private function permissions_check(int $allowed_access, bool $force_check = true)
 	{
 		if ($allowed_access === self::ACCESS_TEAM && !$this->manager->is_team_member())
 		{
 			throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
 		}
 
-		if ($allowed_access === self::ACCESS_REGISTERED && !$this->manager->is_registered())
+		else if ($allowed_access === self::ACCESS_REGISTERED && !$this->manager->is_registered())
 		{
+			throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
+		}
+
+		else if (!$force_check)
+		{
+			// If for any reason, the value is false here then we deny access (e.g., failing the check for a contribution author editing someone else's contribution)
 			throw new \phpbb\exception\http_exception(401, 'CUSTDB_NO_ACCESS');
 		}
 	}
@@ -416,7 +422,7 @@ class oberon
 	*/
 	public function add_revision(int $contribution_id)
 	{
-		$this->permissions_check(self::ACCESS_REGISTERED);
+		$this->permissions_check(self::ACCESS_REGISTERED, $this->manager->is_customisation_author($contribution_id));
 
 		// Get the existing contribution details
 		$contribution = $this->manager->get_contribution_with_revision($contribution_id, true);
