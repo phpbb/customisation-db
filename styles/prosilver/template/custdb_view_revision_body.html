@@ -1,4 +1,5 @@
 {% INCLUDECSS '@phpbb_oberon/oberon_style.css' %}
+{% INCLUDEJS '@phpbb_oberon/oberon_scripts.js' %}
 {% include 'overall_header.html' %}
 
     <div class="custdb_action_bar">
@@ -15,8 +16,20 @@
     <div class="custdb_contribution_main_wrapper">
         <div class="custdb_container">
             <div class="custdb_sidebar">
-                {% if CONTRIBUTION_IMAGE %}
-                    <img src="{{ CONTRIBUTION_IMAGE }}" alt="{{ CONTRIBUTION_NAME }}" class="custdb_contribution_image">
+                {% if CONTRIBUTION_IMAGES|length > 0 %}
+                    <div id="custdb_main_image_container" class="custdb_main_image_container" data-original-src="{{ CONTRIBUTION_IMAGES[0] }}">
+                        <img src="{{ CONTRIBUTION_IMAGES[0] }}" alt="{{ CONTRIBUTION_NAME }}" class="custdb_contribution_image">
+                    </div>
+                    
+                    {% if CONTRIBUTION_IMAGES|length > 1 %}
+                    <div class="custdb_thumbnail_grid">
+                        {% for image in CONTRIBUTION_IMAGES %}
+                            {% if loop.index > 1 and loop.index < 5 %}
+                            <img src="{{ image }}" alt="{{ CONTRIBUTION_NAME }} {{ loop.index }}" class="custdb_thumbnail" data-full-src="{{ image }}" role="button" tabindex="0">
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 {% else %}
                     <div class="custdb_contribution_image_placeholder">
                         {{ lang('CUSTDB_NO_IMAGE') }}
@@ -39,7 +52,7 @@
                     {% if INTERNAL_STATUS != '' %}
                     <div>
                         <strong>{{ lang('CUSTDB_QUEUE_STATUS') }}</strong>
-                         {% if U_INTERNAL_VALIDATION_TOPIC %}<a href="{{ U_INTERNAL_VALIDATION_TOPIC }}"">{{ INTERNAL_STATUS }}</a>{% else %}{{ INTERNAL_STATUS }}{% endif %}
+                         {% if U_INTERNAL_VALIDATION_TOPIC %}<a href="{{ U_INTERNAL_VALIDATION_TOPIC }}">{{ INTERNAL_STATUS }}</a>{% else %}{{ INTERNAL_STATUS }}{% endif %}
                     </div>
                     {% endif %}
                     {% if CONTRIBUTION_DEMO_LINK %}
