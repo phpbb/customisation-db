@@ -236,10 +236,10 @@ class oberon
 			'DEMO_LINK'             	=> $contribution['contribution_demo_link'],
 			'EXTERNAL_STATUS'       	=> $contribution['external_status_label'],
 
-			// First screenshot or empty string
-			'CONTRIBUTION_IMAGE'    => !empty($contribution['screenshots'][0])
-				? $ext_path . '/' . $contribution['screenshots'][0]
-				: '',
+			// Screenshots as array with full URLs
+			'CONTRIBUTION_IMAGES'    => array_map(function($screenshot) use ($ext_path) {
+				return $ext_path . '/' . $screenshot;
+			}, $contribution['screenshots'] ?? []),
 
 			// Links
 			'U_NEW_REVISION'		=> $can_add_revision ? $this->helper->route('custdb_add_revision', ['contribution_id' => $contribution_id]) : false,
@@ -343,7 +343,7 @@ class oberon
 			'CONTRIBUTION_NAME'      	=> $revision['contribution_name'],
 			'CONTRIBUTION_DESCRIPTION' 	=> $revision['contribution_description'],
 			'AUTHORS'               	=> $revision['contribution_authors'],
-			'CONTRIBUTION_IMAGE'     	=> !empty($screenshot_urls[0]) ? $screenshot_urls[0] : '',
+			'CONTRIBUTION_IMAGES'     	=> $screenshot_urls,
 			'CONTRIBUTION_DEMO_LINK' 	=> $revision['contribution_demo_link'],
 
 			'U_EDIT_REVISION'				=> $this->helper->route('custdb_edit_revision', ['contribution_id' => $contribution_id, 'revision_id' => $revision_id]),

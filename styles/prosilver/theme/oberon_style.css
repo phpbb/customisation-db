@@ -424,6 +424,79 @@ textarea.custdb_input_theme {
     background: #f9f9f9;
 }
 
+/* Main image container with fade transition */
+.custdb_main_image_container {
+    display: block;
+    position: relative;
+    margin: 0 auto 15px auto;
+    transition: opacity 0.3s ease;
+}
+
+.custdb_main_image_container .custdb_contribution_image {
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+/* Thumbnail grid layout - responsive columns */
+.custdb_thumbnail_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 50px);
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+/* Individual thumbnail styling */
+.custdb_thumbnail {
+    width: 50px;
+    height: 50px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: all 0.2s ease;
+    display: block;
+    background: #f9f9f9;
+}
+
+/* Thumbnail hover state */
+.custdb_thumbnail:hover {
+    opacity: 1;
+    border-color: #999;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transform: scale(1.05);
+}
+
+/* Active thumbnail (currently displayed as main) */
+.custdb_thumbnail.active {
+    border-color: #333;
+    opacity: 1;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Responsive thumbnail grid for smaller screens */
+@media (max-width: 768px) {
+    .custdb_thumbnail_grid {
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+        gap: 8px;
+        padding: 0 3px;
+    }
+
+    .custdb_thumbnail {
+        max-width: 100%;
+    }
+}
+
 /* Sidebar meta info */
 .custdb_sidebar_meta {
     display: flex;
