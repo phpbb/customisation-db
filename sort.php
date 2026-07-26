@@ -444,6 +444,8 @@ class sort extends entity\base
 		// Spring cleaning
 		unset($params[$this->start_name], $params[$this->limit_name], $params[$this->sort_key_name], $params[$this->sort_dir_name]);
 
+		$params = $this->expand_array_params($params);
+
 		// Add the limit to the URL if required
 		if ($this->limit != $this->default_limit)
 		{
@@ -495,5 +497,48 @@ class sort extends entity\base
 			));
 		}
 		return $this;
+	}
+
+	/**
+	 * Expand array parameters into individually indexed parameters.
+	 *
+	 * \phpbb\path_helper::glue_url_params() concatenates each value onto its own
+	 * key, so an array value raises "Array to string conversion" and reaches the
+	 * URL as name=Array, losing the parameter. Indexing each item keeps
+	 * multi-value parameters intact and is read back as an array by
+	 * \phpbb\request\request::variable().
+	 *
+	 * @param array $params
+	 * @return array
+	 */
+	protected function expand_array_params(array $params)
+	{
+		$expanded = array();
+
+		foreach ($params as $name => $value)
+		{
+			if (!is_array($value))
+			{
+				$expanded[$name] = $value;
+
+				continue;
+			}
+
+			foreach ($value as $index => $item)
+			{
+				$key = $name . '[' . $index . ']';
+
+				if (is_array($item))
+				{
+					$expanded = array_merge($expanded, $this->expand_array_params(array($key => $item)));
+				}
+				else
+				{
+					$expanded[$key] = $item;
+				}
+			}
+		}
+
+		return $expanded;
 	}
 }
