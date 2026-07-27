@@ -111,6 +111,12 @@ class titania_attention extends \phpbb\titania\entity\database_base
 			);
 		}
 
+		// Emojis and other four byte characters are not allowed by MySQL in the
+		// utf8 columns these are stored in, so replace them with their numeric
+		// character reference, as core does for report text.
+		$this->attention_title = utf8_encode_ucr($this->attention_title);
+		$this->attention_description = utf8_encode_ucr($this->attention_description);
+
 		parent::submit();
 	}
 
