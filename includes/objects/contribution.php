@@ -1091,6 +1091,13 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	 */
 	public function submit()
 	{
+		// Emojis and other four byte characters are not allowed by MySQL in the
+		// utf8 column the name is stored in, so replace them with their numeric
+		// character reference, as core does for report text. Doing it here keeps
+		// the encoded form out of everything that reads the name, including the
+		// release topic subject and the generated slug.
+		$this->contrib_name = utf8_encode_ucr($this->contrib_name);
+
 		if (!$this->contrib_id)
 		{
 			// Make sure the author exists, if not we create one (do this before returning if not approved...else we need to duplicate this code in a bunch of places)
@@ -1633,7 +1640,9 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function generate_permalink()
 	{
-		$clean_name = url::generate_slug($this->contrib_name);
+		// Drop any character references left by utf8_encode_ucr() rather than
+		// letting their digits end up in the permalink.
+		$clean_name = url::generate_slug(preg_replace('/&#[0-9]+;/', '', $this->contrib_name));
 		$append = '';
 		$i = 2;
 		while ($this->permalink_exists($clean_name . $append))
