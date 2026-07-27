@@ -192,6 +192,13 @@ class url
 	 */
 	public static function generate_slug($string)
 	{
+		// Neither a character reference nor a character outside the basic
+		// multilingual plane belongs in a slug: the columns slugs are stored in
+		// are utf8, which cannot hold the latter, and the digits of the former
+		// would end up in the URL.
+		$string = preg_replace('/&#[0-9]+;/', '', $string);
+		$string = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $string);
+
 		$string = self::url_replace($string, false);
 
 		// Replace any number of spaces with a single underscore

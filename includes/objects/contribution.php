@@ -1640,9 +1640,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function generate_permalink()
 	{
-		// Drop any character references left by utf8_encode_ucr() rather than
-		// letting their digits end up in the permalink.
-		$clean_name = url::generate_slug(preg_replace('/&#[0-9]+;/', '', $this->contrib_name));
+		$clean_name = url::generate_slug($this->contrib_name);
 		$append = '';
 		$i = 2;
 		while ($this->permalink_exists($clean_name . $append))
