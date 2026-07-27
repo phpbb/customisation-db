@@ -14,6 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\emoji;
 use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -243,6 +244,16 @@ class revision_edit extends revision
 		{
 			$error[] = $this->user->lang['FORM_INVALID'];
 		}
+
+		if (
+			emoji::contains($settings['name']) ||
+			emoji::contains($settings['license']) ||
+			emoji::contains($settings['custom_license'])
+		)
+		{
+			$error[] = $this->user->lang['REVISION_EMOJI_NOT_ALLOWED'];
+		}
+
 		$license_options = ($this->contrib->type->license_options) ?: array();
 
 		if ($license_options && !$this->contrib->type->license_allow_custom && !in_array($settings['license'], $license_options))

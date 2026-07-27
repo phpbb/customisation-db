@@ -18,6 +18,7 @@ use phpbb\template\template;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
+use phpbb\titania\emoji;
 use phpbb\titania\entity\package;
 use phpbb\user;
 
@@ -283,10 +284,10 @@ class type extends base
 		$data = $this->update_phpbb_requirement($data, $revision);
 		$data = $this->set_version_check($data, $contrib);
 
-		$data = json_encode(
+		$data = emoji::escape_json(json_encode(
 			$data,
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-		);
+		));
 
 		file_put_contents($composer_file, $data);
 		$package->restore_root($ext_base_path, $ext_name);

@@ -19,6 +19,7 @@ use phpbb\titania\composer\repository;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\controller\helper;
+use phpbb\titania\emoji;
 use phpbb\titania\entity\package;
 use phpbb\titania\ext;
 use phpbb\titania\manage\tool\base;
@@ -357,6 +358,7 @@ class rebuild_repo extends base
 		if ($path !== null)
 		{
 			$composer_json = file_get_contents($this->package->get_temp_path() . '/' . $path . '/composer.json');
+			$composer_json = emoji::escape_json($composer_json);
 		}
 		$this->package->cleanup();
 

@@ -15,6 +15,7 @@ use phpbb\config\config;
 use phpbb\titania\composer\repository;
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\contribution\type\type_interface;
+use phpbb\titania\emoji;
 use phpbb\titania\ext;
 use phpbb\titania\message\message;
 use phpbb\titania\url\url;
@@ -1569,6 +1570,34 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_NAME'];
 		}
 
+		$metadata = $this->__get_array();
+		unset(
+			$metadata['contrib_desc'],
+			$metadata['contrib_desc_bitfield'],
+			$metadata['contrib_desc_uid'],
+			$metadata['contrib_desc_options']
+		);
+		$metadata = array_merge($metadata, $custom_fields);
+
+		$demos = json_decode($this->contrib_demo, true);
+		if (is_array($demos))
+		{
+			// JSON encoding can otherwise hide emoji behind surrogate escapes.
+			$metadata['contrib_demo'] = implode("\n", $demos);
+		}
+
+		$metadata_has_emoji = false;
+
+		foreach ($metadata as $value)
+		{
+			if (is_string($value) && emoji::contains($value))
+			{
+				$metadata_has_emoji = true;
+				$error[] = phpbb::$user->lang['CONTRIB_EMOJI_NOT_ALLOWED'];
+				break;
+			}
+		}
+
 		if (!$this->contrib_type)
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_TYPE'];
@@ -1602,13 +1631,13 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				$this->set_type($this->contrib_type);
 				$error = array_merge($error, $this->type->validate_contrib_fields($custom_fields));
 
-				if (!$this->contrib_name_clean)
+				if (!$metadata_has_emoji && !$this->contrib_name_clean)
 				{
 					// If they leave it blank automatically create it
 					$this->generate_permalink();
 				}
 
-				if (($permalink_error = $this->validate_permalink($this->contrib_name_clean, $old_permalink)) !== false)
+				if (!$metadata_has_emoji && ($permalink_error = $this->validate_permalink($this->contrib_name_clean, $old_permalink)) !== false)
 				{
 					$error[] = $permalink_error;
 				}
@@ -1657,6 +1686,11 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		$author = key($authors['author']);
 		$missing_coauthors = array_merge($authors['missing']['active_coauthors'], $authors['missing']['nonactive_coauthors']);
+
+		if (!empty($authors['emoji']) && !$metadata_has_emoji)
+		{
+			$error[] = phpbb::$user->lang['CONTRIB_EMOJI_NOT_ALLOWED'];
+		}
 
 		if (!empty($missing_coauthors))
 		{
@@ -1766,13 +1800,29 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function get_authors_from_usernames($authors)
 	{
-		$result = array('missing' => array());
+		$result = array(
+			'missing'	=> array(),
+			'emoji'		=> false,
+		);
 
 		foreach ($authors as $group => $users)
 		{
-			$users = user_helper::get_user_ids_from_list($this->db, $users);
-			$result[$group] = $users['ids'];
-			$result['missing'][$group] = $users['missing'];
+			$valid_users = array();
+
+			foreach (explode("\n", $users) as $username)
+			{
+				if (emoji::contains($username))
+				{
+					$result['emoji'] = true;
+					continue;
+				}
+
+				$valid_users[] = $username;
+			}
+
+			$user_data = user_helper::get_user_ids_from_list($this->db, implode("\n", $valid_users));
+			$result[$group] = $user_data['ids'];
+			$result['missing'][$group] = $user_data['missing'];
 		}
 
 		return $result;

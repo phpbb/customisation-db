@@ -16,6 +16,7 @@ namespace phpbb\titania\attachment;
 use phpbb\files\upload;
 use phpbb\request\request_interface;
 use phpbb\titania\access;
+use phpbb\titania\emoji;
 use phpbb\titania\ext;
 
 class uploader
@@ -255,6 +256,16 @@ class uploader
 
 		if ($file->init_error())
 		{
+			$this->filedata['post_attach'] = false;
+
+			return false;
+		}
+
+		if (emoji::contains($file->get('uploadname')))
+		{
+			$file->error[] = $this->user->lang('INVALID_FILENAME', $file->get('uploadname'));
+			$file->remove();
+			$this->filedata['error'] = array_merge($this->filedata['error'], $file->error);
 			$this->filedata['post_attach'] = false;
 
 			return false;

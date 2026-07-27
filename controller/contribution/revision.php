@@ -15,6 +15,7 @@ namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\composer\repository;
 use phpbb\titania\contribution\type\collection as type_collection;
+use phpbb\titania\emoji;
 use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -589,7 +590,7 @@ class revision extends base
 		{
 			$this->queue->queue_notes .=
 				"\n\n[b]" . $this->user->lang('TEST_ACCOUNT') . "[/b]\n" .
-				$test_account
+				utf8_encode_ucr($test_account)
 			;
 		}
 		$this->queue->submit();
@@ -613,6 +614,15 @@ class revision extends base
 		if (!$settings['version'])
 		{
 			$error[] = $this->user->lang['NO_REVISION_VERSION'];
+		}
+
+		if (
+			emoji::contains($settings['name']) ||
+			emoji::contains($settings['version']) ||
+			emoji::contains($settings['license'])
+		)
+		{
+			$error[] = $this->user->lang['REVISION_EMOJI_NOT_ALLOWED'];
 		}
 
 		if (!empty($this->contrib->type->license_options) && !$this->contrib->type->license_allow_custom

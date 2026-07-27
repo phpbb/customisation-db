@@ -108,10 +108,10 @@ class titania_post extends \phpbb\titania\entity\message_base
 
 			'post_edit_time'		=> array('default' => 0), // The last time that user edit the post
 			'post_edit_user'		=> array('default' => 0), // The last user to edit the post
-			'post_edit_reason'		=> array('default' => ''), // Reason for deleting/editing
+			'post_edit_reason'		=> array('default' => '',	'max' => 255,	'encode_ucr' => true), // Reason for deleting/editing
 			'post_delete_user'		=> array('default' => 0), // The last user to delete the post
 
-			'post_subject'			=> array('default' => '',	'message_field' => 'subject', 'max' => 255),
+			'post_subject'			=> array('default' => '',	'message_field' => 'subject', 'max' => 255, 'encode_ucr' => true),
 			'post_text'				=> array('default' => '',	'message_field' => 'message'),
 			'post_text_bitfield'	=> array('default' => '',	'message_field' => 'message_bitfield'),
 			'post_text_uid'			=> array('default' => '',	'message_field' => 'message_uid'),

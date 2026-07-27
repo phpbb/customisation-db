@@ -173,7 +173,7 @@ class type extends base
 
 		// Save the translation validation results (we need to save it here so that we can add it to the post later)
 		$queue = $revision->get_queue();
-		$queue->tv_results = $translation_validator_output;
+		$queue->tv_results = utf8_encode_ucr($translation_validator_output);
 		$queue->submit();
 
 		return array(

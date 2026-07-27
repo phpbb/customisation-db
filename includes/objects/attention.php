@@ -66,8 +66,8 @@ class titania_attention extends \phpbb\titania\entity\database_base
 			'attention_time'				=> array('default' => titania::$time),
 			'attention_close_time'			=> array('default' => 0),
 			'attention_close_user'			=> array('default' => 0),
-			'attention_title'				=> array('default' => ''),
-			'attention_description'			=> array('default' => ''),
+			'attention_title'				=> array('default' => '',	'max' => 255,	'encode_ucr' => true),
+			'attention_description'			=> array('default' => '',	'encode_ucr' => true),
 			'notify_reporter'				=> array('default' => 0),
 		));
 

@@ -89,8 +89,8 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'topic_posts'					=> array('default' => ''), // Post count; separated by : between access levels ('10:9:8' = 10 team; 9 Mod Author; 8 Public)
 			'topic_views'					=> array('default' => 0), // View count
 
-			'topic_subject'					=> array('default' => ''),
-			'topic_subject_clean'			=> array('default' => ''),
+			'topic_subject'					=> array('default' => '',	'max' => 255,	'encode_ucr' => true),
+			'topic_subject_clean'			=> array('default' => '',	'max' => 255,	'encode_ucr' => true),
 
 			'topic_first_post_id'			=> array('default' => 0),
 			'topic_first_post_user_id'		=> array('default' => 0),
@@ -103,7 +103,7 @@ class titania_topic extends \phpbb\titania\entity\database_base
 			'topic_last_post_username'		=> array('default' => ''),
 			'topic_last_post_user_colour'	=> array('default' => ''),
 			'topic_last_post_time'			=> array('default' => (int) titania::$time),
-			'topic_last_post_subject'		=> array('default' => ''),
+			'topic_last_post_subject'		=> array('default' => '',	'max' => 255,	'encode_ucr' => true),
 
 			'phpbb_topic_id'				=> array('default' => 0),
 		));

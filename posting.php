@@ -810,7 +810,7 @@ class posting
 						if (!$first_post['post_approved'])
 						{
 							$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
-								SET post_subject = "' . $this->db->sql_escape($subject) . '"
+								SET post_subject = "' . $this->db->sql_escape(utf8_encode_ucr($subject)) . '"
 								WHERE post_id = ' . (int) $first_post['post_id'];
 							$this->db->sql_query($sql);
 						}

@@ -95,7 +95,7 @@ class attachment extends \phpbb\titania\entity\database_base
 			'physical_filename'		=> array('default' => '',	'max' => 255),
 			'attachment_directory'	=> array('default' => '',	'max' => 255),
 			'real_filename'			=> array('default' => '',	'max' => 255),
-			'attachment_comment'	=> array('default' => ''),
+			'attachment_comment'	=> array('default' => '',	'encode_ucr' => true),
 
 			'download_count'		=> array('default' => 0),
 
@@ -202,6 +202,14 @@ class attachment extends \phpbb\titania\entity\database_base
 
 		if (!empty($data))
 		{
+			foreach ($data as $name => $value)
+			{
+				if (isset($this->object_config[$name]))
+				{
+					$data[$name] = $this->validate_property($value, $this->object_config[$name]);
+				}
+			}
+
 			$sql = 'UPDATE ' . $this->sql_table . '
 				SET ' . $this->db->sql_build_array('UPDATE', $data) . '
 				WHERE attachment_id = ' . $this->get_id();
