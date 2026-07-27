@@ -25,8 +25,8 @@ class emoji
 	 */
 	public static function escape_json($json)
 	{
-		return preg_replace_callback(
-			'/[\xF0-\xF4][\x80-\xBF]{3}/',
+		$escaped_json = preg_replace_callback(
+			'/[\x{10000}-\x{10FFFF}]/u',
 			function ($matches)
 			{
 				$codepoint = utf8_ord($matches[0]) - 0x10000;
@@ -37,11 +37,19 @@ class emoji
 			},
 			$json
 		);
+
+		if ($escaped_json === null)
+		{
+			throw new \UnexpectedValueException('JSON contains invalid UTF-8.');
+		}
+
+		return $escaped_json;
 	}
 
 	/**
-	 * Check whether a string contains emoji or another four-byte character
-	 * unsupported by phpBB's MySQL utf8 schema.
+	 * Check whether a string contains an emoji (including BMP emoji and
+	 * emoji components) or any four-byte character unsupported by phpBB's
+	 * MySQL utf8 schema.
 	 *
 	 * @param string $value
 	 * @return bool

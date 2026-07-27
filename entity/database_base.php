@@ -255,7 +255,7 @@ abstract class database_base extends base
 		// Truncate to the maximum length
 		if (isset($config['max']) && $config['max'])
 		{
-			$value = truncate_string($value, $config['max'], PHP_INT_MAX);
+			$value = truncate_string($value, $config['max']);
 		}
 
 		if (!empty($config['encode_ucr']))
@@ -266,8 +266,8 @@ abstract class database_base extends base
 			// characters they represent.
 			while (!empty($config['max']) && utf8_strlen($value) > $config['max'])
 			{
-				$length = utf8_strlen(html_entity_decode($value, ENT_COMPAT));
-				$value = truncate_string($value, $length - 1, PHP_INT_MAX);
+				$length = utf8_strlen(html_entity_decode($value, ENT_COMPAT, 'UTF-8'));
+				$value = truncate_string($value, $length - 1);
 				$value = utf8_encode_ucr($value);
 			}
 		}

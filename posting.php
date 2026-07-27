@@ -809,10 +809,12 @@ class posting
 						// Use new subject as the first post's subject to avoid issues when it gets approved
 						if (!$first_post['post_approved'])
 						{
-							$sql = 'UPDATE ' . TITANIA_POSTS_TABLE . '
-								SET post_subject = "' . $this->db->sql_escape(utf8_encode_ucr($subject)) . '"
-								WHERE post_id = ' . (int) $first_post['post_id'];
-							$this->db->sql_query($sql);
+							$first_post_object = new \titania_post($topic->topic_type, $topic, $first_post['post_id']);
+							if ($first_post_object->load())
+							{
+								$first_post_object->post_subject = $subject;
+								$first_post_object->update();
+							}
 						}
 					}
 				}
