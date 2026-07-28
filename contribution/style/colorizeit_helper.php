@@ -13,6 +13,8 @@
 
 namespace phpbb\titania\contribution\style;
 
+use phpbb\titania\emoji;
+
 class colorizeit_helper
 {
 	/** @var array */
@@ -69,6 +71,14 @@ class colorizeit_helper
 	public function submit_options($options, $revision_id, $db)
 	{
 		$options = serialize($options);
+
+		// These values come from configuration files inside the uploaded style.
+		// Keep serving unsupported names without attempting to cache them.
+		if (emoji::contains($options))
+		{
+			return;
+		}
+
 		$sql = 'UPDATE ' . TITANIA_REVISIONS_TABLE . '
 		    SET revision_clr_options = "' . $db->sql_escape($options) . '"
 		    WHERE revision_id = ' . (int) $revision_id;

@@ -616,13 +616,18 @@ class revision extends base
 			$error[] = $this->user->lang['NO_REVISION_VERSION'];
 		}
 
-		if (
-			emoji::contains($settings['name']) ||
-			emoji::contains($settings['version']) ||
-			emoji::contains($settings['license'])
-		)
+		$metadata = array_merge(
+			array($settings['name'], $settings['version'], $settings['license']),
+			$settings['custom']
+		);
+
+		foreach ($metadata as $value)
 		{
-			$error[] = $this->user->lang['REVISION_EMOJI_NOT_ALLOWED'];
+			if (is_string($value) && emoji::contains($value))
+			{
+				$error[] = $this->user->lang['REVISION_EMOJI_NOT_ALLOWED'];
+				break;
+			}
 		}
 
 		if (!empty($this->contrib->type->license_options) && !$this->contrib->type->license_allow_custom
