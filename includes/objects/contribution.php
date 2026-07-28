@@ -1738,7 +1738,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function generate_permalink()
 	{
-		$clean_name = url::generate_slug($this->contrib_name);
+		$clean_name = $this->generate_permalink_slug($this->contrib_name);
 		$append = '';
 		$i = 2;
 		while ($this->permalink_exists($clean_name . $append))
@@ -1747,6 +1747,17 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$i++;
 		}
 		$this->contrib_name_clean = $clean_name . $append;
+	}
+
+	/**
+	 * Generate an ASCII-only contribution permalink.
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	protected function generate_permalink_slug($value)
+	{
+		return preg_replace('/[^a-z0-9_]+/', '_', url::generate_slug($value));
 	}
 
 	/*
@@ -1759,9 +1770,16 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	 */
 	public function validate_permalink($permalink, $old_permalink)
 	{
-		if (url::generate_slug($permalink) !== $permalink)
+		// Preserve existing Unicode permalinks until they are intentionally changed.
+		if ($permalink !== '' && $permalink === $old_permalink)
 		{
-			return phpbb::$user->lang('INVALID_PERMALINK', url::generate_slug($permalink));
+			return false;
+		}
+
+		$generated_permalink = $this->generate_permalink_slug($permalink);
+		if ($generated_permalink !== $permalink)
+		{
+			return phpbb::$user->lang('INVALID_PERMALINK', $generated_permalink);
 		}
 
 		if ($permalink === '' || ($permalink !== $old_permalink && $this->permalink_exists($permalink)))
