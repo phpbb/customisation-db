@@ -47,9 +47,8 @@ class emoji
 	}
 
 	/**
-	 * Check whether a string contains an emoji (including BMP emoji and
-	 * emoji components) or any four-byte character unsupported by phpBB's
-	 * MySQL utf8 schema.
+	 * Check whether a string contains a four-byte character unsupported by
+	 * phpBB's MySQL utf8 schema.
 	 *
 	 * @param string $value
 	 * @return bool
@@ -57,14 +56,8 @@ class emoji
 	public static function contains($value)
 	{
 		$value = utf8_decode_ncr($value);
-		$emoji_pattern = '/[' .
-			'\x{00A9}\x{00AE}\x{200D}\x{203C}\x{2049}\x{20E3}\x{2122}\x{2139}' .
-			'\x{2194}-\x{21FF}\x{2300}-\x{23FF}\x{24C2}\x{25AA}-\x{27BF}' .
-			'\x{2B00}-\x{2BFF}\x{3030}\x{303D}\x{3297}\x{3299}\x{FE0E}\x{FE0F}' .
-			'\x{10000}-\x{10FFFF}' .
-		']/u';
 
-		return (bool) preg_match($emoji_pattern, $value);
+		return (bool) preg_match('/[\x{10000}-\x{10FFFF}]/u', $value);
 	}
 
 	/**

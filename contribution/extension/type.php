@@ -217,7 +217,7 @@ class type extends base
 	public function validate_ext_name($name)
 	{
 		return (bool) preg_match(
-			'#^[a-zA-Z0-9\x7f-\xff]{2,}/[a-zA-Z0-9\x7f-\xff]{2,}$#',
+			'#^[a-zA-Z0-9\x{007F}-\x{FFFF}]{2,}/[a-zA-Z0-9\x{007F}-\x{FFFF}]{2,}$#u',
 			$name
 		);
 	}
