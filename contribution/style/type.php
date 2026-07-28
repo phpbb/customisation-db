@@ -19,7 +19,7 @@ use phpbb\template\template;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
-use phpbb\titania\emoji;
+use phpbb\titania\unicode;
 use phpbb\titania\entity\package;
 use phpbb\user;
 
@@ -166,7 +166,7 @@ class type extends base
 	public function fix_package_name(\titania_contribution $contrib, \titania_revision $revision, attachment $attachment, $root_dir = null)
 	{
 		// If we managed to find a single parent directory, then we use that in the zip name, otherwise we fall back to using contrib_name_clean
-		if ($root_dir !== null && !emoji::contains($root_dir))
+		if ($root_dir !== null && !unicode::contains_unsupported($root_dir))
 		{
 			$new_real_filename = $root_dir . '_' . strtolower($revision->revision_version) . '.' . $attachment->extension;
 		}

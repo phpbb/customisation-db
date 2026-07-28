@@ -14,7 +14,7 @@
 namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\contribution\type\collection as type_collection;
-use phpbb\titania\emoji;
+use phpbb\titania\unicode;
 use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -246,9 +246,9 @@ class revision_edit extends revision
 		}
 
 		if (
-			emoji::contains($settings['name']) ||
-			emoji::contains($settings['license']) ||
-			emoji::contains($settings['custom_license'])
+			unicode::contains_unsupported($settings['name']) ||
+			unicode::contains_unsupported($settings['license']) ||
+			unicode::contains_unsupported($settings['custom_license'])
 		)
 		{
 			$error[] = $this->user->lang['REVISION_EMOJI_NOT_ALLOWED'];

@@ -15,7 +15,7 @@ namespace phpbb\titania\controller\contribution;
 
 use phpbb\titania\composer\repository;
 use phpbb\titania\contribution\type\collection as type_collection;
-use phpbb\titania\emoji;
+use phpbb\titania\unicode;
 use phpbb\titania\ext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -623,7 +623,7 @@ class revision extends base
 
 		foreach ($metadata as $value)
 		{
-			if (is_string($value) && emoji::contains($value))
+			if (is_string($value) && unicode::contains_unsupported($value))
 			{
 				$error[] = $this->user->lang['REVISION_EMOJI_NOT_ALLOWED'];
 				break;

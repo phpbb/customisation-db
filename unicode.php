@@ -13,7 +13,7 @@
 
 namespace phpbb\titania;
 
-class emoji
+class unicode
 {
 	/**
 	 * Escape four-byte UTF-8 characters as JSON surrogate pairs.
@@ -53,7 +53,7 @@ class emoji
 	 * @param string $value
 	 * @return bool
 	 */
-	public static function contains($value)
+	public static function contains_unsupported($value)
 	{
 		$value = utf8_decode_ncr($value);
 

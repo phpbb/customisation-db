@@ -192,7 +192,7 @@ class url
 	 */
 	public static function generate_slug($string)
 	{
-		$string = \phpbb\titania\emoji::strip_unsupported($string);
+		$string = \phpbb\titania\unicode::strip_unsupported($string);
 		$string = self::url_replace($string, false);
 
 		// Replace any number of spaces with a single underscore

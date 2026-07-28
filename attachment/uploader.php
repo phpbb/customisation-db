@@ -16,7 +16,7 @@ namespace phpbb\titania\attachment;
 use phpbb\files\upload;
 use phpbb\request\request_interface;
 use phpbb\titania\access;
-use phpbb\titania\emoji;
+use phpbb\titania\unicode;
 use phpbb\titania\ext;
 
 class uploader
@@ -261,7 +261,7 @@ class uploader
 			return false;
 		}
 
-		if (emoji::contains($file->get('uploadname')))
+		if (unicode::contains_unsupported($file->get('uploadname')))
 		{
 			$file->error[] = $this->user->lang('INVALID_FILENAME', $file->get('uploadname'));
 			$file->remove();

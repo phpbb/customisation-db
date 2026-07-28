@@ -11,7 +11,7 @@
 *
 */
 
-use phpbb\titania\emoji;
+use phpbb\titania\unicode;
 use phpbb\titania\ext;
 use phpbb\titania\sync;
 
@@ -703,7 +703,7 @@ class titania_category extends \phpbb\titania\entity\message_base
 		{
 			$error[] = phpbb::$user->lang['NO_CATEGORY_NAME'];
 		}
-		else if (emoji::contains($this->category_name))
+		else if (unicode::contains_unsupported($this->category_name))
 		{
 			$error[] = phpbb::$user->lang['CATEGORY_EMOJI_NOT_ALLOWED'];
 		}

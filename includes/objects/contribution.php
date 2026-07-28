@@ -15,7 +15,7 @@ use phpbb\config\config;
 use phpbb\titania\composer\repository;
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\contribution\type\type_interface;
-use phpbb\titania\emoji;
+use phpbb\titania\unicode;
 use phpbb\titania\ext;
 use phpbb\titania\message\message;
 use phpbb\titania\url\url;
@@ -1590,7 +1590,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 		foreach ($metadata as $value)
 		{
-			if (is_string($value) && emoji::contains($value))
+			if (is_string($value) && unicode::contains_unsupported($value))
 			{
 				$metadata_has_emoji = true;
 				$error[] = phpbb::$user->lang['CONTRIB_EMOJI_NOT_ALLOWED'];
@@ -1830,7 +1830,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 
 			foreach (explode("\n", $users) as $username)
 			{
-				if (emoji::contains($username))
+				if (unicode::contains_unsupported($username))
 				{
 					$result['emoji'] = true;
 					continue;

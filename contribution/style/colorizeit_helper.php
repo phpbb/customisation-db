@@ -13,7 +13,7 @@
 
 namespace phpbb\titania\contribution\style;
 
-use phpbb\titania\emoji;
+use phpbb\titania\unicode;
 
 class colorizeit_helper
 {
@@ -74,7 +74,7 @@ class colorizeit_helper
 
 		// These values come from configuration files inside the uploaded style.
 		// Keep serving unsupported names without attempting to cache them.
-		if (emoji::contains($options))
+		if (unicode::contains_unsupported($options))
 		{
 			return;
 		}
