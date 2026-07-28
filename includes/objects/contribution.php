@@ -1447,7 +1447,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	public function change_permalink($new_permalink)
 	{
 		$old_permalink = $this->contrib_name_clean;
-		$new_permalink = url::generate_slug($new_permalink);
 
 		if ($this->validate_permalink($new_permalink, $old_permalink))
 		{
@@ -1556,10 +1555,11 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		array('active_coauthors' => array(username => username)).
 	* @param array $custom_fields			Custom field values.
 	* @param string $old_permalink			Old permalink. Defaults to empty string.
+	* @param string|null $new_permalink		Submitted permalink. Defaults to the value on the entity.
 	*
 	* @return array Returns array containing any errors found.
 	*/
-	public function validate($contrib_categories, $authors, $custom_fields, $old_permalink = '')
+	public function validate($contrib_categories, $authors, $custom_fields, $old_permalink = '', $new_permalink = null)
 	{
 		phpbb::$user->add_lang('ucp');
 
@@ -1637,7 +1637,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 					$this->generate_permalink();
 				}
 
-				if (!$metadata_has_emoji && ($permalink_error = $this->validate_permalink($this->contrib_name_clean, $old_permalink)) !== false)
+				$permalink = $new_permalink !== null ? $new_permalink : $this->contrib_name_clean;
+				if (!$metadata_has_emoji && ($permalink_error = $this->validate_permalink($permalink, $old_permalink)) !== false)
 				{
 					$error[] = $permalink_error;
 				}

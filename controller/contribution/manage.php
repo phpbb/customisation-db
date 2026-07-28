@@ -206,7 +206,8 @@ class manage extends base
 				$this->settings['categories'],
 				$authors,
 				$this->settings['custom'],
-				$this->contrib->contrib_name_clean
+				$this->contrib->contrib_name_clean,
+				$this->settings['permalink']
 			));
 
 			// Did we succeed or have an error?
