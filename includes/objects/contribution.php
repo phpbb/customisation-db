@@ -1570,29 +1570,27 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_NAME'];
 		}
 
-		$metadata = $this->__get_array();
-		unset(
-			$metadata['contrib_desc'],
-			$metadata['contrib_desc_bitfield'],
-			$metadata['contrib_desc_uid'],
-			$metadata['contrib_desc_options']
+		$metadata = array(
+			$this->contrib_name,
+			$new_permalink !== null ? $new_permalink : $this->contrib_name_clean,
 		);
 		$metadata = array_merge($metadata, $custom_fields);
 
 		$demos = json_decode($this->contrib_demo, true);
 		if (is_array($demos))
 		{
-			// JSON encoding can otherwise hide emoji behind surrogate escapes.
+			// JSON encoding can otherwise hide unsupported characters behind
+			// surrogate escapes.
 			$metadata['contrib_demo'] = implode("\n", $demos);
 		}
 
-		$metadata_has_emoji = false;
+		$metadata_has_unsupported = false;
 
 		foreach ($metadata as $value)
 		{
-			if (is_string($value) && unicode::contains_unsupported($value))
+			if (is_string($value) && unicode::contains_unsupported($value, false))
 			{
-				$metadata_has_emoji = true;
+				$metadata_has_unsupported = true;
 				$error[] = phpbb::$user->lang['CONTRIB_EMOJI_NOT_ALLOWED'];
 				break;
 			}
@@ -1632,13 +1630,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				$error = array_merge($error, $this->type->validate_contrib_fields($custom_fields));
 
 				$permalink = $new_permalink !== null ? $new_permalink : $this->contrib_name_clean;
-				if (!$metadata_has_emoji && $permalink === '')
-				{
-					// If they leave it blank automatically create it
-					$permalink = $this->find_available_permalink($this->contrib_name);
-				}
-
-				if (!$metadata_has_emoji && ($permalink_error = $this->validate_permalink($permalink, $old_permalink)) !== false)
+				if (!$metadata_has_unsupported && ($permalink_error = $this->validate_permalink($permalink, $old_permalink)) !== false)
 				{
 					$error[] = $permalink_error;
 				}
@@ -1688,11 +1680,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$author = key($authors['author']);
 		$missing_coauthors = array_merge($authors['missing']['active_coauthors'], $authors['missing']['nonactive_coauthors']);
 
-		if (!empty($authors['emoji']) && !$metadata_has_emoji)
-		{
-			$error[] = phpbb::$user->lang['CONTRIB_EMOJI_NOT_ALLOWED'];
-		}
-
 		if (!empty($missing_coauthors))
 		{
 			$error[] = phpbb::$user->lang('COULD_NOT_FIND_USERS', phpbb_generate_string_list($missing_coauthors, phpbb::$user));
@@ -1738,18 +1725,17 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function generate_permalink()
 	{
-		$this->contrib_name_clean = $this->find_available_permalink($this->contrib_name);
+		$this->contrib_name_clean = $this->get_generated_permalink();
 	}
 
 	/**
 	 * Generate an available contribution permalink.
 	 *
-	 * @param string $value
 	 * @return string
 	 */
-	protected function find_available_permalink($value)
+	public function get_generated_permalink()
 	{
-		$clean_name = $this->generate_permalink_slug($value);
+		$clean_name = $this->generate_permalink_slug($this->contrib_name);
 		$append = '';
 		$i = 2;
 		while ($this->permalink_exists($clean_name . $append))
@@ -1762,18 +1748,22 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	}
 
 	/**
-	 * Generate a contribution permalink containing Unicode letters, numbers,
-	 * and underscores.
+	 * Generate a contribution permalink containing Unicode letters, combining
+	 * marks, numbers, and underscores.
 	 *
 	 * @param string $value
 	 * @return string
 	 */
 	protected function generate_permalink_slug($value)
 	{
-		$permalink = preg_replace('/[^\p{L}\p{N}_]+/u', '_', url::generate_slug($value));
-		$permalink = preg_replace('/_+/', '_', $permalink);
+		// Variation selectors control the presentation of the preceding
+		// character. They are combining marks, but have no place in a
+		// permalink and can otherwise survive after an emoji is removed.
+		$value = preg_replace('/[\x{FE00}-\x{FE0F}\x{E0100}-\x{E01EF}]/u', '', $value);
 
-		return trim($permalink, '_');
+		// Preserve repeated and surrounding underscores for compatibility with
+		// existing permalink rules.
+		return preg_replace('/[^\p{L}\p{M}\p{N}_]+/u', '_', url::generate_slug($value));
 	}
 
 	/*
@@ -1841,29 +1831,13 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function get_authors_from_usernames($authors)
 	{
-		$result = array(
-			'missing'	=> array(),
-			'emoji'		=> false,
-		);
+		$result = array('missing' => array());
 
 		foreach ($authors as $group => $users)
 		{
-			$valid_users = array();
-
-			foreach (explode("\n", $users) as $username)
-			{
-				if (unicode::contains_unsupported($username))
-				{
-					$result['emoji'] = true;
-					continue;
-				}
-
-				$valid_users[] = $username;
-			}
-
-			$user_data = user_helper::get_user_ids_from_list($this->db, implode("\n", $valid_users));
-			$result[$group] = $user_data['ids'];
-			$result['missing'][$group] = $user_data['missing'];
+			$users = user_helper::get_user_ids_from_list($this->db, $users);
+			$result[$group] = $users['ids'];
+			$result['missing'][$group] = $users['missing'];
 		}
 
 		return $result;

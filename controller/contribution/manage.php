@@ -194,6 +194,15 @@ class manage extends base
 
 			$this->contrib->post_data($this->message);
 
+			if (!$this->is_moderator)
+			{
+				$this->settings['permalink'] = $this->contrib->contrib_name_clean;
+			}
+			else if ($this->settings['permalink'] === '')
+			{
+				$this->settings['permalink'] = $this->contrib->get_generated_permalink();
+			}
+
 			$authors = $this->contrib->get_authors_from_usernames(array(
 				'active_coauthors'		=> $this->settings['coauthors']['active'],
 				'nonactive_coauthors'	=> $this->settings['coauthors']['nonactive'],
@@ -475,11 +484,6 @@ class manage extends base
 
 			if ($this->settings['permalink'] != $this->contrib->contrib_name_clean)
 			{
-				if ($this->settings['permalink'] == '')
-				{
-					$this->contrib->generate_permalink();
-					$this->settings['permalink'] = $this->contrib->contrib_name_clean;
-				}
 				$this->contrib->change_permalink($this->settings['permalink']);
 			}
 		}

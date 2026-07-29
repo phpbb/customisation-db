@@ -51,11 +51,15 @@ class unicode
 	 * phpBB's MySQL utf8 schema.
 	 *
 	 * @param string $value
+	 * @param bool $decode_ncr Whether to decode numeric character references.
 	 * @return bool
 	 */
-	public static function contains_unsupported($value)
+	public static function contains_unsupported($value, $decode_ncr = true)
 	{
-		$value = utf8_decode_ncr($value);
+		if ($decode_ncr)
+		{
+			$value = utf8_decode_ncr($value);
+		}
 
 		return (bool) preg_match('/[\x{10000}-\x{10FFFF}]/u', $value);
 	}
