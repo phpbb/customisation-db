@@ -11,7 +11,7 @@ on:
 jobs:
   lint:
     name: "Lint (PHP ${{ matrix.php }})"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +35,7 @@ jobs:
 
   coding-standards:
     name: Coding standards (changed files)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.event_name == 'pull_request'
 
     steps:
@@ -64,24 +64,23 @@ jobs:
       - name: Check lines changed by this pull request
         run: |
           git fetch --no-tags origin "$GITHUB_BASE_REF"
-          FILES=$(git diff --name-only --diff-filter=ACMR "origin/$GITHUB_BASE_REF"...HEAD -- '*.php' \
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR "origin/$GITHUB_BASE_REF"...HEAD -- '*.php' \
             | grep -vE '^(vendor|includes/library|composer_packages)/' || true)
 
-          if [ -z "$FILES" ]; then
+          if [ "${#files[@]}" -eq 0 ]; then
             echo "No PHP files changed."
             exit 0
           fi
 
-          echo "$FILES"
+          printf '%s\n' "${files[@]}"
           # Only report violations this pull request introduces. Running the ruleset
           # over whole files would fail on the 175 pre-existing errors any time a
           # legacy file is touched, which would make the check useless.
-          # shellcheck disable=SC2086
           "$RUNNER_TEMP/vendor/bin/phpcs-changed" \
             --git --git-base "origin/$GITHUB_BASE_REF" \
             --phpcs-path "$RUNNER_TEMP/vendor/bin/phpcs" \
             --standard "$RUNNER_TEMP/phpbb/build/code_sniffer/ruleset-php-extensions.xml" \
-            --report checkstyle $FILES | tee phpcs.xml
+            --report checkstyle "${files[@]}" | tee phpcs.xml
           exit "${PIPESTATUS[0]}"
 
       - name: Annotate the pull request
@@ -90,7 +89,7 @@ jobs:
 
   composer:
     name: Validate composer.json
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
