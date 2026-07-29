@@ -188,6 +188,22 @@ class contribs_overlord
 
 		$branch = ($branch) ? (int) $branch : null;
 
+		// Limit the branch filter to validated revisions, so contributions whose
+		// only revision for the branch was denied or pulled do not match.
+		$branch_filter = '';
+
+		if ($branch)
+		{
+			$branch_filter = " AND rp.phpbb_version_branch = $branch";
+
+			if (titania::$config->require_validation)
+			{
+				$validation_free = $types->find_validation_free();
+				$branch_filter .= ' AND (rp.revision_validated = 1' .
+					((sizeof($validation_free)) ? ' OR ' . phpbb::$db->sql_in_set('c.contrib_type', $validation_free) : '') . ')';
+			}
+		}
+
 		$select = 'DISTINCT(c.contrib_id), c.contrib_name, c.contrib_name_clean,
 			c.contrib_status, c.contrib_downloads, c.contrib_views, c.contrib_rating,
 			c.contrib_rating_count, c.contrib_type, c.contrib_last_update, c.contrib_user_id,
@@ -306,7 +322,7 @@ class contribs_overlord
 					// If multiple categories, use the stripped list. If it's just the single hidden category, that's okay
 					// as presumably someone has gone looking for the hidden category, or it has been linked to, etc.
 					'WHERE'		=> phpbb::$db->sql_in_set('cic.category_id', $visible_category_ids, false, true) . '
-						AND c.contrib_visible = 1 ' . (($branch) ? " AND rp.phpbb_version_branch = $branch" : '') .
+						AND c.contrib_visible = 1' . $branch_filter .
 						(($status_filter) ? $status_filter : ''),
 
 					'ORDER_BY'	=> $sort->get_order_by(),
@@ -381,8 +397,7 @@ class contribs_overlord
 						),
 					),
 
-					'WHERE'		=> 'c.contrib_visible = 1' .
-						(($branch) ? " AND rp.phpbb_version_branch = $branch" : '') .
+					'WHERE'		=> 'c.contrib_visible = 1' . $branch_filter .
 						(($status_filter) ? $status_filter : '') .
 						((isset($featured_where_clause)) ? $featured_where_clause : ''),
 
@@ -416,7 +431,6 @@ class contribs_overlord
 
 			$view_unapproved = array_unique($view_unapproved);
 			$sql_ary['WHERE'] .= ' AND (' . phpbb::$db->sql_in_set('c.contrib_status', array(ext::TITANIA_CONTRIB_APPROVED, ext::TITANIA_CONTRIB_DOWNLOAD_DISABLED)) .
-				($branch ? ' AND rp.revision_validated = 1' : '') .
 				((sizeof($view_unapproved)) ? ' OR ' . phpbb::$db->sql_in_set('c.contrib_type', array_map('intval', $view_unapproved)) : '') . '
 				OR c.contrib_user_id = ' . phpbb::$user->data['user_id'] . '
 				OR cc.active = 1)';
