@@ -1631,13 +1631,13 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				$this->set_type($this->contrib_type);
 				$error = array_merge($error, $this->type->validate_contrib_fields($custom_fields));
 
-				if (!$metadata_has_emoji && !$this->contrib_name_clean)
+				$permalink = $new_permalink !== null ? $new_permalink : $this->contrib_name_clean;
+				if (!$metadata_has_emoji && $permalink === '')
 				{
 					// If they leave it blank automatically create it
-					$this->generate_permalink();
+					$permalink = $this->find_available_permalink($this->contrib_name);
 				}
 
-				$permalink = $new_permalink !== null ? $new_permalink : $this->contrib_name_clean;
 				if (!$metadata_has_emoji && ($permalink_error = $this->validate_permalink($permalink, $old_permalink)) !== false)
 				{
 					$error[] = $permalink_error;
@@ -1738,7 +1738,18 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function generate_permalink()
 	{
-		$clean_name = $this->generate_permalink_slug($this->contrib_name);
+		$this->contrib_name_clean = $this->find_available_permalink($this->contrib_name);
+	}
+
+	/**
+	 * Generate an available contribution permalink.
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	protected function find_available_permalink($value)
+	{
+		$clean_name = $this->generate_permalink_slug($value);
 		$append = '';
 		$i = 2;
 		while ($this->permalink_exists($clean_name . $append))
@@ -1746,18 +1757,23 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$append = '_' . $i;
 			$i++;
 		}
-		$this->contrib_name_clean = $clean_name . $append;
+
+		return $clean_name . $append;
 	}
 
 	/**
-	 * Generate an ASCII-only contribution permalink.
+	 * Generate a contribution permalink containing Unicode letters, numbers,
+	 * and underscores.
 	 *
 	 * @param string $value
 	 * @return string
 	 */
 	protected function generate_permalink_slug($value)
 	{
-		return preg_replace('/[^a-z0-9_]+/', '_', url::generate_slug($value));
+		$permalink = preg_replace('/[^\p{L}\p{N}_]+/u', '_', url::generate_slug($value));
+		$permalink = preg_replace('/_+/', '_', $permalink);
+
+		return trim($permalink, '_');
 	}
 
 	/*
@@ -1801,7 +1817,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$sql = 'SELECT contrib_id
 			FROM ' . $this->sql_table . "
 			WHERE contrib_name_clean = '" . phpbb::$db->sql_escape($permalink) . "'
-				AND contrib_type = " . (int) $this->contrib_type;
+				AND contrib_type = " . (int) $this->contrib_type . '
+				AND contrib_id <> ' . (int) $this->contrib_id;
 		$result = phpbb::$db->sql_query($sql);
 		$contrib_id = phpbb::$db->sql_fetchfield('contrib_id');
 		phpbb::$db->sql_freeresult($result);
