@@ -125,7 +125,7 @@ class manage extends base
 		);
 		$this->settings['custom'] = $this->contrib->get_custom_fields();
 
-		foreach ($this->contrib->type->get_allowed_branches(true) as $branch => $name)
+		foreach ($this->contrib->get_approved_branches() as $branch => $name)
 		{
 			$this->settings['demo'][$branch] = $this->contrib->get_demo_url($branch);
 		}
@@ -145,7 +145,7 @@ class manage extends base
 			));
 			$demos = $this->request->variable('demo', array(0 => ''));
 
-			foreach ($this->contrib->type->get_allowed_branches(true) as $branch => $name)
+			foreach ($this->contrib->get_approved_branches() as $branch => $name)
 			{
 				if (isset($demos[$branch]))
 				{
@@ -155,7 +155,8 @@ class manage extends base
 
 			$this->contrib->post_data($this->message);
 			$this->contrib->__set_array(array(
-				'contrib_demo'				=> ($this->can_edit_demo) ? json_encode($this->settings['demo']) : $this->contrib->contrib_demo,
+				// Preserve stored URLs for branches not open for editing.
+				'contrib_demo'				=> ($this->can_edit_demo) ? json_encode($this->settings['demo'] + $this->contrib->get_demo_urls()) : $this->contrib->contrib_demo,
 				'contrib_limited_support'	=> $this->settings['limited_support'],
 			));
 		}

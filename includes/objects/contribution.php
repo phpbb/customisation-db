@@ -1036,6 +1036,38 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	}
 
 	/**
+	* Get the branches for which the contribution has an approved revision.
+	*
+	* @return array Branch names limited to the branches that have an approved
+	*	revision, keyed by branch - example: 31 => 'phpBB 3.1.x'
+	*/
+	public function get_approved_branches()
+	{
+		$this->get_download();
+
+		return array_intersect_key(
+			$this->type->get_allowed_branches(true),
+			$this->download
+		);
+	}
+
+	/**
+	* Get all stored demo URLs.
+	*
+	* @return array Demo URLs keyed by branch - example: 31 => 'http://...'
+	*/
+	public function get_demo_urls()
+	{
+		if (empty($this->contrib_demo))
+		{
+			return array();
+		}
+		$demos = json_decode($this->contrib_demo, true);
+
+		return (is_array($demos)) ? $demos : array();
+	}
+
+	/**
 	* Get demo URL.
 	*
 	* @param int $branch			Branch - example: 30, 31
@@ -1045,11 +1077,7 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function get_demo_url($branch, $integrated_url = false)
 	{
-		if (empty($this->contrib_demo))
-		{
-			return '';
-		}
-		$demos = json_decode($this->contrib_demo, true);
+		$demos = $this->get_demo_urls();
 
 		if (empty($demos[$branch]))
 		{
