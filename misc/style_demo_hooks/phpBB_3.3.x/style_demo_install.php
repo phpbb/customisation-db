@@ -20,6 +20,12 @@ include($phpbb_root_path . 'includes/acp/acp_styles.' . $phpEx);
 include($phpbb_root_path . 'includes/style_demo_manager.' . $phpEx);
 include($phpbb_root_path . 'includes/style_demo_hook.' . $phpEx);
 
+// acp_styles logs the installation and reads the user's id and ip from the
+// session, so one has to exist before the manager runs.
+$user->session_begin();
+$auth->acl($user->data);
+$user->setup();
+
 $hook = new \titania_style_demo_hook($config, $db, $user, $phpbb_root_path, $phpEx);
 $result = $hook->run($request->variable('key', ''));
 

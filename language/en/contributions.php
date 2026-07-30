@@ -101,6 +101,7 @@ $lang = array_merge($lang, array(
 	'DELETE_CONTRIBUTION_EXPLAIN'			=> 'Permanently remove this contribution (use the contribution status field if you need to hide it).',
 	'DELETE_REVISION'						=> 'Delete Revision',
 	'DELETE_REVISION_EXPLAIN'				=> 'Permanently remove this revision (use the revision status field if you need to hide it).',
+	'DEMO_INSTALL_FAILED'					=> 'The style could not be installed on the demo board.',
 	'DEMO_URL'								=> 'Demo URL',
 	'DEMO_URL_EXPLAIN'						=> 'Location of the demonstration',
 	'DEPENDENCIES'							=> 'Dependencies',

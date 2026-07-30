@@ -208,16 +208,24 @@ class type extends base
 
 		$demo_url = '';
 
-		if ($this->demo_manager->configure($branch, $contrib, $package))
+		// A demo failure must not abort the approval or the AJAX reply.
+		try
 		{
-			$result = $this->demo_manager->install();
-
-			if (empty($result['error']))
+			if ($this->demo_manager->configure($branch, $contrib, $package))
 			{
-				$demo_url = $this->demo_manager->get_demo_url($branch, $result['id']);
-				$contrib->set_demo_url($branch, $demo_url);
-				$contrib->submit();
+				$result = $this->demo_manager->install();
+
+				if (empty($result['error']))
+				{
+					$demo_url = $this->demo_manager->get_demo_url($branch, $result['id']);
+					$contrib->set_demo_url($branch, $demo_url);
+					$contrib->submit();
+				}
 			}
+		}
+		catch (\Throwable $e)
+		{
+			$demo_url = '';
 		}
 		$package->cleanup();
 

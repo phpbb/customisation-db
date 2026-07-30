@@ -32,6 +32,9 @@ class manager
 	/** @var \phpbb\db\db_interface */
 	protected $db;
 
+	/** @var string */
+	protected $table_prefix;
+
 	/** @var int */
 	protected $branch;
 
@@ -151,9 +154,18 @@ class manager
 
 		$hook_url = $this->ext_config->demo_style_hook[$this->branch];
 		$context = stream_context_create($options);
-		$result = file_get_contents($hook_url, false, $context, 0, 50);
+		// A failing hook must degrade to an error result; the warning would
+		// otherwise be turned into an exception and lose the JSON reply.
+		$result = @file_get_contents($hook_url, false, $context, 0, 50);
 		$this->delete_auth_key($key);
 
+		if ($result === false)
+		{
+			return array(
+				'id'	=> 0,
+				'error'	=> $this->user->lang('UNKNOWN_ERROR'),
+			);
+		}
 		return $this->get_result($result);
 	}
 
