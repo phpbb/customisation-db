@@ -67,6 +67,17 @@
 			$contribList = $('.contrib-list-container'),
 			$search = $('#category-search');
 
+		// The address is about to change directory depth, which would make the
+		// browser re-resolve every relative URL on the page against the new
+		// path. Pin them to the URL the document was rendered against first.
+		$('a[href^="./"], form[action^="./"]').each(function() {
+			var name = (this.nodeName === 'FORM') ? 'action' : 'href',
+				resolver = document.createElement('a');
+
+			resolver.href = this.getAttribute(name);
+			this.setAttribute(name, resolver.href);
+		});
+
 		phpbb.history.replaceUrl($this.attr('href'));
 
 		var getParents = function($self) {
