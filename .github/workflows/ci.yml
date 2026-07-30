@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - 3.3.x
+      - master
+      - 4.0.x
+  pull_request:
+
+jobs:
+  lint:
+    name: "Lint (PHP ${{ matrix.php }})"
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.1', '8.2', '8.3']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Syntax check
+        run: |
+          find . -name '*.php' \
+            -not -path './vendor/*' \
+            -not -path './includes/library/*' \
+            -not -path './composer_packages/*' \
+            -print0 | xargs -0 -n1 -P4 php -l > /dev/null
+
+  coding-standards:
+    name: Coding standards (changed files)
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: cs2pr
+
+      - name: Fetch the phpBB coding standard
+        run: |
+          git clone --depth 1 --branch 3.3.x --filter=blob:none --sparse \
+            https://github.com/phpbb/phpbb.git "$RUNNER_TEMP/phpbb"
+          git -C "$RUNNER_TEMP/phpbb" sparse-checkout set build/code_sniffer
+
+      - name: Install PHP_CodeSniffer and phpcs-changed
+        run: |
+          composer --working-dir="$RUNNER_TEMP" require --no-interaction \
+            squizlabs/php_codesniffer:^3.7 \
+            sirbrillig/phpcs-changed:^2.11
+
+      - name: Check lines changed by this pull request
+        run: |
+          git fetch --no-tags origin "$GITHUB_BASE_REF"
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR "origin/$GITHUB_BASE_REF"...HEAD -- '*.php' \
+            | grep -vE '^(vendor|includes/library|composer_packages)/' || true)
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No PHP files changed."
+            exit 0
+          fi
+
+          printf '%s\n' "${files[@]}"
+          # Only report violations this pull request introduces. Running the ruleset
+          # over whole files would fail on the 175 pre-existing errors any time a
+          # legacy file is touched, which would make the check useless.
+          "$RUNNER_TEMP/vendor/bin/phpcs-changed" \
+            --git --git-base "origin/$GITHUB_BASE_REF" \
+            --phpcs-path "$RUNNER_TEMP/vendor/bin/phpcs" \
+            --standard "$RUNNER_TEMP/phpbb/build/code_sniffer/ruleset-php-extensions.xml" \
+            --report checkstyle "${files[@]}" | tee phpcs.xml
+          exit "${PIPESTATUS[0]}"
+
+      - name: Annotate the pull request
+        if: ${{ failure() }}
+        run: cs2pr phpcs.xml
+
+  composer:
+    name: Validate composer.json
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+
+      - name: Validate
+        run: composer validate --no-check-all --no-check-publish
