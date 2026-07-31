@@ -1998,12 +1998,31 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$user_id = (int) $user_id;
 		$action = ($action == '-') ? '-' : '+';
 
+		if ($action == '-')
+		{
+			// Guard each counter on its own; the columns are unsigned, so a
+			// counter that is already at zero must not fail the whole update.
+			$sql_set = 'author_contribs = CASE WHEN author_contribs > 0 THEN author_contribs - 1 ELSE 0 END';
+
+			if (isset($this->type->author_count))
+			{
+				$sql_set .= ', ' . $this->type->author_count . ' = CASE WHEN ' . $this->type->author_count . ' > 0 THEN ' . $this->type->author_count . ' - 1 ELSE 0 END';
+			}
+		}
+		else
+		{
+			$sql_set = 'author_contribs = author_contribs + 1';
+
+			if (isset($this->type->author_count))
+			{
+				$sql_set .= ', ' . $this->type->author_count . ' = ' . $this->type->author_count . ' + 1';
+			}
+		}
+
 		// Increment/Decrement the contrib counter for the new owner
 		$sql = 'UPDATE ' . TITANIA_AUTHORS_TABLE . "
-			SET author_contribs = author_contribs $action 1" .
-				((isset($this->type->author_count)) ? ', ' . $this->type->author_count . ' = ' . $this->type->author_count . " $action 1" : '') . "
-			WHERE user_id = $user_id " .
-				(($action == '-') ? 'AND author_contribs > 0' : '');
+			SET $sql_set
+			WHERE user_id = $user_id";
 		phpbb::$db->sql_query($sql);
 
 
