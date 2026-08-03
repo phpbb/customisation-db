@@ -1041,57 +1041,57 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	* @return array Branch names limited to the branches that have an approved
 	*	revision, keyed by branch - example: 31 => 'phpBB 3.1.x'
 	*/
-public function get_approved_branches()
-{
-	$allowed_branches = $this->type->get_allowed_branches(true);
-
-	$this->get_download();
-	if (!empty($this->download))
+	public function get_approved_branches()
 	{
-		return array_intersect_key($allowed_branches, $this->download);
-	}
+		$allowed_branches = $this->type->get_allowed_branches(true);
 
-	// get_download() may intentionally return early (e.g. downloads disabled for non-team)
-	// so fall back to checking which branches have an approved, validated revision.
-	$sql = 'SELECT DISTINCT(phpbb_version_branch), MAX(revision_id) AS revision_id
-		FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
-		WHERE contrib_id = ' . (int) $this->contrib_id . '
-			AND revision_validated = 1
-		GROUP BY phpbb_version_branch';
-	$result = phpbb::$db->sql_query($sql);
-	$revisions = array();
-	while ($row = phpbb::$db->sql_fetchrow($result))
-	{
-		$revisions[(int) $row['phpbb_version_branch']] = (int) $row['revision_id'];
-	}
-	phpbb::$db->sql_freeresult($result);
-
-	if (empty($revisions))
-	{
-		return array();
-	}
-
-	$sql = 'SELECT revision_id
-		FROM ' . TITANIA_REVISIONS_TABLE . '
-		WHERE contrib_id = ' . (int) $this->contrib_id . '
-			AND ' . phpbb::$db->sql_in_set('revision_id', array_values($revisions)) . '
-			AND revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
-			AND revision_submitted = 1';
-	$result = phpbb::$db->sql_query($sql);
-	$revisions = array_flip($revisions); // revision_id => branch
-	$approved = array();
-	while ($row = phpbb::$db->sql_fetchrow($result))
-	{
-		$branch = (int) $revisions[(int) $row['revision_id']];
-		if (isset($allowed_branches[$branch]))
+		$this->get_download();
+		if (!empty($this->download))
 		{
-			$approved[$branch] = $allowed_branches[$branch];
+			return array_intersect_key($allowed_branches, $this->download);
 		}
-	}
-	phpbb::$db->sql_freeresult($result);
 
-	return $approved;
-}
+		// get_download() may intentionally return early (e.g. downloads disabled for non-team)
+		// so fall back to checking which branches have an approved, validated revision.
+		$sql = 'SELECT DISTINCT(phpbb_version_branch), MAX(revision_id) AS revision_id
+			FROM ' . TITANIA_REVISIONS_PHPBB_TABLE . '
+			WHERE contrib_id = ' . (int) $this->contrib_id . '
+				AND revision_validated = 1
+			GROUP BY phpbb_version_branch';
+		$result = phpbb::$db->sql_query($sql);
+		$revisions = array();
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$revisions[(int) $row['phpbb_version_branch']] = (int) $row['revision_id'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		if (empty($revisions))
+		{
+			return array();
+		}
+
+		$sql = 'SELECT revision_id
+			FROM ' . TITANIA_REVISIONS_TABLE . '
+			WHERE contrib_id = ' . (int) $this->contrib_id . '
+				AND ' . phpbb::$db->sql_in_set('revision_id', array_values($revisions)) . '
+				AND revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
+				AND revision_submitted = 1';
+		$result = phpbb::$db->sql_query($sql);
+		$revisions = array_flip($revisions); // revision_id => branch
+		$approved = array();
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$branch = (int) $revisions[(int) $row['revision_id']];
+			if (isset($allowed_branches[$branch]))
+			{
+				$approved[$branch] = $allowed_branches[$branch];
+			}
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		return $approved;
+	}
 
 	/**
 	* Get all stored demo URLs.
