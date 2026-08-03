@@ -70,11 +70,17 @@
 		// The address is about to change directory depth, which would make the
 		// browser re-resolve every relative URL on the page against the new
 		// path. Pin them to the URL the document was rendered against first.
-		$('a[href^="./"], form[action^="./"]').each(function() {
+		var resolver = document.createElement('a');
+		$('a[href], form[action]').each(function() {
 			var name = (this.nodeName === 'FORM') ? 'action' : 'href',
-				resolver = document.createElement('a');
+				value = this.getAttribute(name);
 
-			resolver.href = this.getAttribute(name);
+			// Skip absolute URLs, protocol-relative URLs, root-relative URLs, and in-page anchors.
+			if (!value || value[0] === '#' || value[0] === '/' || value.indexOf('//') === 0 || /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value)) {
+				return;
+			}
+
+			resolver.href = value;
 			this.setAttribute(name, resolver.href);
 		});
 
