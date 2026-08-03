@@ -1221,13 +1221,26 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$contrib_description = $this->contrib_desc;
 			message::decode($contrib_description, $this->contrib_desc_uid);
 
-			$download = reset($this->download); // Just need the first download entry
-			$phpbb_versions = $this->revisions[$download['revision_id']]['phpbb_versions'];
-			foreach ($phpbb_versions as $phpbb_version)
+			// Each branch has its own latest download and its own release topic.
+			foreach ($this->download as $branch => $download)
 			{
-				$branch = (int)$phpbb_version['phpbb_version_branch'];
-
 				if (empty($this->type->forum_database[$branch]))
+				{
+					continue;
+				}
+
+				// The revision row for this branch carries the tested phpBB version.
+				$phpbb_version = false;
+				foreach ($this->revisions[$download['revision_id']]['phpbb_versions'] as $version_row)
+				{
+					if ((int) $version_row['phpbb_version_branch'] == $branch)
+					{
+						$phpbb_version = $version_row;
+						break;
+					}
+				}
+
+				if ($phpbb_version === false)
 				{
 					continue;
 				}
