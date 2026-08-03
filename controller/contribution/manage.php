@@ -629,6 +629,14 @@ class manage extends base
 			$revision->__set_array($this->contrib->download[$branch]);
 			$demo_url = $this->contrib->type->install_demo($this->contrib, $revision);
 		}
+
+		if ($demo_url === '')
+		{
+			return array(
+				'MESSAGE_TITLE'	=> $this->user->lang('INFORMATION'),
+				'MESSAGE_TEXT'	=> $this->user->lang('DEMO_INSTALL_FAILED'),
+			);
+		}
 		return array(
 			'url'	=> $demo_url,
 		);
