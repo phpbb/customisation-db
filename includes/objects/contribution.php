@@ -536,13 +536,22 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 					(($revision_id === false) ? ' AND r.revision_status = ' . ext::TITANIA_REVISION_APPROVED : '') . '
 					AND revision_submitted = 1';
 			$result = phpbb::$db->sql_query($sql);
-			$revisions = array_flip($revisions);
+			$rows = array();
 
 			while ($row = phpbb::$db->sql_fetchrow($result))
 			{
-				$this->download[$revisions[$row['revision_id']]] = $row;
+				$rows[(int) $row['revision_id']] = $row;
 			}
 			phpbb::$db->sql_freeresult($result);
+
+			// Branches sharing one latest revision each keep their own entry.
+			foreach ($revisions as $branch => $branch_revision_id)
+			{
+				if (isset($rows[$branch_revision_id]))
+				{
+					$this->download[$branch] = $rows[$branch_revision_id];
+				}
+			}
 			krsort($this->download);
 		}
 	}
@@ -898,8 +907,16 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				titania::$config->colorizeit . '.html?sample=' . $this->clr_sample->get_id();
 		}
 
+		$displayed = array();
 		foreach ($this->download as $download)
 		{
+			// A revision latest for several branches gets one download block.
+			if (isset($displayed[$download['revision_id']]))
+			{
+				continue;
+			}
+			$displayed[$download['revision_id']] = true;
+
 			$vendor_version = $install_level = $install_time = $u_colorizeit = '';
 
 			if (!empty($this->revisions[$download['revision_id']]['phpbb_versions']))
@@ -1078,17 +1095,21 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				AND revision_status = ' . ext::TITANIA_REVISION_APPROVED . '
 				AND revision_submitted = 1';
 		$result = phpbb::$db->sql_query($sql);
-		$revisions = array_flip($revisions); // revision_id => branch
-		$approved = array();
+		$approved_revisions = array();
 		while ($row = phpbb::$db->sql_fetchrow($result))
 		{
-			$branch = (int) $revisions[(int) $row['revision_id']];
-			if (isset($allowed_branches[$branch]))
+			$approved_revisions[(int) $row['revision_id']] = true;
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		$approved = array();
+		foreach ($revisions as $branch => $branch_revision_id)
+		{
+			if (isset($approved_revisions[$branch_revision_id]) && isset($allowed_branches[$branch]))
 			{
 				$approved[$branch] = $allowed_branches[$branch];
 			}
 		}
-		phpbb::$db->sql_freeresult($result);
 
 		return $approved;
 	}
