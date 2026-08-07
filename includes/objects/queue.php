@@ -230,9 +230,10 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	*
 	* @param string $message
 	* @param bool $teams_only true to set to access level of teams
+	* @param int $post_user_id User ID to use for the post (defaults to current user)
 	* @return \titania_post Returns post object.
 	*/
-	public function topic_reply($message, $teams_only = true)
+	public function topic_reply($message, $teams_only = true, $post_user_id = 0)
 	{
 		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
@@ -247,6 +248,11 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		if ($teams_only)
 		{
 			$post->post_access = access::TEAM_LEVEL;
+		}
+
+		if ($post_user_id)
+		{
+			$post->post_user_id = (int) $post_user_id;
 		}
 
 		$post->parent_contrib_type = $this->queue_type;
@@ -384,8 +390,9 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	* Approve this revision
 	*
 	* @param mixed $public_notes
+	* @param int $robot_user_id User ID to use for posts/messages (defaults to current user)
 	*/
-	public function approve($public_notes)
+	public function approve($public_notes, $robot_user_id = 0)
 	{
 		$this->user->add_lang_ext('phpbb/titania', array('manage', 'contributions'));
 		$revision = $this->get_revision();
@@ -407,8 +414,8 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			$message = str_replace('[quote][/quote]', '', $message);
 		}
 
-		$this->topic_reply($message, false);
-		$this->discussion_reply($message);
+		$this->topic_reply($message, false, $robot_user_id);
+		$this->discussion_reply($message, false, $robot_user_id);
 
 		// Get branch information first
 		$version_branches = array();
@@ -430,13 +437,13 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			{
 				// Replying to an already existing topic, use the update message
 				$post_public_notes = sprintf(phpbb::$user->lang[$contrib->type->update_public], $revision->revision_version) . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->update_public . '_NOTES'], $public_notes) : '');
-				$contrib->reply_release_topic($branch, $post_public_notes);
+				$contrib->reply_release_topic($branch, $post_public_notes, array('poster_id' => $robot_user_id));
 			}
 			elseif (!$contrib_release_topic_id && $contrib->type->reply_public)
 			{
 				// Replying to a topic that was just made, use the reply message
 				$post_public_notes = phpbb::$user->lang[$contrib->type->reply_public] . (($public_notes) ? sprintf(phpbb::$user->lang[$contrib->type->reply_public . '_NOTES'], $public_notes) : '');
-				$contrib->reply_release_topic($branch, $post_public_notes);
+				$contrib->reply_release_topic($branch, $post_public_notes, array('poster_id' => $robot_user_id));
 			}
 		}
 
@@ -447,7 +454,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->submit(false);
 
 		// Send notification message
-		$this->send_approve_deny_notification(true);
+		$this->send_approve_deny_notification(true, $robot_user_id);
 
 		// Subscriptions
 		$email_vars = array(
@@ -474,7 +481,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->trash_queue_topic();
 	}
 
-	public function deny()
+	public function deny($robot_user_id = 0)
 	{
 		// Reply to the queue topic and discussion with the message
 		$this->user->add_lang_ext('phpbb/titania', 'manage');
@@ -490,8 +497,8 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			$message = str_replace('[quote][/quote]', '', $message);
 		}
 
-		$this->topic_reply($message, false);
-		$this->discussion_reply($message);
+		$this->topic_reply($message, false, $robot_user_id);
+		$this->discussion_reply($message, false, $robot_user_id);
 
 		// Update the revision
 		$revision->change_status(ext::TITANIA_REVISION_DENIED);
@@ -503,15 +510,17 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$this->submit(false);
 
 		// Send notification message
-		$this->send_approve_deny_notification(false);
+		$this->send_approve_deny_notification(false, $robot_user_id);
 
 		$this->trash_queue_topic();
 	}
 
 	/**
 	* Send the approve/deny notification
+	* @param bool $approve
+	* @param int $robot_user_id User ID to use as sender (defaults to current user)
 	*/
-	private function send_approve_deny_notification($approve = true)
+	private function send_approve_deny_notification($approve = true, $robot_user_id = 0)
 	{
 		$this->user->add_lang_ext('phpbb/titania', 'manage');
 		phpbb::_include('functions_privmsgs', 'submit_pm');
@@ -560,12 +569,25 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		$message_uid = $message_bitfield = $message_options = false;
 		generate_text_for_storage($message, $message_uid, $message_bitfield, $message_options, true, true, true);
 
+		if ($robot_user_id)
+		{
+			$sender_id = $robot_user_id;
+			$sender_name = users_overlord::get_user($robot_user_id, 'username', true);
+			$sender_ip = '';
+		}
+		else
+		{
+			$sender_id = phpbb::$user->data['user_id'];
+			$sender_name = phpbb::$user->data['username'];
+			$sender_ip = phpbb::$user->ip;
+		}
+
 		$data = array(
 			'address_list'		=> array('u' => $authors),
-			'from_user_id'		=> phpbb::$user->data['user_id'],
-			'from_username'		=> phpbb::$user->data['username'],
+			'from_user_id'		=> $sender_id,
+			'from_username'		=> $sender_name,
 			'icon_id'			=> 0,
-			'from_user_ip'		=> phpbb::$user->ip,
+			'from_user_ip'		=> $sender_ip,
 			'enable_bbcode'		=> true,
 			'enable_smilies'	=> true,
 			'enable_urls'		=> true,
