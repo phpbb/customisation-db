@@ -15,6 +15,7 @@ use phpbb\config\config;
 use phpbb\titania\composer\repository;
 use phpbb\titania\contribution\type\collection as type_collection;
 use phpbb\titania\contribution\type\type_interface;
+use phpbb\titania\unicode;
 use phpbb\titania\ext;
 use phpbb\titania\message\message;
 use phpbb\titania\url\url;
@@ -1480,7 +1481,6 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	public function change_permalink($new_permalink)
 	{
 		$old_permalink = $this->contrib_name_clean;
-		$new_permalink = url::generate_slug($new_permalink);
 
 		if ($this->validate_permalink($new_permalink, $old_permalink))
 		{
@@ -1589,10 +1589,11 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		array('active_coauthors' => array(username => username)).
 	* @param array $custom_fields			Custom field values.
 	* @param string $old_permalink			Old permalink. Defaults to empty string.
+	* @param string|null $new_permalink		Submitted permalink. Defaults to the value on the entity.
 	*
 	* @return array Returns array containing any errors found.
 	*/
-	public function validate($contrib_categories, $authors, $custom_fields, $old_permalink = '')
+	public function validate($contrib_categories, $authors, $custom_fields, $old_permalink = '', $new_permalink = null)
 	{
 		phpbb::$user->add_lang('ucp');
 
@@ -1601,6 +1602,32 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		if (utf8_clean_string($this->contrib_name) == '')
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_NAME'];
+		}
+
+		$metadata = array(
+			$this->contrib_name,
+			$new_permalink !== null ? $new_permalink : $this->contrib_name_clean,
+		);
+		$metadata = array_merge($metadata, $custom_fields);
+
+		$demos = json_decode($this->contrib_demo, true);
+		if (is_array($demos))
+		{
+			// JSON encoding can otherwise hide unsupported characters behind
+			// surrogate escapes.
+			$metadata['contrib_demo'] = implode("\n", $demos);
+		}
+
+		$metadata_has_unsupported = false;
+
+		foreach ($metadata as $value)
+		{
+			if (is_string($value) && unicode::contains_unsupported($value, false))
+			{
+				$metadata_has_unsupported = true;
+				$error[] = phpbb::$user->lang['CONTRIB_EMOJI_NOT_ALLOWED'];
+				break;
+			}
 		}
 
 		if (!$this->contrib_type)
@@ -1636,13 +1663,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 				$this->set_type($this->contrib_type);
 				$error = array_merge($error, $this->type->validate_contrib_fields($custom_fields));
 
-				if (!$this->contrib_name_clean)
-				{
-					// If they leave it blank automatically create it
-					$this->generate_permalink();
-				}
-
-				if (($permalink_error = $this->validate_permalink($this->contrib_name_clean, $old_permalink)) !== false)
+				$permalink = $new_permalink !== null ? $new_permalink : $this->contrib_name_clean;
+				if (!$metadata_has_unsupported && ($permalink_error = $this->validate_permalink($permalink, $old_permalink)) !== false)
 				{
 					$error[] = $permalink_error;
 				}
@@ -1737,7 +1759,17 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	*/
 	public function generate_permalink()
 	{
-		$clean_name = url::generate_slug($this->contrib_name);
+		$this->contrib_name_clean = $this->get_generated_permalink();
+	}
+
+	/**
+	 * Generate an available contribution permalink.
+	 *
+	 * @return string
+	 */
+	public function get_generated_permalink()
+	{
+		$clean_name = $this->generate_permalink_slug($this->contrib_name);
 		$append = '';
 		$i = 2;
 		while ($this->permalink_exists($clean_name . $append))
@@ -1745,7 +1777,27 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			$append = '_' . $i;
 			$i++;
 		}
-		$this->contrib_name_clean = $clean_name . $append;
+
+		return $clean_name . $append;
+	}
+
+	/**
+	 * Generate a contribution permalink containing Unicode letters, combining
+	 * marks, numbers, and underscores.
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	protected function generate_permalink_slug($value)
+	{
+		// Variation selectors control the presentation of the preceding
+		// character. They are combining marks, but have no place in a
+		// permalink and can otherwise survive after an emoji is removed.
+		$value = preg_replace('/[\x{FE00}-\x{FE0F}\x{E0100}-\x{E01EF}]/u', '', $value);
+
+		// Preserve repeated and surrounding underscores for compatibility with
+		// existing permalink rules.
+		return preg_replace('/[^\p{L}\p{M}\p{N}_]+/u', '_', url::generate_slug($value));
 	}
 
 	/*
@@ -1758,14 +1810,26 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	 */
 	public function validate_permalink($permalink, $old_permalink)
 	{
-		if (url::generate_slug($permalink) !== $permalink)
+		// Preserve existing Unicode permalinks until they are intentionally changed.
+		if ($permalink !== '' && $permalink === $old_permalink)
 		{
-			return phpbb::$user->lang('INVALID_PERMALINK', url::generate_slug($permalink));
+			return false;
 		}
 
-		if ($permalink === '' || ($permalink !== $old_permalink && $this->permalink_exists($permalink)))
+		$generated_permalink = $this->generate_permalink_slug($permalink);
+		if ($generated_permalink !== $permalink)
 		{
-			return phpbb::$user->lang['CONTRIB_NAME_EXISTS'];
+			return phpbb::$user->lang('INVALID_PERMALINK', $generated_permalink);
+		}
+
+		if ($permalink === '')
+		{
+			return phpbb::$user->lang['EMPTY_CONTRIB_PERMALINK'];
+		}
+
+		if ($permalink !== $old_permalink && $this->permalink_exists($permalink))
+		{
+			return phpbb::$user->lang['CONTRIB_PERMALINK_EXISTS'];
 		}
 
 		return false;
@@ -1782,7 +1846,8 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		$sql = 'SELECT contrib_id
 			FROM ' . $this->sql_table . "
 			WHERE contrib_name_clean = '" . phpbb::$db->sql_escape($permalink) . "'
-				AND contrib_type = " . (int) $this->contrib_type;
+				AND contrib_type = " . (int) $this->contrib_type . '
+				AND contrib_id <> ' . (int) $this->contrib_id;
 		$result = phpbb::$db->sql_query($sql);
 		$contrib_id = phpbb::$db->sql_fetchfield('contrib_id');
 		phpbb::$db->sql_freeresult($result);

@@ -18,6 +18,7 @@ use phpbb\template\template;
 use phpbb\titania\attachment\attachment;
 use phpbb\titania\config\config as ext_config;
 use phpbb\titania\contribution\type\base;
+use phpbb\titania\unicode;
 use phpbb\titania\entity\package;
 use phpbb\user;
 
@@ -216,7 +217,7 @@ class type extends base
 	public function validate_ext_name($name)
 	{
 		return (bool) preg_match(
-			'#^[a-zA-Z0-9\x7f-\xff]{2,}/[a-zA-Z0-9\x7f-\xff]{2,}$#',
+			'#^[a-zA-Z0-9\x{007F}-\x{FFFF}]{2,}/[a-zA-Z0-9\x{007F}-\x{FFFF}]{2,}$#u',
 			$name
 		);
 	}
@@ -283,10 +284,10 @@ class type extends base
 		$data = $this->update_phpbb_requirement($data, $revision);
 		$data = $this->set_version_check($data, $contrib);
 
-		$data = json_encode(
+		$data = unicode::escape_json(json_encode(
 			$data,
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-		);
+		));
 
 		file_put_contents($composer_file, $data);
 		$package->restore_root($ext_base_path, $ext_name);

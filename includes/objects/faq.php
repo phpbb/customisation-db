@@ -62,7 +62,7 @@ class titania_faq extends \phpbb\titania\entity\message_base
 		$this->object_config = array_merge($this->object_config, array(
 			'faq_id'			=> array('default' => 0),
 			'contrib_id' 		=> array('default' => 0),
-			'faq_subject' 		=> array('default' => '',	'message_field' => 'subject', 'max' => 255),
+			'faq_subject' 		=> array('default' => '',	'message_field' => 'subject', 'max' => 255, 'encode_ucr' => true),
 			'faq_text' 			=> array('default' => '',	'message_field' => 'message'),
 			'faq_text_bitfield'	=> array('default' => '',	'message_field' => 'message_bitfield'),
 			'faq_text_uid'		=> array('default' => '',	'message_field' => 'message_uid'),
