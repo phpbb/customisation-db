@@ -323,6 +323,12 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			WHERE revision_id = ' . $this->revision_id;
 		phpbb::$db->sql_query($sql);
 
+		// Remove any notifications for this queue item
+		phpbb::$container->get('notification_manager')->delete_notifications(
+			array('phpbb.titania.notification.type.queue', 'phpbb.titania.notification.type.queue_move'),
+			$this->queue_id
+		);
+
 		// Assplode
 		parent::delete();
 	}
@@ -353,13 +359,19 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'CATEGORY_NAME'	=> $to,
 			'U_VIEW_QUEUE'	=> $path_helper->strip_url_params($u_view_queue, 'sid'),
 		);
-		$this->subscriptions->send_notifications(
-			ext::TITANIA_QUEUE_TAG,
-			$new_status,
-			'new_contrib_queue_cat',
-			$vars,
-			phpbb::$user->data['user_id']
-		);
+		$this->subscriptions->send_notifications('queue_move', array(
+			'item_id'			=> $this->queue_id,
+			'item_parent_id'	=> $this->contrib_id,
+			'watch'				=> array(array(ext::TITANIA_QUEUE_TAG, $new_status)),
+			'exclude_user'		=> phpbb::$user->data['user_id'],
+			'lang_key'			=> 'NOTIFICATION_TITANIA_QUEUE_MOVE',
+			'lang_params'		=> array($to),
+			'reference'			=> $contrib->contrib_name,
+			'url'				=> $vars['U_VIEW_QUEUE'],
+			'email_template'	=> 'new_contrib_queue_cat',
+			'email_vars'		=> $vars,
+			'actor_id'			=> phpbb::$user->data['user_id'],
+		));
 	}
 
 	public function in_progress()
@@ -461,7 +473,17 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'NAME'		=> $contrib->contrib_name,
 			'U_VIEW'	=> $contrib->get_url(),
 		);
-		$this->subscriptions->send_notifications(ext::TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify', $email_vars);
+		$this->subscriptions->send_notifications('contribution', array(
+			'item_id'			=> $revision->revision_id,
+			'item_parent_id'	=> $this->contrib_id,
+			'watch'				=> array(array(ext::TITANIA_CONTRIB, $this->contrib_id)),
+			'lang_key'			=> 'NOTIFICATION_TITANIA_CONTRIB_UPDATED',
+			'lang_params'		=> array($revision->revision_version),
+			'reference'			=> $contrib->contrib_name,
+			'url'				=> $email_vars['U_VIEW'],
+			'email_template'	=> 'subscribe_notify',
+			'email_vars'		=> $email_vars,
+		));
 
 		$this->trash_queue_topic();
 	}

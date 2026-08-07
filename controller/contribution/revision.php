@@ -270,13 +270,18 @@ class revision extends base
 						'U_VIEW'	=> $this->queue->get_url(),
 					);
 
-					$this->subscriptions->send_notifications(
-						ext::TITANIA_QUEUE,
-						$this->contrib->contrib_type,
-						'subscribe_notify_forum',
-						$email_vars,
-						$this->user->data['user_id']
-					);
+					$this->subscriptions->send_notifications('queue', array(
+						'item_id'			=> $this->queue->queue_id,
+						'item_parent_id'	=> $this->contrib->contrib_id,
+						'watch'				=> array(array(ext::TITANIA_QUEUE, $this->contrib->contrib_type)),
+						'exclude_user'		=> $this->user->data['user_id'],
+						'lang_key'			=> 'NOTIFICATION_TITANIA_QUEUE_NEW',
+						'reference'			=> $this->contrib->contrib_name . ' ' . $this->revision->revision_version,
+						'url'				=> $email_vars['U_VIEW'],
+						'email_template'	=> 'subscribe_notify_forum',
+						'email_vars'		=> $email_vars,
+						'actor_id'			=> $this->user->data['user_id'],
+					));
 				}
 				redirect($this->contrib->get_url());
 			}
