@@ -1832,10 +1832,12 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 			return false;
 		}
 
-		// A pasted link must not be echoed back as a valid permalink example.
-		if ($this->is_link($permalink))
+		// Only allow the characters the permalink generator itself produces.
+		// A pasted link fails this outright, so no slugified link is ever
+		// echoed back as a valid permalink example.
+		if (!preg_match('/^[\p{L}\p{M}\p{N}_]*$/u', $permalink))
 		{
-			return phpbb::$user->lang['CONTRIB_PERMALINK_IS_LINK'];
+			return phpbb::$user->lang['CONTRIB_PERMALINK_INVALID_CHARACTERS'];
 		}
 
 		$generated_permalink = $this->generate_permalink_slug($permalink);
