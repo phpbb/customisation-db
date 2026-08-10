@@ -269,6 +269,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	* @param string $message
 	* @param bool $teams_only true to set to access level of teams
 	* @param int $post_user_id
+	* @return \titania_post
 	*/
 	public function discussion_reply($message, $teams_only = false, $post_user_id = 0)
 	{
@@ -298,6 +299,8 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		$post->generate_text_for_storage(true, true, true);
 		$post->submit();
+
+		return $post;
 	}
 
 	public function delete()
@@ -333,7 +336,14 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		parent::delete();
 	}
 
-	public function move($new_status, \phpbb\titania\tags $tags)
+	/**
+	* Move this queue item to another status tag.
+	*
+	* @param int $new_status					New queue status tag id
+	* @param \phpbb\titania\tags $tags
+	* @param int $robot_user_id					User ID to use for the status update post (defaults to current user)
+	*/
+	public function move($new_status, \phpbb\titania\tags $tags, $robot_user_id = 0)
 	{
 		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
@@ -371,6 +381,36 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'email_template'	=> 'new_contrib_queue_cat',
 			'email_vars'		=> $vars,
 			'actor_id'			=> phpbb::$user->data['user_id'],
+		));
+
+		// Post a status update to the queue discussion topic, so the authors
+		// know where their submission stands. Programmatic posts do not
+		// notify topic subscribers on their own, so the notification is sent
+		// here, the same way replying through the posting form would.
+		$post = $this->discussion_reply(
+			sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_STATUS_UPDATE'], $to),
+			false,
+			$robot_user_id
+		);
+		$u_view_topic = $path_helper->strip_url_params(
+			$post->topic->get_url(false, array('view' => 'unread', '#' => 'unread')),
+			'sid'
+		);
+		$this->subscriptions->send_notifications('posted', array(
+			'item_id'			=> $post->post_id,
+			'item_parent_id'	=> $post->topic_id,
+			'watch'				=> array(array(ext::TITANIA_TOPIC, $post->topic_id)),
+			'exclude_user'		=> phpbb::$user->data['user_id'],
+			'lang_key'			=> 'NOTIFICATION_TITANIA_REPLY',
+			'lang_params'		=> array(),
+			'reference'			=> $post->topic->topic_subject,
+			'url'				=> $u_view_topic,
+			'email_template'	=> 'subscribe_notify',
+			'email_vars'		=> array(
+				'NAME'		=> htmlspecialchars_decode($post->topic->topic_subject),
+				'U_VIEW'	=> $u_view_topic,
+			),
+			'actor_id'			=> $post->post_user_id,
 		));
 	}
 

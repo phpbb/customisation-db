@@ -365,7 +365,8 @@ class item extends \phpbb\titania\controller\manage\base
 				return $this->helper->error('NO_TAG');
 			}
 
-			$this->queue->move($new_tag, $this->tags);
+			$robot_user = $this->get_robot_user();
+			$this->queue->move($new_tag, $this->tags, $robot_user ? (int) $robot_user['user_id'] : 0);
 		}
 		else
 		{
