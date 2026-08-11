@@ -384,9 +384,19 @@ class titania_queue extends \phpbb\titania\entity\message_base
 		));
 
 		// Post a status update to the queue discussion topic, so the authors
-		// know where their submission stands. Programmatic posts do not
-		// notify topic subscribers on their own, so the notification is sent
-		// here, the same way replying through the posting form would.
+		// know where their submission stands. Only moves to validating or
+		// testing are announced; the authors should not learn a pending
+		// verdict from a move to awaiting approval or awaiting denial.
+		$tag = $tags->get_tag($new_status);
+
+		if (!$tag || !in_array($tag['tag_field_name'], array('QUEUE_VALIDATING', 'QUEUE_TESTING')))
+		{
+			return;
+		}
+
+		// Programmatic posts do not notify topic subscribers on their own, so
+		// the notification is sent here, the same way replying through the
+		// posting form would.
 		$post = $this->discussion_reply(
 			sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_STATUS_UPDATE'], $to),
 			false,
