@@ -48,9 +48,6 @@ class posting
 	/** @var \phpbb\titania\subscriptions */
 	protected $subscriptions;
 
-	/** @var \phpbb\path_helper */
-	protected $path_helper;
-
 	/** @var \phpbb\titania\attachment\operator */
 	protected $attachments;
 
@@ -79,10 +76,9 @@ class posting
 	 * @param message $message
 	 * @param access $access
 	 * @param subscriptions $subscriptions
-	 * @param \phpbb\path_helper $path_helper
 	 * @param \phpbb\titania\attachment\operator $attachments
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\template\template $template, controller\helper $controller_helper, message $message, access $access, subscriptions $subscriptions, \phpbb\path_helper $path_helper, \phpbb\titania\attachment\operator $attachments)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\request\request_interface $request, \phpbb\template\template $template, controller\helper $controller_helper, message $message, access $access, subscriptions $subscriptions, \phpbb\titania\attachment\operator $attachments)
 	{
 		$this->auth = $auth;
 		$this->db = $db;
@@ -93,7 +89,6 @@ class posting
 		$this->message = $message;
 		$this->access = $access;
 		$this->subscriptions = $subscriptions;
-		$this->path_helper = $path_helper;
 		$this->attachments = $attachments;
 	}
 

@@ -334,7 +334,6 @@ services:
              - '@phpbb.titania.message'
              - '@phpbb.titania.access'
              - '@phpbb.titania.subscriptions'
-             - '@path_helper'
              - '@phpbb.titania.attachment.operator'
 
     phpbb.titania.queue.stats:

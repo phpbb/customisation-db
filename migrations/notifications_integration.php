@@ -94,7 +94,7 @@ class notifications_integration extends base
 				FROM ' . $this->table_prefix . 'user_notifications
 				WHERE item_id = 0
 					AND ' . $this->db->sql_in_set('user_id', array_keys($wanted)) . '
-					AND ' . $this->db->sql_in_set('item_type', array_values($option_map));
+					AND ' . $this->db->sql_in_set('item_type', array_unique(array_values($option_map)));
 			$result = $this->db->sql_query($sql);
 
 			$existing = array();
