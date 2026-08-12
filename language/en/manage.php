@@ -93,6 +93,7 @@ $lang = array_merge($lang, array(
 	'QUEUE_ATTENTION'			=> 'Attention',
 	'QUEUE_CLOSED'				=> 'Closed',
 	'QUEUE_DENY'				=> 'Awaiting Denial',
+	'QUEUE_DISCUSSION_STATUS_UPDATE'	=> 'The status of this submission has been changed to: [b]%s[/b]',
 	'QUEUE_DISCUSSION_TOPIC'	=> 'Queue Discussion Topic',
 	'QUEUE_NEW'					=> 'New',
 	'QUEUE_REPACK'				=> 'Repack',
