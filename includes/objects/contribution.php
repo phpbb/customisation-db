@@ -1590,10 +1590,11 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 	* @param array $custom_fields			Custom field values.
 	* @param string $old_permalink			Old permalink. Defaults to empty string.
 	* @param string|null $new_permalink		Submitted permalink. Defaults to the value on the entity.
+	* @param string $old_name				Old contribution name. Defaults to empty string.
 	*
 	* @return array Returns array containing any errors found.
 	*/
-	public function validate($contrib_categories, $authors, $custom_fields, $old_permalink = '', $new_permalink = null)
+	public function validate($contrib_categories, $authors, $custom_fields, $old_permalink = '', $new_permalink = null, $old_name = '')
 	{
 		phpbb::$user->add_lang('ucp');
 
@@ -1602,6 +1603,10 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		if (utf8_clean_string($this->contrib_name) == '')
 		{
 			$error[] = phpbb::$user->lang['EMPTY_CONTRIB_NAME'];
+		}
+		else if ($this->contrib_name !== $old_name && $this->is_link($this->contrib_name))
+		{
+			$error[] = phpbb::$user->lang['CONTRIB_NAME_IS_LINK'];
 		}
 
 		$metadata = array(
@@ -1800,6 +1805,17 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		return preg_replace('/[^\p{L}\p{M}\p{N}_]+/u', '_', url::generate_slug($value));
 	}
 
+	/**
+	 * Check whether a value is shaped like a link rather than a name.
+	 *
+	 * @param string $value
+	 * @return bool
+	 */
+	protected function is_link($value)
+	{
+		return (bool) preg_match('#^(?:[a-z][a-z0-9+.\-]*://|www\.)#i', trim($value));
+	}
+
 	/*
 	 * Validate a contrib permalink
 	 *
@@ -1814,6 +1830,14 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		if ($permalink !== '' && $permalink === $old_permalink)
 		{
 			return false;
+		}
+
+		// Only allow the characters the permalink generator itself produces.
+		// A pasted link fails this outright, so no slugified link is ever
+		// echoed back as a valid permalink example.
+		if (!preg_match('/^[\p{L}\p{M}\p{N}_]*$/u', $permalink))
+		{
+			return phpbb::$user->lang['CONTRIB_PERMALINK_INVALID_CHARACTERS'];
 		}
 
 		$generated_permalink = $this->generate_permalink_slug($permalink);
