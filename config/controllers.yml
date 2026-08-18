@@ -411,6 +411,12 @@ services:
             - [set_tool, ["@phpbb.titania.manage.tool.composer.rebuild_repo"]]
         parent: phpbb.titania.controller.manage.tool
 
+    phpbb.titania.controller.manage.demo.install_all:
+        class: phpbb\titania\controller\manage\tool\demo\install_all
+        calls:
+            - [set_tool, ["@phpbb.titania.manage.tool.demo.install_all"]]
+        parent: phpbb.titania.controller.manage.tool
+
     phpbb.titania.controller.manage.search.reindex:
         shared: false
         calls:

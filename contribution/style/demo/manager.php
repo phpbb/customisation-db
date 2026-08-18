@@ -47,6 +47,9 @@ class manager
 	/** @var \titania_contribution */
 	protected $contrib;
 
+	/** @var array|null Map of style_path to style_active on the demo board */
+	protected $installed_styles;
+
 	/**
 	* Constructor.
 	*
@@ -76,9 +79,23 @@ class manager
 	*/
 	public function configure($branch, $contrib, $package)
 	{
-		$this->branch = $branch;
 		$this->contrib = $contrib;
 		$this->package = $package;
+
+		return $this->set_branch($branch);
+	}
+
+	/**
+	* Set the branch and connect to its demo board.
+	*
+	* @param int $branch
+	*
+	* @return bool Returns false if no usable demo board is configured for the branch.
+	*/
+	public function set_branch($branch)
+	{
+		$this->branch = $branch;
+		$this->installed_styles = null;
 
 		if (empty($this->ext_config->demo_style_path[$this->branch]))
 		{
@@ -97,6 +114,36 @@ class manager
 		}
 
 		return $this->db_connect();
+	}
+
+	/**
+	* Check whether a style is present and active on the demo board.
+	*
+	* The board's styles table and the style directory are both checked, so a
+	* wiped database or a wiped filesystem each count as not installed.
+	*
+	* @param string $dir_name	Style directory name, as built by get_style_dir_name().
+	*
+	* @return bool
+	*/
+	public function is_style_installed($dir_name)
+	{
+		if ($this->installed_styles === null)
+		{
+			$this->installed_styles = array();
+
+			$sql = 'SELECT style_path, style_active
+				FROM ' . $this->table_prefix . 'styles';
+			$result = $this->db->sql_query($sql);
+
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$this->installed_styles[$row['style_path']] = (bool) $row['style_active'];
+			}
+			$this->db->sql_freeresult($result);
+		}
+
+		return !empty($this->installed_styles[$dir_name]) && is_dir($this->board_root_path . 'styles/' . $dir_name . '/');
 	}
 
 	/**
@@ -266,6 +313,18 @@ class manager
 	}
 
 	/**
+	* Build the style directory name used on the demo board.
+	*
+	* @param string $contrib_name_clean
+	* @param int $contrib_id
+	* @return string
+	*/
+	public function get_style_dir_name($contrib_name_clean, $contrib_id)
+	{
+		return $contrib_name_clean . '_' . $contrib_id;
+	}
+
+	/**
 	* Get style directory name.
 	*
 	* @param bool $name_only		If false, returns the full path to the directory,
@@ -274,7 +333,7 @@ class manager
 	*/
 	public function get_style_dir($name_only = false)
 	{
-		$dir_name = $this->contrib->contrib_name_clean . '_' . $this->contrib->contrib_id;
+		$dir_name = $this->get_style_dir_name($this->contrib->contrib_name_clean, $this->contrib->contrib_id);
 
 		if ($name_only)
 		{

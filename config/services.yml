@@ -264,6 +264,14 @@ services:
             - '%tables.topics%'
             - '%tables.users%'
 
+    phpbb.titania.manage.tool.demo.install_all:
+        class: phpbb\titania\manage\tool\demo\install_all
+        arguments:
+            - '@dbal.conn'
+            - '@user'
+            - '@phpbb.titania.config'
+            - '@phpbb.titania.style.demo.manager'
+
     phpbb.titania.manage.tool.search.reindex:
         class: phpbb\titania\manage\tool\search\reindex
         shared: false
