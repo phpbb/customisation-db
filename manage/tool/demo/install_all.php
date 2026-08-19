@@ -81,6 +81,7 @@ class install_all extends base
 	public function set_branch($branch)
 	{
 		$this->branch = (int) $branch;
+		$this->board_ready = null;
 
 		return $this;
 	}

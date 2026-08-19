@@ -13,6 +13,7 @@
 
 namespace phpbb\titania\controller\manage\tool\demo;
 
+use phpbb\exception\http_exception;
 use phpbb\titania\controller\manage\tool\tool;
 
 class install_all extends tool
@@ -22,6 +23,8 @@ class install_all extends tool
 	 *
 	 * Tells the user how many styles are missing from the demo board before
 	 * asking for confirmation.
+	 *
+	 * @throws http_exception If the branch has no usable demo board.
 	 */
 	protected function confirm_action()
 	{
@@ -36,11 +39,11 @@ class install_all extends tool
 			->set_branch($this->request->variable('branch', 0))
 			->count_pending();
 
-		$message = ($pending === false)
-			? $this->user->lang('CONFIRM_TOOL_ACTION')
-			: $this->user->lang('INSTALL_DEMO_STYLES_CONFIRM', $pending);
-
-		confirm_box(false, $message);
+		if ($pending === false)
+		{
+			throw new http_exception(200, 'INSTALL_DEMO_STYLES_NOT_CONFIGURED');
+		}
+		confirm_box(false, $this->user->lang('INSTALL_DEMO_STYLES_CONFIRM', $pending));
 
 		return false;
 	}

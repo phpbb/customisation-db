@@ -329,7 +329,7 @@ class manager
 	*
 	* @param bool $name_only		If false, returns the full path to the directory,
 	*	otherwise just the name.
-	* @retun string
+	* @return string
 	*/
 	public function get_style_dir($name_only = false)
 	{
