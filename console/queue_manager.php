@@ -35,7 +35,7 @@ class queue_manager extends Command
             ->setHelp('Manage the Customisation DB queue');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('<info>Begin queue manager...</info>');
         $this->process($input, $output);
