@@ -39,7 +39,7 @@ class ai_validation extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $queue_id = (int) $input->getArgument('queue_id');
         $output->writeln('<info>[execute] STARTING AI VALIDATION (v2)</info>');
