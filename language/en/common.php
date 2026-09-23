@@ -63,6 +63,7 @@ $lang = array_merge($lang, array(
 	'CATEGORY_DELETED'			=> 'Category Deleted',
 	'CATEGORY_DESC'				=> 'Category Description',
 	'CATEGORY_DUPLICATE_PARENT'	=> 'Category cannot be its own parent.',
+	'CATEGORY_EMOJI_NOT_ALLOWED'=> 'Four-byte characters are not allowed in category names.',
 	'CATEGORY_HAS_CHILDREN'		=> 'This category cannot be deleted because it contains children categories.',
 	'CATEGORY_INFORMATION'		=> 'Category Information',
 	'CATEGORY_NAME'				=> 'Category Name',

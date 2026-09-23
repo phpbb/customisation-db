@@ -180,16 +180,17 @@ class repository
 	/**
 	 * Get include files.
 	 *
+	 * @param string $subdir Optional subdirectory
 	 * @return Finder
 	 */
-	protected function get_include_files()
+	protected function get_include_files($subdir = '')
 	{
 		$finder = new Finder;
 		$finder
 			->files()
 			->depth('== 0')
 			->name('/^packages\-[a-z]+\-\d+\.json$/')
-			->in($this->build_dir)
+			->in($this->build_dir . $subdir)
 		;
 
 		return $finder;
@@ -215,7 +216,7 @@ class repository
 	 */
 	protected function build_parent_structure($subdir = '')
 	{
-		$includes = $this->get_include_files();
+		$includes = $this->get_include_files($subdir);
 		$parent = $types = array();
 		$target_dir = $this->build_dir . $subdir;
 

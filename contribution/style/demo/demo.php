@@ -343,15 +343,15 @@ class demo
 			return false;
 		}
 
-		// Get siblings
+		// Get siblings; there is none at either end of the list
 		$prev = $this->sibling($this->default_style, 'prev');
 		$next = $this->sibling($this->default_style, 'next');
 
 		$this->template->assign_vars(array(
-			'U_PREV'	=> $prev['url'],
-			'PREV_ID'	=> $prev['id'],
-			'U_NEXT'	=> $next['url'],
-			'NEXT_ID'	=> $next['id'],
+			'U_PREV'	=> ($prev) ? $prev['url'] : false,
+			'PREV_ID'	=> ($prev) ? $prev['id'] : false,
+			'U_NEXT'	=> ($next) ? $next['url'] : false,
+			'NEXT_ID'	=> ($next) ? $next['id'] : false,
 		));
 
 		$category = '';

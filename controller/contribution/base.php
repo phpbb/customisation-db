@@ -172,7 +172,7 @@ class base
 		if ($this->contrib->contrib_demo)
 		{
 			$demo_menu = array();
-			$allowed_branches = $this->contrib->type->get_allowed_branches(true);
+			$allowed_branches = $this->contrib->get_approved_branches();
 			krsort($allowed_branches);
 			$is_external = $this->contrib->contrib_status != ext::TITANIA_CONTRIB_APPROVED || !$this->contrib->options['demo'];
 

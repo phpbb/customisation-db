@@ -11,6 +11,7 @@
 *
 */
 
+use phpbb\titania\unicode;
 use phpbb\titania\ext;
 use phpbb\titania\sync;
 
@@ -701,6 +702,10 @@ class titania_category extends \phpbb\titania\entity\message_base
 		if (!$this->category_name)
 		{
 			$error[] = phpbb::$user->lang['NO_CATEGORY_NAME'];
+		}
+		else if (unicode::contains_unsupported($this->category_name))
+		{
+			$error[] = phpbb::$user->lang['CATEGORY_EMOJI_NOT_ALLOWED'];
 		}
 
 		if (!$this->category_name_clean || !preg_match('/^[a-zA-Z0-9\-\_]+$/', $this->category_name_clean))

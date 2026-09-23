@@ -77,9 +77,9 @@ class type extends base
 				'explain'	=> 'REVISION_BBCODE_USE_EXPLAIN',
 			),
 			'revision_bbc_help_line' => array(
-				'type'		=> 'input',
+				'type'		=> 'textarea',
 				'name'		=> 'REVISION_HELP_LINE',
-				'explain'	=> '',
+				'explain'	=> 'REVISION_HELP_LINE_EXPLAIN',
 			),
 			'revision_bbc_demo' => array(
 				'type'		=> 'textarea',

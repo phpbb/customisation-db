@@ -125,7 +125,7 @@ class manage extends base
 		);
 		$this->settings['custom'] = $this->contrib->get_custom_fields();
 
-		foreach ($this->contrib->type->get_allowed_branches(true) as $branch => $name)
+		foreach ($this->contrib->get_approved_branches() as $branch => $name)
 		{
 			$this->settings['demo'][$branch] = $this->contrib->get_demo_url($branch);
 		}
@@ -145,7 +145,7 @@ class manage extends base
 			));
 			$demos = $this->request->variable('demo', array(0 => ''));
 
-			foreach ($this->contrib->type->get_allowed_branches(true) as $branch => $name)
+			foreach ($this->contrib->get_approved_branches() as $branch => $name)
 			{
 				if (isset($demos[$branch]))
 				{
@@ -155,7 +155,8 @@ class manage extends base
 
 			$this->contrib->post_data($this->message);
 			$this->contrib->__set_array(array(
-				'contrib_demo'				=> ($this->can_edit_demo) ? json_encode($this->settings['demo']) : $this->contrib->contrib_demo,
+				// Preserve stored URLs for branches not open for editing.
+				'contrib_demo'				=> ($this->can_edit_demo) ? json_encode($this->settings['demo'] + $this->contrib->get_demo_urls()) : $this->contrib->contrib_demo,
 				'contrib_limited_support'	=> $this->settings['limited_support'],
 			));
 		}
@@ -193,6 +194,15 @@ class manage extends base
 
 			$this->contrib->post_data($this->message);
 
+			if (!$this->is_moderator)
+			{
+				$this->settings['permalink'] = $this->contrib->contrib_name_clean;
+			}
+			else if ($this->settings['permalink'] === '')
+			{
+				$this->settings['permalink'] = $this->contrib->get_generated_permalink();
+			}
+
 			$authors = $this->contrib->get_authors_from_usernames(array(
 				'active_coauthors'		=> $this->settings['coauthors']['active'],
 				'nonactive_coauthors'	=> $this->settings['coauthors']['nonactive'],
@@ -205,7 +215,9 @@ class manage extends base
 				$this->settings['categories'],
 				$authors,
 				$this->settings['custom'],
-				$this->contrib->contrib_name_clean
+				$this->contrib->contrib_name_clean,
+				$this->settings['permalink'],
+				$old_settings['contrib_name']
 			));
 
 			// Did we succeed or have an error?
@@ -473,11 +485,6 @@ class manage extends base
 
 			if ($this->settings['permalink'] != $this->contrib->contrib_name_clean)
 			{
-				if ($this->settings['permalink'] == '')
-				{
-					$this->contrib->generate_permalink();
-					$this->settings['permalink'] = $this->contrib->contrib_name_clean;
-				}
 				$this->contrib->change_permalink($this->settings['permalink']);
 			}
 		}
@@ -628,6 +635,14 @@ class manage extends base
 			$revision = new \titania_revision($this->contrib);
 			$revision->__set_array($this->contrib->download[$branch]);
 			$demo_url = $this->contrib->type->install_demo($this->contrib, $revision);
+		}
+
+		if ($demo_url === '')
+		{
+			return array(
+				'MESSAGE_TITLE'	=> $this->user->lang('INFORMATION'),
+				'MESSAGE_TEXT'	=> $this->user->lang('DEMO_INSTALL_FAILED'),
+			);
 		}
 		return array(
 			'url'	=> $demo_url,

@@ -405,6 +405,11 @@ class author
 			));
 			$authors['author'] = array($this->user->data['username'] => $this->user->data['user_id']);
 
+			if ($contrib->contrib_name_clean === '')
+			{
+				$contrib->generate_permalink();
+			}
+
 			$error = $contrib->validate($settings['categories'], $authors, $settings['custom']);
 
 			if (($form_key_error = $message->validate_form_key()) !== false)

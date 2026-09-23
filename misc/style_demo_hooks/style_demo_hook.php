@@ -25,6 +25,9 @@ class titania_style_demo_hook
 	/** @var string */
 	protected $php_ext;
 
+	/** @var titania_demo_manager */
+	protected $manager;
+
 	/**
 	* Constructor.
 	*

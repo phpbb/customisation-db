@@ -1,15 +1,16 @@
 <?php
+
 /**
-*
-* This file is part of the phpBB Customisation Database package.
-*
-* @copyright (c) phpBB Limited <https://www.phpbb.com>
-* @license GNU General Public License, version 2 (GPL-2.0)
-*
-* For full copyright and license information, please see
-* the docs/CREDITS.txt file.
-*
-*/
+ *
+ * This file is part of the phpBB Customisation Database package.
+ *
+ * @copyright (c) phpBB Limited <https://www.phpbb.com>
+ * @license GNU General Public License, version 2 (GPL-2.0)
+ *
+ * For full copyright and license information, please see
+ * the docs/CREDITS.txt file.
+ *
+ */
 
 namespace phpbb\titania\controller\contribution;
 
@@ -58,14 +59,14 @@ class contribution extends base
 	}
 
 	/**
-	* Delegates requested page to appropriate method.
-	*
-	* @param string $contrib_type	Contrib type URL identifier.
-	* @param string $contrib		Contrib name clean.
-	* @param string $page			Requested page.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Delegates requested page to appropriate method.
+	 *
+	 * @param string $contrib_type	Contrib type URL identifier.
+	 * @param string $contrib		Contrib name clean.
+	 * @param string $page			Requested page.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
 	public function base($contrib_type, $contrib, $page)
 	{
 		$this->load_contrib($contrib_type, $contrib);
@@ -106,10 +107,10 @@ class contribution extends base
 	}
 
 	/**
-	* Report page.
-	*
-	* @return null
-	*/
+	 * Report page.
+	 *
+	 * @return null
+	 */
 	protected function report()
 	{
 		// Check permissions
@@ -147,10 +148,10 @@ class contribution extends base
 	}
 
 	/**
-	* Details page.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Details page.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
 	protected function details()
 	{
 		$this->contrib->get_download();
@@ -186,24 +187,26 @@ class contribution extends base
 	}
 
 	/**
-	* Styles demo page.
-	*
-	* @param string $contrib_type		Contrib type URL identifier
-	* @param string $contrib			Contrib name clean
-	* @param string $branch				Branch - examples: 3.0 3.1
-	*
-	* @return \Symfony\Component\HttpFoundation\Response
-	*/
+	 * Styles demo page.
+	 *
+	 * @param string $contrib_type		Contrib type URL identifier
+	 * @param string $contrib			Contrib name clean
+	 * @param string $branch				Branch - examples: 3.0 3.1
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
 	public function demo($contrib_type, $contrib, $branch)
 	{
 		$this->load_contrib($contrib_type, $contrib);
+		$branch = (int) $branch[0] . $branch[2];
+
 		$can_use_demo =
 			$this->contrib->contrib_status == ext::TITANIA_CONTRIB_APPROVED &&
 			$this->contrib->contrib_type == ext::TITANIA_TYPE_STYLE &&
-			$this->contrib->options['demo']
-		;
+			$this->contrib->options['demo'] &&
+			isset($this->ext_config->demo_style_url[$branch]) &&
+			!empty($this->ext_config->demo_style_url[$branch]);
 
-		$branch = (int) $branch[0] . $branch[2];
 		$demo_url = $this->contrib->get_demo_url($branch);
 
 		if (!$can_use_demo || !$demo_url)
@@ -230,11 +233,11 @@ class contribution extends base
 	}
 
 	/**
-	* Queue discussion topic redirect.
-	*
-	* @return Returns \Symfony\Component\HttpFoundation\Response if no
-	*	topic was found, otherwise redirects to topic.
-	*/
+	 * Queue discussion topic redirect.
+	 *
+	 * @return Returns \Symfony\Component\HttpFoundation\Response if no
+	 *	topic was found, otherwise redirects to topic.
+	 */
 	protected function queue_discussion()
 	{
 		$sql = 'SELECT *
@@ -257,10 +260,10 @@ class contribution extends base
 	}
 
 	/**
-	* Rating action.
-	*
-	* @return \Symfony\Component\HttpFoundation\Response|RedirectResponse|JsonResponse
-	*/
+	 * Rating action.
+	 *
+	 * @return \Symfony\Component\HttpFoundation\Response|RedirectResponse|JsonResponse
+	 */
 	protected function rate()
 	{
 		$rating_value = $this->request->variable('value', -1.0);
@@ -288,11 +291,11 @@ class contribution extends base
 	}
 
 	/**
-	* Redirect to contribution from given contrib id.
-	*
-	* @param int $id
-	* @return null
-	*/
+	 * Redirect to contribution from given contrib id.
+	 *
+	 * @param int $id
+	 * @return null
+	 */
 	public function redirect_from_id($id)
 	{
 		$this->load_contrib(false, (int) $id);
