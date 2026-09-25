@@ -18,11 +18,11 @@ class subscriptions
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
-	/** @var \phpbb\config\config */
-	protected $config;
-
 	/** @var \phpbb\request\request_interface */
 	protected $request;
+
+	/** @var \phpbb\template\template */
+	protected $template;
 
 	/** @var \phpbb\user */
 	protected $user;
@@ -30,46 +30,38 @@ class subscriptions
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
-	/** @var string */
-	protected $users_table;
+	/** @var \phpbb\notification\manager */
+	protected $notification_manager;
 
 	/** @var string */
 	protected $watch_table;
 
-	/** @var string */
-	protected $phpbb_root_path;
-
-	/** @var string */
-	protected $php_ext;
-
+	/**
+	* The historical delivery type stored in watch_type. Every row carries
+	* EMAIL; delivery preferences now live in the notification system, so the
+	* column only distinguishes subscription rows, not how they are delivered.
+	*/
 	const EMAIL = 1;
-	const WATCH = 2;
 
 	/**
 	 * Constructor
 	 *
 	 * @param \phpbb\db\driver\driver_interface $db
-	 * @param \phpbb\config\config $config
 	 * @param \phpbb\request\request_interface $request
 	 * @param \phpbb\template\template $template
 	 * @param \phpbb\user $user
 	 * @param \phpbb\path_helper $path_helper
-	 * @param string $users_table
-	 * @param string $phpbb_root_path
-	 * @param string $php_ext
+	 * @param \phpbb\notification\manager $notification_manager
 	 */
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\config\config $config, \phpbb\request\request_interface $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\path_helper $path_helper, $users_table, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\request\request_interface $request, \phpbb\template\template $template, \phpbb\user $user, \phpbb\path_helper $path_helper, \phpbb\notification\manager $notification_manager)
 	{
 		$this->db = $db;
-		$this->config = $config;
 		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
 		$this->path_helper = $path_helper;
-		$this->users_table = $users_table;
+		$this->notification_manager = $notification_manager;
 		$this->watch_table = TITANIA_WATCH_TABLE;
-		$this->phpbb_root_path = $phpbb_root_path;
-		$this->php_ext = $php_ext;
 	}
 
 	/**
@@ -201,125 +193,36 @@ class subscriptions
 	}
 
 	/**
-	 * Send Notifications
+	 * Send subscription notifications through the phpBB notification system.
 	 *
-	 * Using this function:
-	 * Call this function when you know the Object type, object id, and the email
-	 * template name.
-	 * Sample usage:
+	 * Watchers of the given watch pairs receive the notification through the
+	 * delivery methods they enabled in the UCP (board and/or email); the email
+	 * method renders the same Titania email templates the legacy dispatcher
+	 * used, with the same variables plus USERNAME added by the core.
 	 *
-	 * <code>
-	 *
-	 * $object_type = SOME_OBJECT_CONSTANT_TYPE;
-	 * $obhect)id = 242974;
-	 *
-	 * titania_subscriptions::send_notifications($object_type, $object_id, 'mod_subscribe', array(
-	 * 		'OBJECT_NAME'	=> 'Some MOD',
-	 * ));
-	 *
-	 * </code>
-	 *
-	 * The vars parameter will be used in the messanger assign vars, which will act
-	 * as the common vars when sending out the notifications. Data such as the MOD's
-	 * or Style's name should go here, what action was taken, etc. The usernaeme and
-	 * emails of the recepiants will be personalised by the function. Ensure the
-	 * email template has the {USERNAME} var present.
-	 *
-	 * @param $exclude_user User_id of the one who posted the item to exclude them from the sending
-	 *
+	 * @param string $type Titania notification type suffix
+	 *	(posted|contribution|queue|queue_move|attention)
+	 * @param array $type_data Notification data:
+	 *	'item_id'			int the notified item (post, revision, queue, attention id)
+	 *	'item_parent_id'	int its parent (optional)
+	 *	'watch'				array of array(watch_object_type, watch_object_id)
+	 *						pairs selecting the recipients
+	 *	'exclude_user'		int user to exclude, normally the acting user (optional)
+	 *	'lang_key'			string language key for the board notification title
+	 *	'lang_params'		array parameters for the language key (optional)
+	 *	'url'				string url the notification links to
+	 *	'email_template'	string Titania email template name
+	 *	'email_vars'		array variables for the email template (optional)
+	 *	'actor_id'			int user shown as the notification's actor (optional)
 	 */
-	public function send_notifications($object_type, $object_id, $email_tpl, $vars, $exclude_user = false)
+	public function send_notifications($type, array $type_data)
 	{
-		$sql = 'SELECT w.watch_user_id, w.watch_type, u.user_id, u.username, u.user_email, u.user_lang
-			FROM ' . $this->watch_table . ' w, ' . $this->users_table . ' u
-			WHERE w.watch_user_id = u.user_id ';
-
-		if (is_array($object_type) || is_array($object_id))
+		// A stored notification url must never carry a session id
+		if (!empty($type_data['url']))
 		{
-			// Both needs to be arrays if one is and they need to have the same number of elements.
-			if (!is_array($object_type) || !is_array($object_id) || sizeof($object_type) != sizeof($object_id))
-			{
-				return;
-			}
-
-			$sql_objects = '';
-			foreach ($object_type as $key => $value)
-			{
-				$sql_objects .= (($sql_objects == '') ? '' : ' OR ') . '(w.watch_object_type = ' . (int) $value . '
-							AND w.watch_object_id = ' . (int) $object_id[$key] . ')';
-			}
-			$sql .= 'AND (' . $sql_objects . ')';
-
-			unset($sql_objects);
-		}
-		else
-		{
-			$sql .= 'AND w.watch_object_type = ' . (int) $object_type . '
-						AND w.watch_object_id = ' . (int) $object_id;
-		}
-		$sql .= ($exclude_user) ? ' AND w.watch_user_id <> ' . (int) $exclude_user : '';
-
-		$result = $this->db->sql_query($sql);
-
-		// Throw everything here
-		$user_data = array();
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			// Use user_id for the keys to not send duplicates.
-			$user_data[$row['user_id']] = array(
-				'username'		=> $row['username'],
-				'user_email'	=> $row['user_email'],
-				'user_lang'		=> $row['user_lang'],
-				'watch_type'	=> $row['watch_type'],
-			);
-		}
-		$this->db->sql_freeresult($result);
-
-		// No one subscribed? We're done.
-		if (empty($user_data))
-		{
-			return;
-		}
-		$messenger = null;
-
-		// Send to each user
-		// Add a new case statment for each subscription type
-		foreach ($user_data as $data)
-		{
-			/*
-			* Switch between the types.
-			* ------------------------------------------
-			* When adding a type, the final message will
-			* be stored in $message, and the subject is
-			* stored in $vars['SUBJECT'].
-			*/
-			switch($data['watch_type'])
-			{
-				case self::EMAIL:
-
-					if ($messenger === null)
-					{
-						// Only make the object if we need it
-						if (!class_exists('\messenger'))
-						{
-							require($this->phpbb_root_path . 'includes/functions_messenger.' . $this->php_ext);
-						}
-						$messenger = new \messenger;
-					}
-
-					$messenger->anti_abuse_headers($this->config, $this->user);
-					$messenger->template('@phpbb_titania/' . $email_tpl, $data['user_lang']);
-					$messenger->to($data['user_email'], $data['username']);
-					$messenger->assign_vars(array_merge($vars, array(
-						'USERNAME'			=> $data['username'],
-					)));
-
-					$messenger->send();
-					$messenger->save_queue();
-				break;
-			}
+			$type_data['url'] = $this->path_helper->strip_url_params($type_data['url'], 'sid');
 		}
 
-		return;
+		$this->notification_manager->add_notifications('phpbb.titania.notification.type.' . $type, $type_data);
 	}
 }

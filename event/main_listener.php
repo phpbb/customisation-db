@@ -103,6 +103,8 @@ class main_listener implements EventSubscriberInterface
 	{
 		return array(
 			'core.permissions'									=> 'add_permissions',
+			'core.user_setup'									=> 'load_language',
+			'core.user_add_modify_notifications_data'			=> 'add_notifications_data',
 			'kernel.request'									=> array(array('startup', -1)),
 			'core.page_header_after'							=> 'overwrite_template_vars',
             'core.text_formatter_s9e_configure_after'			=> 'inject_bbcode_code_lang',
@@ -190,6 +192,50 @@ class main_listener implements EventSubscriberInterface
 
 			'u_titania_admin' => array('lang' => 'ACL_U_TITANIA_ADMIN', 'cat' => 'titania_moderate'),
 		));
+	}
+
+	/**
+	* Load the notification language file on every page, so the notification
+	* dropdown and the UCP notification options can render Titania's types.
+	*
+	* @param data $event
+	*/
+	public function load_language($event)
+	{
+		$lang_set_ext = $event['lang_set_ext'];
+		$lang_set_ext[] = array(
+			'ext_name'	=> 'phpbb/titania',
+			'lang_set'	=> 'notifications',
+		);
+		$event['lang_set_ext'] = $lang_set_ext;
+	}
+
+	/**
+	* Give new users email delivery for the Titania notification types by
+	* default, like the core does for the post and topic types, so
+	* subscribing keeps its historical mail-me meaning.
+	*
+	* @param data $event
+	*/
+	public function add_notifications_data($event)
+	{
+		$notifications_data = $event['notifications_data'];
+
+		foreach (ext::get_notification_types() as $type)
+		{
+			// queue_move shares the queue type's preferences
+			if ($type === 'phpbb.titania.notification.type.queue_move')
+			{
+				continue;
+			}
+
+			$notifications_data[] = array(
+				'item_type'	=> $type,
+				'method'	=> 'notification.method.email',
+			);
+		}
+
+		$event['notifications_data'] = $notifications_data;
 	}
 
 	public function startup($event)

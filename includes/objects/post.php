@@ -765,11 +765,31 @@ class titania_post extends \phpbb\titania\entity\message_base
 
 		// @todo remove attachments and other things
 
-		// Remove any attention items
+		// Remove any attention items and their notifications
+		$attention_ids = array();
+		$sql = 'SELECT attention_id FROM ' . TITANIA_ATTENTION_TABLE . '
+			WHERE attention_object_type = ' . ext::TITANIA_POST . '
+				AND attention_object_id = ' . $this->post_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$attention_ids[] = (int) $row['attention_id'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
 		$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
 			WHERE attention_object_type = ' . ext::TITANIA_POST . '
 				AND attention_object_id = ' . $this->post_id;
 		phpbb::$db->sql_query($sql);
+
+		// Remove any notifications for this post and its attention items
+		$notification_manager = phpbb::$container->get('notification_manager');
+		$notification_manager->delete_notifications('phpbb.titania.notification.type.posted', $this->post_id);
+
+		if (!empty($attention_ids))
+		{
+			$notification_manager->delete_notifications('phpbb.titania.notification.type.attention', $attention_ids);
+		}
 
 		// Decrement the user's postcount if we must
 		if (!$this->post_deleted && $this->post_approved && in_array($this->post_type, titania::$config->increment_postcount))

@@ -2337,11 +2337,27 @@ class titania_contribution extends \phpbb\titania\entity\message_base
 		// Change the status to new (handles resetting counts)
 		$this->change_status(ext::TITANIA_CONTRIB_NEW);
 
-		// Remove any attention items
+		// Remove any attention items and their notifications
+		$attention_ids = array();
+		$sql = 'SELECT attention_id FROM ' . TITANIA_ATTENTION_TABLE . '
+			WHERE attention_object_type = ' . ext::TITANIA_CONTRIB . '
+				AND attention_object_id = ' . $this->contrib_id;
+		$result = phpbb::$db->sql_query($sql);
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$attention_ids[] = (int) $row['attention_id'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
 		$sql = 'DELETE FROM ' . TITANIA_ATTENTION_TABLE . '
 			WHERE attention_object_type = ' . ext::TITANIA_CONTRIB . '
 				AND attention_object_id = ' . $this->contrib_id;
 		phpbb::$db->sql_query($sql);
+
+		if (!empty($attention_ids))
+		{
+			phpbb::$container->get('notification_manager')->delete_notifications('phpbb.titania.notification.type.attention', $attention_ids);
+		}
 
 		// Delete the release topic
 		if ($this->contrib_release_topic_id)
