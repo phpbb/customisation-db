@@ -90,6 +90,10 @@ phpbb.titania.manage.contrib.update_release_topics:
     path: /administration/contrib/update_release_topics
     defaults: { _controller: phpbb.titania.controller.manage.contrib.update_release_topics:handle }
 
+phpbb.titania.manage.demo.install_all:
+    path: /administration/demo/install_all
+    defaults: { _controller: phpbb.titania.controller.manage.demo.install_all:handle }
+
 phpbb.titania.manage.search.reindex:
     path: /administration/search/reindex
     defaults: { _controller: phpbb.titania.controller.manage.search.reindex:handle }

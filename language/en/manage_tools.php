@@ -59,6 +59,12 @@ $lang = array_merge($lang, array(
 	'SECTION_STATUS'	=> 'part %d of %d',
 	'TRUNCATING_SEARCH'	=> 'Truncating Search',
 
+	'INSTALL_DEMO_STYLES'					=> 'Install all approved styles on the %s demo board',
+	'INSTALL_DEMO_STYLES_COMPLETE'			=> 'Styles installed on the demo board: %1$d. Already installed and skipped: %2$d. Skipped with no package for this branch: %3$d. Failed to install: %4$d.',
+	'INSTALL_DEMO_STYLES_CONFIRM'			=> '%d approved styles are not installed on this demo board. Are you sure you want to run this tool?',
+	'INSTALL_DEMO_STYLES_NOT_CONFIGURED'	=> 'No style demo board is configured for this branch.',
+	'INSTALL_DEMO_STYLES_PROGRESS'			=> '%1$d styles completed of %2$d. Please wait…',
+
 	'PLEASE_WAIT'		=> 'Please wait...',
 
 	'REBUILD_COMPOSER_REPO'	=> 'Rebuild Composer repository',

@@ -64,11 +64,25 @@ class administration extends base
 			),
 		);
 
+		foreach ($this->ext_config->demo_style_path as $branch => $path)
+		{
+			if (empty($path))
+			{
+				continue;
+			}
+			$tools['INSTALL_DEMO_STYLES_' . $branch] = array(
+				'route'		=> 'phpbb.titania.manage.demo.install_all',
+				'params'	=> array('branch' => $branch),
+				'title'		=> $this->user->lang('INSTALL_DEMO_STYLES', $this->get_branch_name($branch)),
+				'ajax'		=> true,
+			);
+		}
+
 		foreach ($tools as $title => $info)
 		{
 			$this->template->assign_block_vars('tools', array(
-				'L_TITLE'			=> $this->user->lang($title),
-				'U_TITLE'			=> $this->helper->route($info['route']),
+				'L_TITLE'			=> isset($info['title']) ? $info['title'] : $this->user->lang($title),
+				'U_TITLE'			=> $this->helper->route($info['route'], isset($info['params']) ? $info['params'] : array()),
 				'S_AJAX'			=> $info['ajax'],
 			));
 		}
@@ -76,6 +90,23 @@ class administration extends base
 		$this->generate_navigation('administration');
 
 		return $this->helper->render('manage/administration.html', 'ADMINISTRATION');
+	}
+
+	/**
+	* Get the display name of a phpBB branch.
+	*
+	* @param int $branch	Branch in the form of 33 for 3.3.
+	* @return string Returns the configured branch name, like phpBB 3.3.x.
+	*/
+	protected function get_branch_name($branch)
+	{
+		$versions = $this->ext_config->phpbb_versions;
+
+		if (isset($versions[$branch]['name']))
+		{
+			return $versions[$branch]['name'];
+		}
+		return 'phpBB ' . implode('.', str_split((string) $branch));
 	}
 
 	/**
