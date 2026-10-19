@@ -176,6 +176,13 @@ class base implements type_interface
 	public $forum_robot = 0;
 
 	/**
+	 * Author profile field used to store the contribution count.
+	 *
+	 * @var string|null
+	 */
+	public $author_count;
+
+	/**
 	 * Array of available licenses for this type of contribution
 	 *
 	 * @var array
