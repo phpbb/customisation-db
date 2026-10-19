@@ -297,6 +297,8 @@ class titania_revision extends \phpbb\titania\entity\database_base
 	 */
 	public function submit()
 	{
+		$notify_subscribers = false;
+
 		if (!$this->revision_id)
 		{
 			// Update the contrib_last_update if required here
@@ -312,17 +314,8 @@ class titania_revision extends \phpbb\titania\entity\database_base
 					WHERE contrib_id = ' . $this->contrib_id;
 				phpbb::$db->sql_query($sql);
 
-				// Subscriptions
-				$email_vars = array(
-					'NAME'		=> $this->contrib->contrib_name,
-					'U_VIEW'	=> $this->contrib->get_url(),
-				);
-				$this->subscriptions->send_notifications(
-					ext::TITANIA_CONTRIB,
-					$this->contrib_id,
-					'subscribe_notify',
-					$email_vars
-				);
+				// Notify the subscribers once the revision row exists
+				$notify_subscribers = true;
 			}
 		}
 		else if (sizeof($this->phpbb_versions))
@@ -377,6 +370,26 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		if ($this->revision_status == ext::TITANIA_REVISION_APPROVED)
 		{
 			$this->contrib->update_release_topic();
+		}
+
+		// Subscriptions
+		if ($notify_subscribers)
+		{
+			$email_vars = array(
+				'NAME'		=> $this->contrib->contrib_name,
+				'U_VIEW'	=> $this->contrib->get_url(),
+			);
+			$this->subscriptions->send_notifications('contribution', array(
+				'item_id'			=> $this->revision_id,
+				'item_parent_id'	=> $this->contrib_id,
+				'watch'				=> array(array(ext::TITANIA_CONTRIB, $this->contrib_id)),
+				'lang_key'			=> 'NOTIFICATION_TITANIA_CONTRIB_UPDATED',
+				'lang_params'		=> array($this->revision_version),
+				'reference'			=> $this->contrib->contrib_name,
+				'url'				=> $email_vars['U_VIEW'],
+				'email_template'	=> 'subscribe_notify',
+				'email_vars'		=> $email_vars,
+			));
 		}
 	}
 
@@ -589,6 +602,9 @@ class titania_revision extends \phpbb\titania\entity\database_base
 		// Delete translations
 		// $translations = new titania_attachment(TITANIA_TRANSLATION, $this->revision_id);
 		// $attachment->delete_all();
+
+		// Remove any notifications for this revision
+		phpbb::$container->get('notification_manager')->delete_notifications('phpbb.titania.notification.type.contribution', $this->revision_id);
 
 		// Self-destruct
 		parent::delete();

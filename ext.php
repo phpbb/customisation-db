@@ -105,4 +105,80 @@ class ext extends \phpbb\extension\base
 	{
 		return [40];
 	}
+
+	/**
+	 * The notification types this extension provides
+	 *
+	 * @return array Array of notification type service names
+	 */
+	public static function get_notification_types(): array
+	{
+		return [
+			'phpbb.titania.notification.type.posted',
+			'phpbb.titania.notification.type.contribution',
+			'phpbb.titania.notification.type.queue',
+			'phpbb.titania.notification.type.queue_move',
+			'phpbb.titania.notification.type.attention',
+		];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function enable_step($old_state)
+	{
+		if ($old_state === false)
+		{
+			$notification_manager = $this->container->get('notification_manager');
+
+			foreach (self::get_notification_types() as $type)
+			{
+				$notification_manager->enable_notifications($type);
+			}
+
+			return 'notifications';
+		}
+
+		return parent::enable_step($old_state);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function disable_step($old_state)
+	{
+		if ($old_state === false)
+		{
+			$notification_manager = $this->container->get('notification_manager');
+
+			foreach (self::get_notification_types() as $type)
+			{
+				$notification_manager->disable_notifications($type);
+			}
+
+			return 'notifications';
+		}
+
+		return parent::disable_step($old_state);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function purge_step($old_state)
+	{
+		if ($old_state === false)
+		{
+			$notification_manager = $this->container->get('notification_manager');
+
+			foreach (self::get_notification_types() as $type)
+			{
+				$notification_manager->purge_notifications($type);
+			}
+
+			return 'notifications';
+		}
+
+		return parent::purge_step($old_state);
+	}
 }

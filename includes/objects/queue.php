@@ -269,6 +269,7 @@ class titania_queue extends \phpbb\titania\entity\message_base
 	* @param string $message
 	* @param bool $teams_only true to set to access level of teams
 	* @param int $post_user_id
+	* @return \titania_post
 	*/
 	public function discussion_reply($message, $teams_only = false, $post_user_id = 0)
 	{
@@ -298,6 +299,8 @@ class titania_queue extends \phpbb\titania\entity\message_base
 
 		$post->generate_text_for_storage(true, true, true);
 		$post->submit();
+
+		return $post;
 	}
 
 	public function delete()
@@ -323,11 +326,24 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			WHERE revision_id = ' . $this->revision_id;
 		phpbb::$db->sql_query($sql);
 
+		// Remove any notifications for this queue item
+		phpbb::$container->get('notification_manager')->delete_notifications(
+			array('phpbb.titania.notification.type.queue', 'phpbb.titania.notification.type.queue_move'),
+			$this->queue_id
+		);
+
 		// Assplode
 		parent::delete();
 	}
 
-	public function move($new_status, \phpbb\titania\tags $tags)
+	/**
+	* Move this queue item to another status tag.
+	*
+	* @param int $new_status					New queue status tag id
+	* @param \phpbb\titania\tags $tags
+	* @param int $robot_user_id					User ID to use for the status update post (defaults to current user)
+	*/
+	public function move($new_status, \phpbb\titania\tags $tags, $robot_user_id = 0)
 	{
 		$this->user->add_lang_ext('phpbb/titania', 'manage');
 
@@ -353,13 +369,59 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'CATEGORY_NAME'	=> $to,
 			'U_VIEW_QUEUE'	=> $path_helper->strip_url_params($u_view_queue, 'sid'),
 		);
-		$this->subscriptions->send_notifications(
-			ext::TITANIA_QUEUE_TAG,
-			$new_status,
-			'new_contrib_queue_cat',
-			$vars,
-			phpbb::$user->data['user_id']
+		$this->subscriptions->send_notifications('queue_move', array(
+			'item_id'			=> $this->queue_id,
+			'item_parent_id'	=> $this->contrib_id,
+			'watch'				=> array(array(ext::TITANIA_QUEUE_TAG, $new_status)),
+			'exclude_user'		=> phpbb::$user->data['user_id'],
+			'lang_key'			=> 'NOTIFICATION_TITANIA_QUEUE_MOVE',
+			'lang_params'		=> array($to),
+			'reference'			=> $contrib->contrib_name,
+			'url'				=> $vars['U_VIEW_QUEUE'],
+			'email_template'	=> 'new_contrib_queue_cat',
+			'email_vars'		=> $vars,
+			'actor_id'			=> phpbb::$user->data['user_id'],
+		));
+
+		// Post a status update to the queue discussion topic, so the authors
+		// know where their submission stands. Only moves to validating or
+		// testing are announced; the authors should not learn a pending
+		// verdict from a move to awaiting approval or awaiting denial.
+		$tag = $tags->get_tag($new_status);
+
+		if (!$tag || !in_array($tag['tag_field_name'], array('QUEUE_VALIDATING', 'QUEUE_TESTING')))
+		{
+			return;
+		}
+
+		// Programmatic posts do not notify topic subscribers on their own, so
+		// the notification is sent here, the same way replying through the
+		// posting form would.
+		$post = $this->discussion_reply(
+			sprintf(phpbb::$user->lang['QUEUE_DISCUSSION_STATUS_UPDATE'], $to),
+			false,
+			$robot_user_id
 		);
+		$u_view_topic = $path_helper->strip_url_params(
+			$post->topic->get_url(false, array('view' => 'unread', '#' => 'unread')),
+			'sid'
+		);
+		$this->subscriptions->send_notifications('posted', array(
+			'item_id'			=> $post->post_id,
+			'item_parent_id'	=> $post->topic_id,
+			'watch'				=> array(array(ext::TITANIA_TOPIC, $post->topic_id)),
+			'exclude_user'		=> phpbb::$user->data['user_id'],
+			'lang_key'			=> 'NOTIFICATION_TITANIA_REPLY',
+			'lang_params'		=> array(),
+			'reference'			=> $post->topic->topic_subject,
+			'url'				=> $u_view_topic,
+			'email_template'	=> 'subscribe_notify',
+			'email_vars'		=> array(
+				'NAME'		=> htmlspecialchars_decode($post->topic->topic_subject),
+				'U_VIEW'	=> $u_view_topic,
+			),
+			'actor_id'			=> $post->post_user_id,
+		));
 	}
 
 	public function in_progress()
@@ -461,7 +523,17 @@ class titania_queue extends \phpbb\titania\entity\message_base
 			'NAME'		=> $contrib->contrib_name,
 			'U_VIEW'	=> $contrib->get_url(),
 		);
-		$this->subscriptions->send_notifications(ext::TITANIA_CONTRIB, $this->contrib_id, 'subscribe_notify', $email_vars);
+		$this->subscriptions->send_notifications('contribution', array(
+			'item_id'			=> $revision->revision_id,
+			'item_parent_id'	=> $this->contrib_id,
+			'watch'				=> array(array(ext::TITANIA_CONTRIB, $this->contrib_id)),
+			'lang_key'			=> 'NOTIFICATION_TITANIA_CONTRIB_UPDATED',
+			'lang_params'		=> array($revision->revision_version),
+			'reference'			=> $contrib->contrib_name,
+			'url'				=> $email_vars['U_VIEW'],
+			'email_template'	=> 'subscribe_notify',
+			'email_vars'		=> $email_vars,
+		));
 
 		$this->trash_queue_topic();
 	}

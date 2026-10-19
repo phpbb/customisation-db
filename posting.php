@@ -1259,16 +1259,18 @@ class posting
 		$email_vars = array(
 			'NAME'	=> htmlspecialchars_decode($post->topic->topic_subject),
 		);
+		$lang_params = array();
 
 		if ($is_support_topic)
 		{
 			$email_vars['CONTRIB_NAME']	= $this->contrib->contrib_name;
+			$lang_params[] = $this->contrib->contrib_name;
 		}
 
 		if ($mode == 'reply')
 		{
-			$object_type	= array(ext::TITANIA_TOPIC);
-			$object_id		= array($post->topic_id);
+			$watch			= array(array(ext::TITANIA_TOPIC, $post->topic_id));
+			$lang_key		= 'NOTIFICATION_TITANIA_REPLY';
 			$topic_params	= array(
 				'view'	=> 'unread',
 				'#'		=> 'unread',
@@ -1277,26 +1279,32 @@ class posting
 			if ($is_support_topic)
 			{
 				// Support topic reply
-				$object_id[]	= $post->topic->parent_id;
-				$object_type[]	= ext::TITANIA_SUPPORT;
-				$template 		.= '_contrib';
+				$watch[]	= array(ext::TITANIA_SUPPORT, $post->topic->parent_id);
+				$template	.= '_contrib';
+				$lang_key	= 'NOTIFICATION_TITANIA_REPLY_CONTRIB';
 			}
 		}
 		else
 		{
-			$object_type	= $post->post_type;
-			$object_id		= $post->topic->parent_id;
-			$template		.= ($is_support_topic) ? '_forum_contrib' : '_forum';
+			$watch		= array(array($post->post_type, $post->topic->parent_id));
+			$template	.= ($is_support_topic) ? '_forum_contrib' : '_forum';
+			$lang_key	= ($is_support_topic) ? 'NOTIFICATION_TITANIA_TOPIC_CONTRIB' : 'NOTIFICATION_TITANIA_TOPIC';
 		}
 
 		$email_vars['U_VIEW'] = $post->topic->get_url(false, $topic_params);
-		$this->subscriptions->send_notifications(
-			$object_type,
-			$object_id,
-			$template,
-			$email_vars,
-			$post->post_user_id
-		);
+		$this->subscriptions->send_notifications('posted', array(
+			'item_id'			=> $post->post_id,
+			'item_parent_id'	=> $post->topic_id,
+			'watch'				=> $watch,
+			'exclude_user'		=> $post->post_user_id,
+			'lang_key'			=> $lang_key,
+			'lang_params'		=> $lang_params,
+			'reference'			=> $post->topic->topic_subject,
+			'url'				=> $email_vars['U_VIEW'],
+			'email_template'	=> $template,
+			'email_vars'		=> $email_vars,
+			'actor_id'			=> $post->post_user_id,
+		));
 	}
 
 	/**

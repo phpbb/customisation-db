@@ -431,18 +431,61 @@ services:
         tags:
             - { name: titania.contribution.type }
 
+    phpbb.titania.notification.type.base:
+        abstract: true
+        class: phpbb\titania\notification\type\base
+        parent: notification.type.base
+        calls:
+            - [set_user_loader, ['@user_loader']]
+
+    phpbb.titania.notification.type.posted:
+        class: phpbb\titania\notification\type\posted
+        shared: false
+        parent: phpbb.titania.notification.type.base
+        tags:
+            - { name: notification.type }
+
+    phpbb.titania.notification.type.contribution:
+        class: phpbb\titania\notification\type\contribution
+        shared: false
+        parent: phpbb.titania.notification.type.base
+        tags:
+            - { name: notification.type }
+
+    phpbb.titania.notification.type.queue:
+        class: phpbb\titania\notification\type\queue
+        shared: false
+        parent: phpbb.titania.notification.type.base
+        calls:
+            - [set_type_collection, ['@phpbb.titania.contribution.type.collection']]
+        tags:
+            - { name: notification.type }
+
+    phpbb.titania.notification.type.queue_move:
+        class: phpbb\titania\notification\type\queue_move
+        shared: false
+        parent: phpbb.titania.notification.type.queue
+        tags:
+            - { name: notification.type }
+
+    phpbb.titania.notification.type.attention:
+        class: phpbb\titania\notification\type\attention
+        shared: false
+        parent: phpbb.titania.notification.type.base
+        calls:
+            - [set_type_collection, ['@phpbb.titania.contribution.type.collection']]
+        tags:
+            - { name: notification.type }
+
     phpbb.titania.subscriptions:
         class: phpbb\titania\subscriptions
         arguments:
             - '@dbal.conn'
-            - '@config'
             - '@request'
             - '@template'
             - '@user'
             - '@path_helper'
-            - '%tables.users%'
-            - '%core.root_path%'
-            - '%core.php_ext%'
+            - '@notification_manager'
 
     phpbb.titania.sync:
         class: phpbb\titania\sync

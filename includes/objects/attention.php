@@ -91,8 +91,12 @@ class titania_attention extends \phpbb\titania\entity\database_base
 
 	public function submit()
 	{
-		// Subscriptions
-		if (!$this->attention_id)
+		$is_new = !$this->attention_id;
+
+		parent::submit();
+
+		// Subscriptions; sent after the parent submit so the attention id exists
+		if ($is_new)
 		{
 			$u_view = $this->controller_helper->route('phpbb.titania.manage.attention.redirect', array(
 				'type'	=> $this->attention_type,
@@ -102,16 +106,35 @@ class titania_attention extends \phpbb\titania\entity\database_base
 				'NAME'		=> $this->attention_title,
 				'U_VIEW'	=> $this->path_helper->strip_url_params($u_view, 'sid'),
 			);
-			$this->subscriptions->send_notifications(
-				ext::TITANIA_ATTENTION,
-				0,
-				'subscribe_notify',
-				$email_vars,
-				$this->attention_poster_id
-			);
-		}
 
-		parent::submit();
+			switch ($this->attention_type)
+			{
+				case ext::TITANIA_ATTENTION_REPORTED:
+					$lang_key = 'NOTIFICATION_TITANIA_ATTENTION_REPORT';
+				break;
+
+				case ext::TITANIA_ATTENTION_UNAPPROVED:
+					$lang_key = 'NOTIFICATION_TITANIA_ATTENTION_UNAPPROVED';
+				break;
+
+				default:
+					$lang_key = 'NOTIFICATION_TITANIA_ATTENTION';
+				break;
+			}
+
+			$this->subscriptions->send_notifications('attention', array(
+				'item_id'			=> $this->attention_id,
+				'item_parent_id'	=> $this->attention_object_id,
+				'watch'				=> array(array(ext::TITANIA_ATTENTION, 0)),
+				'exclude_user'		=> $this->attention_poster_id,
+				'lang_key'			=> $lang_key,
+				'reference'			=> $this->attention_title,
+				'url'				=> $email_vars['U_VIEW'],
+				'email_template'	=> 'subscribe_notify',
+				'email_vars'		=> $email_vars,
+				'actor_id'			=> $this->attention_requester,
+			));
+		}
 	}
 
 	/**

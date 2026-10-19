@@ -273,10 +273,12 @@ class titania_attention_post extends titania_attention
 			$message_vars = array(
 				'U_VIEW' => $this->path_helper->strip_url_params($u_view, 'sid'),
 			);
-			$object_type = array(ext::TITANIA_TOPIC, ext::TITANIA_SUPPORT);
-			$object_id = array($this->post->topic_id, $this->post->topic->parent_id);
+			$watch = array(
+				array(ext::TITANIA_TOPIC, $this->post->topic_id),
+				array(ext::TITANIA_SUPPORT, $this->post->topic->parent_id),
+			);
 
-			$this->send_notifications($object_type, $object_id, 'subscribe_notify_contrib', $message_vars);
+			$this->send_notifications($watch, 'NOTIFICATION_TITANIA_REPLY_CONTRIB', 'subscribe_notify_contrib', $message_vars);
 		}
 	}
 
@@ -296,20 +298,21 @@ class titania_attention_post extends titania_attention
 		if ($this->post->topic->topic_last_post_id == $this->post->post_id)
 		{
 			$message_vars = array('U_VIEW' => $this->post->topic->get_url());
+			$watch = array(array($this->post->post_type, $this->post->topic->parent_id));
 
-			$this->send_notifications($this->post->post_type, $this->post->topic->parent_id, 'subscribe_notify_forum_contrib', $message_vars);
+			$this->send_notifications($watch, 'NOTIFICATION_TITANIA_TOPIC_CONTRIB', 'subscribe_notify_forum_contrib', $message_vars);
 		}
 	}
 
 	/**
 	* Send notifications.
 	*
-	* @param int|array $object_type
-	* @param int|array $object_id
+	* @param array $watch Array of array(watch_object_type, watch_object_id) pairs
+	* @param string $lang_key Language key for the board notification title
 	* @param string $email_template
 	* @param array $message_vars
 	*/
-	public function send_notifications($object_type, $object_id, $email_template, $message_vars)
+	public function send_notifications($watch, $lang_key, $email_template, $message_vars)
 	{
 		$this->load_contrib_object();
 
@@ -318,13 +321,19 @@ class titania_attention_post extends titania_attention
 			'CONTRIB_NAME'	=> $this->contrib->contrib_name,
 		));
 
-		$this->subscriptions->send_notifications(
-			$object_type,
-			$object_id,
-			$email_template,
-			$message_vars,
-			$this->post->post_user_id
-		);
+		$this->subscriptions->send_notifications('posted', array(
+			'item_id'			=> $this->post->post_id,
+			'item_parent_id'	=> $this->post->topic_id,
+			'watch'				=> $watch,
+			'exclude_user'		=> $this->post->post_user_id,
+			'lang_key'			=> $lang_key,
+			'lang_params'		=> array($this->contrib->contrib_name),
+			'reference'			=> $this->post->topic->topic_subject,
+			'url'				=> $message_vars['U_VIEW'],
+			'email_template'	=> $email_template,
+			'email_vars'		=> $message_vars,
+			'actor_id'			=> $this->post->post_user_id,
+		));
 	}
 
 	/**
